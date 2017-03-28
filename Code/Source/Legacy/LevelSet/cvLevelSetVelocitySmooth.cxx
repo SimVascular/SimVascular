@@ -67,12 +67,12 @@ cvLevelSetVelocitySmooth::~cvLevelSetVelocitySmooth()
 int cvLevelSetVelocitySmooth::SetKts( double upper_kt, double lower_kt )
 {
   if ( lower_kt > upper_kt ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   upper_kt_ = upper_kt;
   lower_kt_ = lower_kt;
   ktsValid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -83,11 +83,11 @@ int cvLevelSetVelocitySmooth::SetKts( double upper_kt, double lower_kt )
 int cvLevelSetVelocitySmooth::GetKts( double *upper_kt, double *lower_kt )
 {
   if ( ! ktsValid_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *upper_kt = upper_kt_;
   *lower_kt = lower_kt_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -112,10 +112,10 @@ int cvLevelSetVelocitySmooth::Set3DKType( cvLevelSetVelocitySmooth3DKT kt )
 {
   if ( kt == VS_Invalid_K ) {
     printf("ERR: invalid curvature type\n");
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     ktype_ = kt;
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -127,7 +127,7 @@ int cvLevelSetVelocitySmooth::Set3DKType( cvLevelSetVelocitySmooth3DKT kt )
 int cvLevelSetVelocitySmooth::Get3DKType( cvLevelSetVelocitySmooth3DKT *kt )
 {
   *kt = ktype_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -138,10 +138,10 @@ int cvLevelSetVelocitySmooth::Get3DKType( cvLevelSetVelocitySmooth3DKT *kt )
 int cvLevelSetVelocitySmooth::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( ! ktsValid_ ) return 0;
-  return 1;
+  if ( ! ktsValid_ ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -151,7 +151,7 @@ int cvLevelSetVelocitySmooth::Valid()
 
 int cvLevelSetVelocitySmooth::StopCondition()
 {
-  return 0;
+  return SV_ERROR;
 }
 
 
@@ -167,25 +167,25 @@ int cvLevelSetVelocitySmooth::Evaluate( double pos[], double *f0, double *f1, do
   double km, kg;
   double ks[2];
 
-  if ( ! Valid() ) return CV_ERROR;
-  if ( ls_->GetGrid()->InterpN( pos, n ) != CV_OK ) return CV_ERROR;
+  if ( ! Valid() ) return SV_ERROR;
+  if ( ls_->GetGrid()->InterpN( pos, n ) != SV_OK ) return SV_ERROR;
   if ( ls_->GetGrid()->GetDim() == 3 ) {
     switch (ktype_) {
     case VS_Mean_K:
-      if ( ls_->GetGrid()->InterpKm( pos, &k ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpKm( pos, &k ) != SV_OK ) return SV_ERROR;
       break;
     case VS_Gaussian_K:
-      if ( ls_->GetGrid()->InterpKg( pos, &k ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpKg( pos, &k ) != SV_OK ) return SV_ERROR;
       break;
     case VS_PrincipleK1_K:
-      if ( ls_->GetGrid()->InterpKg( pos, &kg ) != CV_OK ) return CV_ERROR;
-      if ( ls_->GetGrid()->InterpKm( pos, &km ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpKg( pos, &kg ) != SV_OK ) return SV_ERROR;
+      if ( ls_->GetGrid()->InterpKm( pos, &km ) != SV_OK ) return SV_ERROR;
       Compute3dks( kg, km, tol_, ks );
       k = ks[0];
       break;
     case VS_PrincipleK2_K:
-      if ( ls_->GetGrid()->InterpKg( pos, &kg ) != CV_OK ) return CV_ERROR;
-      if ( ls_->GetGrid()->InterpKm( pos, &km ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpKg( pos, &kg ) != SV_OK ) return SV_ERROR;
+      if ( ls_->GetGrid()->InterpKm( pos, &km ) != SV_OK ) return SV_ERROR;
       Compute3dks( kg, km, tol_, ks );
       k = ks[1];
       break;
@@ -220,7 +220,7 @@ int cvLevelSetVelocitySmooth::Evaluate( double pos[], double *f0, double *f1, do
     v[2] = n[2] * (*f0);
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

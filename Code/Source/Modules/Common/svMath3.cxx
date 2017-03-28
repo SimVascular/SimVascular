@@ -62,7 +62,7 @@ std::vector<mitk::Point3D> svMath3::CreateSmoothedCurve(std::vector<mitk::Point3
         rslt=cMath->smoothCurve(pts, actualNumPts, 0, numModes, 2*outputNumPts, &outPts);
     }
     delete cMath;
-    if (rslt == CV_ERROR) {
+    if (rslt == SV_ERROR) {
         return outputPoints;
     }
 

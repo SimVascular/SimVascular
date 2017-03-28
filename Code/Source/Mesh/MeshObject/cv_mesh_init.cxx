@@ -372,7 +372,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
   // call this method directly prior to any other.
   cvMeshObject* geom = (cvMeshObject *)clientData;
   if (geom->GetMeshLoaded() == 0) {
-    if (geom->Update() == CV_ERROR) {
+    if (geom->Update() == SV_ERROR) {
       return TCL_ERROR;
     }
   }
@@ -544,7 +544,7 @@ static int cvMesh_PrintMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvMeshObject *geom = (cvMeshObject *)clientData;
 
-  if (geom->Print() == CV_OK) {
+  if (geom->Print() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -562,7 +562,7 @@ static int cvMesh_UpdateMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvMeshObject *geom = (cvMeshObject *)clientData;
 
-  if (geom->Update() == CV_OK) {
+  if (geom->Update() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -640,7 +640,7 @@ static int cvMesh_WriteMetisAdjacencyMtd( ClientData clientData, Tcl_Interp *int
   // Do work of command:
   status = geom->WriteMetisAdjacency( fn );
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
 		      " to file ", fn, (char *)NULL );
     return TCL_ERROR;
@@ -968,7 +968,7 @@ int cvMesh_LogonCmd( ClientData clientData, Tcl_Interp *interp,
   cvMeshSystem* meshKernel = cvMeshSystem::GetCurrentKernel();
 
   // read in the results file
-  if (meshKernel == NULL || meshKernel->LogOn(logFileName) == CV_ERROR) {
+  if (meshKernel == NULL || meshKernel->LogOn(logFileName) == SV_ERROR) {
       Tcl_AppendResult( interp, "error opening logfile ", (char *)NULL);
       return TCL_ERROR;
   }
@@ -991,7 +991,7 @@ int cvMesh_LogoffCmd( ClientData clientData, Tcl_Interp *interp,
 
   cvMeshSystem* meshKernel = cvMeshSystem::GetCurrentKernel();
 
-  if (meshKernel == NULL || meshKernel->LogOff() == CV_ERROR) {
+  if (meshKernel == NULL || meshKernel->LogOff() == SV_ERROR) {
       Tcl_AppendResult( interp, "error turning off logfile ", (char *)NULL);
       return TCL_ERROR;
   }
@@ -1047,7 +1047,7 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   // Get the cvPolyData:
-  if ( geom->SetMeshOptions(flags,numValues,values) == CV_ERROR ) {
+  if ( geom->SetMeshOptions(flags,numValues,values) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
     delete [] values;
@@ -1089,7 +1089,7 @@ int cvMesh_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   fprintf(stderr,"Filename: %s\n",FileName);
-  if (geom->LoadModel(FileName) == CV_ERROR) {
+  if (geom->LoadModel(FileName) == SV_ERROR) {
       Tcl_AppendResult( interp, "error loading solid model", (char *)NULL);
       return TCL_ERROR;
   }
@@ -1126,7 +1126,7 @@ int cvMesh_GetBoundaryFacesMtd( ClientData clientData, Tcl_Interp *interp,
   }
 
   int status = geom->GetBoundaryFaces(angle);
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetBoundaryFaces: error on object ",
@@ -1167,7 +1167,7 @@ int cvMesh_LoadDiscreteModelMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   // read in the results file
-  if (geom->LoadDiscreteModel(FileName) == CV_ERROR) {
+  if (geom->LoadDiscreteModel(FileName) == SV_ERROR) {
       Tcl_AppendResult( interp, "error loading solid model", (char *)NULL);
       return TCL_ERROR;
   }
@@ -1206,7 +1206,7 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   // read in the results file
-  if (geom->LoadMesh(FileName,SurfFileName) == CV_ERROR) {
+  if (geom->LoadMesh(FileName,SurfFileName) == SV_ERROR) {
       Tcl_AppendResult( interp, "error loading mesh ", (char *)NULL);
       return TCL_ERROR;
   }
@@ -1239,7 +1239,7 @@ int cvMesh_WriteStatsMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   // read in the results file
-  if (geom->WriteStats(FileName) == CV_ERROR) {
+  if (geom->WriteStats(FileName) == SV_ERROR) {
       Tcl_AppendResult( interp, "error writing stats file ", (char *)NULL);
       return TCL_ERROR;
   }
@@ -1253,7 +1253,7 @@ int cvMesh_AdaptMtd( ClientData clientData, Tcl_Interp *interp,
   cvMeshObject *geom = (cvMeshObject *)clientData;
 
   // Do work of command:
-  if (geom->Adapt() == CV_OK) {
+  if (geom->Adapt() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -1288,7 +1288,7 @@ int cvMesh_WriteMeshMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   // read in the results file
-  if (geom->WriteMesh(FileName,smsver) == CV_ERROR) {
+  if (geom->WriteMesh(FileName,smsver) == SV_ERROR) {
       Tcl_AppendResult( interp, "error writing mesh ", (char *)NULL);
       return TCL_ERROR;
   }
@@ -1310,7 +1310,7 @@ int cvMesh_NewMeshMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if (geom->NewMesh() == CV_ERROR) {
+  if (geom->NewMesh() == SV_ERROR) {
       Tcl_AppendResult( interp, "error creating new mesh ", (char *)NULL);
       return TCL_ERROR;
   }
@@ -1332,7 +1332,7 @@ int cvMesh_GenerateMeshMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if (geom->GenerateMesh() == CV_ERROR) {
+  if (geom->GenerateMesh() == SV_ERROR) {
       Tcl_AppendResult( interp, "Error generating mesh ", (char *)NULL);
       return TCL_ERROR;
   }
@@ -1394,7 +1394,7 @@ static int cvMesh_SetSphereRefinementMtd( ClientData clientData, Tcl_Interp *int
 
   // Do work of command:
 
-  if ( geom->SetSphereRefinement(size,r,ctr) == CV_ERROR ) {
+  if ( geom->SetSphereRefinement(size,r,ctr) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
     return TCL_ERROR;
@@ -1433,7 +1433,7 @@ static int cvMesh_SetSizeFunctionBasedMeshMtd( ClientData clientData, Tcl_Interp
 
   // Do work of command:
 
-  if ( geom->SetSizeFunctionBasedMesh(size,functionName) == CV_ERROR ) {
+  if ( geom->SetSizeFunctionBasedMesh(size,functionName) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in setting size function ",
 		      (char *)NULL );
     return TCL_ERROR;
@@ -1518,7 +1518,7 @@ static int cvMesh_SetCylinderRefinementMtd( ClientData clientData, Tcl_Interp *i
 
   // Do work of command:
 
-  if ( geom->SetCylinderRefinement(size,r,length,ctr,nrm) == CV_ERROR ) {
+  if ( geom->SetCylinderRefinement(size,r,length,ctr,nrm) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
     return TCL_ERROR;
@@ -1584,7 +1584,7 @@ static int cvMesh_SetBoundaryLayerMtd( ClientData clientData, Tcl_Interp *interp
 
   // Do work of command:
 
-  if ( geom->SetBoundaryLayer(type,id,side,nL,H) == CV_ERROR ) {
+  if ( geom->SetBoundaryLayer(type,id,side,nL,H) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
     delete [] H;
@@ -1624,7 +1624,7 @@ static int cvMesh_SetWallsMtd( ClientData clientData, Tcl_Interp *interp,
   // Parse coordinate lists:
   if (wallsList.argc == 0) {
       ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
+      return SV_OK;
   }
 
   int *walls = new int [wallsList.argc];
@@ -1645,7 +1645,7 @@ static int cvMesh_SetWallsMtd( ClientData clientData, Tcl_Interp *interp,
 
   // Do work of command:
 
-  if ( geom->SetWalls(numWalls,walls) == CV_ERROR ) {
+  if ( geom->SetWalls(numWalls,walls) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
     delete [] walls;

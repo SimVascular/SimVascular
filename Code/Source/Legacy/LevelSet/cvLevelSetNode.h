@@ -120,19 +120,19 @@ int cvLevelSetNode::Contains( GridScalarT t )
 {
   switch (t) {
   case GS_PHI:
-    return 1;
+    return SV_OK;
   case GS_CURVATURE:
-    return 1;
+    return SV_OK;
   case GS_CURVATURE_3Dm:
-    return 1;
+    return SV_OK;
   case GS_CURVATURE_3Dg:
-    return 1;
+    return SV_OK;
   case GS_CURVATURE_3Dk1:
-    return 0;
+    return SV_ERROR;
   case GS_CURVATURE_3Dk2:
-    return 0;
+    return SV_ERROR;
   default:
-    return 0;
+    return SV_ERROR;
   }
 }
 
@@ -172,12 +172,12 @@ double cvLevelSetNode::ComputeDoubleDatum( GridScalarT t, double tol )
 
   switch (t) {
   case GS_CURVATURE_3Dk1:
-    if ( Compute3dks( K3dg_, K3dm_, tol, ks ) != CV_OK ) {
+    if ( Compute3dks( K3dg_, K3dm_, tol, ks ) != SV_OK ) {
       return 0.0;
     }
     return ks[0];
   case GS_CURVATURE_3Dk2:
-    if ( Compute3dks( K3dg_, K3dm_, tol, ks ) != CV_OK ) {
+    if ( Compute3dks( K3dg_, K3dm_, tol, ks ) != SV_OK ) {
       return 0.0;
     }
     return ks[1];

@@ -49,11 +49,11 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
    // check the range on the order of the requested polynomial
    if (order < 0 || order > 2) {
        fprintf(stderr,"ERROR:  Order of $order not permitted.\n");
-       return CV_ERROR;
+       return SV_ERROR;
    }
    if (numRegions <= 0 || numImages <= 0) {
        fprintf(stderr,"ERROR: invalid value of numRegions or numImages.\n");
-       return CV_ERROR;
+       return SV_ERROR;
    }
 
 
@@ -103,7 +103,7 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
 	  jmin[i] < extent[2] || jmax[i] > extent[3]) {
           fprintf(stderr,"ERROR: region %i bounding box not completely inside of domain.\n",i);
           delete [] imin;delete [] imax;delete [] jmin;delete [] jmax;
-          return CV_ERROR;
+          return SV_ERROR;
       }
    }
 
@@ -131,10 +131,10 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
 	for (j = jmin[n];j <= jmax[n];j++) {
             pt[0] = i*spacing[0]+vtk_origin[0];
             pt[1] = j*spacing[1]+vtk_origin[1];
-            if (sys_geom_PtInPoly(pd,pt,1,&result) == CV_ERROR) {
+            if (sys_geom_PtInPoly(pd,pt,1,&result) == SV_ERROR) {
                 delete [] voxs;
                 delete [] imin;delete [] imax;delete [] jmin;delete [] jmax;
-                return CV_ERROR;
+                return SV_ERROR;
             }
             if (result == 1) {
               int pixel = i + j * dimensions[0];
@@ -174,7 +174,7 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
        // should never get here
        delete [] voxs;
        delete mathobj;
-       return CV_ERROR;
+       return SV_ERROR;
    }
 
    double **xt = mathobj->createArray(numIn*numImages,xOrder);
@@ -248,16 +248,16 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
        mathobj->deleteArray(mt,xOrder,yOrder);
        delete mathobj;
        delete [] voxs;
-       return CV_ERROR;
+       return SV_ERROR;
    }
 
-   if ( (mathobj->fitLeastSquares(s,xt,xOrder,yt,yOrder,mt)) == CV_ERROR) {
+   if ( (mathobj->fitLeastSquares(s,xt,xOrder,yt,yOrder,mt)) == SV_ERROR) {
       mathobj->deleteArray(xt,numIn*numImages,xOrder);
       mathobj->deleteArray(yt,numIn*numImages,yOrder);
       mathobj->deleteArray(mt,xOrder,yOrder);
       delete mathobj;
       delete [] voxs;
-      return CV_ERROR;
+      return SV_ERROR;
    }
 
    // set results 
@@ -274,7 +274,7 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
    delete mathobj;
    delete [] voxs;
 
-   return CV_OK;
+   return SV_OK;
 
 }
 
@@ -288,11 +288,11 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
    // check the range on the order of the requested polynomial
    if (order < 0 || order > 2) {
        fprintf(stderr,"ERROR:  Order of $order not permitted.\n");
-       return CV_ERROR;
+       return SV_ERROR;
    }
    if (numImages <= 0) {
        fprintf(stderr,"ERROR: invalid value of numRegions or numImages.\n");
-       return CV_ERROR;
+       return SV_ERROR;
    }
 
 
@@ -355,7 +355,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
             fprintf(stderr,"ERROR: region %i bounding box not completely inside of domain.\n",i);
             delete [] imin;delete [] imax;delete [] jmin;delete [] jmax;
             delete voxs;
-            return CV_ERROR;
+            return SV_ERROR;
         }
      }
 
@@ -378,10 +378,10 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
  	 for (j = jmin[n];j <= jmax[n];j++) {
             pt[0] = i*spacing[0]+vtk_origin[0];
             pt[1] = j*spacing[1]+vtk_origin[1];
-            if (sys_geom_PtInPoly(pd,pt,1,&result) == CV_ERROR) {
+            if (sys_geom_PtInPoly(pd,pt,1,&result) == SV_ERROR) {
                 delete [] voxs;
                 delete [] imin;delete [] imax;delete [] jmin;delete [] jmax;
-                return CV_ERROR;
+                return SV_ERROR;
             }
             if (result == 1) {
               int pixel = i + j * dimensions[0];
@@ -456,7 +456,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
        delete [] mean;
        delete [] sdev;
        delete [] mask;
-       return CV_ERROR;
+       return SV_ERROR;
    }
 
    s = 0;
@@ -584,7 +584,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
        // should never get here
        delete [] mask;
        delete mathobj;
-       return CV_ERROR;
+       return SV_ERROR;
    }
 
    double **xt = mathobj->createArray(numMaskPix*numImages,xOrder);
@@ -656,16 +656,16 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
        mathobj->deleteArray(mt,xOrder,yOrder);
        delete mathobj;
        delete [] mask;
-       return CV_ERROR;
+       return SV_ERROR;
    }
 
-   if ( (mathobj->fitLeastSquares(s,xt,xOrder,yt,yOrder,mt)) == CV_ERROR) {
+   if ( (mathobj->fitLeastSquares(s,xt,xOrder,yt,yOrder,mt)) == SV_ERROR) {
       mathobj->deleteArray(xt,numMaskPix*numImages,xOrder);
       mathobj->deleteArray(yt,numMaskPix*numImages,yOrder);
       mathobj->deleteArray(mt,xOrder,yOrder);
       delete mathobj;
       delete [] mask;
-      return CV_ERROR;
+      return SV_ERROR;
    }
 
    // set results 
@@ -701,7 +701,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
 
    delete [] mask;
 
-   return CV_OK;
+   return SV_OK;
 
 }
 

@@ -33,7 +33,7 @@ bool svMeshTetGenAdaptor::SetModelElement(svModelElement *modelElement)
 
 //bool svMeshTetGenAdaptor::SetResultMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh)
 //{
-//    if(m_cvTetGenAdaptor && mesh && m_cvTetGenAdaptor->LoadMesh(mesh)==CV_OK)
+//    if(m_cvTetGenAdaptor && mesh && m_cvTetGenAdaptor->LoadMesh(mesh)==SV_OK)
 //        return true;
 //    else
 //        return false;
@@ -41,27 +41,27 @@ bool svMeshTetGenAdaptor::SetModelElement(svModelElement *modelElement)
 
 bool svMeshTetGenAdaptor::LoadMeshFromResultVTUFile(std::string filePath)
 {
-    return (m_cvTetGenAdaptor && m_cvTetGenAdaptor->LoadMesh(const_cast<char*>(filePath.c_str()))==CV_OK);
+    return (m_cvTetGenAdaptor && m_cvTetGenAdaptor->LoadMesh(const_cast<char*>(filePath.c_str()))==SV_OK);
 }
 
 bool svMeshTetGenAdaptor::SetAdaptOptions(std::string flag, double value)
 {
-    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->SetAdaptOptions(const_cast<char*>(flag.c_str()),value)==CV_OK;
+    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->SetAdaptOptions(const_cast<char*>(flag.c_str()),value)==SV_OK;
 }
 
 bool svMeshTetGenAdaptor::Adapt()
 {
     return m_cvTetGenAdaptor
-            && m_cvTetGenAdaptor->SetMetric(NULL,-1,-1)==CV_OK
-            && m_cvTetGenAdaptor->SetupMesh()==CV_OK
-            && m_cvTetGenAdaptor->RunAdaptor()==CV_OK
-            && m_cvTetGenAdaptor->GetAdaptedMesh()==CV_OK
-            && m_cvTetGenAdaptor->TransferSolution()==CV_OK;
+            && m_cvTetGenAdaptor->SetMetric(NULL,-1,-1)==SV_OK
+            && m_cvTetGenAdaptor->SetupMesh()==SV_OK
+            && m_cvTetGenAdaptor->RunAdaptor()==SV_OK
+            && m_cvTetGenAdaptor->GetAdaptedMesh()==SV_OK
+            && m_cvTetGenAdaptor->TransferSolution()==SV_OK;
 }
 
 bool svMeshTetGenAdaptor::WriteAdaptedSolution(std::string filePath)
 {
-    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->WriteAdaptedSolution(const_cast<char*>(filePath.c_str()))==CV_OK;
+    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->WriteAdaptedSolution(const_cast<char*>(filePath.c_str()))==SV_OK;
 }
 
 svMeshTetGen* svMeshTetGenAdaptor::GetAdaptedMesh()

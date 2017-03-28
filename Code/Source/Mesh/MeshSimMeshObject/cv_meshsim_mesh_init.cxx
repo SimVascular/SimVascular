@@ -83,7 +83,7 @@ int MeshSim_Win32ReadRegistrySimRegister(char* regVarName) {
   if (returnStatus2 != ERROR_SUCCESS) {
     fprintf(stderr,"No MeshSim license key for (%s) in registry. Meshsim functionality isn't available.\n",regVarName);
     fflush(stdout);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   returnStatus2 = RegQueryValueEx(hKey2, regVarName, NULL, &dwType2,(LPBYTE)&lszValue2, &dwSize2);
@@ -92,7 +92,7 @@ int MeshSim_Win32ReadRegistrySimRegister(char* regVarName) {
   if (returnStatus2 != ERROR_SUCCESS) {
     fprintf(stdout,"  Warning: Invalid application registry (%s).\n\n",regVarName);
     fflush(stdout);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // set the variable in tcl interpreter
@@ -100,7 +100,7 @@ int MeshSim_Win32ReadRegistrySimRegister(char* regVarName) {
 
   Sim_registerKey(simkey);
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -171,14 +171,14 @@ try
 }
 #else
 fprintf(stdout,"ERROR: need to register license keys somehow!\n");
-return CV_ERROR;
+return SV_ERROR;
 #endif
 try{
   SimModel_start();
   #ifdef SV_USE_PARASOLID
   if (SimParasolid_start( 0 ) != 0) {
    fprintf(stdout,"ERROR starting MeshSim Parasolid Interface!\n");
-   return CV_ERROR;
+   return SV_ERROR;
  }
   #endif
 
@@ -194,7 +194,7 @@ catch (...) {
 
   if (pMeshKernelRegistryMethod != NULL) {
     cvMeshSystem* meshSimSystem = new cvMeshSimMeshSystem();
-    if ((*pMeshKernelRegistryMethod)( cvMeshObject::KERNEL_MESHSIM, meshSimSystem ) == CV_OK) {
+    if ((*pMeshKernelRegistryMethod)( cvMeshObject::KERNEL_MESHSIM, meshSimSystem ) == SV_OK) {
       //printf("  MeshSim module registered\n");
       Tcl_CreateCommand( interp, "meshsim_mesh_available", MeshSimMesh_AvailableCmd,
 		         (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );

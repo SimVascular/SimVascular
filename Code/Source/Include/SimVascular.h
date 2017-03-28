@@ -37,8 +37,8 @@
 
 #ifndef SIMVASCULAR_H
 
-#define CV_OK                 1
-#define CV_ERROR              0
+#define SV_OK                 1
+#define SV_ERROR              0
 
 /* true / false don't seem to be defined on linux */
 #ifndef WIN32

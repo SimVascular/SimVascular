@@ -137,53 +137,53 @@ int cvConvertVisFiles::openInputFile(char* filename, gzFile* fp) {
     *fp = gzopen (filename, "rb");
     if (*fp == Z_NULL) {
       fprintf(stderr,"Error: Could not open input file %s.\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
-    return CV_OK;
+    return SV_OK;
 }
 
 int cvConvertVisFiles::closeInputFile(gzFile fp) {
   gzclose(fp);
-  return CV_OK;
+  return SV_OK;
 }
 
 
 int cvConvertVisFiles::ReadVisMesh(char *infilename) {
 
     // open the mesh file
-    if (openInputFile(infilename, &meshfp_) == CV_ERROR) {
-        return CV_ERROR;
+    if (openInputFile(infilename, &meshfp_) == SV_ERROR) {
+        return SV_ERROR;
     }
 
     if (meshfp_ == NULL) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
     //
     // read the nodal coordinates
     //
 
     // skip until we find the string
-    if (findStringInFile("number of nodal coordinates", meshfp_) == CV_ERROR) {
+    if (findStringInFile("number of nodal coordinates", meshfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of nodal coordinates.\n");
         closeInputFile(meshfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     int numNodes = 0;
     if (sscanf(currentLine_,"    number of nodal coordinates %i\n",&numNodes) != 1) {
       fprintf(stderr,"ERROR: bad format of number of nodal coordinates (%s).\n",currentLine_);
       closeInputFile(meshfp_);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     fprintf(stdout,"Reading %i nodes.\n",numNodes);
 
     // skip until we find the string
-    if (findStringInFile("nodal coordinates",meshfp_) == CV_ERROR) {
+    if (findStringInFile("nodal coordinates",meshfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find nodal coordinates.");
         closeInputFile(meshfp_);
         meshpts_->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkPoints* meshpts_ = vtkPoints::New();
@@ -201,7 +201,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
       if (flag == NEXTLINE_EOF) {
           closeInputFile(meshfp_);
           meshpts_->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end node coordinates") != NULL) {
           break;
@@ -213,7 +213,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(meshfp_);
           meshpts_->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // convert to vtkFloatingPointTypes for vtk
@@ -229,7 +229,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",nodeid,numNodes);
           closeInputFile(meshfp_);
           meshpts_->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
       //fprintf(stdout,"insert pt: %i value: %f %f %f\n",nodeid-1,fpt[0],fpt[1],fpt[2]);
       meshpts_->InsertPoint(nodeid-1,fpt);
@@ -244,26 +244,26 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
     //
 
     // skip until we find the string
-    if (findStringInFile("nodes per element",meshfp_) == CV_ERROR) {
+    if (findStringInFile("nodes per element",meshfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find nodes per element.\n");
         closeInputFile(meshfp_);
         meshpts_->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
     int nodesPerElement = 0;
     if (sscanf(currentLine_,"      nodes per element %i\n",&nodesPerElement) != 1) {
       fprintf(stderr,"ERROR: could not find number of nodes per element!\n");
       closeInputFile(meshfp_);
       meshpts_->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // skip until we find the string
-    if (findStringInFile("number of elements",meshfp_) == CV_ERROR) {
+    if (findStringInFile("number of elements",meshfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of elements.\n");
         closeInputFile(meshfp_);
         meshpts_->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     int numElements = 0;
@@ -271,15 +271,15 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
       fprintf(stderr,"ERROR: could not find number of elements!\n");
       closeInputFile(meshfp_);
       meshpts_->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // skip until we find the string "connectivity"
-    if (findStringInFile("connectivity",meshfp_) == CV_ERROR) {
+    if (findStringInFile("connectivity",meshfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find connectivity.\n");
         closeInputFile(meshfp_);
         meshpts_->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     fprintf(stdout,"Reading %i elements.\n",numElements);
@@ -308,7 +308,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
           meshpts_->Delete();
           ptids->Delete();
           grid_->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end connectivity") != NULL) {
           break;
@@ -322,7 +322,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
           meshpts_->Delete();
           ptids->Delete();
           grid_->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
         }
         ptids->SetNumberOfIds(4);
         ptids->SetId(0,conn[0]-1);ptids->SetId(1,conn[1]-1);
@@ -336,7 +336,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
           meshpts_->Delete();
           ptids->Delete();
           grid_->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
         }
         ptids->SetNumberOfIds(8);
         ptids->SetId(0,conn[0]-1);ptids->SetId(1,conn[1]-1);
@@ -349,7 +349,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
         meshpts_->Delete();
         ptids->Delete();
         grid_->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
       }
 
       if (elementid < 1 || elementid > numElements) {
@@ -358,7 +358,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
           meshpts_->Delete();
           ptids->Delete();
           grid_->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       if ((elementid-1) != currnum) {
@@ -373,7 +373,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
         meshpts_->Delete();
         ptids->Delete();
         grid_->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
       }
 
       currnum++;
@@ -384,10 +384,10 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
 
     fprintf(stdout,"Done reading %i elements.\n",numElements);
 
-    if (closeInputFile(meshfp_) == CV_ERROR) {
+    if (closeInputFile(meshfp_) == SV_ERROR) {
         meshpts_->Delete();
         grid_->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     meshLoaded_ = 1;
@@ -395,7 +395,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
     fprintf(stdout,"debug: number of grid points: %i\n",grid_->GetNumberOfPoints());
     fprintf(stdout,"debug: number of tets: %i\n",grid_->GetNumberOfCells());
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -407,21 +407,21 @@ int cvConvertVisFiles::readNextLineFromFile(gzFile fp) {
     if (fgets(currentLine_,MAXVISLINELENGTH,fp) == NULL) {
 #endif
         //fprintf(stderr,"ERROR:  readNextLine failed.\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
 int cvConvertVisFiles::findStringInFile(char *findme, gzFile fp) {
 
-    while (readNextLineFromFile(fp) == CV_OK) {
+    while (readNextLineFromFile(fp) == SV_OK) {
       if (strstr(currentLine_,findme) != NULL) {
-          return CV_OK;
+          return SV_OK;
       }
     }
-    return CV_ERROR;
+    return SV_ERROR;
 
 }
 
@@ -439,37 +439,37 @@ int cvConvertVisFiles::ReadVisRes(char *infilename) {
     // check and make sure the mesh has been loaded
     if (grid_ == NULL) {
         fprintf(stderr,"ERROR: no mesh loaded!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // open the results file
-    if (openInputFile(infilename, &resfp_) == CV_ERROR) {
-        return CV_ERROR;
+    if (openInputFile(infilename, &resfp_) == SV_ERROR) {
+        return SV_ERROR;
     }
 
     if (resfp_ == NULL) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // loop over the file looking for all analysis results
 
     while (0 == 0) {
 
-      if (findStringInFile("analysis results", resfp_) == CV_ERROR) {
+      if (findStringInFile("analysis results", resfp_) == SV_ERROR) {
         if (gzeof(resfp_)) {
             closeInputFile(resfp_);
             if ((haveVelocityResults_ + havePressureResults_ +
                  haveTransportResults_ + haveStressResults_) == 0) {
                 fprintf(stderr,"ERROR: no results found!\n");
-                return CV_ERROR;
+                return SV_ERROR;
             }
             // eof file reached, no error.
             resLoaded_ = 1;
-            return CV_OK;
+            return SV_OK;
         }
         fprintf(stderr,"ERROR:  of unknown origin.\n");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
       }
 
       if (strstr(currentLine_,"end analysis results") != NULL) {
@@ -500,7 +500,7 @@ int cvConvertVisFiles::ReadVisRes(char *infilename) {
 
     }
 
-    return CV_ERROR;
+    return SV_ERROR;
 
 }
 
@@ -511,15 +511,15 @@ int cvConvertVisFiles::readPressureFromFile() {
     fprintf(stdout,"Reading %i nodal pressures.\n",numNodes);
 
     // skip until we find the string
-    if (findStringInFile("number of data",resfp_) == CV_ERROR) {
+    if (findStringInFile("number of data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of pressure data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (findStringInFile("data",resfp_) == CV_ERROR) {
+    if (findStringInFile("data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find pressure data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkFloatingPointArrayType* scalars = vtkFloatingPointArrayType::New();
@@ -536,7 +536,7 @@ int cvConvertVisFiles::readPressureFromFile() {
       if (flag == NEXTLINE_EOF) {
           closeInputFile(resfp_);
           scalars->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end data") != NULL) {
           break;
@@ -545,7 +545,7 @@ int cvConvertVisFiles::readPressureFromFile() {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(resfp_);
           scalars->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // convert to vtkFloatingPointTypes for vtk
@@ -555,7 +555,7 @@ int cvConvertVisFiles::readPressureFromFile() {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",nodeid,numNodes);
           closeInputFile(resfp_);
           scalars->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       scalars->InsertNextTuple1(f);
@@ -566,14 +566,14 @@ int cvConvertVisFiles::readPressureFromFile() {
     if (nodeid != (numNodes+1)) {
         fprintf(stderr,"ERROR:  not enough pressure data (%i != %i)\n",nodeid,numNodes);
         scalars->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal pressures.\n",numNodes);
 
     havePressureResults_=1;
     pressure_ = scalars;
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -584,15 +584,15 @@ int cvConvertVisFiles::readVelocityFromFile() {
     fprintf(stdout,"Reading %i nodal velocities.\n",numNodes);
 
     // skip until we find the string
-    if (findStringInFile("number of data",resfp_) == CV_ERROR) {
+    if (findStringInFile("number of data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of velocity data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (findStringInFile("data",resfp_) == CV_ERROR) {
+    if (findStringInFile("data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find velocity data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkFloatingPointArrayType* vectors = vtkFloatingPointArrayType::New();
@@ -611,7 +611,7 @@ int cvConvertVisFiles::readVelocityFromFile() {
       if (flag == NEXTLINE_EOF) {
           closeInputFile(resfp_);
           vectors->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end data") != NULL) {
           break;
@@ -620,7 +620,7 @@ int cvConvertVisFiles::readVelocityFromFile() {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(resfp_);
           vectors->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // convert to vtkFloatingPointTypes for vtk
@@ -630,7 +630,7 @@ int cvConvertVisFiles::readVelocityFromFile() {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",nodeid,numNodes);
           closeInputFile(resfp_);
           vectors->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       vectors->InsertNextTuple3(f[0],f[1],f[2]);
@@ -641,14 +641,14 @@ int cvConvertVisFiles::readVelocityFromFile() {
     if (nodeid != (numNodes+1)) {
         fprintf(stderr,"ERROR:  not enough velocity data (%i != %i)\n",nodeid,numNodes);
         vectors->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal velocities.\n",numNodes);
 
     haveVelocityResults_=1;
     velocity_ = vectors;
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -667,15 +667,15 @@ int cvConvertVisFiles::readTractionFromFile() {
     }
 
     // skip until we find the string
-    if (findStringInFile("number of data",resfp_) == CV_ERROR) {
+    if (findStringInFile("number of data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of velocity data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (findStringInFile("data",resfp_) == CV_ERROR) {
+    if (findStringInFile("data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find velocity data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkFloatingPointArrayType* traction = vtkFloatingPointArrayType::New();
@@ -700,7 +700,7 @@ int cvConvertVisFiles::readTractionFromFile() {
       if (flag == NEXTLINE_EOF) {
           closeInputFile(resfp_);
           traction->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end data") != NULL) {
           break;
@@ -709,7 +709,7 @@ int cvConvertVisFiles::readTractionFromFile() {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(resfp_);
           traction->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // convert to vtkFloatingPointTypes for vtk
@@ -723,7 +723,7 @@ int cvConvertVisFiles::readTractionFromFile() {
             fprintf(stderr,"ERROR:  node id (%i) out of traction nodes range (%i).",realnodeid,numTractionNodes_);
             closeInputFile(resfp_);
             traction->Delete();
-            return CV_ERROR;
+            return SV_ERROR;
           }
       }
 
@@ -731,7 +731,7 @@ int cvConvertVisFiles::readTractionFromFile() {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",realnodeid,numNodes);
           closeInputFile(resfp_);
           traction->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       //fprintf(stdout,"set node %i\n",realnodeid);
@@ -745,18 +745,18 @@ int cvConvertVisFiles::readTractionFromFile() {
     if (nodeid != (numNodes+1) && (numTractionNodes_ == 0)) {
         fprintf(stderr,"ERROR:  not enough traction data (%i != %i)\n",nodeid,numNodes);
         traction->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     } else if (nodeid != (numTractionNodes_ + 1) && (numTractionNodes_ > 0)) {
         fprintf(stderr,"ERROR:  not enough traction data (%i != %i)\n",nodeid,numTractionNodes_);
         traction->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal traction vectors.\n",(nodeid-1));
 
     haveTractionResults_=1;
     traction_ = traction;
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -777,15 +777,15 @@ int cvConvertVisFiles::readDisplacementFromFile() {
     }
 
     // skip until we find the string
-    if (findStringInFile("number of data",resfp_) == CV_ERROR) {
+    if (findStringInFile("number of data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of velocity data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (findStringInFile("data",resfp_) == CV_ERROR) {
+    if (findStringInFile("data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find velocity data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkFloatingPointArrayType* displacement = vtkFloatingPointArrayType::New();
@@ -820,7 +820,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
           closeInputFile(resfp_);
           displacement->Delete();
           if (keepme != NULL) delete [] keepme;
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end data") != NULL) {
           break;
@@ -830,7 +830,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
           closeInputFile(resfp_);
           displacement->Delete();
           if (keepme != NULL) delete [] keepme;
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // convert to vtkFloatingPointTypes for vtk
@@ -843,7 +843,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
           closeInputFile(resfp_);
           displacement->Delete();
           if (keepme != NULL) delete [] keepme;
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       //fprintf(stdout,"set node %i\n",realnodeid);
@@ -865,7 +865,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
         fprintf(stderr,"ERROR:  not enough displacement data (%i != %i)\n",nodeid,numNodes);
         displacement->Delete();
         if (keepme != NULL) delete [] keepme;
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal displacement vectors.\n",(nodeid-1));
@@ -874,7 +874,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
 
     haveDisplacementResults_=1;
     displacement_ = displacement;
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -895,15 +895,15 @@ int cvConvertVisFiles::readWSSFromFile() {
     }
 
     // skip until we find the string
-    if (findStringInFile("number of data",resfp_) == CV_ERROR) {
+    if (findStringInFile("number of data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of velocity data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (findStringInFile("data",resfp_) == CV_ERROR) {
+    if (findStringInFile("data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find velocity data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkFloatingPointArrayType* wss = vtkFloatingPointArrayType::New();
@@ -938,7 +938,7 @@ int cvConvertVisFiles::readWSSFromFile() {
           closeInputFile(resfp_);
           wss->Delete();
           if (keepme != NULL) delete [] keepme;
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end data") != NULL) {
           break;
@@ -948,7 +948,7 @@ int cvConvertVisFiles::readWSSFromFile() {
           closeInputFile(resfp_);
           wss->Delete();
           if (keepme != NULL) delete [] keepme;
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // convert to vtkFloatingPointTypes for vtk
@@ -961,7 +961,7 @@ int cvConvertVisFiles::readWSSFromFile() {
           closeInputFile(resfp_);
           wss->Delete();
           if (keepme != NULL) delete [] keepme;
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       //fprintf(stdout,"set node %i\n",realnodeid);
@@ -983,7 +983,7 @@ int cvConvertVisFiles::readWSSFromFile() {
         fprintf(stderr,"ERROR:  not enough wss data (%i != %i)\n",nodeid,numNodes);
         wss->Delete();
         if (keepme != NULL) delete [] keepme;
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal wss vectors.\n",(nodeid-1));
@@ -992,7 +992,7 @@ int cvConvertVisFiles::readWSSFromFile() {
 
     haveWSSResults_=1;
     wss_ = wss;
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -1004,15 +1004,15 @@ int cvConvertVisFiles::readTransportFromFile() {
     fprintf(stdout,"Reading %i nodal transport.\n",numNodes);
 
     // skip until we find the string
-    if (findStringInFile("number of data",resfp_) == CV_ERROR) {
+    if (findStringInFile("number of data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of transport data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (findStringInFile("data",resfp_) == CV_ERROR) {
+    if (findStringInFile("data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find transport data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkFloatingPointArrayType* scalars = vtkFloatingPointArrayType::New();
@@ -1029,7 +1029,7 @@ int cvConvertVisFiles::readTransportFromFile() {
       if (flag == NEXTLINE_EOF) {
           closeInputFile(resfp_);
           scalars->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end data") != NULL) {
           break;
@@ -1038,7 +1038,7 @@ int cvConvertVisFiles::readTransportFromFile() {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(resfp_);
           scalars->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // convert to vtkFloatingPointTypes for vtk
@@ -1048,7 +1048,7 @@ int cvConvertVisFiles::readTransportFromFile() {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",nodeid,numNodes);
           closeInputFile(resfp_);
           scalars->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       scalars->InsertNextTuple1(f);
@@ -1059,15 +1059,15 @@ int cvConvertVisFiles::readTransportFromFile() {
     if (nodeid != (numNodes+1)) {
         fprintf(stderr,"ERROR:  not enough transport data (%i != %i)\n",nodeid,numNodes);
         scalars->Delete();
-        return CV_OK;
-        return CV_ERROR;
+        return SV_OK;
+        return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal transport values.\n",numNodes);
 
     haveTransportResults_=1;
     transport_ = scalars;
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -1079,15 +1079,15 @@ int cvConvertVisFiles::readStressFromFile() {
     fprintf(stdout,"Reading %i nodal tensors.\n",numNodes);
 
     // skip until we find the string
-    if (findStringInFile("number of data",resfp_) == CV_ERROR) {
+    if (findStringInFile("number of data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find number of tensors data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (findStringInFile("data",resfp_) == CV_ERROR) {
+    if (findStringInFile("data",resfp_) == SV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find tensor data.");
         closeInputFile(resfp_);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkFloatingPointArrayType* tensors = vtkFloatingPointArrayType::New();
@@ -1108,7 +1108,7 @@ int cvConvertVisFiles::readStressFromFile() {
       if (flag == NEXTLINE_EOF) {
           closeInputFile(resfp_);
           tensors->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
       if (strstr(currentLine_,"end data") != NULL) {
           break;
@@ -1118,7 +1118,7 @@ int cvConvertVisFiles::readStressFromFile() {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(resfp_);
           tensors->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // convert to vtkFloatingPointTypes for vtk
@@ -1129,7 +1129,7 @@ int cvConvertVisFiles::readStressFromFile() {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",nodeid,numNodes);
           closeInputFile(resfp_);
           tensors->Delete();
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       // assume the following format of the stress results
@@ -1155,14 +1155,14 @@ int cvConvertVisFiles::readStressFromFile() {
     if (nodeid != (numNodes+1)) {
         fprintf(stderr,"ERROR:  not enough tensor data (%i != %i)\n",nodeid,numNodes);
         tensors->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     fprintf(stdout,"Done reading %i nodal tensors.\n",numNodes);
 
     haveStressResults_=1;
     stress_ = tensors;
-    return CV_OK;
+    return SV_OK;
 
 }
 

@@ -98,7 +98,7 @@ public:
   int Copy( const cvAdaptObject& src);
   int CreateInternalMeshObject(Tcl_Interp *interp,char *meshFileName,
 		  char *solidFileName);
-  int SetMeshObject(cvMeshObject* meshobj) {meshobject_=meshobj; return CV_OK;}
+  int SetMeshObject(cvMeshObject* meshobj) {meshobject_=meshobj; return SV_OK;}
 
   //Setup Operations
   int LoadModel(char *fileName);

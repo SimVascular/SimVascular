@@ -109,12 +109,12 @@ int cvRepository::Register( char *name, cvRepositoryData *obj )
   
   entryPtr = Tcl_CreateHashEntry( &table_, name, &newEntry );
   if ( !newEntry ) {
-    return 0;
+    return SV_ERROR;
   } else {
     Tcl_SetHashValue( entryPtr, obj );
     obj->SetName( name );
     iterValid_ = 0;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -132,16 +132,16 @@ int cvRepository::UnRegister( char *name )
 
   entryPtr = Tcl_FindHashEntry( &table_, name );
   if ( entryPtr == NULL ) {
-    return 0;
+    return SV_ERROR;
   } else {
     obj = (cvRepositoryData *) Tcl_GetHashValue( entryPtr );
     if ( obj->NumLocks() > 0 ) {
-      return 0;
+      return SV_ERROR;
     }
     Tcl_DeleteHashEntry( entryPtr );
     delete obj;
     iterValid_ = 0;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -156,9 +156,9 @@ int cvRepository::Exists( char *name )
 
   entryPtr = Tcl_FindHashEntry( &table_, name );
   if ( entryPtr == NULL ) {
-    return 0;
+    return SV_ERROR;
   } else {
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -206,7 +206,7 @@ cvRepositoryData *cvRepository::GetObject( CONST84 char *name )
 int cvRepository::Save( char *filename )
 {
   cout << "cvRepository::Save not yet implemented." << endl;
-  return 0;
+  return SV_ERROR;
 }
 
 
@@ -223,11 +223,11 @@ int cvRepository::Save( char *filename )
 int cvRepository::Load( char *filename )
 {
   if ( ( this->GetNumObjects() ) != 0 ) {
-    return 0;
+    return SV_ERROR;
   }
 
   cout << "cvRepository::Load not yet implemented." << endl;
-  return 0;
+  return SV_ERROR;
 }
 
 

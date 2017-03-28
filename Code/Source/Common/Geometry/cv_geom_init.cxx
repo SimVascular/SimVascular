@@ -525,7 +525,7 @@ int Geom_ReduceCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_Reduce( (cvPolyData*)src, tol, (cvPolyData**)(&dst) ) != CV_OK ) {
+  if ( sys_geom_Reduce( (cvPolyData*)src, tol, (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "point merging error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -614,7 +614,7 @@ int Geom_UnionCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_union( (cvPolyData*)srcA, (cvPolyData*)srcB, tolerance, (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -704,7 +704,7 @@ int Geom_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_intersect( (cvPolyData*)srcA, (cvPolyData*)srcB, tolerance,(cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -794,7 +794,7 @@ int Geom_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_subtract( (cvPolyData*)srcA, (cvPolyData*)srcB, tolerance, (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -852,7 +852,7 @@ int Geom_CheckSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   int stats[2];
   if ( sys_geom_checksurface( (cvPolyData*)src, stats,tol)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error checking surface", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -985,7 +985,7 @@ int Geom_CapIdSetCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( sys_geom_set_ids_for_caps( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  &doublecaps,&numfaces)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error setting cap ids", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1064,7 +1064,7 @@ int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   if (values.argc == 0) {
       ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
+      return SV_OK;
   }
 
   int nvals = 0;
@@ -1080,7 +1080,7 @@ int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_set_array_for_local_op_face( (cvPolyData*)src,(cvPolyData**)(&dst),arrayName,vals,nvals,outArray,dataType)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error creating array on surface", TCL_STATIC );
     delete [] vals;
     return TCL_ERROR;
@@ -1171,7 +1171,7 @@ int Geom_SetArrayForLocalOp_SphereCmd( ClientData clientData, Tcl_Interp *interp
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_set_array_for_local_op_sphere( (cvPolyData*)src,(cvPolyData**)(&dst),radius,ctr,outArray,dataType)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error creating array on surface", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1241,7 +1241,7 @@ int Geom_SetArrayForLocalOp_CellsCmd( ClientData clientData, Tcl_Interp *interp,
 
   if (values.argc == 0) {
       ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
+      return SV_OK;
   }
 
   int nvals = 0;
@@ -1257,7 +1257,7 @@ int Geom_SetArrayForLocalOp_CellsCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_set_array_for_local_op_cells( (cvPolyData*)src,(cvPolyData**)(&dst),vals,nvals,outArray,dataType)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error creating array on surface", TCL_STATIC );
     delete [] vals;
     return TCL_ERROR;
@@ -1333,7 +1333,7 @@ int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
 
   if (values.argc == 0) {
       ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
+      return SV_OK;
   }
 
   int nvals = 0;
@@ -1349,7 +1349,7 @@ int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_set_array_for_local_op_face_blend( (cvPolyData*)src,(cvPolyData**)(&dst),arrayName,vals,nvals,radius,outArray,dataType)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error creating array on surface", TCL_STATIC );
     delete [] vals;
     return TCL_ERROR;
@@ -1421,7 +1421,7 @@ int Geom_LocalDecimationCmd( ClientData clientData, Tcl_Interp *interp,
   }
   if ( sys_geom_local_quadric_decimation( (cvPolyData*)src, (cvPolyData**)(&dst),target,
 			  pointArrayName,cellArrayName)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "running local decimation operation", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1493,7 +1493,7 @@ int Geom_LocalLaplacianSmoothCmd( ClientData clientData, Tcl_Interp *interp,
   if ( sys_geom_local_laplacian_smooth( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,relax,
 			  pointArrayName,cellArrayName)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "running local decimation operation", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1567,7 +1567,7 @@ int Geom_LocalConstrainSmoothCmd( ClientData clientData, Tcl_Interp *interp,
   if ( sys_geom_local_constrain_smooth( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,constrainfactor,numcgsolves,
 			  pointArrayName,cellArrayName)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "running local decimation operation", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1636,7 +1636,7 @@ int Geom_LocalLinearSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
   }
   if ( sys_geom_local_linear_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,pointArrayName,cellArrayName)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "running local subdivision operation", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1705,7 +1705,7 @@ int Geom_LocalButterflySubdivisionCmd( ClientData clientData, Tcl_Interp *interp
   }
   if ( sys_geom_local_butterfly_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,pointArrayName,cellArrayName)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "running local subdivision operation", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1774,7 +1774,7 @@ int Geom_LocalLoopSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
   }
   if ( sys_geom_local_loop_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,pointArrayName,cellArrayName)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "running local subdivision operation", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1856,7 +1856,7 @@ int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
 			  numsubdivisioniters, numcgsmoothiters,
 			  numlapsmoothiters, targetdecimation,
 			  pointArrayName,cellArrayName)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "running local blend operation", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1956,7 +1956,7 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_all_union( srcs, numSrcs,interT,tolerance,(cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     delete dst;
     delete [] srcs;
@@ -2109,7 +2109,7 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_assign_ids_based_on_faces((cvPolyData *)model,faces,numFaces,allids,(cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     delete dst;
     delete [] faces;
@@ -2192,7 +2192,7 @@ int Geom_MakePolysConsistentCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_MakePolysConsistent( (cvPolyData*)src, (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2264,7 +2264,7 @@ int Geom_ReverseAllCellsCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_ReverseAllCells( (cvPolyData*)src, (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "cell reversal error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2325,7 +2325,7 @@ int Geom_NumClosedLineRegionsCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_NumClosedLineRegions( (cvPolyData*)src, &num ) != CV_OK ) {
+  if ( sys_geom_NumClosedLineRegions( (cvPolyData*)src, &num ) != SV_OK ) {
     Tcl_SetResult( interp, "region count failed", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2393,7 +2393,7 @@ int Geom_GetClosedLineRegionCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_GetClosedLineRegion( (cvPolyData*)src, id, (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "region retrieval failed", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2484,7 +2484,7 @@ int Geom_PickCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_Pick( (cvPolyData*)obj, pos, (cvPolyData**)(&result) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "no geometry containing given pos found",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -2593,7 +2593,7 @@ int Geom_OrientProfileCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_OrientProfile( (cvPolyData*)src, ppt, ptan, xhat,
-			       (cvPolyData**)(&dst) ) != CV_OK ) {
+			       (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "orient error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2701,7 +2701,7 @@ int Geom_DisorientProfileCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_DisorientProfile( (cvPolyData*)src, ppt, ptan, xhat,
-				  (cvPolyData**)(&dst) ) != CV_OK ) {
+				  (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "orient error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2883,7 +2883,7 @@ int Geom_TranslateCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_Translate( (cvPolyData*)src, vec, (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "translate error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2959,7 +2959,7 @@ int Geom_ScaleAvgCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_ScaleAvg( (cvPolyData*)src, factor, (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error scaling about average point", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3022,7 +3022,7 @@ int Geom_GetOrderedPtsCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_GetOrderedPts( (cvPolyData*)obj, &pts, &num ) != CV_OK ) {
+  if ( sys_geom_GetOrderedPts( (cvPolyData*)obj, &pts, &num ) != SV_OK ) {
     Tcl_SetResult( interp, "point query error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3082,7 +3082,7 @@ int Geom_WriteOrderedPtsCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_WriteOrderedPts( (cvPolyData*)obj, fileName ) != CV_OK ) {
+  if ( sys_geom_WriteOrderedPts( (cvPolyData*)obj, fileName ) != SV_OK ) {
     Tcl_SetResult( interp, "geometry write error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3136,7 +3136,7 @@ int Geom_WriteLinesCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_WriteLines( (cvPolyData*)obj, fileName ) != CV_OK ) {
+  if ( sys_geom_WriteLines( (cvPolyData*)obj, fileName ) != SV_OK ) {
     Tcl_SetResult( interp, "file write error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3189,7 +3189,7 @@ int Geom_PolysClosedCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_PolysClosed( (cvPolyData*)src, &closed ) != CV_OK ) {
+  if ( sys_geom_PolysClosed( (cvPolyData*)src, &closed ) != SV_OK ) {
     Tcl_SetResult( interp, "polygon traversal error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3248,7 +3248,7 @@ int Geom_SurfAreaCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_SurfArea( (cvPolyData*)src, &area ) != CV_OK ) {
+  if ( sys_geom_SurfArea( (cvPolyData*)src, &area ) != SV_OK ) {
     Tcl_SetResult( interp, "surface area computation error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3306,7 +3306,7 @@ int Geom_GetPolyCentroidCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_getPolyCentroid( (cvPolyData*)src, centroid) != CV_OK ) {
+  if ( sys_geom_getPolyCentroid( (cvPolyData*)src, centroid) != SV_OK ) {
     Tcl_SetResult( interp, "polygon centroid computation error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3364,7 +3364,7 @@ int Geom_PrintTriStatsCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_PrintTriStats( (cvPolyData*)surf ) != CV_OK ) {
+  if ( sys_geom_PrintTriStats( (cvPolyData*)surf ) != SV_OK ) {
     Tcl_SetResult( interp, "surface processing error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3418,7 +3418,7 @@ int Geom_PrintSmallPolysCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_PrintSmallPolys( (cvPolyData*)src, sideTol ) != CV_OK ) {
+  if ( sys_geom_PrintSmallPolys( (cvPolyData*)src, sideTol ) != SV_OK ) {
     Tcl_SetResult( interp, "polygon processing error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3483,7 +3483,7 @@ int Geom_RmSmallPolysCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( sys_geom_RmSmallPolys( (cvPolyData*)src, sideTol, (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "polygon processing error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3546,7 +3546,7 @@ int Geom_BBoxCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_BBox( (cvPolyData*)obj, bbox ) != CV_OK ) {
+  if ( sys_geom_BBox( (cvPolyData*)obj, bbox ) != SV_OK ) {
     Tcl_SetResult( interp, "bounding box query error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3621,7 +3621,7 @@ int Geom_ClassifyCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_Classify( (cvPolyData*)obj, pt, &ans ) != CV_OK ) {
+  if ( sys_geom_Classify( (cvPolyData*)obj, pt, &ans ) != SV_OK ) {
     Tcl_SetResult( interp, "classify error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -3697,7 +3697,7 @@ int Geom_PtInPolyCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_PtInPoly( (cvPolyData*)obj, pt,usePrevPoly, &ans ) != CV_OK ) {
+  if ( sys_geom_PtInPoly( (cvPolyData*)obj, pt,usePrevPoly, &ans ) != SV_OK ) {
     Tcl_SetResult( interp, "point-in-poly error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -4072,7 +4072,7 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
 			  numOutPtsAlongLength,numOutPtsInSegs,
 			  numLinearPtsAlongLength,numModes,splineType,bias,tension,continuity,
 			  (cvPolyData**)(&dst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     delete dst;
     delete [] srcs;
@@ -4181,7 +4181,7 @@ int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
   if ( sys_geom_loft_solid_with_nurbs(srcs, numSrcs, uDegree, vDegree, uSpacing,
                                       vSpacing, uKnotSpanType, vKnotSpanType,
                                       uParametricSpanType, vParametricSpanType,
-			                                (cvPolyData**)(&dst) ) != CV_OK ) {
+			                                (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     delete dst;
     delete [] srcs;
@@ -4297,7 +4297,7 @@ int Geom_PolygonNormCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_PolygonNormal( (cvPolyData*)obj, n ) != CV_OK ) {
+  if ( sys_geom_PolygonNormal( (cvPolyData*)obj, n ) != SV_OK ) {
     Tcl_AppendResult( interp, "error computing normal for ",
 		      objName, (char *)NULL );
     return TCL_ERROR;
@@ -4355,7 +4355,7 @@ int Geom_AvgPtCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_AvgPt( (cvPolyData*)obj, pt ) != CV_OK ) {
+  if ( sys_geom_AvgPt( (cvPolyData*)obj, pt ) != SV_OK ) {
     Tcl_AppendResult( interp, "error averaging points of ",
 		      objName, (char *)NULL );
     return TCL_ERROR;
@@ -4571,7 +4571,7 @@ int Geom_SplinePtsToPathPlanCmd( ClientData clientData, Tcl_Interp *interp,
                                   filename, flag, NULL);
   }
 
-  if (result == CV_OK) {
+  if (result == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -4648,7 +4648,7 @@ int Geom_IntegrateSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   double q = 0.0;
-  if ( sys_geom_IntegrateSurface((cvPolyData*)obj, tensorType, nrm, &q) != CV_OK ) {
+  if ( sys_geom_IntegrateSurface((cvPolyData*)obj, tensorType, nrm, &q) != SV_OK ) {
     Tcl_SetResult( interp, "error calculating surface integral",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -4713,7 +4713,7 @@ int Geom_IntegrateSurface2Cmd( ClientData clientData, Tcl_Interp *interp,
 
   double q = 0.0;
   double area = 0.0;
-  if ( sys_geom_IntegrateSurface2((cvPolyData*)obj, tensorType, &q, &area) != CV_OK ) {
+  if ( sys_geom_IntegrateSurface2((cvPolyData*)obj, tensorType, &q, &area) != SV_OK ) {
     Tcl_SetResult( interp, "error calculating surface integral",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -4795,7 +4795,7 @@ int Geom_IntegrateEnergyCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   double energy = 0.0;
-  if ( sys_geom_IntegrateEnergy((cvPolyData*)obj, rho, nrm, &energy) != CV_OK ) {
+  if ( sys_geom_IntegrateEnergy((cvPolyData*)obj, rho, nrm, &energy) != SV_OK ) {
     Tcl_SetResult( interp, "error calculating surface integral",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -4944,7 +4944,7 @@ int Geom_InterpolateScalarCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   double scalar = 0.0;
-  if ( sys_geom_InterpolateScalar((cvPolyData*)obj, pt, &scalar) != CV_OK ) {
+  if ( sys_geom_InterpolateScalar((cvPolyData*)obj, pt, &scalar) != SV_OK ) {
     Tcl_SetResult( interp, "error interpolating scalar",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -5024,7 +5024,7 @@ int Geom_InterpolateVectorCmd( ClientData clientData, Tcl_Interp *interp,
   vect[0] = 0.0;
   vect[1] = 0.0;
   vect[2] = 0.0;
-  if ( sys_geom_InterpolateVector((cvPolyData*)obj, pt, vect) != CV_OK ) {
+  if ( sys_geom_InterpolateVector((cvPolyData*)obj, pt, vect) != SV_OK ) {
     Tcl_SetResult( interp, "error interpolating vector",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -5109,7 +5109,7 @@ int Geom_IntersectWithLineCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   double intersect[3];
-  if ( sys_geom_IntersectWithLine((cvPolyData*)obj, p0, p1, intersect) != CV_OK ) {
+  if ( sys_geom_IntersectWithLine((cvPolyData*)obj, p0, p1, intersect) != SV_OK ) {
     Tcl_SetResult( interp, "error intersecting vtkPolyData with line",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -5208,7 +5208,7 @@ int Geom_AddPointDataCmd( ClientData clientData, Tcl_Interp *interp,
       v = SYS_GEOM_ADD_VECTOR;
   }
 
-  if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
+  if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "point data math error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -5311,7 +5311,7 @@ int Geom_SubtractPointDataCmd( ClientData clientData, Tcl_Interp *interp,
       v = SYS_GEOM_SUBTRACT_VECTOR;
   }
 
-  if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
+  if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "point data math error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -5414,7 +5414,7 @@ int Geom_MultiplyPointDataCmd( ClientData clientData, Tcl_Interp *interp,
       v = SYS_GEOM_MULTIPLY_VECTOR;
   }
 
-  if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
+  if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "point data math error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -5517,7 +5517,7 @@ int Geom_DividePointDataCmd( ClientData clientData, Tcl_Interp *interp,
       v = SYS_GEOM_DIVIDE_VECTOR;
   }
 
-  if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
+  if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "point data math error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -5620,7 +5620,7 @@ int Geom_ProjectCmd( ClientData clientData, Tcl_Interp *interp,
       v = SYS_GEOM_ADD_VECTOR;
   }
 
-  if ( sys_geom_Project( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
+  if ( sys_geom_Project( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "error projecting polydata point data", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -5682,7 +5682,7 @@ int Geom_IntegrateScalarSurfCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_IntegrateScalarSurf( (cvPolyData*)src, &flux ) != CV_OK ) {
+  if ( sys_geom_IntegrateScalarSurf( (cvPolyData*)src, &flux ) != SV_OK ) {
     Tcl_SetResult( interp, "surface area computation error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -5744,7 +5744,7 @@ int Geom_IntegrateScalarThreshCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_IntegrateScalarThresh( (cvPolyData*)src, wssthresh, &flux, &area) != CV_OK ) {
+  if ( sys_geom_IntegrateScalarThresh( (cvPolyData*)src, wssthresh, &flux, &area) != SV_OK ) {
     Tcl_SetResult( interp, "surface area computation error", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -5844,7 +5844,7 @@ int Geom_ReplacePointDataCmd( ClientData clientData, Tcl_Interp *interp,
       v = SYS_GEOM_ADD_VECTOR;
   }
 
-  if ( sys_geom_ReplacePointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
+  if ( sys_geom_ReplacePointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "error replacing point data", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -5925,12 +5925,12 @@ int Geom_CenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 
   if (sourceList.argc == 0) {
       ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
+      return SV_OK;
   }
 
   if (targetList.argc == 0) {
       ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
+      return SV_OK;
   }
 
   int nsources = 0;
@@ -5956,7 +5956,7 @@ int Geom_CenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_centerlines( (cvPolyData*)geomSrc, sources, nsources, targets, ntargets, (cvPolyData**)(&linesDst), (cvPolyData**)(&voronoiDst))
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error creating centerlines", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -6048,7 +6048,7 @@ int Geom_GroupPolyDataCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_grouppolydata( (cvPolyData*)geomSrc, (cvPolyData*)linesSrc, (cvPolyData**)(&groupedDst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error getting grouped polydata", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -6128,7 +6128,7 @@ int Geom_DistanceToCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_distancetocenterlines( (cvPolyData*)geomSrc, (cvPolyData*)linesSrc, (cvPolyData**)(&distanceDst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error getting distance to centerlines", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -6191,7 +6191,7 @@ int Geom_SeparateCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_separatecenterlines( (cvPolyData*)linesSrc, (cvPolyData**)(&separateDst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error grouping centerlines", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -6256,7 +6256,7 @@ int Geom_MergeCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_mergecenterlines( (cvPolyData*)linesSrc, mergeblanked, (cvPolyData**)(&mergeDst) )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error merging centerlines", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -6332,7 +6332,7 @@ int Geom_CapCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_cap( (cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst), &numIds,&ids,captype )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error capping model", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -6419,7 +6419,7 @@ int Geom_CapWIdsCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( sys_geom_cap_with_ids( (cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst)
 	,fillId,num_filled,filltype)
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error capping model", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -6512,7 +6512,7 @@ int Geom_MapAndCorrectIdsCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_mapandcorrectids( (cvPolyData*)geomSrc, (cvPolyData*)geomNew, (cvPolyData**)(&geomDst), originalArray,newArray )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "error correcting ids", TCL_STATIC );
     return TCL_ERROR;
   }

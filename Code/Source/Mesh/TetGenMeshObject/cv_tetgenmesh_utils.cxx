@@ -83,7 +83,7 @@
 // -----------------------------
 int TGenUtils_Init()
 {
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -94,7 +94,7 @@ int TGenUtils_Init()
  * @param *inmesh tetgenio structure in which to hold the input surface
  * @param *polydatasolid the solid in which to take the discrete points
  * from in order to form the mesh to put into TetGen
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
@@ -127,7 +127,7 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
   {
     fprintf(stderr,"Must have an array with parameters\
        	to compute mesh with sizing function\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   else if (meshsizingfunction && meshSizingFunction != NULL)
   {
@@ -157,11 +157,11 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
   //Do Poly transition from polydatasolid into facetlist
   if (useBoundary)
   {
-    if (VtkUtils_PDCheckArrayName(polydatasolid,1,markerListArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,1,markerListArrayName) != SV_OK)
     {
       fprintf(stderr,"Array name does not exist in polydata. Regions must be identified \
 		    and named prior to this function call\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
 //    boundaryScalars = vtkIntArray::SafeDownCast(polydatasolid->GetCellData()->GetScalars(markerListArrayName.c_str()));
     boundaryScalars = static_cast<vtkIntArray*>(polydatasolid->GetCellData()->GetScalars(markerListArrayName.c_str()));
@@ -204,7 +204,7 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -279,7 +279,7 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -292,7 +292,7 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
  * @param *outmesh tetgen structure for which the mesh is output
  * @param *volumemesh vtkPolyData on which to save the surface mesh
  * @param *surfacemesh vtkUnstructuredGrid on which to save the volume mesh
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtkPolyData *surfacemesh,int *modelRegions,int getBoundary)
@@ -490,7 +490,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   surfacemesh->DeepCopy(fullPolyData);
   volumemesh->DeepCopy(fullUGrid);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -500,7 +500,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
  * @brief Writes a vtu file file
  * @param *filename Name of desired file location
  * @param *UGrid vtkUnstructuredGrid to be written
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int TGenUtils_WriteVTU(char *filename,vtkUnstructuredGrid *UGrid)
@@ -517,7 +517,7 @@ int TGenUtils_WriteVTU(char *filename,vtkUnstructuredGrid *UGrid)
 
   writer->Write();
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -528,7 +528,7 @@ int TGenUtils_WriteVTU(char *filename,vtkUnstructuredGrid *UGrid)
  * @brief Writes a vtp file file
  * @param *filename Name of desired file location
  * @param *UGrid vtkPolyData to be written
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int TGenUtils_WriteVTP(char *filename,vtkPolyData *PData)
@@ -546,7 +546,7 @@ int TGenUtils_WriteVTP(char *filename,vtkPolyData *PData)
 
   writer->Write();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -560,7 +560,7 @@ int TGenUtils_WriteVTP(char *filename,vtkPolyData *PData)
  * @param *face vtkPolyData on which to set the face PolyData
  * @param angle double that specifies the extraction angle. Any faces
  * @param id int that specifies the face id to extract
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  * @note There is another method to do this that does not retain id
  * information. It may be faster, but doesn't reatain info
  */
@@ -593,23 +593,23 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   vtkSmartPointer<vtkIntArray> lessElementIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> globalElement2Ids = vtkSmartPointer<vtkIntArray>::New();
 
-  if (VtkUtils_PDCheckArrayName(mesh,0,"GlobalNodeID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(mesh,0,"GlobalNodeID") != SV_OK)
   {
     fprintf(stderr,"Array name 'GlobalNodeID' does not exist.");
     fprintf(stderr," IDs on mesh may not have been assigned properly\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (VtkUtils_PDCheckArrayName(mesh,1,"GlobalElementID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(mesh,1,"GlobalElementID") != SV_OK)
   {
     fprintf(stderr,"Array name 'GlobalElementID' does not exist.");
     fprintf(stderr," IDs on mesh may not have been assigned properly\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (VtkUtils_PDCheckArrayName(mesh,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(mesh,1,"ModelFaceID") != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified");
 		fprintf(stderr," and named 'ModelFaceID' prior to this function call\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   globalNodeIds = vtkIntArray::SafeDownCast(mesh->GetPointData()->GetScalars("GlobalNodeID"));
@@ -704,7 +704,7 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
 
   face->DeepCopy(tempFace);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -728,13 +728,13 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
   myfile = gzopen (filenamegz, "wb");
   if (myfile == NULL) {
       fprintf(stderr,"Error: Could not open output file %s.\n",filenamegz);
-      return CV_ERROR;
+      return SV_ERROR;
   }
   #else
   myfile = gzopen (filename.c_str(), "wb");
   if (myfile == NULL) {
       fprintf(stderr,"Error: Could not open output file %s.\n",filename.c_str());
-      return CV_ERROR;
+      return SV_ERROR;
   }
   #endif
 
@@ -753,10 +753,10 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
   vtkSmartPointer<vtkIdList> cellIds = vtkSmartPointer<vtkIdList>::New();
   volumemesh->BuildLinks();
 
-  if (VtkUtils_UGCheckArrayName(volumemesh,1,"GlobalElementID") != CV_OK)
+  if (VtkUtils_UGCheckArrayName(volumemesh,1,"GlobalElementID") != SV_OK)
   {
     fprintf(stderr,"Array name 'GlobalElementID' does not exist. IDs on mesh may not have been assigned properly\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   globalIds = vtkIntArray::SafeDownCast(volumemesh->GetCellData()->GetScalars("GlobalElementID"));
   numCells = volumemesh->GetNumberOfCells();
@@ -812,7 +812,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
   delete adjacency;
 
   gzclose(myfile);
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -828,7 +828,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
  * @param length This is the length of the cylinder. Center is half the length.
  * @param normal This is the normal direction of the length of the cylinder.
  * It is normalized before being used for compuation.
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
@@ -851,18 +851,18 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
   numPts = polydatasolid->GetNumberOfPoints();
   if (secondarray)
   {
-    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != SV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
-      return CV_ERROR;
+      return SV_ERROR;
     }
     meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
-    if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != SV_OK)
     {
       fprintf(stderr,"Solid does not contain an int array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",refineIDArrayName.c_str());
-      return CV_ERROR;
+      return SV_ERROR;
     }
     refineIDArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(refineIDArrayName.c_str()));
   }
@@ -922,7 +922,7 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
   polydatasolid->GetPointData()->SetActiveScalars(sizingFunctionArrayName.c_str());
   polydatasolid->GetPointData()->AddArray(refineIDArray);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -935,7 +935,7 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
  * @param size This is the smaller refined of the edges within sphere region.
  * @param radius This is the radius of the refinement sphere.
  * @param center This is the center of the refinement sphere.
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
@@ -953,11 +953,11 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
   numPts = polydatasolid->GetNumberOfPoints();
   if (secondarray)
   {
-    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != SV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
-      return CV_ERROR;
+      return SV_ERROR;
     }
     meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
   }
@@ -974,11 +974,11 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
   }
   if (refinecount != 0)
   {
-    if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != SV_OK)
     {
       fprintf(stderr,"Solid does not contain an int array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",refineIDArrayName.c_str());
-      return CV_ERROR;
+      return SV_ERROR;
     }
     refineIDArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(refineIDArrayName.c_str()));
   }
@@ -1024,7 +1024,7 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
   polydatasolid->GetPointData()->SetActiveScalars(sizingFunctionArrayName.c_str());
   polydatasolid->GetPointData()->AddArray(refineIDArray);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -1041,7 +1041,7 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
  * mesher
  * @param secondarray This designates whether a previous function is already
  * applied.
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
@@ -1065,11 +1065,11 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
   numCells = polydatasolid->GetNumberOfCells();
   if (secondarray)
   {
-    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != SV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
-      return CV_ERROR;
+      return SV_ERROR;
     }
     meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
   }
@@ -1085,11 +1085,11 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
     }
   }
 
-  if (VtkUtils_PDCheckArrayName(polydatasolid,0,functionname) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(polydatasolid,0,functionname) != SV_OK)
   {
     fprintf(stderr,"Solid does not contain a double array of name %s.",
 		    functionname);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   arrayonmesh = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(functionname));
@@ -1103,7 +1103,7 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
     if (min <= 0)
     {
       fprintf(stderr,"Min is Zero or negative. This will not work!!!\n",min);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if (min < size)
     {
@@ -1132,7 +1132,7 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
 
 
   fprintf(stderr,"Sizing function set\n");
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -1161,10 +1161,10 @@ int TGenUtils_LoadMesh(char *filename,vtkUnstructuredGrid *result)
   else {
     fprintf(stderr,"Cannot load the mesh. \
 	It must be of type vtkUnstructuredGrid\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
@@ -1207,17 +1207,17 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   locator->SetDataSet(originalgeom);
   locator->BuildLocator();
 
-  //if (VtkUtils_PDCheckArrayName(newgeom,1,newName) != CV_OK)
+  //if (VtkUtils_PDCheckArrayName(newgeom,1,newName) != SV_OK)
   //{
   //  fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
   //      	    and named 'ModelFaceID' prior to this function call\n");
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
-  if (VtkUtils_PDCheckArrayName(originalgeom,1,originalName) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(originalgeom,1,originalName) != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //currentRegionsInt = static_cast<vtkIntArray*>(newgeom->GetCellData()->GetScalars(newName.c_str()));
@@ -1276,7 +1276,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   newgeom->GetCellData()->SetActiveScalars(originalName.c_str());
 
   delete [] mapper;
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -1358,22 +1358,22 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
   {
     fprintf(stderr,"There are multiple regions here!\n");
     fprintf(stderr,"Terminating meshing!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if(FreeEdges > 0 && !boundarylayer)
   {
     fprintf(stderr,"There are free edes on surface!\n");
     fprintf(stderr,"Terminating meshing!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if(BadEdges > 0)
   {
     fprintf(stderr,"There are bad edes on surface!\n");
     fprintf(stderr,"Terminating meshing!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size)
@@ -1388,7 +1388,7 @@ int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size)
   int numPts = pd->GetNumberOfPoints();
   int numCells = pd->GetNumberOfCells();
   regionarray = vtkIntArray::SafeDownCast(pd->GetCellData()->GetArray("ModelFaceID"));
-  if (VtkUtils_PDCheckArrayName(pd,0,"MeshSizingFunction") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(pd,0,"MeshSizingFunction") != SV_OK)
   {
     meshSizeArray->SetNumberOfComponents(1);
     meshSizeArray->Allocate(numPts,1000);
@@ -1420,5 +1420,5 @@ int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size)
   meshSizeArray->SetName("MeshSizingFunction");
   pd->GetPointData()->AddArray(meshSizeArray);
 
-  return CV_OK;
+  return SV_OK;
 }

@@ -65,9 +65,9 @@ public:
 
   // Band parameters will be relevant only for cvLevelSetSparseGrid:
   virtual int SetBandParams( double innerPhi, double outerPhi,
-			     double mineWidth ) { return CV_ERROR; };
+			     double mineWidth ) { return SV_ERROR; };
   virtual int GetBandParams( double *innerPhi, double *outerPhi,
-			     double *mineWidth ) { return CV_ERROR; };
+			     double *mineWidth ) { return SV_ERROR; };
 
   // Methods for use in an update loop:
   int EvaluateV( cvLevelSetVelocity *vfn, double factor = 1.0 );
@@ -125,7 +125,7 @@ public:
 
   // Get grid-dependent info:
   virtual cvPolyData *CreateGridPolyData();
-  virtual int GridModified() const { return 0; };
+  virtual int GridModified() const { return SV_ERROR; };
   virtual char *StatString() = 0;  // should return a dynamically-alloc'd str
   inline int GetDim();
   inline int GetHv( double *hx, double *hy, double *hz );
@@ -237,9 +237,9 @@ int cvLevelSetStructuredGrid::IxWithinExtent( int i, int j, int k )
   if ( ( i >= 0 ) && ( i < I_ ) &&
        ( j >= 0 ) && ( j < J_ ) &&
        ( k >= 0 ) && ( k < K_ ) ) {
-    return 1;
+    return SV_OK;
   } else {
-    return 0;
+    return SV_ERROR;
   }
 }
 
@@ -263,7 +263,7 @@ int cvLevelSetStructuredGrid::GetHv( double *hx, double *hy, double *hz )
   *hx = hv_[0];
   *hy = hv_[1];
   *hz = hv_[2];
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -294,12 +294,12 @@ int cvLevelSetStructuredGrid::IJKToLogicalIx( int i, int j, int k )
 int cvLevelSetStructuredGrid::LogicalIxToIJK( int log_ix, int *i, int *j, int *k )
 {
   if ( ( log_ix < 0 ) || ( log_ix >= I_*J_*K_ ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *k = log_ix / (I_*J_);
   *j = ( log_ix % (I_*J_) ) / I_;
   *i = log_ix % I_;
-  return CV_OK;
+  return SV_OK;
 }
 
 

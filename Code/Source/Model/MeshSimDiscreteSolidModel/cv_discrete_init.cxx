@@ -69,7 +69,7 @@ int Meshsimdiscretesolid_Init( Tcl_Interp *interp )
 {
 
   // Initialize discrete_utils
-  if (DiscreteUtils_Init() != CV_OK) {
+  if (DiscreteUtils_Init() != SV_OK) {
     return TCL_OK;
   }
 

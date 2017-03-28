@@ -65,10 +65,10 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
          x->pts[i * 3 + 2] = pt[2];
       }
       
-      if (sys_geom_SplinePath(x, 1, numOutputPts, flag, y) == CV_ERROR) {
+      if (sys_geom_SplinePath(x, 1, numOutputPts, flag, y) == SV_ERROR) {
         sys_geom_SplinePointsDelete(x);
         sys_geom_SplinePointsDelete(y);
-        return CV_ERROR;
+        return SV_ERROR;
       }
 
       num = y->numPts;
@@ -100,7 +100,7 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
       sys_geom_SplinePointsDelete(y);
     }
   
-  return CV_OK;
+  return SV_OK;
 }
 
 /***********************************************************************
@@ -314,7 +314,7 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
       if (err == 0)
 	{
 	  fprintf(stderr,"Subdivision too small for computing tangents.  Decrease number of output points requested.\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
 
       for (j = 0; j < dimensions; j++)
@@ -353,7 +353,7 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
   if (err == 0)
     {
       fprintf(stderr,"Subdivision too small for computing tangents.  Decrease number of output points requested.\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   
   for (j = 0; j < dimensions; j++)
@@ -370,7 +370,7 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
   delete[] tmpTangent;
   delete[] tmpNormTangent;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -474,13 +474,13 @@ int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *
   if (magnitude == 0)
     {
       fprintf(stderr, "Vector cannot be normalized.  Magnitude of 0.\n");
-      return 0;
+      return SV_ERROR;
     }
 
   for (j = 0; j < sizeVector; j++)
     output[j] = input[j] / magnitude;
 
-  return 1;
+  return SV_OK;
 }
 
 
@@ -498,10 +498,10 @@ int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *
 int sys_geom_SplinePath (SplinePoints *input, int type, int numOutputPts, int matchEndPoints, SplinePoints *output)
 {
 
-  if (sys_geom_SplineGetTangents(input, type, numOutputPts, matchEndPoints, output) == CV_ERROR) {
-        return CV_ERROR;
+  if (sys_geom_SplineGetTangents(input, type, numOutputPts, matchEndPoints, output) == SV_ERROR) {
+        return SV_ERROR;
   }
 
   sys_geom_SplineGetRotVectors(output);
-  return CV_OK;
+  return SV_OK;
 }

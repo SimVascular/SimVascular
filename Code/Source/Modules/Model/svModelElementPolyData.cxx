@@ -243,7 +243,7 @@ bool svModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double size)
       int numAddedRefines = 0;
 
       if ( MMGUtils_SurfaceRemeshing( m_WholeVtkPolyData, size, size, hausd, angle, hgrad,
-        useSizingFunction, meshSizingFunction, numAddedRefines) != CV_OK ) {
+        useSizingFunction, meshSizingFunction, numAddedRefines) != SV_OK ) {
           fprintf(stderr,"Issue while remeshing surface\n");
           return false;
         }
@@ -262,7 +262,7 @@ bool svModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double size)
 
       if (VMTKUtils_SurfaceRemeshing(m_WholeVtkPolyData,size,meshcaps,preserveedges,
                                      trianglesplitfactor,collapseanglethreshold,excluded,
-                                     markerListName,useSizeFunction,NULL) != CV_OK)
+                                     markerListName,useSizeFunction,NULL) != SV_OK)
       {
           fprintf(stderr,"Issue while remeshing surface\n");
           return false;
@@ -295,7 +295,7 @@ bool svModelElementPolyData::FillHolesWithIDs()
 
     int *newFaceIDs;
     int numFaces = 0;
-    if (PlyDtaUtils_GetFaceIds(newvpd,&numFaces,&newFaceIDs) != CV_OK)
+    if (PlyDtaUtils_GetFaceIds(newvpd,&numFaces,&newFaceIDs) != SV_OK)
     {
       fprintf(stderr,"Could not get face ids\n");
       return false;
@@ -328,14 +328,14 @@ bool svModelElementPolyData::ExtractFaces(double angle)
         return false;
 
     int numFaces = 0;
-    if (PlyDtaUtils_GetBoundaryFaces(m_WholeVtkPolyData,angle,&numFaces) != CV_OK)
+    if (PlyDtaUtils_GetBoundaryFaces(m_WholeVtkPolyData,angle,&numFaces) != SV_OK)
     {
         fprintf(stderr,"Could not extract faces\n");
         return false;
     }
 
     int *faceIDs;
-    if (PlyDtaUtils_GetFaceIds(m_WholeVtkPolyData,&numFaces,&faceIDs) != CV_OK)
+    if (PlyDtaUtils_GetFaceIds(m_WholeVtkPolyData,&numFaces,&faceIDs) != SV_OK)
     {
         fprintf(stderr,"Could not get face ids\n");
         return false;
@@ -435,7 +435,7 @@ bool svModelElementPolyData::RemeshG(double hmax, double hmin)
     int numAddedRefines = 0;
 
   if ( MMGUtils_SurfaceRemeshing( m_WholeVtkPolyData, hmin, hmax, hausd, angle, hgrad,
-	  useSizingFunction, meshSizingFunction, numAddedRefines) != CV_OK ) {
+	  useSizingFunction, meshSizingFunction, numAddedRefines) != SV_OK ) {
       fprintf(stderr,"Issue while remeshing surface\n");
       return false;
     }

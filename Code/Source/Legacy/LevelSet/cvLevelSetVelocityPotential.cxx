@@ -66,7 +66,7 @@ cvLevelSetVelocityPotential::~cvLevelSetVelocityPotential()
 int cvLevelSetVelocityPotential::SetBalloonF( double b )
 {
   balloonF_ = b;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -77,7 +77,7 @@ int cvLevelSetVelocityPotential::SetBalloonF( double b )
 int cvLevelSetVelocityPotential::SetEP( double d )
 {
   eP_ = d;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -88,7 +88,7 @@ int cvLevelSetVelocityPotential::SetEP( double d )
 int cvLevelSetVelocityPotential::SetEK( double d )
 {
   eK_ = d;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -99,7 +99,7 @@ int cvLevelSetVelocityPotential::SetEK( double d )
 int cvLevelSetVelocityPotential::SetKlow( double d )
 {
   Klow_ = d;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -110,7 +110,7 @@ int cvLevelSetVelocityPotential::SetKlow( double d )
 int cvLevelSetVelocityPotential::SetKupp( double d )
 {
   Kupp_ = d;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -121,11 +121,11 @@ int cvLevelSetVelocityPotential::SetKupp( double d )
 int cvLevelSetVelocityPotential::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( image_ == NULL ) return 0;
-  if ( Klow_ > Kupp_ ) return 0;
-  return 1;
+  if ( image_ == NULL ) return SV_ERROR;
+  if ( Klow_ > Kupp_ ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -135,7 +135,7 @@ int cvLevelSetVelocityPotential::Valid()
 
 int cvLevelSetVelocityPotential::StopCondition()
 {
-  return 0;
+  return SV_ERROR;
 }
 
 
@@ -154,9 +154,9 @@ int cvLevelSetVelocityPotential::Evaluate( double pos[], double *f0, double *f1,
   double mag;
   double dynamicRatio;
 
-  if ( !Valid() ) return CV_ERROR;
-  if ( ls_->GetGrid()->InterpK( pos, &K ) != CV_OK ) return CV_ERROR;
-  if ( ls_->GetGrid()->InterpN( pos, n ) != CV_OK ) return CV_ERROR;
+  if ( !Valid() ) return SV_ERROR;
+  if ( ls_->GetGrid()->InterpK( pos, &K ) != SV_OK ) return SV_ERROR;
+  if ( ls_->GetGrid()->InterpN( pos, n ) != SV_OK ) return SV_ERROR;
 
   if ( GetImageClosed( image_ ) && InBorder( image_, pos, 1 ) ) {
     toDot[0] = 0.0;
@@ -169,24 +169,24 @@ int cvLevelSetVelocityPotential::Evaluate( double pos[], double *f0, double *f1,
       v[1] = 0.0;
       v[2] = 0.0;
     }
-    return CV_OK; 
+    return SV_OK; 
   }
 
   // Look up value of potential:
   if ( ! GetIntensity( image_, pos, &p ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // Look up potential gradient:
   if ( ! GetGradIx( image_, pos, &(gradP[0]) ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( ! GetGradIy( image_, pos, &(gradP[1]) ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( image_->dim == 3 ) {
     if ( ! GetGradIz( image_, pos, &(gradP[2]) ) ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
   } else {
     gradP[2] = 0.0;
@@ -249,7 +249,7 @@ int cvLevelSetVelocityPotential::Evaluate( double pos[], double *f0, double *f1,
     v[2] = n[2] * mag;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

@@ -388,7 +388,7 @@ int cvLevelSetDenseGrid::InitPhi( cvPolyData *front )
   if (!init_) {
     sm = cvSolidModel::DefaultInstantiateSolidModel();
     if ( sm == NULL ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if ( dim_ == 3 ) {
       sm->MakePoly3dSolid( front , 0);
@@ -413,20 +413,20 @@ int cvLevelSetDenseGrid::InitPhi( cvPolyData *front )
       if (sm) {
 	delete sm;
       }
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // If Grid is uninitialized, use the cvSolidModel::ClassifyPt method
     // to determine sign of phi:
     if (sm) {
 
-      if ( sm->ClassifyPt( x, y, 0, &c ) != CV_OK ) {
+      if ( sm->ClassifyPt( x, y, 0, &c ) != SV_OK ) {
 	printf("  ERR (cvLevelSetDenseGrid::InitPhi): cvSolidModel::ClassifyPt error.\n");
 	init_ = 0;
 	if (sm) {
 	  delete sm;
 	}
-	return CV_ERROR;
+	return SV_ERROR;
       }
 
       // Mapping classification to distance, sign:
@@ -461,7 +461,7 @@ int cvLevelSetDenseGrid::InitPhi( cvPolyData *front )
   }
 
   phiVtkValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -503,7 +503,7 @@ int cvLevelSetDenseGrid::InitPhi( double ctr[], double radius )
   init_ = 1;
 
   phiVtkValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -521,10 +521,10 @@ int cvLevelSetDenseGrid::InitPhi( cvSolidModel *sm )
   InitIter();
   while ( currNode = GetNext() ) {
 
-    if ( sm->Distance( currNode->pos_, upperLimit, &dist ) != CV_OK ) {
+    if ( sm->Distance( currNode->pos_, upperLimit, &dist ) != SV_OK ) {
       printf("  ERR (cvLevelSetDenseGrid::InitPhi): cvSolidModel::Distance error.\n");
       init_ = 0;
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if ( fabs( dist ) < tol ) {
       dist = 0.0;
@@ -534,7 +534,7 @@ int cvLevelSetDenseGrid::InitPhi( cvSolidModel *sm )
 
   init_ = 1;
   phiVtkValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 
 
   // Old as of 9/29/99:
@@ -548,7 +548,7 @@ int cvLevelSetDenseGrid::InitPhi( cvSolidModel *sm )
   for (i = 0; i < numNodes_; i++) {
     currNode = &(grid_[i]);
 
-    if ( sm->ClassifyPt( currNode->pos_, 0, &c ) != CV_OK ) {
+    if ( sm->ClassifyPt( currNode->pos_, 0, &c ) != SV_OK ) {
       printf("  ERR (cvLevelSetDenseGrid::InitPhi): cvSolidModel::ClassifyPt error.\n");
       init_ = 0;
       return;
@@ -590,7 +590,7 @@ int cvLevelSetDenseGrid::InitPhi( cvSolidModel *sm )
 
 int cvLevelSetDenseGrid::InitPhi( cvStrPts *img, double thr )
 {
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 
@@ -607,11 +607,11 @@ int cvLevelSetDenseGrid::ReinitPhi()
   if ( front->GetVtkPolyData()->GetNumberOfCells() < 1 ) {
     printf("ERR: Current zero level set has no geometry.\n");
     delete front;
-    return CV_ERROR;
+    return SV_ERROR;
   }
   InitPhi( front );
   delete front;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -822,36 +822,36 @@ int cvLevelSetDenseGrid::ProjectV( int save )
   // of a pure virtual) are distinct, but we need to use the scoping
   // operator anyway.
 
-  if ( this->cvLevelSetStructuredGrid::ProjectV( 1, save ) != CV_OK ) {
-    return CV_ERROR;
+  if ( this->cvLevelSetStructuredGrid::ProjectV( 1, save ) != SV_OK ) {
+    return SV_ERROR;
   }
-  if ( this->cvLevelSetStructuredGrid::ProjectV( 0, save ) != CV_OK ) {
-    return CV_ERROR;
+  if ( this->cvLevelSetStructuredGrid::ProjectV( 0, save ) != SV_OK ) {
+    return SV_ERROR;
   }
 
   // If complete coverage, was not achieved, then rebuild phi and try
   // again:
   if ( ! CheckProjectCoverage() ) {
-    if ( ReinitPhi() != CV_OK ) {
-      return CV_ERROR;
+    if ( ReinitPhi() != SV_OK ) {
+      return SV_ERROR;
     }
     ClearCovered();
     ResetNodeSets();
-    if ( this->cvLevelSetStructuredGrid::ProjectV( 1, save ) != CV_OK ) {
-      return CV_ERROR;
+    if ( this->cvLevelSetStructuredGrid::ProjectV( 1, save ) != SV_OK ) {
+      return SV_ERROR;
     }
-    if ( this->cvLevelSetStructuredGrid::ProjectV( 0, save ) != CV_OK ) {
-      return CV_ERROR;
+    if ( this->cvLevelSetStructuredGrid::ProjectV( 0, save ) != SV_OK ) {
+      return SV_ERROR;
     }
 
     // Now, if complete coverage is STILL not achieved, then return an
     // error:
     if ( ! CheckProjectCoverage() ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

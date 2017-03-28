@@ -161,7 +161,7 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	m_cvInputImage = new cvStrPts( s->GetVtkStructuredPoints() );
 	m_cvInputImage->SetName( s->GetName() );
 
-	return 1;
+        return SV_OK;
  }
 template<typename TInputImage,
 typename TInternalPixelType>
@@ -184,7 +184,7 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	//m_cvInputImage = new cvStrPts( s->GetVtkStructuredPoints() );
 	//m_cvInputImage->SetName( s->GetName() );
 
-	return 1;
+        return SV_OK;
  }
 template<typename TInputImage,
 typename TInternalPixelType>
@@ -192,10 +192,10 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 ::GetFeatureImage( cvStrPts **s)
  {
 	if ( m_cvInputImage == NULL ) {
-		return 0;
+                return SV_ERROR;
 	} else {
 		*s = m_cvInputImage;
-		return 1;
+                return SV_OK;
 	}
  }
 
@@ -247,9 +247,9 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 
 	*front = this->GetFront();
 	if(front != 0)
-		return 1;
+                return SV_OK;
 	else
-		return 0;
+                return SV_ERROR;
  }
 
 template<typename TInputImage,
@@ -779,7 +779,7 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	// Debug only, vtk image not used
 	cvITKLSUtil::itk2vtkRecastAndRescale<ITKInternalImageType,ITKExternalImageType>(m_itkFeatureImage,m_vtkFeatureImage,&ExternalImgInfo);
 
-	return 1;
+        return SV_OK;
  }
 
 
@@ -810,7 +810,7 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	{
 		// Do something?
 	}
-	return 1;
+        return SV_OK;
  }
 
 #ifdef USE_QUICKVIEW_DEBUG

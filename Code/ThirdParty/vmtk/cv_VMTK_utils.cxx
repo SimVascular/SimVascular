@@ -92,7 +92,7 @@
  * node for the mesh. Used for mesh refinement!
  * @param *meshSizingFunction This is the actual meshSizing Function. Must
  * exist if using a sizing function
- * @return CV_OK is executed correctly. If something goes wrong, CV_ERROR
+ * @return SV_OK is executed correctly. If something goes wrong, SV_ERROR
  * is returned
  */
 int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
@@ -136,13 +136,13 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
   {
     //Need list of ids to mesh only caps
     fprintf(stderr,"Cannot mesh only caps without Ids to exclude\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (useSizingFunction && meshSizingFunction == NULL)
   {
     fprintf(stderr,"Cannot use sizing function without a function!");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //Apply the Entity Ids array name if not preserving edges and meshing all
@@ -241,7 +241,7 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
     surfaceMesh->GetPointData()->GetNormals()->SetName("Normals");
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // --------------------
@@ -255,7 +255,7 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
  * Default is 1.2.
  * @param sizingFunctionArrayName This is the array name given to the output
  * sizing function attached to the mesh.
- * @return CV_OK if the sizing function is computed correctly.
+ * @return SV_OK if the sizing function is computed correctly.
  */
 int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
     std::string sizingFunctionArrayName)
@@ -281,7 +281,7 @@ int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
   inpd->DeepCopy(sizer->GetOutput());
 
   fprintf(stderr,"Got Volume Mesh Func!\n");
-  return CV_OK;
+  return SV_OK;
 }
 
 // --------------------
@@ -297,7 +297,7 @@ int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
  * caps have only triangles or not.
  * @param cellEntityIdOffset This is used if an offset from surface is desire
  * @param cellEntityIdsArrayName This is the name given if offset is desired
- * @return CV_OK if the mesh sizing function based on the circle is computed
+ * @return SV_OK if the mesh sizing function based on the circle is computed
  * correctly
  */
 int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
@@ -371,7 +371,7 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
 
   inpd->DeepCopy(normaler->GetOutput());
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // --------------------
@@ -397,7 +397,7 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
  * (normals are typically oriented outward).
  * @param cellEntityIdsArrayName This is the name of the array given to the
  * nodes of the output mesh.
- * @return CV_OK if the boundary layer mesh is created properly
+ * @return SV_OK if the boundary layer mesh is created properly
  */
 int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
     vtkUnstructuredGrid *innerSurface,
@@ -431,7 +431,7 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   {
     fprintf(stderr,"Normals vector doesn't exist in Unstructured Grid \
 	and must exist for boundary layer formation\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (blThicknessFactor == NULL)
@@ -467,7 +467,7 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   blMesh->DeepCopy(layerer->GetOutput());
   innerSurface->DeepCopy(layerer->GetInnerSurface());
 
-  return CV_OK;
+  return SV_OK;
 }
 // --------------------
 //  VMTKUtils_AppendMesh
@@ -484,7 +484,7 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
  * @param This is the name of the array within the surfaceWithSize mesh that
  * contains the values pertaining to whehter or not it is a capped surface or
  * not.
- * @return CV_OK if the meshes are appended into one final mesh correctly.
+ * @return SV_OK if the meshes are appended into one final mesh correctly.
  * The full mesh is returned in the first argument
  */
 
@@ -517,7 +517,7 @@ int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
   fprintf(stdout,"Mesh Appended\n");
 
   meshFromTetGen->DeepCopy(appender->GetOutput());
-  return CV_OK;
+  return SV_OK;
 }
 
 // --------------------
@@ -531,7 +531,7 @@ int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
  * and custom procedures.
  * @param fullpolydata This should be empty coming in. It is then the
  * extracted surface from the fullmesh.
- * @return CV_OK if the Ids are attached to the surfaces without issue
+ * @return SV_OK if the Ids are attached to the surfaces without issue
  */
 
 int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata)
@@ -672,6 +672,6 @@ int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata
 
   fullpolydata->DeepCopy(getSurface->GetOutput());
 
-  return CV_OK;
+  return SV_OK;
 }
 

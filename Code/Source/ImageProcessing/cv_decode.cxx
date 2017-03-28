@@ -75,7 +75,7 @@ int mr_decode (vtkStructuredPoints *phase,
 
   *vel = v;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -126,6 +126,6 @@ int mr_decode_masked (vtkStructuredPoints *mag,
 
   *vel = v;
 
-  return CV_OK;
+  return SV_OK;
 }
 

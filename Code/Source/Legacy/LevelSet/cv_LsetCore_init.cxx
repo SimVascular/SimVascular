@@ -243,9 +243,9 @@ static int NewName( CONST84 char *name )
   Tcl_HashEntry *entryPtr;
   entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, name );
   if ( entryPtr != NULL ) {
-    return 0;
+    return SV_ERROR;
   }
-  return 1;
+  return SV_OK;
 }
 
 
@@ -259,12 +259,12 @@ static int NewName( CONST84 char *name, Tcl_Interp *interp )
 
   code = Tcl_VarEval( interp, "info commands ", name, (char *)NULL );
   if ( code != TCL_OK ) {
-    return 0;
+    return SV_ERROR;
   }
   if ( strlen( Tcl_GetStringResult(interp) ) == 0 ) {
-    return 1;
+    return SV_OK;
   } else {
-    return 0;
+    return SV_ERROR;
   }
 }
 
@@ -1607,7 +1607,7 @@ static int LsetCore_SetVelocityMtd( ClientData clientData, Tcl_Interp *interp,
   }
   v = (cvLevelSetVelocity *)Tcl_GetHashValue( entryPtr );
 
-  if ( ls->LinkVelocity( v ) != CV_OK ) {
+  if ( ls->LinkVelocity( v ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting velocity", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1636,7 +1636,7 @@ static int LsetCore_GetVelocityMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( ls->GetVelocity( &v ) != CV_OK ) {
+  if ( ls->GetVelocity( &v ) != SV_OK ) {
     Tcl_SetResult( interp, "error getting velocity", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1812,7 +1812,7 @@ static int LsetCore_SetVExtensionMtd( ClientData clientData,
 
   // Do work of command:
   etype = ExtensionT_StrToEnum( fnName );
-  if ( ls->SetVExtension( etype ) != CV_OK ) {
+  if ( ls->SetVExtension( etype ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting extension", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2419,11 +2419,11 @@ static int LsetCore_ExtractForceMinVNodesMtd( ClientData clientData,
   }
 
   // Do work of command:
-  if ( ls->GetGrid()->SaveForceMinVNodes() != CV_OK ) {
+  if ( ls->GetGrid()->SaveForceMinVNodes() != SV_OK ) {
     Tcl_SetResult( interp, "error querying nodes", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != CV_OK ) {
+  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != SV_OK ) {
     Tcl_SetResult( interp, "error on node extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2490,7 +2490,7 @@ static int LsetCore_ExtractProjectionSetsMtd( ClientData clientData,
 		   " method (e.g. ExtractActiveNodes)\n", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != CV_OK ) {
+  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != SV_OK ) {
     Tcl_SetResult( interp, "error on projection sets extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2549,11 +2549,11 @@ static int LsetCore_ExtractCoveredNodesMtd( ClientData clientData,
   }
 
   // Do work of command:
-  if ( ls->GetGrid()->SaveCoveredNodes() != CV_OK ) {
+  if ( ls->GetGrid()->SaveCoveredNodes() != SV_OK ) {
     Tcl_SetResult( interp, "error on querying covered nodes", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != CV_OK ) {
+  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != SV_OK ) {
     Tcl_SetResult( interp, "error on covered nodes extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2606,11 +2606,11 @@ static int LsetCore_ExtractUncoveredNodesMtd( ClientData clientData,
   }
 
   // Do work of command:
-  if ( ls->GetGrid()->SaveUncoveredNodes() != CV_OK ) {
+  if ( ls->GetGrid()->SaveUncoveredNodes() != SV_OK ) {
     Tcl_SetResult( interp, "error on querying uncovered nodes", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != CV_OK ) {
+  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != SV_OK ) {
     Tcl_SetResult( interp, "error on uncovered nodes extraction", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2667,11 +2667,11 @@ static int LsetCore_ExtractMineNodesMtd( ClientData clientData,
   }
 
   // Do work of command:
-  if ( ls->GetGrid()->SaveMineNodes() != CV_OK ) {
+  if ( ls->GetGrid()->SaveMineNodes() != SV_OK ) {
     Tcl_SetResult( interp, "error on querying mine nodes", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != CV_OK ) {
+  if ( ls->GetGrid()->GetNodeSets( &nodeSets, &numSets ) != SV_OK ) {
     Tcl_SetResult( interp, "error on mine nodes extraction", TCL_STATIC );
     return TCL_ERROR;
   }

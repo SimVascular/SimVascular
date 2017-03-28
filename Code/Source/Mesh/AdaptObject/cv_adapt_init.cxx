@@ -432,7 +432,7 @@ static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Inter
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->CreateInternalMeshObject(interp,meshFileName,solidFileName) != CV_OK)
+  if (geom->CreateInternalMeshObject(interp,meshFileName,solidFileName) != SV_OK)
   {
     fprintf(stderr,"Error in creation of internal mesh\n");
     return TCL_ERROR;
@@ -473,7 +473,7 @@ static int cvAdapt_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->LoadModel(solidFileName) != CV_OK)
+  if (geom->LoadModel(solidFileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of model\n");
     return TCL_ERROR;
@@ -514,7 +514,7 @@ static int cvAdapt_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->LoadMesh(meshFileName) != CV_OK)
+  if (geom->LoadMesh(meshFileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of mesh\n");
     return TCL_ERROR;
@@ -555,7 +555,7 @@ static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *i
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->LoadSolutionFromFile(fileName) != CV_OK)
+  if (geom->LoadSolutionFromFile(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of solution\n");
     return TCL_ERROR;
@@ -596,7 +596,7 @@ static int cvAdapt_LoadYbarFromFileMtd( ClientData clientData, Tcl_Interp *inter
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->LoadYbarFromFile(fileName) != CV_OK)
+  if (geom->LoadYbarFromFile(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of average speed\n");
     return TCL_ERROR;
@@ -637,7 +637,7 @@ static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *i
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->LoadAvgSpeedFromFile(fileName) != CV_OK)
+  if (geom->LoadAvgSpeedFromFile(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of average speed\n");
     return TCL_ERROR;
@@ -678,7 +678,7 @@ static int cvAdapt_LoadHessianFromFileMtd( ClientData clientData, Tcl_Interp *in
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->LoadHessianFromFile(fileName) != CV_OK)
+  if (geom->LoadHessianFromFile(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of hessian\n");
     return TCL_ERROR;
@@ -695,7 +695,7 @@ static int cvAdapt_ReadSolutionFromMeshMtd( ClientData clientData, Tcl_Interp *i
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->ReadSolutionFromMesh() == CV_OK) {
+  if (geom->ReadSolutionFromMesh() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -711,7 +711,7 @@ static int cvAdapt_ReadYbarFromMeshMtd( ClientData clientData, Tcl_Interp *inter
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->ReadYbarFromMesh() == CV_OK) {
+  if (geom->ReadYbarFromMesh() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -727,7 +727,7 @@ static int cvAdapt_ReadAvgSpeedFromMeshMtd( ClientData clientData, Tcl_Interp *i
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->ReadAvgSpeedFromMesh() == CV_OK) {
+  if (geom->ReadAvgSpeedFromMesh() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -769,7 +769,7 @@ static int cvAdapt_SetAdaptOptionsMtd( ClientData clientData, Tcl_Interp *interp
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->SetAdaptOptions(flag,value) != CV_OK)
+  if (geom->SetAdaptOptions(flag,value) != SV_OK)
   {
     fprintf(stderr,"Error in options setting\n");
     fprintf(stderr,"%s is not a valid option flag\n",flag);
@@ -787,7 +787,7 @@ static int cvAdapt_CheckOptionsMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->CheckOptions() == CV_OK) {
+  if (geom->CheckOptions() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -825,7 +825,7 @@ static int cvAdapt_SetMetricMtd( ClientData clientData, Tcl_Interp *interp,
   }
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->SetMetric(fileName,option,strategy) == CV_OK) {
+  if (geom->SetMetric(fileName,option,strategy) == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -842,7 +842,7 @@ static int cvAdapt_SetupMeshMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->SetupMesh() == CV_OK) {
+  if (geom->SetupMesh() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -859,7 +859,7 @@ static int cvAdapt_RunAdaptorMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->RunAdaptor() == CV_OK) {
+  if (geom->RunAdaptor() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -876,7 +876,7 @@ static int cvAdapt_PrintStatsMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->PrintStats() == CV_OK) {
+  if (geom->PrintStats() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -891,7 +891,7 @@ int cvAdapt_GetAdaptedMeshMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->GetAdaptedMesh() == CV_OK) {
+  if (geom->GetAdaptedMesh() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -906,7 +906,7 @@ int cvAdapt_TransferSolutionMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->TransferSolution() == CV_OK) {
+  if (geom->TransferSolution() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -921,7 +921,7 @@ int cvAdapt_TransferRegionsMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->TransferRegions() == CV_OK) {
+  if (geom->TransferRegions() == SV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;
@@ -960,7 +960,7 @@ static int cvAdapt_WriteAdaptedModelMtd( ClientData clientData, Tcl_Interp *inte
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->WriteAdaptedModel(fileName) != CV_OK)
+  if (geom->WriteAdaptedModel(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in writing of model\n");
     return TCL_ERROR;
@@ -1001,7 +1001,7 @@ static int cvAdapt_WriteAdaptedMeshMtd( ClientData clientData, Tcl_Interp *inter
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->WriteAdaptedMesh(fileName) != CV_OK)
+  if (geom->WriteAdaptedMesh(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in writing of mesh\n");
     return TCL_ERROR;
@@ -1042,7 +1042,7 @@ static int cvAdapt_WriteAdaptedSolutionMtd( ClientData clientData, Tcl_Interp *i
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->WriteAdaptedSolution(fileName) != CV_OK)
+  if (geom->WriteAdaptedSolution(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in writing of solution\n");
     return TCL_ERROR;

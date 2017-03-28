@@ -274,7 +274,7 @@ int cvDistanceMap::createDistanceMap (vtkStructuredPoints *vtksp,
     bucket[1]->Delete();
     bucket[2]->Delete();
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -693,7 +693,7 @@ int cvDistanceMap::getCityBlockNeighbors(int p) {
 
   numNeighbors_ = 6;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -723,7 +723,7 @@ int cvDistanceMap::get26ConnectivityNeighbors(int p) {
 
   numNeighbors_ = 26;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -779,7 +779,7 @@ int cvDistanceMap::createInitMask() {
 
     fprintf(stdout,"number of unmasked pixels (%i)\n",maskNum);
 
-    return CV_OK;
+    return SV_OK;
     
 }
 
@@ -838,6 +838,6 @@ int cvDistanceMap::thinMask(int *numPixelsRemoved) {
 
     removeIds->Delete();
 
-    return CV_OK;
+    return SV_OK;
 
 }

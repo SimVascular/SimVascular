@@ -111,21 +111,21 @@ int cvMeshObject::openOutputFile(char* filename) {
   fp_ = gzopen (filenamegz, "wb");
   if (fp_ == NULL) {
       fprintf(stderr,"Error: Could not open output file %s.\n",filenamegz);
-      return CV_ERROR;
+      return SV_ERROR;
   }
   #else
   fp_ = gzopen (filename, "wb");
   if (fp_ == NULL) {
       fprintf(stderr,"Error: Could not open output file %s.\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
   }
   #endif
-  return CV_OK;
+  return SV_OK;
 }
 
 int cvMeshObject::closeOutputFile() {
   gzclose(fp_);
-  return CV_OK;
+  return SV_OK;
 }
 
 

@@ -98,7 +98,7 @@ void cvMeshSimSolidModel::Print() const
 int cvMeshSimSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 
   if ( geom_ == NULL) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   this->Print();
@@ -114,7 +114,7 @@ int cvMeshSimSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 
   *numFaces = num;
 
-  if (num == 0) return CV_ERROR;
+  if (num == 0) return SV_ERROR;
 
   (*faceIds) = new int [num];
 
@@ -125,7 +125,7 @@ int cvMeshSimSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
   }  
   GFIter_delete(myFiter);
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -371,7 +371,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   fflush(stdout);
   
   if (geom_ != NULL) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   pGImporter importer = GImporter_new();
@@ -383,7 +383,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   FILE* fp = NULL;
   if ( (fp = fopen(filename,"r")) == NULL) {
     fprintf(stdout,"ERROR opening file (%s)\n",filename);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //
@@ -397,7 +397,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   sscanf(line,"number_of_vertices %i",&number_of_vertices);
   fprintf(stdout,"number_of_vertices %i\n",number_of_vertices);
@@ -410,7 +410,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     sscanf(line,"vertex_point %i %lf %lf %lf",&vid,&v.xyz[0],
 	    &v.xyz[1],&v.xyz[2]);
@@ -442,7 +442,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   sscanf(line,"number_of_lines %i",&number_of_lines);
 
@@ -455,7 +455,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     meshsim_line_info myline;
     sscanf(line,"line %i %i %i %lf %lf %lf %lf %lf %lf\n",
@@ -489,7 +489,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   sscanf(line,"number_of_planes %i",&number_of_planes);
 
@@ -502,7 +502,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     meshsim_plane_info myplane;
     sscanf(line,"plane %i %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
@@ -538,7 +538,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   sscanf(line,"number_of_edges %i",&number_of_edges);
 
@@ -551,7 +551,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     
     meshsim_edge_info myedge;
@@ -599,7 +599,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   sscanf(line,"number_of_faces %i",&number_of_faces);
 
@@ -613,7 +613,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     int fid = 0;
@@ -622,7 +622,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     meshsim_face_info myface;
@@ -639,7 +639,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       line[0]='\0';
       if (fgets(line,1024,fp) == NULL) {
         fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-        return CV_ERROR;
+        return SV_ERROR;
       }
       int face_edge_id = 0;
       int face_edge_dir = 0;
@@ -652,7 +652,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     int number_of_loops = 0;
@@ -663,7 +663,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       line[0]='\0';
       if (fgets(line,1024,fp) == NULL) {
         fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-        return CV_ERROR;
+        return SV_ERROR;
       }
       int loop_j = 0;
       int loop_index = 0;
@@ -674,7 +674,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     int sid = 0;
     sscanf(line,"face_surface_id %i\n",&sid);
@@ -684,7 +684,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     int face_orientation = 0;
     sscanf(line,"face_orientation %i\n",&face_orientation);
@@ -732,7 +732,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   sscanf(line,"number_of_regions %i",&number_of_regions);
 
@@ -746,7 +746,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     int rid = 0;
@@ -755,7 +755,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     meshsim_region_info myregion;
@@ -774,7 +774,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       line[0]='\0';
       if (fgets(line,1024,fp) == NULL) {
         fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-        return CV_ERROR;
+        return SV_ERROR;
       }
       int region_face_id = 0;
       int region_face_dir = 0;
@@ -787,7 +787,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     int number_of_shells = 0;
@@ -800,7 +800,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       line[0]='\0';
       if (fgets(line,1024,fp) == NULL) {
         fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
-        return CV_ERROR;
+        return SV_ERROR;
       }
       int shell_j = 0;
       int shell_index = 0;
@@ -840,7 +840,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   geom_ = GImporter_complete(importer);
 
   if (geom_ == NULL) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   pPList errorList = PList_new();
@@ -873,7 +873,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   //pNativeModel nmodel = NULL;
   //geom_ = GM_load(filename, nmodel, progress_);
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -884,11 +884,11 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
 
 int cvMeshSimSolidModel::WriteNative( int file_version, char *filename ) const
 {
-  if ( geom_ == NULL ) return CV_ERROR;
+  if ( geom_ == NULL ) return SV_ERROR;
 
   GM_write(geom_,filename,file_version,progress_);
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -911,7 +911,7 @@ int MeshSimSolidUtils_GetVtkPolyData( pGModel model, int useMaxDist, double max_
   pModelItem mdomain = GM_domain(model);
 
   pMesh mesh = NULL;
-  return CV_ERROR;
+  return SV_ERROR;
   ////// NEED TO FIX THIS!
   /*
   if (useMaxDist != 0) {
@@ -996,7 +996,7 @@ int MeshSimSolidUtils_GetVtkPolyData( pGModel model, int useMaxDist, double max_
 
   *out = mycvPolyData;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -1015,7 +1015,7 @@ cvPolyData *cvMeshSimSolidModel::GetPolyData(int useMaxDist, double max_dist) co
  
   if ( geom_ == NULL ) return NULL;
   
-  if ( MeshSimSolidUtils_GetVtkPolyData( geom_, useMaxDist, max_dist, &bound ) != CV_OK ) {
+  if ( MeshSimSolidUtils_GetVtkPolyData( geom_, useMaxDist, max_dist, &bound ) != SV_OK ) {
     return NULL;
   }
  

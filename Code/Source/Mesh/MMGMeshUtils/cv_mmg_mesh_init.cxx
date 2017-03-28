@@ -148,7 +148,7 @@ int MMG_RemeshCmd( ClientData clientData, Tcl_Interp *interp,
   int numAddedRefines = 0;
   vtkDoubleArray *meshSizingFunction = NULL;
   if ( MMGUtils_SurfaceRemeshing( surfacepd, hmin, hmax, hausd, angle, hgrad,
-	useSizingFunction, meshSizingFunction, numAddedRefines) != CV_OK ) {
+	useSizingFunction, meshSizingFunction, numAddedRefines) != SV_OK ) {
     Tcl_SetResult( interp, "remeshing error", TCL_STATIC );
     return TCL_ERROR;
   }

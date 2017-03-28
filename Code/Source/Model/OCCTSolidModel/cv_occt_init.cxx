@@ -244,7 +244,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
   vMarr = getArrayFromDoubleList(vMults,vMlen);
 
   if (geom->CreateBSplineSurface(Xarr,Yarr,Zarr,Xlen1,Xlen2,
-    uKarr,uKlen,vKarr,vKlen,uMarr,uMlen,vMarr,vMlen,p,q) != CV_OK)
+    uKarr,uKlen,vKarr,vKlen,uMarr,uMlen,vMarr,vMlen,p,q) != SV_OK)
   {
     //Set special python thingy
     fprintf(stderr,"Conversion to BSpline surface didn't work\n");

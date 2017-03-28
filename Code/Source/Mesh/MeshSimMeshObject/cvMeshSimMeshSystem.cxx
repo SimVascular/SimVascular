@@ -51,13 +51,13 @@ cvMeshSimMeshSystem::~cvMeshSimMeshSystem()
 int cvMeshSimMeshSystem::LogOn( char *const filename )
 {
   Sim_logOn(filename);
-  return CV_OK;
+  return SV_OK;
 }
 
 int cvMeshSimMeshSystem::LogOff()
 {
   Sim_logOff();
-  return CV_OK;
+  return SV_OK;
 }
 
 cvMeshObject* cvMeshSimMeshSystem::CreateMeshObject( Tcl_Interp *interp )
