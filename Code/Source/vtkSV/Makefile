@@ -38,79 +38,48 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-# --------------
-# Compiler flags
-# --------------
+VTKSV_DIRS = Common Filters Modules/Boolean Modules/Geometry \
+             Modules/NURBS Modules/Parameterization
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) \
-	   $(LOCAL_INCDIR) \
-	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR)
+lib-complete: create_exports_outname_h lib
 
-# double hack for now, want to make code consistent with meshsim code
-ifeq ($(SV_USE_MESHSIM_SHARED),1)
-  CXXFLAGS += -DNOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
-endif
+static-complete:  create_exports_outname_h static
 
-CREATE_EXPORTS_CV_ALL_CAPS=SV_TETGEN_ADAPTOR
-CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_TETGEN_ADAPTOR
-CREATE_EXPORTS_CV_FILE_H=svTetGenAdaptorExports.h
+shared-complete: create_exports_outname_h shared
 
-CXXFLAGS += -DSV_EXPORT_TETGEN_ADAPTOR_COMPILE
+lib:
+	@for i in ${VTKSV_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE)) ; done
 
-ifeq ($(SV_USE_OPENCASCADE),1)
-  CXXFLAGS += $(OPENCASCADE_INCDIR)
-endif
+static:
+	@for i in ${VTKSV_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE)) ; done
 
-ifeq ($(SV_USE_ZLIB),1)
-  CXXFLAGS += $(ZLIB_INCDIR)
-endif
+shared:
+	@for i in ${VTKSV_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) shared) ; done
 
-ifeq ($(SV_USE_TETGEN),1)
-        CXXFLAGS    += $(TETGEN_INCDIR)
-endif
+create_exports_outname_h:
+	@for i in ${VTKSV_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) create_exports_outname_h) ; done
 
-HDRS	= cvTetGenAdapt.h
+clean:
+	for i in ${VTKSV_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) clean ) ; done
 
-CXXSRCS = cvTetGenAdapt.cxx
+veryclean: clean
+	for i in ${VTKSV_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) veryclean ) ; done
 
-DLLHDRS = cv_tetgen_adapt_init.h
-
-DLLSRCS = cv_tetgen_adapt_init.cxx
-
-DLLLIBS = $(SVLIBFLAG)_simvascular_adaptor$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT)
-
-ifeq ($(SV_USE_TETGEN),1)
-  DLLLIBS += $(SVLIBFLAG)_simvascular_tetgen_mesh$(LIBLINKEXT)
-  DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_tetgen$(LIBLINKEXT)
-endif
-
-DLLLIBS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
-
-ifeq ($(SV_USE_VMTK),1)
-  DLLLIBS +=  $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
-endif
-
-ifeq ($(SV_USE_ZLIB),1)
-  DLLLIBS +=  $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT)
-endif
-
-ifeq ($(SV_USE_TETGEN),1)
-  DLLLIBS += $(TETGEN_LIBS)
-endif
-
-DLLLIBS += $(VTK_LIBS)
-
-DLLLIBS += $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
-
-TARGET_LIB_NAME = simvascular_tetgen_adaptor
-
-include $(TOP)/targetlib.mk
 
 
