@@ -1100,7 +1100,7 @@ int vtkSVSphericalMapper::PRUpdateMap(int map)
   double beta[3];
   for (int i=0; i<3; i++)
   {
-    beta[i] = std::max(0.0, numerator[i]/denominator[i]);
+    beta[i] = svmaximum(0.0, numerator[i]/denominator[i]);
   }
 
   this->CGUpdateMap(map, beta);
@@ -1335,7 +1335,7 @@ int vtkSVSphericalMapper::SetLoopOnUnitCircle(vtkPolyData *lines,
                        pow(pt0[2]-pt1[2], 2.0));
     currLength += dist;
 
-    double angle = currLength/length * 2.0 * M_PI;
+    double angle = currLength/length * 2.0 * SV_PI;
     double x_val = (2.0 * radius * std::cos(angle))/(1.0 + std::pow(radius, 2.0));
     double y_val = (2.0 * radius * std::sin(angle))/(1.0 + std::pow(radius, 2.0));
     double z_val = (-1.0 + std::pow(radius, 2.0))/(1.0 + std::pow(radius, 2.0));
@@ -1370,7 +1370,7 @@ int vtkSVSphericalMapper::SetCircleBoundary(vtkPolyData *lines,
     currCoords[i] = cubeStart[i];
   }
 
-  double unitLength = M_PI / 2.0;
+  double unitLength = SV_PI / 2.0;
   int currCell = 0;
   int checkPt = -1;
   for (int i=0; i<markerPts->GetNumberOfTuples(); i++)
@@ -1397,7 +1397,7 @@ int vtkSVSphericalMapper::SetCircleBoundary(vtkPolyData *lines,
       //if (dir == 7)
       //{
       //  double transPt[3];
-      //  double angle = currLength/lengths[i] * unitLength + 5.0 * M_PI/4.0;
+      //  double angle = currLength/lengths[i] * unitLength + 5.0 * SV_PI/4.0;
       //  transPt[0] = (2.0 * radius * std::cos(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[1] = (2.0 * radius * std::sin(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[2] = (-1.0 + std::pow(radius, 2.0))/(1.0 + std::pow(radius, 2.0));
@@ -1406,7 +1406,7 @@ int vtkSVSphericalMapper::SetCircleBoundary(vtkPolyData *lines,
       //else if (dir == 2)
       //{
       //  double transPt[3];
-      //  double angle = currLength/lengths[i] * unitLength + 5.0 * M_PI/4.0;
+      //  double angle = currLength/lengths[i] * unitLength + 5.0 * SV_PI/4.0;
       //  transPt[0] = (2.0 * radius * std::cos(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[1] = (2.0 * radius * std::sin(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[2] = (-1.0 + std::pow(radius, 2.0))/(1.0 + std::pow(radius, 2.0));
@@ -1415,7 +1415,7 @@ int vtkSVSphericalMapper::SetCircleBoundary(vtkPolyData *lines,
       //else if (dir == 3 && i != 2)
       //{
       //  double transPt[3];
-      //  double angle = currLength/lengths[i] * unitLength + M_PI/4.0;
+      //  double angle = currLength/lengths[i] * unitLength + SV_PI/4.0;
       //  transPt[0] = (2.0 * radius * std::cos(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[1] = (2.0 * radius * std::sin(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[2] = (-1.0 + std::pow(radius, 2.0))/(1.0 + std::pow(radius, 2.0));
@@ -1424,7 +1424,7 @@ int vtkSVSphericalMapper::SetCircleBoundary(vtkPolyData *lines,
       //else if (dir == 4)
       //{
       //  double transPt[3];
-      //  double angle = currLength/lengths[i] * unitLength +  7.0 * M_PI/4.0;
+      //  double angle = currLength/lengths[i] * unitLength +  7.0 * SV_PI/4.0;
       //  transPt[0] = (2.0 * radius * std::cos(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[1] = (2.0 * radius * std::sin(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[2] = (-1.0 + std::pow(radius, 2.0))/(1.0 + std::pow(radius, 2.0));
@@ -1433,7 +1433,7 @@ int vtkSVSphericalMapper::SetCircleBoundary(vtkPolyData *lines,
       //else if (dir == 5)
       //{
       //  double transPt[3];
-      //  double angle = currLength/lengths[i] * unitLength +  M_PI/4.0;
+      //  double angle = currLength/lengths[i] * unitLength +  SV_PI/4.0;
       //  transPt[0] = (2.0 * radius * std::cos(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[1] = (2.0 * radius * std::sin(angle))/(1.0 + std::pow(radius, 2.0));
       //  transPt[2] = (-1.0 + std::pow(radius, 2.0))/(1.0 + std::pow(radius, 2.0));

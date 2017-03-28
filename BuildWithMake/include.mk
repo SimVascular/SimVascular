@@ -495,8 +495,15 @@ else
 endif
 
 ifeq ($(SV_USE_SHARED),1)
-  SHARED_LIBDIRS += ../Code/Source/Common/Utils \
+  SHARED_LIBDIRS += \
+          ../Code/Source/Common/Utils \
 	  ../Code/Source/Common/Repository \
+          ../Code/Source/vtkSV/Common \
+          ../Code/Source/vtkSV/Filters \
+          ../Code/Source/vtkSV/Modules/Boolean \
+          ../Code/Source/vtkSV/Modules/Geometry \
+          ../Code/Source/vtkSV/Modules/NURBS \
+          ../Code/Source/vtkSV/Modules/Parameterization \
 	  ../Code/Source/Model/SolidModel \
 	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Common/Geometry \
@@ -505,8 +512,15 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/Model/PolyDataSolidModel \
 	  ../Code/Source/Legacy/LevelSet
 else
-  LIBDIRS += ../Code/Source/Common/Utils \
+  LIBDIRS += \
+          ../Code/Source/Common/Utils \
 	  ../Code/Source/Common/Repository \
+          ../Code/Source/vtkSV/Common \
+          ../Code/Source/vtkSV/Filters \
+          ../Code/Source/vtkSV/Modules/Boolean \
+          ../Code/Source/vtkSV/Modules/Geometry \
+          ../Code/Source/vtkSV/Modules/NURBS \
+          ../Code/Source/vtkSV/Modules/Parameterization \
 	  ../Code/Source/Model/SolidModel \
 	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Common/Geometry \
@@ -712,6 +726,13 @@ ifneq ($(SV_USE_SHARED),1)
               $(SVLIBFLAG)_simvascular_post$(LIBLINKEXT) \
               $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT)
 endif
+
+SV_LIB_VTKSVCOMMON_NAME=_simvascular_vtksvcommon
+SV_LIB_VTKSVFILTERS_NAME=_simvascular_vtksvfilters
+SV_LIB_VTKSVGEOMETRY_NAME=_simvascular_vtksvgeometry
+SV_LIB_VTKSVBOOLEAN_NAME=_simvascular_vtksvboolean
+SV_LIB_VTKSVNURBS_NAME=_simvascular_vtksvnurbs
+SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
 
 #
 # ThirdParty software that must be built

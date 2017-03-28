@@ -56,3 +56,10 @@
 #define VTK_SV_LARGE_DOUBLE 1.0E+32
 #endif
 
+#ifndef SV_PI
+#define SV_PI 3.141592653589793324
+#endif
+
+#define svmaximum(A, B) ((A) > (B) ? (A) : (B))
+#define svminimum(A, B) ((A) < (B) ? (A) : (B))
+

@@ -42,8 +42,8 @@ set(HDRS vtkSVFindGeodesicPath.h   vtkSVFindSeparateRegions.h   vtkSVGetBoundary
   vtkSVGroupsClipper.h   vtkSVPolyBallLine.h   vtkSVHausdorffDistance.h
   vtkSVMapInterpolator.h   vtkSVPassDataArray.cxx vtkSVPullApartPolyData.h
   vtkSVPlacePointsOnS2.h vtkSVCheckRotation.h vtkSVGetSphereRegions.h
-  vtkSVFillHolesFilterWithIds.h vtkSVIntegrateFlowThroughSurface.cxx
-  vtkSVLoftPolyDataSolid.h vtkSVIntegrateAttributes.h vtkSVSurfaceVectors.cxx)
+  vtkSVFillHolesFilterWithIds.h vtkSVIntegrateFlowThroughSurface.h
+  vtkSVLoftPolyDataSolid.h vtkSVIntegrateAttributes.h vtkSVSurfaceVectors.h)
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------

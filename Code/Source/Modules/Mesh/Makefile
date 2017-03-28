@@ -63,6 +63,8 @@ HDRS	= \
     svMitkMeshMapper2D.h \
     svMitkMeshIO.h \
     svMeshLegacyIO.h \
+    svMeshAdaptor.h \
+    svMeshTetGenAdaptor.h \
     svMitkMeshObjectFactory.h
 
 CXXSRCS	= \
@@ -74,6 +76,7 @@ CXXSRCS	= \
     svMitkMeshMapper2D.cxx \
     svMitkMeshIO.cxx \
     svMeshLegacyIO.cxx \
+    svMeshTetGenAdaptor.cxx \
     svMitkMeshObjectFactory.cxx
 
 CXXSRCS += us_init.cxx
@@ -121,6 +124,9 @@ ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
 endif
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
+endif
+ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_tetgen_adaptor$(LIBLINKEXT)
 endif
 
 DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)

@@ -1,9 +1,12 @@
 # Hey emacs, this is a -*- makefile -*-
 
-# =========================================================================
+# Copyright (c) 2009-2011, Open Source Medical Software Corporation,
+#              University of California, San Diego.
 #
-# Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved.
+# All rights reserved.
+#
+# Portions copyright (c) 1999-2007 Stanford University,
+# Nathan Wilson, Ken Wang, Charles Taylor.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -23,39 +26,47 @@
 # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# =========================================================================
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) \
+	   $(LOCAL_INCDIR) \
+	   $(VTK_INCDIRS) \
+	   $(TCLTK_INCDIR) \
+           $(PYTHON_INCDIR)
 
-CXXFLAGS += -DSV_EXPORT_POLYDATASOLID_COMPILE
+MODULE_NAME = vtkSVBoolean
+MODULE_NAME_ALL_CAPS = VTKSVBOOLEAN
+CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
+MODULE_EXPORT_FILE_H = vtkSVBooleanModule.h
 
-ifeq ($(SV_USE_PYTHON),1)
-   CXXFLAGS += $(PYTHON_INCDIR)
+HDRS	= \
+  vtkSVLoopBooleanPolyDataFilter.h \
+  vtkSVLoopIntersectionPolyDataFilter.h \
+  vtkSVMultiplePolyDataIntersectionFilter.h
+
+CXXSRCS	= \
+  vtkSVLoopBooleanPolyDataFilter.cxx \
+  vtkSVLoopIntersectionPolyDataFilter.cxx \
+  vtkSVMultiplePolyDataIntersectionFilter.cxx
+
+VTKSV_DELAUNAY_TYPE=OLD
+
+ifeq ($(VTKSV_DELAUNAY_TYPE),OLD)
+  CXXSRCS += vtkDelaunay2D_60.cxx
+  HDRS += vtkDelaunay2D_60.h
 endif
 
-HDRS	= cvPolyDataSolid.h \
-          cv_polydatasolid_utils.h \
-          vtkGetBoundaryFaces.h
+DLLHDRS =
 
-CXXSRCS	= cvPolyDataSolid.cxx \
-          cv_polydatasolid_utils.cxx \
-          vtkGetBoundaryFaces.cxx
+DLLSRCS =
 
-DLLHDRS = cv_polydatasolid_init.h
-DLLSRCS = cv_polydatasolid_init.cxx
+DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-	  $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
-	  $(VMTK_LIBS)
+DLLLIBS += $(SVLIBFLAG)_simvascular_vtksvcommon$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_polydata_solid
+TARGET_LIB_NAME = simvascular_vtksvboolean
 
 include $(TOP)/targetlib.mk

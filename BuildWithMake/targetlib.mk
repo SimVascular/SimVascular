@@ -233,6 +233,33 @@ create_exports_h:
 	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
 	@echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
 
+create_exports_outname_h:
+	@echo "#ifndef $(MODULE_NAME_ALL_CAPS)_EXPORT_H" > $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#define $(MODULE_NAME_ALL_CAPS)_EXPORT_H" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#include \"SimVascular.h\""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#ifdef $(MODULE_NAME_ALL_CAPS)_STATIC_DEFINE"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#  define $(MODULE_NAME_ALL_CAPS)_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#  define $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#else"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#  ifndef $(MODULE_NAME_ALL_CAPS)_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#    ifdef $(MODULE_NAME)_EXPORTS"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "       /* We are building this library */"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#      define $(MODULE_NAME_ALL_CAPS)_EXPORT SV_DLL_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#    else"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "       /* We are using this library */"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#      define $(MODULE_NAME_ALL_CAPS)_EXPORT SV_DLL_IMPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#    endif"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#  endif"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#  ifndef $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#    define $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+	@echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H)
+
 create_plugin_export_h:
 	@echo  "// .NAME __$(PLUGIN_EXPORTS_NAME)_Export - manage Windows system differences" > $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
 	@echo  "// .SECTION Description" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
@@ -292,6 +319,7 @@ clean:
 	if [ -e us_init.cxx ];then /bin/rm -f us_init.cxx;fi
 	if [ -e $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h;fi
 	if [ -e $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h;fi
+	if [ -n "$(MODULE_EXPORT_FILE_H)" ];then if [ -e $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H) ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(MODULE_EXPORT_FILE_H);fi;fi
 	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done
 	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED2)" ];then for fn in $(TARGET_SHARED2:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi

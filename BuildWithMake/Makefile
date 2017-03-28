@@ -224,6 +224,7 @@ common-pre-build: mksedscript post-build
 	mkdir -p ../Code/Source/Include/Make
 	touch ../Code/Source/Include/Make/simvascular_options.h
 	touch ../Code/Source/Include/Make/simvascular_version.h
+	touch ../Code/Source/Include/Make/delaunay_options.h
 
 shared-pre-build: common-pre-build
 	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
@@ -231,6 +232,7 @@ shared-pre-build: common-pre-build
 	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module create_cppmicroservices_file
 	cd ../Code/Source/UI;$(MAKE) moc
+	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
 
 static-pre-build: common-pre-build
 	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
@@ -239,6 +241,7 @@ static-pre-build: common-pre-build
 	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
 	cd ../Code/Source/UI;$(MAKE) moc
+	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
 
 shared-build:
 	for i in ${SHARED_LIBDIRS}; do ( \
@@ -320,6 +323,7 @@ veryclean:
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Plugins/tclIndex
 	/bin/rm -f  ../Code/Source/Include/Make/simvascular_options.h
 	/bin/rm -f  ../Code/Source/Include/Make/simvascular_version.h
+	/bin/rm -f  ../Code/Source/Include/Make/delaunay_options.h
 	/bin/rm -fR ../Code/Source/Include/Make
 	/bin/rm -f  sedscript
 
