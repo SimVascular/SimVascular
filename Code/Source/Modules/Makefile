@@ -95,6 +95,8 @@ create_cppmicroservices_file:
 	  cd $$i; \
 	  $(MAKE) create_cppmicroservices_file) ; done
 
+create_exports_cv_h:
+
 clean:
 	for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \

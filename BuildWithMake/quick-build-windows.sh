@@ -36,4 +36,4 @@ for i in $EXTERNALS_TOP/tarfiles/windows.msvc-12.5.x64.*.tar.gz; do
 done
 popd
 
-###make
+make

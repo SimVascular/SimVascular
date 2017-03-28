@@ -92,6 +92,8 @@ create_plugin_export_h:
 	  cd $$i; \
 	  $(MAKE) create_plugin_export_h) ; done
 
+create_exports_cv_h:
+
 create_manifest_qrc:
 	@for i in ${SVQTGUIEXT_DIRS}; do ( \
 	  cd $$i; \
