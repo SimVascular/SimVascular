@@ -17,14 +17,14 @@
 #include <vtkThreshold.h>
 #include <vtkDataSetSurfaceFilter.h>
 
-vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, int numSamplingPts, unsigned int t, int noInterOut, double tol)
+vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, int numSamplingPts, int advancedLofting, unsigned int t, int noInterOut, double tol)
 {
     int groupNumber=segs.size();
     cvPolyData **srcs=new cvPolyData* [groupNumber];
     for(int i=0;i<groupNumber;i++)
     {
         svContourGroup* group=segs[i];
-        cvPolyData* cvpd=new cvPolyData(CreateLoftSurface(group,numSamplingPts,1,t));
+        cvPolyData* cvpd=new cvPolyData(CreateLoftSurface(group,numSamplingPts,advancedLofting,1,t));
         srcs[i]=cvpd;
     }
 
@@ -42,7 +42,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, int
     return dst->GetVtkPolyData();
 }
 
-svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], unsigned int t, int noInterOut, double tol)
+svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], int advancedLofting, unsigned int t, int noInterOut, double tol)
 {
     std::vector<svContourGroup*> segs;
     std::vector<std::string> segNames;
@@ -58,7 +58,7 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
         }
     }
 
-    vtkPolyData* solidvpd=CreatePolyData(segs,numSamplingPts,t,noInterOut,tol);
+    vtkPolyData* solidvpd=CreatePolyData(segs,numSamplingPts,advancedLofting,t,noInterOut,tol);
     if(solidvpd==NULL) return NULL;
 
     cvPolyData *src=new cvPolyData(solidvpd);
@@ -240,7 +240,7 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelE
     return mepddst;
 }
 
-vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts, int addCaps, unsigned int t,  svContourGroup::svLoftingParam* param)
+vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts, int advancedLofting, int addCaps, unsigned int t,  svContourGroup::svLoftingParam* param)
 {
 
     svContourGroup::svLoftingParam* usedParam= contourGroup->GetLoftingParam();
@@ -248,10 +248,10 @@ vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int n
 
     std::vector<svContour*> contourSet=contourGroup->GetValidContourSet(t);
 
-    return CreateLoftSurface(contourSet,numSamplingPts,usedParam,addCaps);
+    return CreateLoftSurface(contourSet,numSamplingPts,advancedLofting,usedParam,addCaps);
 }
 
-vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts, svContourGroup::svLoftingParam* param, int addCaps)
+vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts, int advancedLofting, svContourGroup::svLoftingParam* param, int addCaps)
 {
     int contourNumber=contourSet.size();
 
@@ -285,6 +285,7 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
 
         vtkpd->DeepCopy(contourSet[i]->CreateVtkPolyDataFromContour(false));
         cvPolyData* cvpd=new cvPolyData(vtkpd);
+        vtkpd->Delete();
         cvPolyData* cvpd2=sys_geom_sampleLoop(cvpd,param->numSuperPts);
         if(cvpd2==NULL)
         {
@@ -312,6 +313,10 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
             if(cvpd3==NULL)
             {
                 MITK_ERROR << "aligning error ";
+                // Clean up
+                for (int i=0; i<contourNumber; i++)
+                  delete superSampledContours[i];
+
                 return NULL;
             }
 
@@ -326,6 +331,9 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
         if(cvpd4==NULL)
         {
             MITK_ERROR << "sampling error ";
+            for (int j=0; j<i; j++)
+              delete sampledContours[j];
+            delete sampledContours;
             return NULL;
         }
         sampledContours[i]=cvpd4;
@@ -334,26 +342,76 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
     cvPolyData *dst;
     vtkPolyData* outpd;
 
-    if ( sys_geom_loft_solid(sampledContours, contourNumber,param->useLinearSampleAlongLength,param->useFFT,
-                             param->numOutPtsAlongLength,newNumSamplingPts,
-                             param->numPtsInLinearSampleAlongLength,param->numModes,param->splineType,param->bias,param->tension,param->continuity,
-                             &dst )
-         != SV_OK )
+    if (advancedLofting == 0)
     {
-        MITK_ERROR << "poly manipulation error ";
-        outpd=NULL;
+      if ( sys_geom_loft_solid(sampledContours, contourNumber,param->useLinearSampleAlongLength,param->useFFT,
+                               param->numOutPtsAlongLength,newNumSamplingPts,
+                               param->numPtsInLinearSampleAlongLength,param->numModes,param->splineType,param->bias,param->tension,param->continuity,
+                               &dst )
+           != SV_OK )
+      {
+          MITK_ERROR << "poly manipulation error ";
+          delete dst;
+          for (int j=0; j<contourNumber; j++)
+            delete sampledContours[j];
+          delete sampledContours;
+          outpd=NULL;
+      }
+      else
+      {
+
+          if(addCaps==1)
+              outpd=CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+          else
+              outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+      }
     }
     else
     {
+      int uDegree = 3;
+      int vDegree = 3;
+      double uSpacing = 1.0/param->numOutPtsAlongLength;
+      double vSpacing = 1.0/newNumSamplingPts;
+      char uKnotSpanType[11]       = "derivative";
+      char vKnotSpanType[8]        = "average";
+      char uParametricSpanType[12] = "centripetal";
+      char vParametricSpanType[6]  = "chord";
 
-        if(addCaps==1)
-            outpd=CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
-        else
-            outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+      if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,
+                                          uDegree, vDegree, uSpacing,
+                                          vSpacing, uKnotSpanType,
+                                          vKnotSpanType,
+                                          uParametricSpanType,
+                                          vParametricSpanType,
+                                          &dst )
+           != SV_OK )
+      {
+          MITK_ERROR << "poly manipulation error ";
+          delete dst;
+          for (int j=0; j<contourNumber; j++)
+            delete sampledContours[j];
+          delete sampledContours;
+          outpd=NULL;
+      }
+      else
+      {
+
+          if(addCaps==1)
+              outpd=CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+          else
+              outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+      }
     }
 
-    if(dst!=NULL) delete dst;
+    // Clean up
+    for (int i=0; i<contourNumber; i++)
+    {
+      delete superSampledContours[i];
+      delete sampledContours[i];
+    }
+    delete sampledContours;
 
+    if(dst!=NULL) delete dst;
 
     return outpd;
 

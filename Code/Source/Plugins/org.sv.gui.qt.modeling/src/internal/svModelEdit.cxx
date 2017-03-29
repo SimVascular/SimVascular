@@ -1475,7 +1475,8 @@ void svModelEdit::CreateModel()
     QString statusText="Model has been created.";
     if(m_ModelType=="PolyData"){
         int stats[2]={0};
-        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats);
+        int advancedLofting = 1;
+        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats,advancedLofting);
         if(newModelElement==NULL)
         {
             statusText="Failed to create PolyData model.";
