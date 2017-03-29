@@ -177,11 +177,13 @@ private:
 
     QString m_InternalPresolverPath;
     QString m_InternalFlowsolverPath;
+    QString m_InternalFlowsolverNoMPIPath;
     QString m_InternalPostsolverPath;
     QString m_InternalMPIExecPath;
 
     QString m_ExternalPresolverPath;
     QString m_ExternalFlowsolverPath;
+    QString m_ExternalFlowsolverNoMPIPath;
     bool m_UseMPI;
     QString m_MPIExecPath;
     bool m_UseCustom;
@@ -197,7 +199,7 @@ class svProcessHandler : public QObject
     Q_OBJECT
 
 public:
-    svProcessHandler(QProcess* process, QWidget* parent=NULL);
+    svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, QWidget* parent=NULL);
     virtual ~svProcessHandler();
 
     void Start();
@@ -214,7 +216,7 @@ private:
 
     QMessageBox* m_MessageBox;
 
-
+    mitk::DataNode::Pointer m_JobNode;
 };
 
 class svSolverProcessHandler : public QObject

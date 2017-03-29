@@ -58,11 +58,13 @@ svSimulationView::svSimulationView() :
 
     m_InternalPresolverPath="";
     m_InternalFlowsolverPath="";
+    m_InternalFlowsolverNoMPIPath="";
     m_InternalPostsolverPath="";
     m_InternalMPIExecPath="";
 
     m_ExternalPresolverPath="";
     m_ExternalFlowsolverPath="";
+    m_ExternalFlowsolverNoMPIPath="";
     m_UseMPI=true;
     m_UseCustom=false;
     m_SolverTemplatePath="";
@@ -234,34 +236,54 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
 
     //get path for the internal solvers
+    QString solverPath="/usr/local/sv/svsolver";
+    QStringList dirList=QDir(solverPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
+    if(dirList.size()!=0)
+        solverPath+="/"+dirList.back();
+
+    solverPath+="/bin";
+
     QString applicationPath=QCoreApplication::applicationDirPath();
+    QString svpreName="/svpre";
+    QString svsolverName="/svsolver";
+    QString svsolverNoMPIName="/svsolver-nompi";
+    QString svpostName="/svpost";
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-    QString filePath1=applicationPath+"/../svpre";
-    QString filePath2=applicationPath+"/svpre";
-    if(QFile(filePath1).exists())
-        m_InternalPresolverPath=filePath1;
-    else if(QFile(filePath2).exists())
-        m_InternalPresolverPath=filePath2;
+    QString filePath="";
+    if(QFile(filePath=solverPath+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=applicationPath+svpreName).exists())
+        m_InternalPresolverPath=filePath;
 
-    filePath1=applicationPath+"/../svsolver";
-    filePath2=applicationPath+"/svsolver";
-    if(QFile(filePath1).exists())
-        m_InternalFlowsolverPath=filePath1;
-    else if(QFile(filePath2).exists())
-        m_InternalFlowsolverPath=filePath2;
+    if(QFile(filePath=solverPath+svsolverName).exists())
+        m_InternalFlowsolverPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+svsolverName).exists())
+        m_InternalFlowsolverPath=filePath;
+    else if(QFile(filePath=applicationPath+svsolverName).exists())
+        m_InternalFlowsolverPath=filePath;
 
-    filePath1=applicationPath+"/../svpost";
-    filePath2=applicationPath+"/svpost";
-    if(QFile(filePath1).exists())
-        m_InternalPostsolverPath=filePath1;
-    else if(QFile(filePath2).exists())
-        m_InternalPostsolverPath=filePath2;
+    if(QFile(filePath=solverPath+svsolverNoMPIName).exists())
+        m_InternalFlowsolverNoMPIPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+svsolverNoMPIName).exists())
+        m_InternalFlowsolverNoMPIPath=filePath;
+    else if(QFile(filePath=applicationPath+svsolverNoMPIName).exists())
+        m_InternalFlowsolverNoMPIPath=filePath;
+
+    if(QFile(filePath=solverPath+svpostName).exists())
+        m_InternalPostsolverPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+svpostName).exists())
+        m_InternalPostsolverPath=filePath;
+    else if(QFile(filePath=applicationPath+svpostName).exists())
+        m_InternalPostsolverPath=filePath;
 #endif
 
 #if defined(Q_OS_WIN)
     m_InternalPresolverPath=GetRegistryValue("SVPRE_EXE");
     m_InternalFlowsolverPath=GetRegistryValue("SVSOLVER_MSMPI_EXE");
+    m_InternalFlowsolverNoMPIPath=GetRegistryValue("SVSOLVER_NOMPI_EXE");
     m_InternalPostsolverPath=GetRegistryValue("SVPOST_EXE");
 #endif
 
@@ -270,8 +292,12 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
 #endif
 
 #if defined(Q_OS_MAC)
-    QString filePath=applicationPath+"/../mpiexec";
-    if(QFile(filePath).exists())
+    QString mpiexecName="/mpiexec";
+    if(QFile(filePath=solverPath+mpiexecName).exists())
+        m_InternalMPIExecPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+mpiexecName).exists())
+        m_InternalMPIExecPath=filePath;
+    else if(QFile(filePath=applicationPath+mpiexecName).exists())
         m_InternalMPIExecPath=filePath;
 #endif
 
@@ -1389,7 +1415,12 @@ void svSimulationView::RunJob()
 
     QString flowsolverPath=m_ExternalFlowsolverPath;
     if(flowsolverPath=="")
-        flowsolverPath=m_InternalFlowsolverPath;
+    {
+        if(m_UseMPI)
+            flowsolverPath=m_InternalFlowsolverPath;
+        else
+            flowsolverPath=m_InternalFlowsolverNoMPIPath;
+    }
 
     if(flowsolverPath=="")
     {
@@ -1659,23 +1690,14 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
             QStringList arguments;
             arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
             presolverProcess->setArguments(arguments);
-            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_Parent);
+            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_JobNode,m_Parent);
             handler->Start();
         }
     }
 
-    if(updateJob)
-    {
-        m_MitkJob->SetSimJob(job);
-        m_MitkJob->SetMeshName(meshName);
-        if(!createFolder)
-            m_MitkJob->SetStatus("Input/Data files created");
-
-        ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
-        m_MitkJob->SetDataModified();
-    }
-
-    mitk::StatusBar::GetInstance()->DisplayText("Files have been created.");
+    m_MitkJob->SetSimJob(job);
+    m_MitkJob->SetMeshName(meshName);
+    m_MitkJob->SetDataModified();
 
     return true;
 }
@@ -2233,7 +2255,7 @@ void svSimulationView::ExportResults()
     postsolverProcess->setProgram(postsolverPath);
     postsolverProcess->setArguments(arguments);
 
-    svProcessHandler* handler=new svProcessHandler(postsolverProcess,m_Parent);
+    svProcessHandler* handler=new svProcessHandler(postsolverProcess,NULL,m_Parent);
     handler->Start();
 
     mitk::StatusBar::GetInstance()->DisplayText("Results exported.");
@@ -2366,8 +2388,9 @@ void svSimulationView::UpdateJobStatus()
 
 }
 
-svProcessHandler::svProcessHandler(QProcess* process, QWidget* parent)
+svProcessHandler::svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, QWidget* parent)
     : m_Process(process)
+    , m_JobNode(jobNode)
     , m_Parent(parent)
     , m_MessageBox(NULL)
 {
@@ -2420,6 +2443,16 @@ void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus e
         title="Finished";
         text="Data files have been created.                                                                                         ";
         icon=QMessageBox::Information;
+        if(m_JobNode.IsNotNull())
+        {
+            svMitkSimJob* mitkJob=dynamic_cast<svMitkSimJob*>(m_JobNode->GetData());
+            if(mitkJob)
+            {
+                mitkJob->SetStatus("Input/Data files created");
+                m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
+                mitk::StatusBar::GetInstance()->DisplayText("Data files have been created: restart, geombc, etc.");
+            }
+        }
     }
     else
     {
@@ -2433,13 +2466,13 @@ void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus e
     mb.setIcon(icon);
 
     if(m_Process)
-//        mb.setDetailedText(m_Process->readAll());
-    mb.setDetailedText(m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError());
+        mb.setDetailedText(m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError());
+
     mb.setDefaultButton(QMessageBox::Ok);
 
     mb.exec();
 
-    delete this;
+    deleteLater();
 }
 
 svSolverProcessHandler::svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
@@ -2527,14 +2560,15 @@ void svSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitSt
     mb.exec();
 
     svMitkSimJob* mitkJob=dynamic_cast<svMitkSimJob*>(m_JobNode->GetData());
-    mitkJob->SetStatus(status.toStdString());
+    if(mitkJob)
+        mitkJob->SetStatus(status.toStdString());
 
     m_JobNode->SetBoolProperty("running",false);
     m_JobNode->SetDoubleProperty("running progress", 0);
 
     mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
 
-    delete this;
+    deleteLater();
 }
 
 void svSolverProcessHandler::UpdateStatus()
