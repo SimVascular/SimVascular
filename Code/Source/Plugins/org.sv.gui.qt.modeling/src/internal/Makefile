@@ -59,6 +59,7 @@ HDRS	= \
     svSegSelectionWidget.h \
     svModelEdit.h \
     svFaceListDelegate.h \
+    svModelFaceInfoExportAction.h \
     svModelingPluginActivator.h
 
 CXXSRCS	= \
@@ -70,6 +71,7 @@ CXXSRCS	= \
     svSegSelectionWidget.cxx \
     svModelEdit.cxx \
     svFaceListDelegate.cxx \
+    svModelFaceInfoExportAction.cxx \
     svModelingPluginActivator.cxx
 
 UIFILES =  \

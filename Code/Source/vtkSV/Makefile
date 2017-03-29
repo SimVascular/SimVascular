@@ -42,74 +42,44 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIEXT_DIRS = org.sv.projectdatanodes/src/internal \
-                  org.sv.gui.qt.projectmanager/src/internal \
-                  org.sv.gui.qt.modeling/src/internal \
-                  org.sv.gui.qt.pathplanning/src/internal \
-                  org.sv.gui.qt.segmentation/src/internal \
-                  org.sv.gui.qt.meshing/src/internal \
-                  org.sv.gui.qt.simulation/src/internal \
-                  org.sv.gui.qt.application/src/internal
+VTKSV_DIRS = Common Filters Modules/Boolean Modules/Geometry \
+             Modules/NURBS Modules/Parameterization
 
-lib-complete: moc ui qrc lib
+lib-complete: create_exports_outname_h lib
 
-static-complete:  create_plugin_export_h create_manifest_qrc create_cached_qrc moc ui qrc static
+static-complete:  create_exports_outname_h static
 
-shared-complete:  create_plugin_export_h create_manifest_qrc create_cached_qrc moc ui qrc shared
+shared-complete: create_exports_outname_h shared
 
 lib:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
+	@for i in ${VTKSV_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE)) ; done
 
 static:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
+	@for i in ${VTKSV_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE)) ; done
 
 shared:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
+	@for i in ${VTKSV_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) shared) ; done
 
-moc:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
+create_exports_outname_h:
+	@for i in ${VTKSV_DIRS}; do ( \
 	  cd $$i; \
-	  $(MAKE) moc) ; done
-
-ui:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) ui) ; done
-
-qrc:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) qrc) ; done
-
-create_plugin_export_h:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) create_plugin_export_h) ; done
-
-create_exports_cv_h:
-
-create_manifest_qrc:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) create_manifest_qrc) ; done
-
-create_cached_qrc:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) create_cached_qrc) ; done
+	  $(MAKE) create_exports_outname_h) ; done
 
 clean:
-	for i in ${SVQTGUIEXT_DIRS}; do ( \
+	for i in ${VTKSV_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) clean ) ; done
 
 veryclean: clean
-	for i in ${SVQTGUIEXT_DIRS}; do ( \
+	for i in ${VTKSV_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) veryclean ) ; done
+
+
+

@@ -18,6 +18,8 @@
 #if !defined(EDASKEL_QT_TCL_NOTIFIER)
 #define EDASKEL_QT_TCL_NOTIFIER
 
+#include "SimVascular.h"
+
 #include <QSocketNotifier>
 #include <QTimer>
 #include <map>
