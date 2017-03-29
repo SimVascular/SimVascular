@@ -1699,19 +1699,6 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
     m_MitkJob->SetMeshName(meshName);
     m_MitkJob->SetDataModified();
 
-//    if(updateJob)
-//    {
-//        m_MitkJob->SetSimJob(job);
-//        m_MitkJob->SetMeshName(meshName);
-//        if(!createFolder)
-//            m_MitkJob->SetStatus("Input/Data files created");
-
-//        ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
-//        m_MitkJob->SetDataModified();
-//    }
-
-//    mitk::StatusBar::GetInstance()->DisplayText("Files have been created.");
-
     return true;
 }
 
@@ -2460,7 +2447,11 @@ void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus e
         {
             svMitkSimJob* mitkJob=dynamic_cast<svMitkSimJob*>(m_JobNode->GetData());
             if(mitkJob)
+            {
                 mitkJob->SetStatus("Input/Data files created");
+                m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
+                mitk::StatusBar::GetInstance()->DisplayText("Data files have been created: restart, geombc, etc.");
+            }
         }
     }
     else
