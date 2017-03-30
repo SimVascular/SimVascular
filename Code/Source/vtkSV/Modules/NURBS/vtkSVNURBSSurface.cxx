@@ -468,9 +468,6 @@ int vtkSVNURBSSurface::GetVMultiplicity(vtkIntArray *multiplicity, vtkDoubleArra
 // ----------------------
 int vtkSVNURBSSurface::GetMultiplicity(const int dim, vtkIntArray *multiplicity, vtkDoubleArray *singleKnots)
 {
-  fprintf(stdout,"WJAT TJT: %lld\n", this->UVKnotVectors[dim]->GetNumberOfTuples());
-  fprintf(stdout,"WJAT U: %lld\n", this->UKnotVector->GetNumberOfTuples());
-  fprintf(stdout,"WJAT V: %lld\n", this->VKnotVector->GetNumberOfTuples());
   vtkSVNURBSUtils::GetMultiplicity(this->UVKnotVectors[dim], multiplicity, singleKnots);
   return SV_OK;
 }

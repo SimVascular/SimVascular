@@ -1164,14 +1164,14 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
     }
     else
     {
-      int uDegree = 2;
-      int vDegree = 2;
+      int uDegree = 3;
+      int vDegree = 3;
       double uSpacing = 0.8;
       double vSpacing = 0.8;
-      char uKnotSpanType[11]       = "average";
+      char uKnotSpanType[11]       = "derivative";
       char vKnotSpanType[8]        = "average";
       char uParametricSpanType[12] = "centripetal";
-      char vParametricSpanType[6]  = "chord";
+      char vParametricSpanType[12] = "centripetal";
       vtkNew(vtkSVNURBSSurface, NURBSSurface);
 
       cvPolyData *dst;
@@ -1251,13 +1251,14 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
       for (int i=0; i<vMlen; i++)
         vMarr[i] = VMultArray->GetTuple1(i);
 
+      // Flipping order!
       if (surf->CreateBSplineSurface(Xarr, Yarr, Zarr,
                                      Xlen1, Xlen2,
-                                     uKarr, uKlen,
                                      vKarr, vKlen,
-                                     uMarr, uMlen,
+                                     uKarr, uKlen,
                                      vMarr, vMlen,
-                                     uDegree, vDegree) != SV_OK )
+                                     uMarr, uMlen,
+                                     vDegree, uDegree) != SV_OK )
       {
           MITK_ERROR << "poly manipulation error ";
           for (int j=0; j<contourNumber; j++)

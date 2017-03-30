@@ -1592,20 +1592,40 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
   }
 
   //Knot spans
+  fprintf(stdout,"U Knots son: ");
   TColStd_Array1OfReal uKCol(1,uKlen);
   for (int i=0;i<uKlen;i++)
+  {
+    fprintf(stdout,"%.4f ",uKnots[i]);
     uKCol.SetValue(i+1, uKnots[i]);
+  }
+  fprintf(stdout,"\n");
   TColStd_Array1OfReal vKCol(1,vKlen);
+  fprintf(stdout,"V Knots son: ");
   for (int i=0;i<vKlen;i++)
+  {
+    fprintf(stdout,"%.4f ",vKnots[i]);
     vKCol.SetValue(i+1, vKnots[i]);
+  }
+  fprintf(stdout,"\n");
 
   //Mult spans
+  fprintf(stdout,"U Mults son: ");
   TColStd_Array1OfInteger uMCol(1,uMlen);
   for (int i=0;i<uMlen;i++)
+  {
+    fprintf(stdout,"%.4f ",uMults[i]);
     uMCol.SetValue(i+1,(int) uMults[i]);
+  }
+  fprintf(stdout,"\n");
   TColStd_Array1OfInteger vMCol(1,vMlen);
+  fprintf(stdout,"V Mults son: ");
   for (int i=0;i<vMlen;i++)
+  {
+    fprintf(stdout,"%.4f ",vMults[i]);
     vMCol.SetValue(i+1,(int) vMults[i]);
+  }
+  fprintf(stdout,"\n");
 
   Standard_Real tol = 1.e-6;
   Handle(Geom_BSplineSurface) surface;

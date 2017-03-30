@@ -1103,6 +1103,8 @@ int vtkSVNURBSUtils::GetMultiplicity(vtkDoubleArray *array, vtkIntArray *multipl
 
   // Number of values
   int numVals = array->GetNumberOfTuples();
+  if (numVals == 0)
+    return SV_ERROR;
 
   // Loop through values
   for (int i=0; i<numVals-1; i++)
@@ -1122,14 +1124,8 @@ int vtkSVNURBSUtils::GetMultiplicity(vtkDoubleArray *array, vtkIntArray *multipl
   // Number of mult vals
   int numMults = singleValues->GetNumberOfTuples();
 
-  // Set the last spot of the array
-  if (array->GetTuple1(numVals-1) == singleValues->GetTuple1(numMults-1))
-  {
-  // If the last spot is equal to second to last, incr by one
-    multiplicity->SetTuple1(numMults-1, multiplicity->GetTuple1(numMults-1) + 1);
-  }
-  else
-  {
+  // Set the last spot of the array if needed
+  if (array->GetTuple1(numVals-1) != singleValues->GetTuple1(numMults-1)){
     // Add new mult because not equal
     multiplicity->InsertNextTuple1(1);
     singleValues->InsertNextTuple1(array->GetTuple1(numVals-1));
