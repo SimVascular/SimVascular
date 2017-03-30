@@ -25,12 +25,12 @@ public:
     void Update() override;
 
 private slots:
-  void SetNURBSLoftingUDegree();
-  void SetNURBSLoftingVDegree();
-  void SetNURBSLoftingUKnotSpanType();
-  void SetNURBSLoftingVKnotSpanType();
-  void SetNURBSLoftingUParametricSpanType();
-  void SetNURBSLoftingVParametricSpanType();
+  //void SetNURBSLoftingUDegree();
+  //void SetNURBSLoftingVDegree();
+  //void SetNURBSLoftingUKnotSpanType();
+  //void SetNURBSLoftingVKnotSpanType();
+  //void SetNURBSLoftingUParametricSpanType();
+  //void SetNURBSLoftingVParametricSpanType();
 
 private:
   berry::IPreferences::Pointer m_Preferences;
@@ -39,4 +39,4 @@ private:
 
 };
 
-#endif // SVSIMULATIONPREFERENCEPAGE_H
+#endif // SVMODELPREFERENCEPAGE_H

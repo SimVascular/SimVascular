@@ -13,6 +13,7 @@ set(INTERNAL_CPP_FILES
     svFaceListDelegate.cxx
     svModelFaceInfoExportAction.cxx
     svModelingPluginActivator.cxx
+    svModelPreferencePage.cxx
 )
 
 set(MOC_H_FILES
@@ -26,12 +27,14 @@ set(MOC_H_FILES
     src/internal/svFaceListDelegate.h
     src/internal/svModelFaceInfoExportAction.h
     src/internal/svModelingPluginActivator.h
+    src/internal/svModelPreferencePage.h
 )
 
 set(UI_FILES
     src/internal/svModelCreate.ui
     src/internal/svSegSelectionWidget.ui
     src/internal/svModelEdit.ui
+    src/internal/svModelPreferencePage.ui
 )
 
 set(CACHED_RESOURCE_FILES
