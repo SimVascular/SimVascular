@@ -1441,6 +1441,7 @@ void svModelEdit::CreateModel()
 {
     std::vector<std::string> segNames=m_SegSelectionWidget->GetUsedSegNames();
     int numSampling=m_SegSelectionWidget->GetNumSampling();
+    int advancedLofting = m_SegSelectionWidget->GetAdvancedLofting();
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSubset(isProjFolder);
@@ -1475,7 +1476,6 @@ void svModelEdit::CreateModel()
     QString statusText="Model has been created.";
     if(m_ModelType=="PolyData"){
         int stats[2]={0};
-        int advancedLofting = 1;
         newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats,advancedLofting);
         if(newModelElement==NULL)
         {
@@ -1489,7 +1489,7 @@ void svModelEdit::CreateModel()
 #ifdef SV_USE_OpenCASCADE_QT_GUI
     else if(m_ModelType=="OpenCASCADE")
     {
-        newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling);
+        newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling,advancedLofting);
         if(newModelElement==NULL)
         {
             statusText="Failed to create OpenCASCADE model.";

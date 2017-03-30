@@ -26,6 +26,7 @@ public:
     std::vector<std::string> GetUsedSegNames();
 
     int GetNumSampling();
+    int GetAdvancedLofting();
 
 public slots:
 
@@ -50,6 +51,8 @@ private:
     Ui::svSegSelectionWidget *ui;
 
     int m_NumSampling;
+
+    int m_AdvancedLofting;
 
     svModelElement* m_ModelElement;
 

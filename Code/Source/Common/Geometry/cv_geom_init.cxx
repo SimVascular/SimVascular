@@ -46,6 +46,7 @@
 #include "cv_misc_utils.h"
 #include "cv_vtk_utils.h"
 #include "cv_solid_init.h"
+#include "vtkSmartPointer.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -4178,9 +4179,12 @@ int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
+  vtkSmartPointer<vtkSVNURBSSurface> NURBSSurface =
+    vtkSmartPointer<vtkSVNURBSSurface>::New();
   if ( sys_geom_loft_solid_with_nurbs(srcs, numSrcs, uDegree, vDegree, uSpacing,
                                       vSpacing, uKnotSpanType, vKnotSpanType,
                                       uParametricSpanType, vParametricSpanType,
+                                      NURBSSurface,
 			                                (cvPolyData**)(&dst) ) != SV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     delete dst;

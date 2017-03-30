@@ -8,6 +8,7 @@ svSegSelectionWidget::svSegSelectionWidget(QWidget *parent)
     , ui(new Ui::svSegSelectionWidget)
     , m_TableModel(NULL)
     , m_NumSampling(0)
+    , m_AdvancedLofting(0)
     , m_ModelElement(NULL)
     , m_ModelType("")
 {
@@ -130,9 +131,16 @@ int svSegSelectionWidget::GetNumSampling()
     return m_NumSampling;
 }
 
+int svSegSelectionWidget::GetAdvancedLofting()
+{
+    return m_AdvancedLofting;
+}
+
+
 void svSegSelectionWidget::Confirm()
 {
     QString strNum=ui->lineEditNumSampling->text().trimmed();
+    m_AdvancedLofting = ui->advancedLoftingCheckBox->isChecked();
 
     if(strNum=="")
     {

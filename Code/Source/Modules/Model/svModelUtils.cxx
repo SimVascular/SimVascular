@@ -16,6 +16,8 @@
 #include <vtkImplicitDataSet.h>
 #include <vtkThreshold.h>
 #include <vtkDataSetSurfaceFilter.h>
+#include "vtkSVGlobals.h"
+#include "vtkSVNURBSSurface.h"
 
 vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, int numSamplingPts, int advancedLofting, unsigned int t, int noInterOut, double tol)
 {
@@ -368,14 +370,15 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
     }
     else
     {
-      int uDegree = 3;
-      int vDegree = 3;
+      int uDegree = 2;
+      int vDegree = 2;
       double uSpacing = 1.0/param->numOutPtsAlongLength;
       double vSpacing = 1.0/newNumSamplingPts;
-      char uKnotSpanType[11]       = "derivative";
+      char uKnotSpanType[11]       = "average";
       char vKnotSpanType[8]        = "average";
       char uParametricSpanType[12] = "centripetal";
       char vParametricSpanType[6]  = "chord";
+      vtkNew(vtkSVNURBSSurface, NURBSSurface);
 
       if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,
                                           uDegree, vDegree, uSpacing,
@@ -383,6 +386,7 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
                                           vKnotSpanType,
                                           uParametricSpanType,
                                           vParametricSpanType,
+                                          NURBSSurface,
                                           &dst )
            != SV_OK )
       {
@@ -1022,7 +1026,7 @@ double svModelUtils::CalculateVpdArea(vtkPolyData* vpd)
 
 #ifdef SV_USE_OpenCASCADE_QT_GUI
 
-cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps)
+cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int advancedLofting, int vecFlag, int addCaps)
 {
     int contourNumber=contourSet.size();
 
@@ -1049,6 +1053,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
 
         vtkpd->DeepCopy(contourSet[i]->CreateVtkPolyDataFromContour(false));
         cvPolyData* cvpd=new cvPolyData(vtkpd);
+        vtkpd->Delete();
         cvPolyData* cvpd2=sys_geom_sampleLoop(cvpd,numSuperPts);
 
         //        delete cvpd;
@@ -1099,6 +1104,9 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
         if(cvpd4==NULL)
         {
             MITK_ERROR << "sampling error ";
+            for (int j=0; j<i; j++)
+              delete sampledContours[j];
+            delete sampledContours;
             return NULL;
         }
         sampledContours[i]=cvpd4;
@@ -1118,6 +1126,12 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
         {
             //            delete curve;
             MITK_ERROR << "error in curve loop construction ";
+            for (int j=0; j<i; j++)
+              delete curveList[j];
+            delete curveList;
+            for (int j=0; j<contourNumber; j++)
+              delete sampledContours[j];
+            delete sampledContours;
             return NULL;
         }
 
@@ -1127,17 +1141,176 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
     cvOCCTSolidModel* surfFinal=NULL;
 
     cvOCCTSolidModel* surf=new cvOCCTSolidModel();
-    int continuity=2;
-    int partype=0;
-    int smoothing=0;
-    double w1=1.0,w2=1.0,w3=1.0;
-    if ( surf->MakeLoftedSurf(curveList,contourNumber,"dummy_name",continuity,partype,w1,w2,w3,smoothing) != SV_OK )
+    if(advancedLofting == 0)
     {
-        MITK_ERROR << "error in lofting surface. ";
-        return NULL;
+      int continuity=2;
+      int partype=0;
+      int smoothing=0;
+      double w1=1.0,w2=1.0,w3=1.0;
+      if ( surf->MakeLoftedSurf(curveList,contourNumber,"dummy_name",continuity,partype,w1,w2,w3,smoothing) != SV_OK )
+      {
+          MITK_ERROR << "error in lofting surface. ";
+          for (int j=0; j<contourNumber; j++)
+          {
+            delete curveList[j];
+            delete sampledContours[j];
+          }
+          delete curveList;
+          delete sampledContours;
+          delete surf;
+          return NULL;
+      }
+      //delete curveList;
     }
-    //delete curveList;
+    else
+    {
+      int uDegree = 2;
+      int vDegree = 2;
+      double uSpacing = 0.8;
+      double vSpacing = 0.8;
+      char uKnotSpanType[11]       = "average";
+      char vKnotSpanType[8]        = "average";
+      char uParametricSpanType[12] = "centripetal";
+      char vParametricSpanType[6]  = "chord";
+      vtkNew(vtkSVNURBSSurface, NURBSSurface);
+
+      cvPolyData *dst;
+      if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,
+                                          uDegree, vDegree, uSpacing,
+                                          vSpacing, uKnotSpanType,
+                                          vKnotSpanType,
+                                          uParametricSpanType,
+                                          vParametricSpanType,
+                                          NURBSSurface,
+                                          &dst )
+           != SV_OK )
+      {
+          MITK_ERROR << "poly manipulation error ";
+          for (int j=0; j<contourNumber; j++)
+          {
+            delete curveList[j];
+            delete sampledContours[j];
+          }
+          delete curveList;
+          delete sampledContours;
+          delete surf;
+          return NULL;
+      }
+
+      // Get multiplicities, then convert everything to double arrays
+      vtkNew(vtkDoubleArray, USingleKnotArray);
+      vtkNew(vtkIntArray,    UMultArray);
+      NURBSSurface->GetUMultiplicity(UMultArray, USingleKnotArray);
+      vtkNew(vtkDoubleArray, VSingleKnotArray);
+      vtkNew(vtkIntArray,    VMultArray);
+      NURBSSurface->GetVMultiplicity(VMultArray, VSingleKnotArray);
+      vtkSVControlGrid *controlPointGrid = NURBSSurface->GetControlPointGrid();
+
+      // Get all information needed by creation of bspline surface
+      int dims[3];
+      controlPointGrid->GetDimensions(dims);
+      int Xlen1 = dims[0];
+      int Xlen2 = dims[1];
+      double **Xarr = new double*[Xlen1];
+      double **Yarr = new double*[Xlen1];
+      double **Zarr = new double*[Xlen1];
+      for (int i=0; i<Xlen1; i++)
+      {
+        Xarr[i] = new double[Xlen2];
+        Yarr[i] = new double[Xlen2];
+        Zarr[i] = new double[Xlen2];
+        for (int j=0; j<Xlen2; j++)
+        {
+          double pt[3];
+          double w;
+          controlPointGrid->GetControlPoint(i, j, 0, pt, w);
+          Xarr[i][j] = pt[0];
+          Yarr[i][j] = pt[1];
+          Zarr[i][j] = pt[2];
+        }
+      }
+
+      // Get mult information as arrays
+      int uKlen = USingleKnotArray->GetNumberOfTuples();
+      double *uKarr = new double[uKlen];
+      for (int i=0; i<uKlen; i++)
+        uKarr[i] = USingleKnotArray->GetTuple1(i);
+
+      int vKlen = VSingleKnotArray->GetNumberOfTuples();
+      double *vKarr = new double[vKlen];
+      for (int i=0; i<vKlen; i++)
+        vKarr[i] = VSingleKnotArray->GetTuple1(i);
+
+      int uMlen = UMultArray->GetNumberOfTuples();
+      double *uMarr = new double[uMlen];
+      for (int i=0; i<uMlen; i++)
+        uMarr[i] = UMultArray->GetTuple1(i);
+
+      int vMlen = VMultArray->GetNumberOfTuples();
+      double *vMarr = new double[vMlen];
+      for (int i=0; i<vMlen; i++)
+        vMarr[i] = VMultArray->GetTuple1(i);
+
+      if (surf->CreateBSplineSurface(Xarr, Yarr, Zarr,
+                                     Xlen1, Xlen2,
+                                     uKarr, uKlen,
+                                     vKarr, vKlen,
+                                     uMarr, uMlen,
+                                     vMarr, vMlen,
+                                     uDegree, vDegree) != SV_OK )
+      {
+          MITK_ERROR << "poly manipulation error ";
+          for (int j=0; j<contourNumber; j++)
+          {
+            delete curveList[j];
+            delete sampledContours[j];
+          }
+          delete curveList;
+          delete sampledContours;
+          delete surf;
+          //Clean up
+          for (int i=0;i<Xlen1;i++)
+          {
+            delete [] Xarr[i];
+            delete [] Yarr[i];
+            delete [] Zarr[i];
+          }
+          delete Xarr;
+          delete Yarr;
+          delete Zarr;
+
+          delete [] uKarr;
+          delete [] vKarr;
+          delete [] uMarr;
+          delete [] vMarr;
+          return NULL;
+      }
+      //Clean up
+      for (int i=0;i<Xlen1;i++)
+      {
+        delete [] Xarr[i];
+        delete [] Yarr[i];
+        delete [] Zarr[i];
+      }
+      delete Xarr;
+      delete Yarr;
+      delete Zarr;
+
+      delete [] uKarr;
+      delete [] vKarr;
+      delete [] uMarr;
+      delete [] vMarr;
+
+    }
     surfFinal=surf;
+
+    for (int j=0; j<contourNumber; j++)
+    {
+      delete curveList[j];
+      delete sampledContours[j];
+    }
+    delete curveList;
+    delete sampledContours;
 
     if(addCaps)
     {
@@ -1145,6 +1318,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
         if ( surfCapped->CapSurfToSolid(surf) != SV_OK )
         {
             MITK_ERROR << "error in cap / bound operation ";
+            delete surf;
             return NULL;
         }
         //delete surf
@@ -1156,6 +1330,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
     if(surfFinal->GetFaceIds( &numFaces, &faces) != SV_OK )
     {
         MITK_ERROR << "GetFaceIds: error on object";
+        delete surf;
         return NULL;
     }
 
@@ -1169,7 +1344,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
     return surfFinal;
 }
 
-svModelElementOCCT* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, double maxDist, unsigned int t)
+svModelElementOCCT* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts,int advancedLofting, double maxDist, unsigned int t)
 {
     std::vector<cvOCCTSolidModel*> loftedSolids;
     std::vector<std::string> segNames;
@@ -1184,7 +1359,7 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataN
             std::string groupName=segNode->GetName();
             segNames.push_back(groupName);
 
-            cvOCCTSolidModel* solid=CreateLoftSurfaceOCCT(contourSet,groupName,numSamplingPts,0,1);
+            cvOCCTSolidModel* solid=CreateLoftSurfaceOCCT(contourSet,groupName,numSamplingPts,advancedLofting,0,1);
             loftedSolids.push_back(solid);
         }
     }
@@ -1408,6 +1583,7 @@ cvParasolidSolidModel* svModelUtils::CreateLoftSurfaceParasolid(std::vector<svCo
 
         vtkpd->DeepCopy(contourSet[i]->CreateVtkPolyDataFromContour(false));
         cvPolyData* cvpd=new cvPolyData(vtkpd);
+        vtkpd->Delete();
         cvPolyData* cvpd2=sys_geom_sampleLoop(cvpd,numSuperPts);
 
         //        delete cvpd;

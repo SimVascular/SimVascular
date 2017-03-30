@@ -38,6 +38,7 @@
 #include "tcl.h"
 
 #include "cvPolyData.h"
+#include "vtkSVNURBSSurface.h"
 
 
 SV_EXPORT_SYSGEOM cvPolyData *sys_geom_DeepCopy( cvPolyData *src );
@@ -125,7 +126,7 @@ SV_EXPORT_SYSGEOM int sys_geom_loft_solid(cvPolyData **srcs,int numSrcs,int useL
 SV_EXPORT_SYSGEOM int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree, int vDegree,
                                                      double uSpacing, double vSpacing, char *uKnotSpanType,
                                                      char *vKnotSpanType, char *uParametricSpanType,
-                                                     char *vParametricSpanType, cvPolyData **dst);
+                                                     char *vParametricSpanType, vtkSVNURBSSurface *surface, cvPolyData **dst);
 
 SV_EXPORT_SYSGEOM int sys_geom_2DWindingNum( cvPolyData *pgn );
 
