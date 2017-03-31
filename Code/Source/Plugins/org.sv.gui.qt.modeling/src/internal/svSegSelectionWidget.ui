@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>483</width>
-    <height>649</height>
+    <height>711</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -53,7 +53,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Choose Segmentions for Model Creation:</string>
+         <string>Choose Segmentations for Model Creation:</string>
         </property>
        </widget>
       </item>
@@ -99,7 +99,30 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEditNumSampling"/>
+       <widget class="QLineEdit" name="lineEditNumSampling">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_4" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="advancedLoftingCheckBox">
+        <property name="text">
+         <string>Advanced Lofting</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -134,6 +157,10 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tableView</tabstop>
+  <tabstop>lineEditNumSampling</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

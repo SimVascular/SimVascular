@@ -14,6 +14,13 @@
       <contextMenuAction nodeDescriptorName="svModel" label="Extract Paths" icon="" class="svModelExtractPathsAction" />
       <contextMenuAction nodeDescriptorName="svModel" label="Export Solid Model" icon="" class="svModelLegacySaveAction" />
       <contextMenuAction nodeDescriptorName="svModel" label="Export Cap Info" icon="" class="svModelFaceInfoExportAction" />
+    </extension>
+
+  <extension point="org.blueberry.ui.preferencePages">
+    <page id="org.sv.gui.qt.ModelPreferencePage" name="SimVascular Model" class="svModelPreferencePage">
+      <keywordreference id="org.sv.gui.qt.ModelPreferencePageKeywords"></keywordreference>
+    </page>
   </extension>
+
 
 </plugin>

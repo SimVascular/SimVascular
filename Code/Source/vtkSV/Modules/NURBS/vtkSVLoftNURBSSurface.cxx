@@ -42,6 +42,7 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSUtils.h"
+#include "vtkSVMathUtils.h"
 #include "vtkTrivialProducer.h"
 
 #include <string>
@@ -246,7 +247,12 @@ int vtkSVLoftNURBSSurface::RequestData(
     }
 
   // TODO: Need to make sure knot span and parameteric span types are set
-  this->LoftNURBS(inputs,numInputs,output);
+  if (this->LoftNURBS(inputs,numInputs,output) != SV_OK)
+  {
+    vtkErrorMacro("Could not loft surface");
+    delete [] inputs;
+    return SV_ERROR;
+  }
 
   delete [] inputs;
   return SV_OK;
@@ -419,6 +425,18 @@ int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
     }
   }
 
+  // Check that the number of inputs enough for degree
+  if (p > nUCon)
+  {
+    vtkErrorMacro("Need to either decrease degree given or number of inputs in U direction");
+    return SV_ERROR;
+  }
+  if (q > nVCon)
+  {
+    vtkErrorMacro("Need to either decrease degree given or number of inputs in V direction");
+    return SV_ERROR;
+  }
+
   // Set the temporary control points
   vtkNew(vtkPoints, tmpPoints);
   tmpPoints->SetNumberOfPoints(nUCon);
@@ -560,15 +578,10 @@ int vtkSVLoftNURBSSurface::GetDefaultDerivatives(vtkStructuredGrid *input, const
 
     // From point ids, compute vectors at ends of data
     double D0[3], DN[3];
-    for (int j=0; j<3; j++)
-    {
-      D0[j] = pt1[j] - pt0[j];
-      DN[j] = ptnm1[j] - ptnm2[j];
-    }
+    vtkMath::Subtract(pt1, pt0, D0);
+    vtkMath::Subtract(ptnm1, ptnm2, DN);
 
-    // Normalize and set tuples
-    vtkMath::Normalize(D0);
-    vtkMath::Normalize(DN);
+    // Set tuples
     D0out->SetTuple(i, D0);
     DNout->SetTuple(i, DN);
   }

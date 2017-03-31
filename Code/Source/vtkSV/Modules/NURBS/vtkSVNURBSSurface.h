@@ -78,21 +78,41 @@ public:
   vtkGetMacro(NumberOfVKnotPoints, int);
   vtkSetMacro(NumberOfVKnotPoints, int);
   //@}
+  //
+  //@{
+  /// \brief Get and set the degree
+  vtkGetMacro(UDegree, int);
+  vtkSetMacro(UDegree, int);
+  vtkGetMacro(VDegree, int);
+  vtkSetMacro(VDegree, int);
+  //@}
 
   //@{
   // / \brief Set the control point grid
   vtkGetObjectMacro(ControlPointGrid, vtkSVControlGrid);
+  vtkSetObjectMacro(ControlPointGrid, vtkSVControlGrid);
   //@}
 
   //@{
   // / \brief Get and set the knot vector object
   vtkGetObjectMacro(UKnotVector, vtkDoubleArray);
+  vtkSetObjectMacro(UKnotVector, vtkDoubleArray);
   vtkGetObjectMacro(VKnotVector, vtkDoubleArray);
+  vtkSetObjectMacro(VKnotVector, vtkDoubleArray);
+  //@}
+
+  //@{
+  // / \brief Get and set the weights
+  vtkGetObjectMacro(UWeights, vtkDoubleArray);
+  vtkSetObjectMacro(UWeights, vtkDoubleArray);
+  vtkGetObjectMacro(VWeights, vtkDoubleArray);
+  vtkSetObjectMacro(VWeights, vtkDoubleArray);
   //@}
 
   //@{
   // / \brief Get the PolyData Representation
   vtkGetObjectMacro(SurfaceRepresentation, vtkPolyData);
+  vtkSetObjectMacro(SurfaceRepresentation, vtkPolyData);
   //@}
 
   // Initialize
@@ -106,7 +126,6 @@ public:
   int GeneratePolyDataRepresentation(const double uSpacing, const double vSpacing);
 
   //Functions to set control points/knots/etc.
-  void SetControlPointGrid(vtkSVControlGrid *controlPoints) {} /**< \brief Unimplemented */
   void SetControlPoints(vtkStructuredGrid *points2d);
   void SetKnotVector(vtkDoubleArray *knotVector, const int dim);
 
@@ -119,7 +138,7 @@ public:
   int SetKnot(const int index, const int dim, const double newKnot) {return 0;} /**< \brief Unimplemented */
   int SetKnots(vtkIntArray *indices, const int dim, vtkDoubleArray *newKnots) {return 0;} /**< \brief Unimplemented */
   int GetKnot(const int index, const int dim, double &knotVal) {return 0;} /**< \brief Unimplemented */
-  int GetKNots(const int indices, const int dim, vtkDoubleArray *knotVals) {return 0;} /**< \brief Unimplemented */
+  int GetKnots(const int indices, const int dim, vtkDoubleArray *knotVals) {return 0;} /**< \brief Unimplemented */
 
   int SetControlPoint(const int index, const int dim, const double coordinate[3], const double weight) {return 0;} /**< \brief Unimplemented */
   int SetControlPoints(vtkIntArray *indices, const int dim, vtkPoints *coordinates, vtkDoubleArray *weights); /**< \brief Unimplemented */
@@ -134,7 +153,9 @@ public:
   int MakePeriodic(const int continuity, const int dim) {return 0;} /**< \brief Unimplemented */
 
   /** \brief get the knot vector multiplicity. */
-  int GetMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots) {return 0;} /**< \brief Unimplemented */
+  int GetUMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots);
+  int GetVMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots);
+  int GetMultiplicity(const int dim, vtkIntArray *multiplicity, vtkDoubleArray *singleKnots);
 
   /** \brief Get structured grid connectivity.
    *  \param connectivity empty cell array to be filled with a structured grid connectivity. */
@@ -144,6 +165,8 @@ public:
   // Retrieve an instance of this class from an information object.
   static vtkSVNURBSSurface* GetData(vtkInformation* info);
   static vtkSVNURBSSurface* GetData(vtkInformationVector* v, int i=0);
+
+  virtual void DeepCopy(vtkSVNURBSSurface *src);
 
 protected:
   vtkSVNURBSSurface();

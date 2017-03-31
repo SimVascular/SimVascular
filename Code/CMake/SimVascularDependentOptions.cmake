@@ -275,5 +275,15 @@ if(SV_USE_QT_GUI)
 
   set(SV_USE_PYTHON "ON" CACHE BOOL "Force ON" FORCE)
   set(SV_USE_PYTHON_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+
+  if(SV_USE_OpenCASCADE)
+    set(SV_USE_OpenCASCADE_QT_GUI "ON" CACHE BOOL "Force ON" FORCE)
+  endif()
+  if(SV_USE_PARASOLID)
+    set(SV_USE_PARASOLID_QT_GUI "ON" CACHE BOOL "Force ON" FORCE)
+  endif()
+  if(SV_USE_MESHSIM)
+    set(SV_USE_MESHSIM_QT_GUI "ON" CACHE BOOL "Force ON" FORCE)
+  endif()
 endif()
 #-----------------------------------------------------------------------------

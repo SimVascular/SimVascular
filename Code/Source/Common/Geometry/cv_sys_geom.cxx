@@ -79,6 +79,7 @@
 #include "vtkSVLoopIntersectionPolyDataFilter.h"
 #include "vtkSVLoftNURBSSurface.h"
 #include "vtkSVMultiplePolyDataIntersectionFilter.h"
+#include "vtkSVNURBSSurface.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -2400,8 +2401,9 @@ int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongL
 
 int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
                                    int vDegree, double uSpacing, double vSpacing,
-                                   char *uKnotSpanType, char *vKnotSpanType,
-                                   char *uParametricSpanType, char *vParametricSpanType,
+                                   const char *uKnotSpanType, const char *vKnotSpanType,
+                                   const char *uParametricSpanType, const char *vParametricSpanType,
+                                   vtkSVNURBSSurface *surface,
                                    cvPolyData **dst )
 {
   cvPolyData *result = NULL;
@@ -2432,7 +2434,12 @@ int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
   lofter->SetVParametricSpanType(vParametricSpanType);
   try {
     lofter->Update();
+    if (lofter->GetOutput() == NULL)
+      return SV_ERROR;
+    if (lofter->GetOutput()->GetNumberOfPoints() == 0)
+      return SV_ERROR;
 
+    surface->DeepCopy(lofter->GetSurface());
 
     // The NURBS is a vtkPolyDataAlgorithm and thus, returns a PolyData
     // representation. To get the NURBS surface use GetSurface()

@@ -127,11 +127,15 @@ option(SV_USE_SOLVERIO "Use SolverIO" OFF)
 #-----------------------------------------------------------------------------
 # Commercial Software Options: Solid Models - Parasolid
 option(SV_USE_PARASOLID "Parasolid" OFF)
+option(SV_USE_PARASOLID_QT_GUI "Parasolid" OFF)
+mark_as_advanced(SV_USE_PARASOLID_QT_GUI)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # MeshSim
 option(SV_USE_MESHSIM "Use MeshSim commercial libraries.  Requires licenese" OFF)
+option(SV_USE_MESHSIM_QT_GUI "Use MeshSim commercial libraries.  Requires licenese" OFF)
+mark_as_advanced(SV_USE_MESHSIM_QT_GUI)
 
 option(SV_USE_MESHSIM_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
 #-----------------------------------------------------------------------------

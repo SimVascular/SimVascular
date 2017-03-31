@@ -1,6 +1,9 @@
 #include "svModelEdit.h"
 #include "ui_svModelEdit.h"
 
+#include <berryIPreferencesService.h>
+#include <berryPlatform.h>
+
 #include "svModelUtils.h"
 #include "svFaceListDelegate.h"
 #include "svPath.h"
@@ -1472,13 +1475,33 @@ void svModelEdit::CreateModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
+    // Set up lofting parameters
+    svModelElement::svNURBSLoftParam *nurbsParam = new
+      svModelElement::svNURBSLoftParam();
+    nurbsParam->advancedLofting = m_SegSelectionWidget->GetAdvancedLofting();
+
+    // Get the lofting preferences!
+    berry::IPreferencesService *prefService = berry::Platform::GetPreferencesService();
+    Q_ASSERT(prefService);
+    berry::IPreferences::Pointer prefs = prefService->GetSystemPreferences()->Node("/org.sv.views.modeling");
+
+    // Fill in rest of NURBS params with preferences
+    nurbsParam->uDegree = prefs->Get("NURBS Lofting U Degree", "2").toInt();
+    nurbsParam->vDegree = prefs->Get("NURBS Lofting V Degree", "2").toInt();
+    nurbsParam->uKnotSpanType = prefs->Get("NURBS Lofting U Knot Span Type", "derivative").trimmed().toStdString();
+    nurbsParam->vKnotSpanType = prefs->Get("NURBS Lofting V Knot Span Type", "average").trimmed().toStdString();
+    nurbsParam->uParametricSpanType = prefs->Get("NURBS Lofting U Parametric Span Type", "centripetal").trimmed().toStdString();
+    nurbsParam->vParametricSpanType = prefs->Get("NURBS Lofting V Parametric Span Type", "chord").trimmed().toStdString();
+
+    int created = 1;
     QString statusText="Model has been created.";
     if(m_ModelType=="PolyData"){
         int stats[2]={0};
-        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats);
+        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats,nurbsParam);
         if(newModelElement==NULL)
         {
             statusText="Failed to create PolyData model.";
+            created = 0;
         }
         else
         {
@@ -1488,10 +1511,11 @@ void svModelEdit::CreateModel()
 #ifdef SV_USE_OpenCASCADE_QT_GUI
     else if(m_ModelType=="OpenCASCADE")
     {
-        newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling);
+        newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling,nurbsParam);
         if(newModelElement==NULL)
         {
             statusText="Failed to create OpenCASCADE model.";
+            created = 0;
         }
     }
 #endif
@@ -1502,13 +1526,19 @@ void svModelEdit::CreateModel()
         if(newModelElement==NULL)
         {
             statusText="Failed to create Parasolid model.";
+            created = 0;
         }
     }
 #endif
-
+    delete nurbsParam;
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress(2);
     mitk::StatusBar::GetInstance()->DisplayText(statusText.toStdString().c_str());
+    if (!created)
+    {
+      QMessageBox::warning(m_Parent,"Warning","Error creating model.");
+      return;
+    }
 
     if(newModelElement!=NULL)
     {
@@ -1602,6 +1632,8 @@ void svModelEdit::BlendModel()
         param->targetdecimation=ui->dsbDecimation->value();
 
         newModelElement=svModelUtils::CreateModelElementPolyDataByBlend(mepd, blendRadii, param);
+
+        delete param;
     }
 #ifdef SV_USE_OpenCASCADE_QT_GUI
     else if(m_ModelType=="OpenCASCADE")

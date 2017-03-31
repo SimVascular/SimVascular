@@ -102,6 +102,29 @@ vtkSVNURBSSurface::~vtkSVNURBSSurface()
 }
 
 // ----------------------
+// DeepCopy
+// ----------------------
+void vtkSVNURBSSurface::DeepCopy(vtkSVNURBSSurface *src)
+{
+  this->Superclass::DeepCopy(src);
+
+  this->SetNumberOfUControlPoints(src->GetNumberOfUControlPoints());
+  this->SetNumberOfVControlPoints(src->GetNumberOfVControlPoints());
+  this->SetNumberOfUKnotPoints(src->GetNumberOfUKnotPoints());
+  this->SetNumberOfVKnotPoints(src->GetNumberOfVKnotPoints());
+  this->SetUDegree(src->GetUDegree());
+  this->SetVDegree(src->GetVDegree());
+
+  this->ControlPointGrid->DeepCopy(src->GetControlPointGrid());
+  this->UKnotVector->DeepCopy(src->GetUKnotVector());
+  this->VKnotVector->DeepCopy(src->GetVKnotVector());
+  this->UWeights->DeepCopy(src->GetUWeights());
+  this->VWeights->DeepCopy(src->GetVWeights());
+
+  this->SurfaceRepresentation->DeepCopy(src->GetSurfaceRepresentation());
+}
+
+// ----------------------
 // PrintSelf
 // ----------------------
 void vtkSVNURBSSurface::PrintSelf(ostream& os, vtkIndent indent)
@@ -419,6 +442,33 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
   this->SurfaceRepresentation->DeepCopy(cleaner->GetOutput());
   this->SurfaceRepresentation->BuildLinks();
 
+  return SV_OK;
+}
+
+// ----------------------
+// GetUMultiplicity
+// ----------------------
+int vtkSVNURBSSurface::GetUMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots)
+{
+  this->GetMultiplicity(0, multiplicity, singleKnots);
+  return SV_OK;
+}
+
+// ----------------------
+// GetVMultiplicity
+// ----------------------
+int vtkSVNURBSSurface::GetVMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots)
+{
+  this->GetMultiplicity(1, multiplicity, singleKnots);
+  return SV_OK;
+}
+
+// ----------------------
+// GetMultiplicity
+// ----------------------
+int vtkSVNURBSSurface::GetMultiplicity(const int dim, vtkIntArray *multiplicity, vtkDoubleArray *singleKnots)
+{
+  vtkSVNURBSUtils::GetMultiplicity(this->UVKnotVectors[dim], multiplicity, singleKnots);
   return SV_OK;
 }
 

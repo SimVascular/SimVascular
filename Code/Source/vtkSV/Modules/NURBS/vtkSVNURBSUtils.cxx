@@ -1092,6 +1092,49 @@ int vtkSVNURBSUtils::FindSpan(int p, double u, vtkDoubleArray *knots, int &span)
 }
 
 // ----------------------
+// FindSpan
+// ----------------------
+int vtkSVNURBSUtils::GetMultiplicity(vtkDoubleArray *array, vtkIntArray *multiplicity,
+                                     vtkDoubleArray *singleValues)
+{
+  // Reset the return arrays
+  multiplicity->Reset();
+  singleValues->Reset();
+
+  // Number of values
+  int numVals = array->GetNumberOfTuples();
+  if (numVals == 0)
+    return SV_ERROR;
+
+  // Loop through values
+  for (int i=0; i<numVals-1; i++)
+  {
+    int count = 1;
+    while(array->GetTuple1(i+1) == array->GetTuple1(i) && i<numVals)
+    {
+      count++;
+      i++;
+    }
+
+    // Update mults
+    multiplicity->InsertNextTuple1(count);
+    singleValues->InsertNextTuple1(array->GetTuple1(i));
+  }
+
+  // Number of mult vals
+  int numMults = singleValues->GetNumberOfTuples();
+
+  // Set the last spot of the array if needed
+  if (array->GetTuple1(numVals-1) != singleValues->GetTuple1(numMults-1)){
+    // Add new mult because not equal
+    multiplicity->InsertNextTuple1(1);
+    singleValues->InsertNextTuple1(array->GetTuple1(numVals-1));
+  }
+
+  return SV_OK;
+}
+
+// ----------------------
 // MatrixPointsMultiply
 // ----------------------
 int vtkSVNURBSUtils::MatrixPointsMultiply(vtkTypedArray<double>* mat, vtkPoints *pointVec, vtkPoints *output)

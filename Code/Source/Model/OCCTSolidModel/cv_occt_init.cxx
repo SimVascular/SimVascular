@@ -247,6 +247,21 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
     uKarr,uKlen,vKarr,vKlen,uMarr,uMlen,vMarr,vMlen,p,q) != SV_OK)
   {
     //Set special python thingy
+    //Clean up
+    for (int i=0;i<Xlen1;i++)
+    {
+      delete [] Xarr[i];
+      delete [] Yarr[i];
+      delete [] Zarr[i];
+    }
+    delete [] Xarr;
+    delete [] Yarr;
+    delete [] Zarr;
+
+    delete [] uKarr;
+    delete [] vKarr;
+    delete [] uMarr;
+    delete [] vMarr;
     fprintf(stderr,"Conversion to BSpline surface didn't work\n");
     return NULL;
   }

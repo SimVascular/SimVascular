@@ -120,6 +120,7 @@ public:
   static int BasisEvaluationVec(vtkDoubleArray *knots, int p, int kEval, vtkDoubleArray *uEvals,
                              vtkTypedArray<double> *Nus);
   static int FindSpan(int p, double u, vtkDoubleArray *knots, int &span);
+  static int GetMultiplicity(vtkDoubleArray *array, vtkIntArray *multiplicity, vtkDoubleArray *singleValues);
 
   //Conversion functions
   static int PolyDatasToStructuredGrid(vtkPolyData **inputs, const int numInputs, vtkStructuredGrid *points);
