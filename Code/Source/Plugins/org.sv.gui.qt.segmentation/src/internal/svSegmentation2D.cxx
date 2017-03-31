@@ -1174,7 +1174,7 @@ void svSegmentation2D::LoftContourGroup()
 
         m_ContourGroup->RemoveInvalidContours(timeStep);
         if(m_ContourGroup->GetSize()>1)
-            m_LoftSurface->SetVtkPolyData(svModelUtils::CreateLoftSurface(m_ContourGroup,0,0,timeStep),timeStep);
+            m_LoftSurface->SetVtkPolyData(svModelUtils::CreateLoftSurface(m_ContourGroup,0,NULL,0,timeStep),timeStep);
 
     }
     else

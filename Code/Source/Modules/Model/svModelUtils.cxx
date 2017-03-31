@@ -9,6 +9,8 @@
 #include "cvPolyData.h"
 #include "cv_polydatasolid_utils.h"
 
+#include "mitkSurface.h"
+
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkPlaneSource.h>
@@ -19,13 +21,14 @@
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSSurface.h"
 
-vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t, int noInterOut, double tol)
+vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t, int noInterOut, double tol)
 {
-    int groupNumber=segs.size();
-    cvPolyData **srcs=new cvPolyData* [groupNumber];
+    int groupNumber=groups.size();
+    int vtpNumber=vtps.size();
+    cvPolyData **srcs=new cvPolyData* [groupNumber+vtpNumber];
     for(int i=0;i<groupNumber;i++)
     {
-        svContourGroup* group=segs[i];
+        svContourGroup* group=groups[i];
         cvPolyData* cvpd=new cvPolyData(CreateLoftSurface(group,numSamplingPts,nurbsParam,1,t));
         if (cvpd == NULL)
         {
@@ -37,23 +40,52 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, int
         srcs[i]=cvpd;
     }
 
+    for(int i=0;i<vtpNumber;i++)
+    {
+        if(vtps[i]==NULL)
+        {
+            for(int j=0;j<i+groupNumber-1;j++)
+                delete srcs[j];
+            delete [] srcs;
+            return NULL;
+        }
+        vtkPolyData* newvtp=vtkPolyData::New();
+        newvtp->DeepCopy(vtps[i]);
+
+        if(!newvtp->GetCellData()->HasArray("CapID"))
+        {
+            vtkIntArray* capArray=vtkIntArray::New();
+            capArray->SetName("CapID");
+            for(int i=0;i<newvtp->GetNumberOfCells();i++)
+                capArray->InsertNextValue(-1);
+
+            newvtp->GetCellData()->AddArray(capArray);
+        }
+
+        cvPolyData* cvpd=new cvPolyData(newvtp);
+        srcs[i+groupNumber]=cvpd;
+    }
+
     cvPolyData *dst=NULL;
 
-    int status=sys_geom_all_union(srcs, groupNumber, noInterOut, tol, &dst);
-    if(status!=SV_OK) return NULL;
+    int status=sys_geom_all_union(srcs, groupNumber+vtpNumber, noInterOut, tol, &dst);
 
-    for(int i=0;i<groupNumber;i++)
+    for(int i=0;i<groupNumber+vtpNumber;i++)
     {
         delete srcs[i];
     }
     delete [] srcs;
 
-    return dst->GetVtkPolyData();
+    if(status!=SV_OK)
+        return NULL;
+    else
+        return dst->GetVtkPolyData();
 }
 
 svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t, int noInterOut, double tol)
 {
-    std::vector<svContourGroup*> segs;
+    std::vector<svContourGroup*> groups;
+    std::vector<vtkPolyData*> vtps;
     std::vector<std::string> segNames;
 
     for(int i=0;i<segNodes.size();i++)
@@ -62,12 +94,23 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
         svContourGroup* group = dynamic_cast<svContourGroup*>(segNode->GetData());
         if(group!=NULL)
         {
-            segs.push_back(group);
+            groups.push_back(group);
             segNames.push_back(segNode->GetName());
         }
     }
 
-    vtkPolyData* solidvpd=CreatePolyData(segs,numSamplingPts,nurbsParam,t,noInterOut,tol);
+    for(int i=0;i<segNodes.size();i++)
+    {
+        mitk::DataNode::Pointer segNode=segNodes[i];
+        mitk::Surface* surface=dynamic_cast<mitk::Surface*>(segNode->GetData());
+        if(surface && surface->GetVtkPolyData())
+        {
+            vtps.push_back(surface->GetVtkPolyData());
+            segNames.push_back(segNode->GetName());
+        }
+    }
+
+    vtkPolyData* solidvpd=CreatePolyData(groups,vtps,numSamplingPts,nurbsParam,t,noInterOut,tol);
     if(solidvpd==NULL) return NULL;
 
     cvPolyData *src=new cvPolyData(solidvpd);
@@ -353,7 +396,7 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
     cvPolyData *dst;
     vtkPolyData* outpd;
 
-    if (nurbsParam->advancedLofting == 0)
+    if (nurbsParam==NULL || nurbsParam->advancedLofting == 0)
     {
       if ( sys_geom_loft_solid(sampledContours, contourNumber,param->useLinearSampleAlongLength,param->useFFT,
                                param->numOutPtsAlongLength,newNumSamplingPts,

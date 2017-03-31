@@ -23,7 +23,7 @@ class SVMODEL_EXPORT svModelUtils
 
 public:
 
-    static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
     static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
