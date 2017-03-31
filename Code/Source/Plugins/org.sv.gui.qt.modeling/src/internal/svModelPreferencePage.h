@@ -24,14 +24,6 @@ public:
     bool PerformOk() override;
     void Update() override;
 
-private slots:
-  //void SetNURBSLoftingUDegree();
-  //void SetNURBSLoftingVDegree();
-  //void SetNURBSLoftingUKnotSpanType();
-  //void SetNURBSLoftingVKnotSpanType();
-  //void SetNURBSLoftingUParametricSpanType();
-  //void SetNURBSLoftingVParametricSpanType();
-
 private:
   berry::IPreferences::Pointer m_Preferences;
   QScopedPointer<Ui::svModelPreferencePage> m_Ui;

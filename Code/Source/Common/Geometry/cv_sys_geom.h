@@ -124,9 +124,9 @@ SV_EXPORT_SYSGEOM int sys_geom_loft_solid(cvPolyData **srcs,int numSrcs,int useL
 		int numLinearPtsAlongLength,int numModes,int splineType,double bias,double tension, double continuity,cvPolyData **dst );
 
 SV_EXPORT_SYSGEOM int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree, int vDegree,
-                                                     double uSpacing, double vSpacing, char *uKnotSpanType,
-                                                     char *vKnotSpanType, char *uParametricSpanType,
-                                                     char *vParametricSpanType, vtkSVNURBSSurface *surface, cvPolyData **dst);
+                                                     double uSpacing, double vSpacing, const char *uKnotSpanType,
+                                                     const char *vKnotSpanType, const char *uParametricSpanType,
+                                                     const char *vParametricSpanType, vtkSVNURBSSurface *surface, cvPolyData **dst);
 
 SV_EXPORT_SYSGEOM int sys_geom_2DWindingNum( cvPolyData *pgn );
 

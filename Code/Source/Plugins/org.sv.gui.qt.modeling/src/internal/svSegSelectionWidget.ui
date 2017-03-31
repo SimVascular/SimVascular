@@ -99,7 +99,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEditNumSampling"/>
+       <widget class="QLineEdit" name="lineEditNumSampling">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string/>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

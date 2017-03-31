@@ -86,6 +86,25 @@ vtkSVNURBSCurve::~vtkSVNURBSCurve()
 }
 
 // ----------------------
+// DeepCopy
+// ----------------------
+void vtkSVNURBSCurve::DeepCopy(vtkSVNURBSCurve *src)
+{
+  this->Superclass::DeepCopy(src);
+
+  this->SetNumberOfControlPoints(src->GetNumberOfControlPoints());
+  this->SetNumberOfKnotPoints(src->GetNumberOfKnotPoints());
+  this->SetDegree(src->GetDegree());
+
+  this->ControlPointGrid->DeepCopy(src->GetControlPointGrid());
+  this->KnotVector->DeepCopy(src->GetKnotVector());
+  this->Weights->DeepCopy(src->GetWeights());
+
+  this->CurveRepresentation->DeepCopy(src->GetCurveRepresentation());
+}
+
+
+// ----------------------
 // PrintSelf
 // ----------------------
 void vtkSVNURBSCurve::PrintSelf(ostream& os, vtkIndent indent)
@@ -146,21 +165,6 @@ void vtkSVNURBSCurve::SetControlPoints(vtkPoints *points1d)
 
   // Update number of control points
   this->NumberOfControlPoints = nCon;
-}
-
-// ----------------------
-// SetKnotVector
-// ----------------------
-void vtkSVNURBSCurve::SetKnotVector(vtkDoubleArray *knotVector)
-{
-  // Get number of knots
-  int nKnot = knotVector->GetNumberOfTuples();
-
-  // Copy knots
-  this->KnotVector->DeepCopy(knotVector);
-
-  // Update number of knots
-  this->NumberOfKnotPoints = nKnot;
 }
 
 // ----------------------
@@ -297,5 +301,14 @@ int vtkSVNURBSCurve::GetStructuredGridConnectivity(const int numPoints, vtkCellA
     connectivity->InsertNextCell(ptIds);
   }
 
+  return SV_OK;
+}
+
+// ----------------------
+// GetMultiplicity
+// ----------------------
+int vtkSVNURBSCurve::GetMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots)
+{
+  vtkSVNURBSUtils::GetMultiplicity(this->KnotVector, multiplicity, singleKnots);
   return SV_OK;
 }

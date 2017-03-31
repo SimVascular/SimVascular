@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>svSimulationPreferencePage</class>
- <widget class="QWidget" name="svSimulationPreferencePage">
+ <class>svModelPreferencePage</class>
+ <widget class="QWidget" name="svModelPreferencePage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -58,13 +58,16 @@
                </size>
               </property>
               <property name="text">
-               <string>2</string>
+               <string>3</string>
               </property>
               <property name="frame">
                <bool>true</bool>
               </property>
               <property name="dragEnabled">
                <bool>false</bool>
+              </property>
+              <property name="placeholderText">
+               <string>3</string>
               </property>
              </widget>
             </item>
@@ -104,10 +107,6 @@
           </widget>
          </item>
         </layout>
-        <zorder>label_3</zorder>
-        <zorder>widget_2</zorder>
-        <zorder>widget</zorder>
-        <zorder>widget_5</zorder>
        </widget>
       </item>
       <item>
@@ -135,7 +134,10 @@
                </size>
               </property>
               <property name="text">
-               <string>2</string>
+               <string>3</string>
+              </property>
+              <property name="placeholderText">
+               <string>3</string>
               </property>
              </widget>
             </item>
@@ -179,11 +181,6 @@
           </widget>
          </item>
         </layout>
-        <zorder>widget_3</zorder>
-        <zorder>label_4</zorder>
-        <zorder>widget_3</zorder>
-        <zorder>widget_4</zorder>
-        <zorder>widget_6</zorder>
        </widget>
       </item>
      </layout>

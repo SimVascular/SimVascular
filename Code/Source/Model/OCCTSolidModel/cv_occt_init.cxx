@@ -254,9 +254,9 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
       delete [] Yarr[i];
       delete [] Zarr[i];
     }
-    delete Xarr;
-    delete Yarr;
-    delete Zarr;
+    delete [] Xarr;
+    delete [] Yarr;
+    delete [] Zarr;
 
     delete [] uKarr;
     delete [] vKarr;
@@ -273,9 +273,9 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
     delete [] Yarr[i];
     delete [] Zarr[i];
   }
-  delete Xarr;
-  delete Yarr;
-  delete Zarr;
+  delete [] Xarr;
+  delete [] Yarr;
+  delete [] Zarr;
 
   delete [] uKarr;
   delete [] vKarr;

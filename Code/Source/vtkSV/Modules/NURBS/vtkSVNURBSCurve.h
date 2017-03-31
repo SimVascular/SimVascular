@@ -76,18 +76,33 @@ public:
   //@}
 
   //@{
+  /// \brief Get and set the degree
+  vtkGetMacro(Degree, int);
+  vtkSetMacro(Degree, int);
+  //@}
+
+  //@{
   /// \brief Get and set the control point grid
   vtkGetObjectMacro(ControlPointGrid, vtkSVControlGrid);
+  vtkSetObjectMacro(ControlPointGrid, vtkSVControlGrid);
   //@}
 
   //@{
   /// \brief Get and set the knot vector object
   vtkGetObjectMacro(KnotVector, vtkDoubleArray);
+  vtkSetObjectMacro(KnotVector, vtkDoubleArray);
   //@}
 
   //@{
-  // Get the PolyData Representation
+  /// \brief Get and set the weights
+  vtkGetObjectMacro(Weights, vtkDoubleArray);
+  vtkSetObjectMacro(Weights, vtkDoubleArray);
+  //@}
+
+  //@{
+  // \brief Get and set the PolyData Representation
   vtkGetObjectMacro(CurveRepresentation, vtkPolyData);
+  vtkSetObjectMacro(CurveRepresentation, vtkPolyData);
   //@}
 
   // Initialize
@@ -103,17 +118,10 @@ public:
    *  \param connectivity empty cell array to be filled with a structured grid connectivity. */
   int GetStructuredGridConnectivity(const int numPoints, vtkCellArray *connectivity);
 
-  //Functions to set control points/knots/etc.
-  void SetControlPointGrid(vtkSVControlGrid *controlPoints) {} /**< \brief Unimplemented */
-
   /** \brief Set the control points using a point set. */
   void SetControlPoints(vtkPoints *points1d);
 
   //void SetControlPoints(vtkDenseArray<double[3]> *points2d) {} /**< \brief Unimplemented */
-
-  /** \brief Set the knot vector with a double array. */
-  void SetKnotVector(vtkDoubleArray *knotVector);
-
   //Functions to manipulate the geometry
   void UpdateCurve() {} /**< \brief Unimplemented */
   int IncreaseDegree(const int degree) {return 0;} /**< \brief Unimplemented */
@@ -142,12 +150,14 @@ public:
   int MakePeriodic(const int continuity) {return 0;} /**< \brief Unimplemented */
 
   /** \brief get the knot vector multiplicity. */
-  int GetMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots) {return 0;} /**< \brief Unimplemented */
+  int GetMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots);
 
   // Description:
   // Retrieve an instance of this class from an information object.
   static vtkSVNURBSCurve* GetData(vtkInformation* info);
   static vtkSVNURBSCurve* GetData(vtkInformationVector* v, int i=0);
+
+  virtual void DeepCopy(vtkSVNURBSCurve *src);
 
 protected:
   vtkSVNURBSCurve();

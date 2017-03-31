@@ -2401,8 +2401,8 @@ int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongL
 
 int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
                                    int vDegree, double uSpacing, double vSpacing,
-                                   char *uKnotSpanType, char *vKnotSpanType,
-                                   char *uParametricSpanType, char *vParametricSpanType,
+                                   const char *uKnotSpanType, const char *vKnotSpanType,
+                                   const char *uParametricSpanType, const char *vParametricSpanType,
                                    vtkSVNURBSSurface *surface,
                                    cvPolyData **dst )
 {
@@ -2434,6 +2434,10 @@ int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
   lofter->SetVParametricSpanType(vParametricSpanType);
   try {
     lofter->Update();
+    if (lofter->GetOutput() == NULL)
+      return SV_ERROR;
+    if (lofter->GetOutput()->GetNumberOfPoints() == 0)
+      return SV_ERROR;
 
     surface->DeepCopy(lofter->GetSurface());
 

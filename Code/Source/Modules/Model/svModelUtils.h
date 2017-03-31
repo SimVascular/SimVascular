@@ -23,17 +23,17 @@ class SVMODEL_EXPORT svModelUtils
 
 public:
 
-    static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, int numSamplingPts, int advancedLofting, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
-    static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], int advancedLofting, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
     static vtkPolyData* CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElementPolyData::svBlendParam* param);
 
     static svModelElementPolyData* CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElementPolyData::svBlendParam* param);
 
-    static vtkPolyData* CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts,int advancedLofting, int addCaps, unsigned int t = 0,  svContourGroup::svLoftingParam* param = NULL);
+    static vtkPolyData* CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts,svModelElement::svNURBSLoftParam *nurbsParam, int addCaps, unsigned int t = 0,  svContourGroup::svLoftingParam* param = NULL);
 
-    static vtkPolyData* CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts,int advancedLofting, svContourGroup::svLoftingParam* param, int addCaps);
+    static vtkPolyData* CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts,svModelElement::svNURBSLoftParam *nurbsParam, svContourGroup::svLoftingParam* param, int addCaps);
 
     static vtkPolyData* CreateOrientOpenPolySolidVessel(vtkPolyData* inpd);
 
@@ -87,9 +87,9 @@ public:
 
 #ifdef SV_USE_OpenCASCADE_QT_GUI
 
-    static cvOCCTSolidModel* CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int advancedLofting, int vecFlag, int addCaps);
+    static cvOCCTSolidModel* CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, int vecFlag, int addCaps);
 
-    static svModelElementOCCT* CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int advancedLofting, double maxDist = 20.0, unsigned int t = 0);
+    static svModelElementOCCT* CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, double maxDist = 20.0, unsigned int t = 0);
 
     static svModelElementOCCT* CreateModelElementOCCTByBlend(svModelElementOCCT* meocctsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii);
 
