@@ -280,7 +280,7 @@ std::string svSimulationUtils::CreateCORTFileContent(svSimJob* job)
                     ss << b2 <<"\n";
                     ss << "0.0\n";
                     ss << "100.0\n";
-                    ss << props["Timed Pressure"];
+                    ss << props["Timed Pressure"]<<"\n";
                 }
             }
         }
