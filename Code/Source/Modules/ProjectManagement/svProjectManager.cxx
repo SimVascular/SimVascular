@@ -23,6 +23,7 @@
 #include <mitkIMimeTypeProvider.h>
 #include <mitkMimeType.h>
 #include <mitkCustomMimeType.h>
+#include <mitkNodePredicateOr.h>
 
 #include <vtkImageData.h>
 #include <vtkXMLImageDataWriter.h>
@@ -210,13 +211,15 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         segFolderNode->SetVisibility(false);
         QDir dirSeg(projPath);
         dirSeg.cd(segFolderName);
-        fileInfoList=dirSeg.entryInfoList(QStringList("*.ctgr"), QDir::Files, QDir::Name);
+        QStringList segNameFilters;
+        segNameFilters<<"*.ctgr"<<"*.vtp";
+        fileInfoList=dirSeg.entryInfoList(segNameFilters, QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
-            mitk::DataNode::Pointer contourGroupNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            contourGroupNode->SetVisibility(false);
+            mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            segNode->SetVisibility(false);
 
-            svContourGroup* group=dynamic_cast<svContourGroup*>(contourGroupNode->GetData());
+            svContourGroup* group=dynamic_cast<svContourGroup*>(segNode->GetData());
             if(group)
             {
                 auto props=group->GetProps();
@@ -228,12 +231,12 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
                         if(it->first=="point 2D display size")
                         {
                             float value=(float)(std::stod(it->second));
-                            contourGroupNode->SetFloatProperty("point.displaysize",value);
+                            segNode->SetFloatProperty("point.displaysize",value);
                         }
                         else if(it->first=="point size")
                         {
                             float value=(float)(std::stod(it->second));
-                            contourGroupNode->SetFloatProperty("point.3dsize",value);
+                            segNode->SetFloatProperty("point.3dsize",value);
                         }
                     }
 
@@ -241,7 +244,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
                 }
             }
 
-            dataStorage->Add(contourGroupNode,segFolderNode);
+            dataStorage->Add(segNode,segFolderNode);
         }
 
         modelFolderNode->SetVisibility(false);
@@ -531,7 +534,11 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     if(segFolder)
         removeList=segFolder->GetNodeNamesToRemove();
 
-    rs=dataStorage->GetDerivations(segFolderNode,mitk::NodePredicateDataType::New("svContourGroup"));
+    mitk::NodePredicateOr::Pointer segTypes = mitk::NodePredicateOr::New();
+    segTypes->AddPredicate(mitk::NodePredicateDataType::New("svContourGroup"));
+    segTypes->AddPredicate(mitk::NodePredicateDataType::New("Surface"));
+
+    rs=dataStorage->GetDerivations(segFolderNode,segTypes);
 
     QDir dirSeg(QString::fromStdString(projPath));
     dirSeg.cd(QString::fromStdString(segFolderName));
@@ -547,20 +554,31 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         }
 
         svContourGroup *contourGroup=dynamic_cast<svContourGroup*>(node->GetData());
-        if(contourGroup==NULL || (!contourGroup->IsDataModified() && dirSeg.exists(QString::fromStdString(node->GetName())+".ctgr")) )
-            continue;
+        mitk::Surface *surface=dynamic_cast<mitk::Surface*>(node->GetData());
 
-        QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".ctgr");
-        mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+        if(contourGroup)
+        {
+            if(contourGroup->IsDataModified() || !dirSeg.exists(QString::fromStdString(node->GetName())+".ctgr"))
+            {
+                QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".ctgr");
+                mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+                node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
+                contourGroup->SetDataModified(false);
+            }
+        }
 
-        node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
-
-        contourGroup->SetDataModified(false);
+        if(surface)//to do: track if changed
+        {
+            QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".vtp");
+            mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+            node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
+        }
     }
 
     for(int i=0;i<removeList.size();i++)
     {
         dirSeg.remove(QString::fromStdString(removeList[i])+".ctgr");
+        dirSeg.remove(QString::fromStdString(removeList[i])+".vtp");
     }
     segFolder->ClearRemoveList();
 
@@ -801,6 +819,7 @@ void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mi
     //rename the corresponding files and folder if applicable, for svPath, svContourGroup, svModel, svMitkMesh,svMitkSimJob
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isMitkSurface = mitk::NodePredicateDataType::New("Surface");
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
@@ -813,6 +832,10 @@ void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mi
     else if(isContourGroup->CheckNode(dataNode))
     {
         extensions.push_back(".ctgr");
+    }
+    else if(isMitkSurface->CheckNode(dataNode))
+    {
+        extensions.push_back(".vtp");
     }
     else if(isModel->CheckNode(dataNode))
     {

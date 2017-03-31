@@ -9,5 +9,6 @@
         <file alias="svmeshfolder.png">svmeshfolder.png</file>
         <file alias="svsimfolder.png">svsimfolder.png</file>
         <file alias="remove.png">remove.png</file>
+        <file alias="svcontourgroup.png">svcontourgroup.png</file>
     </qresource>
 </RCC>

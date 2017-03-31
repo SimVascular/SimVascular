@@ -16,6 +16,7 @@
 #include "svModel.h"
 #include "svMitkMesh.h"
 #include "svMitkSimJob.h"
+#include "mitkSurface.h"
 
 #include <QMenu>
 #include <QMenuBar>
@@ -1769,7 +1770,6 @@ void svWorkbenchWindowAdvisor::RenameSelectedNode( bool )
             if(rs.IsNotNull()&&rs->size()>0)
                 parentNode=rs->GetElement(0);
 
-
             bool alreadyExists=false;
             if(parentNode.IsNull() && dataStorage->GetNamedNode(newName.toStdString()))
                 alreadyExists=true;
@@ -1840,6 +1840,7 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
 
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isMitkSurface = mitk::NodePredicateDataType::New("Surface");
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
@@ -1859,11 +1860,11 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
         else
             return;
     }
-    else if(isContourGroup->CheckNode(m_CopyDataNode))
+    else if(isContourGroup->CheckNode(m_CopyDataNode) || isMitkSurface->CheckNode(m_CopyDataNode))
     {
         if(isSegFolder->CheckNode(node))
             parentNode=node;
-        else if(isContourGroup->CheckNode(node))
+        else if(isContourGroup->CheckNode(node) || isMitkSurface->CheckNode(node))
         {
             mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
             if(rs->size()>0)
@@ -1918,6 +1919,11 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
 
     mitk::DataNode::Pointer newNode = mitk::DataNode::New();
 
+//    if(m_CopyDataNode->GetData())
+//        newNode->SetData(m_CopyDataNode->GetData()->Clone());
+//    else
+//        return;
+
     svPath* path=dynamic_cast<svPath*>(m_CopyDataNode->GetData());
     if(path)
     {
@@ -1928,6 +1934,12 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
     if(group)
     {
         newNode->SetData(group->Clone());
+    }
+
+    mitk::Surface* surface=dynamic_cast<mitk::Surface*>(m_CopyDataNode->GetData());
+    if(surface)
+    {
+        newNode->SetData(surface->Clone());
     }
 
     svModel* model=dynamic_cast<svModel*>(m_CopyDataNode->GetData());
@@ -1950,9 +1962,9 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
         newNode->SetData(copyJob);
     }
 
-    std::string copyName=m_CopyDataNode->GetName()+"_copy";
-    int i=1;
-    while(i<10)
+    std::string copyName=m_CopyDataNode->GetName();
+    int i=0;
+    while(i<20)
     {
         if(parentNode.IsNull() && !dataStorage->GetNamedNode(copyName))
             break;
@@ -1960,7 +1972,10 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
             break;
 
         i++;
-        copyName=m_CopyDataNode->GetName()+"_copy"+std::to_string(i);
+        if(i==1)
+            copyName=m_CopyDataNode->GetName()+"_copy";
+        else
+            copyName=m_CopyDataNode->GetName()+"_copy"+std::to_string(i);
     }
 
     newNode->SetName(copyName);
