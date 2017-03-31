@@ -53,7 +53,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Choose Segmentions for Model Creation:</string>
+         <string>Choose Segmentations for Model Creation:</string>
         </property>
        </widget>
       </item>
