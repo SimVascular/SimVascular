@@ -245,6 +245,33 @@ std::string svSimulationUtils::CreateCORTFileContent(svSimJob* job)
                 auto values=svStringUtils_split(props["Values"],' ');
                 if(values.size()==5)
                 {
+                    double pressurePeriod=std::stod(props["Pressure Period"]);
+                    double pressureScaling=std::stod(props["Pressure Scaling"]);
+
+                    auto timeStepVec=svStringUtils_split(props["Timed Pressure"],'\n');
+                    int timeStepNumber=timeStepVec.size();
+                    if(timeStepNumber>maxStepNumber)
+                        maxStepNumber=timeStepNumber;
+
+                    auto lastVec=svStringUtils_split(timeStepVec.back(),' ');
+                    double orignalPeriod=std::stod(lastVec[0]);
+
+                    bool scaleTime=false;
+                    double timeFactor=1;
+                    if(pressurePeriod>0 && pressurePeriod!=orignalPeriod)
+                    {
+                        scaleTime=true;
+                        timeFactor=pressurePeriod/orignalPeriod;
+                    }
+
+                    bool scalePressure=false;
+                    double pressureFactor=1;
+                    if(pressureScaling!=0 && pressureScaling!=1)
+                    {
+                        scalePressure=true;
+                        pressureFactor=pressureScaling;
+                    }
+
                     double Ra=std::stod(values[0]);
                     double Ca=std::stod(values[1]);
                     double Ram=std::stod(values[2]);
@@ -263,11 +290,6 @@ std::string svSimulationUtils::CreateCORTFileContent(svSimJob* job)
                     double b1=Cim*Rv;
                     double b2=0;
 
-                    auto timeStepVec=svStringUtils_split(props["Timed Pressure"],'\n');
-                    int timeStepNumber=timeStepVec.size();
-                    if(timeStepNumber>maxStepNumber)
-                        maxStepNumber=timeStepNumber;
-
                     ss << timeStepNumber <<"\n";
                     ss << q0 <<"\n";
                     ss << q1 <<"\n";
@@ -280,7 +302,21 @@ std::string svSimulationUtils::CreateCORTFileContent(svSimJob* job)
                     ss << b2 <<"\n";
                     ss << "0.0\n";
                     ss << "100.0\n";
-                    ss << props["Timed Pressure"]<<"\n";
+
+                    for(int i=0;i<timeStepVec.size();i++)
+                    {
+                        auto lineVec=svStringUtils_split(timeStepVec[i],' ');
+                        std::string timeStr=lineVec[0];
+                        std::string pressureStr=lineVec[1];
+
+                        if(scaleTime)
+                            timeStr=std::to_string(std::stod(timeStr)*timeFactor);
+
+                        if(scalePressure)
+                            pressureStr=std::to_string(std::stod(pressureStr)*pressureFactor);
+
+                        ss << timeStr << " " << pressureStr<<"\n";
+                    }
                 }
             }
         }

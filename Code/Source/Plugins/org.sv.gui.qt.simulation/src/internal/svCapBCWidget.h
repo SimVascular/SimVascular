@@ -49,7 +49,6 @@ private:
     std::map<std::string, std::string> m_Props;
 
     std::string m_TimedPressureContent;
-    std::vector<std::vector<QString>> m_TimedPressureFromFile;
 };
 
 #endif // SVCAPBCWIDGET_H

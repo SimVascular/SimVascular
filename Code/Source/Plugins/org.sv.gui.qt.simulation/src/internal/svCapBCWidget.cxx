@@ -34,8 +34,6 @@ svCapBCWidget::~svCapBCWidget()
 
 void svCapBCWidget::UpdateGUI(std::string capName, std::map<std::string, std::string> props)
 {
-    m_TimedPressureFromFile.clear();
-
     ui->labelFaceName->setText(QString::fromStdString(capName));
 
     ui->comboBoxBCType->setCurrentText(QString::fromStdString(props["BC Type"]));
@@ -58,29 +56,48 @@ void svCapBCWidget::UpdateGUI(std::string capName, std::map<std::string, std::st
     else
         ui->lineEditModeNumber->setText(modeNum);
 
+    m_FlowrateContent=props["Flow Rate"];
+
     QString period=QString::fromStdString(props["Period"]);
     if(period=="")
-        ui->lineEditPeriod->setText("");
-    else
-        ui->lineEditPeriod->setText(period);
+    {
+        QStringList list = QString::fromStdString(m_FlowrateContent).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        if(list.size()>1)
+            period=list[list.size()-2];
+    }
+    ui->lineEditPeriod->setText(period);
 
     ui->checkBoxFlip->setChecked(props["Flip Normal"]=="True"?true:false);
 
     ui->labelLoadFile->setText(QString::fromStdString(props["Original File"]));
 
-    m_FlowrateContent=props["Flow Rate"];
-
     ui->lineEditBCValues->setText(QString::fromStdString(props["Values"]));
 
-    ui->lineEditPressure->setText(QString::fromStdString(props["Pressure"]));
+    QString pressure=QString::fromStdString(props["Pressure"]);
+    if(pressure=="")
+        ui->lineEditPressure->setText("0");
+    else
+        ui->lineEditPressure->setText(pressure);
 
     ui->labelLoadPressureFile->setText(QString::fromStdString(props["Original File"]));
 
-    ui->lineEditPressurePeriod->setText(QString::fromStdString(props["Pressure Period"]));
-
-    ui->lineEditPressureScaling->setText(QString::fromStdString(props["Pressure Scaling"]));
+    QString pressureScaling=QString::fromStdString(props["Pressure Scaling"]);
+    if(pressureScaling=="")
+        ui->lineEditPressureScaling->setText("1.0");
+    else
+        ui->lineEditPressureScaling->setText(pressureScaling);
 
     m_TimedPressureContent=props["Timed Pressure"];
+
+    QString pressurePeriod=QString::fromStdString(props["Pressure Period"]);
+    if(pressurePeriod=="")
+    {
+        QStringList list = QString::fromStdString(m_TimedPressureContent).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        if(list.size()>1)
+            pressurePeriod=list[list.size()-2];
+    }
+    ui->lineEditPressurePeriod->setText(pressurePeriod);
+
 }
 
 bool svCapBCWidget::CreateProps()
@@ -111,15 +128,6 @@ bool svCapBCWidget::CreateProps()
         props["Fourier Modes"]=modeNum.toStdString();
 
         QString period=ui->lineEditPeriod->text().trimmed();
-//        if(period!="")
-//        {
-//            if(!IsDouble(period))
-//            {
-//                QMessageBox::warning(this,"Period Error","Please provide value in a correct format!");
-//                return false;
-//            }
-//            props["Period"]=period.toStdString();
-//        }
         if(period=="" || !IsDouble(period))
         {
             QMessageBox::warning(this,"Period Error","Please provide value in a correct format!");
@@ -188,81 +196,24 @@ bool svCapBCWidget::CreateProps()
                 return false;
             }
 
-            if(m_TimedPressureContent=="" && m_TimedPressureFromFile.size()==0)
+            if(m_TimedPressureContent=="")
             {
                 QMessageBox::warning(this,"No Pim Info","Please provide flow rate data!");
                 return false;
             }
 
             QString newPeriodStr=ui->lineEditPressurePeriod->text().trimmed();
-            if(newPeriodStr!="")
+            if(newPeriodStr=="" || !IsDouble(newPeriodStr))
             {
-                if(!IsDouble(newPeriodStr))
-                {
-                    QMessageBox::warning(this,"Pressure Period Error","Please provide value in a correct format!");
-                    return false;
-                }
+                QMessageBox::warning(this,"Pressure Period Error","Please provide value in a correct format!");
+                return false;
             }
 
             QString scalingFactorStr=ui->lineEditPressureScaling->text().trimmed();
-            if(scalingFactorStr!="")
+            if(scalingFactorStr=="" || !IsDouble(scalingFactorStr))
             {
-                if(!IsDouble(scalingFactorStr))
-                {
-                    QMessageBox::warning(this,"Pressure Scaling Error","Please provide value in a correct format!");
-                    return false;
-                }
-            }
-
-            if(m_TimedPressureFromFile.size()>0)
-            {
-                double oldPeriod=m_TimedPressureFromFile.back()[0].toDouble();
-
-                bool scaleTime=false;
-                double timeFactor=1;
-
-                if(newPeriodStr!="")
-                {
-                    double newPeriod=newPeriodStr.toDouble();
-                    if(newPeriod>0 && newPeriod!=oldPeriod)
-                    {
-                        scaleTime=true;
-                        timeFactor=newPeriod/oldPeriod;
-                    }
-                }
-
-                bool scalePressure=false;
-                double pressureFactor=1;
-
-                if(scalingFactorStr!="")
-                {
-                    double factor=scalingFactorStr.toDouble();
-                    if(factor>0 && factor!=1)
-                    {
-                        scalePressure=true;
-                        pressureFactor=factor;
-                    }
-                }
-
-//                QString newTimePressureContent="";
-                std::stringstream ss;
-                for(int i=0; i<m_TimedPressureFromFile.size();i++)
-                {
-                    QString timeStr=m_TimedPressureFromFile[i][0];
-                    QString pressureStr=m_TimedPressureFromFile[i][1];
-
-                    if(scaleTime)
-                        timeStr=QString::number(timeStr.toDouble()*timeFactor);
-
-                    if(scalePressure)
-                        pressureStr=QString::number(pressureStr.toDouble()*pressureFactor);
-
-//                    newTimePressureContent+=timeStr+" "+pressureStr+"\n";
-                    ss << timeStr.toStdString() << " " << pressureStr.toStdString() <<"\n";
-
-                }
-//                m_TimedPressureContent=newTimePressureContent.toStdString();
-                m_TimedPressureContent=ss.str();
+                QMessageBox::warning(this,"Pressure Scaling Error","Please provide value in a correct format!");
+                return false;
             }
 
             props["Values"]=values.toStdString();
@@ -426,10 +377,9 @@ void svCapBCWidget::LoadTimedPressureFromFile()
         prefs->Flush();
     }
 
-    m_TimedPressureFromFile.clear();
-
     QString pressurePeriod="";
     QFile inputFile(pressureFilePath);
+
     if (inputFile.open(QIODevice::ReadOnly))
     {
         QTextStream in(&inputFile);
@@ -437,6 +387,7 @@ void svCapBCWidget::LoadTimedPressureFromFile()
         QFileInfo fi(pressureFilePath);
         ui->labelLoadPressureFile->setText(fi.fileName());
 
+        std::stringstream ss;
         QString line;
         while (1) {
             line=in.readLine();
@@ -450,15 +401,12 @@ void svCapBCWidget::LoadTimedPressureFromFile()
             if(list.size()!=2)
                 continue;
 
-            std::vector<QString> pair;
-            pair.push_back(list[0]);
-            pair.push_back(list[1]);
-
-            m_TimedPressureFromFile.push_back(pair);
+            ss << list[0].toStdString() << " " << list[1].toStdString() <<"\n";
 
             pressurePeriod=list[0];
         }
 
+        m_TimedPressureContent=ss.str();
         inputFile.close();
     }
 

@@ -1910,6 +1910,7 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
         {
             std::string values=m_TableModelCap->item(i,2)->text().trimmed().toStdString();
             std::string pressure=m_TableModelCap->item(i,3)->text().trimmed().toStdString();
+            std::string originalFile=m_TableModelCap->item(i,10)->text().trimmed().toStdString();
             std::string timedPressure=m_TableModelCap->item(i,11)->text().trimmed().toStdString();
             std::string pressurePeriod=m_TableModelCap->item(i,12)->text().trimmed().toStdString();
             std::string pressureScaling=m_TableModelCap->item(i,13)->text().trimmed().toStdString();
@@ -1961,6 +1962,20 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
                         delete job;
                         return NULL;
                     }
+
+                    if(pressurePeriod=="" || !IsDouble(pressurePeriod))
+                    {
+                        msg=capName + " coronary period error: " + pressurePeriod;
+                        delete job;
+                        return NULL;
+                    }
+
+                    if(pressureScaling=="" || !IsDouble(pressureScaling))
+                    {
+                        msg=capName + " coronary pressure scaling error: " + pressureScaling;
+                        delete job;
+                        return NULL;
+                    }
                 }
 
                 if(pressure!="")
@@ -1987,7 +2002,6 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
                 job->SetCapProp(capName,"Timed Pressure", timedPressure);
                 job->SetCapProp(capName,"Pressure Period", pressurePeriod);
                 job->SetCapProp(capName,"Pressure Scaling",pressureScaling);
-                std::string originalFile=m_TableModelCap->item(i,10)->text().trimmed().toStdString();
                 job->SetCapProp(capName,"Original File", originalFile);
             }
 
