@@ -70,14 +70,15 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
 
                 auto props=it->second;
                 ss << "bct_analytical_shape " << props["Analytic Shape"] <<"\n";
-                if(props["Period"]=="")
-                {
-                    ss << "bct_period " << basicProps["Period"] <<"\n";
-                }
-                else
-                {
-                    ss << "bct_period " << props["Period"] <<"\n";
-                }
+//                if(props["Period"]=="")
+//                {
+//                    ss << "bct_period " << basicProps["Period"] <<"\n";
+//                }
+//                else
+//                {
+//                    ss << "bct_period " << props["Period"] <<"\n";
+//                }
+                ss << "bct_period " << props["Period"] <<"\n";
                 ss << "bct_point_number " << props["Point Number"] <<"\n";
                 ss << "bct_fourier_mode_number " << props["Fourier Modes"] <<"\n";
                 if(props["Flip Normal"]=="False")
@@ -194,9 +195,7 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
 std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
 {
     std::stringstream ss;
-    auto basicProps=job->GetBasicProps();
-
-//    ss << "2\n";
+    //    auto basicProps=job->GetBasicProps();
 
     auto capProps=job->GetCapProps();
     auto it = capProps.begin();
@@ -207,7 +206,7 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
             auto props=it->second;
             if(props["BC Type"]=="RCR")
             {
-	      auto values=svStringUtils_split(props["Values"],' ');
+                auto values=svStringUtils_split(props["Values"],' ');
                 if(values.size()==3)
                 {
                     ss << "2\n";
@@ -215,7 +214,8 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
                     ss << values[1] <<"\n";
                     ss << values[2] <<"\n";
                     ss << "0.0 " << props["Pressure"] <<"\n";
-                    ss << basicProps["Period"] << " " << props["Pressure"] <<"\n";
+                    //                    ss << basicProps["Period"] << " " << props["Pressure"] <<"\n";
+                    ss << "1.0 " << props["Pressure"] <<"\n";
                 }
             }
         }
@@ -225,9 +225,112 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
     if(ss.str()=="")
         return "";
     else
-        return "2\n"+ss.str();;
+        return "2\n"+ss.str();
+}
 
-//    return ss.str();
+std::string svSimulationUtils::CreateCORTFileContent(svSimJob* job)
+{
+    std::stringstream ss;
+    int maxStepNumber=0;
+
+    auto capProps=job->GetCapProps();
+    auto it = capProps.begin();
+    while(it != capProps.end())
+    {
+        if(it->first!="")
+        {
+            auto props=it->second;
+            if(props["BC Type"]=="Coronary")
+            {
+                auto values=svStringUtils_split(props["Values"],' ');
+                if(values.size()==5)
+                {
+                    double pressurePeriod=std::stod(props["Pressure Period"]);
+                    double pressureScaling=std::stod(props["Pressure Scaling"]);
+
+                    auto timeStepVec=svStringUtils_split(props["Timed Pressure"],'\n');
+                    int timeStepNumber=timeStepVec.size();
+                    if(timeStepNumber>maxStepNumber)
+                        maxStepNumber=timeStepNumber;
+
+                    auto lastVec=svStringUtils_split(timeStepVec.back(),' ');
+                    double orignalPeriod=std::stod(lastVec[0]);
+
+                    bool scaleTime=false;
+                    double timeFactor=1;
+                    if(pressurePeriod>0 && pressurePeriod!=orignalPeriod)
+                    {
+                        scaleTime=true;
+                        timeFactor=pressurePeriod/orignalPeriod;
+                    }
+
+                    bool scalePressure=false;
+                    double pressureFactor=1;
+                    if(pressureScaling!=0 && pressureScaling!=1)
+                    {
+                        scalePressure=true;
+                        pressureFactor=pressureScaling;
+                    }
+
+                    double Ra=std::stod(values[0]);
+                    double Ca=std::stod(values[1]);
+                    double Ram=std::stod(values[2]);
+                    double Cim=std::stod(values[3]);
+                    double Rv=std::stod(values[4]);
+
+                    double q0=Ra+Ram+Rv;
+                    double q1=Ra*Ca*(Ram+Rv)+Cim*(Ra+Ram)*Rv;
+                    double q2=Ca*Cim*Ra*Ram*Rv;
+
+                    double p0=1;
+                    double p1=Ram*Ca+Rv*(Ca+Cim);
+                    double p2=Ca*Cim*Ram*Rv;
+
+                    double b0=0;
+                    double b1=Cim*Rv;
+                    double b2=0;
+
+                    ss << timeStepNumber <<"\n";
+                    ss << q0 <<"\n";
+                    ss << q1 <<"\n";
+                    ss << q2 <<"\n";
+                    ss << p0 <<"\n";
+                    ss << p1 <<"\n";
+                    ss << p2 <<"\n";
+                    ss << b0 <<"\n";
+                    ss << b1 <<"\n";
+                    ss << b2 <<"\n";
+                    ss << "0.0\n";
+                    ss << "100.0\n";
+
+                    for(int i=0;i<timeStepVec.size();i++)
+                    {
+                        auto lineVec=svStringUtils_split(timeStepVec[i],' ');
+                        std::string timeStr=lineVec[0];
+                        std::string pressureStr=lineVec[1];
+
+                        if(scaleTime)
+                            timeStr=std::to_string(std::stod(timeStr)*timeFactor);
+
+                        if(scalePressure)
+                            pressureStr=std::to_string(std::stod(pressureStr)*pressureFactor);
+
+                        ss << timeStr << " " << pressureStr<<"\n";
+                    }
+                }
+            }
+        }
+        it++;
+    }
+
+    if(ss.str()=="")
+        return "";
+    else
+    {
+        std::stringstream newss;
+        newss<<maxStepNumber << "\n" <<ss.str();
+        return newss.str();
+    }
 }
 
 std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)

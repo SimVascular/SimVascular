@@ -552,9 +552,9 @@ void svSimulationView::UpdateGUIBasic()
     value=QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
     valueList<<new QStandardItem(value==""?QString("0.04"):value);
 
-    parList<<new QStandardItem("Period");
-    value=QString::fromStdString(job->GetBasicProp("Period"));
-    valueList<<new QStandardItem(value==""?QString("1.0"):value);
+//    parList<<new QStandardItem("Period");
+//    value=QString::fromStdString(job->GetBasicProp("Period"));
+//    valueList<<new QStandardItem(value==""?QString("1.0"):value);
 
     parList<<new QStandardItem("IC File");
     value=QString::fromStdString(job->GetBasicProp("IC File"));
@@ -775,7 +775,13 @@ void svSimulationView::ShowCapBCWidget(bool)
     props["Fourier Modes"]=m_TableModelCap->item(row,7)->text().toStdString();
     props["Flip Normal"]=m_TableModelCap->item(row,8)->text().toStdString();
     props["Flow Rate"]=m_TableModelCap->item(row,9)->text().toStdString();
+    props["File"]=m_TableModelCap->item(row,10)->text().toStdString();
     props["Original File"]=m_TableModelCap->item(row,10)->text().toStdString();
+    props["Timed Pressure"]=m_TableModelCap->item(row,11)->text().toStdString();
+    props["Pressure Period"]=m_TableModelCap->item(row,12)->text().toStdString();
+    props["Pressure Scaling"]=m_TableModelCap->item(row,13)->text().toStdString();
+    props["R Values"]=m_TableModelCap->item(row,14)->text().toStdString();
+    props["C Values"]=m_TableModelCap->item(row,15)->text().toStdString();
 
     m_CapBCWidget->UpdateGUI(capName,props);
 
@@ -827,7 +833,7 @@ void  svSimulationView::SetCapBC()
         int row=(*it).row();
 
         m_TableModelCap->item(row,1)->setText(QString::fromStdString(props["BC Type"]));
-        if(props["BC Type"]=="Resistance" || props["BC Type"]=="RCR")
+        if(props["BC Type"]=="Resistance" || props["BC Type"]=="RCR" || props["BC Type"]=="Coronary")
         {
             m_TableModelCap->item(row,2)->setText(QString::fromStdString(props["Values"]));
         }
@@ -849,6 +855,12 @@ void  svSimulationView::SetCapBC()
         m_TableModelCap->item(row,8)->setText(QString::fromStdString(props["Flip Normal"]));
         m_TableModelCap->item(row,9)->setText(QString::fromStdString(props["Flow Rate"]));
         m_TableModelCap->item(row,10)->setText(QString::fromStdString(props["Original File"]));
+
+        m_TableModelCap->item(row,11)->setText(QString::fromStdString(props["Timed Pressure"]));
+        m_TableModelCap->item(row,12)->setText(QString::fromStdString(props["Pressure Period"]));
+        m_TableModelCap->item(row,13)->setText(QString::fromStdString(props["Pressure Scaling"]));
+        m_TableModelCap->item(row,14)->setText(QString::fromStdString(props["R Values"]));
+        m_TableModelCap->item(row,15)->setText(QString::fromStdString(props["C Values"]));
     }
 
 }
@@ -873,9 +885,12 @@ void svSimulationView::UpdateGUICap()
     m_TableModelCap->clear();
 
     QStringList capHeaders;
-    capHeaders << "Name" << "BC Type" << "Values" << "Pressure" << "Analytic Shape" << "Period" << "Point Number" << "Fourier Modes" << "Flip Normal" << "Flow Rate" << "Original File";
+    capHeaders << "Name" << "BC Type" << "Values" << "Pressure"
+               << "Analytic Shape" << "Period" << "Point Number" << "Fourier Modes" << "Flip Normal" << "Flow Rate" << "Original File"
+               << "Timed Pressure" << "Pressure Period" << "Pressure Scaling"
+               << "R Values" << "C Values";
     m_TableModelCap->setHorizontalHeaderLabels(capHeaders);
-    m_TableModelCap->setColumnCount(11);
+    m_TableModelCap->setColumnCount(capHeaders.size());
 
     std::vector<int> ids=modelElement->GetCapFaceIDs();
     int rowIndex=-1;
@@ -929,6 +944,41 @@ void svSimulationView::UpdateGUICap()
 
         item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Original File")));
         m_TableModelCap->setItem(rowIndex, 10, item);
+
+        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Timed Pressure")));
+        m_TableModelCap->setItem(rowIndex, 11, item);
+
+        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Pressure Period")));
+        m_TableModelCap->setItem(rowIndex, 12, item);
+
+        item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Pressure Scaling")));
+        m_TableModelCap->setItem(rowIndex, 13, item);
+
+        QString RValues="";
+        QString CValues="";
+        QStringList list =QString::fromStdString(job->GetCapProp(face->name,"Values")).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        if(bcType=="RCR")
+        {
+            if(list.size()==3)
+            {
+                RValues=list[0]+" "+list[2];
+                CValues=list[1];
+            }
+        }
+        else if(bcType=="Coronary")
+        {
+            if(list.size()==5)
+            {
+                RValues=list[0]+" "+list[2]+" "+list[4];
+                CValues=list[1]+" "+list[3];
+            }
+        }
+
+        item= new QStandardItem(RValues);
+        m_TableModelCap->setItem(rowIndex, 14, item);
+
+        item= new QStandardItem(CValues);
+        m_TableModelCap->setItem(rowIndex, 15, item);
     }
 
     ui->tableViewCap->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
@@ -936,7 +986,7 @@ void svSimulationView::UpdateGUICap()
     ui->tableViewCap->horizontalHeader()->resizeSection(1,100);
     ui->tableViewCap->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
-    for(int i=3;i<11;i++)
+    for(int i=3;i<capHeaders.size();i++)
         ui->tableViewCap->setColumnHidden(i,true);
 
 }
@@ -1584,12 +1634,12 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
     }
 
     mitk::StatusBar::GetInstance()->DisplayText("Creating solver.inp");
-    QString solverFielContent=QString::fromStdString(svSimulationUtils::CreateFlowSolverFileContent(job));
+    QString solverFileContent=QString::fromStdString(svSimulationUtils::CreateFlowSolverFileContent(job));
     QFile solverFile(outputDir+"/solver.inp");
     if(solverFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QTextStream out(&solverFile);
-        out<<solverFielContent;
+        out<<solverFileContent;
         solverFile.close();
     }
 
@@ -1611,6 +1661,19 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
             QTextStream out(&rcrtFile);
             out<<rcrtFielContent;
             rcrtFile.close();
+        }
+    }
+
+    QString cortFielContent=QString::fromStdString(svSimulationUtils::CreateCORTFileContent(job));
+    if(cortFielContent!="")
+    {
+        mitk::StatusBar::GetInstance()->DisplayText("Creating cort.dat");
+        QFile cortFile(outputDir+"/cort.dat");
+        if(cortFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream out(&cortFile);
+            out<<cortFielContent;
+            cortFile.close();
         }
     }
 
@@ -1771,7 +1834,8 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
 
         if(checkValidity)
         {
-            if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Period" || par=="Initial Pressure")
+//            if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Period" || par=="Initial Pressure")
+            if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Initial Pressure")
             {
                 if(!IsDouble(values))
                 {
@@ -1783,6 +1847,10 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
             else if(par=="Initial Velocities")
             {
                 int count=0;
+
+                QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                values=list.join(" ").toStdString();
+
                 if(!AreDouble(values,&count) || count!=3)
                 {
                     msg=par + " value error: " + values;
@@ -1804,6 +1872,7 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
         if(bcType=="Prescribed Velocities")
         {
             std::string flowrateContent=m_TableModelCap->item(i,9)->text().trimmed().toStdString();
+            std::string period=m_TableModelCap->item(i,5)->text().trimmed().toStdString();
 
             if(checkValidity)
             {
@@ -1813,10 +1882,16 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
                     delete job;
                     return NULL;
                 }
+
+                if(period=="")
+                {
+                    msg=capName + ": no period for flowrate data";
+                    delete job;
+                    return NULL;
+                }
             }
 
             std::string shape=m_TableModelCap->item(i,4)->text().trimmed().toStdString();
-            std::string period=m_TableModelCap->item(i,5)->text().trimmed().toStdString();
             std::string pointNum=m_TableModelCap->item(i,6)->text().trimmed().toStdString();
             std::string modeNum=m_TableModelCap->item(i,7)->text().trimmed().toStdString();
             std::string flip=m_TableModelCap->item(i,8)->text().trimmed().toStdString();
@@ -1835,6 +1910,12 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
         {
             std::string values=m_TableModelCap->item(i,2)->text().trimmed().toStdString();
             std::string pressure=m_TableModelCap->item(i,3)->text().trimmed().toStdString();
+            std::string originalFile=m_TableModelCap->item(i,10)->text().trimmed().toStdString();
+            std::string timedPressure=m_TableModelCap->item(i,11)->text().trimmed().toStdString();
+            std::string pressurePeriod=m_TableModelCap->item(i,12)->text().trimmed().toStdString();
+            std::string pressureScaling=m_TableModelCap->item(i,13)->text().trimmed().toStdString();
+            std::string RValues=m_TableModelCap->item(i,14)->text().trimmed().toStdString();
+            std::string CValues=m_TableModelCap->item(i,15)->text().trimmed().toStdString();
 
             if(checkValidity)
             {
@@ -1850,9 +1931,48 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
                 else if(bcType=="RCR")
                 {
                     int count=0;
+
+                    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    values=list.join(" ").toStdString();
+
                     if(!AreDouble(values,&count)||count!=3)
                     {
                         msg=capName + " RCR values error: " + values;
+                        delete job;
+                        return NULL;
+                    }
+                }
+                else if(bcType=="Coronary")
+                {
+                    int count=0;
+
+                    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    values=list.join(" ").toStdString();
+
+                    if(!AreDouble(values,&count)||count!=5)
+                    {
+                        msg=capName + " Coronary values error: " + values;
+                        delete job;
+                        return NULL;
+                    }
+
+                    if(timedPressure=="")
+                    {
+                        msg=capName + ": no Pim data";
+                        delete job;
+                        return NULL;
+                    }
+
+                    if(pressurePeriod=="" || !IsDouble(pressurePeriod))
+                    {
+                        msg=capName + " coronary period error: " + pressurePeriod;
+                        delete job;
+                        return NULL;
+                    }
+
+                    if(pressureScaling=="" || !IsDouble(pressureScaling))
+                    {
+                        msg=capName + " coronary pressure scaling error: " + pressureScaling;
                         delete job;
                         return NULL;
                     }
@@ -1876,6 +1996,20 @@ svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
             job->SetCapProp(capName,"BC Type", bcType);
             job->SetCapProp(capName,"Values", values);
             job->SetCapProp(capName,"Pressure",pressure);
+
+            if(bcType=="Coronary")
+            {
+                job->SetCapProp(capName,"Timed Pressure", timedPressure);
+                job->SetCapProp(capName,"Pressure Period", pressurePeriod);
+                job->SetCapProp(capName,"Pressure Scaling",pressureScaling);
+                job->SetCapProp(capName,"Original File", originalFile);
+            }
+
+            if(bcType=="RCR" || bcType=="Coronary")
+            {
+                job->SetCapProp(capName,"R Values", RValues);
+                job->SetCapProp(capName,"C Values", CValues);
+            }
         }
     }
 

@@ -17,7 +17,7 @@ QWidget* svTableCapDelegate::createEditor(QWidget *parent, const QStyleOptionVie
         cb->addItem("Resistance");
         cb->addItem("RCR");
         cb->addItem("Coronary");
-        cb->addItem("Impedance");
+//        cb->addItem("Impedance");
         return cb;
     }
     default:

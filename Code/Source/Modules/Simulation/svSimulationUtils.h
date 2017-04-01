@@ -16,6 +16,8 @@ public:
 
     static std::string CreateRCRTFileContent(svSimJob* job);
 
+    static std::string CreateCORTFileContent(svSimJob* job);
+
     static std::string CreateFlowSolverFileContent(svSimJob* job);
 
 };

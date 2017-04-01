@@ -7,16 +7,21 @@
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QTextStream>
+
+#include <sstream>
 
 svCapBCWidget::svCapBCWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::svCapBCWidget)
     , m_FlowrateContent("")
+    , m_TimedPressureContent("")
 {
     ui->setupUi(this);
 
     connect(ui->comboBoxBCType,SIGNAL(currentTextChanged(const QString &)), this, SLOT(SelectionChanged(const QString &)));
     connect(ui->toolButtonBrowse,SIGNAL(clicked()), this, SLOT(LoadFlowrateFromFile()));
+    connect(ui->toolButtonBrowsePressureFile,SIGNAL(clicked()), this, SLOT(LoadTimedPressureFromFile()));
 
     connect(ui->buttonBox,SIGNAL(accepted()), this, SLOT(Confirm()));
     connect(ui->buttonBox,SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -51,21 +56,48 @@ void svCapBCWidget::UpdateGUI(std::string capName, std::map<std::string, std::st
     else
         ui->lineEditModeNumber->setText(modeNum);
 
+    m_FlowrateContent=props["Flow Rate"];
+
     QString period=QString::fromStdString(props["Period"]);
     if(period=="")
-        ui->lineEditPeriod->setText("");
-    else
-        ui->lineEditPeriod->setText(period);
+    {
+        QStringList list = QString::fromStdString(m_FlowrateContent).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        if(list.size()>1)
+            period=list[list.size()-2];
+    }
+    ui->lineEditPeriod->setText(period);
 
     ui->checkBoxFlip->setChecked(props["Flip Normal"]=="True"?true:false);
 
     ui->labelLoadFile->setText(QString::fromStdString(props["Original File"]));
 
-    m_FlowrateContent=props["Flow Rate"];
-
     ui->lineEditBCValues->setText(QString::fromStdString(props["Values"]));
 
-    ui->lineEditPressure->setText(QString::fromStdString(props["Pressure"]));
+    QString pressure=QString::fromStdString(props["Pressure"]);
+    if(pressure=="")
+        ui->lineEditPressure->setText("0");
+    else
+        ui->lineEditPressure->setText(pressure);
+
+    ui->labelLoadPressureFile->setText(QString::fromStdString(props["Original File"]));
+
+    QString pressureScaling=QString::fromStdString(props["Pressure Scaling"]);
+    if(pressureScaling=="")
+        ui->lineEditPressureScaling->setText("1.0");
+    else
+        ui->lineEditPressureScaling->setText(pressureScaling);
+
+    m_TimedPressureContent=props["Timed Pressure"];
+
+    QString pressurePeriod=QString::fromStdString(props["Pressure Period"]);
+    if(pressurePeriod=="")
+    {
+        QStringList list = QString::fromStdString(m_TimedPressureContent).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+        if(list.size()>1)
+            pressurePeriod=list[list.size()-2];
+    }
+    ui->lineEditPressurePeriod->setText(pressurePeriod);
+
 }
 
 bool svCapBCWidget::CreateProps()
@@ -96,21 +128,18 @@ bool svCapBCWidget::CreateProps()
         props["Fourier Modes"]=modeNum.toStdString();
 
         QString period=ui->lineEditPeriod->text().trimmed();
-        if(period!="")
+        if(period=="" || !IsDouble(period))
         {
-            if(!IsDouble(period))
-            {
-                QMessageBox::warning(this,"Period Error","Please provide value in a correct format!");
-                return false;
-            }
-            props["Period"]=period.toStdString();
+            QMessageBox::warning(this,"Period Error","Please provide value in a correct format!");
+            return false;
         }
+        props["Period"]=period.toStdString();
 
         props["Flip Normal"]=ui->checkBoxFlip->isChecked()?"True":"False";
 
         if(m_FlowrateContent=="")
         {
-            QMessageBox::warning(this,"No Flowrate Inof","Please provide flow rate data!");
+            QMessageBox::warning(this,"No Flowrate Info","Please provide flow rate data!");
             return false;
         }
 
@@ -153,6 +182,50 @@ bool svCapBCWidget::CreateProps()
                 return false;
             }
             props["Values"]=values.toStdString();
+
+            QStringList list = values.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            props["R Values"]=list[0].toStdString()+" "+list[2].toStdString();
+            props["C Values"]=list[1].toStdString();
+        }
+        else if (bcType=="Coronary")
+        {
+            int count=0;
+            if(!AreDouble(values,&count) || count!=5)
+            {
+                QMessageBox::warning(this,"Coronary Values Error","Please provide values in a correct format!");
+                return false;
+            }
+
+            if(m_TimedPressureContent=="")
+            {
+                QMessageBox::warning(this,"No Pim Info","Please provide flow rate data!");
+                return false;
+            }
+
+            QString newPeriodStr=ui->lineEditPressurePeriod->text().trimmed();
+            if(newPeriodStr=="" || !IsDouble(newPeriodStr))
+            {
+                QMessageBox::warning(this,"Pressure Period Error","Please provide value in a correct format!");
+                return false;
+            }
+
+            QString scalingFactorStr=ui->lineEditPressureScaling->text().trimmed();
+            if(scalingFactorStr=="" || !IsDouble(scalingFactorStr))
+            {
+                QMessageBox::warning(this,"Pressure Scaling Error","Please provide value in a correct format!");
+                return false;
+            }
+
+            props["Values"]=values.toStdString();
+
+            props["Original File"]=ui->labelLoadPressureFile->text().toStdString();
+            props["Timed Pressure"]=m_TimedPressureContent;
+            props["Pressure Period"]=newPeriodStr.toStdString();
+            props["Pressure Scaling"]=scalingFactorStr.toStdString();
+
+            QStringList list = values.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            props["R Values"]=list[0].toStdString()+" "+list[2].toStdString()+" "+list[4].toStdString();
+            props["C Values"]=list[1].toStdString()+" "+list[3].toStdString();
         }
     }
 
@@ -169,8 +242,24 @@ void svCapBCWidget::SelectionChanged(const QString &text)
 {
     if(text=="Prescribed Velocities")
         ui->stackedWidget->setCurrentIndex(0);
-    else if(text!="")
+    else if(text=="Resistance")
+    {
         ui->stackedWidget->setCurrentIndex(1);
+        ui->labelBCValues->setText("Resistance:");
+        ui->widgetPressure->hide();
+    }
+    else if(text=="RCR")
+    {
+        ui->stackedWidget->setCurrentIndex(1);
+        ui->labelBCValues->setText("R<sub>p</sub>, C, R<sub>d</sub>:");
+        ui->widgetPressure->hide();
+    }
+    else if(text=="Coronary")
+    {
+        ui->stackedWidget->setCurrentIndex(1);
+        ui->labelBCValues->setText("R<sub>a</sub>,C<sub>a</sub>,R<sub>a-micro</sub>,C<sub>im</sub>,R<sub>v</sub>:");
+        ui->widgetPressure->show();
+    }
 }
 
 void svCapBCWidget::LoadFlowrateFromFile()
@@ -221,6 +310,107 @@ void svCapBCWidget::LoadFlowrateFromFile()
 
         inputFile.close();
     }
+
+    QString inflowPeriod="";
+    QFile inputFile2(flowrateFilePath);
+    if (inputFile2.open(QIODevice::ReadOnly))
+    {
+        QTextStream in(&inputFile2);
+
+        QString line;
+        while(1) {
+            line=in.readLine();
+
+            if(line.isNull())
+                break;
+
+            if(line.contains("#"))
+                continue;
+
+            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            if(list.size()!=2)
+                continue;
+
+            inflowPeriod=list[0];
+        }
+
+        inputFile2.close();
+    }
+
+    ui->lineEditPeriod->setText(inflowPeriod);
+}
+
+void svCapBCWidget::LoadTimedPressureFromFile()
+{
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
+    {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFileOpenPath="";
+    if(prefs.IsNotNull())
+    {
+        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+    }
+    if(lastFileOpenPath=="")
+        lastFileOpenPath=QDir::homePath();
+
+    QString pressureFilePath = QFileDialog::getOpenFileName(this, tr("Load Pim File")
+                                                            , lastFileOpenPath
+                                                            , tr("All Files (*)")
+                                                            , NULL
+                                                            , QFileDialog::DontUseNativeDialog);
+
+    pressureFilePath=pressureFilePath.trimmed();
+    if(pressureFilePath.isEmpty())
+        return;
+
+    if(prefs.IsNotNull())
+    {
+        prefs->Put("LastFileOpenPath", pressureFilePath);
+        prefs->Flush();
+    }
+
+    QString pressurePeriod="";
+    QFile inputFile(pressureFilePath);
+
+    if (inputFile.open(QIODevice::ReadOnly))
+    {
+        QTextStream in(&inputFile);
+
+        QFileInfo fi(pressureFilePath);
+        ui->labelLoadPressureFile->setText(fi.fileName());
+
+        std::stringstream ss;
+        QString line;
+        while (1) {
+            line=in.readLine();
+            if(line.isNull())
+                break;
+
+            if(line.contains("#"))
+                continue;
+
+            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            if(list.size()!=2)
+                continue;
+
+            ss << list[0].toStdString() << " " << list[1].toStdString() <<"\n";
+
+            pressurePeriod=list[0];
+        }
+
+        m_TimedPressureContent=ss.str();
+        inputFile.close();
+    }
+
+    ui->lineEditPressurePeriod->setText(pressurePeriod);
 }
 
 void svCapBCWidget::Confirm()

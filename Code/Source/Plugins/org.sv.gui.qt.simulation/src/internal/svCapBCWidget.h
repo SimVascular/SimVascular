@@ -35,6 +35,8 @@ public slots:
 
     void LoadFlowrateFromFile();
 
+    void LoadTimedPressureFromFile();
+
 signals:
     void accepted();
 
@@ -45,6 +47,8 @@ private:
     std::string m_FlowrateContent;
 
     std::map<std::string, std::string> m_Props;
+
+    std::string m_TimedPressureContent;
 };
 
 #endif // SVCAPBCWIDGET_H
