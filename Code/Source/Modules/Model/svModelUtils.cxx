@@ -65,6 +65,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, s
 
         cvPolyData* cvpd=new cvPolyData(newvtp);
         srcs[i+groupNumber]=cvpd;
+        newvtp->Delete();
     }
 
     cvPolyData *dst=NULL;
@@ -452,14 +453,6 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
       const char *vParametricSpanType = nurbsParam->vParametricSpanType.c_str();
       vtkNew(vtkSVNURBSSurface, NURBSSurface);
 
-      fprintf(stdout,"WHAT DEG U: %d\n", uDegree);
-      fprintf(stdout,"WHAT DEG V: %d\n", vDegree);
-      fprintf(stdout,"WHAT KNOT U: %s\n", uKnotSpanType);
-      fprintf(stdout,"WHAT KNOT V: %s\n", vKnotSpanType);
-      fprintf(stdout,"WHAT PARAM U: %s\n", uParametricSpanType);
-      fprintf(stdout,"WHAT PARAM V: %s\n", vParametricSpanType);
-
-
       if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,
                                           uDegree, vDegree, uSpacing,
                                           vSpacing, uKnotSpanType,
@@ -573,6 +566,7 @@ vtkPolyData* svModelUtils::CreateOrientClosedPolySolidVessel(vtkPolyData* inpd)
     vtkSmartPointer<vtkPolyDataNormals> nrmls = vtkSmartPointer<vtkPolyDataNormals>::New();
     nrmls->SplittingOff();
     nrmls->ConsistencyOn();
+    nrmls->FlipNormalsOn();
     nrmls->AutoOrientNormalsOn();
     nrmls->ComputeCellNormalsOn();
     nrmls->ComputePointNormalsOff();
