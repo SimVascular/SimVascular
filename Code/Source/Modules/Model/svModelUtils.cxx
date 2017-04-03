@@ -566,7 +566,6 @@ vtkPolyData* svModelUtils::CreateOrientClosedPolySolidVessel(vtkPolyData* inpd)
     vtkSmartPointer<vtkPolyDataNormals> nrmls = vtkSmartPointer<vtkPolyDataNormals>::New();
     nrmls->SplittingOff();
     nrmls->ConsistencyOn();
-    nrmls->FlipNormalsOn();
     nrmls->AutoOrientNormalsOn();
     nrmls->ComputeCellNormalsOn();
     nrmls->ComputePointNormalsOff();
@@ -650,7 +649,6 @@ vtkSmartPointer<vtkPolyData> svModelUtils::OrientVtkPolyData(vtkSmartPointer<vtk
     orienter->SetInputDataObject(cleaner->GetOutput());
     orienter->AutoOrientNormalsOn();
     orienter->ComputePointNormalsOff();
-    orienter->FlipNormalsOn();
     orienter->SplittingOff();
     orienter->ComputeCellNormalsOn();
     orienter->ConsistencyOn();
