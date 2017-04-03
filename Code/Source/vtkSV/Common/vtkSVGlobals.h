@@ -37,6 +37,9 @@
  *  \author shaddenlab.berkeley.edu
  */
 
+#ifndef vtkSVGlobals_h
+#define vtkSVGlobals_h
+
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
@@ -63,3 +66,4 @@
 #define svmaximum(A, B) ((A) > (B) ? (A) : (B))
 #define svminimum(A, B) ((A) < (B) ? (A) : (B))
 
+#endif
