@@ -42,9 +42,10 @@ string(TIMESTAMP DATE_IMESTAMP %y%m%d)
 math(EXPR SV_VERSION_TIMESTAMP "${DATE_IMESTAMP}-140000")
 string(TIMESTAMP SV_RELEASE_TIMESTAMP %y%m%d%H%M%S)
 set(SV_PLATFORM ${ARCH})
-set(SV_MAJOR_VERSION 2)
-set(SV_MINOR_VERSION 0)
-set(SV_PATCH_VERSION ${SV_VERSION_TIMESTAMP})
+simvascular_today(YEAR MONTH DAY RESULT)
+set(SV_MAJOR_VERSION ${YEAR})   # YEAR
+set(SV_MINOR_VERSION ${MONTH})   # MONTH
+set(SV_PATCH_VERSION ${DAY})  # DAY
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -57,5 +58,5 @@ set(SV_FULL_VERSION
 	"${SV_MAJOR_VERSION}.${SV_MINOR_VERSION}.${SV_PATCH_VERSION}")
 set(SV_REGISTRY_TOPLEVEL "SV")
 
-message(STATUS "SimVascular Version: ${SV_VERSION} ${SV_MAJOR_VERSION}.${SV_MINOR_VERSION}.${SV_PATCH_VERSION}")
+message(STATUS "SimVascular Version: ${SV_VERSION} ${SV_MAJOR_VERSION}-${SV_MINOR_VERSION}-${SV_PATCH_VERSION}")
 #-----------------------------------------------------------------------------

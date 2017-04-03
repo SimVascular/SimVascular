@@ -1253,3 +1253,22 @@ function(print_target_properties tgt)
    endforeach(prop)
 endfunction(print_target_properties)
 #-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+macro(simvascular_today YEAR MONTH DAY RESULT)
+    if(WIN32)
+        execute_process(COMMAND "cmd" " /C date /T" OUTPUT_VARIABLE ${RESULT})
+        string(REGEX REPLACE "(..)/(..)/(....).*" "\\3;\\2;\\1" ${RESULT} ${${RESULT}})
+    elseif(UNIX)
+        execute_process(COMMAND "date" "+%d/%m/%Y" OUTPUT_VARIABLE ${RESULT})
+        string(REGEX REPLACE "(..)/(..)/(....).*" "\\3;\\2;\\1" ${RESULT} ${${RESULT}})
+    else(WIN32)
+        message(SEND_ERROR "date not implemented")
+        SET(${RESULT} 000000)
+    endif (WIN32)
+    list(GET ${RESULT} 0 YEAR)
+    list(GET ${RESULT} 1 MONTH)
+    list(GET ${RESULT} 2 DAY)
+    set(RESULT ${${YEAR}}-${${MONTH}}-${${DAY}})
+endmacro()
+#-----------------------------------------------------------------------------
