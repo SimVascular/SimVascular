@@ -188,12 +188,24 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     connect( setBCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowCapBCWidget(bool) ) );
     connect( setPressureAction, SIGNAL( triggered(bool) ) , this, SLOT( SetDistalPressure(bool) ) );
 
+    QAction* splitBCRAction=m_TableMenuCap->addAction("Split Resistance");
+    QAction* splitBCCAction=m_TableMenuCap->addAction("Split Capacitance");
+    connect( splitBCRAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSplitBCWidgetR(bool) ) );
+    connect( splitBCCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSplitBCWidgetC(bool) ) );
+
     m_CapBCWidget=new svCapBCWidget();
     m_CapBCWidget->move(400,400);
     m_CapBCWidget->hide();
     m_CapBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     connect(m_CapBCWidget,SIGNAL(accepted()), this, SLOT(SetCapBC()));
+
+    m_SplitBCWidget=new svSplitBCWidget();
+    m_SplitBCWidget->move(400,400);
+    m_SplitBCWidget->hide();
+    m_SplitBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+
+    connect(m_SplitBCWidget,SIGNAL(accepted()), this, SLOT(SplitCapBC()));
 
     //for wall panel and var table
     connect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(WallTypeSelectionChanged(int )));
@@ -251,14 +263,18 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
     QString filePath="";
-    if(QFile(filePath=solverPath+svpreName).exists())
+    if(QFile(filePath=solverPath+"/.."+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=solverPath+svpreName).exists())
         m_InternalPresolverPath=filePath;
     else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
         m_InternalPresolverPath=filePath;
     else if(QFile(filePath=applicationPath+svpreName).exists())
         m_InternalPresolverPath=filePath;
 
-    if(QFile(filePath=solverPath+svsolverName).exists())
+    if(QFile(filePath=solverPath+"/.."+svsolverName).exists())
+        m_InternalFlowsolverPath=filePath;
+    else if(QFile(filePath=solverPath+svsolverName).exists())
         m_InternalFlowsolverPath=filePath;
     else if(QFile(filePath=applicationPath+"/.."+svsolverName).exists())
         m_InternalFlowsolverPath=filePath;
@@ -862,7 +878,180 @@ void  svSimulationView::SetCapBC()
         m_TableModelCap->item(row,14)->setText(QString::fromStdString(props["R Values"]));
         m_TableModelCap->item(row,15)->setText(QString::fromStdString(props["C Values"]));
     }
+}
 
+void svSimulationView::ShowSplitBCWidget(QString splitTarget)
+{
+    QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    QString lastBCType="";
+    for(int i=0;i<indexesOfSelectedRows.size();i++)
+    {
+        int row=indexesOfSelectedRows[0].row();
+        QString BCType=m_TableModelCap->item(row,1)->text().trimmed();
+
+        if(BCType=="")
+        {
+            QMessageBox::warning(m_Parent,"BC Type Missing","Please speficify BC type for the caps!");
+            return false;
+        }
+        else if(BCType!=lastBCType && lastBCType!="")
+        {
+            QMessageBox::warning(m_Parent,"BC Type Inconsistent","Please split BC for the caps of the same BC type!");
+            return false;
+        }
+
+        lastBCType=BCType;
+    }
+
+    if(lastBCType=="Resistance" && splitTarget=="Capacitance")
+    {
+        QMessageBox::warning(m_Parent,"Warning","Can't split capacitance for BC type Resistance!");
+        return false;
+    }
+
+    m_SplitBCWidget->UpdateGUI(lastBCType,splitTarget);
+
+    m_SplitBCWidget->show();
+}
+
+void svSimulationView::ShowSplitBCWidgetR(bool)
+{
+    ShowSplitBCWidget("Resistance");
+}
+
+void svSimulationView::ShowSplitBCWidgetC(bool)
+{
+    ShowSplitBCWidget("Capacitance");
+}
+
+void  svSimulationView::SplitCapBC()
+{
+    if(!m_MitkJob)
+        return;
+
+    if(!m_Model)
+        return;
+
+    if(!m_SplitBCWidget)
+        return;
+
+    svModelElement* modelElement=m_Model->GetModelElement();
+    if(modelElement==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    QString bcType=m_SplitBCWidget->GetBCType();
+    QString splitTarget=m_SplitBCWidget->GetSplitTarget();
+    double totalValue=m_SplitBCWidget->GetTotalValue();
+    double murrayCoefficient=m_SplitBCWidget->GetMurrayCoefficient();
+    double percentage1=m_SplitBCWidget->GetPercentage1();
+    double percentage2=m_SplitBCWidget->GetPercentage2();
+    double percentage3=m_SplitBCWidget->GetPercentage3();
+
+    double totalMurrayArea=0;
+    std::vector<double> faceMurrayArea;
+    for(int i=0;i<indexesOfSelectedRows.size();i++)
+    {
+        int row=indexesOfSelectedRows[i].row();
+        std::string faceName=m_TableModelCap->item(row,0)->text().trimmed().toStdString();
+        double murrayArea=pow(sqrt(modelElement->GetFaceArea(modelElement->GetFaceID(faceName))),murrayCoefficient);
+        totalMurrayArea+=murrayArea;
+        faceMurrayArea.push_back(murrayArea);
+    }
+
+    for(int i=0;i<indexesOfSelectedRows.size();i++)
+    {
+        int row=indexesOfSelectedRows[i].row();
+
+        if(splitTarget=="Resistance")
+        {
+            double murrayRatio=totalMurrayArea/faceMurrayArea[i];
+            if(bcType=="Resistance")
+            {
+                m_TableModelCap->item(row,2)->setText(QString::number(murrayRatio*totalValue));
+            }
+            else if(bcType=="RCR")
+            {
+                QString Rp=QString::number(murrayRatio*totalValue*percentage1);
+                QString CC="0";
+                QString Rd=QString::number(murrayRatio*totalValue*percentage2);
+
+                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                if(list.size()==1)
+                    CC=list[0];
+
+                m_TableModelCap->item(row,2)->setText(Rp+" "+CC+" "+Rd);
+                m_TableModelCap->item(row,14)->setText(Rp+" "+Rd);
+            }
+            else if(bcType=="Coronary")
+            {
+                QString Ra=QString::number(murrayRatio*totalValue*percentage1);
+                QString Ca="0";
+                QString Ram=QString::number(murrayRatio*totalValue*percentage2);
+                QString Cim="0";
+                QString Rv=QString::number(murrayRatio*totalValue*percentage3);
+
+                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                if(list.size()==2)
+                {
+                    Ca=list[0];
+                    Cim=list[1];
+                }
+
+                m_TableModelCap->item(row,2)->setText(Ra+" "+Ca+" "+Ram+" "+Cim+" "+Rv);
+                m_TableModelCap->item(row,14)->setText(Ra+" "+Ram+" "+Rv);
+            }
+        }
+        else if(splitTarget=="Capacitance")
+        {
+            double murrayRatio=faceMurrayArea[i]/totalMurrayArea;
+            if(bcType=="RCR")
+            {
+                QString Rp="0";
+                QString CC=QString::number(murrayRatio*totalValue);
+                QString Rd="0";
+
+                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                if(list.size()==2)
+                {
+                    Rp=list[0];
+                    Rd=list[1];
+                }
+
+                m_TableModelCap->item(row,2)->setText(Rp+" "+CC+" "+Rd);
+                m_TableModelCap->item(row,15)->setText(CC);
+            }
+            else if(bcType=="Coronary")
+            {
+                QString Ra="0";
+                QString Ca=QString::number(murrayRatio*totalValue*percentage1);
+                QString Ram="0";
+                QString Cim=QString::number(murrayRatio*totalValue*percentage2);
+                QString Rv="0";
+
+                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                if(list.size()==3)
+                {
+                    Ra=list[0];
+                    Ram=list[1];
+                    Rv=list[2];
+                }
+
+                m_TableModelCap->item(row,2)->setText(Ra+" "+Ca+" "+Ram+" "+Cim+" "+Rv);
+                m_TableModelCap->item(row,15)->setText(Ca+" "+Cim);
+            }
+        }
+    }
 }
 
 void svSimulationView::UpdateGUICap()
@@ -1753,7 +1942,11 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
             QStringList arguments;
             arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
             presolverProcess->setArguments(arguments);
-            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_JobNode,m_Parent);
+#if defined(Q_OS_MAC)
+            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_JobNode,false,m_Parent);
+#else
+            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_JobNode,true,m_Parent);
+#endif
             handler->Start();
         }
     }
@@ -2522,11 +2715,12 @@ void svSimulationView::UpdateJobStatus()
 
 }
 
-svProcessHandler::svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, QWidget* parent)
+svProcessHandler::svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, bool stoppable, QWidget* parent)
     : m_Process(process)
     , m_JobNode(jobNode)
     , m_Parent(parent)
     , m_MessageBox(NULL)
+    , m_Stoppable(stoppable)
 {
 }
 
@@ -2547,16 +2741,19 @@ void svProcessHandler::Start()
     connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
     m_Process->start();
 
-    m_MessageBox= new QMessageBox(m_Parent);
-    m_MessageBox->setWindowTitle("Processing");
-    m_MessageBox->setText("Processing data and creating files...                                 ");
-    m_MessageBox->setInformativeText("Click \"OK\" to continue in background.\nClick \"Abort\" to terminate.");
-    m_MessageBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
-    m_MessageBox->setDefaultButton(QMessageBox::Ok);
+    if(m_Stoppable)
+    {
+        m_MessageBox= new QMessageBox(m_Parent);
+        m_MessageBox->setWindowTitle("Processing");
+        m_MessageBox->setText("Processing data and creating files...                                 ");
+        m_MessageBox->setInformativeText("Click \"OK\" to continue in background.\nClick \"Abort\" to terminate.");
+        m_MessageBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+        m_MessageBox->setDefaultButton(QMessageBox::Ok);
 
-    int ret = m_MessageBox->exec();
-    if(ret==QMessageBox::Abort && m_Process)
-        m_Process->kill();
+        int ret = m_MessageBox->exec();
+        if(ret==QMessageBox::Abort && m_Process)
+            m_Process->kill();
+    }
 }
 
 void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
