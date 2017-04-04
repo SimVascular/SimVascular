@@ -68,30 +68,8 @@ endif()
 # Includes
 include(ExternalProject)
 include(SvExtMacros)
-#include(SvExtFunctions)
+include(SvExtHomeSetup)
 #-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# OS
-set(SV_OS "${CMAKE_SYSTEM_NAME}")
-IF("${CMAKE_SYSTEM}" MATCHES "Linux")
-	SET(LINUX TRUE)
-elseif(WIN32)
-	set(WINDOWS TRUE)
-endif()
-
-if(WIN32)
-	if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
-		set(WIN64 TRUE)
-	else()
-		set(WIN64 FALSE)
-	endif()
-	set(ENV_SET_COMMAND "set")
-	set(ENV_PATH_VARIABLE "PATH")
-	set(ENV_LIBRARY_PATH_VARIABLE "PATH")
-	set(ENV_SEPERATOR ";")
-	set(DIR_SEPERATOR "\\")
-endif()
 
 #-----------------------------------------------------------------------------
 # Initial options

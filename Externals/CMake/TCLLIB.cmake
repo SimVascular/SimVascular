@@ -32,7 +32,7 @@ set(proj TCLLIB)
 set(${proj}_DEPENDENCIES "TCL" "TK")
 
 # Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_STANFORD_URL}/tcltk/tcllib-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/tcltk/tcllib-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 if(UNIX)

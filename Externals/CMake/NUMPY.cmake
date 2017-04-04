@@ -32,7 +32,7 @@ set(proj NUMPY)
 set(${proj}_DEPENDENCIES "PYTHON" "PIP")
 
 # Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_STANFORD_URL}/numpy/numpy-1.11.1.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/numpy/numpy-1.11.1.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 # Configure options

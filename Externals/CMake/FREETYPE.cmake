@@ -32,7 +32,7 @@ set(proj FREETYPE)
 set(${proj}_DEPENDENCIES "")
 
 # Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_STANFORD_URL}/freetype/freetype-2.5.5.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/freetype/freetype-2.5.5.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 # Add external project

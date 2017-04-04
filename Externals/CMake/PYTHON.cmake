@@ -32,7 +32,7 @@ set(proj PYTHON)
 set(${proj}_DEPENDENCIES "")
 
 # Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_STANFORD_URL}/python/python-2.7.11-cmakebuild.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/python/python-2.7.11-cmakebuild.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )

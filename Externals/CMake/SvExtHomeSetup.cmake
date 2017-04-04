@@ -25,31 +25,37 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #-----------------------------------------------------------------------------
-# TCLLIB
-set(proj TKLIB)
-
-# Dependencies
-set(${proj}_DEPENDENCIES "TCL" "TK")
-
-# Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/tcltk/tklib-${SV_EXTERNALS_${proj}_VERSION}.tar.tgz" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
-
-if(UNIX)
-  set(SV_EXTERNALS_${proj}_INSTALL_COMMAND yes | ${SV_EXTERNALS_TCLSH_EXECUTABLE} ${SV_EXTERNALS_${proj}_SRC_DIR}/installer.tcl -no-gui)
-else()
-  set(SV_EXTERNALS_${proj}_INSTALL_COMMAND ${SV_EXTERNALS_TCLSH_EXECUTABLE} ${SV_EXTERNALS_${proj}_SRC_DIR}/installer.tcl -no-gui /y)
+# OS
+set(SV_OS "${CMAKE_SYSTEM_NAME}")
+IF("${CMAKE_SYSTEM}" MATCHES "Linux")
+	SET(LINUX TRUE)
+elseif(WIN32)
+	set(WINDOWS TRUE)
 endif()
 
-# Add external project
-ExternalProject_Add(${proj}
-  URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-  PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-  SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-  BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-  DEPENDS ${${proj}_DEPENDENCIES}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMAND}
-  UPDATE_COMMAND ""
-  )
+if(WIN32)
+	if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
+		set(WIN64 TRUE)
+	else()
+		set(WIN64 FALSE)
+	endif()
+	set(ENV_SET_COMMAND "set")
+	set(ENV_PATH_VARIABLE "PATH")
+	set(ENV_LIBRARY_PATH_VARIABLE "PATH")
+	set(ENV_SEPERATOR ";")
+	set(DIR_SEPERATOR "\\")
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Set platforms directories
+if(APPLE)
+  set(SV_EXTERNALS_PLATFORM_DIR "mac_osx/10.10")
+elseif(LINUX)
+  set(SV_EXTERNALS_PLATFORM_DIR "linux/ubuntu_14")
+elseif(WIN64)
+  set(SV_EXTERNALS_PLATFORM_DIR "windows/10")
+else()
+  set(SV_EXTERNALS_PLATFORM_DIR "unsupported")
+endif()
+#-----------------------------------------------------------------------------
