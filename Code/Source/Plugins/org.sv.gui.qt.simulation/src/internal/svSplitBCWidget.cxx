@@ -120,7 +120,7 @@ bool svSplitBCWidget::SetValues()
             QMessageBox::warning(this,"Ratio Error","Please provide ratio in a correct format!");
             return false;
         }
-        QStringList list = value.split(QRegExp("[(),:{}\\s+]"), QString::SkipEmptyParts);
+        QStringList list = value.split(QRegExp("[(),:{}\\s]"), QString::SkipEmptyParts);
         m_Percentage1=list[0].toDouble();
         m_Percentage2=list[1].toDouble();
 
@@ -141,7 +141,7 @@ bool svSplitBCWidget::SetValues()
             QMessageBox::warning(this,"Ratio Error","Please provide ratio in a correct format!");
             return false;
         }
-        QStringList list = value.split(QRegExp("[(),:{}\\s+]"), QString::SkipEmptyParts);
+        QStringList list = value.split(QRegExp("[(),:{}\\s]"), QString::SkipEmptyParts);
         m_Percentage1=list[0].toDouble();
         m_Percentage2=list[1].toDouble();
         m_Percentage3=list[2].toDouble();
@@ -184,7 +184,7 @@ bool svSplitBCWidget::IsDouble(QString value)
 
 bool svSplitBCWidget::AreDouble(QString values, int* count)
 {
-    QStringList list = values.split(QRegExp("[(),:{}\\s+]"), QString::SkipEmptyParts);
+    QStringList list = values.split(QRegExp("[(),:{}\\s]"), QString::SkipEmptyParts);
     bool ok;
     for(int i=0;i<list.size();i++)
     {

@@ -891,7 +891,7 @@ void svSimulationView::ShowSplitBCWidget(QString splitTarget)
     QString lastBCType="";
     for(int i=0;i<indexesOfSelectedRows.size();i++)
     {
-        int row=indexesOfSelectedRows[0].row();
+        int row=indexesOfSelectedRows[i].row();
         QString BCType=m_TableModelCap->item(row,1)->text().trimmed();
 
         if(BCType=="")
@@ -986,7 +986,7 @@ void  svSimulationView::SplitCapBC()
                 QString CC="0";
                 QString Rd=QString::number(murrayRatio*totalValue*percentage2);
 
-                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
                 if(list.size()==1)
                     CC=list[0];
 
@@ -1001,7 +1001,7 @@ void  svSimulationView::SplitCapBC()
                 QString Cim="0";
                 QString Rv=QString::number(murrayRatio*totalValue*percentage3);
 
-                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
                 if(list.size()==2)
                 {
                     Ca=list[0];
@@ -1021,7 +1021,7 @@ void  svSimulationView::SplitCapBC()
                 QString CC=QString::number(murrayRatio*totalValue);
                 QString Rd="0";
 
-                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
                 if(list.size()==2)
                 {
                     Rp=list[0];
@@ -1039,7 +1039,7 @@ void  svSimulationView::SplitCapBC()
                 QString Cim=QString::number(murrayRatio*totalValue*percentage2);
                 QString Rv="0";
 
-                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
                 if(list.size()==3)
                 {
                     Ra=list[0];
@@ -2604,7 +2604,7 @@ bool svSimulationView::IsDouble(std::string value)
 
 bool svSimulationView::AreDouble(std::string values, int* count)
 {
-    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
     bool ok;
     for(int i=0;i<list.size();i++)
     {
