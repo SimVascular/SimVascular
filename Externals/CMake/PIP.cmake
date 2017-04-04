@@ -37,17 +37,33 @@ set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/python/get-pi
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 # Add external project
-ExternalProject_Add(${proj}
-  PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-  SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-  BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-  DEPENDS ${${proj}_DEPENDENCIES}
-  DOWNLOAD_COMMAND wget ${SV_EXTERNALS_${proj}_SOURCE_URL} -P ${SV_EXTERNALS_${proj}_SRC_DIR}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} "${SV_EXTERNALS_${proj}_SRC_DIR}/get-pip.py"
-  INSTALL_COMMAND ""
-  UPDATE_COMMAND ""
-  )
+if(SV_EXTERNALS_DOWNLOAD_PYTHON)
+  # Empty project
+  ExternalProject_Add(${proj}
+    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+    )
+else()
+  ExternalProject_Add(${proj}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_COMMAND wget ${SV_EXTERNALS_${proj}_SOURCE_URL} -P ${SV_EXTERNALS_${proj}_SRC_DIR}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} "${SV_EXTERNALS_${proj}_SRC_DIR}/get-pip.py"
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+    )
+endif()
 
 # PIP variables needed later on
 set(SV_EXTERNALS_${proj}_EXECUTABLE ${SV_EXTERNALS_PYTHON_BIN_DIR}/bin/pip)

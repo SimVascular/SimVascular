@@ -26,17 +26,6 @@
 #
 #-----------------------------------------------------------------------------
 # Toplevel directories for src, bin, build or externals
-set(SV_EXTERNALS_ARCH_DIR "x64")
-
-set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
-if (NOT CMAKE_CXX_COMPILER_VERSION)
-  message(FATAL_ERROR "Compiler version does not exist; must specify the compiler
-                       version with -DCMAKE_CXX_COMPILER_VERSION='major_version'.'minor_version'")
-endif()
-sv_externals_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJOR_VERSION COMPILER_MINOR_VERSION)
-string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
-set(SV_EXTERNALS_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
-
 set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/sv_externals" CACHE PATH "Externals toplevel directory")
 
 set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/src"
@@ -51,6 +40,7 @@ set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/prefix"
 
 #-----------------------------------------------------------------------------
 # Tar install directory
+option(SV_EXTERNALS_TAR_BINARIES "Tar up the final built or downloaded externals" OFF)
 set(SV_EXTERNALS_TAR_INSTALL_DIR "${CMAKE_BINARY_DIR}/tar_output"
   CACHE PATH "Directory where source files for externals will be put")
 file(MAKE_DIRECTORY "${SV_EXTERNALS_TAR_INSTALL_DIR}")
@@ -59,8 +49,13 @@ file(MAKE_DIRECTORY "${SV_EXTERNALS_TAR_INSTALL_DIR}")
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
 set(SV_EXTERNALS_ORIGINALS_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/src/originals" CACHE STRING "URL with source downloads for externals")
-set(SV_EXTERNALS_BINARIES_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/${SV_EXTERNALS_PLATFORM_DIR}" CACHE STRING "URL with source downloads for externals")
+mark_as_advanced(SV_EXTERNALS_ORIGINALS_URL)
+set(SV_EXTERNALS_DOWNLOADS_DATE "latest" CACHE STRING "Date that downloadable binaries were built")
+mark_as_advanced(SV_EXTERNALS_DOWNLOADS_DATE)
+set(SV_EXTERNALS_BINARIES_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/${SV_EXTERNALS_DOWNLOADS_PLATFORM_DIRS}/${SV_EXTERNALS_DOWNLOADS_DATE}/${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}" CACHE STRING "URL with source downloads for externals")
+mark_as_advanced(SV_EXTERNALS_BINARIES_URL)
 set(SV_EXTERNALS_GIT_URL "http://github.com/SimVascular" CACHE STRING "Git URL for SimVascular")
+mark_as_advanced(SV_EXTERNALS_GIT_URL)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -78,65 +73,69 @@ sv_externals_add_new_external(TCL 8.6.4 ON ON tcl tcltk)
 
 #-----------------------------------------------------------------------------
 # TK
-sv_externals_add_new_external(TK 8.6.4 ON ON tk tcltk)
+sv_externals_add_new_external(TK 8.6.4 ON ON tk none)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # TCLLIB
-sv_externals_add_new_external(TCLLIB 1.17 ON ON tcllib)
+sv_externals_add_new_external(TCLLIB 1.17 ON ON tcllib none)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # TKLIB
-sv_externals_add_new_external(TKLIB 0.6 ON ON tklib tklib)
+sv_externals_add_new_external(TKLIB 0.6 ON ON tklib none)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 #PYTHON
-sv_externals_add_new_external(PYTHON 2.7.11 ON ON python)
+sv_externals_add_new_external(PYTHON 2.7.11 ON ON python python)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 #PIP
-sv_externals_add_new_external(PIP 0.0.0 ON ON pip)
+sv_externals_add_new_external(PIP 0.0.0 ON ON pip none)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 #NUMPY
-sv_externals_add_new_external(NUMPY 1.11.1 ON ON numpy)
+sv_externals_add_new_external(NUMPY 1.11.1 ON ON numpy none)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 #FREETYPE
-sv_externals_add_new_external(FREETYPE 2.6.3 ON ON freetype)
+sv_externals_add_new_external(FREETYPE 2.6.3 ON ON freetype freetype)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # MMG
-sv_externals_add_new_external(MMG 5.1.0 ON OFF mmg)
+sv_externals_add_new_external(MMG 5.1.0 ON OFF mmg mmg)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # GDCM
-sv_externals_add_new_external(GDCM 2.6.1 ON ON gdcm)
+sv_externals_add_new_external(GDCM 2.6.1 ON ON gdcm gdcm)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # VTK
-sv_externals_add_new_external(VTK 6.2.0 ON ON vtk)
+sv_externals_add_new_external(VTK 6.2.0 ON ON vtk vtk)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # ITK
-sv_externals_add_new_external(ITK 4.7.1 ON ON itk)
+sv_externals_add_new_external(ITK 4.7.1 ON ON itk itk)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # OpenCASCADE
-sv_externals_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade)
+sv_externals_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade opencascade)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # MITK
-sv_externals_add_new_external(MITK 2016.03 ON ON mitk)
+sv_externals_add_new_external(MITK 2016.03 ON ON mitk mitk)
 #-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+#Download options for tcltk
+option(SV_EXTERNALS_DOWNLOAD_TCLTK "Download instead of build TCLTK" ON)

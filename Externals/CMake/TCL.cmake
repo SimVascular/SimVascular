@@ -34,6 +34,8 @@ set(${proj}_DEPENDENCIES "")
 # Source URL
 set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/tcltk/tcl${SV_EXTERNALS_${proj}_VERSION}-src.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
+set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_BINARIES_URL}.tcltk-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Download location of ${proj}")
+mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
 
 # Configure options
 set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
@@ -86,13 +88,26 @@ endif()
 
 
 # Add external project
-ExternalProject_Add(${proj}
-  URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-  PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-  SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-  BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-  DEPENDS ${${proj}_DEPENDENCIES}
-  CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} ${SV_EXTERNALS_${proj}_SRC_DIR}/${SV_EXTERNALS_${proj}_URL_EXTENSION}/configure -C ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
-  UPDATE_COMMAND ""
-  )
-
+if(SV_EXTERNALS_DOWNLOAD_TCLTK)
+  ExternalProject_Add(${proj}
+    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+    )
+else()
+  ExternalProject_Add(${proj}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} ${SV_EXTERNALS_${proj}_SRC_DIR}/${SV_EXTERNALS_${proj}_URL_EXTENSION}/configure -C ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    UPDATE_COMMAND ""
+    )
+endif()

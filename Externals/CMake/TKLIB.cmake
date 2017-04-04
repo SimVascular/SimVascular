@@ -42,14 +42,30 @@ else()
 endif()
 
 # Add external project
-ExternalProject_Add(${proj}
-  URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-  PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-  SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-  BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-  DEPENDS ${${proj}_DEPENDENCIES}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMAND}
-  UPDATE_COMMAND ""
-  )
+if(SV_EXTERNALS_DOWNLOAD_TCLTK)
+  # Empty project
+  ExternalProject_Add(${proj}
+    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+    )
+else()
+  ExternalProject_Add(${proj}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMAND}
+    UPDATE_COMMAND ""
+    )
+endif()

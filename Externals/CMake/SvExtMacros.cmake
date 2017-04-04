@@ -27,25 +27,17 @@
 #-----------------------------------------------------------------------------
 # sv_externals_add_new_external
 # \brief Create new external and set variables with default values based on inputs
-macro(sv_externals_add_new_external proj version use shared dirname)
+macro(sv_externals_add_new_external proj version use shared dirname install_dirname)
   option(SV_EXTERNALS_ENABLE_${proj} "Enable ${proj} Plugin" ${use})
   option(SV_EXTERNALS_ENABLE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
+  mark_as_advanced(SV_EXTERNALS_ENABLE_${proj}_SHARED)
+  option(SV_EXTERNALS_DOWNLOAD_${proj} "Download instead of build ${proj}; Unused for tcl, tk, tcllib, tklib, numpy, pip" ${use})
+  mark_as_advanced(SV_EXTERNALS_DOWNLOAD_${proj})
 
   # Version
   set(SV_EXTERNALS_${proj}_VERSION "${version}" CACHE TYPE STRING)
   mark_as_advanced(SV_EXTERNALS_${proj}_VERSION)
   sv_externals_get_major_minor_version(${SV_EXTERNALS_${proj}_VERSION} SV_EXTERNALS_${proj}_MAJOR_VERSION SV_EXTERNALS_${proj}_MINOR_VERSION)
-
-  # Platform
-  if(APPLE)
-    set(SV_EXTERNALS_PLATFORM_DIR "mac_osx")
-  elseif(LINUX)
-    set(SV_EXTERNALS_PLATFORM_DIR "linux")
-  elseif(WIN64)
-    set(SV_EXTERNALS_PLATFORM_DIR "windows")
-  else()
-    set(SV_EXTERNALS_PLATFORM_DIR "unsupported")
-  endif()
 
   # Src, bin, build, prefic dirs
   set(${proj}_VERSION_DIR ${dirname}-${SV_EXTERNALS_${proj}_VERSION})
@@ -84,11 +76,13 @@ macro(sv_externals_add_new_external proj version use shared dirname)
   endif()
 
   # Add install step for each external
-  sv_externals_today(TODAY)
-  set(SV_EXTERNALS_${proj}_TAR_INSTALL_NAME ${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}.${${proj}_VERSION_DIR}-BUILD${TODAY})
-  if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
-    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_${proj}_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_${proj}_BIN_DIR}
-      WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR})")
+  if(NOT "${install_dirname}" STREQUAL "none")
+    sv_externals_today(TODAY)
+    set(SV_EXTERNALS_${proj}_TAR_INSTALL_NAME ${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}.${install_dirname}-${SV_EXTERNALS_${proj}_VERSION}-BUILD${TODAY})
+    if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
+      install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_${proj}_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_${proj}_BIN_DIR}
+        WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR})")
+    endif()
   endif()
 endmacro()
 
