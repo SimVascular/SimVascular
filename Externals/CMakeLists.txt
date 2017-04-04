@@ -126,7 +126,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Add each external to be built. Full list and initial options are specified in SvExtOptions.cmake
 foreach(proj ${SV_EXTERNALS_LIST})
-  if(SV_EXTERNALS_BUILD_${proj})
+  if(SV_EXTERNALS_ENABLE_${proj})
     if(EXISTS "${SV_EXTERNALS_CMAKE_DIR}/${proj}.cmake")
       include("${SV_EXTERNALS_CMAKE_DIR}/${proj}.cmake")
     endif()

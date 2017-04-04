@@ -39,7 +39,7 @@ mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
   --prefix=${SV_EXTERNALS_${proj}_BIN_DIR}
   --enable-threads)
-if(SV_EXTERNALS_BUILD_${proj}_SHARED)
+if(SV_EXTERNALS_ENABLE_${proj}_SHARED)
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     --enable-shared)
@@ -63,7 +63,7 @@ else()
 endif()
 
 # TCL variables needed later on
-if(SV_EXTERNALS_BUILD_${proj}_SHARED)
+if(SV_EXTERNALS_ENABLE_${proj}_SHARED)
   set(${proj}_LIBRARY_NAME libtcl${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
 else()
   set(${proj}_LIBRARY_NAME libtcl${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
