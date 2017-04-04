@@ -34,6 +34,8 @@ void svSplitBCWidget::UpdateGUI(QString bcType, QString splitTarget)
 
     ui->labelTarget->setText("Total "+splitTarget+":");
 
+    setWindowTitle("Split "+splitTarget);
+
     ui->lineEditTotalValue->clear();
 
     if(splitTarget=="Resistance")

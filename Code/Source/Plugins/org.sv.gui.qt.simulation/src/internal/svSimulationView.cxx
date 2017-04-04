@@ -964,7 +964,7 @@ void  svSimulationView::SplitCapBC()
     {
         int row=indexesOfSelectedRows[i].row();
         std::string faceName=m_TableModelCap->item(row,0)->text().trimmed().toStdString();
-        double murrayArea=pow(sqrt(modelElement->GetFaceArea(modelElement->GetFaceID(faceName))),murrayCoefficient);
+        double murrayArea=pow(modelElement->GetFaceArea(modelElement->GetFaceID(faceName)),murrayCoefficient/2);
         totalMurrayArea+=murrayArea;
         faceMurrayArea.push_back(murrayArea);
     }

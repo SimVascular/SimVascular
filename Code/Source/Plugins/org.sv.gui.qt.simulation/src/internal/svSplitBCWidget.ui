@@ -14,7 +14,7 @@
    <enum>Qt::CustomContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>Set Inlet/Outlet BCs</string>
+   <string>Split BC</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
