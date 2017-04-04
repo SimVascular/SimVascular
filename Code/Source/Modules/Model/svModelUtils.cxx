@@ -28,16 +28,17 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, s
     cvPolyData **srcs=new cvPolyData* [groupNumber+vtpNumber];
     for(int i=0;i<groupNumber;i++)
     {
-        svContourGroup* group=groups[i];
-        cvPolyData* cvpd=new cvPolyData(CreateLoftSurface(group,numSamplingPts,nurbsParam,1,t));
-        if (cvpd == NULL)
-        {
-          for (int j=0; j< i-1; j++)
-            delete srcs[j];
-          delete [] srcs;
-          return NULL;
-        }
-        srcs[i]=cvpd;
+      svContourGroup* group=groups[i];
+      vtkPolyData *vtkpd = CreateLoftSurface(group,numSamplingPts,nurbsParam,1,t);
+      if (vtkpd == NULL)
+      {
+        for (int j=0; j< i-1; j++)
+          delete srcs[j];
+        delete [] srcs;
+        return NULL;
+      }
+      srcs[i]=new cvPolyData(vtkpd);
+      vtkpd->Delete();
     }
 
     for(int i=0;i<vtpNumber;i++)
@@ -64,6 +65,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, s
 
         cvPolyData* cvpd=new cvPolyData(newvtp);
         srcs[i+groupNumber]=cvpd;
+        newvtp->Delete();
     }
 
     cvPolyData *dst=NULL;
@@ -405,10 +407,6 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
            != SV_OK )
       {
           MITK_ERROR << "poly manipulation error ";
-          delete dst;
-          for (int j=0; j<contourNumber; j++)
-            delete sampledContours[j];
-          delete [] sampledContours;
           outpd=NULL;
       }
       else
@@ -427,10 +425,10 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
       int vDegree = nurbsParam->vDegree;
 
       // Override to maximum possible degree if too large a degree for given number of inputs!
-      if (uDegree > contourNumber)
-        uDegree = contourNumber;
-      if (vDegree > newNumSamplingPts)
-        vDegree = newNumSamplingPts;
+      if (uDegree >= contourNumber)
+        uDegree = contourNumber-1;
+      if (vDegree >= newNumSamplingPts)
+        vDegree = newNumSamplingPts-1;
 
       // Set to average knot span and chord length if just two inputs
       if (contourNumber == 2)
@@ -455,7 +453,6 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
       const char *vParametricSpanType = nurbsParam->vParametricSpanType.c_str();
       vtkNew(vtkSVNURBSSurface, NURBSSurface);
 
-
       if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,
                                           uDegree, vDegree, uSpacing,
                                           vSpacing, uKnotSpanType,
@@ -467,10 +464,6 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
            != SV_OK )
       {
           MITK_ERROR << "poly manipulation error ";
-          delete dst;
-          for (int j=0; j<contourNumber; j++)
-            delete sampledContours[j];
-          delete [] sampledContours;
           outpd=NULL;
       }
       else
@@ -656,7 +649,6 @@ vtkSmartPointer<vtkPolyData> svModelUtils::OrientVtkPolyData(vtkSmartPointer<vtk
     orienter->SetInputDataObject(cleaner->GetOutput());
     orienter->AutoOrientNormalsOn();
     orienter->ComputePointNormalsOff();
-    orienter->FlipNormalsOn();
     orienter->SplittingOff();
     orienter->ComputeCellNormalsOn();
     orienter->ConsistencyOn();
