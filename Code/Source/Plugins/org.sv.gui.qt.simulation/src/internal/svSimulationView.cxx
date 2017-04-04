@@ -2886,7 +2886,7 @@ void svSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitSt
     mb.setIcon(icon);
 
     if(m_Process)
-        mb.setDetailedText(m_Process->readAll());
+        mb.setDetailedText(m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError());
 
     mb.exec();
 
