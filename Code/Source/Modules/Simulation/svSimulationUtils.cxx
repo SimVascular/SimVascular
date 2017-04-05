@@ -81,7 +81,7 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
                 ss << "bct_period " << props["Period"] <<"\n";
                 ss << "bct_point_number " << props["Point Number"] <<"\n";
                 ss << "bct_fourier_mode_number " << props["Fourier Modes"] <<"\n";
-                if(props["Flip Normal"]=="False")
+                if(props["Flip Normal"]=="True")
                 {
                     ss << "bct_flip\n";
                 }

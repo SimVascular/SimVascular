@@ -397,7 +397,7 @@ void svCapBCWidget::LoadTimedPressureFromFile()
             if(line.contains("#"))
                 continue;
 
-            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            QStringList list = line.split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
             if(list.size()!=2)
                 continue;
 
@@ -436,7 +436,7 @@ bool svCapBCWidget::IsDouble(QString value)
 
 bool svCapBCWidget::AreDouble(QString values, int* count)
 {
-    QStringList list = values.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    QStringList list = values.split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
     bool ok;
     for(int i=0;i<list.size();i++)
     {
