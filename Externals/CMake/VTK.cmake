@@ -72,8 +72,6 @@ set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/VTK.git" CACHE STRING 
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
 set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-6.2" CACHE STRING "Tag for ${proj}")
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
-set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_BINARIES_URL}.vtk-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Download location of ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
 
 # Platform specific additions
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )

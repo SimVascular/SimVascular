@@ -84,6 +84,24 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
         WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR})")
     endif()
   endif()
+
+  # Set up download stuff if downloading
+  if(NOT "${install_dirname}" STREQUAL "none")
+    if(SV_EXTERNALS_DOWNLOAD_${proj})
+      set(${proj}_TEST_FILE "${SV_EXTERNALS_BINARIES_URL_BASE}/exists.txt")
+      file(DOWNLOAD "${${proj}_TEST_FILE}" "${SV_EXTERNALS_${proj}_PFX_DIR}/exists.txt" STATUS _status LOG _log INACTIVITY_TIMEOUT 1 TIMEOUT 1)
+      list(GET _status 0 err)
+      list(GET _status 1 msg)
+      if(err)
+        set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_URL}/${SV_EXTERNALS_DOWNLOADS_DEFAULT_DIR}.${SV_EXTERNALS_${proj}_DEFAULT}.tar.gz" CACHE STRING "Download location of ${proj}")
+        mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
+        message(WARNING "Pre-built binaries for the operating system and compiler do not exist! The best possible match will be downloaded; however, problems may occur, especially if the pre-built binaries are compiled with a different compiler. SV_EXTERNALS_${proj}_BINARIES_URL is being set to ${SV_EXTERNALS_${proj}_BINARIES_URL}. Proceed with caution!")
+      else()
+        set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_BINARIES_URL_BASE}/${SV_EXTERNALS_BINARIES_URL_PREFIX}.${install_dirname}-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Download location of ${proj}")
+        mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
+      endif()
+    endif()
+  endif()
 endmacro()
 
 #-----------------------------------------------------------------------------

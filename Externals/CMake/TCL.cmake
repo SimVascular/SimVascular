@@ -34,8 +34,6 @@ set(${proj}_DEPENDENCIES "")
 # Source URL
 set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/tcltk/tcl${SV_EXTERNALS_${proj}_VERSION}-src.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
-set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_BINARIES_URL}.tcltk-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Download location of ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
 
 # Configure options
 set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS

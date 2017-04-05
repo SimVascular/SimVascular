@@ -34,8 +34,6 @@ set(${proj}_DEPENDENCIES "")
 # Source URL
 set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/python/python-${SV_EXTERNALS_${proj}_VERSION}-cmakebuild.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
-set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_BINARIES_URL}.python-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Download location of ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 if(WIN32)

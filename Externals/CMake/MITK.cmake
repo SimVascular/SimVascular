@@ -28,8 +28,10 @@
 # MITK
 set(proj MITK)
 
-# Find SWIG!
-find_package(SWIG REQUIRED)
+if(NOT SV_EXTERNALS_DOWNLOAD_MITK)
+  # Find SWIG!
+  find_package(SWIG REQUIRED)
+endif()
 
 if(NOT SV_EXTERNALS_USE_QT)
   message(FATAL_ERROR "${proj} cannot be built without Qt")
@@ -59,8 +61,6 @@ set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/MITK.git" CACHE STRING
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
 set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-2016.03.0" CACHE STRING "Tag for ${proj}")
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
-set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_BINARIES_URL}.mitk-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Download location of ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 #Special for Qt, make sure that MITK uses the same libs we are!

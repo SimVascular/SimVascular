@@ -28,8 +28,10 @@
 # GDCM
 set(proj GDCM)
 
-# Find SWIG!
-find_package(SWIG REQUIRED)
+if(NOT SV_EXTERNALS_DOWNLOAD_${proj})
+  # Find SWIG!
+  find_package(SWIG REQUIRED)
+endif()
 
 # Dependencies
 set(${proj}_DEPENDENCIES "")
@@ -43,8 +45,6 @@ set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/GDCM.git" CACHE STRING
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
 set(SV_EXTERNALS_${proj}_GIT_TAG "v${SV_EXTERNALS_${proj}_VERSION}" CACHE STRING "Tag for ${proj}")
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
-set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_BINARIES_URL}.gdcm-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Download location of ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
 
 #If using PYTHON
 if(SV_EXTERNALS_ENABLE_PYTHON)
