@@ -1,0 +1,15 @@
+GCP=/opt/local/libexec/gnubin/cp
+GDIRNAME=/opt/local/libexec/gnubin/dirname
+GBASENAME=/opt/local/libexec/gnubin/basename
+GMKDIR=/opt/local/libexec/gnubin/mkdir
+
+# paths
+
+export PYTHON_SRCDIR=@SV_EXTERNALS_PYTHON_SRC_DIR@
+export PYTHON_BINDIR=@SV_EXTERNALS_PYTHON_BIN_DIR@
+export PYTHON_BLDDIR=@SV_EXTERNALS_PYTHON_BLD_DIR@
+
+
+$GCP -rfl /opt/local/lib/libcrypto.* $PYTHON_BINDIR/lib
+$GCP -rfl /opt/local/lib/libssl.* $PYTHON_BINDIR/lib
+$GCP -rfl /opt/local/lib/libz.* $PYTHON_BINDIR/lib

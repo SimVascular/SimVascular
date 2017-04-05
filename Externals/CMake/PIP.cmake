@@ -40,9 +40,8 @@ mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 if(SV_EXTERNALS_DOWNLOAD_PYTHON)
   # Empty project
   ExternalProject_Add(${proj}
-    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
     DOWNLOAD_COMMAND ""

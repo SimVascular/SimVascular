@@ -66,11 +66,11 @@ if(APPLE)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
     -DCMAKE_PREFIX_PATH:PATH=/opt/local
     )
+  set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-python-mac_osx.sh)
+  configure_file(${SV_EXTERNALS_CMAKE_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
     COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
-    COMMAND cp /opt/local/lib/libcrypto.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
-    COMMAND cp /opt/local/lib/libssl.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
-    COMMAND cp /opt/local/lib/libz.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR})
+    COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT})
 elseif(LINUX)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
     -DCMAKE_INSTALL_RPATH:PATH=${SV_EXTERNALS_${proj}_LIBRARY_DIR}

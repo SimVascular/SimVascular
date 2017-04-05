@@ -42,8 +42,8 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   # Src, bin, build, prefic dirs
   set(${proj}_VERSION_DIR ${dirname}-${SV_EXTERNALS_${proj}_VERSION})
   set(SV_EXTERNALS_${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_SRC_DIR}/${${proj}_VERSION_DIR})
-  if(NOT "${ARGN}" STREQUAL "")
-    set(SV_EXTERNALS_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${ARGN}-${SV_EXTERNALS_${proj}_VERSION})
+  if(NOT "${install_dirname}" STREQUAL "none")
+    set(SV_EXTERNALS_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${install_dirname}-${SV_EXTERNALS_${proj}_VERSION})
   else()
     set(SV_EXTERNALS_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${${proj}_VERSION_DIR})
   endif()
