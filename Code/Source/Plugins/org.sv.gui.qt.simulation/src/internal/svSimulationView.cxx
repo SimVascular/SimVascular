@@ -897,12 +897,12 @@ void svSimulationView::ShowSplitBCWidget(QString splitTarget)
         if(BCType=="")
         {
             QMessageBox::warning(m_Parent,"BC Type Missing","Please speficify BC type for the caps!");
-            return false;
+            return;
         }
         else if(BCType!=lastBCType && lastBCType!="")
         {
             QMessageBox::warning(m_Parent,"BC Type Inconsistent","Please split BC for the caps of the same BC type!");
-            return false;
+            return;
         }
 
         lastBCType=BCType;
@@ -911,7 +911,7 @@ void svSimulationView::ShowSplitBCWidget(QString splitTarget)
     if(lastBCType=="Resistance" && splitTarget=="Capacitance")
     {
         QMessageBox::warning(m_Parent,"Warning","Can't split capacitance for BC type Resistance!");
-        return false;
+        return;
     }
 
     m_SplitBCWidget->UpdateGUI(lastBCType,splitTarget);
@@ -1912,7 +1912,7 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
         bool ok=svMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath);
         WaitCursorOff();
         if(!ok)
-        { 
+        {
             QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
             return false;
         }
@@ -2515,7 +2515,7 @@ void svSimulationView::ExportResults()
 
     exportDir=exportDir+"/"+jobName+"converted-results";
     QDir exdir(exportDir);
-    exdir.mkpath(exportDir);    
+    exdir.mkpath(exportDir);
 
     QString resultDir=ui->lineEditResultDir->text();
     QDir rdir(resultDir);
