@@ -88,6 +88,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   # Set up download stuff if downloading
   if(NOT "${install_dirname}" STREQUAL "none")
     if(SV_EXTERNALS_DOWNLOAD_${proj})
+      message("AHAHAHAH: ${SV_EXTERNALS_BINARIES_URL_BASE}")
       set(${proj}_TEST_FILE "${SV_EXTERNALS_BINARIES_URL_BASE}/exists.txt")
       file(DOWNLOAD "${${proj}_TEST_FILE}" "${SV_EXTERNALS_${proj}_PFX_DIR}/exists.txt" STATUS _status LOG _log INACTIVITY_TIMEOUT 1 TIMEOUT 1)
       list(GET _status 0 err)

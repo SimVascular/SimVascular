@@ -65,7 +65,7 @@ if(APPLE)
     -DCMAKE_PREFIX_PATH:PATH=/opt/local
     )
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-python-mac_osx.sh)
-  configure_file(${SV_EXTERNALS_CMAKE_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
+  configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
     COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
     COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT})
