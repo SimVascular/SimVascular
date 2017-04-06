@@ -6,6 +6,7 @@ set(INTERNAL_CPP_FILES
     svSimJobCreate.cxx
     svSimJobCreateAction.cxx
     svCapBCWidget.cxx
+    svSplitBCWidget.cxx
     svTableCapDelegate.cxx
     svTableSolverDelegate.cxx
     svSimulationView.cxx
@@ -19,6 +20,7 @@ set(MOC_H_FILES
     src/internal/svSimJobCreate.h
     src/internal/svSimJobCreateAction.h
     src/internal/svCapBCWidget.h
+    src/internal/svSplitBCWidget.h
     src/internal/svTableCapDelegate.h
     src/internal/svTableSolverDelegate.h
     src/internal/svSimulationView.h
@@ -31,6 +33,7 @@ set(MOC_H_FILES
 set(UI_FILES
     src/internal/svSimJobCreate.ui
     src/internal/svCapBCWidget.ui
+    src/internal/svSplitBCWidget.ui
     src/internal/svSimulationPreferencePage.ui
     src/internal/svSimulationView.ui
 )

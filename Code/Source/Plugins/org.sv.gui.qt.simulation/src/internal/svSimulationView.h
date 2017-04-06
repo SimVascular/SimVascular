@@ -4,6 +4,8 @@
 #include "svMitkSimJob.h"
 #include "svModel.h"
 #include "svCapBCWidget.h"
+#include "svSplitBCWidget.h"
+
 #include "svModelDataInteractor.h"
 
 #include <QmitkFunctionality.h>
@@ -58,6 +60,12 @@ public slots:
     void SetDistalPressure( bool checked = false );
 
     void SetCapBC();
+
+    void ShowSplitBCWidget(QString splitTarget);
+    void ShowSplitBCWidgetR( bool checked = false);
+    void ShowSplitBCWidgetC( bool checked = false);
+
+    void SplitCapBC();
 
     void UpdateGUICap();
 
@@ -173,6 +181,8 @@ private:
 
     svCapBCWidget* m_CapBCWidget;
 
+    svSplitBCWidget* m_SplitBCWidget;
+
     QStandardItemModel* m_TableModelSolver;
 
     QString m_InternalPresolverPath;
@@ -199,7 +209,7 @@ class svProcessHandler : public QObject
     Q_OBJECT
 
 public:
-    svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, QWidget* parent=NULL);
+    svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, bool stoppable, QWidget* parent=NULL);
     virtual ~svProcessHandler();
 
     void Start();
@@ -217,6 +227,8 @@ private:
     QMessageBox* m_MessageBox;
 
     mitk::DataNode::Pointer m_JobNode;
+
+    bool m_Stoppable;
 };
 
 class svSolverProcessHandler : public QObject
