@@ -34,15 +34,55 @@
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.12)
+
+if (POLICY CMP0040)
+  cmake_policy(SET CMP0040 OLD)
+endif()
+if (POLICY CMP0046)
+  cmake_policy(SET CMP0046 OLD)
+endif()
+if (POLICY CMP0053)
+  cmake_policy(SET CMP0053 OLD)
+endif()
+if (POLICY CMP0054)
+  cmake_policy(SET CMP0054 OLD)
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-Project(SV)
+Project(SV_TOP)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# CMake module path inside of true simvascular source
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Code/CMake"
+	"${CMAKE_MODULE_PATH}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # CMake Includes
+include(CheckLibraryExists)
+include(GetPrerequisites)
+include(GenerateExportHeader)
 include(ExternalProject)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# SimVascular Includes
+include(SimVascularMacros)
+include(SimVascularSystemSetup)
+include(SimVascularFunctionCheckCompilerFlags)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# RPATH handling
+# No objects built directly with project. Not needed!
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Platform, compiler options
+set(SV_PLATFORM_DIR_FOR_EXTERNALS "${SV_PLATFORM_DIR}" CACHE STRING "Dir that will be used in constructing path to externals tar files on simvascular server")
+set(SV_COMPILER_DIR_FOR_EXTERNALS "${SV_COMPILER_DIR}" CACHE STRING "Dir that will be used in constructing path to externals tar files on simvascular server")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -127,4 +167,3 @@ ExternalProject_Add(SimVascular
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
 #-----------------------------------------------------------------------------
-

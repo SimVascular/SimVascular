@@ -30,7 +30,7 @@ set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/sv_externals" CACHE PATH "Ext
 
 set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/src"
   CACHE PATH "Directory where source files for externals will be put")
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin/${SV_EXTERNALS_COMPILER_DIR}/${SV_EXTERNALS_ARCH_DIR}"
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin/${SV_COMPILER_DIR}/${SV_ARCH_DIR}"
   CACHE PATH "Directory where install files for externals will be put")
 set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/build"
   CACHE PATH "Directory where build files for externals will be put")
@@ -40,14 +40,16 @@ set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/prefix"
 
 #-----------------------------------------------------------------------------
 # Tar install directory
+simvascular_today(YEAR MONTH DAY)
 option(SV_EXTERNALS_TAR_BINARIES "Tar up the final built or downloaded externals" OFF)
-set(SV_EXTERNALS_TAR_INSTALL_DIR "${CMAKE_BINARY_DIR}/tar_output"
+set(SV_EXTERNALS_TAR_INSTALL_DIR "${CMAKE_BINARY_DIR}/tar_output/${YEAR}.${MONTH}.${DAY}"
   CACHE PATH "Directory where source files for externals will be put")
 file(MAKE_DIRECTORY "${SV_EXTERNALS_TAR_INSTALL_DIR}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
+set(SV_EXTERNALS_DOWNLOADS_PLATFORM_DIRS "${SV_PLATFORM_DIR}/${SV_PLATFORM_VERSION_DIR}/${SV_COMPILER_DIR}")
 set(SV_EXTERNALS_URL  "http://simvascular.stanford.edu/downloads/public/simvascular/externals")
 set(SV_EXTERNALS_ORIGINALS_URL "${SV_EXTERNALS_URL}/src/originals" CACHE STRING "URL with source downloads for externals")
 mark_as_advanced(SV_EXTERNALS_ORIGINALS_URL)
@@ -55,7 +57,7 @@ set(SV_EXTERNALS_DOWNLOADS_DATE "latest" CACHE STRING "Date that downloadable bi
 mark_as_advanced(SV_EXTERNALS_DOWNLOADS_DATE)
 set(SV_EXTERNALS_BINARIES_URL_BASE "${SV_EXTERNALS_URL}/${SV_EXTERNALS_DOWNLOADS_PLATFORM_DIRS}/${SV_EXTERNALS_DOWNLOADS_DATE}" CACHE STRING "URL base where pre-built externals are located")
 mark_as_advanced(SV_EXTERNALS_BINARIES_URL_BASE)
-set(SV_EXTERNALS_BINARIES_URL_PREFIX "${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}" CACHE STRING "String that gets appended to the beginning of each individual external pre-built binary download")
+set(SV_EXTERNALS_BINARIES_URL_PREFIX "${SV_PLATFORM_DIR}.${SV_COMPILER_DIR}.${SV_ARCH_DIR}" CACHE STRING "String that gets appended to the beginning of each individual external pre-built binary download")
 mark_as_advanced(SV_EXTERNALS_BINARIES_URL_PREFIX)
 set(SV_EXTERNALS_GIT_URL "http://github.com/SimVascular" CACHE STRING "Git URL for SimVascular")
 mark_as_advanced(SV_EXTERNALS_GIT_URL)

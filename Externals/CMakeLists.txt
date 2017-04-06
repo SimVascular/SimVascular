@@ -23,7 +23,17 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+
+#-----------------------------------------------------------------------------
+# This is SimVascular's true CMakeLists.txt. It contains all the options,
+# variables, nuances, and wonders of building SimVascular. The externals
+# are not included here! You can obtain your own versions and manually
+# specify to SimVascular here; however, if you want to use pre-built versions
+# you need to move yourself back one directory to the SV_TOP project which
+# gets the Externals for you and then builds the SimVascular project using
+# those externals.
+#-----------------------------------------------------------------------------
+
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.12)
 
@@ -39,6 +49,7 @@ endif()
 if (POLICY CMP0054)
   cmake_policy(SET CMP0054 OLD)
 endif()
+#-----------------------------------------------------------------------------
 
 
 #-----------------------------------------------------------------------------
@@ -46,33 +57,38 @@ Project(SV_EXTERNALS)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# CMake functions
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
+# CMake module path for both us and the real simvascular
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals"
   "${CMAKE_MODULE_PATH}")
-set(SV_EXTERNALS_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../Code/CMake"
+  "${CMAKE_MODULE_PATH}")
+set(SV_EXTERNALS_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Set a default build type (if none was specified)
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
-  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
-  mark_as_advanced(CMAKE_BUILD_TYPE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
-    "MinSizeRel" "RelWithDebInfo")
-endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Includes
+# CMake Includes
+include(CheckLibraryExists)
+include(GetPrerequisites)
+include(GenerateExportHeader)
 include(ExternalProject)
-include(SvExtMacros)
-include(SvExtHomeSetup)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# SimVascular Includes
+include(SimVascularMacros)
+include(SimVascularSystemSetup)
+include(SimVascularFunctionCheckCompilerFlags)
+include(SimVascularInstallSetup)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# RPATH handling
+# No objects built directly with project. Not needed!
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Initial options
+set(SV_EXTERNALS_LIST "")
 include(SvExtOptions)
 #-----------------------------------------------------------------------------
 
@@ -114,7 +130,8 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 # Tar up everything
-set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}.everything-BUILD${TODAY})
+simvascular_today(YEAR MONTH DAY)
+set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_COMPILER_DIR}.${SV_ARCH_DIR}.everything-BUILD${YEAR}.${MONTH}.${DAY})
 if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
   install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/../)")

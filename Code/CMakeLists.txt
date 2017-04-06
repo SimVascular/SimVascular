@@ -25,6 +25,16 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
+# This is the main CMakeListst.txt to download or build the major library
+# dependencies of SimVascular. The platform and compiler dir options are
+# the same given in the toplevel directory, so if you are simply looking to
+# download the externals package, we recommend moving back one directory and
+# using the SV_TOP project to get the Externals and then build SimVascular.
+# However, if you are looking to build the externals yourself, then this is
+# the place to be!
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.12)
 
 if (POLICY CMP0040)
@@ -39,13 +49,14 @@ endif()
 if (POLICY CMP0054)
 	cmake_policy(SET CMP0054 OLD)
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 Project(SV)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Superbuild
+# CMake module path
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 	"${CMAKE_MODULE_PATH}")
 #-----------------------------------------------------------------------------
@@ -55,16 +66,15 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 include(CheckLibraryExists)
 include(GetPrerequisites)
 include(GenerateExportHeader)
+include(ExternalProject)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # SimVascular Includes
 include(SimVascularMacros)
-include(SimVascularSystemCheck)
-include(SimVascularVersion)
+include(SimVascularSystemSetup)
 include(SimVascularFunctionCheckCompilerFlags)
 include(SimVascularInstallSetup)
-include(SimVascularHomeSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

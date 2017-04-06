@@ -1255,20 +1255,100 @@ endfunction(print_target_properties)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-macro(simvascular_today YEAR MONTH DAY RESULT)
-    if(WIN32)
-        execute_process(COMMAND "cmd" " /C date /T" OUTPUT_VARIABLE ${RESULT})
-        string(REGEX REPLACE "(..)/(..)/(....).*" "\\3;\\2;\\1" ${RESULT} ${${RESULT}})
-    elseif(UNIX)
-        execute_process(COMMAND "date" "+%d/%m/%Y" OUTPUT_VARIABLE ${RESULT})
-        string(REGEX REPLACE "(..)/(..)/(....).*" "\\3;\\2;\\1" ${RESULT} ${${RESULT}})
-    else(WIN32)
-        message(SEND_ERROR "date not implemented")
-        SET(${RESULT} 000000)
-    endif (WIN32)
-    list(GET ${RESULT} 0 YEAR)
-    list(GET ${RESULT} 1 MONTH)
-    list(GET ${RESULT} 2 DAY)
-    set(RESULT ${${YEAR}}-${${MONTH}}-${${DAY}})
+macro(simvascular_today YEAR MONTH DAY)
+  if(WIN32)
+    execute_process(COMMAND "cmd" " /C date /T" OUTPUT_VARIABLE RESULT)
+    string(REGEX REPLACE "(..)/(..)/(....).*" "\\3;\\2;\\1" RESULT ${RESULT})
+  elseif(UNIX)
+    execute_process(COMMAND "date" "+%d/%m/%Y" OUTPUT_VARIABLE RESULT)
+    string(REGEX REPLACE "(..)/(..)/(....).*" "\\3;\\2;\\1" RESULT ${RESULT})
+  else(WIN32)
+    message(SEND_ERROR "date not implemented")
+    set(YEAR 0000)
+    set(MONTH 00)
+    set(DAY 00)
+  endif (WIN32)
+  list(GET RESULT 0 YEAR)
+  list(GET RESULT 1 MONTH)
+  list(GET RESULT 2 DAY)
 endmacro()
 #-----------------------------------------------------------------------------
+
+# sv_externals_add_new_external
+# \brief Create new external and set variables with default values based on inputs
+macro(sv_externals_add_new_external proj version use shared dirname install_dirname)
+  option(SV_EXTERNALS_ENABLE_${proj} "Enable ${proj} Plugin" ${use})
+  option(SV_EXTERNALS_ENABLE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
+  mark_as_advanced(SV_EXTERNALS_ENABLE_${proj}_SHARED)
+  option(SV_EXTERNALS_DOWNLOAD_${proj} "Download instead of build ${proj}; Unused for tcl, tk, tcllib, tklib, numpy, pip" ${use})
+  mark_as_advanced(SV_EXTERNALS_DOWNLOAD_${proj})
+
+  # Version
+  set(SV_EXTERNALS_${proj}_VERSION "${version}" CACHE TYPE STRING)
+  mark_as_advanced(SV_EXTERNALS_${proj}_VERSION)
+  simvascular_get_major_minor_version(${SV_EXTERNALS_${proj}_VERSION} SV_EXTERNALS_${proj}_MAJOR_VERSION SV_EXTERNALS_${proj}_MINOR_VERSION)
+
+  # Src, bin, build, prefic dirs
+  set(${proj}_VERSION_DIR ${dirname}-${SV_EXTERNALS_${proj}_VERSION})
+  set(SV_EXTERNALS_${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_SRC_DIR}/${${proj}_VERSION_DIR})
+  if(NOT "${install_dirname}" STREQUAL "none")
+    set(SV_EXTERNALS_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${install_dirname}-${SV_EXTERNALS_${proj}_VERSION})
+  else()
+    set(SV_EXTERNALS_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${${proj}_VERSION_DIR})
+  endif()
+  set(SV_EXTERNALS_${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_BLD_DIR}/${${proj}_VERSION_DIR})
+  set(SV_EXTERNALS_${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_PFX_DIR}/${${proj}_VERSION_DIR})
+
+  # Install dirs
+  if(NOT SV_EXTERNALS_INSTALL_${proj}_RUNTIME_DIR)
+    set(SV_EXTERNALS_INSTALL_${proj}_RUNTIME_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/bin)
+  endif()
+
+  if(NOT SV_EXTERNALS_INSTALL_${proj}_LIBRARY_DIR)
+    set(SV_EXTERNALS_INSTALL_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib)
+  endif()
+
+  if(NOT SV_EXTERNALS_INSTALL_${proj}_ARCHIVE_DIR)
+    set(SV_EXTERNALS_INSTALL_${proj}_ARCHIVE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib)
+  endif()
+
+  if(NOT SV_EXTERNALS_INSTALL_${proj}_INCLUDE_DIR)
+    set(SV_EXTERNALS_INSTALL_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include)
+  endif()
+
+  # Add to externals list
+  if(SV_EXTERNALS_ENABLE_${proj})
+    list(APPEND SV_EXTERNALS_LIST ${proj})
+  endif()
+  if(SV_EXTERNALS_LIST)
+    list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
+  endif()
+
+  # Add install step for each external
+  if(NOT "${install_dirname}" STREQUAL "none")
+    simvascular_today(YEAR MONTH DAY)
+    set(SV_EXTERNALS_${proj}_TAR_INSTALL_NAME ${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}.${install_dirname}-${SV_EXTERNALS_${proj}_VERSION}-BUILD${YEAR}.${MONTH}.${DAY})
+    if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
+      install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_${proj}_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_${proj}_BIN_DIR}
+        WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR})")
+    endif()
+  endif()
+
+  # Set up download stuff if downloading
+  if(NOT "${install_dirname}" STREQUAL "none")
+    if(SV_EXTERNALS_DOWNLOAD_${proj})
+      set(${proj}_TEST_FILE "${SV_EXTERNALS_BINARIES_URL_BASE}/exists.txt")
+      file(DOWNLOAD "${${proj}_TEST_FILE}" "${SV_EXTERNALS_${proj}_PFX_DIR}/exists.txt" STATUS _status LOG _log INACTIVITY_TIMEOUT 1 TIMEOUT 1)
+      list(GET _status 0 err)
+      list(GET _status 1 msg)
+      if(err)
+        set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_URL}/${SV_EXTERNALS_DOWNLOADS_DEFAULT_DIR}.${SV_EXTERNALS_${proj}_DEFAULT}.tar.gz" CACHE STRING "Download location of ${proj}")
+        mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
+        message(WARNING "Pre-built binaries for the operating system and compiler do not exist! The best possible match will be downloaded; however, problems may occur, especially if the pre-built binaries are compiled with a different compiler. SV_EXTERNALS_${proj}_BINARIES_URL is being set to ${SV_EXTERNALS_${proj}_BINARIES_URL}. Proceed with caution!")
+      else()
+        set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_BINARIES_URL_BASE}/${SV_EXTERNALS_BINARIES_URL_PREFIX}.${install_dirname}-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Download location of ${proj}")
+        mark_as_advanced(SV_EXTERNALS_${proj}_BINARIES_URL)
+      endif()
+    endif()
+  endif()
+endmacro()
