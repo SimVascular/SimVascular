@@ -117,7 +117,7 @@ else()
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-mitk-windows.sh)
   set(SV_${proj}_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 endif()
-configure_file(${SV_EXTERNALS_CMAKE_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
+configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
 
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
