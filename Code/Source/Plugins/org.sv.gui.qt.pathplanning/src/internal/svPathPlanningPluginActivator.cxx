@@ -1,6 +1,6 @@
 #include "svPathPlanningPluginActivator.h"
 #include "svPathCreateAction.h"
-#include "svPathLegacyLoadAction.h"
+#include "svPathLoadAction.h"
 #include "svPathLegacySaveAction.h"
 #include "svPathEdit.h"
 #include "svPathPoint2DSizeAction.h"
@@ -15,7 +15,7 @@ void svPathPlanningPluginActivator::start(ctkPluginContext* context)
 //    m_Context = context;
 
     BERRY_REGISTER_EXTENSION_CLASS(svPathCreateAction, context)
-    BERRY_REGISTER_EXTENSION_CLASS(svPathLegacyLoadAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svPathLoadAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svPathLegacySaveAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svPathEdit, context)
     BERRY_REGISTER_EXTENSION_CLASS(svPathPoint2DSizeAction, context)

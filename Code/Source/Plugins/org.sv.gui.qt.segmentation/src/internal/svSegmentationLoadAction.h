@@ -1,5 +1,5 @@
-#ifndef SVSEGMENTATIONVTPLOADACTION_H
-#define SVSEGMENTATIONVTPLOADACTION_H
+#ifndef SVSEGMENTATIONLOADACTION_H
+#define SVSEGMENTATIONLOADACTION_H
 
 #include <org_sv_gui_qt_segmentation_Export.h>
 
@@ -10,14 +10,14 @@
 
 #include <QObject>
 
-class SV_QT_SEGMENTATION svSegmentationVTPLoadAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_SEGMENTATION svSegmentationLoadAction : public QObject, public mitk::IContextMenuAction
 {
   Q_OBJECT
   Q_INTERFACES(mitk::IContextMenuAction)
 
 public:
-  svSegmentationVTPLoadAction();
-  ~svSegmentationVTPLoadAction();
+  svSegmentationLoadAction();
+  ~svSegmentationLoadAction();
 
   // IContextMenuAction
   void Run(const QList<mitk::DataNode::Pointer> &selectedNodes) override;
@@ -27,8 +27,8 @@ public:
   void SetFunctionality(berry::QtViewPart *functionality) override {}
 
 private:
-  svSegmentationVTPLoadAction(const svSegmentationVTPLoadAction &);
-  svSegmentationVTPLoadAction & operator=(const svSegmentationVTPLoadAction &);
+  svSegmentationLoadAction(const svSegmentationLoadAction &);
+  svSegmentationLoadAction & operator=(const svSegmentationLoadAction &);
 
   mitk::DataStorage::Pointer m_DataStorage;
 

@@ -7,7 +7,7 @@ set(INTERNAL_CPP_FILES
     svContourGroupCreateAction.cxx
     svSegmentationLegacyLoadAction.cxx
     svSegmentationLegacySaveAction.cxx
-    svSegmentationVTPLoadAction.cxx
+    svSegmentationLoadAction.cxx
     svLevelSet2DWidget.cxx
     svLoftParamWidget.cxx
     svSegmentation2D.cxx
@@ -21,7 +21,7 @@ set(MOC_H_FILES
     src/internal/svContourGroupCreateAction.h
     src/internal/svSegmentationLegacyLoadAction.h
     src/internal/svSegmentationLegacySaveAction.h
-    src/internal/svSegmentationVTPLoadAction.h
+    src/internal/svSegmentationLoadAction.h
     src/internal/svLevelSet2DWidget.h
     src/internal/svLoftParamWidget.h
     src/internal/svSegmentation2D.h

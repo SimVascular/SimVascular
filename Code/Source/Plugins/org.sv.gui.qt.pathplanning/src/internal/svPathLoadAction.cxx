@@ -1,6 +1,7 @@
-#include "svPathLegacyLoadAction.h"
+#include "svPathLoadAction.h"
 
 #include "svPathLegacyIO.h"
+#include "svPathIO.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <berryPlatform.h>
@@ -9,15 +10,15 @@
 
 #include <QFileDialog>
 
-svPathLegacyLoadAction::svPathLegacyLoadAction()
+svPathLoadAction::svPathLoadAction()
 {
 }
 
-svPathLegacyLoadAction::~svPathLegacyLoadAction()
+svPathLoadAction::~svPathLoadAction()
 {
 }
 
-void svPathLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
+void svPathLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
@@ -49,26 +50,48 @@ void svPathLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
-        QString fileName = QFileDialog::getOpenFileName(NULL, tr("Import Legacy Paths (Choose File)"),
+        QString fileName = QFileDialog::getOpenFileName(NULL, tr("Import Paths (Choose File)"),
                                                         lastFilePath,
-                                                        tr("SimVascular Legacy Paths (*.paths)"),NULL,QFileDialog::DontUseNativeDialog);
+                                                        tr("SimVascular Legacy Paths (*.paths);;SimVascular Paths (*.pth)"),NULL,QFileDialog::DontUseNativeDialog);
 
         fileName=fileName.trimmed();
-        if(!fileName.isEmpty()){
+        if(fileName.isEmpty())
+            return;
 
+        if(fileName.endsWith(".paths"))
+        {
             std::vector<mitk::DataNode::Pointer> newNodes=svPathLegacyIO::ReadFile(fileName);
             for(int i=0;i<newNodes.size();i++)
             {
                 m_DataStorage->Add(newNodes[i],selectedNode);
             }
+        }
+        else if(fileName.endsWith(".pth"))
+        {
+            QFileInfo fileInfo(fileName);
+            std::string nodeName=fileInfo.baseName().toStdString();
 
-            if(prefs.IsNotNull())
-             {
-                 prefs->Put("LastFileOpenPath", fileName);
-                 prefs->Flush();
-             }
+            std::vector<mitk::BaseData::Pointer> nodedata=svPathIO::ReadFile(fileName.toStdString());
+
+            if(nodedata.size()>0)
+            {
+                mitk::BaseData::Pointer pathdata=nodedata[0];
+                if(pathdata.IsNotNull())
+                {
+                    mitk::DataNode::Pointer pathNode = mitk::DataNode::New();
+                    pathNode->SetData(pathdata);
+                    pathNode->SetName(nodeName);
+
+                    m_DataStorage->Add(pathNode,selectedNode);
+                }
+            }
         }
 
+        if(prefs.IsNotNull())
+         {
+             prefs->Put("LastFileOpenPath", fileName);
+             prefs->Flush();
+         }
     }
     catch(...)
     {
@@ -76,7 +99,7 @@ void svPathLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
     }
 }
 
-void svPathLegacyLoadAction::SetDataStorage(mitk::DataStorage *dataStorage)
+void svPathLoadAction::SetDataStorage(mitk::DataStorage *dataStorage)
 {
     m_DataStorage = dataStorage;
 }

@@ -1,7 +1,7 @@
 #include "svModelingPluginActivator.h"
 #include "svModelCreateAction.h"
 #include "svModelPreferencePage.h"
-#include "svModelLegacyLoadAction.h"
+#include "svModelLoadAction.h"
 #include "svModelLegacySaveAction.h"
 #include "svModelExtractPathsAction.h"
 #include "svModelFaceInfoExportAction.h"
@@ -17,7 +17,7 @@ void svModelingPluginActivator::start(ctkPluginContext* context)
 
     BERRY_REGISTER_EXTENSION_CLASS(svModelCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svModelPreferencePage, context)
-    BERRY_REGISTER_EXTENSION_CLASS(svModelLegacyLoadAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svModelLoadAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svModelLegacySaveAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svModelExtractPathsAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svModelFaceInfoExportAction, context)

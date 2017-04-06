@@ -1,5 +1,5 @@
-#ifndef SVPATHLEGACYLOADACTION_H
-#define SVPATHLEGACYLOADACTION_H
+#ifndef SVPATHLOADACTION_H
+#define SVPATHLOADACTION_H
 
 #include <org_sv_gui_qt_pathplanning_Export.h>
 
@@ -8,14 +8,14 @@
 
 #include <QObject>
 
-class SV_QT_PATHPLANNING svPathLegacyLoadAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_PATHPLANNING svPathLoadAction : public QObject, public mitk::IContextMenuAction
 {
   Q_OBJECT
   Q_INTERFACES(mitk::IContextMenuAction)
 
 public:
-  svPathLegacyLoadAction();
-  ~svPathLegacyLoadAction();
+  svPathLoadAction();
+  ~svPathLoadAction();
 
   // IContextMenuAction
   void Run(const QList<mitk::DataNode::Pointer> &selectedNodes) override;
@@ -25,8 +25,8 @@ public:
   void SetFunctionality(berry::QtViewPart *functionality) override {}
 
 private:
-  svPathLegacyLoadAction(const svPathLegacyLoadAction &);
-  svPathLegacyLoadAction & operator=(const svPathLegacyLoadAction &);
+  svPathLoadAction(const svPathLoadAction &);
+  svPathLoadAction & operator=(const svPathLoadAction &);
 
   mitk::DataStorage::Pointer m_DataStorage;
 

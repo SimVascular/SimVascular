@@ -5,7 +5,7 @@ set(SRC_CPP_FILES
 set(INTERNAL_CPP_FILES
     svPathCreate.cxx
     svPathCreateAction.cxx
-    svPathLegacyLoadAction.cxx
+    svPathLoadAction.cxx
     svPathLegacySaveAction.cxx
     svPathSmooth.cxx
     svPathEdit.cxx
@@ -17,7 +17,7 @@ set(INTERNAL_CPP_FILES
 set(MOC_H_FILES
     src/internal/svPathCreate.h
     src/internal/svPathCreateAction.h
-    src/internal/svPathLegacyLoadAction.h
+    src/internal/svPathLoadAction.h
     src/internal/svPathLegacySaveAction.h
     src/internal/svPathSmooth.h
     src/internal/svPathEdit.h

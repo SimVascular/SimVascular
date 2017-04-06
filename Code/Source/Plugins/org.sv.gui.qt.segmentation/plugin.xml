@@ -10,9 +10,9 @@
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Create Contour Group" icon="" class="svContourGroupCreateAction" />
+      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Import Segmentations" icon="" class="svSegmentationLoadAction" />
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Import Legacy Segmentations" icon="" class="svSegmentationLegacyLoadAction" />
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Export All as Legacy Segmentations" icon="" class="svSegmentationLegacySaveAction" />
-      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Import 3D Segmentation (VTP)" icon="" class="svSegmentationVTPLoadAction" />
       <contextMenuAction nodeDescriptorName="svContourGroup" label="Point 2D Size" icon="" class="svContourGroupPoint2DSizeAction" />
       <contextMenuAction nodeDescriptorName="svContourGroup" label="Point 3D Size" icon="" class="svContourGroupPoint3DSizeAction" />
   </extension>

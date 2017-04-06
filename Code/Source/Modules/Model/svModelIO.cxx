@@ -40,11 +40,16 @@ svModelIO::svModelIO()
 
 std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 {
+    std::string fileName=GetInputLocation();
+
+    return ReadFile(fileName);
+}
+
+std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
+{
     std::vector<mitk::BaseData::Pointer> result;
 
     TiXmlDocument document;
-
-    std::string fileName=GetInputLocation();
 
     if (!document.LoadFile(fileName))
     {

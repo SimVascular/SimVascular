@@ -23,9 +23,14 @@ svPathIO::svPathIO()
 
 std::vector<mitk::BaseData::Pointer> svPathIO::Read()
 {
-    TiXmlDocument document;
-
     std::string fileName=GetInputLocation();
+
+    return ReadFile(fileName);
+}
+
+std::vector<mitk::BaseData::Pointer> svPathIO::ReadFile(std::string fileName)
+{
+    TiXmlDocument document;
 
     if (!document.LoadFile(fileName))
     {
