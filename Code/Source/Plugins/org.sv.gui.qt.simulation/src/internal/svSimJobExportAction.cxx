@@ -120,7 +120,7 @@ void svSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
         }
 
         QStringList fileList, fileListRequired;
-        fileList<<"bct.dat"<<"bct.vtp";
+        fileList<<"bct.dat"<<"bct.vtp"<<"rcrt.dat"<<"cort.dat";
         fileListRequired<<"geombc.dat.1"<<"restart.0.1"<<"solver.inp";
         QString exportDir=dir+"/"+QString::fromStdString(jobName)+"-sim-files";
         QDir().mkpath(exportDir);

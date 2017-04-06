@@ -564,6 +564,10 @@ void svPathEdit::DeleteSelected(){
         return;
     }
 
+    QModelIndexList list=ui->listWidget->selectionModel()->selectedRows();
+    if(list.size()<1)
+        return;
+
     int index= ui->listWidget->selectionModel()->selectedRows().front().row();
 
     if(index>-1 && index<pathElement->GetControlPointNumber()){
