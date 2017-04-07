@@ -582,8 +582,8 @@ void svSimulationView::UpdateGUIBasic()
 
     parList<<new QStandardItem("Initial Velocities");
     value=QString::fromStdString(job->GetBasicProp("Initial Velocities"));
-    valueList<<new QStandardItem(value==""?QString("0 0 0"):value);
-//    valueList<<new QStandardItem(value==""?QString("0.0001 0.0001 0.0001"):value);
+//    valueList<<new QStandardItem(value==""?QString("0 0 0"):value);
+    valueList<<new QStandardItem(value==""?QString("0.0001 0.0001 0.0001"):value);
 
     for(int i=0;i<parList.size();i++)
     {

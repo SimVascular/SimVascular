@@ -1,7 +1,9 @@
-#include "svModelLegacyLoadAction.h"
+#include "svModelLoadAction.h"
 #include "simvascular_options.h"
 
 #include "svModelLegacyIO.h"
+#include "svModelIO.h"
+
 #include <mitkNodePredicateDataType.h>
 
 #include <berryIPreferencesService.h>
@@ -10,15 +12,15 @@
 
 #include <QFileDialog>
 
-svModelLegacyLoadAction::svModelLegacyLoadAction()
+svModelLoadAction::svModelLoadAction()
 {
 }
 
-svModelLegacyLoadAction::~svModelLegacyLoadAction()
+svModelLoadAction::~svModelLoadAction()
 {
 }
 
-void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
+void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
@@ -51,7 +53,7 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
         if(lastFileOpenPath=="")
             lastFileOpenPath=QDir::homePath();
 
-        QString filter="Solid Models (*.vtp *.vtk *.stl *.ply";
+        QString filter="SimVascular Models (*.mdl);;Solid Models (*.vtp *.vtk *.stl *.ply";
 
 #ifdef SV_USE_OpenCASCADE_QT_GUI
         filter=filter+" *.brep *.step *.stl *.iges";
@@ -72,9 +74,32 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
         if(modelFilePath.isEmpty())
             return;
 
-        mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath);
-        if(modelNode.IsNotNull())
-            m_DataStorage->Add(modelNode,selectedNode);
+        if(modelFilePath.endsWith(".mdl"))
+        {
+            QFileInfo fileInfo(modelFilePath);
+            std::string nodeName=fileInfo.baseName().toStdString();
+
+            std::vector<mitk::BaseData::Pointer> nodedata=svModelIO::ReadFile(modelFilePath.toStdString());
+
+            if(nodedata.size()>0)
+            {
+                mitk::BaseData::Pointer modeldata=nodedata[0];
+                if(modeldata.IsNotNull())
+                {
+                    mitk::DataNode::Pointer modelNode = mitk::DataNode::New();
+                    modelNode->SetData(modeldata);
+                    modelNode->SetName(nodeName);
+
+                    m_DataStorage->Add(modelNode,selectedNode);
+                }
+            }
+        }
+        else
+        {
+            mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath);
+            if(modelNode.IsNotNull())
+                m_DataStorage->Add(modelNode,selectedNode);
+        }
 
         if(prefs.IsNotNull())
         {
@@ -89,7 +114,7 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
     }
 }
 
-void svModelLegacyLoadAction::SetDataStorage(mitk::DataStorage *dataStorage)
+void svModelLoadAction::SetDataStorage(mitk::DataStorage *dataStorage)
 {
     m_DataStorage = dataStorage;
 }

@@ -10,7 +10,7 @@
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
       <contextMenuAction nodeDescriptorName="svPathFolder" label="Create Path" icon=":/pathcreate.png" class="svPathCreateAction" />
-      <contextMenuAction nodeDescriptorName="svPathFolder" label="Import Legacy Paths" icon="" class="svPathLegacyLoadAction" />
+      <contextMenuAction nodeDescriptorName="svPathFolder" label="Import Paths" icon="" class="svPathLoadAction" />
       <contextMenuAction nodeDescriptorName="svPathFolder" label="Export All as Legacy Paths" icon="" class="svPathLegacySaveAction" />
       <contextMenuAction nodeDescriptorName="svPath" label="Point 2D Size" icon="" class="svPathPoint2DSizeAction" />
       <contextMenuAction nodeDescriptorName="svPath" label="Point 3D Size" icon="" class="svPathPoint3DSizeAction" />

@@ -1,5 +1,5 @@
-#ifndef SVMODELLEGACYLOADACTION_H
-#define SVMODELLEGACYLOADACTION_H
+#ifndef SVMODELLOADACTION_H
+#define SVMODELLOADACTION_H
 
 #include <org_sv_gui_qt_modeling_Export.h>
 
@@ -8,14 +8,14 @@
 
 #include <QObject>
 
-class SV_QT_MODELING svModelLegacyLoadAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MODELING svModelLoadAction : public QObject, public mitk::IContextMenuAction
 {
   Q_OBJECT
   Q_INTERFACES(mitk::IContextMenuAction)
 
 public:
-  svModelLegacyLoadAction();
-  ~svModelLegacyLoadAction();
+  svModelLoadAction();
+  ~svModelLoadAction();
 
   // IContextMenuAction
   void Run(const QList<mitk::DataNode::Pointer> &selectedNodes) override;
@@ -25,8 +25,8 @@ public:
   void SetFunctionality(berry::QtViewPart *functionality) override {}
 
 private:
-  svModelLegacyLoadAction(const svModelLegacyLoadAction &);
-  svModelLegacyLoadAction & operator=(const svModelLegacyLoadAction &);
+  svModelLoadAction(const svModelLoadAction &);
+  svModelLoadAction & operator=(const svModelLoadAction &);
 
   mitk::DataStorage::Pointer m_DataStorage;
 

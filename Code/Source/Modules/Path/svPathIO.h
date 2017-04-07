@@ -15,6 +15,7 @@ public:
 
     using mitk::AbstractFileReader::Read;
     std::vector<mitk::BaseData::Pointer> Read() override;
+    static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
     mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
     void Write() override;

@@ -28,9 +28,13 @@ svContourGroupIO::svContourGroupIO()
 
 std::vector<mitk::BaseData::Pointer> svContourGroupIO::Read()
 {
-    TiXmlDocument document;
-
     std::string fileName=GetInputLocation();
+    return ReadFile(fileName);
+}
+
+std::vector<mitk::BaseData::Pointer> svContourGroupIO::ReadFile(std::string fileName)
+{
+    TiXmlDocument document;
 
     if (!document.LoadFile(fileName))
     {
