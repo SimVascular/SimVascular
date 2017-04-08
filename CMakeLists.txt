@@ -25,13 +25,11 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# This is SimVascular's true CMakeLists.txt. It contains all the options,
-# variables, nuances, and wonders of building SimVascular. The externals
-# are not included here! You can obtain your own versions and manually
-# specify to SimVascular here; however, if you want to use pre-built versions
-# you need to move yourself back one directory to the SV_TOP project which
-# gets the Externals for you and then builds the SimVascular project using
-# those externals.
+# This toplevel CMakeLists.txt should be used as the first attempt to build
+# SimVascular.
+# This CMakeLists.txt uses ExternalProject_Add to do two main things:
+# 1. ExternalProject_Add(Externals ---> Gets all of SimVascular's externals
+# 2. ExternalProject_Add(SimVascular ---> Builds SimVascular
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -51,18 +49,14 @@ if (POLICY CMP0054)
 endif()
 #-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+Project(SV_TOP)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-Project(SV_EXTERNALS)
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# CMake module path for both us and the real simvascular
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals"
-  "${CMAKE_MODULE_PATH}")
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../Code/CMake"
-  "${CMAKE_MODULE_PATH}")
-set(SV_EXTERNALS_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals")
+# CMake module path inside of true simvascular source
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Code/CMake"
+	"${CMAKE_MODULE_PATH}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -78,7 +72,6 @@ include(ExternalProject)
 include(SimVascularMacros)
 include(SimVascularSystemSetup)
 include(SimVascularFunctionCheckCompilerFlags)
-include(SimVascularInstallSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -87,53 +80,84 @@ include(SimVascularInstallSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Initial options
-set(SV_EXTERNALS_LIST "")
-include(SvExtOptions)
+# First process special Qt stuff
+#Find Qt!
+set(SV_Qt5_COMPONENTS
+  Concurrent
+  Core
+  Designer
+  Gui
+  Help
+  OpenGL
+  PrintSupport
+  Script
+  Sql
+  Svg
+  WebKitWidgets
+  WebKit
+  Widgets
+  Xml
+  XmlPatterns
+  UiTools)
+find_package(Qt5 COMPONENTS ${SV_Qt5_COMPONENTS} REQUIRED)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# First process special Qt stuff, external but not being built
-if(SV_EXTERNALS_USE_QT)
-  #Find Qt!
-  set(SV_EXTERNALS_Qt5_COMPONENTS
-    Concurrent
-    Core
-    Designer
-    Gui
-    Help
-    OpenGL
-    PrintSupport
-    Script
-    Sql
-    Svg
-    WebKitWidgets
-    WebKit
-    Widgets
-    Xml
-    XmlPatterns
-    UiTools)
-  find_package(Qt5 COMPONENTS ${SV_EXTERNALS_Qt5_COMPONENTS} REQUIRED)
-endif()
+# Externals!
+set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+ExternalProject_Add(Externals
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
+  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals-build
+  DOWNLOAD_COMMAND ""
+  UPDATE_COMMAND ""
+  INSTALL_COMMAND ""
+  CMAKE_CACHE_ARGS
+    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+    -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DCMAKE_MACOSX_RPATH:BOOL=ON
+    -DBUILD_TESTING:BOOL=OFF
+    -DBUILD_EXAMPLES:BOOL=OFF
+    -DQt5_DIR:PATH=${Qt5_DIR}
+    ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
+    )
+set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Add each external to be built. Full list and initial options are specified in SvExtOptions.cmake
-foreach(proj ${SV_EXTERNALS_LIST})
-  if(SV_EXTERNALS_ENABLE_${proj})
-    if(EXISTS "${SV_EXTERNALS_CMAKE_DIR}/${proj}.cmake")
-      include("${SV_EXTERNALS_CMAKE_DIR}/${proj}.cmake")
-    endif()
-  endif()
-endforeach()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Tar up everything
-simvascular_today(YEAR MONTH DAY)
-set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_COMPILER_DIR}.${SV_ARCH_DIR}.everything-BUILD${YEAR}.${MONTH}.${DAY})
-if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
-  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
-    WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/../)")
-endif()
+# SimVascular!
+set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+ExternalProject_Add(SimVascular
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
+  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/SimVascular-build
+  DEPENDS Externals
+  DOWNLOAD_COMMAND ""
+  UPDATE_COMMAND ""
+  INSTALL_COMMAND ""
+  CMAKE_CACHE_ARGS
+    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+    -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DCMAKE_MACOSX_RPATH:BOOL=ON
+    -DBUILD_TESTING:BOOL=OFF
+    -DBUILD_EXAMPLES:BOOL=OFF
+    -DBUILD_SHARED_LIBS:BOOL=ON
+    -DSV_USE_FREETYPE:BOOL=ON
+    -DSV_USE_GDCM:BOOL=ON
+    -DSV_USE_ITK:BOOL=ON
+    -DSV_USE_MPICH2:BOOL=OFF
+    -DSV_USE_OpenCASCADE:BOOL=ON
+    -DSV_USE_PYTHON:BOOL=ON
+    -DSV_USE_MMG:BOOL=ON
+    -DSV_USE_MITK:BOOL=ON
+    -DSV_USE_QT_GUI:BOOL=ON
+    -DSV_EXTERNALS_USE_TOPLEVEL_DIR:BOOL=ON
+    -DSV_EXTERNALS_TOPLEVEL_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}
+    -DQt5_DIR:PATH=${Qt5_DIR}
+    ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
+    )
 #-----------------------------------------------------------------------------

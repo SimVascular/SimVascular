@@ -32,7 +32,7 @@ set(proj NUMPY)
 set(${proj}_DEPENDENCIES "PYTHON" "PIP")
 
 # Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_STANFORD_URL}/numpy/numpy-1.11.1.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/numpy/numpy-1.11.1.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 # Configure options
@@ -40,20 +40,35 @@ set(SV_EXTERNALS_${proj}_INSTALL_OPTIONS
   Cython --install-option=--no-cython-compile)
 
 set(SV_EXTERNALS_${proj}_INSTALL_COMMANDS ${SV_EXTERNALS_PYTHON_EXECUTABLE} ${SV_EXTERNALS_${proj}_SRC_DIR}/setup.py install --prefix ${SV_EXTERNALS_PYTHON_BIN_DIR} --old-and-unmanageable
-  COMMAND ${SV_EXTERNALS_PIP_EXECUTABLE} install datetime)
+  COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} -m pip install datetime)
 
 # Add external project
-ExternalProject_Add(${proj}
-  URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-  PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-  SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-  BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-  DEPENDS ${${proj}_DEPENDENCIES}
-  CONFIGURE_COMMAND ${SV_EXTERNALS_PIP_EXECUTABLE} install ${SV_EXTERNALS_${proj}_INSTALL_OPTIONS}
-  BUILD_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} ${SV_EXTERNALS_${proj}_SRC_DIR}/setup.py build
-  INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMANDS}
-  UPDATE_COMMAND ""
-  )
+if(SV_EXTERNALS_DOWNLOAD_PYTHON)
+  # Empty project
+  ExternalProject_Add(${proj}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+    )
+else()
+  ExternalProject_Add(${proj}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    CONFIGURE_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} -m pip install ${SV_EXTERNALS_${proj}_INSTALL_OPTIONS}
+    BUILD_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} ${SV_EXTERNALS_${proj}_SRC_DIR}/setup.py build
+    INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMANDS}
+    UPDATE_COMMAND ""
+    )
+endif()
 
 # NUMPY variables needed later on
 set(SV_EXTERNALS_${proj}_SITE_DIR ${SV_EXTERNALS_PYTHON_SITE_DIR}/numpy)

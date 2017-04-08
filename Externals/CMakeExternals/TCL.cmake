@@ -25,22 +25,21 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #-----------------------------------------------------------------------------
-# TK
-set(proj TK)
+# TCL
+set(proj TCL)
 
 # Dependencies
-set(${proj}_DEPENDENCIES TCL)
+set(${proj}_DEPENDENCIES "")
 
 # Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_STANFORD_URL}/tcltk/tk${SV_EXTERNALS_${proj}_VERSION}-src.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/tcltk/tcl${SV_EXTERNALS_${proj}_VERSION}-src.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 # Configure options
 set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
   --prefix=${SV_EXTERNALS_${proj}_BIN_DIR}
-  --enable-threads
-  --with-tcl=${SV_EXTERNALS_TCL_LIBRARY_DIR})
-if(SV_EXTERNALS_BUILD_${proj}_SHARED)
+  --enable-threads)
+if(SV_EXTERNALS_ENABLE_${proj}_SHARED)
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     --enable-shared)
@@ -51,8 +50,7 @@ if(APPLE)
   set(SV_EXTERNALS_${proj}_URL_EXTENSION unix)
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
-    --enable-corefoundation
-    --enable-aqua)
+    --enable-corefoundation)
 elseif(LINUX)
   set(SV_EXTERNALS_${proj}_URL_EXTENSION unix)
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
@@ -64,14 +62,14 @@ else()
     --enable-64bit)
 endif()
 
-# TK variables needed later on
-if(SV_EXTERNALS_BUILD_${proj}_SHARED)
-  set(${proj}_LIBRARY_NAME libtk${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+# TCL variables needed later on
+if(SV_EXTERNALS_ENABLE_${proj}_SHARED)
+  set(${proj}_LIBRARY_NAME libtcl${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
 else()
-  set(${proj}_LIBRARY_NAME libtk${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
+  set(${proj}_LIBRARY_NAME libtcl${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
 endif()
 
-set(SV_EXTERNALS_WISH_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/wish${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
+set(SV_EXTERNALS_TCLSH_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/tclsh${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
 set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include)
 set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/${${proj}_LIBRARY_NAME})
 get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_LIBRARY} DIRECTORY)
@@ -79,21 +77,35 @@ get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_L
 # Special install rules
 if(APPLE)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
-    COMMAND chmod -R u+w,a+rx ${SV_EXTERNALS_${proj}_BIN_DIR}
+    COMMAND chmod -R u+w,a+rx ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
     COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
-    COMMAND install_name_tool -change ${SV_EXTERNALS_TCL_LIBRARY} ${TCL_LIBRARY_NAME} ${SV_EXTERNALS_WISH_EXECUTABLE}
-    COMMAND install_name_tool -change ${SV_EXTERNALS_${proj}_LIBRARY} ${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_WISH_EXECUTABLE})
+    COMMAND install_name_tool -change ${SV_EXTERNALS_${proj}_LIBRARY} ${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_TCLSH_EXECUTABLE})
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install)
 endif()
 
+
 # Add external project
-ExternalProject_Add(${proj}
-  URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
-  PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
-  SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-  BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
-  DEPENDS ${${proj}_DEPENDENCIES}
-  CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} ${SV_EXTERNALS_${proj}_SRC_DIR}/${SV_EXTERNALS_${proj}_URL_EXTENSION}/configure -C ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
-  UPDATE_COMMAND ""
-  )
+if(SV_EXTERNALS_DOWNLOAD_TCLTK)
+  ExternalProject_Add(${proj}
+    URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+    )
+else()
+  ExternalProject_Add(${proj}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} ${SV_EXTERNALS_${proj}_SRC_DIR}/${SV_EXTERNALS_${proj}_URL_EXTENSION}/configure -C ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    UPDATE_COMMAND ""
+    )
+endif()
