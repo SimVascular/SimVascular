@@ -169,12 +169,12 @@ void simvascularApp::initializeLibraryPaths() {
   } else {
     found_sv_plugin_path = true;
     getenv_s( &requiredSize, plugin_env, requiredSize, "SV_PLUGIN_PATH" );
-    char seps[] = ";";  
+    char seps[] = ";";
     char *token;
-    token = strtok( plugin_env, seps ); 
-    while( token != NULL ) {  
-      // While there are tokens in "string"  
-      printf( " %s\n", token );  
+    token = strtok( plugin_env, seps );
+    while( token != NULL ) {
+      // While there are tokens in "string"
+      printf( " %s\n", token );
       QString pluginPath = token;
       ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
       std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
@@ -188,12 +188,12 @@ void simvascularApp::initializeLibraryPaths() {
     std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;
   } else {
     found_sv_plugin_path = true;
-    char seps[] = ":";  
+    char seps[] = ":";
     char *token;
-    token = strtok( plugin_env, seps ); 
-    while( token != NULL ) {  
-      // While there are tokens in "string"  
-      printf( " %s\n", token );  
+    token = strtok( plugin_env, seps );
+    while( token != NULL ) {
+      // While there are tokens in "string"
+      printf( " %s\n", token );
       QString pluginPath = token;
       ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
       std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
@@ -210,7 +210,7 @@ void simvascularApp::initializeLibraryPaths() {
   if (!found_sv_plugin_path) {
     QStringList suffixes;
     QDir appDir;
-    
+
     suffixes << "plugins";
 #ifdef WIN32
     suffixes << "bin/plugins";
@@ -239,7 +239,7 @@ void simvascularApp::initializeLibraryPaths() {
     {
       ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
     }
-  
+
     suffixes << "plugins";
     suffixes << "bin/plugins";
     suffixes << "lib/plugins";
@@ -252,14 +252,14 @@ void simvascularApp::initializeLibraryPaths() {
       ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
       std::cout << "Adding to plugin search path (" << appDir.absoluteFilePath(suffix).toStdString() <<  ")" << std::endl << std::flush;
     }
-  
+
   }
-  
+
   //
   //  This code is a debugging check to make sure that all of the dll's
   //  can be found in the search path.
   //
-  
+
   QVariant pluginsToStartVariant = this->getProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS);
   QStringList pluginsToStart = pluginsToStartVariant.toStringList();
 
@@ -306,15 +306,15 @@ inline bool file_exists (char* name) {
         return true;
     } else {
         return false;
-    }   
+    }
 }
 
  int main( int argc, char *argv[] )
  {
 
   // default to tcl gui
-  bool use_tcl_gui = true;
-  bool use_qt_gui  = false;
+  bool use_tcl_gui = false;
+  bool use_qt_gui  = true;
   bool use_workbench  = false;
   bool catch_debugger = false;
   use_qt_tcl_interp = false;
@@ -342,7 +342,7 @@ inline bool file_exists (char* name) {
   fflush(stdout);
 
   // check for file to select default qt gui on win32
-#ifdef WIN32  
+#ifdef WIN32
   CHAR user_home_path[MAX_PATH];
   if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, user_home_path))) {
     fprintf(stdout,"User home path: %s\n",user_home_path);
@@ -378,7 +378,7 @@ inline bool file_exists (char* name) {
     }
   }
 #endif
-  
+
   if (argc != 0) {
 
     // default to tcl gui
@@ -564,9 +564,9 @@ inline bool file_exists (char* name) {
       fprintf(stderr,"FATAL ERROR:  path to long!\n");
       exit(-1);
     }
-  }  
+  }
   newpath[newpathlength++]=';';
-  
+
   // now add original path
 
   for (int i = 0; i < strlen(oldpath);i++) {
@@ -766,7 +766,7 @@ RegCloseKey(hKey2);
      } else {
        app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.sv.gui.qt.application.svworkbench");
      }
-     
+
      QStringList preloadLibs;
      preloadLibs << "liborg_mitk_gui_qt_ext";
      app.setPreloadLibraries(preloadLibs);
@@ -827,7 +827,7 @@ RegCloseKey(hKey2);
        pluginsToStart.push_back("org_sv_gui_qt_meshing");
        pluginsToStart.push_back("org_sv_gui_qt_simulation");
      }
-     
+
      app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
 
      //Use transient start with declared activation policy
