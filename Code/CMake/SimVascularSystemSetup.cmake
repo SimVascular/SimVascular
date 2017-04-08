@@ -172,14 +172,13 @@ elseif(LINUX)
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
   # Get distribution name and version number from lsb_release output
-  STRING(REGEX REPLACE "Distributor ID: ([A-za-z ])" "\\1" LSB_RELEASE_INFO LSB_DISTRIB)
-  STRING(REGEX REPLACE "Release:        ([0-9])+\\.([0-9])" "\\1.\\2" LSB_RELEASE_INFO LSB_VERSION)
+  STRING(REGEX REPLACE "Distributor ID:[\t]*([^ \n\r]+).*$" "\\1" LSB_DISTRIB "${LSB_RELEASE_INFO}")
+  STRING(REGEX REPLACE "^.*Release:[\t]*([^ \n\r]+).*$" "\\1" LSB_VERSION "${LSB_RELEASE_INFO}")
   string(TOLOWER "${LSB_DISTRIB}" _platform_lower)
-  string(TOLOWER "${LSB_VERSION}" _platform_version_lower)
 
   # Set the distrib and version
   set(SV_PLATFORM_DIR "${_platform_lower}" CACHE STRING "The distribution platform being used.")
-  set(SV_PLATFORM_VERSION_DIR "${_platform_version_lower}" CACHE STRING "The distribution platform version being used.")
+  set(SV_PLATFORM_VERSION_DIR "${LSB_VERSION}" CACHE STRING "The distribution platform version being used.")
 
 elseif(WIN64)
 
