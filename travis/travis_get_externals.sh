@@ -20,7 +20,7 @@ wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.vtk.6.2.0.ta
 popd
 
 pushd $EXTERNALS_TOP/bin/gnu/4.8/x64
-for i in $EXTERNALS_TOP/tarfiles/ubuntu.14.04.gnu-4.8.x64.RelWithDebInfo.2016.12.11.*.tar.gz; do
+for i in $EXTERNALS_TOP/tarfiles/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.*.tar.gz; do
     echo "untarring ($i)..."
     tar xzf $i
 done
