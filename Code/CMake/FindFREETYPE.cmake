@@ -28,12 +28,16 @@
 # wants explicit full paths and this trickery doesn't work too well.
 # I'm going to attempt to cut out the middleman and hope
 # everything still works.
-unset(FREETYPE_INCLUDE_DIR_ft2build CACHE)
-unset(FREETYPE_INCLUDE_DIR_freetype2 CACHE)
-unset(FREETYPE_LIBRARY CACHE)
 find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
+  PATHS
   ${FREETYPE_DIR}
+  ${FREETYPE_DIR}/include
+  ${FREETYPE_DIR}/include/freetype2
+  ${FREETYPE_DIR}/include/freetype2/freetype
   $ENV{FREETYPE_DIR}
+  $ENV{FREETYPE_DIR}/include
+  $ENV{FREETYPE_DIR}/include/freetype2
+  $ENV{FREETYPE_DIR}/include/freetype2/freetype
   NO_DEFAULT_PATH
   PATH_SUFFIXES include
 )
@@ -41,8 +45,6 @@ find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
 
 find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
   PATHS
-  ${FREETYPE_DIR}/include
-  ${FREETYPE_DIR}/include/freetype2
   /usr/local/X11R6/include
   /usr/local/X11/include
   /usr/X11/include
@@ -50,17 +52,24 @@ find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
   /opt/local/include
   /opt/X11/include
   /usr/freeware/include
-  NO_DEFAULT_PATH
   PATH_SUFFIXES freetype2
 )
 
 find_path(FREETYPE_INCLUDE_DIR_freetype2 config/ftheader.h
+  PATHS
+  ${FREETYPE_DIR}
+  ${FREETYPE_DIR}/include
   ${FREETYPE_DIR}/include/freetype2
+  ${FREETYPE_DIR}/include/freetype2/freetype
+  $ENV{FREETYPE_DIR}
+  $ENV{FREETYPE_DIR}/include
   $ENV{FREETYPE_DIR}/include/freetype2
+  $ENV{FREETYPE_DIR}/include/freetype2/freetype
   NO_DEFAULT_PATH
 )
 
 find_path(FREETYPE_INCLUDE_DIR_freetype2 config/ftheader.h
+  PATHS
   ${FREETYPE_DIR}/include
   /usr/local/X11R6/include
   /usr/local/X11/include

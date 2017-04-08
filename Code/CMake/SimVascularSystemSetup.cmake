@@ -39,7 +39,7 @@ else()
 	SET(ARCH "x32")
   set(IS64 FALSE)
 endif()
-set(SV_ARCH_DIR "${ARCH}")
+set(SV_ARCH_DIR "${ARCH}" CACHE STRING "The architecture being used.")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -86,19 +86,6 @@ set(CLUSTER "${ARCH}_${SV_OS}")
 if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "${CLUSTER}")
 endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Compiler
-set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
-if (NOT CMAKE_CXX_COMPILER_VERSION)
-  message(FATAL_ERROR "Compiler version does not exist; must specify the compiler
-                       version with -DCMAKE_CXX_COMPILER_VERSION='major_version'.'minor_version'")
-endif()
-simvascular_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJOR_VERSION COMPILER_MINOR_VERSION)
-
-string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
-set(SV_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -160,21 +147,64 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Set platforms directories
+# Directory structure is SV_KERNEL_DIR/SV_PLATFORM_DIR/SV_PLATFORM_VERSION_DIR/SV_COMPILER_DIR/SV_COMPILER_VERSION_DIR/SV_ARCH_DIR/SV_BUILD_TYPE_DIR
+string(TOLOWER "${CMAKE_SYSTEM_NAME}" _kernel_lower)
+set(SV_KERNEL_DIR "${_kernel_lower}" CACHE STRING "The overall platform kernel being used.")
+
+# Set the rest of the system variables
 if(APPLE)
-  set(SV_PLATFORM_DIR "mac_osx")
-  set(SV_PLATFORM_VERSION_DIR "10.10")
-  set(SV_PLATFORM_DEFAULT_DIR "mac_osx/10.10/clang-7.0")
+
+  # Assuming use mac os if APPLE
+  set(SV_PLATFORM_DIR "mac_osx" CACHE STRING "The distribution platform being used.")
+
+  # Get just major minor version of osx
+  simvascular_get_major_minor_version(${CURRENT_OSX_VERSION} SV_OSX_MAJOR_VERSION SV_OSX_MINOR_VERSION)
+
+  # Set the os version number
+  set(SV_PLATFORM_VERSION_DIR "${SV_OSX_MAJOR_VERSION}.${SV_OSX_MINOR_VERSION}" CACHE STRING "The distribution platform version being used.")
+
 elseif(LINUX)
-  set(SV_PLATFORM_DIR "linux")
-  set(SV_PLATFORM_VERSION_DIR "ubuntu_14")
-  set(SV_PLATFORM_DEFAULT_DIR "linux/ubuntu_14/gnu-4.8")
+
+  # To get the distriubtion and the version, we need to use lsb
+  find_program(LSB_RELEASE lsb_release)
+  execute_process(COMMAND ${LSB_RELEASE} -a
+    OUTPUT_VARIABLE LSB_RELEASE_INFO
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  # Get distribution name and version number from lsb_release output
+  STRING(REGEX REPLACE "Distributor ID: ([A-za-z ])" "\\1" LSB_RELEASE_INFO LSB_DISTRIB)
+  STRING(REGEX REPLACE "Release:        ([0-9])+\\.([0-9])" "\\1.\\2" LSB_RELEASE_INFO LSB_VERSION)
+  string(TOLOWER "${LSB_DISTRIB}" _platform_lower)
+  string(TOLOWER "${LSB_VERSION}" _platform_version_lower)
+
+  # Set the distrib and version
+  set(SV_PLATFORM_DIR "${_platform_lower}" CACHE STRING "The distribution platform being used.")
+  set(SV_PLATFORM_VERSION_DIR "${_platform_version_lower}" CACHE STRING "The distribution platform version being used.")
+
 elseif(WIN64)
-  set(SV_PLATFORM_DIR "windows")
-  set(SV_PLATFORM_VERSION_DIR "10")
-  set(SV_PLATFORM_DEFAULT_DIR "windows/10/msvc_2013")
+
+  # Windows the platform and kernel should be same
+  set(SV_PLATFORM_DIR "${SV_KERNEL_DIR}" CACHE STRING "The distribution platform being used.")
+
+  # Set the version of the platform
+  set(SV_PLATFORM_VERSION_DIR "${CMAKE_SYSTEM_VERSION}" CACHE STRING "The distribution platform version being used.")
 else()
   set(SV_PLATFORM_DIR "unsupported")
 endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Compiler
+set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
+if (NOT CMAKE_CXX_COMPILER_VERSION)
+  message(FATAL_ERROR "Compiler version does not exist; must specify the compiler
+                       version with -DCMAKE_CXX_COMPILER_VERSION='major_version'.'minor_version'")
+endif()
+simvascular_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJOR_VERSION COMPILER_MINOR_VERSION)
+
+string(TOLOWER "${COMPILER_VERSION}" _compiler_version_lower)
+set(SV_COMPILER_DIR "${_compiler_version_lower}" CACHE STRING "The compiler being used.")
+set(SV_COMPILER_VERSION_DIR "${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}" CACHE STRING "The compiler version being used.")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -208,6 +238,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
 		"MinSizeRel" "RelWithDebInfo")
 endif()
+set(SV_BUILD_TYPE_DIR "${CMAKE_BUILD_TYPE}" CACHE STRING "The compile type being used.")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

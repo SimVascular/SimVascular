@@ -80,12 +80,6 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Platform, compiler options
-set(SV_PLATFORM_DIR_FOR_EXTERNALS "${SV_PLATFORM_DIR}" CACHE STRING "Dir that will be used in constructing path to externals tar files on simvascular server")
-set(SV_COMPILER_DIR_FOR_EXTERNALS "${SV_COMPILER_DIR}" CACHE STRING "Dir that will be used in constructing path to externals tar files on simvascular server")
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 # First process special Qt stuff
 #Find Qt!
 set(SV_Qt5_COMPONENTS
