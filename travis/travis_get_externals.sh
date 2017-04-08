@@ -12,11 +12,11 @@ wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.freetype.2.6
 wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.gdcm.2.6.1.tar.gz
 wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.itk.4.7.1.tar.gz
 wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.mitk.2016.03.tar.gz
-wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.mmg.5.1.0-tar.gz
-wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.opencascade.7.0.0-tar.gz
-wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.python.2.7.11-tar.gz
-wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.tcltk.8.6.4-tar.gz
-wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.vtk.6.2.0-tar.gz
+wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.mmg.5.1.0.tar.gz
+wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.opencascade.7.0.0.tar.gz
+wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.python.2.7.11.tar.gz
+wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.tcltk.8.6.4.tar.gz
+wget $PARENT_URL/ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11.vtk.6.2.0.tar.gz
 popd
 
 pushd $EXTERNALS_TOP/bin/gnu/4.8/x64
