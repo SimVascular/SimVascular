@@ -74,7 +74,6 @@ include(ExternalProject)
 include(SimVascularMacros)
 include(SimVascularSystemSetup)
 include(SimVascularFunctionCheckCompilerFlags)
-include(SimVascularInstallSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -94,6 +93,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 # Include Initial Options
 include(SimVascularOptions)
 include(SimVascularDependentOptions)
+include(SimVascularInstallSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

@@ -1328,7 +1328,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   # Add install step for each external
   if(NOT "${install_dirname}" STREQUAL "none")
     simvascular_today(YEAR MONTH DAY)
-    set(SV_EXTERNALS_${proj}_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_COMPILER_DIR}-${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${install_dirname}-${SV_EXTERNALS_${proj}_VERSION}-BUILD${YEAR}.${MONTH}.${DAY})
+    set(SV_EXTERNALS_${proj}_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_PLATFORM_VERSION_DIR}.${SV_COMPILER_DIR}.${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${SV_BUILD_TYPE_DIR}.${YEAR}.${MONTH}.${DAY}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION})
     if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
       install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_${proj}_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_${proj}_BIN_DIR}
         WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR})")
@@ -1348,7 +1348,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
         simvascular_read_file("${SV_EXTERNALS_${proj}_PFX_DIR}/externals_compiler_info.txt" FILE_CONTENTS)
         sv_externals_check_versioning("${FILE_CONTENTS}" ${SV_PLATFORM_VERSION_DIR} ${SV_COMPILER_DIR} ${SV_COMPILER_VERSION_DIR} SV_DOWNLOAD_DIR)
         string(REPLACE "/" "." SV_TAR_PREFIX "${SV_DOWNLOAD_DIR}")
-        set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_URL}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/${SV_DOWNLOAD_DIR}/${SV_PLATFORM_DIR}.${SV_TAR_PREFIX}.${install_dirname}.${version}.tar.gz")
+        set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_URL}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/${SV_DOWNLOAD_DIR}/${SV_PLATFORM_DIR}.${SV_TAR_PREFIX}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
       endif()
     endif()
   endif()
@@ -1489,7 +1489,7 @@ macro(sv_externals_check_versioning check_file_contents platform_version compile
   else()
     # The worst! fatal error
     message(WARNING "${GENERIC_MESSAGE} Pre-built binaries for ${SV_PLATFORM_DIR} version ${nothing_oldest_platform_ver} and compiler ${nothing_oldest_compiler}/${nothing_oldest_compiler_ver}")
-    set(${output_dir} "${nothing_oldest_platform_ver}/${nothing_oldest_compiler}-${nothing_oldest_compiler_ver}/${nothing_rest_of_line}")
+    set(${output_dir} "${nothing_oldest_platform_ver}/${nothing_oldest_compiler}/${nothing_oldest_compiler_ver}/${nothing_rest_of_line}")
   endif()
 
 endmacro()
