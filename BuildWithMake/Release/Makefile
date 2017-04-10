@@ -61,7 +61,7 @@ else
 endif
 
 ifneq ($(CLUSTER),x64_linux)
-  all: use_subst windows-distribution msi msi-bundle
+  all: use_subst windows-distribution msi msi-bundle msi-meshsim-and-parasolid
 else
   all: linux-distribution taritup taritup-meshsim-and-parasolid
 endif
