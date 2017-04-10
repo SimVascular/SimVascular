@@ -45,7 +45,7 @@ WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 WIXUI_WIN_PATH = C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 endif
 
-SV_TIMESTAMP := $(shell echo "puts \"[clock seconds]\"" | tclsh)
+SV_TIMESTAMP := $(shell date +"%Y-%m-%d")
 DIST_DIR_TOP = package/$(SV_VERSION)
 DIST_DIR := $(DIST_DIR_TOP)/$(SV_TIMESTAMP)
 
