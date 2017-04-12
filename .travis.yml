@@ -1,37 +1,30 @@
-os:
-  - linux
-  - osx
-
-compiler:
-  - gcc
-  - clang
-
-dist:
-  - trusty
-
-osx_image:
-  - xcode7.3
-
-sudo:
-  - required
-
-env:
-  - WITH_CMAKE=true BUILD_TEST=false
-  - WITH_CMAKE=false BUILD_TEST=false
-
-language:
-  - cpp
+language: cpp
 
 matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      dist: trusty
+      sudo: required
+      env: WITH_CMAKE=true BUILD_TEST=false
+    - os: linux
+      compiler: gcc
+      dist: trusty
+      sudo: required
+      env: WITH_CMAKE=false BUILD_TEST=false
+    - os: osx
+      compiler: clang
+      osx_image: xcode7.3
+      sudo: required
+      env: WITH_CMAKE=true BUILD_TEST=false
+    - os: osx
+      compiler: clang
+      osx_image: xcode7.3
+      sudo: required
+      env: WITH_CMAKE=false BUILD_TEST=false
   allow_failures:
     - env: WITH_CMAKE=false BUILD_TEST=false
     - os: osx
-  exclude:
-    - os: linux
-      compiler: clang
-    - os: osx
-      compiler: gcc
-      env: WITH_CMAKE=false BUILD_TEST=false
 
 addons:
   apt:
