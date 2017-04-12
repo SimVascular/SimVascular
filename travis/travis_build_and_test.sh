@@ -6,6 +6,7 @@ MAKE="make --jobs=$NUM_THREADS --keep-going"
 MAKE_TEST="xvfb-run -a make test ARGS=-V"
 
 # Get externals
+mkdir -p $SV_EXTERNALS_BUILD_DIR
 pushd $SV_EXTERNALS_BUILD_DIR
 cmake ../
 $MAKE
