@@ -8,7 +8,7 @@ MAKE_TEST="xvfb-run -a make test ARGS=-V"
 # Get externals
 mkdir -p $SV_EXTERNALS_BUILD_DIR
 pushd $SV_EXTERNALS_BUILD_DIR
-cmake ../
+cmake ../ "-DQt5_DIR:PATH=$Qt5_DIR"
 $MAKE
 popd
 

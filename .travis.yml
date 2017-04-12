@@ -33,10 +33,6 @@ addons:
     - libxt-dev
     - libxi-dev
 
-    sources:
-    - ubuntu-toolchain-r-test
-    - kubuntu-backports
-
 git:
   submodules: false
 
