@@ -1,10 +1,17 @@
-export EXTERNALS_DIR=$EXTERNALS_TOP
+export EXTERNALS_DIR="$SV_EXTERNALS_BUILD_DIR/sv_externals"
 
 pushd $BUILD_DIR
 
 #compilers
-export CC="gcc"
-export CXX="g++"
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+then
+  export CC="gcc"
+  export CXX="g++"
+elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
+then
+  export CC="clang"
+  export CXX="clang++"
+fi
 
 #cmake
 export REPLACEME_SV_CMAKE_CMD="cmake"
