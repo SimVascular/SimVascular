@@ -33,7 +33,7 @@ else
     then
       echo "CLUSTER=x64_macosx" > BuildWithMake/cluster_overrides.mk
       echo "CXX_COMPILER_VERSION=clang" >> BuildWithMake/cluster_overrides.mk
-      echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin/clang/7.0/x64" > BuildWithMake/global_overrides.mk
+      echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin/clang/7.3/x64" > BuildWithMake/global_overrides.mk
     fi
     echo "FORTRAN_COMPILER_VERSION=gfortran" >> BuildWithMake/cluster_overrides.mk
     echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
