@@ -17,6 +17,8 @@ export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
 export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_MAKE_CMD="make -j8"
 
+MAKE="make --jobs=$NUM_THREADS --keep-going"
+
 # Get externals
 mkdir -p $SV_EXTERNALS_BUILD_DIR
 pushd $SV_EXTERNALS_BUILD_DIR
