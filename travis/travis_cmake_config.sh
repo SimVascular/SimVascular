@@ -15,6 +15,13 @@ then
   export Qt5_DIR="/opt/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 fi
 
+#cmake
+export REPLACEME_SV_CMAKE_CMD="cmake"
+export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
+export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
+export REPLACEME_SV_MAKE_CMD="make -j8"
+export REPLACEME_SV_TOP_SRC_DIR_SV=$SV_CODE_DIR
+
 # Get externals
 mkdir -p $SV_EXTERNALS_BUILD_DIR
 pushd $SV_EXTERNALS_BUILD_DIR
@@ -24,13 +31,6 @@ pushd $SV_EXTERNALS_BUILD_DIR
  ../
 $MAKE
 popd
-
-#cmake
-export REPLACEME_SV_CMAKE_CMD="cmake"
-export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
-export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
-export REPLACEME_SV_MAKE_CMD="make -j8"
-export REPLACEME_SV_TOP_SRC_DIR_SV=$SV_CODE_DIR
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
