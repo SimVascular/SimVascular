@@ -13,7 +13,6 @@ then
   echo "untarring (Qt5.4.2-ubuntu-14.04.tar.gz)..."
   sudo tar --directory=/ -xzf ./Qt5.4.2-ubuntu-14.04.tar.gz
   rm Qt5.4.2-ubuntu-14.04.tar.gz
-  export Qt5_DIR="/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5"
   popd
 elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
 then
@@ -28,6 +27,5 @@ then
   echo "untarring (qt-opensource-mac-x64-clang-5.4.2.dmg)..."
   sudo tar --directory=/opt -xzf ./qt-opensource-mac-x64-clang-5.4.2.tar.gz
   rm qt-opensource-mac-x64-clang-5.4.2.tar.gz
-  export Qt5_DIR="/opt/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
   popd
 fi
