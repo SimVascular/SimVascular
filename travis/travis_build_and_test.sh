@@ -24,7 +24,7 @@ if $WITH_CMAKE; then
   cd -
 
 else
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]];
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
     then
       echo "CLUSTER=x64_linux" > BuildWithMake/cluster_overrides.mk
       echo "CXX_COMPILER_VERSION=gcc" >> BuildWithMake/cluster_overrides.mk
