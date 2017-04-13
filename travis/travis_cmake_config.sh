@@ -1,7 +1,5 @@
 export EXTERNALS_DIR="$SV_EXTERNALS_BUILD_DIR/sv_externals"
 
-pushd $BUILD_DIR
-
 #compilers
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]
 then
@@ -22,15 +20,7 @@ export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV=$SV_CODE_DIR
 
-# Get externals
-mkdir -p $SV_EXTERNALS_BUILD_DIR
-pushd $SV_EXTERNALS_BUILD_DIR
-"$REPLACEME_SV_CMAKE_CMD" \
-  -G "$REPLACEME_SV_CMAKE_GENERATOR" \
-  -Qt5_DIR=$Qt5_DIR \
- ../
-$MAKE
-popd
+pushd $BUILD_DIR
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
