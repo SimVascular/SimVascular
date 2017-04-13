@@ -5,14 +5,6 @@ set -e
 MAKE="make --jobs=$NUM_THREADS --keep-going"
 MAKE_TEST="xvfb-run -a make test ARGS=-V"
 
-echo "Qt5 Dir: $Qt5_DIR"
-# Get externals
-mkdir -p $SV_EXTERNALS_BUILD_DIR
-pushd $SV_EXTERNALS_BUILD_DIR
-cmake -DQt5_DIR=$Qt5_DIR ../
-$MAKE
-popd
-
 if $WITH_CMAKE; then
   mkdir -p $BUILD_DIR
   cd $BUILD_DIR
