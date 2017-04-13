@@ -25,7 +25,7 @@ then
   pushd ~/tmp/tarfiles
   wget $PARENT_URL/qt-opensource-mac-x64-clang-5.4.2.tar.gz
   echo "untarring (qt-opensource-mac-x64-clang-5.4.2.dmg)..."
-  sudo tar --directory=/opt -xzf ./qt-opensource-mac-x64-clang-5.4.2.tar.gz
+  sudo tar --directory=/ -xzf ./qt-opensource-mac-x64-clang-5.4.2.tar.gz
   rm qt-opensource-mac-x64-clang-5.4.2.tar.gz
   popd
 fi
