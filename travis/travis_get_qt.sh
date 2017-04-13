@@ -24,12 +24,10 @@ then
 
   mkdir -p ~/tmp/tarfiles
   pushd ~/tmp/tarfiles
-  wget $PARENT_URL/qt-opensource-mac-x64-clang-5.4.2.dmg
-  echo "unpackaging (qt-opensource-mac-x64-clang-5.4.2.dmg)..."
-  sudo hdiutil attach qt-opensource-mac-x64-clang-5.4.2.dmg
-  sudo installer -package /Volumes/qt-opensource-mac-x64-clang-5.4.2/qt-opensource-mac-x64-clang-5.4.2.pkg -target /opt/Qt5.4.2
-  sudo hdiutil detach /Volumes/qt-opensource-mac-x64-clang-5.4.2
-  rm qt-opensource-mac-x64-clang-5.4.2.dmg
+  wget $PARENT_URL/qt-opensource-mac-x64-clang-5.4.2.tar.gz
+  echo "untarring (qt-opensource-mac-x64-clang-5.4.2.dmg)..."
+  sudo tar --directory=/opt -xzf ./qt-opensource-mac-x64-clang-5.4.2.tar.gz
+  rm qt-opensource-mac-x64-clang-5.4.2.tar.gz
   export Qt5_DIR="/opt/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
   popd
 fi
