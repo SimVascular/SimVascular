@@ -37,7 +37,7 @@
 #define __CVMESHSIMSOLID_MODEL_H
 
 #include "SimVascular.h"
-#include "svMeshSimModelExports.h"  // For exports
+#include "svMeshSimSolidExports.h"  // For exports
 #include "cvSolidModel.h"
 #include "cv_misc_utils.h"
 

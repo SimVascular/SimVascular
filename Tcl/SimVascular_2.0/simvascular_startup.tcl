@@ -68,6 +68,7 @@ if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {
     set SV_TIMESTAMP   REPLACE_SV_TIMESTAMP
     set SV_PLATFORM    REPLACE_SV_PLATFORM
     set SV_VERSION     REPLACE_SV_VERSION
+
     if {[string range $SV_FULL_VER_NO 0 6] != "REPLACE"} {
       set SV_RELEASE_BUILD 1
       set timestamp [file tail $simvascular_home]
@@ -209,6 +210,23 @@ proc modules_registry_query {regpath regpathwow key} {
 	  return $value
         } else {
 	  if {![catch {set value [registry get $regpathwow $key]} msg]} {
+	    return $value
+	  }
+	}
+    } else {
+	return
+    }
+}
+
+proc modules_registry_query_latest {regpath regpathwow key} {
+    global tcl_platform
+    set value {}
+    if {$tcl_platform(platform) == "windows"} {
+      package require registry
+	if {![catch {set value [registry get $regpath\\2017-04-10 $key]} msg]} {
+	  return $value
+        } else {
+	  if {![catch {set value [registry get $regpathwow\\2017-04-10 $key]} msg]} {
 	    return $value
 	  }
 	}
@@ -403,14 +421,14 @@ if {![file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
     if {$tcl_platform(platform) == "windows"} {
       package require registry
         if {[string range $SV_VERSION end-1 end] == "32"} {
-          if [catch {set rundir [registry get "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\$SV_VERSION $SV_MAJOR_VER_NO" RunDir]} msg] {
+          if [catch {set rundir [registry get "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP" RunDir]} msg] {
             puts "ERROR:  could not find registry key!"
             set rundir ""
           }
       } else {
-        if [catch {set rundir [registry get "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\$SV_VERSION $SV_MAJOR_VER_NO" RunDir]} msg] {
-          if [catch {set rundir [registry get "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\$SV_VERSION $SV_MAJOR_VER_NO" RunDir]} msg] {
-            puts "ERROR: could not find registry key:\nHKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\$SV_VERSION $SV_MAJOR_VER_NO RunDir"
+        if [catch {set rundir [registry get "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP" RunDir]} msg] {
+          if [catch {set rundir [registry get "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP" RunDir]} msg] {
+            puts "ERROR: could not find registry key:\nHKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP RunDir"
             set rundir ""
           }
         }
@@ -431,10 +449,10 @@ if {![file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
 global tcl_platform
 if {$tcl_platform(platform) == "windows"} {
   package require registry
-  if [catch {set lastdir [registry get "HKEY_CURRENT_USER\\Software\\SimVascular\\$SV_VERSION $SV_MAJOR_VER_NO" LastProjectDir]} msg] {
+  if [catch {set lastdir [registry get "HKEY_CURRENT_USER\\Software\\SimVascular\\$SV_VERSION" LastProjectDir]} msg] {
     catch {cd}
     set lastdir [pwd]
-    if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\$SV_VERSION $SV_MAJOR_VER_NO" LastProjectDir $lastdir} msg] {
+    if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\$SV_VERSION" LastProjectDir $lastdir} msg] {
        puts "ERROR updating LastProjectDir in registry! ($msg)"
     }
   }
@@ -488,41 +506,41 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
      set gExternalPrograms(svsolver-mpi)   [file join $executable_home svsolver-mpi$execbinext]
      set gExternalPrograms(mpiexec)        mpiexec
      set gExternalPrograms(dicom2)         [file join $simvascular_home dicom2$execext]
-     set gExternalPrograms(dcmdump)        [file join $simvascular_home dcmdump$execext]
-     set gExternalPrograms(gdcmdump)       [file join $simvascular_home gdcmdump$execext]
+     set gExternalPrograms(dcmdump)        dcmdump$execext
+     set gExternalPrograms(gdcmdump)       gdcmdump$execext
 
      # use registry to find seperately installed svsolver package on windows
      if {$tcl_platform(platform) == "windows"} {	
-       set svpre_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
-			                     HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
-				             SVPRE_EXE]
+       set svpre_exe [modules_registry_query_latest HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+			                            HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				                    SVPRE_EXE]
        if {$svpre_exe != ""} {		    
 	  if [file exists $svpre_exe] {
 	      puts "Found svPre ($svpre_exe)"
 	      regsub -all {\\} $svpre_exe / gExternalPrograms(svpre)
 	  }
        }
-       set svpost_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
-		  	                      HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
-				              SVPOST_EXE]
+       set svpost_exe [modules_registry_query_latest HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+		  	                             HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				                     SVPOST_EXE]
        if {$svpost_exe != ""} {		    
 	  if [file exists $svpost_exe] {
 	      puts "Found svPost ($svpost_exe)"
 	      regsub -all {\\} $svpost_exe / gExternalPrograms(svpost)
 	  }
        }
-       set svsolver_nompi_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
-			                        HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
-				                SVSOLVER_NOMPI_EXE]
+       set svsolver_nompi_exe [modules_registry_query_latest HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+			                                     HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				                             SVSOLVER_NOMPI_EXE]
        if {$svsolver_nompi_exe != ""} {		    
 	  if [file exists $svsolver_nompi_exe] {
 	      puts "Found svSolver ($svsolver_nompi_exe)"
 	      regsub -all {\\} $svsolver_nompi_exe / gExternalPrograms(svsolver-nompi)
 	  }
        }
-       set svsolver_msmpi_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
-			                        HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
-				                SVSOLVER_MSMPI_EXE]
+       set svsolver_msmpi_exe [modules_registry_query_latest HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+			                                     HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				                             SVSOLVER_MSMPI_EXE]
        if {$svsolver_msmpi_exe != ""} {		    
 	  if [file exists $svsolver_msmpi_exe] {
 	      puts "Found svSolver ($svsolver_msmpi_exe)"

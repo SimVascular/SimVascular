@@ -124,6 +124,9 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_vtksvcommon$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_vtksvfilters$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_vtksvnurbs$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \

@@ -53,6 +53,7 @@ HDRS	= \
     svContourGroupCreateAction.h \
     svSegmentationLegacyLoadAction.h \
     svSegmentationLegacySaveAction.h \
+    svSegmentationLoadAction.h \
     svLevelSet2DWidget.h \
     svLoftParamWidget.h \
     svSegmentation2D.h \
@@ -65,6 +66,7 @@ CXXSRCS	= \
     svContourGroupCreateAction.cxx \
     svSegmentationLegacyLoadAction.cxx \
     svSegmentationLegacySaveAction.cxx \
+    svSegmentationLoadAction.cxx \
     svLevelSet2DWidget.cxx \
     svLoftParamWidget.cxx \
     svSegmentation2D.cxx \

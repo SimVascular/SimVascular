@@ -88,17 +88,17 @@ proc file_find {dir wildcard args} {
         global SV_EXECUTABLE
         global SV_FILES
         set outputRegistry 1
-	puts $outfp "<Registry Id='regid1' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='InstallDir' Action='write' Type='string' Value='\[INSTALLDIR\]' />"
-	puts $outfp "<Registry Id='regid2' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='TimeStamp' Action='write' Type='string' Value='$SV_TIMESTAMP' />"
-	puts $outfp "<Registry Id='regid3' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='RunDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
-	puts $outfp "<Registry Id='regid4' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='TclLibDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL' />"
-	puts $outfp "<Registry Id='regid5' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='TkLibDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL' />"
-	puts $outfp "<Registry Id='regid6' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='PSchemaDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\schema' />"
-	puts $outfp "<Registry Id='regid7' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='HomeDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
-	puts $outfp "<Registry Id='regid8' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='PythonHome' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27' />"
-	puts $outfp "<Registry Id='regid9' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='PythonPackagesDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\vtk-packages;\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
-	puts $outfp "<Registry Id='regid10' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='SV_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\RelWithDebInfo;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\RelWithDebInfo;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
-	puts $outfp "<Registry Id='regid11' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION $SV_RELEASE_VERSION_NO' Name='QT_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\qt-plugins' />"
+	puts $outfp "<Registry Id='regid1' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='InstallDir' Action='write' Type='string' Value='\[INSTALLDIR\]' />"
+	puts $outfp "<Registry Id='regid2' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='TimeStamp' Action='write' Type='string' Value='$SV_TIMESTAMP' />"
+	puts $outfp "<Registry Id='regid3' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='RunDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
+	puts $outfp "<Registry Id='regid4' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='TclLibDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL' />"
+	puts $outfp "<Registry Id='regid5' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='TkLibDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL' />"
+	puts $outfp "<Registry Id='regid6' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PSchemaDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\schema' />"
+	puts $outfp "<Registry Id='regid7' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='HomeDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
+	puts $outfp "<Registry Id='regid8' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonHome' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27' />"
+	puts $outfp "<Registry Id='regid9' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonPackagesDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\vtk-packages;\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
+	puts $outfp "<Registry Id='regid10' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='SV_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\RelWithDebInfo;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\RelWithDebInfo;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
+	puts $outfp "<Registry Id='regid11' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='QT_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\qt-plugins' />"
 	
     }
     foreach i $files {
@@ -165,13 +165,12 @@ puts $outfp "<?xml version='1.0' encoding='windows-1252'?>"
 puts $outfp "<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'"
 puts $outfp "     xmlns:util=\"http://schemas.microsoft.com/wix/UtilExtension\">"
 
-if {$SV_VERSION == "simvascular"} {
-  puts $outfp "<Product Name='$SV_VERSION' Id='986308C0-4613-427A-8971-B976F6A4A823' UpgradeCode='F55C7E60-DBD1-4D25-BDC0-DCFFF5651920' Language='1033' Codepage='1252' Version='$SV_FULL_VER_NO' Manufacturer='SimVascular'>"
-  puts $outfp "<Package Id='104C5565-1E4D-4C92-852B-FAC30A602DC6' Keywords='Installer' Description='$SV_VERSION Installer' Comments='SimVascular $SV_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />"
-} elseif {$SV_VERSION == "beta"} {
-  puts $outfp "<Product Name='$SV_VERSION' Id='BDC232D8-EBE3-4730-BEC1-01D4991C1EE4' UpgradeCode='DCD272C9-71BC-4917-8EE9-AAE95D2B8578' Language='1033' Codepage='1252' Version='$SV_FULL_VER_NO' Manufacturer='SimVascular'>"
-  puts $outfp "<Package Id='06558B20-CCE8-4FDA-BB51-A5073901CA68' Keywords='Installer' Description='$SV_VERSION Installer' Comments='SimVascular $SV_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />"
-}
+set product_id [exec tmp/uuidgen.exe 1]
+set package_id [exec tmp/uuidgen.exe 1]
+set upgrade_id [exec tmp/uuidgen.exe 1]
+
+puts $outfp "<Product Name='$SV_VERSION' Id='$product_id' UpgradeCode='$upgrade_id' Language='1033' Codepage='1252' Version='$SV_FULL_VER_NO' Manufacturer='SimVascular'>"
+puts $outfp "<Package Id='$package_id' Keywords='Installer' Description='$SV_VERSION Installer' Comments='SimVascular $SV_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' Platform='x64' SummaryCodepage='1252' />"
 
 puts $outfp "<WixVariable Id=\"WixUILicenseRtf\" Value=\"License.rtf\" />"
 puts $outfp "<WixVariable Id=\"WixUIBannerBmp\" Value=\"windows_msi_helpers/msi-banner.bmp\" />"
@@ -182,9 +181,9 @@ puts $outfp "<Property Id='INSTALLLEVEL' Value='999' />"
 puts $outfp "<Property Id='ALLUSERS' Value='1' />"
 
 puts $outfp "<Directory Id='TARGETDIR' Name='SourceDir'>"
-puts $outfp "\t<Directory Id='ProgramFilesFolder' Name='PFiles'>"
+puts $outfp "\t<Directory Id='ProgramFiles64Folder' Name='PFiles'>"
 puts $outfp "\t\t<Directory Id='id19' Name='SimVascular'>"
-puts $outfp "\t\t\t<Directory Id='INSTALLDIR' Name='$SV_SHORT_NAME'>"
+puts $outfp "\t\t\t<Directory Id='INSTALLDIR' Name='$SV_VERSION'>"
 
 #puts $outfp "<Component Id='ain_id23' Guid='A7FFADE1-74BB-4CC8-8052-06B214B93701'>"
 

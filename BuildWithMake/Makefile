@@ -53,6 +53,9 @@ mksedscript:
 	-echo "puts \"s+REPLACEME_SV_HOME+[file rootname `pwd`]/..+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_VERSION+$(SIMVASCULAR_VERSION)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LIB_BUILD_DIR+$(LIB_BUILD_DIR)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_MAJOR_VERSION+$(SV_MAJOR_VERSION)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_MINOR_VERSION+$(SV_MINOR_VERSION)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PATCH_VERSION+$(SV_PATCH_VERSION)+g\"" >> tclscript
 ifeq ($(CLUSTER),x64_cygwin)
 	-echo "puts \"s+REPLACEME_SV_OS+windows+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+`cygpath -u $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)`+g\"" >> tclscript
