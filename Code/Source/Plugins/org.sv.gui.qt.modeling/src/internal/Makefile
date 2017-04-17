@@ -53,31 +53,34 @@ endif
 HDRS	= \
     svModelCreate.h \
     svModelCreateAction.h \
-    svModelLegacyLoadAction.h \
+    svModelLoadAction.h \
     svModelLegacySaveAction.h \
     svModelExtractPathsAction.h \
     svSegSelectionWidget.h \
     svModelEdit.h \
     svFaceListDelegate.h \
     svModelFaceInfoExportAction.h \
-    svModelingPluginActivator.h
+    svModelingPluginActivator.h \
+    svModelPreferencePage.h
 
 CXXSRCS	= \
     svModelCreate.cxx \
     svModelCreateAction.cxx \
-    svModelLegacyLoadAction.cxx \
+    svModelLoadAction.cxx \
     svModelLegacySaveAction.cxx \
     svModelExtractPathsAction.cxx \
     svSegSelectionWidget.cxx \
     svModelEdit.cxx \
     svFaceListDelegate.cxx \
     svModelFaceInfoExportAction.cxx \
-    svModelingPluginActivator.cxx
+    svModelingPluginActivator.cxx \
+    svModelPreferencePage.cxx
 
 UIFILES =  \
     svModelCreate.ui \
     svSegSelectionWidget.ui \
-    svModelEdit.ui
+    svModelEdit.ui \
+    svModelPreferencePage.ui
 
 QRCFILES =  ../../resources/modeling.qrc
 

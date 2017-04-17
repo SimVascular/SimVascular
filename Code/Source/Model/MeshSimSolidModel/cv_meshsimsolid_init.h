@@ -33,7 +33,7 @@
 #define __CVMESHSIMSOLID_INIT_H
 
 #include "SimVascular.h"
-#include "svMeshSimModelExports.h"  // For exports
+#include "svMeshSimSolidExports.h"  // For exports
 #include "tcl.h"
 
 extern "C" SV_EXPORT_MESHSIM_SOLID int Meshsimsolid_Init( Tcl_Interp *interp );

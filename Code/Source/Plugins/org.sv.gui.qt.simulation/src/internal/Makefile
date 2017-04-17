@@ -46,6 +46,7 @@ HDRS	= \
     svSimJobCreate.h \
     svSimJobCreateAction.h \
     svCapBCWidget.h \
+    svSplitBCWidget.h \
     svTableCapDelegate.h \
     svTableSolverDelegate.h \
     svSimulationView.h \
@@ -58,6 +59,7 @@ CXXSRCS	= \
     svSimJobCreate.cxx \
     svSimJobCreateAction.cxx \
     svCapBCWidget.cxx \
+    svSplitBCWidget.cxx \
     svTableCapDelegate.cxx \
     svTableSolverDelegate.cxx \
     svSimulationView.cxx \
@@ -69,6 +71,7 @@ CXXSRCS	= \
 UIFILES = \
     svSimJobCreate.ui \
     svCapBCWidget.ui \
+    svSplitBCWidget.ui \
     svSimulationPreferencePage.ui \
     svSimulationView.ui
 

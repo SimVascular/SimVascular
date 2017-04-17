@@ -259,8 +259,8 @@ endif
 #   Release version numbers for SimVascular
 # -------------------------------------------
 
-SV_MAJOR_VER_NO = "2.17"
-SV_FULL_VER_NO = "2.17.0118"
+SV_MAJOR_VER_NO = "17.04"
+SV_FULL_VER_NO = "17.04.10"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
@@ -273,8 +273,12 @@ else
 -include $(TOP)/global_overrides.mk
 endif
 
+SV_MAJOR_VERSION := $(shell date +"%Y")
+SV_MINOR_VERSION := $(shell date +"%m")
+SV_PATCH_VERSION := $(shell date +"%d")
+
 ifeq ($(CLUSTER),x64_cygwin)
-  SV_VERSION  = simvascular
+  SV_VERSION  = SimVascular
   SV_PLATFORM = x64
   SV_POSTFIX=
   SV_OS=windows
@@ -290,7 +294,13 @@ endif
 # Global defines
 # --------------
 
-GLOBAL_DEFINES = -DSV_VERSION=\"$(SV_VERSION)\" -DSV_MAJOR_VER_NO=\"$(SV_MAJOR_VER_NO)\" -DSV_FULL_VER_NO=\"$(SV_FULL_VER_NO)\" -DSV_REGISTRY_TOPLEVEL=\"$(SV_REGISTRY_TOPLEVEL)\"
+GLOBAL_DEFINES = -DSV_VERSION=\"$(SV_VERSION)\" \
+                 -DSV_MAJOR_VERSION=\"$(SV_MAJOR_VERSION)\" \
+                 -DSV_MINOR_VERSION=\"$(SV_MINOR_VERSION)\" \
+                 -DSV_PATCH_VERSION=\"$(SV_PATCH_VERSION)\" \
+                 -DSV_MAJOR_VER_NO=\"$(SV_MAJOR_VER_NO)\" \
+                 -DSV_FULL_VER_NO=\"$(SV_FULL_VER_NO)\" \
+                 -DSV_REGISTRY_TOPLEVEL=\"$(SV_REGISTRY_TOPLEVEL)\"
 
 ifeq ($(SV_USE_WIN32_REGISTRY), 1)
   GLOBAL_DEFINES += -DSV_USE_WIN32_REGISTRY

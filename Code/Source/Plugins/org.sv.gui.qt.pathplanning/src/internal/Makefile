@@ -45,7 +45,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 HDRS	= \
     svPathCreate.h \
     svPathCreateAction.h \
-    svPathLegacyLoadAction.h \
+    svPathLoadAction.h \
     svPathLegacySaveAction.h \
     svPathSmooth.h \
     svPathEdit.h \
@@ -56,7 +56,7 @@ HDRS	= \
 CXXSRCS	=  \
     svPathCreate.cxx \
     svPathCreateAction.cxx \
-    svPathLegacyLoadAction.cxx \
+    svPathLoadAction.cxx \
     svPathLegacySaveAction.cxx \
     svPathSmooth.cxx \
     svPathEdit.cxx \

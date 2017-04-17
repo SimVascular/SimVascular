@@ -495,7 +495,7 @@ inline bool file_exists (char* name) {
 
   char mykey[1024];
   mykey[0]='\0';
-  sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
+  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
 
   // we first assume that we are running on a 32-bit OS
   returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
@@ -504,7 +504,7 @@ inline bool file_exists (char* name) {
   if (returnStatus2 != ERROR_SUCCESS) {
     fprintf(stdout,"Could not find SV registry!\n(%s)\n Looking elsewhere.....",mykey);
     mykey[0]='\0';
-    sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
+    sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
     //fprintf(stdout,"%s\n\n",mykey);
     returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
   }
@@ -866,7 +866,7 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
   lszValue2[0]='\0';
   scmd[0]='\0';
 
-  sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
+  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
 
   // we first assume that we are running on a 32-bit OS
   returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
@@ -875,7 +875,7 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
   // if this fails, then just give up and go home
   if (returnStatus2 != ERROR_SUCCESS) {
     mykey[0]='\0';
-    sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
+    sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
     returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
   }
   if (returnStatus2 != ERROR_SUCCESS) {
