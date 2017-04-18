@@ -5,6 +5,7 @@
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <map>
 
 class SVMODEL_EXPORT svModelElement
 {
@@ -240,6 +241,12 @@ public:
 
     int GetNumSampling();
 
+    typedef svModelElement* (*ModelElementCreationFunction)();
+
+    static void RegisterCreationFunction(std::string type, ModelElementCreationFunction function);
+
+    static svModelElement* CreateModelElement(std::string type);
+
   protected:
 
     std::string m_Type;
@@ -253,6 +260,8 @@ public:
     std::vector<svBlendParamRadius*> m_BlendRadii;
 
     int m_NumSampling;
+
+    static std::map<std::string, ModelElementCreationFunction> m_FunctionMap;
 
   };
 

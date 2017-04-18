@@ -1,7 +1,7 @@
 #include "svModelElement.h"
 #include "svModelUtils.h"
 
-#include <vtkCellData.h>
+//#include <vtkCellData.h>
 
 svModelElement::svModelElement()
     : m_Type("")
@@ -481,4 +481,22 @@ void svModelElement::SetNumSampling(int num)
 int svModelElement::GetNumSampling()
 {
     return m_NumSampling;
+}
+
+void svModelElement::RegisterCreationFunction(std::string type, ModelElementCreationFunction function)
+{
+    auto search=m_FunctionMap.find(type);
+    if(search==m_FunctionMap.end())
+        m_FunctionMap[type]=function;
+}
+
+svModelElement* svModelElement::CreateModelElement(std::string type)
+{
+    svModelElement* me=NULL;
+
+    auto search=m_FunctionMap.find(type);
+    if(search!=m_FunctionMap.end())
+        me=m_FunctionMap[type]();
+
+    return me;
 }
