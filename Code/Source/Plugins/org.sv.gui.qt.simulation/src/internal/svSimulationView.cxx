@@ -2675,19 +2675,54 @@ void svSimulationView::UpdateSimJobNumProcs()
 }
 
 #if defined(Q_OS_WIN)
+QString svSimulationView::FindLatestKey(QString key, QStringList keys)
+{
+    keys.sort();
+
+    QString latestKey="";
+    for(int i=keys.size()-1;i>-1;i--)
+    {
+        if(keys[i].endsWith("/"+key))
+        {
+            latestKey=keys[i];
+            break;
+        }
+    }
+
+    return latestKey;
+}
+
 QString svSimulationView::GetRegistryValue(QString key)
 {
     QString value="";
 
     QSettings settings1("HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver", QSettings::NativeFormat);
-    QString value1=settings1.value(key).toString().trimmed();
-    if(value1!="")
-        return value1;
+    value=settings1.value(key).toString().trimmed();
+    if(value!="")
+        return value;
+
+    QStringList keys=settings1.allKeys();
+    QString latestKey=FindLatestKey(key,keys);
+    if(latestKey!="")
+    {
+        value=settings1.value(latestKey).toString().trimmed();
+        if(value!="")
+            return value;
+    }
 
     QSettings settings2("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\SimVascular\\svSolver", QSettings::NativeFormat);
-    QString value2=settings2.value(key).toString().trimmed();
-    if(value2!="")
-        return value2;
+    value=settings2.value(key).toString().trimmed();
+    if(value!="")
+        return value;
+
+    keys=settings2.allKeys();
+    latestKey=FindLatestKey(key,keys);
+    if(latestKey!="")
+    {
+        value=settings2.value(latestKey).toString().trimmed();
+        if(value!="")
+            return value;
+    }
 
     return "";
 }
