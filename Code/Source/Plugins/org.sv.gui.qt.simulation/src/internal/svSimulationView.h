@@ -148,6 +148,7 @@ public:
     void EnableConnection(bool able = true);
 
 #if defined(Q_OS_WIN)
+    QString FindLatestKey(QString key, QStringList keys);
     QString GetRegistryValue(QString key);
 #endif
 
