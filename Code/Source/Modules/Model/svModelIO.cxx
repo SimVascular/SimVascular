@@ -279,7 +279,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
                     TiXmlElement* blendElement = meElement->FirstChildElement("blend_param");
                     if(blendElement!=nullptr)
                     {
-                        svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
+                        svModelElement::svBlendParam* param=mepd->GetBlendParam();
                         blendElement->QueryIntAttribute("blend_iters", &(param->numblenditers));
                         blendElement->QueryIntAttribute("sub_blend_iter", &(param->numsubblenditers));
                         blendElement->QueryIntAttribute("cstr_smooth_iter", &(param->numcgsmoothiters));
@@ -442,7 +442,7 @@ void svModelIO::Write()
             {
                 auto blendElement= new TiXmlElement("blend_param");
                 meElement->LinkEndChild(blendElement);
-                svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
+                svModelElement::svBlendParam* param=mepd->GetBlendParam();
 
                 blendElement->SetAttribute("blend_iters", param->numblenditers);
                 blendElement->SetAttribute("sub_blend_iters", param->numsubblenditers);

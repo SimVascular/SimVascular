@@ -8,6 +8,7 @@
 #include "svFaceListDelegate.h"
 #include "svPath.h"
 #include "svSegmentationUtils.h"
+#include "svModelElementFactory.h"
 
 #include "svMeshTetGen.h"
 #include "svMitkMesh.h"
@@ -1193,7 +1194,7 @@ void svModelEdit::UpdatePolyDataBlendParam()
     svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
     if(mepd==NULL) return;
 
-    svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
+    svModelElement::svBlendParam* param=mepd->GetBlendParam();
 
     ui->dsbDecimation->setValue(param->targetdecimation);
     ui->sbBlendIters->setValue(param->numblenditers);
@@ -1495,41 +1496,35 @@ void svModelEdit::CreateModel()
 
     int created = 1;
     QString statusText="Model has been created.";
-    if(m_ModelType=="PolyData"){
+
+    svModelElement* tempElement=svModelElementFactory::CreateModelElement(m_ModelType);
+    if(tempElement)
+    {
         int stats[2]={0};
-        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats,nurbsParam);
+        if(m_ModelType=="PolyData")
+        {
+            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,nurbsParam,stats);
+        }
+        else if(m_ModelType=="OpenCASCADE")
+        {
+            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,nurbsParam,NULL,20.0);
+        }
+        else if(m_ModelType=="Parasolid")
+        {
+            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,NULL,NULL,1.0);
+        }
+
         if(newModelElement==NULL)
         {
-            statusText="Failed to create PolyData model.";
+            statusText="Failed to create model.";
             created = 0;
         }
-        else
+        else if(m_ModelType=="PolyData")
         {
             statusText=statusText+" Number of Free Edges: "+ QString::number(stats[0])+", Number of Bad Edges: "+ QString::number(stats[1]);
         }
     }
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-    else if(m_ModelType=="OpenCASCADE")
-    {
-        newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling,nurbsParam);
-        if(newModelElement==NULL)
-        {
-            statusText="Failed to create OpenCASCADE model.";
-            created = 0;
-        }
-    }
-#endif
-#ifdef SV_USE_PARASOLID_QT_GUI
-    else if(m_ModelType=="Parasolid")
-    {
-        newModelElement=svModelUtils::CreateModelElementParasolid(segNodes,numSampling);
-        if(newModelElement==NULL)
-        {
-            statusText="Failed to create Parasolid model.";
-            created = 0;
-        }
-    }
-#endif
+
     delete nurbsParam;
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress(2);
@@ -1610,6 +1605,8 @@ void svModelEdit::BlendModel()
     svModelElement* newModelElement=NULL;
 
     std::vector<svModelElement::svBlendParamRadius*> blendRadii=GetBlendRadii();
+    if(blendRadii.size()==0)
+        return;
 
     mitk::ProgressBar::GetInstance()->Reset();
     mitk::ProgressBar::GetInstance()->AddStepsToDo(2);
@@ -1617,12 +1614,10 @@ void svModelEdit::BlendModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
+    svModelElement::svBlendParam* param=NULL;
+    std::string status="Blending done.";
     if(m_ModelType=="PolyData"){
-
-        svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(modelElement);
-        if(!mepd) return;
-
-        svModelElementPolyData::svBlendParam* param=new svModelElementPolyData::svBlendParam();
+        param=new svModelElement::svBlendParam();
 
         param->numblenditers=ui->sbBlendIters->value();
         param->numsubblenditers=ui->sbSubBlendIters->value();
@@ -1630,33 +1625,22 @@ void svModelEdit::BlendModel()
         param->numlapsmoothiters=ui->sbLapSmoothIters->value();
         param->numsubdivisioniters=ui->sbSubdivisionIters->value();
         param->targetdecimation=ui->dsbDecimation->value();
+    }
 
-        newModelElement=svModelUtils::CreateModelElementPolyDataByBlend(mepd, blendRadii, param);
+    try{
+        newModelElement=modelElement->CreateModelElementByBlend(blendRadii,param);
+    }
+    catch(...)
+    {
+        status="Error during blending";
+    }
 
+    if(param)
         delete param;
-    }
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-    else if(m_ModelType=="OpenCASCADE")
-    {
-        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(modelElement);
-        if(!me) return;
-
-        newModelElement=svModelUtils::CreateModelElementOCCTByBlend(me, blendRadii);
-    }
-#endif
-#ifdef SV_USE_PARASOLID_QT_GUI
-    else if(m_ModelType=="Parasolid")
-    {
-        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(modelElement);
-        if(!me) return;
-
-        newModelElement=svModelUtils::CreateModelElementParasolidByBlend(me, blendRadii);
-    }
-#endif
 
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress();
-    mitk::StatusBar::GetInstance()->DisplayText("Blending done.");
+    mitk::StatusBar::GetInstance()->DisplayText(status.c_str());
 
     if(newModelElement==NULL) return;
 
@@ -2019,31 +2003,16 @@ void svModelEdit::ChangeFacetSize()
     double facetSize=0;
     QString sizeType="";
 
-#ifdef SV_USE_OpenCASCADE_QT_GUI
+    svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(m_Model->GetModelElement(GetTimeStep()));
+    if(meAnalytic==NULL)
+        return;
+
     if(m_ModelType=="OpenCASCADE")
-    {
-        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
-        if(me==NULL)
-            return;
-
         sizeType="Max Angle Dev";
-        facetSize=me->GetMaxDist();
-
-    }
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-    if(m_ModelType=="Parasolid")
-    {
-        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement(GetTimeStep()));
-        if(me==NULL)
-            return;
-
+    else if(m_ModelType=="Parasolid")
         sizeType="Max Edge Size";
-        facetSize=me->GetMaxDist();
 
-    }
-#endif
+    facetSize=meAnalytic->GetMaxDist();
 
     if(sizeType=="")
         return;
@@ -2064,35 +2033,14 @@ void svModelEdit::ChangeFacetSize()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-    if(m_ModelType=="OpenCASCADE")
+    meAnalytic->SetMaxDist(newSize);
+    meAnalytic->SetWholeVtkPolyData(meAnalytic->CreateWholeVtkPolyData());
+    std::vector<svModelElement::svFace*> faces=meAnalytic->GetFaces();
+    for(int i=0;i<faces.size();i++)
     {
-        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
-        me->SetMaxDist(newSize);
-        me->SetWholeVtkPolyData(me->CreateWholeVtkPolyData());
-        std::vector<svModelElement::svFace*> faces=me->GetFaces();
-        for(int i=0;i<faces.size();i++)
-        {
-            faces[i]->vpd=me->CreateFaceVtkPolyData(faces[i]->id);
-        }
-        m_Model->SetDataModified();
+        faces[i]->vpd=meAnalytic->CreateFaceVtkPolyData(faces[i]->id);
     }
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-    if(m_ModelType=="Parasolid")
-    {
-        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement(GetTimeStep()));
-        me->SetMaxDist(newSize);
-        me->SetWholeVtkPolyData(me->CreateWholeVtkPolyData());
-        std::vector<svModelElement::svFace*> faces=me->GetFaces();
-        for(int i=0;i<faces.size();i++)
-        {
-            faces[i]->vpd=me->CreateFaceVtkPolyData(faces[i]->id);
-        }
-        m_Model->SetDataModified();
-    }
-#endif
+    m_Model->SetDataModified();
 
     mitk::StatusBar::GetInstance()->DisplayText("New surface has been created with new facet size.");
     mitk::ProgressBar::GetInstance()->Progress();
@@ -2132,27 +2080,9 @@ void svModelEdit::ConvertToPolyDataModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-    if(m_ModelType=="OpenCASCADE")
-    {
-        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
-        if(me)
-        {
-            modelElement=me->ConverToPolyDataModel();
-        }
-    }
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-    if(m_ModelType=="Parasolid")
-    {
-        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement());
-        if(me)
-        {
-            modelElement=me->ConverToPolyDataModel();
-        }
-    }
-#endif
+    svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(m_Model->GetModelElement());
+    if(meAnalytic)
+        modelElement=meAnalytic->ConverToPolyDataModel();
 
     mitk::StatusBar::GetInstance()->DisplayText("PolyData model has been created.");
     mitk::ProgressBar::GetInstance()->Progress();

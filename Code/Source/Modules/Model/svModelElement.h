@@ -3,6 +3,8 @@
 
 #include <svModelExports.h>
 
+#include <mitkDataNode.h>
+
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <map>
@@ -66,6 +68,35 @@ public:
                 vpd=NULL;
         }
 
+    };
+
+    struct svBlendParam
+    {
+        int numblenditers;
+        int numsubblenditers;
+        int numsubdivisioniters;
+        int numcgsmoothiters;
+        int numlapsmoothiters;
+        double targetdecimation;
+
+        svBlendParam()
+            : numblenditers(2)
+            , numsubblenditers(3)
+            , numsubdivisioniters(1)
+            , numcgsmoothiters(2)
+            , numlapsmoothiters(50)
+            , targetdecimation(0.01)
+        {
+        }
+
+        svBlendParam(const svBlendParam &other)
+            : numblenditers(other.numblenditers)
+            , numsubblenditers(other.numsubblenditers)
+            , numsubdivisioniters(other.numsubdivisioniters)
+            , numcgsmoothiters(other.numcgsmoothiters)
+            , numlapsmoothiters(other.numlapsmoothiters)
+            , targetdecimation(other.targetdecimation)
+        {}
     };
 
     struct svBlendParamRadius
@@ -241,11 +272,17 @@ public:
 
     int GetNumSampling();
 
-    typedef svModelElement* (*ModelElementCreationFunction)();
+    virtual svModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
+                                               , int numSamplingPts
+                                               , svModelElement::svNURBSLoftParam *nurbsParam
+                                               , int* stats = NULL
+                                               , double maxDist = 1.0
+                                               , int noInterOut = 1
+                                               , double tol = 1e-6
+                                               , unsigned int t = 0) {return NULL;}
 
-    static void RegisterCreationFunction(std::string type, ModelElementCreationFunction function);
-
-    static svModelElement* CreateModelElement(std::string type);
+    virtual svModelElement* CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
+                                                      , svModelElement::svBlendParam* param) {return NULL;}
 
   protected:
 
@@ -260,8 +297,6 @@ public:
     std::vector<svBlendParamRadius*> m_BlendRadii;
 
     int m_NumSampling;
-
-    static std::map<std::string, ModelElementCreationFunction> m_FunctionMap;
 
   };
 

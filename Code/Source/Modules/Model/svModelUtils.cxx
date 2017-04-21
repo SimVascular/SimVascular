@@ -118,7 +118,7 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     cvPolyData *src=new cvPolyData(solidvpd);
     cvPolyData *dst = NULL;
 
-    if(sys_geom_checksurface(src,stats,tol)!=SV_OK)
+    if(stats&&sys_geom_checksurface(src,stats,tol)!=SV_OK)
     {
       solidvpd->Delete();
       return NULL;
@@ -211,7 +211,7 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     return modelElement;
 }
 
-vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElementPolyData::svBlendParam* param)
+vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElement::svBlendParam* param)
 {
     if(vpdsrc==NULL)
         return NULL;
@@ -251,7 +251,7 @@ vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID
 
 }
 
-svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElementPolyData::svBlendParam* param)
+svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElement::svBlendParam* param)
 {
 
     vtkSmartPointer<vtkPolyData> oldVpd=mepdsrc->GetWholeVtkPolyData();

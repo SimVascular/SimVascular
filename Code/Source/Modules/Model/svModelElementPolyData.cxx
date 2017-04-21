@@ -75,12 +75,12 @@ vtkSmartPointer<vtkPolyData> svModelElementPolyData::CreateWholeVtkPolyData()
 //    m_WholeVtkPolyData=solidModel;
 //}
 
-svModelElementPolyData::svBlendParam* svModelElementPolyData::GetBlendParam()
+svModelElement::svBlendParam* svModelElementPolyData::GetBlendParam()
 {
     return m_BlendParam;
 }
 
-void svModelElementPolyData::AssignBlendParam(svModelElementPolyData::svBlendParam* param)
+void svModelElementPolyData::AssignBlendParam(svModelElement::svBlendParam* param)
 {
     m_BlendParam->numblenditers=param->numblenditers;
     m_BlendParam->numsubblenditers=param->numsubblenditers;
@@ -861,4 +861,27 @@ void svModelElementPolyData::RemoveActiveCells()
         return;
 
     m_WholeVtkPolyData->GetCellData()->RemoveArray("ActiveCells");
+}
+
+svModelElement* svModelElementPolyData::CreateModelElement()
+{
+    return new svModelElementPolyData();
+}
+
+svModelElement* svModelElementPolyData::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
+                                , int numSamplingPts
+                                , svModelElement::svNURBSLoftParam *nurbsParam
+                                , int* stats
+                                , double maxDist
+                                , int noInterOut
+                                , double tol
+                                , unsigned int t)
+{
+    return svModelUtils::CreateModelElementPolyData(segNodes,numSamplingPts,stats,nurbsParam,t,noInterOut,tol);
+}
+
+svModelElement* svModelElementPolyData::CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
+                                                  , svModelElement::svBlendParam* param)
+{
+    return svModelUtils::CreateModelElementPolyDataByBlend(this,blendRadii,param);
 }

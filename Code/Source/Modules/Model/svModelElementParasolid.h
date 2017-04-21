@@ -4,11 +4,11 @@
 #include <svModelExports.h>
 
 #include "svModelElement.h"
-#include "svModelElementPolyData.h"
+#include "svModelElementAnalytic.h"
 
 #include "cvParasolidSolidModel.h"
 
-class SVMODEL_EXPORT svModelElementParasolid : public svModelElement
+class SVMODEL_EXPORT svModelElementParasolid : public svModelElementAnalytic
 {
 public:
 
@@ -20,33 +20,19 @@ public:
 
     virtual svModelElementParasolid* Clone() override;
 
-    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) override;
+    static svModelElement* CreateModelElement();
 
-    virtual vtkSmartPointer<vtkPolyData> CreateWholeVtkPolyData() override;
+    virtual svModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
+                                    , int numSamplingPts
+                                    , svModelElement::svNURBSLoftParam *nurbsParam
+                                    , int* stats = NULL
+                                    , double maxDist = 1.0
+                                    , int noInterOut = 1
+                                    , double tol = 1e-6
+                                    , unsigned int t = 0) override;
 
-    virtual void AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii) override;
-
-    virtual void SetFaceName(std::string name, int id) override;
-
-    int GetFaceIDFromInnerSolid(std::string faceName);
-
-    double GetMaxDist();
-
-    void SetMaxDist(double maxDist);
-
-    svModelElementPolyData* ConverToPolyDataModel();
-
-    cvParasolidSolidModel* GetInnerSolid();
-
-    void SetInnerSolid(cvParasolidSolidModel* innerSolid);
-
-protected:
-
-    cvParasolidSolidModel* m_InnerSolid;
-
-    double m_MaxDist;
-
+    virtual svModelElement* CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
+                                                      , svModelElement::svBlendParam* param) override;
 };
-
 
 #endif // SVMODELELEMENTPARASOLID_H

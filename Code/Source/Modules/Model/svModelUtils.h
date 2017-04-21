@@ -27,9 +27,9 @@ public:
 
     static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
-    static vtkPolyData* CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElementPolyData::svBlendParam* param);
+    static vtkPolyData* CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElement::svBlendParam* param);
 
-    static svModelElementPolyData* CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElementPolyData::svBlendParam* param);
+    static svModelElementPolyData* CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElement::svBlendParam* param);
 
     static vtkPolyData* CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts,svModelElement::svNURBSLoftParam *nurbsParam, int addCaps, unsigned int t = 0,  svContourGroup::svLoftingParam* param = NULL);
 

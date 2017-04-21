@@ -2,6 +2,8 @@ set(H_FILES
     svModelUtils.h
     svModelElement.h
     svModelElementPolyData.h
+    svModelElementAnalytic.h
+    svModelElementFactory.h
     svModelOperation.h
     svModel.h
     svModelVtkMapper2D.h
@@ -30,6 +32,8 @@ set(CPP_FILES
     svModelUtils.cxx
     svModelElement.cxx
     svModelElementPolyData.cxx
+    svModelElementAnalytic.cxx
+    svModelElementFactory.cxx
     svModelOperation.cxx
     svModel.cxx
     svModelVtkMapper2D.cxx
@@ -38,12 +42,14 @@ set(CPP_FILES
     svModelIO.cxx
     svModelLegacyIO.cxx
     svModelObjectFactory.cxx
+    svRegisterPolyDataFunction.cxx
 )
 
 if(SV_USE_OpenCASCADE_QT_GUI)
   set(CPP_FILES
       ${CPP_FILES}
       svModelElementOCCT.cxx
+      svRegisterOCCTFunction.cxx
   )
 endif()
 
@@ -51,6 +57,7 @@ if(SV_USE_PARASOLID)
   set(CPP_FILES
       ${CPP_FILES}
       svModelElementParasolid.cxx
+      svRegisterParasolidFunction.cxx
   )
 endif()
 
