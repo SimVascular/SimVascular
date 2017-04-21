@@ -46,8 +46,28 @@
 #include "SimVascular.h"
 
 #include "vtkPolyData.h"
+#include "cvPolyData.h"
 #include "vtkUnstructuredGrid.h"
 #include "svVMTKUtilsExports.h" // For exports
+
+SV_EXPORT_VMTK_UTILS int sys_geom_centerlines( cvPolyData *polydata, int *source, int nsources,
+                            int *targets, int ntargets,
+			    cvPolyData **lines, cvPolyData **voronoi);
+
+SV_EXPORT_VMTK_UTILS int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,cvPolyData **grouped );
+
+SV_EXPORT_VMTK_UTILS int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,cvPolyData **distance );
+
+SV_EXPORT_VMTK_UTILS int sys_geom_separatecenterlines( cvPolyData *lines,cvPolyData **separate );
+
+SV_EXPORT_VMTK_UTILS int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked, cvPolyData **merged);
+
+SV_EXPORT_VMTK_UTILS int sys_geom_cap( cvPolyData *polydata, cvPolyData **cappedpolydata, int *numcenterids,int **centerids,int type);
+
+SV_EXPORT_VMTK_UTILS int sys_geom_cap_with_ids( cvPolyData *polydata, cvPolyData **cappedpolydata,
+		int fillId,int filledholes,int filltype);
+
+SV_EXPORT_VMTK_UTILS int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd,cvPolyData **polydata, char *originalarray,char *newarray);
 
 SV_EXPORT_VMTK_UTILS int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh,double maxEdgeSize,
     int meshcapsonly, int preserveedges,double trianglesplitfactor,
