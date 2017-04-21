@@ -28,15 +28,9 @@
  *
  *=========================================================================*/
 
-#ifndef __simvascular_tetgen_h
-#define __simvascular_tetgen_h
+#ifndef __simvascular_vmtk_h
+#define __simvascular_vmtk_h
 
-/* Use the tetgen library configured for SimVascular.  */
-#cmakedefine SV_USE_SYSTEM_TETGEN
-#ifdef SV_USE_SYSTEM_TETGEN
-#include <tetgen.h>
-#else
-#include <simvascular_tetgen/tetgen.h>
-#endif
-
+/* Use the vmtk library configured for SimVascular.  */
+#cmakedefine SV_USE_SYSTEM_VMTK
 #endif
