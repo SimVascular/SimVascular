@@ -44,7 +44,7 @@ SET(HDRS cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h)
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_mesh_init.cxx)
 
 if(SV_USE_VMTK)
-	SET(OPTLIBS ${SV_LIB_THIRDPARTY_VMTK_NAME})
+  SET(OPTLIBS ${SV_LIB_VMTK_UTILS_NAME})
 endif()
 
 if(SV_USE_MMG)

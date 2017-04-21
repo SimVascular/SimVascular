@@ -214,6 +214,7 @@ endif()
 # VMTK
 if(SV_USE_VMTK)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/vmtk")
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/VMTKUtils")
 endif()
 # SolverIO
 if(SV_USE_SOLVERIO)

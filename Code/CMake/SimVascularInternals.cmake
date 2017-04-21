@@ -24,7 +24,8 @@ set(SV_LIBS
   TCL_INTERP
   TETGEN_MESH
   TETGEN_ADAPTOR
-  UTILS)
+  UTILS
+  VMTK_UTILS)
 
 # Thirdparty libs
 set(SV_LIBS ${SV_LIBS}

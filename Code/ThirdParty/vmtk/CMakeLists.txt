@@ -34,7 +34,7 @@
 set(lib ${SV_LIB_THIRDPARTY_VMTK_NAME})
 LIST(APPEND PLUGINLIBS ${lib})
 
-set(CXXSRCS cv_VMTK_utils.cxx vtkvmtkBoundaryLayerGenerator.cxx
+set(CXXSRCS vtkvmtkBoundaryLayerGenerator.cxx
 	vtkvmtkMath.cxx vtkvmtkItem.cxx
 	vtkvmtkStencil.cxx vtkvmtkDataSetItem.cxx vtkvmtkNeighborhood.cxx
 	vtkvmtkPolyBallLine.cxx
@@ -55,7 +55,7 @@ set(CXXSRCS cv_VMTK_utils.cxx vtkvmtkBoundaryLayerGenerator.cxx
   vtkvmtkPolyDataCenterlineGroupsClipper.cxx vtkvmtkMergeCenterlines.cxx
   vtkvmtkCenterlineBifurcationReferenceSystems.cxx vtkvmtkReferenceSystemUtilities.cxx
 	)
-SET(HDRS cv_VMTK_utils.h vtkvmtkAppendFilter.h
+SET(HD vtkvmtkAppendFilter.h
 	vtkvmtkBoundaryLayerGenerator.h vtkvmtkBoundaryReferenceSystems.h
 	vtkvmtkCapPolyData.h vtkvmtkConfigure.h
 	vtkvmtkConstants.h vtkvmtkDataSetItem.h

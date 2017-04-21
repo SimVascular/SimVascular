@@ -56,7 +56,7 @@ target_link_libraries(${lib}
 
 if(SV_USE_VMTK)
 	target_link_libraries(${lib}
-		${SV_LIB_THIRDPARTY_VMTK_NAME}
+    ${SV_LIB_VMTK_UTILS_NAME}
 		)
 endif()
 

@@ -4,9 +4,11 @@
 #include "svModelUtils.h"
 
 #include "cv_polydatasolid_utils.h"
-#include "cv_VMTK_utils.h"
+#ifdef SV_USE_VMTK
+  #include "cv_vmtk_utils.h"
+#endif
 #ifdef SV_USE_MMG
-#include "cv_mmg_mesh_utils.h"
+  #include "cv_mmg_mesh_utils.h"
 #endif
 
 #include <vtkFillHolesFilter.h>
