@@ -220,14 +220,22 @@ proc modules_registry_query {regpath regpathwow key} {
 
 proc modules_registry_query_latest {regpath regpathwow key} {
     global tcl_platform
+    package require registry
     set value {}
     if {$tcl_platform(platform) == "windows"} {
-      package require registry
-	if {![catch {set value [registry get $regpath\\2017-04-10 $key]} msg]} {
-	  return $value
-        } else {
-	  if {![catch {set value [registry get $regpathwow\\2017-04-10 $key]} msg]} {
-	    return $value
+	if {![catch {set mostrecent [lsort -dictionary [registry keys $regpath]]} msg]} {
+	  if {$mostrecent != ""} {
+	    if {![catch {set value [registry get $regpath\\$mostrecent $key]} msg]} {
+	      return $value
+            }
+	  }
+	} else {
+	  if {![catch {set mostrecent [lsort -dictionary [registry keys $regpathwow]]} msg]} {
+	    if {$mostrecent != ""} {
+	      if {![catch {set value [registry get $regpathwow\\$mostrecent $key]} msg]} {
+	        return $value
+	      }
+	    }
 	  }
 	}
     } else {
