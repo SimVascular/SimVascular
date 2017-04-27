@@ -7,8 +7,11 @@ struct SVMODEL_EXPORT svRegisterPolyDataFunction{
 
     svRegisterPolyDataFunction()
     {
-        svModelElementFactory::RegisterCreationFunction("PolyData", &svModelElementPolyData::CreateModelElement);
-        svModelElementFactory::RegisterFileExtension("PolyData", "vtp");
+        svModelElementPolyData* tempme=new svModelElementPolyData();
+        std::string type=tempme->GetType();
+        svModelElementFactory::RegisterCreationFunction(type, &svModelElementPolyData::CreateModelElement);
+        svModelElementFactory::RegisterFileExtensions(type, tempme->GetFileExtensions());
+        delete tempme;
     }
 
     virtual ~svRegisterPolyDataFunction(){}

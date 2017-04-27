@@ -26,6 +26,8 @@
 svModelElementPolyData::svModelElementPolyData()
 {
     m_Type="PolyData";
+    std::vector<std::string> exts={"vtp","vtk","vtu","stl","ply"};
+    m_FileExtensions=exts;
 }
 
 svModelElementPolyData::svModelElementPolyData(const svModelElementPolyData &other)
@@ -872,27 +874,11 @@ svModelElement* svModelElementPolyData::CreateModelElementByBlend(std::vector<sv
     return svModelUtils::CreateModelElementPolyDataByBlend(this,blendRadii,param);
 }
 
-void svModelElementPolyData::ReadFile(std::string filePath)
+bool svModelElementPolyData::ReadFile(std::string filePath)
 {
-//    vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-//    reader->SetFileName(filePath.c_str());
-//    reader->Update();
-//    vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
-//    pd->BuildLinks();
-
-//    vtkSmartPointer<vtkCleanPolyData> cleaner =vtkSmartPointer<vtkCleanPolyData>::New();
-//    cleaner->SetInputData(pd);
-//    cleaner->Update();
-
-//    vtkSmartPointer<vtkPolyData> cleanpd=cleaner->GetOutput();
-//    cleanpd->BuildLinks();
-
-//    m_WholeVtkPolyData=cleanpd;
-
     vtkSmartPointer<vtkPolyData> pd=vtkSmartPointer<vtkPolyData>::New();
-    if ( PlyDtaUtils_ReadNative(const_cast<char*>(filePath.c_str()), pd) != SV_OK) {
-      return;
-    }
+    if(PlyDtaUtils_ReadNative(const_cast<char*>(filePath.c_str()), pd) != SV_OK)
+        return false;
 
     vtkSmartPointer<vtkCleanPolyData> cleaner =vtkSmartPointer<vtkCleanPolyData>::New();
     cleaner->SetInputData(pd);
@@ -902,19 +888,17 @@ void svModelElementPolyData::ReadFile(std::string filePath)
     cleanpd->BuildLinks();
 
     m_WholeVtkPolyData=cleanpd;
+    return  true;
 }
 
-void svModelElementPolyData::WriteFile(std::string filePath)
+bool svModelElementPolyData::WriteFile(std::string filePath)
 {
     if(m_WholeVtkPolyData)
     {
-        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-        writer->SetFileName(filePath.c_str());
-        writer->SetInputData(m_WholeVtkPolyData);
-        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-        {
-            std::cerr << "PolyData model writing error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
-        }
+        if (PlyDtaUtils_WriteNative(m_WholeVtkPolyData, 0, const_cast<char*>(filePath.c_str()) ) != SV_OK)
+            return false;
     }
+
+    return true;
 }
 

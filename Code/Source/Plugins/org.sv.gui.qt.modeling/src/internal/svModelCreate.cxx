@@ -1,10 +1,9 @@
 #include "svModelCreate.h"
 #include "ui_svModelCreate.h"
 
-#include "simvascular_options.h"
-
 #include "svModel.h"
 #include "svDataNodeOperation.h"
+#include "svModelElementFactory.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -34,13 +33,10 @@ svModelCreate::svModelCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataN
     connect(ui->lineEditModelName, SIGNAL(returnPressed()), this, SLOT(CreateModel()));
 
     ui->comboBoxType->clear();
-    ui->comboBoxType->addItem("PolyData");
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-    ui->comboBoxType->addItem("OpenCASCADE");
-#endif
-#ifdef SV_USE_PARASOLID_QT_GUI
-    ui->comboBoxType->addItem("Parasolid");
-#endif
+
+    std::vector<std::string> types=svModelElementFactory::GetAvailableTypes();
+    for(int i=0;i<types.size();i++)
+        ui->comboBoxType->addItem(QString::fromStdString(types[i]));
 
     move(400,400);
 }

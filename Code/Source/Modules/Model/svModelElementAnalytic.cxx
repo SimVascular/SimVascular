@@ -94,6 +94,35 @@ int svModelElementAnalytic::GetFaceIDFromInnerSolid(std::string faceName)
     return id;
 }
 
+std::vector<int> svModelElementAnalytic::GetFaceIDsFromInnerSolid()
+{
+    std::vector<int> faceIDs;
+    if(m_InnerSolid)
+    {
+        int numFaces;
+        int *ids;
+        int status=m_InnerSolid->GetFaceIds( &numFaces, &ids);
+        for(int i=0;i<numFaces;i++)
+            faceIDs.push_back(ids[i]);
+    }
+
+    return faceIDs;
+}
+
+std::string svModelElementAnalytic::GetFaceNameFromInnerSolid(int id)
+{
+    std::string faceName="";
+    if(m_InnerSolid)
+    {
+        char *value;
+        m_InnerSolid->GetFaceAttribute("gdscName",id,&value);
+        std::string name(value);
+        faceName=name;
+    }
+
+    return faceName;
+}
+
 void svModelElementAnalytic::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii)
 {
     for(int i=0;i<moreBlendRadii.size();i++)

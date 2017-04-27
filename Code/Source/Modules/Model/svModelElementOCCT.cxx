@@ -7,6 +7,8 @@ svModelElementOCCT::svModelElementOCCT()
 {
     m_Type="OpenCASCADE";
     m_MaxDist=20.0;
+    std::vector<std::string> exts={"brep","step","iges","stl"};
+    m_FileExtensions=exts;
 }
 
 svModelElementOCCT::svModelElementOCCT(const svModelElementOCCT &other)
@@ -48,22 +50,25 @@ svModelElement* svModelElementOCCT::CreateModelElementByBlend(std::vector<svMode
     return svModelUtils::CreateModelElementOCCTByBlend(this,blendRadii);
 }
 
-void svModelElementOCCT::ReadFile(std::string filePath)
+bool svModelElementOCCT::ReadFile(std::string filePath)
 {
     cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
     char* df=const_cast<char*>(filePath.c_str());
-    occtSolid->ReadNative(df);
     m_InnerSolid=occtSolid;
+    if(m_InnerSolid->ReadNative(df)==SV_OK)
+        return true;
+    else
+        return false;
 }
 
-void svModelElementOCCT::WriteFile(std::string filePath)
+bool svModelElementOCCT::WriteFile(std::string filePath)
 {
     if(m_InnerSolid)
     {
         char* df=const_cast<char*>(filePath.c_str());
-         if (m_InnerSolid->WriteNative(0,df) != SV_OK )
-         {
-             std::cerr << "OpenCASCADE model writing error."<<std::endl;
-         }
+        if (m_InnerSolid->WriteNative(0,df) != SV_OK )
+            return false;
     }
+
+    return true;
 }

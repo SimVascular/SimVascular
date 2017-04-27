@@ -30,6 +30,10 @@ public:
 
     virtual int GetFaceIDFromInnerSolid(std::string faceName);
 
+    virtual std::vector<int> GetFaceIDsFromInnerSolid();
+
+    virtual std::string GetFaceNameFromInnerSolid(int id);
+
     virtual double GetMaxDist();
 
     virtual void SetMaxDist(double maxDist);

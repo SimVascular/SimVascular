@@ -150,7 +150,10 @@ void svModel::ExecuteOperation( mitk::Operation* operation )
 
     case svModelOperation::OpSETVTKPOLYDATA:
     {
-        modelElement->SetWholeVtkPolyData(newVpd);
+        if(GetModelElement(timeStep)==NULL)
+            return;
+
+        GetModelElement(timeStep)->SetWholeVtkPolyData(newVpd);
 
         m_CalculateBoundingBox = true;
         m_DataModified=true;

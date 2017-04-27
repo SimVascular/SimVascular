@@ -15,6 +15,7 @@
 #include "svMitkSimJob.h"
 #include "svMitkMeshIO.h"
 #include "svVtkUtils.h"
+#include "svModelElementFactory.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkIOUtil.h>

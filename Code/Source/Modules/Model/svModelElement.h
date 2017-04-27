@@ -284,13 +284,15 @@ public:
     virtual svModelElement* CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
                                                       , svModelElement::svBlendParam* param) {return NULL;}
 
-    virtual void ReadFile(std::string filePath){}
+    virtual bool ReadFile(std::string filePath){return false;}
 
-    virtual void WriteFile(std::string filePath){}
+    virtual bool WriteFile(std::string filePath){return false;}
 
     svBlendParam* GetBlendParam();
 
     void AssignBlendParam(svBlendParam* param);
+
+    std::vector<std::string> GetFileExtensions(){return m_FileExtensions;}
 
   protected:
 
@@ -307,6 +309,8 @@ public:
     int m_NumSampling;
 
     svBlendParam* m_BlendParam;
+
+    std::vector<std::string> m_FileExtensions;
   };
 
 

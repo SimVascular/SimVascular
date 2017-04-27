@@ -45,8 +45,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
     if (!document.LoadFile(fileName))
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
-//        MITK_ERROR << "Could not open/read/parse " << fileName;
-        return result;
+//        return result;
     }
 
     //    TiXmlElement* version = document.FirstChildElement("format");
@@ -54,9 +53,8 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
     TiXmlElement* modelElement = document.FirstChildElement("model");
 
     if(!modelElement){
-//        MITK_ERROR << "No Model data in "<< fileName;
         mitkThrow() << "No Model data in "<< fileName;
-        return result;
+//        return result;
     }
 
     svModel::Pointer model = svModel::New();
@@ -84,26 +82,33 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
             if(type=="")
             {
                 mitkThrow() << "No type info available when trying to load the model ";
-                return result;
+//                return result;
             }
 
             svModelElement* me=svModelElementFactory::CreateModelElement(type);
             if(me==NULL)
             {
                 mitkThrow() << "No model constructor available for model type: "<< type;
-                return result;
+//                return result;
             }
 
-            std::string fileExtension=svModelElementFactory::GetFileExtension(type);
+            std::string fileExtension="";
+            auto exts=me->GetFileExtensions();
+            if(exts.size()>0)
+                fileExtension=exts[0];
             if(fileExtension=="")
             {
                 mitkThrow() << "No file extension available for model type: "<< type;
-                return result;
+//                return result;
             }
 
             std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+"." +fileExtension;
 
-            me->ReadFile(dataFileName);
+            if(!me->ReadFile(dataFileName))
+            {
+                delete me;
+                mitkThrow() << "Failed in reading: "<< dataFileName;
+            }
 
             svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(me);
             if(meAnalytic)
@@ -388,7 +393,11 @@ void svModelIO::Write()
         }
 
         //Output actual model data file
-        std::string fileExtension=svModelElementFactory::GetFileExtension(me->GetType());
+        std::string fileExtension="";
+        auto exts=me->GetFileExtensions();
+        if(exts.size()>0)
+            fileExtension=exts[0];
+
         if(fileExtension=="")
         {
             mitkThrow() << "No file extension available for model type: "<< me->GetType();
@@ -398,7 +407,8 @@ void svModelIO::Write()
         if(me->GetType()!="Parasolid")
             dataFileName=dataFileName+"." +fileExtension;
 
-        me->WriteFile(dataFileName);
+        if(!me->WriteFile(dataFileName))
+            mitkThrow() << "Failed to write model to " << dataFileName;
     }
 
     if (document.SaveFile(fileName) == false)
