@@ -8,6 +8,7 @@ struct SVMODEL_EXPORT svRegisterOCCTFunction{
     svRegisterOCCTFunction()
     {
         svModelElementFactory::RegisterCreationFunction("OpenCASCADE", &svModelElementOCCT::CreateModelElement);
+        svModelElementFactory::RegisterFileExtension("OpenCASCADE", "brep");
     }
 
     virtual ~svRegisterOCCTFunction(){}

@@ -30,11 +30,6 @@ public:
 
 //    void SetSolidModel(vtkSmartPointer<vtkPolyData> solidModel);
 
-    svBlendParam* GetBlendParam();
-
-
-    void AssignBlendParam(svBlendParam* param);
-
     bool DeleteFaces(std::vector<int> faceIDs);
 
     bool CombineFaces(std::vector<int> faceIDs);
@@ -105,14 +100,15 @@ public:
     virtual svModelElement* CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
                                                       , svModelElement::svBlendParam* param) override;
 
+    virtual void ReadFile(std::string filePath) override;
+
+    virtual void WriteFile(std::string filePath) override;
+
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;
 
-    svBlendParam* m_BlendParam;
-
     std::vector<int> m_SelectedCellIDs;
-
   };
 
 

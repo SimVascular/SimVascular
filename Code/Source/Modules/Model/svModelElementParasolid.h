@@ -33,6 +33,10 @@ public:
 
     virtual svModelElement* CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
                                                       , svModelElement::svBlendParam* param) override;
+
+    virtual void ReadFile(std::string filePath) override;
+
+    virtual void WriteFile(std::string filePath) override;
 };
 
 #endif // SVMODELELEMENTPARASOLID_H

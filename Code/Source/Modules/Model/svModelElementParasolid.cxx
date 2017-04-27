@@ -1,6 +1,8 @@
 #include "svModelElementParasolid.h"
 #include "svModelUtils.h"
 
+#include <iostream>
+
 svModelElementParasolid::svModelElementParasolid()
 {
     m_Type="Parasolid";
@@ -44,4 +46,24 @@ svModelElement* svModelElementParasolid::CreateModelElementByBlend(std::vector<s
                                                   , svModelElement::svBlendParam* param)
 {
     return svModelUtils::CreateModelElementParasolidByBlend(this,blendRadii);
+}
+
+void svModelElementParasolid::ReadFile(std::string filePath)
+{
+    cvParasolidSolidModel* parasolid=new cvParasolidSolidModel();
+    char* df=const_cast<char*>(filePath.c_str());
+    parasolid->ReadNative(df);
+    m_InnerSolid=parasolid;
+}
+
+void svModelElementParasolid::WriteFile(std::string filePath)
+{
+    if(m_InnerSolid)
+    {
+        char* df=const_cast<char*>(filePath.c_str());
+         if (m_InnerSolid->WriteNative(0,df) != SV_OK )
+         {
+             std::cerr<< "Parasolid model writing error."<<std::endl;
+         }
+    }
 }

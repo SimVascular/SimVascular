@@ -21,9 +21,15 @@ public:
 
     static bool IsTypeAvailable(std::string type);
 
+    static void RegisterFileExtension(std::string type, std::string fileExtension);
+
+    static std::string GetFileExtension(std::string type);
+
   protected:
 
     static std::map<std::string, ModelElementCreationFunction> m_FunctionMap;
+
+    static std::map<std::string, std::string> m_FileExtensionMap;
 
   };
 

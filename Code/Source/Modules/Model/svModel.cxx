@@ -1,5 +1,4 @@
 #include "svModel.h"
-#include "svModelElementPolyData.h"
 
 svModel::svModel()
     : m_CalculateBoundingBox(true)
@@ -151,9 +150,6 @@ void svModel::ExecuteOperation( mitk::Operation* operation )
 
     case svModelOperation::OpSETVTKPOLYDATA:
     {
-        svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(GetModelElement(timeStep));
-        if(modelElement==NULL) return;
-
         modelElement->SetWholeVtkPolyData(newVpd);
 
         m_CalculateBoundingBox = true;

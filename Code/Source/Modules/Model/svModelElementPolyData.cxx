@@ -9,6 +9,10 @@
 #include "cv_mmg_mesh_utils.h"
 #endif
 
+#include <vtkCleanPolyData.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkErrorCode.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkQuadricDecimation.h>
@@ -18,19 +22,16 @@
 #include <vtkDensifyPolyData.h>
 
 #include <iostream>
-using namespace std;
 
 svModelElementPolyData::svModelElementPolyData()
 {
     m_Type="PolyData";
-    m_BlendParam=new svBlendParam();
 }
 
 svModelElementPolyData::svModelElementPolyData(const svModelElementPolyData &other)
     : svModelElement(other)
     , m_SelectedCellIDs(other.m_SelectedCellIDs)
 {
-    m_BlendParam=new svBlendParam(*(other.m_BlendParam));
 }
 
 svModelElementPolyData::~svModelElementPolyData()
@@ -74,21 +75,6 @@ vtkSmartPointer<vtkPolyData> svModelElementPolyData::CreateWholeVtkPolyData()
 //    m_SolidModel=solidModel;
 //    m_WholeVtkPolyData=solidModel;
 //}
-
-svModelElement::svBlendParam* svModelElementPolyData::GetBlendParam()
-{
-    return m_BlendParam;
-}
-
-void svModelElementPolyData::AssignBlendParam(svModelElement::svBlendParam* param)
-{
-    m_BlendParam->numblenditers=param->numblenditers;
-    m_BlendParam->numsubblenditers=param->numsubblenditers;
-    m_BlendParam->numsubdivisioniters=param->numsubdivisioniters;
-    m_BlendParam->numcgsmoothiters=param->numcgsmoothiters;
-    m_BlendParam->numlapsmoothiters=param->numlapsmoothiters;
-    m_BlendParam->targetdecimation=param->targetdecimation;
-}
 
 //bool svModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
 //{
@@ -885,3 +871,50 @@ svModelElement* svModelElementPolyData::CreateModelElementByBlend(std::vector<sv
 {
     return svModelUtils::CreateModelElementPolyDataByBlend(this,blendRadii,param);
 }
+
+void svModelElementPolyData::ReadFile(std::string filePath)
+{
+//    vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+//    reader->SetFileName(filePath.c_str());
+//    reader->Update();
+//    vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
+//    pd->BuildLinks();
+
+//    vtkSmartPointer<vtkCleanPolyData> cleaner =vtkSmartPointer<vtkCleanPolyData>::New();
+//    cleaner->SetInputData(pd);
+//    cleaner->Update();
+
+//    vtkSmartPointer<vtkPolyData> cleanpd=cleaner->GetOutput();
+//    cleanpd->BuildLinks();
+
+//    m_WholeVtkPolyData=cleanpd;
+
+    vtkSmartPointer<vtkPolyData> pd=vtkSmartPointer<vtkPolyData>::New();
+    if ( PlyDtaUtils_ReadNative(const_cast<char*>(filePath.c_str()), pd) != SV_OK) {
+      return;
+    }
+
+    vtkSmartPointer<vtkCleanPolyData> cleaner =vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->SetInputData(pd);
+    cleaner->Update();
+
+    vtkSmartPointer<vtkPolyData> cleanpd=cleaner->GetOutput();
+    cleanpd->BuildLinks();
+
+    m_WholeVtkPolyData=cleanpd;
+}
+
+void svModelElementPolyData::WriteFile(std::string filePath)
+{
+    if(m_WholeVtkPolyData)
+    {
+        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+        writer->SetFileName(filePath.c_str());
+        writer->SetInputData(m_WholeVtkPolyData);
+        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
+        {
+            std::cerr << "PolyData model writing error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
+        }
+    }
+}
+

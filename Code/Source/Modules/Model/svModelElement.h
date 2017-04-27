@@ -284,6 +284,14 @@ public:
     virtual svModelElement* CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
                                                       , svModelElement::svBlendParam* param) {return NULL;}
 
+    virtual void ReadFile(std::string filePath){}
+
+    virtual void WriteFile(std::string filePath){}
+
+    svBlendParam* GetBlendParam();
+
+    void AssignBlendParam(svBlendParam* param);
+
   protected:
 
     std::string m_Type;
@@ -298,6 +306,7 @@ public:
 
     int m_NumSampling;
 
+    svBlendParam* m_BlendParam;
   };
 
 

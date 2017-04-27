@@ -2,6 +2,8 @@
 
 std::map<std::string, svModelElementFactory::ModelElementCreationFunction> svModelElementFactory::m_FunctionMap;
 
+std::map<std::string, std::string> svModelElementFactory::m_FileExtensionMap;
+
 void svModelElementFactory::RegisterCreationFunction(std::string type, ModelElementCreationFunction function)
 {
     auto search=m_FunctionMap.find(type);
@@ -40,4 +42,22 @@ bool svModelElementFactory::IsTypeAvailable(std::string type)
         return true;
     else
         return false;
+}
+
+void svModelElementFactory::RegisterFileExtension(std::string type, std::string fileExtension)
+{
+    auto search=m_FileExtensionMap.find(type);
+    if(search==m_FileExtensionMap.end())
+        m_FileExtensionMap[type]=fileExtension;
+}
+
+std::string svModelElementFactory::GetFileExtension(std::string type)
+{
+    std::string extension="";
+
+    auto search=m_FileExtensionMap.find(type);
+    if(search!=m_FileExtensionMap.end())
+        extension=m_FileExtensionMap[type];
+
+    return extension;
 }

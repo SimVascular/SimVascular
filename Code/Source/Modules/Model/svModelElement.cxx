@@ -1,13 +1,12 @@
 #include "svModelElement.h"
 #include "svModelUtils.h"
 
-//#include <vtkCellData.h>
-
 svModelElement::svModelElement()
     : m_Type("")
     , m_WholeVtkPolyData(NULL)
     , m_NumSampling(0)
 {
+    m_BlendParam=new svBlendParam();
 }
 
 svModelElement::svModelElement(const svModelElement &other)
@@ -20,25 +19,6 @@ svModelElement::svModelElement(const svModelElement &other)
 
     for(int i=0;i<faceNum;i++)
     {
-//        svFace* face=new svFace;
-//        face->id=other.m_Faces[i]->id;
-//        face->name=other.m_Faces[i]->name;
-//        face->type=other.m_Faces[i]->type;
-//        face->selected=other.m_Faces[i]->selected;
-//        face->visible=other.m_Faces[i]->visible;
-//        face->opacity=other.m_Faces[i]->opacity;
-//        face->color[0]=other.m_Faces[i]->color[0];
-//        face->color[1]=other.m_Faces[i]->color[1];
-//        face->color[2]=other.m_Faces[i]->color[2];
-
-//        vtkSmartPointer<vtkPolyData> vpd=NULL;
-//        if(other.m_Faces[i]->vpd)
-//        {
-//            vpd=vtkSmartPointer<vtkPolyData>::New();
-//            vpd->DeepCopy(other.m_Faces[i]->vpd);
-//        }
-//        face->vpd=vpd;
-
         m_Faces[i]=new svFace(*(other.m_Faces[i]),true);
     }
 
@@ -53,6 +33,8 @@ svModelElement::svModelElement(const svModelElement &other)
     {
         m_BlendRadii.push_back(new svBlendParamRadius(*(other.m_BlendRadii[i])));
     }
+
+    m_BlendParam=new svBlendParam(*(other.m_BlendParam));
 }
 
 svModelElement::~svModelElement()
@@ -483,3 +465,17 @@ int svModelElement::GetNumSampling()
     return m_NumSampling;
 }
 
+svModelElement::svBlendParam* svModelElement::GetBlendParam()
+{
+    return m_BlendParam;
+}
+
+void svModelElement::AssignBlendParam(svModelElement::svBlendParam* param)
+{
+    m_BlendParam->numblenditers=param->numblenditers;
+    m_BlendParam->numsubblenditers=param->numsubblenditers;
+    m_BlendParam->numsubdivisioniters=param->numsubdivisioniters;
+    m_BlendParam->numcgsmoothiters=param->numcgsmoothiters;
+    m_BlendParam->numlapsmoothiters=param->numlapsmoothiters;
+    m_BlendParam->targetdecimation=param->targetdecimation;
+}

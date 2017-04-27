@@ -1,6 +1,8 @@
 #include "svModelElementOCCT.h"
 #include "svModelUtils.h"
 
+#include <iostream>
+
 svModelElementOCCT::svModelElementOCCT()
 {
     m_Type="OpenCASCADE";
@@ -44,4 +46,24 @@ svModelElement* svModelElementOCCT::CreateModelElementByBlend(std::vector<svMode
                                                   , svModelElement::svBlendParam* param)
 {
     return svModelUtils::CreateModelElementOCCTByBlend(this,blendRadii);
+}
+
+void svModelElementOCCT::ReadFile(std::string filePath)
+{
+    cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
+    char* df=const_cast<char*>(filePath.c_str());
+    occtSolid->ReadNative(df);
+    m_InnerSolid=occtSolid;
+}
+
+void svModelElementOCCT::WriteFile(std::string filePath)
+{
+    if(m_InnerSolid)
+    {
+        char* df=const_cast<char*>(filePath.c_str());
+         if (m_InnerSolid->WriteNative(0,df) != SV_OK )
+         {
+             std::cerr << "OpenCASCADE model writing error."<<std::endl;
+         }
+    }
 }
