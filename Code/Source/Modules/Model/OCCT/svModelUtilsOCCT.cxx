@@ -477,7 +477,7 @@ svModelElementOCCT* svModelUtilsOCCT::CreateModelElementOCCTByBlend(svModelEleme
 
     svModelElementOCCT* meocctdst =meocctsrc->Clone();
 
-    cvOCCTSolidModel* occtSolid=meocctdst->GetInnerSolid();
+    cvSolidModel* occtSolid=meocctdst->GetInnerSolid();
 
     for(int i=0;i<blendRadii.size();i++)
     {

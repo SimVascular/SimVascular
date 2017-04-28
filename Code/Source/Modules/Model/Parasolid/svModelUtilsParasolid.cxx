@@ -286,7 +286,7 @@ svModelElementParasolid* svModelUtilsParasolid::CreateModelElementParasolidByBle
 
     svModelElementParasolid* mepsdst =mepssrc->Clone();
 
-    cvParasolidSolidModel* parasolid=mepsdst->GetInnerSolid();
+    cvSolidModel* parasolid=mepsdst->GetInnerSolid();
 
     for(int i=0;i<blendRadii.size();i++)
     {
