@@ -66,7 +66,7 @@
 #include "vtkAppendPolyData.h"
 
 #ifdef SV_USE_VMTK
-  #include "cv_VMTK_utils.h"
+  #include "cv_vmtk_utils.h"
   #include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
   #include "vtkvmtkUnstructuredGridTetraFilter.h"
 #endif
@@ -605,7 +605,7 @@ int cvTetGenMeshObject::LoadModel(vtkPolyData *pd) {
   {
     polydatasolid_->Delete();
   }
-  if (originalpolydata_ != NULL) 
+  if (originalpolydata_ != NULL)
   {
     originalpolydata_->Delete();
   }

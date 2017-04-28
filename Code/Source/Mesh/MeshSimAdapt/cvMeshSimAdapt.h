@@ -51,13 +51,17 @@
 //#include "cvRepositoryData.h"
 
 #ifdef SV_USE_ZLIB
-#include "simvascular_zlib.h"
+  #ifdef SV_USE_SYSTEM_ZLIB
+    #include <zlib.h>
+  #else
+    #include "simvascular_zlib.h"
+  #endif
 #else
-#include <stdlib.h>
-#define gzopen fopen
-#define gzprintf fprintf
-#define gzFile FILE*
-#define gzclose fclose
+  #include <stdlib.h>
+  #define gzopen fopen
+  #define gzprintf fprintf
+  #define gzFile FILE*
+  #define gzclose fclose
 #endif
 
 

@@ -44,12 +44,14 @@
 #define CVSOLVER_IO_OK 1
 #define CVSOLVER_IO_ERROR 0
 
-#include "SimVascular.h"
-
 #include <stdio.h>
 
 #ifdef SV_USE_ZLIB
-   #include "simvascular_zlib.h"
+  #ifdef SV_USE_SYSTEM_ZLIB
+    #include <zlib.h>
+  #else
+    #include "simvascular_zlib.h"
+  #endif
 #else
    #include <stdlib.h>
    #define gzopen fopen

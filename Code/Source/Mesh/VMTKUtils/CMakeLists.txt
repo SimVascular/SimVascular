@@ -29,30 +29,26 @@
  #=========================================================================#
 
 #-----------------------------------------------------------------------------
-# Geometry
+# Plugin - VMTK Utils
 #-----------------------------------------------------------------------------
+set(lib ${SV_LIB_VMTK_UTILS_NAME})
+set(export_directive vmtk_utils)
+set(export_file_name svVMTKUtilsExports.h)
 
-set(lib ${SV_LIB_GEOM_NAME})
-set(export_directive sysgeom)
-set(export_file_name svGeometryExports.h)
+include_directories(${MMG_INCLUDE_DIR})
 
-list(APPEND CORELIBS ${lib})
+SET(CXXSRCS cv_vmtk_utils.cxx)
+SET(HDRS cv_vmtk_utils.h)
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-
-set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
-	cv_spline.cxx cv_integrate_surface.cxx)
-set(HDRS cv_sys_geom.h cv_ggems.h
-	cv_spline.h cv_integrate_surface.h)
-
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_geom_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
-	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-	${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME}
-  ${SV_LIB_VTKSVBOOLEAN_NAME} ${SV_LIB_VTKSVGEOMETRY_NAME} ${SV_LIB_VTKSVFILTERS_NAME}
-  ${SV_LIB_VTKSVNURBS_NAME}
-	)
+  ${VTK_LIBRARIES}
+  ${SV_LIB_THIRDPARTY_VMTK_NAME}
+  ${SV_LIB_VTKSVFILTERS_NAME}
+  ${SV_LIB_UTILS_NAME}
+  ${SV_LIB_REPOSITORY_NAME}
+  )
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)
@@ -70,13 +66,13 @@ generate_export_header(${lib}
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
 		)
 endif()
 if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
 		)
 endif()

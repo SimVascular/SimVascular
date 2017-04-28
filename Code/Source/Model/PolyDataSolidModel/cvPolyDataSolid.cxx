@@ -60,7 +60,7 @@
 #include "cv_vtk_utils.h"
 
 #ifdef SV_USE_VMTK
-  #include "cv_VMTK_utils.h"
+  #include "cv_vmtk_utils.h"
 #endif
 
 // ----------

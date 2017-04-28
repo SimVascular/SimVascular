@@ -28,58 +28,27 @@
  #
  #=========================================================================#
 
-set(lib ${SV_LIB_TETGEN_ADAPTOR_NAME})
-set(export_directive tetgen_adaptor)
-set(export_file_name svTetGenAdaptorExports.h)
+set(lib ${SV_LIB_THIRDPARTY_SOLVERIO_NAME})
+SET(CXXSRCS cvSolverIO.cxx)
+set(HDRS cvSolverIO.h)
 
-list(APPEND CORELIBS ${lib})
+if(SV_USE_THREEDSOLVER_SHARED_LIBRARIES)
+  add_library(${lib} SHARED ${CXXSRCS})
+else()
+  add_library(${lib} STATIC ${CXXSRCS})
+endif()
 
-include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
-include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
-include_directories(${TETGEN_INCLUDE_DIR})
-
-set(HDRS cvTetGenAdapt.h)
-set(CXXSRCS cvTetGenAdapt.cxx)
-
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_adapt_init.cxx)
-
-target_link_libraries(${lib}
-	${ZLIB_LIBRARY} ${VTK_LIBRARIES}
-	${TCL_LIBRARY} ${TK_LIBRARY}
-	${INTELRUNTIME_LIBRARIES}
-                    ${SV_LIB_ADAPTOR_NAME}
-	${SV_LIB_MESH_NAME}
-	${SV_LIB_SOLID_NAME}
-	${SV_LIB_GEOM_NAME}
-  ${SV_LIB_THIRDPARTY_SOLVERIO_NAME}
-	${SV_LIB_GLOBALS_NAME}
-	${SV_LIB_UTILS_NAME}
-	${SV_LIB_TETGEN_MESH_NAME}
-  )
-
-# Set up for exports
-string(TOUPPER ${export_directive} EXPORT_NAME)
-set(_export_macro_names
-  EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}
-  NO_EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_EXPORT
-  DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_DEPRECATED
-  NO_DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_DEPRECATED
-  )
-
-# Generate export headers
-generate_export_header(${lib}
-  ${_export_macro_names}
-  EXPORT_FILE_NAME ${export_file_name})
+target_link_libraries(${lib} ${INTELRUNTIME_LIBRARIES} ${ZLIB_LIBRARY})
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib}
-    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
-    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
-    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
+    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
+    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
     )
 endif()
 if(SV_INSTALL_HEADERS)
-  install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
-    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
+  install(FILES ${HDRS}
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
 endif()
