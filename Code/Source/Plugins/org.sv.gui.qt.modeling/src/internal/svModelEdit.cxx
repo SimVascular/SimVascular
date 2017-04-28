@@ -4,11 +4,11 @@
 #include <berryIPreferencesService.h>
 #include <berryPlatform.h>
 
-#include "svModelUtils.h"
 #include "svFaceListDelegate.h"
 #include "svPath.h"
 #include "svSegmentationUtils.h"
 #include "svModelElementFactory.h"
+#include "svModelElementAnalytic.h"
 
 #include "svMeshTetGen.h"
 #include "svMitkMesh.h"

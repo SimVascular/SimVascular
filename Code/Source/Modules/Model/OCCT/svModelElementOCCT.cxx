@@ -1,5 +1,5 @@
 #include "svModelElementOCCT.h"
-#include "svModelUtils.h"
+#include "svModelUtilsOCCT.h"
 
 #include <iostream>
 
@@ -41,13 +41,13 @@ svModelElement* svModelElementOCCT::CreateModelElement(std::vector<mitk::DataNod
                                 , double tol
                                 , unsigned int t)
 {
-    return svModelUtils::CreateModelElementOCCT(segNodes,numSamplingPts,nurbsParam,maxDist,t);
+    return svModelUtilsOCCT::CreateModelElementOCCT(segNodes,numSamplingPts,nurbsParam,maxDist,t);
 }
 
 svModelElement* svModelElementOCCT::CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
                                                   , svModelElement::svBlendParam* param)
 {
-    return svModelUtils::CreateModelElementOCCTByBlend(this,blendRadii);
+    return svModelUtilsOCCT::CreateModelElementOCCTByBlend(this,blendRadii);
 }
 
 bool svModelElementOCCT::ReadFile(std::string filePath)

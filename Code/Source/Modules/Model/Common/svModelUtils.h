@@ -3,20 +3,10 @@
 
 #include <svModelExports.h>
 
-#include "simvascular_options.h"
-
 #include "svContour.h"
 #include "svContourGroup.h"
 #include "svModelElement.h"
 #include "svModelElementPolyData.h"
-
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-   #include "svModelElementOCCT.h"
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-   #include "svModelElementParasolid.h"
-#endif
 
 class SVMODEL_EXPORT svModelUtils
 {
@@ -84,27 +74,6 @@ public:
     static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement);
 
     static double CalculateVpdArea(vtkPolyData* vpd);
-
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-
-    static cvOCCTSolidModel* CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, int vecFlag, int addCaps);
-
-    static svModelElementOCCT* CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, double maxDist = 20.0, unsigned int t = 0);
-
-    static svModelElementOCCT* CreateModelElementOCCTByBlend(svModelElementOCCT* meocctsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii);
-
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-
-    static cvParasolidSolidModel* CreateLoftSurfaceParasolid(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps);
-
-    static svModelElementParasolid* CreateModelElementParasolid(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, double maxDist = 1.0, unsigned int t = 0);
-
-    static svModelElementParasolid* CreateModelElementParasolidByBlend(svModelElementParasolid* mepssrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii);
-
-#endif
-
 };
 
 #endif /* SVMODELUTILS_H */

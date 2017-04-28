@@ -1,14 +1,14 @@
 #ifndef SVMODELELEMENTOCCT_H
 #define SVMODELELEMENTOCCT_H
 
-#include <svModelExports.h>
+#include <svModelOCCTExports.h>
 
 #include "svModelElement.h"
 #include "svModelElementAnalytic.h"
 
 #include "cvOCCTSolidModel.h"
 
-class SVMODEL_EXPORT svModelElementOCCT : public svModelElementAnalytic
+class SVMODELOCCT_EXPORT svModelElementOCCT : public svModelElementAnalytic
 {
 public:
 

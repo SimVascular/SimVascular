@@ -1,7 +1,7 @@
 #include <svModelExports.h>
 
-#include <svModelElementFactory.h>
-#include <svModelElementPolyData.h>
+#include "svModelElementFactory.h"
+#include "svModelElementPolyData.h"
 
 struct SVMODEL_EXPORT svRegisterPolyDataFunction{
 

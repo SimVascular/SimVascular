@@ -1,14 +1,14 @@
 #ifndef SVMODELELEMENTPARASOLID_H
 #define SVMODELELEMENTPARASOLID_H
 
-#include <svModelExports.h>
+#include <svModelParasolidExports.h>
 
 #include "svModelElement.h"
 #include "svModelElementAnalytic.h"
 
 #include "cvParasolidSolidModel.h"
 
-class SVMODEL_EXPORT svModelElementParasolid : public svModelElementAnalytic
+class SVMODELPARASOLID_EXPORT svModelElementParasolid : public svModelElementAnalytic
 {
 public:
 

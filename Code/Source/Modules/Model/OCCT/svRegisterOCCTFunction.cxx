@@ -1,7 +1,7 @@
-#include <svModelExports.h>
+#include <svModelOCCTExports.h>
 
-#include <svModelElementFactory.h>
-#include <svModelElementOCCT.h>
+#include "svModelElementFactory.h"
+#include "svModelElementOCCT.h"
 
 #include "cv_globals.h"
 #include <TDocStd_Document.hxx>
@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-struct SVMODEL_EXPORT svRegisterOCCTFunction{
+struct SVMODELOCCT_EXPORT svRegisterOCCTFunction{
 
     svRegisterOCCTFunction()
     {

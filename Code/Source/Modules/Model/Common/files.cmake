@@ -14,20 +14,6 @@ set(H_FILES
     svModelObjectFactory.h
 )
 
-if(SV_USE_OpenCASCADE_QT_GUI)
-  set(H_FILES
-      ${H_FILES}
-      svModelElementOCCT.h
-  )
-endif()
-
-if(SV_USE_PARASOLID)
-  set(H_FILES
-      ${H_FILES}
-      svModelElementParasolid.h
-  )
-endif()
-
 set(CPP_FILES
     svModelUtils.cxx
     svModelElement.cxx
@@ -44,22 +30,6 @@ set(CPP_FILES
     svModelObjectFactory.cxx
     svRegisterPolyDataFunction.cxx
 )
-
-if(SV_USE_OpenCASCADE_QT_GUI)
-  set(CPP_FILES
-      ${CPP_FILES}
-      svModelElementOCCT.cxx
-      svRegisterOCCTFunction.cxx
-  )
-endif()
-
-if(SV_USE_PARASOLID)
-  set(CPP_FILES
-      ${CPP_FILES}
-      svModelElementParasolid.cxx
-      svRegisterParasolidFunction.cxx
-  )
-endif()
 
 set(RESOURCE_FILES
     Interactions/svModelInteraction.xml

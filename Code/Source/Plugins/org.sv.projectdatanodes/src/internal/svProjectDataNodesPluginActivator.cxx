@@ -8,6 +8,8 @@
 #include <QmitkNodeDescriptorManager.h>
 #include <mitkNodePredicateDataType.h>
 
+#include <QLibrary>
+
 static RegistersvPathObjectFactory registersvPathObjectFactory;
 static RegistersvSegmentationObjectFactory registersvSegmentationObjectFactory;
 static RegistersvModelObjectFactory registersvModelObjectFactory;
@@ -27,6 +29,19 @@ svProjectDataNodesPluginActivator::~svProjectDataNodesPluginActivator()
 void svProjectDataNodesPluginActivator::start(ctkPluginContext* context)
 {
 //    this->m_Context = context;
+
+    //Load optional libs: occt, parasolid
+    QLibrary occtlib("lib_simvascular_module_model_occt");
+    if(occtlib.load())
+        MITK_INFO<<"OpenCASCADE module loaded.";
+    else
+        MITK_INFO<<"OpenCASCADE module not loaded.";
+
+    QLibrary parasolidlib("lib_simvascular_module_model_parasolid");
+    if(parasolidlib.load())
+        MITK_INFO<<"Parasolid module loaded.";
+    else
+        MITK_INFO<<"Parasolid module not loaded.";
 
     QmitkNodeDescriptorManager* descriptorManager = QmitkNodeDescriptorManager::GetInstance();
 

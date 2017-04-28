@@ -1,13 +1,13 @@
-#include <svModelExports.h>
+#include <svModelParasolidExports.h>
 
-#include <svModelElementFactory.h>
-#include <svModelElementParasolid.h>
+#include "svModelElementFactory.h"
+#include "svModelElementParasolid.h"
 
 #include "cv_parasolid_utils.h"
 
 #include <iostream>
 
-struct SVMODEL_EXPORT svRegisterParasolidFunction{
+struct SVMODELPARASOLID_EXPORT svRegisterParasolidFunction{
 
     svRegisterParasolidFunction()
     {

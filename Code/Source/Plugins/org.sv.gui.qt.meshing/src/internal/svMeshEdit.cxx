@@ -12,14 +12,7 @@
 #include "svProjectManager.h"
 
 #include "svModelElementPolyData.h"
-
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-#include "svModelElementOCCT.h"
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-#include "svModelElementParasolid.h"
-#endif
+#include "svModelElementAnalytic.h"
 
 #include "svMeshTetGenAdaptor.h"
 #include "svDataNodeOperation.h"
@@ -592,33 +585,17 @@ void svMeshEdit::RunCommands(bool fromGUI)
     svModelElementPolyData* modelElement=NULL;
     modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
 
-#ifdef SV_USE_OpenCASCADE_QT_GUI
     if(modelElement==NULL)
     {
-        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
-        if(me)
+        svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(modelElement);
+        if(meAnalytic)
         {
-            mitk::StatusBar::GetInstance()->DisplayText("converting OpenCASCADE to PolyData...");
+            mitk::StatusBar::GetInstance()->DisplayText("converting to PolyData ...");
             WaitCursorOn();
-            modelElement=me->ConverToPolyDataModel();
+            modelElement=meAnalytic->ConverToPolyDataModel();
             WaitCursorOff();
         }
     }
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-    if(modelElement==NULL)
-    {
-        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement());
-        if(me)
-        {
-            mitk::StatusBar::GetInstance()->DisplayText("converting Parasolid to PolyData...");
-            WaitCursorOn();
-            modelElement=me->ConverToPolyDataModel();
-            WaitCursorOff();
-        }
-    }
-#endif
 
     if(!modelElement) return;
 

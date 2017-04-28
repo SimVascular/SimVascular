@@ -1,5 +1,5 @@
 #include "svModelElementParasolid.h"
-#include "svModelUtils.h"
+#include "svModelUtilsParasolid.h"
 
 #include <iostream>
 
@@ -41,13 +41,13 @@ svModelElement* svModelElementParasolid::CreateModelElement(std::vector<mitk::Da
                                 , double tol
                                 , unsigned int t)
 {
-    return svModelUtils::CreateModelElementParasolid(segNodes,numSamplingPts,maxDist,t);
+    return svModelUtilsParasolid::CreateModelElementParasolid(segNodes,numSamplingPts,maxDist,t);
 }
 
 svModelElement* svModelElementParasolid::CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
                                                   , svModelElement::svBlendParam* param)
 {
-    return svModelUtils::CreateModelElementParasolidByBlend(this,blendRadii);
+    return svModelUtilsParasolid::CreateModelElementParasolidByBlend(this,blendRadii);
 }
 
 bool svModelElementParasolid::ReadFile(std::string filePath)
