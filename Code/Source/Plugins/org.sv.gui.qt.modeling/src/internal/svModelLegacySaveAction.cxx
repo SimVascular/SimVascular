@@ -2,6 +2,8 @@
 
 #include "svModel.h"
 #include "svModelLegacyIO.h"
+#include "svModelElementFactory.h"
+
 #include <mitkNodePredicateDataType.h>
 
 #include <berryIPreferencesService.h>
@@ -30,14 +32,18 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
     svModelElement* modelElement=model->GetModelElement();
     if(!modelElement) return;
 
-    QString fileFilter;
+    QString fileFilter="";
     std::string modelType=model->GetType();
-    if(modelType=="PolyData")
-        fileFilter=tr("VTK PolyData (*.vtp);; VTK Legacy PolyData (*.vtk);; Stereolithography (*.stl);; Stanford PLY (*.ply)");
-    else if(modelType=="OpenCASCADE")
-        fileFilter=tr("OpenCASCADE (*.brep);; Stereolithography (*.stl);; STEP (*.step);; IGES (*.iges)");
-    else if(modelType=="Parasolid")
-        fileFilter=tr("Parasolid (*.xmt_txt)");
+    auto exts=svModelElementFactory::GetFileExtensions(modelType);
+
+    if(exts.size()>0)
+    {
+        fileFilter+="All (*);; Supported Formats (";
+        for(int i=0;i<exts.size();i++)
+            fileFilter=fileFilter+" *."+ QString::fromStdString(exts[i]);
+
+        fileFilter+=")";
+    }
 
     try
     {
@@ -72,21 +78,26 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
         fileName=fileName.trimmed();
         if(fileName.isEmpty()) return;
 
-        if(modelType=="PolyData")
+        bool hasExt=false;
+
+        if(exts.size()>0)
         {
-            if(!fileName.endsWith(".vtp") && !fileName.endsWith(".vtk") && !fileName.endsWith(".stl") && !fileName.endsWith(".ply"))
-                fileName=fileName+".vtp";
+            for(int i=0;i<exts.size();i++)
+            {
+                if(fileName.endsWith(QString::fromStdString("."+exts[i])))
+                {
+                    hasExt=true;
+                    break;
+                }
+
+            }
+
+            if(!hasExt)
+                fileName=fileName+"."+QString::fromStdString(exts[0]);
         }
-        else if(modelType=="OpenCASCADE")
-        {
-            if(!fileName.endsWith(".brep") && !fileName.endsWith(".step") && !fileName.endsWith(".stl") && !fileName.endsWith(".iges"))
-                fileName=fileName+".brep";
-        }
-        else if(modelType=="Parasolid")
-        {
-            if(fileName.endsWith(".xmt_txt"))
-                fileName=fileName.remove(".xmt_txt");
-        }
+
+        fileName=fileName.remove(".xmt_txt");
+
         svModelLegacyIO::WriteFile(selectedNode, fileName);
 
         if(prefs.IsNotNull())

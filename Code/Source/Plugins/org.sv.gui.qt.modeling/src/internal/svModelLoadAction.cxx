@@ -1,8 +1,8 @@
 #include "svModelLoadAction.h"
-#include "simvascular_options.h"
 
 #include "svModelLegacyIO.h"
 #include "svModelIO.h"
+#include "svModelElementFactory.h"
 
 #include <mitkNodePredicateDataType.h>
 
@@ -53,16 +53,21 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
         if(lastFileOpenPath=="")
             lastFileOpenPath=QDir::homePath();
 
-        QString filter="SimVascular Models (*.mdl);;Solid Models (*.vtp *.vtk *.stl *.ply";
+        QString filter="All(*);;SimVascular Models (*.mdl)";
+        auto allTypes=svModelElementFactory::GetAvailableTypes();
+        for(int i=0;i<allTypes.size();i++)
+        {
+            auto exts=svModelElementFactory::GetFileExtensions(allTypes[i]);
+            if(exts.size()>0)
+            {
+                QString filterType=QString::fromStdString(allTypes[i])+" (";
+                for(int j=0;j<exts.size();j++)
+                    filterType=filterType+" *."+QString::fromStdString(exts[j]);
 
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-        filter=filter+" *.brep *.step *.stl *.iges";
-#endif
-#ifdef SV_USE_PARASOLID_QT_GUI
-        filter=filter+" *.xmt_txt";
-#endif
-
-        filter=filter+")";
+                filterType+=")";
+                filter=filter+";;"+filterType;
+            }
+        }
 
         QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Solid Model")
                                                              , lastFileOpenPath

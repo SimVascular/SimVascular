@@ -244,11 +244,19 @@ if(SV_USE_QT_GUI)
     "Source/Modules/Common"
     "Source/Modules/Path"
     "Source/Modules/Segmentation"
-    "Source/Modules/Model"
+    "Source/Modules/Model/Common"
     "Source/Modules/Mesh"
     "Source/Modules/Simulation"
     "Source/Modules/ProjectManagement"
     "Source/Modules/QtWidgets")
+endif()
+
+if(SV_USE_OpenCASCADE)
+        set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/OCCT")
+endif()
+
+if(SV_USE_PARASOLID)
+        set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/Parasolid")
 endif()
 #-----------------------------------------------------------------------------
 

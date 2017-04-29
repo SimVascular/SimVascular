@@ -3,8 +3,11 @@
 
 #include <svModelExports.h>
 
+#include <mitkDataNode.h>
+
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <map>
 
 class SVMODEL_EXPORT svModelElement
 {
@@ -65,6 +68,35 @@ public:
                 vpd=NULL;
         }
 
+    };
+
+    struct svBlendParam
+    {
+        int numblenditers;
+        int numsubblenditers;
+        int numsubdivisioniters;
+        int numcgsmoothiters;
+        int numlapsmoothiters;
+        double targetdecimation;
+
+        svBlendParam()
+            : numblenditers(2)
+            , numsubblenditers(3)
+            , numsubdivisioniters(1)
+            , numcgsmoothiters(2)
+            , numlapsmoothiters(50)
+            , targetdecimation(0.01)
+        {
+        }
+
+        svBlendParam(const svBlendParam &other)
+            : numblenditers(other.numblenditers)
+            , numsubblenditers(other.numsubblenditers)
+            , numsubdivisioniters(other.numsubdivisioniters)
+            , numcgsmoothiters(other.numcgsmoothiters)
+            , numlapsmoothiters(other.numlapsmoothiters)
+            , targetdecimation(other.targetdecimation)
+        {}
     };
 
     struct svBlendParamRadius
@@ -240,6 +272,28 @@ public:
 
     int GetNumSampling();
 
+    virtual svModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
+                                               , int numSamplingPts
+                                               , svModelElement::svNURBSLoftParam *nurbsParam
+                                               , int* stats = NULL
+                                               , double maxDist = 1.0
+                                               , int noInterOut = 1
+                                               , double tol = 1e-6
+                                               , unsigned int t = 0) {return NULL;}
+
+    virtual svModelElement* CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
+                                                      , svModelElement::svBlendParam* param) {return NULL;}
+
+    virtual bool ReadFile(std::string filePath){return false;}
+
+    virtual bool WriteFile(std::string filePath){return false;}
+
+    svBlendParam* GetBlendParam();
+
+    void AssignBlendParam(svBlendParam* param);
+
+    std::vector<std::string> GetFileExtensions(){return m_FileExtensions;}
+
   protected:
 
     std::string m_Type;
@@ -254,6 +308,9 @@ public:
 
     int m_NumSampling;
 
+    svBlendParam* m_BlendParam;
+
+    std::vector<std::string> m_FileExtensions;
   };
 
 

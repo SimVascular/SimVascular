@@ -14,35 +14,6 @@ class SVMODEL_EXPORT svModelElementPolyData : public svModelElement
 {
 public:
 
-    struct svBlendParam
-    {
-        int numblenditers;
-        int numsubblenditers;
-        int numsubdivisioniters;
-        int numcgsmoothiters;
-        int numlapsmoothiters;
-        double targetdecimation;
-
-        svBlendParam()
-            : numblenditers(2)
-            , numsubblenditers(3)
-            , numsubdivisioniters(1)
-            , numcgsmoothiters(2)
-            , numlapsmoothiters(50)
-            , targetdecimation(0.01)
-        {
-        }
-
-        svBlendParam(const svBlendParam &other)
-            : numblenditers(other.numblenditers)
-            , numsubblenditers(other.numsubblenditers)
-            , numsubdivisioniters(other.numsubdivisioniters)
-            , numcgsmoothiters(other.numcgsmoothiters)
-            , numlapsmoothiters(other.numlapsmoothiters)
-            , targetdecimation(other.targetdecimation)
-        {}
-    };
-
     svModelElementPolyData();
 
     svModelElementPolyData(const svModelElementPolyData &other);
@@ -58,11 +29,6 @@ public:
 //    vtkSmartPointer<vtkPolyData> GetSolidModel() const;
 
 //    void SetSolidModel(vtkSmartPointer<vtkPolyData> solidModel);
-
-    svBlendParam* GetBlendParam();
-
-
-    void AssignBlendParam(svBlendParam* param);
 
     bool DeleteFaces(std::vector<int> faceIDs);
 
@@ -120,14 +86,29 @@ public:
 
     void RemoveActiveCells();
 
+    static svModelElement* CreateModelElement();
+
+    virtual svModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
+                                    , int numSamplingPts
+                                    , svModelElement::svNURBSLoftParam *nurbsParam
+                                    , int* stats = NULL
+                                    , double maxDist = 1.0
+                                    , int noInterOut = 1
+                                    , double tol = 1e-6
+                                    , unsigned int t = 0) override;
+
+    virtual svModelElement* CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
+                                                      , svModelElement::svBlendParam* param) override;
+
+    virtual bool ReadFile(std::string filePath) override;
+
+    virtual bool WriteFile(std::string filePath) override;
+
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;
 
-    svBlendParam* m_BlendParam;
-
     std::vector<int> m_SelectedCellIDs;
-
   };
 
 

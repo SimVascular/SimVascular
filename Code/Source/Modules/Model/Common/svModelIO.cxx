@@ -1,16 +1,7 @@
 #include "svModelIO.h"
 #include "svModel.h"
-#include "svModelElementPolyData.h"
-
-#include "simvascular_options.h"
-
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-#include "svModelElementOCCT.h"
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-#include "svModelElementParasolid.h"
-#endif
+#include "svModelElementAnalytic.h"
+#include "svModelElementFactory.h"
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
@@ -54,8 +45,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
     if (!document.LoadFile(fileName))
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
-//        MITK_ERROR << "Could not open/read/parse " << fileName;
-        return result;
+//        return result;
     }
 
     //    TiXmlElement* version = document.FirstChildElement("format");
@@ -63,9 +53,8 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
     TiXmlElement* modelElement = document.FirstChildElement("model");
 
     if(!modelElement){
-//        MITK_ERROR << "No Model data in "<< fileName;
         mitkThrow() << "No Model data in "<< fileName;
-        return result;
+//        return result;
     }
 
     svModel::Pointer model = svModel::New();
@@ -93,83 +82,43 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
             if(type=="")
             {
                 mitkThrow() << "No type info available when trying to load the model ";
-//                MITK_ERROR << "No type info available when trying to load the model ";
-                return result;
+//                return result;
             }
 
-            svModelElement* me=NULL;
-
-            if(type=="PolyData")
-            {
-                me=new svModelElementPolyData();
-
-                svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
-
-                std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
-                vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-
-                reader->SetFileName(dataFileName.c_str());
-                reader->Update();
-                vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
-                pd->BuildLinks();
-
-                vtkSmartPointer<vtkCleanPolyData> cleaner =vtkSmartPointer<vtkCleanPolyData>::New();
-                cleaner->SetInputData(pd);
-                cleaner->Update();
-
-                vtkSmartPointer<vtkPolyData> cleanpd=cleaner->GetOutput();
-                cleanpd->BuildLinks();
-
-                mepd->SetWholeVtkPolyData(cleanpd);
-            }
-
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-            if(type=="OpenCASCADE")
-            {
-                me=new svModelElementOCCT();
-                svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(me);
-                std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".brep";
-                cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
-                char* df=const_cast<char*>(dataFileName.c_str());
-                occtSolid->ReadNative(df);
-                meocct->SetInnerSolid(occtSolid);
-
-                double maxDist=0;
-                if(meElement->QueryDoubleAttribute("max_dist", &maxDist)==TIXML_SUCCESS)
-                {
-                    meocct->SetMaxDist(maxDist);
-                }
-
-                meocct->SetWholeVtkPolyData(meocct->CreateWholeVtkPolyData());
-            }
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-            if(type=="Parasolid")
-            {
-                svModelElementParasolid* meps=new svModelElementParasolid();
-                me=meps;
-                std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".xmt_txt";
-                cvParasolidSolidModel* parasolid=new cvParasolidSolidModel();
-                char* df=const_cast<char*>(dataFileName.c_str());
-                parasolid->ReadNative(df);
-                meps->SetInnerSolid(parasolid);
-
-                double maxDist=0;
-                if(meElement->QueryDoubleAttribute("max_dist", &maxDist)==TIXML_SUCCESS)
-                {
-                    meps->SetMaxDist(maxDist);
-                }
-
-                meps->SetWholeVtkPolyData(meps->CreateWholeVtkPolyData());
-            }
-#endif
-
+            svModelElement* me=svModelElementFactory::CreateModelElement(type);
             if(me==NULL)
             {
-                mitkThrow() << "No support in reading file of "<< type;
-//                MITK_ERROR << "No support in reading file of "<< type;
-                return result;
+                mitkThrow() << "No model constructor available for model type: "<< type;
+//                return result;
+            }
+
+            std::string fileExtension="";
+            auto exts=me->GetFileExtensions();
+            if(exts.size()>0)
+                fileExtension=exts[0];
+            if(fileExtension=="")
+            {
+                mitkThrow() << "No file extension available for model type: "<< type;
+//                return result;
+            }
+
+            std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+"." +fileExtension;
+
+            if(!me->ReadFile(dataFileName))
+            {
+                delete me;
+                mitkThrow() << "Failed in reading: "<< dataFileName;
+            }
+
+            svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(me);
+            if(meAnalytic)
+            {
+                double maxDist=0;
+                if(meElement->QueryDoubleAttribute("max_dist", &maxDist)==TIXML_SUCCESS)
+                {
+                    meAnalytic->SetMaxDist(maxDist);
+                }
+                meAnalytic->SetWholeVtkPolyData(meAnalytic->CreateWholeVtkPolyData());
             }
 
             int numSampling=0;
@@ -244,7 +193,6 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
                 me->SetSegNames(segNames);
             }
 
-
             TiXmlElement* blendRadiiElement = meElement->FirstChildElement("blend_radii");
             if(blendRadiiElement!=nullptr)
             {
@@ -273,64 +221,53 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
 
             if(type=="PolyData")
             {
-                svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
-                if(mepd)
+                TiXmlElement* blendElement = meElement->FirstChildElement("blend_param");
+                if(blendElement!=nullptr)
                 {
-                    TiXmlElement* blendElement = meElement->FirstChildElement("blend_param");
-                    if(blendElement!=nullptr)
-                    {
-                        svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
-                        blendElement->QueryIntAttribute("blend_iters", &(param->numblenditers));
-                        blendElement->QueryIntAttribute("sub_blend_iter", &(param->numsubblenditers));
-                        blendElement->QueryIntAttribute("cstr_smooth_iter", &(param->numcgsmoothiters));
-                        blendElement->QueryIntAttribute("lap_smooth_iter", &(param->numlapsmoothiters));
-                        blendElement->QueryIntAttribute("subdivision_iters", &(param->numsubdivisioniters));
-                        blendElement->QueryDoubleAttribute("decimation", &(param->targetdecimation));
-                    }
+                    svModelElement::svBlendParam* param=me->GetBlendParam();
+                    blendElement->QueryIntAttribute("blend_iters", &(param->numblenditers));
+                    blendElement->QueryIntAttribute("sub_blend_iter", &(param->numsubblenditers));
+                    blendElement->QueryIntAttribute("cstr_smooth_iter", &(param->numcgsmoothiters));
+                    blendElement->QueryIntAttribute("lap_smooth_iter", &(param->numlapsmoothiters));
+                    blendElement->QueryIntAttribute("subdivision_iters", &(param->numsubdivisioniters));
+                    blendElement->QueryDoubleAttribute("decimation", &(param->targetdecimation));
                 }
             }
 
-#ifdef SV_USE_PARASOLID_QT_GUI
             //update face ids (face ids change when loading parasolid file and are become different from info in .mdl file)
-            if(type=="Parasolid")
+            if(type=="Parasolid" && meAnalytic)
             {
-                svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(me);
-                if(meps)
+                std::vector<svModelElement::svBlendParamRadius*> blendRadii=meAnalytic->GetBlendRadii();
+                //set face names
+                for(int i=0;i<blendRadii.size();i++)
                 {
-                    std::vector<svModelElement::svBlendParamRadius*> blendRadii=meps->GetBlendRadii();
-                    //set face names
-                    for(int i=0;i<blendRadii.size();i++)
+                    if(blendRadii[i])
                     {
-                        if(blendRadii[i])
-                        {
-                            blendRadii[i]->faceName1=meps->GetFaceName(blendRadii[i]->faceID1);
-                            blendRadii[i]->faceName2=meps->GetFaceName(blendRadii[i]->faceID2);
-                        }
+                        blendRadii[i]->faceName1=meAnalytic->GetFaceName(blendRadii[i]->faceID1);
+                        blendRadii[i]->faceName2=meAnalytic->GetFaceName(blendRadii[i]->faceID2);
                     }
+                }
 
-                    //update face id and vpd
-                    std::vector<svModelElement::svFace*> faces=meps->GetFaces();
-                    for(int i=0;i<faces.size();i++)
+                //update face id and vpd
+                std::vector<svModelElement::svFace*> faces=meAnalytic->GetFaces();
+                for(int i=0;i<faces.size();i++)
+                {
+                    faces[i]->id=meAnalytic->GetFaceIDFromInnerSolid(faces[i]->name);
+                    faces[i]->vpd=meAnalytic->CreateFaceVtkPolyData(faces[i]->id);
+                }
+
+                //update face id
+                for(int i=0;i<blendRadii.size();i++)
+                {
+                    if(blendRadii[i])
                     {
-                        faces[i]->id=meps->GetFaceIDFromInnerSolid(faces[i]->name);
-                        faces[i]->vpd=meps->CreateFaceVtkPolyData(faces[i]->id);
+                        int faceID1=meAnalytic->GetFaceID(blendRadii[i]->faceName1);
+                        int faceID2=meAnalytic->GetFaceID(blendRadii[i]->faceName2);
+                        blendRadii[i]->faceID1=faceID1;
+                        blendRadii[i]->faceID2=faceID2;
                     }
-
-                    //update face id
-                    for(int i=0;i<blendRadii.size();i++)
-                    {
-                        if(blendRadii[i])
-                        {
-                            int faceID1=meps->GetFaceID(blendRadii[i]->faceName1);
-                            int faceID2=meps->GetFaceID(blendRadii[i]->faceName2);
-                            blendRadii[i]->faceID1=faceID1;
-                            blendRadii[i]->faceID2=faceID2;
-                        }
-                    }
-
                 }
             }
-#endif
 
             model->SetModelElement(me,timestep);
         } //model element
@@ -437,101 +374,41 @@ void svModelIO::Write()
         if(me->GetType()=="PolyData")
         {
             // for PolyData
-            svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
-            if(mepd)
-            {
-                auto blendElement= new TiXmlElement("blend_param");
-                meElement->LinkEndChild(blendElement);
-                svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
+            auto blendElement= new TiXmlElement("blend_param");
+            meElement->LinkEndChild(blendElement);
+            svModelElement::svBlendParam* param=me->GetBlendParam();
 
-                blendElement->SetAttribute("blend_iters", param->numblenditers);
-                blendElement->SetAttribute("sub_blend_iters", param->numsubblenditers);
-                blendElement->SetAttribute("cstr_smooth_iters", param->numcgsmoothiters);
-                blendElement->SetAttribute("lap_smooth_iters", param->numlapsmoothiters);
-                blendElement->SetAttribute("subdivision_iters", param->numsubdivisioniters);
-                blendElement->SetDoubleAttribute("decimation", param->targetdecimation);
-            }
+            blendElement->SetAttribute("blend_iters", param->numblenditers);
+            blendElement->SetAttribute("sub_blend_iters", param->numsubblenditers);
+            blendElement->SetAttribute("cstr_smooth_iters", param->numcgsmoothiters);
+            blendElement->SetAttribute("lap_smooth_iters", param->numlapsmoothiters);
+            blendElement->SetAttribute("subdivision_iters", param->numsubdivisioniters);
+            blendElement->SetDoubleAttribute("decimation", param->targetdecimation);
         }
 
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-        if(me->GetType()=="OpenCASCADE")
+        svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(me);
+        if(meAnalytic)
         {
-            //for OpenCASCADE
-            svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(me);
-            if(meocct)
-            {
-                meElement->SetDoubleAttribute("max_dist", meocct->GetMaxDist());
-            }
+            meElement->SetDoubleAttribute("max_dist", meAnalytic->GetMaxDist());
         }
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-        if(me->GetType()=="Parasolid")
-        {
-            //for Parasolid
-            svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(me);
-            if(meps)
-            {
-                meElement->SetDoubleAttribute("max_dist", meps->GetMaxDist());
-            }
-        }
-#endif
 
         //Output actual model data file
-        if(me->GetType()=="PolyData")
+        std::string fileExtension="";
+        auto exts=me->GetFileExtensions();
+        if(exts.size()>0)
+            fileExtension=exts[0];
+
+        if(fileExtension=="")
         {
-            std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
-
-            svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
-
-            if(mepd&&mepd->GetWholeVtkPolyData())
-            {
-                vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-                writer->SetFileName(dataFileName.c_str());
-                writer->SetInputData(mepd->GetWholeVtkPolyData());
-                if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-                {
-                    mitkThrow() << "PolyData model writing error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
-                }
-            }
+            mitkThrow() << "No file extension available for model type: "<< me->GetType();
         }
 
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-        if(me->GetType()=="OpenCASCADE")
-        {
-            std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".brep";
+        std::string dataFileName=fileName.substr(0,fileName.find_last_of("."));
+        if(me->GetType()!="Parasolid")
+            dataFileName=dataFileName+"." +fileExtension;
 
-            svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(me);
-
-            if(meocct&&meocct->GetInnerSolid())
-            {
-               char* df=const_cast<char*>(dataFileName.c_str());
-                if (meocct->GetInnerSolid()->WriteNative(0,df) != SV_OK )
-                {
-                    mitkThrow() << "OpenCASCADE model writing error: ";
-                }
-            }
-        }
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-        if(me->GetType()=="Parasolid")
-        {
-            std::string dataFileName=fileName.substr(0,fileName.find_last_of("."));
-
-            svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(me);
-
-            if(meps&&meps->GetInnerSolid())
-            {
-               char* df=const_cast<char*>(dataFileName.c_str());
-                if (meps->GetInnerSolid()->WriteNative(0,df) != SV_OK )
-                {
-                    mitkThrow() << "Parasolid model writing error: ";
-                }
-            }
-        }
-#endif
-
+        if(!me->WriteFile(dataFileName))
+            mitkThrow() << "Failed to write model to " << dataFileName;
     }
 
     if (document.SaveFile(fileName) == false)

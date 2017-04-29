@@ -11,6 +11,10 @@
   #include "cv_mmg_mesh_utils.h"
 #endif
 
+#include <vtkCleanPolyData.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkErrorCode.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkQuadricDecimation.h>
@@ -20,19 +24,18 @@
 #include <vtkDensifyPolyData.h>
 
 #include <iostream>
-using namespace std;
 
 svModelElementPolyData::svModelElementPolyData()
 {
     m_Type="PolyData";
-    m_BlendParam=new svBlendParam();
+    std::vector<std::string> exts={"vtp","vtk","vtu","stl","ply"};
+    m_FileExtensions=exts;
 }
 
 svModelElementPolyData::svModelElementPolyData(const svModelElementPolyData &other)
     : svModelElement(other)
     , m_SelectedCellIDs(other.m_SelectedCellIDs)
 {
-    m_BlendParam=new svBlendParam(*(other.m_BlendParam));
 }
 
 svModelElementPolyData::~svModelElementPolyData()
@@ -76,21 +79,6 @@ vtkSmartPointer<vtkPolyData> svModelElementPolyData::CreateWholeVtkPolyData()
 //    m_SolidModel=solidModel;
 //    m_WholeVtkPolyData=solidModel;
 //}
-
-svModelElementPolyData::svBlendParam* svModelElementPolyData::GetBlendParam()
-{
-    return m_BlendParam;
-}
-
-void svModelElementPolyData::AssignBlendParam(svModelElementPolyData::svBlendParam* param)
-{
-    m_BlendParam->numblenditers=param->numblenditers;
-    m_BlendParam->numsubblenditers=param->numsubblenditers;
-    m_BlendParam->numsubdivisioniters=param->numsubdivisioniters;
-    m_BlendParam->numcgsmoothiters=param->numcgsmoothiters;
-    m_BlendParam->numlapsmoothiters=param->numlapsmoothiters;
-    m_BlendParam->targetdecimation=param->targetdecimation;
-}
 
 //bool svModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
 //{
@@ -864,3 +852,55 @@ void svModelElementPolyData::RemoveActiveCells()
 
     m_WholeVtkPolyData->GetCellData()->RemoveArray("ActiveCells");
 }
+
+svModelElement* svModelElementPolyData::CreateModelElement()
+{
+    return new svModelElementPolyData();
+}
+
+svModelElement* svModelElementPolyData::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
+                                , int numSamplingPts
+                                , svModelElement::svNURBSLoftParam *nurbsParam
+                                , int* stats
+                                , double maxDist
+                                , int noInterOut
+                                , double tol
+                                , unsigned int t)
+{
+    return svModelUtils::CreateModelElementPolyData(segNodes,numSamplingPts,stats,nurbsParam,t,noInterOut,tol);
+}
+
+svModelElement* svModelElementPolyData::CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii
+                                                  , svModelElement::svBlendParam* param)
+{
+    return svModelUtils::CreateModelElementPolyDataByBlend(this,blendRadii,param);
+}
+
+bool svModelElementPolyData::ReadFile(std::string filePath)
+{
+    vtkSmartPointer<vtkPolyData> pd=vtkSmartPointer<vtkPolyData>::New();
+    if(PlyDtaUtils_ReadNative(const_cast<char*>(filePath.c_str()), pd) != SV_OK)
+        return false;
+
+    vtkSmartPointer<vtkCleanPolyData> cleaner =vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->SetInputData(pd);
+    cleaner->Update();
+
+    vtkSmartPointer<vtkPolyData> cleanpd=cleaner->GetOutput();
+    cleanpd->BuildLinks();
+
+    m_WholeVtkPolyData=cleanpd;
+    return  true;
+}
+
+bool svModelElementPolyData::WriteFile(std::string filePath)
+{
+    if(m_WholeVtkPolyData)
+    {
+        if (PlyDtaUtils_WriteNative(m_WholeVtkPolyData, 0, const_cast<char*>(filePath.c_str()) ) != SV_OK)
+            return false;
+    }
+
+    return true;
+}
+

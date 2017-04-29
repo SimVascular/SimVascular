@@ -1,33 +1,10 @@
-set(lib ${SV_LIB_MODULE_MODEL_NAME})
-
-set(OTHER_OPT_LIBS )
-
-if(SV_USE_OpenCASCADE_QT_GUI)
-  set(OTHER_OPT_LIBS
-    ${OTHER_OPT_LIBS}
-    ${SV_LIB_OpenCASCADE_SOLID_NAME}
-  )
-endif()
-
-if(SV_USE_PARASOLID)
-  set(OTHER_OPT_LIBS
-    ${OTHER_OPT_LIBS}
-    ${SV_LIB_PARASOLID_SOLID_NAME}
-  )
-endif()
-
-if(SV_USE_MMG)
-  set(OTHER_OPT_LIBS
-    ${OTHER_OPT_LIBS}
-    ${SV_LIB_MMG_MESH_NAME}
-  )
-endif()
+set(lib ${SV_LIB_MODULE_MODEL_PARASOLID_NAME})
 
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(
   TARGET ${lib}
-  EXPORT_DIRECTIVE svModel
+  EXPORT_DIRECTIVE svModelParasolid
   SHARED_LIB ${SV_USE_MODULES_SHARED_LIBRARIES}
   LIBRARY_DEPENDS
   ${QT_LIBRARIES}
@@ -39,8 +16,9 @@ simvascular_create_module(
   ${SV_LIB_MODULE_SEGMENTATION_NAME}
   ${SV_LIB_SOLID_NAME}
   ${SV_LIB_POLYDATA_SOLID_NAME}
-  ${SV_LIB_VMTK_UTILS_NAME}
-  ${OTHER_OPT_LIBS})
+  ${SV_LIB_THIRDPARTY_VMTK_NAME}
+  ${SV_LIB_PARASOLID_SOLID_NAME}
+  ${SV_LIB_MODULE_MODEL_NAME})
 #-----------------------------------------------------------------------------
 
 if(SV_INSTALL_LIBS)

@@ -3,25 +3,10 @@
 #include "svModelVtkMapper2D.h"
 #include "svModelVtkMapper3D.h"
 
-#include "simvascular_options.h"
-
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-#include "cv_globals.h"
-#include <TDocStd_Document.hxx>
-#include <XCAFDoc_DocumentTool.hxx>
-#include <XCAFApp_Application.hxx>
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-#include "cv_parasolid_utils.h"
-#endif
-
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
 #include "mitkDataNode.h"
 #include "mitkCoreObjectFactory.h"
-
-
 
 svModelObjectFactory::svModelObjectFactory()
   : mitk::CoreObjectFactoryBase()
@@ -117,30 +102,6 @@ RegistersvModelObjectFactory::RegistersvModelObjectFactory()
 {
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
     m_ModelIO=new svModelIO();
-
-#ifdef SV_USE_OpenCASCADE_QT_GUI
-    Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
-    //gOCCTManager = new AppStd_Application;
-    OCCTManager = XCAFApp_Application::GetApplication();
-    //if ( gOCCTManager == NULL ) {
-    //  fprintf( stderr, "error allocating gOCCTManager\n" );
-    //  return TCL_ERROR;
-    //}
-    Handle(TDocStd_Document) doc;
-    //gOCCTManager->NewDocument("Standard",doc);
-    OCCTManager->NewDocument("MDTV-XCAF",doc);
-    if ( !XCAFDoc_DocumentTool::IsXCAFDocument(doc))
-    {
-      MITK_ERROR<<"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly";
-    }
-#endif
-
-#ifdef SV_USE_PARASOLID_QT_GUI
-    if (PsdUtils_Init() != SV_OK) {
-      MITK_ERROR<<"Parasolid Uitls init error";
-    }
-#endif
-
 }
 
 RegistersvModelObjectFactory::~RegistersvModelObjectFactory()

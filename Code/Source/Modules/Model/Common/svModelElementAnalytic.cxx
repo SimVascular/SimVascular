@@ -1,39 +1,31 @@
-#include "svModelElementOCCT.h"
-
-//#include "svModelUtils.h"
+#include "svModelElementAnalytic.h"
 
 #include "cv_sys_geom.h"
 
-#include <iostream>
-using namespace std;
-
-svModelElementOCCT::svModelElementOCCT()
+svModelElementAnalytic::svModelElementAnalytic()
+    : m_InnerSolid(NULL)
+    , m_MaxDist(0)
 {
-    m_Type="OpenCASCADE";
-    m_InnerSolid=NULL;
-    m_MaxDist=20.0;
 }
 
-svModelElementOCCT::svModelElementOCCT(const svModelElementOCCT &other)
+svModelElementAnalytic::svModelElementAnalytic(const svModelElementAnalytic &other)
     : svModelElement(other)
     , m_MaxDist(other.m_MaxDist)
 {
-    m_InnerSolid=new cvOCCTSolidModel();
-    m_InnerSolid->Copy(*(other.m_InnerSolid));
 }
 
-svModelElementOCCT::~svModelElementOCCT()
+svModelElementAnalytic::~svModelElementAnalytic()
 {
     if(m_InnerSolid)
         delete m_InnerSolid;
 }
 
-svModelElementOCCT* svModelElementOCCT::Clone()
+svModelElementAnalytic* svModelElementAnalytic::Clone()
 {
-    return new svModelElementOCCT(*this);
+    return new svModelElementAnalytic(*this);
 }
 
-vtkSmartPointer<vtkPolyData> svModelElementOCCT::CreateFaceVtkPolyData(int id)
+vtkSmartPointer<vtkPolyData> svModelElementAnalytic::CreateFaceVtkPolyData(int id)
 {
     if(m_InnerSolid==NULL)
         return NULL;
@@ -43,14 +35,9 @@ vtkSmartPointer<vtkPolyData> svModelElementOCCT::CreateFaceVtkPolyData(int id)
         return NULL;
 
     return cvfacevpd->GetVtkPolyData();
-
-//    vtkSmartPointer<vtkPolyData> fpd
-//      = vtkSmartPointer<vtkPolyData>::Take(facepd);
-
-//    return fpd;
 }
 
-vtkSmartPointer<vtkPolyData> svModelElementOCCT::CreateWholeVtkPolyData()
+vtkSmartPointer<vtkPolyData> svModelElementAnalytic::CreateWholeVtkPolyData()
 {
     if(m_InnerSolid==NULL)
         return NULL;
@@ -62,27 +49,27 @@ vtkSmartPointer<vtkPolyData> svModelElementOCCT::CreateWholeVtkPolyData()
     return cvwholevpd->GetVtkPolyData();
 }
 
-double svModelElementOCCT::GetMaxDist()
+double svModelElementAnalytic::GetMaxDist()
 {
     return m_MaxDist;
 }
 
-void svModelElementOCCT::SetMaxDist(double maxDist)
+void svModelElementAnalytic::SetMaxDist(double maxDist)
 {
     m_MaxDist=maxDist;
 }
 
-cvOCCTSolidModel* svModelElementOCCT::GetInnerSolid()
+cvSolidModel* svModelElementAnalytic::GetInnerSolid()
 {
     return m_InnerSolid;
 }
 
-void svModelElementOCCT::SetInnerSolid(cvOCCTSolidModel* occtSolid)
+void svModelElementAnalytic::SetInnerSolid(cvSolidModel* innerSolid)
 {
-    m_InnerSolid=occtSolid;
+    m_InnerSolid=innerSolid;
 }
 
-int svModelElementOCCT::GetFaceIDFromInnerSolid(std::string faceName)
+int svModelElementAnalytic::GetFaceIDFromInnerSolid(std::string faceName)
 {
     int id=-1;
 
@@ -107,7 +94,36 @@ int svModelElementOCCT::GetFaceIDFromInnerSolid(std::string faceName)
     return id;
 }
 
-void svModelElementOCCT::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii)
+std::vector<int> svModelElementAnalytic::GetFaceIDsFromInnerSolid()
+{
+    std::vector<int> faceIDs;
+    if(m_InnerSolid)
+    {
+        int numFaces;
+        int *ids;
+        int status=m_InnerSolid->GetFaceIds( &numFaces, &ids);
+        for(int i=0;i<numFaces;i++)
+            faceIDs.push_back(ids[i]);
+    }
+
+    return faceIDs;
+}
+
+std::string svModelElementAnalytic::GetFaceNameFromInnerSolid(int id)
+{
+    std::string faceName="";
+    if(m_InnerSolid)
+    {
+        char *value;
+        m_InnerSolid->GetFaceAttribute("gdscName",id,&value);
+        std::string name(value);
+        faceName=name;
+    }
+
+    return faceName;
+}
+
+void svModelElementAnalytic::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii)
 {
     for(int i=0;i<moreBlendRadii.size();i++)
     {
@@ -138,7 +154,7 @@ void svModelElementOCCT::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlen
 
 }
 
-void svModelElementOCCT::SetFaceName(std::string name, int id)
+void svModelElementAnalytic::SetFaceName(std::string name, int id)
 {
     int index=GetFaceIndex(id);
     if(index>-1)
@@ -153,7 +169,7 @@ void svModelElementOCCT::SetFaceName(std::string name, int id)
     }
 }
 
-svModelElementPolyData* svModelElementOCCT::ConverToPolyDataModel()
+svModelElementPolyData* svModelElementAnalytic::ConverToPolyDataModel()
 {
     svModelElementPolyData* mepd=new svModelElementPolyData();
     mepd->SetSegNames(GetSegNames());

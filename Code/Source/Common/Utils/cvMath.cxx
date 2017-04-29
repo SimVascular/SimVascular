@@ -427,13 +427,32 @@ double cvMath::complex_mag (double z1[])
 int cvMath::complex_div (double z1[], double z2[], double zout[])
 
 {
- double zmagsqd;
+    double zmagsqd;
 
- zmagsqd = pow(complex_mag(z2),2.0);
- zout[0] = (z1[0]*z2[0] + z1[1]*z2[1])/zmagsqd;
- zout[1] = (z1[1]*z2[0] - z1[0]*z2[1])/zmagsqd;
+    //avoid multiplication go to infinity, first scale to a smaler number
+    double zz1[2];
+    double zz2[2];
+    zz1[0]=z1[0];
+    zz1[1]=z1[1];
+    zz2[0]=z2[0];
+    zz2[1]=z2[1];
 
- return 0;
+    double a=fabs(zz2[0]);
+    double b=fabs(zz2[1]);
+    if(a>10000 || b>10000)
+    {
+        double c=a>b?a:b;
+        zz1[0]/=c;
+        zz1[1]/=c;
+        zz2[0]/=c;
+        zz2[1]/=c;
+    }
+
+    zmagsqd = pow(complex_mag(zz2),2.0);
+    zout[0] = (zz1[0]*zz2[0] + zz1[1]*zz2[1])/zmagsqd;
+    zout[1] = (zz1[1]*zz2[0] - zz1[0]*zz2[1])/zmagsqd;
+
+    return 0;
 }
        
 
