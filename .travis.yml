@@ -1,19 +1,30 @@
-dist: trusty
-sudo: required
-
-env:
-  - WITH_CMAKE=true BUILD_TEST=false
-  - WITH_CMAKE=false BUILD_TEST=false
-matrix:
- allow_failures:
-  - env: WITH_CMAKE=false BUILD_TEST=false
-
 language: cpp
 
-compiler: gcc
-
-install:
-#  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      dist: trusty
+      sudo: required
+      env: WITH_CMAKE=true BUILD_TEST=false
+    - os: linux
+      compiler: gcc
+      dist: trusty
+      sudo: required
+      env: WITH_CMAKE=false BUILD_TEST=false
+    - os: osx
+      compiler: clang
+      osx_image: xcode7.3
+      sudo: required
+      env: WITH_CMAKE=true BUILD_TEST=false
+    - os: osx
+      compiler: clang
+      osx_image: xcode7.3
+      sudo: required
+      env: WITH_CMAKE=false BUILD_TEST=false
+  allow_failures:
+    - env: WITH_CMAKE=false BUILD_TEST=false
+    - os: osx
 
 addons:
   apt:
@@ -22,39 +33,20 @@ addons:
     - libxt-dev
     - libxi-dev
 
-    sources:
-    - ubuntu-toolchain-r-test
-    - kubuntu-backports
-
 git:
   submodules: false
 
 before_install:
   - export NUM_THREADS=4
   - export cwd=$(pwd)
-  - export SCRIPTS=$cwd/travis
-  - export EXTERNALS_TOP=$cwd/ext
-  - $SCRIPTS/travis_get_qt.sh
-  - $SCRIPTS/travis_get_externals.sh
   - export BUILD_DIR=$cwd/build
+  - export SV_EXTERNALS_DIR=$cwd/Externals
+  - export SV_EXTERNALS_BUILD_DIR=$SV_EXTERNALS_DIR/build
   - export SV_CODE_DIR=$cwd/Code
   - export SV_TEST_DIR=$HOME/test/
+  - export SCRIPTS=$cwd/travis
+  - $SCRIPTS/travis_get_qt.sh
+  - $SCRIPTS/travis_cmake_get_externals.sh
   - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
-  - echo "CLUSTER=x64_linux" > BuildWithMake/cluster_overrides.mk
-  - echo "CXX_COMPILER_VERSION=gcc" >> BuildWithMake/cluster_overrides.mk
-  - echo "FORTRAN_COMPILER_VERSION=gfortran" >> BuildWithMake/cluster_overrides.mk
-  - echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/gnu/4.8/x64" > BuildWithMake/global_overrides.mk
-  - echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
-  - echo "OPEN_SOFTWARE_SOURCES_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
-  - echo "LICENSED_SOFTWARE_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
-  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
-
-cache:
-  directories:
-
-before_script:
-  - $SCRIPTS/travis_before_script_cleanup.sh
-  #- if ! $WITH_CMAKE; then $ fi
 
 script: $SCRIPTS/travis_build_and_test.sh
-

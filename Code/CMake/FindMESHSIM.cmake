@@ -43,7 +43,7 @@ include(GetPrerequisites)
 
 #-----------------------------------------------------------------------------
 # Default Libraries
-set(${proj}_LIBNAMES SimAdvMeshing SimMeshing SimMeshTools SimModel 
+set(${proj}_LIBNAMES SimAdvMeshing SimMeshing SimMeshTools SimModel
 	SimMeshTools SimModel SimPartitionWrapper SimPartitionedMesh SimExport)
 
 # Add requestion components
@@ -128,7 +128,7 @@ list(LENGTH ${proj}_LIBNAMES ${proj}_NUMLIBS_EXPECTED)
 if (NOT ${proj}_NUMLIBS EQUAL ${proj}_NUMLIBS_EXPECTED)
 	set(${proj}_LIBRARIES_WORK "${proj}_LIBRARIES-NOTFOUND")
 endif()
-set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING 
+set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING
 	"${proj} libraries to link against" FORCE)
 
 # Clean up.  If all libraries were found remove cache entries.
@@ -153,7 +153,7 @@ foreach(p ${${proj}_POSSIBLE_PATHS})
 endforeach()
 
 set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_POSSIBLE_INCLUDE_PATHS} ${${proj}_EXTRA_PATHS}
-	"${${proj}_LIB_DIR}/include")	
+	"${${proj}_LIB_DIR}/include")
 
 #-----------------------------------------------------------------------------
 # Add windows Specific Search Paths
@@ -196,8 +196,8 @@ endif()
 #message("${LIB_FULLNAMES}")
 find_package_handle_standard_args(${proj}
 	FOUND_VAR ${proj}_FOUND
-	# REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES
-	# VERSION_VAR ${proj}_VERSION
+	REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES
+	VERSION_VAR ${proj}_VERSION
 	)
 if(NOT ${proj}_FOUND)
 	message(STATUS "${proj}: could not find ${${proj}_LIBS_MISSING}")

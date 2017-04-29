@@ -203,27 +203,8 @@ SV_EXPORT_SYSGEOM int sys_geom_local_blend(cvPolyData *pd,cvPolyData **outpd, in
     int numcgsmoothiters, int numlapsmoothiters, double targetdecimation,
     char *pointarrayname, char *cellarrayname);
 
-#ifdef SV_USE_VMTK
-SV_EXPORT_SYSGEOM int sys_geom_centerlines( cvPolyData *polydata, int *source, int nsources,
-                            int *targets, int ntargets,
-			    cvPolyData **lines, cvPolyData **voronoi);
-
-SV_EXPORT_SYSGEOM int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,cvPolyData **grouped );
-
-SV_EXPORT_SYSGEOM int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,cvPolyData **distance );
-
-SV_EXPORT_SYSGEOM int sys_geom_separatecenterlines( cvPolyData *lines,cvPolyData **separate );
-
-SV_EXPORT_SYSGEOM int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked, cvPolyData **merged);
-
-SV_EXPORT_SYSGEOM int sys_geom_cap( cvPolyData *polydata, cvPolyData **cappedpolydata, int *numcenterids,int **centerids,int type);
-
-SV_EXPORT_SYSGEOM int sys_geom_cap_with_ids( cvPolyData *polydata, cvPolyData **cappedpolydata,
-		int fillId,int filledholes,int filltype);
-
 SV_EXPORT_SYSGEOM int sys_geom_set_ids_for_caps( cvPolyData *pd, cvPolyData **outpd,int **doublecaps,
     int *numfaces);
 
-SV_EXPORT_SYSGEOM int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd,cvPolyData **polydata, char *originalarray,char *newarray);
-#endif
+
 #endif /* __SYS_GEOM_H */

@@ -4,6 +4,7 @@
 # ZLIB
 if(SV_USE_ZLIB)
 	SET(USE_ZLIB ON)
+  SET(SV_USE_ZLIB ON)
 	simvascular_third_party(zlib)
 	if(NOT SV_USE_SYSTEM_ZLIB)
     set(ZLIB_LIBRARY ${SV_LIB_THIRDPARTY_ZLIB_NAME})
@@ -38,6 +39,36 @@ if(SV_USE_TETGEN)
 else()
 	unset(TETGEN_LIBRARY CACHE)
 endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# VMTK
+if(SV_USE_VMTK)
+  simvascular_third_party(vmtk)
+  if(NOT SV_USE_SYSTEM_VMTK)
+    set(VMTK_LIBRARY ${SV_LIB_THIRDPARTY_VMTK_NAME})
+  else()
+    message(FATAL_ERROR "Cannot currently use system VMTK")
+  endif()
+else()
+  unset(VMTK_LIBRARY)
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# SolverIO
+if(SV_USE_SOLVERIO)
+  simvascular_third_party(SolverIO)
+  if(NOT SV_USE_SYSTEM_SOLVERIO)
+    set(SOLVERIO_LIBRARY ${SV_LIB_THIRDPARTY_SOLVERIO_NAME})
+  else()
+    message(FATAL_ERROR "Cannot currently use system SolverIO")
+  endif()
+else()
+  unset(SOLVERIO_LIBRARY)
+endif()
+
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Add libraries for flowsolver

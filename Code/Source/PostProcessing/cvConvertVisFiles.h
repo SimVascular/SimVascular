@@ -45,17 +45,21 @@
 #include "cvPolyData.h"
 
 #ifdef SV_USE_ZLIB
-#include "simvascular_zlib.h"
+  #ifdef SV_USE_SYSTEM_ZLIB
+    #include <zlib.h>
+  #else
+    #include "simvascular_zlib.h"
+  #endif
 #else
-#include <stdlib.h>
-#define gzopen fopen
-#define gzprintf fprintf
-#define gzFile FILE*
-#define gzclose fclose
-#define Z_NULL NULL
-#define gzeof feof
-//gzgets requires different args than fgets
-//#define gzgets fgets
+  #include <stdlib.h>
+  #define gzopen fopen
+  #define gzprintf fprintf
+  #define gzFile FILE*
+  #define gzclose fclose
+  #define Z_NULL NULL
+  #define gzeof feof
+  //gzgets requires different args than fgets
+  //#define gzgets fgets
 #endif
 
 #define NEXTLINE_EOF -1

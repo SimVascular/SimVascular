@@ -25,7 +25,7 @@ simvascular_create_module(
   ${SV_LIB_MODULE_SEGMENTATION_NAME}
   ${SV_LIB_SOLID_NAME}
   ${SV_LIB_POLYDATA_SOLID_NAME}
-  ${SV_LIB_THIRDPARTY_VMTK_NAME}
+  ${SV_LIB_VMTK_UTILS_NAME}
   ${OTHER_OPT_LIBS})
 #-----------------------------------------------------------------------------
 

@@ -1,10 +1,17 @@
-export EXTERNALS_DIR=$EXTERNALS_TOP
-
-pushd $BUILD_DIR
+export EXTERNALS_DIR="$SV_EXTERNALS_BUILD_DIR/sv_externals"
 
 #compilers
-export CC="gcc"
-export CXX="g++"
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+then
+  export CC="gcc"
+  export CXX="g++"
+  export Qt5_DIR="/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5"
+elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
+then
+  export CC="clang"
+  export CXX="clang++"
+  export Qt5_DIR="/opt/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
+fi
 
 #cmake
 export REPLACEME_SV_CMAKE_CMD="cmake"
@@ -13,12 +20,9 @@ export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV=$SV_CODE_DIR
 
-#Qt5
-export Qt5_DIR="/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5"
+pushd $BUILD_DIR
 
 "$REPLACEME_SV_CMAKE_CMD" \
-\
-    --debug-output \
 \
    -G "$REPLACEME_SV_CMAKE_GENERATOR" \
 \

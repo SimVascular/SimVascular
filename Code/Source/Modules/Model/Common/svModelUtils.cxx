@@ -6,6 +6,7 @@
 
 #include "SimVascular.h"
 #include "cv_sys_geom.h"
+#include "cv_vmtk_utils.h"
 #include "cvPolyData.h"
 #include "cv_polydatasolid_utils.h"
 
