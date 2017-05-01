@@ -563,12 +563,14 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
 #endif
 
     QAction* createSVProjAction=new svFileCreateProjectAction(QIcon(":/org.sv.gui.qt.application/CreateSV.png"), window);
+    createSVProjAction->setShortcut(QKeySequence::New);
     QAction* openSVProjAction=new svFileOpenProjectAction(QIcon(":/org.sv.gui.qt.application/OpenSV.png"), window);
+    openSVProjAction->setShortcut(QKeySequence::Open);
     saveSVProjectAction=new svFileSaveProjectAction(QIcon(":/org.sv.gui.qt.application/SaveAllSV.png"), window);
     saveSVProjectAction->setShortcut(QKeySequence::Save);
 
     QAction* fileOpenAction = new QmitkFileOpenAction(QIcon::fromTheme("document-open",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/document-open.svg")), window);
-    fileOpenAction->setShortcut(QKeySequence::Open);
+//    fileOpenAction->setShortcut(QKeySequence::Open);
     fileSaveProjectAction = new QmitkExtFileSaveProjectAction(window);
     fileSaveProjectAction->setIcon(QIcon::fromTheme("document-save",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/document-save.svg")));
     fileSaveProjectAction->setText("Save All Data as MITK Scene File...");
@@ -717,7 +719,7 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         }
 
         // ==== Window Menu ==========================
-        QMenu* windowMenu = menuBar->addMenu("Window");
+        QMenu* windowMenu = menuBar->addMenu("&Window");
         if (showNewWindowMenuItem)
         {
             windowMenu->addAction("&New Window", svWorkbenchWindowAdvisorHack::undohack, SLOT(onNewWindow()));

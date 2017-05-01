@@ -70,6 +70,8 @@ public:
 
     bool MarkCellsByFaces(std::vector<int> faceIDs);
 
+    bool MarkCellsByFaceJunctions(std::vector<int> faceIDs, double radius);
+
     bool DecimateLocal(double targetRate);//mark cells befor calling it
 
     bool LaplacianSmoothLocal(int numIters, double relaxFactor);//mark cells befor calling it

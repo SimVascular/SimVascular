@@ -61,6 +61,8 @@ svModelEdit::svModelEdit() :
     m_PathFolderNode=NULL;
 
     m_OperatingWholeTableModel=false;
+
+    m_LocalOperationforBlendRegion=false;
 }
 
 svModelEdit::~svModelEdit()
@@ -299,6 +301,8 @@ int svModelEdit::GetTimeStep()
 
 void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
+    m_LocalOperationforBlendRegion=false;
+
     //    if(!IsActivated())
     if(!IsVisible())
     {
@@ -396,7 +400,7 @@ void svModelEdit::UpdateGUI()
         ui->groupBoxBlendIters->hide();
     }
 
-    SetupBlendTable();
+        SetupBlendTable();
 }
 
 void svModelEdit::UpdatePathListForTrim()
@@ -1091,6 +1095,9 @@ void svModelEdit::UpdateBlendTable(int index)
 
 void svModelEdit::SetupBlendTable()
 {
+    if(m_LocalOperationforBlendRegion)
+        return;
+
     if(!m_Model)
         return;
 
@@ -1537,6 +1544,8 @@ void svModelEdit::CreateModel()
 
     if(newModelElement!=NULL)
     {
+//        m_LocalOperationforBlendRegion=false;
+
         int timeStep=GetTimeStep();
 
         mitk::OperationEvent::IncCurrObjectEventId();
@@ -1644,6 +1653,8 @@ void svModelEdit::BlendModel()
 
     if(newModelElement==NULL) return;
 
+//    m_LocalOperationforBlendRegion=false;
+
     mitk::OperationEvent::IncCurrObjectEventId();
 
     svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
@@ -1698,11 +1709,32 @@ bool svModelEdit::MarkCells(svModelElementPolyData* modelElement)
     modelElement->RemoveActiveCells();
 
     bool hasFaces=false;
-    if(modelElement->GetSelectedFaceIDs().size()>0)
+    if(ui->checkBoxFaceJunctions->isChecked())
     {
         hasFaces=true;
-        if(!modelElement->MarkCellsByFaces(modelElement->GetSelectedFaceIDs()))
+        std::vector<svModelElement::svBlendParamRadius*> blendRadii=GetBlendRadii();
+        if(blendRadii.size()==0)
             return false;
+
+        for(int i=0;i<blendRadii.size();i++)
+        {
+            if(blendRadii[i])
+            {
+                std::vector<int> facePair={blendRadii[i]->faceID1,blendRadii[i]->faceID2};
+                if(!modelElement->MarkCellsByFaceJunctions(facePair,blendRadii[i]->radius))
+                    return false;
+            }
+        }
+        m_LocalOperationforBlendRegion=true;
+    }
+    else
+    {
+        if(modelElement->GetSelectedFaceIDs().size()>0)
+        {
+            hasFaces=true;
+            if(!modelElement->MarkCellsByFaces(modelElement->GetSelectedFaceIDs()))
+                return false;
+        }
     }
 
     bool hasCells=false;
@@ -1740,6 +1772,8 @@ void svModelEdit::ModelOperate(int operationType)
     svModelElementPolyData* newModelElement=modelElement->Clone();
 
     bool ok=false;
+
+    m_LocalOperationforBlendRegion=false;
 
     mitk::ProgressBar::GetInstance()->Reset();
     mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
@@ -1886,6 +1920,8 @@ void svModelEdit::ModelOperate(int operationType)
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
     mitk::StatusBar::GetInstance()->DisplayText("Model processing done");
+
+    m_LocalOperationforBlendRegion=false;
 }
 
 void svModelEdit::ShowSphereInteractor(bool checked)

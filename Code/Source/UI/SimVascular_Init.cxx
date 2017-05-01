@@ -67,6 +67,10 @@
 
 #include "cv_solid_init.h"
 
+#ifdef SV_USE_VMTK
+  #include "cv_vmtk_utils_init.h"
+#endif
+
 #ifdef SV_USE_MESHSIM
   #include "cv_mesh_init.h"
   #include "cv_meshsim_mesh_init.h"
@@ -211,6 +215,13 @@ int SimVascular_Init( Tcl_Interp *interp )
     fprintf( stderr, "error on PolyDataSolid_Init\n" );
     return TCL_ERROR;
   }
+
+#ifdef SV_USE_VMTK
+  if ( Vmtkutils_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on Vmtkutils_Init\n" );
+    return TCL_ERROR;
+  }
+#endif
 
 #ifdef SV_USE_OpenCASCADE
 //#ifndef SV_USE_OpenCASCADE_SHARED

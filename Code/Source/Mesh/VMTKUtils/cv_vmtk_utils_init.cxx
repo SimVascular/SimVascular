@@ -38,6 +38,7 @@
 #include "cvRepositoryData.h"
 #include "cvPolyData.h"
 #include "cv_vmtk_utils_init.h"
+#include "cv_vmtk_utils.h"
 #include "cvSolidModel.h"
 #include "cv_vtk_utils.h"
 #include "vtkSmartPointer.h"

@@ -699,6 +699,21 @@ bool svModelElementPolyData::MarkCellsByFaces(std::vector<int> faceIDs)
     return true;
 }
 
+bool svModelElementPolyData::MarkCellsByFaceJunctions(std::vector<int> faceIDs, double radius)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::MarkCellsByFaceJunctions(m_WholeVtkPolyData, faceIDs, radius);
+
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    return true;
+}
+
 bool svModelElementPolyData::DecimateLocal(double targetRate)
 {
     if(m_WholeVtkPolyData==NULL)

@@ -182,6 +182,8 @@ protected:
 
     bool m_OperatingWholeTableModel;
 
+    bool m_LocalOperationforBlendRegion;
+
 };
 
 #endif // SVMODELEDIT_H
