@@ -769,18 +769,11 @@ function(simvascular_create_plugin)
   )
 
   set(MODULE_EXPORT_DEFINE ${_PLUGIN_EXPORT_DIRECTIVE})
+  set(MODULE_EXPORT_HEADER_PREFIX "${lib_name}_")
+  set(MODULE_EXPORT_LIBNAME ${lib_name})
 
-  set(_export_macro_names
-    EXPORT_MACRO_NAME ${MODULE_EXPORT_DEFINE}
-    NO_EXPORT_MACRO_NAME ${_PLUGIN_EXPORT_DIRECTIVE}_NO_EXPORT
-    DEPRECATED_MACRO_NAME ${_PLUGIN_EXPORT_DIRECTIVE}_DEPRECATED
-    NO_DEPRECATED_MACRO_NAME ${_PLUGIN_EXPORT_DIRECTIVE}_NO_DEPRECATED
-  )
-
-  generate_export_header(${lib_name}
-    ${_export_macro_names}
-    EXPORT_FILE_NAME ${lib_name}_Export.h
-  )
+  configure_file("${SV_SOURCE_DIR}/CMake/plugin_exports.h.in"
+                 "${CMAKE_CURRENT_BINARY_DIR}/${MODULE_EXPORT_HEADER_PREFIX}Export.h")
 
   target_include_directories(${lib_name} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
   #--------------------------------EXPORT HEADER-----------------------------
