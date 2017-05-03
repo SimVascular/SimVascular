@@ -13,6 +13,7 @@ svModelElement::svModelElement(const svModelElement &other)
     : m_Type(other.m_Type)
     , m_SegNames(other.m_SegNames)
     , m_NumSampling(other.m_NumSampling)
+    , m_FileExtensions(other.m_FileExtensions)
 {
     int faceNum=other.m_Faces.size();
     m_Faces.resize(faceNum);

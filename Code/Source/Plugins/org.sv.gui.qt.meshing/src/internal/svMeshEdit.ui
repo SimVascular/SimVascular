@@ -257,15 +257,15 @@
           <item>
            <widget class="QToolBox" name="toolBox">
             <property name="currentIndex">
-             <number>4</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="page_3">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>393</width>
-               <height>500</height>
+               <width>353</width>
+               <height>218</height>
               </rect>
              </property>
              <attribute name="label">
@@ -603,8 +603,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>393</width>
-               <height>500</height>
+               <width>98</width>
+               <height>83</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -688,8 +688,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>393</width>
-               <height>500</height>
+               <width>178</width>
+               <height>83</height>
               </rect>
              </property>
              <attribute name="label">
@@ -879,6 +879,9 @@
                      <widget class="ctkSliderWidget" name="sliderFlagO">
                       <property name="decimals">
                        <number>0</number>
+                      </property>
+                      <property name="pageStep">
+                       <double>1.000000000000000</double>
                       </property>
                       <property name="minimum">
                        <double>1.000000000000000</double>
