@@ -30,6 +30,8 @@ public:
 
     svMeshTetGen* GetAdaptedMesh() override;
 
+    static svMeshAdaptor* CreateAdaptor();
+
 protected:
 
   cvTetGenMeshObject* m_cvTetGetMesh;

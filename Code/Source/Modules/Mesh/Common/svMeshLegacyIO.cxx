@@ -26,18 +26,19 @@ bool svMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, svModelElement
 
     std::string path="";
     meshNode->GetStringProperty("path",path);
-    std::string meshFileName = path+"/"+meshNode->GetName()+".msh";
+    std::string surfaceFileName = path+"/"+meshNode->GetName()+".vtp";
+    std::string volumeFileName = path+"/"+meshNode->GetName()+".vtu";
 
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
     if(surfaceMesh==NULL && path!="")
     {
-        surfaceMesh=svMitkMeshIO::GetSurfaceMesh(meshFileName);
+        surfaceMesh=mesh->CreateSurfaceMeshFromFile(surfaceFileName);
     }
 
     vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=mesh->GetVolumeMesh();
     if(volumeMesh==NULL && path!="")
     {
-        volumeMesh=svMitkMeshIO::GetVolumeMesh(meshFileName);
+        volumeMesh=mesh->CreateVolumeMeshFromFile(volumeFileName);
     }
 
     return WriteFiles(surfaceMesh, volumeMesh, modelElement, meshDir);

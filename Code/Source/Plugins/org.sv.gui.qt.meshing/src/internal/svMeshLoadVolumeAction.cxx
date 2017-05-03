@@ -36,22 +36,14 @@ void svMeshLoadVolumeAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
         if(path=="")
             return;
 
-        std::string meshFileName = path+"/"+meshNode->GetName()+".msh";
-        vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=svMitkMeshIO::GetVolumeMesh(meshFileName);
-        if(volumeMesh)
-        {
-            mesh->SetVolumeMesh(volumeMesh);
-        }
+        std::string volumeFileName = path+"/"+meshNode->GetName()+".vtu";
+        mesh->ReadVolumeFile(volumeFileName);
 
         if(mesh->GetSurfaceMesh()==NULL)
         {
-            vtkSmartPointer<vtkPolyData> surfaceMesh=svMitkMeshIO::GetSurfaceMesh(meshFileName);
-            if(surfaceMesh)
-            {
-                mesh->SetSurfaceMesh(surfaceMesh);
-            }
+            std::string surfaceFileName = path+"/"+meshNode->GetName()+".vtp";
+            mesh->ReadSurfaceFile(surfaceFileName);
         }
-
     }
     else
     {

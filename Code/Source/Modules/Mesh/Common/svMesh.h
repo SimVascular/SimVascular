@@ -3,7 +3,7 @@
 
 #include <svMeshExports.h>
 
-#include <svModelElement.h>
+#include "svModelElement.h"
 
 #include <vtkSmartPointer.h>
 
@@ -43,7 +43,7 @@ public:
 
     virtual bool Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg) {return false;}
 
-    virtual bool ParseCommandInternal(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) {return false;}
+    virtual bool ParseCommand(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) {return false;}
 
     bool ExecuteCommands(std::vector<std::string> cmds, std::string& msg);
 
@@ -63,6 +63,24 @@ public:
 
     void SetVolumeMesh(vtkSmartPointer<vtkUnstructuredGrid> volumeMesh);
 
+    std::vector<std::string> GetFileExtensions(){return m_FileExtensions;}
+
+    virtual bool WriteSurfaceFile(std::string filePath){return false;}
+
+    virtual bool WriteVolumeFile(std::string filePath){return false;}
+
+    virtual bool ReadSurfaceFile(std::string filePath){return false;}
+
+    virtual bool ReadVolumeFile(std::string filePath){return false;}
+
+    virtual vtkSmartPointer<vtkPolyData> CreateSurfaceMeshFromFile(std::string filePath) {return NULL;}
+
+    virtual vtkSmartPointer<vtkUnstructuredGrid> CreateVolumeMeshFromFile(std::string filePath) {return NULL;}
+
+//    virtual bool WriteMeshComplete(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSmartPointer<vtkUnstructuredGrid> volumeMesh, svModelElement* modelElement, std::string meshDir) {return false;}
+
+//    virtual bool WriteMeshComplete(std::string meshDir);
+
   protected:
 
 //    std::string m_ModelName;
@@ -76,6 +94,8 @@ public:
     vtkSmartPointer<vtkUnstructuredGrid> m_VolumeMesh;
 
     std::vector<std::string> m_CommandHistory;
+
+    std::vector<std::string> m_FileExtensions;
 
   };
 

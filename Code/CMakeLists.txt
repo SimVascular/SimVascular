@@ -245,7 +245,7 @@ if(SV_USE_QT_GUI)
     "Source/Modules/Path"
     "Source/Modules/Segmentation"
     "Source/Modules/Model/Common"
-    "Source/Modules/Mesh"
+    "Source/Modules/Mesh/Common"
     "Source/Modules/Simulation"
     "Source/Modules/ProjectManagement"
     "Source/Modules/QtWidgets")

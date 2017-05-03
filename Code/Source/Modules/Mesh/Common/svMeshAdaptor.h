@@ -3,7 +3,7 @@
 
 #include <svMeshExports.h>
 
-#include <svMesh.h>
+#include "svMesh.h"
 
 class SVMESH_EXPORT svMeshAdaptor
 {
@@ -27,7 +27,7 @@ public:
 
     virtual bool WriteAdaptedSolution(std::string filePath) = 0;
 
-    virtual svMesh* GetAdaptedMesh() =0;
+    virtual svMesh* GetAdaptedMesh() = 0;
 
 protected:
 

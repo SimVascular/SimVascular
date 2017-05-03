@@ -96,7 +96,7 @@ bool svMesh::ExecuteCommand(std::string cmd, std::string& msg)
     std::string strValues[5]={""};
     bool option=false;
 
-    if(!ParseCommandInternal(cmd, flag, values, strValues, option, msg))
+    if(!ParseCommand(cmd, flag, values, strValues, option, msg))
         return false;
 
     if(!Execute(flag, values, strValues, option, msg))

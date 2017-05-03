@@ -10,9 +10,6 @@
 #include "svModelElementFactory.h"
 #include "svModelElementAnalytic.h"
 
-#include "svMeshTetGen.h"
-#include "svMitkMesh.h"
-
 #include "cv_polydatasolid_utils.h"
 
 #include <mitkNodePredicateDataType.h>

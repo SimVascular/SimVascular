@@ -88,4 +88,7 @@ svMeshTetGen* svMeshTetGenAdaptor::GetAdaptedMesh()
     return NULL;
 }
 
-
+svMeshAdaptor* svMeshTetGenAdaptor::CreateAdaptor()
+{
+    return new svMeshTetGenAdaptor();
+}

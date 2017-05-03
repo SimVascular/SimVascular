@@ -1,5 +1,4 @@
 #include "svMitkMesh.h"
-//#include "svMeshTetGen.h"
 
 svMitkMesh::svMitkMesh()
     : m_CalculateBoundingBox(true)

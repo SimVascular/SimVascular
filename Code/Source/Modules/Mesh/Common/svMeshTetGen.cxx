@@ -2,11 +2,18 @@
 
 #include "svStringUtils.h"
 #include "svModelUtils.h"
+#include "svMeshTetGenAdaptor.h"
 
-#include "cvSolidModel.h"
+//#include "cvSolidModel.h"
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkSmartPointer.h>
+#include <vtkErrorCode.h>
+#include <vtkXMLUnstructuredGridWriter.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLUnstructuredGridReader.h>
 
 #include <iostream>
-using namespace std;
+#include <fstream>
 
 svMeshTetGen::svMeshTetGen()
     : m_cvTetGetMesh(NULL)
@@ -235,11 +242,6 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     return true;
 }
 
-bool svMeshTetGen::ParseCommandInternal(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg)
-{
-    return ParseCommand(cmd, flag, values, strValues, option, msg);
-}
-
 bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg)
 {
     option=false;
@@ -254,7 +256,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
         return true;
     }
 
-std::vector<std::string> params=svStringUtils_split(cmd,' ');
+    std::vector<std::string> params=svStringUtils_split(cmd,' ');
 
     if(svStringUtils_lower(params[0])=="option")
     {
@@ -432,3 +434,99 @@ cvTetGenMeshObject* svMeshTetGen::GetMesher()
 {
     return m_cvTetGetMesh;
 }
+
+svMesh* svMeshTetGen::CreateMesh()
+{
+    return new svMeshTetGen();
+}
+
+bool svMeshTetGen::WriteSurfaceFile(std::string filePath)
+{
+    if(m_SurfaceMesh)
+    {
+        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+        writer->SetFileName(filePath.c_str());
+        writer->SetInputData(m_SurfaceMesh);
+        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
+        {
+            std::cerr << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool svMeshTetGen::WriteVolumeFile(std::string filePath)
+{
+    if(m_VolumeMesh)
+    {
+        vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+        writer->SetFileName(filePath.c_str());
+        writer->SetInputData(m_VolumeMesh);
+        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
+        {
+            std::cerr << "vtkXMLUnstructuredGridWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool svMeshTetGen::ReadSurfaceFile(std::string filePath)
+{
+    m_SurfaceMesh=CreateSurfaceMeshFromFile(filePath);
+
+    return true;
+}
+
+bool svMeshTetGen::ReadVolumeFile(std::string filePath)
+{
+    m_VolumeMesh=CreateVolumeMeshFromFile(filePath);
+
+    return true;
+}
+
+vtkSmartPointer<vtkPolyData> svMeshTetGen::CreateSurfaceMeshFromFile(std::string filePath)
+{
+    vtkSmartPointer<vtkPolyData> surfaceMesh=NULL;
+    std::ifstream surfaceFile(filePath);
+    if (surfaceFile) {
+        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+
+        reader->SetFileName(filePath.c_str());
+        reader->Update();
+        surfaceMesh=reader->GetOutput();
+    }
+
+    return surfaceMesh;
+}
+
+vtkSmartPointer<vtkUnstructuredGrid> svMeshTetGen::CreateVolumeMeshFromFile(std::string filePath)
+{
+    vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=NULL;
+    std::ifstream volumeFile(filePath);
+    if (volumeFile) {
+        vtkSmartPointer<vtkXMLUnstructuredGridReader> reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+
+        reader->SetFileName(filePath.c_str());
+        reader->Update();
+        volumeMesh=reader->GetOutput();
+    }
+
+    return volumeMesh;
+}
+
+//bool svMeshTetGen::WriteMeshComplete(vtkSmartPointer<vtkPolyData> surfaceMesh
+//                                     , vtkSmartPointer<vtkUnstructuredGrid> volumeMesh
+//                                     , svModelElement* modelElement
+//                                     , std::string meshDir)
+//{
+
+//}
+
+//bool svMeshTetGen::WriteMeshComplete(std::string meshDir)
+//{
+
+//}

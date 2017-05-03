@@ -4,7 +4,7 @@
 #include "svVtkMeshSphereWidget.h"
 
 #include "svModel.h"
-#include "svMeshTetGen.h"
+#include "svMeshFactory.h"
 #include "svMesh.h"
 #include "svMitkMesh.h"
 #include "svMitkMeshOperation.h"
@@ -14,7 +14,6 @@
 #include "svModelElementPolyData.h"
 #include "svModelElementAnalytic.h"
 
-#include "svMeshTetGenAdaptor.h"
 #include "svDataNodeOperation.h"
 
 #include <berryIPreferencesService.h>
@@ -611,11 +610,11 @@ void svMeshEdit::RunCommands(bool fromGUI)
             QMessageBox::warning(m_Parent,"Warning","Error in Global Egde Size!");
             return;
         }
-
-        newMesh=new svMeshTetGen();
     }
 //    else if(m_MeshType=="MeshSim")
 //        mesh=new svMeshMeshSim();
+
+    newMesh=svMeshFactory::CreateMesh(m_MeshType);
 
     if(newMesh==NULL)
         return;
@@ -1035,7 +1034,6 @@ void svMeshEdit::UpdateTetGenGUI()
 
     //then udpate with command history
     //========================================
-//    svMeshTetGen* mesh=dynamic_cast<svMeshTetGen*>(m_MitkMesh->GetMesh(GetTimeStep()));
     svMesh* mesh=m_MitkMesh->GetMesh(GetTimeStep());
     if(mesh==NULL)
         return;
@@ -1056,7 +1054,7 @@ void svMeshEdit::UpdateTetGenGUI()
         if(cmdHistory[i]=="")
             continue;
 
-        if(!svMeshTetGen::ParseCommand(cmdHistory[i],flag,values,strValues,option,msg))
+        if(!mesh->ParseCommand(cmdHistory[i],flag,values,strValues,option,msg))
         {
             QMessageBox::warning(m_Parent,"Parsing Error","Error in parsing command history!");
             return;
@@ -1394,18 +1392,19 @@ void svMeshEdit::DisplayMeshInfo()
 
     std::string path="";
     m_MeshNode->GetStringProperty("path",path);
-    std::string meshFileName = path+"/"+m_MeshNode->GetName()+".msh";
+    std::string surfaceFileName = path+"/"+m_MeshNode->GetName()+".vtp";
+    std::string volumeFileName = path+"/"+m_MeshNode->GetName()+".vtu";
 
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
     if(surfaceMesh==NULL && path!="")
     {
-        surfaceMesh=svMitkMeshIO::GetSurfaceMesh(meshFileName);
+        surfaceMesh=mesh->CreateSurfaceMeshFromFile(surfaceFileName);
     }
 
     vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=mesh->GetVolumeMesh();
     if(volumeMesh==NULL && path!="")
     {
-        volumeMesh=svMitkMeshIO::GetVolumeMesh(meshFileName);
+        volumeMesh=mesh->CreateVolumeMeshFromFile(volumeFileName);
     }
 
     int num_nodes = 0;
@@ -1595,7 +1594,12 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    svMeshTetGenAdaptor* adaptor=new svMeshTetGenAdaptor();
+    svMeshAdaptor* adaptor=svMeshFactory::CreateAdaptor(m_MeshType);
+    if(adaptor==NULL)
+    {
+        QMessageBox::warning(m_Parent,"No Adaptor","Failed in creating adaptor!");
+        return;
+    }
 
     if(!adaptor->SetModelElement(modelElement))
     {
@@ -1640,7 +1644,7 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    svMeshTetGen* adaptedMesh=adaptor->GetAdaptedMesh();
+    svMesh* adaptedMesh=adaptor->GetAdaptedMesh();
     delete adaptor;
     if(adaptedMesh==NULL)
     {
