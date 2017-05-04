@@ -2,9 +2,7 @@
 
 #include "svStringUtils.h"
 #include "svModelUtils.h"
-#include "svMeshSimAdaptor.h"
 
-//#include "cvSolidModel.h"
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkSmartPointer.h>
 #include <vtkErrorCode.h>
@@ -16,22 +14,21 @@
 #include <fstream>
 
 svMeshSim::svMeshSim()
-    : m_cvTetGetMesh(NULL)
+    : m_cvMeshSimMesh(NULL)
 {
-    m_Type="TetGen";
-    //m_cvTetGetMesh=new cvTetGenMeshObject(NULL);
+    m_Type="MeshSim";
 }
 
 svMeshSim::svMeshSim(const svMeshSim &other)
     : svMesh(other)
-    , m_cvTetGetMesh(other.m_cvTetGetMesh)
+    , m_cvMeshSimMesh(other.m_cvMeshSimMesh)
 {
 }
 
 svMeshSim::~svMeshSim()
 {
-    if(m_cvTetGetMesh!=NULL)
-        delete m_cvTetGetMesh;
+    if(m_cvMeshSimMesh!=NULL)
+        delete m_cvMeshSimMesh;
 }
 
 svMeshSim* svMeshSim::Clone()
@@ -41,10 +38,10 @@ svMeshSim* svMeshSim::Clone()
 
 void svMeshSim::InitNewMesher()
 {
-    if(m_cvTetGetMesh!=NULL)
-        delete m_cvTetGetMesh;
+    if(m_cvMeshSimMesh!=NULL)
+        delete m_cvMeshSimMesh;
 
-    m_cvTetGetMesh=new cvTetGenMeshObject(NULL);
+    m_cvMeshSimMesh=new cvMeshSimMeshObject(NULL);
 }
 
 bool svMeshSim::SetModelElement(svModelElement* modelElement)
@@ -52,7 +49,7 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
     if(!svMesh::SetModelElement(modelElement))
         return false;
 
-    if(m_cvTetGetMesh==NULL)
+    if(m_cvMeshSimMesh==NULL)
         return false;
 
     if(modelElement==NULL||modelElement->GetWholeVtkPolyData()==NULL)
@@ -62,7 +59,7 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
     char *mtype = const_cast<char *>(modelType.c_str());
     SolidModel_KernelT kernel= SolidModel_KernelT_StrToEnum( mtype);
 
-    m_cvTetGetMesh->SetSolidModelKernel(kernel);
+    m_cvMeshSimMesh->SetSolidModelKernel(kernel);
 
     vtkSmartPointer<vtkCleanPolyData> cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
     cleaner->SetInputData(modelElement->GetWholeVtkPolyData());
@@ -72,13 +69,13 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
     vtkpd->DeepCopy(cleaner->GetOutput());
     vtkpd->BuildLinks();
 
-    if(m_cvTetGetMesh->LoadModel(vtkpd)!=SV_OK)
+    if(m_cvMeshSimMesh->LoadModel(vtkpd)!=SV_OK)
         return false;
 
 //    //set walls
-//    //m_cvTetGetMesh->SetMeshOptions("MeshWallFirst",0,NULL) //not nessary, because in "SetWalls" it'll be set at 1 again.
+//    //m_cvMeshSimMesh->SetMeshOptions("MeshWallFirst",0,NULL) //not nessary, because in "SetWalls" it'll be set at 1 again.
 //    std::vector<int> wallFaceIDs=modelElement->GetWallFaceIDs();
-//    if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
+//    if(m_cvMeshSimMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
 //        return false;
 
     return true;
@@ -86,7 +83,7 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
 
 bool svMeshSim::Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg)
 {
-    if(m_cvTetGetMesh==NULL)
+    if(m_cvMeshSimMesh==NULL)
     {
         msg="No mesher created";
         return false;
@@ -118,7 +115,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
             values[1]=egdeSize;
         }
         char *mflag = const_cast<char *>(flag.c_str());
-        if(m_cvTetGetMesh->SetMeshOptions(mflag, 10, values)!=SV_OK)
+        if(m_cvMeshSimMesh->SetMeshOptions(mflag, 10, values)!=SV_OK)
         {
             msg="Failed in setting walls";
             return false;
@@ -133,7 +130,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
         }
 
         std::vector<int> wallFaceIDs=m_ModelElement->GetWallFaceIDs();
-        if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
+        if(m_cvMeshSimMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
         {
             msg="Failed ot set walls";
             return false;
@@ -142,7 +139,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     }
     else if(flag=="useCenterlineRadius")
     {
-        cvPolyData* solid=m_cvTetGetMesh->GetSolid();
+        cvPolyData* solid=m_cvMeshSimMesh->GetSolid();
         if(solid==NULL)
         {
             msg="No mesher model";
@@ -159,12 +156,12 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
         //delete centerlines;
         //delete solid;
 
-        m_cvTetGetMesh->SetVtkPolyDataObject(distance);
+        m_cvMeshSimMesh->SetVtkPolyDataObject(distance);
     }
     else if(flag=="functionBasedMeshing")
     {
         char *strv = const_cast<char *>(strValues[0].c_str());
-        if(m_cvTetGetMesh->SetSizeFunctionBasedMesh(values[0],strv)!=SV_OK)
+        if(m_cvMeshSimMesh->SetSizeFunctionBasedMesh(values[0],strv)!=SV_OK)
         {
             msg="Failed in function based meshing, such as radius based";
             return false;
@@ -173,7 +170,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     else if(flag=="boundaryLayer")
     {
         double H[2]={values[1],values[2]};
-        if(m_cvTetGetMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
+        if(m_cvMeshSimMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
         {
             msg="Failed in boudnary layer meshing";
             return false;
@@ -182,7 +179,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     else if(flag=="sphereRefinement")
     {
         double center[3]={values[2],values[3],values[4]};
-        if(m_cvTetGetMesh->SetSphereRefinement(values[0],values[1],center)!=SV_OK)
+        if(m_cvMeshSimMesh->SetSphereRefinement(values[0],values[1],center)!=SV_OK)
         {
             msg="Failed in sphere refinement";
             return false;
@@ -190,7 +187,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     }
     else if(flag=="generateMesh")
     {
-        if(m_cvTetGetMesh->GenerateMesh()!=SV_OK)
+        if(m_cvMeshSimMesh->GenerateMesh()!=SV_OK)
         {
             msg="Failed in generating mesh";
             return false;
@@ -198,7 +195,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     }
     else if(flag=="getBoundaries")
     {
-        if(m_cvTetGetMesh->GetBoundaryFaces(50)!=SV_OK)
+        if(m_cvMeshSimMesh->GetBoundaryFaces(50)!=SV_OK)
         {
             msg="Failed in getting boundary after boundary layer meshing";
             return false;
@@ -206,14 +203,14 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     }
     else if(flag=="writeMesh")
     {
-        if(m_cvTetGetMesh->WriteMesh(NULL,0)==SV_OK)
+        if(m_cvMeshSimMesh->WriteMesh(NULL,0)==SV_OK)
         {
-            vtkPolyData* surfaceMesh=m_cvTetGetMesh->GetPolyData()->GetVtkPolyData();
-            vtkUnstructuredGrid* volumeMesh=m_cvTetGetMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+            vtkPolyData* surfaceMesh=m_cvMeshSimMesh->GetPolyData()->GetVtkPolyData();
+            vtkUnstructuredGrid* volumeMesh=m_cvMeshSimMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
             if(surfaceMesh==NULL)
             {
-                delete m_cvTetGetMesh;
-                m_cvTetGetMesh=NULL;
+                delete m_cvMeshSimMesh;
+                m_cvMeshSimMesh=NULL;
                 msg="Empty mesh created";
                 return false;
             }
@@ -221,13 +218,13 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
             m_SurfaceMesh->DeepCopy(surfaceMesh);
             m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
             m_VolumeMesh->DeepCopy(volumeMesh);
-            delete m_cvTetGetMesh;
-            m_cvTetGetMesh=NULL;
+            delete m_cvMeshSimMesh;
+            m_cvMeshSimMesh=NULL;
         }
         else
         {
-            delete m_cvTetGetMesh;
-            m_cvTetGetMesh=NULL;
+            delete m_cvMeshSimMesh;
+            m_cvMeshSimMesh=NULL;
             msg="Failed in writing meshing";
             return false;
         }
@@ -430,9 +427,9 @@ bool svMeshSim::ParseCommand(std::string cmd, std::string& flag, double values[2
 
 }
 
-cvTetGenMeshObject* svMeshSim::GetMesher()
+cvMeshSimMeshObject* svMeshSim::GetMesher()
 {
-    return m_cvTetGetMesh;
+    return m_cvMeshSimMesh;
 }
 
 svMesh* svMeshSim::CreateMesh()

@@ -50,7 +50,7 @@ public:
 
   protected:
 
-    cvTetGenMeshObject* m_cvTetGetMesh;
+    cvTetGenMeshObject* m_cvTetGenMesh;
 
   };
 

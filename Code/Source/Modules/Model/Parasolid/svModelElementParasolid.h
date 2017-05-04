@@ -37,6 +37,9 @@ public:
     virtual bool ReadFile(std::string filePath) override;
 
     virtual bool WriteFile(std::string filePath) override;
+
+    virtual std::string GetFaceIdentifierFromInnerSolid(std::string faceName) override;
+
 };
 
 #endif // SVMODELELEMENTPARASOLID_H

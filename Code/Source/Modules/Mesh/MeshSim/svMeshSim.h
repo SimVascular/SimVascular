@@ -27,7 +27,7 @@ public:
 
     bool ParseCommand(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) override;
 
-    cvTetGenMeshObject* GetMesher();
+    cvMeshSimMeshObject* GetMesher();
 
     static svMesh* CreateMesh();
 
@@ -49,7 +49,7 @@ public:
 
   protected:
 
-    cvTetGenMeshObject* m_cvTetGetMesh;
+    cvMeshSimMeshObject* m_cvMeshSimMesh;
 
   };
 

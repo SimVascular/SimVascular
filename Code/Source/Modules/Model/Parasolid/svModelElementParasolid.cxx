@@ -14,8 +14,6 @@ svModelElementParasolid::svModelElementParasolid()
 svModelElementParasolid::svModelElementParasolid(const svModelElementParasolid &other)
     : svModelElementAnalytic(other)
 {
-    m_InnerSolid=new cvParasolidSolidModel();
-    m_InnerSolid->Copy(*(other.m_InnerSolid));
 }
 
 svModelElementParasolid::~svModelElementParasolid()
@@ -73,3 +71,12 @@ bool svModelElementParasolid::WriteFile(std::string filePath)
     return true;
 }
 
+std::string svModelElementParasolid::GetFaceIdentifierFromInnerSolid(std::string faceName)
+{
+    int faceID=GetFaceIDFromInnerSolid(faceName);
+    char* value;
+    m_InnerSolid->GetFaceAttribute("identifier",faceID,&value);
+    std::string idtf(value);
+
+    return idtf;
+}

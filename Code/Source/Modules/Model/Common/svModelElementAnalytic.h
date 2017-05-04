@@ -6,8 +6,6 @@
 #include "svModelElement.h"
 #include "svModelElementPolyData.h"
 
-#include "cvSolidModel.h"
-
 class SVMODEL_EXPORT svModelElementAnalytic : public svModelElement
 {
 public:
@@ -26,13 +24,13 @@ public:
 
     virtual void AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii) override;
 
-    virtual void SetFaceName(std::string name, int id) override;
+//    virtual void SetFaceName(std::string name, int id) override;
 
-    virtual int GetFaceIDFromInnerSolid(std::string faceName);
+//    virtual int GetFaceIDFromInnerSolid(std::string faceName) override;
 
-    virtual std::vector<int> GetFaceIDsFromInnerSolid();
+//    virtual std::vector<int> GetFaceIDsFromInnerSolid() override;
 
-    virtual std::string GetFaceNameFromInnerSolid(int id);
+//    virtual std::string GetFaceNameFromInnerSolid(int id) override;
 
     virtual double GetMaxDist();
 
@@ -40,13 +38,11 @@ public:
 
     virtual svModelElementPolyData* ConverToPolyDataModel();
 
-    virtual cvSolidModel* GetInnerSolid();
+//    virtual cvSolidModel* GetInnerSolid();
 
-    virtual void SetInnerSolid(cvSolidModel* innerSolid);
+//    virtual void SetInnerSolid(cvSolidModel* innerSolid);
 
 protected:
-
-    cvSolidModel* m_InnerSolid;
 
     double m_MaxDist;
 

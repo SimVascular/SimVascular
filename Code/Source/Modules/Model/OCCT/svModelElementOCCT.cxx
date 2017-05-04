@@ -14,8 +14,6 @@ svModelElementOCCT::svModelElementOCCT()
 svModelElementOCCT::svModelElementOCCT(const svModelElementOCCT &other)
     : svModelElementAnalytic(other)
 {
-    m_InnerSolid=new cvOCCTSolidModel();
-    m_InnerSolid->Copy(*(other.m_InnerSolid));
 }
 
 svModelElementOCCT::~svModelElementOCCT()
