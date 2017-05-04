@@ -1,9 +1,10 @@
 #include <svModelOCCTExports.h>
 
+#include "cv_globals.h"
+
 #include "svModelElementFactory.h"
 #include "svModelElementOCCT.h"
 
-#include "cv_globals.h"
 #include <TDocStd_Document.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFApp_Application.hxx>

@@ -3,6 +3,7 @@
 
 #include <svModelExports.h>
 
+#define __CVMISC_UTILS_H //avoid including cv_misc_utils.h from cvSolidModel.h
 #include "cvSolidModel.h"
 
 #include <mitkDataNode.h>
