@@ -104,6 +104,7 @@ public:
   // Routines promoted to abstract class from concrete implementation
   virtual int LoadModel(char *filename) = 0;
   virtual int LoadModel(vtkPolyData *pd) = 0;
+  virtual int LoadModel(cvSolidModel *cvModel) = 0;
   virtual int GetBoundaryFaces(double angle) = 0;
   virtual int LoadMesh(char *filename,char *surfilename) = 0;
   virtual int NewMesh() = 0;
