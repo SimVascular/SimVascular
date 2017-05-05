@@ -34,6 +34,11 @@ svMesh::svMesh(const svMesh &other)
 
 svMesh::~svMesh()
 {
+    if(m_SurfaceMesh)
+        delete m_SurfaceMesh;
+
+    if(m_VolumeMesh)
+        delete m_VolumeMesh;
 }
 
 svMesh* svMesh::Clone()

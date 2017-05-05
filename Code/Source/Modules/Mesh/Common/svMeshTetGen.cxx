@@ -118,7 +118,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
         char *mflag = const_cast<char *>(flag.c_str());
         if(m_cvTetGenMesh->SetMeshOptions(mflag, 10, values)!=SV_OK)
         {
-            msg="Failed in setting walls";
+            msg="Failed in setting mesh options";
             return false;
         }
     }
@@ -219,7 +219,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
             m_SurfaceMesh->DeepCopy(surfaceMesh);
             m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
             m_VolumeMesh->DeepCopy(volumeMesh);
-            delete m_cvTetGenMesh;
+            delete m_cvTetGenMesh;//Get all data;ok to delete inner mesh
             m_cvTetGenMesh=NULL;
         }
         else

@@ -24,23 +24,11 @@ public:
 
     virtual void AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii) override;
 
-//    virtual void SetFaceName(std::string name, int id) override;
-
-//    virtual int GetFaceIDFromInnerSolid(std::string faceName) override;
-
-//    virtual std::vector<int> GetFaceIDsFromInnerSolid() override;
-
-//    virtual std::string GetFaceNameFromInnerSolid(int id) override;
-
     virtual double GetMaxDist();
 
     virtual void SetMaxDist(double maxDist);
 
     virtual svModelElementPolyData* ConverToPolyDataModel();
-
-//    virtual cvSolidModel* GetInnerSolid();
-
-//    virtual void SetInnerSolid(cvSolidModel* innerSolid);
 
 protected:
 

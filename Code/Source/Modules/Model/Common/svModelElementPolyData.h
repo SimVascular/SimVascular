@@ -26,10 +26,6 @@ public:
 
     virtual vtkSmartPointer<vtkPolyData> CreateWholeVtkPolyData() override;
 
-//    vtkSmartPointer<vtkPolyData> GetSolidModel() const;
-
-//    void SetSolidModel(vtkSmartPointer<vtkPolyData> solidModel);
-
     bool DeleteFaces(std::vector<int> faceIDs);
 
     bool CombineFaces(std::vector<int> faceIDs);
@@ -107,8 +103,6 @@ public:
     virtual bool WriteFile(std::string filePath) override;
 
   protected:
-
-//    vtkSmartPointer<vtkPolyData> m_SolidModel;
 
     std::vector<int> m_SelectedCellIDs;
   };

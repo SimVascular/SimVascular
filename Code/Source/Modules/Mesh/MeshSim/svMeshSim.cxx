@@ -52,7 +52,7 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
     if(m_cvMeshSimMesh==NULL)
         return false;
 
-    if(modelElement==NULL||modelElement->GetWholeVtkPolyData()==NULL)
+    if(modelElement==NULL||modelElement->GetInnerSolid()==NULL)
         return false;
 
     std::string modelType=modelElement->GetType();
@@ -61,22 +61,8 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
 
     m_cvMeshSimMesh->SetSolidModelKernel(kernel);
 
-    vtkSmartPointer<vtkCleanPolyData> cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
-    cleaner->SetInputData(modelElement->GetWholeVtkPolyData());
-    cleaner->Update();
-
-    vtkSmartPointer<vtkPolyData> vtkpd=vtkSmartPointer<vtkPolyData>::New();
-    vtkpd->DeepCopy(cleaner->GetOutput());
-    vtkpd->BuildLinks();
-
-    if(m_cvMeshSimMesh->LoadModel(vtkpd)!=SV_OK)
+    if(m_cvMeshSimMesh->LoadModel(modelElement->GetInnerSolid())!=SV_OK)
         return false;
-
-//    //set walls
-//    //m_cvMeshSimMesh->SetMeshOptions("MeshWallFirst",0,NULL) //not nessary, because in "SetWalls" it'll be set at 1 again.
-//    std::vector<int> wallFaceIDs=modelElement->GetWallFaceIDs();
-//    if(m_cvMeshSimMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
-//        return false;
 
     return true;
 }
@@ -97,80 +83,52 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
 
     if(option)
     {
-        if(flag=="LocalEdgeSize")
+        if(flag=="LocalEdgeSize" || flag=="LocalCurvature" || flag=="LocalCurvatureMin" )
         {
             if(m_ModelElement==NULL)
             {
                 msg="Model not assigned to the mesher";
                 return false;
             }
-            int faceID=m_ModelElement->GetFaceID(strValues[0]);
-            if(faceID<0)
+            std::string idtf=m_ModelElement->GetFaceIdentifierFromInnerSolid(strValues[0]);
+            int ident=std::stoi(idtf);
+
+            if(ident<0)
             {
-                msg="ID not found for face: "+strValues[0];
+                msg="Identifier not found for face: "+strValues[0];
                 return false;
             }
-            double egdeSize=values[0];
-            values[0]=faceID;
-            values[1]=egdeSize;
+            values[0]=ident;
         }
         char *mflag = const_cast<char *>(flag.c_str());
         if(m_cvMeshSimMesh->SetMeshOptions(mflag, 10, values)!=SV_OK)
         {
-            msg="Failed in setting walls";
+            msg="Failed in setting mesh options";
             return false;
         }
     }
-    else if(flag=="setWalls")
+    else if(flag=="boundaryLayer")
     {
         if(m_ModelElement==NULL)
         {
             msg="Model not assigned to the mesher";
             return false;
         }
+        std::string idtf=m_ModelElement->GetFaceIdentifierFromInnerSolid(strValues[0]);
+        int ident=std::stoi(idtf);
 
-        std::vector<int> wallFaceIDs=m_ModelElement->GetWallFaceIDs();
-        if(m_cvMeshSimMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
+        if(ident<0)
         {
-            msg="Failed ot set walls";
+            msg="Identifier not found for face: "+strValues[0];
             return false;
         }
+        values[0]=ident;
 
-    }
-    else if(flag=="useCenterlineRadius")
-    {
-        cvPolyData* solid=m_cvMeshSimMesh->GetSolid();
-        if(solid==NULL)
-        {
-            msg="No mesher model";
-            return false;
-        }
-        vtkPolyData* centerlines=svModelUtils::CreateCenterlines(solid->GetVtkPolyData());
-        vtkPolyData* distance=svModelUtils::CalculateDistanceToCenterlines(centerlines, solid->GetVtkPolyData());
-        if(distance==NULL)
-        {
-            msg="Failed in calculating distance to centerlines";
-            return false;
-        }
+        double H[10]={0};
+        for(int i=0;i<values[4];i++)
+            H[i]=values[5+i];
 
-        //delete centerlines;
-        //delete solid;
-
-        m_cvMeshSimMesh->SetVtkPolyDataObject(distance);
-    }
-    else if(flag=="functionBasedMeshing")
-    {
-        char *strv = const_cast<char *>(strValues[0].c_str());
-        if(m_cvMeshSimMesh->SetSizeFunctionBasedMesh(values[0],strv)!=SV_OK)
-        {
-            msg="Failed in function based meshing, such as radius based";
-            return false;
-        }
-    }
-    else if(flag=="boundaryLayer")
-    {
-        double H[2]={values[1],values[2]};
-        if(m_cvMeshSimMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
+        if(m_cvMeshSimMesh->SetBoundaryLayer(values[1], values[0], values[2], values[3], H)!=SV_OK)
         {
             msg="Failed in boudnary layer meshing";
             return false;
@@ -193,41 +151,30 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
             return false;
         }
     }
-    else if(flag=="getBoundaries")
-    {
-        if(m_cvMeshSimMesh->GetBoundaryFaces(50)!=SV_OK)
-        {
-            msg="Failed in getting boundary after boundary layer meshing";
-            return false;
-        }
-    }
     else if(flag=="writeMesh")
     {
-        if(m_cvMeshSimMesh->WriteMesh(NULL,0)==SV_OK)
-        {
-            vtkPolyData* surfaceMesh=m_cvMeshSimMesh->GetPolyData()->GetVtkPolyData();
-            vtkUnstructuredGrid* volumeMesh=m_cvMeshSimMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
-            if(surfaceMesh==NULL)
-            {
-                delete m_cvMeshSimMesh;
-                m_cvMeshSimMesh=NULL;
-                msg="Empty mesh created";
-                return false;
-            }
-            m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
-            m_SurfaceMesh->DeepCopy(surfaceMesh);
-            m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
-            m_VolumeMesh->DeepCopy(volumeMesh);
-            delete m_cvMeshSimMesh;
-            m_cvMeshSimMesh=NULL;
-        }
-        else
-        {
-            delete m_cvMeshSimMesh;
-            m_cvMeshSimMesh=NULL;
-            msg="Failed in writing meshing";
-            return false;
-        }
+        cvUnstructuredGrid* cvug=m_cvMeshSimMesh->GetUnstructuredGrid();
+        if(cvug)
+            m_VolumeMesh=cvug->GetVtkUnstructuredGrid();
+
+        cvPolyData* cvpd=m_cvMeshSimMesh->GetPolyData();
+        if(cvpd)
+            m_SurfaceMesh=cvpd->GetVtkPolyData();
+
+        delete m_cvMeshSimMesh;
+        m_cvMeshSimMesh=NULL;
+    }
+    else if(flag=="logon")
+    {
+        m_cvMeshSimMesh->Logon(strValues[0].c_str());
+    }
+    else if(flag=="logoff")
+    {
+        m_cvMeshSimMesh->Logoff();
+    }
+    else if(flag=="writeStats")
+    {
+        m_cvMeshSimMesh->WriteStats(const_cast<char*>(strValues[0].c_str()));
     }
     else
     {
@@ -270,11 +217,35 @@ bool svMeshSim::ParseCommand(std::string cmd, std::string& flag, double values[2
     params[0]=svStringUtils_lower(params[0]);
 
     try{
-
-        if(paramSize==2 && (params[0]=="surfacemesh" || params[0]=="surface"))
+        if(paramSize==2 && params[0]=="logon")
+        {
+            flag="logon";
+            strValues[0]=params[1];
+        }
+        else if(params[0]=="logoff")
+        {
+            flag="logoff";
+        }
+        else if(params[0]=="newmesh")
+        {
+            flag="newMesh";
+        }
+        else if(paramSize==2 && (params[0]=="surfacemesh" || params[0]=="surface"))
         {
             flag="SurfaceMeshFlag";
             values[0]=std::stod(params[1]);
+            option=true;
+        }
+        else if(paramSize==3 && params[0]=="surface" && params[1]=="optimization")
+        {
+            flag="SurfaceOptimization";
+            values[0]=std::stod(params[2]);
+            option=true;
+        }
+        else if(paramSize==3 && params[0]=="surface" && params[1]=="smoothing")
+        {
+            flag="SurfaceSmoothing";
+            values[0]=std::stod(params[2]);
             option=true;
         }
         else if(paramSize==2 && (params[0]=="volumemesh" || params[0]=="volume"))
@@ -283,52 +254,78 @@ bool svMeshSim::ParseCommand(std::string cmd, std::string& flag, double values[2
             values[0]=std::stod(params[1]);
             option=true;
         }
-        else if(paramSize==2 && params[0]=="usemmg")
+        else if(paramSize==3 && params[0]=="volume" && params[1]=="optimization")
         {
-            flag="UseMMG";
-            values[0]=std::stod(params[1]);
+            flag="VolumeOptimization";
+            values[0]=std::stod(params[2]);
             option=true;
         }
-        else if(params[0]=="setwalls")
+        else if(paramSize==3 && params[0]=="volume" && params[1]=="smoothing")
         {
-            flag="setWalls";
+            flag="VolumeSmoothing";
+            values[0]=std::stod(params[2]);
+            option=true;
         }
-        else if(paramSize==2 && (params[0]=="globaledgesize" || params[0]=="gsize" || params[0]=="a"))
+        else if(paramSize==3 && (params[0]=="globaledgesize" || params[0]=="gsize"))
         {
             flag="GlobalEdgeSize";
             values[0]=std::stod(params[1]);
+            values[1]=std::stod(params[2]);
             option=true;
         }
-        else if(params[0]=="usecenterlineradius")
+        else if(paramSize==3 && (params[0]=="globalcurvature" || params[0]=="gcurv"))
         {
-            flag="useCenterlineRadius";
-        }
-        else if(paramSize==3 && params[0]=="functionbasedmeshing")
-        {
-            flag="functionBasedMeshing";
-            values[0]=std::stod(params[1]);
-            strValues[0]=params[2];
-        }
-        else if(paramSize==4 && params[0]=="boundarylayer")
-        {
-            flag="boundaryLayer";
+            flag="GlobalCurvature";
             values[0]=std::stod(params[1]);
             values[1]=std::stod(params[2]);
+            option=true;
+        }
+        else if(paramSize==3 && (params[0]=="globalcurvaturemin" || params[0]=="gmincurv"))
+        {
+            flag="GlobalCurvatureMin";
+            values[0]=std::stod(params[1]);
+            values[1]=std::stod(params[2]);
+            option=true;
+        }
+        else if(paramSize==4 && (params[0]=="size" || params[0]=="localedgesize" || params[0]=="localsize"))
+        {
+            flag="LocalEdgeSize";
+            strValues[0]=params[1];
+            //values[0] will be set at Execute
+            values[1]=std::stod(params[2]);
             values[2]=std::stod(params[3]);
-        }
-        else if(paramSize==3 && (params[0]=="localedgesize" || params[0]=="localsize"))
-        {
-            flag="LocalEdgeSize";
-            values[0]=std::stod(params[2]);
-            strValues[0]=params[1];
             option=true;
         }
-        else if(paramSize==4 && params[0]=="localsize")
+        else if(paramSize==4 && (params[0]=="curv" || params[0]=="localcurvature" ))
         {
-            flag="LocalEdgeSize";
-            values[0]=std::stod(params[3]);
+            flag="LocalCurvature";
             strValues[0]=params[1];
+            //values[0] will be set at Execute
+            values[1]=std::stod(params[2]);
+            values[2]=std::stod(params[3]);
             option=true;
+        }
+        else if(paramSize==4 && (params[0]=="mincurv" || params[0]=="localcurvaturemin" ))
+        {
+            flag="LocalCurvatureMin";
+            strValues[0]=params[1];
+            //values[0] will be set at Execute
+            values[1]=std::stod(params[2]);
+            values[2]=std::stod(params[3]);
+            option=true;
+        }
+        else if(paramSize>=5 && params[0]=="boundarylayer")
+        {
+            flag="boundaryLayer";
+            strValues[0]=params[1];
+            //values[0] will be set at Execute
+            values[1]=std::stod(params[2]);
+            values[2]=std::stod(params[3]);
+            values[3]=std::stod(params[4]);
+            int count=paramSize-5;
+            values[4]=count;
+            for(int i=0;i<count;i++)
+                values[5+i]=std::stod(params[5+i]);
         }
         else if(paramSize==6 && params[0]=="sphererefinement")
         {
@@ -339,76 +336,17 @@ bool svMeshSim::ParseCommand(std::string cmd, std::string& flag, double values[2
             values[3]=std::stod(params[4]);
             values[4]=std::stod(params[5]);
         }
-        else if(paramSize==2 && params[0]=="optimization")
-        {
-            flag="Optimization";
-            values[0]=std::stod(params[1]);
-            option=true;
-        }
-        else if(paramSize==2 && params[0]=="qualityratio")
-        {
-            flag="QualityRatio";
-            values[0]=std::stod(params[1]);
-            option=true;
-        }
-        else if(params[0]=="nobisect")
-        {
-            flag="NoBisect";
-            option=true;
-        }
         else if(params[0]=="generatemesh")
         {
             flag="generateMesh";
-        }
-        else if(params[0]=="getboundaries")
-        {
-            flag="getBoundaries";
         }
         else if(params[0]=="writemesh")
         {
             flag="writeMesh";
         }
-        else if(paramSize==2 && params[0]=="epsilon")
+        else if(params[0]=="writestats")
         {
-            flag="Epsilon";
-            values[0]=std::stod(params[1]);
-            option=true;
-        }
-        else if(params[0]=="nomerge")
-        {
-            flag="NoMerge";
-            option=true;
-        }
-        else if(params[0]=="diagnose")
-        {
-            flag="Diagnose";
-            option=true;
-        }
-        else if(params[0]=="check")
-        {
-            flag="Check";
-            option=true;
-        }
-        else if(params[0]=="quiet")
-        {
-            flag="Quiet";
-            option=true;
-        }
-        else if(params[0]=="verbose")
-        {
-            flag="Verbose";
-            option=true;
-        }
-        else if(params[0]=="meshwallfirst")
-        {
-            flag="MeshWallFirst";
-            option=true;
-        }
-        else if(paramSize==2 && params[0]=="hausd")
-        {
-            flag="Hausd";
-            values[0]=std::stod(params[1]);
-            option=true;
+            flag="writeStats";
         }
         else
         {
