@@ -81,7 +81,10 @@ bool svMeshLegacyIO::WriteFiles(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSma
         if(face)
         {
             vtkSmartPointer<vtkPolyData> facepd=vtkSmartPointer<vtkPolyData>::New();
-            PlyDtaUtils_GetFacePolyData(surfaceMesh.GetPointer(), &face->id, facepd);
+            //for non-parasolid model, ident=faceid
+            int ident=modelElement->GetFaceIdentifierFromInnerSolid(face->id);
+//            PlyDtaUtils_GetFacePolyData(surfaceMesh.GetPointer(), &face->id, facepd);
+            PlyDtaUtils_GetFacePolyData(surfaceMesh.GetPointer(), &ident, facepd);
 
             vtpFilePath=meshDir+"/mesh-surfaces/"+QString::fromStdString(face->name)+".vtp";
             vtpFilePath=QDir::toNativeSeparators(vtpFilePath);

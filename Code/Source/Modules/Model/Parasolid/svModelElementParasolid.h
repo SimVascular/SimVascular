@@ -38,9 +38,9 @@ public:
 
     virtual bool WriteFile(std::string filePath) override;
 
-    virtual std::string GetFaceIdentifierFromInnerSolid(std::string faceName) override;
+    virtual int GetFaceIdentifierFromInnerSolid(std::string faceName) override;
 
-    virtual std::string GetFaceIdentifierFromInnerSolid(int faceID) override;
+    virtual int GetFaceIdentifierFromInnerSolid(int faceID) override;
 };
 
 #endif // SVMODELELEMENTPARASOLID_H

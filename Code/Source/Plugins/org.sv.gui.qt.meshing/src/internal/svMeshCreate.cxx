@@ -6,6 +6,7 @@
 #include "svMitkMesh.h"
 #include "svModel.h"
 #include "svDataNodeOperation.h"
+#include "svMeshFactory.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -121,13 +122,14 @@ void svMeshCreate::SetupMeshType(int idx)
 
         std::string modelType=model->GetType();
 
-        ui->comboBoxMeshType->addItem("TetGen");
+        std::vector<std::string> types=svMeshFactory::GetAvailableTypes();
+        for(int i=0;i<types.size();i++)
+            ui->comboBoxMeshType->addItem(QString::fromStdString(types[i]));
 
-#ifdef SV_USE_MESHSIM_QT_GUI
-            ui->comboBoxMeshType->addItem("MeshSim");
             if(modelType=="Parasolid")
                 ui->comboBoxMeshType->setCurrentText("MeshSim");
-#endif
+            else
+                ui->comboBoxMeshType->setCurrentText("TetGen");
 
     }
 }
@@ -167,6 +169,14 @@ void svMeshCreate::CreateMesh()
         return;
     }
 
+    std::string modelType=model->GetType();
+    std::string meshType=ui->comboBoxMeshType->currentText().toStdString();
+    if( (modelType=="PolyData" || modelType=="OpenCASCADE") &&  meshType=="MeshSim" )
+    {
+        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(meshType)+ " doesn't work with " +QString::fromStdString(modelType)) + " model.";
+        return;
+    }
+
     std::string meshName=ui->lineEditMeshName->text().trimmed().toStdString();
 
     if(meshName==""){
@@ -182,17 +192,6 @@ void svMeshCreate::CreateMesh()
     svMitkMesh::Pointer mitkMesh = svMitkMesh::New();
     mitkMesh->SetModelName(selectedModelNode->GetName());
     mitkMesh->SetType(ui->comboBoxMeshType->currentText().toStdString());
-//    if(model->GetType()=="PolyData")
-//        mitkMesh->SetType("TetGen");
-//    else if(model->GetType()=="OpenCASCADE")
-//        mitkMesh->SetType("MeshSim");
-//    else if(model->GetType()=="Parasolid")
-//        mitkMesh->SetType("MeshSim");
-//    else
-//    {
-//        QMessageBox::warning(NULL,"The model type is unknown and not supported","Please make sure the model is valid!");
-//        return;
-//    }
     mitkMesh->SetDataModified();
 
     mitk::DataNode::Pointer meshNode = mitk::DataNode::New();

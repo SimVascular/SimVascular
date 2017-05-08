@@ -3,13 +3,6 @@
 #include "svStringUtils.h"
 #include "svModelUtils.h"
 
-#include <vtkXMLPolyDataWriter.h>
-#include <vtkSmartPointer.h>
-#include <vtkErrorCode.h>
-#include <vtkXMLUnstructuredGridWriter.h>
-#include <vtkXMLPolyDataReader.h>
-#include <vtkXMLUnstructuredGridReader.h>
-
 #include <iostream>
 #include <fstream>
 
@@ -436,84 +429,6 @@ cvTetGenMeshObject* svMeshTetGen::GetMesher()
 svMesh* svMeshTetGen::CreateMesh()
 {
     return new svMeshTetGen();
-}
-
-bool svMeshTetGen::WriteSurfaceFile(std::string filePath)
-{
-    if(m_SurfaceMesh)
-    {
-        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-        writer->SetFileName(filePath.c_str());
-        writer->SetInputData(m_SurfaceMesh);
-        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-        {
-            std::cerr << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool svMeshTetGen::WriteVolumeFile(std::string filePath)
-{
-    if(m_VolumeMesh)
-    {
-        vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-        writer->SetFileName(filePath.c_str());
-        writer->SetInputData(m_VolumeMesh);
-        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-        {
-            std::cerr << "vtkXMLUnstructuredGridWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool svMeshTetGen::ReadSurfaceFile(std::string filePath)
-{
-    m_SurfaceMesh=CreateSurfaceMeshFromFile(filePath);
-
-    return true;
-}
-
-bool svMeshTetGen::ReadVolumeFile(std::string filePath)
-{
-    m_VolumeMesh=CreateVolumeMeshFromFile(filePath);
-
-    return true;
-}
-
-vtkSmartPointer<vtkPolyData> svMeshTetGen::CreateSurfaceMeshFromFile(std::string filePath)
-{
-    vtkSmartPointer<vtkPolyData> surfaceMesh=NULL;
-    std::ifstream surfaceFile(filePath);
-    if (surfaceFile) {
-        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-
-        reader->SetFileName(filePath.c_str());
-        reader->Update();
-        surfaceMesh=reader->GetOutput();
-    }
-
-    return surfaceMesh;
-}
-
-vtkSmartPointer<vtkUnstructuredGrid> svMeshTetGen::CreateVolumeMeshFromFile(std::string filePath)
-{
-    vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=NULL;
-    std::ifstream volumeFile(filePath);
-    if (volumeFile) {
-        vtkSmartPointer<vtkXMLUnstructuredGridReader> reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-
-        reader->SetFileName(filePath.c_str());
-        reader->Update();
-        volumeMesh=reader->GetOutput();
-    }
-
-    return volumeMesh;
 }
 
 //bool svMeshTetGen::WriteMeshComplete(vtkSmartPointer<vtkPolyData> surfaceMesh

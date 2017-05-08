@@ -1,22 +1,22 @@
-#include <svModelExports.h>
+#include <svMeshSimExports.h>
 
 #include "svMeshFactory.h"
-#include "svMeshTetGen.h"
-#include "svMeshTetGenAdaptor.h"
+#include "svMeshSim.h"
+//#include "svMeshSimAdaptor.h"
 
-struct SVMESH_EXPORT svRegisterTetGenFunction{
+struct SVMESHSIM_EXPORT svRegisterMeshSimFunction{
 
-    svRegisterTetGenFunction()
+    svRegisterMeshSimFunction()
     {
-        svMeshTetGen* tempmesh=new svMeshTetGen();
+        svMeshSim* tempmesh=new svMeshSim();
         std::string type=tempmesh->GetType();
-        svMeshFactory::RegisterCreationFunction(type, &svMeshTetGen::CreateMesh);
-        svMeshFactory::RegisterFileExtensions(type, tempmesh->GetFileExtensions());
-        svMeshFactory::RegisterAdaptorFunction(type, &svMeshTetGenAdaptor::CreateAdaptor);
+        svMeshFactory::RegisterCreationFunction(type, &svMeshSim::CreateMesh);
+//        svMeshFactory::RegisterFileExtensions(type, tempmesh->GetFileExtensions());
+//        svMeshFactory::RegisterAdaptorFunction(type, &svMesSimAdaptor::CreateAdaptor);
         delete tempmesh;
     }
 
-    virtual ~svRegisterTetGenFunction(){}
+    virtual ~svRegisterMeshSimFunction(){}
 };
 
-static svRegisterTetGenFunction registerTetGenFunction;
+static svRegisterMeshSimFunction registerMeshSimFunction;

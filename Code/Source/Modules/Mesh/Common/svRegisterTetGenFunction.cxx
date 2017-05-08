@@ -1,4 +1,4 @@
-#include <svModelExports.h>
+#include <svMeshExports.h>
 
 #include "svMeshFactory.h"
 #include "svMeshTetGen.h"

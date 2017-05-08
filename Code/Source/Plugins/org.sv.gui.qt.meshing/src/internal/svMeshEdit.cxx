@@ -581,12 +581,11 @@ void svMeshEdit::RunCommands(bool fromGUI)
 
     if(!m_Model) return;
 
-    svModelElementPolyData* modelElement=NULL;
-    modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
 
     if(modelElement==NULL)
     {
-        svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(modelElement);
+        svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(m_Model->GetModelElement());
         if(meAnalytic)
         {
             mitk::StatusBar::GetInstance()->DisplayText("converting to PolyData ...");

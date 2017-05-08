@@ -9,6 +9,7 @@
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLUnstructuredGridReader.h>
+#include <vtkAppendPolyData.h>
 
 #include <iostream>
 #include <fstream>
@@ -157,9 +158,10 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
         if(cvug)
             m_VolumeMesh=cvug->GetVtkUnstructuredGrid();
 
-        cvPolyData* cvpd=m_cvMeshSimMesh->GetPolyData();
-        if(cvpd)
-            m_SurfaceMesh=cvpd->GetVtkPolyData();
+//        cvPolyData* cvpd=m_cvMeshSimMesh->GetPolyData();
+//        if(cvpd)
+//            m_SurfaceMesh=cvpd->GetVtkPolyData();
+        m_SurfaceMesh=CreateSurfaceMeshContainingModelFaceIDs();//faces ids are actually face identifiers from inner solid model
 
         delete m_cvMeshSimMesh;
         m_cvMeshSimMesh=NULL;
@@ -465,3 +467,53 @@ vtkSmartPointer<vtkUnstructuredGrid> svMeshSim::CreateVolumeMeshFromFile(std::st
 //{
 
 //}
+
+vtkSmartPointer<vtkPolyData> svMeshSim::CreateSurfaceMeshContainingModelFaceIDs()
+{
+    vtkSmartPointer<vtkPolyData> result=NULL;
+
+    bool wallFound=false;
+    vtkSmartPointer<vtkAppendPolyData> wallAppender=vtkSmartPointer<vtkAppendPolyData>::New();
+    wallAppender->UserManagedInputsOff();
+
+    if(m_ModelElement==NULL)
+        return result;
+
+    std::vector<int> faceIDs=m_ModelElement->GetFaceIDsFromInnerSolid();
+
+    for(int i=0;i<faceIDs.size();i++)
+    {
+        cvPolyData* cvpd=m_cvMeshSimMesh->GetFacePolyData(faceIDs[i]);
+        if(cvpd==NULL)
+            continue;
+
+        vtkSmartPointer<vtkPolyData> facepd=cvpd->GetVtkPolyData();
+        if(facepd==NULL)
+            continue;
+
+        int ident=m_ModelElement->GetFaceIdentifierFromInnerSolid(faceIDs[i]);
+
+        vtkSmartPointer<vtkIntArray> scalarArray=vtkSmartPointer<vtkIntArray>::New();
+        scalarArray->SetName("ModelFaceID");
+        for (vtkIdType cellId=0;cellId<facepd->GetNumberOfCells();cellId++)
+            scalarArray->InsertNextValue(ident);
+
+        facepd->GetCellData()->AddArray(scalarArray);
+
+        wallAppender->AddInputData(facepd);
+        wallFound=true;
+    }
+
+    if(wallFound)
+    {
+        wallAppender->Update();
+        vtkSmartPointer<vtkCleanPolyData> cleaner=vtkSmartPointer<vtkCleanPolyData>::New();
+        cleaner->PointMergingOn();
+        cleaner->PieceInvariantOff();
+        cleaner->SetInputData(wallAppender->GetOutput());
+        cleaner->Update();
+        result=cleaner->GetOutput();
+    }
+
+    return result;
+}

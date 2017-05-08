@@ -47,6 +47,8 @@ public:
 
 //    bool WriteMeshComplete(std::string meshDir) override;
 
+    vtkSmartPointer<vtkPolyData> CreateSurfaceMeshContainingModelFaceIDs();
+
   protected:
 
     cvMeshSimMeshObject* m_cvMeshSimMesh;

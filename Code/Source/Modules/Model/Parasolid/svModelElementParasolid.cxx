@@ -71,21 +71,23 @@ bool svModelElementParasolid::WriteFile(std::string filePath)
     return true;
 }
 
-std::string svModelElementParasolid::GetFaceIdentifierFromInnerSolid(std::string faceName)
+int svModelElementParasolid::GetFaceIdentifierFromInnerSolid(std::string faceName)
 {
     int faceID=GetFaceIDFromInnerSolid(faceName);
     char* value;
     m_InnerSolid->GetFaceAttribute("identifier",faceID,&value);
     std::string idtf(value);
+    int ident=std::stoi(idtf);
 
-    return idtf;
+    return ident;
 }
 
-std::string svModelElementParasolid::GetFaceIdentifierFromInnerSolid(int faceID)
+int svModelElementParasolid::GetFaceIdentifierFromInnerSolid(int faceID)
 {
     char* value;
     m_InnerSolid->GetFaceAttribute("identifier",faceID,&value);
     std::string idtf(value);
+    int ident=std::stoi(idtf);
 
-    return idtf;
+    return ident;
 }

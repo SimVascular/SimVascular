@@ -5,7 +5,6 @@
 
 #include <svMesh.h>
 
-
 #include <cvTetGenMeshObject.h>
 
 class SVMESH_EXPORT svMeshTetGen : public svMesh
@@ -31,18 +30,6 @@ public:
     cvTetGenMeshObject* GetMesher();
 
     static svMesh* CreateMesh();
-
-    bool WriteSurfaceFile(std::string filePath) override;
-
-    bool WriteVolumeFile(std::string filePath) override;
-
-    bool ReadSurfaceFile(std::string filePath) override;
-
-    bool ReadVolumeFile(std::string filePath) override;
-
-    vtkSmartPointer<vtkPolyData> CreateSurfaceMeshFromFile(std::string filePath) override;
-
-    vtkSmartPointer<vtkUnstructuredGrid> CreateVolumeMeshFromFile(std::string filePath) override;
 
 //    bool WriteMeshComplete(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSmartPointer<vtkUnstructuredGrid> volumeMesh, svModelElement* modelElement, std::string meshDir) override;
 

@@ -299,9 +299,9 @@ public:
 
     virtual int GetFaceIDFromInnerSolid(std::string faceName);
 
-    virtual std::string GetFaceIdentifierFromInnerSolid(std::string faceName);
+    virtual int GetFaceIdentifierFromInnerSolid(std::string faceName);
 
-    virtual std::string GetFaceIdentifierFromInnerSolid(int faceID);
+    virtual int GetFaceIdentifierFromInnerSolid(int faceID);
 
     virtual std::vector<int> GetFaceIDsFromInnerSolid();
 

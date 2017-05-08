@@ -65,17 +65,17 @@ public:
 
     std::vector<std::string> GetFileExtensions(){return m_FileExtensions;}
 
-    virtual bool WriteSurfaceFile(std::string filePath){return false;}
+    virtual bool WriteSurfaceFile(std::string filePath);
 
-    virtual bool WriteVolumeFile(std::string filePath){return false;}
+    virtual bool WriteVolumeFile(std::string filePath);
 
-    virtual bool ReadSurfaceFile(std::string filePath){return false;}
+    virtual bool ReadSurfaceFile(std::string filePath);
 
-    virtual bool ReadVolumeFile(std::string filePath){return false;}
+    virtual bool ReadVolumeFile(std::string filePath);
 
-    virtual vtkSmartPointer<vtkPolyData> CreateSurfaceMeshFromFile(std::string filePath) {return NULL;}
+    virtual vtkSmartPointer<vtkPolyData> CreateSurfaceMeshFromFile(std::string filePath);
 
-    virtual vtkSmartPointer<vtkUnstructuredGrid> CreateVolumeMeshFromFile(std::string filePath) {return NULL;}
+    virtual vtkSmartPointer<vtkUnstructuredGrid> CreateVolumeMeshFromFile(std::string filePath);
 
 //    virtual bool WriteMeshComplete(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSmartPointer<vtkUnstructuredGrid> volumeMesh, svModelElement* modelElement, std::string meshDir) {return false;}
 

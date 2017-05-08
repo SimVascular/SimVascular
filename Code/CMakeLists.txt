@@ -258,6 +258,10 @@ endif()
 if(SV_USE_PARASOLID)
         set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/Parasolid")
 endif()
+
+if(SV_USE_MESHSIM)
+        set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Mesh/MeshSim")
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

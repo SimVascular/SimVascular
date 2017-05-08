@@ -525,14 +525,14 @@ int svModelElement::GetFaceIDFromInnerSolid(std::string faceName)
     return id;
 }
 
-std::string svModelElement::GetFaceIdentifierFromInnerSolid(std::string faceName)
+int svModelElement::GetFaceIdentifierFromInnerSolid(std::string faceName)
 {
-    return std::to_string(GetFaceIDFromInnerSolid(faceName));
+    return GetFaceIDFromInnerSolid(faceName);
 }
 
-std::string svModelElement::GetFaceIdentifierFromInnerSolid(int faceID)
+int svModelElement::GetFaceIdentifierFromInnerSolid(int faceID)
 {
-    return std::to_string(faceID);
+    return faceID;
 }
 
 std::vector<int> svModelElement::GetFaceIDsFromInnerSolid()
