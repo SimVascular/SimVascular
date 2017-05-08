@@ -40,6 +40,7 @@ public:
 
     virtual std::string GetFaceIdentifierFromInnerSolid(std::string faceName) override;
 
+    virtual std::string GetFaceIdentifierFromInnerSolid(int faceID) override;
 };
 
 #endif // SVMODELELEMENTPARASOLID_H

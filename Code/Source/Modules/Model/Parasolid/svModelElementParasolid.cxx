@@ -80,3 +80,12 @@ std::string svModelElementParasolid::GetFaceIdentifierFromInnerSolid(std::string
 
     return idtf;
 }
+
+std::string svModelElementParasolid::GetFaceIdentifierFromInnerSolid(int faceID)
+{
+    char* value;
+    m_InnerSolid->GetFaceAttribute("identifier",faceID,&value);
+    std::string idtf(value);
+
+    return idtf;
+}
