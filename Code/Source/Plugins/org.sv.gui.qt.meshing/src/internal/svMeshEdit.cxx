@@ -915,7 +915,7 @@ void svMeshEdit::UpdateGUI()
 
     if(m_MeshType=="TetGen")
     {
-        ui->stackedWidget->setCurrentIndex(0);
+//        ui->stackedWidget->setCurrentIndex(0);
         UpdateTetGenGUI();
     }
     else if(m_MeshType=="MeshSim")
