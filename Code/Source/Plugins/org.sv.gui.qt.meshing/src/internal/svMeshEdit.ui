@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
-    <height>786</height>
+    <width>499</width>
+    <height>907</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -180,13 +180,13 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <property name="spacing">
-       <number>25</number>
+       <number>5</number>
       </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
       <property name="topMargin">
-       <number>20</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
        <number>0</number>
@@ -197,8 +197,23 @@
       <item>
        <widget class="QWidget" name="widget_9" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_15">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
-          <widget class="QWidget" name="widget_3" native="true">
+          <widget class="QWidget" name="widgetGlobal_T" native="true">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <property name="spacing">
              <number>5</number>
@@ -236,17 +251,91 @@
           </widget>
          </item>
          <item>
+          <widget class="QWidget" name="widgetGlobal_M" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <property name="spacing">
+             <number>5</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>5</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Global Size:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>Type</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxGlobalTypeM">
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContents</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>Max Edge</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Max Curvature</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Min Curvature</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxGlobalSizeTypeM">
+              <item>
+               <property name="text">
+                <string>absolute</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>relative</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditGlobalSizeM"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <widget class="QToolBox" name="toolBox">
            <property name="currentIndex">
-            <number>1</number>
+            <number>3</number>
            </property>
            <widget class="QWidget" name="page_3">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>766</width>
-              <height>461</height>
+              <width>489</width>
+              <height>584</height>
              </rect>
             </property>
             <attribute name="label">
@@ -269,7 +358,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_4" native="true">
+              <widget class="QWidget" name="widgetAdvancedT" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_5">
                 <property name="spacing">
                  <number>5</number>
@@ -565,6 +654,225 @@
               </widget>
              </item>
              <item>
+              <widget class="QWidget" name="widgetAdvancedM" native="true">
+               <layout class="QVBoxLayout" name="verticalLayout_17">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>5</number>
+                </property>
+                <property name="topMargin">
+                 <number>5</number>
+                </property>
+                <property name="rightMargin">
+                 <number>5</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>5</number>
+                </property>
+                <item>
+                 <widget class="QWidget" name="widget_twocolumn" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_23">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QFrame" name="frame_5">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_16">
+                      <property name="spacing">
+                       <number>5</number>
+                      </property>
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QCheckBox" name="checkBoxSurfaceM">
+                        <property name="text">
+                         <string>Surface Meshing</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QCheckBox" name="checkBoxSurfaceOptimizationM">
+                        <property name="text">
+                         <string>Surface Optimization</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_6">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_2">
+                      <property name="spacing">
+                       <number>5</number>
+                      </property>
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QCheckBox" name="checkBoxVolumeM">
+                        <property name="text">
+                         <string>Volume Meshing</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QCheckBox" name="checkBoxVolumeSmoothingM">
+                        <property name="text">
+                         <string>Volume Smoothing</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QCheckBox" name="checkBoxVolumeOptimizationM">
+                        <property name="text">
+                         <string>VolumeOptimization</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_7">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_21">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_17">
+                     <property name="text">
+                      <string>Num. Optimization Passes:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="ctkSliderWidget" name="sliderPassesM">
+                     <property name="decimals">
+                      <number>0</number>
+                     </property>
+                     <property name="pageStep">
+                      <double>1.000000000000000</double>
+                     </property>
+                     <property name="maximum">
+                      <double>20.000000000000000</double>
+                     </property>
+                     <property name="value">
+                      <double>3.000000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_8">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_22">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxWriteStatM">
+                     <property name="text">
+                      <string>Write Mesh Statistics</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+               <zorder>widget_twocolumn</zorder>
+               <zorder>widget_twocolumn</zorder>
+               <zorder>frame_7</zorder>
+               <zorder>frame_8</zorder>
+              </widget>
+             </item>
+             <item>
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -584,8 +892,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>766</width>
-              <height>461</height>
+              <width>489</width>
+              <height>584</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -669,8 +977,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>766</width>
-              <height>461</height>
+              <width>489</width>
+              <height>584</height>
              </rect>
             </property>
             <attribute name="label">
@@ -787,8 +1095,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>766</width>
-              <height>461</height>
+              <width>489</width>
+              <height>584</height>
              </rect>
             </property>
             <attribute name="label">
@@ -811,7 +1119,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_11" native="true">
+              <widget class="QWidget" name="widgetAdvancedFlagsT" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_12">
                 <property name="spacing">
                  <number>5</number>
@@ -1037,8 +1345,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>766</width>
-              <height>461</height>
+              <width>489</width>
+              <height>584</height>
              </rect>
             </property>
             <attribute name="label">

@@ -916,11 +916,21 @@ void svMeshEdit::UpdateGUI()
     if(m_MeshType=="TetGen")
     {
 //        ui->stackedWidget->setCurrentIndex(0);
+        ui->widgetGlobal_T->show();
+        ui->widgetGlobal_M->hide();
+        ui->widgetAdvancedT->show();
+        ui->widgetAdvancedM->hide();
+        ui->widgetAdvancedFlagsT->show();
         UpdateTetGenGUI();
     }
     else if(m_MeshType=="MeshSim")
     {
 //        ui->stackedWidget->setCurrentIndex(1);
+        ui->widgetGlobal_T->hide();
+        ui->widgetGlobal_M->show();
+        ui->widgetAdvancedT->hide();
+        ui->widgetAdvancedM->show();
+        ui->widgetAdvancedFlagsT->hide();
 //        UpdateMeshSimGUI();
     }
 }
