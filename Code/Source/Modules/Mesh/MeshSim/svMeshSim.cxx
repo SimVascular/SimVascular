@@ -144,6 +144,14 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
             return false;
         }
     }
+    else if(flag=="newMesh")
+    {
+        if(m_cvMeshSimMesh->NewMesh()!=SV_OK)
+        {
+            msg="Failed in creating MeshSim mesh";
+            return false;
+        }
+    }
     else if(flag=="generateMesh")
     {
         if(m_cvMeshSimMesh->GenerateMesh()!=SV_OK)
@@ -155,7 +163,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     else if(flag=="writeMesh")
     {
         cvUnstructuredGrid* cvug=m_cvMeshSimMesh->GetUnstructuredGrid();
-        if(cvug)
+//        if(cvug)
             m_VolumeMesh=cvug->GetVtkUnstructuredGrid();
 
 //        cvPolyData* cvpd=m_cvMeshSimMesh->GetPolyData();
@@ -163,8 +171,8 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
 //            m_SurfaceMesh=cvpd->GetVtkPolyData();
         m_SurfaceMesh=CreateSurfaceMeshContainingModelFaceIDs();//faces ids are actually face identifiers from inner solid model
 
-        delete m_cvMeshSimMesh;
-        m_cvMeshSimMesh=NULL;
+//        delete m_cvMeshSimMesh;
+//        m_cvMeshSimMesh=NULL;
     }
     else if(flag=="logon")
     {
@@ -177,6 +185,11 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     else if(flag=="writeStats")
     {
         m_cvMeshSimMesh->WriteStats(const_cast<char*>(strValues[0].c_str()));
+    }
+    else if(flag=="deleteMesh")
+    {
+        delete m_cvMeshSimMesh;
+        m_cvMeshSimMesh=NULL;
     }
     else
     {
@@ -346,9 +359,14 @@ bool svMeshSim::ParseCommand(std::string cmd, std::string& flag, double values[2
         {
             flag="writeMesh";
         }
-        else if(params[0]=="writestats")
+        else if(paramSize==2 && params[0]=="writestats")
         {
             flag="writeStats";
+            strValues[0]=params[1];
+        }
+        else if(params[0]=="deletemesh")
+        {
+            flag="deleteMesh";
         }
         else
         {

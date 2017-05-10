@@ -718,12 +718,18 @@
                         <property name="text">
                          <string>Surface Meshing</string>
                         </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QCheckBox" name="checkBoxSurfaceOptimizationM">
                         <property name="text">
                          <string>Surface Optimization</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
@@ -759,6 +765,9 @@
                         <property name="text">
                          <string>Volume Meshing</string>
                         </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
                        </widget>
                       </item>
                       <item>
@@ -766,12 +775,18 @@
                         <property name="text">
                          <string>Volume Smoothing</string>
                         </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QCheckBox" name="checkBoxVolumeOptimizationM">
                         <property name="text">
                          <string>VolumeOptimization</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
@@ -866,10 +881,6 @@
                  </widget>
                 </item>
                </layout>
-               <zorder>widget_twocolumn</zorder>
-               <zorder>widget_twocolumn</zorder>
-               <zorder>frame_7</zorder>
-               <zorder>frame_8</zorder>
               </widget>
              </item>
              <item>
@@ -946,7 +957,7 @@
                  <number>5</number>
                 </property>
                 <item>
-                 <widget class="QTableView" name="tableViewLocalT">
+                 <widget class="QTableView" name="tableViewLocal">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1019,7 +1030,7 @@
                  <number>5</number>
                 </property>
                 <item>
-                 <widget class="QTableView" name="tableViewRegionT">
+                 <widget class="QTableView" name="tableViewRegion">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1056,14 +1067,14 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QCheckBox" name="checkBoxSphereT">
+                    <widget class="QCheckBox" name="checkBoxSphere">
                      <property name="text">
                       <string>Sphere</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btnAddSphereT">
+                    <widget class="QPushButton" name="btnAddSphere">
                      <property name="text">
                       <string>Add</string>
                      </property>

@@ -66,6 +66,8 @@ public slots:
 
     void UpdateTetGenGUI();
 
+    void UpdateMeshSimGUI();
+
     void UpdateAdaptGUI(int selected);
 
     void AddSphere();
@@ -82,13 +84,15 @@ public:
 
     int GetTimeStep();
 
-    void SetupTetGenGUI(QWidget *parent );
+    void SetupGUI(QWidget *parent );
 
     void RunCommands(bool fromGUI = true);
 
     double EstimateEdgeSize();
 
     std::vector<std::string> CreateCmdsT();
+
+    std::vector<std::string> CreateCmdsM();
 
 //    static void UpdateSphereData( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* vtkNotUsed(clientData), void* vtkNotUsed(callData) );
 
@@ -118,6 +122,8 @@ public:
 
     bool IsInt(QString value);
 
+    QString GetMeshFolderPath();
+
 protected:
 
     QWidget* m_Parent;
@@ -141,11 +147,11 @@ protected:
 
     QmitkStdMultiWidget* m_DisplayWidget;
 
-    QMenu* m_TableMenuLocalT;
-    QStandardItemModel* m_TableModelLocalT;
+    QMenu* m_TableMenuLocal;
+    QStandardItemModel* m_TableModelLocal;
 
-    QMenu* m_TableMenuRegionT;
-    QStandardItemModel* m_TableModelRegionT;
+    QMenu* m_TableMenuRegion;
+    QStandardItemModel* m_TableModelRegion;
 
     int m_SelectedRegionIndex;
 
