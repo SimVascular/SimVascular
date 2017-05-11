@@ -873,14 +873,14 @@ std::vector<std::string> svMeshEdit::CreateCmdsM()
         cmds.push_back("option Verbose");
 
     cmds.push_back("generateMesh");
-    cmds.push_back("writeMesh");
+
+    cmds.push_back("writeMesh "+meshFolderPath+"/"+m_MeshNode->GetName()+".sms");
 
     if(ui->checkBoxWriteStatM->isChecked())
         cmds.push_back("writeStats "+meshFolderPath+"/"+m_MeshNode->GetName()+".sts");
 
-    cmds.push_back("logoff");
     cmds.push_back("deleteMesh");
-
+    cmds.push_back("logoff");
 
     return cmds;
 }
@@ -1317,7 +1317,7 @@ void svMeshEdit::UpdateMeshSimGUI()
     QStringList faceListHeaders;
     faceListHeaders << "ID" << "Name" << "Type"
                     << "LType" << "LSizeType" <<"LSize"
-                    << "BType" << "BDirection" <<"Layers" << "Params";
+                    << "BType" << "Direction" <<"Layers" << "Params";
                        ;
     int faceidColIndex=0;
     int facenameColIndex=1;
@@ -1366,6 +1366,7 @@ void svMeshEdit::UpdateMeshSimGUI()
         m_TableModelLocal->setItem(rowIndex, lsizeColIndex, item);
 
         item= new QStandardItem("(1)t0 tb");
+        item->setToolTip("t0: first layer height\ntb: total height\ntn-1: last layer height\ng: gradation factor(0<g<1)");
         m_TableModelLocal->setItem(rowIndex, btypeColIndex, item);
 
         item= new QStandardItem("both");
@@ -1385,7 +1386,7 @@ void svMeshEdit::UpdateMeshSimGUI()
     ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(facenameColIndex, QHeaderView::Interactive);
 
     ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(facetypeColIndex, QHeaderView::Fixed);
-    ui->tableViewLocal->horizontalHeader()->resizeSection(facetypeColIndex,60);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(facetypeColIndex,40);
 
     ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(ltypeColIndex, QHeaderView::Fixed);
     ui->tableViewLocal->horizontalHeader()->resizeSection(ltypeColIndex,80);
@@ -1394,7 +1395,7 @@ void svMeshEdit::UpdateMeshSimGUI()
     ui->tableViewLocal->horizontalHeader()->resizeSection(lsizetypeColIndex,80);
 
     ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(lsizeColIndex, QHeaderView::Fixed);
-    ui->tableViewLocal->horizontalHeader()->resizeSection(lsizeColIndex,80);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(lsizeColIndex,60);
 
     ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(btypeColIndex, QHeaderView::Fixed);
     ui->tableViewLocal->horizontalHeader()->resizeSection(btypeColIndex,80);
@@ -1403,7 +1404,7 @@ void svMeshEdit::UpdateMeshSimGUI()
     ui->tableViewLocal->horizontalHeader()->resizeSection(bdirectionColIndex,80);
 
     ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(layernumberColIndex, QHeaderView::Fixed);
-    ui->tableViewLocal->horizontalHeader()->resizeSection(layernumberColIndex,80);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(layernumberColIndex,60);
 
     ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(paramsColIndex, QHeaderView::Interactive);
 //    ui->tableViewLocal->horizontalHeader()->resizeSection(paramsColIndex,80);

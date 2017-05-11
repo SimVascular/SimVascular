@@ -63,7 +63,6 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
     m_cvMeshSimMesh->SetSolidModelKernel(kernel);
 
     if(m_cvMeshSimMesh->LoadModel(modelElement->GetInnerSolid())!=SV_OK)
-//        if(m_cvMeshSimMesh->LoadModel("/home/hongzhi/Test/CylinderProject_Commercial/Models/cylinderps.xmt_txt")!=SV_OK)
         return false;
 
     return true;
@@ -71,7 +70,7 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
 
 bool svMeshSim::Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg)
 {
-    if(m_cvMeshSimMesh==NULL)
+    if(m_cvMeshSimMesh==NULL && flag!="logon" && flag!="logoff")
     {
         msg="No mesher created";
         return false;
@@ -161,25 +160,34 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     }
     else if(flag=="writeMesh")
     {
+        if(m_cvMeshSimMesh->WriteMesh(const_cast<char*>(strValues[0].c_str()),0)!=SV_OK)
+        {
+            msg="Failed in writing sms file";
+            return false;
+        }
+
         cvUnstructuredGrid* cvug=m_cvMeshSimMesh->GetUnstructuredGrid();
-//        if(cvug)
+        if(cvug)
             m_VolumeMesh=cvug->GetVtkUnstructuredGrid();
+        else
+            m_VolumeMesh=NULL;
 
 //        cvPolyData* cvpd=m_cvMeshSimMesh->GetPolyData();
 //        if(cvpd)
 //            m_SurfaceMesh=cvpd->GetVtkPolyData();
+//        else
+//            m_SurfaceMesh=NULL;
+
         m_SurfaceMesh=CreateSurfaceMeshContainingModelFaceIDs();//faces ids are actually face identifiers from inner solid model
 
-//        delete m_cvMeshSimMesh;
-//        m_cvMeshSimMesh=NULL;
     }
     else if(flag=="logon")
     {
-        m_cvMeshSimMesh->Logon(strValues[0].c_str());
+        cvMeshSimMeshObject::Logon(strValues[0].c_str());
     }
     else if(flag=="logoff")
     {
-        m_cvMeshSimMesh->Logoff();
+        cvMeshSimMeshObject::Logoff();
     }
     else if(flag=="writeStats")
     {
@@ -192,11 +200,11 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
     }
     else
     {
-        msg="Unknown command";
+        msg="Unknown command: "+flag;
         return false;
     }
 
-    msg="Command executed";
+    msg="Command executed: " + flag;
     return true;
 }
 
@@ -354,9 +362,10 @@ bool svMeshSim::ParseCommand(std::string cmd, std::string& flag, double values[2
         {
             flag="generateMesh";
         }
-        else if(params[0]=="writemesh")
+        else if(paramSize==2 && params[0]=="writemesh")
         {
             flag="writeMesh";
+            strValues[0]=params[1];
         }
         else if(paramSize==2 && params[0]=="writestats")
         {
