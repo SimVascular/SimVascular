@@ -118,41 +118,13 @@ void svMitkMeshIO::Write()
             cmdElement->SetAttribute("content", cmdHistory[i]);
         }
 
-        //Output actual mesh data file
-        if(mesh->GetType()=="TetGen")
-        {
-            std::string surfaceFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
-            if(!mesh->WriteSurfaceFile(surfaceFileName))
-                mitkThrow() << "Error in writing surface mesh to file: " << surfaceFileName;
+        std::string surfaceFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
+        if(!mesh->WriteSurfaceFile(surfaceFileName))
+            mitkThrow() << "Error in writing surface mesh to file: " << surfaceFileName;
 
-            std::string volumeFileName=fileName.substr(0,fileName.find_last_of("."))+".vtu";
-            if(!mesh->WriteVolumeFile(volumeFileName))
-                mitkThrow() << "Error in writing surface mesh to file: " << surfaceFileName;
-
-//            if(mesh->GetSurfaceMesh())
-//            {
-//                std::string surfaceFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
-//                vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-//                writer->SetFileName(surfaceFileName.c_str());
-//                writer->SetInputData(mesh->GetSurfaceMesh());
-//                if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-//                {
-//                    mitkThrow() << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
-//                }
-//            }
-
-//            if(mesh->GetVolumeMesh())
-//            {
-//                std::string volumeFileName=fileName.substr(0,fileName.find_last_of("."))+".vtu";
-//                vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-//                writer->SetFileName(volumeFileName.c_str());
-//                writer->SetInputData(mesh->GetVolumeMesh());
-//                if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-//                {
-//                    mitkThrow() << "vtkXMLUnstructuredGridWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
-//                }
-//            }
-        }
+        std::string volumeFileName=fileName.substr(0,fileName.find_last_of("."))+".vtu";
+        if(!mesh->WriteVolumeFile(volumeFileName))
+            mitkThrow() << "Error in writing surface mesh to file: " << surfaceFileName;
 
     }
 
@@ -273,74 +245,4 @@ svMitkMesh::Pointer svMitkMeshIO::ReadFromFile(std::string fileName, bool readSu
     }//timestep
 
     return mitkMesh;
-}
-
-vtkSmartPointer<vtkPolyData> svMitkMeshIO::GetSurfaceMesh(std::string fileName)
-{
-//    std::string meshType=GetMeshType(fileName);
-
-//    if(meshType=="")
-//        return NULL;
-
-    vtkSmartPointer<vtkPolyData> surfaceMesh=NULL;
-
-    std::string surfaceFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
-    std::ifstream surfaceFile(surfaceFileName);
-    if (surfaceFile) {
-        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-
-        reader->SetFileName(surfaceFileName.c_str());
-        reader->Update();
-        surfaceMesh=reader->GetOutput();
-    }
-
-    return surfaceMesh;
-}
-
-vtkSmartPointer<vtkUnstructuredGrid> svMitkMeshIO::GetVolumeMesh(std::string fileName)
-{
-    //    std::string meshType=GetMeshType(fileName);
-
-    //    if(meshType=="")
-    //        return NULL;
-
-        vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=NULL;
-
-        std::string volumeFileName=fileName.substr(0,fileName.find_last_of("."))+".vtu";
-        std::ifstream volumeFile(volumeFileName);
-        if (volumeFile) {
-            vtkSmartPointer<vtkXMLUnstructuredGridReader> reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-
-            reader->SetFileName(volumeFileName.c_str());
-            reader->Update();
-            volumeMesh=reader->GetOutput();
-        }
-
-        return volumeMesh;
-}
-
-std::string svMitkMeshIO::GetMeshType(std::string fileName)
-{
-    TiXmlDocument document;
-
-    if (!document.LoadFile(fileName))
-    {
-//        mitkThrow() << "Could not open/read/parse " << fileName;
-        MITK_ERROR << "Could not open/read/parse " << fileName;
-        return "";
-    }
-
-    TiXmlElement* mmElement = document.FirstChildElement("mitk_mesh");
-
-    if(!mmElement){
-        MITK_ERROR << "No Mesh data in "<< fileName;
-//        mitkThrow() << "No Mesh data in "<< fileName;
-        return "";
-    }
-
-    std::string meshType="";
-
-    mmElement->QueryStringAttribute("type",&meshType);
-
-    return meshType;
 }

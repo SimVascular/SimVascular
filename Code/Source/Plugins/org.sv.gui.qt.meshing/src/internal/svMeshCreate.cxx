@@ -171,9 +171,15 @@ void svMeshCreate::CreateMesh()
 
     std::string modelType=model->GetType();
     std::string meshType=ui->comboBoxMeshType->currentText().toStdString();
-    if( (modelType=="PolyData" || modelType=="OpenCASCADE") &&  meshType=="MeshSim" )
+    if( meshType=="MeshSim" && (modelType=="PolyData" || modelType=="OpenCASCADE") )
     {
-        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(meshType)+ " doesn't work with " +QString::fromStdString(modelType)) + " model.";
+        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(meshType)+ " doesn't work with " +QString::fromStdString(modelType) + " model.");
+        return;
+    }
+
+    if( meshType=="TetGen" && modelType!="PolyData")
+    {
+        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(meshType)+ " only works with PolyData model.");
         return;
     }
 

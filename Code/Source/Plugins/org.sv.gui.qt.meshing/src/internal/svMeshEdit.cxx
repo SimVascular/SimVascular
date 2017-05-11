@@ -65,6 +65,9 @@ svMeshEdit::svMeshEdit() :
     m_UndoAble=false;
 
     m_Interface=new svDataNodeOperationInterface;
+
+    m_CustomDelegate=new svLocalTableDelegate(this);
+    m_DefaultDelegate=new QItemDelegate(this);
 }
 
 svMeshEdit::~svMeshEdit()
@@ -82,6 +85,12 @@ svMeshEdit::~svMeshEdit()
 
     if(m_TableMenuRegion)
         delete m_TableMenuRegion;
+
+    if(m_CustomDelegate)
+        delete m_CustomDelegate;
+
+    if(m_DefaultDelegate)
+        delete m_DefaultDelegate;
 }
 
 void svMeshEdit::CreateQtPartControl( QWidget *parent )
@@ -126,6 +135,10 @@ void svMeshEdit::SetupGUI(QWidget *parent )
     //for local table
     m_TableModelLocal = new QStandardItemModel(this);
     ui->tableViewLocal->setModel(m_TableModelLocal);
+
+    ui->tableViewLocal->setItemDelegateForColumn(4,m_CustomDelegate);
+    ui->tableViewLocal->setItemDelegateForColumn(6,m_CustomDelegate);
+    ui->tableViewLocal->setItemDelegateForColumn(7,m_CustomDelegate);
 
     connect( ui->tableViewLocal->selectionModel()
       , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
@@ -494,21 +507,22 @@ void svMeshEdit::RunCommands(bool fromGUI)
 
     if(!m_Model) return;
 
-    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
-
-    if(modelElement==NULL)
-    {
-        svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(m_Model->GetModelElement());
-        if(meAnalytic)
-        {
-            mitk::StatusBar::GetInstance()->DisplayText("converting to PolyData ...");
-            WaitCursorOn();
-            modelElement=meAnalytic->ConverToPolyDataModel();
-            WaitCursorOff();
-        }
-    }
+    svModelElement* modelElement=m_Model->GetModelElement();
+    std::string modelType=modelElement->GetType();
 
     if(!modelElement) return;
+
+    if( m_MeshType=="MeshSim" && (modelType=="PolyData" || modelType=="OpenCASCADE") )
+    {
+        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(m_MeshType)+ " doesn't work with " +QString::fromStdString(modelType) + " model.");
+        return;
+    }
+
+    if( m_MeshType=="TetGen" && modelType!="PolyData")
+    {
+        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(m_MeshType)+ " only works with PolyData model.");
+        return;
+    }
 
     svMesh* newMesh=NULL;
 
@@ -864,8 +878,9 @@ std::vector<std::string> svMeshEdit::CreateCmdsM()
     if(ui->checkBoxWriteStatM->isChecked())
         cmds.push_back("writeStats "+meshFolderPath+"/"+m_MeshNode->GetName()+".sts");
 
-    cmds.push_back("deleteMesh");
     cmds.push_back("logoff");
+    cmds.push_back("deleteMesh");
+
 
     return cmds;
 }
@@ -920,13 +935,12 @@ void svMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-    //comment this section to make sure always update GUI
-//    if(m_MeshNode==meshNode)
-//    {
-//        AddObservers();
-//        m_Parent->setEnabled(true);
-//        return;
-//    }
+    if(m_MeshNode==meshNode)
+    {
+        AddObservers();
+        m_Parent->setEnabled(true);
+        return;
+    }
 
     std::string modelName=mitkMesh->GetModelName();
 
@@ -1036,6 +1050,8 @@ void svMeshEdit::UpdateTetGenGUI()
     ui->checkBoxFastMeshing->setChecked(false);
 
     //local table
+    ui->tableViewLocal->setItemDelegateForColumn(3,m_DefaultDelegate);
+
     m_TableModelLocal->clear();
 
     int timeStep=GetTimeStep();
@@ -1288,6 +1304,8 @@ void svMeshEdit::UpdateMeshSimGUI()
     ui->checkBoxWriteStatM->setChecked(false);
 
     //local table
+    ui->tableViewLocal->setItemDelegateForColumn(3,m_CustomDelegate);
+
     m_TableModelLocal->clear();
 
     int timeStep=GetTimeStep();
@@ -1299,7 +1317,7 @@ void svMeshEdit::UpdateMeshSimGUI()
     QStringList faceListHeaders;
     faceListHeaders << "ID" << "Name" << "Type"
                     << "LType" << "LSizeType" <<"LSize"
-                    << "BType" << "BDirection" <<"Num Layers" << "Params";
+                    << "BType" << "BDirection" <<"Layers" << "Params";
                        ;
     int faceidColIndex=0;
     int facenameColIndex=1;

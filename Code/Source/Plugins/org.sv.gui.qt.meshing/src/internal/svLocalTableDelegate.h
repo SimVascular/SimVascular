@@ -1,18 +1,17 @@
-#ifndef SVFACELISTDELEGATE_H
-#define SVFACELISTDELEGATE_H
+#ifndef SVLOCALTABLEDELEGATE_H
+#define SVLOCALTABLEDELEGATE_H
 
 #include <QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
 #include <QSize>
-#include <QDoubleSpinBox>
 #include <QComboBox>
 
-class svFaceListDelegate : public QItemDelegate
+class svLocalTableDelegate : public QItemDelegate
 {
     Q_OBJECT
 public:
-    explicit svFaceListDelegate(QObject *parent = 0);
+    explicit svLocalTableDelegate(QObject *parent = 0);
 
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
@@ -28,4 +27,4 @@ public slots:
 
 };
 
-#endif // SVFACELISTDELEGATE_H
+#endif // SVLOCALTABLEDELEGATE_H

@@ -6,6 +6,7 @@
 
 #include "svModelDataInteractor.h"
 #include "svDataNodeOperationInterface.h"
+#include "svLocalTableDelegate.h"
 
 #include <QmitkFunctionality.h>
 
@@ -13,6 +14,7 @@
 
 #include <QWidget>
 #include <QStandardItemModel>
+#include <QItemDelegate>
 
 namespace Ui {
 class svMeshEdit;
@@ -160,6 +162,10 @@ protected:
     bool m_UndoAble;
 
     svDataNodeOperationInterface* m_Interface;
+
+    svLocalTableDelegate* m_CustomDelegate;
+
+    QItemDelegate* m_DefaultDelegate;
 
 };
 

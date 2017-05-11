@@ -1,45 +1,61 @@
-#include "svFaceListDelegate.h"
+#include "svLocalTableDelegate.h"
 
-svFaceListDelegate::svFaceListDelegate(QObject *parent) :
+svLocalTableDelegate::svLocalTableDelegate(QObject *parent) :
     QItemDelegate(parent)
 {
 }
 
-QWidget* svFaceListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget* svLocalTableDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     int column=index.column();
 
     switch(column){
-    case 2:
+    case 3:
     {
         QComboBox* cb=new QComboBox(parent);
-        cb->addItem("wall");
-//        cb->addItem("inlet");
-//        cb->addItem("outlet");
-        cb->addItem("cap");
-
+        cb->addItem("Max Edge");
+        cb->addItem("Max Curv");
+        cb->addItem("Min Curv");
         return cb;
     }
-    case 5:
+    case 4:
     {
-        QDoubleSpinBox* dsb=new QDoubleSpinBox(parent);
-        dsb->setMinimum(0);
-        dsb->setMaximum(1.0);
-        dsb->setDecimals(2);
-        dsb->setSingleStep(0.2);
-        return dsb;
+        QComboBox* cb=new QComboBox(parent);
+        cb->addItem("absolute");
+        cb->addItem("relative");
+        return cb;
     }
-    default:
+    case 6:
+    {
+        QComboBox* cb=new QComboBox(parent);
+        cb->addItem("(1)t0 tb");
+        cb->addItem("(2)t0 g");
+        cb->addItem("(3)t0 ... tn-1");
+        cb->addItem("(4)g");
+        cb->setToolTip("t0: first layer height\ntb: total height\ntn-1: last layer height\ng: gradation factor(0<g<1)");
+        return cb;
+    }
+    case 7:
+    {
+        QComboBox* cb=new QComboBox(parent);
+        cb->addItem("both");
+        cb->addItem("positive");
+        cb->addItem("negative");
+        return cb;
+    }    default:
         return new QWidget(parent);
     }
 }
 
-void svFaceListDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+void svLocalTableDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     int column=index.column();
 
     switch(column){
-    case 2:
+    case 3:
+    case 4:
+    case 6:
+    case 7:
     {
         QComboBox* cb=dynamic_cast<QComboBox*>(editor);
         if(cb)
@@ -49,27 +65,20 @@ void svFaceListDelegate::setEditorData(QWidget *editor, const QModelIndex &index
         }
     }
         break;
-    case 5:
-    {
-        QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);
-        if(dsb)
-        {
-            double value=index.model()->data(index, Qt::EditRole).toDouble();
-            dsb->setValue(value);
-        }
-    }
-        break;
     default:
         break;
     }
 }
 
-void svFaceListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+void svLocalTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     int column=index.column();
 
     switch(column){
-    case 2:
+    case 3:
+    case 4:
+    case 6:
+    case 7:
     {
         QComboBox* cb=dynamic_cast<QComboBox*>(editor);
         if(cb)
@@ -78,40 +87,23 @@ void svFaceListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
         }
     }
         break;
-    case 5:
-    {
-        QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);
-        if(dsb)
-        {
-            dsb->interpretText();
-            double value = dsb->value();
-            model->setData(index, value, Qt::EditRole);
-        }
-    }
-        break;
     default:
         break;
     }
 }
 
-void svFaceListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void svLocalTableDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     int column=index.column();
 
     switch(column){
-    case 2:
+    case 3:
+    case 4:
+    case 6:
+    case 7:
     {
         QComboBox* cb=dynamic_cast<QComboBox*>(editor);
         if(cb)
-        {
-            editor->setGeometry(option.rect);
-        }
-    }
-        break;
-    case 5:
-    {
-        QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);
-        if(dsb)
         {
             editor->setGeometry(option.rect);
         }

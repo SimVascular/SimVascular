@@ -1557,7 +1557,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
       }
       meshoptions_.gcurv_type=values[0];
       meshoptions_.gcurv=values[1];
-      MS_setMeshSize(case_,modelDomain,meshoptions_.gcurv_type, meshoptions_.gcurv,NULL);
+      MS_setMeshCurv(case_,modelDomain,meshoptions_.gcurv_type, meshoptions_.gcurv);
       fprintf(stdout,"\t%s %i\n"," meshoptions_.gcurv_type",meshoptions_.gcurv_type);
       fprintf(stdout,"\t%s %lf\n"," meshoptions_.gcurv",meshoptions_.gcurv);
 

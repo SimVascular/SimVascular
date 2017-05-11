@@ -63,6 +63,7 @@ bool svMeshSim::SetModelElement(svModelElement* modelElement)
     m_cvMeshSimMesh->SetSolidModelKernel(kernel);
 
     if(m_cvMeshSimMesh->LoadModel(modelElement->GetInnerSolid())!=SV_OK)
+//        if(m_cvMeshSimMesh->LoadModel("/home/hongzhi/Test/CylinderProject_Commercial/Models/cylinderps.xmt_txt")!=SV_OK)
         return false;
 
     return true;
@@ -91,8 +92,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
                 msg="Model not assigned to the mesher";
                 return false;
             }
-            std::string idtf=m_ModelElement->GetFaceIdentifierFromInnerSolid(strValues[0]);
-            int ident=std::stoi(idtf);
+            int ident=m_ModelElement->GetFaceIdentifierFromInnerSolid(strValues[0]);
 
             if(ident<0)
             {
@@ -115,8 +115,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
             msg="Model not assigned to the mesher";
             return false;
         }
-        std::string idtf=m_ModelElement->GetFaceIdentifierFromInnerSolid(strValues[0]);
-        int ident=std::stoi(idtf);
+        int ident=m_ModelElement->GetFaceIdentifierFromInnerSolid(strValues[0]);
 
         if(ident<0)
         {
