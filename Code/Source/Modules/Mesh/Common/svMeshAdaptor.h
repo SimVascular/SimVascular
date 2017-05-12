@@ -18,8 +18,7 @@ public:
 
     virtual bool SetModelElement(svModelElement *modelElement) = 0;
 
-//    virtual bool SetResultMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh) = 0;
-    virtual bool LoadMeshFromResultVTUFile(std::string filePath) = 0;
+    virtual bool LoadMesh(std::string filePath) = 0;
 
     virtual bool SetAdaptOptions(std::string flag, double value) = 0;
 
@@ -28,6 +27,8 @@ public:
     virtual bool WriteAdaptedSolution(std::string filePath) = 0;
 
     virtual svMesh* GetAdaptedMesh() = 0;
+
+    virtual bool WriteAdaptedMesh(std::string filePath) = 0;
 
 protected:
 

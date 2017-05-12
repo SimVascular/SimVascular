@@ -22,7 +22,7 @@ svMeshSim::svMeshSim()
 
 svMeshSim::svMeshSim(const svMeshSim &other)
     : svMesh(other)
-    , m_cvMeshSimMesh(other.m_cvMeshSimMesh)
+//    , m_cvMeshSimMesh(other.m_cvMeshSimMesh)
 {
 }
 
@@ -178,7 +178,7 @@ bool svMeshSim::Execute(std::string flag, double values[20], std::string strValu
 //        else
 //            m_SurfaceMesh=NULL;
 
-        m_SurfaceMesh=CreateSurfaceMeshContainingModelFaceIDs();//faces ids are actually face identifiers from inner solid model
+        m_SurfaceMesh=CreateSurfaceMeshContainingModelFaceIDs(m_ModelElement,m_cvMeshSimMesh);//faces ids are actually face identifiers from inner solid model
 
     }
     else if(flag=="logon")
@@ -494,22 +494,22 @@ vtkSmartPointer<vtkUnstructuredGrid> svMeshSim::CreateVolumeMeshFromFile(std::st
 
 //}
 
-vtkSmartPointer<vtkPolyData> svMeshSim::CreateSurfaceMeshContainingModelFaceIDs()
+vtkSmartPointer<vtkPolyData> svMeshSim::CreateSurfaceMeshContainingModelFaceIDs(svModelElement* modelElement, cvMeshSimMeshObject* cvmeshobj)
 {
     vtkSmartPointer<vtkPolyData> result=NULL;
+
+    if(modelElement==NULL || cvmeshobj==NULL)
+        return result;
 
     bool wallFound=false;
     vtkSmartPointer<vtkAppendPolyData> wallAppender=vtkSmartPointer<vtkAppendPolyData>::New();
     wallAppender->UserManagedInputsOff();
 
-    if(m_ModelElement==NULL)
-        return result;
-
-    std::vector<int> faceIDs=m_ModelElement->GetFaceIDsFromInnerSolid();
+    std::vector<int> faceIDs=modelElement->GetFaceIDsFromInnerSolid();
 
     for(int i=0;i<faceIDs.size();i++)
     {
-        cvPolyData* cvpd=m_cvMeshSimMesh->GetFacePolyData(faceIDs[i]);
+        cvPolyData* cvpd=cvmeshobj->GetFacePolyData(faceIDs[i]);
         if(cvpd==NULL)
             continue;
 
@@ -517,7 +517,7 @@ vtkSmartPointer<vtkPolyData> svMeshSim::CreateSurfaceMeshContainingModelFaceIDs(
         if(facepd==NULL)
             continue;
 
-        int ident=m_ModelElement->GetFaceIdentifierFromInnerSolid(faceIDs[i]);
+        int ident=modelElement->GetFaceIdentifierFromInnerSolid(faceIDs[i]);
 
         vtkSmartPointer<vtkIntArray> scalarArray=vtkSmartPointer<vtkIntArray>::New();
         scalarArray->SetName("ModelFaceID");

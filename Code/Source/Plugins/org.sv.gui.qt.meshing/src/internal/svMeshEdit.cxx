@@ -524,8 +524,6 @@ void svMeshEdit::RunCommands(bool fromGUI)
         return;
     }
 
-    svMesh* newMesh=NULL;
-
     QString ges="";
     if(m_MeshType=="TetGen")
         ges=ui->lineEditGlobalEdgeSizeT->text().trimmed();
@@ -540,7 +538,7 @@ void svMeshEdit::RunCommands(bool fromGUI)
         return;
     }
 
-    newMesh=svMeshFactory::CreateMesh(m_MeshType);
+    svMesh* newMesh=svMeshFactory::CreateMesh(m_MeshType);
 
     if(newMesh==NULL)
         return;
@@ -1279,7 +1277,9 @@ void svMeshEdit::UpdateTetGenGUI()
     }
 
     //adaptor options
-    ui->lineEditMaxEdgeSize->setText(ui->lineEditGlobalEdgeSizeT->text());
+//    ui->lineEditMaxEdgeSize->setText(ui->lineEditGlobalEdgeSizeT->text());
+    ui->comboBoxStrategy->setCurrentIndex(0);
+    ui->comboBoxStrategy->setEnabled(false);
 }
 
 void svMeshEdit::UpdateMeshSimGUI()
@@ -1610,8 +1610,8 @@ void svMeshEdit::UpdateMeshSimGUI()
     }
 
     //adaptor options
-    ui->lineEditMaxEdgeSize->setText(ui->lineEditGlobalEdgeSizeT->text());
-
+//    ui->lineEditMaxEdgeSize->setText(ui->lineEditGlobalSizeM->text());
+    ui->comboBoxStrategy->setEnabled(true);
 }
 
 void svMeshEdit::AddSphere()
@@ -2035,14 +2035,27 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    if(!adaptor->LoadMeshFromResultVTUFile(resultFile.toStdString()))
+    if(m_MeshType=="MeshSim")
+    {
+        std::string meshFolderPath=GetMeshFolderPath().trimmed().toStdString();
+        std::string originalMeshFile=meshFolderPath+"/"+m_MeshNode->GetName()+".sms";
+        if(!adaptor->LoadMesh(originalMeshFile))
+        {
+            QMessageBox::warning(m_Parent,"Error","Failed in loading original mesh.");
+            delete adaptor;
+            return;
+        }
+    }
+
+    if(!adaptor->LoadMesh(resultFile.toStdString()))
     {
         QMessageBox::warning(m_Parent,"Error","Failed in loading result mesh.");
         delete adaptor;
         return;
     }
 
-    adaptor->SetAdaptOptions("strategy",1);
+    int strategy=ui->comboBoxStrategy->currentIndex()+1;
+    adaptor->SetAdaptOptions("strategy",strategy);
     adaptor->SetAdaptOptions("metric_option",currentIndex+2);
     adaptor->SetAdaptOptions("outstep",endStep.toInt());
     adaptor->SetAdaptOptions("ratio",errorFactor.toDouble());
@@ -2061,6 +2074,25 @@ void svMeshEdit::Adapt()
         return;
     }
 
+    if(m_MeshType=="MeshSim")
+    {
+        QString adaptedMeshSMSFilePath=QString::fromStdString(meshFolderPath)+"/"+adaptedMeshName+".sms";
+        adaptedMeshSMSFilePath=QDir::toNativeSeparators(adaptedMeshSMSFilePath);
+        if(!adaptor->WriteAdaptedMesh(adaptedMeshSMSFilePath.toStdString()))
+        {
+            QMessageBox::warning(m_Parent,"Error","Failed in write adapted sms mesh.");
+            delete adaptor;
+            return;
+        }
+    }
+
+    svMesh* adaptedMesh=adaptor->GetAdaptedMesh();
+    if(adaptedMesh==NULL)
+    {
+        QMessageBox::warning(m_Parent,"Error","Failed in getting adapted mesh.");
+        return;
+    }
+
     QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
     solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
 
@@ -2071,16 +2103,14 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    svMesh* adaptedMesh=adaptor->GetAdaptedMesh();
     delete adaptor;
-    if(adaptedMesh==NULL)
-    {
-        QMessageBox::warning(m_Parent,"Error","Failed in getting adapted mesh.");
-        return;
-    }
 
     std::vector<std::string> cmds;
-    cmds.push_back("option GlobalEdgeSize "+maxSize.toStdString());
+    if(m_MeshType=="TetGen")
+        cmds.push_back("option GlobalEdgeSize "+maxSize.toStdString());
+    else if(m_MeshType=="MeshSim")
+        cmds.push_back("option GlobalEdgeSize 1 "+maxSize.toStdString());
+
     adaptedMesh->SetCommandHistory(cmds);
 
     svMitkMesh::Pointer mitkMesh = svMitkMesh::New();

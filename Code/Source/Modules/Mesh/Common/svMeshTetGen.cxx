@@ -15,7 +15,7 @@ svMeshTetGen::svMeshTetGen()
 
 svMeshTetGen::svMeshTetGen(const svMeshTetGen &other)
     : svMesh(other)
-    , m_cvTetGenMesh(other.m_cvTetGenMesh)
+//    , m_cvTetGenMesh(other.m_cvTetGenMesh)
 {
 }
 

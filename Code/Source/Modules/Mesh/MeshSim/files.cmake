@@ -1,11 +1,11 @@
 set(H_FILES
     svMeshSim.h
-#    svMeshSimAdaptor.h
+    svMeshSimAdaptor.h
 )
 
 set(CPP_FILES
     svMeshSim.cxx
-#    svMeshSimAdaptor.cxx
+    svMeshSimAdaptor.cxx
     svRegisterMeshSimFunction.cxx
 )
 

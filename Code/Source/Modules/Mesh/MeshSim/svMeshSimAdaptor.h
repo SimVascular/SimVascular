@@ -6,7 +6,7 @@
 #include "svMeshAdaptor.h"
 #include "svMeshSim.h"
 
-#include <cvTetGenAdapt.h>
+#include <cvMeshSimAdapt.h>
 
 class SVMESH_EXPORT svMeshSimAdaptor : public svMeshAdaptor
 {
@@ -19,8 +19,7 @@ public:
 
     virtual bool SetModelElement(svModelElement *modelElement) override;
 
-//    virtual bool SetResultMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh) override;
-    virtual bool LoadMeshFromResultVTUFile(std::string filePath) override;
+    virtual bool LoadMesh(std::string filePath) override;
 
     virtual bool SetAdaptOptions(std::string flag, double value) override;
 
@@ -30,12 +29,15 @@ public:
 
     svMeshSim* GetAdaptedMesh() override;
 
+    virtual bool WriteAdaptedMesh(std::string filePath) override;
+
     static svMeshAdaptor* CreateAdaptor();
 
 protected:
 
-  cvTetGenMeshObject* m_cvTetGetMesh;
-  cvTetGenAdapt* m_cvTetGenAdaptor;
+    cvMeshSimMeshObject* m_cvMeshSimMesh;
+    cvMeshSimAdapt* m_cvMeshSimAdaptor;
+    svModelElement* m_ModelElement;
 
   };
 

@@ -670,6 +670,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         dirMesh.remove(QString::fromStdString(removeList[i])+".msh");
         dirMesh.remove(QString::fromStdString(removeList[i])+".vtp");
         dirMesh.remove(QString::fromStdString(removeList[i])+".vtu");
+        dirMesh.remove(QString::fromStdString(removeList[i])+".sms");
     }
     meshFolder->ClearRemoveList();
 
@@ -849,6 +850,7 @@ void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mi
         extensions.push_back(".msh");
         extensions.push_back(".vtp");
         extensions.push_back(".vtu");
+        extensions.push_back(".sms");
     }
     else if(isSimJob->CheckNode(dataNode))
     {

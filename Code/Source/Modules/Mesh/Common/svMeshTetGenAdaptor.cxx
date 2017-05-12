@@ -24,22 +24,13 @@ svMeshTetGenAdaptor::~svMeshTetGenAdaptor()
 bool svMeshTetGenAdaptor::SetModelElement(svModelElement *modelElement)
 {
     if(m_cvTetGenAdaptor && modelElement && modelElement->GetWholeVtkPolyData())
-    {
-        m_cvTetGenAdaptor->LoadModel(modelElement->GetWholeVtkPolyData());
-        return true;
-    }else
-        return false;
+        if(m_cvTetGenAdaptor->LoadModel(modelElement->GetWholeVtkPolyData())==SV_OK)
+            return true;
+
+    return false;
 }
 
-//bool svMeshTetGenAdaptor::SetResultMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh)
-//{
-//    if(m_cvTetGenAdaptor && mesh && m_cvTetGenAdaptor->LoadMesh(mesh)==SV_OK)
-//        return true;
-//    else
-//        return false;
-//}
-
-bool svMeshTetGenAdaptor::LoadMeshFromResultVTUFile(std::string filePath)
+bool svMeshTetGenAdaptor::LoadMesh(std::string filePath)
 {
     return (m_cvTetGenAdaptor && m_cvTetGenAdaptor->LoadMesh(const_cast<char*>(filePath.c_str()))==SV_OK);
 }
@@ -86,6 +77,11 @@ svMeshTetGen* svMeshTetGenAdaptor::GetAdaptedMesh()
     }
 
     return NULL;
+}
+
+bool svMeshTetGenAdaptor::WriteAdaptedMesh(std::string filePath)
+{
+    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->WriteAdaptedMesh(const_cast<char*>(filePath.c_str()))==SV_OK;
 }
 
 svMeshAdaptor* svMeshTetGenAdaptor::CreateAdaptor()

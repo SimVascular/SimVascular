@@ -327,7 +327,7 @@
          <item>
           <widget class="QToolBox" name="toolBox">
            <property name="currentIndex">
-            <number>3</number>
+            <number>4</number>
            </property>
            <widget class="QWidget" name="page_3">
             <property name="geometry">
@@ -1424,7 +1424,7 @@
                       </sizepolicy>
                      </property>
                      <property name="text">
-                      <string>Options:</string>
+                      <string>Option:</string>
                      </property>
                     </widget>
                    </item>
@@ -1438,6 +1438,54 @@
                      <item>
                       <property name="text">
                        <string>Use Multiple Steps</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_3" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_24">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_18">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Strategy:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="comboBoxStrategy">
+                     <item>
+                      <property name="text">
+                       <string>Isotropic</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Anisotropic</string>
                       </property>
                      </item>
                     </widget>

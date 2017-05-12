@@ -2,7 +2,7 @@
 
 #include "svMeshFactory.h"
 #include "svMeshSim.h"
-//#include "svMeshSimAdaptor.h"
+#include "svMeshSimAdaptor.h"
 #include "cv_meshsim_mesh_init.h"
 
 struct SVMESHSIM_EXPORT svRegisterMeshSimFunction{
@@ -12,8 +12,8 @@ struct SVMESHSIM_EXPORT svRegisterMeshSimFunction{
         svMeshSim* tempmesh=new svMeshSim();
         std::string type=tempmesh->GetType();
         svMeshFactory::RegisterCreationFunction(type, &svMeshSim::CreateMesh);
-//        svMeshFactory::RegisterFileExtensions(type, tempmesh->GetFileExtensions());
-//        svMeshFactory::RegisterAdaptorFunction(type, &svMesSimAdaptor::CreateAdaptor);
+        svMeshFactory::RegisterFileExtensions(type, tempmesh->GetFileExtensions());
+        svMeshFactory::RegisterAdaptorFunction(type, &svMeshSimAdaptor::CreateAdaptor);
         delete tempmesh;
 
         Meshsimmesh_Init(NULL);
