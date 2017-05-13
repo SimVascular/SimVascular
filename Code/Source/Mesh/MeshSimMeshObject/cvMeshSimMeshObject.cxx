@@ -1228,6 +1228,163 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
 
 }
 
+int cvMeshSimMeshObject::LoadModel(cvSolidModel *cvModel) {
+
+  if (cvModel == NULL) {
+    return SV_ERROR;
+  }
+
+  // must load model before mesh!
+  if (mesh != NULL) {
+    return SV_ERROR;
+  }
+
+  fprintf(stderr,"Solid Kernel: %s\n",SolidModel_KernelT_EnumToStr(solidmodeling_kernel_));
+  if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
+
+#ifdef SV_USE_PARASOLID
+    PK_PART_t firstPart;
+    int isAssembly;
+
+    cvParasolidSolidModel* psModel=dynamic_cast<cvParasolidSolidModel*>(cvModel);
+    if(psModel==NULL)
+        return SV_ERROR;
+
+    if (psModel->GetFirstPart( &firstPart, &isAssembly) != SV_OK) {
+      return SV_ERROR;
+    }
+    part_ = firstPart;
+
+    fprintf(stdout,"note: creating model from SV part.\n");
+    fflush(stdout);
+
+    pParasolidNativeModel paramodel_ = NULL;
+    paramodel_ = ParasolidNM_createFromPart(firstPart);
+    if (paramodel_ == NULL) {
+      fprintf(stderr,"ERROR: Problem from ParasolidNM_createFromPart.\n");
+      fflush(stderr);
+      return SV_ERROR;
+    }
+    if (!isAssembly) {
+
+      model = GM_createFromNativeModel(paramodel_,progress_);
+
+    } else {
+
+      pGAModel pGAM = NULL;
+      pGAM = GAM_createFromNativeModel(paramodel_,progress_);
+      if (pGAM == NULL) {
+        fprintf(stderr,"ERROR: Problem from GM_createFromNativeModel.\n");
+        fflush(stderr);
+        return SV_ERROR;
+      }
+      fprintf(stdout,"GAM_numAssemblies(%i)\n",GAM_numAssemblies(pGAM));
+      fprintf(stdout,"GAM_numParts(%i)\n",GAM_numParts(pGAM));
+      fflush(stdout);
+      // what is a connector?
+      pMConnector connector = MC_new();
+      model = GM_createFromAssemblyModel (pGAM, connector, progress_);
+    }
+
+    if (model == NULL) {
+      fprintf(stderr,"ERROR: Problem from GM_createFromAssemblyModel.\n");
+      fflush(stderr);
+      return SV_ERROR;
+    }
+    // Should we release the model here or not?????
+    //NM_release(paramodel_);
+
+    fprintf(stdout,"attach case.\n");
+    fflush(stdout);
+    case_ = NULL;
+    case_ = MS_newMeshCase(model);
+
+    if (case_ == NULL) {
+      fprintf(stderr,"ERROR: Problem from MS_newMeshCase.\n");
+      fflush(stderr);
+      return SV_ERROR;
+    }
+
+    return SV_OK;
+#else
+    return SV_ERROR;
+#endif
+
+  } else if (solidmodeling_kernel_ == SM_KT_DISCRETE) {
+
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
+
+    cvMeshSimDiscreteSolidModel* dsModel=dynamic_cast<cvMeshSimDiscreteSolidModel*>(cvModel);
+    if(dsModel==NULL)
+        return SV_ERROR;
+
+    discreteModel_ = dsModel;
+
+    model = discreteModel_->geom_;
+
+    fprintf(stdout,"attach case to model (%p).\n",model);
+    fflush(stdout);
+
+    if (model == NULL) {
+      fprintf(stderr,"ERROR: Problem with model.\n");
+      fflush(stderr);
+      return SV_ERROR;
+    }
+
+    case_ = NULL;
+    case_ = MS_newMeshCase(model);
+    if (case_ == NULL) {
+      fprintf(stderr,"ERROR: Problem from MS_newMeshCase.\n");
+      fflush(stderr);
+      return SV_ERROR;
+    }
+
+#else
+    return SV_ERROR;
+#endif
+
+  } else if (solidmodeling_kernel_ == SM_KT_MESHSIMSOLID) {
+
+#ifdef SV_USE_MESHSIM_SOLID_MODEL
+
+    cvMeshSimSolidModel* msModel=dynamic_cast<cvMeshSimSolidModel*>(cvModel);
+    if(msModel==NULL)
+        return SV_ERROR;
+
+    cvMeshSimSolidModel* meshsimsolid = msModel;
+
+    model = meshsimsolid->geom_;
+
+    // probably have a memory leak here...
+    //delete meshsimsolid;
+
+    fprintf(stdout,"attach case to model (%p).\n",model);
+    fflush(stdout);
+
+    if (model == NULL) {
+      fprintf(stderr,"ERROR: Problem with model.\n");
+      fflush(stderr);
+      return SV_ERROR;
+    }
+
+    case_ = NULL;
+    case_ = MS_newMeshCase(model);
+    if (case_ == NULL) {
+      fprintf(stderr,"ERROR: Problem from MS_newMeshCase.\n");
+      fflush(stderr);
+      return SV_ERROR;
+    }
+
+#else
+    return SV_ERROR;
+#endif
+
+  }
+
+  return SV_OK;
+
+}
+
 
 int cvMeshSimMeshObject::LoadMesh(char *filename,char *surfilename) {
 
@@ -1400,7 +1557,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
       }
       meshoptions_.gcurv_type=values[0];
       meshoptions_.gcurv=values[1];
-      MS_setMeshSize(case_,modelDomain,meshoptions_.gcurv_type, meshoptions_.gcurv,NULL);
+      MS_setMeshCurv(case_,modelDomain,meshoptions_.gcurv_type, meshoptions_.gcurv);
       fprintf(stdout,"\t%s %i\n"," meshoptions_.gcurv_type",meshoptions_.gcurv_type);
       fprintf(stdout,"\t%s %lf\n"," meshoptions_.gcurv",meshoptions_.gcurv);
 

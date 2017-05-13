@@ -69,59 +69,6 @@ vtkSmartPointer<vtkPolyData> svModelElementPolyData::CreateWholeVtkPolyData()
     return m_WholeVtkPolyData;
 }
 
-//vtkPolyData* svModelElementPolyData::GetSolidModel() const
-//{
-//    return m_SolidModel;
-//}
-
-//void svModelElementPolyData::SetSolidModel(vtkPolyData* solidModel)
-//{
-//    m_SolidModel=solidModel;
-//    m_WholeVtkPolyData=solidModel;
-//}
-
-//bool svModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
-//{
-//    if(m_WholeVtkPolyData==NULL)
-//        return false;
-
-//    std::string arrayname="ModelFaceID";
-//    bool existing=false;
-
-//    if(m_WholeVtkPolyData->GetCellData()->HasArray(arrayname.c_str()))
-//        existing=true;
-
-//    if(!existing)
-//        return false;
-
-//    for(int i=0;i<faceIDs.size();i++)
-//    {
-//        vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
-//        boundaryRegions = vtkIntArray::SafeDownCast(m_WholeVtkPolyData->GetCellData()-> GetScalars("ModelFaceID"));
-
-//        m_WholeVtkPolyData->BuildLinks();
-
-//        for (vtkIdType cellId=0; cellId< m_WholeVtkPolyData->GetNumberOfCells(); cellId++)
-//        {
-//          if (boundaryRegions->GetValue(cellId) == faceIDs[i])
-//          {
-//            m_WholeVtkPolyData->DeleteCell(cellId);
-//          }
-//        }
-
-//        m_WholeVtkPolyData->RemoveDeletedCells();
-
-//        RemoveFace(faceIDs[i]);
-
-//        RemoveFaceFromBlendParamRadii(faceIDs[i]);
-
-//    }
-
-//    m_SelectedCellIDs.clear();
-
-//    return true;
-//}
-
 bool svModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
 {
     if(!svModelUtils::DeleteRegions(m_WholeVtkPolyData, faceIDs))
@@ -690,6 +637,21 @@ bool svModelElementPolyData::MarkCellsByFaces(std::vector<int> faceIDs)
         return false;
 
     vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::MarkCellsByFaces(m_WholeVtkPolyData, faceIDs);
+
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    return true;
+}
+
+bool svModelElementPolyData::MarkCellsByFaceJunctions(std::vector<int> faceIDs, double radius)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::MarkCellsByFaceJunctions(m_WholeVtkPolyData, faceIDs, radius);
 
     if(newvpd==NULL)
         return false;

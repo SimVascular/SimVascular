@@ -3,8 +3,7 @@
 #include "cv_sys_geom.h"
 
 svModelElementAnalytic::svModelElementAnalytic()
-    : m_InnerSolid(NULL)
-    , m_MaxDist(0)
+    : m_MaxDist(0)
 {
 }
 
@@ -16,8 +15,6 @@ svModelElementAnalytic::svModelElementAnalytic(const svModelElementAnalytic &oth
 
 svModelElementAnalytic::~svModelElementAnalytic()
 {
-    if(m_InnerSolid)
-        delete m_InnerSolid;
 }
 
 svModelElementAnalytic* svModelElementAnalytic::Clone()
@@ -59,70 +56,6 @@ void svModelElementAnalytic::SetMaxDist(double maxDist)
     m_MaxDist=maxDist;
 }
 
-cvSolidModel* svModelElementAnalytic::GetInnerSolid()
-{
-    return m_InnerSolid;
-}
-
-void svModelElementAnalytic::SetInnerSolid(cvSolidModel* innerSolid)
-{
-    m_InnerSolid=innerSolid;
-}
-
-int svModelElementAnalytic::GetFaceIDFromInnerSolid(std::string faceName)
-{
-    int id=-1;
-
-    if(m_InnerSolid==NULL)
-        return id;
-
-    int numFaces;
-    int *ids;
-    int status=m_InnerSolid->GetFaceIds( &numFaces, &ids);
-    if(status!=SV_OK)
-        return id;
-
-    for(int i=0;i<numFaces;i++)
-    {
-        char *value;
-        m_InnerSolid->GetFaceAttribute("gdscName",ids[i],&value);
-        std::string name(value);
-        if(name==faceName)
-            return ids[i];
-    }
-
-    return id;
-}
-
-std::vector<int> svModelElementAnalytic::GetFaceIDsFromInnerSolid()
-{
-    std::vector<int> faceIDs;
-    if(m_InnerSolid)
-    {
-        int numFaces;
-        int *ids;
-        int status=m_InnerSolid->GetFaceIds( &numFaces, &ids);
-        for(int i=0;i<numFaces;i++)
-            faceIDs.push_back(ids[i]);
-    }
-
-    return faceIDs;
-}
-
-std::string svModelElementAnalytic::GetFaceNameFromInnerSolid(int id)
-{
-    std::string faceName="";
-    if(m_InnerSolid)
-    {
-        char *value;
-        m_InnerSolid->GetFaceAttribute("gdscName",id,&value);
-        std::string name(value);
-        faceName=name;
-    }
-
-    return faceName;
-}
-
 void svModelElementAnalytic::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii)
 {
     for(int i=0;i<moreBlendRadii.size();i++)
@@ -152,21 +85,6 @@ void svModelElementAnalytic::AddBlendRadii(std::vector<svBlendParamRadius*> more
         }
     }
 
-}
-
-void svModelElementAnalytic::SetFaceName(std::string name, int id)
-{
-    int index=GetFaceIndex(id);
-    if(index>-1)
-    {
-        m_Faces[index]->name=name;
-        if(m_InnerSolid)
-        {
-            char* nc=const_cast<char*>(name.c_str());
-            m_InnerSolid->SetFaceAttribute("gdscName",id,nc);
-        }
-
-    }
 }
 
 svModelElementPolyData* svModelElementAnalytic::ConverToPolyDataModel()

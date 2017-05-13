@@ -7,6 +7,7 @@ set(INTERNAL_CPP_FILES
     svMeshCreateAction.cxx
     svMeshEdit.cxx
     svVtkMeshSphereWidget.cxx
+    svLocalTableDelegate.cxx
     svMeshLegacySaveAction.cxx
     svMeshLoadSurfaceAction.cxx
     svMeshLoadVolumeAction.cxx
@@ -17,6 +18,7 @@ set(MOC_H_FILES
     src/internal/svMeshCreate.h
     src/internal/svMeshCreateAction.h
     src/internal/svMeshEdit.h
+    src/internal/svLocalTableDelegate.h
     src/internal/svMeshLegacySaveAction.h
     src/internal/svMeshLoadSurfaceAction.h
     src/internal/svMeshLoadVolumeAction.h

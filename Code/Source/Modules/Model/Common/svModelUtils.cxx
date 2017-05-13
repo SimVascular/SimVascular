@@ -715,6 +715,25 @@ vtkSmartPointer<vtkPolyData> svModelUtils::MarkCellsByFaces(vtkSmartPointer<vtkP
     return dst->GetVtkPolyData();
 }
 
+vtkSmartPointer<vtkPolyData> svModelUtils::MarkCellsByFaceJunctions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> faceIDs, double radius)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    int* faceIDArray = &faceIDs[0];
+
+    if ( sys_geom_set_array_for_local_op_face_blend(src, &dst, "ModelFaceID", faceIDArray, faceIDs.size(), radius, "ActiveCells", 1) != SV_OK )
+    {
+        MITK_ERROR << "poly marking cells (by face functions) error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
 vtkSmartPointer<vtkPolyData> svModelUtils::DecimateLocal(vtkSmartPointer<vtkPolyData> inpd, double targetRate)
 {
     if(inpd==NULL)

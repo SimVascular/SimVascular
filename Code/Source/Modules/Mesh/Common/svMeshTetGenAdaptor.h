@@ -19,8 +19,7 @@ public:
 
     virtual bool SetModelElement(svModelElement *modelElement) override;
 
-//    virtual bool SetResultMesh(vtkSmartPointer<vtkUnstructuredGrid> mesh) override;
-    virtual bool LoadMeshFromResultVTUFile(std::string filePath) override;
+    virtual bool LoadMesh(std::string filePath) override;
 
     virtual bool SetAdaptOptions(std::string flag, double value) override;
 
@@ -29,6 +28,10 @@ public:
     virtual bool WriteAdaptedSolution(std::string filePath) override;
 
     svMeshTetGen* GetAdaptedMesh() override;
+
+    virtual bool WriteAdaptedMesh(std::string filePath) override;
+
+    static svMeshAdaptor* CreateAdaptor();
 
 protected:
 

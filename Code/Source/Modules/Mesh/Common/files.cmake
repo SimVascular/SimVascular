@@ -2,6 +2,7 @@ set(H_FILES
     svMesh.h
     svMeshTetGen.h
     svMitkMesh.h
+    svMeshFactory.h
     svMitkMeshOperation.h
     svMitkMeshMapper3D.h
     svMitkMeshMapper2D.h
@@ -15,6 +16,8 @@ set(H_FILES
 set(CPP_FILES
     svMesh.cxx
     svMeshTetGen.cxx
+    svMeshFactory.cxx
+    svRegisterTetGenFunction.cxx
     svMitkMesh.cxx
     svMitkMeshOperation.cxx
     svMitkMeshMapper3D.cxx

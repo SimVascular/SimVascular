@@ -25,15 +25,19 @@ public:
 
     bool Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg) override;
 
-    bool ParseCommandInternal(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) override;
-
-    static bool ParseCommand(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg);
+    bool ParseCommand(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) override;
 
     cvTetGenMeshObject* GetMesher();
 
+    static svMesh* CreateMesh();
+
+//    bool WriteMeshComplete(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSmartPointer<vtkUnstructuredGrid> volumeMesh, svModelElement* modelElement, std::string meshDir) override;
+
+//    bool WriteMeshComplete(std::string meshDir) override;
+
   protected:
 
-    cvTetGenMeshObject* m_cvTetGetMesh;
+    cvTetGenMeshObject* m_cvTetGenMesh;
 
   };
 

@@ -36,12 +36,8 @@ void svMeshLoadSurfaceAction::Run(const QList<mitk::DataNode::Pointer> &selected
         if(path=="")
             return;
 
-        std::string meshFileName = path+"/"+meshNode->GetName()+".msh";
-        vtkSmartPointer<vtkPolyData> surfaceMesh=svMitkMeshIO::GetSurfaceMesh(meshFileName);
-        if(surfaceMesh)
-        {
-            mesh->SetSurfaceMesh(surfaceMesh);
-        }
+        std::string surfaceFileName = path+"/"+meshNode->GetName()+".vtp";
+        mesh->ReadSurfaceFile(surfaceFileName);
     }
     else
     {

@@ -61,6 +61,9 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
         inputFile.close();
     }
 
+    if(modelType=="" && suffix=="stl")
+        modelType="PolyData";
+
     if(modelType=="")
         modelType=svModelElementFactory::GetType(suffix.toStdString());
 

@@ -63,6 +63,7 @@
 #endif
 
 #ifdef SV_USE_PARASOLID
+  #include "cvParasolidSolidModel.h"
   #include "SimParasolidKrnl.h"
   #include "SimParasolidInt.h"
   #include "cv_parasolid_utils.h"
@@ -130,6 +131,7 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
   // Routines promoted to abstract class from concrete implementation
   int LoadModel(char *filename);
   int LoadModel(vtkPolyData *pd){return SV_ERROR;}
+  int LoadModel(cvSolidModel *cvModel);
   int GetBoundaryFaces(double angle) {return SV_ERROR;}
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();

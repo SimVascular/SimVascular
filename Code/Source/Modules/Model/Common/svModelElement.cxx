@@ -5,6 +5,7 @@ svModelElement::svModelElement()
     : m_Type("")
     , m_WholeVtkPolyData(NULL)
     , m_NumSampling(0)
+    , m_InnerSolid(NULL)
 {
     m_BlendParam=new svBlendParam();
 }
@@ -13,6 +14,8 @@ svModelElement::svModelElement(const svModelElement &other)
     : m_Type(other.m_Type)
     , m_SegNames(other.m_SegNames)
     , m_NumSampling(other.m_NumSampling)
+    , m_FileExtensions(other.m_FileExtensions)
+    , m_InnerSolid(NULL)
 {
     int faceNum=other.m_Faces.size();
     m_Faces.resize(faceNum);
@@ -35,6 +38,9 @@ svModelElement::svModelElement(const svModelElement &other)
     }
 
     m_BlendParam=new svBlendParam(*(other.m_BlendParam));
+
+    if(other.m_InnerSolid)
+        m_InnerSolid=other.m_InnerSolid->Copy();
 }
 
 svModelElement::~svModelElement()
@@ -44,19 +50,16 @@ svModelElement::~svModelElement()
     {
         if(m_Faces[i])
         {
-//            if(m_Faces[i]->vpd)
-//            {
-//                m_Faces[i]->vpd->Delete();
-//            }
-
             delete m_Faces[i];
         }
     }
 
-//    if(m_WholeVtkPolyData)
-//    {
-//        m_WholeVtkPolyData->Delete();
-//    }
+    if(m_InnerSolid)
+        delete m_InnerSolid;
+
+    if(m_BlendParam)
+        delete m_BlendParam;
+
 }
 
 svModelElement* svModelElement::Clone()
@@ -137,7 +140,14 @@ void svModelElement::SetFaceName(std::string name, int id)
 {
     int index=GetFaceIndex(id);
     if(index>-1)
+    {
         m_Faces[index]->name=name;
+        if(m_InnerSolid)
+        {
+            char* nc=const_cast<char*>(name.c_str());
+            m_InnerSolid->SetFaceAttribute("gdscName",id,nc);
+        }
+    }
 }
 
 vtkSmartPointer<vtkPolyData> svModelElement::GetWholeVtkPolyData() const
@@ -478,4 +488,78 @@ void svModelElement::AssignBlendParam(svModelElement::svBlendParam* param)
     m_BlendParam->numcgsmoothiters=param->numcgsmoothiters;
     m_BlendParam->numlapsmoothiters=param->numlapsmoothiters;
     m_BlendParam->targetdecimation=param->targetdecimation;
+}
+
+cvSolidModel* svModelElement::GetInnerSolid()
+{
+    return m_InnerSolid;
+}
+
+void svModelElement::SetInnerSolid(cvSolidModel* innerSolid)
+{
+    m_InnerSolid=innerSolid;
+}
+
+int svModelElement::GetFaceIDFromInnerSolid(std::string faceName)
+{
+    int id=-1;
+
+    if(m_InnerSolid==NULL)
+        return id;
+
+    int numFaces;
+    int *ids;
+    int status=m_InnerSolid->GetFaceIds( &numFaces, &ids);
+    if(status!=SV_OK)
+        return id;
+
+    for(int i=0;i<numFaces;i++)
+    {
+        char *value;
+        m_InnerSolid->GetFaceAttribute("gdscName",ids[i],&value);
+        std::string name(value);
+        if(name==faceName)
+            return ids[i];
+    }
+
+    return id;
+}
+
+int svModelElement::GetFaceIdentifierFromInnerSolid(std::string faceName)
+{
+    return GetFaceIDFromInnerSolid(faceName);
+}
+
+int svModelElement::GetFaceIdentifierFromInnerSolid(int faceID)
+{
+    return faceID;
+}
+
+std::vector<int> svModelElement::GetFaceIDsFromInnerSolid()
+{
+    std::vector<int> faceIDs;
+    if(m_InnerSolid)
+    {
+        int numFaces;
+        int *ids;
+        int status=m_InnerSolid->GetFaceIds( &numFaces, &ids);
+        for(int i=0;i<numFaces;i++)
+            faceIDs.push_back(ids[i]);
+    }
+
+    return faceIDs;
+}
+
+std::string svModelElement::GetFaceNameFromInnerSolid(int faceID)
+{
+    std::string faceName="";
+    if(m_InnerSolid)
+    {
+        char *value;
+        m_InnerSolid->GetFaceAttribute("gdscName",faceID,&value);
+        std::string name(value);
+        faceName=name;
+    }
+
+    return faceName;
 }

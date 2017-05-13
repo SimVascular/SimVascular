@@ -4,7 +4,7 @@
 #include "svVtkMeshSphereWidget.h"
 
 #include "svModel.h"
-#include "svMeshTetGen.h"
+#include "svMeshFactory.h"
 #include "svMesh.h"
 #include "svMitkMesh.h"
 #include "svMitkMeshOperation.h"
@@ -14,7 +14,6 @@
 #include "svModelElementPolyData.h"
 #include "svModelElementAnalytic.h"
 
-#include "svMeshTetGenAdaptor.h"
 #include "svDataNodeOperation.h"
 
 #include <berryIPreferencesService.h>
@@ -53,11 +52,11 @@ svMeshEdit::svMeshEdit() :
     m_DataInteractor=NULL;
     m_ModelSelectFaceObserverTag=-1;
 
-    m_TableModelLocalT=NULL;
-    m_TableMenuLocalT=NULL;
+    m_TableModelLocal=NULL;
+    m_TableMenuLocal=NULL;
 
-    m_TableModelRegionT=NULL;
-    m_TableMenuRegionT=NULL;
+    m_TableModelRegion=NULL;
+    m_TableMenuRegion=NULL;
 
     m_SphereWidget=NULL;
 
@@ -66,23 +65,32 @@ svMeshEdit::svMeshEdit() :
     m_UndoAble=false;
 
     m_Interface=new svDataNodeOperationInterface;
+
+    m_CustomDelegate=new svLocalTableDelegate(this);
+    m_DefaultDelegate=new QItemDelegate(this);
 }
 
 svMeshEdit::~svMeshEdit()
 {
     delete ui;
 
-    if(m_TableModelLocalT)
-        delete m_TableModelLocalT;
+    if(m_TableModelLocal)
+        delete m_TableModelLocal;
 
-    if(m_TableMenuLocalT)
-        delete m_TableMenuLocalT;
+    if(m_TableMenuLocal)
+        delete m_TableMenuLocal;
 
-    if(m_TableModelRegionT)
-        delete m_TableModelRegionT;
+    if(m_TableModelRegion)
+        delete m_TableModelRegion;
 
-    if(m_TableMenuRegionT)
-        delete m_TableMenuRegionT;
+    if(m_TableMenuRegion)
+        delete m_TableMenuRegion;
+
+    if(m_CustomDelegate)
+        delete m_CustomDelegate;
+
+    if(m_DefaultDelegate)
+        delete m_DefaultDelegate;
 }
 
 void svMeshEdit::CreateQtPartControl( QWidget *parent )
@@ -103,9 +111,7 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnRunMesher, SIGNAL(clicked()), this, SLOT(RunMesher()) );
 
-    SetupTetGenGUI(parent);
-
-//    SetUpMeshSimGUI(parent);
+    SetupGUI(parent);
 
     if(m_SphereWidget==NULL)
     {
@@ -119,49 +125,55 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnMeshInfo, SIGNAL(clicked()), this, SLOT(DisplayMeshInfo()) );
 }
 
-void svMeshEdit::SetupTetGenGUI(QWidget *parent )
+void svMeshEdit::SetupGUI(QWidget *parent )
 {
+    //global - tetgen
     connect(ui->btnEstimateT, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
 
     ui->toolBox->setCurrentIndex(0);
 
     //for local table
-    m_TableModelLocalT = new QStandardItemModel(this);
-    ui->tableViewLocalT->setModel(m_TableModelLocalT);
+    m_TableModelLocal = new QStandardItemModel(this);
+    ui->tableViewLocal->setModel(m_TableModelLocal);
 
-    connect( ui->tableViewLocalT->selectionModel()
+    ui->tableViewLocal->setItemDelegateForColumn(4,m_CustomDelegate);
+    ui->tableViewLocal->setItemDelegateForColumn(6,m_CustomDelegate);
+    ui->tableViewLocal->setItemDelegateForColumn(7,m_CustomDelegate);
+
+    connect( ui->tableViewLocal->selectionModel()
       , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
       , this
       , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
-    m_TableMenuLocalT=new QMenu(ui->tableViewLocalT);
-    QAction* setLocalTAction=m_TableMenuLocalT->addAction("Set Edge Size");
-    QAction* clearLocalTAction=m_TableMenuLocalT->addAction("Clear Edge Size");
+    connect( ui->tableViewLocal, SIGNAL(customContextMenuRequested(const QPoint&))
+      , this, SLOT(TableViewLocalContextMenuRequested(const QPoint&)) );
+
+    //local menu
+    m_TableMenuLocal=new QMenu(ui->tableViewLocal);
+    QAction* setLocalTAction=m_TableMenuLocal->addAction("Set Local Size");
+    QAction* clearLocalTAction=m_TableMenuLocal->addAction("Clear Local Size");
     connect( setLocalTAction, SIGNAL( triggered(bool) ) , this, SLOT( SetLocal(bool) ) );
     connect( clearLocalTAction, SIGNAL( triggered(bool) ) , this, SLOT( ClearLocal(bool) ) );
 
-    connect( ui->tableViewLocalT, SIGNAL(customContextMenuRequested(const QPoint&))
-      , this, SLOT(TableViewLocalContextMenuRequested(const QPoint&)) );
-
     //for regional table
-    connect(ui->checkBoxSphereT, SIGNAL(toggled(bool)), this, SLOT(ShowSphereInteractor(bool)));
-    connect(ui->btnAddSphereT, SIGNAL(clicked()), this, SLOT(AddSphere()) );
+    connect(ui->checkBoxSphere, SIGNAL(toggled(bool)), this, SLOT(ShowSphereInteractor(bool)));
+    connect(ui->btnAddSphere, SIGNAL(clicked()), this, SLOT(AddSphere()) );
 
-    m_TableModelRegionT = new QStandardItemModel(this);
-    ui->tableViewRegionT->setModel(m_TableModelRegionT);
+    m_TableModelRegion = new QStandardItemModel(this);
+    ui->tableViewRegion->setModel(m_TableModelRegion);
 
-    connect( ui->tableViewRegionT->selectionModel()
+    connect( ui->tableViewRegion->selectionModel()
       , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
       , this
       , SLOT( TableRegionListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
-    m_TableMenuRegionT=new QMenu(ui->tableViewRegionT);
-    QAction* setRegionTAction=m_TableMenuRegionT->addAction("Set Edge Size");
-    QAction* deleteRegionTAction=m_TableMenuRegionT->addAction("Delete");
+    m_TableMenuRegion=new QMenu(ui->tableViewRegion);
+    QAction* setRegionTAction=m_TableMenuRegion->addAction("Set Regional Size");
+    QAction* deleteRegionTAction=m_TableMenuRegion->addAction("Delete");
     connect( setRegionTAction, SIGNAL( triggered(bool) ) , this, SLOT( SetRegion(bool) ) );
     connect( deleteRegionTAction, SIGNAL( triggered(bool) ) , this, SLOT( DeleteSelectedRegions(bool) ) );
 
-    connect( ui->tableViewRegionT, SIGNAL(customContextMenuRequested(const QPoint&))
+    connect( ui->tableViewRegion, SIGNAL(customContextMenuRequested(const QPoint&))
       , this, SLOT(TableViewRegionContextMenuRequested(const QPoint&)) );
 
     //for adaptor
@@ -183,19 +195,8 @@ void svMeshEdit::TableFaceListSelectionChanged( const QItemSelection & /*selecte
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
-    QStandardItemModel* tableModel=NULL;
-    QTableView* tableView=NULL;
-
-    if(m_MeshType=="TetGen")
-    {
-        tableModel=m_TableModelLocalT;
-        tableView=ui->tableViewLocalT;
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        tableModel=m_TableModelLocalM;
-//        tableView=ui->tableViewLocalM;
-    }
+    QStandardItemModel* tableModel=m_TableModelLocal;
+    QTableView* tableView=ui->tableViewLocal;
 
     if(tableModel==NULL || tableView==NULL)
         return;
@@ -227,19 +228,8 @@ void svMeshEdit::SetLocal(bool)
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
-    QStandardItemModel* tableModel=NULL;
-    QTableView* tableView=NULL;
-
-    if(m_MeshType=="TetGen")
-    {
-        tableModel=m_TableModelLocalT;
-        tableView=ui->tableViewLocalT;
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        tableModel=m_TableModelLocalM;
-//        tableView=ui->tableViewLocalM;
-    }
+    QStandardItemModel* tableModel=m_TableModelLocal;
+    QTableView* tableView=ui->tableViewLocal;
 
     if(tableModel==NULL || tableView==NULL)
         return;
@@ -253,25 +243,27 @@ void svMeshEdit::SetLocal(bool)
     bool ok=false;
     QString localInfo="";
 
-    if(m_MeshType=="TetGen")
-    {
-        double localSize=QInputDialog::getDouble(m_Parent, "Set Local Size", "Local Size:", 0.0, 0, 100, 4, &ok);
-        localInfo=QString::number(localSize);
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-
-    }
+    double localSize=QInputDialog::getDouble(m_Parent, "Set Local Size", "Local Size:", 0.0, 0, 100, 4, &ok);
+    localInfo=QString::number(localSize);
 
     if(!ok)
         return;
+
+    int columnIndex=0;
+    if(m_MeshType=="TetGen")
+        columnIndex=3;
+    else if(m_MeshType=="MeshSim")
+        columnIndex=5;
+    else
+        return;
+
 
     for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
        ; it != indexesOfSelectedRows.end(); it++)
      {
        int row=(*it).row();
 
-       QStandardItem* item= tableModel->item(row,3);
+       QStandardItem* item= tableModel->item(row,columnIndex);
        item->setText(localInfo);
      }
 }
@@ -285,19 +277,8 @@ void svMeshEdit::ClearLocal(bool)
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
-    QStandardItemModel* tableModel=NULL;
-    QTableView* tableView=NULL;
-
-    if(m_MeshType=="TetGen")
-    {
-        tableModel=m_TableModelLocalT;
-        tableView=ui->tableViewLocalT;
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        tableModel=m_TableModelLocalM;
-//        tableView=ui->tableViewLocalM;
-    }
+    QStandardItemModel* tableModel=m_TableModelLocal;
+    QTableView* tableView=ui->tableViewLocal;
 
     if(tableModel==NULL || tableView==NULL)
         return;
@@ -308,26 +289,27 @@ void svMeshEdit::ClearLocal(bool)
       return;
     }
 
+    int columnIndex=0;
+    if(m_MeshType=="TetGen")
+        columnIndex=3;
+    else if(m_MeshType=="MeshSim")
+        columnIndex=5;
+    else
+        return;
+
     for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
        ; it != indexesOfSelectedRows.end(); it++)
      {
        int row=(*it).row();
 
-       QStandardItem* item= tableModel->item(row,3);
+       QStandardItem* item= tableModel->item(row,columnIndex);
        item->setText("");
      }
 }
 
 void svMeshEdit::TableViewLocalContextMenuRequested( const QPoint & pos )
 {
-    if(m_MeshType=="TetGen")
-    {
-        m_TableMenuLocalT->popup(QCursor::pos());
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        m_TableMenuLocalM->popup(QCursor::pos());
-    }
+    m_TableMenuLocal->popup(QCursor::pos());
 }
 
 void svMeshEdit::TableRegionListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
@@ -339,19 +321,8 @@ void svMeshEdit::TableRegionListSelectionChanged( const QItemSelection & /*selec
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
-    QStandardItemModel* tableModel=NULL;
-    QTableView* tableView=NULL;
-
-    if(m_MeshType=="TetGen")
-    {
-        tableModel=m_TableModelRegionT;
-        tableView=ui->tableViewRegionT;
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        tableModel=m_TableModelRegionM;
-//        tableView=ui->tableViewRegionM;
-    }
+    QStandardItemModel* tableModel=m_TableModelRegion;
+    QTableView* tableView=ui->tableViewRegion;
 
     if(tableModel==NULL || tableView==NULL)
         return;
@@ -403,19 +374,8 @@ void svMeshEdit::SetRegion(bool)
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
-    QStandardItemModel* tableModel=NULL;
-    QTableView* tableView=NULL;
-
-    if(m_MeshType=="TetGen")
-    {
-        tableModel=m_TableModelRegionT;
-        tableView=ui->tableViewRegionT;
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        tableModel=m_TableModelRegionM;
-//        tableView=ui->tableViewRegionM;
-    }
+    QStandardItemModel* tableModel=m_TableModelRegion;
+    QTableView* tableView=ui->tableViewRegion;
 
     if(tableModel==NULL || tableView==NULL)
         return;
@@ -429,15 +389,8 @@ void svMeshEdit::SetRegion(bool)
     bool ok=false;
     QString localInfo="";
 
-    if(m_MeshType=="TetGen")
-    {
-        double localSize=QInputDialog::getDouble(m_Parent, "Set Edge Size", "Edge Size:", 0.0, 0, 100, 4, &ok);
-        localInfo=QString::number(localSize);
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-
-    }
+    double localSize=QInputDialog::getDouble(m_Parent, "Set Edge Size", "Edge Size:", 0.0, 0, 100, 4, &ok);
+    localInfo=QString::number(localSize);
 
     if(!ok)
         return;
@@ -461,19 +414,8 @@ void svMeshEdit::DeleteSelectedRegions(bool)
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
-    QStandardItemModel* tableModel=NULL;
-    QTableView* tableView=NULL;
-
-    if(m_MeshType=="TetGen")
-    {
-        tableModel=m_TableModelRegionT;
-        tableView=ui->tableViewRegionT;
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        tableModel=m_TableModelRegionM;
-//        tableView=ui->tableViewRegionM;
-    }
+    QStandardItemModel* tableModel=m_TableModelRegion;
+    QTableView* tableView=ui->tableViewRegion;
 
     if(tableModel==NULL || tableView==NULL)
         return;
@@ -483,13 +425,6 @@ void svMeshEdit::DeleteSelectedRegions(bool)
     {
       return;
     }
-
-//    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-//       ; it != indexesOfSelectedRows.end(); it++)
-//     {
-//       int row=(*it).row();
-//       tableModel->removeRow(row);
-//     }
 
     std::vector<int> rows;
     for(int i=0;i<indexesOfSelectedRows.size();i++)
@@ -504,24 +439,14 @@ void svMeshEdit::DeleteSelectedRegions(bool)
 
 void svMeshEdit::TableViewRegionContextMenuRequested( const QPoint & pos )
 {
-    if(m_MeshType=="TetGen")
-    {
-        m_TableMenuRegionT->popup(QCursor::pos());
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        m_TableMenuRegionM->popup(QCursor::pos());
-    }
+    m_TableMenuRegion->popup(QCursor::pos());
 }
 
 void svMeshEdit::SetEstimatedEdgeSize()
 {
     double edgeSize=EstimateEdgeSize();
 
-    if(m_MeshType=="TetGen")
-        ui->lineEditGlobalEdgeSizeT->setText(QString::number(edgeSize));
-//    else if(m_MeshType="MeshSim")
-//        ui->lineEditGlobalEdgeSizeM->setText(QString::number(edgeSize));
+    ui->lineEditGlobalEdgeSizeT->setText(QString::number(edgeSize));
 }
 
 double svMeshEdit::EstimateEdgeSize()
@@ -582,40 +507,38 @@ void svMeshEdit::RunCommands(bool fromGUI)
 
     if(!m_Model) return;
 
-    svModelElementPolyData* modelElement=NULL;
-    modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
-
-    if(modelElement==NULL)
-    {
-        svModelElementAnalytic* meAnalytic=dynamic_cast<svModelElementAnalytic*>(modelElement);
-        if(meAnalytic)
-        {
-            mitk::StatusBar::GetInstance()->DisplayText("converting to PolyData ...");
-            WaitCursorOn();
-            modelElement=meAnalytic->ConverToPolyDataModel();
-            WaitCursorOff();
-        }
-    }
+    svModelElement* modelElement=m_Model->GetModelElement();
+    std::string modelType=modelElement->GetType();
 
     if(!modelElement) return;
 
-    svMesh* newMesh=NULL;
-
-    if(m_MeshType=="TetGen")
+    if( m_MeshType=="MeshSim" && (modelType=="PolyData" || modelType=="OpenCASCADE") )
     {
-        QString ges=ui->lineEditGlobalEdgeSizeT->text().trimmed();
-        bool ok=false;
-        ges.toDouble(&ok);
-        if(!ok)
-        {
-            QMessageBox::warning(m_Parent,"Warning","Error in Global Egde Size!");
-            return;
-        }
-
-        newMesh=new svMeshTetGen();
+        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(m_MeshType)+ " doesn't work with " +QString::fromStdString(modelType) + " model.");
+        return;
     }
-//    else if(m_MeshType=="MeshSim")
-//        mesh=new svMeshMeshSim();
+
+    if( m_MeshType=="TetGen" && modelType!="PolyData")
+    {
+        QMessageBox::warning(NULL,"Not Compatible!", QString::fromStdString(m_MeshType)+ " only works with PolyData model.");
+        return;
+    }
+
+    QString ges="";
+    if(m_MeshType=="TetGen")
+        ges=ui->lineEditGlobalEdgeSizeT->text().trimmed();
+    else if(m_MeshType=="MeshSim")
+        ges=ui->lineEditGlobalSizeM->text().trimmed();
+
+    bool ok=false;
+    ges.toDouble(&ok);
+    if(!ok)
+    {
+        QMessageBox::warning(m_Parent,"Warning","Error in Global Size!");
+        return;
+    }
+
+    svMesh* newMesh=svMeshFactory::CreateMesh(m_MeshType);
 
     if(newMesh==NULL)
         return;
@@ -635,8 +558,8 @@ void svMeshEdit::RunCommands(bool fromGUI)
     {
         if(m_MeshType=="TetGen")
             cmds=CreateCmdsT();
-//        else if(m_MeshType=="MeshSim")
-//            cmds=CreateCmdM();
+        else if(m_MeshType=="MeshSim")
+            cmds=CreateCmdsM();
     }
     else
     {
@@ -683,7 +606,6 @@ void svMeshEdit::RunCommands(bool fromGUI)
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
     DisplayMeshInfo();
-
 }
 
 std::vector<std::string> svMeshEdit::CreateCmdsT()
@@ -725,27 +647,27 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
         cmds.push_back("boundaryLayer "+QString::number(ui->sbLayersT->value()).toStdString()
                        +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString());
 
-    for(int i=0;i<m_TableModelLocalT->rowCount();i++)
+    for(int i=0;i<m_TableModelLocal->rowCount();i++)
     {
-        QStandardItem* itemName= m_TableModelLocalT->item(i,1);
+        QStandardItem* itemName= m_TableModelLocal->item(i,1);
         QString name=itemName->text();
 
-        QStandardItem* itemLocal= m_TableModelLocalT->item(i,3);
+        QStandardItem* itemLocal= m_TableModelLocal->item(i,3);
         QString localSize=itemLocal->text().trimmed();
 
         if(!localSize.isEmpty())
             cmds.push_back("localSize " + name.toStdString() + " " + localSize.toStdString());
     }
 
-    for(int i=0;i<m_TableModelRegionT->rowCount();i++)
+    for(int i=0;i<m_TableModelRegion->rowCount();i++)
     {
-        QStandardItem* itemShape= m_TableModelRegionT->item(i,0);
+        QStandardItem* itemShape= m_TableModelRegion->item(i,0);
         QString shape=itemShape->text();
 
-        QStandardItem* itemLocal= m_TableModelRegionT->item(i,1);
+        QStandardItem* itemLocal= m_TableModelRegion->item(i,1);
         QString localSize=itemLocal->text().trimmed();
 
-        QStandardItem* itemParams= m_TableModelRegionT->item(i,2);
+        QStandardItem* itemParams= m_TableModelRegion->item(i,2);
         QString params=itemParams->text();
         QStringList plist = params.split(QRegExp("\\s+"));
 
@@ -787,6 +709,176 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
         cmds.push_back("getBoundaries");
 
     cmds.push_back("writeMesh");
+
+    return cmds;
+}
+
+std::vector<std::string> svMeshEdit::CreateCmdsM()
+{
+    std::vector<std::string> cmds;
+
+    std::string meshFolderPath=GetMeshFolderPath().trimmed().toStdString();
+
+    //logon
+    cmds.push_back("logon "+meshFolderPath+"/"+m_MeshNode->GetName()+".logfile");
+
+    //init meshsim mesh
+    cmds.push_back("newMesh");
+
+    //surface options
+    if(ui->checkBoxSurfaceM->isChecked())
+        cmds.push_back("option surface 1");
+    else
+        cmds.push_back("option surface 0");
+
+    if(ui->checkBoxSurfaceOptimizationM->isChecked())
+        cmds.push_back("option surface optimization 1");
+    else
+        cmds.push_back("option surface optimization 0");
+
+    QString surfsmooth="option surface smoothing " + QString::number(int(ui->sliderPassesM->value()));
+    cmds.push_back(surfsmooth.toStdString());
+
+    //volume options
+    if(ui->checkBoxVolumeM->isChecked())
+        cmds.push_back("option volume 1");
+    else
+        cmds.push_back("option volume 0");
+
+    if(ui->checkBoxVolumeSmoothingM->isChecked())
+        cmds.push_back("option volume smoothing 1");
+    else
+        cmds.push_back("option volume smoothing 0");
+
+    if(ui->checkBoxVolumeOptimizationM->isChecked())
+        cmds.push_back("option volume optimization 1");
+    else
+        cmds.push_back("option volume optimization 0");
+
+    //global type and size
+    QString gType="";
+    switch(ui->comboBoxGlobalTypeM->currentIndex())
+    {
+    case 0:
+        gType="gsize";
+        break;
+    case 1:
+        gType="gcurv";
+        break;
+    case 2:
+        gType="gmincurv";
+        break;
+    }
+
+    QString gSizeType="";
+    if(ui->comboBoxGlobalSizeTypeM->currentIndex()==0)
+        gSizeType="1";
+    else
+        gSizeType="2";
+
+    QString globalSize=gType+" "+gSizeType+" "+ui->lineEditGlobalSizeM->text().trimmed();
+    cmds.push_back(globalSize.toStdString());
+
+    //local and boundary layer
+    int faceidColIndex=0;
+    int facenameColIndex=1;
+    int facetypeColIndex=2;
+    int ltypeColIndex=3;
+    int lsizetypeColIndex=4;
+    int lsizeColIndex=5;
+    int btypeColIndex=6;
+    int bdirectionColIndex=7;
+    int layernumberColIndex=8;
+    int paramsColIndex=9;
+
+    for(int i=0;i<m_TableModelLocal->rowCount();i++)
+    {
+        QStandardItem* itemName= m_TableModelLocal->item(i,facenameColIndex);
+        QString name=itemName->text().trimmed();
+
+        QStandardItem* itemLtype= m_TableModelLocal->item(i,ltypeColIndex);
+        QString ltype=itemLtype->text().trimmed();
+        if(ltype=="Max Curv")
+            ltype="curv";
+        else if(ltype=="Min Curv")
+            ltype="mincurv";
+        else
+            ltype="size";
+
+        QStandardItem* itemLsizetype= m_TableModelLocal->item(i,lsizetypeColIndex);
+        QString lsizetype=itemLsizetype->text().trimmed();
+        if(lsizetype=="relative")
+            lsizetype="2";
+        else
+            lsizetype="1";
+
+        QStandardItem* itemLocal= m_TableModelLocal->item(i,lsizeColIndex);
+        QString localSize=itemLocal->text().trimmed();
+
+        if(!localSize.isEmpty())
+            cmds.push_back(ltype.toStdString() + " " + name.toStdString() + " " + lsizetype.toStdString()+ " " + localSize.toStdString());
+
+        QStandardItem* itemBtype= m_TableModelLocal->item(i,btypeColIndex);
+        QString btype=itemBtype->text().trimmed();
+        if(btype.startsWith("(1)"))
+            btype="1";
+        else if(btype.startsWith("(2)"))
+            btype="2";
+        else if(btype.startsWith("(3)"))
+            btype="3";
+        else
+            btype="4";
+
+        QStandardItem* itemBdirection= m_TableModelLocal->item(i,bdirectionColIndex);
+        QString bdirection=itemBdirection->text().trimmed();
+        if(bdirection=="negative")
+            bdirection="0";
+        else if(bdirection=="positive")
+            bdirection="1";
+        else
+            bdirection="2";
+
+        QStandardItem* itemLayernumber= m_TableModelLocal->item(i,layernumberColIndex);
+        QString layernumber=itemLayernumber->text().trimmed();
+
+        QStandardItem* itemParams= m_TableModelLocal->item(i,paramsColIndex);
+        QString params=itemParams->text().trimmed();
+
+        if(!layernumber.isEmpty() && !params.isEmpty())
+            cmds.push_back("boundaryLayer " + name.toStdString() + " " + btype.toStdString()+ " " + bdirection.toStdString()
+                           + " " + layernumber.toStdString()+ " " + params.toStdString());
+    }
+
+    //regional
+    for(int i=0;i<m_TableModelRegion->rowCount();i++)
+    {
+        QStandardItem* itemShape= m_TableModelRegion->item(i,0);
+        QString shape=itemShape->text();
+
+        QStandardItem* itemLocal= m_TableModelRegion->item(i,1);
+        QString localSize=itemLocal->text().trimmed();
+
+        QStandardItem* itemParams= m_TableModelRegion->item(i,2);
+        QString params=itemParams->text();
+        QStringList plist = params.split(QRegExp("\\s+"));
+
+        if(!localSize.isEmpty())
+            cmds.push_back("sphereRefinement " + localSize.toStdString() + " " + plist[0].toStdString()
+                    + " " + plist[1].toStdString() + " " + plist[2].toStdString() + " " + plist[3].toStdString());
+    }
+
+    if(ui->checkBoxFlagV->isChecked())
+        cmds.push_back("option Verbose");
+
+    cmds.push_back("generateMesh");
+
+    cmds.push_back("writeMesh "+meshFolderPath+"/"+m_MeshNode->GetName()+".sms");
+
+    if(ui->checkBoxWriteStatM->isChecked())
+        cmds.push_back("writeStats "+meshFolderPath+"/"+m_MeshNode->GetName()+".sts");
+
+    cmds.push_back("deleteMesh");
+    cmds.push_back("logoff");
 
     return cmds;
 }
@@ -841,13 +933,12 @@ void svMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-    //comment this section to make sure always update GUI
-//    if(m_MeshNode==meshNode)
-//    {
-//        AddObservers();
-//        m_Parent->setEnabled(true);
-//        return;
-//    }
+    if(m_MeshNode==meshNode)
+    {
+        AddObservers();
+        m_Parent->setEnabled(true);
+        return;
+    }
 
     std::string modelName=mitkMesh->GetModelName();
 
@@ -917,13 +1008,21 @@ void svMeshEdit::UpdateGUI()
 
     if(m_MeshType=="TetGen")
     {
-        ui->stackedWidget->setCurrentIndex(0);
+        ui->widgetGlobal_T->show();
+        ui->widgetGlobal_M->hide();
+        ui->widgetAdvancedT->show();
+        ui->widgetAdvancedM->hide();
+        ui->widgetAdvancedFlagsT->show();
         UpdateTetGenGUI();
     }
     else if(m_MeshType=="MeshSim")
     {
-//        ui->stackedWidget->setCurrentIndex(1);
-//        UpdateMeshSimGUI();
+        ui->widgetGlobal_T->hide();
+        ui->widgetGlobal_M->show();
+        ui->widgetAdvancedT->hide();
+        ui->widgetAdvancedM->show();
+        ui->widgetAdvancedFlagsT->hide();
+        UpdateMeshSimGUI();
     }
 }
 
@@ -948,8 +1047,10 @@ void svMeshEdit::UpdateTetGenGUI()
 
     ui->checkBoxFastMeshing->setChecked(false);
 
-    //local size
-    m_TableModelLocalT->clear();
+    //local table
+    ui->tableViewLocal->setItemDelegateForColumn(3,m_DefaultDelegate);
+
+    m_TableModelLocal->clear();
 
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
@@ -959,8 +1060,8 @@ void svMeshEdit::UpdateTetGenGUI()
 
     QStringList faceListHeaders;
     faceListHeaders << "ID" << "Name" << "Type" << "Local Size";
-    m_TableModelLocalT->setHorizontalHeaderLabels(faceListHeaders);
-    m_TableModelLocalT->setColumnCount(4);
+    m_TableModelLocal->setHorizontalHeaderLabels(faceListHeaders);
+    m_TableModelLocal->setColumnCount(faceListHeaders.size());
 
     int rowIndex=-1;
 
@@ -970,51 +1071,51 @@ void svMeshEdit::UpdateTetGenGUI()
             continue;
 
         rowIndex++;
-        m_TableModelLocalT->insertRow(rowIndex);
+        m_TableModelLocal->insertRow(rowIndex);
 
         QStandardItem* item;
 
         item= new QStandardItem(QString::number(faces[i]->id));
         item->setEditable(false);
-        m_TableModelLocalT->setItem(rowIndex, 0, item);
+        m_TableModelLocal->setItem(rowIndex, 0, item);
 
         item= new QStandardItem(QString::fromStdString(faces[i]->name));
         item->setEditable(false);
-        m_TableModelLocalT->setItem(rowIndex, 1, item);
+        m_TableModelLocal->setItem(rowIndex, 1, item);
 
         item= new QStandardItem(QString::fromStdString(faces[i]->type));
         item->setEditable(false);
-        m_TableModelLocalT->setItem(rowIndex, 2, item);
+        m_TableModelLocal->setItem(rowIndex, 2, item);
 
         item= new QStandardItem("");
-        m_TableModelLocalT->setItem(rowIndex, 3, item);
+        m_TableModelLocal->setItem(rowIndex, 3, item);
     }
 
-    ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
-    ui->tableViewLocalT->horizontalHeader()->resizeSection(0,20);
-    ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
-    ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    ui->tableViewLocalT->horizontalHeader()->resizeSection(2,60);
-    ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
-    ui->tableViewLocalT->horizontalHeader()->resizeSection(3,80);
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(0,20);
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(2,60);
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(3,80);
 
-    ui->tableViewLocalT->setColumnHidden(0,true);
+    ui->tableViewLocal->setColumnHidden(0,true);
 
     UpdateFaceListSelection();
 
     //regional refinement
-    m_TableModelRegionT->clear();
+    m_TableModelRegion->clear();
 
     QStringList regionListHeaders;
     regionListHeaders << "Type" << "Local Size" << "Radius x y z";
-    m_TableModelRegionT->setHorizontalHeaderLabels(regionListHeaders);
-    m_TableModelRegionT->setColumnCount(3);
+    m_TableModelRegion->setHorizontalHeaderLabels(regionListHeaders);
+    m_TableModelRegion->setColumnCount(3);
 
-    ui->tableViewRegionT->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
-    ui->tableViewRegionT->horizontalHeader()->resizeSection(0,80);
-    ui->tableViewRegionT->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-    ui->tableViewRegionT->horizontalHeader()->resizeSection(1,80);
-    ui->tableViewRegionT->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+    ui->tableViewRegion->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+    ui->tableViewRegion->horizontalHeader()->resizeSection(0,80);
+    ui->tableViewRegion->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    ui->tableViewRegion->horizontalHeader()->resizeSection(1,80);
+    ui->tableViewRegion->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
 
     //advanced flags
     ui->checkBoxFlagO->setChecked(true);
@@ -1035,7 +1136,6 @@ void svMeshEdit::UpdateTetGenGUI()
 
     //then udpate with command history
     //========================================
-//    svMeshTetGen* mesh=dynamic_cast<svMeshTetGen*>(m_MitkMesh->GetMesh(GetTimeStep()));
     svMesh* mesh=m_MitkMesh->GetMesh(GetTimeStep());
     if(mesh==NULL)
         return;
@@ -1056,7 +1156,7 @@ void svMeshEdit::UpdateTetGenGUI()
         if(cmdHistory[i]=="")
             continue;
 
-        if(!svMeshTetGen::ParseCommand(cmdHistory[i],flag,values,strValues,option,msg))
+        if(!mesh->ParseCommand(cmdHistory[i],flag,values,strValues,option,msg))
         {
             QMessageBox::warning(m_Parent,"Parsing Error","Error in parsing command history!");
             return;
@@ -1138,14 +1238,14 @@ void svMeshEdit::UpdateTetGenGUI()
         {
             int faceID=modelElement->GetFaceID(strValues[0]);
 
-            for(int j=0;j<m_TableModelLocalT->rowCount(); j++)
+            for(int j=0;j<m_TableModelLocal->rowCount(); j++)
             {
-                QStandardItem* itemID= m_TableModelLocalT->item(j,0);
+                QStandardItem* itemID= m_TableModelLocal->item(j,0);
                 int id=itemID->text().toInt();
 
                 if(faceID==id)
                 {
-                    QStandardItem* item= m_TableModelLocalT->item(j,3);
+                    QStandardItem* item= m_TableModelLocal->item(j,3);
                     item->setText(QString::number(values[0]));
                     break;
                 }
@@ -1154,20 +1254,20 @@ void svMeshEdit::UpdateTetGenGUI()
         else if(flag=="sphereRefinement")
         {
             regionRowIndex++;
-            m_TableModelRegionT->insertRow(regionRowIndex);
+            m_TableModelRegion->insertRow(regionRowIndex);
 
             QStandardItem* item;
 
             item= new QStandardItem("Sphere");
             item->setEditable(false);
-            m_TableModelRegionT->setItem(regionRowIndex, 0, item);
+            m_TableModelRegion->setItem(regionRowIndex, 0, item);
 
             item= new QStandardItem(QString::number(values[0]));
-            m_TableModelRegionT->setItem(regionRowIndex, 1, item);
+            m_TableModelRegion->setItem(regionRowIndex, 1, item);
 
             item= new QStandardItem(QString::number(values[1])+" "+QString::number(values[2])+" "+QString::number(values[3])+" "+QString::number(values[4]));
             item->setEditable(false);
-            m_TableModelRegionT->setItem(regionRowIndex, 2, item);
+            m_TableModelRegion->setItem(regionRowIndex, 2, item);
         }
         else
         {
@@ -1177,8 +1277,341 @@ void svMeshEdit::UpdateTetGenGUI()
     }
 
     //adaptor options
-    ui->lineEditMaxEdgeSize->setText(ui->lineEditGlobalEdgeSizeT->text());
+//    ui->lineEditMaxEdgeSize->setText(ui->lineEditGlobalEdgeSizeT->text());
+    ui->comboBoxStrategy->setCurrentIndex(0);
+    ui->comboBoxStrategy->setEnabled(false);
+}
 
+void svMeshEdit::UpdateMeshSimGUI()
+{
+    //put default values
+    //==========================================
+
+    //global size
+    ui->comboBoxGlobalTypeM->setCurrentIndex(0);
+    ui->comboBoxGlobalSizeTypeM->setCurrentIndex(0);
+    ui->lineEditGlobalSizeM->clear();
+
+    //advanced options
+    ui->checkBoxSurfaceM->setChecked(true);
+    ui->checkBoxSurfaceOptimizationM->setChecked(true);
+    ui->sliderPassesM->setValue(3);
+
+    ui->checkBoxVolumeM->setChecked(true);
+    ui->checkBoxVolumeSmoothingM->setChecked(true);
+    ui->checkBoxVolumeOptimizationM->setChecked(true);
+
+    ui->checkBoxWriteStatM->setChecked(false);
+
+    //local table
+    ui->tableViewLocal->setItemDelegateForColumn(3,m_CustomDelegate);
+
+    m_TableModelLocal->clear();
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
+
+    QStringList faceListHeaders;
+    faceListHeaders << "ID" << "Name" << "Type"
+                    << "LType" << "LSizeType" <<"LSize"
+                    << "BType" << "Direction" <<"Layers" << "Params";
+                       ;
+    int faceidColIndex=0;
+    int facenameColIndex=1;
+    int facetypeColIndex=2;
+    int ltypeColIndex=3;
+    int lsizetypeColIndex=4;
+    int lsizeColIndex=5;
+    int btypeColIndex=6;
+    int bdirectionColIndex=7;
+    int layernumberColIndex=8;
+    int paramsColIndex=9;
+    m_TableModelLocal->setHorizontalHeaderLabels(faceListHeaders);
+    m_TableModelLocal->setColumnCount(faceListHeaders.size());
+
+    int rowIndex=-1;
+
+    for(int i=0;i<faces.size();i++)
+    {
+        if(faces[i]==NULL )
+            continue;
+
+        rowIndex++;
+        m_TableModelLocal->insertRow(rowIndex);
+
+        QStandardItem* item;
+
+        item= new QStandardItem(QString::number(faces[i]->id));
+        item->setEditable(false);
+        m_TableModelLocal->setItem(rowIndex, faceidColIndex, item);
+
+        item= new QStandardItem(QString::fromStdString(faces[i]->name));
+        item->setEditable(false);
+        m_TableModelLocal->setItem(rowIndex, facenameColIndex, item);
+
+        item= new QStandardItem(QString::fromStdString(faces[i]->type));
+        item->setEditable(false);
+        m_TableModelLocal->setItem(rowIndex, facetypeColIndex, item);
+
+        item= new QStandardItem("Max Edge");
+        m_TableModelLocal->setItem(rowIndex, ltypeColIndex, item);
+
+        item= new QStandardItem("absolute");
+        m_TableModelLocal->setItem(rowIndex, lsizetypeColIndex, item);
+
+        item= new QStandardItem("");
+        m_TableModelLocal->setItem(rowIndex, lsizeColIndex, item);
+
+        item= new QStandardItem("(1)t0 tb");
+        item->setToolTip("t0: first layer height\ntb: total height\ntn-1: last layer height\ng: gradation factor(0<g<1)");
+        m_TableModelLocal->setItem(rowIndex, btypeColIndex, item);
+
+        item= new QStandardItem("both");
+        m_TableModelLocal->setItem(rowIndex, bdirectionColIndex, item);
+
+        item= new QStandardItem("");
+        m_TableModelLocal->setItem(rowIndex, layernumberColIndex, item);
+
+        item= new QStandardItem("");
+        m_TableModelLocal->setItem(rowIndex, paramsColIndex, item);
+    }
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(faceidColIndex, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(faceidColIndex,20);
+    ui->tableViewLocal->setColumnHidden(faceidColIndex,true);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(facenameColIndex, QHeaderView::Interactive);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(facetypeColIndex, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(facetypeColIndex,40);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(ltypeColIndex, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(ltypeColIndex,80);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(lsizetypeColIndex, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(lsizetypeColIndex,80);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(lsizeColIndex, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(lsizeColIndex,60);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(btypeColIndex, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(btypeColIndex,80);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(bdirectionColIndex, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(bdirectionColIndex,80);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(layernumberColIndex, QHeaderView::Fixed);
+    ui->tableViewLocal->horizontalHeader()->resizeSection(layernumberColIndex,60);
+
+    ui->tableViewLocal->horizontalHeader()->setSectionResizeMode(paramsColIndex, QHeaderView::Interactive);
+//    ui->tableViewLocal->horizontalHeader()->resizeSection(paramsColIndex,80);
+
+    UpdateFaceListSelection();
+
+    //regional refinement
+    m_TableModelRegion->clear();
+
+    QStringList regionListHeaders;
+    regionListHeaders << "Type" << "Local Size" << "Radius x y z";
+    m_TableModelRegion->setHorizontalHeaderLabels(regionListHeaders);
+    m_TableModelRegion->setColumnCount(regionListHeaders.size());
+
+    ui->tableViewRegion->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+    ui->tableViewRegion->horizontalHeader()->resizeSection(0,80);
+    ui->tableViewRegion->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    ui->tableViewRegion->horizontalHeader()->resizeSection(1,80);
+    ui->tableViewRegion->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+
+    //then udpate with command history
+    //========================================
+    svMesh* mesh=m_MitkMesh->GetMesh(GetTimeStep());
+    if(mesh==NULL)
+        return;
+
+    std::vector<std::string> cmdHistory=mesh->GetCommandHistory();
+    std::string flag="";
+    double values[20]={0};
+    std::string strValues[5]={""};
+    bool option=false;
+    std::string msg="";
+    int regionRowIndex=-1;
+
+    for(int i=0;i<cmdHistory.size();i++)
+    {
+        if(cmdHistory[i]=="")
+            continue;
+
+        if(!mesh->ParseCommand(cmdHistory[i],flag,values,strValues,option,msg))
+        {
+            QMessageBox::warning(m_Parent,"Parsing Error","Error in parsing command history!");
+            return;
+        }
+
+        if(flag=="GlobalEdgeSize" || flag=="GlobalCurvature" || flag=="GlobalCurvatureMin" )
+        {
+            if(flag=="GlobalEdgeSize")
+                ui->comboBoxGlobalTypeM->setCurrentIndex(0);
+            else if(flag=="GlobalCurvature")
+                ui->comboBoxGlobalTypeM->setCurrentIndex(1);
+            else
+                ui->comboBoxGlobalTypeM->setCurrentIndex(2);
+
+            if(values[0]==1)
+                ui->comboBoxGlobalSizeTypeM->setCurrentIndex(0);
+            else
+                ui->comboBoxGlobalSizeTypeM->setCurrentIndex(1);
+
+            ui->lineEditGlobalSizeM->setText(QString::number(values[1]));
+        }
+        else if(flag=="SurfaceMeshFlag")
+        {
+            if(values[0]==0.0)
+                ui->checkBoxSurfaceM->setChecked(false);
+            else
+                ui->checkBoxSurfaceM->setChecked(true);
+        }
+        else if(flag=="SurfaceOptimization")
+        {
+            if(values[0]==0.0)
+                ui->checkBoxSurfaceOptimizationM->setChecked(false);
+            else
+                ui->checkBoxSurfaceOptimizationM->setChecked(true);
+        }
+        else if(flag=="SurfaceSmoothing")
+        {
+            ui->sliderPassesM->setValue(values[0]);
+        }
+        else if(flag=="VolumeMeshFlag")
+        {
+            if(values[0]==0.0)
+                ui->checkBoxVolumeM->setChecked(false);
+            else
+                ui->checkBoxVolumeM->setChecked(true);
+        }
+        else if(flag=="VolumeOptimization")
+        {
+            if(values[0]==0.0)
+                ui->checkBoxVolumeOptimizationM->setChecked(false);
+            else
+                ui->checkBoxVolumeOptimizationM->setChecked(true);
+        }
+        else if(flag=="VolumeSmoothing")
+        {
+            if(values[0]==0.0)
+                ui->checkBoxVolumeSmoothingM->setChecked(false);
+            else
+                ui->checkBoxVolumeSmoothingM->setChecked(true);
+        }
+        else if(flag=="LocalEdgeSize" || flag=="LocalCurvature" || flag=="LocalCurvatureMin")
+        {
+            int faceID=modelElement->GetFaceID(strValues[0]);
+
+            for(int j=0;j<m_TableModelLocal->rowCount(); j++)
+            {
+                QStandardItem* itemID= m_TableModelLocal->item(j,faceidColIndex);
+                int id=itemID->text().toInt();
+
+                if(faceID==id)
+                {
+                    QStandardItem* item= m_TableModelLocal->item(j,ltypeColIndex);
+                    if(flag=="LocalEdgeSize")
+                        item->setText("Max Edge");
+                    else if(flag=="LocalCurvature")
+                        item->setText("Max Curv");
+                    else
+                        item->setText("Min Curv");
+
+                    item= m_TableModelLocal->item(j,lsizetypeColIndex);
+                    if(values[1]==1)
+                        item->setText("absolute");
+                    else
+                        item->setText("relative");
+
+                    item= m_TableModelLocal->item(j,lsizeColIndex);
+                    item->setText(QString::number(values[2]));
+
+                    break;
+                }
+            }
+        }
+        else if(flag=="boundaryLayer")
+        {
+            int faceID=modelElement->GetFaceID(strValues[0]);
+
+            for(int j=0;j<m_TableModelLocal->rowCount(); j++)
+            {
+                QStandardItem* itemID= m_TableModelLocal->item(j,faceidColIndex);
+                int id=itemID->text().toInt();
+
+                if(faceID==id)
+                {
+                    QStandardItem* item= m_TableModelLocal->item(j,btypeColIndex);
+                    if(values[1]==1)
+                        item->setText("(1)t0 tb");
+                    else if(values[1]==2)
+                        item->setText("(2)t0 g");
+                    else if(values[1]==3)
+                        item->setText("(3)t0 ... tn-1");
+                    else if(values[1]==4)
+                        item->setText("(4)g");
+
+                    item= m_TableModelLocal->item(j,bdirectionColIndex);
+                    if(values[2]==2)
+                        item->setText("both");
+                    else if(values[2]==1)
+                        item->setText("positive");
+                    else if(values[2]==0)
+                        item->setText("negative");
+
+                    item= m_TableModelLocal->item(j,layernumberColIndex);
+                    item->setText(QString::number(int(values[3])));
+
+                    QString params="";
+                    for(int i=0;i<values[4];i++)
+                        params=params+" "+QString::number(values[5+i]);
+
+                    item= m_TableModelLocal->item(j,paramsColIndex);
+                    item->setText(params);
+
+                    break;
+                }
+            }
+        }
+        else if(flag=="sphereRefinement")
+        {
+            regionRowIndex++;
+            m_TableModelRegion->insertRow(regionRowIndex);
+
+            QStandardItem* item;
+
+            item= new QStandardItem("Sphere");
+            item->setEditable(false);
+            m_TableModelRegion->setItem(regionRowIndex, 0, item);
+
+            item= new QStandardItem(QString::number(values[0]));
+            m_TableModelRegion->setItem(regionRowIndex, 1, item);
+
+            item= new QStandardItem(QString::number(values[1])+" "+QString::number(values[2])+" "+QString::number(values[3])+" "+QString::number(values[4]));
+            item->setEditable(false);
+            m_TableModelRegion->setItem(regionRowIndex, 2, item);
+        }
+        else if(flag=="writeStats")
+        {
+            ui->checkBoxWriteStatM->setChecked(true);
+        }
+        else
+        {
+            //do nothing
+        }
+
+    }
+
+    //adaptor options
+//    ui->lineEditMaxEdgeSize->setText(ui->lineEditGlobalSizeM->text());
+    ui->comboBoxStrategy->setEnabled(true);
 }
 
 void svMeshEdit::AddSphere()
@@ -1186,21 +1619,21 @@ void svMeshEdit::AddSphere()
     if(m_SphereWidget==NULL || !m_SphereWidget->GetEnabled() || m_SphereWidget->GetRadius()==0)
         return;
 
-    int regionRowIndex=m_TableModelRegionT->rowCount();
+    int regionRowIndex=m_TableModelRegion->rowCount();
 
     QStandardItem* item;
 
     item= new QStandardItem("Sphere");
     item->setEditable(false);
-    m_TableModelRegionT->setItem(regionRowIndex, 0, item);
+    m_TableModelRegion->setItem(regionRowIndex, 0, item);
 
     item= new QStandardItem("");
-    m_TableModelRegionT->setItem(regionRowIndex, 1, item);
+    m_TableModelRegion->setItem(regionRowIndex, 1, item);
 
     double center[3];
     m_SphereWidget->GetCenter(center);
     item= new QStandardItem(QString::number(m_SphereWidget->GetRadius())+" "+QString::number(center[0])+" "+QString::number(center[1])+" "+QString::number(center[2]));
-    m_TableModelRegionT->setItem(regionRowIndex, 2, item);
+    m_TableModelRegion->setItem(regionRowIndex, 2, item);
 }
 
 void svMeshEdit::ShowSphereInteractor(bool checked)
@@ -1236,7 +1669,7 @@ void svMeshEdit::UpdateSphereData()
 {
     if(m_SelectedRegionIndex>-1 && m_SphereWidget->GetRadius()>0)
     {
-        QStandardItem* item= m_TableModelRegionT->item(m_SelectedRegionIndex,2);
+        QStandardItem* item= m_TableModelRegion->item(m_SelectedRegionIndex,2);
         if(item)
         {
             double center[3];
@@ -1255,19 +1688,11 @@ void svMeshEdit::UpdateFaceListSelection()
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
-    QStandardItemModel* tableModel=NULL;
-    QTableView* tableView=NULL;
+    QStandardItemModel* tableModel=m_TableModelLocal;
+    QTableView* tableView=ui->tableViewLocal;
 
-    if(m_MeshType=="TetGen")
-    {
-        tableModel=m_TableModelLocalT;
-        tableView=ui->tableViewLocalT;
-    }
-    else if(m_MeshType=="MeshSim")
-    {
-//        tableModel=m_TableModelLocalM;
-//        tableView=ui->tableViewLocalM;
-    }
+    if(tableModel==NULL || tableView==NULL)
+        return;
 
     disconnect( tableView->selectionModel()
       , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
@@ -1394,18 +1819,19 @@ void svMeshEdit::DisplayMeshInfo()
 
     std::string path="";
     m_MeshNode->GetStringProperty("path",path);
-    std::string meshFileName = path+"/"+m_MeshNode->GetName()+".msh";
+    std::string surfaceFileName = path+"/"+m_MeshNode->GetName()+".vtp";
+    std::string volumeFileName = path+"/"+m_MeshNode->GetName()+".vtu";
 
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
     if(surfaceMesh==NULL && path!="")
     {
-        surfaceMesh=svMitkMeshIO::GetSurfaceMesh(meshFileName);
+        surfaceMesh=mesh->CreateSurfaceMeshFromFile(surfaceFileName);
     }
 
     vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=mesh->GetVolumeMesh();
     if(volumeMesh==NULL && path!="")
     {
-        volumeMesh=svMitkMeshIO::GetVolumeMesh(meshFileName);
+        volumeMesh=mesh->CreateVolumeMeshFromFile(volumeFileName);
     }
 
     int num_nodes = 0;
@@ -1595,7 +2021,12 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    svMeshTetGenAdaptor* adaptor=new svMeshTetGenAdaptor();
+    svMeshAdaptor* adaptor=svMeshFactory::CreateAdaptor(m_MeshType);
+    if(adaptor==NULL)
+    {
+        QMessageBox::warning(m_Parent,"No Adaptor","Failed in creating adaptor!");
+        return;
+    }
 
     if(!adaptor->SetModelElement(modelElement))
     {
@@ -1604,14 +2035,27 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    if(!adaptor->LoadMeshFromResultVTUFile(resultFile.toStdString()))
+    if(m_MeshType=="MeshSim")
+    {
+        std::string meshFolderPath=GetMeshFolderPath().trimmed().toStdString();
+        std::string originalMeshFile=meshFolderPath+"/"+m_MeshNode->GetName()+".sms";
+        if(!adaptor->LoadMesh(originalMeshFile))
+        {
+            QMessageBox::warning(m_Parent,"Error","Failed in loading original mesh.");
+            delete adaptor;
+            return;
+        }
+    }
+
+    if(!adaptor->LoadMesh(resultFile.toStdString()))
     {
         QMessageBox::warning(m_Parent,"Error","Failed in loading result mesh.");
         delete adaptor;
         return;
     }
 
-    adaptor->SetAdaptOptions("strategy",1);
+    int strategy=ui->comboBoxStrategy->currentIndex()+1;
+    adaptor->SetAdaptOptions("strategy",strategy);
     adaptor->SetAdaptOptions("metric_option",currentIndex+2);
     adaptor->SetAdaptOptions("outstep",endStep.toInt());
     adaptor->SetAdaptOptions("ratio",errorFactor.toDouble());
@@ -1630,6 +2074,25 @@ void svMeshEdit::Adapt()
         return;
     }
 
+    if(m_MeshType=="MeshSim")
+    {
+        QString adaptedMeshSMSFilePath=QString::fromStdString(meshFolderPath)+"/"+adaptedMeshName+".sms";
+        adaptedMeshSMSFilePath=QDir::toNativeSeparators(adaptedMeshSMSFilePath);
+        if(!adaptor->WriteAdaptedMesh(adaptedMeshSMSFilePath.toStdString()))
+        {
+            QMessageBox::warning(m_Parent,"Error","Failed in write adapted sms mesh.");
+            delete adaptor;
+            return;
+        }
+    }
+
+    svMesh* adaptedMesh=adaptor->GetAdaptedMesh();
+    if(adaptedMesh==NULL)
+    {
+        QMessageBox::warning(m_Parent,"Error","Failed in getting adapted mesh.");
+        return;
+    }
+
     QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
     solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
 
@@ -1640,16 +2103,14 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    svMeshTetGen* adaptedMesh=adaptor->GetAdaptedMesh();
     delete adaptor;
-    if(adaptedMesh==NULL)
-    {
-        QMessageBox::warning(m_Parent,"Error","Failed in getting adapted mesh.");
-        return;
-    }
 
     std::vector<std::string> cmds;
-    cmds.push_back("option GlobalEdgeSize "+maxSize.toStdString());
+    if(m_MeshType=="TetGen")
+        cmds.push_back("option GlobalEdgeSize "+maxSize.toStdString());
+    else if(m_MeshType=="MeshSim")
+        cmds.push_back("option GlobalEdgeSize 1 "+maxSize.toStdString());
+
     adaptedMesh->SetCommandHistory(cmds);
 
     svMitkMesh::Pointer mitkMesh = svMitkMesh::New();
@@ -1688,4 +2149,31 @@ bool svMeshEdit::IsDouble(QString value)
     bool ok;
     value.toDouble(&ok);
     return ok;
+}
+
+QString svMeshEdit::GetMeshFolderPath()
+{
+    QString meshFolderPath="";
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_MeshNode,isProjFolder,false);
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+
+        std::string projPath;
+        projFolderNode->GetStringProperty("project path",projPath);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
+        if(rs->size()>0)
+        {
+            mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+            std::string meshFolderName=meshFolderNode->GetName();
+
+            meshFolderPath=QString::fromStdString(projPath+"/"+meshFolderName);
+        }
+    }
+
+    return meshFolderPath;
 }

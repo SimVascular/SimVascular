@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>431</width>
-    <height>667</height>
+    <height>768</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -321,9 +321,17 @@
                          </size>
                         </property>
                         <property name="currentIndex">
-                         <number>3</number>
+                         <number>2</number>
                         </property>
                         <widget class="QWidget" name="page_2">
+                         <property name="geometry">
+                          <rect>
+                           <x>0</x>
+                           <y>0</y>
+                           <width>153</width>
+                           <height>487</height>
+                          </rect>
+                         </property>
                          <attribute name="label">
                           <string>Face Ops</string>
                          </attribute>
@@ -407,8 +415,8 @@
                                  <rect>
                                   <x>0</x>
                                   <y>0</y>
-                                  <width>140</width>
-                                  <height>228</height>
+                                  <width>151</width>
+                                  <height>329</height>
                                  </rect>
                                 </property>
                                 <property name="sizePolicy">
@@ -511,8 +519,8 @@
                                  <rect>
                                   <x>0</x>
                                   <y>0</y>
-                                  <width>140</width>
-                                  <height>306</height>
+                                  <width>113</width>
+                                  <height>94</height>
                                  </rect>
                                 </property>
                                 <attribute name="label">
@@ -616,7 +624,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>138</width>
-                           <height>386</height>
+                           <height>487</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -827,8 +835,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>123</width>
-                               <height>146</height>
+                               <width>136</width>
+                               <height>235</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1185,7 +1193,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>134</width>
-                           <height>386</height>
+                           <height>487</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1206,8 +1214,21 @@
                           </property>
                           <item>
                            <widget class="QCheckBox" name="checkBoxSphere">
+                            <property name="toolTip">
+                             <string>Use a sphere for local selection</string>
+                            </property>
                             <property name="text">
-                             <string>Show Sphere    </string>
+                             <string>Sphere    </string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="checkBoxFaceJunctions">
+                            <property name="toolTip">
+                             <string>Use the junction regions from Blend Table</string>
+                            </property>
+                            <property name="text">
+                             <string>Blend Regions</string>
                             </property>
                            </widget>
                           </item>
@@ -1217,15 +1238,15 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>1</number>
+                             <number>0</number>
                             </property>
                             <widget class="QWidget" name="page_14">
                              <property name="geometry">
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
-                               <height>94</height>
+                               <width>132</width>
+                               <height>276</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1298,7 +1319,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>132</width>
-                               <height>203</height>
+                               <height>304</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1635,6 +1656,14 @@
                          </layout>
                         </widget>
                         <widget class="QWidget" name="page_3">
+                         <property name="geometry">
+                          <rect>
+                           <x>0</x>
+                           <y>0</y>
+                           <width>156</width>
+                           <height>487</height>
+                          </rect>
+                         </property>
                          <attribute name="label">
                           <string>Trim</string>
                          </attribute>
@@ -1686,7 +1715,7 @@
                                   <x>0</x>
                                   <y>0</y>
                                   <width>154</width>
-                                  <height>324</height>
+                                  <height>425</height>
                                  </rect>
                                 </property>
                                 <attribute name="label">
@@ -1782,8 +1811,8 @@
                                  <rect>
                                   <x>0</x>
                                   <y>0</y>
-                                  <width>154</width>
-                                  <height>324</height>
+                                  <width>122</width>
+                                  <height>157</height>
                                  </rect>
                                 </property>
                                 <attribute name="label">

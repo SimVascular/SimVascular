@@ -26,16 +26,6 @@ public:
 
     static svMitkMesh::Pointer ReadFromFile(std::string fileName, bool readSurfaceMesh, bool readVolumeMesh);
 
-    static vtkSmartPointer<vtkPolyData> GetSurfaceMesh(std::string fileName);// use mesh file .msh name, not vtp file name
-
-    static vtkSmartPointer<vtkUnstructuredGrid> GetVolumeMesh(std::string fileName);// use mesh file .msh name, not vtu file name
-
-    static std::string GetMeshType(std::string fileName);
-
-//    void SetReadMeshData(bool read);
-
-//    static svMitkMeshIO* GetSingleton();
-
 private:
     svMitkMeshIO* IOClone() const override;
 

@@ -30,7 +30,7 @@ void svProjectDataNodesPluginActivator::start(ctkPluginContext* context)
 {
 //    this->m_Context = context;
 
-    //Load optional libs: occt, parasolid
+    //Load optional libs: occt, parasolid, meshsim
     QLibrary occtlib("lib_simvascular_module_model_occt");
     if(occtlib.load())
         MITK_INFO<<"OpenCASCADE module loaded.";
@@ -42,6 +42,12 @@ void svProjectDataNodesPluginActivator::start(ctkPluginContext* context)
         MITK_INFO<<"Parasolid module loaded.";
     else
         MITK_INFO<<"Parasolid module not loaded.";
+
+    QLibrary meshsimlib("lib_simvascular_module_meshsim");
+    if(meshsimlib.load())
+        MITK_INFO<<"MeshSim module loaded.";
+    else
+        MITK_INFO<<"MeshSim module not loaded.";
 
     QmitkNodeDescriptorManager* descriptorManager = QmitkNodeDescriptorManager::GetInstance();
 

@@ -245,7 +245,7 @@ if(SV_USE_QT_GUI)
     "Source/Modules/Path"
     "Source/Modules/Segmentation"
     "Source/Modules/Model/Common"
-    "Source/Modules/Mesh"
+    "Source/Modules/Mesh/Common"
     "Source/Modules/Simulation"
     "Source/Modules/ProjectManagement"
     "Source/Modules/QtWidgets")
@@ -257,6 +257,10 @@ endif()
 
 if(SV_USE_PARASOLID)
         set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/Parasolid")
+endif()
+
+if(SV_USE_MESHSIM)
+        set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Mesh/MeshSim")
 endif()
 #-----------------------------------------------------------------------------
 

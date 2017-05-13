@@ -189,6 +189,8 @@ catch (...) {
  return TCL_OK;
 }
 	// Get the main mesh
+if(interp)
+{
 	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod =
     (MeshKernelRegistryMethodPtr) Tcl_GetAssocData( interp, "MeshSystemRegistrar", NULL);
 
@@ -203,6 +205,8 @@ catch (...) {
   else {
     return TCL_ERROR;
   }
+
+}
 
   return TCL_OK;
 }

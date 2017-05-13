@@ -3,6 +3,9 @@
 
 #include <svModelExports.h>
 
+#define __CVMISC_UTILS_H //avoid including cv_misc_utils.h from cvSolidModel.h
+#include "cvSolidModel.h"
+
 #include <mitkDataNode.h>
 
 #include <vtkPolyData.h>
@@ -294,6 +297,20 @@ public:
 
     std::vector<std::string> GetFileExtensions(){return m_FileExtensions;}
 
+    virtual int GetFaceIDFromInnerSolid(std::string faceName);
+
+    virtual int GetFaceIdentifierFromInnerSolid(std::string faceName);
+
+    virtual int GetFaceIdentifierFromInnerSolid(int faceID);
+
+    virtual std::vector<int> GetFaceIDsFromInnerSolid();
+
+    virtual std::string GetFaceNameFromInnerSolid(int faceID);
+
+    virtual cvSolidModel* GetInnerSolid();
+
+    virtual void SetInnerSolid(cvSolidModel* innerSolid);
+
   protected:
 
     std::string m_Type;
@@ -311,6 +328,8 @@ public:
     svBlendParam* m_BlendParam;
 
     std::vector<std::string> m_FileExtensions;
+
+    cvSolidModel* m_InnerSolid;
   };
 
 

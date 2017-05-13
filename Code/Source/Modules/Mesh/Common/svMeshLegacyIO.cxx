@@ -26,18 +26,19 @@ bool svMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, svModelElement
 
     std::string path="";
     meshNode->GetStringProperty("path",path);
-    std::string meshFileName = path+"/"+meshNode->GetName()+".msh";
+    std::string surfaceFileName = path+"/"+meshNode->GetName()+".vtp";
+    std::string volumeFileName = path+"/"+meshNode->GetName()+".vtu";
 
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
     if(surfaceMesh==NULL && path!="")
     {
-        surfaceMesh=svMitkMeshIO::GetSurfaceMesh(meshFileName);
+        surfaceMesh=mesh->CreateSurfaceMeshFromFile(surfaceFileName);
     }
 
     vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=mesh->GetVolumeMesh();
     if(volumeMesh==NULL && path!="")
     {
-        volumeMesh=svMitkMeshIO::GetVolumeMesh(meshFileName);
+        volumeMesh=mesh->CreateVolumeMeshFromFile(volumeFileName);
     }
 
     return WriteFiles(surfaceMesh, volumeMesh, modelElement, meshDir);
@@ -80,7 +81,10 @@ bool svMeshLegacyIO::WriteFiles(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSma
         if(face)
         {
             vtkSmartPointer<vtkPolyData> facepd=vtkSmartPointer<vtkPolyData>::New();
-            PlyDtaUtils_GetFacePolyData(surfaceMesh.GetPointer(), &face->id, facepd);
+            //for non-parasolid model, ident=faceid
+            int ident=modelElement->GetFaceIdentifierFromInnerSolid(face->id);
+//            PlyDtaUtils_GetFacePolyData(surfaceMesh.GetPointer(), &face->id, facepd);
+            PlyDtaUtils_GetFacePolyData(surfaceMesh.GetPointer(), &ident, facepd);
 
             vtpFilePath=meshDir+"/mesh-surfaces/"+QString::fromStdString(face->name)+".vtp";
             vtpFilePath=QDir::toNativeSeparators(vtpFilePath);
