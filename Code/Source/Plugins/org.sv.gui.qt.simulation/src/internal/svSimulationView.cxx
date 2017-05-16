@@ -247,13 +247,24 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
 
+    SetupInternalSolverPaths();
+
+    //get paths for the external solvers
+    berry::IPreferences::Pointer prefs = this->GetPreferences();
+    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
+    //    InitializePreferences(berryprefs);
+    this->OnPreferencesChanged(berryprefs);
+}
+
+void svSimulationView::SetupInternalSolverPaths()
+{
     //get path for the internal solvers
     QString solverPath="/usr/local/sv/svsolver";
     QStringList dirList=QDir(solverPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
     if(dirList.size()!=0)
         solverPath+="/"+dirList.back();
 
-    solverPath+="/bin";
+    QString solverPathBin=solverPath+"/bin";
 
     QString applicationPath=QCoreApplication::applicationDirPath();
     QString svpreName="/svpre";
@@ -261,55 +272,82 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     QString svsolverNoMPIName="/svsolver-nompi";
     QString svpostName="/svpost";
 
-#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-    QString filePath="";
-    if(QFile(filePath=solverPath+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=solverPath+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svpreName).exists())
-        m_InternalPresolverPath=filePath;
+    m_InternalMPIExecPath="mpiexec";
 
-    if(QFile(filePath=solverPath+"/.."+svsolverName).exists())
+    QString filePath="";
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
+    //flowsolver with mpi, prefer to the script one which sets some lib paths for the mpi libs from svsolver
+    //Those libs are needed in Ubuntu 16, intead of using the system ones
+    if(QFile(filePath=solverPathBin+"/.."+svsolverName).exists())
         m_InternalFlowsolverPath=filePath;
-    else if(QFile(filePath=solverPath+svsolverName).exists())
+    else if(QFile(filePath=solverPathBin+svsolverName).exists())
         m_InternalFlowsolverPath=filePath;
     else if(QFile(filePath=applicationPath+"/.."+svsolverName).exists())
         m_InternalFlowsolverPath=filePath;
     else if(QFile(filePath=applicationPath+svsolverName).exists())
         m_InternalFlowsolverPath=filePath;
 
-    if(QFile(filePath=solverPath+svsolverNoMPIName).exists())
+    //svpost
+    if(QFile(filePath=solverPathBin+svpostName).exists())
+        m_InternalPostsolverPath=filePath;
+    else if(QFile(filePath=solverPathBin+"/.."+svpostName).exists())
+        m_InternalPostsolverPath=filePath;
+    else if(QFile(filePath=applicationPath+svpostName).exists())
+        m_InternalPostsolverPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+svpostName).exists())
+        m_InternalPostsolverPath=filePath;
+#endif
+
+#if defined(Q_OS_LINUX)
+    //svpre
+    if(QFile(filePath=solverPathBin+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=solverPathBin+"/.."+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=applicationPath+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+
+    //flowsolver with no mpi
+    if(QFile(filePath=solverPathBin+svsolverNoMPIName).exists())
+        m_InternalFlowsolverNoMPIPath=filePath;
+    else if(QFile(filePath=solverPathBin+"/.."+svsolverNoMPIName).exists())
+        m_InternalFlowsolverNoMPIPath=filePath;
+    else if(QFile(filePath=applicationPath+svsolverNoMPIName).exists())
+        m_InternalFlowsolverNoMPIPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+svsolverNoMPIName).exists())
+        m_InternalFlowsolverNoMPIPath=filePath;
+
+    //mpiexec
+    //user the system one; issue happens if use the one from svsolver or application in Ubuntu 16
+#endif
+
+#if defined(Q_OS_MAC)
+    //svpre
+    if(QFile(filePath=solverPathBin+"/.."+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=solverPathBin+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+    else if(QFile(filePath=applicationPath+svpreName).exists())
+        m_InternalPresolverPath=filePath;
+
+    //flowsolver with no mpi
+    if(QFile(filePath=solverPathBin+"/.."+svsolverNoMPIName).exists())
+        m_InternalFlowsolverNoMPIPath=filePath;
+    else if(QFile(filePath=solverPathBin+svsolverNoMPIName).exists())
         m_InternalFlowsolverNoMPIPath=filePath;
     else if(QFile(filePath=applicationPath+"/.."+svsolverNoMPIName).exists())
         m_InternalFlowsolverNoMPIPath=filePath;
     else if(QFile(filePath=applicationPath+svsolverNoMPIName).exists())
         m_InternalFlowsolverNoMPIPath=filePath;
 
-    if(QFile(filePath=solverPath+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-#endif
-
-#if defined(Q_OS_WIN)
-    m_InternalPresolverPath=GetRegistryValue("SVPRE_EXE");
-    m_InternalFlowsolverPath=GetRegistryValue("SVSOLVER_MSMPI_EXE");
-    m_InternalFlowsolverNoMPIPath=GetRegistryValue("SVSOLVER_NOMPI_EXE");
-    m_InternalPostsolverPath=GetRegistryValue("SVPOST_EXE");
-#endif
-
-#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    m_InternalMPIExecPath="mpiexec";
-#endif
-
-#if defined(Q_OS_MAC)
+    //mpiexec
     QString mpiexecName="/mpiexec";
-    if(QFile(filePath=solverPath+mpiexecName).exists())
+    if(QFile(filePath=solverPathBin+mpiexecName).exists())
         m_InternalMPIExecPath=filePath;
     else if(QFile(filePath=applicationPath+"/.."+mpiexecName).exists())
         m_InternalMPIExecPath=filePath;
@@ -317,11 +355,20 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
         m_InternalMPIExecPath=filePath;
 #endif
 
-    //get paths for the external solvers
-    berry::IPreferences::Pointer prefs = this->GetPreferences();
-    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
-    //    InitializePreferences(berryprefs);
-    this->OnPreferencesChanged(berryprefs);
+#if defined(Q_OS_WIN)
+    m_InternalPresolverPath=GetRegistryValue("SimVascular\\svSolver","SVPRE_EXE");
+    m_InternalFlowsolverPath=GetRegistryValue("SimVascular\\svSolver","SVSOLVER_MSMPI_EXE");
+    m_InternalFlowsolverNoMPIPath=GetRegistryValue("SimVascular\\svSolver","SVSOLVER_NOMPI_EXE");
+    m_InternalPostsolverPath=GetRegistryValue("SimVascular\\svSolver","SVPOST_EXE");
+    QString msmpiDir=GetRegistryValue("Microsoft\\MPI","InstallRoot");
+    if(msmpiDir!="")
+    {
+        if(msmpiDir.endsWith("\\"))
+            m_InternalMPIExecPath=msmpiDir+"Bin\\mpiexec";
+        else
+            m_InternalMPIExecPath=msmpiDir+"\\Bin\\mpiexec";
+    }
+#endif
 }
 
 void svSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
@@ -2692,7 +2739,7 @@ QString svSimulationView::FindLatestKey(QString key, QStringList keys)
     return latestKey;
 }
 
-QString svSimulationView::GetRegistryValue(QString key)
+QString svSimulationView::GetRegistryValue(QString category, QString key)
 {
     QString value="";
 
