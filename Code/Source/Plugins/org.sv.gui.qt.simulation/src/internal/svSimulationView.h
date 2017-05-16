@@ -109,6 +109,8 @@ public slots:
 
     void UpdateSimJobNumProcs();
 
+    void SetupInternalSolverPaths();
+
 public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
@@ -149,7 +151,7 @@ public:
 
 #if defined(Q_OS_WIN)
     QString FindLatestKey(QString key, QStringList keys);
-    QString GetRegistryValue(QString key);
+    QString GetRegistryValue(QString category, QString key);
 #endif
 
 private:
