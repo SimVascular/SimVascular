@@ -46,14 +46,40 @@ install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
 include(InstallRequiredSystemLibraries)
 include(CPackComponent)
 
-set(CPACK_PACKAGE_NAME "SimVascular")
+# Setup components to pack
+set(SV_DISTRIBUTE_COMPONENTS OpenSource CACHE STRING "When distributing, you need to specify which components to distribute.")
+set_property(CACHE SV_DISTRIBUTE_COMPONENTS PROPERTY STRINGS OpenSource Licensed All)
+
+set(opensource_components CoreExecutables CoreLibraries CoreHeaders
+	PluginExecutables PluginLibraries PluginHeaders
+	ModuleExecutables ModuleLibraries
+    Unspecified)
+
+set(licensed_components LicensedExecutables LicensedLibraries
+	LicensedData LicenseFiles)
+
+set(SV_PACK_NAME )
+if(SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
+	set(SV_PACK_NAME "SimVascular")
+	set(CPACK_COMPONENTS_ALL ${opensource_components})
+elseif(SV_DISTRIBUTE_COMPONENTS STREQUAL Licensed)
+    set(SV_PACK_NAME "svLicensedModules")
+    set(CPACK_COMPONENTS_ALL ${licensed_components})
+else()
+    set(SV_PACK_NAME "SimVascular")
+    set(CPACK_COMPONENTS_ALL ${opensource_components} ${licensed_components})
+endif()
+
+set(CPACK_PACKAGE_NAME ${SV_PACK_NAME})
 set(CPACK_PACKAGE_VENDOR "SimVascular.org")
+set(CPACK_PACKAGE_CONTACT "SimVascular<sv@simvascular.org>")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SimVascular - Cardiovascular Modeling and Simulation Application")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/license.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR ${SV_MAJOR_VERSION})
 set(CPACK_PACKAGE_VERSION_MINOR ${SV_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${SV_PATCH_VERSION})
 set(INSTALL_TYPE_STR)
+string(REPLACE "." "-" SV_INSTALL_VERSION_DIR ${SV_FULL_VERSION})
 
 if(Licensed_PARASOLID)
 	set(INSTALL_TYPE_STR "${INSTALL_TYPE_STR}-parasolid")
@@ -65,9 +91,15 @@ set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${${PROJECT_NA
 #-----------------------------------------------------------------------------
 # LINUX setup
 if(LINUX)
-	SET(CPACK_GENERATOR "TGZ")
-	set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
-	SET(CPACK_PACKAGE_FILE_NAME "sv-linux-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
+	if(SV_DISTRIBUTE_COMPONENTS STREQUAL Licensed)
+		set(CPACK_GENERATOR "DEB")
+		set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/licensed/${SV_INSTALL_VERSION_DIR}")
+	else()
+		set(CPACK_GENERATOR "TGZ")
+		set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
+	endif()
+
+	SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-linux-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 endif()
 #-----------------------------------------------------------------------------
 
@@ -75,7 +107,13 @@ endif()
 # APPLE setup
 if(APPLE)
 	# Use the bundle-generator on osx ...
-	set(CPACK_GENERATOR "Bundle")
+	if(SV_DISTRIBUTE_COMPONENTS STREQUAL Licensed)
+		set(CPACK_GENERATOR "productbuild")
+		set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/licensed/${SV_INSTALL_VERSION_DIR}")
+	else()
+		set(CPACK_GENERATOR "Bundle")
+	endif()
+
 	set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/OSX/SimVascular.icns")
 	if(SV_RELEASE_TYPE MATCHES "^Release$")
     set(CPACK_BUNDLE_NAME "SimVascular")
@@ -88,7 +126,7 @@ if(APPLE)
 
 	set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist")
 	set(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/OSX/simvascular.sh")
-	set(CPACK_PACKAGE_FILE_NAME "sv-darwin-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
+	set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-darwin-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
 	if(SV_DEVELOPER_OUTPUT)
 		message(STATUS "CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}.dmg")
