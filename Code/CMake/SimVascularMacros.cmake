@@ -1085,7 +1085,8 @@ function(simvascular_install_external project_name)
     endif()
     if(EXISTS ${SV_${proj}_DIR}/bin)
       install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION}
-        USE_SOURCE_PERMISSIONS)
+        USE_SOURCE_PERMISSIONS
+        PATTERN "designer" EXCLUDE)
     endif()
   endif()
 
