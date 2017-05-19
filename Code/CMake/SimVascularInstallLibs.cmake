@@ -34,6 +34,7 @@ macro(simvascular_install_prereqs tar location)
     install(FILES "${DEPENDENCY_ACTUAL}"
       DESTINATION "${location}"
       RENAME "${DEPENDENCY_NAME}"
+      COMPONENT ExternalLibraries
       )
   endforeach()
 endmacro()
@@ -67,7 +68,7 @@ foreach(var ${SV_EXTERNAL_SHARED_LIBS})
             file(GLOB lib "${lib_path}/${lib_name_we}*")
           endif()
           dev_message("Installing ${lib}")
-          install(FILES ${lib} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT "ExteralRuntimes")
+          install(FILES ${lib} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ExternalLibraries)
           simvascular_install_prereqs(${lib} ${SV_INSTALL_EXTERNALS_RUNTIME_DIR})
         else()
           dev_message("[${var}]  ${lib_name} is not a shared lib, removing ${lib_name}, EXT ${_EXT}, do not install")
@@ -174,6 +175,7 @@ if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_MESHSIM)
     if(EXISTS ${MESHSIM_LICENSE_FILE})
       install(FILES ${MESHSIM_LICENSE_FILE}
         DESTINATION ${SV_INSTALL_HOME_DIR}
+        RENAME "meshsim-license.dat"
         COMPONENT LicenseFiles)
     endif()
   endif()
@@ -231,5 +233,5 @@ foreach(exe ${EXTERNAL_EXES})
 endif()
 install(PROGRAMS ${EXTERNALEXE_${_EXE}}
   DESTINATION ${SV_INSTALL_EXTERNAL_EXE_DIR}
-  RENAME "${_exe}${CMAKE_EXECUTABLE_SUFFIX}" OPTIONAL)
+  RENAME "${_exe}${CMAKE_EXECUTABLE_SUFFIX}" COMPONENT CoreExecutables OPTIONAL)
 endforeach()

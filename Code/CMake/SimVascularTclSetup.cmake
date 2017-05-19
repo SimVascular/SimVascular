@@ -87,7 +87,8 @@ endforeach()
 #-----------------------------------------------------------------------------
 include(PrepareTcl)
 
-install(DIRECTORY ${TEMP_DIR}/Tcl DESTINATION ${SV_INSTALL_SCRIPT_DIR})
+install(DIRECTORY ${TEMP_DIR}/Tcl DESTINATION ${SV_INSTALL_SCRIPT_DIR} COMPONENT CoreScripts)
 install(FILES ${TCL_CONFIG_FILES}
   DESTINATION ${SV_INSTALL_TCL_CODE_DIR}
+  COMPONENT CoreScripts
   )

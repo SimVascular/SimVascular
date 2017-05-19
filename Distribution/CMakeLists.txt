@@ -50,10 +50,11 @@ include(CPackComponent)
 set(SV_DISTRIBUTE_COMPONENTS OpenSource CACHE STRING "When distributing, you need to specify which components to distribute.")
 set_property(CACHE SV_DISTRIBUTE_COMPONENTS PROPERTY STRINGS OpenSource Licensed All)
 
-set(opensource_components CoreExecutables CoreLibraries CoreHeaders
+set(opensource_components CoreExecutables CoreLibraries CoreHeaders CoreScripts CoreFiles
 	PluginExecutables PluginLibraries PluginHeaders
 	ModuleExecutables ModuleLibraries
-    Unspecified)
+	ExternalExecutables ExternalLibraries
+    )
 
 set(licensed_components LicensedExecutables LicensedLibraries
 	LicensedData LicenseFiles)
@@ -67,7 +68,7 @@ elseif(SV_DISTRIBUTE_COMPONENTS STREQUAL Licensed)
     set(CPACK_COMPONENTS_ALL ${licensed_components})
 else()
     set(SV_PACK_NAME "SimVascular")
-    set(CPACK_COMPONENTS_ALL ${opensource_components} ${licensed_components})
+    # set(CPACK_COMPONENTS_ALL ${opensource_components} ${licensed_components})
 endif()
 
 set(CPACK_PACKAGE_NAME ${SV_PACK_NAME})
@@ -87,14 +88,18 @@ endif()
 
 set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${${PROJECT_NAME}_BINARY_DIR};SimVascular;ALL;/")
 #-----------------------------------------------------------------------------
-
+message(STATUS "CPACK_COMPONENTS_ALL: ${CPACK_COMPONENTS_ALL}")
 #-----------------------------------------------------------------------------
 # LINUX setup
 if(LINUX)
 	if(SV_DISTRIBUTE_COMPONENTS STREQUAL Licensed)
 		set(CPACK_GENERATOR "DEB")
 		set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/licensed/${SV_INSTALL_VERSION_DIR}")
-		# set(CPACK_COMPONENT_UNSPECIFIED_REQUIRED 0)
+		set(CPACK_DEB_COMPONENT_INSTALL ON)
+	elseif(SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
+		set(CPACK_GENERATOR "TGZ")
+		set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
+		set(CPACK_TGZ_COMPONENT_INSTALL ON)
 	else()
 		set(CPACK_GENERATOR "TGZ")
 		set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)

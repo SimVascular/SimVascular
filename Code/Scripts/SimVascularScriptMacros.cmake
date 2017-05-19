@@ -111,6 +111,7 @@ macro(simvascular_configure_script)
 			OWNER_READ OWNER_WRITE OWNER_EXECUTE 
 			GROUP_READ GROUP_EXECUTE 
 			WORLD_READ WORLD_EXECUTE
+			COMPONENT CoreScripts
 			)
 	endif()
 

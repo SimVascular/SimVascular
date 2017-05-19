@@ -1081,12 +1081,15 @@ function(simvascular_install_external project_name)
   if(EXISTS ${SV_${proj}_DIR})
     if(EXISTS ${SV_${proj}_DIR}/lib)
       install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${LIB_DESTINATION}
-        USE_SOURCE_PERMISSIONS)
+        USE_SOURCE_PERMISSIONS
+        COMPONENT ExternalLibraries)
     endif()
     if(EXISTS ${SV_${proj}_DIR}/bin)
       install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION}
         USE_SOURCE_PERMISSIONS
-        PATTERN "designer" EXCLUDE)
+        COMPONENT ExternalExecutables
+        PATTERN "designer" EXCLUDE 
+        )
     endif()
   endif()
 

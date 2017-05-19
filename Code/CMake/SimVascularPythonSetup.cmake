@@ -63,4 +63,4 @@ add_custom_command(TARGET copy-py POST_BUILD
 
 include(PreparePython)
 
-install(DIRECTORY ${TEMP_DIR}/Python DESTINATION ${SV_INSTALL_SCRIPT_DIR})
+install(DIRECTORY ${TEMP_DIR}/Python DESTINATION ${SV_INSTALL_SCRIPT_DIR} COMPONENT CoreScripts)
