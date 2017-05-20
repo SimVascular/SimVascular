@@ -54,6 +54,7 @@ set(opensource_components CoreExecutables CoreLibraries CoreHeaders CoreScripts 
 	PluginExecutables PluginLibraries PluginHeaders
 	ModuleExecutables ModuleLibraries
 	ExternalExecutables ExternalLibraries
+	Unspecified
     )
 
 set(licensed_components LicensedExecutables LicensedLibraries
@@ -96,10 +97,12 @@ if(LINUX)
 		set(CPACK_GENERATOR "DEB")
 		set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/licensed/${SV_INSTALL_VERSION_DIR}")
 		set(CPACK_DEB_COMPONENT_INSTALL ON)
+		set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
 	elseif(SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
 		set(CPACK_GENERATOR "TGZ")
 		set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
-		set(CPACK_TGZ_COMPONENT_INSTALL ON)
+		set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+		set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
 	else()
 		set(CPACK_GENERATOR "TGZ")
 		set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
