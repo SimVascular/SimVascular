@@ -91,7 +91,7 @@ mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString fil
                     contourPoints.push_back(point);
                 }
 
-                contour->SetContourPoints(contourPoints);
+                contour->SetContourPoints(contourPoints,false);
 
             }
 
