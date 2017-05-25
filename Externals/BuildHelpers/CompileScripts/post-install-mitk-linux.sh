@@ -2,6 +2,7 @@ GCP=cp
 GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
+GRM=rm
 
 # paths
 
@@ -31,6 +32,7 @@ $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CMakeExternals/Install/lib $MITK_BINDIR
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.REPLACEME_SV_SO_FILE_EXTENSION $MITK_BINDIR/lib
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.h $MITK_BINDIR/include
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/* $MITK_BINDIR/bin
+$GRM -Rf  $MITK_BINDIR/bin/*.REPLACEME_SV_SO_FILE_EXTENSION*
 $GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*CTK*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib
 $GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/liborg*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib/plugins
 
@@ -75,7 +77,7 @@ for i in $(find $MITK_BLDDIR/ep/src/CTK-build -name "*Export.h"); do
     $GCP -fl $i $MITK_BINDIR/include/ctk
 done
 
-$GCP -fl $MITK_BLDDIR/MITK-build/lib/plugins/$MITK_BLDTYPE/* $MITK_BINDIR/lib/plugins
+#$GCP -fl $MITK_BLDDIR/MITK-build/lib/plugins/$MITK_BLDTYPE/* $MITK_BINDIR/lib/plugins
 
 # mitk files
 
