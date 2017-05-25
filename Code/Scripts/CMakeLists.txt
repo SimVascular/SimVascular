@@ -44,13 +44,37 @@ set(FRAGMENT_INJECTION_STRING)
 env_variable_to_value_variable(ENV_SV_HOME SV_HOME)
 
 #----------------------------------------------------------------------------
+# Find external licensed module dir
+#----------------------------------------------------------------------------
+if(UNIX AND SV_ENABLE_DISTRIBUTION AND SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
+	if(SV_USE_PARASOLID OR SV_USE_MESHSIM)
+		file(READ ${SV_SOURCE_DIR}/Scripts/licensed-home-locate-unix.sh licensed_locate_script)
+		set(install_script_string "${install_script_string}${licensed_locate_script}\n")
+
+		set(install_script_string "${install_script_string}# Set env variables for licensed modules\n")
+		set(install_script_string "${install_script_string}if ! [ -z \"$licdir\" ]; then\n")
+		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "$licdir/Lib" install_script_string)
+		if(SV_USE_PARASOLID)
+			set_env_string_concat(P_SCHEMA "$licdir/schema" install_script_string)
+		endif()
+		if(SV_USE_MESHSIM)
+			set_env_string_concat(SIM_LICENSE_FILE "$licdir/meshsim-license.dat" install_script_string)
+		endif()
+		set(install_script_string "${install_script_string}fi\n\n")
+	endif()
+endif()
+
+#----------------------------------------------------------------------------
 # PARASOLID Install Rules
 #----------------------------------------------------------------------------
 if(SV_USE_PARASOLID)
 	#Parasolid as a few special directories to add
 	set_env_string_concat(P_SCHEMA "${PARASOLID_SCHEMA_DIR}" developer_script_string)
-	set_env_string(P_SCHEMA "${ENV_SV_HOME}/${SV_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR}" install_script_string)
-	set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
+
+	if(NOT SV_ENABLE_DISTRIBUTION OR SV_DISTRIBUTE_COMPONENTS STREQUAL All)
+		set_env_string_concat(P_SCHEMA "${ENV_SV_HOME}/${SV_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR}" install_script_string)
+	endif()
+        set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
 		<Registry Id='regid.parasolid' Root='HKLM'
 		Key='Software\\SimVascular\\@SV_VERSION@ @SV_MAJOR_VERSION@'
 		Name='PSchemaDir' Action='write' Type='string'
@@ -67,7 +91,9 @@ if(SV_USE_MESHSIM)
 		else()
 			set_env_string_concat(SIM_LICENSE_FILE "meshsim-license.dat" developer_script_string)
 		endif()
-		set_env_string_concat(SIM_LICENSE_FILE "meshsim-license.dat" install_script_string)
+		if(NOT SV_ENABLE_DISTRIBUTION OR SV_DISTRIBUTE_COMPONENTS STREQUAL All)
+			set_env_string_concat(SIM_LICENSE_FILE "meshsim-license.dat" install_script_string)
+		endif()
 	endif()
 endif()
 

@@ -18,6 +18,9 @@ public:
     void start(ctkPluginContext* context) override;
     void stop(ctkPluginContext* context) override;
 
+    void LoadModules();
+    void LoadLibrary(QString name, QString libFileName);
+
 private:
     static ctkPluginContext* m_Context;
 }; 
