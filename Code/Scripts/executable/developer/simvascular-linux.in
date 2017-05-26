@@ -13,7 +13,7 @@ $SV_HOME/Bin/@SV_EXE@ $*
 esac
 ;;
 *)
-@GDB@ @GDB_FLAGS@ $SV_HOME/Bin/@SV_EXE@ $*
+@GDB@ @GDB_FLAGS@ $SV_HOME/Bin/@SV_EXE@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
 ;;
 esac
 

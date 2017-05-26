@@ -83,7 +83,8 @@ if(NOT SV_USE_MITK_CONFIG)
 
   install(FILES "${SV_WORKBENCH_PROVISIONING_FILE}.install"
     DESTINATION ${SV_INSTALL_RUNTIME_DIR}
-    RENAME "${SV_EXE}.provisioning")
+    RENAME "${SV_EXE}.provisioning"
+    COMPONENT CoreFiles)
 
   # Create a .ini file for initial parameters
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SV_EXE}.ini")
@@ -145,7 +146,7 @@ else()
   set_target_properties(${SV_EXE} PROPERTIES MACOSX_BUNDLE_ICON_FILE "icon.icns")
 
   if(APPLE)
-    install(FILES "icons/icon.icns" DESTINATION "${SV_EXE}.app/Contents/Resources")
+    install(FILES "icons/icon.icns" DESTINATION "${SV_EXE}.app/Contents/Resources" COMPONENT CoreFiles)
   endif(APPLE)
 
   # Add a build time dependency to legacy BlueBerry bundles.

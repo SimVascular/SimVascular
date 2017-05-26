@@ -2,6 +2,7 @@ GCP=cp
 GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
+GRM=rm
 
 # paths
 
@@ -15,8 +16,8 @@ export MITK_BLDTYPE=
 # primary directories to install into
 
 $GMKDIR -p $MITK_BINDIR/bin
-$GMKDIR -p $MITK_BINDIR/bin/plugins
 $GMKDIR -p $MITK_BINDIR/lib
+$GMKDIR -p $MITK_BINDIR/lib/plugins
 $GMKDIR -p $MITK_BINDIR/include
 
 $GCP -Rfl $MITK_BLDDIR/MITK-build/bin $MITK_BINDIR
@@ -31,6 +32,7 @@ $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CMakeExternals/Install/lib $MITK_BINDIR
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.REPLACEME_SV_SO_FILE_EXTENSION $MITK_BINDIR/lib
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.h $MITK_BINDIR/include
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/* $MITK_BINDIR/bin
+$GRM -Rf  $MITK_BINDIR/bin/*.REPLACEME_SV_SO_FILE_EXTENSION*
 $GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*CTK*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib
 $GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/liborg*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib/plugins
 
@@ -63,8 +65,8 @@ $GCP -fl $MITK_BLDDIR/ep/src/CTK/Libs/Scripting/Python/Widgets/*.h $MITK_BINDIR/
 $GCP -fl $MITK_BLDDIR/ep/src/CTK/Libs/Visualization/VTK/Core/*.h $MITK_BINDIR/include/ctk
 $GCP -fl $MITK_BLDDIR/ep/src/CTK/Libs/Widgets/*.h $MITK_BINDIR/include/ctk
 
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/bin
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib
+# $GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/bin
+# $GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib
 $GCP -fl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.REPLACEME_SV_LIB_FILE_EXTENSION $MITK_BINDIR/lib
 
 # copying more than needed here, but not sure how many of the subdirectories are required.
@@ -75,7 +77,7 @@ for i in $(find $MITK_BLDDIR/ep/src/CTK-build -name "*Export.h"); do
     $GCP -fl $i $MITK_BINDIR/include/ctk
 done
 
-$GCP -fl $MITK_BLDDIR/MITK-build/lib/plugins/$MITK_BLDTYPE/* $MITK_BINDIR/lib
+#$GCP -fl $MITK_BLDDIR/MITK-build/lib/plugins/$MITK_BLDTYPE/* $MITK_BINDIR/lib/plugins
 
 # mitk files
 
@@ -234,10 +236,10 @@ $GCP -fl $MITK_BLDDIR/MITK-build/bin/MitkWorkbench* $MITK_BINDIR/bin
 $GCP -fl $MITK_BLDDIR/MITK-build/bin/usResourceCompiler* $MITK_BINDIR/bin
 $GCP -fl $MITK_BLDDIR/MITK-build/bin/MitkPluginGenerator* $MITK_BINDIR/bin
 
-for i in $(find $MITK_BLDDIR/MITK-build/lib/plugins -name "*.REPLACEME_SV_SO_FILE_EXTENSION*"); do
-    echo "$i  $($GBASENAME $i)"
-    $GCP -fl $i $MITK_BINDIR/bin/plugins
-done
+# for i in $(find $MITK_BLDDIR/MITK-build/lib/plugins -name "*.REPLACEME_SV_SO_FILE_EXTENSION*"); do
+#     echo "$i  $($GBASENAME $i)"
+#     $GCP -fl $i $MITK_BINDIR/bin/plugins
+# done
 
 # create a wrapper script for python executable
 

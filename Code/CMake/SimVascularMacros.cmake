@@ -278,7 +278,7 @@ endmacro()
 #
 macro(simvascular_add_executable TARGET_NAME)
 	set(options NO_SCRIPT)
-	set(oneValueArgs DEV_SCRIPT_NAME INSTALL_SCRIPT_NAME COMPONENT INSTALL_DESTINATION)
+	set(oneValueArgs DEV_SCRIPT_NAME INSTALL_SCRIPT_NAME INSTALL_COMPONENT INSTALL_DESTINATION)
 	set(multiValueArgs SRCS)
 
 	unset(simvascular_add_executable_INSTALL_SCRIPT_NAME)
@@ -332,6 +332,9 @@ macro(simvascular_add_executable TARGET_NAME)
 	endif()
 	# CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
 	if(simvascular_add_executable_INSTALL_DESTINATION)
+    if(simvascular_add_executable_INSTALL_COMPONENT)
+        set(_COMPARGS COMPONENT ${simvascular_add_executable_INSTALL_COMPONENT})
+    endif()
     if(APPLE)
       set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
       set(icon_name "icon.icns")
@@ -347,9 +350,9 @@ macro(simvascular_add_executable TARGET_NAME)
           ${_COMPARGS})
       endif()
     else()
-      if(simvascular_add_executable_COMPONENT)
-        set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
-      endif()
+      # if(simvascular_add_executable_INSTALL_COMPONENT)
+      #   set(_COMPARGS "COMPONENT ${simvascular_add_executable_INSTALL_COMPONENT}")
+      # endif()
       install(TARGETS ${TARGET_NAME}
         RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
         ${_COMPARGS})
@@ -1081,11 +1084,15 @@ function(simvascular_install_external project_name)
   if(EXISTS ${SV_${proj}_DIR})
     if(EXISTS ${SV_${proj}_DIR}/lib)
       install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${LIB_DESTINATION}
-        USE_SOURCE_PERMISSIONS)
+        USE_SOURCE_PERMISSIONS
+        COMPONENT ExternalLibraries)
     endif()
     if(EXISTS ${SV_${proj}_DIR}/bin)
       install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION}
-        USE_SOURCE_PERMISSIONS)
+        USE_SOURCE_PERMISSIONS
+        COMPONENT ExternalExecutables
+        PATTERN "designer" EXCLUDE 
+        )
     endif()
   endif()
 

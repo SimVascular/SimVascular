@@ -309,7 +309,7 @@ endif()
 # Put timestamp
 message(STATUS "Install timestamp: ${SV_RELEASE_TIMESTAMP}")
 file(WRITE "${TEMP_DIR}/release-date" "${SV_RELEASE_TIMESTAMP}")
-install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
+install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR} COMPONENT CoreFiles)
 
 if(SV_ENABLE_DISTRIBUTION)
   add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})

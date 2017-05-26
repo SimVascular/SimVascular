@@ -34,6 +34,7 @@ macro(simvascular_install_prereqs tar location)
     install(FILES "${DEPENDENCY_ACTUAL}"
       DESTINATION "${location}"
       RENAME "${DEPENDENCY_NAME}"
+      COMPONENT ExternalLibraries
       )
   endforeach()
 endmacro()
@@ -67,7 +68,7 @@ foreach(var ${SV_EXTERNAL_SHARED_LIBS})
             file(GLOB lib "${lib_path}/${lib_name_we}*")
           endif()
           dev_message("Installing ${lib}")
-          install(FILES ${lib} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT "ExteralRuntimes")
+          install(FILES ${lib} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ExternalLibraries)
           simvascular_install_prereqs(${lib} ${SV_INSTALL_EXTERNALS_RUNTIME_DIR})
         else()
           dev_message("[${var}]  ${lib_name} is not a shared lib, removing ${lib_name}, EXT ${_EXT}, do not install")
@@ -153,10 +154,30 @@ endif()
 if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_PARSOLID)
   if(SV_USE_PARASOLID)
     file(GLOB PARASOLID_DLLS "${PARASOLID_DLL_PATH}/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    install(FILES ${PARASOLID_DLLS} DESTINATION ${SV_INSTALL_RUNTIME_DIR})
+
+    set(PARASOLID_INSTALL_LIB_DIR ${SV_INSTALL_LIBRARY_DIR})
+    if(WIN32)
+      set(PARASOLID_INSTALL_LIB_DIR ${SV_INSTALL_RUNTIME_DIR})
+    endif()
+    install(FILES ${PARASOLID_DLLS} 
+      DESTINATION ${PARASOLID_INSTALL_LIB_DIR}
+      COMPONENT LicensedLibraries)
+    
     file(GLOB PARASOLID_INSTALL_SCHEMAS "${PARASOLID_SCHEMA_DIR}/*.*")
     install(FILES ${PARASOLID_INSTALL_SCHEMAS}
-      DESTINATION ${SV_INSTALL_PARASOLID_SCHEMA_DIR})
+      DESTINATION ${SV_INSTALL_PARASOLID_SCHEMA_DIR}
+      COMPONENT LicensedData)
+  endif()
+endif()
+
+if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_MESHSIM)
+  if(SV_USE_MESHSIM AND MESHSIM_USE_LICENSE_FILE)
+    if(EXISTS ${MESHSIM_LICENSE_FILE})
+      install(FILES ${MESHSIM_LICENSE_FILE}
+        DESTINATION ${SV_INSTALL_HOME_DIR}
+        RENAME "meshsim-license.dat"
+        COMPONENT LicenseFiles)
+    endif()
   endif()
 endif()
 
@@ -212,5 +233,5 @@ foreach(exe ${EXTERNAL_EXES})
 endif()
 install(PROGRAMS ${EXTERNALEXE_${_EXE}}
   DESTINATION ${SV_INSTALL_EXTERNAL_EXE_DIR}
-  RENAME "${_exe}${CMAKE_EXECUTABLE_SUFFIX}" OPTIONAL)
+  RENAME "${_exe}${CMAKE_EXECUTABLE_SUFFIX}" COMPONENT CoreExecutables OPTIONAL)
 endforeach()
