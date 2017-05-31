@@ -4,6 +4,6 @@ Name=SimVascular
 Comment=Open Source Software for Cardiovascular Modeling and Simulation
 Exec=@SV_FULL_LAUNCH_FILE@
 Icon=@SV_FULL_ICON_FILE@
-Terminal=true
+Terminal=@TERMINAL_FLAG@
 Type=Application
 Categories=Application;
