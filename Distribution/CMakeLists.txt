@@ -50,6 +50,11 @@ include(CPackComponent)
 set(SV_DISTRIBUTE_COMPONENTS OpenSource CACHE STRING "When distributing, you need to specify which components to distribute.")
 set_property(CACHE SV_DISTRIBUTE_COMPONENTS PROPERTY STRINGS OpenSource Licensed All)
 
+option(SV_OPEN_TERMINAL "Open terminal when launching SimVascular" OFF)
+option(SV_CREATE_DESKTOP_LAUNCHER "Create desktop launcher" OFF)
+
+option(SV_USE_MSMPI "Use MSMPI" OFF)
+
 set(opensource_components CoreExecutables CoreLibraries CoreHeaders CoreScripts CoreFiles
 	PluginExecutables PluginLibraries PluginHeaders
 	ModuleExecutables ModuleLibraries
@@ -94,6 +99,7 @@ if(LINUX)
 		set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/licensed/${SV_INSTALL_VERSION_DIR}")
 		set(CPACK_DEB_COMPONENT_INSTALL ON)
 		set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
+		set(SV_CREATE_DESKTOP_LAUNCHER OFF)
 	elseif(SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
 		# set(CPACK_GENERATOR "TGZ")
 		# set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
@@ -110,15 +116,21 @@ if(LINUX)
 		set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}")
 	endif()
 
-	if(SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource OR SV_DISTRIBUTE_COMPONENTS STREQUAL All)
+	if(SV_CREATE_DESKTOP_LAUNCHER AND (SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource OR SV_DISTRIBUTE_COMPONENTS STREQUAL All) )
 		INSTALL (FILES ${CMAKE_CURRENT_SOURCE_DIR}/icons/svlogo.png DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}")
 
 		set(SV_FULL_LAUNCH_FILE "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/simvascular")
 		set(SV_FULL_ICON_FILE "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/svlogo.png")
+		set(TERMINAL_FLAG "false")
+		if(SV_OPEN_TERMINAL)
+			set(TERMINAL_FLAG "true")
+		endif()
+
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/linux/simvascular.desktop.in
 						${CMAKE_CURRENT_BINARY_DIR}/linux/simvascular.desktop @ONLY)
 		
 		SET(SV_DESKTOP_DIR "/usr/share/applications/")
+
 		INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/linux/simvascular.desktop DESTINATION ${SV_DESKTOP_DIR})
 
 	endif()
