@@ -1,6 +1,8 @@
 #ifndef SVLOFTPARAMWIDGET_H
 #define SVLOFTPARAMWIDGET_H
 
+#include "svContourGroup.h"
+
 #include <QWidget>
 
 namespace Ui {
@@ -15,8 +17,18 @@ public:
     explicit svLoftParamWidget(QWidget *parent = 0);
     ~svLoftParamWidget();
 
-//private:
+    UpdateGUI(svContourGroup::svLoftingParam param);
+
+    svContourGroup::svLoftingParam GetParam();
+
+    //private:
     Ui::svLoftParamWidget *ui;
+
+public slots:
+
+    SelectionChanged(int index);
+
+
 };
 
 #endif // SVLOFTPARAMWIDGET_H

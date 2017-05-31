@@ -21,6 +21,11 @@ public:
 
     struct svLoftingParam
     {
+        enum LoftingMethod {NURBS_LOFTING, SPLINE_LOFTING};
+
+        LoftingMethod method;
+
+        //Spline Lofting
         int numOutPtsInSegs;//sampleDefault
         //std::vector<int> overrides;
         int samplePerSegment;
@@ -44,8 +49,17 @@ public:
         double tension;
         double continuity;
 
+        //Nurbs Lofting
+        int uDegree;
+        int vDegree;
+        std::string uKnotSpanType;
+        std::string vKnotSpanType;
+        std::string uParametricSpanType;
+        std::string vParametricSpanType;
+
         svLoftingParam()
-            : numOutPtsInSegs(60)
+            : method(NURBS_LOFTING)
+            , numOutPtsInSegs(60)
             , samplePerSegment(12)
             , useLinearSampleAlongLength(1)
             , linearMuliplier(10)
@@ -61,10 +75,18 @@ public:
             , bias(0)
             , tension(0)
             , continuity(0)
+            , uDegree(2)
+            , vDegree(2)
+            , uKnotSpanType("derivative")
+            , vKnotSpanType("average")
+            , uParametricSpanType("centripetal")
+            , vParametricSpanType("chord")
+
         {}
 
         svLoftingParam(const svLoftingParam &other)
-            : numOutPtsInSegs(other.numOutPtsInSegs)
+            : method(other.method)
+            , numOutPtsInSegs(other.numOutPtsInSegs)
             , samplePerSegment(other.samplePerSegment)
             , useLinearSampleAlongLength(other.useLinearSampleAlongLength)
             , linearMuliplier(other.linearMuliplier)
@@ -80,6 +102,12 @@ public:
             , bias(other.bias)
             , tension(other.tension)
             , continuity(other.continuity)
+            , uDegree(other.uDegree)
+            , vDegree(other.vDegree)
+            , uKnotSpanType(other.uKnotSpanType)
+            , vKnotSpanType(other.vKnotSpanType)
+            , uParametricSpanType(other.uParametricSpanType)
+            , vParametricSpanType(other.vParametricSpanType)
         {}
 
 
