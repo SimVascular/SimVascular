@@ -28,12 +28,12 @@
        <widget class="QComboBox" name="comboBoxMethod">
         <item>
          <property name="text">
-          <string>NURBS</string>
+          <string>nurbs</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Spline</string>
+          <string>spline</string>
          </property>
         </item>
        </widget>

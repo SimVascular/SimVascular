@@ -17,9 +17,7 @@
 
 struct svLoftingParam
 {
-    enum LoftingMethod {NURBS_LOFTING, SPLINE_LOFTING};
-
-    LoftingMethod method;
+    std::string method;
 
     //Spline Lofting
     int numOutPtsInSegs;//sampleDefault
@@ -54,7 +52,7 @@ struct svLoftingParam
     std::string vParametricSpanType;
 
     svLoftingParam()
-        : method(NURBS_LOFTING)
+        : method("nurbs")
         , numOutPtsInSegs(60)
         , samplePerSegment(12)
         , useLinearSampleAlongLength(1)

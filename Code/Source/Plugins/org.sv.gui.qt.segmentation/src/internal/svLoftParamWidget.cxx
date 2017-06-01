@@ -7,7 +7,7 @@ svLoftParamWidget::svLoftParamWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->comboBoxMethod,SIGNAL(currentIndexChanged(int index)), this, SLOT(SelectionChanged(int index)));
+    connect(ui->comboBoxMethod,SIGNAL(currentTextChanged(const QString&)), this, SLOT(SelectionChanged(const QString&)));
 }
 
 svLoftParamWidget::~svLoftParamWidget()
@@ -20,7 +20,12 @@ void svLoftParamWidget::UpdateGUI(svLoftingParam* param)
     if(param==NULL)
         return;
 
-    ui->stackedWidget->setCurrentIndex(param->method);
+    ui->comboBoxMethod->setCurrentText(QString::fromStdString(param->method));
+
+//    if(param->methd=="nurbs")
+//        ui->stackedWidget->setCurrentIndex(0);
+//    else if(param->method=="spline")
+//        ui->stackedWidget->setCurrentIndex(1);
 
     ui->NURBSLoftingUDegree->setText(QString::number(param->uDegree));
     ui->NURBSLoftingVDegree->setText(QString::number(param->vDegree));
@@ -50,7 +55,7 @@ void svLoftParamWidget::UpdateParam(svLoftingParam* param)
     if(param==NULL)
         return;
 
-    param->method=ui->comboBoxMethod->currentIndex();
+    param->method=ui->comboBoxMethod->currentText().toStdString();
 
     param->uDegree=ui->NURBSLoftingUDegree->text().trimmed().toInt();
     param->vDegree=ui->NURBSLoftingVDegree->text().trimmed().toInt();
@@ -69,11 +74,13 @@ void svLoftParamWidget::UpdateParam(svLoftingParam* param)
     param->numModes=ui->spinBoxNumModes->value();
 }
 
-void svLoftParamWidget::SelectionChanged(int index)
+void svLoftParamWidget::SelectionChanged(const QString &text)
 {
-    ui->stackedWidget->setCurrentIndex(index);
+    if(text=="nurbs")
+        ui->stackedWidget->setCurrentIndex(0);
+    else if(text=="spline")
+        ui->stackedWidget->setCurrentIndex(1);
 }
-
 
 void svLoftParamWidget::SetButtonGroupVisible(bool visible)
 {

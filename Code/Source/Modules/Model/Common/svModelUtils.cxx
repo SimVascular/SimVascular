@@ -402,7 +402,7 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
     cvPolyData *dst;
     vtkPolyData* outpd=NULL;
 
-    if (param->method==svLoftingParam::SPLINE_LOFTING)
+    if (param->method=="spline")
     {
       if ( sys_geom_loft_solid(sampledContours, contourNumber,param->useLinearSampleAlongLength,param->useFFT,
                                param->numOutPtsAlongLength,newNumSamplingPts,
@@ -422,7 +422,7 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
               outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
       }
     }
-    else if (param->method==svLoftingParam::NURBS_LOFTING)
+    else if (param->method=="nurbs")
     {
       // Degrees of surface
       int uDegree = param->uDegree;

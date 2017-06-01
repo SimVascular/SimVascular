@@ -28,7 +28,7 @@ public:
 
 public slots:
 
-    void SelectionChanged(int index);
+    void SelectionChanged(const QString &text);
 
 
 };

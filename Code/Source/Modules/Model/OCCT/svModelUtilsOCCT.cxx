@@ -125,7 +125,7 @@ cvOCCTSolidModel* svModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<svContour*
     cvOCCTSolidModel* surfFinal=NULL;
 
     cvOCCTSolidModel* surf=new cvOCCTSolidModel();
-    if(param->method==svLoftingParam::SPLINE_LOFTING)
+    if(param->method=="spline")
     {
       int continuity=2;
       int partype=0;
@@ -146,7 +146,7 @@ cvOCCTSolidModel* svModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<svContour*
       }
       //delete curveList;
     }
-    else if (param->method==svLoftingParam::NURBS_LOFTING)
+    else if (param->method=="nurbs")
     {
       // Set degrees
       int uDegree = param->uDegree;
@@ -368,7 +368,10 @@ svModelElementOCCT* svModelUtilsOCCT::CreateModelElementOCCT(std::vector<mitk::D
             std::string groupName=segNode->GetName();
             segNames.push_back(groupName);
 
-            cvOCCTSolidModel* solid=CreateLoftSurfaceOCCT(contourSet,groupName,numSamplingPts,param,0,1);
+            svLoftingParam* usedParam= group->GetLoftingParam();
+            if(param!=NULL) usedParam=param;
+
+            cvOCCTSolidModel* solid=CreateLoftSurfaceOCCT(contourSet,groupName,numSamplingPts,usedParam,0,1);
             loftedSolids.push_back(solid);
             if (solid == NULL)
               return NULL;

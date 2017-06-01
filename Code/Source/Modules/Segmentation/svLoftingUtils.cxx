@@ -15,7 +15,7 @@ void svLoftingUtils::SetPreferencedValues(svLoftingParam* param)
     if(param==NULL)
         return;
 
-     param->method= preferences->GetInt("Lofting Method", param->method);
+     param->method= preferences->Get("Lofting Method", QString::fromStdString(param->method)).toStdString();
 
      param->uDegree= preferences->GetInt("NURBS Lofting U Degree", param->uDegree);
      param->vDegree= preferences->GetInt("NURBS Lofting V Degree", param->vDegree);

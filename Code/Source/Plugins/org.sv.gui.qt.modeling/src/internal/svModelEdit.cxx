@@ -1480,23 +1480,26 @@ void svModelEdit::CreateModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
-    // Set up lofting parameters
-    svModelElement::svNURBSLoftParam *nurbsParam = new
-      svModelElement::svNURBSLoftParam();
-    nurbsParam->advancedLofting = m_SegSelectionWidget->GetAdvancedLofting();
+//    // Set up lofting parameters
+//    svModelElement::svNURBSLoftParam *nurbsParam = new
+//      svModelElement::svNURBSLoftParam();
+//    nurbsParam->advancedLofting = m_SegSelectionWidget->GetAdvancedLofting();
 
-    // Get the lofting preferences!
-    berry::IPreferencesService *prefService = berry::Platform::GetPreferencesService();
-    Q_ASSERT(prefService);
-    berry::IPreferences::Pointer prefs = prefService->GetSystemPreferences()->Node("/org.sv.views.modeling");
+//    // Get the lofting preferences!
+//    berry::IPreferencesService *prefService = berry::Platform::GetPreferencesService();
+//    Q_ASSERT(prefService);
+//    berry::IPreferences::Pointer prefs = prefService->GetSystemPreferences()->Node("/org.sv.views.modeling");
 
-    // Fill in rest of NURBS params with preferences
-    nurbsParam->uDegree = prefs->Get("NURBS Lofting U Degree", "2").toInt();
-    nurbsParam->vDegree = prefs->Get("NURBS Lofting V Degree", "2").toInt();
-    nurbsParam->uKnotSpanType = prefs->Get("NURBS Lofting U Knot Span Type", "derivative").trimmed().toStdString();
-    nurbsParam->vKnotSpanType = prefs->Get("NURBS Lofting V Knot Span Type", "average").trimmed().toStdString();
-    nurbsParam->uParametricSpanType = prefs->Get("NURBS Lofting U Parametric Span Type", "centripetal").trimmed().toStdString();
-    nurbsParam->vParametricSpanType = prefs->Get("NURBS Lofting V Parametric Span Type", "chord").trimmed().toStdString();
+//    // Fill in rest of NURBS params with preferences
+//    nurbsParam->uDegree = prefs->Get("NURBS Lofting U Degree", "2").toInt();
+//    nurbsParam->vDegree = prefs->Get("NURBS Lofting V Degree", "2").toInt();
+//    nurbsParam->uKnotSpanType = prefs->Get("NURBS Lofting U Knot Span Type", "derivative").trimmed().toStdString();
+//    nurbsParam->vKnotSpanType = prefs->Get("NURBS Lofting V Knot Span Type", "average").trimmed().toStdString();
+//    nurbsParam->uParametricSpanType = prefs->Get("NURBS Lofting U Parametric Span Type", "centripetal").trimmed().toStdString();
+//    nurbsParam->vParametricSpanType = prefs->Get("NURBS Lofting V Parametric Span Type", "chord").trimmed().toStdString();
+
+    svLoftingParam* param=NULL;
+    //param=m_SegSelectionWidget->GetParam();
 
     int created = 1;
     QString statusText="Model has been created.";
@@ -1507,11 +1510,11 @@ void svModelEdit::CreateModel()
         int stats[2]={0};
         if(m_ModelType=="PolyData")
         {
-            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,nurbsParam,stats);
+            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,param,stats);
         }
         else if(m_ModelType=="OpenCASCADE")
         {
-            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,nurbsParam,NULL,20.0);
+            newModelElement=tempElement->CreateModelElement(segNodes,numSampling,param,NULL,20.0);
         }
         else if(m_ModelType=="Parasolid")
         {
@@ -1529,7 +1532,9 @@ void svModelEdit::CreateModel()
         }
     }
 
-    delete nurbsParam;
+    if(param)
+        delete param;
+
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress(2);
     mitk::StatusBar::GetInstance()->DisplayText(statusText.toStdString().c_str());
