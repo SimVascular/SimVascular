@@ -17,16 +17,18 @@ public:
     explicit svLoftParamWidget(QWidget *parent = 0);
     ~svLoftParamWidget();
 
-    UpdateGUI(svContourGroup::svLoftingParam param);
+    void UpdateGUI(svLoftingParam* param);
 
-    svContourGroup::svLoftingParam GetParam();
+    void UpdateParam(svLoftingParam* param);
+
+    void SetButtonGroupVisible(bool visible);
 
     //private:
     Ui::svLoftParamWidget *ui;
 
 public slots:
 
-    SelectionChanged(int index);
+    void SelectionChanged(int index);
 
 
 };

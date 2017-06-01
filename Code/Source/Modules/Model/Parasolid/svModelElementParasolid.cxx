@@ -32,7 +32,7 @@ svModelElement* svModelElementParasolid::CreateModelElement()
 
 svModelElement* svModelElementParasolid::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                 , int numSamplingPts
-                                , svModelElement::svNURBSLoftParam *nurbsParam
+                                , svLoftingParam *param
                                 , int* stats
                                 , double maxDist
                                 , int noInterOut

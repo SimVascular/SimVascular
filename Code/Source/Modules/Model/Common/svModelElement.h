@@ -6,6 +6,8 @@
 #define __CVMISC_UTILS_H //avoid including cv_misc_utils.h from cvSolidModel.h
 #include "cvSolidModel.h"
 
+#include "svContourGroup.h"
+
 #include <mitkDataNode.h>
 
 #include <vtkPolyData.h>
@@ -147,40 +149,6 @@ public:
         }
     };
 
-    struct svNURBSLoftParam
-    {
-      int advancedLofting;
-      int uDegree;
-      int vDegree;
-      std::string uKnotSpanType;
-      std::string vKnotSpanType;
-      std::string uParametricSpanType;
-      std::string vParametricSpanType;
-
-      svNURBSLoftParam()
-        : advancedLofting(0),
-          uDegree(2),
-          vDegree(2),
-          uKnotSpanType("average"),
-          vKnotSpanType("average"),
-          uParametricSpanType("centripetal"),
-          vParametricSpanType("centripetal")
-      {
-      }
-      svNURBSLoftParam(const svNURBSLoftParam &src)
-        : advancedLofting(src.advancedLofting),
-          uDegree(src.uDegree),
-          vDegree(src.vDegree),
-          uKnotSpanType(src.uKnotSpanType),
-          vKnotSpanType(src.vKnotSpanType),
-          uParametricSpanType(src.uParametricSpanType),
-          vParametricSpanType(src.vParametricSpanType)
-      {
-      }
-
-    };
-
-
     svModelElement();
 
     svModelElement(const svModelElement &other);
@@ -277,7 +245,7 @@ public:
 
     virtual svModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                                , int numSamplingPts
-                                               , svModelElement::svNURBSLoftParam *nurbsParam
+                                               , svLoftingParam *param
                                                , int* stats = NULL
                                                , double maxDist = 1.0
                                                , int noInterOut = 1

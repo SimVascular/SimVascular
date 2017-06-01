@@ -2,6 +2,7 @@
 #define SVCONTOURGROUPCREATE_H
 
 #include "svDataNodeOperationInterface.h"
+#include "svContourGroup.h"
 #include <mitkDataStorage.h>
 #include <QWidget>
 
@@ -18,6 +19,8 @@ public:
     svContourGroupCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, int timeStep);
 
     virtual ~svContourGroupCreate();
+
+//    void SetPreferencedValues(svLoftingParam* param);
 
 public slots:
 
