@@ -284,7 +284,7 @@ public:
 
     svLoftingParam* GetLoftingParam(){return m_LoftParam;}
 
-    SetLoftingParam(svLoftingParam* param) {
+    void SetLoftingParam(svLoftingParam* param) {
         if(m_LoftParam) delete m_LoftParam;
         m_LoftParam=param;
     }
