@@ -1,21 +1,21 @@
-#ifndef SVMODELPREFERENCEPAGE_H
-#define SVMODELPREFERENCEPAGE_H
+#ifndef SVLOFTINGPREFERENCEPAGE_H
+#define SVLOFTINGPREFERENCEPAGE_H
 
 #include <berryIPreferences.h>
 #include <berryIQtPreferencePage.h>
 
 namespace Ui {
-class svModelPreferencePage;
+class svLoftParamWidget;
 }
 
-class svModelPreferencePage : public QObject, public berry::IQtPreferencePage
+class svLoftingPreferencePage : public QObject, public berry::IQtPreferencePage
 {
     Q_OBJECT
     Q_INTERFACES(berry::IPreferencePage)
 
 public:
-    svModelPreferencePage();
-    ~svModelPreferencePage();
+    svLoftingPreferencePage();
+    ~svLoftingPreferencePage();
 
     void CreateQtControl(QWidget* parent) override;
     QWidget* GetQtControl() const override;
@@ -24,11 +24,15 @@ public:
     bool PerformOk() override;
     void Update() override;
 
+public slots:
+
+    void SelectionChanged(const QString &text);
+
 private:
   berry::IPreferences::Pointer m_Preferences;
-  QScopedPointer<Ui::svModelPreferencePage> m_Ui;
+  QScopedPointer<Ui::svLoftParamWidget> m_Ui;
   QWidget* m_Control;
 
 };
 
-#endif // SVMODELPREFERENCEPAGE_H
+#endif // SVLOFTINGPREFERENCEPAGE_H

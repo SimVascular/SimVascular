@@ -3,6 +3,7 @@
 #include "svModel.h"
 #include "svModelElementAnalytic.h"
 #include "svModelElementFactory.h"
+#include "svLoftingUtils.h"
 
 #include <QString>
 #include <QStringList>
@@ -70,6 +71,8 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
     svModelElement* me=svModelElementFactory::CreateModelElement(modelType);
     if(me==NULL)
         return modelNode;
+
+    svLoftingUtils::SetPreferencedValues(me->GetLoftingParam());
 
     if(!me->ReadFile(filePath.toStdString()))
     {

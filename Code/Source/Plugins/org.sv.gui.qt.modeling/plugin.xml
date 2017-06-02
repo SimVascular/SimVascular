@@ -17,8 +17,8 @@
     </extension>
 
   <extension point="org.blueberry.ui.preferencePages">
-    <page id="org.sv.gui.qt.ModelPreferencePage" name="SimVascular Model" class="svModelPreferencePage">
-      <keywordreference id="org.sv.gui.qt.ModelPreferencePageKeywords"></keywordreference>
+    <page id="org.sv.gui.qt.LoftingPreferencePage" name="SimVascular Lofting" class="svLoftingPreferencePage">
+      <keywordreference id="org.sv.gui.qt.LoftingPreferencePageKeywords"></keywordreference>
     </page>
   </extension>
 

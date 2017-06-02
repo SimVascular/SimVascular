@@ -1194,13 +1194,6 @@ void svSegmentation2D::ShowLoftWidget()
     svLoftingParam *param=m_ContourGroup->GetLoftingParam();
 
     m_LoftWidget->UpdateGUI(param);
-//    m_LoftWidget->ui->spinBoxSampling->setValue(param->numOutPtsInSegs);
-//    m_LoftWidget->ui->spinBoxNumPerSeg->setValue(param->samplePerSegment);
-//    m_LoftWidget->ui->checkBoxUseLinearSample->setChecked(param->useLinearSampleAlongLength==0?false:true);
-//    m_LoftWidget->ui->spinBoxLinearFactor->setValue(param->linearMuliplier);
-//    m_LoftWidget->ui->checkBoxUseFFT->setChecked(param->useFFT==0?false:true);
-//    m_LoftWidget->ui->spinBoxNumModes->setValue(param->numModes);
-
     m_LoftWidget->show();
 }
 

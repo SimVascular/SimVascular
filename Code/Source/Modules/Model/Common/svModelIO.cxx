@@ -2,6 +2,7 @@
 #include "svModel.h"
 #include "svModelElementAnalytic.h"
 #include "svModelElementFactory.h"
+#include "svLoftingUtils.h"
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
@@ -124,6 +125,31 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
             int numSampling=0;
             meElement->QueryIntAttribute("num_sampling", &numSampling);
             me->SetNumSampling(numSampling);
+
+            int useUniform=me->IfUseUniform();
+            meElement->QueryIntAttribute("use_uniform", &useUniform);
+            me->SetUseUniform(useUniform);
+
+            svLoftingParam* param=me->GetLoftingParam();
+            svLoftingUtils::SetPreferencedValues(param);
+            if(useUniform && param )
+            {
+                meElement->QueryStringAttribute("method", &param->method);
+
+                meElement->QueryIntAttribute("sampling", &param->numOutPtsInSegs);
+                meElement->QueryIntAttribute("sample_per_seg",&param->samplePerSegment);
+                meElement->QueryIntAttribute("use_linear_sample",&param->useLinearSampleAlongLength);
+                meElement->QueryIntAttribute("linear_multiplier",&param->linearMuliplier);
+                meElement->QueryIntAttribute("use_fft",&param->useFFT);
+                meElement->QueryIntAttribute("num_modes",&param->numModes);
+
+                meElement->QueryIntAttribute("u_degree",&param->uDegree);
+                meElement->QueryIntAttribute("v_degree",&param->vDegree);
+                meElement->QueryStringAttribute("u_knot_type",&param->uKnotSpanType);
+                meElement->QueryStringAttribute("v_knot_type",&param->vKnotSpanType);
+                meElement->QueryStringAttribute("u_parametric_type",&param->uParametricSpanType);
+                meElement->QueryStringAttribute("v_parametric_type",&param->vParametricSpanType);
+            }
 
             TiXmlElement* facesElement = meElement->FirstChildElement("faces");
             if(facesElement!=nullptr)
@@ -322,6 +348,33 @@ void svModelIO::Write()
         timestepElement->LinkEndChild(meElement);
         meElement->SetAttribute("type",me->GetType());
         meElement->SetAttribute("num_sampling", me->GetNumSampling());
+        meElement->SetAttribute("use_uniform", me->IfUseUniform());
+
+        if(me->IfUseUniform())
+        {
+            svLoftingParam* param=me->GetLoftingParam();
+            if(param)
+            {
+                meElement->SetAttribute("method",param->method);
+
+                meElement->SetAttribute("sampling",param->numOutPtsInSegs);
+                meElement->SetAttribute("sample_per_seg",param->samplePerSegment);
+                meElement->SetAttribute("use_linear_sample",param->useLinearSampleAlongLength);
+                meElement->SetAttribute("linear_multiplier",param->linearMuliplier);
+                meElement->SetAttribute("use_fft",param->useFFT);
+                meElement->SetAttribute("num_modes",param->numModes);
+
+                meElement->SetAttribute("u_degree",param->uDegree);
+                meElement->SetAttribute("v_degree",param->vDegree);
+                meElement->SetAttribute("u_knot_type",param->uKnotSpanType);
+                meElement->SetAttribute("v_knot_type",param->vKnotSpanType);
+                meElement->SetAttribute("u_parametric_type",param->uParametricSpanType);
+                meElement->SetAttribute("v_parametric_type",param->vParametricSpanType);
+            }
+        }
+
+
+
 
         auto segsElement= new TiXmlElement("segmentations");
         meElement->LinkEndChild(segsElement);

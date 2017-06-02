@@ -30,7 +30,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, s
     for(int i=0;i<groupNumber;i++)
     {
       svContourGroup* group=groups[i];
-      vtkPolyData *vtkpd = CreateLoftSurface(group,numSamplingPts,param,1,t);
+      vtkPolyData *vtkpd = CreateLoftSurface(group,numSamplingPts,1,param,t);
       if (vtkpd == NULL)
       {
         for (int j=0; j< i-1; j++)

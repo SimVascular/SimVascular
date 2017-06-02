@@ -20,7 +20,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Lofting Method:</string>
+         <string>Use Lofting Method:</string>
         </property>
        </widget>
       </item>

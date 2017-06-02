@@ -279,6 +279,16 @@ public:
 
     virtual void SetInnerSolid(cvSolidModel* innerSolid);
 
+    int IfUseUniform() {return m_UseUniform;}
+    void SetUseUniform(int flag) { m_UseUniform=flag;}
+
+    svLoftingParam* GetLoftingParam(){return m_LoftParam;}
+
+    SetLoftingParam(svLoftingParam* param) {
+        if(m_LoftParam) delete m_LoftParam;
+        m_LoftParam=param;
+    }
+
   protected:
 
     std::string m_Type;
@@ -298,6 +308,10 @@ public:
     std::vector<std::string> m_FileExtensions;
 
     cvSolidModel* m_InnerSolid;
+
+    int m_UseUniform;
+
+    svLoftingParam* m_LoftParam;
   };
 
 

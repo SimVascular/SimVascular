@@ -1,5 +1,6 @@
 set(H_FILES
     svSegmentationUtils.h
+    svLoftingUtils.h
     svContour.h
     svContourCircle.h
     svContourEllipse.h
@@ -17,11 +18,11 @@ set(H_FILES
     svContourGroupIO.h
     svSegmentationLegacyIO.h
     svSegmentationObjectFactory.h
-    svLoftingUtils.h
 )
 
 set(CPP_FILES
     svSegmentationUtils.cxx
+    svLoftingUtils.cxx
     svContour.cxx
     svContourCircle.cxx
     svContourEllipse.cxx
@@ -39,7 +40,6 @@ set(CPP_FILES
     svContourGroupIO.cxx
     svSegmentationLegacyIO.cxx
     svSegmentationObjectFactory.cxx
-    svLoftingUtils.cxx
 )
 
 set(RESOURCE_FILES

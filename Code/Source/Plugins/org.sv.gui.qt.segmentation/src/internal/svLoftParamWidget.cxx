@@ -22,25 +22,20 @@ void svLoftParamWidget::UpdateGUI(svLoftingParam* param)
 
     ui->comboBoxMethod->setCurrentText(QString::fromStdString(param->method));
 
-//    if(param->methd=="nurbs")
-//        ui->stackedWidget->setCurrentIndex(0);
-//    else if(param->method=="spline")
-//        ui->stackedWidget->setCurrentIndex(1);
-
     ui->NURBSLoftingUDegree->setText(QString::number(param->uDegree));
     ui->NURBSLoftingVDegree->setText(QString::number(param->vDegree));
 
     ui->NURBSLoftingUKnotSpanType->setCurrentIndex(
-      ui->NURBSLoftingUKnotSpanType->findText(QString::fromStdString(param->uKnotSpanType)));
+                ui->NURBSLoftingUKnotSpanType->findText(QString::fromStdString(param->uKnotSpanType)));
 
     ui->NURBSLoftingVKnotSpanType->setCurrentIndex(
-      ui->NURBSLoftingVKnotSpanType->findText(QString::fromStdString(param->vKnotSpanType)));
+                ui->NURBSLoftingVKnotSpanType->findText(QString::fromStdString(param->vKnotSpanType)));
 
     ui->NURBSLoftingUParametricSpanType->setCurrentIndex(
-      ui->NURBSLoftingUParametricSpanType->findText(QString::fromStdString(param->uParametricSpanType)));
+                ui->NURBSLoftingUParametricSpanType->findText(QString::fromStdString(param->uParametricSpanType)));
 
     ui->NURBSLoftingVParametricSpanType->setCurrentIndex(
-      ui->NURBSLoftingVParametricSpanType->findText(QString::fromStdString(param->vParametricSpanType)));
+                ui->NURBSLoftingVParametricSpanType->findText(QString::fromStdString(param->vParametricSpanType)));
 
     ui->spinBoxSampling->setValue(param->numOutPtsInSegs);
     ui->spinBoxNumPerSeg->setValue(param->samplePerSegment);

@@ -1480,26 +1480,10 @@ void svModelEdit::CreateModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
-//    // Set up lofting parameters
-//    svModelElement::svNURBSLoftParam *nurbsParam = new
-//      svModelElement::svNURBSLoftParam();
-//    nurbsParam->advancedLofting = m_SegSelectionWidget->GetAdvancedLofting();
-
-//    // Get the lofting preferences!
-//    berry::IPreferencesService *prefService = berry::Platform::GetPreferencesService();
-//    Q_ASSERT(prefService);
-//    berry::IPreferences::Pointer prefs = prefService->GetSystemPreferences()->Node("/org.sv.views.modeling");
-
-//    // Fill in rest of NURBS params with preferences
-//    nurbsParam->uDegree = prefs->Get("NURBS Lofting U Degree", "2").toInt();
-//    nurbsParam->vDegree = prefs->Get("NURBS Lofting V Degree", "2").toInt();
-//    nurbsParam->uKnotSpanType = prefs->Get("NURBS Lofting U Knot Span Type", "derivative").trimmed().toStdString();
-//    nurbsParam->vKnotSpanType = prefs->Get("NURBS Lofting V Knot Span Type", "average").trimmed().toStdString();
-//    nurbsParam->uParametricSpanType = prefs->Get("NURBS Lofting U Parametric Span Type", "centripetal").trimmed().toStdString();
-//    nurbsParam->vParametricSpanType = prefs->Get("NURBS Lofting V Parametric Span Type", "chord").trimmed().toStdString();
-
     svLoftingParam* param=NULL;
-    //param=m_SegSelectionWidget->GetParam();
+    int useUniform=m_SegSelectionWidget->IfUseUniform();
+    if(useUniform)
+        param=new svLoftingParam(m_SegSelectionWidget->GetLoftingParam());
 
     int created = 1;
     QString statusText="Model has been created.";
@@ -1530,10 +1514,20 @@ void svModelEdit::CreateModel()
         {
             statusText=statusText+" Number of Free Edges: "+ QString::number(stats[0])+", Number of Bad Edges: "+ QString::number(stats[1]);
         }
+
+        if(newModelElement)
+        {
+            newModelElement->SetUseUniform(useUniform);
+            if(useUniform)
+                newModelElement->SetLoftingParam(param);
+
+        }
     }
 
-    if(param)
-        delete param;
+    delete tempElement;
+
+//    if(param)
+//        delete param;
 
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress(2);

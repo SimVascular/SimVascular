@@ -39,6 +39,8 @@ svContourGroup::svContourGroup(const svContourGroup &other)
 svContourGroup::~svContourGroup()
 {
     this->ClearData();
+    if(m_LoftingParam)
+        delete m_LoftingParam;
 }
 
 void svContourGroup::ClearData()

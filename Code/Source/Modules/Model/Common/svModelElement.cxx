@@ -6,8 +6,10 @@ svModelElement::svModelElement()
     , m_WholeVtkPolyData(NULL)
     , m_NumSampling(0)
     , m_InnerSolid(NULL)
+    , m_UseUniform(0)
 {
     m_BlendParam=new svBlendParam();
+    m_LoftParam=new svLoftingParam;
 }
 
 svModelElement::svModelElement(const svModelElement &other)
@@ -41,6 +43,8 @@ svModelElement::svModelElement(const svModelElement &other)
 
     if(other.m_InnerSolid)
         m_InnerSolid=other.m_InnerSolid->Copy();
+
+    m_LoftParam=new svLoftingParam(*(other.m_LoftParam));
 }
 
 svModelElement::~svModelElement()
@@ -59,6 +63,9 @@ svModelElement::~svModelElement()
 
     if(m_BlendParam)
         delete m_BlendParam;
+
+    if(m_LoftParam)
+        delete m_LoftParam;
 
 }
 
