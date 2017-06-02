@@ -2,7 +2,6 @@
 #include "svModel.h"
 #include "svModelElementAnalytic.h"
 #include "svModelElementFactory.h"
-#include "svLoftingUtils.h"
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
@@ -131,7 +130,6 @@ std::vector<mitk::BaseData::Pointer> svModelIO::ReadFile(std::string fileName)
             me->SetUseUniform(useUniform);
 
             svLoftingParam* param=me->GetLoftingParam();
-            svLoftingUtils::SetPreferencedValues(param);
             if(useUniform && param )
             {
                 meElement->QueryStringAttribute("method", &param->method);

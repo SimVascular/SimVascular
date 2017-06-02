@@ -1520,7 +1520,6 @@ void svModelEdit::CreateModel()
             newModelElement->SetUseUniform(useUniform);
             if(useUniform)
                 newModelElement->SetLoftingParam(param);
-
         }
     }
 

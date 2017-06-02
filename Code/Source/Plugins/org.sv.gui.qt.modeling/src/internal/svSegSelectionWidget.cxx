@@ -289,7 +289,7 @@ void svSegSelectionWidget::UseNone(bool)
 
 void svSegSelectionWidget::ShowLoftWidget()
 {
-    if(m_ModelElement && m_ModelElement->GetLoftingParam())
+    if(m_ModelElement && m_ModelElement->IfUseUniform() && m_ModelElement->GetLoftingParam())
         m_Param=*(m_ModelElement->GetLoftingParam());
     else
         svLoftingUtils::SetPreferencedValues(&m_Param);

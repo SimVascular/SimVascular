@@ -6,7 +6,6 @@
 #include "svContourSplinePolygon.h"
 #include "svContourTensionPolygon.h"
 #include "svXmlIOUtil.h"
-#include "svLoftingUtils.h"
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
@@ -55,7 +54,6 @@ std::vector<mitk::BaseData::Pointer> svContourGroupIO::ReadFile(std::string file
     }
 
     svContourGroup::Pointer group = svContourGroup::New();
-    svLoftingUtils::SetPreferencedValues(group->GetLoftingParam());
 
     group->SetPathName(groupElement->Attribute("path_name"));
     int pathID=0;

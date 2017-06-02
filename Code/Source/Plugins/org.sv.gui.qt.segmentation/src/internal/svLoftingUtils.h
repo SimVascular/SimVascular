@@ -3,11 +3,11 @@
 
 #include "SimVascular.h"
 
-#include <svSegmentationExports.h>
+#include <org_sv_gui_qt_segmentation_Export.h>
 
 #include "svContourGroup.h"
 
-class SVSEGMENTATION_EXPORT svLoftingUtils
+class SV_QT_SEGMENTATION svLoftingUtils
 {
 
 public:

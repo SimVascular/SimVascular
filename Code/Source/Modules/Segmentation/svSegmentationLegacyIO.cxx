@@ -1,7 +1,6 @@
 #include "svSegmentationLegacyIO.h"
 #include "svContourGroup.h"
 #include "svSegmentationUtils.h"
-#include "svLoftingUtils.h"
 #include <mitkNodePredicateDataType.h>
 
 #include <QString>
@@ -13,8 +12,6 @@
 #include <QFileInfo>
 #include <QDir>
 
-//#include <algorithm>
-
 mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString filePath)
 {
     QFileInfo fi(filePath);
@@ -22,7 +19,6 @@ mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString fil
 
     svContourGroup::Pointer contourGroup=svContourGroup::New();
 
-    svLoftingUtils::SetPreferencedValues(contourGroup->GetLoftingParam());
 //    contourGroup->SetPathName(groupName.toStdString());
 
     QFile inputFile(filePath);

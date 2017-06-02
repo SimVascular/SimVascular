@@ -1,6 +1,8 @@
 #ifndef SVLOFTPARAMWIDGET_H
 #define SVLOFTPARAMWIDGET_H
 
+#include <org_sv_gui_qt_segmentation_Export.h>
+
 #include "svContourGroup.h"
 
 #include <QWidget>
@@ -9,7 +11,7 @@ namespace Ui {
 class svLoftParamWidget;
 }
 
-class svLoftParamWidget : public QWidget
+class SV_QT_SEGMENTATION svLoftParamWidget : public QWidget
 {
     Q_OBJECT
 
