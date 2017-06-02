@@ -364,7 +364,7 @@ foreach(dir ${SV_MODULE_DIRS})
 endforeach()
 
 foreach(dir ${SV_PLUGIN_DIRS})
-	include_directories(${SV_SOURCE_DIR}/${dir} ${SV_BINARY_DIR}/${dir})
+        include_directories(${SV_SOURCE_DIR}/${dir} ${SV_SOURCE_DIR}/${dir}/src/internal ${SV_BINARY_DIR}/${dir})
 endforeach()
 #-----------------------------------------------------------------------------
 

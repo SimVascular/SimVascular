@@ -3,6 +3,7 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
+    svLoftingUtils.cxx
     svContourGroupCreate.cxx
     svContourGroupCreateAction.cxx
     svSegmentationLegacyLoadAction.cxx
@@ -17,6 +18,7 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
+    src/internal/svLoftingUtils.h
     src/internal/svContourGroupCreate.h
     src/internal/svContourGroupCreateAction.h
     src/internal/svSegmentationLegacyLoadAction.h

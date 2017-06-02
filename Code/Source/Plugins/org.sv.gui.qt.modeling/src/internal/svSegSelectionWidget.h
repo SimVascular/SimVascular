@@ -7,7 +7,9 @@
 #include <QMenu>
 
 #include <mitkDataNode.h>
-#include <svModelElement.h>
+#include "svModelElement.h"
+#include "svContourGroup.h"
+#include "svLoftParamWidget.h"
 
 namespace Ui {
 class svSegSelectionWidget;
@@ -26,7 +28,8 @@ public:
     std::vector<std::string> GetUsedSegNames();
 
     int GetNumSampling();
-    int GetAdvancedLofting();
+    int IfUseUniform();
+    svLoftingParam GetLoftingParam();
 
 public slots:
 
@@ -40,6 +43,14 @@ public slots:
     void Confirm();
     void Cancel();
 
+    void OKLofting();
+
+    void ApplyLofting();
+
+    void HideLoftWidget();
+
+    void ShowLoftWidget();
+
 signals:
     void accepted();
 
@@ -52,11 +63,14 @@ private:
 
     int m_NumSampling;
 
-    int m_AdvancedLofting;
+//    int m_UseUniform;
 
     svModelElement* m_ModelElement;
 
     std::string m_ModelType;
+
+    svLoftingParam m_Param;
+    svLoftParamWidget* m_LoftWidget;
 
 };
 

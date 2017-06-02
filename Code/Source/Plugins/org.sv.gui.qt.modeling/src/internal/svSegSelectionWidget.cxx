@@ -1,5 +1,7 @@
 #include "svSegSelectionWidget.h"
 #include "ui_svSegSelectionWidget.h"
+#include "ui_svLoftParamWidget.h"
+#include "svLoftingUtils.h"
 
 #include <QMessageBox>
 
@@ -8,9 +10,9 @@ svSegSelectionWidget::svSegSelectionWidget(QWidget *parent)
     , ui(new Ui::svSegSelectionWidget)
     , m_TableModel(NULL)
     , m_NumSampling(0)
-    , m_AdvancedLofting(0)
     , m_ModelElement(NULL)
     , m_ModelType("")
+    , m_LoftWidget(NULL)
 {
     ui->setupUi(this);
 
@@ -34,11 +36,26 @@ svSegSelectionWidget::svSegSelectionWidget(QWidget *parent)
 
     connect(ui->buttonBox,SIGNAL(accepted()), this, SLOT(Confirm()));
     connect(ui->buttonBox,SIGNAL(rejected()), this, SLOT(Cancel()));
+
+    m_LoftWidget=new svLoftParamWidget();
+    m_LoftWidget->move(400,400);
+    m_LoftWidget->hide();
+    m_LoftWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+
+    connect(m_LoftWidget->ui->btnOK, SIGNAL(clicked()), this, SLOT(OKLofting()) );
+    connect(m_LoftWidget->ui->btnApply, SIGNAL(clicked()), this, SLOT(ApplyLofting()) );
+    connect(m_LoftWidget->ui->btnClose, SIGNAL(clicked()), this, SLOT(HideLoftWidget()) );
+
+    connect(ui->btnUniformParameters, SIGNAL(clicked()), this, SLOT(ShowLoftWidget()) );
+
 }
 
 svSegSelectionWidget::~svSegSelectionWidget()
 {
     delete ui;
+
+    if(m_LoftWidget)
+        delete m_LoftWidget;
 }
 
 void svSegSelectionWidget::SetTableView(std::vector<mitk::DataNode::Pointer> segNodes, svModelElement* modelElement, std::string type)
@@ -105,6 +122,16 @@ void svSegSelectionWidget::SetTableView(std::vector<mitk::DataNode::Pointer> seg
         else
             ui->lineEditNumSampling->setText("20");
     }
+
+    if(modelElement)
+       ui->checkboxUseUniform->setChecked(modelElement->IfUseUniform()!=0);
+    else
+       ui->checkboxUseUniform->setChecked(false);
+
+    if(type=="Parasolid")
+        ui->widget_4->hide();
+    else
+        ui->widget_4->show();
 }
 
 std::vector<std::string> svSegSelectionWidget::GetUsedSegNames()
@@ -131,16 +158,20 @@ int svSegSelectionWidget::GetNumSampling()
     return m_NumSampling;
 }
 
-int svSegSelectionWidget::GetAdvancedLofting()
+int svSegSelectionWidget::IfUseUniform()
 {
-    return m_AdvancedLofting;
+    return ui->checkboxUseUniform->isChecked()?1:0;
 }
 
+svLoftingParam svSegSelectionWidget::GetLoftingParam()
+{
+    return m_Param;
+}
 
 void svSegSelectionWidget::Confirm()
 {
     QString strNum=ui->lineEditNumSampling->text().trimmed();
-    m_AdvancedLofting = ui->advancedLoftingCheckBox->isChecked();
+//    m_UseUniform = ui->checkboxUseUniform->isChecked()?1:0;
 
     if(strNum=="")
     {
@@ -254,4 +285,32 @@ void svSegSelectionWidget::UseNone(bool)
         QStandardItem* item= m_TableModel->item(i,1);
         item->setCheckState(Qt::Unchecked);
     }
+}
+
+void svSegSelectionWidget::ShowLoftWidget()
+{
+    if(m_ModelElement && m_ModelElement->IfUseUniform() && m_ModelElement->GetLoftingParam())
+        m_Param=*(m_ModelElement->GetLoftingParam());
+    else
+        svLoftingUtils::SetPreferencedValues(&m_Param);
+
+    m_LoftWidget->UpdateGUI(&m_Param);
+
+    m_LoftWidget->show();
+}
+
+void svSegSelectionWidget::OKLofting()
+{
+    m_LoftWidget->UpdateParam(&m_Param);
+    m_LoftWidget->hide();
+}
+
+void svSegSelectionWidget::ApplyLofting()
+{
+    m_LoftWidget->UpdateParam(&m_Param);
+}
+
+void svSegSelectionWidget::HideLoftWidget()
+{
+    m_LoftWidget->hide();
 }

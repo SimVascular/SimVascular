@@ -1174,7 +1174,7 @@ void svSegmentation2D::LoftContourGroup()
 
         m_ContourGroup->RemoveInvalidContours(timeStep);
         if(m_ContourGroup->GetSize()>1)
-            m_LoftSurface->SetVtkPolyData(svModelUtils::CreateLoftSurface(m_ContourGroup,0,NULL,0,timeStep),timeStep);
+            m_LoftSurface->SetVtkPolyData(svModelUtils::CreateLoftSurface(m_ContourGroup,0,0,NULL,timeStep),timeStep);
 
     }
     else
@@ -1191,27 +1191,27 @@ void svSegmentation2D::LoftContourGroup()
 
 void svSegmentation2D::ShowLoftWidget()
 {
-    svContourGroup::svLoftingParam *param=m_ContourGroup->GetLoftingParam();
+    svLoftingParam *param=m_ContourGroup->GetLoftingParam();
 
-    m_LoftWidget->ui->spinBoxSampling->setValue(param->numOutPtsInSegs);
-    m_LoftWidget->ui->spinBoxNumPerSeg->setValue(param->samplePerSegment);
-    m_LoftWidget->ui->checkBoxUseLinearSample->setChecked(param->useLinearSampleAlongLength==0?false:true);
-    m_LoftWidget->ui->spinBoxLinearFactor->setValue(param->linearMuliplier);
-    m_LoftWidget->ui->checkBoxUseFFT->setChecked(param->useFFT==0?false:true);
-    m_LoftWidget->ui->spinBoxNumModes->setValue(param->numModes);
-
+    m_LoftWidget->UpdateGUI(param);
     m_LoftWidget->show();
 }
 
 void svSegmentation2D::UpdateContourGroupLoftingParam()
 {
-    svContourGroup::svLoftingParam *param=m_ContourGroup->GetLoftingParam();
-    param->numOutPtsInSegs=m_LoftWidget->ui->spinBoxSampling->value();
-    param->samplePerSegment=m_LoftWidget->ui->spinBoxNumPerSeg->value();
-    param->useLinearSampleAlongLength=m_LoftWidget->ui->checkBoxUseLinearSample->isChecked()?1:0;
-    param->linearMuliplier=m_LoftWidget->ui->spinBoxLinearFactor->value();
-    param->useFFT=m_LoftWidget->ui->checkBoxUseFFT->isChecked()?1:0;
-    param->numModes=m_LoftWidget->ui->spinBoxNumModes->value();
+    svLoftingParam *param=m_ContourGroup->GetLoftingParam();
+    if(m_LoftWidget)
+    {
+        m_LoftWidget->UpdateParam(param);
+        m_ContourGroup->SetDataModified();
+    }
+
+//    param->numOutPtsInSegs=m_LoftWidget->ui->spinBoxSampling->value();
+//    param->samplePerSegment=m_LoftWidget->ui->spinBoxNumPerSeg->value();
+//    param->useLinearSampleAlongLength=m_LoftWidget->ui->checkBoxUseLinearSample->isChecked()?1:0;
+//    param->linearMuliplier=m_LoftWidget->ui->spinBoxLinearFactor->value();
+//    param->useFFT=m_LoftWidget->ui->checkBoxUseFFT->isChecked()?1:0;
+//    param->numModes=m_LoftWidget->ui->spinBoxNumModes->value();
 }
 
 void svSegmentation2D::OKLofting()

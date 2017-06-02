@@ -13,17 +13,17 @@ class SVMODEL_EXPORT svModelUtils
 
 public:
 
-    static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svLoftingParam *param, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
-    static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svLoftingParam *param, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
     static vtkPolyData* CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElement::svBlendParam* param);
 
     static svModelElementPolyData* CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElement::svBlendParam* param);
 
-    static vtkPolyData* CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts,svModelElement::svNURBSLoftParam *nurbsParam, int addCaps, unsigned int t = 0,  svContourGroup::svLoftingParam* param = NULL);
+    static vtkPolyData* CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts, int addCaps, svLoftingParam* param = NULL, unsigned int t = 0);
 
-    static vtkPolyData* CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts,svModelElement::svNURBSLoftParam *nurbsParam, svContourGroup::svLoftingParam* param, int addCaps);
+    static vtkPolyData* CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts, svLoftingParam* param, int addCaps);
 
     static vtkPolyData* CreateOrientOpenPolySolidVessel(vtkPolyData* inpd);
 

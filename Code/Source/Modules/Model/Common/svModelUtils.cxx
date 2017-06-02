@@ -22,7 +22,7 @@
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSSurface.h"
 
-vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t, int noInterOut, double tol)
+vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
     int groupNumber=groups.size();
     int vtpNumber=vtps.size();
@@ -30,7 +30,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, s
     for(int i=0;i<groupNumber;i++)
     {
       svContourGroup* group=groups[i];
-      vtkPolyData *vtkpd = CreateLoftSurface(group,numSamplingPts,nurbsParam,1,t);
+      vtkPolyData *vtkpd = CreateLoftSurface(group,numSamplingPts,1,param,t);
       if (vtkpd == NULL)
       {
         for (int j=0; j< i-1; j++)
@@ -85,7 +85,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, s
         return dst->GetVtkPolyData();
 }
 
-svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svModelElement::svNURBSLoftParam *nurbsParam, unsigned int t, int noInterOut, double tol)
+svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
     std::vector<svContourGroup*> groups;
     std::vector<vtkPolyData*> vtps;
@@ -113,7 +113,7 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
         }
     }
 
-    vtkPolyData* solidvpd=CreatePolyData(groups,vtps,numSamplingPts,nurbsParam,t,noInterOut,tol);
+    vtkPolyData* solidvpd=CreatePolyData(groups,vtps,numSamplingPts,param,t,noInterOut,tol);
     if(solidvpd==NULL) return NULL;
 
     cvPolyData *src=new cvPolyData(solidvpd);
@@ -295,22 +295,25 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelE
     return mepddst;
 }
 
-vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, int addCaps, unsigned int t,  svContourGroup::svLoftingParam* param)
+vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts, int addCaps, svLoftingParam* param, unsigned int t)
 {
 
-    svContourGroup::svLoftingParam* usedParam= contourGroup->GetLoftingParam();
+    svLoftingParam* usedParam= contourGroup->GetLoftingParam();
     if(param!=NULL) usedParam=param;
 
     std::vector<svContour*> contourSet=contourGroup->GetValidContourSet(t);
 
-    return CreateLoftSurface(contourSet,numSamplingPts,nurbsParam,usedParam,addCaps);
+    return CreateLoftSurface(contourSet,numSamplingPts,usedParam,addCaps);
 }
 
-vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, svContourGroup::svLoftingParam* param, int addCaps)
+vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts, svLoftingParam* param, int addCaps)
 {
     int contourNumber=contourSet.size();
     if (contourNumber < 2)
       return NULL;
+
+    if(param==NULL)
+        return NULL;
 
     param->numOutPtsAlongLength=param->samplePerSegment*contourNumber;
     param->numPtsInLinearSampleAlongLength=param->linearMuliplier*param->numOutPtsAlongLength;
@@ -397,9 +400,9 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
     }
 
     cvPolyData *dst;
-    vtkPolyData* outpd;
+    vtkPolyData* outpd=NULL;
 
-    if (nurbsParam==NULL || nurbsParam->advancedLofting == 0)
+    if (param->method=="spline")
     {
       if ( sys_geom_loft_solid(sampledContours, contourNumber,param->useLinearSampleAlongLength,param->useFFT,
                                param->numOutPtsAlongLength,newNumSamplingPts,
@@ -419,11 +422,11 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
               outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
       }
     }
-    else
+    else if (param->method=="nurbs")
     {
       // Degrees of surface
-      int uDegree = nurbsParam->uDegree;
-      int vDegree = nurbsParam->vDegree;
+      int uDegree = param->uDegree;
+      int vDegree = param->vDegree;
 
       // Override to maximum possible degree if too large a degree for given number of inputs!
       if (uDegree >= contourNumber)
@@ -434,13 +437,13 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
       // Set to average knot span and chord length if just two inputs
       if (contourNumber == 2)
       {
-        nurbsParam->uKnotSpanType = "average";
-        nurbsParam->uParametricSpanType = "chord";
+        param->uKnotSpanType = "average";
+        param->uParametricSpanType = "chord";
       }
       if (newNumSamplingPts == 2)
       {
-        nurbsParam->uKnotSpanType = "average";
-        nurbsParam->uParametricSpanType = "chord";
+        param->uKnotSpanType = "average";
+        param->uParametricSpanType = "chord";
       }
 
       // Output spacing function of given input points
@@ -448,10 +451,10 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
       double vSpacing = 1.0/newNumSamplingPts;
 
       // span types
-      const char *uKnotSpanType       = nurbsParam->uKnotSpanType.c_str();
-      const char *vKnotSpanType       = nurbsParam->vKnotSpanType.c_str();
-      const char *uParametricSpanType = nurbsParam->uParametricSpanType.c_str();
-      const char *vParametricSpanType = nurbsParam->vParametricSpanType.c_str();
+      const char *uKnotSpanType       = param->uKnotSpanType.c_str();
+      const char *vKnotSpanType       = param->vKnotSpanType.c_str();
+      const char *uParametricSpanType = param->uParametricSpanType.c_str();
+      const char *vParametricSpanType = param->vParametricSpanType.c_str();
       vtkNew(vtkSVNURBSSurface, NURBSSurface);
 
       if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,

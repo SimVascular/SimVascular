@@ -32,14 +32,14 @@ svModelElement* svModelElementOCCT::CreateModelElement()
 
 svModelElement* svModelElementOCCT::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                 , int numSamplingPts
-                                , svModelElement::svNURBSLoftParam *nurbsParam
+                                , svLoftingParam *param
                                 , int* stats
                                 , double maxDist
                                 , int noInterOut
                                 , double tol
                                 , unsigned int t)
 {
-    return svModelUtilsOCCT::CreateModelElementOCCT(segNodes,numSamplingPts,nurbsParam,maxDist,t);
+    return svModelUtilsOCCT::CreateModelElementOCCT(segNodes,numSamplingPts,param,maxDist,t);
 }
 
 svModelElement* svModelElementOCCT::CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii

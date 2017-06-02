@@ -54,6 +54,7 @@ std::vector<mitk::BaseData::Pointer> svContourGroupIO::ReadFile(std::string file
     }
 
     svContourGroup::Pointer group = svContourGroup::New();
+
     group->SetPathName(groupElement->Attribute("path_name"));
     int pathID=0;
     groupElement->QueryIntAttribute("path_id",&pathID);
@@ -87,13 +88,23 @@ std::vector<mitk::BaseData::Pointer> svContourGroupIO::ReadFile(std::string file
             TiXmlElement* loftParamElement = timestepElement->FirstChildElement("lofting_parameters");
             if(loftParamElement!=nullptr)
             {
-                svContourGroup::svLoftingParam* param=group->GetLoftingParam();
+                svLoftingParam* param=group->GetLoftingParam();
+
+                loftParamElement->QueryStringAttribute("method", &param->method);
+
                 loftParamElement->QueryIntAttribute("sampling", &param->numOutPtsInSegs);
                 loftParamElement->QueryIntAttribute("sample_per_seg",&param->samplePerSegment);
                 loftParamElement->QueryIntAttribute("use_linear_sample",&param->useLinearSampleAlongLength);
                 loftParamElement->QueryIntAttribute("linear_multiplier",&param->linearMuliplier);
                 loftParamElement->QueryIntAttribute("use_fft",&param->useFFT);
                 loftParamElement->QueryIntAttribute("num_modes",&param->numModes);
+
+                loftParamElement->QueryIntAttribute("u_degree",&param->uDegree);
+                loftParamElement->QueryIntAttribute("v_degree",&param->vDegree);
+                loftParamElement->QueryStringAttribute("u_knot_type",&param->uKnotSpanType);
+                loftParamElement->QueryStringAttribute("v_knot_type",&param->vKnotSpanType);
+                loftParamElement->QueryStringAttribute("u_parametric_type",&param->uParametricSpanType);
+                loftParamElement->QueryStringAttribute("v_parametric_type",&param->vParametricSpanType);
             }
         }
 
@@ -278,13 +289,22 @@ void svContourGroupIO::Write()
         {
             auto loftParamElement = new TiXmlElement("lofting_parameters");
             timestepElement->LinkEndChild(loftParamElement);
-            svContourGroup::svLoftingParam* param=group->GetLoftingParam();
+            svLoftingParam* param=group->GetLoftingParam();
+            loftParamElement->SetAttribute("method",param->method);
+
             loftParamElement->SetAttribute("sampling",param->numOutPtsInSegs);
             loftParamElement->SetAttribute("sample_per_seg",param->samplePerSegment);
             loftParamElement->SetAttribute("use_linear_sample",param->useLinearSampleAlongLength);
             loftParamElement->SetAttribute("linear_multiplier",param->linearMuliplier);
             loftParamElement->SetAttribute("use_fft",param->useFFT);
             loftParamElement->SetAttribute("num_modes",param->numModes);
+
+            loftParamElement->SetAttribute("u_degree",param->uDegree);
+            loftParamElement->SetAttribute("v_degree",param->vDegree);
+            loftParamElement->SetAttribute("u_knot_type",param->uKnotSpanType);
+            loftParamElement->SetAttribute("v_knot_type",param->vKnotSpanType);
+            loftParamElement->SetAttribute("u_parametric_type",param->uParametricSpanType);
+            loftParamElement->SetAttribute("v_parametric_type",param->vParametricSpanType);
         }
 
         for(int i=0;i<group->GetSize(t);i++)

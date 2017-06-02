@@ -10,7 +10,7 @@ svContourGroup::svContourGroup()
     , m_ResliceSize(5.0)
 {
     this->InitializeEmpty();
-    m_LoftingParam=new svContourGroup::svLoftingParam();
+    m_LoftingParam=new svLoftingParam();
 }
 
 svContourGroup::svContourGroup(const svContourGroup &other)
@@ -32,13 +32,15 @@ svContourGroup::svContourGroup(const svContourGroup &other)
 
     //     m_GroupID=other.GetGroupID();
 
-    m_LoftingParam=new svContourGroup::svLoftingParam(*(other.m_LoftingParam));
+    m_LoftingParam=new svLoftingParam(*(other.m_LoftingParam));
 
 }
 
 svContourGroup::~svContourGroup()
 {
     this->ClearData();
+    if(m_LoftingParam)
+        delete m_LoftingParam;
 }
 
 void svContourGroup::ClearData()

@@ -822,14 +822,14 @@ svModelElement* svModelElementPolyData::CreateModelElement()
 
 svModelElement* svModelElementPolyData::CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                 , int numSamplingPts
-                                , svModelElement::svNURBSLoftParam *nurbsParam
+                                , svLoftingParam *param
                                 , int* stats
                                 , double maxDist
                                 , int noInterOut
                                 , double tol
                                 , unsigned int t)
 {
-    return svModelUtils::CreateModelElementPolyData(segNodes,numSamplingPts,stats,nurbsParam,t,noInterOut,tol);
+    return svModelUtils::CreateModelElementPolyData(segNodes,numSamplingPts,stats,param,t,noInterOut,tol);
 }
 
 svModelElement* svModelElementPolyData::CreateModelElementByBlend(std::vector<svModelElement::svBlendParamRadius*> blendRadii

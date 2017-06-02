@@ -7,11 +7,14 @@
 
 #include "vtkSVGlobals.h"
 
-cvOCCTSolidModel* svModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, svModelElement::svNURBSLoftParam *nurbsParam, int vecFlag, int addCaps)
+cvOCCTSolidModel* svModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, svLoftingParam *param, int vecFlag, int addCaps)
 {
     int contourNumber=contourSet.size();
 
     if(contourNumber==0 || numSamplingPts==0)
+        return NULL;
+
+    if(param==NULL)
         return NULL;
 
     int numSuperPts=0;
@@ -122,7 +125,7 @@ cvOCCTSolidModel* svModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<svContour*
     cvOCCTSolidModel* surfFinal=NULL;
 
     cvOCCTSolidModel* surf=new cvOCCTSolidModel();
-    if(nurbsParam->advancedLofting == 0)
+    if(param->method=="spline")
     {
       int continuity=2;
       int partype=0;
@@ -143,11 +146,11 @@ cvOCCTSolidModel* svModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<svContour*
       }
       //delete curveList;
     }
-    else
+    else if (param->method=="nurbs")
     {
       // Set degrees
-      int uDegree = nurbsParam->uDegree;
-      int vDegree = nurbsParam->vDegree;
+      int uDegree = param->uDegree;
+      int vDegree = param->vDegree;
 
       // Need to return if contourNumber is too low
       if (contourNumber < 3)
@@ -173,10 +176,10 @@ cvOCCTSolidModel* svModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<svContour*
       double vSpacing = 0.8;
 
       // span types
-      const char *uKnotSpanType       = nurbsParam->uKnotSpanType.c_str();
-      const char *vKnotSpanType       = nurbsParam->vKnotSpanType.c_str();
-      const char *uParametricSpanType = nurbsParam->uParametricSpanType.c_str();
-      const char *vParametricSpanType = nurbsParam->vParametricSpanType.c_str();
+      const char *uKnotSpanType       = param->uKnotSpanType.c_str();
+      const char *vKnotSpanType       = param->vKnotSpanType.c_str();
+      const char *uParametricSpanType = param->uParametricSpanType.c_str();
+      const char *vParametricSpanType = param->vParametricSpanType.c_str();
       vtkNew(vtkSVNURBSSurface, NURBSSurface);
 
       cvPolyData *dst;
@@ -350,7 +353,7 @@ cvOCCTSolidModel* svModelUtilsOCCT::CreateLoftSurfaceOCCT(std::vector<svContour*
     return surfFinal;
 }
 
-svModelElementOCCT* svModelUtilsOCCT::CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts,svModelElement::svNURBSLoftParam *nurbsParam, double maxDist, unsigned int t)
+svModelElementOCCT* svModelUtilsOCCT::CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts,svLoftingParam *param, double maxDist, unsigned int t)
 {
     std::vector<cvOCCTSolidModel*> loftedSolids;
     std::vector<std::string> segNames;
@@ -365,7 +368,10 @@ svModelElementOCCT* svModelUtilsOCCT::CreateModelElementOCCT(std::vector<mitk::D
             std::string groupName=segNode->GetName();
             segNames.push_back(groupName);
 
-            cvOCCTSolidModel* solid=CreateLoftSurfaceOCCT(contourSet,groupName,numSamplingPts,nurbsParam,0,1);
+            svLoftingParam* usedParam= group->GetLoftingParam();
+            if(param!=NULL) usedParam=param;
+
+            cvOCCTSolidModel* solid=CreateLoftSurfaceOCCT(contourSet,groupName,numSamplingPts,usedParam,0,1);
             loftedSolids.push_back(solid);
             if (solid == NULL)
               return NULL;

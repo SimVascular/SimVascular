@@ -12,14 +12,13 @@
 #include <QFileInfo>
 #include <QDir>
 
-//#include <algorithm>
-
 mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString filePath)
 {
     QFileInfo fi(filePath);
     QString groupName = fi.baseName();
 
     svContourGroup::Pointer contourGroup=svContourGroup::New();
+
 //    contourGroup->SetPathName(groupName.toStdString());
 
     QFile inputFile(filePath);

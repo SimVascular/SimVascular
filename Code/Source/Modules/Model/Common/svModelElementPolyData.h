@@ -88,7 +88,7 @@ public:
 
     virtual svModelElement* CreateModelElement(std::vector<mitk::DataNode::Pointer> segNodes
                                     , int numSamplingPts
-                                    , svModelElement::svNURBSLoftParam *nurbsParam
+                                    , svLoftingParam *param
                                     , int* stats = NULL
                                     , double maxDist = 1.0
                                     , int noInterOut = 1
