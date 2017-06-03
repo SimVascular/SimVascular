@@ -81,7 +81,7 @@ find_path(FREETYPE_INCLUDE_DIR_freetype2 config/ftheader.h
 )
 
 find_library(FREETYPE_LIBRARY
-  NAMES freetype libfreetype freetype219
+  NAMES freetype libfreetype freetype219 freetyped
   PATHS
   ${FREETYPE_DIR}
   $ENV{FREETYPE_DIR}
