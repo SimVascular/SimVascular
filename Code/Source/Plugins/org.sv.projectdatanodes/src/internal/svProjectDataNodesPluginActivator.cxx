@@ -26,6 +26,11 @@ svProjectDataNodesPluginActivator::~svProjectDataNodesPluginActivator()
 {
 }
 
+// needed for Windows
+#ifdef LoadLibrary
+#undef LoadLibrary
+#endif
+
 void svProjectDataNodesPluginActivator::LoadLibrary(QString name, QString libFileName)
 {
     QLibrary extraLib(libFileName);
