@@ -81,6 +81,7 @@ DLLLIBS = $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_vmtk_utils$(LIBLINKEXT) \
           $(TETGEN_LIBS) $(VMTK_LIBS) $(SV_MMG_LIBS) $(ZLIB_LIBS)
 
 TARGET_LIB_NAME = simvascular_tetgen_mesh

@@ -60,7 +60,7 @@
 
 #include "eispack.h"
 
-#include "cvSolverIO.h"
+#include "simvascular_solverio.h"
 
 #include <sys/stat.h>
 

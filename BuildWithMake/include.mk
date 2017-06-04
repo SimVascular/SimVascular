@@ -519,7 +519,6 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/Common/Geometry \
 	  ../Code/Source/ImageProcessing \
 	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Model/PolyDataSolidModel \
 	  ../Code/Source/Legacy/LevelSet
 else
   LIBDIRS += \
@@ -536,8 +535,22 @@ else
 	  ../Code/Source/Common/Geometry \
 	  ../Code/Source/ImageProcessing \
 	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Model/PolyDataSolidModel \
 	  ../Code/Source/Legacy/LevelSet
+endif
+
+ifeq ($(SV_USE_VMTK),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Mesh/VMTKUtils
+  else
+     LIBDIRS += ../Code/Source/Mesh/VMTKUtils
+  endif
+endif
+
+# polydata model can depend on vmtk
+ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Model/PolyDataSolidModel
+else
+     LIBDIRS += ../Code/Source/Model/PolyDataSolidModel
 endif
 
 ifeq ($(SV_USE_ITK),1)
@@ -762,7 +775,7 @@ SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
 ifeq ($(SV_USE_VMTK),1)
      THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/vmtk
      VMTK_TOP = $(TOP)/../Code/ThirdParty/vmtk
-     VMTK_INCDIR  = -I $(VMTK_TOP)
+     VMTK_INCDIR  = -I $(VMTK_TOP) -I $(VMTK_TOP)/simvascular_vmtk
      VMTK_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
 endif
 

@@ -30,7 +30,7 @@
 #
 # =========================================================================*/
 
-TOP=../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -41,70 +41,69 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR)
 
-HDRS	= cv_VMTK_utils.h \
-          vtkvmtkAppendFilter.h \
-	  vtkvmtkBoundaryLayerGenerator.h \
+HDRS	= vtkvmtkAppendFilter.h \
+          vtkvmtkBoundaryLayerGenerator.h \
           vtkvmtkBoundaryReferenceSystems.h \
-	  vtkvmtkCapPolyData.h vtkvmtkConfigure.h \
-	  vtkvmtkConstants.h vtkvmtkDataSetItem.h \
-	  vtkvmtkItem.h vtkvmtkMath.h \
-	  vtkvmtkNeighborhood.h vtkvmtkPolyBallLine.h \
-	  vtkvmtkPolyDataBoundaryExtractor.h \
+          vtkvmtkCapPolyData.h \
+          vtkvmtkConfigure.h \
+          vtkvmtkConstants.h \
+          vtkvmtkDataSetItem.h \
+          vtkvmtkItem.h \
+          vtkvmtkMath.h \
+          vtkvmtkNeighborhood.h \
+          vtkvmtkPolyBallLine.h \
+          vtkvmtkPolyDataBoundaryExtractor.h \
           vtkvmtkPolyDataDistanceToCenterlines.h \
-	  vtkvmtkPolyDataManifoldExtendedNeighborhood.h \
+          vtkvmtkPolyDataManifoldExtendedNeighborhood.h \
           vtkvmtkPolyDataManifoldNeighborhood.h \
-	  vtkvmtkPolyDataManifoldStencil.h \
+          vtkvmtkPolyDataManifoldStencil.h \
           vtkvmtkPolyDataSizingFunction.h \
-	  vtkvmtkPolyDataSurfaceRemeshing.h \
+          vtkvmtkPolyDataSurfaceRemeshing.h \
           vtkvmtkPolyDataToUnstructuredGridFilter.h \
-	  vtkvmtkPolyDataUmbrellaStencil.h \
+          vtkvmtkPolyDataUmbrellaStencil.h \
           vtkvmtkSimpleCapPolyData.h \
-	  vtkvmtkStencil.h \
+          vtkvmtkStencil.h \
           vtkvmtkSurfaceProjection.h \
-	  vtkvmtkUnstructuredGridTetraFilter.h \
+          vtkvmtkUnstructuredGridTetraFilter.h \
           vtkvmtkWin32Header.h \
-	  vtkvmtkMinHeap.h \
+          vtkvmtkMinHeap.h \
           vtkvmtkNonManifoldSteepestDescent.h \
-	  vtkvmtkVoronoiDiagram3D.h \
+          vtkvmtkVoronoiDiagram3D.h \
           vtkvmtkNonManifoldFastMarching.h \
-	  vtkvmtkSimplifyVoronoiDiagram.h \
+          vtkvmtkSimplifyVoronoiDiagram.h \
           vtkvmtkSteepestDescentLineTracer.h \
-	  vtkvmtkInternalTetrahedraExtractor.h \
-	  vtkvmtkCenterlineBranchExtractor.h \
-	  vtkvmtkCenterlineSphereDistance.h \
-	  vtkvmtkCenterlineUtilities.h \
-	  vtkvmtkCenterlineSplittingAndGroupingFilter.h \
-	  vtkvmtkPolyDataCenterlineGroupsClipper.h \
+          vtkvmtkInternalTetrahedraExtractor.h \
           vtkvmtkPolyDataCenterlines.h \
-	  vtkvmtkCenterlineUtilities.h \
+          vtkvmtkCenterlineBranchExtractor.h \
+          vtkvmtkCenterlineSphereDistance.h \
+          vtkvmtkCenterlineUtilities.h \
           vtkvmtkCenterlineSplittingAndGroupingFilter.h \
           vtkvmtkPolyDataCenterlineGroupsClipper.h \
           vtkvmtkMergeCenterlines.h \
           vtkvmtkCenterlineBifurcationReferenceSystems.h \
           vtkvmtkReferenceSystemUtilities.h
 
-CXXSRCS	=  cv_VMTK_utils.cxx \
-           vtkvmtkBoundaryLayerGenerator.cxx \
-	   vtkvmtkMath.cxx \
+CXXSRCS	=  vtkvmtkBoundaryLayerGenerator.cxx \
+           vtkvmtkMath.cxx \
            vtkvmtkItem.cxx \
-	   vtkvmtkStencil.cxx \
+           vtkvmtkStencil.cxx \
            vtkvmtkDataSetItem.cxx \
            vtkvmtkNeighborhood.cxx \
-	   vtkvmtkPolyBallLine.cxx \
-	   vtkvmtkPolyDataManifoldExtendedNeighborhood.cxx \
+           vtkvmtkPolyBallLine.cxx \
+           vtkvmtkPolyDataManifoldExtendedNeighborhood.cxx \
            vtkvmtkPolyDataManifoldNeighborhood.cxx \
-	   vtkvmtkPolyDataManifoldStencil.cxx \
+           vtkvmtkPolyDataManifoldStencil.cxx \
            vtkvmtkPolyDataUmbrellaStencil.cxx \
-	   vtkvmtkPolyDataDistanceToCenterlines.cxx \
-	   vtkvmtkPolyDataSurfaceRemeshing.cxx \
+           vtkvmtkPolyDataDistanceToCenterlines.cxx \
+           vtkvmtkPolyDataSurfaceRemeshing.cxx \
            vtkvmtkPolyDataBoundaryExtractor.cxx \
-	   vtkvmtkPolyDataSizingFunction.cxx \
+           vtkvmtkPolyDataSizingFunction.cxx \
            vtkvmtkBoundaryReferenceSystems.cxx \
-	   vtkvmtkCapPolyData.cxx \
+           vtkvmtkCapPolyData.cxx \
            vtkvmtkSurfaceProjection.cxx \
-	   vtkvmtkPolyDataToUnstructuredGridFilter.cxx \
+           vtkvmtkPolyDataToUnstructuredGridFilter.cxx \
            vtkvmtkSimpleCapPolyData.cxx \
-	   vtkvmtkUnstructuredGridTetraFilter.cxx \
+           vtkvmtkUnstructuredGridTetraFilter.cxx \
            vtkvmtkAppendFilter.cxx \
            vtkvmtkMinHeap.cxx \
            vtkvmtkNonManifoldSteepestDescent.cxx \
@@ -112,13 +111,13 @@ CXXSRCS	=  cv_VMTK_utils.cxx \
            vtkvmtkNonManifoldFastMarching.cxx \
            vtkvmtkSimplifyVoronoiDiagram.cxx \
            vtkvmtkInternalTetrahedraExtractor.cxx \
-	   vtkvmtkSteepestDescentLineTracer.cxx \
-	   vtkvmtkCenterlineBranchExtractor.cxx \
-	   vtkvmtkCenterlineSphereDistance.cxx \
-	   vtkvmtkCenterlineUtilities.cxx \
-	   vtkvmtkCenterlineSplittingAndGroupingFilter.cxx \
-	   vtkvmtkPolyDataCenterlineGroupsClipper.cxx \
+           vtkvmtkSteepestDescentLineTracer.cxx \
            vtkvmtkPolyDataCenterlines.cxx \
+           vtkvmtkCenterlineBranchExtractor.cxx \
+           vtkvmtkCenterlineSphereDistance.cxx \
+           vtkvmtkCenterlineUtilities.cxx \
+           vtkvmtkCenterlineSplittingAndGroupingFilter.cxx \
+           vtkvmtkPolyDataCenterlineGroupsClipper.cxx \
            vtkvmtkMergeCenterlines.cxx \
            vtkvmtkCenterlineBifurcationReferenceSystems.cxx \
            vtkvmtkReferenceSystemUtilities.cxx

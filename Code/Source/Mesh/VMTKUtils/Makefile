@@ -3,7 +3,16 @@
 # =========================================================================
 #
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved.
+# All Rights Reserved. 
+#
+# Copyright (c) 2009-2011 Open Source Medical Software Corporation,
+#                         University of California, San Diego.
+#
+# Portions of the code Copyright (c) 1998-2007 Stanford University,
+# Charles Taylor, Nathan Wilson, Ken Wang.
+#
+# See SimVascular Acknowledgements file for additional
+# contributors to the source code. 
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,43 +33,50 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-# =========================================================================
+# =========================================================================*/
 
 TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS)
+# --------------
+# Compiler flags
+# --------------
 
-CREATE_EXPORTS_CV_ALL_CAPS=SV_POLYDATASOLID
-CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_POLYDATASOLID
-CREATE_EXPORTS_CV_FILE_H=svPolyDataSolidExports.h
+CXXFLAGS = $(GLOBAL_CXXFLAGS)
 
-CXXFLAGS += -DSV_EXPORT_POLYDATASOLID_COMPILE
+CREATE_EXPORTS_CV_ALL_CAPS=SV_VMTK_UTILS
+CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_VMTK_UTILS
+CREATE_EXPORTS_CV_FILE_H=svVMTKUtilsExports.h
 
-ifeq ($(SV_USE_PYTHON),1)
-   CXXFLAGS += $(PYTHON_INCDIR)
+CXXFLAGS += -DSV_EXPORT_VMTK_UTILS_COMPILE
+
+ifeq ($(SV_USE_ZLIB),1)
+        CXXFLAGS += $(ZLIB_INCDIR)
 endif
 
-HDRS	= cvPolyDataSolid.h \
-          cv_polydatasolid_utils.h \
-          vtkGetBoundaryFaces.h
+CXXFLAGS += $(LOCAL_INCDIR) \
+	    $(VTK_INCDIRS) \
+	    $(TCLTK_INCDIR) \
+            $(VMTK_INCDIR)
 
-CXXSRCS	= cvPolyDataSolid.cxx \
-          cv_polydatasolid_utils.cxx \
-          vtkGetBoundaryFaces.cxx
+HDRS	= cv_vmtk_utils.h
 
-DLLHDRS = cv_polydatasolid_init.h
-DLLSRCS = cv_polydatasolid_init.cxx
+CXXSRCS	= cv_vmtk_utils.cxx
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-	  $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+DLLHDRS = cv_vmtk_utils_init.h
+
+DLLSRCS = cv_vmtk_utils_init.cxx
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_vmtk_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
-	  $(VMTK_LIBS)
+          $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+	  $(ZLIB_LIBS) $(VMTK_LIBS)
 
-TARGET_LIB_NAME = simvascular_polydata_solid
+TARGET_LIB_NAME = simvascular_vmtk_utils
 
 include $(TOP)/targetlib.mk
+
+
+
+

@@ -49,6 +49,7 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
 endif
 
 HDRS	= \
+    svLoftingUtils.h \
     svContourGroupCreate.h \
     svContourGroupCreateAction.h \
     svSegmentationLegacyLoadAction.h \
@@ -62,6 +63,7 @@ HDRS	= \
     svSegmentationPluginActivator.h
 
 CXXSRCS	= \
+    svLoftingUtils.cxx \
     svContourGroupCreate.cxx \
     svContourGroupCreateAction.cxx \
     svSegmentationLegacyLoadAction.cxx \

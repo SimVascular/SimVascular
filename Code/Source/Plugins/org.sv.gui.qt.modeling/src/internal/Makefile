@@ -61,7 +61,7 @@ HDRS	= \
     svFaceListDelegate.h \
     svModelFaceInfoExportAction.h \
     svModelingPluginActivator.h \
-    svModelPreferencePage.h
+    src/internal/svLoftingPreferencePage.h
 
 CXXSRCS	= \
     svModelCreate.cxx \
@@ -74,13 +74,12 @@ CXXSRCS	= \
     svFaceListDelegate.cxx \
     svModelFaceInfoExportAction.cxx \
     svModelingPluginActivator.cxx \
-    svModelPreferencePage.cxx
+    svLoftingPreferencePage.cxx
 
 UIFILES =  \
     svModelCreate.ui \
     svSegSelectionWidget.ui \
-    svModelEdit.ui \
-    svModelPreferencePage.ui
+    svModelEdit.ui
 
 QRCFILES =  ../../resources/modeling.qrc
 
