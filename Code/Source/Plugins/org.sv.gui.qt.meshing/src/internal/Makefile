@@ -54,6 +54,7 @@ HDRS	= \
     svMeshCreate.h \
     svMeshCreateAction.h \
     svMeshEdit.h \
+    svLocalTableDelegate.h \
     svMeshLegacySaveAction.h \
     svMeshLoadSurfaceAction.h \
     svMeshLoadVolumeAction.h \
@@ -64,6 +65,7 @@ CXXSRCS	= \
     svMeshCreateAction.cxx \
     svMeshEdit.cxx \
     svVtkMeshSphereWidget.cxx \
+    svLocalTableDelegate.cxx \
     svMeshLegacySaveAction.cxx \
     svMeshLoadSurfaceAction.cxx \
     svMeshLoadVolumeAction.cxx \

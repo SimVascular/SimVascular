@@ -61,7 +61,7 @@ HDRS	= \
     svFaceListDelegate.h \
     svModelFaceInfoExportAction.h \
     svModelingPluginActivator.h \
-    src/internal/svLoftingPreferencePage.h
+    svLoftingPreferencePage.h
 
 CXXSRCS	= \
     svModelCreate.cxx \

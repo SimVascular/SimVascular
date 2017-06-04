@@ -714,14 +714,25 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.simulation/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.application/src/internal \
                      -I$(TOP)/../Code/Source/Modules/Common \
-                     -I$(TOP)/../Code/Source/Modules/Model \
-                     -I$(TOP)/../Code/Source/Modules/Mesh \
+                     -I$(TOP)/../Code/Source/Modules/Model/Common \
+                     -I$(TOP)/../Code/Source/Modules/Mesh/Common \
                      -I$(TOP)/../Code/Source/Modules/Path \
                      -I$(TOP)/../Code/Source/Modules/ProjectManagement \
                      -I$(TOP)/../Code/Source/Modules/QtWidgets \
                      -I$(TOP)/../Code/Source/Modules/Segmentation \
                      -I$(TOP)/../Code/Source/Modules/Simulation
+  ifeq ($(SV_USE_OPENCASCADE),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Model/OCCT
+  endif
+  ifeq ($(SV_USE_PARASOLID),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Model/Parasolid
+  endif
+  ifeq ($(SV_USE_MESHSIM),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Mesh/MeshSim
+  endif
 endif
+
+
 
 # Link flags, which also need to be dealt with conditionally depending
 # on which concrete classes derived from SolidModel are being

@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -44,7 +44,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
 
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 
@@ -58,6 +58,7 @@ HDRS	= \
     svMesh.h \
     svMeshTetGen.h \
     svMitkMesh.h \
+    svMeshFactory.h \
     svMitkMeshOperation.h \
     svMitkMeshMapper3D.h \
     svMitkMeshMapper2D.h \
@@ -70,6 +71,8 @@ HDRS	= \
 CXXSRCS	= \
     svMesh.cxx \
     svMeshTetGen.cxx \
+    svMeshFactory.cxx \
+    svRegisterTetGenFunction.cxx \
     svMitkMesh.cxx \
     svMitkMeshOperation.cxx \
     svMitkMeshMapper3D.cxx \

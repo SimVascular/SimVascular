@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -57,6 +57,8 @@ HDRS	= \
     svModelUtils.h \
     svModelElement.h \
     svModelElementPolyData.h \
+    svModelElementAnalytic.h \
+    svModelElementFactory.h \
     svModelOperation.h \
     svModel.h \
     svModelVtkMapper2D.h \
@@ -66,18 +68,12 @@ HDRS	= \
     svModelLegacyIO.h \
     svModelObjectFactory.h
 
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    HDRS +=  svModelElementOCCT.h
-endif
-
-ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    HDRS +=  svModelElementParasolid.h
-endif
-
 CXXSRCS	= \
     svModelUtils.cxx \
     svModelElement.cxx \
     svModelElementPolyData.cxx \
+    svModelElementAnalytic.cxx \
+    svModelElementFactory.cxx \
     svModelOperation.cxx \
     svModel.cxx \
     svModelVtkMapper2D.cxx \
@@ -85,15 +81,8 @@ CXXSRCS	= \
     svModelDataInteractor.cxx \
     svModelIO.cxx \
     svModelLegacyIO.cxx \
-    svModelObjectFactory.cxx
-
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    CXXSRCS += svModelElementOCCT.cxx
-endif
-
-ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    CXXSRCS += svModelElementParasolid.cxx
-endif
+    svModelObjectFactory.cxx \
+    svRegisterPolyDataFunction.cxx
 
 CXXSRCS += us_init.cxx
 
@@ -155,6 +144,7 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
 endif
 
 ifeq ($(SV_USE_VMTK),1)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_vmtk_utils$(LIBLINKEXT)
 	DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
 	DLLLIBS += $(SV_MMG_LIBS)
 endif
