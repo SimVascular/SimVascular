@@ -53,6 +53,6 @@ HDRS	= cvSolverIO.h
 
 CXXSRCS = cvSolverIO.cxx
 
-TARGET_LIB_NAME = simvascular_solverio
+TARGET_LIB_NAME = $(SV_LIB_THIRDPARTY_SOLVERIO_NAME)
 
 include $(TOP)/targetlib.mk

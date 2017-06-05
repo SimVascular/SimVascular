@@ -73,14 +73,14 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS += \
-          $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+          $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_qtgui_module_qtwidgets
+TARGET_LIB_NAME = $(SV_LIB_MODULE_QTWIDGETS_NAME)
 
 include $(TOP)/targetlib.mk

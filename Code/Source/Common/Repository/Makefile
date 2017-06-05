@@ -62,9 +62,9 @@ DLLHDRS = cv_repos_init.h
 
 DLLSRCS = cv_repos_init.cxx
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_repository
+TARGET_LIB_NAME = $(SV_LIB_REPOSITORY_NAME)
 
 include $(TOP)/targetlib.mk

@@ -62,12 +62,12 @@ DLLHDRS = cv_mmg_mesh_init.h
 
 DLLSRCS = cv_mmg_mesh_init.cxx
 
-TARGET_LIB_NAME = simvascular_mmg_mesh
+TARGET_LIB_NAME = $(SV_LIB_MMG_MESH_NAME)
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
 	  $(SV_MMG_LIBS)
 

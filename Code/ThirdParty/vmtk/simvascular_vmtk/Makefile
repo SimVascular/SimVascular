@@ -126,6 +126,6 @@ DLLHDRS =
 
 DLLSRCS =
 
-TARGET_LIB_NAME = simvascular_thirdparty_vmtk
+TARGET_LIB_NAME = $(SV_LIB_THIRDPARTY_VMTK_NAME)
 
 include $(TOP)/targetlib.mk

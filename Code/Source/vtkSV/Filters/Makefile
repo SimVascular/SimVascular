@@ -86,8 +86,8 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
 
-DLLLIBS += $(SVLIBFLAG)_simvascular_vtksvcommon$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_vtksvfilters
+TARGET_LIB_NAME = $(SV_LIB_VTKSVFILTERS_NAME)
 
 include $(TOP)/targetlib.mk

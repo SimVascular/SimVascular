@@ -100,30 +100,30 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS +=  \
-          $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
-          $(SVLIBFLAG)org_sv_gui_qt_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+          $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_PLUGIN_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_DISCRETE_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_PARASOLID_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
 endif
 
 DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
@@ -134,7 +134,7 @@ endif
 
 EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
 
-TARGET_LIB_NAME = org_sv_gui_qt_modeling
+TARGET_LIB_NAME = $(SV_PLUGIN_MODELING_NAME)
 
 PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_modeling
 PLUGIN_EXPORTS_NAME = org_sv_gui_qt_modeling
