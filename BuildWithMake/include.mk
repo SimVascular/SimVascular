@@ -150,6 +150,7 @@ SV_USE_QT = 1
 SV_USE_SYSTEM_QT = 1
 SV_USE_QT_GUI = 1
 SV_USE_QT_GUI_SHARED = 1
+SV_USE_OPENCASCADE_QT_GUI = 1
 
 # -----------------------------------------------------
 # Compile with freetype
@@ -519,7 +520,6 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/Common/Geometry \
 	  ../Code/Source/ImageProcessing \
 	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Model/PolyDataSolidModel \
 	  ../Code/Source/Legacy/LevelSet
 else
   LIBDIRS += \
@@ -536,8 +536,22 @@ else
 	  ../Code/Source/Common/Geometry \
 	  ../Code/Source/ImageProcessing \
 	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Model/PolyDataSolidModel \
 	  ../Code/Source/Legacy/LevelSet
+endif
+
+ifeq ($(SV_USE_VMTK),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Mesh/VMTKUtils
+  else
+     LIBDIRS += ../Code/Source/Mesh/VMTKUtils
+  endif
+endif
+
+# polydata model can depend on vmtk
+ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Model/PolyDataSolidModel
+else
+     LIBDIRS += ../Code/Source/Model/PolyDataSolidModel
 endif
 
 ifeq ($(SV_USE_ITK),1)
@@ -701,14 +715,78 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.simulation/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.application/src/internal \
                      -I$(TOP)/../Code/Source/Modules/Common \
-                     -I$(TOP)/../Code/Source/Modules/Model \
-                     -I$(TOP)/../Code/Source/Modules/Mesh \
+                     -I$(TOP)/../Code/Source/Modules/Model/Common \
+                     -I$(TOP)/../Code/Source/Modules/Mesh/Common \
                      -I$(TOP)/../Code/Source/Modules/Path \
                      -I$(TOP)/../Code/Source/Modules/ProjectManagement \
                      -I$(TOP)/../Code/Source/Modules/QtWidgets \
                      -I$(TOP)/../Code/Source/Modules/Segmentation \
                      -I$(TOP)/../Code/Source/Modules/Simulation
+  ifeq ($(SV_USE_OPENCASCADE),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Model/OCCT
+  endif
+  ifeq ($(SV_USE_PARASOLID),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Model/Parasolid
+  endif
+  ifeq ($(SV_USE_MESHSIM),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Mesh/MeshSim
+  endif
 endif
+
+#
+# SV library naming
+#
+
+SV_LIB_ADAPTOR_NAME=_simvascular_adaptor
+SV_LIB_GEOM_NAME=_simvascular_geom
+SV_LIB_GLOBALS_NAME=_simvascular_globals
+SV_LIB_IMAGE_NAME=_simvascular_image
+SV_LIB_ITK_LSET_NAME=_simvascular_itk_lset
+SV_LIB_LSET_NAME=_simvascular_lset
+SV_LIB_MESH_NAME=_simvascular_mesh
+SV_LIB_MESHSIM_ADAPTOR_NAME=_simvascular_meshsim_adaptor
+SV_LIB_MESHSIM_DISCRETE_SOLID_NAME=_simvascular_meshsim_discrete
+SV_LIB_MESHSIM_MESH_NAME=_simvascular_meshsim_mesh
+SV_LIB_MESHSIM_SOLID_NAME=_simvascular_meshsim_solid
+SV_LIB_MMG_MESH_NAME=_simvascular_mmg_mesh
+SV_LIB_MODULE_COMMON_NAME=_simvascular_module_common
+SV_LIB_MODULE_MESH_NAME=_simvascular_module_mesh
+SV_LIB_MODULE_MESHSIM_NAME=_simvascular_module_meshsim
+SV_LIB_MODULE_MODEL_NAME=_simvascular_module_model
+SV_LIB_MODULE_MODEL_OCCT_NAME=_simvascular_module_model_occt
+SV_LIB_MODULE_MODEL_PARASOLID_NAME=_simvascular_module_model_parasolid
+SV_LIB_MODULE_PATH_NAME=_simvascular_module_path
+SV_LIB_MODULE_PROJECTMANAGEMENT_NAME=_simvascular_module_projectmanagement
+SV_LIB_MODULE_QTWIDGETS_NAME=_simvascular_module_qtwidgets
+SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
+SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
+SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
+SV_LIB_PARASOLID_SOLID_NAME=_simvascular_parasolid_solid
+SV_LIB_POLYDATA_SOLID_NAME=_simvascular_polydata_solid
+SV_LIB_POST_NAME=_simvascular_post
+SV_LIB_PYTHON_INTERP_NAME=_simvascular_python_interp
+SV_LIB_REPOSITORY_NAME=_simvascular_repository
+SV_LIB_SOLID_NAME=_simvascular_solid
+SV_LIB_TETGEN_ADAPTOR_NAME=_simvascular_tetgen_adaptor
+SV_LIB_TETGEN_MESH_NAME=_simvascular_tetgen_mesh
+SV_LIB_UTILS_NAME=_simvascular_utils
+SV_LIB_VMTK_UTILS_NAME=_simvascular_vmtk_utils
+SV_LIB_VTKSVBOOLEAN_NAME=_simvascular_vtksvboolean
+SV_LIB_VTKSVCOMMON_NAME=_simvascular_vtksvcommon
+SV_LIB_VTKSVFILTERS_NAME=_simvascular_vtksvfilters
+SV_LIB_VTKSVGEOMETRY_NAME=_simvascular_vtksvgeometry
+SV_LIB_VTKSVNURBS_NAME=_simvascular_vtksvnurbs
+SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
+
+#plugin names
+SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application
+SV_PLUGIN_MESHING_NAME=org_sv_gui_qt_meshing
+SV_PLUGIN_MODELING_NAME=org_sv_gui_qt_modeling
+SV_PLUGIN_PATHPLANNING_NAME=org_sv_gui_qt_pathplanning
+SV_PLUGIN_PROJECTMANAGER_NAME=org_sv_gui_qt_projectmanager
+SV_PLUGIN_SEGMENTATION_NAME=org_sv_gui_qt_segmentation
+SV_PLUGIN_SIMULATION_NAME=org_sv_gui_qt_simulation
+SV_PLUGIN_PROJECTDATANODES_NAME=org_sv_projectdatanodes
 
 # Link flags, which also need to be dealt with conditionally depending
 # on which concrete classes derived from SolidModel are being
@@ -726,23 +804,16 @@ endif
 LFLAGS 	 = $(GLOBAL_LFLAGS) $(VTK_LIBS) $(TCLTK_LIBS) $(PYTHON_LIB)
 
 ifneq ($(SV_USE_SHARED),1)
-  LFLAGS     += $(SVLIBFLAG)_simvascular_lset$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_image$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_post$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT)
+  LFLAGS     += $(SVLIBFLAG)$(SV_LIB_LSET_NAME)$(LIBLINKEXT) \
+              $(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
+              $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \
+              $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+              $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+              $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+              $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+              $(SVLIBFLAG)$(SV_LIB_POST_NAME)$(LIBLINKEXT) \
+              $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT)
 endif
-
-SV_LIB_VTKSVCOMMON_NAME=_simvascular_vtksvcommon
-SV_LIB_VTKSVFILTERS_NAME=_simvascular_vtksvfilters
-SV_LIB_VTKSVGEOMETRY_NAME=_simvascular_vtksvgeometry
-SV_LIB_VTKSVBOOLEAN_NAME=_simvascular_vtksvboolean
-SV_LIB_VTKSVNURBS_NAME=_simvascular_vtksvnurbs
-SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
 
 #
 # ThirdParty software that must be built
@@ -760,10 +831,11 @@ SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
 # ----
 
 ifeq ($(SV_USE_VMTK),1)
+     SV_LIB_THIRDPARTY_VMTK_NAME=_simvascular_thirdparty_vmtk
      THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/vmtk
      VMTK_TOP = $(TOP)/../Code/ThirdParty/vmtk
-     VMTK_INCDIR  = -I $(VMTK_TOP)
-     VMTK_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
+     VMTK_INCDIR  = -I $(VMTK_TOP) -I $(VMTK_TOP)/simvascular_vmtk
+     VMTK_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_VMTK_NAME)$(LIBLINKEXT)
 endif
 
 # ----
@@ -771,10 +843,11 @@ endif
 # ----
 
 ifeq ($(SV_USE_ZLIB),1)
+  SV_LIB_THIRDPARTY_ZLIB_NAME=_simvascular_thirdparty_zlib
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/zlib
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
-  ZLIB_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT)
+  ZLIB_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_ZLIB_NAME)$(LIBLINKEXT)
 endif
 
 # --------
@@ -782,10 +855,11 @@ endif
 # --------
 
 ifeq ($(SV_USE_SOLVERIO),1)
+  SV_LIB_THIRDPARTY_SOLVERIO_NAME=_simvascular_thirdparty_solverio
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/SolverIO
   SOLVERIO_TOP = $(TOP)/../Code/ThirdParty/SolverIO
   SOLVERIO_INCDIR  = -I $(SOLVERIO_TOP)
-  SOLVERIO_LIB     = $(SVLIBFLAG)_simvascular_thirdparty_solverio$(LIBLINKEXT)
+  SOLVERIO_LIB     = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_SOLVERIO_NAME)$(LIBLINKEXT)
 endif
 
 # -----------------------------------------
@@ -799,12 +873,13 @@ endif
 # -----------------------------------------
 
 ifeq ($(SV_USE_TETGEN),1)
+  SV_LIB_THIRDPARTY_TETGEN_NAME=_simvascular_thirdparty_tetgen
   TETGEN150       = 1
   GLOBAL_DEFINES += -DTETLIBRARY
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tetgen
   TETGEN_TOP = $(TOP)/../Code/ThirdParty/tetgen
   TETGEN_INCDIR  = -I $(TETGEN_TOP)
-  TETGEN_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_tetgen$(LIBLINKEXT)
+  TETGEN_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_TETGEN_NAME)$(LIBLINKEXT)
 endif
 
 #

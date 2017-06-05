@@ -42,7 +42,23 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path Model Mesh Simulation ProjectManagement
+SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path
+
+SVQTGUIMODULES_DIRS += Model/Common
+
+ifeq ($(SV_USE_OPENCASCADE),1)
+  SVQTGUIMODULES_DIRS += Model/OCCT
+endif
+ifeq ($(SV_USE_PARASOLID),1)
+  SVQTGUIMODULES_DIRS += Model/Parasolid
+endif
+
+SVQTGUIMODULES_DIRS += Mesh/Common
+ifeq ($(SV_USE_MESHSIM),1)
+  SVQTGUIMODULES_DIRS += Mesh/MeshSim
+endif
+
+SVQTGUIMODULES_DIRS += Simulation ProjectManagement
 
 lib-complete: create_exports_h us-init-module moc ui qrc lib
 

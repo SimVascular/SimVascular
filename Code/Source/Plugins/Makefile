@@ -44,9 +44,9 @@ include $(TOP)/include.mk
 
 SVQTGUIEXT_DIRS = org.sv.projectdatanodes/src/internal \
                   org.sv.gui.qt.projectmanager/src/internal \
-                  org.sv.gui.qt.modeling/src/internal \
                   org.sv.gui.qt.pathplanning/src/internal \
                   org.sv.gui.qt.segmentation/src/internal \
+                  org.sv.gui.qt.modeling/src/internal \
                   org.sv.gui.qt.meshing/src/internal \
                   org.sv.gui.qt.simulation/src/internal \
                   org.sv.gui.qt.application/src/internal

@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -44,7 +44,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
 
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 
@@ -58,6 +58,7 @@ HDRS	= \
     svMesh.h \
     svMeshTetGen.h \
     svMitkMesh.h \
+    svMeshFactory.h \
     svMitkMeshOperation.h \
     svMitkMeshMapper3D.h \
     svMitkMeshMapper2D.h \
@@ -70,6 +71,8 @@ HDRS	= \
 CXXSRCS	= \
     svMesh.cxx \
     svMeshTetGen.cxx \
+    svMeshFactory.cxx \
+    svRegisterTetGenFunction.cxx \
     svMitkMesh.cxx \
     svMitkMeshOperation.cxx \
     svMitkMeshMapper3D.cxx \
@@ -98,35 +101,35 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS += \
-          $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_tetgen_mesh$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_thirdparty_tetgen$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+          $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_TETGEN_MESH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+          $(TETGEN_LIBS) \
+          $(ZLIB_LIBS) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_DISCRETE_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_PARASOLID_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_tetgen_adaptor$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_TETGEN_ADAPTOR_NAME)$(LIBLINKEXT)
 endif
 
 DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
@@ -135,6 +138,6 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
-TARGET_LIB_NAME = simvascular_qtgui_module_mesh
+TARGET_LIB_NAME = $(SV_LIB_MODULE_MESH_NAME)
 
 include $(TOP)/targetlib.mk

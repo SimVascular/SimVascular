@@ -1,12 +1,9 @@
 # Hey emacs, this is a -*- makefile -*-
 
-# Copyright (c) 2009-2011, Open Source Medical Software Corporation,
-#              University of California, San Diego.
-#
-# All rights reserved.
-#
-# Portions copyright (c) 1999-2007 Stanford University,
-# Nathan Wilson, Ken Wang, Charles Taylor.
+# Copyright (c) 2015 Open Source Medical Software Corporation,
+#                    University of California, San Diego.
+# 
+# All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -27,46 +24,36 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../../BuildWithMake
+TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) \
-	   $(LOCAL_INCDIR) \
-	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR) \
-           $(PYTHON_INCDIR)
+VMTK_SUBDIRS = simvascular_vmtk
 
-MODULE_NAME = vtkSVNURBS
-MODULE_NAME_ALL_CAPS = VTKSVNURBS
-CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
-MODULE_EXPORT_FILE_H = vtkSVNURBSModule.h
+lib:	createHeaderFile libsubdirs
 
-HDRS	= \
-  vtkSVNURBSUtils.h \
-  vtkSVControlGrid.h \
-  vtkSVNURBSCurve.h \
-  vtkSVNURBSSurface.h \
-  vtkSVLoftNURBSCurve.h \
-  vtkSVLoftNURBSSurface.h
+shared:
 
-CXXSRCS	= \
-  vtkSVNURBSUtils.cxx \
-  vtkSVControlGrid.cxx \
-  vtkSVNURBSCurve.cxx \
-  vtkSVNURBSSurface.cxx \
-  vtkSVLoftNURBSCurve.cxx \
-  vtkSVLoftNURBSSurface.cxx
+libsubdirs:
+	@for i in ${VMTK_SUBDIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE)) ; done
 
-DLLHDRS =
+clean:
+	for i in ${VMTK_SUBDIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) clean ) ; done
 
-DLLSRCS =
+veryclean: clean
+	rm -f simvascular_vmtk.h
+	for i in ${VMTK_SUBDIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) veryclean ) ; done
 
-DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
+createHeaderFile:
+	rm -f simvascular_vmtk.h
+	@echo "#ifndef __simvascular_vmtk_h" > simvascular_vmtk.h
+	@echo "#define __simvascular_vmtk_h" >> simvascular_vmtk.h
+	@echo "#endif" >> simvascular_vmtk.h
 
-DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = $(SV_LIB_VTKSVNURBS_NAME)
-
-include $(TOP)/targetlib.mk

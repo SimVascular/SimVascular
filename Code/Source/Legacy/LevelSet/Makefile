@@ -74,13 +74,13 @@ DLLSRCS = cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx
 # Targets
 # -------
 
-TARGET_LIB_NAME = simvascular_lset
+TARGET_LIB_NAME = $(SV_LIB_LSET_NAME)
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_image$(LIBLINKEXT) \
-	  $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-	  $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
+	  $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+	  $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
 	  $(VMTK_LIBS)
 
 include $(TOP)/targetlib.mk

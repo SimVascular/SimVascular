@@ -34,7 +34,7 @@ HDRS	= tetgen.h
 
 CXXSRCS	= predicates.cxx tetgen.cxx
 
-TARGET_LIB_NAME = simvascular_thirdparty_tetgen
+TARGET_LIB_NAME = $(SV_LIB_THIRDPARTY_TETGEN_NAME)
 
 include $(TOP)/targetlib.mk
 

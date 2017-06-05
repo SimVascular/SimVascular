@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -57,6 +57,8 @@ HDRS	= \
     svModelUtils.h \
     svModelElement.h \
     svModelElementPolyData.h \
+    svModelElementAnalytic.h \
+    svModelElementFactory.h \
     svModelOperation.h \
     svModel.h \
     svModelVtkMapper2D.h \
@@ -66,18 +68,12 @@ HDRS	= \
     svModelLegacyIO.h \
     svModelObjectFactory.h
 
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    HDRS +=  svModelElementOCCT.h
-endif
-
-ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    HDRS +=  svModelElementParasolid.h
-endif
-
 CXXSRCS	= \
     svModelUtils.cxx \
     svModelElement.cxx \
     svModelElementPolyData.cxx \
+    svModelElementAnalytic.cxx \
+    svModelElementFactory.cxx \
     svModelOperation.cxx \
     svModel.cxx \
     svModelVtkMapper2D.cxx \
@@ -85,15 +81,8 @@ CXXSRCS	= \
     svModelDataInteractor.cxx \
     svModelIO.cxx \
     svModelLegacyIO.cxx \
-    svModelObjectFactory.cxx
-
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    CXXSRCS += svModelElementOCCT.cxx
-endif
-
-ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    CXXSRCS += svModelElementParasolid.cxx
-endif
+    svModelObjectFactory.cxx \
+    svRegisterPolyDataFunction.cxx
 
 CXXSRCS += us_init.cxx
 
@@ -121,31 +110,31 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS += \
-          $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_vtksvcommon$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_vtksvfilters$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_vtksvnurbs$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+          $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_DISCRETE_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_PARASOLID_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
 endif
 
 DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
@@ -155,14 +144,15 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
 endif
 
 ifeq ($(SV_USE_VMTK),1)
-	DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VMTK_UTILS_NAME)$(LIBLINKEXT)
+	DLLLIBS += $(VMTK_LIBS)
 	DLLLIBS += $(SV_MMG_LIBS)
 endif
 
 ifeq ($(SV_USE_MMG),1)
-	DLLLIBS += $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT)
 endif
 
-TARGET_LIB_NAME = simvascular_qtgui_module_model
+TARGET_LIB_NAME = $(SV_LIB_MODULE_MODEL_NAME)
 
 include $(TOP)/targetlib.mk

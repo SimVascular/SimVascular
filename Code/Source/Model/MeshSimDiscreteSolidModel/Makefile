@@ -65,17 +65,17 @@ DLLHDRS = cv_discrete_init.h
 
 DLLSRCS = cv_discrete_init.cxx
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)
 
 ifeq ($(SV_USE_VMTK),1)
-	DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
+	DLLLIBS += $(VMTK_LIBS)
 endif
 
 DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS) $(PARASOLID_LIBS)
 
-TARGET_LIB_NAME = simvascular_meshsim_discrete_solid
+TARGET_LIB_NAME = $(SV_LIB_MESHSIM_DISCRETE_SOLID_NAME)
 
 include $(TOP)/targetlib.mk

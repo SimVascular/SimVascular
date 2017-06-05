@@ -53,6 +53,6 @@ CXXSRCS = cv_globals.cxx
 DLLHDRS =
 DLLSRCS =
 
-TARGET_LIB_NAME = simvascular_globals
+TARGET_LIB_NAME = $(SV_LIB_GLOBALS_NAME)
 
 include $(TOP)/targetlib.mk

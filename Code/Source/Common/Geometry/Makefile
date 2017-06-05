@@ -71,15 +71,15 @@ DLLHDRS = cv_geom_init.h
 
 DLLSRCS = cv_geom_init.cxx
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-	  $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+	  $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVGEOMETRY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
           $(VMTK_LIBS)
 
-TARGET_LIB_NAME = simvascular_geom
+TARGET_LIB_NAME = $(SV_LIB_GEOM_NAME)
 
 include $(TOP)/targetlib.mk

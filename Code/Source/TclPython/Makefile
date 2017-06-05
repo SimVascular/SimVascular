@@ -63,6 +63,6 @@ DLLSRCS = cv_pythoninterp_init.cxx
 
 DLLLIBS = $(VTK_LIBS) $(PARASOLID_LIBS) $(PYTHON_LIB)
 
-TARGET_LIB_NAME = simvascular_python_interp
+TARGET_LIB_NAME = $(SV_LIB_PYTHON_INTERP_NAME)
 
 include $(TOP)/targetlib.mk

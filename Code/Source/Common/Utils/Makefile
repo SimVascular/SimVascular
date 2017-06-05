@@ -53,8 +53,8 @@ CXXSRCS	= cv_misc_utils.cxx cv_vtk_utils.cxx cvTimer.cxx cvIntArrayList.cxx \
 DLLHDRS = cv_utils_init.h cv_math_init.h cv_get_tcl_interp_init.h
 DLLSRCS = cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx
 
-TARGET_LIB_NAME = simvascular_utils
+TARGET_LIB_NAME = $(SV_LIB_UTILS_NAME)
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 include $(TOP)/targetlib.mk

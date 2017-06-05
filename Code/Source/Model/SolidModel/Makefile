@@ -72,9 +72,9 @@ CXXSRCS	= cvSolidModel.cxx
 DLLHDRS = cv_solid_init.h 
 DLLSRCS = cv_solid_init.cxx 
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_solid
+TARGET_LIB_NAME = $(SV_LIB_SOLID_NAME)
 
 include $(TOP)/targetlib.mk

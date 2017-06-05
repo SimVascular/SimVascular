@@ -67,12 +67,12 @@ DLLHDRS = cv_mesh_init.h
 
 DLLSRCS = cv_mesh_init.cxx
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
 	  $(ZLIB_LIBS)
 
-TARGET_LIB_NAME = simvascular_mesh
+TARGET_LIB_NAME = $(SV_LIB_MESH_NAME)
 
 include $(TOP)/targetlib.mk
 

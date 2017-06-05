@@ -1,16 +1,19 @@
 # Hey emacs, this is a -*- makefile -*-
 
+# =========================================================================
+#
+# Copyright (c) 2014-2015 The Regents of the University of California.
+# All Rights Reserved. 
+#
 # Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                         University of California, San Diego.
-# 
-# All rights reserved. 
 #
-# Portions copyright (c) 1999-2007 Stanford University,
-# Nathan Wilson, Ken Wang, Charles Taylor.
-# 
+# Portions of the code Copyright (c) 1998-2007 Stanford University,
+# Charles Taylor, Nathan Wilson, Ken Wang.
+#
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code.
-# 
+# contributors to the source code. 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal in the Software without restriction, including 
@@ -29,8 +32,10 @@
 # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+# =========================================================================*/
 
-TOP=../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -38,34 +43,39 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(ZLIB_INCDIR) $(VTK_INCDIRS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS)
 
-CREATE_EXPORTS_CV_ALL_CAPS=SV_POST
-CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_POST
-CREATE_EXPORTS_CV_FILE_H=svPostExports.h
+CREATE_EXPORTS_CV_ALL_CAPS=SV_VMTK_UTILS
+CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_VMTK_UTILS
+CREATE_EXPORTS_CV_FILE_H=svVMTKUtilsExports.h
 
-CXXFLAGS += -DSV_EXPORT_POST_COMPILE
+CXXFLAGS += -DSV_EXPORT_VMTK_UTILS_COMPILE
 
-HDRS	= cvConvertVisFiles.h cvCalculateWallShearStress.h \
-	  cvCalculateTKE.h
+ifeq ($(SV_USE_ZLIB),1)
+        CXXFLAGS += $(ZLIB_INCDIR)
+endif
 
-CXXSRCS	= cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx \
-	  cvCalculateTKE.cxx
+CXXFLAGS += $(LOCAL_INCDIR) \
+	    $(VTK_INCDIRS) \
+	    $(TCLTK_INCDIR) \
+            $(VMTK_INCDIR)
 
-DLLHDRS = cv_post_init.h
+HDRS	= cv_vmtk_utils.h
 
-DLLSRCS = cv_post_init.cxx
+CXXSRCS	= cv_vmtk_utils.cxx
+
+DLLHDRS = cv_vmtk_utils_init.h
+
+DLLSRCS = cv_vmtk_utils_init.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
-	  $(ZLIB_LIBS)
+          $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+	  $(ZLIB_LIBS) $(VMTK_LIBS)
 
-TARGET_LIB_NAME = $(SV_LIB_POST_NAME)
+TARGET_LIB_NAME = $(SV_LIB_VMTK_UTILS_NAME)
 
 include $(TOP)/targetlib.mk
-
-
-
 
 
 
