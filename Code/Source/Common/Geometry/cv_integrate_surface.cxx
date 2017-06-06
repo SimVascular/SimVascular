@@ -337,11 +337,11 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
 // sys_geom_IntegrateSurface2
 // --------------------------
 
-int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, double *area )
+int sys_geom_IntegrateSurface2( vtkPolyData *pd, int tensorType, double *q, double *area )
 {
 
   int i,j;
-  vtkPolyData *pd;
+//  vtkPolyData *pd;
   vtkDataArray *scalars = NULL;
   vtkDataArray *vectors = NULL;
   int numPts, numPolys;
@@ -353,7 +353,7 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
   *q = qtotal;
   *area = areatotal;
 
-  pd = src->GetVtkPolyData();
+  // pd = src->GetVtkPolyData();
 
   if (tensorType < 0 || tensorType > 1) {
       fprintf(stderr,"ERROR:  Invalid tensorType (%i).\n",tensorType);
@@ -374,7 +374,7 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
   }
 
   // make sure we have normals on pd
-  pd = src->GetVtkPolyData();
+  // pd = src->GetVtkPolyData();
 
   vtkUnstructuredGrid* answer;
 
@@ -410,6 +410,10 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
   return SV_OK;
 }
 
+int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, double *area )
+{
+  sys_geom_IntegrateSurface2(src->GetVtkPolyData(),tensorType,q,area);
+}
 
 // ----------------------------
 // sys_geom_IntegrateScalarSurf
