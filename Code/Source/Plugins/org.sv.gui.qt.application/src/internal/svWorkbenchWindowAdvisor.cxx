@@ -1930,6 +1930,13 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
     if(path)
     {
         newNode->SetData(path->Clone());
+        //after pasting, assign a different path id
+        svPath* newPath=dynamic_cast<svPath*>(newNode->GetData());
+        if(newPath && parentNode.IsNotNull())
+        {
+            int maxPathID=svPath::GetMaxPathID(dataStorage->GetDerivations(parentNode));
+            path->SetPathID(maxPathID+1);
+        }
     }
 
     svContourGroup* group=dynamic_cast<svContourGroup*>(m_CopyDataNode->GetData());
