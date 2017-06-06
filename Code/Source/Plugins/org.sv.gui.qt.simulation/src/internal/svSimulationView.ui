@@ -147,7 +147,7 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>4</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="page">
          <property name="geometry">
@@ -744,17 +744,17 @@
                  </widget>
                 </item>
                 <item row="3" column="2">
-                 <widget class="ctkSliderWidget" name="sliderNumProcs">
-                  <property name="decimals">
+                 <widget class="ctkSliderWidget" name="sliderNumProcs" native="true">
+                  <property name="decimals" stdset="0">
                    <number>0</number>
                   </property>
-                  <property name="pageStep">
+                  <property name="pageStep" stdset="0">
                    <double>40.000000000000000</double>
                   </property>
-                  <property name="minimum">
+                  <property name="minimum" stdset="0">
                    <double>1.000000000000000</double>
                   </property>
-                  <property name="maximum">
+                  <property name="maximum" stdset="0">
                    <double>64.000000000000000</double>
                   </property>
                  </widget>
@@ -1077,6 +1077,13 @@
                 <property name="spacing">
                  <number>5</number>
                 </property>
+                <item row="3" column="0">
+                 <widget class="QCheckBox" name="checkBoxCalculateFlows">
+                  <property name="text">
+                   <string>Calculate Flows</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="2" column="1">
                  <widget class="QCheckBox" name="checkBoxToRestart">
                   <property name="text">
@@ -1122,6 +1129,64 @@
                   <property name="checked">
                    <bool>true</bool>
                   </property>
+                 </widget>
+                </item>
+                <item row="4" column="0" colspan="2">
+                 <widget class="QWidget" name="widgetCalculateFlows" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_21">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Sim Units</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="comboBoxSimUnits">
+                     <item>
+                      <property name="text">
+                       <string>cm</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>mm</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxSkipWalls">
+                     <property name="text">
+                      <string>Skip Walls</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                </layout>

@@ -27,13 +27,13 @@ public:
 
     static bool CreateFlowFiles(std::string outFlowFilePath, std::string outPressureFlePath
                                                    , std::string outAverageFilePath, std::string outAverageUnitsFilePath
-                                                   , std::string vtxFilePath
+                                                   , std::vector<std::string> vtxFilePaths, bool useComboFile
                                                    , std::string meshFaceDir, std::vector<std::string> meshFaceFileNames
                                                    , std::string unit, bool skipWalls);
 
-    static void VtpExtractSingleFace(vtkSmartPointer<vtkPolyData> simvtp,vtkSmartPointer<vtkPolyData> facevtp);
+    static void VtpExtractSingleFace(std::string step, vtkSmartPointer<vtkPolyData> simvtp,vtkSmartPointer<vtkPolyData> facevtp);
 
-    static void VtuExtractSingleFace(vtkSmartPointer<vtkUnstructuredGrid> simug,vtkSmartPointer<vtkPolyData> facevtp);
+    static void VtuExtractSingleFace(std::string step, vtkSmartPointer<vtkUnstructuredGrid> simug,vtkSmartPointer<vtkPolyData> facevtp);
 
     static void VtpIntegrateFace(vtkSmartPointer<vtkPolyData>facevtp, std::map<std::string, double>& pmap, std::map<std::string, double>& qmap, std::map<std::string, double>& amap);
 };

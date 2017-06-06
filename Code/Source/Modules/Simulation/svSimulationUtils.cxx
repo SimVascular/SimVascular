@@ -585,7 +585,7 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
 
 bool svSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::string outPressureFlePath
                                         , std::string outAverageFilePath, std::string outAverageUnitsFilePath
-                                        , std::string vtxFilePath
+                                        , std::vector<std::string> vtxFilePaths, bool useComboFile
                                         , std::string meshFaceDir, std::vector<std::string> meshFaceFileNames
                                         , std::string unit, bool skipWalls)
 {
@@ -616,27 +616,54 @@ bool svSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::string
         vtpMap[faceName]=facevtp;
     }
 
-    vtkSmartPointer<vtkPolyData> simvtp=NULL;
-    vtkSmartPointer<vtkUnstructuredGrid> simug=NULL;
+    std::map<std::string,vtkSmartPointer<vtkPolyData>> simVtps;
+    std::map<std::string,vtkSmartPointer<vtkUnstructuredGrid>> simUgs;
 
-    if(vtxFilePath.substr(vtxFilePath.find_last_of('.'),4)=="vtp")
+    for(int i=0;i<vtxFilePaths.size();i++)
     {
-        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-        reader->SetFileName(vtxFilePath.c_str());
-        reader->Update();
-        simvtp=reader->GetOutput();
-    }
-    else if(vtxFilePath.substr(vtxFilePath.find_last_of('.'),4)=="vtu")
-    {
-        vtkSmartPointer<vtkXMLUnstructuredGridReader> reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-        reader->SetFileName(vtxFilePath.c_str());
-        reader->Update();
-        simug=reader->GetOutput();
+        std::string vtxFilePath=vtxFilePaths[i];
+
+        vtkSmartPointer<vtkPolyData> simvtp=NULL;
+        vtkSmartPointer<vtkUnstructuredGrid> simvtu=NULL;
+
+        if(vtxFilePath.substr(vtxFilePath.find_last_of('.'),4)==".vtp")
+        {
+            vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+            reader->SetFileName(vtxFilePath.c_str());
+            reader->Update();
+            simvtp=reader->GetOutput();
+        }
+        else if(vtxFilePath.substr(vtxFilePath.find_last_of('.'),4)==".vtu")
+        {
+            vtkSmartPointer<vtkXMLUnstructuredGridReader> reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+            reader->SetFileName(vtxFilePath.c_str());
+            reader->Update();
+            simvtu=reader->GetOutput();
+        }
+
+        if(useComboFile)
+        {
+            if(simvtp!=NULL)
+                simVtps["combo"]=simvtp;
+
+            if(simvtu!=NULL)
+                simUgs["combo"]=simvtu;
+        }
+        else
+        {
+            std::string str=vtxFilePath.substr(vtxFilePath.find_last_of('_')+1);
+            std::string step=str.substr(0,str.find_last_of('.'));
+            if(simvtp!=NULL)
+                simVtps[step]=simvtp;
+
+            if(simvtu!=NULL)
+                simUgs[step]=simvtu;
+        }
+
     }
 
-    if(simvtp==NULL || simug==NULL)
+    if(simVtps.size()==0 && simUgs.size()==0)
         return false;
-
 
     std::map<std::string,std::map<std::string, double>> pressureMap;
     std::map<std::string,std::map<std::string, double>> flowrateMap;
@@ -645,10 +672,23 @@ bool svSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::string
     auto it=vtpMap.begin();
     while(it!=vtpMap.end())
     {
-        if(simvtp!=NULL)
-            VtpExtractSingleFace(simvtp, it->second);
-        else if(simug!=NULL)
-            VtuExtractSingleFace(simug, it->second);
+        for(auto step_simvtp:simVtps)
+        {
+            std::string step=step_simvtp.first;
+            vtkSmartPointer<vtkPolyData> simvtp=step_simvtp.second;
+
+            if(simvtp!=NULL)
+                VtpExtractSingleFace(step,simvtp, it->second);
+        }
+
+        for(auto step_simug:simUgs)
+        {
+            std::string step=step_simug.first;
+            vtkSmartPointer<vtkUnstructuredGrid> simug=step_simug.second;
+
+            if(simug!=NULL)
+                VtuExtractSingleFace(step,simug, it->second);
+        }
 
         std::map<std::string, double> pmap;
         std::map<std::string, double> qmap;
@@ -668,8 +708,8 @@ bool svSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::string
     ofstream averagefs(outAverageFilePath.c_str());
     ofstream averageunitsfs(outAverageUnitsFilePath.c_str());
 
-    pressurefs<<"step\t";
-    flowfs<<"step\t";
+    pressurefs<<std::fixed<<"step\t";
+    flowfs<<std::fixed<<"step\t";
 
     for(auto name_vtp:vtpMap)
     {
@@ -710,8 +750,8 @@ bool svSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::string
     }
     flowfs.close();
 
-    averagefs<<"Face\t"<<"Pavg\t"<<"Qavg\t"<<"Pmin\t"<<"Pmin_Time\t"<<"Pmax\t"<<"Pmax_Time\t"<<"Qmin\t"<<"Qmin_Time\t"<<"Qmax\t"<<"Qmax_Time\n";
-    averageunitsfs<<"Face\t"<<"Pavg\t"<<"Qavg\t"<<"Pmin\t"<<"Pmin_Time\t"<<"Pmax\t"<<"Pmax_Time\t"<<"Qmin\t"<<"Qmin_Time\t"<<"Qmax\t"<<"Qmax_Time\n";
+    averagefs<<std::fixed<<"Face\t"<<"Pavg\t"<<"Qavg\t"<<"Pmin\t"<<"Pmin_Time\t"<<"Pmax\t"<<"Pmax_Time\t"<<"Qmin\t"<<"Qmin_Time\t"<<"Qmax\t"<<"Qmax_Time\n";
+    averageunitsfs<<std::fixed<<"Face\t"<<"Pavg\t"<<"Qavg\t"<<"Pmin\t"<<"Pmin_Time\t"<<"Pmax\t"<<"Pmax_Time\t"<<"Qmin\t"<<"Qmin_Time\t"<<"Qmax\t"<<"Qmax_Time\n";
     for(auto name_vtp:vtpMap)
     {
         std::string faceName=name_vtp.first;
@@ -799,7 +839,7 @@ bool svSimulationUtils::CreateFlowFiles(std::string outFlowFilePath, std::string
     return true;
 }
 
-void svSimulationUtils::VtpExtractSingleFace(vtkSmartPointer<vtkPolyData> simvtp,vtkSmartPointer<vtkPolyData> facevtp)
+void svSimulationUtils::VtpExtractSingleFace(std::string step, vtkSmartPointer<vtkPolyData> simvtp,vtkSmartPointer<vtkPolyData> facevtp)
 {
     int faceNumPoint=facevtp->GetNumberOfPoints();
     vtkDataArray* faceNodeIDs=facevtp->GetPointData()->GetArray("GlobalNodeID");
@@ -812,13 +852,23 @@ void svSimulationUtils::VtpExtractSingleFace(vtkSmartPointer<vtkPolyData> simvtp
     {
         std::string name(pointData->GetAbstractArray(i)->GetName());
 
-        if(name=="pressure_avg" || name=="pressure_avg_mmHg")
-            continue;
+        if(step=="combo")
+        {
+            if(name=="pressure_avg" || name=="pressure_avg_mmHg")
+                continue;
 
-        if(name.substr(0,9)=="pressure_")
-            pressureNames.push_back(name);
-        else if(name.substr(0,9)=="velocity_")
-            velocityNames.push_back(name);
+            if(name.substr(0,9)=="pressure_")
+                pressureNames.push_back(name);
+            else if(name.substr(0,9)=="velocity_")
+                velocityNames.push_back(name);
+        }
+        else
+        {
+            if(name=="pressure")
+                pressureNames.push_back(name);
+            else if(name=="velocity")
+                velocityNames.push_back(name);
+        }
     }
 
     std::map<int,int> mapGlobal2Local;
@@ -834,7 +884,12 @@ void svSimulationUtils::VtpExtractSingleFace(vtkSmartPointer<vtkPolyData> simvtp
         vtkSmartPointer<vtkDoubleArray> parray=vtkSmartPointer<vtkDoubleArray>::New();
         parray->SetNumberOfComponents(1);
         parray->Allocate(100,100);
-        parray->SetName(pressureNames[i].c_str());
+
+        std::string pn=pressureNames[i];
+        if(step!="combo")
+            pn=pn+"_"+step;
+
+        parray->SetName(pn.c_str());
 
         vtkDataArray* array=pointData->GetArray(pressureNames[i].c_str());
         for(int j=0;j<faceNumPoint;++j)
@@ -853,7 +908,12 @@ void svSimulationUtils::VtpExtractSingleFace(vtkSmartPointer<vtkPolyData> simvtp
         vtkSmartPointer<vtkDoubleArray> varray=vtkSmartPointer<vtkDoubleArray>::New();
         varray->SetNumberOfComponents(3);
         varray->Allocate(100,100);
-        varray->SetName(velocityNames[i].c_str());
+
+        std::string vn=velocityNames[i];
+        if(step!="combo")
+            vn=vn+"_"+step;
+
+        varray->SetName(vn.c_str());
 
         vtkDataArray* array=pointData->GetArray(velocityNames[i].c_str());
         for(int j=0;j<faceNumPoint;++j)
@@ -869,7 +929,7 @@ void svSimulationUtils::VtpExtractSingleFace(vtkSmartPointer<vtkPolyData> simvtp
 
 }
 
-void svSimulationUtils::VtuExtractSingleFace(vtkSmartPointer<vtkUnstructuredGrid> simug,vtkSmartPointer<vtkPolyData> facevtp)
+void svSimulationUtils::VtuExtractSingleFace(std::string step, vtkSmartPointer<vtkUnstructuredGrid> simug,vtkSmartPointer<vtkPolyData> facevtp)
 {
     int faceNumPoint=facevtp->GetNumberOfPoints();
     vtkDataArray* faceNodeIDs=facevtp->GetPointData()->GetArray("GlobalNodeID");
@@ -882,13 +942,23 @@ void svSimulationUtils::VtuExtractSingleFace(vtkSmartPointer<vtkUnstructuredGrid
     {
         std::string name(pointData->GetAbstractArray(i)->GetName());
 
-        if(name=="pressure_avg" || name=="pressure_avg_mmHg")
-            continue;
+        if(step=="combo")
+        {
+            if(name=="pressure_avg" || name=="pressure_avg_mmHg")
+                continue;
 
-        if(name.substr(0,9)=="pressure_")
-            pressureNames.push_back(name);
-        else if(name.substr(0,9)=="velocity_")
-            velocityNames.push_back(name);
+            if(name.substr(0,9)=="pressure_")
+                pressureNames.push_back(name);
+            else if(name.substr(0,9)=="velocity_")
+                velocityNames.push_back(name);
+        }
+        else
+        {
+            if(name=="pressure")
+                pressureNames.push_back(name);
+            else if(name=="velocity")
+                velocityNames.push_back(name);
+        }
     }
 
     std::map<int,int> mapGlobal2Local;
@@ -904,7 +974,12 @@ void svSimulationUtils::VtuExtractSingleFace(vtkSmartPointer<vtkUnstructuredGrid
         vtkSmartPointer<vtkDoubleArray> parray=vtkSmartPointer<vtkDoubleArray>::New();
         parray->SetNumberOfComponents(1);
         parray->Allocate(100,100);
-        parray->SetName(pressureNames[i].c_str());
+
+        std::string pn=pressureNames[i];
+        if(step!="combo")
+            pn=pn+"_"+step;
+
+        parray->SetName(pn.c_str());
 
         vtkDataArray* array=pointData->GetArray(pressureNames[i].c_str());
         for(int j=0;j<faceNumPoint;++j)
@@ -923,7 +998,12 @@ void svSimulationUtils::VtuExtractSingleFace(vtkSmartPointer<vtkUnstructuredGrid
         vtkSmartPointer<vtkDoubleArray> varray=vtkSmartPointer<vtkDoubleArray>::New();
         varray->SetNumberOfComponents(3);
         varray->Allocate(100,100);
-        varray->SetName(velocityNames[i].c_str());
+
+        std::string vn=velocityNames[i];
+        if(step!="combo")
+            vn=vn+"_"+step;
+
+        varray->SetName(vn.c_str());
 
         vtkDataArray* array=pointData->GetArray(velocityNames[i].c_str());
         for(int j=0;j<faceNumPoint;++j)

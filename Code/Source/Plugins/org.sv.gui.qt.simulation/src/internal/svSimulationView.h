@@ -111,6 +111,8 @@ public slots:
 
     void SetupInternalSolverPaths();
 
+    void ShowCalculateFowsWidget(bool checked = false);
+
 public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
@@ -212,10 +214,12 @@ class svProcessHandler : public QObject
     Q_OBJECT
 
 public:
-    svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, bool stoppable, QWidget* parent=NULL);
+    svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, bool multithreading=true, bool stoppable=true, QWidget* parent=NULL);
     virtual ~svProcessHandler();
 
     void Start();
+
+    QString GetMessage(){return m_Message;}
 
 public slots:
 
@@ -232,6 +236,10 @@ private:
     mitk::DataNode::Pointer m_JobNode;
 
     bool m_Stoppable;
+
+    bool m_MultiThreading;
+
+    QString m_Message;
 };
 
 class svSolverProcessHandler : public QObject
