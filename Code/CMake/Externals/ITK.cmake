@@ -43,7 +43,19 @@ if(SV_USE_${proj})
   # Include cmake file provided by ITK to define libs and include dirs
   include(${${proj}_USE_FILE})
 
-  # Set SV_ITK_DIR to the toplevel ITK if it exists
+  get_filename_component(tmp_replace_tcl_lib_name ${TCL_LIBRARY} NAME)
+  if(SV_USE_PYTHON)
+    get_filename_component(tmp_replace_python_lib_name ${PYTHON_LIBRARY} NAME)
+  endif()
+  if(SV_USE_FREETYPE)
+   get_filename_component(tmp_replace_freetype_lib_name ${FREETYPE_LIBRARY} NAME)
+  endif()
+
+if (SV_USE_FREETYPE)
+  simvascular_property_list_find_and_replace(ITKVtkGlue IMPORTED_LINK_INTERFACE_LIBRARIES_RELWITHDEBINFO "${tmp_replace_freetype_lib_name}" ${FREETYPE_LIBRARY})
+endif()
+
+# Set SV_ITK_DIR to the toplevel ITK if it exists
   simvascular_get_external_path_from_include_dir(${proj})
   # Reset VTK vars
   set(VTK_DIR ${TEMP_VTK_DIR} CACHE PATH "Must reset VTK dir after processing ${proj}" FORCE)

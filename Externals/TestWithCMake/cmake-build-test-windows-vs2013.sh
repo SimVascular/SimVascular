@@ -1,6 +1,6 @@
 
-rm -Rf /cygdrive/c/svsv
-mkdir -p /cygdrive/c/svsv
+rm -Rf /cygdrive/c/svtest
+mkdir -p /cygdrive/c/svtest
 
 export REPLACEME_SV_CL_COMPILER="C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/amd64/cl.exe"
 export REPLACEME_SV_IFORT_COMPILER="C:/Program Files (x86)/Intel/Composer XE 2013 SP1/bin/intel64/ifort.exe"
@@ -9,10 +9,10 @@ export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_CMAKE_GENERATOR="Visual Studio 12 2013 Win64"
 export REPLACEME_SV_TOP_SRC_DIR_SV=`pwd`/../../Code
 export REPLACEME_SV_TOP_SRC_DIR_SV=`cygpath -m $REPLACEME_SV_TOP_SRC_DIR_SV`
-#export REPLACEME_SV_EXTERN_OPEN_BIN_DIR=`cygpath -m ../../BuildWithMake/ext/bin`
-export REPLACEME_SV_EXTERN_OPEN_BIN_DIR=C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64
+export REPLACEME_SV_EXTERN_OPEN_BIN_DIR=`cygpath -m ../../BuildWithMake/ext/bin`
+#export REPLACEME_SV_EXTERN_OPEN_BIN_DIR=C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64
 
-pushd /cygdrive/c/svsv
+pushd /cygdrive/c/svtest
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -65,8 +65,8 @@ pushd /cygdrive/c/svsv
 \
    -DSV_USE_SOLVERIO=ON \
 \
-   -DGDCM_DIR="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/gdcm-2.6.1/lib/gdcm-2.6" \
-   -DITK_DIR="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/itk-4.7.1/lib/cmake/ITK-4.7" \
+   -DGDCM_DIR:PATH="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/gdcm-2.6.1/lib/gdcm-2.6" \
+   -DITK_DIR:PATH="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/itk-4.7.1/lib/cmake/ITK-4.7" \
    -DOpenCASCADE_DIR:PATH="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/opencascade-7.0.0/cmake" \
    -DQT_DIR="C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5" \
    -DQt5_DIR="C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5" \
@@ -102,14 +102,14 @@ pushd /cygdrive/c/svsv
 -DTK_LIBRARY="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/tcltk-8.6.4/lib/tk86t.lib" \
 -DTK_WISH="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/tcltk-8.6.4/bin/wish86t.exe" \
 \
--DPYTHON_DEBUG_LIBRARY="" \
--DPYTHON_INCLUDE_DIR=$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/include \
--DPYTHON_LIBRARY=$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/libs/python27.lib \
+-DPYTHON_DEBUG_LIBRARY:FILEPATH="" \
+-DPYTHON_INCLUDE_DIR:PATH=$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/include \
+-DPYTHON_LIBRARY:FILEPATH=$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/libs/python27.lib \
 -DPYTHON_LIBRARY_DEBUG="" \
 -DPYTHON_SITE_PACKAGES="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/Lib/site-packages" \
 -DPYTHON_CORE_PACKAGES="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/Lib" \
 -DPYTHON_DLL_PATH="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/Bin" \
--DPYTHON_EXECUTABLE:FILEPATH="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/Bin.python.exe" \
+-DPYTHON_EXECUTABLE:FILEPATH="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/python-2.7.11/Bin/python.exe" \
 \
 -DMMG_DIR="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/mmg-5.1.0" \
 -DMMG_INCLUDE_DIR="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/mmg-5.1.0/include" \

@@ -35,6 +35,10 @@ if(SV_USE_${proj})
   endif()
   # Find GDCM
   simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
+
+  # Include cmake file provided by GDCM to define libs and include dirs
+  include(${${proj}_USE_FILE})
+
   # Set SV_GDCM_DIR to the toplevel GDCM if it exists
   simvascular_get_external_path_from_include_dir(${proj})
 endif()
