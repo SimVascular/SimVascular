@@ -33,24 +33,30 @@ svPath* svSegmentationLegacyLoadAction::GetPath(int groupPathID, std::string gro
             mitk::DataNode::Pointer pathFolderNode=rs->GetElement(0);
             rs=m_DataStorage->GetDerivations(pathFolderNode);
 
-            for(int i=0;i<rs->size();i++)
+            if(groupPathID!=-1)
             {
-                svPath* path=dynamic_cast<svPath*>(rs->GetElement(i)->GetData());
-
-                if(path&&groupPathID==path->GetPathID())
+                for(int i=0;i<rs->size();i++)
                 {
-                    return path;
+                    svPath* path=dynamic_cast<svPath*>(rs->GetElement(i)->GetData());
+
+                    if(path&&groupPathID==path->GetPathID())
+                    {
+                        return path;
+                    }
                 }
             }
 
-            for(int i=0;i<rs->size();i++)
+            if(groupPathName!="")
             {
-                mitk::DataNode::Pointer pathNode=rs->GetElement(i);
-                svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
-
-                if(path&&groupPathName==pathNode->GetName())
+                for(int i=0;i<rs->size();i++)
                 {
-                    return path;
+                    mitk::DataNode::Pointer pathNode=rs->GetElement(i);
+                    svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
+
+                    if(path&&groupPathName==pathNode->GetName())
+                    {
+                        return path;
+                    }
                 }
             }
 
