@@ -161,7 +161,7 @@ foreach(lib ${${proj}_LIBNAMES})
 	#find library
 	find_library(${proj}_${lib}_LIBRARY
 		NAMES
-		${lib}
+		${lib} ${lib}d
 		PATHS
 		${${proj}_POSSIBLE_LIB_PATHS}
 		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll

@@ -26,7 +26,7 @@ public:
   void SetDecimated(bool decimated) override {}
   void SetFunctionality(berry::QtViewPart *functionality) override {}
 
-  svPath* GetPath(int groupPathID, mitk::DataNode::Pointer segFolderNode);
+  svPath* GetPath(int groupPathID, std::string groupPathName, mitk::DataNode::Pointer segFolderNode);
 
 private:
   svSegmentationLegacyLoadAction(const svSegmentationLegacyLoadAction &);

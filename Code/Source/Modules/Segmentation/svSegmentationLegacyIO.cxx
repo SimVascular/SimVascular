@@ -31,7 +31,7 @@ mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString fil
 
             if(line.contains("/group/"))
             {
-                QStringList list = line.split("/");
+                QStringList list = line.split("/",QString::SkipEmptyParts);
                 contourGroup->SetPathName(list[1].toStdString());
 
                 svContour* contour= new svContour();
@@ -95,6 +95,8 @@ mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString fil
             }
 
         }
+
+        inputFile.close();
     }
 
     mitk::DataNode::Pointer node = mitk::DataNode::New();
@@ -106,23 +108,34 @@ mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString fil
 
 std::vector<mitk::DataNode::Pointer> svSegmentationLegacyIO::ReadFiles(QString segDir)
 {
-    QDir dirSeg(segDir);
-    QFileInfoList fileInfoList=dirSeg.entryInfoList(QStringList("*"), QDir::Files, QDir::Name);
-    std::vector<mitk::DataNode::Pointer> nodes;
-    for(int i=0;i<fileInfoList.size();i++)
+    QStringList groupList;
+    QFile inputFile(segDir+"/group_contents.tcl");
+    if (inputFile.open(QIODevice::ReadOnly))
     {
-        QString filePath=fileInfoList[i].absoluteFilePath();
-        if(filePath.endsWith(".tcl")||filePath.endsWith(".vtp")||filePath.endsWith(".svsurf"))
+        QTextStream in(&inputFile);
+        while (!in.atEnd())
         {
-            continue;
+            QString line = in.readLine();
+            QStringList list=line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            if(list.size()>1 && list[0]=="group_readProfiles")
+                groupList<<list[1];
         }
+
+        inputFile.close();
+    }
+
+    std::vector<mitk::DataNode::Pointer> nodes;
+    for(int i=0;i<groupList.size();i++)
+    {
+        QString filePath=segDir+"/"+groupList[i];
+        if(!QFile(filePath).exists())
+            continue;
 
         mitk::DataNode::Pointer node=ReadContourGroupFile(filePath);
         nodes.push_back(node);
     }
     return nodes;
 }
-
 
 void svSegmentationLegacyIO::WriteContourGroupFile(mitk::DataNode::Pointer node, QString filePath)
 {

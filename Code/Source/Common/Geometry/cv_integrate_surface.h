@@ -39,6 +39,8 @@
 
 SV_EXPORT_SYSGEOM int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, double *q );
 
+SV_EXPORT_SYSGEOM int sys_geom_IntegrateSurface2( vtkPolyData *pd, int tensorType, double *q, double *area );
+
 SV_EXPORT_SYSGEOM int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, double *area );
 
 SV_EXPORT_SYSGEOM int sys_geom_IntegrateScalarSurf ( cvPolyData *src, double *q );
