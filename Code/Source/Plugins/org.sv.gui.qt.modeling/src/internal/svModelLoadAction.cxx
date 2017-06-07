@@ -1,16 +1,20 @@
 #include "svModelLoadAction.h"
 
 #include "svModelLegacyIO.h"
+#include "svModel.h"
 #include "svModelIO.h"
 #include "svModelElementFactory.h"
+#include "svModelUtils.h"
 
 #include <mitkNodePredicateDataType.h>
+#include <mitkStatusBar.h>
 
 #include <berryIPreferencesService.h>
 #include <berryIPreferences.h>
 #include <berryPlatform.h>
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 svModelLoadAction::svModelLoadAction()
 {
@@ -103,7 +107,41 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
         {
             mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath);
             if(modelNode.IsNotNull())
-                m_DataStorage->Add(modelNode,selectedNode);
+            {
+                svModel* model=dynamic_cast<svModel*>(modelNode->GetData());
+
+                if(model)
+                {
+                  bool addNode=true;
+                  svModelElement* modelElement=model->GetModelElement();
+
+                  if(modelElement && modelElement->GetType() =="PolyData" && modelElement->GetWholeVtkPolyData())
+                  {
+                    //check if the surface is valid
+                    std::string msg;
+                    bool valid = svModelUtils::CheckPolyDataSurface (modelElement->GetWholeVtkPolyData(), msg);
+                    if(!valid)
+                    {
+                      if (QMessageBox::question(NULL, "Triangulate Surface?", "Surface contains non-triangular elements. SimVascular does not support non-triangulated surfaces. Would you like the surface to be triangulated?",
+                                                QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+                      {
+
+                        QMessageBox::warning(NULL, "Loaded non-triangular surface", msg.c_str());
+                      }
+                      else
+                      {
+                        svModelUtils::TriangulateSurface(modelElement->GetWholeVtkPolyData());
+                        svModelUtils::CheckPolyDataSurface (modelElement->GetWholeVtkPolyData(), msg);
+                      }
+                    }
+                    mitk::StatusBar::GetInstance()->DisplayText(msg.c_str());
+                  }
+
+                  if (addNode)
+                    m_DataStorage->Add(modelNode,selectedNode);
+
+                }
+            }
         }
 
         if(prefs.IsNotNull())

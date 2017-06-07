@@ -134,6 +134,7 @@ set gSimVascularTclInitLibs [list \
 				 [list Tetgenmesh ${lib_prefix}simvascular_tetgen_mesh${so_postfix}] \
 				 [list Adapt ${lib_prefix}simvascular_adaptor${so_postfix}] \
 				 [list Tetgenadapt ${lib_prefix}simvascular_tetgen_adaptor${so_postfix}] \
+				 [list Vmtkutils ${lib_prefix}simvascular_vmtk_utils${so_postfix}] \
 				 ]
 
 if {$SV_USE_PYTHON == "ON"} {
@@ -488,7 +489,7 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
     source [file join $simvascular_home/Tcl/externals_configure.tcl]
 
 } else {
-	
+
   set executable_home $simvascular_home
   set gExternalPrograms(rundir) $rundir
 
@@ -518,11 +519,11 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
      set gExternalPrograms(gdcmdump)       gdcmdump$execext
 
      # use registry to find seperately installed svsolver package on windows
-     if {$tcl_platform(platform) == "windows"} {	
+     if {$tcl_platform(platform) == "windows"} {
        set svpre_exe [modules_registry_query_latest HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
 			                            HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
 				                    SVPRE_EXE]
-       if {$svpre_exe != ""} {		    
+       if {$svpre_exe != ""} {
 	  if [file exists $svpre_exe] {
 	      puts "Found svPre ($svpre_exe)"
 	      regsub -all {\\} $svpre_exe / gExternalPrograms(svpre)
@@ -531,7 +532,7 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
        set svpost_exe [modules_registry_query_latest HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
 		  	                             HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
 				                     SVPOST_EXE]
-       if {$svpost_exe != ""} {		    
+       if {$svpost_exe != ""} {
 	  if [file exists $svpost_exe] {
 	      puts "Found svPost ($svpost_exe)"
 	      regsub -all {\\} $svpost_exe / gExternalPrograms(svpost)
@@ -540,7 +541,7 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
        set svsolver_nompi_exe [modules_registry_query_latest HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
 			                                     HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
 				                             SVSOLVER_NOMPI_EXE]
-       if {$svsolver_nompi_exe != ""} {		    
+       if {$svsolver_nompi_exe != ""} {
 	  if [file exists $svsolver_nompi_exe] {
 	      puts "Found svSolver ($svsolver_nompi_exe)"
 	      regsub -all {\\} $svsolver_nompi_exe / gExternalPrograms(svsolver-nompi)
@@ -549,14 +550,14 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
        set svsolver_msmpi_exe [modules_registry_query_latest HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
 			                                     HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
 				                             SVSOLVER_MSMPI_EXE]
-       if {$svsolver_msmpi_exe != ""} {		    
+       if {$svsolver_msmpi_exe != ""} {
 	  if [file exists $svsolver_msmpi_exe] {
 	      puts "Found svSolver ($svsolver_msmpi_exe)"
 	      regsub -all {\\} $svsolver_msmpi_exe / gExternalPrograms(svsolver-mpi)
 	  }
        }
      }
-   }		   
+   }
 }
 
 #
