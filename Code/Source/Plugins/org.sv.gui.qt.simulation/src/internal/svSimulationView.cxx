@@ -247,6 +247,9 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
 
+    ui->widgetCalculateFlows->hide();
+    connect(ui->checkBoxCalculateFlows, SIGNAL(clicked(bool)), this, SLOT(ShowCalculateFowsWidget(bool)) );
+
     SetupInternalSolverPaths();
 
     //get paths for the external solvers
@@ -1990,9 +1993,9 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
             arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
             presolverProcess->setArguments(arguments);
 #if defined(Q_OS_MAC)
-            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_JobNode,false,m_Parent);
+            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_JobNode,true,false,m_Parent);
 #else
-            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_JobNode,true,m_Parent);
+            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_JobNode,true,true,m_Parent);
 #endif
             handler->Start();
         }
@@ -2629,10 +2632,112 @@ void svSimulationView::ExportResults()
     postsolverProcess->setProgram(postsolverPath);
     postsolverProcess->setArguments(arguments);
 
-    svProcessHandler* handler=new svProcessHandler(postsolverProcess,NULL,m_Parent);
+    svProcessHandler* handler=new svProcessHandler(postsolverProcess,m_JobNode,false,false,m_Parent);
     handler->Start();
 
-    mitk::StatusBar::GetInstance()->DisplayText("Results exported.");
+    QString detailedInfo=handler->GetMessage();
+    delete handler;
+
+    bool convertedFilesExit=true;
+    bool meshFaceDirExits=true;
+    bool meshFaceFilesExist=true;
+    bool calculateFlows=true;
+
+    if(ui->checkBoxCalculateFlows->isChecked())
+    {
+        convertedFilesExit=false;
+        meshFaceDirExits=false;
+        meshFaceFilesExist=false;
+        calculateFlows=false;
+
+        QString meshFaceDir=GetJobPath()+"/mesh-complete/mesh-surfaces";
+        meshFaceDirExits=QDir(meshFaceDir).exists();
+        std::vector<std::string> meshFaceFileNames;
+        if(meshFaceDirExits)
+        {
+            QStringList filters;
+            filters<<"*.vtp";
+            QStringList fileList=QDir(meshFaceDir).entryList(filters, QDir::Files);
+            meshFaceFilesExist=(fileList.size()>0);
+            for(int i=0;i<fileList.size();i++)
+                meshFaceFileNames.push_back(fileList[i].toStdString());
+        }
+
+        std::vector<std::string> vtxFilePaths;
+
+        if(ui->checkBoxSingleFile->isChecked())
+        {
+            QString vtpResultFilePath=exportDir+"/all_results.vtp";
+            QString vtuResultFilePath=exportDir+"/all_results.vtu";
+
+            if(QFile(vtpResultFilePath).exists())
+                vtxFilePaths.push_back(vtpResultFilePath.toStdString());
+            else if(QFile(vtuResultFilePath).exists())
+                vtxFilePaths.push_back(vtuResultFilePath.toStdString());
+        }
+        else
+        {
+            QStringList filters;
+            filters<<"all_results_*.vtp";
+            QStringList fileList=QDir(exportDir).entryList(filters, QDir::Files, QDir::Name);
+
+            if(fileList.size()==0)
+            {
+                filters.clear();
+                filters<<"all_results_*.vtu";
+                fileList=QDir(exportDir).entryList(filters, QDir::Files, QDir::Name);
+            }
+
+            for(int i=0;i<fileList.size();i++)
+                vtxFilePaths.push_back((exportDir+"/"+fileList[i]).toStdString());
+
+        }
+
+        convertedFilesExit=(vtxFilePaths.size()>0);
+
+        if( convertedFilesExit && meshFaceDirExits && meshFaceFilesExist )
+        {
+
+            QString outPressureFlePath=exportDir+"/all_results-pressures.txt";
+            QString outFlowFilePath=exportDir+"/all_results-flows.txt";
+            QString outAverageFilePath=exportDir+"/all_results-averages.txt";
+            QString outAverageUnitsFilePath=exportDir+"/all_results-averages-from_cm-to-mmHg-L_per_min.txt";
+            QString unit=ui->comboBoxSimUnits->currentText();
+            bool skipWalls=ui->checkBoxSkipWalls->isChecked();
+
+            calculateFlows=svSimulationUtils::CreateFlowFiles(outFlowFilePath.toStdString(), outPressureFlePath.toStdString()
+                                                              , outAverageFilePath.toStdString(), outAverageUnitsFilePath.toStdString()
+                                                              , vtxFilePaths,ui->checkBoxSingleFile->isChecked()
+                                                              , meshFaceDir.toStdString(), meshFaceFileNames
+                                                              , unit.toStdString(), skipWalls);
+        }
+    }
+
+    QString msg="";
+    if(convertedFilesExit)
+    {
+        msg="Results have been converted.";
+        if(!meshFaceDirExits)
+            msg=msg+"\nNo mesh face dir exits.";
+        else if(!meshFaceFilesExist)
+            msg=msg+"\nNo mesh face files exit.";
+        else if(!calculateFlows)
+            msg=msg+"\nFail to calculate flows.";
+    }
+    else
+        msg="Results not converted.";
+
+    msg=msg+"                                                                                        ";
+
+    QMessageBox mb(m_Parent);
+    mb.setWindowTitle("Finished");
+    mb.setText(msg);
+    mb.setIcon(QMessageBox::Information);
+    mb.setDetailedText(detailedInfo);
+    mb.setDefaultButton(QMessageBox::Ok);
+    mb.exec();
+
+    mitk::StatusBar::GetInstance()->DisplayText("Results converting finished.");
 }
 
 bool svSimulationView::IsInt(std::string value)
@@ -2721,6 +2826,11 @@ void svSimulationView::UpdateSimJobNumProcs()
     }
 }
 
+void svSimulationView::ShowCalculateFowsWidget(bool checked)
+{
+    ui->widgetCalculateFlows->setVisible(checked);
+}
+
 #if defined(Q_OS_WIN)
 QString svSimulationView::FindLatestKey(QString key, QStringList keys)
 {
@@ -2797,12 +2907,13 @@ void svSimulationView::UpdateJobStatus()
 
 }
 
-svProcessHandler::svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, bool stoppable, QWidget* parent)
+svProcessHandler::svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, bool multithreading, bool stoppable, QWidget* parent)
     : m_Process(process)
     , m_JobNode(jobNode)
     , m_Parent(parent)
     , m_MessageBox(NULL)
     , m_Stoppable(stoppable)
+    , m_MultiThreading(multithreading)
 {
 }
 
@@ -2820,10 +2931,18 @@ void svProcessHandler::Start()
     if(m_Process==NULL)
         return;
 
-    connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
+    if(m_MultiThreading)
+        connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
+
     m_Process->start();
 
-    if(m_Stoppable)
+    if(!m_MultiThreading)
+    {
+        m_Process->waitForFinished(-1);
+        m_Message=m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError();
+    }
+
+    if(m_MultiThreading && m_Stoppable)
     {
         m_MessageBox= new QMessageBox(m_Parent);
         m_MessageBox->setWindowTitle("Processing");

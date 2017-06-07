@@ -11,6 +11,7 @@ simvascular_create_module(
   ${VTK_LIBRARIES}
   ${ITK_LIBRARIES}
   ${MITK_LIBRARIES}
+  ${SV_LIB_GEOM_NAME}
   ${SV_LIB_MODULE_MESH_NAME})
 #-----------------------------------------------------------------------------
 

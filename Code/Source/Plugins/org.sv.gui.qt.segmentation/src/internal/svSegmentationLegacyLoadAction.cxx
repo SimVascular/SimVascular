@@ -18,7 +18,7 @@ svSegmentationLegacyLoadAction::~svSegmentationLegacyLoadAction()
 {
 }
 
-svPath* svSegmentationLegacyLoadAction::GetPath(int groupPathID, mitk::DataNode::Pointer segFolderNode)
+svPath* svSegmentationLegacyLoadAction::GetPath(int groupPathID, std::string groupPathName, mitk::DataNode::Pointer segFolderNode)
 {
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (segFolderNode,isProjFolder,false);
@@ -38,6 +38,17 @@ svPath* svSegmentationLegacyLoadAction::GetPath(int groupPathID, mitk::DataNode:
                 svPath* path=dynamic_cast<svPath*>(rs->GetElement(i)->GetData());
 
                 if(path&&groupPathID==path->GetPathID())
+                {
+                    return path;
+                }
+            }
+
+            for(int i=0;i<rs->size();i++)
+            {
+                mitk::DataNode::Pointer pathNode=rs->GetElement(i);
+                svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
+
+                if(path&&groupPathName==pathNode->GetName())
                 {
                     return path;
                 }
@@ -105,10 +116,13 @@ void svSegmentationLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &s
             svContourGroup* contourGroup=dynamic_cast<svContourGroup*>(segNodes[i]->GetData());
             if(contourGroup)
             {
-                svPath* path=GetPath(contourGroup->GetPathID(), selectedNode);
+                svPath* path=GetPath(contourGroup->GetPathID(), contourGroup->GetPathName(), selectedNode);
                 svPathElement* pe=NULL;
                 if(path)
+                {
                     pe=path->GetPathElement();
+                    contourGroup->SetPathID(path->GetPathID());
+                }
 
                 if(pe)
                 {

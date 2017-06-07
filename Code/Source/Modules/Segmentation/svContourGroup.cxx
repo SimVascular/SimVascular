@@ -4,6 +4,8 @@
 
 svContourGroup::svContourGroup()
     : m_CalculateBoundingBox(true)
+    , m_PathID(-1)
+    , m_PathName("")
     , m_GroupID(-1)
     , m_CurrentIndexOn2DView(-2)
     , m_DataModified(false)
