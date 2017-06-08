@@ -5,7 +5,7 @@
 #include "svSegmentationLoadAction.h"
 #include "svContourGroupPoint2DSizeAction.h"
 #include "svContourGroupPoint3DSizeAction.h"
-#include "svSegmentation2D.h"
+#include "svSeg2DEdit.h"
 
 //svSegmentationPluginActivator* svSegmentationPluginActivator::m_Instance = nullptr;
 //ctkPluginContext* svSegmentationPluginActivator::m_Context = nullptr;
@@ -18,7 +18,7 @@ void svSegmentationPluginActivator::start(ctkPluginContext* context)
     BERRY_REGISTER_EXTENSION_CLASS(svContourGroupCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svSegmentationLegacyLoadAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svSegmentationLegacySaveAction, context)
-    BERRY_REGISTER_EXTENSION_CLASS(svSegmentation2D, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svSeg2DEdit, context)
     BERRY_REGISTER_EXTENSION_CLASS(svContourGroupPoint2DSizeAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svContourGroupPoint3DSizeAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svSegmentationLoadAction, context)

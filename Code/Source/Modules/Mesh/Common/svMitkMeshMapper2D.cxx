@@ -9,7 +9,6 @@
 #include <mitkDataNode.h>
 #include <mitkProperties.h>
 #include "mitkVtkPropRenderer.h"
-#include <mitkSurface.h>
 #include <mitkLookupTableProperty.h>
 #include <mitkVtkScalarModeProperty.h>
 #include <mitkTransferFunctionProperty.h>

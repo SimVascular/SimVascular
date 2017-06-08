@@ -10,6 +10,7 @@
 
 #include "svPath.h"
 #include "svContourGroup.h"
+#include "svMitkSeg3D.h"
 #include "svModel.h"
 #include "svMitkMesh.h"
 #include "svMitkSimJob.h"
@@ -212,39 +213,48 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         QDir dirSeg(projPath);
         dirSeg.cd(segFolderName);
         QStringList segNameFilters;
-        segNameFilters<<"*.ctgr"<<"*.vtp";
+        segNameFilters<<"*.ctgr"<<"*.s3d";
         fileInfoList=dirSeg.entryInfoList(segNameFilters, QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
-            mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            segNode->SetVisibility(false);
+            std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
 
-            svContourGroup* group=dynamic_cast<svContourGroup*>(segNode->GetData());
-            if(group)
+            try
             {
-                auto props=group->GetProps();
-                auto it = props.begin();
-                while(it != props.end())
+                mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(filePath);
+                segNode->SetVisibility(false);
+
+                svContourGroup* group=dynamic_cast<svContourGroup*>(segNode->GetData());
+                if(group)
                 {
-                    if(it->second!="")
+                    auto props=group->GetProps();
+                    auto it = props.begin();
+                    while(it != props.end())
                     {
-                        if(it->first=="point 2D display size")
+                        if(it->second!="")
                         {
-                            float value=(float)(std::stod(it->second));
-                            segNode->SetFloatProperty("point.displaysize",value);
+                            if(it->first=="point 2D display size")
+                            {
+                                float value=(float)(std::stod(it->second));
+                                segNode->SetFloatProperty("point.displaysize",value);
+                            }
+                            else if(it->first=="point size")
+                            {
+                                float value=(float)(std::stod(it->second));
+                                segNode->SetFloatProperty("point.3dsize",value);
+                            }
                         }
-                        else if(it->first=="point size")
-                        {
-                            float value=(float)(std::stod(it->second));
-                            segNode->SetFloatProperty("point.3dsize",value);
-                        }
+
+                        it++;
                     }
-
-                    it++;
                 }
-            }
 
-            dataStorage->Add(segNode,segFolderNode);
+                dataStorage->Add(segNode,segFolderNode);
+            }
+            catch(...)
+            {
+                MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
+            }
         }
 
         modelFolderNode->SetVisibility(false);
@@ -536,7 +546,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
 
     mitk::NodePredicateOr::Pointer segTypes = mitk::NodePredicateOr::New();
     segTypes->AddPredicate(mitk::NodePredicateDataType::New("svContourGroup"));
-    segTypes->AddPredicate(mitk::NodePredicateDataType::New("Surface"));
+    segTypes->AddPredicate(mitk::NodePredicateDataType::New("svMitkSeg3D"));
 
     rs=dataStorage->GetDerivations(segFolderNode,segTypes);
 
@@ -554,7 +564,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         }
 
         svContourGroup *contourGroup=dynamic_cast<svContourGroup*>(node->GetData());
-        mitk::Surface *surface=dynamic_cast<mitk::Surface*>(node->GetData());
+        svMitkSeg3D *seg3D=dynamic_cast<svMitkSeg3D*>(node->GetData());
 
         if(contourGroup)
         {
@@ -567,17 +577,22 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
             }
         }
 
-        if(surface)//to do: track if changed
+        if(seg3D)
         {
-            QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".vtp");
-            mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
-            node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
+            if(seg3D->IsDataModified() || !dirSeg.exists(QString::fromStdString(node->GetName())+".s3d"))
+            {
+                QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".s3d");
+                mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+                node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
+                seg3D->SetDataModified(false);
+            }
         }
     }
 
     for(int i=0;i<removeList.size();i++)
     {
         dirSeg.remove(QString::fromStdString(removeList[i])+".ctgr");
+        dirSeg.remove(QString::fromStdString(removeList[i])+".s3d");
         dirSeg.remove(QString::fromStdString(removeList[i])+".vtp");
     }
     segFolder->ClearRemoveList();
@@ -736,6 +751,7 @@ void svProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
 
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isSeg3D = mitk::NodePredicateDataType::New("svMitkSeg3D");
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
@@ -747,6 +763,10 @@ void svProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     else if(isContourGroup->CheckNode(dataNode))
     {
         extension="ctgr";
+    }
+    else if(isSeg3D->CheckNode(dataNode))
+    {
+        extension="s3d";
     }
     else if(isModel->CheckNode(dataNode))
     {
@@ -820,7 +840,7 @@ void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mi
     //rename the corresponding files and folder if applicable, for svPath, svContourGroup, svModel, svMitkMesh,svMitkSimJob
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
-    mitk::NodePredicateDataType::Pointer isMitkSurface = mitk::NodePredicateDataType::New("Surface");
+    mitk::NodePredicateDataType::Pointer isSeg3D = mitk::NodePredicateDataType::New("svMitkSeg3D");
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
@@ -834,8 +854,9 @@ void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mi
     {
         extensions.push_back(".ctgr");
     }
-    else if(isMitkSurface->CheckNode(dataNode))
+    else if(isSeg3D->CheckNode(dataNode))
     {
+        extensions.push_back(".s3d");
         extensions.push_back(".vtp");
     }
     else if(isModel->CheckNode(dataNode))
@@ -859,7 +880,6 @@ void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mi
     }
     else
         return;
-
 
     QDir dir(QString::fromStdString(path));
     for(int i=0;i<extensions.size();i++)

@@ -78,6 +78,9 @@ void svProjectDataNodesPluginActivator::start(ctkPluginContext* context)
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("svContourGroup"), QString(":svcontourgroup.png"), isContourGroup, descriptorManager));
 
+    mitk::NodePredicateDataType::Pointer isSeg3D = mitk::NodePredicateDataType::New("svMitkSeg3D");
+    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("svMitkSeg3D"), QString(":svseg3d.png"), isSeg3D, descriptorManager));
+
     mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("svModelFolder");
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("svModelFolder"), QString(":svmodelfolder.png"), isModelFolder, descriptorManager));
 

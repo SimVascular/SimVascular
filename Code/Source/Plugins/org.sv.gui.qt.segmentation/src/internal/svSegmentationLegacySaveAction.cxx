@@ -61,7 +61,7 @@ void svSegmentationLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &s
 
         mitk::DataStorage::SetOfObjects::ConstPointer rsContourGroup=m_DataStorage->GetDerivations(selectedNode,mitk::NodePredicateDataType::New("svContourGroup"));
 
-        mitk::DataStorage::SetOfObjects::ConstPointer rsSeg3D=m_DataStorage->GetDerivations(selectedNode,mitk::NodePredicateDataType::New("svSeg3D"));
+        mitk::DataStorage::SetOfObjects::ConstPointer rsSeg3D=m_DataStorage->GetDerivations(selectedNode,mitk::NodePredicateDataType::New("svMitkSeg3D"));
 
         svSegmentationLegacyIO::WriteFiles(rsContourGroup, rsSeg3D, segDir);
 

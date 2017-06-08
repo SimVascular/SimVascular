@@ -1,5 +1,5 @@
-#include "svSegmentation2D.h"
-#include "ui_svSegmentation2D.h"
+#include "svSeg2DEdit.h"
+#include "ui_svSeg2DEdit.h"
 #include "ui_svLevelSet2DWidget.h"
 #include "ui_svLoftParamWidget.h"
 
@@ -36,10 +36,10 @@ using namespace std;
 
 #include <math.h>
 
-const QString svSegmentation2D::EXTENSION_ID = "org.sv.views.segmentation2d";
+const QString svSeg2DEdit::EXTENSION_ID = "org.sv.views.segmentation2d";
 
-svSegmentation2D::svSegmentation2D() :
-    ui(new Ui::svSegmentation2D)
+svSeg2DEdit::svSeg2DEdit() :
+    ui(new Ui::svSeg2DEdit)
 {
     m_ContourGroupChangeObserverTag=-1;
     m_ContourGroup=NULL;
@@ -59,7 +59,7 @@ svSegmentation2D::svSegmentation2D() :
     m_ContourGroupCreateWidget=NULL;
 }
 
-svSegmentation2D::~svSegmentation2D()
+svSeg2DEdit::~svSeg2DEdit()
 {
     delete ui;
 
@@ -71,7 +71,7 @@ svSegmentation2D::~svSegmentation2D()
         delete m_ContourGroupCreateWidget;
 }
 
-void svSegmentation2D::CreateQtPartControl( QWidget *parent )
+void svSeg2DEdit::CreateQtPartControl( QWidget *parent )
 {
     m_Parent=parent;
     ui->setupUi(parent);
@@ -150,24 +150,24 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
     connect(ui->btnPaste, SIGNAL(clicked()), this, SLOT(PasteContour()) );
 }
 
-void svSegmentation2D::Visible()
+void svSeg2DEdit::Visible()
 {
 //    ui->resliceSlider->turnOnReslice(true);
     OnSelectionChanged(GetDataManagerSelection());
 }
 
-void svSegmentation2D::Hidden()
+void svSeg2DEdit::Hidden()
 {
     ui->resliceSlider->turnOnReslice(false);
     ClearAll();
 }
 
-//bool svSegmentation2D::IsExclusiveFunctionality() const
+//bool svSeg2DEdit::IsExclusiveFunctionality() const
 //{
 //    return true;
 //}
 
-int svSegmentation2D::GetTimeStep()
+int svSeg2DEdit::GetTimeStep()
 {
     mitk::SliceNavigationController* timeNavigationController = NULL;
     if(m_DisplayWidget)
@@ -182,7 +182,7 @@ int svSegmentation2D::GetTimeStep()
 
 }
 
-void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
 //    if(!IsActivated())
     if(!IsVisible())
@@ -349,21 +349,21 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_DataInteractor->SetDataNode(m_ContourGroupNode);
 
     //Add Observer
-    itk::SimpleMemberCommand<svSegmentation2D>::Pointer groupChangeCommand = itk::SimpleMemberCommand<svSegmentation2D>::New();
-    groupChangeCommand->SetCallbackFunction(this, &svSegmentation2D::UpdateContourList);
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer groupChangeCommand = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    groupChangeCommand->SetCallbackFunction(this, &svSeg2DEdit::UpdateContourList);
     m_ContourGroupChangeObserverTag = m_ContourGroup->AddObserver( svContourGroupEvent(), groupChangeCommand);
 
-    itk::SimpleMemberCommand<svSegmentation2D>::Pointer loftCommand = itk::SimpleMemberCommand<svSegmentation2D>::New();
-    loftCommand->SetCallbackFunction(this, &svSegmentation2D::LoftContourGroup);
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer loftCommand = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    loftCommand->SetCallbackFunction(this, &svSeg2DEdit::LoftContourGroup);
     m_StartLoftContourGroupObserverTag = m_ContourGroup->AddObserver( svContourGroupChangeEvent(), loftCommand);
     m_StartLoftContourGroupObserverTag2 = m_ContourGroup->AddObserver( svContourChangeEvent(), loftCommand);
 
-    itk::SimpleMemberCommand<svSegmentation2D>::Pointer flagOnCommand = itk::SimpleMemberCommand<svSegmentation2D>::New();
-    flagOnCommand->SetCallbackFunction(this, &svSegmentation2D::ContourChangingOn);
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer flagOnCommand = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    flagOnCommand->SetCallbackFunction(this, &svSeg2DEdit::ContourChangingOn);
     m_StartChangingContourObserverTag = m_ContourGroup->AddObserver( StartChangingContourEvent(), flagOnCommand);
 
-    itk::SimpleMemberCommand<svSegmentation2D>::Pointer flagOffCommand = itk::SimpleMemberCommand<svSegmentation2D>::New();
-    flagOffCommand->SetCallbackFunction(this, &svSegmentation2D::ContourChangingOff);
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer flagOffCommand = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    flagOffCommand->SetCallbackFunction(this, &svSeg2DEdit::ContourChangingOff);
     m_EndChangingContourObserverTag = m_ContourGroup->AddObserver( EndChangingContourEvent(), flagOffCommand);
 
     double range[2]={0,100};
@@ -380,7 +380,7 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     ui->resliceSlider->turnOnReslice(true);
 }
 
-double svSegmentation2D::GetVolumeImageSpacing()
+double svSeg2DEdit::GetVolumeImageSpacing()
 {
     double minSpacing=0.1;
     if(m_Image)
@@ -391,7 +391,7 @@ double svSegmentation2D::GetVolumeImageSpacing()
     return minSpacing;
 }
 
-void svSegmentation2D::InsertContour(svContour* contour, int contourIndex)
+void svSeg2DEdit::InsertContour(svContour* contour, int contourIndex)
 {
     if(m_ContourGroup&&contour&&contourIndex>-2){
 
@@ -414,7 +414,7 @@ void svSegmentation2D::InsertContour(svContour* contour, int contourIndex)
     }
 }
 
-void svSegmentation2D::InsertContourByPathPosPoint(svContour* contour)
+void svSeg2DEdit::InsertContourByPathPosPoint(svContour* contour)
 {
     if(m_ContourGroup&&contour)
     {
@@ -439,7 +439,7 @@ void svSegmentation2D::InsertContourByPathPosPoint(svContour* contour)
 
 }
 
-void svSegmentation2D::SetContour(int contourIndex, svContour* newContour)
+void svSeg2DEdit::SetContour(int contourIndex, svContour* newContour)
 {
     if(m_ContourGroup&&contourIndex>-2)
     {
@@ -460,7 +460,7 @@ void svSegmentation2D::SetContour(int contourIndex, svContour* newContour)
     }
 }
 
-void svSegmentation2D::RemoveContour(int contourIndex)
+void svSeg2DEdit::RemoveContour(int contourIndex)
 {
     if(m_ContourGroup&&contourIndex>-2)
     {
@@ -481,7 +481,7 @@ void svSegmentation2D::RemoveContour(int contourIndex)
     }
 }
 
-std::vector<int> svSegmentation2D::GetBatchList()
+std::vector<int> svSeg2DEdit::GetBatchList()
 {
     std::vector<int> batchList;
 
@@ -553,7 +553,7 @@ std::vector<int> svSegmentation2D::GetBatchList()
 
 }
 
-svContour* svSegmentation2D::PostprocessContour(svContour* contour)
+svContour* svSeg2DEdit::PostprocessContour(svContour* contour)
 {
     svContour* contourNew=contour;
 
@@ -584,7 +584,7 @@ svContour* svSegmentation2D::PostprocessContour(svContour* contour)
     return contourNew;
 }
 
-void svSegmentation2D::CreateContours(SegmentationMethod method)
+void svSeg2DEdit::CreateContours(SegmentationMethod method)
 {
     if(m_cvImage==NULL)
         return;
@@ -669,14 +669,14 @@ void svSegmentation2D::CreateContours(SegmentationMethod method)
     //LoftContourGroup();
 }
 
-void svSegmentation2D::SetSecondaryWidgetsVisible(bool visible)
+void svSeg2DEdit::SetSecondaryWidgetsVisible(bool visible)
 {
     ui->smoothWidget->setVisible(visible);
     ui->splineWidget->setVisible(visible);
     ui->batchWidget->setVisible(visible);
 }
 
-void svSegmentation2D::ResetGUI()
+void svSeg2DEdit::ResetGUI()
 {
     if(m_CurrentParamWidget)
     {
@@ -695,7 +695,7 @@ void svSegmentation2D::ResetGUI()
     m_ContourChanging=false;
 }
 
-void svSegmentation2D::CreateLSContour()
+void svSeg2DEdit::CreateLSContour()
 {
     if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->lsParamWidgetContainer)
     {
@@ -715,7 +715,7 @@ void svSegmentation2D::CreateLSContour()
 
 }
 
-void svSegmentation2D::CreateThresholdContour()
+void svSeg2DEdit::CreateThresholdContour()
 {
     if(m_cvImage==NULL)
         return;
@@ -769,16 +769,16 @@ void svSegmentation2D::CreateThresholdContour()
     m_PreviewDataNodeInteractor->SetEventConfig("svSegmentationConfig.xml", us::ModuleRegistry::GetModule("svSegmentation"));
     m_PreviewDataNodeInteractor->SetDataNode(m_PreviewDataNode);
 
-    itk::SimpleMemberCommand<svSegmentation2D>::Pointer previewFinished = itk::SimpleMemberCommand<svSegmentation2D>::New();
-    previewFinished->SetCallbackFunction(this, &svSegmentation2D::FinishPreview);
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer previewFinished = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    previewFinished->SetCallbackFunction(this, &svSeg2DEdit::FinishPreview);
     m_PreviewContourModelObserverFinishTag = m_PreviewContourModel->AddObserver( EndInteractionContourModelEvent(), previewFinished);
 
-    itk::SimpleMemberCommand<svSegmentation2D>::Pointer previewUpdating = itk::SimpleMemberCommand<svSegmentation2D>::New();
-    previewUpdating->SetCallbackFunction(this, &svSegmentation2D::UpdatePreview);
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer previewUpdating = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    previewUpdating->SetCallbackFunction(this, &svSeg2DEdit::UpdatePreview);
     m_PreviewContourModelObserverUpdateTag = m_PreviewContourModel->AddObserver( UpdateInteractionContourModelEvent(), previewUpdating);
 }
 
-void svSegmentation2D::UpdatePreview()
+void svSeg2DEdit::UpdatePreview()
 {
     if(m_PreviewContourModel.IsNull())
          return;
@@ -790,7 +790,7 @@ void svSegmentation2D::UpdatePreview()
     }
 }
 
-void svSegmentation2D::FinishPreview()
+void svSeg2DEdit::FinishPreview()
 {
     if(m_PreviewContourModel.IsNull())
          return;
@@ -839,7 +839,7 @@ void svSegmentation2D::FinishPreview()
     ui->btnThreshold->setStyleSheet("");
 }
 
-//void svSegmentation2D::CreateEllipse()
+//void svSeg2DEdit::CreateEllipse()
 //{
 //    ResetGUI();
 
@@ -860,7 +860,7 @@ void svSegmentation2D::FinishPreview()
 //    InsertContourByPathPosPoint(contour);
 //}
 
-void svSegmentation2D::CreateEllipse()
+void svSeg2DEdit::CreateEllipse()
 {
     ResetGUI();
 
@@ -893,7 +893,7 @@ void svSegmentation2D::CreateEllipse()
     InsertContourByPathPosPoint(contour);
 }
 
-void svSegmentation2D::CreateCircle()
+void svSeg2DEdit::CreateCircle()
 {
     ResetGUI();
 
@@ -926,7 +926,7 @@ void svSegmentation2D::CreateCircle()
     InsertContourByPathPosPoint(contour);
 }
 
-void svSegmentation2D::CreateSplinePoly()
+void svSeg2DEdit::CreateSplinePoly()
 {
     ResetGUI();
 
@@ -961,7 +961,7 @@ void svSegmentation2D::CreateSplinePoly()
     InsertContourByPathPosPoint(contour);
 }
 
-void svSegmentation2D::CreatePolygon()
+void svSeg2DEdit::CreatePolygon()
 {
     ResetGUI();
 
@@ -984,7 +984,7 @@ void svSegmentation2D::CreatePolygon()
     InsertContourByPathPosPoint(contour);
 }
 
-void svSegmentation2D::SmoothSelected()
+void svSeg2DEdit::SmoothSelected()
 {
 //    int fourierNumber=12;
     int fourierNumber=ui->spinBoxSmoothNumber->value();
@@ -1003,7 +1003,7 @@ void svSegmentation2D::SmoothSelected()
     LoftContourGroup();
 }
 
-void svSegmentation2D::DeleteSelected()
+void svSeg2DEdit::DeleteSelected()
 {
     QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
     if(selectedRows.size()>0)
@@ -1014,7 +1014,7 @@ void svSegmentation2D::DeleteSelected()
     LoftContourGroup();
 }
 
-void svSegmentation2D::SelectItem(const QModelIndex & idx)
+void svSeg2DEdit::SelectItem(const QModelIndex & idx)
 {
     int index=idx.row();
 
@@ -1052,20 +1052,20 @@ void svSegmentation2D::SelectItem(const QModelIndex & idx)
 
 }
 
-void svSegmentation2D::NodeChanged(const mitk::DataNode* node)
+void svSeg2DEdit::NodeChanged(const mitk::DataNode* node)
 {
 }
 
-void svSegmentation2D::NodeAdded(const mitk::DataNode* node)
+void svSeg2DEdit::NodeAdded(const mitk::DataNode* node)
 {
 }
 
-void svSegmentation2D::NodeRemoved(const mitk::DataNode* node)
+void svSeg2DEdit::NodeRemoved(const mitk::DataNode* node)
 {
     OnSelectionChanged(GetDataManagerSelection());
 }
 
-void svSegmentation2D::ClearAll()
+void svSeg2DEdit::ClearAll()
 {
     //Remove Observer
     if(m_ContourGroup && m_ContourGroupChangeObserverTag!=-1)
@@ -1113,7 +1113,7 @@ void svSegmentation2D::ClearAll()
 
 }
 
-void svSegmentation2D::UpdateContourList()
+void svSeg2DEdit::UpdateContourList()
 {
     if(m_ContourGroup==NULL) return;
 
@@ -1141,7 +1141,7 @@ void svSegmentation2D::UpdateContourList()
 
 }
 
-void svSegmentation2D::LoftContourGroup()
+void svSeg2DEdit::LoftContourGroup()
 {
     if(m_ContourChanging)
         return;
@@ -1189,7 +1189,7 @@ void svSegmentation2D::LoftContourGroup()
 
 }
 
-void svSegmentation2D::ShowLoftWidget()
+void svSeg2DEdit::ShowLoftWidget()
 {
     svLoftingParam *param=m_ContourGroup->GetLoftingParam();
 
@@ -1197,7 +1197,7 @@ void svSegmentation2D::ShowLoftWidget()
     m_LoftWidget->show();
 }
 
-void svSegmentation2D::UpdateContourGroupLoftingParam()
+void svSeg2DEdit::UpdateContourGroupLoftingParam()
 {
     svLoftingParam *param=m_ContourGroup->GetLoftingParam();
     if(m_LoftWidget)
@@ -1214,68 +1214,68 @@ void svSegmentation2D::UpdateContourGroupLoftingParam()
 //    param->numModes=m_LoftWidget->ui->spinBoxNumModes->value();
 }
 
-void svSegmentation2D::OKLofting()
+void svSeg2DEdit::OKLofting()
 {
     UpdateContourGroupLoftingParam();
     LoftContourGroup();
     m_LoftWidget->hide();
 }
 
-void svSegmentation2D::ApplyLofting()
+void svSeg2DEdit::ApplyLofting()
 {
     UpdateContourGroupLoftingParam();
     LoftContourGroup();
 }
 
-void svSegmentation2D::HideLoftWidget()
+void svSeg2DEdit::HideLoftWidget()
 {
     m_LoftWidget->hide();
 }
 
-void svSegmentation2D::ContourChangingOn()
+void svSeg2DEdit::ContourChangingOn()
 {
     m_ContourChanging=true;
 }
 
-void svSegmentation2D::ContourChangingOff()
+void svSeg2DEdit::ContourChangingOff()
 {
     m_ContourChanging=false;
     if(m_CurrentSegButton)
         m_CurrentSegButton->setStyleSheet("");
 }
 
-void svSegmentation2D::UpdatePathResliceSize(double newSize)
+void svSeg2DEdit::UpdatePathResliceSize(double newSize)
 {
     if(m_ContourGroup)
         m_ContourGroup->SetResliceSize(newSize);
 }
 
-void svSegmentation2D::ManualContextMenuRequested()
+void svSeg2DEdit::ManualContextMenuRequested()
 {
     m_ManualMenu->popup(QCursor::pos());
 }
 
-void svSegmentation2D::ManualCircleContextMenuRequested(const QPoint&)
+void svSeg2DEdit::ManualCircleContextMenuRequested(const QPoint&)
 {
     CreateManualCircle();
 }
 
-void svSegmentation2D::ManualEllipseContextMenuRequested(const QPoint&)
+void svSeg2DEdit::ManualEllipseContextMenuRequested(const QPoint&)
 {
     CreateManualEllipse();
 }
 
-void svSegmentation2D::ManualSplinePolyContextMenuRequested(const QPoint&)
+void svSeg2DEdit::ManualSplinePolyContextMenuRequested(const QPoint&)
 {
     CreateManualSplinePoly();
 }
 
-void svSegmentation2D::ManualPolygonContextMenuRequested(const QPoint&)
+void svSeg2DEdit::ManualPolygonContextMenuRequested(const QPoint&)
 {
     CreateManualPolygon();
 }
 
-void svSegmentation2D::CreateManualCircle(bool)
+void svSeg2DEdit::CreateManualCircle(bool)
 {
     bool ok;
     QString text = QInputDialog::getText(m_Parent, tr("Circle Input"),
@@ -1340,7 +1340,7 @@ void svSegmentation2D::CreateManualCircle(bool)
     InsertContourByPathPosPoint(contour);
 }
 
-void svSegmentation2D::CreateManualEllipse(bool)
+void svSeg2DEdit::CreateManualEllipse(bool)
 {
     bool ok;
     QString text = QInputDialog::getText(m_Parent, tr("Ellipse Input"),
@@ -1441,7 +1441,7 @@ void svSegmentation2D::CreateManualEllipse(bool)
     InsertContourByPathPosPoint(contour);
 }
 
-void svSegmentation2D::CreateManualPolygonType(bool spline)
+void svSeg2DEdit::CreateManualPolygonType(bool spline)
 {
     bool ok;
     QString text = QInputDialog::getText(m_Parent, tr("Polygon Input"),
@@ -1522,17 +1522,17 @@ void svSegmentation2D::CreateManualPolygonType(bool spline)
     InsertContourByPathPosPoint(contour);
 }
 
-void svSegmentation2D::CreateManualSplinePoly(bool)
+void svSeg2DEdit::CreateManualSplinePoly(bool)
 {
     CreateManualPolygonType(true);
 }
 
-void svSegmentation2D::CreateManualPolygon(bool)
+void svSeg2DEdit::CreateManualPolygon(bool)
 {
     CreateManualPolygonType(false);
 }
 
-void svSegmentation2D::CopyContour()
+void svSeg2DEdit::CopyContour()
 {
     QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
     if(selectedRows.size()>0 && m_ContourGroup)
@@ -1541,7 +1541,7 @@ void svSegmentation2D::CopyContour()
     }
 }
 
-void svSegmentation2D::PasteContour()
+void svSeg2DEdit::PasteContour()
 {
     if(m_CopyContour==NULL)
         return;
@@ -1581,7 +1581,7 @@ void svSegmentation2D::PasteContour()
     LoftContourGroup();
 }
 
-void svSegmentation2D::NewGroup()
+void svSeg2DEdit::NewGroup()
 {
     if(m_ContourGroupNode.IsNull())
         return;

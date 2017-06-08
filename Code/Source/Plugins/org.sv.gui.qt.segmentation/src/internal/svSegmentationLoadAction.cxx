@@ -1,8 +1,8 @@
 #include "svSegmentationLoadAction.h"
 
-#include "svSegmentationLegacyIO.h"
-#include "svContourGroup.h"
 #include "svContourGroupIO.h"
+#include "svMitkSeg3D.h"
+#include "svMitkSeg3DIO.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <berryPlatform.h>
@@ -10,6 +10,8 @@
 #include <berryIPreferencesService.h>
 
 #include <mitkIOUtil.h>
+
+#include <vtkXMLPolyDataReader.h>
 
 #include <QFileDialog>
 
@@ -53,7 +55,7 @@ void svSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &selecte
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
-        QString filePath = QFileDialog::getOpenFileName(NULL, "Import Segmentation (Choose File)", lastFilePath, tr("SimVascular Contour Group (*.ctgr);;VTP Files (*.vtp)")
+        QString filePath = QFileDialog::getOpenFileName(NULL, "Import Segmentation (Choose File)", lastFilePath, tr("SimVascular Segmentations (*.ctgr *.s3d);;VTP Files (*.vtp)")
                                                               ,NULL,QFileDialog::DontUseNativeDialog);
 
         filePath=filePath.trimmed();
@@ -63,18 +65,8 @@ void svSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &selecte
         QFileInfo fi(filePath);
         std::string baseName=fi.baseName().toStdString();
 
-        if(filePath.endsWith("vtp"))
-        {
-            mitk::Surface::Pointer surface =mitk::IOUtil::LoadSurface(filePath.toStdString());
-            if(surface.IsNotNull())
-            {
-                mitk::DataNode::Pointer surfaceNode=mitk::DataNode::New();
-                surfaceNode->SetData(surface);
-                surfaceNode->SetName(baseName);
-                m_DataStorage->Add(surfaceNode,selectedNode);
-            }
-        }
-        else if(filePath.endsWith(".ctgr"))
+
+        if(filePath.endsWith(".ctgr"))
         {
             std::vector<mitk::BaseData::Pointer> nodedata=svContourGroupIO::ReadFile(filePath.toStdString());
 
@@ -89,6 +81,41 @@ void svSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &selecte
 
                     m_DataStorage->Add(groupNode,selectedNode);
                 }
+            }
+        }
+        else if(filePath.endsWith(".s3d"))
+        {
+            std::vector<mitk::BaseData::Pointer> nodedata=svMitkSeg3DIO::ReadFile(filePath.toStdString());
+
+            if(nodedata.size()>0)
+            {
+                mitk::BaseData::Pointer seg3Ddata=nodedata[0];
+                if(seg3Ddata.IsNotNull())
+                {
+                    mitk::DataNode::Pointer seg3DNode = mitk::DataNode::New();
+                    seg3DNode->SetData(seg3Ddata);
+                    seg3DNode->SetName(baseName);
+
+                    m_DataStorage->Add(seg3DNode,selectedNode);
+                }
+            }
+        }
+        else if(filePath.endsWith("vtp"))
+        {
+            vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+            reader->SetFileName(filePath.toStdString().c_str());
+            reader->Update();
+            vtkPolyData* vpd=reader->GetOutput();
+            if(vpd)
+            {
+                svMitkSeg3D::Pointer seg3D=svMitkSeg3D::New();
+                seg3D->SetVtkPolyData(vpd);
+
+                mitk::DataNode::Pointer seg3DNode = mitk::DataNode::New();
+                seg3DNode->SetData(seg3D);
+                seg3DNode->SetName(baseName);
+
+                m_DataStorage->Add(seg3DNode,selectedNode);
             }
         }
 

@@ -6,6 +6,7 @@
 #include <svSegmentationExports.h>
 
 #include "svContourGroupIO.h"
+#include "svMitkSeg3DIO.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 
@@ -41,6 +42,7 @@ struct SVSEGMENTATION_EXPORT RegistersvSegmentationObjectFactory{
 
   svSegmentationObjectFactory::Pointer m_Factory;
   svContourGroupIO* m_ContourGroupIO;
+  svMitkSeg3DIO* m_Seg3DIO;
 };
 
 #endif // SVSEGMENTATIONOBJECTFACTORY_H

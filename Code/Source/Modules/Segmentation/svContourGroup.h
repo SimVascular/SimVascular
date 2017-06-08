@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 
-struct svLoftingParam
+struct SVSEGMENTATION_EXPORT svLoftingParam
 {
     std::string method;
 

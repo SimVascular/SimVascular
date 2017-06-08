@@ -190,7 +190,7 @@
     </view>
     <view id="sv.segmentation2d"
       name="2D Segmentation"
-      class="svSegmentation2D"
+      class="svSeg2DEdit"
       icon="segmentation.png"
       location="left"
       type="gui"

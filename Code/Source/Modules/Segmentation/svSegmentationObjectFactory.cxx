@@ -112,12 +112,14 @@ RegistersvSegmentationObjectFactory::RegistersvSegmentationObjectFactory()
 {
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
     m_ContourGroupIO=new svContourGroupIO();
+    m_Seg3DIO=new svMitkSeg3DIO();
 }
 
 RegistersvSegmentationObjectFactory::~RegistersvSegmentationObjectFactory()
 {
     mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
     delete m_ContourGroupIO;
+    delete m_Seg3DIO;
 }
 
 //static RegistersvSegmentationObjectFactory registersvSegmentationObjectFactory;
