@@ -17,6 +17,7 @@ set(H_FILES
     svContourGroupIO.h
     svSegmentationLegacyIO.h
     svSegmentationObjectFactory.h
+    svSegmentation3D.h
 )
 
 set(CPP_FILES
@@ -38,6 +39,7 @@ set(CPP_FILES
     svContourGroupIO.cxx
     svSegmentationLegacyIO.cxx
     svSegmentationObjectFactory.cxx
+    svSegmentation3D.cxx
 )
 
 set(RESOURCE_FILES
