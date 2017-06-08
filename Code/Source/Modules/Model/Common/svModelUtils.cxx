@@ -1114,3 +1114,70 @@ double svModelUtils::CalculateVpdArea(vtkPolyData* vpd)
 
     return area;
 }
+
+bool svModelUtils::CheckPolyDataSurface(vtkPolyData* pd, std::string &msg)
+{
+    if(pd==NULL)
+    {
+      msg = "Polydata is empty\n";
+      return SV_ERROR;
+    }
+
+    pd->BuildLinks();
+
+    int numPolys  = pd->GetNumberOfCells();
+    int numPoints = pd->GetNumberOfPoints();
+
+    bool valid=true;
+    int numNotTriangles=0;
+    int numOpenEdges=0;
+    int numNonManifoldEdges=0;
+    for (int i=0; i<numPolys; i++)
+    {
+      vtkIdType npts, *pts;
+      pd->GetCellPoints(i, npts, pts);
+      if (npts != 3)
+      {
+        valid = false;
+        numNotTriangles++;
+      }
+      for (int j=0; j<npts; j++)
+      {
+        vtkIdType p0, p1;
+        p0 = pts[j];
+        p1 = pts[(j+1)%npts];
+
+        vtkNew(vtkIdList, edgeNeighbor);
+        pd->GetCellEdgeNeighbors(i, p0, p1, edgeNeighbor);
+
+        if (edgeNeighbor->GetNumberOfIds() > 1)
+          numNonManifoldEdges++;
+        else if (edgeNeighbor->GetNumberOfIds() == 0)
+          numOpenEdges++;
+      }
+    }
+
+    msg = "";
+    if (!valid)
+    {
+      msg = msg + "Surface contains non-triangular elements!\n";
+      msg = msg + "  Number of non-triangular elements: "+ std::to_string(numNotTriangles) + "\n";
+    }
+    msg = msg +  "  Number of elements: " + std::to_string(numPolys) + "\n";
+    msg = msg +  "  Number of points: " + std::to_string(numPoints) + "\n";
+    msg = msg +  "  Number of  non-manifold edges: " + std::to_string(numNonManifoldEdges) + "\n";
+    msg = msg +  "  Number of  open edges: " + std::to_string(numOpenEdges) + "\n";
+
+    return valid;
+}
+
+bool svModelUtils::TriangulateSurface(vtkPolyData* pd)
+{
+  vtkNew(vtkTriangleFilter, triangulator);
+  triangulator->SetInputData(pd);
+  triangulator->Update();
+
+  pd->DeepCopy(triangulator->GetOutput());
+
+  return SV_OK;
+}
