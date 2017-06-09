@@ -33,7 +33,7 @@ svSegmentation3D::~svSegmentation3D()
 vtkSmartPointer<vtkPolyData> svSegmentation3D::collidingFronts(vtkImageData* volumeImage,
   std::vector<std::vector<int>>& seeds1,
   std::vector<std::vector<int>>& seeds2,
-  int lowerThreshold =0, int upperThreshold=0)
+  int lowerThreshold, int upperThreshold)
 {
 
   typedef itk::Image<short int,3> InputType;
