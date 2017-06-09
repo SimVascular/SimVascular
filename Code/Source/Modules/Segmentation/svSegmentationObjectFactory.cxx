@@ -3,6 +3,7 @@
 #include "svContourModelVtkMapper2D.h"
 #include "svContourGroupVtkMapper2D.h"
 #include "svContourGroupVtkMapper3D.h"
+#include "svMitkSeg3DVtkMapper3D.h"
 
 #include "mitkCoreObjectFactory.h"
 #include "mitkProperties.h"
@@ -49,6 +50,11 @@ mitk::Mapper::Pointer svSegmentationObjectFactory::CreateMapper(mitk::DataNode* 
       newMapper = svContourGroupVtkMapper3D::New();
       newMapper->SetDataNode(node);
     }
+    else if( dynamic_cast<svMitkSeg3D*>(node->GetData())!=NULL )
+    {
+      newMapper = svMitkSeg3DVtkMapper3D::New();
+      newMapper->SetDataNode(node);
+    }
   }
   return newMapper;
 }
@@ -72,6 +78,10 @@ void svSegmentationObjectFactory::SetDefaultProperties(mitk::DataNode* node)
   {
       svContourGroupVtkMapper2D::SetDefaultProperties(node);
       svContourGroupVtkMapper3D::SetDefaultProperties(node);
+  }
+  if( dynamic_cast<svMitkSeg3D*>(node->GetData())!=NULL )
+  {
+    svMitkSeg3DVtkMapper3D::SetDefaultProperties(node);
   }
 }
 

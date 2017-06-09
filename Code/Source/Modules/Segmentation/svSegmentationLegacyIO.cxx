@@ -154,14 +154,17 @@ std::vector<mitk::DataNode::Pointer> svSegmentationLegacyIO::ReadFiles(QString s
         vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
         reader->SetFileName(filePath.toStdString().c_str());
         reader->Update();
-        vtkPolyData* vpd=reader->GetOutput();
-        if(vpd)
+        vtkSmartPointer<vtkPolyData> vpd=reader->GetOutput();
+        if(vpd!=NULL)
         {
-            svMitkSeg3D::Pointer seg3D=svMitkSeg3D::New();
+            svSeg3D* seg3D=new svSeg3D();
             seg3D->SetVtkPolyData(vpd);
 
+            svMitkSeg3D::Pointer mitkSeg3D=svMitkSeg3D::New();
+            mitkSeg3D->SetSeg3D(seg3D);
+
             mitk::DataNode::Pointer node = mitk::DataNode::New();
-            node->SetData(seg3D);
+            node->SetData(mitkSeg3D);
             node->SetName(seg3DList[i].toStdString());
 
             nodes.push_back(node);

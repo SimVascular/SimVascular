@@ -55,37 +55,46 @@ std::vector<mitk::BaseData::Pointer> svMitkSeg3DIO::ReadFile(std::string fileNam
         //        return result;
     }
 
-    svMitkSeg3D::Pointer seg3D = svMitkSeg3D::New();
-    std::string method="";
-    segElement->QueryStringAttribute("method",&method);
-    seg3D->SetMethod(method);
+    svMitkSeg3D::Pointer mitkSeg3D = svMitkSeg3D::New();
+    svSeg3D* seg3D=new svSeg3D();
+    svSeg3DParam& param=seg3D->GetParam();
 
     //read parameters
-
-
-    //read seeds
-    TiXmlElement* seedsElement = segElement->FirstChildElement("seeds");
-    if(seedsElement)
+    TiXmlElement* paramElement = segElement->FirstChildElement("param");
+    if(paramElement)
     {
-        for( TiXmlElement* seedElement = seedsElement->FirstChildElement("seed");
-             seedElement != nullptr;
-             seedElement = seedElement->NextSiblingElement("seed") )
+        paramElement->QueryStringAttribute("method",&param.method);
+        if(param.method!="")
         {
-            if (seedsElement == nullptr)
-                continue;
+            paramElement->QueryDoubleAttribute("lower_threshold",&param.lowerThreshold);
+            paramElement->QueryDoubleAttribute("upper_threshold",&param.upperThreshold);
 
-            svSeed seed;
+            //read seeds
+            TiXmlElement* seedsElement = paramElement->FirstChildElement("seeds");
+            if(seedsElement)
+            {
+                for( TiXmlElement* seedElement = seedsElement->FirstChildElement("seed");
+                     seedElement != nullptr;
+                     seedElement = seedElement->NextSiblingElement("seed") )
+                {
+                    if (seedsElement == nullptr)
+                        continue;
 
-            seedElement->QueryIntAttribute("id", &seed.id);
-            seedElement->QueryStringAttribute("type", &seed.type);
-            seedElement->QueryDoubleAttribute("x", &seed.x);
-            seedElement->QueryDoubleAttribute("y", &seed.y);
-            seedElement->QueryDoubleAttribute("z", &seed.z);
-            seedElement->QueryDoubleAttribute("radius", &seed.radius);
+                    svSeed seed;
 
-            seg3D->AddSeed(seed);
+                    seedElement->QueryIntAttribute("id", &seed.id);
+                    seedElement->QueryStringAttribute("type", &seed.type);
+                    seedElement->QueryDoubleAttribute("x", &seed.x);
+                    seedElement->QueryDoubleAttribute("y", &seed.y);
+                    seedElement->QueryDoubleAttribute("z", &seed.z);
+                    seedElement->QueryDoubleAttribute("radius", &seed.radius);
+
+                    param.AddSeed(seed);
+                }
+            }
         }
     }
+
     std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
     std::ifstream dataFile(dataFileName);
     if (dataFile) {
@@ -93,12 +102,14 @@ std::vector<mitk::BaseData::Pointer> svMitkSeg3DIO::ReadFile(std::string fileNam
 
         reader->SetFileName(dataFileName.c_str());
         reader->Update();
-        vtkPolyData* vpd=reader->GetOutput();
+        vtkSmartPointer<vtkPolyData> vpd=reader->GetOutput();
         if(vpd)
             seg3D->SetVtkPolyData(vpd);
     }
 
-    result.push_back(seg3D.GetPointer());
+    mitkSeg3D->SetSeg3D(seg3D);
+
+    result.push_back(mitkSeg3D.GetPointer());
     return result;
 }
 
@@ -117,8 +128,13 @@ void svMitkSeg3DIO::Write()
 
     std::string fileName=GetOutputLocation();
 
-    const svMitkSeg3D* seg3D = dynamic_cast<const svMitkSeg3D*>(this->GetInput());
+    const svMitkSeg3D* mitkSeg3D = dynamic_cast<const svMitkSeg3D*>(this->GetInput());
+    if(!mitkSeg3D) return;
+
+    svSeg3D* seg3D=mitkSeg3D->GetSeg3D();
     if(!seg3D) return;
+
+    svSeg3DParam& param=seg3D->GetParam();
 
     TiXmlDocument document;
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
@@ -129,24 +145,31 @@ void svMitkSeg3DIO::Write()
     document.LinkEndChild(version);
 
     auto  segElement = new TiXmlElement("seg3d");
-    segElement->SetAttribute("method", seg3D->GetMethod());
     document.LinkEndChild(segElement);
 
-    auto  seedsElement = new TiXmlElement("seeds");
-    segElement->LinkEndChild(seedsElement);
+    auto  paramElement = new TiXmlElement("param");
+    segElement->LinkEndChild(paramElement);
 
-    std::map<int, svSeed>& seedMap=seg3D->GetSeedMap();
-    for(auto s:seedMap)
+    if(param.method!="")
     {
-        auto  seedElement = new TiXmlElement("seed");
-        svSeed seed=s.second;
-        seedsElement->LinkEndChild(seedElement);
-        seedElement->SetAttribute("id",seed.id);
-        seedElement->SetAttribute("type", seed.type);
-        seedElement->SetDoubleAttribute("x", seed.x);
-        seedElement->SetDoubleAttribute("y", seed.y);
-        seedElement->SetDoubleAttribute("z", seed.z);
-        seedElement->SetDoubleAttribute("radius", seed.radius);
+        paramElement->SetAttribute("method", param.method);
+
+        auto  seedsElement = new TiXmlElement("seeds");
+        paramElement->LinkEndChild(seedsElement);
+
+        std::map<int, svSeed>& seedMap=param.GetSeedMap();
+        for(auto s:seedMap)
+        {
+            auto  seedElement = new TiXmlElement("seed");
+            svSeed seed=s.second;
+            seedsElement->LinkEndChild(seedElement);
+            seedElement->SetAttribute("id",seed.id);
+            seedElement->SetAttribute("type", seed.type);
+            seedElement->SetDoubleAttribute("x", seed.x);
+            seedElement->SetDoubleAttribute("y", seed.y);
+            seedElement->SetDoubleAttribute("z", seed.z);
+            seedElement->SetDoubleAttribute("radius", seed.radius);
+        }
     }
 
     std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";

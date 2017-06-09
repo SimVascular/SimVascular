@@ -16,8 +16,11 @@ set(H_FILES
     svContourGroupDataInteractor.h
     svContourGroupIO.h
     svSegmentationLegacyIO.h
+    svSeg3D.h
     svMitkSeg3D.h
+    svMitkSeg3DOperation.h
     svMitkSeg3DIO.h
+    svMitkSeg3DVtkMapper3D.h
     svSegmentationObjectFactory.h
 )
 
@@ -39,8 +42,11 @@ set(CPP_FILES
     svContourGroupDataInteractor.cxx
     svContourGroupIO.cxx
     svSegmentationLegacyIO.cxx
+    svSeg3D.cxx
     svMitkSeg3D.cxx
+    svMitkSeg3DOperation.cxx
     svMitkSeg3DIO.cxx
+    svMitkSeg3DVtkMapper3D.cxx
     svSegmentationObjectFactory.cxx
 )
 

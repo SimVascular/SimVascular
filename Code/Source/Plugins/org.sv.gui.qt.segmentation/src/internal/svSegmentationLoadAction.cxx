@@ -105,14 +105,17 @@ void svSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &selecte
             vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
             reader->SetFileName(filePath.toStdString().c_str());
             reader->Update();
-            vtkPolyData* vpd=reader->GetOutput();
+            vtkSmartPointer<vtkPolyData> vpd=reader->GetOutput();
             if(vpd)
             {
-                svMitkSeg3D::Pointer seg3D=svMitkSeg3D::New();
+                svSeg3D* seg3D=new svSeg3D();
                 seg3D->SetVtkPolyData(vpd);
 
+                svMitkSeg3D::Pointer mitkSeg3D=svMitkSeg3D::New();
+                mitkSeg3D->SetSeg3D(seg3D);
+
                 mitk::DataNode::Pointer seg3DNode = mitk::DataNode::New();
-                seg3DNode->SetData(seg3D);
+                seg3DNode->SetData(mitkSeg3D);
                 seg3DNode->SetName(baseName);
 
                 m_DataStorage->Add(seg3DNode,selectedNode);
