@@ -5,6 +5,7 @@
   <event_variant class="MousePressEvent" name="PrimaryButtonPressed">
     <attribute name="EventButton" value="LeftMouseButton" />
   </event_variant>
+
   <event_variant class="MousePressEvent" name="SecondaryButtonPressed">
     <attribute name="EventButton" value="RightMouseButton" />
   </event_variant>
@@ -14,16 +15,19 @@
     <attribute name="Modifiers" value="ctrl"/>
   </event_variant>
 
-
   <event_variant class="MouseDoubleClickEvent" name="PrimaryButtonDoubleClick">
     <attribute name="EventButton" value="LeftMouseButton" />
   </event_variant>
 
-
   <!-- MouseMoveEvents -->
   <event_variant class="MouseMoveEvent" name="MouseMove" />
+
   <event_variant class="MouseMoveEvent" name="PrimaryButtonPressedAndMouseMove">
     <attribute name="ButtonState" value="LeftMouseButton" />
+  </event_variant>
+
+  <event_variant class="MouseMoveEvent" name="SecondaryButtonPressedAndMouseMove">
+    <attribute name="ButtonState" value="RightMouseButton" />
   </event_variant>
 
   <!-- MouseReleaseEvents -->

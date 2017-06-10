@@ -445,6 +445,10 @@ void svSeg2DEdit::SetContour(int contourIndex, svContour* newContour)
     {
         svContour* originalContour=m_ContourGroup->GetContour(contourIndex);
 
+//        originalContour->DeselectControlPoint();
+//        originalContour->SetFinished();//show center/scaling points if applicable
+//        originalContour->SetClosed();
+
         int timeStep=GetTimeStep();
         svContourOperation* doOp = new svContourOperation(svContourOperation::OpSETCONTOUR,timeStep,newContour,contourIndex);
 
@@ -1031,7 +1035,7 @@ void svSeg2DEdit::SelectItem(const QModelIndex & idx)
 
             m_ContourGroup->SetContourSelected(index,true);
             svContour* contour=m_ContourGroup->GetContour(index);
-            if(contour)
+            if(contour && contour->GetControlPointNumber()>1)
             {
                 ui->resliceSlider->moveToPathPosPoint(contour->GetPathPosPoint());
 

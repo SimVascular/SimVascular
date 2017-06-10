@@ -21,6 +21,7 @@ set(H_FILES
     svMitkSeg3DOperation.h
     svMitkSeg3DIO.h
     svMitkSeg3DVtkMapper3D.h
+    svMitkSeg3DDataInteractor.h
     svSegmentationObjectFactory.h
 )
 
@@ -47,11 +48,13 @@ set(CPP_FILES
     svMitkSeg3DOperation.cxx
     svMitkSeg3DIO.cxx
     svMitkSeg3DVtkMapper3D.cxx
+    svMitkSeg3DDataInteractor.cxx
     svSegmentationObjectFactory.cxx
 )
 
 set(RESOURCE_FILES
     Interactions/svContourGroupInteraction.xml
     Interactions/svContourModelThresholdInteraction.xml
+    Interactions/svMitkSeg3DInteraction.xml
     Interactions/svSegmentationConfig.xml
 )

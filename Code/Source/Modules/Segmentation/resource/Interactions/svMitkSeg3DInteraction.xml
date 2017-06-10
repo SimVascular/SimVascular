@@ -1,0 +1,35 @@
+<statemachine NAME="svMitkSeg3DInteractor">
+
+  <state name="Start" startstate="true">
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverSeed">
+      <condition name="is_over_seed" />
+    </transition>
+
+  </state>
+
+  <state name="OverSeed">
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start" >
+      <condition name="is_over_seed" inverted="true" />
+    </transition>
+
+    <transition event_class="MouseMoveEvent" event_variant="PrimaryButtonPressedAndMouseMove" target="OverSeed" >
+      <action name="move_seed" />
+    </transition>
+
+    <transition event_class="MousePressEvent" event_variant="SecondaryButtonPressed" target="OverSeed" >
+      <action name="init_change_radius" />
+    </transition>
+
+    <transition event_class="MouseMoveEvent" event_variant="SecondaryButtonPressedAndMouseMove" target="OverSeed" >
+      <action name="change_radius" />
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="StdDelete" target="Start" >
+      <action name="delete_seed" />
+    </transition>
+
+  </state>
+
+</statemachine>
