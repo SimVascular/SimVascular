@@ -6,6 +6,14 @@
       <condition name="is_over_seed" />
     </transition>
 
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_S" target="Start">
+      <condition name="add_seed" />
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_E" target="Start">
+      <condition name="add_end_seed" />
+    </transition>
+
   </state>
 
   <state name="OverSeed">

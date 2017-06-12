@@ -224,6 +224,22 @@ void svMitkSeg3DDataInteractor::ChangeRadius(mitk::StateMachineAction*, mitk::In
 
 }
 
+void svMitkSeg3DDataInteractor::DeleteSeed( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
+{
+//    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
+//    if (positionEvent == NULL)
+//        return;
+
+    if(m_Seed && m_Param)
+    {
+        m_Param->RemoveSeed(m_Seed->id);
+        if(m_MitkSeg3D)
+            m_MitkSeg3D->Modified();//tell render that data changed
+    }
+
+    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+}
+
 //void svMitkSeg3DDataInteractor::FinishMove(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 //{
 //    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);

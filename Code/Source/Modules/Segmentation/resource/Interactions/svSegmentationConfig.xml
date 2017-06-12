@@ -39,5 +39,17 @@
     <attribute name="SignalName" value="Dummy-Event" />
   </event_variant>
 
+<!-- InteractionKeyEvent -->
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_S">
+    <attribute name="Key" value="S"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_E">
+    <attribute name="Key" value="E"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_F">
+    <attribute name="Key" value="F"/>
+  </event_variant>
 
 </config>
