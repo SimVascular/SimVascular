@@ -76,6 +76,10 @@ public:
     static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement);
 
     static double CalculateVpdArea(vtkPolyData* vpd);
+
+    static bool CheckPolyDataSurface(vtkPolyData* pd, std::string &msg);
+
+    static bool TriangulateSurface(vtkPolyData* pd);
 };
 
 #endif /* SVMODELUTILS_H */

@@ -73,7 +73,7 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
 
         bool copy=false;
 
-        if (QMessageBox::question(NULL, "Copyt into Project?", "Do you want to copy the image as vti into the project?",
+        if (QMessageBox::question(NULL, "Copy into Project?", "Do you want to copy the image as vti into the project?",
                                   QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
         {
             copy=true;
