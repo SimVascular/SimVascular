@@ -6,7 +6,7 @@ MAKE="make --jobs=$NUM_THREADS --keep-going"
 MAKE_TEST="xvfb-run -a make test ARGS=-V"
 
 ### install latest version of CMake
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
   wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.6.1-Linux-x86_64.sh
   chmod a+rx ./cmake-3.6.1-Linux-x86_64.sh
   sudo mkdir -p /usr/local/package
