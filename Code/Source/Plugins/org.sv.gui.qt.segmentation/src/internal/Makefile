@@ -57,7 +57,7 @@ HDRS	= \
     svSegmentationLoadAction.h \
     svLevelSet2DWidget.h \
     svLoftParamWidget.h \
-    svSegmentation2D.h \
+    svSeg2DEdit.h \
     svContourGroupPoint2DSizeAction.h \
     svContourGroupPoint3DSizeAction.h \
     svSegmentationPluginActivator.h
@@ -71,7 +71,7 @@ CXXSRCS	= \
     svSegmentationLoadAction.cxx \
     svLevelSet2DWidget.cxx \
     svLoftParamWidget.cxx \
-    svSegmentation2D.cxx \
+    svSeg2DEdit.cxx \
     svContourGroupPoint2DSizeAction.cxx \
     svContourGroupPoint3DSizeAction.cxx \
     svSegmentationPluginActivator.cxx
@@ -80,7 +80,7 @@ UIFILES = \
     svContourGroupCreate.ui \
     svLevelSet2DWidget.ui \
     svLoftParamWidget.ui \
-    svSegmentation2D.ui
+    svSeg2DEdit.ui
 
 QRCFILES = org_sv_gui_qt_segmentation_manifest.qrc \
            org_sv_gui_qt_segmentation_cached.qrc

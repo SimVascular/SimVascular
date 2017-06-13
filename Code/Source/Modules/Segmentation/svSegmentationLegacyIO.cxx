@@ -1,5 +1,6 @@
 #include "svSegmentationLegacyIO.h"
 #include "svContourGroup.h"
+#include "svMitkSeg3D.h"
 #include "svSegmentationUtils.h"
 #include <mitkNodePredicateDataType.h>
 
@@ -11,6 +12,11 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QDir>
+
+#include <vtkPolyData.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkErrorCode.h>
 
 mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString filePath)
 {
@@ -109,6 +115,7 @@ mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString fil
 std::vector<mitk::DataNode::Pointer> svSegmentationLegacyIO::ReadFiles(QString segDir)
 {
     QStringList groupList;
+    QStringList seg3DList;
     QFile inputFile(segDir+"/group_contents.tcl");
     if (inputFile.open(QIODevice::ReadOnly))
     {
@@ -119,6 +126,9 @@ std::vector<mitk::DataNode::Pointer> svSegmentationLegacyIO::ReadFiles(QString s
             QStringList list=line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
             if(list.size()>1 && list[0]=="group_readProfiles")
                 groupList<<list[1];
+
+            if(list.size()>1 && list[0]=="seg3d_readSurf")
+                seg3DList<<list[1];
         }
 
         inputFile.close();
@@ -134,6 +144,33 @@ std::vector<mitk::DataNode::Pointer> svSegmentationLegacyIO::ReadFiles(QString s
         mitk::DataNode::Pointer node=ReadContourGroupFile(filePath);
         nodes.push_back(node);
     }
+
+    for(int i=0;i<seg3DList.size();i++)
+    {
+        QString filePath=segDir+"/"+seg3DList[i]+".vtp";
+        if(!QFile(filePath).exists())
+            continue;
+
+        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+        reader->SetFileName(filePath.toStdString().c_str());
+        reader->Update();
+        vtkSmartPointer<vtkPolyData> vpd=reader->GetOutput();
+        if(vpd!=NULL)
+        {
+            svSeg3D* seg3D=new svSeg3D();
+            seg3D->SetVtkPolyData(vpd);
+
+            svMitkSeg3D::Pointer mitkSeg3D=svMitkSeg3D::New();
+            mitkSeg3D->SetSeg3D(seg3D);
+
+            mitk::DataNode::Pointer node = mitk::DataNode::New();
+            node->SetData(mitkSeg3D);
+            node->SetName(seg3DList[i].toStdString());
+
+            nodes.push_back(node);
+        }
+    }
+
     return nodes;
 }
 
@@ -186,6 +223,41 @@ void svSegmentationLegacyIO::WriteContourGroupFile(mitk::DataNode::Pointer node,
 
 void svSegmentationLegacyIO::WriteSeg3DFile(mitk::DataNode::Pointer node, QString filePath)
 {
+    if(node.IsNull()) return;
+
+    svMitkSeg3D* seg3D=dynamic_cast<svMitkSeg3D*>(node->GetData());
+    if(!seg3D) return;
+
+    vtkPolyData* vpd=seg3D->GetVtkPolyData();
+    if(!vpd) return;
+
+    QFile outputFile(filePath+".svsurf");
+    if(outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&outputFile);
+         out.setRealNumberPrecision(17);
+
+        std::string seg3DName=node->GetName();
+
+        out<<"name:"<<seg3DName.c_str()<<endl;
+        out<<"metadata:opacity .8 color steelblue"<<endl;
+        out<<"vtp_filename:"<<(seg3DName+".vtp").c_str()<<endl;
+        out<<"vtp_filename:476556BCC9C6082371E7EEF6A27F05BE"<<endl;//dummy entry
+
+        outputFile.close();
+    }
+
+    if(vpd)
+    {
+        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+        writer->SetFileName((filePath+".vtp").toStdString().c_str());
+        writer->SetInputData(vpd);
+        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
+        {
+            std::cerr << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
+        }
+    }
+
 
 }
 
@@ -238,7 +310,7 @@ void svSegmentationLegacyIO::WriteFiles(mitk::DataStorage::SetOfObjects::ConstPo
 
     for(int i=0;i<seg3DNodes->size();i++){
         mitk::DataNode::Pointer node=seg3DNodes->GetElement(i);
-        QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".vtp");
+        QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName()));
         WriteSeg3DFile(node, filePath);
     }
 

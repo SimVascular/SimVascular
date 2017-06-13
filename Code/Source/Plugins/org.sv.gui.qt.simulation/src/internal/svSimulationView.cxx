@@ -247,7 +247,7 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
 
-    ui->widgetCalculateFlows->hide();
+//    ui->widgetCalculateFlows->hide();
     connect(ui->checkBoxCalculateFlows, SIGNAL(clicked(bool)), this, SLOT(ShowCalculateFowsWidget(bool)) );
 
     SetupInternalSolverPaths();

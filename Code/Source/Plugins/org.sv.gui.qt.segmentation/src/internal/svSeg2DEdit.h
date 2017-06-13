@@ -1,5 +1,5 @@
-#ifndef SVSEGMENTATION2D_H
-#define SVSEGMENTATION2D_H
+#ifndef SVSEG2DEDIT_H
+#define SVSEG2DEDIT_H
 
 #include "svPath.h"
 #include "svSegmentationUtils.h"
@@ -36,10 +36,10 @@
 #include <QWidget>
 
 namespace Ui {
-class svSegmentation2D;
+class svSeg2DEdit;
 }
 
-class svSegmentation2D : public QmitkFunctionality
+class svSeg2DEdit : public QmitkFunctionality
 {
     Q_OBJECT
 
@@ -49,9 +49,9 @@ public:
 
     static const QString EXTENSION_ID;
 
-    svSegmentation2D();
+    svSeg2DEdit();
 
-    virtual ~svSegmentation2D();
+    virtual ~svSeg2DEdit();
 
 public slots:
 
@@ -182,7 +182,7 @@ protected:
 
     cvStrPts* m_cvImage;
 
-    Ui::svSegmentation2D *ui;
+    Ui::svSeg2DEdit *ui;
 
     svContourGroup* m_ContourGroup;
 
@@ -227,4 +227,4 @@ protected:
     svContourGroupCreate* m_ContourGroupCreateWidget;
 };
 
-#endif // SVSEGMENTATION2D_H
+#endif // SVSEG2DEDIT_H

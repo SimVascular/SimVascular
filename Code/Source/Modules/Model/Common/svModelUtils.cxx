@@ -3,14 +3,13 @@
 #include "svModelElementPolyData.h"
 #include "svPathElement.h"
 #include "svMath3.h"
+#include "svMitkSeg3D.h"
 
 #include "SimVascular.h"
 #include "cv_sys_geom.h"
 #include "cv_vmtk_utils.h"
 #include "cvPolyData.h"
 #include "cv_polydatasolid_utils.h"
-
-#include "mitkSurface.h"
 
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
@@ -105,10 +104,10 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     for(int i=0;i<segNodes.size();i++)
     {
         mitk::DataNode::Pointer segNode=segNodes[i];
-        mitk::Surface* surface=dynamic_cast<mitk::Surface*>(segNode->GetData());
-        if(surface && surface->GetVtkPolyData())
+        svMitkSeg3D* seg3D=dynamic_cast<svMitkSeg3D*>(segNode->GetData());
+        if(seg3D && seg3D->GetVtkPolyData())
         {
-            vtps.push_back(surface->GetVtkPolyData());
+            vtps.push_back(seg3D->GetVtkPolyData());
             segNames.push_back(segNode->GetName());
         }
     }

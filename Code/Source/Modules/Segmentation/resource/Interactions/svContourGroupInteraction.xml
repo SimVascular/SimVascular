@@ -61,6 +61,16 @@
     <transition event_class="MouseDoubleClickEvent" event_variant="PrimaryButtonDoubleClick" target="ContourPlaced" >
       <condition name="minimal_contour_is_finished" inverted="true" />
     </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_F" target="Start" >
+      <condition name="minimal_contour_is_finished" />
+      <action name="finalize_contour" />"
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_F" target="ContourPlaced" >
+      <condition name="minimal_contour_is_finished" inverted="true" />
+    </transition>
+
   </state>
 
   <state name="EditContour">

@@ -69,7 +69,7 @@ void svContourPolygon::SetControlPoint(int index, mitk::Point3D point)
     {
         Scale(m_ControlPoints[0], m_ControlPoints[index], point);
     }
-    else
+    else if(index<m_ControlPoints.size())
     {
         m_ControlPoints[index]=point;
         ControlPointsChanged();

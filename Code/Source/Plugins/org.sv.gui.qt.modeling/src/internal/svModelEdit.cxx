@@ -13,7 +13,6 @@
 #include "cv_polydatasolid_utils.h"
 
 #include <mitkNodePredicateDataType.h>
-#include <mitkSurface.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
 #include <mitkProgressBar.h>

@@ -13,10 +13,10 @@
 #include "svProjectManager.h"
 #include "svPath.h"
 #include "svContourGroup.h"
+#include "svMitkSeg3D.h"
 #include "svModel.h"
 #include "svMitkMesh.h"
 #include "svMitkSimJob.h"
-#include "mitkSurface.h"
 
 #include <QMenu>
 #include <QMenuBar>
@@ -640,12 +640,14 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
                 idx=1;
             else if(viewID=="org.sv.views.segmentation2d")
                 idx=2;
-            else if(viewID=="org.sv.views.modeling")
+            else if(viewID=="org.sv.views.segmentation3d")
                 idx=3;
-            else if(viewID=="org.sv.views.meshing")
+            else if(viewID=="org.sv.views.modeling")
                 idx=4;
-            else if(viewID=="org.sv.views.simulation")
+            else if(viewID=="org.sv.views.meshing")
                 idx=5;
+            else if(viewID=="org.sv.views.simulation")
+                idx=6;
             else
             {
                 svIdx++;
@@ -1117,6 +1119,7 @@ void svWorkbenchWindowAdvisor::ShowSVView()
 
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isSeg3D = mitk::NodePredicateDataType::New("svMitkSeg3D");
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
@@ -1134,6 +1137,10 @@ void svWorkbenchWindowAdvisor::ShowSVView()
     else if(isContourGroup->CheckNode(selectedNode))
     {
        page->ShowView("org.sv.views.segmentation2d");
+    }
+    else if(isSeg3D->CheckNode(selectedNode))
+    {
+       page->ShowView("org.sv.views.segmentation3d");
     }
     else if(isModel->CheckNode(selectedNode))
     {
@@ -1842,7 +1849,7 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
 
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
-    mitk::NodePredicateDataType::Pointer isMitkSurface = mitk::NodePredicateDataType::New("Surface");
+    mitk::NodePredicateDataType::Pointer isSeg3D = mitk::NodePredicateDataType::New("svMitkSeg3D");
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
@@ -1862,11 +1869,11 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
         else
             return;
     }
-    else if(isContourGroup->CheckNode(m_CopyDataNode) || isMitkSurface->CheckNode(m_CopyDataNode))
+    else if(isContourGroup->CheckNode(m_CopyDataNode) || isSeg3D->CheckNode(m_CopyDataNode))
     {
         if(isSegFolder->CheckNode(node))
             parentNode=node;
-        else if(isContourGroup->CheckNode(node) || isMitkSurface->CheckNode(node))
+        else if(isContourGroup->CheckNode(node) || isSeg3D->CheckNode(node))
         {
             mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
             if(rs->size()>0)
@@ -1945,10 +1952,10 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
         newNode->SetData(group->Clone());
     }
 
-    mitk::Surface* surface=dynamic_cast<mitk::Surface*>(m_CopyDataNode->GetData());
-    if(surface)
+    svMitkSeg3D* seg3D=dynamic_cast<svMitkSeg3D*>(m_CopyDataNode->GetData());
+    if(seg3D)
     {
-        newNode->SetData(surface->Clone());
+        newNode->SetData(seg3D->Clone());
     }
 
     svModel* model=dynamic_cast<svModel*>(m_CopyDataNode->GetData());

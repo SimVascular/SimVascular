@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>svSegmentation2D</class>
- <widget class="QWidget" name="svSegmentation2D">
+ <class>svSeg2DEdit</class>
+ <widget class="QWidget" name="svSeg2DEdit">
   <property name="geometry">
    <rect>
     <x>0</x>

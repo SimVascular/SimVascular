@@ -5,6 +5,7 @@
   <event_variant class="MousePressEvent" name="PrimaryButtonPressed">
     <attribute name="EventButton" value="LeftMouseButton" />
   </event_variant>
+
   <event_variant class="MousePressEvent" name="SecondaryButtonPressed">
     <attribute name="EventButton" value="RightMouseButton" />
   </event_variant>
@@ -14,16 +15,24 @@
     <attribute name="Modifiers" value="ctrl"/>
   </event_variant>
 
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed_Shift">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
 
   <event_variant class="MouseDoubleClickEvent" name="PrimaryButtonDoubleClick">
     <attribute name="EventButton" value="LeftMouseButton" />
   </event_variant>
 
-
   <!-- MouseMoveEvents -->
   <event_variant class="MouseMoveEvent" name="MouseMove" />
+
   <event_variant class="MouseMoveEvent" name="PrimaryButtonPressedAndMouseMove">
     <attribute name="ButtonState" value="LeftMouseButton" />
+  </event_variant>
+
+  <event_variant class="MouseMoveEvent" name="SecondaryButtonPressedAndMouseMove">
+    <attribute name="ButtonState" value="RightMouseButton" />
   </event_variant>
 
   <!-- MouseReleaseEvents -->
@@ -35,5 +44,17 @@
     <attribute name="SignalName" value="Dummy-Event" />
   </event_variant>
 
+<!-- InteractionKeyEvent -->
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_S">
+    <attribute name="Key" value="S"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_E">
+    <attribute name="Key" value="E"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_F">
+    <attribute name="Key" value="F"/>
+  </event_variant>
 
 </config>
