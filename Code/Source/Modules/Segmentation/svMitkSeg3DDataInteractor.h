@@ -17,7 +17,7 @@ public:
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
-    SetMinRadius(double radius) {m_MinRadius=radius;}
+    void SetMinRadius(double radius) {m_MinRadius=radius;}
 
 protected:
 
