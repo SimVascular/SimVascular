@@ -35,6 +35,9 @@ set(proj VTK)
 # simvascular_add_new_external macro
 if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
   set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/vtk-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION} CACHE PATH "Force ${proj} dir to externals" FORCE)
+  if(WIN32)
+    set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force VTK DLL Path")
+  endif()
 endif()
 # Find VTK, specific components
 simvascular_external(${proj}

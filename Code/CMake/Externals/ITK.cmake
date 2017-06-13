@@ -36,6 +36,9 @@ if(SV_USE_${proj})
   # simvascular_add_new_external macro
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
     set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/${proj}-${${proj}_MAJOR_VERSION}.${ITK_MINOR_VERSION} CACHE PATH "Force ${proj} dir to externals" FORCE)
+    if(WIN32)
+      set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force ITK DLL Path")
+    endif()
   endif()
   # Find ITK
   simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})

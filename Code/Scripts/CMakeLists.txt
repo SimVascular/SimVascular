@@ -110,8 +110,8 @@ endif()
 # Add Qt if it was used
 if(SV_USE_QT OR SV_USE_QT_GUI)
   if(QT_DLL_PATH)
-    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${QT_DLL_PATH}" developer_script_string)
-    set_env_string_concat(QT_PLUGIN_PATH "${QT_PLUGIN_PATH}" developer_script_string)
+    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} ${QT_DLL_PATH} developer_script_string)
+    set_env_string_concat(QT_PLUGIN_PATH ${QT_PLUGIN_PATH} developer_script_string)
     if(WIN32)
       set(developer_script_string "${developer_script_string}REM Plugins Path for Qt GUI\n")
       set(install_script_string "${install_script_string}REM Plugins Path for Qt GUI\n")
@@ -125,6 +125,11 @@ if(SV_USE_QT OR SV_USE_QT_GUI)
       append_env_string_concat(SV_PLUGIN_PATH "%SV_HOME%/Bin/plugins" developer_script_string)
     endif()
   endif()
+endif()
+
+# Add Tcl path for win32
+if(WIN32)
+  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${TCL_DLL_PATH}" developer_script_string)
 endif()
 
 foreach(proj ${SV_EXTERNAL_SHARED_LIBS})
