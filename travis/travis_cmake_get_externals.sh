@@ -9,8 +9,6 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
   sudo ln -s /usr/local/package/cmake-3.6.1-Linux-x86_64/bin/cmake-gui /usr/local/bin/cmake-gui
   sudo ln -s /usr/local/package/cmake-3.6.1-Linux-x86_64/bin/cpack     /usr/local/bin/cpack
   sudo ln -s /usr/local/package/cmake-3.6.1-Linux-x86_64/bin/ctest     /usr/local/bin/ctest
-  echo "Version of CMake: "
-  cmake --version
 fi
 
 #compilers
