@@ -50,12 +50,6 @@ protected:
 
     void FetchDataParam();
 
-//    void AddSeed(svSeed seed, std::string type);
-
-//    std::map<int, svSeed>* GetSeedMap();
-
-//    svSeg3DParam* GetParam();
-
 private:
 
     svMitkSeg3D* m_MitkSeg3D;
@@ -72,24 +66,6 @@ private:
 
     double m_OriginalRadius;
 
-//    mitk::Point3D m_PreviousLocation;
-
-//    mitk::Vector3D m_SumVec;
-
-//    bool m_Interaction3D;
-
 };
-
-//itkEventMacro( StartPlacementContourEvent, svContourEvent );
-//itkEventMacro( EndPlacementContourEvent, svContourEvent );
-//itkEventMacro( StartChangingContourEvent, itk::AnyEvent );
-//itkEventMacro( EndChangingContourEvent, itk::AnyEvent );
-//itkEventMacro( SelectContourEvent, svContourEvent );
-//itkEventMacro( StartInteractionContourEvent, svContourEvent );
-//itkEventMacro( EndInteractionContourEvent, svContourEvent );
-//itkEventMacro( StartHoverContourEvent, svContourEvent );
-//itkEventMacro( EndHoverContourEvent, svContourEvent );
-
-//itkEventMacro( StartLoftContourGroupEvent, svContourGroupEvent );
 
 #endif // SVMITKSEG3DDATAINTERACTOR_H

@@ -117,16 +117,14 @@ void svMitkSeg3DVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *render
         }
     }
 
-    //    if (NumberOfSelectedAdded > 0)
-    //    {
-    ls->m_SelectedSeedVtkPolyDataMapper->SetInputConnection(selectedSeeds->GetOutputPort());
-    //    }
+    if (NumberOfSelectedAdded > 0)
+        ls->m_SelectedSeedVtkPolyDataMapper->SetInputConnection(selectedSeeds->GetOutputPort());
 
-    //    if (NumberOfUnselectedAdded > 0)
-    //    {
-    ls->m_SeedVtkPolyDataMapper->SetInputConnection(commonSeeds->GetOutputPort());
-    //    }
-    ls->m_EndSeedVtkPolyDataMapper->SetInputConnection(endSeeds->GetOutputPort());
+    if (NumberOfCommonAdded > 0)
+        ls->m_SeedVtkPolyDataMapper->SetInputConnection(commonSeeds->GetOutputPort());
+
+    if (NumberOfEndAdded > 0)
+        ls->m_EndSeedVtkPolyDataMapper->SetInputConnection(endSeeds->GetOutputPort());
 
     double selectedSeedColor[3]={1,0,0};
     mitk::ColorProperty* colorprop = dynamic_cast<mitk::ColorProperty*>(node->GetProperty("seed.color.select", renderer));
@@ -164,9 +162,20 @@ void svMitkSeg3DVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *render
 
     if(visible)
     {
-        ls->m_SelectedSeedActor->VisibilityOn();
-        ls->m_SeedActor->VisibilityOn();
-        ls->m_EndSeedActor->VisibilityOn();
+        if(NumberOfSelectedAdded)
+            ls->m_SelectedSeedActor->VisibilityOn();
+        else
+            ls->m_SelectedSeedActor->VisibilityOff();
+
+        if(NumberOfCommonAdded)
+            ls->m_SeedActor->VisibilityOn();
+        else
+            ls->m_SeedActor->VisibilityOff();
+
+        if(NumberOfEndAdded)
+            ls->m_EndSeedActor->VisibilityOn();
+        else
+            ls->m_EndSeedActor->VisibilityOff();
     }
 
 }

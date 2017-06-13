@@ -3,6 +3,7 @@
 
 #include "svVtkUtils.h"
 #include "svSeg3DUtils.h"
+#include "svMitkSeg3DOperation.h"
 
 #include <mitkImage.h>
 #include <mitkOperationEvent.h>
@@ -149,6 +150,14 @@ void svSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         m_VtkImage->GetScalarRange(range);
 
     m_DataInteractor = svMitkSeg3DDataInteractor::New();
+    if(m_VtkImage)
+    {
+        double spacing[3];
+        m_VtkImage->GetSpacing(spacing);
+        double minSpacing=std::min(spacing[0],std::min(spacing[1],spacing[2]));
+        m_DataInteractor->SetMinRadius(minSpacing);
+    }
+
     m_DataInteractor->LoadStateMachine("svMitkSeg3DInteraction.xml", us::ModuleRegistry::GetModule("svSegmentation"));
     m_DataInteractor->SetEventConfig("svSegmentationConfig.xml", us::ModuleRegistry::GetModule("svSegmentation"));
     m_DataInteractor->SetDataNode(m_MitkSeg3DNode);
@@ -157,7 +166,6 @@ void svSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     svSeg3DParam* param=NULL;
     if(seg3D)
         param=&(seg3D->GetParam());
-
 
     bool seedVisible=false;
     m_MitkSeg3DNode->GetBoolProperty("seed.visible", seedVisible);
@@ -187,52 +195,74 @@ void svSeg3DEdit::SetSeedVisibility(bool checked)
 
 void svSeg3DEdit::CreateByCollidingFronts()
 {
-//    if(!m_MitkSeg3D)
-//        return;
+    if(!m_MitkSeg3D)
+        return;
 
-//    svSeg3D* seg3D=m_MitkSeg3D->GetSeg3D();
-//    if(!seg3D)
-//        return;
+    svSeg3D* seg3D=m_MitkSeg3D->GetSeg3D();
+    if(!seg3D)
+        return;
 
-//    if(!m_VtkImage){
-//        QMessageBox::warning(NULL,"No image found for this project","Make sure the image is loaded!");
-//        return;
-//    }
+    if(!m_VtkImage){
+        QMessageBox::warning(NULL,"No image found for this project","Make sure the image is loaded!");
+        return;
+    }
 
-//    svSeg3DParam param=seg3D->GetParam();
-//    std::map<int,svSeed> seedMap=param.GetSeedMap();
+    svSeg3DParam param=seg3D->GetParam();
+    std::map<int,svSeed> seedMap=param.GetSeedMap();
 
-//    double spacing[3], origin[3];
-//    m_VtkImage->GetOrigin(origin);
-//    m_VtkImage->GetSpacing(spacing);
+    double spacing[3], origin[3];
+    m_VtkImage->GetOrigin(origin);
+    m_VtkImage->GetSpacing(spacing);
 
-//    std::vector<std::vector<int>> startSeeds;
-//    std::vector<std::vector<int>> endSeeds;
+    std::vector<std::vector<int>> startSeeds;
+    std::vector<std::vector<int>> endSeeds;
 
-//    for(auto s:seedMap)
-//    {
-//        svSeed seed=s.second;
-//        int ix=(seed.x-origin[0])/spacing[0];
-//        int iy=(seed.y-origin[1])/spacing[1];
-//        int iz=(seed.z-origin[2])/spacing[2];
+    for(auto s:seedMap)
+    {
+        svSeed seed=s.second;
+        int ix=(seed.x-origin[0])/spacing[0];
+        int iy=(seed.y-origin[1])/spacing[1];
+        int iz=(seed.z-origin[2])/spacing[2];
 
-//        std::vector<int> iseed{ix,iy,iz};
+        std::vector<int> iseed{ix,iy,iz};
 
-//        if(seed.type=="end")
-//            endSeeds.push_back(iseed);
-//        else
-//            startSeeds.push_back(iseed);
-//    }
+        if(seed.type=="end")
+            endSeeds.push_back(iseed);
+        else
+            startSeeds.push_back(iseed);
+    }
 
-//    if(startSeeds.size()==0 || endSeeds.size()==0)
-//    {
-//        QMessageBox::warning(NULL,"Seeds Missing","Please add seeds before segmenting!");
-//        return;
-//    }
+    if(startSeeds.size()==0 || endSeeds.size()==0)
+    {
+        QMessageBox::warning(NULL,"Seeds Missing","Please add seeds before segmenting!");
+        return;
+    }
 
+    double lowerThreshold=ui->widgetThresholdCF->minimumValue();
+    double upperThreshold=ui->widgetThresholdCF->maximumValue();
 
+    vtkSmartPointer<vtkPolyData> vpdSeg=svSeg3DUtils::collidingFronts(m_VtkImage,startSeeds,endSeeds,lowerThreshold,upperThreshold);
 
+    svSeg3D* newSeg3D=new svSeg3D();
+    svSeg3DParam newParam;
+    newParam.method="colliding fronts";
+    newParam.lowerThreshold=lowerThreshold;
+    newParam.upperThreshold=upperThreshold;
+    newParam.seedMap=param.GetSeedMap();
 
+    newSeg3D->SetParam(newParam);
+    newSeg3D->SetVtkPolyData(vpdSeg);
+
+    seg3D->SetParam(seg3D->GetInnerParam());//restore to the original param
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+    svMitkSeg3DOperation* doOp = new svMitkSeg3DOperation(svMitkSeg3DOperation::OpSETSEG3D,newSeg3D);
+    svMitkSeg3DOperation* undoOp = new svMitkSeg3DOperation(svMitkSeg3DOperation::OpSETSEG3D,seg3D);
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_MitkSeg3D, doOp, undoOp, "Set 3D Segmentation");
+    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    m_MitkSeg3D->ExecuteOperation(doOp);
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 void svSeg3DEdit::NodeChanged(const mitk::DataNode* node)

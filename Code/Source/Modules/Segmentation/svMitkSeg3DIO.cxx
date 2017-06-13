@@ -155,6 +155,10 @@ void svMitkSeg3DIO::Write()
         {
             paramElement->SetAttribute("method", param.method);
 
+            paramElement->SetDoubleAttribute("lower_threshold", param.lowerThreshold);
+            paramElement->SetDoubleAttribute("upper_threshold", param.upperThreshold);
+
+
             auto  seedsElement = new TiXmlElement("seeds");
             paramElement->LinkEndChild(seedsElement);
 

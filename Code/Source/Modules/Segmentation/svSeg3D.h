@@ -46,8 +46,20 @@ struct SVSEGMENTATION_EXPORT svSeed
     {
     }
 
-    svSeed(const svSeed &other)
+    svSeed(double xx, double yy, double zz, double r, std::string ttype="")
         : id(-1)
+        , type(ttype)
+        , x(xx)
+        , y(yy)
+        , z(zz)
+        , radius(r)
+        , selected(false)
+        , status("")
+    {
+    }
+
+    svSeed(const svSeed &other)
+        : id(other.id)
         , type(other.type)
         , x(other.x)
         , y(other.y)

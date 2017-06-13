@@ -6,25 +6,9 @@
 
 #include <QmitkFunctionality.h>
 
-//#include <mitkDataStorage.h>
-//#include <mitkDataNode.h>
-//#include <mitkSurface.h>
-//#include <mitkPointSet.h>
-//#include <mitkDataInteractor.h>
-//#include <mitkImage.h>
-
-//#include <vtkPoints.h>
-//#include <vtkSmartPointer.h>
-//#include <vtkActor.h>
-//#include <vtkTransform.h>
-
 #include <vtkImageData.h>
 
 #include <ctkRangeWidget.h>
-
-//#include <QSlider>
-//#include <QPushButton>
-//#include <QWidget>
 
 namespace Ui {
 class svSeg3DEdit;
@@ -81,8 +65,6 @@ protected:
     QWidget* m_Parent;
 
     Ui::svSeg3DEdit *ui;
-
-//    mitk::Image* m_Image;
 
     vtkImageData* m_VtkImage;
 

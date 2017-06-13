@@ -56,44 +56,6 @@ void svMitkSeg3DDataInteractor::FetchDataParam()
     }
 }
 
-//svSeg3DParam* svMitkSeg3DDataInteractor::GetParam()
-//{
-//    svSeg3DParam* param=NULL;
-
-//    svMitkSeg3D* mitkSeg3D = dynamic_cast<svMitkSeg3D*>( GetDataNode()->GetData() );
-//    if(mitkSeg3D)
-//    {
-//        svSeg3D* seg3D=mitkSeg3D->GetSeg3D();
-//        if(seg3D)
-//        {
-//            param=&(seg3D->GetParam());
-//        }
-//    }
-
-//    return param;
-//}
-
-//std::map<int, svSeed>* svMitkSeg3DDataInteractor::GetSeedMap()
-//{
-//    std::map<int, svSeed>* seedMap=NULL;
-
-//    svSeg3DParam* param=GetParam();
-//    if(param)
-//        seedMap=&(param->GetSeedMap());
-
-//    return seedMap;
-//}
-
-//void svMitkSeg3DDataInteractor::AddSeed(svSeed seed, std::string type)
-//{
-//    svSeg3DParam* param=GetParam();
-
-//    if(param==NULL)
-//        return;
-
-//    param->AddSeed()
-//}
-
 // ==========Conditions=========
 
 bool svMitkSeg3DDataInteractor::IsOverSeed( const mitk::InteractionEvent* interactionEvent )
@@ -146,7 +108,8 @@ void svMitkSeg3DDataInteractor::AddSeed(mitk::StateMachineAction*, mitk::Interac
     if(m_Param)
     {
         mitk::Point3D point = positionEvent->GetPositionInWorld();
-        m_Param->AddSeed(svSeed(point[0],point[1],point[2]));
+        m_Param->AddSeed(svSeed(point[0],point[1],point[2],10*m_MinRadius));
+//        m_MitkSeg3D->SetDataModified();
         m_MitkSeg3D->Modified();//tell render that data changed
     }
 
@@ -164,7 +127,7 @@ void svMitkSeg3DDataInteractor::AddEndSeed(mitk::StateMachineAction*, mitk::Inte
     if(m_Param)
     {
         mitk::Point3D point = positionEvent->GetPositionInWorld();
-        m_Param->AddSeed(svSeed(point[0],point[1],point[2],"end"));
+        m_Param->AddSeed(svSeed(point[0],point[1],point[2],10*m_MinRadius,"end"));
         m_MitkSeg3D->Modified();//tell render that data changed
     }
 
@@ -212,7 +175,6 @@ void svMitkSeg3DDataInteractor::ChangeRadius(mitk::StateMachineAction*, mitk::In
     if(m_Seed)
     {
         mitk::Point3D point = positionEvent->GetPositionInWorld();
-//        double dist=m_LastPoint.EuclideanDistanceTo(point);
         double dz=point[2]-m_LastPoint[2];
         double newRadius=m_OriginalRadius+dz;
 
@@ -230,10 +192,6 @@ void svMitkSeg3DDataInteractor::ChangeRadius(mitk::StateMachineAction*, mitk::In
 
 void svMitkSeg3DDataInteractor::DeleteSeed( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
-//    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-//    if (positionEvent == NULL)
-//        return;
-
     if(m_Seed && m_Param)
     {
         m_Param->RemoveSeed(m_Seed->id);
@@ -244,55 +202,5 @@ void svMitkSeg3DDataInteractor::DeleteSeed( mitk::StateMachineAction*, mitk::Int
     interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
 }
 
-//void svMitkSeg3DDataInteractor::FinishMove(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
-//{
-//    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
 
-//    if ( positionEvent == NULL )
-//        return;
-
-//    if(m_Contour==NULL)
-//        return;
-
-//    int selectedIndex=m_Contour->GetControlPointSelectedIndex();
-//    mitk::Point3D point = m_Contour->GetControlPoint(selectedIndex);
-
-//    svContourGroup* group = dynamic_cast<svContourGroup *>( GetDataNode()->GetData() );
-
-//    if(group==NULL)
-//        return;
-
-//    group->InvokeEvent(EndChangingContourEvent());
-
-//    svContourOperation* doOp = new svContourOperation(svContourOperation::OpMOVECONTROLPOINT,m_TimeStep,point,m_ContourIndex,selectedIndex);
-
-//    if (m_UndoEnabled)
-//    {
-//        svContourOperation *undoOp = new svContourOperation(svContourOperation::OpMOVECONTROLPOINT,m_TimeStep,m_PreviousLocation,m_ContourIndex,selectedIndex);
-//        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(group, doOp, undoOp, "Move Control Point");
-//        m_UndoController->SetOperationEvent(operationEvent);
-//    }
-
-//    group->ExecuteOperation(doOp);
-
-//    if ( !m_UndoEnabled )
-//        delete doOp;
-
-//    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
-//    mitk::OperationEvent::IncCurrGroupEventId();
-
-//    this->NotifyResultReady();
-
-//}
-
-//bool svMitkSeg3DDataInteractor::IsOn2DView(const mitk::InteractionEvent* interactionEvent) const
-//{
-//     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
-//     if(m_Interaction3D)
-//     {
-//         return renderer->GetMapperID()==mitk::BaseRenderer::Standard2D;
-//     }else{
-//         return true;
-//     }
-//}
 
