@@ -9,7 +9,7 @@
     <view id="org.sv.views.segmentation3d"
           name="SV 3D Segmentation"
           class="svSeg3DEdit"
-          icon="resources/3dsegmentation.png" />
+          icon="resources/svseg3d.png" />
 
   </extension>
 

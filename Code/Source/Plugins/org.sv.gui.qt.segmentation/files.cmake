@@ -47,6 +47,7 @@ set(UI_FILES
 set(CACHED_RESOURCE_FILES
   plugin.xml
   resources/contourgroup.png
+  resources/svseg3d.png
 )
 
 set(QRC_FILES
