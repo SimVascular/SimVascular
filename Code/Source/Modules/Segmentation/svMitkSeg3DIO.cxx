@@ -57,7 +57,7 @@ std::vector<mitk::BaseData::Pointer> svMitkSeg3DIO::ReadFile(std::string fileNam
 
     svMitkSeg3D::Pointer mitkSeg3D = svMitkSeg3D::New();
     svSeg3D* seg3D=new svSeg3D();
-    svSeg3DParam& param=seg3D->GetParam();
+    svSeg3DParam param;
 
     //read parameters
     TiXmlElement* paramElement = segElement->FirstChildElement("param");
@@ -95,6 +95,7 @@ std::vector<mitk::BaseData::Pointer> svMitkSeg3DIO::ReadFile(std::string fileNam
         }
     }
 
+    seg3D->SetParam(param);
     std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
     std::ifstream dataFile(dataFileName);
     if (dataFile) {
@@ -131,11 +132,6 @@ void svMitkSeg3DIO::Write()
     const svMitkSeg3D* mitkSeg3D = dynamic_cast<const svMitkSeg3D*>(this->GetInput());
     if(!mitkSeg3D) return;
 
-    svSeg3D* seg3D=mitkSeg3D->GetSeg3D();
-    if(!seg3D) return;
-
-    svSeg3DParam& param=seg3D->GetParam();
-
     TiXmlDocument document;
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
@@ -144,45 +140,51 @@ void svMitkSeg3DIO::Write()
     version->SetAttribute("version",  "1.0" );
     document.LinkEndChild(version);
 
-    auto  segElement = new TiXmlElement("seg3d");
-    document.LinkEndChild(segElement);
-
-    auto  paramElement = new TiXmlElement("param");
-    segElement->LinkEndChild(paramElement);
-
-    if(param.method!="")
+    svSeg3D* seg3D=mitkSeg3D->GetSeg3D();
+    if(seg3D)
     {
-        paramElement->SetAttribute("method", param.method);
+        svSeg3DParam& param=seg3D->GetParam();
 
-        auto  seedsElement = new TiXmlElement("seeds");
-        paramElement->LinkEndChild(seedsElement);
+        auto  segElement = new TiXmlElement("seg3d");
+        document.LinkEndChild(segElement);
 
-        std::map<int, svSeed>& seedMap=param.GetSeedMap();
-        for(auto s:seedMap)
+        auto  paramElement = new TiXmlElement("param");
+        segElement->LinkEndChild(paramElement);
+
+        if(param.method!="")
         {
-            auto  seedElement = new TiXmlElement("seed");
-            svSeed seed=s.second;
-            seedsElement->LinkEndChild(seedElement);
-            seedElement->SetAttribute("id",seed.id);
-            seedElement->SetAttribute("type", seed.type);
-            seedElement->SetDoubleAttribute("x", seed.x);
-            seedElement->SetDoubleAttribute("y", seed.y);
-            seedElement->SetDoubleAttribute("z", seed.z);
-            seedElement->SetDoubleAttribute("radius", seed.radius);
+            paramElement->SetAttribute("method", param.method);
+
+            auto  seedsElement = new TiXmlElement("seeds");
+            paramElement->LinkEndChild(seedsElement);
+
+            std::map<int, svSeed>& seedMap=param.GetSeedMap();
+            for(auto s:seedMap)
+            {
+                auto  seedElement = new TiXmlElement("seed");
+                svSeed seed=s.second;
+                seedsElement->LinkEndChild(seedElement);
+                seedElement->SetAttribute("id",seed.id);
+                seedElement->SetAttribute("type", seed.type);
+                seedElement->SetDoubleAttribute("x", seed.x);
+                seedElement->SetDoubleAttribute("y", seed.y);
+                seedElement->SetDoubleAttribute("z", seed.z);
+                seedElement->SetDoubleAttribute("radius", seed.radius);
+            }
         }
-    }
 
-    std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
+        std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
 
-    vtkPolyData* vpd=seg3D->GetVtkPolyData();
-    if(vpd)
-    {
-        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-        writer->SetFileName(dataFileName.c_str());
-        writer->SetInputData(vpd);
-        if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
+        vtkPolyData* vpd=seg3D->GetVtkPolyData();
+        if(vpd)
         {
-            std::cerr << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
+            vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+            writer->SetFileName(dataFileName.c_str());
+            writer->SetInputData(vpd);
+            if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
+            {
+                std::cerr << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode())<<std::endl;
+            }
         }
     }
 

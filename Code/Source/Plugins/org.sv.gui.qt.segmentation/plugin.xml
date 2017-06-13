@@ -6,10 +6,16 @@
           name="SV 2D Segmentation"
           class="svSeg2DEdit"
           icon="resources/contourgroup.png" />
+    <view id="org.sv.views.segmentation3d"
+          name="SV 3D Segmentation"
+          class="svSeg3DEdit"
+          icon="resources/3dsegmentation.png" />
+
   </extension>
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Create Contour Group" icon="" class="svContourGroupCreateAction" />
+      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Create 3D Segmentation" icon="" class="svSeg3DCreateAction" />
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Import Segmentations" icon="" class="svSegmentationLoadAction" />
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Import Legacy Segmentations" icon="" class="svSegmentationLegacyLoadAction" />
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Export All as Legacy Segmentations" icon="" class="svSegmentationLegacySaveAction" />

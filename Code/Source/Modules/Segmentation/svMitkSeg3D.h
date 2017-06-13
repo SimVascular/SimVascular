@@ -15,6 +15,7 @@ public:
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
+    virtual bool IsEmptyTimeStep(unsigned int t) const override;
     virtual void ExecuteOperation(mitk::Operation *operation) override;
 
     bool IsDataModified(){return m_DataModified;}

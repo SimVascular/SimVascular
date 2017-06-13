@@ -70,6 +70,8 @@ private:
 
     mitk::Point3D m_LastPoint;
 
+    double m_OriginalRadius;
+
 //    mitk::Point3D m_PreviousLocation;
 
 //    mitk::Vector3D m_SumVec;

@@ -564,28 +564,28 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         }
 
         svContourGroup *contourGroup=dynamic_cast<svContourGroup*>(node->GetData());
-        svMitkSeg3D *seg3D=dynamic_cast<svMitkSeg3D*>(node->GetData());
+        svMitkSeg3D *mitkSeg3D=dynamic_cast<svMitkSeg3D*>(node->GetData());
 
         if(contourGroup)
         {
-            if(contourGroup->IsDataModified() || !dirSeg.exists(QString::fromStdString(node->GetName())+".ctgr"))
-            {
-                QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".ctgr");
-                mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
-                node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
-                contourGroup->SetDataModified(false);
-            }
+            if(!contourGroup->IsDataModified() && dirSeg.exists(QString::fromStdString(node->GetName())+".ctgr") )
+                continue;
+
+            QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".ctgr");
+            mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+            node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
+            contourGroup->SetDataModified(false);
         }
 
-        if(seg3D)
+        if(mitkSeg3D)
         {
-            if(seg3D->IsDataModified() || !dirSeg.exists(QString::fromStdString(node->GetName())+".s3d"))
-            {
-                QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".s3d");
-                mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
-                node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
-                seg3D->SetDataModified(false);
-            }
+            if(!mitkSeg3D->IsDataModified() && dirSeg.exists(QString::fromStdString(node->GetName())+".s3d") )
+                continue;
+
+            QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".s3d");
+            mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+            node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
+            mitkSeg3D->SetDataModified(false);
         }
     }
 

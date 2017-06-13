@@ -23,7 +23,7 @@ set(H_FILES
     svMitkSeg3DVtkMapper3D.h
     svMitkSeg3DDataInteractor.h
     svSegmentationObjectFactory.h
-    svSegmentation3D.h
+    svSeg3DUtils.h
 )
 
 set(CPP_FILES
@@ -51,7 +51,7 @@ set(CPP_FILES
     svMitkSeg3DVtkMapper3D.cxx
     svMitkSeg3DDataInteractor.cxx
     svSegmentationObjectFactory.cxx
-    svSegmentation3D.cxx
+    svSeg3DUtils.cxx
 )
 
 set(RESOURCE_FILES

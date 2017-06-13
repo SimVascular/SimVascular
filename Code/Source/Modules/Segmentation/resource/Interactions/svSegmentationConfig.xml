@@ -15,6 +15,11 @@
     <attribute name="Modifiers" value="ctrl"/>
   </event_variant>
 
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed_Shift">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
   <event_variant class="MouseDoubleClickEvent" name="PrimaryButtonDoubleClick">
     <attribute name="EventButton" value="LeftMouseButton" />
   </event_variant>

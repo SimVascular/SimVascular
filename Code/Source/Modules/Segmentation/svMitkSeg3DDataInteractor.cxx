@@ -20,6 +20,7 @@ svMitkSeg3DDataInteractor::svMitkSeg3DDataInteractor()
     , m_Param(NULL)
     , m_Seed(NULL)
     , m_MinRadius(0.02)
+    , m_OriginalRadius(0.1)
 {
 }
 
@@ -198,6 +199,8 @@ void svMitkSeg3DDataInteractor::InitChangeRadius(mitk::StateMachineAction*, mitk
         return;
 
     m_LastPoint = positionEvent->GetPositionInWorld();
+    if(m_Seed)
+       m_OriginalRadius=m_Seed->radius;
 }
 
 void svMitkSeg3DDataInteractor::ChangeRadius(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
@@ -209,8 +212,9 @@ void svMitkSeg3DDataInteractor::ChangeRadius(mitk::StateMachineAction*, mitk::In
     if(m_Seed)
     {
         mitk::Point3D point = positionEvent->GetPositionInWorld();
-        double dist=m_LastPoint.EuclideanDistanceTo(point);
-        double newRadius=m_Seed->radius+dist;
+//        double dist=m_LastPoint.EuclideanDistanceTo(point);
+        double dz=point[2]-m_LastPoint[2];
+        double newRadius=m_OriginalRadius+dz;
 
         if(newRadius>m_MinRadius)
         {

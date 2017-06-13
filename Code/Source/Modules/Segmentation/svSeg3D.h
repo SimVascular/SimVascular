@@ -134,6 +134,10 @@ public:
 
     svSeg3DParam& GetParam();
 
+    svSeg3DParam& GetInnerParam();
+
+    void SetParam(svSeg3DParam param, bool copyToInner=true);
+
     vtkSmartPointer<vtkPolyData> GetVtkPolyData(){return m_Vpd;}
 
     SetVtkPolyData(vtkSmartPointer<vtkPolyData> vpd) {m_Vpd=vpd;}
@@ -141,6 +145,8 @@ public:
 protected:
 
     svSeg3DParam m_Param;
+
+    svSeg3DParam m_InnerParam;
 
     vtkSmartPointer<vtkPolyData> m_Vpd;
 

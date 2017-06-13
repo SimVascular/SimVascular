@@ -30,3 +30,14 @@ svSeg3DParam& svSeg3D::GetParam()
     return m_Param;
 }
 
+svSeg3DParam& svSeg3D::GetInnerParam()
+{
+    return m_InnerParam;
+}
+
+void svSeg3D::SetParam(svSeg3DParam param, bool copyToInner)
+{
+    m_Param=param;
+    if(copyToInner)
+        m_InnerParam=param;
+}
