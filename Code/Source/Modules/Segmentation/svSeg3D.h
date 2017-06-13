@@ -152,7 +152,7 @@ public:
 
     vtkSmartPointer<vtkPolyData> GetVtkPolyData(){return m_Vpd;}
 
-    SetVtkPolyData(vtkSmartPointer<vtkPolyData> vpd) {m_Vpd=vpd;}
+    void SetVtkPolyData(vtkSmartPointer<vtkPolyData> vpd) {m_Vpd=vpd;}
 
 protected:
 

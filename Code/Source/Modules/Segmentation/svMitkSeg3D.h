@@ -21,7 +21,7 @@ public:
     bool IsDataModified(){return m_DataModified;}
     void SetDataModified(bool modified = true){m_DataModified=modified;}
 
-    svSeg3D* GetSeg3D() {return m_Seg3D;}
+    svSeg3D* GetSeg3D() const {return m_Seg3D;}
 
     void SetSeg3D(svSeg3D* seg3D);
 
