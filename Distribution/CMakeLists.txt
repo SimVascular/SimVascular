@@ -50,7 +50,7 @@ include(CPackComponent)
 set(SV_DISTRIBUTE_COMPONENTS OpenSource CACHE STRING "When distributing, specify which components to distribute.")
 set_property(CACHE SV_DISTRIBUTE_COMPONENTS PROPERTY STRINGS OpenSource Licensed All)
 
-option(SV_OPEN_TERMINAL "Open terminal when launching SimVascular" OFF)
+option(SV_OPEN_TERMINAL "Open terminal when launching SimVascular" ON)
 option(SV_CREATE_DESKTOP_LAUNCHER "Create desktop launcher" OFF)
 
 if(LINUX)

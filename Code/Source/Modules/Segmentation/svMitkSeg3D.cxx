@@ -24,8 +24,7 @@ svMitkSeg3D::~svMitkSeg3D()
 
 bool svMitkSeg3D::IsEmptyTimeStep(unsigned int t) const
 {
-  if(!IsInitialized())
-    return false;
+    return !IsInitialized();
 }
 
 void svMitkSeg3D::SetSeg3D(svSeg3D* seg3D)

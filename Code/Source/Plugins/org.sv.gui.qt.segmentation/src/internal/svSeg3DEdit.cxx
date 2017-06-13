@@ -12,6 +12,9 @@
 #include <mitkProgressBar.h>
 #include <mitkNodePredicateDataType.h>
 
+#include <mitkProgressBar.h>
+#include <mitkStatusBar.h>
+
 #include <usModuleRegistry.h>
 
 // Qt
@@ -55,7 +58,7 @@ void svSeg3DEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->checkBoxShowSeeds, SIGNAL(toggled(bool)), this, SLOT(SetSeedVisibility(bool)));
 
     //for colliding fronts
-    ui->widgetThresholdCF->setDecimals(0);
+    ui->widgetThresholdCF->setDecimals(1);
     ui->widgetThresholdCF->setRange(0,200);
     ui->widgetThresholdCF->setValues(50,100);
 
@@ -241,6 +244,12 @@ void svSeg3DEdit::CreateByCollidingFronts()
     double lowerThreshold=ui->widgetThresholdCF->minimumValue();
     double upperThreshold=ui->widgetThresholdCF->maximumValue();
 
+    mitk::ProgressBar::GetInstance()->Reset();
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
+    mitk::StatusBar::GetInstance()->DisplayText("Creating 3D segmentation...");
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOn();
+
     vtkSmartPointer<vtkPolyData> vpdSeg=svSeg3DUtils::collidingFronts(m_VtkImage,startSeeds,endSeeds,lowerThreshold,upperThreshold);
 
     svSeg3D* newSeg3D=new svSeg3D();
@@ -263,6 +272,10 @@ void svSeg3DEdit::CreateByCollidingFronts()
     m_MitkSeg3D->ExecuteOperation(doOp);
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+    WaitCursorOff();
+    mitk::ProgressBar::GetInstance()->Progress(2);
+    mitk::StatusBar::GetInstance()->DisplayText("3D segmentation created.");
 }
 
 void svSeg3DEdit::NodeChanged(const mitk::DataNode* node)
