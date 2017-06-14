@@ -82,6 +82,16 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # First process special Qt stuff
 #Find Qt!
+if(WIN32)
+  set(SV_Qt5_search_paths C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5
+                          C:/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5
+			  C:/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5)
+elseif(LINUX)
+  set(SV_Qt5_search_paths /opt)
+  elseif(APPLE)
+  set(SV_Qt5_search_paths /opt)
+endif()
+
 set(SV_Qt5_COMPONENTS
   Concurrent
   Core
@@ -99,7 +109,7 @@ set(SV_Qt5_COMPONENTS
   Xml
   XmlPatterns
   UiTools)
-find_package(Qt5 COMPONENTS ${SV_Qt5_COMPONENTS} REQUIRED)
+find_package(Qt5 PATHS ${SV_Qt5_search_paths} COMPONENTS ${SV_Qt5_COMPONENTS} REQUIRED)
 
 # need toplevel Qt dir path
 get_filename_component(qt5_installed_prefix "${Qt5_DIR}/../../.." ABSOLUTE)

@@ -185,8 +185,14 @@ elseif(WIN64)
   # Windows the platform and kernel should be same
   set(SV_PLATFORM_DIR "${SV_KERNEL_DIR}" CACHE STRING "The distribution platform being used.")
 
+  string(REPLACE "." ";" VERSION_LIST ${CMAKE_SYSTEM_VERSION})
+  list(GET VERSION_LIST 0 SV_WINDOWS_VERSION_MAJOR)
+  list(GET VERSION_LIST 1 SV_WINDOWS_VERSION_MINOR)
+  list(GET VERSION_LIST 2 SV_WINDOWS_VERSION_PATCH)
+
   # Set the version of the platform
-  set(SV_PLATFORM_VERSION_DIR "${CMAKE_SYSTEM_VERSION}" CACHE STRING "The distribution platform version being used.")
+  set(SV_PLATFORM_VERSION_DIR "${SV_WINDOWS_VERSION_MAJOR}.${SV_WINDOWS_VERSION_MINOR}" CACHE STRING "The distribution platform version being used.")
+  
 else()
   set(SV_PLATFORM_DIR "unsupported")
 endif()
