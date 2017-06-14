@@ -32,10 +32,23 @@ set(proj TCL)
 if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
   set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
 endif()
+
 # Find TCL
+if(NOT WIN32)
 simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
 # Set SV_TCL_DIR to the directory that was found to contain TCL
 set(SV_${proj}_DIR ${${proj}_DIR})
+endif()
+
+if(WIN32)
+  set(TCL_INCLUDE_PATH "${SV_${proj}_DIR}/include" CACHE PATH "doc string" FORCE)
+  set(TCL_LIBRARY      "${SV_${proj}_DIR}/lib/tcl86t.lib" CACHE FILEPATH "doc string" FORCE)
+  set(TCL_TCLSH        "${SV_${proj}_DIR}/bin/tclsh86t.exe" CACHE FILEPATH "doc string" FORCE)
+  set(TK_INCLUDE_PATH  "${SV_${proj}_DIR}/include" CACHE PATH "doc string" FORCE)
+  set(TK_LIBRARY       "${SV_${proj}_DIR}/lib/tk86t.lib" CACHE FILEPATH "doc string" FORCE)
+  set(TK_WISH          "${SV_${proj}_DIR}/bin/wish86t.exe" CACHE FILEPATH "doc string" FORCE)
+  set(TCL_DLL_PATH     "${SV_${proj}_DIR}/bin" CACHE PATH "Force TCL DLL Path")
+endif()
 
 # Get found ${proj} version
 get_filename_component(${proj}_LIBRARY_PATH "${${proj}_LIBRARY}" PATH)

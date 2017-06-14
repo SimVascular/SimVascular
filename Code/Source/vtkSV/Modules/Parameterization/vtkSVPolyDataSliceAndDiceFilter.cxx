@@ -2359,9 +2359,9 @@ int vtkSVPolyDataSliceAndDiceFilter::FixGraphDirections(svGCell *gCell, const in
       gCell->CornerPtIds[cellIndices[i+4]] = tmpIds[rotIndices->GetValue(cellIndices[i+4])];
 
     // Also update the diverging child angle
-    gCell->Children[gCell->DivergingChild]->RefAngle += M_PI/2.0;
-    if (gCell->Children[gCell->DivergingChild]->RefAngle > 2.0*M_PI)
-      gCell->Children[gCell->DivergingChild]->RefAngle -= 2.0*M_PI;
+    gCell->Children[gCell->DivergingChild]->RefAngle += SV_PI/2.0;
+    if (gCell->Children[gCell->DivergingChild]->RefAngle > 2.0*SV_PI)
+      gCell->Children[gCell->DivergingChild]->RefAngle -= 2.0*SV_PI;
 
     // Check to see if the rotation worked
     newId = gCell->CornerPtIds[cellIndices[4]];

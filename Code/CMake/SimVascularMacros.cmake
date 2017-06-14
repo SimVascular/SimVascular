@@ -1343,7 +1343,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
       list(GET _status 0 err)
       list(GET _status 1 msg)
       if(err)
-        message(FATAL_ERROR "The operating system does not have any available per-built binaries. See the build documentation to build your own.")
+        message(FATAL_ERROR "The operating system does not have any available pre-built binaries. See the build documentation to build your own.")
       else()
         simvascular_read_file("${SV_EXTERNALS_${proj}_PFX_DIR}/externals_compiler_info.txt" FILE_CONTENTS)
         sv_externals_check_versioning("${FILE_CONTENTS}" ${SV_PLATFORM_VERSION_DIR} ${SV_COMPILER_DIR} ${SV_COMPILER_VERSION_DIR} SV_DOWNLOAD_DIR)

@@ -35,9 +35,27 @@ if(SV_USE_${proj})
     set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
   endif()
   # Find Python
+  if(NOT WIN32)
   simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
   # Set SV_PYTHON_DIR to the directory that was found to contain PYTHON
   set(SV_${proj}_DIR ${${proj}_DIR})
+  endif()
+  
+  if(WIN32)
+  message("manually set PYTHON variables ${SV_${proj}_DIR}")
+  set(PYTHON_DEBUG_LIBRARY "" CACHE FILEPATH "doc string" FORCE)
+  set(PYTHON_INCLUDE_DIR   ${SV_${proj}_DIR}/include CACHE PATH "doc string" FORCE)
+  set(PYTHON_INCLUDE_PATH  ${SV_${proj}_DIR}/include CACHE PATH "doc string" FORCE)
+  set(PYTHON_LIBRARY       ${SV_${proj}_DIR}/libs/python27.lib CACHE FILEPATH "doc string" FORCE)
+  set(PYTHON_LIBRARY_DEBUG "" CACHE FILEPATH "doc string" FORCE)
+  set(PYTHON_SITE_PACKAGES ${SV_${proj}_DIR}/Lib/site-packages CACHE PATH "doc string" FORCE)
+  set(PYTHON_CORE_PACKAGES ${SV_${proj}_DIR}/Lib CACHE PATH "doc string" FORCE)
+  set(PYTHON_DLL_PATH      ${SV_${proj}_DIR}/Bin CACHE PATH "doc string" FORCE)
+  set(PYTHON_EXECUTABLE    ${SV_${proj}_DIR}/Bin/python.exe CACHE FILEPATH "doc string" FORCE)
+  link_directories(${${proj}_LIBRARY})
+  include_directories(${${proj}_INCLUDE_DIR})
+  endif()
+  
   # Need to make sure we pick up python module from vtk
   set(VTK_${proj}_MODULES vtkWrappingPythonCore)
 endif()

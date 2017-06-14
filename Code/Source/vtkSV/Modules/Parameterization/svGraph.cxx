@@ -290,8 +290,8 @@ int svGraph::ComputeReferenceVectors(svGCell *parent)
   fprintf(stdout,"Root vec: %.4f %.4f %.4f\n", this->ReferenceVecs[0][0], this->ReferenceVecs[0][1], this->ReferenceVecs[0][2]);
   fprintf(stdout,"Vec 0: %.4f %.4f %.4f\n", vec0[0], vec0[1], vec0[2]);
   fprintf(stdout,"Vec 1: %.4f %.4f %.4f\n", vec1[0], vec1[1], vec1[2]);
-  fprintf(stdout,"Angle 0: %4f\n", 180*ang0/M_PI);
-  fprintf(stdout,"Angle 1: %4f\n", 180*ang1/M_PI);
+  fprintf(stdout,"Angle 0: %4f\n", 180*ang0/SV_PI);
+  fprintf(stdout,"Angle 1: %4f\n", 180*ang1/SV_PI);
   if (ang0 > ang1)
   {
     fprintf(stdout,"Diverging child is %d\n", parent->Children[1]->GroupId);
@@ -458,7 +458,7 @@ int svGraph::GetNewBranchDirections(svGCell *parent)
   if (parent->GroupId != 0)
   {
     if (vtkMath::Dot(vec3, dotVec) < 0.0)
-      ang2 = ang2 + M_PI;
+      ang2 = ang2 + SV_PI;
   }
   parent->Children[parent->DivergingChild]->RefAngle = ang2;
 
@@ -466,7 +466,7 @@ int svGraph::GetNewBranchDirections(svGCell *parent)
   fprintf(stdout,"Dot check dir: %.4f %.4f %.4f\n", dotVec[0], dotVec[1], dotVec[2]);
   fprintf(stdout,"This vec: %.4f %.4f %.4f\n", vec3[0], vec3[1], vec3[2]);
   fprintf(stdout,"Parent direction: %d\n", parent->Dir);
-  fprintf(stdout,"Angle is: %.4f\n", 180*ang2/M_PI);
+  fprintf(stdout,"Angle is: %.4f\n", 180*ang2/SV_PI);
   fprintf(stdout,"Dot is: %.4f\n", vtkMath::Dot(vec3, dotVec));
 
   return SV_OK;
@@ -484,16 +484,16 @@ int svGraph::UpdateCellDirection(svGCell *gCell, void *arg0,
     else
     {
       int ang = gCell->RefAngle;
-      if (ang >= 7.0*M_PI/4.0 || ang < M_PI/4.0)
+      if (ang >= 7.0*SV_PI/4.0 || ang < SV_PI/4.0)
         direction1 = vtkSVPolyDataSliceAndDiceFilter::DT[direction0][0];
 
-      else if (ang >= M_PI/4.0 && ang < 3.0*M_PI/4.0)
+      else if (ang >= SV_PI/4.0 && ang < 3.0*SV_PI/4.0)
         direction1 = vtkSVPolyDataSliceAndDiceFilter::DT[direction0][1];
 
-      else if (ang >= 3.0*M_PI/4.0 && ang < 5.0*M_PI/4.0)
+      else if (ang >= 3.0*SV_PI/4.0 && ang < 5.0*SV_PI/4.0)
         direction1 = vtkSVPolyDataSliceAndDiceFilter::DT[direction0][2];
 
-      else if (ang >= 5.0*M_PI/4.0 && ang < 7.0*M_PI/4.0)
+      else if (ang >= 5.0*SV_PI/4.0 && ang < 7.0*SV_PI/4.0)
         direction1 = vtkSVPolyDataSliceAndDiceFilter::DT[direction0][3];
     }
     gCell->Dir = direction1;
