@@ -10,6 +10,9 @@ sudo apt-get -y install dos2unix
 sudo apt-get -y install g++
 sudo apt-get -y install gfortran
 
+### used by some of the SV cmake code
+sudo apt-get -y install lsb-core
+
 ### cmake tools  (note: we need newer version of cmake installed below!)
 #sudo apt-get -y install cmake
 #sudo apt-get -y install cmake-qt-gui

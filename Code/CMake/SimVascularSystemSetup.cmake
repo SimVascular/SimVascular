@@ -167,12 +167,19 @@ elseif(LINUX)
 
   # To get the distriubtion and the version, we need to use lsb
   find_program(LSB_RELEASE lsb_release)
-  execute_process(COMMAND ${LSB_RELEASE} -a
+
+  execute_process(COMMAND ${LSB_RELEASE} -i
+    OUTPUT_VARIABLE LSB_DISTRIBUTOR_INFO
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND ${LSB_RELEASE} -r
     OUTPUT_VARIABLE LSB_RELEASE_INFO
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+  #message("LSB_DESCRIPTION_INFO: ${LSB_DESCRIPTION_INFO}")
+  #message("LSV_RELEASE_INFO: ${LSB_RELEASE_INFO}")
+
   # Get distribution name and version number from lsb_release output
-  STRING(REGEX REPLACE "Distributor ID:[\t]*([^ \n\r]+).*$" "\\1" LSB_DISTRIB "${LSB_RELEASE_INFO}")
+  STRING(REGEX REPLACE "Distributor ID:[\t]*([^ \n\r]+).*$" "\\1" LSB_DISTRIB "${LSB_DISTRIBUTOR_INFO}")
   STRING(REGEX REPLACE "^.*Release:[\t]*([^ \n\r]+).*$" "\\1" LSB_VERSION "${LSB_RELEASE_INFO}")
   string(TOLOWER "${LSB_DISTRIB}" _platform_lower)
 
