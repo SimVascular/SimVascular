@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file alias="pathcreate.png">pathcreate.png</file>
-    </qresource>
-</RCC>
