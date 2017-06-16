@@ -64,7 +64,16 @@ HDRS	= \
     svContourGroupDataInteractor.h \
     svContourGroupIO.h \
     svSegmentationLegacyIO.h \
-    svSegmentationObjectFactory.h
+    svSurface.h \
+    svSurfaceVtkMapper3D.h \
+    svSeg3D.h \
+    svMitkSeg3D.h \
+    svMitkSeg3DOperation.h \
+    svMitkSeg3DIO.h \
+    svMitkSeg3DVtkMapper3D.h \
+    svMitkSeg3DDataInteractor.h \
+    svSegmentationObjectFactory.h \
+    svSeg3DUtils.h
 
 CXXSRCS	= \
     svSegmentationUtils.cxx \
@@ -84,7 +93,16 @@ CXXSRCS	= \
     svContourGroupDataInteractor.cxx \
     svContourGroupIO.cxx \
     svSegmentationLegacyIO.cxx \
-    svSegmentationObjectFactory.cxx
+    svSurface.cxx \
+    svSurfaceVtkMapper3D.cxx \
+    svSeg3D.cxx \
+    svMitkSeg3D.cxx \
+    svMitkSeg3DOperation.cxx \
+    svMitkSeg3DIO.cxx \
+    svMitkSeg3DVtkMapper3D.cxx \
+    svMitkSeg3DDataInteractor.cxx \
+    svSegmentationObjectFactory.cxx \
+    svSeg3DUtils.cxx
 
 CXXSRCS += us_init.cxx
 
@@ -94,6 +112,7 @@ SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
 RCFILES = \
     resource/Interactions/svContourGroupInteraction.xml \
     resource/Interactions/svContourModelThresholdInteraction.xml \
+    resource/Interactions/svMitkSeg3DInteraction.xml \
     resource/Interactions/svSegmentationConfig.xml
 
 QRCFILES = 

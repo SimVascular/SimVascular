@@ -31,6 +31,8 @@
 
 #include "SimVascular.h"
 
+#include "cv_integrate_surface.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -412,7 +414,7 @@ int sys_geom_IntegrateSurface2( vtkPolyData *pd, int tensorType, double *q, doub
 
 int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, double *area )
 {
-  sys_geom_IntegrateSurface2(src->GetVtkPolyData(),tensorType,q,area);
+  return sys_geom_IntegrateSurface2(src->GetVtkPolyData(),tensorType,q,area);
 }
 
 // ----------------------------

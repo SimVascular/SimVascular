@@ -10,15 +10,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -36,81 +36,66 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR) \
-           $(MESHSIM_INCDIR) \
-           $(PARASOLID_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_segmentation_EXPORTS \
-           -DUS_MODULE_NAME=svSegmentation
+           $(VMTK_INCDIR) \
+	   $(SV_MMG_INCDIR) \
+           $(MESHSIM_INCDIR) \
+           $(PARASOLID_INCDIR)
 
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 
+MODULE_NAME = svModelOCCT
+MODULE_NAME_ALL_CAPS = SVMODELOCCT
+CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
+CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
+
 HDRS	= \
-    svLoftingUtils.h \
-    svContourGroupCreate.h \
-    svContourGroupCreateAction.h \
-    svSegmentationLegacyLoadAction.h \
-    svSegmentationLegacySaveAction.h \
-    svSegmentationLoadAction.h \
-    svLevelSet2DWidget.h \
-    svLoftParamWidget.h \
-    svSeg2DEdit.h \
-    svContourGroupPoint2DSizeAction.h \
-    svContourGroupPoint3DSizeAction.h \
-    svSeg3DCreateAction.h \
-    svSeg3DEdit.h \
-    svSegmentationPluginActivator.h
+    svModelUtilsOCCT.h \
+    svModelElementOCCT.h
 
 CXXSRCS	= \
-    svLoftingUtils.cxx \
-    svContourGroupCreate.cxx \
-    svContourGroupCreateAction.cxx \
-    svSegmentationLegacyLoadAction.cxx \
-    svSegmentationLegacySaveAction.cxx \
-    svSegmentationLoadAction.cxx \
-    svLevelSet2DWidget.cxx \
-    svLoftParamWidget.cxx \
-    svSeg2DEdit.cxx \
-    svContourGroupPoint2DSizeAction.cxx \
-    svContourGroupPoint3DSizeAction.cxx \
-    svSeg3DCreateAction.cxx \
-    svSeg3DEdit.cxx \
-    svSegmentationPluginActivator.cxx
+    svModelUtilsOCCT.cxx \
+    svModelElementOCCT.cxx \
+    svRegisterOCCTFunction.cxx
 
-UIFILES = \
-    svContourGroupCreate.ui \
-    svLevelSet2DWidget.ui \
-    svLoftParamWidget.ui \
-    svSeg2DEdit.ui \
-    svSeg3DEdit.ui
+CXXSRCS += us_init.cxx
 
-QRCFILES = org_sv_gui_qt_segmentation_manifest.qrc \
-           org_sv_gui_qt_segmentation_cached.qrc
+UIFILES =
 
-RCFILES = \
-  ../../plugin.xml \
-  ../../resources/contourgroup.png \
-  ../../resources/svseg3d.png
+#SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
+RCFILES = 
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+QRCFILES =
+
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
 DLLSRCS =
 
+# these DLLLIBS came from Segmentation and can probably be cleaned up
+# significantly!
+
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  \
+DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
@@ -126,25 +111,26 @@ endif
 ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)$(SV_LIB_PARASOLID_SOLID_NAME)$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
     DLLLIBS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
 endif
 
 DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
 
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
     DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
+ifeq ($(SV_USE_VMTK),1)
+	DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VMTK_UTILS_NAME)$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_VMTK_NAME)$(LIBLINKEXT)
+	DLLLIBS += $(SV_MMG_LIBS)
+endif
 
-TARGET_LIB_NAME = $(SV_PLUGIN_SEGMENTATION_NAME)
+ifeq ($(SV_USE_MMG),1)
+	DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT)
+endif
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_segmentation
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_segmentation
-PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = SEGMENTATION
-
-SV_COPY_DLL_TO_BIN_PLUGINS = 1
+TARGET_LIB_NAME = $(SV_LIB_MODULE_MODEL_OCCT_NAME)
 
 include $(TOP)/targetlib.mk
