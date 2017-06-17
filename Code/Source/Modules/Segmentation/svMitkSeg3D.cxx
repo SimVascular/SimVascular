@@ -2,14 +2,14 @@
 #include "svMitkSeg3DOperation.h"
 
 svMitkSeg3D::svMitkSeg3D()
-    : mitk::Surface()
+    : mitk::svSurface()
     , m_Seg3D(NULL)
     , m_DataModified(false)
 {
 }
 
 svMitkSeg3D::svMitkSeg3D(const svMitkSeg3D &other)
-    : mitk::Surface(other)
+    : mitk::svSurface(other)
     , m_DataModified(true)
 {
     m_Seg3D=new svSeg3D(*(other.m_Seg3D),false);
