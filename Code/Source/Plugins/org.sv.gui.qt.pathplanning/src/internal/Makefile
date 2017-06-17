@@ -69,8 +69,7 @@ UIFILES = \
     svPathSmooth.ui \
     svPathEdit.ui
 
-QRCFILES = \
-    ../../resources/pathplanning.qrc
+QRCFILES =
 
 QRCFILES += org_sv_gui_qt_pathplanning_manifest.qrc \
             org_sv_gui_qt_pathplanning_cached.qrc
