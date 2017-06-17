@@ -201,6 +201,23 @@ void svPathCreate::CreatePath()
         pathNode->SetData(path);
         pathNode->SetName(pathName);
 
+        float point2DSize=0;
+        float pointSize=0;
+        if(m_PathFolderNode.IsNotNull())
+        {
+            m_PathFolderNode->GetFloatProperty("point 2D display size",point2DSize);
+            m_PathFolderNode->GetFloatProperty("point size",pointSize);
+        }
+        if(point2DSize!=0)
+        {
+            pathNode->SetFloatProperty("point 2D display size",point2DSize);
+            path->SetProp("point 2D display size",QString::number(point2DSize).toStdString());
+        }
+        if(pointSize!=0)
+        {
+            pathNode->SetFloatProperty("point size",point2DSize);
+            path->SetProp("point size",QString::number(point2DSize).toStdString());
+        }
 //        m_DataStorage->Add(pathNode,m_PathFolderNode);
         mitk::OperationEvent::IncCurrObjectEventId();
 

@@ -31,6 +31,17 @@ void svContourGroupPoint2DSizeAction::Run(const QList<mitk::DataNode::Pointer> &
     if(!ok)
         return;
 
+    mitk::DataNode::Pointer segFolderNode=NULL;
+    if(selectedNode.IsNotNull())
+    {
+        mitk::DataStorage::SetOfObjects::ConstPointer rs = m_DataStorage->GetSources(selectedNode);
+        if(rs->size()>0){
+            segFolderNode=rs->GetElement(0);
+            if(segFolderNode.IsNotNull())
+                segFolderNode->SetFloatProperty("point.displaysize",size);
+        }
+    }
+
     for(int i=0;i<selectedNodes.size();i++)
     {
         mitk::DataNode::Pointer node = selectedNodes[i];

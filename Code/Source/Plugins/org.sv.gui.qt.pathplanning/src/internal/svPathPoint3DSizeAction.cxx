@@ -31,6 +31,17 @@ void svPathPoint3DSizeAction::Run(const QList<mitk::DataNode::Pointer> &selected
     if(!ok)
         return;
 
+    mitk::DataNode::Pointer pathFolderNode=NULL;
+    if(selectedNode.IsNotNull())
+    {
+        mitk::DataStorage::SetOfObjects::ConstPointer rs = m_DataStorage->GetSources(selectedNode);
+        if(rs->size()>0){
+            pathFolderNode=rs->GetElement(0);
+            if(pathFolderNode.IsNotNull())
+                pathFolderNode->SetFloatProperty("point size",size);
+        }
+    }
+
     for(int i=0;i<selectedNodes.size();i++)
     {
         mitk::DataNode::Pointer node = selectedNodes[i];
