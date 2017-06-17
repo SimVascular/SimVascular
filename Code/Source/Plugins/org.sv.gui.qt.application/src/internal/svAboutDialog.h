@@ -16,11 +16,11 @@ public:
 
   QString GetAboutText() const;
   QString GetCaptionText() const;
-  QString GetRevisionText() const;
+  QString GetVersionText() const;
 
   void SetAboutText(const QString &text);
   void SetCaptionText(const QString &text);
-  void SetRevisionText(const QString &text);
+  void SetVersionText(const QString &text);
 
 protected slots:
   void ShowModules();
