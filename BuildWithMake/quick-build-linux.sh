@@ -2,9 +2,9 @@
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/14.04/gnu/4.8/x64/RelWithDebInfo/2016.12.11
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/14.04/gnu/4.8/x64/Release/2017.05.30
 
-export TAR_FILE_PREFIX=ubuntu.14.04.gnu.4.8.x64.RelWithDebInfo.2016.12.11
+export TAR_FILE_PREFIX=ubuntu.14.04.gnu.4.8.x64.Release.2017.05.30
 
 # default is windows, so override with gnu compilers and linux
 
@@ -36,7 +36,7 @@ wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
 popd
 
 pushd $EXTERNALS_TOP/bin/gnu-4.8/x64
-for i in $EXTERNALS_TOP/tarfiles/linux.gnu-4.8.x64.*.tar.gz; do
+for i in $EXTERNALS_TOP/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
     tar xvzf $i
 done
 popd
