@@ -378,6 +378,9 @@ svModelElementOCCT* svModelUtilsOCCT::CreateModelElementOCCT(std::vector<mitk::D
         }
     }
 
+    if(loftedSolids.size()==0)
+        return NULL;
+
     cvOCCTSolidModel* unionSolid=loftedSolids[0];
 
     cvOCCTSolidModel* previousUnionSolid=NULL;
