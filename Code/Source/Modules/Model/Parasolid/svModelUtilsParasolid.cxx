@@ -184,6 +184,9 @@ svModelElementParasolid* svModelUtilsParasolid::CreateModelElementParasolid(std:
         }
     }
 
+    if(loftedSolids.size()==0)
+        return NULL;
+
     cvParasolidSolidModel* unionSolid=loftedSolids[0];
 
     cvParasolidSolidModel* previousUnionSolid=NULL;
