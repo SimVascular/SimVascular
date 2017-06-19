@@ -111,8 +111,8 @@ proc file_find {dir wildcard args} {
           if {[file tail $i] == $SV_EXECUTABLE} {
             global curdirID
 	    puts $outfp "<File Id='id[format %04i $id]' Name='[file tail $i]' Source='$i' DiskId='1'>"
-            puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
-	    puts $outfp "<Shortcut Id='ids13' Directory='DesktopFolder' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+            puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl --ignore-pro' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids13' Directory='DesktopFolder' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl --ignore-pro' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
             puts $outfp "</File>"
             #puts $outfp "<RemoveFolder Directory='ProgramMenuDir' Name='$SV_VERSION' On='uninstall' />"
             puts $outfp "<RemoveFile Id='ids12' On='uninstall' Name='*.*' />"
