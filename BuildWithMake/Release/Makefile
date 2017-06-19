@@ -41,8 +41,7 @@ include $(TOP)/include.mk
 SV_CLUSTER = $(CLUSTER)
 
 ifneq ($(CLUSTER),x64_linux)
-WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
-WIXUI_WIN_PATH = C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
+  include $(TOP)/MakeHelpers/wix-3.11.x64_cygwin.mk
 endif
 
 SV_TIMESTAMP := $(shell date +"%Y-%m-%d")
