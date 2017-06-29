@@ -383,6 +383,13 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
 
     projectFolderNode->GetStringProperty("project path",projPath);
 
+    std::string imageName="image";
+    if(projectFolderNode.IsNotNull())
+        imageName=projectFolderNode->GetName();
+
+    if(imageNode.IsNotNull())
+        imageNode->SetName(imageName);
+
     QDir projDir(QString::fromStdString(projPath));
     QString	configFilePath=projDir.absoluteFilePath(".svproj");
 
@@ -422,8 +429,8 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
     {
         imgElement.setAttribute("in_project","yes");
         QString imageName=QString::fromStdString(imageNode->GetName());
-        if(imageName.size()>15)
-            imageName=imageName.mid(0,15);
+//        if(imageName.size()>15)
+//            imageName=imageName.mid(0,15);
 
         imageName=imageName+".vti";
         imgElement.setAttribute("name",imageName);
@@ -433,7 +440,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
         mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
         if(image)
         {
-            if(scaleFactor>0)
+            if(scaleFactor>0 && scaleFactor!=1)
             {
                 mitk::Point3D org = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin();
                 mitk::Vector3D spacing=image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();

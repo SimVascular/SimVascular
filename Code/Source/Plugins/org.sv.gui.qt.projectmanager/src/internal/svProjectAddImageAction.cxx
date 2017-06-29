@@ -59,8 +59,7 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         QString imageFilePath = QFileDialog::getOpenFileName(NULL, tr("Open Image File")
                                                              , lastFileOpenPath
                                                              , QmitkIOUtil::GetFileOpenFilterString()
-                                                             , NULL
-                                                             , QFileDialog::DontUseNativeDialog);
+                                                             , NULL);
 
         if (imageFilePath.isEmpty())
             return;
@@ -82,11 +81,15 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         double scaleFactor=0;
         if(copy)
         {
-            bool ok;
-            double factor = QInputDialog::getDouble(NULL, tr("Scale image?"),
-                                                 tr("Do you want to scale the image (for unit conversion)?\nScaling Factor:"), 0, 0, 1000, 3, &ok);
-            if (ok)
-                scaleFactor=factor;
+            if (QMessageBox::question(NULL, "Scale image?", "Do you want to scale the image?",
+                                      QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+            {
+                bool ok;
+                double factor = QInputDialog::getDouble(NULL, tr("Image Scaling"),
+                                                     tr("Scaling Factor (for unit conversion):"), 0.1, 0, 1000, 3, &ok);
+                if (ok)
+                    scaleFactor=factor;
+            }
         }
 
         mitk::StatusBar::GetInstance()->DisplayText("Adding or replacing image");

@@ -99,10 +99,7 @@ void svFileOpenProjectAction::Run()
            lastSVProjPath=QDir::homePath();
 
        QString projPath = QFileDialog::getExistingDirectory(NULL, tr("Choose Project"),
-                                                        lastSVProjPath,
-                                                        QFileDialog::DontResolveSymlinks
-                                                        | QFileDialog::DontUseNativeDialog
-                                                        );
+                                                        lastSVProjPath);
 
         if(projPath.trimmed().isEmpty()) return;
 
