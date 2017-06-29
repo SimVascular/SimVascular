@@ -781,12 +781,40 @@ int cvTetGenMeshObject::NewMesh() {
   polydatasolid_->DeepCopy(cleaner->GetOutput());
   fprintf(stderr,"Converting to TetGen...\n");
   //Convert the polydata to tetgen for meshing with given option
-  if (TGenUtils_ConvertSurfaceToTetGen(inmesh_,polydatasolid_,useSizingFunction,
-	  meshsizingfunction,useBoundary,markerListName,
-	  meshoptions_.maxedgesize) != SV_OK)
+  if (TGenUtils_ConvertSurfaceToTetGen(inmesh_,polydatasolid_) != SV_OK)
   {
-      return SV_ERROR;
+    fprintf(stderr,"Error converting surface to tetgen object\n");
+    return SV_ERROR;
   }
+
+  // Add mesh sizing function
+  if (useSizingFunction && meshsizingfunction == NULL)
+  {
+    fprintf(stderr,"Must have an array with parameters\
+       	to compute mesh with sizing function\n");
+    return SV_ERROR;
+  }
+  else if (meshsizingfunction && meshsizingfunction != NULL)
+  {
+    if (TGenUtils_AddPointSizingFunction(inmesh_,polydatasolid_,
+          meshsizingfunction, meshoptions_.maxedgesize) != SV_OK)
+    {
+      fprintf(stderr,"Could not add mesh sizing function to mesh\n");
+      return SV_ERROR;
+    }
+  }
+
+  // Add facet markers
+  if (useBoundary)
+  {
+    if(TGenUtils_AddFacetMarkers(inmesh_,polydatasolid_,
+      markerListName) != SV_OK)
+    {
+      fprintf(stderr,"Could not add facet markers to mesh\n");
+      return SV_ERROR;
+    }
+  }
+
   //The mesh is now loaded, and TetGen is ready to be called
   meshloaded_ = 1;
 
@@ -807,10 +835,6 @@ int cvTetGenMeshObject::NewMesh() {
  */
 
 int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values) {
-  // must have created mesh
-//  if (inmesh_ == NULL) {
-//    return SV_ERROR;
-//  }
 
   if(!strncmp(flags,"GlobalEdgeSize",14)) {            //Global edge size
        if (numValues < 1)
@@ -1144,10 +1168,6 @@ int cvTetGenMeshObject::SetSizeFunctionBasedMesh(double size,char *sizefunctionn
  */
 
 int cvTetGenMeshObject::GenerateMesh() {
-  // must have created mesh
-//  if (inmesh_ == NULL) {
-//    return SV_ERROR;
-//  }
 
   if (surfacemesh_ != NULL)
   {
