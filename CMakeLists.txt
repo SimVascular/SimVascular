@@ -158,6 +158,6 @@ ExternalProject_Add(SimVascular
     -DSV_EXTERNALS_USE_TOPLEVEL_DIR:BOOL=ON
     -DSV_EXTERNALS_TOPLEVEL_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}
     -DQt5_DIR:PATH=${Qt5_DIR}
-    ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
+    ${SV_ADDITIONAL_CMAKE_ARGS}
     )
 #-----------------------------------------------------------------------------
