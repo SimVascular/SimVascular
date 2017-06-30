@@ -165,24 +165,23 @@ if(APPLE)
 		set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/licensed/${SV_INSTALL_VERSION_DIR}")
 	else()
 		set(CPACK_GENERATOR "Bundle")
-	endif()
+		set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/OSX/SimVascular.icns")
+		if(SV_RELEASE_TYPE MATCHES "^Release$")
+	    	set(CPACK_BUNDLE_NAME "SimVascular")
+		elseif(SV_RELEASE_TYPE MATCHES "^Beta$")
+			set(CPACK_BUNDLE_NAME "SimVascular-Beta")
+		endif()
 
-	set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/OSX/SimVascular.icns")
-	if(SV_RELEASE_TYPE MATCHES "^Release$")
-    set(CPACK_BUNDLE_NAME "SimVascular")
-	elseif(SV_RELEASE_TYPE MATCHES "^Beta$")
-		set(CPACK_BUNDLE_NAME "SimVascular-Beta")
-	endif()
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/OSX/Info.plist.in
+			${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist @ONLY)
 
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/OSX/Info.plist.in
-		${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist @ONLY)
+		set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist")
+		set(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/OSX/simvascular.sh")
+		set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-darwin-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
-	set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist")
-	set(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/OSX/simvascular.sh")
-	set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-darwin-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
-
-	if(SV_DEVELOPER_OUTPUT)
-		message(STATUS "CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}.dmg")
+		if(SV_DEVELOPER_OUTPUT)
+			message(STATUS "CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}.dmg")
+		endif()
 	endif()
 endif(APPLE)
 #-----------------------------------------------------------------------------
