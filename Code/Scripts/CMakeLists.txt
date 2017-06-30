@@ -70,6 +70,7 @@ endif()
 if(SV_USE_PARASOLID)
 	#Parasolid as a few special directories to add
 	set_env_string_concat(P_SCHEMA "${PARASOLID_SCHEMA_DIR}" developer_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${PARASOLID_DIR}/shared_object" developer_script_string)
 
 	if(NOT SV_ENABLE_DISTRIBUTION OR SV_DISTRIBUTE_COMPONENTS STREQUAL All)
 		set_env_string_concat(P_SCHEMA "${ENV_SV_HOME}/${SV_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR}" install_script_string)
