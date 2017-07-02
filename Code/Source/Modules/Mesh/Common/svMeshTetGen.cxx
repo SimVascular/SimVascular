@@ -404,6 +404,14 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[0]=std::stod(params[1]);
             option=true;
         }
+        else if(paramSize==4 && params[0]=="addhole")
+        {
+            flag="AddHole";
+            values[0]=std::stod(params[1]);
+            values[1]=std::stod(params[2]);
+            values[2]=std::stod(params[3]);
+            option=true;
+        }
         else
         {
             msg="Unknown command: "+originalCmd;

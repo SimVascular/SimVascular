@@ -161,9 +161,8 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
 // -----------------------------
 /**
  */
-
 int TGenUtils_AddPointSizingFunction(tetgenio *inmesh,vtkPolyData *polydatasolid,
-    vtkDoubleArray *meshSizingFunction, double maxEdgeSize)
+    std::string meshSizingFunctionName, double maxEdgeSize)
 {
   // check number of points
   if (polydatasolid->GetNumberOfPoints() != inmesh->numberofpoints)
@@ -174,17 +173,18 @@ int TGenUtils_AddPointSizingFunction(tetgenio *inmesh,vtkPolyData *polydatasolid
 
   //Check if applying a mesh sizing function and initiate point metrics list
   //if ok
-  if (meshSizingFunction == NULL)
+  if (VtkUtils_PDCheckArrayName(polydatasolid, 0, meshSizingFunctionName) != SV_OK)
   {
-    fprintf(stderr,"Must have an array with parameters\
-       	to compute mesh with sizing function\n");
+    fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
+        Something may have gone wrong when setting up BL");
     return SV_ERROR;
   }
-  else
-  {
-    inmesh->numberofpointmtrs = 1;
-    inmesh->pointmtrlist = new REAL[inmesh->numberofpoints];
-  }
+  vtkDoubleArray *meshSizingFunction = vtkDoubleArray::SafeDownCast(
+    polydatasolid->GetPointData()->GetArray(meshSizingFunctionName.c_str()));
+
+  inmesh->numberofpointmtrs = 1;
+  inmesh->pointmtrlist = new REAL[inmesh->numberofpoints];
+
   //Do Point transition from polydatasolid into pointlist
   fprintf(stderr,"Adding mesh sizing metric...\n");
   for (int i=0; i<inmesh->numberofpoints;i++)
@@ -202,7 +202,6 @@ int TGenUtils_AddPointSizingFunction(tetgenio *inmesh,vtkPolyData *polydatasolid
 // -----------------------------
 /**
  */
-
 int TGenUtils_AddFacetMarkers(tetgenio *inmesh,vtkPolyData *polydatasolid,
     std::string markerListArrayName)
 {
@@ -227,6 +226,28 @@ int TGenUtils_AddFacetMarkers(tetgenio *inmesh,vtkPolyData *polydatasolid,
   {
     double boundarymarker = (int) boundaryScalars->GetValue(i);
     inmesh->facetmarkerlist[i]=boundarymarker;
+  }
+
+  return SV_OK;
+}
+
+// -----------------------------
+// cvTGenUtils_AddHoles
+// -----------------------------
+/**
+ */
+int TGenUtils_AddHoles(tetgenio *inmesh, vtkPoints *holeList)
+{
+  inmesh->numberofholes = holeList->GetNumberOfPoints();
+  inmesh->holelist = new REAL[inmesh->numberofholes * 3];
+
+  for (int i=0; i<inmesh->numberofholes; i++)
+  {
+    double pt[3];
+    holeList->GetPoint(i, pt);
+    inmesh->holelist[3*i] =   pt[0];
+    inmesh->holelist[3*i+1] = pt[1];
+    inmesh->holelist[3*i+2] = pt[2];
   }
 
   return SV_OK;
@@ -1379,12 +1400,12 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
   fprintf(stdout,"Number of Bad Edges on Surface: %d\n",BadEdges);
   fprintf(stdout,"Number of Free Edges on Surface: %d\n",FreeEdges);
   fprintf(stdout,"Regions: %d\n",regions);
-  if (regions != 0)
-  {
-    fprintf(stderr,"There are multiple regions here!\n");
-    fprintf(stderr,"Terminating meshing!\n");
-    return SV_ERROR;
-  }
+  //if (regions != 0)
+  //{
+  //  fprintf(stderr,"There are multiple regions here!\n");
+  //  fprintf(stderr,"Terminating meshing!\n");
+  //  return SV_ERROR;
+  //}
   if(FreeEdges > 0 && !boundarylayer)
   {
     fprintf(stderr,"There are free edes on surface!\n");

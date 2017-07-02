@@ -58,6 +58,10 @@ public slots:
 
     void TableRegionListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
+    void TableDomainsListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+    void DeleteSelectedDomains( bool checked = false );
+
     void SetRegion( bool checked = false );
 
     void DeleteSelectedRegions( bool checked = false );
@@ -73,6 +77,8 @@ public slots:
     void UpdateAdaptGUI(int selected);
 
     void AddSphere();
+
+    void AddHole();
 
     void ShowSphereInteractor(bool checked);
 
@@ -155,7 +161,11 @@ protected:
     QMenu* m_TableMenuRegion;
     QStandardItemModel* m_TableModelRegion;
 
+    QMenu* m_TableMenuDomains;
+    QStandardItemModel* m_TableModelDomains;
+
     int m_SelectedRegionIndex;
+    int m_SelectedDomainsIndex;
 
     vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
 

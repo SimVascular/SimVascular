@@ -327,15 +327,15 @@
          <item>
           <widget class="QToolBox" name="toolBox">
            <property name="currentIndex">
-            <number>4</number>
+            <number>5</number>
            </property>
            <widget class="QWidget" name="page_3">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>584</height>
+              <width>320</width>
+              <height>320</height>
              </rect>
             </property>
             <attribute name="label">
@@ -828,17 +828,17 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="ctkSliderWidget" name="sliderPassesM">
-                     <property name="decimals">
+                    <widget class="ctkSliderWidget" name="sliderPassesM" native="true">
+                     <property name="decimals" stdset="0">
                       <number>0</number>
                      </property>
-                     <property name="pageStep">
+                     <property name="pageStep" stdset="0">
                       <double>1.000000000000000</double>
                      </property>
-                     <property name="maximum">
+                     <property name="maximum" stdset="0">
                       <double>20.000000000000000</double>
                      </property>
-                     <property name="value">
+                     <property name="value" stdset="0">
                       <double>3.000000000000000</double>
                      </property>
                     </widget>
@@ -903,8 +903,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>584</height>
+              <width>100</width>
+              <height>84</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -988,8 +988,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>584</height>
+              <width>167</width>
+              <height>84</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1106,8 +1106,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>584</height>
+              <width>322</width>
+              <height>196</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1176,23 +1176,23 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="ctkSliderWidget" name="sliderFlagO">
-                     <property name="decimals">
+                    <widget class="ctkSliderWidget" name="sliderFlagO" native="true">
+                     <property name="decimals" stdset="0">
                       <number>0</number>
                      </property>
-                     <property name="pageStep">
+                     <property name="pageStep" stdset="0">
                       <double>1.000000000000000</double>
                      </property>
-                     <property name="minimum">
+                     <property name="minimum" stdset="0">
                       <double>1.000000000000000</double>
                      </property>
-                     <property name="maximum">
+                     <property name="maximum" stdset="0">
                       <double>7.000000000000000</double>
                      </property>
-                     <property name="value">
+                     <property name="value" stdset="0">
                       <double>3.000000000000000</double>
                      </property>
-                     <property name="tickInterval">
+                     <property name="tickInterval" stdset="0">
                       <double>1.000000000000000</double>
                      </property>
                     </widget>
@@ -1229,23 +1229,23 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="ctkSliderWidget" name="sliderFlagQ">
-                     <property name="decimals">
+                    <widget class="ctkSliderWidget" name="sliderFlagQ" native="true">
+                     <property name="decimals" stdset="0">
                       <number>1</number>
                      </property>
-                     <property name="singleStep">
+                     <property name="singleStep" stdset="0">
                       <double>0.100000000000000</double>
                      </property>
-                     <property name="pageStep">
+                     <property name="pageStep" stdset="0">
                       <double>0.500000000000000</double>
                      </property>
-                     <property name="minimum">
+                     <property name="minimum" stdset="0">
                       <double>1.100000000000000</double>
                      </property>
-                     <property name="maximum">
+                     <property name="maximum" stdset="0">
                       <double>2.000000000000000</double>
                      </property>
-                     <property name="value">
+                     <property name="value" stdset="0">
                       <double>1.400000000000000</double>
                      </property>
                     </widget>
@@ -1356,8 +1356,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>584</height>
+              <width>227</width>
+              <height>303</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1751,6 +1751,79 @@
                 </size>
                </property>
               </spacer>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_10">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>489</width>
+              <height>544</height>
+             </rect>
+            </property>
+            <attribute name="label">
+             <string>Multi-Domain</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_26">
+             <item>
+              <widget class="QWidget" name="verticalWidget" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_25">
+                <item>
+                 <widget class="QTableView" name="tableViewDomains"/>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_23">
+                  <item>
+                   <widget class="QLabel" name="labelAddHoleLabel">
+                    <property name="maximumSize">
+                     <size>
+                      <width>80</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Add Hole:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnAddHole">
+                    <property name="maximumSize">
+                     <size>
+                      <width>100</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Add</string>
+                    </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>16</width>
+                      <height>16</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer_5">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </widget>

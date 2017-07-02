@@ -100,6 +100,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   volumemesh_ = NULL;
   boundarylayermesh_ = NULL;
   innerblmesh_ = NULL;
+  holelist_ = NULL;
 
   meshFileName_[0] = '\0';
   solidFileName_[0] = '\0';
@@ -137,6 +138,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.meshwallfirst=0;
   meshoptions_.startwithvolume=0;
   meshoptions_.refinecount=0;
+  meshoptions_.numberofholes=0;
 #ifdef SV_USE_MMG
   meshoptions_.usemmg=1;
 #else
@@ -199,6 +201,8 @@ cvTetGenMeshObject::~cvTetGenMeshObject()
   if (innerblmesh_ != NULL)
     innerblmesh_->Delete();
 
+  if (holelist_ != NULL)
+    holelist_->Delete();
 }
 
 int cvTetGenMeshObject::SetMeshFileName( const char* meshFileName )
@@ -732,8 +736,6 @@ int cvTetGenMeshObject::NewMesh() {
   std::string markerListName;
   int useSizingFunction;
   int useBoundary;
-  vtkSmartPointer<vtkDoubleArray> meshsizingfunction =
-    vtkSmartPointer<vtkDoubleArray>::New();
 
   if (meshoptions_.boundarylayermeshflag)
   {
@@ -755,25 +757,6 @@ int cvTetGenMeshObject::NewMesh() {
     markerListName = "ModelFaceID";
   }
 
-  //If using boundary layer mesh, must apply mesh sizing function that is
-  //attached to the polydatasolid from VMTKUtils_ComputeSizingFunction
-  if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing ||
-      meshoptions_.refinement)
-  {
-    if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != SV_OK)
-    {
-      fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
-		      Something may have gone wrong when setting up BL");
-      return SV_ERROR;
-    }
-    meshsizingfunction = vtkDoubleArray::SafeDownCast(polydatasolid_->\
-	  GetPointData()->GetScalars("MeshSizingFunction"));
-  }
-  else
-  {
-    meshsizingfunction = NULL;
-  }
-
   vtkSmartPointer<vtkCleanPolyData> cleaner =
    vtkSmartPointer<vtkCleanPolyData>::New();
   cleaner->SetInputData(polydatasolid_);
@@ -788,16 +771,10 @@ int cvTetGenMeshObject::NewMesh() {
   }
 
   // Add mesh sizing function
-  if (useSizingFunction && meshsizingfunction == NULL)
-  {
-    fprintf(stderr,"Must have an array with parameters\
-       	to compute mesh with sizing function\n");
-    return SV_ERROR;
-  }
-  else if (meshsizingfunction && meshsizingfunction != NULL)
+  if (useSizingFunction)
   {
     if (TGenUtils_AddPointSizingFunction(inmesh_,polydatasolid_,
-          meshsizingfunction, meshoptions_.maxedgesize) != SV_OK)
+          "MeshSizingFunction", meshoptions_.maxedgesize) != SV_OK)
     {
       fprintf(stderr,"Could not add mesh sizing function to mesh\n");
       return SV_ERROR;
@@ -811,6 +788,16 @@ int cvTetGenMeshObject::NewMesh() {
       markerListName) != SV_OK)
     {
       fprintf(stderr,"Could not add facet markers to mesh\n");
+      return SV_ERROR;
+    }
+  }
+
+  // Add holes
+  if (meshoptions_.numberofholes > 0)
+  {
+    if (TGenUtils_AddHoles(inmesh_, holelist_) != SV_OK)
+    {
+      fprintf(stderr,"Could not add hole to mesh\n");
       return SV_ERROR;
     }
   }
@@ -889,6 +876,17 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
       if (numValues < 1)
 	return SV_ERROR;
       meshoptions_.coarsen_percent=values[0]/100;
+  }
+  else if(!strncmp(flags,"AddHole",7)) {
+    if (numValues < 3)
+    {
+      fprintf(stderr,"Must provide x,y,z coordinate of hole\n");
+      return SV_ERROR;
+    }
+    meshoptions_.numberofholes++;
+    if (holelist_ == NULL)
+      holelist_ = vtkPoints::New();
+    holelist_->InsertNextPoint(values[0], values[1], values[2]);
   }
   else if(!strncmp(flags,"Verbose",7)) {//V
       meshoptions_.verbose=1;
