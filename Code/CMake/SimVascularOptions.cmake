@@ -29,6 +29,10 @@
 #-----------------------------------------------------------------------------
 # Developer flag (Output extra info during configure)
 option(SV_DEVELOPER_OUTPUT "This is a developer mode to print extra messages during configure" OFF)
+
+# Setup components to pack
+set(SV_DISTRIBUTE_COMPONENTS OpenSource CACHE STRING "When distributing, specify which components to distribute.")
+set_property(CACHE SV_DISTRIBUTE_COMPONENTS PROPERTY STRINGS OpenSource Licensed All)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

@@ -46,10 +46,6 @@ install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
 include(InstallRequiredSystemLibraries)
 include(CPackComponent)
 
-# Setup components to pack
-set(SV_DISTRIBUTE_COMPONENTS OpenSource CACHE STRING "When distributing, specify which components to distribute.")
-set_property(CACHE SV_DISTRIBUTE_COMPONENTS PROPERTY STRINGS OpenSource Licensed All)
-
 option(SV_OPEN_TERMINAL "Open terminal when launching SimVascular" ON)
 option(SV_CREATE_DESKTOP_LAUNCHER "Create desktop launcher" OFF)
 
@@ -171,6 +167,8 @@ if(APPLE)
 		elseif(SV_RELEASE_TYPE MATCHES "^Beta$")
 			set(CPACK_BUNDLE_NAME "SimVascular-Beta")
 		endif()
+
+		# component-based distribution doesn't work for bundle; instead, control which to install before cpack
 
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/OSX/Info.plist.in
 			${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist @ONLY)
