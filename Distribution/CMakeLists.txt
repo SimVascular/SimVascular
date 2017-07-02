@@ -155,11 +155,13 @@ endif()
 #-----------------------------------------------------------------------------
 # APPLE setup
 if(APPLE)
-	# Use the bundle-generator on osx ...
+	set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-darwin-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
+
 	if(SV_DISTRIBUTE_COMPONENTS STREQUAL Licensed)
 		set(CPACK_GENERATOR "productbuild")
 		set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/licensed/${SV_INSTALL_VERSION_DIR}")
 	else()
+		# Use the bundle-generator on osx ...
 		set(CPACK_GENERATOR "Bundle")
 		set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/OSX/SimVascular.icns")
 		if(SV_RELEASE_TYPE MATCHES "^Release$")
@@ -175,7 +177,6 @@ if(APPLE)
 
 		set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist")
 		set(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/OSX/simvascular.sh")
-		set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-darwin-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
 		if(SV_DEVELOPER_OUTPUT)
 			message(STATUS "CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}.dmg")
