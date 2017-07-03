@@ -36,11 +36,11 @@ void svProjectDataNodesPluginActivator::LoadLibrary(QString name, QString libFil
     QLibrary extraLib(libFileName);
     if(extraLib.load())
         MITK_INFO<< name.toStdString() + " module loaded.";
-    else
-    {
-        MITK_INFO<< name.toStdString() + " module not loaded.";
-        MITK_INFO<< extraLib.errorString().toStdString();
-    }
+//    else
+//    {
+//        MITK_INFO<< name.toStdString() + " module not loaded.";
+//        MITK_INFO<< extraLib.errorString().toStdString();
+//    }
 }
 
 void svProjectDataNodesPluginActivator::LoadModules()

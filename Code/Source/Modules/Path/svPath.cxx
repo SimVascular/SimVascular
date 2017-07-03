@@ -25,6 +25,7 @@ svPath::svPath(const svPath &other)
     , m_CalculateBoundingBox(true)
     , m_ResliceSize(other.m_ResliceSize)
     , m_AddingMode(other.m_AddingMode)
+    , m_Props(other.m_Props)
 {
     for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
     {
