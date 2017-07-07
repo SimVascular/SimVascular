@@ -4,5 +4,8 @@
         <file>CloseSV.png</file>
         <file>SaveAllSV.png</file>
         <file>remove.png</file>
+        <file>axial.png</file>
+        <file>sagittal.png</file>
+        <file>coronal.png</file>
     </qresource>
 </RCC>

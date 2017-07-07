@@ -881,6 +881,15 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         mainActionsToolBar->addAction(viewNavigatorAction);
     }
 
+    QAction* axialAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/axial.png"), "");
+    QObject::connect(axialAction, SIGNAL(triggered(bool)), this, SLOT(ToggleAxialPlane(bool)));
+
+    QAction* sagittalAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/sagittal.png"), "");
+    QObject::connect(sagittalAction, SIGNAL(triggered(bool)), this, SLOT(ToggleSagittalPlane(bool)));
+
+    QAction* coronalAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/coronal.png"), "");
+    QObject::connect(coronalAction, SIGNAL(triggered(bool)), this, SLOT(ToggleCoronalPlane(bool)));
+
     mainWindow->addToolBar(mainActionsToolBar);
 
     // ==== Perspective Toolbar ==================================
@@ -2017,4 +2026,35 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
         mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
     }
     m_Interface->ExecuteOperation(doOp);
+}
+
+void svWorkbenchWindowAdvisor::ToggleSlicePlane(QString name)
+{
+    mitk::DataStorage::Pointer dataStorage=GetDataStorage();
+    if(dataStorage.IsNull())
+        return;
+
+    mitk::DataNode* node=dataStorage->GetNamedNode(name.toStdString());
+    if(node)
+    {
+        bool visible=false;
+        node->GetBoolProperty("visible", visible);
+        node->SetVisibility(!visible);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
+}
+
+void svWorkbenchWindowAdvisor::ToggleAxialPlane(bool )
+{
+    ToggleSlicePlane("stdmulti.widget1.plane");
+}
+
+void svWorkbenchWindowAdvisor::ToggleSagittalPlane(bool )
+{
+    ToggleSlicePlane("stdmulti.widget2.plane");
+}
+
+void svWorkbenchWindowAdvisor::ToggleCoronalPlane(bool )
+{
+    ToggleSlicePlane("stdmulti.widget3.plane");
 }
