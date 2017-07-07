@@ -246,7 +246,7 @@ void svMitkMesh::PrintSelf( std::ostream& os, itk::Indent indent ) const
         os << indent << "Timestep " << t << ": \n";
         itk::Indent nextIndent = indent.GetNextIndent();
 
-        if(m_MeshSet[t])
+        if(m_MeshSet[t] && m_MeshSet[t]->GetVolumeMesh())
         {
             os << nextIndent << "Mesh Type: " << m_MeshSet[t]->GetType() << "\n";
                 os << nextIndent << "Number of cells: " << m_MeshSet[t]->GetVolumeMesh()->GetNumberOfCells() << "\n";
