@@ -1712,6 +1712,12 @@ void svWorkbenchWindowAdvisor::RemoveSelectedNodes( bool )
                 if(rs.IsNotNull()&&rs->size()>0)
                     parentNode=rs->GetElement(0);
 
+                //prevent removing image inside a project;however you can replace it
+                mitk::NodePredicateDataType::Pointer isImageFolder = mitk::NodePredicateDataType::New("svImageFolder");
+                mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
+                if(parentNode.IsNotNull() && isImageFolder->CheckNode(parentNode) && isImage->CheckNode(node))
+                    continue;
+
                 svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,dataStorage,node,parentNode);
                 if(m_UndoEnabled)
                 {
@@ -1780,6 +1786,15 @@ void svWorkbenchWindowAdvisor::RenameSelectedNode( bool )
                 alreadyExists=true;
             else if(parentNode.IsNotNull() && dataStorage->GetNamedDerivedNode(newName.toStdString().c_str(),parentNode))
                 alreadyExists=true;
+
+            //prevent renaming image inside a project
+            mitk::NodePredicateDataType::Pointer isImageFolder = mitk::NodePredicateDataType::New("svImageFolder");
+            mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
+            if(parentNode.IsNotNull() && isImageFolder->CheckNode(parentNode) && isImage->CheckNode(node))
+            {
+                QMessageBox::information(NULL,"Info","Image renaming in inside a SV project is not allowed.");
+                return;
+            }
 
             if(alreadyExists)
             {

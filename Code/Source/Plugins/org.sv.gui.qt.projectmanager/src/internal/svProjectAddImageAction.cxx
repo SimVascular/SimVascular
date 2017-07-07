@@ -73,7 +73,7 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         bool copy=false;
 
         if (QMessageBox::question(NULL, "Copy into Project?", "Do you want to copy the image as vti into the project?",
-                                  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
         {
             copy=true;
         }
@@ -92,10 +92,13 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
             }
         }
 
+        QString imageName = QInputDialog::getText(NULL, tr("Assign Image Name"),
+                                                                tr("Image name:"), QLineEdit::Normal);
+
         mitk::StatusBar::GetInstance()->DisplayText("Adding or replacing image");
         QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-        svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode, copy, scaleFactor);
+        svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode, copy, scaleFactor, imageName.trimmed());
 
         mitk::StatusBar::GetInstance()->DisplayText("Imaged Added");
         QApplication::restoreOverrideCursor();

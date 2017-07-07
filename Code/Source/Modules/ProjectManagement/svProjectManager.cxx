@@ -104,6 +104,11 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
     QString projectConfigFilePath=dir.absoluteFilePath(projectConfigFileName);
 
     QStringList imageFilePathList;
+    QStringList imageNameList;
+
+    bool rewriteProjectConfigFile=false;
+    QDomDocument doc("svproj");
+
     if(newProject)
     {
         WriteEmptyConfigFile(projectConfigFilePath);
@@ -117,7 +122,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
 
         QFile xmlFile(projectConfigFilePath);
         xmlFile.open(QIODevice::ReadOnly);
-        QDomDocument doc("svproj");
+//        QDomDocument doc("svproj");
         QString *em=NULL;
         doc.setContent(&xmlFile,em);
         xmlFile.close();
@@ -135,11 +140,38 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
             if(imageElement.isNull()) continue;
 
             QString inProj=imageElement.attribute("in_project");
+            QString imageName=imageElement.attribute("name");
+            QString imagePath=imageElement.attribute("path");
 
             if(inProj=="yes")
-                imageFilePathList<<(projPath+"/"+imageFolderName+"/"+imageElement.attribute("name"));
+            {
+                if(imagePath!="")
+                {
+                    imageFilePathList<<(projPath+"/"+imageFolderName+"/"+imagePath);
+                }
+                else if(imageName!="")
+                {
+                    imageFilePathList<<(projPath+"/"+imageFolderName+"/"+imageName);
+
+                    imageElement.setAttribute("path",imageName);
+                    imageElement.setAttribute("name",imageName.remove(".vti"));
+                    rewriteProjectConfigFile=true;
+                }
+                 imageNameList<<imageName;
+            }
             else
+            {
                 imageFilePathList<<imageElement.attribute("path");
+
+                if(imageName=="")
+                {
+                    imageName="image";
+                    imageElement.setAttribute("name",imageName);
+                    rewriteProjectConfigFile=true;
+                }
+                imageNameList<<imageName;
+
+            }
         }
 
         pathFolderName=projDesc.firstChildElement("paths").attribute("folder_name");
@@ -149,6 +181,19 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
 
     }
+
+    if(rewriteProjectConfigFile)
+    {
+        QString xml = doc.toString(4);
+
+        QFile file( projectConfigFilePath );
+
+        if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+            QTextStream out(&file);
+            out << xml <<endl;
+        }
+    }
+
 
     mitk::DataNode::Pointer projectFolderNode= CreateDataFolder<svProjectFolder>(dataStorage,projName);
     projectFolderNode->AddProperty("project path",mitk::StringProperty::New(projPath.toStdString().c_str()));
@@ -174,6 +219,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         {
             mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePathList[i].toStdString());
             //            imageNode->SetVisibility(false);
+            imageNode->SetName(imageNameList[i].toStdString());
             dataStorage->Add(imageNode,imageFolderNode);
         }
 
@@ -367,7 +413,8 @@ void svProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
 }
 
 // so far, no copy into project
-void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor)
+void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageFolderNode
+                                , bool copyIntoProject, double scaleFactor, QString newImageName)
 {
     mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
 
@@ -383,9 +430,13 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
 
     projectFolderNode->GetStringProperty("project path",projPath);
 
-    std::string imageName="image";
-    if(projectFolderNode.IsNotNull())
-        imageName=projectFolderNode->GetName();
+    std::string imageName=newImageName.toStdString();
+    if(imageName=="")
+    {
+        imageName="image";
+        if(projectFolderNode.IsNotNull())
+            imageName=projectFolderNode->GetName();
+    }
 
     if(imageNode.IsNotNull())
         imageNode->SetName(imageName);
@@ -410,9 +461,16 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
 
         if(inProj=="yes")
         {
-            QString piPath=QString::fromStdString(projPath+"/"+imageFolderNode->GetName()+"/"+previousImgElement.attribute("name").toStdString());
-            QFile piFile(piPath);
-            piFile.remove();
+            QString imagePath=previousImgElement.attribute("path");
+            if(imagePath=="")
+                imagePath=previousImgElement.attribute("name");
+
+            if(imagePath!="")
+            {
+                QString fullPath=QString::fromStdString(projPath+"/"+imageFolderNode->GetName()+"/"+imagePath.toStdString());
+                QFile piFile(fullPath);
+                piFile.remove();
+            }
         }
 
         mitk::DataStorage::SetOfObjects::ConstPointer nodesToRemove=dataStorage->GetDerivations(imageFolderNode,nullptr,false);
@@ -429,14 +487,14 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
     {
         imgElement.setAttribute("in_project","yes");
         QString imageName=QString::fromStdString(imageNode->GetName());
-//        if(imageName.size()>15)
-//            imageName=imageName.mid(0,15);
+        QString imagePath=imageName+".vti";
 
-        imageName=imageName+".vti";
         imgElement.setAttribute("name",imageName);
-        std::string ipath=projPath+"/"+imageFolderNode->GetName();
-        std::string ifilePath=ipath+"/"+imageName.toStdString();
-        imageNode->SetStringProperty("path",ipath.c_str());
+        imgElement.setAttribute("path",imagePath);
+
+        std::string imageParentPath=projPath+"/"+imageFolderNode->GetName();
+        std::string imagFullPath=imageParentPath+"/"+imagePath.toStdString();
+        imageNode->SetStringProperty("path",imageParentPath.c_str());
         mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
         if(image)
         {
@@ -455,7 +513,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
             if(vtkImg)
             {
                 vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
-                writer->SetFileName(ifilePath.c_str());
+                writer->SetFileName(imagFullPath.c_str());
                 writer->SetInputData(vtkImg);
                 writer->Write();
             }
@@ -466,6 +524,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
     else
     {
         imgElement.setAttribute("in_project","no");
+        imgElement.setAttribute("name",QString::fromStdString(imageName));
         imgElement.setAttribute("path",imageFilePath);
     }
 
