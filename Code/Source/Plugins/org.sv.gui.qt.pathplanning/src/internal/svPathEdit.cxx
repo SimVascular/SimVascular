@@ -65,9 +65,10 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
 
     if(m_DisplayWidget)
     {
-        m_DisplayWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
-        m_DisplayWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
-        m_DisplayWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
+        //instead set zero in svappication
+//        m_DisplayWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
+//        m_DisplayWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
+//        m_DisplayWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
     }
     else
     {

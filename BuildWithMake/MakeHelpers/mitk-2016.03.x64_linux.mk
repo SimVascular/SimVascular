@@ -87,6 +87,7 @@ MITK_PLUGIN_INCDIRS = \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common.legacy \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.datamanager \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.stdmultiwidgeteditor \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.ext \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.ui.qt \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.ui.qt/application \
@@ -102,6 +103,7 @@ MITK_INCDIRS += $(MITK_PLUGIN_INCDIRS)
 MITK_PLUGIN_LIBS += \
              $(LIBFLAG)org_mitk_gui_qt_application$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_datamanager$(LIBLINKEXT) \
+             $(LIBFLAGorg_mitk_gui_qt_stdmultiwidgeteditor$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_ext$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_common$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_common$(LIBLINKEXT) \

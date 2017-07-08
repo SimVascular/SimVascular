@@ -81,6 +81,7 @@ set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
                             org_mitk_gui_qt_common
                             org_mitk_gui_qt_common_legacy
                             org_mitk_gui_qt_datamanager
+                            org_mitk_gui_qt_stdmultiwidgeteditor
                             org_mitk_gui_qt_ext
                             org_blueberry_ui_qt
                             org_blueberry_core_runtime)
@@ -133,6 +134,7 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "QmitkAbstractView.h"                            #mitk/plugins/org.mitk.gui.qt.common
                     "QmitkFunctionality.h"                           #mitk/plugins/org.mitk.gui.qt.common.legacy
                     "mitkIContextMenuAction.h"                       #mitk/plugins/org.mitk.gui.qt.datamanager
+                    "QmitkStdMultiWidgetEditor.h"                    #mitk/plugins/org.mitk.gui.qt.stdmultiwidgeteditor
                     "QmitkExtActionBarAdvisor.h"                     #mitk/plugins/org.mitk.gui.qt.ext
                     "berryMacros.h"                                  #mitk/plugins/org.blueberry.core.runtime
                     "berryIApplication.h"                            #mitk/plugins/org.blueberry.core.runtime/application
@@ -321,6 +323,7 @@ set(possible_sub_paths ctk
                        mitk/plugins/org.mitk.gui.qt.common
                        mitk/plugins/org.mitk.gui.qt.common.legacy
                        mitk/plugins/org.mitk.gui.qt.datamanager
+                       mitk/plugins/org.mitk.gui.qt.stdmultiwidgeteditor
                        mitk/plugins/org.mitk.gui.qt.ext
                        mitk/plugins/org.blueberry.core.runtime
                        mitk/plugins/org.blueberry.core.runtime/application

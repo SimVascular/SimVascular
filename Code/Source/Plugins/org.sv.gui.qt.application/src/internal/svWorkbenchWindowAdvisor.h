@@ -84,6 +84,8 @@ public:
 
     void ToggleSlicePlane(QString name);
 
+    void SetCrosshairGapZero();
+
 protected slots:
 
     virtual void onIntro();

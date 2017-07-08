@@ -67,6 +67,8 @@
 #include <QmitkPreferencesDialog.h>
 #include <QmitkOpenDicomEditorAction.h>
 #include <QmitkDataManagerView.h>
+#include <QmitkStdMultiWidgetEditor.h>
+#include <QmitkStdMultiWidget.h>
 
 #include <itkConfigure.h>
 #include <vtkConfigure.h>
@@ -1018,6 +1020,7 @@ void svWorkbenchWindowAdvisor::PostWindowOpen()
     AddCustomMenuItemsForDataManager();
     SetupDataManagerDoubleClick();
 
+    SetCrosshairGapZero();
 }
 
 
@@ -1076,8 +1079,6 @@ void svWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
     berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
     if(workbench==NULL)
         return;
-
-    int count=workbench->GetWorkbenchWindowCount();
 
 //    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
     if(workbench->GetWorkbenchWindows().size()==0)
@@ -2057,4 +2058,56 @@ void svWorkbenchWindowAdvisor::ToggleSagittalPlane(bool )
 void svWorkbenchWindowAdvisor::ToggleCoronalPlane(bool )
 {
     ToggleSlicePlane("stdmulti.widget3.plane");
+}
+
+void svWorkbenchWindowAdvisor::SetCrosshairGapZero()
+{
+    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
+    if(workbench==NULL)
+        return;
+
+//    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
+    if(workbench->GetWorkbenchWindows().size()==0)
+        return;
+
+    berry::IWorkbenchWindow::Pointer window=workbench->GetWorkbenchWindows()[0];
+    if(window.IsNull())
+        return;
+
+    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
+    if(page.IsNull())
+        return;
+
+    ctkPluginContext* context=svApplicationPluginActivator::getContext();
+
+    mitk::IDataStorageService* dss = nullptr;
+    ctkServiceReference dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
+    if (dsServiceRef)
+        dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
+
+    if (!dss)
+        return;
+
+    berry::IEditorInput::Pointer editorInput( new mitk::DataStorageEditorInput( dss->GetActiveDataStorage() ) );
+    const QString stdEditorID = "org.mitk.editors.stdmultiwidget";
+    QList<berry::IEditorReference::Pointer> editorList = page->FindEditors( editorInput, stdEditorID, 1 );
+
+    // if an StdMultiWidgetEditor open was found
+    if(editorList.isEmpty())
+        return;
+
+    QmitkStdMultiWidgetEditor* editor=dynamic_cast<QmitkStdMultiWidgetEditor*>(editorList[0]->GetPart(true).GetPointer());
+
+    if(!editor)
+        return;
+
+
+    QmitkStdMultiWidget* multiWidget=editor->GetStdMultiWidget();
+    if(multiWidget)
+    {
+        multiWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
+        multiWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
+        multiWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
+    }
+
 }
