@@ -98,7 +98,7 @@ SV_EXPORT_TETGEN_MESH int TGenUtils_LoadMesh(char *filename,vtkUnstructuredGrid 
 SV_EXPORT_TETGEN_MESH int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,std::string newName,std::string originalName);
 
-SV_EXPORT_TETGEN_MESH int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer);
+SV_EXPORT_TETGEN_MESH int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd, int meshInfo[3]);
 
 SV_EXPORT_TETGEN_MESH int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size);
 

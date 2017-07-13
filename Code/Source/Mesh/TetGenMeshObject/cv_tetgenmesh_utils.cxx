@@ -1334,13 +1334,13 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
  */
 //
 
-int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
+int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd, int meshInfo[3])
 {
   fprintf(stdout,"Checking surface mesh\n");
   vtkIdType npts,p0,p1;
   vtkIdType *pts;
-  int BadEdges = 0,FreeEdges = 0;
-  int regions=0;
+  int NonManifoldEdges = 0,FreeEdges = 0;
+  int Regions=0;
   vtkSmartPointer<vtkCleanPolyData> cleaner =
     vtkSmartPointer<vtkCleanPolyData>::New();
   vtkSmartPointer<vtkIdList> edgeneigh =
@@ -1356,22 +1356,20 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
   pd->DeepCopy(cleaner->GetOutput());
   pd->BuildLinks();
 
-  connector->SetInputData(cleaner->GetOutput());
+  surfacer->SetInputData(cleaner->GetOutput());
+  surfacer->Update();
+
+  connector->SetInputData(surfacer->GetOutput());
   connector->ColorRegionsOn();
   connector->Update();
 
-  surfacer->SetInputData(connector->GetOutput());
-  surfacer->Update();
-
-  vtkSmartPointer<vtkIdTypeArray> regionarray =
-    vtkSmartPointer<vtkIdTypeArray>::New();
-  regionarray = vtkIdTypeArray::SafeDownCast(surfacer->GetOutput()->
-      GetCellData()->GetScalars("RegionId"));
+  vtkDataArray *regionarray = connector->GetOutput()->
+      GetCellData()->GetScalars("RegionId");
 
   //Loop through the surface and find edges with cells that have either more
   //than one neighbor or no neighbors. No neighbors can be okay,as this can
-  //indicate a free edge. However, for a polydata surface, multiple neighbors
-  //indicates a bad cell with possible intersecting facets!
+  //indicate a free edge. Multiple neighbors indicates a
+  //non-manifold edge. This can cause issues as well in certain cases.
   for (int i = 0;i<pd->GetNumberOfCells();i++)
   {
     pd->GetCellPoints(i,npts,pts);
@@ -1382,42 +1380,22 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
 
       pd->GetCellEdgeNeighbors(i,p0,p1,edgeneigh);
       if (edgeneigh->GetNumberOfIds() > 1)
-      {
-	BadEdges++;
-      }
+        NonManifoldEdges++;
       else if (edgeneigh->GetNumberOfIds() < 1)
-      {
-	FreeEdges++;
-      }
+        FreeEdges++;
     }
-    int val = regionarray->GetValue(i);
-    if (val > regions)
-    {
-      regions = val;
-    }
+    int val = regionarray->GetTuple1(i);
+    if (val > Regions)
+      Regions = val;
   }
 
-  fprintf(stdout,"Number of Bad Edges on Surface: %d\n",BadEdges);
-  fprintf(stdout,"Number of Free Edges on Surface: %d\n",FreeEdges);
-  fprintf(stdout,"Regions: %d\n",regions);
-  //if (regions != 0)
-  //{
-  //  fprintf(stderr,"There are multiple regions here!\n");
-  //  fprintf(stderr,"Terminating meshing!\n");
-  //  return SV_ERROR;
-  //}
-  if(FreeEdges > 0 && !boundarylayer)
-  {
-    fprintf(stderr,"There are free edes on surface!\n");
-    fprintf(stderr,"Terminating meshing!\n");
-    return SV_ERROR;
-  }
-  if(BadEdges > 0)
-  {
-    fprintf(stderr,"There are bad edes on surface!\n");
-    fprintf(stderr,"Terminating meshing!\n");
-    return SV_ERROR;
-  }
+  fprintf(stdout,"Regions: %d\n", Regions);
+  fprintf(stdout,"Number of Free Edges on Surface: %d\n", FreeEdges);
+  fprintf(stdout,"Number of Non-Manifold Edges on Surface: %d\n", NonManifoldEdges);
+
+  meshInfo[0] = Regions;
+  meshInfo[1] = FreeEdges;
+  meshInfo[2] = NonManifoldEdges;
 
   return SV_OK;
 }

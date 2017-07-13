@@ -1219,10 +1219,32 @@ int cvTetGenMeshObject::GenerateMesh() {
   //to re-set up the mesh based on sizing function for sphere refinement
   if (meshoptions_.volumemeshflag && !meshoptions_.surfacemeshflag)
   {
-    if (TGenUtils_CheckSurfaceMesh(polydatasolid_,
-	  meshoptions_.boundarylayermeshflag) != SV_OK)
+    int meshInfo[3];
+    if (TGenUtils_CheckSurfaceMesh(polydatasolid_, meshInfo) != SV_OK)
     {
-      fprintf(stderr,"Mesh surface is bad\n");
+      fprintf(stderr,"Error checking surface\n");
+      return SV_ERROR;
+    }
+
+    if (meshInfo[0] > 0)
+    {
+      if (meshInfo[0] != meshoptions_.numberofholes)
+      {
+        fprintf(stderr,"There are too many regions here!\n");
+        fprintf(stderr,"Terminating meshing!\n");
+        return SV_ERROR;
+      }
+    }
+    if (meshInfo[1] > 0 && !meshoptions_.boundarylayermeshflag)
+    {
+      fprintf(stderr,"There are free edes on surface!\n");
+      fprintf(stderr,"Terminating meshing!\n");
+      return SV_ERROR;
+    }
+    if (meshInfo[2] > 0)
+    {
+      fprintf(stderr,"There are bad edes on surface!\n");
+      fprintf(stderr,"Terminating meshing!\n");
       return SV_ERROR;
     }
     NewMesh();
@@ -1605,10 +1627,32 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   }
 #endif
 
-  if (TGenUtils_CheckSurfaceMesh(polydatasolid_,
-	  meshoptions_.meshwallfirst) != SV_OK)
+  int meshInfo[3];
+  if (TGenUtils_CheckSurfaceMesh(polydatasolid_, meshInfo) != SV_OK)
   {
     fprintf(stderr,"Mesh surface is bad\n");
+    return SV_ERROR;
+  }
+
+  if (meshInfo[0] > 0)
+  {
+    if (meshInfo[0] != meshoptions_.numberofholes)
+    {
+      fprintf(stderr,"There are too many regions here!\n");
+      fprintf(stderr,"Terminating meshing!\n");
+      return SV_ERROR;
+    }
+  }
+  if (meshInfo[1] > 0 && !meshoptions_.meshwallfirst)
+  {
+    fprintf(stderr,"There are free edes on surface!\n");
+    fprintf(stderr,"Terminating meshing!\n");
+    return SV_ERROR;
+  }
+  if (meshInfo[2] > 0)
+  {
+    fprintf(stderr,"There are bad edes on surface!\n");
+    fprintf(stderr,"Terminating meshing!\n");
     return SV_ERROR;
   }
 
