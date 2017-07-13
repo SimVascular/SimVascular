@@ -84,6 +84,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
     double cylinderlength;
     double cylindernormal[3];
     int numberofholes;
+    int numberofregions;
     int functionbasedmeshing;
     int secondarrayfunction;
     int meshwallfirst;
@@ -182,6 +183,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   vtkPolyData *originalpolydata_;
   vtkPolyData *surfacemesh_;
   vtkPoints   *holelist_;
+  vtkPoints   *regionlist_;
   vtkUnstructuredGrid *volumemesh_;
   vtkUnstructuredGrid *boundarylayermesh_;
   vtkUnstructuredGrid *innerblmesh_;

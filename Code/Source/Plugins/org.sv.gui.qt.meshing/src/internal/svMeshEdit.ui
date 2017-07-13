@@ -334,8 +334,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>320</width>
-              <height>320</height>
+              <width>489</width>
+              <height>544</height>
              </rect>
             </property>
             <attribute name="label">
@@ -903,8 +903,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>100</width>
-              <height>84</height>
+              <width>489</width>
+              <height>544</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -988,8 +988,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>167</width>
-              <height>84</height>
+              <width>489</width>
+              <height>544</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1106,8 +1106,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>322</width>
-              <height>196</height>
+              <width>489</width>
+              <height>544</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1356,8 +1356,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>227</width>
-              <height>303</height>
+              <width>489</width>
+              <height>544</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1776,10 +1776,24 @@
                 <item>
                  <layout class="QVBoxLayout" name="verticalLayout_23">
                   <item>
+                   <widget class="QLabel" name="labelAddSubDomain">
+                    <property name="text">
+                     <string>Add SumDomain:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnAddSubDomain">
+                    <property name="text">
+                     <string>Add</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
                    <widget class="QLabel" name="labelAddHoleLabel">
                     <property name="maximumSize">
                      <size>
-                      <width>80</width>
+                      <width>16777215</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -1792,7 +1806,7 @@
                    <widget class="QPushButton" name="btnAddHole">
                     <property name="maximumSize">
                      <size>
-                      <width>100</width>
+                      <width>16777215</width>
                       <height>16777215</height>
                      </size>
                     </property>

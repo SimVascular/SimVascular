@@ -65,6 +65,8 @@ SV_EXPORT_TETGEN_MESH int TGenUtils_AddFacetMarkers(tetgenio *inmesh,vtkPolyData
 
 SV_EXPORT_TETGEN_MESH int TGenUtils_AddHoles(tetgenio *inmesh, vtkPoints *holeList);
 
+SV_EXPORT_TETGEN_MESH int TGenUtils_AddRegions(tetgenio *inmesh, vtkPoints *regionList);
+
 SV_EXPORT_TETGEN_MESH int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,
     vtkPolyData *surfaceMesh,tetgenio *inmesh);
 

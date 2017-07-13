@@ -254,6 +254,28 @@ int TGenUtils_AddHoles(tetgenio *inmesh, vtkPoints *holeList)
 }
 
 // -----------------------------
+// cvTGenUtils_AddRegions
+// -----------------------------
+/**
+ */
+int TGenUtils_AddRegions(tetgenio *inmesh, vtkPoints *regionList)
+{
+  inmesh->numberofholes = holeList->GetNumberOfPoints();
+  inmesh->holelist = new REAL[inmesh->numberofholes * 3];
+
+  for (int i=0; i<inmesh->numberofholes; i++)
+  {
+    double pt[3];
+    holeList->GetPoint(i, pt);
+    inmesh->holelist[3*i] =   pt[0];
+    inmesh->holelist[3*i+1] = pt[1];
+    inmesh->holelist[3*i+2] = pt[2];
+  }
+
+  return SV_OK;
+}
+
+// -----------------------------
 // cvTGenUtils_ConvertVolumeToTetGen()
 // -----------------------------
 /**

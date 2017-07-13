@@ -101,6 +101,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   boundarylayermesh_ = NULL;
   innerblmesh_ = NULL;
   holelist_ = NULL;
+  regionlist_ = NULL;
 
   meshFileName_[0] = '\0';
   solidFileName_[0] = '\0';
@@ -139,6 +140,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.startwithvolume=0;
   meshoptions_.refinecount=0;
   meshoptions_.numberofholes=0;
+  meshoptions_.numberofregions=0;
 #ifdef SV_USE_MMG
   meshoptions_.usemmg=1;
 #else
@@ -203,6 +205,9 @@ cvTetGenMeshObject::~cvTetGenMeshObject()
 
   if (holelist_ != NULL)
     holelist_->Delete();
+
+  if (regionlist_ != NULL)
+    regionlist_->Delete();
 }
 
 int cvTetGenMeshObject::SetMeshFileName( const char* meshFileName )
@@ -802,6 +807,15 @@ int cvTetGenMeshObject::NewMesh() {
     }
   }
 
+  if (meshoptions_.numberofregions > 0)
+  {
+    if (TGenUtils_AddRegions(inmesh_, regionlist_) != SV_OK)
+    {
+      fprintf(stderr,"Could not add hole to mesh\n");
+      return SV_ERROR;
+    }
+  }
+
   //The mesh is now loaded, and TetGen is ready to be called
   meshloaded_ = 1;
 
@@ -887,6 +901,17 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
     if (holelist_ == NULL)
       holelist_ = vtkPoints::New();
     holelist_->InsertNextPoint(values[0], values[1], values[2]);
+  }
+  else if(!strncmp(flags,"AddSubDomain",12)) {
+    if (numValues < 3)
+    {
+      fprintf(stderr,"Must provide x,y,z coordinate of region\n");
+      return SV_ERROR;
+    }
+    meshoptions_.numberofregions++;
+    if (regionlist_ == NULL)
+      regionlist_ = vtkPoints::New();
+    regionlist_->InsertNextPoint(values[0], values[1], values[2]);
   }
   else if(!strncmp(flags,"Verbose",7)) {//V
       meshoptions_.verbose=1;
