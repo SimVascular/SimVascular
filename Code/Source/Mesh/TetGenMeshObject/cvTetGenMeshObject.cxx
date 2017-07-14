@@ -102,6 +102,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   innerblmesh_ = NULL;
   holelist_ = NULL;
   regionlist_ = NULL;
+  regionsizelist_ = NULL;
 
   meshFileName_[0] = '\0';
   solidFileName_[0] = '\0';
@@ -208,6 +209,9 @@ cvTetGenMeshObject::~cvTetGenMeshObject()
 
   if (regionlist_ != NULL)
     regionlist_->Delete();
+
+  if (regionsizelist_ != NULL)
+    regionsizelist_->Delete();
 }
 
 int cvTetGenMeshObject::SetMeshFileName( const char* meshFileName )
@@ -809,9 +813,9 @@ int cvTetGenMeshObject::NewMesh() {
 
   if (meshoptions_.numberofregions > 0)
   {
-    if (TGenUtils_AddRegions(inmesh_, regionlist_) != SV_OK)
+    if (TGenUtils_AddRegions(inmesh_, regionlist_, regionsizelist_) != SV_OK)
     {
-      fprintf(stderr,"Could not add hole to mesh\n");
+      fprintf(stderr,"Could not add region to mesh\n");
       return SV_ERROR;
     }
   }
@@ -903,15 +907,19 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
     holelist_->InsertNextPoint(values[0], values[1], values[2]);
   }
   else if(!strncmp(flags,"AddSubDomain",12)) {
-    if (numValues < 3)
+    if (numValues < 4)
     {
-      fprintf(stderr,"Must provide x,y,z coordinate of region\n");
+      fprintf(stderr,"Must provide x,y,z, size of region, and coordinate of region\n");
       return SV_ERROR;
     }
     meshoptions_.numberofregions++;
+    if (regionsizelist_ == NULL)
+      regionsizelist_ = vtkDoubleArray::New();
+    regionsizelist_->InsertNextTuple1(values[0]);
     if (regionlist_ == NULL)
       regionlist_ = vtkPoints::New();
-    regionlist_->InsertNextPoint(values[0], values[1], values[2]);
+    regionlist_->InsertNextPoint(values[1], values[2], values[3]);
+
   }
   else if(!strncmp(flags,"Verbose",7)) {//V
       meshoptions_.verbose=1;
@@ -1216,18 +1224,18 @@ int cvTetGenMeshObject::GenerateMesh() {
       //If we are doing boundary layer mesh, it gets complicated!
       if (meshoptions_.boundarylayermeshflag)
       {
-	if (GenerateBoundaryLayerMesh() != SV_OK)
-	  return SV_ERROR;
+        if (GenerateBoundaryLayerMesh() != SV_OK)
+          return SV_ERROR;
 
-	if (GenerateAndMeshCaps() != SV_OK)
-	  return SV_ERROR;
+        if (GenerateAndMeshCaps() != SV_OK)
+          return SV_ERROR;
       }
 
       if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing
         || meshoptions_.refinement)
       {
-	if (GenerateMeshSizingFunction() != SV_OK)
-	  return SV_ERROR;
+        if (GenerateMeshSizingFunction() != SV_OK)
+          return SV_ERROR;
       }
       NewMesh();
     }
@@ -1251,26 +1259,27 @@ int cvTetGenMeshObject::GenerateMesh() {
       return SV_ERROR;
     }
 
-    if (meshInfo[0] > 0)
+    if (!(meshoptions_.numberofholes > 0 ||
+          meshoptions_.numberofregions > 0))
     {
-      if (meshInfo[0] != meshoptions_.numberofholes)
+      if (meshInfo[0] > 1)
       {
         fprintf(stderr,"There are too many regions here!\n");
         fprintf(stderr,"Terminating meshing!\n");
         return SV_ERROR;
       }
-    }
-    if (meshInfo[1] > 0 && !meshoptions_.boundarylayermeshflag)
-    {
-      fprintf(stderr,"There are free edes on surface!\n");
-      fprintf(stderr,"Terminating meshing!\n");
-      return SV_ERROR;
-    }
-    if (meshInfo[2] > 0)
-    {
-      fprintf(stderr,"There are bad edes on surface!\n");
-      fprintf(stderr,"Terminating meshing!\n");
-      return SV_ERROR;
+      if (meshInfo[1] > 0 && !meshoptions_.boundarylayermeshflag)
+      {
+        fprintf(stderr,"There are free edes on surface!\n");
+        fprintf(stderr,"Terminating meshing!\n");
+        return SV_ERROR;
+      }
+      if (meshInfo[2] > 0)
+      {
+        fprintf(stderr,"There are bad edes on surface!\n");
+        fprintf(stderr,"Terminating meshing!\n");
+        return SV_ERROR;
+      }
     }
     NewMesh();
   }
@@ -1343,6 +1352,12 @@ int cvTetGenMeshObject::GenerateMesh() {
       tgb->quality = 3;
       tgb->metric = 1;
       tgb->mindihedral = 10.0;
+    }
+    if (meshoptions_.numberofregions > 0)
+    {
+      tgb->fixedvolume = 0;
+      tgb->varvolume = 1;
+      tgb->regionattrib = 1;
     }
 #if defined(TETGEN150) || defined(TETGEN151)
     if (meshoptions_.coarsen_percent != 0)
@@ -1659,26 +1674,27 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
     return SV_ERROR;
   }
 
-  if (meshInfo[0] > 0)
+  if (!(meshoptions_.numberofholes > 0 ||
+        meshoptions_.numberofregions > 0))
   {
-    if (meshInfo[0] != meshoptions_.numberofholes)
+    if (meshInfo[0] > 1)
     {
       fprintf(stderr,"There are too many regions here!\n");
       fprintf(stderr,"Terminating meshing!\n");
       return SV_ERROR;
     }
-  }
-  if (meshInfo[1] > 0 && !meshoptions_.meshwallfirst)
-  {
-    fprintf(stderr,"There are free edes on surface!\n");
-    fprintf(stderr,"Terminating meshing!\n");
-    return SV_ERROR;
-  }
-  if (meshInfo[2] > 0)
-  {
-    fprintf(stderr,"There are bad edes on surface!\n");
-    fprintf(stderr,"Terminating meshing!\n");
-    return SV_ERROR;
+    if (meshInfo[1] > 0 && !meshoptions_.meshwallfirst)
+    {
+      fprintf(stderr,"There are free edes on surface!\n");
+      fprintf(stderr,"Terminating meshing!\n");
+      return SV_ERROR;
+    }
+    if (meshInfo[2] > 0)
+    {
+      fprintf(stderr,"There are bad edes on surface!\n");
+      fprintf(stderr,"Terminating meshing!\n");
+      return SV_ERROR;
+    }
   }
 
   if (meshoptions_.meshwallfirst && !meshoptions_.boundarylayermeshflag)

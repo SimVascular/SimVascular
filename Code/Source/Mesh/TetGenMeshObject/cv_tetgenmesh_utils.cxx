@@ -258,18 +258,23 @@ int TGenUtils_AddHoles(tetgenio *inmesh, vtkPoints *holeList)
 // -----------------------------
 /**
  */
-int TGenUtils_AddRegions(tetgenio *inmesh, vtkPoints *regionList)
+int TGenUtils_AddRegions(tetgenio *inmesh, vtkPoints *regionList, vtkDoubleArray *regionSizeList)
 {
-  inmesh->numberofholes = holeList->GetNumberOfPoints();
-  inmesh->holelist = new REAL[inmesh->numberofholes * 3];
+  inmesh->numberofregions = regionList->GetNumberOfPoints();
+  inmesh->regionlist = new REAL[inmesh->numberofregions * 5];
 
-  for (int i=0; i<inmesh->numberofholes; i++)
+  for (int i=0; i<inmesh->numberofregions; i++)
   {
     double pt[3];
-    holeList->GetPoint(i, pt);
-    inmesh->holelist[3*i] =   pt[0];
-    inmesh->holelist[3*i+1] = pt[1];
-    inmesh->holelist[3*i+2] = pt[2];
+    regionList->GetPoint(i, pt);
+    inmesh->regionlist[5*i] =   pt[0];
+    inmesh->regionlist[5*i+1] = pt[1];
+    inmesh->regionlist[5*i+2] = pt[2];
+    inmesh->regionlist[5*i+3] = i;
+
+    double mES = regionSizeList->GetTuple1(i);
+    double maxvol = (mES*mES*mES)/(6*sqrt(2.));
+    inmesh->regionlist[5*i+4] = maxvol;
   }
 
   return SV_OK;
@@ -423,8 +428,8 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
     {
       if (pointOnSurface[outmesh->trifacelist[3*i+j]] == false)
       {
-	pointOnSurface[outmesh->trifacelist[3*i+j]] = true;
-	pointMapping[outmesh->trifacelist[3*i+j]] = count++;
+        pointOnSurface[outmesh->trifacelist[3*i+j]] = true;
+        pointMapping[outmesh->trifacelist[3*i+j]] = count++;
       }
     }
   }
@@ -453,7 +458,11 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
       polyPointIds->SetId(j,vtkId);
     }
 
-    modelRegionIds->InsertValue(i,modelId);
+    if (outmesh->numberoftetrahedronattributes > 0)
+      modelRegionIds->InsertValue(i, outmesh->tetrahedronattributelist[i] + 1);
+    else
+      modelRegionIds->InsertValue(i,modelId);
+
     globalElementIds->InsertValue(i,globalId);
     globalId++;
     polys->InsertNextCell(polyPointIds);
@@ -470,11 +479,9 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
 
   globalNodeIds->SetName("GlobalNodeID");
   fullUGrid->GetPointData()->AddArray(globalNodeIds);
-  fullUGrid->GetPointData()->SetActiveScalars("GlobalNodeID");
 
   globalElementIds->SetName("GlobalElementID");
   fullUGrid->GetCellData()->AddArray(globalElementIds);
-  fullUGrid->GetCellData()->SetActiveScalars("GlobalElementID");
 
   //Save all external faces to a vtkCellArray list
   fprintf(stderr,"Converting Faces to VTK Structures...\n");
@@ -1411,11 +1418,11 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd, int meshInfo[3])
       Regions = val;
   }
 
-  fprintf(stdout,"Regions: %d\n", Regions);
+  fprintf(stdout,"Regions: %d\n", Regions + 1);
   fprintf(stdout,"Number of Free Edges on Surface: %d\n", FreeEdges);
   fprintf(stdout,"Number of Non-Manifold Edges on Surface: %d\n", NonManifoldEdges);
 
-  meshInfo[0] = Regions;
+  meshInfo[0] = Regions+1;
   meshInfo[1] = FreeEdges;
   meshInfo[2] = NonManifoldEdges;
 

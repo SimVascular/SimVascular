@@ -334,8 +334,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>544</height>
+              <width>324</width>
+              <height>320</height>
              </rect>
             </property>
             <attribute name="label">
@@ -903,8 +903,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>544</height>
+              <width>98</width>
+              <height>84</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -1106,8 +1106,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>544</height>
+              <width>323</width>
+              <height>196</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1356,8 +1356,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>544</height>
+              <width>231</width>
+              <height>303</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1771,14 +1771,30 @@
               <widget class="QWidget" name="verticalWidget" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_25">
                 <item>
-                 <widget class="QTableView" name="tableViewDomains"/>
+                 <widget class="QTableView" name="tableViewDomains">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                  <property name="selectionMode">
+                   <enum>QAbstractItemView::ExtendedSelection</enum>
+                  </property>
+                  <property name="selectionBehavior">
+                   <enum>QAbstractItemView::SelectRows</enum>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <layout class="QVBoxLayout" name="verticalLayout_23">
                   <item>
                    <widget class="QLabel" name="labelAddSubDomain">
                     <property name="text">
-                     <string>Add SumDomain:</string>
+                     <string>Add SubDomain:</string>
                     </property>
                    </widget>
                   </item>

@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,9 +32,9 @@
  *  @brief This implements the vtkGetBoundaryFaces filter as a class
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "vtkGetBoundaryFaces.h"
@@ -69,29 +69,29 @@ vtkStandardNewMacro(vtkGetBoundaryFaces);
 // Construct object with feature angle = 50.0;
 vtkGetBoundaryFaces::vtkGetBoundaryFaces()
 {
-/** 
+/**
  * @brief member data that is the Feature Edges filter. Extracts edges!
  */
     this->boundaries = vtkFeatureEdges::New();
-/** 
- * @Default angle of extraction. Can be easily changed by setting Feature 
+/**
+ * @Default angle of extraction. Can be easily changed by setting Feature
  * Angle
  */
     this->FeatureAngle = 50.0;
-/** 
- * @brief Integer Array containing the values associated with the region 
+/**
+ * @brief Integer Array containing the values associated with the region
  * number at each face
  */
     this->newScalars = vtkIntArray::New();
-/** 
+/**
  * @brief PolyData that contains the output mesh with region scalars
  */
     this->mesh = vtkPolyData::New();
-/** 
+/**
  * @brief The series of points and lines output from the Feature Edges filter
  */
     this->boundaryLines = vtkPolyData::New();
-/** 
+/**
  * @brief The list of cell Ids that have been checked
  */
     this->CheckCells = vtkIdList::New();
@@ -164,10 +164,10 @@ int vtkGetBoundaryFaces::RequestData(
     // get the input and output
     vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
     vtkPolyData *output = vtkPolyData::GetData(outputVector);
-    
+
     // Define variables used by the algorithm
-    int reg = 0;                                          
-    int pt = 0;                                          
+    int reg = 0;
+    int pt = 0;
     vtkSmartPointer<vtkPoints> inpts = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> inPolys = vtkSmartPointer<vtkCellArray>::New();
     vtkPoints *newPts;
@@ -187,7 +187,7 @@ int vtkGetBoundaryFaces::RequestData(
     numPts = input->GetNumberOfPoints();
 
     //Check the input to make sure it is there
-    if (numPolys < 1)               
+    if (numPolys < 1)
     {
         vtkDebugMacro("No input!");
 	return 1;
@@ -213,7 +213,7 @@ int vtkGetBoundaryFaces::RequestData(
     this->boundaryLines->DeepCopy(this->boundaries->GetOutput());
     //this->boundaryLines->BuildLinks();
     //std::cout<<"Number Points: "<<this->boundaryLines->GetNumberOfPoints()<<endl;
- 
+
     this->SetBoundaryArrays();
 
     vtkDebugMacro("Starting Boundary Face Separation");
@@ -274,11 +274,11 @@ void vtkGetBoundaryFaces::FindBoundaryRegion(int reg,int start)
 {
     //Variables used in function
     int i;
-    vtkIdType j,k,l,cellId; 
+    vtkIdType j,k,l,cellId;
     vtkIdType *pts = 0;
     vtkIdType npts = 0;
     vtkIdType numNei, nei, p1, p2, nIds, neis;
-    
+
     //Id List to store neighbor cells for each set of nodes and a cell
     vtkSmartPointer<vtkIdList> neighbors = vtkSmartPointer<vtkIdList>::New();
     vtkSmartPointer<vtkIdList> tmp = vtkSmartPointer<vtkIdList>::New();
@@ -330,7 +330,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegion(int reg,int start)
 		  this->CheckCellsCareful2->Reset();
 		}
 	      }
-	      //Cell needs to be added to check list 
+	      //Cell needs to be added to check list
 	      else
 	      {
 		this->CheckCells2->InsertNextId(neighbors->GetId(j));
@@ -366,7 +366,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegionTipToe(int reg)
   //std::cout<<"Am tip toeing"<<endl;
     //Variables used in function
     int i;
-    vtkIdType j,k,l; 
+    vtkIdType j,k,l;
     vtkIdType *pts = 0;
     vtkIdType npts = 0;
     vtkIdType cellId;
@@ -378,7 +378,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegionTipToe(int reg)
 
     //Variable for accessing neiIds list
     vtkIdType sz = 0;
-    
+
     //Variables for the boundary cells adjacent to the boundary point
     vtkSmartPointer<vtkIdList> bLinesOne = vtkSmartPointer<vtkIdList>::New();
     vtkSmartPointer<vtkIdList> bLinesTwo = vtkSmartPointer<vtkIdList>::New();
@@ -396,7 +396,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegionTipToe(int reg)
 	this->mesh->GetCellPoints(cellId,npts,pts);
 	if (this->checkedcarefully[cellId] == 0)
 	{
-          //Update this cell to have been checked carefully and assign it 
+          //Update this cell to have been checked carefully and assign it
 	  //with the fillnumber scalar
           this->newScalars->InsertValue(cellId,reg);
 	  this->checkedcarefully[cellId] = 1;
@@ -407,18 +407,18 @@ void vtkGetBoundaryFaces::FindBoundaryRegionTipToe(int reg)
 	    p1 = pts[i];
 	    p2 = pts[(i+1)%(npts)];
 
-            vtkSmartPointer<vtkIdList> neighbors = 
+            vtkSmartPointer<vtkIdList> neighbors =
 	      vtkSmartPointer<vtkIdList>::New();
 	    //Initial check to make sure the cell is in fact a face cell
 	    this->mesh->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
 	    numNei = neighbors->GetNumberOfIds();
 
-	    //Check to make sure it is an oustide surface cell, 
+	    //Check to make sure it is an oustide surface cell,
 	    //i.e. one neighbor
 	    if (numNei==1)
 	    {
               int count = 0;
-		//Check to see if cell is on the boundary, 
+		//Check to see if cell is on the boundary,
 		//if it is get adjacent lines
 	      if (this->BoundaryPointArray->GetValue(p1) == 1)
 	        count++;
@@ -432,9 +432,9 @@ void vtkGetBoundaryFaces::FindBoundaryRegionTipToe(int reg)
 	      {
 		neiIds->InsertNextId(nei);
 	      }
-	      //if cell is on boundary, check to make sure it isn't 
+	      //if cell is on boundary, check to make sure it isn't
 	      //false positive; don't add to check list. This is done by
-	      //getting the boundary lines attached to each point, then 
+	      //getting the boundary lines attached to each point, then
 	      //intersecting the two lists. If the result is zero, then this
 	      //is a false positive
 	      else
@@ -447,7 +447,7 @@ void vtkGetBoundaryFaces::FindBoundaryRegionTipToe(int reg)
 		this->boundaryLines->GetPointCells(bPt2,bLinesTwo);
 
 		bLinesOne->IntersectWith(bLinesTwo);
-		//Cell is false positive. Add to check list. 
+		//Cell is false positive. Add to check list.
 		if (bLinesOne->GetNumberOfIds() == 0)
 		{
 	          //std::cout<<"False positive! "<<nei<<endl;
@@ -503,11 +503,11 @@ void vtkGetBoundaryFaces::SetBoundaryArrays()
   //Variables used in the function
   double pt[3];
   vtkIdType pointId,bp,bp2,i;
-  vtkSmartPointer<vtkIdList> bpCellIds = 
+  vtkSmartPointer<vtkIdList> bpCellIds =
     vtkSmartPointer<vtkIdList>::New();
   //Point locator to find points on mesh that are the points on the boundary
   //lines
-  vtkSmartPointer<vtkPointLocator> pointLocator = 
+  vtkSmartPointer<vtkPointLocator> pointLocator =
     vtkSmartPointer<vtkPointLocator>::New();
   pointLocator->SetDataSet(this->mesh);
   pointLocator->BuildLocator();
@@ -519,7 +519,7 @@ void vtkGetBoundaryFaces::SetBoundaryArrays()
   this->pointMapper = new vtkIdType[numMeshCells];
   this->BoundaryPointArray->SetNumberOfTuples(numMeshPoints);
   this->BoundaryCellArray->SetNumberOfTuples(numMeshCells);
-  
+
   for (int i =0;i<numMeshPoints;i++)
   {
     this->BoundaryPointArray->InsertValue(i,0);
@@ -535,7 +535,7 @@ void vtkGetBoundaryFaces::SetBoundaryArrays()
   for (pointId = 0;pointId < numPoints;pointId++)
   {
     this->boundaryLines->GetPoint(pointId,pt);
-    //Find point on mesh 
+    //Find point on mesh
     bp = pointLocator->FindClosestPoint(pt);
     this->pointMapper[bp] = pointId;
     this->BoundaryPointArray->InsertValue(bp,1);
@@ -543,7 +543,7 @@ void vtkGetBoundaryFaces::SetBoundaryArrays()
     //Set the point mapping array
     //Assign each cell attached to this point as a boundary cell
     for (i = 0;i < bpCellIds->GetNumberOfIds();i++)
-    { 
+    {
       this->BoundaryCellArray->InsertValue(bpCellIds->GetId(i),1);
       this->checked[bpCellIds->GetId(i)] = 1;
     }

@@ -188,7 +188,7 @@ void svMeshEdit::SetupGUI(QWidget *parent )
 
     //for multi-domains
     connect(ui->btnAddHole, SIGNAL(clicked()), this, SLOT(AddHole()) );
-    connect(ui->btnAddSumDomain, SIGNAL(clicked()), this, SLOT(AddSumDomain()) );
+    connect(ui->btnAddSubDomain, SIGNAL(clicked()), this, SLOT(AddSubDomain()) );
 
     m_TableModelDomains = new QStandardItemModel(this);
     ui->tableViewDomains->setModel(m_TableModelDomains);
@@ -199,8 +199,17 @@ void svMeshEdit::SetupGUI(QWidget *parent )
       , SLOT( TableDomainsListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
     m_TableMenuDomains=new QMenu(ui->tableViewDomains);
+    QAction* setDomainSizeTAction=m_TableMenuDomains->addAction("Set SubDomain Size");
     QAction* deleteDomainsTAction=m_TableMenuDomains->addAction("Delete");
+    QAction* addHoleTAction=m_TableMenuDomains->addAction("Add Hole");
+    QAction* addSubDomainTAction=m_TableMenuDomains->addAction("Add SubDomain");
+    connect( setDomainSizeTAction, SIGNAL( triggered(bool) ) , this, SLOT( SetSubDomainSize(bool) ) );
     connect( deleteDomainsTAction, SIGNAL( triggered(bool) ) , this, SLOT( DeleteSelectedDomains(bool) ) );
+    connect( addHoleTAction, SIGNAL( triggered(bool) ) , this, SLOT( AddHole() ) );
+    connect( addSubDomainTAction, SIGNAL( triggered(bool) ) , this, SLOT( AddSubDomain() ) );
+
+    connect( ui->tableViewDomains, SIGNAL(customContextMenuRequested(const QPoint&))
+      , this, SLOT(TableViewDomainsContextMenuRequested(const QPoint&)) );
 
     //for adaptor
     connect(ui->comboBoxOption, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAdaptGUI(int)));
@@ -419,11 +428,14 @@ void svMeshEdit::TableDomainsListSelectionChanged( const QItemSelection & /*sele
     int row=indexesOfSelectedRows[0].row();
     m_SelectedDomainsIndex=row;
 
-    QStandardItem* itemShape= tableModel->item(row,0);
-    QString shape=itemShape->text();
+    QStandardItem* itemType= tableModel->item(row,0);
+    QString type=itemType->text();
 
-    QStandardItem* itemLocal= tableModel->item(row,1);
-    QString localSize=itemLocal->text();
+    QStandardItem* itemSize= tableModel->item(row,1);
+    QString localSize=itemSize->text();
+
+    QStandardItem* itemLocation= tableModel->item(row,2);
+    QString location=itemLocation->text();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -465,6 +477,52 @@ void svMeshEdit::SetRegion(bool)
 
        QStandardItem* item= tableModel->item(row,1);
        item->setText(localInfo);
+     }
+}
+
+void svMeshEdit::SetSubDomainSize(bool)
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    QStandardItemModel* tableModel=m_TableModelDomains;
+    QTableView* tableView=ui->tableViewDomains;
+
+    if(tableModel==NULL || tableView==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = tableView->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+      return;
+    }
+
+    bool ok=false;
+    QString domainInfo="";
+
+    double domainSize=QInputDialog::getDouble(m_Parent, "Set Edge Size", "Edge Size:", 0.0, 0, 100, 4, &ok);
+    domainInfo=QString::number(domainSize);
+
+    if(!ok)
+        return;
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+       ; it != indexesOfSelectedRows.end(); it++)
+     {
+       int row=(*it).row();
+
+       QStandardItem* itemType= tableModel->item(row,0);
+       QString type=itemType->text();
+
+       if (type=="SubDomain")
+       {
+         QStandardItem* item= tableModel->item(row,1);
+         item->setText(domainInfo);
+       }
      }
 }
 
@@ -535,6 +593,11 @@ void svMeshEdit::DeleteSelectedDomains(bool)
 void svMeshEdit::TableViewRegionContextMenuRequested( const QPoint & pos )
 {
     m_TableMenuRegion->popup(QCursor::pos());
+}
+
+void svMeshEdit::TableViewDomainsContextMenuRequested( const QPoint & pos )
+{
+    m_TableMenuDomains->popup(QCursor::pos());
 }
 
 void svMeshEdit::SetEstimatedEdgeSize()
@@ -803,21 +866,34 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
         QStandardItem* itemType= m_TableModelDomains->item(i,0);
         QString type=itemType->text();
 
-        QStandardItem* itemParams= m_TableModelDomains->item(i,1);
-        QString params=itemParams->text();
-        QStringList plist = params.split(QRegExp("\\s+"));
+        QStandardItem* itemSize= m_TableModelDomains->item(i,1);
+        QString size=itemSize->text();
 
-        if (itemType=="Hole")
+        QStandardItem* itemLocation= m_TableModelDomains->item(i,2);
+        QString location=itemLocation->text();
+        QStringList locationList = location.split(QRegExp("\\s+"));
+
+        if (type=="Hole")
         {
-          if(!plist.isEmpty())
-              cmds.push_back("option AddHole " + plist[0].toStdString()
-                      + " " + plist[1].toStdString() + " " + plist[2].toStdString());
+          if(!locationList.isEmpty())
+              cmds.push_back("option AddHole " + locationList[0].toStdString()
+                      + " " + locationList[1].toStdString() + " " + locationList[2].toStdString());
         }
-        else if (itemType=="SubDomain")
+        else if (type=="SubDomain")
         {
-          if(!plist.isEmpty())
-              cmds.push_back("option AddSubDomain " + plist[0].toStdString()
-                      + " " + plist[1].toStdString() + " " + plist[2].toStdString());
+          if(!locationList.isEmpty())
+          {
+            if (!size.isEmpty())
+            {
+              cmds.push_back("option AddSubDomain " + size.toStdString() + " " + locationList[0].toStdString()
+                      + " " + locationList[1].toStdString() + " " + locationList[2].toStdString());
+            }
+            else
+            {
+              cmds.push_back("option AddSubDomain -1.0 " + locationList[0].toStdString()
+                      + " " + locationList[1].toStdString() + " " + locationList[2].toStdString());
+            }
+          }
         }
     }
 
@@ -1239,13 +1315,16 @@ void svMeshEdit::UpdateTetGenGUI()
     m_TableModelDomains->clear();
 
     QStringList domainsListHeaders;
-    domainsListHeaders << "Type" << "Location x y z";
+    domainsListHeaders << "Type" << "SubDomain Size" << "Location x y z";
     m_TableModelDomains->setHorizontalHeaderLabels(domainsListHeaders);
-    m_TableModelDomains->setColumnCount(2);
+    m_TableModelDomains->setColumnCount(3);
 
     ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
-    ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);;
-    ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
+    ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
+    ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
+    ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+    ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
 
     //advanced flags
     ui->checkBoxFlagO->setChecked(true);
@@ -1411,10 +1490,14 @@ void svMeshEdit::UpdateTetGenGUI()
           item->setEditable(false);
           m_TableModelDomains->setItem(domainsRowIndex, 0, item);
 
-          item= new QStandardItem(QString::number(values[1])+" "+QString::number(values[2])+" "+QString::number(values[3]));
+          item= new QStandardItem("N/A");
+          item->setEditable(false);
           m_TableModelDomains->setItem(domainsRowIndex, 1, item);
+
+          item= new QStandardItem(QString::number(values[0])+" "+QString::number(values[1])+" "+QString::number(values[2]));
+          m_TableModelDomains->setItem(domainsRowIndex, 2, item);
         }
-        else if (flag=="AddSumDomain")
+        else if (flag=="AddSubDomain")
         {
           domainsRowIndex++;
           m_TableModelDomains->insertRow(domainsRowIndex);
@@ -1425,8 +1508,11 @@ void svMeshEdit::UpdateTetGenGUI()
           item->setEditable(false);
           m_TableModelDomains->setItem(domainsRowIndex, 0, item);
 
-          item= new QStandardItem(QString::number(values[1])+" "+QString::number(values[2])+" "+QString::number(values[3]));
+          item= new QStandardItem(QString::number(values[0]));
           m_TableModelDomains->setItem(domainsRowIndex, 1, item);
+
+          item= new QStandardItem(QString::number(values[1])+" "+QString::number(values[2])+" "+QString::number(values[3]));
+          m_TableModelDomains->setItem(domainsRowIndex, 2, item);
         }
         else
         {
@@ -1805,8 +1891,12 @@ void svMeshEdit::AddHole()
     item->setEditable(false);
     m_TableModelDomains->setItem(regionRowIndex, 0, item);
 
-    item= new QStandardItem("0.0 0.0 0.0");
+    item= new QStandardItem("N/A");
+    item->setEditable(false);
     m_TableModelDomains->setItem(regionRowIndex, 1, item);
+
+    item= new QStandardItem("0.0 0.0 0.0");
+    m_TableModelDomains->setItem(regionRowIndex, 2, item);
 }
 
 void svMeshEdit::AddSubDomain()
@@ -1819,8 +1909,11 @@ void svMeshEdit::AddSubDomain()
     item->setEditable(false);
     m_TableModelDomains->setItem(regionRowIndex, 0, item);
 
-    item= new QStandardItem("0.0 0.0 0.0");
+    item= new QStandardItem("");
     m_TableModelDomains->setItem(regionRowIndex, 1, item);
+
+    item= new QStandardItem("0.0 0.0 0.0");
+    m_TableModelDomains->setItem(regionRowIndex, 2, item);
 }
 
 void svMeshEdit::ShowSphereInteractor(bool checked)

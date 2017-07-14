@@ -184,6 +184,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   vtkPolyData *surfacemesh_;
   vtkPoints   *holelist_;
   vtkPoints   *regionlist_;
+  vtkDoubleArray *regionsizelist_;
   vtkUnstructuredGrid *volumemesh_;
   vtkUnstructuredGrid *boundarylayermesh_;
   vtkUnstructuredGrid *innerblmesh_;

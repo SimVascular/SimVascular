@@ -62,11 +62,15 @@ public slots:
 
     void DeleteSelectedDomains( bool checked = false );
 
+    void SetSubDomainSize( bool checked = false );
+
     void SetRegion( bool checked = false );
 
     void DeleteSelectedRegions( bool checked = false );
 
     void TableViewRegionContextMenuRequested( const QPoint & pos );
+
+    void TableViewDomainsContextMenuRequested( const QPoint & pos );
 
     void UpdateFaceListSelection();
 
@@ -79,6 +83,8 @@ public slots:
     void AddSphere();
 
     void AddHole();
+
+    void AddSubDomain();
 
     void ShowSphereInteractor(bool checked);
 

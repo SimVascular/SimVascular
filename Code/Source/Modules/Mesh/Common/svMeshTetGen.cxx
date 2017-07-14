@@ -412,12 +412,13 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[2]=std::stod(params[3]);
             option=true;
         }
-        else if(paramSize==4 && params[0]=="addsubdomain")
+        else if(paramSize==5 && params[0]=="addsubdomain")
         {
           flag="AddSubDomain";
           values[0]=std::stod(params[1]);
           values[1]=std::stod(params[2]);
           values[2]=std::stod(params[3]);
+          values[3]=std::stod(params[4]);
           option=true;
         }
         else
