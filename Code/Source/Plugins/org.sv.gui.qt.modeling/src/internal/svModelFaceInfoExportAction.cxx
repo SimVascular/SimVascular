@@ -57,10 +57,7 @@ void svModelFaceInfoExportAction::Run(const QList<mitk::DataNode::Pointer> &sele
         QString fileName = QFileDialog::getSaveFileName(NULL
                                                         ,tr("Export Cap Info")
                                                         ,lastFileSavePath
-                                                        ,tr("All Files (*)")
-                                                        ,NULL
-                                                        ,QFileDialog::DontUseNativeDialog
-                                                        );
+                                                        ,tr("All Files (*)"));
 
         fileName=fileName.trimmed();
         if(fileName.isEmpty()) return;

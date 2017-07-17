@@ -285,9 +285,7 @@ void svCapBCWidget::LoadFlowrateFromFile()
 
     QString flowrateFilePath = QFileDialog::getOpenFileName(this, tr("Load Flow File")
                                                             , lastFileOpenPath
-                                                            , tr("All Files (*)")
-                                                            , NULL
-                                                            , QFileDialog::DontUseNativeDialog);
+                                                            , tr("All Files (*)"));
 
     flowrateFilePath=flowrateFilePath.trimmed();
     if(flowrateFilePath.isEmpty())
@@ -363,9 +361,7 @@ void svCapBCWidget::LoadTimedPressureFromFile()
 
     QString pressureFilePath = QFileDialog::getOpenFileName(this, tr("Load Pim File")
                                                             , lastFileOpenPath
-                                                            , tr("All Files (*)")
-                                                            , NULL
-                                                            , QFileDialog::DontUseNativeDialog);
+                                                            , tr("All Files (*)"));
 
     pressureFilePath=pressureFilePath.trimmed();
     if(pressureFilePath.isEmpty())

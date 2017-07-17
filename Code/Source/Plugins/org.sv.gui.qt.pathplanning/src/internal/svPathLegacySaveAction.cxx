@@ -52,10 +52,7 @@ void svPathLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
         QString fileName = QFileDialog::getSaveFileName(NULL
                                                         ,tr("Export as Legacy Paths")
                                                         ,lastFilePath
-                                                        ,tr("SimVascular Legacy Paths (*.paths)")
-                                                        ,NULL
-                                                        ,QFileDialog::DontUseNativeDialog
-                                                        );
+                                                        ,tr("SimVascular Legacy Paths (*.paths)"));
 
        fileName=fileName.trimmed();
         if(!fileName.isEmpty()){

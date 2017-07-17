@@ -75,9 +75,7 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 
         QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Solid Model")
                                                              , lastFileOpenPath
-                                                             , tr(filter.toStdString().c_str())
-                                                             , NULL
-                                                             , QFileDialog::DontUseNativeDialog);
+                                                             , tr(filter.toStdString().c_str()));
 
         modelFilePath=modelFilePath.trimmed();
         if(modelFilePath.isEmpty())

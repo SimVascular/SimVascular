@@ -55,8 +55,7 @@ void svSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &selecte
         if(lastFilePath=="")
             lastFilePath=QDir::homePath();
 
-        QString filePath = QFileDialog::getOpenFileName(NULL, "Import Segmentation (Choose File)", lastFilePath, tr("SimVascular Segmentations (*.ctgr *.s3d);;VTP Files (*.vtp)")
-                                                              ,NULL,QFileDialog::DontUseNativeDialog);
+        QString filePath = QFileDialog::getOpenFileName(NULL, "Import Segmentation (Choose File)", lastFilePath, tr("SimVascular Segmentations (*.ctgr *.s3d);;VTP Files (*.vtp)"));
 
         filePath=filePath.trimmed();
         if(filePath.isEmpty())

@@ -688,9 +688,7 @@ void svSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
 
     QString icFilePath = QFileDialog::getOpenFileName(m_Parent, tr("Select IC File (Restart)")
                                                             , lastFileOpenPath
-                                                            , tr("All Files (*)")
-                                                            , NULL
-                                                            , QFileDialog::DontUseNativeDialog);
+                                                            , tr("All Files (*)"));
 
     icFilePath=icFilePath.trimmed();
     if (icFilePath.isEmpty())
@@ -1603,11 +1601,7 @@ void svSimulationView::UpdateGUIRunDir()
 
 //    QString dir = QFileDialog::getExistingDirectory(m_Parent
 //                                                    , tr("Choose Directory")
-//                                                    , lastFileSavePath
-//                                                    , QFileDialog::ShowDirsOnly
-//                                                    | QFileDialog::DontResolveSymlinks
-//                                                    | QFileDialog::DontUseNativeDialog
-//                                                    );
+//                                                    , lastFileSavePath);
 
 //    if(dir.isEmpty()) return;
 
@@ -1635,11 +1629,7 @@ void svSimulationView::UpdateGUIRunDir()
 
 //    QString dir = QFileDialog::getExistingDirectory(m_Parent
 //                                                    , tr("Choose Directory")
-//                                                    , lastFileSavePath
-//                                                    , QFileDialog::ShowDirsOnly
-//                                                    | QFileDialog::DontResolveSymlinks
-//                                                    | QFileDialog::DontUseNativeDialog
-//                                                    );
+//                                                    , lastFileSavePath);
 
 //    if(dir.isEmpty()) return;
 
@@ -2034,8 +2024,7 @@ void svSimulationView::ImportFiles()
     if(lastFilePath=="")
         lastFilePath=QDir::homePath();
 
-    QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files", lastFilePath, tr("All Files (*)")
-                                                          ,NULL,QFileDialog::DontUseNativeDialog);
+    QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files", lastFilePath, tr("All Files (*)"));
 
     if(filePaths.size()>0)
         if(prefs.IsNotNull())
@@ -2494,10 +2483,7 @@ void svSimulationView::SetResultDir()
 
     QString dir = QFileDialog::getExistingDirectory(m_Parent
                                                     , tr("Choose Result Directory")
-                                                    , lastFileOpenPath
-                                                    , QFileDialog::DontResolveSymlinks
-                                                    | QFileDialog::DontUseNativeDialog
-                                                    );
+                                                    , lastFileOpenPath);
 
     dir=dir.trimmed();
     if(dir.isEmpty()) return;
@@ -2544,10 +2530,7 @@ void svSimulationView::ExportResults()
 
     QString exportDir = QFileDialog::getExistingDirectory(m_Parent
                                                     , tr("Choose Export Directory")
-                                                    , lastFileSavePath
-                                                    , QFileDialog::DontResolveSymlinks
-                                                    | QFileDialog::DontUseNativeDialog
-                                                    );
+                                                    , lastFileSavePath);
 
     exportDir=exportDir.trimmed();
     if(exportDir.isEmpty())

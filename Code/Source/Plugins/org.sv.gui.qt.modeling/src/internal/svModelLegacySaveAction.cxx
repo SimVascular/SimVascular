@@ -68,12 +68,9 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
             lastFileSavePath=QDir::homePath();
 
         QString fileName = QFileDialog::getSaveFileName(NULL
-                                                        ,tr("Export as Legacy Model")
+                                                        ,tr("Export Solid Model")
                                                         ,lastFileSavePath
-                                                        ,fileFilter
-                                                        ,NULL
-                                                        ,QFileDialog::DontUseNativeDialog
-                                                        );
+                                                        ,fileFilter);
 
         fileName=fileName.trimmed();
         if(fileName.isEmpty()) return;

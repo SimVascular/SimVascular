@@ -51,10 +51,7 @@ void svSegmentationLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &s
 
 
         QString segDir = QFileDialog::getExistingDirectory(NULL, tr("Export as Legacy Segmentations (Choose Directory)"),
-                                                             lastFilePath,
-                                                             QFileDialog::DontResolveSymlinks
-                                                             | QFileDialog::DontUseNativeDialog
-                                                             );
+                                                             lastFilePath);
 
         segDir=segDir.trimmed();
         if(segDir.isEmpty()) return;
