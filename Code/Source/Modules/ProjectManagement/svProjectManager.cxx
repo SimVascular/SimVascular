@@ -412,12 +412,9 @@ void svProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
     }
 }
 
-// so far, no copy into project
-void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageFolderNode
+void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode
                                 , bool copyIntoProject, double scaleFactor, QString newImageName)
 {
-    mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
-
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
 
     //add image to config
@@ -438,8 +435,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
             imageName=projectFolderNode->GetName();
     }
 
-    if(imageNode.IsNotNull())
-        imageNode->SetName(imageName);
+    imageNode->SetName(imageName);
 
     QDir projDir(QString::fromStdString(projPath));
     QString	configFilePath=projDir.absoluteFilePath(".svproj");
@@ -530,11 +526,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
 
     dataStorage->Add(imageNode,imageFolderNode);
 
-    mitk::BaseData::Pointer mimage = imageNode->GetData();
-    if ( mimage.IsNotNull() && mimage->GetTimeGeometry()->IsValid() )
-    {
-        mitk::RenderingManager::GetInstance()->InitializeViews(mimage->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
-    }
+    mitk::RenderingManager::GetInstance()->InitializeViews(imageNode->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
 
     imagesElement.appendChild(imgElement);
 

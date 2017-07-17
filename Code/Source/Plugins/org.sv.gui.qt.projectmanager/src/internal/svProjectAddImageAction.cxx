@@ -64,6 +64,22 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         if (imageFilePath.isEmpty())
             return;
 
+        mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
+
+        mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
+        if(imageNode.IsNull() || !isImage->CheckNode(imageNode))
+        {
+            QMessageBox::warning(NULL,"Not Image!", "Please add an image.");
+            return;
+        }
+
+        mitk::BaseData::Pointer mimage = imageNode->GetData();
+        if(mimage.IsNull() || !mimage->GetTimeGeometry()->IsValid())
+        {
+            QMessageBox::warning(NULL,"Not Valid!", "Please add a valid image.");
+            return;
+        }
+
         if(prefs.IsNotNull())
         {
             prefs->Put("LastFileOpenPath", imageFilePath);
@@ -98,7 +114,7 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         mitk::StatusBar::GetInstance()->DisplayText("Adding or replacing image");
         QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-        svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode, copy, scaleFactor, imageName.trimmed());
+        svProjectManager::AddImage(m_DataStorage, imageFilePath, imageNode, selectedNode, copy, scaleFactor, imageName.trimmed());
 
         mitk::StatusBar::GetInstance()->DisplayText("Imaged Added");
         QApplication::restoreOverrideCursor();
