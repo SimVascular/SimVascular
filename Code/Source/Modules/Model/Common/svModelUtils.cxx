@@ -287,7 +287,6 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelE
     }
 
     mepddst->AssignBlendParam(param);
-    delete param;
 
     mepddst->AddBlendRadii(blendRadii);
 
