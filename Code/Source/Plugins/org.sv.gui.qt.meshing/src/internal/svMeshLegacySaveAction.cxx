@@ -78,10 +78,7 @@ void svMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
 
         QString dir = QFileDialog::getExistingDirectory(NULL
                                                         , tr("Export as Legacy Mesh (Choose Directory)")
-                                                        , lastFileSavePath
-                                                        , QFileDialog::DontResolveSymlinks
-                                                        | QFileDialog::DontUseNativeDialog
-                                                        );
+                                                        , lastFileSavePath);
 
         dir=dir.trimmed();
         if(dir.isEmpty()) return;

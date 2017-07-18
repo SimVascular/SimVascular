@@ -82,6 +82,10 @@ public:
     void SetupDataManagerDoubleClick();
     void AddCustomMenuItemsForDataManager();
 
+    void ToggleSlicePlane(QString name);
+
+    void SetCrosshairGapZero();
+
 protected slots:
 
     virtual void onIntro();
@@ -98,6 +102,12 @@ protected slots:
 
     void CopyDataNode( bool checked );
     void PasteDataNode( bool checked );
+
+    void ToggleAxialPlane(bool checked);
+
+    void ToggleSagittalPlane(bool checked);
+
+    void ToggleCoronalPlane(bool checked);
 
 protected:
     std::vector< std::pair< QmitkNodeDescriptor*, QAction* > > m_DescriptorActionList;

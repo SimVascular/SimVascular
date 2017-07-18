@@ -59,11 +59,26 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         QString imageFilePath = QFileDialog::getOpenFileName(NULL, tr("Open Image File")
                                                              , lastFileOpenPath
                                                              , QmitkIOUtil::GetFileOpenFilterString()
-                                                             , NULL
-                                                             , QFileDialog::DontUseNativeDialog);
+                                                             , NULL);
 
         if (imageFilePath.isEmpty())
             return;
+
+        mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
+
+        mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
+        if(imageNode.IsNull() || !isImage->CheckNode(imageNode))
+        {
+            QMessageBox::warning(NULL,"Not Image!", "Please add an image.");
+            return;
+        }
+
+        mitk::BaseData::Pointer mimage = imageNode->GetData();
+        if(mimage.IsNull() || !mimage->GetTimeGeometry()->IsValid())
+        {
+            QMessageBox::warning(NULL,"Not Valid!", "Please add a valid image.");
+            return;
+        }
 
         if(prefs.IsNotNull())
         {
@@ -74,7 +89,7 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         bool copy=false;
 
         if (QMessageBox::question(NULL, "Copy into Project?", "Do you want to copy the image as vti into the project?",
-                                  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
         {
             copy=true;
         }
@@ -82,17 +97,24 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         double scaleFactor=0;
         if(copy)
         {
-            bool ok;
-            double factor = QInputDialog::getDouble(NULL, tr("Scale image?"),
-                                                 tr("Do you want to scale the image (for unit conversion)?\nScaling Factor:"), 0, 0, 1000, 3, &ok);
-            if (ok)
-                scaleFactor=factor;
+            if (QMessageBox::question(NULL, "Scale image?", "Do you want to scale the image?",
+                                      QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+            {
+                bool ok;
+                double factor = QInputDialog::getDouble(NULL, tr("Image Scaling"),
+                                                     tr("Scaling Factor (for unit conversion):"), 0.1, 0, 1000, 3, &ok);
+                if (ok)
+                    scaleFactor=factor;
+            }
         }
+
+        QString imageName = QInputDialog::getText(NULL, tr("Assign Image Name"),
+                                                                tr("Image name:"), QLineEdit::Normal);
 
         mitk::StatusBar::GetInstance()->DisplayText("Adding or replacing image");
         QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-        svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode, copy, scaleFactor);
+        svProjectManager::AddImage(m_DataStorage, imageFilePath, imageNode, selectedNode, copy, scaleFactor, imageName.trimmed());
 
         mitk::StatusBar::GetInstance()->DisplayText("Imaged Added");
         QApplication::restoreOverrideCursor();

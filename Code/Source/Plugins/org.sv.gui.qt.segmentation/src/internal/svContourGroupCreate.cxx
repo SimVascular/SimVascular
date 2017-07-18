@@ -141,6 +141,24 @@ void svContourGroupCreate::CreateGroup()
     groupNode->SetData(group);
     groupNode->SetName(groupName);
 
+    float point2DSize=0;
+    float pointSize=0;
+    if(m_SegFolderNode.IsNotNull())
+    {
+        m_SegFolderNode->GetFloatProperty("point.displaysize",point2DSize);
+        m_SegFolderNode->GetFloatProperty("point.3dsize",pointSize);
+    }
+    if(point2DSize!=0)
+    {
+        groupNode->SetFloatProperty("point.displaysize",point2DSize);
+        group->SetProp("point 2D display size",QString::number(point2DSize).toStdString());
+    }
+    if(pointSize!=0)
+    {
+        groupNode->SetFloatProperty("point.3dsize",point2DSize);
+        group->SetProp("point size",QString::number(point2DSize).toStdString());
+    }
+
 //    m_DataStorage->Add(groupNode,m_SegFolderNode);
     mitk::OperationEvent::IncCurrObjectEventId();
 

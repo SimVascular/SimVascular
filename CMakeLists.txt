@@ -204,6 +204,6 @@ ExternalProject_Add(SimVascular
     -DQt5_DIR:PATH=${Qt5_DIR}
     -DQT_DLL_PATH:PATH=${qt5_installed_prefix}/bin
     -DQT_PLUGIN_PATH:PATH=${qt5_installed_prefix}/plugins
-    ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
+    ${SV_ADDITIONAL_CMAKE_ARGS}
     )
 #-----------------------------------------------------------------------------

@@ -67,6 +67,8 @@
 #include <QmitkPreferencesDialog.h>
 #include <QmitkOpenDicomEditorAction.h>
 #include <QmitkDataManagerView.h>
+#include <QmitkStdMultiWidgetEditor.h>
+#include <QmitkStdMultiWidget.h>
 
 #include <itkConfigure.h>
 #include <vtkConfigure.h>
@@ -881,6 +883,15 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         mainActionsToolBar->addAction(viewNavigatorAction);
     }
 
+    QAction* axialAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/axial.png"), "");
+    QObject::connect(axialAction, SIGNAL(triggered(bool)), this, SLOT(ToggleAxialPlane(bool)));
+
+    QAction* sagittalAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/sagittal.png"), "");
+    QObject::connect(sagittalAction, SIGNAL(triggered(bool)), this, SLOT(ToggleSagittalPlane(bool)));
+
+    QAction* coronalAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/coronal.png"), "");
+    QObject::connect(coronalAction, SIGNAL(triggered(bool)), this, SLOT(ToggleCoronalPlane(bool)));
+
     mainWindow->addToolBar(mainActionsToolBar);
 
     // ==== Perspective Toolbar ==================================
@@ -1009,6 +1020,7 @@ void svWorkbenchWindowAdvisor::PostWindowOpen()
     AddCustomMenuItemsForDataManager();
     SetupDataManagerDoubleClick();
 
+    SetCrosshairGapZero();
 }
 
 
@@ -1067,8 +1079,6 @@ void svWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
     berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
     if(workbench==NULL)
         return;
-
-    int count=workbench->GetWorkbenchWindowCount();
 
 //    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
     if(workbench->GetWorkbenchWindows().size()==0)
@@ -1712,6 +1722,12 @@ void svWorkbenchWindowAdvisor::RemoveSelectedNodes( bool )
                 if(rs.IsNotNull()&&rs->size()>0)
                     parentNode=rs->GetElement(0);
 
+                //prevent removing image inside a project;however you can replace it
+                mitk::NodePredicateDataType::Pointer isImageFolder = mitk::NodePredicateDataType::New("svImageFolder");
+                mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
+                if(parentNode.IsNotNull() && isImageFolder->CheckNode(parentNode) && isImage->CheckNode(node))
+                    continue;
+
                 svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,dataStorage,node,parentNode);
                 if(m_UndoEnabled)
                 {
@@ -1780,6 +1796,15 @@ void svWorkbenchWindowAdvisor::RenameSelectedNode( bool )
                 alreadyExists=true;
             else if(parentNode.IsNotNull() && dataStorage->GetNamedDerivedNode(newName.toStdString().c_str(),parentNode))
                 alreadyExists=true;
+
+            //prevent renaming image inside a project
+            mitk::NodePredicateDataType::Pointer isImageFolder = mitk::NodePredicateDataType::New("svImageFolder");
+            mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
+            if(parentNode.IsNotNull() && isImageFolder->CheckNode(parentNode) && isImage->CheckNode(node))
+            {
+                QMessageBox::information(NULL,"Info","Image renaming in inside a SV project is not allowed.");
+                return;
+            }
 
             if(alreadyExists)
             {
@@ -2002,4 +2027,87 @@ void svWorkbenchWindowAdvisor::PasteDataNode( bool )
         mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
     }
     m_Interface->ExecuteOperation(doOp);
+}
+
+void svWorkbenchWindowAdvisor::ToggleSlicePlane(QString name)
+{
+    mitk::DataStorage::Pointer dataStorage=GetDataStorage();
+    if(dataStorage.IsNull())
+        return;
+
+    mitk::DataNode* node=dataStorage->GetNamedNode(name.toStdString());
+    if(node)
+    {
+        bool visible=false;
+        node->GetBoolProperty("visible", visible);
+        node->SetVisibility(!visible);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
+}
+
+void svWorkbenchWindowAdvisor::ToggleAxialPlane(bool )
+{
+    ToggleSlicePlane("stdmulti.widget1.plane");
+}
+
+void svWorkbenchWindowAdvisor::ToggleSagittalPlane(bool )
+{
+    ToggleSlicePlane("stdmulti.widget2.plane");
+}
+
+void svWorkbenchWindowAdvisor::ToggleCoronalPlane(bool )
+{
+    ToggleSlicePlane("stdmulti.widget3.plane");
+}
+
+void svWorkbenchWindowAdvisor::SetCrosshairGapZero()
+{
+    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
+    if(workbench==NULL)
+        return;
+
+//    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
+    if(workbench->GetWorkbenchWindows().size()==0)
+        return;
+
+    berry::IWorkbenchWindow::Pointer window=workbench->GetWorkbenchWindows()[0];
+    if(window.IsNull())
+        return;
+
+    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
+    if(page.IsNull())
+        return;
+
+    ctkPluginContext* context=svApplicationPluginActivator::getContext();
+
+    mitk::IDataStorageService* dss = nullptr;
+    ctkServiceReference dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
+    if (dsServiceRef)
+        dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
+
+    if (!dss)
+        return;
+
+    berry::IEditorInput::Pointer editorInput( new mitk::DataStorageEditorInput( dss->GetActiveDataStorage() ) );
+    const QString stdEditorID = "org.mitk.editors.stdmultiwidget";
+    QList<berry::IEditorReference::Pointer> editorList = page->FindEditors( editorInput, stdEditorID, 1 );
+
+    // if an StdMultiWidgetEditor open was found
+    if(editorList.isEmpty())
+        return;
+
+    QmitkStdMultiWidgetEditor* editor=dynamic_cast<QmitkStdMultiWidgetEditor*>(editorList[0]->GetPart(true).GetPointer());
+
+    if(!editor)
+        return;
+
+
+    QmitkStdMultiWidget* multiWidget=editor->GetStdMultiWidget();
+    if(multiWidget)
+    {
+        multiWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
+        multiWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
+        multiWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
+    }
+
 }

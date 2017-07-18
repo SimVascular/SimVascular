@@ -38,6 +38,8 @@ svModelCreate::svModelCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataN
     for(int i=0;i<types.size();i++)
         ui->comboBoxType->addItem(QString::fromStdString(types[i]));
 
+    ui->comboBoxType->setCurrentText("PolyData");
+
     move(400,400);
 }
 

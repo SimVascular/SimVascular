@@ -73,10 +73,7 @@ void svSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
 
         QString dir = QFileDialog::getExistingDirectory(NULL
                                                         , tr("Export Simulation Data Files (Choose Directory)")
-                                                        , lastFileSavePath
-                                                        , QFileDialog::DontResolveSymlinks
-                                                        | QFileDialog::DontUseNativeDialog
-                                                        );
+                                                        , lastFileSavePath);
 
         dir=dir.trimmed();
         if(dir.isEmpty()) return;

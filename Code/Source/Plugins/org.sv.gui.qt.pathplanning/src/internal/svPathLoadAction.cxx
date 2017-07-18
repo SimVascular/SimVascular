@@ -52,7 +52,7 @@ void svPathLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 
         QString fileName = QFileDialog::getOpenFileName(NULL, tr("Import Paths (Choose File)"),
                                                         lastFilePath,
-                                                        tr("SimVascular Legacy Paths (*.paths);;SimVascular Paths (*.pth)"),NULL,QFileDialog::DontUseNativeDialog);
+                                                        tr("SimVascular Legacy Paths (*.paths);;SimVascular Paths (*.pth)"));
 
         fileName=fileName.trimmed();
         if(fileName.isEmpty())

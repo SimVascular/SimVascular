@@ -2186,9 +2186,7 @@ void svMeshEdit::SetResultFile()
 
     QString resultVtuFile = QFileDialog::getOpenFileName(m_Parent, tr("Select Result VTU File")
                                                             , lastFileOpenPath
-                                                            , tr("VTU Files (*.vtu)")
-                                                            , NULL
-                                                            , QFileDialog::DontUseNativeDialog);
+                                                            , tr("VTU Files (*.vtu)"));
     resultVtuFile=resultVtuFile.trimmed();
     if(resultVtuFile.isEmpty())
         return;

@@ -119,10 +119,7 @@ void svProjectCreate::ChoosePath()
         path=m_LastPath;
 
     QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Directory"),
-                                                    path,
-                                                    QFileDialog::DontResolveSymlinks
-                                                    | QFileDialog::DontUseNativeDialog
-                                                    );
+                                                    path);
     dir=dir.trimmed();
     if(dir!="")
         ui->lineEditDir->setText(dir);
