@@ -101,92 +101,41 @@ int TGenUtils_Init()
  * @return SV_OK if function completes properly
  */
 
-int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
-    int meshsizingfunction,vtkDoubleArray *meshSizingFunction,
-    int useBoundary,std::string markerListArrayName,double maxEdgeSize)
+int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid)
 {
   tetgenio::facet *f;
   tetgenio::polygon *p;
-  vtkIdType npts=0;
-  int i=0;
-  double polyPts[3];
-  double boundarymarker;
-
-  //Initiate pointers for the points, polys, and scalars
-  vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
-  vtkSmartPointer<vtkPoints> inPts = vtkSmartPointer<vtkPoints>::New();
-  vtkSmartPointer<vtkCellArray> inPolys =
-    vtkSmartPointer<vtkCellArray>::New();
-  vtkSmartPointer<vtkIntArray> boundaryScalars =
-    vtkSmartPointer<vtkIntArray>::New();
 
   //All input numbers start from zero, all outmesh_put number start from zero
   inmesh->firstnumber = 0;
   inmesh->numberofpoints = polydatasolid->GetNumberOfPoints();
   inmesh->pointlist = new REAL[inmesh->numberofpoints*3];
 
-  //Check if applying a mesh sizing function and initiate point metrics list
-  //if ok
-  if (meshsizingfunction && meshSizingFunction == NULL)
-  {
-    fprintf(stderr,"Must have an array with parameters\
-       	to compute mesh with sizing function\n");
-    return SV_ERROR;
-  }
-  else if (meshsizingfunction && meshSizingFunction != NULL)
-  {
-    inmesh->numberofpointmtrs = 1;
-    inmesh->pointmtrlist = new REAL[inmesh->numberofpoints];
-  }
   //Do Point transition from polydatasolid into pointlist
   fprintf(stderr,"Converting Points...\n");
+  vtkSmartPointer<vtkPoints> inPts = vtkSmartPointer<vtkPoints>::New();
   inPts = polydatasolid->GetPoints();
-  for ( i=0; i<inmesh->numberofpoints;i++)
+  for (int i=0; i<inmesh->numberofpoints;i++)
   {
-    inPts->GetPoint(i,polyPts);
-    inmesh->pointlist[i*3] = polyPts[0];
-    inmesh->pointlist[i*3+1] = polyPts[1];
-    inmesh->pointlist[i*3+2] = polyPts[2];
-
-    if (meshsizingfunction)
-    {
-      inmesh->pointmtrlist[i] = meshSizingFunction->GetComponent(i,0);
-      if (inmesh->pointmtrlist[i] == 0.0)
-      {
-	inmesh->pointmtrlist[i] = maxEdgeSize;
-      }
-    }
+    double polyPt[3];
+    inPts->GetPoint(i,polyPt);
+    inmesh->pointlist[i*3] = polyPt[0];
+    inmesh->pointlist[i*3+1] = polyPt[1];
+    inmesh->pointlist[i*3+2] = polyPt[2];
   }
 
-  //Do Poly transition from polydatasolid into facetlist
-  if (useBoundary)
-  {
-    if (VtkUtils_PDCheckArrayName(polydatasolid,1,markerListArrayName) != SV_OK)
-    {
-      fprintf(stderr,"Array name does not exist in polydata. Regions must be identified \
-		    and named prior to this function call\n");
-      return SV_ERROR;
-    }
-//    boundaryScalars = vtkIntArray::SafeDownCast(polydatasolid->GetCellData()->GetScalars(markerListArrayName.c_str()));
-    boundaryScalars = static_cast<vtkIntArray*>(polydatasolid->GetCellData()->GetScalars(markerListArrayName.c_str()));
-  }
+  // Convert faces
   inmesh->numberoffacets = (int) polydatasolid->GetNumberOfPolys();
   inmesh->facetlist = new tetgenio::facet[inmesh->numberoffacets];
   inmesh->facetmarkerlist = new int[inmesh->numberoffacets];
 
   fprintf(stderr,"Converting Faces...\n");
+  vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
   ptIds->SetNumberOfIds(3);
-  for (i=0;i<inmesh->numberoffacets;i++)
+  for (int i=0;i<inmesh->numberoffacets;i++)
   {
-//    fprintf(stderr,"Getting Face %d!\n",i);
     polydatasolid->GetCellPoints(i,ptIds);
-    if (useBoundary)
-    {
-//      fprintf(stderr,"Its prolly here\n",i);
-      boundarymarker = (int) boundaryScalars->GetValue(i);
-//      boundarymarker = (int) boundaryScalars->GetComponent(i,0);
-//      fprintf(stderr,"Am I right?\n",i);
-    }
+
     f = &inmesh->facetlist[i];
     f->numberofpolygons=1;
 
@@ -202,10 +151,130 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
     p->vertexlist[1] =  (int) ptIds->GetId(1);
     p->vertexlist[2] =  (int) ptIds->GetId(2);
 
-    if (useBoundary)
-    {
-      inmesh->facetmarkerlist[i]=boundarymarker;
-    }
+  }
+
+  return SV_OK;
+}
+
+// -----------------------------
+// cvTGenUtils_AddPointSizingFunction
+// -----------------------------
+/**
+ */
+int TGenUtils_AddPointSizingFunction(tetgenio *inmesh,vtkPolyData *polydatasolid,
+    std::string meshSizingFunctionName, double maxEdgeSize)
+{
+  // check number of points
+  if (polydatasolid->GetNumberOfPoints() != inmesh->numberofpoints)
+  {
+    fprintf(stderr,"surface and tetgen object must match and must have already been converted to add sizing function\n");
+    return SV_ERROR;
+  }
+
+  //Check if applying a mesh sizing function and initiate point metrics list
+  //if ok
+  if (VtkUtils_PDCheckArrayName(polydatasolid, 0, meshSizingFunctionName) != SV_OK)
+  {
+    fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
+        Something may have gone wrong when setting up BL");
+    return SV_ERROR;
+  }
+  vtkDoubleArray *meshSizingFunction = vtkDoubleArray::SafeDownCast(
+    polydatasolid->GetPointData()->GetArray(meshSizingFunctionName.c_str()));
+
+  inmesh->numberofpointmtrs = 1;
+  inmesh->pointmtrlist = new REAL[inmesh->numberofpoints];
+
+  //Do Point transition from polydatasolid into pointlist
+  fprintf(stderr,"Adding mesh sizing metric...\n");
+  for (int i=0; i<inmesh->numberofpoints;i++)
+  {
+    inmesh->pointmtrlist[i] = meshSizingFunction->GetComponent(i,0);
+    if (inmesh->pointmtrlist[i] == 0.0)
+      inmesh->pointmtrlist[i] = maxEdgeSize;
+  }
+
+  return SV_OK;
+}
+
+// -----------------------------
+// cvTGenUtils_AddFacetMarkers
+// -----------------------------
+/**
+ */
+int TGenUtils_AddFacetMarkers(tetgenio *inmesh,vtkPolyData *polydatasolid,
+    std::string markerListArrayName)
+{
+  // Check to make sure number of facets matches
+  if (polydatasolid->GetNumberOfPolys() != inmesh->numberoffacets)
+  {
+    fprintf(stderr,"surface and tetgen object must match and must have already been converted to add facet markers\n");
+    return SV_ERROR;
+  }
+
+  //Do Poly transition from polydatasolid into facetlist
+  if (VtkUtils_PDCheckArrayName(polydatasolid,1,markerListArrayName) != SV_OK)
+  {
+    fprintf(stderr,"Array name does not exist in polydata. Regions must be identified \
+      and named prior to this function call\n");
+    return SV_ERROR;
+  }
+  vtkIntArray *boundaryScalars = static_cast<vtkIntArray*>(polydatasolid->GetCellData()->GetScalars(markerListArrayName.c_str()));
+
+  fprintf(stderr,"Adding Facet Markers...\n");
+  for (int i=0;i<inmesh->numberoffacets;i++)
+  {
+    double boundarymarker = (int) boundaryScalars->GetValue(i);
+    inmesh->facetmarkerlist[i]=boundarymarker;
+  }
+
+  return SV_OK;
+}
+
+// -----------------------------
+// cvTGenUtils_AddHoles
+// -----------------------------
+/**
+ */
+int TGenUtils_AddHoles(tetgenio *inmesh, vtkPoints *holeList)
+{
+  inmesh->numberofholes = holeList->GetNumberOfPoints();
+  inmesh->holelist = new REAL[inmesh->numberofholes * 3];
+
+  for (int i=0; i<inmesh->numberofholes; i++)
+  {
+    double pt[3];
+    holeList->GetPoint(i, pt);
+    inmesh->holelist[3*i] =   pt[0];
+    inmesh->holelist[3*i+1] = pt[1];
+    inmesh->holelist[3*i+2] = pt[2];
+  }
+
+  return SV_OK;
+}
+
+// -----------------------------
+// cvTGenUtils_AddRegions
+// -----------------------------
+/**
+ */
+int TGenUtils_AddRegions(tetgenio *inmesh, vtkPoints *regionList, vtkDoubleArray *regionSizeList)
+{
+  inmesh->numberofregions = regionList->GetNumberOfPoints();
+  inmesh->regionlist = new REAL[inmesh->numberofregions * 5];
+
+  for (int i=0; i<inmesh->numberofregions; i++)
+  {
+    double pt[3];
+    regionList->GetPoint(i, pt);
+    inmesh->regionlist[5*i] =   pt[0];
+    inmesh->regionlist[5*i+1] = pt[1];
+    inmesh->regionlist[5*i+2] = pt[2];
+    inmesh->regionlist[5*i+3] = i;
+
+    double mES = regionSizeList->GetTuple1(i);
+    double maxvol = (mES*mES*mES)/(6*sqrt(2.));
+    inmesh->regionlist[5*i+4] = maxvol;
   }
 
   return SV_OK;
@@ -359,8 +428,8 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
     {
       if (pointOnSurface[outmesh->trifacelist[3*i+j]] == false)
       {
-	pointOnSurface[outmesh->trifacelist[3*i+j]] = true;
-	pointMapping[outmesh->trifacelist[3*i+j]] = count++;
+        pointOnSurface[outmesh->trifacelist[3*i+j]] = true;
+        pointMapping[outmesh->trifacelist[3*i+j]] = count++;
       }
     }
   }
@@ -389,7 +458,11 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
       polyPointIds->SetId(j,vtkId);
     }
 
-    modelRegionIds->InsertValue(i,modelId);
+    if (outmesh->numberoftetrahedronattributes > 0)
+      modelRegionIds->InsertValue(i, outmesh->tetrahedronattributelist[i] + 1);
+    else
+      modelRegionIds->InsertValue(i,modelId);
+
     globalElementIds->InsertValue(i,globalId);
     globalId++;
     polys->InsertNextCell(polyPointIds);
@@ -406,11 +479,9 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
 
   globalNodeIds->SetName("GlobalNodeID");
   fullUGrid->GetPointData()->AddArray(globalNodeIds);
-  fullUGrid->GetPointData()->SetActiveScalars("GlobalNodeID");
 
   globalElementIds->SetName("GlobalElementID");
   fullUGrid->GetCellData()->AddArray(globalElementIds);
-  fullUGrid->GetCellData()->SetActiveScalars("GlobalElementID");
 
   //Save all external faces to a vtkCellArray list
   fprintf(stderr,"Converting Faces to VTK Structures...\n");
@@ -1292,13 +1363,13 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
  */
 //
 
-int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
+int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd, int meshInfo[3])
 {
   fprintf(stdout,"Checking surface mesh\n");
   vtkIdType npts,p0,p1;
   vtkIdType *pts;
-  int BadEdges = 0,FreeEdges = 0;
-  int regions=0;
+  int NonManifoldEdges = 0,FreeEdges = 0;
+  int Regions=0;
   vtkSmartPointer<vtkCleanPolyData> cleaner =
     vtkSmartPointer<vtkCleanPolyData>::New();
   vtkSmartPointer<vtkIdList> edgeneigh =
@@ -1314,22 +1385,20 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
   pd->DeepCopy(cleaner->GetOutput());
   pd->BuildLinks();
 
-  connector->SetInputData(cleaner->GetOutput());
+  surfacer->SetInputData(cleaner->GetOutput());
+  surfacer->Update();
+
+  connector->SetInputData(surfacer->GetOutput());
   connector->ColorRegionsOn();
   connector->Update();
 
-  surfacer->SetInputData(connector->GetOutput());
-  surfacer->Update();
-
-  vtkSmartPointer<vtkIdTypeArray> regionarray =
-    vtkSmartPointer<vtkIdTypeArray>::New();
-  regionarray = vtkIdTypeArray::SafeDownCast(surfacer->GetOutput()->
-      GetCellData()->GetScalars("RegionId"));
+  vtkDataArray *regionarray = connector->GetOutput()->
+      GetCellData()->GetScalars("RegionId");
 
   //Loop through the surface and find edges with cells that have either more
   //than one neighbor or no neighbors. No neighbors can be okay,as this can
-  //indicate a free edge. However, for a polydata surface, multiple neighbors
-  //indicates a bad cell with possible intersecting facets!
+  //indicate a free edge. Multiple neighbors indicates a
+  //non-manifold edge. This can cause issues as well in certain cases.
   for (int i = 0;i<pd->GetNumberOfCells();i++)
   {
     pd->GetCellPoints(i,npts,pts);
@@ -1340,42 +1409,22 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
 
       pd->GetCellEdgeNeighbors(i,p0,p1,edgeneigh);
       if (edgeneigh->GetNumberOfIds() > 1)
-      {
-	BadEdges++;
-      }
+        NonManifoldEdges++;
       else if (edgeneigh->GetNumberOfIds() < 1)
-      {
-	FreeEdges++;
-      }
+        FreeEdges++;
     }
-    int val = regionarray->GetValue(i);
-    if (val > regions)
-    {
-      regions = val;
-    }
+    int val = regionarray->GetTuple1(i);
+    if (val > Regions)
+      Regions = val;
   }
 
-  fprintf(stdout,"Number of Bad Edges on Surface: %d\n",BadEdges);
-  fprintf(stdout,"Number of Free Edges on Surface: %d\n",FreeEdges);
-  fprintf(stdout,"Regions: %d\n",regions);
-  if (regions != 0)
-  {
-    fprintf(stderr,"There are multiple regions here!\n");
-    fprintf(stderr,"Terminating meshing!\n");
-    return SV_ERROR;
-  }
-  if(FreeEdges > 0 && !boundarylayer)
-  {
-    fprintf(stderr,"There are free edes on surface!\n");
-    fprintf(stderr,"Terminating meshing!\n");
-    return SV_ERROR;
-  }
-  if(BadEdges > 0)
-  {
-    fprintf(stderr,"There are bad edes on surface!\n");
-    fprintf(stderr,"Terminating meshing!\n");
-    return SV_ERROR;
-  }
+  fprintf(stdout,"Regions: %d\n", Regions + 1);
+  fprintf(stdout,"Number of Free Edges on Surface: %d\n", FreeEdges);
+  fprintf(stdout,"Number of Non-Manifold Edges on Surface: %d\n", NonManifoldEdges);
+
+  meshInfo[0] = Regions+1;
+  meshInfo[1] = FreeEdges;
+  meshInfo[2] = NonManifoldEdges;
 
   return SV_OK;
 }

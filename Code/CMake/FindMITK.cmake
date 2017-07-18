@@ -166,14 +166,14 @@ foreach(lib ${${proj}_LIBNAMES})
 		${lib} ${lib}d
 		PATHS
 		${${proj}_POSSIBLE_LIB_PATHS}
-		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll
+		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE}
 		NO_DEFAULT_PATH)
 	find_library(${proj}_${lib}_LIBRARY
 		NAMES
 		${lib}
 		PATHS
 		${${proj}_POSSIBLE_LIB_PATHS}
-		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll)
+		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE})
 	mark_as_advanced(${proj}_${lib}_LIBRARY)
 	set(${proj}_LIB_FULLNAMES ${${proj}_LIB_FULLNAMES} ${proj}_${lib}_LIBRARY)
 	if(${proj}_${lib}_LIBRARY)
@@ -230,14 +230,14 @@ foreach(lib ${${proj}_PLUGIN_LIBNAMES})
       ${lib}
       PATHS
       ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-      ${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/${CMAKE_BUILD_TYPE}
+      ${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/RelWithDebInfo ${${proj}_DIR}/bin/plugins/RelWithDebInfo
       NO_DEFAULT_PATH)
     find_library(${proj}_${lib}_PLUGIN_LIBRARY
       NAMES
       ${lib}
       PATHS
       ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-      ${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/${CMAKE_BUILD_TYPE})
+      ${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/RelWithDebInfo ${${proj}_DIR}/bin/plugins/RelWithDebInfo)
     mark_as_advanced(${proj}_${lib}_PLUGIN_LIBRARY)
     set(${proj}_PLUGIN_LIB_FULLNAMES ${${proj}_PLUGIN_LIB_FULLNAMES} ${proj}_${lib}_PLUGIN_LIBRARY)
     if(${proj}_${lib}_PLUGIN_LIBRARY)

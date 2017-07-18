@@ -317,6 +317,7 @@ inline bool file_exists (char* name) {
   bool use_qt_gui  = true;
   bool use_workbench  = false;
   bool catch_debugger = false;
+  bool ignore_provisioning_file = false;
   use_qt_tcl_interp = false;
 
   ios::sync_with_stdio();
@@ -398,6 +399,7 @@ inline bool file_exists (char* name) {
 	fprintf(stdout,"  --qt-tcl-interp : use command line tcl interp with qt gui\n");
 	fprintf(stdout,"  --warn          : warn if invalid cmd line params (off by default)\n");
 	fprintf(stdout,"  --workbench     : use mitk workbench application\n");
+	fprintf(stdout,"  --ignore-pro    : ignore the .provisioning file \n");
 	exit(0);
       }
       if((!strcmp("--warn",argv[iarg]))) {
@@ -436,6 +438,9 @@ inline bool file_exists (char* name) {
 	use_tcl_gui = false;
 	use_workbench = true;
 	foundValid = true;
+      }
+      if((!strcmp("--ignore-pro",argv[iarg]))) {
+	ignore_provisioning_file = true;
       }
       if (!foundValid && warnInvalid) {
 	fprintf(stderr,"Warning:  unknown option (%s) ignored!\n",argv[iarg]);
@@ -771,69 +776,73 @@ RegCloseKey(hKey2);
      preloadLibs << "liborg_mitk_gui_qt_ext";
      app.setPreloadLibraries(preloadLibs);
 
-#ifdef SV_IGNORE_PROVISIONING_FILE
-     // can set a provisioning file here, but we hard code the plugins below
-     QString provisioningFilePath = "";
-     app.setProvisioningFilePath(provisioningFilePath);
+     if (ignore_provisioning_file) {
 
-     QString plugin_dirs = "";
-     app.setProperty(mitk::BaseApplication::ARG_PLUGIN_DIRS, "");
+       fprintf(stdout,"Note: Ignoring the provisioning file.\n");
+       fflush(stdout);
+       
+       // can set a provisioning file here, but we hard code the plugins below
+       QString provisioningFilePath = "";
+       app.setProvisioningFilePath(provisioningFilePath);
 
-     QStringList pluginsToStart;
-     QString pluginPath;
+       QString plugin_dirs = "";
+       app.setProperty(mitk::BaseApplication::ARG_PLUGIN_DIRS, "");
 
-     // Note: You can specify full URL filenames as well, e.g.
-     // pluginsToStart.push_back("file:///C:/.../liborg_commontk_eventadmin.dll");
+       QStringList pluginsToStart;
+       QString pluginPath;
 
-     // remove lib prefix and dll postfix
-     pluginsToStart.push_back("org_commontk_configadmin");
-     pluginsToStart.push_back("org_commontk_eventadmin");
-     pluginsToStart.push_back("org_blueberry_core_runtime");
-     pluginsToStart.push_back("org_blueberry_core_expressions");
-     pluginsToStart.push_back("org_blueberry_core_commands");
-     pluginsToStart.push_back("org_blueberry_ui_qt");
-     pluginsToStart.push_back("org_blueberry_ui_qt_help");
-     pluginsToStart.push_back("org_blueberry_ui_qt_log");
-     pluginsToStart.push_back("org_mitk_core_services");
-     pluginsToStart.push_back("org_mitk_gui_common");
-     pluginsToStart.push_back("org_mitk_planarfigure");
-     pluginsToStart.push_back("org_mitk_core_ext");
-     pluginsToStart.push_back("org_mitk_gui_qt_application");
-     pluginsToStart.push_back("org_mitk_gui_qt_ext");
-     pluginsToStart.push_back("org_mitk_gui_qt_extapplication");
-     pluginsToStart.push_back("org_mitk_gui_qt_common");
-     pluginsToStart.push_back("org_mitk_gui_qt_stdmultiwidgeteditor");
-     pluginsToStart.push_back("org_mitk_gui_qt_common_legacy");
-     pluginsToStart.push_back("org_mitk_gui_qt_datamanager");
-     pluginsToStart.push_back("org_mitk_gui_qt_properties");
-     pluginsToStart.push_back("org_mitk_gui_qt_basicimageprocessing");
-     pluginsToStart.push_back("org_mitk_gui_qt_dicom");
-     pluginsToStart.push_back("org_mitk_gui_qt_geometrytools");
-     pluginsToStart.push_back("org_mitk_gui_qt_imagecropper");
-     pluginsToStart.push_back("org_mitk_gui_qt_imagenavigator");
-     pluginsToStart.push_back("org_mitk_gui_qt_measurementtoolbox");
-     pluginsToStart.push_back("org_mitk_gui_qt_python");
-     pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
-     pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
+       // Note: You can specify full URL filenames as well, e.g.
+       // pluginsToStart.push_back("file:///C:/.../liborg_commontk_eventadmin.dll");
 
-     // SimVascular plugins
-     if (!use_workbench) {
-       pluginsToStart.push_back("org_sv_gui_qt_application");
-       pluginsToStart.push_back("org_sv_projectdatanodes");
-       pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
-       pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
-       pluginsToStart.push_back("org_sv_gui_qt_modeling");
-       pluginsToStart.push_back("org_sv_gui_qt_segmentation");
-       pluginsToStart.push_back("org_sv_gui_qt_meshing");
-       pluginsToStart.push_back("org_sv_gui_qt_simulation");
+      // remove lib prefix and dll postfix
+       pluginsToStart.push_back("org_commontk_configadmin");
+       pluginsToStart.push_back("org_commontk_eventadmin");
+       pluginsToStart.push_back("org_blueberry_core_runtime");
+       pluginsToStart.push_back("org_blueberry_core_expressions");
+       pluginsToStart.push_back("org_blueberry_core_commands");
+       pluginsToStart.push_back("org_blueberry_ui_qt");
+       pluginsToStart.push_back("org_blueberry_ui_qt_help");
+       pluginsToStart.push_back("org_blueberry_ui_qt_log");
+       pluginsToStart.push_back("org_mitk_core_services");
+       pluginsToStart.push_back("org_mitk_gui_common");
+       pluginsToStart.push_back("org_mitk_planarfigure");
+       pluginsToStart.push_back("org_mitk_core_ext");
+       pluginsToStart.push_back("org_mitk_gui_qt_application");
+       pluginsToStart.push_back("org_mitk_gui_qt_ext");
+       pluginsToStart.push_back("org_mitk_gui_qt_extapplication");
+       pluginsToStart.push_back("org_mitk_gui_qt_common");
+       pluginsToStart.push_back("org_mitk_gui_qt_stdmultiwidgeteditor");
+       pluginsToStart.push_back("org_mitk_gui_qt_common_legacy");
+       pluginsToStart.push_back("org_mitk_gui_qt_datamanager");
+       pluginsToStart.push_back("org_mitk_gui_qt_properties");
+       pluginsToStart.push_back("org_mitk_gui_qt_basicimageprocessing");
+       pluginsToStart.push_back("org_mitk_gui_qt_dicom");
+       pluginsToStart.push_back("org_mitk_gui_qt_geometrytools");
+       pluginsToStart.push_back("org_mitk_gui_qt_imagecropper");
+       pluginsToStart.push_back("org_mitk_gui_qt_imagenavigator");
+       pluginsToStart.push_back("org_mitk_gui_qt_measurementtoolbox");
+       pluginsToStart.push_back("org_mitk_gui_qt_python");
+       pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
+       pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
+
+       // SimVascular plugins
+       if (!use_workbench) {
+         pluginsToStart.push_back("org_sv_gui_qt_application");
+         pluginsToStart.push_back("org_sv_projectdatanodes");
+         pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
+         pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
+         pluginsToStart.push_back("org_sv_gui_qt_modeling");
+         pluginsToStart.push_back("org_sv_gui_qt_segmentation");
+         pluginsToStart.push_back("org_sv_gui_qt_meshing");
+         pluginsToStart.push_back("org_sv_gui_qt_simulation");
+       }
+
+       app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
+
+       //Use transient start with declared activation policy
+       ctkPlugin::StartOptions startOptions(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
+       app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS, static_cast<int>(startOptions));
      }
-
-     app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
-
-     //Use transient start with declared activation policy
-     ctkPlugin::StartOptions startOptions(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
-     app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS, static_cast<int>(startOptions));
-#endif
 
      if (use_qt_tcl_interp) {
        Tcl_Main (argc, argv, Tcl_AppInit);

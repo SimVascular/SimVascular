@@ -3,15 +3,14 @@
 
 #include <svSegmentationExports.h>
 
+#include "svSurface.h"
 #include <svSeg3D.h>
 
-#include <mitkSurface.h>
-
-class SVSEGMENTATION_EXPORT svMitkSeg3D : public mitk::Surface
+class SVSEGMENTATION_EXPORT svMitkSeg3D : public mitk::svSurface
 {
 public:
 
-    mitkClassMacro(svMitkSeg3D, mitk::Surface);
+    mitkClassMacro(svMitkSeg3D, mitk::svSurface);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 

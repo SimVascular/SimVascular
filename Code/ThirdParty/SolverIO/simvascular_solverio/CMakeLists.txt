@@ -40,6 +40,10 @@ endif()
 
 target_link_libraries(${lib} ${INTELRUNTIME_LIBRARIES} ${ZLIB_LIBRARY})
 
+if(WIN32)
+  set_target_properties(${lib} PROPERTIES "COMPILE_DEFINITIONS" SV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE)
+endif()
+
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib}
     RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables

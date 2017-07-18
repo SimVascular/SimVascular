@@ -7,10 +7,11 @@ MITK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/mitk-2016.03
 MITK_US_RESOURCE_COMPILER = $(MITK_BINDIR)/bin/usResourceCompiler
 
 MITK_LIBDIRS = $(MITK_BINDIR)/lib
-SV_MITK_PLUGIN_PATH = "$(MITK_BINDIR)/lib:$(MITK_BINDIR)/lib/plugins"
+MITK_PLUGIN_DIR = $(MITK_BINDIR)/lib/plugins
+SV_MITK_PLUGIN_PATH = $(MITK_BINDIR)/lib/plugins
 MITK_BINDIRS = $(MITK_BINDIR)/bin
 
-SV_MITK_SO_PATH = "$(MITK_LIBDIRS):$(MITK_BINDIRS)"
+SV_MITK_SO_PATH = "$(MITK_LIBDIRS):$(MITK_BINDIRS):$(SV_MITK_PLUGIN_PATH)"
 MITK_DLLS    = $(MITK_BINDIRS)/*.$(SOEXT)
 
 MITK_SYS_LIBS  = 
@@ -113,8 +114,6 @@ MITK_PLUGIN_LIBS += \
              $(LIBFLAG)org_blueberry_core_runtime$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_core_services$(LIBLINKEXT)
 
-MITK_LIBS = $(MITK_PLUGIN_LIBS)
-
 ### this library doesn't seem to be on linux
 ##         $(LIBFLAG)CTKVisualizationVTKCorePythonQt$(LIBLINKEXT)
 
@@ -122,6 +121,7 @@ MITK_LIBS += \
            $(LIBPATH_COMPILER_FLAG)$(MITK_LIBDIRS) \
            $(LIBPATH_COMPILER_FLAG)$(MITK_BINDIRS) \
            $(LIBPATH_COMPILER_FLAG)$(MITK_PLUGIN_DIR) \
+           $(MITK_PLUGIN_LIBS) \
            $(LIBFLAG)CppMicroServices$(LIBLINKEXT) \
            $(LIBFLAG)CTKCommandLineModulesBackendLocalProcess$(LIBLINKEXT) \
            $(LIBFLAG)CTKCommandLineModulesCore$(LIBLINKEXT) \

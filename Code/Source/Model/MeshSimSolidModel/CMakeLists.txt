@@ -59,15 +59,17 @@ generate_export_header(${lib}
   ${_export_macro_names}
   EXPORT_FILE_NAME ${export_file_name})
 
-if(SV_INSTALL_LIBS)
-	install(TARGETS ${lib}
-		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT LicensedExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT LicensedLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT LicensedLibraries
-		)
-endif()
-if(SV_INSTALL_HEADERS)
-  install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT LicensedHeaders
-		)
+if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
+  if(SV_INSTALL_LIBS)
+  	install(TARGETS ${lib}
+  		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT LicensedExecutables
+  		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT LicensedLibraries
+  		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT LicensedLibraries
+  		)
+  endif()
+  if(SV_INSTALL_HEADERS)
+    install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
+  		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT LicensedHeaders
+  		)
+  endif()
 endif()

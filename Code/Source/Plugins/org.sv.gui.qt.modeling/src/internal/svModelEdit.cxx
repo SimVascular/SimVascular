@@ -6,6 +6,7 @@
 
 #include "svFaceListDelegate.h"
 #include "svPath.h"
+#include "svMitkSeg3D.h"
 #include "svSegmentationUtils.h"
 #include "svModelElementFactory.h"
 #include "svModelElementAnalytic.h"
@@ -1437,8 +1438,15 @@ void svModelEdit::ShowSegSelectionWidget()
 
     std::vector<mitk::DataNode::Pointer> segNodes;
     for(int i=0;i<rs->size();i++)
+    {
+        if(m_ModelType=="OpenCASCADE" || m_ModelType=="Parasolid")
+        {
+            svContourGroup* group = dynamic_cast<svContourGroup*>(rs->GetElement(i)->GetData());
+            if(group==NULL)
+                continue;
+        }
         segNodes.push_back(rs->GetElement(i));
-
+    }
 
     m_SegSelectionWidget->SetTableView(segNodes,modelElement,m_ModelType);
     m_SegSelectionWidget->show();
@@ -1468,6 +1476,39 @@ void svModelEdit::CreateModel()
         mitk::DataNode::Pointer node=GetDataStorage()->GetNamedDerivedNode(segNames[i].c_str(),segFolderNode);
         if(node.IsNotNull())
             segNodes.push_back(node);
+    }
+
+    //sanity check
+    int numSeg2D=0;
+    int numSeg3D=0;
+
+    for(int i=0;i<segNodes.size();i++)
+    {
+        svContourGroup* group = dynamic_cast<svContourGroup*>(segNodes[i]->GetData());
+        if(group!=NULL)
+        {
+            numSeg2D++;
+            continue;
+        }
+        svMitkSeg3D* seg3D = dynamic_cast<svMitkSeg3D*>(segNodes[i]->GetData());
+        if(seg3D!=NULL)
+        {
+            numSeg3D++;
+            continue;
+        }
+
+    }
+
+    if(numSeg2D+numSeg3D==0)
+    {
+        QMessageBox::warning(m_Parent,"Warning","No valid segmentations are used.");
+        return;
+    }
+
+    if(numSeg2D==0 && (m_ModelType=="OpenCASCADE" || m_ModelType=="Parasolid"))
+    {
+        QMessageBox::warning(m_Parent,"Warning","No valid 2D segmentations are used.");
+        return;
     }
 
     svModelElement* newModelElement=NULL;

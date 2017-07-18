@@ -20,25 +20,26 @@ simvascular_create_module(
   ${SV_LIB_PARASOLID_SOLID_NAME}
   ${SV_LIB_MODULE_MODEL_NAME})
 #-----------------------------------------------------------------------------
-
-if(SV_INSTALL_LIBS)
-  install(TARGETS ${lib}
-    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT LicensedExecutables
-    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT LicensedLibraries
-    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT LicensedLibraries
-  )
-endif()
-
-if(SV_INSTALL_HEADERS)
-  set(MODULE_FILES_CMAKE files.cmake)
-  if(NOT IS_ABSOLUTE ${MODULE_FILES_CMAKE})
-    set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
+if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
+  if(SV_INSTALL_LIBS)
+    install(TARGETS ${lib}
+      RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT LicensedExecutables
+      LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT LicensedLibraries
+      ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT LicensedLibraries
+    )
   endif()
-  if (EXISTS ${MODULE_FILES_CMAKE})
-    include(${MODULE_FILES_CMAKE})
+
+  if(SV_INSTALL_HEADERS)
+    set(MODULE_FILES_CMAKE files.cmake)
+    if(NOT IS_ABSOLUTE ${MODULE_FILES_CMAKE})
+      set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
+    endif()
+    if (EXISTS ${MODULE_FILES_CMAKE})
+      include(${MODULE_FILES_CMAKE})
+    endif()
+    install(FILES ${H_FILES}
+      DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT LicensedHeaders
+    )
   endif()
-  install(FILES ${H_FILES}
-    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT LicensedHeaders
-  )
 endif()
 

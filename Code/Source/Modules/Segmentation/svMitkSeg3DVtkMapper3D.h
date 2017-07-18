@@ -7,13 +7,13 @@
 
 #include "svMitkSeg3D.h"
 
-#include <mitkSurfaceVtkMapper3D.h>
+#include "svSurfaceVtkMapper3D.h"
 
-class SVSEGMENTATION_EXPORT svMitkSeg3DVtkMapper3D : public mitk::SurfaceVtkMapper3D
+class SVSEGMENTATION_EXPORT svMitkSeg3DVtkMapper3D : public mitk::svSurfaceVtkMapper3D
 {
 public:
 
-    mitkClassMacro( svMitkSeg3DVtkMapper3D, mitk::SurfaceVtkMapper3D );
+    mitkClassMacro( svMitkSeg3DVtkMapper3D, mitk::svSurfaceVtkMapper3D );
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 

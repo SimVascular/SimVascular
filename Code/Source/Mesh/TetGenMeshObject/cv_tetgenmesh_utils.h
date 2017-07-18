@@ -57,9 +57,15 @@ SV_EXPORT_TETGEN_MESH int TGenUtils_Init();
 //int cvTetGenMeshObjectUtils_Logon(char *filename);
 //int cvTetGenMeshObjectUtils_Logoff();
 //
-SV_EXPORT_TETGEN_MESH int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
-    int meshsizingfunction, vtkDoubleArray *meshSizingFunction,
-    int useBoundary, std::string markerListArrayName, double maxEdgeSize);
+SV_EXPORT_TETGEN_MESH int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid);
+
+SV_EXPORT_TETGEN_MESH int TGenUtils_AddPointSizingFunction(tetgenio *inmesh,vtkPolyData *polydatasolid, std::string meshSizingFunctionName, double maxEdgeSize);
+
+SV_EXPORT_TETGEN_MESH int TGenUtils_AddFacetMarkers(tetgenio *inmesh,vtkPolyData *polydatasolid, std::string markerListArrayName);
+
+SV_EXPORT_TETGEN_MESH int TGenUtils_AddHoles(tetgenio *inmesh, vtkPoints *holeList);
+
+SV_EXPORT_TETGEN_MESH int TGenUtils_AddRegions(tetgenio *inmesh, vtkPoints *regionList, vtkDoubleArray *regionSizeList);
 
 SV_EXPORT_TETGEN_MESH int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,
     vtkPolyData *surfaceMesh,tetgenio *inmesh);
@@ -94,7 +100,7 @@ SV_EXPORT_TETGEN_MESH int TGenUtils_LoadMesh(char *filename,vtkUnstructuredGrid 
 SV_EXPORT_TETGEN_MESH int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,std::string newName,std::string originalName);
 
-SV_EXPORT_TETGEN_MESH int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer);
+SV_EXPORT_TETGEN_MESH int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd, int meshInfo[3]);
 
 SV_EXPORT_TETGEN_MESH int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size);
 

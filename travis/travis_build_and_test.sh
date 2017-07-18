@@ -24,25 +24,16 @@ if $WITH_CMAKE; then
   cd -
 
 else
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
-    then
-      echo "CLUSTER=x64_linux" > BuildWithMake/cluster_overrides.mk
-      echo "CXX_COMPILER_VERSION=gcc" >> BuildWithMake/cluster_overrides.mk
-      echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin/gnu/4.8/x64" > BuildWithMake/global_overrides.mk
-    elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
-    then
-      echo "CLUSTER=x64_macosx" > BuildWithMake/cluster_overrides.mk
-      echo "CXX_COMPILER_VERSION=clang" >> BuildWithMake/cluster_overrides.mk
-      echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin/clang/7.3/x64" > BuildWithMake/global_overrides.mk
-    fi
-    echo "FORTRAN_COMPILER_VERSION=gfortran" >> BuildWithMake/cluster_overrides.mk
-    echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
-    echo "OPEN_SOFTWARE_SOURCES_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
-    echo "LICENSED_SOFTWARE_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
-
-    echo "Building with just make (i.e. NOT cmake!)"
-    pushd BuildWithMake
-    make --keep-going
-    popd
+  echo "Building with just make (i.e. NOT cmake!)"
+  pushd BuildWithMake
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+  then
+     source ./quick-build-linux.sh
+  elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
+  then
+     echo "QT_TOP_DIR=/opt/Qt5.4.2/5.4/clang_64" > ./pkg_overrides.mk
+     source ./quick-build-macosx.sh
+  fi
+  popd
 fi
 

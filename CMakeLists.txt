@@ -82,6 +82,19 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # First process special Qt stuff
 #Find Qt!
+if(WIN32)
+  set(SV_Qt5_search_paths C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5
+                          C:/OpenSource/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5
+                          C:/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5
+			  C:/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5)
+elseif(LINUX)
+  set(SV_Qt5_search_paths /opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5
+                          /usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5)
+  elseif(APPLE)
+  set(SV_Qt5_search_paths /usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5
+                          /opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5)
+endif()
+
 set(SV_Qt5_COMPONENTS
   Concurrent
   Core
@@ -99,7 +112,11 @@ set(SV_Qt5_COMPONENTS
   Xml
   XmlPatterns
   UiTools)
-find_package(Qt5 COMPONENTS ${SV_Qt5_COMPONENTS} REQUIRED)
+find_package(Qt5 PATHS ${SV_Qt5_search_paths} COMPONENTS ${SV_Qt5_COMPONENTS} REQUIRED)
+
+# need toplevel Qt dir path
+get_filename_component(qt5_installed_prefix "${Qt5_DIR}/../../.." ABSOLUTE)
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -128,6 +145,13 @@ set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals"
 
 #-----------------------------------------------------------------------------
 # SimVascular!
+
+if(WIN32)
+  set(freetype_shared_option "-DSV_USE_FREETYPE_SHARED:BOOL=OFF")
+else()
+  set(freetype_shared_option "-DSV_USE_FREETYPE_SHARED:BOOL=ON")
+endif()
+
 set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 ExternalProject_Add(SimVascular
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
@@ -147,17 +171,39 @@ ExternalProject_Add(SimVascular
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DSV_USE_FREETYPE:BOOL=ON
+    ${freetype_shared_option}
     -DSV_USE_GDCM:BOOL=ON
+    -DSV_USE_GDCM_SHARED:BOOL=ON
     -DSV_USE_ITK:BOOL=ON
+    -DSV_USE_ITK_SHARED:BOOL=ON
+    -DSV_USE_MITK:BOOL=ON
+    -DSV_USE_MITK_CONFIG:BOOL=OFF
+    -DSV_USE_MITK_SHARED:BOOL=ON
+    -DSV_USE_MMG:BOOL=ON
     -DSV_USE_MPICH2:BOOL=OFF
     -DSV_USE_OpenCASCADE:BOOL=ON
+    -DSV_USE_OpenCASCADE_SHARED:BOOL=ON
     -DSV_USE_PYTHON:BOOL=ON
-    -DSV_USE_MMG:BOOL=ON
-    -DSV_USE_MITK:BOOL=ON
+    -DSV_USE_QT:BOOL=ON
     -DSV_USE_QT_GUI:BOOL=ON
+    -DSV_USE_SOLVERIO:BOOL=ON
+    -DSV_USE_SYSTEM_FREETYPE:BOOL=ON
+    -DSV_USE_SYSTEM_GDCM:BOOL=ON
+    -DSV_USE_SYSTEM_ITK:BOOL=ON
+    -DSV_USE_SYSTEM_MITK:BOOL=ON
+    -DSV_USE_SYSTEM_MMG:BOOL=ON
+    -DSV_USE_SYSTEM_OpenCASCADE:BOOL=ON
+    -DSV_USE_SYSTEM_PYTHON:BOOL=ON
+    -DSV_USE_SYSTEM_TCL:BOOL=ON
+    -DSV_USE_SYSTEM_VTK:BOOL=ON
+    -DSV_USE_TCL_SHARED:BOOL=ON
+    -DSV_USE_TETGEN_ADAPTOR:BOOL=ON
+    -DSV_USE_VTK_SHARED:BOOL=ON
     -DSV_EXTERNALS_USE_TOPLEVEL_DIR:BOOL=ON
     -DSV_EXTERNALS_TOPLEVEL_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}
     -DQt5_DIR:PATH=${Qt5_DIR}
+    -DQT_DLL_PATH:PATH=${qt5_installed_prefix}/bin
+    -DQT_PLUGIN_PATH:PATH=${qt5_installed_prefix}/plugins
     ${SV_ADDITIONAL_CMAKE_ARGS}
     )
 #-----------------------------------------------------------------------------
