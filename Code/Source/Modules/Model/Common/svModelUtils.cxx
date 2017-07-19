@@ -470,11 +470,19 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
       }
       else
       {
-
-          if(addCaps==1)
-              outpd=CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+          if (PlyDtaUtils_CheckLoftSurface(dst->GetVtkPolyData()) != SV_OK)
+          {
+            MITK_ERROR << "Error lofting surface";
+            outpd=NULL;
+          }
           else
-              outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+          {
+            if(addCaps==1)
+                outpd=CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+            else
+                outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+          }
+
       }
     }
 

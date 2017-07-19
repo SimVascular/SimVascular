@@ -83,4 +83,6 @@ SV_EXPORT_POLYDATASOLID int PlyDtaUtils_DeleteCells( vtkPolyData *geom, int *num
 
 SV_EXPORT_POLYDATASOLID int PlyDtaUtils_DeleteRegion( vtkPolyData *geom, int *regionid);
 
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_CheckLoftSurface( vtkPolyData *geom);
+
 #endif // __POLYDATASOLID_MODEL_H
