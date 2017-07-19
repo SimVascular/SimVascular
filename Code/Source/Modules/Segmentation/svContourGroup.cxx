@@ -326,13 +326,19 @@ int svContourGroup::SearchContourByPlane(const mitk::PlaneGeometry *planeGeometr
 {
     if(planeGeometry!=NULL)
     {
+        mitk::Point3D center=planeGeometry->GetCenter();
+        mitk::Vector3D spacing=planeGeometry->GetSpacing();
+        double minDist=sqrt(spacing[0]*spacing[0]+spacing[1]*spacing[1]+spacing[2]*spacing[2]);
+
         for(int i=0;i<GetSize(t);i++){
 
             svContour* contour=GetContour(i,t);
+            if(contour==NULL) continue;
 
-            if(contour&&contour->IsOnPlane(planeGeometry,precisionFactor)){
-
-                return i;
+            if(contour->IsOnPlane(planeGeometry,precisionFactor)){
+                double dist=center.EuclideanDistanceTo(contour->GetPathPosPoint());
+                if(dist<2*minDist)
+                    return i;
 
             }
         }
