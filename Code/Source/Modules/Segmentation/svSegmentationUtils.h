@@ -78,9 +78,9 @@ public:
 
     static mitk::PlaneGeometry::Pointer CreatePlaneGeometry(svPathElement::svPathPoint pathPoint, mitk::Vector3D spacing, double size);
 
-    static mitk::PlaneGeometry::Pointer CreatePlaneGeometry(svPathElement::svPathPoint pathPoint, mitk::Image* image, double size, bool useOnlyMinimumSpacing = false);
+    static mitk::PlaneGeometry::Pointer CreatePlaneGeometry(svPathElement::svPathPoint pathPoint, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing = false);
 
-    static mitk::SlicedGeometry3D::Pointer CreateSlicedGeometry(std::vector<svPathElement::svPathPoint> pathPoints, mitk::Image* image, double size, bool useOnlyMinimumSpacing = false);
+    static mitk::SlicedGeometry3D::Pointer CreateSlicedGeometry(std::vector<svPathElement::svPathPoint> pathPoints, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing = false);
 
 
     static mitk::Image::Pointer GetSliceImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep = 0);

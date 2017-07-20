@@ -225,6 +225,7 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
 //    mitk::DataNode::Pointer pathNode=NULL;
     mitk::DataNode::Pointer imageNode=NULL;
+    m_Image=NULL;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ContourGroupNode,isProjFolder,false);
 
@@ -238,9 +239,13 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
             mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
             rs=GetDataStorage()->GetDerivations(imageFolderNode);
-            if(rs->size()<1) return;
-            imageNode=rs->GetElement(0);
-            m_Image= dynamic_cast<mitk::Image*>(imageNode->GetData());
+//            if(rs->size()<1) return;
+            if(rs->size()>0)
+            {
+                imageNode=rs->GetElement(0);
+                if(imageNode.IsNotNull())
+                    m_Image= dynamic_cast<mitk::Image*>(imageNode->GetData());
+            }
 
         }
 
@@ -265,10 +270,10 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     }
 
-    if(!m_Image){
-        QMessageBox::warning(NULL,"No image found for this project","Make sure the image is loaded!");
-//        return;
-    }
+//    if(!m_Image){
+//        QMessageBox::warning(NULL,"No image found for this project","Make sure the image is loaded!");
+////        return;
+//    }
 
     if(!m_Path){
         QMessageBox::warning(NULL,"No path found for this contour group","Make sure the path for the contour group exits!");
@@ -332,7 +337,11 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     //set resice slider
     ui->resliceSlider->setPathPoints(pathPoints);
-    ui->resliceSlider->setImageNode(imageNode);
+    if(imageNode.IsNotNull())
+        ui->resliceSlider->setDataNode(imageNode);
+    else
+        ui->resliceSlider->setDataNode(m_ContourGroupNode);
+
     double resliceSize=m_ContourGroup->GetResliceSize();
     if(resliceSize==0)
     {

@@ -178,6 +178,8 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
+    m_ImageNode=NULL;
+    m_Image=NULL;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_PathNode,isProjFolder,false);
     if(rs->size()>0)
@@ -189,9 +191,13 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         {
             mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
             rs=GetDataStorage()->GetDerivations(imageFolderNode);
-            if(rs->size()<1) return;
-            m_ImageNode=rs->GetElement(0);
-            m_Image=dynamic_cast<mitk::Image*>(m_ImageNode->GetData());
+//            if(rs->size()<1) return;
+            if(rs->size()>0)
+            {
+                m_ImageNode=rs->GetElement(0);
+                if(m_ImageNode.IsNotNull())
+                    m_Image=dynamic_cast<mitk::Image*>(m_ImageNode->GetData());
+            }
 
         }
     }
@@ -358,8 +364,8 @@ void svPathEdit::SetupResliceSlider()
 
 //    if(imageNode.IsNull()) return;
 
-    if(m_ImageNode.IsNull())
-        return;
+//    if(m_ImageNode.IsNull())
+//        return;
 
     if(m_Path==NULL)
         return;
@@ -372,11 +378,24 @@ void svPathEdit::SetupResliceSlider()
     {
 //        ui->resliceSlider->setPathPoints(pathElement->GetPathPoints());
         int startingIndex=0;
-        double realBounds[6];
-        GetImageRealBounds(realBounds);
-        ui->resliceSlider->setPathPoints(pathElement->GetExtendedPathPoints(realBounds,GetVolumeImageSpacing(),startingIndex));
+        if(m_ImageNode.IsNotNull())
+        {
+            double realBounds[6];
+            GetImageRealBounds(realBounds);
+            ui->resliceSlider->setPathPoints(pathElement->GetExtendedPathPoints(realBounds,GetVolumeImageSpacing(),startingIndex));
+        }
+        else
+            ui->resliceSlider->setPathPoints(pathElement->GetPathPoints());
+
         ui->resliceSlider->SetStartingSlicePos(startingIndex);
-        ui->resliceSlider->setImageNode(m_ImageNode);
+
+        if(m_ImageNode.IsNotNull())
+            ui->resliceSlider->setDataNode(m_ImageNode);
+        else if(m_PathNode.IsNotNull())
+            ui->resliceSlider->setDataNode(m_PathNode);
+        else
+            ui->resliceSlider->setDataNode(NULL);
+
         double resliceSize=m_Path->GetResliceSize();
         if(resliceSize==0)
         {
@@ -417,10 +436,14 @@ void svPathEdit::GetImageRealBounds(double realBounds[6])
 
 double svPathEdit::GetVolumeImageSpacing()
 {
-    mitk::Vector3D spacing=m_Image->GetGeometry()->GetSpacing();
-    double minSpacing=std::min(spacing[0],std::min(spacing[1],spacing[2]));
-    return minSpacing;
-
+    if(m_Image)
+    {
+        mitk::Vector3D spacing=m_Image->GetGeometry()->GetSpacing();
+        double minSpacing=std::min(spacing[0],std::min(spacing[1],spacing[2]));
+        return minSpacing;
+    }
+    else
+        return 0.1;
 }
 
 void svPathEdit::ChangePath(){
