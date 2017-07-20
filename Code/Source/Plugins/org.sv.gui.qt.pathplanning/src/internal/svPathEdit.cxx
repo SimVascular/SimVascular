@@ -228,6 +228,19 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     pointMoveCommand->SetCallbackFunction(this, &svPathEdit::UpdateSlice);
     m_PointMoveObserverTag = m_Path->AddObserver( svPathFinishMovePointEvent(), pointMoveCommand);
 
+    mitk::BaseData* baseData=NULL;
+    if(m_ImageNode.IsNotNull())
+        baseData=m_ImageNode->GetData();
+    else if(m_PathNode.IsNotNull())
+        baseData=m_PathNode->GetData();
+
+    if ( baseData && baseData->GetTimeGeometry()->IsValid() )
+    {
+        mitk::RenderingManager::GetInstance()->InitializeViews(
+                    baseData->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
+
     SetupResliceSlider();
 
     ui->comboBoxAddingMode->setCurrentIndex(m_Path->GetAddingMode());
@@ -376,7 +389,6 @@ void svPathEdit::SetupResliceSlider()
 
     if(pathElement->GetControlPointNumber()>1)
     {
-//        ui->resliceSlider->setPathPoints(pathElement->GetPathPoints());
         int startingIndex=0;
         if(m_ImageNode.IsNotNull())
         {

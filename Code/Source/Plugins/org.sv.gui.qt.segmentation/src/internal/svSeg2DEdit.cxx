@@ -43,7 +43,9 @@ svSeg2DEdit::svSeg2DEdit() :
 {
     m_ContourGroupChangeObserverTag=-1;
     m_ContourGroup=NULL;
+    m_ContourGroupNode=NULL;
     m_Path=NULL;
+    m_PathNode=NULL;
     m_Image=NULL;
     m_cvImage=NULL;
     m_LoftWidget=NULL;
@@ -229,6 +231,7 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ContourGroupNode,isProjFolder,false);
 
+    m_PathNode=NULL;
     if(rs->size()>0)
     {
         mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
@@ -262,6 +265,7 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
                 if(path&&groupPathID==path->GetPathID())
                 {
                     m_Path=path;
+                    m_PathNode=rs->GetElement(i);
                     break;
                 }
             }
@@ -334,6 +338,20 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         }
     }
     m_PathPoints=pathPoints;
+
+    //set visible range for 3D view
+    mitk::BaseData* baseData=NULL;
+    if(imageNode.IsNotNull())
+        baseData=imageNode->GetData();
+    else if(m_PathNode.IsNotNull())
+        baseData=m_PathNode->GetData();
+
+    if ( baseData && baseData->GetTimeGeometry()->IsValid() )
+    {
+        mitk::RenderingManager::GetInstance()->InitializeViews(
+                    baseData->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
 
     //set resice slider
     ui->resliceSlider->setPathPoints(pathPoints);
