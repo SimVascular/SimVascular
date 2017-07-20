@@ -436,6 +436,7 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
   // Clean the surface in case of duplicate points (closed surface)
   vtkNew(vtkCleanPolyData, cleaner);
   cleaner->SetInputData(this->SurfaceRepresentation);
+  cleaner->SetTolerance(1.0e-6);
   cleaner->Update();
 
   // Get clean output and build links

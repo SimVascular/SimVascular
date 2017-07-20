@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,12 +32,12 @@
  *  @brief The implementations of functions in cv_polydatasolid_utils
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,6 +50,7 @@
 #include "cv_sys_geom.h"
 
 #include "cv_globals.h"
+#include "vtkConnectivityFilter.h"
 #include "vtkSmartPointer.h"
 #include "vtkSTLReader.h"
 #include "vtkSTLWriter.h"
@@ -72,8 +73,8 @@
 // -------------
 // PlyDtaUtils_Init
 // -------------
-/** 
- * @brief Initialization function for cv_polydata_utils (not necessary) 
+/**
+ * @brief Initialization function for cv_polydata_utils (not necessary)
  */
 
 int PlyDtaUtils_Init()
@@ -85,12 +86,12 @@ int PlyDtaUtils_Init()
 // ---------------------
 // PlyDtaUtils_GetFaceIds
 // ---------------------
-/** 
- * @brief Procedure to get face numbers that correspond to the scalars 
- * assigned to the geometry in vtkGetBoundaryFaces.cxx 
+/**
+ * @brief Procedure to get face numbers that correspond to the scalars
+ * assigned to the geometry in vtkGetBoundaryFaces.cxx
  * @param *geom input vtkPolyData on which to get the face ids
  * @param *v_num_faces int that contains the number of total face regions
- * @param **v_faces vector containing the array of numerical values 
+ * @param **v_faces vector containing the array of numerical values
  * corresponding to each face region
  * @return SV_OK if function completes properly
  */
@@ -120,11 +121,11 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
   }
   boundaryScalars = vtkIntArray::SafeDownCast(geom->GetCellData()->GetArray("ModelFaceID"));
 //  boundaryScalars = static_cast<vtkIntArray*>(geom->GetCellData()->GetArray("ModelFaceID"));
-  
+
   boundaryScalars->GetRange(range,0);
 
   max = range[1];
-  
+
   checkNums = new bool[max];
   for (i=0;i<max;i++)
   {
@@ -146,7 +147,7 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
   for (i=0;i<max;i++)
   {
     if (checkNums[i] == true)
-    { 
+    {
       faceNums[faceid++] = i+1;
     }
   }
@@ -162,12 +163,12 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
 // -------------------
 // PlyDtaUtils_GetBoundaryFaces
 // -------------------
-// 
-/** 
- * @brief Custom filter to extract the boundaries from surface  
+//
+/**
+ * @brief Custom filter to extract the boundaries from surface
  * @param *geom input vtkPolyData on which to get the surfaces
  * @param angle double that specifies the extraction angle. Any faces
- * with a difference between face normals larger than this angle will be 
+ * with a difference between face normals larger than this angle will be
  * considered a separate face
  * @return SV_OK if function completes properly
  */
@@ -175,7 +176,7 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
 int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions)
 {
   //Create BoundarySurface Filter to get the boundaries
-  vtkSmartPointer<vtkGetBoundaryFaces> boundFacs; 
+  vtkSmartPointer<vtkGetBoundaryFaces> boundFacs;
 
   //Custom Filter vtkGetBoundaryFaces located in Core/TetMesh folder. Uses
   //vtkFeatureEdges as a base class
@@ -201,18 +202,18 @@ int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions
 // -------------------
 // PlyDtaUtils_GetFacePolyData
 // -------------------
-/** 
- * @brief Based on Scalars Defined by the GetBoundaryFaces filter, 
- * separate into face VTKs   
+/**
+ * @brief Based on Scalars Defined by the GetBoundaryFaces filter,
+ * separate into face VTKs
  * @param *geom input vtkPolyData on which to get the face PolyData
  * @param angle double that specifies the extraction angle. Any faces
- * with a difference between face normals larger than this angle will be 
+ * with a difference between face normals larger than this angle will be
  * considered a separate face
  * @return SV_OK if function completes properly
- * @note There is another method to do this that does not retain id 
+ * @note There is another method to do this that does not retain id
  * information. It may be faster, but doesn't reatain info
  */
-// 
+//
 
 int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *facepd)
 {
@@ -222,7 +223,7 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
   vtkSmartPointer<vtkDataSetSurfaceFilter> getPoly = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
 
   double facenum;
-  
+
   facenum = (double) *faceid;
   idThreshold->SetInputData(geom);
   //Set Input Array to 0 port,0 connection,1 for Cell Data, and Regions is the type name
@@ -234,7 +235,7 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
 
   getPoly->SetInputData(tempGrid);
   getPoly->Update();
-  
+
   facepd->DeepCopy(getPoly->GetOutput());
 
   if (facepd->GetNumberOfPoints() != tempGrid->GetNumberOfPoints())
@@ -249,7 +250,7 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
 // -------------------
 // PlyDtaUtils_ReadNative
 // -------------------
-/** 
+/**
  * @brief Function to load in a solid file
  * @param *filename Pointer to a char filename of the file to read in
  * @param *result vtkPolyData that is to store input file info
@@ -311,11 +312,11 @@ int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result)
   }
   return SV_OK;
 }
-  
+
 // -------------------
 // PlyDtaUtils_WriteNative
 // -------------------
-/** 
+/**
  * @brief Function to write the polydata
  * @param *filename Pointer to a char filename of the file to write
  * @param file_version int for filetype
@@ -323,7 +324,7 @@ int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result)
  * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the write function does not return properly.
  */
-    
+
 int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename )
 {
   const char *extension = strrchr(filename,'.');
@@ -332,7 +333,7 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
   if (!strncmp(extension,"vtk",3))
   {
     //Writing a legacy vtk file
-    vtkSmartPointer<vtkGenericDataObjectWriter> writer 
+    vtkSmartPointer<vtkGenericDataObjectWriter> writer
       = vtkSmartPointer<vtkGenericDataObjectWriter>::New();
 
     writer->SetInputData(geom);
@@ -344,7 +345,7 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
   else if (!strncmp(extension,"vtp",3))
   {
     //Writing a vtp file
-    vtkSmartPointer<vtkXMLPolyDataWriter> writer 
+    vtkSmartPointer<vtkXMLPolyDataWriter> writer
       = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
 
     writer->SetInputData(geom);
@@ -352,13 +353,13 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
     writer->Update();
 
     writer->Write();
-  } 
+  }
   else if (!strncmp(extension,"vtu",3))
   {
     //Writing a vtu file
-    vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer 
+    vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer
       = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-    vtkSmartPointer<vtkAppendFilter> converter 
+    vtkSmartPointer<vtkAppendFilter> converter
       = vtkSmartPointer<vtkAppendFilter>::New();
 
     converter->AddInputData(geom);
@@ -373,7 +374,7 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
   else if (!strncmp(extension,"stl",3))
   {
     //Writing an stl file
-    vtkSmartPointer<vtkSTLWriter> writer 
+    vtkSmartPointer<vtkSTLWriter> writer
       = vtkSmartPointer<vtkSTLWriter>::New();
 
     writer->SetInputData(geom);
@@ -385,7 +386,7 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
   else if (!strncmp(extension,"ply",3))
   {
     //Writing an stl file
-    vtkSmartPointer<vtkPLYWriter> writer 
+    vtkSmartPointer<vtkPLYWriter> writer
       = vtkSmartPointer<vtkPLYWriter>::New();
 
     writer->SetInputData(geom);
@@ -406,20 +407,20 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
 // -------------------
 // PlyDtaUtils_CombineFaces
 // -------------------
-/** 
+/**
  * @brief Function to combine the ids of two faces in the polydata
  * @param targetface id of the face to set the two faces to have new id of
  * @param loseface id of the second face, id will be lost
  * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
-    
+
 int PlyDtaUtils_CombineFaces(vtkPolyData *geom,int *targetface,int *loseface )
 {
   int id1;
   int id2;
   vtkIdType cellId;
-  vtkSmartPointer<vtkIntArray> boundaryRegions = 
+  vtkSmartPointer<vtkIntArray> boundaryRegions =
     vtkSmartPointer<vtkIntArray>::New();
 
   id1 = *targetface;
@@ -433,7 +434,7 @@ int PlyDtaUtils_CombineFaces(vtkPolyData *geom,int *targetface,int *loseface )
   }
   boundaryRegions = vtkIntArray::SafeDownCast(geom->GetCellData()->
 		    GetScalars("ModelFaceID"));
-  
+
   for (cellId = 0;cellId<geom->GetNumberOfCells();cellId++)
   {
     if (boundaryRegions->GetValue(cellId) == id2)
@@ -452,14 +453,14 @@ int PlyDtaUtils_CombineFaces(vtkPolyData *geom,int *targetface,int *loseface )
 // -------------------
 // PlyDtaUtils_DeleteCells
 // -------------------
-/** 
+/**
  * @brief Function to delete the cells in the polydata
  * @param numfaces this is the number of cells to delete from the polydata
  * @param faces this is an array containing the ids of the cells to delete
  * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
-    
+
 int PlyDtaUtils_DeleteCells(vtkPolyData *geom,int *numcells,int *cells )
 {
   int i;
@@ -480,15 +481,15 @@ int PlyDtaUtils_DeleteCells(vtkPolyData *geom,int *numcells,int *cells )
 // -------------------
 // PlyDtaUtils_DeleteRegion
 // -------------------
-/** 
+/**
  * @brief Function to delete a region in the polydata
  * @param regionid this is the region id to delete all of the cells in
  * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
-    
+
 int PlyDtaUtils_DeleteRegion(vtkPolyData *geom,int *regionid)
-{                          
+{
   int id = *regionid;
   vtkIdType cellId;
   vtkSmartPointer<vtkIntArray> boundaryRegions =
@@ -516,4 +517,38 @@ int PlyDtaUtils_DeleteRegion(vtkPolyData *geom,int *regionid)
 
   return SV_OK;
 }
+
+// -------------------
+// PlyDtaUtils_CheckLoftSurface
+// -------------------
+/**
+ * @brief Function to check if surface was lofted correctly. Uses vtkFeatureEdges
+ * @param geom the polydata to check.
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is incorrect
+ * or the function does not return properly.
+ */
+
+int PlyDtaUtils_CheckLoftSurface(vtkPolyData *geom)
+{
+  vtkSmartPointer<vtkFeatureEdges> boundaries =
+    vtkSmartPointer<vtkFeatureEdges>::New();
+  boundaries->SetInputData(geom);
+  boundaries->BoundaryEdgesOn();
+  boundaries->FeatureEdgesOff();
+  boundaries->NonManifoldEdgesOff();
+  boundaries->ManifoldEdgesOff();
+  boundaries->Update();
+
+  vtkSmartPointer<vtkConnectivityFilter> connector =
+    vtkSmartPointer<vtkConnectivityFilter>::New();
+  connector->SetInputData(boundaries->GetOutput());
+  connector->ColorRegionsOn();
+  connector->Update();
+
+  if (connector->GetNumberOfExtractedRegions() != 2)
+    return SV_ERROR;
+
+  return SV_OK;
+}
+
 
