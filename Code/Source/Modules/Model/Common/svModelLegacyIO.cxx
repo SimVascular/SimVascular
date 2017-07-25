@@ -45,6 +45,10 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath, QString pref
             else if(line.contains(handlerOCCT))
                 modelType="OpenCASCADE";
 
+            //dont get face info for stl, ply, since the model has not face id.
+            if(suffix=="stl" || suffix=="ply")
+                continue;
+
             if(line.contains(handlerPolyData) || line.contains(handlerOCCT))
             {
                 QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
@@ -63,7 +67,7 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath, QString pref
 
     if(preferredType=="")
     {
-        if(modelType=="" && suffix=="stl")
+        if(suffix=="stl")
             modelType="PolyData";
 
         if(modelType=="")
