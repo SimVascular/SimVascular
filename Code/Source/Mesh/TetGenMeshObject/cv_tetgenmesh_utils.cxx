@@ -497,17 +497,16 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
 
     faces->InsertNextCell(facePointIds);
 
-    if (outmesh->adjtetlist[2*i] >= numPolys || outmesh->adjtetlist[2*i] <= 0)
+    if (outmesh->adjtetlist[2*i] >= numPolys || outmesh->adjtetlist[2*i] < 0)
     {
       vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
       count++;
     }
-    else if (outmesh->adjtetlist[2*i+1] >= numPolys || outmesh->adjtetlist[2*i+1] <= 0)
+    else if (outmesh->adjtetlist[2*i+1] >= numPolys || outmesh->adjtetlist[2*i+1] < 0)
     {
       vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i]));
       count++;
     }
-
     else
     {
       vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
@@ -517,11 +516,11 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
     {
       if (outmesh->trifacemarkerlist != NULL)
       {
-	boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
+        boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
       }
       if (boundaryScalars->GetValue(i)>totRegions)
       {
-	totRegions = outmesh->trifacemarkerlist[i];
+        totRegions = outmesh->trifacemarkerlist[i];
       }
     }
   }
