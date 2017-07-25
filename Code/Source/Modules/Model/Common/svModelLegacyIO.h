@@ -14,7 +14,7 @@ public:
   svModelLegacyIO(){}
   virtual ~svModelLegacyIO(){}
 
-  static mitk::DataNode::Pointer ReadFile(QString filePath) ;
+  static mitk::DataNode::Pointer ReadFile(QString filePath, QString preferredType="") ;
 
   static std::vector<mitk::DataNode::Pointer> ReadFiles(QString modelDir);
 

@@ -15,6 +15,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QInputDialog>
 
 svModelLoadAction::svModelLoadAction()
 {
@@ -81,7 +82,7 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
         if(modelFilePath.isEmpty())
             return;
 
-        if(modelFilePath.endsWith(".mdl"))
+        if(modelFilePath.endsWith(".mdl",Qt::CaseInsensitive))
         {
             QFileInfo fileInfo(modelFilePath);
             std::string nodeName=fileInfo.baseName().toStdString();
@@ -103,7 +104,21 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
         }
         else
         {
-            mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath);
+            QString preferredType="";
+
+//            if(modelFilePath.endsWith(".stl"))
+//            {
+//                QStringList items;
+//                items << tr("PolyData") << tr("OpenCASCADE");
+
+//                bool ok;
+//                QString item = QInputDialog::getItem(NULL, tr("Convert To"),
+//                                                     tr("Model Type:"), items, 0, false, &ok);
+//                if (ok && !item.isEmpty())
+//                    preferredType=item;
+//            }
+
+            mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath,preferredType);
             if(modelNode.IsNotNull())
             {
                 svModel* model=dynamic_cast<svModel*>(modelNode->GetData());

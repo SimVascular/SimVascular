@@ -104,6 +104,18 @@ std::vector<svModelElement::svFace*> svModelElement::GetFaces() const
     return m_Faces;
 }
 
+std::vector<std::string> svModelElement::GetFaceNames() const
+{
+    std::vector<std::string> names;
+    std::vector<svModelElement::svFace*> faces=GetFaces();
+
+    for(int i=0;i<faces.size();i++)
+        if(faces[i])
+            names.push_back(faces[i]->name);
+
+    return names;
+}
+
 void svModelElement::SetFaces(std::vector<svModelElement::svFace*> faces)
 {
     m_Faces=faces;

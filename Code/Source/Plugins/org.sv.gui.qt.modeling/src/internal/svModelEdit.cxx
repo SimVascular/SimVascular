@@ -1592,6 +1592,50 @@ void svModelEdit::CreateModel()
         m_Model->ExecuteOperation(doOp);
 
 //        UpdateGUI();
+
+        std::vector<std::string> segNames=newModelElement->GetSegNames();
+        std::vector<std::string> faceNames=newModelElement->GetFaceNames();
+        if(faceNames.size()>2*segNames.size()+1)
+        {
+
+            std::vector<std::string> faceNamesToCheck;
+
+            for(int i=0;i<segNames.size();i++)
+            {
+                int count=0;
+
+                std::string wname="wall_"+segNames[i];
+                std::string capPrefix="cap_";
+                if(newModelElement->GetType()=="Parasolid")
+                    capPrefix="";
+                std::string cname1=capPrefix+segNames[i];
+                std::string cname2=capPrefix+segNames[i]+"_2";
+
+                for(int j=0;j<faceNames.size();j++)
+                {
+                    if(faceNames[j]==wname || faceNames[j]==cname1 || faceNames[j]==cname2 )
+                        count++;
+                }
+
+                if(count>2)
+                {
+                    faceNamesToCheck.push_back(cname1);
+                    faceNamesToCheck.push_back(cname2);
+                }
+            }
+
+            std::string info="There may be redundant faces, such as ledges. \nPlease check those faces (highlighted) as below:";
+            for(int i=0;i<faceNamesToCheck.size();i++)
+            {
+                info+="\n"+faceNamesToCheck[i];
+                newModelElement->SelectFace(faceNamesToCheck[i]);
+            }
+
+            UpdateFaceListSelection();
+
+            QMessageBox::warning(m_Parent,"Warning",QString::fromStdString(info));
+            return;
+        }
     }
 }
 

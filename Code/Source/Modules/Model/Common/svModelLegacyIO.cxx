@@ -16,7 +16,7 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkErrorCode.h>
 
-mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
+mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath, QString preferredType)
 {
     mitk::DataNode::Pointer modelNode=NULL;
 
@@ -61,11 +61,16 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
         inputFile.close();
     }
 
-    if(modelType=="" && suffix=="stl")
-        modelType="PolyData";
+    if(preferredType=="")
+    {
+        if(modelType=="" && suffix=="stl")
+            modelType="PolyData";
 
-    if(modelType=="")
-        modelType=svModelElementFactory::GetType(suffix.toStdString());
+        if(modelType=="")
+            modelType=svModelElementFactory::GetType(suffix.toStdString());
+    }
+    else
+        modelType=preferredType.toStdString();
 
     svModelElement* me=svModelElementFactory::CreateModelElement(modelType);
     if(me==NULL)
