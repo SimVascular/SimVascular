@@ -90,24 +90,29 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath, QString pref
     if(meAnalytic)
         meAnalytic->SetWholeVtkPolyData(meAnalytic->CreateWholeVtkPolyData());
 
-    //for PolyData, OpenCASCADE; not Parasolid since it has no .facenames file
-    for(int i=0;i<faces.size();i++)
-        faces[i]->vpd=me->CreateFaceVtkPolyData(faces[i]->id);
-
-    if(modelType=="Parasolid" && meAnalytic && faces.size()==0)
+    if(faces.size()>0)//face info exists
     {
-        std::vector<int> faceIDs=meAnalytic->GetFaceIDsFromInnerSolid();
+        for(int i=0;i<faces.size();i++)
+            faces[i]->vpd=me->CreateFaceVtkPolyData(faces[i]->id);
+    }
+    else if(suffix!="stl" && suffix!="ply") //face info missing or embeded in model
+    {
+        std::vector<int> faceIDs=me->GetFaceIDsFromInnerSolid();
         for(int i=0;i<faceIDs.size();i++)
         {
             svModelElement::svFace* face =new svModelElement::svFace;
 
             face->id=faceIDs[i];
-            face->name=meAnalytic->GetFaceNameFromInnerSolid(faceIDs[i]);
-            face->vpd=meAnalytic->CreateFaceVtkPolyData(faceIDs[i]);;
+            if(modelType=="Parasolid")
+                face->name=me->GetFaceNameFromInnerSolid(face->id);
+            else
+                face->name="noname_"+std::to_string(face->id);
+
+            face->vpd=me->CreateFaceVtkPolyData(face->id);
 
             if(face->name.substr(0,5)=="wall_")
                 face->type="wall";
-            else
+            else if(face->name.substr(0,7)!="noname_")
                 face->type="cap";
 
             faces.push_back(face);

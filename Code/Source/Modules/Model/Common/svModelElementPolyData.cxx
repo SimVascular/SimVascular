@@ -3,6 +3,7 @@
 #include "svMath3.h"
 #include "svModelUtils.h"
 
+#include "cvPolyDataSolid.h"
 #include "cv_polydatasolid_utils.h"
 #ifdef SV_USE_VMTK
   #include "cv_vmtk_utils.h"
@@ -852,7 +853,11 @@ bool svModelElementPolyData::ReadFile(std::string filePath)
     cleanpd->BuildLinks();
 
     m_WholeVtkPolyData=cleanpd;
-    return  true;
+
+    m_InnerSolid=new cvPolyDataSolid();
+    m_InnerSolid->SetVtkPolyDataObject(m_WholeVtkPolyData);
+
+    return true;
 }
 
 bool svModelElementPolyData::WriteFile(std::string filePath)

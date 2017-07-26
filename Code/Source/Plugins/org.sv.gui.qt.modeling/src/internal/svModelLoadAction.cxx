@@ -168,7 +168,6 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
                                                 msg+=" Failed in face extraction.";
                                         }
 
-
                                     }
 
                                 }
@@ -178,7 +177,6 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
                             mitk::StatusBar::GetInstance()->DisplayText(msg.c_str());
 
                         }
-
 
                     }
 
