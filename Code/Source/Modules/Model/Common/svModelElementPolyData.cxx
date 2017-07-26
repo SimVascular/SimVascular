@@ -70,6 +70,29 @@ vtkSmartPointer<vtkPolyData> svModelElementPolyData::CreateWholeVtkPolyData()
     return m_WholeVtkPolyData;
 }
 
+std::vector<int> svModelElementPolyData::GetFaceIDsFromInnerSolid()
+{
+    std::vector<int> ids;
+
+    if(m_WholeVtkPolyData)
+    {
+        if (VtkUtils_PDCheckArrayName(m_WholeVtkPolyData,1,"ModelFaceID") == SV_OK)
+        {
+            int *faceIds=NULL;
+            int numBoundaryRegions=0;
+            int result = PlyDtaUtils_GetFaceIds( m_WholeVtkPolyData, &numBoundaryRegions, &faceIds);
+            if(result==SV_OK)
+            {
+                for(int i=0;i<numBoundaryRegions;++i)
+                    ids.push_back(faceIds[i]);
+            }
+            delete [] faceIds;
+        }
+    }
+
+    return ids;
+}
+
 bool svModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
 {
     if(!svModelUtils::DeleteRegions(m_WholeVtkPolyData, faceIDs))
@@ -853,9 +876,6 @@ bool svModelElementPolyData::ReadFile(std::string filePath)
     cleanpd->BuildLinks();
 
     m_WholeVtkPolyData=cleanpd;
-
-    m_InnerSolid=new cvPolyDataSolid();
-    m_InnerSolid->SetVtkPolyDataObject(m_WholeVtkPolyData);
 
     return true;
 }
