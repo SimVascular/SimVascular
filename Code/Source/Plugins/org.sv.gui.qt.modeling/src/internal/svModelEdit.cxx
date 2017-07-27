@@ -1595,36 +1595,88 @@ void svModelEdit::CreateModel()
 
         std::vector<std::string> segNames=newModelElement->GetSegNames();
         std::vector<std::string> faceNames=newModelElement->GetFaceNames();
-        if(faceNames.size()>2*segNames.size()+1)
+        if(faceNames.size()<=2*segNames.size()+1)
+            return;
+
+        //find possible extra faces
+        std::vector<std::string> faceNamesToCheck;
+
+        std::string wallPrefix="wall_";
+        std::string capPrefix="cap_";
+        if(newModelElement->GetType()=="Parasolid")
+            capPrefix="";
+
+        for(int i=0;i<segNames.size();++i)
         {
+            int capNumber=0;
+            int wallNumber=0;
 
-            std::vector<std::string> faceNamesToCheck;
+            QString wallName=QString::fromStdString(wallPrefix+segNames[i]);
+            QString capName=QString::fromStdString(capPrefix+segNames[i]);
 
-            for(int i=0;i<segNames.size();i++)
+            for(int j=0;j<faceNames.size();j++)
             {
-                int count=0;
+                QString faceName=QString::fromStdString(faceNames[j]);
 
-                std::string wname="wall_"+segNames[i];
-                std::string capPrefix="cap_";
-                if(newModelElement->GetType()=="Parasolid")
-                    capPrefix="";
-                std::string cname1=capPrefix+segNames[i];
-                std::string cname2=capPrefix+segNames[i]+"_2";
-
-                for(int j=0;j<faceNames.size();j++)
+                if(faceName.contains(wallName))
                 {
-                    if(faceNames[j]==wname || faceNames[j]==cname1 || faceNames[j]==cname2 )
-                        count++;
+                    faceName.remove(wallName);
+                    if(faceName=="")
+                        wallNumber++;
+                    else
+                    {
+                        faceName.remove(0,1);
+                        bool ok;
+                        faceName.toInt(&ok);
+                        if(ok)
+                            wallNumber++;
+                    }
                 }
-
-                if(count>2)
+                else if (faceName.contains(capName))
                 {
-                    faceNamesToCheck.push_back(cname1);
-                    faceNamesToCheck.push_back(cname2);
+                    faceName.remove(capName);
+                    if(faceName=="")
+                        capNumber++;
+                    else
+                    {
+                        faceName.remove(0,1);
+                        bool ok;
+                        faceName.toInt(&ok);
+                        if(ok)
+                            capNumber++;
+                    }
                 }
             }
 
-            std::string info="There may be redundant faces, such as ledges. \nPlease check those faces (highlighted) as below:";
+            if(capNumber>1)
+            {
+                for(int j=0;j<capNumber;++j)
+                {
+                    QString suffix="";
+                    if(j>0)
+                        suffix="_"+QString::number(j+1);
+
+                    faceNamesToCheck.push_back((capName+suffix).toStdString());
+                }
+            }
+
+            if(wallNumber>1)
+            {
+                for(int j=0;j<wallNumber;++j)
+                {
+                    QString suffix="";
+                    if(j>0)
+                        suffix="_"+QString::number(j+1);
+
+                    faceNamesToCheck.push_back((wallName+suffix).toStdString());
+                }
+            }
+
+        }
+
+        if(faceNamesToCheck.size()>0)
+        {
+            std::string info="There may be more cap or wall faces than supposed, such as ledges. \nPlease check those faces (highlighted) as below:";
             for(int i=0;i<faceNamesToCheck.size();i++)
             {
                 info+="\n"+faceNamesToCheck[i];
@@ -1636,6 +1688,7 @@ void svModelEdit::CreateModel()
             QMessageBox::warning(m_Parent,"Warning",QString::fromStdString(info));
             return;
         }
+
     }
 }
 
