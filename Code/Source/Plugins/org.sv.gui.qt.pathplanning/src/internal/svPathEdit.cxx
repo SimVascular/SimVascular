@@ -606,6 +606,8 @@ void svPathEdit::DeleteSelected(){
 
     int index= ui->listWidget->selectionModel()->selectedRows().front().row();
 
+    mitk::OperationEvent::IncCurrObjectEventId();
+
     if(index>-1 && index<pathElement->GetControlPointNumber()){
         mitk::Point3D point=pathElement->GetControlPoint(index);
         svPathOperation* doOp = new svPathOperation(svPathOperation::OpREMOVECONTROLPOINT,timeStep, point, index);

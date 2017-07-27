@@ -46,6 +46,7 @@ void svResliceSlider::SetDisplayWidget(QmitkStdMultiWidget* widget)
     resliceCheckBox=new QCheckBox("Turn on Reslicing");
     //    resliceCheckBox->setFixedWidth(80);
     resliceCheckBox->setChecked(false);
+    resliceCheckBox->setToolTip("Show image reslice perpendicular to the path.");
 
     intensityWindow=displayWidget->GetRenderWindow1();
     QmitkSliderNavigatorWidget* intensitySlider=new QmitkSliderNavigatorWidget;
@@ -62,6 +63,7 @@ void svResliceSlider::SetDisplayWidget(QmitkStdMultiWidget* widget)
                                                "PotentialStepper");
 
     btnResliceSize=new QPushButton("Size");
+    btnResliceSize->setToolTip("Change reslice size");
 
     hlayout->addWidget(new QLabel("Reslice:"));
     hlayout->addWidget(intensitySlider);
