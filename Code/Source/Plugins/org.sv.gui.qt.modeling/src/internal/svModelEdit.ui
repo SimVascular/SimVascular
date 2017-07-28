@@ -349,10 +349,10 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                          </size>
                         </property>
                         <property name="toolTip">
-                         <string>Delete the selected faces.</string>
+                         <string/>
                         </property>
                         <property name="currentIndex">
-                         <number>2</number>
+                         <number>0</number>
                         </property>
                         <widget class="QWidget" name="page_2">
                          <property name="geometry">
@@ -442,7 +442,7 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                                 </sizepolicy>
                                </property>
                                <property name="toolTip">
-                                <string>Extract boundary faces using the specified separation angle.</string>
+                                <string/>
                                </property>
                                <property name="styleSheet">
                                 <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
@@ -565,6 +565,9 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                                   <width>151</width>
                                   <height>329</height>
                                  </rect>
+                                </property>
+                                <property name="toolTip">
+                                 <string>Extract boundary faces using the specified separation angle.</string>
                                 </property>
                                 <attribute name="label">
                                  <string>Extract</string>
@@ -713,7 +716,7 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>2</number>
+                             <number>3</number>
                             </property>
                             <widget class="QWidget" name="page_19">
                              <property name="geometry">
@@ -999,8 +1002,8 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>105</width>
-                               <height>94</height>
+                               <width>136</width>
+                               <height>235</height>
                               </rect>
                              </property>
                              <attribute name="label">
