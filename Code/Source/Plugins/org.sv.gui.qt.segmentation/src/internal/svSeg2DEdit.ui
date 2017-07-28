@@ -150,6 +150,9 @@
       </property>
       <item>
        <widget class="QCheckBox" name="checkBoxLoftingPreview">
+        <property name="toolTip">
+         <string>Switch on to create a lofted surface from the group</string>
+        </property>
         <property name="text">
          <string>Lofting Preview</string>
         </property>
@@ -292,6 +295,9 @@
                   </property>
                   <item>
                    <widget class="QCheckBox" name="checkBoxPresetThreshold">
+                    <property name="toolTip">
+                     <string>switch on to use a specified value to create a contour.</string>
+                    </property>
                     <property name="text">
                      <string> Preset</string>
                     </property>
@@ -349,6 +355,9 @@
             </property>
             <item>
              <widget class="QCheckBox" name="checkBoxSmooth">
+              <property name="toolTip">
+               <string>Switch on to smooth a contour after created by levelset or threshold</string>
+              </property>
               <property name="text">
                <string>Smooth   Fourier Number:</string>
               </property>
@@ -390,6 +399,9 @@
             </property>
             <item>
              <widget class="QCheckBox" name="checkBoxSpline">
+              <property name="toolTip">
+               <string>Switch on to  converte a contour to a SplinePolygon smooth  after created by levelset or threshold</string>
+              </property>
               <property name="text">
                <string>Convert to Spline   Ctrl No.:</string>
               </property>
@@ -431,6 +443,9 @@
             </property>
             <item>
              <widget class="QCheckBox" name="checkBoxBatch">
+              <property name="toolTip">
+               <string>Switch on to enable batch segmentation by levelset or threshold</string>
+              </property>
               <property name="text">
                <string>Batch Mode  List:</string>
               </property>
@@ -485,6 +500,10 @@
          </property>
          <item>
           <widget class="QPushButton" name="btnLevelSet">
+           <property name="toolTip">
+            <string>Click to show the levelset parameter panel.
+Click again to create a contour by levelset</string>
+           </property>
            <property name="text">
             <string>LevelSet</string>
            </property>
@@ -495,6 +514,14 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnThreshold">
+           <property name="toolTip">
+            <string>Click to show the threshold parameter panel.
+
+If &quot;Preset&quot; on, Click again to create a contour with a specified threshold value.
+
+If &quot;Preset&quot; off, Click again and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and hold the left moust button, move up/down to create a contour.</string>
+           </property>
            <property name="text">
             <string>Threshold</string>
            </property>
@@ -512,6 +539,14 @@
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
+           <property name="toolTip">
+            <string>Interactive method:
+Click and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and move to create a contour.
+
+Manual method:
+Right click and manually provide center coordiantes and radius.</string>
+           </property>
            <property name="text">
             <string>Circle</string>
            </property>
@@ -528,6 +563,14 @@
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
+           <property name="toolTip">
+            <string>Interactive method:
+Click and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and move to create a contour.
+
+Manual method:
+Right click and manually provide center coordiantes and semi-axis length.</string>
+           </property>
            <property name="text">
             <string>Ellipse</string>
            </property>
@@ -538,6 +581,14 @@
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
+           <property name="toolTip">
+            <string>Interactive method:
+Click and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and move to add control points.
+
+Manual method:
+Right click and manually provide coordiantes for control points.</string>
+           </property>
            <property name="text">
             <string>SplinePoly</string>
            </property>
@@ -547,6 +598,14 @@
           <widget class="QPushButton" name="btnPolygon">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="toolTip">
+            <string>Interactive method:
+Click and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and move to add control points.
+
+Manual method:
+Right click and manually provide coordiantes for control points.</string>
            </property>
            <property name="text">
             <string>Polygon</string>
@@ -562,6 +621,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnSmooth">
+           <property name="toolTip">
+            <string>Smooth the selected contour using the specified Fourier number.</string>
+           </property>
            <property name="text">
             <string>Smooth</string>
            </property>
@@ -576,6 +638,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnCopy">
+           <property name="toolTip">
+            <string>Copy the selected contour.</string>
+           </property>
            <property name="text">
             <string>Copy</string>
            </property>
@@ -583,6 +648,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnPaste">
+           <property name="toolTip">
+            <string>Paste to the current location along the path.</string>
+           </property>
            <property name="text">
             <string>Paste</string>
            </property>
@@ -597,6 +665,12 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnDelete">
+           <property name="toolTip">
+            <string>Delete the selected contour.
+
+You can also move the cursor to a 2D view and click.
+Then, press key Delete to remove the shown contour.</string>
+           </property>
            <property name="text">
             <string>Delete</string>
            </property>

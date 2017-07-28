@@ -421,7 +421,6 @@ void svMeshEdit::TableDomainsListSelectionChanged( const QItemSelection & /*sele
 
     if(indexesOfSelectedRows.size()==0)
     {
-        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
         return;
     }
 
@@ -437,7 +436,16 @@ void svMeshEdit::TableDomainsListSelectionChanged( const QItemSelection & /*sele
     QStandardItem* itemLocation= tableModel->item(row,2);
     QString location=itemLocation->text();
 
-    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    QStringList plist = location.split(QRegExp("\\s+"));
+    if(plist.size()==3)
+    {
+        mitk::Point3D point;
+        point[0]= plist[0].toDouble();
+        point[1]= plist[1].toDouble();
+        point[2]= plist[2].toDouble();
+
+        m_DisplayWidget->MoveCrossToPosition(point);
+    }
 }
 
 void svMeshEdit::SetRegion(bool)
@@ -1315,14 +1323,14 @@ void svMeshEdit::UpdateTetGenGUI()
     m_TableModelDomains->clear();
 
     QStringList domainsListHeaders;
-    domainsListHeaders << "Type" << "SubDomain Size" << "Location x y z";
+    domainsListHeaders << "Type" << "Local Size" << "Location(x y z)";
     m_TableModelDomains->setHorizontalHeaderLabels(domainsListHeaders);
     m_TableModelDomains->setColumnCount(3);
 
     ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
     ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
     ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-    ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
+    ui->tableViewDomains->horizontalHeader()->resizeSection(0,120);
     ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
 
@@ -1895,7 +1903,10 @@ void svMeshEdit::AddHole()
     item->setEditable(false);
     m_TableModelDomains->setItem(regionRowIndex, 1, item);
 
-    item= new QStandardItem("0.0 0.0 0.0");
+    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
+    QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
+
+    item= new QStandardItem(coordinates);
     m_TableModelDomains->setItem(regionRowIndex, 2, item);
 }
 
@@ -1912,7 +1923,10 @@ void svMeshEdit::AddSubDomain()
     item= new QStandardItem("");
     m_TableModelDomains->setItem(regionRowIndex, 1, item);
 
-    item= new QStandardItem("0.0 0.0 0.0");
+    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
+    QString coordinates=QString::number(point[0])+" "+QString::number(point[1])+" "+QString::number(point[2]);
+
+    item= new QStandardItem(coordinates);
     m_TableModelDomains->setItem(regionRowIndex, 2, item);
 }
 

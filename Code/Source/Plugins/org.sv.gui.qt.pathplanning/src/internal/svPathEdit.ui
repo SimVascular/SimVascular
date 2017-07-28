@@ -311,7 +311,7 @@
           <widget class="QPushButton" name="buttonAdd">
            <property name="toolTip">
             <string>Add the crosshair center as a new control point
- (Ctrl+A)</string>
+ ( Shortcut: Ctrl+A )</string>
            </property>
            <property name="text">
             <string>Add</string>

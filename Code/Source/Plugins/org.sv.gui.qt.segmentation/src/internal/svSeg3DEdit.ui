@@ -56,7 +56,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>3D Segmentation</string>
+         <string>3D Segmentation:</string>
         </property>
        </widget>
       </item>
@@ -112,6 +112,22 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Move the cursor to the 3D view window.
+Shift + click: add a normal/start seed (green sphere).
+Ctrl + click: add an end seed (blue sphere).
+
+Delete: move the cursor to a seed and press key &quot;Delete&quot;.</string>
+     </property>
     </widget>
    </item>
    <item>
@@ -172,7 +188,11 @@
            </widget>
           </item>
           <item>
-           <widget class="ctkRangeWidget" name="widgetThresholdCF" native="true"/>
+           <widget class="ctkRangeWidget" name="widgetThresholdCF" native="true">
+            <property name="toolTip">
+             <string>Specify the lower and upper threshold values.</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="btnCreateCF">
