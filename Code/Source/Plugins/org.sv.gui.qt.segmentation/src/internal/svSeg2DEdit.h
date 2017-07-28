@@ -192,6 +192,8 @@ protected:
 
     mitk::DataNode::Pointer m_ContourGroupNode;
 
+    mitk::DataNode::Pointer m_GroupFolderNode;
+
     svContourGroupDataInteractor::Pointer m_DataInteractor;
 
     long m_ContourGroupChangeObserverTag;

@@ -44,6 +44,7 @@ svSeg2DEdit::svSeg2DEdit() :
     m_ContourGroupChangeObserverTag=-1;
     m_ContourGroup=NULL;
     m_ContourGroupNode=NULL;
+    m_GroupFolderNode=NULL;
     m_Path=NULL;
     m_PathNode=NULL;
     m_Image=NULL;
@@ -283,6 +284,11 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         QMessageBox::warning(NULL,"No path found for this contour group","Make sure the path for the contour group exits!");
         return;
     }
+
+    rs=GetDataStorage()->GetSources(m_ContourGroupNode);
+    m_GroupFolderNode=NULL;
+    if(rs->size()>0)
+        m_GroupFolderNode=rs->GetElement(0);
 
     ui->labelGroupName->setText(QString::fromStdString(m_ContourGroupNode->GetName()));
 
@@ -1278,7 +1284,13 @@ void svSeg2DEdit::ContourChangingOff()
 void svSeg2DEdit::UpdatePathResliceSize(double newSize)
 {
     if(m_ContourGroup)
+    {
         m_ContourGroup->SetResliceSize(newSize);
+        m_ContourGroup->SetDataModified();
+    }
+
+    if(m_GroupFolderNode.IsNotNull())
+        m_GroupFolderNode->SetFloatProperty("reslice size",newSize);
 }
 
 void svSeg2DEdit::ManualContextMenuRequested()

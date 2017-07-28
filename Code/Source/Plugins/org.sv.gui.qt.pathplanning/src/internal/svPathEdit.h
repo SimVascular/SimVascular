@@ -98,6 +98,8 @@ protected:
 
     mitk::DataNode::Pointer m_PathNode;
 
+    mitk::DataNode::Pointer m_PathFolderNode;
+
     svPath* m_Path;
 
     Ui::svPathEdit *ui;

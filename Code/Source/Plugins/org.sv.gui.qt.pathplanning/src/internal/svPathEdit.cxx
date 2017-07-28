@@ -30,6 +30,7 @@ svPathEdit::svPathEdit():
     m_PathChangeObserverTag(-1),
     m_PathNode(NULL),
     m_Path(NULL),
+    m_PathFolderNode(NULL),
     m_DisplayWidget(NULL),
     m_SmoothWidget(NULL),
     m_PathCreateWidget(NULL),
@@ -201,6 +202,11 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
         }
     }
+
+    rs=GetDataStorage()->GetSources(m_PathNode);
+    m_PathFolderNode=NULL;
+    if(rs->size()>0)
+        m_PathFolderNode=rs->GetElement(0);
 
     m_Parent->setEnabled(true);
 
@@ -679,7 +685,13 @@ void svPathEdit::SmoothCurrentPath()
 void svPathEdit::UpdatePathResliceSize(double newSize)
 {
     if(m_Path)
+    {
         m_Path->SetResliceSize(newSize);
+        m_Path->SetDataModified();
+    }
+
+    if(m_PathFolderNode.IsNotNull())
+        m_PathFolderNode->SetFloatProperty("reslice size",newSize);
 }
 
 void svPathEdit::UpdateAddingMode(int mode)
