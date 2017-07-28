@@ -169,6 +169,8 @@ public:
 
     std::vector<svFace*> GetFaces() const;
 
+    std::vector<std::string> GetFaceNames() const;
+
     void SetFaces(std::vector<svFace*> faces);
 
     svFace* GetFace(int id) const;

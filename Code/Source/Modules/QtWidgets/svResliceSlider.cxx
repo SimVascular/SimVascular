@@ -14,7 +14,7 @@
 
 svResliceSlider::svResliceSlider(QWidget *parent)
     : QWidget(parent)
-    , currentImageNode(NULL)
+    , currentDataNode(NULL)
     , resliceSize(5.0)
     , m_UseGeometrySize(true)
     , m_UseGeometrySpacing(false)
@@ -46,6 +46,7 @@ void svResliceSlider::SetDisplayWidget(QmitkStdMultiWidget* widget)
     resliceCheckBox=new QCheckBox("Turn on Reslicing");
     //    resliceCheckBox->setFixedWidth(80);
     resliceCheckBox->setChecked(false);
+    resliceCheckBox->setToolTip("Show image reslice perpendicular to the path.");
 
     intensityWindow=displayWidget->GetRenderWindow1();
     QmitkSliderNavigatorWidget* intensitySlider=new QmitkSliderNavigatorWidget;
@@ -62,6 +63,7 @@ void svResliceSlider::SetDisplayWidget(QmitkStdMultiWidget* widget)
                                                "PotentialStepper");
 
     btnResliceSize=new QPushButton("Size");
+    btnResliceSize->setToolTip("Change reslice size");
 
     hlayout->addWidget(new QLabel("Reslice:"));
     hlayout->addWidget(intensitySlider);
@@ -95,9 +97,9 @@ bool svResliceSlider::isStepperSynchronized()
 }
 
 
-void svResliceSlider::setImageNode(mitk::DataNode::Pointer imageNode)
+void svResliceSlider::setDataNode(mitk::DataNode::Pointer dataNode)
 {
-    currentImageNode=imageNode;
+    currentDataNode=dataNode;
 }
 
 void svResliceSlider::setPathPoints(std::vector<svPathElement::svPathPoint> pathPoints)
@@ -137,11 +139,17 @@ void svResliceSlider::updateReslice()
 
     if(m_PathPoints.size()==0) return;
 
-    if(!currentImageNode) return;
+//    if(!currentDataNode) return;
 
-    mitk::Image* image= dynamic_cast<mitk::Image*>(currentImageNode->GetData());
+    mitk::Image* image=NULL;
+    mitk::BaseData* baseData=NULL;
+    if(currentDataNode.IsNotNull())
+    {
+        image= dynamic_cast<mitk::Image*>(currentDataNode->GetData());
+        baseData=currentDataNode->GetData();
+    }
 
-    if(!image) return;
+//    if(!image) return;
 
     //    if(currentSlicedGeometry)
     //    {
@@ -149,7 +157,7 @@ void svResliceSlider::updateReslice()
     //        currentSlicedGeometry=NULL;
     //    }
 
-    currentSlicedGeometry=svSegmentationUtils::CreateSlicedGeometry(m_PathPoints, image, resliceSize);
+    currentSlicedGeometry=svSegmentationUtils::CreateSlicedGeometry(m_PathPoints, baseData, resliceSize);
 
     displayWidget->changeLayoutTo2x2Dand3DWidget();
 
@@ -163,50 +171,55 @@ void svResliceSlider::updateReslice()
     potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
     potentialController->Update();
 
-    mitk::LookupTable::Pointer mitkLut = mitk::LookupTable::New();
-    mitkLut->SetType(mitk::LookupTable::GRAYSCALE);
-    mitk::LookupTableProperty::Pointer mitkLutProp = mitk::LookupTableProperty::New();
-    mitkLutProp->SetLookupTable(mitkLut);
-    currentImageNode->SetProperty("LookupTable", mitkLutProp,potentialWindow->GetRenderer());
-
-    currentImageNode->SetBoolProperty("show gradient", true, potentialWindow->GetRenderer());
-
-    if(m_UseGeometrySpacing)
+    if(image)
     {
-        currentImageNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
-        currentImageNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
-    }
+        mitk::LookupTable::Pointer mitkLut = mitk::LookupTable::New();
+        mitkLut->SetType(mitk::LookupTable::GRAYSCALE);
+        mitk::LookupTableProperty::Pointer mitkLutProp = mitk::LookupTableProperty::New();
+        mitkLutProp->SetLookupTable(mitkLut);
+        currentDataNode->SetProperty("LookupTable", mitkLutProp,potentialWindow->GetRenderer());
 
-    if(m_UseGeometrySize)
-    {
-        currentImageNode->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
-        currentImageNode->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
-    }
+        currentDataNode->SetBoolProperty("show gradient", true, potentialWindow->GetRenderer());
 
-    if(m_UseMinimumSpacing)
-    {
-        currentImageNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
-        currentImageNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
-    }
+        if(m_UseGeometrySpacing)
+        {
+            currentDataNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
+            currentDataNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
+        }
 
-    mitk::VtkResliceInterpolationProperty::Pointer interProp=mitk::VtkResliceInterpolationProperty::New();
-    switch(m_ResliceMode)
-    {
-    case mitk::ExtractSliceFilter::RESLICE_NEAREST:
-        interProp->SetInterpolationToNearest();
-        break;
-    case mitk::ExtractSliceFilter::RESLICE_LINEAR:
-        interProp->SetInterpolationToLinear();
-        break;
-    case mitk::ExtractSliceFilter::RESLICE_CUBIC:
-        interProp->SetInterpolationToCubic();
-        break;
-    default:
-        break;
-    }
+        if(m_UseGeometrySize)
+        {
+            currentDataNode->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
+            currentDataNode->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
+        }
 
-    currentImageNode->SetProperty("reslice interpolation", interProp,intensityWindow->GetRenderer());
-    currentImageNode->SetProperty("reslice interpolation", interProp,potentialWindow->GetRenderer());
+        if(m_UseMinimumSpacing)
+        {
+            currentDataNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
+            currentDataNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
+        }
+
+
+        mitk::VtkResliceInterpolationProperty::Pointer interProp=mitk::VtkResliceInterpolationProperty::New();
+        switch(m_ResliceMode)
+        {
+        case mitk::ExtractSliceFilter::RESLICE_NEAREST:
+            interProp->SetInterpolationToNearest();
+            break;
+        case mitk::ExtractSliceFilter::RESLICE_LINEAR:
+            interProp->SetInterpolationToLinear();
+            break;
+        case mitk::ExtractSliceFilter::RESLICE_CUBIC:
+            interProp->SetInterpolationToCubic();
+            break;
+        default:
+            break;
+        }
+
+        currentDataNode->SetProperty("reslice interpolation", interProp,intensityWindow->GetRenderer());
+        currentDataNode->SetProperty("reslice interpolation", interProp,potentialWindow->GetRenderer());
+
+    }
 
     intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
     intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetBoolProperty( "in plane resample size by geometry", mitk::BoolProperty::New( true ),displayWidget->GetRenderWindow4()->GetRenderer());
@@ -271,8 +284,8 @@ void svResliceSlider::potentialOnRefetch()
 
 void svResliceSlider::restoreDisplayWidget()
 {
-    if(currentImageNode.IsNull())
-        return;
+//    if(currentDataNode.IsNull())
+//        return;
 
     if(stepperSynchronized){
         disconnect(intensityStepper, SIGNAL(Refetch()), this, SLOT(intensityOnRefetch()));
@@ -280,18 +293,29 @@ void svResliceSlider::restoreDisplayWidget()
         stepperSynchronized=false;
     }
 
-    currentImageNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("LookupTable");
-    currentImageNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("show gradient");
+    mitk::Image* image=NULL;
+    mitk::BaseData* baseData=NULL;
+    if(currentDataNode.IsNotNull())
+    {
+        image= dynamic_cast<mitk::Image*>(currentDataNode->GetData());
+        baseData=currentDataNode->GetData();
+    }
 
-    currentImageNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("in plane resample extent by geometry");
-    currentImageNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("in plane resample size by geometry");
-    currentImageNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("in plane resample extent by minimum spacing");
-    currentImageNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("reslice interpolation");
+    if(image)
+    {
+        currentDataNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("LookupTable");
+        currentDataNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("show gradient");
 
-    currentImageNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("in plane resample extent by geometry");
-    currentImageNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("in plane resample size by geometry");
-    currentImageNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("in plane resample extent by minimum spacing");
-    currentImageNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("reslice interpolation");
+        currentDataNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("in plane resample extent by geometry");
+        currentDataNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("in plane resample size by geometry");
+        currentDataNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("in plane resample extent by minimum spacing");
+        currentDataNode->GetPropertyList(potentialWindow->GetRenderer())->DeleteProperty("reslice interpolation");
+
+        currentDataNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("in plane resample extent by geometry");
+        currentDataNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("in plane resample size by geometry");
+        currentDataNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("in plane resample extent by minimum spacing");
+        currentDataNode->GetPropertyList(intensityWindow->GetRenderer())->DeleteProperty("reslice interpolation");
+    }
 
     intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->GetPropertyList(displayWidget->GetRenderWindow4()->GetRenderer())->DeleteProperty("in plane resample size by geometry");
     intensityWindow->GetRenderer()->GetCurrentWorldPlaneGeometryNode()->SetVisibility(true);
@@ -306,14 +330,13 @@ void svResliceSlider::restoreDisplayWidget()
 
     displayWidget->changeLayoutToDefault();
 
-    mitk::BaseData::Pointer basedata = currentImageNode->GetData();
-    if ( basedata.IsNotNull() &&
-         basedata->GetTimeGeometry()->IsValid() )
+    if ( baseData && baseData->GetTimeGeometry()->IsValid() )
     {
         mitk::RenderingManager::GetInstance()->InitializeViews(
-                    basedata->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
+                    baseData->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
+
 
     sliderContainer->hide();
 }

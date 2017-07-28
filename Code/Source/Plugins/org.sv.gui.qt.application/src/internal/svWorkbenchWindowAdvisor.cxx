@@ -884,12 +884,15 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     }
 
     QAction* axialAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/axial.png"), "");
+    axialAction->setToolTip("Show/hide axial slice plane in 3D view");
     QObject::connect(axialAction, SIGNAL(triggered(bool)), this, SLOT(ToggleAxialPlane(bool)));
 
     QAction* sagittalAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/sagittal.png"), "");
+    sagittalAction->setToolTip("Show/hide sagittal slice plane in 3D view");
     QObject::connect(sagittalAction, SIGNAL(triggered(bool)), this, SLOT(ToggleSagittalPlane(bool)));
 
     QAction* coronalAction=mainActionsToolBar->addAction(QIcon(":/org.sv.gui.qt.application/coronal.png"), "");
+    coronalAction->setToolTip("Show/hide coronal slice plane in 3D view");
     QObject::connect(coronalAction, SIGNAL(triggered(bool)), this, SLOT(ToggleCoronalPlane(bool)));
 
     mainWindow->addToolBar(mainActionsToolBar);
@@ -1802,7 +1805,7 @@ void svWorkbenchWindowAdvisor::RenameSelectedNode( bool )
             mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
             if(parentNode.IsNotNull() && isImageFolder->CheckNode(parentNode) && isImage->CheckNode(node))
             {
-                QMessageBox::information(NULL,"Info","Image renaming in inside a SV project is not allowed.");
+                QMessageBox::information(NULL,"Info","Image renaming inside a SV project is not allowed.");
                 return;
             }
 

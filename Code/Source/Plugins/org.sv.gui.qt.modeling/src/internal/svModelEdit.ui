@@ -95,6 +95,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip">
+         <string>Select segmentions to union to create a solid model.</string>
+        </property>
         <property name="text">
          <string>Create Model ...</string>
         </property>
@@ -139,6 +142,9 @@
       </property>
       <item>
        <widget class="QPushButton" name="btnChangeFacet">
+        <property name="toolTip">
+         <string>Change facet size to create a discrete surface for the CAD model.</string>
+        </property>
         <property name="text">
          <string>Change Facet Size...</string>
         </property>
@@ -146,6 +152,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="btnConvert">
+        <property name="toolTip">
+         <string>Create a new PolyData model from this model.</string>
+        </property>
         <property name="text">
          <string>Convert to PolyData...</string>
         </property>
@@ -268,6 +277,25 @@
                      <property name="contextMenuPolicy">
                       <enum>Qt::CustomContextMenu</enum>
                      </property>
+                     <property name="toolTip">
+                      <string>Double click in the table to edit names, types, etc.
+
+Interactive methods for faces (in the 3D view window):
+Move the cursor to a face, then 
+Press key &quot;S&quot; to select a single face.
+Press key &quot;Shift + S&quot; to select multiple faces.
+Press key &quot;D&quot; to deselect a face.
+Press key &quot;S&quot; outside of any face to deselect all faces.
+
+Press key &quot;C&quot; to select a single cell on the face.
+Press key &quot;Shift + C&quot; to select multiple cells.
+Press key &quot;B&quot; to select a cell and its neighbouring cells.
+Press key &quot;E&quot; to deselect a cell
+Press key &quot;Shift + E&quot; to deselect a cell and its neighbouring cells.
+Press key &quot;C&quot; outside of any face to deselect all cells.
+
+Press key &quot;Delete&quot; to delete all the selected faces and cells.</string>
+                     </property>
                      <property name="selectionBehavior">
                       <enum>QAbstractItemView::SelectRows</enum>
                      </property>
@@ -320,8 +348,11 @@
                           <height>16777215</height>
                          </size>
                         </property>
+                        <property name="toolTip">
+                         <string/>
+                        </property>
                         <property name="currentIndex">
-                         <number>2</number>
+                         <number>0</number>
                         </property>
                         <widget class="QWidget" name="page_2">
                          <property name="geometry">
@@ -384,6 +415,9 @@
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
                                </property>
+                               <property name="toolTip">
+                                <string>Fill holes with new faces.</string>
+                               </property>
                                <property name="text">
                                 <string>Fill Holes w. IDs</string>
                                </property>
@@ -391,6 +425,9 @@
                              </item>
                              <item>
                               <widget class="QPushButton" name="btnCombineFaces">
+                               <property name="toolTip">
+                                <string>Combine the selected faces to one single face.</string>
+                               </property>
                                <property name="text">
                                 <string>Combine</string>
                                </property>
@@ -404,11 +441,14 @@
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
                                </property>
+                               <property name="toolTip">
+                                <string/>
+                               </property>
                                <property name="styleSheet">
                                 <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                                </property>
                                <property name="currentIndex">
-                                <number>0</number>
+                                <number>1</number>
                                </property>
                                <widget class="QWidget" name="page_10">
                                 <property name="geometry">
@@ -494,6 +534,9 @@
                                  </item>
                                  <item>
                                   <widget class="QPushButton" name="btnRemeshFaces">
+                                   <property name="toolTip">
+                                    <string>Remesh the selected faces.</string>
+                                   </property>
                                    <property name="text">
                                     <string>Remesh</string>
                                    </property>
@@ -519,9 +562,12 @@
                                  <rect>
                                   <x>0</x>
                                   <y>0</y>
-                                  <width>113</width>
-                                  <height>94</height>
+                                  <width>151</width>
+                                  <height>329</height>
                                  </rect>
+                                </property>
+                                <property name="toolTip">
+                                 <string>Extract boundary faces using the specified separation angle.</string>
                                 </property>
                                 <attribute name="label">
                                  <string>Extract</string>
@@ -645,6 +691,10 @@
                           </property>
                           <item>
                            <widget class="QPushButton" name="btnFillHoles">
+                            <property name="toolTip">
+                             <string>Fill holes to create a solid model.
+(Faces will be remove. You need to extract faces.)</string>
+                            </property>
                             <property name="text">
                              <string>Fill Holes w/o ID</string>
                             </property>
@@ -652,6 +702,9 @@
                           </item>
                           <item>
                            <widget class="QPushButton" name="btnSelectLargestConnected">
+                            <property name="toolTip">
+                             <string>Convert the largest connected region to a model. </string>
+                            </property>
                             <property name="text">
                              <string>Sel Lg Connected</string>
                             </property>
@@ -663,7 +716,7 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>2</number>
+                             <number>3</number>
                             </property>
                             <widget class="QWidget" name="page_19">
                              <property name="geometry">
@@ -949,8 +1002,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>105</width>
-                               <height>94</height>
+                               <width>136</width>
+                               <height>235</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1192,7 +1245,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>134</width>
+                           <width>130</width>
                            <height>487</height>
                           </rect>
                          </property>
@@ -1245,7 +1298,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>132</width>
+                               <width>128</width>
                                <height>276</height>
                               </rect>
                              </property>
@@ -1318,8 +1371,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>132</width>
-                               <height>304</height>
+                               <width>115</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1660,7 +1713,7 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>156</width>
+                           <width>116</width>
                            <height>487</height>
                           </rect>
                          </property>
@@ -1714,7 +1767,7 @@
                                  <rect>
                                   <x>0</x>
                                   <y>0</y>
-                                  <width>154</width>
+                                  <width>114</width>
                                   <height>425</height>
                                  </rect>
                                 </property>
@@ -1768,11 +1821,11 @@
                                   </widget>
                                  </item>
                                  <item>
-                                  <widget class="ctkSliderWidget" name="sliderPathPlane">
-                                   <property name="decimals">
+                                  <widget class="ctkSliderWidget" name="sliderPathPlane" native="true">
+                                   <property name="decimals" stdset="0">
                                     <number>0</number>
                                    </property>
-                                   <property name="maximum">
+                                   <property name="maximum" stdset="0">
                                     <double>200.000000000000000</double>
                                    </property>
                                   </widget>
@@ -1812,7 +1865,7 @@
                                   <x>0</x>
                                   <y>0</y>
                                   <width>122</width>
-                                  <height>157</height>
+                                  <height>128</height>
                                  </rect>
                                 </property>
                                 <attribute name="label">
@@ -1855,11 +1908,11 @@
                                   <widget class="QComboBox" name="comboBoxPathBox"/>
                                  </item>
                                  <item>
-                                  <widget class="ctkSliderWidget" name="sliderPathBox">
-                                   <property name="decimals">
+                                  <widget class="ctkSliderWidget" name="sliderPathBox" native="true">
+                                   <property name="decimals" stdset="0">
                                     <number>0</number>
                                    </property>
-                                   <property name="maximum">
+                                   <property name="maximum" stdset="0">
                                     <double>200.000000000000000</double>
                                    </property>
                                   </widget>

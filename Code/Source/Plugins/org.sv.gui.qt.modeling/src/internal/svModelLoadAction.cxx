@@ -15,6 +15,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QInputDialog>
 
 svModelLoadAction::svModelLoadAction()
 {
@@ -81,7 +82,7 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
         if(modelFilePath.isEmpty())
             return;
 
-        if(modelFilePath.endsWith(".mdl"))
+        if(modelFilePath.endsWith(".mdl",Qt::CaseInsensitive))
         {
             QFileInfo fileInfo(modelFilePath);
             std::string nodeName=fileInfo.baseName().toStdString();
@@ -103,40 +104,84 @@ void svModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
         }
         else
         {
-            mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath);
+            QString preferredType="";
+
+//            if(modelFilePath.endsWith(".stl"))
+//            {
+//                QStringList items;
+//                items << tr("PolyData") << tr("OpenCASCADE");
+
+//                bool ok;
+//                QString item = QInputDialog::getItem(NULL, tr("Convert To"),
+//                                                     tr("Model Type:"), items, 0, false, &ok);
+//                if (ok && !item.isEmpty())
+//                    preferredType=item;
+//            }
+
+            mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath,preferredType);
             if(modelNode.IsNotNull())
             {
                 svModel* model=dynamic_cast<svModel*>(modelNode->GetData());
 
                 if(model)
                 {
-                  bool addNode=true;
-                  svModelElement* modelElement=model->GetModelElement();
+                    bool addNode=true;
+                    svModelElement* modelElement=model->GetModelElement();
 
-                  if(modelElement && modelElement->GetType() =="PolyData" && modelElement->GetWholeVtkPolyData())
-                  {
-                    //check if the surface is valid
-                    std::string msg;
-                    bool valid = svModelUtils::CheckPolyDataSurface (modelElement->GetWholeVtkPolyData(), msg);
-                    if(!valid)
+                    if(modelElement)
                     {
-                      if (QMessageBox::question(NULL, "Triangulate Surface?", "Surface contains non-triangular elements. SimVascular does not support non-triangulated surfaces. Would you like the surface to be triangulated?",
-                                                QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
-                      {
+                        if(modelElement->GetType() =="PolyData" && modelElement->GetWholeVtkPolyData())
+                        {
+                            //check if the surface is valid
+                            std::string msg;
+                            bool valid = svModelUtils::CheckPolyDataSurface (modelElement->GetWholeVtkPolyData(), msg);
+                            if(!valid)
+                            {
+                                if (QMessageBox::question(NULL, "Triangulate Surface?", "Surface contains non-triangular elements. SimVascular does not support non-triangulated surfaces. Would you like the surface to be triangulated?",
+                                                          QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+                                {
 
-                        QMessageBox::warning(NULL, "Loaded non-triangular surface", msg.c_str());
-                      }
-                      else
-                      {
-                        svModelUtils::TriangulateSurface(modelElement->GetWholeVtkPolyData());
-                        svModelUtils::CheckPolyDataSurface (modelElement->GetWholeVtkPolyData(), msg);
-                      }
+                                    QMessageBox::warning(NULL, "Loaded non-triangular surface", msg.c_str());
+                                }
+                                else
+                                {
+                                    svModelUtils::TriangulateSurface(modelElement->GetWholeVtkPolyData());
+                                    svModelUtils::CheckPolyDataSurface (modelElement->GetWholeVtkPolyData(), msg);
+                                }
+                            }
+
+                            if(modelElement->GetFaceNumber()==0)
+                            {
+                                svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(modelElement);
+                                if(mepd)
+                                {
+                                    if (QMessageBox::question(NULL, "No Face Info", "No face info found. Would you like to extract faces for the model?",
+                                                              QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+                                    {
+                                        bool ok;
+                                        double angle = QInputDialog::getDouble(NULL, tr("Extract Faces"),
+                                                                           tr("Separation Angle:"), 50, 0, 90, 0, &ok);
+                                        if(ok)
+                                        {
+                                            bool success=mepd->ExtractFaces(angle);
+                                            if(!success)
+                                                msg+=" Failed in face extraction.";
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                            mitk::StatusBar::GetInstance()->DisplayText(msg.c_str());
+
+                        }
+
                     }
-                    mitk::StatusBar::GetInstance()->DisplayText(msg.c_str());
-                  }
 
-                  if (addNode)
-                    m_DataStorage->Add(modelNode,selectedNode);
+                    if (addNode)
+                        m_DataStorage->Add(modelNode,selectedNode);
 
                 }
             }

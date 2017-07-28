@@ -1592,6 +1592,103 @@ void svModelEdit::CreateModel()
         m_Model->ExecuteOperation(doOp);
 
 //        UpdateGUI();
+
+        std::vector<std::string> segNames=newModelElement->GetSegNames();
+        std::vector<std::string> faceNames=newModelElement->GetFaceNames();
+        if(faceNames.size()<=2*segNames.size()+1)
+            return;
+
+        //find possible extra faces
+        std::vector<std::string> faceNamesToCheck;
+
+        std::string wallPrefix="wall_";
+        std::string capPrefix="cap_";
+        if(newModelElement->GetType()=="Parasolid")
+            capPrefix="";
+
+        for(int i=0;i<segNames.size();++i)
+        {
+            int capNumber=0;
+            int wallNumber=0;
+
+            QString wallName=QString::fromStdString(wallPrefix+segNames[i]);
+            QString capName=QString::fromStdString(capPrefix+segNames[i]);
+
+            for(int j=0;j<faceNames.size();j++)
+            {
+                QString faceName=QString::fromStdString(faceNames[j]);
+
+                if(faceName.contains(wallName))
+                {
+                    faceName.remove(wallName);
+                    if(faceName=="")
+                        wallNumber++;
+                    else
+                    {
+                        faceName.remove(0,1);
+                        bool ok;
+                        faceName.toInt(&ok);
+                        if(ok)
+                            wallNumber++;
+                    }
+                }
+                else if (faceName.contains(capName))
+                {
+                    faceName.remove(capName);
+                    if(faceName=="")
+                        capNumber++;
+                    else
+                    {
+                        faceName.remove(0,1);
+                        bool ok;
+                        faceName.toInt(&ok);
+                        if(ok)
+                            capNumber++;
+                    }
+                }
+            }
+
+            if(capNumber>1)
+            {
+                for(int j=0;j<capNumber;++j)
+                {
+                    QString suffix="";
+                    if(j>0)
+                        suffix="_"+QString::number(j+1);
+
+                    faceNamesToCheck.push_back((capName+suffix).toStdString());
+                }
+            }
+
+            if(wallNumber>1)
+            {
+                for(int j=0;j<wallNumber;++j)
+                {
+                    QString suffix="";
+                    if(j>0)
+                        suffix="_"+QString::number(j+1);
+
+                    faceNamesToCheck.push_back((wallName+suffix).toStdString());
+                }
+            }
+
+        }
+
+        if(faceNamesToCheck.size()>0)
+        {
+            std::string info="There may be more cap or wall faces than supposed, such as ledges. \nPlease check those faces (highlighted) as below:";
+            for(int i=0;i<faceNamesToCheck.size();i++)
+            {
+                info+="\n"+faceNamesToCheck[i];
+                newModelElement->SelectFace(faceNamesToCheck[i]);
+            }
+
+            UpdateFaceListSelection();
+
+            QMessageBox::warning(m_Parent,"Warning",QString::fromStdString(info));
+            return;
+        }
+
     }
 }
 

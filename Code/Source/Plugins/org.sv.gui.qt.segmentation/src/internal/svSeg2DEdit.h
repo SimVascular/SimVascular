@@ -188,6 +188,8 @@ protected:
 
     svPath* m_Path;
 
+    mitk::DataNode::Pointer m_PathNode;
+
     mitk::DataNode::Pointer m_ContourGroupNode;
 
     svContourGroupDataInteractor::Pointer m_DataInteractor;

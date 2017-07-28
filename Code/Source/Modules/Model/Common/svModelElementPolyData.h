@@ -26,6 +26,8 @@ public:
 
     virtual vtkSmartPointer<vtkPolyData> CreateWholeVtkPolyData() override;
 
+    virtual std::vector<int> GetFaceIDsFromInnerSolid() override;
+
     bool DeleteFaces(std::vector<int> faceIDs);
 
     bool CombineFaces(std::vector<int> faceIDs);

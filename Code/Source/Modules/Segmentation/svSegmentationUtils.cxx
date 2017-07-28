@@ -236,80 +236,99 @@ mitk::PlaneGeometry::Pointer svSegmentationUtils::CreatePlaneGeometry(svPathElem
     return planegeometry;
 }
 
-mitk::PlaneGeometry::Pointer svSegmentationUtils::CreatePlaneGeometry(svPathElement::svPathPoint pathPoint, mitk::Image* image, double size, bool useOnlyMinimumSpacing)
+mitk::PlaneGeometry::Pointer svSegmentationUtils::CreatePlaneGeometry(svPathElement::svPathPoint pathPoint, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
     mitk::Vector3D newSpacing;
-    const mitk::Vector3D &imageSpacing = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
-    if(useOnlyMinimumSpacing)
+
+    mitk::Image* image=dynamic_cast<mitk::Image*>(baseData);
+
+    if(image)
     {
-        double minSpacing=std::min(imageSpacing[0],std::min(imageSpacing[1],imageSpacing[2]));
-        newSpacing.Fill(minSpacing);
+        mitk::Vector3D imageSpacing = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
+        if(useOnlyMinimumSpacing)
+        {
+            double minSpacing=std::min(imageSpacing[0],std::min(imageSpacing[1],imageSpacing[2]));
+            newSpacing.Fill(minSpacing);
+        }
+        else
+        {
+            vtkTransform* tr=GetvtkTransform(pathPoint);
+            mitk::PlaneGeometry::Pointer planeGeometry1 = mitk::PlaneGeometry::New();
+            planeGeometry1->SetIndexToWorldTransformByVtkMatrix(tr->GetMatrix());
+
+            //        mitk::Vector3D axis0 = planeGeometry1->GetAxisVector(0);
+            //        mitk::Vector3D axis1 = planeGeometry1->GetAxisVector(1);
+            //        mitk::Vector3D normal = planeGeometry1->GetNormal();
+
+            //        newSpacing[0] = mitk::SlicedGeometry3D::CalculateSpacing( imageSpacing, axis0 );
+            //        newSpacing[1] = mitk::SlicedGeometry3D::CalculateSpacing( imageSpacing, axis1 );
+            //        newSpacing[2] = mitk::SlicedGeometry3D::CalculateSpacing( imageSpacing, normal );
+
+            //Use the same way as mitk::ExtractSliceFilter to calculate spacing
+            mitk::Vector3D right = planeGeometry1->GetAxisVector(0);
+            mitk::Vector3D bottom = planeGeometry1->GetAxisVector(1);
+            mitk::Vector3D normal = planeGeometry1->GetNormal();
+
+            right.Normalize();
+            bottom.Normalize();
+            normal.Normalize();
+
+            right=size*right;
+            bottom=size*bottom;
+
+            mitk::Vector3D rightInIndex, bottomInIndex,normalInIndex;
+            image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( right, rightInIndex );
+            image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( bottom, bottomInIndex );
+            image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( normal, normalInIndex );
+            newSpacing[0] = size/rightInIndex.GetNorm();
+            newSpacing[1] = size/bottomInIndex.GetNorm();
+            newSpacing[2] = 1.0/normalInIndex.GetNorm();
+        }
     }
     else
     {
-        vtkTransform* tr=GetvtkTransform(pathPoint);
-        mitk::PlaneGeometry::Pointer planeGeometry1 = mitk::PlaneGeometry::New();
-        planeGeometry1->SetIndexToWorldTransformByVtkMatrix(tr->GetMatrix());
-
-//        mitk::Vector3D axis0 = planeGeometry1->GetAxisVector(0);
-//        mitk::Vector3D axis1 = planeGeometry1->GetAxisVector(1);
-//        mitk::Vector3D normal = planeGeometry1->GetNormal();
-
-//        newSpacing[0] = mitk::SlicedGeometry3D::CalculateSpacing( imageSpacing, axis0 );
-//        newSpacing[1] = mitk::SlicedGeometry3D::CalculateSpacing( imageSpacing, axis1 );
-//        newSpacing[2] = mitk::SlicedGeometry3D::CalculateSpacing( imageSpacing, normal );
-
-        //Use the same way as mitk::ExtractSliceFilter to calculate spacing
-        mitk::Vector3D right = planeGeometry1->GetAxisVector(0);
-        mitk::Vector3D bottom = planeGeometry1->GetAxisVector(1);
-        mitk::Vector3D normal = planeGeometry1->GetNormal();
-
-        right.Normalize();
-        bottom.Normalize();
-        normal.Normalize();
-
-        right=size*right;
-        bottom=size*bottom;
-
-        mitk::Vector3D rightInIndex, bottomInIndex,normalInIndex;
-        image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( right, rightInIndex );
-        image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( bottom, bottomInIndex );
-        image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex( normal, normalInIndex );
-        newSpacing[0] = size/rightInIndex.GetNorm();
-        newSpacing[1] = size/bottomInIndex.GetNorm();
-        newSpacing[2] = 1.0/normalInIndex.GetNorm();
-
-
+        newSpacing[0] = 0.1;
+        newSpacing[1] = 0.1;
+        newSpacing[2] = 0.1;
     }
 
     mitk::PlaneGeometry::Pointer planeGeometry=CreatePlaneGeometry(pathPoint, newSpacing, size);
-    planeGeometry->SetReferenceGeometry(image->GetTimeGeometry()->GetGeometryForTimeStep(0));
+
+    if(baseData)
+        planeGeometry->SetReferenceGeometry(baseData->GetTimeGeometry()->GetGeometryForTimeStep(0));
 
     return planeGeometry;
 }
 
-mitk::SlicedGeometry3D::Pointer svSegmentationUtils::CreateSlicedGeometry(std::vector<svPathElement::svPathPoint> pathPoints, mitk::Image* image, double size, bool useOnlyMinimumSpacing)
+mitk::SlicedGeometry3D::Pointer svSegmentationUtils::CreateSlicedGeometry(std::vector<svPathElement::svPathPoint> pathPoints, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
     mitk::SlicedGeometry3D::Pointer slicedGeo3D=mitk::SlicedGeometry3D::New();
     slicedGeo3D->SetEvenlySpaced(false);
     slicedGeo3D->InitializeSlicedGeometry(pathPoints.size());
 
+    mitk::Image* image=dynamic_cast<mitk::Image*>(baseData);
+
     for(int i=0;i<pathPoints.size();i++)
     {
-        mitk::PlaneGeometry::Pointer planegeometry=CreatePlaneGeometry(pathPoints[i],image,size,useOnlyMinimumSpacing);
-        planegeometry->SetImageGeometry(true);
+        mitk::PlaneGeometry::Pointer planegeometry=CreatePlaneGeometry(pathPoints[i],baseData,size,useOnlyMinimumSpacing);
+
+        if(image)
+            planegeometry->SetImageGeometry(true);
+
         slicedGeo3D->SetPlaneGeometry(planegeometry,i);
     }
 
-    slicedGeo3D->SetReferenceGeometry(image->GetTimeGeometry()->GetGeometryForTimeStep(0));
-    slicedGeo3D->SetBounds(image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetBounds());
-    slicedGeo3D->SetOrigin(image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin());
-    slicedGeo3D->SetIndexToWorldTransform(image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetIndexToWorldTransform());
-    //    slicedGeo3D->SetSpacing(image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing());
-    //    slicedGeo3D->ChangeImageGeometryConsideringOriginOffset(true);
-    //    slicedGeo3D->SetImageGeometry(true);
-    //    slicedGeo3D->ImageGeometryOn();
-
+    if(baseData)
+    {
+        slicedGeo3D->SetReferenceGeometry(baseData->GetTimeGeometry()->GetGeometryForTimeStep(0));
+        slicedGeo3D->SetBounds(baseData->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetBounds());
+        slicedGeo3D->SetOrigin(baseData->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin());
+        slicedGeo3D->SetIndexToWorldTransform(baseData->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetIndexToWorldTransform());
+        //    slicedGeo3D->SetSpacing(baseData->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing());
+        //    slicedGeo3D->ChangeImageGeometryConsideringOriginOffset(true);
+        //    slicedGeo3D->SetImageGeometry(true);
+        //    slicedGeo3D->ImageGeometryOn();
+    }
     return slicedGeo3D;
 }
 
@@ -317,21 +336,21 @@ mitk::Image::Pointer svSegmentationUtils::GetSliceImage(const mitk::PlaneGeometr
 {
     if ( !image || !planeGeometry ) return NULL;
 
-//    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer
-//    vtkSmartPointer<mitkVtkImageOverwrite> reslice = vtkSmartPointer<mitkVtkImageOverwrite>::New();
-//    //set to false to extract a slice
-//    reslice->SetOverwriteMode(false);
-//    reslice->Modified();
+    //    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer
+    //    vtkSmartPointer<mitkVtkImageOverwrite> reslice = vtkSmartPointer<mitkVtkImageOverwrite>::New();
+    //    //set to false to extract a slice
+    //    reslice->SetOverwriteMode(false);
+    //    reslice->Modified();
 
     //use ExtractSliceFilter with our specific vtkImageReslice for overwriting and extracting
-//    mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New(reslice);
+    //    mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New(reslice);
     mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New();
     extractor->SetInput( image );
     extractor->SetTimeStep( timeStep );
     extractor->SetWorldGeometry( planeGeometry );
     extractor->SetVtkOutputRequest(false);
     extractor->SetResliceTransformByGeometry( image->GetTimeGeometry()->GetGeometryForTimeStep( timeStep ) );
-//    extractor->SetInPlaneResampleExtentByGeometry(true);
+    //    extractor->SetInPlaneResampleExtentByGeometry(true);
     extractor->Modified();
     extractor->Update();
 
@@ -344,56 +363,56 @@ vtkImageData* svSegmentationUtils::GetSlicevtkImage(const mitk::PlaneGeometry* p
 {
     if ( !image || !planeGeometry ) return NULL;
 
-//    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer
-//    vtkSmartPointer<mitkVtkImageOverwrite> reslice = vtkSmartPointer<mitkVtkImageOverwrite>::New();
-//    //set to false to extract a slice
-//    reslice->SetOverwriteMode(false);
-//    reslice->Modified();
+    //    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer
+    //    vtkSmartPointer<mitkVtkImageOverwrite> reslice = vtkSmartPointer<mitkVtkImageOverwrite>::New();
+    //    //set to false to extract a slice
+    //    reslice->SetOverwriteMode(false);
+    //    reslice->Modified();
 
     //use ExtractSliceFilter with our specific vtkImageReslice for overwriting and extracting
-//    mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New(reslice);
+    //    mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New(reslice);
     mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New();
     extractor->SetInput( image );
     extractor->SetTimeStep( timeStep );
     extractor->SetWorldGeometry( planeGeometry );
     extractor->SetResliceTransformByGeometry( image->GetTimeGeometry()->GetGeometryForTimeStep( timeStep ) );
-//    extractor->SetInPlaneResampleExtentByGeometry(true);
-//    extractor->SetInterpolationMode(mitk::ExtractSliceFilter::RESLICE_NEAREST);
+    //    extractor->SetInPlaneResampleExtentByGeometry(true);
+    //    extractor->SetInterpolationMode(mitk::ExtractSliceFilter::RESLICE_NEAREST);
     extractor->SetVtkOutputRequest(true);
 
-//    extractor->SetOutputDimensionality( 2 );
-//    extractor->SetOutputSpacingZDirection(1.0);
-//    extractor->SetOutputExtentZDirection( 0, 0 );
+    //    extractor->SetOutputDimensionality( 2 );
+    //    extractor->SetOutputSpacingZDirection(1.0);
+    //    extractor->SetOutputExtentZDirection( 0, 0 );
 
     extractor->Modified();
     //start the pipeline with updating the largest possible, needed if the geometry of the input has changed
-//    extractor->UpdateLargestPossibleRegion();
+    //    extractor->UpdateLargestPossibleRegion();
     extractor->Update();
 
-//    mitk::Image::Pointer slice = extractor->GetOutput();
+    //    mitk::Image::Pointer slice = extractor->GetOutput();
 
-//    return slice->GetVtkImageData();
+    //    return slice->GetVtkImageData();
 
-//    vtkImageData* vtkimage=extractor->GetVtkOutput();
-//    int extent[6];
-//    vtkimage->GetExtent(extent);
-//    vtkimage->SetDimensions(extent[1]-extent[0]+1,extent[3]-extent[2]+1,extent[5]-extent[4]+1);
+    //    vtkImageData* vtkimage=extractor->GetVtkOutput();
+    //    int extent[6];
+    //    vtkimage->GetExtent(extent);
+    //    vtkimage->SetDimensions(extent[1]-extent[0]+1,extent[3]-extent[2]+1,extent[5]-extent[4]+1);
 
-//    return vtkimage;
+    //    return vtkimage;
 
     vtkImageData* vtkimage=vtkImageData::New();
     vtkimage->DeepCopy(extractor->GetVtkOutput());
 
-        double* origin2=vtkimage->GetOrigin();
-        int* extent2=vtkimage->GetExtent();
-        double* spacing2=vtkimage->GetSpacing();
+    double* origin2=vtkimage->GetOrigin();
+    int* extent2=vtkimage->GetExtent();
+    double* spacing2=vtkimage->GetSpacing();
 
-        cout<<"vtk image"<<endl;
-        cout<<"orign: "<<origin2[0]<<","<<origin2[1]<<","<<origin2[2]<<endl;
-        cout<<"extent: "<<extent2[0]<<","<<extent2[1]<<";"<<extent2[2]<<","<<extent2[3]<<";"<<extent2[4]<<","<<extent2[5]<<endl;
-        cout<<"spacing: "<<spacing2[0]<<","<<spacing2[1]<<","<<spacing2[2]<<endl;
+    cout<<"vtk image"<<endl;
+    cout<<"orign: "<<origin2[0]<<","<<origin2[1]<<","<<origin2[2]<<endl;
+    cout<<"extent: "<<extent2[0]<<","<<extent2[1]<<";"<<extent2[2]<<","<<extent2[3]<<";"<<extent2[4]<<","<<extent2[5]<<endl;
+    cout<<"spacing: "<<spacing2[0]<<","<<spacing2[1]<<","<<spacing2[2]<<endl;
 
-//    return extractor->GetVtkOutput();
+    //    return extractor->GetVtkOutput();
     return vtkimage;
 }
 
@@ -462,11 +481,11 @@ cvStrPts* svSegmentationUtils::vtkImageData2cvStrPts(vtkImageData* vtkImg)
     whole[0] = 0;
     whole[2] = 0;
     // shift Z origin for 3-D images
-//    if (whole[4] > 0 && whole[5] > 0) {
-        origin[2] += spacing[2] * whole[4];
-        whole[5] -= whole[4];
-        whole[4] = 0;
-//    }
+    //    if (whole[4] > 0 && whole[5] > 0) {
+    origin[2] += spacing[2] * whole[4];
+    whole[5] -= whole[4];
+    whole[4] = 0;
+    //    }
     mysp->SetExtent(whole);
     mysp->SetOrigin(origin);
     mysp->SetSpacing(spacing);
@@ -496,7 +515,7 @@ svContour* svSegmentationUtils::CreateLSContour(svPathElement::svPathPoint pathP
     double center[3];
     center[0] = param->ctrx;
     center[1] = param->ctry;
-//    center[2] = param->ctrz;
+    //    center[2] = param->ctrz;
     center[2] = 0.0;
 
     cvITKLSUtil::vtkGenerateCircle(param->radius,center,50,&seedPd);
@@ -653,15 +672,15 @@ std::vector<mitk::Point3D> svSegmentationUtils::GetThresholdContour(vtkImageData
     vtkSmartPointer<vtkPolyData> uncleanContour=contourFilter->GetOutput();
     cvPolyData* cvUncleanContour=new cvPolyData(uncleanContour);
 
-//    cvPolyData *cvCleanContour;
-//    double tol=0.001;
-//    cvCleanContour=sys_geom_MergePts_tol(cvUncleanContour, tol );
-//    vtkPolyData* cleanContour=cvCleanContour->GetVtkPolyData();
+    //    cvPolyData *cvCleanContour;
+    //    double tol=0.001;
+    //    cvCleanContour=sys_geom_MergePts_tol(cvUncleanContour, tol );
+    //    vtkPolyData* cleanContour=cvCleanContour->GetVtkPolyData();
 
     vtkSmartPointer<vtkPolyDataConnectivityFilter> connectFilter=vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-//    connectFilter->SetInputData(cleanContour);
+    //    connectFilter->SetInputData(cleanContour);
     connectFilter->SetInputData(uncleanContour);
-//    connectFilter->SetExtractionModeToLargestRegion();
+    //    connectFilter->SetExtractionModeToLargestRegion();
     connectFilter->SetExtractionModeToClosestPointRegion();
     connectFilter->SetClosestPoint(seedPoint);
     connectFilter->Update();

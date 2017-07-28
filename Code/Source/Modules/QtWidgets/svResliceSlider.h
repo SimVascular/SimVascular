@@ -34,7 +34,7 @@ public slots:
 
     void SetDisplayWidget(QmitkStdMultiWidget* widget);
 
-    void setImageNode(mitk::DataNode::Pointer imageNode);
+    void setDataNode(mitk::DataNode::Pointer imageNode);
 
     void setPathPoints(std::vector<svPathElement::svPathPoint> pathPoints);
 
@@ -91,7 +91,7 @@ protected:
 
     std::vector<svPathElement::svPathPoint> m_PathPoints;
 
-    mitk::DataNode::Pointer currentImageNode;
+    mitk::DataNode::Pointer currentDataNode;
 
     double resliceSize;
 

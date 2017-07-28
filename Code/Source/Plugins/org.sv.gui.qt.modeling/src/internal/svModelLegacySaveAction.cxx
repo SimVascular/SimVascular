@@ -32,18 +32,21 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
     svModelElement* modelElement=model->GetModelElement();
     if(!modelElement) return;
 
+    QString extNames="";
     QString fileFilter="";
     std::string modelType=model->GetType();
     auto exts=svModelElementFactory::GetFileExtensions(modelType);
 
     if(exts.size()>0)
     {
-        fileFilter+="All (*);; Supported Formats (";
         for(int i=0;i<exts.size();i++)
+        {
+            extNames=extNames+" "+ QString::fromStdString(exts[i]);
             fileFilter=fileFilter+" *."+ QString::fromStdString(exts[i]);
+        }
 
-        fileFilter+=")";
-    }
+        fileFilter="All (*);; "+extNames +" ("+fileFilter+")";
+   }
 
     try
     {
