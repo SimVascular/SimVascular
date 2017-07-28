@@ -142,6 +142,8 @@ public slots:
 
     void NewGroup();
 
+    void ShowPath(bool checked = false);
+
 public:
 
     int GetTimeStep();

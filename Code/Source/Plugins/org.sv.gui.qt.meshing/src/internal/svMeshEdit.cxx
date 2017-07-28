@@ -133,6 +133,7 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
     }
 
     connect(ui->btnMeshInfo, SIGNAL(clicked()), this, SLOT(DisplayMeshInfo()) );
+    connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
 }
 
 void svMeshEdit::SetupGUI(QWidget *parent )
@@ -1197,8 +1198,13 @@ void svMeshEdit::UpdateGUI()
     //======================================================================
     ui->labelMeshName->setText(QString::fromStdString(m_MeshNode->GetName()));
     ui->labelMeshType->setText(QString::fromStdString(m_MeshType));
+    ui->checkBoxShowModel->setChecked(false);
     if(m_ModelNode.IsNotNull())
+    {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+        if(m_ModelNode->IsVisible(NULL))
+            ui->checkBoxShowModel->setChecked(true);
+    }
     else
         ui->labelModelName->setText("No model found");
 
@@ -2468,4 +2474,13 @@ QString svMeshEdit::GetMeshFolderPath()
     }
 
     return meshFolderPath;
+}
+
+void svMeshEdit::ShowModel(bool checked)
+{
+    if(m_ModelNode.IsNotNull())
+    {
+        m_ModelNode->SetVisibility(checked);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
 }

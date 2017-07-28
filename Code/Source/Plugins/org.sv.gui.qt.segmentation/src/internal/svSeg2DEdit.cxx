@@ -116,6 +116,8 @@ void svSeg2DEdit::CreateQtPartControl( QWidget *parent )
     parent->setMinimumWidth(400);
 //    parent->setFixedWidth(400);
 
+    connect(ui->checkBoxShowPath, SIGNAL(clicked(bool)), this, SLOT(ShowPath(bool)) );
+
     connect(ui->btnLevelSet, SIGNAL(clicked()), this, SLOT(CreateLSContour()) );
     connect(ui->btnThreshold, SIGNAL(clicked()), this, SLOT(CreateThresholdContour()) );
     connect(ui->btnCircle, SIGNAL(clicked()), this, SLOT(CreateCircle()) );
@@ -291,6 +293,12 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         m_GroupFolderNode=rs->GetElement(0);
 
     ui->labelGroupName->setText(QString::fromStdString(m_ContourGroupNode->GetName()));
+
+    ui->labelPathName->setText(QString::fromStdString(m_PathNode->GetName()));
+    if(m_PathNode->IsVisible(NULL))
+        ui->checkBoxShowPath->setChecked(true);
+    else
+        ui->checkBoxShowPath->setChecked(false);
 
     UpdateContourList();
 
@@ -1637,4 +1645,13 @@ void svSeg2DEdit::NewGroup()
     m_ContourGroupCreateWidget=new svContourGroupCreate(GetDataStorage(), m_ContourGroupNode,0);
     m_ContourGroupCreateWidget->show();
     m_ContourGroupCreateWidget->SetFocus();
+}
+
+void svSeg2DEdit::ShowPath(bool checked)
+{
+    if(m_PathNode.IsNotNull())
+    {
+        m_PathNode->SetVisibility(checked);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
 }
