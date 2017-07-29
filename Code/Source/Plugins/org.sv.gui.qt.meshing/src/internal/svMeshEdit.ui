@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>499</width>
+    <width>477</width>
     <height>907</height>
    </rect>
   </property>
@@ -102,7 +102,7 @@
       <item row="0" column="2">
        <widget class="QPushButton" name="btnMeshInfo">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -141,7 +141,7 @@
       <item row="1" column="2">
        <widget class="QPushButton" name="btnRunMesher">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -153,6 +153,12 @@
       </item>
       <item row="2" column="2">
        <widget class="QCheckBox" name="checkBoxShowModel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Show Model</string>
         </property>
@@ -1383,7 +1389,7 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
+              <width>467</width>
               <height>548</height>
              </rect>
             </property>

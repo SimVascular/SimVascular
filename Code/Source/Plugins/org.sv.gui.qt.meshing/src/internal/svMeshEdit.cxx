@@ -1329,14 +1329,14 @@ void svMeshEdit::UpdateTetGenGUI()
     m_TableModelDomains->clear();
 
     QStringList domainsListHeaders;
-    domainsListHeaders << "Type" << "Local Size" << "Location(x y z)";
+    domainsListHeaders << "Type" << "SubDomain\nSize" << "Location\n(x y z)";
     m_TableModelDomains->setHorizontalHeaderLabels(domainsListHeaders);
     m_TableModelDomains->setColumnCount(3);
 
     ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
-    ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
-    ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
     ui->tableViewDomains->horizontalHeader()->resizeSection(0,120);
+    ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    ui->tableViewDomains->horizontalHeader()->resizeSection(0,100);
     ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
 
