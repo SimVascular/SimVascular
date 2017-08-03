@@ -49,7 +49,6 @@ file(MAKE_DIRECTORY "${SV_EXTERNALS_TAR_INSTALL_DIR}")
 
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
-set(SV_EXTERNALS_DOWNLOADS_PLATFORM_DIRS "${SV_PLATFORM_DIR}/${SV_PLATFORM_VERSION_DIR}/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_BUILD_TYPE_DIR}/${SV_BUILD_TYPE_DIR}")
 set(SV_EXTERNALS_URL  "http://simvascular.stanford.edu/downloads/public/simvascular/externals" CACHE STRING "SimVascular Externals")
 set(SV_EXTERNALS_ORIGINALS_URL "${SV_EXTERNALS_URL}/src/originals" CACHE STRING "URL with source downloads for externals")
 mark_as_advanced(SV_EXTERNALS_ORIGINALS_URL)

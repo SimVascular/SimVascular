@@ -1091,7 +1091,7 @@ function(simvascular_install_external project_name)
       install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION}
         USE_SOURCE_PERMISSIONS
         COMPONENT ExternalExecutables
-        PATTERN "designer" EXCLUDE 
+        PATTERN "designer" EXCLUDE
         )
     endif()
   endif()
@@ -1327,8 +1327,9 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
 
   # Add install step for each external
   if(NOT "${install_dirname}" STREQUAL "none")
+    string(TOLOWER "${SV_BUILD_TYPE_DIR}" SV_BUILD_TYPE_LOWER)
     simvascular_today(YEAR MONTH DAY)
-    set(SV_EXTERNALS_${proj}_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_PLATFORM_VERSION_DIR}.${SV_COMPILER_DIR}.${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${SV_BUILD_TYPE_DIR}.${YEAR}.${MONTH}.${DAY}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION})
+    set(SV_EXTERNALS_${proj}_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_PLATFORM_VERSION_DIR}.${SV_COMPILER_DIR}.${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${SV_BUILD_TYPE_LOWER}.${YEAR}.${MONTH}.${DAY}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION})
     if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
       install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_${proj}_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_${proj}_BIN_DIR}
         WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR})")
