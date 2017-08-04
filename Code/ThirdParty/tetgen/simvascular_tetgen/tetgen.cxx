@@ -29546,7 +29546,7 @@ void tetgenmesh::outsubfaces(tetgenio* out)
   int *elist = NULL;
   int *emlist = NULL;
   int index = 0, index1 = 0, index2 = 0;
-  triface abuttingtet;
+  triface abuttingtet, abuttingtet2;
   face faceloop;
   point torg, tdest, tapex;
   int marker = 0;
@@ -29664,11 +29664,18 @@ void tetgenmesh::outsubfaces(tetgenio* out)
       neigh1 = -1;
       neigh2 = -1;
       stpivot(faceloop, abuttingtet);
+
       if (abuttingtet.tet != NULL) {
-        neigh1 = elemindex(abuttingtet.tet);
-        fsymself(abuttingtet);
         if (!ishulltet(abuttingtet)) {
-          neigh2 = elemindex(abuttingtet.tet);
+          neigh1 = elemindex(abuttingtet.tet);
+        }
+      }
+
+      fsym(abuttingtet, abuttingtet2);
+
+      if (abuttingtet2.tet != NULL) {
+        if (!ishulltet(abuttingtet2)) {
+          neigh2 = elemindex(abuttingtet2.tet);
         }
       }
     }
