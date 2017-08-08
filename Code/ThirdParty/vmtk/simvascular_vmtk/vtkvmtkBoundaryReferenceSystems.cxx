@@ -10,15 +10,15 @@ Version:   $Revision: 1.6 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-//SimVascular Changes: Changes to update code to VTK pipeline 6.0 
+//SimVascular Changes: Changes to update code to VTK pipeline 6.0
 //Line 323: SetInput -> SetInputData
 
 #include "vtkvmtkBoundaryReferenceSystems.h"
@@ -64,7 +64,7 @@ vtkvmtkBoundaryReferenceSystems::~vtkvmtkBoundaryReferenceSystems()
     delete[] this->Point1ArrayName;
     this->Point1ArrayName = NULL;
     }
-    
+
   if (this->Point2ArrayName)
     {
     delete[] this->Point2ArrayName;
@@ -105,7 +105,7 @@ void vtkvmtkBoundaryReferenceSystems::ComputeBoundaryBarycenter(vtkPoints* point
     barycenter[1] += (point0[1] + point1[1])/2.0 * weight;
     barycenter[2] += (point0[2] + point1[2])/2.0 * weight;
     }
-  
+
   barycenter[0] /= weightSum;
   barycenter[1] /= weightSum;
   barycenter[2] /= weightSum;
@@ -152,7 +152,7 @@ void vtkvmtkBoundaryReferenceSystems::ComputeBoundaryNormal(vtkPoints* points, d
     vector1[2] = point[2] - barycenter[2];
 
     vtkMath::Cross(vector1,vector0,cross);
-    
+
     for (j=0; j<3; j++)
       {
       vector0[j] = vector1[j];
@@ -162,7 +162,7 @@ void vtkvmtkBoundaryReferenceSystems::ComputeBoundaryNormal(vtkPoints* points, d
 
   vtkMath::Normalize(sumCross);
 
-  for (j=0; j<3; j++)  
+  for (j=0; j<3; j++)
     {
     normal[j] = sumCross[j];
     }
@@ -227,9 +227,9 @@ void vtkvmtkBoundaryReferenceSystems::OrientBoundaryNormalOutwards(vtkPolyData* 
     {
     outwardNormal[k] = normal[k];
     }
-  
-  vtkMath::Normalize(neighborsToBoundaryNormal); 
-  
+
+  vtkMath::Normalize(neighborsToBoundaryNormal);
+
   if (vtkMath::Dot(normal,neighborsToBoundaryNormal) < 0.0)
     {
     for (k=0; k<3; k++)
@@ -285,7 +285,7 @@ int vtkvmtkBoundaryReferenceSystems::RequestData(
     vtkErrorMacro(<< "BoundaryRadiusArrayName not specified.");
     return 1;
     }
-    
+
   if (!this->BoundaryNormalsArrayName)
     {
     vtkErrorMacro(<< "BoundaryNormalsArrayName not specified.");
@@ -297,7 +297,7 @@ int vtkvmtkBoundaryReferenceSystems::RequestData(
     vtkErrorMacro(<< "Point1ArrayName not specified.");
     return 1;
     }
-    
+
   if (!this->Point2ArrayName)
     {
     vtkErrorMacro(<< "Point2ArrayName not specified.");
@@ -343,7 +343,7 @@ int vtkvmtkBoundaryReferenceSystems::RequestData(
     this->OrientBoundaryNormalOutwards(input,boundaries,i,normal,outwardNormal);
     double point1[3], point2[3];
     this->ComputeReferenceSystemPoints(barycenter,normal,meanRadius,point1,point2);
-    
+
     vtkIdType pointId = outputPoints->InsertNextPoint(barycenter);
     outputVerts->InsertNextCell(1);
     outputVerts->InsertCellPoint(pointId);

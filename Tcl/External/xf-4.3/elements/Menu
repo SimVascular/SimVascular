@@ -222,12 +222,12 @@ proc XFConfig.Menu5 {xfW xfType xfClass {xfLeader ""}} {
       -value "<separator> " \
       -underline 0 \
       -command "XFMenuSetItems $xfMC separator $xfClass"
-  
+
   label \
     .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 \
       -anchor w \
       -text {Commandbutton}
-  
+
   button .xf${xfClass}Config5$xfMC.params1.params2.commands.insert \
     -text {Insert} \
     -command "
@@ -381,7 +381,7 @@ proc XFConfig.Menu5 {xfW xfType xfClass {xfLeader ""}} {
 
   pack before .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.vscroll \
               .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover {right filly}
-  
+
   if {"$xfType" == "add"} {
     .xf${xfClass}Config5$xfMC.leave.ok configure \
       -command "
@@ -846,9 +846,9 @@ proc XFMenuInsertItem {xfMC xfClass {xfIndex ""}} {
     configure \
       -to [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items size]
   .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
-    select anchor $xfIndex 
+    select anchor $xfIndex
   .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
-    select set $xfIndex 
+    select set $xfIndex
 
   set xfCurSelected \
     [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items curselection]
@@ -902,16 +902,16 @@ proc XFMenuModifyItem {xfMC xfClass} {
     XFMenuInsertItem $xfMC $xfClass $xfIndex
 
     .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
-      select anchor $xfIndex 
+      select anchor $xfIndex
     .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
-      select set $xfIndex 
+      select set $xfIndex
   }
 }
 
 ##########
 # Procedure: XFMenuReadMenu
 # Description: read current menu, and insert it into the lists
-# Arguments: xfW - the widget we configure 
+# Arguments: xfW - the widget we configure
 #            xfMC - the edit menu counter
 #            xfClass - the class we configure
 # Returns: none

@@ -2,7 +2,7 @@
 #
 #	This file implements the Tcl language binding for the DOM -
 #	the Document Object Model.  Support for the core specification
-#	is given here.  Layered support for specific languages, 
+#	is given here.  Layered support for specific languages,
 #	such as HTML, will be in separate modules.
 #
 # Copyright (c) 1998-2004 Zveno Pty Ltd
@@ -881,7 +881,7 @@ proc dom::tcl::CreateElement {token name aList args} {
     # Does this element qualify as the document element?
     # If so, then has a document element already been set?
 
-    if {[string length $token] && 
+    if {[string length $token] &&
 	[string equal $parent(node:nodeType) document]} {
 
 	if {$token == $parent(documentFragment:masterDoc)} {
@@ -1352,7 +1352,7 @@ proc dom::tcl::node {method token args} {
 
 	    # insertBefore
 
-	    # Previous and next sibling relationships are OK, 
+	    # Previous and next sibling relationships are OK,
 	    # because they are dynamically determined
 
 	    if {[llength $args] < 1 || [llength $args] > 2} {
@@ -4062,7 +4062,7 @@ proc dom::tcl::XPath:Pred:CompareLiterals {op operand1 operand2} {
     # The obvious:
     #return [expr {$result $opMap($op) 0}]
     # doesn't compile
-    
+
     switch $op {
 	= {
 	    return [expr {$result == 0}]

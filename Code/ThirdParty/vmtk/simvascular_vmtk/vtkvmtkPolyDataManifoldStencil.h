@@ -10,11 +10,11 @@
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -30,7 +30,7 @@
 #include "vtkPolyData.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataManifoldStencil : public vtkvmtkStencil 
+class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataManifoldStencil : public vtkvmtkStencil
 {
 public:
 
@@ -50,7 +50,7 @@ public:
   vtkGetMacro(UseExtendedNeighborhood,int);
   vtkSetMacro(UseExtendedNeighborhood,int);
   vtkBooleanMacro(UseExtendedNeighborhood,int);
-  
+
 protected:
   vtkvmtkPolyDataManifoldStencil();
   ~vtkvmtkPolyDataManifoldStencil() {};
@@ -60,7 +60,7 @@ protected:
   double Area;
 
   int UseExtendedNeighborhood;
-  
+
 private:
   vtkvmtkPolyDataManifoldStencil(const vtkvmtkPolyDataManifoldStencil&);  // Not implemented.
   void operator=(const vtkvmtkPolyDataManifoldStencil&);  // Not implemented.

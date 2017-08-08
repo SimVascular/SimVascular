@@ -29,7 +29,7 @@ global symbolicName
   # pack widget .frame.frame
   pack append .frame.frame \
     .frame.frame.entry2   {top frame center expand fill} \
-    .frame.frame.scrollbar1   {top frame center fillx} 
+    .frame.frame.scrollbar1   {top frame center fillx}
 
   # build widget .frame.label1
   label .frame.label1 \
@@ -38,11 +38,11 @@ global symbolicName
   # pack widget .frame
   pack append .frame \
     .frame.label1   {left frame center filly} \
-    .frame.frame   {top frame center fillx} 
+    .frame.frame   {top frame center fillx}
 
   # pack widgets
   pack append . \
-    .frame   {top fill frame center} 
+    .frame   {top fill frame center}
 
 # end of widget tree
 

@@ -43,7 +43,7 @@ proc XFAdd.Listbox {xfW xfName xfType} {
       listbox $xfStatus(path).$xfName
     }
     $xfStatus(path).$xfName insert 0 "$xfName"
- 
+
     XFMiscPositionWidget $xfStatus(path).$xfName
     XFMiscBindWidgetTree $xfStatus(path).$xfName
   }
@@ -68,7 +68,7 @@ proc XFConfig.Listbox4 {xfW xfType xfClass {xfLeader ""}} {
   global xfStatus
   global xfMisc
 
-  set xfMisc(singleSelection) 0  
+  set xfMisc(singleSelection) 0
   if {"$xfType" == "add"} {
     set xfName listbox$xfStatus(elementCounter)
   } {
@@ -240,7 +240,7 @@ proc XFListboxSetListbox4 {xfW xfType xfClass {xfParam1 ""}} {
     [.xf${xfClass}Config4.params1.params2.xcommand.xcommand get]
   XFMiscSetResource $xfW yscrollcommand \
     [.xf${xfClass}Config4.params1.params2.ycommand.ycommand get]
-  
+
   XFMiscClearList $xfW
   set xfContents [string trim [XFMiscGetText .xf${xfClass}Config4.params1.params2.contents.contents]]
   foreach xfCounter [split $xfContents [format "%s" "\n"]] {
@@ -248,7 +248,7 @@ proc XFListboxSetListbox4 {xfW xfType xfClass {xfParam1 ""}} {
   }
 
   if {$xfMisc(singleSelection)} {
-    bind $xfW <B1-Motion> {%W select anchor [%W nearest %y]} 
+    bind $xfW <B1-Motion> {%W select anchor [%W nearest %y]}
     bind $xfW <Shift-1> {%W select anchor [%W nearest %y]}
     bind $xfW <Shift-B1-Motion> {%W select anchor [%W nearest %y]}
   } {

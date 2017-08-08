@@ -2,7 +2,7 @@
 # the next line restarts using tclsh \
 exec /usr/bin/tclsh "$0" $0 $*
 
-set lexec [lindex $argv 0] 
+set lexec [lindex $argv 0]
 set myexec [file tail $lexec]
 set allvers [glob -nocomplain [file dirname $lexec]/../package/REPLACE_SV_VERSION/*]
 set dirnames {}

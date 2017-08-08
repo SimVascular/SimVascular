@@ -10,11 +10,11 @@ Version:   $Revision: 1.11 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -175,7 +175,7 @@ int vtkvmtkCenterlineSplittingAndGroupingFilter::RequestData(
 #endif
     splitCenterline->Delete();
     }
-  
+
   appendCenterlinesFilter->Update();
 
   vtkPolyData* centerlineTracts = vtkPolyData::New();
@@ -184,7 +184,7 @@ int vtkvmtkCenterlineSplittingAndGroupingFilter::RequestData(
   appendCenterlinesFilter->Delete();
 
   this->GroupTracts(input,centerlineTracts);
-  this->MergeTracts(centerlineTracts); 
+  this->MergeTracts(centerlineTracts);
   //FIXME: now, ill situations may still occour after merging: a branch that was inbetween two same-group and has been merged, might have had a buddy that didn't need to be merged on another centerline. In that case ehat should we do? Leave the other one alone? Or rething the whole thing once for all?
   this->MakeGroupIdsAdjacent(centerlineTracts);
   this->MakeTractIdsAdjacent(centerlineTracts);
@@ -205,7 +205,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::MergeTracts(vtkPolyData* cente
   mergedCenterlineTracts->SetPoints(mergedCenterlineTractsPoints);
   mergedCenterlineTracts->GetPointData()->DeepCopy(centerlineTracts->GetPointData());
   mergedCenterlineTracts->GetCellData()->CopyAllocate(centerlineTracts->GetCellData());
-  
+
   vtkCellArray* mergedCellArray = vtkCellArray::New();
 
   vtkIntArray* groupIdsArray = vtkIntArray::SafeDownCast(centerlineTracts->GetCellData()->GetArray(this->GroupIdsArrayName));
@@ -234,10 +234,10 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::MergeTracts(vtkPolyData* cente
             {
             groupIdsArray->SetValue(centerlineCellIds->GetId(l),groupId);
             }
-          }   
-        } 
+          }
+        }
       }
-    
+
     // at this point we have to merge based on the repeated groupIds (which are now adjacent)
     vtkIdList* tractCellPointIds = vtkIdList::New();
     vtkIdList* mergedCellPointIds = vtkIdList::New();
@@ -246,7 +246,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::MergeTracts(vtkPolyData* cente
     int firstTractCellId = 0;
     for (j=0; j<numberOfCenterlineTracts; j++)
       {
-      // copy cell if not repeated, copy first cell and keep adding points if repeated. 
+      // copy cell if not repeated, copy first cell and keep adding points if repeated.
       // Note that point data remains the same, only cells change
       int tractCellId = centerlineCellIds->GetId(j);
       centerlineTracts->GetCellPoints(tractCellId,tractCellPointIds);
@@ -282,9 +282,9 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::MergeTracts(vtkPolyData* cente
     }
 
   mergedCenterlineTracts->SetLines(mergedCellArray);
-    
+
   centerlineTracts->DeepCopy(mergedCenterlineTracts);
-  
+
   mergedCellArray->Delete();
   mergedCenterlineTracts->Delete();
   mergedCenterlineTractsPoints->Delete();
@@ -361,9 +361,9 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::CoincidentExtremePointGroupTra
         {
         groupIdsArray->SetValue(j,tractGroupId);
         }
-      } 
+      }
     }
- 
+
   centerlineTracts->GetCellData()->AddArray(groupIdsArray);
 
   groupIdsArray->Delete();
@@ -415,7 +415,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::PointInTubeGroupTracts(vtkPoly
     centerlineTube->SetInputCellIds(centerlineTubeCellIds);
 
     int centerlineGroupId = groupIdsArray->GetValue(i);
-    
+
     int centerlineId = centerlineIdsArray->GetValue(i);
 
     for (int k=0; k<numberOfCenterlineCells; k++)
@@ -424,7 +424,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::PointInTubeGroupTracts(vtkPoly
         {
         continue;
         }
-      
+
       bool centerlineTractAlreadyInGroup = false;
       int j;
       for (j=0; j<numberOfCells; j++)
@@ -447,12 +447,12 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::PointInTubeGroupTracts(vtkPoly
           centerlineTractAlreadyInGroup = true;
           }
         }
-      
+
       if (centerlineTractAlreadyInGroup)
         {
         continue;
         }
-      
+
       int sameGroupTubeGroupId = -1;
 
       for (j=0; j<numberOfCells; j++)
@@ -479,7 +479,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::PointInTubeGroupTracts(vtkPoly
           {
           continue;
           }
- 
+
         int tubeGroupId = groupIdsArray->GetValue(j);
 
         if (tubeGroupId == centerlineGroupId)
@@ -675,7 +675,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
       {
       splitCenterlinePD->CopyData(inputPD,centerline->GetPointId(i),i);
       splitCenterlineCellArray->InsertCellPoint(i);
-      } 
+      }
     centerlineIdsArray->InsertNextValue(cellId);
     tractIdsArray->InsertNextValue(0);
     blankingArray->InsertNextValue(0);
@@ -701,7 +701,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
     {
     if (tractBlanking[i] == 1)
       {
-      continue; 
+      continue;
       }
     vtkIdType lowerId, higherId;
 
@@ -759,7 +759,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
       {
       centerline->GetPoints()->GetPoint(subIds[i-1],point0);
       centerline->GetPoints()->GetPoint(subIds[i-1]+1,point1);
-      for (k=0; k<3; k++) 
+      for (k=0; k<3; k++)
         {
         point[k] = point0[k] + pcoords[i-1]*(point1[k] - point0[k]);
         }
@@ -777,13 +777,13 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
       splitCenterlineCellPointIds->InsertNextId(pointId);
       splitCenterlinePD->CopyData(inputPD,centerline->GetPointId(j),pointId);
       }
-    
+
     // insert last interpolated point if necessary
     if (i<numberOfSplittingPoints)
       {
       centerline->GetPoints()->GetPoint(subIds[i],point0);
       centerline->GetPoints()->GetPoint(subIds[i]+1,point1);
-      for (k=0; k<3; k++) 
+      for (k=0; k<3; k++)
         {
         point[k] = point0[k] + pcoords[i]*(point1[k] - point0[k]);
         }

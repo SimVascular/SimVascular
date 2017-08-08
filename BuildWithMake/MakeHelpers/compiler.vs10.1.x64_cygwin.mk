@@ -10,14 +10,14 @@ ifeq ($(CLUSTER), x64_cygwin)
     CCDEP           = gcc -MM
     AR              = lib -out:
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
-    DEBUG_FLAGS     = 
+    DEBUG_FLAGS     =
     OPT_FLAGS       = /MD /Ox /EHsc
 else
   ifeq ($(MAKE_OPTIMIZED),1)
     DEBUG_FLAGS     =
     OPT_FLAGS       = /MD /Zi /O2 /EHsc /GS
   else
-    OPT_FLAGS       = 
+    OPT_FLAGS       =
     DEBUG_FLAGS     = /MD /Zi /Od /EHsc -D_CRT_SECURE_NO_DEPRECATE /GS /GR
   endif
 endif
@@ -42,15 +42,15 @@ endif
                       /MACHINE:X64 -subsystem:console
 
     SHARED_LFLAGS   = /DLL $(GLOBAL_LFLAGS) $(CXX_LIBS)
-    STATIC_FLAG     = 
-    DYNAMIC_FLAG    = 
+    STATIC_FLAG     =
+    DYNAMIC_FLAG    =
     TEMPLATE_AR     = $(AR)
     CC_LIBS         =
     CXX_LIBS        = Advapi32.lib Ws2_32.lib Shlwapi.lib
     LINK_EXE        = link /out:
     LIBPATH_COMPILER_FLAG = /LIBPATH:
     LIBFLAG         =
-    LIBCMD          = lib 
+    LIBCMD          = lib
     SVLIBFLAG       =lib
     LIBLINKEXT      =.lib
     SV_QUIET_FLAG   = @

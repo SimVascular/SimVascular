@@ -101,7 +101,7 @@ foreach (_variableName ${_variableNames})
    # tcl
    simvascular_list_find_and_replace(${_variableName} "${tmp_replace_tcl_lib_name}" ${TCL_LIBRARY})
    simvascular_property_list_find_and_replace(${modname} INTERFACE_LINK_LIBRARIES "${tmp_replace_tcl_lib_name}" ${TCL_LIBRARY})
-   # python   
+   # python
    if(SV_USE_PYTHON)
      simvascular_list_find_and_replace(${_variableName} "${tmp_replace_python_lib_name}" ${PYTHON_LIBRARY})
      simvascular_property_list_find_and_replace(${modname} INTERFACE_LINK_LIBRARIES "${tmp_replace_python_lib_name}" ${PYTHON_LIBRARY})
@@ -121,7 +121,7 @@ endforeach()
 get_filename_component(tmp_replace_tcl_lib_name ${TCL_LIBRARY} NAME)
 message("replace tcl name ${tmp_replace_tcl_lib_name}")
 simvascular_list_find_and_replace(${proj}_LIBRARIES "${tmp_replace_tcl_lib_name}" ${TCL_LIBRARY})
-  
+
 if(SV_USE_PYTHON)
   get_filename_component(tmp_replace_python_lib_name ${PYTHON_LIBRARY} NAME)
   message("replace python name ${tmp_replace_python_lib_name}")

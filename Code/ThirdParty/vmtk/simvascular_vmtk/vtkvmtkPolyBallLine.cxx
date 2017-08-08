@@ -10,11 +10,11 @@ Version:   $Revision: 1.5 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -156,7 +156,7 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
       }
 
     this->Input->GetCellPoints(cellId,npts,pts);
-    
+
     for (i=0; i<npts-1; i++)
       {
       this->Input->GetPoint(pts[i],point0);
@@ -184,7 +184,7 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
 
       num = this->ComplexDot(vector0,vector1);
       den = this->ComplexDot(vector0,vector0);
-      
+
       if (fabs(den)<VTK_VMTK_DOUBLE_TOL)
         {
         continue;
@@ -231,7 +231,7 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
         }
       }
     }
-  
+
   cellIds->Delete();
 
   return minPolyBallFunctionValue;

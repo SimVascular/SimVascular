@@ -8,7 +8,7 @@
 # http://www.explain.com.au/
 # Copyright (c) 2000-2004 Zveno Pty Ltd
 # http://www.zveno.com/
-# 
+#
 # See the file "LICENSE" in this distribution for information on usage and
 # redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
@@ -29,7 +29,7 @@ namespace eval xml {
     # Counter for generating unique names
     variable counter 0
 }
-
+
 # xml::configure --
 #
 #	Configure the xml package
@@ -41,7 +41,7 @@ namespace eval xml {
 #	None (not yet implemented)
 
 proc xml::configure args {}
-
+
 # xml::parserclass --
 #
 #	Implements the xml::parserclass command for managing
@@ -104,7 +104,7 @@ proc xml::parserclass {method args} {
 		    return [array names classes]
 		}
 		default {
-		    return $default 
+		    return $default
 		}
 	    }
 	}
@@ -116,7 +116,7 @@ proc xml::parserclass {method args} {
 
     return {}
 }
-
+
 # xml::parser --
 #
 #	Create a parser object instance
@@ -171,7 +171,7 @@ proc xml::parser args {
 
     return $parserName
 }
-
+
 # xml::FindUniqueName --
 #
 #	Generate unique object name
@@ -186,7 +186,7 @@ proc xml::FindUniqueName {} {
     variable counter
     return xmlparser[incr counter]
 }
-
+
 # xml::ParserCmd --
 #
 #	Implements parser object command
@@ -258,7 +258,7 @@ proc xml::ParserCmd {name method args} {
 
     return {}
 }
-
+
 # xml::noop --
 #
 #	Do nothing utility proc

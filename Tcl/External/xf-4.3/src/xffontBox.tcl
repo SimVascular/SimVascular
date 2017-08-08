@@ -35,7 +35,7 @@ proc XFFontBox {{xfFontBoxFileFont "/usr/local/lib/xf/lib/Fonts"} {xfFontBoxReso
 # Returns: fontname, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global xfFontBox(activeBackground) - active background color
 # global xfFontBox(activeForeground) - active foreground color
 # global xfFontBox(background) - background color
@@ -90,7 +90,7 @@ proc XFFontBox {{xfFontBoxFileFont "/usr/local/lib/xf/lib/Fonts"} {xfFontBoxReso
     append tmpScrollOpt "-foreground \"$xfFontBox(scrollForeground)\" "
   }
 
-  set xfFontBoxTmpFileFont $xfFontBoxFileFont 
+  set xfFontBoxTmpFileFont $xfFontBoxFileFont
   # get font file name
   if {!([file exists $xfFontBoxFileFont] &&
         [file readable $xfFontBoxFileFont])} {

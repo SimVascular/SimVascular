@@ -236,7 +236,7 @@ proc XFBindShowName {xfW xfX xfY} {
     -anchor c \
     -relief raised \
     -text "This widget is named:"
-  
+
   set xfName $xfW
   set xfShowName $xfW
   foreach xfCounter [array names symbolicName] {
@@ -254,7 +254,7 @@ proc XFBindShowName {xfW xfX xfY} {
     -anchor n \
     -relief raised \
     -text "$xfName"
-  
+
   .xfEdit.curSelected delete 0 end
   .xfEdit.curSelected insert 0 $xfShowName
   .xfEdit.curSelected select from 0

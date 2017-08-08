@@ -11,10 +11,10 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_TCL* ]]; then
   rm -Rf ../tk-8.6.4
   rm -Rf ../tcllib-1.17
   rm -Rf ../tklib-0.6
-  
+
   #  untar tcl/tk
   tar xvf Originals/tcltk/tcl8.5.18-src.tar.gz
-  tar xvf Originals/tcltk/tk8.5.18-src.tar.gz  
+  tar xvf Originals/tcltk/tk8.5.18-src.tar.gz
   tar xvf Originals/tcltk/tcl8.6.4-src.tar.gz
   tar xvf Originals/tcltk/tk8.6.4-src.tar.gz
   tar xvf Originals/tcltk/tcllib-1.17.tar.gz
@@ -56,7 +56,7 @@ fi
 # freetype2
 if [[ $SV_SUPER_OPTIONS == *UNTAR_FREETYPE* ]]; then
   echo "UNTAR_FREETYPE"
-  rm -Rf ../freetype-2.6.3  
+  rm -Rf ../freetype-2.6.3
   unzip Originals/freetype/ft263.zip
   mv freetype-2.6.3 ..
 fi
@@ -64,7 +64,7 @@ fi
 #  gdcm
 if [[ $SV_SUPER_OPTIONS == *UNTAR_GDCM* ]]; then
   echo "UNTAR_GDCM"
-  rm -Rf ../gdcm-2.6.1  
+  rm -Rf ../gdcm-2.6.1
   tar xvf Originals/gdcm/gdcm-2.6.1.tar.gz
   mv gdcm-2.6.1 ..
 fi
@@ -85,7 +85,7 @@ fi
 # itk
 if [[ $SV_SUPER_OPTIONS == *UNTAR_ITK* ]]; then
   echo "UNTAR_ITK"
-  rm -Rf ../itk-4.7.1 
+  rm -Rf ../itk-4.7.1
   tar xvf Originals/itk/InsightToolkit-4.7.1.tar.gz
   mv InsightToolkit-4.7.1 ../itk-4.7.1
 fi
@@ -111,7 +111,7 @@ fi
 # mitk
 if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   echo "UNTAR_MITK"
-  rm -Rf ../mitk-2016.03  
+  rm -Rf ../mitk-2016.03
   tar xvf Originals/mitk/mitk-v2016.03.0.tar.gz
   #cd ..
   mv mitk-2016.03 ..

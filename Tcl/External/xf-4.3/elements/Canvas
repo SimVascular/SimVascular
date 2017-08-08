@@ -262,7 +262,7 @@ proc XFConfig.Canvas5 {xfW xfType xfClass {xfLeader ""}} {
       -command "
         .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
         XFCanvasSetItems window $xfClass"
- 
+
   label \
     .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
       -anchor w \
@@ -642,7 +642,7 @@ proc XFConfig.Canvas5 {xfW xfType xfClass {xfLeader ""}} {
     -command "XFCanvasRepositionItem $xfW $xfClass"
   pack before .xf${xfClass}Config5.params1.params2.frame1.children.items.vscroll \
               .xf${xfClass}Config5.params1.params2.frame1.children.items.mover {right filly}
-  
+
   button .xf${xfClass}Config5.additional.tagbinding \
     -text {Item binding} \
     -command "
@@ -1094,7 +1094,7 @@ proc XFCanvasDrawItem {xfW xfX xfY} {
       $xfW itemconfig $xfTmpTag -text text
       XFMiscSetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text.text text
     }
-    if {"$xfItemType" == "arc" || "$xfItemType" == "oval" || 
+    if {"$xfItemType" == "arc" || "$xfItemType" == "oval" ||
         "$xfItemType" == "rectangle" || "$xfItemType" == "polygon"} {
       $xfW itemconfig $xfTmpTag -outline black
       .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
@@ -1246,7 +1246,7 @@ proc XFCanvasInsertItem {xfW xfClass {xfIndex ""}} {
     .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
       select anchor $xfIndex
     .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
-      select set $xfIndex 
+      select set $xfIndex
   }
 
   if {[.xf${xfClass}Config5.params1.params2.frame1.children.items.items size] > 0} {
@@ -1340,7 +1340,7 @@ proc XFCanvasPosMove {xfW xfClass xfX xfY} {
       }
       XFMiscSetText \
         .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
-          $xfSetCoords 
+          $xfSetCoords
     }
   }
 }
@@ -1366,7 +1366,7 @@ proc XFCanvasPosRelease {xfW xfClass xfX xfY} {
 ##########
 # Procedure: XFCanvasReadCanvas
 # Description: read current canvas, and insert it into the lists
-# Arguments: xfW - the widget we configure 
+# Arguments: xfW - the widget we configure
 #            xfClass - the class we configure
 # Returns: none
 # Sideeffects: none
@@ -1524,7 +1524,7 @@ proc XFCanvasSetItem {xfW xfClass} {
     }
     XFMiscSetText \
       .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
-        $xfSetCoords 
+        $xfSetCoords
     foreach xfCounter [$xfW itemconfigure "[lrange [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1 end]"] {
       # only handle options with 5 items per option entry
       if {[llength $xfCounter] == 5} {

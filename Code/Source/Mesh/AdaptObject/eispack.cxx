@@ -130,7 +130,7 @@ int bakvec ( int n, double t[], double e[], int m, double z[] )
 }
 //****************************************************************************80
 
-void bandr ( int n, int mb, double a[], double d[], double e[], double e2[], 
+void bandr ( int n, int mb, double a[], double d[], double e[], double e2[],
   int matz, double z[] )
 
 //****************************************************************************80
@@ -374,7 +374,7 @@ void bandr ( int n, int mb, double a[], double d[], double e[], double e2[],
 
             ugl = j;
             a[j1-1+0*n] = b2 * a[j1-1+0*n] + g;
- 
+
             if ( j != n )
             {
               maxl = i4_min ( m1, n - j1 );
@@ -490,7 +490,7 @@ void bandr ( int n, int mb, double a[], double d[], double e[], double e2[],
 }
 //****************************************************************************80
 
-void cbabk2 ( int n, int low, int igh, double scale[], int m, double zr[], 
+void cbabk2 ( int n, int low, int igh, double scale[], int m, double zr[],
   double zi[] )
 
 //****************************************************************************80
@@ -656,10 +656,10 @@ void csroot ( double xr, double xi, double &yr, double &yi )
 //
 //  Parameters:
 //
-//    Input, double XR, XI, the real and imaginary parts of the 
+//    Input, double XR, XI, the real and imaginary parts of the
 //    quantity whose square root is desired.
 //
-//    Output, double &YR, &YI, the real and imaginary parts of the 
+//    Output, double &YR, &YI, the real and imaginary parts of the
 //    square root.
 //
 {
@@ -1533,7 +1533,7 @@ int rs ( int n, double a[], double w[], int matz, double z[] )
 //
 //    Input, double A[N*N], the real symmetric matrix.
 //
-//    Input, int MATZ, is zero if only eigenvalues are desired, 
+//    Input, int MATZ, is zero if only eigenvalues are desired,
 //    and nonzero if both eigenvalues and eigenvectors are desired.
 //
 //    Output, double W[N], the eigenvalues in ascending order.
@@ -2045,7 +2045,7 @@ int tqlrat ( int n, double d[], double e2[] )
 //    order.  If an error exit was made, then the eigenvalues are correct
 //    in positions 1 through IERR-1, but may not be the smallest eigenvalues.
 //
-//    Input/output, double E2[N], contains in positions 2 through N 
+//    Input/output, double E2[N], contains in positions 2 through N
 //    the squares of the subdiagonal elements of the matrix.  E2(1) is
 //    arbitrary.  On output, E2 has been overwritten by workspace
 //    information.
@@ -2104,7 +2104,7 @@ int tqlrat ( int n, double d[], double e2[] )
 //  Look for small squared sub-diagonal element.
 //
     for ( m = l; m < n; m++ )
-    {  
+    {
       if ( e2[m] <= c )
       {
         break;

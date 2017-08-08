@@ -9,9 +9,9 @@ pushd tmp/mitk
 BUILDDATE=`date +%F`
 echo "WGET_MITK"
 wget $PARENT_URL/mitk/mitk-v2016.03.0.tar.gz
-rm -Rf mitk-2016.03  
+rm -Rf mitk-2016.03
 tar xzf ./mitk-v2016.03.0.tar.gz
-  
+
 echo "checkout patched version from git"
 
 git clone https://github.com/SimVascular/MITK.git $SV_PATCH_BRANCH_MITK_NAME
@@ -25,4 +25,4 @@ diff -aur --new-file -x ".git" mitk-2016.03/ $SV_PATCH_BRANCH_MITK_NAME > mitk-2
 cp mitk-2016.03-$BUILDDATE.patch ../../Patches
 
 popd
-  
+

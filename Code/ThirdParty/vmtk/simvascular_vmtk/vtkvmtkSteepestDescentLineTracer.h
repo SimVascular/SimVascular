@@ -10,11 +10,11 @@ Version:   $Revision: 1.4 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -27,9 +27,9 @@ Version:   $Revision: 1.4 $
   // The class uses the members of its base class vtkNonManifoldSteepestDescent to compute the steepest descent point at each step.
   // The computed paths are polylines whose points always lie on input polygon edges.
   //
-  // This class is meant to be used for backtracing centerlines after solving the Eikonal equation on the Voronoi diagram of a shape (by means of vtkNonManifoldFastMarching). If MergePaths is off, one polyline for each seed point is produced (the cell id of each polyline corresponds to the list id of input seeds). If MergePaths is on, polylines are merged if they intersect the same Voronoi diagram edge and their distance is below a user-defined tolerance. Actually, if a path visits an edge which has already been visited by a previous path, its endpoint is set to the previous path point, so that a T junction is produced. 
+  // This class is meant to be used for backtracing centerlines after solving the Eikonal equation on the Voronoi diagram of a shape (by means of vtkNonManifoldFastMarching). If MergePaths is off, one polyline for each seed point is produced (the cell id of each polyline corresponds to the list id of input seeds). If MergePaths is on, polylines are merged if they intersect the same Voronoi diagram edge and their distance is below a user-defined tolerance. Actually, if a path visits an edge which has already been visited by a previous path, its endpoint is set to the previous path point, so that a T junction is produced.
   //
-  // The user can specify a point data array whose values are interpolated on path points and presented in output as point data. 
+  // The user can specify a point data array whose values are interpolated on path points and presented in output as point data.
   //
   // If 1) EdgeArrayName and/or 2) EdgePCoordArrayName are provided, the output will contain 1) a 2-component vtkIntArray in which the point ids of the edges intersected by the paths are stored and 2) a 1-component vtkDoubleArray in which the parametric coordinate of the intersection is stored.
   //
@@ -50,7 +50,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSteepestDescentLineTracer : 
 {
 public:
   vtkTypeMacro(vtkvmtkSteepestDescentLineTracer,vtkvmtkNonManifoldSteepestDescent);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkSteepestDescentLineTracer *New();
 

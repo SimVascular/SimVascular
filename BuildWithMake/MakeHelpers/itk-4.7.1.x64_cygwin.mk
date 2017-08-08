@@ -56,8 +56,8 @@ endif
 #$(LIBFLAG)itkgdcmCommon-4.7.lib
 #$(LIBFLAG)itkgdcmDICT-4.7.lib
 #$(LIBFLAG)itkgdcmDSED-4.7.lib
-#$(LIBFLAG)itkgdcmIOD-4.7.lib 
-#$(LIBFLAG)itkgdcmjpeg12-4.7.lib 
+#$(LIBFLAG)itkgdcmIOD-4.7.lib
+#$(LIBFLAG)itkgdcmjpeg12-4.7.lib
 #$(LIBFLAG)itkgdcmjpeg16-4.7.lib
 #$(LIBFLAG)itkgdcmjpeg8-4.7.lib
 #$(LIBFLAG)itkgdcmMSFF-4.7.lib

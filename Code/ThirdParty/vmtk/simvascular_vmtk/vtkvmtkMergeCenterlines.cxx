@@ -10,11 +10,11 @@ Version:   $Revision: 1.4 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -167,7 +167,7 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   cleaner->SetInputData(input);
 #endif
   cleaner->Update();
-  
+
   if (this->ResamplingStepLength < 1E-12)
     {
     this->ResamplingStepLength = 0.01 * cleaner->GetOutput()->GetLength();
@@ -186,7 +186,7 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   vtkPolyData* resampledCenterlines = vtkPolyData::New();
   resampledCenterlines->DeepCopy(resampler->GetOutput());
 
-  resampler->Delete(); 
+  resampler->Delete();
 
   radiusArray = resampledCenterlines->GetPointData()->GetArray(this->RadiusArrayName);
 
@@ -335,7 +335,7 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
 
     double bifurcationPoint[3];
     referenceSystems->GetPoint(referenceSystemPointId,bifurcationPoint);
-    
+
     vtkIdType bifurcationPointId = outputPoints->InsertNextPoint(bifurcationPoint);
 
     vtkIdType sourcePointId = -1;
@@ -411,7 +411,7 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
     upStreamGroupIds->Delete();
     downStreamGroupIds->Delete();
     }
- 
+
   vtkCellArray* extendedOutputLines = vtkCellArray::New();
   outputLines->InitTraversal();
   for (i=0; i<numberOfMergedCells; i++)
@@ -465,7 +465,7 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   groupIdsToBifurcationPointIds->Delete();
   cellAdditionalEndPointIds->Delete();
   extendedOutputLines->Delete();
- 
+
   return 1;
 }
 

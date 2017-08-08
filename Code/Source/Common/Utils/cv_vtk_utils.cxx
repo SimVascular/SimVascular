@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -681,7 +681,7 @@ int VtkUtils_GetLinkedLines( vtkIdType *lines, int numLines, int ptIx,
     }
   }
   // (*lineIxs) now contains a list of (*numLineIxs) line indices
-  
+
   delete [] tmp;
   return result;
 }
@@ -868,7 +868,7 @@ int VtkUtils_FindClosedLineRegions( vtkIdType *lines, int numLines, int numPts,
       MarkDeadEnd( state, numPts );
       prev = -1;
       curr = GetStartPt( state, numPts );
-      if (curr == -1) break; 
+      if (curr == -1) break;
       state[curr] = INTERMED;
 
       //      printf( "start --> %d --> ", curr );
@@ -896,7 +896,7 @@ int VtkUtils_FindClosedLineRegions( vtkIdType *lines, int numLines, int numPts,
       (*numRegions)++;
       prev = -1;
       curr = GetStartPt( state, numPts );
-      if (curr == -1) break; 
+      if (curr == -1) break;
       state[curr] = INTERMED;
 
       //      printf( "start --> %d --> ", curr );
@@ -910,7 +910,7 @@ int VtkUtils_FindClosedLineRegions( vtkIdType *lines, int numLines, int numPts,
       MarkDeadEnd( state, numPts );
       prev = -1;
       curr = GetStartPt( state, numPts );
-      if (curr == -1) break; 
+      if (curr == -1) break;
       state[curr] = INTERMED;
 
       //      printf( "start --> %d --> ", curr );
@@ -1448,15 +1448,15 @@ int VtkUtils_GetOrderedPoints(vtkPolyData *inputData, int direction,  double **o
    *****************/
 
   // Get point and line data.  Note that VtkUtils_GetPoints,
-  // VtkUtils_GetAllLines, VtkUtils_ReformatLineIndices 
+  // VtkUtils_GetAllLines, VtkUtils_ReformatLineIndices
   // allocate memory for their results.
-  
-  VtkUtils_GetPoints(inputData, &pts, &numPts); 
+
+  VtkUtils_GetPoints(inputData, &pts, &numPts);
   VtkUtils_GetAllLines(inputData, &numLines, &lines);
 
 
-  // Reformat the array lines so it can be used with 
-  // VtkUtils_GetClosedLineRegion.  
+  // Reformat the array lines so it can be used with
+  // VtkUtils_GetClosedLineRegion.
 
   numPtsPerPoly = lines[0];
   formattedLines = new vtkIdType [numPtsPerPoly * numLines];
@@ -1467,7 +1467,7 @@ int VtkUtils_GetOrderedPoints(vtkPolyData *inputData, int direction,  double **o
 
 
   // This returns a list of line indices in order of connectivity
-  VtkUtils_GetClosedLineRegion (formattedLines, numLines, startIndex, &orderedLineIndices, &numOrderedLineIndices);  
+  VtkUtils_GetClosedLineRegion (formattedLines, numLines, startIndex, &orderedLineIndices, &numOrderedLineIndices);
 
 
   // Allocate memory for the points and get the coordinates for the
@@ -1478,7 +1478,7 @@ int VtkUtils_GetOrderedPoints(vtkPolyData *inputData, int direction,  double **o
     {
       lineIndex = orderedLineIndices[i];
       ptIndex = formattedLines[lineIndex * 2];
-     
+
       // Copy point coordinates to orderedPts array
       for (j = 0; j < 3; j++)
  	(*orderedPts)[i * 3 + j] = pts[ptIndex * 3 + j];
@@ -1487,7 +1487,7 @@ int VtkUtils_GetOrderedPoints(vtkPolyData *inputData, int direction,  double **o
   *numOrderedPts = numPts;
 
 
-  // Compute the direction/orientation of the points.  If the 
+  // Compute the direction/orientation of the points.  If the
   // direction of the points isn't the desired direction, reverse
   // the order of the points.
 
@@ -1497,11 +1497,11 @@ int VtkUtils_GetOrderedPoints(vtkPolyData *inputData, int direction,  double **o
   if (currentDirection != direction)
     {
       VtkUtils_ReversePtList(*numOrderedPts, *orderedPts, &reversedPts);
-  
+
       for (i = 0; i < *numOrderedPts; i++)
 	for (j = 0; j < 3; j++)
 	  (*orderedPts)[i * 3 + j] = reversedPts[i * 3 + j];
-      
+
       delete [] reversedPts;
     }
 
@@ -1552,9 +1552,9 @@ int VtkUtils_CalcDirection(double *pts, int numPts, int *currentDirection)
   numDim = 3;
 
   // Now figure out direction of points
- 
+
   cgeom_CalcCentroid(pts, numPts, numDim, centroid);
-  
+
   angles = new double[numPts];
   incrAngleCount = 0;
   decrAngleCount = 0;
@@ -1564,18 +1564,18 @@ int VtkUtils_CalcDirection(double *pts, int numPts, int *currentDirection)
     {
       for (j = 0; j < 3; j++)
 	tmpPt[j] = pts[i * 3 + j];
-      
+
       cgeom_CalcAngle(centroid, tmpPt, &tmpAngle);
-      
+
       angles[i] = tmpAngle;
     }
 
-  
+
   // Loop 2:  Track whether angles are increasing or decreasing
   for (i = 0; i < numPts; i++)
-    {      
+    {
       index1 = i;
-      
+
       if (i == 0)
 	index2 = numPts - 1;
       else
@@ -1589,7 +1589,7 @@ int VtkUtils_CalcDirection(double *pts, int numPts, int *currentDirection)
       // increment decrAngleCount.) This is okay if most of the other points
       // are well-behaved.
       if ((angles[index1] - angles[index2]) >= 0)
-	incrAngleCount++; 
+	incrAngleCount++;
       else
 	decrAngleCount++;
     }
@@ -1632,7 +1632,7 @@ int VtkUtils_ReversePtList( int num, double ptsIn[], double *ptsOut[] )
 // ----------------------
 // VtkUtils_PDCheckArrayName
 // ----------------------
-/** 
+/**
  * @brief Function to check is array with name exists in cell or point data
  * @param object this is the object to check if the array exists
  * @param datatype this is point or cell. point =0,cell=1
@@ -1658,7 +1658,7 @@ int VtkUtils_PDCheckArrayName(vtkPolyData *object,int datatype,std::string array
       }
     }
   }
-  else 
+  else
   {
     numArrays = object->GetCellData()->GetNumberOfArrays();
     for (i=0;i<numArrays;i++)
@@ -1683,7 +1683,7 @@ int VtkUtils_PDCheckArrayName(vtkPolyData *object,int datatype,std::string array
 // -------------------
 // VtkUtils_UGCheckArrayName
 // -------------------
-/** 
+/**
  * @brief Function to check is array with name exists in cell or point data
  * @param object this is the object to check if the array exists
  * @param datatype this is point or cell. point =0,cell=1
@@ -1709,7 +1709,7 @@ int VtkUtils_UGCheckArrayName(vtkUnstructuredGrid *object,int datatype,std::stri
       }
     }
   }
-  else 
+  else
   {
     numArrays = object->GetCellData()->GetNumberOfArrays();
     for (i=0;i<numArrays;i++)

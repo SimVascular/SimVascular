@@ -335,8 +335,8 @@ proc XFInfoImagesSet {xfImgName} {
   set xfAttrbs {}
   if {$attrb != ""} {
     lappend xfAttrbs -data $attrb
-  }    
-  set attrb [.xfInfoImg.file.file get]    
+  }
+  set attrb [.xfInfoImg.file.file get]
   if {$attrb != ""} {
     lappend xfAttrbs -file $attrb
   }

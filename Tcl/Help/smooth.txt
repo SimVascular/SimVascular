@@ -4,9 +4,9 @@ Selecting any of the following surface operators will edit the entire surface of
 
 ## Surface Operators summary
 
-        Smooth Poly Data Model: 
+        Smooth Poly Data Model:
                 smooths the bumps and ridges of the model
-                Laplacian Smooth -> Relax Factor -> Choose between .01 and .05 
+                Laplacian Smooth -> Relax Factor -> Choose between .01 and .05
 
 
         Butterfly Subdivision:
@@ -17,7 +17,7 @@ Selecting any of the following surface operators will edit the entire surface of
 
         Decimate Surface:
                 Based on target rate, makes the meshing triangles bigger
-                
+
 
         WindowSync Smooth:
                 Smooths more than Laplacian smooth

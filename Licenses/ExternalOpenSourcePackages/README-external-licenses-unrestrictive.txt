@@ -46,7 +46,7 @@ MODIFICATIONS.
 
 GOVERNMENT USE: If you are acquiring this software on behalf of the
 U.S. government, the Government shall have only "Restricted Rights"
-in the software and related documentation as defined in the Federal 
+in the software and related documentation as defined in the Federal
 Acquisition Regulations (FARs) in Clause 52.227.19 (c) (2).  If you
 are acquiring the software on behalf of the Department of Defense, the
 software shall be classified as "Commercial Computer Software" and the
@@ -54,7 +54,7 @@ Government shall have only "Restricted Rights" as defined in Clause
 252.227-7013 (b) (3) of DFARs.  Notwithstanding the foregoing, the
 authors grant the U.S. Government and others acting in its behalf
 permission to use and distribute the software in accordance with the
-terms specified in this license. 
+terms specified in this license.
 
 ***************************************************************
 ***************************************************************
@@ -406,4 +406,4 @@ software, even if advised of the possibility of such damage.
 ***************************************************************
 
 The code was developed at US Government research laboratories and is therefore in the public domain.  [SLATEC, Wikipedia, accessed on 2014-08-10].
- 
+

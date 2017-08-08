@@ -10,11 +10,11 @@
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -41,7 +41,7 @@ public:
   vtkTypeMacro(vtkvmtkMath,vtkObject);
 //  vtkTypeMacro(vtkvmtkMath,vtkObject);
   static vtkvmtkMath* New();
-  
+
   static double Cotangent(double point0[3], double point1[3], double point2[3]);
   static double TriangleArea(double point0[3], double point1[3], double point2[3]);
   static int IsAngleObtuse(double point0[3], double point1[3], double point2[3]);
@@ -57,23 +57,23 @@ protected:
   ~vtkvmtkMath() {};
 
   static double GetTolerance(float cookie)
-  { 
-    return VTK_VMTK_FLOAT_TOL; 
+  {
+    return VTK_VMTK_FLOAT_TOL;
   }
 
   static double GetTolerance(double cookie)
-  { 
-    return VTK_VMTK_DOUBLE_TOL; 
+  {
+    return VTK_VMTK_DOUBLE_TOL;
   }
 
   static double GetLarge(float cookie)
-  { 
-    return VTK_VMTK_LARGE_FLOAT; 
+  {
+    return VTK_VMTK_LARGE_FLOAT;
   }
 
   static double GetLarge(double cookie)
-  { 
-    return VTK_VMTK_LARGE_DOUBLE; 
+  {
+    return VTK_VMTK_LARGE_DOUBLE;
   }
 
 private:

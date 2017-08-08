@@ -101,7 +101,7 @@ proc ReadBox {} {# xf ignore me 5
     -borderwidth 0 \
     -relief raised
   catch ".readBox.frame1 config $tmpFrameOpt"
- 
+
   button .readBox.frame1.send \
     -text "Send" \
     -command {
@@ -140,7 +140,7 @@ proc ReadBox {} {# xf ignore me 5
     -borderwidth 0 \
     -relief raised
   catch ".readBox.text1 config $tmpFrameOpt"
- 
+
   scrollbar .readBox.text1.scrollbar1 \
     -command {.readBox.text1.text1 yview} \
     -relief "raised"

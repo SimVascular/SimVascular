@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=3.0
-Name=SimVascular 
+Name=SimVascular
 Comment=Open Source Software for Cardiovascular Modeling and Simulation
 Exec=@SV_FULL_LAUNCH_FILE@
 Icon=@SV_FULL_ICON_FILE@

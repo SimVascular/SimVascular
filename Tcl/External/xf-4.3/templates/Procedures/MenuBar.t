@@ -58,7 +58,7 @@ proc MenuBarConf {menuBarConfig} {# xf ignore me 5
 # Returns: none
 # Sideeffects: none
 ##########
-# 
+#
 # global menuBar(activeBackground) - active background color
 # global menuBar(activeForeground) - active foreground color
 # global menuBar(background) - background color
@@ -131,42 +131,42 @@ proc MenuBarConf {menuBarConfig} {# xf ignore me 5
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1 config $tmpFrameOpt"
- 
+
   frame .menuBar.frame1.frame2 \
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame2 config $tmpFrameOpt"
- 
+
   frame .menuBar.frame1.frame2.frame4 \
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame2.frame4 config $tmpFrameOpt"
- 
+
   frame .menuBar.frame1.frame2.frame5 \
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame2.frame5 config $tmpFrameOpt"
- 
+
   frame .menuBar.frame1.frame2.frame6 \
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame2.frame6 config $tmpFrameOpt"
- 
+
   frame .menuBar.frame1.frame2.frame8 \
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame2.frame8 config $tmpFrameOpt"
- 
+
   frame .menuBar.frame1.frame7 \
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame7 config $tmpFrameOpt"
- 
+
   frame .menuBar.frame1.frame3 \
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame3 config $tmpFrameOpt"
- 
+
   scrollbar .menuBar.frame1.frame2.frame5.vscroll \
     -relief raised \
     -command ".menuBar.frame1.frame2.frame5.buttons yview"
@@ -346,7 +346,7 @@ proc MenuBarConf {menuBarConfig} {# xf ignore me 5
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame2.frame4.items config $tmpFrameOpt"
- 
+
   menubutton .menuBar.frame1.frame2.frame4.items.items \
     -text "Menu entry:" \
     -menu ".menuBar.frame1.frame2.frame4.items.items.m"
@@ -385,12 +385,12 @@ proc MenuBarConf {menuBarConfig} {# xf ignore me 5
       -variable menuBar(menuType) \
       -value "<separator> " \
       -command "MenuBarSetItems separator"
-  
+
   label .menuBar.frame1.frame2.frame4.items.message1 \
     -anchor w \
     -text "Commandbutton"
   catch ".menuBar.frame1.frame2.frame4.items.message1 config $tmpMessageOpt"
-  
+
   MenuBarEntry accelerator "Accelerator:"
   MenuBarEntry actbg "Active background:"
   MenuBarScale actborder "Active borderwidth:" "pixels" 40
@@ -411,7 +411,7 @@ proc MenuBarConf {menuBarConfig} {# xf ignore me 5
     -borderwidth 0 \
     -relief raised
   catch ".menuBar.frame1.frame2.frame4.state config $tmpFrameOpt"
- 
+
   label .menuBar.frame1.frame2.frame4.state.message1 \
     -anchor w \
     -relief raised \
@@ -453,7 +453,7 @@ proc MenuBarConf {menuBarConfig} {# xf ignore me 5
     -relief raised \
     -text "Command:"
   catch ".menuBar.frame1.frame2.frame4.message1 config $tmpMessageOpt"
-  
+
   frame .menuBar.frame1.frame2.frame4.command \
     -borderwidth 0 \
     -relief raised

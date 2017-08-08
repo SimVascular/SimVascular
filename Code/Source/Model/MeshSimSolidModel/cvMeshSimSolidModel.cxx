@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 #include "cvMeshSimSolidModel.h"
 #include "cv_sys_geom.h"
 
@@ -84,7 +84,7 @@ void cvMeshSimSolidModel::Print() const
     int numEdges = GM_numEdges(geom_);
     int numFaces = GM_numFaces(geom_);
     int numRegions = GM_numRegions(geom_);
-    cout<<"num edges: "<<numEdges<<endl;    
+    cout<<"num edges: "<<numEdges<<endl;
     cout<<"num faces: "<<numFaces<<endl;
     cout<<"num regions: "<<numRegions<<endl;
   }
@@ -102,14 +102,14 @@ int cvMeshSimSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
   }
 
   this->Print();
-  
+
   int num = 0;
 
   GFIter myFiter = GM_faceIter(geom_);
-  pGFace myface; 
+  pGFace myface;
   while (myface = GFIter_next(myFiter)) {
     num++;
-  }  
+  }
   GFIter_delete(myFiter);
 
   *numFaces = num;
@@ -122,7 +122,7 @@ int cvMeshSimSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
   int j = 0;
   while (myface = GFIter_next(myFiter)) {
     (*faceIds)[j++] = GEN_tag(myface);
-  }  
+  }
   GFIter_delete(myFiter);
 
   return SV_OK;
@@ -133,7 +133,7 @@ int cvMeshSimSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 int cvMeshSimSolidModel::FindNodesOnElementFace (pFace face, int* nodes, double *xyz) const {
 
   return 0;
-  
+
   int i;
   int num_nodes = 0;
 
@@ -141,7 +141,7 @@ int cvMeshSimSolidModel::FindNodesOnElementFace (pFace face, int* nodes, double 
 
   pPList vert_list = F_vertices (face,MY_MESHSIM_VERTEX_ORDERING);
   int numElemFaceVerts = PList_size (vert_list);
-  
+
   // write out "linear" nodes
   for (i = 0; i < numElemFaceVerts; i++) {
     pVertex vertex = (pVertex)PList_item (vert_list, i);
@@ -164,18 +164,18 @@ int cvMeshSimSolidModel::FindNodesOnElementFace (pFace face, int* nodes, double 
       if (E_numPoints(xedge) != 1) {
         fprintf(stderr,"ERROR:  no interior point!\n");
         exit(-1);
-      }       
-      nodes[numElemFaceVerts+i] = P_id(E_point(xedge,0)); 
+      }
+      nodes[numElemFaceVerts+i] = P_id(E_point(xedge,0));
       xyz[pos++]=P_x(E_point(xedge,0));
       xyz[pos++]=P_y(E_point(xedge,0));
-      xyz[pos++]=P_z(E_point(xedge,0));    
+      xyz[pos++]=P_z(E_point(xedge,0));
     }
 
     num_nodes+=numEdges;
   }
 
   return num_nodes;
-  
+
 }
 
 
@@ -188,18 +188,18 @@ cvPolyData* cvMeshSimSolidModel::GetFacePolyData(int faceID, int useMaxDist, dou
 
   int n;
   vtkPolyData *mycvPolyData;
-  cvPolyData *result; 
+  cvPolyData *result;
 
   int foundIt = 0;
 
   GFIter myGFiter = GM_faceIter(geom_);
-  pGFace mygface; 
+  pGFace mygface;
   while (mygface = GFIter_next(myGFiter)) {
     if (faceID == GEN_tag(mygface)) {
       foundIt++;
       break;
     }
-  }  
+  }
   GFIter_delete(myGFiter);
 
   if (!foundIt) {
@@ -212,7 +212,7 @@ cvPolyData* cvMeshSimSolidModel::GetFacePolyData(int faceID, int useMaxDist, dou
   return NULL;
   //pMesh mesh = DM_getMesh(geom_);
 /////// PROBABLY OKAY FROM HERE DOWN!
-  
+
   // vtk requires single precision
   vtkFloatingPointType p[3];
 
@@ -224,7 +224,7 @@ cvPolyData* cvMeshSimSolidModel::GetFacePolyData(int faceID, int useMaxDist, dou
   mycvPolyData->SetPoints(myPoints);
 
   vtkIdList* PointIds = vtkIdList::New();
-  PointIds->Allocate(10,10);  
+  PointIds->Allocate(10,10);
 
   // track the actual mesh node numbers in a scalar array
   vtkFloatArray *myScalars = vtkFloatArray::New();
@@ -240,7 +240,7 @@ cvPolyData* cvMeshSimSolidModel::GetFacePolyData(int faceID, int useMaxDist, dou
   while (myface = FIter_next(myFiter)) {
 
         //if (!(loopfaces % 10000)) fprintf(stdout,"face %i\n",loopfaces);
-  
+
         // Get the model tag for the face
         int facetag=0;
         pGEntity modelface = F_whatIn(myface);
@@ -291,7 +291,7 @@ cvPolyData* cvMeshSimSolidModel::GetFacePolyData(int faceID, int useMaxDist, dou
   delete tmpresult;
 
   return result;
-  
+
 }
 
 
@@ -366,10 +366,10 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
 {
 
   int i;
-  
+
   fprintf(stdout,"inside of ReadNative!\n");
   fflush(stdout);
-  
+
   if (geom_ != NULL) {
     return SV_ERROR;
   }
@@ -379,7 +379,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   //
   // read the geometry
   //
-  
+
   FILE* fp = NULL;
   if ( (fp = fopen(filename,"r")) == NULL) {
     fprintf(stdout,"ERROR opening file (%s)\n",filename);
@@ -389,7 +389,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   //
   //  vertices
   //
-  
+
   std::map <int,meshsim_vertex_info> vertices;
 
   int number_of_vertices  = 0;
@@ -417,11 +417,11 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     pv = NULL;
     pv = GImporter_createVertex(importer,v.xyz);
     v.ptr = pv;
-    vertices[vid] = v; 
+    vertices[vid] = v;
   }
 
   std::map<int,meshsim_vertex_info>::iterator iv;
-  
+
   for (iv=vertices.begin();iv !=vertices.end(); ++iv) {
     int tmpid = iv->first;
     meshsim_vertex_info tmpv = iv->second;
@@ -432,13 +432,13 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
 	    tmpv.xyz[2]);
   }
   fflush(stdout);
-  
+
   //
   // read lines
   //
 
   int number_of_lines = 0;
-  
+
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -448,7 +448,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
 
   fprintf(stdout,"number_of_lines %i\n",number_of_lines);
   fflush(stdout);
- 
+
   std::map <int,meshsim_line_info> lines;
 
   for (i = 0;i < number_of_lines;i++) {
@@ -469,7 +469,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   }
 
   std::map<int,meshsim_line_info>::iterator il;
-  
+
   for (il=lines.begin();il !=lines.end(); ++il) {
     int lid = il->first;
     meshsim_line_info tmpl = il->second;
@@ -485,7 +485,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   //
 
   int number_of_planes = 0;
-  
+
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -495,7 +495,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
 
   fprintf(stdout,"number_of_planes %i\n",number_of_planes);
   fflush(stdout);
- 
+
   std::map <int,meshsim_plane_info> planes;
 
   for (i = 0;i < number_of_planes;i++) {
@@ -517,7 +517,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   }
 
   std::map<int,meshsim_plane_info>::iterator ip;
-  
+
   for (ip=planes.begin();ip !=planes.end(); ++ip) {
     int pid = ip->first;
     meshsim_plane_info tmpp = ip->second;
@@ -534,7 +534,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   //
 
   int number_of_edges = 0;
-  
+
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -544,7 +544,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
 
   fprintf(stdout,"number_of_edges %i\n",number_of_edges);
   fflush(stdout);
- 
+
   std::map <int,meshsim_edge_info> edges;
 
   for (i = 0;i < number_of_edges;i++) {
@@ -553,14 +553,14 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
       return SV_ERROR;
     }
-    
+
     meshsim_edge_info myedge;
     int eid = 0;
     int vertex0_id = 0;
     int vertex1_id = 0;
     int curve_id = 0;
     int edge_dir = 0;
-    
+
     sscanf(line,"edge %i %i %i %i %i\n",
 	   &eid,&vertex0_id,&vertex1_id,&curve_id,&edge_dir);
 
@@ -579,7 +579,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   }
 
   std::map<int,meshsim_edge_info>::iterator ie;
-  
+
   for (ie=edges.begin();ie !=edges.end(); ++ie) {
     int eid2 = ie->first;
     meshsim_edge_info tmpe = ie->second;
@@ -595,7 +595,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   //
 
   int number_of_faces = 0;
-  
+
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -609,7 +609,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   std::map <int,meshsim_face_info> faces;
 
   for (i = 0;i < number_of_faces;i++) {
-    
+
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -618,7 +618,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
 
     int fid = 0;
     sscanf(line,"face %i\n",&fid);
-     
+
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -626,15 +626,15 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     }
 
     meshsim_face_info myface;
-    
+
     int face_number_of_edges = 0;
     sscanf(line,"number_of_edges %i\n",&face_number_of_edges);
-    
+
     pGEdge* face_edges = new pGEdge[face_number_of_edges];
     int* face_edge_senses = new int[face_number_of_edges];
 
     int j;
-    
+
     for (j = 0; j < face_number_of_edges; j++) {
       line[0]='\0';
       if (fgets(line,1024,fp) == NULL) {
@@ -643,12 +643,12 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       }
       int face_edge_id = 0;
       int face_edge_dir = 0;
-      
+
       sscanf(line,"edge %i %i\n",&face_edge_id,&face_edge_dir);
       face_edges[j] = edges[face_edge_id].ptr;
       face_edge_senses[j] = face_edge_dir;
     }
-   
+
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -670,7 +670,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       sscanf(line,"loopIndex %i %i\n",&loop_j,&loop_index);
       loopIndex[j] = loop_index;
     }
-    
+
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -713,7 +713,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   }
 
   std::map<int,meshsim_face_info>::iterator iface;
-  
+
   for (iface=faces.begin();iface !=faces.end(); ++iface) {
     int fid2 = iface->first;
     meshsim_face_info tmpf = iface->second;
@@ -728,7 +728,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   //
 
   int number_of_regions = 0;
-  
+
   line[0]='\0';
   if (fgets(line,1024,fp) == NULL) {
     fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -742,7 +742,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   std::map <int,meshsim_region_info> regions;
 
   for (i = 0;i < number_of_regions;i++) {
-    
+
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -751,7 +751,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
 
     int rid = 0;
     sscanf(line,"create_region %i\n",&rid);
-     
+
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -759,17 +759,17 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     }
 
     meshsim_region_info myregion;
-    
+
     int region_number_of_faces = 0;
     sscanf(line,"number_of_faces %i\n",&region_number_of_faces);
     fprintf(stdout,"numebr_of_faces %i\n",region_number_of_faces);
     fflush(stdout);
-    
+
     pGFace* region_faces = new pGFace[region_number_of_faces];
     int* region_face_senses = new int[region_number_of_faces];
 
     int j;
-    
+
     for (j = 0; j < region_number_of_faces; j++) {
       line[0]='\0';
       if (fgets(line,1024,fp) == NULL) {
@@ -778,12 +778,12 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       }
       int region_face_id = 0;
       int region_face_dir = 0;
-      
+
       sscanf(line,"face %i %i\n",&region_face_id,&region_face_dir);
       region_faces[j] = faces[region_face_id].ptr;
       region_face_senses[j] = region_face_dir;
     }
-   
+
     line[0]='\0';
     if (fgets(line,1024,fp) == NULL) {
       fprintf(stdout,"ERROR reading line from file (%s)\n",filename);
@@ -794,7 +794,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
     sscanf(line,"number_of_shells %i\n",&number_of_shells);
     fprintf(stdout,"numebr_of_shells %i\n",number_of_shells);
     fflush(stdout);
- 
+
     int* shellIndex = new int[number_of_shells];
     for (j = 0; j < number_of_shells; j++) {
       line[0]='\0';
@@ -807,7 +807,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       sscanf(line,"shellIndex %i %i\n",&shell_j,&shell_index);
       shellIndex[j] = shell_index;
     }
- 
+
     pGRegion region_ptr = NULL;
     fprintf(stdout,"creaeRegion %i %p %p %i %p\n",region_number_of_faces,
 				    region_faces,
@@ -826,7 +826,7 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
   }
 
   std::map<int,meshsim_region_info>::iterator iregion;
-  
+
   for (iregion=regions.begin();iregion !=regions.end(); ++iregion) {
     int rid2 = iregion->first;
     meshsim_region_info tmpf = iregion->second;
@@ -858,15 +858,15 @@ int cvMeshSimSolidModel::ReadNative( char *filename )
       fflush(stdout);
     }
   }
-  
+
   fflush(stdout);
   // memory leak for now...
   //GImporter_delete(importer);
 
 
-   
+
   fflush(stdout);
-  
+
   fclose(fp);
 
   // read geomsim geometric model
@@ -906,7 +906,7 @@ int MeshSimSolidUtils_GetVtkPolyData( pGModel model, int useMaxDist, double max_
   vtkPolyData *mycvPolyData;
 
   int i,j;
-  
+
   pACase mcase = MS_newMeshCase(model);
   pModelItem mdomain = GM_domain(model);
 
@@ -918,21 +918,21 @@ int MeshSimSolidUtils_GetVtkPolyData( pGModel model, int useMaxDist, double max_
 
       MS_setupMesh(mesh);
 
-      mesh = M_new(0,model);  
+      mesh = M_new(0,model);
 
       double target_size = max_dist;
       MS_setMeshSize(mcase,mdomain,1,target_size,NULL);
-  
+
       // initialize the surface mesher
       MS_initSurfaceMesher(mcase,0);
       pProcess sp = MS_newSurfaceMesher(mcase,mesh,0);
       Process_execute(sp);
       Process_delete(sp);
-      
+
   }
   */
   ////// PROBABLY OKAY FROM HERE DOWN!!
-  
+
   int num_verts = M_numVertices (mesh);
   fprintf(stdout,"num_verts: %i\n",num_verts);
   // only want the linear tets, surfaces, and nodes
@@ -956,13 +956,13 @@ int MeshSimSolidUtils_GetVtkPolyData( pGModel model, int useMaxDist, double max_
   for (i = 0; i < num_verts; i++) {
     pPoint point = V_point (VIter_next(myViter));
     int nodenumber = P_id (point);
-    //fprintf(stdout,"nodenumber: %i\n",nodenumber);  
+    //fprintf(stdout,"nodenumber: %i\n",nodenumber);
     double x = P_x (point);
     double y = P_y (point);
-    double z = P_z (point);  
+    double z = P_z (point);
     p[0] = x; p[1] = y; p[2] = z;
     myPoints->InsertPoint(nodenumber-1,p);
-  } // i 
+  } // i
   VIter_delete(myViter);
 
   mycvPolyData = vtkPolyData::New();
@@ -971,25 +971,25 @@ int MeshSimSolidUtils_GetVtkPolyData( pGModel model, int useMaxDist, double max_
 
   // if a surface mesh, insert facets
   vtkIdList* PointIds = vtkIdList::New();
-  PointIds->Allocate(10,10);  
- 
+  PointIds->Allocate(10,10);
+
   // insert the triangles
 
   int num_faces = M_numFaces (mesh);
   fprintf(stdout,"num_faces: %i\n",num_faces);
 
   FIter myFiter = M_faceIter(mesh);
-  pFace myface; 
+  pFace myface;
   while (myface = FIter_next(myFiter)) {
       pPList vert_list = F_vertices (myface,MY_MESHSIM_VERTEX_ORDERING);
       for (j = 0; j < PList_size (vert_list); j++) {
         int nodenum = P_id (V_point ((pVertex)PList_item (vert_list, j)));
         PointIds->InsertNextId(nodenum-1);
-      }      
+      }
       mycvPolyData->InsertNextCell(VTK_POLYGON,PointIds);
-      PList_delete(vert_list);  
+      PList_delete(vert_list);
       PointIds->Reset();
-  }  
+  }
   FIter_delete(myFiter);
 
   PointIds->Delete();
@@ -1012,13 +1012,13 @@ cvPolyData *cvMeshSimSolidModel::GetPolyData(int useMaxDist, double max_dist) co
 
   vtkPolyData *bound;
   cvPolyData *result;
- 
+
   if ( geom_ == NULL ) return NULL;
-  
+
   if ( MeshSimSolidUtils_GetVtkPolyData( geom_, useMaxDist, max_dist, &bound ) != SV_OK ) {
     return NULL;
   }
- 
+
   result = new cvPolyData( bound );
   bound->Delete();  // cvPolyData uses ref-counting
 

@@ -99,7 +99,7 @@ proc XFConfig.Text4 {xfW xfType xfClass {xfLeader ""}} {
   XFElementSize $xfW .xf${xfClass}Config4 $xfType $xfClass XFTextSetText4
 
   XFTmpltFrame .xf${xfClass}Config4.params1.params2.frame2 0
-  
+
   label .xf${xfClass}Config4.params1.params2.frame2.message1 \
     -anchor e \
     -width $xfStatus(elementWidth) \

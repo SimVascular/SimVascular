@@ -228,7 +228,7 @@ proc InputBoxInternal {inputBoxMessage inputBoxCommandOk inputBoxCommandCancel i
 
     $inputBox(toplevelName).frame1.input insert 0 \
       $inputBox($inputBox(toplevelName),inputOne)
-    
+
     # bindings
     bind $inputBox(toplevelName).frame1.input <Return> "
       global inputBox
@@ -239,7 +239,7 @@ proc InputBoxInternal {inputBoxMessage inputBoxCommandOk inputBoxCommandCancel i
         catch {destroy $inputBox(toplevelName)}
       }
       $inputBoxCommandOk"
-    
+
     # packing
     pack append $inputBox(toplevelName).frame1 \
                 $inputBox(toplevelName).frame1.hscroll {bottom fill} \
@@ -285,7 +285,7 @@ proc InputBoxInternal {inputBoxMessage inputBoxCommandOk inputBoxCommandCancel i
                 $inputBox(toplevelName).frame1.vscroll "$inputBox(scrollSide) filly" \
                 $inputBox(toplevelName).frame1.input {left fill expand}
   }
-  
+
   button $inputBox(toplevelName).frame0.button0 \
     -text "OK" \
     -command "

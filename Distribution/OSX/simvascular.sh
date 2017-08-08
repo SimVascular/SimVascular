@@ -1,6 +1,6 @@
 #!/bin/bash -f
 #/bin/tcsh -f
-# limit stacksize unlimited 
+# limit stacksize unlimited
 
 if [ "$BASH_SOURCE" == "$0" ];then
   BUNDLE=`echo "$0" | sed -e 's/\/Contents\/MacOS\/.*//'`

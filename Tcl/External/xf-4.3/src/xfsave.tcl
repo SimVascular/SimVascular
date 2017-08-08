@@ -353,7 +353,7 @@ proc XFSaveModules {xfFileName} {
           }
         }
       }
- 
+
       XFSaveSourceAppendix $xfOutFile
       puts $xfOutFile "\n# eof"
       puts $xfOutFile "#"

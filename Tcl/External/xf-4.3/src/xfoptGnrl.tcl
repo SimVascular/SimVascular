@@ -65,7 +65,7 @@ proc XFOptionsGeneral {} {
   XFTmpltFrame .xfOptionsGeneral.frame2
 
   XFTmpltScaleDouble .xfOptionsGeneral.frame2 autosave "Auto save:" \
-    "Interval(min)" "File number" 120 100 
+    "Interval(min)" "File number" 120 100
   .xfOptionsGeneral.frame2.autosave.autosave1.autosave1 set $xfConf(saveInterval)
   .xfOptionsGeneral.frame2.autosave.autosave2.autosave2 set $xfConf(maxSaveId)
   XFMiscSetResource .xfOptionsGeneral.frame2.autosave.label1 \

@@ -6,13 +6,13 @@
 
 ## Script File
 
-	* Meshsim script file: Load or save a script file (.mss). If you have run a previous mesh with the same parameters, you can just load the script file from the run. The script file saves the meshing parameters specified. 
+	* Meshsim script file: Load or save a script file (.mss). If you have run a previous mesh with the same parameters, you can just load the script file from the run. The script file saves the meshing parameters specified.
 
 ## Basic Options
 
-	* Global max edge size: Specify a global max edge size. This edge size will be targeted for all elements and no element will have a size larger than the specified number. 
+	* Global max edge size: Specify a global max edge size. This edge size will be targeted for all elements and no element will have a size larger than the specified number.
 	* Type: Specify to use absolute or relative edge size
-		Absolute - is used to specify a number based on the dimensions of the model. 
+		Absolute - is used to specify a number based on the dimensions of the model.
 		Relative - is a number between 0 and 1. The actual mesh size will be calculated by multiplying the length of the largest edge of the coordinate-aligned bounding box of the entity by the given parameter.
 
 ## Load/Create Mesh

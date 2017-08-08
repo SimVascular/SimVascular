@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,9 +32,9 @@
  *  @brief Ipmlements functions to register MeshSimAdapt as an adaptor type
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "SimVascular.h"
@@ -59,7 +59,7 @@
 // --------
 
 #include "cv_globals.h"
- 
+
 // Prototypes:
 // -----------
 //
@@ -86,15 +86,15 @@ int Meshsimadapt_Init( Tcl_Interp *interp )
 {
 
   printf("  %-12s %s\n","","MeshSim Adaption Enabled");
-  
+
   // Associate the adapt registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
-  cvFactoryRegistrar* adaptObjectRegistrar = 
+  cvFactoryRegistrar* adaptObjectRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", NULL);
 
   if (adaptObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_MESHSIM, 
+          adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_MESHSIM,
       (FactoryMethodPtr) &CreateMeshSimAdapt );
 
     Tcl_CreateCommand( interp, "meshsimadapt_available", MeshSimAdapt_AvailableCmd,
@@ -127,14 +127,14 @@ int MeshSimAdapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_SetResult( interp, "usage: registrars_list", TCL_STATIC );
     return TCL_ERROR;
   }
-  cvFactoryRegistrar *adaptObjectRegistrar = 
+  cvFactoryRegistrar *adaptObjectRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", NULL);
 
   char result[255];
   sprintf( result, "Adapt object registrar ptr -> %p\n", adaptObjectRegistrar );
   Tcl_AppendElement( interp, result );
   for (int i = 0; i < 5; i++) {
-    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n", 
+    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n",
       i, (adaptObjectRegistrar->GetFactoryMethodPtr(i)));
     Tcl_AppendElement( interp, result );
   }

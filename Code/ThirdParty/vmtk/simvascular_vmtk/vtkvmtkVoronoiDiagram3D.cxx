@@ -10,11 +10,11 @@ Version:   $Revision: 1.5 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -76,7 +76,7 @@ void vtkvmtkVoronoiDiagram3D::ExtractUniqueEdges(vtkUnstructuredGrid* input, vtk
   insertedLoopPoints = vtkIdList::New();
 
   for (i=0; i<input->GetNumberOfPoints(); i++)
-    {           
+    {
     visited->SetValue(i,1);
     edgePts[0] = i;
     pointCells->Initialize();
@@ -136,7 +136,7 @@ void vtkvmtkVoronoiDiagram3D::BuildVoronoiPolys(vtkUnstructuredGrid* input, vtkC
     linePointIds->Initialize();
     linePointIds->InsertNextId(pts[0]);
     linePointIds->InsertNextId(pts[1]);
-                
+
     boundaryTetra = false;
     neighborCells->Initialize();
     neighborTrianglePointIds->Initialize();
@@ -269,7 +269,7 @@ int vtkvmtkVoronoiDiagram3D::RequestData(
       }
     this->PoleIds->SetId(i,poleId);
     thicknessScalars->SetValue(i,currentRadius);
-    }  
+    }
 
   this->BuildVoronoiPolys(input,newPolys);
 

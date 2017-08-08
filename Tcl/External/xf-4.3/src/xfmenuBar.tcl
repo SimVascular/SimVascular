@@ -53,7 +53,7 @@ proc XFMenuBarConf {xfMenuBarConfig} {# xf ignore me 5
 # Returns: none
 # Sideeffects: none
 ##########
-# 
+#
 # global xfMenuBar(activeBackground) - active background color
 # global xfMenuBar(activeForeground) - active foreground color
 # global xfMenuBar(background) - background color
@@ -112,42 +112,42 @@ proc XFMenuBarConf {xfMenuBarConfig} {# xf ignore me 5
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1 config $tmpFrameOpt"
- 
+
   frame .xfMenuBar.frame1.frame2 \
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame2 config $tmpFrameOpt"
- 
+
   frame .xfMenuBar.frame1.frame2.frame4 \
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame2.frame4 config $tmpFrameOpt"
- 
+
   frame .xfMenuBar.frame1.frame2.frame5 \
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame2.frame5 config $tmpFrameOpt"
- 
+
   frame .xfMenuBar.frame1.frame2.frame6 \
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame2.frame6 config $tmpFrameOpt"
- 
+
   frame .xfMenuBar.frame1.frame2.frame8 \
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame2.frame8 config $tmpFrameOpt"
- 
+
   frame .xfMenuBar.frame1.frame7 \
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame7 config $tmpFrameOpt"
- 
+
   frame .xfMenuBar.frame1.frame3 \
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame3 config $tmpFrameOpt"
- 
+
   scrollbar .xfMenuBar.frame1.frame2.frame5.vscroll \
     -highlightthickness 0 \
     -relief raised \
@@ -337,7 +337,7 @@ proc XFMenuBarConf {xfMenuBarConfig} {# xf ignore me 5
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame2.frame4.items config $tmpFrameOpt"
- 
+
   menubutton .xfMenuBar.frame1.frame2.frame4.items.items \
     -text "Menu entry:" \
     -menu ".xfMenuBar.frame1.frame2.frame4.items.items.m"
@@ -376,12 +376,12 @@ proc XFMenuBarConf {xfMenuBarConfig} {# xf ignore me 5
       -variable xfMenuBar(menuType) \
       -value "<separator> " \
       -command "XFMenuBarSetItems separator"
-  
+
   label .xfMenuBar.frame1.frame2.frame4.items.message1 \
     -anchor w \
     -text "Commandbutton"
   catch ".xfMenuBar.frame1.frame2.frame4.items.message1 config $tmpMessageOpt"
-  
+
   XFMenuBarEntry accelerator "Accelerator:"
   XFMenuBarEntry actbg "Active background:"
   XFMenuBarScale actborder "Active borderwidth:" "pixels" 40
@@ -402,7 +402,7 @@ proc XFMenuBarConf {xfMenuBarConfig} {# xf ignore me 5
     -borderwidth 0 \
     -relief raised
   catch ".xfMenuBar.frame1.frame2.frame4.state config $tmpFrameOpt"
- 
+
   label .xfMenuBar.frame1.frame2.frame4.state.message1 \
     -anchor w \
     -relief raised \
@@ -447,7 +447,7 @@ proc XFMenuBarConf {xfMenuBarConfig} {# xf ignore me 5
     -relief raised \
     -text "Command:"
   catch ".xfMenuBar.frame1.frame2.frame4.message1 config $tmpMessageOpt"
-  
+
   frame .xfMenuBar.frame1.frame2.frame4.command \
     -borderwidth 0 \
     -relief raised

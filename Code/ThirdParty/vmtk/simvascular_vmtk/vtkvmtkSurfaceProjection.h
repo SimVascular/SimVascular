@@ -10,11 +10,11 @@ Version:   $Revision: 1.4 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -33,9 +33,9 @@ class vtkPolyData;
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceProjection : public vtkPolyDataAlgorithm
 {
-  public: 
+  public:
   vtkTypeMacro(vtkvmtkSurfaceProjection,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkSurfaceProjection *New();
 
@@ -46,7 +46,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceProjection : public vtkPolyDataAlgorith
 
   protected:
   vtkvmtkSurfaceProjection();
-  ~vtkvmtkSurfaceProjection();  
+  ~vtkvmtkSurfaceProjection();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 

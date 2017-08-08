@@ -10,11 +10,11 @@ Version:   $Revision: 1.1 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -98,7 +98,7 @@ int vtkvmtkUnstructuredGridTetraFilter::TriangulateQuad(vtkUnstructuredGrid* out
     ptIds->InsertId(4,quadPtIds->GetId(2));
     ptIds->InsertId(5,quadPtIds->GetId(3));
     }
- 
+
   neighborCellIds->Delete();
 
   return 1;
@@ -145,7 +145,7 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
           break;
         case VTK_VERTEX:
         case VTK_LINE:
-        case VTK_TRIANGLE:          
+        case VTK_TRIANGLE:
           if (this->TetrahedraOnly)
             {
             allsimplices = 0;
@@ -174,7 +174,7 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
 
   outCD->CopyAllocate(tempCD, input->GetNumberOfCells()*5);
   output->Allocate(input->GetNumberOfCells()*5);
-  
+
   // Points are passed through
   output->SetPoints(input->GetPoints());
   output->GetPointData()->PassData(input->GetPointData());
@@ -188,7 +188,7 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
       {
       continue;
       }
-      
+
     numPts = cell->GetNumberOfPoints();
     double *p, *pPtr=cell->GetParametricCoords();
     this->Triangulator->InitTriangulation(0.0,1.0, 0.0,1.0, 0.0,1.0, numPts);
@@ -211,7 +211,7 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
 
     ncells = output->GetNumberOfCells();
     numTets = this->Triangulator->AddTetras(0,output);
-      
+
     for (j=0; j < numTets; j++)
       {
       outCD->CopyData(tempCD, cellId, ncells+j);
@@ -227,7 +227,7 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
       input->GetCell(cellId, cell);
       dim = cell->GetCellDimension();
 
-      if (dim != 2) 
+      if (dim != 2)
         {
         continue;
         }
@@ -244,7 +244,7 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
         }
 
       numPts = cellPtIds->GetNumberOfIds();
-      
+
       numSimplices = numPts / dim;
       type = 0;
       switch (dim)
@@ -266,13 +266,13 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
         newCellId = output->InsertNextCell(type, dim, pts);
         outCD->CopyData(tempCD, cellId, newCellId);
         }
-      } 
+      }
 
     //links->Delete();
     }
-  
+
   output->Squeeze();
-  
+
   tempCD->Delete();
 
   cellPts->Delete();

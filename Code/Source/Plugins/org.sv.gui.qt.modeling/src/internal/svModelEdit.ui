@@ -281,7 +281,7 @@
                       <string>Double click in the table to edit names, types, etc.
 
 Interactive methods for faces (in the 3D view window):
-Move the cursor to a face, then 
+Move the cursor to a face, then
 Press key &quot;S&quot; to select a single face.
 Press key &quot;Shift + S&quot; to select multiple faces.
 Press key &quot;D&quot; to deselect a face.

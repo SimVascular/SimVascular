@@ -41,8 +41,8 @@ button .frame.frame1.button3 -text .frame1.button3
 button .frame.frame2.button1 -text .frame2.button1
 button .frame.frame2.button2 -text .frame2.button2
 button .frame.frame2.button3 -text .frame2.button3
-pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top} 
-pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top} 
+pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top}
+pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top}
 pack append .frame .frame.frame1 {top} .frame.frame2 {top}
 pack append . .frame "top fill expand"
 XFPacking . config Toplevel

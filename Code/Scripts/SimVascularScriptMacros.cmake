@@ -55,12 +55,12 @@ endif()
 # Script Macros
 #
 macro(simvascular_configure_script)
-	set(options INSTALL) 
+	set(options INSTALL)
 	set(oneValueArgs TARGET OUTPUT_NAME DESTINATION)
 	set(multiValueArgs FILES)
 
 	CMAKE_PARSE_ARGUMENTS(""
-		"${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )	
+		"${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 	message(STATUS "Generating ${_TARGET} scripts. Dev name: ${${_TARGET}_DEVELOPER_SCRIPT_NAME}, install name:  ${${_TARGET}_INSTALL_SCRIPT_NAME}")
 	foreach(MODE DEVELOPER INSTALL)
 
@@ -71,7 +71,7 @@ macro(simvascular_configure_script)
 		else()
 			set(RELEASE_MODE 0)
 		endif()
-		
+
 		set(sc ";")
 		set(ACCUM_SCRIPT_STRING)
 		set(TEMP_SCRIPT)
@@ -89,9 +89,9 @@ macro(simvascular_configure_script)
 			"${SCRIPT_STRING}")
 
 	endforeach()
-	
+
 	file(REMOVE "${SV_DEVELOPER_SCRIPT_DIR}/${${_TARGET}_DEVELOPER_SCRIPT_NAME}${WIN_BAT}")
-	file(COPY "${TEMP_DIR}/developer/${${_TARGET}_DEVELOPER_SCRIPT_NAME}${WIN_BAT}" 
+	file(COPY "${TEMP_DIR}/developer/${${_TARGET}_DEVELOPER_SCRIPT_NAME}${WIN_BAT}"
 		DESTINATION ${SV_DEVELOPER_SCRIPT_DIR}
 		FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
 		GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
@@ -105,11 +105,11 @@ macro(simvascular_configure_script)
 	#	${TEMP_DIR}/install/${${_TARGET}_INSTALL_SCRIPT_NAME}${WIN_BAT}-config ${TEMP_DIR}/install/${${_TARGET}_INSTALL_SCRIPT_NAME}${WIN_BAT})
 
 	if(_INSTALL)
-		install(FILES ${TEMP_DIR}/install/${${_TARGET}_INSTALL_SCRIPT_NAME}${WIN_BAT} 
+		install(FILES ${TEMP_DIR}/install/${${_TARGET}_INSTALL_SCRIPT_NAME}${WIN_BAT}
 			DESTINATION ${SV_INSTALL_SCRIPT_DIR}
-			PERMISSIONS 
-			OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-			GROUP_READ GROUP_EXECUTE 
+			PERMISSIONS
+			OWNER_READ OWNER_WRITE OWNER_EXECUTE
+			GROUP_READ GROUP_EXECUTE
 			WORLD_READ WORLD_EXECUTE
 			COMPONENT CoreScripts
 			)

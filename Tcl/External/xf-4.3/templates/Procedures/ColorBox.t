@@ -33,7 +33,7 @@ proc ColorBox {{colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMessa
 # Returns: colorname, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global colorBox(activeBackground) - active background color
 # global colorBox(activeForeground) - active foreground color
 # global colorBox(background) - background color
@@ -142,7 +142,7 @@ proc ColorBox {{colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMessa
       -borderwidth 0 \
       -relief raised
     catch ".colorBox.frame1 config $tmpFrameOpt"
- 
+
     button .colorBox.frame1.ok \
       -text "OK"
     catch ".colorBox.frame1.ok config $tmpButtonOpt"
@@ -155,7 +155,7 @@ proc ColorBox {{colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMessa
       -borderwidth 0 \
       -relief raised
     catch ".colorBox.frame2 config $tmpFrameOpt"
- 
+
     radiobutton .colorBox.frame2.rgb \
       -command "ColorBoxShowSlides $colorBoxMessage \"$colorBoxTargetW\"" \
       -text "RGB" \
@@ -181,7 +181,7 @@ proc ColorBox {{colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMessa
       -borderwidth 0 \
       -relief raised
     catch ".colorBox.palette config $tmpFrameOpt"
- 
+
     set counter 0
     foreach element $colorBox(palette) {
       button .colorBox.palette.palette$counter \
@@ -312,7 +312,7 @@ proc ColorBox {{colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMessa
         set colorReadList [read $colorInFile]
         close $colorInFile
         foreach colorLine [split $colorReadList "\n"] {
-          if {("[string trim $colorLine]" != "") && ![regexp "!" $colorLine]} { 
+          if {("[string trim $colorLine]" != "") && ![regexp "!" $colorLine]} {
             set colorNewLine [lrange $colorLine 3 end]
             append colorNewLine " " [format #%02x [lindex $colorLine 0]]
             append colorNewLine [format %02x [lindex $colorLine 1]]
@@ -345,7 +345,7 @@ proc ColorBox {{colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMessa
 
     set colorBox(oldWidget) $colorBoxEntryW
   }
-   
+
   .colorBox.frame1.ok config \
     -command "
       global colorBox
@@ -441,7 +441,7 @@ proc ColorBox {{colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMessa
   if {"[.colorBox.current.current get]" != ""} {
     ColorBoxSetColor $colorBoxMessage $colorBoxTargetW text [.colorBox.current.current get]
   }
-    
+
   # packing
   pack append .colorBox.frame1 \
               .colorBox.frame1.ok {left fill expand} \

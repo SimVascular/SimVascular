@@ -21,7 +21,7 @@ global symbolicName
     -yscrollcommand {.frame.scrollbar1 set} \
     -wrap {none}
   # bindings
-  bind .frame.text2 <Any-Key> {NoFunction} 
+  bind .frame.text2 <Any-Key> {NoFunction}
 
   # pack widget .frame
   pack append .frame \
@@ -30,7 +30,7 @@ global symbolicName
 
   # pack widgets
   pack append . \
-    .frame   {top fill frame center} 
+    .frame   {top fill frame center}
 
 # end of widget tree
 

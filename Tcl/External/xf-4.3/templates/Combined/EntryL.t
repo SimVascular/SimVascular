@@ -25,11 +25,11 @@ global symbolicName
   # pack widget .frame
   pack append .frame \
     .frame.label4   {left frame center} \
-    .frame.entry5   {top frame center expand fill} 
+    .frame.entry5   {top frame center expand fill}
 
   # pack widgets
   pack append . \
-    .frame   {top fill frame center} 
+    .frame   {top fill frame center}
 
 # end of widget tree
 

@@ -1,20 +1,20 @@
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Portions of the code Copyright (c) 2009-2012 Open Source Medical Software Corporation,
 #                           University of California, San Diego.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -50,7 +50,7 @@ proc EStart {tag attlist args} {
     global x__vessels
 
     global x__anatomic_model_surface_representation
- 
+
     global x__vtkunstructuredgrid_object
 
     global x__picture_object
@@ -105,7 +105,7 @@ proc EStart {tag attlist args} {
     foreach i [array names attr] {
       puts "  $i -> $attr($i)"
     }
-  
+
     set xPreviousTag $xCurrentTag
     set xPreviousTagIdentifier $xCurrentTagIdentifier
 
@@ -225,7 +225,7 @@ proc guiFREE_load_cpm_model {fn} {
        set default_state $mystate
        break
       }
-  }  
+  }
   if {$default_state == ""} {
     return -code error "ERROR:  No default state found!"
   }
@@ -236,7 +236,7 @@ proc guiFREE_load_cpm_model {fn} {
   global x__image_temporal_data_series_text
   set image_series [lindex $x__image_temporal_data_series_text($data_series_no) $data_frame]
 
-  array set image_data_series_vars $x__image_temporal_data_series($data_series_no) 
+  array set image_data_series_vars $x__image_temporal_data_series($data_series_no)
   puts "image series: $image_series"
 
   # override axis labels from defaults if defined in image_temporal_data_series
@@ -250,7 +250,7 @@ proc guiFREE_load_cpm_model {fn} {
 
   global x__image_data_frame
 
-  array set image_vars $x__image_data_frame($image_series) 
+  array set image_vars $x__image_data_frame($image_series)
   set image_identifier $image_vars(image_obj_identifier)
 
   global x__vtkstructuredgrid_object
@@ -305,7 +305,7 @@ proc guiFREE_load_cpm_model {fn} {
     set pd [$reader GetOutput]
     set vect_t [[$pd GetPointData] GetArray t]
     set vect_tx [[$pd GetPointData] GetArray tx]
- 
+
     set numPts [$pd GetNumberOfPoints]
     set gPathPoints($pathId,numSplinePts) $numPts
 
@@ -339,9 +339,9 @@ proc guiFREE_load_cpm_model {fn} {
   global x__segmentation_2d
   global x__ordered_vessel_2d_segmentations
   global x__ordered_vessel_2d_segmentations_text
-  
+
   global x__vessels
-  
+
   global x__vtkpolydata_object
 
   catch {unset ordered_2d_segs}
@@ -362,9 +362,9 @@ proc guiFREE_load_cpm_model {fn} {
 
       set posId $seg_vars(spline_path_position_id)
       set fn $pd_vars(file)
-  
+
       puts "grp: $name posId: $posId fn: $fn"
- 
+
       set reader guiFREE_load_cpm_model-reader
       catch {$reader Delete}
 
@@ -393,7 +393,7 @@ proc guiFREE_load_cpm_model {fn} {
 
   global gAnatomicModelSurfaces
   catch {unset gAnatomicModelSurfaces}
-  
+
   foreach surface [array names x__anatomic_model_surface_representation] {
 
     catch {unset coarse_vars}
@@ -402,7 +402,7 @@ proc guiFREE_load_cpm_model {fn} {
     catch {unset pd_vars}
     array set pd_vars $x__vtkpolydata_object($coarse_vars(surface_obj_identifier))
     set fn $pd_vars(file)
-  
+
     set reader guiFREE_load_cpm_model-reader
 
     # read coarse
@@ -421,22 +421,22 @@ proc guiFREE_load_cpm_model {fn} {
   #
   #  Load in pics
   #
-  
+
   global gPictures
-  catch {unset gPictures} 
+  catch {unset gPictures}
 
   foreach mypicstuff [array names x__picture_object] {
 
     catch {unset pic_vars}
     array set pic_vars $x__picture_object($mypicstuff)
-   
+
     set myimg fullsize_photo_$pic_vars(identifier)
     image create photo $myimg -file [file join [pwd] $pic_vars(file)]  -gamma {1.0}  -height {0}  -width {0}
 
-    set gPictures($pic_vars(identifier)) [list $myimg $pic_vars(text_description)]    
+    set gPictures($pic_vars(identifier)) [list $myimg $pic_vars(text_description)]
 
   }
-  
+
   #
   #  associate pics to anatomic model
   #
@@ -448,28 +448,28 @@ proc guiFREE_load_cpm_model {fn} {
 
     catch {unset pic_vars}
     array set pic_vars $x__associate_pictures_to_anatomic_model($mypicstuff)
- 
+
     set ordered_pics $x__associate_pictures_to_anatomic_model_text($mypicstuff)
-   
+
     foreach i $ordered_pics {
       set myimg fullsize_photo_[string trim $i]
-      lappend gAnatomicModelSurfacePictures($pic_vars(anatomic_model_identifier)) $i 
+      lappend gAnatomicModelSurfacePictures($pic_vars(anatomic_model_identifier)) $i
     }
-    
+
   }
 
   #
   #  need to read in surfaces results here
   #
-  
+
   global gSurfaceResults
-  catch {unset gSurfaceResults} 
+  catch {unset gSurfaceResults}
 
   foreach mysurf [array names x__surface_results] {
 
     catch {unset surf_vars}
     array set surf_vars $x__surface_results($mysurf)
-   
+
     set gSurfaceResults($surf_vars(identifier)) [list \
                                     $surf_vars(surface_obj_identifier) \
                                     $surf_vars(field_name) \
@@ -491,13 +491,13 @@ proc guiFREE_load_cpm_model {fn} {
 
     catch {unset surf_vars}
     array set surf_vars $x__associate_surface_results_to_anatomic_model($mysurf)
- 
+
     set ordered_results $x__associate_surface_results_to_anatomic_model_text($mysurf)
-   
+
     foreach i $ordered_results {
-      lappend gAnatomicModelSurfaceResults($surf_vars(anatomic_model_identifier)) $i 
+      lappend gAnatomicModelSurfaceResults($surf_vars(anatomic_model_identifier)) $i
     }
-    
+
   }
 
 }

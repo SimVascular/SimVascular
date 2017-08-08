@@ -1,19 +1,19 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -26,7 +26,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-#===========================================================================    
+#===========================================================================
 
 proc seg_writeVolumeMha {name fname} {
 	catch {writer Delete}
@@ -41,7 +41,7 @@ proc seg_writeVolumeMha {name fname} {
 	writer Delete
 }
 
-proc seg_convertModeltoVolume { {objName temp} } { 
+proc seg_convertModeltoVolume { {objName temp} } {
 
 	global smasherInputName
   global gKernel
@@ -57,7 +57,7 @@ proc seg_convertModeltoVolume { {objName temp} } {
 	catch {repos_delete -obj $modelPd}
 }
 
-proc seg_saveSmasherPolyData { {fn "smasher.vtp"} } { 
+proc seg_saveSmasherPolyData { {fn "smasher.vtp"} } {
 
 global smasherInputName
 set modelPd /tmp/pd
@@ -74,7 +74,7 @@ repos_writeXMLPolyData $modelPd $fn
 }
 
 # proc seg_reSaveModelPolydata {{fn ""}} {
-    
+
 #     global gFilenames
 #     if {$fn == ""} {
 #       set fnOrg $gFilenames(generic_solid_file)
@@ -123,7 +123,7 @@ proc seg_SavePathsAsPolyData { {pathsIds -1} } {
 }
 
 
-proc seg_convertPdtoVolume { pd {objName temp} } { 
+proc seg_convertPdtoVolume { pd {objName temp} } {
 
 	set modelPd pd_$objName
 
@@ -132,7 +132,7 @@ proc seg_convertPdtoVolume { pd {objName temp} } {
 	catch {repos_delete -obj $modelPd}
 }
 
-proc seg_convertPdtoVolumeAndSave { pd fn } { 
+proc seg_convertPdtoVolumeAndSave { pd fn } {
     set objName /tmp/pdvol
     catch {repos_delete -obj $objName}
     seg_convertPdtoVolume $pd $objName
@@ -457,7 +457,7 @@ proc seg_AppendSplines { {pathIds -1} } {
 
     path_MakePolyData $splinePts $splinePd
     lappend splinePds $splinePd
-    
+
      # repos_setLabel -obj $splinePd -key color -value $color
      # generalView $gRen3d $splinePd
      # set myact [vis_pGetActor $gRen3d $splinePd]
@@ -563,12 +563,12 @@ proc seg_getPDSliceAtPathPoint {{value 0} } {
 
     catch {plane Delete}
     vtkPlane plane
-    plane SetOrigin [lindex $pos 0] [lindex $pos 1] [lindex $pos 2] 
+    plane SetOrigin [lindex $pos 0] [lindex $pos 1] [lindex $pos 2]
     plane SetNormal [lindex $nrm 0] [lindex $nrm 1] [lindex $nrm 2]
 
     catch {cutter Delete}
     vtkCutter cutter
-    cutter SetCutFunction plane 
+    cutter SetCutFunction plane
 
     cutter SetInputData [repos_exportToVtk -src $pd]
     cutter GenerateValues 1 0 1
@@ -632,20 +632,20 @@ for {set idx 0} {$idx < [llength $posList]} {incr idx 1} {
 #         regsub -all "^/" $img "" img2
 #         regsub -all "/" $img2 "-" fname
 #         set ffname $directory/$fname.tiff
-        
+
 #         vtkImageCast caster
 #         puts "caster - $img"
 #         caster SetInputData [repos_exportToVtk -src $img]
 #         caster SetOutputScalarTypeToFloat
 #         caster ClampOverflowOff
 #         caster Update
-        
+
 #         vtkTIFFWriter writer
-    
-#         writer SetFileName $ffname 
+
+#         writer SetFileName $ffname
 #         writer SetInputData [caster GetOutput]
 #         writer Write
-        
+
 #         writer Delete
 #         caster Delete
 #         #ITKLevelSet_WriteImage -src $img -fname $ffname
@@ -753,8 +753,8 @@ proc seg_writeSliceSegEdgePNG {pathId posList {fnamebase tmp} {pathfn .} } {
   stat SetInputData [repos_exportToVtk -src $segImg]
   stat GenerateHistogramImageOff
   stat Update
-  
- 
+
+
     set min [stat GetMinimum]
     set max [stat GetMaximum]
     if { $min != $max} {
@@ -772,7 +772,7 @@ proc seg_writeSliceSegEdgePNG {pathId posList {fnamebase tmp} {pathfn .} } {
 
 
 proc seg_writePNG {img filename {usestat 0} } {
-        
+
   set directory [file path $filename]
   file mkdir $directory
 
@@ -786,7 +786,7 @@ proc seg_writePNG {img filename {usestat 0} } {
     set range "[stat GetMinimum] [stat GetMaximum]"
   }
 
-  
+
   puts "$filename $img $range, min, max [stat GetMinimum] [stat GetMaximum]"
 
   catch {shifter Delete}
@@ -800,7 +800,7 @@ proc seg_writePNG {img filename {usestat 0} } {
 
   catch {writer Delete}
   vtkPNGWriter writer
-  writer SetFileName $filename 
+  writer SetFileName $filename
   writer SetInputData [shifter GetOutput]
   writer Write
 
@@ -865,8 +865,8 @@ proc seg_writeSliceSegEdgeTIFF {pathId posList {fnamebase tmp} {pathfn .} } {
   stat SetInputData [repos_exportToVtk -src $segImg]
   stat GenerateHistogramImageOff
   stat Update
-  
- 
+
+
     set min [stat GetMinimum]
     set max [stat GetMaximum]
     if { $min != $max} {
@@ -885,7 +885,7 @@ proc seg_writeSliceSegEdgeTIFF {pathId posList {fnamebase tmp} {pathfn .} } {
 
 
 proc seg_writeTIFF {img filename {rescale 0} {usestat 0} } {
-      
+
   set directory [file path $filename]
   file mkdir $directory
 
@@ -921,7 +921,7 @@ proc seg_writeTIFF {img filename {rescale 0} {usestat 0} } {
   }
 
   vtkTIFFWriter writer
-  writer SetFileName $ffname 
+  writer SetFileName $ffname
   writer SetInputData [caster GetOutput]
   writer Write
 
@@ -948,7 +948,7 @@ proc seg_LoadAll {imgfn pathfn modelfn} {
   if {[file extension $imgfn] == ".mha"} {
       set gImageVol(mha_filename) "$imgfn"
   }
-  createPREOPloadsaveLoadVol 
+  createPREOPloadsaveLoadVol
 
   ## Load Model
   if {$modelfn == ""} return
@@ -1005,7 +1005,7 @@ proc seg_takeScreenShots {{num 0}} {
   set gSavedView(Position) {0 0 1000}
   set gSavedView(ViewUp) {1 0 0}
   }
-  
+
   global gFilenames
   set fn_base $gFilenames(generic_solid_file)
   if {$fn_base == ""} return

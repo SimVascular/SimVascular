@@ -33,12 +33,12 @@ endmacro()
 macro(add_test_compare_files name test_cmd test_args output_blessed output_test)
   message(STATUS "Adding test: ${name}")
   add_test(NAME "${name}"
-   COMMAND 
-   "${CMAKE_COMMAND}" 
-   -Dtest_cmd="${test_cmd}" 
-   -Dtest_args=${test_args} 
-   -Doutput_blessed="${output_blessed}" 
-   -Doutput_test="${output_test}" 
+   COMMAND
+   "${CMAKE_COMMAND}"
+   -Dtest_cmd="${test_cmd}"
+   -Dtest_args=${test_args}
+   -Doutput_blessed="${output_blessed}"
+   -Doutput_test="${output_test}"
    -P ${CMAKE_SOURCE_DIR}/Testing/compareFileTestScript.cmake
    )
 endmacro()
@@ -47,10 +47,10 @@ macro(add_test_residualSimple name test_cmd test_args output_test threshold)
   message(STATUS "Adding test: ${name}")
 
   add_test(NAME "${name}"
-   COMMAND 
+   COMMAND
    "${CMAKE_COMMAND}"
-   -Dtest_cmd="${test_cmd}" 
-   -Dtest_args=${test_args} 
+   -Dtest_cmd="${test_cmd}"
+   -Dtest_args=${test_args}
    -Doutput_test=${output_test}
    -Dthreshold=${threshold}
    -P ${CMAKE_SOURCE_DIR}/Testing/residualTestScriptSimple.cmake
@@ -60,10 +60,10 @@ endmacro()
 
 macro(add_test_residual)
   set(options)
-  set(oneValueArgs NAME 
-    SIM_CMD TCL_FILE 
+  set(oneValueArgs NAME
+    SIM_CMD TCL_FILE
     WORKING_DIRECTORY
-    POST_CMD THRESHOLD 
+    POST_CMD THRESHOLD
     OUTPUT_FILE BLESSED_FILE RESIDUAL_FILE)
   set(multiValueArgs )
 
@@ -78,18 +78,18 @@ macro(add_test_residual)
   unset(add_test_residual_RESIDUAL_FILE)
 
 
-  CMAKE_PARSE_ARGUMENTS("add_test_residual" 
+  CMAKE_PARSE_ARGUMENTS("add_test_residual"
     "${options}"
     "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   message(STATUS "Adding test: ${add_test_residual_NAME}")
 
   add_test(NAME "${add_test_residual_NAME}"
-   COMMAND 
+   COMMAND
    "${CMAKE_COMMAND}" -Wno-dev
    -Dsim_cmd=${add_test_residual_SIM_CMD}
    -Dpost_cmd=${add_test_residual_POST_CMD}
-   -Dtest_tcl_file=${add_test_residual_TCL_FILE} 
+   -Dtest_tcl_file=${add_test_residual_TCL_FILE}
    -Doutput_file=${add_test_residual_OUTPUT_FILE}
    -Dblessed_file=${add_test_residual_BLESSED_FILE}
    -Dresidual_file=${add_test_residual_RESIDUAL_FILE}
@@ -102,10 +102,10 @@ endmacro()
 
 macro(add_test_append_compare)
   set(options)
-  set(oneValueArgs NAME 
-    SIM_CMD TCL_FILE 
+  set(oneValueArgs NAME
+    SIM_CMD TCL_FILE
     WORKING_DIRECTORY
-    POST_CMD THRESHOLD 
+    POST_CMD THRESHOLD
     OUTPUT_FILE BLESSED_FILE RESIDUAL_FILE
     TEST_DEPENDS)
   set(multiValueArgs )
@@ -119,7 +119,7 @@ macro(add_test_append_compare)
   unset(add_test_append_compare_TEST_DEPENDS)
 
 
-  CMAKE_PARSE_ARGUMENTS("add_test_append_compare" 
+  CMAKE_PARSE_ARGUMENTS("add_test_append_compare"
     "${options}"
     "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -139,5 +139,5 @@ macro(add_test_append_compare)
    )
 
   set_property(TEST "${add_test_append_compare_NAME}" APPEND PROPERTY DEPENDS "${add_test_append_compare_TEST_DEPENDS}")
-  
+
  endmacro()

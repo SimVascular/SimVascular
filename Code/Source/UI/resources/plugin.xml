@@ -141,7 +141,7 @@
     </view>
     <view id="mitk.volumevisualization"
       name="Volume Visualization"
-      class="QmitkVolumeVisualizationView" 
+      class="QmitkVolumeVisualizationView"
       icon="volumerendering.png"
       location="left"
       type="gui"
@@ -154,18 +154,18 @@
   <category name="Paths">
     <view id="sv.pathcreate"
       name="Create Path"
-      class="svPathCreate" 
+      class="svPathCreate"
       icon="pathcreate.png"
       location="popup"
       type="gui"
       in_menu="yes"
       in_toolbar="yes"
       life="short">
-      <description>Create a New Path</description> 
+      <description>Create a New Path</description>
     </view>
     <view id="sv.pathedit"
       name="Edit Path"
-      class="svPathEdit" 
+      class="svPathEdit"
       icon="pathedit.png"
       location="left"
       type="gui"

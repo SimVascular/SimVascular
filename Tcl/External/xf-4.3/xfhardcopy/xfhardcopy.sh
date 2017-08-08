@@ -44,11 +44,11 @@ done
 #
 export XF_LOAD_PATH
 for p in `echo $XF_LOAD_PATH|awk 'BEGIN{RS=":"}{print $0}'`; do
-  if test -f $p/xfhardcopy.tcl; then 
+  if test -f $p/xfhardcopy.tcl; then
     exec $WISH_CMD -name xfhardcopy -file $p/xfhardcopy.tcl $COMMANDLINE
   fi
   (cd $p; retrv -q xfhardcopy.tcl) 2>/dev/null
-  if test -f $p/xfhardcopy.tcl; then 
+  if test -f $p/xfhardcopy.tcl; then
     $WISH_CMD -name xfhardcopy -file $p/xfhardcopy.tcl $COMMANDLINE
     (cd $p; rm -f xfhardcopy.tcl) 2>/dev/null
   fi

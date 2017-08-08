@@ -101,7 +101,7 @@ proc XFConfig.Checkbutton4 {xfW xfType xfClass {xfLeader ""}} {
   XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
     XFCheckbuttonSetCheckbutton4
   XFElementVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
-    XFCheckbuttonSetCheckbutton4 
+    XFCheckbuttonSetCheckbutton4
   XFElementCommand $xfW .xf${xfClass}Config4 $xfType
 
   if {"$xfType" == "add"} {

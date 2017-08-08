@@ -34,7 +34,7 @@ proc FSBox {{fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""} 
 # Returns: the filename that was selected, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global fsBox(activeBackground) - active background color
 # global fsBox(activeForeground) - active foreground color
 # global fsBox(background) - background color
@@ -118,7 +118,7 @@ proc FSBox {{fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""} 
   toplevel .fsBox \
     -borderwidth 0
   catch ".fsBox config $tmpFrameOpt"
-  wm geometry .fsBox 350x300 
+  wm geometry .fsBox 350x300
   wm title .fsBox {File select box}
   wm maxsize .fsBox 1000 1000
   wm minsize .fsBox 100 100
@@ -276,7 +276,7 @@ proc FSBox {{fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""} 
   catch ".fsBox.pattern.pattern config $tmpMessageOpt"
 
   .fsBox.pattern.pattern insert 0 $fsBox(pattern)
-  
+
   frame .fsBox.files \
     -borderwidth 0 \
     -relief raised
@@ -316,7 +316,7 @@ proc FSBox {{fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""} 
 
   .fsBox.file.file delete 0 end
   .fsBox.file.file insert 0 $fsBox(name)
-  
+
   checkbutton .fsBox.pattern.all \
     -offvalue 0 \
     -onvalue 1 \
@@ -417,7 +417,7 @@ proc FSBox {{fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""} 
     pack append .fsBox.frame2 \
                 .fsBox.frame2.scrollbar1 {left filly} \
                 .fsBox.frame2.canvas2 {top expand fill} \
-                .fsBox.frame2.scrollbar3 {top fillx} 
+                .fsBox.frame2.scrollbar3 {top fillx}
 
     pack append .fsBox \
                 .fsBox.message1 {top fill} \
@@ -850,7 +850,7 @@ proc FSBoxFSShow {fsBoxPath fsBoxPattern fsBoxAll} {# xf ignore me 6
   if {$fsBox(extensions)} {
     .fsBox.pattern.patterns.patterns.menu add separator
   }
-  if {$fsBox(extensions) || 
+  if {$fsBox(extensions) ||
       "[.fsBox.pattern.patterns.patterns.menu index last]" == "none"} {
     .fsBox.pattern.patterns.patterns.menu add checkbutton \
       -label "Scan extensions" \

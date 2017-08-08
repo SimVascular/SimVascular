@@ -11,19 +11,19 @@ Restricted (academic only) licenses:
 ***************************************************************
 
 The METIS package is copyrighted by the Regents of the University of
-Minnesota. It can be freely used for educational and research purposes 
-by non-profit institutions and US government agencies only. Other 
+Minnesota. It can be freely used for educational and research purposes
+by non-profit institutions and US government agencies only. Other
 organizations are allowed to use METIS only for evaluation purposes,
-and any further uses will require prior approval. The software 
-may not be sold or redistributed without prior approval. One may 
-make copies of the software for their use provided that the copies, 
-are not sold or distributed, are used under the same terms and 
-conditions. 
+and any further uses will require prior approval. The software
+may not be sold or redistributed without prior approval. One may
+make copies of the software for their use provided that the copies,
+are not sold or distributed, are used under the same terms and
+conditions.
 
-As unestablished research software, this code is provided on an 
-``as is'' basis without warranty of any kind, either expressed or 
-implied. The downloading, or executing any part of this software 
-constitutes an implicit agreement to these terms. These terms and 
+As unestablished research software, this code is provided on an
+``as is'' basis without warranty of any kind, either expressed or
+implied. The downloading, or executing any part of this software
+constitutes an implicit agreement to these terms. These terms and
 conditions are subject to change at any time without prior notice.
 
 ***************************************************************
@@ -42,7 +42,7 @@ conditions are subject to change at any time without prior notice.
 !     California. All Rights Reserved.
 !
 !     Permission to copy and modify this software and its documentation
-!     for educational, research and non-profit purposes, without fee, 
+!     for educational, research and non-profit purposes, without fee,
 !     and without a written agreement is hereby granted, provided that
 !     the above copyright notice, this paragraph and the following three
 !     paragraphs appear in all copies.
@@ -65,14 +65,14 @@ conditions are subject to change at any time without prior notice.
 !     purposes and is advised not to rely exclusively on the program for
 !     any reason.
 !
-!     IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY 
-!     PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL 
-!     DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS 
-!     SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF 
-!     CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
-!     THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY 
-!     WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-!     OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE 
-!     SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE 
-!     UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE 
+!     IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY
+!     PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+!     DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS
+!     SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+!     CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+!     THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY
+!     WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+!     OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+!     SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE
+!     UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE
 !     MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.

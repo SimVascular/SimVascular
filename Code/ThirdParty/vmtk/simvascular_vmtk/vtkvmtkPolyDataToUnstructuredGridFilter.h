@@ -10,11 +10,11 @@ Version:   $Revision: 1.4 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -44,7 +44,7 @@ protected:
 
   int FillInputPortInformation(int, vtkInformation *info);
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  
+
 private:
   vtkvmtkPolyDataToUnstructuredGridFilter(const vtkvmtkPolyDataToUnstructuredGridFilter&);  // Not implemented.
   void operator=(const vtkvmtkPolyDataToUnstructuredGridFilter&);  // Not implemented.

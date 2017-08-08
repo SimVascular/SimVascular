@@ -32,11 +32,11 @@
   # pack widget .frame0
   pack append .frame0 \
     .frame0.menubutton1 {left} \
-    .frame0.menubutton2 {right} 
+    .frame0.menubutton2 {right}
 
   # pack widgets
   pack append . \
-    .frame0 {top fillx} 
+    .frame0 {top fillx}
 
 # end of widget tree
 

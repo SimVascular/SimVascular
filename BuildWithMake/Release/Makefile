@@ -1,26 +1,26 @@
 # Hey emacs, this is a -*- makefile -*-
 
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
-# Portions of the code Copyright (c) 2009-2011 Open Source Medical 
+# Portions of the code Copyright (c) 2009-2011 Open Source Medical
 # Software Corporation, University of California, San Diego.
 # All rights reserved.
 #
 # Portions copyright (c) 1999-2007 Stanford University,
 #   Nathan Wilson, Ken Wang, Charles Taylor.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -56,7 +56,7 @@ ifeq ($(CLUSTER), x64_cygwin)
   DIST_DIR := /cygdrive/p/package/$(SV_VERSION)/$(SV_TIMESTAMP)
 else
   DIST_DIR_TOP := $(REAL_DIST_DIR_TOP)
-  DIST_DIR := $(REAL_DIST_DIR) 
+  DIST_DIR := $(REAL_DIST_DIR)
 endif
 
 ifneq ($(CLUSTER),x64_linux)
@@ -284,7 +284,7 @@ ifeq ($(SV_USE_PYTHON),1)
 endif
 ifeq ($(SV_USE_QT),1)
 	-cp -f $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
-	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins 
+	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)

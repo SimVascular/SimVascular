@@ -238,7 +238,7 @@
         <property name="toolTip">
          <string>To interactively modify the path in Display window:
  Ctrl + left click to add a control point
- Ctrl + right click to remove a control point 
+ Ctrl + right click to remove a control point
  Left click and hold to drag a control point</string>
         </property>
        </widget>

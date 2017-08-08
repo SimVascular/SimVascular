@@ -1,23 +1,23 @@
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 # BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 # OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 # AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -152,9 +152,9 @@ proc itklsChangeFrame { value } {
 		set img /tmp/lsGUI/$guy
 		if { [info exists [subst $w](ren)] &&
 			[subst $[subst $w](ren)] != "" } then {
-				itklsUpdateView $w $img $baseName 
+				itklsUpdateView $w $img $baseName
 				} else {
-					puts "No render window in $w, so no view to update" 
+					puts "No render window in $w, so no view to update"
 				}
 			}
 			# indent )
@@ -167,7 +167,7 @@ proc itklsChangeFrame { value } {
 }
 
 proc itklsGUITabOpen { } {
-	
+
 	global itklsGUIParams
 	itklsGUIUpdatePhyRadius -1
 	global itklsGUIParamsBatch
@@ -201,12 +201,12 @@ proc itklsUpdateView { window img baseName } {
 		repos_setLabel -obj $seedPd -key color -value $gOptions(color_for_seeds)
 		repos_setLabel -obj $seedPd -key width -value $gOptions(line_width_for_seeds)
       	repos_setLabel -obj $seedPd -key opacity -value $gOptions(opacity_for_seeds)
-		generalView $ren $seedPd    
+		generalView $ren $seedPd
 	}
-	
+
 	if {$showLS =="1"} {
 		if {[repos_exists -obj $baseName/ls/unclean] == 1} {
-			
+
 			generalView $ren $baseName/ls/unclean
 		}
 
@@ -265,7 +265,7 @@ proc itkLSStg1 { } {
 
 		  img_getSliceAtPathPoint $src $path $posId $ext $inpImg ->
 		  itkutils_DistanceImage -src $inpImg -dst $distImg -thres $gSigma1
-		  
+
 		  set inImg $distImg
 			$itklset SetUseInputImageAsFeature -input 1
 			puts "using edge image!"
@@ -295,7 +295,7 @@ proc itkLSStg1 { } {
 	$itklset GetFront -out $lsres_unclean
 
 	repos_setLabel -obj $lsres_unclean -key color -value yellow
-}    
+}
 
 proc itkLSStg2 { } {
 
@@ -339,7 +339,7 @@ proc itkLSStg2 { } {
 
 		  img_getSliceAtPathPoint $src $path $posId $ext $inpImg ->
 		  itkutils_DistanceImage -src $inpImg -dst $distImg -thres $gSigma2
-		  
+
 		  set inImg $distImg
 			$itklset SetUseInputImageAsFeature -input 1
 			puts "using edge image!"
@@ -367,7 +367,7 @@ proc itkLSStg2 { } {
 	catch {repos_delete -obj $lsres}
 
 	puts "extracting $lsres_unclean2"
-	$itklset GetFront -out $lsres_unclean2 
+	$itklset GetFront -out $lsres_unclean2
 
 
 	geom_mergePts -src $lsres_unclean2 -dst $lsres -tol 0.001
@@ -378,7 +378,7 @@ proc itkLSStg2 { } {
 	global lsGUIcurrentPathNumber
 	set pathId $lsGUIcurrentPathNumber
 
-	global gPathPoints 
+	global gPathPoints
 	set path $gPathPoints($pathId,splinePts)
 
 	global lsGUIcurrentPositionNumber
@@ -392,7 +392,7 @@ proc itkLSStg2 { } {
 	catch {repos_delete -obj $lsoriented}
 	geom_orientProfile -src $lsres -path_pos $pos -path_tan $nrm -path_xhat $xhat -dst $lsoriented
 
-	# Set Labels 
+	# Set Labels
 	foreach tagobj [list $lsres $lsoriented] {
 		repos_setLabel -obj $tagobj -key pathId -value $pathId
 		repos_setLabel -obj $tagobj -key posId -value $posId
@@ -507,7 +507,7 @@ global gui3Dvars
 if {$value =="-1"} {set value $gui3Dvars(show_seed_default)}
 set gui3Dvars(chooserShowCursorFlag) $value
 set gui3Dvars(chooserShowSphereFlag) $value
-set gui3Dvars(chooserShowAllSeedsFlag) $value 
+set gui3Dvars(chooserShowAllSeedsFlag) $value
 
 gui3DchooserShowSphere clicked
 gui3DchooserShowCursor
@@ -539,7 +539,7 @@ proc gui_show_seg_slice { } {
 
 		global lsGUIpotWindow
 		set lsGUIpotWindow(showSegSlice) 1
-		
+
 	} else {
 		global lsGUImagWindow
 		set lsGUImagWindow(showSegSlice) 0
@@ -549,7 +549,7 @@ proc gui_show_seg_slice { } {
 	}
 	lsGUIchangeFrame 0
 }
-proc resetViews { } { 
+proc resetViews { } {
 
 	global lsGUIcurrentPathNumber
 	global lsGUIcurrentPositionNumber
@@ -588,7 +588,7 @@ proc resetViews { } {
 	lappend pathNames $pathName
 	}
 
-	
+
 	# search for current selected path
 	puts "pathIds: $pathIds"
 	puts "pathNames: $pathNames"
@@ -601,10 +601,10 @@ proc resetViews { } {
 		set lsGUIcurrentPathLabel [lindex $pathNames 0]
 		lsGUIupdatePath
 	}
-	
+
 	# Set the display to 3d and 2d
 	guiCV_display_windows 3d_and_2d
-	
+
 	# Update 2d pot window
 	global lsGUImagWindow
 	set lsGUImagWindow(showLS) 1
@@ -626,7 +626,7 @@ proc resetViews { } {
 	#itklsChangeFrame 0
 }
 
-proc unset2DViews { } { 
+proc unset2DViews { } {
 
 	lsGUIupdatePositionScale 0
 
@@ -671,10 +671,10 @@ proc itklsBatchUpdateList { {value 0} } {
 	if {[string is integer $begin] &&
 		[string is integer $end] &&
 		[string is integer $inc] } then {
-			set posList [numlist $begin $end $inc] 
+			set posList [numlist $begin $end $inc]
 		}
 		set {itklsGUIParamsBatch(posList)} $posList
-		# indent) 
+		# indent)
 }
 
 proc itklsUpdateBatchInfo {} {
@@ -683,7 +683,7 @@ proc itklsUpdateBatchInfo {} {
 	global lsGUIcurrentPathNumber
 	set {itklsGUIParamsBatch(pathId)} $lsGUIcurrentPathNumber
 }
-proc itklsBatchRun { } { 
+proc itklsBatchRun { } {
 	# find min/max frame number
 	global itklsGUIParamsBatch
 	global symbolicName
@@ -815,7 +815,7 @@ proc itkLSOnPos {pathId posId} {
 	set lsoriented /lsGUI/$pathId/$posId/ls/oriented
 	catch {repos_delete -obj $lsoriented}
 	geom_orientProfile -src $lsres -path_pos $pos -path_tan $nrm -path_xhat $xhat -dst $lsoriented
-}	
+}
 
 proc itkLSOnImage {img lsres paramsstr} {
 
@@ -866,7 +866,7 @@ proc itkLSOnImage {img lsres paramsstr} {
 	$itklset PhaseOneLevelSet -Kc $kThr -expRising $expRise -expFalling $expFall -sigmaFeat $gSigma1 -sigmaAdv $advSigma1
 
 	puts "extracting stage 1 into $lsres_unclean"
-	$itklset GetFront -out $lsres_unclean 
+	$itklset GetFront -out $lsres_unclean
 	repos_setLabel -obj $lsres_unclean -key color -value yellow
 
 	set itklset2 /tmp/lsGUI/itklset2
@@ -891,7 +891,7 @@ proc itkLSOnImage {img lsres paramsstr} {
 	$itklset2 PhaseTwoLevelSet -Klow $kLow -Kupp $kUpp -sigmaFeat $gSigma2 -sigmaAdv $advSigma2
 
 	puts "extracting stage 2 into $lsres_unclean2"
-	$itklset2 GetFront -out $lsres_unclean2 
+	$itklset2 GetFront -out $lsres_unclean2
 
 	puts "cleaning into $lsres"
 	geom_mergePts -src $lsres_unclean2 -dst $lsres -tol 0.001
@@ -913,7 +913,7 @@ proc itkLSDoBatch {pathId posList groupName} {
 	set orgGroup $lsGUIcurrentGroup
 	set lsGUIcurrentPathNumber $pathId
 	set lsGUIcurrentGroup $groupName
-	
+
 	global itklsGUIParamsBatch
 	set addToGroup $itklsGUIParamsBatch(addToGroup)
 	set smooth $itklsGUIParamsBatch(smooth)
@@ -923,7 +923,7 @@ proc itkLSDoBatch {pathId posList groupName} {
 	set notDoneList {}
 	for {set idx 0} {$idx < [llength $posList]} {incr idx 1} {
 		set lsGUIcurrentGroup $groupName
-		
+
 		set posId [lindex $posList $idx]
 		global lsGUIcurrentPositionNumber
 		set lsGUIcurrentPositionNumber $posId
@@ -946,10 +946,10 @@ proc itkLSDoBatch {pathId posList groupName} {
 		}
 		catch {repos_delete -obj tmp/pd}
 
-	
+
 		if { $addToGrp == "1" } {
 			lsGUIaddToGroup levelset
-		}	
+		}
 		after 1
 		lsGUIupdatePositionScale 0
 		itklsChangeFrame 0
@@ -958,7 +958,7 @@ proc itkLSDoBatch {pathId posList groupName} {
 
 puts "notDoneList $notDoneList"
 
-} 
+}
 
 proc numlist {a b c} {
 	#puts "[expr ($b-$a)/($c)]"
@@ -986,7 +986,7 @@ proc itk3dLSSave { {value 0} } {
 }
 
 proc itk3dLSRun {img seedPd out} {
-	
+
 	set itklset /tmp/lsGUI/itk3dlset
 	if {![cmdExists $itklset]} {
 		itkls3d $itklset
@@ -1056,7 +1056,7 @@ if {$ls_image_show_option == "edge"} {
 	set guiVIB(current_color_map) $guiVIB(color_map)
 } else {
 	set guiVIB(use_alt_image) 0
-	set guiVIB(repos_image_obj) 
+	set guiVIB(repos_image_obj)
 	set guiVIB(use_alt_image) 0
 	set imgobj volume_image
 	set cmap $guiVIB(current_color_map)
@@ -1084,7 +1084,7 @@ proc lsGUI3dSwapSeedpanel {{value 0}} {
 		lsGUI3dSeedupdatePositionScale 0
 	} else {
 		guiCV_swapframes $symbolicName(gui3d_seed_move_frame_path) $symbolicName(gui3d_seed_move_frame_xyz)
-		
+
 	}
 }
 

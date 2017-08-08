@@ -202,7 +202,7 @@ proc XFLayoutPosPress {xfW xfX xfY xfLocalX xfLocalY} {
   } {
     if {$xfLocalY >= [expr $tmpHeight-$xfConf(layoutBorder)]} {
       set xfStatus(sizingVBorder) 2
-    }  
+    }
   }
 
   if {"$xfConf(geometry)" == "placer"} {
@@ -232,7 +232,7 @@ proc XFLayoutPosPress {xfW xfX xfY xfLocalX xfLocalY} {
         if {"$xfCounter" == "-in"} {
          set xfStatus(placeCurMaster) \
            [lindex $xfPlaceInfo [expr $xfCounter1+1]]
-        } 
+        }
         if {"$xfCounter" == "-x"} {
           set xfStatus(placeCurX) \
             [lindex $xfPlaceInfo [expr $xfCounter1+1]]
@@ -375,7 +375,7 @@ proc XFLayoutPosMove {xfW xfX xfY xfLocalX xfLocalY} {
     set xfPlacingWindows ""
     if {"[info commands .xfPlacing*]" != ""} {
       foreach xfElement [winfo children .] {
-        if {[string match .xfPlacing* $xfElement]} { 
+        if {[string match .xfPlacing* $xfElement]} {
           if {"[$xfElement.frame2.children.childs.childs get [$xfElement.frame2.children.childs.childs curselection]]" == "$xfW"} {
             lappend xfPlacingWindows $xfElement
           }
@@ -701,7 +701,7 @@ proc XFLayoutPosRelease {xfW xfX xfY xfLocalX xfLocalY} {
     set xfPackingWindow ""
     if {"[info commands .xfPacking*]" != ""} {
       foreach xfElement [winfo children .] {
-        if {[string match .xfPacking* $xfElement]} { 
+        if {[string match .xfPacking* $xfElement]} {
           if {"[lindex [$xfElement.frame2.children.childs.childs get [$xfElement.frame2.children.childs.childs curselection]] 1]" == "$xfW"} {
             set xfPackingWindow $xfElement
           }

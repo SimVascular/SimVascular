@@ -11,7 +11,7 @@
     -borderwidth {2}
 
   # build widget .frame0.frame1
-  frame .frame0.frame1 
+  frame .frame0.frame1
 
   # build widget .frame0.frame1.frame3
   frame .frame0.frame1.frame3 \
@@ -28,7 +28,7 @@
 
   # pack widget .frame0.frame1.frame3
   pack append .frame0.frame1.frame3 \
-    .frame0.frame1.frame3.listbox8 {left frame center expand fill} 
+    .frame0.frame1.frame3.listbox8 {left frame center expand fill}
 
 
   # build widget .frame0.frame1.frame4
@@ -43,13 +43,13 @@
 
   # pack widget .frame0.frame1.frame4
   pack append .frame0.frame1.frame4 \
-    .frame0.frame1.frame4.scrollbar9 {top frame center expand filly} 
+    .frame0.frame1.frame4.scrollbar9 {top frame center expand filly}
 
 
   # pack widget .frame0.frame1
   pack append .frame0.frame1 \
     .frame0.frame1.frame3 {left frame center expand fill} \
-    .frame0.frame1.frame4 {right frame center filly} 
+    .frame0.frame1.frame4 {right frame center filly}
 
 
   # build widget .frame0.frame2
@@ -69,7 +69,7 @@
 
   # pack widget .frame0.frame2.frame5
   pack append .frame0.frame2.frame5 \
-    .frame0.frame2.frame5.scrollbar10 {left frame center expand fillx} 
+    .frame0.frame2.frame5.scrollbar10 {left frame center expand fillx}
 
 
   # build widget .frame0.frame2.frame6
@@ -84,24 +84,24 @@
 
   # pack widget .frame0.frame2.frame6
   pack append .frame0.frame2.frame6 \
-    .frame0.frame2.frame6.frame11 {top frame center expand fill} 
+    .frame0.frame2.frame6.frame11 {top frame center expand fill}
 
 
   # pack widget .frame0.frame2
   pack append .frame0.frame2 \
     .frame0.frame2.frame5 {left frame center expand fill} \
-    .frame0.frame2.frame6 {right frame center filly} 
+    .frame0.frame2.frame6 {right frame center filly}
 
 
   # pack widget .frame0
   pack append .frame0 \
     .frame0.frame1 {top frame center expand fill} \
-    .frame0.frame2 {bottom frame center fillx} 
+    .frame0.frame2 {bottom frame center fillx}
 
 
   # pack widgets
   pack append . \
-    .frame0 {top frame center expand fill} 
+    .frame0 {top frame center expand fill}
 
 # end of widget tree
 

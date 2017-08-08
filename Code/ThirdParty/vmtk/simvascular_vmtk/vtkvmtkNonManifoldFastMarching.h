@@ -10,11 +10,11 @@ Version:   $Revision: 1.5 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -57,7 +57,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldFastMarching : pu
 {
   public:
   vtkTypeMacro(vtkvmtkNonManifoldFastMarching,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkNonManifoldFastMarching *New();
 
@@ -146,10 +146,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldFastMarching : pu
   void UpdateNeighborhood(vtkPolyData* input, vtkIdType pointId);
   void Propagate(vtkPolyData* input);
 
-  static double Max(double a, double b)    
+  static double Max(double a, double b)
     { return a-b > VTK_VMTK_DOUBLE_TOL ? a : b; }
 
-  static double Min(double a, double b)    
+  static double Min(double a, double b)
     { return a-b < - VTK_VMTK_DOUBLE_TOL ? a : b; }
 
   vtkDoubleArray* TScalars;
