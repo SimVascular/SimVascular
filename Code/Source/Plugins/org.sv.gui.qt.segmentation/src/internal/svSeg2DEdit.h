@@ -7,6 +7,7 @@
 #include "svContourModel.h"
 #include "svContourGroupDataInteractor.h"
 #include "svContourGroupCreate.h"
+#include "svContourModelThresholdInteractor.h"
 
 #include "svResliceSlider.h"
 #include "svLevelSet2DWidget.h"
@@ -144,6 +145,8 @@ public slots:
 
     void ShowPath(bool checked = false);
 
+    void UpdatePathPoint(int pos);
+
 public:
 
     int GetTimeStep();
@@ -167,6 +170,10 @@ public:
     virtual void Hidden() override;
 
 //    bool IsExclusiveFunctionality() const override;
+
+    void PreparePreviewInteraction(QString method);
+
+    void QuitPreviewInteraction();
 
 protected:
 
@@ -206,7 +213,7 @@ protected:
 
     bool groupCreated=false;
 
-    mitk::DataInteractor::Pointer m_PreviewDataNodeInteractor;
+    svContourModelThresholdInteractor::Pointer m_PreviewDataNodeInteractor;
 
     mitk::DataNode::Pointer m_PreviewDataNode;
 

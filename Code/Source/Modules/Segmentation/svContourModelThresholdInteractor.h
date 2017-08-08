@@ -21,6 +21,16 @@ public:
 
     double GetCurrentValue();
 
+    void SetPathPoint(svPathElement::svPathPoint pathPoint) {m_PathPoint=pathPoint;}
+
+    svPathElement::svPathPoint GetPathPoint() {return m_PathPoint;}
+
+    vtkImageData* GetVtkImageData() {return m_VtkImageData;}
+
+    void SetVtkImageData(vtkImageData* imageData) {m_VtkImageData=imageData;}
+
+    void SetResliceSize(double size) {m_ResliceSize=size;}
+
 protected:
 
     svContourModelThresholdInteractor();
@@ -32,6 +42,7 @@ protected:
 
     bool OnCurrentContourPlane( const mitk::InteractionEvent* interactionEvent );
 
+    bool On2DView( const mitk::InteractionEvent* interactionEvent );
 
     //  Actions //
 
@@ -56,6 +67,16 @@ private:
     int m_TimeStep;
 
     double m_ScaleBase;// use display units
+
+    std::string m_Method;
+
+    vtkImageData* m_VtkImageData;
+
+    vtkImageData* m_ImageSlice;
+
+    double m_ResliceSize;
+
+    svPathElement::svPathPoint m_PathPoint;
 
 };
 

@@ -60,6 +60,13 @@ svSeg2DEdit::svSeg2DEdit() :
     m_ManualMenu=NULL;
     m_CopyContour=NULL;
     m_ContourGroupCreateWidget=NULL;
+
+    m_PreviewDataNode=NULL;
+    m_PreviewContourModel=NULL;
+    m_PreviewDataNodeInteractor=NULL;
+    m_PreviewContourModelObserverFinishTag=-1;
+    m_PreviewContourModelObserverUpdateTag=-1;
+
 }
 
 svSeg2DEdit::~svSeg2DEdit()
@@ -732,7 +739,7 @@ void svSeg2DEdit::ResetGUI()
     if(m_CurrentSegButton)
         m_CurrentSegButton->setStyleSheet("");
 
-    FinishPreview();//remove node, data, interaction for interactive threshold
+    QuitPreviewInteraction();
 
     if(m_ContourGroup)
         m_ContourGroup->RemoveInvalidContours(GetTimeStep());
@@ -790,37 +797,8 @@ void svSeg2DEdit::CreateThresholdContour()
 
     m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
-    cvStrPts*  strPts=svSegmentationUtils::GetSlicevtkImage(ui->resliceSlider->getCurrentPathPoint(), m_cvImage->GetVtkStructuredPoints(), ui->resliceSlider->getResliceSize());
+    PreparePreviewInteraction("Threshold");
 
-    svContour* contour=new svContour();
-    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-    contour->SetPlaced(true);
-    contour->SetMethod("Threshold");
-    contour->SetVtkImageSlice(strPts->GetVtkStructuredPoints());
-
-    m_PreviewContourModel = svContourModel::New();
-    m_PreviewContourModel->SetContour(contour);
-
-    m_PreviewDataNode = mitk::DataNode::New();
-    m_PreviewDataNode->SetData(m_PreviewContourModel);
-    m_PreviewDataNode->SetName("PreviewContour");
-    m_PreviewDataNode->SetBoolProperty("helper object", true);
-
-    //GetDataStorage()->Add(m_PreviewDataNode);
-    GetDataStorage()->Add(m_PreviewDataNode, m_ContourGroupNode);
-
-    m_PreviewDataNodeInteractor= svContourModelThresholdInteractor::New();
-    m_PreviewDataNodeInteractor->LoadStateMachine("svContourModelThresholdInteraction.xml", us::ModuleRegistry::GetModule("svSegmentation"));
-    m_PreviewDataNodeInteractor->SetEventConfig("svSegmentationConfig.xml", us::ModuleRegistry::GetModule("svSegmentation"));
-    m_PreviewDataNodeInteractor->SetDataNode(m_PreviewDataNode);
-
-    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer previewFinished = itk::SimpleMemberCommand<svSeg2DEdit>::New();
-    previewFinished->SetCallbackFunction(this, &svSeg2DEdit::FinishPreview);
-    m_PreviewContourModelObserverFinishTag = m_PreviewContourModel->AddObserver( EndInteractionContourModelEvent(), previewFinished);
-
-    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer previewUpdating = itk::SimpleMemberCommand<svSeg2DEdit>::New();
-    previewUpdating->SetCallbackFunction(this, &svSeg2DEdit::UpdatePreview);
-    m_PreviewContourModelObserverUpdateTag = m_PreviewContourModel->AddObserver( UpdateInteractionContourModelEvent(), previewUpdating);
 }
 
 void svSeg2DEdit::UpdatePreview()
@@ -843,6 +821,7 @@ void svSeg2DEdit::FinishPreview()
     int timeStep=GetTimeStep();
 
     svContour* contour=m_PreviewContourModel->GetContour(timeStep);
+    m_PreviewContourModel->SetContour(NULL);
 
     if(contour && contour->GetContourPointNumber()>2)
     {
@@ -861,49 +840,7 @@ void svSeg2DEdit::FinishPreview()
 
 //        QMessageBox::warning(NULL,"No Valid Contour Created","Contour not created and added since it's invalid");
     }
-
-    if( m_PreviewContourModelObserverFinishTag)
-    {
-        m_PreviewContourModel->RemoveObserver(m_PreviewContourModelObserverFinishTag);
-    }
-
-    if( m_PreviewContourModelObserverUpdateTag)
-    {
-        m_PreviewContourModel->RemoveObserver(m_PreviewContourModelObserverUpdateTag);
-    }
-
-    if(m_PreviewDataNode)
-    {
-        m_PreviewDataNode->SetDataInteractor(NULL);
-        m_PreviewDataNodeInteractor=NULL;
-        GetDataStorage()->Remove(m_PreviewDataNode);
-        m_PreviewDataNode=NULL;
-    }
-
-    m_PreviewContourModel=NULL;
-    ui->btnThreshold->setStyleSheet("");
 }
-
-//void svSeg2DEdit::CreateEllipse()
-//{
-//    ResetGUI();
-
-//    m_CurrentSegButton=ui->btnEllipse;
-//    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-
-//    SetSecondaryWidgetsVisible(false);
-
-//    svContour* contour=new svContourEllipse();
-//    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
-//    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
-//    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-
-//    mitk::OperationEvent::IncCurrObjectEventId();
-
-//    m_ContourChanging=true;
-
-//    InsertContourByPathPosPoint(contour);
-//}
 
 void svSeg2DEdit::CreateEllipse()
 {
@@ -1156,6 +1093,7 @@ void svSeg2DEdit::ClearAll()
     ui->labelGroupName->setText("");
     ui->listWidget->clear();
 
+    ResetGUI();
 }
 
 void svSeg2DEdit::UpdateContourList()
@@ -1654,4 +1592,71 @@ void svSeg2DEdit::ShowPath(bool checked)
         m_PathNode->SetVisibility(checked);
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
+}
+
+void svSeg2DEdit::PreparePreviewInteraction(QString method)
+{
+    m_PreviewContourModel = svContourModel::New();
+
+    m_PreviewDataNode = mitk::DataNode::New();
+    m_PreviewDataNode->SetData(m_PreviewContourModel);
+    m_PreviewDataNode->SetName("PreviewContour");
+    m_PreviewDataNode->SetBoolProperty("helper object", true);
+
+    GetDataStorage()->Add(m_PreviewDataNode, m_ContourGroupNode);
+
+    m_PreviewDataNodeInteractor= svContourModelThresholdInteractor::New();
+    m_PreviewDataNodeInteractor->LoadStateMachine("svContourModelThresholdInteraction.xml", us::ModuleRegistry::GetModule("svSegmentation"));
+    m_PreviewDataNodeInteractor->SetEventConfig("svSegmentationConfig.xml", us::ModuleRegistry::GetModule("svSegmentation"));
+    m_PreviewDataNodeInteractor->SetDataNode(m_PreviewDataNode);
+
+    cvStrPts*  strPts=svSegmentationUtils::GetSlicevtkImage(ui->resliceSlider->getCurrentPathPoint(), m_cvImage->GetVtkStructuredPoints(), ui->resliceSlider->getResliceSize());
+    m_PreviewDataNodeInteractor->SetVtkImageData(m_cvImage->GetVtkStructuredPoints());
+    m_PreviewDataNodeInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer previewFinished = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    previewFinished->SetCallbackFunction(this, &svSeg2DEdit::FinishPreview);
+    m_PreviewContourModelObserverFinishTag = m_PreviewContourModel->AddObserver( EndInteractionContourModelEvent(), previewFinished);
+
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer previewUpdating = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    previewUpdating->SetCallbackFunction(this, &svSeg2DEdit::UpdatePreview);
+    m_PreviewContourModelObserverUpdateTag = m_PreviewContourModel->AddObserver( UpdateInteractionContourModelEvent(), previewUpdating);
+
+    connect(ui->resliceSlider,SIGNAL(reslicePositionChanged(int)), this, SLOT(UpdatePathPoint(int)) );
+
+}
+
+void svSeg2DEdit::UpdatePathPoint(int pos)
+{
+    if(m_PreviewDataNodeInteractor.IsNotNull())
+        m_PreviewDataNodeInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+
+    //to do: update path point for contour group
+}
+
+void svSeg2DEdit::QuitPreviewInteraction()
+{
+    disconnect(ui->resliceSlider,SIGNAL(reslicePositionChanged(int)), this, SLOT(UpdatePathPoint(int)) );
+
+    if( m_PreviewContourModelObserverFinishTag!=-1)
+    {
+        m_PreviewContourModel->RemoveObserver(m_PreviewContourModelObserverFinishTag);
+        m_PreviewContourModelObserverFinishTag=-1;
+    }
+
+    if( m_PreviewContourModelObserverUpdateTag!=-1)
+    {
+        m_PreviewContourModel->RemoveObserver(m_PreviewContourModelObserverUpdateTag);
+        m_PreviewContourModelObserverUpdateTag=-1;
+    }
+
+    if(m_PreviewDataNode.IsNotNull())
+    {
+        m_PreviewDataNode->SetDataInteractor(NULL);
+        m_PreviewDataNodeInteractor=NULL;
+        GetDataStorage()->Remove(m_PreviewDataNode);
+        m_PreviewDataNode=NULL;
+    }
+
+    m_PreviewContourModel=NULL;
 }

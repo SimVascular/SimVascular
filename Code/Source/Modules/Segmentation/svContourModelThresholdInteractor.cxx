@@ -19,6 +19,10 @@ svContourModelThresholdInteractor::svContourModelThresholdInteractor()
     , m_Contour(NULL)
     , m_TimeStep(0)
     , m_ScaleBase(100)
+    , m_Method("Threshold")
+    , m_VtkImageData(NULL)
+    , m_ImageSlice(NULL)
+    , m_ResliceSize(5.0)
 {
 }
 
@@ -29,15 +33,30 @@ svContourModelThresholdInteractor::~svContourModelThresholdInteractor()
 void svContourModelThresholdInteractor::ConnectActionsAndFunctions()
 {
     CONNECT_CONDITION("on_contour_plane", OnCurrentContourPlane);
+    CONNECT_CONDITION("on_2D_view", On2DView);
 
     CONNECT_FUNCTION( "start_drawing", StartDrawing);
     CONNECT_FUNCTION( "update_drawing", UpdateDrawing);
     CONNECT_FUNCTION( "finish_drawing", FinishDrawing);
 }
 
+bool svContourModelThresholdInteractor::On2DView( const mitk::InteractionEvent* interactionEvent )
+{
+    mitk::BaseRenderer *renderer = interactionEvent->GetSender();
+    if(renderer->GetMapperID()==mitk::BaseRenderer::Standard2D)
+        return true;
+    else
+        return false;
+}
+
+
 bool svContourModelThresholdInteractor::OnCurrentContourPlane( const mitk::InteractionEvent* interactionEvent )
 {
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
+
+    if(renderer->GetMapperID()!=mitk::BaseRenderer::Standard2D)
+        return false;
+
     const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
 
     m_TimeStep = renderer->GetTimeStep();
@@ -64,18 +83,36 @@ void svContourModelThresholdInteractor::StartDrawing(mitk::StateMachineAction*, 
     if (positionEvent == NULL)
         return;
 
-    if (m_Contour==NULL)
+    svContourModel* model = dynamic_cast<svContourModel*>( GetDataNode()->GetData() );
+    if(model==NULL)
         return;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
-    const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
+    if(renderer->GetMapperID()!=mitk::BaseRenderer::Standard2D)
+    {
+        m_Contour=NULL;
+        return;
+    }
 
+    m_Contour=new svContour();
+    m_Contour->SetPathPoint(m_PathPoint);
+    m_Contour->SetPlaced(true);
+    m_Contour->SetMethod(m_Method);
     m_Contour->SetFinished(false);
+    model->SetContour(m_Contour);
+
+    const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
     //    mitk::OperationEvent::IncCurrObjectEventId();
 
     m_LastPoint = positionEvent->GetPositionInWorld();
 
-    vtkImageData* imageSlice=m_Contour->GetVtkImageSlice();
+    if(m_VtkImageData!=NULL)
+    {
+        cvStrPts* strPts=svSegmentationUtils::GetSlicevtkImage(m_PathPoint, m_VtkImageData, m_ResliceSize);
+        m_ImageSlice=strPts->GetVtkStructuredPoints();
+    }
+
+    vtkImageData* imageSlice=m_ImageSlice;
     if(imageSlice==NULL)
         return;
 
@@ -145,7 +182,7 @@ void svContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineAction*,
 
     svPathElement::svPathPoint pathPoint=m_Contour->GetPathPoint();
 
-    vtkImageData* imageSlice=m_Contour->GetVtkImageSlice();
+    vtkImageData* imageSlice=m_ImageSlice;
     if(imageSlice==NULL)
         return;
 
@@ -185,6 +222,9 @@ void svContourModelThresholdInteractor::FinishDrawing(mitk::StateMachineAction*,
 
     svContourModel* model = dynamic_cast<svContourModel*>( GetDataNode()->GetData() );
     if(model==NULL)
+        return;
+
+    if(m_Contour==NULL)
         return;
 
     m_Contour->SetFinished();
