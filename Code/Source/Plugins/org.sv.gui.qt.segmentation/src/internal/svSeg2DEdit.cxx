@@ -850,9 +850,12 @@ void svSeg2DEdit::FinishPreview()
 
 void svSeg2DEdit::CreateEllipse()
 {
-    ResetGUI();
+    if(m_CurrentSegButton!=ui->btnEllipse)
+    {
+        ResetGUI();
 
-    SetSecondaryWidgetsVisible(false);
+        SetSecondaryWidgetsVisible(false);
+    }
 
     int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
 
@@ -862,23 +865,20 @@ void svSeg2DEdit::CreateEllipse()
     if(existingContour && existingContour->GetContourPointNumber()>2)
     {
         contour=svContourEllipse::CreateByFitting(existingContour);
-    }else{
+        if(contour)
+        {
+            contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+            contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+            mitk::OperationEvent::IncCurrObjectEventId();
 
-        m_CurrentSegButton=ui->btnEllipse;
-        m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-
-        contour=new svContourEllipse();
-        contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-
-        m_ContourChanging=true;
+            InsertContourByPathPosPoint(contour);
+        }
     }
 
-    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
-    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+    m_CurrentSegButton=ui->btnEllipse;
+    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
-    mitk::OperationEvent::IncCurrObjectEventId();
-
-    InsertContourByPathPosPoint(contour);
+    m_DataInteractor->SetMethod("Ellipse");
 }
 
 void svSeg2DEdit::CreateCircle()
@@ -912,8 +912,6 @@ void svSeg2DEdit::CreateCircle()
     m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
     m_DataInteractor->SetMethod("Circle");
-
-    m_ContourChanging=true;
 }
 
 void svSeg2DEdit::CreateSplinePoly()

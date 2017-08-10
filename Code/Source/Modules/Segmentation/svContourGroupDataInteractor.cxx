@@ -482,7 +482,11 @@ void svContourGroupDataInteractor::SetContour(svContourGroup* group, int contour
 
 bool svContourGroupDataInteractor::IsMethodSpecified( const mitk::InteractionEvent* interactionEvent )
 {
-    return m_Method!="";
+    mitk::BaseRenderer *renderer = interactionEvent->GetSender();
+    if (renderer && renderer->GetMapperID()==mitk::BaseRenderer::Standard2D)
+        return m_Method!="";
+    else
+        return false;
 }
 
 // ==========Actions=============
@@ -501,6 +505,8 @@ void svContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mi
 
     if(m_Method=="Circle")
         m_Contour=new svContourCircle();
+    else if(m_Method=="Ellipse")
+        m_Contour=new svContourEllipse();
     else
         return;
 
@@ -509,6 +515,9 @@ void svContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mi
     m_Contour->SetSubdivisionSpacing(m_SubdivisionSpacing);
 
     mitk::OperationEvent::IncCurrObjectEventId();
+
+    // Invoke event to notify listeners that placement of this PF starts now
+    group->InvokeEvent( StartChangingContourEvent() );
 
     int index=group->GetContourIndexByPathPosPoint(m_Contour->GetPathPosPoint());
     if(index!=-2)
@@ -532,9 +541,6 @@ void svContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mi
 
     mitk::Point3D point = positionEvent->GetPositionInWorld();
     m_LastPoint=point;
-
-    // Invoke event to notify listeners that placement of this PF starts now
-    group->InvokeEvent( StartChangingContourEvent() );
 
     m_Contour->PlaceContour(point);
 
