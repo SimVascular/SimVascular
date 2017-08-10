@@ -6,6 +6,7 @@
 #include <svSegmentationExports.h>
 
 #include "svContourModel.h"
+#include "svContourGroupDataInteractor.h"
 
 #include <itkEventObject.h>
 #include <mitkInteractionPositionEvent.h>
@@ -31,6 +32,8 @@ public:
 
     void SetResliceSize(double size) {m_ResliceSize=size;}
 
+    void SetGroupInteractor(svContourGroupDataInteractor::Pointer groupInteractor) {m_GroupInteractor=groupInteractor;}
+
 protected:
 
     svContourModelThresholdInteractor();
@@ -42,7 +45,7 @@ protected:
 
     bool OnCurrentContourPlane( const mitk::InteractionEvent* interactionEvent );
 
-    bool On2DView( const mitk::InteractionEvent* interactionEvent );
+    bool AtValidLocation( const mitk::InteractionEvent* interactionEvent );
 
     //  Actions //
 
@@ -51,6 +54,8 @@ protected:
     void UpdateDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
 
     void FinishDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+
+    void ClearDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
 
 private:
 
@@ -77,6 +82,8 @@ private:
     double m_ResliceSize;
 
     svPathElement::svPathPoint m_PathPoint;
+
+    svContourGroupDataInteractor::Pointer m_GroupInteractor;
 
 };
 

@@ -56,6 +56,7 @@ svSeg2DEdit::svSeg2DEdit() :
     m_StartChangingContourObserverTag=-1;
     m_EndChangingContourObserverTag=-1;
     m_ContourChanging=false;
+    m_DataInteractor=NULL;
 
     m_ManualMenu=NULL;
     m_CopyContour=NULL;
@@ -426,6 +427,13 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     ui->checkBoxLoftingPreview->setChecked(lofting);
 
     ui->resliceSlider->turnOnReslice(true);
+
+    m_DataInteractor->SetPathPoints(m_PathPoints);
+    m_DataInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+    m_DataInteractor->SetSubdivisionSpacing(GetVolumeImageSpacing());
+
+    connect(ui->resliceSlider,SIGNAL(reslicePositionChanged(int)), this, SLOT(UpdatePathPoint(int)) );
+
 }
 
 double svSeg2DEdit::GetVolumeImageSpacing()
@@ -493,9 +501,7 @@ void svSeg2DEdit::SetContour(int contourIndex, svContour* newContour)
     {
         svContour* originalContour=m_ContourGroup->GetContour(contourIndex);
 
-//        originalContour->DeselectControlPoint();
-//        originalContour->SetFinished();//show center/scaling points if applicable
-//        originalContour->SetClosed();
+        newContour->SetSelected(true);
 
         int timeStep=GetTimeStep();
         svContourOperation* doOp = new svContourOperation(svContourOperation::OpSETCONTOUR,timeStep,newContour,contourIndex);
@@ -739,6 +745,9 @@ void svSeg2DEdit::ResetGUI()
     if(m_CurrentSegButton)
         m_CurrentSegButton->setStyleSheet("");
 
+    if(m_DataInteractor.IsNotNull())
+        m_DataInteractor->SetMethod("");
+
     QuitPreviewInteraction();
 
     if(m_ContourGroup)
@@ -806,11 +815,8 @@ void svSeg2DEdit::UpdatePreview()
     if(m_PreviewContourModel.IsNull())
          return;
 
-    svContourModelThresholdInteractor* interactor=dynamic_cast<svContourModelThresholdInteractor*>( m_PreviewDataNodeInteractor.GetPointer());
-    if(interactor)
-    {
-        ui->sliderThreshold->setValue(interactor->GetCurrentValue());
-    }
+    if(m_PreviewDataNodeInteractor.IsNotNull())
+        ui->sliderThreshold->setValue(m_PreviewDataNodeInteractor->GetCurrentValue());
 }
 
 void svSeg2DEdit::FinishPreview()
@@ -877,9 +883,12 @@ void svSeg2DEdit::CreateEllipse()
 
 void svSeg2DEdit::CreateCircle()
 {
-    ResetGUI();
+    if(m_CurrentSegButton!=ui->btnCircle)
+    {
+        ResetGUI();
 
-    SetSecondaryWidgetsVisible(false);
+        SetSecondaryWidgetsVisible(false);
+    }
 
     int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
 
@@ -889,23 +898,22 @@ void svSeg2DEdit::CreateCircle()
     if(existingContour && existingContour->GetContourPointNumber()>2)
     {
         contour=svContourCircle::CreateByFitting(existingContour);
-    }else{
+        if(contour)
+        {
+            contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+            contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+            mitk::OperationEvent::IncCurrObjectEventId();
 
-        m_CurrentSegButton=ui->btnCircle;
-        m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-
-        contour=new svContourCircle();
-        contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-
-        m_ContourChanging=true;
+            InsertContourByPathPosPoint(contour);
+        }
     }
 
-    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
-    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+    m_CurrentSegButton=ui->btnCircle;
+    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
-    mitk::OperationEvent::IncCurrObjectEventId();
+    m_DataInteractor->SetMethod("Circle");
 
-    InsertContourByPathPosPoint(contour);
+    m_ContourChanging=true;
 }
 
 void svSeg2DEdit::CreateSplinePoly()
@@ -1093,6 +1101,8 @@ void svSeg2DEdit::ClearAll()
     ui->labelGroupName->setText("");
     ui->listWidget->clear();
 
+    disconnect(ui->resliceSlider,SIGNAL(reslicePositionChanged(int)), this, SLOT(UpdatePathPoint(int)) );
+
     ResetGUI();
 }
 
@@ -1223,8 +1233,8 @@ void svSeg2DEdit::ContourChangingOn()
 void svSeg2DEdit::ContourChangingOff()
 {
     m_ContourChanging=false;
-    if(m_CurrentSegButton)
-        m_CurrentSegButton->setStyleSheet("");
+//    if(m_CurrentSegButton)
+//        m_CurrentSegButton->setStyleSheet("");
 }
 
 void svSeg2DEdit::UpdatePathResliceSize(double newSize)
@@ -1613,6 +1623,7 @@ void svSeg2DEdit::PreparePreviewInteraction(QString method)
     cvStrPts*  strPts=svSegmentationUtils::GetSlicevtkImage(ui->resliceSlider->getCurrentPathPoint(), m_cvImage->GetVtkStructuredPoints(), ui->resliceSlider->getResliceSize());
     m_PreviewDataNodeInteractor->SetVtkImageData(m_cvImage->GetVtkStructuredPoints());
     m_PreviewDataNodeInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+    m_PreviewDataNodeInteractor->SetGroupInteractor(m_DataInteractor);
 
     itk::SimpleMemberCommand<svSeg2DEdit>::Pointer previewFinished = itk::SimpleMemberCommand<svSeg2DEdit>::New();
     previewFinished->SetCallbackFunction(this, &svSeg2DEdit::FinishPreview);
@@ -1621,9 +1632,6 @@ void svSeg2DEdit::PreparePreviewInteraction(QString method)
     itk::SimpleMemberCommand<svSeg2DEdit>::Pointer previewUpdating = itk::SimpleMemberCommand<svSeg2DEdit>::New();
     previewUpdating->SetCallbackFunction(this, &svSeg2DEdit::UpdatePreview);
     m_PreviewContourModelObserverUpdateTag = m_PreviewContourModel->AddObserver( UpdateInteractionContourModelEvent(), previewUpdating);
-
-    connect(ui->resliceSlider,SIGNAL(reslicePositionChanged(int)), this, SLOT(UpdatePathPoint(int)) );
-
 }
 
 void svSeg2DEdit::UpdatePathPoint(int pos)
@@ -1631,13 +1639,12 @@ void svSeg2DEdit::UpdatePathPoint(int pos)
     if(m_PreviewDataNodeInteractor.IsNotNull())
         m_PreviewDataNodeInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
 
-    //to do: update path point for contour group
+    if(m_DataInteractor.IsNotNull())
+        m_DataInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
 }
 
 void svSeg2DEdit::QuitPreviewInteraction()
 {
-    disconnect(ui->resliceSlider,SIGNAL(reslicePositionChanged(int)), this, SLOT(UpdatePathPoint(int)) );
-
     if( m_PreviewContourModelObserverFinishTag!=-1)
     {
         m_PreviewContourModel->RemoveObserver(m_PreviewContourModelObserverFinishTag);
@@ -1653,10 +1660,10 @@ void svSeg2DEdit::QuitPreviewInteraction()
     if(m_PreviewDataNode.IsNotNull())
     {
         m_PreviewDataNode->SetDataInteractor(NULL);
-        m_PreviewDataNodeInteractor=NULL;
         GetDataStorage()->Remove(m_PreviewDataNode);
         m_PreviewDataNode=NULL;
     }
 
+    m_PreviewDataNodeInteractor=NULL;
     m_PreviewContourModel=NULL;
 }

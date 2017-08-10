@@ -25,6 +25,20 @@ public:
 
     void SetInteraction3D(bool use3D);
 
+    void SetPathPoints(std::vector<svPathElement::svPathPoint> pathPoints) {m_PathPoints=pathPoints;}
+
+    void SetPathPoint(svPathElement::svPathPoint pathPoint) {m_PathPoint=pathPoint;}
+
+    svPathElement::svPathPoint GetPathPoint() {return m_PathPoint;}
+
+    void SetMethod(std::string method) {m_Method=method;}
+
+    std::string GetMethod() {return m_Method;}
+
+    void SetSubdivisionSpacing(double spacing) {m_SubdivisionSpacing=spacing;}
+
+    double GetSubdivisionSpacing() {return m_SubdivisionSpacing;}
+
 protected:
 
     svContourGroupDataInteractor();
@@ -32,6 +46,7 @@ protected:
 
     virtual void ConnectActionsAndFunctions() override;
 
+public:
     //  Conditions //
 
     bool ContourExistsOnCurrentSlice( const mitk::InteractionEvent* interactionEvent );
@@ -51,6 +66,8 @@ protected:
     bool IsOverContour( const mitk::InteractionEvent* interactionEvent );
 
     bool IsOverPoint( const mitk::InteractionEvent* interactionEvent );
+
+    bool IsMethodSpecified( const mitk::InteractionEvent* interactionEvent );
 
     //  Actions //
 
@@ -108,6 +125,10 @@ protected:
 
     bool IsOn2DView(const mitk::InteractionEvent* interactionEvent) const;
 
+    void InsertContour(svContourGroup* group, svContour* contour, int contourIndex, int timeStep = 0);
+
+    void SetContour(svContourGroup* group, int contourIndex, svContour* newContour, int timeStep = 0);
+
 private:
 
     mitk::ScalarType m_SelectionAccuracy;
@@ -132,6 +153,13 @@ private:
 
     bool m_Interaction3D;
 
+    std::vector<svPathElement::svPathPoint> m_PathPoints;
+
+    svPathElement::svPathPoint m_PathPoint;
+
+    std::string m_Method;
+
+    double m_SubdivisionSpacing;
 };
 
 itkEventMacro( StartPlacementContourEvent, svContourEvent );

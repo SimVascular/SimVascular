@@ -2,6 +2,10 @@
 
 #include "svContourGroupDataInteractor.h"
 #include "svContourOperation.h"
+#include "svContourCircle.h"
+#include "svContourEllipse.h"
+#include "svContourPolygon.h"
+#include "svContourSplinePolygon.h"
 
 #include "mitkInteractionPositionEvent.h"
 #include "mitkInternalEvent.h"
@@ -24,6 +28,8 @@ svContourGroupDataInteractor::svContourGroupDataInteractor()
     , m_Contour(NULL)
     , m_TimeStep(0)
     , m_Interaction3D(false)
+    , m_Method("")
+    , m_SubdivisionSpacing(0.1)
 {
 }
 
@@ -42,6 +48,7 @@ void svContourGroupDataInteractor::ConnectActionsAndFunctions()
     CONNECT_CONDITION("minimal_contour_is_finished", MinimalContourIsFinished);
     CONNECT_CONDITION("is_over_contour", IsOverContour);
     CONNECT_CONDITION("is_over_point", IsOverPoint);
+    CONNECT_CONDITION("method_is_specified", IsMethodSpecified);
 
     CONNECT_FUNCTION( "add_initial_point", AddInitialPoint);
     CONNECT_FUNCTION( "move_current_point", MoveCurrentPoint);
@@ -64,7 +71,7 @@ bool svContourGroupDataInteractor::ContourExistsOnCurrentSlice( const mitk::Inte
 {
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
-        m_TimeStep = renderer->GetTimeStep();
+    m_TimeStep = renderer->GetTimeStep();
     svContourGroup* group = dynamic_cast<svContourGroup*>( GetDataNode()->GetData() );
     if(group==NULL)
         return false;
@@ -431,6 +438,53 @@ int svContourGroupDataInteractor::SearchControlPoint(
     return -2;
 }
 
+void svContourGroupDataInteractor::InsertContour(svContourGroup* group, svContour* contour, int contourIndex, int timeStep)
+{
+    if(group&&contour&&contourIndex>-2){
+
+        group->DeselectContours();
+
+        contour->SetSelected(true);
+
+        svContourOperation* doOp = new svContourOperation(svContourOperation::OpINSERTCONTOUR,timeStep,contour,contourIndex);
+
+        svContourOperation *undoOp = new svContourOperation(svContourOperation::OpREMOVECONTOUR,timeStep, contour, contourIndex);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(group, doOp, undoOp, "Insert Contour");
+
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+
+        group->ExecuteOperation(doOp);
+
+//        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+    }
+}
+
+void svContourGroupDataInteractor::SetContour(svContourGroup* group, int contourIndex, svContour* newContour, int timeStep)
+{
+    if(group&&contourIndex>-2)
+    {
+        svContour* originalContour=group->GetContour(contourIndex);
+
+        svContourOperation* doOp = new svContourOperation(svContourOperation::OpSETCONTOUR,timeStep,newContour,contourIndex);
+
+        svContourOperation *undoOp = new svContourOperation(svContourOperation::OpSETCONTOUR,timeStep, originalContour, contourIndex);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(group, doOp, undoOp, "Set Contour");
+
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+
+        group->ExecuteOperation(doOp);
+
+//        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+    }
+}
+
+bool svContourGroupDataInteractor::IsMethodSpecified( const mitk::InteractionEvent* interactionEvent )
+{
+    return m_Method!="";
+}
+
 // ==========Actions=============
 
 void svContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
@@ -439,20 +493,42 @@ void svContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mi
     if ( positionEvent == NULL )
         return;
 
+    mitk::BaseRenderer *renderer = interactionEvent->GetSender();
+
     svContourGroup* group = dynamic_cast<svContourGroup *>( GetDataNode()->GetData() );
-    svContour* contour=NULL;
-    int contourIndex=svContour::INVALID_INDEX;
-    if(group)
+    if(group==NULL)
+        return;
+
+    if(m_Method=="Circle")
+        m_Contour=new svContourCircle();
+    else
+        return;
+
+    m_Contour->SetPathPoint(m_PathPoint);
+    m_Contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+    m_Contour->SetSubdivisionSpacing(m_SubdivisionSpacing);
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    int index=group->GetContourIndexByPathPosPoint(m_Contour->GetPathPosPoint());
+    if(index!=-2)
     {
-        contourIndex=group->GetUnplacedContourIndex(m_TimeStep);
-        contour=group->GetContour(contourIndex,m_TimeStep);
+        SetContour(group, index, m_Contour, renderer->GetTimeStep());
+    }
+    else
+    {
+        for(int i=0;i<m_PathPoints.size();i++)
+        {
+            if(m_PathPoints[i].pos==m_Contour->GetPathPosPoint())
+                m_Contour->SetTagIndex(i);
+        }
+
+        index=group->GetInsertingContourIndexByTagIndex(m_Contour->GetTagIndex());
+        InsertContour(group, m_Contour,index, renderer->GetTimeStep());
     }
 
-    if(contour==NULL) return;
-
-    contour->SetFinished(false);//hide center/scaling points if applicable
-    m_Contour=contour;
-    m_ContourIndex=contourIndex;
+    m_Contour->SetFinished(false);//hide center/scaling points if applicable
+    m_ContourIndex=index;
 
     mitk::Point3D point = positionEvent->GetPositionInWorld();
     m_LastPoint=point;
@@ -460,9 +536,7 @@ void svContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mi
     // Invoke event to notify listeners that placement of this PF starts now
     group->InvokeEvent( StartChangingContourEvent() );
 
-    mitk::BaseRenderer *renderer = interactionEvent->GetSender();
-
-    contour->PlaceContour(point);
+    m_Contour->PlaceContour(point);
 
     renderer->GetRenderingManager()->RequestUpdateAll();
 }
