@@ -54,8 +54,8 @@ button .frame.frame1.button3 -text .frame1.button3
 button .frame.frame2.button1 -text .frame2.button1
 button .frame.frame2.button2 -text .frame2.button2
 button .frame.frame2.button3 -text .frame2.button3
-pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top} 
-pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top} 
+pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top}
+pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top}
 pack append .frame .frame.frame1 {top} .frame.frame2 {top}
 pack append . .frame "top fill expand"
 XFPlacing . config Toplevel
@@ -64,7 +64,7 @@ update idletasks}
 
 set placingName1 {place の使い方}
 set placingText1 {\
-まず、２つの frame をそれぞれ配置します。最初の 
+まず、２つの frame をそれぞれ配置します。最初の
 frame に対しては (0,0) の座標を指定して左上の角に
 配置し、２つめの frame に対しては、相対位置 (0.5,
 0.5) を指定して親ウィジェットの中央に配置すること
@@ -168,7 +168,7 @@ set placingName3 {place の使い方}
 set placingText3 {\
 ここでお見せする機能は、それが何のために、どうやっ
 て起きているのかを理解せずには、非常に使い辛いもの
-です。いくつもの子供を持つ親のウィジェットが、元々 
+です。いくつもの子供を持つ親のウィジェットが、元々
 pack されていなかったりして座標情報（幅と高さ）が
 与えられていない場合を考えると、この機能は子供の配
 置の指定を pack から place に変更する時に効力を発

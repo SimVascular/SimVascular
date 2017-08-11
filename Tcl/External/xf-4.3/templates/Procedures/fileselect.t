@@ -4,7 +4,7 @@
 # Author: Mario Jorge Silva (msilva@cs.Berkeley.EDU)
 #         University of California Berkeley           Ph: +1(510)642-8248
 #         Computer Science Division, 571 Evans Hall   Fax: +1(510)642-5775
-#         Berkeley CA 94720                                 
+#         Berkeley CA 94720
 # Source: fileselect.t
 # Version: 1.1
 #
@@ -62,8 +62,8 @@ proc fileselect.default.cmd {f} {# xf ignore me 5
 # this is the proc that creates the file selector box
 
 proc fileselect {
-    {cmd fileselect.default.cmd} 
-    {purpose "Open file:"} 
+    {cmd fileselect.default.cmd}
+    {purpose "Open file:"}
     {w .fileSelectWindow} } {# xf ignore me 5
 ##########
 # Procedure: fileselect
@@ -102,7 +102,7 @@ proc fileselect {
     set fileselect_dirlabel $w.file.dirlabel
 
     # widgets
-    frame $w.file -bd 10 
+    frame $w.file -bd 10
     frame $w.bframe -bd 10
     pack append $w \
         $w.file {left filly} \
@@ -110,7 +110,7 @@ proc fileselect {
 
     frame $w.file.eframe
     frame $w.file.sframe
-    label $w.file.dirlabel -anchor e -width 24 -text [pwd] 
+    label $w.file.dirlabel -anchor e -width 24 -text [pwd]
 
     pack append $w.file \
         $w.file.eframe {top frame w} \
@@ -119,7 +119,7 @@ proc fileselect {
 
 
     label $w.file.eframe.label -anchor w -width 24 -text $purpose
-    entry $w.file.eframe.entry -relief sunken 
+    entry $w.file.eframe.entry -relief sunken
 
     pack append $w.file.eframe \
 		$w.file.eframe.label {top expand frame w} \
@@ -129,15 +129,15 @@ proc fileselect {
     scrollbar $w.file.sframe.yscroll -relief sunken \
 	 -command "$w.file.sframe.list yview"
     listbox $w.file.sframe.list -relief sunken \
-	-yscroll "$w.file.sframe.yscroll set" 
+	-yscroll "$w.file.sframe.yscroll set"
 
     pack append $w.file.sframe \
         $w.file.sframe.yscroll {right filly} \
- 	$w.file.sframe.list {left fill} 
+ 	$w.file.sframe.list {left fill}
 
     # buttons
     frame $w.bframe.okframe -borderwidth 2 -relief sunken
- 
+
     button $w.bframe.okframe.ok -text OK -relief raised -padx 10 \
         -command "fileselect.ok.cmd $w $cmd"
 
@@ -150,7 +150,7 @@ proc fileselect {
 
     # Fill the listbox with a list of all the files in the directory (run
     # the "ls" command to get that information).
- 
+
     foreach i [Ls -a [pwd]] {
         if {[string compare $i "."] != 0} {
             $fileselect_list insert end $i
@@ -218,7 +218,7 @@ proc fileselect.cancel.cmd {w} {# xf ignore me 6
 }
 
 proc fileselect.ok.cmd {w cmd} {# xf ignore me 6
-    global fileselect_entry fileselect_dirlabel fileselect_list 
+    global fileselect_entry fileselect_dirlabel fileselect_list
     set selected [$fileselect_entry get]
 
     if {[file isdirectory $selected] != 0} {

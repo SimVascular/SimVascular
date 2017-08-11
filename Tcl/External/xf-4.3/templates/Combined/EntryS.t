@@ -24,11 +24,11 @@ global symbolicName
   # pack widget .frame
   pack append .frame \
     .frame.entry2   {top frame center fill} \
-    .frame.scrollbar1   {top frame center fillx} 
+    .frame.scrollbar1   {top frame center fillx}
 
   # pack widgets
   pack append . \
-    .frame   {top fill frame center} 
+    .frame   {top fill frame center}
 
 # end of widget tree
 

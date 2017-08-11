@@ -6,15 +6,15 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -28,7 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include "cvDistanceMap.h"
 
@@ -57,7 +57,7 @@ cvDistanceMap::cvDistanceMap() {
       }
     }
     if (num != 26) {
-      fprintf(stderr,"ERROR:  need 26 neighbors and found %i\n",num); 
+      fprintf(stderr,"ERROR:  need 26 neighbors and found %i\n",num);
       exit(-1);
     }
 }
@@ -72,7 +72,7 @@ cvDistanceMap::~cvDistanceMap() {
 }
 
 int cvDistanceMap::createDistanceMap (vtkStructuredPoints *vtksp,
-                                        vtkFloatingPointType thrval, 
+                                        vtkFloatingPointType thrval,
                                         int start[3]) {
 
     // Code to create a PathPlan binary segmentation from a VTK
@@ -120,13 +120,13 @@ int cvDistanceMap::createDistanceMap (vtkStructuredPoints *vtksp,
     fprintf(stdout,"dims: %i %i %i\n", imgDims_[0],imgDims_[1],imgDims_[2]);
 
     vtkDataArray *vScalars = vtksp->GetPointData()->GetScalars();
-    
+
     int buckindex, bloop;
 
     // count the number of non-zero
     int nonZeroPixels = 0;
     int totalNumPixels = imgDims_[0]*imgDims_[1]*imgDims_[2];
- 
+
     for (s = 0; s < totalNumPixels; s++) {
       if ((int)(vScalars->GetTuple1(s)) >= thrval) {
         nonZeroPixels++;
@@ -184,14 +184,14 @@ int cvDistanceMap::createDistanceMap (vtkStructuredPoints *vtksp,
 
         // loop over neighbors_s and calc distance
         for (n = 0; n < numNeighbors_; n++) {
-            q = neighbors_[n]; 
+            q = neighbors_[n];
 
             if (q < 0) continue;
             // check distance value
-            //fprintf(stdout,"mapScalars [%i] : %i\n",q,(int)mapScalars->GetTuple1(q)); 
+            //fprintf(stdout,"mapScalars [%i] : %i\n",q,(int)mapScalars->GetTuple1(q));
             if ((int)(mapScalars->GetTuple1(q)) >= 0) {
                 distanceMapType pval = (distanceMapType)(mapScalars->GetTuple1(p));
-                distanceMapType qval = (distanceMapType)(mapScalars->GetTuple1(q)); 
+                distanceMapType qval = (distanceMapType)(mapScalars->GetTuple1(q));
                 Dq = pval + 1;
                 //fprintf(stdout,"%i %i %i\n",p,q,Dq);
                 if (Dq < qval) {
@@ -223,7 +223,7 @@ int cvDistanceMap::createDistanceMap (vtkStructuredPoints *vtksp,
                     }
                     bucket[buckindex]->InsertNextId(q);
                 }
-            } 
+            }
         }
 
       p = -1;
@@ -304,7 +304,7 @@ vtkPolyData* cvDistanceMap::getPathOld(int stop[3]) {
     mylines->Allocate(100,100);
     mylines->InitTraversal();
     vtkPolyData *mypd  =  vtkPolyData::New();
-  
+
     mypd->SetPoints(mypts);
     mypd->SetLines(mylines);
 
@@ -327,7 +327,7 @@ vtkPolyData* cvDistanceMap::getPathOld(int stop[3]) {
 */
 
     int minq = MAX_DISTANCE_VAL;
-    
+
     vtkIdList *line = vtkIdList::New();
     line->Allocate(3,3);
 
@@ -346,7 +346,7 @@ vtkPolyData* cvDistanceMap::getPathOld(int stop[3]) {
         for (int n = 0; n < numNeighbors_; n++) {
             q = neighbors_[n];
             if (q < 0) continue;
-            int qval = (int)(mapScalars->GetTuple1(q)); 
+            int qval = (int)(mapScalars->GetTuple1(q));
             if (qval >= 0 && qval <= minq) {
                 minq = qval;
                 p = q;
@@ -383,7 +383,7 @@ vtkPolyData* cvDistanceMap::getPathOld(int stop[3]) {
 vtkPolyData* cvDistanceMap::getPath(int stop[3], int minqstop) {
 
     int i,n;
-    
+
     if (map_ == NULL) {
         return NULL;
     }
@@ -419,7 +419,7 @@ vtkPolyData* cvDistanceMap::getPath(int stop[3], int minqstop) {
         for (n = 0; n < numNeighbors_; n++) {
             q = neighbors_[n];
             if (q < 0) continue;
-            distanceMapType qval = (distanceMapType)(mapScalars->GetTuple1(q)); 
+            distanceMapType qval = (distanceMapType)(mapScalars->GetTuple1(q));
             if (qval >= 0 && qval <= minq) {
                 minq = qval;
                 p = q;
@@ -431,7 +431,7 @@ vtkPolyData* cvDistanceMap::getPath(int stop[3], int minqstop) {
           curpath->Delete();
           return NULL;
         }
-  
+
         curpath->InsertNextId(p);
 
     }
@@ -447,7 +447,7 @@ vtkPolyData* cvDistanceMap::getPath(int stop[3], int minqstop) {
 
     vtkIdList *line = vtkIdList::New();
     line->Allocate(3,3);
-  
+
     mypd->SetPoints(mypts);
     mypd->SetLines(mylines);
 
@@ -558,19 +558,19 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
             q = neighbors_[n];
             if (q < 0) continue;
             distanceMapType qval = (distanceMapType)(mapScalars->GetTuple1(q));
-            if (prevpath->IsId(q) >= 0) {   
+            if (prevpath->IsId(q) >= 0) {
               if (qval >= 0 && qval < minq) {
                 minq = qval;
                 p = q;
               }
             }
           }
-          if (p < 0) {         
+          if (p < 0) {
             fprintf(stdout,"ERROR:  could not find less than equal path to next pt!\n");
             curpath->Delete();
             prevpath->Delete();
             return NULL;
-          }     
+          }
         }
         fprintf(stdout,"adding (%i) \n",p);
         curpath->InsertNextId(p);
@@ -586,12 +586,12 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
     int numPixelsRemoved = 0;
     thinMask(&numPixelsRemoved);
     fprintf(stderr,"pass [%i]: num of pixels removed = %i\n",curIterNum,numPixelsRemoved);
- 
+
     if (numPixelsRemoved == 0) break;
 
     if (prevpath != NULL) prevpath->Delete();
     prevpath = curpath;
- 
+
   }
 
   // create return vtk polydata
@@ -626,7 +626,7 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
   path_ = mypd;
   curpath->Delete();
   if (maxIterNum > 1) prevpath->Delete();
- 
+
   return path_;
 
 }
@@ -634,15 +634,15 @@ vtkPolyData* cvDistanceMap::getPathByThinning(int stop[3],  int minqstop, int ma
 
 void cvDistanceMap::setDistanceMap(vtkStructuredPoints *sp) {
     map_ = sp;
-} 
+}
 
 void cvDistanceMap::setUseCityBlockDistance() {
     useCityBlock_ = 1;
-} 
+}
 
 void cvDistanceMap::setUse26ConnectivityDistance() {
     useCityBlock_ = 0;
-} 
+}
 
 
 int cvDistanceMap::getCityBlockNeighbors(int p) {
@@ -735,7 +735,7 @@ int cvDistanceMap::createInitMask() {
         mask_ -> Delete();
         mask_ = NULL;
     }
-   
+
     int s;
 
     vtkShortArray *maskScalars = vtkShortArray::New();
@@ -768,7 +768,7 @@ int cvDistanceMap::createInitMask() {
           maskNum++;
       } else {
         maskScalars->InsertNextTuple1(0);
-      } 
+      }
     }
 
 
@@ -780,7 +780,7 @@ int cvDistanceMap::createInitMask() {
     fprintf(stdout,"number of unmasked pixels (%i)\n",maskNum);
 
     return SV_OK;
-    
+
 }
 
 int cvDistanceMap::thinMask(int *numPixelsRemoved) {
@@ -789,7 +789,7 @@ int cvDistanceMap::thinMask(int *numPixelsRemoved) {
 
     vtkDataArray *maskScalars = mask_->GetPointData()->GetScalars();
 
-    // scan each direction, build list of 
+    // scan each direction, build list of
     // indexes to remove, then parallel thin
     int i,j,k,p,s,n;
 
@@ -811,7 +811,7 @@ int cvDistanceMap::thinMask(int *numPixelsRemoved) {
             inside = 0;
             removeIds->InsertNextId(sprev);
           }
-          sprev = s; 
+          sprev = s;
         }
         if (inside == 1) {
             removeIds->InsertNextId(s);
@@ -829,7 +829,7 @@ int cvDistanceMap::thinMask(int *numPixelsRemoved) {
     // mask all surface pixels
     for (n = 0; n < numPixels; n++) {
         maskScalars->SetTuple1(removeIds->GetId(n),0);
-    }  
+    }
 
     vtkXMLDataSetWriter *foo = vtkXMLDataSetWriter::New();
     foo->SetInputData(mask_);

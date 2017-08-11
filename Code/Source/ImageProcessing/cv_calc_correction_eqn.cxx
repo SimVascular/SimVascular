@@ -6,15 +6,15 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -28,7 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -138,7 +138,7 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
             }
             if (result == 1) {
               int pixel = i + j * dimensions[0];
-              // only count a pixel once, it may have been in a 
+              // only count a pixel once, it may have been in a
               // previous region
               if (voxs[pixel] == 0) {
                 voxs[pixel] = 1;
@@ -202,7 +202,7 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
             xt[s][0] = 1;
             s++;
          }
-       } 
+       }
      }
    } else if (order == 1) {
      for (p = 0; p < maxPixNum; p++) {
@@ -217,7 +217,7 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
             yt[s][0] = value;
             xt[s][0] = 1;xt[s][1] = pt[0];xt[s][2] = pt[1];
             s++;
-         } 
+         }
        }
      }
    } else if (order == 2) {
@@ -235,8 +235,8 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
             xt[s][3] = pt[0]*pt[0];
             xt[s][4] = pt[1]*pt[1];
             xt[s][5] = pt[0]*pt[1];
-            s++;  
-         } 
+            s++;
+         }
        }
      }
    }
@@ -260,7 +260,7 @@ int img_calcCorrectionEqn(int numRegions,vtkPolyData **listPd,
       return SV_ERROR;
    }
 
-   // set results 
+   // set results
    results[0]=0;results[1]=0;results[2]=0;
    results[3]=0;results[4]=0;results[5]=0;
    for (i = 0; i < xOrder; i++) {
@@ -327,7 +327,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
    double pt[2];
    int n,j;
    int numIn = 0;
- 
+
    if (numRegions != 0) {
 
      // to speed things up, we first find the bounding box of each
@@ -385,7 +385,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
             }
             if (result == 1) {
               int pixel = i + j * dimensions[0];
-              // only count a pixel once, it may have been in a 
+              // only count a pixel once, it may have been in a
               // previous region
               if (voxs[pixel] == 0) {
                 voxs[pixel] = 1;
@@ -446,7 +446,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
          mean[p] += value;
          s++;
        }
-       mean[p] = mean[p] / numImages; 
+       mean[p] = mean[p] / numImages;
      }
    }
 
@@ -609,7 +609,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
             xt[s][0] = 1;
             s++;
          }
-       } 
+       }
      }
    } else if (order == 1) {
      for (p = 0; p < maxPixNum; p++) {
@@ -624,7 +624,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
             yt[s][0] = value;
             xt[s][0] = 1;xt[s][1] = pt[0];xt[s][2] = pt[1];
             s++;
-         } 
+         }
        }
      }
    } else if (order == 2) {
@@ -642,8 +642,8 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
             xt[s][3] = pt[0]*pt[0];
             xt[s][4] = pt[1]*pt[1];
             xt[s][5] = pt[0]*pt[1];
-            s++;  
-         } 
+            s++;
+         }
        }
      }
    }
@@ -668,7 +668,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
       return SV_ERROR;
    }
 
-   // set results 
+   // set results
    results[0]=0;results[1]=0;results[2]=0;
    results[3]=0;results[4]=0;results[5]=0;
    for (i = 0; i < xOrder; i++) {
@@ -681,7 +681,7 @@ int img_calcCorrectionEqnAuto(int numRegions,vtkPolyData **listPd,
    mathobj->deleteArray(mt,xOrder,yOrder);
    delete mathobj;
 
-   
+
    // return the mask for vis
    vtkShortArray* maskvtkPts = vtkShortArray::New();
    maskvtkPts->SetNumberOfComponents(1);

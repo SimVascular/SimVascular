@@ -65,7 +65,7 @@ set exampleText1 {\
 から "Frame" の項目を選んで、ダブル・クリックする
 ことによって行います。
 
-一番上の frame にはメニュー・バーが、中央の frame 
+一番上の frame にはメニュー・バーが、中央の frame
 には現在のディレクトリとファイル名を表示する label
 が、一番下の frame にはディレクトリとファイルの内
 容を表示する listbox が、それぞれ挿入されることに
@@ -186,8 +186,8 @@ set exampleText5 {\
 ず、XF の編集ウィンドウ上の "Templates" リストから
 "Combined" の項目をダブル・クリックしてサブ・ディ
 レクトリを開きます。さらにその中から、"ListboxLS"
-の項目を選びます。この listbox は、すでに２つの 
-scrollbar が付加されたものであり、ことさら listbox 
+の項目を選びます。この listbox は、すでに２つの
+scrollbar が付加されたものであり、ことさら listbox
 と scrollbar を関係付けたりする必要はありません。}
 
 set exampleCommand5 {\
@@ -250,7 +250,7 @@ update idletasks}
 
 set exampleName7 {メニュー・バーのレイアウト}
 set exampleText7 {\
-"Children" リストから１番目の frame を選び、pack 
+"Children" リストから１番目の frame を選び、pack
 のオプションの中から "fillx" オプションを選んで、
 この frame が親のウィンドウの幅を埋め尽くすように
 指定します。}
@@ -351,7 +351,7 @@ set exampleText10 {\
 ウスのダブル・クリックで選ぶことによって行います。
 これに従って、"Children" リストの内容が、メニュー・
 バーの子供（menubutton）に変更されます。"Left" の
-オプションを選ぶことによって、menubutton が frame 
+オプションを選ぶことによって、menubutton が frame
 の左端に寄せられます。}
 
 set exampleCommand10 {\
@@ -581,7 +581,7 @@ update idletasks}
 set exampleName15 {プルダウン・メニューの定義}
 set exampleText15 {\
 ここでメニューの項目名と、その項目が選ばれた時に実
-行するコマンドを入力します。入力が終って "Insert" 
+行するコマンドを入力します。入力が終って "Insert"
 ボタンが押されると、その項目は右側のリストに表示さ
 れます。最初の項目 "Refresh" は、ディレクトリの内
 容を再表示するものです。２つめの項目 "Quit" は、プ
@@ -724,7 +724,7 @@ set exampleText19 {\
 後に実行される手続きを定義します。このソースは（メ
 イン・ループに制御が渡される前に実行される最後のソー
 スという意味で）"end source" と呼ばれます。編集ウィ
-ンドウのメニュー "Programming" から "End source" 
+ンドウのメニュー "Programming" から "End source"
 の項目を選んで、コードを入力して下さい。}
 
 set exampleCommand19 {\
@@ -773,7 +773,7 @@ set exampleName21 {手続きについて}
 set exampleText21 {\
 アプリケーションの手続きを定義したり変更したりする
 ためのダイアログ・ウィンドウを呼び出します。編集ウィ
-ンドウのメニュー "Programming" から "Procedures" 
+ンドウのメニュー "Programming" から "Procedures"
 の項目を選択して下さい。}
 
 set exampleCommand21 {\
@@ -884,7 +884,7 @@ set exampleName25 {リストに対する動作の定義}
 set exampleText25 {\
 ディレクトリの変更やファイルの表示を指示するための
 動作を、ディレクトリの listbox の項目に対して定義
-します。編集ウィンドウのメニュー "Configuration" 
+します。編集ウィンドウのメニュー "Configuration"
 から "Binding" の項目を選択して、binding のダイア
 ログ・ウィンドウを呼び出して下さい。}
 
@@ -943,12 +943,12 @@ update idletasks}
 set exampleName27 {終りに}
 set exampleText27 {\
 こうしてアプリケーションが完成したら、編集ウィンド
-ウのメニュー "File" から "Save" または "Save as..." 
+ウのメニュー "File" から "Save" または "Save as..."
 の項目を選択して、プログラムをセーブしましょう。
 
 以上で、例題の章を終ります。
 
-チュートリアルを終了するには、メニュー "File" から 
+チュートリアルを終了するには、メニュー "File" から
 "Quit" の項目を選択して下さい。}
 
 set exampleCommand27 {\

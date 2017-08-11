@@ -316,7 +316,7 @@ int cvITKLevelSet::ComputeGACLevelSet(float expFactorRising)
 
 
 #ifdef USE_QUICKVIEW_DEBUG
-	
+
 	//We're done, but there is some debug info I might want
 	if(this->GetDebug())
 		std::cout << "NumPts " << contour->GetOutput()->GetNumberOfPoints() <<std::endl;
@@ -388,7 +388,7 @@ int cvITKLevelSet::ComputeGACLevelSet(float expFactorRising)
 	}
 
 #endif
-	
+
 	return TCL_OK;
 
 
@@ -553,7 +553,7 @@ int cvITKLevelSet::ComputePhaseOneLevelSet(float kc,
 		viewer.Visualize();
 	}
 #endif
-	
+
 	return TCL_OK;
 }
 int cvITKLevelSet::ComputePhaseTwoLevelSet(float kupp,float klow)
@@ -701,7 +701,7 @@ int cvITKLevelSet::ComputePhaseTwoLevelSet(float kupp,float klow)
 		viewer.Visualize();
 	}
 #endif
-	
+
 	return TCL_OK;
 
 

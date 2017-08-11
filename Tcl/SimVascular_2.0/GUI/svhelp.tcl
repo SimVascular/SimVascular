@@ -1,17 +1,17 @@
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
-# 
+# All Rights Reserved.
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -120,7 +120,7 @@ proc guiSVHELPshow { file} {
   global symbolicName
   ShowWindow.svhelp
   set tbox $symbolicName(svhelp_textbox)
-  
+
   $tbox tag bind helplink <Button-1> {clickLink %x %y}
 
   $tbox tag configure header1 -font "helvetica 20" \
@@ -188,7 +188,7 @@ proc guiSVHELPshow { file} {
 
             set idx [expr $end + 1]
             } {
-              set idx -1 
+              set idx -1
             }
           }
         }

@@ -51,7 +51,7 @@ $(LIBFLAG)itkhdf5-4.7$(LIBLINKEXT) $(LIBFLAG)itkhdf5_cpp-4.7$(LIBLINKEXT) $(LIBF
 $(ITK_SYS_LIBS)
 endif
 
-#      
+#
 
-# conflicts with vtkhdf5 library itkhdf5-4.7.lib    
+# conflicts with vtkhdf5 library itkhdf5-4.7.lib
 

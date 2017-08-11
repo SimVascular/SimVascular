@@ -12,7 +12,7 @@ proc ShowWindow.top0 { args} {
   } {
     catch "destroy .top0"
   }
-  toplevel .top0 
+  toplevel .top0
 
   # Window manager configurations
   wm positionfrom .top0 ""
@@ -27,7 +27,7 @@ proc ShowWindow.top0 { args} {
   frame .top0.frame     -borderwidth {2}    -relief {raised}
 
   # build widget .top0.frame.frame
-  frame .top0.frame.frame 
+  frame .top0.frame.frame
 
   # build widget .top0.frame.frame.scrollbar1
   scrollbar .top0.frame.frame.scrollbar1     -command {.top0.frame.frame.entry2 xview}    -orient {horizontal}    -width {11}
@@ -36,19 +36,19 @@ proc ShowWindow.top0 { args} {
   entry .top0.frame.frame.entry2     -relief {sunken}    -xscrollcommand {.top0.frame.frame.scrollbar1 set}
 
   # pack widget .top0.frame.frame
-  pack append .top0.frame.frame     .top0.frame.frame.entry2 {top frame center expand fill}     .top0.frame.frame.scrollbar1 {top frame center fillx} 
+  pack append .top0.frame.frame     .top0.frame.frame.entry2 {top frame center expand fill}     .top0.frame.frame.scrollbar1 {top frame center fillx}
 
   # build widget .top0.frame.label1
   label .top0.frame.label1     -text {Name:}
 
   # pack widget .top0.frame
-  pack append .top0.frame     .top0.frame.label1 {left frame center filly}     .top0.frame.frame {top frame center fillx} 
+  pack append .top0.frame     .top0.frame.label1 {left frame center filly}     .top0.frame.frame {top frame center fillx}
 
   # build widget .top0.frame4
   frame .top0.frame4     -borderwidth {2}    -relief {raised}
 
   # build widget .top0.frame4.frame
-  frame .top0.frame4.frame 
+  frame .top0.frame4.frame
 
   # build widget .top0.frame4.frame.scrollbar1
   scrollbar .top0.frame4.frame.scrollbar1     -command {.top0.frame4.frame.entry2 xview}    -orient {horizontal}    -width {11}
@@ -57,13 +57,13 @@ proc ShowWindow.top0 { args} {
   entry .top0.frame4.frame.entry2     -relief {sunken}    -xscrollcommand {.top0.frame4.frame.scrollbar1 set}
 
   # pack widget .top0.frame4.frame
-  pack append .top0.frame4.frame     .top0.frame4.frame.entry2 {top frame center expand fill}     .top0.frame4.frame.scrollbar1 {top frame center fillx} 
+  pack append .top0.frame4.frame     .top0.frame4.frame.entry2 {top frame center expand fill}     .top0.frame4.frame.scrollbar1 {top frame center fillx}
 
   # build widget .top0.frame4.label1
   label .top0.frame4.label1     -text {Command:}
 
   # pack widget .top0.frame4
-  pack append .top0.frame4     .top0.frame4.label1 {left frame center filly}     .top0.frame4.frame {top frame center fillx} 
+  pack append .top0.frame4     .top0.frame4.label1 {left frame center filly}     .top0.frame4.frame {top frame center fillx}
 
   # build widget .top0.frame5
   frame .top0.frame5     -relief {raised}
@@ -81,10 +81,10 @@ proc ShowWindow.top0 { args} {
   button .top0.frame5.button9     -command {HardcopySave}    -text {Save}
 
   # pack widget .top0.frame5
-  pack append .top0.frame5     .top0.frame5.button6 {left frame center expand fill}     .top0.frame5.button7 {left frame center expand fill}     .top0.frame5.button8 {left frame center expand fill}     .top0.frame5.button9 {left frame center expand fill} 
+  pack append .top0.frame5     .top0.frame5.button6 {left frame center expand fill}     .top0.frame5.button7 {left frame center expand fill}     .top0.frame5.button8 {left frame center expand fill}     .top0.frame5.button9 {left frame center expand fill}
 
   # pack widget .top0
-  pack append .top0     .top0.frame {top frame center fill}     .top0.frame4 {top frame center fill}     .top0.frame5 {top frame center expand fill} 
+  pack append .top0     .top0.frame {top frame center fill}     .top0.frame4 {top frame center fill}     .top0.frame5 {top frame center expand fill}
 
   if {"[info procs XFEdit]" != ""} {
     XFEditSetShowWindows
@@ -123,7 +123,7 @@ proc ShowWindow. {args} {# xf ignore me 7
 
 
   # build widget .frame
-  frame .frame 
+  frame .frame
 
   # build widget .frame.scrollbar2
   scrollbar .frame.scrollbar2 \
@@ -153,7 +153,7 @@ proc ShowWindow. {args} {# xf ignore me 7
   pack append .frame \
     .frame.scrollbar2 {left frame center filly} \
     .frame.listbox1 {top frame center expand fill} \
-    .frame.scrollbar3 {bottom frame center fillx} 
+    .frame.scrollbar3 {bottom frame center fillx}
 
   # build widget .frame0
   frame .frame0 \
@@ -173,7 +173,7 @@ proc ShowWindow. {args} {# xf ignore me 7
   # pack widget .frame0
   pack append .frame0 \
     .frame0.label1 {left frame center fillx} \
-    .frame0.label2 {left frame center expand fillx} 
+    .frame0.label2 {left frame center expand fillx}
 
   # build widget .frame1
   frame .frame1 \
@@ -187,7 +187,7 @@ proc ShowWindow. {args} {# xf ignore me 7
     -underline {0}
 
   # build widget .frame1.menubutton3.m
-  menu .frame1.menubutton3.m 
+  menu .frame1.menubutton3.m
   .frame1.menubutton3.m add command \
     -command {Hardcopy} \
     -label {Hardcopy} \
@@ -215,14 +215,14 @@ RescanWidgets} \
 
   # pack widget .frame1
   pack append .frame1 \
-    .frame1.menubutton3 {left frame center} 
+    .frame1.menubutton3 {left frame center}
 
   # build widget .frame2
   frame .frame2 \
     -relief {raised}
 
   # build widget .frame2.frame
-  frame .frame2.frame 
+  frame .frame2.frame
 
   # build widget .frame2.frame.scrollbar2
   scrollbar .frame2.frame.scrollbar2 \
@@ -257,10 +257,10 @@ RescanWidgets} \
     .frame2.frame.label6 {top frame center fillx} \
     .frame2.frame.scrollbar2 {left frame center filly} \
     .frame2.frame.listbox1 {top frame center expand fill} \
-    .frame2.frame.scrollbar3 {bottom frame center fillx} 
+    .frame2.frame.scrollbar3 {bottom frame center fillx}
 
   # build widget .frame2.frame4
-  frame .frame2.frame4 
+  frame .frame2.frame4
 
   # build widget .frame2.frame4.scrollbar2
   scrollbar .frame2.frame4.scrollbar2 \
@@ -296,12 +296,12 @@ RescanWidgets} \
     .frame2.frame4.label5 {top frame center fillx} \
     .frame2.frame4.scrollbar2 {left frame center filly} \
     .frame2.frame4.listbox1 {top frame center expand fill} \
-    .frame2.frame4.scrollbar3 {bottom frame center fillx} 
+    .frame2.frame4.scrollbar3 {bottom frame center fillx}
 
   # pack widget .frame2
   pack append .frame2 \
     .frame2.frame {left frame center expand fill} \
-    .frame2.frame4 {left frame center expand fill} 
+    .frame2.frame4 {left frame center expand fill}
 
   # build widget .label7
   label .label7 \
@@ -314,7 +314,7 @@ RescanWidgets} \
     .frame0 {top frame center fillx} \
     .frame2 {top frame center expand fill} \
     .label7 {top frame center fillx} \
-    .frame {top frame center fill} 
+    .frame {top frame center fill}
 
   if {"[info procs XFEdit]" != ""} {
     XFEditSetShowWindows
@@ -517,7 +517,7 @@ proc Alias { args} {
 #                   the alias name, and the second parameter is
 #                   the procedure that is aliased.
 # Returns: nothing, the command that is bound to the alias or a
-#          list of all aliases - command pairs. 
+#          list of all aliases - command pairs.
 # Sideeffects: internalAliasList is updated, and the alias
 #              proc is inserted
 ##########
@@ -586,7 +586,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
 # Returns: the filename that was selected, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global fsBox(activeBackground) - active background color
 # global fsBox(activeForeground) - active foreground color
 # global fsBox(background) - background color
@@ -669,7 +669,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
   }
   toplevel .fsBox     -borderwidth 0
   catch ".fsBox config $tmpFrameOpt"
-  wm geometry .fsBox 350x300 
+  wm geometry .fsBox 350x300
   wm title .fsBox {File select box}
   wm maxsize .fsBox 1000 1000
   wm minsize .fsBox 100 100
@@ -777,7 +777,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
   catch ".fsBox.pattern.pattern config $tmpMessageOpt"
 
   .fsBox.pattern.pattern insert 0 $fsBox(pattern)
-  
+
   frame .fsBox.files     -borderwidth 0     -relief raised
   catch ".fsBox.files config $tmpFrameOpt"
 
@@ -801,7 +801,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
 
   .fsBox.file.file delete 0 end
   .fsBox.file.file insert 0 $fsBox(name)
-  
+
   checkbutton .fsBox.pattern.all     -offvalue 0     -onvalue 1     -text "Show all files"     -variable fsBox(all)     -command {
       global fsBox
       FSBoxFSShow [.fsBox.path.path get]         [.fsBox.pattern.pattern get] $fsBox(all)}
@@ -875,7 +875,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
   pack append .fsBox.path               .fsBox.path.paths {left}               .fsBox.path.path {left fill expand}
   pack append .fsBox.pattern               .fsBox.pattern.patterns {left}               .fsBox.pattern.all {right fill}               .fsBox.pattern.pattern {left fill expand}
   if {$fsBox(showPixmap)} {
-    pack append .fsBox.frame2                 .fsBox.frame2.scrollbar1 {left filly}                 .fsBox.frame2.canvas2 {top expand fill}                 .fsBox.frame2.scrollbar3 {top fillx} 
+    pack append .fsBox.frame2                 .fsBox.frame2.scrollbar1 {left filly}                 .fsBox.frame2.canvas2 {top expand fill}                 .fsBox.frame2.scrollbar3 {top fillx}
 
     pack append .fsBox                 .fsBox.message1 {top fill}                 .fsBox.frame1 {bottom fill}                 .fsBox.pattern {bottom fill}                 .fsBox.file {bottom fill}                 .fsBox.path {bottom fill}                 .fsBox.frame2 {right fill}                 .fsBox.files {left fill expand}
   } {
@@ -1242,7 +1242,7 @@ proc FSBoxFSShow { fsBoxPath fsBoxPattern fsBoxAll} {
   if {$fsBox(extensions)} {
     .fsBox.pattern.patterns.patterns.menu add separator
   }
-  if {$fsBox(extensions) || 
+  if {$fsBox(extensions) ||
       "[.fsBox.pattern.patterns.patterns.menu index last]" == "none"} {
     .fsBox.pattern.patterns.patterns.menu add checkbutton       -label "Scan extensions"       -variable "fsBox(extensions)"       -command {
         global fsBox
@@ -1932,8 +1932,8 @@ proc XFLocalParseAppDefs {xfAppDefFile} {
       # situation where a resource name ends in . and when it
       # ends in *.  In the second case you want to keep the *
       # in the widget name for pattern matching, but you want
-      # to get rid of the . if it is the end of the name. 
-      set backup -2  
+      # to get rid of the . if it is the end of the name.
+      set backup -2
       set line [string trim $line]
       if {[string index $line 0] == "#" || "$line" == ""} {
         # skip comments and empty lines
@@ -1943,7 +1943,7 @@ proc XFLocalParseAppDefs {xfAppDefFile} {
       set resource [string trim [lindex $list 0]]
       set i [string last "." $resource]
       set j [string last "*" $resource]
-      if {$j > $i} { 
+      if {$j > $i} {
         set i $j
         set backup -1
       }
@@ -2059,7 +2059,7 @@ proc XFLocalSetAppDefs {{xfWidgetPath "."}} {
         foreach widget $widlist {
           # make sure this command is a widget.
           if {![catch "winfo id $widget"]} {
-            catch "$widget configure -[string tolower $name] $xfAppDefaults($xfCounter)" 
+            catch "$widget configure -[string tolower $name] $xfAppDefaults($xfCounter)"
           }
         }
       }

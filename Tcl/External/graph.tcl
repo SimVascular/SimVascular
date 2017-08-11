@@ -37,7 +37,7 @@
 ## SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ##-----------------------------------------------------------------------
 
-# This file implements package emu_graph, which  draws a graph on 
+# This file implements package emu_graph, which  draws a graph on
 #  a tk canvas
 #
 package provide emu_graph 2.0
@@ -48,8 +48,8 @@ namespace eval emu_graph {
 ## widget command
 namespace export -clear emu_graph
 
-## legal options 
-set emu_graph(options) { 
+## legal options
+set emu_graph(options) {
     width height xref yref ticklen axistextoffset
     nticks_x nticks_y font autorange canvas xmin xmax ymin ymax
 }
@@ -91,7 +91,7 @@ proc emu_graph args {
 
     set graph [lindex $args 0]
     lappend emu_graph(graphs) $graph
-    
+
     ## remove any existing config info under this name
     foreach key [array names emu_graph] {
         if [string match "$graph,*" $key] {
@@ -101,17 +101,17 @@ proc emu_graph args {
 
     ## prepend the default options to args, they can then be overridden if they
     ## appear later in the args
-    set args [concat $graph 0 $emu_graph(default) [lrange $args 1 end]] 
+    set args [concat $graph 0 $emu_graph(default) [lrange $args 1 end]]
 
     ## now parse the options
     set restargs [eval "internal_configure $args"]
-    
+
     # shouldn't be any more args
     if { $restargs != {} } {
 	error "Usage: emu_graph graph \[options\] ($restargs)"
     }
     set emu_graph($graph,datasets) {}
-    
+
     # define the widget command
     namespace eval :: \
 	proc $graph args "\{namespace eval emu_graph \[concat emu_graph::invoke $graph  \$args\] \}"
@@ -126,7 +126,7 @@ proc invoke args {
 
     if {[info procs $method] != {}} {
 	eval [concat $method $graph [lrange $args 2 end]]
-	} else { 
+	} else {
 	    error "no method $method for emu_graph,\n options are [methods]"
         }
 }
@@ -150,7 +150,7 @@ proc data args {
 	error "Usage: graph data tag \[options\]"
     }
 
-    set args [concat $graph $tag $emu_graph(datadefault) [lrange $args 2 end]] 
+    set args [concat $graph $tag $emu_graph(datadefault) [lrange $args 2 end]]
 
     ## now parse the options
     set restargs [eval "internal_configure $args"]
@@ -161,11 +161,11 @@ proc data args {
 
     ## append tag only if not already exists, Mark Koennecke
     set mark_list $emu_graph($graph,datasets)
-    if { [lsearch -exact $mark_list $tag] < 0 } {    
+    if { [lsearch -exact $mark_list $tag] < 0 } {
        set emu_graph($graph,datasets) [lappend emu_graph($graph,datasets) $tag]
     }
-    set datalength 0 
-    ## if we have data as coords then verify that each element is a pair 
+    set datalength 0
+    ## if we have data as coords then verify that each element is a pair
     ## and remember the length for later
     if { [info exists emu_graph($graph,$tag,coords)] } {
 	set ncoords [llength $emu_graph($graph,$tag,coords)]
@@ -180,7 +180,7 @@ proc data args {
 	set datalength [$emu_graph($graph,$tag,trackdata) length]
     }
 
-    # if there's a mask, chech that there's also a maskthresh and 
+    # if there's a mask, chech that there's also a maskthresh and
     # that the length of the mask is the same as the data
     if { $datalength != 0 && [info exists emu_graph($graph,$tag,mask)] } {
 	if { ![info exists emu_graph($graph,$tag,maskthresh)] } {
@@ -210,7 +210,7 @@ proc image {graph image xmin xmax ymin ymax} {
     set emu_graph($graph,height) [image height $image]
 
     set emu_graph($graph,image) $image
-    
+
     redraw $graph
 }
 
@@ -222,32 +222,32 @@ proc configure args {
 }
 
 proc internal_configure args {
-    ## rest of args is a list of option value pairs, 
-    ## set emu_graph($canvas,option) to value for each option, 
+    ## rest of args is a list of option value pairs,
+    ## set emu_graph($canvas,option) to value for each option,
     ## if args remain after last option (ie
     ## something not beginning with a - or after a --, they are returned
 
     variable emu_graph
-    
+
     set graph [lindex $args 0]
     set datatag [lindex $args 1]
     set args [lrange $args 2 end]
-    
+
     if {![is_graph $graph]} {
         error "$graph is not an emu_graph"
     }
 
     # if we're setting options for a data set we modify $graph
-    # to include the tag to make the array entry 
+    # to include the tag to make the array entry
     # emu_graph($graph,$tag,$option)
     if { $datatag != 0 } {
-	set graph "$graph,$datatag"    
+	set graph "$graph,$datatag"
 	set validoptions $emu_graph(dataoptions)
     } else {
 	set validoptions $emu_graph(options)
-    }	
+    }
 
-    
+
     set curropt ""
     for {set i 0} { $i<[llength $args] } { incr i 2 } {
         if { [lindex $args $i] == "--" } {
@@ -259,7 +259,7 @@ proc internal_configure args {
             if { [lsearch $validoptions $curropt] >= 0 } {
                 if { $i+1<[llength $args] } {
                     set emu_graph($graph,$curropt) [lindex $args [expr $i+1]]
- 
+
                 }
             } else {
                 error "Bad option -$curropt to emu_graph\n\tuse one of $validoptions"
@@ -346,10 +346,10 @@ proc auto_range {graph} {
 
 	set xrange [lindex $xyrange 0]
 	set yrange [lindex $xyrange 1]
-	
+
         set xextra 0
         set yextra 0
-	
+
         set emu_graph($graph,xmin) [expr [lindex $xrange 0]-$xextra]
         set emu_graph($graph,xmax) [expr [lindex $xrange 1]+$xextra]
         set emu_graph($graph,ymin) [expr [lindex $yrange 0]-$yextra]
@@ -367,9 +367,9 @@ proc generate_colors {} {
 	    }
 	}
     }
-    return $colors    
+    return $colors
 }
- 
+
 ## set up emu_graph($graph,$dataset,color,$label) array
 proc assign_colors {graph dataset} {
     variable emu_graph
@@ -397,7 +397,7 @@ proc plot_data {graph} {
 
     variable emu_graph
 
-    if {![is_graph $graph]} { 
+    if {![is_graph $graph]} {
         error "$graph is not an emu_graph"
     }
 
@@ -413,7 +413,7 @@ proc plot_data {graph} {
 
     foreach tag $emu_graph($graph,datasets) {
         # plot the points, first delete any old ones
-        $canvas delete -withtag $tag 
+        $canvas delete -withtag $tag
 
         set tags [list graph$graph data$graph $tag]
 
@@ -433,7 +433,7 @@ proc plot_data {graph} {
 	} else {
 	    set coords {}
 	}
-	
+
 	# we may have a masking vector
 	if { [info exists emu_graph($graph,$tag,mask)] } {
 	    set mask $emu_graph($graph,$tag,mask)
@@ -441,8 +441,8 @@ proc plot_data {graph} {
 	} else {
 	    set mask 0
 	}
-	
-	## we may have labels, if so set colours but only when 
+
+	## we may have labels, if so set colours but only when
 	## plotting only points
 	if { [llength $emu_graph($graph,$tag,labels)] > 0 } {
 	    assign_colors $graph $tag
@@ -464,7 +464,7 @@ proc plot_data {graph} {
 		     [lindex $mask [expr $i/2]] >= $maskthresh } {
 		set point [lrange $coords $i [expr $i+1]]
 		if { [point_in_bounds $graph $point] } {
-		    
+
 		    if { $labelcolors } {
 			## find the colour for this point via its label
 			set ll [lindex $emu_graph($graph,$tag,labels) \
@@ -495,7 +495,7 @@ proc plot_data {graph} {
 	}
     }
 }
-                   
+
 #
 # check whether point is in bounds, where point is already scaled to canvas coords
 #
@@ -503,12 +503,12 @@ proc point_in_bounds {graph point} {
     variable emu_graph
     set x [lindex $point 0]
     set y [lindex $point 1]
- 
-    if { $x >= $emu_graph($graph,xref) && 
+
+    if { $x >= $emu_graph($graph,xref) &&
 	 $x <= $emu_graph($graph,xref)+$emu_graph($graph,width)  &&
-	 $y <= $emu_graph($graph,yref)+$emu_graph($graph,height) && 
+	 $y <= $emu_graph($graph,yref)+$emu_graph($graph,height) &&
 	 $y >= $emu_graph($graph,yref) } {
-	return 1 
+	return 1
     } else {
 	return 0
     }
@@ -553,7 +553,7 @@ proc axes {graph} {
 
     set x_min $emu_graph($graph,xmin)
     set x_max $emu_graph($graph,xmax)
-    set y_min $emu_graph($graph,ymin)  
+    set y_min $emu_graph($graph,ymin)
     set y_max $emu_graph($graph,ymax)
 
     set y_min_c [y2canvas $graph $y_min]
@@ -575,11 +575,11 @@ proc axes {graph} {
 
     $canvas create rect $x_min_c $y_min_c $x_max_c $y_max_c\
         -outline black -tag [list graph$graph axis]
-                                          
+
     # y-pos of tick end points and of axis tick labels
     set ticky [expr $y_min_c-$ticklen]
     set texty [expr $y_min_c+$axistextoffset]
-    # put ticks and numbers on the axis 
+    # put ticks and numbers on the axis
     # starting at next nice number above x_min
     set delta_x [nicenum [expr double($x_max-$x_min)/$nticks_x] 1]
     set nicex_min [nicenum $x_min 1]
@@ -608,7 +608,7 @@ proc axes {graph} {
     set tickx2   [expr [x2canvas $graph $x_max]-$ticklen]
     set textx    [expr [x2canvas $graph $x_min]-$axistextoffset]
 
-    set nicey_min [nicenum $y_min 1]   
+    set nicey_min [nicenum $y_min 1]
     set delta_y [nicenum [expr double($y_max-$y_min)/$nticks_y] 1]
 
     for { set f $nicey_min } { $f <= $y_max } { set f [expr $f + $delta_y] } {
@@ -652,7 +652,7 @@ proc bbox {graph} {
     return [$emu_graph($graph,canvas) bbox graph$graph]
 }
 
-proc cget {graph option} { 
+proc cget {graph option} {
     variable emu_graph
     # remove leading - if present
     if { [regexp -- "-(.*)" $option ignore optname] } {
@@ -724,7 +724,7 @@ proc range {list {mask 0} {maskthresh 0}} {
 
 	if { $mask == 0 || \
 		 [lindex $mask [expr $i/2]] >= $maskthresh } {
-	
+
 	    if {$y > $ymax} {
 		set ymax $y
 	    }
@@ -734,16 +734,16 @@ proc range {list {mask 0} {maskthresh 0}} {
 	    }
 	}
 	# don't worry about the mask for x -- we still want to line up with
-	# other plots 
+	# other plots
 	if {$x>$xmax} {
 	    set xmax $x
 	}
-	
+
 	if {$x < $xmin} {
 	    set xmin $x
 	}
     }
-    return [list [list $xmin $xmax] [list $ymin $ymax]] 
+    return [list [list $xmin $xmax] [list $ymin $ymax]]
 }
 
 
@@ -771,7 +771,7 @@ proc maxrange-aux {a b} {
     return [list $first $second]
 }
 
-             
+
 ## translated from C-code in Blt, who got it from:
 ##      Taken from Paul Heckbert's "Nice Numbers for Graph Labels" in
 ##      Graphics Gems (pp 61-63).  Finds a "nice" number approximately
@@ -780,7 +780,7 @@ proc maxrange-aux {a b} {
 proc nicenum {x floor} {
 
     if {$x == 0} { return 0 }
-    
+
     set negative 0
     if {$x < 0} {
         set x [expr -$x]
@@ -796,7 +796,7 @@ proc nicenum {x floor} {
             set nf 2.0
         } elseif {$fractX < 7.0} {
             set nf 5.0
-        } else {                
+        } else {
          set nf 10.0
         }
     } elseif {$fractX <= 1.0} {
@@ -821,10 +821,10 @@ proc nicenum {x floor} {
 	    return $value
 	}
     }
-}                
+}
 
 #
-# put a vertical or horizontal mark on the graph 
+# put a vertical or horizontal mark on the graph
 #
 proc vmark {graph x tag {color red}} {
     variable emu_graph

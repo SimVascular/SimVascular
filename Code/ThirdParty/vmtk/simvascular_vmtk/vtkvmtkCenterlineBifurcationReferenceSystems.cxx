@@ -10,11 +10,11 @@ Version:   $Revision: 1.8 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -176,7 +176,7 @@ int vtkvmtkCenterlineBifurcationReferenceSystems::RequestData(
     this->ComputeGroupReferenceSystem(input,groupId,outputPoints,normalArray,upNormalArray,referenceGroupIdsArray);
     }
   blankedGroupIds->Delete();
-  
+
   vtkCellArray* outputVertices = vtkCellArray::New();
 
   int numberOfOutputPoints = outputPoints->GetNumberOfPoints();
@@ -341,14 +341,14 @@ void vtkvmtkCenterlineBifurcationReferenceSystems::ComputeGroupReferenceSystem(v
       polygonNormal[0] = polygonNormal[1] = polygonNormal[2] = 0.0;
 
       for (int n=0; n<numberOfPolygonPoints; n++)
-        {        
+        {
         vtkIdType vertexId0 = (i-1+numberOfPolygonPoints) % numberOfPolygonPoints;
         vtkIdType vertexId1 = n;
         vtkIdType vertexId2 = (i+1) % numberOfPolygonPoints;
         vertexPoints->GetPoint(vertexId0,vertexPoint0);
         vertexPoints->GetPoint(vertexId1,vertexPoint1);
         vertexPoints->GetPoint(vertexId2,vertexPoint2);
-        
+
         vtkTriangle::ComputeNormal(vertexPoint0,vertexPoint1,vertexPoint2,vertexNormal);
 
         cotangent0 = vtkvmtkMath::Cotangent(vertexPoint0,vertexPoint1,bifurcationOrigin);
@@ -365,7 +365,7 @@ void vtkvmtkCenterlineBifurcationReferenceSystems::ComputeGroupReferenceSystem(v
       vtkMath::Normalize(polygonNormal);
 
       bifurcationNormals->InsertNextTuple(polygonNormal);
-      }    
+      }
     }
 
   if (bifurcationNormals->GetNumberOfTuples() == 0)
@@ -414,7 +414,7 @@ void vtkvmtkCenterlineBifurcationReferenceSystems::ComputeGroupReferenceSystem(v
       bifurcationNormals->SetTuple(i,orientedNormal);
       }
     }
- 
+
   bifurcationNormal[0] = bifurcationNormal[1] = bifurcationNormal[2] = 0.0;
 
   for (i=0; i<numberOfNormals; i++)
@@ -461,7 +461,7 @@ void vtkvmtkCenterlineBifurcationReferenceSystems::ComputeGroupReferenceSystem(v
     }
 
   vtkMath::Normalize(bifurcationUpNormal);
-  
+
   outputPoints->InsertNextPoint(bifurcationOrigin);
   normalArray->InsertNextTuple(bifurcationNormal);
   upNormalArray->InsertNextTuple(bifurcationUpNormal);

@@ -40,7 +40,7 @@ if(SV_USE_${proj})
   # Set SV_PYTHON_DIR to the directory that was found to contain PYTHON
   set(SV_${proj}_DIR ${${proj}_DIR})
   endif()
-  
+
   if(WIN32)
   message("manually set PYTHON variables ${SV_${proj}_DIR}")
   set(PYTHON_DEBUG_LIBRARY "" CACHE FILEPATH "doc string" FORCE)
@@ -55,7 +55,7 @@ if(SV_USE_${proj})
   link_directories(${${proj}_LIBRARY})
   include_directories(${${proj}_INCLUDE_DIR})
   endif()
-  
+
   # Need to make sure we pick up python module from vtk
   set(VTK_${proj}_MODULES vtkWrappingPythonCore)
 endif()

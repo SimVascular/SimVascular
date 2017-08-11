@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2011 Open Source Medical Software Corporation, 
+# Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 # University of California, San Diego.
 #
 # Portions of the code Copyright (c) 1998-2007 Stanford University,
@@ -6,15 +6,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -74,12 +74,12 @@ proc ::vis::tkExpose {widget} {
     #@c This code handles switching focus
     #@a widget:  render widget name
 
-    if [info exists ::vis::tkvars(InExpose_$widget)] { 
+    if [info exists ::vis::tkvars(InExpose_$widget)] {
       if {$::vis::tkvars(InExpose_$widget) == 1} {
 	  return
       }
     }
-    set ::vis::tkvars(InExpose_$widget) 1 
+    set ::vis::tkvars(InExpose_$widget) 1
     [$widget GetRenderWindow] SetDesiredUpdateRate $::vis::tkvars(StillUpdateRate)
     update
     [$widget GetRenderWindow] Render
@@ -139,11 +139,11 @@ proc ::vis::tkUpdateRenderer {widget x y} {
             break
         }
     }
-    
+
     set ::vis::tkvars(CurrentCamera) [$::vis::tkvars(CurrentRenderer) GetActiveCamera]
     set lights [$::vis::tkvars(CurrentRenderer) GetLights]
     $lights InitTraversal; set ::vis::tkvars(CurrentLight) [$lights GetNextItem]
-   
+
     set ::vis::tkvars(LastX) $x
     set ::vis::tkvars(LastY) $y
 }
@@ -391,7 +391,7 @@ proc ::vis::tkIncrementColorMap {widget x y deltamin deltamax} {
   if {$deltamin == 0 && $deltamax == 0} {
     set winx $::vis::tkvars(window_level_prev_X)
     set winy $::vis::tkvars(window_level_prev_Y)
-    set ::vis::tkvars(window_level_prev_X) $x 
+    set ::vis::tkvars(window_level_prev_X) $x
     set ::vis::tkvars(window_level_prev_Y) $y
     if {$winx < 0 || $winy < 0} {
         return
@@ -403,18 +403,18 @@ proc ::vis::tkIncrementColorMap {widget x y deltamin deltamax} {
     if {[expr abs($winy - $y)] > [expr abs($winx - $x)]} {
       if {$winy < $y} {
         set deltamin -1
-        set deltamax 0 
+        set deltamax 0
       } elseif {$winy > $y} {
         set deltamin 1
-        set deltamax 0 
+        set deltamax 0
       }
     } else {
       if {$winx < $x} {
         set deltamin 0
-        set deltamax -1 
+        set deltamax -1
       } elseif {$winx > $x} {
         set deltamin 0
-        set deltamax 1 
+        set deltamax 1
       }
     }
   }
@@ -439,7 +439,7 @@ proc ::vis::tkIncrementColorMap {widget x y deltamin deltamax} {
         set lookupTable [$texture GetLookupTable]
         set scalarMin [lindex [$lookupTable GetTableRange] 0]
         set scalarMax [lindex [$lookupTable GetTableRange] 1]
-     
+
         set win_incr $::vis::tkvars(window_level_increment)
 
 	if {$win_incr > 0.99} {
@@ -474,7 +474,7 @@ proc ::vis::tkIncrementColorMap {widget x y deltamin deltamax} {
 proc ::vis::tkResetColorMap {widget x y} {
 
   #@author Nathan Wilson
-  #@c Reset the color map to the full range 
+  #@c Reset the color map to the full range
   #@a widget:  render widget name
   #@a x:  x location
   #@a y:  y location
@@ -501,7 +501,7 @@ proc ::vis::tkResetColorMap {widget x y} {
         set scalar_range [$mapper GetScalarRange]
         set scalarMin [lindex $scalar_range 0]
         set scalarMax [lindex $scalar_range 1]
-     
+
         if {$scalarMax <= $scalarMin} {
            set scalarMax [expr $scalarMin + 1]
         }

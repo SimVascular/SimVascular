@@ -10,11 +10,11 @@
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -30,7 +30,7 @@
 //#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkStencil : public vtkvmtkNeighborhood 
+class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkStencil : public vtkvmtkNeighborhood
 {
 public:
 
@@ -53,7 +53,7 @@ public:
   void SetCenterWeight(double weight) {this->CenterWeight[0] = weight;};
 
   const double* GetCenterWeightTuple() {return this->CenterWeight;};
-  
+
   double GetCenterWeight(vtkIdType component) {return this->CenterWeight[component];};
   void SetCenterWeight(vtkIdType component, double weightComponent) {this->CenterWeight[component] = weightComponent;};
 
@@ -91,7 +91,7 @@ protected:
   int WeightScaling;
 
   int NegateWeights;
-  
+
 private:
   vtkvmtkStencil(const vtkvmtkStencil&);  // Not implemented.
   void operator=(const vtkvmtkStencil&);  // Not implemented.

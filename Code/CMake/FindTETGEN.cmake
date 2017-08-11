@@ -103,7 +103,7 @@ if (NOT ${proj}_NUMLIBS EQUAL ${proj}_NUMLIBS_EXPECTED)
 	set(${proj}_LIBRARIES_WORK "${proj}_LIBRARIES-NOTFOUND")
 endif()
 
-set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING 
+set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING
 	"${proj} libraries to link against" FORCE)
 
 #-----------------------------------------------------------------------------
@@ -120,17 +120,17 @@ elseif(WIN32 AND IS64)
 	set(inc_sub_path "")
 elseif(WIN32 AND NOT IS64)
 	set(inc_sub_path "")
-endif()		
+endif()
 
 set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_LIB_DIR} ${${proj}_EXTRA_PATHS}
 	"${${proj}_PATH}/${inc_sub_path}"
 	"${${proj}_PATH2}/${inc_sub_path}"
-	)	
+	)
 
 #-----------------------------------------------------------------------------
 # Add windows Specific Search Paths
 if(WIN32)
-	set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_POSSIBLE_INCLUDE_PATHS} 
+	set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_POSSIBLE_INCLUDE_PATHS}
 		)
 endif()
 
@@ -150,7 +150,7 @@ FIND_PATH(${proj}_INCLUDE_DIR
 
 #-----------------------------------------------------------------------------
 # Handle Standard Args
-find_package_handle_standard_args(${proj} DEFAULT_MSG 
+find_package_handle_standard_args(${proj} DEFAULT_MSG
 	${proj}_LIB_DIR
 	${proj}_LIBRARIES
 	${${proj}_LIBRARIES_NAMES}
@@ -170,16 +170,16 @@ if("${${proj}_VERSION_DETECTED}" STREQUAL "")
 	set(${proj}_VERSION_DETECTED "${proj}_VERSION-NOTFOUND")
 endif()
 
-#message("${proj}_VERSION_WORK ${${proj}_VERSION_WORK}") 
+#message("${proj}_VERSION_WORK ${${proj}_VERSION_WORK}")
 #message(STATUS "${proj}_VERSION_DETECTED: ${${proj}_VERSION_DETECTED}")
-#message("${proj}_VERSION ${${proj}_VERSION}") 
+#message("${proj}_VERSION ${${proj}_VERSION}")
 
 if(NOT ${proj}_VERSION)
-	set(${proj}_VERSION ${${proj}_VERSION_DETECTED} CACHE STRING 
+	set(${proj}_VERSION ${${proj}_VERSION_DETECTED} CACHE STRING
 		"${proj} Verison" FORCE)
 else()
 	message(STATUS "${proj}_VERSION already set: ${${proj}_VERSION}")
 endif()
-#message("${proj}_VERSION ${${proj}_VERSION}") 
+#message("${proj}_VERSION ${${proj}_VERSION}")
 
 unset(${proj}_VERSION_DETECTED)

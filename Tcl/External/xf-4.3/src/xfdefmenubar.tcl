@@ -46,7 +46,7 @@ menu .xfEdit.frame1.optionsMenu.m
            XFProcMiscAppDefaults $xfFile(appdef)} \
   -label {XF Application defaults} \
   -underline {0}
-.xfEdit.frame1.optionsMenu.m add separator 
+.xfEdit.frame1.optionsMenu.m add separator
 .xfEdit.frame1.optionsMenu.m add command \
   -command {XFProcOptionsBindings} \
   -label {Bindings} \
@@ -79,7 +79,7 @@ menu .xfEdit.frame1.optionsMenu.m
   -command {XFProcOptionsWindow} \
   -label {Window options} \
   -underline {0}
-.xfEdit.frame1.optionsMenu.m add separator 
+.xfEdit.frame1.optionsMenu.m add separator
 .xfEdit.frame1.optionsMenu.m add command \
   -command {XFProcOptionsSaveModuleList} \
   -label {Save module list} \
@@ -116,7 +116,7 @@ menu .xfEdit.frame1.miscMenu.m
   -command {XFProcMiscHardcopy} \
   -label {Hardcopy} \
   -underline {0}
-.xfEdit.frame1.miscMenu.m add separator 
+.xfEdit.frame1.miscMenu.m add separator
 .xfEdit.frame1.miscMenu.m add command \
   -command {XFProcMiscAliases} \
   -label {Aliases} \
@@ -129,7 +129,7 @@ menu .xfEdit.frame1.miscMenu.m
   -command {XFProcMiscImages} \
   -label {Images} \
   -underline {0}
-.xfEdit.frame1.miscMenu.m add separator 
+.xfEdit.frame1.miscMenu.m add separator
 .xfEdit.frame1.miscMenu.m add command \
   -command {XFProcMiscTestProgram} \
   -label {Test program} \
@@ -163,7 +163,7 @@ menu .xfEdit.frame1.infoMenu.m
   -command {XFProcProgWidgetTree} \
   -label {Widget tree} \
   -underline {0}
-.xfEdit.frame1.infoMenu.m add separator 
+.xfEdit.frame1.infoMenu.m add separator
 .xfEdit.frame1.infoMenu.m add command \
   -command {XFProcProgShowScript} \
   -label {Show script} \
@@ -180,7 +180,7 @@ menu .xfEdit.frame1.infoMenu.m
   -command {XFProcProgEndSrc} \
   -label {End source} \
   -underline {0}
-.xfEdit.frame1.infoMenu.m add separator 
+.xfEdit.frame1.infoMenu.m add separator
 .xfEdit.frame1.infoMenu.m add command \
   -command {XFProcProgErrors} \
   -label {Error status} \
@@ -228,7 +228,7 @@ menu .xfEdit.frame1.editMenu.m
            XFProcEditDelete $xfStatus(path)} \
   -label {Delete} \
   -underline {0}
-.xfEdit.frame1.editMenu.m add separator 
+.xfEdit.frame1.editMenu.m add separator
 .xfEdit.frame1.editMenu.m add command \
   -command {XFProcEditClearCut} \
   -label {Clear Cutbuffer} \
@@ -245,7 +245,7 @@ menu .xfEdit.frame1.editMenu.m
   -command {XFProcEditSaveCutAsTemplate cb} \
   -label {Save Template (cut buffer)} \
   -underline {5}
-.xfEdit.frame1.editMenu.m add separator 
+.xfEdit.frame1.editMenu.m add separator
 .xfEdit.frame1.editMenu.m add command \
   -command {XFProcEditShowCut script} \
   -label {Show Cutbuffer (script)} \
@@ -271,7 +271,7 @@ menu .xfEdit.frame1.configMenu.m
   -command {XFProcConfParametersDefault} \
   -label {Parameters} \
   -underline {0}
-.xfEdit.frame1.configMenu.m add separator 
+.xfEdit.frame1.configMenu.m add separator
 .xfEdit.frame1.configMenu.m add command \
   -command {XFProcConfPacking} \
   -label {Packing} \
@@ -284,12 +284,12 @@ menu .xfEdit.frame1.configMenu.m
   -command {XFProcConfLayout} \
   -label {Layout} \
   -underline {0}
-.xfEdit.frame1.configMenu.m add separator 
+.xfEdit.frame1.configMenu.m add separator
 .xfEdit.frame1.configMenu.m add command \
   -command {XFProcConfBinding} \
   -label {Binding} \
   -underline {0}
-.xfEdit.frame1.configMenu.m add separator 
+.xfEdit.frame1.configMenu.m add separator
 .xfEdit.frame1.configMenu.m add command \
   -command {XFProcConfParametersSmall} \
   -label {Parameters (small)} \
@@ -331,7 +331,7 @@ menu .xfEdit.frame1.fileMenu.m
   -command {XFProcFileInsert} \
   -label {Insert...} \
   -underline {0}
-.xfEdit.frame1.fileMenu.m add separator 
+.xfEdit.frame1.fileMenu.m add separator
 .xfEdit.frame1.fileMenu.m add command \
   -command {XFProcFileSave} \
   -label {Save} \
@@ -340,12 +340,12 @@ menu .xfEdit.frame1.fileMenu.m
   -command {XFProcFileSaveAs} \
   -label {Save as...} \
   -underline {5}
-.xfEdit.frame1.fileMenu.m add separator 
+.xfEdit.frame1.fileMenu.m add separator
 .xfEdit.frame1.fileMenu.m add command \
   -command {XFProcFileEnterTCL} \
   -label {Enter TCL code} \
   -underline {0}
-.xfEdit.frame1.fileMenu.m add separator 
+.xfEdit.frame1.fileMenu.m add separator
 .xfEdit.frame1.fileMenu.m add command \
   -command {XFProcFileQuit} \
   -label {Quit} \

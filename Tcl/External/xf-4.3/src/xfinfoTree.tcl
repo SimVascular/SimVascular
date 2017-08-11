@@ -199,7 +199,7 @@ proc XFInfoWidgetTree {} {
   pack append .xfInfoWidgetTree.frame1 \
               .xfInfoWidgetTree.frame1.scrollbar1 "$xfConf(scrollSide) filly" \
               .xfInfoWidgetTree.frame1.canvas2 {top expand fill} \
-              .xfInfoWidgetTree.frame1.scrollbar3 {top fillx} 
+              .xfInfoWidgetTree.frame1.scrollbar3 {top fillx}
   pack append .xfInfoWidgetTree \
               .xfInfoWidgetTree.frame0 {bottom fill} \
               .xfInfoWidgetTree.frame1 {bottom fill expand}
@@ -225,7 +225,7 @@ proc XFInfoWidgetTreeRead {xfW xfX xfY} {
       .xfInfoWidgetTree.frame1.canvas2 delete $xfCounter
     }
   }
-  
+
   if {("[info commands $xfW]" == "" && "$xfW" != ".") ||
       [string match ".xf*" $xfW] ||
       ([string match "xf*" [winfo name $xfW]] && "$xfW" != ".")} {

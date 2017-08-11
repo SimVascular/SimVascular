@@ -294,7 +294,7 @@ proc XFProcConfInsertWidgetDefault {xfClass} {
 ##########
 # Procedure: XFProcConfInsertWidgetDefault
 # Description: insert the specified class of widget
-# Arguments: xfClass - the class to insert 
+# Arguments: xfClass - the class to insert
 # Returns: none
 # Sideeffects: none
 ##########
@@ -319,7 +319,7 @@ proc XFProcConfInsertWidgetConfig {xfClass} {
 ##########
 # Procedure: XFProcConfInsertWidgetConfig
 # Description: insert the specified class of widget and configure it
-# Arguments: xfClass - the class to insert 
+# Arguments: xfClass - the class to insert
 # Returns: none
 # Sideeffects: none
 ##########

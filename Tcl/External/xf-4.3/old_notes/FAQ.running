@@ -54,7 +54,7 @@ R-3) How can I show/hide toplevel windows ?
                 ShowWindow.toplevel
 
         To remove an XF created toplevel window, you should
-        use the automatically created function: 
+        use the automatically created function:
 
                 DestroyWindow.toplevel
 
@@ -109,7 +109,7 @@ R-6) How can I cut/copy/paste a widget ?
 R-7) How can I delete a widget ?
         To delete the "current widget", you have to select
         the menu item (Edit | Delete).
-  
+
 
 R-8) How can I create templates ?
         To make a template, you simply put the widget
@@ -257,7 +257,7 @@ R-21) How can I use the mouse to arrange widgets?
 	without the layout window, both in
 	(Options | General).
 
-       
+
 R-22) How can I set the values of sliders more accurately ?
 	Many sliders have to cover a wide range. The value
 	of a slider can be set with the cursor keys.
@@ -266,7 +266,7 @@ R-23) How can I create menubars ?
 	To define a menubar, you create menubuttons that
 	are all children of one frame. A menubutton is only
 	handled by XF if the underline resource is set to
-	something different than -1. 
+	something different than -1.
 
 R-24) Why is the xftutorial not running ?
 	Usually, there are two reasons why the XF tutorial
@@ -295,7 +295,7 @@ R-25) How can I make my X server secure ?
 	modified automatically. If you call the X server by
 	hand, you have to add certain keys to the file using
 	xauth(1X). This will look about like this:
-	
+
 		key=`xauthkey`
 		xauth add ${HOST}:0  . $key
 		xauth add ${HOST}/unix:0  . $key

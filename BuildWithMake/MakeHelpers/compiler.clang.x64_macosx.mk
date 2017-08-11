@@ -4,7 +4,7 @@ ifeq ($(CLUSTER), x64_macosx)
     CC              = clang -pthread -w
     CXXDEP          = $(CXX) -MM
     CCDEP           = $(CC) -MM
-    AR              = ar -cru  
+    AR              = ar -cru
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     OPT_FLAGS       = -O3 -fPIC
     DEBUG_FLAGS     =
@@ -15,9 +15,9 @@ else
     OPT_FLAGS       = -O2 -fPIC
     LINK_EXE        = $(CXX) -o
   else
-    DEBUG_FLAGS     = -O0 -g -fstack-protector-all 
+    DEBUG_FLAGS     = -O0 -g -fstack-protector-all
     OPT_FLAGS       =
-    LINK_EXE        = $(CXX) -g -fstack-protector-all -o  
+    LINK_EXE        = $(CXX) -g -fstack-protector-all -o
   endif
 endif
 #    SHAR            = $(CXX) -dynamiclib -current_version 1.0 -compatibility_version 1.0 -fvisibility=hidden -o
@@ -25,7 +25,7 @@ endif
     SOEXT           = dylib
     STATICEXT       = a
     OBJECTEXT       = o
-    EXEEXT          = 
+    EXEEXT          =
     BUILDFLAGS      = $(GLOBAL_DEFINES)
     GLOBAL_CXXFLAGS = $(BUILDFLAGS) $(DEBUG_FLAGS) $(OPT_FLAGS)
     GLOBAL_CXXFLAGS += -fpermissive
@@ -47,7 +47,7 @@ endif
     TEMPLATE_AR     = $(AR)
     CC_LIBS         =
     CXX_LIBS        =
-#    LINK_EXE        = $(CXX)  -L$(TOP)/Lib -o 
+#    LINK_EXE        = $(CXX)  -L$(TOP)/Lib -o
     LIBPATH_COMPILER_FLAG = -L
     LIBFLAG         = -l
     SVLIBFLAG       = -l

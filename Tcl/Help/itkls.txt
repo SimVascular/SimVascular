@@ -15,7 +15,7 @@ These parameters control the growth and stop criteria of the first stage levelse
 **Kthr** This value is the equilibrium curvature of the level set.  A higher value will result in less curvature smoothing.
 
 ###Advanced Features
-**Exponent Factor Rise and Fall** These values affect the speed of of the level set when rising on an image gradient, or falling.  A ratio of 1:2 is reccomended. 
+**Exponent Factor Rise and Fall** These values affect the speed of of the level set when rising on an image gradient, or falling.  A ratio of 1:2 is reccomended.
 **Max Iterations** This specifies the maximum number of iterations that can be complete before levelset is halted.
 **Max Error** This specifies the maximum RMS error for the levelset stop criteria.
 

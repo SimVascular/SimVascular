@@ -16,7 +16,7 @@ proc XFOptionsPath {} {
   global xfLoadPath
   global xfPath
 
-  # build widget structure 
+  # build widget structure
   XFTmpltToplevel .xfOptionsPath 400x590 {XF path names}
 
   XFTmpltFrame .xfOptionsPath.frame1 0

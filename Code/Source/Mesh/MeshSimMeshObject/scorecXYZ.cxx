@@ -3,23 +3,23 @@
  *
  * All rights reserved.
  *
- * Portions of the code Copyright (c) 1998-2007 Stanford University, 
+ * Portions of the code Copyright (c) 1998-2007 Stanford University,
  * RPI, Charles Taylor, Ken Jansen, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
- * 
+ * contributors to the source code.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,9 +29,9 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/* 
+/*
    Functionality:
-   Return the aspect ratio (longest edge)/(shortest edge) of a region. 
+   Return the aspect ratio (longest edge)/(shortest edge) of a region.
    Currently, only tetrahedrons are supported.
 */
 
@@ -54,8 +54,8 @@ double scorecXYZ_inscrRad(dArray *xyz);
 
 double scorecDet(int n, double A[3][3]) {
 
-   return (A[0][0]*A[1][1]*A[2][2] + A[1][0]*A[2][1]*A[0][2] + 
-	   A[0][1]*A[1][2]*A[2][0] -  A[0][2]*A[1][1]*A[2][0] - 
+   return (A[0][0]*A[1][1]*A[2][2] + A[1][0]*A[2][1]*A[0][2] +
+	   A[0][1]*A[1][2]*A[2][0] -  A[0][2]*A[1][1]*A[2][0] -
 	   A[1][2]*A[2][1]*A[0][0] - A[0][1]*A[1][0]*A[2][2]);
 
 }
@@ -128,8 +128,8 @@ int scorecNormVt(double *v1,double *nv)
   norm = v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2] ;
 
   norm = 1./sqrt(norm) ;
-  nv[0] = v1[0]*norm ; 
-  nv[1] = v1[1]*norm ; 
+  nv[0] = v1[0]*norm ;
+  nv[1] = v1[1]*norm ;
   nv[2] = v1[2]*norm ;
 
   return(1) ;
@@ -137,9 +137,9 @@ int scorecNormVt(double *v1,double *nv)
 
 /*----------------------------------------------------------------------------
 ----------------------------------------------------------------------------*/
-double scorecDet3Mat(double *v1,double *v2,double *v3) 
+double scorecDet3Mat(double *v1,double *v2,double *v3)
 {
-  return 
+  return
     v1[0]*v2[1]*v3[2] + v2[0]*v3[1]*v1[2] + v1[1]*v2[2]*v3[0] -
     v1[2]*v2[1]*v3[0] - v2[2]*v3[1]*v1[0] - v1[1]*v2[0]*v3[2] ;
 }
@@ -188,11 +188,11 @@ double scorecXYZ_aspectRatio2(dArray *xyz) {
 /*-------------------------------------------------------------------------
   Scientific Computation Research Center, RPI, Troy NY
   (C) Copyright 1995, RPI-SCOREC
- 
+
   Project   : Mesh Tools
   Author(s) : Pascal J. Frey
   Creation  : Feb., 95
-  Modifi.   : 
+  Modifi.   :
   Function  :
     returns the cosine of smallest and largest dihedral angle in a tetra.
 -------------------------------------------------------------------------*/
@@ -227,11 +227,11 @@ void scorecXYZ_dihedral(dArray *xyz,double *sml,double *big) {
 /*-------------------------------------------------------------------------
   Scientific Computation Research Center, RPI, Troy NY
   (C) Copyright 1995, RPI-SCOREC
- 
+
   Project   : Mesh Tools
   Author(s) : Rao Garimella
   Creation  : Aug., 95
-  Modifi.   : 
+  Modifi.   :
   Function  :
     Return the square of maximum edge length ratio of a region. Currently, only
     tetrahedrons are supported.
@@ -259,7 +259,7 @@ double scorecXYZ_edgLenRatio2(dArray *xyz) {
 /* Scientific Computation Research Center, RPI, Troy NY
    (C) Copyright 1995, RPI-SCOREC
 
-   Project: 
+   Project:
 
    Authors/Dates:
    Rao Garimella, Feb 1995
@@ -277,7 +277,7 @@ double scorecXYZ_rbyR2(dArray *xyz) {
   double irad;
 
   irad = scorecXYZ_inscrRad(xyz);
-  return (9.0*irad*irad/scorecXYZ_circumRad2(xyz));  
+  return (9.0*irad*irad/scorecXYZ_circumRad2(xyz));
 
 } /* scorecXYZ_rbyR */
 
@@ -304,7 +304,7 @@ int scorecXYZ_shape(dArray *xyz,double *shape) {
   area += scorecDotProd(cp,cp) ;
   scorecCrossProd(v31,v32,cp) ;
   area += scorecDotProd(cp,cp) ;
-  
+
   scorecDiffVt(xyz[0],xyz[2],v20) ;
   scorecDiffVt(xyz[1],xyz[2],v21) ;
   scorecCrossProd(v20,v21,cp) ;
@@ -319,7 +319,7 @@ int scorecXYZ_shape(dArray *xyz,double *shape) {
 /* Scientific Computation Research Center, RPI, Troy NY
    (C) Copyright 1995, RPI-SCOREC
 
-   Project: 
+   Project:
 
    Authors/Dates:
    Rao Garimella, Feb 1995
@@ -378,7 +378,7 @@ double scorecXYZ_circumRad2(dArray *xyz) {
   }
 
   center[2] = (scorecDet(3,cols))/p_mixt;
-   
+
   scorecDiffVt(center,xyz[0],vects[0]);
 
   cradius2 = scorecDotProd(vects[0],vects[0]);
@@ -465,35 +465,35 @@ void scorecXYZ_dhdAngs(double xyz[4][3], double *cosAngs) {
   if ( t114 > 0)
     cos_ang = - cos_ang ;
   cosAngs[0] = cos_ang;
-  
+
   cos_ang = t122*t52*t108;
   if ( t121 > 0)
     cos_ang = - cos_ang ;
-  
+
   cosAngs[2] = cos_ang;
-  
+
   cos_ang = t129*t84*t108;
   if ( t128 > 0)
     cos_ang = - cos_ang ;
-  
+
   cosAngs[3] = cos_ang;
-  
+
   cos_ang =  t47*t52*t57;
   if ( t46 > 0)
     cos_ang = - cos_ang ;
-  
+
   cosAngs[1] = cos_ang;
-  
+
   cos_ang =   t79*t84*t57;
   if ( t78 > 0)
     cos_ang = - cos_ang ;
-  
+
   cosAngs[4] = cos_ang;
-  
+
   cos_ang =  t103*t108*t57;
   if ( t102 > 0)
     cos_ang = - cos_ang ;
-  
+
   cosAngs[5] = cos_ang;
 }
 
@@ -504,7 +504,7 @@ double scorecXYZ_inscrRad(dArray *xyz) {
   double A1, A2, A3, A4, SA, V;
   int i;
   void *temp = 0;
-  
+
   for (i = 0; i < 3; i++)
     scorecDiffVt(xyz[i+1], xyz[0], vects[i]);
 

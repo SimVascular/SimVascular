@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -966,7 +966,7 @@ int cvLevelSetSparseGrid::ConstructHT( double ctr[], double radius )
 // cvPolyData::FindDistance to compute distances with both surfaces and
 // solids.  Things have since changed in the following ways:
 //
-//   - a distance method has been added to cvSolidModel 
+//   - a distance method has been added to cvSolidModel
 //
 //   - distance to cvPolyData has been improved s.t. the result is no
 //     longer to vertices of the cvPolyData, but instead to the closest
@@ -1086,7 +1086,7 @@ int cvLevelSetSparseGrid::ConstructHT( cvSolidModel *sm )
 	if ( ( (-innerExtent2_) <= dist2 ) && ( dist2 <= outerExtent2_ ) ) {
 
 	  udist = sqrt( udist2 );
-	  
+
 	  if ( cls > 0 ) {
 	    dist = -1.0 * udist;
 	  } else if ( cls == 0 ) {
@@ -1264,7 +1264,7 @@ int cvLevelSetSparseGrid::ConstructHT( cvPolyData *front )
 //     sparse grid around the given threshold uses the sign
 //     information in topoOverlay_ to drive the sweeping mechanism
 //     plus the threshold contour as a geometry to which to compute
-//     distances 
+//     distances
 //
 //   - sign init based on a cvSolidModel --> topoOverlay_ set via point
 //     classifications... pass a facetted representation of the
@@ -1654,7 +1654,7 @@ int cvLevelSetSparseGrid::Blot( int dim[3] )
 	      // Neighbor is inside grid domain:
 	      blotIx = IJKToDenseIx( a, b, c );
 	      (*topoOverlay_)[blotIx] |= STATE_NODE_COVERED;
-	      
+
 	    }
 	  }
 	}

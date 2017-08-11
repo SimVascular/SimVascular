@@ -1091,7 +1091,7 @@ function(simvascular_install_external project_name)
       install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION}
         USE_SOURCE_PERMISSIONS
         COMPONENT ExternalExecutables
-        PATTERN "designer" EXCLUDE 
+        PATTERN "designer" EXCLUDE
         )
     endif()
   endif()

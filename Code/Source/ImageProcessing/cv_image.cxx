@@ -6,15 +6,15 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -28,7 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -221,7 +221,7 @@ void Image_Delete( Image_T *img )
 // double's.  And just to be safe, I assign operations btw short's to
 // int's to avoid potential overflow problems.
 
-double ComputePointSlope( Pixel_T *prev, Pixel_T *curr, Pixel_T *next, 
+double ComputePointSlope( Pixel_T *prev, Pixel_T *curr, Pixel_T *next,
                           Image_T *image, int dimFlag )
 {
   double rngPrev, rngCurr, rngNext;
@@ -382,14 +382,14 @@ void ComputeImageGrad( Image_T *image )
 	prev = &( image->pixels[pixIx-1] );
 	curr = &( image->pixels[pixIx] );
 	next = &( image->pixels[pixIx+1] );
-	image->pixels[pixIx].gradX = ComputePointSlope( prev, curr, next, 
+	image->pixels[pixIx].gradX = ComputePointSlope( prev, curr, next,
 							image, 0 );
 
 	// Differentiation w.r.t. y:
 	prev = &( image->pixels[pixIx-xdim] );
 	curr = &( image->pixels[pixIx] );
 	next = &( image->pixels[pixIx+xdim] );
-	image->pixels[pixIx].gradY = ComputePointSlope( prev, curr, next, 
+	image->pixels[pixIx].gradY = ComputePointSlope( prev, curr, next,
 							image, 1 );
 
 	// Differentiation w.r.t. z:
@@ -397,7 +397,7 @@ void ComputeImageGrad( Image_T *image )
 	  prev = &( image->pixels[pixIx - (xdim*ydim)] );
 	  curr = &( image->pixels[pixIx] );
 	  next = &( image->pixels[pixIx + (xdim*ydim)] );
-	  image->pixels[pixIx].gradZ = ComputePointSlope( prev, curr, next, 
+	  image->pixels[pixIx].gradZ = ComputePointSlope( prev, curr, next,
 							  image, 2 );
 	} else {
 	  image->pixels[pixIx].gradZ = 0.0;
@@ -838,7 +838,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
   } else {
     inBorder = 0;
   }
-  
+
   pixelCol = (int)floor( x / image->pixelDims[0] );
   pixelRow = (int)floor( y / image->pixelDims[1] );
   if (tri) {
@@ -1101,7 +1101,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
   planeOffset = ix1 % (image->imgDims[0] * image->imgDims[1]);
   rowNum1 = planeOffset / image->imgDims[0];
   colNum1 = planeOffset % image->imgDims[0];
-  
+
   cx1 = colNum1 * image->pixelDims[0] + xBdWidth;
   cy1 = rowNum1 * image->pixelDims[1] + yBdWidth;
   if ( tri ) {

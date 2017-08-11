@@ -10,11 +10,11 @@ Version:   $Revision: 1.3 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -210,7 +210,7 @@ void vtkvmtkMinHeap::SiftUp(vtkIdType loc)
 
   vtkIdType parentLoc;
 
-  while (loc>0) 
+  while (loc>0)
     {
     parentLoc = this->GetParent(loc);
 
@@ -249,7 +249,7 @@ void vtkvmtkMinHeap::SiftDown(vtkIdType loc)
     rightChildLoc = leftChildLoc + 1;
 
     minChildLoc = leftChildLoc;
-    if ((leftChildLoc<this->Heap->GetNumberOfIds()-1) && 
+    if ((leftChildLoc<this->Heap->GetNumberOfIds()-1) &&
         (this->MinHeapScalars->GetValue(this->Heap->GetId(leftChildLoc)) - this->MinHeapScalars->GetValue(this->Heap->GetId(rightChildLoc))) > VTK_VMTK_DOUBLE_TOL)
       {
       minChildLoc = rightChildLoc;

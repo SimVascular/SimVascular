@@ -10,11 +10,11 @@
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -38,9 +38,9 @@ double vtkvmtkMath::Cotangent(double point0[3], double point1[3], double point2[
   crossNorm = sqrt(norm0Squared * norm1Squared - dot*dot);
 
   cotangent = 0.0;
-  
+
   if (crossNorm < GetTolerance(crossNorm))
-    {  
+    {
     if (fabs(dot) < GetTolerance(dot))
       cotangent = 0.0;
     else
@@ -88,7 +88,7 @@ int vtkvmtkMath::IsTriangleObtuse(double point0[3], double point1[3], double poi
     return VTK_VMTK_OBTUSE_IN_POINT;
   else if (IsAngleObtuse(point2,point0,point1) || IsAngleObtuse(point1,point2,point0))
     return VTK_VMTK_OBTUSE_NOT_IN_POINT;
-        
+
   return VTK_VMTK_NON_OBTUSE;
   }
 
@@ -107,7 +107,7 @@ double vtkvmtkMath::VoronoiSectorArea(double point0[3], double point1[3], double
 
   if (sectorArea < GetTolerance(sectorArea))
     sectorArea = 0.0;
-        
+
   return sectorArea;
   }
 
@@ -150,12 +150,12 @@ double vtkvmtkMath::TriangleGradient(double point0[3], double point1[3], double 
   gradientNormalVector[0] /= 2.0*area;
   gradientNormalVector[1] /= 2.0*area;
   gradientNormalVector[2] /= 2.0*area;
-  
+
   gradientNorm = vtkMath::Norm(gradientNormalVector);
 
   vtkMath::Cross(triangleNormal,gradientNormalVector,gradientDirection);
   vtkMath::Normalize(gradientDirection);
-  
+
   gradient[0] = gradientNorm * gradientDirection[0];
   gradient[1] = gradientNorm * gradientDirection[1];
   gradient[2] = gradientNorm * gradientDirection[2];
@@ -184,15 +184,15 @@ void vtkvmtkMath::TwoSphereIntersection(double center0[3], double radius0, doubl
 
   squaredRadiusDifference = radius0*radius0 - radius1*radius1;
   displacementRatio = squaredRadiusDifference/distance;
-  
+
   if (distance*distance - fabs(squaredRadiusDifference) > GetTolerance(distance))
     {
     displacement = 0.5 * (displacementRatio + distance);
     }
-  else 
+  else
     {
       if (squaredRadiusDifference > GetTolerance(distance))
-        { 
+        {
         displacement = 0.5 * (displacementRatio - distance);
         }
       else
@@ -200,7 +200,7 @@ void vtkvmtkMath::TwoSphereIntersection(double center0[3], double radius0, doubl
         displacement = 0.5 * (displacementRatio + distance);
         }
     }
-  
+
   origin[0] = center0[0] + displacement * normal[0];
   origin[1] = center0[1] + displacement * normal[1];
   origin[2] = center0[2] + displacement * normal[2];

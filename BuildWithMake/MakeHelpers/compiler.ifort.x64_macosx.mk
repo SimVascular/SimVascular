@@ -9,19 +9,19 @@ else
     DEBUG_FFLAGS    =
   else
     OPT_FFLAGS      =
-    DEBUG_FFLAGS    = -O0 -fPIC -debug -g -check -traceback 
+    DEBUG_FFLAGS    = -O0 -fPIC -debug -g -check -traceback
   endif
 endif
     GLOBAL_FFLAGS   = $(BUILDFLAGS) $(DEBUG_FFLAGS) $(OPT_FFLAGS) \
-                      -W0 -132 -heap-arrays 256 
+                      -W0 -132 -heap-arrays 256
 ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += -g
-endif  
+endif
 #    F90_LIBS        = -lifcoremt -lifport -limf -lintlc -ldl
 #    F90_LIBS        = -lifcoremt -lifport -limf
     F90_LIBS        = /opt/intel/compilers_and_libraries_2016/mac/lib/libifcoremt.a \
                       /opt/intel/compilers_and_libraries_2016/mac/lib/libifport.a \
                       /opt/intel/compilers_and_libraries_2016/mac/lib/libimf.a \
                       /opt/intel/compilers_and_libraries_2016/mac/lib/libintlc.dylib \
-                      /opt/intel/compilers_and_libraries_2016/mac/lib/libsvml.a 
+                      /opt/intel/compilers_and_libraries_2016/mac/lib/libsvml.a
 endif

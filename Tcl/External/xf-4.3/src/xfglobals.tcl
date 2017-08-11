@@ -12,7 +12,7 @@ proc Alias {args} {# xf ignore me 7
 #                   the alias name, and the second parameter is
 #                   the procedure that is aliased.
 # Returns: nothing, the command that is bound to the alias or a
-#          list of all aliases - command pairs. 
+#          list of all aliases - command pairs.
 # Sideeffects: internalAliasList is updated, and the alias
 #              proc is inserted
 ##########

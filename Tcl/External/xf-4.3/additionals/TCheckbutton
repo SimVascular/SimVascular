@@ -86,7 +86,7 @@ proc XFConfig.TCheckbutton4 {xfW xfType xfClass {xfLeader ""}} {
   XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
     XFTCheckbuttonSetTCheckbutton4
   XFElementVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
-    XFTCheckbuttonSetTCheckbutton4 
+    XFTCheckbuttonSetTCheckbutton4
   XFElementTileWidth $xfW .xf${xfClass}Config4 $xfType $xfClass \
     XFTCheckbuttonSetTCheckbutton4
   XFElementCommand $xfW .xf${xfClass}Config4 $xfType

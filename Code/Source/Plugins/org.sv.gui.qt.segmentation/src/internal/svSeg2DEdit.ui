@@ -519,7 +519,7 @@ Click again to create a contour by levelset</string>
 
 If &quot;Preset&quot; on, Click again to create a contour with a specified threshold value.
 
-If &quot;Preset&quot; off, Click again and the button becomes blue (active for interaction). 
+If &quot;Preset&quot; off, Click again and the button becomes blue (active for interaction).
 Then, you need to move the cursor to a 2D view window, click and hold the left moust button, move up/down to create a contour.</string>
            </property>
            <property name="text">
@@ -541,7 +541,7 @@ Then, you need to move the cursor to a 2D view window, click and hold the left m
            </property>
            <property name="toolTip">
             <string>Interactive method:
-Click and the button becomes blue (active for interaction). 
+Click and the button becomes blue (active for interaction).
 Then, you need to move the cursor to a 2D view window, click and move to create a contour.
 
 Manual method:
@@ -565,7 +565,7 @@ Right click and manually provide center coordiantes and radius.</string>
            </property>
            <property name="toolTip">
             <string>Interactive method:
-Click and the button becomes blue (active for interaction). 
+Click and the button becomes blue (active for interaction).
 Then, you need to move the cursor to a 2D view window, click and move to create a contour.
 
 Manual method:
@@ -583,7 +583,7 @@ Right click and manually provide center coordiantes and semi-axis length.</strin
            </property>
            <property name="toolTip">
             <string>Interactive method:
-Click and the button becomes blue (active for interaction). 
+Click and the button becomes blue (active for interaction).
 Then, you need to move the cursor to a 2D view window, click and move to add control points.
 
 Manual method:
@@ -601,7 +601,7 @@ Right click and manually provide coordiantes for control points.</string>
            </property>
            <property name="toolTip">
             <string>Interactive method:
-Click and the button becomes blue (active for interaction). 
+Click and the button becomes blue (active for interaction).
 Then, you need to move the cursor to a 2D view window, click and move to add control points.
 
 Manual method:

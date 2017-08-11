@@ -1,7 +1,7 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                         University of California, San Diego.
@@ -10,19 +10,19 @@
 # Charles Taylor, Nathan Wilson, Ken Wang.
 #
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
+# contributors to the source code.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -31,7 +31,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-#===========================================================================    
+#===========================================================================
 
 
 # generate a "unique" name for a widget variable
@@ -129,7 +129,7 @@ proc Expose {widget} {
     if {[GetWidgetVariableValue $widget InExpose] == 1} {
 	return
     }
-    SetWidgetVariableValue $widget InExpose 1    
+    SetWidgetVariableValue $widget InExpose 1
     [$widget GetRenderWindow] SetDesiredUpdateRate $TkInteractor_StillUpdateRate
     update
     [$widget GetRenderWindow] Render
@@ -161,7 +161,7 @@ proc Render {widget} {
 }
 
 proc UpdateRenderer {widget x y} {
-    global CurrentCamera CurrentLight 
+    global CurrentCamera CurrentLight
     global CurrentRenderWindow CurrentRenderer
     global RendererFound LastX LastY
     global WindowCenterX WindowCenterY
@@ -170,8 +170,8 @@ proc UpdateRenderer {widget x y} {
     set WindowX [lindex [$widget configure -width] 4]
     set WindowY [lindex [$widget configure -height] 4]
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     # Find which renderer event has occurred in
     set CurrentRenderWindow [$widget GetRenderWindow]
@@ -198,11 +198,11 @@ proc UpdateRenderer {widget x y} {
             break
         }
     }
-    
+
     set CurrentCamera [$CurrentRenderer GetActiveCamera]
     set lights [$CurrentRenderer GetLights]
     $lights InitTraversal; set CurrentLight [$lights GetNextItem]
-   
+
     set LastX $x
     set LastY $y
 }
@@ -215,8 +215,8 @@ proc ChangeWaitVar {} {
 proc Enter {widget x y} {
     global oldFocus
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     set oldFocus [focus]
     focus $widget
@@ -224,15 +224,15 @@ proc Enter {widget x y} {
 }
 
 proc StartMotion {widget x y} {
-    global CurrentCamera CurrentLight 
+    global CurrentCamera CurrentLight
     global CurrentRenderWindow CurrentRenderer
     global LastX LastY
     global RendererFound
     global TkInteractor_InteractiveUpdateRate
     global RubberZoomPerformed
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     if {[focus] != $widget} {
        #puts "oldfocus: [focus]  widget: $widget"
@@ -266,12 +266,12 @@ proc EndMotion {widget x y} {
 }
 
 proc Rotate {widget x y {shouldRender 1}} {
-    global CurrentCamera 
+    global CurrentCamera
     global LastX LastY
     global RendererFound
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     if { ! $RendererFound } { return }
 
@@ -321,7 +321,7 @@ proc RenderCameraView {widget x y} {
     global gSavedView
     global CurrentRenderer CurrentCamera
     $CurrentCamera SetPosition [lindex $gSavedView(Position) 0] [lindex $gSavedView(Position) 1] [lindex $gSavedView(Position) 2]
-    $CurrentCamera SetFocalPoint [lindex $gSavedView(FocalPoint) 0] [lindex $gSavedView(FocalPoint) 1] [lindex $gSavedView(FocalPoint) 2] 
+    $CurrentCamera SetFocalPoint [lindex $gSavedView(FocalPoint) 0] [lindex $gSavedView(FocalPoint) 1] [lindex $gSavedView(FocalPoint) 2]
     $CurrentCamera SetViewUp [lindex $gSavedView(ViewUp) 0] [lindex $gSavedView(ViewUp) 1] [lindex $gSavedView(ViewUp) 2]
 
     Render $widget
@@ -334,8 +334,8 @@ proc Pan {widget x y} {
     global WindowCenterX WindowCenterY LastX LastY
     global RendererFound
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     if { ! $RendererFound } { return }
 
@@ -391,8 +391,8 @@ proc Zoom {widget x y} {
     global LastX LastY
     global RendererFound
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     if { ! $RendererFound } { return }
 
@@ -421,8 +421,8 @@ proc Reset {widget x y} {
     set WindowX [lindex [$widget configure -width] 4]
     set WindowY [lindex [$widget configure -height] 4]
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     # Find which renderer event has occurred in
     set CurrentRenderWindow [$widget GetRenderWindow]
@@ -565,10 +565,10 @@ set PrePickedProperty ""
 
 vtkPropPicker PointPicker
 proc PickPointNoCrosshairs {widget x y} {
-    global guiPPchooserExists    
+    global guiPPchooserExists
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     if { [info exists guiPPchooserExists] } {
 
@@ -583,8 +583,8 @@ proc PickPointNoCrosshairs {widget x y} {
 proc PickSeedNoCrosshairs {widget x y} {
     global guiPICKSEEDExists
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     if { [info exists guiPICKSEEDExists] } {
       global CurrentRenderer RendererFound
@@ -600,14 +600,14 @@ proc PickActor {widget x y} {
     global PickedAssemblyRenderer
     global gActorPicked
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     set WindowY [lindex [$widget configure -height] 4]
 
     if { ! $RendererFound } { return }
     ActorPicker Pick $x [expr $WindowY - $y - 1] 0.0 $CurrentRenderer
-    
+
     #set assembly [ActorPicker GetAssembly]
     #puts "assembly: $assembly"
     #set pickedActors [ActorPicker GetActors]
@@ -855,8 +855,8 @@ proc PickPolyDataCell {widget x y add delete} {
       set gNumPickedCells 0
     } else {
 
-      set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-      set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+      set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+      set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
       set WindowY [lindex [$widget configure -height] 4]
 
@@ -865,7 +865,7 @@ proc PickPolyDataCell {widget x y add delete} {
 
 #      set worldPosition [CellPicker GetPickPosition]
       set cellId [CellPicker GetCellId]
-       
+
       set deletedActor 0
       if {$add == 0} {
 	for {set i 1} {$i <= $gNumPickedCells} {incr i} {
@@ -892,12 +892,12 @@ proc PickPolyDataCell {widget x y add delete} {
 	for {set i 1} {$i <= $count} {incr i} {
 	  set gPickedCellIds($i) $tempCellIds($i)
 	}
-      }	
+      }
 
       if {$cellId !=  -1 && $deletedActor == 0} {
 
 	incr gNumPickedCells
-	set gPickedCellIds($gNumPickedCells) $cellId 
+	set gPickedCellIds($gNumPickedCells) $cellId
 
   #      puts "Position is: "
   #      puts "[lindex $worldPosition 0],"
@@ -921,7 +921,7 @@ proc PickPolyDataCell {widget x y add delete} {
 	#Content Type 4 is INDICES
 	selectionNode SetContentType 4
 	selectionNode SetSelectionList ids
-	
+
 	vtkSelection newSelection
 	newSelection AddNode selectionNode
 
@@ -969,8 +969,8 @@ proc PickPolyDataPoint {widget x y add delete} {
       set gNumPickedPoints 0
     } else {
 
-      set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-      set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+      set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+      set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
       set WindowY [lindex [$widget configure -height] 4]
 
@@ -980,7 +980,7 @@ proc PickPolyDataPoint {widget x y add delete} {
 
       set worldPosition [PolyDataPointPicker GetPickPosition]
       set pointId [PolyDataPointPicker GetPointId]
-       
+
       set deletedActor 0
       if {$add == 0} {
 	for {set i 1} {$i <= $gNumPickedPoints} {incr i} {
@@ -1006,12 +1006,12 @@ proc PickPolyDataPoint {widget x y add delete} {
 	for {set i 1} {$i <= $count} {incr i} {
 	  set gPickedPointIds($i) $tempPointIds($i)
 	}
-      }	
+      }
 
       if {$pointId !=  -1 && $deletedActor == 0} {
 
 	incr gNumPickedPoints
-	set gPickedPointIds($gNumPickedPoints) $pointId 
+	set gPickedPointIds($gNumPickedPoints) $pointId
 
         puts "Position is: "
         puts "[lindex $worldPosition 0],"
@@ -1035,7 +1035,7 @@ proc PickPolyDataPoint {widget x y add delete} {
 	#Content Type 4 is INDICES
 	selectionNode SetContentType 4
 	selectionNode SetSelectionList ids
-	
+
 	vtkSelection newSelection
 	newSelection AddNode selectionNode
 
@@ -1168,8 +1168,8 @@ proc vis_interactorToggle {W x y} {
 
 proc vis_interactorEnter {W x y} {
 
-  set x [expr [winfo pointerx $W] - [winfo rootx $W]] 
-  set y [expr [winfo pointery $W] - [winfo rooty $W]] 
+  set x [expr [winfo pointerx $W] - [winfo rootx $W]]
+  set y [expr [winfo pointery $W] - [winfo rooty $W]]
 
   vis_interactorGeneric EnterEvent $W $x $y
   Enter $W $x $y
@@ -1177,8 +1177,8 @@ proc vis_interactorEnter {W x y} {
 
 proc vis_interactorLeave {W x y} {
 
-  set x [expr [winfo pointerx $W] - [winfo rootx $W]] 
-  set y [expr [winfo pointery $W] - [winfo rooty $W]] 
+  set x [expr [winfo pointerx $W] - [winfo rootx $W]]
+  set y [expr [winfo pointery $W] - [winfo rooty $W]]
 
   vis_interactorGeneric LeaveEvent $W $x $y
   global oldFocus
@@ -1187,8 +1187,8 @@ proc vis_interactorLeave {W x y} {
 
 proc vis_interactorGeneric {event W x y} {
 
-  set x [expr [winfo pointerx $W] - [winfo rootx $W]] 
-  set y [expr [winfo pointery $W] - [winfo rooty $W]] 
+  set x [expr [winfo pointerx $W] - [winfo rootx $W]]
+  set y [expr [winfo pointery $W] - [winfo rooty $W]]
 
   set ctrl 0
   set shift 0
@@ -1211,9 +1211,9 @@ proc vis_interactorGeneric {event W x y} {
 
 proc vis_interactorRotate {W x y {shouldRender 1}} {
 
-  set x [expr [winfo pointerx $W] - [winfo rootx $W]] 
-  set y [expr [winfo pointery $W] - [winfo rooty $W]] 
-  
+  set x [expr [winfo pointerx $W] - [winfo rootx $W]]
+  set y [expr [winfo pointery $W] - [winfo rooty $W]]
+
   global gB1PRESSED
   if {$gB1PRESSED == 0} {
     set gB1PRESSED 1
@@ -1299,7 +1299,7 @@ proc DoRubberZoom { widget } {
 	    [expr $StartRubberZoomX - $EndRubberZoomX] > -5 } { return }
     if { [expr $StartRubberZoomY - $EndRubberZoomY] < 5 && \
 	    [expr $StartRubberZoomY - $EndRubberZoomY] > -5 } { return }
-    
+
     # We'll need the window height later
     set WindowY [lindex [$widget configure -height] 4]
 
@@ -1368,7 +1368,7 @@ proc DoRubberZoom { widget } {
     # change our parallel scale to encompass the entire y range of the
     # rubber band box. In perspective, we assume the box is drawn on the
     # near plane - this means that it is not possible that someone can
-    # draw a rubber band box around a nearby object and dolly past it. It 
+    # draw a rubber band box around a nearby object and dolly past it. It
     # also means that you won't get very close to distance objects - but that
     # seems better than getting lost.
     if {[$CurrentCamera GetParallelProjection]} {
@@ -1442,7 +1442,7 @@ proc DoRubberZoom { widget } {
 	$CurrentCamera SetPosition $newPosition0 $newPosition1 $newPosition2
 	$CurrentCamera Dolly $factor
 	$CurrentRenderer ResetCameraClippingRange
-    }    
+    }
 }
 
 proc RubberZoom {widget x y} {
@@ -1453,8 +1453,8 @@ proc RubberZoom {widget x y} {
     global StartRubberZoomX StartRubberZoomY
     global EndRubberZoomX EndRubberZoomY
 
-    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-    set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+    set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+    set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
     if { ! $RendererFound } { return }
 
@@ -1465,7 +1465,7 @@ proc RubberZoom {widget x y} {
 
 	set StartRubberZoomX $x
 	set StartRubberZoomY [expr $WindowY - $y - 1]
-	
+
 	set RubberZoomPerformed 1
     }
 

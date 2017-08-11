@@ -2,26 +2,26 @@
 
 # Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                         University of California, San Diego.
-# 
-# All rights reserved. 
+#
+# All rights reserved.
 #
 # Portions copyright (c) 1999-2007 Stanford University,
 # Nathan Wilson, Ken Wang, Charles Taylor.
-# 
+#
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
+# contributors to the source code.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -79,10 +79,10 @@ lib:	directories $(TARGET_LIB)
 shared: directories $(TARGET_SHARED) $(TARGET_SHARED2) $(TARGET_SHARED3)
 
 $(TARGET_LIB):	$(OBJS)
-	for fn in $(TARGET_LIB); do /bin/rm -f $$fn; done 
+	for fn in $(TARGET_LIB); do /bin/rm -f $$fn; done
 	$(AR)$(TARGET_LIB) $(OBJS)
 
-ifeq ($(CLUSTER),x64_linux) 
+ifeq ($(CLUSTER),x64_linux)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
@@ -93,7 +93,7 @@ ifdef SV_COPY_DLL_TO_BIN_PLUGINS
 	cp -f $(TARGET_SHARED) $(TOP)/Bin/plugins
 endif
 endif
-ifeq ($(CLUSTER),x64_macosx) 
+ifeq ($(CLUSTER),x64_macosx)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
@@ -121,7 +121,7 @@ else
 #	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
 endif
 ifdef SV_APPEND_CPPMICROSERVICES_TO_DLL
-	$(MITK_US_RESOURCE_COMPILER) --append $(TARGET_SHARED) ./cppmicroservices_shared/res_0.zip 
+	$(MITK_US_RESOURCE_COMPILER) --append $(TARGET_SHARED) ./cppmicroservices_shared/res_0.zip
 endif
 ifdef SV_COPY_DLL_TO_BIN_PLUGINS
 	mkdir -p $(TOP)/Bin/plugins
@@ -130,14 +130,14 @@ ifdef SV_COPY_DLL_TO_BIN_PLUGINS
 endif
 endif
 
-ifeq ($(CLUSTER),x64_linux) 
+ifeq ($(CLUSTER),x64_linux)
 $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	$(SHAR) $(TARGETDIR)/$(TARGET_SHARED2)              \
              $(DLLOBJS2) $(LFLAGS) $(DLLLIBS2) $(SHARED_LFLAGS)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
 endif
-ifeq ($(CLUSTER),x64_macosx) 
+ifeq ($(CLUSTER),x64_macosx)
 $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED2)              \
              $(DLLOBJS2) $(LFLAGS) $(DLLLIBS2)
@@ -161,14 +161,14 @@ else
 	$(LIBCMD) /out:"$(TARGET_SHARED2:.$(SOEXT)=.lib)" $(DLLOBJS2)
 endif
 endif
-ifeq ($(CLUSTER),x64_linux) 
+ifeq ($(CLUSTER),x64_linux)
 $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED3)             \
              $(DLLOBJS3) $(LFLAGS) $(DLLLIBS3)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED3); do /bin/mv -f $$fn $(TOP)/Lib; done
 endif
-ifeq ($(CLUSTER),x64_macosx) 
+ifeq ($(CLUSTER),x64_macosx)
 $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED3)             \
              $(DLLOBJS3) $(LFLAGS) $(DLLLIBS3)

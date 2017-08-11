@@ -104,7 +104,7 @@ $GCP $MITK_BLDDIR/MITK-build/*.h $MITK_BINDIR/include/mitk
 #
 # org.blueberry.core.runtime  (nested)
 # org.blueberry.ui.qt (nested)
-# org.mitk.core.services 
+# org.mitk.core.services
 # org.mitk.gui.common
 # org.mitk.gui.qt.common
 # org.mitk.gui.qt.common.legacy
@@ -191,7 +191,7 @@ done
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Interactions
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
-	   
+
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/ContourModel
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/ImageDenoising
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/LegacyGL
@@ -222,7 +222,7 @@ done
            $GCP -fl $MITK_SRCDIR/Modules/SegmentationUI/Qmitk/*.h $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GCP -fl $MITK_SRCDIR/Modules/SurfaceInterpolation/*.h $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
            $GCP -fl $MITK_SRCDIR/Utilities/mbilog/*.h $MITK_BINDIR/include/mitk/Utilities/mbilog
-	   
+
            $GCP -fl $MITK_BLDDIR/MITK-build/Modules/ContourModel/*.h $MITK_BINDIR/include/mitk/Modules/ContourModel
            $GCP -fl $MITK_BLDDIR/MITK-build/Modules/ImageDenoising/*.h $MITK_BINDIR/include/mitk/Modules/ImageDenoising
            $GCP -fl $MITK_BLDDIR/MITK-build/Modules/LegacyGL/*.h $MITK_BINDIR/include/mitk/Modules/LegacyGL

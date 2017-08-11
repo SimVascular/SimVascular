@@ -207,7 +207,7 @@ proc XFOptionsBind {} {
 proc XFOptionsBindSet {} {
   global xfBind
 
-  XFMiscRemoveBindWidgetTree . all    
+  XFMiscRemoveBindWidgetTree . all
   if {"[string index [.xfOptionsBind.frame3.config get] 0]" == "<" &&
       "[string index [.xfOptionsBind.frame3.config get] \
         [expr [string length [.xfOptionsBind.frame3.config get]]-1]]" == ">"} {

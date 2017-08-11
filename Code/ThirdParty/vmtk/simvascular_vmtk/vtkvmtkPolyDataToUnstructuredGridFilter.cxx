@@ -10,11 +10,11 @@ Version:   $Revision: 1.3 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -52,11 +52,11 @@ int vtkvmtkPolyDataToUnstructuredGridFilter::RequestData(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
-  
+
   output->SetPoints(input->GetPoints());
   output->GetPointData()->PassData(input->GetPointData());
   output->GetCellData()->PassData(input->GetCellData());
-  
+
   vtkCellArray* cellArray = vtkCellArray::New();
 
   int numberOfCells = input->GetNumberOfCells();
@@ -71,7 +71,7 @@ int vtkvmtkPolyDataToUnstructuredGridFilter::RequestData(
     {
     input->GetCellPoints(i,npts,pts);
     cellType = input->GetCellType(i);
-    
+
     cellArray->InsertNextCell(npts,pts);
     cellTypes[i] = cellType;
     }

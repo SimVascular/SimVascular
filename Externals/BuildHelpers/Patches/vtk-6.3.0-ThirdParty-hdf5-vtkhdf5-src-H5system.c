@@ -73,7 +73,7 @@
 /* Local Variables */
 /*******************/
 
-
+
 /*-------------------------------------------------------------------------
  * Function:  HDfprintf
  *
@@ -428,7 +428,7 @@ HDfprintf(FILE *stream, const char *fmt, ...)
     return nout;
 } /* end HDfprintf() */
 
-
+
 /*-------------------------------------------------------------------------
  * Function:  HDstrtoll
  *
@@ -549,7 +549,7 @@ HDstrtoll(const char *s, const char **rest, int base)
     return acc;
 } /* end HDstrtoll() */
 
-
+
 /*-------------------------------------------------------------------------
  * Function:  HDrand/HDsrand
  *
@@ -584,7 +584,7 @@ void HDsrand(unsigned int seed)
 }
 #endif
 
-
+
 /*-------------------------------------------------------------------------
  * Function:  HDremove_all
  *
@@ -732,7 +732,7 @@ int HDvsnprintf(char* str, size_t size, const char* format, va_list ap)
 
 #endif
 
-
+
 /*-------------------------------------------------------------------------
  * Function: H5_build_extpath
  *

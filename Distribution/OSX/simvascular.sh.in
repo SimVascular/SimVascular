@@ -1,6 +1,6 @@
 #!/bin/bash -f
 #/bin/tcsh -f
-# limit stacksize unlimited 
+# limit stacksize unlimited
 
 export SOFTWARE_PLATFORM=@CLUSTER@
 export COMPILER_VERSION=@COMPILER_VERSION@

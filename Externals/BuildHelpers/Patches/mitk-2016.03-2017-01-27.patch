@@ -2,7 +2,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake s
 --- mitk-2016.03/CMake/mitkFunctionCreateModule.cmake	2016-08-15 16:50:00.000000000 -0700
 +++ simvascular-patch-2016.03.0/CMake/mitkFunctionCreateModule.cmake	2017-01-27 17:22:20.965616600 -0800
 @@ -126,6 +126,7 @@
- 
+
    set(_macro_options
        FORCE_STATIC           # force building this module as a static library
 +      FORCE_SHARED           # force building this module as a shared library
@@ -12,7 +12,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake s
 @@ -339,7 +340,7 @@
        set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
      endif()
- 
+
 -    if(MODULE_WARNINGS_AS_ERRORS)
 +    if(MODULE_WARNINGS_AS_ERRORS_IGNORED)
        if(MSVC_VERSION)
@@ -21,7 +21,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake s
 @@ -367,12 +368,16 @@
        endif()
      endif(MODULE_WARNINGS_AS_ERRORS)
- 
+
 +    set(_STATIC )
 +
      if(MODULE_FORCE_STATIC)
@@ -29,7 +29,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake s
 -    else()
 -      set(_STATIC )
      endif(MODULE_FORCE_STATIC)
- 
+
 +    if(MODULE_FORCE_SHARED)
 +      set(_STATIC SHARED)
 +    endif(MODULE_FORCE_SHARED)
@@ -54,7 +54,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkMacroInstall.cmake simvascul
 +++ simvascular-patch-2016.03.0/CMake/mitkMacroInstall.cmake	2017-01-27 17:22:21.016994700 -0800
 @@ -170,6 +170,7 @@
      set(DIRS \"${_search_paths}\")
- 
+
      set(_additional_search_paths ${_install_LIBRARY_DIRS})
 +    set(_additional_search_paths \"${_additional_search_paths};${GDCM_DIR}/../;${VTK_DIR}/../../;${ITK_DIR}/../../\")
      if(_additional_search_paths)
@@ -90,7 +90,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/SimpleITK.cmake simvasc
 --- mitk-2016.03/CMakeExternals/SimpleITK.cmake	2016-08-15 16:50:01.000000000 -0700
 +++ simvascular-patch-2016.03.0/CMakeExternals/SimpleITK.cmake	2017-01-27 17:22:21.083184900 -0800
 @@ -111,7 +111,8 @@
- 
+
        if( MITK_USE_SYSTEM_PYTHON )
          ExternalProject_Add_Step(${proj} sitk_python_install_step
 -          COMMAND PYTHONUSERBASE=${_install_dir} ${PYTHON_EXECUTABLE} setup.py install --prefix=${_install_dir}
@@ -104,18 +104,18 @@ diff -aur --new-file -x .git mitk-2016.03/CMakeLists.txt simvascular-patch-2016.
 +++ simvascular-patch-2016.03.0/CMakeLists.txt	2017-01-27 17:22:21.106621300 -0800
 @@ -262,8 +262,8 @@
  mitkFunctionAddExternalProject(NAME Vigra     OFF          DEPENDS HDF5)
- 
+
  # These are "hard" dependencies and always set to ON
 -mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)
  mitkFunctionAddExternalProject(NAME VTK       ON           NO_CACHE)
 +mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)
  mitkFunctionAddExternalProject(NAME Boost     ON           NO_CACHE)
- 
+
  mitkFunctionAddExternalProject(NAME SimpleITK OFF          DEPENDS ITK GDCM SWIG)
 @@ -830,6 +830,12 @@
    ${CMAKE_MODULE_PATH}
    )
- 
+
 +# 2017-01-27:  This doesn't seem to be necessary for our builds with sv_externals
 +#if(MITK_USE_GDCM)
 +#  find_package(GDCM REQUIRED)
@@ -132,12 +132,12 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Classification/CLUtilities/CMa
  MITK_CREATE_MODULE(
    DEPENDS MitkCore MitkCLCore
 -  PACKAGE_DEPENDS PUBLIC Eigen
-+  PACKAGE_DEPENDS 
++  PACKAGE_DEPENDS
 +    PUBLIC Eigen
 +    PUBLIC  ITK|ITKImageLabel+ITKConnectedComponents+ITKImageCompare+ITKMathematicalMorphology+ITKBinaryMathematicalMorphology
    WARNINGS_AS_ERRORS
  )
- 
+
 diff -aur --new-file -x .git mitk-2016.03/Modules/Core/CMakeLists.txt simvascular-patch-2016.03.0/Modules/Core/CMakeLists.txt
 --- mitk-2016.03/Modules/Core/CMakeLists.txt	2016-08-15 16:50:05.000000000 -0700
 +++ simvascular-patch-2016.03.0/Modules/Core/CMakeLists.txt	2017-01-27 17:22:22.465473300 -0800
@@ -156,24 +156,24 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/include/mitkExtractSliceF
 @@ -85,6 +85,10 @@
      /** \brief Resampling grid corresponds to: false->image    true->worldgeometry*/
      void SetInPlaneResampleExtentByGeometry(bool inPlaneResampleExtentByGeometry){ this->m_InPlaneResampleExtentByGeometry = inPlaneResampleExtentByGeometry; }
- 
+
 +    void SetInPlaneResampleSizeByGeometry(bool inPlaneResampleSizeByGeometry){ this->m_InPlaneResampleSizeByGeometry = inPlaneResampleSizeByGeometry; }
 +
 +    void SetInPlaneResampleExtentByMinimumSpacing(bool inPlaneResampleExtentByMinimumSpacing){this->m_InPlaneResampleExtentByMinimumSpacing = inPlaneResampleExtentByMinimumSpacing;}
 +
      /** \brief Sets the output dimension of the slice*/
      void SetOutputDimensionality(unsigned int dimension){ this->m_OutputDimension = dimension; }
- 
+
 @@ -168,6 +172,10 @@
- 
+
      bool m_InPlaneResampleExtentByGeometry;//Resampling grid corresponds to:  false->image    true->worldgeometry
- 
+
 +    bool m_InPlaneResampleSizeByGeometry;//Use Renderer Plane extents
 +
 +    bool m_InPlaneResampleExtentByMinimumSpacing;
 +
      mitk::ScalarType* m_OutPutSpacing;
- 
+
      bool m_VtkOutputRequested;
 diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp simvascular-patch-2016.03.0/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp
 --- mitk-2016.03/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp	2016-08-15 16:50:07.000000000 -0700
@@ -207,13 +207,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Algorithms/mitkExtrac
        {
 @@ -305,12 +314,14 @@
    int xMin, xMax, yMin, yMax;
- 
+
    xMin = yMin = 0;
 -  xMax = static_cast< int >( extent[0]);
 -  yMax = static_cast< int >( extent[1]);
 +  xMax = static_cast< int >( std::round(extent[0]));
 +  yMax = static_cast< int >( std::round(extent[1]));
- 
+
 -  double sliceBounds[6];
 -  if (m_WorldGeometry->GetReferenceGeometry())
 +  if(!m_InPlaneResampleSizeByGeometry)
@@ -255,13 +255,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
  #include <vtkColorTransferFunction.h>
 +#include <vtkImageGradientMagnitude.h>
 +#include <vtkImageHistogramStatistics.h>
- 
+
  //ITK
  #include <itkRGBAPixel.h>
 @@ -166,6 +168,13 @@
    datanode->GetBoolProperty("in plane resample extent by geometry", inPlaneResampleExtentByGeometry, renderer);
    localStorage->m_Reslicer->SetInPlaneResampleExtentByGeometry(inPlaneResampleExtentByGeometry);
- 
+
 +  bool inPlaneResampleSizeByGeometry = false;
 +  datanode->GetBoolProperty("in plane resample size by geometry", inPlaneResampleSizeByGeometry, renderer);
 +  localStorage->m_Reslicer->SetInPlaneResampleSizeByGeometry(inPlaneResampleSizeByGeometry);
@@ -269,13 +269,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 +  bool inPlaneResampleExtentByMinimumSpacing = false;
 +  datanode->GetBoolProperty("in plane resample extent by minimum spacing", inPlaneResampleExtentByMinimumSpacing, renderer);
 +  localStorage->m_Reslicer->SetInPlaneResampleExtentByMinimumSpacing(inPlaneResampleExtentByMinimumSpacing);
- 
+
    // Initialize the interpolation mode for resampling; switch to nearest
    // neighbor if the input image is too small.
 @@ -288,6 +297,60 @@
      localStorage->m_ReslicedImage = localStorage->m_Reslicer->GetVtkOutput();
    }
- 
+
 +  bool showGradient= false;
 +  datanode->GetBoolProperty("show gradient", showGradient, renderer);
 +  if (showGradient)
@@ -352,7 +352,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 +  {
 +    localStorage->m_Reslicer->GetClippedPlaneBounds(sliceBounds);
 +  }
- 
+
    //get the spacing of the slice
    localStorage->m_mmPerPixel = localStorage->m_Reslicer->GetOutputSpacing();
 @@ -308,16 +384,29 @@
@@ -368,7 +368,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 -    textureClippingBounds[1] = static_cast< int >( textureClippingBounds[1] / localStorage->m_mmPerPixel[0] + 0.5 );
 -    textureClippingBounds[2] = static_cast< int >( textureClippingBounds[2] / localStorage->m_mmPerPixel[1] + 0.5 );
 -    textureClippingBounds[3] = static_cast< int >( textureClippingBounds[3] / localStorage->m_mmPerPixel[1] + 0.5 );
- 
+
 +    if(inPlaneResampleSizeByGeometry)
 +    {
 +        double widthInMM = planeGeometry->GetExtentInMM( 0 );
@@ -396,7 +396,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
    }
 @@ -439,7 +528,10 @@
    LocalStorage *localStorage = this->GetLocalStorage( renderer );
- 
+
    LevelWindow levelWindow;
 -  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, "levelwindow" );
 +//  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, "levelwindow" );
@@ -404,15 +404,15 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 +  this->GetDataNode()->GetBoolProperty("show gradient", showGradient, renderer);
 +  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, showGradient? "gradientlevelwindow" : "levelwindow" );
    localStorage->m_LevelWindowFilter->GetLookupTable()->SetRange( levelWindow.GetLowerWindowBound(), levelWindow.GetUpperWindowBound() );
- 
+
    mitk::LevelWindow opacLevelWindow;
 @@ -591,7 +683,7 @@
    vtkLookupTable* usedLookupTable = localStorage->m_ColorLookupTable;
- 
+
    // If lookup table or transferfunction use is requested...
 -  mitk::LookupTableProperty::Pointer lookupTableProp = dynamic_cast<mitk::LookupTableProperty*>(this->GetDataNode()->GetProperty("LookupTable"));
 +  mitk::LookupTableProperty::Pointer lookupTableProp = dynamic_cast<mitk::LookupTableProperty*>(this->GetDataNode()->GetProperty("LookupTable", renderer));
- 
+
    if( lookupTableProp.IsNotNull() ) // is a lookuptable set?
    {
 @@ -686,6 +778,8 @@
@@ -422,7 +422,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 +  node->AddProperty( "in plane resample size by geometry", mitk::BoolProperty::New( false ) );
 +  node->AddProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( false ) );
    node->AddProperty( "bounding box", mitk::BoolProperty::New( false ) );
- 
+
    mitk::RenderingModeProperty::Pointer renderingModeProperty = mitk::RenderingModeProperty::New();
 diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp simvascular-patch-2016.03.0/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp
 --- mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp	2016-08-15 16:50:09.000000000 -0700
@@ -430,7 +430,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGe
 @@ -310,6 +310,13 @@
          tubeRadius = sqrt( m_SurfaceCreator->GetBoundingBox()->GetDiagonalLength2() ) / 450.0;
        }
- 
+
 +      bool useGeometryBoundingBox = false;
 +      if(GetDataNode()->GetBoolProperty("in plane resample size by geometry", useGeometryBoundingBox, renderer))
 +      {
@@ -447,7 +447,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/CppMicroServices/core/src/util
 @@ -59,6 +59,13 @@
      #endif
      #include <windows.h>
- 
+
 +    // 2016-12-09 - problems with maro replacement on msvc 2013
 +    #ifdef UNICODE
 +    #define CreateMutex  CreateMutexW
@@ -477,7 +477,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/MapperExt/CMakeLists.txt simva
 -                   WARNINGS_AS_ERRORS
 +#                   WARNINGS_AS_ERRORS
                    )
- 
+
  add_subdirectory(test)
 diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/files.cmake simvascular-patch-2016.03.0/Modules/QtWidgets/files.cmake
 --- mitk-2016.03/Modules/QtWidgets/files.cmake	2016-08-15 16:50:23.000000000 -0700
@@ -485,7 +485,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/files.cmake simvascu
 @@ -36,6 +36,10 @@
  QmitkDataStorageComboBoxWithSelectNone.cpp
  )
- 
+
 +if(APPLE)
 +  set(CPP_FILES ${CPP_FILES} QmitkDisableGLHiDPI.mm)
 +endif()
@@ -537,9 +537,9 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/include/QmitkRenderW
 --- mitk-2016.03/Modules/QtWidgets/include/QmitkRenderWindow.h	2016-08-15 16:50:23.000000000 -0700
 +++ simvascular-patch-2016.03.0/Modules/QtWidgets/include/QmitkRenderWindow.h	2017-01-27 17:22:26.458266000 -0800
 @@ -96,6 +96,8 @@
- 
+
    void FullScreenMode(bool state);
- 
+
 +  void SetWindowMenuEventAble(bool able);
 +
  protected:
@@ -549,23 +549,23 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/include/QmitkRenderW
 --- mitk-2016.03/Modules/QtWidgets/include/QmitkRenderWindowMenu.h	2016-08-15 16:50:23.000000000 -0700
 +++ simvascular-patch-2016.03.0/Modules/QtWidgets/include/QmitkRenderWindowMenu.h	2017-01-27 17:22:26.462171700 -0800
 @@ -95,6 +95,9 @@
- 
+
    void NotifyNewWidgetPlanesMode( int mode );
- 
+
 +  void SetEventAble( bool able)
 +  { m_EventAble=able; }
 +
  protected:
- 
+
    /*! Create menu widget. The menu contains five QPushButtons (hori-split, verti-split, full-screen, settings and close button)
 @@ -311,6 +314,8 @@
- 
+
    bool                m_Entered;
- 
+
 +  bool                m_EventAble;
 +
    private:
- 
+
    mitk::BaseRenderer::Pointer m_Renderer;
 diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkDisableGLHiDPI.mm simvascular-patch-2016.03.0/Modules/QtWidgets/src/QmitkDisableGLHiDPI.mm
 --- mitk-2016.03/Modules/QtWidgets/src/QmitkDisableGLHiDPI.mm	1969-12-31 16:00:00.000000000 -0800
@@ -625,7 +625,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -35,6 +37,10 @@
  #include "QmitkRenderWindowMenu.h"
  #include "QmitkMimeTypes.h"
- 
+
 +#ifdef __APPLE__
 +#include "QmitkDisableGLHiDPI.h"
 +#endif
@@ -636,7 +636,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -47,6 +53,10 @@
    newform.setSamples(8);
    this->setFormat(newform);*/
- 
+
 +  QSurfaceFormat surfaceFormat = windowHandle()->format();
 +  surfaceFormat.setStencilBufferSize(8);
 +  windowHandle()->setFormat(surfaceFormat);
@@ -645,7 +645,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
    {
      GetRenderWindow()->SetMultiSamples(0);
 @@ -65,6 +75,11 @@
- 
+
    setFocusPolicy(Qt::StrongFocus);
    setMouseTracking(true);
 +
@@ -654,12 +654,12 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 +#endif
 +
  }
- 
+
  QmitkRenderWindow::~QmitkRenderWindow()
 @@ -269,6 +284,11 @@
    }
  }
- 
+
 +void QmitkRenderWindow::SetWindowMenuEventAble(bool able)
 +{
 +  m_MenuWidget->SetEventAble(able);
@@ -679,38 +679,38 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 +m_Parent(parent),
 +m_EventAble(true)
  {
- 
+
    MITK_DEBUG << "creating renderwindow menu on baserenderer " << b;
 @@ -257,10 +258,13 @@
- 
+
  void QmitkRenderWindowMenu::enterEvent( QEvent * /*e*/ )
  {
 -  MITK_DEBUG << "menu enterEvent";
 -  DeferredShowMenu();
 +  if(m_EventAble)
-+  {  
++  {
 +    MITK_DEBUG << "menu enterEvent";
 +    DeferredShowMenu();
- 
+
 -  m_Entered=true;
 +    m_Entered=true;
 +  }
  }
- 
+
  void QmitkRenderWindowMenu::DeferredHideMenu( )
 @@ -380,7 +384,7 @@
    m_LayoutDesign = LAYOUT_2DIMAGEUP;
    emit SignalChangeLayoutDesign( LAYOUT_2DIMAGEUP );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
- 
+
  }
  void QmitkRenderWindowMenu::OnChangeLayoutTo2DImagesLeft(bool)
 @@ -392,7 +396,7 @@
    m_LayoutDesign = LAYOUT_2DIMAGELEFT;
    emit SignalChangeLayoutDesign( LAYOUT_2DIMAGELEFT );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
@@ -719,25 +719,25 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -403,7 +407,7 @@
    m_LayoutDesign = LAYOUT_DEFAULT;
    emit SignalChangeLayoutDesign( LAYOUT_DEFAULT );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
- 
+
  }
- 
+
 @@ -436,7 +440,7 @@
    m_LayoutDesign = LAYOUT_BIG3D;
    emit SignalChangeLayoutDesign( LAYOUT_BIG3D );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
- 
+
  }
- 
+
 @@ -449,7 +453,7 @@
    m_LayoutDesign = LAYOUT_AXIAL;
    emit SignalChangeLayoutDesign( LAYOUT_AXIAL );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
@@ -746,7 +746,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -460,7 +464,7 @@
    m_LayoutDesign = LAYOUT_SAGITTAL;
    emit SignalChangeLayoutDesign( LAYOUT_SAGITTAL );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
@@ -755,7 +755,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -471,7 +475,7 @@
    m_LayoutDesign = LAYOUT_CORONAL;
    emit SignalChangeLayoutDesign( LAYOUT_CORONAL );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
@@ -764,7 +764,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -482,7 +486,7 @@
    m_LayoutDesign = LAYOUT_ROWWIDGET3AND4;
    emit SignalChangeLayoutDesign( LAYOUT_ROWWIDGET3AND4 );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
@@ -773,16 +773,16 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -493,7 +497,7 @@
    m_LayoutDesign = LAYOUT_COLUMNWIDGET3AND4;
    emit SignalChangeLayoutDesign( LAYOUT_COLUMNWIDGET3AND4 );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
- 
+
  void QmitkRenderWindowMenu::OnChangeLayoutToSmallUpperWidget2Big3and4(bool)
 @@ -505,7 +509,7 @@
    m_LayoutDesign = LAYOUT_SMALLUPPERWIDGET2BIGAND4;
    emit SignalChangeLayoutDesign( LAYOUT_SMALLUPPERWIDGET2BIGAND4 );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
@@ -791,7 +791,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -516,7 +520,7 @@
    m_LayoutDesign = LAYOUT_2X2DAND3DWIDGET;
    emit SignalChangeLayoutDesign( LAYOUT_2X2DAND3DWIDGET );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
@@ -800,24 +800,24 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -527,7 +531,7 @@
    m_LayoutDesign = LAYOUT_LEFT2DAND3DRIGHT2D;
    emit SignalChangeLayoutDesign( LAYOUT_LEFT2DAND3DRIGHT2D );
- 
+
 -  DeferredShowMenu( );
 +  DeferredHideMenu( );
  }
- 
+
  void QmitkRenderWindowMenu::UpdateLayoutDesignList( int layoutDesignIndex )
 diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp simvascular-patch-2016.03.0/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp
 --- mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp	2016-08-15 16:50:24.000000000 -0700
 +++ simvascular-patch-2016.03.0/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp	2017-01-27 17:22:26.578763200 -0800
 @@ -467,10 +467,13 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
- 
+
    //Set Layout to widget
    this->setLayout(QmitkStdMultiWidgetLayout);
- 
+
 +  QSplitter* previousMainSplit=m_MainSplit;
 +
    //create main splitter
@@ -830,21 +830,21 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget1->SetWindowMenuEventAble(true);
 +  mitkWidget2->SetWindowMenuEventAble(true);
 +  mitkWidget3->SetWindowMenuEventAble(true);
- 
+
    //set SplitterSize for splitter top
    QList<int> splitterSize;
 @@ -500,6 +506,7 @@
- 
+
    //insert Widget Container into splitter bottom
    m_SubSplit2->addWidget( mitkWidget4Container );
 +  mitkWidget4->SetWindowMenuEventAble(true);
- 
+
    //set SplitterSize for splitter m_LayoutSplit
    splitterSize.clear();
 @@ -525,6 +532,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_2D_IMAGES_UP );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_2D_IMAGES_UP );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -852,7 +852,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -540,6 +550,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -861,7 +861,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -560,6 +576,9 @@
@@ -871,21 +871,21 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget1->SetWindowMenuEventAble(true);
 +  mitkWidget2->SetWindowMenuEventAble(true);
 +  mitkWidget3->SetWindowMenuEventAble(true);
- 
+
    //set splitterSize of SubSplit1
    QList<int> splitterSize;
 @@ -569,6 +588,7 @@
    m_SubSplit1->setSizes( splitterSize );
- 
+
    m_SubSplit2->addWidget( mitkWidget4Container );
 +  mitkWidget4->SetWindowMenuEventAble(true);
- 
+
    //set splitterSize of Layout Split
    splitterSize.clear();
 @@ -594,6 +614,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_2D_IMAGES_LEFT );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_2D_IMAGES_LEFT );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -893,7 +893,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -666,6 +689,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -902,13 +902,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -689,6 +718,11 @@
    m_SubSplit2->addWidget( mitkWidget3Container );
    m_SubSplit2->addWidget( mitkWidget4Container );
- 
+
 +  mitkWidget1->SetWindowMenuEventAble(true);
 +  mitkWidget2->SetWindowMenuEventAble(true);
 +  mitkWidget3->SetWindowMenuEventAble(true);
@@ -920,7 +920,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 @@ -714,6 +748,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_DEFAULT );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_DEFAULT );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -928,7 +928,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -729,6 +766,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -937,11 +937,11 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -736,6 +779,20 @@
- 
+
    //add widget Splitter to main Splitter
    m_MainSplit->addWidget( mitkWidget4Container );
 +  mitkWidget4->SetWindowMenuEventAble(true);
@@ -958,13 +958,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget3->SetWindowMenuEventAble(false);
 +  widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //add LevelWindow Widget to mainSplitter
    m_MainSplit->addWidget( levelWindowWidget );
 @@ -757,6 +814,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_BIG_3D );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_BIG_3D );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -972,7 +972,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -772,6 +832,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -981,11 +981,11 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -779,6 +845,20 @@
- 
+
    //add widget Splitter to main Splitter
    m_MainSplit->addWidget( mitkWidget1Container );
 +  mitkWidget1->SetWindowMenuEventAble(true);
@@ -1002,13 +1002,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget4->SetWindowMenuEventAble(false);
 +  widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //add LevelWindow Widget to mainSplitter
    m_MainSplit->addWidget( levelWindowWidget );
 @@ -800,6 +880,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_WIDGET1 );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_WIDGET1 );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1016,7 +1016,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -815,6 +898,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -1025,11 +1025,11 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -822,6 +911,20 @@
- 
+
    //add widget Splitter to main Splitter
    m_MainSplit->addWidget( mitkWidget2Container );
 +  mitkWidget2->SetWindowMenuEventAble(true);
@@ -1046,13 +1046,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget4->SetWindowMenuEventAble(false);
 +  widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //add LevelWindow Widget to mainSplitter
    m_MainSplit->addWidget( levelWindowWidget );
 @@ -843,6 +946,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_WIDGET2 );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_WIDGET2 );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1060,7 +1060,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -858,6 +964,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -1069,11 +1069,11 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -865,6 +977,20 @@
- 
+
    //add widget Splitter to main Splitter
    m_MainSplit->addWidget( mitkWidget3Container );
 +  mitkWidget3->SetWindowMenuEventAble(true);
@@ -1090,13 +1090,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget4->SetWindowMenuEventAble(false);
 +  widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //add LevelWindow Widget to mainSplitter
    m_MainSplit->addWidget( levelWindowWidget );
 @@ -886,6 +1012,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_WIDGET3 );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_WIDGET3 );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1104,7 +1104,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -901,6 +1030,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -1113,7 +1113,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -916,6 +1051,19 @@
@@ -1133,13 +1133,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget2->SetWindowMenuEventAble(false);
 +  widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //set Splitter Size
    QList<int> splitterSize;
 @@ -940,6 +1088,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_ROW_WIDGET_3_AND_4 );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_ROW_WIDGET_3_AND_4 );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1147,7 +1147,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -955,6 +1106,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -1156,7 +1156,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -970,6 +1127,19 @@
@@ -1176,13 +1176,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget2->SetWindowMenuEventAble(false);
 + widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //set SplitterSize
    QList<int> splitterSize;
 @@ -994,6 +1164,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_COLUMN_WIDGET_3_AND_4 );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_COLUMN_WIDGET_3_AND_4 );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1190,7 +1190,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -1018,6 +1191,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -1199,11 +1199,11 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -1039,6 +1218,18 @@
- 
+
    m_SubSplit2->addWidget( mitkWidget3Container );
    m_SubSplit2->addWidget( mitkWidget4Container );
 +  mitkWidget2->SetWindowMenuEventAble(true);
@@ -1218,13 +1218,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget1->SetWindowMenuEventAble(false);
 +  widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //set Splitter Size
    QList<int> splitterSize;
 @@ -1067,6 +1258,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_SMALL_UPPER_WIDGET2_BIG3_AND4 );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_SMALL_UPPER_WIDGET2_BIG3_AND4 );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1232,7 +1232,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -1082,6 +1276,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -1241,7 +1241,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -1102,6 +1302,18 @@
@@ -1260,13 +1260,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget3->SetWindowMenuEventAble(false);
 +  widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //set Splitter Size
    QList<int> splitterSize;
 @@ -1127,6 +1339,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_2X_2D_AND_3D_WIDGET );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_2X_2D_AND_3D_WIDGET );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1274,7 +1274,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -1142,6 +1357,12 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
@@ -1283,7 +1283,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  this->setLayout(QmitkStdMultiWidgetLayout);
 +
 +  QSplitter* previousMainSplit=m_MainSplit;
- 
+
    //create main splitter
    m_MainSplit = new QSplitter( this );
 @@ -1162,6 +1383,18 @@
@@ -1302,13 +1302,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +  mitkWidget3->SetWindowMenuEventAble(false);
 +  widgetTemp->hide();
 +  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
- 
+
    //set Splitter Size
    QList<int> splitterSize;
 @@ -1187,6 +1420,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_2D_AND_3D_LEFT_2D_RIGHT_WIDGET );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_2D_AND_3D_LEFT_2D_RIGHT_WIDGET );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1316,25 +1316,25 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    this->UpdateAllWidgets();
  }
 @@ -1202,10 +1438,13 @@
- 
+
    //create Main Layout
    QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
 +  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
- 
+
    //Set Layout to widget
    this->setLayout(QmitkStdMultiWidgetLayout);
- 
+
 +  QSplitter* previousMainSplit=m_MainSplit;
 +
    //create main splitter
    m_MainSplit = new QSplitter( this );
    QmitkStdMultiWidgetLayout->addWidget( m_MainSplit );
 @@ -1223,17 +1462,30 @@
- 
+
    //insert Widget Container into splitter top
    m_SubSplit1->addWidget( mitkWidget1Container );
 +  mitkWidget1->SetWindowMenuEventAble(true);
- 
+
    //set SplitterSize for splitter top
     QList<int> splitterSize;
    //insert Widget Container into splitter bottom
@@ -1345,7 +1345,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
    splitterSize.push_back(700);
    splitterSize.push_back(700);
    m_LayoutSplit->setSizes( splitterSize );
- 
+
 +  QWidget* widgetTemp=new QWidget(this);
 +  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
 +  layoutTemp->setContentsMargins(0,0,0,0);
@@ -1359,11 +1359,11 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWid
 +
    //show mainSplitt
    m_MainSplit->show();
- 
+
 @@ -1251,6 +1503,9 @@
    mitkWidget3->LayoutDesignListChanged( LAYOUT_2D_UP_AND_3D_DOWN );
    mitkWidget4->LayoutDesignListChanged( LAYOUT_2D_UP_AND_3D_DOWN );
- 
+
 +  if(previousMainSplit)
 +    delete previousMainSplit;
 +
@@ -1405,18 +1405,18 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 @@ -152,8 +153,8 @@
    m_NodeTreeView->setTextElideMode(Qt::ElideMiddle);
    m_NodeTreeView->installEventFilter(new QmitkNodeTableViewKeyFilter(this));
- 
+
 -  m_ItemDelegate = new QmitkDataManagerItemDelegate(m_NodeTreeView);
 -  m_NodeTreeView->setItemDelegate(m_ItemDelegate);
 +  // m_ItemDelegate = new QmitkDataManagerItemDelegate(m_NodeTreeView);
 +  // m_NodeTreeView->setItemDelegate(m_ItemDelegate);
- 
+
    QObject::connect( m_NodeTreeView, SIGNAL(customContextMenuRequested(const QPoint&))
      , this, SLOT(NodeTableViewContextMenuRequested(const QPoint&)) );
 @@ -211,11 +212,11 @@
    unknownDataNodeDescriptor->AddAction(saveAction);
    m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,saveAction));
- 
+
 -  QAction* removeAction = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/Remove_48.png"), "Remove", this);
 -  QObject::connect( removeAction, SIGNAL( triggered(bool) )
 -    , this, SLOT( RemoveSelectedNodes(bool) ) );
@@ -1427,7 +1427,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +  //   , this, SLOT( RemoveSelectedNodes(bool) ) );
 +  // unknownDataNodeDescriptor->AddAction(removeAction);
 +  // m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,removeAction));
- 
+
    QAction* reinitAction = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/Refresh_48.png"), "Reinit", this);
    QObject::connect( reinitAction, SIGNAL( triggered(bool) )
 @@ -378,6 +379,14 @@
@@ -1442,18 +1442,18 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +    QmitkNodeDescriptorManager::GetInstance()->GetDescriptor("svMitkMesh");
 +  if(meshDataNodeDescriptor)
 +    meshDataNodeDescriptor->AddAction(m_SurfaceRepresentation, false);
- 
+
    QAction* showOnlySelectedNodes
      = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/ShowSelectedNode_48.png")
 @@ -436,11 +445,13 @@
    mitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<mitk::IContextMenuAction>("class");
- 
+
    QString className = confElem->GetAttribute("class");
 -  QString smoothed = confElem->GetAttribute("smoothed");
-+  
++
 +  contextMenuAction->SetDataStorage(this->GetDataStorage());
 +  contextMenuAction->SetFunctionality(this);
- 
+
    if(className == "QmitkCreatePolygonModelAction")
    {
 -    contextMenuAction->SetDataStorage(this->GetDataStorage());
@@ -1476,18 +1476,18 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +
    contextMenuAction->Run( this->GetCurrentSelection() ); // run the action
  }
- 
+
  void QmitkDataManagerView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
  {
 -  if( m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() !=  prefs->GetBool("Place new nodes on top", true) )
 +  if( m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() !=  prefs->GetBool("Place new nodes on top", false) )
      m_NodeTreeModel->SetPlaceNewNodesOnTop( !m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() );
- 
+
    bool hideHelperObjects = !prefs->GetBool("Show helper objects", false);
 @@ -910,11 +914,37 @@
    _QmitkInfoDialog.exec();
  }
- 
+
 -void QmitkDataManagerView::NodeChanged(const mitk::DataNode* /*node*/)
 +void QmitkDataManagerView::NodeChanged(const mitk::DataNode* node)
  {
@@ -1513,7 +1513,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +            for(int i=0;i<rs->size();i++){
 +                rs->GetElement(i)->SetVisibility(currentVisible);
 +            }
-+            
++
 +            mitk::DataNode* nodex=const_cast<mitk::DataNode*>(node);
 +            nodex->SetBoolProperty("previous visibility",currentVisible);
 +        }
@@ -1521,7 +1521,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +    }
 +
  }
- 
+
  QItemSelectionModel *QmitkDataManagerView::GetDataNodeSelectionModel() const
 diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h simvascular-patch-2016.03.0/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h
 --- mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h	2016-08-15 16:50:45.000000000 -0700
@@ -1529,7 +1529,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 @@ -72,6 +72,8 @@
    ///
    virtual ~QmitkDataManagerView();
- 
+
 +  QTreeView* GetTreeView(){return m_NodeTreeView;}
 +
  public slots:
@@ -1543,7 +1543,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidget
    m_Preferences->PutBool("PACS like mouse interaction", m_Ui->m_PACSLikeMouseMode->isChecked());
    m_Preferences->PutInt("Rendering Mode", m_Ui->m_RenderingMode->currentIndex());
 +  m_Preferences->PutBool("Show Department Logo", m_Ui->m_ShowDepartmentLogo->isChecked());
- 
+
    return true;
  }
 @@ -158,6 +159,7 @@
@@ -1553,7 +1553,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidget
 +  m_Ui->m_ShowDepartmentLogo->setChecked(m_Preferences->GetBool("Show Department Logo", false));
    m_Ui->m_CrosshairGapSize->setValue(m_Preferences->GetInt("crosshair gap size", 32));
  }
- 
+
 diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui simvascular-patch-2016.03.0/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui
 --- mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2016-08-15 16:50:57.000000000 -0700
 +++ simvascular-patch-2016.03.0/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2017-01-27 17:22:31.083215900 -0800
@@ -1858,7 +1858,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidget
    bool newMode = prefs->GetBool("PACS like mouse interaction", false);
    d->m_MouseModeToolbar->setVisible( newMode );
    d->m_StdMultiWidget->GetMouseModeSwitcher()->SetInteractionScheme( newMode ? mitk::MouseModeSwitcher::PACS : mitk::MouseModeSwitcher::MITK );
-+  
++
 +  bool showLogo = prefs->GetBool("Show Department Logo", false);
 +  if(showLogo)
 +  {
@@ -1869,7 +1869,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidget
 +    d->m_StdMultiWidget->DisableDepartmentLogo();
 +  }
  }
- 
+
  mitk::Color QmitkStdMultiWidgetEditor::HexColorToMitkColor(const QString& widgetColorInHex)
 diff -aur --new-file -x .git mitk-2016.03/Plugins/PluginList.cmake simvascular-patch-2016.03.0/Plugins/PluginList.cmake
 --- mitk-2016.03/Plugins/PluginList.cmake	2016-08-15 16:50:33.000000000 -0700

@@ -20,7 +20,7 @@ namespace Ui {
 }
 
 class svPathEdit : public QmitkFunctionality
-{  
+{
     Q_OBJECT
 
 public:

@@ -85,7 +85,7 @@ proc TUTEvalCommand {tutNormal} {
 proc TUTBlock {tutNormal} {
   global tutBlock
   global tutSetNormal
-  
+
   set tutBlock 1
   set tutSetNormal $tutNormal
   .frame2.prev configure -state disabled
@@ -97,7 +97,7 @@ proc TUTBlock {tutNormal} {
 proc TUTUnblock {} {
   global tutBlock
   global tutSetNormal
-  
+
   set tutBlock 0
   .frame2.prev configure -state normal
   .frame2.next configure -state normal

@@ -2,5 +2,5 @@
   set POSTSOLVER    "$env(SV_HOME)/@postsolver_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"
   set MPIEXEC       @MPIEXEC@
   set SOLVER        "$env(SV_HOME)/@flowsolver_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"
-  set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(cvflowsolver)] 
+  set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(cvflowsolver)]
   set ADAPTOR       "$env(SV_HOME)/@adapter_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"

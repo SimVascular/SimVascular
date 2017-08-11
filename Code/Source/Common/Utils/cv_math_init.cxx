@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h"  
+#include "SimVascular.h"
 
 #include <stdio.h>
 
@@ -169,7 +169,7 @@ int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
     pts[i][0] = pt[0];
-    pts[i][1] = pt[1];    
+    pts[i][1] = pt[1];
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -185,7 +185,7 @@ int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
      delete mathobj;
      return TCL_ERROR;
   }
-  
+
   // create result string
   char r[2048];
   for (i = 0; i < nterms; i++) {
@@ -218,7 +218,7 @@ int Math_inverseFFTCmd( ClientData clientData, Tcl_Interp *interp,
   double dt = 0;
   double omega = 0;
   int numPts = 0;
- 
+
   int table_sz = 5;
   ARG_Entry arg_table[] = {
     { "-terms", LIST_Type, &termsArg, NULL, REQUIRED, 0, { 0 } },
@@ -281,7 +281,7 @@ int Math_inverseFFTCmd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
     terms[i][0] = term[0];
-    terms[i][1] = term[1];    
+    terms[i][1] = term[1];
   }
 
   //for (i = 0; i < nlistterms; i++) {
@@ -297,7 +297,7 @@ int Math_inverseFFTCmd( ClientData clientData, Tcl_Interp *interp,
      delete mathobj;
      return TCL_ERROR;
   }
-  
+
   // create result string
   char r[2048];
   for (i = 0; i < numPts; i++) {
@@ -332,7 +332,7 @@ int Math_computeWomersleyCmd( ClientData clientData, Tcl_Interp *interp,
   double density = 0;
   double radmax = 0;
   double radius = 0;
- 
+
   int table_sz = 7;
   ARG_Entry arg_table[] = {
     { "-terms", LIST_Type, &termsArg, NULL, REQUIRED, 0, { 0 } },
@@ -344,7 +344,7 @@ int Math_computeWomersleyCmd( ClientData clientData, Tcl_Interp *interp,
     { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
   };
 
- 
+
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
 
   if ( argc == 1 ) {
@@ -398,7 +398,7 @@ int Math_computeWomersleyCmd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
     terms[i][0] = term[0];
-    terms[i][1] = term[1];    
+    terms[i][1] = term[1];
   }
 
   //for (i = 0; i < nlistterms; i++) {
@@ -415,7 +415,7 @@ int Math_computeWomersleyCmd( ClientData clientData, Tcl_Interp *interp,
      delete mathobj;
      return TCL_ERROR;
   }
-  
+
   // create result string
   char r[2048];
   r[0] = '\0';
@@ -497,7 +497,7 @@ int Math_linearInterpCmd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
     pts[i][0] = pt[0];
-    pts[i][1] = pt[1];    
+    pts[i][1] = pt[1];
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -518,7 +518,7 @@ int Math_linearInterpCmd( ClientData clientData, Tcl_Interp *interp,
      delete mathobj;
      return TCL_ERROR;
   }
-  
+
   // create result string
   char r[2048];
   for (i = 0; i < numInterpPoints; i++) {
@@ -603,8 +603,8 @@ int Math_curveLengthCmd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
     pts[i][0] = pt[0];
-    pts[i][1] = pt[1]; 
-    pts[i][2] = pt[2];   
+    pts[i][1] = pt[1];
+    pts[i][2] = pt[2];
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -620,7 +620,7 @@ int Math_curveLengthCmd( ClientData clientData, Tcl_Interp *interp,
      delete mathobj;
      return TCL_ERROR;
   }
-  
+
   // create result string
   char r[2048];
   r[0] = '\0';
@@ -705,7 +705,7 @@ int Math_linearInterpolateCurveCmd( ClientData clientData, Tcl_Interp *interp,
     }
     pts[i][0] = pt[0];
     pts[i][1] = pt[1];
-    pts[i][2] = pt[2];    
+    pts[i][2] = pt[2];
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -721,7 +721,7 @@ int Math_linearInterpolateCurveCmd( ClientData clientData, Tcl_Interp *interp,
      delete mathobj;
      return TCL_ERROR;
   }
-  
+
   // create result string
   char r[2048];
   for (i = 0; i < numInterpPoints; i++) {
@@ -752,7 +752,7 @@ int Math_fitLeastSquaresCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_List xtermsArg,ytermsArg;
   int xOrder = 0;
   int yOrder = 0;
- 
+
   int table_sz = 4;
   ARG_Entry arg_table[] = {
     { "-X", LIST_Type, &xtermsArg, NULL, REQUIRED, 0, { 0 } },
@@ -814,8 +814,8 @@ int Math_fitLeastSquaresCmd( ClientData clientData, Tcl_Interp *interp,
       delete xterms;
       ARG_FreeListArgvs( table_sz, arg_table );
       return TCL_ERROR;
-    }  
-  }     
+    }
+  }
 
   delete xterms;
 
@@ -864,7 +864,7 @@ int Math_fitLeastSquaresCmd( ClientData clientData, Tcl_Interp *interp,
       for (j = 0; j < yOrder; j++) {
           fprintf(stdout,"%lf ",yt[k][j]);
       }
-      fprintf(stdout,"\n");      
+      fprintf(stdout,"\n");
   }
 
   double **mt = mathobj->createArray(xOrder,yOrder);
@@ -967,7 +967,7 @@ int Math_smoothCurveCmd( ClientData clientData, Tcl_Interp *interp,
     }
     pts[i][0] = pt[0];
     pts[i][1] = pt[1];
-    pts[i][2] = pt[2];    
+    pts[i][2] = pt[2];
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -983,7 +983,7 @@ int Math_smoothCurveCmd( ClientData clientData, Tcl_Interp *interp,
      delete mathobj;
      return TCL_ERROR;
   }
-  
+
   // create result string
   char r[2048];
   for (i = 0; i < numInterpPoints; i++) {

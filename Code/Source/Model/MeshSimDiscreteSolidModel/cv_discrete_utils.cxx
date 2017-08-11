@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -33,7 +33,7 @@
  *
  *=========================================================================*/
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include "cv_globals.h"
 
@@ -83,17 +83,17 @@ int DiscreteUtils_Init()
   return SV_OK;
 }
 
- 
+
 /* ---------------------------------- */
 /*  DiscreteUtils_MakePoly3dSolidVtk  */
 /* ---------------------------------- */
 
 #ifdef USE_STL_TO_READ_DISCRETE_MODEL
-int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPolyData, 
+int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPolyData,
 				      int faceCode, double angle,
 				      pDiscreteModel *result) {
 
-  
+
     // first need to write out an stl file to read in the
     // discrete model
     Tcl_Interp *myinterp = Tcl_CreateInterp();
@@ -110,13 +110,13 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPolyData,
   //double target_size = 0.01;
 
   pMesh mesh = M_new(0,0); // create the mesh
-  
+
   M_importFromSTLFile(mesh,"MakePoly3dSolid.stl"); // import the stl file
   //M_importFromSTLBinaryFile(mesh, argv[1]); // if binary STL
 
   // create a DiscreteModel object from the mesh
   pDiscreteModel model = DM_createFromMesh(mesh,0);
- 
+
   // get the initial extracted mesh and write it out
   //M_writeSMS(mesh,"init.sms", 2);
 
@@ -127,9 +127,9 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPolyData,
 
   // memory leak!!!!!!
   mesh = DM_getMesh(model);
-  
+
   *result = model;
- 
+
   /*
   DM_save (model, "discrete-init.sdm");
 
@@ -137,10 +137,10 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPolyData,
   MS_setupMesh(mesh);
 
   MS_setGlobalMeshSize(mesh,1,target_size);
-  
+
   // initialize the surface mesher
   MS_initSurfaceMesher(mesh,0);
-  
+
   // run surface mesher in mode to manipulate existing surface mesh
   refDerefSurfMesh(mesh, 15, 90.01, 15, 165, 15, 15, 0, 0, 0);
   */
@@ -168,7 +168,7 @@ int discreteCalcJacDet(double xx[2][4], double r, double s, double *determinant)
   sp = 1.0 + s;
   rm = 1.0 - r;
   sm = 1.0 - s;
-  
+
   // interpolation functions
 
   h[0] = 0.25 * rp * sp;
@@ -215,16 +215,16 @@ int discreteCalcJacDet(double xx[2][4], double r, double s, double *determinant)
     //fprintf(stderr,"ERROR: Jacobian determinant negative! (%lf)\n"
     //     ,det);
     return SV_ERROR;
-  }  
+  }
 
   return SV_OK;
 
 }
 
-int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD, 
+int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
 				      int facetCode, double angle,
 				      pDiscreteModel *result) {
- 
+
    double *coords = NULL;
    int numVerts = 0;
    vtkCellArray *pdPgns;
@@ -267,7 +267,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
      double x1[3],x2[3],x3[3];
      double v1[2],v2[2],v3[2];
      inputPD->GetPoints()->GetPoint(pts[0],x1);
-     inputPD->GetPoints()->GetPoint(pts[1],x2);     
+     inputPD->GetPoints()->GetPoint(pts[1],x2);
      inputPD->GetPoints()->GetPoint(pts[2],x3);
      vtkTriangle::ProjectTo2D(x1,x2,x3,v1,v2,v3);
 
@@ -286,7 +286,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
      xx[0][2]=v3[0] ; xx[1][2]=v3[1] ;
      xx[0][3]=v3[0] ; xx[1][3]=v3[1] ;
 
-     // calculate a sample determinant, and rearrange points 
+     // calculate a sample determinant, and rearrange points
      // if det. is negative.
      if (discreteCalcJacDet(xx,a[1],a[1],&det) == SV_ERROR) {
        numSwitched++;
@@ -294,7 +294,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
        elementData[pos+1]=pts[1];
        elementData[pos+2]=pts[0];
        inputPD->GetPoints()->GetPoint(pts[2],x1);
-       inputPD->GetPoints()->GetPoint(pts[1],x2);     
+       inputPD->GetPoints()->GetPoint(pts[1],x2);
        inputPD->GetPoints()->GetPoint(pts[0],x3);
        vtkTriangle::ProjectTo2D(x1,x2,x3,v1,v2,v3);
        xx[0][0]=v1[0] ; xx[1][0]=v1[1] ;
@@ -365,7 +365,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
       }
        fprintf(stdout,"nums: %i %i %i\n",numVerts,numEdges,numFaces);
        Progress_delete(progress);
-       return SV_ERROR;    
+       return SV_ERROR;
   }
   Progress_delete(progress);
 
@@ -378,7 +378,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
   if (scalars == NULL) {
 
     fprintf(stdout,"NOTE:  no ModelFaceID data for discrete model\n");
-    
+
     //return SV_ERROR;
 
     progress = Progress_new();
@@ -409,14 +409,14 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
        Progress_delete(progress);
 
     } else {
- 
+
       fprintf(stdout,"NOTE:  Using ModelFaceID data to tag faces for discrete model\n");
- 
+
       for (i = 0; i < numElems; i++) {
         int val = iscalars->GetTuple1(i);
         F_markAsBoundary(static_cast<pFace>(eReturn[i]),val);
       }
-      progress = Progress_new();   
+      progress = Progress_new();
       model = DM_createFromMesh(mesh,0,progress);
       Progress_delete(progress);
     }
@@ -435,9 +435,9 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
 
   // memory leak!!!!!!
   mesh = DM_getMesh(model);
-  
+
   *result = model;
- 
+
   return SV_OK;
 }
 
@@ -465,16 +465,16 @@ int DiscreteUtils_GetVtkPolyData( pDiscreteModel model, int useMaxDist, double m
 
   pACase mcase = MS_newMeshCase(model);
   pModelItem mdomain = GM_domain(model);
- 
+
   if (useMaxDist != 0) {
       // set up the mesh to allow for modifications
       //MS_setupMesh(mesh);
 
-      //pMesh mesh = M_new(0,model);  
+      //pMesh mesh = M_new(0,model);
 
       double target_size = max_dist;
       MS_setMeshSize(mcase,mdomain,1,target_size,NULL);
-  
+
       // initialize the surface mesher
       //MS_initSurfaceMesher(mcase,0);
       //pProcess sp = MS_newSurfaceMesher(mcase,mesh,0);
@@ -509,13 +509,13 @@ int DiscreteUtils_GetVtkPolyData( pDiscreteModel model, int useMaxDist, double m
   for (i = 0; i < num_verts; i++) {
     pPoint point = V_point (VIter_next(myViter));
     int nodenumber = P_id (point);
-    //fprintf(stdout,"nodenumber: %i\n",nodenumber);  
+    //fprintf(stdout,"nodenumber: %i\n",nodenumber);
     double x = P_x (point);
     double y = P_y (point);
-    double z = P_z (point);  
+    double z = P_z (point);
     p[0] = x; p[1] = y; p[2] = z;
     myPoints->InsertPoint(nodenumber-1,p);
-  } // i 
+  } // i
   VIter_delete(myViter);
 
   mycvPolyData = vtkPolyData::New();
@@ -524,25 +524,25 @@ int DiscreteUtils_GetVtkPolyData( pDiscreteModel model, int useMaxDist, double m
 
   // if a surface mesh, insert facets
   vtkIdList* PointIds = vtkIdList::New();
-  PointIds->Allocate(10,10);  
- 
+  PointIds->Allocate(10,10);
+
   // insert the triangles
 
   int num_faces = M_numFaces (mesh);
   fprintf(stdout,"num_faces: %i\n",num_faces);
 
   FIter myFiter = M_faceIter(mesh);
-  pFace myface; 
+  pFace myface;
   while (myface = FIter_next(myFiter)) {
       pPList vert_list = F_vertices (myface,MY_MESHSIM_VERTEX_ORDERING);
       for (j = 0; j < PList_size (vert_list); j++) {
         int nodenum = P_id (V_point ((pVertex)PList_item (vert_list, j)));
         PointIds->InsertNextId(nodenum-1);
-      }      
+      }
       mycvPolyData->InsertNextCell(VTK_POLYGON,PointIds);
-      PList_delete(vert_list);  
+      PList_delete(vert_list);
       PointIds->Reset();
-  }  
+  }
   FIter_delete(myFiter);
 
   PointIds->Delete();

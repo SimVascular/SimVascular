@@ -10,11 +10,11 @@ Version:   $Revision: 1.10 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -75,7 +75,7 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
     }
 
   vtkDataArray* radiusArray = input->GetPointData()->GetArray(this->RadiusArrayName);
-  
+
   if (!radiusArray)
     {
     return;
@@ -141,17 +141,17 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
         numberOfSteps = (int)ceil(segmentLength / stepSize);
         stepSize = segmentLength / numberOfSteps;
         pcoordStepSize = 1.0 / (double)numberOfSteps;
-        
+
         double pcoord = 0.0;
         int s;
         for (s=0; s<numberOfSteps; s++)
           {
-          for (int d=0; d<3; d++) 
+          for (int d=0; d<3; d++)
             {
             subPoint0[d] = point0[d] + pcoord * (point1[d] - point0[d]);
             subPoint1[d] = point0[d] + (pcoord + pcoordStepSize) * (point1[d] - point0[d]);
             }
-          
+
           subTubeValue0 = tube->EvaluateFunction(subPoint0);
           subTubeValue1 = tube->EvaluateFunction(subPoint1);
 
@@ -162,7 +162,7 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
             break;
             }
 
-          pcoord += pcoordStepSize; 
+          pcoord += pcoordStepSize;
           }
 
         //since we are considering each other cell separately, we need to decide where to put the intersection point in order to have them sorted along cellId
@@ -192,8 +192,8 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
         }
       }
     }
-  
-  // For each branch, find point at one-sphere distance upstream (i.e. touching forward). 
+
+  // For each branch, find point at one-sphere distance upstream (i.e. touching forward).
 
   vtkIdType touchingSubId;
   double touchingPCoord;
@@ -233,17 +233,17 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
     if (i==0)
       {
       splittingSubIds->InsertNextId(touchingSubIds->GetId(i));
-      splittingPCoords->InsertNextValue(touchingPCoords->GetValue(i)); 
+      splittingPCoords->InsertNextValue(touchingPCoords->GetValue(i));
       blankingFlags->InsertNextId(1);
       }
     else
       {
       // check if this touching is before previous intersection. If it is, skip the touching.
-      if (!((touchingSubIds->GetId(i) < intersectionSubIds->GetId(i-1)) || 
+      if (!((touchingSubIds->GetId(i) < intersectionSubIds->GetId(i-1)) ||
             ((touchingSubIds->GetId(i) == intersectionSubIds->GetId(i-1)) && (touchingPCoords->GetValue(i) <= intersectionPCoords->GetValue(i-1)))))
         {
         splittingSubIds->InsertNextId(touchingSubIds->GetId(i));
-        splittingPCoords->InsertNextValue(touchingPCoords->GetValue(i)); 
+        splittingPCoords->InsertNextValue(touchingPCoords->GetValue(i));
         blankingFlags->InsertNextId(1);
         }
       }
@@ -258,9 +258,9 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
       {
       // check if subsequent touching is before this intersection. If it is, and if subsequent intersection is after this intersection, skip the intersection.
       if (!
-           (((touchingSubIds->GetId(i+1) < intersectionSubIds->GetId(i)) || 
+           (((touchingSubIds->GetId(i+1) < intersectionSubIds->GetId(i)) ||
             ((touchingSubIds->GetId(i+1) == intersectionSubIds->GetId(i)) && (touchingPCoords->GetValue(i+1) <= intersectionPCoords->GetValue(i))))) &&
-           (((intersectionSubIds->GetId(i+1) > intersectionSubIds->GetId(i)) || 
+           (((intersectionSubIds->GetId(i+1) > intersectionSubIds->GetId(i)) ||
             ((intersectionSubIds->GetId(i+1) == intersectionSubIds->GetId(i)) && (intersectionPCoords->GetValue(i+1) > intersectionPCoords->GetValue(i))))) )
         {
         splittingSubIds->InsertNextId(intersectionSubIds->GetId(i));
@@ -277,7 +277,7 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
     {
     if (i > 0)
       {
-      if ((touchingSubIds->GetId(i) < intersectionSubIds->GetId(prevIntersectionId)) || 
+      if ((touchingSubIds->GetId(i) < intersectionSubIds->GetId(prevIntersectionId)) ||
          ((touchingSubIds->GetId(i) == intersectionSubIds->GetId(prevIntersectionId)) && (touchingPCoords->GetValue(i) <= intersectionPCoords->GetValue(prevIntersectionId))))
         {
         continue;
@@ -285,7 +285,7 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
       }
 
     splittingSubIds->InsertNextId(touchingSubIds->GetId(i));
-    splittingPCoords->InsertNextValue(touchingPCoords->GetValue(i)); 
+    splittingPCoords->InsertNextValue(touchingPCoords->GetValue(i));
     blankingFlags->InsertNextId(1);
 
     vtkIdType maxIntersectionId = i;
@@ -294,10 +294,10 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
       {
       for (j=i+1; j<touchingSubIds->GetNumberOfIds(); j++)
         {
-        if ((touchingSubIds->GetId(j) < intersectionSubIds->GetId(maxIntersectionId)) || 
+        if ((touchingSubIds->GetId(j) < intersectionSubIds->GetId(maxIntersectionId)) ||
            ((touchingSubIds->GetId(j) == intersectionSubIds->GetId(maxIntersectionId)) && (touchingPCoords->GetValue(j) <= intersectionPCoords->GetValue(maxIntersectionId))))
           {
-          if ((intersectionSubIds->GetId(j) > intersectionSubIds->GetId(maxIntersectionId)) || 
+          if ((intersectionSubIds->GetId(j) > intersectionSubIds->GetId(maxIntersectionId)) ||
               ((intersectionSubIds->GetId(j) == intersectionSubIds->GetId(maxIntersectionId)) && (intersectionPCoords->GetValue(j) >= intersectionPCoords->GetValue(maxIntersectionId))))
             {
             maxIntersectionId = j;
@@ -309,9 +309,9 @@ void vtkvmtkCenterlineBranchExtractor::ComputeCenterlineSplitting(vtkPolyData* i
           }
         }
       }
- 
+
     splittingSubIds->InsertNextId(intersectionSubIds->GetId(maxIntersectionId));
-    splittingPCoords->InsertNextValue(intersectionPCoords->GetValue(maxIntersectionId)); 
+    splittingPCoords->InsertNextValue(intersectionPCoords->GetValue(maxIntersectionId));
     blankingFlags->InsertNextId(0);
 
     prevIntersectionId = maxIntersectionId;

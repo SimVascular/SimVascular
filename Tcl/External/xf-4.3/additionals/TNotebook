@@ -78,7 +78,7 @@ proc XFConfig.TNotebook4 {xfW xfType xfClass {xfLeader ""}} {
 
   XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTNotebookSetTNotebook4 \
     parameters $xfName 4
- 
+
   # save current parameter
   XFElementSave $xfW $xfClass {height width}
 

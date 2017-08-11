@@ -780,7 +780,7 @@ RegCloseKey(hKey2);
 
        fprintf(stdout,"Note: Ignoring the provisioning file.\n");
        fflush(stdout);
-       
+
        // can set a provisioning file here, but we hard code the plugins below
        QString provisioningFilePath = "";
        app.setProvisioningFilePath(provisioningFilePath);

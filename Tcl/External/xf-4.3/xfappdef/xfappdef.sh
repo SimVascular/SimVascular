@@ -44,11 +44,11 @@ done
 #
 export XF_LOAD_PATH
 for p in `echo $XF_LOAD_PATH|awk 'BEGIN{RS=":"}{print $0}'`; do
-  if test -f $p/xfappdef.tcl; then 
+  if test -f $p/xfappdef.tcl; then
     exec $WISH_CMD -name xfappdef -file $p/xfappdef.tcl $COMMANDLINE
   fi
   (cd $p; retrv -q xfappdef.tcl) 2>/dev/null
-  if test -f $p/xfappdef.tcl; then 
+  if test -f $p/xfappdef.tcl; then
     $WISH_CMD -name xfappdef -file $p/xfappdef.tcl $COMMANDLINE
     (cd $p; rm -f xfappdef.tcl) 2>/dev/null
   fi

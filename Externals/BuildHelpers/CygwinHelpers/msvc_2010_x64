@@ -42,7 +42,7 @@ PATH=`cygpath "$WindowsSdkDir/bin/NETFX 4.0 Tools/x64"`\:`cygpath "$WindowsSdkDi
 
 INCLUDE=$WindowsSdkDir/include\;$INCLUDE
 LIB=$WindowsSdkDir/lib/x64\;$LIB
-	
+
 #PATH=$WindowsSdkDir/bin/x64:$PATH
 #INCLUDE=`cygpath -m "$WindowsSdkDir\Include"`\;$INCLUDE
 #echo $INCLUDE

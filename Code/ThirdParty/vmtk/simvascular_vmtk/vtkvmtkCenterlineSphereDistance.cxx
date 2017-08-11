@@ -10,11 +10,11 @@ Version:   $Revision: 1.7 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -51,7 +51,7 @@ void vtkvmtkCenterlineSphereDistance::FindNTouchingSphereCenter(vtkPolyData* cen
     touchingPCoord = pcoord;
     return;
   }
-  
+
   dummySubId0 = subId;
   dummyPCoord0 = pcoord;
 
@@ -76,7 +76,7 @@ void vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(vtkPolyData* cent
   touchingPCoord = 0.0;
 
   vtkCell* centerline = centerlines->GetCell(cellId);
-  
+
   if (centerline->GetCellType() != VTK_LINE && centerline->GetCellType() != VTK_POLY_LINE)
     {
     return;
@@ -88,7 +88,7 @@ void vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(vtkPolyData* cent
     }
 
   vtkDataArray* radiusArray = centerlines->GetPointData()->GetArray(radiusArrayName);
-  
+
   if (!radiusArray)
     {
     return;
@@ -115,7 +115,7 @@ void vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(vtkPolyData* cent
   double point[3], point0[3], point1[3];
   centerline->GetPoints()->GetPoint(subId,point0);
   centerline->GetPoints()->GetPoint(subId+1,point1);
-  for (k=0; k<3; k++) 
+  for (k=0; k<3; k++)
     {
     point[k] = point0[k] + pcoord*(point1[k] - point0[k]);
     }
@@ -133,13 +133,13 @@ void vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(vtkPolyData* cent
   for (i=0; i<subIds->GetNumberOfIds(); i++)
     {
     currentSubId = subIds->GetId(i);
-    
+
     centerId0 = centerline->GetPointId(currentSubId);
     centerId1 = centerline->GetPointId(currentSubId+1);
     centerlines->GetPoint(centerId0,center0);
     centerlines->GetPoint(centerId1,center1);
     radius0 = radiusArray->GetComponent(centerId0,0);
-    radius1 = radiusArray->GetComponent(centerId1,0);    
+    radius1 = radiusArray->GetComponent(centerId1,0);
     sphereDistance0 = vtkvmtkMath::EvaluateSphereFunction(center0,radius0,point);
     sphereDistance1 = vtkvmtkMath::EvaluateSphereFunction(center1,radius1,point);
 
@@ -206,7 +206,7 @@ void vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(vtkPolyData* cent
   currentPCoord = 0.0;
   for (i=0; i<numberOfSteps; i++)
     {
-    for (int k=0; k<3; k++) 
+    for (int k=0; k<3; k++)
       {
       subCenter0[k] = center0[k] + currentPCoord*(center1[k] - center0[k]);
       subCenter1[k] = center0[k] + (currentPCoord+pcoordStepSize)*(center1[k] - center0[k]);

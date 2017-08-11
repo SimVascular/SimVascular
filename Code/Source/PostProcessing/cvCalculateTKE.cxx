@@ -1,19 +1,19 @@
 /* Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
  *
- * All rights reserved. 
+ * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -23,7 +23,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,14 +92,14 @@ int cvCalculateTKE::SetInputData(int numPds, cvPolyData **inputPds) {
 
     // create a list of the shear vectors
     inputVectors_ = new vtkDataArray*[numInputArrays_];
- 
+
     for (i = 0; i < numInputArrays_; i++) {
       inputVectors_[i]=inputPds[i]->GetVtkPolyData()->GetPointData()->GetVectors();
     }
 
     points_=inputPds[0]->GetVtkPolyData()->GetPoints();
 
-    return SV_OK; 
+    return SV_OK;
 
 }
 
@@ -128,8 +128,8 @@ int cvCalculateTKE::CalculateAverageVelocity() {
             inputVectors_[j]->GetTuple(i,vel);
             v0 += vel[0];v1 += vel[1];v2 += vel[2];
         }
-        v0 = v0/numInputArrays_; 
-        v1 = v1/numInputArrays_; 
+        v0 = v0/numInputArrays_;
+        v1 = v1/numInputArrays_;
         v2 = v2/numInputArrays_;
         averageU_->InsertNextTuple3(v0,v1,v2);
     }
@@ -165,7 +165,7 @@ int cvCalculateTKE::CalculateTKE() {
     int j = 0;
     vtkFloatingPointType avg[3];
     vtkFloatingPointType vel[3];
-   
+
     for (i = 0; i < numArrayPts_; i++) {
         double v0 = 0.0;
         double v1 = 0.0;
@@ -177,8 +177,8 @@ int cvCalculateTKE::CalculateTKE() {
             v1 = v1 + (vel[1]-avg[1])*(vel[1]-avg[1]);
             v2 = v2 + (vel[2]-avg[2])*(vel[2]-avg[2]);
         }
-        v0 = sqrt(v0/numInputArrays_); 
-        v1 = sqrt(v1/numInputArrays_); 
+        v0 = sqrt(v0/numInputArrays_);
+        v1 = sqrt(v1/numInputArrays_);
         v2 = sqrt(v2/numInputArrays_);
         rms_->InsertNextTuple3(v0,v1,v2);
         double s = 0.5*((v0*v0)+(v1*v1)+(v2*v2));

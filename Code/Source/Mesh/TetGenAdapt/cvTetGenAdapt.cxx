@@ -586,7 +586,7 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
 	options.outstep_,options.step_incr_) != SV_OK)
     return SV_ERROR;
 
-  if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != SV_OK) 
+  if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != SV_OK)
   {
     fprintf(stderr,"Could not converate solution into average speed array\n");
     return SV_ERROR;

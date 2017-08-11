@@ -417,7 +417,7 @@ proc XFInfoCommandsSelect {xfW xfY} {
           foreach xfCounter $xfArgList {
             if {[info default $xfSelectProc $xfCounter xfDefault]} {
              append xfArguments " \{$xfCounter \"$xfDefault\"\}"
-            } { 
+            } {
               append xfArguments " $xfCounter"
             }
           }
@@ -487,7 +487,7 @@ proc XFInfoCommandsTest {xfTarget} {
     foreach xfCounter $xfArgList {
       if {[info default $xfCmdName $xfCounter xfDefault]} {
         append xfCurArgs " \{$xfCounter \"$xfDefault\"\}"
-      } { 
+      } {
         append xfCurArgs " $xfCounter"
       }
     }
@@ -498,7 +498,7 @@ proc XFInfoCommandsTest {xfTarget} {
           XFInfoCommandsSet $xfCmdName
         }
       }
-    } { 
+    } {
       if {"$xfBody" != ""} {
         if {[XFProcYesNo "Insert the currently edited command ?"]} {
           XFInfoCommandsSet $xfCmdName

@@ -172,7 +172,7 @@ proc XFProcEditLoadTemplate {} {
       break
     }
   }
-  
+
   XFProcFSBox "Select file to load as template:" {
     global xfPath
     global xfStatus

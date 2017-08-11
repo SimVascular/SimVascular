@@ -10,7 +10,7 @@
 # http://www.explain.com.au/
 # Copyright (c) 1998-2003 Zveno Pty Ltd
 # http://www.zveno.com/
-# 
+#
 # See the file "LICENSE" in this distribution for information on usage and
 # redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
@@ -43,7 +43,7 @@ namespace eval xml::tclparser {
 	    -deletecommand [namespace code delete] \
 	    -resetcommand [namespace code reset]
 }
-
+
 # xml::tclparser::create --
 #
 #	Creates XML parser object.
@@ -81,7 +81,7 @@ proc xml::tclparser::create name {
 
     return $parser(-cmd)
 }
-
+
 # xml::tclparser::createentityparser --
 #
 #	Creates XML parser object for an entity.
@@ -112,7 +112,7 @@ proc xml::tclparser::createentityparser {parent name} {
 
     return $external(-cmd)
 }
-
+
 # xml::tclparser::configure --
 #
 #	Configures a XML parser object.
@@ -171,7 +171,7 @@ proc xml::tclparser::configure {name args} {
 
     return {}
 }
-
+
 # xml::tclparser::parse --
 #
 #	Parses document instance data
@@ -251,13 +251,13 @@ proc xml::tclparser::parse {name xml args} {
 
     lappend tokenOptions  \
       -internaldtdvariable [namespace current]::${name}(internaldtd)
-    
+
     # Mats: If -final 0 we also need to maintain the state with a -statevariable !
     if {!$parser(-final)} {
 	eval lappend tokenOptions [array get parser -statevariable] \
 	  [array get parser -final]
     }
-    
+
     # Mats:
     # Why not the first four? Just padding? Lrange undos \n interp.
     # It is necessary to have the first four as well if chopped off in
@@ -271,7 +271,7 @@ proc xml::tclparser::parse {name xml args} {
 
     return {}
 }
-
+
 # xml::tclparser::ParseEmpty --  Tcl 8.1+ version
 #
 #	Used by parser to determine whether an element is empty.
@@ -314,7 +314,7 @@ proc xml::tclparser::ParseEmpty {tag attr e} {
 #	attrs	attribute string given in a tag
 #
 # Results:
-#	Returns a Tcl list representing the name-value pairs in the 
+#	Returns a Tcl list representing the name-value pairs in the
 #	attribute string
 #
 #	A ">" occurring in the attribute list causes problems when parsing
@@ -447,7 +447,7 @@ proc xml::tclparser::NormalizeAttValue:DeRef {opts ref} {
 	}
     }
 }
-
+
 # xml::tclparser::ParseEntity --
 #
 #	Parse general entity declaration
@@ -475,7 +475,7 @@ proc xml::tclparser::ParseEntity data {
 	return -code error "badly formed entity declaration"
     }
 }
-
+
 # xml::tclparser::delete --
 #
 #	Destroy parser data
@@ -492,7 +492,7 @@ proc xml::tclparser::delete name {
     catch {unset parser}
     return {}
 }
-
+
 # xml::tclparser::get --
 #
 #	Retrieve additional information from the parser
@@ -561,7 +561,7 @@ proc xml::tclparser::get {name method args} {
 
     return {}
 }
-
+
 # xml::tclparser::ExternalEntity --
 #
 #	Resolve and parse external entity
@@ -577,7 +577,7 @@ proc xml::tclparser::get {name method args} {
 
 proc xml::tclparser::ExternalEntity {name base sys pub} {
 }
-
+
 # xml::tclparser:: --
 #
 #	Reset a parser instance, ready to parse another document

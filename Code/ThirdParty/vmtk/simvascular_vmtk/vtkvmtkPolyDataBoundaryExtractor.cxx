@@ -10,11 +10,11 @@ Version:   $Revision: 1.6 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -72,7 +72,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
   newLines = vtkCellArray::New();
   newScalars = vtkIdTypeArray::New();
 
-  // Execute  
+  // Execute
   for (i=0; i<input->GetNumberOfCells(); i++)
     {
     cell = input->GetCell(i);
@@ -95,11 +95,11 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
     output->SetPoints(newPoints);
     output->SetLines(newLines);
     output->GetPointData()->SetScalars(newScalars);
-  
+
     newPoints->Delete();
     newLines->Delete();
     newScalars->Delete();
-  
+
     boundary->Delete();
     boundaryIds->Delete();
     cellEdgeNeighbors->Delete();
@@ -119,7 +119,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
     {
     foundAny = false;
     foundNeighbor = false;
-                
+
     for (i=0; i<boundaryIds->GetNumberOfIds(); i++)
       {
       id = boundaryIds->GetId(i);
@@ -174,7 +174,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
       currentId = -1;
       boundary->Initialize();
       }
-        
+
     if (!foundAny)
       {
       done = true;
@@ -191,7 +191,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
           missing++;
           }
         }
-      vtkErrorMacro(<<"Can't find adjacent point. Bailing out."); 
+      vtkErrorMacro(<<"Can't find adjacent point. Bailing out.");
       done = true;
       }
     }

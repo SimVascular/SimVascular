@@ -15,7 +15,7 @@
 // .NAME vtkWin32Header - manage Windows system differences
 // .SECTION Description
 // The vtkWin32Header captures some system differences between Unix and
-// Windows operating systems. 
+// Windows operating systems.
 
 #ifndef __vtkvmtkWIN32Header_h
 #define __vtkvmtkWIN32Header_h
@@ -102,57 +102,57 @@
 // #define VTK_EXPORT __declspec( dllexport )
 
  #if defined(vtkvmtkCommon_EXPORTS)
-  #define VTK_VMTK_COMMON_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_COMMON_EXPORT __declspec( dllexport )
  #else
-  #define VTK_VMTK_COMMON_EXPORT __declspec( dllimport ) 
+  #define VTK_VMTK_COMMON_EXPORT __declspec( dllimport )
  #endif
 
  #if defined(vtkvmtkComputationalGeometry_EXPORTS)
-  #define VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT __declspec( dllexport )
  #else
-  #define VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT __declspec( dllimport ) 
+  #define VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT __declspec( dllimport )
  #endif
 
  #if defined(vtkvmtkDifferentialGeometry_EXPORTS)
-  #define VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT __declspec( dllexport )
  #else
-  #define VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT __declspec( dllimport ) 
+  #define VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT __declspec( dllimport )
  #endif
 
  #if defined(vtkvmtkIO_EXPORTS)
-  #define VTK_VMTK_IO_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_IO_EXPORT __declspec( dllexport )
  #else
-  #define VTK_VMTK_IO_EXPORT __declspec( dllimport ) 
+  #define VTK_VMTK_IO_EXPORT __declspec( dllimport )
  #endif
 
  #if defined(vtkvmtkMisc_EXPORTS)
-  #define VTK_VMTK_MISC_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_MISC_EXPORT __declspec( dllexport )
  #else
-  #define VTK_VMTK_MISC_EXPORT __declspec( dllimport ) 
+  #define VTK_VMTK_MISC_EXPORT __declspec( dllimport )
  #endif
 
 // #if defined(vtkvmtkITK_EXPORTS)
-  #define VTK_VMTK_ITK_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_ITK_EXPORT __declspec( dllexport )
 // #else
-//  #define VTK_ITK_EXPORT __declspec( dllimport ) 
+//  #define VTK_ITK_EXPORT __declspec( dllimport )
 // #endif
 
  #if defined(vtkvmtkSegmentation_EXPORTS)
-  #define VTK_VMTK_SEGMENTATION_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_SEGMENTATION_EXPORT __declspec( dllexport )
  #else
-  #define VTK_VMTK_SEGMENTATION_EXPORT __declspec( dllimport ) 
+  #define VTK_VMTK_SEGMENTATION_EXPORT __declspec( dllimport )
  #endif
 
  #if defined(vtkvmtkContrib_EXPORTS)
-  #define VTK_VMTK_CONTRIB_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_CONTRIB_EXPORT __declspec( dllexport )
  #else
-  #define VTK_VMTK_CONTRIB_EXPORT __declspec( dllimport ) 
+  #define VTK_VMTK_CONTRIB_EXPORT __declspec( dllimport )
  #endif
 
  #if defined(vtkvmtkRendering_EXPORTS)
-  #define VTK_VMTK_RENDERING_EXPORT __declspec( dllexport ) 
+  #define VTK_VMTK_RENDERING_EXPORT __declspec( dllexport )
  #else
-  #define VTK_VMTK_RENDERING_EXPORT __declspec( dllimport ) 
+  #define VTK_VMTK_RENDERING_EXPORT __declspec( dllimport )
  #endif
 
 #else

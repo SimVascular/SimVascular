@@ -45,11 +45,11 @@
   pack append .frame0 \
     .frame0.label1 {left fill} \
     .frame0.value {left expand fill} \
-    .frame0.menubutton2 {right fill} 
+    .frame0.menubutton2 {right fill}
 
   # pack widgets
   pack append . \
-    .frame0 {top fillx} 
+    .frame0 {top fillx}
 
 proc OptionButtonGet {widget} {
 

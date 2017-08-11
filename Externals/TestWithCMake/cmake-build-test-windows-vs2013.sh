@@ -116,5 +116,5 @@ pushd /cygdrive/c/svtest
 -DMMG_LIBRARY="$REPLACEME_SV_EXTERN_OPEN_BIN_DIR/mmg-5.1.0/lib/mmg.lib" \
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
- 
+
 popd

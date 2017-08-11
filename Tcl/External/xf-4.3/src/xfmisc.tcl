@@ -805,7 +805,7 @@ proc XFMiscInsertText {xfW {xfContents ""}} {
 # Sideeffects: none
 ##########
 proc XFMiscInsertTextIntoWidget {xfW xfText} {
-  
+
   if {[winfo exists $xfW]} {
     XFMiscInsertText $xfW $xfText
   }
@@ -1264,7 +1264,7 @@ proc XFMiscQuit {{xfRetVal 0}} {
   catch "Rm $xfPath(tmp)/cb$xfStatus(uniqueId)"
   catch "Rm $xfPath(tmp)/tb$xfStatus(uniqueId)"
   catch "Rm $xfPath(tmp)/lc$xfStatus(uniqueId)"
-  catch "Rm $xfPath(tmp)/tr$xfStatus(uniqueId).grl"  
+  catch "Rm $xfPath(tmp)/tr$xfStatus(uniqueId).grl"
   catch "Rm $xfPath(tmp)/et$xfStatus(uniqueId)"
   catch "Rm $xfPath(tmp)/st$xfStatus(uniqueId)"
 
@@ -1563,7 +1563,7 @@ proc XFMiscSetInfo {xfType xfList xfSet} {
     {procs | hiddenprocs} {
       set xfCurrentName $xfStatus(procName)
       set xfCurrentIndex $xfStatus(procIndex)
-    } 
+    }
     {images} {
       set xfCurrentName $xfStatus(imgName)
       set xfCurrentIndex $xfStatus(imgIndex)

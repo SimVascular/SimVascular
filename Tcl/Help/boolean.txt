@@ -6,7 +6,7 @@
 
 2. The "Number of Points Per Segment" box under "Longitdunial Sampling Rules" sets the number of points to be used to create the segment between each segmentation. This creates points between two circumferential points created above. The points are joined to create a solid model. A higher number for this field would result in a smoother model but takes longer to render. The default is set at 6 but numbers upwards of 50 can be used with success for a smoother model.
 
-3. Linear Sample Along Length: When this is checked on, the amount of triangles created between each segmentation is uniform. When off, the number of triangles is proportional to the length between the segmentations. The default Factor: 10 should be sufficient for most modeling. 
+3. Linear Sample Along Length: When this is checked on, the amount of triangles created between each segmentation is uniform. When off, the number of triangles is proportional to the length between the segmentations. The default Factor: 10 should be sufficient for most modeling.
 
 4. Cap Vessels: when on, this caps the end of each vessel. When off, it leaves the inflow and outflow ends of the vessels as a hole
 
@@ -21,6 +21,6 @@ Hit “Read Model” and select the model created with PolyData, in this case �
 The Model should appear in the Display Window.
 
 <font color="red">**HELPFUL HINT:** </font> **Boolean Solid:**
-At the end of the Boolean operation, a window pop up will display the number of free edges and bad cells on the surfaces. Bad cells are denoted by triangles that have more than one neighbor which should not be possible if you have a valid 3D surface. If these numbers are not zero, please report this occurence to the SimVascular development team.  
+At the end of the Boolean operation, a window pop up will display the number of free edges and bad cells on the surfaces. Bad cells are denoted by triangles that have more than one neighbor which should not be possible if you have a valid 3D surface. If these numbers are not zero, please report this occurence to the SimVascular development team.
 
 In addition, you should now be able to switch to the "PolyData -> Extract Faces" tab and see the face names retained from your group segmentations. There should be wall and cap surfaces. If there are two caps for a surface, this means that after lofting, this surface had two holes. For a typical model, you should have one vessel like this and the rest should have one cap. If you have two caps, it may be the case that one of your vessels does not completely intersect into another vessel.

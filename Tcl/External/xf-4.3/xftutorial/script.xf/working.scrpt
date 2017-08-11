@@ -56,7 +56,7 @@ and the name of the widget.}
 set workingName2 {Inserting widgets}
 set workingText2 {\
 As described above, you can insert widgets into your
-application by pressing one of the two buttons in 
+application by pressing one of the two buttons in
 the main edit window of XF. If you set the scale to
 a number different than one, you can insert these
 much widgets at once. To insert a widget with default
@@ -83,7 +83,7 @@ This allows you to set the specific parameters
 for the widget. This may be i.e. the foreground
 color or the font. When we specify the
 functionality (i.e. for buttons) we will do this
-with the "command" parameter. For some parameters 
+with the "command" parameter. For some parameters
 (like color, font etc.) there are additional
 dialog boxes, that can be called by double
 clicking the right mouse button over the entry
@@ -134,7 +134,7 @@ list or to set the contents of a list at
 startup), you can use the startup/end source.
 The startup source is executed as first
 source of the complete application. The end
-source is executed right before the flow 
+source is executed right before the flow
 control of the program is given to the main
 loop. To define the startup source you select
 the menu item "Startup source" in the menu

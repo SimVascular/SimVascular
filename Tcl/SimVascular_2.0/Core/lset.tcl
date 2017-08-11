@@ -10,19 +10,19 @@
 #   All rights reserved.
 #
 #   See SimVascular Acknowledgements file for additional
-#   contributors to the source code. 
-# 
+#   contributors to the source code.
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -108,7 +108,7 @@ proc lset_for {core nsteps maxStep renList v w rebuildPhiFreq} {
 	    set code 0
 	    break
 	}
-	set ts [$core GetTimeStep]   
+	set ts [$core GetTimeStep]
         if {![expr int($ts) % int(10)]} {
 	  foreach ren $renList {
 	    if [catch {vis_pRm $ren $lset_for_last_vis_obj} msg] {
@@ -637,8 +637,8 @@ proc lset_run {img pot initData kt klow kupp \
     #@author Ken Wang
     #@c This is macro to run a levelset simulation to segment a 2-D
     #@c contour from a slice of image data.
-    #@a img:		image data (vtkImageData) 
-    #@a pot:		potential well data	      
+    #@a img:		image data (vtkImageData)
+    #@a pot:		potential well data
     #@a initData:	intialization procedures
     #@a kt:		curvature value used for vExpDecay function
     #@a klow:		used by vPotential & vSmooth
@@ -648,10 +648,10 @@ proc lset_run {img pot initData kt klow kupp \
     #@a serialInit:                set function as it was left by the previous item
     #@a gridFactor:      grid spacing (h) based on min voxel size * gridFactor
     #@a initOnly:       boolean which determines if you actually run
-    #@a initOnly:	simulation or just set up for it 
+    #@a initOnly:	simulation or just set up for it
     #@a sparseFlag:	whether to use the sparse or dense grid
     #@a isotropicFlag:   boolean to use a uniformly spaced grid in all dimensions
-    #@a expandFlag:	boolean used to determine if front in 
+    #@a expandFlag:	boolean used to determine if front in
     #@a convFlag:	boolean determines if area/volume convergence is checked
     #@a timerFlag:       $core SetTimers -flag $timerFlag
     #@a maxTSFlag:       boolean determining whether to exist after a fixed
@@ -659,7 +659,7 @@ proc lset_run {img pot initData kt klow kupp \
     #@a maxTS:		maximum number of time steps to run
     #@a writeIntermediate: ** probably output intermediate objects flag **
     #@a runVSmooth:	  boolean to run vSmooth
-    #@a runVConst:	  boolean to run VConst		 
+    #@a runVConst:	  boolean to run VConst
     #@a numVConst:	  number of steps to run VConst
     #@a magGradFactor:	  magnitude of intensity gradient cut-off for vExpDecay
     #@a pFactor:	  potential well tolerance for vPotential
@@ -1202,7 +1202,7 @@ proc AreaMetric_3 {gridDim truePgn approxPgn truePhi approxPhi} {
     geom_largestConnected $truePgn/merge $truePgn/merge/pd
 
     set vcalculator tmp-area_metric-masser
- 
+
     catch {$vcalculator Delete}
     vtkMassProperties $vcalculator
 
@@ -1224,11 +1224,11 @@ proc AreaMetric_3 {gridDim truePgn approxPgn truePhi approxPhi} {
 
     puts [format "A(%s) = \t %10.4f" $truePgn $aTrue]
     puts [format "A(%s) = \t %10.4f" $approxPgn $aApprox]
- 
+
     set vTruePhi [repos_exportToVtk -src $truePhi]
     set vApproxPhi [repos_exportToVtk -src $approxPhi]
     if {[$vTruePhi GetNumberOfPoints] == [$vApproxPhi GetNumberOfPoints]} {
-       
+
       [[$vTruePhi   GetPointData] GetScalars] SetName s1
       [[$vApproxPhi GetPointData] GetScalars] SetName s2
       [$vTruePhi   GetPointData] AddArray [[$vApproxPhi GetPointData] GetScalars]
@@ -1272,7 +1272,7 @@ proc AreaMetric_3 {gridDim truePgn approxPgn truePhi approxPhi} {
       set fi [expr $ainter / $aTrue]
       set fj [expr $ainter / $aApprox]
       set result [expr sqrt($fi * $fj)]
-    
+
       $aa Delete
       $calc Delete
       repos_delete -obj $interPD
@@ -1345,5 +1345,5 @@ proc lset_combine {allGrids outPd} {
   #catch {repos_delete -obj $tmp}
 }
 
- 
+
 

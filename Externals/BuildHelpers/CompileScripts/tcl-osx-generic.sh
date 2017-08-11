@@ -44,11 +44,11 @@ mkdir ${SV_TCL_INSTALL_FULL_DIR_NAME}/bin
 cp build/tcl/tclsh8.6 ${SV_TCL_INSTALL_FULL_DIR_NAME}/bin/tclsh${SV_TCL_MAJOR_VERSION}
 install_name_tool -change /Library/Frameworks/Tcl.framework/Versions/${SV_TCL_MAJOR_VERSION}/Tcl \
 		  ${SV_TCL_INSTALL_FULL_DIR_NAME}/Library/Frameworks/Tcl.framework/Versions/${SV_TCL_MAJOR_VERSION}/Tcl \
-                  ${SV_TCL_INSTALL_FULL_DIR_NAME}/bin/tclsh${SV_TCL_MAJOR_VERSION}	  
+                  ${SV_TCL_INSTALL_FULL_DIR_NAME}/bin/tclsh${SV_TCL_MAJOR_VERSION}
 cp build/tk/wish8.6 ${SV_TCL_INSTALL_FULL_DIR_NAME}/bin/wish${SV_TCL_MAJOR_VERSION}
 install_name_tool -change /Library/Frameworks/Tcl.framework/Versions/${SV_TCL_MAJOR_VERSION}/Tcl \
 		  ${SV_TCL_INSTALL_FULL_DIR_NAME}/Library/Frameworks/Tcl.framework/Versions/${SV_TCL_MAJOR_VERSION}/Tcl \
-                  ${SV_TCL_INSTALL_FULL_DIR_NAME}/bin/wish${SV_TCL_MAJOR_VERSION}	  
+                  ${SV_TCL_INSTALL_FULL_DIR_NAME}/bin/wish${SV_TCL_MAJOR_VERSION}
 install_name_tool -change /Library/Frameworks/Tk.framework/Versions/${SV_TCL_MAJOR_VERSION}/Tk \
 		  ${SV_TCL_INSTALL_FULL_DIR_NAME}/Library/Frameworks/Tk.framework/Versions/${SV_TCL_MAJOR_VERSION}/Tk \
                   ${SV_TCL_INSTALL_FULL_DIR_NAME}/bin/wish${SV_TCL_MAJOR_VERSION}

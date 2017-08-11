@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 #include "cvMeshSimDiscreteSolidModel.h"
 #include "cv_discrete_utils.h"
 #include "cv_sys_geom.h"
@@ -106,14 +106,14 @@ int cvMeshSimDiscreteSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 
 
   this->Print();
-  
+
   int num = 0;
 
   GFIter myFiter = GM_faceIter(geom_);
-  pGFace myface; 
+  pGFace myface;
   while (myface = GFIter_next(myFiter)) {
     num++;
-  }  
+  }
   GFIter_delete(myFiter);
 
   *numFaces = num;
@@ -126,7 +126,7 @@ int cvMeshSimDiscreteSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
   int j = 0;
   while (myface = GFIter_next(myFiter)) {
     (*faceIds)[j++] = GEN_tag(myface);
-  }  
+  }
   GFIter_delete(myFiter);
 
   return SV_OK;
@@ -135,7 +135,7 @@ int cvMeshSimDiscreteSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 
 
 int cvMeshSimDiscreteSolidModel::FindNodesOnElementFace (pFace face, int* nodes, double *xyz) const {
- 
+
   int i;
   int num_nodes = 0;
 
@@ -143,7 +143,7 @@ int cvMeshSimDiscreteSolidModel::FindNodesOnElementFace (pFace face, int* nodes,
 
   pPList vert_list = F_vertices (face,MY_MESHSIM_VERTEX_ORDERING);
   int numElemFaceVerts = PList_size (vert_list);
-  
+
   // write out "linear" nodes
   for (i = 0; i < numElemFaceVerts; i++) {
     pVertex vertex = (pVertex)PList_item (vert_list, i);
@@ -166,11 +166,11 @@ int cvMeshSimDiscreteSolidModel::FindNodesOnElementFace (pFace face, int* nodes,
       if (E_numPoints(xedge) != 1) {
         fprintf(stderr,"ERROR:  no interior point!\n");
         exit(-1);
-      }       
-      nodes[numElemFaceVerts+i] = P_id(E_point(xedge,0)); 
+      }
+      nodes[numElemFaceVerts+i] = P_id(E_point(xedge,0));
       xyz[pos++]=P_x(E_point(xedge,0));
       xyz[pos++]=P_y(E_point(xedge,0));
-      xyz[pos++]=P_z(E_point(xedge,0));    
+      xyz[pos++]=P_z(E_point(xedge,0));
     }
 
     num_nodes+=numEdges;
@@ -190,18 +190,18 @@ cvPolyData* cvMeshSimDiscreteSolidModel::GetFacePolyData(int faceID, int useMaxD
 
   int n;
   vtkPolyData *mycvPolyData;
-  cvPolyData *result; 
+  cvPolyData *result;
 
   int foundIt = 0;
 
   GFIter myGFiter = GM_faceIter(geom_);
-  pGFace mygface; 
+  pGFace mygface;
   while (mygface = GFIter_next(myGFiter)) {
     if (faceID == GEN_tag(mygface)) {
       foundIt++;
       break;
     }
-  }  
+  }
   GFIter_delete(myGFiter);
 
   if (!foundIt) {
@@ -222,7 +222,7 @@ cvPolyData* cvMeshSimDiscreteSolidModel::GetFacePolyData(int faceID, int useMaxD
   mycvPolyData->SetPoints(myPoints);
 
   vtkIdList* PointIds = vtkIdList::New();
-  PointIds->Allocate(10,10);  
+  PointIds->Allocate(10,10);
 
   // track the actual mesh node numbers in a scalar array
   vtkFloatArray *myScalars = vtkFloatArray::New();
@@ -238,7 +238,7 @@ cvPolyData* cvMeshSimDiscreteSolidModel::GetFacePolyData(int faceID, int useMaxD
   while (myface = FIter_next(myFiter)) {
 
         //if (!(loopfaces % 10000)) fprintf(stdout,"face %i\n",loopfaces);
-  
+
         // Get the model tag for the face
         int facetag=0;
         pGEntity modelface = F_whatIn(myface);
@@ -311,7 +311,7 @@ void cvMeshSimDiscreteSolidModel::Check( int *nerr) const
 
 int cvMeshSimDiscreteSolidModel::ReadNative( char *filename )
 {
- 
+
   if (geom_ != NULL) {
     return SV_ERROR;
   }
@@ -349,12 +349,12 @@ cvPolyData *cvMeshSimDiscreteSolidModel::GetPolyData(int useMaxDist, double max_
 
   vtkPolyData *bound;
   cvPolyData *result;
- 
+
   if ( geom_ == NULL ) return NULL;
   if ( DiscreteUtils_GetVtkPolyData( geom_, useMaxDist, max_dist, &bound ) != SV_OK ) {
     return NULL;
   }
- 
+
   result = new cvPolyData( bound );
   bound->Delete();  // cvPolyData uses ref-counting
 

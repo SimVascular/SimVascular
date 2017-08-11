@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2011 Open Source Medical Software Corporation, 
+# Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 # University of California, San Diego.
 #
 # Portions of the code Copyright (c) 1998-2007 Stanford University,
@@ -6,15 +6,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -80,9 +80,9 @@ proc ::vis::polyGetActor {ren obj} {
 
 proc ::vis::polyNorm {ren obj} {
 
-    #@c Add vtkPolyDataNormals to the vtkPolyData viewing pipeline.  
-    #@note there is no proc to perform the reverse operation (i.e. remove 
-    #@note the normals).  This is because the caller can presumably just 
+    #@c Add vtkPolyDataNormals to the vtkPolyData viewing pipeline.
+    #@note there is no proc to perform the reverse operation (i.e. remove
+    #@note the normals).  This is because the caller can presumably just
     #@note turn off normal-based properties via the actor's vtkProperty.
     #@a ren: renderer
     #@a obj: object name
@@ -215,14 +215,14 @@ proc ::vis::polyUnshowAll {ren} {
 
     set allnames [::vis::getall p_labels_$ren\_]
 
-    foreach name $allnames {      
+    foreach name $allnames {
       set actor [::vis::getobj $name]
       ::vis::actor2DRm $ren $actor
     }
 
     set allnames [::vis::getall p_act_$ren\_]
 
-    foreach name $allnames {      
+    foreach name $allnames {
       set actor [::vis::getobj $name]
       ::vis::actorRm $ren $actor
     }

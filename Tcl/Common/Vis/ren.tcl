@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2011 Open Source Medical Software Corporation, 
+# Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 # University of California, San Diego.
 #
 # Portions of the code Copyright (c) 1998-2007 Stanford University,
@@ -6,15 +6,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -84,7 +84,7 @@ proc ::vis::renSetBackground {ren r g b} {
     #@a r: red (value between 0 and 1)
     #@a g: green (value between 0 and 1)
     #@a b: blue (value between 0 and 1)
-    
+
     $ren SetBackground $r $g $b
     ::vis::render $ren
 
@@ -177,7 +177,7 @@ proc ::vis::renSetPhongAll {ren} {
 proc ::vis::renParallelProjection {ren} {
 
   #@author Nathan Wilson
-  #@c Turn on parallel projection for given 
+  #@c Turn on parallel projection for given
   #@c renderer.
   #@a ren: renderer
 
@@ -194,7 +194,7 @@ proc ::vis::renParallelProjection {ren} {
 proc ::vis::renPerspectiveProjection {ren} {
 
   #@author Nathan Wilson
-  #@c Turn on perspective projection for 
+  #@c Turn on perspective projection for
   #@c given renderer
   #@a ren: renderer
 
@@ -228,7 +228,7 @@ proc ::vis::renWriteJPEG {ren args} {
 
   set w2i [tmpobj]
   set jwriter [tmpobj]
- 
+
   vtkJPEGWriter $jwriter
   $jwriter ProgressiveOff
   $jwriter SetQuality 95
@@ -256,7 +256,7 @@ proc ::vis::renWriteJPEG {ren args} {
 proc ::vis::renAddActor {ren actor} {
 
   #@author Nathan Wilson
-  #@c Add the specified actor to the given 
+  #@c Add the specified actor to the given
   #@c renderer.
   #@a ren: renderer
   #@a actor: vtkActor object
@@ -376,7 +376,7 @@ proc ::vis::renderWindow {win} {
   #@author Nathan Wilson
   #@c Render the current window.
   #@a win:  window name
- 
+
   $win Render
 
 }

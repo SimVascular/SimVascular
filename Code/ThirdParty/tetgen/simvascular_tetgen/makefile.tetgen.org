@@ -21,7 +21,7 @@ CXX = g++
 
 CXXFLAGS = -O3
 
-# PREDCXXFLAGS is for compiling J. Shewchuk's predicates. 
+# PREDCXXFLAGS is for compiling J. Shewchuk's predicates.
 
 PREDCXXFLAGS = -O0
 
@@ -29,14 +29,14 @@ PREDCXXFLAGS = -O0
 # =================================================
 #
 # By default, TetGen uses double precision floating point numbers.  If you
-#   prefer single precision, use the -DSINGLE switch. 
+#   prefer single precision, use the -DSINGLE switch.
 #
 # The source code of TetGen includes a lot of assertions, which are mainly
 #   used for catching bugs at that places.  These assertions somewhat slow
 #   down the speed of TetGen.  They can be skipped by define the -DNDEBUG
 #   switch.
 
-SWITCHES = 
+SWITCHES =
 
 # RM should be set to the name of your favorite rm (file deletion program).
 

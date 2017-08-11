@@ -124,7 +124,7 @@ proc XFIconBarShow {xfIconBarName {xfIconBarPath ""} {xfIconBarStatus ""}} {# xf
 # Returns: none
 # Sideeffects: none
 ##########
-# 
+#
 # global xfIconBar(activeBackground) - active background color
 # global xfIconBar(activeForeground) - active foreground color
 # global xfIconBar(background) - background color
@@ -206,7 +206,7 @@ proc XFIconBarShow {xfIconBarName {xfIconBarPath ""} {xfIconBarStatus ""}} {# xf
         }
       }
     }
-        
+
     if {$xfIconBar(barIgnoreSep)} {
       frame $tmpPath.xfIconBar \
         -borderwidth $xfIconBar(barBorder) \
@@ -360,7 +360,7 @@ proc XFIconBarShow {xfIconBarName {xfIconBarPath ""} {xfIconBarStatus ""}} {# xf
       }
     }
     set tmpPath $xfIconBarPath
-      
+
     frame $tmpPath.xfIconBar \
       -borderwidth $xfIconBar(barBorder) \
       -relief $xfIconBar(barRelief)
@@ -463,7 +463,7 @@ proc XFIconBarConf {xfIconBarName {xfIconBarPath ""} {xfIconBarProcs ""}} {# xf 
 # Returns: none
 # Sideeffects: none
 ##########
-# 
+#
 # global xfIconBar(activeBackground) - active background color
 # global xfIconBar(activeForeground) - active foreground color
 # global xfIconBar(background) - background color
@@ -529,48 +529,48 @@ proc XFIconBarConf {xfIconBarName {xfIconBarPath ""} {xfIconBarProcs ""}} {# xf 
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1 config $tmpFrameOpt"
- 
+
   frame .xfIconBarEdit.frame1.frame2 \
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame2 config $tmpFrameOpt"
- 
+
   frame .xfIconBarEdit.frame1.frame2.frame4 \
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame2.frame4 config $tmpFrameOpt"
- 
+
   frame .xfIconBarEdit.frame1.frame2.frame5 \
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame2.frame5 config $tmpFrameOpt"
- 
+
   frame .xfIconBarEdit.frame1.frame2.frame6 \
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame2.frame6 config $tmpFrameOpt"
- 
+
   frame .xfIconBarEdit.frame1.frame7 \
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame7 config $tmpFrameOpt"
- 
+
   frame .xfIconBarEdit.frame1.frame3 \
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame3 config $tmpFrameOpt"
- 
+
   frame .xfIconBarEdit.frame1.frame4 \
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame4 config $tmpFrameOpt"
- 
+
   label .xfIconBarEdit.frame1.frame2.frame4.message1 \
     -anchor c \
     -relief raised \
     -text "Icon pictures:"
   catch ".xfIconBarEdit.frame1.frame2.frame4.message1 config $tmpMessageOpt"
-  
+
   scrollbar .xfIconBarEdit.frame1.frame2.frame4.vscroll \
     -highlightthickness 0 \
     -relief raised \
@@ -597,7 +597,7 @@ proc XFIconBarConf {xfIconBarName {xfIconBarPath ""} {xfIconBarProcs ""}} {# xf 
     -relief raised \
     -text "Procedures:"
   catch ".xfIconBarEdit.frame1.frame2.frame5.message1 config $tmpMessageOpt"
-  
+
   scrollbar .xfIconBarEdit.frame1.frame2.frame5.vscroll \
     -highlightthickness 0 \
     -relief raised \
@@ -624,7 +624,7 @@ proc XFIconBarConf {xfIconBarName {xfIconBarPath ""} {xfIconBarProcs ""}} {# xf 
     -relief raised \
     -text "Iconbar Icons:"
   catch ".xfIconBarEdit.frame1.frame2.frame6.message1 config $tmpMessageOpt"
-  
+
   scrollbar .xfIconBarEdit.frame1.frame2.frame6.vscroll \
     -highlightthickness 0 \
     -relief raised \
@@ -660,25 +660,25 @@ proc XFIconBarConf {xfIconBarName {xfIconBarPath ""} {xfIconBarProcs ""}} {# xf 
     -borderwidth 0 \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame4.bitmap config $tmpFrameOpt"
- 
+
   label .xfIconBarEdit.frame1.frame4.bitmap.message1 \
     -anchor c \
     -relief raised \
     -text "Current bitmap:"
   catch ".xfIconBarEdit.frame1.frame4.bitmap.message1 config $tmpMessageOpt"
-  
+
   label .xfIconBarEdit.frame1.frame4.bitmap.bitmap \
     -bitmap gray50 \
     -anchor c \
     -relief raised
   catch ".xfIconBarEdit.frame1.frame4.bitmap.bitmap config $tmpMessageOpt"
-  
+
   label .xfIconBarEdit.frame1.frame4.message1 \
     -anchor c \
     -relief raised \
     -text "Command:"
   catch ".xfIconBarEdit.frame1.frame4.message1 config $tmpMessageOpt"
-  
+
   frame .xfIconBarEdit.frame1.frame4.command \
     -borderwidth 0 \
     -relief raised

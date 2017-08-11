@@ -10,11 +10,11 @@ Version:   $Revision: 1.3 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -77,9 +77,9 @@ int vtkvmtkAppendFilter::RequestData(
   double bounds[6], inputBounds[6];
   vtkMath::UninitializeBounds(bounds);
 
-  // Loop over all data sets, checking to see what data is common to 
-  // all inputs. Note that data is common if 1) it is the same attribute 
-  // type (scalar, vector, etc.), 2) it is the same native type (int, 
+  // Loop over all data sets, checking to see what data is common to
+  // all inputs. Note that data is common if 1) it is the same attribute
+  // type (scalar, vector, etc.), 2) it is the same native type (int,
   // float, etc.), and 3) if a data array in a field, if it has the same name.
   count   = 0;
   decimal = 0.0;
@@ -147,7 +147,7 @@ int vtkvmtkAppendFilter::RequestData(
         {
         ptList.IntersectFieldList(pd);
         }
-      
+
       cd = ds->GetCellData();
       if ( firstCD )
         {
@@ -166,7 +166,7 @@ int vtkvmtkAppendFilter::RequestData(
     vtkDebugMacro(<<"No data to append!");
     return 1;
     }
-  
+
   // Now can allocate memory
   output->Allocate(numCells); //allocate storage for geometry/topology
 //  outputPD->CopyGlobalIdsOn();
@@ -177,7 +177,7 @@ int vtkvmtkAppendFilter::RequestData(
   newPts = vtkPoints::New();
   ptIds = vtkIdList::New(); ptIds->Allocate(VTK_CELL_SIZE);
   newPtIds = vtkIdList::New(); newPtIds->Allocate(VTK_CELL_SIZE);
-  
+
   vtkMergePoints* locator = vtkMergePoints::New();
   if (this->MergeDuplicatePoints)
     {
@@ -212,7 +212,7 @@ int vtkvmtkAppendFilter::RequestData(
 
       ptIdMap->Initialize();
       ptIdMap->SetNumberOfIds(numPts);
-      
+
       // copy points and point data
       for (ptId=0; ptId < numPts && !abort; ptId++)
         {
@@ -230,17 +230,17 @@ int vtkvmtkAppendFilter::RequestData(
           outputPD->CopyData(ptList,pd,inputCount,ptId,newPtId);
           }
         ptIdMap->SetId(ptId,newPtId);
-        
+
         // Update progress
         count++;
-        if (!(count % tenth)) 
+        if (!(count % tenth))
           {
           decimal += 0.1;
           this->UpdateProgress(decimal);
           abort = this->GetAbortExecute();
           }
         }
-      
+
       cd = ds->GetCellData();
       // copy cell and cell data
       for (cellId=0; cellId<numCells && !abort; cellId++)
@@ -253,10 +253,10 @@ int vtkvmtkAppendFilter::RequestData(
           }
         newCellId = output->InsertNextCell(ds->GetCellType(cellId),newPtIds);
         outputCD->CopyData(cellList,cd,inputCount,cellId,newCellId);
-        
+
         // Update progress
         count++;
-        if (!(count % tenth)) 
+        if (!(count % tenth))
           {
           decimal += 0.1;
           this->UpdateProgress(decimal);
@@ -266,7 +266,7 @@ int vtkvmtkAppendFilter::RequestData(
       ++inputCount;
       }
     }
-  
+
   // Update ourselves and release memory
   //
   output->SetPoints(newPts);

@@ -531,7 +531,7 @@ proc XFInfoProceduresTest {xfTarget} {
           XFInfoProceduresSet $xfProcName
         }
       }
-    } { 
+    } {
       if {"$xfBody" != ""} {
         if {[XFProcYesNo "Insert the currently edited procedure ?"]} {
           XFInfoProceduresSet $xfProcName

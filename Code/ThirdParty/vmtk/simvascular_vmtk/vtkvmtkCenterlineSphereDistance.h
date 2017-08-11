@@ -10,11 +10,11 @@ Version:   $Revision: 1.3 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -30,12 +30,12 @@ Version:   $Revision: 1.3 $
 #include "vtkvmtkWin32Header.h"
 
 class vtkPolyData;
-  
+
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSphereDistance : public vtkObject
 {
-  public: 
+  public:
   vtkTypeMacro(vtkvmtkCenterlineSphereDistance,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
   static vtkvmtkCenterlineSphereDistance* New();
 
   static void FindTouchingSphereCenter(vtkPolyData* centerlines, const char* radiusArrayName, vtkIdType cellId, vtkIdType subId, double pcoord, vtkIdType& touchingSubId, double& touchingPCoord, bool forward=true);
@@ -44,7 +44,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSphereDistance : p
 
   protected:
   vtkvmtkCenterlineSphereDistance() {};
-  ~vtkvmtkCenterlineSphereDistance() {};  
+  ~vtkvmtkCenterlineSphereDistance() {};
 
   private:
   vtkvmtkCenterlineSphereDistance(const vtkvmtkCenterlineSphereDistance&);  // Not implemented.

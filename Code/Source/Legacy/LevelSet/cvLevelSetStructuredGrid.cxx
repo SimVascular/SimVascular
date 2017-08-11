@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -194,7 +194,7 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
   // Stuff to build up the set of velocity vectors:
   vtkPolyData *pd = vtkPolyData::New();
   vtkPoints *pts = vtkPoints::New();
-  vtkFloatingPointArrayType *vec = vtkFloatingPointArrayType::New(); 
+  vtkFloatingPointArrayType *vec = vtkFloatingPointArrayType::New();
   vec->SetNumberOfComponents(3);
   pts->Allocate(100,100);
   vec->Allocate(100,100);
@@ -317,7 +317,7 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
   pd->Delete();
 
   deltaPhiValid_ = 0;
-  
+
   return SV_OK;
 }
 
@@ -2173,7 +2173,7 @@ int cvLevelSetStructuredGrid::ProjectV( int posFlag, int save )
 	      neighborDstIx = SteepestAscentPhi( neighborIx );
 	    }
 	    if ( neighborDstIx == currIx ) {
-	 
+
 	      neighborNode->F0_ = currNode->F0_;
 	      neighborNode->F1_ = currNode->F1_;
 

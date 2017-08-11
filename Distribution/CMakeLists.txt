@@ -141,7 +141,7 @@ if(LINUX)
 
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/linux/simvascular.desktop.in
 						${CMAKE_CURRENT_BINARY_DIR}/linux/simvascular.desktop @ONLY)
-		
+
 		SET(SV_DESKTOP_DIR "/usr/share/applications/")
 
 		INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/linux/simvascular.desktop DESTINATION ${SV_DESKTOP_DIR})

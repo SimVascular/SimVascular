@@ -199,7 +199,7 @@ elseif(WIN64)
 
   # Set the version of the platform
   set(SV_PLATFORM_VERSION_DIR "${SV_WINDOWS_VERSION_MAJOR}.${SV_WINDOWS_VERSION_MINOR}" CACHE STRING "The distribution platform version being used.")
-  
+
 else()
   set(SV_PLATFORM_DIR "unsupported")
 endif()

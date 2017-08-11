@@ -75,7 +75,7 @@ public:
   // 3D methods:
   int MakeBox3d( double dims[], double ctr[] ) {return SV_ERROR;}
   int MakeSphere( double r, double ctr[] ) {return SV_ERROR;}
-  int MakePoly3dSolid( cvPolyData *pd , double angle ) {return SV_ERROR;} 
+  int MakePoly3dSolid( cvPolyData *pd , double angle ) {return SV_ERROR;}
   int MakePoly3dSurface( cvPolyData *pd ) {return SV_ERROR;}
   int SetPoly3dFacetMethod( SolidModel_FacetT code ) {return SV_OK;}
   int MakeCylinder( double r, double length, double ctr[], double axis[] ) {return SV_ERROR;}

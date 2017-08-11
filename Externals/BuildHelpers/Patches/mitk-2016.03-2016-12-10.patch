@@ -2,7 +2,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake m
 --- mitk-2016.03/CMake/mitkFunctionCreateModule.cmake	2016-08-15 16:50:00.988987100 -0700
 +++ mitk-simvascular/CMake/mitkFunctionCreateModule.cmake	2016-12-09 18:50:35.903668100 -0800
 @@ -126,6 +126,7 @@
- 
+
    set(_macro_options
        FORCE_STATIC           # force building this module as a static library
 +      FORCE_SHARED           # force building this module as a shared library
@@ -12,7 +12,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake m
 @@ -339,7 +340,7 @@
        set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
      endif()
- 
+
 -    if(MODULE_WARNINGS_AS_ERRORS)
 +    if(MODULE_WARNINGS_AS_ERRORS_IGNORED)
        if(MSVC_VERSION)
@@ -21,7 +21,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake m
 @@ -367,12 +368,16 @@
        endif()
      endif(MODULE_WARNINGS_AS_ERRORS)
- 
+
 +    set(_STATIC )
 +
      if(MODULE_FORCE_STATIC)
@@ -29,7 +29,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake m
 -    else()
 -      set(_STATIC )
      endif(MODULE_FORCE_STATIC)
- 
+
 +    if(MODULE_FORCE_SHARED)
 +      set(_STATIC SHARED)
 +    endif(MODULE_FORCE_SHARED)
@@ -54,7 +54,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMake/mitkMacroInstall.cmake mitk-simv
 +++ mitk-simvascular/CMake/mitkMacroInstall.cmake	2016-12-09 18:50:35.916937800 -0800
 @@ -170,6 +170,7 @@
      set(DIRS \"${_search_paths}\")
- 
+
      set(_additional_search_paths ${_install_LIBRARY_DIRS})
 +    set(_additional_search_paths \"${_additional_search_paths};${GDCM_DIR}/../;${VTK_DIR}/../../;${ITK_DIR}/../../\")
      if(_additional_search_paths)
@@ -90,7 +90,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/SimpleITK.cmake mitk-si
 --- mitk-2016.03/CMakeExternals/SimpleITK.cmake	2016-08-15 16:50:01.378036800 -0700
 +++ mitk-simvascular/CMakeExternals/SimpleITK.cmake	2016-12-09 18:50:35.932562100 -0800
 @@ -111,7 +111,8 @@
- 
+
        if( MITK_USE_SYSTEM_PYTHON )
          ExternalProject_Add_Step(${proj} sitk_python_install_step
 -          COMMAND PYTHONUSERBASE=${_install_dir} ${PYTHON_EXECUTABLE} setup.py install --prefix=${_install_dir}
@@ -103,7 +103,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMakeLists.txt mitk-simvascular/CMakeL
 --- mitk-2016.03/CMakeLists.txt	2016-08-15 16:50:01.415038700 -0700
 +++ mitk-simvascular/CMakeLists.txt	2016-12-09 10:56:44.418180300 -0800
 @@ -204,7 +204,7 @@
- 
+
  if(MITK_USE_QT)
    set(MITK_QT5_MINIMUM_VERSION 5.0.0)
 -  set(MITK_QT5_COMPONENTS Concurrent OpenGL PrintSupport Script Sql Svg Widgets WebKitWidgets Xml XmlPatterns UiTools Help)
@@ -113,18 +113,18 @@ diff -aur --new-file -x .git mitk-2016.03/CMakeLists.txt mitk-simvascular/CMakeL
    endif()
 @@ -262,8 +262,8 @@
  mitkFunctionAddExternalProject(NAME Vigra     OFF          DEPENDS HDF5)
- 
+
  # These are "hard" dependencies and always set to ON
 -mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)
  mitkFunctionAddExternalProject(NAME VTK       ON           NO_CACHE)
 +mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)
  mitkFunctionAddExternalProject(NAME Boost     ON           NO_CACHE)
- 
+
  mitkFunctionAddExternalProject(NAME SimpleITK OFF          DEPENDS ITK GDCM SWIG)
 @@ -830,6 +830,11 @@
    ${CMAKE_MODULE_PATH}
    )
- 
+
 +if(MITK_USE_GDCM)
 +  find_package(GDCM REQUIRED)
 +  include(${GDCM_USE_FILE})
@@ -140,12 +140,12 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Classification/CLUtilities/CMa
  MITK_CREATE_MODULE(
    DEPENDS MitkCore MitkCLCore
 -  PACKAGE_DEPENDS PUBLIC Eigen
-+  PACKAGE_DEPENDS 
++  PACKAGE_DEPENDS
 +    PUBLIC Eigen
 +    PUBLIC  ITK|ITKImageLabel+ITKConnectedComponents+ITKImageCompare+ITKMathematicalMorphology+ITKBinaryMathematicalMorphology
    WARNINGS_AS_ERRORS
  )
- 
+
 diff -aur --new-file -x .git mitk-2016.03/Modules/Core/CMakeLists.txt mitk-simvascular/Modules/Core/CMakeLists.txt
 --- mitk-2016.03/Modules/Core/CMakeLists.txt	2016-08-15 16:50:05.337548600 -0700
 +++ mitk-simvascular/Modules/Core/CMakeLists.txt	2016-12-09 18:50:35.941350500 -0800
@@ -164,10 +164,10 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/CMakeLists.txt mitk-simva
 @@ -73,6 +73,6 @@
    target_link_libraries(${MODULE_TARGET} PRIVATE psapi.lib)
  endif(MSVC_IDE OR MSVC_VERSION OR MINGW)
- 
+
 -add_subdirectory(TestingHelper)
 +#add_subdirectory(TestingHelper)
- 
+
 -add_subdirectory(test)
 +#add_subdirectory(test)
 diff -aur --new-file -x .git mitk-2016.03/Modules/Core/include/mitkExtractSliceFilter.h mitk-simvascular/Modules/Core/include/mitkExtractSliceFilter.h
@@ -176,24 +176,24 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/include/mitkExtractSliceF
 @@ -85,6 +85,10 @@
      /** \brief Resampling grid corresponds to: false->image    true->worldgeometry*/
      void SetInPlaneResampleExtentByGeometry(bool inPlaneResampleExtentByGeometry){ this->m_InPlaneResampleExtentByGeometry = inPlaneResampleExtentByGeometry; }
- 
+
 +    void SetInPlaneResampleSizeByGeometry(bool inPlaneResampleSizeByGeometry){ this->m_InPlaneResampleSizeByGeometry = inPlaneResampleSizeByGeometry; }
 +
 +    void SetInPlaneResampleExtentByMinimumSpacing(bool inPlaneResampleExtentByMinimumSpacing){this->m_InPlaneResampleExtentByMinimumSpacing = inPlaneResampleExtentByMinimumSpacing;}
 +
      /** \brief Sets the output dimension of the slice*/
      void SetOutputDimensionality(unsigned int dimension){ this->m_OutputDimension = dimension; }
- 
+
 @@ -168,6 +172,10 @@
- 
+
      bool m_InPlaneResampleExtentByGeometry;//Resampling grid corresponds to:  false->image    true->worldgeometry
- 
+
 +    bool m_InPlaneResampleSizeByGeometry;//Use Renderer Plane extents
 +
 +    bool m_InPlaneResampleExtentByMinimumSpacing;
 +
      mitk::ScalarType* m_OutPutSpacing;
- 
+
      bool m_VtkOutputRequested;
 diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp mitk-simvascular/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp
 --- mitk-2016.03/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp	2016-08-15 16:50:07.228798400 -0700
@@ -227,13 +227,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Algorithms/mitkExtrac
        {
 @@ -305,12 +314,14 @@
    int xMin, xMax, yMin, yMax;
- 
+
    xMin = yMin = 0;
 -  xMax = static_cast< int >( extent[0]);
 -  yMax = static_cast< int >( extent[1]);
 +  xMax = static_cast< int >( std::round(extent[0]));
 +  yMax = static_cast< int >( std::round(extent[1]));
- 
+
 -  double sliceBounds[6];
 -  if (m_WorldGeometry->GetReferenceGeometry())
 +  if(!m_InPlaneResampleSizeByGeometry)
@@ -275,13 +275,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
  #include <vtkColorTransferFunction.h>
 +#include <vtkImageGradientMagnitude.h>
 +#include <vtkImageHistogramStatistics.h>
- 
+
  //ITK
  #include <itkRGBAPixel.h>
 @@ -166,6 +168,13 @@
    datanode->GetBoolProperty("in plane resample extent by geometry", inPlaneResampleExtentByGeometry, renderer);
    localStorage->m_Reslicer->SetInPlaneResampleExtentByGeometry(inPlaneResampleExtentByGeometry);
- 
+
 +  bool inPlaneResampleSizeByGeometry = false;
 +  datanode->GetBoolProperty("in plane resample size by geometry", inPlaneResampleSizeByGeometry, renderer);
 +  localStorage->m_Reslicer->SetInPlaneResampleSizeByGeometry(inPlaneResampleSizeByGeometry);
@@ -289,13 +289,13 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 +  bool inPlaneResampleExtentByMinimumSpacing = false;
 +  datanode->GetBoolProperty("in plane resample extent by minimum spacing", inPlaneResampleExtentByMinimumSpacing, renderer);
 +  localStorage->m_Reslicer->SetInPlaneResampleExtentByMinimumSpacing(inPlaneResampleExtentByMinimumSpacing);
- 
+
    // Initialize the interpolation mode for resampling; switch to nearest
    // neighbor if the input image is too small.
 @@ -288,6 +297,60 @@
      localStorage->m_ReslicedImage = localStorage->m_Reslicer->GetVtkOutput();
    }
- 
+
 +  bool showGradient= false;
 +  datanode->GetBoolProperty("show gradient", showGradient, renderer);
 +  if (showGradient)
@@ -372,7 +372,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 +  {
 +    localStorage->m_Reslicer->GetClippedPlaneBounds(sliceBounds);
 +  }
- 
+
    //get the spacing of the slice
    localStorage->m_mmPerPixel = localStorage->m_Reslicer->GetOutputSpacing();
 @@ -308,16 +384,29 @@
@@ -388,7 +388,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 -    textureClippingBounds[1] = static_cast< int >( textureClippingBounds[1] / localStorage->m_mmPerPixel[0] + 0.5 );
 -    textureClippingBounds[2] = static_cast< int >( textureClippingBounds[2] / localStorage->m_mmPerPixel[1] + 0.5 );
 -    textureClippingBounds[3] = static_cast< int >( textureClippingBounds[3] / localStorage->m_mmPerPixel[1] + 0.5 );
- 
+
 +    if(inPlaneResampleSizeByGeometry)
 +    {
 +        double widthInMM = planeGeometry->GetExtentInMM( 0 );
@@ -416,7 +416,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
    }
 @@ -439,7 +528,10 @@
    LocalStorage *localStorage = this->GetLocalStorage( renderer );
- 
+
    LevelWindow levelWindow;
 -  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, "levelwindow" );
 +//  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, "levelwindow" );
@@ -424,15 +424,15 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 +  this->GetDataNode()->GetBoolProperty("show gradient", showGradient, renderer);
 +  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, showGradient? "gradientlevelwindow" : "levelwindow" );
    localStorage->m_LevelWindowFilter->GetLookupTable()->SetRange( levelWindow.GetLowerWindowBound(), levelWindow.GetUpperWindowBound() );
- 
+
    mitk::LevelWindow opacLevelWindow;
 @@ -591,7 +683,7 @@
    vtkLookupTable* usedLookupTable = localStorage->m_ColorLookupTable;
- 
+
    // If lookup table or transferfunction use is requested...
 -  mitk::LookupTableProperty::Pointer lookupTableProp = dynamic_cast<mitk::LookupTableProperty*>(this->GetDataNode()->GetProperty("LookupTable"));
 +  mitk::LookupTableProperty::Pointer lookupTableProp = dynamic_cast<mitk::LookupTableProperty*>(this->GetDataNode()->GetProperty("LookupTable", renderer));
- 
+
    if( lookupTableProp.IsNotNull() ) // is a lookuptable set?
    {
 @@ -686,6 +778,8 @@
@@ -442,7 +442,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVt
 +  node->AddProperty( "in plane resample size by geometry", mitk::BoolProperty::New( false ) );
 +  node->AddProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( false ) );
    node->AddProperty( "bounding box", mitk::BoolProperty::New( false ) );
- 
+
    mitk::RenderingModeProperty::Pointer renderingModeProperty = mitk::RenderingModeProperty::New();
 diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp mitk-simvascular/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp
 --- mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp	2016-08-15 16:50:09.263560400 -0700
@@ -450,7 +450,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGe
 @@ -310,6 +310,13 @@
          tubeRadius = sqrt( m_SurfaceCreator->GetBoundingBox()->GetDiagonalLength2() ) / 450.0;
        }
- 
+
 +      bool useGeometryBoundingBox = false;
 +      if(GetDataNode()->GetBoolProperty("in plane resample size by geometry", useGeometryBoundingBox, renderer))
 +      {
@@ -467,7 +467,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/CppMicroServices/core/src/util
 @@ -59,6 +59,13 @@
      #endif
      #include <windows.h>
- 
+
 +    // 2016-12-09 - problems with maro replacement on msvc 2013
 +    #ifdef UNICODE
 +    #define CreateMutex  CreateMutexW
@@ -486,14 +486,14 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/OpenViewCore/CMakeLists.txt mi
 -  PACKAGE_DEPENDS Qt5|Core+Quick VTK|vtkGUISupportQt OpenGL
 +  PACKAGE_DEPENDS Qt5|Core+Quick VTK|vtkGUISupportQt+vtkRenderingFreeType OpenGL
    )
- 
+
 diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/files.cmake mitk-simvascular/Modules/QtWidgets/files.cmake
 --- mitk-2016.03/Modules/QtWidgets/files.cmake	2016-08-15 16:50:23.753995200 -0700
 +++ mitk-simvascular/Modules/QtWidgets/files.cmake	2016-12-10 10:07:24.100506900 -0800
 @@ -36,6 +36,10 @@
  QmitkDataStorageComboBoxWithSelectNone.cpp
  )
- 
+
 +if(APPLE)
 +  set(CPP_FILES ${CPP_FILES} QmitkDisableGLHiDPI.mm)
 +endif()
@@ -599,7 +599,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -35,6 +37,10 @@
  #include "QmitkRenderWindowMenu.h"
  #include "QmitkMimeTypes.h"
- 
+
 +#ifdef __APPLE__
 +#include "QmitkDisableGLHiDPI.h"
 +#endif
@@ -610,7 +610,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 @@ -47,6 +53,10 @@
    newform.setSamples(8);
    this->setFormat(newform);*/
- 
+
 +  QSurfaceFormat surfaceFormat = windowHandle()->format();
 +  surfaceFormat.setStencilBufferSize(8);
 +  windowHandle()->setFormat(surfaceFormat);
@@ -619,7 +619,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
    {
      GetRenderWindow()->SetMultiSamples(0);
 @@ -65,6 +75,11 @@
- 
+
    setFocusPolicy(Qt::StrongFocus);
    setMouseTracking(true);
 +
@@ -628,7 +628,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindo
 +#endif
 +
  }
- 
+
  QmitkRenderWindow::~QmitkRenderWindow()
 diff -aur --new-file -x .git mitk-2016.03/Modules/Segmentation/CMakeLists.txt mitk-simvascular/Modules/Segmentation/CMakeLists.txt
 --- mitk-2016.03/Modules/Segmentation/CMakeLists.txt	2016-08-15 16:50:28.020599100 -0700
@@ -640,7 +640,7 @@ diff -aur --new-file -x .git mitk-2016.03/Modules/Segmentation/CMakeLists.txt mi
 -    PUBLIC ITK|ITKBinaryMathematicalMorphology+ITKLabelVoting+ITKRegionGrowing+ITKFastMarching+ITKAnisotropicSmoothing+ITKWatersheds
 +    PUBLIC ITK|ITKBinaryMathematicalMorphology+ITKLabelVoting+ITKRegionGrowing+ITKFastMarching+ITKAnisotropicSmoothing+ITKWatersheds+ITKDistanceMap
  )
- 
+
  add_subdirectory(Testing)
 diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerPreferencePage.cpp mitk-simvascular/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerPreferencePage.cpp
 --- mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerPreferencePage.cpp	2016-08-15 16:50:45.072902600 -0700
@@ -677,18 +677,18 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 @@ -152,8 +153,8 @@
    m_NodeTreeView->setTextElideMode(Qt::ElideMiddle);
    m_NodeTreeView->installEventFilter(new QmitkNodeTableViewKeyFilter(this));
- 
+
 -  m_ItemDelegate = new QmitkDataManagerItemDelegate(m_NodeTreeView);
 -  m_NodeTreeView->setItemDelegate(m_ItemDelegate);
 +  // m_ItemDelegate = new QmitkDataManagerItemDelegate(m_NodeTreeView);
 +  // m_NodeTreeView->setItemDelegate(m_ItemDelegate);
- 
+
    QObject::connect( m_NodeTreeView, SIGNAL(customContextMenuRequested(const QPoint&))
      , this, SLOT(NodeTableViewContextMenuRequested(const QPoint&)) );
 @@ -211,11 +212,11 @@
    unknownDataNodeDescriptor->AddAction(saveAction);
    m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,saveAction));
- 
+
 -  QAction* removeAction = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/Remove_48.png"), "Remove", this);
 -  QObject::connect( removeAction, SIGNAL( triggered(bool) )
 -    , this, SLOT( RemoveSelectedNodes(bool) ) );
@@ -699,7 +699,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +  //   , this, SLOT( RemoveSelectedNodes(bool) ) );
 +  // unknownDataNodeDescriptor->AddAction(removeAction);
 +  // m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,removeAction));
- 
+
    QAction* reinitAction = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/Refresh_48.png"), "Reinit", this);
    QObject::connect( reinitAction, SIGNAL( triggered(bool) )
 @@ -378,6 +379,12 @@
@@ -712,18 +712,18 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +  QmitkNodeDescriptor* meshDataNodeDescriptor =
 +    QmitkNodeDescriptorManager::GetInstance()->GetDescriptor("svMitkMesh");
 +  meshDataNodeDescriptor->AddAction(m_SurfaceRepresentation, false);
- 
+
    QAction* showOnlySelectedNodes
      = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/ShowSelectedNode_48.png")
 @@ -436,11 +443,13 @@
    mitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<mitk::IContextMenuAction>("class");
- 
+
    QString className = confElem->GetAttribute("class");
 -  QString smoothed = confElem->GetAttribute("smoothed");
-+  
++
 +  contextMenuAction->SetDataStorage(this->GetDataStorage());
 +  contextMenuAction->SetFunctionality(this);
- 
+
    if(className == "QmitkCreatePolygonModelAction")
    {
 -    contextMenuAction->SetDataStorage(this->GetDataStorage());
@@ -746,18 +746,18 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +
    contextMenuAction->Run( this->GetCurrentSelection() ); // run the action
  }
- 
+
  void QmitkDataManagerView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
  {
 -  if( m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() !=  prefs->GetBool("Place new nodes on top", true) )
 +  if( m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() !=  prefs->GetBool("Place new nodes on top", false) )
      m_NodeTreeModel->SetPlaceNewNodesOnTop( !m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() );
- 
+
    bool hideHelperObjects = !prefs->GetBool("Show helper objects", false);
 @@ -910,11 +912,37 @@
    _QmitkInfoDialog.exec();
  }
- 
+
 -void QmitkDataManagerView::NodeChanged(const mitk::DataNode* /*node*/)
 +void QmitkDataManagerView::NodeChanged(const mitk::DataNode* node)
  {
@@ -783,7 +783,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +            for(int i=0;i<rs->size();i++){
 +                rs->GetElement(i)->SetVisibility(currentVisible);
 +            }
-+            
++
 +            mitk::DataNode* nodex=const_cast<mitk::DataNode*>(node);
 +            nodex->SetBoolProperty("previous visibility",currentVisible);
 +        }
@@ -791,7 +791,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 +    }
 +
  }
- 
+
  QItemSelectionModel *QmitkDataManagerView::GetDataNodeSelectionModel() const
 diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h mitk-simvascular/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h
 --- mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h	2016-08-15 16:50:45.116907800 -0700
@@ -799,7 +799,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/sr
 @@ -72,6 +72,8 @@
    ///
    virtual ~QmitkDataManagerView();
- 
+
 +  QTreeView* GetTreeView(){return m_NodeTreeView;}
 +
  public slots:
@@ -813,7 +813,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidget
    m_Preferences->PutBool("PACS like mouse interaction", m_Ui->m_PACSLikeMouseMode->isChecked());
    m_Preferences->PutInt("Rendering Mode", m_Ui->m_RenderingMode->currentIndex());
 +  m_Preferences->PutBool("Show Department Logo", m_Ui->m_ShowDepartmentLogo->isChecked());
- 
+
    return true;
  }
 @@ -158,6 +159,7 @@
@@ -823,7 +823,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidget
 +  m_Ui->m_ShowDepartmentLogo->setChecked(m_Preferences->GetBool("Show Department Logo", false));
    m_Ui->m_CrosshairGapSize->setValue(m_Preferences->GetInt("crosshair gap size", 32));
  }
- 
+
 diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui mitk-simvascular/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui
 --- mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2016-08-15 16:50:57.838648900 -0700
 +++ mitk-simvascular/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2016-12-09 10:56:55.304231200 -0800
@@ -1128,7 +1128,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidget
    bool newMode = prefs->GetBool("PACS like mouse interaction", false);
    d->m_MouseModeToolbar->setVisible( newMode );
    d->m_StdMultiWidget->GetMouseModeSwitcher()->SetInteractionScheme( newMode ? mitk::MouseModeSwitcher::PACS : mitk::MouseModeSwitcher::MITK );
-+  
++
 +  bool showLogo = prefs->GetBool("Show Department Logo", false);
 +  if(showLogo)
 +  {
@@ -1139,7 +1139,7 @@ diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidget
 +    d->m_StdMultiWidget->DisableDepartmentLogo();
 +  }
  }
- 
+
  mitk::Color QmitkStdMultiWidgetEditor::HexColorToMitkColor(const QString& widgetColorInHex)
 diff -aur --new-file -x .git mitk-2016.03/Plugins/PluginList.cmake mitk-simvascular/Plugins/PluginList.cmake
 --- mitk-2016.03/Plugins/PluginList.cmake	2016-08-15 16:50:33.908388600 -0700

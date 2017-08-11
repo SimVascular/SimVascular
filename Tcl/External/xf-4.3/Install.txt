@@ -10,7 +10,7 @@ XF features:
 	- editing "on the fly". XF is running as a
 	  part of the application (not in an external wish),
 	- editing of existing TCL/TK programs,
-	- placing and sizing of widgets by direct 
+	- placing and sizing of widgets by direct
 	  interactive manipulation,
 	- full access to all widget attributes,
 	- cut and paste functionality,
@@ -56,7 +56,7 @@ The XF package comes with HTML online documentation. You will need an HTML brows
 
 Using:
 ------
-When you start XF, you get a normal wish window and the main editing window of XF. 
+When you start XF, you get a normal wish window and the main editing window of XF.
 
 If you are just starting to learn XF, use the help facility of XF.
 

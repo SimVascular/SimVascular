@@ -10,11 +10,11 @@ Version:   $Revision: 1.5 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -142,10 +142,10 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
   keepCell = vtkIntArray::New();
   keepCell->SetNumberOfTuples(input->GetNumberOfCells());
 
-  // Execute 
+  // Execute
 
   //skeleton: dual of inner delaunay tets (Attali, Sk0)(not necessarily internal) or inner voronoi elements (Sk2)(not necessarily homotpic).
-  //actual choice: Sk2. 
+  //actual choice: Sk2.
 
   double tolerance = this->Tolerance;
 
@@ -168,7 +168,7 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
           boundaryTetra = true;
           }
         }
-      } 
+      }
 
     tetra->GetPoints()->GetPoint(0,p0);
     tetra->GetPoints()->GetPoint(1,p1);
@@ -183,7 +183,7 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
       v2[j] = p2[j] - circumcenter[j];
       v3[j] = p3[j] - circumcenter[j];
       }
-    
+
     outwardPointNormals->GetTuple(tetra->GetPointId(0),n0);
     outwardPointNormals->GetTuple(tetra->GetPointId(1),n1);
     outwardPointNormals->GetTuple(tetra->GetPointId(2),n2);
@@ -223,7 +223,7 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
         }
       }
     }
-    
+
   if (this->RemoveSubresolutionTetrahedra)
     {
     double pt0[3], pt1[3], pt2[3];
@@ -296,7 +296,7 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
       }
     cellNeighbors->Delete();
     }
- 
+
   for (i=0; i<input->GetNumberOfCells(); i++)
     {
     if (keepCell->GetValue(i))

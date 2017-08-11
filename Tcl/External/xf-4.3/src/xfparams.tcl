@@ -433,7 +433,7 @@ proc XFParametersGetResources {xfW} {
 ##########
 proc XFParametersSelectWidget {xfW xfY} {
   global xfMisc
-  global xfStatus 
+  global xfStatus
 
   set xfNearest [$xfW nearest $xfY]
   if {$xfNearest >= 0} {

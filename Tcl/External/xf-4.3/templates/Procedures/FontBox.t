@@ -36,7 +36,7 @@ proc FontBox {{fontBoxFileFont "/usr/local/lib/xf/lib/Fonts"} {fontBoxResource "
 # Returns: fontname, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global fontBox(activeBackground) - active background color
 # global fontBox(activeForeground) - active foreground color
 # global fontBox(background) - background color
@@ -91,7 +91,7 @@ proc FontBox {{fontBoxFileFont "/usr/local/lib/xf/lib/Fonts"} {fontBoxResource "
     append tmpScrollOpt "-foreground \"$fontBox(scrollForeground)\" "
   }
 
-  set fontBoxTmpFileFont $fontBoxFileFont 
+  set fontBoxTmpFileFont $fontBoxFileFont
   # get font file name
   if {!([file exists $fontBoxFileFont] &&
         [file readable $fontBoxFileFont])} {
@@ -614,7 +614,7 @@ proc FontBox {{fontBoxFileFont "/usr/local/lib/xf/lib/Fonts"} {fontBoxResource "
 ##########
 proc FontBoxComposeFont {} {# xf ignore me 6
   global fontBox
-  
+
   if {"$fontBox(fontFamily)" != "*"} {
     append fontNewFont * $fontBox(fontFamily)
   } {

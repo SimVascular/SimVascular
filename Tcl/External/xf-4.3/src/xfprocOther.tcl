@@ -218,7 +218,7 @@ proc XFProcFSBoxPixmap {xfW} {
     }
   }
   XFFSBox "Select pixmap:" "" "
-    if {\"\$xfFSBox(path)\" != \"\" && 
+    if {\"\$xfFSBox(path)\" != \"\" &&
         \[XFMiscIsDir \[string trimleft \$xfFSBox(path) @\]\] &&
         \"\$xfFSBox(name)\" != \"\" &&
         \[XFMiscIsFile \[string trimleft \$xfFSBox(path) @\]/\$xfFSBox(name)\]} {
