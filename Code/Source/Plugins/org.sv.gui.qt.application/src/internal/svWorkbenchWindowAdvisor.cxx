@@ -820,9 +820,7 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     auto mainActionsToolBar = new QToolBar;
     mainActionsToolBar->setObjectName("mainActionsToolBar");
     mainActionsToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
-#ifdef __APPLE__
-    mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextUnderIcon );
-#else
+#ifndef __APPLE__
     mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextBesideIcon );
 #endif
 
