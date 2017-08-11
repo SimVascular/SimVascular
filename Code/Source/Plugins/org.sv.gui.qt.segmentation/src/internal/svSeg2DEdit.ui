@@ -556,7 +556,8 @@
           <widget class="QPushButton" name="btnLevelSet">
            <property name="toolTip">
             <string>Click to show the levelset parameter panel.
-Click again to create a contour by levelset</string>
+Click again to create a contour by levelset.
+(Shortcut: Ctrl+L)</string>
            </property>
            <property name="text">
             <string>LevelSet</string>
@@ -571,10 +572,12 @@ Click again to create a contour by levelset</string>
            <property name="toolTip">
             <string>Click to show the threshold parameter panel.
 
-If &quot;Preset&quot; on, Click again to create a contour with a specified threshold value.
+Click again and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and hold the left moust button, move up/down, then release to finish a contour.
 
-If &quot;Preset&quot; off, Click again and the button becomes blue (active for interaction). 
-Then, you need to move the cursor to a 2D view window, click and hold the left moust button, move up/down to create a contour.</string>
+If &quot;Preset&quot; on,  a contour is created with a specified threshold value, you click the button.
+
+(Shortcut: Ctrl+T)</string>
            </property>
            <property name="text">
             <string>Threshold</string>
@@ -623,7 +626,7 @@ Click and the button becomes blue (active for interaction).
 Then, you need to move the cursor to a 2D view window, click and move to create a contour.
 
 Manual method:
-Right click and manually provide center coordiantes and semi-axis length.</string>
+Right click and manually provide center coordiantes and semi-axis lengths.</string>
            </property>
            <property name="text">
             <string>Ellipse</string>
@@ -638,7 +641,7 @@ Right click and manually provide center coordiantes and semi-axis length.</strin
            <property name="toolTip">
             <string>Interactive method:
 Click and the button becomes blue (active for interaction). 
-Then, you need to move the cursor to a 2D view window, click and move to add control points.
+Then, you need to move the cursor to a 2D view window, click and move to add control points, double click or press &quot;F&quot; to finish.
 
 Manual method:
 Right click and manually provide coordiantes for control points.</string>
@@ -656,7 +659,7 @@ Right click and manually provide coordiantes for control points.</string>
            <property name="toolTip">
             <string>Interactive method:
 Click and the button becomes blue (active for interaction). 
-Then, you need to move the cursor to a 2D view window, click and move to add control points.
+Then, you need to move the cursor to a 2D view window, click and move to add control points, double click or press &quot;F&quot; to finish.
 
 Manual method:
 Right click and manually provide coordiantes for control points.</string>
@@ -693,7 +696,8 @@ Right click and manually provide coordiantes for control points.</string>
          <item>
           <widget class="QPushButton" name="btnCopy">
            <property name="toolTip">
-            <string>Copy the selected contour.</string>
+            <string>Copy the selected contour.
+(Shortcut: Ctrl+C)</string>
            </property>
            <property name="text">
             <string>Copy</string>
@@ -703,7 +707,8 @@ Right click and manually provide coordiantes for control points.</string>
          <item>
           <widget class="QPushButton" name="btnPaste">
            <property name="toolTip">
-            <string>Paste to the current location along the path.</string>
+            <string>Paste to the current location along the path.
+(Shortcut: Ctrl+V)</string>
            </property>
            <property name="text">
             <string>Paste</string>
@@ -721,6 +726,7 @@ Right click and manually provide coordiantes for control points.</string>
           <widget class="QPushButton" name="btnDelete">
            <property name="toolTip">
             <string>Delete the selected contour.
+(Shortcut: Ctrl+D)
 
 You can also move the cursor to a 2D view and click.
 Then, press key Delete to remove the shown contour.</string>

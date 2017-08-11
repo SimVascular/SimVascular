@@ -135,9 +135,7 @@ void svSeg2DEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnEllipse, SIGNAL(clicked()), this, SLOT(CreateEllipse()) );
     connect(ui->btnSplinePoly, SIGNAL(clicked()), this, SLOT(CreateSplinePoly()) );
     connect(ui->btnPolygon, SIGNAL(clicked()), this, SLOT(CreatePolygon()) );
-
     connect(ui->btnSmooth, SIGNAL(clicked()), this, SLOT(SmoothSelected()) );
-
     connect(ui->btnDelete, SIGNAL(clicked()), this, SLOT(DeleteSelected()) );
     connect(ui->listWidget,SIGNAL(itemSelectionChanged()), this, SLOT(SelectContour()) );
     connect(ui->listWidget,SIGNAL(clicked(const QModelIndex &)), this, SLOT(SelectContour(const QModelIndex &)) );
@@ -165,6 +163,12 @@ void svSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnCopy, SIGNAL(clicked()), this, SLOT(CopyContour()) );
     connect(ui->btnPaste, SIGNAL(clicked()), this, SLOT(PasteContour()) );
+
+    ui->btnLevelSet->setShortcut(QKeySequence("Ctrl+L"));
+    ui->btnThreshold->setShortcut(QKeySequence("Ctrl+T"));
+    ui->btnCopy->setShortcut(QKeySequence("Ctrl+C"));
+    ui->btnPaste->setShortcut(QKeySequence("Ctrl+V"));
+    ui->btnDelete->setShortcut(QKeySequence("Ctrl+D"));
 
     ui->listWidget->installEventFilter(this);
 }

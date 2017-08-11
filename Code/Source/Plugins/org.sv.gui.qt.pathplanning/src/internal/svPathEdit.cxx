@@ -94,8 +94,8 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnSmooth,SIGNAL(clicked()), this, SLOT(SmoothCurrentPath()) );
 
-    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+A"), parent);
-    connect(shortcut, SIGNAL(activated()), ui->buttonAdd, SLOT(click()));
+    ui->buttonAdd->setShortcut(QKeySequence("Ctrl+A"));
+    ui->buttonDelete->setShortcut(QKeySequence("Ctrl+D"));
 
     connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 
