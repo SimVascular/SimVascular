@@ -343,14 +343,14 @@
             <string/>
            </property>
            <property name="currentIndex">
-            <number>4</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="page_3">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
+              <width>467</width>
               <height>548</height>
              </rect>
             </property>
@@ -919,7 +919,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
+              <width>467</width>
               <height>548</height>
              </rect>
             </property>
@@ -1014,7 +1014,7 @@ Press key &quot;S&quot; outside of any face to deselect all faces.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
+              <width>467</width>
               <height>548</height>
              </rect>
             </property>
@@ -1139,7 +1139,7 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
+              <width>467</width>
               <height>548</height>
              </rect>
             </property>
@@ -1456,6 +1456,10 @@ Change size: righ click and hold, move.</string>
                   </property>
                   <item>
                    <widget class="QPushButton" name="btnAddSubDomain">
+                    <property name="toolTip">
+                     <string>Make sure the crosshair center is inside a subdomain you want to specify.
+Click the button to add it to the left table for meshing.</string>
+                    </property>
                     <property name="text">
                      <string>Add SubDomain</string>
                     </property>
@@ -1468,6 +1472,10 @@ Change size: righ click and hold, move.</string>
                       <width>16777215</width>
                       <height>16777215</height>
                      </size>
+                    </property>
+                    <property name="toolTip">
+                     <string>Make sure the crosshair center is inside a hole you want to specify.
+Click the button to add it to the left table.</string>
                     </property>
                     <property name="text">
                      <string>Add Hole</string>
@@ -1505,7 +1513,7 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
+              <width>467</width>
               <height>548</height>
              </rect>
             </property>

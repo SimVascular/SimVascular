@@ -1339,9 +1339,6 @@ void svSeg2DEdit::CreateManualCircle(bool)
         }
     }
 
-    ResetGUI();
-    SetSecondaryWidgetsVisible(false);
-
     svContour* contour=new svContourCircle();
     contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
     contour->SetPlaced(true);
@@ -1433,9 +1430,6 @@ void svSeg2DEdit::CreateManualEllipse(bool)
         }
     }
 
-    ResetGUI();
-    SetSecondaryWidgetsVisible(false);
-
     svContourEllipse* contour=new svContourEllipse();
     contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
     contour->SetPlaced(true);
@@ -1506,9 +1500,6 @@ void svSeg2DEdit::CreateManualPolygonType(bool spline)
 
         points.push_back(point);
     }
-
-    ResetGUI();
-    SetSecondaryWidgetsVisible(false);
 
     svContour* contour=NULL;
     if(spline)
