@@ -7,6 +7,7 @@
 #include "svContourModel.h"
 #include "svContourGroupDataInteractor.h"
 #include "svContourGroupCreate.h"
+#include "svContourModelThresholdInteractor.h"
 
 #include "svResliceSlider.h"
 #include "svLevelSet2DWidget.h"
@@ -79,7 +80,9 @@ public slots:
 
     void DeleteSelected();
 
-    void SelectItem(const QModelIndex & idx);
+    void SelectContour();
+
+    void SelectContour(const QModelIndex & idx);
 
     void ClearAll();
 
@@ -115,6 +118,8 @@ public slots:
 
     void ContourChangingOff();
 
+    void SelectContour3D();
+
     void ResetGUI();
 
     void UpdatePathResliceSize(double newSize);
@@ -142,7 +147,13 @@ public slots:
 
     void NewGroup();
 
+    void ShowPath(bool checked = false);
+
+    void UpdatePathPoint(int pos);
+
 public:
+
+    void SelectContour(int index);
 
     int GetTimeStep();
 
@@ -166,7 +177,13 @@ public:
 
 //    bool IsExclusiveFunctionality() const override;
 
+    void PreparePreviewInteraction(QString method);
+
+    void QuitPreviewInteraction();
+
 protected:
+
+    bool eventFilter(QObject *obj, QEvent *ev);
 
     QWidget* m_Parent;
 
@@ -192,6 +209,8 @@ protected:
 
     mitk::DataNode::Pointer m_ContourGroupNode;
 
+    mitk::DataNode::Pointer m_GroupFolderNode;
+
     svContourGroupDataInteractor::Pointer m_DataInteractor;
 
     long m_ContourGroupChangeObserverTag;
@@ -202,7 +221,7 @@ protected:
 
     bool groupCreated=false;
 
-    mitk::DataInteractor::Pointer m_PreviewDataNodeInteractor;
+    svContourModelThresholdInteractor::Pointer m_PreviewDataNodeInteractor;
 
     mitk::DataNode::Pointer m_PreviewDataNode;
 
@@ -215,6 +234,8 @@ protected:
     long m_StartLoftContourGroupObserverTag2;
     long m_StartChangingContourObserverTag;
     long m_EndChangingContourObserverTag;
+    long m_SelectContourObserverTag;
+
 
     bool m_ContourChanging;
 
@@ -227,6 +248,8 @@ protected:
     svContour* m_CopyContour;
 
     svContourGroupCreate* m_ContourGroupCreateWidget;
+
+    bool m_UpdatingGUI;
 };
 
 #endif // SVSEG2DEDIT_H

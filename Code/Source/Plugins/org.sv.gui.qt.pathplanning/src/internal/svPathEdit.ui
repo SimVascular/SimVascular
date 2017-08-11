@@ -237,9 +237,9 @@
        <widget class="QListWidget" name="listWidget">
         <property name="toolTip">
          <string>To interactively modify the path in Display window:
- Ctrl + left click to add a control point
- Ctrl + right click to remove a control point
- Left click and hold to drag a control point</string>
+Ctrl + left click to add a control point
+Left click and hold to drag a control point
+Right click to remove a control point </string>
         </property>
        </widget>
       </item>
@@ -311,7 +311,7 @@
           <widget class="QPushButton" name="buttonAdd">
            <property name="toolTip">
             <string>Add the crosshair center as a new control point
- ( Shortcut: Ctrl+A )</string>
+(Shortcut: Ctrl+A)</string>
            </property>
            <property name="text">
             <string>Add</string>
@@ -338,7 +338,8 @@
          <item>
           <widget class="QPushButton" name="buttonDelete">
            <property name="toolTip">
-            <string>Delete the selected point</string>
+            <string>Delete the selected point
+(Shortcut: Ctrl+D)</string>
            </property>
            <property name="text">
             <string>Delete</string>

@@ -217,10 +217,18 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         imageFolderNode->SetVisibility(false);
         for(int i=0;i<imageFilePathList.size();i++)
         {
-            mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePathList[i].toStdString());
-            //            imageNode->SetVisibility(false);
-            imageNode->SetName(imageNameList[i].toStdString());
-            dataStorage->Add(imageNode,imageFolderNode);
+            std::string imageFilePath=imageFilePathList[i].toStdString();
+
+            try{
+                mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath);
+                //            imageNode->SetVisibility(false);
+                imageNode->SetName(imageNameList[i].toStdString());
+                dataStorage->Add(imageNode,imageFolderNode);
+            }
+            catch(...)
+            {
+                MITK_ERROR << "Failed to load image (maybe non-existing or unsupported data type): " << imageFilePath;
+            }
         }
 
         pathFolderNode->SetVisibility(false);

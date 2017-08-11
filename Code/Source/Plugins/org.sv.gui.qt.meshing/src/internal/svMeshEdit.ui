@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>499</width>
+    <width>477</width>
     <height>907</height>
    </rect>
   </property>
@@ -102,13 +102,13 @@
       <item row="0" column="2">
        <widget class="QPushButton" name="btnMeshInfo">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Mesh Info</string>
+         <string>  Mesh Info  </string>
         </property>
        </widget>
       </item>
@@ -138,8 +138,21 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="1" column="2">
        <widget class="QPushButton" name="btnRunMesher">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Run Mesher</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="checkBoxShowModel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -147,7 +160,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Run Mesher</string>
+         <string>Show Model</string>
         </property>
        </widget>
       </item>
@@ -330,15 +343,15 @@
             <string/>
            </property>
            <property name="currentIndex">
-            <number>4</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="page_3">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>553</height>
+              <width>467</width>
+              <height>548</height>
              </rect>
             </property>
             <attribute name="label">
@@ -906,8 +919,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>553</height>
+              <width>467</width>
+              <height>548</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -1001,8 +1014,8 @@ Press key &quot;S&quot; outside of any face to deselect all faces.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>553</height>
+              <width>467</width>
+              <height>548</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1126,8 +1139,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>553</height>
+              <width>467</width>
+              <height>548</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1376,8 +1389,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>553</height>
+              <width>467</width>
+              <height>548</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1443,6 +1456,10 @@ Change size: righ click and hold, move.</string>
                   </property>
                   <item>
                    <widget class="QPushButton" name="btnAddSubDomain">
+                    <property name="toolTip">
+                     <string>Make sure the crosshair center is inside a subdomain you want to specify.
+Click the button to add it to the left table for meshing.</string>
+                    </property>
                     <property name="text">
                      <string>Add SubDomain</string>
                     </property>
@@ -1455,6 +1472,10 @@ Change size: righ click and hold, move.</string>
                       <width>16777215</width>
                       <height>16777215</height>
                      </size>
+                    </property>
+                    <property name="toolTip">
+                     <string>Make sure the crosshair center is inside a hole you want to specify.
+Click the button to add it to the left table.</string>
                     </property>
                     <property name="text">
                      <string>Add Hole</string>
@@ -1492,8 +1513,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>489</width>
-              <height>553</height>
+              <width>467</width>
+              <height>548</height>
              </rect>
             </property>
             <attribute name="label">

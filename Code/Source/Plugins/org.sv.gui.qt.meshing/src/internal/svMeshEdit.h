@@ -94,6 +94,8 @@ public slots:
 
     void Adapt();
 
+    void ShowModel(bool checked = false);
+
 public:
 
     int GetTimeStep();

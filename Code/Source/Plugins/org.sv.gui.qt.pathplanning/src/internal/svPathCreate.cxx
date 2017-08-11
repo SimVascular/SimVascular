@@ -203,11 +203,21 @@ void svPathCreate::CreatePath()
 
         float point2DSize=0;
         float pointSize=0;
-        if(m_PathFolderNode.IsNotNull())
+        float resliceSize=0;
+
+        if(m_SelecteNode.IsNotNull())
         {
-            m_PathFolderNode->GetFloatProperty("point 2D display size",point2DSize);
-            m_PathFolderNode->GetFloatProperty("point size",pointSize);
+            m_SelecteNode->GetFloatProperty("point 2D display size",point2DSize);
+            m_SelecteNode->GetFloatProperty("point size",pointSize);
+            m_SelecteNode->GetFloatProperty("reslice size",resliceSize);
+            if(resliceSize==0)
+            {
+                svPath* originalPath=dynamic_cast<svPath*>(m_SelecteNode->GetData());
+                if(originalPath)
+                    resliceSize=originalPath->GetResliceSize();
+            }
         }
+
         if(point2DSize!=0)
         {
             pathNode->SetFloatProperty("point 2D display size",point2DSize);
@@ -215,9 +225,12 @@ void svPathCreate::CreatePath()
         }
         if(pointSize!=0)
         {
-            pathNode->SetFloatProperty("point size",point2DSize);
-            path->SetProp("point size",QString::number(point2DSize).toStdString());
+            pathNode->SetFloatProperty("point size",pointSize);
+            path->SetProp("point size",QString::number(pointSize).toStdString());
         }
+        if(resliceSize!=0)
+            path->SetResliceSize(resliceSize);
+
 //        m_DataStorage->Add(pathNode,m_PathFolderNode);
         mitk::OperationEvent::IncCurrObjectEventId();
 
