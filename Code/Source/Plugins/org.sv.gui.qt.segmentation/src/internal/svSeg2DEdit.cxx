@@ -30,6 +30,7 @@
 // Qt
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QWheelEvent>
 
 #include <iostream>
 using namespace std;
@@ -55,6 +56,7 @@ svSeg2DEdit::svSeg2DEdit() :
     m_StartLoftContourGroupObserverTag2=-1;
     m_StartChangingContourObserverTag=-1;
     m_EndChangingContourObserverTag=-1;
+    m_SelectContourObserverTag=-1;
     m_ContourChanging=false;
     m_DataInteractor=NULL;
 
@@ -68,6 +70,7 @@ svSeg2DEdit::svSeg2DEdit() :
     m_PreviewContourModelObserverFinishTag=-1;
     m_PreviewContourModelObserverUpdateTag=-1;
 
+    m_UpdatingGUI=false;
 }
 
 svSeg2DEdit::~svSeg2DEdit()
@@ -136,7 +139,8 @@ void svSeg2DEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnSmooth, SIGNAL(clicked()), this, SLOT(SmoothSelected()) );
 
     connect(ui->btnDelete, SIGNAL(clicked()), this, SLOT(DeleteSelected()) );
-    connect(ui->listWidget,SIGNAL(clicked(const QModelIndex&)), this, SLOT(SelectItem(const QModelIndex&)) );
+    connect(ui->listWidget,SIGNAL(itemSelectionChanged()), this, SLOT(SelectContour()) );
+    connect(ui->listWidget,SIGNAL(clicked(const QModelIndex &)), this, SLOT(SelectContour(const QModelIndex &)) );
 
     connect(ui->checkBoxLoftingPreview, SIGNAL(clicked()), this, SLOT(LoftContourGroup()) );
     connect(ui->btnLoftingOptions, SIGNAL(clicked()), this, SLOT(ShowLoftWidget()) );
@@ -161,6 +165,8 @@ void svSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnCopy, SIGNAL(clicked()), this, SLOT(CopyContour()) );
     connect(ui->btnPaste, SIGNAL(clicked()), this, SLOT(PasteContour()) );
+
+    ui->listWidget->installEventFilter(this);
 }
 
 void svSeg2DEdit::Visible()
@@ -392,7 +398,7 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     ui->resliceSlider->updateReslice();
 
     m_DataInteractor = svContourGroupDataInteractor::New();
-    m_DataInteractor->SetInteraction3D(true);
+    m_DataInteractor->SetInteraction3D(false);
     m_DataInteractor->LoadStateMachine("svContourGroupInteraction.xml", us::ModuleRegistry::GetModule("svSegmentation"));
     m_DataInteractor->SetEventConfig("svSegmentationConfig.xml", us::ModuleRegistry::GetModule("svSegmentation"));
     m_DataInteractor->SetDataNode(m_ContourGroupNode);
@@ -414,6 +420,10 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     itk::SimpleMemberCommand<svSeg2DEdit>::Pointer flagOffCommand = itk::SimpleMemberCommand<svSeg2DEdit>::New();
     flagOffCommand->SetCallbackFunction(this, &svSeg2DEdit::ContourChangingOff);
     m_EndChangingContourObserverTag = m_ContourGroup->AddObserver( EndChangingContourEvent(), flagOffCommand);
+
+    itk::SimpleMemberCommand<svSeg2DEdit>::Pointer selectCommand = itk::SimpleMemberCommand<svSeg2DEdit>::New();
+    selectCommand->SetCallbackFunction(this, &svSeg2DEdit::SelectContour3D);
+    m_SelectContourObserverTag = m_ContourGroup->AddObserver( SelectContourEvent(), selectCommand);
 
     double range[2]={0,100};
     if(m_cvImage)
@@ -796,10 +806,7 @@ void svSeg2DEdit::CreateThresholdContour()
     }
 
     if(ui->checkBoxPresetThreshold->isChecked())
-    {
         CreateContours(THRESHOLD_METHOD);
-        return;
-    }
 
     if(m_CurrentSegButton->styleSheet().trimmed()!="")
         return;
@@ -916,60 +923,60 @@ void svSeg2DEdit::CreateCircle()
 
 void svSeg2DEdit::CreateSplinePoly()
 {
-    ResetGUI();
+    if(m_CurrentSegButton!=ui->btnSplinePoly)
+    {
+        ResetGUI();
 
-    SetSecondaryWidgetsVisible(false);
+        SetSecondaryWidgetsVisible(false);
+    }
 
     int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
 
     svContour* existingContour=m_ContourGroup->GetContour(index);
 
-    svContour* contour;
+    svContour* contour=NULL;
     if(existingContour && existingContour->GetContourPointNumber()>2)
     {
         int splineControlNumber=ui->spinBoxControlNumber->value();
+        if(splineControlNumber<3)
+            splineControlNumber=3;
+
         contour=svContourSplinePolygon::CreateByFitting(existingContour,splineControlNumber);
-    }else{
+        if(contour)
+        {
+            contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+            contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+            mitk::OperationEvent::IncCurrObjectEventId();
 
-        m_CurrentSegButton=ui->btnSplinePoly;
-        m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-
-        contour=new svContourSplinePolygon();
-        contour->SetClosed(false);
-        contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-
-        m_ContourChanging=true;
+            InsertContourByPathPosPoint(contour);
+        }
     }
 
-    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
-    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+    m_CurrentSegButton=ui->btnSplinePoly;
+    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
-    mitk::OperationEvent::IncCurrObjectEventId();
-
-    InsertContourByPathPosPoint(contour);
+    m_DataInteractor->SetMethod("SplinePolygon");
 }
 
 void svSeg2DEdit::CreatePolygon()
 {
-    ResetGUI();
+    if(m_CurrentSegButton!=ui->btnPolygon)
+    {
+        ResetGUI();
+
+        SetSecondaryWidgetsVisible(false);
+    }
+
+    int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+
+    RemoveContour(index);
+
+    LoftContourGroup();
 
     m_CurrentSegButton=ui->btnPolygon;
     m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
-    SetSecondaryWidgetsVisible(false);
-
-    svContour* contour=new svContourPolygon();
-    contour->SetClosed(false);
-    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
-    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
-
-    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-
-    mitk::OperationEvent::IncCurrObjectEventId();
-
-    m_ContourChanging=true;
-
-    InsertContourByPathPosPoint(contour);
+    m_DataInteractor->SetMethod("Polygon");
 }
 
 void svSeg2DEdit::SmoothSelected()
@@ -1002,42 +1009,54 @@ void svSeg2DEdit::DeleteSelected()
     LoftContourGroup();
 }
 
-void svSeg2DEdit::SelectItem(const QModelIndex & idx)
+void svSeg2DEdit::SelectContour(int index)
 {
-    int index=idx.row();
+    if(m_UpdatingGUI)
+        return;
 
     mitk::StatusBar::GetInstance()->DisplayText("");
 
-    if(m_ContourGroup)
+    if(m_ContourGroup && index>-1)
     {
-        if(m_ContourGroup->GetSelectedContourIndex()==-2 || !m_ContourGroup->IsContourSelected(index))
-        {
-            if(m_ContourGroup->GetSelectedContourIndex()!=-2)
-            {
-                m_ContourGroup->DeselectContours();
-            }
 
-            m_ContourGroup->SetContourSelected(index,true);
-            svContour* contour=m_ContourGroup->GetContour(index);
-            if(contour && contour->GetControlPointNumber()>1)
-            {
-                ui->resliceSlider->moveToPathPosPoint(contour->GetPathPosPoint());
+        m_ContourGroup->DeselectContours();
 
-                mitk::Point3D centerPoint=contour->GetCenterPoint();
-                QString info="Contour Geometry Info: Area="+QString::number(contour->GetArea())
-                        +", Perimeter="+QString::number(contour->GetPerimeter())
-                        +", Center Point=("+QString::number(centerPoint[0])+","+QString::number(centerPoint[1])+","+QString::number(centerPoint[2])+")";
-                mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
-            }
-        }
-        else
+        m_ContourGroup->SetContourSelected(index,true);
+        svContour* contour=m_ContourGroup->GetContour(index);
+        if(contour && contour->GetControlPointNumber()>1)
         {
-            m_ContourGroup->SetContourSelected(index,false);
+            ui->resliceSlider->moveToPathPosPoint(contour->GetPathPosPoint());
+
+            mitk::Point3D centerPoint=contour->GetCenterPoint();
+            QString info="Contour Geometry Info: Area="+QString::number(contour->GetArea())
+                    +", Perimeter="+QString::number(contour->GetPerimeter())
+                    +", Center Point=("+QString::number(centerPoint[0])+","+QString::number(centerPoint[1])+","+QString::number(centerPoint[2])+")";
+            mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
         }
 
         mitk::RenderingManager::GetInstance()->ForceImmediateUpdateAll();
     }
+}
 
+void svSeg2DEdit::SelectContour()
+{
+    if(m_UpdatingGUI)
+        return;
+
+    int index=-1;
+    QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
+    if(selectedRows.size()>0)
+    {
+        index=selectedRows.front().row();
+        SelectContour(index);
+    }
+
+}
+
+void svSeg2DEdit::SelectContour(const QModelIndex & idx)
+{
+    int index=idx.row();
+    SelectContour(index);
 }
 
 void svSeg2DEdit::NodeChanged(const mitk::DataNode* node)
@@ -1086,6 +1105,12 @@ void svSeg2DEdit::ClearAll()
         m_EndChangingContourObserverTag=-1;
     }
 
+    if(m_ContourGroup && m_SelectContourObserverTag!=-1)
+    {
+        m_ContourGroup->RemoveObserver(m_SelectContourObserverTag);
+        m_SelectContourObserverTag=-1;
+    }
+
     if(m_ContourGroupNode.IsNotNull())
     {
         m_ContourGroupNode->SetDataInteractor(NULL);
@@ -1110,6 +1135,8 @@ void svSeg2DEdit::UpdateContourList()
 
     int timeStep=GetTimeStep();
 
+    m_UpdatingGUI=true;
+
     ui->listWidget->clear();
 
     for(int index=0;index<m_ContourGroup->GetSize(timeStep);index++){
@@ -1130,6 +1157,7 @@ void svSeg2DEdit::UpdateContourList()
         ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::ClearAndSelect);
     }
 
+    m_UpdatingGUI=false;
 }
 
 void svSeg2DEdit::LoftContourGroup()
@@ -1639,6 +1667,14 @@ void svSeg2DEdit::UpdatePathPoint(int pos)
 
     if(m_DataInteractor.IsNotNull())
         m_DataInteractor->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+
+    if(m_ContourGroup)
+    {
+        int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+        if(index>-1)
+            ui->listWidget->setCurrentRow(index);
+    }
+
 }
 
 void svSeg2DEdit::QuitPreviewInteraction()
@@ -1664,4 +1700,50 @@ void svSeg2DEdit::QuitPreviewInteraction()
 
     m_PreviewDataNodeInteractor=NULL;
     m_PreviewContourModel=NULL;
+}
+
+bool svSeg2DEdit::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->listWidget) {
+        if (event->type() == QEvent::Wheel) {
+
+            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+            QPoint numDegrees = wheelEvent->angleDelta();
+
+            int row=-1;
+            QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
+            if(selectedRows.size()>0)
+                row=selectedRows.front().row();
+
+            int totalCount=ui->listWidget->count();
+
+            if(numDegrees.y()<-50)
+            {
+                if(row>-1 && row<totalCount-1)
+                    ui->listWidget->setCurrentRow(row+1);
+            }
+            else if(numDegrees.y()>50)
+            {
+                if(row>0 && row<totalCount)
+                    ui->listWidget->setCurrentRow(row-1);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return svSeg2DEdit::eventFilter(obj, event);
+    }
+}
+
+
+void svSeg2DEdit::SelectContour3D()
+{
+    if(m_DataInteractor.IsNotNull())
+    {
+        int index=m_DataInteractor->GetSelectedContourIndex();
+        if(index>-1)
+            ui->listWidget->setCurrentRow(index);
+    }
 }

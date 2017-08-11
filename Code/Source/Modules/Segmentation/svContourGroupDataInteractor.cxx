@@ -30,6 +30,7 @@ svContourGroupDataInteractor::svContourGroupDataInteractor()
     , m_Interaction3D(false)
     , m_Method("")
     , m_SubdivisionSpacing(0.1)
+    , m_SelectedContourIndex(-2)
 {
 }
 
@@ -47,6 +48,7 @@ void svContourGroupDataInteractor::ConnectActionsAndFunctions()
     CONNECT_CONDITION("contour_is_finished", ContourIsFinished);
     CONNECT_CONDITION("minimal_contour_is_finished", MinimalContourIsFinished);
     CONNECT_CONDITION("is_over_contour", IsOverContour);
+    CONNECT_CONDITION("is_over_contour2", IsOverContour2);
     CONNECT_CONDITION("is_over_point", IsOverPoint);
     CONNECT_CONDITION("method_is_specified", IsMethodSpecified);
 
@@ -69,6 +71,8 @@ void svContourGroupDataInteractor::ConnectActionsAndFunctions()
 
 bool svContourGroupDataInteractor::ContourExistsOnCurrentSlice( const mitk::InteractionEvent* interactionEvent )
 {
+    m_ContourIndex=-2;
+    m_Contour=NULL;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
     m_TimeStep = renderer->GetTimeStep();
@@ -82,16 +86,13 @@ bool svContourGroupDataInteractor::ContourExistsOnCurrentSlice( const mitk::Inte
         m_ContourIndex=group->SearchContourByPlane(rendererPlaneGeometry,1.0,m_TimeStep);
         m_Contour=group->GetContour(m_ContourIndex,m_TimeStep);
 
-    }else {
+    }else if(m_Interaction3D){
 
         m_ContourIndex=group->GetCurrentIndexOn2DView();
         m_Contour=group->GetContour(m_ContourIndex,m_TimeStep);
     }
 
-    if(m_Contour!=NULL)
-        return true;
-    else
-        false;
+    return m_Contour!=NULL;
 }
 
 bool svContourGroupDataInteractor::CurrentContourHasControlPoints( const mitk::InteractionEvent* interactionEvent )
@@ -116,15 +117,22 @@ bool svContourGroupDataInteractor::OnCurrentContourPlane( const mitk::Interactio
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
     if(m_Contour==NULL)
         return false;
+
     if(IsOn2DView(interactionEvent))
     {
        return m_Contour->IsOnPlane(renderer->GetCurrentWorldPlaneGeometry(),0.1);
-    }else{
-        svContourGroup* group = dynamic_cast<svContourGroup*>( GetDataNode()->GetData() );
-        if(group==NULL)
-            return false;
+    }
+    else
+    {
+        if(m_Interaction3D){
+            svContourGroup* group = dynamic_cast<svContourGroup*>( GetDataNode()->GetData() );
+            if(group==NULL)
+                return false;
 
-        return group->GetCurrentIndexOn2DView()!=-2;
+            return group->GetCurrentIndexOn2DView()!=-2;
+        }
+        else
+            return false;
     }
 }
 
@@ -133,6 +141,9 @@ bool svContourGroupDataInteractor::PointIsValid( const mitk::InteractionEvent* i
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
     if ( positionEvent == NULL )
         return false;
+
+    if(m_Contour==NULL)
+         return false;
 
     bool tooClose=false;
     mitk::Point3D point = positionEvent->GetPositionInWorld();
@@ -168,20 +179,26 @@ bool svContourGroupDataInteractor::PointIsValid( const mitk::InteractionEvent* i
     }
     else
     {
-        for( int i=0; i < m_Contour->GetControlPointNumber(); i++ )
+        if(m_Interaction3D)
         {
-            if ( i != m_Contour->GetControlPointSelectedIndex() )
+            for( int i=0; i < m_Contour->GetControlPointNumber(); i++ )
             {
-                mitk::Point3D previousPoint=m_Contour->GetControlPoint(i);
+                if ( i != m_Contour->GetControlPointSelectedIndex() )
+                {
+                    mitk::Point3D previousPoint=m_Contour->GetControlPoint(i);
 
-                double dis=point.EuclideanDistanceTo(previousPoint);
+                    double dis=point.EuclideanDistanceTo(previousPoint);
 
-                tooClose=dis<GetSelectionAccuracy();
+                    tooClose=dis<GetSelectionAccuracy();
 
-                if ( tooClose )
-                    return false;
+                    if ( tooClose )
+                        return false;
+                }
             }
         }
+        else
+            tooClose=true;
+
     }
 
     return !tooClose;
@@ -228,6 +245,45 @@ bool svContourGroupDataInteractor::IsOverContour( const mitk::InteractionEvent* 
                                                renderer );
 
     return nextContourPointIndex!=-2 && controlPointIndex==-2;
+}
+
+bool svContourGroupDataInteractor::IsOverContour2( const mitk::InteractionEvent* interactionEvent )
+{
+    m_SelectedContourIndex=-2;
+
+    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
+    if ( positionEvent == NULL )
+        return false;
+
+    mitk::BaseRenderer *renderer = interactionEvent->GetSender();
+
+    if(renderer->GetMapperID()==mitk::BaseRenderer::Standard2D)
+        return false;
+
+    int timeStep = renderer->GetTimeStep();
+    svContourGroup* group = dynamic_cast<svContourGroup*>( GetDataNode()->GetData() );
+    if(group==NULL)
+        return false;
+
+    for(int i=0;i<group->GetSize(timeStep);++i)
+    {
+        svContour* contour=group->GetContour(i,timeStep);
+        if(contour)
+        {
+            int nextContourPointIndex = SearchCoutourPoint3D(positionEvent
+                                                           , contour
+                                                           );
+            if(nextContourPointIndex!=-2)
+            {
+                m_SelectedContourIndex=i;
+                group->InvokeEvent( SelectContourEvent() );
+                return true;
+            }
+        }
+
+    }
+
+    return false;
 }
 
 bool svContourGroupDataInteractor::IsPointNearLine(
@@ -290,6 +346,42 @@ bool svContourGroupDataInteractor::IsPoint3DNearLine(
     return false;
 }
 
+int svContourGroupDataInteractor::SearchCoutourPoint3D(
+        const mitk::InteractionPositionEvent *positionEvent
+        , svContour *contour
+        ) const
+{
+    mitk::Point3D point3d = positionEvent->GetPositionInWorld();
+
+    mitk::Point3D contourPoint;
+    mitk::Point3D firstContourPoint;
+    mitk::Point3D previousContourPoint;
+
+    double selectionDistance=2*GetSelectionAccuracy();
+
+    bool firstPoint=true;
+    for(int i=0;i<contour->GetContourPointNumber();i++)
+    {
+        contourPoint=contour->GetContourPoint(i);
+        if ( firstPoint )
+        {
+            firstContourPoint = contourPoint;
+            firstPoint = false;
+        }
+        else if (IsPoint3DNearLine( point3d, previousContourPoint, contourPoint, selectionDistance ) )
+        {
+            return i;
+        }
+        previousContourPoint = contourPoint;
+    }
+
+    if(IsPoint3DNearLine( point3d, contourPoint, firstContourPoint,  selectionDistance ) )
+        return 0;
+
+    return -2;
+
+}
+
 int svContourGroupDataInteractor::SearchCoutourPoint(
         const mitk::InteractionPositionEvent *positionEvent
         , svContour *contour
@@ -330,36 +422,9 @@ int svContourGroupDataInteractor::SearchCoutourPoint(
             return 0;
         }
     }
-    else
+    else if(m_Interaction3D)
     {
-        mitk::Point3D point3d = positionEvent->GetPositionInWorld();
-
-        mitk::Point3D contourPoint;
-        mitk::Point3D firstContourPoint;
-        mitk::Point3D previousContourPoint;
-
-        double selectionDistance=2*GetSelectionAccuracy();
-
-        bool firstPoint=true;
-        for(int i=0;i<contour->GetContourPointNumber();i++)
-        {
-            contourPoint=contour->GetContourPoint(i);
-            if ( firstPoint )
-            {
-                firstContourPoint = contourPoint;
-                firstPoint = false;
-            }
-            else if (IsPoint3DNearLine( point3d, previousContourPoint, contourPoint, selectionDistance ) )
-            {
-                return i;
-            }
-            previousContourPoint = contourPoint;
-        }
-
-        if(IsPoint3DNearLine( point3d, contourPoint, firstContourPoint,  selectionDistance ) )
-        {
-            return 0;
-        }
+        return SearchCoutourPoint3D(positionEvent,contour);
     }
 
     return -2;
@@ -419,7 +484,7 @@ int svContourGroupDataInteractor::SearchControlPoint(
 
         }
     }
-    else
+    else  if(m_Interaction3D)
     {
         mitk::Point3D point3d = positionEvent->GetPositionInWorld();
 
@@ -484,7 +549,7 @@ bool svContourGroupDataInteractor::IsMethodSpecified( const mitk::InteractionEve
 {
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
     if (renderer && renderer->GetMapperID()==mitk::BaseRenderer::Standard2D)
-        return m_Method!="";
+        return m_Method=="Circle" || m_Method=="Ellipse" || m_Method=="SplinePolygon" || m_Method=="Polygon";
     else
         return false;
 }
@@ -507,6 +572,10 @@ void svContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mi
         m_Contour=new svContourCircle();
     else if(m_Method=="Ellipse")
         m_Contour=new svContourEllipse();
+    else if(m_Method=="SplinePolygon")
+        m_Contour=new svContourSplinePolygon();
+    else if(m_Method=="Polygon")
+        m_Contour=new svContourPolygon();
     else
         return;
 
@@ -906,13 +975,11 @@ void svContourGroupDataInteractor::SetMinimumPointDistance( mitk::ScalarType min
 
 bool svContourGroupDataInteractor::IsOn2DView(const mitk::InteractionEvent* interactionEvent) const
 {
-     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
-     if(m_Interaction3D)
-     {
-         return renderer->GetMapperID()==mitk::BaseRenderer::Standard2D;
-     }else{
-         return true;
-     }
+    mitk::BaseRenderer *renderer = interactionEvent->GetSender();
+    if(renderer)
+        return renderer->GetMapperID()==mitk::BaseRenderer::Standard2D;
+    else
+        return false;
 }
 
 void svContourGroupDataInteractor::SetInteraction3D(bool use3D)

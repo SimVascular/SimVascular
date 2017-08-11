@@ -80,7 +80,9 @@ public slots:
 
     void DeleteSelected();
 
-    void SelectItem(const QModelIndex & idx);
+    void SelectContour();
+
+    void SelectContour(const QModelIndex & idx);
 
     void ClearAll();
 
@@ -116,6 +118,8 @@ public slots:
 
     void ContourChangingOff();
 
+    void SelectContour3D();
+
     void ResetGUI();
 
     void UpdatePathResliceSize(double newSize);
@@ -149,6 +153,8 @@ public slots:
 
 public:
 
+    void SelectContour(int index);
+
     int GetTimeStep();
 
     virtual void CreateQtPartControl(QWidget *parent) override;
@@ -176,6 +182,8 @@ public:
     void QuitPreviewInteraction();
 
 protected:
+
+    bool eventFilter(QObject *obj, QEvent *ev);
 
     QWidget* m_Parent;
 
@@ -226,6 +234,8 @@ protected:
     long m_StartLoftContourGroupObserverTag2;
     long m_StartChangingContourObserverTag;
     long m_EndChangingContourObserverTag;
+    long m_SelectContourObserverTag;
+
 
     bool m_ContourChanging;
 
@@ -238,6 +248,8 @@ protected:
     svContour* m_CopyContour;
 
     svContourGroupCreate* m_ContourGroupCreateWidget;
+
+    bool m_UpdatingGUI;
 };
 
 #endif // SVSEG2DEDIT_H

@@ -280,7 +280,7 @@ void svContourGroup::SetContourSelected(int contourIndex, bool selected, unsigne
         {
             contour->SetSelected(selected);
             ContoursChanged(t);
-            this->InvokeEvent( svContourEvent() );
+//            this->InvokeEvent( svContourEvent() );
 
         }
     }
@@ -293,7 +293,7 @@ void svContourGroup::DeselectContours(unsigned int t)
         if(contour) contour->SetSelected(false);
     }
     ContoursChanged(t);
-    this->InvokeEvent( svContourEvent() );
+//    this->InvokeEvent( svContourEvent() );
 }
 
 int svContourGroup::GetSelectedContourIndex(unsigned int t)

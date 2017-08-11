@@ -39,6 +39,8 @@ public:
 
     double GetSubdivisionSpacing() {return m_SubdivisionSpacing;}
 
+    int GetSelectedContourIndex() {return m_SelectedContourIndex;}
+
 protected:
 
     svContourGroupDataInteractor();
@@ -64,6 +66,8 @@ public:
     bool MinimalContourIsFinished( const mitk::InteractionEvent* interactionEvent );
 
     bool IsOverContour( const mitk::InteractionEvent* interactionEvent );
+
+    bool IsOverContour2( const mitk::InteractionEvent* interactionEvent );
 
     bool IsOverPoint( const mitk::InteractionEvent* interactionEvent );
 
@@ -117,6 +121,11 @@ public:
             , mitk::BaseRenderer *renderer
             ) const;
 
+    int SearchCoutourPoint3D(
+            const mitk::InteractionPositionEvent *positionEvent
+            , svContour *contour
+            ) const;
+
     int SearchControlPoint(
             const mitk::InteractionPositionEvent* positionEvent,
             svContour* contour,
@@ -160,6 +169,8 @@ private:
     std::string m_Method;
 
     double m_SubdivisionSpacing;
+
+    int m_SelectedContourIndex;
 };
 
 itkEventMacro( StartPlacementContourEvent, svContourEvent );

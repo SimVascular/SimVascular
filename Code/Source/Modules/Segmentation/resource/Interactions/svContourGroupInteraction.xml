@@ -13,6 +13,10 @@
       <action name="add_initial_point" />
     </transition>
 
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="Start" >
+      <condition name="is_over_contour2" />
+    </transition>
+
   </state>
 
   <state name="ContourPlaced">

@@ -24,7 +24,7 @@ public:
 
     virtual void CreateContourPoints() override;
 
-    static svContour* CreateByFitting(svContour* contour, int divisionNumber = 20);
+    static svContour* CreateByFitting(svContour* contour, int divisionNumber = 12);
 
   protected:
 
