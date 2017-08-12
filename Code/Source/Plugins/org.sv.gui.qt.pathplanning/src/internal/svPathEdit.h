@@ -41,7 +41,9 @@ public slots:
 
     void ClearAll();
 
-    void SelectItem(const QModelIndex & idx);
+    void SelectPoint();
+
+    void SelectPoint(const QModelIndex & idx);
 
     void DeleteSelected();
 
@@ -62,6 +64,8 @@ public slots:
     void NewPath();
 
 public:
+
+    void SelectPoint(int index);
 
     int GetTimeStep();
 
@@ -92,11 +96,15 @@ public:
 
 protected:
 
+    bool eventFilter(QObject *obj, QEvent *ev);
+
     long m_PathChangeObserverTag;
 
     long m_PointMoveObserverTag;
 
     mitk::DataNode::Pointer m_PathNode;
+
+    mitk::DataNode::Pointer m_PathFolderNode;
 
     svPath* m_Path;
 
@@ -118,6 +126,8 @@ protected:
     mitk::DataNode::Pointer m_ImageNode;
 
     QmitkStdMultiWidget* m_DisplayWidget;
+
+    bool m_UpdatingGUI;
 
 };
 

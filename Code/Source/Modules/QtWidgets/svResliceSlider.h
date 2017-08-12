@@ -26,6 +26,8 @@ public:
 
     virtual ~svResliceSlider();
 
+    QmitkStepperAdapter* GetIntensityStepper() {return intensityStepper;}
+
 public slots:
 
     bool isResliceOn();
@@ -84,6 +86,8 @@ public slots:
 
 signals:
     void resliceSizeChanged(double newSize);
+
+    void reslicePositionChanged(int slice);
 
 protected:
 

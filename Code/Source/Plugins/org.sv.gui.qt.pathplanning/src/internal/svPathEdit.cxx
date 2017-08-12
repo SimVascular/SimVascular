@@ -19,6 +19,7 @@
 #include <QMessageBox>
 #include <QShortcut>
 #include <QInputDialog>
+#include <QWheelEvent>
 
 #include <iostream>
 using namespace std;
@@ -30,11 +31,13 @@ svPathEdit::svPathEdit():
     m_PathChangeObserverTag(-1),
     m_PathNode(NULL),
     m_Path(NULL),
+    m_PathFolderNode(NULL),
     m_DisplayWidget(NULL),
     m_SmoothWidget(NULL),
     m_PathCreateWidget(NULL),
     m_PathCreateWidget2(NULL),
-    m_ImageNode(NULL)
+    m_ImageNode(NULL),
+    m_UpdatingGUI(false)
 {
 }
 
@@ -86,18 +89,19 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->buttonAdd, SIGNAL(clicked()), this, SLOT(SmartAdd()) );
     connect(ui->buttonAddManually, SIGNAL(clicked()), this, SLOT(ManuallyAdd()) );
     connect(ui->buttonDelete, SIGNAL(clicked()), this, SLOT(DeleteSelected()) );
-    connect(ui->listWidget,SIGNAL(clicked(const QModelIndex&)), this, SLOT(SelectItem(const QModelIndex&)) );
+    connect(ui->listWidget,SIGNAL(itemSelectionChanged()), this, SLOT(SelectPoint()) );
+    connect(ui->listWidget,SIGNAL(clicked(const QModelIndex &)), this, SLOT(SelectPoint(const QModelIndex &)) );
 
     connect(ui->btnSmooth,SIGNAL(clicked()), this, SLOT(SmoothCurrentPath()) );
 
-    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+A"), parent);
-    connect(shortcut, SIGNAL(activated()), ui->buttonAdd, SLOT(click()));
+    ui->buttonAdd->setShortcut(QKeySequence("Ctrl+A"));
+    ui->buttonDelete->setShortcut(QKeySequence("Ctrl+D"));
 
     connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 
     connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
 
-    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    ui->listWidget->installEventFilter(this);
 }
 
 //void svPathEdit::Activated()
@@ -202,6 +206,11 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         }
     }
 
+    rs=GetDataStorage()->GetSources(m_PathNode);
+    m_PathFolderNode=NULL;
+    if(rs->size()>0)
+        m_PathFolderNode=rs->GetElement(0);
+
     m_Parent->setEnabled(true);
 
     ui->labelPathName->setText(QString::fromStdString(m_PathNode->GetName()));
@@ -292,6 +301,8 @@ void svPathEdit::UpdateGUI()
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
 
+    m_UpdatingGUI=true;
+
     //Update Path Point Number
     ui->labelPathPointNumber->setText(QString::number(pathElement->GetPathPointNumber()));
 
@@ -340,6 +351,8 @@ void svPathEdit::UpdateGUI()
         SetupResliceSlider();
         break;
     }
+
+    m_UpdatingGUI=false;
 
 }
 
@@ -621,45 +634,50 @@ void svPathEdit::DeleteSelected(){
     }
 }
 
-void svPathEdit::SelectItem(const QModelIndex & idx){
+void svPathEdit::SelectPoint(int index)
+{
+    if(m_UpdatingGUI)
+        return;
 
-    int index=idx.row();
-
-    if(m_Path)
+    if(m_Path && index>-1)
     {
         int timeStep=GetTimeStep();
         svPathElement* pathElement=m_Path->GetPathElement(timeStep);
         if(pathElement==NULL) return;
 
-        if(pathElement->GetControlPointSelectedIndex()==-2 || !pathElement->IsControlPointSelected(index))
+        pathElement->DeselectControlPoint();
+        pathElement->SetControlPointSelected(index,true);
+        m_Path->Modified();//make sure rendering update
+
+        if(ui->resliceSlider->isResliceOn())
         {
-            if(pathElement->GetControlPointSelectedIndex()!=-2)
-            {
-                pathElement->DeselectControlPoint();
-            }
-
-//            pathElement->SetControlPointSelected(index,true);
-            svPathOperation* doOp = new svPathOperation(svPathOperation::OpSELECTCONTROLPOINT,timeStep, index,true);
-            m_Path->ExecuteOperation(doOp);
-
-            if(ui->resliceSlider->isResliceOn())
-            {
-                ui->resliceSlider->moveToPathPosPoint(pathElement->GetControlPoint(index));
-            }
-            else
-            {
-                m_DisplayWidget->MoveCrossToPosition(pathElement->GetControlPoint(index));
-            }
+            ui->resliceSlider->moveToPathPosPoint(pathElement->GetControlPoint(index));
         }
         else
         {
-//            pathElement->SetControlPointSelected(index,false);
-            svPathOperation* doOp = new svPathOperation(svPathOperation::OpSELECTCONTROLPOINT,timeStep, index,false);
-            m_Path->ExecuteOperation(doOp);
+            m_DisplayWidget->MoveCrossToPosition(pathElement->GetControlPoint(index));
         }
 
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
+}
+
+void svPathEdit::SelectPoint()
+{
+    int index=-1;
+    QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
+    if(selectedRows.size()>0)
+    {
+        index=selectedRows.front().row();
+        SelectPoint(index);
+    }
+
+}
+
+void svPathEdit::SelectPoint(const QModelIndex & idx)
+{
+    int index=idx.row();
+    SelectPoint(index);
 }
 
 void svPathEdit::SmoothCurrentPath()
@@ -679,7 +697,13 @@ void svPathEdit::SmoothCurrentPath()
 void svPathEdit::UpdatePathResliceSize(double newSize)
 {
     if(m_Path)
+    {
         m_Path->SetResliceSize(newSize);
+        m_Path->SetDataModified();
+    }
+
+    if(m_PathFolderNode.IsNotNull())
+        m_PathFolderNode->SetFloatProperty("reslice size",newSize);
 }
 
 void svPathEdit::UpdateAddingMode(int mode)
@@ -710,4 +734,39 @@ void svPathEdit::NewPath()
 
     m_PathCreateWidget2->show();
     m_PathCreateWidget2->SetFocus();
+}
+
+bool svPathEdit::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->listWidget) {
+        if (event->type() == QEvent::Wheel) {
+
+            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+            QPoint numDegrees = wheelEvent->angleDelta();
+
+            int row=-1;
+            QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
+            if(selectedRows.size()>0)
+                row=selectedRows.front().row();
+
+            int totalCount=ui->listWidget->count();
+
+            if(numDegrees.y()<-50)
+            {
+                if(row>-1 && row<totalCount-1)
+                    ui->listWidget->setCurrentRow(row+1);
+            }
+            else if(numDegrees.y()>50)
+            {
+                if(row>0 && row<totalCount)
+                    ui->listWidget->setCurrentRow(row-1);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return svPathEdit::eventFilter(obj, event);
+    }
 }

@@ -352,14 +352,14 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                          <string/>
                         </property>
                         <property name="currentIndex">
-                         <number>0</number>
+                         <number>1</number>
                         </property>
                         <widget class="QWidget" name="page_2">
                          <property name="geometry">
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>153</width>
+                           <width>126</width>
                            <height>487</height>
                           </rect>
                          </property>
@@ -448,14 +448,14 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                                 <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                                </property>
                                <property name="currentIndex">
-                                <number>1</number>
+                                <number>0</number>
                                </property>
                                <widget class="QWidget" name="page_10">
                                 <property name="geometry">
                                  <rect>
                                   <x>0</x>
                                   <y>0</y>
-                                  <width>151</width>
+                                  <width>124</width>
                                   <height>329</height>
                                  </rect>
                                 </property>
@@ -562,12 +562,12 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                                  <rect>
                                   <x>0</x>
                                   <y>0</y>
-                                  <width>151</width>
+                                  <width>124</width>
                                   <height>329</height>
                                  </rect>
                                 </property>
                                 <property name="toolTip">
-                                 <string>Extract boundary faces using the specified separation angle.</string>
+                                 <string/>
                                 </property>
                                 <attribute name="label">
                                  <string>Extract</string>
@@ -637,6 +637,9 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                                  </item>
                                  <item>
                                   <widget class="QPushButton" name="btnExtractFaces">
+                                   <property name="toolTip">
+                                    <string>Extract boundary faces using the specified separation angle.</string>
+                                   </property>
                                    <property name="text">
                                     <string>Extract Faces</string>
                                    </property>
@@ -723,8 +726,8 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
-                               <height>128</height>
+                               <width>136</width>
+                               <height>235</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -806,8 +809,8 @@ Press key &quot;Delete&quot; to delete all the selected faces and cells.</string
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>92</width>
-                               <height>94</height>
+                               <width>136</width>
+                               <height>235</height>
                               </rect>
                              </property>
                              <property name="cursor">

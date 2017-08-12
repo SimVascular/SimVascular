@@ -113,6 +113,8 @@ public slots:
 
     void ShowCalculateFowsWidget(bool checked = false);
 
+    void ShowModel(bool checked = false);
+
 public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;

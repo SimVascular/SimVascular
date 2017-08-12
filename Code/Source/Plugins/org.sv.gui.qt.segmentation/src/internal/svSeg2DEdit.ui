@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>367</width>
-    <height>564</height>
+    <height>696</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,6 +77,60 @@
         </property>
         <property name="text">
          <string>New Group</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_4" native="true">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QLabel" name="labelPathName">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Path:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="checkBoxShowPath">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Show Path</string>
         </property>
        </widget>
       </item>
@@ -502,7 +556,8 @@
           <widget class="QPushButton" name="btnLevelSet">
            <property name="toolTip">
             <string>Click to show the levelset parameter panel.
-Click again to create a contour by levelset</string>
+Click again to create a contour by levelset.
+(Shortcut: Ctrl+L)</string>
            </property>
            <property name="text">
             <string>LevelSet</string>
@@ -517,10 +572,12 @@ Click again to create a contour by levelset</string>
            <property name="toolTip">
             <string>Click to show the threshold parameter panel.
 
-If &quot;Preset&quot; on, Click again to create a contour with a specified threshold value.
+Click again and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and hold the left moust button, move up/down, then release to finish a contour.
 
-If &quot;Preset&quot; off, Click again and the button becomes blue (active for interaction).
-Then, you need to move the cursor to a 2D view window, click and hold the left moust button, move up/down to create a contour.</string>
+If &quot;Preset&quot; on,  a contour is created with a specified threshold value, you click the button.
+
+(Shortcut: Ctrl+T)</string>
            </property>
            <property name="text">
             <string>Threshold</string>
@@ -569,7 +626,7 @@ Click and the button becomes blue (active for interaction).
 Then, you need to move the cursor to a 2D view window, click and move to create a contour.
 
 Manual method:
-Right click and manually provide center coordiantes and semi-axis length.</string>
+Right click and manually provide center coordiantes and semi-axis lengths.</string>
            </property>
            <property name="text">
             <string>Ellipse</string>
@@ -583,8 +640,8 @@ Right click and manually provide center coordiantes and semi-axis length.</strin
            </property>
            <property name="toolTip">
             <string>Interactive method:
-Click and the button becomes blue (active for interaction).
-Then, you need to move the cursor to a 2D view window, click and move to add control points.
+Click and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and move to add control points, double click or press &quot;F&quot; to finish.
 
 Manual method:
 Right click and manually provide coordiantes for control points.</string>
@@ -601,8 +658,8 @@ Right click and manually provide coordiantes for control points.</string>
            </property>
            <property name="toolTip">
             <string>Interactive method:
-Click and the button becomes blue (active for interaction).
-Then, you need to move the cursor to a 2D view window, click and move to add control points.
+Click and the button becomes blue (active for interaction). 
+Then, you need to move the cursor to a 2D view window, click and move to add control points, double click or press &quot;F&quot; to finish.
 
 Manual method:
 Right click and manually provide coordiantes for control points.</string>
@@ -639,7 +696,8 @@ Right click and manually provide coordiantes for control points.</string>
          <item>
           <widget class="QPushButton" name="btnCopy">
            <property name="toolTip">
-            <string>Copy the selected contour.</string>
+            <string>Copy the selected contour.
+(Shortcut: Ctrl+C)</string>
            </property>
            <property name="text">
             <string>Copy</string>
@@ -649,7 +707,8 @@ Right click and manually provide coordiantes for control points.</string>
          <item>
           <widget class="QPushButton" name="btnPaste">
            <property name="toolTip">
-            <string>Paste to the current location along the path.</string>
+            <string>Paste to the current location along the path.
+(Shortcut: Ctrl+V)</string>
            </property>
            <property name="text">
             <string>Paste</string>
@@ -667,6 +726,7 @@ Right click and manually provide coordiantes for control points.</string>
           <widget class="QPushButton" name="btnDelete">
            <property name="toolTip">
             <string>Delete the selected contour.
+(Shortcut: Ctrl+D)
 
 You can also move the cursor to a 2D view and click.
 Then, press key Delete to remove the shown contour.</string>
@@ -713,15 +773,15 @@ Then, press key Delete to remove the shown contour.</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>svResliceSlider</class>
    <extends>QWidget</extends>
    <header location="global">svResliceSlider.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
