@@ -52,7 +52,6 @@ add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-	${PARASOLID_LIBRARIES} ${TETGEN_LIBRARY}
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME}
   )
 if(SV_USE_PYTHON)
