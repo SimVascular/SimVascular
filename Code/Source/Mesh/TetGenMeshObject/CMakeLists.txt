@@ -54,7 +54,6 @@ endif()
 target_link_libraries(${lib}
    ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
    ${OPTLIBS}
-   ${PARASOLID_LIBRARIES}
    ${TETGEN_LIBRARY}
    ${ZLIB_LIBRARY}
    ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
