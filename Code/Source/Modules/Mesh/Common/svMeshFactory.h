@@ -3,7 +3,7 @@
 
 #include <svMeshExports.h>
 
-#include "svMesh.h";
+#include "svMesh.h"
 #include "svMeshAdaptor.h"
 #include <map>
 
