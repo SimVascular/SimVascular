@@ -121,8 +121,8 @@ endif
 	-chmod -R a+rwx package-release-meshsim-and-parasolid
 	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_meshsim*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*meshsim*.$(SOEXT)* package-release-meshsim-and-parasolid
 ifeq ($(SV_USE_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
@@ -214,8 +214,8 @@ ifeq ($(SV_USE_PYTHON),1)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_python_interp*.$(SOEXT)* $(DIST_DIR)
 endif
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_*.$(SOEXT)* $(DIST_DIR)
-	-rm -f $(DIST_DIR)/*simvascular_parasolid*.$(SOEXT)*
-	-rm -f $(DIST_DIR)/*simvascular_meshsim*.$(SOEXT)*
+	-rm -f $(DIST_DIR)/*parasolid*.$(SOEXT)*
+	-rm -f $(DIST_DIR)/*meshsim*.$(SOEXT)*
 	-cp -fR $(TOP)/Bin/plugins $(DIST_DIR)
 
 copy-sv-tcl-code:
