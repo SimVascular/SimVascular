@@ -1,14 +1,14 @@
 #ifndef SVMESHSIMADAPTOR_H
 #define SVMESHSIMADAPTOR_H
 
-#include <svMeshExports.h>
+#include <svMeshSimExports.h>
 
 #include "svMeshAdaptor.h"
 #include "svMeshSim.h"
 
 #include <cvMeshSimAdapt.h>
 
-class SVMESH_EXPORT svMeshSimAdaptor : public svMeshAdaptor
+class SVMESHSIM_EXPORT svMeshSimAdaptor : public svMeshAdaptor
 {
 
 public:

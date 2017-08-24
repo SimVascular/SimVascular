@@ -260,8 +260,8 @@ endif
 #   Release version numbers for SimVascular
 # -------------------------------------------
 
-SV_MAJOR_VER_NO = "17.04"
-SV_FULL_VER_NO = "17.04.10"
+SV_MAJOR_VER_NO = "17.08"
+SV_FULL_VER_NO = "17.08.21"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 

@@ -41,56 +41,32 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            $(VMTK_INCDIR) \
 	   $(SV_MMG_INCDIR) \
-           $(MESHSIM_INCDIR) \
            $(PARASOLID_INCDIR)
 
 ifeq ($(SV_USE_OPENCASCADE),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 
-MODULE_NAME = svModel
-MODULE_NAME_ALL_CAPS = SVMODEL
+MODULE_NAME = svModelParasolid
+MODULE_NAME_ALL_CAPS = SVMODELPARASOLID
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svModelUtils.h \
-    svModelElement.h \
-    svModelElementPolyData.h \
-    svModelElementAnalytic.h \
-    svModelElementFactory.h \
-    svModelOperation.h \
-    svModel.h \
-    svModelVtkMapper2D.h \
-    svModelVtkMapper3D.h \
-    svModelDataInteractor.h \
-    svModelIO.h \
-    svModelLegacyIO.h \
-    svModelObjectFactory.h
+    svModelUtilsParasolid.h \
+    svModelElementParasolid.h
 
 CXXSRCS	= \
-    svModelUtils.cxx \
-    svModelElement.cxx \
-    svModelElementPolyData.cxx \
-    svModelElementAnalytic.cxx \
-    svModelElementFactory.cxx \
-    svModelOperation.cxx \
-    svModel.cxx \
-    svModelVtkMapper2D.cxx \
-    svModelVtkMapper3D.cxx \
-    svModelDataInteractor.cxx \
-    svModelIO.cxx \
-    svModelLegacyIO.cxx \
-    svModelObjectFactory.cxx \
-    svRegisterPolyDataFunction.cxx
+    svModelUtilsParasolid.cxx \
+    svModelElementParasolid.cxx \
+    svRegisterParasolidFunction.cxx
 
 CXXSRCS += us_init.cxx
 
 UIFILES =
 
-SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
-RCFILES = resource/Interactions/svModelInteraction.xml \
-          resource/Interactions/svModelConfig.xml
+#SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
+RCFILES =
 
 QRCFILES =
 
@@ -113,6 +89,7 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
@@ -124,17 +101,14 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-ifeq ($(SV_USE_OPENCASCADE),1)
-    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
-endif
-
-ifeq ($(SV_USE_OPENCASCADE),1)
-    DLLLIBS += $(OPENCASCADE_LIBS)
+ifeq ($(SV_USE_PARASOLID),1)
+    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_PARASOLID_SOLID_NAME)$(LIBLINKEXT)
+    DLLLIBS += $(PARASOLID_LIBS)
 endif
 
 ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VMTK_UTILS_NAME)$(LIBLINKEXT)
-	DLLLIBS += $(VMTK_LIBS)
+	DLLLIBS += $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_VMTK_NAME)$(LIBLINKEXT)
 	DLLLIBS += $(SV_MMG_LIBS)
 endif
 
@@ -142,6 +116,6 @@ ifeq ($(SV_USE_MMG),1)
 	DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT)
 endif
 
-TARGET_LIB_NAME = $(SV_LIB_MODULE_MODEL_NAME)
+TARGET_LIB_NAME = $(SV_LIB_MODULE_MODEL_PARASOLID_NAME)
 
 include $(TOP)/targetlib.mk
