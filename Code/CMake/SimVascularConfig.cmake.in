@@ -33,33 +33,42 @@ if(SimVascular_ALREADY_INCLUDED)
 endif()
 set(SimVascular_ALREADY_INCLUDED 1)
 
+#-----------------------------------------------------------------------------
+# Versioning
+set(SimVascular_VERSION       "@SV_FULL_VERSION@")
+set(SimVascular_MAJOR_VERSION "@SV_MAJOR_VERSION@")
+set(SimVascular_MINOR_VERSION "@SV_MINOR_VERSION@")
+set(SimVascular_PATCH_VERSION "@SV_PATCH_VERSION@")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Compute the installation prefix from SimVascularConfig.cmake file
-get_filename_component (SimVascular_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
-get_filename_component (SimVascular_INSTALL_PREFIX "${SimVascular_INSTALL_PREFIX}" PATH)
-#-----------------------------------------------------------------------------
+get_filename_component(SimVascular_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
+set(SimVascular_TOPLEVEL_DIR "${SimVascular_CMAKE_DIR}")
 
-#-----------------------------------------------------------------------------
-# Versioning
-set(SimVascular_VERSION       "@SV_VERSION")
-set(SimVascular_MAJOR_VERSION "@SV_MAJOR_VERSION")
-set(SimVascular_MINOR_VERSION "@SV_MINOR_VERSION")
-set(SimVascular_PATCH_VERSION "@SV_PATCH_VERSION")
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Paths for headers, binaries, libraries
-set(SimVascular_RUNTIME_DIR "${SimVascular_INSTALL_PREFIX}/@SV_INSTALL_RUNTIME_DIR@")
-set(SimVascular_LIBRARY_DIR "${SimVascular_INSTALL_PREFIX}/@SV_INSTALL_LIBRARY_DIR@")
-set(SimVascular_INCLUDE_DIR "${SimVascular_INSTALL_PREFIX}/@SV_INSTALL_INCLUDE_DIR@")
-set(SimVascular_ARCHIVE_DIR "${SimVascular_INSTALL_PREFIX}/@SV_INSTALL_ARCHIVE_DIR@")
+get_filename_component(TEST_DIR_0 "${SimVascular_TOPLEVEL_DIR}" DIRECTORY)
+get_filename_component(TEST_NAME_0 "${TEST_DIR_0}" NAME)
+if ("${TEST_NAME_0}" STREQUAL "cmake")
+  get_filename_component(TEST_DIR_1 "${TEST_DIR_0}" DIRECTORY)
+  get_filename_component(TEST_NAME_1 "${TEST_DIR_1}" NAME)
+  if ("${TEST_NAME_1}" STREQUAL "Lib")
+    get_filename_component(SimVascular_TOPLEVEL_DIR "${TEST_DIR_1}" DIRECTORY)
+  endif()
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Paths for headers, binaries, libraries
-set(SimVascular_C_FLAGS   "@CMAKE_C_FLAGS")
-set(SimVascular_CXX_FLAGS "@CMAKE_CXX_FLAGS")
+set(SimVascular_RUNTIME_DIR "${SimVascular_TOPLEVEL_DIR}/@SV_INSTALL_RUNTIME_DIR@")
+set(SimVascular_LIBRARY_DIR "${SimVascular_TOPLEVEL_DIR}/@SV_INSTALL_LIBRARY_DIR@")
+set(SimVascular_INCLUDE_DIR "${SimVascular_TOPLEVEL_DIR}/@SV_INSTALL_INCLUDE_DIR@")
+set(SimVascular_ARCHIVE_DIR "${SimVascular_TOPLEVEL_DIR}/@SV_INSTALL_ARCHIVE_DIR@")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Paths for headers, binaries, libraries
+set(SimVascular_C_FLAGS   "@CMAKE_C_FLAGS@")
+set(SimVascular_CXX_FLAGS "@CMAKE_CXX_FLAGS@")
 
 #TODOD ADD LINKER FLAGSSS
 #-----------------------------------------------------------------------------
@@ -67,4 +76,19 @@ set(SimVascular_CXX_FLAGS "@CMAKE_CXX_FLAGS")
 #-----------------------------------------------------------------------------
 # Set all available libraries
 set(SimVascular_LIBRARIES "@SV_USED_LIBS@")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Set all header locations
+set(CONF_INCLUDE_DIRS "@SV_CONF_INCLUDE_DIRS@")
+if("${CONF_INCLUDE_DIRS}" STREQUAL "")
+  set(SimVascular_INCLUDE_DIRS
+    "${SimVascular_INCLUDE_DIR}/core"
+    "${SimVascular_INCLUDE_DIR}/thirdparty/solverio"
+    "${SimVascular_INCLUDE_DIR}/thirdparty/tetgen"
+    "${SimVascular_INCLUDE_DIR}/thirdparty/vmtk"
+    "${SimVascular_INCLUDE_DIR}/thirdparty/zlib")
+else()
+  set(SimVascular_INCLUDE_DIRS "${CONF_INCLUDE_DIRS}")
+endif()
 #-----------------------------------------------------------------------------

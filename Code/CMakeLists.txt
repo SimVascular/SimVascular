@@ -468,30 +468,50 @@ export(PACKAGE SimVascular)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Set relative path from camke dir to include dir
+file(RELATIVE_PATH SV_REL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_CMAKE_DIR}" "${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_INCLUDE_DIR}")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # BUILD TREE
 # SimVascular Configure file
-configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" @ONLY)
-# TODO NEED TO SET INSTALL LOCATION
-install(FILES "${CMAKE_BINARY_DIR}/SimVascularConfig.cmake" DESTINATION "TODO SET INSTALLL LOCATITOTN")
-
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# BUILD TREE
-# SimVascular Version Configure file
+# TODO NEED TO IMPROVE INCLUDE DIRS!!!
+set(SV_CONF_INCLUDE_DIRS "")
+foreach(dir ${SV_CORE_LIBRARY_DIRS})
+  list(APPEND SV_CONF_INCLUDE_DIRS ${dir})
+endforeach()
+foreach(dir ${SV_MODULE_DIRS})
+  list(APPEND SV_CONF_INCLUDE_DIRS ${dir})
+endforeach()
+foreach(dir ${SV_PLUGIN_DIRS})
+  list(APPEND SV_CONF_INCLUDE_DIRS ${dir})
+endforeach()
+configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" "${SV_BINARY_DIR}/SimVascularConfig.cmake" @ONLY)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # INSTALL TREE
 # SimVascular Configure file
-configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" @ONLY)
-# TODO NEED TO SET INSTALL LOCATION
-install(FILES "${CMAKE_BINARY_DIR}/SimVascularConfig.cmake" DESTINATION "TODO SET INSTALLL LOCATITOTN")
-
+set(SV_CONF_INCLUDE_DIRS "")
+configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" "${SV_BINARY_DIR}/tmp/SimVascularConfig.cmake" @ONLY)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# INSTALL TREE
+# VERSION
+configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfigVersion.cmake.in"
+  "${SV_BINARY_DIR}/SimVascularConfigVersion.cmake" @ONLY)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# INSTALL
 # SimVascular Version Configure file
-#-----------------------------------------------------------------------------
+# Install the FooBarConfig.cmake and FooBarConfigVersion.cmake
+install(FILES
+  "${SV_BINARY_DIR}/tmp/SimVascularConfig.cmake"
+  "${SV_BINARY_DIR}/SimVascularConfigVersion.cmake"
+  DESTINATION "${SV_INSTALL_CMAKE_DIR}" COMPONENT CMake)
 
+## Install the export set for use with the install-tree
+#install(EXPORT SimVascularTargets DESTINATION
+#  "${SV_INSTALL_CMAKE_DIR}" COMPONENT CMake)
+#-----------------------------------------------------------------------------

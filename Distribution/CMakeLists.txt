@@ -56,9 +56,7 @@ endif()
 option(SV_USE_MSMPI "Use MSMPI" OFF)
 
 set(opensource_components CoreExecutables CoreLibraries CoreHeaders CoreScripts CoreFiles
-	PluginExecutables PluginLibraries PluginHeaders
-	ModuleExecutables ModuleLibraries
-	ExternalExecutables ExternalLibraries
+	ThirdPartyExecutables ThirdPartyLibraries ThirdPartyHeaders
 	Unspecified
     )
 
