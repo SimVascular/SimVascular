@@ -1,0 +1,70 @@
+# Copyright (c) 2014-2015 The Regents of the University of California.
+# All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject
+# to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#-----------------------------------------------------------------------------
+# Config to use SimVascular using find_package
+#-----------------------------------------------------------------------------
+
+if(SimVascular_ALREADY_INCLUDED)
+  return()
+endif()
+set(SimVascular_ALREADY_INCLUDED 1)
+
+
+#-----------------------------------------------------------------------------
+# Compute the installation prefix from SimVascularConfig.cmake file
+get_filename_component (SimVascular_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component (SimVascular_INSTALL_PREFIX "${SimVascular_INSTALL_PREFIX}" PATH)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Versioning
+set(SimVascular_VERSION       "@SV_VERSION")
+set(SimVascular_MAJOR_VERSION "@SV_MAJOR_VERSION")
+set(SimVascular_MINOR_VERSION "@SV_MINOR_VERSION")
+set(SimVascular_PATCH_VERSION "@SV_PATCH_VERSION")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Paths for headers, binaries, libraries
+set(SimVascular_RUNTIME_DIR "${SimVascular_INSTALL_PREFIX}/@SV_INSTALL_RUNTIME_DIR@")
+set(SimVascular_LIBRARY_DIR "${SimVascular_INSTALL_PREFIX}/@SV_INSTALL_LIBRARY_DIR@")
+set(SimVascular_INCLUDE_DIR "${SimVascular_INSTALL_PREFIX}/@SV_INSTALL_INCLUDE_DIR@")
+set(SimVascular_ARCHIVE_DIR "${SimVascular_INSTALL_PREFIX}/@SV_INSTALL_ARCHIVE_DIR@")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Paths for headers, binaries, libraries
+set(SimVascular_C_FLAGS   "@CMAKE_C_FLAGS")
+set(SimVascular_CXX_FLAGS "@CMAKE_CXX_FLAGS")
+
+#TODOD ADD LINKER FLAGSSS
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Set all available libraries
+set(SimVascular_LIBRARIES "@SV_USED_LIBS@")
+#-----------------------------------------------------------------------------

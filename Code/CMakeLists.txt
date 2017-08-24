@@ -436,6 +436,7 @@ foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
         message(STATUS "	${dir}")
         add_subdirectory("${dir}")
 endforeach()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
@@ -444,3 +445,53 @@ if(SV_USE_QT_GUI)
 endif()
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Get used lib names
+set(SV_USED_LIBS )
+foreach(lib ${SV_LIB_NAMES})
+  if(TARGET ${lib})
+    get_target_property(${lib}_TYPE ${lib} "TYPE")
+    if("${${lib}_TYPE}" STREQUAL "STATIC_LIBRARY" OR "${${lib}_TYPE}" STREQUAL "SHARED_LIBRARY")
+      list(APPEND SV_USED_LIBS "${lib}")
+    endif()
+  endif()
+endforeach()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Export all targets
+export(TARGETS ${SV_USED_LIBS} FILE "${CMAKE_BINARY_DIR}/SimVascularTargets.cmake")
+
+export(PACKAGE SimVascular)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# BUILD TREE
+# SimVascular Configure file
+configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" @ONLY)
+# TODO NEED TO SET INSTALL LOCATION
+install(FILES "${CMAKE_BINARY_DIR}/SimVascularConfig.cmake" DESTINATION "TODO SET INSTALLL LOCATITOTN")
+
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# BUILD TREE
+# SimVascular Version Configure file
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# INSTALL TREE
+# SimVascular Configure file
+configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" @ONLY)
+# TODO NEED TO SET INSTALL LOCATION
+install(FILES "${CMAKE_BINARY_DIR}/SimVascularConfig.cmake" DESTINATION "TODO SET INSTALLL LOCATITOTN")
+
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# INSTALL TREE
+# SimVascular Version Configure file
+#-----------------------------------------------------------------------------
+
