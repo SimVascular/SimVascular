@@ -56,7 +56,8 @@ endif()
 option(SV_USE_MSMPI "Use MSMPI" OFF)
 
 set(opensource_components CoreExecutables CoreLibraries CoreHeaders CoreScripts CoreFiles
-	ThirdPartyExecutables ThirdPartyLibraries ThirdPartyHeaders
+  ThirdPartyExecutables ThirdPartyLibraries ThirdPartyHeaders ExternalExecutables ExternalLibraries
+  ExternalHeaders CMake
 	Unspecified
     )
 

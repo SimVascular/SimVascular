@@ -45,15 +45,22 @@ set(SimVascular_PATCH_VERSION "@SV_PATCH_VERSION@")
 # Compute the installation prefix from SimVascularConfig.cmake file
 get_filename_component(SimVascular_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
 set(SimVascular_TOPLEVEL_DIR "${SimVascular_CMAKE_DIR}")
+get_filename_component(SimVascular_CODE_DIR "${SimVascular_TOPLEVEL_DIR}" DIRECTORY)
 
 get_filename_component(TEST_DIR_0 "${SimVascular_TOPLEVEL_DIR}" DIRECTORY)
 get_filename_component(TEST_NAME_0 "${TEST_DIR_0}" NAME)
 if ("${TEST_NAME_0}" STREQUAL "cmake")
+  set(SimVascular_EXTERNALS_DIR "${SimVascular_CMAKE_DIR}/Externals")
+  set(SimVascular_EXTERNALS_CMAKE_DIR "${SimVascular_CMAKE_DIR}/Externals/CMakeExternals")
   get_filename_component(TEST_DIR_1 "${TEST_DIR_0}" DIRECTORY)
   get_filename_component(TEST_NAME_1 "${TEST_DIR_1}" NAME)
-  if ("${TEST_NAME_1}" STREQUAL "Lib")
+  if ("${TEST_NAME_1}" STREQUAL "lib")
     get_filename_component(SimVascular_TOPLEVEL_DIR "${TEST_DIR_1}" DIRECTORY)
   endif()
+else()
+  set(SimVascular_CMAKE_DIR "${SimVascular_CODE_DIR}/CMake")
+  set(SimVascular_EXTERNALS_DIR "${SimVascular_CODE_DIR}/../Externals")
+  set(SimVascular_EXTERNALS_CMAKE_DIR "${SimVascular_CODE_DIR}/../Externals/CMakeExternals")
 endif()
 #-----------------------------------------------------------------------------
 
@@ -75,12 +82,17 @@ set(SimVascular_CXX_FLAGS "@CMAKE_CXX_FLAGS@")
 
 #-----------------------------------------------------------------------------
 # Set all available libraries
-set(SimVascular_LIBRARIES "@SV_USED_LIBS@")
+set(CONF_USED_LIBS "@SV_CONF_USED_LIBS@")
+set(SimVascular_LIBRARIES "")
+foreach(lib ${CONF_USED_LIBS})
+  list(APPEND SimVascular_LIBRARIES "${SimVascular_LIBRARY_DIR}/${lib}")
+endforeach()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Set all header locations
 set(CONF_INCLUDE_DIRS "@SV_CONF_INCLUDE_DIRS@")
+set(SimVascular_INCLUDE_DIRS "")
 if("${CONF_INCLUDE_DIRS}" STREQUAL "")
   set(SimVascular_INCLUDE_DIRS
     "${SimVascular_INCLUDE_DIR}/core"
@@ -89,6 +101,14 @@ if("${CONF_INCLUDE_DIRS}" STREQUAL "")
     "${SimVascular_INCLUDE_DIR}/thirdparty/vmtk"
     "${SimVascular_INCLUDE_DIR}/thirdparty/zlib")
 else()
-  set(SimVascular_INCLUDE_DIRS "${CONF_INCLUDE_DIRS}")
+  foreach(dir ${CONF_INCLUDE_DIRS})
+    list(APPEND SimVascular_INCLUDE_DIRS "${SimVascular_CODE_DIR}/${dir}")
+    list(APPEND SimVascular_INCLUDE_DIRS "${SimVascular_TOPLEVEL_DIR}/${dir}")
+  endforeach()
 endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Now for externals
+set(SimVascular_USE_EXTERNALS_FILE "${SimVascular_CMAKE_DIR}/SimVascularUseExternals.cmake")
 #-----------------------------------------------------------------------------

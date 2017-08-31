@@ -90,7 +90,7 @@ if(WIN32)
 elseif(LINUX)
   set(SV_Qt5_search_paths /opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5
                           /usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5)
-  elseif(APPLE)
+elseif(APPLE)
   set(SV_Qt5_search_paths /usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5
                           /opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5)
 endif()

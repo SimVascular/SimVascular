@@ -1,3 +1,3 @@
 set SV_RELEASED_MODE=@RELEASE_MODE@
 
-"%SV_HOME%\Bin\@SV_EXE@@WIN_EXE@" "%SV_HOME%\Tcl\SimVascular_2.0\simvascular_startup.tcl" %*
+"%SV_HOME%\bin\@SV_EXE@@WIN_EXE@" "%SV_HOME%\Tcl\SimVascular_2.0\simvascular_startup.tcl" %*

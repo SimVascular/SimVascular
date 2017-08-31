@@ -1077,22 +1077,30 @@ endmacro()
 function(simvascular_install_external project_name)
 
   if(${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION)
-    set(LIB_DESTINATION "${SV_EXTERNALS_INSTALL_PREFIX}")
+    set(INSTALL_DESTINATION "${SV_EXTERNALS_INSTALL_PREFIX}")
   else()
-    set(LIB_DESTINATION "${SV_EXTERNALS_${proj}_INSTALL_PREFIX}")
+    set(INSTALL_DESTINATION "${SV_EXTERNALS_${proj}_INSTALL_PREFIX}")
   endif()
   if(EXISTS ${SV_${proj}_DIR})
     if(EXISTS ${SV_${proj}_DIR}/lib)
-      install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${LIB_DESTINATION}
+      install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${INSTALL_DESTINATION}
         USE_SOURCE_PERMISSIONS
         COMPONENT ExternalLibraries)
     endif()
     if(EXISTS ${SV_${proj}_DIR}/bin)
-      install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION}
+      install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${INSTALL_DESTINATION}
         USE_SOURCE_PERMISSIONS
         COMPONENT ExternalExecutables
         PATTERN "designer" EXCLUDE
         )
+    endif()
+    if(SV_EXTERNALS_INSTALL_HEADERS)
+      if(EXISTS ${SV_${proj}_DIR}/include)
+        install(DIRECTORY ${SV_${proj}_DIR}/include DESTINATION ${INSTALL_DESTINATION}
+          USE_SOURCE_PERMISSIONS
+          COMPONENT ExternalHeaders
+          )
+      endif()
     endif()
   endif()
 
@@ -1199,12 +1207,14 @@ endmacro()
 
 #-----------------------------------------------------------------------------
 macro(simvascular_property_list_find_and_replace TARGET PROPERTY VALUE NEWVALUE)
-  get_target_property(_LIST_VAR ${TARGET} ${PROPERTY})
-  if("${_LIST_VAR}" STREQUAL "_LIST_VAR-NOTFOUND")
-    dev_message("Property list find and replace, property ${PROPERTY} not found")
-  else()
-    simvascular_list_find_and_replace(_LIST_VAR "${VALUE}" ${NEWVALUE})
-    set_target_properties(${TARGET} PROPERTIES ${PROPERTY} "${_LIST_VAR}")
+  if(TARGET ${TARGET})
+    get_target_property(_LIST_VAR ${TARGET} ${PROPERTY})
+    if("${_LIST_VAR}" STREQUAL "_LIST_VAR-NOTFOUND")
+      dev_message("Property list find and replace, property ${PROPERTY} not found")
+    else()
+      simvascular_list_find_and_replace(_LIST_VAR "${VALUE}" ${NEWVALUE})
+      set_target_properties(${TARGET} PROPERTIES ${PROPERTY} "${_LIST_VAR}")
+    endif()
   endif()
 endmacro()
 #-----------------------------------------------------------------------------
