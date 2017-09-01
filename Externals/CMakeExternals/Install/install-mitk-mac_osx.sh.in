@@ -1,7 +1,7 @@
-GCP=/opt/local/libexec/gnubin/cp
-GDIRNAME=/opt/local/libexec/gnubin/dirname
-GBASENAME=/opt/local/libexec/gnubin/basename
-GMKDIR=/opt/local/libexec/gnubin/mkdir
+GCP=/usr/local/bin/gcp
+GDIRNAME=/usr/local/bin/gdirname
+GBASENAME=/usr/local/bin/gbasename
+GMKDIR=/usr/local/bin/gmkdir
 
 # paths
 
