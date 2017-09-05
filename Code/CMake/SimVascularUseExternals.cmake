@@ -126,7 +126,7 @@ endif()
 ##-----------------------------------------------------------------------------
 ## Externals!
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
-#list(APPEND SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH})
+list(APPEND SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS -DCMAKE_MODULE_PATH:PATH="${CMAKE_MODULE_PATH}")
 execute_process(COMMAND bash "-c"
   "${CMAKE_COMMAND} \
   -B${CMAKE_CURRENT_BINARY_DIR}/Externals-build \

@@ -287,7 +287,7 @@ set_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}/p
 if(SV_ENABLE_DISTRIBUTION)
   append_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/plugins" install_script_string)
   else()
-    append_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_INSTALL_MITK_LIBRARY_DIR}" install_script_string)
+    append_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_INSTALL_MITK_LIBRARY_DIR}/plugins" install_script_string)
 endif()
 
 set_env_string_concat(SV_PLUGIN_PATH "${CMAKE_BINARY_DIR}/lib/plugins" developer_script_string)

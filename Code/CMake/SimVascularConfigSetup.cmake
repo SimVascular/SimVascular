@@ -102,12 +102,8 @@ install(FILES
 
 #-----------------------------------------------------------------------------
 # INSTALL CMake stuff
-file(GLOB SV_CMAKE_FILES "${SV_SOURCE_DIR}/CMake/*.cmake")
-
-install(FILES ${SV_CMAKE_FILES}
+install(DIRECTORY "${SV_SOURCE_DIR}/CMake"
   DESTINATION "${SV_INSTALL_CMAKE_DIR}" COMPONENT CMake)
-
-file(GLOB SV_EXTERNALS_CMAKE_FILES "${SV_SOURCE_DIR}/../Externals/CMakeExternals/*.cmake")
 
 install(DIRECTORY "${SV_SOURCE_DIR}/../Externals/CMakeExternals"
   DESTINATION "${SV_INSTALL_CMAKE_DIR}/Externals" COMPONENT CMake)
