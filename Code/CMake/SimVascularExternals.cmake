@@ -32,7 +32,7 @@
 # pre-built libs and bins
 if(SV_USE_QT_GUI)
   # Qt5 modules to load
-  set(SV_QT5_COMPONENTS
+  set(SV_Qt5_COMPONENTS
     Concurrent
     Core
     Designer
@@ -52,7 +52,7 @@ if(SV_USE_QT_GUI)
   # Prefix path helper if needed
   set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
   # Find Qt
-  simvascular_external(Qt5 COMPONENTS ${SV_QT5_COMPONENTS} REQUIRED)
+  simvascular_external(Qt5 COMPONENTS ${SV_Qt5_COMPONENTS} REQUIRED)
   # Get toplevel Qt dir from location of config file
   if(Qt5_DIR)
     get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
@@ -65,7 +65,7 @@ if(SV_USE_QT_GUI)
   if(NOT SV_USE_MITK_CONFIG)
     set(QT_LIBRARIES "")
     set(QT_INCLUDE_DIRS "")
-    foreach(comp ${SV_QT5_COMPONENTS})
+    foreach(comp ${SV_Qt5_COMPONENTS})
       if(Qt5${comp}_LIBRARIES)
         set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${comp}_LIBRARIES})
       endif()

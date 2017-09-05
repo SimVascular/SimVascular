@@ -1043,7 +1043,7 @@ function(simvascular_create_provisioning_file)
       endif()
 
       set(plugin_url "${file_url}${_plugin_location}/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
-      set(plugin_url_install "${file_url}@EXECUTABLE_DIR/../Lib/plugins/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+      set(plugin_url_install "${file_url}@EXECUTABLE_DIR/../lib/plugins/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
       set(out_var "${out_var}START ${plugin_url}\n")
       set(out_var_install "${out_var_install}START ${plugin_url_install}\n")

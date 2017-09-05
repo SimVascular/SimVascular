@@ -274,6 +274,31 @@ append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin/R
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
+# These are the locations of the simvascular plugins
+if(WIN32)
+  set(developer_script_string "${developer_script_string}\nREM SimVascular plugin locations\n")
+  set(install_script_string "${install_script_string}\nREM SimVascular plugin locations\n")
+else()
+  set(developer_script_string "${developer_script_string}\n# SimVascular plugin locations\n")
+  set(install_script_string "${install_script_string}\n# SimVascular plugin locations\n")
+endif()
+
+set_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}/plugins" install_script_string)
+if(SV_ENABLE_DISTRIBUTION)
+  append_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/plugins" install_script_string)
+  else()
+    append_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_INSTALL_MITK_LIBRARY_DIR}" install_script_string)
+endif()
+
+set_env_string_concat(SV_PLUGIN_PATH "${CMAKE_BINARY_DIR}/lib/plugins" developer_script_string)
+if (SV_USE_MITK)
+  if (MITK_DIR)
+    append_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/lib/plugins" developer_script_string)
+  endif()
+endif()
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
 configure_file(${SV_SOURCE_DIR}/../Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
 set(PREAMBLE_DEVELOPER_FILE "${TEMP_DIR}/developer-preample")
 set(PREAMBLE_INSTALL_FILE "${TEMP_DIR}/install-preample")

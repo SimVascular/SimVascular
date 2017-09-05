@@ -317,7 +317,7 @@ inline bool file_exists (char* name) {
   bool use_qt_gui  = true;
   bool use_workbench  = false;
   bool catch_debugger = false;
-  bool ignore_provisioning_file = false;
+  bool use_provisioning_file = false;
   use_qt_tcl_interp = false;
 
   ios::sync_with_stdio();
@@ -399,7 +399,7 @@ inline bool file_exists (char* name) {
 	fprintf(stdout,"  --qt-tcl-interp : use command line tcl interp with qt gui\n");
 	fprintf(stdout,"  --warn          : warn if invalid cmd line params (off by default)\n");
 	fprintf(stdout,"  --workbench     : use mitk workbench application\n");
-	fprintf(stdout,"  --ignore-pro    : ignore the .provisioning file \n");
+	fprintf(stdout,"  --use-pro    : use the .provisioning file \n");
 	exit(0);
       }
       if((!strcmp("--warn",argv[iarg]))) {
@@ -439,8 +439,8 @@ inline bool file_exists (char* name) {
 	use_workbench = true;
 	foundValid = true;
       }
-      if((!strcmp("--ignore-pro",argv[iarg]))) {
-	ignore_provisioning_file = true;
+      if((!strcmp("--use-pro",argv[iarg]))) {
+	use_provisioning_file = true;
       }
       if (!foundValid && warnInvalid) {
 	fprintf(stderr,"Warning:  unknown option (%s) ignored!\n",argv[iarg]);
@@ -776,7 +776,7 @@ RegCloseKey(hKey2);
      preloadLibs << "liborg_mitk_gui_qt_ext";
      app.setPreloadLibraries(preloadLibs);
 
-     if (ignore_provisioning_file) {
+     if (use_provisioning_file == false) {
 
        fprintf(stdout,"Note: Ignoring the provisioning file.\n");
        fflush(stdout);

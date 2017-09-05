@@ -323,7 +323,7 @@ add_definitions(${GLOBAL_DEFINES})
 
 #-----------------------------------------------------------------------------
 # Add Local Includes
-set(LOCAL_LIBDIR Lib)
+set(LOCAL_LIBDIR lib)
 set(SV_SCRIPT_TARGETS "" CACHE INTERNAL "" FORCE)
 set(INDENTS "")
 #-----------------------------------------------------------------------------

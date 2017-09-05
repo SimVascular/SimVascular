@@ -46,6 +46,7 @@ set(SimVascular_PATCH_VERSION "@SV_PATCH_VERSION@")
 get_filename_component(SimVascular_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
 set(SimVascular_TOPLEVEL_DIR "${SimVascular_CMAKE_DIR}")
 get_filename_component(SimVascular_CODE_DIR "${SimVascular_TOPLEVEL_DIR}" DIRECTORY)
+get_filename_component(SV_SOURCE_DIR "${SimVascular_TOPLEVEL_DIR}" DIRECTORY)
 
 get_filename_component(TEST_DIR_0 "${SimVascular_TOPLEVEL_DIR}" DIRECTORY)
 get_filename_component(TEST_NAME_0 "${TEST_DIR_0}" NAME)
@@ -111,4 +112,28 @@ endif()
 #-----------------------------------------------------------------------------
 # Now for externals
 set(SimVascular_USE_EXTERNALS_FILE "${SimVascular_CMAKE_DIR}/SimVascularUseExternals.cmake")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# For install
+if(NOT DEFINED OUTBIN_DIR OR NOT DEFINED OUTLIB_DIR)
+  set(OUTBIN_DIR "${CMAKE_BINARY_DIR}/bin")
+  set(OUTLIB_DIR ${CMAKE_BINARY_DIR}/lib)
+endif()
+
+if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUTBIN_DIR}")
+endif()
+
+if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUTLIB_DIR}")
+endif()
+
+if(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUTLIB_DIR}")
+endif()
+
+mark_as_advanced(CMAKE_RUNTIME_OUTPUT_DIRECTORY
+  CMAKE_LIBRARY_OUTPUT_DIRECTORY
+  CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
 #-----------------------------------------------------------------------------

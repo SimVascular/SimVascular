@@ -93,39 +93,70 @@ set(SV_Qt5_COMPONENTS
 find_package(Qt5 PATHS ${SV_Qt5_search_paths} COMPONENTS ${SV_Qt5_COMPONENTS} REQUIRED)
 
 # need toplevel Qt dir path
-get_filename_component(qt5_installed_prefix "${Qt5_DIR}/../../.." ABSOLUTE)
+if(Qt5_DIR)
+  get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
+  list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
+  if(_result LESS 0)
+    set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
+  endif()
+endif()
+# Need to set include dirs and libraries of Qt from individual components
+if(NOT SV_USE_MITK_CONFIG)
+  set(QT_LIBRARIES "")
+  set(QT_INCLUDE_DIRS "")
+  foreach(comp ${SV_Qt5_COMPONENTS})
+    if(Qt5${comp}_LIBRARIES)
+      set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${comp}_LIBRARIES})
+    endif()
+    if(Qt5${comp}_INCLUDE_DIRS)
+      set(QT_INCLUDE_DIRS ${QT_INCLUDE_DIRS} ${Qt5${comp}_INCLUDE_DIRS})
+    endif()
+  endforeach()
+  include_directories(${QT_INCLUDE_DIRS})
+endif()
 
 #-----------------------------------------------------------------------------
 ## Special variable to inform about externals download
 option(ACCEPT_DOWNLOAD_EXTERNALS "Turn to ON to download externals" OFF)
 if(NOT ACCEPT_DOWNLOAD_EXTERNALS)
-  message(FATAL_ERROR "To download externals used by SimVascular, swith ACCEPT_DOWNLOAD_EXTERNALS to ON and reconfigure. Be patient as this can take some time depending on internet connection and operating system")
+  message(FATAL_ERROR "To download externals used by SimVascular, switch ACCEPT_DOWNLOAD_EXTERNALS to ON and reconfigure. Be patient as this can take some time depending on internet connection and operating system")
 endif()
 #-----------------------------------------------------------------------------
 
 ##-----------------------------------------------------------------------------
 ## Externals!
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
-list(APPEND SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH})
+#list(APPEND SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS -DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH})
 execute_process(COMMAND bash "-c"
   "${CMAKE_COMMAND} \
   -B${CMAKE_CURRENT_BINARY_DIR}/Externals-build \
   -H${SimVascular_EXTERNALS_DIR} \
   -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER} \
   -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER} \
-  -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} \
-  -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS} \
+  -DCMAKE_CXX_FLAGS:STRING=\"${CMAKE_CXX_FLAGS}\" \
+  -DCMAKE_C_FLAGS:STRING=\"${CMAKE_C_FLAGS}\" \
   -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} \
   -DCMAKE_MACOSX_RPATH:BOOL=ON \
   -DQt5_DIR:PATH=${Qt5_DIR} \
   ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}"
-  OUTPUT_VARIABLE EXTERNALS_OUTPUT RESULT_VARIABLE EXTERNALS_RESULT ERROR_VARIABLE EXTERNALS_ERROR)
-message("GETTING EXTERNALS OUTPUT: ${EXTERNALS_OUTPUT}")
-message("GETTING EXTERNALS RESULT: ${EXTERNALS_RESULT}")
-message("GETTING EXTERNALS ERROR:  ${EXTERNALS_ERROR}")
+  OUTPUT_VARIABLE EXTERNALS_OUTPUT
+  RESULT_VARIABLE EXTERNALS_RESULT
+  ERROR_VARIABLE EXTERNALS_ERROR)
+message("CONFIGURING EXTERNALS DOWNLOAD OUTPUT: ${EXTERNALS_OUTPUT}")
+if(EXTERNALS_RESULT)
+  message(FATAL_ERROR "Error configuring download of externals. ERROR: ${EXTERNALS_ERROR}")
+endif()
 
 execute_process(COMMAND bash "-c" "make"
-  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Externals-build")
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Externals-build"
+  OUTPUT_VARIABLE MAKE_OUTPUT
+  RESULT_VARIABLE MAKE_RESULT
+  ERROR_VARIABLE  MAKE_ERROR)
+if(MAKE_RESULT)
+  message(FATAL_ERROR "Error downloading externals. OUTPUT: ${MAKE_OUTPUT}. ERROR: ${MAKE_ERROR}")
+else()
+  message(STATUS "DOWNLOADED EXTERNALS")
+endif()
 ##-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -140,28 +171,28 @@ set(SV_EXTERNALS_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin/${SV_COMPILER_DIR}/${
 simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
 
 #PYTHON
-simvascular_add_new_external(PYTHON 2.7.11 OFF ON python)
+simvascular_add_new_external(PYTHON 2.7.11 ON ON python)
 
 #FREETYPE
-simvascular_add_new_external(FREETYPE 2.6.3 OFF ON freetype)
+simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
 
 # MMG
-simvascular_add_new_external(MMG 5.1.0 OFF OFF mmg)
+simvascular_add_new_external(MMG 5.1.0 ON OFF mmg)
 
 # VTK
 simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
 
 # GDCM
-simvascular_add_new_external(GDCM 2.6.1 OFF ON gdcm)
+simvascular_add_new_external(GDCM 2.6.1 ON ON gdcm)
 
 # ITK
 simvascular_add_new_external(ITK 4.7.1 ON ON itk)
 
 # OpenCASCADE
-simvascular_add_new_external(OpenCASCADE 7.0.0 OFF ON opencascade)
+simvascular_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade)
 
 # MITK
-simvascular_add_new_external(MITK 2016.03 OFF ON mitk)
+simvascular_add_new_external(MITK 2016.03 ON ON mitk)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
