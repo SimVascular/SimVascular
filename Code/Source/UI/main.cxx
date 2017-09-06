@@ -277,6 +277,8 @@ void simvascularApp::initializeLibraryPaths() {
      std::cout << "  plugin (" << current.toStdString() << ")" << std::endl << std::flush;
      std::cout << "    resolves to [" << MypluginPath.toStdString() << "]" << std::endl << std::flush;
   }
+  fprintf(stdout,"\n");
+  fflush(stdout);
 
   return;
 }

@@ -89,6 +89,9 @@ set(CONF_USED_LIBS "@SV_CONF_USED_LIBS@")
 set(SimVascular_LIBRARIES "")
 foreach(lib ${CONF_USED_LIBS})
   list(APPEND SimVascular_LIBRARIES "${SimVascular_LIBRARY_DIR}/${lib}")
+  if(WIN32)
+    list(APPEND SimVascular_LIBRARIES "${SimVascular_RUNTIME_DIR}/${lib}")
+  endif()
 endforeach()
 #-----------------------------------------------------------------------------
 

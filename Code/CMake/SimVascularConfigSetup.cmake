@@ -52,11 +52,6 @@ export(PACKAGE SimVascular)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Set relative path from camke dir to include dir
-file(RELATIVE_PATH SV_REL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_CMAKE_DIR}" "${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_INCLUDE_DIR}")
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 # BUILD TREE
 # SimVascular Configure file
 # TODO NEED TO IMPROVE INCLUDE DIRS!!!

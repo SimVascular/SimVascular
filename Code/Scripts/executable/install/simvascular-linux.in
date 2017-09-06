@@ -2,9 +2,9 @@
 export SV_RELEASED_MODE=1
 
 # Load custom plugins and paths if file present
-if [ -e ~/.local/SimVascular/simvascular_custom_plugins.sh ]
+if [ -e ~/.local/share/SimVascular/simvascular_custom_plugins.sh ]
 then
-  source ~/.local/SimVascular/simvascular_custom_plugins.sh
+  source ~/.local/share/SimVascular/simvascular_custom_plugins.sh
 fi
 
 # Run the executable
