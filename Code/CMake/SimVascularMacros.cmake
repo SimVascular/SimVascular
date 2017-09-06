@@ -318,7 +318,7 @@ macro(simvascular_add_executable TARGET_NAME)
 	endif()
 
 	if(NOT simvascular_add_executable_NO_SCRIPT)
-		IF(simvascular_add_executable_DEV_SCRIPT_NAME)
+		if(simvascular_add_executable_DEV_SCRIPT_NAME)
 			set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
 			list(APPEND SV_SCRIPT_TARGETS_WORK "${TARGET_NAME}")
 			list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
