@@ -47,14 +47,12 @@ endforeach()
 #-----------------------------------------------------------------------------
 # Export all targets
 export(TARGETS ${SV_TARGETS} FILE "${CMAKE_BINARY_DIR}/SimVascularTargets.cmake")
-
 export(PACKAGE SimVascular)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # BUILD TREE
 # SimVascular Configure file
-# TODO NEED TO IMPROVE INCLUDE DIRS!!!
 set(SV_CONF_INCLUDE_DIRS "${SV_INCLUDE_DIRS}")
 foreach(dir ${SV_CORE_LIBRARY_DIRS})
   list(APPEND SV_CONF_INCLUDE_DIRS ${dir})
@@ -89,10 +87,6 @@ install(FILES
   "${SV_BINARY_DIR}/tmp/SimVascularConfig.cmake"
   "${SV_BINARY_DIR}/SimVascularConfigVersion.cmake"
   DESTINATION "${SV_INSTALL_CMAKE_DIR}" COMPONENT CMake)
-
-## Install the export set for use with the install-tree
-#install(EXPORT SimVascularTargets DESTINATION
-#  "${SV_INSTALL_CMAKE_DIR}" COMPONENT CMake)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

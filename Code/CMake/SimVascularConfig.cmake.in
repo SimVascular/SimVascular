@@ -25,9 +25,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# Config to use SimVascular using find_package
+# Config to find SimVascular with cmake find_package
 #-----------------------------------------------------------------------------
-
 if(SimVascular_ALREADY_INCLUDED)
   return()
 endif()
@@ -79,8 +78,6 @@ set(SimVascular_ARCHIVE_DIR "${SimVascular_TOPLEVEL_DIR}/@SV_INSTALL_ARCHIVE_DIR
 # Paths for headers, binaries, libraries
 set(SimVascular_C_FLAGS   "@CMAKE_C_FLAGS@")
 set(SimVascular_CXX_FLAGS "@CMAKE_CXX_FLAGS@")
-
-#TODOD ADD LINKER FLAGSSS
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
