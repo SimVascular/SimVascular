@@ -77,7 +77,7 @@ if(NOT SV_USE_MITK_CONFIG)
   # Not using MITK config file, so just use regular simvascular functions
   simvascular_add_executable(${SV_EXE}
     SRCS ${CXXSRCS}
-    DEV_SCRIPT_NAME "mysim"
+    DEV_SCRIPT_NAME "sv"
     INSTALL_SCRIPT_NAME "simvascular"
     INSTALL_COMPONENT CoreExecutables
     INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
@@ -98,13 +98,13 @@ if(NOT SV_USE_MITK_CONFIG)
       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.ini)
   endif()
 else()
-  # Using MITK Config files, have to create mysim script
+  # Using MITK Config files, have to create sv script
   set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
   list(APPEND SV_SCRIPT_TARGETS_WORK "${SV_EXE}")
   list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
   set(SV_SCRIPT_TARGETS ${SV_SCRIPT_TARGETS_WORK} CACHE INTERNAL "" FORCE)
 
-  set(DEV_SCRIPT_NAME "mysim")
+  set(DEV_SCRIPT_NAME "sv")
   set(${SV_EXE}_DEVELOPER_SCRIPT_NAME ${DEV_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
   set(${SV_EXE}_EXECUTABLE_NAME ${${SV_EXE}_DEVELOPER_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
 
