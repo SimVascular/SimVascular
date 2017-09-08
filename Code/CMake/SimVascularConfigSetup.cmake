@@ -63,6 +63,8 @@ endforeach()
 foreach(dir ${SV_PLUGIN_DIRS})
   list(APPEND SV_CONF_INCLUDE_DIRS ${dir})
 endforeach()
+set(SV_CONF_SOURCE_DIR "${SV_SOURCE_DIR}")
+set(SV_CONF_BINARY_DIR "${SV_BINARY_DIR}")
 configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" "${SV_BINARY_DIR}/SimVascularConfig.cmake" @ONLY)
 #-----------------------------------------------------------------------------
 
@@ -70,6 +72,8 @@ configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" "${SV_BINARY_
 # INSTALL TREE
 # SimVascular Configure file
 set(SV_CONF_INCLUDE_DIRS "")
+set(SV_CONF_SOURCE_DIR "")
+set(SV_CONF_BINARY_DIR "")
 configure_file("${SV_SOURCE_DIR}/CMake/SimVascularConfig.cmake.in" "${SV_BINARY_DIR}/tmp/SimVascularConfig.cmake" @ONLY)
 #-----------------------------------------------------------------------------
 
