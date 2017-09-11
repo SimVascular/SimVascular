@@ -29,7 +29,7 @@
  #=========================================================================#
 
 #-----------------------------------------------------------------------------
-# Plugin - TetGen Mesh
+# Core - TetGen Mesh
 #-----------------------------------------------------------------------------
 set(lib ${SV_LIB_TETGEN_MESH_NAME})
 set(export_directive tetgen_mesh)
@@ -78,13 +78,13 @@ generate_export_header(${lib}
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)
 endif()
 if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()

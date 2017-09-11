@@ -4,7 +4,7 @@ set(HDRS ConnectVTKITK.h cvITKMacros.h
   )
 if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS}
-    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/plugins/itk/include COMPONENT PluginHeaders
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
 endif()
 

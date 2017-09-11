@@ -25,17 +25,16 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# This is the main CMakeListst.txt to download or build the major library
-# dependencies of SimVascular. The platform and compiler dir options are
-# the same given in the toplevel directory, so if you are simply looking to
-# download the externals package, we recommend moving back one directory and
-# using the SV_TOP project to get the Externals and then build SimVascular.
-# However, if you are looking to build the externals yourself, then this is
-# the place to be!
+# This is the main CMakeListst.txt to download or build  SimVascular.
+# If you are building SimVascular for the first time, we recommend moving
+# back one directory and using the SV_TOP project to automatically download
+# the externals of SimVascular for your platform and compatible with
+# SimVascular. However, if you already have compatible externals and want
+# to build SimVascular with those externals, this is the right place to be.
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.6.0)
 
 if (POLICY CMP0040)
 	cmake_policy(SET CMP0040 OLD)
@@ -324,7 +323,7 @@ add_definitions(${GLOBAL_DEFINES})
 
 #-----------------------------------------------------------------------------
 # Add Local Includes
-set(LOCAL_LIBDIR Lib)
+set(LOCAL_LIBDIR lib)
 set(SV_SCRIPT_TARGETS "" CACHE INTERNAL "" FORCE)
 set(INDENTS "")
 #-----------------------------------------------------------------------------
@@ -436,6 +435,7 @@ foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
         message(STATUS "	${dir}")
         add_subdirectory("${dir}")
 endforeach()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
@@ -444,3 +444,9 @@ if(SV_USE_QT_GUI)
 endif()
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Create SimVascularConfig.cmake
+include(SimVascularConfigSetup)
+#-----------------------------------------------------------------------------
