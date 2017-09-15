@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # Exports
 #----------------------------------------------------------------------------
-export BUILD_DIR=@CTEST_BINARY_DIR@
+export BUILD_DIR=@CTEST_BINARY_DIRECTORY@
 export SV_EXTERNALS_DIR=@CTEST_EXTERNALS_DIRECTORY@/Externals
 export SV_CODE_DIR=@CTEST_CODE_DIRECTORY@/Code
 export SV_EXTERNALS_BUILD_DIR=$BUILD_DIR/Externals-build
