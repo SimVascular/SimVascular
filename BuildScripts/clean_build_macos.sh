@@ -1,22 +1,12 @@
 #!/bin/bash
-
-#----------------------------------------------------------------------------
-# SimVascular src
-#----------------------------------------------------------------------------
-export SV_SRC_URL=http://github.com/SimVascular/SimVascular.git
-
-git clone $SV_SRC_URL
-cd SimVascular
-#----------------------------------------------------------------------------
-
 #----------------------------------------------------------------------------
 # Exports
 #----------------------------------------------------------------------------
 export cwd=$(pwd)
 export BUILD_DIR=$cwd/build
-export SV_EXTERNALS_DIR=$cwd/Externals
-export SV_CODE_DIR=$cwd/Code
-export SV_EXTERNALS_BUILD_DIR=$SV_EXTERNALS_DIR/build
+export SV_EXTERNALS_DIR=$cwd/../Externals
+export SV_CODE_DIR=$cwd/../Code
+export SV_EXTERNALS_BUILD_DIR=$BUILD_DIR/externals-build
 export SV_EXTERNALS_TOPLEVEL_DIR=$SV_EXTERNALS_BUILD_DIR/sv_externals
 #cmake
 export SV_CMAKE_CMD="cmake"
@@ -28,22 +18,23 @@ export CC="clang"
 export CXX="clang++"
 # Qt
 export Qt5_URL=http://simvascular.stanford.edu/downloads/public/open_source/mac_osx/qt/5.4
-export Qt5_DIR="/opt/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
+#export Qt5_DIR="/opt/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
+export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
 # Qt
 #----------------------------------------------------------------------------
-sudo mkdir -p /opt/Qt5.4.2
-sudo chmod -R a+rwx /opt/Qt5.4.2
-
-mkdir -p ~/tmp/tarfiles
-pushd ~/tmp/tarfiles
-wget $Qt5_URL/qt-opensource-mac-x64-clang-5.4.2.tar.gz
-echo "untarring (qt-opensource-mac-x64-clang-5.4.2.dmg)..."
-sudo tar --directory=/ -xzf ./qt-opensource-mac-x64-clang-5.4.2.tar.gz
-rm qt-opensource-mac-x64-clang-5.4.2.tar.gz
-popd
+#sudo mkdir -p /opt/Qt5.4.2
+#sudo chmod -R a+rwx /opt/Qt5.4.2
+#
+#mkdir -p ~/tmp/tarfiles
+#pushd ~/tmp/tarfiles
+#curl -O $Qt5_URL/qt-opensource-mac-x64-clang-5.4.2.tar.gz
+#echo "untarring (qt-opensource-mac-x64-clang-5.4.2.dmg)..."
+#sudo tar --directory=/ -xzf ./qt-opensource-mac-x64-clang-5.4.2.tar.gz
+#rm qt-opensource-mac-x64-clang-5.4.2.tar.gz
+#popd
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
@@ -72,7 +63,8 @@ pushd $BUILD_DIR
 \
    -DCMAKE_BUILD_TYPE="$SV_CMAKE_BUILD_TYPE" \
    -DBUILD_SHARED_LIBS=ON \
-   -DBUILD_TESTING=OFF \
+   -DBUILD_TESTING=ON \
+   -DSV_TEST_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/SimVascular-Test/automated_tests" \
 \
    -DSV_USE_FREETYPE=ON \
    -DSV_USE_GDCM=ON \
