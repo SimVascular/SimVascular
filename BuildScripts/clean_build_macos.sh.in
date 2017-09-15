@@ -45,7 +45,7 @@ pushd $SV_EXTERNALS_BUILD_DIR
 "$SV_CMAKE_CMD" \
   -G "$SV_CMAKE_GENERATOR" \
   -Qt5_DIR=$Qt5_DIR \
- ../
+"$SV_EXTERNALS_DIR"
 $SV_MAKE_CMD
 popd
 #----------------------------------------------------------------------------
