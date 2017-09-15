@@ -2,11 +2,10 @@
 #----------------------------------------------------------------------------
 # Exports
 #----------------------------------------------------------------------------
-export cwd=$(pwd)
-export BUILD_DIR=$cwd/build
-export SV_EXTERNALS_DIR=$cwd/../Externals
-export SV_CODE_DIR=$cwd/../Code
-export SV_EXTERNALS_BUILD_DIR=$BUILD_DIR/externals-build
+export BUILD_DIR=@CTEST_BINARY_DIR@
+export SV_EXTERNALS_DIR=@CTEST_EXTERNALS_DIRECTORY@/Externals
+export SV_CODE_DIR=@CTEST_CODE_DIRECTORY@/Code
+export SV_EXTERNALS_BUILD_DIR=$BUILD_DIR/Externals-build
 export SV_EXTERNALS_TOPLEVEL_DIR=$SV_EXTERNALS_BUILD_DIR/sv_externals
 #cmake
 export SV_CMAKE_CMD="cmake"
