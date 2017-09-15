@@ -36,9 +36,14 @@
 #include "cv_math_init.h"
 #include "cv_get_tcl_interp_init.h"
 
+int Utils_pyInit(){
+  Math_Init();
+  return SV_OK;
+}
+
 int Utils_Init( Tcl_Interp *interp ) {
 
-  Math_Init( interp );
+  
   Getinterp_Init( interp);
 
   return TCL_OK;

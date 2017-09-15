@@ -42,4 +42,8 @@
 
 extern "C" SV_DLL_EXPORT int SimVascular_Init( Tcl_Interp *interp );
 
+#ifdef SV_USE_PYTHON
+// Tclpython_Init(Tcl_Interp *interp);
+extern "C" int SimVascular_InitPy();
+#endif
 #endif // __SIMVASCULAR_INIT_H

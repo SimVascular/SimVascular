@@ -37,6 +37,14 @@ set(export_directive utils)
 set(export_file_name svUtilsExports.h)
 
 LIST(APPEND CORELIBS ${lib})
+if(SV_USE_PYTHON)
+	find_program(PYTHON “python”)
+	find_package(PythonLibs REQUIRED)
+	include_directories(${PYTHON_INCLUDE_PATH}
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
+
 
 SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
   cvTimer.cxx cvIntArrayList.cxx
@@ -56,6 +64,9 @@ target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${SV_LIB_GLOBALS_NAME}
   )
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+endif()
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)
@@ -83,3 +94,6 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+
+PYTHON_ADD_MODULE(pyMath cv_utils_init.cxx cv_math_init.cxx)
+target_link_libraries(pyMath ${lib} ${PYTHON_LIBRARY})

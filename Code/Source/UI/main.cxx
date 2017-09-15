@@ -107,7 +107,9 @@ errno_t cv_getenv_s(
 #endif
 
 #include "SimVascular_Init.h"
-
+#ifdef SV_USE_PYTHON
+int Py_AppInit();
+#endif
 #ifdef SV_USE_QT_GUI
 typedef void Tcl_MainLoopProc(void);
 void SimVascularTcl_MainLoop(void) {
@@ -144,7 +146,7 @@ simvascularApp::~simvascularApp()
 
 void simvascularApp::initializeLibraryPaths() {
 
-  //std::cout << "\n\n *** simvascularApp: initializeLibraryPaths! *** \n\n" << std::endl << std::flush;
+  std::cout << "\n\n *** simvascularApp: initializeLibraryPaths! *** \n\n" << std::endl << std::flush;
 
   bool found_sv_plugin_path = false;
 
@@ -154,9 +156,6 @@ void simvascularApp::initializeLibraryPaths() {
   //
 
   // read environment variables for plugin paths
-  fprintf(stdout,"Reading plugin paths SV_PLUGIN_PATH environment variable...\n");
-  fprintf(stdout,"\n");
-  fflush(stdout);
 #ifdef WIN32
   char plugin_env[_MAX_ENV];
   size_t requiredSize;
@@ -177,7 +176,7 @@ void simvascularApp::initializeLibraryPaths() {
     token = strtok( plugin_env, seps );
     while( token != NULL ) {
       // While there are tokens in "string"
-      //printf( " %s\n", token );
+      printf( " %s\n", token );
       QString pluginPath = token;
       ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
       std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
@@ -196,7 +195,7 @@ void simvascularApp::initializeLibraryPaths() {
     token = strtok( plugin_env, seps );
     while( token != NULL ) {
       // While there are tokens in "string"
-      //printf( " %s\n", token );
+      printf( " %s\n", token );
       QString pluginPath = token;
       ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
       std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
@@ -205,7 +204,6 @@ void simvascularApp::initializeLibraryPaths() {
     }
   }
 #endif
-  fprintf(stdout,"\n");
 
   //
   // This is the default behavior in AppUtil for MITK.
@@ -263,9 +261,6 @@ void simvascularApp::initializeLibraryPaths() {
   //  This code is a debugging check to make sure that all of the dll's
   //  can be found in the search path.
   //
-  fprintf(stdout,"Checking all plugin paths...\n");
-  fprintf(stdout,"\n");
-  fflush(stdout);
 
   QVariant pluginsToStartVariant = this->getProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS);
   QStringList pluginsToStart = pluginsToStartVariant.toStringList();
@@ -277,8 +272,6 @@ void simvascularApp::initializeLibraryPaths() {
      std::cout << "  plugin (" << current.toStdString() << ")" << std::endl << std::flush;
      std::cout << "    resolves to [" << MypluginPath.toStdString() << "]" << std::endl << std::flush;
   }
-  fprintf(stdout,"\n");
-  fflush(stdout);
 
   return;
 }
@@ -326,7 +319,7 @@ inline bool file_exists (char* name) {
   bool use_qt_gui  = true;
   bool use_workbench  = false;
   bool catch_debugger = false;
-  bool use_provisioning_file = false;
+  bool ignore_provisioning_file = false;
   use_qt_tcl_interp = false;
 
   ios::sync_with_stdio();
@@ -408,7 +401,7 @@ inline bool file_exists (char* name) {
 	fprintf(stdout,"  --qt-tcl-interp : use command line tcl interp with qt gui\n");
 	fprintf(stdout,"  --warn          : warn if invalid cmd line params (off by default)\n");
 	fprintf(stdout,"  --workbench     : use mitk workbench application\n");
-	fprintf(stdout,"  --use-pro       : use the .provisioning file \n");
+	fprintf(stdout,"  --ignore-pro    : ignore the .provisioning file \n");
 	exit(0);
       }
       if((!strcmp("--warn",argv[iarg]))) {
@@ -448,8 +441,8 @@ inline bool file_exists (char* name) {
 	use_workbench = true;
 	foundValid = true;
       }
-      if((!strcmp("--use-pro",argv[iarg]))) {
-	use_provisioning_file = true;
+      if((!strcmp("--ignore-pro",argv[iarg]))) {
+	ignore_provisioning_file = true;
       }
       if (!foundValid && warnInvalid) {
 	fprintf(stderr,"Warning:  unknown option (%s) ignored!\n",argv[iarg]);
@@ -785,10 +778,9 @@ RegCloseKey(hKey2);
      preloadLibs << "liborg_mitk_gui_qt_ext";
      app.setPreloadLibraries(preloadLibs);
 
-     if (use_provisioning_file == false) {
+     if (ignore_provisioning_file) {
 
-       fprintf(stdout,"Note: Not using the provisioning file. To use a provisioning file, provide --use-pro flag\n");
-       fprintf(stdout,"\n");
+       fprintf(stdout,"Note: Ignoring the provisioning file.\n");
        fflush(stdout);
 
        // can set a provisioning file here, but we hard code the plugins below
@@ -847,59 +839,14 @@ RegCloseKey(hKey2);
          pluginsToStart.push_back("org_sv_gui_qt_simulation");
        }
 
-        // read environment variables for custom plugins
-  fprintf(stdout,"Reading custom plugins SV_CUSTOM_PLUGINS environment variable...\n");
-  fprintf(stdout,"\n");
-#ifdef WIN32
-       char custom_plugins[_MAX_ENV];
-       size_t requiredSize;
-       custom_plugins[0]='\0';
-       requiredSize = 0;
-       getenv_s( &requiredSize, NULL, 0, "SV_CUSTOM_PLUGINS");
-
-       if (requiredSize >= _MAX_ENV) {
-         std::cerr << "FATAL ERROR:  SV_CUSTOM_PLUGINS to long!\n" << std::endl << std::flush;
-         exit(-1);
-       } else if (requiredSize > 0) {
-         getenv_s( &requiredSize, custom_plugins, requiredSize, "SV_CUSTOM_PLUGINS" );
-         char seps[] = ";";
-         char *token;
-         token = strtok( custom_plugins, seps );
-         while( token != NULL ) {
-           // While there are tokens in "string"
-           //printf( " %s\n", token );
-           QString newPlugin = token;
-           pluginsToStart.push_back(newPlugin);
-           std::cout << "   Adding custom plugin (" << newPlugin.toStdString() << ")" << std::endl << std::flush;
-           // Get next token
-           token = strtok( NULL, seps );
-         }
-       }
-#else
-       char *custom_plugins = getenv("SV_CUSTOM_PLUGINS");
-       if (custom_plugins != NULL) {
-         char seps[] = ":";
-         char *token;
-         token = strtok( custom_plugins, seps );
-         while( token != NULL ) {
-           // While there are tokens in "string"
-           //printf( " %s\n", token );
-           QString newPlugin = token;
-           pluginsToStart.push_back(newPlugin);
-           std::cout << "   Adding custom plugin (" << newPlugin.toStdString() << ")" << std::endl << std::flush;
-           // Get next token
-           token = strtok( NULL, seps );
-         }
-       }
-#endif
-       fprintf(stdout,"\n");
-
        app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
 
        //Use transient start with declared activation policy
        ctkPlugin::StartOptions startOptions(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
        app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS, static_cast<int>(startOptions));
      }
+
+     
 
      if (use_qt_tcl_interp) {
        Tcl_Main (argc, argv, Tcl_AppInit);
@@ -911,6 +858,9 @@ RegCloseKey(hKey2);
 
 #endif
 
+#ifdef SV_USE_PYTHON
+Py_AppInit();
+#endif
   return 0;
 }
 
@@ -969,6 +919,23 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
 }
 
 #endif
+#endif
+
+// -----------
+// Py_AppInit
+// -----------
+#ifdef SV_USE_PYTHON
+int Py_AppInit()
+{
+
+if (SimVascular_InitPy() == SV_ERROR ) {
+  fprintf( stderr, "error on SimVascular_InitPy\n" );
+  return SV_ERROR;
+}
+
+return SV_OK;
+
+};
 #endif
 
 // -----------
