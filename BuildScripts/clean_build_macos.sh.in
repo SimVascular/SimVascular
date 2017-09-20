@@ -2,16 +2,16 @@
 #----------------------------------------------------------------------------
 # Exports
 #----------------------------------------------------------------------------
-export BUILD_DIR=@CTEST_BINARY_DIRECTORY@
-export SV_EXTERNALS_DIR=@CTEST_EXTERNALS_DIRECTORY@
-export SV_CODE_DIR=@CTEST_CODE_DIRECTORY@
-export SV_TEST_DIR=@CTEST_TEST_DIRECTORY@/automated_tests
-export SV_EXTERNALS_BUILD_DIR=$BUILD_DIR/Externals-build
-export SV_EXTERNALS_TOPLEVEL_DIR=$SV_EXTERNALS_BUILD_DIR/sv_externals
+export BUILD_DIR="@CTEST_BINARY_DIRECTORY@"
+export SV_EXTERNALS_DIR="@CTEST_EXTERNALS_DIRECTORY@"
+export SV_CODE_DIR="@CTEST_CODE_DIRECTORY@"
+export SV_TEST_DIR="@CTEST_TEST_DIRECTORY@/automated_tests"
+export SV_EXTERNALS_BUILD_DIR="$BUILD_DIR/Externals-build"
+export SV_EXTERNALS_TOPLEVEL_DIR="$SV_EXTERNALS_BUILD_DIR/sv_externals"
 #cmake
-export SV_CMAKE_CMD=@CMAKE_COMMAND@
-export SV_CMAKE_GENERATOR=@CTEST_CMAKE_GENERATOR@
-export SV_CMAKE_BUILD_TYPE=@CTEST_CONFIGURATION_TYPE@
+export SV_CMAKE_CMD="@CMAKE_COMMAND@"
+export SV_CMAKE_GENERATOR="@CTEST_CMAKE_GENERATOR@"
+export SV_CMAKE_BUILD_TYPE="@CTEST_CONFIGURATION_TYPE@"
 export SV_MAKE_CMD="make -j8"
 #compilers
 export CXX="clang++"
