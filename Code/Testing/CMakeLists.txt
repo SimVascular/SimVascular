@@ -30,6 +30,5 @@ if(SV_DEV_OUTPUT)
 endif()
 
 if(SV_RUN_GUI_TESTS)
-  set(ENV{SV_BATCH_MODE} 1)
-  add_test_return(StartUpTest ${SV_TEST_EXE} "${SV_TEST_DIR}/startup/startup.tcl" )
+  add_test_return(StartUpTest ${SV_TEST_EXE} "${SV_TEST_DIR}/startup/startup.tcl" -tcl)
 endif()
