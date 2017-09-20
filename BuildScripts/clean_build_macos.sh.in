@@ -28,6 +28,7 @@ export Qt5_DIR="/Applications/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 if [ -e "$Qt5_TOPLEVEL_DIR" ]
  then
    rm -rf "$Qt5_TOPLEVEL_DIR"
+fi
 mkdir -p "$Qt5_TOPLEVEL_DIR"
 echo "downloading (qt-opensource-mac-x64-clang-5.4.2-applications.tar.gz)..."
 curl -O $Qt5_URL/qt-opensource-mac-x64-clang-5.4.2-applications.tar.gz
