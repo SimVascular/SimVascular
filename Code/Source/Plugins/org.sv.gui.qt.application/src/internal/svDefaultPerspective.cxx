@@ -14,7 +14,7 @@ void svDefaultPerspective::CreateInitialLayout(berry::IPageLayout::Pointer layou
     berry::IViewLayout::Pointer lo = layout->GetViewLayout("org.mitk.views.datamanager");
     lo->SetCloseable(false);
 
-    layout->AddView("org.mitk.views.volumevisualization", berry::IPageLayout::LEFT, 0.3f, editorArea);
+//    layout->AddView("org.mitk.views.volumevisualization", berry::IPageLayout::LEFT, 0.3f, editorArea);
 //    layout->AddView("org.sv.views.pathplanning", berry::IPageLayout::LEFT, 0.3f, editorArea);
 
     layout->AddView("org.mitk.views.imagenavigator", berry::IPageLayout::BOTTOM, 0.5f, "org.mitk.views.datamanager");
