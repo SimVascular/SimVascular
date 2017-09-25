@@ -33,6 +33,10 @@ public:
 
     static void RenameDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, std::string newName);
 
+    static void DuplicateProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString newName);
+
+    static bool DuplicateDirRecursively(const QString &srcFilePath, const QString &tgtFilePath);
+
 };
 
 #endif // SVPROJECTMANAGER_H
