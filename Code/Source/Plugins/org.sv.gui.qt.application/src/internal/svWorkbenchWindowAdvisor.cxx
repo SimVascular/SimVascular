@@ -1461,7 +1461,7 @@ QString svWorkbenchWindowAdvisor::ComputeTitle()
         // add version informatioin
         QString svVersion = QString("%1.%2.%3").arg(SV_MAJOR_VERSION).arg(SV_MINOR_VERSION).arg(SV_PATCH_VERSION);
 
-        QString versions = QString(" (SimVascular %1 MITK %2 VTK %3.%4.%5 ITK %6.%7.%8 Qt %9)")
+        QString versions = QString(" %1 (MITK %2 VTK %3.%4.%5 ITK %6.%7.%8 Qt %9)")
                 .arg(svVersion)
                 .arg(MITK_VERSION_STRING)
                 .arg(VTK_MAJOR_VERSION).arg(VTK_MINOR_VERSION).arg(VTK_BUILD_VERSION)

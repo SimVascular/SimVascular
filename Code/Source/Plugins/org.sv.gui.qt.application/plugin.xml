@@ -8,7 +8,7 @@
   </extension>
 
   <extension id="svworkbench" point="org.blueberry.core.runtime.products">
-    <product name="SimVascular Workbench" application="org.sv.qt.application" />
+    <product name="SimVascular" application="org.sv.qt.application" />
   </extension>
 
   <extension point="org.blueberry.ui.intro">
