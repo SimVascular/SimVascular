@@ -18,23 +18,25 @@ export CXX="clang++"
 export CC="clang"
 # Qt
 export Qt5_URL=http://simvascular.stanford.edu/downloads/public/open_source/mac_osx/qt/5.4
-export Qt5_TOPLEVEL_DIR="/Applications/Qt5.4.2"
-export Qt5_DIR="/Applications/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
+export Qt5_TOPLEVEL_DIR="/usr/local/package/Qt5.4.2"
+export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
 # Qt
 #----------------------------------------------------------------------------
-if [ -e "$Qt5_TOPLEVEL_DIR" ]
+if [ -e "$Qt5_DIR" ]
  then
-   rm -rf "$Qt5_TOPLEVEL_DIR"
+   echo "Qt5 already exists at $Qt5_TOPLEVEL_DIR with config at $Qt5_DIR"
+ else
+    sudo mkdir -p "$Qt5_TOPLEVEL_DIR"
+    sudo chmod 777 "$Qt5_TOPLEVEL_DIR"
 fi
-mkdir -p "$Qt5_TOPLEVEL_DIR"
-echo "downloading (qt-opensource-mac-x64-clang-5.4.2-applications.tar.gz)..."
-curl -O $Qt5_URL/qt-opensource-mac-x64-clang-5.4.2-applications.tar.gz
-echo "untarring (qt-opensource-mac-x64-clang-5.4.2-applications.tar.gz)..."
-tar --directory=/ -xzf ./qt-opensource-mac-x64-clang-5.4.2-applications.tar.gz
-rm qt-opensource-mac-x64-clang-5.4.2-applications.tar.gz
+echo "downloading (qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz)..."
+curl -O $Qt5_URL/qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz
+echo "untarring (qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz)..."
+tar --directory=/ -xzf ./qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz
+rm qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
