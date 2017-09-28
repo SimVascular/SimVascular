@@ -45,7 +45,7 @@ void svProjectCloseAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
     catch(std::exception& e)
     {
         MITK_ERROR << "Project closing failed!";
-        QMessageBox::warning(NULL, "Error", QString("An error occurred during Close Project: %1").arg(e.what()));
+        QMessageBox::warning(NULL, "Error", QString("An error occurred during closing project: %1").arg(e.what()));
     }
 
 }

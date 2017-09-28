@@ -1,6 +1,8 @@
 #include "svProjectManagerPluginActivator.h"
 #include "svProjectAddImageAction.h"
 #include "svProjectCloseAction.h"
+#include "svProjectSaveAction.h"
+#include "svProjectDuplicateAction.h"
 #include "svProjectShowModelEdgesAction.h"
 #include "svProjectShowModelFullAction.h"
 
@@ -22,6 +24,8 @@ void svProjectManagerPluginActivator::start(ctkPluginContext* context)
 
     BERRY_REGISTER_EXTENSION_CLASS(svProjectAddImageAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svProjectCloseAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svProjectSaveAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svProjectDuplicateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svProjectShowModelEdgesAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svProjectShowModelFullAction, context)
 }

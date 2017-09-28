@@ -133,7 +133,7 @@ else()
   mitkFunctionCreateBlueBerryApplication(
     NAME ${SV_EXE}
     SOURCES ${CXXSRCS}
-    DESCRIPTION "SimVascular Workbench"
+    DESCRIPTION "SimVascular"
     EXCLUDE_PLUGINS ${_exclude_plugins}
     ${_app_options}
     )
