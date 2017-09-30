@@ -32,7 +32,7 @@ if [ -e "$Qt5_DIR" ]
   sudo mkdir -p "$Qt5_TOPLEVEL_DIR"
   sudo chmod 777 "$Qt5_TOPLEVEL_DIR"
   echo "downloading (Qt5.4.2-ubuntu-14.04.tar.gz)..."
-  wget $PARENT_URL/Qt5.4.2-ubuntu-14.04.tar.gz
+  wget $QT5_URL/Qt5.4.2-ubuntu-14.04.tar.gz
   echo "untarring (Qt5.4.2-ubuntu-14.04.tar.gz)..."
   sudo tar --directory=/ -xzf ./Qt5.4.2-ubuntu-14.04.tar.gz
   rm Qt5.4.2-ubuntu-14.04.tar.gz
