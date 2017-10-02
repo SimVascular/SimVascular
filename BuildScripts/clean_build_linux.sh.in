@@ -43,7 +43,7 @@ fi
 # Additional libs
 # libxmu
 pkgvar=$(dpkg -s libxmu-dev)
-if [ "${var:0:7}" != "Package" ]
+if [ "${pkgvar:0:7}" != "Package" ]
   then
     sudo apt-get -y install libxmu-dev
   else
@@ -52,7 +52,7 @@ fi
 
 # libxi
 pkgvar=$(dpkg -s libxi-dev)
-if [ "${var:0:7}" != "Package" ]
+if [ "${pkgvar:0:7}" != "Package" ]
   then
     sudo apt-get -y install libxi-dev
   else
