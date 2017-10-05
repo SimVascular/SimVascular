@@ -41,23 +41,18 @@ fi
 
 #----------------------------------------------------------------------------
 # Additional libs
-# libxmu
-pkgvar=$(dpkg -s libxmu-dev)
-if [ "${pkgvar:0:7}" != "Package" ]
-  then
-    sudo apt-get -y install libxmu-dev
-  else
-    echo "libxmu-dev already installed"
-fi
+pkgarray=( libglu-dev libxmu-dev libxi-dev )
 
-# libxi
-pkgvar=$(dpkg -s libxi-dev)
-if [ "${pkgvar:0:7}" != "Package" ]
-  then
-    sudo apt-get -y install libxi-dev
-  else
-    echo "libxi-dev already installed"
-fi
+for pkg in "${pkgarray[@]}"
+do
+  pkgvar=$(dpkg -s $pkg)
+  if [ "${pkgvar:0:7}" != "Package" ]
+    then
+      sudo apt-get -y install $pkg
+    else
+      echo "$pkg already installed"
+  fi
+done
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
