@@ -15,14 +15,14 @@ case "$*" in
 $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ -tcl
 ;;
 *)
-$SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
+$SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $* -tcl
 ;;
 esac
 ;;
 *)
 if [ -e ~/.simvascular_default_tcl ]
 then
-  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl -tcl $*
+  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $* -tcl
 else
   $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
 fi

@@ -1,6 +1,6 @@
-rm -Rf ../../Code/NoFlowSolverDownloadExternalsBuild
-mkdir -p ../../Code/NoFlowSolverDownloadExternalsBuild
-pushd ../../Code/NoFlowSolverDownloadExternalsBuild
+rm -Rf ../Code/DownloadExternalsBuild
+mkdir -p ../Code/DownloadExternalsBuild
+pushd ../Code/DownloadExternalsBuild
 
 #compilers
 export CC="gcc"

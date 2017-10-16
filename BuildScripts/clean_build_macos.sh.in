@@ -1,0 +1,108 @@
+#!/bin/bash
+#----------------------------------------------------------------------------
+# Exports
+#----------------------------------------------------------------------------
+export BUILD_DIR="@CTEST_BINARY_DIRECTORY@"
+export SV_EXTERNALS_DIR="@CTEST_EXTERNALS_DIRECTORY@"
+export SV_CODE_DIR="@CTEST_CODE_DIRECTORY@"
+export SV_TEST_DIR="@CTEST_TEST_DIRECTORY@/automated_tests"
+export SV_EXTERNALS_BUILD_DIR="$BUILD_DIR/Externals-build"
+export SV_EXTERNALS_TOPLEVEL_DIR="$SV_EXTERNALS_BUILD_DIR/sv_externals"
+#cmake
+export SV_CMAKE_CMD="@CMAKE_COMMAND@"
+export SV_CMAKE_GENERATOR="@CTEST_CMAKE_GENERATOR@"
+export SV_CMAKE_BUILD_TYPE="@CTEST_CONFIGURATION_TYPE@"
+export SV_MAKE_CMD="make -j8"
+#compilers
+export CXX="clang++"
+export CC="clang"
+# Qt
+export Qt5_URL=http://simvascular.stanford.edu/downloads/public/open_source/mac_osx/qt/5.4
+export Qt5_TOPLEVEL_DIR="/usr/local/package/Qt5.4.2"
+export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
+# Qt
+#----------------------------------------------------------------------------
+if [ -e "$Qt5_DIR" ]
+ then
+   echo "Qt5 already exists at $Qt5_TOPLEVEL_DIR with config at $Qt5_DIR"
+ else
+  sudo mkdir -p "$Qt5_TOPLEVEL_DIR"
+  sudo chmod 777 "$Qt5_TOPLEVEL_DIR"
+  echo "downloading (qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz)..."
+  curl -O $Qt5_URL/qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz
+  echo "untarring (qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz)..."
+  tar --directory=/ -xzf ./qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz
+  rm qt-opensource-mac-x64-clang-5.4.2-usrlocalpackage.tar.gz
+fi
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
+# SimVascular Externals
+#----------------------------------------------------------------------------
+# Get externals
+mkdir -p $SV_EXTERNALS_BUILD_DIR
+pushd $SV_EXTERNALS_BUILD_DIR
+"$SV_CMAKE_CMD" \
+  -G "$SV_CMAKE_GENERATOR" \
+  -Qt5_DIR=$Qt5_DIR \
+"$SV_EXTERNALS_DIR"
+$SV_MAKE_CMD
+popd
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
+# SimVascular
+#----------------------------------------------------------------------------
+
+pushd $BUILD_DIR
+
+"$SV_CMAKE_CMD" \
+\
+   -G "$SV_CMAKE_GENERATOR" \
+\
+   -DCMAKE_BUILD_TYPE="$SV_CMAKE_BUILD_TYPE" \
+   -DBUILD_SHARED_LIBS=ON \
+   -DBUILD_TESTING=ON \
+   -DSV_TEST_DIR="$SV_TEST_DIR" \
+   -DSV_ENABLE_DISTRIBUTION=ON \
+\
+   -DSV_USE_FREETYPE=ON \
+   -DSV_USE_GDCM=ON \
+   -DSV_USE_ITK=ON \
+   -DSV_USE_MPICH2=OFF \
+   -DSV_USE_OpenCASCADE=ON \
+   -DSV_USE_PYTHON=ON \
+   -DSV_USE_MMG=ON \
+   -DSV_USE_MITK=ON \
+   -DSV_USE_QT_GUI=ON \
+\
+   -DSV_USE_SYSTEM_FREETYPE=ON \
+   -DSV_USE_SYSTEM_GDCM=ON \
+   -DSV_USE_SYSTEM_ITK=ON \
+   -DSV_USE_SYSTEM_PYTHON=ON \
+   -DSV_USE_SYSTEM_OpenCASCADE=ON \
+   -DSV_USE_SYSTEM_TCL=ON \
+   -DSV_USE_SYSTEM_VTK=ON \
+   -DSV_USE_SYSTEM_MMG=ON \
+   -DSV_USE_SYSTEM_MITK=ON \
+\
+   -DSV_USE_GDCM_SHARED=ON \
+   -DSV_USE_FREETYPE_SHARED=ON \
+   -DSV_USE_ITK_SHARED=ON \
+   -DSV_USE_OpenCASCADE_SHARED=ON \
+   -DSV_USE_TCL_SHARED=ON \
+   -DSV_USE_VTK_SHARED=ON \
+   -DSV_USE_MITK_SHARED=ON \
+\
+   -DSV_DOWNLOAD_EXTERNALS=ON \
+   -DSV_EXTERNALS_USE_TOPLEVEL_DIR=ON \
+   -DSV_EXTERNALS_TOPLEVEL_DIR="$SV_EXTERNALS_TOPLEVEL_DIR" \
+   -Qt5_DIR=$Qt5_DIR \
+\
+ "$SV_CODE_DIR"
+
+popd
+#----------------------------------------------------------------------------
