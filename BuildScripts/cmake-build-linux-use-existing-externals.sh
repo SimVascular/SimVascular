@@ -1,10 +1,10 @@
-rm -Rf ../../Code/NoFlowSolverDownloadExternalsBuild
-mkdir -p ../../Code/NoFlowSolverDownloadExternalsBuild
-pushd ../../Code/NoFlowSolverDownloadExternalsBuild
+rm -Rf ../Code/UseExistingExternalsBuild
+mkdir -p ../Code/UseExistingExternalsBuild
+pushd ../Code/UseExistingExternalsBuild
 
 #compilers
-export CC="clang"
-export CXX="clang++"
+export CC="gcc"
+export CXX="g++"
 
 #cmake
 export REPLACEME_SV_CMAKE_CMD="cmake"
@@ -14,7 +14,11 @@ export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #Qt5
-export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
+export Qt5_DIR="/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5"
+export EXTERNALS_DIR="/usr/local/sv/ext"
+
+#sudo mkdir -p $EXTERNALS_DIR
+#sudo chmod -R 777 $EXTERNALS_DIR
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -45,6 +49,7 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DSV_USE_SYSTEM_VTK=ON \
    -DSV_USE_SYSTEM_MMG=ON \
    -DSV_USE_SYSTEM_MITK=ON \
+   -DSV_USE_MITK_CONFIG:BOOL=ON \
 \
    -DSV_USE_GDCM_SHARED=ON \
    -DSV_USE_FREETYPE_SHARED=ON \
@@ -54,12 +59,18 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DSV_USE_VTK_SHARED=ON \
    -DSV_USE_MITK_SHARED=ON \
 \
-   -DSV_DOWNLOAD_EXTERNALS=ON \
    -DSV_EXTERNALS_USE_TOPLEVEL_DIR=ON \
+   -DSV_EXTERNALS_TOPLEVEL_DIR="$EXTERNALS_DIR" \
    -Qt5_DIR=$Qt5_DIR \
+   -DMITK_DIR:PATH="/usr/local/sv/ext/build/gnu-4.8/x64/mitk-2016.03/MITK-build" \
+\
+  -DFREETYPE_DIR:PATH="/usr/local/sv/ext/bin/gnu-4.8/x64/freetype-2.6.3" \
+  -DFREETYPE_LIBRARY:FILEPATH="/usr/local/sv/ext/bin/gnu-4.8/x64/freetype-2.6.3/lib/libfreetype.so" \
+  -DFREETYPE_INCLUDE_DIR_freetype2:PATH="/usr/local/sv/ext/bin/gnu-4.8/x64/freetype-2.6.3/include" \
+  -DFREETYPE_INCLUDE_DIR_ft2build:PATH="/usr/local/sv/ext/bin/gnu-4.8/x64/freetype-2.6.3/include" \
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
 
-$REPLACEME_SV_MAKE_CMD >& stdout-compile.txt
+#$REPLACEME_SV_MAKE_CMD >& stdout-compile.txt
 
 popd
