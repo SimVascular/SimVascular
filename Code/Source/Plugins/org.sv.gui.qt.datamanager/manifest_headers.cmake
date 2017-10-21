@@ -1,0 +1,5 @@
+set(Plugin-Name "SV Data Manager")
+set(Plugin-Version "1.0.0")
+set(Plugin-Vendor "SimVascular")
+set(Plugin-ContactAddress "http://www.simvascular.org")
+set(Require-Plugin org.mitk.gui.qt.application org.mitk.gui.qt.common)

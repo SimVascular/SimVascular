@@ -1,0 +1,11 @@
+s/berrySingleNodeSelection/svberrySingleNodeSelection/g
+s/mitkIContextMenuAction/svmitkIContextMenuAction/g
+s/QmitkDataManagerHotkeysPrefPage/svQmitkDataManagerHotkeysPrefPage/g
+s/QmitkDataManagerPreferencePage/svQmitkDataManagerPreferencePage/g
+s/QmitkDataManagerView/svQmitkDataManagerView/g
+s/mitkPluginActivator/svmitkPluginActivator/g
+s/QmitkDataManagerItemDelegate/svQmitkDataManagerItemDelegate/g
+s/QmitkDelKeyFilter/svQmitkDelKeyFilter/g
+s/QmitkInfoDialog/svQmitkInfoDialog/g
+s/QmitkNodeTableViewKeyFilter/svQmitkNodeTableViewKeyFilter/g
+
