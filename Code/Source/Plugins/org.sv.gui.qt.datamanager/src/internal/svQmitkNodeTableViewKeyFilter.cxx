@@ -18,7 +18,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include <QKeyEvent>
 #include <QKeySequence>
-#include "../svQmitkDataManagerView.h"
+#include "svQmitkDataManagerView.h"
 
 #include "berryIPreferencesService.h"
 #include "berryPlatform.h"

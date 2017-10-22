@@ -14,8 +14,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QMITKNODETABLEVIEWKEYFILTER_H_
-#define QMITKNODETABLEVIEWKEYFILTER_H_
+#ifndef SVQMITKNODETABLEVIEWKEYFILTER_H_
+#define SVQMITKNODETABLEVIEWKEYFILTER_H_
 
 #include <QObject>
 
@@ -41,4 +41,4 @@ protected:
   berry::IPreferencesService* m_PreferencesService;
 };
 
-#endif // QMITKNODETABLEVIEWKEYFILTER_H_
+#endif // SVQMITKNODETABLEVIEWKEYFILTER_H_

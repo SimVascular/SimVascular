@@ -17,7 +17,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include "svQmitkDelKeyFilter.h"
 
 #include <QKeyEvent>
-#include <src/internal/svQmitkDataManagerView.h>
+#include <svQmitkDataManagerView.h>
 
 svQmitkDelKeyFilter::svQmitkDelKeyFilter( QObject* _DataManagerView )
 : QObject(_DataManagerView)

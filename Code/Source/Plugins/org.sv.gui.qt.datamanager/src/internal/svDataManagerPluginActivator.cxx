@@ -13,10 +13,10 @@ A PARTICULAR PURPOSE.
 See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
-#include "svmitkPluginActivator.h"
-#include "../svQmitkDataManagerView.h"
-#include "../svQmitkDataManagerPreferencePage.h"
-#include "../svQmitkDataManagerHotkeysPrefPage.h"
+#include "svDataManagerPluginActivator.h"
+#include "svQmitkDataManagerView.h"
+#include "svQmitkDataManagerPreferencePage.h"
+#include "svQmitkDataManagerHotkeysPrefPage.h"
 
 namespace mitk {
 

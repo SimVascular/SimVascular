@@ -14,8 +14,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QMITKDATAMANAGERVIEW_H_
-#define QMITKDATAMANAGERVIEW_H_
+#ifndef SVQMITKDATAMANAGERVIEW_H_
+#define SVQMITKDATAMANAGERVIEW_H_
 
 // BlueBerry includes
 #include <berryIBerryPreferences.h>
@@ -27,7 +27,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 /// Qt
 #include <QItemSelection>
 
-#include <org_mitk_gui_qt_datamanager_Export.h>
+#include <org_sv_gui_qt_datamanager_Export.h>
 
 // Forward declarations
 class QMenu;
@@ -49,13 +49,13 @@ class QmitkNumberPropertySlider;
 class QmitkDataStorageFilterProxyModel;
 
 ///
-/// \ingroup org_mitk_gui_qt_datamanager_internal
+/// \ingroup org_sv_gui_qt_datamanager_internal
 ///
 /// \brief A View class that can show all data tree nodes of a certain DataStorage
 ///
 /// \TODO: complete PACS support, in save dialog show regular filename
 ///
-class MITK_QT_DATAMANAGER svQmitkDataManagerView : public QmitkAbstractView
+class SV_QT_DATAMANAGER svQmitkDataManagerView : public QmitkAbstractView
 {
   Q_OBJECT
 
@@ -265,4 +265,4 @@ private:
   mitk::IRenderWindowPart *OpenRenderWindowPart(bool activatedEditor = true);
 };
 
-#endif /*QMITKDATAMANAGERVIEW_H_*/
+#endif /*SVQMITKDATAMANAGERVIEW_H_*/

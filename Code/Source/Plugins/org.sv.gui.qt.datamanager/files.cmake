@@ -1,11 +1,8 @@
-set(SRC_CPP_FILES
+set(INTERNAL_CPP_FILES
   svberrySingleNodeSelection.cpp
   svQmitkDataManagerView.cpp
   svQmitkDataManagerPreferencePage.cpp
   svQmitkDataManagerHotkeysPrefPage.cpp
-)
-
-set(INTERNAL_CPP_FILES
   svmitkPluginActivator.cpp
   svQmitkNodeTableViewKeyFilter.cpp
   svQmitkInfoDialog.cpp
@@ -13,13 +10,13 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-  src/svQmitkDataManagerView.h
-  src/svQmitkDataManagerPreferencePage.h
-  src/svQmitkDataManagerHotkeysPrefPage.h
+  src/internal/svQmitkDataManagerView.h
+  src/internal/svQmitkDataManagerPreferencePage.h
+  src/internal/svQmitkDataManagerHotkeysPrefPage.h
   src/internal/svQmitkNodeTableViewKeyFilter.h
   src/internal/svQmitkInfoDialog.h
   src/internal/svQmitkDataManagerItemDelegate.h
-  src/internal/svmitkPluginActivator.h
+  src/internal/svDataManagerPluginActivator.h
 )
 
 set(CPP_FILES )

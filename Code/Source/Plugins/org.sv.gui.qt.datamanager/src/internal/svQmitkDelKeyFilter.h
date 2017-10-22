@@ -14,8 +14,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QMITKDELKEYFILTER_H_
-#define QMITKDELKEYFILTER_H_
+#ifndef SVQMITKDELKEYFILTER_H_
+#define SVQMITKDELKEYFILTER_H_
 
 #include <QObject>
 
@@ -32,4 +32,4 @@ protected:
   bool eventFilter(QObject *obj, QEvent *event);
 };
 
-#endif // QMITKDELKEYFILTER_H_
+#endif // SVQMITKDELKEYFILTER_H_

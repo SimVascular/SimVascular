@@ -13,8 +13,8 @@ A PARTICULAR PURPOSE.
 See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
-#ifndef MITKPLUGINACTIVATOR_H
-#define MITKPLUGINACTIVATOR_H
+#ifndef SVDATAMANAGERPLUGINACTIVATOR_H
+#define SVDATAMANAGERPLUGINACTIVATOR_H
 
 #include <ctkPluginActivator.h>
 
@@ -36,4 +36,4 @@ public:
 
 }
 
-#endif // MITKPLUGINACTIVATOR_H
+#endif // SVDATAMANAGERPLUGINACTIVATOR_H

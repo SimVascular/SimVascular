@@ -44,9 +44,9 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <QmitkFileSaveAction.h>
 #include <QmitkDataStorageFilterProxyModel.h>
 #include <QmitkNumberPropertySlider.h>
-#include "src/internal/svQmitkNodeTableViewKeyFilter.h"
-#include "src/internal/svQmitkInfoDialog.h"
-#include "src/internal/svQmitkDataManagerItemDelegate.h"
+#include "svQmitkNodeTableViewKeyFilter.h"
+#include "svQmitkInfoDialog.h"
+#include "svQmitkDataManagerItemDelegate.h"
 //## Berry
 #include <berryIEditorPart.h>
 #include <berryIWorkbenchPage.h>

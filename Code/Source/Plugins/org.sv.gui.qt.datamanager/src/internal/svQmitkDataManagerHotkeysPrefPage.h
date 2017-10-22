@@ -15,18 +15,18 @@ See LICENSE.txt or http://www.mitk.org for details.
 ===================================================================*/
 
 
-#ifndef QMITKDATAMANAGERHOTKEYSPREFPAGE_H_
-#define QMITKDATAMANAGERHOTKEYSPREFPAGE_H_
+#ifndef SVQMITKDATAMANAGERHOTKEYSPREFPAGE_H_
+#define SVQMITKDATAMANAGERHOTKEYSPREFPAGE_H_
 
 #include "berryIQtPreferencePage.h"
-#include <org_mitk_gui_qt_datamanager_Export.h>
+#include <org_sv_gui_qt_datamanager_Export.h>
 
 #include <map>
 #include <QWidget>
 
 class QmitkHotkeyLineEdit;
 
-struct MITK_QT_DATAMANAGER svQmitkDataManagerHotkeysPrefPage : public QObject, public berry::IQtPreferencePage
+struct SV_QT_DATAMANAGER svQmitkDataManagerHotkeysPrefPage : public QObject, public berry::IQtPreferencePage
 {
   Q_OBJECT
   Q_INTERFACES(berry::IPreferencePage)
@@ -69,4 +69,4 @@ protected:
   QWidget* m_MainControl;
 };
 
-#endif /* QMITKDATAMANAGERHOTKEYSPREFPAGE_H_ */
+#endif /* SVQMITKDATAMANAGERHOTKEYSPREFPAGE_H_ */

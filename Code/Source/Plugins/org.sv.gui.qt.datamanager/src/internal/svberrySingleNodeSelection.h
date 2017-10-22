@@ -14,13 +14,13 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QMITKSINGLENODESELECTION_H_
-#define QMITKSINGLENODESELECTION_H_
+#ifndef SVQMITKSINGLENODESELECTION_H_
+#define SVQMITKSINGLENODESELECTION_H_
 
 // Own includes
 #include "berryISelection.h"
 /// Qmitk
-#include <org_mitk_gui_qt_datamanager_Export.h>
+#include <org_sv_gui_qt_datamanager_Export.h>
 
 //# forward declarations
 namespace mitk
@@ -35,7 +35,7 @@ namespace berry
   /// \struct SingleNodeSelection
   /// \brief Represents a selection object that encapsulates the selection of a single node.
   ///
-  struct MITK_QT_DATAMANAGER SingleNodeSelection: public berry::ISelection
+  struct SV_QT_DATAMANAGER SingleNodeSelection: public berry::ISelection
   {
     ///
     /// \brief Make typdefs for pointer types.
@@ -63,4 +63,4 @@ namespace berry
 
 }
 
-#endif // QMITKSINGLENODESELECTION_H_
+#endif // SVQMITKSINGLENODESELECTION_H_

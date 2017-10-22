@@ -14,8 +14,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QMITKINFODIALOG_H_
-#define QMITKINFODIALOG_H_
+#ifndef SVQMITKINFODIALOG_H_
+#define SVQMITKINFODIALOG_H_
 
 #include <mitkDataNode.h>
 
@@ -47,4 +47,4 @@ class svQmitkInfoDialog : public QDialog
     QTextBrowser* m_TextBrowser;
 };
 
-#endif // QMITKINFODIALOG_H_
+#endif // SVQMITKINFODIALOG_H_

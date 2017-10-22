@@ -15,17 +15,17 @@ See LICENSE.txt or http://www.mitk.org for details.
 ===================================================================*/
 
 
-#ifndef QMITKDATAMANAGERPREFERENCEPAGE_H_
-#define QMITKDATAMANAGERPREFERENCEPAGE_H_
+#ifndef SVQMITKDATAMANAGERPREFERENCEPAGE_H_
+#define SVQMITKDATAMANAGERPREFERENCEPAGE_H_
 
 #include "berryIQtPreferencePage.h"
-#include <org_mitk_gui_qt_datamanager_Export.h>
+#include <org_sv_gui_qt_datamanager_Export.h>
 #include <berryIPreferences.h>
 
 class QWidget;
 class QCheckBox;
 
-struct MITK_QT_DATAMANAGER svQmitkDataManagerPreferencePage : public QObject, public berry::IQtPreferencePage
+struct SV_QT_DATAMANAGER svQmitkDataManagerPreferencePage : public QObject, public berry::IQtPreferencePage
 {
   Q_OBJECT
   Q_INTERFACES(berry::IPreferencePage)
@@ -66,4 +66,4 @@ protected:
   berry::IPreferences::Pointer m_DataManagerPreferencesNode;
 };
 
-#endif /* QMITKDATAMANAGERPREFERENCEPAGE_H_ */
+#endif /* SVQMITKDATAMANAGERPREFERENCEPAGE_H_ */
