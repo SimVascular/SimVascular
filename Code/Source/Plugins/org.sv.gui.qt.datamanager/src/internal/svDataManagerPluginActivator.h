@@ -18,9 +18,9 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include <ctkPluginActivator.h>
 
-namespace mitk {
+//namespace mitk {
 
-class PluginActivator :
+class svDataManagerPluginActivator :
   public QObject, public ctkPluginActivator
 {
   Q_OBJECT
@@ -34,6 +34,6 @@ public:
 
 }; // PluginActivator
 
-}
+//}
 
 #endif // SVDATAMANAGERPLUGINACTIVATOR_H

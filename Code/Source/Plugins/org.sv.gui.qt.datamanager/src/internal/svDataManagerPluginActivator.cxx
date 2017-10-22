@@ -18,18 +18,18 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include "svQmitkDataManagerPreferencePage.h"
 #include "svQmitkDataManagerHotkeysPrefPage.h"
 
-namespace mitk {
+//namespace mitk {
 
-void PluginActivator::start(ctkPluginContext* context)
+void svDataManagerPluginActivator::start(ctkPluginContext* context)
 {
   BERRY_REGISTER_EXTENSION_CLASS(svQmitkDataManagerView, context)
   BERRY_REGISTER_EXTENSION_CLASS(svQmitkDataManagerPreferencePage, context)
   BERRY_REGISTER_EXTENSION_CLASS(svQmitkDataManagerHotkeysPrefPage, context)
 }
 
-void PluginActivator::stop(ctkPluginContext* context)
+void svDataManagerPluginActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
 }
 
-}
+//}

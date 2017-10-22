@@ -46,6 +46,8 @@ HDRS	=  \
   svProjectManagerPluginActivator.h \
   svProjectAddImageAction.h \
   svProjectCloseAction.h \
+  svProjectSaveAction.h \
+  svProjectDuplicateAction.h \
   svProjectShowModelEdgesAction.h \
   svProjectShowModelFullAction.h
 
@@ -53,6 +55,8 @@ CXXSRCS	= \
   svProjectManagerPluginActivator.cxx \
   svProjectAddImageAction.cxx \
   svProjectCloseAction.cxx \
+  svProjectSaveAction.cxx \
+  svProjectDuplicateAction.cxx \
   svProjectShowModelEdgesAction.cxx \
   svProjectShowModelFullAction.cxx
 

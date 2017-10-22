@@ -840,6 +840,7 @@ RegCloseKey(hKey2);
          pluginsToStart.push_back("org_sv_gui_qt_application");
          pluginsToStart.push_back("org_sv_projectdatanodes");
          pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
+	 pluginsToStart.push_back("org_sv_gui_qt_datamanager");
          pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
          pluginsToStart.push_back("org_sv_gui_qt_modeling");
          pluginsToStart.push_back("org_sv_gui_qt_segmentation");
