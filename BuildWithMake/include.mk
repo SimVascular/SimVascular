@@ -708,6 +708,7 @@ endif
 ifeq ($(SV_USE_MITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.meshing/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
