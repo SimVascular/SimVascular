@@ -88,14 +88,14 @@ s+REPLACEME_SV_CMAKE_CMD+/cygdrive/c/Program\\ Files/CMake/bin/cmake.exe+g
 s+REPLACEME_SV_CMAKE_OBJECT_PATH_MAX+128+g
 
 s+REPLACEME_SV_OS_DIR+win+g
-s+REPLACEME_SV_COMPILER_BIN_DIR+msvc-12.5+g
+s+REPLACEME_SV_COMPILER_BIN_DIR+msvc/18.0+g
 s+REPLACEME_SV_ARCH_DIR+x64+g
 
 # swig
 
-s+REPLACEME_SV_SWIG_EXECUTABLE+C:/OpenSource/swigwin-3.0.8/swig.exe+g
-s+REPLACEME_SV_SWIG_DIR+C:/OpenSource/swigwin-3.0.8/Lib+g
-s+REPLACEME_SV_SWIG_VERSION+3.0.8+g
+s+REPLACEME_SV_SWIG_EXECUTABLE+C:/OpenSource/swigwin-3.0.12/swig.exe+g
+s+REPLACEME_SV_SWIG_DIR+C:/OpenSource/swigwin-3.0.12/Lib+g
+s+REPLACEME_SV_SWIG_VERSION+3.0.12+g
 
 # gdcm
 

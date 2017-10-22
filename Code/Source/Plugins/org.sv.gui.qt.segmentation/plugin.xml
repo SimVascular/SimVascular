@@ -13,7 +13,7 @@
 
   </extension>
 
-  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Create Contour Group" icon="" class="svContourGroupCreateAction" />
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Create 3D Segmentation" icon="" class="svSeg3DCreateAction" />
       <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Import Segmentations" icon="" class="svSegmentationLoadAction" />

@@ -8,7 +8,7 @@
           icon="resources/pathedit.png" />
   </extension>
 
-  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
       <contextMenuAction nodeDescriptorName="svPathFolder" label="Create Path" icon="" class="svPathCreateAction" />
       <contextMenuAction nodeDescriptorName="svPathFolder" label="Import Paths" icon="" class="svPathLoadAction" />
       <contextMenuAction nodeDescriptorName="svPathFolder" label="Export All as Legacy Paths" icon="" class="svPathLegacySaveAction" />
