@@ -823,7 +823,7 @@ RegCloseKey(hKey2);
        pluginsToStart.push_back("org_mitk_gui_qt_common");
        pluginsToStart.push_back("org_mitk_gui_qt_stdmultiwidgeteditor");
        pluginsToStart.push_back("org_mitk_gui_qt_common_legacy");
-       pluginsToStart.push_back("org_mitk_gui_qt_datamanager");
+       //pluginsToStart.push_back("org_mitk_gui_qt_datamanager");
        pluginsToStart.push_back("org_mitk_gui_qt_properties");
        pluginsToStart.push_back("org_mitk_gui_qt_basicimageprocessing");
        pluginsToStart.push_back("org_mitk_gui_qt_dicom");
@@ -839,8 +839,8 @@ RegCloseKey(hKey2);
        if (!use_workbench) {
          pluginsToStart.push_back("org_sv_gui_qt_application");
          pluginsToStart.push_back("org_sv_projectdatanodes");
+         pluginsToStart.push_back("org_sv_gui_qt_datamanager");
          pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
-	 pluginsToStart.push_back("org_sv_gui_qt_datamanager");
          pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
          pluginsToStart.push_back("org_sv_gui_qt_modeling");
          pluginsToStart.push_back("org_sv_gui_qt_segmentation");
