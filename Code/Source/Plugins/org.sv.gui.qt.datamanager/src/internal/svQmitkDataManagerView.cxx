@@ -442,7 +442,7 @@ void svQmitkDataManagerView::ContextMenuActionTriggered( bool )
     return;
   }
   berry::IConfigurationElement::Pointer confElem = it->second;
-  mitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<mitk::IContextMenuAction>("class");
+  svmitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<svmitk::IContextMenuAction>("class");
 
   QString className = confElem->GetAttribute("class");
   

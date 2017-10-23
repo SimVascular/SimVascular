@@ -3,15 +3,15 @@
 
 #include <org_sv_gui_qt_segmentation_Export.h>
 
-#include <mitkIContextMenuAction.h>
+#include <svmitkIContextMenuAction.h>
 #include <mitkDataNode.h>
 
 #include <QObject>
 
-class SV_QT_SEGMENTATION svContourGroupPoint2DSizeAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_SEGMENTATION svContourGroupPoint2DSizeAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   svContourGroupPoint2DSizeAction();

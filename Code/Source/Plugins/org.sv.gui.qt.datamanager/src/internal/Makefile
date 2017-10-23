@@ -57,7 +57,8 @@ HDRS	= \
   svQmitkNodeTableViewKeyFilter.h \
   svQmitkInfoDialog.h \
   svQmitkDataManagerItemDelegate.h \
-  svDataManagerPluginActivator.h
+  svDataManagerPluginActivator.h \
+  svmitkIContextMenuAction.h
 
 CXXSRCS	= \
   svberrySingleNodeSelection.cxx \
@@ -122,7 +123,7 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
 
 TARGET_LIB_NAME = $(SV_PLUGIN_DATAMANAGER_NAME)
 

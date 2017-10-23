@@ -3,15 +3,15 @@
 
 #include <org_sv_gui_qt_modeling_Export.h>
 
-#include <mitkIContextMenuAction.h>
+#include <svmitkIContextMenuAction.h>
 #include <mitkDataNode.h>
 
 #include <QObject>
 
-class SV_QT_MODELING svModelLegacySaveAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MODELING svModelLegacySaveAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   svModelLegacySaveAction();

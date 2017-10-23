@@ -25,7 +25,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 class QmitkStdMultiWidget;
 
-namespace mitk
+namespace svmitk
 {
   /**
   * A context menu action, which is linked to the context menu <br>
@@ -50,6 +50,6 @@ namespace mitk
   };
 }
 
-Q_DECLARE_INTERFACE(mitk::IContextMenuAction, "org.sv.datamanager.IContextMenuAction")
+Q_DECLARE_INTERFACE(svmitk::IContextMenuAction, "org.sv.datamanager.IContextMenuAction")
 
 #endif // svmitkIContextMenuAction_H_

@@ -5,15 +5,15 @@
 
 #include "svDataNodeOperationInterface.h"
 
-#include <mitkIContextMenuAction.h>
+#include <svmitkIContextMenuAction.h>
 #include <mitkDataNode.h>
 
 #include <QObject>
 
-class SV_QT_SEGMENTATION svSeg3DCreateAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_SEGMENTATION svSeg3DCreateAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   svSeg3DCreateAction();
