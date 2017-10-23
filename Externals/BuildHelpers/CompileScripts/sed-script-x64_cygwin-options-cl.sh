@@ -71,7 +71,7 @@ s+REPLACEME_CC+CL+g
 s/REPLACEME_CXX/CL/g
 s/REPLACEME_TAR/tar/g
 s/REPLACEME_ZIP/zip/g
-s+REPLACEME_SV_SPECIAL_COMPILER_SCRIPT+source CygwinHelpers/msvc_2013_x64;export PATH=/cygdrive/c/Program\\ Files/doxygen/bin:/cygdrive/c/Program\\ Files/CMake/bin:$PATH+g
+s+REPLACEME_SV_SPECIAL_COMPILER_SCRIPT+source CygwinHelpers/msvc_2013_x64;export PATH=/cygdrive/c/Program\\ Files/doxygen/bin:/cygdrive/c/Program\\ Files\\ \\(x86\\)/Graphviz2.38/bin:/cygdrive/c/Program\\ Files/CMake/bin:$PATH+g
 s+REPLACEME_SV_PLATFORM+windows+g
 s+REPLACEME_SV_LIB_FILE_PREFIX++g
 s+REPLACEME_SV_LIB_FILE_EXTENSION+lib+g

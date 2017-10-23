@@ -66,7 +66,7 @@
 #include <QmitkMemoryUsageIndicatorView.h>
 #include <QmitkPreferencesDialog.h>
 #include <QmitkOpenDicomEditorAction.h>
-#include <QmitkDataManagerView.h>
+#include "svQmitkDataManagerView.h"
 #include <QmitkStdMultiWidgetEditor.h>
 #include <QmitkStdMultiWidget.h>
 
@@ -1093,11 +1093,11 @@ void svWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
     if(page.IsNull())
         return;
 
-    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.mitk.views.datamanager");
+    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.sv.views.datamanager");
     if(dataManagerView.IsNull())
         return;
 
-    QmitkDataManagerView* dataManager=dynamic_cast<QmitkDataManagerView*>(dataManagerView.GetPointer());
+    svQmitkDataManagerView* dataManager=dynamic_cast<svQmitkDataManagerView*>(dataManagerView.GetPointer());
     QTreeView* treeView=dataManager->GetTreeView();
 
     QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
