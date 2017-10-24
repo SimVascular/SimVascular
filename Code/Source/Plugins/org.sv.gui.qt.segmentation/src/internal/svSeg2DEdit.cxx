@@ -390,7 +390,10 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     if(imageNode.IsNotNull())
         ui->resliceSlider->setDataNode(imageNode);
     else
-        ui->resliceSlider->setDataNode(m_ContourGroupNode);
+        ui->resliceSlider->setDataNode(m_PathNode);
+
+    //ui->resliceSlider->setDataNode(m_ContourGroupNode);
+
 
     double resliceSize=m_ContourGroup->GetResliceSize();
     if(resliceSize==0)
