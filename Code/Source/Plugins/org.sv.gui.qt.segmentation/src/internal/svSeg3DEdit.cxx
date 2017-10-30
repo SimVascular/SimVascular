@@ -15,6 +15,9 @@
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
 
+#include <berryIWorkbenchWindow.h>
+#include <berryISelectionService.h>
+
 #include <usModuleRegistry.h>
 
 // Qt
@@ -79,6 +82,14 @@ void svSeg3DEdit::Hidden()
 //{
 //    return true;
 //}
+
+std::vector<mitk::DataNode*> svSeg3DEdit::GetDataManagerSelection() const
+{
+  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
+    // buffer for the data manager selection
+  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
+  return this->DataNodeSelectionToVector(currentSelection);
+}
 
 void svSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {

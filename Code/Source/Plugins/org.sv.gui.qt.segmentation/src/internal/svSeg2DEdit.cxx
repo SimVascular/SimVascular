@@ -25,6 +25,9 @@
 #include <mitkProgressBar.h>
 #include <mitkNodePredicateDataType.h>
 
+#include <berryIWorkbenchWindow.h>
+#include <berryISelectionService.h>
+
 #include <usModuleRegistry.h>
 
 // Qt
@@ -189,6 +192,14 @@ void svSeg2DEdit::Hidden()
 //{
 //    return true;
 //}
+
+std::vector<mitk::DataNode*> svSeg2DEdit::GetDataManagerSelection() const
+{
+  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
+    // buffer for the data manager selection
+  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
+  return this->DataNodeSelectionToVector(currentSelection);
+}
 
 int svSeg2DEdit::GetTimeStep()
 {

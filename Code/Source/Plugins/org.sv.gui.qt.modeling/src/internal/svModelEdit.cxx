@@ -3,6 +3,8 @@
 
 #include <berryIPreferencesService.h>
 #include <berryPlatform.h>
+#include <berryIWorkbenchWindow.h>
+#include <berryISelectionService.h>
 
 #include "svFaceListDelegate.h"
 #include "svPath.h"
@@ -280,6 +282,14 @@ void svModelEdit::Hidden()
 {
     //    ClearAll();
     RemoveObservers();
+}
+
+std::vector<mitk::DataNode*> svModelEdit::GetDataManagerSelection() const
+{
+  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
+    // buffer for the data manager selection
+  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
+  return this->DataNodeSelectionToVector(currentSelection);
 }
 
 int svModelEdit::GetTimeStep()

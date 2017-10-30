@@ -17,6 +17,8 @@
 #include <berryIPreferencesService.h>
 #include <berryIPreferences.h>
 #include <berryPlatform.h>
+#include <berryIWorkbenchWindow.h>
+#include <berryISelectionService.h>
 
 #include <usModuleRegistry.h>
 
@@ -538,6 +540,14 @@ void svSimulationView::Visible()
 void svSimulationView::Hidden()
 {
     RemoveObservers();
+}
+
+std::vector<mitk::DataNode*> svSimulationView::GetDataManagerSelection() const
+{
+  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
+    // buffer for the data manager selection
+  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
+  return this->DataNodeSelectionToVector(currentSelection);
 }
 
 void svSimulationView::AddObservers()

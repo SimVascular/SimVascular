@@ -177,6 +177,9 @@ public:
 
 //    bool IsExclusiveFunctionality() const override;
 
+    // HIDING Function from mitk data manager
+    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
+
     void PreparePreviewInteraction(QString method);
 
     void QuitPreviewInteraction();
