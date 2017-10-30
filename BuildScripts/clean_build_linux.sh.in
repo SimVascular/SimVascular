@@ -41,7 +41,7 @@ fi
 
 #----------------------------------------------------------------------------
 # Additional libs
-pkgarray=( libglu-dev libxmu-dev libxi-dev )
+pkgarray=( libglu1-mesa-dev libxmu-dev libxi-dev )
 
 for pkg in "${pkgarray[@]}"
 do
