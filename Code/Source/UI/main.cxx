@@ -823,7 +823,7 @@ RegCloseKey(hKey2);
        pluginsToStart.push_back("org_mitk_gui_qt_common");
        pluginsToStart.push_back("org_mitk_gui_qt_stdmultiwidgeteditor");
        pluginsToStart.push_back("org_mitk_gui_qt_common_legacy");
-       //pluginsToStart.push_back("org_mitk_gui_qt_datamanager");
+       pluginsToStart.push_back("org_mitk_gui_qt_datamanager");
        pluginsToStart.push_back("org_mitk_gui_qt_properties");
        pluginsToStart.push_back("org_mitk_gui_qt_basicimageprocessing");
        pluginsToStart.push_back("org_mitk_gui_qt_dicom");
