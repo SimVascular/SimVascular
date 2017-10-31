@@ -8,7 +8,7 @@
           icon="resources/model.png" />
   </extension>
 
-  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
       <contextMenuAction nodeDescriptorName="svModelFolder" label="Create Model" icon="" class="svModelCreateAction" />
       <contextMenuAction nodeDescriptorName="svModelFolder" label="Import Solid Model" icon="" class="svModelLoadAction" />
       <contextMenuAction nodeDescriptorName="svModel" label="Export Solid Model" icon="" class="svModelLegacySaveAction" />

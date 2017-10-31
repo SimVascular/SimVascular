@@ -4,16 +4,16 @@
 #include <org_sv_gui_qt_modeling_Export.h>
 #include "svDataNodeOperationInterface.h"
 
-#include <mitkIContextMenuAction.h>
+#include <svmitkIContextMenuAction.h>
 #include <mitkDataNode.h>
 
 #include <QObject>
 #include <QThread>
 
-class SV_QT_MODELING svModelExtractPathsAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MODELING svModelExtractPathsAction : public QObject, public svmitk::IContextMenuAction
 {
     Q_OBJECT
-    Q_INTERFACES(mitk::IContextMenuAction)
+    Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
     svModelExtractPathsAction();

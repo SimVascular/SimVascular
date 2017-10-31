@@ -46,6 +46,8 @@ HDRS	=  \
   svProjectManagerPluginActivator.h \
   svProjectAddImageAction.h \
   svProjectCloseAction.h \
+  svProjectSaveAction.h \
+  svProjectDuplicateAction.h \
   svProjectShowModelEdgesAction.h \
   svProjectShowModelFullAction.h
 
@@ -53,6 +55,8 @@ CXXSRCS	= \
   svProjectManagerPluginActivator.cxx \
   svProjectAddImageAction.cxx \
   svProjectCloseAction.cxx \
+  svProjectSaveAction.cxx \
+  svProjectDuplicateAction.cxx \
   svProjectShowModelEdgesAction.cxx \
   svProjectShowModelFullAction.cxx
 
@@ -90,7 +94,7 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
 
 TARGET_LIB_NAME = $(SV_PLUGIN_PROJECTMANAGER_NAME)
 

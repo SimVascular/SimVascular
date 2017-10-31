@@ -135,6 +135,9 @@ public:
 
     virtual void Hidden() override;
 
+    // HIDING Function from mitk data manager
+    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
+
     virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
 
     svSimJob* CreateJob(std::string& msg, bool checkValidity = true);

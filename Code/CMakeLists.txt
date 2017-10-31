@@ -269,6 +269,7 @@ if(SV_USE_QT_GUI)
   if(NOT SV_USE_MITK_CONFIG)
     set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
       "Source/Plugins/org.sv.projectdatanodes"
+      "Source/Plugins/org.sv.gui.qt.datamanager"
       "Source/Plugins/org.sv.gui.qt.projectmanager"
       "Source/Plugins/org.sv.gui.qt.pathplanning"
       "Source/Plugins/org.sv.gui.qt.segmentation"

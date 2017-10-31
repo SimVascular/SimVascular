@@ -94,6 +94,9 @@ public:
 
 //    bool IsExclusiveFunctionality() const override;
 
+    // HIDING Function from mitk data manager
+    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
+
 protected:
 
     bool eventFilter(QObject *obj, QEvent *ev);

@@ -147,6 +147,9 @@ public:
 
     virtual void Hidden() override;
 
+    // HIDING Function from mitk data manager
+    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
+
 protected:
 
     QWidget* m_Parent;

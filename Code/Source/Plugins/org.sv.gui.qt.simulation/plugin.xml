@@ -8,7 +8,7 @@
           icon="resources/simulation.png" />
   </extension>
 
-  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
     <contextMenuAction nodeDescriptorName="svSimulationFolder" label="Create Simulation Job" icon="" class="svSimJobCreateAction" />
     <contextMenuAction nodeDescriptorName="svMitkSimJob" label="Stop Simulation" icon="" class="svSimJobStopAction" />
     <contextMenuAction nodeDescriptorName="svMitkSimJob" label="Export Data Files" icon="" class="svSimJobExportAction" />

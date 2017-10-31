@@ -3,15 +3,15 @@
 
 #include <org_sv_gui_qt_pathplanning_Export.h>
 
-#include <mitkIContextMenuAction.h>
+#include <svmitkIContextMenuAction.h>
 #include <mitkDataNode.h>
 
 #include <QObject>
 
-class SV_QT_PATHPLANNING svPathLegacySaveAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_PATHPLANNING svPathLegacySaveAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   svPathLegacySaveAction();

@@ -839,6 +839,7 @@ RegCloseKey(hKey2);
        if (!use_workbench) {
          pluginsToStart.push_back("org_sv_gui_qt_application");
          pluginsToStart.push_back("org_sv_projectdatanodes");
+         pluginsToStart.push_back("org_sv_gui_qt_datamanager");
          pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
          pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
          pluginsToStart.push_back("org_sv_gui_qt_modeling");

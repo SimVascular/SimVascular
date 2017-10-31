@@ -134,6 +134,9 @@ public:
 
     virtual void Hidden() override;
 
+    // HIDING Function from mitk data manager
+    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
+
     bool IsDouble(QString value);
 
     bool IsInt(QString value);

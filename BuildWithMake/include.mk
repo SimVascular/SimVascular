@@ -708,6 +708,7 @@ endif
 ifeq ($(SV_USE_MITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.meshing/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
@@ -780,6 +781,7 @@ SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
 
 #plugin names
 SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application
+SV_PLUGIN_DATAMANAGER_NAME=org_sv_gui_qt_datamanager
 SV_PLUGIN_MESHING_NAME=org_sv_gui_qt_meshing
 SV_PLUGIN_MODELING_NAME=org_sv_gui_qt_modeling
 SV_PLUGIN_PATHPLANNING_NAME=org_sv_gui_qt_pathplanning

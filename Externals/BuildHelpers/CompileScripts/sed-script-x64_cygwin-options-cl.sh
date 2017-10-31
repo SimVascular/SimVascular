@@ -71,7 +71,7 @@ s+REPLACEME_CC+CL+g
 s/REPLACEME_CXX/CL/g
 s/REPLACEME_TAR/tar/g
 s/REPLACEME_ZIP/zip/g
-s+REPLACEME_SV_SPECIAL_COMPILER_SCRIPT+source CygwinHelpers/msvc_2013_x64;export PATH=/cygdrive/c/Program\\ Files/doxygen/bin:/cygdrive/c/Program\\ Files/CMake/bin:$PATH+g
+s+REPLACEME_SV_SPECIAL_COMPILER_SCRIPT+source CygwinHelpers/msvc_2013_x64;export PATH=/cygdrive/c/Program\\ Files/doxygen/bin:/cygdrive/c/Program\\ Files\\ \\(x86\\)/Graphviz2.38/bin:/cygdrive/c/Program\\ Files/CMake/bin:$PATH+g
 s+REPLACEME_SV_PLATFORM+windows+g
 s+REPLACEME_SV_LIB_FILE_PREFIX++g
 s+REPLACEME_SV_LIB_FILE_EXTENSION+lib+g
@@ -88,14 +88,14 @@ s+REPLACEME_SV_CMAKE_CMD+/cygdrive/c/Program\\ Files/CMake/bin/cmake.exe+g
 s+REPLACEME_SV_CMAKE_OBJECT_PATH_MAX+128+g
 
 s+REPLACEME_SV_OS_DIR+win+g
-s+REPLACEME_SV_COMPILER_BIN_DIR+msvc-12.5+g
+s+REPLACEME_SV_COMPILER_BIN_DIR+msvc/18.0+g
 s+REPLACEME_SV_ARCH_DIR+x64+g
 
 # swig
 
-s+REPLACEME_SV_SWIG_EXECUTABLE+C:/OpenSource/swigwin-3.0.8/swig.exe+g
-s+REPLACEME_SV_SWIG_DIR+C:/OpenSource/swigwin-3.0.8/Lib+g
-s+REPLACEME_SV_SWIG_VERSION+3.0.8+g
+s+REPLACEME_SV_SWIG_EXECUTABLE+C:/OpenSource/swigwin-3.0.12/swig.exe+g
+s+REPLACEME_SV_SWIG_DIR+C:/OpenSource/swigwin-3.0.12/Lib+g
+s+REPLACEME_SV_SWIG_VERSION+3.0.12+g
 
 # gdcm
 

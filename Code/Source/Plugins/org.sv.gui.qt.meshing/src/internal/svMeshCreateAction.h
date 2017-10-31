@@ -5,15 +5,15 @@
 
 #include "svMeshCreate.h"
 
-#include <mitkIContextMenuAction.h>
+#include <svmitkIContextMenuAction.h>
 #include <mitkDataNode.h>
 
 #include <QObject>
 
-class SV_QT_MESHING svMeshCreateAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MESHING svMeshCreateAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   svMeshCreateAction();
