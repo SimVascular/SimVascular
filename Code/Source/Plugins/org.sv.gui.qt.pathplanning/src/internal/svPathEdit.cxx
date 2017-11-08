@@ -535,20 +535,40 @@ void svPathEdit::AddPoint(mitk::Point3D point)
     switch(selectedModeIndex)
     {
     case svPath::SMART:
+      {
         index=pathElement->GetInsertintIndexByDistance(point);
         break;
+      }
     case svPath::BEGINNING:
+      {
         index=0;
         break;
+      }
     case svPath::END:
+      {
         index=-1;
         break;
+      }
     case svPath::BEFORE:
-        index= ui->listWidget->selectionModel()->selectedRows().front().row();
-        break;
+        {
+          index= ui->listWidget->selectionModel()->selectedRows().front().row();
+          if (index < 0)
+          {
+            QMessageBox::information(NULL,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
+            return;
+          }
+          break;
+        }
     case svPath::AFTER:
-        index= ui->listWidget->selectionModel()->selectedRows().front().row()+1;
-        break;
+        {
+          index= ui->listWidget->selectionModel()->selectedRows().front().row()+1;
+          if (index < 0)
+          {
+            QMessageBox::information(NULL,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
+            return;
+          }
+          break;
+        }
     default:
         break;
     }
