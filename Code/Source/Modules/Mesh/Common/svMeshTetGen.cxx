@@ -200,7 +200,10 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
         if(m_cvTetGenMesh->WriteMesh(NULL,0)==SV_OK)
         {
             vtkPolyData* surfaceMesh=m_cvTetGenMesh->GetPolyData()->GetVtkPolyData();
-            vtkUnstructuredGrid* volumeMesh=m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+            vtkUnstructuredGrid* volumeMesh = NULL;
+            if (m_cvTetGenMesh->GetUnstructuredGrid() != NULL)
+              volumeMesh = m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+
             if(surfaceMesh==NULL)
             {
                 delete m_cvTetGenMesh;
@@ -210,8 +213,11 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
             }
             m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
             m_SurfaceMesh->DeepCopy(surfaceMesh);
-            m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
-            m_VolumeMesh->DeepCopy(volumeMesh);
+            if (volumeMesh!=NULL)
+            {
+              m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
+              m_VolumeMesh->DeepCopy(volumeMesh);
+            }
             delete m_cvTetGenMesh;//Get all data;ok to delete inner mesh
             m_cvTetGenMesh=NULL;
         }
