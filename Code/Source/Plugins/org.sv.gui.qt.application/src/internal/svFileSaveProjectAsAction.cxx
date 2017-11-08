@@ -1,13 +1,17 @@
-#include "svCloseProjectAction.h"
+#include "svFileSaveProjectAsAction.h"
 
 #include "svApplicationPluginActivator.h"
 #include "svProjectManager.h"
 
 #include <QMessageBox>
 #include <QApplication>
+#include <QFileDialog>
 
+#include <berryPlatform.h>
 #include <berryPlatformUI.h>
 #include <berryISelectionService.h>
+#include <berryIPreferencesService.h>
+#include <berryIPreferences.h>
 
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
@@ -16,14 +20,14 @@
 #include <mitkDataNodeSelection.h>
 #include <mitkDataNode.h>
 
-svCloseProjectAction::svCloseProjectAction(berry::IWorkbenchWindow::Pointer window)
+svFileSaveProjectAsAction::svFileSaveProjectAsAction(berry::IWorkbenchWindow::Pointer window)
     : QAction(0)
     , m_Window(nullptr)
 {
     this->Init(window.GetPointer());
 }
 
-svCloseProjectAction::svCloseProjectAction(const QIcon & icon, berry::IWorkbenchWindow::Pointer window)
+svFileSaveProjectAsAction::svFileSaveProjectAsAction(const QIcon & icon, berry::IWorkbenchWindow::Pointer window)
     : QAction(0)
     , m_Window(nullptr)
 {
@@ -31,7 +35,7 @@ svCloseProjectAction::svCloseProjectAction(const QIcon & icon, berry::IWorkbench
     this->setIcon(icon);
 }
 
-svCloseProjectAction::svCloseProjectAction(const QIcon & icon, berry::IWorkbenchWindow* window)
+svFileSaveProjectAsAction::svFileSaveProjectAsAction(const QIcon & icon, berry::IWorkbenchWindow* window)
     : QAction(0)
     , m_Window(nullptr)
 {
@@ -39,16 +43,16 @@ svCloseProjectAction::svCloseProjectAction(const QIcon & icon, berry::IWorkbench
     this->setIcon(icon);
 }
 
-void svCloseProjectAction::Init(berry::IWorkbenchWindow* window)
+void svFileSaveProjectAsAction::Init(berry::IWorkbenchWindow* window)
 {
     m_Window = window;
-    this->setText("&Close SV Project...");
-    this->setToolTip("Remove selected projects from the data manager");
+    this->setText("&Save SV Project As...");
+    this->setToolTip("Save selected project to specified directory");
 
     this->connect(this, SIGNAL(triggered(bool)), this, SLOT(Run()));
 }
 
-void svCloseProjectAction::Run()
+void svFileSaveProjectAsAction::Run()
 {
     try
     {
@@ -93,6 +97,19 @@ void svCloseProjectAction::Run()
 
         std::list< mitk::DataNode::Pointer > selectedList = nodeSelection->GetSelectedDataNodes();
 
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+
+        if (prefService)
+        {
+            prefs = prefService->GetSystemPreferences()->Node("/General");
+        }
+        else
+        {
+            prefs = berry::IPreferences::Pointer(0);
+        }
+
+
         for (std::list<mitk::DataNode::Pointer>::iterator it = selectedList.begin(); it != selectedList.end(); it++)
         {
           mitk::DataNode::Pointer selectedNode = *it;
@@ -101,39 +118,53 @@ void svCloseProjectAction::Run()
 
           if(!isProjectFolder->CheckNode(selectedNode))
           {
-              mitk::StatusBar::GetInstance()->DisplayText("Select an SV project folder to close.");
+              mitk::StatusBar::GetInstance()->DisplayText("Select an SV project folder to save.");
               return;
           }
 
-          QString msg = "Are you sure that you want to close the project "+QString::fromStdString(selectedNode->GetName())+"?";
-          if (QMessageBox::question(NULL, "Close Project", msg,
-                                    QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+          QString lastSVProjPath="";
+          if(prefs.IsNotNull())
           {
-              mitk::StatusBar::GetInstance()->DisplayText("Not closing project.");
-              continue;
+              lastSVProjPath = prefs->Get("LastSVProjPath", prefs->Get("LastSVProjCreatParentPath", ""));
+          }
+
+          if(lastSVProjPath=="")
+             lastSVProjPath=QDir::homePath();
+
+           QString projPath = QFileDialog::getExistingDirectory(NULL, tr("Choose folder for project"),
+                                                            lastSVProjPath);
+
+          if(projPath.trimmed().isEmpty()) return;
+
+          lastSVProjPath=projPath.trimmed();
+
+          QDir dir(lastSVProjPath);
+          if(dir.exists(".svproj"))
+          {
+            QString msg = "An SV project named "+projPath+" already exists; saving will overwrite the project. Continue?";
+            if (QMessageBox::question(NULL, "Save Project As", msg,
+                                      QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+            {
+                mitk::StatusBar::GetInstance()->DisplayText("Project not saved.");
+                return;
+            }
           }
 
           mitk::ProgressBar::GetInstance()->AddStepsToDo(2);
-          mitk::StatusBar::GetInstance()->DisplayText("Closing SV project...");
+          mitk::StatusBar::GetInstance()->DisplayText("Saving SV project...");
           QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-          mitk::DataStorage::SetOfObjects::ConstPointer nodesToRemove=dataStorage->GetDerivations(selectedNode,nullptr,false);
-
-          if( !nodesToRemove->empty())
-          {
-              dataStorage->Remove(nodesToRemove);
-          }
-
-          dataStorage->Remove(selectedNode);
+          svProjectManager::SaveProjectAs(dataStorage, selectedNode, lastSVProjPath);
 
           mitk::ProgressBar::GetInstance()->Progress(2);
-          mitk::StatusBar::GetInstance()->DisplayText("SV project closed.");
+          mitk::StatusBar::GetInstance()->DisplayText("SV project saved.");
           QApplication::restoreOverrideCursor();
+
         }
 
     }
     catch (std::exception& e)
     {
-        MITK_ERROR << "Exception caught during closing of SV project: " << e.what();
+        MITK_ERROR << "Exception caught during saving SV projects: " << e.what();
     }
 }

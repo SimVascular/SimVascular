@@ -7,6 +7,7 @@
 #include "svFileCreateProjectAction.h"
 #include "svFileOpenProjectAction.h"
 #include "svFileSaveProjectAction.h"
+#include "svFileSaveProjectAsAction.h"
 #include "svCloseProjectAction.h"
 #include "svAboutDialog.h"
 #include "svDataFolder.h"
@@ -323,6 +324,7 @@ public:
                 windowAdvisor->closePerspAction->setEnabled(true);
             }
             windowAdvisor->saveSVProjectAction->setEnabled(true);
+            windowAdvisor->saveSVProjectAsAction->setEnabled(true);
         }
 
         perspectivesClosed = false;
@@ -365,6 +367,7 @@ public:
                 windowAdvisor->closePerspAction->setEnabled(false);
             }
             windowAdvisor->saveSVProjectAction->setEnabled(false);
+            windowAdvisor->saveSVProjectAsAction->setEnabled(false);
         }
     }
 
@@ -571,7 +574,10 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     openSVProjAction->setShortcut(QKeySequence::Open);
     saveSVProjectAction=new svFileSaveProjectAction(QIcon(":/org.sv.gui.qt.application/SaveAllSV.png"), window);
     saveSVProjectAction->setShortcut(QKeySequence::Save);
-    closeSVProjectAction = new svCloseProjectAction(window);
+    saveSVProjectAsAction=new svFileSaveProjectAsAction(QIcon(":/org.sv.gui.qt.application/SaveAllSV.png"), window);
+    saveSVProjectAsAction->setShortcut(QKeySequence::SaveAs);
+    closeSVProjectAction = new svCloseProjectAction(QIcon::fromTheme("edit-delete",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-delete.svg")), window);
+    closeSVProjectAction->setShortcut(QKeySequence::Close);
 
     QAction* fileOpenAction = new QmitkFileOpenAction(QIcon::fromTheme("document-open",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/document-open.svg")), window);
 //    fileOpenAction->setShortcut(QKeySequence::Open);
@@ -679,6 +685,7 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         fileMenu->addAction(createSVProjAction);
         fileMenu->addAction(openSVProjAction);
         fileMenu->addAction(saveSVProjectAction);
+        fileMenu->addAction(saveSVProjectAsAction);
         fileMenu->addAction(closeSVProjectAction);
         fileMenu->addSeparator();
 

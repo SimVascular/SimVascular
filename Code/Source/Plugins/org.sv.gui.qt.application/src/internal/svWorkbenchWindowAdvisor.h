@@ -185,6 +185,7 @@ private:
   QAction* openDicomEditorAction;
 
   QAction* saveSVProjectAction;
+  QAction* saveSVProjectAsAction;
   QAction* closeSVProjectAction;
   QList<QAction*> svViewActions;
   QList<QAction*> otherViewActions;
