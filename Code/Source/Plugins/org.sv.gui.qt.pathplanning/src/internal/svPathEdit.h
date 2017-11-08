@@ -94,8 +94,24 @@ public:
 
 //    bool IsExclusiveFunctionality() const override;
 
+    //{
+    // FUNCTIONS THAT NEED TO BE HIDDEN FROM QmitkFunctionality SO THAT
+    // WE CAN USE org.sv.views.datamanager INSTEAD OF org.mitk.views.datamanager
     // HIDING Function from mitk data manager
     std::vector<mitk::DataNode*> GetDataManagerSelection() const;
+    /// Called immediately after CreateQtPartControl().
+    /// Here standard event listeners for a QmitkFunctionality are registered
+    void AfterCreateQtPartControl();
+    /// reactions to selection events from data manager (and potential other senders)
+    void BlueBerrySelectionChanged(const berry::IWorkbenchPart::Pointer& sourcepart, const berry::ISelection::ConstPointer& selection);
+    /// Called, when the WorkbenchPart gets closed for removing event listeners
+    /// Internally this method calls ClosePart after it removed the listeners registered
+    /// by QmitkFunctionality. By having this proxy method the user does not have to
+    /// call QmitkFunctionality::ClosePart() when overwriting ClosePart()
+    void ClosePartProxy();
+    /// Creates a scroll area for this view and calls CreateQtPartControl then
+    void CreatePartControl(QWidget* parent) override;
+    //}
 
 protected:
 
@@ -131,6 +147,15 @@ protected:
     QmitkStdMultiWidget* m_DisplayWidget;
 
     bool m_UpdatingGUI;
+
+private:
+
+    //{
+    /// PRIVATE OBJECTS FROM QmitkFunctionality
+    /// object to observe BlueBerry selections
+    QmitkFunctionalitySelectionProvider* m_SelectionProvider;
+    QScopedPointer<berry::ISelectionListener> m_BlueBerrySelectionListener;
+    //}
 
 };
 
