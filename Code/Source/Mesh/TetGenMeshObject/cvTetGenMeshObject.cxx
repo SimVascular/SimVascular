@@ -424,7 +424,7 @@ cvUnstructuredGrid* cvTetGenMeshObject::GetUnstructuredGrid() {
   if (volumemesh_ == NULL)
   {
     //Mesh must be created first
-    return SV_ERROR;
+    return NULL;
   }
 
   cvUnstructuredGrid *result = NULL;
