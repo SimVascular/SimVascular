@@ -2402,10 +2402,19 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
-    solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
+    std::string resultFileString = resultFile.toStdString();
+    std::string resultPathName;
+    int split = resultFileString.find_last_of("/\\");
+    if (split < 0)
+      resultPathName = ".";
+    else
+      resultPathName = resultFileString.substr(0, split);
 
-    if(!adaptor->WriteAdaptedSolution(solutionFilePath.toStdString()))
+    //QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
+    //solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
+    std::string solutionFileName = resultPathName + "/adapted-restart." + endStep.toStdString() + ".1";
+
+    if(!adaptor->WriteAdaptedSolution(solutionFileName))
     {
         QMessageBox::warning(m_Parent,"Error","Failed in writing adapted solution (restart).");
         delete adaptor;
