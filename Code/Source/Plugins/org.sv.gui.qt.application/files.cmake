@@ -7,6 +7,7 @@ set(INTERNAL_CPP_FILES
   svFileCreateProjectAction.cxx
   svFileOpenProjectAction.cxx
   svFileSaveProjectAction.cxx
+  svCloseProjectAction.cxx
   svProjectCreate.cxx
   svWorkbenchWindowAdvisor.cxx
   svAppWorkbenchAdvisor.cxx
@@ -21,6 +22,7 @@ set(MOC_H_FILES
   src/internal/svFileCreateProjectAction.h
   src/internal/svFileOpenProjectAction.h
   src/internal/svFileSaveProjectAction.h
+  src/internal/svCloseProjectAction.h
   src/internal/svProjectCreate.h
   src/internal/svWorkbenchWindowAdvisor.h
   src/internal/svWorkbenchWindowAdvisorHack.h

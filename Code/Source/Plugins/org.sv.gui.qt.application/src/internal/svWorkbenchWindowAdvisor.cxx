@@ -7,6 +7,7 @@
 #include "svFileCreateProjectAction.h"
 #include "svFileOpenProjectAction.h"
 #include "svFileSaveProjectAction.h"
+#include "svCloseProjectAction.h"
 #include "svAboutDialog.h"
 #include "svDataFolder.h"
 #include "svDataNodeOperation.h"
@@ -311,7 +312,7 @@ public:
                 windowAdvisor->openDicomEditorAction->setEnabled(true);
             }
             windowAdvisor->fileSaveProjectAction->setEnabled(true);
-            windowAdvisor->closeProjectAction->setEnabled(true);
+            windowAdvisor->closeSVProjectAction->setEnabled(true);
             windowAdvisor->undoAction->setEnabled(true);
             windowAdvisor->redoAction->setEnabled(true);
             windowAdvisor->imageNavigatorAction->setEnabled(true);
@@ -353,7 +354,7 @@ public:
                 windowAdvisor->openDicomEditorAction->setEnabled(false);
             }
             windowAdvisor->fileSaveProjectAction->setEnabled(false);
-            windowAdvisor->closeProjectAction->setEnabled(false);
+            windowAdvisor->closeSVProjectAction->setEnabled(false);
             windowAdvisor->undoAction->setEnabled(false);
             windowAdvisor->redoAction->setEnabled(false);
             windowAdvisor->imageNavigatorAction->setEnabled(false);
@@ -570,6 +571,7 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     openSVProjAction->setShortcut(QKeySequence::Open);
     saveSVProjectAction=new svFileSaveProjectAction(QIcon(":/org.sv.gui.qt.application/SaveAllSV.png"), window);
     saveSVProjectAction->setShortcut(QKeySequence::Save);
+    closeSVProjectAction = new svCloseProjectAction(window);
 
     QAction* fileOpenAction = new QmitkFileOpenAction(QIcon::fromTheme("document-open",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/document-open.svg")), window);
 //    fileOpenAction->setShortcut(QKeySequence::Open);
@@ -577,10 +579,10 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     fileSaveProjectAction->setIcon(QIcon::fromTheme("document-save",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/document-save.svg")));
     fileSaveProjectAction->setText("Save All Data as MITK Scene File...");
     fileSaveProjectAction->setToolTip("Save all the data into a MITK scene file");
-    closeProjectAction = new QmitkCloseProjectAction(window);
-    closeProjectAction->setIcon(QIcon::fromTheme("edit-delete",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-delete.svg")));
-    closeProjectAction->setText("Empty Data Manager...");
-    closeProjectAction->setToolTip("Remove all the data from data manager");
+    //closeProjectAction = new QmitkCloseProjectAction(window);
+    //closeProjectAction->setIcon(QIcon::fromTheme("edit-delete",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-delete.svg")));
+    //closeProjectAction->setText("Close SV Project...");
+    //closeProjectAction->setToolTip("Remove selected projects from the data manager");
 
     auto perspGroup = new QActionGroup(menuBar);
     std::map<QString, berry::IViewDescriptor::Pointer> VDMap;
@@ -677,11 +679,12 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         fileMenu->addAction(createSVProjAction);
         fileMenu->addAction(openSVProjAction);
         fileMenu->addAction(saveSVProjectAction);
+        fileMenu->addAction(closeSVProjectAction);
         fileMenu->addSeparator();
 
         fileMenu->addAction(fileOpenAction);
         fileMenu->addAction(fileSaveProjectAction);
-        fileMenu->addAction(closeProjectAction);
+        //fileMenu->addAction(closeProjectAction);
         fileMenu->addSeparator();
 
         QAction* fileExitAction = new QAction(nullptr);
