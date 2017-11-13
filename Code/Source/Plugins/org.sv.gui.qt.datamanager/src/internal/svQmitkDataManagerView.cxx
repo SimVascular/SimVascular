@@ -218,11 +218,11 @@ void svQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
   // unknownDataNodeDescriptor->AddAction(removeAction);
   // m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,removeAction));
 
-  QAction* reinitAction = new QAction(QIcon(":/org.sv.gui.qt.datamanager/Refresh_48.png"), "Reinit", this);
-  QObject::connect( reinitAction, SIGNAL( triggered(bool) )
-    , this, SLOT( ReinitSelectedNodes(bool) ) );
-  unknownDataNodeDescriptor->AddAction(reinitAction);
-  m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,reinitAction));
+  //QAction* reinitAction = new QAction(QIcon(":/org.sv.gui.qt.datamanager/Refresh_48.png"), "Reinit", this);
+  //QObject::connect( reinitAction, SIGNAL( triggered(bool) )
+  //  , this, SLOT( ReinitSelectedNodes(bool) ) );
+  //unknownDataNodeDescriptor->AddAction(reinitAction);
+  //m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,reinitAction));
 
   // find contextMenuAction extension points and add them to the node descriptor
   berry::IExtensionRegistry* extensionPointService = berry::Platform::GetExtensionRegistry();
@@ -373,6 +373,13 @@ void svQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
       m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(diffusionImageDataNodeDescriptor, m_ColormapAction));
   }
 
+  QAction* reinitAction = new QAction(QIcon(":/org.sv.gui.qt.datamanager/Refresh_48.png"), "Reinit", this);
+  QObject::connect( reinitAction, SIGNAL( triggered(bool) )
+    , this, SLOT( ReinitSelectedNodes(bool) ) );
+  imageDataNodeDescriptor->AddAction(reinitAction);
+  m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(imageDataNodeDescriptor,reinitAction));
+
+
   m_SurfaceRepresentation = new QAction("Surface Representation", this);
   m_SurfaceRepresentation->setMenu(new QMenu(m_NodeTreeView));
   QObject::connect( m_SurfaceRepresentation->menu(), SIGNAL( aboutToShow() )
@@ -445,7 +452,7 @@ void svQmitkDataManagerView::ContextMenuActionTriggered( bool )
   svmitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<svmitk::IContextMenuAction>("class");
 
   QString className = confElem->GetAttribute("class");
-  
+
   contextMenuAction->SetDataStorage(this->GetDataStorage());
   contextMenuAction->SetFunctionality(this);
 
@@ -938,7 +945,7 @@ void svQmitkDataManagerView::NodeChanged(const mitk::DataNode* node)
             for(int i=0;i<rs->size();i++){
                 rs->GetElement(i)->SetVisibility(currentVisible);
             }
-            
+
             mitk::DataNode* nodex=const_cast<mitk::DataNode*>(node);
             nodex->SetBoolProperty("previous visibility",currentVisible);
         }
