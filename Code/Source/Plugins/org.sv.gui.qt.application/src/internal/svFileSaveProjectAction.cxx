@@ -36,8 +36,8 @@ svFileSaveProjectAction::svFileSaveProjectAction(const QIcon & icon, berry::IWor
 void svFileSaveProjectAction::Init(berry::IWorkbenchWindow* window)
 {
     m_Window = window;
-    this->setText("&Save SV Projects");
-    this->setToolTip("Save all SimVascular Projects");
+    this->setText("&Save SV Projects...");
+    this->setToolTip("Save all SimVascular projects");
 
     this->connect(this, SIGNAL(triggered(bool)), this, SLOT(Run()));
 }

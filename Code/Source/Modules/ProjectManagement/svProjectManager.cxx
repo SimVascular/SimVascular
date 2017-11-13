@@ -549,6 +549,18 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
 
 }
 
+void svProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath)
+{
+    SaveProject(dataStorage,projFolderNode);
+
+    std::string projPath;
+    projFolderNode->GetStringProperty("project path",projPath);
+
+    QString oldPath=QString::fromStdString(projPath);
+
+    DuplicateDirRecursively(oldPath, saveFilePath);
+}
+
 void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode)
 {
     std::vector<std::string> removeList;
@@ -976,9 +988,16 @@ bool svProjectManager::DuplicateDirRecursively(const QString &srcFilePath, const
     QFileInfo srcFileInfo(srcFilePath);
     if (srcFileInfo.isDir()) {
         QDir targetDir(tgtFilePath);
-        targetDir.cdUp();
-        if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName()))
-            return false;
+        if (targetDir.exists())
+          targetDir.cdUp();
+        else
+        {
+          targetDir.cdUp();
+          if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName()))
+          {
+              return false;
+          }
+        }
         QDir sourceDir(srcFilePath);
         QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
         foreach (const QString &fileName, fileNames) {
@@ -987,11 +1006,20 @@ bool svProjectManager::DuplicateDirRecursively(const QString &srcFilePath, const
             const QString newTgtFilePath
                     = tgtFilePath + QLatin1Char('/') + fileName;
             if (!DuplicateDirRecursively(newSrcFilePath, newTgtFilePath))
+            {
                 return false;
+            }
         }
     } else {
+
+        QFile targetFile(tgtFilePath);
+        if (targetFile.exists())
+          targetFile.remove();
+
         if (!QFile::copy(srcFilePath, tgtFilePath))
+        {
             return false;
+        }
     }
     return true;
 }
