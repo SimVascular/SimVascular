@@ -7,6 +7,7 @@ set(INTERNAL_CPP_FILES
   svQmitkNodeTableViewKeyFilter.cxx
   svQmitkInfoDialog.cxx
   svQmitkDataManagerItemDelegate.cxx
+  svQmitkFunctionality.cxx
 )
 
 set(MOC_H_FILES
@@ -18,6 +19,7 @@ set(MOC_H_FILES
   src/internal/svQmitkDataManagerItemDelegate.h
   src/internal/svDataManagerPluginActivator.h
   src/internal/svmitkIContextMenuAction.h
+  src/internal/svQmitkFunctionality.h
 )
 
 set(CPP_FILES )
