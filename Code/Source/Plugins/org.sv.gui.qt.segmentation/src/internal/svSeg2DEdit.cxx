@@ -19,14 +19,12 @@
 
 #include "svModelUtils.h"
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkOperationEvent.h>
 #include <mitkUndoController.h>
 #include <mitkStatusBar.h>
 #include <mitkProgressBar.h>
 #include <mitkNodePredicateDataType.h>
-
-#include <berryIWorkbenchWindow.h>
-#include <berryISelectionService.h>
 
 #include <usModuleRegistry.h>
 
@@ -34,6 +32,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QWheelEvent>
+#include <QVBoxLayout>
 
 #include <iostream>
 using namespace std;
@@ -192,14 +191,6 @@ void svSeg2DEdit::Hidden()
 //{
 //    return true;
 //}
-
-std::vector<mitk::DataNode*> svSeg2DEdit::GetDataManagerSelection() const
-{
-  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
-    // buffer for the data manager selection
-  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
-  return this->DataNodeSelectionToVector(currentSelection);
-}
 
 int svSeg2DEdit::GetTimeStep()
 {

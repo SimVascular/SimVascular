@@ -5,8 +5,7 @@
 #include "svSegSelectionWidget.h"
 #include "svModelDataInteractor.h"
 #include "svModelElementPolyData.h"
-
-#include <QmitkFunctionality.h>
+#include "svQmitkFunctionality.h"
 
 #include <vtkSphereWidget.h>
 #include <vtkPlaneWidget.h>
@@ -18,7 +17,7 @@ namespace Ui {
 class svModelEdit;
 }
 
-class svModelEdit : public QmitkFunctionality
+class svModelEdit : public svQmitkFunctionality
 {
     Q_OBJECT
 
@@ -146,9 +145,6 @@ public:
     virtual void Visible() override;
 
     virtual void Hidden() override;
-
-    // HIDING Function from mitk data manager
-    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
 
 protected:
 

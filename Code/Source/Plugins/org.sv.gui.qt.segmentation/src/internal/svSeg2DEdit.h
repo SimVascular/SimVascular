@@ -8,12 +8,12 @@
 #include "svContourGroupDataInteractor.h"
 #include "svContourGroupCreate.h"
 #include "svContourModelThresholdInteractor.h"
+#include "svQmitkFunctionality.h"
 
 #include "svResliceSlider.h"
 #include "svLevelSet2DWidget.h"
 #include "svLoftParamWidget.h"
 
-#include <QmitkFunctionality.h>
 #include <QmitkSliceWidget.h>
 #include <QmitkSliderNavigatorWidget.h>
 #include <QmitkStepperAdapter.h>
@@ -40,7 +40,7 @@ namespace Ui {
 class svSeg2DEdit;
 }
 
-class svSeg2DEdit : public QmitkFunctionality
+class svSeg2DEdit : public svQmitkFunctionality
 {
     Q_OBJECT
 
@@ -177,9 +177,6 @@ public:
 
 //    bool IsExclusiveFunctionality() const override;
 
-    // HIDING Function from mitk data manager
-    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
-
     void PreparePreviewInteraction(QString method);
 
     void QuitPreviewInteraction();
@@ -253,6 +250,7 @@ protected:
     svContourGroupCreate* m_ContourGroupCreateWidget;
 
     bool m_UpdatingGUI;
+
 };
 
 #endif // SVSEG2DEDIT_H

@@ -5,6 +5,7 @@
 #include "svSeg3DUtils.h"
 #include "svMitkSeg3DOperation.h"
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkImage.h>
 #include <mitkOperationEvent.h>
 #include <mitkUndoController.h>
@@ -15,14 +16,16 @@
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
 
-#include <berryIWorkbenchWindow.h>
-#include <berryISelectionService.h>
-
 #include <usModuleRegistry.h>
 
 // Qt
 #include <QMessageBox>
+#include <QShortcut>
 #include <QInputDialog>
+#include <QWheelEvent>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QApplication>
 
 #include <iostream>
 using namespace std;
@@ -82,14 +85,6 @@ void svSeg3DEdit::Hidden()
 //{
 //    return true;
 //}
-
-std::vector<mitk::DataNode*> svSeg3DEdit::GetDataManagerSelection() const
-{
-  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
-    // buffer for the data manager selection
-  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
-  return this->DataNodeSelectionToVector(currentSelection);
-}
 
 void svSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
@@ -313,4 +308,3 @@ void svSeg3DEdit::ClearAll()
     m_MitkSeg3D=NULL;
     m_MitkSeg3DNode=NULL;
 }
-

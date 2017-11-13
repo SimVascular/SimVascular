@@ -7,8 +7,7 @@
 #include "svModelDataInteractor.h"
 #include "svDataNodeOperationInterface.h"
 #include "svLocalTableDelegate.h"
-
-#include <QmitkFunctionality.h>
+#include "svQmitkFunctionality.h"
 
 #include <vtkSphereWidget.h>
 
@@ -20,7 +19,7 @@ namespace Ui {
 class svMeshEdit;
 }
 
-class svMeshEdit : public QmitkFunctionality
+class svMeshEdit : public svQmitkFunctionality
 {
     Q_OBJECT
 
@@ -133,9 +132,6 @@ public:
     virtual void Visible() override;
 
     virtual void Hidden() override;
-
-    // HIDING Function from mitk data manager
-    std::vector<mitk::DataNode*> GetDataManagerSelection() const;
 
     bool IsDouble(QString value);
 

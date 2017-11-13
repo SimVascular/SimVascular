@@ -19,9 +19,8 @@
 #include <berryIPreferencesService.h>
 #include <berryIPreferences.h>
 #include <berryPlatform.h>
-#include <berryIWorkbenchWindow.h>
-#include <berryISelectionService.h>
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -33,9 +32,8 @@
 #include <vtkProperty.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
-#include <QTreeView>
-#include <QInputDialog>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QFileDialog>
 
 #include <iostream>
@@ -1098,15 +1096,6 @@ void svMeshEdit::Hidden()
 //    ClearAll();
     RemoveObservers();
 }
-
-std::vector<mitk::DataNode*> svMeshEdit::GetDataManagerSelection() const
-{
-  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
-    // buffer for the data manager selection
-  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
-  return this->DataNodeSelectionToVector(currentSelection);
-}
-
 
 int svMeshEdit::GetTimeStep()
 {

@@ -1,11 +1,6 @@
 #include "svModelEdit.h"
 #include "ui_svModelEdit.h"
 
-#include <berryIPreferencesService.h>
-#include <berryPlatform.h>
-#include <berryIWorkbenchWindow.h>
-#include <berryISelectionService.h>
-
 #include "svFaceListDelegate.h"
 #include "svPath.h"
 #include "svMitkSeg3D.h"
@@ -15,6 +10,7 @@
 
 #include "cv_polydatasolid_utils.h"
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -26,12 +22,13 @@
 
 #include <vtkProperty.h>
 
-#include <QTreeView>
 #include <QStandardItemModel>
 #include <QInputDialog>
 #include <QColorDialog>
 #include <QSignalMapper>
 #include <QMessageBox>
+#include <QScrollArea>
+#include <QVBoxLayout>
 
 #include <iostream>
 using namespace std;
@@ -282,14 +279,6 @@ void svModelEdit::Hidden()
 {
     //    ClearAll();
     RemoveObservers();
-}
-
-std::vector<mitk::DataNode*> svModelEdit::GetDataManagerSelection() const
-{
-  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
-    // buffer for the data manager selection
-  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
-  return this->DataNodeSelectionToVector(currentSelection);
 }
 
 int svModelEdit::GetTimeStep()

@@ -7,21 +7,19 @@
 #include "svMath3.h"
 
 // mitk
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkDataStorage.h>
 #include "mitkDataNode.h"
 #include "mitkProperties.h"
 #include <mitkUndoController.h>
 #include <mitkNodePredicateDataType.h>
-
-#include <berryIWorkbenchWindow.h>
-#include <berryISelectionService.h>
-
+#include <mitkIDataStorageService.h>
+#include <mitkDataStorageEditorInput.h>
 
 #include <usModuleRegistry.h>
 
 // Qt
 #include <QMessageBox>
-#include <QShortcut>
 #include <QInputDialog>
 #include <QWheelEvent>
 
@@ -131,14 +129,6 @@ void svPathEdit::Hidden()
 //{
 //    return true;
 //}
-
-std::vector<mitk::DataNode*> svPathEdit::GetDataManagerSelection() const
-{
-  berry::ISelection::ConstPointer selection( this->GetSite()->GetWorkbenchWindow()->GetSelectionService()->GetSelection("org.sv.views.datamanager"));
-    // buffer for the data manager selection
-  mitk::DataNodeSelection::ConstPointer currentSelection = selection.Cast<const mitk::DataNodeSelection>();
-  return this->DataNodeSelectionToVector(currentSelection);
-}
 
 int svPathEdit::GetTimeStep()
 {
