@@ -108,10 +108,10 @@ void svQmitkFunctionality::AfterCreateQtPartControl()
         /*"org.sv.views.datamanager",*/ m_BlueBerrySelectionListener.data());
 
   // REGISTER A SELECTION PROVIDER
-  QmitkFunctionalitySelectionProvider::Pointer _SelectionProvider(
-        new QmitkFunctionalitySelectionProvider(this));
-  m_SelectionProvider = _SelectionProvider.GetPointer();
-  this->GetSite()->SetSelectionProvider(berry::ISelectionProvider::Pointer(m_SelectionProvider));
+  //QmitkFunctionalitySelectionProvider::Pointer _SelectionProvider(
+  //      new QmitkFunctionalitySelectionProvider(this));
+  //m_SelectionProvider = _SelectionProvider.GetPointer();
+  //this->GetSite()->SetSelectionProvider(berry::ISelectionProvider::Pointer(m_SelectionProvider));
 
   // EMULATE INITIAL SELECTION EVENTS
 
