@@ -2,7 +2,7 @@
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/14.04/gnu/4.8/x64/Release/2017.05.30
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/14.04/gnu/4.8/x64/release/2017.05.30
 
 export TAR_FILE_PREFIX=ubuntu.14.04.gnu.4.8.x64.release.2017.05.30
 
