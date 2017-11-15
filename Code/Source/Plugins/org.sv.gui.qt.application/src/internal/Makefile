@@ -48,6 +48,8 @@ HDRS	= \
   svFileCreateProjectAction.h \
   svFileOpenProjectAction.h \
   svFileSaveProjectAction.h \
+  svFileSaveProjectAsAction.h \
+  svCloseProjectAction.h \
   svProjectCreate.h \
   svWorkbenchWindowAdvisor.h \
   svWorkbenchWindowAdvisorHack.h \
@@ -61,6 +63,8 @@ CXXSRCS	= \
   svFileCreateProjectAction.cxx \
   svFileOpenProjectAction.cxx \
   svFileSaveProjectAction.cxx \
+  svFileSaveProjectAsAction.cxx \
+  svCloseProjectAction.cxx \
   svProjectCreate.cxx \
   svWorkbenchWindowAdvisor.cxx \
   svAppWorkbenchAdvisor.cxx \
@@ -94,6 +98,7 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS +=  \
+          $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \

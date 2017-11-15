@@ -15,7 +15,7 @@ if {[llength $dirnames] == 0} {
   return -code error "ERROR: installation of simvascular not found!"
 }
 
-set dirnames [lsort -integer $dirnames]
+set dirnames [lsort $dirnames]
 set mostrecent [lindex $dirnames end]
 
 exec bash -c "[file dirname $lexec]/../package/REPLACE_SV_VERSION/$mostrecent/$myexec [lrange $argv 1 end]" >&@ stdout

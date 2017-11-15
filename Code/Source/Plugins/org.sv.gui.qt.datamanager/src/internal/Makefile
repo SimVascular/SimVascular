@@ -58,7 +58,8 @@ HDRS	= \
   svQmitkInfoDialog.h \
   svQmitkDataManagerItemDelegate.h \
   svDataManagerPluginActivator.h \
-  svmitkIContextMenuAction.h
+  svmitkIContextMenuAction.h \
+  svQmitkFunctionality.h
 
 CXXSRCS	= \
   svberrySingleNodeSelection.cxx \
@@ -68,7 +69,8 @@ CXXSRCS	= \
   svDataManagerPluginActivator.cxx \
   svQmitkNodeTableViewKeyFilter.cxx \
   svQmitkInfoDialog.cxx \
-  svQmitkDataManagerItemDelegate.cxx
+  svQmitkDataManagerItemDelegate.cxx \
+  svQmitkFunctionality.cxx
 
 UIFILES = \
 

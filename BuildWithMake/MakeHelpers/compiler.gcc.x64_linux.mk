@@ -4,7 +4,7 @@ ifeq ($(CLUSTER), x64_linux)
     CC              = gcc -pthread -w
     CXXDEP          = $(CXX) -MM
     CCDEP           = $(CC) -MM
-    AR              = ar -cru
+    AR              = ar -cru 
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     OPT_FLAGS       = -O3 -fPIC
     DEBUG_FLAGS     =

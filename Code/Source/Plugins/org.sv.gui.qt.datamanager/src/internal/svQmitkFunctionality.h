@@ -1,13 +1,17 @@
 #ifndef SVQMITKFUNCTIONALITY_H
 #define SVQMITKFUNCTIONALITY_H
 
+#include "org_sv_gui_qt_datamanager_Export.h"
+#include <org_mitk_gui_qt_common_legacy_Export.h>
+#include <org_mitk_gui_qt_common_Export.h>
+
 #include <QmitkFunctionality.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QItemDelegate>
 
-class svQmitkFunctionality : public QmitkFunctionality
+class SV_QT_DATAMANAGER svQmitkFunctionality : public QmitkFunctionality
 {
     Q_OBJECT
 
