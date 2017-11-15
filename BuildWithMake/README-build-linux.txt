@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
             Compiling Instructions for SimVascular on Linux
-                       Revised 2017-01-04
+                       Revised 2017-11-14
 ------------------------------------------------------------------------
 
 --------
@@ -13,8 +13,8 @@ makefiles.  You must override the deafult options to build on linux.
 Our base test configuration for linux is:
 
 Ubuntu 14.04 64-bit desktop (w/ patches)
-Intel 7 processor
-gcc/g++/gfortran version 4.8.4
+Intel 7/9 processor
+gcc/g++ version 4.8.4
 
 -----------
 Major Steps
@@ -22,63 +22,19 @@ Major Steps
 
 1. Ubuntu prerequisities
 ------------------------
-The following packages are required to build simvascular
 
-### compilers
-% sudo apt-get install g++
-% sudo apt-get install gfortran
+See:
 
-### cmake tools
-% sudo apt-get install cmake
-% sudo apt-get install cmake-qt-gui
+Externals/ubuntu-14-prep.sh
 
-### for flowsolver
-% sudo apt-get install libmpich2-dev
-
-### for vtk
-% sudo apt-get install libglu1-mesa-dev
-% sudo apt-get install libxt-dev
-% sudo apt-get install libxi-dev
-
-### used by SV to read DICOM headers
-% sudo apt-get install dcmtk
-% sudo apt-get install libgdcm-tools
-
-
-#
-# default subversion for (ubuntu 14.04) is 1.8.8
-#
-
-% sudo apt-get install subversion
-% sudo apt-get install git
-
-# python
-% sudo apt-get install python2.7-dev
-% sudo apt-get install python-numpy
-% sudo apt-get install python-scipy
-
-#
-# install qt
-#
-
-% sudo ./qt-opensource-linux-x64-5.4.2.run
-
-leads to /opt/Qt5.4.2
-
-% sudo apt-get install libicu-dev
-
-#
-# some optional helpers
-#
-% sudo apt-get install dos2unix
-% sudo apt-get install emacs
+for system packages that required to build simvascular.
 
 2.  Install of build external open source packages
 --------------------------------------------------
 
 For downloading pre-built binaries see the quick-build-linux.sh script:
 
-% ./quick-build-linux.sh
+% ./quick-build-ubuntu-14.sh
 
 To build your own version:
 
