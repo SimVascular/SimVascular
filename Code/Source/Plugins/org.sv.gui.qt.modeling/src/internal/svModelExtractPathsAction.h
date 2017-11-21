@@ -53,7 +53,10 @@ private:
 
         mitk::DataNode::Pointer GetCenterlinesModelNode() {return m_CenterlinesModelNode;}
 
-        mitk::DataNode::Pointer GetModelFolderNode(){return m_ModelFolderNode;}
+        mitk::DataNode::Pointer GetMergedCenterlinesModelNode() {return m_MergedCenterlinesModelNode;}
+
+
+        mitk::DataNode::Pointer GetSelectedNode(){return m_SelectedNode;}
 
     private:
 
@@ -65,13 +68,13 @@ private:
 
         mitk::DataNode::Pointer m_PathFolderNode;
 
-        mitk::DataNode::Pointer m_ModelFolderNode;
-
         QString m_Status;
 
         std::vector<mitk::DataNode::Pointer> m_PathNodes;
 
         mitk::DataNode::Pointer m_CenterlinesModelNode;
+
+        mitk::DataNode::Pointer m_MergedCenterlinesModelNode;
 
     };
 

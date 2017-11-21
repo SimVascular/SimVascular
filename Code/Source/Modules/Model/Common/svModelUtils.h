@@ -67,6 +67,8 @@ public:
 
     static vtkPolyData* CreateCenterlines(vtkPolyData* vpd);
 
+    static vtkPolyData* MergeCenterlines(vtkPolyData* centerlinesPD);
+
     static vtkPolyData* CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original);
 
     static std::vector<svPathElement::svPathPoint> ConvertToPathPoints(std::vector<mitk::Point3D> posPoints);

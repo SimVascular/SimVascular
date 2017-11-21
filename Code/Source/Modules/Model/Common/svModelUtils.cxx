@@ -989,24 +989,34 @@ vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
     }
     delete capped;
 
-    cvPolyData *temp2Centerlines=NULL;
-    if ( sys_geom_separatecenterlines(tempCenterlines, &temp2Centerlines) != SV_OK )
+    cvPolyData *centerlines=NULL;
+    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != SV_OK )
     {
         delete tempCenterlines;
         return NULL;
     }
     delete tempCenterlines;
 
-    cvPolyData *centerlines=NULL;
+    return centerlines->GetVtkPolyData();
+}
+
+vtkPolyData* svModelUtils::MergeCenterlines(vtkPolyData* centerlinesPD)
+{
+    if(centerlinesPD==NULL)
+        return NULL;
+
+    cvPolyData *centerlines =new cvPolyData(centerlinesPD);
+
+    cvPolyData *merged_centerlines=NULL;
     int mergeblanked = 1;
-    if (sys_geom_mergecenterlines(temp2Centerlines, mergeblanked, &centerlines) != SV_OK )
+    if (sys_geom_mergecenterlines(centerlines, mergeblanked, &merged_centerlines) != SV_OK )
     {
-      delete temp2Centerlines;
+      delete centerlines;
       return NULL;
     }
-    delete temp2Centerlines;
+    delete centerlines;
 
-    return centerlines->GetVtkPolyData();
+    return merged_centerlines->GetVtkPolyData();
 }
 
 vtkPolyData* svModelUtils::CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original)
