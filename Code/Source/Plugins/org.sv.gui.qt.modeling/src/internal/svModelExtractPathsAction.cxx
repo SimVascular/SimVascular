@@ -44,6 +44,18 @@ void svModelExtractPathsAction::UpdateStatus()
         m_Interface->ExecuteOperation(doOp);
     }
 
+    mitk::DataNode::Pointer modelNode = m_Thread->GetCenterlinesModelNode();
+
+    undoEnabled = false;
+    svDataNodeOperation* modelDoOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,m_DataStorage,modelNode,m_Thread->GetModelFolderNode());
+    if(undoEnabled)
+    {
+        svDataNodeOperation* modelUndoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,m_DataStorage,modelNode,m_Thread->GetModelFolderNode());
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, modelDoOp, modelUndoOp, "Add DataNode");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    }
+    m_Interface->ExecuteOperation(modelDoOp);
+
     m_ProjFolderNode->SetBoolProperty("thread running",false);
     mitk::StatusBar::GetInstance()->DisplayText(m_Thread->GetStatus().toStdString().c_str());
 }
@@ -119,7 +131,8 @@ void svModelExtractPathsAction::WorkThread::run()
 
     try
     {
-        std::vector<svPathElement*> pathElements=svModelUtils::CreatePathElements(modelElement);
+        vtkSmartPointer<vtkPolyData> centerlinesPD = svModelUtils::CreateCenterlines(modelElement);
+        std::vector<svPathElement*> pathElements=svModelUtils::CreatePathElements(modelElement, centerlinesPD);
 
         if(pathElements.size()==0)
             return;
@@ -157,6 +170,27 @@ void svModelExtractPathsAction::WorkThread::run()
 
             m_PathNodes.push_back(pathNode);
         }
+
+        rs=mm_DataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svModelFolder"));
+
+        if(rs->size()==0)
+            return;
+
+        m_ModelFolderNode=rs->GetElement(0);
+
+        // Now add model for whole centerlines pd
+        svModelElementPolyData *centerlinesModelElement = new svModelElementPolyData();
+        centerlinesModelElement->SetWholeVtkPolyData(centerlinesPD);
+
+        svModel::Pointer centerlinesModel = svModel::New();
+        centerlinesModel->SetType("PolyData");
+        centerlinesModel->SetModelElement(centerlinesModelElement);
+        centerlinesModel->SetDataModified();
+
+        m_CenterlinesModelNode = mitk::DataNode::New();
+        m_CenterlinesModelNode->SetData(centerlinesModel);
+        m_CenterlinesModelNode->SetName(selectedNode->GetName()+"_centerlines");
+        // Added model
 
         m_Status="Paths extracting done.";
     }

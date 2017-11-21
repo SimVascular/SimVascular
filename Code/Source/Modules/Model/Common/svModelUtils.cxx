@@ -1062,11 +1062,10 @@ vtkSmartPointer<vtkPolyData> svModelUtils::GetThresholdRegion(vtkSmartPointer<vt
     return surfacer->GetOutput();
 }
 
-std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElement* modelElement)
+std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElement* modelElement,
+                                                             vtkSmartPointer<vtkPolyData> centerlinesPD)
 {
     std::vector<svPathElement*> pathElements;
-
-    vtkSmartPointer<vtkPolyData> centerlinesPD=CreateCenterlines(modelElement);
 
     if(centerlinesPD==NULL || !centerlinesPD->GetCellData()->HasArray("CenterlineIds"))
         return pathElements;

@@ -73,7 +73,8 @@ public:
 
     static vtkSmartPointer<vtkPolyData> GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue );
 
-    static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement);
+    static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement,
+                                                          vtkSmartPointer<vtkPolyData> centerlinesPD);
 
     static double CalculateVpdArea(vtkPolyData* vpd);
 

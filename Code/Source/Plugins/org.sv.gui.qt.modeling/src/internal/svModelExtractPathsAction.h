@@ -51,6 +51,10 @@ private:
 
         std::vector<mitk::DataNode::Pointer> GetPathNodes(){return m_PathNodes;}
 
+        mitk::DataNode::Pointer GetCenterlinesModelNode() {return m_CenterlinesModelNode;}
+
+        mitk::DataNode::Pointer GetModelFolderNode(){return m_ModelFolderNode;}
+
     private:
 
         void run();
@@ -61,9 +65,13 @@ private:
 
         mitk::DataNode::Pointer m_PathFolderNode;
 
+        mitk::DataNode::Pointer m_ModelFolderNode;
+
         QString m_Status;
 
         std::vector<mitk::DataNode::Pointer> m_PathNodes;
+
+        mitk::DataNode::Pointer m_CenterlinesModelNode;
 
     };
 
