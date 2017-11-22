@@ -8,6 +8,7 @@
 #include "svModelElementFactory.h"
 #include "svModelElementAnalytic.h"
 #include "svModelExtractPathsAction.h"
+#include "svQmitkDataManagerView.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -30,6 +31,10 @@
 #include <QMessageBox>
 #include <QScrollArea>
 #include <QVBoxLayout>
+
+#include <berryPlatformUI.h>
+#include <berryIWorkbenchWindow.h>
+#include <berryIWorkbenchPage.h>
 
 #include <iostream>
 using namespace std;
@@ -1746,24 +1751,48 @@ void svModelEdit::ExtractCenterlines()
 
     std::vector<std::string> capNames=m_CapSelectionWidget->GetUsedCapNames();
 
-    //QAction* action = qobject_cast<QAction*> ( sender() );
+    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
+    if(workbench==NULL)
+        return;
 
-    //std::map<QAction*, berry::IConfigurationElement::Pointer>::iterator it
-    //  = m_ConfElements.find( action );
-    //if( it == m_ConfElements.end() )
-    //{
-    //  MITK_WARN << "associated conf element for action " << action->text().toStdString() << " not found";
-    //  return;
-    //}
-    //berry::IConfigurationElement::Pointer confElem = it->second;
-    //svmitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<svmitk::IContextMenuAction>("class");
+//    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
+    if(workbench->GetWorkbenchWindows().size()==0)
+        return;
 
-    //QString className = confElem->GetAttribute("class");
+    berry::IWorkbenchWindow::Pointer window=workbench->GetWorkbenchWindows()[0];
+    if(window.IsNull())
+        return;
 
-    //contextMenuAction->SetDataStorage(this->GetDataStorage());
-    //contextMenuAction->SetFunctionality(this);
+    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
+    if(page.IsNull())
+        return;
 
-    //contextMenuAction->Run( this->GetCurrentSelection() ); // run the action
+    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.sv.views.datamanager");
+    if(dataManagerView.IsNull())
+        return;
+
+    svQmitkDataManagerView* dataManager=dynamic_cast<svQmitkDataManagerView*>(dataManagerView.GetPointer());
+
+    QAction* action = qobject_cast<QAction*> ( QObject::sender() );
+
+    std::map<QAction*, berry::IConfigurationElement::Pointer>::iterator it
+      = dataManager->m_ConfElements.find( action );
+    if( it == dataManager->m_ConfElements.end() )
+    {
+      MITK_WARN << "associated conf element for action " << action->text().toStdString() << " not found";
+      return;
+    }
+    berry::IConfigurationElement::Pointer confElem = it->second;
+    svmitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<svmitk::IContextMenuAction>("class");
+
+    QString className = confElem->GetAttribute("class");
+
+    contextMenuAction->SetDataStorage(this->GetDataStorage());
+    contextMenuAction->SetFunctionality(this);
+
+    QList<mitk::DataNode::Pointer> selectedNode;
+    selectedNode.push_back(m_ModelNode);
+    contextMenuAction->Run( selectedNode ); // run the action
 
     return;
 }

@@ -193,6 +193,12 @@ protected:
   /// React to node changes. Overridden from QmitkAbstractView.
   ///
   virtual void NodeChanged(const mitk::DataNode* /*node*/) override;
+
+public:
+  std::map<QAction*, berry::IConfigurationElement::Pointer> m_ConfElements;
+  ///
+  /// \brief The Table view to show the selected nodes.
+  ///
 protected:
 
   QWidget* m_Parent;
@@ -211,10 +217,6 @@ protected:
   berry::IBerryPreferences::Pointer m_DataManagerPreferencesNode;
   ///
   /// saves the configuration elements for the context menu actions from extension points
-  ///
-  std::map<QAction*, berry::IConfigurationElement::Pointer> m_ConfElements;
-  ///
-  /// \brief The Table view to show the selected nodes.
   ///
   QTreeView* m_NodeTreeView;
   ///
