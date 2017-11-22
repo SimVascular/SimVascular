@@ -67,6 +67,7 @@ void svModelExtractPathsAction::Run(const QList<mitk::DataNode::Pointer> &select
 {
 
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
+    fprintf(stdout,"AFT RUN NAME: %s\n", selectedNode->GetName().c_str());
 
     svModel* model=dynamic_cast<svModel*>(selectedNode->GetData());
     if(!model) return;

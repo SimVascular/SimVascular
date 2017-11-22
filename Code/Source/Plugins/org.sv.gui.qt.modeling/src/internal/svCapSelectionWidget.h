@@ -28,10 +28,6 @@ public:
 
     std::vector<std::string> GetUsedCapNames();
 
-    int GetNumSampling();
-    int IfUseUniform();
-    svLoftingParam GetLoftingParam();
-
 public slots:
 
     void TableViewContextMenuRequested( const QPoint & index );
@@ -44,14 +40,6 @@ public slots:
     void Confirm();
     void Cancel();
 
-    void OKLofting();
-
-    void ApplyLofting();
-
-    void HideLoftWidget();
-
-    void ShowLoftWidget();
-
 signals:
     void accepted();
 
@@ -62,17 +50,9 @@ private:
 
     Ui::svCapSelectionWidget *ui;
 
-    int m_NumSampling;
-
-//    int m_UseUniform;
-
     svModelElement* m_ModelElement;
 
     std::string m_ModelType;
-
-    svLoftingParam m_Param;
-    svLoftParamWidget* m_LoftWidget;
-
 };
 
 #endif // SVSEGSELECTIONWIDGET_H

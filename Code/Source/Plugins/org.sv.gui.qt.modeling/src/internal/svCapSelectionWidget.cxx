@@ -9,10 +9,8 @@ svCapSelectionWidget::svCapSelectionWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::svCapSelectionWidget)
     , m_TableModel(NULL)
-    , m_NumSampling(0)
     , m_ModelElement(NULL)
     , m_ModelType("")
-    , m_LoftWidget(NULL)
 {
     ui->setupUi(this);
 
@@ -36,26 +34,11 @@ svCapSelectionWidget::svCapSelectionWidget(QWidget *parent)
 
     connect(ui->buttonBox,SIGNAL(accepted()), this, SLOT(Confirm()));
     connect(ui->buttonBox,SIGNAL(rejected()), this, SLOT(Cancel()));
-
-    m_LoftWidget=new svLoftParamWidget();
-    m_LoftWidget->move(400,400);
-    m_LoftWidget->hide();
-    m_LoftWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
-
-    connect(m_LoftWidget->ui->btnOK, SIGNAL(clicked()), this, SLOT(OKLofting()) );
-    connect(m_LoftWidget->ui->btnApply, SIGNAL(clicked()), this, SLOT(ApplyLofting()) );
-    connect(m_LoftWidget->ui->btnClose, SIGNAL(clicked()), this, SLOT(HideLoftWidget()) );
-
-    connect(ui->btnUniformParameters, SIGNAL(clicked()), this, SLOT(ShowLoftWidget()) );
-
 }
 
 svCapSelectionWidget::~svCapSelectionWidget()
 {
     delete ui;
-
-    if(m_LoftWidget)
-        delete m_LoftWidget;
 }
 
 void svCapSelectionWidget::SetTableView(std::vector<std::string> caps, svModelElement* modelElement, std::string type)
@@ -97,6 +80,7 @@ void svCapSelectionWidget::SetTableView(std::vector<std::string> caps, svModelEl
     m_TableModel->setHorizontalHeaderLabels(headers);
 
     ui->tableView->setModel(m_TableModel);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
     //ui->tableView->setColumnWidth(0,150);
 }
 
@@ -119,55 +103,8 @@ std::vector<std::string> svCapSelectionWidget::GetUsedCapNames()
     return capNames;
 }
 
-int svCapSelectionWidget::GetNumSampling()
-{
-    return m_NumSampling;
-}
-
-int svCapSelectionWidget::IfUseUniform()
-{
-    return ui->checkboxUseUniform->isChecked()?1:0;
-}
-
-svLoftingParam svCapSelectionWidget::GetLoftingParam()
-{
-    return m_Param;
-}
-
 void svCapSelectionWidget::Confirm()
 {
-    QString strNum=ui->lineEditNumSampling->text().trimmed();
-//    m_UseUniform = ui->checkboxUseUniform->isChecked()?1:0;
-
-    if(strNum=="")
-    {
-        if(m_ModelType!="PolyData")
-        {
-            QMessageBox::warning(this,"Value Mising","Pleases provide the number of sampling points.");
-            return;
-        }
-
-        m_NumSampling=0;
-    }
-    else
-    {
-        bool ok;
-        int num=strNum.toInt(&ok);
-        if(ok)
-        {
-            if(num<1)
-            {
-                QMessageBox::warning(this,"Value Error","Pleases give a positive integer format if you want to provide the number of sampling points.");
-                return;
-            }
-            m_NumSampling=num;
-        }
-        else
-        {
-            QMessageBox::warning(this,"Format Error","Pleases give a correct format if you want to provide the number of sampling points.");
-            return;
-        }
-    }
     hide();
     emit accepted();
 }
@@ -251,32 +188,4 @@ void svCapSelectionWidget::UseNone(bool)
         QStandardItem* item= m_TableModel->item(i,1);
         item->setCheckState(Qt::Unchecked);
     }
-}
-
-void svCapSelectionWidget::ShowLoftWidget()
-{
-    if(m_ModelElement && m_ModelElement->IfUseUniform() && m_ModelElement->GetLoftingParam())
-        m_Param=*(m_ModelElement->GetLoftingParam());
-    else
-        svLoftingUtils::SetPreferencedValues(&m_Param);
-
-    m_LoftWidget->UpdateGUI(&m_Param);
-
-    m_LoftWidget->show();
-}
-
-void svCapSelectionWidget::OKLofting()
-{
-    m_LoftWidget->UpdateParam(&m_Param);
-    m_LoftWidget->hide();
-}
-
-void svCapSelectionWidget::ApplyLofting()
-{
-    m_LoftWidget->UpdateParam(&m_Param);
-}
-
-void svCapSelectionWidget::HideLoftWidget()
-{
-    m_LoftWidget->hide();
 }

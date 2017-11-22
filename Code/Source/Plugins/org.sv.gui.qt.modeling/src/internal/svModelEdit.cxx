@@ -7,6 +7,7 @@
 #include "svSegmentationUtils.h"
 #include "svModelElementFactory.h"
 #include "svModelElementAnalytic.h"
+#include "svModelExtractPathsAction.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -1744,9 +1745,25 @@ void svModelEdit::ExtractCenterlines()
     }
 
     std::vector<std::string> capNames=m_CapSelectionWidget->GetUsedCapNames();
-    int numSampling=m_CapSelectionWidget->GetNumSampling();
-    fprintf(stdout,"NUMCAP: %d\n", capNames.size());
-    fprintf(stdout,"NUMSAMPS: %d\n", numSampling);
+
+    //QAction* action = qobject_cast<QAction*> ( sender() );
+
+    //std::map<QAction*, berry::IConfigurationElement::Pointer>::iterator it
+    //  = m_ConfElements.find( action );
+    //if( it == m_ConfElements.end() )
+    //{
+    //  MITK_WARN << "associated conf element for action " << action->text().toStdString() << " not found";
+    //  return;
+    //}
+    //berry::IConfigurationElement::Pointer confElem = it->second;
+    //svmitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<svmitk::IContextMenuAction>("class");
+
+    //QString className = confElem->GetAttribute("class");
+
+    //contextMenuAction->SetDataStorage(this->GetDataStorage());
+    //contextMenuAction->SetFunctionality(this);
+
+    //contextMenuAction->Run( this->GetCurrentSelection() ); // run the action
 
     return;
 }
