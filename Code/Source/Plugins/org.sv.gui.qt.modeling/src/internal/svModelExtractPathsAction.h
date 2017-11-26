@@ -26,6 +26,9 @@ public:
     void SetDecimated(bool decimated) override {}
     void SetFunctionality(berry::QtViewPart *functionality) override {}
 
+    // Custom functionality
+    void SetSourceCapIds(std::vector<int> sourceCapIds);
+
 public slots:
     void UpdateStatus();
 
@@ -39,11 +42,14 @@ private:
 
     svDataNodeOperationInterface* m_Interface;
 
+    std::vector<int> m_SourceCapIds;
+
     class WorkThread : public QThread
     {
         //      Q_OBJECT
     public:
-        WorkThread(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode);
+        WorkThread(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode,
+                   std::vector<int> sourceCapIds);
 
         QString GetStatus(){return m_Status;}
 
@@ -75,6 +81,8 @@ private:
         mitk::DataNode::Pointer m_CenterlinesModelNode;
 
         mitk::DataNode::Pointer m_MergedCenterlinesModelNode;
+
+        std::vector<int> mm_SourceCapIds;
 
     };
 

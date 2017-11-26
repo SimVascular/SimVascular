@@ -940,7 +940,9 @@ vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement,
         return NULL;
 
     vtkSmartPointer<vtkPolyData> inpd=vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkPolyData> fullpd=vtkSmartPointer<vtkPolyData>::New();
     inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+    fullpd->DeepCopy(modelElement->GetWholeVtkPolyData());
 
     if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()))
     {
@@ -992,7 +994,7 @@ vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement,
     {
       vtkSmartPointer<vtkCellLocator> locator =
         vtkSmartPointer<vtkCellLocator>::New();
-      locator->SetDataSet(inpd);
+      locator->SetDataSet(fullpd);
       locator->BuildLocator();
 
       int subId;
@@ -1011,7 +1013,7 @@ vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement,
         locator->FindClosestPoint(capPt,closestPt,genericCell,closestCell,
           subId,distance);
 
-        int capFaceId = inpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCell);
+        int capFaceId = fullpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCell);
 
         if (sourceCapIds->IsId(capFaceId) != -1)
           sourcePtIds->InsertNextId(ptId);

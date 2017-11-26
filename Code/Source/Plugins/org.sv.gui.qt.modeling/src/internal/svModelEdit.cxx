@@ -32,10 +32,6 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 
-#include <berryPlatformUI.h>
-#include <berryIWorkbenchWindow.h>
-#include <berryIWorkbenchPage.h>
-
 #include <iostream>
 using namespace std;
 
@@ -1749,50 +1745,21 @@ void svModelEdit::ExtractCenterlines()
       return;
     }
 
-    std::vector<std::string> capNames=m_CapSelectionWidget->GetUsedCapNames();
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
 
-    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
-    if(workbench==NULL)
-        return;
+    std::vector<std::string> capNames = m_CapSelectionWidget->GetUsedCapNames();
+    std::vector<int> capIds;
+    for (int i=0; i<capNames.size(); i++)
+      capIds.push_back(modelElement->GetFaceID(capNames[i]));
 
-//    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
-    if(workbench->GetWorkbenchWindows().size()==0)
-        return;
-
-    berry::IWorkbenchWindow::Pointer window=workbench->GetWorkbenchWindows()[0];
-    if(window.IsNull())
-        return;
-
-    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
-    if(page.IsNull())
-        return;
-
-    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.sv.views.datamanager");
-    if(dataManagerView.IsNull())
-        return;
-
-    svQmitkDataManagerView* dataManager=dynamic_cast<svQmitkDataManagerView*>(dataManagerView.GetPointer());
-
-    QAction* action = qobject_cast<QAction*> ( QObject::sender() );
-
-    std::map<QAction*, berry::IConfigurationElement::Pointer>::iterator it
-      = dataManager->m_ConfElements.find( action );
-    if( it == dataManager->m_ConfElements.end() )
-    {
-      MITK_WARN << "associated conf element for action " << action->text().toStdString() << " not found";
-      return;
-    }
-    berry::IConfigurationElement::Pointer confElem = it->second;
-    svmitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<svmitk::IContextMenuAction>("class");
-
-    QString className = confElem->GetAttribute("class");
-
-    contextMenuAction->SetDataStorage(this->GetDataStorage());
-    contextMenuAction->SetFunctionality(this);
-
+    svModelExtractPathsAction *extractPathsAction = new svModelExtractPathsAction();
+    extractPathsAction->SetDataStorage(this->GetDataStorage());
+    extractPathsAction->SetFunctionality(this);
+    extractPathsAction->SetSourceCapIds(capIds);
     QList<mitk::DataNode::Pointer> selectedNode;
     selectedNode.push_back(m_ModelNode);
-    contextMenuAction->Run( selectedNode ); // run the action
+    extractPathsAction->Run(selectedNode);
 
     return;
 }
