@@ -998,7 +998,9 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
     double edgeSize,double blThicknessFactor,int numSublayers,
     double sublayerRatio,int sidewallCellEntityId,
     int innerSurfaceCellEntityId,int negateWarpVectors,
-    std::string cellEntityIdsArrayName)
+    std::string cellEntityIdsArrayName,
+    int useConstantThickness,
+    std::string layerThicknessArrayName)
 {
   vtkSmartPointer<vtkvmtkBoundaryLayerGenerator> layerer =
     vtkSmartPointer<vtkvmtkBoundaryLayerGenerator>::New();
@@ -1040,6 +1042,14 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   {
     sublayerRatio = 0.3;
   }
+  if (!useConstantThickness)
+  {
+    if (VtkUtils_UGCheckArrayName(copyug,0,layerThicknessArrayName) != SV_OK)
+    {
+      fprintf(stderr,"%s Array is not on the surface\n", layerThicknessArrayName.c_str());
+      return SV_ERROR;
+    }
+  }
 
   layerer->SetInputData(copyug);
   layerer->SetLayerThickness(edgeSize*blThicknessFactor);
@@ -1049,7 +1059,9 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   layerer->SetNegateWarpVectors(negateWarpVectors);
   layerer->SetWarpVectorsArrayName("Normals");
   layerer->SetCellEntityIdsArrayName(cellEntityIdsArrayName.c_str());
-  layerer->SetConstantThickness(1);
+  layerer->SetUseWarpVectorMagnitudeAsThickness(0);
+  layerer->SetConstantThickness(useConstantThickness);
+  layerer->SetLayerThicknessArrayName(layerThicknessArrayName.c_str());
   //9999
   layerer->SetSidewallCellEntityId(sidewallCellEntityId);
   //1
