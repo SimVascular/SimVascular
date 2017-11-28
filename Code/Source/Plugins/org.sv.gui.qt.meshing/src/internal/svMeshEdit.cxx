@@ -811,8 +811,11 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
     }
 
     if(ui->checkBoxBoundaryLayerT->isChecked())
-        cmds.push_back("boundaryLayer "+QString::number(ui->sbLayersT->value()).toStdString()
-                       +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString());
+    {
+      int useConstantThickness = ui->checkBoxConstantThicknessBL->isChecked();
+      cmds.push_back("boundaryLayer "+QString::number(ui->sbLayersT->value()).toStdString()
+                       +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString()+" "+QString::number(useConstantThickness).toStdString());
+    }
 
     for(int i=0;i<m_TableModelLocal->rowCount();i++)
     {

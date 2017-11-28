@@ -75,6 +75,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
     int numsublayers;
     double blthicknessfactor;
     double sublayerratio;
+    int useconstantblthickness;
     int refinement;
     double refinedsize;
     double sphereradius;

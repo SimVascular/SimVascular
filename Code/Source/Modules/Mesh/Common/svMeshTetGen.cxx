@@ -163,12 +163,12 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     }
     else if(flag=="boundaryLayer")
     {
-        double H[2]={values[1],values[2]};
-        if(m_cvTetGenMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
-        {
-            msg="Failed in boudnary layer meshing";
-            return false;
-        }
+      double H[3]={values[1],values[2],values[3]};
+      if(m_cvTetGenMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
+      {
+          msg="Failed in boudnary layer meshing";
+          return false;
+      }
     }
     else if(flag=="sphereRefinement")
     {
@@ -315,6 +315,14 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[0]=std::stod(params[1]);
             values[1]=std::stod(params[2]);
             values[2]=std::stod(params[3]);
+        }
+        else if(paramSize==5 && params[0]=="boundarylayer")
+        {
+            flag="boundaryLayer";
+            values[0]=std::stod(params[1]);
+            values[1]=std::stod(params[2]);
+            values[2]=std::stod(params[3]);
+            values[3]=std::stod(params[4]);
         }
         else if(paramSize==3 && (params[0]=="localedgesize" || params[0]=="localsize"))
         {
