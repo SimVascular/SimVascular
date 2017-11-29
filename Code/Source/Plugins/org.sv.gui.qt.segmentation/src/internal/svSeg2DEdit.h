@@ -126,10 +126,10 @@ public slots:
 
     void ManualContextMenuRequested();
 
-    void ManualCircleContextMenuRequested(const QPoint&);
-    void ManualEllipseContextMenuRequested(const QPoint&);
-    void ManualSplinePolyContextMenuRequested(const QPoint&);
-    void ManualPolygonContextMenuRequested(const QPoint&);
+    void ManualCircleContextMenuRequested(const QPoint &pos);
+    void ManualEllipseContextMenuRequested(const QPoint &pos);
+    void ManualSplinePolyContextMenuRequested(const QPoint &pos);
+    void ManualPolygonContextMenuRequested(const QPoint &pos);
 
     void CreateManualCircle( bool checked = false );
 
