@@ -1472,7 +1472,7 @@ macro(sv_externals_check_versioning check_file_contents platform_version compile
   endforeach()
 
   # Set the generic warning
-  if (not complete_match)
+  if (NOT complete_match)
     set(GENERIC_MESSAGE "Pre-built binaries for the operating system and compiler do not exist! The best possible match will be downloaded; however, problems may occur, especially if the pre-built binaries are compiled with a different compiler.")
   endif()
 
