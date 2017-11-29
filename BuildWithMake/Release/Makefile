@@ -1,26 +1,26 @@
 # Hey emacs, this is a -*- makefile -*-
 
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
-# Portions of the code Copyright (c) 2009-2011 Open Source Medical 
+# Portions of the code Copyright (c) 2009-2011 Open Source Medical
 # Software Corporation, University of California, San Diego.
 # All rights reserved.
 #
 # Portions copyright (c) 1999-2007 Stanford University,
 #   Nathan Wilson, Ken Wang, Charles Taylor.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -56,7 +56,7 @@ ifeq ($(CLUSTER), x64_cygwin)
   DIST_DIR := /cygdrive/p/package/$(SV_VERSION)/$(SV_TIMESTAMP)
 else
   DIST_DIR_TOP := $(REAL_DIST_DIR_TOP)
-  DIST_DIR := $(REAL_DIST_DIR) 
+  DIST_DIR := $(REAL_DIST_DIR)
 endif
 
 ifneq ($(CLUSTER),x64_linux)
@@ -121,8 +121,8 @@ endif
 	-chmod -R a+rwx package-release-meshsim-and-parasolid
 	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_meshsim*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*meshsim*.$(SOEXT)* package-release-meshsim-and-parasolid
 ifeq ($(SV_USE_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
@@ -214,8 +214,8 @@ ifeq ($(SV_USE_PYTHON),1)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_python_interp*.$(SOEXT)* $(DIST_DIR)
 endif
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_*.$(SOEXT)* $(DIST_DIR)
-	-rm -f $(DIST_DIR)/*simvascular_parasolid*.$(SOEXT)*
-	-rm -f $(DIST_DIR)/*simvascular_meshsim*.$(SOEXT)*
+	-rm -f $(DIST_DIR)/*parasolid*.$(SOEXT)*
+	-rm -f $(DIST_DIR)/*meshsim*.$(SOEXT)*
 	-cp -fR $(TOP)/Bin/plugins $(DIST_DIR)
 
 copy-sv-tcl-code:
@@ -247,8 +247,8 @@ copy-tcl-libs:
 	-cp -fR $(TKCXIMAGE_DLL) $(DIST_DIR)
 
 copy-external-libs:
-	-mkdir -p $(DIST_DIR)/intel_compiler_runtime_libs
-	-cp -f -p $(INTEL_COMPILER_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/intel_compiler_runtime_libs
+#	-mkdir -p $(DIST_DIR)/intel_compiler_runtime_libs
+#	-cp -f -p $(INTEL_COMPILER_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/intel_compiler_runtime_libs
 #ifeq ($(SV_USE_PARASOLID),1)
 #	-cp -f $(PARASOLID_DLLS) $(DIST_DIR)
 #	-cp -Rf $(P_SCHEMA) $(DIST_DIR)/schema
@@ -263,15 +263,19 @@ ifeq ($(SV_USE_VTK),1)
 	-cp -fd $(VTK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
 	-cp -fd $(VTK_BINDIRS)/*.$(SOEXT)* $(DIST_DIR)
 endif
-ifeq ($(SV_USE_ZLIB),1)
-	-cp -f $(ZLIB_LIBDIR)/zlib.$(SOEXT)* $(DIST_DIR)
-endif
+#ifeq ($(SV_USE_ZLIB),1)
+#	-cp -f $(ZLIB_LIBDIR)/zlib.$(SOEXT)* $(DIST_DIR)
+#endif
 ifeq ($(SV_USE_ITK),1)
 	-cp -f $(ITK_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_GDCM),1)
-	-cp -f $(SV_GDCM_DLLS)/gdcm*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(SV_GDCM_DLLS)/*gdcm*.$(SOEXT)* $(DIST_DIR)
+ifeq ($(CLUSTER),x64_cygwin)
 	-cp -f $(SV_GDCM_DLLS)/gdcm*.exe* $(DIST_DIR)
+else
+	-cp -fR $(SV_GDCM_DLLS)/gdcm* $(DIST_DIR)
+endif
 	-cp -f $(SV_GDCM_DLLS)/socketxx.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_PYTHON),1)
@@ -283,27 +287,33 @@ ifeq ($(SV_USE_PYTHON),1)
 	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
 endif
 ifeq ($(SV_USE_QT),1)
-	-cp -f $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
-	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins 
+ifeq ($(CLUSTER), x64_cygwin)
+	-cp -fd $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
+else
+	-cp -fd $(QT_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
+endif
+	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
-	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fd $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_MITK),1)
 	-mkdir -p $(DIST_DIR)/mitk
-#	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
-#	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
-#	-cp -fR $(MITK_BINDIRS)/MitkCore $(DIST_DIR)/mitk/bin
-#	-cp -fR $(MITK_BINDIRS)/MitkPython $(DIST_DIR)/mitk/bin
-#	-cp -fR $(MITK_BINDIRS)/Python $(DIST_DIR)/mitk/bin
 ifeq ($(CLUSTER), x64_cygwin)
 	-cp -fRd $(MITK_BINDIRS) $(DIST_DIR)/mitk
 #	-mkdir -p $(DIST_DIR)/mitk/bin/plugins
 #	-cp -fR $(SV_MITK_PLUGIN_PATH) $(DIST_DIR)/mitk/bin/plugins
 #	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins/RelWithDebInfo
 else
-	-cp -f $(SV_MITK_PLUGIN_PATH)/* $(DIST_DIR)/mitk/bin/plugins
-	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins
+	-mkdir -p $(DIST_DIR)/mitk/bin
+	-mkdir -p $(DIST_DIR)/mitk/lib/plugins
+	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
+	-cp -f $(MITK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)/mitk/lib
+	-cp -fR $(MITK_LIBDIRS)/MitkCore $(DIST_DIR)/mitk/lib
+	-cp -fR $(MITK_LIBDIRS)/MitkPython $(DIST_DIR)/mitk/lib
+	-cp -fR $(MITK_LIBDIRS)/Python $(DIST_DIR)/mitk/lib
+	-cp -f $(SV_MITK_PLUGIN_PATH)/* $(DIST_DIR)/mitk/lib/plugins
+	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/lib/plugins
 endif
 endif
 

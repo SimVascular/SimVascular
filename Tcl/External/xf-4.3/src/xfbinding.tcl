@@ -404,7 +404,7 @@ proc XFBinding {xfW xfType xfClass xfLeader {xfCanvas ""}} {
 # Description: delete new event in list
 # Arguments: xfW - the widget we configure
 #            xfClass - the class we edit
-#            xfCanvas - contains the item of the canvas 
+#            xfCanvas - contains the item of the canvas
 # Returns: none
 # Sideeffects: none
 ##########
@@ -436,7 +436,7 @@ proc XFBindingDeleteEvent {xfW xfClass {xfCanvas ""}} {
   }
 
   XFMiscSetText .xfBinding$xfClass.value.value ""
-  
+
   if {$xfConf(applyBinding)} {
     XFBindingSetBinding $xfW $xfClass $xfCanvas
   }
@@ -447,7 +447,7 @@ proc XFBindingDeleteEvent {xfW xfClass {xfCanvas ""}} {
 # Description: insert new event in list
 # Arguments: xfW - the widget we configure
 #            xfClass - the class we edit
-#            xfCanvas - contains the item of the canvas 
+#            xfCanvas - contains the item of the canvas
 # Returns: none
 # Sideeffects: none
 ##########
@@ -500,7 +500,7 @@ proc XFBindingEnterEvent {xfW xfClass {xfCanvas ""}} {
 proc XFBindingInsertEvent {xfEvent xfClass} {
 
   set xfCurrentEvent [.xfBinding$xfClass.current.current get]
-  set xfCurrentEvent [string trimleft $xfCurrentEvent "<"] 
+  set xfCurrentEvent [string trimleft $xfCurrentEvent "<"]
   set xfCurrentEvent [string trimright $xfCurrentEvent ">"]
   .xfBinding$xfClass.current.current delete 0 end
   if {"$xfCurrentEvent" == ""} {
@@ -515,7 +515,7 @@ proc XFBindingInsertEvent {xfEvent xfClass} {
 # Description: select the current event
 # Arguments: xfW - the widget we configure
 #            xfClass - the class we currently configure
-#            xfCanvas - contains the item of the canvas 
+#            xfCanvas - contains the item of the canvas
 # Returns: none
 # Sideeffects: none
 ##########
@@ -537,7 +537,7 @@ proc XFBindingSelectEvent {xfW xfClass xfList xfY {xfCanvas ""}} {
 # Description: set binding for currently selected widget
 # Arguments: xfW - the widget we configure
 #            xfClass - the class we currently configure
-#            xfCanvas - contains the item of the canvas 
+#            xfCanvas - contains the item of the canvas
 # Returns: none
 # Sideeffects: none
 ##########
@@ -591,7 +591,7 @@ proc XFBindingSetBinding {xfW xfClass {xfCanvas ""}} {
 # Arguments: xfW - the widget we configure
 #            xfClass - the class
 #            xfCommand - optional command string
-#            xfCanvas - contains the item of the canvas 
+#            xfCanvas - contains the item of the canvas
 # Returns: none
 # Sideeffects: none
 ##########
@@ -634,7 +634,7 @@ proc XFBindingTestInsert {xfW xfClass {xfCommand ""} {xfCanvas ""}} {
 # Description: undo binding for widgets
 # Arguments: xfW - the widget we configure
 #            xfClass - the class we currently configure
-#            xfCanvas - contains the item of the canvas 
+#            xfCanvas - contains the item of the canvas
 # Returns: none
 # Sideeffects: none
 ##########

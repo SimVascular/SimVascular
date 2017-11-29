@@ -20,6 +20,7 @@ public:
     static void AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor, QString newImageName);
 
     static void SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode);
+    static void SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath);
     static void SaveAllProjects(mitk::DataStorage::Pointer dataStorage);
 
     static void LoadData(mitk::DataNode::Pointer dataNode);
@@ -32,6 +33,10 @@ public:
     static void RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode);
 
     static void RenameDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, std::string newName);
+
+    static void DuplicateProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString newName);
+
+    static bool DuplicateDirRecursively(const QString &srcFilePath, const QString &tgtFilePath);
 
 };
 

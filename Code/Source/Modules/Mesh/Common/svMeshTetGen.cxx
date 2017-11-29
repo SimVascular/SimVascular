@@ -163,12 +163,12 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     }
     else if(flag=="boundaryLayer")
     {
-        double H[2]={values[1],values[2]};
-        if(m_cvTetGenMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
-        {
-            msg="Failed in boudnary layer meshing";
-            return false;
-        }
+      double H[3]={values[1],values[2],values[3]};
+      if(m_cvTetGenMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
+      {
+          msg="Failed in boudnary layer meshing";
+          return false;
+      }
     }
     else if(flag=="sphereRefinement")
     {
@@ -200,7 +200,10 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
         if(m_cvTetGenMesh->WriteMesh(NULL,0)==SV_OK)
         {
             vtkPolyData* surfaceMesh=m_cvTetGenMesh->GetPolyData()->GetVtkPolyData();
-            vtkUnstructuredGrid* volumeMesh=m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+            vtkUnstructuredGrid* volumeMesh = NULL;
+            if (m_cvTetGenMesh->GetUnstructuredGrid() != NULL)
+              volumeMesh = m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+
             if(surfaceMesh==NULL)
             {
                 delete m_cvTetGenMesh;
@@ -210,8 +213,11 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
             }
             m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
             m_SurfaceMesh->DeepCopy(surfaceMesh);
-            m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
-            m_VolumeMesh->DeepCopy(volumeMesh);
+            if (volumeMesh!=NULL)
+            {
+              m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
+              m_VolumeMesh->DeepCopy(volumeMesh);
+            }
             delete m_cvTetGenMesh;//Get all data;ok to delete inner mesh
             m_cvTetGenMesh=NULL;
         }
@@ -309,6 +315,14 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[0]=std::stod(params[1]);
             values[1]=std::stod(params[2]);
             values[2]=std::stod(params[3]);
+        }
+        else if(paramSize==5 && params[0]=="boundarylayer")
+        {
+            flag="boundaryLayer";
+            values[0]=std::stod(params[1]);
+            values[1]=std::stod(params[2]);
+            values[2]=std::stod(params[3]);
+            values[3]=std::stod(params[4]);
         }
         else if(paramSize==3 && (params[0]=="localedgesize" || params[0]=="localsize"))
         {

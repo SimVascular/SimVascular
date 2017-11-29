@@ -4,15 +4,15 @@ case "$SV_BATCH_MODE" in
 "1")
 case "$*" in
 "")
-$SV_HOME/Bin/@SV_EXE@
+$SV_HOME/bin/@SV_EXE@
 ;;
 *)
-$SV_HOME/Bin/@SV_EXE@ $*
+$SV_HOME/bin/@SV_EXE@ $*
 ;;
 esac
 ;;
 *)
-$SV_HOME/Bin/@SV_EXE@ $SV_HOME/Tcl/cpmView/cpmview_startup.tcl $*
+$SV_HOME/bin/@SV_EXE@ $SV_HOME/Tcl/cpmView/cpmview_startup.tcl $*
 ;;
 esac
 

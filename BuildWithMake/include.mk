@@ -58,6 +58,12 @@ CLUSTER = x64_cygwin
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
+# NOTE: CXX_COMPILER_VERSION and FORTRAN_COMPILER_VERSION
+#       should be replaced with additional variables
+
+SV_COMPILER = msvc
+SV_COMPILER_VERSION = 18.0
+
 CXX_COMPILER_VERSION = msvc-18.0
 FORTRAN_COMPILER_VERSION = ifort
 
@@ -236,22 +242,22 @@ ifeq ($(CLUSTER), x64_macosx)
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/sv/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/sv/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/sv/ext/src
     LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
@@ -260,8 +266,8 @@ endif
 #   Release version numbers for SimVascular
 # -------------------------------------------
 
-SV_MAJOR_VER_NO = "17.04"
-SV_FULL_VER_NO = "17.04.10"
+SV_MAJOR_VER_NO = "17.08"
+SV_FULL_VER_NO = "17.08.21"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
@@ -708,6 +714,7 @@ endif
 ifeq ($(SV_USE_MITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.meshing/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
@@ -780,6 +787,7 @@ SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
 
 #plugin names
 SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application
+SV_PLUGIN_DATAMANAGER_NAME=org_sv_gui_qt_datamanager
 SV_PLUGIN_MESHING_NAME=org_sv_gui_qt_meshing
 SV_PLUGIN_MODELING_NAME=org_sv_gui_qt_modeling
 SV_PLUGIN_PATHPLANNING_NAME=org_sv_gui_qt_pathplanning

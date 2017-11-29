@@ -410,14 +410,14 @@ proc ShowWindow. {args} {# xf ignore me 7
   pack append .frame0 \
     .frame0.menubutton12 {left frame center} \
     .frame0.menubutton0 {left frame center} \
-    .frame0.menubutton1 {left frame center} 
+    .frame0.menubutton1 {left frame center}
 
   # build widget .frame1
   frame .frame1 \
     -relief {raised}
 
   # build widget .frame1.frame
-  frame .frame1.frame 
+  frame .frame1.frame
 
   # build widget .frame1.frame.scrollbar2
   scrollbar .frame1.frame.scrollbar2 \
@@ -448,7 +448,7 @@ proc ShowWindow. {args} {# xf ignore me 7
   pack append .frame1.frame \
     .frame1.frame.scrollbar2 {left frame center filly} \
     .frame1.frame.listbox1 {top frame center expand fill} \
-    .frame1.frame.scrollbar3 {bottom frame center fillx} 
+    .frame1.frame.scrollbar3 {bottom frame center fillx}
 
   # build widget .frame1.frame20
   frame .frame1.frame20 \
@@ -456,7 +456,7 @@ proc ShowWindow. {args} {# xf ignore me 7
     -relief {raised}
 
   # build widget .frame1.frame20.frame
-  frame .frame1.frame20.frame 
+  frame .frame1.frame20.frame
 
   # build widget .frame1.frame20.frame.scrollbar1
   scrollbar .frame1.frame20.frame.scrollbar1 \
@@ -474,7 +474,7 @@ proc ShowWindow. {args} {# xf ignore me 7
   # pack widget .frame1.frame20.frame
   pack append .frame1.frame20.frame \
     .frame1.frame20.frame.entry2 {top frame center expand fill} \
-    .frame1.frame20.frame.scrollbar1 {top frame center fillx} 
+    .frame1.frame20.frame.scrollbar1 {top frame center fillx}
 
   # build widget .frame1.frame20.label1
   label .frame1.frame20.label1 \
@@ -483,7 +483,7 @@ proc ShowWindow. {args} {# xf ignore me 7
   # pack widget .frame1.frame20
   pack append .frame1.frame20 \
     .frame1.frame20.label1 {left frame center filly} \
-    .frame1.frame20.frame {top frame center fillx} 
+    .frame1.frame20.frame {top frame center fillx}
 
   # build widget .frame1.frame7
   frame .frame1.frame7 \
@@ -506,7 +506,7 @@ proc ShowWindow. {args} {# xf ignore me 7
   # pack widget .frame1.frame7
   pack append .frame1.frame7 \
     .frame1.frame7.scrollbar1 {left frame center filly} \
-    .frame1.frame7.text2 {top frame center expand fill} 
+    .frame1.frame7.text2 {top frame center expand fill}
 
   # build widget .frame1.frame8
   frame .frame1.frame8 \
@@ -525,14 +525,14 @@ proc ShowWindow. {args} {# xf ignore me 7
   # pack widget .frame1.frame8
   pack append .frame1.frame8 \
     .frame1.frame8.button10 {left frame center expand fillx} \
-    .frame1.frame8.button11 {left frame center expand fillx} 
+    .frame1.frame8.button11 {left frame center expand fillx}
 
   # pack widget .frame1
   pack append .frame1 \
     .frame1.frame {top frame center expand fill} \
     .frame1.frame8 {top frame center fillx} \
     .frame1.frame20 {top frame center fillx} \
-    .frame1.frame7 {top frame center expand fill} 
+    .frame1.frame7 {top frame center expand fill}
 
   # build widget .frame2
   frame .frame2 \
@@ -569,16 +569,16 @@ proc ShowWindow. {args} {# xf ignore me 7
     .frame2.button16 {left frame center expand fillx} \
     .frame2.button0 {left frame center expand fillx} \
     .frame2.button {left frame center expand fillx} \
-    .frame2.button1 {left frame center expand fillx} 
+    .frame2.button1 {left frame center expand fillx}
 
   # build widget .templist
-  listbox .templist 
+  listbox .templist
 
   # pack widget .
   pack append . \
     .frame0 {top frame center fillx} \
     .frame1 {top frame center expand fill} \
-    .frame2 {top frame center fillx} 
+    .frame2 {top frame center fillx}
 
   if {"[info procs XFEdit]" != ""} {
     XFEditSetShowWindows
@@ -808,7 +808,7 @@ proc Alias { args} {
 #                   the alias name, and the second parameter is
 #                   the procedure that is aliased.
 # Returns: nothing, the command that is bound to the alias or a
-#          list of all aliases - command pairs. 
+#          list of all aliases - command pairs.
 # Sideeffects: internalAliasList is updated, and the alias
 #              proc is inserted
 ##########
@@ -865,7 +865,7 @@ proc ColorBox { {colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMess
 # Returns: colorname, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global colorBox(activeBackground) - active background color
 # global colorBox(activeForeground) - active foreground color
 # global colorBox(background) - background color
@@ -970,7 +970,7 @@ proc ColorBox { {colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMess
 
     frame .colorBox.frame1       -borderwidth 0       -relief raised
     catch ".colorBox.frame1 config $tmpFrameOpt"
- 
+
     button .colorBox.frame1.ok       -text "OK"
     catch ".colorBox.frame1.ok config $tmpButtonOpt"
 
@@ -990,7 +990,7 @@ proc ColorBox { {colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMess
 
     frame .colorBox.palette       -borderwidth 0       -relief raised
     catch ".colorBox.palette config $tmpFrameOpt"
- 
+
     set counter 0
     foreach element $colorBox(palette) {
       button .colorBox.palette.palette$counter         -command "ColorBoxSetPalette $colorBoxMessage \"$colorBoxTargetW\" $counter"                -width 3
@@ -1089,7 +1089,7 @@ proc ColorBox { {colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMess
 
     set colorBox(oldWidget) $colorBoxEntryW
   }
-   
+
   .colorBox.frame1.ok config     -command "
       global colorBox
       set colorBox(colorName) \[.colorBox.current.current get\]
@@ -1173,7 +1173,7 @@ proc ColorBox { {colorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {colorBoxMess
       }
     }
   }
-    
+
   # packing
   pack append .colorBox.frame1               .colorBox.frame1.ok {left fill expand}               .colorBox.frame1.cancel {left fill expand}
   pack append .colorBox.frame2               .colorBox.frame2.rgb {left fill expand}               .colorBox.frame2.hsv {left fill expand}               .colorBox.frame2.list {left fill expand}
@@ -1555,7 +1555,7 @@ proc CursorBox { {cursorBoxFileCursor "/usr/local/lib/xf/lib/Cursors"} {cursorBo
 
     frame .cursorBox.frame1       -borderwidth 0       -relief raised
     catch ".cursorBox.frame1 config $tmpFrameOpt"
- 
+
     button .cursorBox.frame1.ok       -text "OK"
     catch ".cursorBox.frame1.ok config $tmpButtonOpt"
 
@@ -1623,7 +1623,7 @@ proc CursorBox { {cursorBoxFileCursor "/usr/local/lib/xf/lib/Cursors"} {cursorBo
         close $cursorInFile
       }
     }
-  
+
     # bindings
     global xfBind
     set tmpBinding "<Double-Button-3>"
@@ -1921,7 +1921,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
 # Returns: the filename that was selected, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global fsBox(activeBackground) - active background color
 # global fsBox(activeForeground) - active foreground color
 # global fsBox(background) - background color
@@ -2004,7 +2004,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
   }
   toplevel .fsBox     -borderwidth 0
   catch ".fsBox config $tmpFrameOpt"
-  wm geometry .fsBox 350x300 
+  wm geometry .fsBox 350x300
   wm title .fsBox {File select box}
   wm maxsize .fsBox 1000 1000
   wm minsize .fsBox 100 100
@@ -2112,7 +2112,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
   catch ".fsBox.pattern.pattern config $tmpMessageOpt"
 
   .fsBox.pattern.pattern insert 0 $fsBox(pattern)
-  
+
   frame .fsBox.files     -borderwidth 0     -relief raised
   catch ".fsBox.files config $tmpFrameOpt"
 
@@ -2136,7 +2136,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
 
   .fsBox.file.file delete 0 end
   .fsBox.file.file insert 0 $fsBox(name)
-  
+
   checkbutton .fsBox.pattern.all     -offvalue 0     -onvalue 1     -text "Show all files"     -variable fsBox(all)     -command {
       global fsBox
       FSBoxFSShow [.fsBox.path.path get]         [.fsBox.pattern.pattern get] $fsBox(all)}
@@ -2210,7 +2210,7 @@ proc FSBox { {fsBoxMessage "Select file:"} {fsBoxFileName ""} {fsBoxActionOk ""}
   pack append .fsBox.path               .fsBox.path.paths {left}               .fsBox.path.path {left fill expand}
   pack append .fsBox.pattern               .fsBox.pattern.patterns {left}               .fsBox.pattern.all {right fill}               .fsBox.pattern.pattern {left fill expand}
   if {$fsBox(showPixmap)} {
-    pack append .fsBox.frame2                 .fsBox.frame2.scrollbar1 {left filly}                 .fsBox.frame2.canvas2 {top expand fill}                 .fsBox.frame2.scrollbar3 {top fillx} 
+    pack append .fsBox.frame2                 .fsBox.frame2.scrollbar1 {left filly}                 .fsBox.frame2.canvas2 {top expand fill}                 .fsBox.frame2.scrollbar3 {top fillx}
 
     pack append .fsBox                 .fsBox.message1 {top fill}                 .fsBox.frame1 {bottom fill}                 .fsBox.pattern {bottom fill}                 .fsBox.file {bottom fill}                 .fsBox.path {bottom fill}                 .fsBox.frame2 {right fill}                 .fsBox.files {left fill expand}
   } {
@@ -2577,7 +2577,7 @@ proc FSBoxFSShow { fsBoxPath fsBoxPattern fsBoxAll} {
   if {$fsBox(extensions)} {
     .fsBox.pattern.patterns.patterns.menu add separator
   }
-  if {$fsBox(extensions) || 
+  if {$fsBox(extensions) ||
       "[.fsBox.pattern.patterns.patterns.menu index last]" == "none"} {
     .fsBox.pattern.patterns.patterns.menu add checkbutton       -label "Scan extensions"       -variable "fsBox(extensions)"       -command {
         global fsBox
@@ -2599,7 +2599,7 @@ proc FontBox { {fontBoxFileFont "/usr/local/lib/xf/lib/Fonts"} {fontBoxMessage "
 # Returns: fontname, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global fontBox(activeBackground) - active background color
 # global fontBox(activeForeground) - active foreground color
 # global fontBox(background) - background color
@@ -2652,7 +2652,7 @@ proc FontBox { {fontBoxFileFont "/usr/local/lib/xf/lib/Fonts"} {fontBoxMessage "
     append tmpScrollOpt "-foreground \"$fontBox(scrollForeground)\" "
   }
 
-  set fontBoxTmpFileFont $fontBoxFileFont 
+  set fontBoxTmpFileFont $fontBoxFileFont
   # get font file name
   if {!([file exists $fontBoxFileFont] &&
         [file readable $fontBoxFileFont])} {
@@ -2974,7 +2974,7 @@ proc FontBox { {fontBoxFileFont "/usr/local/lib/xf/lib/Fonts"} {fontBoxMessage "
 proc FontBoxComposeFont {} {
 # xf ignore me 6
   global fontBox
-  
+
   if {"$fontBox(fontFamily)" != "*"} {
     append fontNewFont * $fontBox(fontFamily)
   } {
@@ -3653,8 +3653,8 @@ proc XFLocalParseAppDefs {xfAppDefFile} {
       # situation where a resource name ends in . and when it
       # ends in *.  In the second case you want to keep the *
       # in the widget name for pattern matching, but you want
-      # to get rid of the . if it is the end of the name. 
-      set backup -2  
+      # to get rid of the . if it is the end of the name.
+      set backup -2
       set line [string trim $line]
       if {[string index $line 0] == "#" || "$line" == ""} {
         # skip comments and empty lines
@@ -3664,7 +3664,7 @@ proc XFLocalParseAppDefs {xfAppDefFile} {
       set resource [string trim [lindex $list 0]]
       set i [string last "." $resource]
       set j [string last "*" $resource]
-      if {$j > $i} { 
+      if {$j > $i} {
         set i $j
         set backup -1
       }
@@ -3780,7 +3780,7 @@ proc XFLocalSetAppDefs {{xfWidgetPath "."}} {
         foreach widget $widlist {
           # make sure this command is a widget.
           if {![catch "winfo id $widget"]} {
-            catch "$widget configure -[string tolower $name] $xfAppDefaults($xfCounter)" 
+            catch "$widget configure -[string tolower $name] $xfAppDefaults($xfCounter)"
           }
         }
       }

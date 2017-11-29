@@ -183,8 +183,8 @@ proc XFTmpltScaleDouble {xfW xfName xfLabel1 xfLabel2 \
     label $xfW.$xfName.label1 \
       -relief raised \
       -text "$xfLabel1"
-  } 
-  
+  }
+
   scale $xfW.$xfName.${xfName}1.${xfName}1 \
     -from 0 \
     -label "$xfLabel2" \
@@ -206,7 +206,7 @@ proc XFTmpltScaleDouble {xfW xfName xfLabel1 xfLabel2 \
     $xfW.$xfName.${xfName}1.${xfName}1 set [lindex [split $xfValue1 .] 0]
   } {
     $xfW.$xfName.${xfName}1.${xfName}1 set 0
-  }  
+  }
 
   if {"$xfValue2" != ""} {
     $xfW.$xfName.${xfName}2.${xfName}2 set [lindex [split $xfValue2 .] 0]
@@ -289,7 +289,7 @@ proc XFTmpltTextLong {xfW xfName xfReadOnly {xfText ""} {xfNoEmacs 1}} {
       # packing of the subwidgets
       pack configure $xfW.$xfName.vscroll -side $xfConf(scrollSide) -fill y
       pack configure $xfW.$xfName.hscroll -side bottom -fill x
-      pack configure $xfW.$xfName.$xfName -side left -fill both -expand 1 
+      pack configure $xfW.$xfName.$xfName -side left -fill both -expand 1
     }
   }
   if {$xfNoEmacs || !$xfConf(interpreterHasTkemacs)} {

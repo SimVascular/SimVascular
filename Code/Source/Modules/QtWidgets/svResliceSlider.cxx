@@ -262,6 +262,8 @@ void svResliceSlider::intensityOnRefetch()
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
     }
+
+    emit reslicePositionChanged(pos1);
 }
 
 
@@ -388,7 +390,6 @@ void svResliceSlider::moveToPathPosPoint(mitk::Point3D posPoint){
         }
     }
 }
-
 
 void svResliceSlider::moveToClosestPathPosPoint(mitk::Point3D posPoint)
 {

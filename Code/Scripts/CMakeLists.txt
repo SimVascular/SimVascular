@@ -22,7 +22,14 @@ foreach(var ${core_vars})
 endforeach()
 
 set(SCRIPT_FILES ${HOME_FILE_STRING})
-if(UNIX)
+if(APPLE)
+	set(WIN_PATH )
+	set(WIN_EXE )
+	set(WIN_BAT )
+	set(OSTYPE macos)
+endif()
+
+if(UNIX AND NOT APPLE)
 	set(WIN_PATH )
 	set(WIN_EXE )
 	set(WIN_BAT )
@@ -53,7 +60,7 @@ if(UNIX AND SV_ENABLE_DISTRIBUTION AND SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSou
 
 		set(install_script_string "${install_script_string}# Set env variables for licensed modules\n")
 		set(install_script_string "${install_script_string}if ! [ -z \"$licdir\" ]; then\n")
-		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "$licdir/Lib" install_script_string)
+		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "$licdir/lib" install_script_string)
 		if(SV_USE_PARASOLID)
 			set_env_string_concat(P_SCHEMA "$licdir/schema" install_script_string)
 		endif()
@@ -123,7 +130,7 @@ if(SV_USE_QT OR SV_USE_QT_GUI)
     if(WIN32)
       set_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/RelWithDebInfo" developer_script_string)
       append_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/plugins/RelWithDebInfo" developer_script_string)
-      append_env_string_concat(SV_PLUGIN_PATH "%SV_HOME%/Bin/plugins" developer_script_string)
+      append_env_string_concat(SV_PLUGIN_PATH "%SV_HOME%/bin/plugins" developer_script_string)
     endif()
   endif()
 endif()
@@ -267,10 +274,35 @@ append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTA
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}/plugins" install_script_string)
 set_env_string_concat(DYLD_FALLBACK_FRAMEWORK_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib" install_script_string)
 
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin" developer_script_string)
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Lib/plugins" developer_script_string)
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Lib" developer_script_string)
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin/RelWithDebInfo" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/lib/plugins" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/lib" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin/RelWithDebInfo" developer_script_string)
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
+# These are the locations of the simvascular plugins
+if(WIN32)
+  set(developer_script_string "${developer_script_string}\nREM SimVascular plugin locations\n")
+  set(install_script_string "${install_script_string}\nREM SimVascular plugin locations\n")
+else()
+  set(developer_script_string "${developer_script_string}\n# SimVascular plugin locations\n")
+  set(install_script_string "${install_script_string}\n# SimVascular plugin locations\n")
+endif()
+
+append_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}/plugins" install_script_string)
+if(SV_ENABLE_DISTRIBUTION)
+  append_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/plugins" install_script_string)
+  else()
+    append_env_string_concat(SV_PLUGIN_PATH "${ENV_SV_HOME}/${SV_INSTALL_MITK_LIBRARY_DIR}/plugins" install_script_string)
+endif()
+
+append_env_string_concat(SV_PLUGIN_PATH "${CMAKE_BINARY_DIR}/lib/plugins" developer_script_string)
+if (SV_USE_MITK)
+  if (MITK_DIR)
+    append_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/lib/plugins" developer_script_string)
+  endif()
+endif()
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------

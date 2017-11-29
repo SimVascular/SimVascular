@@ -47,9 +47,9 @@ proc XFInfoAliases {} {
     -text {Commands:}
 
   XFTmpltLabledEntry .xfInfoAliases.frame1 alias "Alias name:"
-  
+
   XFTmpltLabledEntry .xfInfoAliases.frame1 aliased "Aliased command:"
-  
+
   XFTmpltFrame .xfInfoAliases.frame2
 
   button .xfInfoAliases.frame2.insert \

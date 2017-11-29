@@ -19,24 +19,24 @@ proc XFPasteFile {xfW xfFileName {xfSaveAsProc 0}} {
   if {![catch "open $xfFileName r" xfInFile]} {
     set xfFileContents [read $xfInFile]
     close $xfInFile
-    
+
     if {![regexp "^#\[ \t\]+(\[^ \t\n\]+)\[ \t\]*\n" $xfFileContents xfDummy xfCutName]} {
       XFProcError "Pastebuffer not in correct format"
       return
     }
-    
+
     if {$xfCutName == "XFNoParsing"} {
       if {[catch "source $xfFileName" xfResult]} {
 	XFProcError $xfResult
       }
       return
     }
-    
+
     # if xfCutName is .ist.eine.kleine ... then xfPasteElement is kleine
-    
+
     set xfPasteElement [string range $xfCutName [expr [string last . $xfCutName]+1] end]
     set xfNewPasteElement $xfPasteElement
-    
+
     # maybe could use this somehow:
     # regexp {^(.*[^0-9])?([0-9]*)$} $x d class number
 
@@ -45,7 +45,7 @@ proc XFPasteFile {xfW xfFileName {xfSaveAsProc 0}} {
     regexp {[A-Za-z0-9_-]+} $xfPasteElement xfPasteName
     regexp {[A-Za-z_-]+} $xfPasteElement xfPasteClass
     regexp {[0-9]+} $xfPasteElement xfPasteNumber
-    
+
     set xfNewPasteElement [XFMiscGetUniqueName $xfPasteName $xfPasteClass $xfW]
 
     # hopefuly this sequence does not appear in the file
@@ -81,7 +81,7 @@ proc XFPasteFile {xfW xfFileName {xfSaveAsProc 0}} {
     }
 
     # now $xfRoot marks all places the initial path occurred
-    
+
     regsub -all $xfRoot\\.$xfPEQ $xfFileContents $xfRoot.$xfNewPasteElement xfFileContents
 
     # now the new name is set
@@ -145,7 +145,7 @@ proc XFPasteShowTree {} {
 
   # build widget structure
   XFTmpltToplevel .xfCutPaste 200x200 {XF current cut buffer}
-  
+
   XFTmpltFrame .xfCutPaste.frame1
 
   XFTmpltFrame .xfCutPaste.frame2 0

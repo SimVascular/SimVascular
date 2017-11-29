@@ -56,9 +56,8 @@ endif()
 option(SV_USE_MSMPI "Use MSMPI" OFF)
 
 set(opensource_components CoreExecutables CoreLibraries CoreHeaders CoreScripts CoreFiles
-	PluginExecutables PluginLibraries PluginHeaders
-	ModuleExecutables ModuleLibraries
-	ExternalExecutables ExternalLibraries
+  ThirdPartyExecutables ThirdPartyLibraries ThirdPartyHeaders ExternalExecutables ExternalLibraries
+  ExternalHeaders CMake
 	Unspecified
     )
 
@@ -141,7 +140,7 @@ if(LINUX)
 
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/linux/simvascular.desktop.in
 						${CMAKE_CURRENT_BINARY_DIR}/linux/simvascular.desktop @ONLY)
-		
+
 		SET(SV_DESKTOP_DIR "/usr/share/applications/")
 
 		INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/linux/simvascular.desktop DESTINATION ${SV_DESKTOP_DIR})

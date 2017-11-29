@@ -113,7 +113,7 @@ proc XFModules {} {
             set xfSaveModuleList [lreplace $xfSaveModuleList $xfTmpIndex $xfTmpIndex]
           }
         }
-        XFModulesReadModules      
+        XFModulesReadModules
         XFModulesReadContents
       }}
 

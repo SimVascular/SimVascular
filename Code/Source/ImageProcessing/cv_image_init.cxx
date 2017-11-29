@@ -6,15 +6,15 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -28,7 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h"  
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -81,7 +81,7 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
 int Image_Init( Tcl_Interp *interp )
 {
   Tcl_CreateCommand( interp, "img_readHeader_5X", Image_ReadHeaderCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "img_decode", Image_DecodeCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "img_calcCorrectionEqn", Image_CalcCorrectionEqnCmd,
@@ -168,9 +168,9 @@ int Image_ReadHeaderCmd( ClientData clientData, Tcl_Interp *interp,
                               ul, ur, br,&venc,&vencscale,
                               &vas_collapse,&user2, &user5, &user6,
 			      &user7, &user8 ,&user9,
-                              &user12, &user13 ,&user14, 
+                              &user12, &user13 ,&user14,
                               patid, patname, psdname,
-                              &magWeightFlag, &examNumber, nrm_RAS, 
+                              &magWeightFlag, &examNumber, nrm_RAS,
                               &acquisitionTime,&heart_rate,&im_no,&im_seno);
 
   if ( status == SV_ERROR ) {
@@ -208,13 +208,13 @@ int Image_ReadHeaderCmd( ClientData clientData, Tcl_Interp *interp,
   Tcl_AppendElement(interp, tmpStr);
   tmpStr[0]='\0';
   sprintf(tmpStr,"user2 %f",user2);
-  Tcl_AppendElement(interp, tmpStr);  
+  Tcl_AppendElement(interp, tmpStr);
   tmpStr[0]='\0';
   sprintf(tmpStr,"user5 %f",user5);
-  Tcl_AppendElement(interp, tmpStr);  
+  Tcl_AppendElement(interp, tmpStr);
   tmpStr[0]='\0';
   sprintf(tmpStr,"user6 %f",user6);
-  Tcl_AppendElement(interp, tmpStr);  
+  Tcl_AppendElement(interp, tmpStr);
   tmpStr[0]='\0';
   sprintf(tmpStr,"user7 %f",user7);
   Tcl_AppendElement(interp, tmpStr);
@@ -482,7 +482,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
       delete [] listPd;
       delete [] listImg;
       ARG_FreeListArgvs( table_sz, arg_table );
-      return TCL_ERROR;     
+      return TCL_ERROR;
     }
   }
 
@@ -515,7 +515,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
       delete [] listPd;
       delete [] listImg;
       ARG_FreeListArgvs ( table_sz, arg_table );
-      return TCL_ERROR;     
+      return TCL_ERROR;
     }
   }
 
@@ -539,7 +539,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
   if ( status == SV_ERROR ) {
     Tcl_AppendResult( interp, "error finding correction equation ", (char *)NULL );
     return TCL_ERROR;
-  } 
+  }
 
   // return a string with the correction equation
   char r[2048];
@@ -561,7 +561,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
   Tcl_AppendResult( interp, r, (char *)NULL );
   return TCL_OK;
 
-}  
+}
 
 
 // ------------------------------
@@ -585,7 +585,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
     { "-regions", LIST_Type, &regionsArg, NULL, REQUIRED, 0, { 0 } },
     { "-images", LIST_Type, &imagesArg, NULL, REQUIRED, 0, { 0 } },
     { "-order", INT_Type, &order, NULL, REQUIRED, 0, { 0 } },
-    { "-factor", DOUBLE_Type, &factor, NULL, REQUIRED, 0, { 0 } }, 
+    { "-factor", DOUBLE_Type, &factor, NULL, REQUIRED, 0, { 0 } },
     { "-mask", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
   };
 
@@ -642,7 +642,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *pd,*img;
 
   vtkStructuredPoints **listImg = new vtkStructuredPoints* [numImages];
- 
+
   // find the corresponding repository objects to each name
   for (i = 0; i < numImages; i++) {
     if (imagesArg.argv[i] != NULL) {
@@ -669,7 +669,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
       Tcl_AppendResult( interp, "NULL image pointer encountered ", (char *)NULL );
       delete [] listImg;
       ARG_FreeListArgvs ( table_sz, arg_table );
-      return TCL_ERROR;     
+      return TCL_ERROR;
     }
   }
 
@@ -703,7 +703,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
       delete [] listPd;
       delete [] listImg;
       ARG_FreeListArgvs( table_sz, arg_table );
-      return TCL_ERROR;     
+      return TCL_ERROR;
     }
   }
   }
@@ -729,7 +729,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
   if ( status == SV_ERROR ) {
     Tcl_AppendResult( interp, "error finding correction equation ", (char *)NULL );
     return TCL_ERROR;
-  } 
+  }
 
   // return a string with the correction equation
   char r[2048];
@@ -762,7 +762,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
 
   return TCL_OK;
 
-}  
+}
 
 
 // ------------------
@@ -954,7 +954,7 @@ int Image_ComputeStructuredCoordCmd( ClientData clientData, Tcl_Interp *interp,
   vtkFloatingPointType intensity = 0.0;
   intensity = vtksp->GetPointData()->GetScalars()->GetTuple1(vtksp->ComputePointId(ijk));
   rtnstr[0]='\0';
-  sprintf(rtnstr,"%f",intensity); 
+  sprintf(rtnstr,"%f",intensity);
   Tcl_AppendElement(interp, rtnstr);
 
   return TCL_OK;
@@ -1026,7 +1026,7 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
 
   int nstart;
   int start[3];
- 
+
   // Parse coordinate lists:
   if ( ARG_ParseTclListStatic( interp, startList, INT_Type, start, 3, &nstart )
        != TCL_OK ) {
@@ -1141,7 +1141,7 @@ int Image_FindPathCmd( ClientData clientData, Tcl_Interp *interp,
 
   int nstart;
   int stop[3];
- 
+
   // Parse coordinate lists:
   if ( ARG_ParseTclListStatic( interp, stopList, INT_Type, stop, 3, &nstart )
        != TCL_OK ) {
@@ -1205,7 +1205,7 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   char *objName;
   char *maskName;
-  
+
   double replaceVal = 0;
   int notval = 0;
 

@@ -1,6 +1,15 @@
 set(lib ${SV_LIB_MODULE_MESHSIM_NAME})
 
 #-----------------------------------------------------------------------------
+# Extra depends
+set(EXTRA_DEPENDS "")
+if(SV_USE_MESHSIM_ADAPTOR)
+  set(EXTRA_DEPENDS ${EXTRA_DEPENDS} 
+    ${SV_LIB_MESHSIM_ADAPTOR_NAME})
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(
   TARGET ${lib}
@@ -16,7 +25,6 @@ simvascular_create_module(
   ${SV_LIB_MODULE_MESH_NAME}
   ${SV_LIB_MESH_NAME}
   ${SV_LIB_MESHSIM_MESH_NAME}
-  ${SV_LIB_MESHSIM_ADAPTOR_NAME}
   ${SV_LIB_SOLID_NAME}
   ${SV_LIB_PARASOLID_SOLID_NAME}
 )

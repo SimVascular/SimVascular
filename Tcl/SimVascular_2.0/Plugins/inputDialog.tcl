@@ -1,7 +1,7 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # RCS: @(#) $Id: dialog.tcl,v 1.14.2.1 2003/10/22 15:22:07 dkf Exp $
 # Copyright (c) 1992-1993 The Regents of the University of California.
@@ -9,15 +9,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-#===========================================================================    
+#===========================================================================
 
 # dialog.tcl --
 #
@@ -55,7 +55,7 @@
 #		bottom of the dialog box.
 
 proc ::tk_inputDialog {w title text bitmap default args} {
-    global tcl_platform 
+    global tcl_platform
     global gInputReturnVar
     variable ::tk::Priv
 
@@ -89,7 +89,7 @@ proc ::tk_inputDialog {w title text bitmap default args} {
     #
     if {[winfo viewable [winfo toplevel [winfo parent $w]]] } {
 	wm transient $w [winfo toplevel [winfo parent $w]]
-    }    
+    }
 
     frame $w.bot
     frame $w.top
@@ -125,8 +125,8 @@ proc ::tk_inputDialog {w title text bitmap default args} {
     }
 
     # 3. Create an entry dialog box and buttons
-                                                            
-    ttk::entry $w.entry1 -font {Helvetica 10} -textvariable {gInputReturnVar} -width {12} 
+
+    ttk::entry $w.entry1 -font {Helvetica 10} -textvariable {gInputReturnVar} -width {12}
 
     pack configure $w.entry1 -fill both -side left -expand 1
 

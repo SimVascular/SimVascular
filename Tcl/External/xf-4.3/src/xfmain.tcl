@@ -195,8 +195,8 @@ proc XFParseAppDefs {xfAppDefFile} {
       # situation where a resource name ends in . and when it
       # ends in *.  In the second case you want to keep the *
       # in the widget name for pattern matching, but you want
-      # to get rid of the . if it is the end of the name. 
-      set backup -2  
+      # to get rid of the . if it is the end of the name.
+      set backup -2
       set line [string trim $line]
       if {[string index $line 0] == "#" || "$line" == ""} {
         # skip comments and empty lines
@@ -210,7 +210,7 @@ proc XFParseAppDefs {xfAppDefFile} {
       set resource [string trim [lindex $list 0]]
       set i [string last "." $resource]
       set j [string last "*" $resource]
-      if {$j > $i} { 
+      if {$j > $i} {
         set i $j
         set backup -1
       }
@@ -354,7 +354,7 @@ proc XFSetAppDefs {{xfWidgetPath "."}} {
           # make sure this command is a widget.
           if {![catch "winfo id $widget"] &&
               [string match "${xfWidgetPath}*" $widget]} {
-            catch "$widget configure -$name $value" 
+            catch "$widget configure -$name $value"
           }
         }
       }
@@ -474,7 +474,7 @@ proc XFStartup {} {
   set xfVersionNr {4.3}
 
   # hidden procedures
-  global hiddenProcs 
+  global hiddenProcs
   global hiddenBodys
 
   # widget initialisations
@@ -498,7 +498,7 @@ proc XFStartup {} {
   set xfPath(src) "$xf_DIR/src"
   set xfPath(templates) "$xf_DIR/templates"
   set xfPath(tmp) $xf_TMP
-  
+
   # file names
   global xfFile
   set xfFile(appdef) "$xf_DIR/xf.ad"
@@ -803,19 +803,19 @@ proc XFStartup {} {
 #   Charles Taylor, Nathan Wilson, Ken Wang.
 #
 #   See SimVascular Acknowledgements file for additional
-#   contributors to the source code. 
-# 
+#   contributors to the source code.
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -840,19 +840,19 @@ proc XFStartup {} {
 #   Charles Taylor, Nathan Wilson, Ken Wang.
 #
 #   See SimVascular Acknowledgements file for additional
-#   contributors to the source code. 
-# 
+#   contributors to the source code.
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -1141,7 +1141,7 @@ proc XFStartup {} {
           set moduleList([file tail $newname]) ""
           catch "unset moduleList($xfConf(programNameOld))"
           set xfConf(programNameOld) [file tail $newname]
-          
+
           # initialize the program path
           if {[string match "./*" $newname] != 1 &&
               "$xfConf(programPath)" == "."} {
@@ -1266,7 +1266,7 @@ proc XFStartup {} {
   # run startup functions
   foreach xfCounter [info commands XFExternalInitProc*] {
     if {[catch "$xfCounter" xfResult]} {
-      puts stdout $xfResult    
+      puts stdout $xfResult
     }
   }
 

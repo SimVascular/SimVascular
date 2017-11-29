@@ -48,19 +48,19 @@ set SV_BUILD_TYPE \"${SV_BUILD_TYPE}\"
 set SV_USE_PYTHON \"${SV_USE_PYTHON}\"
 set VTK_DIR \"${SV_VTK_DIR}\"\n")
 
-file(WRITE ${TCL_SPLASH_CONFIG_FILE} 
+file(WRITE ${TCL_SPLASH_CONFIG_FILE}
 "if {$SV_RELEASE_BUILD == 1} {
 	set {gOptions(simvascular_version)} \"VERSION ${SV_FULL_VER_NO}.${SV_VERSION_TIMESTAMP}\"
 } else {
 set {gOptions(simvascular_version)} \"VERSION ${SV_FULL_VER_NO} (developers build)\"
 }\n")
 
-# file(WRITE ${TCL_EXTERNAL_CONFIG_FILE} 
+# file(WRITE ${TCL_EXTERNAL_CONFIG_FILE}
 # "set bindir $env(SV_HOME)/Bin
 file(WRITE ${TCL_EXTERNAL_CONFIG_FILE}
 "if {$SV_RELEASE_BUILD == 1} {
 	set bindir $env(SV_HOME)/${SV_INSTALL_RUNTIME_DIR}
-	set homedir $env(SV_HOME)	
+	set homedir $env(SV_HOME)
 	set execext {${CMAKE_EXECUTABLE_SUFFIX}}
 	set execbinext {${CMAKE_EXECUTABLE_SUFFIX}}
 	set gExternalPrograms(mpiexec) [file join  $homedir mpiexec${CMAKE_EXECUTABLE_SUFFIX}]
@@ -81,12 +81,12 @@ set gExternalPrograms(dicom2) [file join $homedir dicom2${CMAKE_EXECUTABLE_SUFFI
 ")
 
 if(WIN32)
-file(APPEND ${TCL_EXTERNAL_CONFIG_FILE} 
+file(APPEND ${TCL_EXTERNAL_CONFIG_FILE}
 "set gExternalPrograms(dcmodify) [file join $homedir dcmodify${CMAKE_EXECUTABLE_SUFFIX}]
 set gExternalPrograms(dcmdump) [file join $homedir dcmdump${CMAKE_EXECUTABLE_SUFFIX}]
 ")
 else()
-file(APPEND ${TCL_EXTERNAL_CONFIG_FILE} 
+file(APPEND ${TCL_EXTERNAL_CONFIG_FILE}
 "set gExternalPrograms(dcmodify) [file join dcmodify${CMAKE_EXECUTABLE_SUFFIX}]
 set gExternalPrograms(dcmdump) [file join dcmdump${CMAKE_EXECUTABLE_SUFFIX}]
 ")

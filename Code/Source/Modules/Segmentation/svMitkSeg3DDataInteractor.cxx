@@ -22,6 +22,9 @@ svMitkSeg3DDataInteractor::svMitkSeg3DDataInteractor()
     , m_MinRadius(0.02)
     , m_OriginalRadius(0.1)
 {
+    m_CurrentPickedPoint[0]=0;
+    m_CurrentPickedPoint[1]=0;
+    m_CurrentPickedPoint[2]=0;
 }
 
 svMitkSeg3DDataInteractor::~svMitkSeg3DDataInteractor()
@@ -32,6 +35,7 @@ void svMitkSeg3DDataInteractor::ConnectActionsAndFunctions()
 {
     CONNECT_CONDITION("is_over_seed", IsOverSeed);
 
+    CONNECT_FUNCTION("get_position",GetPosition);
     CONNECT_FUNCTION( "add_seed", AddSeed);
     CONNECT_FUNCTION( "add_end_seed", AddEndSeed);
     CONNECT_FUNCTION( "move_seed", MoveSeed);
@@ -97,19 +101,23 @@ bool svMitkSeg3DDataInteractor::IsOverSeed( const mitk::InteractionEvent* intera
 
 // ==========Actions=============
 
-void svMitkSeg3DDataInteractor::AddSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
+void svMitkSeg3DDataInteractor::GetPosition(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
-    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
+    if(positionEvent == NULL)
         return;
 
+    m_CurrentPickedPoint = positionEvent->GetPositionInWorld();
+}
+
+void svMitkSeg3DDataInteractor::AddSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
+{
     FetchDataParam();
 
     if(m_Param)
     {
-        mitk::Point3D point = positionEvent->GetPositionInWorld();
+        mitk::Point3D point = m_CurrentPickedPoint;
         m_Param->AddSeed(svSeed(point[0],point[1],point[2],10*m_MinRadius));
-//        m_MitkSeg3D->SetDataModified();
         m_MitkSeg3D->Modified();//tell render that data changed
     }
 
@@ -118,15 +126,11 @@ void svMitkSeg3DDataInteractor::AddSeed(mitk::StateMachineAction*, mitk::Interac
 
 void svMitkSeg3DDataInteractor::AddEndSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
-    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
-        return;
-
     FetchDataParam();
 
     if(m_Param)
     {
-        mitk::Point3D point = positionEvent->GetPositionInWorld();
+        mitk::Point3D point = m_CurrentPickedPoint;
         m_Param->AddSeed(svSeed(point[0],point[1],point[2],10*m_MinRadius,"end"));
         m_MitkSeg3D->Modified();//tell render that data changed
     }
@@ -149,7 +153,7 @@ void svMitkSeg3DDataInteractor::MoveSeed(mitk::StateMachineAction*, mitk::Intera
         m_Seed->y=point[1];
         m_Seed->z=point[2];
         if(m_MitkSeg3D)
-            m_MitkSeg3D->Modified();//tell render that data changed
+            m_MitkSeg3D->Modified();//tell renderer that data changed
     }
 
     interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();

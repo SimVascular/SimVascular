@@ -372,7 +372,7 @@ proc XFInfoGlobalsTest {xfTarget} {
         incr xfCounter 1
       }
       set xfValue $xfTmpValue
-  
+
       global $xfVarName
       if {"[set $xfVarName]" != "$xfValue"} {
         if {[XFProcYesNo "Modify the currently edited variable ?"]} {

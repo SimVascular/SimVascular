@@ -63,9 +63,15 @@ public:
 
     static bool DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> regionIDs);
 
-    static vtkPolyData* CreateCenterlines(svModelElement* modelElement);
+    static vtkPolyData* CreateCenterlines(svModelElement* modelElement, vtkIdList *sourceCapIds = NULL);
 
-    static vtkPolyData* CreateCenterlines(vtkPolyData* vpd);
+    static vtkPolyData* CreateCenterlines(vtkPolyData* inpd);
+
+    static vtkPolyData* CreateCenterlines(vtkPolyData* inpd,
+                                          vtkIdList *sourcePtIds,
+                                          vtkIdList *targetPtIds);
+
+    static vtkPolyData* MergeCenterlines(vtkPolyData* centerlinesPD);
 
     static vtkPolyData* CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original);
 
@@ -73,7 +79,8 @@ public:
 
     static vtkSmartPointer<vtkPolyData> GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue );
 
-    static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement);
+    static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement,
+                                                          vtkSmartPointer<vtkPolyData> centerlinesPD);
 
     static double CalculateVpdArea(vtkPolyData* vpd);
 

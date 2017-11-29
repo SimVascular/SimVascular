@@ -6,15 +6,15 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -28,7 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include "cv_mask_image_in_place.h"
 
@@ -43,7 +43,7 @@ int MaskImageInPlace(vtkStructuredPoints *imgsp,
     int i;
     int numPtsImg = imgsp->GetNumberOfPoints();
     int numPtsMask = masksp->GetNumberOfPoints();
-    
+
 
     vtkDataArray *mscalars = masksp->GetPointData()->GetScalars();
     vtkDataArray *iscalars = imgsp->GetPointData()->GetScalars();
@@ -67,12 +67,12 @@ int MaskImageInPlace(vtkStructuredPoints *imgsp,
         if (!(mscalars->GetTuple1(i))) {
           iscalars->SetTuple1(i,replaceVal);
           numBlanked++;
-        } 
+        }
       }
     }
 
     fprintf(stdout,"  %i pixels changed out of %i\n",numBlanked,numPtsImg);
 
     return SV_OK;
-      
+
 }

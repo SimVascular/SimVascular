@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -58,16 +58,16 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 */
 
 
-// list.h 
-//	Data structures to manage LISP-like lists.  
+// list.h
+//	Data structures to manage LISP-like lists.
 //
 //      As in LISP, a list can contain any type of data structure
-//	as an item on the list: thread control blocks, 
+//	as an item on the list: thread control blocks,
 //	pending interrupts, etc.  Allocation and deallocation of the
 //	items on the list are to be done by the caller.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 
@@ -125,12 +125,12 @@ class cvLispList {
     unsigned int NumInList() { return numInList;};
     				// how many items in the list?
     Bool IsEmpty() { return (numInList == 0); };
-    				// is the list empty? 
+    				// is the list empty?
 
-    void Apply(void (*f)(T)) const; 
+    void Apply(void (*f)(T)) const;
     				// apply function to all elements in list
 
-    virtual void SanityCheck() const;	
+    virtual void SanityCheck() const;
 				// has this list been corrupted?
     void SelfTest(T *p, int numEntries);
 				// verify module is working
@@ -144,11 +144,11 @@ friend class cvLispListIterator<T>;
 };
 
 // The following class defines a "sorted list" -- a singly linked list of
-// list elements, arranged so that "Remove" always returns the smallest 
-// element. 
+// list elements, arranged so that "Remove" always returns the smallest
+// element.
 // All types to be inserted onto a sorted list must have a "Compare"
 // function defined:
-//	   int Compare(T x, T y) 
+//	   int Compare(T x, T y)
 //		returns -1 if x < y
 //		returns 0 if x == y
 //		returns 1 if x > y
@@ -168,15 +168,15 @@ class cvSortedList : public cvLispList<T> {
   private:
     int (*compare)(T x, T y);	// function for sorting list elements
 
-    void Prepend(T item) { Insert(item); }  // *pre*pending has no meaning 
+    void Prepend(T item) { Insert(item); }  // *pre*pending has no meaning
 				             //	in a sorted list
-    void Append(T item) { Insert(item); }   // neither does *ap*pend 
+    void Append(T item) { Insert(item); }   // neither does *ap*pend
 
 };
 
-// The following class can be used to step through a list. 
+// The following class can be used to step through a list.
 // Example code:
-//	cvLispListIterator<T> *iter(list); 
+//	cvLispListIterator<T> *iter(list);
 //
 //	for (; !iter->IsDone(); iter->Next()) {
 //	    Operation on iter->Item()
@@ -185,7 +185,7 @@ class cvSortedList : public cvLispList<T> {
 template <class T>
 class cvLispListIterator {
   public:
-    cvLispListIterator(cvLispList<T> *list) { current = list->first; } 
+    cvLispListIterator(cvLispList<T> *list) { current = list->first; }
 				// initialize an iterator
 
     Bool IsDone() { return current == NULL; };
@@ -194,7 +194,7 @@ class cvLispListIterator {
     T Item() { cvAssert(!IsDone()); return current->item; };
 				// return current element on list
 
-    void Next() { current = current->next; };		
+    void Next() { current = current->next; };
 				// update iterator to point to next
 
   private:

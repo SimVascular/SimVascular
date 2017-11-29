@@ -6,29 +6,29 @@
  * Portions of the code Copyright (c) 2009-2011 Open Source Medical
  * Software Corporation, University of California, San Diego.
  *
- * Portions of the code Copyright (c) 1998-2007 Stanford University, 
+ * Portions of the code Copyright (c) 1998-2007 Stanford University,
  * RPI, Charles Taylor, Ken Jansen, Nathan Wilson, Ken Wang.
  *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
  * are met:
 
  * Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 
- * Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
- * documentation and/or other materials provided with the distribution. 
+ * this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  * Neither the name of the Stanford University or Rensselaer Polytechnic
  * Institute nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior 
+ * promote products derived from this software without specific prior
  * written permission.
 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
  * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -63,7 +63,7 @@ cvsolverIO::cvsolverIO () {
     DataSize_=0;
     LastHeaderNotFound_ = false;
     Wrong_Endian_ = false ;
-    binary_format_ = true; 
+    binary_format_ = true;
     char *mode_ = NULL;
     char *fname_ = NULL;
 }
@@ -84,7 +84,7 @@ int cvsolverIO::openFile (const char *filename, const char *mode) {
     fname_ = StringStripper( filename );
     mode_ = StringStripper( mode );
 
-    if ( cscompare( mode_, "read" ) ) 
+    if ( cscompare( mode_, "read" ) )
         filePointer_ = gzopen( fname_, "rb" );
     else if( cscompare( mode_, "write" ) )
         filePointer_ = gzopen( fname_ , "wb" );
@@ -113,7 +113,7 @@ int cvsolverIO::openFile (const char *filename, const char *mode) {
     //fprintf(stdout,"fname_ : %s\n",fname_);
     //fprintf(stdout,"mode_ : %s\n",mode_);
 
-    return CVSOLVER_IO_OK;    
+    return CVSOLVER_IO_OK;
 
 }
 
@@ -149,15 +149,15 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
 
    while (rewinded < 2) {
      while (gzgets(filePointer_, Line_, 1024) != Z_NULL) {
-         
+
          // ignore comment lines
-         if (Line_[0] == '#') { 
+         if (Line_[0] == '#') {
              //fprintf(stdout,"COMMENT: %s",Line_);
              continue;
          }
 
          // ignore blank lines
-         
+
          //char* chkblank = StringStripper(Line_);
          //fprintf(stdout,"chkblank: %i\n",strlen(chkblank));
          if (strlen(Line_) <= 1) {
@@ -169,7 +169,7 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
          //fprintf(stdout,"token: %s\n",token);
          if( cscompare( keyphrase , token ) ) {
             LastHeaderKey_[0] = '\0';
-            sprintf(LastHeaderKey_,"%s",keyphrase); 
+            sprintf(LastHeaderKey_,"%s",keyphrase);
             token = strtok( NULL, " ,;<>" );
             skip_size = 0;
             skip_size = atoi( token );
@@ -233,11 +233,11 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
                               const char*  iotype ) {
 
     int n;
-    int* valueArrayInt;	
+    int* valueArrayInt;
     float* valueArrayFloat;
     double* valueArrayDouble;
     char junk;
-   
+
     // check that the file has been opened
     if (filePointer_ == Z_NULL) {
         fprintf(stderr,"No file associated with Descriptor \n");
@@ -245,7 +245,7 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
         fprintf(stderr,"acessing the file\n");
         return CVSOLVER_IO_ERROR;
     }
-    
+
     if ( LastHeaderNotFound_ ) {
        fprintf(stderr,"ERROR:  last header was not found.\n");
        return CVSOLVER_IO_ERROR;
@@ -253,7 +253,7 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
 
     // error check..
     // since we require that a consistant header always preceed the data block
-    // let us check to see that it is actually the case.    
+    // let us check to see that it is actually the case.
 
     if ( ! cscompare( LastHeaderKey_, keyphrase ) ) {
         fprintf(stderr,"ERROR: header not consistant with data block\n");
@@ -272,18 +272,18 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
         fprintf(stderr,"Please recheck read sequence\n");
         return CVSOLVER_IO_ERROR;
     }
-    
+
     isBinary( iotype );
-    
+
     if ( binary_format_ ) {
-        
+
         //fread(valueArray,type_size,nItems,filePointer_ );
         gzread(filePointer_,valueArray,type_size*nItems);
         //fread(&junk, sizeof(char), 1, filePointer_);
         gzread(filePointer_,&junk,sizeof(char)); /* reading the new line */
         if ( Wrong_Endian_ ) SwapArrayByteOrder( valueArray, type_size, nItems );
-        
-    } else { 
+
+    } else {
         char junk;
         switch( type_of_data_ ) {
         case INT:
@@ -296,7 +296,7 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
                    return CVSOLVER_IO_ERROR;
                }
                valueArrayInt[n] = integer_value;
-            }	
+            }
             break;
         case FLOAT:
             valueArrayFloat  = static_cast<float*>( valueArray );
@@ -324,7 +324,7 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
             break;
         }
     }
-    
+
     return CVSOLVER_IO_OK;
 }
 
@@ -352,7 +352,7 @@ int cvsolverIO::writeHeader (const char* keyphrase,
                            const char* iotype  ) {
 
     int* valueListInt;
-   
+
     // check that the file has been opened
     if (filePointer_ == Z_NULL) {
         fprintf(stderr,"No file associated with Descriptor \n");
@@ -374,12 +374,12 @@ int cvsolverIO::writeHeader (const char* keyphrase,
         fprintf(stderr,"Header: %s\n", LastHeaderKey_);
         fprintf(stderr,"DataBlock: %s\n", keyphrase);
         fprintf(stderr,"Please recheck write sequence\n");
-        return CVSOLVER_IO_ERROR; 
+        return CVSOLVER_IO_ERROR;
     }
 
-    int size_of_nextblock = 
+    int size_of_nextblock =
         ( binary_format_ ) ? type_size*( ndataItems )+sizeof( char ) : ndataItems ;
-    
+
     gzprintf(filePointer_,"%s",keyphrase);
     gzprintf(filePointer_," : < %i > ",size_of_nextblock);
     if( nItems > 0 ) {
@@ -388,7 +388,7 @@ int cvsolverIO::writeHeader (const char* keyphrase,
             gzprintf(filePointer_,"%i ",valueListInt [i]);
     }
     gzprintf(filePointer_,"\n");
-    
+
     return CVSOLVER_IO_OK ;
 }
 
@@ -398,7 +398,7 @@ int cvsolverIO::writeDataBlock (const char* keyphrase,
                               int nItems,
                               const char* datatype,
                               const char* iotype ) {
-    
+
     int n;
 
     // check that the file has been opened
@@ -411,7 +411,7 @@ int cvsolverIO::writeDataBlock (const char* keyphrase,
 
     // error check..
     // since we require that a consistant header always preceed the data block
-    // let us check to see that it is actually the case.    
+    // let us check to see that it is actually the case.
 
     if ( ! cscompare( LastHeaderKey_, keyphrase ) ) {
         fprintf(stderr,"ERROR: header not consistant with data block\n");
@@ -421,10 +421,10 @@ int cvsolverIO::writeDataBlock (const char* keyphrase,
         return CVSOLVER_IO_ERROR;
     }
 
-    int* valueArrayInt;	
+    int* valueArrayInt;
     float* valueArrayFloat;
     double* valueArrayDouble;
-   
+
     int header_type = type_of_data_;
     size_t type_size=typeSize( datatype );
 
@@ -433,7 +433,7 @@ int cvsolverIO::writeDataBlock (const char* keyphrase,
         fprintf(stderr,"Header: %s\n", LastHeaderKey_);
         fprintf(stderr,"DataBlock: %s\n", keyphrase);
         fprintf(stderr,"Please recheck write datablock sequence\n");
-        return CVSOLVER_IO_ERROR; 
+        return CVSOLVER_IO_ERROR;
     }
 
     if ( header_type != type_of_data_ ) {
@@ -451,42 +451,42 @@ int cvsolverIO::writeDataBlock (const char* keyphrase,
         fprintf(stderr, "returning\n");
         return CVSOLVER_IO_ERROR;
     }
- 
+
     isBinary( iotype );
 
     if ( binary_format_ ) {
-        
-      //size_t fwrite(const void* ptr, size_t size, size_t nobj, FILE* stream); 
+
+      //size_t fwrite(const void* ptr, size_t size, size_t nobj, FILE* stream);
       //fwrite(static_cast< char* >( valueArray ),type_size, nUnits, filePointer_);
         gzwrite(filePointer_,static_cast< char* >( valueArray ),type_size*nUnits);
         gzprintf(filePointer_,"\n");
-        
-    } else { 
-        
+
+    } else {
+
         switch( type_of_data_ ) {
         case INT:
-            
+
             valueArrayInt  = static_cast<int*>( valueArray );
-            for( n=0; n < nUnits ; n++ ) 
-                gzprintf(filePointer_,"%i\n", valueArrayInt[n]);	
+            for( n=0; n < nUnits ; n++ )
+                gzprintf(filePointer_,"%i\n", valueArrayInt[n]);
             break;
 
         case FLOAT:
 
             valueArrayFloat  = static_cast<float*>( valueArray );
-            for( n=0; n < nUnits ; n++ ) 
-                gzprintf(filePointer_,"%f\n", valueArrayFloat[n]);	
+            for( n=0; n < nUnits ; n++ )
+                gzprintf(filePointer_,"%f\n", valueArrayFloat[n]);
             break;
 
         case DOUBLE:
 
             valueArrayDouble  = static_cast<double*>( valueArray );
-            for( n=0; n < nUnits ; n++ ) 
-                gzprintf(filePointer_,"%lf\n", valueArrayDouble[n]);	
+            for( n=0; n < nUnits ; n++ )
+                gzprintf(filePointer_,"%lf\n", valueArrayDouble[n]);
             break;
         }
-    }	
-    
+    }
+
     return CVSOLVER_IO_OK;
 }
 
@@ -507,8 +507,8 @@ char* cvsolverIO::StringStripper ( const char*  istring ) {
 int cvsolverIO::cscompare( const char* s1, const char* s2) {
         while( *s1 == ' ') s1++;
         while( *s2 == ' ') s2++;
-        while( ( *s1 ) 
-               && ( *s2 ) 
+        while( ( *s1 )
+               && ( *s2 )
                && ( *s2 != '?')
                && ( tolower( *s1 )==tolower( *s2 ) ) ) {
             s1++;
@@ -538,12 +538,12 @@ size_t cvsolverIO::typeSize( const char* typestring ) {
         } else if ( cscompare( ts1, "float" ) ) {
             type_of_data_ = FLOAT;
             delete [] ts1;
-            return sizeof( float ); 
-        } else if ( cscompare( ts1, "double" ) ) { 
+            return sizeof( float );
+        } else if ( cscompare( ts1, "double" ) ) {
             type_of_data_ = DOUBLE;
             delete [] ts1;
             return sizeof( double );
-        } else { 
+        } else {
             delete [] ts1;
             fprintf(stderr,"unknown type (%s)\n",typestring);
             return 0;
@@ -556,7 +556,7 @@ void cvsolverIO::SwapArrayByteOrder( void* array, int nbytes, int nItems ) {
         int i,j;
         unsigned char ucTmp;
         unsigned char* ucDst = (unsigned char*)array;
-        
+
         for(i=0; i < nItems; i++) {
             for(j=0; j < (nbytes/2); j++)
                 swap_char( ucDst[j] , ucDst[(nbytes - 1) - j] );
@@ -564,7 +564,7 @@ void cvsolverIO::SwapArrayByteOrder( void* array, int nbytes, int nItems ) {
         }
 }
 
-int openfile_( const char* filename, 
+int openfile_( const char* filename,
                 const char* mode,
                 int*  fileDescriptor ) {
 
@@ -600,7 +600,7 @@ int openfile_( const char* filename,
 
 }
 
-void closefile_( int* fileDescriptor, 
+void closefile_( int* fileDescriptor,
                  const char* mode ) {
     cvsolverIOfp[(*fileDescriptor)]->closeFile();
     delete cvsolverIOfp[(*fileDescriptor)];
@@ -675,11 +675,11 @@ void Gather_Headers( int* fileDescriptor, std::vector< std::string >& headers ) 
      while ( cvsolverIOfp[(*fileDescriptor)]->readString(Line) == CVSOLVER_IO_OK) {
         if ( Line[0] == '#' ) {
             headers.push_back( Line );
-        } else { 
-            break; 
+        } else {
+            break;
         }
      }
-    cvsolverIOfp[(*fileDescriptor)]->rewindFile();    
+    cvsolverIOfp[(*fileDescriptor)]->rewindFile();
 }
 
 /*

@@ -175,7 +175,7 @@ private:
   // actions which will be enabled/disabled depending on the application state
   QList<QAction*> viewActions;
   QAction* fileSaveProjectAction;
-  QAction* closeProjectAction;
+  //QAction* closeProjectAction;
   QAction* undoAction;
   QAction* redoAction;
   QAction* imageNavigatorAction;
@@ -185,6 +185,8 @@ private:
   QAction* openDicomEditorAction;
 
   QAction* saveSVProjectAction;
+  QAction* saveSVProjectAsAction;
+  QAction* closeSVProjectAction;
   QList<QAction*> svViewActions;
   QList<QAction*> otherViewActions;
 

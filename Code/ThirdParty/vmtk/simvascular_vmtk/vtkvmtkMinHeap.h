@@ -10,17 +10,17 @@ Version:   $Revision: 1.3 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
   // .NAME vtkvmtkMinHeap - Implementation of the min heap data structure.
   // .SECTION Description
-  // This class is an implementation of the min heap data structure, used to handle a set of values in such a way that the retrieval of the minimum element takes constant time. A min heap is a complete binary tree where the value at each node is equal or less than the value at its children, and it is represented as an array where the children of a node stored at location k are at location 2k and 2k+1 (so that the parent of k is located at k/2). Keeping the min heap ordered after a value is updated or an id is inserted in teh heap takes O(log N). 
+  // This class is an implementation of the min heap data structure, used to handle a set of values in such a way that the retrieval of the minimum element takes constant time. A min heap is a complete binary tree where the value at each node is equal or less than the value at its children, and it is represented as an array where the children of a node stored at location k are at location 2k and 2k+1 (so that the parent of k is located at k/2). Keeping the min heap ordered after a value is updated or an id is inserted in teh heap takes O(log N).
   //
   // In the present implementation, values are provided in a vtkDoubleArray, and element ids are inserted in the heap. Backpointers are used to access the heap by id. This class is optimized for working in conjunction with vtkNonManifoldFastMarching.
   //
@@ -40,12 +40,12 @@ Version:   $Revision: 1.3 $
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMinHeap : public vtkObject
 {
-  public: 
+  public:
   vtkTypeMacro(vtkvmtkMinHeap,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkMinHeap *New();
-  
+
   // Description:
   // Initializes the heap to an empty state and prepares back pointers. Calls this method before using the min heap once MinHeapScalars have been defined.
   void Initialize();
@@ -77,7 +77,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMinHeap : public vtkObject
 
   protected:
   vtkvmtkMinHeap();
-  ~vtkvmtkMinHeap();  
+  ~vtkvmtkMinHeap();
 
   void Swap(vtkIdType loc0, vtkIdType loc1);
   int IsLeaf(vtkIdType loc);

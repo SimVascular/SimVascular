@@ -131,7 +131,7 @@ proc XFCursorBox {{xfCursorBoxFileCursor "/usr/local/lib/xf/lib/Cursors"} {xfCur
       -borderwidth 0 \
       -relief raised
     catch ".xfCursorBox.frame1 config $tmpFrameOpt"
- 
+
     button .xfCursorBox.frame1.ok \
       -text "OK"
     catch ".xfCursorBox.frame1.ok config $tmpButtonOpt"
@@ -228,7 +228,7 @@ proc XFCursorBox {{xfCursorBoxFileCursor "/usr/local/lib/xf/lib/Cursors"} {xfCur
         }
       }
     }
-  
+
     # bindings
     global xfBind
     set tmpBinding "<Double-Button-3>"

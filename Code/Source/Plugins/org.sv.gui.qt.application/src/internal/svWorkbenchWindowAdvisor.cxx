@@ -7,6 +7,8 @@
 #include "svFileCreateProjectAction.h"
 #include "svFileOpenProjectAction.h"
 #include "svFileSaveProjectAction.h"
+#include "svFileSaveProjectAsAction.h"
+#include "svCloseProjectAction.h"
 #include "svAboutDialog.h"
 #include "svDataFolder.h"
 #include "svDataNodeOperation.h"
@@ -66,7 +68,7 @@
 #include <QmitkMemoryUsageIndicatorView.h>
 #include <QmitkPreferencesDialog.h>
 #include <QmitkOpenDicomEditorAction.h>
-#include <QmitkDataManagerView.h>
+#include "svQmitkDataManagerView.h"
 #include <QmitkStdMultiWidgetEditor.h>
 #include <QmitkStdMultiWidget.h>
 
@@ -311,7 +313,7 @@ public:
                 windowAdvisor->openDicomEditorAction->setEnabled(true);
             }
             windowAdvisor->fileSaveProjectAction->setEnabled(true);
-            windowAdvisor->closeProjectAction->setEnabled(true);
+            windowAdvisor->closeSVProjectAction->setEnabled(true);
             windowAdvisor->undoAction->setEnabled(true);
             windowAdvisor->redoAction->setEnabled(true);
             windowAdvisor->imageNavigatorAction->setEnabled(true);
@@ -322,6 +324,7 @@ public:
                 windowAdvisor->closePerspAction->setEnabled(true);
             }
             windowAdvisor->saveSVProjectAction->setEnabled(true);
+            windowAdvisor->saveSVProjectAsAction->setEnabled(true);
         }
 
         perspectivesClosed = false;
@@ -353,7 +356,7 @@ public:
                 windowAdvisor->openDicomEditorAction->setEnabled(false);
             }
             windowAdvisor->fileSaveProjectAction->setEnabled(false);
-            windowAdvisor->closeProjectAction->setEnabled(false);
+            windowAdvisor->closeSVProjectAction->setEnabled(false);
             windowAdvisor->undoAction->setEnabled(false);
             windowAdvisor->redoAction->setEnabled(false);
             windowAdvisor->imageNavigatorAction->setEnabled(false);
@@ -364,6 +367,7 @@ public:
                 windowAdvisor->closePerspAction->setEnabled(false);
             }
             windowAdvisor->saveSVProjectAction->setEnabled(false);
+            windowAdvisor->saveSVProjectAsAction->setEnabled(false);
         }
     }
 
@@ -570,6 +574,10 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     openSVProjAction->setShortcut(QKeySequence::Open);
     saveSVProjectAction=new svFileSaveProjectAction(QIcon(":/org.sv.gui.qt.application/SaveAllSV.png"), window);
     saveSVProjectAction->setShortcut(QKeySequence::Save);
+    saveSVProjectAsAction=new svFileSaveProjectAsAction(QIcon(":/org.sv.gui.qt.application/SaveAllSV.png"), window);
+    saveSVProjectAsAction->setShortcut(QKeySequence::SaveAs);
+    closeSVProjectAction = new svCloseProjectAction(QIcon::fromTheme("edit-delete",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-delete.svg")), window);
+    closeSVProjectAction->setShortcut(QKeySequence::Close);
 
     QAction* fileOpenAction = new QmitkFileOpenAction(QIcon::fromTheme("document-open",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/document-open.svg")), window);
 //    fileOpenAction->setShortcut(QKeySequence::Open);
@@ -577,10 +585,10 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     fileSaveProjectAction->setIcon(QIcon::fromTheme("document-save",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/document-save.svg")));
     fileSaveProjectAction->setText("Save All Data as MITK Scene File...");
     fileSaveProjectAction->setToolTip("Save all the data into a MITK scene file");
-    closeProjectAction = new QmitkCloseProjectAction(window);
-    closeProjectAction->setIcon(QIcon::fromTheme("edit-delete",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-delete.svg")));
-    closeProjectAction->setText("Empty Data Manager...");
-    closeProjectAction->setToolTip("Remove all the data from data manager");
+    //closeProjectAction = new QmitkCloseProjectAction(window);
+    //closeProjectAction->setIcon(QIcon::fromTheme("edit-delete",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-delete.svg")));
+    //closeProjectAction->setText("Close SV Project...");
+    //closeProjectAction->setToolTip("Remove selected projects from the data manager");
 
     auto perspGroup = new QActionGroup(menuBar);
     std::map<QString, berry::IViewDescriptor::Pointer> VDMap;
@@ -677,11 +685,13 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         fileMenu->addAction(createSVProjAction);
         fileMenu->addAction(openSVProjAction);
         fileMenu->addAction(saveSVProjectAction);
+        fileMenu->addAction(saveSVProjectAsAction);
+        fileMenu->addAction(closeSVProjectAction);
         fileMenu->addSeparator();
 
         fileMenu->addAction(fileOpenAction);
         fileMenu->addAction(fileSaveProjectAction);
-        fileMenu->addAction(closeProjectAction);
+        //fileMenu->addAction(closeProjectAction);
         fileMenu->addSeparator();
 
         QAction* fileExitAction = new QAction(nullptr);
@@ -820,9 +830,7 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     auto mainActionsToolBar = new QToolBar;
     mainActionsToolBar->setObjectName("mainActionsToolBar");
     mainActionsToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
-#ifdef __APPLE__
-    mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextUnderIcon );
-#else
+#ifndef __APPLE__
     mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextBesideIcon );
 #endif
 
@@ -1095,11 +1103,11 @@ void svWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
     if(page.IsNull())
         return;
 
-    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.mitk.views.datamanager");
+    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.sv.views.datamanager");
     if(dataManagerView.IsNull())
         return;
 
-    QmitkDataManagerView* dataManager=dynamic_cast<QmitkDataManagerView*>(dataManagerView.GetPointer());
+    svQmitkDataManagerView* dataManager=dynamic_cast<svQmitkDataManagerView*>(dataManagerView.GetPointer());
     QTreeView* treeView=dataManager->GetTreeView();
 
     QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
@@ -1463,7 +1471,7 @@ QString svWorkbenchWindowAdvisor::ComputeTitle()
         // add version informatioin
         QString svVersion = QString("%1.%2.%3").arg(SV_MAJOR_VERSION).arg(SV_MINOR_VERSION).arg(SV_PATCH_VERSION);
 
-        QString versions = QString(" (SimVascular %1 MITK %2 VTK %3.%4.%5 ITK %6.%7.%8 Qt %9)")
+        QString versions = QString(" %1 (MITK %2 VTK %3.%4.%5 ITK %6.%7.%8 Qt %9)")
                 .arg(svVersion)
                 .arg(MITK_VERSION_STRING)
                 .arg(VTK_MAJOR_VERSION).arg(VTK_MINOR_VERSION).arg(VTK_BUILD_VERSION)

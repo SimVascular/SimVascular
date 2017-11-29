@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,7 +50,7 @@ cvCalculateWallShearStress::cvCalculateWallShearStress() {
     wallshear_ = NULL;
     surfaceMesh_ = NULL;
     tensors_ = NULL;
-    
+
 }
 
 
@@ -72,7 +72,7 @@ cvCalculateWallShearStress::~cvCalculateWallShearStress() {
 int cvCalculateWallShearStress::SetSurfaceMesh(cvPolyData* surfaceMesh) {
     surfaceMesh_ = NULL;
     surfaceMesh_ = surfaceMesh->GetVtkPolyData();
-    return SV_OK; 
+    return SV_OK;
 }
 
 // --------------
@@ -82,7 +82,7 @@ int cvCalculateWallShearStress::SetSurfaceMesh(cvPolyData* surfaceMesh) {
 int cvCalculateWallShearStress::SetTensors(cvPolyData* tensors) {
     tensors_ = NULL;
     tensors_ = tensors->GetVtkPolyData();
-    return SV_OK; 
+    return SV_OK;
 }
 
 // ---------------
@@ -92,7 +92,7 @@ int cvCalculateWallShearStress::SetTensors(cvPolyData* tensors) {
 int cvCalculateWallShearStress::SetTractions(cvPolyData* tractions) {
     tractions_ = NULL;
     tractions_ = tractions->GetVtkPolyData();
-    return SV_OK; 
+    return SV_OK;
 }
 
 // -----------------------------
@@ -133,8 +133,8 @@ int cvCalculateWallShearStress::CalcWallShearFromStresses() {
         ptOnSurf[ids[0]] = 1;
         ptOnSurf[ids[1]] = 1;
         ptOnSurf[ids[2]] = 1;
-    } 
-        
+    }
+
     int numPtsOnSurf = 0;
     for (i = 0; i < numPts; i++) {
         if (ptOnSurf[i] != 0) {
@@ -152,7 +152,7 @@ int cvCalculateWallShearStress::CalcWallShearFromStresses() {
     vtkFloatingPointType nrm[3];
     vtkFloatingPointType stress[9];
     double t[3];
-    double t_dot_n = 0.0;    
+    double t_dot_n = 0.0;
     double twall[3];
 
     if (stresses->GetNumberOfComponents() != 9) {
@@ -173,7 +173,7 @@ int cvCalculateWallShearStress::CalcWallShearFromStresses() {
            t_dot_n = t[0]*nrm[0]+t[1]*nrm[1]+t[2]*nrm[2];
            twall[0] = t[0] - t_dot_n*nrm[0];
            twall[1] = t[1] - t_dot_n*nrm[1];
-           twall[2] = t[2] - t_dot_n*nrm[2]; 
+           twall[2] = t[2] - t_dot_n*nrm[2];
            wallshear_->InsertNextTuple3(twall[0],twall[1],twall[2]);
         }
     }
@@ -221,8 +221,8 @@ int cvCalculateWallShearStress::CalcWallShearFromTractions() {
         ptOnSurf[ids[0]] = 1;
         ptOnSurf[ids[1]] = 1;
         ptOnSurf[ids[2]] = 1;
-    } 
-        
+    }
+
     int numPtsOnSurf = 0;
     for (i = 0; i < numPts; i++) {
         if (ptOnSurf[i] != 0) {
@@ -240,7 +240,7 @@ int cvCalculateWallShearStress::CalcWallShearFromTractions() {
     vtkFloatingPointType nrm[3];
     vtkFloatingPointType tf[3];
     double t[3];
-    double t_dot_n = 0.0;    
+    double t_dot_n = 0.0;
     double twall[3];
 
     for (i = 0; i < numPts; i++) {
@@ -256,7 +256,7 @@ int cvCalculateWallShearStress::CalcWallShearFromTractions() {
            t_dot_n = t[0]*nrm[0]+t[1]*nrm[1]+t[2]*nrm[2];
            twall[0] = t[0] - t_dot_n*nrm[0];
            twall[1] = t[1] - t_dot_n*nrm[1];
-           twall[2] = t[2] - t_dot_n*nrm[2]; 
+           twall[2] = t[2] - t_dot_n*nrm[2];
            wallshear_->InsertNextTuple3(twall[0],twall[1],twall[2]);
         }
     }
@@ -280,7 +280,7 @@ cvPolyData* cvCalculateWallShearStress::CalcWallShearMean(int numPds, cvPolyData
 
     int i = 0;
     int j = 0;
-    vtkFloatingPointType shear[3];    
+    vtkFloatingPointType shear[3];
 
     fprintf(stdout,"numPds: %i\n",numPds);
 
@@ -292,7 +292,7 @@ cvPolyData* cvCalculateWallShearStress::CalcWallShearMean(int numPds, cvPolyData
     vtkDataArray **vectors = new vtkDataArray*[numPds];
     for (i = 0; i < numPds; i++) {
       vectors[i]=shearPds[i]->GetVtkPolyData()->GetPointData()->GetVectors();
-    } 
+    }
 
     // create return vtk vector
     vtkFloatingPointArrayType *shearmean = vtkFloatingPointArrayType::New();
@@ -330,7 +330,7 @@ cvPolyData* cvCalculateWallShearStress::CalcWallShearPulse(int numPds, cvPolyDat
 
     int i = 0;
     int j = 0;
-    vtkFloatingPointType shear[3];    
+    vtkFloatingPointType shear[3];
 
     fprintf(stdout,"numPds: %i\n",numPds);
 
@@ -342,7 +342,7 @@ cvPolyData* cvCalculateWallShearStress::CalcWallShearPulse(int numPds, cvPolyDat
     vtkDataArray **vectors = new vtkDataArray*[numPds];
     for (i = 0; i < numPds; i++) {
       vectors[i]=shearPds[i]->GetVtkPolyData()->GetPointData()->GetVectors();
-    } 
+    }
 
     // create return vtk vector
     vtkFloatingPointArrayType *shearpulse = vtkFloatingPointArrayType::New();
@@ -385,7 +385,7 @@ cvPolyData* cvCalculateWallShearStress::CalcOSI(cvPolyData *shearMean, cvPolyDat
 
     // create a list of the shear vectors
     vtkDataArray *meanscalars = shearMean->GetVtkPolyData()->GetPointData()->GetScalars();
-    vtkDataArray *pulsescalars = shearPulse->GetVtkPolyData()->GetPointData()->GetScalars(); 
+    vtkDataArray *pulsescalars = shearPulse->GetVtkPolyData()->GetPointData()->GetScalars();
 
     // create return vtk vector
     vtkFloatingPointArrayType *osiScalars = vtkFloatingPointArrayType::New();
@@ -426,7 +426,7 @@ cvPolyData* cvCalculateWallShearStress::CalcAvgPointData(int numPds, cvPolyData 
 
     int i = 0;
     int j = 0;
-    vtkFloatingPointType vec[3];    
+    vtkFloatingPointType vec[3];
     vtkFloatingPointType scal=0;
 
     fprintf(stdout,"numPds: %i\n",numPds);
@@ -442,7 +442,7 @@ cvPolyData* cvCalculateWallShearStress::CalcAvgPointData(int numPds, cvPolyData 
     for (i = 0; i < numPds; i++) {
       vectors[i]=inputPds[i]->GetVtkPolyData()->GetPointData()->GetVectors();
       scalars[i]=inputPds[i]->GetVtkPolyData()->GetPointData()->GetScalars();
-    } 
+    }
 
     // create return vtk scalar array
     vtkFloatingPointArrayType *avgscalar = vtkFloatingPointArrayType::New();

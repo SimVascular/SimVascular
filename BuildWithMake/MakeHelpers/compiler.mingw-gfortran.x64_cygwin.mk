@@ -5,11 +5,11 @@
 ifeq ($(CLUSTER), x64_cygwin)
     F90             = x86_64-w64-mingw32-gfortran.exe -cpp
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
-    DEBUG_FFLAGS    = 
+    DEBUG_FFLAGS    =
     OPT_FFLAGS      = -O2
 else
   ifeq ($(MAKE_OPTIMIZED),1)
-    DEBUG_FFLAGS    =  
+    DEBUG_FFLAGS    =
     OPT_FFLAGS      = -g -O2
   else
     DEBUG_FFLAGS    = -g -fcheck=all

@@ -673,7 +673,7 @@ int Solid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_SetResult( interp, "usage: registrars_list", TCL_STATIC );
     return TCL_ERROR;
   }
-  cvFactoryRegistrar *solidModelRegistrar = 
+  cvFactoryRegistrar *solidModelRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 
   char result[255];
@@ -3319,7 +3319,7 @@ static void PrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "GetClassName\n");
   tcl_printstr(interp, "GetDiscontinuities\n");
   tcl_printstr(interp, "GetAxialIsoparametricCurve\n");
-  tcl_printstr(interp, "GetFaceAttr\n");  
+  tcl_printstr(interp, "GetFaceAttr\n");
   tcl_printstr(interp, "GetFaceIds\n");
   tcl_printstr(interp, "GetBoundaryFaces\n");
   tcl_printstr(interp, "GetFaceNormal\n");
@@ -3362,7 +3362,7 @@ static int Solid_FindExtentMtd( ClientData clientData, Tcl_Interp *interp,
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%f", extent );
-    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "FindExtent: error on object ",
@@ -3431,7 +3431,7 @@ static int Solid_GetTopoDimMtd( ClientData clientData, Tcl_Interp *interp,
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%d", tdim );
-    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetTopoDim: error on object ",
@@ -4080,7 +4080,7 @@ static int Solid_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, SV_OPTIONAL, 0, { 0 } },  
+    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4206,7 +4206,7 @@ static int Solid_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
     { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, SV_OPTIONAL, 0, { 0 } }, 
+    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4269,7 +4269,7 @@ static int Solid_GetFaceNormalMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
     { "-u", DOUBLE_Type, &u, NULL, REQUIRED, 0, { 0 } },
-    { "-v", DOUBLE_Type, &v, NULL, REQUIRED, 0, {0}}, 
+    { "-v", DOUBLE_Type, &v, NULL, REQUIRED, 0, {0}},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4608,7 +4608,7 @@ static int Solid_ClearLabelMtd( ClientData clientData, Tcl_Interp *interp,
     Tcl_AppendResult( interp, "key ", key, " not found", (char *) NULL );
     return TCL_ERROR;
   }
-    
+
   geom->ClearLabel( key );
 
   return TCL_OK;
@@ -4635,7 +4635,7 @@ static int Solid_GetFaceIdsMtd( ClientData clientData, Tcl_Interp *interp,
       Tcl_AppendElement ( interp, facestring);
 	  facestring[0]='\n';
     }
-    delete faces; 
+    delete faces;
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetFaceIds: error on object ",

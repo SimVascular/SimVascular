@@ -1,34 +1,22 @@
 <statemachine NAME="svContourGroupInteractor">
 
   <state name="Start" startstate="true">
-    <!-- Contour is placed on current slice but has no control points-->
-<!--    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start">
-      <condition name="contour_exists_on_current_slice" />
-      <condition name="contour_has_control_points" inverted="true" />
-    </transition>-->
 
     <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="EditContour"> <!-- Contour is placed on current slice -->
       <condition name="contour_exists_on_current_slice" />
       <condition name="contour_has_control_points" />
     </transition>
 
-    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="PlaceContour"> <!-- No contour on current slice, but has a contour to place -->
-<!--      <condition name="contour_exists_on_current_slice" inverted="true"/>-->
-      <condition name="contour_exists_on_current_slice"/>
-      <condition name="group_has_unplaced_contour" />
-    </transition>
-
-    <!-- No contour on current slice -->
-<!--    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start">
-      <condition name="contour_exists_on_current_slice" inverted="true"/>
-      <condition name="group_has_unplaced_contour" inverted="true"/>
-    </transition>-->
-  </state>
-
-  <state name="PlaceContour">
     <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="ContourPlaced" >
+      <condition name="contour_exists_on_current_slice" inverted="true"/>
+      <condition name="method_is_specified" />
       <action name="add_initial_point" />
     </transition>
+
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="Start" >
+      <condition name="is_over_contour2" />
+    </transition>
+
   </state>
 
   <state name="ContourPlaced">
@@ -74,12 +62,12 @@
   </state>
 
   <state name="EditContour">
-  <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverPoint" >
-    <condition name="contour_exists_on_current_slice" />
-    <condition name="is_over_point" />
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverPoint" >
+      <condition name="contour_exists_on_current_slice" />
+      <condition name="is_over_point" />
 <!--      <action name="start_hovering" />-->
-    <action name="select_point" />
-  </transition>
+      <action name="select_point" />
+    </transition>
 
     <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverContour" >
       <condition name="contour_exists_on_current_slice" />

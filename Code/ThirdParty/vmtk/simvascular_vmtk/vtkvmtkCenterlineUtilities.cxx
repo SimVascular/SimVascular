@@ -10,11 +10,11 @@ Version:   $Revision: 1.5 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -57,12 +57,12 @@ void vtkvmtkCenterlineUtilities::GetGroupsIdList(vtkPolyData* centerlines, const
   vtkDataArray* groupIdsArray = centerlines->GetCellData()->GetArray(groupIdsArrayName);
 
   vtkDataArray* blankingArray = NULL;
-  
+
   if (blankingArrayName)
-  {          
+  {
     blankingArray = centerlines->GetCellData()->GetArray(blankingArrayName);
   }
-  
+
   int numberOfCells = centerlines->GetNumberOfCells();
 
   groupIds->Initialize();
@@ -83,7 +83,7 @@ void vtkvmtkCenterlineUtilities::GetGroupsIdList(vtkPolyData* centerlines, const
     groupIds->InsertUniqueId(groupId);
     }
 }
- 
+
 void vtkvmtkCenterlineUtilities::GetGroupsIdList(vtkPolyData* centerlines, const char* groupIdsArrayName, vtkIdList* groupIds)
 {
   vtkvmtkCenterlineUtilities::GetGroupsIdList(centerlines,groupIdsArrayName,NULL,0,groupIds);
@@ -93,7 +93,7 @@ void vtkvmtkCenterlineUtilities::GetNonBlankedGroupsIdList(vtkPolyData* centerli
 {
   vtkvmtkCenterlineUtilities::GetGroupsIdList(centerlines,groupIdsArrayName,blankingArrayName,0,groupIds);
 }
-  
+
 void vtkvmtkCenterlineUtilities::GetBlankedGroupsIdList(vtkPolyData* centerlines, const char* groupIdsArrayName, const char* blankingArrayName, vtkIdList* groupIds)
 {
   vtkvmtkCenterlineUtilities::GetGroupsIdList(centerlines,groupIdsArrayName,blankingArrayName,1,groupIds);
@@ -105,7 +105,7 @@ void vtkvmtkCenterlineUtilities::GetGroupCellIds(vtkPolyData* centerlines, const
   int numberOfCells = centerlines->GetNumberOfCells();
 
   groupCellIds->Initialize();
-  
+
   int i;
   for (i=0; i<numberOfCells; i++)
   {
@@ -167,7 +167,7 @@ void vtkvmtkCenterlineUtilities::GetCenterlineCellIds(vtkPolyData* centerlines, 
   int numberOfCells = centerlines->GetNumberOfCells();
 
   centerlineCellIds->Initialize();
-  
+
   int i;
   for (i=0; i<numberOfCells; i++)
   {
@@ -188,7 +188,7 @@ void vtkvmtkCenterlineUtilities::GetCenterlineCellIds(vtkPolyData* centerlines, 
 
   centerlineCellIds->Initialize();
   vtkIdList* centerlineTractIds = vtkIdList::New();
-  
+
   int i;
   for (i=0; i<numberOfCells; i++)
   {
@@ -203,7 +203,7 @@ void vtkvmtkCenterlineUtilities::GetCenterlineCellIds(vtkPolyData* centerlines, 
   }
 
   int numberOfCenterlineCellIds = centerlineCellIds->GetNumberOfIds();
-  
+
   bool done = false;
   while (!done)
     {
@@ -222,7 +222,7 @@ void vtkvmtkCenterlineUtilities::GetCenterlineCellIds(vtkPolyData* centerlines, 
         }
       }
     }
-  
+
   centerlineTractIds->Delete();
 }
 
@@ -248,10 +248,10 @@ int vtkvmtkCenterlineUtilities::IsGroupBlanked(vtkPolyData* centerlines, const c
   {
     return -1;
   }
-  
+
   return vtkvmtkCenterlineUtilities::IsCellBlanked(centerlines,blankingArrayName,cellId);
 }
-  
+
 int vtkvmtkCenterlineUtilities::IsCellBlanked(vtkPolyData* centerlines, const char* blankingArrayName, vtkIdType cellId)
 {
   vtkDataArray* blankingArray = centerlines->GetCellData()->GetArray(blankingArrayName);
@@ -259,7 +259,7 @@ int vtkvmtkCenterlineUtilities::IsCellBlanked(vtkPolyData* centerlines, const ch
   int isBlanked = blanking == 1 ? 1 : 0;
   return isBlanked;
 }
-  
+
 void vtkvmtkCenterlineUtilities::FindAdjacentCenterlineGroupIds(vtkPolyData* centerlines, const char* groupIdsArrayName, const char* centerlineIdsArrayName, const char* tractIdsArrayName, vtkIdType groupId, vtkIdList* upStreamGroupIds, vtkIdList* downStreamGroupIds)
 {
   upStreamGroupIds->Initialize();
@@ -327,7 +327,7 @@ void vtkvmtkCenterlineUtilities::InterpolatePoint(vtkPolyData* centerlines, int 
   vtkPoints* centerlineCellPoints = centerlines->GetCell(cellId)->GetPoints();
   centerlineCellPoints->GetPoint(subId,point0);
   centerlineCellPoints->GetPoint(subId+1,point1);
-      
+
   interpolatedPoint[0] = (1.0 - pcoord) * point0[0] + pcoord * point1[0];
   interpolatedPoint[1] = (1.0 - pcoord) * point0[1] + pcoord * point1[1];
   interpolatedPoint[2] = (1.0 - pcoord) * point0[2] + pcoord * point1[2];
@@ -389,7 +389,7 @@ void vtkvmtkCenterlineUtilities::FindMergingPoints(vtkPolyData* centerlines, vtk
           }
         delete[] weights;
         }
-      } 
+      }
     }
 }
 

@@ -32,7 +32,7 @@ proc XFColorBox {{xfColorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {xfColorBo
 # Returns: colorname, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global xfColorBox(activeBackground) - active background color
 # global xfColorBox(activeForeground) - active foreground color
 # global xfColorBox(background) - background color
@@ -127,7 +127,7 @@ proc XFColorBox {{xfColorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {xfColorBo
       -borderwidth 0 \
       -relief raised
     catch ".xfColorBox.frame1 config $tmpFrameOpt"
- 
+
     button .xfColorBox.frame1.ok \
       -text "OK"
     catch ".xfColorBox.frame1.ok config $tmpButtonOpt"
@@ -140,7 +140,7 @@ proc XFColorBox {{xfColorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {xfColorBo
       -borderwidth 0 \
       -relief raised
     catch ".xfColorBox.frame2 config $tmpFrameOpt"
- 
+
     radiobutton .xfColorBox.frame2.rgb \
       -value rgb \
       -command "XFColorBoxShowSlides $xfColorBoxMessage \"$xfColorBoxTargetW\"" \
@@ -166,7 +166,7 @@ proc XFColorBox {{xfColorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {xfColorBo
       -borderwidth 0 \
       -relief raised
     catch ".xfColorBox.palette config $tmpFrameOpt"
- 
+
     set counter 0
     foreach element $xfColorBox(palette) {
       button .xfColorBox.palette.palette$counter \
@@ -330,7 +330,7 @@ proc XFColorBox {{xfColorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {xfColorBo
 
     set xfColorBox(oldWidget) $xfColorBoxEntryW
   }
-   
+
   .xfColorBox.frame1.ok config \
     -command "
       global xfColorBox
@@ -426,7 +426,7 @@ proc XFColorBox {{xfColorBoxFileColor "/usr/local/lib/xf/lib/Colors"} {xfColorBo
   if {"[.xfColorBox.current.current get]" != ""} {
     XFColorBoxSetColor $xfColorBoxMessage $xfColorBoxTargetW text [.xfColorBox.current.current get]
   }
-    
+
   # packing
   pack append .xfColorBox.frame1 \
               .xfColorBox.frame1.ok {left fill expand} \

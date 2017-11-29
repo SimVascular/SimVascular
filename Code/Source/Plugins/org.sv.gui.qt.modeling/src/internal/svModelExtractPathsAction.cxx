@@ -8,6 +8,7 @@
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkStatusBar.h>
+#include <mitkSurface.h>
 #include <mitkOperationEvent.h>
 #include <mitkUndoController.h>
 
@@ -44,14 +45,36 @@ void svModelExtractPathsAction::UpdateStatus()
         m_Interface->ExecuteOperation(doOp);
     }
 
+    // Now add model for whole centerlines pd
+    mitk::DataNode::Pointer centerlinesModelNode = m_DataStorage->GetNamedDerivedNode("Full_Centerlines", m_Thread->GetSelectedNode());
+
+    if (centerlinesModelNode.IsNull())
+      m_DataStorage->Add(m_Thread->GetCenterlinesModelNode(), m_Thread->GetSelectedNode());
+    // Added model
+
+    // Now add model for merged centerlines pd
+    mitk::DataNode::Pointer mergedCenterlinesModelNode = m_DataStorage->GetNamedDerivedNode("Merged_Centerlines", m_Thread->GetSelectedNode());
+
+    if (mergedCenterlinesModelNode.IsNull())
+      m_DataStorage->Add(m_Thread->GetMergedCenterlinesModelNode(), m_Thread->GetSelectedNode());
+    // Added model
+
     m_ProjFolderNode->SetBoolProperty("thread running",false);
     mitk::StatusBar::GetInstance()->DisplayText(m_Thread->GetStatus().toStdString().c_str());
+}
+
+void svModelExtractPathsAction::SetSourceCapIds(std::vector<int> sourceCapIds)
+{
+  this->m_SourceCapIds.clear();
+  for (int i=0; i<sourceCapIds.size(); i++)
+    this->m_SourceCapIds.push_back(sourceCapIds[i]);
 }
 
 void svModelExtractPathsAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
 
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
+    fprintf(stdout,"AFT RUN NAME: %s\n", selectedNode->GetName().c_str());
 
     svModel* model=dynamic_cast<svModel*>(selectedNode->GetData());
     if(!model) return;
@@ -80,7 +103,7 @@ void svModelExtractPathsAction::Run(const QList<mitk::DataNode::Pointer> &select
     }
 
     mitk::StatusBar::GetInstance()->DisplayText("Extracting paths from the model... ( may take several minutes or more)");
-    m_Thread=new WorkThread(m_DataStorage,selectedNode);
+    m_Thread=new WorkThread(m_DataStorage,selectedNode,m_SourceCapIds);
 
     connect(m_Thread, SIGNAL(finished()), this, SLOT(UpdateStatus()));
 
@@ -94,10 +117,13 @@ void svModelExtractPathsAction::SetDataStorage(mitk::DataStorage *dataStorage)
     m_DataStorage = dataStorage;
 }
 
-svModelExtractPathsAction::WorkThread::WorkThread(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode)
+svModelExtractPathsAction::WorkThread::WorkThread(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, std::vector<int> sourceCapIds)
 {
-    mm_DataStorage=dataStorage;
-    m_SelectedNode=selectedNode;
+    this->mm_DataStorage=dataStorage;
+    this->m_SelectedNode=selectedNode;
+    this->mm_SourceCapIds.clear();
+    for (int i=0; i<sourceCapIds.size(); i++)
+      this->mm_SourceCapIds.push_back(sourceCapIds[i]);
 }
 
 void svModelExtractPathsAction::WorkThread::run()
@@ -119,7 +145,14 @@ void svModelExtractPathsAction::WorkThread::run()
 
     try
     {
-        std::vector<svPathElement*> pathElements=svModelUtils::CreatePathElements(modelElement);
+        vtkSmartPointer<vtkIdList> sourceCapIds = vtkSmartPointer<vtkIdList>::New();
+        for (int i=0; i<this->mm_SourceCapIds.size(); i++)
+          sourceCapIds->InsertNextId(this->mm_SourceCapIds[i]);
+
+        vtkSmartPointer<vtkPolyData> centerlinesPd = svModelUtils::CreateCenterlines(modelElement, sourceCapIds);
+        vtkSmartPointer<vtkPolyData> mergedCenterlinesPD = svModelUtils::MergeCenterlines(centerlinesPd);
+
+        std::vector<svPathElement*> pathElements=svModelUtils::CreatePathElements(modelElement, mergedCenterlinesPD);
 
         if(pathElements.size()==0)
             return;
@@ -157,6 +190,40 @@ void svModelExtractPathsAction::WorkThread::run()
 
             m_PathNodes.push_back(pathNode);
         }
+
+        // Now add model for whole centerlines pd
+        m_CenterlinesModelNode = mm_DataStorage->GetNamedDerivedNode("Full_Centerlines", m_SelectedNode);
+        mitk::Surface::Pointer centerlinesSurface;
+
+        if (m_CenterlinesModelNode.IsNull())
+        {
+          centerlinesSurface = mitk::Surface::New();
+
+          m_CenterlinesModelNode = mitk::DataNode::New();
+          m_CenterlinesModelNode->SetData(centerlinesSurface);
+          m_CenterlinesModelNode->SetName("Full_Centerlines");
+        }
+        else
+          centerlinesSurface = dynamic_cast<mitk::Surface*>(m_CenterlinesModelNode->GetData());
+        centerlinesSurface->SetVtkPolyData(centerlinesPd, 0);
+        // Added model
+
+        // Add model for merged centerlines pd
+        m_MergedCenterlinesModelNode = mm_DataStorage->GetNamedDerivedNode("Merged_Centerlines", m_SelectedNode);
+        mitk::Surface::Pointer mergedCenterlinesSurface;
+
+        if (m_MergedCenterlinesModelNode.IsNull())
+        {
+          mergedCenterlinesSurface = mitk::Surface::New();
+
+          m_MergedCenterlinesModelNode = mitk::DataNode::New();
+          m_MergedCenterlinesModelNode->SetData(mergedCenterlinesSurface);
+          m_MergedCenterlinesModelNode->SetName("Merged_Centerlines");
+        }
+        else
+          mergedCenterlinesSurface = dynamic_cast<mitk::Surface*>(m_MergedCenterlinesModelNode->GetData());
+        mergedCenterlinesSurface->SetVtkPolyData(mergedCenterlinesPD, 0);
+        // Added model
 
         m_Status="Paths extracting done.";
     }

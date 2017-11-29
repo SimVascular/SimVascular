@@ -32,7 +32,7 @@ except ImportError:
 #-----------------------------------------
 class SimVascularGroup:
     '''
-    This is a class to contain the information for a SimVascular Group or 
+    This is a class to contain the information for a SimVascular Group or
     a group of segmentations defining one individual vessel.
 
     Members:
@@ -68,7 +68,7 @@ class SimVascularGroup:
 #----------------------------------------------------------------------
 class SimVascularSeg:
     '''
-    This is a class to contain the information for a singular SimVascular 
+    This is a class to contain the information for a singular SimVascular
     segmentation.
 
     Members:
@@ -76,16 +76,16 @@ class SimVascularSeg:
 	m_SegmentDataDict: Dictionary containing many of the important
 			   segmentation details
 			   Items:
-			   	pathID  - ID of corresponding SimVascular path	
-			   	pos     - Position along SimVascular path	
+			   	pathID  - ID of corresponding SimVascular path
+			   	pos     - Position along SimVascular path
 			   	normal  - Normal to seg at path location
 				xhat    - Direction of 2D slice plane relative to xhat
-			   	centerX - On 2D slice plane, X center of seg	
-			   	centerY - On 2D slice plane, Y center of seg	
-			   	radius  - For analytic seg, radius of circle	
-	m_SegmentPoints:   List of the segmentations points. Each entry in 
+			   	centerX - On 2D slice plane, X center of seg
+			   	centerY - On 2D slice plane, Y center of seg
+			   	radius  - For analytic seg, radius of circle
+	m_SegmentPoints:   List of the segmentations points. Each entry in
 			   list is X,Y,Z coordinates of new point around
-			   segmentation. First point is not repeated at the 
+			   segmentation. First point is not repeated at the
 			   end
     '''
 
@@ -110,7 +110,7 @@ def processSimVascularGroupFile(a_Filename,a_Groupname):
     information, and save in into a SimVascularGroup data structure.
 
     Args:
-	arg1: a_Filename, the location of the saved simvascular group to 
+	arg1: a_Filename, the location of the saved simvascular group to
 	      process.
 	arg2: a_Groupname, the name to give ot the processed group.
 
@@ -230,12 +230,12 @@ def convertGroupPointsToNumpy(a_SimVascularGroup,a_numSamplePts):
     structure as a 3 dimensional numpy array
 
     Args:
-	arg1: a_SimVascularGroup, the SimVascularGroup to process 
+	arg1: a_SimVascularGroup, the SimVascularGroup to process
 	arg2: a_numSamplePts, If SimVascularGroup does not have same number
 	      of points per segmentation, resample the groups to this resolution.
 
     Returns:
-    	The numpy array of points of size m,n,l. Where m is the number of 
+    	The numpy array of points of size m,n,l. Where m is the number of
 	segmentations, n is the number of points per segmentation, and l is
 	3 (X,Y,Z) coordinate.
 

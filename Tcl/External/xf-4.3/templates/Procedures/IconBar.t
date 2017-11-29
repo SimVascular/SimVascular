@@ -128,7 +128,7 @@ proc IconBarShow {iconBarName {iconBarPath ""} {iconBarStatus ""}} {# xf ignore 
 # Returns: none
 # Sideeffects: none
 ##########
-# 
+#
 # global iconBar(activeBackground) - active background color
 # global iconBar(activeForeground) - active foreground color
 # global iconBar(background) - background color
@@ -215,7 +215,7 @@ proc IconBarShow {iconBarName {iconBarPath ""} {iconBarStatus ""}} {# xf ignore 
         }
       }
     }
-        
+
     if {$iconBar(barIgnoreSep)} {
       frame $tmpPath.iconBar \
         -borderwidth $iconBar(barBorder) \
@@ -369,7 +369,7 @@ proc IconBarShow {iconBarName {iconBarPath ""} {iconBarStatus ""}} {# xf ignore 
       }
     }
     set tmpPath $iconBarPath
-      
+
     frame $tmpPath.iconBar \
       -borderwidth $iconBar(barBorder) \
       -relief $iconBar(barRelief)
@@ -472,7 +472,7 @@ proc IconBarConf {iconBarName {iconBarPath ""} {iconBarProcs ""}} {# xf ignore m
 # Returns: none
 # Sideeffects: none
 ##########
-# 
+#
 # global iconBar(activeBackground) - active background color
 # global iconBar(activeForeground) - active foreground color
 # global iconBar(background) - background color
@@ -551,48 +551,48 @@ proc IconBarConf {iconBarName {iconBarPath ""} {iconBarProcs ""}} {# xf ignore m
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1 config $tmpFrameOpt"
- 
+
   frame .iconBarEdit.frame1.frame2 \
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1.frame2 config $tmpFrameOpt"
- 
+
   frame .iconBarEdit.frame1.frame2.frame4 \
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1.frame2.frame4 config $tmpFrameOpt"
- 
+
   frame .iconBarEdit.frame1.frame2.frame5 \
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1.frame2.frame5 config $tmpFrameOpt"
- 
+
   frame .iconBarEdit.frame1.frame2.frame6 \
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1.frame2.frame6 config $tmpFrameOpt"
- 
+
   frame .iconBarEdit.frame1.frame7 \
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1.frame7 config $tmpFrameOpt"
- 
+
   frame .iconBarEdit.frame1.frame3 \
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1.frame3 config $tmpFrameOpt"
- 
+
   frame .iconBarEdit.frame1.frame4 \
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1.frame4 config $tmpFrameOpt"
- 
+
   label .iconBarEdit.frame1.frame2.frame4.message1 \
     -anchor c \
     -relief raised \
     -text "Icon pictures:"
   catch ".iconBarEdit.frame1.frame2.frame4.message1 config $tmpMessageOpt"
-  
+
   scrollbar .iconBarEdit.frame1.frame2.frame4.vscroll \
     -relief raised \
     -command ".iconBarEdit.frame1.frame2.frame4.icons yview"
@@ -616,7 +616,7 @@ proc IconBarConf {iconBarName {iconBarPath ""} {iconBarProcs ""}} {# xf ignore m
     -relief raised \
     -text "Procedures:"
   catch ".iconBarEdit.frame1.frame2.frame5.message1 config $tmpMessageOpt"
-  
+
   scrollbar .iconBarEdit.frame1.frame2.frame5.vscroll \
     -relief raised \
     -command ".iconBarEdit.frame1.frame2.frame5.procs yview"
@@ -640,7 +640,7 @@ proc IconBarConf {iconBarName {iconBarPath ""} {iconBarProcs ""}} {# xf ignore m
     -relief raised \
     -text "Iconbar Icons:"
   catch ".iconBarEdit.frame1.frame2.frame6.message1 config $tmpMessageOpt"
-  
+
   scrollbar .iconBarEdit.frame1.frame2.frame6.vscroll \
     -relief raised \
     -command ".iconBarEdit.frame1.frame2.frame6.bar yview"
@@ -672,25 +672,25 @@ proc IconBarConf {iconBarName {iconBarPath ""} {iconBarProcs ""}} {# xf ignore m
     -borderwidth 0 \
     -relief raised
   catch ".iconBarEdit.frame1.frame4.bitmap config $tmpFrameOpt"
- 
+
   label .iconBarEdit.frame1.frame4.bitmap.message1 \
     -anchor c \
     -relief raised \
     -text "Current bitmap:"
   catch ".iconBarEdit.frame1.frame4.bitmap.message1 config $tmpMessageOpt"
-  
+
   label .iconBarEdit.frame1.frame4.bitmap.bitmap \
     -bitmap gray50 \
     -anchor c \
     -relief raised
   catch ".iconBarEdit.frame1.frame4.bitmap.bitmap config $tmpMessageOpt"
-  
+
   label .iconBarEdit.frame1.frame4.message1 \
     -anchor c \
     -relief raised \
     -text "Command:"
   catch ".iconBarEdit.frame1.frame4.message1 config $tmpMessageOpt"
-  
+
   frame .iconBarEdit.frame1.frame4.command \
     -borderwidth 0 \
     -relief raised

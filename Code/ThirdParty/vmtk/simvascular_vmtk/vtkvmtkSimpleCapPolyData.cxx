@@ -18,7 +18,7 @@ Version:   $Revision: 1.6 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-//SimVascular Changes: Changes to update code to VTK pipeline 6.0 
+//SimVascular Changes: Changes to update code to VTK pipeline 6.0
 //Line 118: SetInput -> SetInputData
 
 #include "vtkvmtkSimpleCapPolyData.h"

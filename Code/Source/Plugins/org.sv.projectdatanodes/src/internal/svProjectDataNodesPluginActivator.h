@@ -23,6 +23,6 @@ public:
 
 private:
     static ctkPluginContext* m_Context;
-}; 
+};
 
 #endif // SVPROJECTDATANODESPLUGINACTIVATOR_H

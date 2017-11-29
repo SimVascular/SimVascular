@@ -10,11 +10,11 @@ Version:   $Revision: 1.2 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -33,12 +33,12 @@ class vtkPolyData;
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkReferenceSystemUtilities : public vtkObject
 {
-public: 
+public:
   vtkTypeMacro(vtkvmtkReferenceSystemUtilities,vtkObject);
   static vtkvmtkReferenceSystemUtilities* New();
 
   static vtkIdType GetReferenceSystemPointId(vtkPolyData* referenceSystems, const char* groupIdsArrayName, vtkIdType groupId);
-  
+
 protected:
   vtkvmtkReferenceSystemUtilities() {};
   ~vtkvmtkReferenceSystemUtilities() {};

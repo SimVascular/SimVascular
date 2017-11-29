@@ -6,15 +6,15 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -43,12 +43,12 @@
 int mrRead_unsigned_short_int(FILE *in,int offset,unsigned short int *value) {
 
     // set file position
-    if (fseek(in, offset, SEEK_SET)) { 
+    if (fseek(in, offset, SEEK_SET)) {
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
       return SV_ERROR;
     }
 
-    // read bytes from file    
+    // read bytes from file
     if (fread(value, sizeof(unsigned short int), 1, in) != 1) {
         fprintf(stderr,"ERROR: Could not read unsigned short int!\n");
         return SV_ERROR;
@@ -64,12 +64,12 @@ int mrRead_unsigned_short_int(FILE *in,int offset,unsigned short int *value) {
 int mrRead_short_int(FILE *in,int offset,short int *value) {
 
     // set file position
-    if (fseek(in, offset, SEEK_SET)) { 
+    if (fseek(in, offset, SEEK_SET)) {
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
       return SV_ERROR;
     }
 
-    // read bytes from file    
+    // read bytes from file
     if (fread(value, sizeof(short int), 1, in) != 1) {
         fprintf(stderr,"ERROR: Could not read unsigned short int!\n");
         return SV_ERROR;
@@ -85,12 +85,12 @@ int mrRead_short_int(FILE *in,int offset,short int *value) {
 int mrRead_int(FILE *in,int offset,int *value) {
 
     // set file position
-    if (fseek(in, offset, SEEK_SET)) { 
+    if (fseek(in, offset, SEEK_SET)) {
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
       return SV_ERROR;
     }
 
-    // read bytes from file    
+    // read bytes from file
     if (fread(value, sizeof(int), 1, in) != 1) {
         fprintf(stderr,"ERROR: Could not read unsigned short int!\n");
         return SV_ERROR;
@@ -105,12 +105,12 @@ int mrRead_int(FILE *in,int offset,int *value) {
 int mrRead_float(FILE *in,int offset,float *value) {
 
     // set file position
-    if (fseek(in, offset, SEEK_SET)) { 
+    if (fseek(in, offset, SEEK_SET)) {
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
       return SV_ERROR;
     }
 
-    // read bytes from file    
+    // read bytes from file
     if (fread(value, sizeof(float), 1, in) != 1) {
         fprintf(stderr,"ERROR: Could not read float!\n");
         return SV_ERROR;
@@ -125,12 +125,12 @@ int mrRead_float(FILE *in,int offset,float *value) {
 int mrRead_char(FILE *in,int offset,int numBytes, char *value) {
 
     // set file position
-    if (fseek(in, offset, SEEK_SET)) { 
+    if (fseek(in, offset, SEEK_SET)) {
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
       return SV_ERROR;
     }
 
-    // read bytes from file    
+    // read bytes from file
     if (fread(value, sizeof(char), numBytes, in) != numBytes) {
         fprintf(stderr,"ERROR: Could not read float!\n");
         return SV_ERROR;
@@ -145,8 +145,8 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
                         int *dim_x, int *dim_y, int *file_hdr_size,
                         float ul[], float ur[], float br[],
                         int *rtnvenc, float *rtnvencscale,
-		        int *rtnvas_collapse, float *rtnuser2, 
-		        float *rtnuser5, float *rtnuser6, 
+		        int *rtnvas_collapse, float *rtnuser2,
+		        float *rtnuser5, float *rtnuser6,
 		        float *rtnuser7,float *rtnuser8,float *rtnuser9,
 		        float *rtnuser12,float *rtnuser13,float *rtnuser14,
                         char *patid, char *patname, char *psdname,
@@ -185,7 +185,7 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     mrRead_int(in, OFFSET_EXAM, &EXoffset);
     mrRead_int(in, OFFSET_SERIES, &SEoffset);
     mrRead_int(in, OFFSET_IMAGE, &MRoffset);
-   
+
     fprintf(stdout,"\n\nHeader offsets\n\n");
     fprintf(stdout,"SUoffset      : %05x\n",SUoffset);
     fprintf(stdout,"EXoffset      : %05x\n",EXoffset);
@@ -210,7 +210,7 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     float              tlhc_R = 0, tlhc_A = 0, tlhc_S = 0;
     float              trhc_R = 0, trhc_A = 0, trhc_S = 0;
     float              brhc_R = 0, brhc_A = 0, brhc_S = 0;
-    float              norm_R = 0, norm_A = 0, norm_S = 0; 
+    float              norm_R = 0, norm_A = 0, norm_S = 0;
     float              slthick = 0;
     short int          venc = 0;
     float              vencscale = 0;
@@ -233,7 +233,7 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     float              MR_dim_Y = 0;
 
     mrRead_char(in, EXoffset + EX_PATID, 13, patid);
-    mrRead_char(in, EXoffset + EX_PATNAME, 25, patname);  
+    mrRead_char(in, EXoffset + EX_PATNAME, 25, patname);
     mrRead_unsigned_short_int(in , MRoffset + EX_NO, &im_exno);
     mrRead_float(in , MRoffset + IM_PIXSIZE_X , &pixelSize_x);
     mrRead_float(in , MRoffset + IM_PIXSIZE_Y , &pixelSize_y);
@@ -289,7 +289,7 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     //fprintf(stdout,"actual acq. time   : %i\n",im_actual_dt);
     fprintf(stdout,"pixel size         : %f by %f\n",pixelSize_x,pixelSize_y);
     fprintf(stdout,"slice thickness    : %f\n", slthick);
-    fprintf(stdout,"imatrix            : %i by %i\n",imatrix_X,imatrix_Y); 
+    fprintf(stdout,"imatrix            : %i by %i\n",imatrix_X,imatrix_Y);
     fprintf(stdout,"img_width          : %i\n",img_width);
     fprintf(stdout,"img_height         : %i\n",img_height);
     fprintf(stdout,"top left corner    : %f %f %f \n",tlhc_R, tlhc_A, tlhc_S);

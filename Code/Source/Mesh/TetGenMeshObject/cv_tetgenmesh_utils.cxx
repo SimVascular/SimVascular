@@ -436,7 +436,6 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
 
   vtpPoints->SetNumberOfPoints(count);
   //Create face point list
-  count=0;
   for (i=0;i<numPts;i++)
   {
     if (pointOnSurface[i] == true)
@@ -484,10 +483,9 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   fullUGrid->GetCellData()->AddArray(globalElementIds);
 
   //Save all external faces to a vtkCellArray list
-  fprintf(stderr,"Converting Faces to VTK Structures...\n");
+  fprintf(stdout,"Converting Faces to VTK Structures...\n");
   facePointIds->SetNumberOfIds(3);
 
-  count=0;
   for (i=0;i< numFaces;i++)
   {
     for (j=0; j<3;j++)
@@ -497,19 +495,17 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
 
     faces->InsertNextCell(facePointIds);
 
-    if (outmesh->adjtetlist[2*i] >= numPolys || outmesh->adjtetlist[2*i] <= 0)
-    {
-      vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
-      count++;
-    }
-    else if (outmesh->adjtetlist[2*i+1] >= numPolys || outmesh->adjtetlist[2*i+1] <= 0)
+    if (!(outmesh->adjtetlist[2*i] >= numPolys || outmesh->adjtetlist[2*i] < 0))
     {
       vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i]));
-      count++;
     }
-
+    else if (!(outmesh->adjtetlist[2*i+1] >= numPolys || outmesh->adjtetlist[2*i+1] < 0))
+    {
+      vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
+    }
     else
     {
+      fprintf(stderr,"WARNING: TetGen says face has no adjacent tetrahedron\n");
       vtpFaceIds->InsertValue(i,globalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
     }
 
@@ -517,11 +513,11 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
     {
       if (outmesh->trifacemarkerlist != NULL)
       {
-	boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
+        boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
       }
       if (boundaryScalars->GetValue(i)>totRegions)
       {
-	totRegions = outmesh->trifacemarkerlist[i];
+        totRegions = outmesh->trifacemarkerlist[i];
       }
     }
   }

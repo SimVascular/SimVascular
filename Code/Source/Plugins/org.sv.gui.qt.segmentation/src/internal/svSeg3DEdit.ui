@@ -123,8 +123,8 @@
      </property>
      <property name="text">
       <string>Move the cursor to the 3D view window.
-Shift + click: add a normal/start seed (green sphere).
-Ctrl + click: add an end seed (blue sphere).
+Press key &quot;S&quot; to add a normal/start seed (green sphere).
+Press key &quot;E&quot; to add an end seed (blue sphere).
 
 Delete: move the cursor to a seed and press key &quot;Delete&quot;.</string>
      </property>

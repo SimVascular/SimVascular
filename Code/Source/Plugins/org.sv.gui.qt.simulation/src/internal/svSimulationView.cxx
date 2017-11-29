@@ -7,6 +7,7 @@
 #include "svMeshLegacyIO.h"
 #include "svSimulationUtils.h"
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -30,6 +31,9 @@
 #include <QFileDialog>
 #include <QThread>
 #include <QSettings>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QApplication>
 
 const QString svSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
@@ -155,6 +159,8 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
 
     ui->btnSave->hide();
 //    connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveToManager()) );
+
+    connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
 
     ui->toolBox->setCurrentIndex(0);
 
@@ -467,10 +473,15 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     //======================================================================
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
     ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+    ui->checkBoxShowModel->setChecked(false);
     if(m_ModelNode.IsNotNull())
+    {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+        if(m_ModelNode->IsVisible(NULL))
+            ui->checkBoxShowModel->setChecked(true);
+    }
     else
-        ui->labelModelName->setText("Model not found");
+        ui->labelModelName->setText("No model found");
 
     EnableConnection(false);
 
@@ -2888,6 +2899,15 @@ void svSimulationView::UpdateJobStatus()
         ui->widgetRun->setEnabled(true);
     }
 
+}
+
+void svSimulationView::ShowModel(bool checked)
+{
+    if(m_ModelNode.IsNotNull())
+    {
+        m_ModelNode->SetVisibility(checked);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
 }
 
 svProcessHandler::svProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, bool multithreading, bool stoppable, QWidget* parent)

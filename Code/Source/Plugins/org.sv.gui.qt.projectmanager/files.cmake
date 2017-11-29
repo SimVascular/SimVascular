@@ -1,11 +1,13 @@
 set(SRC_CPP_FILES
-  
+
 )
 
 set(INTERNAL_CPP_FILES
   svProjectManagerPluginActivator.cxx
   svProjectAddImageAction.cxx
   svProjectCloseAction.cxx
+  svProjectSaveAction.cxx
+  svProjectDuplicateAction.cxx
   svProjectShowModelEdgesAction.cxx
   svProjectShowModelFullAction.cxx
 )
@@ -14,6 +16,8 @@ set(MOC_H_FILES
   src/internal/svProjectManagerPluginActivator.h
   src/internal/svProjectAddImageAction.h
   src/internal/svProjectCloseAction.h
+  src/internal/svProjectSaveAction.h
+  src/internal/svProjectDuplicateAction.h
   src/internal/svProjectShowModelEdgesAction.h
   src/internal/svProjectShowModelFullAction.h
 )

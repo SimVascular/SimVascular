@@ -20,6 +20,7 @@
 #include <berryIPreferences.h>
 #include <berryPlatform.h>
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -31,9 +32,8 @@
 #include <vtkProperty.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
-#include <QTreeView>
-#include <QInputDialog>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QFileDialog>
 
 #include <iostream>
@@ -133,6 +133,7 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
     }
 
     connect(ui->btnMeshInfo, SIGNAL(clicked()), this, SLOT(DisplayMeshInfo()) );
+    connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
 }
 
 void svMeshEdit::SetupGUI(QWidget *parent )
@@ -810,8 +811,11 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
     }
 
     if(ui->checkBoxBoundaryLayerT->isChecked())
-        cmds.push_back("boundaryLayer "+QString::number(ui->sbLayersT->value()).toStdString()
-                       +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString());
+    {
+      int useConstantThickness = ui->checkBoxConstantThicknessBL->isChecked();
+      cmds.push_back("boundaryLayer "+QString::number(ui->sbLayersT->value()).toStdString()
+                       +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString()+" "+QString::number(useConstantThickness).toStdString());
+    }
 
     for(int i=0;i<m_TableModelLocal->rowCount();i++)
     {
@@ -1197,8 +1201,13 @@ void svMeshEdit::UpdateGUI()
     //======================================================================
     ui->labelMeshName->setText(QString::fromStdString(m_MeshNode->GetName()));
     ui->labelMeshType->setText(QString::fromStdString(m_MeshType));
+    ui->checkBoxShowModel->setChecked(false);
     if(m_ModelNode.IsNotNull())
+    {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+        if(m_ModelNode->IsVisible(NULL))
+            ui->checkBoxShowModel->setChecked(true);
+    }
     else
         ui->labelModelName->setText("No model found");
 
@@ -1323,14 +1332,14 @@ void svMeshEdit::UpdateTetGenGUI()
     m_TableModelDomains->clear();
 
     QStringList domainsListHeaders;
-    domainsListHeaders << "Type" << "Local Size" << "Location(x y z)";
+    domainsListHeaders << "Type" << "SubDomain\nSize" << "Location\n(x y z)";
     m_TableModelDomains->setHorizontalHeaderLabels(domainsListHeaders);
     m_TableModelDomains->setColumnCount(3);
 
     ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
-    ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
-    ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
     ui->tableViewDomains->horizontalHeader()->resizeSection(0,120);
+    ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    ui->tableViewDomains->horizontalHeader()->resizeSection(0,100);
     ui->tableViewDomains->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     ui->tableViewDomains->horizontalHeader()->resizeSection(0,80);
 
@@ -2385,10 +2394,19 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
-    solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
+    std::string resultFileString = resultFile.toStdString();
+    std::string resultPathName;
+    int split = resultFileString.find_last_of("/\\");
+    if (split < 0)
+      resultPathName = ".";
+    else
+      resultPathName = resultFileString.substr(0, split);
 
-    if(!adaptor->WriteAdaptedSolution(solutionFilePath.toStdString()))
+    //QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
+    //solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
+    std::string solutionFileName = resultPathName + "/adapted-restart." + endStep.toStdString() + ".1";
+
+    if(!adaptor->WriteAdaptedSolution(solutionFileName))
     {
         QMessageBox::warning(m_Parent,"Error","Failed in writing adapted solution (restart).");
         delete adaptor;
@@ -2468,4 +2486,13 @@ QString svMeshEdit::GetMeshFolderPath()
     }
 
     return meshFolderPath;
+}
+
+void svMeshEdit::ShowModel(bool checked)
+{
+    if(m_ModelNode.IsNotNull())
+    {
+        m_ModelNode->SetVisibility(checked);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
 }

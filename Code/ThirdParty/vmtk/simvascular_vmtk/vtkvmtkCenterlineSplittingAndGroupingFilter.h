@@ -10,11 +10,11 @@ Version:   $Revision: 1.7 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -28,12 +28,12 @@ Version:   $Revision: 1.7 $
 #include "vtkPolyDataAlgorithm.h"
 //#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
-  
+
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupingFilter : public vtkPolyDataAlgorithm
 {
-  public: 
+  public:
   vtkTypeMacro(vtkvmtkCenterlineSplittingAndGroupingFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkSetStringMacro(RadiusArrayName);
   vtkGetStringMacro(RadiusArrayName);
@@ -69,14 +69,14 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupi
 
   protected:
   vtkvmtkCenterlineSplittingAndGroupingFilter();
-  ~vtkvmtkCenterlineSplittingAndGroupingFilter();  
+  ~vtkvmtkCenterlineSplittingAndGroupingFilter();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId) = 0;
 
   virtual void GroupTracts(vtkPolyData* input, vtkPolyData* centerlineTracts);
-  
+
   void CoincidentExtremePointGroupTracts(vtkPolyData* input, vtkPolyData* centerlineTracts, bool first = true);
   void PointInTubeGroupTracts(vtkPolyData* input, vtkPolyData* centerlineTracts);
 

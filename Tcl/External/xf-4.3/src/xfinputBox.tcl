@@ -213,7 +213,7 @@ proc XFInputBoxInternal {xfInputBoxMessage xfInputBoxCommandOk xfInputBoxCommand
 
     $xfInputBox(toplevelName).frame1.input insert 0 \
       $xfInputBox($xfInputBox(toplevelName),inputOne)
-    
+
     # bindings
     bind $xfInputBox(toplevelName).frame1.input <Return> "
       global xfInputBox
@@ -224,7 +224,7 @@ proc XFInputBoxInternal {xfInputBoxMessage xfInputBoxCommandOk xfInputBoxCommand
         catch {destroy $xfInputBox(toplevelName)}
       }
       $xfInputBoxCommandOk"
-    
+
     # packing
     pack append $xfInputBox(toplevelName).frame1 \
                 $xfInputBox(toplevelName).frame1.hscroll {bottom fill} \
@@ -281,7 +281,7 @@ proc XFInputBoxInternal {xfInputBoxMessage xfInputBoxCommandOk xfInputBoxCommand
                 $xfInputBox(toplevelName).frame1.hscroll {bottom fillx} \
                 $xfInputBox(toplevelName).frame1.input {left fill expand}
   }
-  
+
   button $xfInputBox(toplevelName).frame0.button0 \
     -text "OK" \
     -command "

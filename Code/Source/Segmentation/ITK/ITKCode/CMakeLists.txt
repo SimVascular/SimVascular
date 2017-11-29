@@ -6,7 +6,7 @@ set(HDRS itkVascularPhaseOneLevelSetFunction.hxx
 
 if(SV_INSTALL_HEADERS)
 	install(FILES ${HDRS}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/plugins/itk/levelset COMPONENT PluginHeaders
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
 

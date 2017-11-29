@@ -10,11 +10,11 @@ Version:   $Revision: 1.4 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -40,7 +40,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldSteepestDescent :
 {
   public:
   vtkTypeMacro(vtkvmtkNonManifoldSteepestDescent,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkNonManifoldSteepestDescent *New();
 
@@ -51,9 +51,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldSteepestDescent :
 
   vtkSetMacro(Direction,int);
   vtkGetMacro(Direction,int);
-  void SetDirectionToDownward() 
+  void SetDirectionToDownward()
   {this->SetDirection(VTK_VMTK_DOWNWARD); }
-  void SetDirectionToUpward() 
+  void SetDirectionToUpward()
   {this->SetDirection(VTK_VMTK_UPWARD); }
 
   protected:

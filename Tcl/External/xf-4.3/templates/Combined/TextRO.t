@@ -11,11 +11,11 @@ global symbolicName
     -borderwidth 2 \
     -wrap {none}
   # bindings
-  bind .text1 <Any-Key> {NoFunction} 
+  bind .text1 <Any-Key> {NoFunction}
 
   # pack widgets
   pack append . \
-    .text1   {top fill frame center} 
+    .text1   {top fill frame center}
 
 # end of widget tree
 

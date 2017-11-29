@@ -14,7 +14,7 @@ MITK_BINDIRS = $(MITK_BINDIR)/bin
 SV_MITK_SO_PATH = "$(MITK_LIBDIRS):$(MITK_BINDIRS):$(SV_MITK_PLUGIN_PATH)"
 MITK_DLLS    = $(MITK_BINDIRS)/*.$(SOEXT)
 
-MITK_SYS_LIBS  = 
+MITK_SYS_LIBS  =
 
 # Poco needs?
 
@@ -104,7 +104,7 @@ MITK_INCDIRS += $(MITK_PLUGIN_INCDIRS)
 MITK_PLUGIN_LIBS += \
              $(LIBFLAG)org_mitk_gui_qt_application$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_datamanager$(LIBLINKEXT) \
-             $(LIBFLAGorg_mitk_gui_qt_stdmultiwidgeteditor$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_stdmultiwidgeteditor$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_ext$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_common$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_common$(LIBLINKEXT) \
@@ -158,3 +158,5 @@ MITK_LIBS += \
            $(LIBFLAG)PocoZip$(LIBLINKEXT) \
            $(LIBFLAG)PocoUtil$(LIBLINKEXT) \
            $(LIBFLAG)CppMicroServices$(LIBLINKEXT)
+
+MITK_LIBS += $(MITK_PLUGIN_LIBS)

@@ -1,7 +1,7 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                         University of California, San Diego.
@@ -10,19 +10,19 @@
 # Charles Taylor, Nathan Wilson, Ken Wang.
 #
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
+# contributors to the source code.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -31,7 +31,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-#===========================================================================    
+#===========================================================================
 
 # -------------
 # vis_nodeSetup
@@ -52,7 +52,7 @@ proc vis_nodeSetup {ren} {
     vtkSphereSource $vs\_sphere_$ren
     $vs\_sphere_$ren SetRadius 0.1
     $vs\_sphere_$ren Update
-    
+
     vtkAppendPolyData $vs\_append_$ren
 
     vtkGlyph3D $vs\_glyph_$ren
@@ -76,7 +76,7 @@ proc vis_nodeSetup {ren} {
     $vs\_mapper_$ren SetScalarVisibility 0
     $vs\_mapper_$ren SetInputConnection \
 	    [$vs\_transformFilter_$ren GetOutputPort]
-    
+
     vtkActor $vs\_actor_$ren
     $vs\_actor_$ren SetMapper $vs\_mapper_$ren
     [$vs\_actor_$ren GetProperty] SetDiffuseColor 0.3 0.3 0.3
@@ -229,7 +229,7 @@ proc vis_nodeRmAll {ren} {
     catch {$vs\_glyph_$ren Delete}
     catch {$vs\_append_$ren Delete}
     catch {$vs\_sphere_$ren Delete}
- 
+
 }
 
 
@@ -243,7 +243,7 @@ proc vis_nodeSetColor {ren r g b} {
 	[$act GetProperty] SetDiffuseColor $r $g $b
 	vis_render $ren
     }
-}	
+}
 
 
 # ------------------------

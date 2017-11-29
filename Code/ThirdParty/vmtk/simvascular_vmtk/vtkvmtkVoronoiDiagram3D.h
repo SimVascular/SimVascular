@@ -10,11 +10,11 @@ Version:   $Revision: 1.4 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -35,9 +35,9 @@ class vtkUnstructuredGrid;
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkVoronoiDiagram3D : public vtkPolyDataAlgorithm
 {
-  public: 
+  public:
   vtkTypeMacro(vtkvmtkVoronoiDiagram3D,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkVoronoiDiagram3D *New();
 
@@ -56,7 +56,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkVoronoiDiagram3D : public vt
 
   protected:
   vtkvmtkVoronoiDiagram3D();
-  ~vtkvmtkVoronoiDiagram3D();  
+  ~vtkvmtkVoronoiDiagram3D();
 
   int FillInputPortInformation(int, vtkInformation *info);
 

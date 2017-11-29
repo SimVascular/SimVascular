@@ -17,14 +17,14 @@ directory tree named "xf/...". The installation procedure
 will not copy the XF files to another location. When the
 distribution is unpacked, you have to configure the
 src/xfmain.tcl file. The file contains some path names
-that must correspond to your system. 
+that must correspond to your system.
 
 
 Installing the help pages:
 --------------------------
 The XF package comes with preformatted html online
 documentation. You will need an HTML browser to show
-it. 
+it.
 
 Using:
 ------
@@ -53,7 +53,7 @@ to support software configuration management in a UNIX
 environment. It consists of a set of version and attribute
 control commands and a building tool ("shape"). It should be
 installed on every "good" system :-). Shape is available at
-ftp.cs.tu-berlin.de. 
+ftp.cs.tu-berlin.de.
 
 Bugs:
 -----

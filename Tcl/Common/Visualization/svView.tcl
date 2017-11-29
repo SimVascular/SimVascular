@@ -1,7 +1,7 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                         University of California, San Diego.
@@ -10,19 +10,19 @@
 # Charles Taylor, Nathan Wilson, Ken Wang.
 #
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
+# contributors to the source code.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -31,7 +31,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-#===========================================================================    
+#===========================================================================
 
 # --------
 # svView
@@ -167,7 +167,7 @@ proc generalView args {
           puts "          is being ignored in generalView."
           continue
       }
-      
+
 
       if {[repos_type -obj $i] != "SolidModel" && \
           [repos_type -obj $i] != "PolyData" && \
@@ -178,7 +178,7 @@ proc generalView args {
         continue
       }
 
-      lappend workObjs $i 
+      lappend workObjs $i
     }
   }
 
@@ -187,10 +187,10 @@ proc generalView args {
     puts "          generalView, nothing done."
     return
   }
- 
 
-   
-  # Create tmp vtkPolyData sets for SolidModel objects 
+
+
+  # Create tmp vtkPolyData sets for SolidModel objects
   # needed by code below.
 
   # workPDS contains the working list of vtk pointers to vtkPolyDataSets.
@@ -220,9 +220,9 @@ proc generalView args {
     } else {
       puts "Error:  Object $i not of type PolyData or SolidModel."
       return
-    } 
+    }
   }
- 
+
   # default to black for background color
   set bgcolor black
 
@@ -232,7 +232,7 @@ proc generalView args {
     set curObj [lindex $workObjs $i]
     set curRepObj [lindex $workRepPD $i]
 
-    # get color from keys defined on solid object, 
+    # get color from keys defined on solid object,
     # default to blue otherwise.
 
     if {[lsearch [repos_getLabelKeys -obj $curObj] color] == -1} {
@@ -272,18 +272,18 @@ proc generalView args {
 
     [$actor_curRepObj GetProperty] SetColor \
 	[lindex $rgb 0] [lindex $rgb 1] [lindex $rgb 2]
-     
+
     if {[lsearch [repos_getLabelKeys -obj $curObj] opacity] == -1} {
       [$actor_curRepObj GetProperty] SetOpacity 1.0
-    } else { 
+    } else {
       set opacity [repos_getLabel -obj $curObj -key opacity]
-      [$actor_curRepObj GetProperty] SetOpacity $opacity    
+      [$actor_curRepObj GetProperty] SetOpacity $opacity
     }
 
     if {[lsearch [repos_getLabelKeys -obj $curObj] width] != -1} {
       set width [repos_getLabel -obj $curObj -key width]
       [$actor_curRepObj GetProperty] SetLineWidth $width
-     } 
+     }
 
     if {[lsearch [repos_getLabelKeys -obj $curObj] background] != -1} {
       set bgcolor [repos_getLabel -obj $curObj -key background]
@@ -309,7 +309,7 @@ proc generalView args {
   foreach i $workObjs {
     if {[repos_type -obj $i] == "SolidModel"} {
       repos_delete -obj /tmp/svView/$i
-    } 
+    }
   }
 
   # update display

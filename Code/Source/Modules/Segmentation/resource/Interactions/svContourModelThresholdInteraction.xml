@@ -2,27 +2,27 @@
 
   <state name="Start" startstate="true">
     <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="UpdateDrawing">
-      <condition name="on_contour_plane" />
+      <condition name="at_valid_location" />
       <action name="start_drawing" />
     </transition>
 
-<!--    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="Start">
-      <condition name="on_contour_plane" inverted="true"/>
-    </transition>-->
   </state>
 
   <state name="UpdateDrawing">
     <transition event_class="MouseMoveEvent" event_variant="PrimaryButtonPressedAndMouseMove" target="UpdateDrawing" >
-      <condition name="on_contour_plane" />
+<!--      <condition name="on_contour_plane" />-->
       <action name="update_drawing" />
     </transition>
 
-    <transition event_class="MouseReleaseEvent" event_variant="PrimaryButtonReleased" target="Final" >
+    <transition event_class="MouseReleaseEvent" event_variant="PrimaryButtonReleased" target="Start" >
+      <condition name="on_contour_plane" />
       <action name="finish_drawing" />"
     </transition>
-  </state>
 
-  <state name="Final">
+    <transition event_class="MouseReleaseEvent" event_variant="PrimaryButtonReleased" target="Start" >
+      <condition name="on_contour_plane" inverted="true" />
+      <action name="clear_drawing" />"
+    </transition>
   </state>
 
 </statemachine>

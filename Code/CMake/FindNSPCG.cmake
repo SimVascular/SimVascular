@@ -104,7 +104,7 @@ if (NOT ${proj}_NUMLIBS EQUAL ${proj}_NUMLIBS_EXPECTED)
 	set(${proj}_LIBRARIES_WORK "${proj}_LIBRARIES-NOTFOUND")
 endif()
 
-set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING 
+set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING
 	"${proj} libraries to link against" FORCE)
 
 #-----------------------------------------------------------------------------
@@ -121,11 +121,11 @@ elseif(WIN32 AND IS64)
 	set(inc_sub_path "")
 elseif(WIN32 AND NOT IS64)
 	set(inc_sub_path "")
-endif()		
+endif()
 
 set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_EXTRA_PATHS}
 	"${${proj}_PATH}/${inc_sub_path}"
-	)	
+	)
 
 #-----------------------------------------------------------------------------
 # Add windows Specific Search Paths
@@ -149,7 +149,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Handle Standard Args
-find_package_handle_standard_args(${proj} DEFAULT_MSG 
+find_package_handle_standard_args(${proj} DEFAULT_MSG
 	${proj}_LIBRARIES
 	${${proj}_LIBRARIES_NAMES}
 	)

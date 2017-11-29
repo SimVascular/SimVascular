@@ -318,7 +318,7 @@ macro(simvascular_add_executable TARGET_NAME)
 	endif()
 
 	if(NOT simvascular_add_executable_NO_SCRIPT)
-		IF(simvascular_add_executable_DEV_SCRIPT_NAME)
+		if(simvascular_add_executable_DEV_SCRIPT_NAME)
 			set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
 			list(APPEND SV_SCRIPT_TARGETS_WORK "${TARGET_NAME}")
 			list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
@@ -1043,7 +1043,7 @@ function(simvascular_create_provisioning_file)
       endif()
 
       set(plugin_url "${file_url}${_plugin_location}/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
-      set(plugin_url_install "${file_url}@EXECUTABLE_DIR/../Lib/plugins/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+      set(plugin_url_install "${file_url}@EXECUTABLE_DIR/../lib/plugins/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
       set(out_var "${out_var}START ${plugin_url}\n")
       set(out_var_install "${out_var_install}START ${plugin_url_install}\n")
@@ -1077,22 +1077,30 @@ endmacro()
 function(simvascular_install_external project_name)
 
   if(${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION)
-    set(LIB_DESTINATION "${SV_EXTERNALS_INSTALL_PREFIX}")
+    set(INSTALL_DESTINATION "${SV_EXTERNALS_INSTALL_PREFIX}")
   else()
-    set(LIB_DESTINATION "${SV_EXTERNALS_${proj}_INSTALL_PREFIX}")
+    set(INSTALL_DESTINATION "${SV_EXTERNALS_${proj}_INSTALL_PREFIX}")
   endif()
   if(EXISTS ${SV_${proj}_DIR})
     if(EXISTS ${SV_${proj}_DIR}/lib)
-      install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${LIB_DESTINATION}
+      install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${INSTALL_DESTINATION}
         USE_SOURCE_PERMISSIONS
         COMPONENT ExternalLibraries)
     endif()
     if(EXISTS ${SV_${proj}_DIR}/bin)
-      install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION}
+      install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${INSTALL_DESTINATION}
         USE_SOURCE_PERMISSIONS
         COMPONENT ExternalExecutables
         PATTERN "designer" EXCLUDE
         )
+    endif()
+    if(SV_EXTERNALS_INSTALL_HEADERS)
+      if(EXISTS ${SV_${proj}_DIR}/include)
+        install(DIRECTORY ${SV_${proj}_DIR}/include DESTINATION ${INSTALL_DESTINATION}
+          USE_SOURCE_PERMISSIONS
+          COMPONENT ExternalHeaders
+          )
+      endif()
     endif()
   endif()
 
@@ -1199,12 +1207,14 @@ endmacro()
 
 #-----------------------------------------------------------------------------
 macro(simvascular_property_list_find_and_replace TARGET PROPERTY VALUE NEWVALUE)
-  get_target_property(_LIST_VAR ${TARGET} ${PROPERTY})
-  if("${_LIST_VAR}" STREQUAL "_LIST_VAR-NOTFOUND")
-    dev_message("Property list find and replace, property ${PROPERTY} not found")
-  else()
-    simvascular_list_find_and_replace(_LIST_VAR "${VALUE}" ${NEWVALUE})
-    set_target_properties(${TARGET} PROPERTIES ${PROPERTY} "${_LIST_VAR}")
+  if(TARGET ${TARGET})
+    get_target_property(_LIST_VAR ${TARGET} ${PROPERTY})
+    if("${_LIST_VAR}" STREQUAL "_LIST_VAR-NOTFOUND")
+      dev_message("Property list find and replace, property ${PROPERTY} not found")
+    else()
+      simvascular_list_find_and_replace(_LIST_VAR "${VALUE}" ${NEWVALUE})
+      set_target_properties(${TARGET} PROPERTIES ${PROPERTY} "${_LIST_VAR}")
+    endif()
   endif()
 endmacro()
 #-----------------------------------------------------------------------------
@@ -1259,6 +1269,7 @@ macro(simvascular_today YEAR MONTH DAY)
   if(WIN32)
     execute_process(COMMAND "cmd" " /C date /T" OUTPUT_VARIABLE RESULT)
     string(REGEX REPLACE "(..)/(..)/(....).*" "\\3;\\2;\\1" RESULT ${RESULT})
+    #string(REGEX REPLACE ".* (..)/(..)/(....).*" "\\3;\\2;\\1" RESULT ${RESULT})
   elseif(UNIX)
     execute_process(COMMAND "date" "+%d/%m/%Y" OUTPUT_VARIABLE RESULT)
     string(REGEX REPLACE "(..)/(..)/(....).*" "\\3;\\2;\\1" RESULT ${RESULT})

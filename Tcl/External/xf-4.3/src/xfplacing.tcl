@@ -303,7 +303,7 @@ proc XFPlacing {xfW xfType xfClass {xfLeader ""}} {
   label .xfPlacing$xfClass.frame2.children.widgets.message6 \
     -text {Masters:}
   pack before .xfPlacing$xfClass.frame2.children.widgets.vscroll \
-              .xfPlacing$xfClass.frame2.children.widgets.message6 {top fillx}  
+              .xfPlacing$xfClass.frame2.children.widgets.message6 {top fillx}
 
   XFTmpltListbox .xfPlacing$xfClass.frame2.children childs
 
@@ -345,7 +345,7 @@ proc XFPlacing {xfW xfType xfClass {xfLeader ""}} {
     XFBindSelectOne %W %y"
   bind .xfPlacing$xfClass.frame2.children.widgets.widgets <Shift-Button1-Motion> "
     XFBindSelectOne %W %y"
-  
+
   bind .xfPlacing$xfClass.frame2.children.childs.childs <ButtonPress-1> "
     XFBindSelectOne %W %y
     XFPlacingGetPlacing $xfW $xfClass"
@@ -357,7 +357,7 @@ proc XFPlacing {xfW xfType xfClass {xfLeader ""}} {
   bind .xfPlacing$xfClass.frame2.children.childs.childs <Shift-Button1-Motion> "
     NoFunction"
 
-  # packing  
+  # packing
   pack append .xfPlacing$xfClass.frame1 \
               .xfPlacing$xfClass.frame1.ok {left fill expand} \
               .xfPlacing$xfClass.frame1.apply {left fill expand} \

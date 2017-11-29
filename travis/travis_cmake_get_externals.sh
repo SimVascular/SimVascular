@@ -21,7 +21,7 @@ elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
 then
   export CC="clang"
   export CXX="clang++"
-  export Qt5_DIR="/opt/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
+  export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 fi
 
 #cmake

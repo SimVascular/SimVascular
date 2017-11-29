@@ -29,7 +29,7 @@
  #=========================================================================#
 
 #-----------------------------------------------------------------------------
-# Plugin - VMTK
+# ThirdParty - VMTK
 #-----------------------------------------------------------------------------
 set(lib ${SV_LIB_THIRDPARTY_VMTK_NAME})
 LIST(APPEND PLUGINLIBS ${lib})
@@ -55,7 +55,7 @@ set(CXXSRCS vtkvmtkBoundaryLayerGenerator.cxx
   vtkvmtkPolyDataCenterlineGroupsClipper.cxx vtkvmtkMergeCenterlines.cxx
   vtkvmtkCenterlineBifurcationReferenceSystems.cxx vtkvmtkReferenceSystemUtilities.cxx
 	)
-SET(HD vtkvmtkAppendFilter.h
+SET(HDRS vtkvmtkAppendFilter.h
 	vtkvmtkBoundaryLayerGenerator.h vtkvmtkBoundaryReferenceSystems.h
 	vtkvmtkCapPolyData.h vtkvmtkConfigure.h
 	vtkvmtkConstants.h vtkvmtkDataSetItem.h
@@ -89,13 +89,13 @@ target_link_libraries(${lib}
 	)
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ThirdPartyExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ThirdPartyLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ThirdPartyLibraries
 		)
 endif()
 if(SV_INSTALL_HEADERS)
 	install(FILES ${HDRS}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/plugins/vmtk COMPONENT PluginHeaders
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/vmtk COMPONENT ThirdPartyHeaders
 		)
 endif()

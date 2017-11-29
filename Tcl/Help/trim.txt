@@ -1,10 +1,10 @@
 # Trimming a PolyData Model
 
 ## Cut Surface
-        
+
 	* Cut with plane -> check on “Show Plane Interactor”
-        move the interactor to the desired position and click “Cut Above” or “Cut Below” 
-                This will cut either above or below the entire plane depending on its orientation shown by the arrows 
+        move the interactor to the desired position and click “Cut Above” or “Cut Below”
+                This will cut either above or below the entire plane depending on its orientation shown by the arrows
 
         * Cut with box -> check on “Show Box Interactor”
                 expand the box in any direction by clicking and dragging the grey spheres that appear

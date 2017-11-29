@@ -33,7 +33,7 @@ proc XFFSBox {{xfFSBoxMessage "Select file:"} {xfFSBoxFileName ""} {xfFSBoxActio
 # Returns: the filename that was selected, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global xfFSBox(activeBackground) - active background color
 # global xfFSBox(activeForeground) - active foreground color
 # global xfFSBox(background) - background color
@@ -262,7 +262,7 @@ proc XFFSBox {{xfFSBoxMessage "Select file:"} {xfFSBoxFileName ""} {xfFSBoxActio
   catch ".xfFSBox.pattern.pattern config $tmpMessageOpt"
 
   .xfFSBox.pattern.pattern insert 0 $xfFSBox(pattern)
-  
+
   frame .xfFSBox.files \
     -borderwidth 0 \
     -relief raised
@@ -302,7 +302,7 @@ proc XFFSBox {{xfFSBoxMessage "Select file:"} {xfFSBoxFileName ""} {xfFSBoxActio
 
   .xfFSBox.file.file delete 0 end
   .xfFSBox.file.file insert 0 $xfFSBox(name)
-  
+
   checkbutton .xfFSBox.pattern.all \
     -offvalue 0 \
     -onvalue 1 \
@@ -403,7 +403,7 @@ proc XFFSBox {{xfFSBoxMessage "Select file:"} {xfFSBoxFileName ""} {xfFSBoxActio
     pack append .xfFSBox.frame2 \
                 .xfFSBox.frame2.scrollbar1 {left filly} \
                 .xfFSBox.frame2.canvas2 {top expand fill} \
-                .xfFSBox.frame2.scrollbar3 {top fillx} 
+                .xfFSBox.frame2.scrollbar3 {top fillx}
 
     pack append .xfFSBox \
                 .xfFSBox.message1 {top fill} \
@@ -836,7 +836,7 @@ proc XFFSBoxFSShow {xfFSBoxPath xfFSBoxPattern xfFSBoxAll} {# xf ignore me 6
   if {$xfFSBox(extensions)} {
     .xfFSBox.pattern.patterns.patterns.menu add separator
   }
-  if {$xfFSBox(extensions) || 
+  if {$xfFSBox(extensions) ||
       "[.xfFSBox.pattern.patterns.patterns.menu index last]" == "none"} {
     .xfFSBox.pattern.patterns.patterns.menu add checkbutton \
       -label "Scan extensions" \

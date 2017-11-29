@@ -3,7 +3,7 @@
 
 #include <svModelExports.h>
 
-#include "svModelElement.h";
+#include "svModelElement.h"
 #include <map>
 
 class SVMODEL_EXPORT svModelElementFactory

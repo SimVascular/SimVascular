@@ -3,10 +3,10 @@
 
 #include "svModel.h"
 #include "svSegSelectionWidget.h"
+#include "svCapSelectionWidget.h"
 #include "svModelDataInteractor.h"
 #include "svModelElementPolyData.h"
-
-#include <QmitkFunctionality.h>
+#include "svQmitkFunctionality.h"
 
 #include <vtkSphereWidget.h>
 #include <vtkPlaneWidget.h>
@@ -18,7 +18,7 @@ namespace Ui {
 class svModelEdit;
 }
 
-class svModelEdit : public QmitkFunctionality
+class svModelEdit : public svQmitkFunctionality
 {
     Q_OBJECT
 
@@ -47,9 +47,13 @@ public slots:
 
     void ShowSegSelectionWidget();
 
+    void ShowCapSelectionWidget();
+
     void UpdateGUI();
 
     void BlendModel();
+
+    void ExtractCenterlines();
 
     void UpdateFaceListSelection();
 
@@ -160,6 +164,8 @@ protected:
     mitk::DataNode::Pointer m_ModelNode;
 
     svSegSelectionWidget* m_SegSelectionWidget;
+
+    svCapSelectionWidget* m_CapSelectionWidget;
 
     svModelDataInteractor::Pointer m_DataInteractor;
 

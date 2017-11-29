@@ -77,7 +77,7 @@ proc XFReadBox {} {# xf ignore me 5
     -borderwidth 2 \
     -relief raised
   catch ".xfReadBox.frame1 config $tmpFrameOpt"
- 
+
   button .xfReadBox.frame1.send \
     -text "Send" \
     -command {
@@ -126,7 +126,7 @@ proc XFReadBox {} {# xf ignore me 5
     -borderwidth 0\
     -relief raised
   catch ".xfReadBox.text1 config $tmpFrameOpt"
- 
+
   scrollbar .xfReadBox.text1.scrollbar1 \
     -command {.xfReadBox.text1.text1 yview} \
     -highlightthickness 0 \

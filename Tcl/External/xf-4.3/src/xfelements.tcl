@@ -170,7 +170,7 @@ proc XFElementAnchor {xfW xfRoot xfType xfClass xfFunction} {
               $xfRoot.params1.params2.anchor.label1 {top frame center} \
               $xfRoot.params1.params2.anchor.anchor {top frame center}
   pack append $xfRoot.params1.params2 \
-              $xfRoot.params1.params2.anchor {top fillx pady 6}  
+              $xfRoot.params1.params2.anchor {top fillx pady 6}
 }
 
 ##########
@@ -426,7 +426,7 @@ proc XFElementCommand {xfW xfRoot xfType {specialFlag 0}} {
               $xfRoot.params1.params2.command.label1 {top frame center} \
               $xfRoot.params1.params2.command.command {top fill expand}
   pack append $xfRoot.params1.params2 \
-              $xfRoot.params1.params2.command {top fill expand}  
+              $xfRoot.params1.params2.command {top fill expand}
 }
 
 ##########
@@ -717,7 +717,7 @@ proc XFElementInit {xfW xfRoot xfType xfClass xfFunction xfMessage xfName xfDial
       -text {Geometry} \
       -command "
         XFProcConfGeometryDefault $xfW .xf${xfClass}Config$xfDialog"
-  
+
     button $xfRoot.additional.binding \
       -text {Binding} \
       -command "
@@ -729,7 +729,7 @@ proc XFElementInit {xfW xfRoot xfType xfClass xfFunction xfMessage xfName xfDial
                 $xfRoot.additional.packing {left fill expand} \
                 $xfRoot.additional.binding {left fill expand}
   }
-  
+
   XFElementPathname $xfW $xfRoot $xfType
   if {"$xfType" == "add"} {
     $xfRoot.params1.params2.name.name insert 0 $xfName

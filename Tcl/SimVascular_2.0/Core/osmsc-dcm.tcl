@@ -5,15 +5,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -58,7 +58,7 @@ proc dcm_img_readHeader {args} {
 
   if [catch {set header [exec $dcmdump --load-short --print-all $fn]} errmsg] {
       puts "ERROR with file $fn: $errmsg"
-      return -code error "ERROR: $errmsg"   
+      return -code error "ERROR: $errmsg"
   }
 
   set list_of_header [split $header [format "\n"]]
@@ -100,7 +100,7 @@ proc dcm_img_readHeader {args} {
   set PatientSex {blank}
 
   set Modality {unkown}
-  
+
   for {set j 0} {$j < [llength $list_of_header]} {incr j} {
 
       set line [string trim [lindex $list_of_header $j]]
@@ -176,7 +176,7 @@ proc dcm_img_readHeader {args} {
   if {$gOptions(image_data_type) == "GE_MR_DICOM"} {
     if [catch {set header [exec $gdcmdump $fn]} errmsg] {
       puts "ERROR with file $i: $errmsg"
-      return -code error "ERROR: $errmsg"   
+      return -code error "ERROR: $errmsg"
     }
 
     set list_of_header [split $header [format "\n"]]
@@ -423,7 +423,7 @@ proc dcm_img_readSlice {fn} {
 #
 
 proc dicom_generateUID {} {
-  
+
    set SITE_INSTANCE_UID_ROOT 1.2.276.0.7230010.3
    set hostid [expr int(rand()*pow(2,31))]
    set uid "$SITE_INSTANCE_UID_ROOT.1.2.$hostid.[pid].[clock seconds].[expr int(rand()*65535)]"
@@ -721,7 +721,7 @@ proc dicom_findMaxMinFromHeaders {filenames rtnMinPt rtnMaxPt} {
 proc dicom_sortCardiacFiles {filenames rmHDRflag} {
 
   set numProblems 0
-  
+
   global positions
   catch {unset positions}
   global mapPositions
@@ -765,16 +765,16 @@ proc dicom_sortCardiacFiles {filenames rmHDRflag} {
 	  set Image_Position [lindex [split $line {[]}] end-1]
       }
     }
-  
+
     global positions
-    lappend positions($Image_Position) $Instance_Number 
-    global mapPositions 
+    lappend positions($Image_Position) $Instance_Number
+    global mapPositions
     set mapPositions($Instance_Number) $Image_Position
 
     #if {$Image_Position == ""} {
     #   return -code error "No image position in header!"
     #}
-   
+
     if {($Image_Position == "") || ($Study_ID == "") ||  \
         ($Series_Number == "") || ($Instance_Number == "")} {
       puts "ERROR finding required header info:"
@@ -842,7 +842,7 @@ proc dicom_sortCardiacFiles {filenames rmHDRflag} {
 proc dicom_sortFiles {filenames args} {
 
   set numProblems 0
-  
+
   global gExternalPrograms
   set dcmdump $gExternalPrograms(dcmdump)
 
@@ -953,7 +953,7 @@ proc dicom_sortFiles {filenames args} {
 
     set seriesDir [file join $Study_ID $Study_Date [format "%03i" $Series_Number] $Series_Instance_UID]
     set imageFileName [file join $seriesDir I.[format "%04i" $Instance_Number].dcm]
- 
+
     file mkdir $seriesDir
 
     if [catch {file copy $i $imageFileName} msg] {
@@ -1003,7 +1003,7 @@ proc dicom_summary {dirnames outFn} {
        puts "Not a directory ($i), ignored!"
        continue
     }
-  
+
     if [catch {set fns [glob $i/*.dcm]}] {
        puts "No images found in ($i), ignored"
        continue

@@ -196,7 +196,7 @@ void itkGenerateFeatureImageNoGrad(TImageType* itkInputImage,
 			rescaleFilter->SetOutputMinimum(-255);
 			rescaleFilter->SetOutputMaximum(255);
 			rescaleFilter->Update();
-			itkDeepCopy<TImageType>(itkInputImage,outImage);	
+			itkDeepCopy<TImageType>(itkInputImage,outImage);
 		}
 	}
 	catch( itk::ExceptionObject & err )
@@ -226,7 +226,7 @@ void itkGenerateFeatureImageDistance(TImageType* itkInputImage,
 	typedef itk::AbsImageFilter<TImageType,TImageType> AbsFilterType;
 	typedef itk::BinaryThresholdImageFilter<TImageType,TImageType> ThresholdFilterType;
 	typedef itk::BinaryContourImageFilter<TImageType,TImageType> ContourFilterType;
-	
+
 
 	typedef itk::CastImageFilter<TImageType,floatImageType> InputCastType;
 	typedef itk::CastImageFilter<floatImageType,TImageType> OutputCastType;

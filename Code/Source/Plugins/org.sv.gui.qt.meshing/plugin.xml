@@ -8,7 +8,7 @@
           icon="resources/mesh.png" />
   </extension>
 
-  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
     <contextMenuAction nodeDescriptorName="svMeshFolder" label="Create Mesh" icon="" class="svMeshCreateAction" />
     <contextMenuAction nodeDescriptorName="svMitkMesh" label="Export Mesh-Complete" icon="" class="svMeshLegacySaveAction" />
     <contextMenuAction nodeDescriptorName="svMitkMesh" label="Load/Unload Surface Mesh" icon="" class="svMeshLoadSurfaceAction" />

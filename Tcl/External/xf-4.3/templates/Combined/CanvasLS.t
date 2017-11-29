@@ -36,11 +36,11 @@ global symbolicName
   pack append .frame0 \
     .frame0.scrollbar1   {left frame center filly} \
     .frame0.canvas2   {top frame center expand fill} \
-    .frame0.scrollbar3   {top frame center fillx} 
+    .frame0.scrollbar3   {top frame center fillx}
 
   # pack widgets
   pack append . \
-    .frame0   {top fill frame center} 
+    .frame0   {top fill frame center}
 
 # end of widget tree
 

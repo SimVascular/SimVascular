@@ -32,6 +32,8 @@ protected:
 
     //  Actions //
 
+    void GetPosition(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
     void AddSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
 
     void AddEndSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
@@ -57,6 +59,8 @@ private:
     svSeg3DParam* m_Param;
 
     svSeed* m_Seed;
+
+    mitk::Point3D m_CurrentPickedPoint;
 
     double m_MinRadius;
 

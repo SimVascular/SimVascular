@@ -1,0 +1,26 @@
+# Set release mode
+export SV_RELEASED_MODE=@RELEASE_MODE@
+
+# Load custom plugins and paths if file present
+if [ -e ~/Library/Application\ Support/SimVascular/simvascular_custom_plugins.sh ]
+then
+  source ~/Library/Application\ Support/SimVascular/simvascular_custom_plugins.sh
+fi
+
+# Run the executable
+case "$SV_BATCH_MODE" in
+"1")
+case "$*" in
+"")
+$SV_HOME/bin/@SV_EXE@ -tcl
+;;
+*)
+$SV_HOME/bin/@SV_EXE@ $* -tcl
+;;
+esac
+;;
+*)
+@GDB@ @GDB_FLAGS@ $SV_HOME/bin/@SV_EXE@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
+;;
+esac
+

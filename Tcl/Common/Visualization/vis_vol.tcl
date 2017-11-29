@@ -1,5 +1,5 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                           University of California, San Diego.
 #
@@ -9,19 +9,19 @@
 # Charles Taylor, Nathan Wilson, Ken Wang.
 #
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
+# contributors to the source code.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -105,7 +105,7 @@ proc vis_volRepos {renWin objName} {
   if {0 == 1} {
   set unaccelerated true
   if {$gOptions(vis_vol_render_method) == "texture3d"} {
-    # See if we have hardware acceleration    
+    # See if we have hardware acceleration
     vtkVolumeTextureMapper3D $volumeMapper
     $volumeMapper SetInputDataObject [$caster GetOutput]
 
@@ -122,7 +122,7 @@ proc vis_volRepos {renWin objName} {
       puts "  Switching to default 2D texture mapping volume rendering."
     }
   }
-  
+
   if {$unaccelerated} {
     if {$gOptions(vis_vol_render_method) == "texture"} {
       # use texture map volume renderer
@@ -140,7 +140,7 @@ proc vis_volRepos {renWin objName} {
       vtkVolumeProMapper $volumeMapper
       $volumeMapper SetBlendModeToComposite
     }
-  
+
     $volumeMapper SetInputDataObject [$caster GetOutput]
   }
   }

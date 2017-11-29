@@ -4,12 +4,12 @@
 
 parse_reg_dir()
 {
-reg query "$1" /v $2 | sed ':a;N;$!ba;s/\n//g;s+\\+/+g' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}' | awk '{$1="";$2="";$3="";print}' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}'
+reg query "$1" /v $2 | sed ':a;N;$!ba;s/\n//g;s/\r//g;s+\\+/+g' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}' | awk '{$1="";$2="";$3="";print}' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}'
 }
 
 parse_reg_dir_with_extra_space()
 {
-reg query "$1" /v $2 | sed ':a;N;$!ba;s/\n//g;s+\\+/+g' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}' | awk '{$1="";$2="";$3="";$4="";print}' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}'
+reg query "$1" /v $2 | sed ':a;N;$!ba;s/\n//g;s/\r//g;s+\\+/+g' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}' | awk '{$1="";$2="";$3="";$4="";print}' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}'
 }
 
 export VS100COMNTOOLS=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VS7 10.0`/Common7/Tools
@@ -42,7 +42,7 @@ PATH=`cygpath "$WindowsSdkDir/bin/NETFX 4.0 Tools/x64"`\:`cygpath "$WindowsSdkDi
 
 INCLUDE=$WindowsSdkDir/include\;$INCLUDE
 LIB=$WindowsSdkDir/lib/x64\;$LIB
-	
+
 #PATH=$WindowsSdkDir/bin/x64:$PATH
 #INCLUDE=`cygpath -m "$WindowsSdkDir\Include"`\;$INCLUDE
 #echo $INCLUDE

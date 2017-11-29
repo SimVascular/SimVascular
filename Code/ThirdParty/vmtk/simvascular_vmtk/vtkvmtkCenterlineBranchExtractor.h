@@ -10,11 +10,11 @@ Version:   $Revision: 1.5 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -28,18 +28,18 @@ Version:   $Revision: 1.5 $
 #include "vtkvmtkCenterlineSplittingAndGroupingFilter.h"
 //#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
-  
+
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBranchExtractor : public vtkvmtkCenterlineSplittingAndGroupingFilter
 {
-  public: 
+  public:
   vtkTypeMacro(vtkvmtkCenterlineBranchExtractor,vtkvmtkCenterlineSplittingAndGroupingFilter);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkCenterlineBranchExtractor *New();
-  
+
   protected:
   vtkvmtkCenterlineBranchExtractor();
-  ~vtkvmtkCenterlineBranchExtractor();  
+  ~vtkvmtkCenterlineBranchExtractor();
 
   virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId);
   virtual void GroupTracts(vtkPolyData* input, vtkPolyData* centerlineTracts);

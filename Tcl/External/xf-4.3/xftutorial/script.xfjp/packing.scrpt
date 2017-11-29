@@ -15,7 +15,7 @@ set packingText0 {\
 ウの残りの空間の中で、いずれかの辺に沿って配置され
 て行きます。
 
-基本的な概念を理解していただくために、まずは pack 
+基本的な概念を理解していただくために、まずは pack
 で指定することのできるオプションを使ってみましょう。}
 
 set packingCommand0 {\
@@ -37,8 +37,8 @@ button .frame.frame1.button3 -text .frame1.button3
 button .frame.frame2.button1 -text .frame2.button1
 button .frame.frame2.button2 -text .frame2.button2
 button .frame.frame2.button3 -text .frame2.button3
-pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top} 
-pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top} 
+pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top}
+pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top}
 pack append .frame .frame.frame1 {top} .frame.frame2 {top}
 pack append . .frame "top fill expand"
 XFPacking . config Toplevel
@@ -47,7 +47,7 @@ update idletasks}
 
 set packingName1 {pack の使い方 - left}
 set packingText1 {\
-このウィジェットの構成は、まず元になる１つの frame 
+このウィジェットの構成は、まず元になる１つの frame
 があります。その frame 上には２つの子供の frame が
 あり、さらにそれらの子供の frame 上に、それぞれ３
 つの button があります。
@@ -212,7 +212,7 @@ update idletasks}
 
 set packingName7 {pack の使い方 - その他}
 set packingText7 {\
-最後に、左の frame の１番目の button を "expand" 
+最後に、左の frame の１番目の button を "expand"
 し、さらに最大限に広げます("fill")。
 
 １番目の button が左の frame の中で、空間を最大限

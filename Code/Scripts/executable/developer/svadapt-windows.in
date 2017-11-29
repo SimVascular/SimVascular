@@ -1,7 +1,0 @@
-
-IF "%SIM_LICENSE_FILE%" == ""(
-echo "No license key for MeshSim found!!!  Exiting."
-)
-IF "%SIM_LICENSE_FILE%" NEQ ""(
-"%SV_HOME%\Bin\@SV_MESHSIM_ADAPTOR_EXE@@WIN_EXE@ %*
-)

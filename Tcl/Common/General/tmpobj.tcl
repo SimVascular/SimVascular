@@ -6,15 +6,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -35,7 +35,7 @@ proc ::obj::tmp_name {} {
   #@c Create a temporary name
   #@r next temporary name
   incr ::obj::tmp_id
-  return "tmpvtkobj-$::obj::tmp_id"  
+  return "tmpvtkobj-$::obj::tmp_id"
 }
 
 proc ::obj::new {args} {
@@ -45,7 +45,7 @@ proc ::obj::new {args} {
   set name [::obj::tmp_name]
   catch {$name Delete}
   set obj $name
-  if {$::obj::debugLevel > 0} { 
+  if {$::obj::debugLevel > 0} {
     if {[info level] == 0} {
       set ::obj::callfunc($obj) "global"
     } elseif {[info level] == 1} {
@@ -73,7 +73,7 @@ proc ::obj::delete {name} {
   #@author Nathan Wilson
   #@c Delete the object corresponding to name
   #@a name: object name to delete
-  #@note  This function does not return an error if the 
+  #@note  This function does not return an error if the
   #@note  object to be deleted does not exist
   catch {$name Delete}
   catch {unset ::obj::callfunc($name)}
@@ -95,7 +95,7 @@ proc ::obj::print {} {
 
 proc ::obj::debug {level} {
   #@author Nathan Wilson
-  #@c Set the debugging level 
+  #@c Set the debugging level
   #@a level: 0,1, 2
   set ::obj::debugLevel $level
 }

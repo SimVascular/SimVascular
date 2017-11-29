@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -38,7 +38,7 @@
 
 int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
                                   char *filename, int flag, Tcl_Interp *interp)
-{  
+{
   SplinePoints *x;
   SplinePoints *y;
   int i, j;
@@ -51,20 +51,20 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
   // Get points for each path
   for (j = 0; j < numPaths; j++)
     {
-      // get number of points from vtkPolyData file 
-      numInputPts = pd->GetNumberOfPoints(); 
+      // get number of points from vtkPolyData file
+      numInputPts = pd->GetNumberOfPoints();
 
       x = sys_geom_SplinePointsInit(numInputPts, 3);
       y = sys_geom_SplinePointsInit(numOutputPts, 3);
 
       // Remaining lines are coordinates of points
-      for (i = 0; i < numInputPts; i++) {   
+      for (i = 0; i < numInputPts; i++) {
          pt = pd->GetPoint(i);
          x->pts[i * 3] = pt[0];
          x->pts[i * 3 + 1] = pt[1];
          x->pts[i * 3 + 2] = pt[2];
       }
-      
+
       if (sys_geom_SplinePath(x, 1, numOutputPts, flag, y) == SV_ERROR) {
         sys_geom_SplinePointsDelete(x);
         sys_geom_SplinePointsDelete(y);
@@ -79,7 +79,7 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
         outfile = fopen(filename, "w");
         fprintf(outfile, "pointcount=%d\nviewinterval=1.00000\nviewwindow=25.00000\nviewcount=%d\n", numOutputPts, numOutputPts);
 
- 
+
         for (i = 0; i < num; i++) {
 	  fprintf(outfile, "p=(%f,%f,%f) t=(%f,%f,%f) tx=(%f,%f,%f)\n", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
         }
@@ -95,11 +95,11 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
           Tcl_AppendElement(interp, rtnstr);
         }
       }
-      
+
       sys_geom_SplinePointsDelete(x);
       sys_geom_SplinePointsDelete(y);
     }
-  
+
   return SV_OK;
 }
 
@@ -140,7 +140,7 @@ SplinePoints *sys_geom_SplinePointsInit(int numPts, int dimensions)
  * sys_geom_SplinePointsDelete                                         *
  * ---------------------------                                         *
  * Frees up the memory associated with the struct SplinePoints         *
- *                                                                     *   
+ *                                                                     *
  ***********************************************************************/
 
 void sys_geom_SplinePointsDelete(SplinePoints *sp)
@@ -156,7 +156,7 @@ void sys_geom_SplinePointsDelete(SplinePoints *sp)
  * sys_geom_SplineInterpolate                                          *
  * --------------------------                                          *
  * Performs spline interpolation.                                      *
- *                                                                     *   
+ *                                                                     *
  * Assumptions:  Open spline.  Results of interpolation not clamped    *
  *               to input data.                                        *
  ***********************************************************************/
@@ -173,7 +173,7 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type, int numberOfOutpu
    *     body      *
    *****************/
 
-  switch (type) 
+  switch (type)
     {
     case 1:  /* Cardinal basis */
       spline = (vtkSpline *)vtkCardinalSpline::New();
@@ -219,7 +219,7 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type, int numberOfOutpu
 
 	  switch (type)
 	    {
-	    case 1:  
+	    case 1:
 	      output->pts[dimensions * k + i] = ((vtkCardinalSpline *)spline)->Evaluate(t);
 	      break;
 
@@ -228,7 +228,7 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type, int numberOfOutpu
 	      break;
 	    }
 	}
-      
+
     }
 
   output->numPts = numberOfOutputPoints;
@@ -245,7 +245,7 @@ void sys_geom_SplineInterpolate(SplinePoints *input, int type, int numberOfOutpu
  * --------------------------                                          *
  * Computes the spline tangents and returns the tangents and their     *
  * corresponding points.                                               *
- *                                                                     *   
+ *                                                                     *
  * Assumptions:  Open spline.                                          *
  * Approach is to compute spline for many, many points and calculate   *
  * the tangent using a finite difference.                              *
@@ -274,22 +274,22 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
     numberOfTangentPoints = (ceil(500.0 / numberOfOutputPoints)) * numberOfOutputPoints;
   else
     numberOfTangentPoints = 10 * numberOfOutputPoints;
-    
+
 
   tmpSpline = sys_geom_SplinePointsInit(numberOfTangentPoints, input->dim);
   sys_geom_SplineInterpolate(input, type, numberOfTangentPoints, tmpSpline);
-  
+
   if (matchEndPoints != 0)
     interval = floor(1.0*numberOfTangentPoints / (numberOfOutputPoints - 1));
   else
     interval = floor(1.0*numberOfTangentPoints / numberOfOutputPoints);
-  
+
   /* Assume input and output have same dimensions */
   dimensions = output->dim;
 
- 
+
   for (i = 0; i < (numberOfOutputPoints - 1); i++)
-    { 
+    {
       for (j = 0; j < MAX_DIM; j++)
 	{
 	  tmpTangent[j] = 0.0;   /* Reset */
@@ -302,14 +302,14 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
 
 	  /* Copy point coordinates */
 	  output->pts[dimensions * i + j] = coordinate;
-	
+
 	  /* Compute forward difference */
 	  tmpTangent[j] = tmpSpline->pts[dimensions * (i * interval + 1) + j] - coordinate;
 	}
 
-  
+
       /* Normalize tangent */
-      
+
       err = sys_geom_NormalizeVector(tmpTangent, tmpNormTangent, MAX_DIM);
       if (err == 0)
 	{
@@ -322,10 +322,10 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
     }
 
 
-  /* 
-   * The last point just gets copied over and the tangent is based on the 
+  /*
+   * The last point just gets copied over and the tangent is based on the
    * backwards difference.
-   */  
+   */
   for (j = 0; j < MAX_DIM; j++)
     {
       tmpTangent[j] = 0.0;   /* Reset */
@@ -340,14 +340,14 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
 	coordinate = tmpSpline->pts[dimensions * (numberOfTangentPoints - 1) + j];
       else
 	coordinate = input->pts[dimensions * (input->numPts - 1) + j];
-      
- 
+
+
       output->pts[dimensions * (numberOfOutputPoints - 1) + j] = coordinate;
-      
+
       tmpTangent[j] = coordinate - tmpSpline->pts[tmpSpline->dim * (tmpSpline->numPts - 2) + j];
 
     }
-  
+
   /* Normalize tangent */
   err = sys_geom_NormalizeVector(tmpTangent, tmpNormTangent, MAX_DIM);
   if (err == 0)
@@ -355,12 +355,12 @@ int sys_geom_SplineGetTangents(SplinePoints *input, int type, int numberOfOutput
       fprintf(stderr,"Subdivision too small for computing tangents.  Decrease number of output points requested.\n");
       return SV_ERROR;
     }
-  
+
   for (j = 0; j < dimensions; j++)
     output->tangents[dimensions * (numberOfOutputPoints - 1) + j] = tmpNormTangent[j];
-  
+
   /* End code for handling last point */
-    
+
   output->numPts = numberOfOutputPoints;
   output->dim = dimensions;
 
@@ -412,7 +412,7 @@ void sys_geom_SplineGetRotVectors(SplinePoints *input)
       /* Reset */
       for (j = 0; j < MAX_DIM; j++)
 	tmpRotVector[j] = 0;
-     
+
       int replaceComp;
 
       if (fabs(input->tangents[dimensions * i + 2]) > 0.0001) {
@@ -430,7 +430,7 @@ void sys_geom_SplineGetRotVectors(SplinePoints *input)
 
       for (j = 0; j < (dimensions - 1); j++)
 	dotProduct = dotProduct + (input->tangents[dimensions * i + j] * tmpRotVector[j]);
-	
+
       tmpRotVector[replaceComp] = -dotProduct / input->tangents[dimensions * i + replaceComp];
 
       /* Now normalize vector */
@@ -468,9 +468,9 @@ int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *
 
   for (j = 0; j < sizeVector; j++)
     magnitude = magnitude + pow(input[j], 2);
-  
+
   magnitude = sqrt(magnitude);
-  
+
   if (magnitude == 0)
     {
       fprintf(stderr, "Vector cannot be normalized.  Magnitude of 0.\n");
@@ -490,7 +490,7 @@ int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *
  * -------------------                                                 *
  * Performs spline interpolation and calculates tangents and rotation  *
  * vectors for the interpolated points.                                *
- *                                                                     *   
+ *                                                                     *
  * Assumptions:  Open spline.  Results of interpolation not clamped    *
  *               to input data.                                        *
  ***********************************************************************/

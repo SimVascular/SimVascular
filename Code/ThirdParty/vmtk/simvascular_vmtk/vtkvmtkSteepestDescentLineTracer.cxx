@@ -10,11 +10,11 @@ Version:   $Revision: 1.4 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -137,11 +137,11 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
   currentPoint[1] = startingPoint[1];
   currentPoint[2] = startingPoint[2];
 
-  pointId = newPoints->InsertNextPoint(startingPoint);          
+  pointId = newPoints->InsertNextPoint(startingPoint);
 
   currentScalar = this->DescentArray->GetTuple1(seedId);
   currentRadius = this->LineDataArray->GetTuple1(seedId);
-  lineIds->InsertNextId(pointId);       
+  lineIds->InsertNextId(pointId);
 
   currentEdge[0] = seedId;
   currentEdge[1] = seedId;
@@ -183,11 +183,11 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
         currentScalar = this->DescentArray->GetTuple1(targetId);
         currentRadius = this->LineDataArray->GetTuple1(targetId);
         lineIds->InsertNextId(pointId);
-      
+
         currentEdge[0] = targetId;
         currentEdge[1] = targetId;
         currentS = 0.0;
-      
+
         newScalars->InsertTuple1(pointId,currentRadius);
         this->Edges->InsertComponent(pointId,0,currentEdge[0]);
         this->Edges->InsertComponent(pointId,1,currentEdge[1]);
@@ -243,13 +243,13 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
       }
 
     previousPoint[0] = currentPoint[0];
-    previousPoint[1] = currentPoint[1]; 
+    previousPoint[1] = currentPoint[1];
     previousPoint[2] = currentPoint[2];
-                
+
     currentPoint[0] = input->GetPoint(currentEdge[0])[0] * (1.0 - currentS) + input->GetPoint(currentEdge[1])[0] * currentS;
     currentPoint[1] = input->GetPoint(currentEdge[0])[1] * (1.0 - currentS) + input->GetPoint(currentEdge[1])[1] * currentS;
     currentPoint[2] = input->GetPoint(currentEdge[0])[2] * (1.0 - currentS) + input->GetPoint(currentEdge[1])[2] * currentS;
-                
+
     currentScalar = this->DescentArray->GetTuple1(currentEdge[0]) * (1.0 - currentS) + this->DescentArray->GetTuple1(currentEdge[1]) * currentS;
     currentRadius = this->LineDataArray->GetTuple1(currentEdge[0]) * (1.0 - currentS) + this->LineDataArray->GetTuple1(currentEdge[1]) * currentS;
 
@@ -274,10 +274,10 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
       if (done)
         break;
       }
-    
+
     pointId = newPoints->InsertNextPoint(currentPoint);
     lineIds->InsertNextId(pointId);
-    
+
     newScalars->InsertTuple1(pointId,currentRadius);
     this->Edges->InsertComponent(pointId,0,currentEdge[0]);
     this->Edges->InsertComponent(pointId,1,currentEdge[1]);

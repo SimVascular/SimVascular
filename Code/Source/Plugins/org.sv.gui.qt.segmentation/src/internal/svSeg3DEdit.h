@@ -3,8 +3,7 @@
 
 #include "svMitkSeg3D.h"
 #include "svMitkSeg3DDataInteractor.h"
-
-#include <QmitkFunctionality.h>
+#include "svQmitkFunctionality.h"
 
 #include <vtkImageData.h>
 
@@ -14,7 +13,7 @@ namespace Ui {
 class svSeg3DEdit;
 }
 
-class svSeg3DEdit : public QmitkFunctionality
+class svSeg3DEdit : public svQmitkFunctionality
 {
     Q_OBJECT
 
@@ -75,6 +74,7 @@ protected:
     svMitkSeg3DDataInteractor::Pointer m_DataInteractor;
 
     QmitkStdMultiWidget* m_DisplayWidget;
+
 };
 
 #endif // svSeg3DUtils_H

@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2011 Open Source Medical Software Corporation, 
+# Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 # University of California, San Diego.
 #
 # Portions of the code Copyright (c) 1998-2007 Stanford University,
@@ -6,15 +6,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,7 +32,7 @@
 #
 
 proc ::vis::img {ren obj args} {
-    
+
     #@author Nathan Wilson
     #@a ren: renderer
     #@c Display a 2-D image object
@@ -55,7 +55,7 @@ proc ::vis::img {ren obj args} {
     set lookupColor     [::vis::newobj img_blueToRedLUT_$ren\_$obj]
 
     vtkTexture $txt
-    $txt ReleaseDataFlagOn   
+    $txt ReleaseDataFlagOn
     $txt ReleaseGraphicsResources [$ren GetRenderWindow]
 
     vtkPlaneSource $plane
@@ -153,7 +153,7 @@ proc ::vis::img {ren obj args} {
 
     $map SetScalarRange [lindex $irng 0] [lindex $irng 1]
 
-    if {$args == ""} { 
+    if {$args == ""} {
       $lookupGrayscale SetTableRange [lindex $irng 0] [lindex $irng 1]
       $lookupColor SetTableRange [lindex $irng 0] [lindex $irng 1]
     } else {
@@ -184,7 +184,7 @@ proc ::vis::imgSetPlane {ren obj newobj} {
     set vorig [$newobj GetOrigin]
     set vspc  [$newobj GetSpacing]
     set vdims [$newobj GetExtent]
- 
+
     if { ([lindex $vdims 4] != [lindex $vdims 5]) && \
 	    ([lindex $vdims 0] != [lindex $vdims 1]) && \
 	    ([lindex $vdims 2] != [lindex $vdims 3]) } {
@@ -316,7 +316,7 @@ proc ::vis::imgUnshowAll {ren} {
     #@a ren: renderer
     set allnames [::vis::getall img_actor_$ren\_]
 
-    foreach name $allnames {      
+    foreach name $allnames {
       set actor [::vis::getobj $name]
       ::vis::actorRm $ren $actor
     }
@@ -393,7 +393,7 @@ proc ::vis::imgInverseVideo {ren obj flag} {
   #@c Invert the LUT
   #@a ren: renderer
   #@a obj: image object
-  #@a flag: used for SetInverseVideo method of grayscale LUT 
+  #@a flag: used for SetInverseVideo method of grayscale LUT
   set lookupGrayscale [::vis::getobj img_grayscaleLUT_$ren\_$obj]
   $lookupGrayscale SetInverseVideo $flag
   ::vis::render $ren
@@ -438,7 +438,7 @@ proc ::vis::imgCreateTexture {ren obj LUT uniqueId} {
     $txt SetLookupTable $LUT
     $txt RepeatOff
 
-    $txt ReleaseDataFlagOn   
+    $txt ReleaseDataFlagOn
     $txt ReleaseGraphicsResources [$ren GetRenderWindow]
 
     return $txt
@@ -453,7 +453,7 @@ proc ::vis::imgCreateTexture {ren obj LUT uniqueId} {
 proc ::vis::imgSwapTexture {ren obj textureObj} {
 
     #@author Nathan Wilson
-    #@c Swap textures 
+    #@c Swap textures
     #@a ren: renderer
     #@a obj: image object
     #@a textureObj: new texture
@@ -462,7 +462,7 @@ proc ::vis::imgSwapTexture {ren obj textureObj} {
     set actor [::vis::getobj img_actor_$ren\_$obj]
 
     set rtntxt [$actor GetTexture]
-    $actor SetTexture $textureObj 
+    $actor SetTexture $textureObj
     ::vis::render $ren
     return $rtntxt
 
@@ -496,7 +496,7 @@ proc ::vis::imgGetActor {ren obj} {
   #@c Get actor displayed in renderer
   #@a ren: renderer
   #@a obj: image object
-  #@r actor name 
+  #@r actor name
   return [::vis::getobj img_actor_$ren\_$obj]
 }
 
@@ -559,7 +559,7 @@ proc ::vis::imgSetTableRangeAll {ren min max} {
 
     set allnames [::vis::getall img_grayscaleLUT_$ren\_]
 
-    foreach name $allnames {      
+    foreach name $allnames {
       set lookupGrayscale [::vis::getobj $name]
       $lookupGrayscale SetTableRange $min $max
     }

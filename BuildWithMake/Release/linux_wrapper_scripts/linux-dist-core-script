@@ -10,23 +10,35 @@ export SV_RELEASE_BUILD=REPLACE_SV_PLATFORM
 export SV_STATIC_BUILD=1
 export SV_RELEASED_MODE=1
 
-# SV additions (parasolid, tcltk, etc.)
+# SV additions
 export LD_LIBRARY_PATH=$SV_HOME:$LD_LIBRARY_PATH
-
-# MeshSim license file
-export SIM_LICENSE_FILE=$SV_HOME/meshsim-license.dat
 
 # Tcl/Tk additions
 export TCL_LIBRARY=$SV_HOME/lib/REPLACE_TCL_VERSION_NO
 export TK_LIBRARY=$SV_HOME/lib/REPLACE_TK_VERSION_NO
 export LD_LIBRARY_PATH=$SV_HOME/lib:$LD_LIBRARY_PATH
-
-# PARASOLID additions
-export P_SCHEMA=$SV_HOME/schema
-
-# MPICH2 additions
-export LD_LIBRARY_PATH=$SV_HOME/mpi/lib:$LD_LIBRARY_PATH
+# Python additions
+export PYTHONHOME=$SV_HOME/Python27
+export PYTHONPATH=$PYTHONHOME/lib/python2.7:$PYTHONHOME/lib/python2.7/site-packages:$PYTHONHOME/lib
+export LD_LIBRARY_PATH=$PYTHONHOME:$LD_LIBRARY_PATH
 
 # intel additions
-export LD_LIBRARY_PATH=$SV_HOME/intel_compiler_runtime_libs:$LD_LIBRARY_PATH
+#export LD_LIBRARY_PATH=$SV_HOME/intel_compiler_runtime_libs:$LD_LIBRARY_PATH
 
+# MITK additions
+export LD_LIBRARY_PATH=$SV_HOME/mitk/lib:$LD_LIBRARY_PATH
+export SV_PLUGIN_PATH=$SV_HOME/mitk/lib/plugins
+
+# SV plugins for MITK
+export SV_PLUGIN_PATH=$SV_PLUGIN_PATH:$SV_HOME/plugins
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SV_PLUGIN_PATH
+
+# Qt additions
+export QT_PLUGIN_PATH=$SV_HOME/qt-plugins
+
+# Vtk Tcl path additions
+#export TCLLIBPATH=REPLACEME_VTK_TCL_LIB_PATH
+# Vtk Python additions (included above with python site-packages)
+
+  

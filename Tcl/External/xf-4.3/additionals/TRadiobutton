@@ -91,7 +91,7 @@ proc XFConfig.TRadiobutton4 {xfW xfType xfClass {xfLeader ""}} {
 
   # save current parameter
   XFElementSave $xfW $xfClass {image command text textvariable value variable width}
-  
+
 
   # packing
   pack append .xf${xfClass}Config4.params1 \

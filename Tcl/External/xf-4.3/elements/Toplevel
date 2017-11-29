@@ -595,10 +595,10 @@ proc XFConfig.Toplevel5 {xfW xfType xfClass {xfLeader ""}} {
 
   # bindings
   bind .xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap $xfBind(configure) \
-      "XFProcFSBoxPixmap .xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap"  
+      "XFProcFSBoxPixmap .xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap"
 
   bind .xf${xfClass}Config5.params1.params2.iconmask.iconmask $xfBind(configure) \
-      "XFProcFSBoxPixmap .xf${xfClass}Config5.params1.params2.iconmask.iconmask"  
+      "XFProcFSBoxPixmap .xf${xfClass}Config5.params1.params2.iconmask.iconmask"
 
   # packing
   pack after .xf${xfClass}Config5.additional.params \

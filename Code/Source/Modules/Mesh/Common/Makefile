@@ -10,15 +10,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -38,8 +38,6 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR) \
            $(ZLIB_INCDIR) \
            $(TETGEN_INCDIR) \
-           $(MESHSIM_INCDIR) \
-           $(PARASOLID_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
@@ -84,11 +82,11 @@ CXXSRCS	= \
 
 CXXSRCS += us_init.cxx
 
-UIFILES = 
+UIFILES =
 
 RCFILES =
 
-QRCFILES = 
+QRCFILES =
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
@@ -116,25 +114,14 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_DISCRETE_SOLID_NAME)$(LIBLINKEXT)
-endif
-ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_SOLID_NAME)$(LIBLINKEXT)
-endif
-ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_PARASOLID_SOLID_NAME)$(LIBLINKEXT)
-endif
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
     DLLLIBS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
     DLLLIBS += $(SVLIBFLAG)$(SV_LIB_TETGEN_ADAPTOR_NAME)$(LIBLINKEXT)
 endif
 
-DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
-
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
     DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 

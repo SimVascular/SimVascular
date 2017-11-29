@@ -6,6 +6,7 @@
 #include <svSegmentationExports.h>
 
 #include "svContourModel.h"
+#include "svContourGroupDataInteractor.h"
 
 #include <itkEventObject.h>
 #include <mitkInteractionPositionEvent.h>
@@ -21,6 +22,18 @@ public:
 
     double GetCurrentValue();
 
+    void SetPathPoint(svPathElement::svPathPoint pathPoint) {m_PathPoint=pathPoint;}
+
+    svPathElement::svPathPoint GetPathPoint() {return m_PathPoint;}
+
+    vtkImageData* GetVtkImageData() {return m_VtkImageData;}
+
+    void SetVtkImageData(vtkImageData* imageData) {m_VtkImageData=imageData;}
+
+    void SetResliceSize(double size) {m_ResliceSize=size;}
+
+    void SetGroupInteractor(svContourGroupDataInteractor::Pointer groupInteractor) {m_GroupInteractor=groupInteractor;}
+
 protected:
 
     svContourModelThresholdInteractor();
@@ -32,6 +45,7 @@ protected:
 
     bool OnCurrentContourPlane( const mitk::InteractionEvent* interactionEvent );
 
+    bool AtValidLocation( const mitk::InteractionEvent* interactionEvent );
 
     //  Actions //
 
@@ -40,6 +54,8 @@ protected:
     void UpdateDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
 
     void FinishDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+
+    void ClearDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
 
 private:
 
@@ -56,6 +72,18 @@ private:
     int m_TimeStep;
 
     double m_ScaleBase;// use display units
+
+    std::string m_Method;
+
+    vtkImageData* m_VtkImageData;
+
+    vtkImageData* m_ImageSlice;
+
+    double m_ResliceSize;
+
+    svPathElement::svPathPoint m_PathPoint;
+
+    svContourGroupDataInteractor::Pointer m_GroupInteractor;
 
 };
 

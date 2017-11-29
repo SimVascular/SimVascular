@@ -31119,7 +31119,7 @@ proc guiMMinstallMeshSimLicenseKeys {} {
    set yesno [tk_messageBox -default yes  -message "You must restart SimVascular for MeshSim to be available.  Close SimVascular now?"  -title "Exit SimVascular?"  -type yesno]
    switch -- $yesno {
      yes {
-          exit
+          mainGUIexit
         }
      no {
         }

@@ -54,7 +54,6 @@ add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_utils_init.cxx cv_math_init.
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-	${PARASOLID_LIBRARIES}
 	${SV_LIB_GLOBALS_NAME}
   )
 

@@ -26,5 +26,5 @@ set ATLAS=None
 
 [fullpath]/python setup.py build
 
-[fullpath]/python.exe setup.py install --prefix C:\\cygwin64/SV16/bin/msvc-12.5/x64/python-2.7.11
+[fullpath]/python.exe setup.py install --prefix C:\\cygwin64/SV16/bin/msvc/18.0/x64/python-2.7.11
 

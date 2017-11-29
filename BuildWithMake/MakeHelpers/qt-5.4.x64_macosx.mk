@@ -50,5 +50,5 @@ endif
              -framework QtWebView \
              -framework QtWidgets -framework QtGui -framework QtCore \
              -framework QtXml -framework QtQml -framework QtConcurrent -framework QtNetwork \
-             -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL 
+             -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL
 endif

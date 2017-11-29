@@ -1,6 +1,13 @@
+# Set release mode
 export SV_RELEASED_MODE=1
 
-# run the executable
+# Load custom plugins and paths if file present
+if [ -e ~/.local/share/SimVascular/simvascular_custom_plugins.sh ]
+then
+  source ~/.local/share/SimVascular/simvascular_custom_plugins.sh
+fi
+
+# Run the executable
 case "$SV_BATCH_MODE" in
 "1")
 case "$*" in
@@ -8,14 +15,14 @@ case "$*" in
 $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ -tcl
 ;;
 *)
-$SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
+$SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $* -tcl
 ;;
 esac
 ;;
 *)
 if [ -e ~/.simvascular_default_tcl ]
 then
-  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl -tcl $*
+  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $* -tcl
 else
   $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
 fi

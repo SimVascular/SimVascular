@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <math.h>
 #include "cv_ggems.h"
@@ -62,10 +62,10 @@ Rdouble ggemsGeoVecLen ( ggemsGeoPoint *vec )
  return sqrt ( ggemsGeoDotProd ( vec, vec ) );
 }
 
-int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n ) 
+int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n )
 {
  int      i;
- ggemsGeoPoint v0, v1, p; 
+ ggemsGeoPoint v0, v1, p;
 
  ggemsGeoZeroVec ( *n );
  ggemsGeo_Vet ( verts[0], verts[1], v0 );
@@ -88,12 +88,12 @@ int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n )
 }
 
 /*=========================  ggemsgeo_solid_angle  =========================*/
-/* 
-  Calculates the solid angle given by the spherical projection of 
+/*
+  Calculates the solid angle given by the spherical projection of
   a 3D plane polygon
 */
 
-Rdouble ggemsgeo_solid_angle ( 
+Rdouble ggemsgeo_solid_angle (
         int      n_vert,  /* number of vertices */
         ggemsGeoPoint *verts,  /* vertex coordinates list */
         ggemsGeoPoint *p )     /* point to be tested */
@@ -106,42 +106,42 @@ Rdouble ggemsgeo_solid_angle (
  if ( n_vert < 3 ) return 0.0;
 
  ggemsGeoPolyNormal ( n_vert, verts, &plane );
- 
- /* 
+
+ /*
     WARNING: at this point, a practical implementation should check
     whether p is too close to the polygon plane. If it is, then
-    there are two possibilities: 
-      a) if the projection of p onto the plane is outside the 
+    there are two possibilities:
+      a) if the projection of p onto the plane is outside the
          polygon, then area zero should be returned;
       b) otherwise, p is on the polyhedron boundary.
- */ 
+ */
 
  p2 = verts[n_vert-1];  /* last vertex */
  p1 = verts[0];         /* first vertex */
- ggemsGeo_Vet ( p1, p2, a ); /* a = p2 - p1 */  
+ ggemsGeo_Vet ( p1, p2, a ); /* a = p2 - p1 */
 
  for ( i = 0; i < n_vert; i++ )
      {
-      ggemsGeo_Vet(*p, p1, r1); 
+      ggemsGeo_Vet(*p, p1, r1);
       p2 = verts[(i+1)%n_vert];
       ggemsGeo_Vet ( p1, p2, b );
       ggemsGeoCrossProd ( &a, &r1, &n1 );
       ggemsGeoCrossProd ( &r1, &b, &n2 );
-    
+
       l1 = ggemsGeoVecLen ( &n1 );
       l2 = ggemsGeoVecLen ( &n2 );
       s  = ggemsGeoDotProd ( &n1, &n2 ) / ( l1 * l2 );
       ang = acos ( maximum(-1.0,minimum(1.0,s)) );
       s = ggemsGeoTripleProd( &b, &a, &plane );
       area += s > 0.0 ? PI - ang : PI + ang;
-     
+
       ggemsGeoMultVec ( -1.0, b, a );
       p1 = p2;
      }
 
  area -= PI*(n_vert-2);
 
- return ( ggemsGeoDotProd ( &plane, &r1 ) > 0.0 ) ? -area : area; 
+ return ( ggemsGeoDotProd ( &plane, &r1 ) > 0.0 ) ? -area : area;
 }
 
 

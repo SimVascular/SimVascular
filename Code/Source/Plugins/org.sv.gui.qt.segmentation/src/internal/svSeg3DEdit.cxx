@@ -5,6 +5,7 @@
 #include "svSeg3DUtils.h"
 #include "svMitkSeg3DOperation.h"
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkImage.h>
 #include <mitkOperationEvent.h>
 #include <mitkUndoController.h>
@@ -19,7 +20,12 @@
 
 // Qt
 #include <QMessageBox>
+#include <QShortcut>
 #include <QInputDialog>
+#include <QWheelEvent>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QApplication>
 
 #include <iostream>
 using namespace std;
@@ -302,4 +308,3 @@ void svSeg3DEdit::ClearAll()
     m_MitkSeg3D=NULL;
     m_MitkSeg3DNode=NULL;
 }
-

@@ -21,7 +21,7 @@ proc XFEdit {} {
 
   # build widget structure
   XFTmpltToplevel .xfEdit 450x480 {XF}
-  wm maxsize .xfEdit 1600 1200 
+  wm maxsize .xfEdit 1600 1200
   XFTmpltFrame .xfEdit.frame1
 
   XFTmpltFrame .xfEdit.frame10
@@ -31,7 +31,7 @@ proc XFEdit {} {
   XFTmpltFrame .xfEdit.frame3 0
 
   XFTmpltFrame .xfEdit.frame4 0
-  
+
   XFTmpltFrame .xfEdit.frame5
 
   XFTmpltFrame .xfEdit.frame9 0
@@ -136,7 +136,7 @@ proc XFEdit {} {
       -anchor w \
       -relief raised \
       -text "Current widget type:"
-  
+
     label .xfEdit.frame9.currentType \
       -borderwidth 1 \
       -anchor w \
@@ -149,7 +149,7 @@ proc XFEdit {} {
       -borderwidth 1 \
       -anchor w \
       -relief raised
-  
+
     label .xfEdit.frame3.cutPaste \
       -borderwidth 1 \
       -anchor w \
@@ -161,7 +161,7 @@ proc XFEdit {} {
     XFEditSetStatus {}
 
     # set cut buffer status
-    XFEditSetCutInfo  
+    XFEditSetCutInfo
   }
 
   if {!$xfConf(pathNameHidden)} {
@@ -175,14 +175,14 @@ proc XFEdit {} {
     menu .xfEdit.frame4.showWindows.m -tearoff 0
 
     XFTmpltFrame .xfEdit.frame4.path
-  
+
     # set path line
     XFEditSetPath .
 
     # set window displaying
     XFEditSetShowWindows
   }
-  
+
   if {!$xfConf(editListsHidden)} {
     # the add buttons
     button .xfEdit.frame5.addDefault \
@@ -304,7 +304,7 @@ proc XFEdit {} {
       XFBindSelectOne %W %y
       .xfEdit.frame2.additional.additional selection clear 0 end
       .xfEdit.frame2.template.template selection clear 0 end
-      XFEditSetType [%W get [%W nearest %y]] 0} 
+      XFEditSetType [%W get [%W nearest %y]] 0}
     bind .xfEdit.frame2.standard.standard <Shift-ButtonPress-1> {
       XFBindSelectOne %W %y
       .xfEdit.frame2.additional.additional selection clear 0 end
@@ -747,7 +747,7 @@ proc XFEditSetPath {xfW} {
       .xfEdit.frame4.path.pathMenu$xfCounter {left}
     incr xfCounter 1
   }
-  
+
   if {$xfConf(scanTree) && "[info commands .xfParameters]" != ""} {
     XFMiscReadTree . .xfParameters.frame2.widgets.widgets all 1"
   }

@@ -10,15 +10,15 @@ Version:   $Revision: 1.6 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-//SimVascular Changes: Changes to update code to VTK pipeline 6.0 
+//SimVascular Changes: Changes to update code to VTK pipeline 6.0
 //Lines 197, 210, 219, 237, 249, 259, 310: SetInput -> SetInputData
 
 #include "vtkvmtkPolyDataCenterlines.h"
@@ -167,7 +167,7 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
-  
+
   if (!this->SourceSeedIds)
     {
     vtkErrorMacro(<< "No SourceSeedIds set.");
@@ -239,7 +239,7 @@ int vtkvmtkPolyDataCenterlines::RequestData(
   voronoiDiagramFilter->Update();
 
   this->PoleIds->DeepCopy(voronoiDiagramFilter->GetPoleIds());
-  
+
   vtkPolyData* voronoiDiagram = voronoiDiagramFilter->GetOutput();
 
   if (this->SimplifyVoronoi)
@@ -282,7 +282,7 @@ int vtkvmtkPolyDataCenterlines::RequestData(
       }
     }
   else
-    { 
+    {
     for (i=0; i<this->SourceSeedIds->GetNumberOfIds(); i++)
       {
       voronoiSourceSeedIds->InsertNextId(this->PoleIds->GetId(this->SourceSeedIds->GetId(i)));
@@ -350,7 +350,7 @@ int vtkvmtkPolyDataCenterlines::RequestData(
         endPointPairs->InsertNextPoint(input->GetPoint(endPointId2));
         }
       }
-    
+
     this->AppendEndPoints(endPointPairs);
     }
   }
@@ -370,7 +370,7 @@ int vtkvmtkPolyDataCenterlines::RequestData(
   voronoiFastMarching->Delete();
   centerlineBacktracing->Delete();
   endPointPairs->Delete();
-  
+
   return 1;
 }
 
@@ -426,7 +426,7 @@ void vtkvmtkPolyDataCenterlines::FindVoronoiSeeds(vtkUnstructuredGrid *delaunay,
     poleVector[0] = pole[0] - baricenter[0];
     poleVector[1] = pole[1] - baricenter[1];
     poleVector[2] = pole[2] - baricenter[2];
-    
+
     secondMaxRadius = 0.0;
 
     for (j=0; j<pointCells->GetNumberOfIds(); j++)
@@ -443,7 +443,7 @@ void vtkvmtkPolyDataCenterlines::FindVoronoiSeeds(vtkUnstructuredGrid *delaunay,
       referenceVector[0] = circumcenter[0] - baricenter[0];
       referenceVector[1] = circumcenter[1] - baricenter[1];
       referenceVector[2] = circumcenter[2] - baricenter[2];
-      
+
       if ((tetraRadius - secondMaxRadius > VTK_VMTK_DOUBLE_TOL) && (vtkMath::Dot(poleVector,referenceVector) < VTK_VMTK_DOUBLE_TOL))
         {
         secondMaxRadius = tetraRadius;
@@ -457,7 +457,7 @@ void vtkvmtkPolyDataCenterlines::FindVoronoiSeeds(vtkUnstructuredGrid *delaunay,
     secondPoleVector[0] = secondPole[0] - baricenter[0];
     secondPoleVector[1] = secondPole[1] - baricenter[1];
     secondPoleVector[2] = secondPole[2] - baricenter[2];
-   
+
     if (vtkMath::Dot(poleVector,normal) < VTK_VMTK_DOUBLE_TOL)
       {
       seedIds->InsertNextId(maxRadiusCellId);
@@ -481,7 +481,7 @@ void vtkvmtkPolyDataCenterlines::AppendEndPoints(vtkPoints* endPointPairs)
   vtkDoubleArray* completeCenterlinesRadiusArray = vtkDoubleArray::New();
   completeCenterlinesRadiusArray->SetName(this->RadiusArrayName);
   vtkIdList* completeCell = vtkIdList::New();
-    
+
   vtkDoubleArray* centerlinesRadiusArray = vtkDoubleArray::SafeDownCast(output->GetPointData()->GetArray(this->RadiusArrayName));
 
   completeCenterlinesPoints->DeepCopy(output->GetPoints());
@@ -498,7 +498,7 @@ void vtkvmtkPolyDataCenterlines::AppendEndPoints(vtkPoints* endPointPairs)
     completeCell->SetNumberOfIds(cell->GetNumberOfPoints()+2);
 
     completeCell->SetId(0,endPointId1);
-    
+
     for (int i=0; i<cell->GetNumberOfPoints(); i++)
       {
       completeCell->SetId(i+1,cell->GetPointId(i));
@@ -515,7 +515,7 @@ void vtkvmtkPolyDataCenterlines::AppendEndPoints(vtkPoints* endPointPairs)
   completeCenterlines->SetLines(completeCenterlinesCellArray);
   completeCenterlines->GetPointData()->AddArray(completeCenterlinesRadiusArray);
   completeCenterlines->BuildLinks();
-  
+
   output->ShallowCopy(completeCenterlines);
 
   completeCell->Delete();
@@ -554,23 +554,23 @@ void vtkvmtkPolyDataCenterlines::ResampleCenterlines()
     lineAbscissa = 0.0;
     lineLength = 0.0;
     stepAbscissa = 0.0;
-    
+
     for (int i=0; i<cell->GetNumberOfPoints()-1; i++)
       {
       cell->GetPoints()->GetPoint(i,point0);
       cell->GetPoints()->GetPoint(i+1,point1);
-      
+
       double scalar0 = centerlinesRadiusArray->GetValue(cell->GetPointId(i));
       double scalar1 = centerlinesRadiusArray->GetValue(cell->GetPointId(i+1));
-      
+
       double length = sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
-      
+
       if (length < this->ResamplingStepLength - stepAbscissa)
         {
         stepAbscissa = stepAbscissa + length;
         continue;
         }
-      
+
       double pcoord = 0.0;
       double pcoordStep = this->ResamplingStepLength / length;
       while (pcoord < 1.0)

@@ -10,11 +10,11 @@
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -32,7 +32,7 @@
 
 vtkStandardNewMacro(vtkvmtkPolyDataDistanceToCenterlines);
 
-vtkvmtkPolyDataDistanceToCenterlines::vtkvmtkPolyDataDistanceToCenterlines() 
+vtkvmtkPolyDataDistanceToCenterlines::vtkvmtkPolyDataDistanceToCenterlines()
 {
   this->DistanceToCenterlinesArrayName = NULL;
 
@@ -105,7 +105,7 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
       }
 
     vtkDataArray* centerlineRadiusArray = this->Centerlines->GetPointData()->GetArray(this->CenterlineRadiusArrayName);
-    
+
     if (!centerlineRadiusArray)
       {
       vtkErrorMacro(<<"CenterlineRadiusArrayName with name specified does not exist.");
@@ -122,7 +122,7 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
   distanceToCenterlinesArray->SetNumberOfComponents(1);
   distanceToCenterlinesArray->SetNumberOfTuples(numberOfInputPoints);
   distanceToCenterlinesArray->FillComponent(0,0.0);
-  
+
   output->GetPointData()->AddArray(distanceToCenterlinesArray);
 
   vtkDoubleArray* surfaceCenterlineRadiusArray = NULL;
@@ -133,7 +133,7 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
     surfaceCenterlineRadiusArray->SetNumberOfComponents(1);
     surfaceCenterlineRadiusArray->SetNumberOfTuples(numberOfInputPoints);
     surfaceCenterlineRadiusArray->FillComponent(0,0.0);
-    
+
     output->GetPointData()->AddArray(surfaceCenterlineRadiusArray);
     }
 
@@ -145,7 +145,7 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
     tube->SetPolyBallRadiusArrayName(this->CenterlineRadiusArrayName);
     }
 
-  if (this->ProjectPointArrays) 
+  if (this->ProjectPointArrays)
     {
     output->GetPointData()->InterpolateAllocate(this->Centerlines->GetPointData(),numberOfInputPoints);
     }
@@ -171,7 +171,7 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
       surfaceCenterlineRadiusArray->SetComponent(i,0,tube->GetLastPolyBallCenterRadius());
       }
 
-    if (this->ProjectPointArrays) 
+    if (this->ProjectPointArrays)
       {
       vtkIdType cellId = tube->GetLastPolyBallCellId();
       vtkIdType subId = tube->GetLastPolyBallCellSubId();

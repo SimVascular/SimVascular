@@ -130,6 +130,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.numsublayers=0;
   meshoptions_.blthicknessfactor=0;
   meshoptions_.sublayerratio=0;
+  meshoptions_.useconstantblthickness=0;
   meshoptions_.refinement=0;
   meshoptions_.refinedsize=0;
   meshoptions_.sphereradius=0;
@@ -424,7 +425,7 @@ cvUnstructuredGrid* cvTetGenMeshObject::GetUnstructuredGrid() {
   if (volumemesh_ == NULL)
   {
     //Mesh must be created first
-    return SV_ERROR;
+    return NULL;
   }
 
   cvUnstructuredGrid *result = NULL;
@@ -987,6 +988,7 @@ int cvTetGenMeshObject::SetBoundaryLayer(int type, int id, int side,
   meshoptions_.numsublayers = nL;
   meshoptions_.blthicknessfactor = *H;
   meshoptions_.sublayerratio = *(H+1);
+  meshoptions_.useconstantblthickness = *(H+2);
 #else
   fprintf(stderr,"Plugin VMTK is not being used! \
       In order to use boundary layer meshing, \
@@ -1757,7 +1759,21 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   cleaner->SetInputData(polydatasolid_);
   cleaner->Update();
 
-  converter->SetInputData(cleaner->GetOutput());
+  vtkSmartPointer<vtkPolyData> cleanpd = vtkSmartPointer<vtkPolyData>::New();
+  cleanpd->DeepCopy(cleaner->GetOutput());
+
+  if (VMTKUtils_ComputeSizingFunction(cleanpd,NULL,
+	"MeshSizingFunction") != SV_OK)
+  {
+    fprintf(stderr,"Problem when computing sizing function");
+    return SV_ERROR;
+  }
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetInputData(cleanpd);
+  writer->SetFileName("/Users/adamupdegrove/Desktop/tmp/WHATHTE.vtp");
+  writer->Write();
+
+  converter->SetInputData(cleanpd);
   converter->Update();
 
   innerblmesh_->DeepCopy(converter->GetOutput());
@@ -1766,11 +1782,14 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   int negateWarpVectors = 1;
   int innerSurfaceCellId = 1;
   int sidewallCellEntityId = 9999;
+  int useConstantThickness = meshoptions_.useconstantblthickness;
+  std::string layerThicknessArrayName = "MeshSizingFunction";
+
   if (VMTKUtils_BoundaryLayerMesh(boundarylayermesh_,innerSurface,
 	meshoptions_.maxedgesize,meshoptions_.blthicknessfactor,
 	meshoptions_.numsublayers,meshoptions_.sublayerratio,
 	sidewallCellEntityId,innerSurfaceCellId,negateWarpVectors,
-	markerListName) != SV_OK)
+	markerListName, useConstantThickness, layerThicknessArrayName) != SV_OK)
   {
     fprintf(stderr,"Problem with boundary layer meshing\n");
     return SV_ERROR;

@@ -143,11 +143,20 @@ void svContourGroupCreate::CreateGroup()
 
     float point2DSize=0;
     float pointSize=0;
-    if(m_SegFolderNode.IsNotNull())
+    float resliceSize=0;
+    if(m_SelecteNode.IsNotNull())
     {
-        m_SegFolderNode->GetFloatProperty("point.displaysize",point2DSize);
-        m_SegFolderNode->GetFloatProperty("point.3dsize",pointSize);
+        m_SelecteNode->GetFloatProperty("point.displaysize",point2DSize);
+        m_SelecteNode->GetFloatProperty("point.3dsize",pointSize);
+        m_SelecteNode->GetFloatProperty("reslice size",resliceSize);
+        if(resliceSize==0)
+        {
+            svContourGroup* originalGroup=dynamic_cast<svContourGroup*>(m_SelecteNode->GetData());
+            if(originalGroup)
+                resliceSize=originalGroup->GetResliceSize();
+        }
     }
+
     if(point2DSize!=0)
     {
         groupNode->SetFloatProperty("point.displaysize",point2DSize);
@@ -155,9 +164,11 @@ void svContourGroupCreate::CreateGroup()
     }
     if(pointSize!=0)
     {
-        groupNode->SetFloatProperty("point.3dsize",point2DSize);
-        group->SetProp("point size",QString::number(point2DSize).toStdString());
+        groupNode->SetFloatProperty("point.3dsize",pointSize);
+        group->SetProp("point size",QString::number(pointSize).toStdString());
     }
+    if(resliceSize!=0)
+        group->SetResliceSize(resliceSize);
 
 //    m_DataStorage->Add(groupNode,m_SegFolderNode);
     mitk::OperationEvent::IncCurrObjectEventId();

@@ -3,15 +3,15 @@
 
 #include <org_sv_gui_qt_projectmanager_Export.h>
 
-#include <mitkIContextMenuAction.h>
+#include <svmitkIContextMenuAction.h>
 #include <mitkDataNode.h>
 
 #include <QObject>
 
-class SV_QT_PROJECTMANAGER svProjectCloseAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_PROJECTMANAGER svProjectCloseAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   svProjectCloseAction();

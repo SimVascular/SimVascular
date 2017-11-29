@@ -169,7 +169,7 @@ proc XFSaveGlobals {xfOutFile {xfSavePlain 0}} {
 # Procedure: XFSaveImg
 # Description: save image code
 # Arguments: xfOutFile - the output descriptor
-#            xfImgName - the image name        
+#            xfImgName - the image name
 # Returns: none
 # Sideeffects: none
 ##########
@@ -342,7 +342,7 @@ proc XFSaveProc {xfOutFile xfProcName} {
     return
   }
 
-  puts $xfOutFile "\n" 
+  puts $xfOutFile "\n"
   XFSaveComment $xfOutFile proc $xfProcName
   # write procedure
   if {[XFMiscIsXFSpecialElement $xfProcName]} {
@@ -608,11 +608,11 @@ proc XFSaveWidget {xfOutFile xfW} {
       }
       {TButton TCheckbutton TCombobox TEntry TFrame TLabel TLabelframe TMenubutton TNotebook TPanedwindow TProgressbar TRadiobutton TScrollbar TSeparator TSizegrip TScale TSpinbox} {
 	  puts $xfOutFile "  ttk::[string tolower [string range $xfClass 1 end]] $xfW" nonewline
-        set xfUseConfig 0 
+        set xfUseConfig 0
       }
       {Treeview} {
 	  puts $xfOutFile "  ttk::treeview $xfW" nonewline
-        set xfUseConfig 0 
+        set xfUseConfig 0
       }
       {default} {
         set xfType [string tolower [string index $xfClass 0]]

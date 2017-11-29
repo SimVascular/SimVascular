@@ -63,7 +63,7 @@ I-2) How do I install XF ?
 I-3) How do I install the XF help system ?
         The XF package comes with preformatted html online
         documentation. You will need an HTML browser
-        to show it. On Windows platforms, XF retrieves the 
+        to show it. On Windows platforms, XF retrieves the
         name of the browser from the registry. On UNIX
         platforms, XF first attempts to use netscape then
         mosaic.
@@ -121,7 +121,7 @@ I-9) Where do I get the widget XXX ?
 		ftp.cs.tu-berlin.de:	pub/tcl/contrib/extensions
 
 	- bargraph, dial, pie and stripchart
-		ftphost.comp.vuw.ac.nz: 
+		ftphost.comp.vuw.ac.nz:
 		ftp.cs.tu-berlin.de:	pub/tcl/local/misc/vuw_meters_widgets.tar.gz
 
 	- TkEmacs

@@ -27,7 +27,7 @@ proc XFKeysymBox {{xfKeysymBoxFileKeysym "/usr/local/lib/xf/lib/Keysyms"} {xfKey
 # Returns: keysym, or nothing
 # Sideeffects: none
 ##########
-# 
+#
 # global xfKeysymBox(activeBackground) - active background color
 # global xfKeysymBox(activeForeground) - active foreground color
 # global xfKeysymBox(background) - background color

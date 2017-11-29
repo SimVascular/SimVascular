@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -74,7 +74,7 @@ void cvMath::deleteArray(double **ptr, int a, int b) {
     delete ptr;
 }
 
-int cvMath::linearInterpolate(double **orgPts, int numOrgPts, double t0, 
+int cvMath::linearInterpolate(double **orgPts, int numOrgPts, double t0,
                             double dt, int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -118,7 +118,7 @@ int cvMath::linearInterpolate(double **orgPts, int numOrgPts, double t0,
               double m = (orgPts[j][1]-orgPts[j-1][1])/(orgPts[j][0]-orgPts[j-1][0]);
               outPts[i][1] = m*(t - orgPts[j-1][0]) + orgPts[j-1][1];
               break;
-          }   
+          }
       }
 
       if (j == numOrgPts) {
@@ -202,7 +202,7 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
     if (*terms == NULL) {
         return SV_ERROR;
     }
-   
+
     // here we calculate dt so that our time series will go from
     // 0 to T - dt.
 
@@ -240,7 +240,7 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
 
 }
 
-int cvMath::inverseFFT(double **terms, int numTerms, double t0, double dt, double omega, 
+int cvMath::inverseFFT(double **terms, int numTerms, double t0, double dt, double omega,
                          int numRtnPts, double ***rtnPts) {
 
   int i,j;
@@ -270,7 +270,7 @@ int cvMath::inverseFFT(double **terms, int numTerms, double t0, double dt, doubl
 int cvMath::compute_v_womersley(double **terms, int numTerms, double viscosity, double density,
                              double omega, double radmax, double rad, double time, double *vel)
 {
-  int k;    
+  int k;
   double Pi = 3.1415926535;
   double Y;
   double v = 0;
@@ -282,7 +282,7 @@ int cvMath::compute_v_womersley(double **terms, int numTerms, double viscosity, 
       // The womersley code from Charley requires we
       // specify the complex conjugant of the the fourier
       // terms obtained from the FFT code (from Numerical Recipes)
-      // negate sign here 
+      // negate sign here
       terms[k][1]=-terms[k][1];
     double alpha_k = radmax*pow(omega*k*density/viscosity,0.5);
     v += compute_velocity(k,omega,time,radmax,alpha_k,Y,terms[k]);
@@ -294,13 +294,13 @@ int cvMath::compute_v_womersley(double **terms, int numTerms, double viscosity, 
 
 }
 
-double cvMath::compute_velocity (int k, double omega, double time, double radmax, 
+double cvMath::compute_velocity (int k, double omega, double time, double radmax,
                                    double alpha_k, double Y, double Qk[]) {
 
   double z1[2],z2[2],z3[2],z4[2],z5[2],z6[2],z7[2],z8[2],z9[2],z10[2],v_kwt;
   double Pi = 3.1415926535;
 
-  
+
   ber_bei(0, Y*alpha_k, z1);
   ber_bei(0, alpha_k, z2);
   complex_div(z1,z2,z3);
@@ -320,7 +320,7 @@ double cvMath::compute_velocity (int k, double omega, double time, double radmax
   // the sign should be negative instead of positive as it
   // was in his code
   v_kwt = (z10[0]*cos(k*omega*time) - z10[1]*sin(k*omega*time))/(Pi*radmax*radmax);
- 
+
  return v_kwt;
 
 }
@@ -454,12 +454,12 @@ int cvMath::complex_div (double z1[], double z2[], double zout[])
 
     return 0;
 }
-       
+
 
 int cvMath::curveLength(double **pts, int numPts, int closed, double *length) {
 
     // This method takes an original set of points and returns the length
-    // of the line 2-D line.  
+    // of the line 2-D line.
 
     // If you specify closed == 1, the curve is assumed to be closed
     // and the distance between the last point and the first is included
@@ -483,7 +483,7 @@ int cvMath::curveLength(double **pts, int numPts, int closed, double *length) {
         if (j == numPts) {
             j = 0;
         }
-        result += sqrt( (pts[j][0]-pts[i][0])*(pts[j][0]-pts[i][0]) + 
+        result += sqrt( (pts[j][0]-pts[i][0])*(pts[j][0]-pts[i][0]) +
                         (pts[j][1]-pts[i][1])*(pts[j][1]-pts[i][1]) +
                         (pts[j][2]-pts[i][2])*(pts[j][2]-pts[i][2]) );
     }
@@ -494,7 +494,7 @@ int cvMath::curveLength(double **pts, int numPts, int closed, double *length) {
 }
 
 
-int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed, 
+int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
                                      int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -509,12 +509,12 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
     // find the length of the curve
     double length = 0;
     curveLength(orgPts,numOrgPts,closed,&length);
- 
+
     // now do linear interpolation of each coordinate
     double **xin = createArray(numOrgPts+1,2);
     double **yin = createArray(numOrgPts+1,2);
-    double **zin = createArray(numOrgPts+1,2);   
- 
+    double **zin = createArray(numOrgPts+1,2);
+
     int i;
     double t = 0;
     for (i=0;i < numOrgPts;i++) {
@@ -527,7 +527,7 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
         }
         t += sqrt( (orgPts[j][0]-orgPts[i][0])*(orgPts[j][0]-orgPts[i][0]) +
                    (orgPts[j][1]-orgPts[i][1])*(orgPts[j][1]-orgPts[i][1]) +
-                   (orgPts[j][2]-orgPts[i][2])*(orgPts[j][2]-orgPts[i][2]) ); 
+                   (orgPts[j][2]-orgPts[i][2])*(orgPts[j][2]-orgPts[i][2]) );
     }
 
     int numPts = numOrgPts;
@@ -568,7 +568,7 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
     double **outPts = createArray(numOutPts,3);
     if (*outPts == NULL) {
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
-        deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2); 
+        deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2);
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
         return SV_ERROR;
     }
@@ -585,7 +585,7 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
 
     // clean up
     deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
-    deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2); 
+    deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2);
     deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
 
     *rtnOutPts = outPts;
@@ -602,14 +602,14 @@ int cvMath::fitLeastSquares(int numberOfSamples,double **xt,int xOrder,double **
     if (vmathobj->SolveLeastSquares(numberOfSamples,xt,xOrder,yt,yOrder,mt) == 0) {
       return SV_ERROR;
     }
-    vmathobj->Delete(); 
+    vmathobj->Delete();
     return SV_OK;
- 
-}  
+
+}
 
 
 
-int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes, 
+int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes,
                                      int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -628,12 +628,12 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
     // find the length of the curve
     double length = 0;
     curveLength(orgPts,numOrgPts,closed,&length);
- 
+
     // now do linear interpolation of each coordinate
     double **xin = createArray(numOrgPts+1,2);
     double **yin = createArray(numOrgPts+1,2);
-    double **zin = createArray(numOrgPts+1,2);   
- 
+    double **zin = createArray(numOrgPts+1,2);
+
     int i;
     double t = 0;
     for (i=0;i < numOrgPts;i++) {
@@ -646,7 +646,7 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
         }
         t += sqrt( (orgPts[j][0]-orgPts[i][0])*(orgPts[j][0]-orgPts[i][0]) +
                    (orgPts[j][1]-orgPts[i][1])*(orgPts[j][1]-orgPts[i][1]) +
-                   (orgPts[j][2]-orgPts[i][2])*(orgPts[j][2]-orgPts[i][2]) ); 
+                   (orgPts[j][2]-orgPts[i][2])*(orgPts[j][2]-orgPts[i][2]) );
     }
 
     int numPts = numOrgPts;
@@ -663,7 +663,7 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
     double **xmodes;
     double **ymodes;
     double **zmodes;
-  
+
     // need to unhardcore this
     int numInterpPts = 2048;
 
@@ -697,21 +697,21 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
     double Pi = 3.1415926535;
     double omega = 2.0*Pi/length;
 
-    if (inverseFFT(xmodes, keepNumModes, t0, dt, omega, 
+    if (inverseFFT(xmodes, keepNumModes, t0, dt, omega,
                    numOutPts, &xout) == SV_ERROR) {
         deleteArray(xmodes,keepNumModes,2);
         deleteArray(ymodes,keepNumModes,2);
         deleteArray(zmodes,keepNumModes,2);
         return SV_ERROR;
     }
-    if (inverseFFT(ymodes, keepNumModes, t0, dt, omega, 
+    if (inverseFFT(ymodes, keepNumModes, t0, dt, omega,
                    numOutPts, &yout) == SV_ERROR) {
         deleteArray(xmodes,keepNumModes,2);deleteArray(xout,numOutPts,2);
         deleteArray(ymodes,keepNumModes,2);
         deleteArray(zmodes,keepNumModes,2);
         return SV_ERROR;
     }
-    if (inverseFFT(zmodes, keepNumModes, t0, dt, omega, 
+    if (inverseFFT(zmodes, keepNumModes, t0, dt, omega,
                    numOutPts, &zout) == SV_ERROR) {
         deleteArray(xmodes,keepNumModes,2);deleteArray(xout,numOutPts,2);
         deleteArray(ymodes,keepNumModes,2);deleteArray(yout,numOutPts,2);
@@ -723,7 +723,7 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
     double **outPts = createArray(numOutPts,3);
     if (*outPts == NULL) {
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
-        deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2); 
+        deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2);
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
         return SV_ERROR;
     }
@@ -740,7 +740,7 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
 
     // clean up
     deleteArray(xout,numOutPts,2);
-    deleteArray(yout,numOutPts,2); 
+    deleteArray(yout,numOutPts,2);
     deleteArray(zout,numOutPts,2);
 
     *rtnOutPts = outPts;

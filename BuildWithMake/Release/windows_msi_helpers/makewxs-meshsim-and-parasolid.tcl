@@ -140,7 +140,7 @@ puts $outfp "<WixVariable Id=\"WixUIDialogBmp\" Value=\"windows_msi_helpers/msi-
 
 puts $outfp "<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' />"
 puts $outfp "<Property Id='INSTALLLEVEL' Value='999' />"
-puts $outfp "<Property Id='ALLUSERS' Value='1' />" 
+puts $outfp "<Property Id='ALLUSERS' Value='1' />"
 
 puts $outfp "<Directory Id='TARGETDIR' Name='SourceDir'>"
 puts $outfp "\t<Directory Id='ProgramFilesFolder' Name='PFiles'>"

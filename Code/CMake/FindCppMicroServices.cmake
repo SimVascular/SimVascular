@@ -71,10 +71,16 @@
 #   US_<component>_COMPILE_DEFINITIONS_DEBUG
 #
 
+find_path(US_CMAKE_FILES_DIR usModuleInit.cpp
+  PATHS
+  ${SV_SOURCE_DIR}/CMake/CppMicroServices
+  ${SimVascular_CMAKE_DIR}/CppMicroServices
+  )
+
 set(US_RCC_EXECUTABLE_NAME usResourceCompiler)
-set(US_MODULE_INIT_TEMPLATE "${SV_SOURCE_DIR}/CMake/CppMicroServices/usModuleInit.cpp")
-set(US_RESOURCE_RC_TEMPLATE "${SV_SOURCE_DIR}/CMake/CppMicroServices/us_resources.rc.in")
-set(US_CMAKE_RESOURCE_DEPENDENCIES_CPP "${SV_SOURCE_DIR}/CMake/CppMicroServices/usCMakeResourceDependencies.cpp")
+set(US_MODULE_INIT_TEMPLATE "${US_CMAKE_FILES_DIR}/usModuleInit.cpp")
+set(US_RESOURCE_RC_TEMPLATE "${US_CMAKE_FILES_DIR}/us_resources.rc.in")
+set(US_CMAKE_RESOURCE_DEPENDENCIES_CPP "${US_CMAKE_FILES_DIR}/usCMakeResourceDependencies.cpp")
 
 # The CppMicroServices resource compiler
 find_program(US_RCC_EXECUTABLE ${US_RCC_EXECUTABLE_NAME}
@@ -86,16 +92,16 @@ mark_as_advanced(US_RCC_EXECUTABLE)
 include(CMakeParseArguments)
 if(CMAKE_VERSION VERSION_LESS "2.8.8")
   # We need the HANDLE_COMPONENTS argument
-  include("${SV_SOURCE_DIR}/CMake/CppMicroServices/FindPackageHandleStandardArgs.cmake")
+  include("${US_CMAKE_FILES_DIR}/CppMicroServices/FindPackageHandleStandardArgs.cmake")
 elseif(NOT COMMAND find_package_handle_standard_args)
   include(FindPackageHandleStandardArgs)
 endif()
-include("${SV_SOURCE_DIR}/CMake/CppMicroServices/usFunctionGenerateModuleInit.cmake")
-include("${SV_SOURCE_DIR}/CMake/CppMicroServices/usFunctionAddResources.cmake")
-include("${SV_SOURCE_DIR}/CMake/CppMicroServices/usFunctionCheckCompilerFlags.cmake")
-include("${SV_SOURCE_DIR}/CMake/CppMicroServices/usFunctionEmbedResources.cmake")
-include("${SV_SOURCE_DIR}/CMake/CppMicroServices/usFunctionCheckResourceLinking.cmake")
-include("${SV_SOURCE_DIR}/CMake/CppMicroServices/usFunctionGetResourceSource.cmake")
+include("${US_CMAKE_FILES_DIR}/usFunctionGenerateModuleInit.cmake")
+include("${US_CMAKE_FILES_DIR}/usFunctionAddResources.cmake")
+include("${US_CMAKE_FILES_DIR}/usFunctionCheckCompilerFlags.cmake")
+include("${US_CMAKE_FILES_DIR}/usFunctionEmbedResources.cmake")
+include("${US_CMAKE_FILES_DIR}/usFunctionCheckResourceLinking.cmake")
+include("${US_CMAKE_FILES_DIR}/usFunctionGetResourceSource.cmake")
 
 usFunctionCheckResourceLinking()
 

@@ -5,15 +5,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -95,10 +95,10 @@ proc RCR_calc_pressures {R C period ratio units flow_with_time scale_factor_q me
     set num_kept_modes [expr [llength $flow_with_time] * 4]
 
     # get fourier modes for flow waveform
- 
+
     set modes [math_FFT -pts $flow_with_time -nterms $num_kept_modes -numInterpPts 1024]
     set Qzero [lindex [lindex $modes 0] 0]
-    
+
     # for convolution?
 
     for {set i 0} {$i < $num_kept_modes} {incr i} {
@@ -117,7 +117,7 @@ proc RCR_calc_pressures {R C period ratio units flow_with_time scale_factor_q me
         set Z [::math::complexnumbers::+ [list $Rc 0] $part2]
 	lappend Z_RCR $Z
     }
-   
+
     # convolve?
 
     for {set i 0} {$i < [llength $Z_RCR]} {incr i} {
@@ -125,9 +125,9 @@ proc RCR_calc_pressures {R C period ratio units flow_with_time scale_factor_q me
     }
 
     set number_of_points_per_cycle [expr [llength $flow_with_time] * 2]
-    
+
     # Calculating the time
-    set dt [expr double($period)/($number_of_points_per_cycle)]    
+    set dt [expr double($period)/($number_of_points_per_cycle)]
     set pomega [expr 2.0*[math_pi]*1.0/$period]
     set pressure [math_inverseFFT -terms $modified_modes -t0 0 -dt $dt -omega $pomega -numPts [expr $number_of_points_per_cycle + 1]]
     set pZero [lindex [lindex $modified_modes 0] 0]
@@ -164,7 +164,7 @@ proc RCR_estimator {R C period ratio units flow_filename scale_factor flip_flow_
 	lappend new_pts [list [lindex $pt 0] [expr $scale_factor*[lindex $pt 1]]]
     }
     set flow_pts $new_pts
-    
+
     set mean_q 0
     set mean_r 0
 
@@ -188,7 +188,7 @@ proc RCR_estimator {R C period ratio units flow_filename scale_factor flip_flow_
     set systolic_pressure [lindex $sorted_p end]
     set diastolic_pressure [lindex $sorted_p 0]
     set pulse_pressure [expr $systolic_pressure-$diastolic_pressure]
-     
+
     set mean_p 0
     foreach p $scaled_pressure  {
 	set mean_p [expr $mean_p + $p]
@@ -200,7 +200,7 @@ proc RCR_estimator {R C period ratio units flow_filename scale_factor flip_flow_
     puts $rcr_stdout [format "%20s %12.3f" "systolic pressure:" $systolic_pressure]
     puts $rcr_stdout [format "%20s %12.3f" "pulse pressure:" $pulse_pressure]
     puts $rcr_stdout [format "%20s %12.3f" "mean flow:" $mean_q]
-    
+
     return [list $diastolic_pressure $mean_p $systolic_pressure $pulse_pressure $mean_q]
 
 }
@@ -231,7 +231,7 @@ proc RCR_branch_estimator {targetQ targetP TAC period ratio units flow_filename 
   set total_flow [lindex [lindex $modes 0] 0]
   if {[string toupper $flip_flow_sign] == "TRUE"} {
     set total_flow [expr -1.0*$total_flow]
-  } 
+  }
 
   # if targetQ is blank, use total flow
   if {$targetQ == ""} {
@@ -301,7 +301,7 @@ proc RCR_TAC_optimize {ratio targetSP targetDP targetMP period units flow_filena
 
   puts $rcr_stdout "\n\n  optimal TAC: $TAC"
   return $TAC
-  
+
 }
 
 proc RCR_branch_optimize {TAC targetQ targetSP targetDP targetMP period units flow_filename flip_flow_sign} {
@@ -336,7 +336,7 @@ proc RCR_branch_optimize {TAC targetQ targetSP targetDP targetMP period units fl
   set Rd $gRCRvars(branch_estimator_last_Rd)
   set ratio $gRCRvars(branch_estimator_last_ratio)
 
-  return [list $Rc $C $Rd $ratio] 
+  return [list $Rc $C $Rd $ratio]
 
 }
 
@@ -344,7 +344,7 @@ proc RCR_branch_optimize {TAC targetQ targetSP targetDP targetMP period units fl
 proc RCR_branch_optimize_PP {TAC targetQ targetPP targetMP period units flow_filename flip_flow_sign} {
     global gRCR_stdout_fp
     set rcr_stdout $gRCR_stdout_fp
-    return [RCR_branch_optimize $TAC $targetQ $targetPP 0.0 $targetMP $period $units $flow_filename $flip_flow_sign] 
+    return [RCR_branch_optimize $TAC $targetQ $targetPP 0.0 $targetMP $period $units $flow_filename $flip_flow_sign]
 }
 
 
@@ -377,7 +377,7 @@ proc RCR_utility_optimize_func { x } {
 
   set pressures [RCR_branch_estimator $targetQ $targetMP $TAC $period $ratio $units $flow_filename $flip_flow_sign]
 
-  set  diastolic_pressure [lindex $pressures 0] 
+  set  diastolic_pressure [lindex $pressures 0]
   set  mean_p [lindex $pressures 1]
   set  systolic_pressure [lindex $pressures 2]
   set  pulse_pressure [lindex $pressures 3]
@@ -415,7 +415,7 @@ proc RCR_create_multi_branch_rcrtdat {in_fn out_fn_excel out_fn} {
     if {[string index $line 0] == "\#"} continue
     if {$foundFaceName} {
       set target_flow([lindex $line 0]) [lindex $line 1]
-      set target_MAP([lindex $line 0]) [lindex $line 2]     
+      set target_MAP([lindex $line 0]) [lindex $line 2]
     } else {
       if {[lindex $line 0] == "face_name"} {
         set foundFaceName 1
@@ -445,7 +445,7 @@ proc RCR_create_multi_branch_rcrtdat {in_fn out_fn_excel out_fn} {
                                                 $myvars(period) \
                                                 $myvars(units) \
                                                 $myvars(flow_filename) \
-		                                $myvars(flip_flow_sign)]                    
+		                                $myvars(flip_flow_sign)]
   }
 
   set fp [open $out_fn_excel w]
@@ -460,7 +460,7 @@ proc RCR_create_multi_branch_rcrtdat {in_fn out_fn_excel out_fn} {
   set numDataRCR 2
   set ValuePdist1 "0 0"
   set ValuePdist2 "$myvars(period) 0"
- 
+
   set fp [open $out_fn w]
   fconfigure $fp -translation lf
 

@@ -113,7 +113,7 @@ proc XFSaveSourceAppendix {xfOutFile {xfSavePlain 0}} {
     puts $xfOutFile "global auto_path"
     puts $xfOutFile "global tk_library"
     puts $xfOutFile "global xfLoadPath"
-#  May 11, 1997 - Dennis LaBelle 
+#  May 11, 1997 - Dennis LaBelle
 #			Added use of xfMisc(separator) to next line
     puts $xfOutFile "foreach xfElement \[eval list \[split \$xfLoadPath $xfMisc(separator)\] \$auto_path\] {"
     puts $xfOutFile "  if {\[file exists \$xfElement/tclIndex\]} {"

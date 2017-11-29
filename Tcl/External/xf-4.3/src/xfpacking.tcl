@@ -280,7 +280,7 @@ proc XFPacking {xfW xfType xfClass {xfLeader ""}} {
   label .xfPacking$xfClass.frame2.children.widgets.message6 \
     -text {Widgets:}
   pack before .xfPacking$xfClass.frame2.children.widgets.vscroll \
-              .xfPacking$xfClass.frame2.children.widgets.message6 {top fillx}  
+              .xfPacking$xfClass.frame2.children.widgets.message6 {top fillx}
 
   XFTmpltListbox .xfPacking$xfClass.frame2.children childs
 
@@ -296,7 +296,7 @@ proc XFPacking {xfW xfType xfClass {xfLeader ""}} {
     -from 0
   pack before .xfPacking$xfClass.frame2.children.childs.vscroll \
               .xfPacking$xfClass.frame2.children.childs.mover {right filly}
-  
+
   XFMiscReadTree $xfW .xfPacking$xfClass.frame2.children.widgets.widgets all
 
   XFPackingMakeMaster $xfW $xfType $xfClass
@@ -382,7 +382,7 @@ proc XFPacking {xfW xfType xfClass {xfLeader ""}} {
     XFPackingGetPacking $xfW $xfClass"
   bind .xfPacking$xfClass.frame2.children.childs.childs <Shift-Button1-Motion> "
     NoFunction"
-  
+
   # packing
   pack append .xfPacking$xfClass.frame1 \
               .xfPacking$xfClass.frame1.ok {left fill expand} \
@@ -647,7 +647,7 @@ proc XFPackingGetPacking {xfW xfClass} {
 	      .xfPacking$xfClass.frame2.expand.expand select
 	      set xfGotExpand 1
 	    }
-	  } 
+	  }
 	}
 
 	# Now set ipadx
@@ -675,7 +675,7 @@ proc XFPackingGetPacking {xfW xfClass} {
       }
     }
 
- 
+
     if {$xfGotSide == 0} {
       .xfPacking$xfClass.frame2.side.top select
     }
@@ -932,7 +932,7 @@ proc XFPackingMakeMaster {xfW xfType xfClass} {
     XFBindSelectOne %W %y
     XFPackingGetPacking $xfW $xfClass"
 
-	
+
   # read new packing into xfMisc(current) variables
   XFPackingReadPacking $xfW $xfClass
 
@@ -1039,7 +1039,7 @@ proc XFPackingRepositionChild {xfClass} {
     .xfPacking$xfClass.frame2.children.childs.childs selection set $xfNewPos
   }
 }
-  
+
 ##########
 # Procedure: XFPackingSetPacking
 # Description: set packing for currently selected widget
@@ -1060,7 +1060,7 @@ proc XFPackingSetPacking {xfW xfClass} {
       XFProcError "$xfResult"
     }
   }
-	
+
   while {$xfCounter < [llength $xfMisc($xfClass,curPacking)]} {
     set xfPackString "pack "
     append xfPackString [lindex [.xfPacking$xfClass.frame2.children.childs.childs get $xfCounter] 1]
@@ -1136,7 +1136,7 @@ proc XFPackingUpdatePacking {xfW xfClass {xfUpdatePos 1} {xfParam1 ""}} {
   # pack info is of the form:
   # -in . -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 \
   #     -padx 0 -pady 0 -side left
-	
+
   set xfNewPacking "-in $xfW"
   set xfCurSelected [.xfPacking$xfClass.frame2.children.childs.childs curselection]
   if {$xfCurSelected >= 0} {

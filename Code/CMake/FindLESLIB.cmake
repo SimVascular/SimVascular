@@ -26,7 +26,7 @@
 
 
 # - Find leslib Libraries
-# This function provides the barebones for find leslib.  
+# This function provides the barebones for find leslib.
 # It creates the variables required so the user can set them
 # === Variables ===
 #
@@ -43,6 +43,6 @@ find_path(${proj}_INCLUDE_DIR les.h)
 
 #-----------------------------------------------------------------------------
 # Handle Standard Args
-find_package_handle_standard_args(${proj} DEFAULT_MSG 
+find_package_handle_standard_args(${proj} DEFAULT_MSG
 	${proj}_LIBRARY
 	${proj}_INCLUDE_DIR)

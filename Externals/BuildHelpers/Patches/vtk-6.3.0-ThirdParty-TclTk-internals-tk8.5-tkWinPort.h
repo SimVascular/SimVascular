@@ -111,7 +111,7 @@
   | ((p)->green & 0xff00) | (((p)->blue << 8) & 0xff0000)) | 0x20000000)
 
 /*
- * These calls implement native bitmaps which are not currently 
+ * These calls implement native bitmaps which are not currently
  * supported under Windows.  The macros eliminate the calls.
  */
 
@@ -123,7 +123,7 @@
  * Define timezone for gettimeofday.
  */
 
-#ifndef __MINGW32__ 
+#ifndef __MINGW32__
 struct timezone {
     int tz_minuteswest;
     int tz_dsttime;

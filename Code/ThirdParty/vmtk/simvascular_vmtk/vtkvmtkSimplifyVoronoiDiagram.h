@@ -10,11 +10,11 @@ Version:   $Revision: 1.4 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -41,9 +41,9 @@ class vtkCellLinks;
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSimplifyVoronoiDiagram : public vtkPolyDataAlgorithm
 {
-  public: 
+  public:
   vtkTypeMacro(vtkvmtkSimplifyVoronoiDiagram,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkSimplifyVoronoiDiagram *New();
 
@@ -74,7 +74,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSimplifyVoronoiDiagram : pub
 
   protected:
   vtkvmtkSimplifyVoronoiDiagram();
-  ~vtkvmtkSimplifyVoronoiDiagram();  
+  ~vtkvmtkSimplifyVoronoiDiagram();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   vtkIdType IsBoundaryEdge(vtkCellLinks* links, vtkIdType* edge);

@@ -17,7 +17,7 @@ the directory tree and to show the contents of files (the
 first 50 lines).
 
 The basic dialog component will be a menubar at the top
-of the main dialog window. The menubar will contain a 
+of the main dialog window. The menubar will contain a
 menubutton, that allows the user to refresh the displayed
 directory contents and to quit the program.
 
@@ -68,7 +68,7 @@ contain the two listboxes to display the directory and the
 file contents.}
 
 set exampleCommand1 {\
-.xfEdit.frame2.additional.additional select clear 0 end 
+.xfEdit.frame2.additional.additional select clear 0 end
 .xfEdit.frame2.template.template select clear 0 end
 .xfEdit.frame2.standard.standard select clear 0 end
 .xfEdit.frame2.standard.standard select set 4

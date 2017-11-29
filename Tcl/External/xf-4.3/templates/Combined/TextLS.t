@@ -28,7 +28,7 @@ global symbolicName
 
   # pack widgets
   pack append . \
-    .frame   {top fill frame center} 
+    .frame   {top fill frame center}
 
 # end of widget tree
 
