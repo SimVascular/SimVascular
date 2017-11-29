@@ -70,7 +70,7 @@ if("${SV_EXTERNALS_${proj}_VERSION}" VERSION_LESS "4.7.2" AND
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-itk-4.7.1-gnu.patch)
 elseif("${SV_EXTERNALS_${proj}_VERSION}" VERSION_LESS "4.7.2" AND
     "${COMPILER_VERSION}" STREQUAL "Clang" AND
-    "${CMAKE_CXX_COMPILER_VERSION}" GREATER_EQUAL "9.0")
+    NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "9.0"))
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-itk-4.7.1-clang-9.0.patch)
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")

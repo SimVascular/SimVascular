@@ -121,7 +121,7 @@ configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_
 
 #Patch for cppmicroservices
 if("${COMPILER_VERSION}" STREQUAL "Clang" AND
-    "${CMAKE_CXX_COMPILER_VERSION}" GREATER_EQUAL "9.0")
+    NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "9.0"))
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-mitk-2016.03-clang-9.0.patch)
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
