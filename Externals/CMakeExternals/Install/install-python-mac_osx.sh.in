@@ -15,4 +15,4 @@ export PYTHON_BLDDIR=@SV_EXTERNALS_PYTHON_BLD_DIR@
 #$GCP -rfl /usr/lib/libz.* $PYTHON_BINDIR/lib
 $GCP /usr/local/opt/openssl/lib/libcrypto.* $PYTHON_BINDIR/lib
 $GCP /usr/local/opt/openssl/lib/libssl.* $PYTHON_BINDIR/lib
-$GCP /usr/lib/libz.* $PYTHON_BINDIR/lib
+#$GCP /usr/lib/libz.* $PYTHON_BINDIR/lib
