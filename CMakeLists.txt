@@ -47,6 +47,9 @@ endif()
 if (POLICY CMP0054)
   cmake_policy(SET CMP0054 OLD)
 endif()
+if (POLICY CMP0025) # Compiler ID when using clang set to clang not appleclang
+  cmake_policy(SET CMP0025 OLD)
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
