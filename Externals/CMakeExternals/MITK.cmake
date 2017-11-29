@@ -119,6 +119,14 @@ else()
 endif()
 configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
 
+#Patch for cppmicroservices
+if("${COMPILER_VERSION}" STREQUAL "Clang" AND
+    "${CMAKE_CXX_COMPILER_VERSION}" GREATER_EQUAL "9.0")
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-mitk-2016.03-clang-9.0.patch)
+else()
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
+endif()
+
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
@@ -140,6 +148,7 @@ else()
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
+    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     UPDATE_COMMAND ""
     INSTALL_COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}
      CMAKE_CACHE_ARGS

@@ -1,0 +1,39 @@
+diff -rupN original/Modules/CppMicroServices/core/src/util/usThreads_p.h patch/Modules/CppMicroServices/core/src/util/usThreads_p.h
+--- original/Modules/CppMicroServices/core/src/util/usThreads_p.h	2017-11-26 19:31:03.000000000 -0800
++++ patch/Modules/CppMicroServices/core/src/util/usThreads_p.h	2017-11-26 19:32:34.000000000 -0800
+@@ -24,6 +24,7 @@
+ #define USTHREADINGMODEL_H
+ 
+ #include <usCoreConfig.h>
++#include <atomic>
+ 
+ #ifdef US_ENABLE_THREADING_SUPPORT
+ 
+@@ -93,15 +94,19 @@
+     #define US_ATOMIC_OPTIMIZATION
+     #if defined(US_ATOMIC_OPTIMIZATION_APPLE)
+       #if defined (__LP64__) && __LP64__
+-        #define US_THREADS_LONG           volatile int64_t
+-        #define US_ATOMIC_INCREMENT(x)    IntType n = OSAtomicIncrement64Barrier(x)
+-        #define US_ATOMIC_DECREMENT(x)    IntType n = OSAtomicDecrement64Barrier(x)
+-        #define US_ATOMIC_ASSIGN(l, v)    OSAtomicCompareAndSwap64Barrier(*l, v, l)
++        #define US_THREADS_LONG           volatile std::atomic<int64_t>
++        #define US_ATOMIC_INCREMENT(x)    IntType n{std::atomic_fetch_add(x,int64_t(1))}
++        #define US_ATOMIC_DECREMENT(x)    IntType n{std::atomic_fetch_sub(x,int64_t(1))}
++        #define US_ATOMIC_ASSIGN(l, v)    int64_t expected = (*l).load(); \
++                                          int64_t desired = v.load(); \
++                                          std::atomic_compare_exchange_strong(l, &expected, desired)
+       #else
+-        #define US_THREADS_LONG           volatile int32_t
+-        #define US_ATOMIC_INCREMENT(x)    IntType n = OSAtomicIncrement32Barrier(x)
+-        #define US_ATOMIC_DECREMENT(x)    IntType n = OSAtomicDecrement32Barrier(x)
+-        #define US_ATOMIC_ASSIGN(l, v)    OSAtomicCompareAndSwap32Barrier(*l, v, l)
++        #define US_THREADS_LONG           volatile std::atomic<int32_t>
++        #define US_ATOMIC_INCREMENT(x)    IntType n{std::atomic_fetch_add(x,int32_t(1))}
++        #define US_ATOMIC_DECREMENT(x)    IntType n{std::atomic_fetch_sub(x,int32_t(1))}
++        #define US_ATOMIC_ASSIGN(l, v)    int32_t expected = (*l).load(); \
++                                          int32_t desired = v.load(); \
++                                          std::atomic_compare_exchange_strong(l, &expected, desired)
+       #endif
+     #elif defined(US_ATOMIC_OPTIMIZATION_GNUC)
+       #define US_THREADS_LONG             _Atomic_word
