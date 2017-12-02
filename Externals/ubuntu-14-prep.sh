@@ -29,8 +29,8 @@ sudo apt-get -y install libxi-dev
  sudo apt-get -y install libicu-dev
 
 ### mitk
-sudo apt-get -y install libXmu-dev
-sudo apt-get -y install libXi-dev
+sudo apt-get -y install libxmu-dev
+sudo apt-get -y install libxi-dev
 sudo apt-get -y install libtiff4-dev
 sudo apt-get -y install libwrap0-dev
 
