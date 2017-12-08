@@ -37,6 +37,10 @@ svQmitkFunctionality::svQmitkFunctionality()
 
 svQmitkFunctionality::~svQmitkFunctionality()
 {
+  this->Register();
+  this->ClosePartProxy();
+
+  this->UnRegister(false);
 }
 
 // --------- FOLLOWING FROM QmitkFunctionality ------------------------------
@@ -165,4 +169,5 @@ void svQmitkFunctionality::ClosePartProxy()
 
   this->ClosePart();
 }
+
 // --------------------------------------------------------------------------
