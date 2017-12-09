@@ -397,6 +397,9 @@ foreach(dir ${SV_PLUGIN_DIRS})
   message(STATUS "	${dir}")
   include_directories("${dir}")
   add_subdirectory("${dir}")
+  get_filename_component(plugin_dir_name ${dir} NAME)
+  string(REPLACE "." "_" plugin_name ${plugin_dir_name})
+  list(APPEND SV_PLUGIN_NAMES ${plugin_name})
 endforeach()
 #-----------------------------------------------------------------------------
 
