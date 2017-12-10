@@ -81,11 +81,18 @@ set(SimVascular_CXX_FLAGS "@CMAKE_CXX_FLAGS@")
 #-----------------------------------------------------------------------------
 # Set all available libraries
 set(CONF_USED_LIBS "@SV_CONF_USED_LIBS@")
+set(CONF_USED_PLUGINS "@SV_CONF_USED_PLUGINS@")
 set(SimVascular_LIBRARIES "")
 foreach(lib ${CONF_USED_LIBS})
   list(APPEND SimVascular_LIBRARIES "${SimVascular_LIBRARY_DIR}/${lib}")
   if(WIN32)
     list(APPEND SimVascular_LIBRARIES "${SimVascular_RUNTIME_DIR}/${lib}")
+  endif()
+endforeach()
+foreach(lib ${CONF_USED_PLUGINS})
+  list(APPEND SimVascular_LIBRARIES "${SimVascular_LIBRARY_DIR}/plugins/${lib}")
+  if(WIN32)
+    list(APPEND SimVascular_LIBRARIES "${SimVascular_RUNTIME_DIR}/plugins/${lib}")
   endif()
 endforeach()
 #-----------------------------------------------------------------------------
