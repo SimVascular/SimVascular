@@ -32,7 +32,6 @@
 #include "SimVascular.h"
 
 #include <stdio.h>
-#include <iostream>
 
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
@@ -171,7 +170,6 @@ int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
     }
     pts[i][0] = pt[0];
     pts[i][1] = pt[1];
-    std::cout<<pts[i][0]<<std::endl<<pts[i][1]<<std::endl;
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -179,7 +177,6 @@ int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
   //}
 
   double **terms = NULL;
-    printf("%d,%d,%d,%d\n",nlistpts,numInterpPoints,nterms,&terms);
   if ((mathobj->FFT(pts, nlistpts, numInterpPoints, nterms, &terms)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in fft", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
