@@ -112,10 +112,9 @@
   #include "cv_tetgen_adapt_init.h"
 #endif
 
-//#ifdef SV_USE_PYTHON
-// Tclpython_Init(Tcl_Interp *interp);
-//extern "C" int SimVascular_InitPy();
-//#endif
+#ifdef SV_USE_PYTHON
+extern "C" int Tclpython_Init(Tcl_Interp *interp);
+#endif
 
 // ---------------
 // SimVascularWelcome
@@ -156,23 +155,6 @@ void SimVascularWelcome( Tcl_Interp *interp )
 # include "vtktcl_static_prototypes.h"
 #endif
 
-#ifdef SV_USE_PYTHON
-int SimVascular_InitPy()
-{
-  #ifdef SV_STATIC_BUILD
-  if ( Image_Init() != "SV_OK" ) {
-    fprintf( stderr, "error on Image_Init\n" );
-    return SV_ERROR;
-  }
-  if ( Math_Init() == "SV_ERROR" ) {
-    fprintf( stderr, "error on Math_Init\n" );
-    return SV_ERROR;
-  }
-  #endif
-  return SV_OK;
-}
-#endif
-
 int SimVascular_Init( Tcl_Interp *interp )
 {
   SimVascularWelcome(interp);
@@ -206,6 +188,11 @@ int SimVascular_Init( Tcl_Interp *interp )
 
   if ( Geom_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Geom_Init\n" );
+    return TCL_ERROR;
+  }
+
+  if ( Image_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on Image_Init\n" );
     return TCL_ERROR;
   }
 
