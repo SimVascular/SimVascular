@@ -1,6 +1,8 @@
-/* Copyright (c) 2009-2011 Open Source Medical Software Corporation,
- *                         University of California, San Diego.
+/* Copyright (c) 2014-2015 The Regents of the University of California.
+ * All Rights Reserved.
  *
+ * Portions of the code Copyright (c) 2009-2011 Open Source Medical
+ * Software Corporation, University of California, San Diego.
  * All rights reserved.
  *
  * Portions of the code Copyright (c) 1998-2007 Stanford University,
@@ -29,13 +31,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __CVGETTCLINTERP_INIT_H
-#define __CVGETTCLINTERP_INIT_H
+#ifndef __CVREPOS_INIT_H
+#define __CVREPOS_INIT_H
 
 #include "SimVascular.h"
-#include "svUtilsExports.h" // For exports
-#include "tcl.h"
+#include "svRepositoryExports.h" // For exports
+#ifdef SV_USE_PYTHON
+#include "Python.h"
+#endif
 
-extern "C" SV_EXPORT_UTILS int Getinterp_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_REPOSITORY int Repos_pyInit();
 
-#endif // __CVGETTCLINTERP_INIT_H
+#endif // __CVREPOS_INIT_H

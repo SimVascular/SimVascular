@@ -37,8 +37,5 @@
 #include "tcl.h"
 
 extern "C" SV_EXPORT_UTILS int Utils_Init( Tcl_Interp *interp );
-#ifdef SV_USE_PYTHON
-extern "C" SV_EXPORT_UTILS int Utils_pyInit();
-#endif
 
 #endif // __UTILS_INIT_H

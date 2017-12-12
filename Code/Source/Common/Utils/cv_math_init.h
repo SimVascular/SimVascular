@@ -36,10 +36,6 @@
 #include "svUtilsExports.h" // For exports
 #include "tcl.h"
 
-//extern "C" SV_EXPORT_UTILS int Math_Init( Tcl_Interp *interp );
-#ifdef SV_USE_PYTHON
-extern "C" SV_EXPORT_UTILS int Math_Init( );
-#endif
-
+extern "C" SV_EXPORT_UTILS int Math_Init( Tcl_Interp *interp );
 
 #endif // __CVMATH_INIT_H

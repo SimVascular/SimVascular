@@ -32,6 +32,7 @@
 #include "SimVascular.h"
 
 #include <stdio.h>
+#include <iostream>
 
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
@@ -45,63 +46,105 @@
 #endif
 
 // Prototypes:
-#ifdef SV_USE_PYTHON
-#include "Python.h"
 
-static PyObject *MathErr;
-PyObject *Math_FFTCmd( PyObject *self, PyObject *args );
-PyObject *Math_inverseFFTCmd(PyObject *self, PyObject *args  );
-PyObject *Math_computeWomersleyCmd( PyObject *self, PyObject *args  );
-PyObject *Math_linearInterpCmd( PyObject *self, PyObject *args  );
-PyObject *Math_curveLengthCmd( PyObject *self, PyObject *args  );
-PyObject *Math_linearInterpolateCurveCmd( PyObject *self, PyObject *args  );
-PyObject *Math_fitLeastSquaresCmd( PyObject *self, PyObject *args  );
-PyObject *Math_smoothCurveCmd( PyObject *self, PyObject *args  );
-PyMODINIT_FUNC
-initpyMath(void);
+int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] );
+
+int Math_inverseFFTCmd( ClientData clientData, Tcl_Interp *interp,
+		int argc, CONST84 char *argv[] );
+
+int Math_computeWomersleyCmd( ClientData clientData, Tcl_Interp *interp,
+		int argc, CONST84 char *argv[] );
+
+int Math_linearInterpCmd( ClientData clientData, Tcl_Interp *interp,
+		int argc, CONST84 char *argv[] );
+
+int Math_curveLengthCmd( ClientData clientData, Tcl_Interp *interp,
+		int argc, CONST84 char *argv[] );
+
+int Math_linearInterpolateCurveCmd( ClientData clientData, Tcl_Interp *interp,
+		int argc, CONST84 char *argv[] );
+
+int Math_fitLeastSquaresCmd( ClientData clientData, Tcl_Interp *interp,
+                int argc, CONST84 char *argv[] );
+
+int Math_smoothCurveCmd( ClientData clientData, Tcl_Interp *interp,
+                int argc, CONST84 char *argv[] );
 
 // ---------
 // Math_Init
 // ---------
 
-int Math_Init( )
+int Math_Init( Tcl_Interp *interp )
 {
+  Tcl_CreateCommand( interp, "math_FFT", Math_FFTCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "math_inverseFFT", Math_inverseFFTCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "math_computeWomersley", Math_computeWomersleyCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "math_linearInterp", Math_linearInterpCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "math_curveLength", Math_curveLengthCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "math_linearInterpCurve", Math_linearInterpolateCurveCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "math_fitLeastSquares", Math_fitLeastSquaresCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "math_smoothCurve", Math_smoothCurveCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
-  Py_Initialize();
-
-  initpyMath();
-
-  return SV_OK;
+  return TCL_OK;
 }
+
 
 // -----------
 // Math_FFTCmd
 // -----------
 
-PyObject *Math_FFTCmd(PyObject *self, PyObject *args)
+int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] )
 {
   char *usage;
 
   int nterms = 0;
   int numInterpPoints = 0;
+  ARG_List pointsArg;
 
-  PyObject *pointsArg;
-  
-    if (!PyArg_ParseTuple(args,"Oii", &pointsArg, 
-      &nterms,&numInterpPoints))
-    {
-      PyErr_SetString(MathErr, "Could not import 1 tuple and 2 int: pointsArg, nterms, numInterpPoints");
-      return NULL;
-    }  
+  int table_sz = 3;
+  ARG_Entry arg_table[] = {
+    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-nterms", INT_Type, &nterms, NULL, REQUIRED, 0, { 0 } },
+    { "-numInterpPts", INT_Type, &numInterpPoints, NULL, REQUIRED, 0, { 0 } },
+  };
+
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
 
   // Do work of command
-  if (!PyList_Check(pointsArg)){
-    PyErr_SetString( MathErr, "pointsArg not a list");
-    return SV_ERROR;
-  }
-  int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+
+  int nlistpts = pointsArg.argc;
   int npts = 0;
+
+  ARG_List *indpts = new ARG_List [nlistpts];
+
+  if ( ARG_ParseTclListStatic( interp, pointsArg, LIST_Type, indpts, nlistpts, &npts )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete indpts;
+    return TCL_ERROR;
+  }
 
   int i;
   cvMath *mathobj = new cvMath();
@@ -109,14 +152,26 @@ PyObject *Math_FFTCmd(PyObject *self, PyObject *args)
   double pt[2];
 
   for (i = 0; i < nlistpts; i++) {
-    PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
-    {
-      for (int j=0;j<2;j++)
-      {
-        pts[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, indpts[i], DOUBLE_Type, pt, 2, &npts )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,2);
+      delete mathobj;
+      return TCL_ERROR;
     }
+    if ( npts != 2 ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,2);
+      delete mathobj;
+      return TCL_ERROR;
+    }
+    pts[i][0] = pt[0];
+    pts[i][1] = pt[1];
+    std::cout<<pts[i][0]<<std::endl<<pts[i][1]<<std::endl;
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -124,37 +179,32 @@ PyObject *Math_FFTCmd(PyObject *self, PyObject *args)
   //}
 
   double **terms = NULL;
+    printf("%d,%d,%d,%d\n",nlistpts,numInterpPoints,nterms,&terms);
   if ((mathobj->FFT(pts, nlistpts, numInterpPoints, nterms, &terms)) == SV_ERROR) {
-     PyErr_SetString( MathErr, "error in fft");
+     Tcl_SetResult( interp, "error in fft", TCL_VOLATILE );
+     ARG_FreeListArgvs( table_sz, arg_table );
+     delete indpts;
      mathobj->deleteArray(pts,nlistpts,2);
      delete mathobj;
-     return SV_ERROR;
+     return TCL_ERROR;
   }
 
   // create result string
   char r[2048];
-  PyObject *pylist=PyList_New(nterms);
-  if(pylist!=NULL)
-  {
   for (i = 0; i < nterms; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",terms[i][0],terms[i][1]);
-    PyObject *rr=PyString_FromString(r);
-    if(!rr)
-    {
-      Py_DECREF(pylist);
-      return NULL;
-    }
-    PyList_SET_ITEM(pylist, i, rr);
-    }
-  }  
+    Tcl_AppendElement(interp, r);
+  }
 
   // clean up
+  ARG_FreeListArgvs( table_sz, arg_table );
+  delete indpts;
   mathobj->deleteArray(pts,nlistpts,2);
   mathobj->deleteArray(terms,nterms,2);
   delete mathobj;
 
-  return pylist;
+  return TCL_OK;
 }
 
 
@@ -162,32 +212,52 @@ PyObject *Math_FFTCmd(PyObject *self, PyObject *args)
 // Math_inverseFFTCmd
 // ------------------
 
-PyObject *Math_inverseFFTCmd(PyObject *self, PyObject *args)
+int Math_inverseFFTCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] )
 {
+  char *usage;
+  ARG_List termsArg;
   double t0 = 0;
   double dt = 0;
   double omega = 0;
   int numPts = 0;
 
-  PyObject *termsArg;
-  
-    if (!PyArg_ParseTuple(args,"Odddi", &termsArg, 
-      &t0,&dt,&omega,&numPts))
-    {
-      PyErr_SetString(MathErr, "Could not import 1 tuple, 3 double and 1 int: termsArg, t0, dt,omega, numPts");
-      return NULL;
-    }
+  int table_sz = 5;
+  ARG_Entry arg_table[] = {
+    { "-terms", LIST_Type, &termsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-t0", DOUBLE_Type, &t0, NULL, REQUIRED, 0, { 0 } },
+    { "-dt", DOUBLE_Type, &dt, NULL, REQUIRED, 0, { 0 } },
+    { "-omega", DOUBLE_Type, &omega, NULL, REQUIRED, 0, { 0 } },
+    { "-numPts", INT_Type, &numPts, NULL, REQUIRED, 0, { 0 } },
+  };
 
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
 
   // Do work of command
-  if (!PyList_Check(termsArg)){
-    PyErr_SetString( MathErr, "termsArg is not a list");
-    return SV_ERROR;
-  }
-  int nlistterms = PyList_Size(termsArg);
-  if (nlistterms < 0)   return NULL;
 
+  int nlistterms = termsArg.argc;
   int numTerms = 0;
+
+  ARG_List *indterms = new ARG_List [nlistterms];
+
+  if ( ARG_ParseTclListStatic( interp, termsArg, LIST_Type, indterms, nlistterms, &numTerms )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete indterms;
+    return TCL_ERROR;
+  }
 
   int i;
   cvMath *mathobj = new cvMath();
@@ -196,16 +266,25 @@ PyObject *Math_inverseFFTCmd(PyObject *self, PyObject *args)
   int nt = 0;
 
   for (i = 0; i < nlistterms; i++) {
-
-    PyObject *temp=PyList_GetItem(termsArg,i);
-    if (temp!=NULL)
-    {
-      for (int j=0;j<2;j++)
-      {
-        terms[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, indterms[i], DOUBLE_Type, term, 2, &nt )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in terms list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indterms;
+      mathobj->deleteArray(terms,nlistterms,2);
+      delete mathobj;
+      return TCL_ERROR;
     }
-
+    if ( nt != 2 ) {
+      Tcl_SetResult( interp, "error in terms list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indterms;
+      mathobj->deleteArray(terms,nlistterms,2);
+      delete mathobj;
+      return TCL_ERROR;
+    }
+    terms[i][0] = term[0];
+    terms[i][1] = term[1];
   }
 
   //for (i = 0; i < nlistterms; i++) {
@@ -214,44 +293,42 @@ PyObject *Math_inverseFFTCmd(PyObject *self, PyObject *args)
 
   double **pts = NULL;
   if ( (mathobj->inverseFFT(terms, nlistterms, t0, dt, omega, numPts, &pts)) == SV_ERROR) {
-     PyErr_SetString( MathErr, "error in inverse fft" );
+     Tcl_SetResult( interp, "error in inverse fft", TCL_VOLATILE );
+     ARG_FreeListArgvs( table_sz, arg_table );
+     delete indterms;
      mathobj->deleteArray(terms,nlistterms,2);
      delete mathobj;
-     return SV_ERROR;
+     return TCL_ERROR;
   }
 
   // create result string
   char r[2048];
-  PyObject *pylist=PyList_New(numPts);
-  if(pylist!=NULL)
-  {
   for (i = 0; i < numPts; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",pts[i][0],pts[i][1]);
-    PyObject *rr=PyString_FromString(r);
-    if(!rr)
-    {
-      Py_DECREF(pylist);
-      return NULL;
-    }
-    PyList_SET_ITEM(pylist, i, rr);
-    }
-  }  
+    Tcl_AppendElement(interp, r);
+  }
 
   // clean up
+  ARG_FreeListArgvs( table_sz, arg_table );
+  delete indterms;
   mathobj->deleteArray(terms,nlistterms,2);
   mathobj->deleteArray(pts,numPts,2);
   delete mathobj;
 
-  return pylist;
+  return TCL_OK;
 }
 
 
 // ------------------------
 // Math_computeWomersleyCmd
 // ------------------------
-PyObject *Math_computeWomersleyCmd(PyObject *self, PyObject *args)
+
+int Math_computeWomersleyCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] )
 {
+  char *usage;
+  ARG_List termsArg;
   double time = 0;
   double viscosity = 0;
   double omega = 0;
@@ -259,14 +336,16 @@ PyObject *Math_computeWomersleyCmd(PyObject *self, PyObject *args)
   double radmax = 0;
   double radius = 0;
 
-  PyObject *termsArg;
-  
-    if (!PyArg_ParseTuple(args,"Odddddd", PyList_Type, &termsArg, 
-      &time,&viscosity,&omega,&density,&radmax,&radius))
-    {
-      PyErr_SetString(MathErr, "Could not import 1 tuple and 6 double: termsArg,time,viscosity,omega,density,radmax,radius");
-      return NULL;
-    }
+  int table_sz = 7;
+  ARG_Entry arg_table[] = {
+    { "-terms", LIST_Type, &termsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-time", DOUBLE_Type, &time, NULL, REQUIRED, 0, { 0 } },
+    { "-viscosity", DOUBLE_Type, &viscosity, NULL, REQUIRED, 0, { 0 } },
+    { "-omega", DOUBLE_Type, &omega, NULL, REQUIRED, 0, { 0 } },
+    { "-density", DOUBLE_Type, &density, NULL, REQUIRED, 0, { 0 } },
+    { "-radmax", DOUBLE_Type, &radmax, NULL, REQUIRED, 0, { 0 } },
+    { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
+  };
 
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -283,28 +362,46 @@ PyObject *Math_computeWomersleyCmd(PyObject *self, PyObject *args)
   }
 
   // Do work of command
-  if (!PyList_Check(termsArg)){
-    PyErr_SetString( MathErr, "termsArg not a list");
-    return SV_ERROR;
-  }
-  int nlistterms = PyList_Size(termsArg);
-  if (nlistterms < 0)   return NULL;
+
+  int nlistterms = termsArg.argc;
   int numTerms = 0;
+
+  ARG_List *indterms = new ARG_List [nlistterms];
+
+  if ( ARG_ParseTclListStatic( interp, termsArg, LIST_Type, indterms, nlistterms, &numTerms )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete indterms;
+    return TCL_ERROR;
+  }
 
   int i;
   cvMath *mathobj = new cvMath();
   double **terms = mathobj->createArray(nlistterms,2);
+  double term[2];
   int nt = 0;
 
   for (i = 0; i < nlistterms; i++) {
-    PyObject *temp=PyList_GetItem(termsArg,i);
-    if (temp!=NULL)
-    {
-      for (int j=0;j<2;j++)
-      {
-        terms[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, indterms[i], DOUBLE_Type, term, 2, &nt )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in terms list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indterms;
+      mathobj->deleteArray(terms,nlistterms,2);
+      delete mathobj;
+      return TCL_ERROR;
     }
+    if ( nt != 2 ) {
+      Tcl_SetResult( interp, "error in terms list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indterms;
+      mathobj->deleteArray(terms,nlistterms,2);
+      delete mathobj;
+      return TCL_ERROR;
+    }
+    terms[i][0] = term[0];
+    terms[i][1] = term[1];
   }
 
   //for (i = 0; i < nlistterms; i++) {
@@ -314,64 +411,96 @@ PyObject *Math_computeWomersleyCmd(PyObject *self, PyObject *args)
   double velocity = 0;
   if ((mathobj->compute_v_womersley(terms, nlistterms, viscosity, density,
                      omega, radmax, radius, time, &velocity)) == SV_ERROR) {
-     PyErr_SetString( MathErr, "error in calculate worm" );
+     Tcl_SetResult( interp, "error in calculate worm", TCL_VOLATILE );
+     ARG_FreeListArgvs( table_sz, arg_table );
+     delete indterms;
      mathobj->deleteArray(terms,nlistterms,2);
      delete mathobj;
-     return SV_ERROR;
+     return TCL_ERROR;
   }
 
   // create result string
   char r[2048];
   r[0] = '\0';
   sprintf(r,"%.6le",velocity);
+  Tcl_AppendElement(interp, r);
 
   // clean up
+  ARG_FreeListArgvs( table_sz, arg_table );
+  delete indterms;
   mathobj->deleteArray(terms,nlistterms,2);
   delete mathobj;
 
-  return Py_BuildValue("s",r);
+  return TCL_OK;
 }
 
-PyObject *Math_linearInterpCmd(PyObject *self, PyObject *args)
-{
-  int numInterpPoints = 0;
 
-  PyObject *pointsArg;
-  
-  if (!PyArg_ParseTuple(args,"Oi", &pointsArg, 
-      &numInterpPoints))
-  {
-      PyErr_SetString(MathErr, "Could not import 1 tuple and 1 int: termsArg,numInterpPoints");
-      return NULL;
-  }  
-  
+int Math_linearInterpCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  int numInterpPoints = 0;
+  ARG_List pointsArg;
+
+  int table_sz = 2;
+  ARG_Entry arg_table[] = {
+    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-numInterpPts", INT_Type, &numInterpPoints, NULL, REQUIRED, 0, { 0 } },
+  };
+
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
 
   // Do work of command
 
-  if (!PyList_Check(pointsArg)){
-    PyErr_SetString( MathErr, "pointsArg not a list");
-    return SV_ERROR;
-  }
-  int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+  int nlistpts = pointsArg.argc;
   int npts = 0;
 
+  ARG_List *indpts = new ARG_List [nlistpts];
+
+  if ( ARG_ParseTclListStatic( interp, pointsArg, LIST_Type, indpts, nlistpts, &npts )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete indpts;
+    return TCL_ERROR;
+  }
 
   int i;
   cvMath *mathobj = new cvMath();
   double **pts = mathobj->createArray(nlistpts,2);
-
+  double pt[2];
 
   for (i = 0; i < nlistpts; i++) {
-
-    PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
-    {
-      for (int j=0;j<2;j++)
-      {
-        pts[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, indpts[i], DOUBLE_Type, pt, 2, &npts )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,2);
+      delete mathobj;
+      return TCL_ERROR;
     }
+    if ( npts != 2 ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,2);
+      delete mathobj;
+      return TCL_ERROR;
+    }
+    pts[i][0] = pt[0];
+    pts[i][1] = pt[1];
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -385,58 +514,73 @@ PyObject *Math_linearInterpCmd(PyObject *self, PyObject *args)
   double **outPts = NULL;
 
   if ((mathobj->linearInterpolate(pts, nlistpts, t0, dt, numInterpPoints, &outPts)) == SV_ERROR) {
-     PyErr_SetString( MathErr, "error in linear interpolation");
+     Tcl_SetResult( interp, "error in linear interpolation", TCL_VOLATILE );
+     ARG_FreeListArgvs( table_sz, arg_table );
+     delete indpts;
      mathobj->deleteArray(pts,nlistpts,2);
      delete mathobj;
-     return SV_ERROR;
+     return TCL_ERROR;
   }
 
   // create result string
   char r[2048];
-  PyObject *pylist=PyList_New(numInterpPoints);
-  if(pylist!=NULL)
-  {
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",outPts[i][0],outPts[i][1]);
-    PyObject *rr=PyString_FromString(r);
-    if(!rr)
-    {
-      Py_DECREF(pylist);
-      return NULL;
-    }
-    PyList_SET_ITEM(pylist, i, rr);
-    }
+    Tcl_AppendElement(interp, r);
   }
 
   // clean up
+  ARG_FreeListArgvs( table_sz, arg_table );
+  delete indpts;
   mathobj->deleteArray(pts,nlistpts,2);
   mathobj->deleteArray(outPts,numInterpPoints,2);
   delete mathobj;
 
-  return pylist;
+  return TCL_OK;
 }
 
-PyObject *Math_curveLengthCmd(PyObject *self, PyObject *args)
+
+int Math_curveLengthCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] )
 {
+  char *usage;
+  ARG_List pointsArg;
   int closed = 0;
 
-  PyObject *pointsArg;
-  if (!PyArg_ParseTuple(args,"Oi", PyList_Type, &pointsArg, 
-      &closed))
-  {
-      PyErr_SetString(MathErr, "Could not import 1 tuple and 1 int: termsArg,closed");
-      return NULL;
-  }  
+  int table_sz = 2;
+  ARG_Entry arg_table[] = {
+    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, NULL, REQUIRED, 0, { 0 } },
+  };
+
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
 
   // Do work of command
-  if (!PyList_Check(pointsArg)){
-    PyErr_SetString( MathErr, "pointsArg not a list");
-    return SV_ERROR;
-  }
-  int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+
+  int nlistpts = pointsArg.argc;
   int npts = 0;
+
+  ARG_List *indpts = new ARG_List [nlistpts];
+
+  if ( ARG_ParseTclListStatic( interp, pointsArg, LIST_Type, indpts, nlistpts, &npts )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete indpts;
+    return TCL_ERROR;
+  }
 
   int i;
   cvMath *mathobj = new cvMath();
@@ -444,14 +588,26 @@ PyObject *Math_curveLengthCmd(PyObject *self, PyObject *args)
   double pt[3];
 
   for (i = 0; i < nlistpts; i++) {
-    PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
-    {
-      for (int j=0;j<3;j++)
-      {
-        pts[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, indpts[i], DOUBLE_Type, pt, 3, &npts )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,3);
+      delete mathobj;
+      return TCL_ERROR;
     }
+    if ( npts != 3 ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,3);
+      delete mathobj;
+      return TCL_ERROR;
+    }
+    pts[i][0] = pt[0];
+    pts[i][1] = pt[1];
+    pts[i][2] = pt[2];
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -460,46 +616,72 @@ PyObject *Math_curveLengthCmd(PyObject *self, PyObject *args)
 
   double length = 0;
   if ((mathobj->curveLength(pts, nlistpts, closed, &length)) == SV_ERROR) {
-     PyErr_SetString( MathErr, "error finding curve length" );
+     Tcl_SetResult( interp, "error finding curve length", TCL_VOLATILE );
+     ARG_FreeListArgvs( table_sz, arg_table );
+     delete indpts;
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return SV_ERROR;
+     return TCL_ERROR;
   }
 
   // create result string
   char r[2048];
   r[0] = '\0';
   sprintf(r,"%.6le",length);
-  //Tcl_AppendElement(interp, r);
+  Tcl_AppendElement(interp, r);
 
   // clean up
+  ARG_FreeListArgvs( table_sz, arg_table );
+  delete indpts;
   mathobj->deleteArray(pts,nlistpts,3);
   delete mathobj;
 
-  return Py_BuildValue("s",r);
+  return TCL_OK;
 }
 
-PyObject *Math_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
+
+int Math_linearInterpolateCurveCmd( ClientData clientData, Tcl_Interp *interp,
+			            int argc, CONST84 char *argv[] )
 {
+  char *usage;
   int numInterpPoints = 0;
   int closed = 0;
+  ARG_List pointsArg;
 
-  PyObject *pointsArg;
-  if (!PyArg_ParseTuple(args,"Oii", PyList_Type, &pointsArg, 
-      &closed,&numInterpPoints))
-  {
-      PyErr_SetString(MathErr, "Could not import 1 tuple and 2 int: termsArg,closed,&numInterpPoints");
-      return NULL;
-  }  
-  
-  // Do work of command
-  if (!PyList_Check(pointsArg)){
-    PyErr_SetString( MathErr, "pointsArg not a list");
-    return SV_ERROR;
+  int table_sz = 3;
+  ARG_Entry arg_table[] = {
+    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, NULL, REQUIRED, 0, { 0 } },
+    { "-numInterpPts", INT_Type, &numInterpPoints, NULL, REQUIRED, 0, { 0 } },
+  };
+
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
   }
-  int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command
+
+  int nlistpts = pointsArg.argc;
   int npts = 0;
+
+  ARG_List *indpts = new ARG_List [nlistpts];
+
+  if ( ARG_ParseTclListStatic( interp, pointsArg, LIST_Type, indpts, nlistpts, &npts )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete indpts;
+    return TCL_ERROR;
+  }
 
   int i;
   cvMath *mathobj = new cvMath();
@@ -507,14 +689,26 @@ PyObject *Math_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   double pt[3];
 
   for (i = 0; i < nlistpts; i++) {
-    PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
-    {
-      for (int j=0;j<3;j++)
-      {
-        pts[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, indpts[i], DOUBLE_Type, pt, 3, &npts )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,3);
+      delete mathobj;
+      return TCL_ERROR;
     }
+    if ( npts != 3 ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,3);
+      delete mathobj;
+      return TCL_ERROR;
+    }
+    pts[i][0] = pt[0];
+    pts[i][1] = pt[1];
+    pts[i][2] = pt[2];
   }
 
   //for (i = 0; i < nlistpts; i++) {
@@ -523,102 +717,147 @@ PyObject *Math_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
 
   double **outPts = NULL;
   if ((mathobj->linearInterpolateCurve(pts, nlistpts, closed, numInterpPoints, &outPts)) == SV_ERROR) {
-     PyErr_SetString( MathErr, "error in linear interpolation" );
+     Tcl_SetResult( interp, "error in linear interpolation", TCL_VOLATILE );
+     ARG_FreeListArgvs( table_sz, arg_table );
+     delete indpts;
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return SV_ERROR;
+     return TCL_ERROR;
   }
 
   // create result string
   char r[2048];
-  PyObject *pylist=PyList_New(numInterpPoints);
-  if(pylist!=NULL)
-  {
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le %.6le",outPts[i][0],outPts[i][1],outPts[i][2]);
-    PyObject *rr=PyString_FromString(r);
-    if(!rr)
-    {
-      Py_DECREF(pylist);
-      return NULL;
-    }
-    PyList_SET_ITEM(pylist, i, rr);
-    }
-  }  
-  
+    Tcl_AppendElement(interp, r);
+  }
 
   // clean up
+  ARG_FreeListArgvs( table_sz, arg_table );
+  delete indpts;
   mathobj->deleteArray(pts,nlistpts,3);
   mathobj->deleteArray(outPts,numInterpPoints,3);
   delete mathobj;
 
-  return pylist;
+  return TCL_OK;
 }
 
 
 // -----------------------
 // Math_fitLeastSquaresCmd
 // -----------------------
-PyObject *Math_fitLeastSquaresCmd(PyObject *self, PyObject *args)
+
+int Math_fitLeastSquaresCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] )
 {
+  char *usage;
+  ARG_List xtermsArg,ytermsArg;
   int xOrder = 0;
   int yOrder = 0;
 
-  PyObject *xtermsArg;
-  PyObject *ytermsArg;
+  int table_sz = 4;
+  ARG_Entry arg_table[] = {
+    { "-X", LIST_Type, &xtermsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-Y", LIST_Type, &ytermsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-xOrder", INT_Type, &xOrder, NULL, REQUIRED, 0, { 0 } },
+    { "-yOrder", INT_Type, &yOrder, NULL, REQUIRED, 0, { 0 } },
+  };
 
-  if (!PyArg_ParseTuple(args,"OOii", PyList_Type, &xtermsArg, 
-                        PyList_Type, &ytermsArg,
-                        &xOrder,&yOrder))
-  {
-      PyErr_SetString(MathErr, "Could not import 2 tuple and 2 int:xtermsArg, termsArg,xOrder,yOrder");
-      return NULL;
-  }  
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
 
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
 
   // Do work of command
-  if (!(PyList_Check(xtermsArg)||PyList_Check(ytermsArg))){
-    PyErr_SetString( MathErr, "xtermsArg or ytermsArg is not a list");
-    return SV_ERROR;
-  }
-  int numberOfSamples = PyList_Size(xtermsArg);
-  int numberOfSamplesY = PyList_Size(ytermsArg);
-  if (numberOfSamples < 0)   return NULL;
-
-  if (numberOfSamples!= numberOfSamplesY) {
-
-      PyErr_SetString(MathErr,"ERROR:  X and Y must have the same number of samples\n");
+  if (xtermsArg.argc != ytermsArg.argc) {
+      fprintf(stderr,"ERROR:  X and Y must have the same number of samples (%i != %i).\n",xtermsArg.argc,ytermsArg.argc);
+      Tcl_SetResult( interp, usage, TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
   }
 
+  int numberOfSamples = xtermsArg.argc;
+  ARG_List *xterms = new ARG_List [numberOfSamples];
   int numTerms = 0;
+
+  if ( ARG_ParseTclListStatic( interp, xtermsArg, LIST_Type, xterms, numberOfSamples, &numTerms )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, "error in X samples", TCL_VOLATILE );
+    delete xterms;
+    ARG_FreeListArgvs( table_sz, arg_table );
+    return TCL_ERROR;
+  }
 
   int i,j;
   cvMath *mathobj = new cvMath();
 
   double **xt = mathobj->createArray(numberOfSamples,xOrder);
   for (i = 0; i < numberOfSamples; i++) {
-    PyObject *temp=PyList_GetItem(xtermsArg,i);
-    if (temp!=NULL)
-    {
-      for (int j=0;j<3;j++)
-      {
-        xt[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, xterms[i], DOUBLE_Type, xt[i], xOrder, &numTerms )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in X samples", TCL_VOLATILE );
+      mathobj->deleteArray(xt,numberOfSamples,xOrder);
+      delete mathobj;
+      delete xterms;
+      ARG_FreeListArgvs( table_sz, arg_table );
+      return TCL_ERROR;
     }
+    if (numTerms != xOrder) {
+      Tcl_SetResult( interp, "error in X samples", TCL_VOLATILE );
+      mathobj->deleteArray(xt,numberOfSamples,xOrder);
+      delete mathobj;
+      delete xterms;
+      ARG_FreeListArgvs( table_sz, arg_table );
+      return TCL_ERROR;
+    }
+  }
+
+  delete xterms;
+
+  ARG_List *yterms = new ARG_List [numberOfSamples];
+
+  if ( ARG_ParseTclListStatic( interp, ytermsArg, LIST_Type, yterms, numberOfSamples, &numTerms )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, "error in Y samples", TCL_VOLATILE );
+    delete yterms;
+    ARG_FreeListArgvs( table_sz, arg_table );
+    return TCL_ERROR;
   }
 
   double **yt = mathobj->createArray(numberOfSamples,yOrder);
   for (i = 0; i < numberOfSamples; i++) {
-    PyObject *temp=PyList_GetItem(ytermsArg,i);
-    if (temp!=NULL)
-    {
-      for (j=0;j<3;j++)
-      {
-        yt[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, yterms[i], DOUBLE_Type, yt[i], yOrder, &numTerms )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in Y samples", TCL_VOLATILE );
+      mathobj->deleteArray(xt,numberOfSamples,xOrder);
+      mathobj->deleteArray(yt,numberOfSamples,yOrder);
+      delete mathobj;
+      delete yterms;
+      ARG_FreeListArgvs( table_sz, arg_table );
+      return TCL_ERROR;
+    }
+    if (numTerms != yOrder) {
+      Tcl_SetResult( interp, "error in Y samples", TCL_VOLATILE );
+      mathobj->deleteArray(xt,numberOfSamples,xOrder);
+      mathobj->deleteArray(yt,numberOfSamples,yOrder);
+      delete mathobj;
+      delete yterms;
+      ARG_FreeListArgvs( table_sz, arg_table );
+      return TCL_ERROR;
     }
   }
+
+  delete yterms;
+  ARG_FreeListArgvs( table_sz, arg_table );
+
   // debug print
   for (int k = 0; k < numberOfSamples; k++) {
       for (i = 0; i < xOrder; i++) {
@@ -633,30 +872,22 @@ PyObject *Math_fitLeastSquaresCmd(PyObject *self, PyObject *args)
 
   double **mt = mathobj->createArray(xOrder,yOrder);
   if ( (mathobj->fitLeastSquares(numberOfSamples,xt,xOrder,yt,yOrder,mt)) == SV_ERROR) {
-     PyErr_SetString( MathErr, "error in least squares fit" );
+     Tcl_SetResult( interp, "error in least squares fit", TCL_VOLATILE );
       mathobj->deleteArray(xt,numberOfSamples,xOrder);
       mathobj->deleteArray(yt,numberOfSamples,yOrder);
       delete mathobj;
-     return SV_ERROR;
+     return TCL_ERROR;
   }
 
   // create result string
   char r[2048];
-  PyObject *pylist=PyList_New(xOrder);
-  if(pylist!=NULL)
-  {
   for (i = 0; i < xOrder; i++) {
-    r[0] = '\0';
-    sprintf(r,"%.6le ",mt[i][j]);
-    PyObject *rr=PyString_FromString(r);
-    if(!rr)
-    {
-      Py_DECREF(pylist);
-      return NULL;
-    }
-    PyList_SET_ITEM(pylist, i, rr);
-    }
-  }  
+      r[0] = '\0';
+      for (j = 0; j < yOrder; j++) {
+        sprintf(r,"%.6le ",mt[i][j]);
+      }
+      Tcl_AppendElement(interp, r);
+  }
 
   // clean up
   mathobj->deleteArray(xt,numberOfSamples,xOrder);
@@ -664,110 +895,113 @@ PyObject *Math_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   mathobj->deleteArray(mt,xOrder,yOrder);
   delete mathobj;
 
-  return pylist;
+  return TCL_OK;
 }
 
 
-PyObject *Math_smoothCurveCmd(PyObject *self, PyObject *args)
+
+int Math_smoothCurveCmd( ClientData clientData, Tcl_Interp *interp,
+			            int argc, CONST84 char *argv[] )
 {
+  char *usage;
   int numInterpPoints = 0;
   int closed = 0;
   int numModes = 0;
+  ARG_List pointsArg;
 
-  PyObject *pointsArg;
-  if (!PyArg_ParseTuple(args,"Oiii", PyList_Type, &pointsArg, 
-      &closed,&numModes,&numInterpPoints))
-  {
-      PyErr_SetString(MathErr, "Could not import 1 tuple and 3 int: termsArg,closed,numModes,numInterpPoints");
-      return NULL;
-  }  
+  int table_sz = 4;
+  ARG_Entry arg_table[] = {
+    { "-pts", LIST_Type, &pointsArg, NULL, REQUIRED, 0, { 0 } },
+    { "-closed", INT_Type, &closed, NULL, REQUIRED, 0, { 0 } },
+    { "-numModes", INT_Type, &numModes, NULL, REQUIRED, 0, { 0 } },
+    { "-numInterpPts", INT_Type, &numInterpPoints, NULL, REQUIRED, 0, { 0 } },
+  };
 
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
 
   // Do work of command
-  if (!PyList_Check(pointsArg)){
-    PyErr_SetString( MathErr, "pointsArg is not a list");
-    return SV_ERROR;
-  }
-  int nlistpts = PyList_Size(pointsArg);
-  if (nlistpts < 0)   return NULL;
+
+  int nlistpts = pointsArg.argc;
   int npts = 0;
+
+  ARG_List *indpts = new ARG_List [nlistpts];
+
+  if ( ARG_ParseTclListStatic( interp, pointsArg, LIST_Type, indpts, nlistpts, &npts )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete indpts;
+    return TCL_ERROR;
+  }
 
   int i;
   cvMath *mathobj = new cvMath();
   double **pts = mathobj->createArray(nlistpts,3);
+  double pt[3];
 
   for (i = 0; i < nlistpts; i++) {
-    PyObject *temp=PyList_GetItem(pointsArg,i);
-    if (temp!=NULL)
-    {
-      for (int j=0;j<3;j++)
-      {
-        pts[i][j] = PyFloat_AsDouble(PyList_GetItem(temp,j));
-      }
+    if ( ARG_ParseTclListStatic( interp, indpts[i], DOUBLE_Type, pt, 3, &npts )
+       != TCL_OK ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,3);
+      delete mathobj;
+      return TCL_ERROR;
     }
+    if ( npts != 3 ) {
+      Tcl_SetResult( interp, "error in points list", TCL_VOLATILE );
+      ARG_FreeListArgvs( table_sz, arg_table );
+      delete indpts;
+      mathobj->deleteArray(pts,nlistpts,3);
+      delete mathobj;
+      return TCL_ERROR;
+    }
+    pts[i][0] = pt[0];
+    pts[i][1] = pt[1];
+    pts[i][2] = pt[2];
   }
+
+  //for (i = 0; i < nlistpts; i++) {
+  //     fprintf(stdout,"Point %i:  %lf %lf\n",i,pts[i][0],pts[i][1]);
+  //}
 
   double **outPts = NULL;
   if ((mathobj->smoothCurve(pts, nlistpts, closed, numModes, numInterpPoints, &outPts)) == SV_ERROR) {
-     PyErr_SetString( MathErr, "error in smoothing curve");
+     Tcl_SetResult( interp, "error in smoothing curve", TCL_VOLATILE );
+     ARG_FreeListArgvs( table_sz, arg_table );
+     delete indpts;
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return SV_ERROR;
+     return TCL_ERROR;
   }
 
   // create result string
   char r[2048];
-  PyObject *pylist=PyList_New(numInterpPoints);
-  if(pylist!=NULL)
-  {
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le %.6le",outPts[i][0],outPts[i][1],outPts[i][2]);
-    PyObject *rr=PyString_FromString(r);
-    if(!rr)
-    {
-      Py_DECREF(pylist);
-      return NULL;
-    }
-    PyList_SET_ITEM(pylist, i, rr);
-    }
-  }  
+    Tcl_AppendElement(interp, r);
+  }
+
   // clean up
+  ARG_FreeListArgvs( table_sz, arg_table );
+  delete indpts;
   mathobj->deleteArray(pts,nlistpts,3);
   mathobj->deleteArray(outPts,numInterpPoints,3);
   delete mathobj;
 
-  return pylist;
+  return TCL_OK;
 }
-//All functions listed and initiated as pyMath_methods declared here
-// --------------------
-// pyImage_methods
-// --------------------
-PyMethodDef pyMath_methods[] = {
-  {"math_FFT", Math_FFTCmd, METH_VARARGS,NULL},
-  {"math_inverseFFT", Math_inverseFFTCmd, METH_VARARGS,NULL},
-  {"math_computeWomersley", Math_computeWomersleyCmd, METH_VARARGS,NULL},
-  {"math_linearInterp", Math_linearInterpCmd, METH_VARARGS,NULL},
-  {"math_curveLength", Math_curveLengthCmd, METH_VARARGS,NULL},
-  {"math_linearInterpCurve", Math_linearInterpolateCurveCmd, METH_VARARGS,NULL},
-  {"math_fitLeastSquares", Math_fitLeastSquaresCmd, METH_VARARGS,NULL},
-  {"math_smoothCurve", Math_smoothCurveCmd, METH_VARARGS,NULL},
-  {NULL, NULL,0,NULL},
-  };
 
-
-// --------------------
-// initpyImage
-// --------------------
-PyMODINIT_FUNC
-initpyMath(void)
-{
-PyObject *pyMth;
-
-pyMth = Py_InitModule("pyMath",pyMath_methods);
-
-MathErr = PyErr_NewException("pyMath.error",NULL,NULL);
-Py_INCREF(MathErr);
-PyModule_AddObject(pyMth,"error",MathErr);
-}
-#endif
