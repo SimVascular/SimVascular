@@ -36,9 +36,6 @@
 
 #include "SimVascular.h"
 #include "svRepositoryExports.h" // For exports
-#ifdef SV_USE_PYTHON
-#include "Python.h"
-#endif
 
 extern "C" SV_EXPORT_REPOSITORY int Repos_pyInit();
 

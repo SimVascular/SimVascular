@@ -8,8 +8,6 @@ set(export_file_name svRepositoryExports.h)
 
 LIST(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
-	find_program(PYTHON “python”)
-	find_package(PythonLibs REQUIRED)
 	include_directories(${PYTHON_INCLUDE_PATH}
 	  ${PYTHON_INCLUDE_DIR}
 	  ${PYTHON_INCLUDE_DIRS})
