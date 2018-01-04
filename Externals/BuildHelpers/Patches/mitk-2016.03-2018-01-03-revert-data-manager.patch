@@ -93,7 +93,7 @@ diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/DCMTK.cmake simvascular
        )
      endif()
  
-+    if(LINUX)
++    if(UNIX)
 +      set(DCMTK_PATCH_FILE DCMTK-3.6.1-linux.patch)
 +    else()
 +      set(DCMTK_PATCH_FILE DCMTK-3.6.1.patch)
