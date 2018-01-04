@@ -16,7 +16,7 @@ case "$osver" in
 	export SV_EXTERN_LINUX_VERSION=ubuntu_16
 	;;
     
-    'precise')
+    'trusty')
 	export SV_EXTERN_LINUX_VERSION=ubuntu_14
 	;;
     
