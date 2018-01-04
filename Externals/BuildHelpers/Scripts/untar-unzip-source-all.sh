@@ -88,6 +88,7 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_ITK* ]]; then
   rm -Rf ../itk-4.7.1
   tar xvf Originals/itk/InsightToolkit-4.7.1.tar.gz
   mv InsightToolkit-4.7.1 ../itk-4.7.1
+  source Patches/patch-source-itk-4.7.1.sh
 fi
 
 # opencascade

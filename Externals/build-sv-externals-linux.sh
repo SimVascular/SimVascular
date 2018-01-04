@@ -8,13 +8,31 @@ EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 sudo mkdir -p /usr/local/sv
 sudo chmod a+rwx /usr/local/sv
 
+osver=$(lsb_release -sc)
+
+case "$osver" in
+    
+    'xenial')
+	export SV_EXTERN_LINUX_VERSION=ubuntu_16
+	;;
+    
+    'precise')
+	export SV_EXTERN_LINUX_VERSION=ubuntu_14
+	;;
+    
+    *)
+	echo "Error!"
+	exit
+	;;
+esac
+    
 #
 # initial setup
 #
 
 echo "Deleting previous build dir ($EXTERNALS_BUILD_TOP)"
 rm -Rf $EXTERNALS_BUILD_TOP
-mkdir $EXTERNALS_BUILD_TOP
+mkdir -p $EXTERNALS_BUILD_TOP
 
 echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"
 rm -Rf $EXTERNALS_TOP
