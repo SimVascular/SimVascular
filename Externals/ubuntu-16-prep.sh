@@ -40,11 +40,12 @@ sudo apt-get -y install libssl-dev
 # for swig-3.0.12
 sudo apt-get -y install libpcre3-dev
 
-# qt
+# qt webkit build
 sudo apt-get install ruby2.3
 sudo apt-get install gperf
 sudo apt-get install bison
 sudo apt-get install flex
+sudo apt-get install libxrender-dev
 
 ### gdcm/mitk
 #sudo apt-get -y install swig3.0
