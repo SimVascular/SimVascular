@@ -26,7 +26,7 @@ sudo apt-get -y install libxt-dev
 sudo apt-get -y install libxi-dev
 
 ### for qt/mitk
- sudo apt-get -y install libicu-dev
+sudo apt-get -y install libicu-dev
 
 ### mitk
 sudo apt-get -y install libxmu-dev
@@ -37,8 +37,14 @@ sudo apt-get -y install libwrap0-dev
 ### python
 sudo apt-get -y install libssl-dev
 
+# for swig-3.0.12
+sudo apt-get -y install libpcre3-dev
+
+# qt
+sudo apt-get install ruby2.3
+
 ### gdcm/mitk
-sudo apt-get -y install swig3.0
+#sudo apt-get -y install swig3.0
 
 # optional: mitk
 sudo apt-get -y install doxygen

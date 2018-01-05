@@ -30,6 +30,16 @@ if [[ $SV_SUPER_OPTIONS == *WGET_PYTHON* ]]; then
   popd
 fi
 
+# swig
+if [[ $SV_SUPER_OPTIONS == *WGET_SWIG* ]]; then
+  echo "WGET_SWIG"
+  rm -Rf swig
+  mkdir -p swig
+  pushd swig
+  wget $PARENT_URL/swig/swig-3.0.12.tar.gz
+  popd
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *WGET_NUMPY* ]]; then
   echo "WGET_NUMPY"
@@ -37,6 +47,16 @@ if [[ $SV_SUPER_OPTIONS == *WGET_NUMPY* ]]; then
   mkdir -p numpy
   pushd numpy
   wget $PARENT_URL/numpy/numpy-1.11.1.tar.gz
+  popd
+fi
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *WGET_QT* ]]; then
+  echo "WGET_QT"
+  rm -Rf qt
+  mkdir -p qt
+  pushd qt
+  wget $PARENT_URL/qt/qt-everywhere-opensource-src-5.4.2.tar.gz
   popd
 fi
 

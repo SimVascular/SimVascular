@@ -16,9 +16,10 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    mkdir -p tar_output
    rm -Rf zip_output
    mkdir -p zip_output
-   SV_SUPER_OPTIONS="UNTAR_UNZIP_ALL"
+   SV_SUPER_OPTIONS=""
    SV_SUPER_OPTIONS="WGET_TCL         UNTAR_TCL         BUILD_TCL         ARCHIVE_TCL         ZIP_TCL         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_PYTHON      UNTAR_PYTHON      BUILD_PYTHON      ARCHIVE_PYTHON      ZIP_PYTHON      $SV_SUPER_OPTIONS"
+   SV_SUPER_OPTIONS="WGET_SWIG        UNTAR_SWIG        BUILD_SWIG        ARCHIVE_SWIG        ZIP_SWIG        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_FREETYPE    UNTAR_FREETYPE    BUILD_FREETYPE    ARCHIVE_FREETYPE    ZIP_FREETYPE    $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_GDCM        UNTAR_GDCM        BUILD_GDCM        ARCHIVE_GDCM        ZIP_GDCM        $SV_SUPER_OPTIONS"
@@ -61,11 +62,25 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   chmod a+rx ./tmp/compile.cmake.python.gcc.sh
 fi
 
+# swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "CREATE_BUILD_SCRIPT_SWIG"
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-make-swig-generic.sh > tmp/compile.make.swig.gcc.sh
+  chmod a+rx ./tmp/compile.make.swig.gcc.sh
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "CREATE_BUILD_SCRIPT_NUMPY"
   sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-python-numpy-linux.sh > tmp/compile.python.numpy-linux.sh
   chmod a+rx ./tmp/compile.python.numpy-linux.sh
+fi
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "CREATE_BUILD_SCRIPT_QT"
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-make-qt-generic.sh > tmp/compile.make.qt.gcc.sh
+  chmod a+rx ./tmp/compile.make.qt.gcc.sh
 fi
 
 # freetype
@@ -149,10 +164,22 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   ./tmp/compile.cmake.python.gcc.sh >& ./tmp/stdout.python.gcc.txt
 fi
 
+#  swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "BUILD_SWIG"
+  time ./tmp/compile.make.swig.gcc.sh >& ./tmp/stdout.swig.txt
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.python.numpy-linux.sh >& ./tmp/stdout.numpy.python.txt
+fi
+
+#  qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "BUILD_QT"
+  time ./tmp/compile.make.qt.gcc.sh >& ./tmp/stdout.qt.txt
 fi
 
 # freetype

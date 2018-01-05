@@ -37,8 +37,14 @@ sudo apt-get -y install libwrap0-dev
 ### python
 sudo apt-get -y install libssl-dev
 
+# for swig-3.0.12
+sudo apt-get -y install libpcre3-dev
+
+# qt
+sudo apt-get install ruby2.0
+
 ### gdcm/mitk
-sudo apt-get -y install swig3.0
+#sudo apt-get -y install swig3.0
 
 # optional: mitk
 sudo apt-get -y install doxygen
