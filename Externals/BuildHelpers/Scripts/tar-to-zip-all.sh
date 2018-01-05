@@ -115,4 +115,3 @@ if [[ $SV_SUPER_OPTIONS == *ZIP_MITK* ]]; then
 fi
 
 rm -Rf zip_output_tmp
-mkdir -p zip_output_tmp
