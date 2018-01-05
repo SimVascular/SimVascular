@@ -42,6 +42,9 @@ sudo apt-get -y install libpcre3-dev
 
 # qt
 sudo apt-get install ruby2.3
+sudo apt-get install gperf
+sudo apt-get install bison
+sudo apt-get install flex
 
 ### gdcm/mitk
 #sudo apt-get -y install swig3.0
