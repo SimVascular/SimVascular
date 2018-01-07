@@ -63,6 +63,13 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   chmod a+rx ./tmp/compile.cmake.python.cl.sh
 fi
 
+# swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "CREATE_BUILD_SCRIPT_SWIG"
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-make-swig-generic.sh > tmp/compile.make.swig.cl.sh
+  chmod a+rx ./tmp/compile.make.swig.cl.sh
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "CREATE_BUILD_SCRIPT_NUMPY"
@@ -70,6 +77,13 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   chmod a+rx ./tmp/compile.msvc.numpy.cl.sh
   sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-python-numpy-msvc.bat > tmp/compile.msvc.numpy.bat
   chmod a+rx ./tmp/compile.msvc.numpy.bat
+fi
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "CREATE_BUILD_SCRIPT_QT"
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-make-qt-generic.sh > tmp/compile.make.qt.cl.sh
+  chmod a+rx ./tmp/compile.make.qt.cl.sh
 fi
 
 # freetype
@@ -153,10 +167,22 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   ./tmp/compile.cmake.python.cl.sh >& ./tmp/stdout.python.cl.txt
 fi
 
+#  swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "BUILD_SWIG"
+  time ./tmp/compile.make.swig.cl.sh >& ./tmp/stdout.swig.txt
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.msvc.numpy.cl.sh >& ./tmp/stdout.msvc.numpy.cl.txt
+fi
+
+#  qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "BUILD_QT"
+  time ./tmp/compile.make.qt.cl.sh >& ./tmp/stdout.qt.txt
 fi
 
 # freetype

@@ -242,9 +242,9 @@ ifeq ($(CLUSTER), x64_macosx)
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/sv/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/sv/ext/src
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/licensed
 endif
 
