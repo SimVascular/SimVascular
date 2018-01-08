@@ -2,7 +2,7 @@ REM @echo off
 
 REM Microsoft Visual Studio
 REM touch .gitignore in qtbase
-REM configure -opensource -nomake examples -nomake tests -confirm-license -skip qtwebkit -skip qtwebengine -opengl desktop
+REM configure -opensource -nomake examples -nomake tests -confirm-license -skip qtwebkit -skip qtwebengine -opengl desktop -mp -release
 
 call "C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/vcvarsall.bat" x64
 
@@ -38,4 +38,6 @@ REM Contrary to earlier recommendations, do NOT set QMAKESPEC.
 SET _ROOT=
 
 REM Keeps the command line open when this script is run.
-cmd /k
+REM cmd /k
+
+configure -opensource -nomake examples -nomake tests -confirm-license -skip qtwebkit -skip qtwebengine -opengl desktop -mp -prefix C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/qt-5.4.2
