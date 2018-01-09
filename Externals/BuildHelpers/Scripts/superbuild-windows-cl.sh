@@ -82,13 +82,14 @@ fi
 # qt
 if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
   echo "CREATE_BUILD_SCRIPT_QT"
-  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-python-qt-windows.sh > tmp/compile.msvc.qt.cl.sh
-  chmod a+rx ./tmp/compile.msvc.qt.cl.sh
-  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-python-qt-msvc.bat > tmp/compile.msvc.qt.bat
-  chmod a+rx ./tmp/compile.msvc.qt.bat
-  
-  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-make-qt-generic.sh > tmp/compile.make.qt.cl.sh
-  chmod a+rx ./tmp/compile.make.qt.cl.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-qt-windows.sh > tmp/compile.qt.msvc.sh
+  chmod a+rx ./tmp/compile.qt.msvc.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-qt-msvc-env.bat > tmp/compile.qt.msvc.env.bat
+  chmod a+rx ./tmp/compile.qt.msvc.env.bat
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-qt-msvc-configure.bat > tmp/compile.qt.msvc.configure.bat
+  chmod a+rx ./tmp/compile.qt.msvc.configure.bat
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-qt-msvc-nmake.bat > tmp/compile.qt.msvc.nmake.bat
+  chmod a+rx ./tmp/compile.qt.msvc.nmake.bat
 fi
 
 # freetype
@@ -187,7 +188,7 @@ fi
 #  qt
 if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
   echo "BUILD_QT"
-  time ./tmp/compile.msvc.qt.cl.sh >& ./tmp/stdout.msvc.qt.cl.txt
+  time ./tmp/compile.qt.msvc.sh >& ./tmp/stdout.qt.msvc.txt
 fi
 
 # freetype

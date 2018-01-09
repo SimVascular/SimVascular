@@ -43,6 +43,6 @@ SET _ROOT=
 REM Keeps the command line open when this script is run.
 REM cmd /k
 
-configure -opensource -nomake examples -nomake tests -confirm-license -skip qtwebkit -opengl desktop -mp -release -prefix C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/qt-5.4.2
+REM configure -opensource -nomake examples -nomake tests -confirm-license -skip qtwebkit -opengl desktop -mp -release -prefix C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/qt-5.4.2
 
-nmake
+REM nmake
