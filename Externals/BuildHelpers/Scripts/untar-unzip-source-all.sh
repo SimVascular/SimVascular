@@ -45,12 +45,28 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_PYTHON* ]]; then
   mv Python-2.7.11 ../python-2.7.11
 fi
 
+# swig
+if [[ $SV_SUPER_OPTIONS == *UNTAR_SWIG* ]]; then
+    echo "UNTAR_SWIG"
+  rm -Rf ../swig-3.0.12
+  tar xvf Originals/swig/swig-3.0.12.tar.gz
+  mv swig-3.0.12 ..
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *UNTAR_NUMPY* ]]; then
     echo "UNTAR_NUMPY"
   rm -Rf ../numpy-1.11.1
   tar xvf Originals/numpy/numpy-1.11.1.tar.gz
   mv numpy-1.11.1 ..
+fi
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *UNTAR_QT* ]]; then
+    echo "UNTAR_SWIG"
+  rm -Rf ../qt-5.4.2
+  tar xvf Originals/qt/qt-everywhere-opensource-src-5.4.2.tar.gz
+  mv qt-everywhere-opensource-src-5.4.2 ../qt-5.4.2
 fi
 
 # freetype2

@@ -1,5 +1,6 @@
 ifeq ($(CLUSTER), x64_linux)
-    QT_TOP_DIR	= /opt/Qt5.4.2/5.4/gcc_64
+#    QT_TOP_DIR	= /opt/Qt5.4.2/5.4/gcc_64
+    QT_TOP_DIR  = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-5.4.2
     QT_DEFS = -DUNIX -D_REENTRANT -DNDEBUG
     QT_DEFS += -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_PLUGIN -DQT_WEBVIEW -DQT_WEBKITWIDGETS -DQT_SQL_LIB
 
@@ -38,7 +39,6 @@ endif
     QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5Sql$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebKitWidgets$(LIBLINKEXT) \
-      $(LIBFLAG)Qt5WebView$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Network$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Gui$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Qml$(LIBLINKEXT) \
@@ -51,10 +51,15 @@ endif
       $(LIBFLAG)Qt5Gui$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Concurrent$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Core$(LIBLINKEXT) \
-      $(LIBFLAG)Qt5Quick$(LIBLINKEXT) \
-      $(QT_LIBDIRS)/libicuuc.so.53 \
-      $(QT_LIBDIRS)/libicui18n.so.53 \
-      $(QT_LIBDIRS)/libicudata.so.53
+      $(LIBFLAG)Qt5Quick$(LIBLINKEXT)
     QT_SO_PATH=$(QT_TOP_DIR)/lib
     QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
 endif
+
+# in Qt version of compile but not ours...
+#      $(QT_LIBDIRS)/libicuuc.so.53 \
+#      $(QT_LIBDIRS)/libicui18n.so.53 \
+#      $(QT_LIBDIRS)/libicudata.so.53
+
+#     $(LIBFLAG)Qt5WebView$(LIBLINKEXT) \
+
