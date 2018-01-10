@@ -34,13 +34,18 @@ TOP = .
 
 include $(TOP)/include.mk
 
-all-shared: shared-pre-build all-shared-fast
+all-shared: shared-pre-build all-shared-build-only
 
-all-shared-fast: static-build shared-build exec-shared-build
+all-shared-build-only: static-build shared-build exec-shared-build
 
 all: mixed
 
 mixed: static-pre-build static-build shared-build exec-build
+
+fast:
+	make shared-pre-build
+	make -j6 all-shared-build-only
+	make all-shared-build-only
 
 mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
