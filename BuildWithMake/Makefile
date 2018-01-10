@@ -43,8 +43,8 @@ all: mixed
 mixed: static-pre-build static-build shared-build exec-build
 
 fast:
-	make shared-pre-build
-	make -j6 all-shared-build-only
+	-make shared-pre-build
+	-make -j6 all-shared-build-only
 	make all-shared-build-only
 
 mksedscript:
