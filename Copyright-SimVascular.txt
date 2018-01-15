@@ -1,4 +1,6 @@
 
+C-style copyright notice:
+
 /* Copyright (c) Stanford University, The Regents of the University of
  *               California, and others.
  *
@@ -30,6 +32,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+Script copyright notice:
+
 # Copyright (c) Stanford University, The Regents of the University of
 #               California, and others.
 #
@@ -59,3 +63,11 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Portions of the code may be copyright:
+
+Bill Katz
+Charles Taylor
+Ken Wang
+Nathan Wilson
+Open Source Medical Software Corporation
