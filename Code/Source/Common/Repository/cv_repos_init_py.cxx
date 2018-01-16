@@ -829,13 +829,15 @@ PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
 
   // Do work of command:
 
+#ifndef WIN32
   // Does file exist?
   if ( access( fn, F_OK ) == -1 )
   {
     PyErr_SetString(PyRunTimeErr, "error accessing file ");
     return SV_ERROR;
   }
-
+#endif
+  
   vtkPolyDataReader *pdReader = vtkPolyDataReader::New();
   pdReader->SetFileName( fn );
 

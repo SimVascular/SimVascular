@@ -34,9 +34,9 @@ source CygwinHelpers/msvc_2013_x64
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/windows/windows/10.0/msvc/18.0/x64/relwithdebinfo/2017.01.29
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/windows/windows/10.0/msvc/18.0/x64/relwithdebinfo/2018.01.09
 
-export TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.2017.01.29
+export TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.2018.01.09
 
 # default is windows
 
@@ -68,4 +68,5 @@ for i in $EXTERNALS_TOP/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
 done
 popd
 
-make
+make fast
+
