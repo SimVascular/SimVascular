@@ -73,6 +73,6 @@ done
 popd
 
 # needed for "uic" compiler for Qt
-export LD_LIBRARY_PATH=$EXTERNALS_TOP/bin/gnu/5.4/x64/relwithdebinfo/qt-5.4.2/lib:$LB_LIBRARY_PATH
+export LD_LIBRARY_PATH=$EXTERNALS_TOP/bin/gnu/4.8/x64/relwithdebinfo/qt-5.4.2/lib:$LB_LIBRARY_PATH
 
 make fast
