@@ -32,9 +32,9 @@
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/14.04/gnu/5.4/x64/relwithdebinfo/2018.01.08
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/16.04/gnu/5.4/x64/relwithdebinfo/2018.01.08
 
-export TAR_FILE_PREFIX=ubuntu.14.04.gnu.5.4.x64.relwithdebinfo.2018.01.08
+export TAR_FILE_PREFIX=ubuntu.16.04.gnu.5.4.x64.relwithdebinfo.2018.01.08
 
 # default is windows, so override with gnu compilers and linux
 
