@@ -32,9 +32,9 @@
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/14.04/gnu/4.8/x64/release/2017.05.30
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/14.04/gnu/4.8/x64/relwithdebinfo/2018.01.08
 
-export TAR_FILE_PREFIX=ubuntu.14.04.gnu.4.8.x64.release.2017.05.30
+export TAR_FILE_PREFIX=ubuntu.14.04.gnu.4.8.x64.relwithdebinfo.2018.01.08
 
 # default is windows, so override with gnu compilers and linux
 
@@ -63,6 +63,7 @@ wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.0.0.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.python.2.7.11.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
+wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.4.2.tar.gz
 popd
 
 pushd $EXTERNALS_TOP/bin/gnu/4.8/x64
