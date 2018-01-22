@@ -41,11 +41,11 @@ sudo apt-get -y install libssl-dev
 sudo apt-get -y install libpcre3-dev
 
 # qt webkit build
-sudo apt-get install ruby2.0
-sudo apt-get install gperf
-sudo apt-get install bison
-sudo apt-get install flex
-sudo apt-get install libxrender-dev
+sudo apt-get -y install ruby2.0
+sudo apt-get -y install gperf
+sudo apt-get -y install bison
+sudo apt-get -y install flex
+sudo apt-get -y install libxrender-dev
 
 ### gdcm/mitk
 #sudo apt-get -y install swig3.0
@@ -54,15 +54,15 @@ sudo apt-get install libxrender-dev
 sudo apt-get -y install doxygen
 
 ### install Qt
-wget http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.4/qt-opensource-linux-x64-5.4.2.run
-chmod a+rx ./qt-opensource-linux-x64-5.4.2.run
-sudo ./qt-opensource-linux-x64-5.4.2.run --script ./ubuntu-qt-installer-noninteractive.qs
+#wget http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.4/qt-opensource-linux-x64-5.4.2.run
+#chmod a+rx ./qt-opensource-linux-x64-5.4.2.run
+#sudo ./qt-opensource-linux-x64-5.4.2.run --script ./ubuntu-qt-installer-noninteractive.qs
 
 ### install latest version of CMake
-wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.6.1-Linux-x86_64.sh
-chmod a+rx ./cmake-3.6.1-Linux-x86_64.sh
-sudo mkdir -p /usr/local/package/cmake-3.6.1
-sudo ./cmake-3.6.1-Linux-x86_64.sh --prefix=/usr/local/package/cmake-3.6.1 --skip-license
+#wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.6.1-Linux-x86_64.sh
+#chmod a+rx ./cmake-3.6.1-Linux-x86_64.sh
+#sudo mkdir -p /usr/local/package/cmake-3.6.1
+#sudo ./cmake-3.6.1-Linux-x86_64.sh --prefix=/usr/local/package/cmake-3.6.1 --skip-license
 sudo ln -s /usr/local/package/cmake-3.6.1/bin/ccmake    /usr/local/bin/ccmake
 sudo ln -s /usr/local/package/cmake-3.6.1/bin/cmake     /usr/local/bin/cmake
 sudo ln -s /usr/local/package/cmake-3.6.1/bin/cmake-gui /usr/local/bin/cmake-gui
