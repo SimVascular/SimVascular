@@ -32,9 +32,9 @@
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/darwin/mac_osx/10.10/clang/7.0/x64/RelWithDebInfo/2017.04.04
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/darwin/mac_osx/10.10/clang/7.0/x64/relwithdebinfo/2017.04.04/
 
-export TAR_FILE_PREFIX=mac_osx.10.10.clang.7.0.x64.RelWithDebInfo.2017.04.04
+export TAR_FILE_PREFIX=mac_osx.10.10.clang.7.0.x64.relwithdebinfo.2017.04.04
 
 # default is windows, so override with gnu compilers on mac_osx
 
