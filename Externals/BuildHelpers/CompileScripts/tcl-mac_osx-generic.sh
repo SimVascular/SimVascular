@@ -37,11 +37,11 @@ make -j8 clean
 cd ../../BuildHelpers
 
 cd ../tcllib-1.17
-REPLACEME_SV_TOP_BIN_DIR_TCL/bin/tclsh8.? installer.tcl
+REPLACEME_SV_TOP_BIN_DIR_TCL/bin/tclsh8.? installer.tcl -no-gui -no-wait
 cd ../BuildHelpers
 
 cd ../tklib-0.6
-REPLACEME_SV_TOP_BIN_DIR_TCL/bin/tclsh8.? installer.tcl
+REPLACEME_SV_TOP_BIN_DIR_TCL/bin/tclsh8.? installer.tcl -no-gui -no-wait
 cd ../BuildHelpers
 
 chmod u+w,a+rx REPLACEME_SV_TOP_BIN_DIR_TCL/lib/REPLACEME_SV_TCL_LIB_NAME
