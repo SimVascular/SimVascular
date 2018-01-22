@@ -41,7 +41,7 @@ sudo apt-get -y install libssl-dev
 sudo apt-get -y install libpcre3-dev
 
 # qt webkit build
-sudo apt-get -y install ruby2.0
+sudo apt-get -y install ruby2.3
 sudo apt-get -y install gperf
 sudo apt-get -y install bison
 sudo apt-get -y install flex
