@@ -59,10 +59,10 @@ sudo apt-get -y install doxygen
 #sudo ./qt-opensource-linux-x64-5.4.2.run --script ./ubuntu-qt-installer-noninteractive.qs
 
 ### install latest version of CMake
-#wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.6.1-Linux-x86_64.sh
-#chmod a+rx ./cmake-3.6.1-Linux-x86_64.sh
-#sudo mkdir -p /usr/local/package/cmake-3.6.1
-#sudo ./cmake-3.6.1-Linux-x86_64.sh --prefix=/usr/local/package/cmake-3.6.1 --skip-license
+wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.6.1-Linux-x86_64.sh
+chmod a+rx ./cmake-3.6.1-Linux-x86_64.sh
+sudo mkdir -p /usr/local/package/cmake-3.6.1
+sudo ./cmake-3.6.1-Linux-x86_64.sh --prefix=/usr/local/package/cmake-3.6.1 --skip-license
 sudo ln -s /usr/local/package/cmake-3.6.1/bin/ccmake    /usr/local/bin/ccmake
 sudo ln -s /usr/local/package/cmake-3.6.1/bin/cmake     /usr/local/bin/cmake
 sudo ln -s /usr/local/package/cmake-3.6.1/bin/cmake-gui /usr/local/bin/cmake-gui
