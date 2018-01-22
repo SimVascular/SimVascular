@@ -58,7 +58,7 @@ else
   pushd BuildWithMake
   if [[ "$TRAVIS_OS_NAME" == "linux" ]]
   then
-     source ./quick-build-ubuntu-14.sh
+     source ./quick-build-linux.sh
   elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
   then
      echo "QT_TOP_DIR=/opt/Qt5.4.2/5.4/clang_64" > ./pkg_overrides.mk
