@@ -8,7 +8,8 @@ export CC=REPLACEME_CC
 export CXX=REPLACEME_CXX
 
 # pick up openssl from homebrew install location
-export LDFLAGS="-L/usr/local/opt/openssl/lib -lcrypto -lssl"
+#export LDFLAGS="-L/usr/local/opt/openssl/lib -lcrypto -lssl"
+export LDFLAGS="-L/usr/local/opt/openssl/lib:$LDFLAGS"
 
 # not sure if we need to add this or can just use system after
 # specifying LDFLAGS above
@@ -32,8 +33,8 @@ REPLACEME_SV_CMAKE_CMD -G REPLACEME_SV_CMAKE_GENERATOR \
    -DBUILD_TESTING=OFF \
    -DCMAKE_MACOSX_RPATH=1 \
    -DCMAKE_OSX_SYSROOT=/ \
-   -DCMAKE_OSX_SDK=10.11 \
-   -DCMAKE_OSX_DEPLOYMENT_TARGET=10.11 \
+   -DCMAKE_OSX_SDK=REPLACEME_SV_OS_VER_NO \
+   -DCMAKE_OSX_DEPLOYMENT_TARGET=REPLACEME_SV_OS_VER_NO \
    -DBUILD_LIBPYTHON_SHARED=ON \
    -DENABLE_SSL=ON \
    -DBUILTIN_SSL=ON \
