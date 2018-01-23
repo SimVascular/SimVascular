@@ -1,7 +1,7 @@
-GCP=/opt/local/libexec/gnubin/cp
-GDIRNAME=/opt/local/libexec/gnubin/dirname
-GBASENAME=/opt/local/libexec/gnubin/basename
-GMKDIR=/opt/local/libexec/gnubin/mkdir
+GCP=cp
+GDIRNAME=dirname
+GBASENAME=basename
+GMKDIR=mkdir
 
 # paths
 
@@ -137,18 +137,18 @@ done
 # everything else
 #
 
-for i in $($GDIRNAME $MITK_SRCDIR/Modules/*/include); do
-    $GMKDIR -p $MITK_BINDIR/include/mitk/$($GBASENAME $i)
-    $GCP -R $i/include $MITK_BINDIR/include/mitk/$($GBASENAME $i)
+for i in $MITK_SRCDIR/Modules/*/include; do
+    $GMKDIR -p $MITK_BINDIR/include/mitk/$($GBASENAME $($GDIRNAME $i))
+    $GCP -R $i $MITK_BINDIR/include/mitk/$($GBASENAME $($GDIRNAME $i))
 done
 
-for i in $($GDIRNAME $MITK_SRCDIR/Modules/*/include); do
-    $GCP $MITK_BLDDIR/MITK-build/Modules/$($GBASENAME $i)/ui_*.h $MITK_BINDIR/include/mitk/$($GBASENAME $i)
+for i in $MITK_SRCDIR/Modules/*/include; do
+    $GCP $MITK_BLDDIR/MITK-build/Modules/$($GBASENAME $($GDIRNAME $i))/ui_*.h $MITK_BINDIR/include/mitk/$($GBASENAME $($GDIRNAME $i))
 done
 
-for i in $($GDIRNAME $MITK_SRCDIR/Modules/*/*/include); do
-    $GMKDIR -p $MITK_BINDIR/include/mitk/$($GBASENAME $($GDIRNAME $i))/$($GBASENAME $i)
-    $GCP -R $i/include $MITK_BINDIR/include/mitk/$($GBASENAME $($GDIRNAME $i))/$($GBASENAME $i)
+for i in $MITK_SRCDIR/Modules/*/*/include; do
+    $GMKDIR -p $MITK_BINDIR/include/mitk/$($GBASENAME $($GDIRNAME $($GDIRNAME $i)))/$($GBASENAME $($GDIRNAME $i))
+    $GCP -R $i $MITK_BINDIR/include/mitk/$($GBASENAME $($GDIRNAME $($GDIRNAME $i)))/$($GBASENAME $($GDIRNAME $i))
 done
 
 

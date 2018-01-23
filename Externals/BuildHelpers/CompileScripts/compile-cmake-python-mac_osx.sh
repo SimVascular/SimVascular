@@ -7,6 +7,19 @@ REPLACEME_SV_SPECIAL_COMPILER_SCRIPT
 export CC=REPLACEME_CC
 export CXX=REPLACEME_CXX
 
+# pick up openssl from homebrew install location
+export LDFLAGS="-L/usr/local/opt/openssl/lib -lcrypto -lssl"
+
+# not sure if we need to add this or can just use system after
+# specifying LDFLAGS above
+#   -DUSE_SYSTEM_OpenSSL=OFF \
+#   -DOPENSSL_ROOT_DIR:PATH=/usr/local/opt/openssl \
+#   -DOPENSSL_INCLUDE_DIR:PATH=/usr/local/opt/openssl/include \
+#   -DOPENSSL_CRYPTO_LIBRARY:FILEPATH=/usr/local/opt/openssl/lib/libssl.a \
+#   -DOPENSSL_SSL_LIBRARY:FILEPATH=/usr/local/opt/openssl/lib/libcrypto.a \
+#   -DOPENSSL_LIBRARIES="/usr/local/opt/openssl/lib/libssl.a"  \
+#
+   
 rm -Rf REPLACEME_SV_TOP_BIN_DIR_PYTHON
 mkdir -p REPLACEME_SV_TOP_BIN_DIR_PYTHON
 chmod u+w,a+rx REPLACEME_SV_TOP_BIN_DIR_PYTHON
@@ -18,6 +31,9 @@ cd REPLACEME_SV_TOP_BLD_DIR_PYTHON
 REPLACEME_SV_CMAKE_CMD -G REPLACEME_SV_CMAKE_GENERATOR \
    -DBUILD_TESTING=OFF \
    -DCMAKE_MACOSX_RPATH=1 \
+   -DCMAKE_OSX_SYSROOT=/ \
+   -DCMAKE_OSX_SDK=10.11 \
+   -DCMAKE_OSX_DEPLOYMENT_TARGET=10.11 \
    -DBUILD_LIBPYTHON_SHARED=ON \
    -DENABLE_SSL=ON \
    -DBUILTIN_SSL=ON \
