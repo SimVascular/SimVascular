@@ -40,20 +40,21 @@ export TAR_FILE_PREFIX=mac_osx.10.11.clang.8.0.x64.relwithdebinfo.2018.01.23
 
 echo "CLUSTER=x64_macosx" > cluster_overrides.mk
 echo "CXX_COMPILER_VERSION=clang" >> cluster_overrides.mk
-
 echo "FORTRAN_COMPILER_VERSION=ifort" >> cluster_overrides.mk
+echo "SV_COMPILER=clang" >> cluster_overrides.mk
+echo "SV_COMPILER_VERSION=8.0" >> cluster_overrides.mk
 
-echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/clang-8.0/x64" >> global_overrides.mk
-echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=$EXTERNALS_TOP/build/clang-8.0/x64" >> global_overrides.mk
-echo "OPEN_SOFTWARE_SOURCES_TOPLEVEL=$EXTERNALS_TOP/src/clang-8.0/x64" >> global_overrides.mk
+echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo" >> global_overrides.mk
+echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=$EXTERNALS_TOP/build/clang/8.0/x64/relwithdebinfo" >> global_overrides.mk
+echo "OPEN_SOFTWARE_SOURCES_TOPLEVEL=$EXTERNALS_TOP/src/clang-8.0/x64/relwithdebinfo" >> global_overrides.mk
 echo "LICENSED_SOFTWARE_TOPLEVEL=" >> global_overrides.mk
 
 sudo mkdir -p $EXTERNALS_TOP
 sudo chmod -R a+rwx $EXTERNALS_TOP
-mkdir -p $EXTERNALS_TOP/tarfiles
-mkdir -p $EXTERNALS_TOP/bin/clang-8.0/x64
+mkdir -p $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo/tarfiles
+mkdir -p $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo
 
-pushd $EXTERNALS_TOP/tarfiles
+pushd $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo/tarfiles
 wget $PARENT_URL/$TAR_FILE_PREFIX.freetype.2.6.3.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.1.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.7.1.tar.gz
@@ -65,8 +66,8 @@ wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
 popd
 
-pushd $EXTERNALS_TOP/bin/clang-8.0/x64
-for i in $EXTERNALS_TOP/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
+pushd $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo
+for i in $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
     tar xvzf $i
 done
 popd
