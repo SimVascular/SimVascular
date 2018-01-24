@@ -14,6 +14,12 @@ brew install openssl
 brew install pcre
 brew install bison
 
+# openssl (not sure if this is really needed!)
+ln -s /usr/local/opt/openssl /usr/local/openssl
+# not sure libgcrypt is needed (doesn't seem to replace
+# libcrypt which could be used by python build)
+brew install libgcrypt
+
 # now install Qt precompiled
 
 sudo mkdir -p /usr/local/package

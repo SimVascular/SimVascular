@@ -25,8 +25,8 @@ if [[ $SV_SUPER_OPTIONS == *WGET_PYTHON* ]]; then
   mkdir -p python
   pushd python
   wget $PARENT_URL/python/get-pip.py
-  wget $PARENT_URL/python/Python-2.7.11.tgz
-  wget $PARENT_URL/python/python-2.7.11-cmakebuild.tar.gz
+  wget $PARENT_URL/python/Python-2.7.13.tgz
+  wget $PARENT_URL/python/python-2.7.13-cmakebuild.tar.gz
   popd
 fi
 

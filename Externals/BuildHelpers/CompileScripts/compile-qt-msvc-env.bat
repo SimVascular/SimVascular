@@ -31,10 +31,10 @@ SET PATH=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/icu-5.3.1
 
 REM python
 
-SET PYTHONHOME=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.11
-SET PYTHONPATH=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.11/lib/python2.7/lib-dynload;C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.11/lib;C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.11/lib/python2.7;C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.11/lib/python2.7/site-packages
-SET PATH=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.11/bin;%PATH%
-SET INCLUDE=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.11/include;%INCLUDE%
+SET PYTHONHOME=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.13
+SET PYTHONPATH=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.13/lib/python2.7/lib-dynload;C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.13/lib;C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.13/lib/python2.7;C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.13/lib/python2.7/site-packages
+SET PATH=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.13/bin;%PATH%
+SET INCLUDE=C:/cygwin64/usr/local/sv/ext/bin/msvc/18.0/x64/relwithdebinfo/python-2.7.13/include;%INCLUDE%
 
 REM Contrary to earlier recommendations, do NOT set QMAKESPEC.
 

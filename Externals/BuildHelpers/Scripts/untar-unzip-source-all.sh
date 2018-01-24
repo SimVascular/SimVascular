@@ -38,11 +38,11 @@ fi
 #  python
 if [[ $SV_SUPER_OPTIONS == *UNTAR_PYTHON* ]]; then
   echo "UNTAR_PYTHON"
-  rm -Rf ../python-2.7.11
-  tar xvf Originals/python/python-2.7.11-cmakebuild.tar.gz
-  mv python-2.7.11-cmakebuild ../python-2.7.11
-  tar xvf Originals/python/Python-2.7.11.tgz
-  mv Python-2.7.11 ../python-2.7.11
+  rm -Rf ../python-2.7.13
+  tar xvf Originals/python/python-2.7.13-cmakebuild.tar.gz
+  mv python-2.7.13-cmakebuild ../python-2.7.13
+  tar xvf Originals/python/Python-2.7.13.tgz
+  mv Python-2.7.13 ../python-2.7.13
 fi
 
 # swig
