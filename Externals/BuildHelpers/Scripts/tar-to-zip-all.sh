@@ -1,7 +1,7 @@
 BUILDDATE=`date +%F`
 
-SV_TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.${BUILDDATE}
-SV_ZIP_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.${BUILDDATE}
+SV_TAR_FILE_PREFIX=REPLACEME_SV_TAR_FILE_PREFIX.${BUILDDATE}
+SV_ZIP_FILE_PREFIX=REPLACEME_SV_TAR_FILE_PREFIX.${BUILDDATE}
 
 rm -Rf zip_output_tmp
 mkdir -p zip_output_tmp
