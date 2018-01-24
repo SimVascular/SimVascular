@@ -34,9 +34,9 @@ source CygwinHelpers/msvc_2013_x64
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/windows/windows/10.0/msvc/18.0/x64/relwithdebinfo/2018.01.09
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/windows/windows/10.0/msvc/18.0/x64/relwithdebinfo/2018.01.24
 
-export TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.2018.01.09
+export TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.2018.01.24
 
 # default is windows
 
@@ -57,7 +57,7 @@ wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.7.1.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2016.03.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.1.0.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.0.0.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.python.2.7.11.tar.gz
+wget $PARENT_URL/$TAR_FILE_PREFIX.python.2.7.13.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
 wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
 popd

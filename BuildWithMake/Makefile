@@ -328,6 +328,7 @@ veryclean:
 	for fn in $(TOP)/Bin/*; do /bin/rm -f -r $$fn; done
 	if [ -e sv ];then /bin/rm -f sv;fi
 	if [ -e xfsv ];then /bin/rm -f xfsv;fi
+	if [ -e ext ];then /bin/rm -Rf ext;fi
 	$(RM) $(TOP)/../Tcl/Common/Visualization/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/Vis/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/General/tclIndex
