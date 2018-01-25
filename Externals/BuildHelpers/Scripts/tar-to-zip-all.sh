@@ -1,7 +1,7 @@
 BUILDDATE=`date +%F`
 
-SV_TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.${BUILDDATE}
-SV_ZIP_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.${BUILDDATE}
+SV_TAR_FILE_PREFIX=REPLACEME_SV_TAR_FILE_PREFIX.${BUILDDATE}
+SV_ZIP_FILE_PREFIX=REPLACEME_SV_TAR_FILE_PREFIX.${BUILDDATE}
 
 rm -Rf zip_output_tmp
 mkdir -p zip_output_tmp
@@ -30,8 +30,32 @@ fi
 rm -Rf zip_output_tmp
 mkdir -p zip_output_tmp
 
+# swig
+if [[ $SV_SUPER_OPTIONS == *ZIP_SWIG* ]]; then
+  echo "ZIP_SWIG"
+  REPLACEME_TAR -C zip_output_tmp/ -xvzf tar_output/$SV_TAR_FILE_PREFIX.REPLACEME_SV_SWIG_DIR.tar.gz
+  pushd zip_output_tmp
+  REPLACEME_ZIP -r ../zip_output/$SV_ZIP_FILE_PREFIX.REPLACEME_SV_SWIG_DIR.zip REPLACEME_SV_SWIG_DIR
+  popd
+fi
+
+rm -Rf zip_output_tmp
+mkdir -p zip_output_tmp
+
 # numpy
 # NOTE: numpy is contained in the python zip
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *ZIP_QT* ]]; then
+  echo "ZIP_QT"
+  REPLACEME_TAR -C zip_output_tmp/ -xvzf tar_output/$SV_TAR_FILE_PREFIX.REPLACEME_SV_QT_DIR.tar.gz
+  pushd zip_output_tmp
+  REPLACEME_ZIP -r ../zip_output/$SV_ZIP_FILE_PREFIX.REPLACEME_SV_QT_DIR.zip REPLACEME_SV_QT_DIR
+  popd
+fi
+
+rm -Rf zip_output_tmp
+mkdir -p zip_output_tmp
 
 # freetype
 if [[ $SV_SUPER_OPTIONS == *ZIP_FREETYPE* ]]; then
@@ -115,4 +139,3 @@ if [[ $SV_SUPER_OPTIONS == *ZIP_MITK* ]]; then
 fi
 
 rm -Rf zip_output_tmp
-mkdir -p zip_output_tmp

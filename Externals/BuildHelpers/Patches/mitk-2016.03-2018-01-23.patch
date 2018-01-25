@@ -1,0 +1,1868 @@
+diff -aur --new-file -x .git mitk-2016.03/CMake/mitkFunctionCreateModule.cmake mitk-2016.03-sv_modified/CMake/mitkFunctionCreateModule.cmake
+--- mitk-2016.03/CMake/mitkFunctionCreateModule.cmake	2016-08-15 16:50:00.000000000 -0700
++++ mitk-2016.03-sv_modified/CMake/mitkFunctionCreateModule.cmake	2018-01-23 11:18:03.026754200 -0800
+@@ -126,6 +126,7 @@
+ 
+   set(_macro_options
+       FORCE_STATIC           # force building this module as a static library
++      FORCE_SHARED           # force building this module as a shared library
+       HEADERS_ONLY           # this module is a headers-only library
+       GCC_DEFAULT_VISIBILITY # do not use gcc visibility flags - all symbols will be exported
+       NO_DEFAULT_INCLUDE_DIRS # do not add default include directories like "include" or "."
+@@ -339,7 +340,7 @@
+       set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+     endif()
+ 
+-    if(MODULE_WARNINGS_AS_ERRORS)
++    if(MODULE_WARNINGS_AS_ERRORS_IGNORED)
+       if(MSVC_VERSION)
+         mitkFunctionCheckCAndCXXCompilerFlags("/WX" module_c_flags module_cxx_flags)
+       else()
+@@ -367,12 +368,16 @@
+       endif()
+     endif(MODULE_WARNINGS_AS_ERRORS)
+ 
++    set(_STATIC )
++
+     if(MODULE_FORCE_STATIC)
+       set(_STATIC STATIC)
+-    else()
+-      set(_STATIC )
+     endif(MODULE_FORCE_STATIC)
+ 
++    if(MODULE_FORCE_SHARED)
++      set(_STATIC SHARED)
++    endif(MODULE_FORCE_SHARED)
++
+     if(NOT MODULE_HEADERS_ONLY)
+       if(NOT MODULE_NO_INIT OR RESOURCE_FILES)
+         find_package(CppMicroServices QUIET NO_MODULE REQUIRED)
+diff -aur --new-file -x .git mitk-2016.03/CMake/mitkMacroCreateExecutable.cmake mitk-2016.03-sv_modified/CMake/mitkMacroCreateExecutable.cmake
+--- mitk-2016.03/CMake/mitkMacroCreateExecutable.cmake	2016-08-15 16:50:01.000000000 -0700
++++ mitk-2016.03-sv_modified/CMake/mitkMacroCreateExecutable.cmake	2018-01-23 11:18:03.048133900 -0800
+@@ -50,7 +50,7 @@
+   if(EXEC_NO_INIT)
+     list(APPEND _EXEC_OPTIONS NO_INIT)
+   endif()
+-  if(EXEC_WARNINGS_AS_ERRORS)
++  if(EXEC_WARNINGS_AS_ERRORS_IGNORED)
+     list(APPEND _EXEC_OPTIONS WARNINGS_AS_ERRORS)
+   endif()
+   if(EXEC_NO_FEATURE_INFO)
+diff -aur --new-file -x .git mitk-2016.03/CMake/mitkMacroInstall.cmake mitk-2016.03-sv_modified/CMake/mitkMacroInstall.cmake
+--- mitk-2016.03/CMake/mitkMacroInstall.cmake	2016-08-15 16:50:01.000000000 -0700
++++ mitk-2016.03-sv_modified/CMake/mitkMacroInstall.cmake	2018-01-23 11:18:03.072152100 -0800
+@@ -170,6 +170,7 @@
+     set(DIRS \"${_search_paths}\")
+ 
+     set(_additional_search_paths ${_install_LIBRARY_DIRS})
++    set(_additional_search_paths \"${_additional_search_paths};${GDCM_DIR}/../;${VTK_DIR}/../../;${ITK_DIR}/../../\")
+     if(_additional_search_paths)
+       set(DIRS \"\${DIRS};\${_additional_search_paths}\")
+     endif()
+diff -aur --new-file -x .git mitk-2016.03/CMake/PackageDepends/MITK_VTK_Config.cmake mitk-2016.03-sv_modified/CMake/PackageDepends/MITK_VTK_Config.cmake
+--- mitk-2016.03/CMake/PackageDepends/MITK_VTK_Config.cmake	2016-08-15 16:50:00.000000000 -0700
++++ mitk-2016.03-sv_modified/CMake/PackageDepends/MITK_VTK_Config.cmake	2018-01-23 11:18:03.090200000 -0800
+@@ -1,4 +1,5 @@
+-find_package(VTK COMPONENTS ${VTK_REQUIRED_COMPONENTS_BY_MODULE} REQUIRED)
++#find_package(VTK COMPONENTS ${VTK_REQUIRED_COMPONENTS_BY_MODULE} REQUIRED)
++find_package(VTK REQUIRED)
+ if(VTK_FOUND AND NOT VTK_BUILD_SHARED_LIBS)
+   message(FATAL_ERROR "MITK only supports a VTK which was built with shared libraries. Turn on BUILD_SHARED_LIBS in your VTK config.")
+ endif()
+diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/CTK.cmake mitk-2016.03-sv_modified/CMakeExternals/CTK.cmake
+--- mitk-2016.03/CMakeExternals/CTK.cmake	2016-08-15 16:50:01.000000000 -0700
++++ mitk-2016.03-sv_modified/CMakeExternals/CTK.cmake	2018-01-23 11:22:09.183365100 -0800
+@@ -26,6 +26,12 @@
+         list(APPEND proj_DEPENDENCIES Python)
+       endif()
+       list(APPEND ctk_optional_cache_args
++           if(DEFINED EXTERNAL_VTK_DIR)
++	     -DVTK_DIR:PATH=${EXTERNAL_VTK_DIR}
++	   endif()
++           -DCTK_LIB_Visualization/VTK/Core:BOOL=ON
++           -DCTK_LIB_Scripting/Python/Core:BOOL=ON
++	   -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=ON
+            -DCTK_LIB_Scripting/Python/Widgets:BOOL=ON
+            -DCTK_ENABLE_Python_Wrapping:BOOL=ON
+            -DCTK_APP_ctkSimplePythonShell:BOOL=ON
+@@ -78,6 +84,7 @@
+       URL_MD5 9ebeb78c78ff9f458045e0a5ecffc73f
+       UPDATE_COMMAND ""
+       INSTALL_COMMAND ""
++      PATCH_COMMAND ${PATCH_COMMAND} -N -p1 -i ${CMAKE_CURRENT_LIST_DIR}/CTK-cmake-3.10.patch
+       CMAKE_GENERATOR ${gen}
+       CMAKE_ARGS
+         ${ep_common_args}
+diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/CTK-cmake-3.10.patch mitk-2016.03-sv_modified/CMakeExternals/CTK-cmake-3.10.patch
+--- mitk-2016.03/CMakeExternals/CTK-cmake-3.10.patch	1969-12-31 16:00:00.000000000 -0800
++++ mitk-2016.03-sv_modified/CMakeExternals/CTK-cmake-3.10.patch	2018-01-23 11:18:56.293619300 -0800
+@@ -0,0 +1,11 @@
++--- CTK-original/CMake/ctkMacroSetupQt.cmake	2018-01-23 09:19:44.000000000 -0800
+++++ CTK/CMake/ctkMacroSetupQt.cmake	2018-01-22 18:20:16.000000000 -0800
++@@ -73,7 +73,7 @@
++       message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
++     endif()
++ 
++-  else()
+++#  else()
++     message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
++   endif()
++ 
+diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/DCMTK.cmake mitk-2016.03-sv_modified/CMakeExternals/DCMTK.cmake
+--- mitk-2016.03/CMakeExternals/DCMTK.cmake	2016-08-15 16:50:01.000000000 -0700
++++ mitk-2016.03-sv_modified/CMakeExternals/DCMTK.cmake	2018-01-23 11:18:03.130346200 -0800
+@@ -26,6 +26,12 @@
+       )
+     endif()
+ 
++    if(UNIX)
++      set(DCMTK_PATCH_FILE DCMTK-3.6.1-linux.patch)
++    else()
++      set(DCMTK_PATCH_FILE DCMTK-3.6.1.patch)
++    endif()
++
+     ExternalProject_Add(${proj}
+       LIST_SEPARATOR ${sep}
+       URL ${MITK_THIRDPARTY_DOWNLOAD_PREFIX_URL}/dcmtk-3.6.1_20121102.tar.gz
+@@ -35,7 +41,7 @@
+       # of dcmtk in the same install prefix.
+       # The other patches were originally for the Xcode generator, but we always
+       # apply them for consistency.
+-      PATCH_COMMAND ${PATCH_COMMAND} -N -p1 -i ${CMAKE_CURRENT_LIST_DIR}/DCMTK-3.6.1.patch
++      PATCH_COMMAND ${PATCH_COMMAND} -N -p1 -i ${CMAKE_CURRENT_LIST_DIR}/${DCMTK_PATCH_FILE}
+       CMAKE_GENERATOR ${gen}
+       CMAKE_ARGS
+          ${ep_common_args}
+diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/DCMTK-3.6.1-linux.patch mitk-2016.03-sv_modified/CMakeExternals/DCMTK-3.6.1-linux.patch
+--- mitk-2016.03/CMakeExternals/DCMTK-3.6.1-linux.patch	1969-12-31 16:00:00.000000000 -0800
++++ mitk-2016.03-sv_modified/CMakeExternals/DCMTK-3.6.1-linux.patch	2018-01-23 11:18:03.146851100 -0800
+@@ -0,0 +1,62 @@
++diff -Naur DCMTK-original/CMake/dcmtkMacros.cmake DCMTK/CMake/dcmtkMacros.cmake
++--- DCMTK-original/CMake/dcmtkMacros.cmake	2012-11-02 06:35:36.000000000 -0700
+++++ DCMTK/CMake/dcmtkMacros.cmake	2017-04-05 11:59:04.603761740 -0700
++@@ -26,6 +26,7 @@
++ MACRO(DCMTK_ADD_EXECUTABLE PROGRAM)
++     IF(BUILD_APPS)
++         ADD_EXECUTABLE(${PROGRAM} ${ARGN})
+++        SET_TARGET_PROPERTIES(${PROGRAM} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
++
++         # Make wildcard arguments work
++         IF(WIN32 AND NOT MINGW)
++diff -Naur DCMTK-original/CMake/dcmtkPrepare.cmake DCMTK/CMake/dcmtkPrepare.cmake
++--- DCMTK-original/CMake/dcmtkPrepare.cmake	2012-11-02 06:37:54.000000000 -0700
+++++ DCMTK/CMake/dcmtkPrepare.cmake	2017-04-05 11:59:04.603761740 -0700
++@@ -107,7 +107,8 @@
++ ENDIF(COMMAND CMAKE_POLICY)
++
++ # pass optional build date to compiler
++-ADD_DEFINITIONS("-DDCMTK_BUILD_DATE=\\\"2012-11-02\\\"")
+++set(DCMTK_BUILD_DATE "\"2012-11-02\"")
+++#ADD_DEFINITIONS("-DDCMTK_BUILD_DATE=\\\"2012-11-02\\\"")
++
++ # make OFString(NULL) safe by default
++ ADD_DEFINITIONS("-DUSE_NULL_SAFE_OFSTRING")
++@@ -330,3 +331,4 @@
++     ENDIF(HAVE_LIBRT)
++   ENDIF(HAVE_PTHREAD_H)
++ ENDIF(WITH_THREADS)
+++
++diff -Naur DCMTK-original/CMake/osconfig.h.in DCMTK/CMake/osconfig.h.in
++--- DCMTK-original/CMake/osconfig.h.in	2012-11-02 06:35:36.000000000 -0700
+++++ DCMTK/CMake/osconfig.h.in	2017-04-05 11:59:04.603761740 -0700
++@@ -738,6 +738,8 @@
++ /* Define to the date of this package. */
++ #define PACKAGE_DATE "@DCMTK_PACKAGE_DATE@"
++
+++#define DCMTK_BUILD_DATE @DCMTK_BUILD_DATE@
+++
++ /* Define to the version of this package. */
++ #define PACKAGE_VERSION "@DCMTK_PACKAGE_VERSION@"
++
++diff -Naur DCMTK-original/ofstd/libsrc/ofstd.cc DCMTK/ofstd/libsrc/ofstd.cc
++--- DCMTK-original/ofstd/libsrc/ofstd.cc	2012-11-02 06:35:36.000000000 -0700
+++++ DCMTK/ofstd/libsrc/ofstd.cc	2017-04-05 12:00:50.387101802 -0700
++@@ -1859,7 +1859,7 @@
++ #ifdef HAVE_WINDOWS_H
++   if (_isnan(val))
++ #else
++-  if (isnan(val))
+++  if (std::isnan(val))
++ #endif
++   {
++     OFStandard::strlcpy(dst, "nan", siz);
++@@ -1868,7 +1868,7 @@
++
++   // check if val is infinity
++ #ifdef HAVE_ISINF
++-  if (isinf(val))
+++  if (std::isinf(val))
++ #else
++   if (my_isinf(val))
++ #endif
+diff -aur --new-file -x .git mitk-2016.03/CMakeExternals/SimpleITK.cmake mitk-2016.03-sv_modified/CMakeExternals/SimpleITK.cmake
+--- mitk-2016.03/CMakeExternals/SimpleITK.cmake	2016-08-15 16:50:01.000000000 -0700
++++ mitk-2016.03-sv_modified/CMakeExternals/SimpleITK.cmake	2018-01-23 11:18:03.166404800 -0800
+@@ -111,7 +111,8 @@
+ 
+       if( MITK_USE_SYSTEM_PYTHON )
+         ExternalProject_Add_Step(${proj} sitk_python_install_step
+-          COMMAND PYTHONUSERBASE=${_install_dir} ${PYTHON_EXECUTABLE} setup.py install --prefix=${_install_dir}
++          #COMMAND PYTHONUSERBASE=${_install_dir} ${PYTHON_EXECUTABLE} setup.py install --prefix=${_install_dir}
++	  #COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${_install_dir}
+           DEPENDEES install
+           WORKING_DIRECTORY ${_sitk_build_dir}/Wrapping/PythonPackage
+         )
+diff -aur --new-file -x .git mitk-2016.03/CMakeLists.txt mitk-2016.03-sv_modified/CMakeLists.txt
+--- mitk-2016.03/CMakeLists.txt	2016-08-15 16:50:01.000000000 -0700
++++ mitk-2016.03-sv_modified/CMakeLists.txt	2018-01-23 11:18:03.195891700 -0800
+@@ -262,8 +262,8 @@
+ mitkFunctionAddExternalProject(NAME Vigra     OFF          DEPENDS HDF5)
+ 
+ # These are "hard" dependencies and always set to ON
+-mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)
+ mitkFunctionAddExternalProject(NAME VTK       ON           NO_CACHE)
++mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)
+ mitkFunctionAddExternalProject(NAME Boost     ON           NO_CACHE)
+ 
+ mitkFunctionAddExternalProject(NAME SimpleITK OFF          DEPENDS ITK GDCM SWIG)
+@@ -830,6 +830,12 @@
+   ${CMAKE_MODULE_PATH}
+   )
+ 
++# 2017-01-27:  This doesn't seem to be necessary for our builds with sv_externals
++#if(MITK_USE_GDCM)
++#  find_package(GDCM REQUIRED)
++#  include(${GDCM_USE_FILE})
++#endif()
++
+ if(MITK_USE_DCMTK)
+   # Due to the preferred CONFIG mode in find_package calls above,
+   # the DCMTKConfig.cmake file is read, which does not provide useful
+diff -aur --new-file -x .git mitk-2016.03/Modules/Classification/CLUtilities/CMakeLists.txt mitk-2016.03-sv_modified/Modules/Classification/CLUtilities/CMakeLists.txt
+--- mitk-2016.03/Modules/Classification/CLUtilities/CMakeLists.txt	2016-08-15 16:50:04.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/Classification/CLUtilities/CMakeLists.txt	2018-01-23 11:18:03.218452800 -0800
+@@ -1,6 +1,8 @@
+ MITK_CREATE_MODULE(
+   DEPENDS MitkCore MitkCLCore
+-  PACKAGE_DEPENDS PUBLIC Eigen
++  PACKAGE_DEPENDS 
++    PUBLIC Eigen
++    PUBLIC  ITK|ITKImageLabel+ITKConnectedComponents+ITKImageCompare+ITKMathematicalMorphology+ITKBinaryMathematicalMorphology
+   WARNINGS_AS_ERRORS
+ )
+ 
+diff -aur --new-file -x .git mitk-2016.03/Modules/Core/CMakeLists.txt mitk-2016.03-sv_modified/Modules/Core/CMakeLists.txt
+--- mitk-2016.03/Modules/Core/CMakeLists.txt	2016-08-15 16:50:05.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/Core/CMakeLists.txt	2018-01-23 11:18:03.240511100 -0800
+@@ -18,7 +18,7 @@
+     # We privately use/link all ITK modules in order to support all IO, Transform, etc.
+     # factories from ITK which are registered "automatically" via a factory manager.
+     PRIVATE ITK
+-    PUBLIC  VTK|vtkFiltersTexture+vtkFiltersParallel+vtkImagingStencil+vtkImagingMath+vtkInteractionStyle+vtkRenderingOpenGL+vtkRenderingVolumeOpenGL+vtkRenderingFreeTypeOpenGL+vtkRenderingLabel+vtkInteractionWidgets+vtkIOGeometry+vtkIOXML
++    PUBLIC  VTK|vtkFiltersTexture+vtkFiltersParallel+vtkImagingStencil+vtkImagingMath+vtkInteractionStyle+vtkRenderingOpenGL+vtkRenderingVolumeOpenGL+vtkRenderingFreeTypeOpenGL+vtkRenderingLabel+vtkInteractionWidgets+vtkIOGeometry+vtkIOXML+vtkImagingStatistics
+     PUBLIC  Boost
+   WARNINGS_AS_ERRORS
+   SUBPROJECTS MITK-Core
+diff -aur --new-file -x .git mitk-2016.03/Modules/Core/include/mitkExtractSliceFilter.h mitk-2016.03-sv_modified/Modules/Core/include/mitkExtractSliceFilter.h
+--- mitk-2016.03/Modules/Core/include/mitkExtractSliceFilter.h	2016-08-15 16:50:05.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/Core/include/mitkExtractSliceFilter.h	2018-01-23 11:18:03.271233600 -0800
+@@ -85,6 +85,10 @@
+     /** \brief Resampling grid corresponds to: false->image    true->worldgeometry*/
+     void SetInPlaneResampleExtentByGeometry(bool inPlaneResampleExtentByGeometry){ this->m_InPlaneResampleExtentByGeometry = inPlaneResampleExtentByGeometry; }
+ 
++    void SetInPlaneResampleSizeByGeometry(bool inPlaneResampleSizeByGeometry){ this->m_InPlaneResampleSizeByGeometry = inPlaneResampleSizeByGeometry; }
++
++    void SetInPlaneResampleExtentByMinimumSpacing(bool inPlaneResampleExtentByMinimumSpacing){this->m_InPlaneResampleExtentByMinimumSpacing = inPlaneResampleExtentByMinimumSpacing;}
++
+     /** \brief Sets the output dimension of the slice*/
+     void SetOutputDimensionality(unsigned int dimension){ this->m_OutputDimension = dimension; }
+ 
+@@ -168,6 +172,10 @@
+ 
+     bool m_InPlaneResampleExtentByGeometry;//Resampling grid corresponds to:  false->image    true->worldgeometry
+ 
++    bool m_InPlaneResampleSizeByGeometry;//Use Renderer Plane extents
++
++    bool m_InPlaneResampleExtentByMinimumSpacing;
++
+     mitk::ScalarType* m_OutPutSpacing;
+ 
+     bool m_VtkOutputRequested;
+diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp mitk-2016.03-sv_modified/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp
+--- mitk-2016.03/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp	2016-08-15 16:50:07.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp	2018-01-23 11:18:03.296300200 -0800
+@@ -36,6 +36,8 @@
+   m_InterpolationMode = ExtractSliceFilter::RESLICE_NEAREST;
+   m_ResliceTransform = nullptr;
+   m_InPlaneResampleExtentByGeometry = false;
++  m_InPlaneResampleSizeByGeometry = false;
++  m_InPlaneResampleExtentByMinimumSpacing = false;
+   m_OutPutSpacing = new mitk::ScalarType[2];
+   m_OutputDimension = 2;
+   m_ZSpacing = 1.0;
+@@ -186,8 +188,15 @@
+         // Resampling grid corresponds to the current world geometry. This
+         // means that the spacing of the output 2D image depends on the
+         // currently selected world geometry, and *not* on the image itself.
+-        extent[0] = m_WorldGeometry->GetExtent( 0 );
+-        extent[1] = m_WorldGeometry->GetExtent( 1 );
++        extent[0] = planeGeometry->GetExtent( 0 );
++        extent[1] = planeGeometry->GetExtent( 1 );
++      }
++      else if(m_InPlaneResampleExtentByMinimumSpacing)
++      {
++    	    const mitk::Vector3D &imageSpacing = inputTimeGeometry->GetGeometryForTimeStep(0)->GetSpacing();
++            double minSpacing=std::min(imageSpacing[0],std::min(imageSpacing[1],imageSpacing[2]));
++            extent[0]=planeGeometry->GetExtentInMM( 0 )/minSpacing;
++            extent[1]=planeGeometry->GetExtentInMM( 1 )/minSpacing;
+       }
+       else
+       {
+@@ -305,12 +314,14 @@
+   int xMin, xMax, yMin, yMax;
+ 
+   xMin = yMin = 0;
+-  xMax = static_cast< int >( extent[0]);
+-  yMax = static_cast< int >( extent[1]);
++  xMax = static_cast< int >( std::round(extent[0]));
++  yMax = static_cast< int >( std::round(extent[1]));
+ 
+-  double sliceBounds[6];
+-  if (m_WorldGeometry->GetReferenceGeometry())
++  if(!m_InPlaneResampleSizeByGeometry)
+   {
++   double sliceBounds[6];
++   if (m_WorldGeometry->GetReferenceGeometry())
++   {
+     for (auto & sliceBound : sliceBounds)
+     {
+       sliceBound = 0.0;
+@@ -324,8 +335,8 @@
+       yMin = static_cast< int >( sliceBounds[2] / m_OutPutSpacing[1] + 0.5 );
+       yMax = static_cast< int >( sliceBounds[3] / m_OutPutSpacing[1] + 0.5 );
+     } // ELSE we use the default values
++   }
+   }
+-
+   // Set the output extents! First included pixel index and last included pixel index
+   // xMax and yMax are one after the last pixel. so they have to be decremented by 1.
+   // In case we have a 2D image, xMax or yMax might be 0. in this case, do not decrement, but take 0.
+diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/DataManagement/mitkSlicedGeometry3D.cpp mitk-2016.03-sv_modified/Modules/Core/src/DataManagement/mitkSlicedGeometry3D.cpp
+--- mitk-2016.03/Modules/Core/src/DataManagement/mitkSlicedGeometry3D.cpp	2016-08-15 16:50:08.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/Core/src/DataManagement/mitkSlicedGeometry3D.cpp	2018-01-23 11:18:03.325064900 -0800
+@@ -65,7 +65,7 @@
+       }
+       else
+       {
+-        PlaneGeometry* geometry2D = other.m_PlaneGeometries[s]->Clone();
++        PlaneGeometry::Pointer geometry2D = other.m_PlaneGeometries[s]->Clone();
+         assert(geometry2D!=nullptr);
+         SetPlaneGeometry(geometry2D, s);
+       }
+diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkImageVtkMapper2D.cpp mitk-2016.03-sv_modified/Modules/Core/src/Rendering/mitkImageVtkMapper2D.cpp
+--- mitk-2016.03/Modules/Core/src/Rendering/mitkImageVtkMapper2D.cpp	2016-08-15 16:50:09.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/Core/src/Rendering/mitkImageVtkMapper2D.cpp	2018-01-23 11:18:03.349631000 -0800
+@@ -52,6 +52,8 @@
+ #include <vtkCellArray.h>
+ #include <vtkCamera.h>
+ #include <vtkColorTransferFunction.h>
++#include <vtkImageGradientMagnitude.h>
++#include <vtkImageHistogramStatistics.h>
+ 
+ //ITK
+ #include <itkRGBAPixel.h>
+@@ -166,6 +168,13 @@
+   datanode->GetBoolProperty("in plane resample extent by geometry", inPlaneResampleExtentByGeometry, renderer);
+   localStorage->m_Reslicer->SetInPlaneResampleExtentByGeometry(inPlaneResampleExtentByGeometry);
+ 
++  bool inPlaneResampleSizeByGeometry = false;
++  datanode->GetBoolProperty("in plane resample size by geometry", inPlaneResampleSizeByGeometry, renderer);
++  localStorage->m_Reslicer->SetInPlaneResampleSizeByGeometry(inPlaneResampleSizeByGeometry);
++
++  bool inPlaneResampleExtentByMinimumSpacing = false;
++  datanode->GetBoolProperty("in plane resample extent by minimum spacing", inPlaneResampleExtentByMinimumSpacing, renderer);
++  localStorage->m_Reslicer->SetInPlaneResampleExtentByMinimumSpacing(inPlaneResampleExtentByMinimumSpacing);
+ 
+   // Initialize the interpolation mode for resampling; switch to nearest
+   // neighbor if the input image is too small.
+@@ -288,6 +297,60 @@
+     localStorage->m_ReslicedImage = localStorage->m_Reslicer->GetVtkOutput();
+   }
+ 
++  bool showGradient= false;
++  datanode->GetBoolProperty("show gradient", showGradient, renderer);
++  if (showGradient)
++  {
++	  vtkSmartPointer<vtkImageGradientMagnitude> gradientFilter = vtkSmartPointer<vtkImageGradientMagnitude>::New();
++      gradientFilter->HandleBoundariesOn();
++      gradientFilter->SetInputData(localStorage->m_ReslicedImage);
++      gradientFilter->Update();
++
++      // "background" pixels produce very large gradients at border
++      int extent[6];
++      gradientFilter->GetOutput()->GetExtent(extent);
++
++      for (int y = extent[2]; y <=extent[3] ; ++y)
++      {
++          for (int x = extent[0]; x <= extent[1]; ++x)
++          {
++              if (fabsf(localStorage->m_ReslicedImage->GetScalarComponentAsDouble(x, y, 0, 0) - (-32768.0)) < 1e-3)
++              {
++            	  gradientFilter->GetOutput()->SetScalarComponentFromDouble(x, y, 0, 0, 0);
++              }
++
++              int offsets[][2] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
++
++              for (size_t i = 0; i < sizeof(offsets) / sizeof(offsets[0]); ++i) {
++                  int xoff = x + offsets[i][0];
++                  int yoff = y + offsets[i][1];
++
++                  if (xoff < extent[0] || xoff > extent[1] || yoff < extent[2] || yoff > extent[3]) {
++                      continue;
++                  }
++
++                  if (fabsf(localStorage->m_ReslicedImage->GetScalarComponentAsDouble(xoff, yoff, 0, 0) - (-32768.0)) < 1e-3)
++                  {
++                	  gradientFilter->GetOutput()->SetScalarComponentFromDouble(x, y, 0, 0, 0);
++                      break;
++                  }
++              }
++          }
++      }
++
++      localStorage->m_ReslicedImage = gradientFilter->GetOutput();
++
++      vtkSmartPointer<vtkImageHistogramStatistics> stats = vtkSmartPointer<vtkImageHistogramStatistics>::New();
++      stats->SetInputData(localStorage->m_ReslicedImage);
++      stats->GenerateHistogramImageOff();
++      stats->Update();
++
++      mitk::LevelWindow levelWindow;
++      levelWindow.SetRangeMinMax(stats->GetAutoRange()[0], stats->GetAutoRange()[1]);
++      levelWindow.SetWindowBounds(stats->GetAutoRange()[0], stats->GetAutoRange()[1]);
++      datanode->SetLevelWindow(levelWindow, renderer, "gradientlevelwindow");
++  }
++
+   // Bounds information for reslicing (only reuqired if reference geometry
+   // is present)
+   //this used for generating a vtkPLaneSource with the right size
+@@ -296,7 +359,20 @@
+   {
+     sliceBound = 0.0;
+   }
+-  localStorage->m_Reslicer->GetClippedPlaneBounds(sliceBounds);
++
++  if(inPlaneResampleSizeByGeometry)
++  {
++      double widthInMM = planeGeometry->GetExtentInMM( 0 );
++      double heightInMM = planeGeometry->GetExtentInMM( 1 );
++      sliceBounds[0] = 0.0;
++      sliceBounds[1] = widthInMM;
++      sliceBounds[2] = 0.0;
++      sliceBounds[3] = heightInMM;
++  }
++  else
++  {
++    localStorage->m_Reslicer->GetClippedPlaneBounds(sliceBounds);
++  }
+ 
+   //get the spacing of the slice
+   localStorage->m_mmPerPixel = localStorage->m_Reslicer->GetOutputSpacing();
+@@ -308,16 +384,29 @@
+     {
+       textureClippingBound = 0.0;
+     }
+-    // Calculate the actual bounds of the transformed plane clipped by the
+-    // dataset bounding box; this is required for drawing the texture at the
+-    // correct position during 3D mapping.
+-    mitk::PlaneClipping::CalculateClippedPlaneBounds( input->GetGeometry(), planeGeometry, textureClippingBounds );
+-
+-    textureClippingBounds[0] = static_cast< int >( textureClippingBounds[0] / localStorage->m_mmPerPixel[0] + 0.5 );
+-    textureClippingBounds[1] = static_cast< int >( textureClippingBounds[1] / localStorage->m_mmPerPixel[0] + 0.5 );
+-    textureClippingBounds[2] = static_cast< int >( textureClippingBounds[2] / localStorage->m_mmPerPixel[1] + 0.5 );
+-    textureClippingBounds[3] = static_cast< int >( textureClippingBounds[3] / localStorage->m_mmPerPixel[1] + 0.5 );
+ 
++    if(inPlaneResampleSizeByGeometry)
++    {
++        double widthInMM = planeGeometry->GetExtentInMM( 0 );
++        double heightInMM = planeGeometry->GetExtentInMM( 1 );
++
++        textureClippingBounds[0] = 0.0;
++        textureClippingBounds[1] = widthInMM / localStorage->m_mmPerPixel[0];
++        textureClippingBounds[2] = 0.0;
++        textureClippingBounds[3] = heightInMM / localStorage->m_mmPerPixel[1];
++    }
++    else
++    {
++        // Calculate the actual bounds of the transformed plane clipped by the
++        // dataset bounding box; this is required for drawing the texture at the
++        // correct position during 3D mapping.
++        mitk::PlaneClipping::CalculateClippedPlaneBounds( input->GetGeometry(), planeGeometry, textureClippingBounds );
++
++        textureClippingBounds[0] = static_cast< int >( textureClippingBounds[0] / localStorage->m_mmPerPixel[0] + 0.5 );
++        textureClippingBounds[1] = static_cast< int >( textureClippingBounds[1] / localStorage->m_mmPerPixel[0] + 0.5 );
++        textureClippingBounds[2] = static_cast< int >( textureClippingBounds[2] / localStorage->m_mmPerPixel[1] + 0.5 );
++        textureClippingBounds[3] = static_cast< int >( textureClippingBounds[3] / localStorage->m_mmPerPixel[1] + 0.5 );
++    }
+     //clipping bounds for cutting the image
+     localStorage->m_LevelWindowFilter->SetClippingBounds(textureClippingBounds);
+   }
+@@ -439,7 +528,10 @@
+   LocalStorage *localStorage = this->GetLocalStorage( renderer );
+ 
+   LevelWindow levelWindow;
+-  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, "levelwindow" );
++//  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, "levelwindow" );
++  bool showGradient = false;
++  this->GetDataNode()->GetBoolProperty("show gradient", showGradient, renderer);
++  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, showGradient? "gradientlevelwindow" : "levelwindow" );
+   localStorage->m_LevelWindowFilter->GetLookupTable()->SetRange( levelWindow.GetLowerWindowBound(), levelWindow.GetUpperWindowBound() );
+ 
+   mitk::LevelWindow opacLevelWindow;
+@@ -591,7 +683,7 @@
+   vtkLookupTable* usedLookupTable = localStorage->m_ColorLookupTable;
+ 
+   // If lookup table or transferfunction use is requested...
+-  mitk::LookupTableProperty::Pointer lookupTableProp = dynamic_cast<mitk::LookupTableProperty*>(this->GetDataNode()->GetProperty("LookupTable"));
++  mitk::LookupTableProperty::Pointer lookupTableProp = dynamic_cast<mitk::LookupTableProperty*>(this->GetDataNode()->GetProperty("LookupTable", renderer));
+ 
+   if( lookupTableProp.IsNotNull() ) // is a lookuptable set?
+   {
+@@ -686,6 +778,8 @@
+   else node->AddProperty( "reslice interpolation", mitk::VtkResliceInterpolationProperty::New() );
+   node->AddProperty( "texture interpolation", mitk::BoolProperty::New( false ) );
+   node->AddProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( false ) );
++  node->AddProperty( "in plane resample size by geometry", mitk::BoolProperty::New( false ) );
++  node->AddProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( false ) );
+   node->AddProperty( "bounding box", mitk::BoolProperty::New( false ) );
+ 
+   mitk::RenderingModeProperty::Pointer renderingModeProperty = mitk::RenderingModeProperty::New();
+diff -aur --new-file -x .git mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp mitk-2016.03-sv_modified/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp
+--- mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp	2016-08-15 16:50:09.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp	2018-01-23 11:18:03.379313700 -0800
+@@ -310,6 +310,13 @@
+         tubeRadius = sqrt( m_SurfaceCreator->GetBoundingBox()->GetDiagonalLength2() ) / 450.0;
+       }
+ 
++      bool useGeometryBoundingBox = false;
++      if(GetDataNode()->GetBoolProperty("in plane resample size by geometry", useGeometryBoundingBox, renderer))
++      {
++          if(useGeometryBoundingBox)
++        	  m_SurfaceCreator->SetUseBoundingBox(false);
++      }
++
+       // Calculate the surface of the PlaneGeometry
+       m_SurfaceCreator->Update();
+       Surface *surface = m_SurfaceCreator->GetOutput();
+diff -aur --new-file -x .git mitk-2016.03/Modules/CppMicroServices/core/src/util/usThreads_p.h mitk-2016.03-sv_modified/Modules/CppMicroServices/core/src/util/usThreads_p.h
+--- mitk-2016.03/Modules/CppMicroServices/core/src/util/usThreads_p.h	2016-08-15 16:50:11.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/CppMicroServices/core/src/util/usThreads_p.h	2018-01-23 11:18:03.404882400 -0800
+@@ -59,6 +59,13 @@
+     #endif
+     #include <windows.h>
+ 
++    // 2016-12-09 - problems with maro replacement on msvc 2013
++    #ifdef UNICODE
++    #define CreateMutex  CreateMutexW
++    #else
++    #define CreateMutex  CreateMutexA
++    #endif // !UNICODE
++
+     #define US_THREADS_MUTEX(x)           HANDLE (x);
+     #define US_THREADS_MUTEX_INIT(x)
+     #define US_THREADS_MUTEX_CTOR(x)      : x(::CreateMutex(NULL, FALSE, NULL))
+diff -aur --new-file -x .git mitk-2016.03/Modules/IOExt/CMakeLists.txt mitk-2016.03-sv_modified/Modules/IOExt/CMakeLists.txt
+--- mitk-2016.03/Modules/IOExt/CMakeLists.txt	2016-08-15 16:50:20.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/IOExt/CMakeLists.txt	2018-01-23 11:18:03.426997900 -0800
+@@ -1,5 +1,5 @@
+ MITK_CREATE_MODULE(DEPENDS MitkDataTypesExt MitkMapperExt MitkSceneSerialization MitkLegacyIO
+                    PACKAGE_DEPENDS VTK|vtkIOPLY+vtkIOExport+vtkIOParallelXML
+-                   WARNINGS_AS_ERRORS
++#                   WARNINGS_AS_ERRORS
+                    AUTOLOAD_WITH MitkCore
+                   )
+diff -aur --new-file -x .git mitk-2016.03/Modules/MapperExt/CMakeLists.txt mitk-2016.03-sv_modified/Modules/MapperExt/CMakeLists.txt
+--- mitk-2016.03/Modules/MapperExt/CMakeLists.txt	2016-08-15 16:50:21.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/MapperExt/CMakeLists.txt	2018-01-23 11:18:03.441536700 -0800
+@@ -1,6 +1,6 @@
+ MITK_CREATE_MODULE(DEPENDS MitkDataTypesExt MitkLegacyGL
+                    PACKAGE_DEPENDS VTK|vtkRenderingVolumeOpenGL
+-                   WARNINGS_AS_ERRORS
++#                   WARNINGS_AS_ERRORS
+                   )
+ 
+ add_subdirectory(test)
+diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/files.cmake mitk-2016.03-sv_modified/Modules/QtWidgets/files.cmake
+--- mitk-2016.03/Modules/QtWidgets/files.cmake	2016-08-15 16:50:23.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/QtWidgets/files.cmake	2018-01-23 11:18:03.457077900 -0800
+@@ -36,6 +36,10 @@
+ QmitkDataStorageComboBoxWithSelectNone.cpp
+ )
+ 
++if(APPLE)
++  set(CPP_FILES ${CPP_FILES} QmitkDisableGLHiDPI.mm)
++endif()
++
+ set(MOC_H_FILES
+   include/QmitkDataStorageComboBox.h
+   include/QmitkDataStorageTableModel.h
+diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/include/QmitkDisableGLHiDPI.h mitk-2016.03-sv_modified/Modules/QtWidgets/include/QmitkDisableGLHiDPI.h
+--- mitk-2016.03/Modules/QtWidgets/include/QmitkDisableGLHiDPI.h	1969-12-31 16:00:00.000000000 -0800
++++ mitk-2016.03-sv_modified/Modules/QtWidgets/include/QmitkDisableGLHiDPI.h	2018-01-23 11:18:03.473986900 -0800
+@@ -0,0 +1,36 @@
++/*=========================================================================
++ *
++ * Copyright (c) 2014-2015 The Regents of the University of California.
++ * All Rights Reserved.
++ *
++ * Portions of the code Copyright (c) 1998-2007 Stanford University,
++ * Charles Taylor, Nathan Wilson, Ken Wang.
++ *
++ * See SimVascular Acknowledgements file for additional
++ * contributors to the source code.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining
++ * a copy of this software and associated documentation files (the
++ * "Software"), to deal in the Software without restriction, including
++ * without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, sublicense, and/or sell copies of the Software, and to
++ * permit persons to whom the Software is furnished to do so, subject
++ * to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included
++ * in all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
++ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
++ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
++ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
++ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
++ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++*=========================================================================*/
++
++#ifndef _QMITKDISABLEGLHIDPI_H
++#define _QMITKDISABLEGLHIDPI_H
++  void disableGLHiDPI( long a_id );
++#endif
+diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/include/QmitkRenderWindow.h mitk-2016.03-sv_modified/Modules/QtWidgets/include/QmitkRenderWindow.h
+--- mitk-2016.03/Modules/QtWidgets/include/QmitkRenderWindow.h	2016-08-15 16:50:23.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-01-23 11:18:03.496305200 -0800
+@@ -96,6 +96,8 @@
+ 
+   void FullScreenMode(bool state);
+ 
++  void SetWindowMenuEventAble(bool able);
++
+ protected:
+   // overloaded move handler
+   virtual void moveEvent(QMoveEvent* event) override;
+diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/include/QmitkRenderWindowMenu.h mitk-2016.03-sv_modified/Modules/QtWidgets/include/QmitkRenderWindowMenu.h
+--- mitk-2016.03/Modules/QtWidgets/include/QmitkRenderWindowMenu.h	2016-08-15 16:50:23.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/QtWidgets/include/QmitkRenderWindowMenu.h	2018-01-23 11:18:03.520260700 -0800
+@@ -95,6 +95,9 @@
+ 
+   void NotifyNewWidgetPlanesMode( int mode );
+ 
++  void SetEventAble( bool able)
++  { m_EventAble=able; }
++
+ protected:
+ 
+   /*! Create menu widget. The menu contains five QPushButtons (hori-split, verti-split, full-screen, settings and close button)
+@@ -311,6 +314,8 @@
+ 
+   bool                m_Entered;
+ 
++  bool                m_EventAble;
++
+   private:
+ 
+   mitk::BaseRenderer::Pointer m_Renderer;
+diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkDisableGLHiDPI.mm mitk-2016.03-sv_modified/Modules/QtWidgets/src/QmitkDisableGLHiDPI.mm
+--- mitk-2016.03/Modules/QtWidgets/src/QmitkDisableGLHiDPI.mm	1969-12-31 16:00:00.000000000 -0800
++++ mitk-2016.03-sv_modified/Modules/QtWidgets/src/QmitkDisableGLHiDPI.mm	2018-01-23 11:18:03.535798400 -0800
+@@ -0,0 +1,39 @@
++/*=========================================================================
++ *
++ * Copyright (c) 2014-2015 The Regents of the University of California.
++ * All Rights Reserved.
++ *
++ * Portions of the code Copyright (c) 1998-2007 Stanford University,
++ * Charles Taylor, Nathan Wilson, Ken Wang.
++ *
++ * See SimVascular Acknowledgements file for additional
++ * contributors to the source code.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining
++ * a copy of this software and associated documentation files (the
++ * "Software"), to deal in the Software without restriction, including
++ * without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, sublicense, and/or sell copies of the Software, and to
++ * permit persons to whom the Software is furnished to do so, subject
++ * to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included
++ * in all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
++ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
++ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
++ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
++ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
++ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++*=========================================================================*/
++
++#include <Cocoa/Cocoa.h>
++#include "QmitkDisableGLHiDPI.h"
++
++void disableGLHiDPI( long a_id ){
++  NSView* view = reinterpret_cast<NSView*>( a_id );
++  [view setWantsBestResolutionOpenGLSurface:NO];
++}
+diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindow.cpp mitk-2016.03-sv_modified/Modules/QtWidgets/src/QmitkRenderWindow.cpp
+--- mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindow.cpp	2016-08-15 16:50:24.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/QtWidgets/src/QmitkRenderWindow.cpp	2018-01-23 11:18:03.557355900 -0800
+@@ -24,6 +24,8 @@
+ #include <QTimer>
+ #include <QDragEnterEvent>
+ #include <QDropEvent>
++#include <QSurfaceFormat>
++#include <QWindow>
+ #include "mitkMousePressEvent.h"
+ #include "mitkMouseMoveEvent.h"
+ #include "mitkMouseDoubleClickEvent.h"
+@@ -35,6 +37,10 @@
+ #include "QmitkRenderWindowMenu.h"
+ #include "QmitkMimeTypes.h"
+ 
++#ifdef __APPLE__
++#include "QmitkDisableGLHiDPI.h"
++#endif
++
+ QmitkRenderWindow::QmitkRenderWindow(QWidget *parent,
+   QString name,
+   mitk::VtkPropRenderer* /*renderer*/,
+@@ -47,6 +53,10 @@
+   newform.setSamples(8);
+   this->setFormat(newform);*/
+ 
++  QSurfaceFormat surfaceFormat = windowHandle()->format();
++  surfaceFormat.setStencilBufferSize(8);
++  windowHandle()->setFormat(surfaceFormat);
++
+   if (renderingMode == mitk::BaseRenderer::RenderingMode::DepthPeeling)
+   {
+     GetRenderWindow()->SetMultiSamples(0);
+@@ -65,6 +75,11 @@
+ 
+   setFocusPolicy(Qt::StrongFocus);
+   setMouseTracking(true);
++
++#ifdef __APPLE__
++  disableGLHiDPI(this->winId());
++#endif
++
+ }
+ 
+ QmitkRenderWindow::~QmitkRenderWindow()
+@@ -269,6 +284,11 @@
+   }
+ }
+ 
++void QmitkRenderWindow::SetWindowMenuEventAble(bool able)
++{
++  m_MenuWidget->SetEventAble(able);
++}
++
+ void QmitkRenderWindow::AdjustRenderWindowMenuVisibility(const QPoint& /*pos*/)
+ {
+   if (m_MenuWidget)
+diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp mitk-2016.03-sv_modified/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp
+--- mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp	2016-08-15 16:50:24.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp	2018-01-23 11:18:03.593893300 -0800
+@@ -63,7 +63,8 @@
+ m_Entered(false),
+ m_Renderer(b),
+ m_MultiWidget(mw),
+-m_Parent(parent)
++m_Parent(parent),
++m_EventAble(true)
+ {
+ 
+   MITK_DEBUG << "creating renderwindow menu on baserenderer " << b;
+@@ -257,10 +258,13 @@
+ 
+ void QmitkRenderWindowMenu::enterEvent( QEvent * /*e*/ )
+ {
+-  MITK_DEBUG << "menu enterEvent";
+-  DeferredShowMenu();
++  if(m_EventAble)
++  {  
++    MITK_DEBUG << "menu enterEvent";
++    DeferredShowMenu();
+ 
+-  m_Entered=true;
++    m_Entered=true;
++  }
+ }
+ 
+ void QmitkRenderWindowMenu::DeferredHideMenu( )
+@@ -380,7 +384,7 @@
+   m_LayoutDesign = LAYOUT_2DIMAGEUP;
+   emit SignalChangeLayoutDesign( LAYOUT_2DIMAGEUP );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ 
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutTo2DImagesLeft(bool)
+@@ -392,7 +396,7 @@
+   m_LayoutDesign = LAYOUT_2DIMAGELEFT;
+   emit SignalChangeLayoutDesign( LAYOUT_2DIMAGELEFT );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToDefault(bool)
+ {
+@@ -403,7 +407,7 @@
+   m_LayoutDesign = LAYOUT_DEFAULT;
+   emit SignalChangeLayoutDesign( LAYOUT_DEFAULT );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ 
+ }
+ 
+@@ -436,7 +440,7 @@
+   m_LayoutDesign = LAYOUT_BIG3D;
+   emit SignalChangeLayoutDesign( LAYOUT_BIG3D );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ 
+ }
+ 
+@@ -449,7 +453,7 @@
+   m_LayoutDesign = LAYOUT_AXIAL;
+   emit SignalChangeLayoutDesign( LAYOUT_AXIAL );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToWidget2(bool)
+ {
+@@ -460,7 +464,7 @@
+   m_LayoutDesign = LAYOUT_SAGITTAL;
+   emit SignalChangeLayoutDesign( LAYOUT_SAGITTAL );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToWidget3(bool)
+ {
+@@ -471,7 +475,7 @@
+   m_LayoutDesign = LAYOUT_CORONAL;
+   emit SignalChangeLayoutDesign( LAYOUT_CORONAL );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToRowWidget3And4(bool)
+ {
+@@ -482,7 +486,7 @@
+   m_LayoutDesign = LAYOUT_ROWWIDGET3AND4;
+   emit SignalChangeLayoutDesign( LAYOUT_ROWWIDGET3AND4 );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToColumnWidget3And4(bool)
+ {
+@@ -493,7 +497,7 @@
+   m_LayoutDesign = LAYOUT_COLUMNWIDGET3AND4;
+   emit SignalChangeLayoutDesign( LAYOUT_COLUMNWIDGET3AND4 );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ 
+ void QmitkRenderWindowMenu::OnChangeLayoutToSmallUpperWidget2Big3and4(bool)
+@@ -505,7 +509,7 @@
+   m_LayoutDesign = LAYOUT_SMALLUPPERWIDGET2BIGAND4;
+   emit SignalChangeLayoutDesign( LAYOUT_SMALLUPPERWIDGET2BIGAND4 );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutTo2x2Dand3DWidget(bool)
+ {
+@@ -516,7 +520,7 @@
+   m_LayoutDesign = LAYOUT_2X2DAND3DWIDGET;
+   emit SignalChangeLayoutDesign( LAYOUT_2X2DAND3DWIDGET );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToLeft2Dand3DRight2D(bool)
+ {
+@@ -527,7 +531,7 @@
+   m_LayoutDesign = LAYOUT_LEFT2DAND3DRIGHT2D;
+   emit SignalChangeLayoutDesign( LAYOUT_LEFT2DAND3DRIGHT2D );
+ 
+-  DeferredShowMenu( );
++  DeferredHideMenu( );
+ }
+ 
+ void QmitkRenderWindowMenu::UpdateLayoutDesignList( int layoutDesignIndex )
+diff -aur --new-file -x .git mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp mitk-2016.03-sv_modified/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp
+--- mitk-2016.03/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp	2016-08-15 16:50:24.000000000 -0700
++++ mitk-2016.03-sv_modified/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp	2018-01-23 11:18:03.629841500 -0800
+@@ -467,10 +467,13 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
+ 
+   //Set Layout to widget
+   this->setLayout(QmitkStdMultiWidgetLayout);
+ 
++  QSplitter* previousMainSplit=m_MainSplit;
++
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+   QmitkStdMultiWidgetLayout->addWidget( m_MainSplit );
+@@ -490,6 +493,9 @@
+   m_SubSplit1->addWidget( mitkWidget1Container );
+   m_SubSplit1->addWidget( mitkWidget2Container );
+   m_SubSplit1->addWidget( mitkWidget3Container );
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget3->SetWindowMenuEventAble(true);
+ 
+   //set SplitterSize for splitter top
+   QList<int> splitterSize;
+@@ -500,6 +506,7 @@
+ 
+   //insert Widget Container into splitter bottom
+   m_SubSplit2->addWidget( mitkWidget4Container );
++  mitkWidget4->SetWindowMenuEventAble(true);
+ 
+   //set SplitterSize for splitter m_LayoutSplit
+   splitterSize.clear();
+@@ -525,6 +532,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_2D_IMAGES_UP );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_2D_IMAGES_UP );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -540,6 +550,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -560,6 +576,9 @@
+   m_SubSplit1->addWidget( mitkWidget1Container );
+   m_SubSplit1->addWidget( mitkWidget2Container );
+   m_SubSplit1->addWidget( mitkWidget3Container );
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget3->SetWindowMenuEventAble(true);
+ 
+   //set splitterSize of SubSplit1
+   QList<int> splitterSize;
+@@ -569,6 +588,7 @@
+   m_SubSplit1->setSizes( splitterSize );
+ 
+   m_SubSplit2->addWidget( mitkWidget4Container );
++  mitkWidget4->SetWindowMenuEventAble(true);
+ 
+   //set splitterSize of Layout Split
+   splitterSize.clear();
+@@ -594,6 +614,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_2D_IMAGES_LEFT );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_2D_IMAGES_LEFT );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -666,6 +689,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -689,6 +718,11 @@
+   m_SubSplit2->addWidget( mitkWidget3Container );
+   m_SubSplit2->addWidget( mitkWidget4Container );
+ 
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget3->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
+   //set splitter Size
+   QList<int> splitterSize;
+   splitterSize.push_back(1000);
+@@ -714,6 +748,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_DEFAULT );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_DEFAULT );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -729,6 +766,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -736,6 +779,20 @@
+ 
+   //add widget Splitter to main Splitter
+   m_MainSplit->addWidget( mitkWidget4Container );
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget2Container);
++  layoutTemp->addWidget(mitkWidget3Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //add LevelWindow Widget to mainSplitter
+   m_MainSplit->addWidget( levelWindowWidget );
+@@ -757,6 +814,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_BIG_3D );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_BIG_3D );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -772,6 +832,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -779,6 +845,20 @@
+ 
+   //add widget Splitter to main Splitter
+   m_MainSplit->addWidget( mitkWidget1Container );
++  mitkWidget1->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget2Container);
++  layoutTemp->addWidget(mitkWidget3Container);
++  layoutTemp->addWidget(mitkWidget4Container);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  mitkWidget4->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //add LevelWindow Widget to mainSplitter
+   m_MainSplit->addWidget( levelWindowWidget );
+@@ -800,6 +880,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_WIDGET1 );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_WIDGET1 );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -815,6 +898,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -822,6 +911,20 @@
+ 
+   //add widget Splitter to main Splitter
+   m_MainSplit->addWidget( mitkWidget2Container );
++  mitkWidget2->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget3Container);
++  layoutTemp->addWidget(mitkWidget4Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  mitkWidget4->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //add LevelWindow Widget to mainSplitter
+   m_MainSplit->addWidget( levelWindowWidget );
+@@ -843,6 +946,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_WIDGET2 );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_WIDGET2 );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -858,6 +964,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -865,6 +977,20 @@
+ 
+   //add widget Splitter to main Splitter
+   m_MainSplit->addWidget( mitkWidget3Container );
++  mitkWidget3->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget2Container);
++  layoutTemp->addWidget(mitkWidget4Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  mitkWidget4->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //add LevelWindow Widget to mainSplitter
+   m_MainSplit->addWidget( levelWindowWidget );
+@@ -886,6 +1012,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_WIDGET3 );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_WIDGET3 );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -901,6 +1030,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -916,6 +1051,19 @@
+   //add Widgets to splitter
+   m_LayoutSplit->addWidget( mitkWidget3Container );
+   m_LayoutSplit->addWidget( mitkWidget4Container );
++  mitkWidget3->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget2Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //set Splitter Size
+   QList<int> splitterSize;
+@@ -940,6 +1088,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_ROW_WIDGET_3_AND_4 );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_ROW_WIDGET_3_AND_4 );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -955,6 +1106,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -970,6 +1127,19 @@
+   //add Widgets to splitter
+   m_LayoutSplit->addWidget( mitkWidget3Container );
+   m_LayoutSplit->addWidget( mitkWidget4Container );
++  mitkWidget3->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget2Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget2->SetWindowMenuEventAble(false);
++ widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //set SplitterSize
+   QList<int> splitterSize;
+@@ -994,6 +1164,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_COLUMN_WIDGET_3_AND_4 );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_COLUMN_WIDGET_3_AND_4 );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -1018,6 +1191,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -1039,6 +1218,18 @@
+ 
+   m_SubSplit2->addWidget( mitkWidget3Container );
+   m_SubSplit2->addWidget( mitkWidget4Container );
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget3->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //set Splitter Size
+   QList<int> splitterSize;
+@@ -1067,6 +1258,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_SMALL_UPPER_WIDGET2_BIG3_AND4 );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_SMALL_UPPER_WIDGET2_BIG3_AND4 );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -1082,6 +1276,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -1102,6 +1302,18 @@
+   m_SubSplit1->addWidget( mitkWidget1Container );
+   m_SubSplit1->addWidget( mitkWidget2Container );
+   m_SubSplit2->addWidget( mitkWidget4Container );
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget3Container);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //set Splitter Size
+   QList<int> splitterSize;
+@@ -1127,6 +1339,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_2X_2D_AND_3D_WIDGET );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_2X_2D_AND_3D_WIDGET );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -1142,6 +1357,12 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+@@ -1162,6 +1383,18 @@
+   m_SubSplit1->addWidget( mitkWidget1Container );
+   m_SubSplit1->addWidget( mitkWidget4Container );
+   m_SubSplit2->addWidget( mitkWidget2Container );
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget3Container);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   //set Splitter Size
+   QList<int> splitterSize;
+@@ -1187,6 +1420,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_2D_AND_3D_LEFT_2D_RIGHT_WIDGET );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_2D_AND_3D_LEFT_2D_RIGHT_WIDGET );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -1202,10 +1438,13 @@
+ 
+   //create Main Layout
+   QmitkStdMultiWidgetLayout =  new QHBoxLayout( this );
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
+ 
+   //Set Layout to widget
+   this->setLayout(QmitkStdMultiWidgetLayout);
+ 
++  QSplitter* previousMainSplit=m_MainSplit;
++
+   //create main splitter
+   m_MainSplit = new QSplitter( this );
+   QmitkStdMultiWidgetLayout->addWidget( m_MainSplit );
+@@ -1223,17 +1462,30 @@
+ 
+   //insert Widget Container into splitter top
+   m_SubSplit1->addWidget( mitkWidget1Container );
++  mitkWidget1->SetWindowMenuEventAble(true);
+ 
+   //set SplitterSize for splitter top
+    QList<int> splitterSize;
+   //insert Widget Container into splitter bottom
+   m_SubSplit2->addWidget( mitkWidget4Container );
++  mitkWidget4->SetWindowMenuEventAble(true);
+   //set SplitterSize for splitter m_LayoutSplit
+   splitterSize.clear();
+   splitterSize.push_back(700);
+   splitterSize.push_back(700);
+   m_LayoutSplit->setSizes( splitterSize );
+ 
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget2Container);
++  layoutTemp->addWidget(mitkWidget3Container);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
++
+   //show mainSplitt
+   m_MainSplit->show();
+ 
+@@ -1251,6 +1503,9 @@
+   mitkWidget3->LayoutDesignListChanged( LAYOUT_2D_UP_AND_3D_DOWN );
+   mitkWidget4->LayoutDesignListChanged( LAYOUT_2D_UP_AND_3D_DOWN );
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   //update all Widgets
+   this->UpdateAllWidgets();
+ }
+diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp mitk-2016.03-sv_modified/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp	2016-08-15 16:50:57.000000000 -0700
++++ mitk-2016.03-sv_modified/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp	2018-01-23 11:18:03.658104100 -0800
+@@ -109,6 +109,7 @@
+   m_Preferences->PutBool("Show level/window widget", m_Ui->m_ShowLevelWindowWidget->isChecked());
+   m_Preferences->PutBool("PACS like mouse interaction", m_Ui->m_PACSLikeMouseMode->isChecked());
+   m_Preferences->PutInt("Rendering Mode", m_Ui->m_RenderingMode->currentIndex());
++  m_Preferences->PutBool("Show Department Logo", m_Ui->m_ShowDepartmentLogo->isChecked());
+ 
+   return true;
+ }
+@@ -158,6 +159,7 @@
+   m_Ui->m_PACSLikeMouseMode->setChecked(m_Preferences->GetBool("PACS like mouse interaction", false));
+   int mode= m_Preferences->GetInt("Rendering Mode",0);
+   m_Ui->m_RenderingMode->setCurrentIndex(mode);
++  m_Ui->m_ShowDepartmentLogo->setChecked(m_Preferences->GetBool("Show Department Logo", false));
+   m_Ui->m_CrosshairGapSize->setValue(m_Preferences->GetInt("crosshair gap size", 32));
+ }
+ 
+diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui mitk-2016.03-sv_modified/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2016-08-15 16:50:57.000000000 -0700
++++ mitk-2016.03-sv_modified/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2018-01-23 11:18:03.682669600 -0800
+@@ -7,14 +7,40 @@
+     <x>0</x>
+     <y>0</y>
+     <width>518</width>
+-    <height>431</height>
++    <height>419</height>
+    </rect>
+   </property>
+   <property name="windowTitle">
+    <string>External Programs</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+-   <item row="10" column="1">
++   <property name="verticalSpacing">
++    <number>6</number>
++   </property>
++   <item row="2" column="0" colspan="3">
++    <widget class="QCheckBox" name="m_PACSLikeMouseMode">
++     <property name="layoutDirection">
++      <enum>Qt::LeftToRight</enum>
++     </property>
++     <property name="text">
++      <string>Use PACS like mouse interaction (select left mouse button action)</string>
++     </property>
++     <property name="tristate">
++      <bool>false</bool>
++     </property>
++    </widget>
++   </item>
++   <item row="11" column="0">
++    <widget class="QLabel" name="label_6">
++     <property name="toolTip">
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the renderwindow from the multi widget.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++     </property>
++     <property name="text">
++      <string>Render windows</string>
++     </property>
++    </widget>
++   </item>
++   <item row="11" column="1">
+     <widget class="QComboBox" name="m_RenderWindowChooser">
+      <item>
+       <property name="text">
+@@ -38,43 +64,27 @@
+      </item>
+     </widget>
+    </item>
+-   <item row="11" column="0">
+-    <widget class="QLabel" name="label_2">
+-     <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If two colors are set, a gradient background is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++   <item row="1" column="0" colspan="3">
++    <widget class="QCheckBox" name="m_ShowLevelWindowWidget">
++     <property name="layoutDirection">
++      <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+-      <string>Background color</string>
++      <string>Show level/window widget</string>
++     </property>
++     <property name="checked">
++      <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+-   <item row="15" column="0">
+-    <widget class="QPushButton" name="m_ResetButton">
++   <item row="12" column="1">
++    <widget class="QPushButton" name="m_ColorButton1">
+      <property name="text">
+-      <string>Reset preferences</string>
++      <string/>
+      </property>
+     </widget>
+    </item>
+-   <item row="6" column="1" colspan="2">
+-    <widget class="QComboBox" name="m_RenderingMode">
+-     <item>
+-      <property name="text">
+-       <string>Standard Rendering</string>
+-      </property>
+-     </item>
+-     <item>
+-      <property name="text">
+-       <string>Enable Multisampling (Antialiasing)</string>
+-      </property>
+-     </item>
+-     <item>
+-      <property name="text">
+-       <string>Enable Depth Peeling</string>
+-      </property>
+-     </item>
+-    </widget>
+-   </item>
+-   <item row="7" column="0" colspan="3">
++   <item row="8" column="0" colspan="3">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>* Changes require restart of MITK.
+@@ -84,51 +94,27 @@
+      </property>
+     </widget>
+    </item>
+-   <item row="9" column="1">
+-    <widget class="QSpinBox" name="m_CrosshairGapSize">
+-     <property name="value">
+-      <number>32</number>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="8" column="0" colspan="3">
+-    <widget class="Line" name="line_3">
+-     <property name="orientation">
+-      <enum>Qt::Horizontal</enum>
+-     </property>
+-    </widget>
++   <item row="15" column="1" colspan="2">
++    <widget class="QLineEdit" name="m_RenderWindowDecorationText"/>
+    </item>
+    <item row="14" column="0">
+-    <widget class="QLabel" name="label_8">
+-     <property name="toolTip">
+-      <string>The small text on the button left of each renderwindow.</string>
+-     </property>
+-     <property name="text">
+-      <string>Corner annotation</string>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="9" column="0">
+-    <widget class="QLabel" name="label_9">
++    <widget class="QLabel" name="label_7">
+      <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gap in the middle of the crosshair in pixels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The color is used for the following decorations (of each renderwindow):&lt;/p&gt;&lt;p&gt;Rectangle border&lt;/p&gt;&lt;p&gt;Corner annotation&lt;/p&gt;&lt;p&gt;Crosshair&lt;/p&gt;&lt;p&gt;Plane geometry helper objects (3D Planes)&lt;/p&gt;&lt;p&gt;Image navigator borders&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+-      <string>Crosshair gap size</string>
++      <string>Decoration color</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="13" column="0">
+-    <widget class="QLabel" name="label_7">
+-     <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The color is used for the following decorations (of each renderwindow):&lt;/p&gt;&lt;p&gt;Rectangle border&lt;/p&gt;&lt;p&gt;Corner annotation&lt;/p&gt;&lt;p&gt;Crosshair&lt;/p&gt;&lt;p&gt;Plane geometry helper objects (3D Planes)&lt;/p&gt;&lt;p&gt;Image navigator borders&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+-     </property>
++   <item row="7" column="0">
++    <widget class="QLabel" name="label_5">
+      <property name="text">
+-      <string>Decoration color</string>
++      <string>Rendering Mode*</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="13" column="1">
++   <item row="14" column="1">
+     <widget class="QPushButton" name="m_RenderWindowDecorationColor">
+      <property name="text">
+       <string/>
+@@ -136,67 +122,77 @@
+     </widget>
+    </item>
+    <item row="10" column="0">
+-    <widget class="QLabel" name="label_6">
++    <widget class="QLabel" name="label_9">
+      <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the renderwindow from the multi widget.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gap in the middle of the crosshair in pixels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+-      <string>Render windows</string>
++      <string>Crosshair gap size</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="1" column="0" colspan="3">
+-    <widget class="QCheckBox" name="m_ShowLevelWindowWidget">
+-     <property name="layoutDirection">
+-      <enum>Qt::LeftToRight</enum>
++   <item row="9" column="0" colspan="3">
++    <widget class="Line" name="line_3">
++     <property name="orientation">
++      <enum>Qt::Horizontal</enum>
+      </property>
+-     <property name="text">
+-      <string>Show level/window widget</string>
++    </widget>
++   </item>
++   <item row="12" column="0">
++    <widget class="QLabel" name="label_2">
++     <property name="toolTip">
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If two colors are set, a gradient background is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+-     <property name="checked">
+-      <bool>true</bool>
++     <property name="text">
++      <string>Background color</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="2" column="0" colspan="3">
+-    <widget class="QCheckBox" name="m_PACSLikeMouseMode">
+-     <property name="layoutDirection">
+-      <enum>Qt::LeftToRight</enum>
++   <item row="7" column="1" colspan="2">
++    <widget class="QComboBox" name="m_RenderingMode">
++     <item>
++      <property name="text">
++       <string>Standard Rendering</string>
++      </property>
++     </item>
++     <item>
++      <property name="text">
++       <string>Enable Multisampling (Antialiasing)</string>
++      </property>
++     </item>
++     <item>
++      <property name="text">
++       <string>Enable Depth Peeling</string>
++      </property>
++     </item>
++    </widget>
++   </item>
++   <item row="15" column="0">
++    <widget class="QLabel" name="label_8">
++     <property name="toolTip">
++      <string>The small text on the button left of each renderwindow.</string>
+      </property>
+      <property name="text">
+-      <string>Use PACS like mouse interaction (select left mouse button action)</string>
+-     </property>
+-     <property name="tristate">
+-      <bool>false</bool>
++      <string>Corner annotation</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="11" column="2">
+-    <widget class="QPushButton" name="m_ColorButton2">
++   <item row="16" column="0">
++    <widget class="QPushButton" name="m_ResetButton">
+      <property name="text">
+-      <string/>
++      <string>Reset preferences</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="3" column="0" colspan="3">
++   <item row="4" column="0" colspan="3">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+-   <item row="6" column="0">
+-    <widget class="QLabel" name="label_5">
+-     <property name="text">
+-      <string>Rendering Mode*</string>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="14" column="1" colspan="2">
+-    <widget class="QLineEdit" name="m_RenderWindowDecorationText"/>
+-   </item>
+-   <item row="11" column="1">
+-    <widget class="QPushButton" name="m_ColorButton1">
++   <item row="12" column="2">
++    <widget class="QPushButton" name="m_ColorButton2">
+      <property name="text">
+       <string/>
+      </property>
+@@ -218,6 +214,20 @@
+      </property>
+     </widget>
+    </item>
++   <item row="10" column="1">
++    <widget class="QSpinBox" name="m_CrosshairGapSize">
++     <property name="value">
++      <number>32</number>
++     </property>
++    </widget>
++   </item>
++   <item row="3" column="0">
++    <widget class="QCheckBox" name="m_ShowDepartmentLogo">
++     <property name="text">
++      <string>Show Department Logo</string>
++     </property>
++    </widget>
++   </item>
+   </layout>
+  </widget>
+  <resources/>
+diff -aur --new-file -x .git mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp mitk-2016.03-sv_modified/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp	2016-08-15 16:50:57.000000000 -0700
++++ mitk-2016.03-sv_modified/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp	2018-01-23 11:18:03.710242700 -0800
+@@ -424,6 +424,16 @@
+   bool newMode = prefs->GetBool("PACS like mouse interaction", false);
+   d->m_MouseModeToolbar->setVisible( newMode );
+   d->m_StdMultiWidget->GetMouseModeSwitcher()->SetInteractionScheme( newMode ? mitk::MouseModeSwitcher::PACS : mitk::MouseModeSwitcher::MITK );
++  
++  bool showLogo = prefs->GetBool("Show Department Logo", false);
++  if(showLogo)
++  {
++    d->m_StdMultiWidget->EnableDepartmentLogo();
++  }
++  else
++  {
++    d->m_StdMultiWidget->DisableDepartmentLogo();
++  }
+ }
+ 
+ mitk::Color QmitkStdMultiWidgetEditor::HexColorToMitkColor(const QString& widgetColorInHex)
+diff -aur --new-file -x .git mitk-2016.03/Plugins/PluginList.cmake mitk-2016.03-sv_modified/Plugins/PluginList.cmake
+--- mitk-2016.03/Plugins/PluginList.cmake	2016-08-15 16:50:33.000000000 -0700
++++ mitk-2016.03-sv_modified/Plugins/PluginList.cmake	2018-01-23 11:18:03.734361100 -0800
+@@ -37,26 +37,26 @@
+   org.mitk.gui.qt.datamanager:ON
+   org.mitk.gui.qt.datamanagerlight:OFF
+   org.mitk.gui.qt.properties:ON
+-  org.mitk.gui.qt.basicimageprocessing:OFF
+-  org.mitk.gui.qt.dicom:OFF
++  org.mitk.gui.qt.basicimageprocessing:ON
++  org.mitk.gui.qt.dicom:ON
+   org.mitk.gui.qt.diffusionimaging:OFF
+   org.mitk.gui.qt.dosevisualization:OFF
+-  org.mitk.gui.qt.geometrytools:OFF
++  org.mitk.gui.qt.geometrytools:ON
+   org.mitk.gui.qt.igtexamples:OFF
+   org.mitk.gui.qt.igttracking:OFF
+   org.mitk.gui.qt.openigtlink:OFF
+-  org.mitk.gui.qt.imagecropper:OFF
++  org.mitk.gui.qt.imagecropper:ON
+   org.mitk.gui.qt.imagenavigator:ON
+   org.mitk.gui.qt.viewnavigator:OFF
+   org.mitk.gui.qt.materialeditor:OFF
+-  org.mitk.gui.qt.measurementtoolbox:OFF
++  org.mitk.gui.qt.measurementtoolbox:ON
+   org.mitk.gui.qt.moviemaker:OFF
+   org.mitk.gui.qt.pointsetinteraction:OFF
+   org.mitk.gui.qt.pointsetinteractionmultispectrum:OFF
+-  org.mitk.gui.qt.python:OFF
++  org.mitk.gui.qt.python:ON
+   org.mitk.gui.qt.registration:OFF
+   org.mitk.gui.qt.remeshing:OFF
+-  org.mitk.gui.qt.segmentation:OFF
++  org.mitk.gui.qt.segmentation:ON
+   org.mitk.gui.qt.simulation:OFF
+   org.mitk.gui.qt.aicpregistration:OFF
+   org.mitk.gui.qt.toftutorial:OFF
+@@ -64,7 +64,7 @@
+   org.mitk.gui.qt.tubegraph:OFF
+   org.mitk.gui.qt.ugvisualization:OFF
+   org.mitk.gui.qt.ultrasound:OFF
+-  org.mitk.gui.qt.volumevisualization:OFF
++  org.mitk.gui.qt.volumevisualization:ON
+   org.mitk.gui.qt.eventrecorder:OFF
+   org.mitk.gui.qt.xnat:OFF
+   org.mitk.gui.qt.spectrocamrecorder:OFF

@@ -1,5 +1,9 @@
-# Copyright (c) 2014-2015 The Regents of the University of California.
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
+#
 # All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -1537,3 +1541,92 @@ macro(test_versioning)
   message("Exact test - Output: ${output_dir} should be 9.8/clang/2.2")
 
 endmacro()
+
+
+# PYTHON_ADD_MODULE(<name> src1 src2 ... srcN) is used to build modules for python.
+# PYTHON_WRITE_MODULES_HEADER(<filename>) writes a header file you can include
+# in your sources to initialize the static python modules
+function(PYTHON_ADD_MODULE _NAME )
+  get_property(_TARGET_SUPPORTS_SHARED_LIBS
+    GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS)
+  option(PYTHON_ENABLE_MODULE_${_NAME} "Add module ${_NAME}" TRUE)
+  option(PYTHON_MODULE_${_NAME}_BUILD_SHARED
+    "Add module ${_NAME} shared" ${_TARGET_SUPPORTS_SHARED_LIBS})
+
+  # Mark these options as advanced
+  mark_as_advanced(PYTHON_ENABLE_MODULE_${_NAME}
+    PYTHON_MODULE_${_NAME}_BUILD_SHARED)
+
+  if(PYTHON_ENABLE_MODULE_${_NAME})
+    if(PYTHON_MODULE_${_NAME}_BUILD_SHARED)
+      set(PY_MODULE_TYPE MODULE)
+    else()
+      set(PY_MODULE_TYPE STATIC)
+      set_property(GLOBAL  APPEND  PROPERTY  PY_STATIC_MODULES_LIST ${_NAME})
+    endif()
+
+    set_property(GLOBAL  APPEND  PROPERTY  PY_MODULES_LIST ${_NAME})
+    add_library(${_NAME} ${PY_MODULE_TYPE} ${ARGN})
+#    target_link_libraries(${_NAME} ${PYTHON_LIBRARIES})
+
+    if(PYTHON_MODULE_${_NAME}_BUILD_SHARED)
+      set_target_properties(${_NAME} PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}")
+      if(WIN32 AND NOT CYGWIN)
+        set_target_properties(${_NAME} PROPERTIES SUFFIX ".pyd")
+      endif()
+    endif()
+
+  endif()
+endfunction()
+
+function(PYTHON_WRITE_MODULES_HEADER _filename)
+
+  get_property(PY_STATIC_MODULES_LIST  GLOBAL  PROPERTY PY_STATIC_MODULES_LIST)
+
+  get_filename_component(_name "${_filename}" NAME)
+  string(REPLACE "." "_" _name "${_name}")
+  string(TOUPPER ${_name} _nameUpper)
+  set(_filename ${CMAKE_CURRENT_BINARY_DIR}/${_filename})
+
+  set(_filenameTmp "${_filename}.in")
+  file(WRITE ${_filenameTmp} "/*Created by cmake, do not edit, changes will be lost*/\n")
+  file(APPEND ${_filenameTmp}
+"#ifndef ${_nameUpper}
+#define ${_nameUpper}
+
+#include <Python.h>
+
+#ifdef __cplusplus
+extern \"C\" {
+#endif /* __cplusplus */
+
+")
+
+  foreach(_currentModule ${PY_STATIC_MODULES_LIST})
+    file(APPEND ${_filenameTmp} "extern void init${PYTHON_MODULE_PREFIX}${_currentModule}(void);\n\n")
+  endforeach()
+
+  file(APPEND ${_filenameTmp}
+"#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+")
+
+
+  foreach(_currentModule ${PY_STATIC_MODULES_LIST})
+    file(APPEND ${_filenameTmp} "int ${_name}_${_currentModule}(void) \n{\n  static char name[]=\"${PYTHON_MODULE_PREFIX}${_currentModule}\"; return PyImport_AppendInittab(name, init${PYTHON_MODULE_PREFIX}${_currentModule});\n}\n\n")
+  endforeach()
+
+  file(APPEND ${_filenameTmp} "void ${_name}_LoadAllPythonModules(void)\n{\n")
+  foreach(_currentModule ${PY_STATIC_MODULES_LIST})
+    file(APPEND ${_filenameTmp} "  ${_name}_${_currentModule}();\n")
+  endforeach()
+  file(APPEND ${_filenameTmp} "}\n\n")
+  file(APPEND ${_filenameTmp} "#ifndef EXCLUDE_LOAD_ALL_FUNCTION\nvoid CMakeLoadAllPythonModules(void)\n{\n  ${_name}_LoadAllPythonModules();\n}\n#endif\n\n#endif\n")
+
+# with configure_file() cmake complains that you may not use a file created using file(WRITE) as input file for configure_file()
+  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_filenameTmp}" "${_filename}" OUTPUT_QUIET ERROR_QUIET)
+
+endfunction()
+

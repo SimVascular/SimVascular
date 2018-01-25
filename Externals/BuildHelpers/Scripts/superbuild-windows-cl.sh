@@ -23,6 +23,7 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_TCL         UNTAR_TCL         BUILD_TCL         ARCHIVE_TCL         ZIP_TCL         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_PYTHON      UNTAR_PYTHON      BUILD_PYTHON      ARCHIVE_PYTHON      ZIP_PYTHON      $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
+#   SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_FREETYPE    UNTAR_FREETYPE    BUILD_FREETYPE    ARCHIVE_FREETYPE    ZIP_FREETYPE    $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_GDCM        UNTAR_GDCM        BUILD_GDCM        ARCHIVE_GDCM        ZIP_GDCM        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_VTK         UNTAR_VTK         BUILD_VTK         ARCHIVE_VTK         ZIP_VTK         $SV_SUPER_OPTIONS"
@@ -32,6 +33,8 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_MITK        UNTAR_MITK        BUILD_MITK        ARCHIVE_MITK        ZIP_MITK        $SV_SUPER_OPTIONS"
    export SV_SUPER_OPTIONS
 fi
+
+echo "SV_SUPER_OPTIONS for build: $SV_SUPER_OPTIONS"
 
 #
 # wget all source code
@@ -63,6 +66,13 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   chmod a+rx ./tmp/compile.cmake.python.cl.sh
 fi
 
+# swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "CREATE_BUILD_SCRIPT_SWIG"
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-make-swig-generic.sh > tmp/compile.make.swig.cl.sh
+  chmod a+rx ./tmp/compile.make.swig.cl.sh
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "CREATE_BUILD_SCRIPT_NUMPY"
@@ -70,6 +80,19 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   chmod a+rx ./tmp/compile.msvc.numpy.cl.sh
   sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-python-numpy-msvc.bat > tmp/compile.msvc.numpy.bat
   chmod a+rx ./tmp/compile.msvc.numpy.bat
+fi
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "CREATE_BUILD_SCRIPT_QT"
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-qt-windows.sh > tmp/compile.qt.msvc.sh
+  chmod a+rx ./tmp/compile.qt.msvc.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-qt-msvc-env.bat > tmp/compile.qt.msvc.env.bat
+  chmod a+rx ./tmp/compile.qt.msvc.env.bat
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-qt-msvc-configure.bat > tmp/compile.qt.msvc.configure.bat
+  chmod a+rx ./tmp/compile.qt.msvc.configure.bat
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-qt-msvc-nmake.bat > tmp/compile.qt.msvc.nmake.bat
+  chmod a+rx ./tmp/compile.qt.msvc.nmake.bat
 fi
 
 # freetype
@@ -153,10 +176,22 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   ./tmp/compile.cmake.python.cl.sh >& ./tmp/stdout.python.cl.txt
 fi
 
+#  swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "BUILD_SWIG"
+  time ./tmp/compile.make.swig.cl.sh >& ./tmp/stdout.swig.txt
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.msvc.numpy.cl.sh >& ./tmp/stdout.msvc.numpy.cl.txt
+fi
+
+#  qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "BUILD_QT"
+  time ./tmp/compile.qt.msvc.sh >& ./tmp/stdout.qt.msvc.txt
 fi
 
 # freetype

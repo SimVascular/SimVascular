@@ -16,10 +16,12 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    mkdir -p tar_output
    rm -Rf zip_output
    mkdir -p zip_output
-   SV_SUPER_OPTIONS="UNTAR_UNZIP_ALL"
+   SV_SUPER_OPTIONS=""
    SV_SUPER_OPTIONS="WGET_TCL         UNTAR_TCL         BUILD_TCL         ARCHIVE_TCL         ZIP_TCL         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_PYTHON      UNTAR_PYTHON      BUILD_PYTHON      ARCHIVE_PYTHON      ZIP_PYTHON      $SV_SUPER_OPTIONS"
+   SV_SUPER_OPTIONS="WGET_SWIG        UNTAR_SWIG        BUILD_SWIG        ARCHIVE_SWIG        ZIP_SWIG        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
+   SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_FREETYPE    UNTAR_FREETYPE    BUILD_FREETYPE    ARCHIVE_FREETYPE    ZIP_FREETYPE    $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_GDCM        UNTAR_GDCM        BUILD_GDCM        ARCHIVE_GDCM        ZIP_GDCM        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_VTK         UNTAR_VTK         BUILD_VTK         ARCHIVE_VTK         ZIP_VTK         $SV_SUPER_OPTIONS"
@@ -50,86 +52,100 @@ source Scripts/untar-unzip-source-all.sh
 #  tcl/tk 8.6
 if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   echo "CREATE_BUILD_SCRIPT_TCL"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/tcl-linux-generic.sh > tmp/compile.make.tcl.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/tcl-linux-generic.sh > tmp/compile.make.tcl.gcc.sh
   chmod a+rx ./tmp/compile.make.tcl.gcc.sh
 fi
 
 # python 2.7
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "CREATE_BUILD_SCRIPT_PYTHON"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-cmake-python-linux.sh > tmp/compile.cmake.python.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-python-linux.sh > tmp/compile.cmake.python.gcc.sh
   chmod a+rx ./tmp/compile.cmake.python.gcc.sh
+fi
+
+# swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "CREATE_BUILD_SCRIPT_SWIG"
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-make-swig-generic.sh > tmp/compile.make.swig.gcc.sh
+  chmod a+rx ./tmp/compile.make.swig.gcc.sh
 fi
 
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "CREATE_BUILD_SCRIPT_NUMPY"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-python-numpy-linux.sh > tmp/compile.python.numpy-linux.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-python-numpy-linux.sh > tmp/compile.python.numpy-linux.sh
   chmod a+rx ./tmp/compile.python.numpy-linux.sh
+fi
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "CREATE_BUILD_SCRIPT_QT"
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-make-qt-generic.sh > tmp/compile.make.qt.gcc.sh
+  chmod a+rx ./tmp/compile.make.qt.gcc.sh
 fi
 
 # freetype
 if [[ $SV_SUPER_OPTIONS == *BUILD_FREETYPE* ]]; then
   echo "CREATE_BUILD_SCRIPT_FREETYPE"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-cmake-freetype-generic.sh > tmp/compile.cmake.freetype.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-freetype-generic.sh > tmp/compile.cmake.freetype.gcc.sh
   chmod a+rx ./tmp/compile.cmake.freetype.gcc.sh
 fi
 
 # gdcm
 if [[ $SV_SUPER_OPTIONS == *BUILD_GDCM* ]]; then
   echo "CREATE_BUILD_SCRIPT_GDCM"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-cmake-gdcm-generic.sh > tmp/compile.cmake.gdcm.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-gdcm-generic.sh > tmp/compile.cmake.gdcm.gcc.sh
   chmod a+rx ./tmp/compile.cmake.gdcm.gcc.sh
 fi
 
 # vtk
 if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
   echo "CREATE_BUILD_SCRIPT_VTK"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-cmake-vtk-generic.sh > tmp/compile.cmake.vtk.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-vtk-generic.sh > tmp/compile.cmake.vtk.gcc.sh
   chmod a+rx ./tmp/compile.cmake.vtk.gcc.sh
 fi
 
 # itk
 if [[ $SV_SUPER_OPTIONS == *BUILD_ITK* ]]; then
   echo "CREATE_BUILD_SCRIPT_ITK"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-cmake-itk-generic.sh > tmp/compile.cmake.itk.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-itk-generic.sh > tmp/compile.cmake.itk.gcc.sh
   chmod a+rx ./tmp/compile.cmake.itk.gcc.sh
 fi
 
 # opencascade
 if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
   echo "CREATE_BUILD_SCRIPT_OPENCASCADE"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-cmake-opencascade-generic.sh > tmp/compile.cmake.opencascade.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-opencascade-generic.sh > tmp/compile.cmake.opencascade.gcc.sh
   chmod a+rx ./tmp/compile.cmake.opencascade.gcc.sh
 fi
 
 # mmg
 if [[ $SV_SUPER_OPTIONS == *BUILD_MMG* ]]; then
   echo "CREATE_BUILD_SCRIPT_MMG"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-cmake-mmg-generic.sh > tmp/compile.cmake.mmg.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-mmg-generic.sh > tmp/compile.cmake.mmg.gcc.sh
   chmod a+rx ./tmp/compile.cmake.mmg.gcc.sh
 fi
 
 # mitk
 if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
   echo "CREATE_BUILD_SCRIPT_MITK"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/compile-cmake-mitk-linux.sh > tmp/compile.cmake.mitk.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-mitk-linux.sh > tmp/compile.cmake.mitk.gcc.sh
   chmod a+rx ./tmp/compile.cmake.mitk.gcc.sh
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh CompileScripts/post-install-mitk-linux.sh > tmp/post-install-mitk-linux.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/post-install-mitk-linux.sh > tmp/post-install-mitk-linux.sh
   chmod a+rx ./tmp/post-install-mitk-linux.sh
 fi
 
 # create script to create tar files
 if [[ $SV_SUPER_OPTIONS == *ARCHIVE_* ]]; then
   echo "CREATE_BUILD_SCRIPT_TAR_FILES_ALL"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh Scripts/create-archives-generic.sh > tmp/create-archives-all.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh Scripts/create-archives-generic.sh > tmp/create-archives-all.gcc.sh
   chmod a+rx ./tmp/create-archives-all.gcc.sh
 fi
 
 # create script to create zip files
 if [[ $SV_SUPER_OPTIONS == *ZIP_* ]]; then
   echo "CREATE_BUILD_SCRIPT_ZIP_FILES_ALL"
-  sed -f CompileScripts/sed-script-x64_linux-options-gcc.sh Scripts/tar-to-zip-all.sh > tmp/tar-to-zip-all.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh Scripts/tar-to-zip-all.sh > tmp/tar-to-zip-all.gcc.sh
   chmod a+rx ./tmp/tar-to-zip-all.gcc.sh
 fi
 
@@ -149,10 +165,22 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   ./tmp/compile.cmake.python.gcc.sh >& ./tmp/stdout.python.gcc.txt
 fi
 
+#  swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "BUILD_SWIG"
+  time ./tmp/compile.make.swig.gcc.sh >& ./tmp/stdout.swig.txt
+fi
+
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.python.numpy-linux.sh >& ./tmp/stdout.numpy.python.txt
+fi
+
+#  qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "BUILD_QT"
+  time ./tmp/compile.make.qt.gcc.sh >& ./tmp/stdout.qt.txt
 fi
 
 # freetype
