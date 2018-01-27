@@ -28,14 +28,10 @@
 # MITK
 set(proj MITK)
 
-if(NOT SV_EXTERNALS_DOWNLOAD_MITK)
-  # Find SWIG!
-  find_package(SWIG REQUIRED)
-endif()
-
-if(NOT SV_EXTERNALS_USE_QT)
-  message(FATAL_ERROR "${proj} cannot be built without Qt")
-endif()
+#if(NOT SV_EXTERNALS_DOWNLOAD_MITK)
+#  # Find SWIG!
+#  find_package(SWIG REQUIRED)
+#endif()
 
 # Dependencies
 set(${proj}_DEPENDENCIES "VTK")
@@ -55,6 +51,14 @@ if(SV_EXTERNALS_ENABLE_ITK)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "ITK")
 endif()
+if(SV_EXTERNALS_ENABLE_SWIG)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "SWIG")
+endif()
+if(SV_EXTERNALS_ENABLE_Qt)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "Qt")
+endif()
 
 # Git info
 set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/MITK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
@@ -65,11 +69,12 @@ mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 #Special for Qt, make sure that MITK uses the same libs we are!
 foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
-  if(Qt5${comp}_LIBRARIES)
+  #if(Qt5${comp}_LIBRARIES)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-      -DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
-    )
-  endif()
+      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_Qt_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
+      )
+      #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+  #endif()
 endforeach()
 
 #If using PYTHON
@@ -172,10 +177,10 @@ else()
       -DMITK_USE_Numpy:BOOL=${SV_EXTERNALS_ENABLE_NUMPY}
       -DMITK_USE_VMTK:BOOL=OFF
       -DEXTERNAL_VTK_DIR:PATH=${SV_EXTERNALS_VTK_CMAKE_DIR}
-      -DSWIG_EXECUTABLE:FILEPATH=${SWIG_EXECUTABLE}
-      -DSWIG_DIR:PATH=${SWIG_DIR}
-      -DSWIG_VERSION:STRING=${SWIG_VERSION}
-      -DQt5_DIR:PATH:STRING=${Qt5_DIR}
+      -DSWIG_EXECUTABLE:FILEPATH=${SV_EXTERNALS_SWIG_EXECUTABLE}
+      -DSWIG_DIR:PATH=${SV_EXTERNALS_SWIG_BIN_DIR}
+      -DSWIG_VERSION:STRING=${SV_EXTERNALS_SWIG_VERSION}
+      -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_Qt_CMAKE_DIR}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}

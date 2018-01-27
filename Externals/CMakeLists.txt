@@ -94,30 +94,30 @@ set(SV_EXTERNALS_LIST "")
 include(SvExtOptions)
 #-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# First process special Qt stuff, external but not being built
-if(SV_EXTERNALS_USE_QT)
-  #Find Qt!
-  set(SV_EXTERNALS_Qt5_COMPONENTS
-    Concurrent
-    Core
-    Designer
-    Gui
-    Help
-    OpenGL
-    PrintSupport
-    Script
-    Sql
-    Svg
-    WebKitWidgets
-    WebKit
-    Widgets
-    Xml
-    XmlPatterns
-    UiTools)
-  find_package(Qt5 COMPONENTS ${SV_EXTERNALS_Qt5_COMPONENTS} REQUIRED)
-endif()
-#-----------------------------------------------------------------------------
+##-----------------------------------------------------------------------------
+## First process special Qt stuff, external but not being built
+#if(SV_EXTERNALS_USE_QT)
+#  #Find Qt!
+#  set(SV_EXTERNALS_Qt5_COMPONENTS
+#    Concurrent
+#    Core
+#    Designer
+#    Gui
+#    Help
+#    OpenGL
+#    PrintSupport
+#    Script
+#    Sql
+#    Svg
+#    WebKitWidgets
+#    WebKit
+#    Widgets
+#    Xml
+#    XmlPatterns
+#    UiTools)
+#  find_package(Qt5 COMPONENTS ${SV_EXTERNALS_Qt5_COMPONENTS} REQUIRED)
+#endif()
+##-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Add each external to be built. Full list and initial options are specified in SvExtOptions.cmake

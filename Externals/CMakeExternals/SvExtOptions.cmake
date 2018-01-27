@@ -59,6 +59,15 @@ mark_as_advanced(SV_EXTERNALS_GIT_URL)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# SV_EXTERNALS_MAC_PACKAGE_MANAGER
+if (APPLE)
+  message(WARNING "Need to make sure to have openssl from homebrew or macports. Specify which is used with SV_EXTERNALS_MAC_PACKAGE_MANAGER variable.")
+  set(SV_EXTERNALS_MAC_PACKAGE_MANAGER "HOMEBREW" CACHE STRING "Options are HOMEBREW OR MACPORTS")
+  set_property(CACHE SV_EXTERNALS_MAC_PACKAGE_MANAGER PROPERTY STRINGS HOMEBREW MACPORTS)
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # Qt
 # First external is not built by the project but is required if building
 # MITK
@@ -66,6 +75,14 @@ option(SV_EXTERNALS_USE_QT "Enable QT Plugin" ON)
 
 # Add externals with default values of version, build_with, shared, dirname,
 # and optional install dirname. Order matters; put independent packages first
+# Must have existing "EXTERNAL_NAME.cmake" file underneath CMakeExternals
+# (i.e. Qt.cmake for Qt)
+# "EXTERNAL_NAME" "ENABLE_EXTERNAL" "BUILD_SHARED" "BUILD_DIR_NAME" "INSTALL_DIR_NAME"
+#-----------------------------------------------------------------------------
+# QT
+sv_externals_add_new_external(Qt 5.4.2 ON ON qt qt)
+#-----------------------------------------------------------------------------
+
 #-----------------------------------------------------------------------------
 # TCL
 sv_externals_add_new_external(TCL 8.6.4 ON ON tcl tcltk)
@@ -87,23 +104,28 @@ sv_externals_add_new_external(TKLIB 0.6 ON ON tklib none)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-#PYTHON
+# PYTHON
 sv_externals_add_new_external(PYTHON 2.7.11 ON ON python python)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-#PIP
+# PIP
 sv_externals_add_new_external(PIP 0.0.0 ON ON pip none)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-#NUMPY
+# NUMPY
 sv_externals_add_new_external(NUMPY 1.11.1 ON ON numpy none)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-#FREETYPE
+# FREETYPE
 sv_externals_add_new_external(FREETYPE 2.6.3 ON ON freetype freetype)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# SWIG
+sv_externals_add_new_external(SWIG 3.0.12 ON ON swig swig)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

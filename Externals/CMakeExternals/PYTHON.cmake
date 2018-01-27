@@ -61,9 +61,26 @@ if(LINUX)
 endif()
 
 if(APPLE)
-  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-    -DCMAKE_PREFIX_PATH:PATH=/usr/local/opt
-    )
+  if (SV_EXTERNALS_MAC_PACKAGE_MANAGER STREQUAL HOMEBREW)
+
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DCMAKE_PREFIX_PATH:PATH=/usr/local/opt
+      -DOPENSSL_CRYPTO_LIBRARY:FILEPATH=/usr/local/opt/openssl/lib/libcrypto.dylib
+      -DOPENSSL_INCLUDE_DIR:PATH=/usr/local/opt/openssl/include
+      -DOPENSSL_SSL_LIBRARY:FILEPATH=/usr/local/opt/openssl/lib/libssl.dylib
+      )
+
+    set(OPENSSL_ROOT "/usr/local/opt/openssl")
+
+  elseif(SV_EXTERNALS_MAC_PACKAGE_MANAGER STREQUAL MACPORTS)
+
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DCMAKE_PREFIX_PATH:PATH=/opt/local
+      )
+
+    set(OPENSSL_ROOT "/opt/local")
+
+  endif()
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-python-mac_osx.sh)
   configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
@@ -111,9 +128,6 @@ else()
       -DBUILD_LIBPYTHON_SHARED:BOOL=${SV_EXTERNALS_ENABLE_${proj}_SHARED}
       -DENABLE_SSL:BOOL=ON
       -DBUILTIN_SSL:BOOL=ON
-      -DOPENSSL_CRYPTO_LIBRARY:FILEPATH=/usr/local/opt/openssl/lib/libcrypto.dylib
-      -DOPENSSL_INCLUDE_DIR:PATH=/usr/local/opt/openssl/include
-      -DOPENSSL_SSL_LIBRARY:FILEPATH=/usr/local/opt/openssl/lib/libssl.dylib
       -DBUILTIN_HASHLIB:BOOL=ON
       -DENABLE_CTYPES:BOOL=ON
       -DBUILTIN_CTYPES:BOOL=ON

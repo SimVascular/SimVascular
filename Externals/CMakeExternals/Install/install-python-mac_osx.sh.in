@@ -1,8 +1,3 @@
-GCP=/usr/local/bin/gcp
-GDIRNAME=/usr/local/bin/gdirname
-GBASENAME=/usr/local/bin/gbasename
-GMKDIR=/usr/local/bin/gmkdir
-
 # paths
 
 export PYTHON_SRCDIR=@SV_EXTERNALS_PYTHON_SRC_DIR@
@@ -13,6 +8,6 @@ export PYTHON_BLDDIR=@SV_EXTERNALS_PYTHON_BLD_DIR@
 #$GCP -rfl /usr/lib/libcrypto.* $PYTHON_BINDIR/lib
 #$GCP -rfl /usr/lib/libssl.* $PYTHON_BINDIR/lib
 #$GCP -rfl /usr/lib/libz.* $PYTHON_BINDIR/lib
-$GCP /usr/local/opt/openssl/lib/libcrypto.* $PYTHON_BINDIR/lib
-$GCP /usr/local/opt/openssl/lib/libssl.* $PYTHON_BINDIR/lib
+cp @OPENSSL_ROOT@/lib/libcrypto.* $PYTHON_BINDIR/lib
+cp @OPENSSL_ROOT@/lib/libssl.* $PYTHON_BINDIR/lib
 #$GCP /usr/lib/libz.* $PYTHON_BINDIR/lib

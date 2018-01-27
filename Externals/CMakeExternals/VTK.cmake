@@ -66,6 +66,10 @@ if(SV_EXTERNALS_ENABLE_FREETYPE)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "FREETYPE")
 endif()
+if(SV_EXTERNALS_ENABLE_Qt)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "Qt")
+endif()
 
 # Git info
 set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/VTK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
@@ -118,18 +122,19 @@ if(SV_EXTERNALS_USE_QT)
   endif()
 
   foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
-    if(Qt5${comp}_LIBRARIES)
-      list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-        -DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+    #if(Qt5${comp}_LIBRARIES)
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_Qt_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
       )
-    endif()
+      #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+    #endif()
   endforeach()
 
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-    -DQt5_DIR:PATH:STRING=${Qt5_DIR}
+    -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_Qt_CMAKE_DIR}
     -DVTK_QT_VERSION:STRING=5
     -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
-    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_Qt_QMAKE_EXECUTABLE}
     -DModule_vtkGUISupportQt:BOOL=ON
     -DModule_vtkGUISupportQtWebkit:BOOL=ON
     -DModule_vtkGUISupportQtSQL:BOOL=ON
