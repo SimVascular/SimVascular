@@ -50,9 +50,9 @@ CXXSRCS	= cv_image.cxx cv_read_header.cxx cv_decode.cxx \
 	  cv_img_threshold.cxx cvDistanceMap.cxx \
 	  cv_mask_image_in_place.cxx
 
-DLLHDRS = cv_image_init.h
+DLLHDRS = cv_image_init.h cv_image_init_py.h 
 
-DLLSRCS = cv_image_init.cxx
+DLLSRCS = cv_image_init.cxx cv_image_init_py.cxx 
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
