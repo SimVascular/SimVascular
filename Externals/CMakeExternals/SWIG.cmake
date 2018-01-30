@@ -99,4 +99,4 @@ else()
 endif()
 
 # SWIG variables to be used later
-set(SV_EXTERNALS_${proj}_EXECUTABLE ${SV_EXTERNALS_${proj}_DIR}/bin/swig)
+set(SV_EXTERNALS_${proj}_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/swig)

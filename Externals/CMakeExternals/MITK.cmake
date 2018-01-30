@@ -77,6 +77,9 @@ foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
   #endif()
 endforeach()
 
+# -------------TESTING ADD DEFINITION--------------------------------------
+add_definitions(-DQT_NO_SSL)
+
 #If using PYTHON
 if(SV_EXTERNALS_ENABLE_PYTHON)
   #Need to make directory for site-packages if we are using our own python
@@ -181,7 +184,7 @@ else()
       -DSWIG_DIR:PATH=${SV_EXTERNALS_SWIG_BIN_DIR}
       -DSWIG_VERSION:STRING=${SV_EXTERNALS_SWIG_VERSION}
       -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_Qt_CMAKE_DIR}
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_Qt_QMAKE_EXECUTABLE}
       -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
       )
