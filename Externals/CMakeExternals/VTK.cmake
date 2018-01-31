@@ -72,10 +72,12 @@ if(SV_EXTERNALS_ENABLE_Qt)
 endif()
 
 # Git info
-set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/VTK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
-set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-6.2" CACHE STRING "Tag for ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+#set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/VTK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
+#mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
+#set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-6.2" CACHE STRING "Tag for ${proj}")
+#mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/vtk/VTK-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 # Platform specific additions
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
@@ -192,8 +194,7 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     )
 else()
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY ${SV_EXTERNALS_${proj}_GIT_URL}
-    GIT_TAG ${SV_EXTERNALS_${proj}_GIT_TAG}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}

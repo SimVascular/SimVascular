@@ -61,10 +61,12 @@ if(SV_EXTERNALS_ENABLE_Qt)
 endif()
 
 # Git info
-set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/MITK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
-set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-2016.03.0" CACHE STRING "Tag for ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+#set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/MITK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
+#mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
+#set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-2016.03.0" CACHE STRING "Tag for ${proj}")
+#mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/mitk/mitk-v${SV_EXTERNALS_${proj}_VERSION}.0.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 #Special for Qt, make sure that MITK uses the same libs we are!
@@ -77,8 +79,13 @@ foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
   #endif()
 endforeach()
 
-# -------------TESTING ADD DEFINITION--------------------------------------
-add_definitions(-DQT_NO_SSL)
+    get_directory_property( DirDefs DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS )
+
+    foreach( d ${DirDefs} )
+          message( STATUS "Found Define: " ${d} )
+        endforeach()
+        message( STATUS "DirDefs: " ${DirDefs} )
+
 
 #If using PYTHON
 if(SV_EXTERNALS_ENABLE_PYTHON)
@@ -150,8 +157,7 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     )
 else()
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY ${SV_EXTERNALS_${proj}_GIT_URL}
-    GIT_TAG ${SV_EXTERNALS_${proj}_GIT_TAG}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
