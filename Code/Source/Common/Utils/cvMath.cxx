@@ -193,7 +193,7 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
 
     int i;
 
-    if (numInterpPts <= 0 || numDesiredTerms <= 0 || numPts <= 0) {
+    if (numInterpPts <= 0 || numDesiredTerms <= 0 || numPts <= 0 || numInterpPts<numDesiredTerms) {
         return SV_ERROR;
     }
 
@@ -223,9 +223,12 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
     deleteArray(outPts,numInterpPts,2);
 
     FFT(data,numInterpPts,1);
+    for (i = 0; i < numInterpPts; i++) {
+    }
 
     terms[0][0] = data[0]/numInterpPts;
     terms[0][1] = data[1]/numInterpPts;
+    
 
     for (i=1;i<numDesiredTerms;i++) {
       terms[i][0]=2.0*data[2*i]/numInterpPts;
