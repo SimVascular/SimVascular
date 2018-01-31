@@ -38,8 +38,6 @@ set(export_file_name svImageExports.h)
 
 list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
-	find_program(PYTHON “python”)
-	find_package(PythonLibs REQUIRED)
 	include_directories(${PYTHON_INCLUDE_PATH}
 	  ${PYTHON_INCLUDE_DIR}
 	  ${PYTHON_INCLUDE_DIRS})
@@ -93,6 +91,3 @@ endif()
 
 PYTHON_ADD_MODULE(pyImage cv_image_init_py.cxx)
 target_link_libraries(pyImage ${lib} ${PYTHON_LIBRARY})
-
-#PYTHON_ADD_MODULE(pyItkls test.cxx)
-#target_link_libraries(pyItkls ${lib} ${PYTHON_LIBRARY})
