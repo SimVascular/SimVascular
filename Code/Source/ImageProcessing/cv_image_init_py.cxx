@@ -80,7 +80,7 @@ initpyImage(void);
 // ----------
 int Image_pyInit()
 {
-
+  Py_Initialize();
   initpyImage();
 
   return SV_OK;
@@ -133,7 +133,7 @@ PyObject *Image_ReadHeaderCmd(PyObject *self, PyObject *args)
   int heart_rate;
   int im_no;
   int im_seno;
-  
+
   int status = mrRead_Header (filename, &vdims_x, &vdims_y,
                               &dim_x, &dim_y, &file_hdr_size,
                               ul, ur, br,&venc,&vencscale,
@@ -354,7 +354,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
 		      (char *)NULL);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+
     return SV_ERROR;
   }
 
@@ -442,12 +442,12 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
   cvRepositoryData *pd,*img;
   vtkPolyData **listPd = new vtkPolyData* [numRegions];
   vtkStructuredPoints **listImg = new vtkStructuredPoints* [numImages];
-  for (i = 0; i < numRegions; i++) 
+  for (i = 0; i < numRegions; i++)
   {
-    if (PyString_AsString(PyList_GetItem(regionsArg,i))  != NULL) 
+    if (PyString_AsString(PyList_GetItem(regionsArg,i))  != NULL)
     {
       pd = gRepository->GetObject( PyString_AsString(PyList_GetItem(regionsArg,i)) );
-      if ( pd == NULL ) 
+      if ( pd == NULL )
       {
         sprintf(tmpStr,"couldn't find object ", PyString_AsString(PyList_GetItem(regionsArg,i))  );
         PyErr_SetString( ImgErr, tmpStr );
@@ -459,7 +459,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
 
       // Make sure region is of type POLYDATA_T:
       type = pd->GetType();
-      if ( type != POLY_DATA_T ) 
+      if ( type != POLY_DATA_T )
       {
         sprintf(tmpStr,"error: object ", PyString_AsString(PyList_GetItem(regionsArg,i)) ,
         "not of type cvPolyData" );
@@ -470,8 +470,8 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
         return SV_ERROR;
       }
       listPd[i] = ((cvPolyData*)pd)->GetVtkPolyData();
-    } 
-    else 
+    }
+    else
     {
       sprintf(tmpStr,"NULL region pointer encountered ");
       PyErr_SetString( ImgErr, tmpStr );
@@ -483,12 +483,12 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
   }
 
   // find the corresponding repository objects to each name
-  for (i = 0; i < numImages; i++) 
+  for (i = 0; i < numImages; i++)
   {
-    if (PyString_AsString(PyList_GetItem(imagesArg,i))  != NULL) 
+    if (PyString_AsString(PyList_GetItem(imagesArg,i))  != NULL)
     {
       img = gRepository->GetObject( PyString_AsString(PyList_GetItem(imagesArg,i)) );
-      if ( img == NULL ) 
+      if ( img == NULL )
       {
         sprintf(tmpStr,"couldn't find object ", PyString_AsString(PyList_GetItem(imagesArg,i)));
         PyErr_SetString( ImgErr, tmpStr );
@@ -500,7 +500,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
 
       // Make sure image is of type POLYDATA_T:
       type = img->GetType();
-      if ( type != STRUCTURED_PTS_T ) 
+      if ( type != STRUCTURED_PTS_T )
       {
         sprintf(tmpStr,"error: object ", PyString_AsString(PyList_GetItem(imagesArg,i)),
         "not of type StructuredPts");
@@ -513,7 +513,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
       listImg[i] = ((cvStrPts*)img)->GetVtkStructuredPoints();
 
     }
-    else 
+    else
     {
       sprintf(tmpStr,"NULL image pointer encountered ");
       PyErr_SetString( ImgErr, tmpStr );
@@ -525,11 +525,11 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
   }
 
   // debug info
-  for (i = 0; i < numRegions; i++) 
+  for (i = 0; i < numRegions; i++)
   {
       fprintf(stdout,"region %i: %s %p\n",i,PyString_AsString(PyList_GetItem(regionsArg,i)),listPd[i]);
   }
-  for (i = 0; i < numImages; i++) 
+  for (i = 0; i < numImages; i++)
   {
       fprintf(stdout,"images %i: %s %p\n",i,PyString_AsString(PyList_GetItem(imagesArg,i)),listImg[i]);
   }
@@ -541,8 +541,8 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
   // clean up
   delete [] listPd;
   delete [] listImg;
-  
-  if ( status == SV_ERROR ) 
+
+  if ( status == SV_ERROR )
   {
     sprintf(tmpStr,"error finding correction equation ");
     PyErr_SetString( ImgErr, tmpStr );
@@ -553,16 +553,16 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
   // return a string with the correction equation
   char r[2048];
   r[0] = '\0';
-  if (order == 0) 
+  if (order == 0)
   {
       sprintf(r,"%le",results[0]);
-  } 
-  else if (order == 1) 
+  }
+  else if (order == 1)
   {
       sprintf(r,"%le %s %le %s %le %s",results[0],
          " + ", results[1], "*$x + ", results[2], "*$y");
-  } 
-  else if (order == 2) 
+  }
+  else if (order == 2)
   {
       sprintf(r,"%le %s %le %s %le %s %le %s %le %s %le %s",
              results[0]," + ",results[1],"*$x + ",results[2],
@@ -612,7 +612,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   }
 
   int numImages = PyList_Size(imagesArg);
-  if (numImages == 0) 
+  if (numImages == 0)
   {
     sprintf(tmpStr,"empty list of images" );
     PyErr_SetString( ImgErr, tmpStr );
@@ -625,7 +625,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   fflush(stdout);
 
   // Make sure the specified result object does not exist:
-  if ( gRepository->Exists( objName ) ) 
+  if ( gRepository->Exists( objName ) )
   {
     sprintf(tmpStr,"object ", objName, " already exists");
     PyErr_SetString( ImgErr, tmpStr );
@@ -640,12 +640,12 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   vtkStructuredPoints **listImg = new vtkStructuredPoints* [numImages];
 
   // find the corresponding repository objects to each name
-  for (i = 0; i < numImages; i++) 
+  for (i = 0; i < numImages; i++)
   {
     if (PyString_AsString(PyList_GetItem(imagesArg,i))!= NULL)
     {
       img = gRepository->GetObject( PyString_AsString(PyList_GetItem(imagesArg,i)));
-      if ( img == NULL ) 
+      if ( img == NULL )
       {
         sprintf(tmpStr,"couldn't find object ", PyString_AsString(PyList_GetItem(imagesArg,i)));
         PyErr_SetString( ImgErr, tmpStr );
@@ -656,7 +656,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
 
       // Make sure image is of type POLYDATA_T:
       type = img->GetType();
-      if ( type != STRUCTURED_PTS_T ) 
+      if ( type != STRUCTURED_PTS_T )
       {
         sprintf(tmpStr,"error: object ", PyString_AsString(PyList_GetItem(imagesArg,i)),
         "not of type StructuredPts");
@@ -668,7 +668,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
       listImg[i] = ((cvStrPts*)img)->GetVtkStructuredPoints();
 
     }
-    else 
+    else
     {
       sprintf(tmpStr, "NULL image pointer encountered ");
       PyErr_SetString( ImgErr, tmpStr );
@@ -679,15 +679,15 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   }
 
   vtkPolyData **listPd = NULL;
-  if (numRegions > 0) 
+  if (numRegions > 0)
   {
     listPd = new vtkPolyData* [numRegions];
-    for (i = 0; i < numRegions; i++) 
+    for (i = 0; i < numRegions; i++)
     {
-      if (PyString_AsString(PyList_GetItem(regionsArg,i))!= NULL) 
+      if (PyString_AsString(PyList_GetItem(regionsArg,i))!= NULL)
       {
         pd = gRepository->GetObject( PyString_AsString(PyList_GetItem(regionsArg,i)));
-        if ( pd == NULL ) 
+        if ( pd == NULL )
         {
           sprintf(tmpStr, "couldn't find object ", PyString_AsString(PyList_GetItem(regionsArg,i)));
           PyErr_SetString( ImgErr, tmpStr );
@@ -699,7 +699,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
 
       // Make sure region is of type POLYDATA_T:
         type = pd->GetType();
-        if ( type != POLY_DATA_T ) 
+        if ( type != POLY_DATA_T )
         {
           sprintf(tmpStr, "error: object ", PyString_AsString(PyList_GetItem(regionsArg,i)),"not of type cvPolyData");
           PyErr_SetString( ImgErr, tmpStr );
@@ -709,8 +709,8 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
           return SV_ERROR;
         }
         listPd[i] = ((cvPolyData*)pd)->GetVtkPolyData();
-      } 
-      else 
+      }
+      else
       {
       sprintf(tmpStr, "NULL region pointer encountered " );
       PyErr_SetString( ImgErr, tmpStr );
@@ -718,16 +718,16 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
       delete [] listPd;
       delete [] listImg;
       return SV_ERROR;
-      }   
+      }
     }
   }
 
   // debug info
-  for (i = 0; i < numRegions; i++) 
+  for (i = 0; i < numRegions; i++)
   {
       fprintf(stdout,"region %i: %s %p\n",i,PyString_AsString(PyList_GetItem(regionsArg,i)),listPd[i]);
   }
-  for (i = 0; i < numImages; i++) 
+  for (i = 0; i < numImages; i++)
   {
       fprintf(stdout,"images %i: %s %p\n",i,PyString_AsString(PyList_GetItem(imagesArg,i)),listImg[i]);
   }
@@ -738,11 +738,11 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   int status = img_calcCorrectionEqnAuto(numRegions,listPd,numImages,listImg,order,factor,results,&maskImg);
 
   // clean up
-  if (numRegions != 0) 
+  if (numRegions != 0)
    delete [] listPd;
   delete [] listImg;
 
-  if ( status == SV_ERROR ) 
+  if ( status == SV_ERROR )
   {
     sprintf(tmpStr, "error finding correction equation ");
     PyErr_SetString( ImgErr, tmpStr );
@@ -753,16 +753,16 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   // return a string with the correction equation
   char r[2048];
   r[0] = '\0';
-  if (order == 0) 
+  if (order == 0)
   {
       sprintf(r,"%le",results[0]);
-  } 
-  else if (order == 1) 
+  }
+  else if (order == 1)
   {
       sprintf(r,"%le %s %le %s %le %s",results[0],
          " + ", results[1], "*$x + ", results[2], "*$y");
-  } 
-  else if (order == 2) 
+  }
+  else if (order == 2)
   {
       sprintf(r,"%le %s %le %s %le %s %le %s %le %s %le %s",
              results[0]," + ",results[1],"*$x + ",results[2],
@@ -778,7 +778,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   cvStrPts *sp = new cvStrPts(maskImg);
 
   // Register the image
-  if ( !( gRepository->Register( objName, sp ) ) ) 
+  if ( !( gRepository->Register( objName, sp ) ) )
   {
     sprintf(tmpStr, "error registering obj ", objName,
     " in repository");
@@ -822,11 +822,11 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
   cvRepositoryData *img;
   vtkStructuredPoints *vtksp;
 
-  if (imagename != NULL) 
+  if (imagename != NULL)
   {
     // Look up given image object:
     img = gRepository->GetObject( imagename );
-    if ( img == NULL ) 
+    if ( img == NULL )
     {
       sprintf(tmpStr, "couldn't find object %s", imagename);
       PyErr_SetString( ImgErr, tmpStr );
@@ -836,7 +836,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
 
     // Make sure image is of type STRUCTURED_PTS_T:
     type = img->GetType();
-    if ( type != STRUCTURED_PTS_T ) 
+    if ( type != STRUCTURED_PTS_T )
     {
       sprintf(tmpStr, "error: object %s not of type StructuredPts", imagename);
       PyErr_SetString( ImgErr, tmpStr );
@@ -848,7 +848,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
   }
 
   // Make sure the specified result object does not exist:
-  if ( gRepository->Exists( result ) ) 
+  if ( gRepository->Exists( result ) )
   {
     sprintf(tmpStr, "object %s already exists",result);
     PyErr_SetString( ImgErr, tmpStr );
@@ -859,7 +859,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
   cvPolyData *obj = NULL;
   int status = img_threshold(vtksp, thrMin, thrMax, max_num_pts, &obj);
 
-  if ( status == SV_ERROR || obj == NULL) 
+  if ( status == SV_ERROR || obj == NULL)
   {
     sprintf(tmpStr, "Problem thresholding %s", imagename);
     PyErr_SetString( ImgErr, tmpStr );
@@ -868,7 +868,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
   }
 
   obj->SetName( result );
-  if ( !( gRepository->Register( obj->GetName(), obj ) ) ) 
+  if ( !( gRepository->Register( obj->GetName(), obj ) ) )
   {
    //if (!(gRepository->Register(result,polydataObj))){
     sprintf(tmpStr, "error registering obj %s in repository", result);
@@ -878,7 +878,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
     return SV_ERROR;
   }
 
-  vtkSmartPointer<vtkPolyData> polydataObj = 
+  vtkSmartPointer<vtkPolyData> polydataObj =
   vtkSmartPointer<vtkPolyData>::New();
   polydataObj = obj->GetVtkPolyData();
   //instead of exporting the object name, output the vtkPolydata object
@@ -907,8 +907,8 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
   }
 
   double pt[3];
- 
-  for (int i = 0; i < 3; i++) 
+
+  for (int i = 0; i < 3; i++)
   {
     pt[i]=PyFloat_AsDouble(PyList_GetItem(ptList,i));
     if (PyErr_Occurred())
@@ -925,11 +925,11 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
   cvRepositoryData *img;
   vtkStructuredPoints *vtksp;
 
-  if (imagename != NULL) 
+  if (imagename != NULL)
   {
     // Look up given image object:
     img = gRepository->GetObject( imagename );
-    if ( img == NULL ) 
+    if ( img == NULL )
     {
       sprintf(tmpStr, "couldn't find object ", imagename);
       PyErr_SetString( ImgErr, tmpStr );
@@ -939,7 +939,7 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
 
     // Make sure image is of type STRUCTURED_PTS_T:
     type = img->GetType();
-    if ( type != STRUCTURED_PTS_T ) 
+    if ( type != STRUCTURED_PTS_T )
     {
       sprintf(tmpStr,  "error: object ", imagename,
       "not of type StructuredPts" );
@@ -959,7 +959,7 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
   rtnstr[0]='\0';
   x[0]=pt[0];x[1]=pt[1];x[2]=pt[2];
 
-  if ( (vtksp->ComputeStructuredCoordinates(x, ijk, pcoords)) == 0) 
+  if ( (vtksp->ComputeStructuredCoordinates(x, ijk, pcoords)) == 0)
   {
       return Py_BuildValue("s",rtnstr);
   }
@@ -999,10 +999,10 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
 
   char *srcName;
   PyObject* startList;
-  
+
   double thr;
   char *dstName;
-  
+
   int useCityBlock = 1;
 
 
@@ -1023,7 +1023,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
 
   // Look up given image object:
   img = gRepository->GetObject( srcName );
-  if ( img == NULL ) 
+  if ( img == NULL )
   {
     sprintf(tmpStr,  "couldn't find object ", srcName  );
     PyErr_SetString( ImgErr, tmpStr );
@@ -1033,7 +1033,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
 
   // Make sure image is of type STRUCTURED_PTS_T:
   type = img->GetType();
-  if ( type != STRUCTURED_PTS_T ) 
+  if ( type != STRUCTURED_PTS_T )
   {
     sprintf(tmpStr,  "error: object ", srcName,
     "not of type StructuredPts");
@@ -1049,7 +1049,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
   int start[3];
 
   // Parse coordinate lists:
-  for (int i = 0; i < 3; i++) 
+  for (int i = 0; i < 3; i++)
   {
     start[i]=PyInt_AsLong(PyList_GetItem(startList,i));
     if (PyErr_Occurred()||PyList_Size(startList)!=3)
@@ -1060,7 +1060,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
   }
 
   // Make sure the specified result object does not exist:
-  if ( gRepository->Exists( dstName ) ) 
+  if ( gRepository->Exists( dstName ) )
   {
     sprintf(tmpStr,  "object ", dstName, " already exists",
     (char *)NULL);
@@ -1073,13 +1073,13 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
   vtkFloatingPointType thrval = thr;
 
   cvDistanceMap* distmap = new cvDistanceMap();
-  if (useCityBlock== 0) 
+  if (useCityBlock== 0)
   {
       distmap->setUse26ConnectivityDistance();
   }
   int status = distmap->createDistanceMap(sp,thrval,start);
 
-  if ( status == SV_ERROR ) 
+  if ( status == SV_ERROR )
   {
     sprintf(tmpStr, "Problem creating distance map for ", srcName);
     PyErr_SetString( ImgErr, tmpStr );
@@ -1091,7 +1091,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
   delete distmap;
 
   repossp->SetName( dstName );
-  if ( !( gRepository->Register( repossp->GetName(), repossp ) ) ) 
+  if ( !( gRepository->Register( repossp->GetName(), repossp ) ) )
   {
     sprintf(tmpStr, "error registering obj ", dstName,
     " in repository"  );
@@ -1139,7 +1139,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
 
   // Look up given image object:
   img = gRepository->GetObject( srcName );
-  if ( img == NULL ) 
+  if ( img == NULL )
   {
     sprintf(tmpStr, "couldn't find object ", srcName  );
     PyErr_SetString( ImgErr, tmpStr );
@@ -1149,7 +1149,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
 
   // Make sure image is of type STRUCTURED_PTS_T:
   type = img->GetType();
-  if ( type != STRUCTURED_PTS_T ) 
+  if ( type != STRUCTURED_PTS_T )
   {
     sprintf(tmpStr, "error: object ", srcName,
     "not of type StructuredPts"  );
@@ -1163,9 +1163,9 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
 
   int nstart;
   int stop[3];
-  
+
   // Parse coordinate lists:
-  for (int i = 0; i < 3; i++) 
+  for (int i = 0; i < 3; i++)
   {
     stop[i]=PyInt_AsLong(PyList_GetItem(stopList,i));
     if (PyErr_Occurred()||PyList_Size(stopList)!=3)
@@ -1242,7 +1242,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
     PyErr_SetString(ImgErr,"Could not import 2 chars or 1 optional double, 1 optional int: objName,maskName,replaceVal, notval");
     return SV_ERROR;
   }
-  
+
   // Do work of command
   char tmpStr[1024];
   tmpStr[0]='\0';
@@ -1253,7 +1253,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
 
   // Look up given image object:
   img = gRepository->GetObject( objName );
-  if ( img == NULL ) 
+  if ( img == NULL )
   {
     sprintf(tmpStr, "couldn't find object ", objName  );
     PyErr_SetString( ImgErr, tmpStr );
@@ -1263,7 +1263,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
 
   // Make sure image is of type STRUCTURED_PTS_T:
   type = img->GetType();
-  if ( type != STRUCTURED_PTS_T ) 
+  if ( type != STRUCTURED_PTS_T )
   {
     sprintf(tmpStr, "error: object ", objName,
     "not of type StructuredPts"  );
@@ -1275,7 +1275,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
 
   // Look up given mask object:
   mask = gRepository->GetObject( maskName );
-  if ( mask == NULL ) 
+  if ( mask == NULL )
   {
     sprintf(tmpStr, "couldn't find object ", maskName   );
     PyErr_SetString( ImgErr, tmpStr );
@@ -1299,10 +1299,10 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
   imgsp = ((cvStrPts*)img)->GetVtkStructuredPoints();
   masksp = ((cvStrPts*)mask)->GetVtkStructuredPoints();
 
-  bool notvalBool = (notval!=0); 
+  bool notvalBool = (notval!=0);
   int status = MaskImageInPlace(imgsp,masksp,replaceVal,notvalBool);
 
-  if ( status == SV_ERROR ) 
+  if ( status == SV_ERROR )
   {
     sprintf(tmpStr, "Problem masking in place for ", objName );
     PyErr_SetString( ImgErr, tmpStr );
