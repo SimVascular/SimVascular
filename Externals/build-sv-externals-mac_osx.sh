@@ -14,7 +14,7 @@ sudo chmod a+rwx /usr/local/sv
 
 echo "Deleting previous build dir ($EXTERNALS_BUILD_TOP)"
 rm -Rf $EXTERNALS_BUILD_TOP
-mkdir $EXTERNALS_BUILD_TOP
+mkdir -p $EXTERNALS_BUILD_TOP
 
 echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"
 rm -Rf $EXTERNALS_TOP

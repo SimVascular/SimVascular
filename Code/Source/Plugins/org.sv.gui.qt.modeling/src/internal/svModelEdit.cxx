@@ -1,8 +1,36 @@
+/* Copyright (c) Stanford University, The Regents of the University of
+ *               California, and others.
+ *
+ * All Rights Reserved.
+ *
+ * See Copyright-SimVascular.txt for additional details.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "svModelEdit.h"
 #include "ui_svModelEdit.h"
-
-#include <berryIPreferencesService.h>
-#include <berryPlatform.h>
 
 #include "svFaceListDelegate.h"
 #include "svPath.h"
@@ -10,9 +38,12 @@
 #include "svSegmentationUtils.h"
 #include "svModelElementFactory.h"
 #include "svModelElementAnalytic.h"
+#include "svModelExtractPathsAction.h"
+#include "svQmitkDataManagerView.h"
 
 #include "cv_polydatasolid_utils.h"
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -24,12 +55,13 @@
 
 #include <vtkProperty.h>
 
-#include <QTreeView>
 #include <QStandardItemModel>
 #include <QInputDialog>
 #include <QColorDialog>
 #include <QSignalMapper>
 #include <QMessageBox>
+#include <QScrollArea>
+#include <QVBoxLayout>
 
 #include <iostream>
 using namespace std;
@@ -43,6 +75,7 @@ svModelEdit::svModelEdit() :
     m_ModelNode=NULL;
 
     m_SegSelectionWidget=NULL;
+    m_CapSelectionWidget=NULL;
 
     m_DataInteractor=NULL;
     m_ModelSelectFaceObserverTag=-1;
@@ -67,6 +100,7 @@ svModelEdit::~svModelEdit()
     delete ui;
 
     if(m_SegSelectionWidget) delete m_SegSelectionWidget;
+    if(m_CapSelectionWidget) delete m_CapSelectionWidget;
 }
 
 void svModelEdit::CreateQtPartControl( QWidget *parent )
@@ -268,6 +302,16 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     widgetGRemesh->show();
 #endif
 
+    //for extracting centerlines
+    //=================================================================
+    m_CapSelectionWidget=new svCapSelectionWidget();
+    m_CapSelectionWidget->move(400,400);
+    m_CapSelectionWidget->hide();
+    m_CapSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+
+    connect(ui->btnExtractCenterlines, SIGNAL(clicked()), this, SLOT(ShowCapSelectionWidget()) );
+
+    connect(m_CapSelectionWidget,SIGNAL(accepted()), this, SLOT(ExtractCenterlines()));
 }
 
 void svModelEdit::Visible()
@@ -372,10 +416,10 @@ void svModelEdit::UpdateGUI()
     else
         ui->toolBoxPolyData->hide();
 
-    if(m_ModelType=="OpenCASCADE")
-        ui->widgetOCC->show();
-    else
-        ui->widgetOCC->hide();
+    //if(m_ModelType=="OpenCASCADE")
+    //    ui->widgetOCC->show();
+    //else
+    //    ui->widgetOCC->hide();
 
     //----------------------
     UpdatePathListForTrim();
@@ -1452,6 +1496,38 @@ void svModelEdit::ShowSegSelectionWidget()
     m_SegSelectionWidget->show();
 }
 
+void svModelEdit::ShowCapSelectionWidget()
+{
+    if(!m_Model)
+        return;
+
+    if (m_ModelType != "PolyData")
+    {
+      QMessageBox::warning(m_Parent,"Error","Cannot currently extract centerlines of anyting other than a PolyData model");
+      return;
+    }
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+
+    std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
+    std::vector<std::string> caps;
+
+    int rowIndex=-1;
+
+    for(int i=0;i<faces.size();i++)
+    {
+        if(faces[i]==NULL )
+            continue;
+
+        if (faces[i]->type=="cap")
+          caps.push_back(faces[i]->name);
+    }
+
+    m_CapSelectionWidget->SetTableView(caps,modelElement,m_ModelType);
+    m_CapSelectionWidget->show();
+}
+
 void svModelEdit::CreateModel()
 {
     std::vector<std::string> segNames=m_SegSelectionWidget->GetUsedSegNames();
@@ -1690,6 +1766,33 @@ void svModelEdit::CreateModel()
         }
 
     }
+}
+
+void svModelEdit::ExtractCenterlines()
+{
+    if (m_ModelType != "PolyData")
+    {
+      QMessageBox::warning(m_Parent,"Error","Cannot currently extract centerlines of anyting other than a PolyData model");
+      return;
+    }
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+
+    std::vector<std::string> capNames = m_CapSelectionWidget->GetUsedCapNames();
+    std::vector<int> capIds;
+    for (int i=0; i<capNames.size(); i++)
+      capIds.push_back(modelElement->GetFaceID(capNames[i]));
+
+    svModelExtractPathsAction *extractPathsAction = new svModelExtractPathsAction();
+    extractPathsAction->SetDataStorage(this->GetDataStorage());
+    extractPathsAction->SetFunctionality(this);
+    extractPathsAction->SetSourceCapIds(capIds);
+    QList<mitk::DataNode::Pointer> selectedNode;
+    selectedNode.push_back(m_ModelNode);
+    extractPathsAction->Run(selectedNode);
+
+    return;
 }
 
 std::vector<svModelElement::svBlendParamRadius*> svModelEdit::GetBlendRadii()

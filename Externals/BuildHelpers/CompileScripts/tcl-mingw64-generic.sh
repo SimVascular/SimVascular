@@ -1,6 +1,10 @@
 
 #/bin/bash  -f
 
+#
+#  2018-01-04: SCRIPT IS OUT OF DATE AND NEEDS UPDATED!!
+#
+
 # Copyright (c) 2015 Open Source Medical Software Corporation.
 # All Rights Reserved.
 

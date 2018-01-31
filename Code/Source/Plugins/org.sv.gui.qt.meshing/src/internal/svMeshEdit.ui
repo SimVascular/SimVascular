@@ -351,7 +351,7 @@
               <x>0</x>
               <y>0</y>
               <width>467</width>
-              <height>548</height>
+              <height>547</height>
              </rect>
             </property>
             <attribute name="label">
@@ -450,7 +450,7 @@
                       <item>
                        <widget class="QDoubleSpinBox" name="dsbPortionT">
                         <property name="maximum">
-                         <double>1.000000000000000</double>
+                         <double>10000000.000000000000000</double>
                         </property>
                         <property name="singleStep">
                          <double>0.100000000000000</double>
@@ -546,6 +546,16 @@
                        </widget>
                       </item>
                      </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxConstantThicknessBL">
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If selected, the same boundary layer thickness will be used throughout the entire model. If left unselected, the boundary layer thickness will scale with the local mesh edge size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                     <property name="text">
+                      <string>Use Constant Boundary Layer Thickness</string>
+                     </property>
                     </widget>
                    </item>
                   </layout>
@@ -919,8 +929,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>548</height>
+              <width>98</width>
+              <height>84</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -1014,8 +1024,8 @@ Press key &quot;S&quot; outside of any face to deselect all faces.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>548</height>
+              <width>167</width>
+              <height>84</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1139,8 +1149,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>548</height>
+              <width>323</width>
+              <height>196</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1389,8 +1399,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>548</height>
+              <width>237</width>
+              <height>84</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1513,8 +1523,8 @@ Click the button to add it to the left table.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>548</height>
+              <width>231</width>
+              <height>303</height>
              </rect>
             </property>
             <attribute name="label">

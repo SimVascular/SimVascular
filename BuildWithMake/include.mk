@@ -1,15 +1,11 @@
 # Hey emacs, this is a -*- makefile -*-
 
-# Copyright (c) 2009-2011 Open Source Medical Software Corporation,
-#                         University of California, San Diego.
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
 #
-# All rights reserved.
+# All Rights Reserved.
 #
-# Portions copyright (c) 1999-2007 Stanford University,
-# Nathan Wilson, Ken Wang, Charles Taylor.
-#
-# See SimVascular Acknowledgements file for additional
-# contributors to the source code.
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -22,13 +18,17 @@
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
 #
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # This is where we want to define things that will be useful for
 # multiple packages.  Vtk, for example, is used by both the level set
@@ -57,6 +57,12 @@ CLUSTER = x64_cygwin
 # CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-18.0, mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
+
+# NOTE: CXX_COMPILER_VERSION and FORTRAN_COMPILER_VERSION
+#       should be replaced with additional variables
+
+SV_COMPILER = msvc
+SV_COMPILER_VERSION = 18.0
 
 CXX_COMPILER_VERSION = msvc-18.0
 FORTRAN_COMPILER_VERSION = ifort
@@ -236,22 +242,22 @@ ifeq ($(CLUSTER), x64_macosx)
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/sv/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/sv/ext/src
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
@@ -708,6 +714,7 @@ endif
 ifeq ($(SV_USE_MITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.meshing/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
@@ -780,6 +787,7 @@ SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
 
 #plugin names
 SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application
+SV_PLUGIN_DATAMANAGER_NAME=org_sv_gui_qt_datamanager
 SV_PLUGIN_MESHING_NAME=org_sv_gui_qt_meshing
 SV_PLUGIN_MODELING_NAME=org_sv_gui_qt_modeling
 SV_PLUGIN_PATHPLANNING_NAME=org_sv_gui_qt_pathplanning

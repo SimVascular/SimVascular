@@ -1,5 +1,9 @@
-# Copyright (c) 2014-2015 The Regents of the University of California.
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
+#
 # All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -29,6 +33,7 @@
 #-----------------------------------------------------------------------------
 # Get used lib names
 set(SV_CONF_USED_LIBS )
+set(SV_CONF_USED_PLUGINS )
 set(SV_TARGETS )
 foreach(lib ${SV_LIB_NAMES})
   if(TARGET ${lib})
@@ -39,6 +44,18 @@ foreach(lib ${SV_LIB_NAMES})
     elseif("${${lib}_TYPE}" STREQUAL "SHARED_LIBRARY")
       list(APPEND SV_TARGETS "${lib}")
       list(APPEND SV_CONF_USED_LIBS "${CMAKE_SHARED_LIBRARY_PREFIX}${lib}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    endif()
+  endif()
+endforeach()
+foreach(lib ${SV_PLUGIN_NAMES})
+  if(TARGET ${lib})
+    get_target_property(${lib}_TYPE ${lib} "TYPE")
+    if("${${lib}_TYPE}" STREQUAL "STATIC_LIBRARY")
+      list(APPEND SV_TARGETS "${lib}")
+      list(APPEND SV_CONF_USED_PLUGINS "${CMAKE_STATIC_LIBRARY_PREFIX}${lib}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    elseif("${${lib}_TYPE}" STREQUAL "SHARED_LIBRARY")
+      list(APPEND SV_TARGETS "${lib}")
+      list(APPEND SV_CONF_USED_PLUGINS "${CMAKE_SHARED_LIBRARY_PREFIX}${lib}${CMAKE_SHARED_LIBRARY_SUFFIX}")
     endif()
   endif()
 endforeach()
@@ -62,6 +79,8 @@ foreach(dir ${SV_MODULE_DIRS})
 endforeach()
 foreach(dir ${SV_PLUGIN_DIRS})
   list(APPEND SV_CONF_INCLUDE_DIRS ${dir})
+  list(APPEND SV_CONF_INCLUDE_DIRS ${dir}/src)
+  list(APPEND SV_CONF_INCLUDE_DIRS ${dir}/src/internal)
 endforeach()
 set(SV_CONF_SOURCE_DIR "${SV_SOURCE_DIR}")
 set(SV_CONF_BINARY_DIR "${SV_BINARY_DIR}")

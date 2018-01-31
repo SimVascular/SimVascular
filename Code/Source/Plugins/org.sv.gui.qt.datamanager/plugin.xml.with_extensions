@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+  <extension point="org.blueberry.ui.views">
+    <view
+      id="org.sv.views.datamanager"
+      name="SV Data Manager"
+      icon="resources/DataManager_48.png"
+      class="svQmitkDataManagerView" />
+  </extension>
+
+  <extension point="org.blueberry.ui.preferencePages">
+    <page id="org.sv.gui.qt.application.DataManagerPreferencePage" name="Data Manager" class="svQmitkDataManagerPreferencePage">
+      <keywordreference id="org.sv.gui.qt.application.DataManagerPreferencePageKeywords"></keywordreference>
+    </page>
+    <page id="org.sv.gui.qt.application.DataManagerHotkeysPrefPage" name="Hotkeys" class="svQmitkDataManagerHotkeysPrefPage" category="org.sv.gui.qt.application.DataManagerPreferencePage">
+      <keywordreference id="org.sv.gui.qt.application.DataManagerHotkeysPrefPageKeywords"></keywordreference>
+    </page>
+  </extension>
+
+  <extension point="org.blueberry.ui.keywords">
+    <keyword id="org.sv.gui.qt.application.DataManagerPreferencePageKeywords" label="data manager"></keyword>
+    <keyword id="org.sv.gui.qt.application.DataManagerHotkeysPrefPageKeywords" label="data manager hotkeys"></keyword>
+  </extension>
+
+  <extension-point id="contextMenuActions" name="Context menu actions"/>
+
+</plugin>

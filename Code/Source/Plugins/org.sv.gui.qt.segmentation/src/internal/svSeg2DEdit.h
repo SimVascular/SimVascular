@@ -1,3 +1,34 @@
+/* Copyright (c) Stanford University, The Regents of the University of
+ *               California, and others.
+ *
+ * All Rights Reserved.
+ *
+ * See Copyright-SimVascular.txt for additional details.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #ifndef SVSEG2DEDIT_H
 #define SVSEG2DEDIT_H
 
@@ -8,12 +39,12 @@
 #include "svContourGroupDataInteractor.h"
 #include "svContourGroupCreate.h"
 #include "svContourModelThresholdInteractor.h"
+#include "svQmitkFunctionality.h"
 
 #include "svResliceSlider.h"
 #include "svLevelSet2DWidget.h"
 #include "svLoftParamWidget.h"
 
-#include <QmitkFunctionality.h>
 #include <QmitkSliceWidget.h>
 #include <QmitkSliderNavigatorWidget.h>
 #include <QmitkStepperAdapter.h>
@@ -40,7 +71,7 @@ namespace Ui {
 class svSeg2DEdit;
 }
 
-class svSeg2DEdit : public QmitkFunctionality
+class svSeg2DEdit : public svQmitkFunctionality
 {
     Q_OBJECT
 
@@ -126,10 +157,10 @@ public slots:
 
     void ManualContextMenuRequested();
 
-    void ManualCircleContextMenuRequested(const QPoint&);
-    void ManualEllipseContextMenuRequested(const QPoint&);
-    void ManualSplinePolyContextMenuRequested(const QPoint&);
-    void ManualPolygonContextMenuRequested(const QPoint&);
+    void ManualCircleContextMenuRequested(const QPoint &pos);
+    void ManualEllipseContextMenuRequested(const QPoint &pos);
+    void ManualSplinePolyContextMenuRequested(const QPoint &pos);
+    void ManualPolygonContextMenuRequested(const QPoint &pos);
 
     void CreateManualCircle( bool checked = false );
 
@@ -250,6 +281,7 @@ protected:
     svContourGroupCreate* m_ContourGroupCreateWidget;
 
     bool m_UpdatingGUI;
+
 };
 
 #endif // SVSEG2DEDIT_H

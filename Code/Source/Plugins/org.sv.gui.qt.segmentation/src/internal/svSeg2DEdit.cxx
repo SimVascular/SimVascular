@@ -1,3 +1,34 @@
+/* Copyright (c) Stanford University, The Regents of the University of
+ *               California, and others.
+ *
+ * All Rights Reserved.
+ *
+ * See Copyright-SimVascular.txt for additional details.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "svSeg2DEdit.h"
 #include "ui_svSeg2DEdit.h"
 #include "ui_svLevelSet2DWidget.h"
@@ -19,6 +50,7 @@
 
 #include "svModelUtils.h"
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkOperationEvent.h>
 #include <mitkUndoController.h>
 #include <mitkStatusBar.h>
@@ -29,8 +61,11 @@
 
 // Qt
 #include <QMessageBox>
+#include <QMenu>
 #include <QInputDialog>
 #include <QWheelEvent>
+#include <QVBoxLayout>
+#include <QWidget>
 
 #include <iostream>
 using namespace std;
@@ -390,7 +425,10 @@ void svSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     if(imageNode.IsNotNull())
         ui->resliceSlider->setDataNode(imageNode);
     else
-        ui->resliceSlider->setDataNode(m_ContourGroupNode);
+        ui->resliceSlider->setDataNode(m_PathNode);
+
+    //ui->resliceSlider->setDataNode(m_ContourGroupNode);
+
 
     double resliceSize=m_ContourGroup->GetResliceSize();
     if(resliceSize==0)
@@ -1284,24 +1322,64 @@ void svSeg2DEdit::ManualContextMenuRequested()
     m_ManualMenu->popup(QCursor::pos());
 }
 
-void svSeg2DEdit::ManualCircleContextMenuRequested(const QPoint&)
+void svSeg2DEdit::ManualCircleContextMenuRequested(const QPoint &pos)
 {
-    CreateManualCircle();
+  if (m_CurrentSegButton == NULL)
+    return;
+  if (m_CurrentSegButton != ui->btnCircle)
+    return;
+
+  QMenu contextMenu(tr("Manual Circle Button"), m_Parent);
+  QAction action1("Create Manual Circle", m_Parent);
+  connect(&action1, SIGNAL(triggered()), this, SLOT(CreateManualCircle()));
+
+  contextMenu.addAction(&action1);
+  contextMenu.exec(m_CurrentSegButton->mapToGlobal(pos));
 }
 
-void svSeg2DEdit::ManualEllipseContextMenuRequested(const QPoint&)
+void svSeg2DEdit::ManualEllipseContextMenuRequested(const QPoint &pos)
 {
-    CreateManualEllipse();
+  if (m_CurrentSegButton == NULL)
+    return;
+  if (m_CurrentSegButton != ui->btnEllipse)
+    return;
+
+  QMenu contextMenu(tr("Manual Ellipse Button"), m_Parent);
+  QAction action1("Create Manual Ellipse", m_Parent);
+  connect(&action1, SIGNAL(triggered()), this, SLOT(CreateManualEllipse()));
+
+  contextMenu.addAction(&action1);
+  contextMenu.exec(m_CurrentSegButton->mapToGlobal(pos));
 }
 
-void svSeg2DEdit::ManualSplinePolyContextMenuRequested(const QPoint&)
+void svSeg2DEdit::ManualSplinePolyContextMenuRequested(const QPoint &pos)
 {
-    CreateManualSplinePoly();
+  if (m_CurrentSegButton == NULL)
+    return;
+  if (m_CurrentSegButton != ui->btnSplinePoly)
+    return;
+
+  QMenu contextMenu(tr("Manual Spline Poly Button"), m_Parent);
+  QAction action1("Create Manual Spline Poly", m_Parent);
+  connect(&action1, SIGNAL(triggered()), this, SLOT(CreateManualSplinePoly()));
+
+  contextMenu.addAction(&action1);
+  contextMenu.exec(m_CurrentSegButton->mapToGlobal(pos));
 }
 
-void svSeg2DEdit::ManualPolygonContextMenuRequested(const QPoint&)
+void svSeg2DEdit::ManualPolygonContextMenuRequested(const QPoint &pos)
 {
-    CreateManualPolygon();
+  if (m_CurrentSegButton == NULL)
+    return;
+  if (m_CurrentSegButton != ui->btnPolygon)
+    return;
+
+  QMenu contextMenu(tr("Manual Polygon Button"), m_Parent);
+  QAction action1("Create Manual Polygon", m_Parent);
+  connect(&action1, SIGNAL(triggered()), this, SLOT(CreateManualPolygon()));
+
+  contextMenu.addAction(&action1);
+  contextMenu.exec(m_CurrentSegButton->mapToGlobal(pos));
 }
 
 void svSeg2DEdit::CreateManualCircle(bool)

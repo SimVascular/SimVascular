@@ -33,12 +33,12 @@ cd ../../BuildHelpers
 export SV_TOPLEVEL_BINDIR_CYGWIN=`cygpath "REPLACEME_SV_TOP_BIN_DIR_TCL"`
 
 cd ../tcllib-1.17
-$SV_TOPLEVEL_BINDIR_CYGWIN/bin/tclsh8?t.exe installer.tcl
+$SV_TOPLEVEL_BINDIR_CYGWIN/bin/tclsh8?t.exe installer.tcl -no-gui -no-wait
 cd ../BuildHelpers
 chmod -R a+rx $SV_TOPLEVEL_BINDIR_CYGWIN
 
 cd ../tklib-0.6
-$SV_TOPLEVEL_BINDIR_CYGWIN/bin/tclsh8?t.exe installer.tcl
+$SV_TOPLEVEL_BINDIR_CYGWIN/bin/tclsh8?t.exe installer.tcl -no-gui -no-wait
 cd ../BuildHelpers
 chmod -R a+rx $SV_TOPLEVEL_BINDIR_CYGWIN
 

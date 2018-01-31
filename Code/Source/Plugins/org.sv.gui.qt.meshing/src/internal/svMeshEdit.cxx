@@ -1,3 +1,34 @@
+/* Copyright (c) Stanford University, The Regents of the University of
+ *               California, and others.
+ *
+ * All Rights Reserved.
+ *
+ * See Copyright-SimVascular.txt for additional details.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "svMeshEdit.h"
 #include "ui_svMeshEdit.h"
 
@@ -20,6 +51,7 @@
 #include <berryIPreferences.h>
 #include <berryPlatform.h>
 
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -31,9 +63,8 @@
 #include <vtkProperty.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
-#include <QTreeView>
-#include <QInputDialog>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QFileDialog>
 
 #include <iostream>
@@ -811,8 +842,11 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
     }
 
     if(ui->checkBoxBoundaryLayerT->isChecked())
-        cmds.push_back("boundaryLayer "+QString::number(ui->sbLayersT->value()).toStdString()
-                       +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString());
+    {
+      int useConstantThickness = ui->checkBoxConstantThicknessBL->isChecked();
+      cmds.push_back("boundaryLayer "+QString::number(ui->sbLayersT->value()).toStdString()
+                       +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString()+" "+QString::number(useConstantThickness).toStdString());
+    }
 
     for(int i=0;i<m_TableModelLocal->rowCount();i++)
     {
@@ -2391,10 +2425,19 @@ void svMeshEdit::Adapt()
         return;
     }
 
-    QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
-    solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
+    std::string resultFileString = resultFile.toStdString();
+    std::string resultPathName;
+    int split = resultFileString.find_last_of("/\\");
+    if (split < 0)
+      resultPathName = ".";
+    else
+      resultPathName = resultFileString.substr(0, split);
 
-    if(!adaptor->WriteAdaptedSolution(solutionFilePath.toStdString()))
+    //QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
+    //solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
+    std::string solutionFileName = resultPathName + "/adapted-restart." + endStep.toStdString() + ".1";
+
+    if(!adaptor->WriteAdaptedSolution(solutionFileName))
     {
         QMessageBox::warning(m_Parent,"Error","Failed in writing adapted solution (restart).");
         delete adaptor;

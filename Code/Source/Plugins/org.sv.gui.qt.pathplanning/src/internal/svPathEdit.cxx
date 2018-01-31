@@ -1,3 +1,34 @@
+/* Copyright (c) Stanford University, The Regents of the University of
+ *               California, and others.
+ *
+ * All Rights Reserved.
+ *
+ * See Copyright-SimVascular.txt for additional details.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "svPathEdit.h"
 #include "ui_svPathEdit.h"
 #include "svPathCreate.h"
@@ -7,17 +38,19 @@
 #include "svMath3.h"
 
 // mitk
+#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkDataStorage.h>
 #include "mitkDataNode.h"
 #include "mitkProperties.h"
 #include <mitkUndoController.h>
 #include <mitkNodePredicateDataType.h>
+#include <mitkIDataStorageService.h>
+#include <mitkDataStorageEditorInput.h>
 
 #include <usModuleRegistry.h>
 
 // Qt
 #include <QMessageBox>
-#include <QShortcut>
 #include <QInputDialog>
 #include <QWheelEvent>
 
@@ -523,20 +556,40 @@ void svPathEdit::AddPoint(mitk::Point3D point)
     switch(selectedModeIndex)
     {
     case svPath::SMART:
+      {
         index=pathElement->GetInsertintIndexByDistance(point);
         break;
+      }
     case svPath::BEGINNING:
+      {
         index=0;
         break;
+      }
     case svPath::END:
+      {
         index=-1;
         break;
+      }
     case svPath::BEFORE:
-        index= ui->listWidget->selectionModel()->selectedRows().front().row();
-        break;
+        {
+          index= ui->listWidget->selectionModel()->selectedRows().front().row();
+          if (index < 0)
+          {
+            QMessageBox::information(NULL,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
+            return;
+          }
+          break;
+        }
     case svPath::AFTER:
-        index= ui->listWidget->selectionModel()->selectedRows().front().row()+1;
-        break;
+        {
+          index= ui->listWidget->selectionModel()->selectedRows().front().row()+1;
+          if (index < 0)
+          {
+            QMessageBox::information(NULL,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
+            return;
+          }
+          break;
+        }
     default:
         break;
     }

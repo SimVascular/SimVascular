@@ -1,7 +1,9 @@
-/*=========================================================================
+/* Copyright (c) Stanford University, The Regents of the University of
+ *               California, and others.
  *
- * Copyright (c) 2014-2015 The Regents of the University of California.
  * All Rights Reserved.
+ *
+ * See Copyright-SimVascular.txt for additional details.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,8 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *=========================================================================*/
+ */
 
 /** @file cv_vmtk_utils.cxx
  *  @brief These functions are utilities that implement vtkvmtk classes
@@ -998,7 +999,9 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
     double edgeSize,double blThicknessFactor,int numSublayers,
     double sublayerRatio,int sidewallCellEntityId,
     int innerSurfaceCellEntityId,int negateWarpVectors,
-    std::string cellEntityIdsArrayName)
+    std::string cellEntityIdsArrayName,
+    int useConstantThickness,
+    std::string layerThicknessArrayName)
 {
   vtkSmartPointer<vtkvmtkBoundaryLayerGenerator> layerer =
     vtkSmartPointer<vtkvmtkBoundaryLayerGenerator>::New();
@@ -1040,6 +1043,14 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   {
     sublayerRatio = 0.3;
   }
+  if (!useConstantThickness)
+  {
+    if (VtkUtils_UGCheckArrayName(copyug,0,layerThicknessArrayName) != SV_OK)
+    {
+      fprintf(stderr,"%s Array is not on the surface\n", layerThicknessArrayName.c_str());
+      return SV_ERROR;
+    }
+  }
 
   layerer->SetInputData(copyug);
   layerer->SetLayerThickness(edgeSize*blThicknessFactor);
@@ -1049,7 +1060,9 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   layerer->SetNegateWarpVectors(negateWarpVectors);
   layerer->SetWarpVectorsArrayName("Normals");
   layerer->SetCellEntityIdsArrayName(cellEntityIdsArrayName.c_str());
-  layerer->SetConstantThickness(1);
+  layerer->SetUseWarpVectorMagnitudeAsThickness(0);
+  layerer->SetConstantThickness(useConstantThickness);
+  layerer->SetLayerThicknessArrayName(layerThicknessArrayName.c_str());
   //9999
   layerer->SetSidewallCellEntityId(sidewallCellEntityId);
   //1

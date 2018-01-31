@@ -9,10 +9,8 @@ if [[ $SV_SUPER_OPTIONS == *WGET_TCL* ]]; then
   rm -Rf tcltk
   mkdir -p tcltk
   pushd tcltk
-  wget $PARENT_URL/tcltk/tcl8.5.18-src.tar.gz
   wget $PARENT_URL/tcltk/tcl8.6.4-src.tar.gz
   wget $PARENT_URL/tcltk/tcllib-1.17.tar.gz
-  wget $PARENT_URL/tcltk/tk8.5.18-src.tar.gz
   wget $PARENT_URL/tcltk/tk8.6.4-src.tar.gz
   wget $PARENT_URL/tcltk/tklib-0.6.tar.tgz
   popd
@@ -25,8 +23,18 @@ if [[ $SV_SUPER_OPTIONS == *WGET_PYTHON* ]]; then
   mkdir -p python
   pushd python
   wget $PARENT_URL/python/get-pip.py
-  wget $PARENT_URL/python/Python-2.7.11.tgz
-  wget $PARENT_URL/python/python-2.7.11-cmakebuild.tar.gz
+  wget $PARENT_URL/python/Python-2.7.13.tgz
+  wget $PARENT_URL/python/python-2.7.13-cmakebuild.tar.gz
+  popd
+fi
+
+# swig
+if [[ $SV_SUPER_OPTIONS == *WGET_SWIG* ]]; then
+  echo "WGET_SWIG"
+  rm -Rf swig
+  mkdir -p swig
+  pushd swig
+  wget $PARENT_URL/swig/swig-3.0.12.tar.gz
   popd
 fi
 
@@ -37,6 +45,16 @@ if [[ $SV_SUPER_OPTIONS == *WGET_NUMPY* ]]; then
   mkdir -p numpy
   pushd numpy
   wget $PARENT_URL/numpy/numpy-1.11.1.tar.gz
+  popd
+fi
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *WGET_QT* ]]; then
+  echo "WGET_QT"
+  rm -Rf qt
+  mkdir -p qt
+  pushd qt
+  wget $PARENT_URL/qt/qt-everywhere-opensource-src-5.4.2.tar.gz
   popd
 fi
 
@@ -68,7 +86,6 @@ if [[ $SV_SUPER_OPTIONS == *WGET_VTK* ]]; then
   mkdir -p vtk
   pushd vtk
   wget $PARENT_URL/vtk/VTK-6.2.0.tar.gz
-  wget $PARENT_URL/vtk/VTK-6.3.0.tar.gz
   popd
 fi
 

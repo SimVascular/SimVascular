@@ -1,14 +1,11 @@
 # Hey emacs, this is a -*- makefile -*-
 
-# Copyright (c) 2014-2015 The Regents of the University of California.
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
+#
 # All Rights Reserved.
 #
-# Portions of the code Copyright (c) 2009-2011 Open Source Medical
-# Software Corporation, University of California, San Diego.
-# All rights reserved.
-#
-# Portions copyright (c) 1999-2007 Stanford University,
-#   Nathan Wilson, Ken Wang, Charles Taylor.
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,13 +18,17 @@
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
 #
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 TOP = ..
 
@@ -247,8 +248,8 @@ copy-tcl-libs:
 	-cp -fR $(TKCXIMAGE_DLL) $(DIST_DIR)
 
 copy-external-libs:
-	-mkdir -p $(DIST_DIR)/intel_compiler_runtime_libs
-	-cp -f -p $(INTEL_COMPILER_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/intel_compiler_runtime_libs
+#	-mkdir -p $(DIST_DIR)/intel_compiler_runtime_libs
+#	-cp -f -p $(INTEL_COMPILER_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/intel_compiler_runtime_libs
 #ifeq ($(SV_USE_PARASOLID),1)
 #	-cp -f $(PARASOLID_DLLS) $(DIST_DIR)
 #	-cp -Rf $(P_SCHEMA) $(DIST_DIR)/schema
@@ -263,15 +264,19 @@ ifeq ($(SV_USE_VTK),1)
 	-cp -fd $(VTK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
 	-cp -fd $(VTK_BINDIRS)/*.$(SOEXT)* $(DIST_DIR)
 endif
-ifeq ($(SV_USE_ZLIB),1)
-	-cp -f $(ZLIB_LIBDIR)/zlib.$(SOEXT)* $(DIST_DIR)
-endif
+#ifeq ($(SV_USE_ZLIB),1)
+#	-cp -f $(ZLIB_LIBDIR)/zlib.$(SOEXT)* $(DIST_DIR)
+#endif
 ifeq ($(SV_USE_ITK),1)
 	-cp -f $(ITK_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_GDCM),1)
-	-cp -f $(SV_GDCM_DLLS)/gdcm*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(SV_GDCM_DLLS)/*gdcm*.$(SOEXT)* $(DIST_DIR)
+ifeq ($(CLUSTER),x64_cygwin)
 	-cp -f $(SV_GDCM_DLLS)/gdcm*.exe* $(DIST_DIR)
+else
+	-cp -fR $(SV_GDCM_DLLS)/gdcm* $(DIST_DIR)
+endif
 	-cp -f $(SV_GDCM_DLLS)/socketxx.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_PYTHON),1)
@@ -283,27 +288,33 @@ ifeq ($(SV_USE_PYTHON),1)
 	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
 endif
 ifeq ($(SV_USE_QT),1)
-	-cp -f $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
+ifeq ($(CLUSTER), x64_cygwin)
+	-cp -fd $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
+else
+	-cp -fd $(QT_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
+endif
 	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
-	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fd $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_MITK),1)
 	-mkdir -p $(DIST_DIR)/mitk
-#	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
-#	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
-#	-cp -fR $(MITK_BINDIRS)/MitkCore $(DIST_DIR)/mitk/bin
-#	-cp -fR $(MITK_BINDIRS)/MitkPython $(DIST_DIR)/mitk/bin
-#	-cp -fR $(MITK_BINDIRS)/Python $(DIST_DIR)/mitk/bin
 ifeq ($(CLUSTER), x64_cygwin)
 	-cp -fRd $(MITK_BINDIRS) $(DIST_DIR)/mitk
 #	-mkdir -p $(DIST_DIR)/mitk/bin/plugins
 #	-cp -fR $(SV_MITK_PLUGIN_PATH) $(DIST_DIR)/mitk/bin/plugins
 #	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins/RelWithDebInfo
 else
-	-cp -f $(SV_MITK_PLUGIN_PATH)/* $(DIST_DIR)/mitk/bin/plugins
-	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins
+	-mkdir -p $(DIST_DIR)/mitk/bin
+	-mkdir -p $(DIST_DIR)/mitk/lib/plugins
+	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
+	-cp -f $(MITK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)/mitk/lib
+	-cp -fR $(MITK_LIBDIRS)/MitkCore $(DIST_DIR)/mitk/lib
+	-cp -fR $(MITK_LIBDIRS)/MitkPython $(DIST_DIR)/mitk/lib
+	-cp -fR $(MITK_LIBDIRS)/Python $(DIST_DIR)/mitk/lib
+	-cp -f $(SV_MITK_PLUGIN_PATH)/* $(DIST_DIR)/mitk/lib/plugins
+	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/lib/plugins
 endif
 endif
 

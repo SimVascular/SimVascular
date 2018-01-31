@@ -8,8 +8,10 @@
           icon="resources/icon.xpm" />
   </extension>-->
 
-  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
     <contextMenuAction nodeDescriptorName="svImageFolder" label="Add/Replace Image" icon="" class="svProjectAddImageAction" />
+    <contextMenuAction nodeDescriptorName="svProjectFolder" label="Save SV Project" icon="" class="svProjectSaveAction" />
+    <contextMenuAction nodeDescriptorName="svProjectFolder" label="Duplicate SV Project" icon="" class="svProjectDuplicateAction" />
     <contextMenuAction nodeDescriptorName="svProjectFolder" label="Close SV Project" icon="" class="svProjectCloseAction" />
     <contextMenuAction nodeDescriptorName="svModel" label="Show/Hide Edges" icon="" class="svProjectShowModelEdgesAction" />
     <contextMenuAction nodeDescriptorName="svModel" label="Show Full/Faces" icon="" class="svProjectShowModelFullAction" />

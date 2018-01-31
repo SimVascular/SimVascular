@@ -1,5 +1,9 @@
-# Copyright (c) 2014-2015 The Regents of the University of California.
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
+#
 # All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -60,11 +64,17 @@ set(${proj}_HEADER "MeshSim.h")
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR})
 	set(${proj}_POSSIBLE_PATHS ${${proj}_POSSIBLE_PATHS} "${${PROJECT_NAME}_EXTERNAL_DIR}/licensed/meshsim-8.0-131007/")
+	set(${proj}_POSSIBLE_PATHS ${${proj}_POSSIBLE_PATHS} "${${PROJECT_NAME}_EXTERNAL_DIR}/licensed/meshsim-8.0")
+	set(${proj}_POSSIBLE_PATHS ${${proj}_POSSIBLE_PATHS} "${${PROJECT_NAME}_EXTERNAL_DIR}/licensed/meshsim-10.0")
 endif()
 
 # Set paths to search for parasolid
 if(LINUX)
-	set(lib_sub_path "lib/x64_rhel5_gcc41")
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
+    set(lib_sub_path "lib/x64_rhel5_gcc41")
+  else()
+    set(lib_sub_path "lib/x64_rhel6_gcc44")
+  endif()
 elseif(APPLE)
 	set(lib_sub_path "lib/x64_rhel5_gcc41")
 elseif(WIN32 AND IS64)

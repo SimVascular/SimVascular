@@ -1,5 +1,9 @@
-# Copyright (c) 2014-2015 The Regents of the University of California.
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
+#
 # All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -269,6 +273,7 @@ if(SV_USE_QT_GUI)
   if(NOT SV_USE_MITK_CONFIG)
     set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
       "Source/Plugins/org.sv.projectdatanodes"
+      "Source/Plugins/org.sv.gui.qt.datamanager"
       "Source/Plugins/org.sv.gui.qt.projectmanager"
       "Source/Plugins/org.sv.gui.qt.pathplanning"
       "Source/Plugins/org.sv.gui.qt.segmentation"
@@ -396,6 +401,9 @@ foreach(dir ${SV_PLUGIN_DIRS})
   message(STATUS "	${dir}")
   include_directories("${dir}")
   add_subdirectory("${dir}")
+  get_filename_component(plugin_dir_name ${dir} NAME)
+  string(REPLACE "." "_" plugin_name ${plugin_dir_name})
+  list(APPEND SV_PLUGIN_NAMES ${plugin_name})
 endforeach()
 #-----------------------------------------------------------------------------
 

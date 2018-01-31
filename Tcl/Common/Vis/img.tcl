@@ -1,8 +1,9 @@
-# Copyright (c) 2009-2011 Open Source Medical Software Corporation,
-# University of California, San Diego.
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
 #
-# Portions of the code Copyright (c) 1998-2007 Stanford University,
-# Charles Taylor, Nathan Wilson, Ken Wang.
+# All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the

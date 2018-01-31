@@ -1,3 +1,34 @@
+/* Copyright (c) Stanford University, The Regents of the University of
+ *               California, and others.
+ *
+ * All Rights Reserved.
+ *
+ * See Copyright-SimVascular.txt for additional details.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "svModelUtils.h"
 
 #include "svModelElementPolyData.h"
@@ -20,6 +51,8 @@
 #include <vtkDataSetSurfaceFilter.h>
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSSurface.h"
+
+#include "vtkXMLPolyDataWriter.h"
 
 vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> groups, std::vector<vtkPolyData*> vtps, int numSamplingPts, svLoftingParam *param, unsigned int t, int noInterOut, double tol)
 {
@@ -931,82 +964,209 @@ bool svModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<
     return true;
 }
 
-vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
+vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement,
+                                             vtkIdList *sourceCapIds)
 {
     if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
         return NULL;
 
     vtkSmartPointer<vtkPolyData> inpd=vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkPolyData> fullpd=vtkSmartPointer<vtkPolyData>::New();
     inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+    fullpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+
     if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()))
     {
         return NULL;
     }
 
-    vtkPolyData* centerlines=CreateCenterlines(inpd);
-
-    return centerlines;
-}
-
-vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
-{
-    if(vpd==NULL)
-        return NULL;
-
-    cvPolyData *src=new cvPolyData(vpd);
+    cvPolyData *src=new cvPolyData(inpd);
     cvPolyData *cleaned = NULL;
     cvPolyData *capped  = NULL;
-    int numCapCenterIDs;
-    int *capCenterIDs=NULL;
+    int numCapCenterIds;
+    int *capCenterIds=NULL;
 
     cleaned = sys_geom_Clean(src);
     delete src;
 
-    if ( sys_geom_cap(cleaned, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != SV_OK || numCapCenterIDs<2)
+    if ( sys_geom_cap(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1 ) != SV_OK)
     {
-        //        delete capped;
-        delete cleaned;
-        if (capped != NULL)
-          delete capped;
-        return NULL;
+      delete cleaned;
+      if (capped != NULL)
+        delete capped;
+      return NULL;
+    }
+    if (numCapCenterIds < 2)
+    {
+      delete cleaned;
+      if (capped != NULL)
+        delete capped;
+      return NULL;
     }
     delete cleaned;
 
+    vtkSmartPointer<vtkIdList> sourcePtIds = vtkSmartPointer<vtkIdList>::New();
+    vtkSmartPointer<vtkIdList> targetPtIds = vtkSmartPointer<vtkIdList>::New();
+
+    int capIdsGiven = 0;
+    if (sourceCapIds != NULL)
+    {
+      if (sourceCapIds->GetNumberOfIds() > 0)
+        capIdsGiven = 1;
+    }
+
+    if (!capIdsGiven)
+    {
+      sourcePtIds->InsertNextId(capCenterIds[0]);
+      for (int i=1; i<numCapCenterIds; i++)
+        targetPtIds->InsertNextId(capCenterIds[i]);
+    }
+    else
+    {
+      vtkSmartPointer<vtkCellLocator> locator =
+        vtkSmartPointer<vtkCellLocator>::New();
+      locator->SetDataSet(fullpd);
+      locator->BuildLocator();
+
+      int subId;
+      double distance;
+      double capPt[3];
+      double closestPt[3];
+      vtkIdType closestCell;
+      vtkSmartPointer<vtkGenericCell> genericCell =
+        vtkSmartPointer<vtkGenericCell>::New();
+
+      for (int i=0; i<numCapCenterIds; i++)
+      {
+        int ptId = capCenterIds[i];
+        capped->GetVtkPolyData()->GetPoint(ptId, capPt);
+
+        locator->FindClosestPoint(capPt,closestPt,genericCell,closestCell,
+          subId,distance);
+
+        int capFaceId = fullpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCell);
+
+        if (sourceCapIds->IsId(capFaceId) != -1)
+          sourcePtIds->InsertNextId(ptId);
+        else
+          targetPtIds->InsertNextId(ptId);
+      }
+    }
+
+    delete [] capCenterIds;
+
+    vtkPolyData* centerlines=CreateCenterlines(capped->GetVtkPolyData(),
+                                               sourcePtIds, targetPtIds);
+    delete capped;
+
+    return centerlines;
+}
+
+vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* inpd)
+{
+  // If given just a polydata, assume it is a wall, cap and get source and
+  // target points and then send to centerline extraction
+
+  // Cap the solid to get centerline ids
+  cvPolyData *src = new cvPolyData(inpd);
+  cvPolyData *cleaned = NULL;
+  cvPolyData *capped  = NULL;
+  int numCapCenterIds;
+  int *capCenterIds=NULL;
+
+  cleaned = sys_geom_Clean(src);
+
+  if ( sys_geom_cap(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1 ) != SV_OK)
+  {
+    delete cleaned;
+    if (capped != NULL)
+      delete capped;
+    return NULL;
+  }
+  if (numCapCenterIds < 2)
+  {
+    delete cleaned;
+    if (capped != NULL)
+      delete capped;
+    return NULL;
+  }
+  delete cleaned;
+
+  vtkSmartPointer<vtkIdList> sourcePtIds = vtkSmartPointer<vtkIdList>::New();
+  sourcePtIds->InsertNextId(capCenterIds[0]);
+  vtkSmartPointer<vtkIdList> targetPtIds = vtkSmartPointer<vtkIdList>::New();
+  for (int i=1; i<numCapCenterIds; i++)
+    targetPtIds->InsertNextId(capCenterIds[i]);
+
+  delete [] capCenterIds;
+  // capped and got ids
+
+  return CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+
+}
+
+
+vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* inpd,
+                                             vtkIdList *sourcePtIds,
+                                             vtkIdList *targetPtIds)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src = new cvPolyData(inpd);
     cvPolyData *tempCenterlines = NULL;
     cvPolyData *voronoi = NULL;
 
-    int *sources=new int[1];
-    sources[0]=capCenterIDs[0];
+    int numSourcePts = sourcePtIds->GetNumberOfIds();
+    int *sources=new int[numSourcePts];
+    for (int i=0; i<numSourcePts; i++)
+      sources[i]=sourcePtIds->GetId(i);
 
-    int *targets=new int[numCapCenterIDs-1];
-    for(int i=1;i<numCapCenterIDs;i++)
-        targets[i-1]= capCenterIDs[i];
+    int numTargetPts = targetPtIds->GetNumberOfIds();
+    int *targets=new int[numTargetPts];
+    for (int i=0; i<numTargetPts; i++)
+      targets[i]=targetPtIds->GetId(i);
 
-    if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != SV_OK )
+    if ( sys_geom_centerlines(src, sources, numSourcePts, targets, numTargetPts, &tempCenterlines, &voronoi) != SV_OK )
     {
-        delete capped;
+        delete src;
+        delete [] sources;
+        delete [] targets;
         return NULL;
     }
-    delete capped;
+    delete src;
+    delete voronoi;
+    delete [] sources;
+    delete [] targets;
 
-    cvPolyData *temp2Centerlines=NULL;
-    if ( sys_geom_separatecenterlines(tempCenterlines, &temp2Centerlines) != SV_OK )
+    cvPolyData *centerlines=NULL;
+    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != SV_OK )
     {
         delete tempCenterlines;
         return NULL;
     }
     delete tempCenterlines;
 
-    cvPolyData *centerlines=NULL;
+    return centerlines->GetVtkPolyData();
+}
+
+vtkPolyData* svModelUtils::MergeCenterlines(vtkPolyData* centerlinesPD)
+{
+    if(centerlinesPD==NULL)
+        return NULL;
+
+    cvPolyData *centerlines =new cvPolyData(centerlinesPD);
+
+    cvPolyData *merged_centerlines=NULL;
     int mergeblanked = 1;
-    if (sys_geom_mergecenterlines(temp2Centerlines, mergeblanked, &centerlines) != SV_OK )
+    if (sys_geom_mergecenterlines(centerlines, mergeblanked, &merged_centerlines) != SV_OK )
     {
-      delete temp2Centerlines;
+      delete centerlines;
       return NULL;
     }
-    delete temp2Centerlines;
+    delete centerlines;
 
-    return centerlines->GetVtkPolyData();
+    return merged_centerlines->GetVtkPolyData();
 }
 
 vtkPolyData* svModelUtils::CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original)
@@ -1062,11 +1222,10 @@ vtkSmartPointer<vtkPolyData> svModelUtils::GetThresholdRegion(vtkSmartPointer<vt
     return surfacer->GetOutput();
 }
 
-std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElement* modelElement)
+std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElement* modelElement,
+                                                             vtkSmartPointer<vtkPolyData> centerlinesPD)
 {
     std::vector<svPathElement*> pathElements;
-
-    vtkSmartPointer<vtkPolyData> centerlinesPD=CreateCenterlines(modelElement);
 
     if(centerlinesPD==NULL || !centerlinesPD->GetCellData()->HasArray("CenterlineIds"))
         return pathElements;

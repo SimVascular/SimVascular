@@ -1,11 +1,9 @@
-#===========================================================================
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
 #
-# Copyright (c) 2014-2015 The Regents of the University of California.
 # All Rights Reserved.
 #
-# RCS: @(#) $Id: dialog.tcl,v 1.14.2.1 2003/10/22 15:22:07 dkf Exp $
-# Copyright (c) 1992-1993 The Regents of the University of California.
-# Copyright (c) 1994-1997 Sun Microsystems, Inc.
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -29,8 +27,6 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-#===========================================================================
 
 # dialog.tcl --
 #

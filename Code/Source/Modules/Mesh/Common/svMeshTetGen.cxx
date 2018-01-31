@@ -1,3 +1,34 @@
+/* Copyright (c) Stanford University, The Regents of the University of
+ *               California, and others.
+ *
+ * All Rights Reserved.
+ *
+ * See Copyright-SimVascular.txt for additional details.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "svMeshTetGen.h"
 
 #include "svStringUtils.h"
@@ -163,12 +194,12 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     }
     else if(flag=="boundaryLayer")
     {
-        double H[2]={values[1],values[2]};
-        if(m_cvTetGenMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
-        {
-            msg="Failed in boudnary layer meshing";
-            return false;
-        }
+      double H[3]={values[1],values[2],values[3]};
+      if(m_cvTetGenMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
+      {
+          msg="Failed in boudnary layer meshing";
+          return false;
+      }
     }
     else if(flag=="sphereRefinement")
     {
@@ -200,7 +231,10 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
         if(m_cvTetGenMesh->WriteMesh(NULL,0)==SV_OK)
         {
             vtkPolyData* surfaceMesh=m_cvTetGenMesh->GetPolyData()->GetVtkPolyData();
-            vtkUnstructuredGrid* volumeMesh=m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+            vtkUnstructuredGrid* volumeMesh = NULL;
+            if (m_cvTetGenMesh->GetUnstructuredGrid() != NULL)
+              volumeMesh = m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+
             if(surfaceMesh==NULL)
             {
                 delete m_cvTetGenMesh;
@@ -210,8 +244,11 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
             }
             m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
             m_SurfaceMesh->DeepCopy(surfaceMesh);
-            m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
-            m_VolumeMesh->DeepCopy(volumeMesh);
+            if (volumeMesh!=NULL)
+            {
+              m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
+              m_VolumeMesh->DeepCopy(volumeMesh);
+            }
             delete m_cvTetGenMesh;//Get all data;ok to delete inner mesh
             m_cvTetGenMesh=NULL;
         }
@@ -309,6 +346,14 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[0]=std::stod(params[1]);
             values[1]=std::stod(params[2]);
             values[2]=std::stod(params[3]);
+        }
+        else if(paramSize==5 && params[0]=="boundarylayer")
+        {
+            flag="boundaryLayer";
+            values[0]=std::stod(params[1]);
+            values[1]=std::stod(params[2]);
+            values[2]=std::stod(params[3]);
+            values[3]=std::stod(params[4]);
         }
         else if(paramSize==3 && (params[0]=="localedgesize" || params[0]=="localsize"))
         {
