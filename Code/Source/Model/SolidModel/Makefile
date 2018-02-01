@@ -69,8 +69,8 @@ endif
 HDRS	= cvSolidModel.h
 CXXSRCS	= cvSolidModel.cxx
 
-DLLHDRS = cv_solid_init.h
-DLLSRCS = cv_solid_init.cxx
+DLLHDRS = cv_solid_init.h cv_solid_init_py.h
+DLLSRCS = cv_solid_init.cxx cv_solid_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)

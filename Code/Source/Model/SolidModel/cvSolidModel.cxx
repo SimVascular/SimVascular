@@ -41,6 +41,7 @@
 #include "cv_get_tcl_interp_init.h"
 #include <string.h>
 #include <assert.h>
+#include "Python.h"
 
 // Globals:
 // --------
@@ -103,6 +104,33 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
 
 }
 
+cvSolidModel* cvSolidModel::pyDefaultInstantiateSolidModel()
+{
+  // Get the solid model factory registrar associated with the python interpreter.
+  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  if (pySolidModelRegistrar==NULL)
+  {
+    fprintf(stdout,"Cannot get solidModelRegistrar from pySys");
+  }
+  cvSolidModel* solid = NULL;
+  if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
+      cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
+      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
+      cvSolidModel::gCurrentKernel == SM_KT_OCCT ||
+      cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID)
+      {
+        solid = (cvSolidModel *) (pySolidModelRegistrar->UseFactoryMethod( cvSolidModel::gCurrentKernel ));
+        if (solid == NULL) {
+		  fprintf( stdout, "Unable to create solid model kernel (%i)\n",cvSolidModel::gCurrentKernel);
+		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
+    }
+  } else {
+    fprintf( stdout, "current kernel is not valid (%i)\n",cvSolidModel::gCurrentKernel);
+    //Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
+  }
+  return solid;
+
+}
 // ----------
 // cvSolidModel
 // ----------

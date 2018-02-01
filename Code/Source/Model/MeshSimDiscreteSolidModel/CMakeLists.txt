@@ -32,13 +32,18 @@ set(lib ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
 set(export_directive discrete)
 set(export_file_name svDiscreteExports.h)
 
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
 set(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
 set(HDRS cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h)
 
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx)
+  add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx cv_discrete_init_py.cxx)
 else()
-  add_library(${lib} STATIC ${CXXSRCS} cv_discrete_init.cxx)
+  add_library(${lib} STATIC ${CXXSRCS} cv_discrete_init.cxx cv_discrete_init_py.cxx)
 endif()
 
 target_link_libraries(${lib}
@@ -74,3 +79,6 @@ if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
 			)
 	endif()
 endif()
+
+PYTHON_ADD_MODULE(pySolidDiscrete cv_discrete_init_py.cxx)
+target_link_libraries(pySolidDiscrete ${lib} ${PYTHON_LIBRARY})

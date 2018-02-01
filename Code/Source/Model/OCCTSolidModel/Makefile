@@ -42,8 +42,8 @@ CXXFLAGS += -DSV_EXPORT_OPENCASCADE_COMPILE
 HDRS	= cvOCCTSolidModel.h cv_occtsolid_utils.h
 CXXSRCS	= cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx
 
-DLLHDRS = cv_occt_init.h
-DLLSRCS = cv_occt_init.cxx
+DLLHDRS = cv_occt_init.h cv_occt_init_py.h
+DLLSRCS = cv_occt_init.cxx cv_occt_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_OpenCASCADE_SOLID_NAME)
 

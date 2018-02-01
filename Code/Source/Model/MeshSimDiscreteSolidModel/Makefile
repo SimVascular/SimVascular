@@ -61,9 +61,9 @@ HDRS	= cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h
 
 CXXSRCS	= cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx
 
-DLLHDRS = cv_discrete_init.h
+DLLHDRS = cv_discrete_init.h cv_discrete_init_py.h
 
-DLLSRCS = cv_discrete_init.cxx
+DLLSRCS = cv_discrete_init.cxx cv_discrete_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
