@@ -111,6 +111,7 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
   public:
 
   cvMeshSimMeshObject( Tcl_Interp *interp ); // default constructor
+  cvMeshSimMeshObject(); // default constructor for python
   cvMeshSimMeshObject( const cvMeshSimMeshObject& sm );  // copy constructor
   ~cvMeshSimMeshObject();
 
@@ -125,6 +126,7 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
   int InitTraversal();
   int Update();
   int Print();
+  int pyPrint();
   // the copy command probably doesn't work right!
   cvMeshObject *Copy() const;
 

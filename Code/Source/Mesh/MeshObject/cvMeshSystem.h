@@ -53,6 +53,8 @@ public:
   //  concrete implementations.
   static cvMeshObject* DefaultInstantiateMeshObject( Tcl_Interp *interp = NULL,
     char *const meshFileName = NULL, char *const solidFileName = NULL );
+  static cvMeshObject* DefaultInstantiateMeshObject(
+    char *const meshFileName = NULL, char *const solidFileName = NULL );
 
   // Methods that concrete implementations must provide for meshing system abstraction.
 
@@ -61,6 +63,7 @@ public:
 
 protected:
   virtual cvMeshObject* CreateMeshObject( Tcl_Interp *interp ) = 0;
+  virtual cvMeshObject* CreateMeshObject() = 0;
 
   static cvMeshObject::KernelType gCurrentKernel;
   static cvMeshSystem* gMeshSystems[cvMeshObject::KERNEL_MAX_TYPES];

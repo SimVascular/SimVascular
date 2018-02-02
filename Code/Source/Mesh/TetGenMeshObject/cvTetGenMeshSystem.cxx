@@ -75,3 +75,7 @@ cvMeshObject* cvTetGenMeshSystem::CreateMeshObject( Tcl_Interp *interp )
   return new cvTetGenMeshObject(interp);
 }
 
+cvMeshObject* cvTetGenMeshSystem::CreateMeshObject()
+{
+  return new cvTetGenMeshObject();
+}

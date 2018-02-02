@@ -63,6 +63,7 @@ char* cvMeshSystem::GetCurrentKernelName()
 
 int cvMeshSystem::SetCurrentKernel(cvMeshObject::KernelType kernel_type)
 {
+  fprintf(stdout,"setCk\n");
   switch (kernel_type) {
     case cvMeshObject::KERNEL_INVALID:
       gCurrentKernel = cvMeshObject::KERNEL_INVALID;
@@ -77,8 +78,10 @@ int cvMeshSystem::SetCurrentKernel(cvMeshObject::KernelType kernel_type)
         return SV_ERROR;
 
     case cvMeshObject::KERNEL_TETGEN:
+      fprintf(stdout,"setCkTet\n");
       if (gMeshSystems[gCurrentKernel] != NULL)
       {
+        fprintf(stdout,"setCkTetLoop\n");
 	gCurrentKernel = cvMeshObject::KERNEL_TETGEN;
         return SV_OK;
       }
@@ -156,3 +159,40 @@ cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject( Tcl_Interp *interp,
   return meshObject;
 }
 
+// ----------------------------
+// DefaultInstantiateMeshObject for python
+// ----------------------------
+
+cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject(
+  char *const meshFileName,
+  char *const solidFileName )
+{
+cvMeshSystem* meshSystem = NULL;
+cvMeshObject* meshObject = NULL;
+if (gCurrentKernel == cvMeshObject::KERNEL_MESHSIM || gCurrentKernel == cvMeshObject::KERNEL_TETGEN)
+{
+  if (gMeshSystems[gCurrentKernel] == NULL)
+  {
+    fprintf( stdout, "current kernel is not available");
+    return NULL;
+  }
+  meshSystem = gMeshSystems[gCurrentKernel];
+
+  meshObject = (cvMeshObject *) (meshSystem->CreateMeshObject());
+  if (meshObject == NULL)
+  {
+    fprintf( stdout, "Unable to create mesh object");
+  }
+  else
+  {
+    meshObject->SetMeshFileName( meshFileName );
+    meshObject->SetSolidFileName( solidFileName );
+  }
+}
+else
+{
+  fprintf(stdout,"current kernel is not valid");
+}
+
+return meshObject;
+}

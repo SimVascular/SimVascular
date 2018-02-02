@@ -61,6 +61,7 @@ public:
 
 protected:
   cvMeshObject* CreateMeshObject( Tcl_Interp *interp );
+  cvMeshObject* CreateMeshObject();
 
 private:
 

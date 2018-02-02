@@ -1,9 +1,7 @@
-/* Copyright (c) Stanford University, The Regents of the University of
- *               California, and others.
+/*=========================================================================
  *
+ * Copyright (c) 2014-2015 The Regents of the University of California.
  * All Rights Reserved.
- *
- * See Copyright-SimVascular.txt for additional details.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,35 +25,28 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *=========================================================================*/
+
+/** @file cv_tetgen_mesh_init.h
+ *  @brief Initiates TetGenMeshObject as a valid meshing type upon startup
+ *  @details The Tetgenmesh_Init is called upon startup of Simvascular
+ *  and registers the TetGenMeshObject within the Mesh System
+ *
+ *  @author Adam Updegrove
+ *  @author updega2@gmail.com
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu
  */
 
-#ifndef __CVMESHSIMMESHSYSTEM_H
-#define __CVMESHSIMMESHSYSTEM_H
+#ifndef __CVTETGEN_MESH_INIT_H
+#define __CVTETGEN_MESH_INIT_H
 
 #include "SimVascular.h"
-#include "svMeshSimMeshExports.h" // For exports
-#include "cvMeshSystem.h"
-#include "cvMeshSimMeshObject.h"
-#include "cvFactoryRegistrar.h"
+#include "svTetGenMeshExports.h" // For exports
+//#ifdef SV_USE_PYTHON
+#include "Python.h"
+extern "C" SV_EXPORT_TETGEN_MESH PyObject* Tetgenmesh_pyInit();
+//#endif
+#endif // __Tetgenmesh_Init
 
-class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshSystem : public cvMeshSystem {
-
-public:
-  cvMeshSimMeshSystem();
-  virtual ~cvMeshSimMeshSystem();
-
-  // Methods that concrete implementations must provide for meshing system abstraction.
-
-  int LogOn( char *const filename );
-  int LogOff();
-
-protected:
-  cvMeshObject* CreateMeshObject( Tcl_Interp *interp );
-  cvMeshObject* CreateMeshObject();
-
-private:
-
-};
-
-
-#endif // __CVMESHSIMMESHSYSTEM_H

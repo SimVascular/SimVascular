@@ -35,13 +35,17 @@
 set(lib ${SV_LIB_MESH_NAME})
 set(export_directive mesh)
 set(export_file_name svMeshObjectExports.h)
-
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+		    ${PYTHON_INCLUDE_DIR}
+		    ${PYTHON_INCLUDE_DIRS})
+endif()
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cvMeshObject.cxx cvMeshSystem.cxx)
 SET(HDRS cvMeshObject.h cvMeshSystem.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mesh_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mesh_init.cxx cv_mesh_init_py.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -77,3 +81,5 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+PYTHON_ADD_MODULE(pyMeshObject cv_mesh_init_py.cxx)
+target_link_libraries(pyMeshObject ${lib} ${PYTHON_LIBRARY})

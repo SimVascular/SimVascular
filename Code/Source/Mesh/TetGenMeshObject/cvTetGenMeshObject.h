@@ -99,6 +99,9 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   public:
 
   cvTetGenMeshObject( Tcl_Interp *interp ); // default constructor
+  #ifdef SV_USE_PYTHON
+  cvTetGenMeshObject(); // default constructor for python
+  #endif
 
   cvTetGenMeshObject( const cvTetGenMeshObject& sm); //copy constructor
 
@@ -110,6 +113,9 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
 
   int Update();
   int Print();
+  #ifdef SV_USE_PYTHON
+  int pyPrint();
+  #endif
   cvMeshObject *Copy() const;
 
   // Routines promoted to abstract class from concrete implementation

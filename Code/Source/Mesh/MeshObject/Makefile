@@ -58,9 +58,9 @@ HDRS	= cvMeshObject.h cvMeshSystem.h
 
 CXXSRCS	= cvMeshObject.cxx cvMeshSystem.cxx
 
-DLLHDRS = cv_mesh_init.h
+DLLHDRS = cv_mesh_init.h cv_mesh_init_py.h
 
-DLLSRCS = cv_mesh_init.cxx
+DLLSRCS = cv_mesh_init.cxx cv_mesh_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \

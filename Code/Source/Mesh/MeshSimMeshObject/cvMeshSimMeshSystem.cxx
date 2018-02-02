@@ -61,3 +61,8 @@ cvMeshObject* cvMeshSimMeshSystem::CreateMeshObject( Tcl_Interp *interp )
   return new cvMeshSimMeshObject(interp);
 }
 
+cvMeshObject* cvMeshSimMeshSystem::CreateMeshObject()
+{
+  return new cvMeshSimMeshObject();
+}
+
