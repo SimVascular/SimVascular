@@ -85,7 +85,9 @@ public:
   KernelType GetKernel() const {return adapt_kernel_;}
   //Instantiation function from SimVascular
   static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL, KernelType t = KERNEL_TETGEN);
+  #ifdef SV_USE_PYTHON
   static cvAdaptObject* DefaultInstantiateAdaptObject(KernelType t = KERNEL_TETGEN);
+  #endif
   //Called after Insantiation, create a cvMeshObject
   virtual int CreateInternalMeshObject(Tcl_Interp *interp,char *meshFileName,
       char *solidFileName)=0;

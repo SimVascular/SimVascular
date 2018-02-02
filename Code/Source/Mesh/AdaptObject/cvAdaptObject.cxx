@@ -36,6 +36,10 @@
 #include "cvMeshObject.h"
 #include "cv_misc_utils.h"
 
+#ifdef SV_USE_PYTHON
+#include "Python.h"
+#endif
+
 #include <string.h>
 #include <assert.h>
 
@@ -93,7 +97,7 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,
 // ----------------------------
 // DefaultInstantiateAdaptObject for python
 // ----------------------------
-
+#ifdef SV_USE_PYTHON
 cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject(KernelType t )
 {
   // Get the adapt object factory registrar associated with the python interpreter
@@ -118,3 +122,4 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject(KernelType t )
 
   return adaptor;
 }
+#endif
