@@ -365,7 +365,6 @@ int cvTetGenAdapt::CreateInternalMeshObject(
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s.LoadMesh('%s')",mesh_name,meshFileName);
-    fprintf(stdout,"CKInternal6\n");
     if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
     {
       fprintf(stderr,"Error loading mesh in internal object creation\n");
@@ -502,13 +501,11 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 
   if (sol_ != NULL)
     delete [] sol_;
-  fprintf(stdout,"tetgenCK\n");
   if (AdaptUtils_readArrayFromFile(fileName,"solution",sol_) != SV_OK)
   {
     fprintf(stderr,"Error: Couldn't read solution from file\n");
     return SV_ERROR;
   }
-  fprintf(stdout,"tetgenCK\n");
   if (inmesh_ != NULL)
   {
     int nVar = 5;//Number of variables in solution
@@ -739,11 +736,9 @@ int cvTetGenAdapt::ReadAvgSpeedFromMesh()
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
     return SV_ERROR;
   }
-  fprintf(stdout,"CHECKread\n");
   if (avgspeed_ != NULL)
     delete [] avgspeed_;
   char avgspeed_step[80];
-  fprintf(stdout,"CHECKread\n");
   sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
   if (AdaptUtils_checkArrayExists(inmesh_,0,avgspeed_step) != SV_OK)
   {

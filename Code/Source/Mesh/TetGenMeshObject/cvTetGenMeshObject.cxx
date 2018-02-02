@@ -865,14 +865,11 @@ int cvTetGenMeshObject::LoadMesh(char *filename,char *surfilename) {
   if (filename == NULL) {
     return SV_ERROR;
   }
-  fprintf(stdout,"checkTetO\n");
   if (volumemesh_ != NULL)
     volumemesh_->Delete();
-  fprintf(stdout,"checkTetO\n");
   volumemesh_ = vtkUnstructuredGrid::New();
   if (TGenUtils_LoadMesh(filename,volumemesh_) != SV_OK)
     return SV_ERROR;
-    fprintf(stdout,"checkTetO\n");
   if (surfilename != 0)
   {
     if (surfacemesh_ != NULL)
@@ -882,7 +879,6 @@ int cvTetGenMeshObject::LoadMesh(char *filename,char *surfilename) {
     if (PlyDtaUtils_ReadNative(surfilename,surfacemesh_) != SV_OK)
       return SV_ERROR;
   }
-  fprintf(stdout,"checkTetO\n");
   return SV_OK;
 
 }
@@ -1018,17 +1014,13 @@ int cvTetGenMeshObject::NewMesh() {
  */
 
 int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values) {
-  fprintf(stdout,"checktetgen\n");
   if(!strncmp(flags,"GlobalEdgeSize",14)) {            //Global edge size
-    fprintf(stdout,"checktetgen\n");
        if (numValues < 1)
    return SV_ERROR;
 
-      fprintf(stdout,"checktetgen\n");
       meshoptions_.maxedgesize=values[0];
   }
   else if(!strncmp(flags,"LocalEdgeSize",13)) {
-    fprintf(stdout,"checktetgen\n");
 
       if (numValues < 2)
       {
@@ -1056,10 +1048,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   else if(!strncmp(flags,"VolumeMeshFlag",14)) {
       if (numValues < 1)
   return SV_ERROR;
-      fprintf(stdout,"values before: %d\n",meshoptions_.volumemeshflag);
-      fprintf(stdout,"values assigned: %d\n",values[0]);
       meshoptions_.volumemeshflag = values[0];
-      fprintf(stdout,"values after: %d\n",meshoptions_.volumemeshflag);
   }
   else if(!strncmp(flags,"QualityRatio",12)) {//q
       if (numValues < 1)
@@ -1144,7 +1133,6 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
   }
-  fprintf(stdout,"meshoptions_.volumemeshflag %d\n",meshoptions_.volumemeshflag);
   return SV_OK;
 }
 
@@ -1411,7 +1399,6 @@ int cvTetGenMeshObject::GenerateMesh() {
       //If we are doing boundary layer mesh, it gets complicated!
       if (meshoptions_.boundarylayermeshflag)
       {
-        fprintf(stdout,"checkBLMesh\n");
         if (GenerateBoundaryLayerMesh() != SV_OK)
           return SV_ERROR;
 
@@ -1473,7 +1460,6 @@ int cvTetGenMeshObject::GenerateMesh() {
   }
 
   //Here we set all the mesh flags for TetGen!
-  fprintf(stdout,"meshoptions_.volumemeshflag %d\n",meshoptions_.volumemeshflag);
   if (meshoptions_.volumemeshflag)
   {
     tetgenbehavior* tgb = new tetgenbehavior;
@@ -1622,10 +1608,8 @@ int cvTetGenMeshObject::GenerateMesh() {
 
 int cvTetGenMeshObject::WriteMesh(char *filename, int smsver) {
   // must have created mesh
-  fprintf(stdout,"volume: %d; bl: %d\n",meshoptions_.volumemeshflag,meshoptions_.boundarylayermeshflag);
   if (meshoptions_.volumemeshflag && !meshoptions_.boundarylayermeshflag)
   {
-    fprintf(stdout, "checkWriteMesh\n");
     if (outmesh_ == NULL) {
       return SV_ERROR;
     }

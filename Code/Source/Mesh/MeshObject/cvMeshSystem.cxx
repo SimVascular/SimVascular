@@ -63,7 +63,6 @@ char* cvMeshSystem::GetCurrentKernelName()
 
 int cvMeshSystem::SetCurrentKernel(cvMeshObject::KernelType kernel_type)
 {
-  fprintf(stdout,"setCk\n");
   switch (kernel_type) {
     case cvMeshObject::KERNEL_INVALID:
       gCurrentKernel = cvMeshObject::KERNEL_INVALID;
@@ -78,10 +77,8 @@ int cvMeshSystem::SetCurrentKernel(cvMeshObject::KernelType kernel_type)
         return SV_ERROR;
 
     case cvMeshObject::KERNEL_TETGEN:
-      fprintf(stdout,"setCkTet\n");
       if (gMeshSystems[gCurrentKernel] != NULL)
       {
-        fprintf(stdout,"setCkTetLoop\n");
 	gCurrentKernel = cvMeshObject::KERNEL_TETGEN;
         return SV_OK;
       }

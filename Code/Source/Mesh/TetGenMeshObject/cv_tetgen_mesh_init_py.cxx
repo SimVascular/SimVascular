@@ -133,10 +133,8 @@ initpyMeshTetgen(void)
 
   // Associate the mesh registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
-fprintf(stdout,"checkMeshTetgen.\n");
 	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod =
     (MeshKernelRegistryMethodPtr) PySys_GetObject("MeshSystemRegistrar");
-fprintf(stdout,"checkMeshTetgen.\n");
   if (pMeshKernelRegistryMethod != NULL) {
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
@@ -147,20 +145,17 @@ fprintf(stdout,"checkMeshTetgen.\n");
   else {
     return;
   }
-  fprintf(stdout,"checkMeshTetgen.\n");
   //Initialize Tetgenutils
   if (TGenUtils_Init() != SV_OK) {
     return;
   }
   PyObject* pythonC;
-  fprintf(stdout,"checkMeshTetgen.\n");
   pythonC = Py_InitModule("pyMeshTetgen",MeshTetgen_methods);
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
     return;
   }
-  fprintf(stdout,"checkMeshTetgen.\n");
 }
 
 PyObject*  TetGenMesh_AvailableCmd(PyObject* self, PyObject* args)
