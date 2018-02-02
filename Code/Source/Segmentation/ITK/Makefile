@@ -46,8 +46,8 @@ CXXFLAGS += -DSV_EXPORT_SEGITK_COMPILE
 HDRS	=  cvITKUtils.h cvITKLevelSet.h
 CXXSRCS	=  cvITKUtils.cxx cvITKLevelSet.cxx
 
-DLLHDRS = cv_ITKUtils_init.h cv_ITKLset2d_init.h cv_ITKLset3d_init.h cv_ITKLset_init.h
-DLLSRCS = cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx  cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx
+DLLHDRS = cv_ITKLset_init_py.h  cv_ITKUtils_init_py.h cv_ITKLset2d_init_py.h cv_ITKLset3d_init_py.h cv_ITKUtils_init.h cv_ITKLset2d_init.h cv_ITKLset3d_init.h cv_ITKLset_init.h 
+DLLSRCS = cv_ITKLset_init_py.cxx  cv_ITKUtils_init_py.cxx cv_ITKLset2d_init_py.cxx  cv_ITKLset3d_init_py.cxx cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx  cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx 
 
 TARGET_LIB_NAME = $(SV_LIB_ITK_LSET_NAME)
 
