@@ -70,9 +70,9 @@ HDRS	= cvTetGenAdapt.h
 
 CXXSRCS = cvTetGenAdapt.cxx
 
-DLLHDRS = cv_tetgen_adapt_init.h
+DLLHDRS = cv_tetgen_adapt_init.h cv_tetgen_adapt_init_py.h
 
-DLLSRCS = cv_tetgen_adapt_init.cxx
+DLLSRCS = cv_tetgen_adapt_init.cxx cv_tetgen_adapt_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT) \
           $(SOLVERIO_LIB)

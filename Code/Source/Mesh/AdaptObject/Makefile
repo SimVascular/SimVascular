@@ -71,9 +71,9 @@ HDRS	= cvAdaptObject.h cv_adapt_utils.h eispack.h
 
 CXXSRCS	= cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx
 
-DLLHDRS = cv_adapt_init.h
+DLLHDRS = cv_adapt_init.h cv_adapt_init_py.h
 
-DLLSRCS = cv_adapt_init.cxx
+DLLSRCS = cv_adapt_init.cxx cv_adapt_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_ADAPTOR_NAME)
 

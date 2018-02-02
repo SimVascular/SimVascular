@@ -59,6 +59,11 @@
 #include "cvVTK.h"
 #include "cv_globals.h"
 
+#ifdef SV_USE_PYTHON
+#include "Python.h"
+#include "cv_mesh_init_py.h"
+#endif
+
 #include <iostream>
 
 cvMeshSimAdapt::cvMeshSimAdapt()
@@ -226,7 +231,84 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   return SV_OK;
 
 }
+#ifdef SV_USE_PYTHON
+// -----------------------
+//  CreateInternalMeshObject for python
+// -----------------------
+int cvMeshSimAdapt::CreateInternalMeshObject(
+		char *meshFileName,
+		char *solidFileName)
+{
+  if (meshobject_ != NULL)
+  {
+    fprintf(stderr,"Cannot create a mesh object, one already exists\n");
+    return SV_ERROR;
+  }
 
+  char* mesh_name = "/adapt/internal/meshobject";
+
+  char evalmestr[1024];
+
+  if ( gRepository->Exists(mesh_name) ) {
+    fprintf(stderr,"Object %s already exists\n",mesh_name);
+    return SV_ERROR;
+  }
+
+  PyObject* Globals;
+  PyMapping_SetItemString(globals, "pyMeshObject", PyImport_ImportModule("pyMeshObject"));
+
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"pyMeshObject.mesh_setKernel('MeshSim')");
+  if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"%s=pyMeshObject.pyMeshObject()",mesh_name);
+  if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+  sprintf(evalmestr,"%s.mesh_newObject(%s)",mesh_name);
+  if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+
+  if (solidFileName != NULL)
+  {
+    evalmestr[0]='\0';
+    sprintf(evalmestr,"%s.LoadModel(%s)",mesh_name,solidFileName);
+
+    if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+      fprintf(stderr,"Error loading solid model in internal object creation\n");
+      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return SV_ERROR;
+    }
+  }
+
+  if (meshFileName != NULL)
+  {
+    evalmestr[0]='\0';
+    ssprintf(evalmestr,"%s.LoadModel(%s)",mesh_name,meshFileName);
+
+    if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+      fprintf(stderr,"Error loading mesh in internal object creation\n");
+      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return SV_ERROR;
+    }
+  }
+
+  meshobject_ = dynamic_cast<cvMeshSimMeshObject*>(gRepository->GetObject(mesh_name));
+
+  return SV_OK;
+
+}
+#endif
 #else
 
 // -----------------------
@@ -292,7 +374,84 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 
  return SV_OK;
 }
+#ifdef SV_USE_PYTHON
+// -----------------------
+//  CreateInternalMeshObject for python
+// -----------------------
+int cvMeshSimAdapt::CreateInternalMeshObject(
+		char *meshFileName,
+		char *solidFileName)
+{
+  if (meshobject_ != NULL)
+  {
+    fprintf(stderr,"Cannot create a mesh object, one already exists\n");
+    return SV_ERROR;
+  }
 
+  char* mesh_name = "/adapt/internal/meshobject";
+
+  char evalmestr[1024];
+
+  if ( gRepository->Exists(mesh_name) ) {
+    fprintf(stderr,"Object %s already exists\n",mesh_name);
+    return SV_ERROR;
+  }
+
+  PyObject* Globals;
+  PyMapping_SetItemString(globals, "pyMeshObject", PyImport_ImportModule("pyMeshObject"));
+
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"pyMeshObject.mesh_setKernel('MeshSim')");
+  if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"%s=pyMeshObject.pyMeshObject()",mesh_name);
+  if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+  sprintf(evalmestr,"%s.mesh_newObject(%s)",mesh_name);
+  if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+
+  if (solidFileName != NULL)
+  {
+    evalmestr[0]='\0';
+    sprintf(evalmestr,"%s.LoadModel(%s)",mesh_name,solidFileName);
+
+    if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+      fprintf(stderr,"Error loading solid model in internal object creation\n");
+      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return SV_ERROR;
+    }
+  }
+
+  if (meshFileName != NULL)
+  {
+    evalmestr[0]='\0';
+    ssprintf(evalmestr,"%s.LoadModel(%s)",mesh_name,meshFileName);
+
+    if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+      fprintf(stderr,"Error loading mesh in internal object creation\n");
+      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return SV_ERROR;
+    }
+  }
+
+  meshobject_ = dynamic_cast<cvMeshSimMeshObject*>(gRepository->GetObject(mesh_name));
+
+  return SV_OK;
+
+}
+#endif
 #endif
 
 // -----------------------
