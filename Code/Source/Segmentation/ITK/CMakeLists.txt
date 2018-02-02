@@ -37,11 +37,9 @@ set(export_file_name svSegITKExports.h)
 
 list(APPEND PLUGINLIBS ${lib})
 if(SV_USE_PYTHON)
-	find_program(PYTHON “python”)
-	find_package(PythonLibs REQUIRED)
 	include_directories(${PYTHON_INCLUDE_PATH}
-	  ${PYTHON_INCLUDE_DIR}
-	  ${PYTHON_INCLUDE_DIRS})
+		    ${PYTHON_INCLUDE_DIR}
+		    ${PYTHON_INCLUDE_DIRS})
 endif()
 
 add_subdirectory(Include)
