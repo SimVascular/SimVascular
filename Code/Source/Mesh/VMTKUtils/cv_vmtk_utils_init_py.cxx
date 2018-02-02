@@ -60,6 +60,7 @@
 // -----------
 #ifdef SV_USE_PYTHON
 #ifdef SV_USE_VMTK
+PyObject* PyRunTimeErr;
 PyMODINIT_FUNC initpyVMTKUtils();
 
 PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args);

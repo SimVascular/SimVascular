@@ -67,6 +67,7 @@
 
 // Prototypes:
 // -----------
+PyObject* PyRunTimeErr;
 PyObject* MMG_RemeshCmd( PyObject* self, PyObject* args);
 
 PyMethodDef Mmgmesh_methods[]=
