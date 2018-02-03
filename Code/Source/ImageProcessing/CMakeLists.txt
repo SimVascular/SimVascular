@@ -37,6 +37,11 @@ set(export_directive image)
 set(export_file_name svImageExports.h)
 
 list(APPEND CORELIBS ${lib})
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
@@ -51,7 +56,7 @@ set(HDRS cv_image.h cv_img_offsets.h
   cv_mask_image_in_place.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_image_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS}  cv_image_init_py.cxx cv_image_init.cxx )
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -83,3 +88,6 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+
+PYTHON_ADD_MODULE(pyImage cv_image_init_py.cxx)
+target_link_libraries(pyImage ${lib} ${PYTHON_LIBRARY})
