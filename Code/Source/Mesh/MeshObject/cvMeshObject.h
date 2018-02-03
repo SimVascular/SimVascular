@@ -95,6 +95,7 @@ public:
   //Common functions for abstract base class
   virtual int Update() = 0;
   virtual int Print() = 0;
+  virtual int pyPrint() = 0;
   virtual cvMeshObject *Copy() const = 0;
 
   // Routines promoted to abstract class from concrete implementation

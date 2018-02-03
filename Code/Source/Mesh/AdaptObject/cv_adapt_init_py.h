@@ -29,53 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVMESHSYSTEM_H
-#define __CVMESHSYSTEM_H
+#ifndef __CVADAPT_INIT_H
+#define __CVADAPT_INIT_H
 
 #include "SimVascular.h"
-#include "svMeshObjectExports.h"
-#include "cvMeshObject.h"
+#include "svAdaptorExports.h" // For exports
 
-class SV_EXPORT_MESH cvMeshSystem {
+extern "C" SV_EXPORT_ADAPTOR int Adapt_pyInit();
 
-public:
-  cvMeshSystem();
-  virtual ~cvMeshSystem();
-
-  static cvMeshSystem* GetCurrentKernel();
-  static cvMeshObject::KernelType GetCurrentKernelType() { return gCurrentKernel; }
-  static char* GetCurrentKernelName();
-  static int SetCurrentKernel( cvMeshObject::KernelType kernel_type );
-
-  static int RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSystem* pKernel );
-
-  // Mesh object factory method that delegates creation of meshes to the
-  //  concrete implementations.
-  #ifdef SV_USE_TCL
-  static cvMeshObject* DefaultInstantiateMeshObject( Tcl_Interp *interp = NULL,
-    char *const meshFileName = NULL, char *const solidFileName = NULL );
-  #endif
-  #ifdef SV_USE_PYTHON
-  static cvMeshObject* DefaultInstantiateMeshObject(
-    char *const meshFileName = NULL, char *const solidFileName = NULL );
-  #endif
-  // Methods that concrete implementations must provide for meshing system abstraction.
-
-  virtual int LogOn( char *const filename ) = 0;
-  virtual int LogOff() = 0;
-
-protected:
-  #ifdef SV_USE_TCL
-  virtual cvMeshObject* CreateMeshObject( Tcl_Interp *interp ) = 0;
-  #endif
-  #ifdef SV_USE_PYTHON
-  virtual cvMeshObject* CreateMeshObject() = 0;
-  #endif
-
-  static cvMeshObject::KernelType gCurrentKernel;
-  static cvMeshSystem* gMeshSystems[cvMeshObject::KERNEL_MAX_TYPES];
-};
-
-typedef int (*MeshKernelRegistryMethodPtr)(cvMeshObject::KernelType kernel_type, cvMeshSystem* pKernel);
-
-#endif // __CVMESHSYSTEM_H
+#endif // __CVADAPT_INIT_H

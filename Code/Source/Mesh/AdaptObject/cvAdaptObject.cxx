@@ -36,6 +36,10 @@
 #include "cvMeshObject.h"
 #include "cv_misc_utils.h"
 
+#ifdef SV_USE_PYTHON
+#include "Python.h"
+#endif
+
 #include <string.h>
 #include <assert.h>
 
@@ -58,7 +62,7 @@ cvAdaptObject::~cvAdaptObject()
 // ----------------------------
 // DefaultInstantiateAdaptObject
 // ----------------------------
-
+#ifdef SV_USE_TCL
 cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,KernelType t )
 {
   // Get the adapt object factory registrar associated with this Tcl interpreter.
@@ -89,4 +93,33 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,
 
   return adaptor;
 }
+#endif
+// ----------------------------
+// DefaultInstantiateAdaptObject for python
+// ----------------------------
+#ifdef SV_USE_PYTHON
+cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject(KernelType t )
+{
+  // Get the adapt object factory registrar associated with the python interpreter
+  cvFactoryRegistrar* adaptObjectRegistrar;
+  adaptObjectRegistrar = (cvFactoryRegistrar *) PySys_GetObject("AdaptObjectRegistrar");
+  if (adaptObjectRegistrar==NULL)
+  {
+    fprintf(stdout,"Cannot get AdaptObjectRegistrar from pySys");
+  }
+  cvAdaptObject* adaptor = NULL;
+  if (t == KERNEL_TETGEN ||
+      t == KERNEL_MESHSIM)
+  {
+    adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( t ));
+    if (adaptor == NULL) {
+		  fprintf( stdout, "Unable to create adaptor object for kernel (%i)\n",cvAdaptObject::gCurrentKernel);
+    }
 
+  } else {
+    fprintf( stdout, "current kernel is not valid (%i)\n",t);
+  }
+
+  return adaptor;
+}
+#endif

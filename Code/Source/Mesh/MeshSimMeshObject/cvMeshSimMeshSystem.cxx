@@ -56,8 +56,17 @@ int cvMeshSimMeshSystem::LogOff()
   return SV_OK;
 }
 
+#ifdef SV_USE_TCL
 cvMeshObject* cvMeshSimMeshSystem::CreateMeshObject( Tcl_Interp *interp )
 {
   return new cvMeshSimMeshObject(interp);
 }
+#endif
+
+#ifdef SV_USE_PYTHON
+cvMeshObject* cvMeshSimMeshSystem::CreateMeshObject()
+{
+  return new cvMeshSimMeshObject();
+}
+#endif
 

@@ -123,7 +123,7 @@ int cvMeshSystem::RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSy
 // registered in the repository.  Subsequent cvMeshSystem lookup's
 // currently DO NOT check for NULL values.  The idea is that objects
 // are checked for validity *before* they get registered.
-
+#ifdef SV_USE_TCL
 cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject( Tcl_Interp *interp,
                                                           char *const meshFileName,
                                                           char *const solidFileName )
@@ -155,4 +155,42 @@ cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject( Tcl_Interp *interp,
 
   return meshObject;
 }
+#endif
+// ----------------------------
+// DefaultInstantiateMeshObject for python
+// ----------------------------
+#ifdef SV_USE_PYTHON
+cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject(
+  char *const meshFileName,
+  char *const solidFileName )
+{
+cvMeshSystem* meshSystem = NULL;
+cvMeshObject* meshObject = NULL;
+if (gCurrentKernel == cvMeshObject::KERNEL_MESHSIM || gCurrentKernel == cvMeshObject::KERNEL_TETGEN)
+{
+  if (gMeshSystems[gCurrentKernel] == NULL)
+  {
+    fprintf( stdout, "current kernel is not available");
+    return NULL;
+  }
+  meshSystem = gMeshSystems[gCurrentKernel];
 
+  meshObject = (cvMeshObject *) (meshSystem->CreateMeshObject());
+  if (meshObject == NULL)
+  {
+    fprintf( stdout, "Unable to create mesh object");
+  }
+  else
+  {
+    meshObject->SetMeshFileName( meshFileName );
+    meshObject->SetSolidFileName( solidFileName );
+  }
+}
+else
+{
+  fprintf(stdout,"current kernel is not valid");
+}
+
+return meshObject;
+}
+#endif
