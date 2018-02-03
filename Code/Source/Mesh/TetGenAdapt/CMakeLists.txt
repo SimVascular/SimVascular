@@ -41,7 +41,9 @@ include_directories(${TETGEN_INCLUDE_DIR})
 set(HDRS cvTetGenAdapt.h)
 set(CXXSRCS cvTetGenAdapt.cxx)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_adapt_init.cxx cv_tetgen_adapt_init_py.cxx)
+if(SV_USE_TCL)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_adapt_init.cxx)
+endif()
 
 target_link_libraries(${lib}
 	${ZLIB_LIBRARY} ${VTK_LIBRARIES}
@@ -84,5 +86,7 @@ if(SV_INSTALL_HEADERS)
     )
 endif()
 
-PYTHON_ADD_MODULE(pyTetGenAdapt cv_tetgen_adapt_init_py.cxx)
-target_link_libraries(pyTetGenAdapt ${lib} ${PYTHON_LIBRARY})
+if(SV_USE_PYTHON)
+  PYTHON_ADD_MODULE(pyTetGenAdapt cv_tetgen_adapt_init_py.cxx)
+  target_link_libraries(pyTetGenAdapt ${lib} ${PYTHON_LIBRARY})
+endif()

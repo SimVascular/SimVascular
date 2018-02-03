@@ -89,9 +89,17 @@ HDRS	= cvMeshSimAdapt.h cvAdaptHelp.h
 
 CXXSRCS = cvMeshSimAdapt.cxx
 
-DLLHDRS = cv_meshsim_adapt_init.h cv_meshsim_adapt_init_py.h
+if(SV_USE_TCL)
+  DLLHDRS = cv_meshsim_adapt_init.h
+elseif(SV_USE_PYTON)
+  DDLHDRS = cv_meshsim_adapt_init_py.h
+endif()
 
-DLLSRCS = cv_meshsim_adapt_init.cxx cv_meshsim_adapt_init_py.cxx
+if(SV_USE_TCL)
+  DLLSRCS = cv_meshsim_adapt_init.cxx
+elseif(SV_USE_PYTHON)
+  DLLSRCS = cv_meshsim_adapt_init_py.cxx
+endif()
 
 DLLLIBS +=    $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT) \
               $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \

@@ -45,7 +45,9 @@ include_directories(${TETGEN_INCLUDE_DIR})
 SET(CXXSRCS cvTetGenMeshObject.cxx cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx)
 SET(HDRS cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_mesh_init.cxx cv_tetgen_mesh_init_py.cxx)
+if(SV_USE_TCL)
+  add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_mesh_init.cxx)
+endif()
 
 if(SV_USE_VMTK)
   SET(OPTLIBS ${SV_LIB_VMTK_UTILS_NAME})
@@ -92,5 +94,8 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
-PYTHON_ADD_MODULE(pyMeshTetgen cv_tetgen_mesh_init_py.cxx)
-target_link_libraries(pyMeshTetgen ${lib} ${PYTHON_LIBRARY})
+
+if(SV_USE_PYTHON)
+  PYTHON_ADD_MODULE(pyMeshTetgen cv_tetgen_mesh_init_py.cxx)
+  target_link_libraries(pyMeshTetgen ${lib} ${PYTHON_LIBRARY})
+endif()

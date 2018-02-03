@@ -78,9 +78,17 @@ HDRS	= cvMeshSimMeshObject.h cvMeshSimMeshSystem.h
 CXXSRCS	= cvMeshSimMeshObject.cxx \
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx
 
-DLLHDRS = cv_meshsim_mesh_init.h cv_meshsim_mesh_init_py.h
+if(SV_USE_TCL)
+  DLLHDRS = cv_meshsim_mesh_init.h
+elseif(SV_USE_PYTHON)
+  DLLHDRS = cv_meshsim_mesh_init_py.h
+endif()
 
-DLLSRCS = cv_meshsim_mesh_init.cxx cv_meshsim_mesh_init_py.cxx
+if(SV_USE_TCL)
+  DLLSRCS = cv_meshsim_mesh_init.cxx
+elseif(SV_USE_PYTHON)
+  DLLSRCS = cv_meshsim_mesh_init_py.cxx
+endif()
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \

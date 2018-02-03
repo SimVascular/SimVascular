@@ -32,21 +32,23 @@ set(lib ${SV_LIB_ADAPTOR_NAME})
 set(export_directive adaptor)
 set(export_file_name svAdaptorExports.h)
 
-#if(SV_USE_PYTHON)
-#	include_directories(${PYTHON_INCLUDE_PATH}
-#		    ${PYTHON_INCLUDE_DIR}
-#		    ${PYTHON_INCLUDE_DIRS})
-#endif()
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+		    ${PYTHON_INCLUDE_DIR}
+		    ${PYTHON_INCLUDE_DIRS})
+endif()
 
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx)
 set(HDRS cvAdaptObject.h cv_adapt_utils.h eispack.h)
 
-if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS} cv_adapt_init.cxx )
-else()
-  add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_adapt_init.cxx )
+if(SV_USE_TCL)
+	if(SV_USE_MESHSIM_SHARED_LIBRARIES)
+  		add_library(${lib} SHARED ${CXXSRCS} cv_adapt_init.cxx )
+	else()
+  		add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_adapt_init.cxx )
+	endif()
 endif()
 
 target_link_libraries(${lib}
@@ -85,5 +87,8 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
 endif()
+
+if(SV_USE_PYTHON)
 PYTHON_ADD_MODULE(pyMeshAdapt cv_adapt_init_py.cxx)
 target_link_libraries(pyMeshAdapt ${lib} ${PYTHON_LIBRARY})
+endif()

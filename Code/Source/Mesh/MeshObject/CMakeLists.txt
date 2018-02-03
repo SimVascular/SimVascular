@@ -45,7 +45,9 @@ LIST(APPEND CORELIBS ${lib})
 SET(CXXSRCS cvMeshObject.cxx cvMeshSystem.cxx)
 SET(HDRS cvMeshObject.h cvMeshSystem.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mesh_init.cxx cv_mesh_init_py.cxx)
+if(SV_USE_TCL)
+	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mesh_init.cxx)
+endif()
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -81,5 +83,7 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
-PYTHON_ADD_MODULE(pyMeshObject cv_mesh_init_py.cxx)
-target_link_libraries(pyMeshObject ${lib} ${PYTHON_LIBRARY})
+if(SV_USE_PYTHON)
+	PYTHON_ADD_MODULE(pyMeshObject cv_mesh_init_py.cxx)
+	target_link_libraries(pyMeshObject ${lib} ${PYTHON_LIBRARY})
+endif()

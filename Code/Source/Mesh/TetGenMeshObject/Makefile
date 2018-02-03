@@ -71,9 +71,17 @@ HDRS	= cvTetGenMeshObject.h cvTetGenMeshSystem.h \
 CXXSRCS	= cvTetGenMeshObject.cxx \
           cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx
 
-DLLHDRS = cv_tetgen_mesh_init.h cv_tetgen_mesh_init_py.h
+if(SV_USE_TCL)
+  DLLHDRS = cv_tetgen_mesh_init.h
+elseif(SV_USE_PYTHON)
+  DLLHDRS = cv_tetgen_mesh_init_py.h
+endif()
 
-DLLSRCS = cv_tetgen_mesh_init.cxx cv_tetgen_mesh_init_py.cxx
+if(SV_USE_TCL)
+  DLLSRCS = cv_tetgen_mesh_init.cxx
+elseif(SV_USE_PYTHON)
+  DLLSRCS = cv_tetgen_mesh_init_py.cxx
+endif()
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \

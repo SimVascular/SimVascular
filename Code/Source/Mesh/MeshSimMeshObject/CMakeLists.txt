@@ -41,10 +41,12 @@ set(CXXSRCS cvMeshSimMeshObject.cxx
 set(HDRS cvMeshSimMeshObject.h
   cvMeshSimMeshSystem.h)
 
-if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx cv_meshsim_mesh_init_py.cxx)
-else()
-  add_library(${lib} STATIC ${CXXSRCS} cv_meshsim_mesh_init.cxx cv_meshsim_mesh_init_py.cxx)
+if(SV_USE_TCL)
+  if(SV_USE_MESHSIM_SHARED_LIBRARIES)
+    add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+  else()
+    add_library(${lib} STATIC ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+  endif()
 endif()
 
 if(SV_USE_ADAPTOR)
@@ -98,6 +100,7 @@ if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
   		)
   endif()
 endif()
-
-PYTHON_ADD_MODULE(pyMeshSim cv_meshsim_mesh_init_py.cxx)
-target_link_libraries(pyMeshSim ${lib} ${PYTHON_LIBRARY})
+if(SV_USE_PYTHON)
+  PYTHON_ADD_MODULE(pyMeshSim cv_meshsim_mesh_init_py.cxx)
+  target_link_libraries(pyMeshSim ${lib} ${PYTHON_LIBRARY})
+endif()
