@@ -38,10 +38,18 @@ set(export_file_name svPolyDataSolidExports.h)
 
 list(APPEND CORELIBS ${lib})
 
+if(SV_USE_PYTHON)
+	find_program(PYTHON “python”)
+	find_package(PythonLibs REQUIRED)
+	include_directories(${PYTHON_INCLUDE_PATH}
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
+
 set(CXXSRCS cvPolyDataSolid.cxx cv_polydatasolid_utils.cxx vtkGetBoundaryFaces.cxx)
 set(HDRS cvPolyDataSolid.h cv_polydatasolid_utils.h vtkGetBoundaryFaces.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_polydatasolid_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_polydatasolid_init.cxx cv_polydatasolid_init_py.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -79,4 +87,5 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
-
+PYTHON_ADD_MODULE(pySolidPolydata cv_polydatasolid_init_py.cxx)
+target_link_libraries(pySolidPolydata ${lib} ${PYTHON_LIBRARY})

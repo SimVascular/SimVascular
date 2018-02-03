@@ -54,8 +54,8 @@ CXXSRCS	= cvPolyDataSolid.cxx \
           cv_polydatasolid_utils.cxx \
           vtkGetBoundaryFaces.cxx
 
-DLLHDRS = cv_polydatasolid_init.h
-DLLSRCS = cv_polydatasolid_init.cxx
+DLLHDRS = cv_polydatasolid_init.h cv_polydatasolid_init_py.h
+DLLSRCS = cv_polydatasolid_init.cxx cv_polydatasolid_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
 	  $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \

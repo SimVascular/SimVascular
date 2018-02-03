@@ -56,9 +56,9 @@ HDRS	= cvMeshSimSolidModel.h
 
 CXXSRCS	= cvMeshSimSolidModel.cxx
 
-DLLHDRS = cv_meshsimsolid_init.h
+DLLHDRS = cv_meshsimsolid_init.h cv_meshsimsolid_init_py.h
 
-DLLSRCS = cv_meshsimsolid_init.cxx
+DLLSRCS = cv_meshsimsolid_init.cxx cv_meshsimsolid_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
