@@ -83,6 +83,7 @@ int Solid_pyInit()
 {
   //Py_Initialize();
   initpySolid2();
+  return 0;
 }
 
 typedef struct

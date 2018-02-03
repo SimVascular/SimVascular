@@ -113,6 +113,7 @@ void DeleteAdapt( pyAdaptObject* self );
 int Adapt_pyInit()
 {
   initpyMeshAdapt();
+  return 0;
 }
 static int pyAdaptObject_init(pyAdaptObject* self, PyObject* args)
 {
