@@ -36,11 +36,17 @@ set(export_directive mmg)
 set(export_file_name svMMGExports.h)
 
 include_directories(${MMG_INCLUDE_DIR})
-
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+		    ${PYTHON_INCLUDE_DIR}
+		    ${PYTHON_INCLUDE_DIRS})
+endif()
 SET(CXXSRCS cv_mmg_mesh_utils.cxx)
 SET(HDRS cv_mmg_mesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mmg_mesh_init.cxx)
+if(SV_USE_TCL)
+	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mmg_mesh_init.cxx)
+endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -76,4 +82,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(SV_USE_PYTHON)
+PYTHON_ADD_MODULE(pyMeshUtil cv_mmg_mesh_init_py.cxx)
+target_link_libraries(pyMeshUtil ${lib} ${PYTHON_LIBRARY})
 endif()

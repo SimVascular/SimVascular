@@ -53,9 +53,17 @@ HDRS	= cv_mmg_mesh_utils.h
 
 CXXSRCS	= cv_mmg_mesh_utils.cxx
 
-DLLHDRS = cv_mmg_mesh_init.h
+if(SV_USE_TCL)
+    DLLHDRS = cv_mmg_mesh_init.h
+elseif(SV_USE_PYTHON)
+    DLLHDRS = cv_mmg_mesh_init_py.h
+endif()
 
-DLLSRCS = cv_mmg_mesh_init.cxx
+if(SV_USE_TCL)
+    DLLSRCS = cv_mmg_mesh_init.cxx
+elseif(SV_USE_PYTHON)
+    DLLSRCS = cv_mmg_mesh_init_py.cxx
+endif()
 
 TARGET_LIB_NAME = $(SV_LIB_MMG_MESH_NAME)
 
