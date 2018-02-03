@@ -39,10 +39,8 @@
 #define CV_ITKUTILS_INIT_PY_H_
 
 #include "SimVascular.h"
-#ifdef SV_USE_PYTHON
 #include "Python.h"
 
-#endif
 #include "svSegITKExports.h" // For exports
 
 extern "C" SV_EXPORT_SEGITK PyObject* Itkutils_pyInit();

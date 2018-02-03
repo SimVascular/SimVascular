@@ -45,9 +45,17 @@ CXXFLAGS += -DSV_EXPORT_SEGITK_COMPILE
 
 HDRS	=  cvITKUtils.h cvITKLevelSet.h
 CXXSRCS	=  cvITKUtils.cxx cvITKLevelSet.cxx
+if(SV_USE_PYTHON)
+  DLLHDRS = cv_ITKLset_init_py.h  cv_ITKUtils_init_py.h cv_ITKLset2d_init_py.h cv_ITKLset3d_init_py.h
+elseif (SV_USE_TCL)
+  DLLHDRS = cv_ITKUtils_init.h cv_ITKLset2d_init.h cv_ITKLset3d_init.h cv_ITKLset_init.h
+endif()
 
-DLLHDRS = cv_ITKLset_init_py.h  cv_ITKUtils_init_py.h cv_ITKLset2d_init_py.h cv_ITKLset3d_init_py.h cv_ITKUtils_init.h cv_ITKLset2d_init.h cv_ITKLset3d_init.h cv_ITKLset_init.h 
-DLLSRCS = cv_ITKLset_init_py.cxx  cv_ITKUtils_init_py.cxx cv_ITKLset2d_init_py.cxx  cv_ITKLset3d_init_py.cxx cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx  cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx 
+if(SV_USE_PYTHON)
+DLLSRCS = cv_ITKLset_init_py.cxx  cv_ITKUtils_init_py.cxx cv_ITKLset2d_init_py.cxx  cv_ITKLset3d_init_py.cxx
+elseif (SV_USE_TCL)
+DLLSRCS = cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx  cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx
+endif()
 
 TARGET_LIB_NAME = $(SV_LIB_ITK_LSET_NAME)
 

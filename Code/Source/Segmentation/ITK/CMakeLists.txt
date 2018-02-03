@@ -49,7 +49,10 @@ add_subdirectory(ITKCode)
 
 set(CXXSRCS  cvITKUtils.cxx cvITKLevelSet.cxx)
 set(HDRS cvITKLevelSet.h cvITKLevelSetBase.h)
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKLset_init_py.cxx cv_ITKUtils_init_py.cxx cv_ITKLset2d_init_py.cxx cv_ITKLset3d_init_py.cxx cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx )
+
+if (SV_USE_TCL)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx)
+endif()
 
 target_link_libraries(${lib}
  ${SV_LIB_REPOSITORY_NAME}
@@ -81,5 +84,7 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
 endif()
-PYTHON_ADD_MODULE(pyItkls cv_ITKLset_init_py.cxx cv_ITKLset2d_init_py.cxx)
+if(SV_USE_PYTHON)
+PYTHON_ADD_MODULE(pyItkls cv_ITKLset_init_py.cxx  cv_ITKUtils_init_py.cxx cv_ITKLset2d_init_py.cxx  cv_ITKLset3d_init_py.cxx)
 target_link_libraries(pyItkls ${lib} ${PYTHON_LIBRARY})
+endif()

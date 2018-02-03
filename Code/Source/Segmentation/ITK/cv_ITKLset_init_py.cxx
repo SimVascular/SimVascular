@@ -35,7 +35,6 @@
 #include "cv_ITKUtils_init_py.h"
 #include "cv_ITKLset2d_init_py.h"
 #include "cv_ITKLset3d_init_py.h"
-#ifdef SV_USE_PYTHON
 #include "Python.h"
 PyObject* SegErr;
 
@@ -88,5 +87,3 @@ initpyItkls(void)
     PyModule_AddObject(pyItklsm,"Itkutils",pyItkUtils);
 
 }
-
-#endif
