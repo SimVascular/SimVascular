@@ -155,6 +155,7 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
+#ifdef SV_USE_TCL
 int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 		char *meshFileName,
 		char *solidFileName)
@@ -234,9 +235,9 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   return SV_OK;
 
 }
-
+#endif
 #else
-
+#ifdef SV_USE_TCL
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
@@ -295,6 +296,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 
   return SV_OK;
 }
+#endif
 #ifdef SV_USE_PYTHON
 // -----------------------
 //  CreateInternalMeshObject for python

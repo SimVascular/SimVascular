@@ -38,9 +38,8 @@
 #include "cv_meshsim_mesh_init.h"
 
 #include "cv_globals.h"
-#ifdef SV_USE_PYTHON
 #include "Python.h"
-#endif
+
 
 #ifdef SV_USE_PARASOLID
 #include "SimParasolidKrnl.h"

@@ -34,10 +34,9 @@
 
 #include "SimVascular.h"
 #include "svMeshSimMeshExports.h" // For exports
-#ifdef SV_USE_PYTHON
 #include "Python.h"
 
 extern "C" SV_EXPORT_MESHSIM_MESH PyObject* Meshsimmesh_pyInit();
-#endif
+
 
 #endif // __CVMESHSIMMESH_INIT_H

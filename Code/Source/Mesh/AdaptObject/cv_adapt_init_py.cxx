@@ -44,9 +44,7 @@
 
 #include "cvFactoryRegistrar.h"
 
-#ifdef SV_USE_PYTHON
 #include "Python.h"
-#endif
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject

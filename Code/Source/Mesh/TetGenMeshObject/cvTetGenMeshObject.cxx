@@ -84,7 +84,7 @@
 /**
  * @brief Constructor for cvTetGenMeshObject(Should never be called directly)
  */
-
+#ifdef SV_USE_TCL
 cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   : cvMeshObject()
 {
@@ -159,7 +159,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
     meshoptions_.cylindernormal[i] = 0;
   }
 }
-
+#endif
 // -----------
 // cvTetGenMeshObject for python
 // -----------
@@ -170,7 +170,6 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
 cvTetGenMeshObject::cvTetGenMeshObject()
 : cvMeshObject()
 {
-interp_ = NULL;
 inmesh_ = NULL;
 outmesh_ = NULL;
 polydatasolid_ = NULL;
@@ -326,7 +325,7 @@ int cvTetGenMeshObject::SetSolidFileName( const char* solidFileName )
  * @brief Function to print out the mesh statistics
  * @return SV_OK if executed correctly
  */
-
+#ifdef SV_USE_TCL
 int cvTetGenMeshObject::Print()
 {
   int num_nodes = 0;
@@ -412,7 +411,7 @@ int cvTetGenMeshObject::Print()
 
   return SV_OK;
 }
-
+#endif
 // -----
 // pyPrint
 // -----

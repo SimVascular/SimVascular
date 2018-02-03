@@ -72,7 +72,7 @@ void SimVascularMeshSimMessageHandler(int type, const char *msg) {
 // -----------
 // cvMeshSimMeshObject
 // -----------
-
+#ifdef SV_USE_TCL
 cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   : cvMeshObject()
 {
@@ -124,15 +124,14 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   phasta_solution  = NULL;
 #endif
 }
-
+#endif
 // -----------
 // cvMeshSimMeshObject for python
 // -----------
-
+#ifdef SV_USE_PYTHON
 cvMeshSimMeshObject::cvMeshSimMeshObject()
 : cvMeshObject()
 {
-interp_ = NULL;
 mesh = NULL;
 model = NULL;
 meshloaded_ = 0;
@@ -180,6 +179,7 @@ nodalgradientID  = NULL;
 phasta_solution  = NULL;
 #endif
 }
+#endif
 // -----------
 // cvMeshSimMeshObject
 // -----------

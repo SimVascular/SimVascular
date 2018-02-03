@@ -46,9 +46,7 @@
 
 #include "SimVascular.h"
 #include "svTetGenAdaptorExports.h"
-#ifdef SV_USE_PYTHON
 #include "Python.h"
-#endif
 
 extern "C" SV_EXPORT_TETGEN_ADAPTOR PyObject* Tetgenadapt_pyInit();
 

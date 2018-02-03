@@ -62,7 +62,7 @@ cvAdaptObject::~cvAdaptObject()
 // ----------------------------
 // DefaultInstantiateAdaptObject
 // ----------------------------
-
+#ifdef SV_USE_TCL
 cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,KernelType t )
 {
   // Get the adapt object factory registrar associated with this Tcl interpreter.
@@ -93,7 +93,7 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,
 
   return adaptor;
 }
-
+#endif
 // ----------------------------
 // DefaultInstantiateAdaptObject for python
 // ----------------------------

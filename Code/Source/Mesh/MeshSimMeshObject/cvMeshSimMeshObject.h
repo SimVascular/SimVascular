@@ -109,9 +109,12 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
   } MSoptions;
 
   public:
-
+  #ifdef SV_USE_TCL
   cvMeshSimMeshObject( Tcl_Interp *interp ); // default constructor
+  #endif
+  #ifdef SV_USE_PYTHON
   cvMeshSimMeshObject(); // default constructor for python
+  #endif
   cvMeshSimMeshObject( const cvMeshSimMeshObject& sm );  // copy constructor
   ~cvMeshSimMeshObject();
 
@@ -208,7 +211,9 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
 #else
   int part_;
 #endif
+  #ifdef SV_USE_TCL
   Tcl_Interp* interp_;
+  #endif
   int loadedVolumeMesh_;
   pRegion pCurrentMeshRegion_;
   //int* nodemap_;

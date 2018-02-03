@@ -123,7 +123,7 @@ int cvMeshSystem::RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSy
 // registered in the repository.  Subsequent cvMeshSystem lookup's
 // currently DO NOT check for NULL values.  The idea is that objects
 // are checked for validity *before* they get registered.
-
+#ifdef SV_USE_TCL
 cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject( Tcl_Interp *interp,
                                                           char *const meshFileName,
                                                           char *const solidFileName )
@@ -155,11 +155,11 @@ cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject( Tcl_Interp *interp,
 
   return meshObject;
 }
-
+#endif
 // ----------------------------
 // DefaultInstantiateMeshObject for python
 // ----------------------------
-
+#ifdef SV_USE_PYTHON
 cvMeshObject* cvMeshSystem::DefaultInstantiateMeshObject(
   char *const meshFileName,
   char *const solidFileName )
@@ -193,3 +193,4 @@ else
 
 return meshObject;
 }
+#endif
