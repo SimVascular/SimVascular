@@ -71,4 +71,6 @@ DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_MESHSIM_SOLID_NAME)
 
+SV_PYTHON_MODULE_NAME = pySolidMeshSim
+
 include $(TOP)/targetlib.mk

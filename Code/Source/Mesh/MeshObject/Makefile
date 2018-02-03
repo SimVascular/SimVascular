@@ -72,6 +72,8 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
 
 TARGET_LIB_NAME = $(SV_LIB_MESH_NAME)
 
+SV_PYTHON_MODULE_NAME = pyMeshObject
+
 include $(TOP)/targetlib.mk
 
 

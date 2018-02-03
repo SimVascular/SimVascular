@@ -152,5 +152,7 @@ DLLLIBS += $(VTK_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_MESHSIM_MESH_NAME)
 
+SV_PYTHON_MODULE_NAME = pyMeshSim
+
 include $(TOP)/targetlib.mk
 

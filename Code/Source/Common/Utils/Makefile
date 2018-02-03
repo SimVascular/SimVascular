@@ -58,6 +58,8 @@ SVPYSRCS = cv_utils_init_py.cxx cv_math_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_UTILS_NAME)
 
+SV_PYTHON_MODULE_NAME = pyMath
+
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 include $(TOP)/targetlib.mk

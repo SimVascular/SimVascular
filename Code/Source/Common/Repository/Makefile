@@ -59,12 +59,14 @@ CXXSRCS	= cvRepository.cxx cvRepositoryData.cxx cvDataObject.cxx \
 DLLHDRS = cv_repos_init.h
 DLLSRCS = cv_repos_init.cxx
 
-DLLHDRS = cv_repos_init_py.h
-DLLSRCS = cv_repos_init_py.cxx
+SVPYHDRS = cv_repos_init_py.h
+SVPYSRCS = cv_repos_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 TARGET_LIB_NAME = $(SV_LIB_REPOSITORY_NAME)
+
+SV_PYTHON_MODULE_NAME = pyRepository
 
 include $(TOP)/targetlib.mk

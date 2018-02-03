@@ -87,6 +87,8 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \
           $(SOLVERIO_LIB) \
           $(ZLIB_LIBS)
 
+SV_PYTHON_MODULE_NAME = pyMeshAdapt
+
 include $(TOP)/targetlib.mk
 
 
