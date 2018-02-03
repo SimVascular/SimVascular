@@ -59,9 +59,17 @@ HDRS	= cv_vmtk_utils.h
 
 CXXSRCS	= cv_vmtk_utils.cxx
 
-DLLHDRS = cv_vmtk_utils_init.h cv_vmtk_utils_init_py.h
+if(SV_USE_TCL)
+    DLLHDRS = cv_vmtk_utils_init.h
+elseif(SV_USE_PYTHON)
+    DLLHDRS = cv_vmtk_utils_init_py.h
+endif()
 
-DLLSRCS = cv_vmtk_utils_init.cxx cv_vmtk_utils_init_py.cxx
+if(SV_USE_TCL)
+    DLLSRCS = cv_vmtk_utils_init.cxx
+elseif(SV_USE_PYTHON)
+    DLLSRCS = cv_vmtk_utils_init_py.cxx
+endif()
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \

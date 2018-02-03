@@ -44,7 +44,9 @@ endif()
 SET(CXXSRCS cv_vmtk_utils.cxx)
 SET(HDRS cv_vmtk_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_vmtk_utils_init.cxx cv_vmtk_utils_init_py.cxx)
+if(SV_USE_TCL)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_vmtk_utils_init.cxx)
+endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES}
