@@ -65,23 +65,18 @@ endif
 
 CXXFLAGS += $(LOCAL_INCDIR) \
 	    $(VTK_INCDIRS) \
-	    $(TCLTK_INCDIR)
+	    $(TCLTK_INCDIR) \
+            $(PYTHON_INCDIR)
 
 HDRS	= cvAdaptObject.h cv_adapt_utils.h eispack.h
 
 CXXSRCS	= cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx
 
-if(SV_USE_TCL)
-  DLLHDRS = cv_adapt_init.h
-elseif(SV_USE_PYTHON)
-  DLLHDRS = cv_adapt_init_py.h
-endif()
+DLLHDRS = cv_adapt_init.h
+DLLSRCS = cv_adapt_init.cxx
 
-if(SV_USE_TCL)
-  DLLSRCS = cv_adapt_init.cxx
-elseif(SV_USE_PYTHON)
-  DLLSRCS = cv_adapt_init_py.cxx
-endif()
+SVPYHDRS = cv_adapt_init_py.h
+SVPYSRCS = cv_adapt_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_ADAPTOR_NAME)
 

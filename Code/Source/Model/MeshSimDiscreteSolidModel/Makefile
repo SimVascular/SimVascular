@@ -42,6 +42,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
+	   $(PYTHON_INCDIR) \
 	   $(MESHSIM_DEFS) \
            $(MESHSIM_INCDIR) \
 	   $(ZLIB_INCDIR)
@@ -56,9 +57,11 @@ HDRS	= cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h
 
 CXXSRCS	= cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx
 
-DLLHDRS = cv_discrete_init.h cv_discrete_init_py.h
+DLLHDRS = cv_discrete_init.h
+DLLSRCS = cv_discrete_init.cxx
 
-DLLSRCS = cv_discrete_init.cxx cv_discrete_init_py.cxx
+SVPYHDRS = cv_discrete_init_py.h
+SVPYSRCS = cv_discrete_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \

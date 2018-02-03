@@ -35,7 +35,7 @@ TOP=../../../../BuildWithMake
 include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR) $(DEFINES)
+	   $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(DEFINES)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_UTILS
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_UTILS
@@ -50,8 +50,11 @@ HDRS	= cv_misc_utils.h cv_vtk_utils.h cvTimer.h cvIntArrayList.h \
 CXXSRCS	= cv_misc_utils.cxx cv_vtk_utils.cxx cvTimer.cxx cvIntArrayList.cxx \
 	  cvStateArray.cxx cv_cgeom.cxx cvMath.cxx cv_arg.cxx cvFactoryRegistrar.cxx
 
-DLLHDRS = cv_utils_init.h cv_math_init.h cv_get_tcl_interp_init.h cv_utils_init_py.h cv_math_init_py.h
-DLLSRCS = cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx cv_utils_init_py.cxx cv_math_init_py.cxx
+DLLHDRS = cv_utils_init.h cv_math_init.h cv_get_tcl_interp_init.h
+DLLSRCS = cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx
+
+SVPYHDRS = cv_utils_init_py.h cv_math_init_py.h
+SVPYSRCS = cv_utils_init_py.cxx cv_math_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_UTILS_NAME)
 

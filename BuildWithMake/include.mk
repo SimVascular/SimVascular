@@ -141,6 +141,13 @@ SV_USE_MMG_SHARED = 1
 SV_USE_ZLIB = 1
 
 # -----------------------------------------------------
+# Compile with tcl
+# -----------------------------------------------------
+
+SV_USE_TCL = 1
+SV_USE_TCL_SHARED = 1
+
+# -----------------------------------------------------
 # Compile with python interpreter
 # -----------------------------------------------------
 
@@ -388,6 +395,10 @@ endif
 
 ifeq ($(SV_USE_MMG),1)
   GLOBAL_DEFINES += -DSV_USE_MMG
+endif
+
+ifeq ($(SV_USE_TCL),1)
+    GLOBAL_DEFINES += -DSV_USE_TCL
 endif
 
 ifeq ($(SV_USE_PYTHON),1)

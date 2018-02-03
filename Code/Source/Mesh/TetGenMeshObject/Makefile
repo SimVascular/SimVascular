@@ -37,7 +37,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR)
+	   $(TCLTK_INCDIR) \
+	   $(PYTHON_INCDIR)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_TETGEN_MESH
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_TETGEN_MESH
@@ -71,17 +72,11 @@ HDRS	= cvTetGenMeshObject.h cvTetGenMeshSystem.h \
 CXXSRCS	= cvTetGenMeshObject.cxx \
           cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx
 
-if(SV_USE_TCL)
-  DLLHDRS = cv_tetgen_mesh_init.h
-elseif(SV_USE_PYTHON)
-  DLLHDRS = cv_tetgen_mesh_init_py.h
-endif()
+DLLHDRS = cv_tetgen_mesh_init.h
+DLLSRCS = cv_tetgen_mesh_init.cxx
 
-if(SV_USE_TCL)
-  DLLSRCS = cv_tetgen_mesh_init.cxx
-elseif(SV_USE_PYTHON)
-  DLLSRCS = cv_tetgen_mesh_init_py.cxx
-endif()
+SVPYHDRS = cv_tetgen_mesh_init_py.h
+SVPYSRCS = cv_tetgen_mesh_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
