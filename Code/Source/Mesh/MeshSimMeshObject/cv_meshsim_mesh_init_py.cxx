@@ -81,7 +81,7 @@ int MeshSim_Win32ReadRegistrySimRegister(char* regVarName) {
   if (returnStatus2 != ERROR_SUCCESS) {
     fprintf(stderr,"No MeshSim license key for (%s) in registry. Meshsim functionality isn't available.\n",regVarName);
     fflush(stdout);
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   returnStatus2 = RegQueryValueEx(hKey2, regVarName, NULL, &dwType2,(LPBYTE)&lszValue2, &dwSize2);
@@ -90,7 +90,7 @@ int MeshSim_Win32ReadRegistrySimRegister(char* regVarName) {
   if (returnStatus2 != ERROR_SUCCESS) {
     fprintf(stdout,"  Warning: Invalid application registry (%s).\n\n",regVarName);
     fflush(stdout);
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   // set the variable in tcl interpreter
@@ -98,7 +98,7 @@ int MeshSim_Win32ReadRegistrySimRegister(char* regVarName) {
 
   Sim_registerKey(simkey);
 
-  return SV_OK;
+  return Py_OK;
 
 }
 
@@ -172,14 +172,14 @@ try
 }
 #else
 fprintf(stdout,"ERROR: need to register license keys somehow!\n");
-return SV_ERROR;
+return Py_ERROR;
 #endif
 try{
   SimModel_start();
   #ifdef SV_USE_PARASOLID
   if (SimParasolid_start( 0 ) != 0) {
    fprintf(stdout,"ERROR starting MeshSim Parasolid Interface!\n");
-   return SV_ERROR;
+   return Py_ERROR;
  }
   #endif
 
@@ -197,18 +197,18 @@ catch (...) {
     cvMeshSystem* meshSimSystem = new cvMeshSimMeshSystem();
     if ((*pMeshKernelRegistryMethod)( cvMeshObject::KERNEL_MESHSIM, meshSimSystem ) != SV_OK) {
       //printf("  MeshSim module registered\n");
-    return SV_ERROR;
+    return Py_ERROR;
     }
   }
   else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyMeshSim",MeshSim_methods);
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in intializing pyMeshSim\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return pythonC;
 }

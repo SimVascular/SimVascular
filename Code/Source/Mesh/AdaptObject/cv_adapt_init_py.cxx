@@ -113,12 +113,12 @@ void DeleteAdapt( pyAdaptObject* self );
 int Adapt_pyInit()
 {
   initpyMeshAdapt();
-  return 0;
+  return Py_OK;
 }
 static int pyAdaptObject_init(pyAdaptObject* self, PyObject* args)
 {
   fprintf(stdout,"pyAdaptObject initialized.\n");
-  return SV_OK;
+  return Py_OK;
 }
 
 static PyMethodDef pyAdaptObject_methods[]={
@@ -306,7 +306,7 @@ pyAdaptObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   KernelType meshType = KERNEL_INVALID;
@@ -321,20 +321,20 @@ pyAdaptObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args)
     cvAdaptObject::gCurrentKernel = KERNEL_MESHSIM;
   } else {
     PyErr_SetString(PyRunTimeErr, "invalid kernel name");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   fprintf(stdout, kernelName );
   adaptor = cvAdaptObject::DefaultInstantiateAdaptObject(meshType);
 
   if ( adaptor == NULL ) {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   // Register the solid:
   if ( !( gRepository->Register( resultName, adaptor ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete adaptor;
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   Py_INCREF(adaptor);
@@ -403,12 +403,12 @@ static PyObject* cvAdapt_CreateInternalMeshObjectMtd( pyAdaptObject* self, PyObj
   cvAdaptObject *geom =self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->CreateInternalMeshObject(meshFileName,solidFileName) != SV_OK)
   {
     fprintf(stderr,"Error in creation of internal mesh\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -431,12 +431,12 @@ static PyObject* cvAdapt_LoadModelMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->LoadModel(solidFileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of model\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }//, meshFileName, solidFileName );
 
   return Py_BuildValue("s","success");
@@ -459,12 +459,12 @@ static PyObject* cvAdapt_LoadMeshMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom =self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->LoadMesh(meshFileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of mesh\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -488,12 +488,12 @@ static PyObject* cvAdapt_LoadSolutionFromFileMtd( pyAdaptObject* self, PyObject*
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->LoadSolutionFromFile(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of solution\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -516,12 +516,12 @@ static PyObject* cvAdapt_LoadYbarFromFileMtd( pyAdaptObject* self, PyObject* arg
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->LoadYbarFromFile(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of average speed\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -543,12 +543,12 @@ static PyObject* cvAdapt_LoadAvgSpeedFromFileMtd( pyAdaptObject* self, PyObject*
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->LoadAvgSpeedFromFile(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of average speed\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -571,12 +571,12 @@ static PyObject* cvAdapt_LoadHessianFromFileMtd( pyAdaptObject* self, PyObject* 
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->LoadHessianFromFile(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in loading of hessian\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -592,7 +592,7 @@ static PyObject* cvAdapt_ReadSolutionFromMeshMtd( pyAdaptObject* self, PyObject*
   if (geom->ReadSolutionFromMesh() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return Py_BuildValue("s","success");
 }
@@ -607,7 +607,7 @@ static PyObject* cvAdapt_ReadYbarFromMeshMtd( pyAdaptObject* self, PyObject* arg
   if (geom->ReadYbarFromMesh() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return Py_BuildValue("s","success");
 }
@@ -622,7 +622,7 @@ static PyObject* cvAdapt_ReadAvgSpeedFromMeshMtd( pyAdaptObject* self, PyObject*
   if (geom->ReadAvgSpeedFromMesh() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return Py_BuildValue("s","success");
 }
@@ -645,13 +645,13 @@ static PyObject* cvAdapt_SetAdaptOptionsMtd( pyAdaptObject* self, PyObject* args
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->SetAdaptOptions(flag,value) != SV_OK)
   {
     fprintf(stderr,"Error in options setting\n");
     fprintf(stderr,"%s is not a valid option flag\n",flag);
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -667,7 +667,7 @@ static PyObject* cvAdapt_CheckOptionsMtd( pyAdaptObject* self, PyObject* args)
   if (geom->CheckOptions() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -692,7 +692,7 @@ static PyObject* cvAdapt_SetMetricMtd( pyAdaptObject* self, PyObject* args)
   if (geom->SetMetric(fileName,option,strategy) == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -708,7 +708,7 @@ static PyObject* cvAdapt_SetupMeshMtd( pyAdaptObject* self, PyObject* args)
   if (geom->SetupMesh() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -724,7 +724,7 @@ static PyObject* cvAdapt_RunAdaptorMtd( pyAdaptObject* self, PyObject* args)
   if (geom->RunAdaptor() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -740,7 +740,7 @@ static PyObject* cvAdapt_PrintStatsMtd( pyAdaptObject* self, PyObject* args)
   if (geom->PrintStats() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 }
 
@@ -753,7 +753,7 @@ PyObject* cvAdapt_GetAdaptedMeshMtd( pyAdaptObject* self, PyObject* args)
   if (geom->GetAdaptedMesh() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 }
 
@@ -767,7 +767,7 @@ PyObject* cvAdapt_TransferSolutionMtd( pyAdaptObject* self, PyObject* args)
   if (geom->TransferSolution() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 }
 
@@ -781,7 +781,7 @@ PyObject* cvAdapt_TransferRegionsMtd( pyAdaptObject* self, PyObject* args)
   if (geom->TransferRegions() == SV_OK) {
     return Py_BuildValue("s","success");
   } else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 }
 
@@ -802,12 +802,12 @@ static PyObject* cvAdapt_WriteAdaptedModelMtd( pyAdaptObject* self, PyObject* ar
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->WriteAdaptedModel(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in writing of model\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -829,12 +829,12 @@ static PyObject* cvAdapt_WriteAdaptedMeshMtd( pyAdaptObject* self, PyObject* arg
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->WriteAdaptedMesh(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in writing of mesh\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");
@@ -856,12 +856,12 @@ static PyObject* cvAdapt_WriteAdaptedSolutionMtd( pyAdaptObject* self, PyObject*
   cvAdaptObject *geom = self->geom;
   if ( geom == NULL ) {
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   if (geom->WriteAdaptedSolution(fileName) != SV_OK)
   {
     fprintf(stderr,"Error in writing of solution\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s","success");

@@ -42,7 +42,7 @@
  */
 
 #ifndef __CV_OCCT_INIT_PY_H
-#define __CV_OCCT_INIT__PYH
+#define __CV_OCCT_INIT_PY_H
 
 #include "SimVascular.h"
 #include "svOpenCASCADEExports.h" // For exports

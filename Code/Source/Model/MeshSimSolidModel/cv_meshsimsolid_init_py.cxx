@@ -72,7 +72,7 @@ PyObject* Meshsimsolid_pyInit()
       (FactoryMethodPtr) &pyCreateMeshSimSolidModel );
   }
   else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
 
@@ -81,7 +81,7 @@ PyObject* Meshsimsolid_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolidMeshSim");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return pythonC;
 }

@@ -96,23 +96,23 @@ PyObject* Tetgenmesh_pyInit()
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
-      return SV_ERROR;
+      return Py_ERROR;
     }
   }
   else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   //Initialize Tetgenutils
   if (TGenUtils_Init() != SV_OK) {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyMeshTetgen",MeshTetgen_methods);
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return pythonC;
 }

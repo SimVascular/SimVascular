@@ -177,7 +177,7 @@ PyObject* itkls2d_SetInputsMtd( CXX_PYTHON_STDARGS )
 	if(!PyArg_ParseTuple(args, "ss",&inputImageName,&seedPdName))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 2 chars");
-		return SV_ERROR;
+		return Py_ERROR;
 	}
 
 
@@ -193,7 +193,7 @@ PyObject* itkls2d_SetInputsMtd( CXX_PYTHON_STDARGS )
 			char temp[2048];
 			sprintf(temp,"couldn't find object ", inputImageName, (char *)NULL );
 			PyErr_SetString(PyRunTimeErr2d, temp );
-			return SV_ERROR;
+			return Py_ERROR;
 		}
 		printf("Found Object\n");
 		// Make sure image is of type STRUCTURED_PTS_T:
@@ -202,7 +202,7 @@ PyObject* itkls2d_SetInputsMtd( CXX_PYTHON_STDARGS )
 			char temp[2048];
 			sprintf(temp,"error: object ", inputImageName, "not of type StructuredPts", (char *)NULL);
 			PyErr_SetString(PyRunTimeErr2d, temp );
-			return SV_ERROR;
+			return Py_ERROR;
 		}
 	}
 
@@ -220,7 +220,7 @@ PyObject* itkls2d_SetInputsMtd( CXX_PYTHON_STDARGS )
 			char temp[2048];
 			sprintf(temp,"couldn't find object ", seedPdName, (char *)NULL );
 			PyErr_SetString(PyRunTimeErr2d, temp );
-			return SV_ERROR;
+			return Py_ERROR;
 		}
 		printf("Found Object\n");
 		// Make sure image is of type STRUCTURED_PTS_T:
@@ -229,7 +229,7 @@ PyObject* itkls2d_SetInputsMtd( CXX_PYTHON_STDARGS )
 			char temp[2048];
 			sprintf(temp,"error: object ", seedPdName, "not of type PolyData", (char *)NULL);
 			PyErr_SetString(PyRunTimeErr2d, temp );
-			return SV_ERROR;
+			return Py_ERROR;
 		}
 	}
 
@@ -258,7 +258,7 @@ static PyObject* itkls2d_PhaseOneLevelSetMtd( CXX_PYTHON_STDARGS )
 					&sigmaFeat,&sigmaAdv))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 5 doubles");
-		return SV_ERROR;
+		return Py_ERROR;
 	}
 	std::cout << "sigmaFeat " << sigmaFeat << std::endl;
 
@@ -282,7 +282,7 @@ static PyObject* itkls2d_PhaseTwoLevelSetMtd( CXX_PYTHON_STDARGS )
 					&sigmaFeat,&sigmaAdv))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 4 doubles");
-		return SV_ERROR;
+		return Py_ERROR;
 	}
 
 
@@ -307,7 +307,7 @@ static PyObject* itkls2d_GACLevelSetMtd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"dd",&expFactor,&sigma))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 2 doubles");
-		return SV_ERROR;
+		return Py_ERROR;
 	}
 
 

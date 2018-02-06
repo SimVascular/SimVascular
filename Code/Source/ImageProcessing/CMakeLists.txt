@@ -56,7 +56,9 @@ set(HDRS cv_image.h cv_img_offsets.h
   cv_mask_image_in_place.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS}  cv_image_init_py.cxx cv_image_init.cxx )
+if(SV_USE_TCL)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_image_init.cxx )
+endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -89,5 +91,7 @@ if(SV_INSTALL_HEADERS)
 		)
 endif()
 
+if(SV_USE_PYTHON)
 PYTHON_ADD_MODULE(pyImage cv_image_init_py.cxx)
 target_link_libraries(pyImage ${lib} ${PYTHON_LIBRARY})
+endif()

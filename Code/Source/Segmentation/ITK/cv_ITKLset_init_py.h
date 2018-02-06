@@ -41,8 +41,6 @@
 #include "SimVascular.h"
 #include "svSegITKExports.h" // For exports
 
-#include "Python.h"
-
 extern "C" SV_EXPORT_SEGITK int Itklset_pyInit();
 
 

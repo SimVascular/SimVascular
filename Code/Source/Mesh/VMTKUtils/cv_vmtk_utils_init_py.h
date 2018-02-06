@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVVMTK_UTILS_INIT_H
-#define __CVVMTK_UTILS_INIT_H
+#ifndef __CVVMTK_UTILS_INIT_PY_H
+#define __CVVMTK_UTILS_INIT_PY_H
 
 #include "SimVascular.h"
 #include "svVMTKUtilsExports.h" // For exports

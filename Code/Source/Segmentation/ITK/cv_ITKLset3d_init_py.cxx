@@ -221,7 +221,7 @@ PyObject* itkls3d_SetInputsMtd( CXX_PYTHON_STDARGS )
 	if(!PyArg_ParseTuple(args, "ss",&inputImageName,&seedPdName))
 	{
 		PyErr_SetString(PyRunTimeErr3d,"Could not import 2 chars");
-		return SV_ERROR;
+		return Py_ERROR;
 	}
 
 
@@ -238,7 +238,7 @@ PyObject* itkls3d_SetInputsMtd( CXX_PYTHON_STDARGS )
 			char temp[2048];
 			sprintf(temp,"couldn't find object ", inputImageName, (char *)NULL );
 			PyErr_SetString(PyRunTimeErr3d, temp );
-			return SV_ERROR;
+			return Py_ERROR;
 		}
 		printf("Found Object\n");
 		// Make sure image is of type STRUCTURED_PTS_T:
@@ -247,7 +247,7 @@ PyObject* itkls3d_SetInputsMtd( CXX_PYTHON_STDARGS )
 			char temp[2048];
 			sprintf(temp,"error: object ", inputImageName, "not of type StructuredPts", (char *)NULL);
 			PyErr_SetString(PyRunTimeErr3d, temp );
-			return SV_ERROR;
+			return Py_ERROR;
 		}
 	}
 
@@ -264,7 +264,7 @@ PyObject* itkls3d_SetInputsMtd( CXX_PYTHON_STDARGS )
 			char temp[2048];
 			sprintf(temp,"couldn't find object ", seedPdName, (char *)NULL );
 			PyErr_SetString(PyRunTimeErr3d, temp );
-			return SV_ERROR;
+			return Py_ERROR;
 		}
 		printf("Found Object\n");
 		// Make sure image is of type STRUCTURED_PTS_T:
@@ -273,7 +273,7 @@ PyObject* itkls3d_SetInputsMtd( CXX_PYTHON_STDARGS )
 			char temp[2048];
 			sprintf(temp,"error: object ", seedPdName, "not of type PolyData", (char *)NULL);
 			PyErr_SetString(PyRunTimeErr3d, temp );
-			return SV_ERROR;
+			return Py_ERROR;
 		}
 	}
 
@@ -296,7 +296,7 @@ static PyObject* itkls3d_PhaseOneLevelSetMtd( CXX_PYTHON_STDARGS )
 	&sigmaFeat,&sigmaAdv))
     {
 		PyErr_SetString(PyRunTimeErr3d,"Could not import 5 doubles");
-		return SV_ERROR;
+		return Py_ERROR;
 	}
 	std::cout << "sigmaFeat " << sigmaFeat << std::endl;
 
@@ -321,7 +321,7 @@ static PyObject* itkls3d_PhaseTwoLevelSetMtd( CXX_PYTHON_STDARGS )
 	&sigmaFeat,&sigmaAdv))
     {
 		PyErr_SetString(PyRunTimeErr3d,"Could not import 4 doubles");
-		return SV_ERROR;
+		return Py_ERROR;
     }
 
 
@@ -345,7 +345,7 @@ static PyObject* itkls3d_GACLevelSetMtd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"dddd",&expFactor,&sigma,&kappa,&iso))
 	{
 		PyErr_SetString(PyRunTimeErr3d,"Could not import 4 doubles");
-		return SV_ERROR;
+		return Py_ERROR;
 	}
 
 	if(sigma >= 0)
@@ -363,7 +363,7 @@ static PyObject* itkls3d_LaplacianLevelSetMtd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"dddd",&expFactor,&sigma,&kappa,&iso))
 	{
 		PyErr_SetString(PyRunTimeErr3d,"Could not import 4 doubles");
-		return SV_ERROR;
+		return Py_ERROR;
 	}
 
 	if(sigma >= 0)

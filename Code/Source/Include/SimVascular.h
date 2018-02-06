@@ -34,6 +34,11 @@
 #define SV_OK                 1
 #define SV_ERROR              0
 
+#ifdef SV_USE_PYTHON
+#define Py_OK                 1
+#define Py_ERROR              0
+#endif
+
 /* true / false don't seem to be defined on linux */
 #ifndef WIN32
 #ifndef TRUE

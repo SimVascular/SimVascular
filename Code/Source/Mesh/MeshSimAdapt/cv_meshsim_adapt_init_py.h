@@ -46,9 +46,7 @@
 
 #include "SimVascular.h"
 #include "svMeshSimAdaptorExports.h" // For exports
-#ifdef SV_USE_PYTHON
 #include "Python.h"
-#endif
 
 extern "C" SV_EXPORT_MESHSIM_ADAPTOR PyObject* Meshsimadapt_pyInit();
 

@@ -50,7 +50,7 @@ int Itklset_pyInit()
   Itkls3d_pyInit();
   Itkutils_pyInit();
 
-  return SV_OK;
+  return Py_OK;
 
 }
 PyObject* hello(PyObject* self, PyObject* args)
