@@ -1,0 +1,117 @@
+diff -rupN original/IO/Video/vtkWin32VideoSource.cxx patch/IO/Video/vtkWin32VideoSource.cxx
+--- original/IO/Video/vtkWin32VideoSource.cxx	2015-03-02 16:56:42.000000000 -0800
++++ patch/IO/Video/vtkWin32VideoSource.cxx	2015-08-12 18:44:48.000000000 -0700
+@@ -78,10 +78,7 @@ vtkWin32VideoSource::~vtkWin32VideoSourc
+ {
+   this->vtkWin32VideoSource::ReleaseSystemResources();
+ 
+-  if (this->Internal->BitMapPtr != NULL)
+-    {
+-    delete [] (char *)(this->Internal->BitMapPtr);
+-    }
++  delete [] (char *)(this->Internal->BitMapPtr);
+   this->Internal->BitMapPtr = NULL;
+   this->BitMapSize = 0;
+   delete this->Internal;
+@@ -349,7 +346,7 @@ void vtkWin32VideoSource::Initialize()
+     }
+ 
+   // set user data for callbacks
+-  if (!capSetUserData(this->Internal->CapWnd,(long)this))
++  if (!capSetUserData(this->Internal->CapWnd,this))
+     {
+     vtkErrorMacro(<< "Initialize: couldn't set user data for callback"\
+                     << " (" << GetLastError() << ")");
+@@ -1041,10 +1038,7 @@ void vtkWin32VideoSource::DoVFWFormatChe
+   int formatSize = capGetVideoFormatSize(this->Internal->CapWnd);
+   if (formatSize > this->BitMapSize)
+     {
+-    if (this->Internal->BitMapPtr)
+-      {
+-      delete [] ((char *)this->Internal->BitMapPtr);
+-      }
++    delete [] ((char *)this->Internal->BitMapPtr);
+     this->Internal->BitMapPtr = (LPBITMAPINFO) new char[formatSize];
+     this->BitMapSize = formatSize;
+     }
+@@ -1131,10 +1125,7 @@ void vtkWin32VideoSource::DoVFWFormatSet
+   int formatSize = capGetVideoFormatSize(this->Internal->CapWnd);
+   if (formatSize > this->BitMapSize)
+     {
+-    if (this->Internal->BitMapPtr)
+-      {
+-      delete [] ((char *)this->Internal->BitMapPtr);
+-      }
++    delete [] ((char *)this->Internal->BitMapPtr);
+     this->Internal->BitMapPtr = (LPBITMAPINFO) new char[formatSize];
+     this->BitMapSize = formatSize;
+     }
+@@ -1147,7 +1138,7 @@ void vtkWin32VideoSource::DoVFWFormatSet
+   this->Internal->BitMapPtr->bmiHeader.biClrUsed = 0;
+   this->Internal->BitMapPtr->bmiHeader.biClrImportant = 0;
+ 
+-  for (i = 0; i < 4; i++)
++  for (i = 0; i < 3; i++)
+     { // try for a
+     if (this->OutputFormat == VTK_RGBA || this->OutputFormat == VTK_RGB)
+       {
+diff -rupN original/ThirdParty/TclTk/internals/tk8.5/tkWinPort.h patch/ThirdParty/TclTk/internals/tk8.5/tkWinPort.h
+--- original/ThirdParty/TclTk/internals/tk8.5/tkWinPort.h	2015-03-02 16:56:42.000000000 -0800
++++ patch/ThirdParty/TclTk/internals/tk8.5/tkWinPort.h	2015-08-12 18:44:48.000000000 -0700
+@@ -123,10 +123,12 @@
+  * Define timezone for gettimeofday.
+  */
+ 
++#ifndef __MINGW32__ 
+ struct timezone {
+     int tz_minuteswest;
+     int tz_dsttime;
+ };
++#endif
+ 
+ /*
+  * Disabled inclusion of Tcl's private header in hope of discovering we
+diff -rupN original/ThirdParty/hdf5/vtkhdf5/src/H5system.c patch/ThirdParty/hdf5/vtkhdf5/src/H5system.c
+--- original/ThirdParty/hdf5/vtkhdf5/src/H5system.c	2015-03-02 16:56:42.000000000 -0800
++++ patch/ThirdParty/hdf5/vtkhdf5/src/H5system.c	2015-08-12 18:44:48.000000000 -0700
+@@ -649,7 +649,7 @@ HDremove_all(const char *fname)
+ #define _W32_FT_OFFSET (116444736000000000ULL)
+ 
+ int
+-Wgettimeofday(struct timeval *tv, struct timezone *tz)
++VTKH5gettimeofday(struct timeval *tv, struct timezone *tz)
+  {
+   union {
+     unsigned long long ns100; /*time since 1 Jan 1601 in 100ns units */
+@@ -686,7 +686,7 @@ Wgettimeofday(struct timeval *tv, struct
+ static char Wlogin_buffer[WloginBuffer_count];
+ 
+ char*
+-Wgetlogin()
++VTKH5getlogin()
+ {
+ 
+ #ifdef H5_HAVE_WINSOCK2_H
+diff -rupN original/ThirdParty/hdf5/vtkhdf5/src/H5win32defs.h patch/ThirdParty/hdf5/vtkhdf5/src/H5win32defs.h
+--- original/ThirdParty/hdf5/vtkhdf5/src/H5win32defs.h	2015-03-02 16:56:42.000000000 -0800
++++ patch/ThirdParty/hdf5/vtkhdf5/src/H5win32defs.h	2015-08-12 18:44:48.000000000 -0700
+@@ -73,15 +73,15 @@ struct timezone {
+ #ifdef __cplusplus
+         extern "C" {
+ #endif /* __cplusplus */
+-        H5_DLL int Wgettimeofday(struct timeval *tv, struct timezone *tz);
+-        H5_DLL char* Wgetlogin(void);
++        H5_DLL int VTKH5gettimeofday(struct timeval *tv, struct timezone *tz);
++        H5_DLL char* VTK5Hgetlogin(void);
+         H5_DLL int HDsnprintf(char* str, size_t size, const char* format, ...);
+         H5_DLL int HDvsnprintf(char* str, size_t size, const char* format, va_list ap);
+ #ifdef __cplusplus
+         }
+ #endif /* __cplusplus */
+-#define HDgettimeofday(V,Z) Wgettimeofday(V,Z)
+-#define HDgetlogin()        Wgetlogin()
++#define HDgettimeofday(V,Z) VTKH5gettimeofday(V,Z)
++#define HDgetlogin()        VTKH5getlogin()
+ #define HDsnprintf          HDsnprintf
+ #define HDvsnprintf         HDvsnprintf
+ #endif /* H5_HAVE_VISUAL_STUDIO */

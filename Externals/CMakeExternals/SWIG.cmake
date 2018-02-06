@@ -63,15 +63,25 @@ endif()
 set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/swig/swig-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
-set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
-  --prefix=${SV_EXTERNALS_${proj}_BIN_DIR}
-  --without-alllang
-  --with-tclconfig=${SV_EXTERNALS_TCL_LIBRARY_DIR}
-  --with-tcl=${SV_EXTERNALS_TCL_BIN_DIR}
-  --with-tclincl=${SV_EXTERNALS_TCL_INCLUDE_DIR}
-  --with-tcllib=${SV_EXTERNALS_TCL_LIBRARY_DIR}
+set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS "")
+
+if(SV_EXTERNALS_ENABLE_TCL)
+  set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
+    ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    --prefix=${SV_EXTERNALS_${proj}_BIN_DIR}
+    --without-alllang
+    --with-tclconfig=${SV_EXTERNALS_TCL_LIBRARY_DIR}
+    --with-tcl=${SV_EXTERNALS_TCL_BIN_DIR}
+    --with-tclincl=${SV_EXTERNALS_TCL_INCLUDE_DIR}
+    --with-tcllib=${SV_EXTERNALS_TCL_LIBRARY_DIR}
+    )
+endif()
+if(SV_EXTERNALS_ENABLE_PYTHON)
+  set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
+    ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
   --with-python=${SV_EXTERNALS_PYTHON_EXECUTABLE}
   )
+endif()
 
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})

@@ -1296,8 +1296,8 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   option(SV_EXTERNALS_ENABLE_${proj} "Enable ${proj} Plugin" ${use})
   option(SV_EXTERNALS_ENABLE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
   mark_as_advanced(SV_EXTERNALS_ENABLE_${proj}_SHARED)
-  option(SV_EXTERNALS_DOWNLOAD_${proj} "Download instead of build ${proj}; Unused for tcl, tk, tcllib, tklib, numpy, pip" ${use})
-  mark_as_advanced(SV_EXTERNALS_DOWNLOAD_${proj})
+  option(SV_EXTERNALS_DOWNLOAD_${proj} "Download instead of build ${proj}; Unused for tcl, tk, tcllib, tklib, numpy, pip" OFF)
+  #mark_as_advanced(SV_EXTERNALS_DOWNLOAD_${proj})
 
   # Version
   set(SV_EXTERNALS_${proj}_VERSION "${version}" CACHE TYPE STRING)

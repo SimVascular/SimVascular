@@ -179,6 +179,9 @@ if(SV_EXTERNALS_ENABLE_PYTHON)
     )
 endif()
 
+#Patch for vtk
+set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-vtk-6.2.0.patch)
+
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
@@ -199,6 +202,7 @@ else()
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
+    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     UPDATE_COMMAND ""
      CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
