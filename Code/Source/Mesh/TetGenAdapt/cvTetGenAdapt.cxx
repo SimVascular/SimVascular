@@ -297,6 +297,8 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   return SV_OK;
 }
 #endif
+#endif
+
 #ifdef SV_USE_PYTHON
 // -----------------------
 //  CreateInternalMeshObject for python
@@ -376,7 +378,6 @@ int cvTetGenAdapt::CreateInternalMeshObject(
   }
   return SV_OK;
 }
-#endif
 #endif
 
 // -----------------------

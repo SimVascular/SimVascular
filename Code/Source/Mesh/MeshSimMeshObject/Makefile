@@ -42,6 +42,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
+	   $(PYTHON_INCDIR) \
            $(OPENCASCADE_INCDIR)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_MESHSIM_MESH
@@ -78,17 +79,11 @@ HDRS	= cvMeshSimMeshObject.h cvMeshSimMeshSystem.h
 CXXSRCS	= cvMeshSimMeshObject.cxx \
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx
 
-if(SV_USE_TCL)
-  DLLHDRS = cv_meshsim_mesh_init.h
-elseif(SV_USE_PYTHON)
-  DLLHDRS = cv_meshsim_mesh_init_py.h
-endif()
+DLLHDRS = cv_meshsim_mesh_init.h
+DLLSRCS = cv_meshsim_mesh_init.cxx
 
-if(SV_USE_TCL)
-  DLLSRCS = cv_meshsim_mesh_init.cxx
-elseif(SV_USE_PYTHON)
-  DLLSRCS = cv_meshsim_mesh_init_py.cxx
-endif()
+SVPYHDRS = cv_meshsim_mesh_init_py.h
+SVPYSRCS = cv_meshsim_mesh_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \
@@ -156,6 +151,8 @@ DLLLIBS +=  $(VMTK_LIBS)
 DLLLIBS += $(VTK_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_MESHSIM_MESH_NAME)
+
+SV_PYTHON_MODULE_NAME = pyMeshSim
 
 include $(TOP)/targetlib.mk
 

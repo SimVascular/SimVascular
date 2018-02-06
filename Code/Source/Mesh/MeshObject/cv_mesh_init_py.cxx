@@ -124,6 +124,7 @@ static void MeshPrintMethods();
 int Mesh_pyInit()
 {
   initpyMeshObject();
+  return 0;
 }
 static int pyMeshObject_init(pyMeshObject* self, PyObject* args)
 {

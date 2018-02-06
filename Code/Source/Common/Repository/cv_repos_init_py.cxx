@@ -773,7 +773,7 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args )
   type = gRepository->GetType( objName );
   if ( type != POLY_DATA_T )
   {
-    sprintf(r,"\ &s\" must be of type cvPolyData",objName);
+    sprintf(r,"\"&s\" must be of type cvPolyData",objName);
     PyErr_SetString(PyRunTimeErr, r);
     return SV_ERROR;
   }

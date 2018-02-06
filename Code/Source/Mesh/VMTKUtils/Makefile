@@ -53,23 +53,18 @@ endif
 CXXFLAGS += $(LOCAL_INCDIR) \
 	    $(VTK_INCDIRS) \
 	    $(TCLTK_INCDIR) \
+	    $(PYTHON_INCDIR) \
             $(VMTK_INCDIR)
 
 HDRS	= cv_vmtk_utils.h
 
 CXXSRCS	= cv_vmtk_utils.cxx
 
-if(SV_USE_TCL)
-    DLLHDRS = cv_vmtk_utils_init.h
-elseif(SV_USE_PYTHON)
-    DLLHDRS = cv_vmtk_utils_init_py.h
-endif()
+DLLHDRS = cv_vmtk_utils_init.h
+DLLSRCS = cv_vmtk_utils_init.cxx
 
-if(SV_USE_TCL)
-    DLLSRCS = cv_vmtk_utils_init.cxx
-elseif(SV_USE_PYTHON)
-    DLLSRCS = cv_vmtk_utils_init_py.cxx
-endif()
+SVPYHDRS = cv_vmtk_utils_init_py.h
+SVPYSRCS = cv_vmtk_utils_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
@@ -77,6 +72,8 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
 	  $(ZLIB_LIBS) $(VMTK_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_VMTK_UTILS_NAME)
+
+SV_PYTHON_MODULE_NAME = pyVMTKUtils
 
 include $(TOP)/targetlib.mk
 

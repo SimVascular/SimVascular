@@ -42,6 +42,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
+	   $(PYTHON_INCDIR) \
 	   $(MESHSIM_DEFS) \
            $(MESHSIM_INCDIR) \
 	   $(ZLIB_INCDIR)
@@ -56,9 +57,11 @@ HDRS	= cvMeshSimSolidModel.h
 
 CXXSRCS	= cvMeshSimSolidModel.cxx
 
-DLLHDRS = cv_meshsimsolid_init.h cv_meshsimsolid_init_py.h
+DLLHDRS = cv_meshsimsolid_init.h
+DLLSRCS = cv_meshsimsolid_init.cxx
 
-DLLSRCS = cv_meshsimsolid_init.cxx cv_meshsimsolid_init_py.cxx
+SVPYHDRS = cv_meshsimsolid_init_py.h
+SVPYSRCS = cv_meshsimsolid_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
@@ -67,5 +70,7 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
 DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_MESHSIM_SOLID_NAME)
+
+SV_PYTHON_MODULE_NAME = pySolidMeshSim
 
 include $(TOP)/targetlib.mk

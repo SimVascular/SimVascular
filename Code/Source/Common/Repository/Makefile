@@ -39,7 +39,7 @@ include $(TOP)/include.mk
 # --------------
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) \
-	   $(TCLTK_INCDIR) \
+	   $(TCLTK_INCDIR) $(PYTHON_INCDIR) \
 	   $(VTK_INCDIRS)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_REPOSITORY
@@ -57,12 +57,16 @@ CXXSRCS	= cvRepository.cxx cvRepositoryData.cxx cvDataObject.cxx \
 	  cvDataSet.cxx
 
 DLLHDRS = cv_repos_init.h
-
 DLLSRCS = cv_repos_init.cxx
+
+SVPYHDRS = cv_repos_init_py.h
+SVPYSRCS = cv_repos_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 TARGET_LIB_NAME = $(SV_LIB_REPOSITORY_NAME)
+
+SV_PYTHON_MODULE_NAME = pyRepository
 
 include $(TOP)/targetlib.mk

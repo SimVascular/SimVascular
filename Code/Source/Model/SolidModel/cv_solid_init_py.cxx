@@ -36,9 +36,6 @@
 #include "cvRepository.h"
 #include "cv_solid_init_py.h"
 #include "cvSolidModel.h"
-////temp
-#include "cvOCCTSolidModel.h"
-////temp
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
 #include "cv_vtk_utils.h"
@@ -83,6 +80,7 @@ int Solid_pyInit()
 {
   //Py_Initialize();
   initpySolid2();
+  return 0;
 }
 
 typedef struct
