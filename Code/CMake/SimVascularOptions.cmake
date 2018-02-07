@@ -77,15 +77,11 @@ option(SV_USE_MSMPI "Use MSMPI" OFF)
 
 #-----------------------------------------------------------------------------
 # Externals
-set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/sv_externals" CACHE PATH "Externals toplevel directory")
-set(SV_EXTERNALS_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/src" CACHE PATH "Externals toplevel src dir")
-set(SV_EXTERNALS_BLD_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/build" CACHE PATH "Externals toplevel build dir")
-set(SV_EXTERNALS_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/prefix" CACHE PATH "Externals toplevel prefix dir")
-set(SV_EXTERNALS_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}" CACHE PATH "Externals toplevel bin dir")
-
 set(SV_EXTERNALS_INSTALL_PREFIX "sv_externals" CACHE PATH "Externals toplevel directory")
 
-option(SV_EXTERNALS_USE_TOPLEVEL_DIR "If ON, SV_EXTERNALS_TOPLEVEL_DIR will be used as location for external packages" OFF)
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/sv_externals/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}/${SV_BUILD_TYPE_DIR}" CACHE PATH "Externals toplevel bin dir")
+
+option(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR "If ON, SV_EXTERNALS_TOPLEVEL_BIN_DIR will be used as location used to find external packages" OFF)
 
 option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be included in the installation" OFF)
 
@@ -93,28 +89,28 @@ option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be includ
 simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
 
 #PYTHON
-simvascular_add_new_external(PYTHON 2.7.11 OFF ON python)
+simvascular_add_new_external(PYTHON 2.7.11 ON ON python)
 
 #FREETYPE
-simvascular_add_new_external(FREETYPE 2.6.3 OFF ON freetype)
+simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
 
 # MMG
-simvascular_add_new_external(MMG 5.1.0 OFF OFF mmg)
+simvascular_add_new_external(MMG 5.1.0 ON OFF mmg)
 
 # VTK
 simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
 
 # GDCM
-simvascular_add_new_external(GDCM 2.6.1 OFF ON gdcm)
+simvascular_add_new_external(GDCM 2.6.1 ON ON gdcm)
 
 # ITK
 simvascular_add_new_external(ITK 4.7.1 ON ON itk)
 
 # OpenCASCADE
-simvascular_add_new_external(OpenCASCADE 7.0.0 OFF ON opencascade)
+simvascular_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade)
 
 # MITK
-simvascular_add_new_external(MITK 2016.03 OFF ON mitk)
+simvascular_add_new_external(MITK 2016.03 ON ON mitk)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -151,9 +147,9 @@ option(SV_USE_MODULES_SHARED_LIBRARIES "Option to build the thirdparty libs as s
 
 #-----------------------------------------------------------------------------
 # Option to build qt GUI
-option(SV_USE_QT_GUI "Option to build the SimVascular QT GUI" OFF)
+option(SV_USE_QT_GUI "Option to build the SimVascular QT GUI" ON)
 
-option(SV_USE_QT "Option to build the SimVascular QT" OFF)
+option(SV_USE_QT "Option to build the SimVascular QT" ON)
 
 option(SV_NO_PYTHONQT_ALL "Option to use PythonQt_all" ON)
 

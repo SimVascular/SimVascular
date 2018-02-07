@@ -32,16 +32,22 @@
 # GDCM
 set(proj GDCM)
 if(SV_USE_${proj})
+
   # If using toplevel dir, foce GDCM_DIR to be the SV_GDCM_DIR set by the
   # simvascular_add_new_external macro
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+  if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
     set(${proj}_DIR ${SV_${proj}_DIR}/lib/gdcm-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION} CACHE PATH "Force GDCM dir to externals" FORCE)
     if(WIN32)
       set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force GDCM DLL Path")
     endif()
   endif()
+
   # Find GDCM
-  simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
+  simvascular_external(${proj}
+    SHARED_LIB ${SV_USE_${proj}_SHARED}
+    VERSION ${${proj}_VERSION}
+    REQUIRED
+    )
 
   # Include cmake file provided by GDCM to define libs and include dirs
   include(${${proj}_USE_FILE})

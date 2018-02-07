@@ -32,17 +32,22 @@
 # MITK
 set(proj MITK)
 if(SV_USE_${proj})
+
   # If using toplevel dir, foce MITK_DIR to be the SV_MITK_DIR set by the
   # simvascular_add_new_external macro
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+  if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
     set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
   endif()
+
   if(SV_USE_${proj}_CONFIG)
+
     # ITK resets the vtk dir and variables (very annoying), must set temp vars
     # vtk dir to reset at the end
     set(TEMP_VTK_DIR ${VTK_DIR})
     set(TEMP_VTK_LIBRARIES ${VTK_LIBRARIES})
+
     find_package(${proj} NO_MODULE)
+
     set(${proj}_LIBRARIES
       MitkCore
       MitkAppUtil
@@ -53,16 +58,26 @@ if(SV_USE_${proj})
       MitkSegmentationUI
       MitkSegmentation
       MitkSceneSerialization)
+
     # Reset VTK vars
     set(VTK_DIR ${TEMP_VTK_DIR} CACHE PATH "Must reset VTK dir after processing ${proj}" FORCE)
     set(VTK_LIBRARIES ${TEMP_VTK_LIBRARIES})
+
   else()
-    simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
+
+    simvascular_external(${proj}
+      SHARED_LIB ${SV_USE_${proj}_SHARED}
+      VERSION ${${proj}_VERSION}
+      REQUIRED
+      )
+
     # Copy of necessary resource files are in SV CMake dir. usResourceCompiler
     # is in mitk bin directory
     find_package(CppMicroServices)
     # Set SV_MITK_DIR to the toplevel MITK if it exists
     get_filename_component(SV_${proj}_DIR ${${proj}_INCLUDE_DIR} DIRECTORY)
+
   endif()
+
 endif()
 #-----------------------------------------------------------------------------

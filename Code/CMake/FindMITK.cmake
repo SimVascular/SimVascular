@@ -37,8 +37,15 @@
 #  MITK_FOUND, If false, do not try to use this library.
 
 set(proj MITK)
+
+include(CMakeFindFrameworks)
 include(FindPackageHandleStandardArgs)
 include(GetPrerequisites)
+
+if(NOT ${proj}_DIR)
+  set(${proj}_DIR "${proj}_DIR-NOTFOUND" CACHE PATH "Path of toplevel ${proj} dir. Specify this if ${proj} cannot be found.")
+  message(FATAL_ERROR "${proj}_DIR was not specified. Set ${proj}_DIR to the toplevel ${proj} dir that contains bin, lib, include")
+endif()
 
 #-----------------------------------------------------------------------------
 # Set what we need to find
@@ -154,30 +161,31 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
 
-set(${proj}_POSSIBLE_LIB_PATHS)
 foreach(p ${${proj}_POSSIBLE_PATHS})
-	set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
-		"${p}/${lib_sub_path}")
+  list(APPEND ${proj}_POSSIBLE_LIB_PATHS "${p}/${lib_sub_path}")
 endforeach()
+
+set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
+  ${${proj}_DIR}
+  ${${proj}_DIR}/shared_object
+  ${${proj}_DIR}/dll
+  ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE}
+  )
 
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_LIBS_MISSING)
 set(${proj}_LIBRARIES_WORK "")
 foreach(lib ${${proj}_LIBNAMES})
 	#find library
-	find_library(${proj}_${lib}_LIBRARY
-		NAMES
-		${lib} ${lib}d
-		PATHS
-		${${proj}_POSSIBLE_LIB_PATHS}
-		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE}
-		NO_DEFAULT_PATH)
+  unset(${proj}_${lib}_LIBRARY CACHE)
 	find_library(${proj}_${lib}_LIBRARY
 		NAMES
 		${lib}
+    ${lib}d
 		PATHS
 		${${proj}_POSSIBLE_LIB_PATHS}
-		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE})
+		NO_DEFAULT_PATH
+    )
 	mark_as_advanced(${proj}_${lib}_LIBRARY)
 	set(${proj}_LIB_FULLNAMES ${${proj}_LIB_FULLNAMES} ${proj}_${lib}_LIBRARY)
 	if(${proj}_${lib}_LIBRARY)
@@ -202,7 +210,7 @@ set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING
 # Clean up.  If all libraries were found remove cache entries.
 if(${proj}_LIBRARIES)
 	foreach(lib ${${proj}_LIBNAMES})
-		unset(${proj}_${lib}_LIBRARY)
+    unset(${proj}_${lib}_LIBRARY CACHE)
 	endforeach()
 	if(${proj}_NUMLIBS_EXPECTED EQUAL 1)
 		set(temp_path ${${proj}_LIBRARIES})
@@ -218,33 +226,35 @@ endif()
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
 
-set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS)
 foreach(p ${${proj}_POSSIBLE_PATHS})
-  set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-		"${p}/${lib_sub_path}/plugins")
+  list(APPEND ${proj}_POSSIBLE_PLUGIN_LIB_PATHS "${p}/${lib_sub_path}/plugins")
 endforeach()
+
+set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
+    ${${proj}_DIR}
+    ${${proj}_DIR}/shared_object
+    ${${proj}_DIR}/dll
+    ${${proj}_DIR}/lib/plugins/RelWithDebInfo
+    ${${proj}_DIR}/bin/plugins/RelWithDebInfo
+  )
 
 set(${proj}_PLUGIN_LIBS_MISSING ${${proj}_PLUGIN_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_PLUGIN_LIBS_MISSING)
 set(${proj}_PLUGIN_LIBRARIES_WORK "")
 foreach(lib ${${proj}_PLUGIN_LIBNAMES})
 	#find library
-    find_library(${proj}_${lib}_PLUGIN_LIBRARY
-      NAMES
-      ${lib}
-      PATHS
-      ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-      ${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/RelWithDebInfo ${${proj}_DIR}/bin/plugins/RelWithDebInfo
-      NO_DEFAULT_PATH)
-    find_library(${proj}_${lib}_PLUGIN_LIBRARY
-      NAMES
-      ${lib}
-      PATHS
-      ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-      ${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/RelWithDebInfo ${${proj}_DIR}/bin/plugins/RelWithDebInfo)
-    mark_as_advanced(${proj}_${lib}_PLUGIN_LIBRARY)
-    set(${proj}_PLUGIN_LIB_FULLNAMES ${${proj}_PLUGIN_LIB_FULLNAMES} ${proj}_${lib}_PLUGIN_LIBRARY)
-    if(${proj}_${lib}_PLUGIN_LIBRARY)
+  unset(${proj}_${lib}_PLUGIN_LIBRARY CACHE)
+  find_library(${proj}_${lib}_PLUGIN_LIBRARY
+    NAMES
+    ${lib}
+    PATHS
+    ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
+    NO_DEFAULT_PATH
+    )
+
+  mark_as_advanced(${proj}_${lib}_PLUGIN_LIBRARY)
+  set(${proj}_PLUGIN_LIB_FULLNAMES ${${proj}_PLUGIN_LIB_FULLNAMES} ${proj}_${lib}_PLUGIN_LIBRARY)
+  if(${proj}_${lib}_PLUGIN_LIBRARY)
     set(${proj}_PLUGIN_LIBRARIES_WORK ${${proj}_PLUGIN_LIBRARIES_WORK} "${${proj}_${lib}_PLUGIN_LIBRARY}")
     list(REMOVE_ITEM ${proj}_PLUGIN_LIBS_MISSING ${lib})
 	endif()
@@ -266,7 +276,7 @@ set(${proj}_PLUGIN_LIBRARIES  ${${proj}_PLUGIN_LIBRARIES_WORK} CACHE STRING
 # Clean up.  If all libraries were found remove cache entries.
 if(${proj}_PLUGIN_LIBRARIES)
   foreach(lib ${${proj}_PLUGIN_LIBNAMES})
-    unset(${proj}_${lib}_PLUGIN_LIBRARY)
+    unset(${proj}_${lib}_PLUGIN_LIBRARY CACHE)
 	endforeach()
         if(${proj}_NUMPLUGINS_EXPECTED EQUAL 1)
           set(temp_path ${${proj}_PLUGIN_LIBRARIES})
@@ -280,65 +290,15 @@ endif()
 # Find Include Directory
 #-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Setup search paths for header
-set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_DIR})
-set(inc_sub_path "include")
-set(possible_sub_paths ctk
-                       ctk/PluginFramework
-                       eigen3
-                       mitk
-                       mitk/configs
-                       mitk/exports
-                       mitk/ui_files
-                       mitk/AlgorithmsExt/include
-                       mitk/AppUtil/include
-                       mitk/Core/include
-                       mitk/CppMicroServices/core/include
-                       mitk/DataTypesExt/include
-                       mitk/MapperExt/include
-                       mitk/PlanarFigure/include
-                       mitk/QtWidgets
-                       mitk/QtWidgets/include
-                       mitk/QtWidgetsExt
-                       mitk/QtWidgetsExt/include
-                       mitk/SceneSerialization/include
-                       mitk/Utilities/mbilog
-                       mitk/Modules/ContourModel/DataManagement
-                       mitk/Modules/CppMicroServices/core/src/module
-                       mitk/Modules/CppMicroServices/core/src/service
-                       mitk/Modules/CppMicroServices/core/src/util
-                       mitk/Modules/ImageDenoising
-                       mitk/Modules/LegacyGL
-                       mitk/Modules/Multilabel
-                       mitk/Modules/Overlays
-                       mitk/Modules/Segmentation/Algorithms
-                       mitk/Modules/Segmentation/Controllers
-                       mitk/Modules/Segmentation/Interactions
-                       mitk/Modules/SegmentationUI
-                       mitk/Modules/SegmentationUI/Qmitk
-                       mitk/Modules/SurfaceInterpolation
-                       mitk/Modules/QtWidgets
-                       PythonQt
-                       tinyxml
-                       mitk/plugins/org.mitk.core.services
-                       mitk/plugins/org.mitk.gui.common
-                       mitk/plugins/org.mitk.gui.qt.application
-                       mitk/plugins/org.mitk.gui.qt.common
-                       mitk/plugins/org.mitk.gui.qt.common.legacy
-                       mitk/plugins/org.mitk.gui.qt.datamanager
-                       mitk/plugins/org.mitk.gui.qt.stdmultiwidgeteditor
-                       mitk/plugins/org.mitk.gui.qt.ext
-                       mitk/plugins/org.blueberry.core.runtime
-                       mitk/plugins/org.blueberry.core.runtime/application
-                       mitk/plugins/org.blueberry.core.runtime/registry
-                       mitk/plugins/org.blueberry.ui.qt
-                       mitk/plugins/org.blueberry.ui.qt/application
-                       mitk/plugins/org.blueberry.ui.qt/intro)
-
-foreach(sub_path ${possible_sub_paths})
-  set(${proj}_POSSIBLE_INCLUDE_PATHS "${${proj}_POSSIBLE_INCLUDE_PATHS}" "${${proj}_DIR}/${inc_sub_path}/${sub_path}")
-endforeach()
+set(${proj}_POSSIBLE_INCLUDE_PATHS
+  "${${proj}_DIR}/*"
+  "${${proj}_DIR}/include/*"
+  "${${proj}_DIR}/include/*/*"
+  "${${proj}_DIR}/include/*/*/*"
+  "${${proj}_DIR}/include/*/*/*/*"
+  "${${proj}_DIR}/include/*/*/*/*/*"
+  "${${proj}_DIR}/include/*/*/*/*/*/*"
+  )
 
 #message("${proj}_POSSIBLE_INCLUDE_PATHS: ${${proj}_POSSIBLE_INCLUDE_PATHS}")
 #-----------------------------------------------------------------------------
@@ -347,25 +307,21 @@ set(${proj}_HEADERS_MISSING ${${proj}_HEADERS})
 list(REMOVE_DUPLICATES ${proj}_HEADERS_MISSING)
 set(${proj}_HEADERS_WORK "")
 foreach(header ${${proj}_HEADERS})
-              find_path(${proj}_${header}_HEADER
-                      NAMES ${header}
-                      PATHS ${${proj}_POSSIBLE_INCLUDE_PATHS}
-                      ${${proj}_DIR} ${${proj}_DIR}/include
-                      NO_DEFAULT_PATH
-                      )
+  unset(${proj}_${header}_HEADER CACHE)
+  find_path(${proj}_${header}_HEADER
+    NAMES
+    ${header}
+    PATHS
+    ${${proj}_POSSIBLE_INCLUDE_PATHS}
+    NO_DEFAULT_PATH
+    )
 
-              find_path(${proj}_${header}_HEADER
-                      NAMES ${header}
-                      PATHS ${${proj}_POSSIBLE_INCLUDE_PATHS}
-                      ${${proj}_DIR} ${${proj}_DIR}/include
-                      )
-
-              mark_as_advanced(${proj}_${header}_HEADER)
-              set(${proj}_HEADER_FULLNAMES ${${proj}_HEADER_FULLNAMES} ${proj}_${header}_HEADER)
-              if(${proj}_${header}_HEADER)
-                set(${proj}_HEADERS_WORK ${${proj}_HEADERS_WORK} "${${proj}_${header}_HEADER}")
-                list(REMOVE_ITEM ${proj}_HEADERS_MISSING ${header})
-              endif()
+  mark_as_advanced(${proj}_${header}_HEADER)
+  set(${proj}_HEADER_FULLNAMES ${${proj}_HEADER_FULLNAMES} ${proj}_${header}_HEADER)
+  if(${proj}_${header}_HEADER)
+    set(${proj}_HEADERS_WORK ${${proj}_HEADERS_WORK} "${${proj}_${header}_HEADER}")
+    list(REMOVE_ITEM ${proj}_HEADERS_MISSING ${header})
+  endif()
 endforeach()
 
 list(LENGTH ${proj}_HEADERS_WORK ${proj}_NUMHEADERS)
@@ -385,7 +341,16 @@ list(GET ${proj}_INCLUDE_DIRS 0 ${proj}_INCLUDE_DIR)
 # Handle Standard Args
 find_package_handle_standard_args(${proj}
 	FOUND_VAR ${proj}_FOUND
-        REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES ${proj}_LIBRARY_DIR ${proj}_PLUGIN_LIBRARIES ${proj}_PLUGIN_LIBRARY_DIR
-	VERSION_VAR ${proj}_VERSION
-        FAIL_MESSAGE "Could NOT find ${proj} missing component: ${${proj}_LIBS_MISSING} and ${${proj}_HEADERS_MISSING}")
+  REQUIRED_VARS ${proj}_INCLUDE_DIR ${proj}_LIBRARIES ${proj}_LIBRARY_DIR ${proj}_PLUGIN_LIBRARIES ${proj}_PLUGIN_LIBRARY_DIR
+  VERSION_VAR ${proj}_VERSION_STRING
+  FAIL_MESSAGE "Could NOT find ${proj} missing component: ${${proj}_LIBS_MISSING} and ${${proj}_HEADERS_MISSING}")
+
 set(${proj}_LIBRARY ${${proj}_LIBRARIES})
+
+mark_as_advanced(
+  ${proj}_INCLUDE_DIR
+  ${proj}_LIBRARIES
+  ${proj}_LIBRARY_DIR
+  ${proj}_PLUGIN_LIBRARIES
+  ${proj}_PLUGIN_LIBRARY_DIR
+  )

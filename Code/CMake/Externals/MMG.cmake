@@ -34,7 +34,7 @@ set(proj MMG)
 if(SV_USE_${proj})
   # If using toplevel dir, foce MMG_DIR to be the SV_MMG_DIR set by the
   # simvascular_add_new_external macro
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+  if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
     set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
   endif()
   simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
