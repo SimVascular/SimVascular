@@ -76,9 +76,6 @@ endif()
 
 if(SV_USE_OpenCASCADE)
 	set(OPTLIBS ${OPTLIBS} ${SV_LIB_OpenCASCADE_SOLID_NAME})
-  if(SV_USE_FREETYPE)
-    link_directories(${FREETYPE_LIBRARY_DIR})
-  endif()
 endif()
 
 if(SV_USE_ITK)

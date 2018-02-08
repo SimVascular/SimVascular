@@ -51,6 +51,9 @@ endif()
 if (POLICY CMP0054)
   cmake_policy(SET CMP0054 OLD)
 endif()
+if (POLICY CMP0025) # Compiler ID when using clang set to clang not appleclang
+  cmake_policy(SET CMP0025 OLD)
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -125,6 +128,7 @@ get_filename_component(qt5_installed_prefix "${Qt5_DIR}/../../.." ABSOLUTE)
 
 #-----------------------------------------------------------------------------
 # Externals!
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals/bin")
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 ExternalProject_Add(Externals
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
@@ -142,9 +146,9 @@ ExternalProject_Add(Externals
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_EXAMPLES:BOOL=OFF
     -DQt5_DIR:PATH=${Qt5_DIR}
+    -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
-set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -204,8 +208,8 @@ ExternalProject_Add(SimVascular
     -DSV_USE_TCL_SHARED:BOOL=ON
     -DSV_USE_TETGEN_ADAPTOR:BOOL=ON
     -DSV_USE_VTK_SHARED:BOOL=ON
-    -DSV_EXTERNALS_USE_TOPLEVEL_DIR:BOOL=ON
-    -DSV_EXTERNALS_TOPLEVEL_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}
+    -DSV_EXTERNALS_USE_TOPLEVEL_BIN_DIR:BOOL=ON
+    -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     -DQt5_DIR:PATH=${Qt5_DIR}
     -DQT_DLL_PATH:PATH=${qt5_installed_prefix}/bin
     -DQT_PLUGIN_PATH:PATH=${qt5_installed_prefix}/plugins

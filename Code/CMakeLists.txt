@@ -52,6 +52,9 @@ endif()
 if (POLICY CMP0054)
 	cmake_policy(SET CMP0054 OLD)
 endif()
+if (POLICY CMP0025) # Compiler ID when using clang set to clang not appleclang
+  cmake_policy(SET CMP0025 OLD)
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -252,19 +255,21 @@ if(SV_USE_QT_GUI)
     "Source/Modules/Simulation"
     "Source/Modules/ProjectManagement"
     "Source/Modules/QtWidgets")
+
+  if(SV_USE_OpenCASCADE)
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/OCCT")
+  endif()
+
+  if(SV_USE_PARASOLID)
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/Parasolid")
+  endif()
+
+  if(SV_USE_MESHSIM)
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Mesh/MeshSim")
+  endif()
+
 endif()
 
-if(SV_USE_OpenCASCADE)
-        set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/OCCT")
-endif()
-
-if(SV_USE_PARASOLID)
-        set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/Parasolid")
-endif()
-
-if(SV_USE_MESHSIM)
-        set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Mesh/MeshSim")
-endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

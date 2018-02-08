@@ -37,7 +37,7 @@ set(proj VTK)
 # after ITK is found
 # If using toplevel dir, foce VTK_DIR to be the SV_VTK_DIR set by the
 # simvascular_add_new_external macro
-if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
   set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/vtk-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION} CACHE PATH "Force ${proj} dir to externals" FORCE)
   if(WIN32)
     set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force VTK DLL Path")
@@ -64,7 +64,9 @@ simvascular_external(${proj}
   ${${proj}_PYTHON_MODULES}
   NO_DEFAULT_PATH
   SHARED_LIB ${SV_USE_${proj}_SHARED}
-  VERSION ${${proj}_VERSION})
+  VERSION ${${proj}_VERSION}
+  REQUIRED
+  )
 
 # Include cmake file provided by VTK to define libs and include dirs
 include(${${proj}_USE_FILE})
