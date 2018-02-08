@@ -1288,7 +1288,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   option(SV_EXTERNALS_ENABLE_${proj} "Enable ${proj} Plugin" ${use})
   option(SV_EXTERNALS_ENABLE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
   mark_as_advanced(SV_EXTERNALS_ENABLE_${proj}_SHARED)
-  option(SV_EXTERNALS_DOWNLOAD_${proj} "Download instead of build ${proj}; Unused for tcl, tk, tcllib, tklib, numpy, pip" OFF)
+  option(SV_EXTERNALS_DOWNLOAD_${proj} "Download instead of build ${proj}; Unused for tcl, tk, tcllib, tklib, numpy, pip" ON)
   #mark_as_advanced(SV_EXTERNALS_DOWNLOAD_${proj})
 
   # Version
@@ -1364,7 +1364,7 @@ endmacro()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# sv_externals_add_new_external
+# sv_externals_read_file
 # \brief Create new external and set variables with default values based on inputs
 macro(simvascular_read_file file_name file_contents)
   file(READ "${file_name}" ${file_contents})
