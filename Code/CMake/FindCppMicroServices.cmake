@@ -100,11 +100,20 @@
 #   US_<component>_COMPILE_DEFINITIONS_RELEASE
 #   US_<component>_COMPILE_DEFINITIONS_DEBUG
 #
+include(FindPackageHandleStandardArgs)
+include(CMakeParseArguments)
 
-find_path(US_CMAKE_FILES_DIR usModuleInit.cpp
-  PATHS
+set(CppMicroServices_POSSIBLE_US_FILES_PATHS
   ${SV_SOURCE_DIR}/CMake/CppMicroServices
   ${SimVascular_CMAKE_DIR}/CppMicroServices
+  )
+
+find_path(US_CMAKE_FILES_DIR
+  NAMES
+  usModuleInit.cpp
+  PATHS
+  ${CppMicroServices_POSSIBLE_US_FILES_PATHS}
+  NO_DEFAULT_PATH
   )
 
 set(US_RCC_EXECUTABLE_NAME usResourceCompiler)
@@ -113,19 +122,24 @@ set(US_RESOURCE_RC_TEMPLATE "${US_CMAKE_FILES_DIR}/us_resources.rc.in")
 set(US_CMAKE_RESOURCE_DEPENDENCIES_CPP "${US_CMAKE_FILES_DIR}/usCMakeResourceDependencies.cpp")
 
 # The CppMicroServices resource compiler
-find_program(US_RCC_EXECUTABLE ${US_RCC_EXECUTABLE_NAME}
-  PATHS "${MITK_DIR}/bin"
-  PATH_SUFFIXES Release Debug RelWithDebInfo MinSizeRel)
+set(CppMicroServices_POSSIBLE_US_EXECUTABLE_PATHS
+  "${MITK_DIR}/bin"
+  "${MITK_DIR}/bin/Release"
+  "${MITK_DIR}/bin/Debug"
+  "${MITK_DIR}/bin/RelWithDebInfo"
+  "${MITK_DIR}/bin/MinSizeRel"
+  )
+
+find_program(US_RCC_EXECUTABLE
+  NAMES
+  ${US_RCC_EXECUTABLE_NAME}
+  PATHS
+  ${CppMicroServices_POSSIBLE_US_EXECUTABLE_PATHS}
+  NO_DEFAULT_PATH
+  )
+
 mark_as_advanced(US_RCC_EXECUTABLE)
 
-# Include helper macros
-include(CMakeParseArguments)
-if(CMAKE_VERSION VERSION_LESS "2.8.8")
-  # We need the HANDLE_COMPONENTS argument
-  include("${US_CMAKE_FILES_DIR}/CppMicroServices/FindPackageHandleStandardArgs.cmake")
-elseif(NOT COMMAND find_package_handle_standard_args)
-  include(FindPackageHandleStandardArgs)
-endif()
 include("${US_CMAKE_FILES_DIR}/usFunctionGenerateModuleInit.cmake")
 include("${US_CMAKE_FILES_DIR}/usFunctionAddResources.cmake")
 include("${US_CMAKE_FILES_DIR}/usFunctionCheckCompilerFlags.cmake")

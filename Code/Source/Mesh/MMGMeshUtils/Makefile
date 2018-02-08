@@ -47,17 +47,21 @@ CREATE_EXPORTS_CV_FILE_H=svMMGExports.h
 CXXFLAGS += -DSV_EXPORT_MMG_COMPILE
 
 CXXFLAGS += $(LOCAL_INCDIR) \
-	    $(SV_MMG_INCDIR) $(VTK_INCDIRS) $(TCLTK_INCDIR)
+	    $(SV_MMG_INCDIR) $(VTK_INCDIRS) $(TCLTK_INCDIR) $(PYTHON_INCDIR)
 
 HDRS	= cv_mmg_mesh_utils.h
 
 CXXSRCS	= cv_mmg_mesh_utils.cxx
 
 DLLHDRS = cv_mmg_mesh_init.h
-
 DLLSRCS = cv_mmg_mesh_init.cxx
 
+SVPYHDRS = cv_mmg_mesh_init_py.h
+SVPYSRCS = cv_mmg_mesh_init_py.cxx
+
 TARGET_LIB_NAME = $(SV_LIB_MMG_MESH_NAME)
+
+SV_PYTHON_MODULE_NAME = pyMeshUtil
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \

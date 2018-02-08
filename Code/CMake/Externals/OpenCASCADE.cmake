@@ -32,9 +32,10 @@
 # OpenCASCADE
 set(proj OpenCASCADE)
 if(SV_USE_${proj})
+
   # If using toplevel dir, foce OpenCASCADE_DIR to be the SV_OpenCASCADE_DIR set by the
   # simvascular_add_new_external macro
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+  if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
     if(WIN32)
       set(${proj}_DIR ${SV_${proj}_DIR}/cmake CACHE PATH "Force ${proj} dir to externals" FORCE)
       set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force OpenCASCADE DLL Path")
@@ -42,9 +43,21 @@ if(SV_USE_${proj})
       set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/opencascade CACHE PATH "Force ${proj} dir to externals" FORCE)
     endif()
   endif()
+
+  if(NOT ${proj}_DIR)
+    set(${proj}_DIR "${proj}_DIR-NOTFOUND" CACHE PATH "Path of toplevel ${proj} dir. Specify this if ${proj} cannot be found.")
+    message(FATAL_ERROR "${proj}_DIR was not specified. Set ${proj}_DIR to the build or bin directory containing OpenCASCADEConfig.cmake")
+  endif()
+
   # Find OpenCASCADE
-  simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
+  simvascular_external(${proj}
+    SHARED_LIB ${SV_USE_${proj}_SHARED}
+    VERSION ${${proj}_VERSION}
+    REQUIRED
+    )
+
   # Set SV_OpenCASCADE_DIR to the toplevel OpenCASCADE if it exists
   simvascular_get_external_path_from_include_dir(${proj})
+
 endif()
 #-----------------------------------------------------------------------------

@@ -65,15 +65,18 @@ endif
 
 CXXFLAGS += $(LOCAL_INCDIR) \
 	    $(VTK_INCDIRS) \
-	    $(TCLTK_INCDIR)
+	    $(TCLTK_INCDIR) \
+            $(PYTHON_INCDIR)
 
 HDRS	= cvAdaptObject.h cv_adapt_utils.h eispack.h
 
 CXXSRCS	= cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx
 
 DLLHDRS = cv_adapt_init.h
-
 DLLSRCS = cv_adapt_init.cxx
+
+SVPYHDRS = cv_adapt_init_py.h
+SVPYSRCS = cv_adapt_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_ADAPTOR_NAME)
 
@@ -83,6 +86,8 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SOLVERIO_LIB) \
           $(ZLIB_LIBS)
+
+SV_PYTHON_MODULE_NAME = pyMeshAdapt
 
 include $(TOP)/targetlib.mk
 

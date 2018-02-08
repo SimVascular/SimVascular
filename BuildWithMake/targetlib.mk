@@ -34,9 +34,21 @@ OBJS    ?= $(addprefix $(OBJ_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
            $(addprefix $(OBJ_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
            $(addprefix $(OBJ_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
 
-DLLOBJS  ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS:.cxx=.$(OBJECTEXT))) $(OBJS)
-DLLOBJS2 ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS2:.cxx=.$(OBJECTEXT)))
-DLLOBJS3 ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS3:.cxx=.$(OBJECTEXT)))
+DLLOBJS  ?= $(OBJS)
+DLLOBJS2 ?=
+DLLOBJS3 ?=
+
+ifeq ($(SV_USE_TCL),1)
+  DLLOBJS  += $(addprefix $(OBJ_DIR)/,$(DLLSRCS:.cxx=.$(OBJECTEXT)))
+  DLLOBJS2 += $(addprefix $(OBJ_DIR)/,$(DLLSRCS2:.cxx=.$(OBJECTEXT)))
+  DLLOBJS3 += $(addprefix $(OBJ_DIR)/,$(DLLSRCS3:.cxx=.$(OBJECTEXT)))
+endif
+
+ifeq ($(SV_USE_PYTHON),1)
+  DLLOBJS  += $(addprefix $(OBJ_DIR)/,$(SVPYSRCS:.cxx=.$(OBJECTEXT)))
+  DLLOBJS2 += $(addprefix $(OBJ_DIR)/,$(SVPYSRCS2:.cxx=.$(OBJECTEXT)))
+  DLLOBJS3 += $(addprefix $(OBJ_DIR)/,$(SVPYSRCS3:.cxx=.$(OBJECTEXT)))
+endif
 
 SRCS	= $(CXXSRCS)
 

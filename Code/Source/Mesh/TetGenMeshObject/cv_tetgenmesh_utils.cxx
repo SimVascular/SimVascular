@@ -177,7 +177,7 @@ int TGenUtils_AddPointSizingFunction(tetgenio *inmesh,vtkPolyData *polydatasolid
   if (VtkUtils_PDCheckArrayName(polydatasolid, 0, meshSizingFunctionName) != SV_OK)
   {
     fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
-        Something may have gone wrong when setting up BL");
+        Something may have gone wrong when setting up BL\n");
     return SV_ERROR;
   }
   vtkDoubleArray *meshSizingFunction = vtkDoubleArray::SafeDownCast(

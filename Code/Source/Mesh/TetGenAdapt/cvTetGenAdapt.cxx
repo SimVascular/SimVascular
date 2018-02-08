@@ -64,6 +64,10 @@
 #endif
 
 #include <iostream>
+#ifdef SV_USE_PYTHON
+#include "Python.h"
+#include "cv_mesh_init_py.h"
+#endif
 
 
 cvTetGenAdapt::cvTetGenAdapt()
@@ -151,6 +155,7 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
+#ifdef SV_USE_TCL
 int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 		char *meshFileName,
 		char *solidFileName)
@@ -230,9 +235,9 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   return SV_OK;
 
 }
-
+#endif
 #else
-
+#ifdef SV_USE_TCL
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
@@ -289,9 +294,90 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     }
   }
 
- return SV_OK;
+  return SV_OK;
 }
+#endif
+#endif
 
+#ifdef SV_USE_PYTHON
+// -----------------------
+//  CreateInternalMeshObject for python
+// -----------------------
+int cvTetGenAdapt::CreateInternalMeshObject(
+		char *meshFileName,
+		char *solidFileName)
+{
+  if (meshobject_ != NULL)
+  {
+    fprintf(stderr,"Cannot create a mesh object, one already exists\n");
+    return SV_ERROR;
+  }
+
+  char* mesh_name = "adaptInternalMeshobject";
+  if ( gRepository->Exists(mesh_name) ) {
+    fprintf(stderr,"Object %s already exists\n",mesh_name);
+    return TCL_ERROR;
+  }
+  cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
+  meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject(meshFileName,solidFileName);
+  if ( meshobject_ == NULL ) {
+    fprintf(stderr,"Mesh Object is null after instantiation!\n");
+    return SV_ERROR;
+  }
+
+  char evalmestr[1024];
+  PyObject* mod=PyImport_ImportModule("pyMeshObject");
+  PyObject* globals=PyModule_GetDict(mod);
+
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"mesh_setKernel('TetGen')");
+
+  if (!PyRun_String(evalmestr, Py_single_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"%s=pyMeshObject()",mesh_name);
+  if (!PyRun_String(evalmestr, Py_single_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"%s.mesh_newObject('%s')",mesh_name,mesh_name);
+  if (!PyRun_String(evalmestr, Py_single_input, globals, globals))
+  {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return SV_ERROR;
+  }
+  if (solidFileName != NULL)
+  {
+    evalmestr[0]='\0';
+    sprintf(evalmestr,"%s.LoadModel('%s')",mesh_name,solidFileName);
+
+    if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+    {
+      fprintf(stderr,"Error loading solid model in internal object creation\n");
+      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return SV_ERROR;
+    }
+  }
+  if (meshFileName != NULL)
+  {
+    evalmestr[0]='\0';
+    sprintf(evalmestr,"%s.LoadMesh('%s')",mesh_name,meshFileName);
+    if (!PyRun_String(evalmestr, Py_eval_input, globals, globals))
+    {
+      fprintf(stderr,"Error loading mesh in internal object creation\n");
+      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return SV_ERROR;
+    }
+  }
+  return SV_OK;
+}
 #endif
 
 // -----------------------
@@ -418,13 +504,11 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 
   if (sol_ != NULL)
     delete [] sol_;
-
   if (AdaptUtils_readArrayFromFile(fileName,"solution",sol_) != SV_OK)
   {
     fprintf(stderr,"Error: Couldn't read solution from file\n");
     return SV_ERROR;
   }
-
   if (inmesh_ != NULL)
   {
     int nVar = 5;//Number of variables in solution
@@ -612,6 +696,7 @@ int cvTetGenAdapt::ReadYbarFromMesh()
     delete [] ybar_;
   char ybar_step[80];
   sprintf(ybar_step,"%s_%05i","ybar",options.outstep_);
+  fprintf(stdout,"%s",ybar_step);
   if (AdaptUtils_checkArrayExists(inmesh_,0,ybar_step) != SV_OK)
   {
     fprintf(stderr,"Array %s does not exist on mesh\n",ybar_step);
@@ -654,7 +739,6 @@ int cvTetGenAdapt::ReadAvgSpeedFromMesh()
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
     return SV_ERROR;
   }
-
   if (avgspeed_ != NULL)
     delete [] avgspeed_;
   char avgspeed_step[80];

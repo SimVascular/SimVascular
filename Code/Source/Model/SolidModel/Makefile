@@ -37,7 +37,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR)
+	   $(TCLTK_INCDIR) \
+	   $(PYTHON_INCDIR)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_SOLID
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_SOLID
@@ -67,9 +68,14 @@ CXXSRCS	= cvSolidModel.cxx
 DLLHDRS = cv_solid_init.h
 DLLSRCS = cv_solid_init.cxx
 
+SVPYHDRS = cv_solid_init_py.h
+SVPYSRCS = cv_solid_init_py.cxx
+
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)
 
 TARGET_LIB_NAME = $(SV_LIB_SOLID_NAME)
+
+SV_PYTHON_MODULE_NAME = pySolid2
 
 include $(TOP)/targetlib.mk

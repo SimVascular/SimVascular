@@ -49,7 +49,9 @@
 #include "cv_tetgenmesh_utils.h"
 
 #include "cv_sys_geom.h"
-
+#ifdef SV_USE_PYTHON
+#include "Python.h"
+#endif
 #include "vtkGeometryFilter.h"
 #include "vtkCleanPolyData.h"
 #include "vtkSmartPointer.h"
@@ -82,7 +84,7 @@
 /**
  * @brief Constructor for cvTetGenMeshObject(Should never be called directly)
  */
-
+#ifdef SV_USE_TCL
 cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   : cvMeshObject()
 {
@@ -157,7 +159,87 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
     meshoptions_.cylindernormal[i] = 0;
   }
 }
+#endif
+// -----------
+// cvTetGenMeshObject for python
+// -----------
+/**
+ * @brief Constructor for cvTetGenMeshObject(Should never be called directly)
+ */
+#ifdef SV_USE_PYTHON
+cvTetGenMeshObject::cvTetGenMeshObject()
+: cvMeshObject()
+{
+inmesh_ = NULL;
+outmesh_ = NULL;
+polydatasolid_ = NULL;
+inputug_ = NULL;
+meshloaded_ = 0;
+loadedVolumeMesh_ = 0;
+//nodemap_ = NULL;
+pts_ = NULL;
 
+originalpolydata_ = NULL;
+surfacemesh_ = NULL;
+volumemesh_ = NULL;
+boundarylayermesh_ = NULL;
+innerblmesh_ = NULL;
+holelist_ = NULL;
+regionlist_ = NULL;
+regionsizelist_ = NULL;
+
+meshFileName_[0] = '\0';
+solidFileName_[0] = '\0';
+
+solidmodeling_kernel_ = SM_KT_POLYDATA;
+numModelRegions_ = 0;
+numBoundaryRegions_ = 0;
+
+//All the different mesh options. Originally set to zero. Changed by calls to object from GUI
+//Specifically ->SetMeshOptions()
+meshoptions_.surfacemeshflag=0;
+meshoptions_.volumemeshflag=0;
+meshoptions_.nomerge=0;
+meshoptions_.quiet=0;
+meshoptions_.docheck=0;
+meshoptions_.verbose=0;
+meshoptions_.diagnose=0;
+meshoptions_.nobisect=0;
+meshoptions_.optlevel=0;
+meshoptions_.maxedgesize=0;
+meshoptions_.epsilon=0;
+meshoptions_.minratio=0;
+meshoptions_.coarsen_percent=0;
+meshoptions_.boundarylayermeshflag=0;
+meshoptions_.numsublayers=0;
+meshoptions_.blthicknessfactor=0;
+meshoptions_.sublayerratio=0;
+meshoptions_.refinement=0;
+meshoptions_.refinedsize=0;
+meshoptions_.sphereradius=0;
+meshoptions_.cylinderradius=0;
+meshoptions_.cylinderlength=0;
+meshoptions_.functionbasedmeshing=0;
+meshoptions_.secondarrayfunction=0;
+meshoptions_.meshwallfirst=0;
+meshoptions_.startwithvolume=0;
+meshoptions_.refinecount=0;
+meshoptions_.numberofholes=0;
+meshoptions_.numberofregions=0;
+#ifdef SV_USE_MMG
+meshoptions_.usemmg=1;
+#else
+meshoptions_.usemmg=0;
+#endif
+meshoptions_.hausd=0;
+for (int i=0;i<3;i++)
+{
+  meshoptions_.spherecenter[i] = 0;
+  meshoptions_.cylindercenter[i] = 0;
+  meshoptions_.cylindernormal[i] = 0;
+}
+}
+#endif
 // -----------
 // cvTetGenMeshObject
 // -----------
@@ -243,7 +325,7 @@ int cvTetGenMeshObject::SetSolidFileName( const char* solidFileName )
  * @brief Function to print out the mesh statistics
  * @return SV_OK if executed correctly
  */
-
+#ifdef SV_USE_TCL
 int cvTetGenMeshObject::Print()
 {
   int num_nodes = 0;
@@ -329,8 +411,101 @@ int cvTetGenMeshObject::Print()
 
   return SV_OK;
 }
+#endif
+// -----
+// pyPrint
+// -----
+/**
+ * @brief Function to print out the mesh statistics
+ * @return SV_OK if executed correctly
+ */
+#ifdef SV_USE_PYTHON
+int cvTetGenMeshObject::pyPrint()
+{
+  int num_nodes = 0;
+  int nMeshFaces = 0;
+  int num_elems = 0;
+  int nMeshEdges = 0;
+  int nRegion = 1;
+  int nFace = 0;
+  int nEdge = 0;
+  int nVertex = 0;
 
+  if (polydatasolid_ == NULL)
+  {
+    fprintf(stderr,"Solid has not been loaded\n");
+    return SV_ERROR;
+  }
+  if(meshoptions_.surfacemeshflag && !meshoptions_.volumemeshflag)
+  {
+    num_nodes = polydatasolid_->GetNumberOfPoints();
+    nMeshFaces = polydatasolid_->GetNumberOfCells();
+  }
+  else if(meshoptions_.boundarylayermeshflag)
+  {
+    if (volumemesh_ == NULL)
+    {
+      fprintf(stderr,"Mesh has not been created\n");
+      return SV_ERROR;
+    }
+    num_nodes = volumemesh_->GetNumberOfPoints();
+    num_elems = volumemesh_->GetNumberOfCells();
+    nMeshFaces = 4.0*(volumemesh_->GetNumberOfCells());
+    nMeshEdges = 3.0*(nMeshFaces);
+  }
+  else
+  {
+    if (outmesh_ == NULL)
+    {
+      fprintf(stderr,"Mesh has not been created\n");
+      return SV_ERROR;
+    }
+    num_nodes = outmesh_->numberofpoints;
+    num_elems = outmesh_->numberoftetrahedra;
+    nMeshFaces = outmesh_->numberoftrifaces;
+    nMeshEdges = outmesh_->numberofedges;
+    nFace = outmesh_->numberoftrifaces;
+    nEdge = outmesh_->numberofregions;
+    nVertex = outmesh_->numberofpoints;
+  }
+   /* output the statistics */
 
+  nFace = originalpolydata_->GetNumberOfPolys();
+  nVertex = originalpolydata_->GetNumberOfPoints();
+  nEdge = 3*(originalpolydata_->GetNumberOfPolys());
+
+  fprintf(stdout,"\nMESH STATISTICS:\n");
+  fprintf(stdout,"  elements         = %i\n",num_elems);
+  fprintf(stdout,"  nodes            = %i\n",num_nodes);
+  fprintf(stdout,"  mesh edges       = %i\n",nMeshEdges);
+  fprintf(stdout,"  mesh faces       = %i\n",nMeshFaces);
+  fprintf(stdout,"\nMODEL STATISTICS:\n");
+  fprintf(stdout,"  material regions = %i\n",nRegion);
+  fprintf(stdout,"  edges            = %i\n",nEdge);
+  fprintf(stdout,"  vertices         = %i\n\n",nVertex);
+
+  char rtnstr[2048];
+  rtnstr[0]='\0';
+  sprintf(rtnstr,"number_of_nodes %i\n",num_nodes);
+  PySys_WriteStdout(rtnstr);
+  rtnstr[0]='\0';
+  sprintf(rtnstr,"number_of_elements %i\n",num_elems);
+  PySys_WriteStdout(rtnstr);
+  rtnstr[0]='\0';
+  sprintf(rtnstr,"number_of_mesh_edges %i\n",nMeshEdges);
+  PySys_WriteStdout(rtnstr);
+  rtnstr[0]='\0';
+  sprintf(rtnstr,"number_of_mesh_faces %i\n",nMeshFaces);
+  PySys_WriteStdout(rtnstr);
+
+  //Reset all the meshoptions to be ready for next mesh
+  meshoptions_.volumemeshflag = 0;
+  meshoptions_.surfacemeshflag = 0;
+  meshoptions_.boundarylayermeshflag = 0;
+
+  return SV_OK;
+}
+#endif
 // ----
 // Copy
 // ----
@@ -689,14 +864,11 @@ int cvTetGenMeshObject::LoadMesh(char *filename,char *surfilename) {
   if (filename == NULL) {
     return SV_ERROR;
   }
-
   if (volumemesh_ != NULL)
     volumemesh_->Delete();
-
   volumemesh_ = vtkUnstructuredGrid::New();
   if (TGenUtils_LoadMesh(filename,volumemesh_) != SV_OK)
     return SV_ERROR;
-
   if (surfilename != 0)
   {
     if (surfacemesh_ != NULL)
@@ -706,7 +878,6 @@ int cvTetGenMeshObject::LoadMesh(char *filename,char *surfilename) {
     if (PlyDtaUtils_ReadNative(surfilename,surfacemesh_) != SV_OK)
       return SV_ERROR;
   }
-
   return SV_OK;
 
 }
@@ -842,13 +1013,14 @@ int cvTetGenMeshObject::NewMesh() {
  */
 
 int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values) {
-
   if(!strncmp(flags,"GlobalEdgeSize",14)) {            //Global edge size
        if (numValues < 1)
-	 return SV_ERROR;
+   return SV_ERROR;
+
       meshoptions_.maxedgesize=values[0];
   }
   else if(!strncmp(flags,"LocalEdgeSize",13)) {
+
       if (numValues < 2)
       {
 	fprintf(stderr,"Must give face id and local edge size\n");
@@ -874,7 +1046,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   }
   else if(!strncmp(flags,"VolumeMeshFlag",14)) {
       if (numValues < 1)
-	return SV_ERROR;
+  return SV_ERROR;
       meshoptions_.volumemeshflag = values[0];
   }
   else if(!strncmp(flags,"QualityRatio",12)) {//q
@@ -960,7 +1132,6 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
   }
-
   return SV_OK;
 }
 
@@ -1438,7 +1609,6 @@ int cvTetGenMeshObject::WriteMesh(char *filename, int smsver) {
   // must have created mesh
   if (meshoptions_.volumemeshflag && !meshoptions_.boundarylayermeshflag)
   {
-
     if (outmesh_ == NULL) {
       return SV_ERROR;
     }

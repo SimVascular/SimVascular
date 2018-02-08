@@ -32,13 +32,19 @@ set(lib ${SV_LIB_MESHSIM_SOLID_NAME})
 set(export_directive meshsim_solid)
 set(export_file_name svMeshSimSolidExports.h)
 
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
+
 SET(CXXSRCS cvMeshSimSolidModel.cxx)
 SET(HDRS cvMeshSimSolidModel.h)
 
 if(MESHSIM_MESHSIMSOLID_USE_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
+  add_library(${lib} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx cv_meshsimsolid_init_py.cxx)
 else()
-  add_library(${lib} ${CXXSRCS} cv_meshsimsolid_init.cxx)
+  add_library(${lib} ${CXXSRCS} cv_meshsimsolid_init.cxx cv_meshsimsolid_init_py.cxx)
 endif()
 
 target_link_libraries(${lib}
@@ -73,3 +79,5 @@ if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
   		)
   endif()
 endif()
+PYTHON_ADD_MODULE(pySolidMeshSim cv_meshsimsolid_init.cxx)
+target_link_libraries(pySolidMeshSim ${lib} ${PYTHON_LIBRARY})

@@ -92,7 +92,7 @@ foreach(proj ${SV_EXTERNALS_LIST})
       include("${SV_SOURCE_DIR}/CMake/Externals/${proj}.cmake")
     endif()
     # Install
-    if(SV_USE_${proj}_SHARED AND SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    if(SV_USE_${proj}_SHARED AND SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
       simvascular_install_external(${proj})
     endif()
   endif()

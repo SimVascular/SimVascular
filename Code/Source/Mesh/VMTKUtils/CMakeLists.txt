@@ -36,11 +36,17 @@ set(export_directive vmtk_utils)
 set(export_file_name svVMTKUtilsExports.h)
 
 include_directories(${MMG_INCLUDE_DIR})
-
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+		    ${PYTHON_INCLUDE_DIR}
+		    ${PYTHON_INCLUDE_DIRS})
+endif()
 SET(CXXSRCS cv_vmtk_utils.cxx)
 SET(HDRS cv_vmtk_utils.h)
 
+if(SV_USE_TCL)
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_vmtk_utils_init.cxx)
+endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES}
@@ -75,4 +81,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(SV_USE_PYTHON)
+PYTHON_ADD_MODULE(pyVMTKUtils cv_vmtk_utils_init_py.cxx)
+target_link_libraries(pyVMTKUtils ${lib} ${PYTHON_LIBRARY})
 endif()

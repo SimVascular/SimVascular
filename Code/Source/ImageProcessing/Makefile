@@ -34,7 +34,7 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_IMAGE
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_IMAGE
@@ -51,8 +51,10 @@ CXXSRCS	= cv_image.cxx cv_read_header.cxx cv_decode.cxx \
 	  cv_mask_image_in_place.cxx
 
 DLLHDRS = cv_image_init.h
-
 DLLSRCS = cv_image_init.cxx
+
+SVPYHDRS = cv_image_init_py.h
+SVPYSRCS = cv_image_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
@@ -61,6 +63,8 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
 	  $(VMTK_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_IMAGE_NAME)
+
+SV_PYTHON_MODULE_NAME = pyImage
 
 include $(TOP)/targetlib.mk
 

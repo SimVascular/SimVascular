@@ -41,7 +41,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR)
+	   $(TCLTK_INCDIR) \
+	   $(PYTHON_INCDIR)
 
 # double hack for now, want to make code consistent with meshsim code
 ifeq ($(SV_USE_MESHSIM_SHARED),1)
@@ -71,8 +72,10 @@ HDRS	= cvTetGenAdapt.h
 CXXSRCS = cvTetGenAdapt.cxx
 
 DLLHDRS = cv_tetgen_adapt_init.h
-
 DLLSRCS = cv_tetgen_adapt_init.cxx
+
+SVPYHDRS = cv_tetgen_adapt_init_py.h
+SVPYSRCS = cv_tetgen_adapt_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT) \
           $(SOLVERIO_LIB)
@@ -102,6 +105,8 @@ DLLLIBS += $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
            $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)
 
 TARGET_LIB_NAME = $(SV_LIB_TETGEN_ADAPTOR_NAME)
+
+SV_PYTHON_MODULE_NAME = pyTetGenAdapt
 
 include $(TOP)/targetlib.mk
 

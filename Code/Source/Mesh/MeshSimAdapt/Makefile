@@ -41,7 +41,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR)
+	   $(TCLTK_INCDIR) \
+	   $(PYTHON_INCDIR)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_MESHSIM_ADAPTOR
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_MESHSIM_ADAPTOR
@@ -90,8 +91,10 @@ HDRS	= cvMeshSimAdapt.h cvAdaptHelp.h
 CXXSRCS = cvMeshSimAdapt.cxx
 
 DLLHDRS = cv_meshsim_adapt_init.h
-
 DLLSRCS = cv_meshsim_adapt_init.cxx
+
+SVPYHDRS = cv_meshsim_adapt_init_py.h
+SVPYSRCS = cv_meshsim_adapt_init_py.cxx
 
 DLLLIBS +=    $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT) \
               $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT) \
@@ -142,6 +145,8 @@ DLLLIBS +=    $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT) \
 DLLLIBS += $(VTK_LIBS) $(OPENCASCADE_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_MESHSIM_ADAPTOR_NAME)
+
+SV_PYTHON_MODULE_NAME = pyMeshSimAdapt
 
 include $(TOP)/targetlib.mk
 

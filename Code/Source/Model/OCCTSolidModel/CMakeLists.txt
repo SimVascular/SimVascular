@@ -42,14 +42,11 @@ if(SV_USE_PYTHON)
 	  ${PYTHON_INCLUDE_DIR}
 	  ${PYTHON_INCLUDE_DIRS})
 endif()
-if(SV_USE_FREETYPE)
-  link_directories(${FREETYPE_LIBRARY_DIR})
-endif()
 
 set(CXXSRCS cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx)
 set(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx cv_occt_init_py.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -88,3 +85,5 @@ if(SV_INSTALL_HEADERS)
 		)
 endif()
 
+PYTHON_ADD_MODULE(pySolidOCCT cv_occt_init_py.cxx)
+target_link_libraries(pySolidOCCT ${lib} ${PYTHON_LIBRARY})
