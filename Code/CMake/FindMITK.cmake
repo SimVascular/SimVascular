@@ -230,7 +230,7 @@ foreach(p ${${proj}_POSSIBLE_PATHS})
   list(APPEND ${proj}_POSSIBLE_PLUGIN_LIB_PATHS "${p}/${lib_sub_path}/plugins")
 endforeach()
 
-set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
+set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
     ${${proj}_DIR}
     ${${proj}_DIR}/shared_object
     ${${proj}_DIR}/dll
