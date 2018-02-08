@@ -27,16 +27,14 @@ cp -rf $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*@CMAKE_SHARED_LIBRARY_SUFFI
 cp -rf $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.h $MITK_BINDIR/include
 mv $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/Python $MITK_BINDIR/ep/src/CTK-build/CTK-build/bin/CTKPython
 cp -rf $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/* $MITK_BINDIR/bin
-cp -rf -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*CTK*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
-cp -rf -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/liborg*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib/plugins
+cp -rf $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/liborg*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib/plugins
 
 # copy qRestAPI from CTK-build
 
 mkdir -p $MITK_BINDIR/include/qRestAPI
 cp -rf $MITK_BLDDIR/ep/src/CTK-build/qRestAPI/*.h $MITK_BINDIR/include/qRestAPI
 cp -rf $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI.lib $MITK_BINDIR/lib
-cp -rf -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-cp -rf -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+cp -rf $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 
 # copy PythonQt from CTK-build
 
@@ -44,12 +42,11 @@ mkdir -p $MITK_BINDIR/include/PythonQt
 cp -rf $MITK_BLDDIR/ep/src/CTK-build/PythonQt/src/*.h $MITK_BINDIR/include/PythonQt
 cp -rf $MITK_BLDDIR/ep/src/CTK-build/PythonQt/src/gui/*.h $MITK_BINDIR/include/PythonQt
 cp -rf $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt.lib $MITK_BINDIR/lib
-cp -rf -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-cp -rf -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+cp -rf $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 
 # Poco
 
-cp -rf -d $MITK_BLDDIR/ep/src/Poco-build/lib/libPoco*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+cp -rf $MITK_BLDDIR/ep/src/Poco-build/lib/libPoco*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 
 # CTK
 
@@ -62,8 +59,7 @@ cp -rf $MITK_BLDDIR/ep/src/CTK/Libs/Scripting/Python/Widgets/*.h $MITK_BINDIR/in
 cp -rf $MITK_BLDDIR/ep/src/CTK/Libs/Visualization/VTK/Core/*.h $MITK_BINDIR/include/ctk
 cp -rf $MITK_BLDDIR/ep/src/CTK/Libs/Widgets/*.h $MITK_BINDIR/include/ctk
 
-cp -rf -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-cp -rf -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+cp -rf $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 cp -rf $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*.lib $MITK_BINDIR/lib
 
 # copying more than needed here, but not sure how many of the subdirectories are required.
@@ -78,8 +74,7 @@ cp -rf $MITK_BLDDIR/MITK-build/lib/plugins/* $MITK_BINDIR/lib
 
 # mitk files
 
-cp -rf -d $MITK_BLDDIR/MITK-build/bin/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-cp -rf -d $MITK_BLDDIR/MITK-build/lib/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+cp -rf $MITK_BLDDIR/MITK-build/lib/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 cp -rf $MITK_BLDDIR/MITK-build/lib/*.lib $MITK_BINDIR/lib
 
 mkdir -p $MITK_BINDIR/include/mitk
@@ -137,20 +132,25 @@ done
 # everything else
 #
 
-for i in $(dirname $MITK_SRCDIR/Modules/*/include); do
-    mkdir -p $MITK_BINDIR/include/mitk/$(basename $i)
+for i in $MITK_SRCDIR/Modules/*; do
+  if [ -d $i/include ]; then
+    mkdir -p $MITK_BINDIR/include/mitk/$(basename $i)/include
     cp -R $i/include $MITK_BINDIR/include/mitk/$(basename $i)
+  fi
 done
 
-for i in $(dirname $MITK_SRCDIR/Modules/*/include); do
-    cp $MITK_BLDDIR/MITK-build/Modules/$(basename $i)/ui_*.h $MITK_BINDIR/include/mitk/$(basename $i)
+for i in $MITK_SRCDIR/Modules/*; do
+  if [ -d $i/include ]; then
+    cp $MITK_BLDDIR/MITK-build/Modules/$(basename $i)/ui_*.h $MITK_BINDIR/include/mitk/$(basename $i)/include
+  fi
 done
 
-for i in $(dirname $MITK_SRCDIR/Modules/*/*/include); do
+for i in $MITK_SRCDIR/Modules/*/*; do
+  if [ -d $i/include ]; then
     mkdir -p $MITK_BINDIR/include/mitk/$(basename $(dirname $i))/$(basename $i)
     cp -R $i/include $MITK_BINDIR/include/mitk/$(basename $(dirname $i))/$(basename $i)
+  fi
 done
-
 
 for i in $(find $MITK_BLDDIR -name "*Exports.h"); do
     echo "$i  $(basename $i)"

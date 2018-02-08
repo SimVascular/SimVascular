@@ -45,10 +45,30 @@ set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
   -qt-freetype
   -qt-pcre
   -prefix ${SV_EXTERNALS_${proj}_BIN_DIR}
+  -openssl
   )
+
+if(APPLE)
+  if (SV_EXTERNALS_MAC_PACKAGE_MANAGER STREQUAL HOMEBREW)
+    set(OPENSSL_ROOT "/usr/local/opt/openssl")
+  elseif(SV_EXTERNALS_MAC_PACKAGE_MANAGER STREQUAL MACPORTS)
+    set(OPENSSL_ROOT "/opt/local")
+  endif()
+
+  set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
+    ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    -openssl
+    -openssl-linked
+    -I${OPENSSL_ROOT}/include
+    -L${OPENSSL_ROOT}/lib
+    -lssl
+    )
+
+endif()
+
 if(LINUX)
-set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
-  ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+  set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
+    ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     -qt-xcb
     )
 endif()
