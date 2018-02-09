@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVREPOS_INIT_H
-#define __CVREPOS_INIT_H
+#ifndef __CVREPOS_INIT_PY_H
+#define __CVREPOS_INIT_PY_H
 
 #include "SimVascular.h"
 #include "svRepositoryExports.h" // For exports

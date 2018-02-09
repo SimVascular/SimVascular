@@ -57,8 +57,10 @@ SET(HDRS cvRepository.h cvRepositoryData.h
   cvDataSet.h
   )
 
-if(SV_USE_TCL)
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_repos_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_repos_init.cxx cv_repos_init_py.cxx)
+
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 # Set up for exports
@@ -92,9 +94,4 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
-endif()
-
-if(SV_USE_PYTHON)
-PYTHON_ADD_MODULE(pyRepository cv_repos_init_py.cxx)
-target_link_libraries(pyRepository ${lib} ${PYTHON_LIBRARY})
 endif()

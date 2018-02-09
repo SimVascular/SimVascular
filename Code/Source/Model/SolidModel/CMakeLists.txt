@@ -48,8 +48,10 @@ endif()
 set(CXXSRCS cvSolidModel.cxx)
 set(HDRS    cvSolidModel.h)
 
-if(SV_USE_TCL)
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx cv_solid_init_py.cxx)
+
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 target_link_libraries(${lib}
@@ -85,9 +87,4 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
-endif()
-
-if(SV_USE_PYTHON)
-PYTHON_ADD_MODULE(pySolid2 cv_solid_init_py.cxx)
-target_link_libraries(pySolid2 ${lib} ${PYTHON_LIBRARY})
 endif()

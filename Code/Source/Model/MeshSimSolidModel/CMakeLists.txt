@@ -41,12 +41,14 @@ endif()
 SET(CXXSRCS cvMeshSimSolidModel.cxx)
 SET(HDRS cvMeshSimSolidModel.h)
 
-if(SV_USE_TCL)
 if(MESHSIM_MESHSIMSOLID_USE_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
+  add_library(${lib} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx cv_meshsimsolid_init_py.cxx)
 else()
-  add_library(${lib} ${CXXSRCS} cv_meshsimsolid_init.cxx)
+  add_library(${lib} ${CXXSRCS} cv_meshsimsolid_init.cxx cv_meshsimsolid_init_py.cxx)
 endif()
+
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 target_link_libraries(${lib}
@@ -80,9 +82,4 @@ if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
   		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT LicensedHeaders
   		)
   endif()
-endif()
-
-if(SV_USE_PYTHON)
-PYTHON_ADD_MODULE(pySolidMeshSim cv_meshsimsolid_init_py.cxx)
-target_link_libraries(pySolidMeshSim ${lib} ${PYTHON_LIBRARY})
 endif()
