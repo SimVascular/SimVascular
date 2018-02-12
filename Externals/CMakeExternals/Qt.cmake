@@ -45,7 +45,6 @@ set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
   -qt-freetype
   -qt-pcre
   -prefix ${SV_EXTERNALS_${proj}_BIN_DIR}
-  -openssl
   )
 
 if(APPLE)
@@ -57,6 +56,8 @@ if(APPLE)
 
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    -skip webengine
+    -sdk macosx${CURRENT_OSX_VERSION}
     -openssl
     -openssl-linked
     -I${OPENSSL_ROOT}/include
@@ -75,7 +76,11 @@ endif()
 
 #Patch for lalr.cpp
 if("${COMPILER_VERSION}" STREQUAL "Clang")
-  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.4.2-clang-7.0.patch)
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.4.2-clang.patch)
+  if (NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "8.0"))
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+      COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.4.2-clang-8.0.patch)
+  endif()
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
 endif()
