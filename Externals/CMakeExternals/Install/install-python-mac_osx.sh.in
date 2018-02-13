@@ -9,5 +9,9 @@ export PYTHON_BLDDIR=@SV_EXTERNALS_PYTHON_BLD_DIR@
 #$GCP -rfl /usr/lib/libssl.* $PYTHON_BINDIR/lib
 #$GCP -rfl /usr/lib/libz.* $PYTHON_BINDIR/lib
 cp @OPENSSL_ROOT@/lib/libcrypto.* $PYTHON_BINDIR/lib
+install_name_tool -id @rpath/libcrypto.dylib $PYTHON_BINDIR/lib/libcrypto.dylib
+install_name_tool -id @rpath/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libcrypto.1.0.0.dylib
 cp @OPENSSL_ROOT@/lib/libssl.* $PYTHON_BINDIR/lib
+install_name_tool -id @rpath/libssl.dylib $PYTHON_BINDIR/lib/libssl.dylib
+install_name_tool -id @rpath/libssl.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.1.0.0.dylib
 #$GCP /usr/lib/libz.* $PYTHON_BINDIR/lib
