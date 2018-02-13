@@ -32,7 +32,7 @@
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/darwin/mac_osx/10.11/clang/8.0/x64/relwithdebinfo/2018.01.23/
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.01/darwin/mac_osx/10.11/clang/8.0/x64/relwithdebinfo/2018.01.23/
 
 export TAR_FILE_PREFIX=mac_osx.10.11.clang.8.0.x64.relwithdebinfo.2018.01.23
 
