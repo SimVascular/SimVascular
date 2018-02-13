@@ -128,7 +128,7 @@ sv_externals_add_new_external(FREETYPE 2.6.3 ON ON freetype freetype)
 
 #-----------------------------------------------------------------------------
 # SWIG
-sv_externals_add_new_external(SWIG 3.0.12 ON ON swig swig)
+sv_externals_add_new_external(SWIG 3.0.12 OFF ON swig swig)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
