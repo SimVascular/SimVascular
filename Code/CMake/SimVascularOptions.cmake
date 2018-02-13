@@ -85,6 +85,9 @@ option(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR "If ON, SV_EXTERNALS_TOPLEVEL_BIN_DIR w
 
 option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be included in the installation" OFF)
 
+# Qt
+simvascular_add_new_external(Qt5 5.4.2 ON ON qt)
+
 # TCL
 simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
 

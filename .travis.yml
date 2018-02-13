@@ -46,7 +46,6 @@ before_install:
   - export SV_CODE_DIR=$cwd/Code
   - export SV_TEST_DIR=$HOME/test/
   - export SCRIPTS=$cwd/travis
-  - $SCRIPTS/travis_get_qt.sh
   - $SCRIPTS/travis_cmake_get_externals.sh
   - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
 

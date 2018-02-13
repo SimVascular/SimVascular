@@ -1346,7 +1346,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   # Set up download stuff if downloading
   if(NOT "${install_dirname}" STREQUAL "none")
     if(SV_EXTERNALS_DOWNLOAD_${proj})
-      set(${proj}_TEST_FILE "${SV_EXTERNALS_URL}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/externals_compiler_info.txt")
+      set(${proj}_TEST_FILE "${SV_EXTERNALS_URL}/${SV_EXTERNALS_VERSION}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/externals_compiler_info.txt")
       file(DOWNLOAD "${${proj}_TEST_FILE}" "${SV_EXTERNALS_${proj}_PFX_DIR}/externals_compiler_info.txt" STATUS _status LOG _log INACTIVITY_TIMEOUT 5 TIMEOUT 5)
       list(GET _status 0 err)
       list(GET _status 1 msg)
@@ -1356,7 +1356,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
         simvascular_read_file("${SV_EXTERNALS_${proj}_PFX_DIR}/externals_compiler_info.txt" FILE_CONTENTS)
         sv_externals_check_versioning("${FILE_CONTENTS}" ${SV_PLATFORM_VERSION_DIR} ${SV_COMPILER_DIR} ${SV_COMPILER_VERSION_DIR} SV_DOWNLOAD_DIR)
         string(REPLACE "/" "." SV_TAR_PREFIX "${SV_DOWNLOAD_DIR}")
-        set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_URL}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/${SV_DOWNLOAD_DIR}/${SV_PLATFORM_DIR}.${SV_TAR_PREFIX}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
+        set(SV_EXTERNALS_${proj}_BINARIES_URL "${SV_EXTERNALS_URL}/${SV_EXTERNALS_VERSION}/${SV_KERNEL_DIR}/${SV_PLATFORM_DIR}/${SV_DOWNLOAD_DIR}/${SV_PLATFORM_DIR}.${SV_TAR_PREFIX}.${install_dirname}.${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
       endif()
     endif()
   endif()

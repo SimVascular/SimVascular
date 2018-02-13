@@ -50,7 +50,9 @@ file(MAKE_DIRECTORY "${SV_EXTERNALS_TAR_INSTALL_DIR}")
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
 set(SV_EXTERNALS_URL  "http://simvascular.stanford.edu/downloads/public/simvascular/externals" CACHE STRING "SimVascular Externals")
-set(SV_EXTERNALS_ORIGINALS_URL "${SV_EXTERNALS_URL}/src/originals" CACHE STRING "URL with source downloads for externals")
+set(SV_EXTERNALS_VERSION  "2018.01" CACHE STRING "SimVascular Externals version")
+set_property(CACHE SV_EXTERNALS_VERSION PROPERTY STRINGS "2017.01" "2018.01")
+set(SV_EXTERNALS_ORIGINALS_URL "${SV_EXTERNALS_URL}/${SV_EXTERNALS_VERSION}/src/originals" CACHE STRING "URL with source downloads for externals")
 #set(SV_EXTERNALS_ORIGINALS_URL "/Users/adamupdegrove/Documents/simvascular_externals_srcs/originals" CACHE STRING "URL with source downloads for externals")
 mark_as_advanced(SV_EXTERNALS_ORIGINALS_URL)
 set(SV_EXTERNALS_BINARIES_URL_PREFIX "${SV_PLATFORM_DIR}.${SV_COMPILER_DIR}-${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}" CACHE STRING "String that gets appended to the beginning of each individual external pre-built binary download")
@@ -161,4 +163,4 @@ sv_externals_add_new_external(MITK 2016.03 ON ON mitk mitk)
 
 #-----------------------------------------------------------------------------
 #Download options for tcltk
-option(SV_EXTERNALS_DOWNLOAD_TCLTK "Download instead of build TCLTK" OFF)
+option(SV_EXTERNALS_DOWNLOAD_TCLTK "Download instead of build TCLTK" ON)
