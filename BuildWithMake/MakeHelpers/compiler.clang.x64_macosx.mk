@@ -34,7 +34,7 @@ ifeq ($(CLUSTER), x64_macosx)
     CC              = clang -pthread -w
     CXXDEP          = $(CXX) -MM
     CCDEP           = $(CC) -MM
-    AR              = ar -cru 
+    AR              = ar -cru
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     OPT_FLAGS       = -O3 -fPIC
     DEBUG_FLAGS     =

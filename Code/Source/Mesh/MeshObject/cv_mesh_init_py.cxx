@@ -1159,7 +1159,7 @@ static PyObject* cvMesh_SetCylinderRefinementMtd( pyMeshObject* self, PyObject* 
   int nnrm;
   double length;
 
-  if(!PyArg_ParseTuple(args,"ddOO",&size,&r,&ctrList,&nrmList))
+  if(!PyArg_ParseTuple(args,"ddOO",&size,&r, &length,&ctrList,&nrmList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two doubles and two lists, size, r, ctrList,nrmList.");
     return Py_ERROR;

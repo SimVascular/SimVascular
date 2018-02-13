@@ -150,7 +150,7 @@ PyObject *Image_ReadHeaderCmd(PyObject *self, PyObject *args)
     PyErr_SetString( ImgErr, tmpStr);
     return Py_ERROR;
   }
-  PyObject *pylist;
+  PyObject *pylist=PyList_New(0);
   tmpStr[0]='\0';
   sprintf(tmpStr,"extent {%i %i}",dim_x,dim_y);
   PyObject* pyStr= PyString_FromString(tmpStr);
@@ -964,18 +964,18 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
   {
       return Py_BuildValue("s",rtnstr);
   }
-  PyObject *pylist;
+  PyObject *pylist=PyList_New(3);
   // return ijk
   rtnstr[0]='\0';
   sprintf(rtnstr,"%i %i %i",ijk[0],ijk[1],ijk[2]);
   PyObject* pyStr = PyString_FromString(rtnstr);
-  PyList_Append( pylist,  pyStr );
+  PyList_SetItem( pylist, 0, pyStr );
 
   // return pcoords
   rtnstr[0]='\0';
   sprintf(rtnstr,"%.6e %.6e %.6e",pcoords[0],pcoords[1],pcoords[2]);
   pyStr = PyString_FromString(rtnstr);
-  PyList_Append( pylist,  pyStr );
+  PyList_SetItem( pylist, 1, pyStr );
 
   // return intensity for convenience
   vtkFloatingPointType intensity = 0.0;
@@ -983,7 +983,7 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
   rtnstr[0]='\0';
   sprintf(rtnstr,"%f",intensity);
   pyStr = PyString_FromString(rtnstr);
-  PyList_Append( pylist,  pyStr );
+  PyList_SetItem( pylist, 2, pyStr );
 
   return Py_BuildValue("s",pylist);
 

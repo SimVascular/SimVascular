@@ -589,7 +589,7 @@ PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args)
   RepositoryDataT type;
 
   if (!PyArg_ParseTuple(args,"sssss",&originalName,
-	&newName, &resultName,originalArray,&newArray))
+	&newName, &resultName,&originalArray,&newArray))
   {
     PyErr_SetString(PyRunTimeErr,
 	"Could not import five chars, originalName,newName, resultName"

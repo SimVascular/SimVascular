@@ -1049,7 +1049,7 @@ pySolidModel* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
   double ctr[3];
   double axis[3];
   double r, l;
-  int nctr, naxis;
+  int nctr, naxis=0;
   PyObject* ctrList;
   PyObject* axisList;
   cvSolidModel *geom;
@@ -1189,7 +1189,7 @@ pySolidModel* Solid_TorusCmd( pySolidModel* self, PyObject* args)
   PyObject* ctrList;
   PyObject* axisList;
   double rmaj, rmin;
-  int nctr, naxis;
+  int nctr, naxis=0;
   cvSolidModel *geom;
   if(!PyArg_ParseTuple(args,"sddOO",&objName,&rmaj,&rmin,&ctrList,&axisList))
   {
@@ -1730,6 +1730,7 @@ pySolidModel* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
   srcs = new cvSolidModel * [numSrcs];
 
   for ( i = 0; i < numSrcs; i++ ) {
+    src = gRepository->GetObject( PyString_AsString(PyList_GetItem(srcList,i)) );
     if ( src == NULL ) {
       PyErr_SetString(PyRunTimeErr,"Couldn't find object ");
       delete [] srcs;
@@ -1737,7 +1738,7 @@ pySolidModel* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
     }
     type = src->GetType();
     if ( type != SOLID_MODEL_T ) {
-	PyErr_SetString(PyRunTimeErr,"src not of type cvSolidModel");
+	    PyErr_SetString(PyRunTimeErr,"src not of type cvSolidModel");
       delete [] srcs;
       return Py_ERROR;
     }
@@ -2478,13 +2479,13 @@ static PyObject*  Solid_FindCentroidMtd( pySolidModel *self ,PyObject* args )
     return Py_ERROR;
   }
   status = geom->FindCentroid( centroid );
-  PyObject* tmpPy;
+  PyObject* tmpPy=PyList_New(3);
   if ( status == SV_OK ) {
 
-    PyList_Append(tmpPy,PyFloat_FromDouble(centroid[0]));
-    PyList_Append(tmpPy,PyFloat_FromDouble(centroid[1]));
+    PyList_SetItem(tmpPy,0,PyFloat_FromDouble(centroid[0]));
+    PyList_SetItem(tmpPy,1,PyFloat_FromDouble(centroid[1]));
     if ( tdim == 3 ) {
-    PyList_Append(tmpPy,PyFloat_FromDouble(centroid[2]));
+    PyList_SetItem(tmpPy,2,PyFloat_FromDouble(centroid[2]));
     }
     return tmpPy;
   } else {
@@ -2600,8 +2601,8 @@ static PyObject*  Solid_DistanceMtd( pySolidModel *self ,PyObject* args  )
     PyErr_SetString(PyRunTimeErr,"posList Dimension is greater than 3!");
     return Py_ERROR;
   }
-
-  for(int i=0;i<PyList_Size(posList);i++)
+  npos = PyList_Size(posList);
+  for(int i=0;i<npos;i++)
   {
     pos[i]=PyFloat_AsDouble(PyList_GetItem(posList,i));
   }
@@ -2652,8 +2653,8 @@ static PyObject*  Solid_TranslateMtd( pySolidModel *self ,PyObject* args  )
     PyErr_SetString(PyRunTimeErr,"vecList Dimension is greater than 3!");
     return Py_ERROR;
   }
-
-  for(int i=0;i<PyList_Size(vecList);i++)
+  nvec = PyList_Size(vecList);
+  for(int i=0;i<nvec;i++)
   {
     vec[i]=PyFloat_AsDouble(PyList_GetItem(vecList,i));
   }
@@ -2689,14 +2690,14 @@ static pySolidModel*  Solid_RotateMtd( pySolidModel *self ,PyObject* args  )
     PyErr_SetString(PyRunTimeErr,"Could not import one list and one double");
     return Py_ERROR;
   }
-
-  if (PyList_Size(axisList)>3)
+  naxis = PyList_Size(axisList);
+  if (naxis>3)
   {
     PyErr_SetString(PyRunTimeErr,"posList Dimension is greater than 3!");
     return Py_ERROR;
   }
 
-  for(int i=0;i<PyList_Size(axisList);i++)
+  for(int i=0;i<naxis;i++)
   {
     axis[i]=PyFloat_AsDouble(PyList_GetItem(axisList,i));
   }
@@ -2749,7 +2750,7 @@ static pySolidModel* Solid_ReflectMtd( pySolidModel *self ,PyObject* args  )
   PyObject* nrmList;
   double pos[3];
   double nrm[3];
-  int npos;
+  int npos=0;
   int nnrm;
   int status;
   cvSolidModel *geom =(self->geom);
@@ -3182,7 +3183,7 @@ static pySolidModel* Solid_GetAxialIsoparametricCurveMtd( pySolidModel* self,
   double prm;
   cvSolidModel *curve;
 
-  if(!PyArg_ParseTuple(args,"sd",&resultName))
+  if(!PyArg_ParseTuple(args,"sd",&resultName,&prm))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string and one double");
     return Py_ERROR;
@@ -3220,7 +3221,13 @@ static pySolidModel* Solid_GetAxialIsoparametricCurveMtd( pySolidModel* self,
 
   Py_INCREF(curve);
   pySolidModel* newCurve;
-  newCurve->geom=curve;
+  if (pySolidModel_init(newCurve,args)!=Py_OK){
+    PyErr_SetString(PyRunTimeErr,"error creating new object of type pySolidModel");
+    Py_DECREF(curve);
+  }
+  else{
+    newCurve->geom=curve;
+  }
   Py_DECREF(curve);
   return newCurve;
 }
@@ -3259,10 +3266,10 @@ static PyObject* Solid_GetLabelKeysMtd( pySolidModel* self, PyObject* args)
   char **keys;
 
   // Do work of command:
-  PyObject* keyList;
   geom->GetLabelKeys( &numKeys, &keys );
+  PyObject* keyList=PyList_New(numKeys);
   for (i = 0; i < numKeys; i++) {
-    PyList_Append(keyList, PyString_FromString(keys[i]));
+    PyList_SetItem(keyList, i, PyString_FromString(keys[i]));
   }
   delete [] keys;
 
