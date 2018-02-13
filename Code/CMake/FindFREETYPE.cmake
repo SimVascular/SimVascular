@@ -58,98 +58,79 @@
 # wants explicit full paths and this trickery doesn't work too well.
 # I'm going to attempt to cut out the middleman and hope
 # everything still works.
-find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
-  PATHS
-  ${FREETYPE_DIR}
-  ${FREETYPE_DIR}/include
-  ${FREETYPE_DIR}/include/freetype2
-  ${FREETYPE_DIR}/include/freetype2/freetype
-  $ENV{FREETYPE_DIR}
-  $ENV{FREETYPE_DIR}/include
-  $ENV{FREETYPE_DIR}/include/freetype2
-  $ENV{FREETYPE_DIR}/include/freetype2/freetype
-  NO_DEFAULT_PATH
-  PATH_SUFFIXES include
-)
 
+set(proj FREETYPE)
 
-find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
-  PATHS
-  /usr/local/X11R6/include
-  /usr/local/X11/include
-  /usr/X11/include
-  /sw/include
-  /opt/local/include
-  /opt/X11/include
-  /usr/freeware/include
-  PATH_SUFFIXES freetype2
-)
+include(FindPackageHandleStandardArgs)
+include(CMakeFindFrameworks)
 
-find_path(FREETYPE_INCLUDE_DIR_freetype2 config/ftheader.h
+if(NOT ${proj}_DIR)
+  set(${proj}_DIR "${proj}_DIR-NOTFOUND" CACHE PATH "Path of toplevel ${proj} dir. Specify this if ${proj} cannot be found.")
+  message(FATAL_ERROR "${proj}_DIR was not specified. Set ${proj}_DIR to the toplevel ${proj} dir that contains bin, lib, include")
+endif()
+
+set(${proj}_POSSIBLE_INCLUDE_PATHS
+  "${${proj}_DIR}/*"
+  "${${proj}_DIR}/include/*"
+  "${${proj}_DIR}/include/*/*"
+  )
+
+unset(${proj}_INCLUDE_DIR_ft2build CACHE)
+find_path(${proj}_INCLUDE_DIR_ft2build
+  NAMES
+  ft2build.h
   PATHS
-  ${FREETYPE_DIR}
-  ${FREETYPE_DIR}/include
-  ${FREETYPE_DIR}/include/freetype2
-  ${FREETYPE_DIR}/include/freetype2/freetype
-  $ENV{FREETYPE_DIR}
-  $ENV{FREETYPE_DIR}/include
-  $ENV{FREETYPE_DIR}/include/freetype2
-  $ENV{FREETYPE_DIR}/include/freetype2/freetype
+  ${${proj}_POSSIBLE_INCLUDE_PATHS}
   NO_DEFAULT_PATH
 )
+mark_as_advanced(${proj}_INCLUDE_DIR_ft2build)
 
-find_path(FREETYPE_INCLUDE_DIR_freetype2 config/ftheader.h
+unset(${proj}_INCLUDE_DIR_freetype2 CACHE)
+find_path(${proj}_INCLUDE_DIR_freetype2
+  NAMES
+  config/ftheader.h
   PATHS
-  ${FREETYPE_DIR}/include
-  /usr/local/X11R6/include
-  /usr/local/X11/include
-  /usr/X11/include
-  /sw/include
-  /opt/local/include
-  /usr/freeware/include
-  PATH_SUFFIXES freetype2
-)
-
-find_library(FREETYPE_LIBRARY
-  NAMES freetype libfreetype freetype219 freetyped
-  PATHS
-  ${FREETYPE_DIR}
-  $ENV{FREETYPE_DIR}
+  ${${proj}_POSSIBLE_INCLUDE_PATHS}
   NO_DEFAULT_PATH
-  PATH_SUFFIXES lib64 lib
 )
+mark_as_advanced(${proj}_INCLUDE_DIR_freetype2)
 
-find_library(FREETYPE_LIBRARY
-  NAMES freetype libfreetype freetype219
+set(${proj}_POSSIBLE_LIB_PATHS
+  "${${proj}_DIR}/*"
+  "${${proj}_DIR}/lib/*"
+  )
+
+unset(${proj}_LIBRARY CACHE)
+find_library(${proj}_LIBRARY
+  NAMES
+  freetype
+  freetype.${${proj}_VERSION}
+  freetyped
+  freetype.${${proj}_VERSION}d
   PATHS
-  /usr/local/X11R6
-  /usr/local/X11
-  /usr/X11
-  /sw
-  /usr/freeware
+  ${${proj}_POSSIBLE_LIB_PATHS}
   NO_DEFAULT_PATH
-  PATH_SUFFIXES lib64 lib
 )
 
 # set the user variables
-if(FREETYPE_INCLUDE_DIR_ft2build AND FREETYPE_INCLUDE_DIR_freetype2)
-  set(FREETYPE_INCLUDE_DIRS "${FREETYPE_INCLUDE_DIR_ft2build};${FREETYPE_INCLUDE_DIR_freetype2}")
-endif(FREETYPE_INCLUDE_DIR_ft2build AND FREETYPE_INCLUDE_DIR_freetype2)
-set(FREETYPE_LIBRARIES "${FREETYPE_LIBRARY}")
+if(${proj}_INCLUDE_DIR_ft2build AND ${proj}_INCLUDE_DIR_freetype2)
+  set(${proj}_INCLUDE_DIRS "${${proj}_INCLUDE_DIR_ft2build};${${proj}_INCLUDE_DIR_freetype2}")
+endif()
 
-set(FREETYPE_DIR ${FREETYPE_DIR} CACHE PATH "Path to top level libraries.  Specify this if FREETYPE cannot be found.")
+set(${proj}_LIBRARIES "${${proj}_LIBRARY}")
+
 # handle the QUIETLY and REQUIRED arguments and set FREETYPE_FOUND to TRUE if
 # all listed variables are TRUE
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(FREETYPE
-  FOUND_VAR FREETYPE_FOUND
-	REQUIRED_VARS FREETYPE_LIBRARY FREETYPE_INCLUDE_DIRS
-	VERSION_VAR FREETYPE_VERSION
-	FAIL_MESSAGE "Could NOT find FREETYPE:")
+find_package_handle_standard_args(${proj}
+  FOUND_VAR ${proj}_FOUND
+	REQUIRED_VARS ${proj}_LIBRARY ${proj}_INCLUDE_DIRS
+  VERSION_VAR ${proj}_VERSION_STRING
+	FAIL_MESSAGE "Could NOT find ${proj}")
 
-get_filename_component(FREETYPE_LIBRARY_DIR ${FREETYPE_LIBRARY} DIRECTORY)
+get_filename_component(${proj}_LIBRARY_DIR ${${proj}_LIBRARY} DIRECTORY)
 
-
-#MARK_AS_ADVANCED(FREETYPE_LIBRARY FREETYPE_INCLUDE_DIR_freetype2 FREETYPE_INCLUDE_DIR_ft2build)
-get_filename_component(FREETYPE_LIBRARY_DIR ${FREETYPE_LIBRARY} DIRECTORY)
-link_directories(${FREETYPE_LIBRARY_DIR})
+mark_as_advanced(
+  ${proj}_INCLUDE_DIRS
+  ${proj}_LIBRARY
+  ${proj}_LIBRARY_DIR
+  )

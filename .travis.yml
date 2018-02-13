@@ -42,6 +42,7 @@ before_install:
   - export BUILD_DIR=$cwd/build
   - export SV_EXTERNALS_DIR=$cwd/Externals
   - export SV_EXTERNALS_BUILD_DIR=$SV_EXTERNALS_DIR/build
+  - export SV_EXTERNALS_BIN_DIR=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin
   - export SV_CODE_DIR=$cwd/Code
   - export SV_TEST_DIR=$HOME/test/
   - export SCRIPTS=$cwd/travis

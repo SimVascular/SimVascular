@@ -42,9 +42,6 @@ if(SV_USE_PYTHON)
 	  ${PYTHON_INCLUDE_DIR}
 	  ${PYTHON_INCLUDE_DIRS})
 endif()
-if(SV_USE_FREETYPE)
-  link_directories(${FREETYPE_LIBRARY_DIR})
-endif()
 
 set(CXXSRCS cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx)
 set(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)

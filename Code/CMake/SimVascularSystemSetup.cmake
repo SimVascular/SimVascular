@@ -254,7 +254,8 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
 		"MinSizeRel" "RelWithDebInfo")
 endif()
-set(SV_BUILD_TYPE_DIR "${CMAKE_BUILD_TYPE}" CACHE STRING "The compile type being used.")
+string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER)
+set(SV_BUILD_TYPE_DIR "${CMAKE_BUILD_TYPE_LOWER}" CACHE STRING "The compile type being used.")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
