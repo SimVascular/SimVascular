@@ -3221,13 +3221,8 @@ static pySolidModel* Solid_GetAxialIsoparametricCurveMtd( pySolidModel* self,
 
   Py_INCREF(curve);
   pySolidModel* newCurve;
-  if (pySolidModel_init(newCurve,args)!=Py_OK){
-    PyErr_SetString(PyRunTimeErr,"error creating new object of type pySolidModel");
-    Py_DECREF(curve);
-  }
-  else{
-    newCurve->geom=curve;
-  }
+  newCurve = PyObject_New(pySolidModel, &pySolidModelType);
+  newCurve->geom=curve;
   Py_DECREF(curve);
   return newCurve;
 }
