@@ -85,6 +85,17 @@ else()
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
 endif()
 
+# Post install script
+if(APPLE)
+  set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-qt-mac_osx.sh)
+  configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
+  set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
+    COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT})
+else()
+  set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install)
+endif()
+
+
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
