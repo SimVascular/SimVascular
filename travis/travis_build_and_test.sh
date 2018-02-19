@@ -35,9 +35,6 @@ set -e
 MAKE="make --jobs=$NUM_THREADS --keep-going"
 MAKE_TEST="xvfb-run -a make test ARGS=-V"
 
-echo "CHECK LD PATH: $LD_LIBRARY_PATH"
-ls "$SV_EXTERNALS_BIN_DIR/qt-5.4.2/lib"
-
 if $WITH_CMAKE; then
   mkdir -p $BUILD_DIR
   cd $BUILD_DIR
