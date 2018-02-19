@@ -73,5 +73,7 @@ popd
 # TEMPORARY, add export for location of qt libraries for ui and moc qt compilers
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]
 then
-  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${SV_EXTERNALS_BIN_DIR}/qt-5.4.2/lib"
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SV_EXTERNALS_BIN_DIR/qt-5.4.2/lib
+  echo "CHECK LD PATH: $LD_LIBRARY_PATH"
+  ls "$SV_EXTERNALS_BIN_DIR/qt-5.4.2./lib"
 fi
