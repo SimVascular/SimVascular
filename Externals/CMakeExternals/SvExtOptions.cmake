@@ -84,6 +84,7 @@ option(SV_EXTERNALS_USE_QT "Enable QT Plugin" ON)
 #-----------------------------------------------------------------------------
 # QT
 sv_externals_add_new_external(Qt 5.4.2 ON ON qt qt)
+set_property(CACHE SV_EXTERNALS_Qt_VERSION PROPERTY STRINGS "5.4.2" "5.6.0")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

@@ -32,8 +32,13 @@ set(proj Qt)
 set(${proj}_DEPENDENCIES "")
 
 # Git info
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/qt/qt-everywhere-opensource-src-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
+set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
+mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/qt/qt-everywhere-opensource-src-${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
+else()
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
+endif()
 
 set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
   -opensource
@@ -56,8 +61,6 @@ if(APPLE)
 
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
-    -skip webengine
-    -skip connectivity
     -sdk macosx${SV_OSX_MAJOR_VERSION}.${SV_OSX_MINOR_VERSION}
     -openssl
     -openssl-linked
@@ -65,6 +68,12 @@ if(APPLE)
     -L${OPENSSL_ROOT}/lib
     -lssl
     )
+  if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
+  set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
+    ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    -skip webengine
+    )
+  endif()
 
 endif()
 
@@ -77,8 +86,10 @@ endif()
 
 #Patch for lalr.cpp
 if("${COMPILER_VERSION}" STREQUAL "Clang")
-  if(${proj}_VERSION VERSION_EQUAL "5.4.2")
+  if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.4.2-clang.patch)
+  elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.6.0")
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.6.0-clang.patch)
   else()
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
   endif()
