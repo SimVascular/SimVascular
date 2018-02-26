@@ -694,7 +694,7 @@ function(simvascular_create_plugin)
 
   #------------------------------------QT-------------------------------------
   if(LINUX)
-    echo("ADDING ${QT_LIB_DIR} to LD_LIBRARY_PATH")
+    message("ADDING ${QT_LIB_DIR} to LD_LIBRARY_PATH")
     set(ENV{LD_LIBRARY_PATH} "${QT_LIB_DIR}")
   endif()
   qt5_wrap_ui(UISrcs ${UI_FILES})
@@ -833,7 +833,7 @@ function(simvascular_create_module)
 
   include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
   if(LINUX)
-    echo("ADDING ${QT_LIB_DIR} to LD_LIBRARY_PATH")
+    message("ADDING ${QT_LIB_DIR} to LD_LIBRARY_PATH")
     set(ENV{LD_LIBRARY_PATH} "${QT_LIB_DIR}")
   endif()
   qt5_wrap_ui(UISrcs ${UI_FILES})
