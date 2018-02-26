@@ -66,12 +66,23 @@ if(SV_EXTERNALS_ENABLE_FREETYPE)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "FREETYPE")
 endif()
+if(SV_EXTERNALS_ENABLE_Qt)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "Qt")
+endif()
 
 # Git info
-set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/VTK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
-set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-6.2" CACHE STRING "Tag for ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+#set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/VTK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
+#mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
+#set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-6.2" CACHE STRING "Tag for ${proj}")
+#mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
+mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/vtk/VTK-${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
+else()
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
+endif()
 
 # Platform specific additions
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
@@ -118,18 +129,19 @@ if(SV_EXTERNALS_USE_QT)
   endif()
 
   foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
-    if(Qt5${comp}_LIBRARIES)
-      list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-        -DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+    #if(Qt5${comp}_LIBRARIES)
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_Qt_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
       )
-    endif()
+      #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+    #endif()
   endforeach()
 
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-    -DQt5_DIR:PATH:STRING=${Qt5_DIR}
+    -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_Qt_CMAKE_DIR}
     -DVTK_QT_VERSION:STRING=5
     -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
-    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_Qt_QMAKE_EXECUTABLE}
     -DModule_vtkGUISupportQt:BOOL=ON
     -DModule_vtkGUISupportQtWebkit:BOOL=ON
     -DModule_vtkGUISupportQtSQL:BOOL=ON
@@ -172,6 +184,9 @@ if(SV_EXTERNALS_ENABLE_PYTHON)
     )
 endif()
 
+#Patch for vtk
+set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-vtk-6.2.0.patch)
+
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
@@ -187,12 +202,12 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     )
 else()
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY ${SV_EXTERNALS_${proj}_GIT_URL}
-    GIT_TAG ${SV_EXTERNALS_${proj}_GIT_TAG}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
+    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     UPDATE_COMMAND ""
      CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}

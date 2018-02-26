@@ -28,10 +28,10 @@
 # GDCM
 set(proj GDCM)
 
-if(NOT SV_EXTERNALS_DOWNLOAD_${proj})
-  # Find SWIG!
-  find_package(SWIG REQUIRED)
-endif()
+#if(NOT SV_EXTERNALS_DOWNLOAD_${proj})
+#  # Find SWIG!
+#  find_package(SWIG REQUIRED)
+#endif()
 
 # Dependencies
 set(${proj}_DEPENDENCIES "")
@@ -39,12 +39,19 @@ if(${SV_EXTERNALS_ENABLE_PYTHON})
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "PYTHON")
 endif()
+if(${SV_EXTERNALS_ENABLE_SWIG})
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "SWIG")
+endif()
 
 # Git info
-set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/GDCM.git" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
-set(SV_EXTERNALS_${proj}_GIT_TAG "v${SV_EXTERNALS_${proj}_VERSION}" CACHE STRING "Tag for ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
+mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/gdcm/gdcm-${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
+else()
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
+endif()
 
 #If using PYTHON
 if(SV_EXTERNALS_ENABLE_PYTHON)
@@ -58,6 +65,15 @@ if(SV_EXTERNALS_ENABLE_PYTHON)
     -DPYTHON_LIBRARY:FILEPATH=${SV_EXTERNALS_PYTHON_LIBRARY}
     -DPYTHON_LIBRARIES:FILEPATH=${SV_EXTERNALS_PYTHON_LIBRARY}
     -DPYTHON_LIBRARY_DEBUG:FILEPATH=""
+    )
+endif()
+
+#If using SWIG
+if(SV_EXTERNALS_ENABLE_SWIG)
+  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DSWIG_EXECUTABLE:FILEPATH=${SV_EXTERNALS_SWIG_EXECUTABLE}
+    -DSWIG_DIR:PATH=${SV_EXTERNALS_SWIG_BIN_DIR}
+    -DSWIG_VERSION:STRING=${SV_EXTERNALS_SWIG_VERSION}
     )
 endif()
 
@@ -76,8 +92,7 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     )
 else()
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY ${SV_EXTERNALS_${proj}_GIT_URL}
-    GIT_TAG ${SV_EXTERNALS_${proj}_GIT_TAG}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
@@ -94,9 +109,6 @@ else()
       -DGDCM_USE_VTK:BOOL=OFF
       -DGDCM_WRAP_PYTHON:BOOL=${SV_EXTERNALS_ENABLE_PYTHON}
       -DGDCM_BUILD_APPLICATIONS:BOOL=ON
-      -DSWIG_EXECUTABLE:FILEPATH=${SWIG_EXECUTABLE}
-      -DSWIG_DIR:PATH=${SWIG_DIR}
-      -DSWIG_VERSION:STRING=${SWIG_VERSION}
       -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
     )

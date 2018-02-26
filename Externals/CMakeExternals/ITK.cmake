@@ -36,10 +36,13 @@ if(${SV_EXTERNALS_ENABLE_GDCM})
 endif()
 
 # Git info
-set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/ITK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
-set(SV_EXTERNALS_${proj}_GIT_TAG "v${SV_EXTERNALS_${proj}_VERSION}" CACHE STRING "Tag for ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
+mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/itk/InsightToolkit-${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
+else()
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
+endif()
 
 #If using Qt
 if(SV_EXTERNALS_USE_QT)
@@ -68,6 +71,10 @@ if("${SV_EXTERNALS_${proj}_VERSION}" VERSION_LESS "4.7.2" AND
     "${COMPILER_VERSION}" STREQUAL "GNU" AND
     "${CMAKE_CXX_COMPILER_VERSION}" VERSION_GREATER "5.0")
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-itk-4.7.1-gnu.patch)
+elseif("${SV_EXTERNALS_${proj}_VERSION}" VERSION_LESS "4.7.2" AND
+    "${COMPILER_VERSION}" STREQUAL "Clang" AND
+    NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "9.0"))
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-itk-4.7.1-clang-9.0.patch)
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
 endif()
@@ -87,8 +94,7 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     )
 else()
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY ${SV_EXTERNALS_${proj}_GIT_URL}
-    GIT_TAG ${SV_EXTERNALS_${proj}_GIT_TAG}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}

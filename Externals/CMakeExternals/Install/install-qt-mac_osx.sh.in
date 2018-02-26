@@ -1,0 +1,82 @@
+# paths
+
+export Qt_SRCDIR=@SV_EXTERNALS_Qt_SRC_DIR@
+export Qt_BINDIR=@SV_EXTERNALS_Qt_BIN_DIR@
+export Qt_BLDDIR=@SV_EXTERNALS_Qt_BLD_DIR@
+
+# crypto fix
+cp @OPENSSL_ROOT@/lib/libcrypto.* $Qt_BINDIR/lib
+
+# crypto lib names
+install_name_tool -id @loader_path/libcrypto.dylib $Qt_BINDIR/lib/libcrypto.dylib
+install_name_tool -id @loader_path/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libcrypto.1.0.0.dylib
+
+# ssl changes
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @loader_path/libcrypto.dylib $Qt_BINDIR/lib/libssl.dylib
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @loader_path/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.dylib
+
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @loader_path/libcrypto.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @loader_path/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
+
+# ssl fix
+cp @OPENSSL_ROOT@/lib/libssl.* $Qt_BINDIR/lib
+
+# ssl lib names
+install_name_tool -id @loader_path/libssl.dylib $Qt_BINDIR/lib/libssl.dylib
+install_name_tool -id @loader_path/libssl.1.0.0.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
+
+# qt executables
+for file in $Qt_BINDIR/bin/*; do
+  if [[ ! -d ${file} ]]; then
+
+    # lib ssl
+    install_name_tool -change @OPENSSL_ROOT@/lib/libssl.dylib @loader_path/../lib/libssl.dylib ${file}
+    install_name_tool -change @OPENSSL_ROOT@/lib/libssl.1.0.0.dylib @loader_path/../lib/libssl.1.0.0.dylib ${file}
+
+    # qt libs
+    for module_dir_1 in $Qt_BINDIR/lib/*; do
+      if [[ -d ${module_dir_1} ]]; then
+        module_name_1=$(basename $module_dir_1)
+        module_split_name_1=(${module_name_1//./ })
+        if [[ "${module_split_name_1[1]}" == "framework" ]]; then
+          change_module_name_1=${module_split_name_1[0]}
+          install_name_tool -change ${module_dir_1}/Versions/5/${change_module_name_1} @loader_path/../lib/${module_name_1}/Versions/5/${change_module_name_1} ${file}
+        fi
+      fi
+    done
+
+  fi
+done
+
+# qt module libraries
+for module_dir_1 in $Qt_BINDIR/lib/*; do
+  if [[ -d ${module_dir_1} ]]; then
+    module_name_1=$(basename $module_dir_1)
+    module_split_name_1=(${module_name_1//./ })
+    if [[ "${module_split_name_1[1]}" == "framework" ]]; then
+      change_module_name_1=${module_split_name_1[0]}
+
+      # lib ssl
+      install_name_tool -change @OPENSSL_ROOT@/lib/libssl.dylib @loader_path/../../../libssl.dylib ${module_dir_1}/${change_module_name_1}
+      install_name_tool -change @OPENSSL_ROOT@/lib/libssl.1.0.0.dylib @loader_path/../../../libssl.1.0.0.dylib ${module_dir_1}/${change_module_name_1}
+
+      # change name of qt lib
+      install_name_tool -id @loader_path/${change_module_name_1} ${module_dir_1}/Versions/5/${change_module_name_1}
+
+      # all of other qt libs
+      for module_dir_2 in $Qt_BINDIR/lib/*; do
+        if [[ -d ${module_dir_2} ]]; then
+          module_name_2=$(basename $module_dir_2)
+          module_split_name_2=(${module_name_2//./ })
+          if [[ "${module_split_name_2[1]}" == "framework" ]]; then
+            change_module_name_2=${module_split_name_2[0]}
+
+            # qt libs
+            install_name_tool -change ${module_dir_2}/Versions/5/${change_module_name_2} @loader_path/../../../${module_name_2}/Versions/5/${change_module_name_2} ${module_dir_1}/Versions/5/${change_module_name_1}
+
+          fi
+        fi
+      done
+    fi
+  fi
+done

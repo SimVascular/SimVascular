@@ -95,31 +95,6 @@ include(SvExtOptions)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# First process special Qt stuff, external but not being built
-if(SV_EXTERNALS_USE_QT)
-  #Find Qt!
-  set(SV_EXTERNALS_Qt5_COMPONENTS
-    Concurrent
-    Core
-    Designer
-    Gui
-    Help
-    OpenGL
-    PrintSupport
-    Script
-    Sql
-    Svg
-    WebKitWidgets
-    WebKit
-    Widgets
-    Xml
-    XmlPatterns
-    UiTools)
-  find_package(Qt5 COMPONENTS ${SV_EXTERNALS_Qt5_COMPONENTS} REQUIRED)
-endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 # Add each external to be built. Full list and initial options are specified in SvExtOptions.cmake
 foreach(proj ${SV_EXTERNALS_LIST})
   if(SV_EXTERNALS_ENABLE_${proj})
@@ -133,7 +108,8 @@ endforeach()
 #-----------------------------------------------------------------------------
 # Tar up everything
 simvascular_today(YEAR MONTH DAY)
-set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_PLATFORM_VERSION_DIR}.${SV_COMPILER_DIR}.${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${SV_BUILD_TYPE_DIR}.${YEAR}.${MONTH}.${DAY}.everything)
+string(TOLOWER "${SV_BUILD_TYPE_DIR}" SV_BUILD_TYPE_LOWER)
+set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_PLATFORM_VERSION_DIR}.${SV_COMPILER_DIR}.${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${SV_BUILD_TYPE_LOWER}.${YEAR}.${MONTH}.${DAY}.everything)
 if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
   install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/../)")

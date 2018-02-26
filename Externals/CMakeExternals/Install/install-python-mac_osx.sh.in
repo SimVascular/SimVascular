@@ -1,8 +1,3 @@
-GCP=/opt/local/libexec/gnubin/cp
-GDIRNAME=/opt/local/libexec/gnubin/dirname
-GBASENAME=/opt/local/libexec/gnubin/basename
-GMKDIR=/opt/local/libexec/gnubin/mkdir
-
 # paths
 
 export PYTHON_SRCDIR=@SV_EXTERNALS_PYTHON_SRC_DIR@
@@ -10,6 +5,41 @@ export PYTHON_BINDIR=@SV_EXTERNALS_PYTHON_BIN_DIR@
 export PYTHON_BLDDIR=@SV_EXTERNALS_PYTHON_BLD_DIR@
 
 
-$GCP -rfl /opt/local/lib/libcrypto.* $PYTHON_BINDIR/lib
-$GCP -rfl /opt/local/lib/libssl.* $PYTHON_BINDIR/lib
-$GCP -rfl /opt/local/lib/libz.* $PYTHON_BINDIR/lib
+# python library fix
+install_name_tool -id @loader_path/@PYTHON_LIBRARY_NAME@ @SV_EXTERNALS_PYTHON_LIBRARY@
+install_name_tool -change @loader_path/@PYTHON_LIBRARY_NAME@ @SV_EXTERNALS_PYTHON_LIBRARY@ @SV_EXTERNALS_PYTHON_EXECUTABLE@
+
+# crypto fix
+cp @OPENSSL_ROOT@/lib/libcrypto.* $PYTHON_BINDIR/lib
+
+# crypto lib names
+install_name_tool -id @loader_path/libcrypto.dylib $PYTHON_BINDIR/lib/libcrypto.dylib
+install_name_tool -id @loader_path/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libcrypto.1.0.0.dylib
+
+# ssl changes
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @loader_path/libcrypto.dylib $PYTHON_BINDIR/lib/libssl.dylib
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @loader_path/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.dylib
+
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @loader_path/libcrypto.dylib $PYTHON_BINDIR/lib/libssl.1.0.0.dylib
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @loader_path/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.1.0.0.dylib
+
+# python changes
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @loader_path/libcrypto.dylib @SV_EXTERNALS_PYTHON_LIBRARY@
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @loader_path/libcrypto.1.0.0.dylib @SV_EXTERNALS_PYTHON_LIBRARY@
+
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @loader_path/../lib/libcrypto.dylib @SV_EXTERNALS_PYTHON_EXECUTABLE@
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @loader_path/../lib/libcrypto.1.0.0.dylib @SV_EXTERNALS_PYTHON_EXECUTABLE@
+
+# ssl fix
+cp @OPENSSL_ROOT@/lib/libssl.* $PYTHON_BINDIR/lib
+
+# ssl lib names
+install_name_tool -id @loader_path/libssl.dylib $PYTHON_BINDIR/lib/libssl.dylib
+install_name_tool -id @loader_path/libssl.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.1.0.0.dylib
+
+# python changes
+install_name_tool -change @OPENSSL_ROOT@/lib/libssl.dylib @loader_path/libssl.dylib @SV_EXTERNALS_PYTHON_LIBRARY@
+install_name_tool -change @OPENSSL_ROOT@/lib/libssl.1.0.0.dylib @loader_path/libssl.1.0.0.dylib @SV_EXTERNALS_PYTHON_LIBRARY@
+
+install_name_tool -change @OPENSSL_ROOT@/lib/libssl.dylib @loader_path/../lib/libssl.dylib @SV_EXTERNALS_PYTHON_EXECUTABLE@
+install_name_tool -change @OPENSSL_ROOT@/lib/libssl.1.0.0.dylib @loader_path/../lib/libssl.1.0.0.dylib @SV_EXTERNALS_PYTHON_EXECUTABLE@

@@ -25,73 +25,95 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #-----------------------------------------------------------------------------
-# TCL
-set(proj TCL)
+# Qt
+set(proj Qt)
 
 # Dependencies
 set(${proj}_DEPENDENCIES "")
 
-# Source URL
+# Git info
 set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
 mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
 if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
-  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/tcltk/tcl${SV_EXTERNALS_${proj}_VERSION}-src.tar.gz")
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/qt/qt-everywhere-opensource-src-${SV_EXTERNALS_${proj}_VERSION}.tar.gz")
 else()
   set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
 endif()
 
-# Configure options
 set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
-  --prefix=${SV_EXTERNALS_${proj}_BIN_DIR}
-  --enable-threads)
-if(SV_EXTERNALS_ENABLE_${proj}_SHARED)
-  set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
-    ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
-    --enable-shared)
-endif()
+  -opensource
+  -confirm-license
+  -release
+  -qt-zlib
+  -qt-libpng
+  -qt-libjpeg
+  -qt-freetype
+  -qt-pcre
+  -prefix ${SV_EXTERNALS_${proj}_BIN_DIR}
+  )
 
-# Platform specific additions
 if(APPLE)
-  set(SV_EXTERNALS_${proj}_URL_EXTENSION unix)
+  if (SV_EXTERNALS_MAC_PACKAGE_MANAGER STREQUAL HOMEBREW)
+    set(OPENSSL_ROOT "/usr/local/opt/openssl")
+  elseif(SV_EXTERNALS_MAC_PACKAGE_MANAGER STREQUAL MACPORTS)
+    set(OPENSSL_ROOT "/opt/local")
+  endif()
+
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
-    --enable-corefoundation)
-elseif(LINUX)
-  set(SV_EXTERNALS_${proj}_URL_EXTENSION unix)
-  set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
-    ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS})
-else()
-  set(SV_EXTERNALS_${proj}_URL_EXTENSION win)
+    -sdk macosx${SV_OSX_MAJOR_VERSION}.${SV_OSX_MINOR_VERSION}
+    -openssl
+    -openssl-linked
+    -I${OPENSSL_ROOT}/include
+    -L${OPENSSL_ROOT}/lib
+    -lssl
+    )
+  if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
-    --enable-64bit)
+    -skip webengine
+    )
+  endif()
+
 endif()
 
-# TCL variables needed later on
-if(SV_EXTERNALS_ENABLE_${proj}_SHARED)
-  set(${proj}_LIBRARY_NAME libtcl${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+if(LINUX)
+  set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
+    ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    -qt-xcb
+    )
+endif()
+
+#Patch for lalr.cpp
+if("${COMPILER_VERSION}" STREQUAL "Clang")
+  if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.4.2-clang.patch)
+  elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.6.0")
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.6.0-clang.patch)
+  else()
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
+  endif()
+  if (NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "8.0"))
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+      COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-clang-8.0.patch)
+  endif()
 else()
-  set(${proj}_LIBRARY_NAME libtcl${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
 endif()
 
-set(SV_EXTERNALS_TCLSH_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/tclsh${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
-set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include)
-set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/${${proj}_LIBRARY_NAME})
-get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_LIBRARY} DIRECTORY)
-
-# Special install rules
+# Post install script
 if(APPLE)
+  set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-qt-mac_osx.sh)
+  configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
-    COMMAND chmod -R u+w,a+rx ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
-    COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
-    COMMAND install_name_tool -change ${SV_EXTERNALS_${proj}_LIBRARY} ${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_TCLSH_EXECUTABLE})
+    COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT})
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install)
 endif()
 
 
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_TCLTK)
+if(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
@@ -110,7 +132,36 @@ else()
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
-    CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} ${SV_EXTERNALS_${proj}_SRC_DIR}/${SV_EXTERNALS_${proj}_URL_EXTENSION}/configure -C ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    CONFIGURE_COMMAND ${SV_EXTERNALS_${proj}_SRC_DIR}/configure ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     UPDATE_COMMAND ""
     )
 endif()
+
+# Qt variables needed later on
+set(SV_EXTERNALS_${proj}_QMAKE_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/qmake)
+set(SV_EXTERNALS_${proj}_TOPLEVEL_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake)
+set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake/Qt5)
+
+# Qt externals dirs also needed
+  #Find Qt!
+set(SV_EXTERNALS_Qt5_COMPONENTS
+  Concurrent
+  Core
+  Designer
+  Gui
+  Help
+  OpenGL
+  PrintSupport
+  Script
+  Sql
+  Svg
+  WebKitWidgets
+  WebKit
+  Widgets
+  Xml
+  XmlPatterns
+  UiTools)
+#-----------------------------------------------------------------------------
+
+

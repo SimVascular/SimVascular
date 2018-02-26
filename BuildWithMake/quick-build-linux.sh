@@ -37,7 +37,7 @@ osver=$(lsb_release -sc)
 case "$osid" in
 
     'Ubuntu')
-	
+
 	case "$osver" in
 	    'xenial')
 		export SV_EXTERN_LINUX_VERSION=ubuntu_16
@@ -60,7 +60,7 @@ case "$osid" in
                 export EXTERNALS_SV_OS_LONG_NAME_DIR=ubuntu
                 export EXTERNALS_SV_FULL_OS_VER_NO=14.04
                 export EXTERNALS_SV_ARCH_DIR=x64
-		;;   
+		;;
 	    *)
 		echo "Error!"
 		exit
@@ -95,11 +95,11 @@ case "$osid" in
 		exit
 		;;
 
-	esac	       
+	esac
 	;;
 
     *)
-	 
+
 	echo "Error!"
 	exit
 	;;
@@ -108,7 +108,7 @@ esac
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/$EXTERNALS_SV_OS_LONG_NAME_DIR/$EXTERNALS_SV_FULL_OS_VER_NO/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE/$EXTERNALS_BUILD_DATE
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.01/linux/$EXTERNALS_SV_OS_LONG_NAME_DIR/$EXTERNALS_SV_FULL_OS_VER_NO/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE/$EXTERNALS_BUILD_DATE
 
 export TAR_FILE_PREFIX=$EXTERNALS_SV_OS_LONG_NAME_DIR.$EXTERNALS_SV_FULL_OS_VER_NO.$EXTERNALS_SV_COMPILER_SHORT_NAME.$EXTERNALS_SV_COMPILER_VER_NO.$EXTERNALS_SV_ARCH_DIR.$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE.$EXTERNALS_BUILD_DATE
 

@@ -34,12 +34,10 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]
 then
   export CC="gcc"
   export CXX="g++"
-  export Qt5_DIR="/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5"
 elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
 then
   export CC="clang"
   export CXX="clang++"
-  export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 fi
 
 #cmake
@@ -67,30 +65,13 @@ pushd $BUILD_DIR
    -DSV_USE_PYTHON=ON \
    -DSV_USE_MMG=ON \
    -DSV_USE_MITK=ON \
+   -DSV_USE_Qt5=ON \
+   -DSV_USE_QT=ON \
    -DSV_USE_QT_GUI=ON \
-\
-   -DSV_USE_SYSTEM_FREETYPE=ON \
-   -DSV_USE_SYSTEM_GDCM=ON \
-   -DSV_USE_SYSTEM_ITK=ON \
-   -DSV_USE_SYSTEM_PYTHON=ON \
-   -DSV_USE_SYSTEM_OpenCASCADE=ON \
-   -DSV_USE_SYSTEM_TCL=ON \
-   -DSV_USE_SYSTEM_VTK=ON \
-   -DSV_USE_SYSTEM_MMG=ON \
-   -DSV_USE_SYSTEM_MITK=ON \
-\
-   -DSV_USE_GDCM_SHARED=ON \
-   -DSV_USE_FREETYPE_SHARED=ON \
-   -DSV_USE_ITK_SHARED=ON \
-   -DSV_USE_OpenCASCADE_SHARED=ON \
-   -DSV_USE_TCL_SHARED=ON \
-   -DSV_USE_VTK_SHARED=ON \
-   -DSV_USE_MITK_SHARED=ON \
 \
    -DSV_DOWNLOAD_EXTERNALS=ON \
    -DSV_EXTERNALS_USE_TOPLEVEL_BIN_DIR=ON \
    -DSV_EXTERNALS_TOPLEVEL_BIN_DIR="$SV_EXTERNALS_BIN_DIR" \
-   -DQt5_DIR=$Qt5_DIR \
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV"
 

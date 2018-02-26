@@ -43,10 +43,10 @@ before_install:
   - export SV_EXTERNALS_DIR=$cwd/Externals
   - export SV_EXTERNALS_BUILD_DIR=$SV_EXTERNALS_DIR/build
   - export SV_EXTERNALS_BIN_DIR=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SV_EXTERNALS_BIN_DIR/qt-5.4.2/lib
   - export SV_CODE_DIR=$cwd/Code
   - export SV_TEST_DIR=$HOME/test/
   - export SCRIPTS=$cwd/travis
-  - $SCRIPTS/travis_get_qt.sh
   - $SCRIPTS/travis_cmake_get_externals.sh
   - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
 

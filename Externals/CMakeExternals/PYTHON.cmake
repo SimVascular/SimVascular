@@ -32,8 +32,13 @@ set(proj PYTHON)
 set(${proj}_DEPENDENCIES "")
 
 # Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/python/python-${SV_EXTERNALS_${proj}_VERSION}-cmakebuild.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
+set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
+mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/python/python-${SV_EXTERNALS_${proj}_VERSION}-cmakebuild.tar.gz")
+else()
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
+endif()
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 if(WIN32)
@@ -61,13 +66,29 @@ if(LINUX)
 endif()
 
 if(APPLE)
-  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-    -DCMAKE_PREFIX_PATH:PATH=/opt/local
-    )
+  if (SV_EXTERNALS_MAC_PACKAGE_MANAGER STREQUAL HOMEBREW)
+
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DCMAKE_PREFIX_PATH:PATH=/usr/local/opt
+      -DOPENSSL_CRYPTO_LIBRARY:FILEPATH=/usr/local/opt/openssl/lib/libcrypto.dylib
+      -DOPENSSL_INCLUDE_DIR:PATH=/usr/local/opt/openssl/include
+      -DOPENSSL_SSL_LIBRARY:FILEPATH=/usr/local/opt/openssl/lib/libssl.dylib
+      )
+
+    set(OPENSSL_ROOT "/usr/local/opt/openssl")
+
+  elseif(SV_EXTERNALS_MAC_PACKAGE_MANAGER STREQUAL MACPORTS)
+
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DCMAKE_PREFIX_PATH:PATH=/opt/local
+      )
+
+    set(OPENSSL_ROOT "/opt/local")
+
+  endif()
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-python-mac_osx.sh)
   configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
-    COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
     COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT})
 elseif(LINUX)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS

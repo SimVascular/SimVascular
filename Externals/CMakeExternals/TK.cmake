@@ -32,8 +32,13 @@ set(proj TK)
 set(${proj}_DEPENDENCIES TCL)
 
 # Source URL
-set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/tcltk/tk${SV_EXTERNALS_${proj}_VERSION}-src.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
+set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
+mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/tcltk/tk${SV_EXTERNALS_${proj}_VERSION}-src.tar.gz")
+else()
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
+endif()
 
 # Configure options
 set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS

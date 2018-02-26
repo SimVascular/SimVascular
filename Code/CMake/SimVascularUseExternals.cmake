@@ -62,64 +62,6 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# First process special Qt stuff
-#Find Qt!
-if(WIN32)
-  set(SV_Qt5_search_paths C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5
-                          C:/OpenSource/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5
-                          C:/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5
-			  C:/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5)
-elseif(LINUX)
-  set(SV_Qt5_search_paths /opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5
-                          /usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5)
-elseif(APPLE)
-  set(SV_Qt5_search_paths /usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5
-                          /opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5)
-endif()
-
-set(SV_Qt5_COMPONENTS
-  Concurrent
-  Core
-  Designer
-  Gui
-  Help
-  OpenGL
-  PrintSupport
-  Script
-  Sql
-  Svg
-  WebKitWidgets
-  WebKit
-  Widgets
-  Xml
-  XmlPatterns
-  UiTools)
-find_package(Qt5 PATHS ${SV_Qt5_search_paths} COMPONENTS ${SV_Qt5_COMPONENTS} REQUIRED)
-
-# need toplevel Qt dir path
-if(Qt5_DIR)
-  get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
-  list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
-  if(_result LESS 0)
-    set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
-  endif()
-endif()
-# Need to set include dirs and libraries of Qt from individual components
-if(NOT SV_USE_MITK_CONFIG)
-  set(QT_LIBRARIES "")
-  set(QT_INCLUDE_DIRS "")
-  foreach(comp ${SV_Qt5_COMPONENTS})
-    if(Qt5${comp}_LIBRARIES)
-      set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${comp}_LIBRARIES})
-    endif()
-    if(Qt5${comp}_INCLUDE_DIRS)
-      set(QT_INCLUDE_DIRS ${QT_INCLUDE_DIRS} ${Qt5${comp}_INCLUDE_DIRS})
-    endif()
-  endforeach()
-  include_directories(${QT_INCLUDE_DIRS})
-endif()
-
-#-----------------------------------------------------------------------------
 ## Special variable to inform about externals download
 option(ACCEPT_DOWNLOAD_EXTERNALS "Turn to ON to download externals" OFF)
 if(NOT ACCEPT_DOWNLOAD_EXTERNALS)
@@ -129,6 +71,13 @@ endif()
 
 ##-----------------------------------------------------------------------------
 ## Externals!
+# Setup the externals now
+set(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR ON)
+set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Externals-build/sv_externals")
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin")
+set(SV_USE_QT ON)
+set(SV_USE_QT_GUI ON)
+
 configure_file("${SimVascular_CMAKE_DIR}/simvascular_download_externals.sh.in" "${CMAKE_BINARY_DIR}/simvascular_download_externals.sh" @ONLY)
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 list(APPEND SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS -DCMAKE_MODULE_PATH:PATH="${CMAKE_MODULE_PATH}")
@@ -169,10 +118,9 @@ endif()
 ##-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Setup the externals now
-set(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR ON)
-set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Externals-build/sv_externals")
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}/${SV_BUILD_TYPE_DIR}")
+# Qt5
+simvascular_add_new_external(Qt5 5.4.2 ON ON qt)
+
 # TCL
 simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
 

@@ -1,0 +1,24 @@
+diff -rupN original/Modules/Filtering/FastMarching/include/itkFastMarchingBase.h patch/Modules/Filtering/FastMarching/include/itkFastMarchingBase.h
+--- original/Modules/Filtering/FastMarching/include/itkFastMarchingBase.h	2017-11-21 19:39:58.000000000 -0800
++++ patch/Modules/Filtering/FastMarching/include/itkFastMarchingBase.h	2017-11-21 19:43:36.000000000 -0800
+@@ -235,7 +235,7 @@ protected:
+   typedef std::greater< NodePairType >  NodeComparerType;
+ 
+   typedef std::priority_queue<
+-    NodeType,
++    NodePairType,
+     HeapContainerType,
+     NodeComparerType >
+     PriorityQueueType;
+diff -rupN original/Modules/ThirdParty/VNL/src/vxl/v3p/netlib/linalg/lsqrBase.cxx patch/Modules/ThirdParty/VNL/src/vxl/v3p/netlib/linalg/lsqrBase.cxx
+--- original/Modules/ThirdParty/VNL/src/vxl/v3p/netlib/linalg/lsqrBase.cxx	2017-11-21 19:40:00.000000000 -0800
++++ patch/Modules/ThirdParty/VNL/src/vxl/v3p/netlib/linalg/lsqrBase.cxx	2017-11-21 19:41:11.000000000 -0800
+@@ -619,7 +619,7 @@ Solve( unsigned int m, unsigned int n, c
+     // See if it is time to print something.
+     //----------------------------------------------------------------
+     bool prnt = false;
+-    if (nout > 0)
++    if (this->nout)
+       {
+       if (n     <=        40) prnt = true;
+       if (this->itn   <=        10) prnt = true;

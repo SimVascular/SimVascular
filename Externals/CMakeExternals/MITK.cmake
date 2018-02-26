@@ -28,17 +28,10 @@
 # MITK
 set(proj MITK)
 
-if(NOT SV_EXTERNALS_DOWNLOAD_MITK)
-  # Find SWIG!
-  find_package(SWIG REQUIRED)
-endif()
-
-if(NOT SV_EXTERNALS_USE_QT)
-  message(FATAL_ERROR "${proj} cannot be built without Qt")
-endif()
-
 # Dependencies
-set(${proj}_DEPENDENCIES "VTK")
+set(${proj}_DEPENDENCIES "VTK" "Qt")
+#set(${proj}_DEPENDENCIES "VTK")
+
 if(SV_EXTERNALS_ENABLE_PYTHON)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "PYTHON")
@@ -46,6 +39,10 @@ endif()
 if(SV_EXTERNALS_ENABLE_NUMPY)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "NUMPY")
+endif()
+if(SV_EXTERNALS_ENABLE_PIP)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "PIP")
 endif()
 if(SV_EXTERNALS_ENABLE_GDCM)
   set(${proj}_DEPENDENCIES
@@ -55,21 +52,33 @@ if(SV_EXTERNALS_ENABLE_ITK)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "ITK")
 endif()
+if(SV_EXTERNALS_ENABLE_SWIG)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "SWIG")
+endif()
 
 # Git info
-set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/MITK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
-set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-2016.03.0" CACHE STRING "Tag for ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+#set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/MITK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
+#mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
+#set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-2016.03.0" CACHE STRING "Tag for ${proj}")
+#mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+set(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL "" CACHE STRING "Manual specification of ${proj}, can be web address or local path to tar file")
+mark_as_advanced(SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+if(NOT SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL)
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_ORIGINALS_URL}/mitk/mitk-v${SV_EXTERNALS_${proj}_VERSION}.0.tar.gz")
+else()
+  set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
+endif()
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 #Special for Qt, make sure that MITK uses the same libs we are!
 foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
-  if(Qt5${comp}_LIBRARIES)
+  #if(Qt5${comp}_LIBRARIES)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-      -DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
-    )
-  endif()
+      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_Qt_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
+      )
+      #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+  #endif()
 endforeach()
 
 #If using PYTHON
@@ -106,6 +115,15 @@ if(SV_EXTERNALS_ENABLE_ITK)
     )
 endif()
 
+#If using SWIG
+if(SV_EXTERNALS_ENABLE_SWIG)
+  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DSWIG_EXECUTABLE:FILEPATH=${SV_EXTERNALS_SWIG_EXECUTABLE}
+    -DSWIG_DIR:PATH=${SV_EXTERNALS_SWIG_BIN_DIR}
+    -DSWIG_VERSION:STRING=${SV_EXTERNALS_SWIG_VERSION}
+    )
+endif()
+
 # Configure file for custom install!!!
 if(APPLE)
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-mitk-mac_osx.sh)
@@ -118,6 +136,14 @@ else()
   set(SV_${proj}_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 endif()
 configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
+
+#Patch for cppmicroservices
+set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/PATCH/patch-mitk-2016.03.patch)
+if("${COMPILER_VERSION}" STREQUAL "Clang" AND
+  NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "9.0"))
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-mitk-2016.03-clang-9.0.patch)
+endif()
 
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
@@ -134,12 +160,12 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     )
 else()
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY ${SV_EXTERNALS_${proj}_GIT_URL}
-    GIT_TAG ${SV_EXTERNALS_${proj}_GIT_TAG}
+    URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
+    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     UPDATE_COMMAND ""
     INSTALL_COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}
      CMAKE_CACHE_ARGS
@@ -157,17 +183,14 @@ else()
       -DMITK_BUILD_ALL_PLUGINS:BOOL=ON
       -DMITK_USE_SUPERBUILD:BOOL=ON
       -DMITK_USE_GDCM:BOOL=${SV_EXTERNALS_ENABLE_GDCM}
-      -DMITK_USE_SWIG:BOOL=ON
+      -DMITK_USE_SWIG:BOOL=${SV_EXTERNALS_ENABLE_SWIG}
       -DMITK_USE_Python:BOOL=${SV_EXTERNALS_ENABLE_PYTHON}
       -DMITK_USE_SYSTEM_PYTHON:BOOL=${SV_EXTERNALS_ENABLE_PYTHON}
       -DMITK_USE_Numpy:BOOL=${SV_EXTERNALS_ENABLE_NUMPY}
       -DMITK_USE_VMTK:BOOL=OFF
       -DEXTERNAL_VTK_DIR:PATH=${SV_EXTERNALS_VTK_CMAKE_DIR}
-      -DSWIG_EXECUTABLE:FILEPATH=${SWIG_EXECUTABLE}
-      -DSWIG_DIR:PATH=${SWIG_DIR}
-      -DSWIG_VERSION:STRING=${SWIG_VERSION}
-      -DQt5_DIR:PATH:STRING=${Qt5_DIR}
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_Qt_CMAKE_DIR}
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_Qt_QMAKE_EXECUTABLE}
       -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
       )

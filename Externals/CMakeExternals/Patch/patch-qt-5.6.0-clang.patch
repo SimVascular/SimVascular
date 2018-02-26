@@ -1,0 +1,237 @@
+diff -rupN original/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager.mm patch/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager.mm
+--- original/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager.mm	2018-02-20 13:09:13.000000000 -0800
++++ patch/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager.mm	2018-02-21 14:59:15.000000000 -0800
+@@ -1072,10 +1072,19 @@ QT_USE_NAMESPACE
+ {
+     using namespace OSXBluetooth;
+
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
++    const CBManagerState state = central.state;
++#else
+     const CBCentralManagerState state = central.state;
++#endif
+
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
++    if (state == CBManagerStateUnknown
++        || state == CBManagerStateResetting) {
++#else
+     if (state == CBCentralManagerStateUnknown
+         || state == CBCentralManagerStateResetting) {
++#endif
+         // We still have to wait, docs say:
+         // "The current state of the central manager is unknown;
+         // an update is imminent." or
+@@ -1085,7 +1094,11 @@ QT_USE_NAMESPACE
+     }
+
+     // Let's check some states we do not like first:
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
++    if (state == CBManagerStateUnsupported || state == CBManagerStateUnauthorized) {
++#else
+     if (state == CBCentralManagerStateUnsupported || state == CBCentralManagerStateUnauthorized) {
++#endif
+         if (managerState == CentralManagerUpdating) {
+             // We tried to connect just to realize, LE is not supported. Report this.
+             managerState = CentralManagerIdle;
+@@ -1101,7 +1114,11 @@ QT_USE_NAMESPACE
+         return;
+     }
+
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
++    if (state == CBManagerStatePoweredOff) {
++#else
+     if (state == CBCentralManagerStatePoweredOff) {
++#endif
+         managerState = CentralManagerIdle;
+         if (managerState == CentralManagerUpdating) {
+             // I've seen this instead of Unsupported on OS X.
+@@ -1116,7 +1133,11 @@ QT_USE_NAMESPACE
+         return;
+     }
+
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
++    if (state == CBManagerStatePoweredOn) {
++#else
+     if (state == CBCentralManagerStatePoweredOn) {
++#endif
+         if (managerState == CentralManagerUpdating && !disconnectPending) {
+             managerState = CentralManagerIdle;
+             [self retrievePeripheralAndConnect];
+diff -rupN original/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager_p.h patch/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager_p.h
+--- original/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager_p.h	2018-02-20 13:09:13.000000000 -0800
++++ patch/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager_p.h	2018-02-21 14:59:15.000000000 -0800
+@@ -61,6 +61,15 @@
+
+ #include "corebluetoothwrapper_p.h"
+
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_12, __IPHONE_NA)
++#include <CoreBluetooth/CBService.h>
++#include <CoreBluetooth/CBCharacteristic.h>
++#include <CoreBluetooth/CBDescriptor.h>
++#include <CoreBluetooth/CBCentralManager.h>
++#include <CoreBluetooth/CBPeripheral.h>
++#endif
++
++
+ @class QT_MANGLE_NAMESPACE(OSXBTCentralManager);
+
+ QT_BEGIN_NAMESPACE
+diff -rupN original/qtconnectivity/src/bluetooth/osx/osxbtledeviceinquiry.mm patch/qtconnectivity/src/bluetooth/osx/osxbtledeviceinquiry.mm
+--- original/qtconnectivity/src/bluetooth/osx/osxbtledeviceinquiry.mm	2018-02-20 13:09:13.000000000 -0800
++++ patch/qtconnectivity/src/bluetooth/osx/osxbtledeviceinquiry.mm	2018-02-21 14:59:15.000000000 -0800
+@@ -42,6 +42,11 @@
+
+ #include "corebluetoothwrapper_p.h"
+
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_12, __IPHONE_NA)
++#import <CoreBluetooth/CBCentralManager.h>
++#import <CoreBluetooth/CBPeripheral.h>
++#endif
++
+ QT_BEGIN_NAMESPACE
+
+ namespace OSXBluetooth {
+@@ -204,8 +209,13 @@ using namespace QT_NAMESPACE;
+     dispatch_queue_t leQueue(qt_LE_queue());
+     Q_ASSERT(leQueue);
+
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
++    const CBManagerState cbState(central.state);
++    if (cbState == CBManagerStatePoweredOn) {
++#else
+     const CBCentralManagerState cbState(central.state);
+     if (cbState == CBCentralManagerStatePoweredOn) {
++#endif
+         if (internalState == InquiryStarting) {
+             internalState = InquiryActive;
+             // Scan time is actually 10 seconds. Having a block with such delay can prevent
+@@ -220,7 +230,11 @@ using namespace QT_NAMESPACE;
+                                           });
+             [manager scanForPeripheralsWithServices:nil options:nil];
+         } // Else we ignore.
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
+     } else if (state == CBCentralManagerStateUnsupported || state == CBCentralManagerStateUnauthorized) {
++#else
++    } else if (state == CBManagerStateUnsupported || state == CBManagerStateUnauthorized) {
++#endif
+         if (internalState == InquiryActive) {
+             [manager stopScan];
+             // Not sure how this is possible at all, probably, can never happen.
+@@ -230,7 +244,11 @@ using namespace QT_NAMESPACE;
+         }
+
+         [manager setDelegate:nil];
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
++    } else if (cbState == CBManagerStatePoweredOff) {
++#else
+     } else if (cbState == CBCentralManagerStatePoweredOff) {
++#endif
+         if (internalState == InquiryStarting) {
+ #ifndef Q_OS_OSX
+             // On iOS a user can see at this point an alert asking to enable
+diff -rupN original/qtconnectivity/src/bluetooth/osx/osxbtutility.mm patch/qtconnectivity/src/bluetooth/osx/osxbtutility.mm
+--- original/qtconnectivity/src/bluetooth/osx/osxbtutility.mm	2018-02-20 13:09:13.000000000 -0800
++++ patch/qtconnectivity/src/bluetooth/osx/osxbtutility.mm	2018-02-21 14:59:15.000000000 -0800
+@@ -41,6 +41,9 @@
+ #ifndef QT_IOS_BLUETOOTH
+
+ #import <IOBluetooth/objc/IOBluetoothSDPUUID.h>
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_12, __IPHONE_NA)
++#import <CoreBluetooth/CBUUID.h>
++#endif
+
+ #endif
+
+diff -rupN original/qtwebengine/src/3rdparty/chromium/base/mac/sdk_forward_declarations.h patch/qtwebengine/src/3rdparty/chromium/base/mac/sdk_forward_declarations.h
+--- original/qtwebengine/src/3rdparty/chromium/base/mac/sdk_forward_declarations.h	2018-02-20 13:10:01.000000000 -0800
++++ patch/qtwebengine/src/3rdparty/chromium/base/mac/sdk_forward_declarations.h	2018-02-21 15:00:07.000000000 -0800
+@@ -18,6 +18,18 @@
+
+ #include "base/base_export.h"
+
++#if defined(__APPLE__)
++#define QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(osx, ios) \
++  ((defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && osx != __MAC_NA && __MAC_OS_X_VERSION_MAX_ALLOWED >= osx) || \
++   (defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && ios != __IPHONE_NA && __IPHONE_OS_VERSION_MAX_ALLOWED >= ios))
++#endif
++
++#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_12, __IPHONE_NA)
++#import <CoreBluetooth/CBCentralManager.h>
++#import <CoreBluetooth/CBPeripheral.h>
++#import <CoreBluetooth/CBUUID.h>
++#endif
++
+ // ----------------------------------------------------------------------------
+ // Either define or forward declare classes only available in OSX 10.7+.
+ // ----------------------------------------------------------------------------
+diff -rupN original/qtwebengine/src/3rdparty/chromium/content/common/gpu/image_transport_surface_calayer_mac.mm patch/qtwebengine/src/3rdparty/chromium/content/common/gpu/image_transport_surface_calayer_mac.mm
+--- original/qtwebengine/src/3rdparty/chromium/content/common/gpu/image_transport_surface_calayer_mac.mm	2018-02-20 13:09:25.000000000 -0800
++++ patch/qtwebengine/src/3rdparty/chromium/content/common/gpu/image_transport_surface_calayer_mac.mm	2018-02-21 14:59:28.000000000 -0800
+@@ -50,15 +50,15 @@ bool CanUseIOSurface() {
+ }  // namespace
+
+ // Private IOSurface API.
+-@interface IOSurface : NSObject
+-- (void)flushRect:(CGRect)rect;
+-- (void)attachToCGLContext:(CGLContextObj)cglContext;
+-- (id)initWithSize:(CGSize)size
+-        colorSpace:(CGColorSpaceRef)colorSpace
+-            atomic:(BOOL)atomic;
+-@property(readonly) CGImageRef image;
+-@property(readonly) id layerContents;
+-@end
++//@interface IOSurface : NSObject
++//- (void)flushRect:(CGRect)rect;
++//- (void)attachToCGLContext:(CGLContextObj)cglContext;
++//- (id)initWithSize:(CGSize)size
++//        colorSpace:(CGColorSpaceRef)colorSpace
++//            atomic:(BOOL)atomic;
++//@property(readonly) CGImageRef image;
++//@property(readonly) id layerContents;
++//@end
+
+ // Private CALayer API.
+ @interface CALayer (Private)
+diff -rupN original/qtwebengine/src/3rdparty/chromium/v8/src/compiler/instruction.h patch/qtwebengine/src/3rdparty/chromium/v8/src/compiler/instruction.h
+--- original/qtwebengine/src/3rdparty/chromium/v8/src/compiler/instruction.h	2018-02-20 13:09:17.000000000 -0800
++++ patch/qtwebengine/src/3rdparty/chromium/v8/src/compiler/instruction.h	2018-02-21 14:59:20.000000000 -0800
+@@ -1011,7 +1011,7 @@ class InstructionBlock final : public Zo
+
+ typedef ZoneDeque<Constant> ConstantDeque;
+ typedef std::map<int, Constant, std::less<int>,
+-                 zone_allocator<std::pair<int, Constant> > > ConstantMap;
++                 zone_allocator<std::pair<const int, Constant> > > ConstantMap;
+
+ typedef ZoneDeque<Instruction*> InstructionDeque;
+ typedef ZoneDeque<ReferenceMap*> ReferenceMapDeque;
+diff -rupN original/qtwebengine/src/3rdparty/chromium/v8/src/compiler/js-type-feedback.h patch/qtwebengine/src/3rdparty/chromium/v8/src/compiler/js-type-feedback.h
+--- original/qtwebengine/src/3rdparty/chromium/v8/src/compiler/js-type-feedback.h	2018-02-20 13:09:17.000000000 -0800
++++ patch/qtwebengine/src/3rdparty/chromium/v8/src/compiler/js-type-feedback.h	2018-02-21 14:59:20.000000000 -0800
+@@ -33,9 +33,9 @@ class JSTypeFeedbackTable : public ZoneO
+  private:
+   friend class JSTypeFeedbackSpecializer;
+   typedef std::map<NodeId, TypeFeedbackId, std::less<NodeId>,
+-                   zone_allocator<TypeFeedbackId> > TypeFeedbackIdMap;
++                   zone_allocator<std::pair<const NodeId, TypeFeedbackId> > > TypeFeedbackIdMap;
+   typedef std::map<NodeId, FeedbackVectorICSlot, std::less<NodeId>,
+-                   zone_allocator<FeedbackVectorICSlot> >
++                   zone_allocator<std::pair<const NodeId, FeedbackVectorICSlot> > >
+       FeedbackVectorICSlotMap;
+
+   TypeFeedbackIdMap type_feedback_id_map_;
+diff -rupN original/qtwebengine/src/3rdparty/chromium/v8/src/zone-containers.h patch/qtwebengine/src/3rdparty/chromium/v8/src/zone-containers.h
+--- original/qtwebengine/src/3rdparty/chromium/v8/src/zone-containers.h	2018-02-20 13:09:17.000000000 -0800
++++ patch/qtwebengine/src/3rdparty/chromium/v8/src/zone-containers.h	2018-02-21 14:59:20.000000000 -0800
+@@ -114,11 +114,11 @@ class ZoneSet : public std::set<K, Compa
+ // a zone allocator.
+ template <typename K, typename V, typename Compare = std::less<K>>
+ class ZoneMap
+-    : public std::map<K, V, Compare, zone_allocator<std::pair<K, V>>> {
++    : public std::map<K, V, Compare, zone_allocator<std::pair<const K, V>>> {
+  public:
+   // Constructs an empty map.
+   explicit ZoneMap(Zone* zone)
+-      : std::map<K, V, Compare, zone_allocator<std::pair<K, V>>>(
++      : std::map<K, V, Compare, zone_allocator<std::pair<const K, V>>>(
+             Compare(), zone_allocator<std::pair<K, V>>(zone)) {}
+ };
