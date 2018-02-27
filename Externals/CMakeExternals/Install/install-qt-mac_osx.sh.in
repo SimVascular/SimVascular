@@ -86,3 +86,22 @@ for module_dir_1 in $Qt_BINDIR/lib/*; do
     fi
   fi
 done
+
+# qt plugins
+for dir in $Qt_BINDIR/plugins/*; do
+  if [[ -d ${dir} ]]; then
+    for plugin in ${dir}/*; do
+      # qt libs
+      for module_dir_1 in $Qt_BINDIR/lib/*; do
+        if [[ -d ${module_dir_1} ]]; then
+          module_name_1=$(basename $module_dir_1)
+          module_split_name_1=(${module_name_1//./ })
+          if [[ "${module_split_name_1[1]}" == "framework" ]]; then
+            change_module_name_1=${module_split_name_1[0]}
+          install_name_tool -change ${module_dir_1}/Versions/5/${change_module_name_1} @rpath/${module_name_1}/Versions/5/${change_module_name_1} ${plugin}
+          fi
+        fi
+      done
+    done
+  fi
+done
