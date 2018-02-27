@@ -39,7 +39,7 @@ install_name_tool -id @rpath/libssl.dylib $PYTHON_BINDIR/lib/libssl.dylib
 install_name_tool -id @rpath/libssl.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.1.0.0.dylib
 
 # python changes
-install_name_tool -add_path @loader_path/../lib @SV_EXTERNALS_PYTHON_LIBRARY@
+install_name_tool -add_rpath @loader_path/../lib @SV_EXTERNALS_PYTHON_LIBRARY@
 install_name_tool -change @OPENSSL_ROOT@/lib/libssl.dylib @rpath/libssl.dylib @SV_EXTERNALS_PYTHON_LIBRARY@
 install_name_tool -change @OPENSSL_ROOT@/lib/libssl.1.0.0.dylib @rpath/libssl.1.0.0.dylib @SV_EXTERNALS_PYTHON_LIBRARY@
 
