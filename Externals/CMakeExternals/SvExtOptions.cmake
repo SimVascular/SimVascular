@@ -26,7 +26,7 @@
 #
 #-----------------------------------------------------------------------------
 # Toplevel directories for src, bin, build or externals
-set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/sv_externals")
+set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/svExternals")
 
 set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/src"
   CACHE PATH "Directory where source files for externals will be put")
@@ -75,6 +75,7 @@ endif()
 # First external is not built by the project but is required if building
 # MITK
 option(SV_EXTERNALS_USE_QT "Enable QT Plugin" ON)
+option(SV_EXTERNALS_BUILD_MITK_WITH_PYTHON "Build MITK without python" ON)
 
 # Add externals with default values of version, build_with, shared, dirname,
 # and optional install dirname. Order matters; put independent packages first
@@ -110,6 +111,7 @@ sv_externals_add_new_external(TKLIB 0.6 ON ON tklib none)
 #-----------------------------------------------------------------------------
 # PYTHON
 sv_externals_add_new_external(PYTHON 2.7.11 ON ON python python)
+set_property(CACHE SV_EXTERNALS_PYTHON_VERSION PROPERTY STRINGS "2.7.11" "3.5.2")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -135,31 +137,37 @@ sv_externals_add_new_external(SWIG 3.0.12 OFF ON swig swig)
 #-----------------------------------------------------------------------------
 # MMG
 sv_externals_add_new_external(MMG 5.1.0 ON OFF mmg mmg)
+set_property(CACHE SV_EXTERNALS_MMG_VERSION PROPERTY STRINGS "5.1.0" "5.3.9")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # GDCM
 sv_externals_add_new_external(GDCM 2.6.1 ON ON gdcm gdcm)
+set_property(CACHE SV_EXTERNALS_GDCM_VERSION PROPERTY STRINGS "2.6.1" "2.6.3")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # VTK
 sv_externals_add_new_external(VTK 6.2.0 ON ON vtk vtk)
+set_property(CACHE SV_EXTERNALS_VTK_VERSION PROPERTY STRINGS "6.2.0" "8.0.0")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # ITK
 sv_externals_add_new_external(ITK 4.7.1 ON ON itk itk)
+set_property(CACHE SV_EXTERNALS_ITK_VERSION PROPERTY STRINGS "4.7.1" "4.12.2")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # OpenCASCADE
 sv_externals_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade opencascade)
+set_property(CACHE SV_EXTERNALS_OpenCASCADE_VERSION PROPERTY STRINGS "7.0.0" "7.2.0")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # MITK
 sv_externals_add_new_external(MITK 2016.03 ON ON mitk mitk)
+set_property(CACHE SV_EXTERNALS_MITK_VERSION PROPERTY STRINGS "2016.03" "2018.02")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

@@ -77,9 +77,9 @@ option(SV_USE_MSMPI "Use MSMPI" OFF)
 
 #-----------------------------------------------------------------------------
 # Externals
-set(SV_EXTERNALS_INSTALL_PREFIX "sv_externals" CACHE PATH "Externals toplevel directory")
+set(SV_EXTERNALS_INSTALL_PREFIX "svExternals" CACHE PATH "Externals toplevel directory")
 
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/sv_externals/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}/${SV_BUILD_TYPE_DIR}" CACHE PATH "Externals toplevel bin dir")
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/svExternals/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}/${SV_BUILD_TYPE_DIR}" CACHE PATH "Externals toplevel bin dir")
 
 option(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR "If ON, SV_EXTERNALS_TOPLEVEL_BIN_DIR will be used as location used to find external packages" OFF)
 
