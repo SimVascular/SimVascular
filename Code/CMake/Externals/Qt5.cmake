@@ -77,7 +77,7 @@ if(SV_USE_${proj})
       if(_result LESS 0)
         set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
       endif()
-      set(QT_PLUGIN_PATH "${_Qt5_DIR}/plugins")
+      set(QT_PLUGIN_PATH "${Qt5_DIR}/plugins")
     endif()
     # Need to set include dirs and libraries of Qt from individual components
     if(NOT SV_USE_MITK_CONFIG)
