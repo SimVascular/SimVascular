@@ -3,14 +3,19 @@
 export PYTHON_SRCDIR=@SV_EXTERNALS_PYTHON_SRC_DIR@
 export PYTHON_BINDIR=@SV_EXTERNALS_PYTHON_BIN_DIR@
 export PYTHON_BLDDIR=@SV_EXTERNALS_PYTHON_BLD_DIR@
+PYTHON_LIB_NAME=@PYTHON_LIBRARY_NAME@
 
 # python library fix
-install_name_tool -id @rpath/@PYTHON_LIBRARY_NAME@ @SV_EXTERNALS_PYTHON_LIBRARY@
-install_name_tool -change @rpath/@PYTHON_LIBRARY_NAME@ @SV_EXTERNALS_PYTHON_LIBRARY@ @SV_EXTERNALS_PYTHON_EXECUTABLE@
+install_name_tool -id @rpath/$PYTHON_LIB_NAME @SV_EXTERNALS_PYTHON_LIBRARY@
+install_name_tool -change @SV_EXTERNALS_PYTHON_LIBRARY@ @rpath/$PYTHON_LIB_NAME @SV_EXTERNALS_PYTHON_EXECUTABLE@
 
 # crypto fix
 cp @OPENSSL_ROOT@/lib/libcrypto.* $PYTHON_BINDIR/lib
 chmod 755 $PYTHON_BINDIR/lib/libcrypto.*
+
+# ssl fix
+cp @OPENSSL_ROOT@/lib/libssl.* $PYTHON_BINDIR/lib
+chmod 755 $PYTHON_BINDIR/lib/libssl.*
 
 # crypto lib names
 install_name_tool -id @rpath/libcrypto.dylib $PYTHON_BINDIR/lib/libcrypto.dylib
@@ -19,20 +24,20 @@ install_name_tool -id @rpath/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libcrypto.
 # ssl changes
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib $PYTHON_BINDIR/lib/libssl.dylib
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.dylib
+install_name_tool -change /usr/local/Cellar/openssl/1.0.2m/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.dylib
 
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib $PYTHON_BINDIR/lib/libssl.1.0.0.dylib
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.1.0.0.dylib
+install_name_tool -change /usr/local/Cellar/openssl/1.0.2m/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $PYTHON_BINDIR/lib/libssl.1.0.0.dylib
+
 
 # python changes
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib @SV_EXTERNALS_PYTHON_LIBRARY@
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib @SV_EXTERNALS_PYTHON_LIBRARY@
 
+
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib @SV_EXTERNALS_PYTHON_EXECUTABLE@
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib @SV_EXTERNALS_PYTHON_EXECUTABLE@
-
-# ssl fix
-cp @OPENSSL_ROOT@/lib/libssl.* $PYTHON_BINDIR/lib
-chmod 755 $PYTHON_BINDIR/lib/libssl.*
 
 # ssl lib names
 install_name_tool -id @rpath/libssl.dylib $PYTHON_BINDIR/lib/libssl.dylib

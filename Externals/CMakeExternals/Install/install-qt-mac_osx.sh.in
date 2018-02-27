@@ -8,6 +8,10 @@ export Qt_BLDDIR=@SV_EXTERNALS_Qt_BLD_DIR@
 cp @OPENSSL_ROOT@/lib/libcrypto.* $Qt_BINDIR/lib
 chmod 755 $Qt_BINDIR/lib/libcrypto.*
 
+# ssl fix
+cp @OPENSSL_ROOT@/lib/libssl.* $Qt_BINDIR/lib
+chmod 755 $Qt_BINDIR/lib/libssl.*
+
 # crypto lib names
 install_name_tool -id @rpath/libcrypto.dylib $Qt_BINDIR/lib/libcrypto.dylib
 install_name_tool -id @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libcrypto.1.0.0.dylib
@@ -15,13 +19,12 @@ install_name_tool -id @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libcrypto.1.0.
 # ssl changes
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib $Qt_BINDIR/lib/libssl.dylib
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.dylib
+install_name_tool -change /usr/local/Cellar/openssl/1.0.2m/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.dylib
 
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
 install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
+install_name_tool -change /usr/local/Cellar/openssl/1.0.2m/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
 
-# ssl fix
-cp @OPENSSL_ROOT@/lib/libssl.* $Qt_BINDIR/lib
-chmod 755 $Qt_BINDIR/lib/libssl.*
 
 # ssl lib names
 install_name_tool -id @rpath/libssl.dylib $Qt_BINDIR/lib/libssl.dylib
