@@ -99,7 +99,7 @@ PyObject* Tetgenadapt_pyInit()
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
   }
   else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
 
@@ -108,7 +108,7 @@ PyObject* Tetgenadapt_pyInit()
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return pythonC;
 

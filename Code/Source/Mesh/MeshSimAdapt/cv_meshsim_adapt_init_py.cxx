@@ -51,9 +51,7 @@
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
 
-#ifdef SV_USE_PYTHON
 #include "Python.h"
-#endif
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
@@ -104,7 +102,7 @@ PyObject* Meshsimadapt_pyInit()
       (FactoryMethodPtr) &CreateMeshSimAdapt );
   }
   else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
 
@@ -113,7 +111,7 @@ PyObject* Meshsimadapt_pyInit()
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshSimAdapt\n");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return pythonC;
 

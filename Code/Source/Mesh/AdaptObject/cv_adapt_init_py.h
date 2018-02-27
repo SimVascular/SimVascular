@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVADAPT_INIT_H
-#define __CVADAPT_INIT_H
+#ifndef __CVADAPT_INIT_PY_H
+#define __CVADAPT_INIT_PY_H
 
 #include "SimVascular.h"
 #include "svAdaptorExports.h" // For exports

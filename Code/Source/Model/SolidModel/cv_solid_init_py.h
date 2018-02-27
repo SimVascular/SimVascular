@@ -34,15 +34,8 @@
 
 #include "SimVascular.h"
 #include "svSolidModelExports.h" // For exports
-#include "tcl.h"
-#ifdef SV_USE_PYTHON
 #include "Python.h"
-#endif
-
-#ifdef SV_USE_PYTHON
 
 extern "C" SV_EXPORT_SOLID int Solid_pyInit();
-
-#endif
 
 #endif // __CVSOLID_INIT_H

@@ -45,11 +45,9 @@
 
 #include "SimVascular.h"
 #include "svMMGExports.h" // For exports
-#ifdef SV_USE_PYTHON
 #include "Python.h"
 
 extern "C" SV_EXPORT_MMG PyObject* Mmgmesh_pyInit();
-#endif
 
 #endif // __cvmmgmesh_Init
 

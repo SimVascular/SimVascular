@@ -62,11 +62,9 @@
 // Globals:
 // --------
 
-#ifdef SV_USE_PYTHON
 #include "Python.h"
 #include "vtkPythonUtil.h"
 #include "PyVTKClass.h"
-#endif
 #include "cv_globals.h"
 #include <TDF_Data.hxx>
 #include <TDF_Label.hxx>
@@ -130,7 +128,7 @@ PyObject* Occtsolid_pyInit()
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
   }
   else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
   PyObject *pythonC;
@@ -138,7 +136,7 @@ PyObject* Occtsolid_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return pythonC;
 }

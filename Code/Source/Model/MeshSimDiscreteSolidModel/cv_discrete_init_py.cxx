@@ -67,7 +67,7 @@ PyMethodDef SolidMeshSimDiscrete_methods[] = {
 PyObject* Meshsimdiscretesolid_pyInit()
 {
   if (DiscreteUtils_Init() != SV_OK) {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
   if (pySolidModelRegistrar != NULL) {
@@ -76,7 +76,7 @@ PyObject* Meshsimdiscretesolid_pyInit()
       (FactoryMethodPtr) &pyCreateMeshSimDiscreteModel );
   }
   else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
 
@@ -85,7 +85,7 @@ PyObject* Meshsimdiscretesolid_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolidDiscrete");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return pythonC;
 }

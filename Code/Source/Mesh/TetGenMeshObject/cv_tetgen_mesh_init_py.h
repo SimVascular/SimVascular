@@ -40,8 +40,8 @@
  *  @author shaddenlab.berkeley.edu
  */
 
-#ifndef __CVTETGEN_MESH_INIT_H
-#define __CVTETGEN_MESH_INIT_H
+#ifndef __CVTETGEN_MESH_INIT_PY_H
+#define __CVTETGEN_MESH_INIT_PY_H
 
 #include "SimVascular.h"
 #include "svTetGenMeshExports.h" // For exports

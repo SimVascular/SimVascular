@@ -47,6 +47,10 @@ else()
   add_library(${lib} ${CXXSRCS} cv_meshsimsolid_init.cxx cv_meshsimsolid_init_py.cxx)
 endif()
 
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+endif()
+
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${MESHSIM_LIBRARIES})
@@ -79,5 +83,3 @@ if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
   		)
   endif()
 endif()
-PYTHON_ADD_MODULE(pySolidMeshSim cv_meshsimsolid_init.cxx)
-target_link_libraries(pySolidMeshSim ${lib} ${PYTHON_LIBRARY})

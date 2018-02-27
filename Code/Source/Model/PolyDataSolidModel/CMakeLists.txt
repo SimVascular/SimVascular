@@ -51,6 +51,10 @@ set(HDRS cvPolyDataSolid.h cv_polydatasolid_utils.h vtkGetBoundaryFaces.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_polydatasolid_init.cxx cv_polydatasolid_init_py.cxx)
 
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+endif()
+
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
@@ -87,5 +91,3 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
-PYTHON_ADD_MODULE(pySolidPolydata cv_polydatasolid_init_py.cxx)
-target_link_libraries(pySolidPolydata ${lib} ${PYTHON_LIBRARY})

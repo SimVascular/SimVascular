@@ -46,6 +46,10 @@ else()
   add_library(${lib} STATIC ${CXXSRCS} cv_discrete_init.cxx cv_discrete_init_py.cxx)
 endif()
 
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+endif()
+
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
@@ -79,6 +83,3 @@ if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
 			)
 	endif()
 endif()
-
-PYTHON_ADD_MODULE(pySolidDiscrete cv_discrete_init_py.cxx)
-target_link_libraries(pySolidDiscrete ${lib} ${PYTHON_LIBRARY})

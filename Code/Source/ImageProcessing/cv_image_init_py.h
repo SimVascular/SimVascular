@@ -57,16 +57,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVIMAGE_INIT_H
-#define __CVIMAGE_INIT_H
+#ifndef __CVIMAGE_INIT_PY_H
+#define __CVIMAGE_INIT_PY_H
 
 #include "SimVascular.h"
 #include "svImageExports.h" // For exports
 #include "tcl.h"
-#ifdef SV_USE_PYTHON
-#include "Python.h"
-
-#endif
 
 extern "C" SV_EXPORT_IMAGE int Image_pyInit();
 #endif // __IMAGE_INIT_H

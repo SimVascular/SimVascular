@@ -99,12 +99,12 @@ PyObject* Polydatasolid_pyInit()
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
   }
   else {
-    return SV_ERROR;
+    return Py_ERROR;
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
   // Initialize parasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
-    return SV_ERROR;
+    return Py_ERROR;
   }
 
   PyObject *pythonC;
@@ -112,7 +112,7 @@ PyObject* Polydatasolid_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-    return SV_ERROR;
+    return Py_ERROR;
   }
   return pythonC;
 }
