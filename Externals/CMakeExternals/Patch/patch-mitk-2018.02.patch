@@ -18,7 +18,7 @@ diff -rupN original/CMakeLists.txt patch/CMakeLists.txt
    if(MITK_USE_SYSTEM_PYTHON)
 diff -rupN original/CMake/FindNumpy.cmake patch/CMake/FindNumpy.cmake
 --- original/CMake/FindNumpy.cmake	2018-03-03 08:36:22.000000000 -0800
-+++ patch/CMake/FindNumpy.cmake	2018-03-03 10:22:39.000000000 -0800
++++ patch/CMake/FindNumpy.cmake	2018-03-03 14:20:33.000000000 -0800
 @@ -15,7 +15,7 @@ if(UNIX)
  endif()
  
@@ -28,9 +28,19 @@ diff -rupN original/CMake/FindNumpy.cmake patch/CMake/FindNumpy.cmake
    OUTPUT_VARIABLE output
    OUTPUT_STRIP_TRAILING_WHITESPACE
    )
+diff -rupN original/CMake/PackageDepends/MITK_VTK_Config.cmake patch/CMake/PackageDepends/MITK_VTK_Config.cmake
+--- original/CMake/PackageDepends/MITK_VTK_Config.cmake	2018-03-03 08:36:22.000000000 -0800
++++ patch/CMake/PackageDepends/MITK_VTK_Config.cmake	2018-03-03 14:20:33.000000000 -0800
+@@ -1,4 +1,5 @@
+-find_package(VTK COMPONENTS ${VTK_REQUIRED_COMPONENTS_BY_MODULE} REQUIRED)
++#find_package(VTK COMPONENTS ${VTK_REQUIRED_COMPONENTS_BY_MODULE} REQUIRED)
++find_package(VTK REQUIRED)
+ if(VTK_FOUND AND NOT VTK_BUILD_SHARED_LIBS)
+   message(FATAL_ERROR "MITK only supports a VTK which was built with shared libraries. Turn on BUILD_SHARED_LIBS in your VTK config.")
+ endif()
 diff -rupN original/CMakeExternals/CTK.cmake patch/CMakeExternals/CTK.cmake
 --- original/CMakeExternals/CTK.cmake	2018-03-03 08:36:22.000000000 -0800
-+++ patch/CMakeExternals/CTK.cmake	2018-03-03 10:22:39.000000000 -0800
++++ patch/CMakeExternals/CTK.cmake	2018-03-03 14:20:33.000000000 -0800
 @@ -59,8 +59,8 @@ if(MITK_USE_CTK)
  
      ExternalProject_Add(${proj}
@@ -44,7 +54,7 @@ diff -rupN original/CMakeExternals/CTK.cmake patch/CMakeExternals/CTK.cmake
        INSTALL_COMMAND ""
 diff -rupN original/CMakeExternals/ExternalProjectList.cmake patch/CMakeExternals/ExternalProjectList.cmake
 --- original/CMakeExternals/ExternalProjectList.cmake	2018-03-03 08:36:22.000000000 -0800
-+++ patch/CMakeExternals/ExternalProjectList.cmake	2018-03-03 10:22:39.000000000 -0800
++++ patch/CMakeExternals/ExternalProjectList.cmake	2018-03-03 14:20:33.000000000 -0800
 @@ -28,7 +28,7 @@ mitkFunctionAddExternalProject(NAME Open
  mitkFunctionAddExternalProject(NAME Vigra     OFF          DEPENDS HDF5)
  
@@ -56,7 +66,7 @@ diff -rupN original/CMakeExternals/ExternalProjectList.cmake patch/CMakeExternal
  
 diff -rupN original/CMakeExternals/ITK.cmake patch/CMakeExternals/ITK.cmake
 --- original/CMakeExternals/ITK.cmake	2018-03-03 08:36:22.000000000 -0800
-+++ patch/CMakeExternals/ITK.cmake	2018-03-03 10:22:39.000000000 -0800
++++ patch/CMakeExternals/ITK.cmake	2018-03-03 14:20:33.000000000 -0800
 @@ -14,9 +14,9 @@ if(MITK_USE_OpenCV)
    list(APPEND proj_DEPENDENCIES OpenCV)
  endif()
@@ -81,3 +91,57 @@ diff -rupN original/CMakeExternals/ITK.cmake patch/CMakeExternals/ITK.cmake
       CMAKE_CACHE_ARGS
         ${ep_common_cache_args}
       CMAKE_CACHE_DEFAULT_ARGS
+diff -rupN original/Modules/PhotoacousticsAlgorithms/include/mitkPhotoacousticBeamformingSettings.h patch/Modules/PhotoacousticsAlgorithms/include/mitkPhotoacousticBeamformingSettings.h
+--- original/Modules/PhotoacousticsAlgorithms/include/mitkPhotoacousticBeamformingSettings.h	2018-03-03 08:36:23.000000000 -0800
++++ patch/Modules/PhotoacousticsAlgorithms/include/mitkPhotoacousticBeamformingSettings.h	2018-03-03 14:20:35.000000000 -0800
+@@ -120,18 +120,18 @@ namespace mitk {
+     */
+     static bool SettingsChangedOpenCL(const BeamformingSettings& lhs, const BeamformingSettings& rhs)
+     {
+-      return !((abs(lhs.Angle - rhs.Angle) < 0.01f) && // 0.01 degree error margin
++      return !((fabs(lhs.Angle - rhs.Angle) < 0.01f) && // 0.01 degree error margin
+         (lhs.Apod == rhs.Apod) &&
+         (lhs.DelayCalculationMethod == rhs.DelayCalculationMethod) &&
+         (lhs.isPhotoacousticImage == rhs.isPhotoacousticImage) &&
+-        (abs(lhs.Pitch - rhs.Pitch) < 0.000001f) && // 0.0001 mm error margin
++        (fabs(lhs.Pitch - rhs.Pitch) < 0.000001f) && // 0.0001 mm error margin
+         (lhs.ReconstructionLines == rhs.ReconstructionLines) &&
+-        (abs(lhs.RecordTime - rhs.RecordTime) < 0.00000001f) && // 10 ns error margin
++        (fabs(lhs.RecordTime - rhs.RecordTime) < 0.00000001f) && // 10 ns error margin
+         (lhs.SamplesPerLine == rhs.SamplesPerLine) &&
+-        (abs(lhs.SpeedOfSound - rhs.SpeedOfSound) < 0.01f) &&
+-        (abs(lhs.TimeSpacing - rhs.TimeSpacing) < 0.00000000001f) && //0.01 ns error margin
++        (fabs(lhs.SpeedOfSound - rhs.SpeedOfSound) < 0.01f) &&
++        (fabs(lhs.TimeSpacing - rhs.TimeSpacing) < 0.00000000001f) && //0.01 ns error margin
+         (lhs.TransducerElements == rhs.TransducerElements));
+     }
+   };
+ }
+-#endif
+\ No newline at end of file
++#endif
+diff -rupN original/Modules/PhotoacousticsAlgorithms/source/OpenCLFilter/mitkPhotoacousticBModeFilter.cpp patch/Modules/PhotoacousticsAlgorithms/source/OpenCLFilter/mitkPhotoacousticBModeFilter.cpp
+--- original/Modules/PhotoacousticsAlgorithms/source/OpenCLFilter/mitkPhotoacousticBModeFilter.cpp	2018-03-03 08:36:23.000000000 -0800
++++ patch/Modules/PhotoacousticsAlgorithms/source/OpenCLFilter/mitkPhotoacousticBModeFilter.cpp	2018-03-03 14:20:35.000000000 -0800
+@@ -205,17 +205,17 @@ void mitk::PhotoacousticBModeFilter::Gen
+   if(!m_UseLogFilter)
+     for (unsigned int i = 0; i < size; ++i)
+     {
+-      OutputData[i] = abs(InputData[i]);
++      OutputData[i] = fabs(InputData[i]);
+     }
+   else
+   {
+     for (unsigned int i = 0; i < size; ++i)
+     {
+-      OutputData[i] = log(abs(InputData[i]));
++      OutputData[i] = log(fabs(InputData[i]));
+     }
+   }
+ 
+   output->SetImportVolume(OutputData, 0, 0, mitk::Image::ImportMemoryManagementType::ManageMemory);
+ 
+   m_TimeOfHeaderInitialization.Modified();
+-}
+\ No newline at end of file
++}
