@@ -59,14 +59,14 @@ if(APPLE)
     set(OPENSSL_ROOT "/opt/local")
   endif()
 
+  #-openssl
+  #-openssl-linked
+  #-I${OPENSSL_ROOT}/include
+  #-L${OPENSSL_ROOT}/lib
+  #-lssl
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     -sdk macosx${SV_OSX_MAJOR_VERSION}.${SV_OSX_MINOR_VERSION}
-    -openssl
-    -openssl-linked
-    -I${OPENSSL_ROOT}/include
-    -L${OPENSSL_ROOT}/lib
-    -lssl
     )
   if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
@@ -126,11 +126,11 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     UPDATE_COMMAND ""
     )
 else()
+  #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR} We have to do an in source build so that qt cmake files populate the private headers
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR} We have to do an in source build so that qt cmake files populate the private headers
     BINARY_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
     PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
