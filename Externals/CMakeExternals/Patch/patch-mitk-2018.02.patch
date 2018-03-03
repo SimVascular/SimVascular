@@ -16,16 +16,68 @@ diff -rupN original/CMakeLists.txt patch/CMakeLists.txt
  
    option(MITK_USE_SYSTEM_PYTHON "Use the system python runtime" OFF)
    if(MITK_USE_SYSTEM_PYTHON)
+diff -rupN original/CMake/FindNumpy.cmake patch/CMake/FindNumpy.cmake
+--- original/CMake/FindNumpy.cmake	2018-03-03 08:36:22.000000000 -0800
++++ patch/CMake/FindNumpy.cmake	2018-03-03 10:22:39.000000000 -0800
+@@ -15,7 +15,7 @@ if(UNIX)
+ endif()
+ 
+ execute_process (
+-  COMMAND ${_python} -c "import os; os.environ['DISTUTILS_USE_SDK']='1'; import numpy.distutils; print numpy.distutils.misc_util.get_numpy_include_dirs()[0]"
++  COMMAND ${_python} -c "import os; os.environ['DISTUTILS_USE_SDK']='1'; import numpy.distutils; print(numpy.distutils.misc_util.get_numpy_include_dirs()[0])"
+   OUTPUT_VARIABLE output
+   OUTPUT_STRIP_TRAILING_WHITESPACE
+   )
 diff -rupN original/CMakeExternals/CTK.cmake patch/CMakeExternals/CTK.cmake
 --- original/CMakeExternals/CTK.cmake	2018-03-03 08:36:22.000000000 -0800
-+++ patch/CMakeExternals/CTK.cmake	2018-03-03 09:02:58.000000000 -0800
-@@ -59,8 +59,7 @@ if(MITK_USE_CTK)
++++ patch/CMakeExternals/CTK.cmake	2018-03-03 10:22:39.000000000 -0800
+@@ -59,8 +59,8 @@ if(MITK_USE_CTK)
  
      ExternalProject_Add(${proj}
        LIST_SEPARATOR ${sep}
 -      URL ${MITK_THIRDPARTY_DOWNLOAD_PREFIX_URL}/CTK_${revision_tag}.tar.gz
 -      URL_MD5 e7997d53c556f45b6eadb7bdf1645280
 +      GIT_REPOSITORY "https://github.com/commontk/CTK"
++      GIT_TAG "59ad0ef7e7abba886816ceb1bbbc0e7e803e5a1b"
        # PATCH_COMMAND ${PATCH_COMMAND} -N -p1 -i ${CMAKE_CURRENT_LIST_DIR}/CTK.patch
        UPDATE_COMMAND ""
        INSTALL_COMMAND ""
+diff -rupN original/CMakeExternals/ExternalProjectList.cmake patch/CMakeExternals/ExternalProjectList.cmake
+--- original/CMakeExternals/ExternalProjectList.cmake	2018-03-03 08:36:22.000000000 -0800
++++ patch/CMakeExternals/ExternalProjectList.cmake	2018-03-03 10:22:39.000000000 -0800
+@@ -28,7 +28,7 @@ mitkFunctionAddExternalProject(NAME Open
+ mitkFunctionAddExternalProject(NAME Vigra     OFF          DEPENDS HDF5)
+ 
+ # These are "hard" dependencies and always set to ON
+-mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE DEPENDS HDF5)
++mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)# DEPENDS HDF5)
+ mitkFunctionAddExternalProject(NAME VTK       ON           NO_CACHE)
+ mitkFunctionAddExternalProject(NAME Boost     ON           NO_CACHE)
+ 
+diff -rupN original/CMakeExternals/ITK.cmake patch/CMakeExternals/ITK.cmake
+--- original/CMakeExternals/ITK.cmake	2018-03-03 08:36:22.000000000 -0800
++++ patch/CMakeExternals/ITK.cmake	2018-03-03 10:22:39.000000000 -0800
+@@ -14,9 +14,9 @@ if(MITK_USE_OpenCV)
+   list(APPEND proj_DEPENDENCIES OpenCV)
+ endif()
+ 
+-if(MITK_USE_HDF5)
+-  list(APPEND proj_DEPENDENCIES HDF5)
+-endif()
++#if(MITK_USE_HDF5)
++#  list(APPEND proj_DEPENDENCIES HDF5)
++#endif()
+ 
+ set(ITK_DEPENDS ${proj})
+ 
+@@ -67,8 +67,8 @@ if(NOT DEFINED ITK_DIR)
+        -DBUILD_EXAMPLES:BOOL=OFF
+        -DITK_USE_SYSTEM_GDCM:BOOL=ON
+        -DGDCM_DIR:PATH=${GDCM_DIR}
+-       -DITK_USE_SYSTEM_HDF5:BOOL=ON
+-       -DHDF5_DIR:PATH=${HDF5_DIR}
++       #-DITK_USE_SYSTEM_HDF5:BOOL=ON
++       #-DHDF5_DIR:PATH=${HDF5_DIR}
+      CMAKE_CACHE_ARGS
+        ${ep_common_cache_args}
+      CMAKE_CACHE_DEFAULT_ARGS
