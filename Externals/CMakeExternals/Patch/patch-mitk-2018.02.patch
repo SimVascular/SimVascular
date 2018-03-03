@@ -1,0 +1,18 @@
+diff -rupN original/CMakeLists.txt patch/CMakeLists.txt
+--- original/CMakeLists.txt	2018-02-27 21:04:17.000000000 -0800
++++ patch/CMakeLists.txt	2018-03-02 19:07:56.000000000 -0800
+@@ -286,10 +286,10 @@ elseif(MITK_USE_Python)
+     message("> Forcing MITK_USE_Numpy to ON because of MITK_USE_Python")
+     set(MITK_USE_Numpy ON CACHE BOOL "Use Numpy" FORCE)
+   endif()
+-  if(NOT MITK_USE_SimpleITK)
+-    message("> Forcing MITK_USE_SimpleITK to ON because of MITK_USE_Python")
+-    set(MITK_USE_SimpleITK ON CACHE BOOL "Use SimpleITK" FORCE)
+-  endif()
++  #if(NOT MITK_USE_SimpleITK)
++  #  message("> Forcing MITK_USE_SimpleITK to ON because of MITK_USE_Python")
++  #  set(MITK_USE_SimpleITK ON CACHE BOOL "Use SimpleITK" FORCE)
++  #endif()
+ 
+   option(MITK_USE_SYSTEM_PYTHON "Use the system python runtime" OFF)
+   if(MITK_USE_SYSTEM_PYTHON)

@@ -130,7 +130,8 @@ else()
     URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR} We have to do an in source build so that qt cmake files populate the private headers
+    BINARY_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
     PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     CONFIGURE_COMMAND ${SV_EXTERNALS_${proj}_SRC_DIR}/configure ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}

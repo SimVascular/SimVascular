@@ -175,6 +175,9 @@ if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2016.03")
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
       COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-mitk-2016.03-clang-9.0.patch)
   endif()
+elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2018.02")
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/PATCH/patch-mitk-2018.02.patch)
 endif()
 
 # Add external project
