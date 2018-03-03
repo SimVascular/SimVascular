@@ -98,9 +98,11 @@ if(SV_EXTERNALS_ENABLE_PYTHON AND SV_EXTERNALS_BUILD_MITK_WITH_PYTHON)
 endif()
 
 #If downloading Qt
-if(NOT SV_EXTERNALS_DOWNLOAD_Qt)
-set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-  COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/PATCH/patch-mitk-2016.03-download-qt.patch)
+if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2016.03")
+  if(NOT SV_EXTERNALS_DOWNLOAD_Qt)
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/PATCH/patch-mitk-2016.03-download-qt.patch)
+  endif()
 endif()
 
 
@@ -165,12 +167,14 @@ endif()
 configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
 
 #Patch for cppmicroservices
-set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-  COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/PATCH/patch-mitk-2016.03.patch)
-if("${COMPILER_VERSION}" STREQUAL "Clang" AND
-  NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "9.0"))
+if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2016.03")
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-mitk-2016.03-clang-9.0.patch)
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/PATCH/patch-mitk-2016.03.patch)
+  if("${COMPILER_VERSION}" STREQUAL "Clang" AND
+    NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "9.0"))
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+      COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-mitk-2016.03-clang-9.0.patch)
+  endif()
 endif()
 
 # Add external project
