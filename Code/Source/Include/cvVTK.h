@@ -141,7 +141,6 @@
 #include "vtkStructuredGrid.h"
 #include "vtkStructuredPoints.h"
 #include "vtkSystemIncludes.h"
-#include "vtkTensor.h"
 #include "vtkTetra.h"
 #include "vtkTimeStamp.h"
 #include "vtkTimerLog.h"
@@ -188,6 +187,10 @@
   #define vtkFloatingPointArrayType vtkFloatingPointArrayType
   /*typedef vtkFloatArray vtkFloatingPointArrayType;*/
   typedef vtkDoubleArray vtkFloatingPointArrayType;
+#endif
+
+#ifndef vtkFloatingPointType
+  #define vtkFloatingPointType double
 #endif
 
 #endif
