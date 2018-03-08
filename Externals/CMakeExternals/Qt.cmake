@@ -59,11 +59,6 @@ if(APPLE)
     set(OPENSSL_ROOT "/opt/local")
   endif()
 
-  #-openssl
-  #-openssl-linked
-  #-I${OPENSSL_ROOT}/include
-  #-L${OPENSSL_ROOT}/lib
-  #-lssl
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     -sdk macosx${SV_OSX_MAJOR_VERSION}.${SV_OSX_MINOR_VERSION}
@@ -72,6 +67,11 @@ if(APPLE)
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     -skip webengine
+    -openssl
+    -openssl-linked
+    -I${OPENSSL_ROOT}/include
+    -L${OPENSSL_ROOT}/lib
+    -lssl
     )
   endif()
 

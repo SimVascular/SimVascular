@@ -86,34 +86,44 @@ option(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR "If ON, SV_EXTERNALS_TOPLEVEL_BIN_DIR w
 option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be included in the installation" OFF)
 
 # Qt
-simvascular_add_new_external(Qt5 5.4.2 ON ON qt)
+simvascular_add_new_external(Qt5 5.6.3 ON ON qt)
+set_property(CACHE Qt5_VERSION PROPERTY STRINGS "5.4.2" "5.6.0" "5.6.3")
 
 # TCL
-simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
+simvascular_add_new_external(TCL 8.6.8 ON ON tcltk)
+set_property(CACHE TCL_VERSION PROPERTY STRINGS "8.6.4" "8.6.8")
 
 #PYTHON
-simvascular_add_new_external(PYTHON 2.7.11 ON ON python)
+simvascular_add_new_external(PYTHON 3.5.2 ON ON python)
+set_property(CACHE PYTHON_VERSION PROPERTY STRINGS "2.7.11" "2.7.13" "3.5.2")
 
 #FREETYPE
 simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
+set_property(CACHE FREETYPE_VERSION PROPERTY STRINGS "2.6.3")
 
 # MMG
-simvascular_add_new_external(MMG 5.1.0 ON OFF mmg)
+simvascular_add_new_external(MMG 5.3.9 ON OFF mmg)
+set_property(CACHE MMG_VERSION PROPERTY STRINGS "5.1.0" "5.3.9")
 
 # VTK
-simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
+simvascular_add_new_external(VTK 8.0.0 ON ON vtk)
+set_property(CACHE VTK_VERSION PROPERTY STRINGS "6.2.0" "8.0.0")
 
 # GDCM
-simvascular_add_new_external(GDCM 2.6.1 ON ON gdcm)
+simvascular_add_new_external(GDCM 2.6.3 ON ON gdcm)
+set_property(CACHE GDCM_VERSION PROPERTY STRINGS "2.6.1" "2.6.3")
 
 # ITK
-simvascular_add_new_external(ITK 4.7.1 ON ON itk)
+simvascular_add_new_external(ITK 4.12.2 ON ON itk)
+set_property(CACHE ITK_VERSION PROPERTY STRINGS "4.7.1" "4.12.2")
 
 # OpenCASCADE
-simvascular_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade)
+simvascular_add_new_external(OpenCASCADE 7.2.0 ON ON opencascade)
+set_property(CACHE OpenCASCADE_VERSION PROPERTY STRINGS "7.0.0" "7.2.0")
 
 # MITK
-simvascular_add_new_external(MITK 2016.03 ON ON mitk)
+simvascular_add_new_external(MITK 2018.02 ON ON mitk)
+set_property(CACHE MITK_VERSION PROPERTY STRINGS "2016.03" "2018.02")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
