@@ -105,6 +105,8 @@ if(APPLE)
 
   endif()
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-python-mac_osx.sh)
+  set(SV_EXTERNALS_${proj}_CONFIG_SCRIPT ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}-config)
+  set(EXENAME @EXENAME@)
   configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
     COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT})
@@ -158,5 +160,3 @@ else()
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
     )
 endif()
-#TODO Add install rpath
-

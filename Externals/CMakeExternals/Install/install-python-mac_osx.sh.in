@@ -50,3 +50,7 @@ install_name_tool -change @OPENSSL_ROOT@/lib/libssl.1.0.0.dylib @rpath/libssl.1.
 
 install_name_tool -change @OPENSSL_ROOT@/lib/libssl.dylib @rpath/libssl.dylib @SV_EXTERNALS_PYTHON_EXECUTABLE@
 install_name_tool -change @OPENSSL_ROOT@/lib/libssl.1.0.0.dylib @rpath/libssl.1.0.0.dylib @SV_EXTERNALS_PYTHON_EXECUTABLE@
+
+# add the python configure file
+sed -e "s,@EXENAME@,@SV_EXTERNALS_PYTHON_EXECUTABLE@," < @SV_EXTERNALS_PYTHON_BLD_DIR@/Misc/python-config.in > @SV_EXTERNALS_PYTHON_CONFIG_SCRIPT@
+chmod 755 @SV_EXTERNALS_PYTHON_CONFIG_SCRIPT@
