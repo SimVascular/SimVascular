@@ -1299,10 +1299,11 @@ int OCCTUtils_GetOrientation(const TopoDS_Shape &shape,int &orientation)
 int OCCTUtils_SetOrientation(TopoDS_Shape &shape,TopoDS_Shape &face,int &orientation)
 {
   Handle(BRepTools_ReShape) reshaper =  new BRepTools_ReShape();
-  reshaper->ModeConsiderOrientation() = Standard_True;
+  //reshaper->ModeConsiderOrientation() = Standard_True; // opencascade 7.0.0
 
   TopoDS_Shape compFace = face.Complemented();
-  reshaper->Replace(face,compFace,Standard_True);
+  //reshaper->Replace(face,compFace,Standard_True); opencascade 7.0.0
+  reshaper->Replace(face,compFace); // opencascade 7.2.0
   TopoDS_Shape tmpShape = reshaper->Apply(shape,TopAbs_FACE);
   shape = tmpShape;
 

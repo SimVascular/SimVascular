@@ -36,9 +36,9 @@
 #include <math.h>
 
 
-#define maximum(A, B) ((A) > (B) ? (A) : (B))
-#define minimum(A, B) ((A) < (B) ? (A) : (B))
-#define sqr(A) ((A) * (A))
+#define svmaximum(A, B) ((A) > (B) ? (A) : (B))
+#define svminimum(A, B) ((A) < (B) ? (A) : (B))
+#define svSqr(A) ((A) * (A))
 
 
 #define CV_PHI_TOL   0.001

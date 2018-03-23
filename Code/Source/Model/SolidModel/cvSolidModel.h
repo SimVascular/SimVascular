@@ -97,7 +97,9 @@ public:
   // Solid Model factory method that delegates creation of models to the
   //  concrete implementations.
   static cvSolidModel* DefaultInstantiateSolidModel( Tcl_Interp *interp = NULL);
+#ifdef SV_USE_PYTHON
   static cvSolidModel* pyDefaultInstantiateSolidModel();
+#endif
 
   // Global variables that handle management of solid model kernels.
   static SolidModel_KernelT gCurrentKernel;
@@ -107,7 +109,9 @@ public:
   virtual void Clear() = 0;
   virtual void Print() const = 0;
   //***for debug
+#ifdef SV_USE_PYTHON
   virtual void pyPrint(){fprintf(stdout,"checkHeader\n");};
+#endif
   //******
   virtual void Check( int *nerr ) const = 0;
   virtual cvSolidModel *Copy() const = 0;

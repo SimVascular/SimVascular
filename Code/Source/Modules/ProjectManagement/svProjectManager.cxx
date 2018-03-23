@@ -251,7 +251,8 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
             std::string imageFilePath=imageFilePathList[i].toStdString();
 
             try{
-                mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath);
+                //mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath);
+                mitk::DataNode::Pointer imageNode=mitk::IOUtil::Load(imageFilePath, *dataStorage)->GetElement(0);
                 //            imageNode->SetVisibility(false);
                 imageNode->SetName(imageNameList[i].toStdString());
                 dataStorage->Add(imageNode,imageFolderNode);
@@ -268,7 +269,8 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         QFileInfoList fileInfoList=dir1.entryInfoList(QStringList("*.pth"), QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
-            mitk::DataNode::Pointer pathNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            //mitk::DataNode::Pointer pathNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            mitk::DataNode::Pointer pathNode=mitk::IOUtil::Load(fileInfoList[i].absoluteFilePath().toStdString(), *dataStorage)->GetElement(0);
             pathNode->SetVisibility(false);
 
             svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
@@ -306,7 +308,8 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
 
             try
             {
-                mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(filePath);
+                //mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(filePath);
+                mitk::DataNode::Pointer segNode=mitk::IOUtil::Load(filePath, *dataStorage)->GetElement(0);
                 segNode->SetVisibility(false);
 
                 svContourGroup* group=dynamic_cast<svContourGroup*>(segNode->GetData());
@@ -353,7 +356,8 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
 
             try
             {
-                mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(filePath);
+                //mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(filePath);
+                mitk::DataNode::Pointer modelNode=mitk::IOUtil::Load(filePath, *dataStorage)->GetElement(0);
                 if(firstModel)
                 {
                     modelNode->SetVisibility(true);
@@ -379,7 +383,8 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
             std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
             try
             {
-            mitk::DataNode::Pointer meshNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            //mitk::DataNode::Pointer meshNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            mitk::DataNode::Pointer meshNode=mitk::IOUtil::Load(fileInfoList[i].absoluteFilePath().toStdString(), *dataStorage)->GetElement(0);
             meshNode->SetVisibility(false);
             dataStorage->Add(meshNode,meshFolderNode);
             }
@@ -395,7 +400,8 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         fileInfoList=dirSim.entryInfoList(QStringList("*.sjb"), QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
-            mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            mitk::DataNode::Pointer jobNode=mitk::IOUtil::Load(fileInfoList[i].absoluteFilePath().toStdString(), *dataStorage)->GetElement(0);
             jobNode->SetVisibility(false);
             dataStorage->Add(jobNode,simFolderNode);
         }

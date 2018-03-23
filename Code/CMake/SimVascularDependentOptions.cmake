@@ -265,7 +265,7 @@ if(SV_USE_QT_GUI)
   set(SV_USE_GDCM "ON" CACHE BOOL "Force ON" FORCE)
   set(SV_USE_GDCM_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-  set(SV_USE_PYTHON "ON" CACHE BOOL "Force ON" FORCE)
-  set(SV_USE_PYTHON_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+  #set(SV_USE_PYTHON "ON" CACHE BOOL "Force ON" FORCE)
+  #set(SV_USE_PYTHON_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 endif()
 #-----------------------------------------------------------------------------

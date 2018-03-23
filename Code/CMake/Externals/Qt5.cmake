@@ -58,8 +58,11 @@ if(SV_USE_${proj})
       Widgets
       Xml
       XmlPatterns
+      WebEngineCore
+      WebEngineWidgets
+      WebView
       UiTools)
-    
+
     if(${proj}_VERSION VERSION_EQUAL "5.4.2")
       list(APPEND SV_${proj}_COMPONENTS
         WebKitWidgets
@@ -67,7 +70,7 @@ if(SV_USE_${proj})
         )
     endif()
 
-    # Find ITK
+    # Find Qt
     simvascular_external(${proj}
       SHARED_LIB ${SV_USE_${proj}_SHARED}
       VERSION ${${proj}_VERSION}
