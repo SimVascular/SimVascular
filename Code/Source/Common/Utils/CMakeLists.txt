@@ -36,31 +36,30 @@ set(lib ${SV_LIB_UTILS_NAME})
 set(export_directive utils)
 set(export_file_name svUtilsExports.h)
 
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
 	  ${PYTHON_INCLUDE_DIR}
 	  ${PYTHON_INCLUDE_DIRS})
 endif()
 
-
-SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
+set(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
   cvTimer.cxx cvIntArrayList.cxx
   cvStateArray.cxx cv_cgeom.cxx
   cvMath.cxx cv_arg.cxx
   cvFactoryRegistrar.cxx
   )
-SET(HDRS cv_misc_utils.h cv_vtk_utils.h
+set(HDRS cv_misc_utils.h cv_vtk_utils.h
   cvTimer.h cvIntArrayList.h
   cvStateArray.h cv_cgeom.h
   cvMath.h cv_arg.h cvFactoryRegistrar.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx cv_utils_init_py.cxx cv_math_init_py.cxx)
-
 if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+  list(APPEND CXXSRCS cv_utils_init_py.cxx cv_math_init_py.cxx)
 endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -92,4 +91,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(SV_USE_PYTHON)
+  python_add_module(pyMath cv_utils_init_py.cxx cv_math_init_py.cxx)
+  target_link_libraries(pyMath ${lib} ${PYTHON_LIBRARY})
 endif()

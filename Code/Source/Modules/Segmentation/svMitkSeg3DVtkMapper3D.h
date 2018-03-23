@@ -74,27 +74,27 @@ public:
         vtkSmartPointer<vtkPropAssembly> m_Assembly;
 
         vtkSmartPointer<vtkActor> m_SelectedSeedActor;
-        vtkSmartPointer<vtkPainterPolyDataMapper> m_SelectedSeedVtkPolyDataMapper;
+        vtkSmartPointer<vtkOpenGLPolyDataMapper> m_SelectedSeedVtkPolyDataMapper;
 
         vtkSmartPointer<vtkActor> m_SeedActor;
-        vtkSmartPointer<vtkPainterPolyDataMapper> m_SeedVtkPolyDataMapper;
+        vtkSmartPointer<vtkOpenGLPolyDataMapper> m_SeedVtkPolyDataMapper;
 
         vtkSmartPointer<vtkActor> m_EndSeedActor;
-        vtkSmartPointer<vtkPainterPolyDataMapper> m_EndSeedVtkPolyDataMapper;
+        vtkSmartPointer<vtkOpenGLPolyDataMapper> m_EndSeedVtkPolyDataMapper;
 
 //        itk::TimeStamp m_LastUpdateTime;
 
         svLocalStorage()
         {
-            m_SelectedSeedVtkPolyDataMapper=vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+            m_SelectedSeedVtkPolyDataMapper=vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
             m_SelectedSeedActor=vtkSmartPointer<vtkActor>::New();
             m_SelectedSeedActor->SetMapper(m_SelectedSeedVtkPolyDataMapper);
 
-            m_SeedVtkPolyDataMapper=vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+            m_SeedVtkPolyDataMapper=vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
             m_SeedActor=vtkSmartPointer<vtkActor>::New();
             m_SeedActor->SetMapper(m_SeedVtkPolyDataMapper);
 
-            m_EndSeedVtkPolyDataMapper=vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+            m_EndSeedVtkPolyDataMapper=vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
             m_EndSeedActor=vtkSmartPointer<vtkActor>::New();
             m_EndSeedActor->SetMapper(m_EndSeedVtkPolyDataMapper);
 

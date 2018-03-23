@@ -40,7 +40,7 @@
 #include <mitkVtkScalarModeProperty.h>
 #include <mitkClippingProperty.h>
 #include <mitkSmartPointerProperty.h>
-#include <mitkIShaderRepository.h>
+//#include <mitkIShaderRepository.h>
 #include <mitkExtractSliceFilter.h>
 #include <mitkImageSliceSelector.h>
 #include <mitkCoreServices.h>
@@ -124,7 +124,7 @@ void svMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
     bool showEdges=false;
     node->GetBoolProperty("show edges", showEdges, renderer);
 
-    vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+    vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
     mapper->SetInputData(surfaceMesh);
 
     vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
@@ -295,7 +295,7 @@ void svMitkMeshMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, 
     }
 }
 
-void svMitkMeshMapper3D::ApplyAllProperties(mitk::DataNode *node, mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor, mitk::LocalStorageHandler<LocalStorage>* handler, bool clipping)
+void svMitkMeshMapper3D::ApplyAllProperties(mitk::DataNode *node, mitk::BaseRenderer* renderer, vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor, mitk::LocalStorageHandler<LocalStorage>* handler, bool clipping)
 {
     // Applying shading properties
 //    Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
@@ -509,12 +509,12 @@ void svMitkMeshMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* node
         node->AddProperty( "material.interpolation"       , mitk::VtkInterpolationProperty::New()   , renderer, overwrite );
     }
 
-    // Shaders
-    mitk::IShaderRepository* shaderRepo = mitk::CoreServices::GetShaderRepository();
-    if (shaderRepo)
-    {
-        shaderRepo->AddDefaultProperties(node, renderer, overwrite);
-    }
+    //// Shaders
+    //mitk::IShaderRepository* shaderRepo = mitk::CoreServices::GetShaderRepository();
+    //if (shaderRepo)
+    //{
+    //    shaderRepo->AddDefaultProperties(node, renderer, overwrite);
+    //}
 }
 
 void svMitkMeshMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)

@@ -114,7 +114,7 @@ int cvLevelSet::SetDtFactor( double dtf )
     printf("ERR: cfl factor f must satisfy 0.0 < f <= 1.0\n");
     return SV_ERROR;
   } else {
-    dtf = minimum( dtf, 1.0 );
+    dtf = svminimum( dtf, 1.0 );
     dtFactor_ = dtf;
     return SV_OK;
   }

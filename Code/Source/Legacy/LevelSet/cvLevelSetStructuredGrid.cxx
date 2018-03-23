@@ -76,11 +76,11 @@ cvLevelSetStructuredGrid::cvLevelSetStructuredGrid( double h[], int dims[], doub
   hv_[0] = h[0];
   hv_[1] = h[1];
   hv_[2] = h[2];
-  minh_ = minimum( hv_[0], hv_[1] );
-  minh_ = minimum( minh_, hv_[2] );
-  maxh_ = maximum( hv_[0], hv_[1] );
-  maxh_ = maximum( maxh_, hv_[2] );
-  mainDiagonal_ = sqrt( sqr( hv_[0] ) + sqr( hv_[1] ) +	sqr( hv_[2] ) );
+  minh_ = svminimum( hv_[0], hv_[1] );
+  minh_ = svminimum( minh_, hv_[2] );
+  maxh_ = svmaximum( hv_[0], hv_[1] );
+  maxh_ = svmaximum( maxh_, hv_[2] );
+  mainDiagonal_ = sqrt( svSqr( hv_[0] ) + svSqr( hv_[1] ) +	svSqr( hv_[2] ) );
 
   if ( I_ == 1 ) {
     dim_ = 0;
@@ -370,8 +370,8 @@ double cvLevelSetStructuredGrid::ComputeDeltaPhi( double factor )
     // Choose the right entropy-satisfying approximation for use with
     // the constant velocity term F0 in computing the contribution of
     // this term to phi_t:
-    maxVal = maximum( currNode->F0_, 0.0 );
-    minVal = minimum( currNode->F0_, 0.0 );
+    maxVal = svmaximum( currNode->F0_, 0.0 );
+    minVal = svminimum( currNode->F0_, 0.0 );
     f0Contrib = maxVal * currNode->delPlus_ + minVal * currNode->delMinus_;
 
     // Put this in on 2/16/00 as part of an attempt to deal with
@@ -490,8 +490,8 @@ int cvLevelSetStructuredGrid::UpdatePhi()
     // Choose the right entropy-satisfying approximation for use with
     // the constant velocity term F0 in computing the contribution of
     // this term to phi_t:
-    maxVal = maximum( currNode->F0_, 0.0 );
-    minVal = minimum( currNode->F0_, 0.0 );
+    maxVal = svmaximum( currNode->F0_, 0.0 );
+    minVal = svminimum( currNode->F0_, 0.0 );
     f0Contrib = maxVal * currNode->delPlus_ + minVal * currNode->delMinus_;
 
     // Put this in on 2/16/00 as part of an attempt to deal with
@@ -985,17 +985,17 @@ void cvLevelSetStructuredGrid::FindDelPlus()
     InitIter();
     while ( currNode = GetNext() ) {
       acc = 0.0;
-      tmp = maximum( currNode->dm_[0], 0.0 );
+      tmp = svmaximum( currNode->dm_[0], 0.0 );
       acc += tmp * tmp;
-      tmp = minimum( currNode->dp_[0], 0.0 );
+      tmp = svminimum( currNode->dp_[0], 0.0 );
       acc += tmp * tmp;
-      tmp = maximum( currNode->dm_[1], 0.0 );
+      tmp = svmaximum( currNode->dm_[1], 0.0 );
       acc += tmp * tmp;
-      tmp = minimum( currNode->dp_[1], 0.0 );
+      tmp = svminimum( currNode->dp_[1], 0.0 );
       acc += tmp * tmp;
-      tmp = maximum( currNode->dm_[2], 0.0 );
+      tmp = svmaximum( currNode->dm_[2], 0.0 );
       acc += tmp * tmp;
-      tmp = minimum( currNode->dp_[2], 0.0 );
+      tmp = svminimum( currNode->dp_[2], 0.0 );
       acc += tmp * tmp;
       currNode->delPlus_ = sqrt( acc );
     }
@@ -1020,17 +1020,17 @@ void cvLevelSetStructuredGrid::FindDelMinus()
     InitIter();
     while ( currNode = GetNext() ) {
       acc = 0.0;
-      tmp = maximum( currNode->dp_[0], 0.0 );
+      tmp = svmaximum( currNode->dp_[0], 0.0 );
       acc += tmp * tmp;
-      tmp = minimum( currNode->dm_[0], 0.0 );
+      tmp = svminimum( currNode->dm_[0], 0.0 );
       acc += tmp * tmp;
-      tmp = maximum( currNode->dp_[1], 0.0 );
+      tmp = svmaximum( currNode->dp_[1], 0.0 );
       acc += tmp * tmp;
-      tmp = minimum( currNode->dm_[1], 0.0 );
+      tmp = svminimum( currNode->dm_[1], 0.0 );
       acc += tmp * tmp;
-      tmp = maximum( currNode->dp_[2], 0.0 );
+      tmp = svmaximum( currNode->dp_[2], 0.0 );
       acc += tmp * tmp;
-      tmp = minimum( currNode->dm_[2], 0.0 );
+      tmp = svminimum( currNode->dm_[2], 0.0 );
       acc += tmp * tmp;
       currNode->delMinus_ = sqrt( acc );
     }
@@ -1248,19 +1248,19 @@ void cvLevelSetStructuredGrid::FindN()
       dmz = currNode->dm_[2];
 
       if ( dim_ == 2 ) {
-	den1 = sqrt( sqr(dpx) + sqr(dpy) );
-	den2 = sqrt( sqr(dmx) + sqr(dpy) );
-	den3 = sqrt( sqr(dpx) + sqr(dmy) );
-	den4 = sqrt( sqr(dmx) + sqr(dmy) );
+	den1 = sqrt( svSqr(dpx) + svSqr(dpy) );
+	den2 = sqrt( svSqr(dmx) + svSqr(dpy) );
+	den3 = sqrt( svSqr(dpx) + svSqr(dmy) );
+	den4 = sqrt( svSqr(dmx) + svSqr(dmy) );
       } else {
-	den1 = sqrt( sqr(dpx) + sqr(dpy) + sqr(dpz) );
-	den2 = sqrt( sqr(dmx) + sqr(dpy) + sqr(dpz) );
-	den3 = sqrt( sqr(dpx) + sqr(dmy) + sqr(dpz) );
-	den4 = sqrt( sqr(dmx) + sqr(dmy) + sqr(dpz) );
-	den5 = sqrt( sqr(dpx) + sqr(dpy) + sqr(dmz) );
-	den6 = sqrt( sqr(dmx) + sqr(dpy) + sqr(dmz) );
-	den7 = sqrt( sqr(dpx) + sqr(dmy) + sqr(dmz) );
-	den8 = sqrt( sqr(dmx) + sqr(dmy) + sqr(dmz) );
+	den1 = sqrt( svSqr(dpx) + svSqr(dpy) + svSqr(dpz) );
+	den2 = sqrt( svSqr(dmx) + svSqr(dpy) + svSqr(dpz) );
+	den3 = sqrt( svSqr(dpx) + svSqr(dmy) + svSqr(dpz) );
+	den4 = sqrt( svSqr(dmx) + svSqr(dmy) + svSqr(dpz) );
+	den5 = sqrt( svSqr(dpx) + svSqr(dpy) + svSqr(dmz) );
+	den6 = sqrt( svSqr(dmx) + svSqr(dpy) + svSqr(dmz) );
+	den7 = sqrt( svSqr(dpx) + svSqr(dmy) + svSqr(dmz) );
+	den8 = sqrt( svSqr(dmx) + svSqr(dmy) + svSqr(dmz) );
       }
 
       nx = 0.0;
@@ -2034,7 +2034,7 @@ double cvLevelSetStructuredGrid::GetMaxF()
       continue;
     }
     currF = fabs( currNode->F0_ + currNode->F1_ );
-    currMaxF = maximum( currF, currMaxF );
+    currMaxF = svmaximum( currF, currMaxF );
   }
   return currMaxF;
 }
@@ -2061,7 +2061,7 @@ vtkFloatingPointType cvLevelSetStructuredGrid::GetMaxV()
       continue;
     }
     currV = fabs( currNode->velocity_ );
-    currMaxV = maximum( currV, currMaxV );
+    currMaxV = svmaximum( currV, currMaxV );
   }
   return currMaxV;
 }
@@ -2089,7 +2089,7 @@ double cvLevelSetStructuredGrid::GetMaxPhiIncr()
       continue;
     }
     curr = fabs( currNode->deltaPhi_ );
-    currMax = maximum( curr, currMax );
+    currMax = svmaximum( curr, currMax );
   }
   return currMax;
 }

@@ -136,6 +136,7 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
                     "mitkSurfaceInterpolationController.h"           #mitk/Modules/SurfaceInterpolation
                     "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets
+                    "mitkLogoAnnotation.h"                           #mitk/Modules/Annotation
                     "PythonQt.h"                                     #PythonQt
                     "tinyxml.h"                                      #tinyxml
                     "mitkIDataStorageService.h"                      #mitk/plugins/org.mitk.core.services
