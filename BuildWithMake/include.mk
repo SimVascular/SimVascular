@@ -152,6 +152,8 @@ SV_USE_TCL_SHARED = 1
 # -----------------------------------------------------
 
 SV_USE_PYTHON = 1
+SV_USE_PYTHON2 = 0
+SV_USE_PYTHON3 = 1
 SV_USE_PYTHON_SHARED = 1
 SV_USE_SYSTEM_PYTHON = 1
 

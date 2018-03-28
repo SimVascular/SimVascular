@@ -31,13 +31,17 @@
 
 #include "SimVascular.h"
 
+#include "tcl.h"
+
 #include "cv_utils_init.h"
 #include "cv_math_init_py.h"
 #include "cv_get_tcl_interp_init.h"
 
+#ifdef SV_USE_PYTHON
 
 int Utils_pyInit()
 {
   Math_pyInit();
-  return Py_OK;
+  return SV_OK;
 }
+#endif

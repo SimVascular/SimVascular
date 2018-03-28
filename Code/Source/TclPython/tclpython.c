@@ -44,7 +44,9 @@
 
 #include <Python.h>
 #include <tcl.h>
+#ifdef SV_USE_PYTHON2
 #include <cStringIO.h>
+#endif
 #include "tclpython.h"
 
 //#include "pythonModules.h"
@@ -107,6 +109,7 @@ static int pythonInterpreter(ClientData clientData, Tcl_Interp *interpreter, int
     /* choose start token depending on whether this is an evaluation or an execution: */
     result = PyRun_String(Tcl_GetString(arguments[2]), (evaluate? Py_eval_input: Py_file_input), globals, globals);
     if (result == 0) {                                                                                        /* an error occured */
+#ifdef SV_USE_PYTHON2
         output = PycStringIO->NewOutput(1024);               /* use a reasonable initial size but big enough to handle most cases */
         PySys_SetObject("stderr", output);                                                /* capture all interpreter error output */
         PyErr_Print();                                            /* so that error is printed on standard error, redirected above */
@@ -118,9 +121,15 @@ static int pythonInterpreter(ClientData clientData, Tcl_Interp *interpreter, int
         Tcl_AppendStringsToObj(object, Tcl_GetString(arguments[0]), ": ", 0);                    /* identify interpreter in error */
         Tcl_AppendObjToObj(object, Tcl_NewStringObj(string, length));
         Py_DECREF(output);
+#endif
     } else {
         if (evaluate) {
+#ifdef SV_USE_PYTHON2
             string = PyString_AsString(PyObject_Str(result));
+#endif
+#ifdef SV_USE_PYTHON3
+            string = PyBytes_AsString(PyObject_Str(result));
+#endif
             object = Tcl_NewStringObj(string, -1);                                                    /* return evaluation result */
         } else                                                                                                         /* execute */
             object = Tcl_NewObj();                                                   /* always return an empty result or an error */
@@ -189,6 +198,17 @@ static PyMethodDef tclMethods[] = {
     {0, 0, 0, 0}                                                                                                      /* sentinel */
 };
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef tclmodule = {
+   PyModuleDef_HEAD_INIT,
+   "tcl",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   tclMethods
+};
+#endif
+
 static int newInterpreter(Tcl_Interp *interpreter)
 {
     int identifier;
@@ -210,7 +230,9 @@ static int newInterpreter(Tcl_Interp *interpreter)
         return TCL_ERROR;
     } else {
         Py_Initialize();                                                                           /* initialize main interpreter */
+#ifdef SV_USE_PYTHON2
         PycString_IMPORT;
+#endif
     }
     Tcl_SetHashValue(Tcl_CreateHashEntry(&threadStates, (ClientData)identifier, &created), 0);
 #else
@@ -220,16 +242,20 @@ static int newInterpreter(Tcl_Interp *interpreter)
 	printf("  %-12s %s\n", "Python:",
 	       Py_GetVersion());
 	PyEval_InitThreads();                                               /* initialize and acquire the global interpreter lock */
+#ifdef SV_USE_PYTHON2
         PycString_IMPORT;
+#endif
         globalState = PyThreadState_Swap(0);                                                            /* save the global thread */
 	//
     } else {
         PyEval_AcquireLock();                                           /* needed in order to be able to create a new interpreter */
     }
+#ifdef SV_USE_PYTHON2
     if (PycStringIO == 0) {                                              /* make sure string input/output is properly initialized */
         Tcl_SetResult(interpreter, "fatal error: could not initialize Python string input/output module", TCL_STATIC);
         return TCL_ERROR;
     }
+#endif
     state = Py_NewInterpreter();          /* hangs here if automatic 'import site' on a new thread is allowed (set Py_NoSiteFlag) */
     if (state == 0) {
         PyEval_ReleaseLock();
@@ -250,7 +276,12 @@ static int newInterpreter(Tcl_Interp *interpreter)
     newIdentifier++;
 #endif
     existingInterpreters++;
+#ifdef SV_USE_PYTHON2
     tcl = Py_InitModule("tcl", tclMethods);                                   /* add a new 'tcl' module to the python interpreter */
+#endif
+#ifdef SV_USE_PYTHON3
+    tcl = PyModule_Create(&tclmodule);
+#endif
     Py_INCREF(tcl);
     PyModule_AddObject(PyImport_AddModule("__builtin__"), "tcl", tcl);
 

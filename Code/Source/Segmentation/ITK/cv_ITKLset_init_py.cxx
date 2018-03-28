@@ -50,7 +50,7 @@ int Itklset_pyInit()
   Itkls3d_pyInit();
   Itkutils_pyInit();
 
-  return Py_OK;
+  return SV_OK;
 
 }
 PyObject* hello(PyObject* self, PyObject* args)
@@ -64,6 +64,16 @@ PyMethodDef pyItkls_methods[] = {
     {NULL, NULL,0,NULL},
 };
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyItklsmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyItkls",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyItkls_methods
+};
+#endif
 // --------------------
 // initpyItkls
 // --------------------
@@ -71,8 +81,12 @@ PyMODINIT_FUNC
 initpyItkls(void)
 {
     PyObject* pyItklsm;
+#ifdef SV_USE_PYTHON2
     pyItklsm=Py_InitModule("pyItkls",pyItkls_methods);
-
+#endif
+#ifdef SV_USE_PYTHON3
+    pyItklsm=PyModule_Create(&pyItklsmodule);
+#endif
     SegErr = PyErr_NewException("pyItkls.error",NULL,NULL);
     Py_INCREF(SegErr);
     PyModule_AddObject(pyItklsm,"error",SegErr);
@@ -85,5 +99,7 @@ initpyItkls(void)
 
     PyObject* pyItkUtils=Itkutils_pyInit();
     PyModule_AddObject(pyItklsm,"Itkutils",pyItkUtils);
-
+#ifdef SV_USE_PYTHON3
+    return pyItklsm;
+#endif
 }

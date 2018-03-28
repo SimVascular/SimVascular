@@ -43,10 +43,16 @@ LIST(APPEND CORELIBS ${lib})
 SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx)
 set(HDRS cvAdaptObject.h cv_adapt_utils.h eispack.h)
 
-if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-  	add_library(${lib} SHARED ${CXXSRCS} cv_adapt_init.cxx cv_adapt_init_py.cxx)
-else()
-  	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_adapt_init.cxx cv_adapt_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS cv_adapt_init_py.cxx)
+endif()
+
+if(SV_USE_TCL)
+	if(SV_USE_MESHSIM_SHARED_LIBRARIES)
+  		add_library(${lib} SHARED ${CXXSRCS} cv_adapt_init.cxx )
+	else()
+  		add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_adapt_init.cxx )
+	endif()
 endif()
 
 if(SV_USE_PYTHON)
@@ -88,4 +94,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
+endif()
+
+if(SV_USE_PYTHON)
+PYTHON_ADD_MODULE(pyMeshAdapt cv_adapt_init_py.cxx)
+target_link_libraries(pyMeshAdapt ${lib} ${PYTHON_LIBRARY})
 endif()

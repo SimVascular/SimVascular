@@ -40,10 +40,14 @@ endif()
 set(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
 set(HDRS cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h)
 
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS cv_discrete_init_py.cxx)
+endif()
+
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx cv_discrete_init_py.cxx)
+  add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx)
 else()
-  add_library(${lib} STATIC ${CXXSRCS} cv_discrete_init.cxx cv_discrete_init_py.cxx)
+  add_library(${lib} STATIC ${CXXSRCS} cv_discrete_init.cxx)
 endif()
 
 if(SV_USE_PYTHON)
@@ -83,3 +87,6 @@ if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
 			)
 	endif()
 endif()
+
+PYTHON_ADD_MODULE(pySolidDiscrete cv_discrete_init_py.cxx)
+target_link_libraries(pySolidDiscrete ${lib} ${PYTHON_LIBRARY})

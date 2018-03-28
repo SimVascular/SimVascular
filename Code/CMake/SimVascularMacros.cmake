@@ -697,13 +697,13 @@ function(simvascular_create_plugin)
   qt5_add_resources(QRCSrcs ${QRC_FILES})
   set(MOC_OPTIONS "-DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
   foreach(moc_src ${MOC_H_FILES})
-    qt5_wrap_cpp(MOCSrcs ${moc_src} OPTIONS -f${moc_src} ${MOC_OPTIONS} TARGET ${lib_name})
+    qt5_wrap_cpp(MOCSrcs ${moc_src} OPTIONS -f${moc_src} ${MOC_OPTIONS} -DHAVE_QT5 TARGET ${lib_name})
   endforeach()
   #------------------------------------QT-------------------------------------
 
   #---------------------------------MANIFEST----------------------------------
   # If a file named manifest_headers.cmake exists, read it
-  set(CTK_QT_VERSION 5.4)
+  set(CTK_QT_VERSION "${Qt5_MAJOR_VERSION}.${Qt5_MINOR_VERSION}")
   set(manifest_headers_dep )
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
     include(${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)

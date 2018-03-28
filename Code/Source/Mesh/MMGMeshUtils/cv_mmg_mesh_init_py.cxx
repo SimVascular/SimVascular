@@ -51,7 +51,9 @@
 #include "cv_misc_utils.h"
 
 #include "cv_mmg_mesh_utils.h"
+#ifdef SV_USE_PYTHON
 #include "Python.h"
+#endif
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -74,6 +76,16 @@ PyMethodDef Mmgmesh_methods[]=
   {NULL,NULL}
 };
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyMeshUtilmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyMeshUtil",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   Mmgmesh_methods
+};
+#endif
 // ----------
 // Mmgmesh_Init
 // ----------
@@ -81,11 +93,16 @@ PyMethodDef Mmgmesh_methods[]=
 PyObject* Mmgmesh_pyInit()
 {
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pyMeshUtilmodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
@@ -95,15 +112,30 @@ PyObject* Mmgmesh_pyInit()
 PyMODINIT_FUNC initpyMeshUtil()
 {
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pyMeshUtilmodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
+#ifdef SV_USE_PYTHON2
     return;
+#endif
+#ifdef SV_USE_PYTHON3
+   Py_RETURN_NONE;
+#endif
   }
   PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
+#ifdef SV_USE_PYTHON2
   return;
+#endif
+#ifdef SV_USE_PYTHON3
+  return pythonC;
+#endif
 }
 
 // MMG_RemeshCmd
@@ -136,19 +168,19 @@ PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    return SV_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    return SV_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    return SV_ERROR;
   }
 
   vtkPolyData *surfacepd;
@@ -160,19 +192,19 @@ PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
   if ( MMGUtils_SurfaceRemeshing( surfacepd, hmin, hmax, hausd, angle, hgrad,
 	useSizingFunction, meshSizingFunction, numAddedRefines) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "remeshing error");
-    return Py_ERROR;
+    return SV_ERROR;
   }
 
   dst = new cvPolyData(surfacepd);
   if ( dst == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error remeshing obj in repository");
-    return Py_ERROR;
+    return SV_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete dst;
-    return Py_ERROR;
+    return SV_ERROR;
   }
   return Py_BuildValue("s",dst->GetName());
 }

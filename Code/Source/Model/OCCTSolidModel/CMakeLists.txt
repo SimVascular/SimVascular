@@ -46,11 +46,11 @@ endif()
 set(CXXSRCS cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx)
 set(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx cv_occt_init_py.cxx)
-
 if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+  list(APPEND CXXSRCS cv_occt_init_py.cxx)
 endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -87,4 +87,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(SV_USE_PYTHON)
+  python_add_module(pySolidOCCT cv_occt_init_py.cxx)
+  target_link_libraries(pySolidOCCT ${lib} ${PYTHON_LIBRARY})
 endif()

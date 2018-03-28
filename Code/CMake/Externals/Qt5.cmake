@@ -55,14 +55,22 @@ if(SV_USE_${proj})
       Script
       Sql
       Svg
-      WebKitWidgets
-      WebKit
       Widgets
       Xml
       XmlPatterns
+      WebEngineCore
+      WebEngineWidgets
+      WebView
       UiTools)
 
-    # Find ITK
+    if(${proj}_VERSION VERSION_EQUAL "5.4.2")
+      list(APPEND SV_${proj}_COMPONENTS
+        WebKitWidgets
+        WebKit
+        )
+    endif()
+
+    # Find Qt
     simvascular_external(${proj}
       SHARED_LIB ${SV_USE_${proj}_SHARED}
       VERSION ${${proj}_VERSION}

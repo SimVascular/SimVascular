@@ -44,6 +44,7 @@
 #undef GetObject
 #endif
 // Prototypes:
+#ifdef SV_USE_PYTHON
 #include "Python.h"
 
 static PyObject *MathErr;
@@ -57,7 +58,7 @@ PyObject *pyMath_fitLeastSquaresCmd( PyObject *self, PyObject *args  );
 PyObject *pyMath_smoothCurveCmd( PyObject *self, PyObject *args  );
 PyMODINIT_FUNC
 initpyMath(void);
-
+#endif
 
 // ---------
 // Math_Init
@@ -71,7 +72,7 @@ int Math_pyInit( )
 
   initpyMath();
 
-  return Py_OK;
+  return SV_OK;
 }
 #endif
 
@@ -99,7 +100,7 @@ PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -132,7 +133,7 @@ PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in fft");
      mathobj->deleteArray(pts,nlistpts,2);
      delete mathobj;
-     return Py_ERROR;
+     return SV_ERROR;
   }
 
   // create result string
@@ -143,7 +144,7 @@ PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
   for (i = 0; i < nterms; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",terms[i][0],terms[i][1]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -186,7 +187,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(termsArg)){
     PyErr_SetString( MathErr, "termsArg is not a list");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   int nlistterms = PyList_Size(termsArg);
   if (nlistterms < 0)   return NULL;
@@ -221,7 +222,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in inverse fft" );
      mathobj->deleteArray(terms,nlistterms,2);
      delete mathobj;
-     return Py_ERROR;
+     return SV_ERROR;
   }
 
   // create result string
@@ -232,7 +233,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
   for (i = 0; i < numPts; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",pts[i][0],pts[i][1]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -275,7 +276,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(termsArg)){
     PyErr_SetString( MathErr, "termsArg not a list");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   int nlistterms = PyList_Size(termsArg);
   if (nlistterms < 0)   return NULL;
@@ -307,7 +308,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in calculate worm" );
      mathobj->deleteArray(terms,nlistterms,2);
      delete mathobj;
-     return Py_ERROR;
+     return SV_ERROR;
   }
 
   // create result string
@@ -340,7 +341,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
 
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -378,7 +379,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in linear interpolation");
      mathobj->deleteArray(pts,nlistpts,2);
      delete mathobj;
-     return Py_ERROR;
+     return SV_ERROR;
   }
 
   // create result string
@@ -389,7 +390,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",outPts[i][0],outPts[i][1]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -422,7 +423,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -453,7 +454,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error finding curve length" );
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return Py_ERROR;
+     return SV_ERROR;
   }
 
   // create result string
@@ -485,7 +486,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -516,7 +517,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in linear interpolation" );
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return Py_ERROR;
+     return SV_ERROR;
   }
 
   // create result string
@@ -527,7 +528,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le %.6le",outPts[i][0],outPts[i][1],outPts[i][2]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -569,7 +570,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!(PyList_Check(xtermsArg)||PyList_Check(ytermsArg))){
     PyErr_SetString( MathErr, "xtermsArg or ytermsArg is not a list");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   int numberOfSamples = PyList_Size(xtermsArg);
   int numberOfSamplesY = PyList_Size(ytermsArg);
@@ -627,7 +628,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
       mathobj->deleteArray(yt,numberOfSamples,yOrder);
       delete mathobj;
       delete temp;
-      return Py_ERROR;
+      return SV_ERROR;
   }
 
   // create result string
@@ -639,7 +640,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
     r[0] = '\0';
     for (j = 0; j < yOrder; j++) {
     sprintf(r,"%.6le ",mt[i][j]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -678,7 +679,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg is not a list");
-    return Py_ERROR;
+    return SV_ERROR;
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -704,7 +705,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in smoothing curve");
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return Py_ERROR;
+     return SV_ERROR;
   }
 
   // create result string
@@ -715,7 +716,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le %.6le",outPts[i][0],outPts[i][1],outPts[i][2]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -747,7 +748,16 @@ PyMethodDef pyMath_methods[] = {
   {NULL, NULL,0,NULL},
   };
 
-
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyMathmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyMath",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyMath_Methods
+};
+#endif
 // --------------------
 // initpyImage
 // --------------------
@@ -755,11 +765,18 @@ PyMODINIT_FUNC
 initpyMath(void)
 {
 PyObject *pyMth;
-
+#ifdef SV_USE_PYTHON2
 pyMth = Py_InitModule("pyMath",pyMath_methods);
-
+#endif
+#ifdef SV_USE_PYTHON3
+pyMth = PyModule_Create(&pyMathmodule);
+#endif
 MathErr = PyErr_NewException("pyMath.error",NULL,NULL);
 Py_INCREF(MathErr);
 PyModule_AddObject(pyMth,"error",MathErr);
+
+#ifdef SV_USE_PYTHON3
+return pyMth;
+#endif
 }
 #endif

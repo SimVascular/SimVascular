@@ -37,7 +37,9 @@
 #include "cv_get_tcl_interp_init.h"
 #include <string.h>
 #include <assert.h>
-#include "Python.h"
+#ifdef SV_USE_PYTHON
+  #include "Python.h"
+#endif
 
 // Globals:
 // --------
@@ -65,7 +67,7 @@ cvFactoryRegistrar cvSolidModel::gRegistrar;
 // registered in the repository.  Subsequent cvSolidModel lookup's
 // currently DO NOT check for NULL values.  The idea is that objects
 // are checked for validity *before* they get registered.
-#ifdef SV_USE_TCL
+
 cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
 {
   // Get the solid model factory registrar associated with this Tcl interpreter.
@@ -99,7 +101,6 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
   return solid;
 
 }
-#endif
 
 #ifdef SV_USE_PYTHON
 cvSolidModel* cvSolidModel::pyDefaultInstantiateSolidModel()

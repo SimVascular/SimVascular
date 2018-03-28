@@ -1008,7 +1008,7 @@ int cvLevelSetSparseGrid::ConstructHT( cvSolidModel *sm )
   // be something which captures all band members but doesn't waste
   // time on points that will be excluded.  I'm adding in a buffer
   // region of 2*maxh_ to ensure that we catch all band nodes.
-  distLimit = maximum( fabs(innerExtent_), fabs(outerExtent_) );
+  distLimit = svmaximum( fabs(innerExtent_), fabs(outerExtent_) );
   distLimit += 2 * maxh_;
 
   for (k = 0; k < K_; k++) {
@@ -1323,7 +1323,7 @@ int cvLevelSetSparseGrid::ConstructHT_Sweep( cvPolyData *front )
   }
   */
 
-  blotDims[0] = maximum( ceil( fabs( innerExtent_ / minh_ ) ),
+  blotDims[0] = svmaximum( ceil( fabs( innerExtent_ / minh_ ) ),
 			 ceil( fabs( outerExtent_ / minh_ ) ) ) + 1;
   blotDims[1] = blotDims[0];
   blotDims[2] = blotDims[0];
@@ -2498,8 +2498,8 @@ int cvLevelSetSparseGrid::UpdatePhi()
     // Choose the right entropy-satisfying approximation for use with
     // the constant velocity term F0 in computing the contribution of
     // this term to phi_t:
-    maxVal = maximum( currNode->F0_, 0.0 );
-    minVal = minimum( currNode->F0_, 0.0 );
+    maxVal = svmaximum( currNode->F0_, 0.0 );
+    minVal = svminimum( currNode->F0_, 0.0 );
     f0Contrib = maxVal * currNode->delPlus_ + minVal * currNode->delMinus_;
 
     // Put this in on 2/16/00 as part of an attempt to deal with

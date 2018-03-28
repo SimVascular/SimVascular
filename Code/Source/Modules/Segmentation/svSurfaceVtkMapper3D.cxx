@@ -55,7 +55,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <mitkVtkScalarModeProperty.h>
 #include <mitkClippingProperty.h>
 #include <mitkSmartPointerProperty.h>
-#include <mitkIShaderRepository.h>
+//#include <mitkIShaderRepository.h>
 #include <mitkExtractSliceFilter.h>
 #include <mitkImageSliceSelector.h>
 #include <mitkCoreServices.h>
@@ -501,12 +501,12 @@ void mitk::svSurfaceVtkMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNo
     node->AddProperty( "material.interpolation"       , mitk::VtkInterpolationProperty::New()   , renderer, overwrite );
   }
 
-  // Shaders
-  IShaderRepository* shaderRepo = CoreServices::GetShaderRepository();
-  if (shaderRepo)
-  {
-    shaderRepo->AddDefaultProperties(node, renderer, overwrite);
-  }
+  //// Shaders
+  //IShaderRepository* shaderRepo = CoreServices::GetShaderRepository();
+  //if (shaderRepo)
+  //{
+  //  shaderRepo->AddDefaultProperties(node, renderer, overwrite);
+  //}
 }
 
 void mitk::svSurfaceVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)

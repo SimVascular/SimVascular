@@ -313,8 +313,8 @@ double cvLevelSetDenseGrid::UpdatePhi( double factor )
     // Choose the right entropy-satisfying approximation for use with
     // the constant velocity term F0 in computing the contribution of
     // this term to phi_t:
-    maxVal = maximum( currNode->F0_, 0.0 );
-    minVal = minimum( currNode->F0_, 0.0 );
+    maxVal = svmaximum( currNode->F0_, 0.0 );
+    minVal = svminimum( currNode->F0_, 0.0 );
     f0Contrib = maxVal * currNode->delPlus_ + minVal * currNode->delMinus_;
 
     // Use a central difference approximation to the magnitude of the
@@ -784,8 +784,8 @@ cvLevelSetNode *cvLevelSetDenseGrid::FindNearestActiveNode( cvLevelSetNode *n )
   double currDist, minDist;
 
   InitIter();
-  maxDim = maximum(I_, J_);
-  maxDim = maximum(maxDim, K_);
+  maxDim = svmaximum(I_, J_);
+  maxDim = svmaximum(maxDim, K_);
   minDist = maxDim * minh_ * sqrt(2.0);
   t = NULL;
   while ( c = GetNext() ) {

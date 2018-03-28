@@ -42,14 +42,14 @@
 		if ( gRepository->Exists( obj ) ) {                                         \
             char temp[2048];                                                        \
 			PyErr_SetString(PyRunTimeErr, "object already exists"); 											\
-					return Py_ERROR;											\
+					return SV_ERROR;											\
 		}																		\
 
 #define CVPYTHONRepositoryRegisterMacro(objName,obj,PyRunTimeErr) 								\
 		if ( !(gRepository->Register( objName, obj )) ) { 						\
 			PyErr_SetString(PyRunTimeErr, "error registering obj in repository");\
 					delete obj; 												\
-					return Py_ERROR;											\
+					return SV_ERROR;											\
 		} 																		\
 																	\
 
@@ -66,7 +66,7 @@
             if(!PyArg_ParseTuple(args,cv_type,&input))                          \
             {                                                                   \
                 PyErr_SetString(PyRunTimeErr, "Could not import cv_type");      \
-                return Py_ERROR ;                                                \
+                return SV_ERROR ;                                                \
             };																	 \
 			ls->Set##property(input); 											\
 			return Py_BuildValue("s","success");									\
@@ -82,12 +82,12 @@
             if(!PyArg_ParseTuple(args,"s",&objName))                            \
             {                                                                   \
                 PyErr_SetString(PyRunTimeErr, "Could not import cv_type");      \
-                return Py_ERROR ;                                                \
+                return SV_ERROR ;                                                \
             };																	\
 			cvObj = ls->Get##property (); 										\
 			if ( cvObj == NULL ) { 												\
 				PyErr_SetString(PyRunTimeErr, "error, obj is null" ); 		    \
-				return Py_ERROR;												\
+				return SV_ERROR;												\
 			}																	\
 			CVPYTHONRepositoryRegisterMacro(objName,cvObj,PyRunTimeErr);						\
 			return Py_BuildValue("s",cvObj->GetName());							\

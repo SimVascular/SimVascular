@@ -125,13 +125,28 @@ PyMethodDef Itkutils_methods[] = {
 	{NULL, NULL,0,NULL},
 	};
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef Itkutilsmodule = {
+   PyModuleDef_HEAD_INIT,
+   "Itkutils",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   Itkutils_methods
+};
+#endif
+
 PyObject*  Itkutils_pyInit( ){
 
 	printf("  %-12s %s\n","Itk:", itk::Version::GetITKVersion());
 
     PyObject *pyItklsUtils;
-
+#ifdef SV_USE_PYTHON2
     pyItklsUtils= Py_InitModule("Itkutils",Itkutils_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+    pyItklsUtils= PyModule_Create(&Itkutilsmodule);
+#endif
     PyRunTimeErrU = PyErr_NewException("Itkutils.error",NULL,NULL);
     PyModule_AddObject(pyItklsUtils,"error",PyRunTimeErrU);
 
@@ -162,7 +177,7 @@ static PyObject* itkutils_GenerateCircleCmd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"sdddd",&result,&r,&x,&y,&z))
 	{
 		PyErr_SetString(PyRunTimeErrU,"Could not import 1 char and 4 doubles");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 	// Make sure the specified result object does not exist:
 	CVPYTHONRepositoryExistsMacro(result,PyRunTimeErrU)
@@ -181,7 +196,7 @@ static PyObject* itkutils_GenerateCircleCmd( CXX_PYTHON_STDARGS )
 
     if (obj == NULL) {
         PyErr_SetString( PyRunTimeErrU, "Problem generating circle" );
-        return Py_ERROR;
+        return SV_ERROR;
     }
 	//Save Result
 	obj->SetName( result );
@@ -189,7 +204,7 @@ static PyObject* itkutils_GenerateCircleCmd( CXX_PYTHON_STDARGS )
 		PyErr_SetString(PyRunTimeErrU,"Error registering obj in repository.");
 
 		delete obj;
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
     vtkSmartPointer<vtkPolyData> polydataObj =
@@ -209,7 +224,7 @@ static PyObject* itkutils_PdToImgCmd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"ss",&inputPdName,&result))
 	{
 		PyErr_SetString(PyRunTimeErrU,"Could not import 2 chars");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 	//Get the input image from the repository
 	RepositoryDataT type;
@@ -221,13 +236,13 @@ static PyObject* itkutils_PdToImgCmd( CXX_PYTHON_STDARGS )
 		if ( pd == NULL ) {
 
 			PyErr_SetString(PyRunTimeErrU,"couldn't find object." );
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = pd->GetType();
 		if ( type != POLY_DATA_T ) {
 			PyErr_SetString(PyRunTimeErrU,"error: object not of type PolyData");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtkpd = ((cvPolyData*)pd)->GetVtkPolyData();
@@ -250,7 +265,7 @@ static PyObject* itkutils_PdToImgCmd( CXX_PYTHON_STDARGS )
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		PyErr_SetString(PyRunTimeErrU,"error registering obj in repository");
 		delete obj;
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	// Return name
@@ -268,7 +283,7 @@ static PyObject* itkutils_PdToVolCmd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"sss",&inputPdName,&result,&refName))
     {
 		PyErr_SetString(PyRunTimeErrU,"Could not import 3 chars");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 	//Get the input image from the repository
 	RepositoryDataT type;
@@ -280,13 +295,13 @@ static PyObject* itkutils_PdToVolCmd( CXX_PYTHON_STDARGS )
 		if ( pd == NULL ) {
 
 			PyErr_SetString(PyRunTimeErrU,"couldn't find object." );
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = pd->GetType();
 		if ( type != POLY_DATA_T ) {
 			 PyErr_SetString(PyRunTimeErrU,"error: object not of type PolyData");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtkpd = ((cvPolyData*)pd)->GetVtkPolyData();
@@ -299,13 +314,13 @@ static PyObject* itkutils_PdToVolCmd( CXX_PYTHON_STDARGS )
 		ref = gRepository->GetObject( refName );
 		if ( ref == NULL ) {
 			PyErr_SetString(PyRunTimeErrU,"couldn't find object ");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = ref->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			PyErr_SetString(PyRunTimeErrU, "error: object not of type StructuredPts");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtkref = (vtkStructuredPoints*)((cvStrPts*)ref)->GetVtkPtr();
@@ -326,7 +341,7 @@ static PyObject* itkutils_PdToVolCmd( CXX_PYTHON_STDARGS )
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		PyErr_SetString(PyRunTimeErrU,"error registering obj in repository");
 		delete obj;
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	//Return Name
@@ -344,7 +359,7 @@ static PyObject* itkutils_WriteImageCmd(CXX_PYTHON_STDARGS)
 	if (!PyArg_ParseTuple(args,"ss",&inputImgName,&fname))
 	{
 		PyErr_SetString(PyRunTimeErrU,"Could not import 2 chars");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	/*
@@ -367,13 +382,13 @@ static PyObject* itkutils_WriteImageCmd(CXX_PYTHON_STDARGS)
 		img = gRepository->GetObject( inputImgName );
 		if ( img == NULL ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object ");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			PyErr_SetString(PyRunTimeErrU, "error: object not of type StructuredPts" );
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtksp = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -399,7 +414,7 @@ PyObject* itkutils_GradientMagnitudeGaussianCmd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"sss",&inputImgName,&result,&sigma))
 	{
 		PyErr_SetString(PyRunTimeErrU,"Could not import 3 chars");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 
@@ -412,14 +427,14 @@ PyObject* itkutils_GradientMagnitudeGaussianCmd( CXX_PYTHON_STDARGS )
 		img = gRepository->GetObject( inputImgName );
 		if ( img == NULL ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object " );
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			PyErr_SetString(PyRunTimeErrU, "error: object not of type StructuredPts" );
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtksp = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -443,7 +458,7 @@ PyObject* itkutils_GradientMagnitudeGaussianCmd( CXX_PYTHON_STDARGS )
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		PyErr_SetString(PyRunTimeErrU, "error registering obj in repository");
 		delete obj;
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	// Return Name
@@ -462,7 +477,7 @@ PyObject* itkutils_GaussianCmd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"sss",&inputImgName,&result,&sigma))
 	{
 		PyErr_SetString(PyRunTimeErrU,"Could not import 3 chars");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 
@@ -475,14 +490,14 @@ PyObject* itkutils_GaussianCmd( CXX_PYTHON_STDARGS )
 		img = gRepository->GetObject( inputImgName );
 		if ( img == NULL ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object ");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			PyErr_SetString(PyRunTimeErrU, "error: object not of type StructuredPts");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtksp = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -506,7 +521,7 @@ PyObject* itkutils_GaussianCmd( CXX_PYTHON_STDARGS )
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		PyErr_SetString(PyRunTimeErrU, "error registering obj in repository" );
 		delete obj;
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	// Return Name
@@ -525,7 +540,7 @@ PyObject* itkutils_DistanceImageCmd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"sss",&inputImgName,&result,&thres))
 	{
 		PyErr_SetString(PyRunTimeErrU,"Could not import 3 chars");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 
@@ -538,14 +553,14 @@ PyObject* itkutils_DistanceImageCmd( CXX_PYTHON_STDARGS )
 		img = gRepository->GetObject( inputImgName );
 		if ( img == NULL ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object ");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			PyErr_SetString(PyRunTimeErrU, "error: object not of type StructuredPts");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtksp = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -569,7 +584,7 @@ PyObject* itkutils_DistanceImageCmd( CXX_PYTHON_STDARGS )
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		PyErr_SetString(PyRunTimeErrU, "error registering obj in repository");
 		delete obj;
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	// Return Name
@@ -590,7 +605,7 @@ PyObject* itkutils_ThresholdImageCmd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"sss",&inputImgName,&result,&thres))
 	{
 		PyErr_SetString(PyRunTimeErrU,"Could not import 3 chars");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	// Get the input image from the repository
@@ -602,14 +617,14 @@ PyObject* itkutils_ThresholdImageCmd( CXX_PYTHON_STDARGS )
 		img = gRepository->GetObject( inputImgName );
 		if ( img == NULL ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object " );
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			PyErr_SetString(PyRunTimeErrU, "error: object not of type StructuredPts");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtksp = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -633,7 +648,7 @@ PyObject* itkutils_ThresholdImageCmd( CXX_PYTHON_STDARGS )
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		PyErr_SetString(PyRunTimeErrU, "error registering obj in repository");
 		delete obj;
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	// Return Name
@@ -653,7 +668,7 @@ PyObject* itkutils_FractEdgeProximity3DCmd( CXX_PYTHON_STDARGS )
 	if (!PyArg_ParseTuple(args,"ssddd",&inputImgName,&result,&sigma,&kappa,&exponent))
 	{
 		PyErr_SetString(PyRunTimeErrU,"Could not import 2 chars and 3 doubles");
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 
@@ -666,14 +681,14 @@ PyObject* itkutils_FractEdgeProximity3DCmd( CXX_PYTHON_STDARGS )
 		img = gRepository->GetObject( inputImgName );
 		if ( img == NULL ) {
 			PyErr_SetString(PyRunTimeErrU, "couldn't find object ");
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 
 		// Make sure image is of type STRUCTURED_PTS_T:
 		type = img->GetType();
 		if ( type != STRUCTURED_PTS_T ) {
 			PyErr_SetString(PyRunTimeErrU, "error: object not of type StructuredPts" );
-			return Py_ERROR;
+			return SV_ERROR;
 		}
 		// Retrive geometric information:
 		vtksp = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -700,7 +715,7 @@ PyObject* itkutils_FractEdgeProximity3DCmd( CXX_PYTHON_STDARGS )
 	if ( !( gRepository->Register( obj->GetName(), obj ) ) ) {
 		PyErr_SetString(PyRunTimeErrU, "error registering obj in repository");
 		delete obj;
-		return Py_ERROR;
+		return SV_ERROR;
 	}
 
 	// Return Name
