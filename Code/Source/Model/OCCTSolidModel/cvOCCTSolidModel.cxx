@@ -1171,7 +1171,8 @@ int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
    }
    if (deleteFace[faceId] == 1) {
      BRepTools_ReShape remover;
-     remover.Remove(aFace,Standard_True);
+     //remover.Remove(aFace,Standard_True); OpenCASCADE version 7.0.0
+     remover.Remove(aFace); // OpenCASCADE version 7.2.0
      *geom_ = remover.Apply(*geom_,TopAbs_FACE);
      numFaces_--;
      //TDF_Label tmpLabel;

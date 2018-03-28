@@ -49,12 +49,22 @@ if(SV_USE_${proj})
     message(FATAL_ERROR "${proj}_DIR was not specified. Set ${proj}_DIR to the build or bin directory containing OpenCASCADEConfig.cmake")
   endif()
 
+  # Newer versionof opencascade load up duplicate compile definitions from
+  # vtk that slow down qt5 moc generation. Copy now and set afterward
+  if(${proj}_VERSION VERSION_GREATER "7.0.0")
+    get_directory_property(_defines_before COMPILE_DEFINITIONS)
+  endif()
+
   # Find OpenCASCADE
   simvascular_external(${proj}
     SHARED_LIB ${SV_USE_${proj}_SHARED}
     VERSION ${${proj}_VERSION}
     REQUIRED
     )
+
+  if(${proj}_VERSION VERSION_GREATER "7.0.0")
+    set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS ${_defines_before})
+  endif()
 
   # Set SV_OpenCASCADE_DIR to the toplevel OpenCASCADE if it exists
   simvascular_get_external_path_from_include_dir(${proj})

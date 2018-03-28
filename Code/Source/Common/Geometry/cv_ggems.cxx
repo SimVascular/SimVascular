@@ -131,7 +131,7 @@ Rdouble ggemsgeo_solid_angle (
       l1 = ggemsGeoVecLen ( &n1 );
       l2 = ggemsGeoVecLen ( &n2 );
       s  = ggemsGeoDotProd ( &n1, &n2 ) / ( l1 * l2 );
-      ang = acos ( maximum(-1.0,minimum(1.0,s)) );
+      ang = acos ( svmaximum(-1.0,svminimum(1.0,s)) );
       s = ggemsGeoTripleProd( &b, &a, &plane );
       area += s > 0.0 ? PI - ang : PI + ang;
 

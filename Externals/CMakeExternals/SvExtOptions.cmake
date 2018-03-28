@@ -26,7 +26,7 @@
 #
 #-----------------------------------------------------------------------------
 # Toplevel directories for src, bin, build or externals
-set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/sv_externals")
+set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/svExternals")
 
 set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/src"
   CACHE PATH "Directory where source files for externals will be put")
@@ -50,8 +50,8 @@ file(MAKE_DIRECTORY "${SV_EXTERNALS_TAR_INSTALL_DIR}")
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
 set(SV_EXTERNALS_URL  "http://simvascular.stanford.edu/downloads/public/simvascular/externals" CACHE STRING "SimVascular Externals")
-set(SV_EXTERNALS_VERSION_NUMBER  "2018.01" CACHE STRING "SimVascular Externals version")
-set_property(CACHE SV_EXTERNALS_VERSION_NUMBER PROPERTY STRINGS "2017.01" "2018.01")
+set(SV_EXTERNALS_VERSION_NUMBER  "2018.03" CACHE STRING "SimVascular Externals version")
+set_property(CACHE SV_EXTERNALS_VERSION_NUMBER PROPERTY STRINGS "2017.01" "2018.01" "2018.03")
 set(SV_EXTERNALS_ORIGINALS_URL "${SV_EXTERNALS_URL}/${SV_EXTERNALS_VERSION_NUMBER}/src/originals" CACHE STRING "URL with source downloads for externals")
 #set(SV_EXTERNALS_ORIGINALS_URL "/Users/adamupdegrove/Documents/simvascular_externals_srcs/originals" CACHE STRING "URL with source downloads for externals")
 mark_as_advanced(SV_EXTERNALS_ORIGINALS_URL)
@@ -75,6 +75,7 @@ endif()
 # First external is not built by the project but is required if building
 # MITK
 option(SV_EXTERNALS_USE_QT "Enable QT Plugin" ON)
+option(SV_EXTERNALS_BUILD_MITK_WITH_PYTHON "Build MITK without python" ON)
 
 # Add externals with default values of version, build_with, shared, dirname,
 # and optional install dirname. Order matters; put independent packages first
@@ -83,83 +84,98 @@ option(SV_EXTERNALS_USE_QT "Enable QT Plugin" ON)
 # "EXTERNAL_NAME" "ENABLE_EXTERNAL" "BUILD_SHARED" "BUILD_DIR_NAME" "INSTALL_DIR_NAME"
 #-----------------------------------------------------------------------------
 # QT
-sv_externals_add_new_external(Qt 5.4.2 ON ON qt qt)
-set_property(CACHE SV_EXTERNALS_Qt_VERSION PROPERTY STRINGS "5.4.2" "5.6.0")
+sv_externals_add_new_external(Qt 5.6.3 ON ON qt qt)
+set_property(CACHE SV_EXTERNALS_Qt_VERSION PROPERTY STRINGS "5.4.2" "5.6.0" "5.6.3")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # TCL
-sv_externals_add_new_external(TCL 8.6.4 ON ON tcl tcltk)
+sv_externals_add_new_external(TCL 8.6.8 ON ON tcl tcltk)
+set_property(CACHE SV_EXTERNALS_TCL_VERSION PROPERTY STRINGS "8.6.4" "8.6.8")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # TK
-sv_externals_add_new_external(TK 8.6.4 ON ON tk tcltk)
+sv_externals_add_new_external(TK 8.6.8 ON ON tk tcltk)
+set_property(CACHE SV_EXTERNALS_TK_VERSION PROPERTY STRINGS "8.6.4" "8.6.8")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # TCLLIB
 sv_externals_add_new_external(TCLLIB 1.17 ON ON tcllib none)
+set_property(CACHE SV_EXTERNALS_TCLLIB_VERSION PROPERTY STRINGS "1.17")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # TKLIB
 sv_externals_add_new_external(TKLIB 0.6 ON ON tklib none)
+set_property(CACHE SV_EXTERNALS_TKLIB_VERSION PROPERTY STRINGS "0.6")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # PYTHON
-sv_externals_add_new_external(PYTHON 2.7.11 ON ON python python)
+sv_externals_add_new_external(PYTHON 3.5.2 ON ON python python)
+set_property(CACHE SV_EXTERNALS_PYTHON_VERSION PROPERTY STRINGS "2.7.11" "2.7.13" "3.5.2")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # PIP
 sv_externals_add_new_external(PIP 0.0.0 ON ON pip none)
+set_property(CACHE SV_EXTERNALS_PIP_VERSION PROPERTY STRINGS "0.0.0")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # NUMPY
 sv_externals_add_new_external(NUMPY 1.11.1 ON ON numpy none)
+set_property(CACHE SV_EXTERNALS_NUMPY_VERSION PROPERTY STRINGS "1.11.1")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # FREETYPE
 sv_externals_add_new_external(FREETYPE 2.6.3 ON ON freetype freetype)
+set_property(CACHE SV_EXTERNALS_FREETYPE_VERSION PROPERTY STRINGS "2.6.3")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # SWIG
 sv_externals_add_new_external(SWIG 3.0.12 OFF ON swig swig)
+set_property(CACHE SV_EXTERNALS_SWIG_VERSION PROPERTY STRINGS "3.0.12")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # MMG
-sv_externals_add_new_external(MMG 5.1.0 ON OFF mmg mmg)
+sv_externals_add_new_external(MMG 5.3.9 ON OFF mmg mmg)
+set_property(CACHE SV_EXTERNALS_MMG_VERSION PROPERTY STRINGS "5.1.0" "5.3.9")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # GDCM
-sv_externals_add_new_external(GDCM 2.6.1 ON ON gdcm gdcm)
+sv_externals_add_new_external(GDCM 2.6.3 ON ON gdcm gdcm)
+set_property(CACHE SV_EXTERNALS_GDCM_VERSION PROPERTY STRINGS "2.6.1" "2.6.3")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # VTK
-sv_externals_add_new_external(VTK 6.2.0 ON ON vtk vtk)
+sv_externals_add_new_external(VTK 8.0.0 ON ON vtk vtk)
+set_property(CACHE SV_EXTERNALS_VTK_VERSION PROPERTY STRINGS "6.2.0" "8.0.0")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # ITK
-sv_externals_add_new_external(ITK 4.7.1 ON ON itk itk)
+sv_externals_add_new_external(ITK 4.12.2 ON ON itk itk)
+set_property(CACHE SV_EXTERNALS_ITK_VERSION PROPERTY STRINGS "4.7.1" "4.12.2")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # OpenCASCADE
-sv_externals_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade opencascade)
+sv_externals_add_new_external(OpenCASCADE 7.2.0 ON ON opencascade opencascade)
+set_property(CACHE SV_EXTERNALS_OpenCASCADE_VERSION PROPERTY STRINGS "7.0.0" "7.2.0")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # MITK
-sv_externals_add_new_external(MITK 2016.03 ON ON mitk mitk)
+sv_externals_add_new_external(MITK 2018.02 ON ON mitk mitk)
+set_property(CACHE SV_EXTERNALS_MITK_VERSION PROPERTY STRINGS "2016.03" "2018.02")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

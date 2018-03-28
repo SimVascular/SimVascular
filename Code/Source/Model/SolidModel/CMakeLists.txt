@@ -48,7 +48,11 @@ endif()
 set(CXXSRCS cvSolidModel.cxx)
 set(HDRS    cvSolidModel.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx cv_solid_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS cv_solid_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

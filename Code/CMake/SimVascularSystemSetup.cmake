@@ -248,6 +248,7 @@ set(SV_BINARY_DISTRIBUTION_DIR ${SV_BINARY_HOME}/Distribution)
 # Set a default build type (if none was specified)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
+  unset(CMAKE_BUILD_TYPE CACHE)
 	set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build.")
 	mark_as_advanced(CMAKE_BUILD_TYPE)
 	# Set the possible values of build type for cmake-gui
@@ -255,7 +256,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 		"MinSizeRel" "RelWithDebInfo")
 endif()
 string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER)
-set(SV_BUILD_TYPE_DIR "${CMAKE_BUILD_TYPE_LOWER}" CACHE STRING "The compile type being used.")
+set(SV_BUILD_TYPE_DIR "${CMAKE_BUILD_TYPE_LOWER}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

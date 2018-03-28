@@ -36,7 +36,7 @@ set(lib ${SV_LIB_REPOSITORY_NAME})
 set(export_directive repository)
 set(export_file_name svRepositoryExports.h)
 
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
 	  ${PYTHON_INCLUDE_DIR}
@@ -45,19 +45,23 @@ endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-SET(CXXSRCS cvRepository.cxx cvRepositoryData.cxx
+set(CXXSRCS cvRepository.cxx cvRepositoryData.cxx
   cvDataObject.cxx cvPolyData.cxx
   cvStrPts.cxx cvUnstructuredGrid.cxx
   cvDataSet.cxx
   )
 
-SET(HDRS cvRepository.h cvRepositoryData.h
+set(HDRS cvRepository.h cvRepositoryData.h
   cvDataObject.h cvPolyData.h
   cvStrPts.h cvUnstructuredGrid.h
   cvDataSet.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_repos_init.cxx cv_repos_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS cv_repos_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_repos_init.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

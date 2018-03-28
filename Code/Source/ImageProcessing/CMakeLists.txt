@@ -56,7 +56,11 @@ set(HDRS cv_image.h cv_img_offsets.h
   cv_mask_image_in_place.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_image_init.cxx cv_image_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS cv_image_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_image_init.cxx )
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

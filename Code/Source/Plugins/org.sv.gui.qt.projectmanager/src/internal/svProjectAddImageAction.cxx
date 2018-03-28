@@ -95,7 +95,8 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
         if (imageFilePath.isEmpty())
             return;
 
-        mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
+        //mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
+        mitk::DataNode::Pointer imageNode=mitk::IOUtil::Load(imageFilePath.toStdString(), *m_DataStorage)->GetElement(0);
 
         mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
         if(imageNode.IsNull() || !isImage->CheckNode(imageNode))

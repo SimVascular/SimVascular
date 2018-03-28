@@ -1344,8 +1344,8 @@ int sys_geom_PrintTriStats( cvPolyData *surf )
 			 pts[3*c], pts[3*c+1], pts[3*c+2] );
       len_bc = Distance( pts[3*b], pts[3*b+1], pts[3*b+2],
 			 pts[3*c], pts[3*c+1], pts[3*c+2] );
-      currMinEdge = minimum( len_ab, len_ac );
-      currMinEdge = minimum( currMinEdge, len_bc );
+      currMinEdge = svminimum( len_ab, len_ac );
+      currMinEdge = svminimum( currMinEdge, len_bc );
       if ( ( i == 0 ) || ( currMinEdge < minEdge ) ) {
 	minEdge = currMinEdge;
 	min_e_id = i;
@@ -1368,8 +1368,8 @@ int sys_geom_PrintTriStats( cvPolyData *surf )
 
       // Find the smallest triangle height:
       // A(tri) = 1/2 (base) (height)
-      currMaxEdge = maximum( len_ab, len_ac );
-      currMaxEdge = maximum( currMaxEdge, len_bc );
+      currMaxEdge = svmaximum( len_ab, len_ac );
+      currMaxEdge = svmaximum( currMaxEdge, len_bc );
       currMinHeight = 2 * currArea / currMaxEdge;
       if ( ( i == 0 ) || ( currMinHeight < minHeight ) ) {
 	minHeight = currMinHeight;
@@ -1535,14 +1535,14 @@ int sys_geom_BBox( cvPolyData *obj, double bbox[] )
       bbox[4] = bbox[5] = pts[3*i+2];
     }
 
-    bbox[0] = minimum( bbox[0], pts[3*i] );
-    bbox[1] = maximum( bbox[1], pts[3*i] );
+    bbox[0] = svminimum( bbox[0], pts[3*i] );
+    bbox[1] = svmaximum( bbox[1], pts[3*i] );
 
-    bbox[2] = minimum( bbox[2], pts[3*i+1] );
-    bbox[3] = maximum( bbox[3], pts[3*i+1] );
+    bbox[2] = svminimum( bbox[2], pts[3*i+1] );
+    bbox[3] = svmaximum( bbox[3], pts[3*i+1] );
 
-    bbox[4] = minimum( bbox[4], pts[3*i+2] );
-    bbox[5] = maximum( bbox[5], pts[3*i+2] );
+    bbox[4] = svminimum( bbox[4], pts[3*i+2] );
+    bbox[5] = svmaximum( bbox[5], pts[3*i+2] );
   }
 
   delete [] pts;
@@ -1868,7 +1868,7 @@ cvPolyData *sys_geom_Align( cvPolyData *ref, cvPolyData *src )
       if ( currScore > maxScore ) {
 	posId = i;
       }
-      maxScore = maximum( maxScore, currScore );
+      maxScore = svmaximum( maxScore, currScore );
     }
   }
   delete [] srcPts;

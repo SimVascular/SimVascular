@@ -51,16 +51,34 @@ endif()
 
 # PYTHON variables needed later on
 if(SV_EXTERNALS_ENABLE_${proj}_SHARED)
-  set(${proj}_LIBRARY_NAME libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+  if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "3.5.2")
+    set(${proj}_LIBRARY_NAME libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}m${CMAKE_SHARED_LIBRARY_SUFFIX})
+  else()
+    set(${proj}_LIBRARY_NAME libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+  endif()
 else()
-  set(${proj}_LIBRARY_NAME libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
+  if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "3.5.2")
+    set(${proj}_LIBRARY_NAME libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}m${CMAKE_STATIC_LIBRARY_SUFFIX})
+  else()
+    set(${proj}_LIBRARY_NAME libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
+  endif()
 endif()
 
 set(SV_EXTERNALS_${proj}_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
-set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
+if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "3.5.2")
+  set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}m)
+else()
+  set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
+endif()
 set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/${${proj}_LIBRARY_NAME})
 get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_LIBRARY} DIRECTORY)
 set(SV_EXTERNALS_${proj}_SITE_DIR ${SV_EXTERNALS_${proj}_LIBRARY_DIR}/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}/site-packages)
+
+# turn off patching if 3.5
+if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "3.5.2")
+  list(APPEND SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-python-3.5.2.patch)
+endif()
 
 if(LINUX)
 endif()
@@ -87,6 +105,8 @@ if(APPLE)
 
   endif()
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-python-mac_osx.sh)
+  set(SV_EXTERNALS_${proj}_CONFIG_SCRIPT ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}-config)
+  set(EXENAME @EXENAME@)
   configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
     COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT})
@@ -119,6 +139,7 @@ else()
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
+    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     INSTALL_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_INSTALL}
     UPDATE_COMMAND ""
     CMAKE_CACHE_ARGS
@@ -139,5 +160,3 @@ else()
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
     )
 endif()
-#TODO Add install rpath
-

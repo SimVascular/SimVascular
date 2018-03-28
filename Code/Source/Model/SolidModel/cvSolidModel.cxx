@@ -37,7 +37,9 @@
 #include "cv_get_tcl_interp_init.h"
 #include <string.h>
 #include <assert.h>
-#include "Python.h"
+#ifdef SV_USE_PYTHON
+  #include "Python.h"
+#endif
 
 // Globals:
 // --------
