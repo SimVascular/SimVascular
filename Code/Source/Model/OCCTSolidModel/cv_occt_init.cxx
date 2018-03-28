@@ -64,7 +64,12 @@
 #ifdef SV_USE_PYTHON
 #include "Python.h"
 #include "vtkPythonUtil.h"
+#ifdef SV_USE_PYTHON2
 #include "PyVTKClass.h"
+#endif
+#ifdef SV_USE_PYTHON3
+#include "PyVTKObject.h"
+#endif
 #endif
 #include "cv_globals.h"
 #include <TDF_Data.hxx>
@@ -296,6 +301,17 @@ PyMethodDef pyOCCT_methods[] = {
   {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
   {NULL, NULL}
 };
+
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyOCCTmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyOCCT",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyOCCT_methods
+};
+#endif
 #endif
 
 #ifdef SV_USE_PYTHON
@@ -316,7 +332,12 @@ int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 
   //Init our defined functions
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyOCCT", pyOCCT_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pyOCCTmodule);
+#endif
   Py_INCREF(pythonC);
   PyModule_AddObject(PyImport_AddModule("__buildin__"), "pyOCCT", pythonC);
 

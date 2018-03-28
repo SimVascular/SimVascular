@@ -65,6 +65,9 @@ target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${SV_LIB_GLOBALS_NAME}
   )
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+endif()
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)

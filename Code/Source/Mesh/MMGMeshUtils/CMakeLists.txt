@@ -44,7 +44,13 @@ endif()
 SET(CXXSRCS cv_mmg_mesh_utils.cxx)
 SET(HDRS cv_mmg_mesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mmg_mesh_init.cxx cv_mmg_mesh_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS cv_mmg_mesh_init_py.cxx)
+endif()
+
+if(SV_USE_TCL)
+	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mmg_mesh_init.cxx)
+endif()
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -84,4 +90,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(SV_USE_PYTHON)
+PYTHON_ADD_MODULE(pyMeshUtil cv_mmg_mesh_init_py.cxx)
+target_link_libraries(pyMeshUtil ${lib} ${PYTHON_LIBRARY})
 endif()

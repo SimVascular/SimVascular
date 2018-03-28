@@ -41,10 +41,16 @@ SET(CXXSRCS cvMeshSimAdapt.cxx)
 
 add_definitions("-DSV_EXPORT_MESHSIM_ADAPTOR_COMPILE")
 
-if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_adapt_init.cxx cv_meshsim_adapt_init_py.cxx)
-else()
-  add_library(${lib} STATIC ${CXXSRCS} cv_meshsim_adapt_init.cxx cv_meshsim_adapt_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS cv_meshsim_adapt_init_py.cxx)
+endif()
+
+if(SV_USE_TCL)
+  if(SV_USE_MESHSIM_SHARED_LIBRARIES)
+    add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_adapt_init.cxx)
+  else()
+    add_library(${lib} STATIC ${CXXSRCS} cv_meshsim_adapt_init.cxx)
+  endif()
 endif()
 
 if(SV_USE_PYTHON)
@@ -88,6 +94,10 @@ if(NOT SV_DISTRIBUTE_COMPONENTS STREQUAL OpenSource)
       DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT LicensedHeaders
       )
   endif()
+endif()
+if(SV_USE_PYTHON)
+  PYTHON_ADD_MODULE(pyMeshSimAdapt cv_meshsim_adapt_init_py.cxx)
+  target_link_libraries(pyMeshSimAdapt ${lib} ${PYTHON_LIBRARY})
 endif()
 
 

@@ -140,6 +140,10 @@ option(SV_USE_TETGEN_ADAPTOR "Option to use open source mesh adaption" ON)
 
 option(SV_USE_PYTHON "Use Tcl Python" OFF)
 
+option(SV_USE_PYTHON2 "Use Tcl Python2" OFF)
+
+option(SV_USE_PYTHON3 "Use Tcl Python3" OFF)
+
 option(SV_USE_SOLVERIO "Use SolverIO" OFF)
 #-----------------------------------------------------------------------------
 

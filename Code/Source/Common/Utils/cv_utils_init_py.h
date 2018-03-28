@@ -34,7 +34,10 @@
 
 #include "SimVascular.h"
 #include "svUtilsExports.h" // For exports
+#include "tcl.h"
 
+#ifdef SV_USE_PYTHON
 extern "C" SV_EXPORT_UTILS int Utils_pyInit();
+#endif
 
 #endif // __UTILS_INIT_H
