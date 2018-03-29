@@ -109,21 +109,46 @@ PyMethodDef VMTKUtils_methods[]=
   {NULL,NULL}
 };
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyVMTKUtilsmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyVMTKUtils",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   VMTKUtils_methods
+};
+#endif
 //------------------
 //initpyVMTKUtils
 //------------------
 PyMODINIT_FUNC initpyVMTKUtils()
 {
   PyObject* pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC=Py_InitModule("pyVMTKUtils",VMTKUtils_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pyVMTKUtilsmodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error initializing pyVMTKUtils.\n");
+#ifdef SV_USE_PYTHON2
     return;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
+#ifdef SV_USE_PYTHON2
   return;
+#endif
+#ifdef SV_USE_PYTHON3
+  return pythonC;
+#endif
 }
 
 //--------------------
@@ -507,7 +532,7 @@ PyObject* Geom_CapCmd( PyObject* self, PyObject* args)
   PyObject* pyList=PyList_New(numIds);
   for (int i = 0; i < numIds; i++) {
 	sprintf(idstring, "%i", ids[i]);
-    PyList_SetItem(pyList,i,PyString_FromFormat(idstring));
+    PyList_SetItem(pyList,i,PyBytes_FromFormat(idstring));
 	idstring[0]='\n';
   }
   delete [] ids;

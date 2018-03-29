@@ -89,6 +89,18 @@ PyMethodDef SolidPolydata_methods[] = {
   {"polydatasolid_registrars", PolyDataSolid_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
+
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pySolidPolydatamodule = {
+   PyModuleDef_HEAD_INIT,
+   "pySolidPolydata",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   SolidPolydata_methods
+};
+#endif
+
 PyObject* Polydatasolid_pyInit()
 {
 
@@ -108,7 +120,12 @@ PyObject* Polydatasolid_pyInit()
   }
 
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolidPolydata", SolidPolydata_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pySolidPolydatamodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
@@ -127,20 +144,40 @@ initpySolidPolydata()
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
   }
   else {
+#ifdef SV_USE_PYTHON2
     return ;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
   // Initialize parasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
+#ifdef SV_USE_PYTHON2
     return ;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
 
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolidPolydata", SolidPolydata_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pySolidPolydatamodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
+#ifdef SV_USE_PYTHON2
     return ;
+#endif
+#ifdef SV_USE_PYTHON3
+    return pythonC;
+#endif
   }
 }
 
@@ -157,13 +194,13 @@ PyObject* PolyDataSolid_RegistrarsListCmd(PyObject* self, PyObject* args )
   cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
   sprintf(result, "Solid model registrar ptr -> %p\n", pySolidModelRegistrar);
   fprintf(stdout,result);
-  PyList_SetItem(pyPtr,0,PyString_FromFormat(result));
+  PyList_SetItem(pyPtr,0,PyBytes_FromFormat(result));
 
   for (int i = 0; i < 5; i++) {
       sprintf( result,"GetFactoryMethodPtr(%i) = %p\n",
       i, (pySolidModelRegistrar->GetFactoryMethodPtr(i)));
       fprintf(stdout,result);
-      PyList_SetItem(pyPtr,i+1,PyString_FromFormat(result));
+      PyList_SetItem(pyPtr,i+1,PyBytes_FromFormat(result));
   }
   return pyPtr;
 }

@@ -62,7 +62,12 @@ int DiscreteUtils_Init();
 #ifdef SV_USE_PYTHON
 #include "Python.h"
 #include "vtkPythonUtil.h"
+#ifdef SV_USE_PYTHON2
 #include "PyVTKClass.h"
+#endif
+#ifdef SV_USE_PYTHON3
+#include "PyVTKObject.h"
+#endif
 #endif
 
 #ifdef SV_USE_PYTHON
@@ -633,6 +638,16 @@ int Solid_Init( Tcl_Interp *interp )
 #ifdef SV_USE_PYTHON
 //Must be called after the python interpreter is initiated and through
 //the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pySolidmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pySolid",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pySolid_methods
+};
+#endif
 // --------------------
 // Solid_InitPyModules
 // --------------------
@@ -653,7 +668,12 @@ int Solid_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 
   //Init our defined functions
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolid", pySolid_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pySolidmodule);
+#endif
   Py_INCREF(pythonC);
   PyModule_AddObject(PyImport_AddModule("__buildin__"), "pySolid", pythonC);
 

@@ -143,7 +143,7 @@ PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
   for (i = 0; i < nterms; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",terms[i][0],terms[i][1]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -232,7 +232,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
   for (i = 0; i < numPts; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",pts[i][0],pts[i][1]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -389,7 +389,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le",outPts[i][0],outPts[i][1]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -527,7 +527,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le %.6le",outPts[i][0],outPts[i][1],outPts[i][2]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -639,7 +639,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
     r[0] = '\0';
     for (j = 0; j < yOrder; j++) {
     sprintf(r,"%.6le ",mt[i][j]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -715,7 +715,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
   for (i = 0; i < numInterpPoints; i++) {
     r[0] = '\0';
     sprintf(r,"%.6le %.6le %.6le",outPts[i][0],outPts[i][1],outPts[i][2]);
-    PyObject *rr=PyString_FromString(r);
+    PyObject *rr=PyBytes_FromString(r);
     if(!rr)
     {
       Py_DECREF(pylist);
@@ -747,7 +747,16 @@ PyMethodDef pyMath_methods[] = {
   {NULL, NULL,0,NULL},
   };
 
-
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyMathmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyMath",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyMath_Methods
+};
+#endif
 // --------------------
 // initpyImage
 // --------------------
@@ -755,11 +764,18 @@ PyMODINIT_FUNC
 initpyMath(void)
 {
 PyObject *pyMth;
-
+#ifdef SV_USE_PYTHON2
 pyMth = Py_InitModule("pyMath",pyMath_methods);
-
+#endif
+#ifdef SV_USE_PYTHON3
+pyMth = PyModule_Create(&pyMathmodule);
+#endif
 MathErr = PyErr_NewException("pyMath.error",NULL,NULL);
 Py_INCREF(MathErr);
 PyModule_AddObject(pyMth,"error",MathErr);
+
+#ifdef SV_USE_PYTHON3
+return pyMth;
+#endif
 }
 #endif

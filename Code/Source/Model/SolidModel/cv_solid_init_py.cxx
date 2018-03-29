@@ -62,7 +62,12 @@ int DiscreteUtils_Init();
 #include "Python.h"
 #include <structmember.h>
 #include "vtkPythonUtil.h"
+#ifdef SV_USE_PYTHON3
+#include "PyVTKObject.h"
+#endif
+#ifdef SV_USE_PYTHON2
 #include "PyVTKClass.h"
+#endif
 
 #include "cv_occt_init_py.h"
 #include "cv_polydatasolid_init_py.h"
@@ -454,6 +459,18 @@ static PyMethodDef pySolid2_methods[] = {
 		     METH_NOARGS,NULL},
   {NULL, NULL}
 };
+
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pySolid2module = {
+   PyModuleDef_HEAD_INIT,
+   "pySolid2",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pySolid2_methods
+};
+#endif
+
 PyMODINIT_FUNC
 initpySolid2(void)
 {
@@ -477,20 +494,41 @@ initpySolid2(void)
   if (PyType_Ready(&pySolidModelType)<0)
   {
     fprintf(stdout,"Error in pySolidModelType");
+#ifdef SV_USE_PYTHON2
     return;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   //Init our defined functions
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolid2", pySolid2_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pySolid2module);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
+#ifdef SV_USE_PYTHON2
     return;
+#endif 
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   PyRunTimeErr=PyErr_NewException("pySolid2.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
   Py_INCREF(&pySolidModelType);
   PyModule_AddObject(pythonC, "pySolidModel", (PyObject *)&pySolidModelType);
+#ifdef SV_USE_PYTHON2
+  return;
+#endif
+#ifdef SV_USE_PYTHON3
+  return pythonC;
+#endif
 }
 
 /*#ifdef SV_USE_PYTHON

@@ -1333,6 +1333,16 @@ PyMethodDef pyImage_methods[] = {
   {NULL, NULL,0,NULL},
   };
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyImagemodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyImage",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyImage_methods
+};
+#endif
 
 // --------------------
 // initpyImage
@@ -1340,13 +1350,23 @@ PyMethodDef pyImage_methods[] = {
 PyMODINIT_FUNC
 initpyImage(void)
 {
-PyObject *pyIm;
+  PyObject *pyIm;
 
-pyIm = Py_InitModule("pyImage",pyImage_methods);
-
-ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
-Py_INCREF(ImgErr);
-PyModule_AddObject(pyIm,"error",ImgErr);
+#ifdef SV_USE_PYTHON2
+  pyIm = Py_InitModule("pyImage",pyImage_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pyIm = PyModule_Create(&pyImagemodule);
+#endif
+  ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
+  Py_INCREF(ImgErr);
+  PyModule_AddObject(pyIm,"error",ImgErr);
+#ifdef SV_USE_PYTHON2
+  return;
+#endif
+#ifdef SV_USE_PYTHON3
+  return pyIm;
+#endif
 }
 #endif
 

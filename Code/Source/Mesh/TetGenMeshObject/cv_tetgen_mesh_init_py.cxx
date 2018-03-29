@@ -71,6 +71,17 @@ PyMethodDef MeshTetgen_methods[]=
   {"meshtetgen_available",TetGenMesh_AvailableCmd,METH_NOARGS,NULL},
   {NULL,NULL}
 };
+
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyMeshTetgenmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyMeshTetgen",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   MeshTetgen_methods
+};
+#endif
 // ----------
 // Tetgenmesh_Init
 // ----------
@@ -108,7 +119,12 @@ PyObject* Tetgenmesh_pyInit()
     return Py_ERROR;
   }
   PyObject* pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyMeshTetgen",MeshTetgen_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pyMeshTetgenmodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
@@ -137,23 +153,55 @@ initpyMeshTetgen(void)
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
+#ifdef SV_USE_PYTHON2
       return;
+#endif
+#ifdef SV_USE_PYTHON3
+      Py_RETURN_NONE;
+#endif
     }
   }
   else {
-    return;
+#ifdef SV_USE_PYTHON2
+      return;
+#endif
+#ifdef SV_USE_PYTHON3
+      Py_RETURN_NONE;
+#endif
   }
   //Initialize Tetgenutils
   if (TGenUtils_Init() != SV_OK) {
-    return;
+#ifdef SV_USE_PYTHON2
+      return;
+#endif
+#ifdef SV_USE_PYTHON3
+      Py_RETURN_NONE;
+#endif
   }
   PyObject* pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyMeshTetgen",MeshTetgen_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pyMeshTetgenmodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
-    return;
+#ifdef SV_USE_PYTHON2
+      return;
+#endif
+#ifdef SV_USE_PYTHON3
+      Py_RETURN_NONE;
+#endif
   }
+
+#ifdef SV_USE_PYTHON2
+      return;
+#endif
+#ifdef SV_USE_PYTHON3
+      return pythonC;
+#endif
 }
 
 PyObject*  TetGenMesh_AvailableCmd(PyObject* self, PyObject* args)

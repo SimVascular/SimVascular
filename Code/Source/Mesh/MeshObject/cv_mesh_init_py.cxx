@@ -219,6 +219,16 @@ static PyMethodDef pyMeshObjectModule_methods[] =
   {NULL, NULL}
 };
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyMeshObjectmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyMeshObject",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyMeshObjectModule_methods
+};
+#endif
 //----------------
 //initpyMeshObject
 //----------------
@@ -236,12 +246,22 @@ PyMODINIT_FUNC initpyMeshObject()
   if (Py_BuildValue("i",kernel)==nullptr)
   {
     fprintf(stdout,"Unable to create MeshSystemRegistrar\n");
+#ifdef SV_USE_PYTHON2
     return;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   if(PySys_SetObject("MeshSystemRegistrar",Py_BuildValue("i",kernel))<0)
   {
     fprintf(stdout, "Unable to register MeshSystemRegistrar\n");
+#ifdef SV_USE_PYTHON2
     return;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   // Initialize
   cvMeshSystem::SetCurrentKernel( cvMeshObject::KERNEL_INVALID );
@@ -250,20 +270,40 @@ PyMODINIT_FUNC initpyMeshObject()
   if (PyType_Ready(&pyMeshObjectType)<0)
   {
     fprintf(stdout,"Error in pyMeshObjectType\n");
+#ifdef SV_USE_PYTHON2
     return;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   PyObject* pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyMeshObject",pyMeshObjectModule_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pyMeshObjectmodule);
+#endif
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshObject\n");
+#ifdef SV_USE_PYTHON2
     return;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   PyRunTimeErr = PyErr_NewException("pyMeshObject.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyMeshObjectType);
   PyModule_AddObject(pythonC,"pyMeshObject",(PyObject*)&pyMeshObjectType);
-  return ;
+#ifdef SV_USE_PYTHON2  
+  return;
+#endif
+#ifdef SV_USE_PYTHON3
+  return pythonC;
+#endif
 
 }
 

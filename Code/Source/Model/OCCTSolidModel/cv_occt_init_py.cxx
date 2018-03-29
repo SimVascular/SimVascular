@@ -64,7 +64,12 @@
 
 #include "Python.h"
 #include "vtkPythonUtil.h"
+#ifdef SV_USE_PYTHON2
 #include "PyVTKClass.h"
+#endif
+#ifdef SV_USE_PYTHON3
+#include "PyVTKObject.h"
+#endif
 #include "cv_globals.h"
 #include <TDF_Data.hxx>
 #include <TDF_Label.hxx>
@@ -102,6 +107,18 @@ PyMethodDef SolidOCCT_methods[] = {
   {NULL, NULL}
 };
 
+#ifdef SV_USE_PYTHON3
+
+static struct PyModuleDef pySolidOCCTmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pySolidOCCT",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   SolidOCCT_methods
+};
+#endif
+
 PyObject* Occtsolid_pyInit()
 {
   Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
@@ -132,7 +149,12 @@ PyObject* Occtsolid_pyInit()
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pySolidOCCTmodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
@@ -168,15 +190,30 @@ initpySolidOCCT()
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
   }
   else {
+#ifdef SV_USE_PYTHON2
     return ;
+#endif
+#ifdef SV_USE_PYTHON3
+    Py_RETURN_NONE;
+#endif
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
   PyObject *pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pySolidOCCTmodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
+#ifdef SV_USE_PYTHON2
     return ;
+#endif
+#ifdef SV_USE_PYTHON3
+    pythonC;
+#endif
   }
 }
 
