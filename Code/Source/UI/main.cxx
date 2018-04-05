@@ -35,10 +35,9 @@
   #include <QApplication>
   #include <QDir>
   #include <QVariant>
-#include <QDebug>
+  #include <QDebug>
   #include "mitkBaseApplication.h"
   #include "ctkPluginFrameworkLauncher.h"
-  #include "qttclnotifier.h"
 #endif
 
 #include "cvIOstream.h"
@@ -307,7 +306,6 @@ void simvascularApp::initializeLibraryPaths() {
 
  FILE *simvascularstdout;
  FILE *simvascularstderr;
- bool use_qt_tcl_interp;
 
 inline bool file_exists (char* name) {
     if (FILE *file = fopen(name, "r")) {
@@ -327,7 +325,6 @@ inline bool file_exists (char* name) {
   bool use_workbench  = false;
   bool catch_debugger = false;
   bool use_provisioning_file = false;
-  use_qt_tcl_interp = false;
 
   ios::sync_with_stdio();
 
@@ -434,11 +431,6 @@ inline bool file_exists (char* name) {
       }
       if((!strcmp("-ng",argv[iarg]))    ||
 	 (!strcmp("--no-gui",argv[iarg]))) {
-	gSimVascularBatchMode = 1;
-	foundValid = true;
-      }
-      if((!strcmp("--qt-tcl-interp",argv[iarg]))) {
-	use_qt_tcl_interp = true;
 	gSimVascularBatchMode = 1;
 	foundValid = true;
       }
@@ -902,12 +894,7 @@ RegCloseKey(hKey2);
        app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS, static_cast<int>(startOptions));
      }
 
-     if (use_qt_tcl_interp) {
-       Tcl_Main (argc, argv, Tcl_AppInit);
-     } else {
-       return app.run();
-     }
-
+     return app.run();
   }
 
 #endif
@@ -1014,24 +1001,6 @@ int Tcl_AppInit( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-  if (use_qt_tcl_interp) {
-    #ifndef WIN32
-    #ifdef SV_USE_QT
-      // instantiate "notifier" to combine Tcl and Qt events
-      QtTclNotify::QtTclNotifier::setup();
-    #endif
-    #endif
-
-    #ifndef WIN32
-    #ifdef SV_USE_QT
-      // run Qt's event loop
-      Tcl_SetMainLoop(SimVascularTcl_MainLoop);
-    #endif
-    #endif
-  }
-
   return TCL_OK;
 
 }
-
-
