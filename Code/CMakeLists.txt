@@ -147,9 +147,8 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Tcl Python Setup
+# Tcl Setup
 include(SimVascularTclSetup)
-include(SimVascularPythonSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -228,10 +227,6 @@ endif()
 # ITK
 if(SV_USE_ITK)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
-endif()
-# PYTHON
-if(SV_USE_PYTHON)
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
 endif()
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)

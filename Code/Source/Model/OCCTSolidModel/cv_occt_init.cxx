@@ -49,9 +49,13 @@
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
 #include "cv_vtk_utils.h"
+#include "cv_sys_geom.h"
 #include "cvOCCTSolidModel.h"
 
 #include "cvFactoryRegistrar.h"
+
+#include "vtkSmartPointer.h"
+#include "vtkSVNURBSSurface.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -96,6 +100,9 @@ int OCCTSolidModel_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
 int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 
+int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] );
+
 #ifdef SV_USE_PYTHON
 int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
@@ -137,6 +144,8 @@ int Occtsolid_Init( Tcl_Interp *interp )
 
   Tcl_CreateCommand( interp, "opencascadesolidmodel_registrars", OCCTSolidModel_RegistrarsListCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "occt_loft_vtksv_nurbs", OCCTSolidModel_loftVtksvNURBSCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 #ifdef SV_USE_PYTHON
   Tcl_CreateCommand( interp, "occt_initPyMods", OCCTSolidModel_InitPyModulesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
@@ -173,6 +182,230 @@ int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
   }
   return TCL_OK;
 }
+
+// ---------------------
+// OCCTSolidModel_loftVtksvNURBSCmd
+// ---------------------
+int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *objName;
+  int numSrcs;
+  ARG_List srcList;
+  cvRepositoryData *src;
+  cvPolyData *loftedPd;
+  RepositoryDataT type;
+  cvPolyData **srcs;
+  int uDegree = 2;
+  int vDegree = 2;
+  char *uKnotSpanType;
+  char *vKnotSpanType;
+  char *uParametricSpanType;
+  char *vParametricSpanType;
+
+  int table_size = 8;
+  ARG_Entry arg_table[] = {
+    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
+    { "-uDegree", INT_Type, &uDegree, NULL, REQUIRED, 0, { 0 } },
+    { "-vDegree", INT_Type, &vDegree, NULL, REQUIRED, 0, { 0 } },
+    { "-uKnotSpanType", STRING_Type, &uKnotSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-vKnotSpanType", STRING_Type, &vKnotSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-uParametricSpanType", STRING_Type, &uParametricSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-vParametricSpanType", STRING_Type, &vParametricSpanType, NULL, REQUIRED, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  //Call cvOCCTSolidModel function to create BSpline surf
+  cvOCCTSolidModel *geom;
+  if (cvSolidModel::gCurrentKernel != SM_KT_OCCT)
+  {
+    fprintf(stderr,"Solid Model kernel must be OCCT\n");
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  geom = (cvOCCTSolidModel *)gRepository->GetObject( objName );
+  if ( geom == NULL ) {
+    fprintf(stderr,"Object is not in repository\n");
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+  numSrcs = srcList.argc;
+
+  // Foreach src obj, check that it is in the repository and of the
+  // correct type (i.e. cvSolidModel).  Also build up the array of
+  // cvSolidModel*'s to pass to cvSolidModel::MakeLoftedSurf.
+
+  srcs = new cvPolyData * [numSrcs];
+
+  for (int i = 0; i < numSrcs; i++ ) {
+    src = gRepository->GetObject( srcList.argv[i] );
+    if ( src == NULL ) {
+      Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
+			(char *)NULL );
+      ARG_FreeListArgvs( table_size, arg_table );
+      delete [] srcs;
+      return TCL_ERROR;
+    }
+    type = src->GetType();
+    if ( type != POLY_DATA_T ) {
+      Tcl_AppendResult( interp, "object ", srcList.argv[i],
+			" not of type cvPolyData", (char *)NULL );
+      ARG_FreeListArgvs( table_size, arg_table );
+      delete [] srcs;
+      return TCL_ERROR;
+    }
+    srcs[i] = (cvPolyData *) src;
+  }
+
+  // We're done with the src object names:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  double dummySpacing = 0.5;
+  vtkSmartPointer<vtkSVNURBSSurface> NURBSSurface =
+    vtkSmartPointer<vtkSVNURBSSurface>::New();
+  if ( sys_geom_loft_solid_with_nurbs(srcs, numSrcs, uDegree, vDegree, dummySpacing,
+                                      dummySpacing, uKnotSpanType, vKnotSpanType,
+                                      uParametricSpanType, vParametricSpanType,
+                                      NURBSSurface,
+			                                (cvPolyData**)(&loftedPd) ) != SV_OK ) {
+    Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
+    delete loftedPd;
+    delete [] srcs;
+    return TCL_ERROR;
+  }
+
+  delete loftedPd;
+
+  // Now convert all NURBS info to arrays for creation of bspline
+  // Control points
+  int dims[3];
+  NURBSSurface->GetControlPointGrid()->GetDimensions(dims);
+  int Xlen1 = dims[0]; int Xlen2 = dims[1];
+  double **Xarr = new double*[Xlen1];
+  double **Yarr = new double*[Xlen1];
+  double **Zarr = new double*[Xlen1];
+  for (int i=0; i<Xlen1; i++)
+  {
+    Xarr[i] = new double[Xlen2];
+    Yarr[i] = new double[Xlen2];
+    Zarr[i] = new double[Xlen2];
+  }
+
+  int ptId;
+  double pt[3];
+  for (int i=0; i<Xlen1; i++)
+  {
+    for (int j=0; j<Xlen2; j++)
+    {
+      NURBSSurface->GetControlPointGrid()->GetPointId(i, j, 0, ptId);
+      NURBSSurface->GetControlPointGrid()->GetPoint(ptId, pt);
+      Xarr[i][j] = pt[0];
+      Yarr[i][j] = pt[1];
+      Zarr[i][j] = pt[2];
+    }
+  }
+
+  // Knots and multiplicities
+  vtkSmartPointer<vtkDoubleArray> singleUKnots =
+    vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkDoubleArray> singleVKnots =
+    vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkIntArray> uMult =
+    vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> vMult =
+    vtkSmartPointer<vtkIntArray>::New();
+
+  NURBSSurface->GetUMultiplicity(uMult, singleUKnots);
+  NURBSSurface->GetVMultiplicity(vMult, singleVKnots);
+
+  int uKlen = singleUKnots->GetNumberOfTuples();
+  double *uKarr = new double[uKlen];
+  for (int i=0; i<uKlen; i++)
+    uKarr[i] = singleUKnots->GetTuple1(i);
+
+  int vKlen = singleVKnots->GetNumberOfTuples();
+  double *vKarr = new double[vKlen];
+  for (int i=0; i<vKlen; i++)
+    vKarr[i] = singleVKnots->GetTuple1(i);
+
+  int uMlen = uMult->GetNumberOfTuples();
+  double *uMarr = new double[uMlen];
+  for (int i=0; i<uMlen; i++)
+    uMarr[i] = uMult->GetTuple1(i);
+
+  int vMlen = vMult->GetNumberOfTuples();
+  double *vMarr = new double[vMlen];
+  for (int i=0; i<vMlen; i++)
+    vMarr[i] = vMult->GetTuple1(i);
+
+  //int p = NURBSSurface->GetUDegree();  vtksv needs update
+  //int q = NURBSSurface->GetVDegree();
+  int p = uDegree;
+  int q = vDegree;
+
+      // Flipping order!
+  if (geom->CreateBSplineSurface(Xarr,Yarr,Zarr,Xlen1,Xlen2,
+    vKarr,vKlen,uKarr,uKlen,vMarr,vMlen,uMarr,uMlen,q,p) != SV_OK)
+  {
+    Tcl_AppendResult( interp, "error lofting obj ", objName,
+		      " in repository", (char *)NULL );
+    delete [] uKarr;
+    delete [] vKarr;
+    delete [] uMarr;
+    delete [] vMarr;
+
+    for (int i=0; i<Xlen1; i++)
+    {
+      delete [] Xarr[i];
+      delete [] Yarr[i];
+      delete [] Zarr[i];
+    }
+    delete [] Xarr;
+    delete [] Yarr;
+    delete [] Zarr;
+
+    delete [] srcs;
+    return TCL_ERROR;
+  }
+
+  delete [] uKarr;
+  delete [] vKarr;
+  delete [] uMarr;
+  delete [] vMarr;
+
+  for (int i=0; i<Xlen1; i++)
+  {
+    delete [] Xarr[i];
+    delete [] Yarr[i];
+    delete [] Zarr[i];
+  }
+  delete [] Xarr;
+  delete [] Yarr;
+  delete [] Zarr;
+
+  delete [] srcs;
+
+  char qstring[2048];
+  qstring[0]='\0';
+  sprintf(qstring,"%lf",q);
+  Tcl_SetResult( interp, qstring, TCL_VOLATILE );
+  return TCL_OK;
+}
+
 
 #ifdef SV_USE_PYTHON
 // --------------------
