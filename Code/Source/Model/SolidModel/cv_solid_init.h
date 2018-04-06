@@ -35,9 +35,6 @@
 #include "SimVascular.h"
 #include "svSolidModelExports.h" // For exports
 #include "tcl.h"
-#ifdef SV_USE_PYTHON
-#include "Python.h"
-#endif
 
 extern "C" SV_EXPORT_SOLID int Solid_Init( Tcl_Interp *interp );
 
@@ -46,17 +43,5 @@ SV_EXPORT_SOLID int Solid_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		     int argc, CONST84 char *argv[] );
 
 SV_EXPORT_SOLID void DeleteSolid( ClientData clientData );
-
-#ifdef SV_USE_PYTHON
-
-SV_EXPORT_SOLID double *getArrayFromDoubleList(PyObject* listObj,int &len);
-
-SV_EXPORT_SOLID double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny);
-
-SV_EXPORT_SOLID PyObject* importList1D(PyObject* self, PyObject* args);
-
-SV_EXPORT_SOLID PyObject* importList2D(PyObject* self, PyObject* args);
-
-#endif
 
 #endif // __CVSOLID_INIT_H

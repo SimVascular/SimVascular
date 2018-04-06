@@ -93,12 +93,16 @@ PyObject* OCCTSolidModel_AvailableCmd( PyObject* self, PyObject* args);
 
 PyObject* OCCTSolidModel_RegistrarsListCmd(PyObject* self, PyObject* args);
 
-PyObject* convertListsToOCCTObject2(PyObject* self, PyObject* args);
+PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args);
+
+double *getArrayFromDoubleList(PyObject* listObj,int &len);
+
+double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny);
 
 PyMethodDef SolidOCCT_methods[] = {
   {"opencascade_available", OCCTSolidModel_AvailableCmd,METH_NOARGS,NULL},
   {"opencascadesolidmodel_registrars", OCCTSolidModel_RegistrarsListCmd,METH_NOARGS,NULL},
-  {"convertListsToOCCT", convertListsToOCCTObject2, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
+  {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
   {NULL, NULL}
 };
 
@@ -205,11 +209,10 @@ PyObject* OCCTSolidModel_RegistrarsListCmd(PyObject* self, PyObject* args )
 }
 
 
-#ifdef SV_USE_PYTHON
 // --------------------
-// pySolid.convertListsToOCCTObject
+// pySolidOCCT.convertListsToOCCTObject
 // --------------------
-PyObject* convertListsToOCCTObject2(PyObject* self, PyObject* args)
+PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 {
   //Call cvOCCTSolidModel function to create BSpline surf
   cvOCCTSolidModel *geom;
@@ -315,8 +318,35 @@ PyObject* convertListsToOCCTObject2(PyObject* self, PyObject* args)
 
   return Py_BuildValue("s","success");
 }
-#endif
 
+// --------------------
+// getArrayFromDoubleList
+// --------------------
+double *getArrayFromDoubleList(PyObject* listObj,int &len)
+{
+  len = PyList_Size(listObj);
+  double *arr = new double[len];
+  for (int i=0;i<len;i++)
+  {
+    arr[i] = (double) PyFloat_AsDouble(PyList_GetItem(listObj,i));
+  }
+  return arr;
+}
 
-
-
+// --------------------
+// getArrayFromDoubleList2D
+// --------------------
+double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny)
+{
+  lenx = PyList_Size(listObj);
+  double **arr = new double*[lenx];
+  for (int i=0;i<lenx;i++)
+  {
+    PyObject *newList = PyList_GetItem(listObj,i);
+    leny = PyList_Size(newList);
+    arr[i] = new double[leny];
+    for (int j=0;j<leny;j++)
+      arr[i][j] = (double) PyFloat_AsDouble(PyList_GetItem(newList,j));
+  }
+  return arr;
+}
