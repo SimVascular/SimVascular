@@ -49,9 +49,13 @@
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
 #include "cv_vtk_utils.h"
+#include "cv_sys_geom.h"
 #include "cvOCCTSolidModel.h"
 
 #include "cvFactoryRegistrar.h"
+
+#include "vtkSmartPointer.h"
+#include "vtkSVNURBSSurface.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -61,11 +65,6 @@
 // Globals:
 // --------
 
-#ifdef SV_USE_PYTHON
-#include "Python.h"
-#include "vtkPythonUtil.h"
-#include "PyVTKClass.h"
-#endif
 #include "cv_globals.h"
 #include <TDF_Data.hxx>
 #include <TDF_Label.hxx>
@@ -96,11 +95,8 @@ int OCCTSolidModel_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
 int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 
-#ifdef SV_USE_PYTHON
-int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] );
-#endif
-
+int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] );
 
 int Occtsolid_Init( Tcl_Interp *interp )
 {
@@ -137,10 +133,8 @@ int Occtsolid_Init( Tcl_Interp *interp )
 
   Tcl_CreateCommand( interp, "opencascadesolidmodel_registrars", OCCTSolidModel_RegistrarsListCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-#ifdef SV_USE_PYTHON
-  Tcl_CreateCommand( interp, "occt_initPyMods", OCCTSolidModel_InitPyModulesCmd,
+  Tcl_CreateCommand( interp, "occt_loft_vtksv_nurbs", OCCTSolidModel_loftVtksvNURBSCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-#endif
 
   return TCL_OK;
 }
@@ -174,81 +168,192 @@ int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
   return TCL_OK;
 }
 
-#ifdef SV_USE_PYTHON
-// --------------------
-// pySolid.convertListsToOCCTObject
-// --------------------
-PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
+// ---------------------
+// OCCTSolidModel_loftVtksvNURBSCmd
+// ---------------------
+int OCCTSolidModel_loftVtksvNURBSCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] )
 {
+  char *usage;
+  char *objName;
+  int numSrcs;
+  ARG_List srcList;
+  cvRepositoryData *src;
+  cvPolyData *loftedPd;
+  RepositoryDataT type;
+  cvPolyData **srcs;
+  int uDegree = 2;
+  int vDegree = 2;
+  char *uKnotSpanType;
+  char *vKnotSpanType;
+  char *uParametricSpanType;
+  char *vParametricSpanType;
+
+  int table_size = 8;
+  ARG_Entry arg_table[] = {
+    { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+    { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
+    { "-uDegree", INT_Type, &uDegree, NULL, REQUIRED, 0, { 0 } },
+    { "-vDegree", INT_Type, &vDegree, NULL, REQUIRED, 0, { 0 } },
+    { "-uKnotSpanType", STRING_Type, &uKnotSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-vKnotSpanType", STRING_Type, &vKnotSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-uParametricSpanType", STRING_Type, &uParametricSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-vParametricSpanType", STRING_Type, &vParametricSpanType, NULL, REQUIRED, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
   //Call cvOCCTSolidModel function to create BSpline surf
   cvOCCTSolidModel *geom;
   if (cvSolidModel::gCurrentKernel != SM_KT_OCCT)
   {
     fprintf(stderr,"Solid Model kernel must be OCCT\n");
-    return NULL;
-  }
-
-  char *objName;
-  int p=0,q=0;
-  PyObject *X,*Y,*Z,*uKnots,*vKnots,*uMults,*vMults,*uDeg,*vDeg;
-  if (!PyArg_ParseTuple(args,"sO!O!O!O!O!O!O!ii",&objName,
-						&PyList_Type,&X,
-					        &PyList_Type,&Y,
-					        &PyList_Type,&Z,
-					        &PyList_Type,&uKnots,
-						&PyList_Type,&vKnots,
-						&PyList_Type,&uMults,
-						&PyList_Type,&vMults,
-						&p,&q))
-  {
-    fprintf(stderr,"Could not import 1 char, 7 tuples, and 2 ints: X,Y,Z,uKnots,vKnots,uMults,vMults,uDeg,vDeg");
-    return NULL;
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
   }
 
   geom = (cvOCCTSolidModel *)gRepository->GetObject( objName );
   if ( geom == NULL ) {
     fprintf(stderr,"Object is not in repository\n");
-    return NULL;
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
   }
-  //Get X,Y,Z arrays
-  double **Xarr=NULL,**Yarr=NULL,**Zarr=NULL;
-  int Xlen1=0,Xlen2=0,Ylen1=0,Ylen2=0,Zlen1=0,Zlen2=0;
-  Py_INCREF(X); Py_INCREF(Y); Py_INCREF(Z);
-  Xarr = getArrayFromDoubleList2D(X,Xlen1,Xlen2);
-  Yarr = getArrayFromDoubleList2D(Y,Ylen1,Ylen2);
-  Zarr = getArrayFromDoubleList2D(Z,Zlen1,Zlen2);
-  Py_DECREF(X); Py_DECREF(Y); Py_DECREF(Z);
-  //Clean up
-  if ((Xlen1 != Ylen1 || Ylen1 != Zlen1 || Zlen1 != Xlen1) ||
-      (Xlen2 != Ylen2 || Ylen2 != Zlen2 || Zlen2 != Xlen2))
+
+  // Do work of command:
+  numSrcs = srcList.argc;
+
+  // Foreach src obj, check that it is in the repository and of the
+  // correct type (i.e. cvSolidModel).  Also build up the array of
+  // cvSolidModel*'s to pass to cvSolidModel::MakeLoftedSurf.
+
+  srcs = new cvPolyData * [numSrcs];
+
+  for (int i = 0; i < numSrcs; i++ ) {
+    src = gRepository->GetObject( srcList.argv[i] );
+    if ( src == NULL ) {
+      Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
+			(char *)NULL );
+      ARG_FreeListArgvs( table_size, arg_table );
+      delete [] srcs;
+      return TCL_ERROR;
+    }
+    type = src->GetType();
+    if ( type != POLY_DATA_T ) {
+      Tcl_AppendResult( interp, "object ", srcList.argv[i],
+			" not of type cvPolyData", (char *)NULL );
+      ARG_FreeListArgvs( table_size, arg_table );
+      delete [] srcs;
+      return TCL_ERROR;
+    }
+    srcs[i] = (cvPolyData *) src;
+  }
+
+  // We're done with the src object names:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  double dummySpacing = 0.5;
+  vtkSmartPointer<vtkSVNURBSSurface> NURBSSurface =
+    vtkSmartPointer<vtkSVNURBSSurface>::New();
+  if ( sys_geom_loft_solid_with_nurbs(srcs, numSrcs, uDegree, vDegree, dummySpacing,
+                                      dummySpacing, uKnotSpanType, vKnotSpanType,
+                                      uParametricSpanType, vParametricSpanType,
+                                      NURBSSurface,
+			                                (cvPolyData**)(&loftedPd) ) != SV_OK ) {
+    Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
+    delete loftedPd;
+    delete [] srcs;
+    return TCL_ERROR;
+  }
+
+  delete loftedPd;
+
+  // Now convert all NURBS info to arrays for creation of bspline
+  // Control points
+  int dims[3];
+  NURBSSurface->GetControlPointGrid()->GetDimensions(dims);
+  int Xlen1 = dims[0]; int Xlen2 = dims[1];
+  double **Xarr = new double*[Xlen1];
+  double **Yarr = new double*[Xlen1];
+  double **Zarr = new double*[Xlen1];
+  for (int i=0; i<Xlen1; i++)
   {
-    fprintf(stderr,"X,Y,and Z inputs need to be same dimensions\n");
-    for (int i=0;i<Xlen1;i++)
-      delete [] Xarr[i];
-    delete [] Xarr;
-    for (int i=0;i<Ylen1;i++)
-      delete [] Yarr[i];
-    delete [] Yarr;
-    for (int i=0;i<Zlen1;i++)
-      delete [] Zarr[i];
-    delete [] Zarr;
-    return NULL;
+    Xarr[i] = new double[Xlen2];
+    Yarr[i] = new double[Xlen2];
+    Zarr[i] = new double[Xlen2];
   }
 
-  //Get knots and multiplicity arrays
-  double *uKarr=NULL,*vKarr=NULL,*uMarr=NULL,*vMarr=NULL;
-  int uKlen=0,vKlen=0,uMlen=0,vMlen=0;
-  uKarr = getArrayFromDoubleList(uKnots,uKlen);
-  vKarr = getArrayFromDoubleList(vKnots,vKlen);
-  uMarr = getArrayFromDoubleList(uMults,uMlen);
-  vMarr = getArrayFromDoubleList(vMults,vMlen);
+  int ptId;
+  double pt[3];
+  for (int i=0; i<Xlen1; i++)
+  {
+    for (int j=0; j<Xlen2; j++)
+    {
+      NURBSSurface->GetControlPointGrid()->GetPointId(i, j, 0, ptId);
+      NURBSSurface->GetControlPointGrid()->GetPoint(ptId, pt);
+      Xarr[i][j] = pt[0];
+      Yarr[i][j] = pt[1];
+      Zarr[i][j] = pt[2];
+    }
+  }
 
+  // Knots and multiplicities
+  vtkSmartPointer<vtkDoubleArray> singleUKnots =
+    vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkDoubleArray> singleVKnots =
+    vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkIntArray> uMult =
+    vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> vMult =
+    vtkSmartPointer<vtkIntArray>::New();
+
+  NURBSSurface->GetUMultiplicity(uMult, singleUKnots);
+  NURBSSurface->GetVMultiplicity(vMult, singleVKnots);
+
+  int uKlen = singleUKnots->GetNumberOfTuples();
+  double *uKarr = new double[uKlen];
+  for (int i=0; i<uKlen; i++)
+    uKarr[i] = singleUKnots->GetTuple1(i);
+
+  int vKlen = singleVKnots->GetNumberOfTuples();
+  double *vKarr = new double[vKlen];
+  for (int i=0; i<vKlen; i++)
+    vKarr[i] = singleVKnots->GetTuple1(i);
+
+  int uMlen = uMult->GetNumberOfTuples();
+  double *uMarr = new double[uMlen];
+  for (int i=0; i<uMlen; i++)
+    uMarr[i] = uMult->GetTuple1(i);
+
+  int vMlen = vMult->GetNumberOfTuples();
+  double *vMarr = new double[vMlen];
+  for (int i=0; i<vMlen; i++)
+    vMarr[i] = vMult->GetTuple1(i);
+
+  //int p = NURBSSurface->GetUDegree();  vtksv needs update
+  //int q = NURBSSurface->GetVDegree();
+  int p = uDegree;
+  int q = vDegree;
+
+      // Flipping order!
   if (geom->CreateBSplineSurface(Xarr,Yarr,Zarr,Xlen1,Xlen2,
-    uKarr,uKlen,vKarr,vKlen,uMarr,uMlen,vMarr,vMlen,p,q) != SV_OK)
+    vKarr,vKlen,uKarr,uKlen,vMarr,vMlen,uMarr,uMlen,q,p) != SV_OK)
   {
-    //Set special python thingy
-    //Clean up
-    for (int i=0;i<Xlen1;i++)
+    Tcl_AppendResult( interp, "error lofting obj ", objName,
+		      " in repository", (char *)NULL );
+    delete [] uKarr;
+    delete [] vKarr;
+    delete [] uMarr;
+    delete [] vMarr;
+
+    for (int i=0; i<Xlen1; i++)
     {
       delete [] Xarr[i];
       delete [] Yarr[i];
@@ -258,16 +363,16 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
     delete [] Yarr;
     delete [] Zarr;
 
-    delete [] uKarr;
-    delete [] vKarr;
-    delete [] uMarr;
-    delete [] vMarr;
-    fprintf(stderr,"Conversion to BSpline surface didn't work\n");
-    return NULL;
+    delete [] srcs;
+    return TCL_ERROR;
   }
 
-  //Clean up
-  for (int i=0;i<Xlen1;i++)
+  delete [] uKarr;
+  delete [] vKarr;
+  delete [] uMarr;
+  delete [] vMarr;
+
+  for (int i=0; i<Xlen1; i++)
   {
     delete [] Xarr[i];
     delete [] Yarr[i];
@@ -277,50 +382,11 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
   delete [] Yarr;
   delete [] Zarr;
 
-  delete [] uKarr;
-  delete [] vKarr;
-  delete [] uMarr;
-  delete [] vMarr;
+  delete [] srcs;
 
-  return Py_BuildValue("s","success");
-}
-#endif
-
-
-#ifdef SV_USE_PYTHON
-//All functions listed and initiated as pyOCCT_methods declared here
-// --------------------
-// pyOCCT_methods
-// --------------------
-PyMethodDef pyOCCT_methods[] = {
-  {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
-  {NULL, NULL}
-};
-#endif
-
-#ifdef SV_USE_PYTHON
-//Must be called after the python interpreter is initiated and through
-//the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
-// --------------------
-// Solid_InitPyModules
-// --------------------
-int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] )
-{
-  char *name;
-
-  if ( argc != 1 ) {
-    Tcl_SetResult( interp, "usage: occt_initPyMods", TCL_STATIC );
-    return TCL_ERROR;
-  }
-
-  //Init our defined functions
-  PyObject *pythonC;
-  pythonC = Py_InitModule("pyOCCT", pyOCCT_methods);
-  Py_INCREF(pythonC);
-  PyModule_AddObject(PyImport_AddModule("__buildin__"), "pyOCCT", pythonC);
-
+  char qstring[2048];
+  qstring[0]='\0';
+  sprintf(qstring,"%lf",q);
+  Tcl_SetResult( interp, qstring, TCL_VOLATILE );
   return TCL_OK;
 }
-#endif
-

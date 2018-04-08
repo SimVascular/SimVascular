@@ -35,12 +35,6 @@ set(APP_SHOW_CONSOLE ON)
 
 set(CXXSRCS main.cxx SimVascular_Init.cxx)
 
-if(SV_USE_QT)
-  set(CXXSRCS ${CXXSRCS} qttclnotifier.cxx)
-  qt5_wrap_cpp(qt_tcl_hdr_moc qttclnotifier.h)
-  set(CXXSRCS ${CXXSRCS} ${qt_tcl_hdr_moc})
-endif()
-
 unset(OPTLIBS)
 
 if(NOT ${USE_SYSTEM_TCL})
@@ -92,10 +86,6 @@ if (SV_USE_MESHSIM_ADAPTOR)
 	  set(OPTLIBS ${OPTLIBS} ${SV_LIB_ADAPTOR_NAME})
 	  set(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_ADAPTOR_NAME})
   endif()
-endif()
-
-if (SV_USE_PYTHON)
-	set(OPTLIBS ${OPTLIBS} ${SV_LIB_PYTHON_INTERP_NAME})
 endif()
 
 set(SV_WORKBENCH_PROVISIONING_FILE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.provisioning" CACHE INTERNAL "svWorkbench provisioning file" FORCE)
