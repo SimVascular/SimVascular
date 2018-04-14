@@ -29,6 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef SVWORKBENCHWINDOWADVISORHACK_H
+#define SVWORKBENCHWINDOWADVISORHACK_H
+
 #include <QObject>
 
 class ctkPluginContext;
@@ -72,3 +75,6 @@ public:
 
     static svWorkbenchWindowAdvisorHack* undohack;
 };
+
+#endif // SVWORKBENCHWINDOWADVISORHACK_H
+

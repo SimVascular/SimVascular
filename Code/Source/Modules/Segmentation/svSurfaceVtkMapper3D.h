@@ -45,8 +45,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef mitksvSurfaceVtkMapper3D_h
-#define mitksvSurfaceVtkMapper3D_h
+#ifndef SVSURFACEVTKMAPPER3D_H
+#define SVSURFACEVTKMAPPER3D_H
 
 #include <MitkCoreExports.h>
 #include "svSurface.h"
@@ -177,4 +177,5 @@ public:
 };
 } // namespace mitk
 
-#endif /* mitksvSurfaceVtkMapper3D_h */
+#endif /* SVSURFACEVTKMAPPER3D_H */
+

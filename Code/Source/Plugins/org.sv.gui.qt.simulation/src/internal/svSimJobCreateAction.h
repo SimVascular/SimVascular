@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef svSimJobCreateACTION_H
-#define svSimJobCreateACTION_H
+#ifndef SVSIMJOBCREATEACTION_H
+#define SVSIMJOBCREATEACTION_H
 
 #include <org_sv_gui_qt_simulation_Export.h>
 
@@ -67,4 +67,5 @@ private:
   svSimJobCreate* m_SimJobCreateWidget;
 };
 
-#endif
+#endif // SVSIMJOBCREATEACTION_H
+

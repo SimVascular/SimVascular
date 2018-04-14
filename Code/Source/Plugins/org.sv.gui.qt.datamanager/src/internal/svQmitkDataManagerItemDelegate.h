@@ -45,8 +45,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef svQmitkDataManagerItemDelegate_h
-#define svQmitkDataManagerItemDelegate_h
+#ifndef SVQMITKDATAMANAGERITEMDELEGATE_H
+#define SVQMITKDATAMANAGERITEMDELEGATE_H
 
 #include <QStyledItemDelegate>
 
@@ -61,4 +61,5 @@ public:
   void setEditorData(QWidget* editor, const QModelIndex& index) const override;
 };
 
-#endif
+#endif // SVQMITKDATAMANAGERITEMDELEGATE_H
+

@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef svSeg3DUtils_H
-#define svSeg3DUtils_H
+#ifndef SVSEG3DEDIT_H
+#define SVSEG3DEDIT_H
 
 #include "svMitkSeg3D.h"
 #include "svMitkSeg3DDataInteractor.h"
@@ -108,4 +108,5 @@ protected:
 
 };
 
-#endif // svSeg3DUtils_H
+#endif // SVSEG3DEDIT_H
+

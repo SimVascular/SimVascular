@@ -45,8 +45,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef svSurface_h
-#define svSurface_h
+#ifndef SVSURFACE_H
+#define SVSURFACE_H
 
 #include "SimVascular.h"
 #include <svSegmentationExports.h>
@@ -168,4 +168,5 @@ DEPRECATED( MITKCORE_EXPORT bool Equal( vtkPolyData* leftHandSide, vtkPolyData* 
 MITKCORE_EXPORT bool Equal( vtkPolyData& leftHandSide, vtkPolyData& rightHandSide, mitk::ScalarType eps, bool verbose);
 }
 
-#endif
+#endif // SVSURFACE_H
+
