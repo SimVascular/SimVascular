@@ -44,6 +44,8 @@ set(INTERNAL_CPP_FILES
     svSimJobStopAction.cxx
     svSimJobExportAction.cxx
     svSimulationPluginActivator.cxx
+    svProcessHandler.cxx
+    svSolverProcessHandler.cxx
 )
 
 set(MOC_H_FILES
@@ -58,6 +60,8 @@ set(MOC_H_FILES
     src/internal/svSimJobStopAction.h
     src/internal/svSimJobExportAction.h
     src/internal/svSimulationPluginActivator.h
+    src/internal/svProcessHandler.h
+    src/internal/svSolverProcessHandler.h
 )
 
 set(UI_FILES
