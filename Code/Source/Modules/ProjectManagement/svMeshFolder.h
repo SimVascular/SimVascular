@@ -52,9 +52,9 @@ protected:
 
     mitkCloneMacro(Self);
 
-    svMeshFolder(){}
-    svMeshFolder(const svMeshFolder &other) : svDataFolder(other) { }
-    virtual ~svMeshFolder(){}
+    svMeshFolder();
+    svMeshFolder(const svMeshFolder &other);
+    virtual ~svMeshFolder();
 
 };
 

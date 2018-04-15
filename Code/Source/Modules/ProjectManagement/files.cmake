@@ -47,5 +47,12 @@ set(CPP_FILES
     svProjectManager.cxx
     svDataNodeOperation.cxx
     svDataNodeOperationInterface.cxx
+    svImageFolder.cxx
+    svMeshFolder.cxx
+    svModelFolder.cxx
+    svPathFolder.cxx
+    svProjectFolder.cxx
+    svSegmentationFolder.cxx
+    svSimulationFolder.cxx
 )
 

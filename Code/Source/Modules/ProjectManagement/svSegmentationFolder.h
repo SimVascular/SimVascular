@@ -52,9 +52,9 @@ protected:
 
     mitkCloneMacro(Self);
 
-    svSegmentationFolder(){}
-    svSegmentationFolder(const svSegmentationFolder &other) : svDataFolder(other) { }
-    virtual ~svSegmentationFolder(){}
+    svSegmentationFolder();
+    svSegmentationFolder(const svSegmentationFolder &other);
+    virtual ~svSegmentationFolder();
 
 };
 

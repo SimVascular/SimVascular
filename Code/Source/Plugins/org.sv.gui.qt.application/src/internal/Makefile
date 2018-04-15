@@ -73,7 +73,8 @@ CXXSRCS	= \
   svAppWorkbenchAdvisor.cxx \
   svAboutDialog.cxx \
   svWorkbenchIntroPart.cxx \
-  svDefaultPerspective.cxx
+  svDefaultPerspective.cxx \
+  svWorkbenchWindowAdvisorHack.cxx
 
 UIFILES = \
   svProjectCreate.ui \

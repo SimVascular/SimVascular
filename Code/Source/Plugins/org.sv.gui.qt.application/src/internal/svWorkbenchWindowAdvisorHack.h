@@ -72,7 +72,7 @@ public:
 
     svWorkbenchWindowAdvisorHack();
     ~svWorkbenchWindowAdvisorHack();
-
+    static void SafeHandleNavigatorView(QString view_query_name);
     static svWorkbenchWindowAdvisorHack* undohack;
 };
 

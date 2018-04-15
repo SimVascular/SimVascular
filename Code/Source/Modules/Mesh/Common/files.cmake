@@ -56,6 +56,7 @@ set(CPP_FILES
     svMeshLegacyIO.cxx
     svMeshTetGenAdaptor.cxx
     svMitkMeshObjectFactory.cxx
+    svMeshAdaptor.cxx
 )
 
 set(RESOURCE_FILES

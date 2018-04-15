@@ -52,9 +52,9 @@ protected:
 
     mitkCloneMacro(Self);
 
-    svProjectFolder(){}
-    svProjectFolder(const svProjectFolder &other) : svDataFolder(other) { }
-    virtual ~svProjectFolder(){}
+    svProjectFolder();
+    svProjectFolder(const svProjectFolder &other);
+    virtual ~svProjectFolder();
 
 };
 

@@ -81,7 +81,8 @@ CXXSRCS	= \
     svMitkMeshIO.cxx \
     svMeshLegacyIO.cxx \
     svMeshTetGenAdaptor.cxx \
-    svMitkMeshObjectFactory.cxx
+    svMitkMeshObjectFactory.cxx \
+    svMeshAdaptor.cxx
 
 CXXSRCS += us_init.cxx
 

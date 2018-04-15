@@ -29,42 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SVMESHADAPTOR_H
-#define SVMESHADAPTOR_H
+#include "svMeshFolder.h"
 
-#include <svMeshExports.h>
+svMeshFolder::svMeshFolder() {
+}
 
-#include "svMesh.h"
+svMeshFolder::svMeshFolder(const svMeshFolder &other) : svDataFolder(other) {
+}
 
-class SVMESH_EXPORT svMeshAdaptor
-{
-
-public:
-
-    svMeshAdaptor();
-
-    virtual ~svMeshAdaptor();
-
-    std::string GetType() const {return m_Type;}
-
-    virtual bool SetModelElement(svModelElement *modelElement) = 0;
-
-    virtual bool LoadMesh(std::string filePath) = 0;
-
-    virtual bool SetAdaptOptions(std::string flag, double value) = 0;
-
-    virtual bool Adapt() = 0;
-
-    virtual bool WriteAdaptedSolution(std::string filePath) = 0;
-
-    virtual svMesh* GetAdaptedMesh() = 0;
-
-    virtual bool WriteAdaptedMesh(std::string filePath) = 0;
-
-protected:
-
-    std::string m_Type;
-
-  };
-
-#endif // SVMESHADAPTOR_H
+svMeshFolder::~svMeshFolder() {
+}

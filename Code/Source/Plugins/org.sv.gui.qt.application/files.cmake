@@ -45,6 +45,7 @@ set(INTERNAL_CPP_FILES
   svAboutDialog.cxx
   svWorkbenchIntroPart.cxx
   svDefaultPerspective.cxx
+  svWorkbenchWindowAdvisorHack.cxx
 )
 
 set(MOC_H_FILES

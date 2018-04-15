@@ -65,7 +65,14 @@ CXXSRCS	= \
     svDataFolder.cxx \
     svProjectManager.cxx \
     svDataNodeOperation.cxx \
-    svDataNodeOperationInterface.cxx
+    svDataNodeOperationInterface.cxx \
+    svImageFolder.cxx \
+    svMeshFolder.cxx \
+    svModelFolder.cxx \
+    svPathFolder.cxx \
+    svProjectFolder.cxx \
+    svSegmentationFolder.cxx \
+    svSimulationFolder.cxx
 
 CXXSRCS += us_init.cxx
 

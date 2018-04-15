@@ -52,11 +52,10 @@ protected:
 
     mitkCloneMacro(Self);
 
-    svSimulationFolder(){}
-    svSimulationFolder(const svSimulationFolder &other) : svDataFolder(other) { }
-    virtual ~svSimulationFolder(){}
+    svSimulationFolder();
+    svSimulationFolder(const svSimulationFolder &other);
+    virtual ~svSimulationFolder();
 
 };
-
 
 #endif // SVSIMULATIONFOLDER_H
