@@ -1,0 +1,3 @@
+./Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.cxx
+./Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.h
+./Plugins/org.sv.gui.qt.datamanager/src/internal/svmitkIContextMenuAction.h

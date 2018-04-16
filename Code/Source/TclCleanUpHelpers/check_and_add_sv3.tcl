@@ -101,7 +101,8 @@ for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
 
 ###eval exec emacs $emacs_edit
 
-puts "play with rename to check..."
+if {0 == 1} {
+puts "delete files to check what I'm not checking..."
 
 for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
     
@@ -129,6 +130,115 @@ for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
         exec rm -f $found_file_cxx_fn
     }
 
+}
+}
+
+# replace header filenames and #defines
+
+exec rm -f sed-replace-scripts.txt
+set ofn [open sed-replace-scripts.txt w]
+
+# not needed if we use exact match
+# hangeEvent looks like a header file .h sometimes!
+#puts $ofn "s+ChangeEvent+PROTECT_ME_CHANGE_EVENT+g"
+#puts $ofn "s+ChangeEvent+PROTECT_ME_CHANGE_EVENT+g"
+#puts $ofn "s+ThresholdInteractor+PROTECT_ME_THRESHOLD_INTERACTOR+g"
+
+foreach fn [file_find {Plugins} *.ui] {
+    set myroot [string range [file rootname [file tail $fn]] 2 end]
+    puts $ofn "s+ui_sv$myroot\\.h+ui_sv3gui_$myroot\\.h+g"
+    puts $ofn "s+sv$myroot\\.ui+sv3gui_$myroot\\.ui+g"
+}
+
+for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
+    
+    set find_me_hdr_fn  [file rootname [lindex $all_header_filenames $i]]\\.h
+    set find_me_cxx_fn  [file rootname [lindex $all_cxx_filenames $i]]\\.cxx
+    set find_me_defines [lindex $all_pound_defines $i]
+
+    puts $ofn "s+$find_me_hdr_fn+sv3gui_[string range $find_me_hdr_fn 2 end]+g"
+    puts $ofn "s+$find_me_cxx_fn+sv3gui_[string range $find_me_cxx_fn 2 end]+g"
+    puts $ofn "s+$find_me_defines+SV3GUI\_[string range $find_me_defines 2 end]+g"
     
 }
+
+#undo hack
+#puts $ofn "s+PROTECT_ME_CHANGE_EVENT+ChangeEvent+g"
+#puts $ofn "s+PROTECT_ME_THRESHOLD_INTERACTOR+ThresholdInteractor+g"
+
+close $ofn
+
+exec rm -Rf sv3gui
+exec mkdir sv3gui
+
+foreach fn [file_find {Modules Plugins} *.h] {
+
+    set newfn sv3gui_[string range [file tail $fn] 2 end]
+    puts "working on fn: $fn  ($newfn)"
+    exec mkdir -p sv3gui/[file dirname $fn]
+    exec sed -f sed-replace-scripts.txt $fn > sv3gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+
+}
+
+foreach fn [file_find {Modules Plugins} *.cxx] {
+
+    set newfn sv3gui_[string range [file tail $fn] 2 end]
+    puts "working on fn: $fn  ($newfn)"
+    exec mkdir -p sv3gui/[file dirname $fn]
+    exec sed -f sed-replace-scripts.txt $fn > sv3gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+
+}
+
+foreach fn [file_find {Modules Plugins} Makefile] {
+
+    set newfn [file tail $fn]
+    puts "working on fn: $fn  ($newfn)"
+    exec mkdir -p sv3gui/[file dirname $fn]
+    exec sed -f sed-replace-scripts.txt $fn > sv3gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+
+}
+
+foreach fn [file_find {Modules Plugins} files.cmake] {
+
+    set newfn [file tail $fn]
+    puts "working on fn: $fn  ($newfn)"
+    exec mkdir -p sv3gui/[file dirname $fn]
+    exec sed -f sed-replace-scripts.txt $fn > sv3gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+
+}
+
+foreach fn [file_find {Plugins} *.ui] {
+    set myroot [string range [file rootname [file tail $fn]] 2 end]
+    set newfn sv3gui_$myroot.ui
+    puts "working on ($fn) to ($newfn)"
+    exec mkdir -p sv3gui/[file dirname $fn]
+    exec sed -f sed-replace-scripts.txt $fn > sv3gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+}
+
+foreach fn [file_find {Modules Plugins} *] {
+
+    if [file isdirectory $fn] continue 
+    if {[file extension $fn] == ".h"} continue
+    if {[file extension $fn] == ".ui"} continue
+    if {[file extension $fn] == ".cxx"} continue
+    if {[file tail $fn] == "Makefile"} continue
+    if {[file tail $fn] == "files.cmake"} continue
+    
+    set newfn [file tail $fn]
+    puts "copying fn: $fn  ($newfn)"
+    exec mkdir -p sv3gui/[file dirname $fn]
+    exec cp $fn sv3gui/[file dirname $fn]/$newfn
+
+}
+
+# need to manually copy these three unaltered files
+exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.cxx sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.cxx
+exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.h sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.h
+exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svmitkIContextMenuAction.h sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/svmitkIContextMenuAction.h
+
 
