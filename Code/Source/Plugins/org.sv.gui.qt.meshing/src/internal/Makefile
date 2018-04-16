@@ -54,29 +54,29 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
 endif
 
 HDRS	= \
-    svMeshCreate.h \
-    svMeshCreateAction.h \
-    svMeshEdit.h \
-    svLocalTableDelegate.h \
-    svMeshLegacySaveAction.h \
-    svMeshLoadSurfaceAction.h \
-    svMeshLoadVolumeAction.h \
-    svMeshingPluginActivator.h
+    sv3gui_MeshCreate.h \
+    sv3gui_MeshCreateAction.h \
+    sv3gui_MeshEdit.h \
+    sv3gui_LocalTableDelegate.h \
+    sv3gui_MeshLegacySaveAction.h \
+    sv3gui_MeshLoadSurfaceAction.h \
+    sv3gui_MeshLoadVolumeAction.h \
+    sv3gui_MeshingPluginActivator.h
 
 CXXSRCS	= \
-    svMeshCreate.cxx \
-    svMeshCreateAction.cxx \
-    svMeshEdit.cxx \
-    svVtkMeshSphereWidget.cxx \
-    svLocalTableDelegate.cxx \
-    svMeshLegacySaveAction.cxx \
-    svMeshLoadSurfaceAction.cxx \
-    svMeshLoadVolumeAction.cxx \
-    svMeshingPluginActivator.cxx
+    sv3gui_MeshCreate.cxx \
+    sv3gui_MeshCreateAction.cxx \
+    sv3gui_MeshEdit.cxx \
+    sv3gui_VtkMeshSphereWidget.cxx \
+    sv3gui_LocalTableDelegate.cxx \
+    sv3gui_MeshLegacySaveAction.cxx \
+    sv3gui_MeshLoadSurfaceAction.cxx \
+    sv3gui_MeshLoadVolumeAction.cxx \
+    sv3gui_MeshingPluginActivator.cxx
 
 UIFILES = \
-    svMeshCreate.ui \
-    svMeshEdit.ui
+    sv3gui_MeshCreate.ui \
+    sv3gui_MeshEdit.ui
 
 QRCFILES = org_sv_gui_qt_meshing_manifest.qrc \
            org_sv_gui_qt_meshing_cached.qrc

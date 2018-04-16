@@ -33,45 +33,45 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
-    svLoftingUtils.cxx
-    svContourGroupCreate.cxx
-    svContourGroupCreateAction.cxx
-    svSegmentationLegacyLoadAction.cxx
-    svSegmentationLegacySaveAction.cxx
-    svSegmentationLoadAction.cxx
-    svLevelSet2DWidget.cxx
-    svLoftParamWidget.cxx
-    svSeg2DEdit.cxx
-    svContourGroupPoint2DSizeAction.cxx
-    svContourGroupPoint3DSizeAction.cxx
-    svSeg3DCreateAction.cxx
-    svSeg3DEdit.cxx
-    svSegmentationPluginActivator.cxx
+    sv3gui_LoftingUtils.cxx
+    sv3gui_ContourGroupCreate.cxx
+    sv3gui_ContourGroupCreateAction.cxx
+    sv3gui_SegmentationLegacyLoadAction.cxx
+    sv3gui_SegmentationLegacySaveAction.cxx
+    sv3gui_SegmentationLoadAction.cxx
+    sv3gui_LevelSet2DWidget.cxx
+    sv3gui_LoftParamWidget.cxx
+    sv3gui_Seg2DEdit.cxx
+    sv3gui_ContourGroupPoint2DSizeAction.cxx
+    sv3gui_ContourGroupPoint3DSizeAction.cxx
+    sv3gui_Seg3DCreateAction.cxx
+    sv3gui_Seg3DEdit.cxx
+    sv3gui_SegmentationPluginActivator.cxx
 )
 
 set(MOC_H_FILES
-    src/internal/svLoftingUtils.h
-    src/internal/svContourGroupCreate.h
-    src/internal/svContourGroupCreateAction.h
-    src/internal/svSegmentationLegacyLoadAction.h
-    src/internal/svSegmentationLegacySaveAction.h
-    src/internal/svSegmentationLoadAction.h
-    src/internal/svLevelSet2DWidget.h
-    src/internal/svLoftParamWidget.h
-    src/internal/svSeg2DEdit.h
-    src/internal/svContourGroupPoint2DSizeAction.h
-    src/internal/svContourGroupPoint3DSizeAction.h
-    src/internal/svSeg3DCreateAction.h
-    src/internal/svSeg3DEdit.h
-    src/internal/svSegmentationPluginActivator.h
+    src/internal/sv3gui_LoftingUtils.h
+    src/internal/sv3gui_ContourGroupCreate.h
+    src/internal/sv3gui_ContourGroupCreateAction.h
+    src/internal/sv3gui_SegmentationLegacyLoadAction.h
+    src/internal/sv3gui_SegmentationLegacySaveAction.h
+    src/internal/sv3gui_SegmentationLoadAction.h
+    src/internal/sv3gui_LevelSet2DWidget.h
+    src/internal/sv3gui_LoftParamWidget.h
+    src/internal/sv3gui_Seg2DEdit.h
+    src/internal/sv3gui_ContourGroupPoint2DSizeAction.h
+    src/internal/sv3gui_ContourGroupPoint3DSizeAction.h
+    src/internal/sv3gui_Seg3DCreateAction.h
+    src/internal/sv3gui_Seg3DEdit.h
+    src/internal/sv3gui_SegmentationPluginActivator.h
 )
 
 set(UI_FILES
-    src/internal/svContourGroupCreate.ui
-    src/internal/svLevelSet2DWidget.ui
-    src/internal/svLoftParamWidget.ui
-    src/internal/svSeg2DEdit.ui
-    src/internal/svSeg3DEdit.ui
+    src/internal/sv3gui_ContourGroupCreate.ui
+    src/internal/sv3gui_LevelSet2DWidget.ui
+    src/internal/sv3gui_LoftParamWidget.ui
+    src/internal/sv3gui_Seg2DEdit.ui
+    src/internal/sv3gui_Seg3DEdit.ui
 )
 
 set(CACHED_RESOURCE_FILES

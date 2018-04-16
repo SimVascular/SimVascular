@@ -29,13 +29,13 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    svModelUtilsParasolid.h
-    svModelElementParasolid.h
-    svRegisterParasolidFunction.h
+    sv3gui_ModelUtilsParasolid.h
+    sv3gui_ModelElementParasolid.h
+    sv3gui_RegisterParasolidFunction.h
 )
 
 set(CPP_FILES
-    svModelUtilsParasolid.cxx
-    svModelElementParasolid.cxx
-    svRegisterParasolidFunction.cxx
+    sv3gui_ModelUtilsParasolid.cxx
+    sv3gui_ModelElementParasolid.cxx
+    sv3gui_RegisterParasolidFunction.cxx
 )

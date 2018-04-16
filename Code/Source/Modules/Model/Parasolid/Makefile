@@ -56,14 +56,14 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svModelUtilsParasolid.h \
-    svModelElementParasolid.h \
-    svRegisterParasolidFunction.h
+    sv3gui_ModelUtilsParasolid.h \
+    sv3gui_ModelElementParasolid.h \
+    sv3gui_RegisterParasolidFunction.h
 
 CXXSRCS	= \
-    svModelUtilsParasolid.cxx \
-    svModelElementParasolid.cxx \
-    svRegisterParasolidFunction.cxx
+    sv3gui_ModelUtilsParasolid.cxx \
+    sv3gui_ModelElementParasolid.cxx \
+    sv3gui_RegisterParasolidFunction.cxx
 
 CXXSRCS += us_init.cxx
 

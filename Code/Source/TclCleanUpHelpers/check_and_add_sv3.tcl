@@ -168,6 +168,10 @@ for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
 
 close $ofn
 
+exec rm -f git-changes-to-commit.txt
+
+set gitfn [open git-changes-to-commit.txt w]
+
 exec rm -Rf sv3gui
 exec mkdir sv3gui
 
@@ -178,6 +182,8 @@ foreach fn [file_find {Modules Plugins} *.h] {
     exec mkdir -p sv3gui/[file dirname $fn]
     exec sed -f sed-replace-scripts.txt $fn > sv3gui/[file dirname $fn]/$newfn
     catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+    puts $gitfn "git rm $fn"
+    puts $gitfn "git add [file dirname $fn]/$newfn"
 
 }
 
@@ -188,6 +194,8 @@ foreach fn [file_find {Modules Plugins} *.cxx] {
     exec mkdir -p sv3gui/[file dirname $fn]
     exec sed -f sed-replace-scripts.txt $fn > sv3gui/[file dirname $fn]/$newfn
     catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+    puts $gitfn "git rm $fn"
+    puts $gitfn "git add [file dirname $fn]/$newfn"
 
 }
 
@@ -218,6 +226,8 @@ foreach fn [file_find {Plugins} *.ui] {
     exec mkdir -p sv3gui/[file dirname $fn]
     exec sed -f sed-replace-scripts.txt $fn > sv3gui/[file dirname $fn]/$newfn
     catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+    puts $gitfn "git rm $fn"
+    puts $gitfn "git add [file dirname $fn]/$newfn"
 }
 
 foreach fn [file_find {Modules Plugins} *] {
@@ -236,7 +246,11 @@ foreach fn [file_find {Modules Plugins} *] {
 
 }
 
+close $gitfn
+
 # need to manually copy these three unaltered files
+#
+#  had to manually copy again, why doesn't this work???
 exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.cxx sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.cxx
 exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.h sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.h
 exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svmitkIContextMenuAction.h sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/svmitkIContextMenuAction.h

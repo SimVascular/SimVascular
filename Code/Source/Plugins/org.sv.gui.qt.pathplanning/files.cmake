@@ -33,33 +33,33 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
-    svPathCreate.cxx
-    svPathCreateAction.cxx
-    svPathLoadAction.cxx
-    svPathLegacySaveAction.cxx
-    svPathSmooth.cxx
-    svPathEdit.cxx
-    svPathPoint2DSizeAction.cxx
-    svPathPoint3DSizeAction.cxx
-    svPathPlanningPluginActivator.cxx
+    sv3gui_PathCreate.cxx
+    sv3gui_PathCreateAction.cxx
+    sv3gui_PathLoadAction.cxx
+    sv3gui_PathLegacySaveAction.cxx
+    sv3gui_PathSmooth.cxx
+    sv3gui_PathEdit.cxx
+    sv3gui_PathPoint2DSizeAction.cxx
+    sv3gui_PathPoint3DSizeAction.cxx
+    sv3gui_PathPlanningPluginActivator.cxx
 )
 
 set(MOC_H_FILES
-    src/internal/svPathCreate.h
-    src/internal/svPathCreateAction.h
-    src/internal/svPathLoadAction.h
-    src/internal/svPathLegacySaveAction.h
-    src/internal/svPathSmooth.h
-    src/internal/svPathEdit.h
-    src/internal/svPathPoint2DSizeAction.h
-    src/internal/svPathPoint3DSizeAction.h
-    src/internal/svPathPlanningPluginActivator.h
+    src/internal/sv3gui_PathCreate.h
+    src/internal/sv3gui_PathCreateAction.h
+    src/internal/sv3gui_PathLoadAction.h
+    src/internal/sv3gui_PathLegacySaveAction.h
+    src/internal/sv3gui_PathSmooth.h
+    src/internal/sv3gui_PathEdit.h
+    src/internal/sv3gui_PathPoint2DSizeAction.h
+    src/internal/sv3gui_PathPoint3DSizeAction.h
+    src/internal/sv3gui_PathPlanningPluginActivator.h
 )
 
 set(UI_FILES
-    src/internal/svPathCreate.ui
-    src/internal/svPathSmooth.ui
-    src/internal/svPathEdit.ui
+    src/internal/sv3gui_PathCreate.ui
+    src/internal/sv3gui_PathSmooth.ui
+    src/internal/sv3gui_PathEdit.ui
 )
 
 set(CACHED_RESOURCE_FILES

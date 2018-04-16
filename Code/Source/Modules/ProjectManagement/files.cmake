@@ -29,30 +29,30 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    svDataFolder.h
-    svProjectFolder.h
-    svImageFolder.h
-    svPathFolder.h
-    svSegmentationFolder.h
-    svModelFolder.h
-    svMeshFolder.h
-    svSimulationFolder.h
-    svProjectManager.h
-    svDataNodeOperation.h
-    svDataNodeOperationInterface.h
+    sv3gui_DataFolder.h
+    sv3gui_ProjectFolder.h
+    sv3gui_ImageFolder.h
+    sv3gui_PathFolder.h
+    sv3gui_SegmentationFolder.h
+    sv3gui_ModelFolder.h
+    sv3gui_MeshFolder.h
+    sv3gui_SimulationFolder.h
+    sv3gui_ProjectManager.h
+    sv3gui_DataNodeOperation.h
+    sv3gui_DataNodeOperationInterface.h
 )
 
 set(CPP_FILES
-    svDataFolder.cxx
-    svProjectManager.cxx
-    svDataNodeOperation.cxx
-    svDataNodeOperationInterface.cxx
-    svImageFolder.cxx
-    svMeshFolder.cxx
-    svModelFolder.cxx
-    svPathFolder.cxx
-    svProjectFolder.cxx
-    svSegmentationFolder.cxx
-    svSimulationFolder.cxx
+    sv3gui_DataFolder.cxx
+    sv3gui_ProjectManager.cxx
+    sv3gui_DataNodeOperation.cxx
+    sv3gui_DataNodeOperationInterface.cxx
+    sv3gui_ImageFolder.cxx
+    sv3gui_MeshFolder.cxx
+    sv3gui_ModelFolder.cxx
+    sv3gui_PathFolder.cxx
+    sv3gui_ProjectFolder.cxx
+    sv3gui_SegmentationFolder.cxx
+    sv3gui_SimulationFolder.cxx
 )
 

@@ -29,30 +29,30 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    svPathElement.h
-    svPath.h
-    svPathOperation.h
-    svPathDataInteractor.h
-    svPathVtkMapper2D.h
-    svPathVtkMapper3D.h
-    svPathIO.h
-    svPathLegacyIO.h
-    svPathObjectFactory.h
+    sv3gui_PathElement.h
+    sv3gui_Path.h
+    sv3gui_PathOperation.h
+    sv3gui_PathDataInteractor.h
+    sv3gui_PathVtkMapper2D.h
+    sv3gui_PathVtkMapper3D.h
+    sv3gui_PathIO.h
+    sv3gui_PathLegacyIO.h
+    sv3gui_PathObjectFactory.h
 )
 
 set(CPP_FILES
 
 #    svPathModuleActivator.cxx
 
-    svPathElement.cxx
-    svPath.cxx
-    svPathOperation.cxx
-    svPathDataInteractor.cxx
-    svPathVtkMapper2D.cxx
-    svPathVtkMapper3D.cxx
-    svPathIO.cxx
-    svPathLegacyIO.cxx
-    svPathObjectFactory.cxx
+    sv3gui_PathElement.cxx
+    sv3gui_Path.cxx
+    sv3gui_PathOperation.cxx
+    sv3gui_PathDataInteractor.cxx
+    sv3gui_PathVtkMapper2D.cxx
+    sv3gui_PathVtkMapper3D.cxx
+    sv3gui_PathIO.cxx
+    sv3gui_PathLegacyIO.cxx
+    sv3gui_PathObjectFactory.cxx
 )
 
 set(RESOURCE_FILES
