@@ -57,7 +57,8 @@ CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
     svModelUtilsParasolid.h \
-    svModelElementParasolid.h
+    svModelElementParasolid.h \
+    svRegisterParasolidFunction.h
 
 CXXSRCS	= \
     svModelUtilsParasolid.cxx \

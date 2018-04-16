@@ -31,6 +31,7 @@
 set(H_FILES
     svModelUtilsOCCT.h
     svModelElementOCCT.h
+    svRegisterOCCTFunction.h
 )
 
 set(CPP_FILES

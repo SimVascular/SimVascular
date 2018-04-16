@@ -83,8 +83,8 @@ for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
     set found_file_cxx_fn [string trim [file_find {Modules Plugins} $find_me_cxx_fn]]
     if {$found_file_cxx_fn == ""} {
 	puts "error finding file: $find_me_cxx_fn  (hdr: $found_file_hdr_fn)"
-	exec cp $found_file_hdr_fn ../[file dirname $found_file_hdr_fn]/$find_me_cxx_fn
-	# three lines below require significant hand editing afterwards!
+	# four lines below require significant hand editing afterwards!
+	#exec cp $found_file_hdr_fn ../[file dirname $found_file_hdr_fn]/$find_me_cxx_fn
 	#exec echo \"#include \"$find_me_hdr_fn\" >> ../[file dirname $found_file_hdr_fn]/$find_me_cxx_fn
 	#exec git add ../[file dirname $found_file_hdr_fn]/$find_me_cxx_fn
 	#lappend emacs_edit ../[file dirname $found_file_hdr_fn]/$find_me_cxx_fn
@@ -103,4 +103,32 @@ for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
 
 puts "play with rename to check..."
 
+for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
+    
+    set find_me_hdr_fn  [lindex $all_header_filenames $i]
+    set find_me_cxx_fn  [lindex $all_cxx_filenames $i]
+    set find_me_defines [lindex $all_pound_defines $i]
+
+    # check headers
+    
+    set found_file_hdr_fn [string trim [file_find {Modules Plugins} $find_me_hdr_fn]]
+    if {$found_file_hdr_fn == ""} {
+	puts "error finding file: $find_me_hdr_fn"
+    } else {
+	#puts "found file: $found_file_hdr_fn"
+	exec rm -f $found_file_hdr_fn
+    }
+
+    #check cxx files
+    
+    set found_file_cxx_fn [string trim [file_find {Modules Plugins} $find_me_cxx_fn]]
+    if {$found_file_cxx_fn == ""} {
+	puts "error finding file: $find_me_cxx_fn  (hdr: $found_file_hdr_fn)"
+    } else {
+	#puts "found file: $found_file_cxx_fn"
+        exec rm -f $found_file_cxx_fn
+    }
+
+    
+}
 

@@ -29,24 +29,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "svRegisterTetGenFunction.h"
+#ifndef SVREGISTERTETGENFUNCTION_H
+#define SVREGISTERTETGENFUNCTION_H
 
 #include <svMeshExports.h>
 
-#include "svMeshFactory.h"
-#include "svMeshTetGen.h"
-#include "svMeshTetGenAdaptor.h"
+class SVMESH_EXPORT svRegisterTetGenFunction {
 
-svRegisterTetGenFunction::svRegisterTetGenFunction()
-    {
-        svMeshTetGen* tempmesh=new svMeshTetGen();
-        std::string type=tempmesh->GetType();
-        svMeshFactory::RegisterCreationFunction(type, &svMeshTetGen::CreateMesh);
-        svMeshFactory::RegisterFileExtensions(type, tempmesh->GetFileExtensions());
-        svMeshFactory::RegisterAdaptorFunction(type, &svMeshTetGenAdaptor::CreateAdaptor);
-        delete tempmesh;
-    }
+ public:
+    svRegisterTetGenFunction();
+    virtual ~svRegisterTetGenFunction();
+    
+};
 
-svRegisterTetGenFunction::~svRegisterTetGenFunction(){}
-
-static svRegisterTetGenFunction registerTetGenFunction = svRegisterTetGenFunction();
+#endif

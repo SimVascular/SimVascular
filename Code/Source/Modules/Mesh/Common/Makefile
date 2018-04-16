@@ -60,6 +60,7 @@ HDRS	= \
     svMeshTetGen.h \
     svMitkMesh.h \
     svMeshFactory.h \
+    svRegisterTetGenFunction.h \
     svMitkMeshOperation.h \
     svMitkMeshMapper3D.h \
     svMitkMeshMapper2D.h \

@@ -31,6 +31,7 @@
 set(H_FILES
     svModelUtilsParasolid.h
     svModelElementParasolid.h
+    svRegisterParasolidFunction.h
 )
 
 set(CPP_FILES

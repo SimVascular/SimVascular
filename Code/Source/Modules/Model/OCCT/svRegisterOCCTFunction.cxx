@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "svRegisterOCCTFunction.h"
+
 #include <svModelOCCTExports.h>
 
 #include "cv_globals.h"
@@ -42,9 +44,7 @@
 
 #include <iostream>
 
-struct SVMODELOCCT_EXPORT svRegisterOCCTFunction{
-
-    svRegisterOCCTFunction()
+svRegisterOCCTFunction::svRegisterOCCTFunction()
     {
         svModelElementOCCT* tempme=new svModelElementOCCT();
         std::string type=tempme->GetType();
@@ -62,7 +62,6 @@ struct SVMODELOCCT_EXPORT svRegisterOCCTFunction{
         }
     }
 
-    virtual ~svRegisterOCCTFunction(){}
-};
+svRegisterOCCTFunction::~svRegisterOCCTFunction() {}
 
-static svRegisterOCCTFunction registerOCCTFunction;
+static svRegisterOCCTFunction registerOCCTFunction = svRegisterOCCTFunction();

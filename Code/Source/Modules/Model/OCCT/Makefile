@@ -56,7 +56,8 @@ CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
     svModelUtilsOCCT.h \
-    svModelElementOCCT.h
+    svModelElementOCCT.h \
+    svRegisterOCCTFunction.h
 
 CXXSRCS	= \
     svModelUtilsOCCT.cxx \

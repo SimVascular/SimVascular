@@ -25,6 +25,7 @@ svPath
 svProcessHandler 
 svProject
 svQmitk
+svRegister
 svResliceSlider
 svSeg2DEdit
 svSeg3D
@@ -37,7 +38,7 @@ svSpline
 svSplitBCWidget
 svStringUtils
 svSurface
-svTableCapDelegate
+svTable
 svVtkMeshSphereWidget
 svVtkParametricSpline
 svVtkUtils

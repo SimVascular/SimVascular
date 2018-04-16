@@ -29,24 +29,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "svRegisterTetGenFunction.h"
+#ifndef SVREGISTERPARASOLIDFUNCTION_H
+#define SVREGISTERPARASOLIDFUNCTION_H
 
-#include <svMeshExports.h>
+#include <svModelParasolidExports.h>
 
-#include "svMeshFactory.h"
-#include "svMeshTetGen.h"
-#include "svMeshTetGenAdaptor.h"
+class SVMODELPARASOLID_EXPORT svRegisterParasolidFunction {
 
-svRegisterTetGenFunction::svRegisterTetGenFunction()
-    {
-        svMeshTetGen* tempmesh=new svMeshTetGen();
-        std::string type=tempmesh->GetType();
-        svMeshFactory::RegisterCreationFunction(type, &svMeshTetGen::CreateMesh);
-        svMeshFactory::RegisterFileExtensions(type, tempmesh->GetFileExtensions());
-        svMeshFactory::RegisterAdaptorFunction(type, &svMeshTetGenAdaptor::CreateAdaptor);
-        delete tempmesh;
-    }
+  public:
+  
+  svRegisterParasolidFunction();
+  virtual ~svRegisterParasolidFunction();
+  
+};
 
-svRegisterTetGenFunction::~svRegisterTetGenFunction(){}
-
-static svRegisterTetGenFunction registerTetGenFunction = svRegisterTetGenFunction();
+#endif // SVREGISTERPARASOLIDFUNCTION_H

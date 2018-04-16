@@ -59,7 +59,8 @@ CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
     svMeshSim.h \
-    svMeshSimAdaptor.h
+    svMeshSimAdaptor.h \
+    svRegisterMeshSimFunction.h
 
 CXXSRCS	= \
     svMeshSim.cxx \

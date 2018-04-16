@@ -30,6 +30,7 @@
 
 set(H_FILES
     svMeshSim.h
+    svRegisterMeshSimFunction.h
 )
 
 if(SV_USE_MESHSIM_ADAPTOR)

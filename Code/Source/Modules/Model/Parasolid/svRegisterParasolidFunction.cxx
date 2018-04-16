@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "svRegisterParasolidFunction.h"
+
 #include <svModelParasolidExports.h>
 
 #include "svModelElementFactory.h"
@@ -38,10 +40,8 @@
 
 #include <iostream>
 
-struct SVMODELPARASOLID_EXPORT svRegisterParasolidFunction{
-
-    svRegisterParasolidFunction()
-    {
+svRegisterParasolidFunction::svRegisterParasolidFunction() {
+    
         svModelElementParasolid* tempme=new svModelElementParasolid();
         std::string type=tempme->GetType();
         svModelElementFactory::RegisterCreationFunction(type, &svModelElementParasolid::CreateModelElement);
@@ -50,9 +50,10 @@ struct SVMODELPARASOLID_EXPORT svRegisterParasolidFunction{
 
         if (PsdUtils_Init() != SV_OK)
             std::cerr<<"Parasolid Uitls init error."<<std::endl;
-    }
 
-    virtual ~svRegisterParasolidFunction(){}
-};
+}
 
-static svRegisterParasolidFunction registerParasolidFunction;
+svRegisterParasolidFunction::~svRegisterParasolidFunction() {
+}
+
+static svRegisterParasolidFunction registerParasolidFunction = svRegisterParasolidFunction();

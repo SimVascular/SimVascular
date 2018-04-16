@@ -128,12 +128,19 @@ svProjectManagerPluginActivator
 svProjectSaveAction
 svProjectShowModelEdgesAction
 svProjectShowModelFullAction
+svQmitkDataManagerHotkeysPrefPage
 svQmitkDataManagerItemDelegate
+svQmitkDataManagerPreferencePage
 svQmitkDataManagerView
 svQmitkDelKeyFilter
 svQmitkFunctionality
 svQmitkInfoDialog
 svQmitkNodeTableViewKeyFilter
+svRegisterTetGenFunction
+svRegisterMeshSimFunction
+svRegisterPolyDataFunction
+svRegisterOCCTFunction
+svRegisterParasolidFunction
 svResliceSlider
 svSeg2DEdit
 svSeg3D
@@ -166,6 +173,7 @@ svStringUtils
 svSurface
 svSurfaceVtkMapper3D
 svTableCapDelegate
+svTableSolverDelegate
 svVtkMeshSphereWidget
 svVtkParametricSpline
 svVtkUtils

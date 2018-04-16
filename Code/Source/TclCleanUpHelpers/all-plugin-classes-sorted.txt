@@ -55,7 +55,9 @@ svProjectManagerPluginActivator
 svProjectSaveAction
 svProjectShowModelEdgesAction
 svProjectShowModelFullAction
+svQmitkDataManagerHotkeysPrefPage
 svQmitkDataManagerItemDelegate
+svQmitkDataManagerPreferencePage
 svQmitkDataManagerView
 svQmitkDelKeyFilter
 svQmitkFunctionality
@@ -79,6 +81,7 @@ svSimulationView
 svSolverProcessHandler
 svSplitBCWidget
 svTableCapDelegate
+svTableSolverDelegate
 svVtkMeshSphereWidget
 svWorkbenchIntroPart
 svWorkbenchWindowAdvisor

@@ -69,7 +69,8 @@ HDRS	= \
     svModelDataInteractor.h \
     svModelIO.h \
     svModelLegacyIO.h \
-    svModelObjectFactory.h
+    svModelObjectFactory.h \
+    svRegisterPolyDataFunction.h
 
 CXXSRCS	= \
     svModelUtils.cxx \

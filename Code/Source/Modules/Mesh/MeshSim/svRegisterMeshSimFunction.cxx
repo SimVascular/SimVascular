@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "svRegisterMeshSimFunction.h"
+
 #include <svMeshSimExports.h>
 
 #include "svMeshFactory.h"
@@ -38,9 +40,7 @@
 #endif
 #include "cv_meshsim_mesh_init.h"
 
-struct SVMESHSIM_EXPORT svRegisterMeshSimFunction{
-
-    svRegisterMeshSimFunction()
+svRegisterMeshSimFunction::svRegisterMeshSimFunction()
     {
         svMeshSim* tempmesh=new svMeshSim();
         std::string type=tempmesh->GetType();
@@ -54,7 +54,6 @@ struct SVMESHSIM_EXPORT svRegisterMeshSimFunction{
         Meshsimmesh_Init(NULL);
     }
 
-    virtual ~svRegisterMeshSimFunction(){}
-};
+svRegisterMeshSimFunction::~svRegisterMeshSimFunction(){}
 
-static svRegisterMeshSimFunction registerMeshSimFunction;
+static svRegisterMeshSimFunction registerMeshSimFunction = svRegisterMeshSimFunction();

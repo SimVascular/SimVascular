@@ -42,6 +42,7 @@ set(H_FILES
     svModelIO.h
     svModelLegacyIO.h
     svModelObjectFactory.h
+    svRegisterPolyDataFunction.h
 )
 
 set(CPP_FILES

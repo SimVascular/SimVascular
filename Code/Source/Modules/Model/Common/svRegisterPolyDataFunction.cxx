@@ -29,14 +29,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "svRegisterPolyDataFunction.h"
+
 #include <svModelExports.h>
 
 #include "svModelElementFactory.h"
 #include "svModelElementPolyData.h"
 
-struct SVMODEL_EXPORT svRegisterPolyDataFunction{
-
-    svRegisterPolyDataFunction()
+svRegisterPolyDataFunction::svRegisterPolyDataFunction()
     {
         svModelElementPolyData* tempme=new svModelElementPolyData();
         std::string type=tempme->GetType();
@@ -45,7 +45,6 @@ struct SVMODEL_EXPORT svRegisterPolyDataFunction{
         delete tempme;
     }
 
-    virtual ~svRegisterPolyDataFunction(){}
-};
+svRegisterPolyDataFunction::~svRegisterPolyDataFunction(){}
 
-static svRegisterPolyDataFunction registerPolyDataFunction;
+static svRegisterPolyDataFunction registerPolyDataFunction = svRegisterPolyDataFunction();
