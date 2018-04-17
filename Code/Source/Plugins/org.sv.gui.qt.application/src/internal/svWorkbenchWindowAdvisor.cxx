@@ -1673,17 +1673,17 @@ void svWorkbenchWindowAdvisor::AddCustomMenuItemsForDataManager()
     unknownDataNodeDescriptor->AddAction(removeAction);
     m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,removeAction));
 
-    QAction* renameAction = new QAction(QIcon(":rename.png"), "Rename", this);
+    QAction* renameAction = new QAction(QIcon(""), "Rename", this);
     QObject::connect( renameAction, SIGNAL( triggered(bool) ) , this, SLOT( RenameSelectedNode(bool) ) );
     unknownDataNodeDescriptor->AddAction(renameAction,false);
     m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,renameAction));
 
-    QAction* copyAction = new QAction(QIcon(":copy.png"), "Copy", this);
+    QAction* copyAction = new QAction(QIcon(""), "Copy", this);
     QObject::connect( copyAction, SIGNAL( triggered(bool) ) , this, SLOT( CopyDataNode(bool) ) );
     unknownDataNodeDescriptor->AddAction(copyAction,false);
     m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,copyAction));
 
-    QAction* pasteAction = new QAction(QIcon(":paste.png"), "Paste", this);
+    QAction* pasteAction = new QAction(QIcon(""), "Paste", this);
     QObject::connect( pasteAction, SIGNAL( triggered(bool) ) , this, SLOT( PasteDataNode(bool) ) );
     unknownDataNodeDescriptor->AddAction(pasteAction,false);
     m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,pasteAction));

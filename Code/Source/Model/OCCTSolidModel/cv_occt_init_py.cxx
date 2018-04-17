@@ -64,11 +64,11 @@
 
 #include "Python.h"
 #include "vtkPythonUtil.h"
-#ifdef SV_USE_PYTHON2
-#include "PyVTKClass.h"
-#endif
 #ifdef SV_USE_PYTHON3
 #include "PyVTKObject.h"
+#endif
+#ifdef SV_USE_PYTHON2
+#include "PyVTKClass.h"
 #endif
 #include "cv_globals.h"
 #include <TDF_Data.hxx>
