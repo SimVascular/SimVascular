@@ -58,13 +58,14 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svMeshSim.h \
-    svMeshSimAdaptor.h
+    sv3gui_MeshSim.h \
+    sv3gui_MeshSimAdaptor.h \
+    sv3gui_RegisterMeshSimFunction.h
 
 CXXSRCS	= \
-    svMeshSim.cxx \
-    svMeshSimAdaptor.cxx \
-    svRegisterMeshSimFunction.cxx
+    sv3gui_MeshSim.cxx \
+    sv3gui_MeshSimAdaptor.cxx \
+    sv3gui_RegisterMeshSimFunction.cxx
 
 CXXSRCS += us_init.cxx
 

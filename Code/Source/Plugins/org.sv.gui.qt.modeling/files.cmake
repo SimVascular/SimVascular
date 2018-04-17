@@ -33,40 +33,40 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
-    svModelCreate.cxx
-    svModelCreateAction.cxx
-    svModelLoadAction.cxx
-    svModelLegacySaveAction.cxx
-    svModelExtractPathsAction.cxx
-    svSegSelectionWidget.cxx
-    svModelEdit.cxx
-    svFaceListDelegate.cxx
-    svModelFaceInfoExportAction.cxx
-    svModelingPluginActivator.cxx
-    svLoftingPreferencePage.cxx
-    svCapSelectionWidget.cxx
+    sv3gui_ModelCreate.cxx
+    sv3gui_ModelCreateAction.cxx
+    sv3gui_ModelLoadAction.cxx
+    sv3gui_ModelLegacySaveAction.cxx
+    sv3gui_ModelExtractPathsAction.cxx
+    sv3gui_SegSelectionWidget.cxx
+    sv3gui_ModelEdit.cxx
+    sv3gui_FaceListDelegate.cxx
+    sv3gui_ModelFaceInfoExportAction.cxx
+    sv3gui_ModelingPluginActivator.cxx
+    sv3gui_LoftingPreferencePage.cxx
+    sv3gui_CapSelectionWidget.cxx
 )
 
 set(MOC_H_FILES
-    src/internal/svModelCreate.h
-    src/internal/svModelCreateAction.h
-    src/internal/svModelLoadAction.h
-    src/internal/svModelLegacySaveAction.h
-    src/internal/svModelExtractPathsAction.h
-    src/internal/svSegSelectionWidget.h
-    src/internal/svModelEdit.h
-    src/internal/svFaceListDelegate.h
-    src/internal/svModelFaceInfoExportAction.h
-    src/internal/svModelingPluginActivator.h
-    src/internal/svLoftingPreferencePage.h
-    src/internal/svCapSelectionWidget.h
+    src/internal/sv3gui_ModelCreate.h
+    src/internal/sv3gui_ModelCreateAction.h
+    src/internal/sv3gui_ModelLoadAction.h
+    src/internal/sv3gui_ModelLegacySaveAction.h
+    src/internal/sv3gui_ModelExtractPathsAction.h
+    src/internal/sv3gui_SegSelectionWidget.h
+    src/internal/sv3gui_ModelEdit.h
+    src/internal/sv3gui_FaceListDelegate.h
+    src/internal/sv3gui_ModelFaceInfoExportAction.h
+    src/internal/sv3gui_ModelingPluginActivator.h
+    src/internal/sv3gui_LoftingPreferencePage.h
+    src/internal/sv3gui_CapSelectionWidget.h
 )
 
 set(UI_FILES
-    src/internal/svModelCreate.ui
-    src/internal/svSegSelectionWidget.ui
-    src/internal/svModelEdit.ui
-    src/internal/svCapSelectionWidget.ui
+    src/internal/sv3gui_ModelCreate.ui
+    src/internal/sv3gui_SegSelectionWidget.ui
+    src/internal/sv3gui_ModelEdit.ui
+    src/internal/sv3gui_CapSelectionWidget.ui
 )
 
 set(CACHED_RESOURCE_FILES

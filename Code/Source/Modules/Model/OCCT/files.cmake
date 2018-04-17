@@ -29,12 +29,13 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    svModelUtilsOCCT.h
-    svModelElementOCCT.h
+    sv3gui_ModelUtilsOCCT.h
+    sv3gui_ModelElementOCCT.h
+    sv3gui_RegisterOCCTFunction.h
 )
 
 set(CPP_FILES
-    svModelUtilsOCCT.cxx
-    svModelElementOCCT.cxx
-    svRegisterOCCTFunction.cxx
+    sv3gui_ModelUtilsOCCT.cxx
+    sv3gui_ModelElementOCCT.cxx
+    sv3gui_RegisterOCCTFunction.cxx
 )

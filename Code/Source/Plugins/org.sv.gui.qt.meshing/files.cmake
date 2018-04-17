@@ -33,31 +33,31 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
-    svMeshCreate.cxx
-    svMeshCreateAction.cxx
-    svMeshEdit.cxx
-    svVtkMeshSphereWidget.cxx
-    svLocalTableDelegate.cxx
-    svMeshLegacySaveAction.cxx
-    svMeshLoadSurfaceAction.cxx
-    svMeshLoadVolumeAction.cxx
-    svMeshingPluginActivator.cxx
+    sv3gui_MeshCreate.cxx
+    sv3gui_MeshCreateAction.cxx
+    sv3gui_MeshEdit.cxx
+    sv3gui_VtkMeshSphereWidget.cxx
+    sv3gui_LocalTableDelegate.cxx
+    sv3gui_MeshLegacySaveAction.cxx
+    sv3gui_MeshLoadSurfaceAction.cxx
+    sv3gui_MeshLoadVolumeAction.cxx
+    sv3gui_MeshingPluginActivator.cxx
 )
 
 set(MOC_H_FILES
-    src/internal/svMeshCreate.h
-    src/internal/svMeshCreateAction.h
-    src/internal/svMeshEdit.h
-    src/internal/svLocalTableDelegate.h
-    src/internal/svMeshLegacySaveAction.h
-    src/internal/svMeshLoadSurfaceAction.h
-    src/internal/svMeshLoadVolumeAction.h
-    src/internal/svMeshingPluginActivator.h
+    src/internal/sv3gui_MeshCreate.h
+    src/internal/sv3gui_MeshCreateAction.h
+    src/internal/sv3gui_MeshEdit.h
+    src/internal/sv3gui_LocalTableDelegate.h
+    src/internal/sv3gui_MeshLegacySaveAction.h
+    src/internal/sv3gui_MeshLoadSurfaceAction.h
+    src/internal/sv3gui_MeshLoadVolumeAction.h
+    src/internal/sv3gui_MeshingPluginActivator.h
 )
 
 set(UI_FILES
-    src/internal/svMeshCreate.ui
-    src/internal/svMeshEdit.ui
+    src/internal/sv3gui_MeshCreate.ui
+    src/internal/sv3gui_MeshEdit.ui
 )
 
 set(CACHED_RESOURCE_FILES

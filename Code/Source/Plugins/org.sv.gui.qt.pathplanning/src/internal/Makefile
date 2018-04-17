@@ -46,31 +46,31 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
           -DUS_MODULE_NAME=svPathPlanning
 
 HDRS	= \
-    svPathCreate.h \
-    svPathCreateAction.h \
-    svPathLoadAction.h \
-    svPathLegacySaveAction.h \
-    svPathSmooth.h \
-    svPathEdit.h \
-    svPathPoint2DSizeAction.h \
-    svPathPoint3DSizeAction.h \
-    svPathPlanningPluginActivator.h
+    sv3gui_PathCreate.h \
+    sv3gui_PathCreateAction.h \
+    sv3gui_PathLoadAction.h \
+    sv3gui_PathLegacySaveAction.h \
+    sv3gui_PathSmooth.h \
+    sv3gui_PathEdit.h \
+    sv3gui_PathPoint2DSizeAction.h \
+    sv3gui_PathPoint3DSizeAction.h \
+    sv3gui_PathPlanningPluginActivator.h
 
 CXXSRCS	=  \
-    svPathCreate.cxx \
-    svPathCreateAction.cxx \
-    svPathLoadAction.cxx \
-    svPathLegacySaveAction.cxx \
-    svPathSmooth.cxx \
-    svPathEdit.cxx \
-    svPathPoint2DSizeAction.cxx \
-    svPathPoint3DSizeAction.cxx \
-    svPathPlanningPluginActivator.cxx
+    sv3gui_PathCreate.cxx \
+    sv3gui_PathCreateAction.cxx \
+    sv3gui_PathLoadAction.cxx \
+    sv3gui_PathLegacySaveAction.cxx \
+    sv3gui_PathSmooth.cxx \
+    sv3gui_PathEdit.cxx \
+    sv3gui_PathPoint2DSizeAction.cxx \
+    sv3gui_PathPoint3DSizeAction.cxx \
+    sv3gui_PathPlanningPluginActivator.cxx
 
 UIFILES = \
-    svPathCreate.ui \
-    svPathSmooth.ui \
-    svPathEdit.ui
+    sv3gui_PathCreate.ui \
+    sv3gui_PathSmooth.ui \
+    sv3gui_PathEdit.ui
 
 QRCFILES =
 

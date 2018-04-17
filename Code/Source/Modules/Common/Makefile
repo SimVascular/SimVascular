@@ -48,17 +48,17 @@ MODULE_NAME_ALL_CAPS = SVCOMMON
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
-HDRS	=   svMath3.h \
-            svSpline.h \
-            svVtkParametricSpline.h \
-            svVtkUtils.h \
-            svXmlIOUtil.h
+HDRS	=   sv3gui_Math3.h \
+            sv3gui_Spline.h \
+            sv3gui_VtkParametricSpline.h \
+            sv3gui_VtkUtils.h \
+            sv3gui_XmlIOUtil.h
 
-CXXSRCS	=   svMath3.cxx \
-            svSpline.cxx \
-            svVtkParametricSpline.cxx \
-            svVtkUtils.cxx \
-            svXmlIOUtil.cxx
+CXXSRCS	=   sv3gui_Math3.cxx \
+            sv3gui_Spline.cxx \
+            sv3gui_VtkParametricSpline.cxx \
+            sv3gui_VtkUtils.cxx \
+            sv3gui_XmlIOUtil.cxx
 
 CXXSRCS += us_init.cxx
 

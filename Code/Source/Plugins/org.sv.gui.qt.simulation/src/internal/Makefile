@@ -46,37 +46,41 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            -DUS_MODULE_NAME=svSimulation
 
 HDRS	= \
-    svSimJobCreate.h \
-    svSimJobCreateAction.h \
-    svCapBCWidget.h \
-    svSplitBCWidget.h \
-    svTableCapDelegate.h \
-    svTableSolverDelegate.h \
-    svSimulationView.h \
-    svSimulationPreferencePage.h \
-    svSimJobStopAction.h \
-    svSimJobExportAction.h \
-    svSimulationPluginActivator.h
+    sv3gui_SimJobCreate.h \
+    sv3gui_SimJobCreateAction.h \
+    sv3gui_CapBCWidget.h \
+    sv3gui_SplitBCWidget.h \
+    sv3gui_TableCapDelegate.h \
+    sv3gui_TableSolverDelegate.h \
+    sv3gui_SimulationView.h \
+    sv3gui_SimulationPreferencePage.h \
+    sv3gui_SimJobStopAction.h \
+    sv3gui_SimJobExportAction.h \
+    sv3gui_SimulationPluginActivator.h \
+    sv3gui_ProcessHandler.h \
+    sv3gui_SolverProcessHandler.h
 
 CXXSRCS	= \
-    svSimJobCreate.cxx \
-    svSimJobCreateAction.cxx \
-    svCapBCWidget.cxx \
-    svSplitBCWidget.cxx \
-    svTableCapDelegate.cxx \
-    svTableSolverDelegate.cxx \
-    svSimulationView.cxx \
-    svSimulationPreferencePage.cxx \
-    svSimJobStopAction.cxx \
-    svSimJobExportAction.cxx \
-    svSimulationPluginActivator.cxx
+    sv3gui_SimJobCreate.cxx \
+    sv3gui_SimJobCreateAction.cxx \
+    sv3gui_CapBCWidget.cxx \
+    sv3gui_SplitBCWidget.cxx \
+    sv3gui_TableCapDelegate.cxx \
+    sv3gui_TableSolverDelegate.cxx \
+    sv3gui_SimulationView.cxx \
+    sv3gui_SimulationPreferencePage.cxx \
+    sv3gui_SimJobStopAction.cxx \
+    sv3gui_SimJobExportAction.cxx \
+    sv3gui_SimulationPluginActivator.cxx \
+    sv3gui_ProcessHandler.cxx \
+    sv3gui_SolverProcessHandler.cxx
 
 UIFILES = \
-    svSimJobCreate.ui \
-    svCapBCWidget.ui \
-    svSplitBCWidget.ui \
-    svSimulationPreferencePage.ui \
-    svSimulationView.ui
+    sv3gui_SimJobCreate.ui \
+    sv3gui_CapBCWidget.ui \
+    sv3gui_SplitBCWidget.ui \
+    sv3gui_SimulationPreferencePage.ui \
+    sv3gui_SimulationView.ui
 
 QRCFILES = ../../resources/simulation.qrc
 

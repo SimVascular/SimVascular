@@ -33,11 +33,11 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
-  svProjectDataNodesPluginActivator.cxx
+  sv3gui_ProjectDataNodesPluginActivator.cxx
 )
 
 set(MOC_H_FILES
-  src/internal/svProjectDataNodesPluginActivator.h
+  src/internal/sv3gui_ProjectDataNodesPluginActivator.h
 )
 
 set(QRC_FILES

@@ -54,38 +54,38 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
 endif
 
 HDRS	= \
-    svModelCreate.h \
-    svModelCreateAction.h \
-    svModelLoadAction.h \
-    svModelLegacySaveAction.h \
-    svModelExtractPathsAction.h \
-    svSegSelectionWidget.h \
-    svModelEdit.h \
-    svFaceListDelegate.h \
-    svModelFaceInfoExportAction.h \
-    svModelingPluginActivator.h \
-    svLoftingPreferencePage.h \
-    svCapSelectionWidget.h
+    sv3gui_ModelCreate.h \
+    sv3gui_ModelCreateAction.h \
+    sv3gui_ModelLoadAction.h \
+    sv3gui_ModelLegacySaveAction.h \
+    sv3gui_ModelExtractPathsAction.h \
+    sv3gui_SegSelectionWidget.h \
+    sv3gui_ModelEdit.h \
+    sv3gui_FaceListDelegate.h \
+    sv3gui_ModelFaceInfoExportAction.h \
+    sv3gui_ModelingPluginActivator.h \
+    sv3gui_LoftingPreferencePage.h \
+    sv3gui_CapSelectionWidget.h
 
 CXXSRCS	= \
-    svModelCreate.cxx \
-    svModelCreateAction.cxx \
-    svModelLoadAction.cxx \
-    svModelLegacySaveAction.cxx \
-    svModelExtractPathsAction.cxx \
-    svSegSelectionWidget.cxx \
-    svModelEdit.cxx \
-    svFaceListDelegate.cxx \
-    svModelFaceInfoExportAction.cxx \
-    svModelingPluginActivator.cxx \
-    svLoftingPreferencePage.cxx \
-    svCapSelectionWidget.cxx
+    sv3gui_ModelCreate.cxx \
+    sv3gui_ModelCreateAction.cxx \
+    sv3gui_ModelLoadAction.cxx \
+    sv3gui_ModelLegacySaveAction.cxx \
+    sv3gui_ModelExtractPathsAction.cxx \
+    sv3gui_SegSelectionWidget.cxx \
+    sv3gui_ModelEdit.cxx \
+    sv3gui_FaceListDelegate.cxx \
+    sv3gui_ModelFaceInfoExportAction.cxx \
+    sv3gui_ModelingPluginActivator.cxx \
+    sv3gui_LoftingPreferencePage.cxx \
+    sv3gui_CapSelectionWidget.cxx
 
 UIFILES =  \
-    svModelCreate.ui \
-    svSegSelectionWidget.ui \
-    svModelEdit.ui \
-    svCapSelectionWidget.ui
+    sv3gui_ModelCreate.ui \
+    sv3gui_SegSelectionWidget.ui \
+    sv3gui_ModelEdit.ui \
+    sv3gui_CapSelectionWidget.ui
 
 QRCFILES =  ../../resources/modeling.qrc
 

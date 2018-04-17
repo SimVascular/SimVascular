@@ -30,26 +30,26 @@
 
 set(INTERNAL_CPP_FILES
   svberrySingleNodeSelection.cxx
-  svQmitkDataManagerView.cxx
-  svQmitkDataManagerPreferencePage.cxx
-  svQmitkDataManagerHotkeysPrefPage.cxx
-  svDataManagerPluginActivator.cxx
-  svQmitkNodeTableViewKeyFilter.cxx
-  svQmitkInfoDialog.cxx
-  svQmitkDataManagerItemDelegate.cxx
-  svQmitkFunctionality.cxx
+  sv3gui_QmitkDataManagerView.cxx
+  sv3gui_QmitkDataManagerPreferencePage.cxx
+  sv3gui_QmitkDataManagerHotkeysPrefPage.cxx
+  sv3gui_DataManagerPluginActivator.cxx
+  sv3gui_QmitkNodeTableViewKeyFilter.cxx
+  sv3gui_QmitkInfoDialog.cxx
+  sv3gui_QmitkDataManagerItemDelegate.cxx
+  sv3gui_QmitkFunctionality.cxx
 )
 
 set(MOC_H_FILES
-  src/internal/svQmitkDataManagerView.h
-  src/internal/svQmitkDataManagerPreferencePage.h
-  src/internal/svQmitkDataManagerHotkeysPrefPage.h
-  src/internal/svQmitkNodeTableViewKeyFilter.h
-  src/internal/svQmitkInfoDialog.h
-  src/internal/svQmitkDataManagerItemDelegate.h
-  src/internal/svDataManagerPluginActivator.h
+  src/internal/sv3gui_QmitkDataManagerView.h
+  src/internal/sv3gui_QmitkDataManagerPreferencePage.h
+  src/internal/sv3gui_QmitkDataManagerHotkeysPrefPage.h
+  src/internal/sv3gui_QmitkNodeTableViewKeyFilter.h
+  src/internal/sv3gui_QmitkInfoDialog.h
+  src/internal/sv3gui_QmitkDataManagerItemDelegate.h
+  src/internal/sv3gui_DataManagerPluginActivator.h
   src/internal/svmitkIContextMenuAction.h
-  src/internal/svQmitkFunctionality.h
+  src/internal/sv3gui_QmitkFunctionality.h
 )
 
 set(CPP_FILES )

@@ -29,19 +29,19 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    svSimJob.h
-    svMitkSimJob.h
-    svMitkSimJobIO.h
-    svSimulationUtils.h
-    svMitkSimulationObjectFactory.h
+    sv3gui_SimJob.h
+    sv3gui_MitkSimJob.h
+    sv3gui_MitkSimJobIO.h
+    sv3gui_SimulationUtils.h
+    sv3gui_MitkSimulationObjectFactory.h
 )
 
 set(CPP_FILES
-    svSimJob.cxx
-    svMitkSimJob.cxx
-    svMitkSimJobIO.cxx
-    svSimulationUtils.cxx
-    svMitkSimulationObjectFactory.cxx
+    sv3gui_SimJob.cxx
+    sv3gui_MitkSimJob.cxx
+    sv3gui_MitkSimJobIO.cxx
+    sv3gui_SimulationUtils.cxx
+    sv3gui_MitkSimulationObjectFactory.cxx
 )
 
 set(RESOURCE_FILES

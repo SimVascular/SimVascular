@@ -48,9 +48,9 @@ MODULE_NAME_ALL_CAPS = SVQTWIDGETS
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
-HDRS	= svResliceSlider.h
+HDRS	= sv3gui_ResliceSlider.h
 
-CXXSRCS	= svResliceSlider.cxx
+CXXSRCS	= sv3gui_ResliceSlider.cxx
 
 CXXSRCS += us_init.cxx
 
