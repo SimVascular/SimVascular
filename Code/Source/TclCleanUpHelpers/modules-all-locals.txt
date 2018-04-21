@@ -1,0 +1,9 @@
+Path/svPathVtkMapper2D.h:    class SVPATH_EXPORT LocalStorage : public mitk::Mapper::BaseLocalStorage
+Segmentation/svContourGroupVtkMapper3D.h:    class SVSEGMENTATION_EXPORT LocalStorage : public mitk::Mapper::BaseLocalStorage
+Segmentation/svContourModelVtkMapper2D.h:    class LocalStorage : public mitk::Mapper::BaseLocalStorage
+Segmentation/svMitkSeg3DVtkMapper3D.h:    class svLocalStorage : public mitk::Mapper::BaseLocalStorage
+Segmentation/svSurfaceVtkMapper3D.h:  class LocalStorage : public mitk::Mapper::BaseLocalStorage
+Mesh/Common/svMitkMeshMapper2D.h:    class LocalStorage : public mitk::Mapper::BaseLocalStorage
+Mesh/Common/svMitkMeshMapper3D.h:    class LocalStorage : public mitk::Mapper::BaseLocalStorage
+Model/Common/svModelVtkMapper2D.h:    class LocalStorage : public mitk::Mapper::BaseLocalStorage
+Model/Common/svModelVtkMapper3D.h:    class LocalStorage : public mitk::Mapper::BaseLocalStorage

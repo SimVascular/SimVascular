@@ -19,8 +19,6 @@ svMath3
 svMesh
 svMitk
 svModel
-svModel
-svPath
 svPath
 svProcessHandler 
 svProject
