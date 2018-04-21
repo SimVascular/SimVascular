@@ -99,7 +99,7 @@ if {![file exists Modules]} {
 exec rm -Rf ../Plugins
 exec rm -Rf ../Modules
 
-exec mkdir tmp
+exec mkdir -p tmp
 
 puts "Check for existence of headers and #defines..."
 

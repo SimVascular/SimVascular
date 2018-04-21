@@ -137,7 +137,7 @@ for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
 }
 
 # replace header filenames and #defines
-exec mkdir tmp
+exec mkdir -p tmp
 exec rm -f tmp/sed-rename-files.txt
 set ofn [open tmp/sed-rename-files.txt w]
 
@@ -161,9 +161,9 @@ for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
 
 # have to manually handle these three files since they don't really contain sv3gui
 # classes!
-puts $ofn "s+svberrySingleNodeSelection\.cxx+sv3gui_svberrySingleNodeSelection\.cxx+g"
+puts $ofn "s+svberrySingleNodeSelection\.cxx+sv3gui_berrySingleNodeSelection\.cxx+g"
 puts $ofn "s+svberrySingleNodeSelection\.h+sv3gui_berrySingleNodeSelection\.h+g"
-puts $ofn "s+svmitkIContextMenuAction\.h+sv3gui_svmitkIContextMenuAction\.h+g"
+puts $ofn "s+svmitkIContextMenuAction\.h+sv3gui_mitkIContextMenuAction\.h+g"
 
 close $ofn
 
@@ -245,16 +245,5 @@ foreach fn [file_find {Modules Plugins} *] {
 
 }
 
-# need to manually add these files
-puts $gitfn "git add Plugins/org.sv.gui.qt.datamanager/src/internal/sv3gui_svberrySingleNodeSelection.cxx"
-puts $gitfn "git add Plugins/org.sv.gui.qt.datamanager/src/internal/sv3gui_svberrySingleNodeSelection.h"
-puts $gitfn "git add Plugins/org.sv.gui.qt.datamanager/src/internal/sv3gui_svmitkIContextMenuAction.h"
-
 close $gitfn
-
-# need to manually copy these three unaltered files
-exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.cxx sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/sv3gui_svberrySingleNodeSelection.cxx
-exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svberrySingleNodeSelection.h sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/sv3gui_svberrySingleNodeSelection.h
-exec cp Plugins/org.sv.gui.qt.datamanager/src/internal/svmitkIContextMenuAction.h sv3gui/Plugins/org.sv.gui.qt.datamanager/src/internal/sv3gui_svmitkIContextMenuAction.h
-
 
