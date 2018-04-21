@@ -259,7 +259,7 @@ set fn ../UI/svMainWindow.cxx.org
 if {![file exists $fn]} {
     exec mv $newfn $fn
 }
-exec rm -f $fn
+exec rm -f $newfn
 puts "special work on fn: $fn  ($newfn)"
 exec sed -f tmp/sed-replace-stubs.txt $fn > $newfn
 catch {exec d2u $newfn}
