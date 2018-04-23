@@ -33,43 +33,43 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
-    svSimJobCreate.cxx
-    svSimJobCreateAction.cxx
-    svCapBCWidget.cxx
-    svSplitBCWidget.cxx
-    svTableCapDelegate.cxx
-    svTableSolverDelegate.cxx
-    svSimulationView.cxx
-    svSimulationPreferencePage.cxx
-    svSimJobStopAction.cxx
-    svSimJobExportAction.cxx
-    svSimulationPluginActivator.cxx
-    svProcessHandler.cxx
-    svSolverProcessHandler.cxx
+    sv4gui_SimJobCreate.cxx
+    sv4gui_SimJobCreateAction.cxx
+    sv4gui_CapBCWidget.cxx
+    sv4gui_SplitBCWidget.cxx
+    sv4gui_TableCapDelegate.cxx
+    sv4gui_TableSolverDelegate.cxx
+    sv4gui_SimulationView.cxx
+    sv4gui_SimulationPreferencePage.cxx
+    sv4gui_SimJobStopAction.cxx
+    sv4gui_SimJobExportAction.cxx
+    sv4gui_SimulationPluginActivator.cxx
+    sv4gui_ProcessHandler.cxx
+    sv4gui_SolverProcessHandler.cxx
 )
 
 set(MOC_H_FILES
-    src/internal/svSimJobCreate.h
-    src/internal/svSimJobCreateAction.h
-    src/internal/svCapBCWidget.h
-    src/internal/svSplitBCWidget.h
-    src/internal/svTableCapDelegate.h
-    src/internal/svTableSolverDelegate.h
-    src/internal/svSimulationView.h
-    src/internal/svSimulationPreferencePage.h
-    src/internal/svSimJobStopAction.h
-    src/internal/svSimJobExportAction.h
-    src/internal/svSimulationPluginActivator.h
-    src/internal/svProcessHandler.h
-    src/internal/svSolverProcessHandler.h
+    src/internal/sv4gui_SimJobCreate.h
+    src/internal/sv4gui_SimJobCreateAction.h
+    src/internal/sv4gui_CapBCWidget.h
+    src/internal/sv4gui_SplitBCWidget.h
+    src/internal/sv4gui_TableCapDelegate.h
+    src/internal/sv4gui_TableSolverDelegate.h
+    src/internal/sv4gui_SimulationView.h
+    src/internal/sv4gui_SimulationPreferencePage.h
+    src/internal/sv4gui_SimJobStopAction.h
+    src/internal/sv4gui_SimJobExportAction.h
+    src/internal/sv4gui_SimulationPluginActivator.h
+    src/internal/sv4gui_ProcessHandler.h
+    src/internal/sv4gui_SolverProcessHandler.h
 )
 
 set(UI_FILES
-    src/internal/svSimJobCreate.ui
-    src/internal/svCapBCWidget.ui
-    src/internal/svSplitBCWidget.ui
-    src/internal/svSimulationPreferencePage.ui
-    src/internal/svSimulationView.ui
+    src/internal/sv4gui_SimJobCreate.ui
+    src/internal/sv4gui_CapBCWidget.ui
+    src/internal/sv4gui_SplitBCWidget.ui
+    src/internal/sv4gui_SimulationPreferencePage.ui
+    src/internal/sv4gui_SimulationView.ui
 )
 
 set(CACHED_RESOURCE_FILES

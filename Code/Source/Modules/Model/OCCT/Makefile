@@ -55,14 +55,14 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svModelUtilsOCCT.h \
-    svModelElementOCCT.h \
-    svRegisterOCCTFunction.h
+    sv4gui_ModelUtilsOCCT.h \
+    sv4gui_ModelElementOCCT.h \
+    sv4gui_RegisterOCCTFunction.h
 
 CXXSRCS	= \
-    svModelUtilsOCCT.cxx \
-    svModelElementOCCT.cxx \
-    svRegisterOCCTFunction.cxx
+    sv4gui_ModelUtilsOCCT.cxx \
+    sv4gui_ModelElementOCCT.cxx \
+    sv4gui_RegisterOCCTFunction.cxx
 
 CXXSRCS += us_init.cxx
 

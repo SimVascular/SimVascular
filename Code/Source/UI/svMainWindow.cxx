@@ -31,10 +31,10 @@
 
 #include "svMainWindow.h"
 
-#include "svApplication.h"
+#include "sv4guiApplication.h"
 #include "svDisplayEditor.h"
-#include "svQmitkDataManager.h"
-#include "svQmitkImageNavigator.h"
+#include "sv4guiQmitkDataManager.h"
+#include "sv4guiQmitkImageNavigator.h"
 
 #include "QmitkStatusBar.h"
 #include <QmitkProgressBar.h>
@@ -74,28 +74,28 @@ svMainWindow::svMainWindow(QWidget *parent) :
 
     // get DataStorage
     //========================================================
-    m_DataStorage= svApplication::application()->dataStorage();
+    m_DataStorage= sv4guiApplication::application()->dataStorage();
 
     // set up DisplatWidget
     //========================================================
     svDisplayEditor* displayEditor=new svDisplayEditor;
     m_DisplayWidget=displayEditor->GetDisplayWidget();
-    svApplication::application()->setDisplayWidget(m_DisplayWidget);
-    svApplication::application()->pythonManager()->addObjectToPythonMain("svDisplay", m_DisplayWidget);
+    sv4guiApplication::application()->setDisplayWidget(m_DisplayWidget);
+    sv4guiApplication::application()->pythonManager()->addObjectToPythonMain("svDisplay", m_DisplayWidget);
 
     //set up DataManager
     //==============================================================
-    svQmitkDataManager* dataManager= new svQmitkDataManager;
-    svApplication::application()->setDataManager(dataManager);
+    sv4guiQmitkDataManager* dataManager= new sv4guiQmitkDataManager;
+    sv4guiApplication::application()->setDataManager(dataManager);
 
     //set up ImageNavigator
     //==============================================================
-    svQmitkImageNavigator* svImageNavigator= new svQmitkImageNavigator;
-    //svApplication::application()->pythonManager()->addObjectToPythonMain("svNavigator", svImageNavigator);
+    sv4guiQmitkImageNavigator* svImageNavigator= new sv4guiQmitkImageNavigator;
+    //sv4guiApplication::application()->pythonManager()->addObjectToPythonMain("svNavigator", svImageNavigator);
 
     //Load plugins
     QFile xmlFile(":plugin.xml");
-    svApplication::application()->setExtensionManager(new svExtensionManager(&xmlFile));
+    sv4guiApplication::application()->setExtensionManager(new svExtensionManager(&xmlFile));
 
     //Layout
     ctkCollapsibleGroupBox *groupBox = new ctkCollapsibleGroupBox("Image Navigator", this);
@@ -118,7 +118,7 @@ svMainWindow::svMainWindow(QWidget *parent) :
     centerLayout->setMargin(0);
     centerLayout->setSpacing(5);
 
-    centerLayout->addWidget(svApplication::application()->extensionManager()->getLeftPane());
+    centerLayout->addWidget(sv4guiApplication::application()->extensionManager()->getLeftPane());
     centerLayout->addWidget(displayEditor);
     centerPanel->resize(QSize(800,477).expandedTo(minimumSizeHint()));
 
@@ -138,7 +138,7 @@ svMainWindow::svMainWindow(QWidget *parent) :
     QAction* action;
 
     //Get extension info
-    QList<svExtensionManager::svViewInfo*> viewList=svApplication::application()->extensionManager()->getViewList();
+    QList<svExtensionManager::svViewInfo*> viewList=sv4guiApplication::application()->extensionManager()->getViewList();
 
     //Add menus and toolbars for extensions
     QString currentMenuName="";
@@ -183,7 +183,7 @@ svMainWindow::svMainWindow(QWidget *parent) :
 
     }
 
-    connect(signalMapper, SIGNAL(mapped(QString)),svApplication::application()->extensionManager(), SLOT(useExtension(QString)));
+    connect(signalMapper, SIGNAL(mapped(QString)),sv4guiApplication::application()->extensionManager(), SLOT(useExtension(QString)));
 
     currentMenu=menuBar()->addMenu("Python");
     action=currentMenu->addAction(QIcon(":Python.png"),"Show Console");
@@ -246,7 +246,7 @@ void svMainWindow::initializePythonConsole(){
     pythonConsole->setWindowTitle("SimVascular Python Interactor");
 
 //  ===============
-     pythonConsole->initialize(svApplication::application()->pythonManager());
+     pythonConsole->initialize(sv4guiApplication::application()->pythonManager());
 
     QStringList autocompletePreferenceList;
 //    autocompletePreferenceList << "sv" << "sv.app" << "qt.QPushButton";
@@ -256,7 +256,7 @@ void svMainWindow::initializePythonConsole(){
     //pythonConsole->setAttribute(Qt::WA_QuitOnClose, false);
     pythonConsole->resize(600, 300);
 
-//    svApplication::application()->settingsDialog()->addPanel(
+//    sv4guiApplication::application()->settingsDialog()->addPanel(
 //      "Python", new svSettingsPythonPanel);
 
 //  =================

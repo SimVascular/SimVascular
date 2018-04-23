@@ -29,37 +29,37 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    svModelUtils.h
-    svModelElement.h
-    svModelElementPolyData.h
-    svModelElementAnalytic.h
-    svModelElementFactory.h
-    svModelOperation.h
-    svModel.h
-    svModelVtkMapper2D.h
-    svModelVtkMapper3D.h
-    svModelDataInteractor.h
-    svModelIO.h
-    svModelLegacyIO.h
-    svModelObjectFactory.h
-    svRegisterPolyDataFunction.h
+    sv4gui_ModelUtils.h
+    sv4gui_ModelElement.h
+    sv4gui_ModelElementPolyData.h
+    sv4gui_ModelElementAnalytic.h
+    sv4gui_ModelElementFactory.h
+    sv4gui_ModelOperation.h
+    sv4gui_Model.h
+    sv4gui_ModelVtkMapper2D.h
+    sv4gui_ModelVtkMapper3D.h
+    sv4gui_ModelDataInteractor.h
+    sv4gui_ModelIO.h
+    sv4gui_ModelLegacyIO.h
+    sv4gui_ModelObjectFactory.h
+    sv4gui_RegisterPolyDataFunction.h
 )
 
 set(CPP_FILES
-    svModelUtils.cxx
-    svModelElement.cxx
-    svModelElementPolyData.cxx
-    svModelElementAnalytic.cxx
-    svModelElementFactory.cxx
-    svModelOperation.cxx
-    svModel.cxx
-    svModelVtkMapper2D.cxx
-    svModelVtkMapper3D.cxx
-    svModelDataInteractor.cxx
-    svModelIO.cxx
-    svModelLegacyIO.cxx
-    svModelObjectFactory.cxx
-    svRegisterPolyDataFunction.cxx
+    sv4gui_ModelUtils.cxx
+    sv4gui_ModelElement.cxx
+    sv4gui_ModelElementPolyData.cxx
+    sv4gui_ModelElementAnalytic.cxx
+    sv4gui_ModelElementFactory.cxx
+    sv4gui_ModelOperation.cxx
+    sv4gui_Model.cxx
+    sv4gui_ModelVtkMapper2D.cxx
+    sv4gui_ModelVtkMapper3D.cxx
+    sv4gui_ModelDataInteractor.cxx
+    sv4gui_ModelIO.cxx
+    sv4gui_ModelLegacyIO.cxx
+    sv4gui_ModelObjectFactory.cxx
+    sv4gui_RegisterPolyDataFunction.cxx
 )
 
 set(RESOURCE_FILES

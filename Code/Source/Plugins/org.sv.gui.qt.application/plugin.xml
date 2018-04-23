@@ -3,7 +3,7 @@
 <plugin>
   <extension id="org.sv.qt.application" point="org.blueberry.osgi.applications">
     <application>
-      <run class="svApplication"/>
+      <run class="sv4guiApplication"/>
     </application>
   </extension>
 
@@ -13,7 +13,7 @@
 
   <extension point="org.blueberry.ui.intro">
     <intro id="org.sv.qt.applicationintro"
-      class="svWorkbenchIntroPart"
+      class="sv4guiWorkbenchIntroPart"
       role="editor"/>
     <introProductBinding
       productId="org.sv.gui.qt.application.svworkbench"
@@ -24,7 +24,7 @@
     <perspective
       id="org.sv.application.defaultperspective"
       name="SimVascular"
-      class="svDefaultPerspective"
+      class="sv4guiDefaultPerspective"
       icon="resources/icon.png">
     </perspective>
   </extension>

@@ -54,26 +54,26 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
 endif
 
 HDRS	= \
-  svQmitkDataManagerView.h \
-  svQmitkDataManagerPreferencePage.h \
-  svQmitkDataManagerHotkeysPrefPage.h \
-  svQmitkNodeTableViewKeyFilter.h \
-  svQmitkInfoDialog.h \
-  svQmitkDataManagerItemDelegate.h \
-  svDataManagerPluginActivator.h \
-  svmitkIContextMenuAction.h \
-  svQmitkFunctionality.h
+  sv4gui_QmitkDataManagerView.h \
+  sv4gui_QmitkDataManagerPreferencePage.h \
+  sv4gui_QmitkDataManagerHotkeysPrefPage.h \
+  sv4gui_QmitkNodeTableViewKeyFilter.h \
+  sv4gui_QmitkInfoDialog.h \
+  sv4gui_QmitkDataManagerItemDelegate.h \
+  sv4gui_DataManagerPluginActivator.h \
+  sv4gui_mitkIContextMenuAction.h \
+  sv4gui_QmitkFunctionality.h
 
 CXXSRCS	= \
-  svberrySingleNodeSelection.cxx \
-  svQmitkDataManagerView.cxx \
-  svQmitkDataManagerPreferencePage.cxx \
-  svQmitkDataManagerHotkeysPrefPage.cxx \
-  svDataManagerPluginActivator.cxx \
-  svQmitkNodeTableViewKeyFilter.cxx \
-  svQmitkInfoDialog.cxx \
-  svQmitkDataManagerItemDelegate.cxx \
-  svQmitkFunctionality.cxx
+  sv4gui_berrySingleNodeSelection.cxx \
+  sv4gui_QmitkDataManagerView.cxx \
+  sv4gui_QmitkDataManagerPreferencePage.cxx \
+  sv4gui_QmitkDataManagerHotkeysPrefPage.cxx \
+  sv4gui_DataManagerPluginActivator.cxx \
+  sv4gui_QmitkNodeTableViewKeyFilter.cxx \
+  sv4gui_QmitkInfoDialog.cxx \
+  sv4gui_QmitkDataManagerItemDelegate.cxx \
+  sv4gui_QmitkFunctionality.cxx
 
 UIFILES = \
 

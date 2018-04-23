@@ -29,15 +29,15 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    svResliceSlider.h
+    sv4gui_ResliceSlider.h
 )
 
 set(CPP_FILES
-    svResliceSlider.cxx
+    sv4gui_ResliceSlider.cxx
 )
 
 set(MOC_H_FILES
-    svResliceSlider.h
+    sv4gui_ResliceSlider.h
 )
 
 #set(UI_FILES

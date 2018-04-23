@@ -46,10 +46,10 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            -DUS_MODULE_NAME=svProjectDataNodes
 
 HDRS	= \
-  svProjectDataNodesPluginActivator.h
+  sv4gui_ProjectDataNodesPluginActivator.h
 
 CXXSRCS	= \
-  svProjectDataNodesPluginActivator.cxx
+  sv4gui_ProjectDataNodesPluginActivator.cxx
 
 UIFILES =
 

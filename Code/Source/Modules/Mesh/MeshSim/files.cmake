@@ -29,23 +29,23 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    svMeshSim.h
-    svRegisterMeshSimFunction.h
+    sv4gui_MeshSim.h
+    sv4gui_RegisterMeshSimFunction.h
 )
 
 if(SV_USE_MESHSIM_ADAPTOR)
   set(H_FILES ${H_FILES}
-    svMeshSimAdaptor.h)
+    sv4gui_MeshSimAdaptor.h)
 endif()
 
 set(CPP_FILES
-    svMeshSim.cxx
-    svRegisterMeshSimFunction.cxx
+    sv4gui_MeshSim.cxx
+    sv4gui_RegisterMeshSimFunction.cxx
 )
 
 if(SV_USE_MESHSIM_ADAPTOR)
   set(CPP_FILES ${CPP_FILES}
-    svMeshSimAdaptor.cxx)
+    sv4gui_MeshSimAdaptor.cxx)
 endif()
 
 set(RESOURCE_FILES
