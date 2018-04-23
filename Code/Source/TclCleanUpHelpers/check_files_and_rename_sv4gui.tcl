@@ -143,8 +143,8 @@ set ofn [open tmp/sed-rename-files.txt w]
 
 foreach fn [file_find {Plugins} *.ui] {
     set myroot [string range [file rootname [file tail $fn]] 2 end]
-    puts $ofn "s+ui_sv$myroot\\.h+ui_sv3gui_$myroot\\.h+g"
-    puts $ofn "s+sv$myroot\\.ui+sv3gui_$myroot\\.ui+g"
+    puts $ofn "s+ui_sv$myroot\\.h+ui_sv4gui_$myroot\\.h+g"
+    puts $ofn "s+sv$myroot\\.ui+sv4gui_$myroot\\.ui+g"
 }
 
 for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
@@ -153,17 +153,17 @@ for {set i 0} {$i < [llength $all_header_filenames]} {incr i} {
     set find_me_cxx_fn  [file rootname [lindex $all_cxx_filenames $i]]\\.cxx
     set find_me_defines [lindex $all_pound_defines $i]
 
-    puts $ofn "s+$find_me_hdr_fn+sv3gui_[string range $find_me_hdr_fn 2 end]+g"
-    puts $ofn "s+$find_me_cxx_fn+sv3gui_[string range $find_me_cxx_fn 2 end]+g"
-    puts $ofn "s+$find_me_defines+SV3GUI\_[string range $find_me_defines 2 end]+g"
+    puts $ofn "s+$find_me_hdr_fn+sv4gui_[string range $find_me_hdr_fn 2 end]+g"
+    puts $ofn "s+$find_me_cxx_fn+sv4gui_[string range $find_me_cxx_fn 2 end]+g"
+    puts $ofn "s+$find_me_defines+SV4GUI\_[string range $find_me_defines 2 end]+g"
     
 }
 
-# have to manually handle these three files since they don't really contain sv3gui
+# have to manually handle these three files since they don't really contain sv4gui
 # classes!
-puts $ofn "s+svberrySingleNodeSelection\.cxx+sv3gui_berrySingleNodeSelection\.cxx+g"
-puts $ofn "s+svberrySingleNodeSelection\.h+sv3gui_berrySingleNodeSelection\.h+g"
-puts $ofn "s+svmitkIContextMenuAction\.h+sv3gui_mitkIContextMenuAction\.h+g"
+puts $ofn "s+svberrySingleNodeSelection\.cxx+sv4gui_berrySingleNodeSelection\.cxx+g"
+puts $ofn "s+svberrySingleNodeSelection\.h+sv4gui_berrySingleNodeSelection\.h+g"
+puts $ofn "s+svmitkIContextMenuAction\.h+sv4gui_mitkIContextMenuAction\.h+g"
 
 close $ofn
 
@@ -171,16 +171,16 @@ exec rm -f tmp/git-changes-to-commit.txt
 
 set gitfn [open tmp/git-changes-to-commit.txt w]
 
-exec rm -Rf sv3gui
-exec mkdir sv3gui
+exec rm -Rf sv4gui
+exec mkdir sv4gui
 
 foreach fn [file_find {Modules Plugins} *.h] {
 
-    set newfn sv3gui_[string range [file tail $fn] 2 end]
+    set newfn sv4gui_[string range [file tail $fn] 2 end]
     puts "working on fn: $fn  ($newfn)"
-    exec mkdir -p sv3gui/[file dirname $fn]
-    exec sed -f tmp/sed-rename-files.txt $fn > sv3gui/[file dirname $fn]/$newfn
-    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+    exec mkdir -p sv4gui/[file dirname $fn]
+    exec sed -f tmp/sed-rename-files.txt $fn > sv4gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv4gui/[file dirname $fn]/$newfn}
     puts $gitfn "git rm $fn"
     puts $gitfn "git add [file dirname $fn]/$newfn"
 
@@ -188,11 +188,11 @@ foreach fn [file_find {Modules Plugins} *.h] {
 
 foreach fn [file_find {Modules Plugins} *.cxx] {
 
-    set newfn sv3gui_[string range [file tail $fn] 2 end]
+    set newfn sv4gui_[string range [file tail $fn] 2 end]
     puts "working on fn: $fn  ($newfn)"
-    exec mkdir -p sv3gui/[file dirname $fn]
-    exec sed -f tmp/sed-rename-files.txt $fn > sv3gui/[file dirname $fn]/$newfn
-    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+    exec mkdir -p sv4gui/[file dirname $fn]
+    exec sed -f tmp/sed-rename-files.txt $fn > sv4gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv4gui/[file dirname $fn]/$newfn}
     puts $gitfn "git rm $fn"
     puts $gitfn "git add [file dirname $fn]/$newfn"
 
@@ -202,9 +202,9 @@ foreach fn [file_find {Modules Plugins} Makefile] {
 
     set newfn [file tail $fn]
     puts "working on fn: $fn  ($newfn)"
-    exec mkdir -p sv3gui/[file dirname $fn]
-    exec sed -f tmp/sed-rename-files.txt $fn > sv3gui/[file dirname $fn]/$newfn
-    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+    exec mkdir -p sv4gui/[file dirname $fn]
+    exec sed -f tmp/sed-rename-files.txt $fn > sv4gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv4gui/[file dirname $fn]/$newfn}
 
 }
 
@@ -212,19 +212,19 @@ foreach fn [file_find {Modules Plugins} files.cmake] {
 
     set newfn [file tail $fn]
     puts "working on fn: $fn  ($newfn)"
-    exec mkdir -p sv3gui/[file dirname $fn]
-    exec sed -f tmp/sed-rename-files.txt $fn > sv3gui/[file dirname $fn]/$newfn
-    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+    exec mkdir -p sv4gui/[file dirname $fn]
+    exec sed -f tmp/sed-rename-files.txt $fn > sv4gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv4gui/[file dirname $fn]/$newfn}
 
 }
 
 foreach fn [file_find {Plugins} *.ui] {
     set myroot [string range [file rootname [file tail $fn]] 2 end]
-    set newfn sv3gui_$myroot.ui
+    set newfn sv4gui_$myroot.ui
     puts "working on ($fn) to ($newfn)"
-    exec mkdir -p sv3gui/[file dirname $fn]
-    exec sed -f tmp/sed-rename-files.txt $fn > sv3gui/[file dirname $fn]/$newfn
-    catch {exec d2u sv3gui/[file dirname $fn]/$newfn}
+    exec mkdir -p sv4gui/[file dirname $fn]
+    exec sed -f tmp/sed-rename-files.txt $fn > sv4gui/[file dirname $fn]/$newfn
+    catch {exec d2u sv4gui/[file dirname $fn]/$newfn}
     puts $gitfn "git rm $fn"
     puts $gitfn "git add [file dirname $fn]/$newfn"
 }
@@ -240,8 +240,8 @@ foreach fn [file_find {Modules Plugins} *] {
     
     set newfn [file tail $fn]
     puts "copying fn: $fn  ($newfn)"
-    exec mkdir -p sv3gui/[file dirname $fn]
-    exec cp $fn sv3gui/[file dirname $fn]/$newfn
+    exec mkdir -p sv4gui/[file dirname $fn]
+    exec cp $fn sv4gui/[file dirname $fn]/$newfn
 
 }
 

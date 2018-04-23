@@ -1,26 +1,26 @@
 set ui_files [list \
-sv3gui_AboutDialog.ui \
-sv3gui_ProjectCreate.ui \
-sv3gui_WelcomeScreenViewControls.ui \
-sv3gui_MeshCreate.ui \
-sv3gui_MeshEdit.ui \
-sv3gui_CapSelectionWidget.ui \
-sv3gui_ModelCreate.ui \
-sv3gui_ModelEdit.ui \
-sv3gui_SegSelectionWidget.ui \
-sv3gui_PathCreate.ui \
-sv3gui_PathEdit.ui \
-sv3gui_PathSmooth.ui \
-sv3gui_ContourGroupCreate.ui \
-sv3gui_LevelSet2DWidget.ui \
-sv3gui_LoftParamWidget.ui \
-sv3gui_Seg2DEdit.ui \
-sv3gui_Seg3DEdit.ui \
-sv3gui_CapBCWidget.ui \
-sv3gui_SimJobCreate.ui \
-sv3gui_SimulationPreferencePage.ui \
-sv3gui_SimulationView.ui \
-sv3gui_SplitBCWidget.ui \
+sv4gui_AboutDialog.ui \
+sv4gui_ProjectCreate.ui \
+sv4gui_WelcomeScreenViewControls.ui \
+sv4gui_MeshCreate.ui \
+sv4gui_MeshEdit.ui \
+sv4gui_CapSelectionWidget.ui \
+sv4gui_ModelCreate.ui \
+sv4gui_ModelEdit.ui \
+sv4gui_SegSelectionWidget.ui \
+sv4gui_PathCreate.ui \
+sv4gui_PathEdit.ui \
+sv4gui_PathSmooth.ui \
+sv4gui_ContourGroupCreate.ui \
+sv4gui_LevelSet2DWidget.ui \
+sv4gui_LoftParamWidget.ui \
+sv4gui_Seg2DEdit.ui \
+sv4gui_Seg3DEdit.ui \
+sv4gui_CapBCWidget.ui \
+sv4gui_SimJobCreate.ui \
+sv4gui_SimulationPreferencePage.ui \
+sv4gui_SimulationView.ui \
+sv4gui_SplitBCWidget.ui \
 ]
 
 # ignore this one!
@@ -111,9 +111,9 @@ set ofn [open all-sv-classes-to-replace.txt r]
 while {[gets $ofn line] >= 0} {
     set line [string trim $line]
     if {$line != ""} {
-	lappend all_header_filenames sv3gui_[string range $line 2 end].h
-	lappend all_cxx_filenames sv3gui_[string range $line 2 end].cxx
-	lappend all_pound_defines SV3GUI_[string toupper [string range $line 2 end]]_H
+	lappend all_header_filenames sv4gui_[string range $line 2 end].h
+	lappend all_cxx_filenames sv4gui_[string range $line 2 end].cxx
+	lappend all_pound_defines SV4GUI_[string toupper [string range $line 2 end]]_H
     }
 }
 close $ofn
@@ -178,11 +178,11 @@ foreach me $module_exports_h {
 }
 
 #foreach funcname [lsort -dictionary $functions_to_replace] {
-#    puts $ofn "s+$funcname+sv3gui::[string range $funcname 2 end]+g"
+#    puts $ofn "s+$funcname+sv4gui::[string range $funcname 2 end]+g"
 #}
 
 foreach funcname [lsort -dictionary $functions_to_replace] {
-    puts $ofn "s+$funcname+sv3gui[string range $funcname 2 end]+g"
+    puts $ofn "s+$funcname+sv4gui[string range $funcname 2 end]+g"
 }
 
 
@@ -190,7 +190,7 @@ foreach me $module_exports_h {
     puts $ofn "s+PROTECT_ME_[string toupper [string range [file rootname $me] 2 end]]+[file rootname $me]\\.h+g"
 }
 
-#puts $ofn "s+::sv3gui::+::+g"
+#puts $ofn "s+::sv4gui::+::+g"
 
 close $ofn
 
