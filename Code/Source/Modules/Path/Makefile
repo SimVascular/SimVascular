@@ -49,26 +49,26 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svPathElement.h \
-    svPath.h \
-    svPathOperation.h \
-    svPathDataInteractor.h \
-    svPathVtkMapper2D.h \
-    svPathVtkMapper3D.h \
-    svPathIO.h \
-    svPathLegacyIO.h \
-    svPathObjectFactory.h
+    sv4gui_PathElement.h \
+    sv4gui_Path.h \
+    sv4gui_PathOperation.h \
+    sv4gui_PathDataInteractor.h \
+    sv4gui_PathVtkMapper2D.h \
+    sv4gui_PathVtkMapper3D.h \
+    sv4gui_PathIO.h \
+    sv4gui_PathLegacyIO.h \
+    sv4gui_PathObjectFactory.h
 
 CXXSRCS	= \
-    svPathElement.cxx \
-    svPath.cxx \
-    svPathOperation.cxx \
-    svPathDataInteractor.cxx \
-    svPathVtkMapper2D.cxx \
-    svPathVtkMapper3D.cxx \
-    svPathIO.cxx \
-    svPathLegacyIO.cxx \
-    svPathObjectFactory.cxx
+    sv4gui_PathElement.cxx \
+    sv4gui_Path.cxx \
+    sv4gui_PathOperation.cxx \
+    sv4gui_PathDataInteractor.cxx \
+    sv4gui_PathVtkMapper2D.cxx \
+    sv4gui_PathVtkMapper3D.cxx \
+    sv4gui_PathIO.cxx \
+    sv4gui_PathLegacyIO.cxx \
+    sv4gui_PathObjectFactory.cxx
 
 CXXSRCS += us_init.cxx
 

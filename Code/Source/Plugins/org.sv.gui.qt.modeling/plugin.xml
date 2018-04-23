@@ -4,20 +4,20 @@
   <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.modeling"
           name="SV Modeling"
-          class="svModelEdit"
+          class="sv4guiModelEdit"
           icon="resources/model.png" />
   </extension>
 
   <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
-      <contextMenuAction nodeDescriptorName="svModelFolder" label="Create Model" icon="" class="svModelCreateAction" />
-      <contextMenuAction nodeDescriptorName="svModelFolder" label="Import Solid Model" icon="" class="svModelLoadAction" />
-      <contextMenuAction nodeDescriptorName="svModel" label="Export Solid Model" icon="" class="svModelLegacySaveAction" />
-      <contextMenuAction nodeDescriptorName="svModel" label="Export Cap Info" icon="" class="svModelFaceInfoExportAction" />
-      <contextMenuAction nodeDescriptorName="svModel" label="Extract Paths" icon="" class="svModelExtractPathsAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiModelFolder" label="Create Model" icon="" class="sv4guiModelCreateAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiModelFolder" label="Import Solid Model" icon="" class="sv4guiModelLoadAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiModel" label="Export Solid Model" icon="" class="sv4guiModelLegacySaveAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiModel" label="Export Cap Info" icon="" class="sv4guiModelFaceInfoExportAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiModel" label="Extract Paths" icon="" class="sv4guiModelExtractPathsAction" />
     </extension>
 
   <extension point="org.blueberry.ui.preferencePages">
-    <page id="org.sv.gui.qt.LoftingPreferencePage" name="SimVascular Lofting" class="svLoftingPreferencePage">
+    <page id="org.sv.gui.qt.LoftingPreferencePage" name="SimVascular Lofting" class="sv4guiLoftingPreferencePage">
       <keywordreference id="org.sv.gui.qt.LoftingPreferencePageKeywords"></keywordreference>
     </page>
   </extension>

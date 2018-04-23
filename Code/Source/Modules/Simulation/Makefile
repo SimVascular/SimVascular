@@ -50,18 +50,18 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svSimJob.h \
-    svMitkSimJob.h \
-    svMitkSimJobIO.h \
-    svSimulationUtils.h \
-    svMitkSimulationObjectFactory.h
+    sv4gui_SimJob.h \
+    sv4gui_MitkSimJob.h \
+    sv4gui_MitkSimJobIO.h \
+    sv4gui_SimulationUtils.h \
+    sv4gui_MitkSimulationObjectFactory.h
 
 CXXSRCS	= \
-    svSimJob.cxx \
-    svMitkSimJob.cxx \
-    svMitkSimJobIO.cxx \
-    svSimulationUtils.cxx \
-    svMitkSimulationObjectFactory.cxx
+    sv4gui_SimJob.cxx \
+    sv4gui_MitkSimJob.cxx \
+    sv4gui_MitkSimJobIO.cxx \
+    sv4gui_SimulationUtils.cxx \
+    sv4gui_MitkSimulationObjectFactory.cxx
 
 CXXSRCS += us_init.cxx
 

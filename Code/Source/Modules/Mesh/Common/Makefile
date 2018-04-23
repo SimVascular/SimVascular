@@ -56,32 +56,34 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svMesh.h \
-    svMeshTetGen.h \
-    svMitkMesh.h \
-    svMeshFactory.h \
-    svMitkMeshOperation.h \
-    svMitkMeshMapper3D.h \
-    svMitkMeshMapper2D.h \
-    svMitkMeshIO.h \
-    svMeshLegacyIO.h \
-    svMeshAdaptor.h \
-    svMeshTetGenAdaptor.h \
-    svMitkMeshObjectFactory.h
+    sv4gui_Mesh.h \
+    sv4gui_MeshTetGen.h \
+    sv4gui_MitkMesh.h \
+    sv4gui_MeshFactory.h \
+    sv4gui_RegisterTetGenFunction.h \
+    sv4gui_MitkMeshOperation.h \
+    sv4gui_MitkMeshMapper3D.h \
+    sv4gui_MitkMeshMapper2D.h \
+    sv4gui_MitkMeshIO.h \
+    sv4gui_MeshLegacyIO.h \
+    sv4gui_MeshAdaptor.h \
+    sv4gui_MeshTetGenAdaptor.h \
+    sv4gui_MitkMeshObjectFactory.h
 
 CXXSRCS	= \
-    svMesh.cxx \
-    svMeshTetGen.cxx \
-    svMeshFactory.cxx \
-    svRegisterTetGenFunction.cxx \
-    svMitkMesh.cxx \
-    svMitkMeshOperation.cxx \
-    svMitkMeshMapper3D.cxx \
-    svMitkMeshMapper2D.cxx \
-    svMitkMeshIO.cxx \
-    svMeshLegacyIO.cxx \
-    svMeshTetGenAdaptor.cxx \
-    svMitkMeshObjectFactory.cxx
+    sv4gui_Mesh.cxx \
+    sv4gui_MeshTetGen.cxx \
+    sv4gui_MeshFactory.cxx \
+    sv4gui_RegisterTetGenFunction.cxx \
+    sv4gui_MitkMesh.cxx \
+    sv4gui_MitkMeshOperation.cxx \
+    sv4gui_MitkMeshMapper3D.cxx \
+    sv4gui_MitkMeshMapper2D.cxx \
+    sv4gui_MitkMeshIO.cxx \
+    sv4gui_MeshLegacyIO.cxx \
+    sv4gui_MeshTetGenAdaptor.cxx \
+    sv4gui_MitkMeshObjectFactory.cxx \
+    sv4gui_MeshAdaptor.cxx
 
 CXXSRCS += us_init.cxx
 

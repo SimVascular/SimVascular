@@ -4,23 +4,23 @@
   <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.segmentation2d"
           name="SV 2D Segmentation"
-          class="svSeg2DEdit"
+          class="sv4guiSeg2DEdit"
           icon="resources/contourgroup.png" />
     <view id="org.sv.views.segmentation3d"
           name="SV 3D Segmentation"
-          class="svSeg3DEdit"
+          class="sv4guiSeg3DEdit"
           icon="resources/svseg3d.png" />
 
   </extension>
 
   <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
-      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Create Contour Group" icon="" class="svContourGroupCreateAction" />
-      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Create 3D Segmentation" icon="" class="svSeg3DCreateAction" />
-      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Import Segmentations" icon="" class="svSegmentationLoadAction" />
-      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Import Legacy Segmentations" icon="" class="svSegmentationLegacyLoadAction" />
-      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Export All as Legacy Segmentations" icon="" class="svSegmentationLegacySaveAction" />
-      <contextMenuAction nodeDescriptorName="svContourGroup" label="Point 2D Size" icon="" class="svContourGroupPoint2DSizeAction" />
-      <contextMenuAction nodeDescriptorName="svContourGroup" label="Point 3D Size" icon="" class="svContourGroupPoint3DSizeAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiSegmentationFolder" label="Create Contour Group" icon="" class="sv4guiContourGroupCreateAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiSegmentationFolder" label="Create 3D Segmentation" icon="" class="sv4guiSeg3DCreateAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiSegmentationFolder" label="Import Segmentations" icon="" class="sv4guiSegmentationLoadAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiSegmentationFolder" label="Import Legacy Segmentations" icon="" class="sv4guiSegmentationLegacyLoadAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiSegmentationFolder" label="Export All as Legacy Segmentations" icon="" class="sv4guiSegmentationLegacySaveAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiContourGroup" label="Point 2D Size" icon="" class="sv4guiContourGroupPoint2DSizeAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiContourGroup" label="Point 3D Size" icon="" class="sv4guiContourGroupPoint3DSizeAction" />
   </extension>
 
 </plugin>

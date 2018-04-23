@@ -29,20 +29,20 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-  svMath3.h
-  svSpline.h
-  svVtkParametricSpline.h
-  svVtkUtils.h
-  svXmlIOUtil.h
-  svStringUtils.h
+  sv4gui_Math3.h
+  sv4gui_Spline.h
+  sv4gui_VtkParametricSpline.h
+  sv4gui_VtkUtils.h
+  sv4gui_XmlIOUtil.h
+  sv4gui_StringUtils.h
 )
 
 set(CPP_FILES
-  svMath3.cxx
-  svSpline.cxx
-  svVtkParametricSpline.cxx
-  svVtkUtils.cxx
-  svXmlIOUtil.cxx
-  svStringUtils.cxx
+  sv4gui_Math3.cxx
+  sv4gui_Spline.cxx
+  sv4gui_VtkParametricSpline.cxx
+  sv4gui_VtkUtils.cxx
+  sv4gui_XmlIOUtil.cxx
+  sv4gui_StringUtils.cxx
 )
 

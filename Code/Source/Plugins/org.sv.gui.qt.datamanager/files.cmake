@@ -29,27 +29,27 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(INTERNAL_CPP_FILES
-  svberrySingleNodeSelection.cxx
-  svQmitkDataManagerView.cxx
-  svQmitkDataManagerPreferencePage.cxx
-  svQmitkDataManagerHotkeysPrefPage.cxx
-  svDataManagerPluginActivator.cxx
-  svQmitkNodeTableViewKeyFilter.cxx
-  svQmitkInfoDialog.cxx
-  svQmitkDataManagerItemDelegate.cxx
-  svQmitkFunctionality.cxx
+  sv4gui_berrySingleNodeSelection.cxx
+  sv4gui_QmitkDataManagerView.cxx
+  sv4gui_QmitkDataManagerPreferencePage.cxx
+  sv4gui_QmitkDataManagerHotkeysPrefPage.cxx
+  sv4gui_DataManagerPluginActivator.cxx
+  sv4gui_QmitkNodeTableViewKeyFilter.cxx
+  sv4gui_QmitkInfoDialog.cxx
+  sv4gui_QmitkDataManagerItemDelegate.cxx
+  sv4gui_QmitkFunctionality.cxx
 )
 
 set(MOC_H_FILES
-  src/internal/svQmitkDataManagerView.h
-  src/internal/svQmitkDataManagerPreferencePage.h
-  src/internal/svQmitkDataManagerHotkeysPrefPage.h
-  src/internal/svQmitkNodeTableViewKeyFilter.h
-  src/internal/svQmitkInfoDialog.h
-  src/internal/svQmitkDataManagerItemDelegate.h
-  src/internal/svDataManagerPluginActivator.h
-  src/internal/svmitkIContextMenuAction.h
-  src/internal/svQmitkFunctionality.h
+  src/internal/sv4gui_QmitkDataManagerView.h
+  src/internal/sv4gui_QmitkDataManagerPreferencePage.h
+  src/internal/sv4gui_QmitkDataManagerHotkeysPrefPage.h
+  src/internal/sv4gui_QmitkNodeTableViewKeyFilter.h
+  src/internal/sv4gui_QmitkInfoDialog.h
+  src/internal/sv4gui_QmitkDataManagerItemDelegate.h
+  src/internal/sv4gui_DataManagerPluginActivator.h
+  src/internal/sv4gui_mitkIContextMenuAction.h
+  src/internal/sv4gui_QmitkFunctionality.h
 )
 
 set(CPP_FILES )

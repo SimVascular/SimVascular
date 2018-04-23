@@ -46,39 +46,40 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            -DUS_MODULE_NAME=svApplication
 
 HDRS	= \
-  svApplication.h \
-  svApplicationPluginActivator.h \
-  svFileCreateProjectAction.h \
-  svFileOpenProjectAction.h \
-  svFileSaveProjectAction.h \
-  svFileSaveProjectAsAction.h \
-  svCloseProjectAction.h \
-  svProjectCreate.h \
-  svWorkbenchWindowAdvisor.h \
-  svWorkbenchWindowAdvisorHack.h \
-  svAboutDialog.h \
-  svWorkbenchIntroPart.h \
-  svDefaultPerspective.h
+  sv4gui_Application.h \
+  sv4gui_ApplicationPluginActivator.h \
+  sv4gui_FileCreateProjectAction.h \
+  sv4gui_FileOpenProjectAction.h \
+  sv4gui_FileSaveProjectAction.h \
+  sv4gui_FileSaveProjectAsAction.h \
+  sv4gui_CloseProjectAction.h \
+  sv4gui_ProjectCreate.h \
+  sv4gui_WorkbenchWindowAdvisor.h \
+  sv4gui_WorkbenchWindowAdvisorHack.h \
+  sv4gui_AboutDialog.h \
+  sv4gui_WorkbenchIntroPart.h \
+  sv4gui_DefaultPerspective.h
 
 CXXSRCS	= \
-  svApplication.cxx \
-  svApplicationPluginActivator.cxx \
-  svFileCreateProjectAction.cxx \
-  svFileOpenProjectAction.cxx \
-  svFileSaveProjectAction.cxx \
-  svFileSaveProjectAsAction.cxx \
-  svCloseProjectAction.cxx \
-  svProjectCreate.cxx \
-  svWorkbenchWindowAdvisor.cxx \
-  svAppWorkbenchAdvisor.cxx \
-  svAboutDialog.cxx \
-  svWorkbenchIntroPart.cxx \
-  svDefaultPerspective.cxx
+  sv4gui_Application.cxx \
+  sv4gui_ApplicationPluginActivator.cxx \
+  sv4gui_FileCreateProjectAction.cxx \
+  sv4gui_FileOpenProjectAction.cxx \
+  sv4gui_FileSaveProjectAction.cxx \
+  sv4gui_FileSaveProjectAsAction.cxx \
+  sv4gui_CloseProjectAction.cxx \
+  sv4gui_ProjectCreate.cxx \
+  sv4gui_WorkbenchWindowAdvisor.cxx \
+  sv4gui_AppWorkbenchAdvisor.cxx \
+  sv4gui_AboutDialog.cxx \
+  sv4gui_WorkbenchIntroPart.cxx \
+  sv4gui_DefaultPerspective.cxx \
+  sv4gui_WorkbenchWindowAdvisorHack.cxx
 
 UIFILES = \
-  svProjectCreate.ui \
-  svAboutDialog.ui \
-  svWelcomeScreenViewControls.ui
+  sv4gui_ProjectCreate.ui \
+  sv4gui_AboutDialog.ui \
+  sv4gui_WelcomeScreenViewControls.ui
 
 QRCFILES = \
   ../../resources/svApplication.qrc \

@@ -46,22 +46,22 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
           -DUS_MODULE_NAME=svProjectManager
 
 HDRS	=  \
-  svProjectManagerPluginActivator.h \
-  svProjectAddImageAction.h \
-  svProjectCloseAction.h \
-  svProjectSaveAction.h \
-  svProjectDuplicateAction.h \
-  svProjectShowModelEdgesAction.h \
-  svProjectShowModelFullAction.h
+  sv4gui_ProjectManagerPluginActivator.h \
+  sv4gui_ProjectAddImageAction.h \
+  sv4gui_ProjectCloseAction.h \
+  sv4gui_ProjectSaveAction.h \
+  sv4gui_ProjectDuplicateAction.h \
+  sv4gui_ProjectShowModelEdgesAction.h \
+  sv4gui_ProjectShowModelFullAction.h
 
 CXXSRCS	= \
-  svProjectManagerPluginActivator.cxx \
-  svProjectAddImageAction.cxx \
-  svProjectCloseAction.cxx \
-  svProjectSaveAction.cxx \
-  svProjectDuplicateAction.cxx \
-  svProjectShowModelEdgesAction.cxx \
-  svProjectShowModelFullAction.cxx
+  sv4gui_ProjectManagerPluginActivator.cxx \
+  sv4gui_ProjectAddImageAction.cxx \
+  sv4gui_ProjectCloseAction.cxx \
+  sv4gui_ProjectSaveAction.cxx \
+  sv4gui_ProjectDuplicateAction.cxx \
+  sv4gui_ProjectShowModelEdgesAction.cxx \
+  sv4gui_ProjectShowModelFullAction.cxx
 
 UIFILES =
 
