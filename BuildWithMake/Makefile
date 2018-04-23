@@ -235,10 +235,10 @@ common-pre-build: mksedscript post-build
 	touch ../Code/Source/Include/Make/delaunay_options.h
 
 shared-pre-build: common-pre-build
-	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
-	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module create_cppmicroservices_file
+	cd ../Code/Source/sv4gui/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
+	cd ../Code/Source/sv4gui/Plugins;$(MAKE) moc qrc ui
+	cd ../Code/Source/sv4gui/Modules;$(MAKE) moc qrc ui
+	cd ../Code/Source/sv4gui/Modules;$(MAKE) create_exports_h us-init-module create_cppmicroservices_file
 	cd ../Code/Source/UI;$(MAKE) moc
 	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
 	for i in ${SHARED_LIBDIRS}; do ( \
@@ -249,10 +249,10 @@ shared-pre-build: common-pre-build
 
 static-pre-build: common-pre-build
 	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
-	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
-	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
+	cd ../Code/Source/sv4gui/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
+	cd ../Code/Source/sv4gui/Plugins;$(MAKE) moc qrc ui
+	cd ../Code/Source/sv4gui/Modules;$(MAKE) moc qrc ui
+	cd ../Code/Source/sv4gui/Modules;$(MAKE) create_exports_h us-init-module
 	cd ../Code/Source/UI;$(MAKE) moc
 	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
 
