@@ -694,17 +694,17 @@ endif
 # for now, combine mitk code qt gui code
 ifeq ($(SV_USE_MITK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Modules
+     SHARED_LIBDIRS += ../Code/Source/sv4gui/Modules
   else
-     LIBDIRS += ../Code/Source/Modules
+     LIBDIRS += ../Code/Source/sv4gui/Modules
   endif
 endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   ifeq ($(SV_USE_QT_GUI_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Plugins
+     SHARED_LIBDIRS += ../Code/Source/sv4gui/Plugins
   else
-     LIBDIRS += ../Code/Source/Plugins
+     LIBDIRS += ../Code/Source/sv4gui/Plugins
   endif
 endif
 
@@ -723,31 +723,31 @@ endif
 
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.datamanager/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.meshing/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.segmentation/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.simulation/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.application/src/internal \
-                     -I$(TOP)/../Code/Source/Modules/Common \
-                     -I$(TOP)/../Code/Source/Modules/Model/Common \
-                     -I$(TOP)/../Code/Source/Modules/Mesh/Common \
-                     -I$(TOP)/../Code/Source/Modules/Path \
-                     -I$(TOP)/../Code/Source/Modules/ProjectManagement \
-                     -I$(TOP)/../Code/Source/Modules/QtWidgets \
-                     -I$(TOP)/../Code/Source/Modules/Segmentation \
-                     -I$(TOP)/../Code/Source/Modules/Simulation
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.projectdatanodes/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.datamanager/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.meshing/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.modeling/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.pathplanning/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.segmentation/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.simulation/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.application/src/internal \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Common \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Model/Common \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Mesh/Common \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Path \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/ProjectManagement \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/QtWidgets \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Segmentation \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation
   ifeq ($(SV_USE_OPENCASCADE),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Model/OCCT
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/OCCT
   endif
   ifeq ($(SV_USE_PARASOLID),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Model/Parasolid
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/Parasolid
   endif
   ifeq ($(SV_USE_MESHSIM),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Modules/Mesh/MeshSim
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Mesh/MeshSim
   endif
 endif
 

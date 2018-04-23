@@ -242,25 +242,25 @@ endif()
 # Modules
 if(SV_USE_QT_GUI)
   set(SV_MODULE_DIRS ${SV_MODULE_DIRS}
-    "Source/Modules/Common"
-    "Source/Modules/Path"
-    "Source/Modules/Segmentation"
-    "Source/Modules/Model/Common"
-    "Source/Modules/Mesh/Common"
-    "Source/Modules/Simulation"
-    "Source/Modules/ProjectManagement"
-    "Source/Modules/QtWidgets")
+    "Source/sv4gui/Modules/Common"
+    "Source/sv4gui/Modules/Path"
+    "Source/sv4gui/Modules/Segmentation"
+    "Source/sv4gui/Modules/Model/Common"
+    "Source/sv4gui/Modules/Mesh/Common"
+    "Source/sv4gui/Modules/Simulation"
+    "Source/sv4gui/Modules/ProjectManagement"
+    "Source/sv4gui/Modules/QtWidgets")
 
   if(SV_USE_OpenCASCADE)
-    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/OCCT")
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Model/OCCT")
   endif()
 
   if(SV_USE_PARASOLID)
-    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/Parasolid")
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Model/Parasolid")
   endif()
 
   if(SV_USE_MESHSIM)
-    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Mesh/MeshSim")
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Mesh/MeshSim")
   endif()
 
 endif()
@@ -272,15 +272,15 @@ endif()
 if(SV_USE_QT_GUI)
   if(NOT SV_USE_MITK_CONFIG)
     set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
-      "Source/Plugins/org.sv.projectdatanodes"
-      "Source/Plugins/org.sv.gui.qt.datamanager"
-      "Source/Plugins/org.sv.gui.qt.projectmanager"
-      "Source/Plugins/org.sv.gui.qt.pathplanning"
-      "Source/Plugins/org.sv.gui.qt.segmentation"
-      "Source/Plugins/org.sv.gui.qt.modeling"
-      "Source/Plugins/org.sv.gui.qt.meshing"
-      "Source/Plugins/org.sv.gui.qt.simulation"
-      "Source/Plugins/org.sv.gui.qt.application")
+      "Source/sv4gui/Plugins/org.sv.projectdatanodes"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.datamanager"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.projectmanager"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.pathplanning"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.segmentation"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.modeling"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.application")
   endif()
 endif()
 #-----------------------------------------------------------------------------
@@ -409,7 +409,7 @@ endforeach()
 
 #----------------------------------------------------------------------------
 # Setup Plugins for provisioning file, must after add_subdirectory for Modules
-include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/Source/sv4gui/Plugins/PluginList.cmake)
 if(SV_USE_MITK_CONFIG)
   if(SV_USE_QT_GUI)
     macro(GetMyTargetLibraries all_target_libraries varname)
@@ -424,7 +424,7 @@ if(SV_USE_MITK_CONFIG)
 
     set(sv_plugins_fullpath "")
     foreach(sv_plugin ${SV_PLUGINS})
-      list(APPEND sv_plugins_fullpath "Source/Plugins/${sv_plugin}")
+      list(APPEND sv_plugins_fullpath "Source/sv4gui/Plugins/${sv_plugin}")
     endforeach()
 
     message(STATUS "sv_plugins_fullpath: ${sv_plugins_fullpath}")
