@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -42,57 +42,41 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_application_EXPORTS \
-           -DUS_MODULE_NAME=svApplication
+          -Dorg_sv_gui_qt_projectmanager_EXPORTS \
+          -DUS_MODULE_NAME=svProjectManager
 
-HDRS	= \
-  sv4gui_Application.h \
-  sv4gui_ApplicationPluginActivator.h \
-  sv4gui_FileCreateProjectAction.h \
-  sv4gui_FileOpenProjectAction.h \
-  sv4gui_FileSaveProjectAction.h \
-  sv4gui_FileSaveProjectAsAction.h \
-  sv4gui_CloseProjectAction.h \
-  sv4gui_ProjectCreate.h \
-  sv4gui_WorkbenchWindowAdvisor.h \
-  sv4gui_WorkbenchWindowAdvisorHack.h \
-  sv4gui_AboutDialog.h \
-  sv4gui_WorkbenchIntroPart.h \
-  sv4gui_DefaultPerspective.h
+HDRS	=  \
+  sv4gui_ProjectManagerPluginActivator.h \
+  sv4gui_ProjectAddImageAction.h \
+  sv4gui_ProjectCloseAction.h \
+  sv4gui_ProjectSaveAction.h \
+  sv4gui_ProjectDuplicateAction.h \
+  sv4gui_ProjectShowModelEdgesAction.h \
+  sv4gui_ProjectShowModelFullAction.h
 
 CXXSRCS	= \
-  sv4gui_Application.cxx \
-  sv4gui_ApplicationPluginActivator.cxx \
-  sv4gui_FileCreateProjectAction.cxx \
-  sv4gui_FileOpenProjectAction.cxx \
-  sv4gui_FileSaveProjectAction.cxx \
-  sv4gui_FileSaveProjectAsAction.cxx \
-  sv4gui_CloseProjectAction.cxx \
-  sv4gui_ProjectCreate.cxx \
-  sv4gui_WorkbenchWindowAdvisor.cxx \
-  sv4gui_AppWorkbenchAdvisor.cxx \
-  sv4gui_AboutDialog.cxx \
-  sv4gui_WorkbenchIntroPart.cxx \
-  sv4gui_DefaultPerspective.cxx \
-  sv4gui_WorkbenchWindowAdvisorHack.cxx
+  sv4gui_ProjectManagerPluginActivator.cxx \
+  sv4gui_ProjectAddImageAction.cxx \
+  sv4gui_ProjectCloseAction.cxx \
+  sv4gui_ProjectSaveAction.cxx \
+  sv4gui_ProjectDuplicateAction.cxx \
+  sv4gui_ProjectShowModelEdgesAction.cxx \
+  sv4gui_ProjectShowModelFullAction.cxx
 
-UIFILES = \
-  sv4gui_ProjectCreate.ui \
-  sv4gui_AboutDialog.ui \
-  sv4gui_WelcomeScreenViewControls.ui
+UIFILES =
 
 QRCFILES = \
-  ../../resources/svApplication.qrc \
-  ../../resources/welcome/svWelcomeScreenView.qrc
+  resources/projectmanager.qrc
 
-QRCFILES += org_sv_gui_qt_application_manifest.qrc \
-            org_sv_gui_qt_application_cached.qrc
+QRCFILES += org_sv_gui_qt_projectmanager_manifest.qrc \
+            org_sv_gui_qt_projectmanager_cached.qrc
 
 RCFILES = \
-  ../../plugin.xml \
-  ../../resources/icon.png
+  resources/icon.xpm \
+  plugin.xml
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
@@ -101,15 +85,11 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  \
-          $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
@@ -117,14 +97,14 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-TARGET_LIB_NAME = $(SV_PLUGIN_APPLICATION_NAME)
+TARGET_LIB_NAME = $(SV_PLUGIN_PROJECTMANAGER_NAME)
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_application
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_application
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_projectmanager
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_projectmanager
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = APPLICATION
+PLUGIN_NAME = PROJECTMANAGER
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

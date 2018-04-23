@@ -28,11 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SRC_CPP_FILES
-
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
     sv4gui_ModelCreate.cxx
     sv4gui_ModelCreateAction.cxx
     sv4gui_ModelLoadAction.cxx
@@ -48,25 +44,25 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-    src/internal/sv4gui_ModelCreate.h
-    src/internal/sv4gui_ModelCreateAction.h
-    src/internal/sv4gui_ModelLoadAction.h
-    src/internal/sv4gui_ModelLegacySaveAction.h
-    src/internal/sv4gui_ModelExtractPathsAction.h
-    src/internal/sv4gui_SegSelectionWidget.h
-    src/internal/sv4gui_ModelEdit.h
-    src/internal/sv4gui_FaceListDelegate.h
-    src/internal/sv4gui_ModelFaceInfoExportAction.h
-    src/internal/sv4gui_ModelingPluginActivator.h
-    src/internal/sv4gui_LoftingPreferencePage.h
-    src/internal/sv4gui_CapSelectionWidget.h
+    sv4gui_ModelCreate.h
+    sv4gui_ModelCreateAction.h
+    sv4gui_ModelLoadAction.h
+    sv4gui_ModelLegacySaveAction.h
+    sv4gui_ModelExtractPathsAction.h
+    sv4gui_SegSelectionWidget.h
+    sv4gui_ModelEdit.h
+    sv4gui_FaceListDelegate.h
+    sv4gui_ModelFaceInfoExportAction.h
+    sv4gui_ModelingPluginActivator.h
+    sv4gui_LoftingPreferencePage.h
+    sv4gui_CapSelectionWidget.h
 )
 
 set(UI_FILES
-    src/internal/sv4gui_ModelCreate.ui
-    src/internal/sv4gui_SegSelectionWidget.ui
-    src/internal/sv4gui_ModelEdit.ui
-    src/internal/sv4gui_CapSelectionWidget.ui
+    sv4gui_ModelCreate.ui
+    sv4gui_SegSelectionWidget.ui
+    sv4gui_ModelEdit.ui
+    sv4gui_CapSelectionWidget.ui
 )
 
 set(CACHED_RESOURCE_FILES
@@ -77,14 +73,4 @@ set(CACHED_RESOURCE_FILES
 set(QRC_FILES
   resources/modeling.qrc
 )
-
-set(CPP_FILES )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})
 

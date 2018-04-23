@@ -28,11 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SRC_CPP_FILES
-
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
     sv4gui_LoftingUtils.cxx
     sv4gui_ContourGroupCreate.cxx
     sv4gui_ContourGroupCreateAction.cxx
@@ -50,28 +46,28 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-    src/internal/sv4gui_LoftingUtils.h
-    src/internal/sv4gui_ContourGroupCreate.h
-    src/internal/sv4gui_ContourGroupCreateAction.h
-    src/internal/sv4gui_SegmentationLegacyLoadAction.h
-    src/internal/sv4gui_SegmentationLegacySaveAction.h
-    src/internal/sv4gui_SegmentationLoadAction.h
-    src/internal/sv4gui_LevelSet2DWidget.h
-    src/internal/sv4gui_LoftParamWidget.h
-    src/internal/sv4gui_Seg2DEdit.h
-    src/internal/sv4gui_ContourGroupPoint2DSizeAction.h
-    src/internal/sv4gui_ContourGroupPoint3DSizeAction.h
-    src/internal/sv4gui_Seg3DCreateAction.h
-    src/internal/sv4gui_Seg3DEdit.h
-    src/internal/sv4gui_SegmentationPluginActivator.h
+    sv4gui_LoftingUtils.h
+    sv4gui_ContourGroupCreate.h
+    sv4gui_ContourGroupCreateAction.h
+    sv4gui_SegmentationLegacyLoadAction.h
+    sv4gui_SegmentationLegacySaveAction.h
+    sv4gui_SegmentationLoadAction.h
+    sv4gui_LevelSet2DWidget.h
+    sv4gui_LoftParamWidget.h
+    sv4gui_Seg2DEdit.h
+    sv4gui_ContourGroupPoint2DSizeAction.h
+    sv4gui_ContourGroupPoint3DSizeAction.h
+    sv4gui_Seg3DCreateAction.h
+    sv4gui_Seg3DEdit.h
+    sv4gui_SegmentationPluginActivator.h
 )
 
 set(UI_FILES
-    src/internal/sv4gui_ContourGroupCreate.ui
-    src/internal/sv4gui_LevelSet2DWidget.ui
-    src/internal/sv4gui_LoftParamWidget.ui
-    src/internal/sv4gui_Seg2DEdit.ui
-    src/internal/sv4gui_Seg3DEdit.ui
+    sv4gui_ContourGroupCreate.ui
+    sv4gui_LevelSet2DWidget.ui
+    sv4gui_LoftParamWidget.ui
+    sv4gui_Seg2DEdit.ui
+    sv4gui_Seg3DEdit.ui
 )
 
 set(CACHED_RESOURCE_FILES
@@ -83,14 +79,3 @@ set(CACHED_RESOURCE_FILES
 set(QRC_FILES
 
 )
-
-set(CPP_FILES )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})
-

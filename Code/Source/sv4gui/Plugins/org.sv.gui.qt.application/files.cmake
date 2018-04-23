@@ -28,10 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SRC_CPP_FILES
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
   sv4gui_Application.cxx
   sv4gui_ApplicationPluginActivator.cxx
   sv4gui_FileCreateProjectAction.cxx
@@ -49,25 +46,25 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-  src/internal/sv4gui_Application.h
-  src/internal/sv4gui_ApplicationPluginActivator.h
-  src/internal/sv4gui_FileCreateProjectAction.h
-  src/internal/sv4gui_FileOpenProjectAction.h
-  src/internal/sv4gui_FileSaveProjectAction.h
-  src/internal/sv4gui_FileSaveProjectAsAction.h
-  src/internal/sv4gui_CloseProjectAction.h
-  src/internal/sv4gui_ProjectCreate.h
-  src/internal/sv4gui_WorkbenchWindowAdvisor.h
-  src/internal/sv4gui_WorkbenchWindowAdvisorHack.h
-  src/internal/sv4gui_AboutDialog.h
-  src/internal/sv4gui_WorkbenchIntroPart.h
-  src/internal/sv4gui_DefaultPerspective.h
+  sv4gui_Application.h
+  sv4gui_ApplicationPluginActivator.h
+  sv4gui_FileCreateProjectAction.h
+  sv4gui_FileOpenProjectAction.h
+  sv4gui_FileSaveProjectAction.h
+  sv4gui_FileSaveProjectAsAction.h
+  sv4gui_CloseProjectAction.h
+  sv4gui_ProjectCreate.h
+  sv4gui_WorkbenchWindowAdvisor.h
+  sv4gui_WorkbenchWindowAdvisorHack.h
+  sv4gui_AboutDialog.h
+  sv4gui_WorkbenchIntroPart.h
+  sv4gui_DefaultPerspective.h
 )
 
 set(UI_FILES
-  src/internal/sv4gui_ProjectCreate.ui
-  src/internal/sv4gui_AboutDialog.ui
-  src/internal/sv4gui_WelcomeScreenViewControls.ui
+  sv4gui_ProjectCreate.ui
+  sv4gui_AboutDialog.ui
+  sv4gui_WelcomeScreenViewControls.ui
 )
 
 set(CACHED_RESOURCE_FILES
@@ -79,14 +76,3 @@ set(QRC_FILES
 resources/svApplication.qrc
 resources/welcome/svWelcomeScreenView.qrc
 )
-
-set(CPP_FILES )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})
-

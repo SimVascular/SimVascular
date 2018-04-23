@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -41,60 +41,49 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR) \
            $(ZLIB_INCDIR) \
            $(TETGEN_INCDIR) \
-           $(MESHSIM_INCDIR) \
-           $(PARASOLID_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_modeling_EXPORTS \
-          -DUS_MODULE_NAME=svModeling
+           $(MESHSIM_INCDIR) \
+           $(PARASOLID_INCDIR) \
+           -Dorg_sv_gui_qt_meshing_EXPORTS \
+           -DUS_MODULE_NAME=svMeshing
 
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 
 HDRS	= \
-    sv4gui_ModelCreate.h \
-    sv4gui_ModelCreateAction.h \
-    sv4gui_ModelLoadAction.h \
-    sv4gui_ModelLegacySaveAction.h \
-    sv4gui_ModelExtractPathsAction.h \
-    sv4gui_SegSelectionWidget.h \
-    sv4gui_ModelEdit.h \
-    sv4gui_FaceListDelegate.h \
-    sv4gui_ModelFaceInfoExportAction.h \
-    sv4gui_ModelingPluginActivator.h \
-    sv4gui_LoftingPreferencePage.h \
-    sv4gui_CapSelectionWidget.h
+    sv4gui_MeshCreate.h \
+    sv4gui_MeshCreateAction.h \
+    sv4gui_MeshEdit.h \
+    sv4gui_LocalTableDelegate.h \
+    sv4gui_MeshLegacySaveAction.h \
+    sv4gui_MeshLoadSurfaceAction.h \
+    sv4gui_MeshLoadVolumeAction.h \
+    sv4gui_MeshingPluginActivator.h
 
 CXXSRCS	= \
-    sv4gui_ModelCreate.cxx \
-    sv4gui_ModelCreateAction.cxx \
-    sv4gui_ModelLoadAction.cxx \
-    sv4gui_ModelLegacySaveAction.cxx \
-    sv4gui_ModelExtractPathsAction.cxx \
-    sv4gui_SegSelectionWidget.cxx \
-    sv4gui_ModelEdit.cxx \
-    sv4gui_FaceListDelegate.cxx \
-    sv4gui_ModelFaceInfoExportAction.cxx \
-    sv4gui_ModelingPluginActivator.cxx \
-    sv4gui_LoftingPreferencePage.cxx \
-    sv4gui_CapSelectionWidget.cxx
+    sv4gui_MeshCreate.cxx \
+    sv4gui_MeshCreateAction.cxx \
+    sv4gui_MeshEdit.cxx \
+    sv4gui_VtkMeshSphereWidget.cxx \
+    sv4gui_LocalTableDelegate.cxx \
+    sv4gui_MeshLegacySaveAction.cxx \
+    sv4gui_MeshLoadSurfaceAction.cxx \
+    sv4gui_MeshLoadVolumeAction.cxx \
+    sv4gui_MeshingPluginActivator.cxx
 
-UIFILES =  \
-    sv4gui_ModelCreate.ui \
-    sv4gui_SegSelectionWidget.ui \
-    sv4gui_ModelEdit.ui \
-    sv4gui_CapSelectionWidget.ui
+UIFILES = \
+    sv4gui_MeshCreate.ui \
+    sv4gui_MeshEdit.ui
 
-QRCFILES =  ../../resources/modeling.qrc
-
-QRCFILES += org_sv_gui_qt_modeling_manifest.qrc \
-           org_sv_gui_qt_modeling_cached.qrc
+QRCFILES = org_sv_gui_qt_meshing_manifest.qrc \
+           org_sv_gui_qt_meshing_cached.qrc
 
 RCFILES = \
-  ../../plugin.xml \
-  ../../resources/model.png
+  plugin.xml \
+  resources/mesh.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
@@ -108,12 +97,12 @@ DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
@@ -139,14 +128,14 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-TARGET_LIB_NAME = $(SV_PLUGIN_MODELING_NAME)
+TARGET_LIB_NAME = $(SV_PLUGIN_MESHING_NAME)
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_modeling
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_modeling
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_meshing
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_meshing
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = MODELING
+PLUGIN_NAME = MESHING
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

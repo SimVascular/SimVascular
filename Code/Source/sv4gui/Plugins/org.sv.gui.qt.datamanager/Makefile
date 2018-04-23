@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -80,11 +80,11 @@ UIFILES = \
 
 QRCFILES = org_sv_gui_qt_datamanager_manifest.qrc \
            org_sv_gui_qt_datamanager_cached.qrc \
-           ../../resources/svdatamanager.qrc
+           resources/svdatamanager.qrc
 
 RCFILES = \
-  ../../plugin.xml \
-  ../../resources/DataManager_48.png
+  plugin.xml \
+  resources/DataManager_48.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
@@ -128,7 +128,7 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
 TARGET_LIB_NAME = $(SV_PLUGIN_DATAMANAGER_NAME)
 

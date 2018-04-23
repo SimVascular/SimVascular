@@ -28,29 +28,14 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SRC_CPP_FILES
-
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
   sv4gui_ProjectDataNodesPluginActivator.cxx
 )
 
 set(MOC_H_FILES
-  src/internal/sv4gui_ProjectDataNodesPluginActivator.h
+  sv4gui_ProjectDataNodesPluginActivator.h
 )
 
 set(QRC_FILES
   resources/projectdatanodes.qrc
 )
-
-set(CPP_FILES )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})
-

@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -39,51 +39,64 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR) \
-           $(ZLIB_INCDIR) \
-           $(TETGEN_INCDIR) \
+           $(MESHSIM_INCDIR) \
+           $(PARASOLID_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           $(MESHSIM_INCDIR) \
-           $(PARASOLID_INCDIR) \
-           -Dorg_sv_gui_qt_meshing_EXPORTS \
-           -DUS_MODULE_NAME=svMeshing
+           -Dorg_sv_gui_qt_segmentation_EXPORTS \
+           -DUS_MODULE_NAME=svSegmentation
 
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 
 HDRS	= \
-    sv4gui_MeshCreate.h \
-    sv4gui_MeshCreateAction.h \
-    sv4gui_MeshEdit.h \
-    sv4gui_LocalTableDelegate.h \
-    sv4gui_MeshLegacySaveAction.h \
-    sv4gui_MeshLoadSurfaceAction.h \
-    sv4gui_MeshLoadVolumeAction.h \
-    sv4gui_MeshingPluginActivator.h
+    sv4gui_LoftingUtils.h \
+    sv4gui_ContourGroupCreate.h \
+    sv4gui_ContourGroupCreateAction.h \
+    sv4gui_SegmentationLegacyLoadAction.h \
+    sv4gui_SegmentationLegacySaveAction.h \
+    sv4gui_SegmentationLoadAction.h \
+    sv4gui_LevelSet2DWidget.h \
+    sv4gui_LoftParamWidget.h \
+    sv4gui_Seg2DEdit.h \
+    sv4gui_ContourGroupPoint2DSizeAction.h \
+    sv4gui_ContourGroupPoint3DSizeAction.h \
+    sv4gui_Seg3DCreateAction.h \
+    sv4gui_Seg3DEdit.h \
+    sv4gui_SegmentationPluginActivator.h
 
 CXXSRCS	= \
-    sv4gui_MeshCreate.cxx \
-    sv4gui_MeshCreateAction.cxx \
-    sv4gui_MeshEdit.cxx \
-    sv4gui_VtkMeshSphereWidget.cxx \
-    sv4gui_LocalTableDelegate.cxx \
-    sv4gui_MeshLegacySaveAction.cxx \
-    sv4gui_MeshLoadSurfaceAction.cxx \
-    sv4gui_MeshLoadVolumeAction.cxx \
-    sv4gui_MeshingPluginActivator.cxx
+    sv4gui_LoftingUtils.cxx \
+    sv4gui_ContourGroupCreate.cxx \
+    sv4gui_ContourGroupCreateAction.cxx \
+    sv4gui_SegmentationLegacyLoadAction.cxx \
+    sv4gui_SegmentationLegacySaveAction.cxx \
+    sv4gui_SegmentationLoadAction.cxx \
+    sv4gui_LevelSet2DWidget.cxx \
+    sv4gui_LoftParamWidget.cxx \
+    sv4gui_Seg2DEdit.cxx \
+    sv4gui_ContourGroupPoint2DSizeAction.cxx \
+    sv4gui_ContourGroupPoint3DSizeAction.cxx \
+    sv4gui_Seg3DCreateAction.cxx \
+    sv4gui_Seg3DEdit.cxx \
+    sv4gui_SegmentationPluginActivator.cxx
 
 UIFILES = \
-    sv4gui_MeshCreate.ui \
-    sv4gui_MeshEdit.ui
+    sv4gui_ContourGroupCreate.ui \
+    sv4gui_LevelSet2DWidget.ui \
+    sv4gui_LoftParamWidget.ui \
+    sv4gui_Seg2DEdit.ui \
+    sv4gui_Seg3DEdit.ui
 
-QRCFILES = org_sv_gui_qt_meshing_manifest.qrc \
-           org_sv_gui_qt_meshing_cached.qrc
+QRCFILES = org_sv_gui_qt_segmentation_manifest.qrc \
+           org_sv_gui_qt_segmentation_cached.qrc
 
 RCFILES = \
-  ../../plugin.xml \
-  ../../resources/mesh.png
+  plugin.xml \
+  resources/contourgroup.png \
+  resources/svseg3d.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
@@ -98,7 +111,6 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
@@ -128,14 +140,14 @@ ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-TARGET_LIB_NAME = $(SV_PLUGIN_MESHING_NAME)
+TARGET_LIB_NAME = $(SV_PLUGIN_SEGMENTATION_NAME)
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_meshing
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_meshing
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_segmentation
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_segmentation
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = MESHING
+PLUGIN_NAME = SEGMENTATION
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

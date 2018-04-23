@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -42,27 +42,56 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_projectdatanodes_EXPORTS \
-           -DUS_MODULE_NAME=svProjectDataNodes
+           -Dorg_sv_gui_qt_simulation_EXPORTS \
+           -DUS_MODULE_NAME=svSimulation
 
 HDRS	= \
-  sv4gui_ProjectDataNodesPluginActivator.h
+    sv4gui_SimJobCreate.h \
+    sv4gui_SimJobCreateAction.h \
+    sv4gui_CapBCWidget.h \
+    sv4gui_SplitBCWidget.h \
+    sv4gui_TableCapDelegate.h \
+    sv4gui_TableSolverDelegate.h \
+    sv4gui_SimulationView.h \
+    sv4gui_SimulationPreferencePage.h \
+    sv4gui_SimJobStopAction.h \
+    sv4gui_SimJobExportAction.h \
+    sv4gui_SimulationPluginActivator.h \
+    sv4gui_ProcessHandler.h \
+    sv4gui_SolverProcessHandler.h
 
 CXXSRCS	= \
-  sv4gui_ProjectDataNodesPluginActivator.cxx
+    sv4gui_SimJobCreate.cxx \
+    sv4gui_SimJobCreateAction.cxx \
+    sv4gui_CapBCWidget.cxx \
+    sv4gui_SplitBCWidget.cxx \
+    sv4gui_TableCapDelegate.cxx \
+    sv4gui_TableSolverDelegate.cxx \
+    sv4gui_SimulationView.cxx \
+    sv4gui_SimulationPreferencePage.cxx \
+    sv4gui_SimJobStopAction.cxx \
+    sv4gui_SimJobExportAction.cxx \
+    sv4gui_SimulationPluginActivator.cxx \
+    sv4gui_ProcessHandler.cxx \
+    sv4gui_SolverProcessHandler.cxx
 
-UIFILES =
+UIFILES = \
+    sv4gui_SimJobCreate.ui \
+    sv4gui_CapBCWidget.ui \
+    sv4gui_SplitBCWidget.ui \
+    sv4gui_SimulationPreferencePage.ui \
+    sv4gui_SimulationView.ui
 
-QRCFILES = \
-  ../../resources/projectdatanodes.qrc
+QRCFILES = resources/simulation.qrc
 
-QRCFILES += org_sv_projectdatanodes_manifest.qrc \
-            org_sv_projectdatanodes_cached.qrc
+QRCFILES += org_sv_gui_qt_simulation_manifest.qrc \
+            org_sv_gui_qt_simulation_cached.qrc
 
-RCFILES =
+RCFILES = \
+  plugin.xml \
+  resources/simulation.png
 
-CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
-
+CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
@@ -71,14 +100,15 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS += \
+DLLLIBS +=  \
+          $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
@@ -86,14 +116,14 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-TARGET_LIB_NAME = $(SV_PLUGIN_PROJECTDATANODES_NAME)
+TARGET_LIB_NAME = $(SV_PLUGIN_SIMULATION_NAME)
 
-PLUGIN_SYMBOLIC_NAME = org_sv_projectdatanodes
-PLUGIN_EXPORTS_NAME = org_sv_projectdatanodes
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_simulation
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_simulation
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = PROJECTDATANODES
+PLUGIN_NAME = SIMULATION
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

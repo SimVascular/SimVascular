@@ -329,7 +329,7 @@ create_plugin_export_h:
 	@echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
 
 create_manifest_qrc:
-	-tclsh $(TOP)/TclHelpers/create_manifest_mf.tcl $(PLUGIN_SYMBOLIC_NAME) $(PLUGIN_EXPORTS_NAME)_manifest.qrc ../../manifest_headers.cmake MANIFEST.MF
+	-tclsh $(TOP)/TclHelpers/create_manifest_mf.tcl $(PLUGIN_SYMBOLIC_NAME) $(PLUGIN_EXPORTS_NAME)_manifest.qrc manifest_headers.cmake MANIFEST.MF
 
 create_cached_qrc:
 	-tclsh $(TOP)/TclHelpers/create_cached_qrc.tcl $(PLUGIN_EXPORTS_NAME) $(PLUGIN_EXPORTS_NAME)_cached.qrc $(RCFILES)

@@ -28,11 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SRC_CPP_FILES
-
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
     sv4gui_SimJobCreate.cxx
     sv4gui_SimJobCreateAction.cxx
     sv4gui_CapBCWidget.cxx
@@ -49,27 +45,27 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-    src/internal/sv4gui_SimJobCreate.h
-    src/internal/sv4gui_SimJobCreateAction.h
-    src/internal/sv4gui_CapBCWidget.h
-    src/internal/sv4gui_SplitBCWidget.h
-    src/internal/sv4gui_TableCapDelegate.h
-    src/internal/sv4gui_TableSolverDelegate.h
-    src/internal/sv4gui_SimulationView.h
-    src/internal/sv4gui_SimulationPreferencePage.h
-    src/internal/sv4gui_SimJobStopAction.h
-    src/internal/sv4gui_SimJobExportAction.h
-    src/internal/sv4gui_SimulationPluginActivator.h
-    src/internal/sv4gui_ProcessHandler.h
-    src/internal/sv4gui_SolverProcessHandler.h
+    sv4gui_SimJobCreate.h
+    sv4gui_SimJobCreateAction.h
+    sv4gui_CapBCWidget.h
+    sv4gui_SplitBCWidget.h
+    sv4gui_TableCapDelegate.h
+    sv4gui_TableSolverDelegate.h
+    sv4gui_SimulationView.h
+    sv4gui_SimulationPreferencePage.h
+    sv4gui_SimJobStopAction.h
+    sv4gui_SimJobExportAction.h
+    sv4gui_SimulationPluginActivator.h
+    sv4gui_ProcessHandler.h
+    sv4gui_SolverProcessHandler.h
 )
 
 set(UI_FILES
-    src/internal/sv4gui_SimJobCreate.ui
-    src/internal/sv4gui_CapBCWidget.ui
-    src/internal/sv4gui_SplitBCWidget.ui
-    src/internal/sv4gui_SimulationPreferencePage.ui
-    src/internal/sv4gui_SimulationView.ui
+    sv4gui_SimJobCreate.ui
+    sv4gui_CapBCWidget.ui
+    sv4gui_SplitBCWidget.ui
+    sv4gui_SimulationPreferencePage.ui
+    sv4gui_SimulationView.ui
 )
 
 set(CACHED_RESOURCE_FILES
@@ -80,14 +76,3 @@ set(CACHED_RESOURCE_FILES
 set(QRC_FILES
   resources/simulation.qrc
 )
-
-set(CPP_FILES )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})
-

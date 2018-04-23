@@ -34,15 +34,15 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIEXT_DIRS = org.sv.projectdatanodes/src/internal \
-                  org.sv.gui.qt.projectmanager/src/internal \
-                  org.sv.gui.qt.datamanager/src/internal \
-                  org.sv.gui.qt.pathplanning/src/internal \
-                  org.sv.gui.qt.segmentation/src/internal \
-                  org.sv.gui.qt.modeling/src/internal \
-                  org.sv.gui.qt.meshing/src/internal \
-                  org.sv.gui.qt.simulation/src/internal \
-                  org.sv.gui.qt.application/src/internal
+SVQTGUIEXT_DIRS = org.sv.projectdatanodes \
+                  org.sv.gui.qt.projectmanager \
+                  org.sv.gui.qt.datamanager \
+                  org.sv.gui.qt.pathplanning \
+                  org.sv.gui.qt.segmentation \
+                  org.sv.gui.qt.modeling \
+                  org.sv.gui.qt.meshing \
+                  org.sv.gui.qt.simulation \
+                  org.sv.gui.qt.application
 
 lib-complete: moc ui qrc lib
 

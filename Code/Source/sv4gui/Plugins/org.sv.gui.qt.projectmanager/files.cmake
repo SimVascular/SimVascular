@@ -28,11 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SRC_CPP_FILES
-
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
   sv4gui_ProjectManagerPluginActivator.cxx
   sv4gui_ProjectAddImageAction.cxx
   sv4gui_ProjectCloseAction.cxx
@@ -43,13 +39,13 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-  src/internal/sv4gui_ProjectManagerPluginActivator.h
-  src/internal/sv4gui_ProjectAddImageAction.h
-  src/internal/sv4gui_ProjectCloseAction.h
-  src/internal/sv4gui_ProjectSaveAction.h
-  src/internal/sv4gui_ProjectDuplicateAction.h
-  src/internal/sv4gui_ProjectShowModelEdgesAction.h
-  src/internal/sv4gui_ProjectShowModelFullAction.h
+  sv4gui_ProjectManagerPluginActivator.h
+  sv4gui_ProjectAddImageAction.h
+  sv4gui_ProjectCloseAction.h
+  sv4gui_ProjectSaveAction.h
+  sv4gui_ProjectDuplicateAction.h
+  sv4gui_ProjectShowModelEdgesAction.h
+  sv4gui_ProjectShowModelFullAction.h
 )
 
 set(UI_FILES
@@ -63,14 +59,3 @@ set(CACHED_RESOURCE_FILES
 set(QRC_FILES
   resources/projectmanager.qrc
 )
-
-set(CPP_FILES )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})
-

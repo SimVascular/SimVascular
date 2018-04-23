@@ -28,7 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
   sv4gui_berrySingleNodeSelection.cxx
   sv4gui_QmitkDataManagerView.cxx
   sv4gui_QmitkDataManagerPreferencePage.cxx
@@ -41,18 +41,16 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-  src/internal/sv4gui_QmitkDataManagerView.h
-  src/internal/sv4gui_QmitkDataManagerPreferencePage.h
-  src/internal/sv4gui_QmitkDataManagerHotkeysPrefPage.h
-  src/internal/sv4gui_QmitkNodeTableViewKeyFilter.h
-  src/internal/sv4gui_QmitkInfoDialog.h
-  src/internal/sv4gui_QmitkDataManagerItemDelegate.h
-  src/internal/sv4gui_DataManagerPluginActivator.h
-  src/internal/sv4gui_mitkIContextMenuAction.h
-  src/internal/sv4gui_QmitkFunctionality.h
+  sv4gui_QmitkDataManagerView.h
+  sv4gui_QmitkDataManagerPreferencePage.h
+  sv4gui_QmitkDataManagerHotkeysPrefPage.h
+  sv4gui_QmitkNodeTableViewKeyFilter.h
+  sv4gui_QmitkInfoDialog.h
+  sv4gui_QmitkDataManagerItemDelegate.h
+  sv4gui_DataManagerPluginActivator.h
+  sv4gui_mitkIContextMenuAction.h
+  sv4gui_QmitkFunctionality.h
 )
-
-set(CPP_FILES )
 
 set(CACHED_RESOURCE_FILES
   plugin.xml
@@ -62,11 +60,3 @@ set(CACHED_RESOURCE_FILES
 set(QRC_FILES
   resources/svdatamanager.qrc
 )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})

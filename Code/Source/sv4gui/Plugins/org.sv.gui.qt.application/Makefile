@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -42,54 +42,55 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_simulation_EXPORTS \
-           -DUS_MODULE_NAME=svSimulation
+           -Dorg_sv_gui_qt_application_EXPORTS \
+           -DUS_MODULE_NAME=svApplication
 
 HDRS	= \
-    sv4gui_SimJobCreate.h \
-    sv4gui_SimJobCreateAction.h \
-    sv4gui_CapBCWidget.h \
-    sv4gui_SplitBCWidget.h \
-    sv4gui_TableCapDelegate.h \
-    sv4gui_TableSolverDelegate.h \
-    sv4gui_SimulationView.h \
-    sv4gui_SimulationPreferencePage.h \
-    sv4gui_SimJobStopAction.h \
-    sv4gui_SimJobExportAction.h \
-    sv4gui_SimulationPluginActivator.h \
-    sv4gui_ProcessHandler.h \
-    sv4gui_SolverProcessHandler.h
+  sv4gui_Application.h \
+  sv4gui_ApplicationPluginActivator.h \
+  sv4gui_FileCreateProjectAction.h \
+  sv4gui_FileOpenProjectAction.h \
+  sv4gui_FileSaveProjectAction.h \
+  sv4gui_FileSaveProjectAsAction.h \
+  sv4gui_CloseProjectAction.h \
+  sv4gui_ProjectCreate.h \
+  sv4gui_WorkbenchWindowAdvisor.h \
+  sv4gui_WorkbenchWindowAdvisorHack.h \
+  sv4gui_AboutDialog.h \
+  sv4gui_WorkbenchIntroPart.h \
+  sv4gui_DefaultPerspective.h
 
 CXXSRCS	= \
-    sv4gui_SimJobCreate.cxx \
-    sv4gui_SimJobCreateAction.cxx \
-    sv4gui_CapBCWidget.cxx \
-    sv4gui_SplitBCWidget.cxx \
-    sv4gui_TableCapDelegate.cxx \
-    sv4gui_TableSolverDelegate.cxx \
-    sv4gui_SimulationView.cxx \
-    sv4gui_SimulationPreferencePage.cxx \
-    sv4gui_SimJobStopAction.cxx \
-    sv4gui_SimJobExportAction.cxx \
-    sv4gui_SimulationPluginActivator.cxx \
-    sv4gui_ProcessHandler.cxx \
-    sv4gui_SolverProcessHandler.cxx
+  sv4gui_Application.cxx \
+  sv4gui_ApplicationPluginActivator.cxx \
+  sv4gui_FileCreateProjectAction.cxx \
+  sv4gui_FileOpenProjectAction.cxx \
+  sv4gui_FileSaveProjectAction.cxx \
+  sv4gui_FileSaveProjectAsAction.cxx \
+  sv4gui_CloseProjectAction.cxx \
+  sv4gui_ProjectCreate.cxx \
+  sv4gui_WorkbenchWindowAdvisor.cxx \
+  sv4gui_AppWorkbenchAdvisor.cxx \
+  sv4gui_AboutDialog.cxx \
+  sv4gui_WorkbenchIntroPart.cxx \
+  sv4gui_DefaultPerspective.cxx \
+  sv4gui_WorkbenchWindowAdvisorHack.cxx
 
 UIFILES = \
-    sv4gui_SimJobCreate.ui \
-    sv4gui_CapBCWidget.ui \
-    sv4gui_SplitBCWidget.ui \
-    sv4gui_SimulationPreferencePage.ui \
-    sv4gui_SimulationView.ui
+  sv4gui_ProjectCreate.ui \
+  sv4gui_AboutDialog.ui \
+  sv4gui_WelcomeScreenViewControls.ui
 
-QRCFILES = ../../resources/simulation.qrc
+QRCFILES = \
+  resources/svApplication.qrc \
+  resources/welcome/svWelcomeScreenView.qrc
 
-QRCFILES += org_sv_gui_qt_simulation_manifest.qrc \
-            org_sv_gui_qt_simulation_cached.qrc
+QRCFILES += org_sv_gui_qt_application_manifest.qrc \
+            org_sv_gui_qt_application_cached.qrc
 
 RCFILES = \
-  ../../plugin.xml \
-  ../../resources/simulation.png
+  plugin.xml \
+  resources/icon.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
@@ -106,24 +107,24 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-TARGET_LIB_NAME = $(SV_PLUGIN_SIMULATION_NAME)
+TARGET_LIB_NAME = $(SV_PLUGIN_APPLICATION_NAME)
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_simulation
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_simulation
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_application
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_application
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = SIMULATION
+PLUGIN_NAME = APPLICATION
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

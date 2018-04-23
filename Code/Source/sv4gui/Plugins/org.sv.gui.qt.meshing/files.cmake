@@ -28,11 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SRC_CPP_FILES
-
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
     sv4gui_MeshCreate.cxx
     sv4gui_MeshCreateAction.cxx
     sv4gui_MeshEdit.cxx
@@ -45,19 +41,19 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-    src/internal/sv4gui_MeshCreate.h
-    src/internal/sv4gui_MeshCreateAction.h
-    src/internal/sv4gui_MeshEdit.h
-    src/internal/sv4gui_LocalTableDelegate.h
-    src/internal/sv4gui_MeshLegacySaveAction.h
-    src/internal/sv4gui_MeshLoadSurfaceAction.h
-    src/internal/sv4gui_MeshLoadVolumeAction.h
-    src/internal/sv4gui_MeshingPluginActivator.h
+    sv4gui_MeshCreate.h
+    sv4gui_MeshCreateAction.h
+    sv4gui_MeshEdit.h
+    sv4gui_LocalTableDelegate.h
+    sv4gui_MeshLegacySaveAction.h
+    sv4gui_MeshLoadSurfaceAction.h
+    sv4gui_MeshLoadVolumeAction.h
+    sv4gui_MeshingPluginActivator.h
 )
 
 set(UI_FILES
-    src/internal/sv4gui_MeshCreate.ui
-    src/internal/sv4gui_MeshEdit.ui
+    sv4gui_MeshCreate.ui
+    sv4gui_MeshEdit.ui
 )
 
 set(CACHED_RESOURCE_FILES
@@ -67,14 +63,3 @@ set(CACHED_RESOURCE_FILES
 
 set(QRC_FILES
 )
-
-set(CPP_FILES )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})
-

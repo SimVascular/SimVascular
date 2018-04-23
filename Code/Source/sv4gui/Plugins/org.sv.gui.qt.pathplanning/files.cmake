@@ -28,11 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SRC_CPP_FILES
-
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
     sv4gui_PathCreate.cxx
     sv4gui_PathCreateAction.cxx
     sv4gui_PathLoadAction.cxx
@@ -45,21 +41,21 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
-    src/internal/sv4gui_PathCreate.h
-    src/internal/sv4gui_PathCreateAction.h
-    src/internal/sv4gui_PathLoadAction.h
-    src/internal/sv4gui_PathLegacySaveAction.h
-    src/internal/sv4gui_PathSmooth.h
-    src/internal/sv4gui_PathEdit.h
-    src/internal/sv4gui_PathPoint2DSizeAction.h
-    src/internal/sv4gui_PathPoint3DSizeAction.h
-    src/internal/sv4gui_PathPlanningPluginActivator.h
+    sv4gui_PathCreate.h
+    sv4gui_PathCreateAction.h
+    sv4gui_PathLoadAction.h
+    sv4gui_PathLegacySaveAction.h
+    sv4gui_PathSmooth.h
+    sv4gui_PathEdit.h
+    sv4gui_PathPoint2DSizeAction.h
+    sv4gui_PathPoint3DSizeAction.h
+    sv4gui_PathPlanningPluginActivator.h
 )
 
 set(UI_FILES
-    src/internal/sv4gui_PathCreate.ui
-    src/internal/sv4gui_PathSmooth.ui
-    src/internal/sv4gui_PathEdit.ui
+    sv4gui_PathCreate.ui
+    sv4gui_PathSmooth.ui
+    sv4gui_PathEdit.ui
 )
 
 set(CACHED_RESOURCE_FILES
@@ -70,14 +66,3 @@ set(CACHED_RESOURCE_FILES
 set(QRC_FILES
 
 )
-
-set(CPP_FILES )
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})
-

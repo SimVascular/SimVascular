@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -42,44 +42,24 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_pathplanning_EXPORTS \
-          -DUS_MODULE_NAME=svPathPlanning
+           -Dorg_sv_projectdatanodes_EXPORTS \
+           -DUS_MODULE_NAME=svProjectDataNodes
 
 HDRS	= \
-    sv4gui_PathCreate.h \
-    sv4gui_PathCreateAction.h \
-    sv4gui_PathLoadAction.h \
-    sv4gui_PathLegacySaveAction.h \
-    sv4gui_PathSmooth.h \
-    sv4gui_PathEdit.h \
-    sv4gui_PathPoint2DSizeAction.h \
-    sv4gui_PathPoint3DSizeAction.h \
-    sv4gui_PathPlanningPluginActivator.h
+  sv4gui_ProjectDataNodesPluginActivator.h
 
-CXXSRCS	=  \
-    sv4gui_PathCreate.cxx \
-    sv4gui_PathCreateAction.cxx \
-    sv4gui_PathLoadAction.cxx \
-    sv4gui_PathLegacySaveAction.cxx \
-    sv4gui_PathSmooth.cxx \
-    sv4gui_PathEdit.cxx \
-    sv4gui_PathPoint2DSizeAction.cxx \
-    sv4gui_PathPoint3DSizeAction.cxx \
-    sv4gui_PathPlanningPluginActivator.cxx
+CXXSRCS	= \
+  sv4gui_ProjectDataNodesPluginActivator.cxx
 
-UIFILES = \
-    sv4gui_PathCreate.ui \
-    sv4gui_PathSmooth.ui \
-    sv4gui_PathEdit.ui
+UIFILES =
 
-QRCFILES =
+QRCFILES = \
+  resources/projectdatanodes.qrc
 
-QRCFILES += org_sv_gui_qt_pathplanning_manifest.qrc \
-            org_sv_gui_qt_pathplanning_cached.qrc
+QRCFILES += org_sv_projectdatanodes_manifest.qrc \
+            org_sv_projectdatanodes_cached.qrc
 
-RCFILES = \
-    ../../plugin.xml \
-    ../../resources/pathedit.png
+RCFILES =
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
@@ -91,12 +71,14 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  \
-          $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
@@ -104,14 +86,14 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-TARGET_LIB_NAME = $(SV_PLUGIN_PATHPLANNING_NAME)
+TARGET_LIB_NAME = $(SV_PLUGIN_PROJECTDATANODES_NAME)
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_pathplanning
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_pathplanning
+PLUGIN_SYMBOLIC_NAME = org_sv_projectdatanodes
+PLUGIN_EXPORTS_NAME = org_sv_projectdatanodes
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = PATHPLANNING
+PLUGIN_NAME = PROJECTDATANODES
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

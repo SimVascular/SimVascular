@@ -723,15 +723,15 @@ endif
 
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.projectdatanodes/src/internal \
-                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.projectmanager/src/internal \
-                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.datamanager/src/internal \
-                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.meshing/src/internal \
-                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.modeling/src/internal \
-                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.pathplanning/src/internal \
-                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.segmentation/src/internal \
-                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.simulation/src/internal \
-                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.application/src/internal \
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.projectdatanodes \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.projectmanager \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.datamanager \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.meshing \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.modeling \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.pathplanning \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.segmentation \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.simulation \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.application \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Common \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Model/Common \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Mesh/Common \

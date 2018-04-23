@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../../../BuildWithMake
+TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -39,66 +39,50 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR) \
-           $(MESHSIM_INCDIR) \
-           $(PARASOLID_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_segmentation_EXPORTS \
-           -DUS_MODULE_NAME=svSegmentation
-
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    CXXFLAGS += $(OPENCASCADE_INCDIR)
-endif
+           -Dorg_sv_gui_qt_pathplanning_EXPORTS \
+          -DUS_MODULE_NAME=svPathPlanning
 
 HDRS	= \
-    sv4gui_LoftingUtils.h \
-    sv4gui_ContourGroupCreate.h \
-    sv4gui_ContourGroupCreateAction.h \
-    sv4gui_SegmentationLegacyLoadAction.h \
-    sv4gui_SegmentationLegacySaveAction.h \
-    sv4gui_SegmentationLoadAction.h \
-    sv4gui_LevelSet2DWidget.h \
-    sv4gui_LoftParamWidget.h \
-    sv4gui_Seg2DEdit.h \
-    sv4gui_ContourGroupPoint2DSizeAction.h \
-    sv4gui_ContourGroupPoint3DSizeAction.h \
-    sv4gui_Seg3DCreateAction.h \
-    sv4gui_Seg3DEdit.h \
-    sv4gui_SegmentationPluginActivator.h
+    sv4gui_PathCreate.h \
+    sv4gui_PathCreateAction.h \
+    sv4gui_PathLoadAction.h \
+    sv4gui_PathLegacySaveAction.h \
+    sv4gui_PathSmooth.h \
+    sv4gui_PathEdit.h \
+    sv4gui_PathPoint2DSizeAction.h \
+    sv4gui_PathPoint3DSizeAction.h \
+    sv4gui_PathPlanningPluginActivator.h
 
-CXXSRCS	= \
-    sv4gui_LoftingUtils.cxx \
-    sv4gui_ContourGroupCreate.cxx \
-    sv4gui_ContourGroupCreateAction.cxx \
-    sv4gui_SegmentationLegacyLoadAction.cxx \
-    sv4gui_SegmentationLegacySaveAction.cxx \
-    sv4gui_SegmentationLoadAction.cxx \
-    sv4gui_LevelSet2DWidget.cxx \
-    sv4gui_LoftParamWidget.cxx \
-    sv4gui_Seg2DEdit.cxx \
-    sv4gui_ContourGroupPoint2DSizeAction.cxx \
-    sv4gui_ContourGroupPoint3DSizeAction.cxx \
-    sv4gui_Seg3DCreateAction.cxx \
-    sv4gui_Seg3DEdit.cxx \
-    sv4gui_SegmentationPluginActivator.cxx
+CXXSRCS	=  \
+    sv4gui_PathCreate.cxx \
+    sv4gui_PathCreateAction.cxx \
+    sv4gui_PathLoadAction.cxx \
+    sv4gui_PathLegacySaveAction.cxx \
+    sv4gui_PathSmooth.cxx \
+    sv4gui_PathEdit.cxx \
+    sv4gui_PathPoint2DSizeAction.cxx \
+    sv4gui_PathPoint3DSizeAction.cxx \
+    sv4gui_PathPlanningPluginActivator.cxx
 
 UIFILES = \
-    sv4gui_ContourGroupCreate.ui \
-    sv4gui_LevelSet2DWidget.ui \
-    sv4gui_LoftParamWidget.ui \
-    sv4gui_Seg2DEdit.ui \
-    sv4gui_Seg3DEdit.ui
+    sv4gui_PathCreate.ui \
+    sv4gui_PathSmooth.ui \
+    sv4gui_PathEdit.ui
 
-QRCFILES = org_sv_gui_qt_segmentation_manifest.qrc \
-           org_sv_gui_qt_segmentation_cached.qrc
+QRCFILES =
+
+QRCFILES += org_sv_gui_qt_pathplanning_manifest.qrc \
+            org_sv_gui_qt_pathplanning_cached.qrc
 
 RCFILES = \
-  ../../plugin.xml \
-  ../../resources/contourgroup.png \
-  ../../resources/svseg3d.png
+    plugin.xml \
+    resources/pathedit.png
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
@@ -111,7 +95,6 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
@@ -121,33 +104,14 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_DISCRETE_SOLID_NAME)$(LIBLINKEXT)
-endif
-ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_SOLID_NAME)$(LIBLINKEXT)
-endif
-ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_PARASOLID_SOLID_NAME)$(LIBLINKEXT)
-endif
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    DLLLIBS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
-endif
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
+TARGET_LIB_NAME = $(SV_PLUGIN_PATHPLANNING_NAME)
 
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
-    DLLLIBS += $(OPENCASCADE_LIBS)
-endif
-
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.sv.gui.qt.datamanager/src/internal
-
-TARGET_LIB_NAME = $(SV_PLUGIN_SEGMENTATION_NAME)
-
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_segmentation
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_segmentation
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_pathplanning
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_pathplanning
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = SEGMENTATION
+PLUGIN_NAME = PATHPLANNING
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 
