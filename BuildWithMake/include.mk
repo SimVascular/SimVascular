@@ -517,9 +517,9 @@ LIBDIRS =
 SHARED_LIBDIRS =
 
 ifeq ($(SV_USE_GLOBALS_SHARED),1)
-  SHARED_LIBDIRS = ../Code/Source/Common/Globals
+  SHARED_LIBDIRS = ../Code/Source/sv2/Globals
 else
-  LIBDIRS = ../Code/Source/Common/Globals
+  LIBDIRS = ../Code/Source/sv2/Globals
 endif
 
 ifeq ($(SV_USE_SHARED),1)
@@ -535,9 +535,9 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/Model/SolidModel \
 	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Common/Geometry \
-	  ../Code/Source/ImageProcessing \
-	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Legacy/LevelSet
+	  ../Code/Source/sv2/ImageProcessing \
+	  ../Code/Source/sv2/PostProcessing \
+	  ../Code/Source/sv2/Segmentation
 else
   LIBDIRS += \
           ../Code/Source/Common/Utils \
@@ -551,9 +551,9 @@ else
 	  ../Code/Source/Model/SolidModel \
 	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Common/Geometry \
-	  ../Code/Source/ImageProcessing \
-	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Legacy/LevelSet
+	  ../Code/Source/sv2/ImageProcessing \
+	  ../Code/Source/sv2/PostProcessing \
+	  ../Code/Source/sv2/Segmentation
 endif
 
 ifeq ($(SV_USE_VMTK),1)

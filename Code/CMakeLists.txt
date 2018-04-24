@@ -174,7 +174,7 @@ endif(DOXYGEN_FOUND)
 #-----------------------------------------------------------------------------
 # Basic Core Libs
 set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
-	"Source/Common/Globals"
+	"Source/sv2/Globals"
 	"Source/Common/Utils"
 	"Source/Common/Repository"
   "Source/vtkSV/Common"
@@ -183,11 +183,11 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
   "Source/vtkSV/Modules/Geometry"
   "Source/vtkSV/Modules/NURBS"
   "Source/vtkSV/Modules/Parameterization"
-	"Source/ImageProcessing"
+	"Source/sv2/ImageProcessing"
 	"Source/Common/Geometry"
-	"Source/Legacy/LevelSet"
+	"Source/sv2/Segmentation"
 	"Source/Model/SolidModel"
-	"Source/PostProcessing"
+	"Source/sv2/PostProcessing"
 	"Source/Mesh/MeshObject"
 	"Source/Model/PolyDataSolidModel")
 #-----------------------------------------------------------------------------
