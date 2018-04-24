@@ -524,33 +524,33 @@ endif
 
 ifeq ($(SV_USE_SHARED),1)
   SHARED_LIBDIRS += \
-          ../Code/Source/Common/Utils \
-	  ../Code/Source/Common/Repository \
+          ../Code/Source/sv3/Common/Utils \
+	  ../Code/Source/sv3/Common/Repository \
           ../Code/Source/vtkSV/Common \
           ../Code/Source/vtkSV/Filters \
           ../Code/Source/vtkSV/Modules/Boolean \
           ../Code/Source/vtkSV/Modules/Geometry \
           ../Code/Source/vtkSV/Modules/NURBS \
           ../Code/Source/vtkSV/Modules/Parameterization \
-	  ../Code/Source/Model/SolidModel \
-	  ../Code/Source/Mesh/MeshObject \
-	  ../Code/Source/Common/Geometry \
+	  ../Code/Source/sv3/Model/SolidModel \
+	  ../Code/Source/sv3/Mesh/MeshObject \
+	  ../Code/Source/sv3/Common/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation
 else
   LIBDIRS += \
-          ../Code/Source/Common/Utils \
-	  ../Code/Source/Common/Repository \
+          ../Code/Source/sv3/Common/Utils \
+	  ../Code/Source/sv3/Common/Repository \
           ../Code/Source/vtkSV/Common \
           ../Code/Source/vtkSV/Filters \
           ../Code/Source/vtkSV/Modules/Boolean \
           ../Code/Source/vtkSV/Modules/Geometry \
           ../Code/Source/vtkSV/Modules/NURBS \
           ../Code/Source/vtkSV/Modules/Parameterization \
-	  ../Code/Source/Model/SolidModel \
-	  ../Code/Source/Mesh/MeshObject \
-	  ../Code/Source/Common/Geometry \
+	  ../Code/Source/sv3/Model/SolidModel \
+	  ../Code/Source/sv3/Mesh/MeshObject \
+	  ../Code/Source/sv3/Common/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation
@@ -558,40 +558,40 @@ endif
 
 ifeq ($(SV_USE_VMTK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/VMTKUtils
+     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/VMTKUtils
   else
-     LIBDIRS += ../Code/Source/Mesh/VMTKUtils
+     LIBDIRS += ../Code/Source/sv3/Mesh/VMTKUtils
   endif
 endif
 
 # polydata model can depend on vmtk
 ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Model/PolyDataSolidModel
+     SHARED_LIBDIRS += ../Code/Source/sv3/Model/PolyDataSolidModel
 else
-     LIBDIRS += ../Code/Source/Model/PolyDataSolidModel
+     LIBDIRS += ../Code/Source/sv3/Model/PolyDataSolidModel
 endif
 
 ifeq ($(SV_USE_ITK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Segmentation/ITK
+     SHARED_LIBDIRS += ../Code/Source/sv3/Segmentation/ITK
   else
-     LIBDIRS += ../Code/Source/Segmentation/ITK
+     LIBDIRS += ../Code/Source/sv3/Segmentation/ITK
   endif
 endif
 
 ifeq ($(SV_USE_MMG),1)
   ifeq ($(SV_USE_MMG_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
+     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/MMGMeshUtils
   else
-     LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
+     LIBDIRS += ../Code/Source/sv3/Mesh/MMGMeshUtils
   endif
 endif
 
 ifeq ($(SV_USE_TETGEN),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/TetGenMeshObject
+     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/TetGenMeshObject
   else
-     LIBDIRS += ../Code/Source/Mesh/TetGenMeshObject
+     LIBDIRS += ../Code/Source/sv3/Mesh/TetGenMeshObject
   endif
 endif
 
@@ -607,25 +607,25 @@ endif
 
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
   ifeq ($(SV_USE_MESHSIM_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
+    SHARED_LIBDIRS += ../Code/Source/sv3/Model/MeshSimDiscreteSolidModel
   else
-    LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
+    LIBDIRS += ../Code/Source/sv3/Model/MeshSimDiscreteSolidModel
   endif
 endif
 
     ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
       ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
-        SHARED_LIBDIRS += ../Code/Source/Model/MeshSimSolidModel
+        SHARED_LIBDIRS += ../Code/Source/sv3/Model/MeshSimSolidModel
       else
-        LIBDIRS += ../Code/Source/Model/MeshSimSolidModel
+        LIBDIRS += ../Code/Source/sv3/Model/MeshSimSolidModel
       endif
     endif
 
 ifeq ($(SV_USE_OPENCASCADE),1)
   ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/Model/OCCTSolidModel
+    SHARED_LIBDIRS += ../Code/Source/sv3/Model/OCCTSolidModel
   else
-    LIBDIRS += ../Code/Source/Model/OCCTSolidModel
+    LIBDIRS += ../Code/Source/sv3/Model/OCCTSolidModel
   endif
 endif
 
@@ -633,9 +633,9 @@ endif
 
 ifeq ($(SV_USE_MESHSIM),1)
   ifeq ($(SV_USE_MESHSIM_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
+     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/MeshSimMeshObject
   else
-     LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
+     LIBDIRS += ../Code/Source/sv3/Mesh/MeshSimMeshObject
   endif
 endif
 
@@ -645,45 +645,33 @@ EXECDIRS = ../Code/Source/UI
 
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
   ifeq ($(SV_USE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/Mesh/AdaptObject
+    SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/AdaptObject
   else
-    LIBDIRS += ../Code/Source/Mesh/AdaptObject
+    LIBDIRS += ../Code/Source/sv3/Mesh/AdaptObject
   endif
 else
   ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
     ifeq ($(SV_USE_SHARED),1)
-      SHARED_LIBDIRS += ../Code/Source/Mesh/AdaptObject
+      SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/AdaptObject
     else
-      LIBDIRS += ../Code/Source/Mesh/AdaptObject
+      LIBDIRS += ../Code/Source/sv3/Mesh/AdaptObject
     endif
   endif
 endif
 
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
   ifeq ($(SV_USE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
+    SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/TetGenAdapt
   else
-    LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
+    LIBDIRS += ../Code/Source/sv3/Mesh/TetGenAdapt
   endif
 endif
 
 ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
   ifeq ($(SV_USE_MESHSIM_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimAdapt
+     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/MeshSimAdapt
   else
-     LIBDIRS += ../Code/Source/Mesh/MeshSimAdapt
-  endif
-endif
-
-# -------------------------
-# Build a python interpreter
-# -------------------------
-
-ifeq ($(SV_USE_PYTHON),1)
-  ifeq ($(SV_USE_PYTHON_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/TclPython
-  else
-     LIBDIRS += ../Code/Source/TclPython
+     LIBDIRS += ../Code/Source/sv3/Mesh/MeshSimAdapt
   endif
 endif
 
@@ -718,7 +706,7 @@ LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include ../Code/So
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 
 ifeq ($(SV_USE_ITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segmentation/ITK/Include
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv3/Segmentation/ITK/Include
 endif
 
 # for now, combine the mitk and qt gui include dirs
