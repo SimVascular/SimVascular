@@ -63,6 +63,6 @@ set(CPP_FILES
 )
 
 set(RESOURCE_FILES
-    Interactions/svModelInteraction.xml
-    Interactions/svModelConfig.xml
+    Interactions/sv4gui_ModelInteraction.xml
+    Interactions/sv4gui_ModelConfig.xml
 )

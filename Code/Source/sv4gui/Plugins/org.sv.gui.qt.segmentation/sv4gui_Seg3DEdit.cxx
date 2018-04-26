@@ -198,8 +198,8 @@ void sv4guiSeg3DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         m_DataInteractor->SetMinRadius(minSpacing);
     }
 
-    m_DataInteractor->LoadStateMachine("sv4guiMitkSeg3DInteraction.xml", us::ModuleRegistry::GetModule("sv4guiSegmentation"));
-    m_DataInteractor->SetEventConfig("sv4guiSegmentationConfig.xml", us::ModuleRegistry::GetModule("sv4guiSegmentation"));
+    m_DataInteractor->LoadStateMachine("sv4gui_MitkSeg3DInteraction.xml", us::ModuleRegistry::GetModule("svSegmentation"));
+    m_DataInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("svSegmentation"));
     m_DataInteractor->SetDataNode(m_MitkSeg3DNode);
 
     sv4guiSeg3D* seg3D=m_MitkSeg3D->GetSeg3D();
