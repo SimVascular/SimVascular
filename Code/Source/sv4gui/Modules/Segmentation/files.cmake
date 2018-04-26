@@ -89,8 +89,8 @@ set(CPP_FILES
 )
 
 set(RESOURCE_FILES
-    Interactions/svContourGroupInteraction.xml
-    Interactions/svContourModelThresholdInteraction.xml
-    Interactions/svMitkSeg3DInteraction.xml
-    Interactions/svSegmentationConfig.xml
+    Interactions/sv4gui_ContourGroupInteraction.xml
+    Interactions/sv4gui_ContourModelThresholdInteraction.xml
+    Interactions/sv4gui_MitkSeg3DInteraction.xml
+    Interactions/sv4gui_SegmentationConfig.xml
 )

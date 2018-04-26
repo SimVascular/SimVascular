@@ -56,6 +56,6 @@ set(CPP_FILES
 )
 
 set(RESOURCE_FILES
-    Interactions/svPath.xml
-    Interactions/svPathConfig.xml
+    Interactions/sv4gui_Path.xml
+    Interactions/sv4gui_PathConfig.xml
 )

@@ -105,7 +105,6 @@ void sv4guiModelExtractPathsAction::Run(const QList<mitk::DataNode::Pointer> &se
 {
 
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
-    fprintf(stdout,"AFT RUN NAME: %s\n", selectedNode->GetName().c_str());
 
     sv4guiModel* model=dynamic_cast<sv4guiModel*>(selectedNode->GetData());
     if(!model) return;

@@ -75,8 +75,8 @@ CXXSRCS += us_init.cxx
 UIFILES =
 
 SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
-RCFILES = resource/Interactions/svPath.xml \
-          resource/Interactions/svPathConfig.xml
+RCFILES = resource/Interactions/sv4gui_Path.xml \
+          resource/Interactions/sv4gui_PathConfig.xml
 
 QRCFILES =
 

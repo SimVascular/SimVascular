@@ -113,10 +113,10 @@ UIFILES =
 
 SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
 RCFILES = \
-    resource/Interactions/svContourGroupInteraction.xml \
-    resource/Interactions/svContourModelThresholdInteraction.xml \
-    resource/Interactions/svMitkSeg3DInteraction.xml \
-    resource/Interactions/svSegmentationConfig.xml
+    resource/Interactions/sv4gui_ContourGroupInteraction.xml \
+    resource/Interactions/sv4gui_ContourModelThresholdInteraction.xml \
+    resource/Interactions/sv4gui_MitkSeg3DInteraction.xml \
+    resource/Interactions/sv4gui_SegmentationConfig.xml
 
 QRCFILES =
 

@@ -582,8 +582,8 @@ void sv4guiSimulationView::AddObservers()
         if(m_ModelNode->GetDataInteractor().IsNull())
         {
             m_DataInteractor = sv4guiModelDataInteractor::New();
-            m_DataInteractor->LoadStateMachine("sv4guiModelInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModel"));
-            m_DataInteractor->SetEventConfig("sv4guiModelConfig.xml", us::ModuleRegistry::GetModule("sv4guiModel"));
+            m_DataInteractor->LoadStateMachine("sv4gui_ModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
+            m_DataInteractor->SetEventConfig("sv4gui_ModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
             m_DataInteractor->SetDataNode(m_ModelNode);
         }
         m_ModelNode->SetStringProperty("interactor user","simulation");
