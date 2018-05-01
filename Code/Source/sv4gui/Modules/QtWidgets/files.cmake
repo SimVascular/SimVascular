@@ -44,5 +44,5 @@ set(MOC_H_FILES
 #)
 
 #set(QRC_FILES
-#  resource/svQtWidgets.qrc
+#  resource/sv4guiModuleQtWidgets.qrc
 #)

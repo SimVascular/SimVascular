@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <svSegmentationExports.h>
+#include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_PathElement.h"
 #include "sv4gui_Contour.h"
@@ -48,7 +48,7 @@
 #include <vtkTransform.h>
 #include <vtkPolyData.h>
 
-class SVSEGMENTATION_EXPORT sv4guiSegmentationUtils
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationUtils
 {
 
 public:

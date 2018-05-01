@@ -34,14 +34,14 @@
 
 #include "SimVascular.h"
 
-#include <svProjectManagementExports.h>
+#include <sv4guiModuleProjectManagementExports.h>
 
 #include <mitkDataNode.h>
 #include <mitkDataStorage.h>
 
 #include <QString>
 
-class SVPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
+class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 {
 
 public:

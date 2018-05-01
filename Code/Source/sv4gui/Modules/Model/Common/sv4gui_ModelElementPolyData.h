@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MODELELEMENTPOLYDATA_H
 #define SV4GUI_MODELELEMENTPOLYDATA_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "sv4gui_ModelElement.h"
 
@@ -41,7 +41,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPlanes.h>
 
-class SVMODEL_EXPORT sv4guiModelElementPolyData : public sv4guiModelElement
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelElementPolyData : public sv4guiModelElement
 {
 public:
 

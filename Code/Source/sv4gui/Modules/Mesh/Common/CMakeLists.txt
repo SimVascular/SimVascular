@@ -34,7 +34,7 @@ set(lib ${SV_LIB_MODULE_MESH_NAME})
 # Create module
 simvascular_create_module(
   TARGET ${lib}
-  EXPORT_DIRECTIVE svMesh
+  EXPORT_DIRECTIVE sv4guiModuleMesh
   SHARED_LIB ${SV_USE_MODULES_SHARED_LIBRARIES}
   LIBRARY_DEPENDS
   ${QT_LIBRARIES}

@@ -34,11 +34,11 @@
 
 #include "SimVascular.h"
 
-#include <svSegmentationExports.h>
+#include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_ContourModelVtkMapper2D.h"
 
-class SVSEGMENTATION_EXPORT sv4guiContourGroupVtkMapper2D : public sv4guiContourModelVtkMapper2D
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroupVtkMapper2D : public sv4guiContourModelVtkMapper2D
 {
 public:
 

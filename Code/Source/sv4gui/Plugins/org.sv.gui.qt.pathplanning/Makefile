@@ -43,7 +43,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            -Dorg_sv_gui_qt_pathplanning_EXPORTS \
-          -DUS_MODULE_NAME=svPathPlanning
+          -DUS_MODULE_NAME=sv4guiModulePathPlanning
 
 HDRS	= \
     sv4gui_PathCreate.h \

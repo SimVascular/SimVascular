@@ -31,7 +31,7 @@
 
 #include "sv4gui_RegisterPolyDataFunction.h"
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "sv4gui_ModelElementFactory.h"
 #include "sv4gui_ModelElementPolyData.h"

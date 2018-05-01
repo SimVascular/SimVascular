@@ -32,7 +32,7 @@
 #ifndef SV4GUI_SIMULATIONUTILS_H
 #define SV4GUI_SIMULATIONUTILS_H
 
-#include <svSimulationExports.h>
+#include <sv4guiModuleSimulationExports.h>
 
 #include "sv4gui_SimJob.h"
 
@@ -43,7 +43,7 @@
 #include <vtkPolyData.h>
 #include <vtkUnstructuredGrid.h>
 
-class SVSIMULATION_EXPORT sv4guiSimulationUtils
+class SV4GUIMODULESIMULATION_EXPORT sv4guiSimulationUtils
 {
 
 public:

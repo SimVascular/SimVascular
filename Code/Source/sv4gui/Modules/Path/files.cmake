@@ -42,7 +42,7 @@ set(H_FILES
 
 set(CPP_FILES
 
-#    svPathModuleActivator.cxx
+#    sv4guiModulePathModuleActivator.cxx
 
     sv4gui_PathElement.cxx
     sv4gui_Path.cxx

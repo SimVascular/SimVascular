@@ -43,7 +43,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            -Dorg_sv_gui_qt_simulation_EXPORTS \
-           -DUS_MODULE_NAME=svSimulation
+           -DUS_MODULE_NAME=sv4guiModuleSimulation
 
 HDRS	= \
     sv4gui_SimJobCreate.h \

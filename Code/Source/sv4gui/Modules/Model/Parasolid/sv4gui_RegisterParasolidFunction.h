@@ -32,9 +32,9 @@
 #ifndef SV4GUI_REGISTERPARASOLIDFUNCTION_H
 #define SV4GUI_REGISTERPARASOLIDFUNCTION_H
 
-#include <svModelParasolidExports.h>
+#include <sv4guiModuleModelParasolidExports.h>
 
-class SVMODELPARASOLID_EXPORT sv4guiRegisterParasolidFunction {
+class SV4GUIMODULEMODELPARASOLID_EXPORT sv4guiRegisterParasolidFunction {
 
   public:
   

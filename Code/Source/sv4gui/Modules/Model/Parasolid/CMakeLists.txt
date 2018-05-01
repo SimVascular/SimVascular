@@ -34,7 +34,7 @@ set(lib ${SV_LIB_MODULE_MODEL_PARASOLID_NAME})
 # Create module
 simvascular_create_module(
   TARGET ${lib}
-  EXPORT_DIRECTIVE svModelParasolid
+  EXPORT_DIRECTIVE sv4guiModuleModelParasolid
   SHARED_LIB ${SV_USE_MODULES_SHARED_LIBRARIES}
   LIBRARY_DEPENDS
   ${QT_LIBRARIES}

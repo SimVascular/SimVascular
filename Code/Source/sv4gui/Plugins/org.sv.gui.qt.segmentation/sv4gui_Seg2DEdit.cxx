@@ -441,8 +441,8 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     m_DataInteractor = sv4guiContourGroupDataInteractor::New();
     m_DataInteractor->SetInteraction3D(false);
-    m_DataInteractor->LoadStateMachine("sv4gui_ContourGroupInteraction.xml", us::ModuleRegistry::GetModule("svSegmentation"));
-    m_DataInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("svSegmentation"));
+    m_DataInteractor->LoadStateMachine("sv4gui_ContourGroupInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
+    m_DataInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
     m_DataInteractor->SetDataNode(m_ContourGroupNode);
 
     //Add Observer
@@ -1715,8 +1715,8 @@ void sv4guiSeg2DEdit::PreparePreviewInteraction(QString method)
     GetDataStorage()->Add(m_PreviewDataNode, m_ContourGroupNode);
 
     m_PreviewDataNodeInteractor= sv4guiContourModelThresholdInteractor::New();
-    m_PreviewDataNodeInteractor->LoadStateMachine("sv4gui_ContourModelThresholdInteraction.xml", us::ModuleRegistry::GetModule("svSegmentation"));
-    m_PreviewDataNodeInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("svSegmentation"));
+    m_PreviewDataNodeInteractor->LoadStateMachine("sv4gui_ContourModelThresholdInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
+    m_PreviewDataNodeInteractor->SetEventConfig("sv4gui_SegmentationConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleSegmentation"));
     m_PreviewDataNodeInteractor->SetDataNode(m_PreviewDataNode);
 
     cvStrPts*  strPts=sv4guiSegmentationUtils::GetSlicevtkImage(ui->resliceSlider->getCurrentPathPoint(), m_cvImage->GetVtkStructuredPoints(), ui->resliceSlider->getResliceSize());
