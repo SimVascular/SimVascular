@@ -42,11 +42,6 @@ if(SV_USE_PYTHON)
 		    ${PYTHON_INCLUDE_DIRS})
 endif()
 
-add_subdirectory(Include)
-
-# Contains Pure ITK Code, Mostly Level Set Code
-add_subdirectory(ITKCode)
-
 set(CXXSRCS  cvITKUtils.cxx cvITKLevelSet.cxx)
 set(HDRS cvITKLevelSet.h cvITKLevelSetBase.h
         cv_VascularPhaseOneLevelSetFunction.hxx
