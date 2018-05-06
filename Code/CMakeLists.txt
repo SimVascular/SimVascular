@@ -174,22 +174,22 @@ endif(DOXYGEN_FOUND)
 #-----------------------------------------------------------------------------
 # Basic Core Libs
 set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
-	"Source/Common/Globals"
-	"Source/Common/Utils"
-	"Source/Common/Repository"
+	"Source/sv2/Globals"
+	"Source/sv3/Common/Utils"
+	"Source/sv3/Common/Repository"
   "Source/vtkSV/Common"
   "Source/vtkSV/Filters"
   "Source/vtkSV/Modules/Boolean"
   "Source/vtkSV/Modules/Geometry"
   "Source/vtkSV/Modules/NURBS"
   "Source/vtkSV/Modules/Parameterization"
-	"Source/ImageProcessing"
-	"Source/Common/Geometry"
-	"Source/Legacy/LevelSet"
-	"Source/Model/SolidModel"
-	"Source/PostProcessing"
-	"Source/Mesh/MeshObject"
-	"Source/Model/PolyDataSolidModel")
+	"Source/sv2/ImageProcessing"
+	"Source/sv3/Common/Geometry"
+	"Source/sv2/Segmentation"
+	"Source/sv3/Model/SolidModel"
+	"Source/sv2/PostProcessing"
+	"Source/sv3/Mesh/MeshObject"
+	"Source/sv3/Model/PolyDataSolidModel")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -197,40 +197,40 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 #-----------------------------------------------------------------------------
 # Tetgen
 if(SV_USE_TETGEN)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenMeshObject")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Mesh/TetGenMeshObject")
 endif()
 # Meshsim
 if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Mesh/MeshSimMeshObject")
 endif()
 if(SV_USE_MESHSIM_DISCRETE_MODEL)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/MeshSimDiscreteSolidModel")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Model/MeshSimDiscreteSolidModel")
 endif()
 # Adaptors
 if(SV_USE_MESHIM_ADAPTOR OR SV_USE_TETGEN_ADAPTOR)
-    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Mesh/AdaptObject")
 endif()
 if(SV_USE_MESHSIM_ADAPTOR)
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Mesh/MeshSimAdapt")
 endif()
 if(SV_USE_TETGEN_ADAPTOR)
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Mesh/TetGenAdapt")
 endif()
 # VMTK
 if(SV_USE_VMTK)
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/VMTKUtils")
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Mesh/VMTKUtils")
 endif()
 # MMG
 if(SV_USE_MMG)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Mesh/MMGMeshUtils")
 endif()
 # ITK
 if(SV_USE_ITK)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Segmentation/ITK")
 endif()
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Model/OCCTSolidModel")
 endif()
 # PARASOLID
 if(SV_USE_PARASOLID)
@@ -344,8 +344,8 @@ endif()
 
 # Include directories that don't have targets
 if(SV_USE_ITK)
-  include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
-  include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
+  include_directories("${SV_SOURCE_DIR}/Source/sv3/Segmentation/ITK/Include")
+  include_directories("${SV_SOURCE_DIR}/Source/sv3/Segmentation/ITK/ITKCode")
 endif()
 if(SV_USE_SOLVERIO)
   include_directories("${SV_SOURCE_DIR}/ThirdParty/SolverIO/simvascular_solverio")
