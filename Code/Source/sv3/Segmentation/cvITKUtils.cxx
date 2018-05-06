@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
 #include <iostream>
 #include <sstream>
 #include <math.h>

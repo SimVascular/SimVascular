@@ -38,7 +38,7 @@
 #include "SimVascular.h"
 #include "Python.h"
 #include "vtkPythonUtil.h"
-#include "cvPYTHONMacros.h"
+#include "cv_ITKLSet_PYTHON_Macros.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -50,7 +50,7 @@
 #include "cv_arg.h"
 #include "itkVersion.h"
 
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
 
 #include "cv_ITKUtils_init_py.h"
 

@@ -41,7 +41,7 @@ typedef std::ostream ostream;
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
 
-#include "cvMacros.h"
+#include "cv_ITKLset_Macros.h"
 
 #ifndef IMGINFO_H_
 #define IMGINFO_H_

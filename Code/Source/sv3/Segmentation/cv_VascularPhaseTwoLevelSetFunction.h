@@ -32,7 +32,7 @@
 #ifndef __itkVascularPhaseTwoLevelSetFunction_h
 #define __itkVascularPhaseTwoLevelSetFunction_h
 
-#include "VascularLevelSetFunction.h"
+#include "cv_VascularLevelSetFunction.h"
 
 namespace itk
 {
@@ -183,7 +183,7 @@ public:
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVascularPhaseTwoLevelSetFunction.hxx"
+#include "cv_VascularPhaseTwoLevelSetFunction.hxx"
 #endif
 
 #endif

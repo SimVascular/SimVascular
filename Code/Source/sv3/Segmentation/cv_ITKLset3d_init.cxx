@@ -30,7 +30,7 @@
  */
 
 #include "SimVascular.h"
-#include "cvTCLMacros.h"
+#include "cv_ITKLset_TCL_Macros.h"
 
 #include "cv_LsetCore_init.h"
 #include "cvITKLevelSet.h"
@@ -41,7 +41,7 @@
 #include "cv_misc_utils.h"
 #include "cv_arg.h"
 
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
 
 #include "cv_ITKLset3d_init.h"
 

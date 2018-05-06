@@ -33,7 +33,7 @@
 #define __itkVascularPhaseOneLevelSetFunction_h
 
 
-#include "VascularLevelSetFunction.h"
+#include "cv_VascularLevelSetFunction.h"
 #include "itkExpNegativeImageFilter.h"
 
 namespace itk
@@ -277,7 +277,7 @@ public:
 } //namespace
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVascularPhaseOneLevelSetFunction.hxx"
+#include "cv_VascularPhaseOneLevelSetFunction.hxx"
 #endif
 
 #endif

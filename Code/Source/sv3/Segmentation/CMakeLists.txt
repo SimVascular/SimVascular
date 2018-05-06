@@ -49,14 +49,14 @@ add_subdirectory(ITKCode)
 
 set(CXXSRCS  cvITKUtils.cxx cvITKLevelSet.cxx)
 set(HDRS cvITKLevelSet.h cvITKLevelSetBase.h
-        itkVascularPhaseOneLevelSetFunction.hxx
-	itkVascularPhaseOneLevelSetImageFilter.hxx
-	itkVascularPhaseTwoLevelSetFunction.hxx
-	itkVascularPhaseTwoLevelSetImageFilter.hxx
-	VascularLevelSetObserver.h
-        ConnectVTKITK.h cvITKMacros.h
-        cvMacros.h cvTCLMacros.h
-        cvVTKMacros.h ImgInfo.h
+        cv_VascularPhaseOneLevelSetFunction.hxx
+	cv_VascularPhaseOneLevelSetImageFilter.hxx
+	cv_VascularPhaseTwoLevelSetFunction.hxx
+	cv_VascularPhaseTwoLevelSetImageFilter.hxx
+	cv_VascularLevelSetObserver.h
+        cv_ITKLset_ConnectVTKITK.h cv_ITKLset_ITK_Macros.h
+        cv_ITKLset_Macros.h cv_ITKLset_TCL_Macros.h
+        cv_ITKLset_VTK_Macros.h cv_ITKLset_ImgInfo.h
   )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx 

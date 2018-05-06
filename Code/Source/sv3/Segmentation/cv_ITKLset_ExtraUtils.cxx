@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "MyUtils.h"
+#include "cv_ITKLset_ExtraUtils.h"
 
 #ifndef WIN32
 using std::isdigit;

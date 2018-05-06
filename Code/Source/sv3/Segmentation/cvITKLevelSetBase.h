@@ -54,10 +54,10 @@
 #define cvStructuredPoints cvStrPts
 #endif
 
-#include "cvITKMacros.h"
-#include "cvMacros.h"
-#include "ConnectVTKITK.h"
-#include "MyUtils.h"
+#include "cv_ITKLset_ITK_Macros.h"
+#include "cv_ITKLset_Macros.h"
+#include "cv_ITKLset_ConnectVTKITK.h"
+#include "cv_ITKLset_ExtraUtils.h"
 
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
@@ -73,9 +73,9 @@
 
 #include "itkImageFileWriter.h"
 #include "vtkTIFFWriter.h"
-#include "ImgInfo.h"
+#include "cv_ITKLset_ImgInfo.h"
 
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
 
 #ifndef NULL
 #define NULL   ((void *) 0)

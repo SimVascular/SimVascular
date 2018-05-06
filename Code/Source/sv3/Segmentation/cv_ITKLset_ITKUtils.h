@@ -44,10 +44,10 @@
 #include "itkImage.h"
 #include "itkImageRegionIterator.h"
 
-#include "cvITKMacros.h"
-#include "cvMacros.h"
+#include "cv_ITKLset_ITK_Macros.h"
+#include "cv_ITKLset_Macros.h"
 
-#include "ConnectVTKITK.h"
+#include "cv_ITKLset_ConnectVTKITK.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
 
@@ -65,7 +65,7 @@
 
 #include "itkImageFileWriter.h"
 #include "vtkTIFFWriter.h"
-#include "ImgInfo.h"
+#include "cv_ITKLset_ImgInfo.h"
 
 typedef std::string string;
 
@@ -209,7 +209,7 @@ SV_EXPORT_SEGITK void inline vtkGenerateCircle(double radius,double center[3],
 
 
 // Below contains the template function body
-#include "cvITKUtils.hxx"
+#include "cv_ITKLset_ITKUtils.hxx"
 
 
 #endif /* CVLEVELSETUTILS_H_ */

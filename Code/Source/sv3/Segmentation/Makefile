@@ -43,10 +43,10 @@ CREATE_EXPORTS_CV_FILE_H=svSegITKExports.h
 
 CXXFLAGS += -DSV_EXPORT_SEGITK_COMPILE
 
-HDRS	=  cvITKUtils.h cvITKLevelSet.h \
-           ConnectVTKITK.h cvITKMacros.h \
-           cvMacros.h cvTCLMacros.h \
-           cvVTKMacros.h ImgInfo.h
+HDRS	=  cv_ITKLset_ITKUtils.h cvITKLevelSet.h \
+           cv_ITKLset_ConnectVTKITK.h cv_ITKLset_ITK_Macros.h \
+           cv_ITKLset_Macros.h cv_ITKLset_TCL_Macros.h \
+           cv_ITKLset_VTK_Macros.h cv_ITKLset_ImgInfo.h
 
 CXXSRCS	=  cvITKUtils.cxx cvITKLevelSet.cxx
 
