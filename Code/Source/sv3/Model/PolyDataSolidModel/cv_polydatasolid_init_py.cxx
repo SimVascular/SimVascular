@@ -102,7 +102,7 @@ PyObject* Polydatasolid_pyInit()
     return Py_ERROR;
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
-  // Initialize parasolid_utils
+  // Initialize polydatasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
     return Py_ERROR;
   }
@@ -130,7 +130,7 @@ initpySolidPolydata()
     return ;
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
-  // Initialize parasolid_utils
+  // Initialize polydatasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
     return ;
   }

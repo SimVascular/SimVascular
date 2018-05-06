@@ -105,7 +105,7 @@ int Polydatasolid_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "polydatasolid_registrars", PolyDataSolid_RegistrarsListCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
-  // Initialize parasolid_utils
+  // Initialize polydatasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
     return TCL_ERROR;
   }

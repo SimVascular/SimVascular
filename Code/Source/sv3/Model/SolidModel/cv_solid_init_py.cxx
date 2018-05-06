@@ -45,11 +45,6 @@
 
 #include "cvFactoryRegistrar.h"
 
-#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
-#include "cvMeshSimDiscreteSolidModel.h"
-int DiscreteUtils_Init();
-#endif
-
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
@@ -66,10 +61,6 @@ int DiscreteUtils_Init();
 
 #include "cv_occt_init_py.h"
 #include "cv_polydatasolid_init_py.h"
-#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
-#include "cv_meshsimsolid_init_py.h"
-#include "cv_discrete_init_py.h"
-#endif
 
 //Python intialization functions. Called from python interpreter
 PyMODINIT_FUNC initpySolid2(void);
