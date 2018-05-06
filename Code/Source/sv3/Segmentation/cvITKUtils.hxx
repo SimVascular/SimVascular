@@ -38,7 +38,7 @@
 #include "itkDiscreteGaussianImageFilter.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkDanielssonDistanceMapImageFilter.h"
-#include "./ITKCode/EdgeRemapImageFilter.h"
+#include "EdgeRemapImageFilter.h"
 #include <vtkImageChangeInformation.h>
 #include "itkInvertIntensityImageFilter.h"
 #include <itkAbsImageFilter.h>

@@ -111,7 +111,7 @@
 #include "vtkCellArray.h"
 
 #include <vtkMath.h>
-#include "../Include/cvVTKMacros.h"
+#include "cvVTKMacros.h"
 
 
 #include "vtkImageReader2.h"

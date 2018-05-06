@@ -52,8 +52,8 @@ using namespace std;
 #include "itkExpNegativeImageFilter.h"
 
 //Ken's Filters
-#include "./ITKCode/itkVascularPhaseOneLevelSetImageFilter.h"
-#include "./ITKCode/itkVascularPhaseTwoLevelSetImageFilter.h"
+#include "itkVascularPhaseOneLevelSetImageFilter.h"
+#include "itkVascularPhaseTwoLevelSetImageFilter.h"
 
 //Recast
 #include "itkCastImageFilter.h"
@@ -78,8 +78,8 @@ using namespace std;
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkContourFilter.h>
 
-#include "./ITKCode/EdgeRemapImageFilter.h"
-#include "./ITKCode/GeodesicActiveContourLaplacianSmoothLevelSetImageFilter.h"
+#include "EdgeRemapImageFilter.h"
+#include "GeodesicActiveContourLaplacianSmoothLevelSetImageFilter.h"
 
 
 template<typename TInputImage,

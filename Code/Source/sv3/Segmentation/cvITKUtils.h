@@ -44,10 +44,10 @@
 #include "itkImage.h"
 #include "itkImageRegionIterator.h"
 
-#include "Include/cvITKMacros.h"
-#include "Include/cvMacros.h"
+#include "cvITKMacros.h"
+#include "cvMacros.h"
 
-#include "Include/ConnectVTKITK.h"
+#include "ConnectVTKITK.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
 
