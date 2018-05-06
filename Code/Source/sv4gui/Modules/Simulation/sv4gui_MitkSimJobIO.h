@@ -32,11 +32,11 @@
 #ifndef SV4GUI_MITKSIMJOBIO_H
 #define SV4GUI_MITKSIMJOBIO_H
 
-#include <svSimulationExports.h>
+#include <sv4guiModuleSimulationExports.h>
 
 #include "mitkAbstractFileIO.h"
 
-class SVSIMULATION_EXPORT sv4guiMitkSimJobIO : public mitk::AbstractFileIO
+class SV4GUIMODULESIMULATION_EXPORT sv4guiMitkSimJobIO : public mitk::AbstractFileIO
 {
 public:
 

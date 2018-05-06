@@ -34,13 +34,13 @@
 
 #include "SimVascular.h"
 
-#include "svCommonExports.h"
+#include "sv4guiModuleCommonExports.h"
 
 #include <mitkPoint.h>
 #include <mitkVector.h>
 #include <mitkPlaneGeometry.h>
 
-class SVCOMMON_EXPORT sv4guiMath3
+class SV4GUIMODULECOMMON_EXPORT sv4guiMath3
 {
 public:
 

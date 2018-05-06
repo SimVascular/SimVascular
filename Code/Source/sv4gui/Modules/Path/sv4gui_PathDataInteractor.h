@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <svPathExports.h>
+#include <sv4guiModulePathExports.h>
 
 #include "sv4gui_Path.h"
 
@@ -46,7 +46,7 @@
 #include <itkSmartPointer.h>
 #include <itkObjectFactory.h>
 
-class SVPATH_EXPORT sv4guiPathDataInteractor: public mitk::DataInteractor
+class SV4GUIMODULEPATH_EXPORT sv4guiPathDataInteractor: public mitk::DataInteractor
 {
 
 public:

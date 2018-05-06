@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MITKSIMULATIONOBJECTFACTORY_H
 #define SV4GUI_MITKSIMULATIONOBJECTFACTORY_H
 
-#include <svSimulationExports.h>
+#include <sv4guiModuleSimulationExports.h>
 
 #include "sv4gui_MitkSimJobIO.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 
-class SVSIMULATION_EXPORT sv4guiMitkSimulationObjectFactory : public mitk::CoreObjectFactoryBase
+class SV4GUIMODULESIMULATION_EXPORT sv4guiMitkSimulationObjectFactory : public mitk::CoreObjectFactoryBase
 {
 public:
     mitkClassMacro(sv4guiMitkSimulationObjectFactory,mitk::CoreObjectFactoryBase);
@@ -63,7 +63,7 @@ private:
 
 };
 
-struct SVSIMULATION_EXPORT Registersv4guiMitkSimulationObjectFactory{
+struct SV4GUIMODULESIMULATION_EXPORT Registersv4guiMitkSimulationObjectFactory{
   Registersv4guiMitkSimulationObjectFactory();
 
   virtual ~Registersv4guiMitkSimulationObjectFactory();

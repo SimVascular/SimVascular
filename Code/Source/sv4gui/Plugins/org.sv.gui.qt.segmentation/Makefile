@@ -45,7 +45,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            -Dorg_sv_gui_qt_segmentation_EXPORTS \
-           -DUS_MODULE_NAME=svSegmentation
+           -DUS_MODULE_NAME=sv4guiModuleSegmentation
 
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)

@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MITKMESHOBJECTFACTORY_H
 #define SV4GUI_MITKMESHOBJECTFACTORY_H
 
-#include <svMeshExports.h>
+#include <sv4guiModuleMeshExports.h>
 
 #include "sv4gui_MitkMeshIO.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 
-class SVMESH_EXPORT sv4guiMitkMeshObjectFactory : public mitk::CoreObjectFactoryBase
+class SV4GUIMODULEMESH_EXPORT sv4guiMitkMeshObjectFactory : public mitk::CoreObjectFactoryBase
 {
 public:
     mitkClassMacro(sv4guiMitkMeshObjectFactory,mitk::CoreObjectFactoryBase);
@@ -63,7 +63,7 @@ private:
 
 };
 
-struct SVMESH_EXPORT Registersv4guiMitkMeshObjectFactory{
+struct SV4GUIMODULEMESH_EXPORT Registersv4guiMitkMeshObjectFactory{
   Registersv4guiMitkMeshObjectFactory();
 
   virtual ~Registersv4guiMitkMeshObjectFactory();

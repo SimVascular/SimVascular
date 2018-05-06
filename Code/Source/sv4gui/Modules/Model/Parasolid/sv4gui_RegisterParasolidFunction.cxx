@@ -31,7 +31,7 @@
 
 #include "sv4gui_RegisterParasolidFunction.h"
 
-#include <svModelParasolidExports.h>
+#include <sv4guiModuleModelParasolidExports.h>
 
 #include "sv4gui_ModelElementFactory.h"
 #include "sv4gui_ModelElementParasolid.h"

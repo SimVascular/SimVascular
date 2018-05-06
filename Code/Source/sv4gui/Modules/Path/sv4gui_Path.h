@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <svPathExports.h>
+#include <sv4guiModulePathExports.h>
 
 #include "sv4gui_PathElement.h"
 #include "sv4gui_PathOperation.h"
@@ -49,7 +49,7 @@
 #include <iostream>
 #include <string>
 
-class SVPATH_EXPORT sv4guiPath : public mitk::BaseData
+class SV4GUIMODULEPATH_EXPORT sv4guiPath : public mitk::BaseData
 {
 public:
 
@@ -163,8 +163,8 @@ public:
     std::map<std::string,std::string> m_Props;
   };
 
-SVPATH_EXPORT bool Equal( const sv4guiPath* leftHandSide, const sv4guiPath* rightHandSide, mitk::ScalarType eps, bool verbose );
-SVPATH_EXPORT bool Equal( const sv4guiPath& leftHandSide, const sv4guiPath& rightHandSide, mitk::ScalarType eps, bool verbose );
+SV4GUIMODULEPATH_EXPORT bool Equal( const sv4guiPath* leftHandSide, const sv4guiPath* rightHandSide, mitk::ScalarType eps, bool verbose );
+SV4GUIMODULEPATH_EXPORT bool Equal( const sv4guiPath& leftHandSide, const sv4guiPath& rightHandSide, mitk::ScalarType eps, bool verbose );
 
 itkEventMacro( sv4guiPathEvent, itk::AnyEvent );
 

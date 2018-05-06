@@ -34,13 +34,13 @@
 
 #include "SimVascular.h"
 
-#include <svPathExports.h>
+#include <sv4guiModulePathExports.h>
 
 #include "sv4gui_Spline.h"
 
 #include "mitkPoint.h"
 
-class SVPATH_EXPORT sv4guiPathElement
+class SV4GUIMODULEPATH_EXPORT sv4guiPathElement
 {
 public:
 

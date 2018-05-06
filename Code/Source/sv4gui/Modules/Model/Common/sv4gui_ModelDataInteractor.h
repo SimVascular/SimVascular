@@ -32,14 +32,14 @@
 #ifndef SV4GUI_MODELDATAINTERACTOR_H
 #define SV4GUI_MODELDATAINTERACTOR_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "sv4gui_Model.h"
 
 #include <itkEventObject.h>
 #include <mitkInteractionPositionEvent.h>
 
-class SVMODEL_EXPORT sv4guiModelDataInteractor : public mitk::DataInteractor
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelDataInteractor : public mitk::DataInteractor
 {
 public:
     mitkClassMacro(sv4guiModelDataInteractor, mitk::DataInteractor);

@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <svSegmentationExports.h>
+#include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_PathElement.h"
 
@@ -51,7 +51,7 @@
 #undef GetClassName
 #endif
 
-class SVSEGMENTATION_EXPORT sv4guiContour
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContour
 {
 
 public:

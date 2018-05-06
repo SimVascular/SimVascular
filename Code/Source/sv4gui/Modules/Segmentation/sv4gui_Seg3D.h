@@ -32,13 +32,13 @@
 #ifndef SV4GUI_SEG3D_H
 #define SV4GUI_SEG3D_H
 
-#include <svSegmentationExports.h>
+#include <sv4guiModuleSegmentationExports.h>
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <map>
 
-struct SVSEGMENTATION_EXPORT svSeed
+struct SV4GUIMODULESEGMENTATION_EXPORT svSeed
 {
     int id;
     std::string type;//begin, end
@@ -103,7 +103,7 @@ struct SVSEGMENTATION_EXPORT svSeed
 
 };
 
-struct SVSEGMENTATION_EXPORT sv4guiSeg3DParam
+struct SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3DParam
 {
     std::string method;
 
@@ -163,7 +163,7 @@ struct SVSEGMENTATION_EXPORT sv4guiSeg3DParam
 
 
 
-class SVSEGMENTATION_EXPORT sv4guiSeg3D
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSeg3D
 {
 public:
 

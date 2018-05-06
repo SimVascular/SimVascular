@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MODELELEMENT_H
 #define SV4GUI_MODELELEMENT_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #define __CVMISC_UTILS_H //avoid including cv_misc_utils.h from cvSolidModel.h
 #include "cvSolidModel.h"
@@ -45,7 +45,7 @@
 #include <vtkSmartPointer.h>
 #include <map>
 
-class SVMODEL_EXPORT sv4guiModelElement
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelElement
 {
 
 public:

@@ -38,7 +38,7 @@ usFunctionGenerateModuleInit(CPP_FILES)
 # Create module
 simvascular_create_module(
   TARGET ${lib}
-  EXPORT_DIRECTIVE svProjectManagement
+  EXPORT_DIRECTIVE sv4guiModuleProjectManagement
   SHARED_LIB ${SV_USE_MODULES_SHARED_LIBRARIES}
   LIBRARY_DEPENDS
   ${QT_LIBRARIES}

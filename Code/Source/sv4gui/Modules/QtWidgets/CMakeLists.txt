@@ -34,7 +34,7 @@ set(lib ${SV_LIB_MODULE_QTWIDGETS_NAME})
 # Create module
 simvascular_create_module(
   TARGET ${lib}
-  EXPORT_DIRECTIVE svQtWidgets
+  EXPORT_DIRECTIVE sv4guiModuleQtWidgets
   SHARED_LIB ${SV_USE_MODULES_SHARED_LIBRARIES}
   LIBRARY_DEPENDS
   ${QT_LIBRARIES}

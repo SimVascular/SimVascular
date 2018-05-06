@@ -104,7 +104,7 @@ namespace mitk {
   * @ingroup Mapper
   */
 
-class SVSEGMENTATION_EXPORT sv4guiSurfaceVtkMapper3D : public VtkMapper
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSurfaceVtkMapper3D : public VtkMapper
 {
 public:
 

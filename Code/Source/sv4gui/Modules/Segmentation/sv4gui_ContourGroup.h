@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <svSegmentationExports.h>
+#include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_Contour.h"
 
@@ -46,7 +46,7 @@
 #include <iostream>
 #include <string>
 
-struct SVSEGMENTATION_EXPORT svLoftingParam
+struct SV4GUIMODULESEGMENTATION_EXPORT svLoftingParam
 {
     std::string method;
 
@@ -138,7 +138,7 @@ struct SVSEGMENTATION_EXPORT svLoftingParam
 
 };
 
-class SVSEGMENTATION_EXPORT sv4guiContourGroup : public mitk::BaseData
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroup : public mitk::BaseData
 {
 public:
 
