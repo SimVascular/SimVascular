@@ -226,7 +226,7 @@ if(SV_USE_MMG)
 endif()
 # ITK
 if(SV_USE_ITK)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Segmentation/ITK")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Segmentation")
 endif()
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)
@@ -343,10 +343,6 @@ if(SV_USE_THREEDSOLVER)
 endif()
 
 # Include directories that don't have targets
-if(SV_USE_ITK)
-  include_directories("${SV_SOURCE_DIR}/Source/sv3/Segmentation/ITK/Include")
-  include_directories("${SV_SOURCE_DIR}/Source/sv3/Segmentation/ITK/ITKCode")
-endif()
 if(SV_USE_SOLVERIO)
   include_directories("${SV_SOURCE_DIR}/ThirdParty/SolverIO/simvascular_solverio")
 endif()

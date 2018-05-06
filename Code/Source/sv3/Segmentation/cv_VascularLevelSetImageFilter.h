@@ -34,7 +34,7 @@
 
 
 #include "itkSegmentationLevelSetImageFilter.h"
-#include "VascularLevelSetFunction.h"
+#include "cv_VascularLevelSetFunction.h"
 
 namespace itk
 {

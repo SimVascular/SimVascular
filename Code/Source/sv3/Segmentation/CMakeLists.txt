@@ -42,13 +42,17 @@ if(SV_USE_PYTHON)
 		    ${PYTHON_INCLUDE_DIRS})
 endif()
 
-add_subdirectory(Include)
-
-# Contains Pure ITK Code, Mostly Level Set Code
-add_subdirectory(ITKCode)
-
 set(CXXSRCS  cvITKUtils.cxx cvITKLevelSet.cxx)
-set(HDRS cvITKLevelSet.h cvITKLevelSetBase.h)
+set(HDRS cvITKLevelSet.h cvITKLevelSetBase.h
+        cv_VascularPhaseOneLevelSetFunction.hxx
+	cv_VascularPhaseOneLevelSetImageFilter.hxx
+	cv_VascularPhaseTwoLevelSetFunction.hxx
+	cv_VascularPhaseTwoLevelSetImageFilter.hxx
+	cv_VascularLevelSetObserver.h
+        cv_ITKLset_ConnectVTKITK.h cv_ITKLset_ITK_Macros.h
+        cv_ITKLset_Macros.h cv_ITKLset_TCL_Macros.h
+        cv_ITKLset_VTK_Macros.h cv_ITKLset_ImgInfo.h
+  )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx 
 cv_ITKUtils_init_py.cxx cv_ITKLset2d_init_py.cxx cv_ITKLset3d_init_py.cxx cv_ITKLset_init_py.cxx)

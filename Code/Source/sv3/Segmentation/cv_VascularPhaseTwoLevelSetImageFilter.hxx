@@ -29,22 +29,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __itkVascularPhaseOneLevelSetImageFilter_hxx
-#define __itkVascularPhaseOneLevelSetImageFilter_hxx
+#ifndef __itkVascularPhaseTwoLevelSetImageFilter_hxx
+#define __itkVascularPhaseTwoLevelSetImageFilter_hxx
 
-#include "itkVascularPhaseOneLevelSetImageFilter.h"
+#include "cv_VascularPhaseTwoLevelSetImageFilter.h"
 
 namespace itk
 {
 template< typename TInputImage, typename TFeatureImage, typename TOutputType >
-VascularPhaseOneLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
-::VascularPhaseOneLevelSetImageFilter()
+VascularPhaseTwoLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
+::VascularPhaseTwoLevelSetImageFilter()
  {
 	/* Instantiate a geodesic active contour function and set it as the
     segmentation function. */
-	m_VascularPhaseOneLevelSetFunction = VascularPhaseOneLevelSetFunctionType::New();
+	m_VascularPhaseTwoLevelSetFunction = VascularPhaseTwoLevelSetFunctionType::New();
 
-	this->SetVascularSegmentationFunction(m_VascularPhaseOneLevelSetFunction);
+	this->SetVascularSegmentationFunction(m_VascularPhaseTwoLevelSetFunction);
 	/* Turn off interpolation. */
 	this->InterpolateSurfaceLocationOff();
 	this->SetDebug(0);
@@ -52,20 +52,13 @@ VascularPhaseOneLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
 
 template< typename TInputImage, typename TFeatureImage, typename TOutputType >
 void
-VascularPhaseOneLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
-::PrintSelf(std::ostream & os, Indent indent) const
- {
-	Superclass::PrintSelf(os, indent);
-	os << "VascularPhaseOneLevelSetFunction: " << m_VascularPhaseOneLevelSetFunction.GetPointer();
- }
-
-template< typename TInputImage, typename TFeatureImage, typename TOutputType >
-void
-VascularPhaseOneLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
+VascularPhaseTwoLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
 ::GenerateData()
  {
 	// Make sure the SpeedImage is setup for the case when PropagationScaling
 	// is zero
+	if(this->GetDebug() > 1)
+		std::cout << "Image Filter -> Generating Data" <<std::endl;
 
 	if ( this->GetVascularSegmentationFunction()
 			&& this->GetVascularSegmentationFunction()->GetPropagationWeight() == 0 )
@@ -74,13 +67,24 @@ VascularPhaseOneLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
 		this->GetVascularSegmentationFunction()->CalculateSpeedImage();
 		this->GetVascularSegmentationFunction()->AllocateAdvectionImage();
 		this->GetVascularSegmentationFunction()->CalculateAdvectionImage();
-		m_VascularPhaseOneLevelSetFunction->AllocateGradientImage();
-		m_VascularPhaseOneLevelSetFunction->CalculateGradientImage();
 	}
 
 	// Continue with Superclass implementation
 	Superclass::GenerateData();
  }
-} // end namespace itk
+
+
+template< typename TInputImage, typename TFeatureImage, typename TOutputType >
+void
+VascularPhaseTwoLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
+::PrintSelf(std::ostream & os, Indent indent) const
+ {
+	Superclass::PrintSelf(os, indent);
+	os << "VascularPhaseTwoLevelSetFunction: " << m_VascularPhaseTwoLevelSetFunction.GetPointer();
+ }
+
+
+}// namespace
 
 #endif
+

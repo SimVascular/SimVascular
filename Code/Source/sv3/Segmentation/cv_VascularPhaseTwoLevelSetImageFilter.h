@@ -32,8 +32,8 @@
 #ifndef __itkVascularPhaseTwoLevelSetImageFilter_h
 #define __itkVascularPhaseTwoLevelSetImageFilter_h
 
-#include "VascularLevelSetImageFilter.h"
-#include "itkVascularPhaseTwoLevelSetFunction.h"
+#include "cv_VascularLevelSetImageFilter.h"
+#include "cv_VascularPhaseTwoLevelSetFunction.h"
 
 namespace itk
 {
@@ -127,7 +127,7 @@ private:
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVascularPhaseTwoLevelSetImageFilter.hxx"
+#include "cv_VascularPhaseTwoLevelSetImageFilter.hxx"
 #endif
 
 #endif

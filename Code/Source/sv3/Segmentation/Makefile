@@ -30,12 +30,12 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS) \
-           $(ITK_INCDIRS)  $(SV_GDCM_INCDIR) -I./Include -I./ITKCode
+           $(ITK_INCDIRS)  $(SV_GDCM_INCDIR)
 
 CREATE_EXPORTS_CV_ALL_CAPS=SV_SEGITK
 CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_SEGITK
@@ -43,7 +43,11 @@ CREATE_EXPORTS_CV_FILE_H=svSegITKExports.h
 
 CXXFLAGS += -DSV_EXPORT_SEGITK_COMPILE
 
-HDRS	=  cvITKUtils.h cvITKLevelSet.h
+HDRS	=  cv_ITKLset_ITKUtils.h cvITKLevelSet.h \
+           cv_ITKLset_ConnectVTKITK.h cv_ITKLset_ITK_Macros.h \
+           cv_ITKLset_Macros.h cv_ITKLset_TCL_Macros.h \
+           cv_ITKLset_VTK_Macros.h cv_ITKLset_ImgInfo.h
+
 CXXSRCS	=  cvITKUtils.cxx cvITKLevelSet.cxx
 
 DLLHDRS = cv_ITKUtils_init.h cv_ITKLset2d_init.h cv_ITKLset3d_init.h cv_ITKLset_init.h

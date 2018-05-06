@@ -73,7 +73,7 @@
 
 #include "itkChangeInformationImageFilter.h"
 
-#include "ConnectVTKITK.h"
+#include "cv_ITKLset_ConnectVTKITK.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
 #include "vtkImageImport.h"
@@ -111,7 +111,7 @@
 #include "vtkCellArray.h"
 
 #include <vtkMath.h>
-#include "../Include/cvVTKMacros.h"
+#include "cv_ITKLset_VTK_Macros.h"
 
 
 #include "vtkImageReader2.h"

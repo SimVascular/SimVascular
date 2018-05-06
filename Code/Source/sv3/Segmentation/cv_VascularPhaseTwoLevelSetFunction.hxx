@@ -32,7 +32,7 @@
 #ifndef __itkVascularPhaseTwoLevelSetFunction_hxx
 #define __itkVascularPhaseTwoLevelSetFunction_hxx
 
-#include "itkVascularPhaseTwoLevelSetFunction.h"
+#include "cv_VascularPhaseTwoLevelSetFunction.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkGradientRecursiveGaussianImageFilter.h"

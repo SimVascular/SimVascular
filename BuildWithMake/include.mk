@@ -573,9 +573,9 @@ endif
 
 ifeq ($(SV_USE_ITK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv3/Segmentation/ITK
+     SHARED_LIBDIRS += ../Code/Source/sv3/Segmentation
   else
-     LIBDIRS += ../Code/Source/sv3/Segmentation/ITK
+     LIBDIRS += ../Code/Source/sv3/Segmentation
   endif
 endif
 
@@ -704,10 +704,6 @@ SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 
 LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include ../Code/Source/Include/Make
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
-
-ifeq ($(SV_USE_ITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv3/Segmentation/ITK/Include
-endif
 
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)

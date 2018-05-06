@@ -43,8 +43,8 @@
 #include "itkExpNegativeImageFilter.h"
 
 //Ken's Filters
-#include "itkVascularPhaseOneLevelSetImageFilter.h"
-#include "itkVascularPhaseTwoLevelSetImageFilter.h"
+#include "cv_VascularPhaseOneLevelSetImageFilter.h"
+#include "cv_VascularPhaseTwoLevelSetImageFilter.h"
 
 //Recast
 #include "itkCastImageFilter.h"

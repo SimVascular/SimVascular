@@ -35,7 +35,7 @@
 #include "cvITKLevelSetBase.h"
 #include <stdio.h>
 
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
 
 using namespace std;
 
@@ -52,8 +52,8 @@ using namespace std;
 #include "itkExpNegativeImageFilter.h"
 
 //Ken's Filters
-#include "./ITKCode/itkVascularPhaseOneLevelSetImageFilter.h"
-#include "./ITKCode/itkVascularPhaseTwoLevelSetImageFilter.h"
+#include "cv_VascularPhaseOneLevelSetImageFilter.h"
+#include "cv_VascularPhaseTwoLevelSetImageFilter.h"
 
 //Recast
 #include "itkCastImageFilter.h"
@@ -78,8 +78,8 @@ using namespace std;
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkContourFilter.h>
 
-#include "./ITKCode/EdgeRemapImageFilter.h"
-#include "./ITKCode/GeodesicActiveContourLaplacianSmoothLevelSetImageFilter.h"
+#include "cv_ITKLset_EdgeRemapImageFilter.h"
+#include "cv_GeodesicActiveContourLaplacianSmoothLevelSetImageFilter.h"
 
 
 template<typename TInputImage,

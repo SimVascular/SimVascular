@@ -30,7 +30,7 @@
  */
 
 #include "SimVascular.h"
-#include "cvTCLMacros.h"
+#include "cv_ITKLset_TCL_Macros.h"
 
 #include "cv_LsetCore_init.h"
 #include "cvITKLevelSet.h"
@@ -41,9 +41,9 @@
 #include "cv_misc_utils.h"
 #include "cv_arg.h"
 
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
 
-#include "cv_ITKLset2d_init.h"
+#include "cv_ITKLset3d_init.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -64,48 +64,52 @@ static void PrintMethods();
 
 // Prototypes:
 // -----------
-typedef itk::Image<short,2> ImageType;
+typedef itk::Image<short,3> ImageType;
 // cvITKLevelSets New and delete
-static int itkls2d_NewCmd(CXX_TCL_STDARGS);
-void Deleteitkls2d( ClientData clientData );
+static int itkls3d_NewCmd(CXX_TCL_STDARGS);
+void Deleteitkls3d( ClientData clientData );
 // cvITKLevelSets object methods
-static int itkls2d_ObjectCmd( CXX_TCL_STDARGS );
-static int itkls2d_SetInputsMtd( CXX_TCL_STDARGS );
-static int itkls2d_PhaseOneLevelSetMtd( CXX_TCL_STDARGS );
-static int itkls2d_PhaseTwoLevelSetMtd( CXX_TCL_STDARGS );
-static int itkls2d_GACLevelSetMtd( CXX_TCL_STDARGS );
-CVTCLMtdDeclareMacro(itkls2d,GetFront);
-CVTCLMtdDeclareMacro(itkls2d,GetFrontImage);
-CVTCLMtdDeclareMacro(itkls2d,GetVelocityImage);
-CVTCLMtdDeclareMacro(itkls2d,WriteFront);
-CVTCLMtdDeclareMacro(itkls2d,SetMaxIterations);
-CVTCLMtdDeclareMacro(itkls2d,SetMaxRMSError);
-CVTCLMtdDeclareMacro(itkls2d,SetDebug);
-CVTCLMtdDeclareMacro(itkls2d,SetPropagationScaling);
-CVTCLMtdDeclareMacro(itkls2d,SetAdvectionScaling);
-CVTCLMtdDeclareMacro(itkls2d,SetCurvatureScaling);
+static int itkls3d_ObjectCmd( CXX_TCL_STDARGS );
+static int itkls3d_SetInputsMtd( CXX_TCL_STDARGS );
+static int itkls3d_PhaseOneLevelSetMtd( CXX_TCL_STDARGS );
+static int itkls3d_PhaseTwoLevelSetMtd( CXX_TCL_STDARGS );
+static int itkls3d_GACLevelSetMtd( CXX_TCL_STDARGS );
+static int itkls3d_LaplacianLevelSetMtd( CXX_TCL_STDARGS );
+static int itkls3d_CopyFrontToSeedMtd( CXX_TCL_STDARGS );
+CVTCLMtdDeclareMacro(itkls3d,GetFront);
+CVTCLMtdDeclareMacro(itkls3d,GetFrontImage);
+CVTCLMtdDeclareMacro(itkls3d,GetVelocityImage);
+CVTCLMtdDeclareMacro(itkls3d,WriteFront);
+CVTCLMtdDeclareMacro(itkls3d,SetMaxIterations);
+CVTCLMtdDeclareMacro(itkls3d,SetMaxRMSError);
+CVTCLMtdDeclareMacro(itkls3d,SetDebug);
+CVTCLMtdDeclareMacro(itkls3d,SetPropagationScaling);
+CVTCLMtdDeclareMacro(itkls3d,SetLaplacianScaling);
+CVTCLMtdDeclareMacro(itkls3d,SetAdvectionScaling);
+CVTCLMtdDeclareMacro(itkls3d,SetCurvatureScaling);
 
-CVTCLMtdDeclareMacro(itkls2d,SetUseNormalVectorCurvature);
-CVTCLMtdDeclareMacro(itkls2d,SetUseMeanCurvature);
-CVTCLMtdDeclareMacro(itkls2d,SetUseMinimalCurvature);
+CVTCLMtdDeclareMacro(itkls3d,SetUseNormalVectorCurvature);
+CVTCLMtdDeclareMacro(itkls3d,SetUseMeanCurvature);
+CVTCLMtdDeclareMacro(itkls3d,SetUseMinimalCurvature);
+CVTCLMtdDeclareMacro(itkls3d,SetBinarySeed);
 
 
 // cvITKLevelSet Properties
-CVTCLObjMemberGetObjPropertyMacro(itkls2d,cvITKLevelSet,Front,cvPolyData);
-CVTCLObjMemberGetObjPropertyMacro(itkls2d,cvITKLevelSet,VelocityImage,cvStrPts);
-CVTCLObjMemberGetObjPropertyMacro(itkls2d,cvITKLevelSet,FrontImage,cvStrPts);
+CVTCLObjMemberGetObjPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,Front,cvPolyData);
+CVTCLObjMemberGetObjPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,VelocityImage,cvStrPts);
+CVTCLObjMemberGetObjPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,FrontImage,cvStrPts);
 
-CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,MaxIterations,int,INT_Type);
-CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,MaxRMSError,double,DOUBLE_Type);
-CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,PropagationScaling,double,DOUBLE_Type);
-CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,CurvatureScaling,double,DOUBLE_Type);
-CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,AdvectionScaling,double,DOUBLE_Type);
-CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,Debug,bool,BOOL_Type);
-CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,UseInputImageAsFeature,bool,BOOL_Type);
-CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,UseInputImageDistance,bool,BOOL_Type);
-// CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,UseNormalVectorCurvature,bool,BOOL_Type);
-// CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,UseMeanCurvature,bool,BOOL_Type);
-// CVTCLObjMemberSetPropertyMacro(itkls2d,cvITKLevelSet,UseMinimalCurvature,bool,BOOL_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,MaxIterations,int,INT_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,MaxRMSError,double,DOUBLE_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,PropagationScaling,double,DOUBLE_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,CurvatureScaling,double,DOUBLE_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,AdvectionScaling,double,DOUBLE_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,LaplacianScaling,double,DOUBLE_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,Debug,bool,BOOL_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,UseNormalVectorCurvature,bool,BOOL_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,UseMeanCurvature,bool,BOOL_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,UseMinimalCurvature,bool,BOOL_Type);
+CVTCLObjMemberSetPropertyMacro(itkls3d,cvITKLevelSetBase<ImageType>,BinarySeed,bool,BOOL_Type);
 
 
 
@@ -123,20 +127,21 @@ static int NewName( CONST84 char *name )
 
 
 // -------------
-// Itkls2d_Init
+// Itkls3d_Init
 // -------------
-int Itkls2d_Init( Tcl_Interp *interp ){
+int Itkls3d_Init( Tcl_Interp *interp ){
 
 	//Usage: CVTCLFunctionInit(Prefix,FunctionName,TclName)
-	CVTCLFunctionInit(itkls2d,NewCmd,ITKLevelSet2D);
-	CVTCLFunctionInit(itkls2d,NewCmd,itkls2d);
+	CVTCLFunctionInit(itkls3d,NewCmd,ITKLevelSet3D);
+	CVTCLFunctionInit(itkls3d,NewCmd,itkls3d);
 
 	return TCL_OK;
 
 }
 
+
 // Creates the rest of the commands
-int itkls2d_ObjectCmd( CXX_TCL_STDARGS )
+int itkls3d_ObjectCmd( CXX_TCL_STDARGS )
 {
 	////std::cout << "Method: " << argv[1] << std::endl;
 	if ( argc == 1 ) {
@@ -145,31 +150,33 @@ int itkls2d_ObjectCmd( CXX_TCL_STDARGS )
 	}
 
 	if ( Tcl_StringMatch( argv[1], "GetClassName" ) ) {
-		Tcl_SetResult( interp, "ITKLevelSet2D", TCL_STATIC );
+		Tcl_SetResult( interp, "ITKLevelSet3D", TCL_STATIC );
 		return TCL_OK;
 	}
 
-	CVTCLObjMethodInit(itkls2d,SetInputsMtd,SetInputs)
-	CVTCLObjMethodInit(itkls2d,PhaseOneLevelSetMtd,PhaseOneLevelSet)
-	CVTCLObjMethodInit(itkls2d,PhaseTwoLevelSetMtd,PhaseTwoLevelSet)
-	CVTCLObjMethodInit(itkls2d,GACLevelSetMtd,GACLevelSet)
-	CVTCLObjMethodInit(itkls2d,GetFrontMtd,GetFront)
-	CVTCLObjMethodInit(itkls2d,GetVelocityImageMtd,GetVelocityImage)
-	CVTCLObjMethodInit(itkls2d,GetFrontImageMtd,GetFrontImage)
-	CVTCLObjMethodInit(itkls2d,WriteFrontMtd,WriteFront);
-	CVTCLObjMethodInit(itkls2d,SetMaxRMSErrorMtd,SetMaxRMSError)
-	CVTCLObjMethodInit(itkls2d,SetMaxIterationsMtd,SetMaxIterations)
-	CVTCLObjMethodInit(itkls2d,SetPropagationScalingMtd,SetPropagationScaling)
-	CVTCLObjMethodInit(itkls2d,SetCurvatureScalingMtd,SetCurvatureScaling)
-	CVTCLObjMethodInit(itkls2d,SetAdvectionScalingMtd,SetAdvectionScaling)
-	CVTCLObjMethodInit(itkls2d,SetMaxIterationsMtd,SetMaxIterations)
-	CVTCLObjMethodInit(itkls2d,SetDebugMtd,SetDebug)
-	CVTCLObjMethodInit(itkls2d,SetUseInputImageAsFeatureMtd,SetUseInputImageAsFeature)
-	CVTCLObjMethodInit(itkls2d,SetUseInputImageDistanceMtd,SetUseInputImageDistance)
+	CVTCLObjMethodInit(itkls3d,SetInputsMtd,SetInputs)
+	CVTCLObjMethodInit(itkls3d,PhaseOneLevelSetMtd,PhaseOneLevelSet)
+	CVTCLObjMethodInit(itkls3d,PhaseTwoLevelSetMtd,PhaseTwoLevelSet)
+	CVTCLObjMethodInit(itkls3d,GACLevelSetMtd,GACLevelSet)
+	CVTCLObjMethodInit(itkls3d,LaplacianLevelSetMtd,LaplacianLevelSet)
+	CVTCLObjMethodInit(itkls3d,GetFrontMtd,GetFront)
+	CVTCLObjMethodInit(itkls3d,GetVelocityImageMtd,GetVelocityImage)
+	CVTCLObjMethodInit(itkls3d,GetFrontImageMtd,GetFrontImage)
+	CVTCLObjMethodInit(itkls3d,WriteFrontMtd,WriteFront);
+	CVTCLObjMethodInit(itkls3d,SetMaxRMSErrorMtd,SetMaxRMSError)
+	CVTCLObjMethodInit(itkls3d,SetMaxIterationsMtd,SetMaxIterations)
+	CVTCLObjMethodInit(itkls3d,SetPropagationScalingMtd,SetPropagationScaling)
+	CVTCLObjMethodInit(itkls3d,SetLaplacianScalingMtd,SetLaplacianScaling)
+	CVTCLObjMethodInit(itkls3d,SetCurvatureScalingMtd,SetCurvatureScaling)
+	CVTCLObjMethodInit(itkls3d,SetAdvectionScalingMtd,SetAdvectionScaling)
+	CVTCLObjMethodInit(itkls3d,SetMaxIterationsMtd,SetMaxIterations)
+	CVTCLObjMethodInit(itkls3d,SetDebugMtd,SetDebug)
+	CVTCLObjMethodInit(itkls3d,CopyFrontToSeedMtd,CopyFrontToSeed)
 
-	//CVTCLObjMethodInit(itkls2d,SetUseNormalVectorCurvatureMtd,SetUseNormalVectorCurvature)
-	//CVTCLObjMethodInit(itkls2d,SetUseMeanCurvatureMtd,SetUseMeanCurvature)
-	//CVTCLObjMethodInit(itkls2d,SetUseMinimalCurvatureMtd,SetUseMinimalCurvature)
+	CVTCLObjMethodInit(itkls3d,SetUseNormalVectorCurvatureMtd,SetUseNormalVectorCurvature)
+	CVTCLObjMethodInit(itkls3d,SetUseMeanCurvatureMtd,SetUseMeanCurvature)
+	CVTCLObjMethodInit(itkls3d,SetUseMinimalCurvatureMtd,SetUseMinimalCurvature)
+	CVTCLObjMethodInit(itkls3d,SetBinarySeedMtd,SetBinarySeed)
 
 	Tcl_AppendResult( interp, "\"", argv[1],
 			"\" not a recognized ITKLevelSet method", (char *)NULL );
@@ -182,15 +189,15 @@ static void PrintMethods()
 }
 
 // -------------
-// itkls2d_NewCmd
+// itkls3d_NewCmd
 // -------------
 
-// itkls2d <objName> Or ITKLevelSet <objName>
-static int itkls2d_NewCmd( CXX_TCL_STDARGS )
+// itkls3d <objName> Or ITKLevelSet <objName>
+static int itkls3d_NewCmd( CXX_TCL_STDARGS )
 {
 
 	CONST84 char *lsName;
-	cvITKLevelSet *ls;
+	cvITKLevelSetBase<ImageType> *ls;
 	Tcl_HashEntry *entryPtr;
 	int newEntry = 0;
 
@@ -211,7 +218,7 @@ static int itkls2d_NewCmd( CXX_TCL_STDARGS )
 	}
 
 	// Allocate new cvLevelSet object:
-	ls = new cvITKLevelSet;
+	ls = new cvITKLevelSetBase<ImageType>;
 	if ( ls == NULL ) {
 		Tcl_AppendResult( interp, "error allocating object \"", lsName,
 				"\"", (char *)NULL );
@@ -231,8 +238,8 @@ static int itkls2d_NewCmd( CXX_TCL_STDARGS )
 	lsNameStr[0]='\0';
 	sprintf(lsNameStr,"%s",lsName);
 	Tcl_SetResult( interp, lsNameStr, TCL_VOLATILE );
-	Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), itkls2d_ObjectCmd,
-			(ClientData)ls, Deleteitkls2d );
+	Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), itkls3d_ObjectCmd,
+			(ClientData)ls, Deleteitkls3d );
 	return TCL_OK;
 }
 
@@ -242,10 +249,10 @@ static int itkls2d_NewCmd( CXX_TCL_STDARGS )
 // Deletion callback invoked when the Tcl object is deleted.  Delete
 // Tcl hash table entry as well as the cvITKLevelSet object itself.
 
-void Deleteitkls2d( ClientData clientData )
+void Deleteitkls3d( ClientData clientData )
 {
 
-	cvITKLevelSet *ls = (cvITKLevelSet *)clientData;
+	cvITKLevelSetBase<ImageType> *ls = (cvITKLevelSetBase<ImageType> *)clientData;
 	Tcl_HashEntry *entryPtr;
 
 	entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, ls->tclName_ );
@@ -260,9 +267,9 @@ void Deleteitkls2d( ClientData clientData )
 
 
 
-int itkls2d_SetInputsMtd( CXX_TCL_STDARGS )
+int itkls3d_SetInputsMtd( CXX_TCL_STDARGS )
 {
-	cvITKLevelSet *ls = (cvITKLevelSet *)clientData;
+	cvITKLevelSetBase<ImageType> *ls = (cvITKLevelSetBase<ImageType> *)clientData;
 	char *usage;
 	char *inputImageName;
 	char *seedPdName;
@@ -294,7 +301,7 @@ int itkls2d_SetInputsMtd( CXX_TCL_STDARGS )
 			Tcl_AppendResult( interp, "couldn't find object ", inputImageName, (char *)NULL );
 			return TCL_ERROR;
 		}
-		printf("Found Object\n");
+		//printf("Found Object\n");
 		// Make sure image is of type STRUCTURED_PTS_T:
 		typeImg1 = inputImage->GetType();
 		if ( typeImg1 != STRUCTURED_PTS_T ) {
@@ -340,9 +347,9 @@ int itkls2d_SetInputsMtd( CXX_TCL_STDARGS )
  *
  */
 
-static int itkls2d_PhaseOneLevelSetMtd( CXX_TCL_STDARGS )
+static int itkls3d_PhaseOneLevelSetMtd( CXX_TCL_STDARGS )
 {
-	cvITKLevelSet *ls = (cvITKLevelSet *)clientData;
+	cvITKLevelSetBase<ImageType> *ls = (cvITKLevelSetBase<ImageType> *)clientData;
 	char *usage;
 	double kc, expFactorRising,expFactorFalling, advScale;
 
@@ -375,9 +382,9 @@ static int itkls2d_PhaseOneLevelSetMtd( CXX_TCL_STDARGS )
 	return TCL_OK;
 }
 
-static int itkls2d_PhaseTwoLevelSetMtd( CXX_TCL_STDARGS )
+static int itkls3d_PhaseTwoLevelSetMtd( CXX_TCL_STDARGS )
 {
-	cvITKLevelSet *ls = (cvITKLevelSet *)clientData;
+	cvITKLevelSetBase<ImageType> *ls = (cvITKLevelSetBase<ImageType> *)clientData;
 	char *usage;
 	double klow, kupp;
 	double sigmaFeat = -1, sigmaAdv = -1;
@@ -407,35 +414,72 @@ static int itkls2d_PhaseTwoLevelSetMtd( CXX_TCL_STDARGS )
 
 	return TCL_OK;
 }
-static int itkls2d_GACLevelSetMtd( CXX_TCL_STDARGS )
+static int itkls3d_GACLevelSetMtd( CXX_TCL_STDARGS )
 {
-	cvITKLevelSet *ls = (cvITKLevelSet *)clientData;
+	cvITKLevelSetBase<ImageType> *ls = (cvITKLevelSetBase<ImageType> *)clientData;
 	char *usage;
-	double sigma, expFactor;
+	double sigma, expFactor,kappa,iso;
 
-	int table_size = 2;
+	int table_size = 4;
 	ARG_Entry arg_table[] = {
 			{ "-expFactor", DOUBLE_Type, &expFactor, NULL, REQUIRED, 0, { 0 } },
 			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-kappa", DOUBLE_Type, &kappa, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-iso", DOUBLE_Type, &iso, NULL, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
 
-	CVTCLParseTclStrMacro(2)
-	CVTCLTestArgsMacro(2)
+	CVTCLParseTclStrMacro(2);
+	CVTCLTestArgsMacro(2);
 
-	ls->ComputeGACLevelSet(expFactor);
+	if(sigma >= 0)
+		ls->SetSigmaFeature(sigma);
+	ls->ComputeGACLevelSet(expFactor,kappa,iso);
+
+
+	return TCL_OK;
+}
+static int itkls3d_LaplacianLevelSetMtd( CXX_TCL_STDARGS )
+{
+	cvITKLevelSetBase<ImageType> *ls = (cvITKLevelSetBase<ImageType> *)clientData;
+	char *usage;
+	double sigma, expFactor,kappa,iso;
+	std::cout << "Laplacian" << std::endl;
+	int table_size = 4;
+	ARG_Entry arg_table[] = {
+			{ "-expFactor", DOUBLE_Type, &expFactor, NULL, REQUIRED, 0, { 0 } },
+			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-kappa", DOUBLE_Type, &kappa, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-iso", DOUBLE_Type, &iso, NULL, SV_OPTIONAL, 0, { 0 } },
+	};
+
+	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
+
+	CVTCLParseTclStrMacro(2);
+	CVTCLTestArgsMacro(2);
+
+	if(sigma >= 0)
+		ls->SetSigmaFeature(sigma);
+	ls->ComputeLaplacianLevelSet(expFactor,kappa,iso);
 
 
 	return TCL_OK;
 }
 
 
-
-static int itkls2d_WriteFrontMtd( CXX_TCL_STDARGS )
+static int itkls3d_WriteFrontMtd( CXX_TCL_STDARGS )
 {
-	cvITKLevelSet *ls = (cvITKLevelSet *)clientData;
+	cvITKLevelSetBase<ImageType> *ls = (cvITKLevelSetBase<ImageType> *)clientData;
 	ls->WriteFrontImages();
+	return TCL_OK;
+}
+
+static int itkls3d_CopyFrontToSeedMtd(CXX_TCL_STDARGS)
+{
+
+	cvITKLevelSetBase<ImageType> *ls = (cvITKLevelSetBase<ImageType> *)clientData;\
+	ls->CopyFrontToSeed();
 	return TCL_OK;
 }
 

@@ -36,7 +36,7 @@
  */
 
 #include "SimVascular.h"
-#include "cvPYTHONMacros.h"
+#include "cv_ITKLSet_PYTHON_Macros.h"
 #include "Python.h"
 
 #include "cv_LsetCore_init.h"
@@ -48,7 +48,7 @@
 #include "cv_misc_utils.h"
 #include "cv_arg.h"
 
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
 #include "cv_ITKLset2d_init_py.h"
 
 // The following is needed for Windows

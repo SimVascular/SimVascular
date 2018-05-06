@@ -32,7 +32,7 @@
 #ifndef __itkVascularPhaseOneLevelSetFunction_hxx
 #define __itkVascularPhaseOneLevelSetFunction_hxx
 
-#include "itkVascularPhaseOneLevelSetFunction.h"
+#include "cv_VascularPhaseOneLevelSetFunction.h"
 #include <math.h>
 
 

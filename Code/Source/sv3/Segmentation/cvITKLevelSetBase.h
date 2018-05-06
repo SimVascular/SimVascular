@@ -41,8 +41,8 @@
  *      In addition, it should include helper functions to convert data between the two systems.
  */
 
-#ifndef CVITKLEVELSET_H_
-#define CVITKLEVELSET_H_
+#ifndef CVITKLEVELSETBASE_H_
+#define CVITKLEVELSETBASE_H_
 
 #include "SimVascular.h"
 #include "svSegITKExports.h" // For exports
@@ -54,14 +54,10 @@
 #define cvStructuredPoints cvStrPts
 #endif
 
-#include <sstream>
-#include <iostream>
-#include <string>
-
-#include "Include/cvITKMacros.h"
-#include "Include/cvMacros.h"
-#include "Include/ConnectVTKITK.h"
-#include "MyUtils.h"
+#include "cv_ITKLset_ITK_Macros.h"
+#include "cv_ITKLset_Macros.h"
+#include "cv_ITKLset_ConnectVTKITK.h"
+#include "cv_ITKLset_ExtraUtils.h"
 
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
@@ -77,31 +73,33 @@
 
 #include "itkImageFileWriter.h"
 #include "vtkTIFFWriter.h"
-#include "ImgInfo.h"
+#include "cv_ITKLset_ImgInfo.h"
 
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
+
+#ifndef NULL
+#define NULL   ((void *) 0)
+#endif
 
 
-#define CVITKException(x)																\
-		{																				\
-	std::ostringstream message;															\
-	message << "(" << this << "): " "x";												\
-	message << __FILE__ << " " << __LINE__ << " ";										\
-	message << "ERROR: " << this->GetNameOfClass() << " ";								\
-	message << " " << __PRETTY_FUNCTION__ << std::endl;									\
-	throw std::runtime_error(message.str()); 											\
-		}																				\
-
-class SV_EXPORT_SEGITK cvITKLevelSet
+template<typename TInputImage = itk::Image<short,2>,
+typename TInternalPixelType = float>
+class SV_EXPORT_SEGITK cvITKLevelSetBase
 {
 
 public:
 
 	/** Typedefs */
 	// Depending on image size, this might be better with float...
-	typedef cvITKLevelSet Self;
-	typedef itk::Image<short,2> ITKExternalImageType;
-	typedef itk::Image<float,2> ITKInternalImageType;
+	typedef cvITKLevelSetBase Self;
+	typedef TInputImage ITKExternalImageType;
+	typedef itk::Image<TInternalPixelType,
+			ITKExternalImageType::ImageDimension> ITKInternalImageType;
+	enum { ImageDimension = TInputImage::ImageDimension };
+
+
+	//typedef itk::Image<short,N> ITKExternalImageType;
+	//typedef itk::Image<float,N> ITKInternalImageType;
 
 	typedef itk::VTKImageImport<ITKExternalImageType> itkExternalImportType;
 	typedef itk::VTKImageExport<ITKExternalImageType> itkExternalExportType;
@@ -128,17 +126,18 @@ public:
 	int ComputePhaseOneLevelSet(float kc,
 			float expFactorRising,float expFactorFalling);
 	int ComputePhaseTwoLevelSet(float kupp,float klow);
-	int ComputeGACLevelSet(float expFactorRising);
+	int ComputeGACLevelSet(float exponent,float kappa=5,float iso = .5);
+	int ComputeLaplacianLevelSet(float exponent,float kappa=5,float iso = .5);
 
 	int GenerateFeatureImage();
 	int GenerateSeedImage();
+	int CopyFrontToSeed();
 
 
 	//Front Image Stuff:
 	void DeallocateFrontObjs();
 	int GetFront(cvPolyData** front);
 	cvPolyData* GetFront();
-
 	cvStrPts* GetFrontImage();
 
 	//Get and Set Properties
@@ -150,6 +149,9 @@ public:
 
 	cvSetMacro(AdvectionScaling,double);
 	cvGetMacro(AdvectionScaling,double);
+
+	cvSetMacro(LaplacianScaling,double);
+	cvGetMacro(LaplacianScaling,double);
 
 	cvSetMacro(PropagationScaling,double);
 	cvGetMacro(PropagationScaling,double);
@@ -169,11 +171,17 @@ public:
 	cvSetMacro(Debug,bool);
 	cvGetMacro(Debug,bool);
 
-	cvSetMacro(UseInputImageAsFeature,bool);
-	cvGetMacro(UseInputImageAsFeature,bool);
+	cvSetMacro(UseNormalVectorCurvature,bool);
+	cvGetMacro(UseNormalVectorCurvature,bool);
 
-	cvSetMacro(UseInputImageDistance,bool);
-	cvGetMacro(UseInputImageDistance,bool);
+	cvSetMacro(UseMeanCurvature,bool);
+	cvGetMacro(UseMeanCurvature,bool);
+
+	cvSetMacro(UseMinimalCurvature,bool);
+	cvGetMacro(UseMinimalCurvature,bool);
+
+	cvSetMacro(BinarySeed,bool);
+	cvGetMacro(BinarySeed,bool);
 
 	//cvSetRepoObjMacro(InputImage,cvStrPts,vtkStructuredPoints);
 	int SetInputImage(cvStrPts *s);
@@ -201,6 +209,9 @@ public:
 	}
 #endif
 
+	template<typename TLevelSetFilterType>
+	void ShowDebug(typename TLevelSetFilterType::Pointer levelSetFilter);
+
 	void WriteFrontImages()
 	{
 		std::stringstream filenameBase;
@@ -210,8 +221,8 @@ public:
 
 	}
 
-	cvITKLevelSet();
-	virtual ~cvITKLevelSet()
+	cvITKLevelSetBase();
+	virtual ~cvITKLevelSetBase()
 	{
 		if ( m_cvInputImage != NULL ) {
 			delete m_cvInputImage;
@@ -231,8 +242,8 @@ protected:
 	//base class
 	void GenerateData(); //Might need a helper function
 	//I do not want the compiler to auto-generate these methods.
-	cvITKLevelSet(const cvITKLevelSet &); // purposely not implemented
-	void operator=(const cvITKLevelSet &); // purposely not implemented
+	cvITKLevelSetBase(const cvITKLevelSetBase &); // purposely not implemented
+	void operator=(const cvITKLevelSetBase &); // purposely not implemented
 	//void
 
 
@@ -244,8 +255,8 @@ private:
 	cvStructuredPoints* m_cvInputImage;
 	cvPolyData* m_cvSeed;
 
-	ITKInternalImageType::Pointer m_itkFeatureImage;
-	ITKInternalImageType::Pointer m_itkSeedImage;
+	typename ITKInternalImageType::Pointer m_itkFeatureImage;
+	typename ITKInternalImageType::Pointer m_itkSeedImage;
 
 	//output images
 	vtkSmartPointer<vtkPolyData> m_vtkFrontPolyData;
@@ -253,7 +264,7 @@ private:
 
 	//Helper and debug output images
 	vtkSmartPointer<vtkStructuredPoints> m_vtkFeatureImage;
-	ITKInternalImageType::Pointer m_itkFrontImage;
+	typename ITKInternalImageType::Pointer m_itkFrontImage;
 	cvStructuredPoints* m_cvSeedImage;
 
 	//Level Set Parameters
@@ -266,16 +277,20 @@ private:
 	double m_PropagationScaling;
 	double m_CurvatureScaling;
 	double m_AdvectionScaling;
+	double m_LaplacianScaling;
 
-	bool m_UseInputImageAsFeature;
-	bool m_UseInputImageDistance;
+	//curvature type
+	bool m_UseNormalVectorCurvature;
+	bool m_UseMeanCurvature;
+	bool m_UseMinimalCurvature;
+	bool m_BinarySeed;
 
 	//ITK Stuff
 	bool m_Debug;
 
 };
 
-
+#include "cvITKLevelSetBase.cxx"
 
 //throw e_; /* Explicit naming to work around Intel compiler bug.  */					\
 

@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 #include "cvStrPts.h"
-#include "cvITKUtils.h"
+#include "cv_ITKLset_ITKUtils.h"
 #include "cv_sys_geom.h"
 #include "cv_vtk_utils.h"
 #include "cvITKLevelSet.h"
