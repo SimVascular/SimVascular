@@ -29,87 +29,60 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# Core libs
-set(SV_LIBS
-  ADAPTOR
-  GEOM
-  GLOBALS
-  IMAGE
-  ITK_LSET
-  LSET
-  MATH
-  PATH
-  MESH
-  MESHSIM_MESH
-  MESHSIM_ADAPTOR
-  MESHSIM_DISCRETE_SOLID
-  MESHSIM_SOLID
-  MMG_MESH
-  OpenCASCADE_SOLID
-  PARASOLID_SOLID
-  POLYDATA_SOLID
-  POST
-  REPOSITORY
-  SOLID
-  TCL_INTERP
-  TETGEN_MESH
-  TETGEN_ADAPTOR
-  UTILS
-  VMTK_UTILS)
-
-# Thirdparty libs
-set(SV_LIBS ${SV_LIBS}
-  THIRDPARTY_METIS
-  THIRDPARTY_NSPCG
-  THIRDPARTY_SPARSE
-  THIRDPARTY_TETGEN
-  THIRDPARTY_VMTK
-  THIRDPARTY_ZLIB
-  THIRDPARTY_SOLVERIO)
-
-# Module libs
-set(SV_LIBS ${SV_LIBS}
-  MODULE_COMMON
-  MODULE_MESH
-  MODULE_MESHSIM
-  MODULE_MODEL
-  MODULE_MODEL_OCCT
-  MODULE_MODEL_PARASOLID
-  MODULE_PATH
-  MODULE_PROJECTMANAGEMENT
-  MODULE_QTWIDGETS
-  MODULE_SEGMENTATION
-  MODULE_SIMULATION)
-
-# Solver libs
-set(SV_LIBS ${SV_LIBS}
-  PRESOLVER
-  THREEDSOLVER_DUMMY_LESLIB
-  THREEDSOLVER_FORTRAN
-  THREEDSOLVER_WRITE_RESTART
-  THREEDSOLVER_VTK
-  POSTSOLVER
-  SVLS)
-
-# vtkSV Libraries
-set(SV_LIBS ${SV_LIBS}
-  VTKSVBOOLEAN
-  VTKSVCOMMON
-  VTKSVFILTERS
-  VTKSVGEOMETRY
-  VTKSVNURBS
-  VTKSVPARAMETERIZATION)
+# Path
 #-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Make library name
-set(SV_LIB_NAMES )
-foreach(lib ${SV_LIBS})
-  if(WIN32)
-    string(TOLOWER "lib_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
-  else()
-    string(TOLOWER "_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
-  endif()
-  list(APPEND SV_LIB_NAMES "${SV_LIB_${lib}_NAME}")
-endforeach()
-#-----------------------------------------------------------------------------
+set(lib ${SV_LIB_PATH_NAME})
+set(export_directive path)
+set(export_file_name svPathExports.h)
+
+list(APPEND CORELIBS ${lib})
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
+
+include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+
+set(CXXSRCS sv4_PathElement.cxx sv4_VtkParametricSpline.cxx sv4_Spline.cxx 
+  )
+set(HDRS sv4_PathElement.h sv4_VtkParametricSpline.h sv4_Spline.h
+  )
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+endif()
+
+target_link_libraries(${lib}
+  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME})
+
+# Set up for exports
+string(TOUPPER ${export_directive} EXPORT_NAME)
+set(_export_macro_names
+  EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}
+  NO_EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_EXPORT
+  DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_DEPRECATED
+  NO_DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_DEPRECATED
+  )
+
+# Generate export headers
+generate_export_header(${lib}
+  ${_export_macro_names}
+  EXPORT_FILE_NAME ${export_file_name})
+
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
+  install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+		)
+endif()

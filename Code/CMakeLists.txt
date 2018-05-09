@@ -183,6 +183,7 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
   "Source/vtkSV/Modules/Geometry"
   "Source/vtkSV/Modules/NURBS"
   "Source/vtkSV/Modules/Parameterization"
+  	"Source/sv3/Path"
 	"Source/sv2/ImageProcessing"
 	"Source/sv3/Common/Geometry"
 	"Source/sv2/Segmentation"

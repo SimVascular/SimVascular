@@ -35,6 +35,8 @@
 #include "stdlib.h"
 #include "math.h"
 #include <math.h>
+#include <array>
+#include <cmath>
 
 #include "cvVTK.h"
 
@@ -403,7 +405,7 @@ double cvMath::factrl(int n)
 
 /* These functions performs operations on complex numbers_*/
 
-int cvMath::complex_mult (double z1[], double z2[], double zout[])
+int cvMath::complex_mult(double z1[], double z2[], double zout[])
 
 {
  zout[0] = z1[0]*z2[0] - z1[1]*z2[1];
@@ -777,12 +779,12 @@ int cvMath::GetInsertintIndexByDistanceSum( std::vector<std::array<double,3> > p
             std::array<double,3> startPoint=points[i];
             std::array<double,3> endPoint=points[i+1];
 
-            double dist1 = 0.
+            double dist1 = 0.;
             double dist2 = 0.;
             for (int i=0;i<3;i++)
             {
-                dist1+=(startPoint[i]-point[i])^2;
-                dist2+=(endPoint[i]-point[i])^2;
+                dist1+=pow(startPoint[i]-point[i],2);
+                dist2+=pow(endPoint[i]-point[i],2);
             }
             dist1 = sqrt(dist1);
             dist2 = sqrt(dist2);
@@ -820,7 +822,7 @@ int cvMath::GetInsertintIndexByDistanceSum( std::vector<std::array<double,3> > p
         std::array<double,3> startPoint=points[markingIndex];
         std::array<double,3> endPoint=points[markingIndex+1];
 
-        std::array<double,3> n1
+        std::array<double,3> n1;
         for (int i = 0;i<3;i++)
             n1[i] = endPoint[i] - startPoint[i];
             
@@ -829,7 +831,7 @@ int cvMath::GetInsertintIndexByDistanceSum( std::vector<std::array<double,3> > p
         double l2=0.;
         for (int i = 0;i<3;i++)
         {
-            n1[i] /= sqrt(n1[0]^2+n1[1]^2+n1[2]^2);
+            n1[i] /= sqrt(pow(n1[0],2)+pow(n1[1],2)+pow(n1[2],2));
             l1 += n1[i]*(point[i]-startPoint[i]);
             l2 += -1*n1[i]*(point[i]-endPoint[i]);
         }
@@ -878,7 +880,7 @@ int cvMath::GetInsertintIndexByProjectedDistance( std::vector<std::array<double,
             double l2=0.;
             for (int i = 0;i<3;i++)
             {
-                n1[i] /= sqrt(n1[0]^2+n1[1]^2+n1[2]^2);
+                n1[i] /= sqrt(pow(n1[0],2)+pow(n1[1],2)+pow(n1[2],2));
                 l1 += n1[i]*(point[i]-startPoint[i]);
                 l2 += -1*n1[i]*(point[i]-endPoint[i]);
             }
@@ -890,9 +892,9 @@ int cvMath::GetInsertintIndexByProjectedDistance( std::vector<std::array<double,
             double dist1 = 0., dist2 = 0., dist3 = 0.;
             for (int i=0;i<3;i++)
             {
-                dist1+=(startPoint[i]-point[i])^2;
-                dist2+=(endPoint[i]-point[i])^2;
-                dist3+=(crossPoint[i]-point[i])^2;
+                dist1+=pow(startPoint[i]-point[i],2);
+                dist2+=pow(endPoint[i]-point[i],2);
+                dist3+=pow(crossPoint[i]-point[i],2);
             }
             dist1 = sqrt(dist1);
             dist2 = sqrt(dist2);
@@ -988,7 +990,7 @@ std::array<double,3> cvMath::GetPerpendicularNormalVector(std::array<double,3> v
 
 
     for (int i = 0;i<3;i++)
-        pvec[i] /= sqrt(pvec[0]^2+pvec[1]^2+pvec[2]^2);
+        pvec[i] /= sqrt(pow(pvec[0],2)+pow(pvec[1],2)+pow(pvec[2],2));
 
     return pvec;
 }
