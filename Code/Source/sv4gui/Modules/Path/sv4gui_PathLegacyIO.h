@@ -34,13 +34,13 @@
 
 #include "SimVascular.h"
 
-#include <svPathExports.h>
+#include <sv4guiModulePathExports.h>
 
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 #include <QString>
 
-class SVPATH_EXPORT sv4guiPathLegacyIO
+class SV4GUIMODULEPATH_EXPORT sv4guiPathLegacyIO
 {
 public:
 

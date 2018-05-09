@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MODELVTKMAPPER3D_H
 #define SV4GUI_MODELVTKMAPPER3D_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "sv4gui_Model.h"
 
@@ -81,7 +81,7 @@
   * @ingroup Mapper
   */
 
-class SVMODEL_EXPORT sv4guiModelVtkMapper3D : public mitk::VtkMapper
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelVtkMapper3D : public mitk::VtkMapper
 {
 public:
 

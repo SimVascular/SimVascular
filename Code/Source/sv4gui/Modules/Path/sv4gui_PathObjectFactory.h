@@ -34,13 +34,13 @@
 
 #include "SimVascular.h"
 
-#include <svPathExports.h>
+#include <sv4guiModulePathExports.h>
 
 #include "sv4gui_PathIO.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 
-class SVPATH_EXPORT sv4guiPathObjectFactory : public mitk::CoreObjectFactoryBase
+class SV4GUIMODULEPATH_EXPORT sv4guiPathObjectFactory : public mitk::CoreObjectFactoryBase
 {
 public:
     mitkClassMacro(sv4guiPathObjectFactory,mitk::CoreObjectFactoryBase);
@@ -65,7 +65,7 @@ private:
 
 };
 
-struct SVPATH_EXPORT Registersv4guiPathObjectFactory{
+struct SV4GUIMODULEPATH_EXPORT Registersv4guiPathObjectFactory{
 
     Registersv4guiPathObjectFactory();
 

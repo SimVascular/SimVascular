@@ -32,12 +32,12 @@
 #ifndef SV4GUI_MODELELEMENTANALYTIC_H
 #define SV4GUI_MODELELEMENTANALYTIC_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "sv4gui_ModelElement.h"
 #include "sv4gui_ModelElementPolyData.h"
 
-class SVMODEL_EXPORT sv4guiModelElementAnalytic : public sv4guiModelElement
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelElementAnalytic : public sv4guiModelElement
 {
 public:
 

@@ -31,7 +31,7 @@
 
 #include "sv4gui_RegisterMeshSimFunction.h"
 
-#include <svMeshSimExports.h>
+#include <sv4guiModuleMeshSimExports.h>
 
 #include "sv4gui_MeshFactory.h"
 #include "sv4gui_MeshSim.h"

@@ -32,12 +32,12 @@
 #ifndef SV4GUI_MITKSEG3D_H
 #define SV4GUI_MITKSEG3D_H
 
-#include <svSegmentationExports.h>
+#include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_Surface.h"
 #include <sv4gui_Seg3D.h>
 
-class SVSEGMENTATION_EXPORT sv4guiMitkSeg3D : public mitk::sv4guiSurface
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiMitkSeg3D : public mitk::sv4guiSurface
 {
 public:
 

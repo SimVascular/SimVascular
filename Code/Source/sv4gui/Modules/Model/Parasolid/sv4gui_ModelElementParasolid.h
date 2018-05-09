@@ -32,14 +32,14 @@
 #ifndef SV4GUI_MODELELEMENTPARASOLID_H
 #define SV4GUI_MODELELEMENTPARASOLID_H
 
-#include <svModelParasolidExports.h>
+#include <sv4guiModuleModelParasolidExports.h>
 
 #include "sv4gui_ModelElement.h"
 #include "sv4gui_ModelElementAnalytic.h"
 
 #include "cvParasolidSolidModel.h"
 
-class SVMODELPARASOLID_EXPORT sv4guiModelElementParasolid : public sv4guiModelElementAnalytic
+class SV4GUIMODULEMODELPARASOLID_EXPORT sv4guiModelElementParasolid : public sv4guiModelElementAnalytic
 {
 public:
 

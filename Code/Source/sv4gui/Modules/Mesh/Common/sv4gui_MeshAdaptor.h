@@ -32,11 +32,11 @@
 #ifndef SV4GUI_MESHADAPTOR_H
 #define SV4GUI_MESHADAPTOR_H
 
-#include <svMeshExports.h>
+#include <sv4guiModuleMeshExports.h>
 
 #include "sv4gui_Mesh.h"
 
-class SVMESH_EXPORT sv4guiMeshAdaptor
+class SV4GUIMODULEMESH_EXPORT sv4guiMeshAdaptor
 {
 
 public:

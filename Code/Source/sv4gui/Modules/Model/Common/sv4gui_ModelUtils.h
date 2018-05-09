@@ -32,14 +32,14 @@
 #ifndef SV4GUI_MODELUTILS_H
 #define SV4GUI_MODELUTILS_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "sv4gui_Contour.h"
 #include "sv4gui_ContourGroup.h"
 #include "sv4gui_ModelElement.h"
 #include "sv4gui_ModelElementPolyData.h"
 
-class SVMODEL_EXPORT sv4guiModelUtils
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelUtils
 {
 
 public:

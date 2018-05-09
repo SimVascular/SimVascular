@@ -32,9 +32,9 @@
 #ifndef SV4GUI_REGISTERMESHSIMFUNCTION_H
 #define SV4GUI_REGISTERMESHSIMFUNCTION_H
 
-#include <svMeshSimExports.h>
+#include <sv4guiModuleMeshSimExports.h>
 
-class SVMESHSIM_EXPORT sv4guiRegisterMeshSimFunction {
+class SV4GUIMODULEMESHSIM_EXPORT sv4guiRegisterMeshSimFunction {
 
  public:
    sv4guiRegisterMeshSimFunction();

@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <svSegmentationExports.h>
+#include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_ContourGroup.h"
 
@@ -52,7 +52,7 @@
 #include <vtkPolyData.h>
 #include <vtkTubeFilter.h>
 
-class SVSEGMENTATION_EXPORT sv4guiContourGroupVtkMapper3D : public mitk::VtkMapper
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroupVtkMapper3D : public mitk::VtkMapper
 {
 
 public:
@@ -67,7 +67,7 @@ public:
 
     virtual vtkProp* GetVtkProp(mitk::BaseRenderer* renderer) override;
 
-    class SVSEGMENTATION_EXPORT LocalStorage : public mitk::Mapper::BaseLocalStorage
+    class SV4GUIMODULESEGMENTATION_EXPORT LocalStorage : public mitk::Mapper::BaseLocalStorage
     {
 
     public:

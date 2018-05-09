@@ -32,9 +32,9 @@
 #ifndef SV4GUI_REGISTERPOLYDATAFUNCTION_H
 #define SV4GUI_REGISTERPOLYDATAFUNCTION_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
-class SVMODEL_EXPORT sv4guiRegisterPolyDataFunction {
+class SV4GUIMODULEMODEL_EXPORT sv4guiRegisterPolyDataFunction {
 
  public:
    sv4guiRegisterPolyDataFunction();

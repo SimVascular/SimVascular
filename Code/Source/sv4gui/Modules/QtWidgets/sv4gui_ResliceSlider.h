@@ -32,7 +32,7 @@
 #ifndef SV4GUI_RESLICESLIDER_H
 #define SV4GUI_RESLICESLIDER_H
 
-#include <svQtWidgetsExports.h>
+#include <sv4guiModuleQtWidgetsExports.h>
 
 #include "sv4gui_PathElement.h"
 
@@ -48,7 +48,7 @@
 #include <QmitkStepperAdapter.h>
 
 
-class SVQTWIDGETS_EXPORT sv4guiResliceSlider : public QWidget
+class SV4GUIMODULEQTWIDGETS_EXPORT sv4guiResliceSlider : public QWidget
 {
     Q_OBJECT
 public:

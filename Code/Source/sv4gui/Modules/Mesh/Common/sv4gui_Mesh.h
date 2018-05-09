@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MESH_H
 #define SV4GUI_MESH_H
 
-#include <svMeshExports.h>
+#include <sv4guiModuleMeshExports.h>
 
 #include "sv4gui_ModelElement.h"
 
@@ -41,7 +41,7 @@
 #include <vtkPolyData.h>
 #include <vtkUnstructuredGrid.h>
 
-class SVMESH_EXPORT sv4guiMesh
+class SV4GUIMODULEMESH_EXPORT sv4guiMesh
 {
 
 public:

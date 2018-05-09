@@ -32,14 +32,14 @@
 #ifndef SV4GUI_MITKMESH_H
 #define SV4GUI_MITKMESH_H
 
-#include <svMeshExports.h>
+#include <sv4guiModuleMeshExports.h>
 
 #include "sv4gui_Mesh.h"
 #include "sv4gui_MitkMeshOperation.h"
 
 #include "mitkBaseData.h"
 
-class SVMESH_EXPORT sv4guiMitkMesh : public mitk::BaseData
+class SV4GUIMODULEMESH_EXPORT sv4guiMitkMesh : public mitk::BaseData
 {
 public:
 

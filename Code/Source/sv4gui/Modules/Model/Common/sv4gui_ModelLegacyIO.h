@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MODELLEGACYIO_H
 #define SV4GUI_MODELLEGACYIO_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 #include <QString>
 
-class SVMODEL_EXPORT sv4guiModelLegacyIO
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelLegacyIO
 {
 public:
 

@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MESHTETGEN_H
 #define SV4GUI_MESHTETGEN_H
 
-#include <svMeshExports.h>
+#include <sv4guiModuleMeshExports.h>
 
 #include <sv4gui_Mesh.h>
 
 #include <cvTetGenMeshObject.h>
 
-class SVMESH_EXPORT sv4guiMeshTetGen : public sv4guiMesh
+class SV4GUIMODULEMESH_EXPORT sv4guiMeshTetGen : public sv4guiMesh
 {
 public:
 

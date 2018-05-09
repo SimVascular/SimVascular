@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MESHLEGACYIO_H
 #define SV4GUI_MESHLEGACYIO_H
 
-#include <svMeshExports.h>
+#include <sv4guiModuleMeshExports.h>
 
 #include "sv4gui_Mesh.h"
 
@@ -40,7 +40,7 @@
 
 #include <QString>
 
-class SVMESH_EXPORT sv4guiMeshLegacyIO
+class SV4GUIMODULEMESH_EXPORT sv4guiMeshLegacyIO
 {
 public:
 

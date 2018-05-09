@@ -34,11 +34,11 @@
 
 #include "SimVascular.h"
 
-#include <svSegmentationExports.h>
+#include <sv4guiModuleSegmentationExports.h>
 
 #include "mitkAbstractFileIO.h"
 
-class SVSEGMENTATION_EXPORT sv4guiContourGroupIO : public mitk::AbstractFileIO
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourGroupIO : public mitk::AbstractFileIO
 {
 public:
 

@@ -32,13 +32,13 @@
 #ifndef SV4GUI_MITKSIMJOB_H
 #define SV4GUI_MITKSIMJOB_H
 
-#include <svSimulationExports.h>
+#include <sv4guiModuleSimulationExports.h>
 
 #include "sv4gui_SimJob.h"
 
 #include "mitkBaseData.h"
 
-class SVSIMULATION_EXPORT sv4guiMitkSimJob : public mitk::BaseData
+class SV4GUIMODULESIMULATION_EXPORT sv4guiMitkSimJob : public mitk::BaseData
 {
 public:
 

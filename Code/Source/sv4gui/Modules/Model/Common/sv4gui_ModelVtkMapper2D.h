@@ -32,7 +32,7 @@
 #ifndef SV4GUI_MODELVTKMAPPER2D_H
 #define SV4GUI_MODELVTKMAPPER2D_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "sv4gui_Model.h"
 
@@ -43,7 +43,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPropAssembly.h>
 
-class SVMODEL_EXPORT sv4guiModelVtkMapper2D : public mitk::VtkMapper
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelVtkMapper2D : public mitk::VtkMapper
 {
 public:
     mitkClassMacro(sv4guiModelVtkMapper2D, mitk::VtkMapper);

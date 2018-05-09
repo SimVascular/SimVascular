@@ -32,11 +32,11 @@
 #ifndef SV4GUI_MODELIO_H
 #define SV4GUI_MODELIO_H
 
-#include <svModelExports.h>
+#include <sv4guiModuleModelExports.h>
 
 #include "mitkAbstractFileIO.h"
 
-class SVMODEL_EXPORT sv4guiModelIO : public mitk::AbstractFileIO
+class SV4GUIMODULEMODEL_EXPORT sv4guiModelIO : public mitk::AbstractFileIO
 {
 public:
 

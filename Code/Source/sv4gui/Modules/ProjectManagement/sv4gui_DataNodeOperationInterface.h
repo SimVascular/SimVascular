@@ -35,7 +35,7 @@
 
 #include "SimVascular.h"
 
-#include <svProjectManagementExports.h>
+#include <sv4guiModuleProjectManagementExports.h>
 
 #include "itkObject.h"
 
@@ -43,7 +43,7 @@
 #include "mitkOperationActor.h"
 
 
-class SVPROJECTMANAGEMENT_EXPORT sv4guiDataNodeOperationInterface : public itk::Object, public mitk::OperationActor
+class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiDataNodeOperationInterface : public itk::Object, public mitk::OperationActor
 {
 
 public:
