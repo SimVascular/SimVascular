@@ -189,7 +189,8 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 	"Source/Model/SolidModel"
 	"Source/PostProcessing"
 	"Source/Mesh/MeshObject"
-	"Source/Model/PolyDataSolidModel")
+	"Source/Model/PolyDataSolidModel"
+	"Source/Path")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

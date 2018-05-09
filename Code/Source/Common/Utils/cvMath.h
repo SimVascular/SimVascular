@@ -70,6 +70,16 @@ public:
 
   int fitLeastSquares(int numberOfSamples,double **xt,int xOrder,double **yt,
                       int yOrder,double **mt);
+  int GetInsertintIndexByDistance( std::vector<mitk::Point3D> points, mitk::Point3D point, 
+                            bool insertOnlyIfDifferent = true, bool useDistanceSum = true);
+  
+  int GetInsertintIndexByDistanceSum( std::vector<mitk::Point3D> points, mitk::Point3D point, 
+                            bool insertOnlyIfDifferent = true);
+
+  int GetInsertintIndexByProjectedDistance( std::vector<mitk::Point3D> points, mitk::Point3D point, 
+                            bool insertOnlyIfDifferent = true);
+                            
+  std::array<double,3> GetPerpendicularNormalVector(std::array<double,3> vec)
 
   private:
   int complex_mult (double z1[], double z2[], double zout[]);
