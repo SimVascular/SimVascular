@@ -58,7 +58,13 @@
 // -----------
 #ifdef SV_USE_VMTK
 PyObject* PyRunTimeErr;
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpyVMTKUtils();
+#endif
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyVMTKUtils();
+#endif
+
 
 PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args);
 
@@ -87,7 +93,12 @@ PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args);
 
 int Vmtkutils_pyInit()
 {
+#ifdef SV_USE_PYTHON2
   initpyVMTKUtils();
+#endif
+#ifdef SV_USE_PYTHON3
+  PyInit_pyVMTKUtils();
+#endif
   return Py_OK;
 }
 
@@ -122,35 +133,42 @@ static struct PyModuleDef pyVMTKUtilsmodule = {
 //------------------
 //initpyVMTKUtils
 //------------------
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpyVMTKUtils()
 {
   PyObject* pythonC;
-#ifdef SV_USE_PYTHON2
   pythonC=Py_InitModule("pyVMTKUtils",VMTKUtils_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pythonC = PyModule_Create(&pyVMTKUtilsmodule);
-#endif
+
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error initializing pyVMTKUtils.\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
   PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
-#ifdef SV_USE_PYTHON2
   return;
+}
 #endif
+
 #ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyVMTKUtils()
+{
+  PyObject* pythonC;
+
+  pythonC = PyModule_Create(&pyVMTKUtilsmodule);
+  if (pythonC==NULL)
+  {
+    fprintf(stdout,"Error initializing pyVMTKUtils.\n");
+    Py_RETURN_NONE;
+  }
+  PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
+  PyModule_AddObject(pythonC,"error",PyRunTimeErr);
+
   return pythonC;
-#endif
 }
 
+#endif
 //--------------------
 //Geom_CenterlinesCmd
 //--------------------

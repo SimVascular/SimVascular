@@ -28,10 +28,11 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#include "Python.h"
 #include "SimVascular.h"
 
 #include <stdio.h>
+#include <iostream>
 
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
@@ -44,10 +45,10 @@
 #undef GetObject
 #endif
 // Prototypes:
-#include "Python.h"
+
 
 static PyObject *MathErr;
-PyObject *pyMath_FFTCmd( PyObject *self, PyObject *args );
+static PyObject *pyMath_FFTCmd( PyObject *self, PyObject *args );
 PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args  );
 PyObject *pyMath_computeWomersleyCmd( PyObject *self, PyObject *args  );
 PyObject *pyMath_linearInterpCmd( PyObject *self, PyObject *args  );
@@ -55,32 +56,36 @@ PyObject *pyMath_curveLengthCmd( PyObject *self, PyObject *args  );
 PyObject *pyMath_linearInterpolateCurveCmd( PyObject *self, PyObject *args  );
 PyObject *pyMath_fitLeastSquaresCmd( PyObject *self, PyObject *args  );
 PyObject *pyMath_smoothCurveCmd( PyObject *self, PyObject *args  );
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpyMath(void);
+#endif
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyMath(void);
+#endif
 
 
 // ---------
 // Math_Init
 // ---------
-#ifdef SV_USE_PYTHON
 
 int Math_pyInit( )
 {
 
-  Py_Initialize();
-
+#ifdef SV_USE_PYTHON2
   initpyMath();
-
+#endif
+#ifdef SV_USE_PYTHON3
+  PyInit_pyMath();
+#endif
   return Py_OK;
 }
-#endif
 
-#ifdef SV_USE_PYTHON
 // -----------
 // Math_FFTCmd
 // -----------
 
-PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
+static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
 {
   char *usage;
 
@@ -735,47 +740,63 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
 // --------------------
 // pyImage_methods
 // --------------------
-PyMethodDef pyMath_methods[] = {
-  {"math_FFT", pyMath_FFTCmd, METH_VARARGS,NULL},
-  {"math_inverseFFT", pyMath_inverseFFTCmd, METH_VARARGS,NULL},
-  {"math_computeWomersley", pyMath_computeWomersleyCmd, METH_VARARGS,NULL},
-  {"math_linearInterp", pyMath_linearInterpCmd, METH_VARARGS,NULL},
-  {"math_curveLength", pyMath_curveLengthCmd, METH_VARARGS,NULL},
-  {"math_linearInterpCurve", pyMath_linearInterpolateCurveCmd, METH_VARARGS,NULL},
-  {"math_fitLeastSquares", pyMath_fitLeastSquaresCmd, METH_VARARGS,NULL},
-  {"math_smoothCurve", pyMath_smoothCurveCmd, METH_VARARGS,NULL},
-  {NULL, NULL,0,NULL},
+static PyMethodDef pyMath_methods[] = {
+   {"math_FFT", pyMath_FFTCmd, METH_VARARGS,NULL},
+   {"math_inverseFFT", pyMath_inverseFFTCmd, METH_VARARGS,NULL},
+   {"math_computeWomersley", pyMath_computeWomersleyCmd, METH_VARARGS,NULL},
+   {"math_linearInterp", pyMath_linearInterpCmd, METH_VARARGS,NULL},
+   {"math_curveLength", pyMath_curveLengthCmd, METH_VARARGS,NULL},
+   {"math_linearInterpCurve", pyMath_linearInterpolateCurveCmd, METH_VARARGS,NULL},
+   {"math_fitLeastSquares", pyMath_fitLeastSquaresCmd, METH_VARARGS,NULL},
+   {"math_smoothCurve", pyMath_smoothCurveCmd, METH_VARARGS,NULL},
+  {NULL,       NULL},
   };
 
 #ifdef SV_USE_PYTHON3
 static struct PyModuleDef pyMathmodule = {
    PyModuleDef_HEAD_INIT,
    "pyMath",   /* name of module */
-   "", /* module documentation, may be NULL */
+   "pyMath module", /* module documentation, may be NULL */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
-   pyMath_Methods
+   pyMath_methods
 };
 #endif
 // --------------------
 // initpyImage
 // --------------------
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpyMath(void)
 {
 PyObject *pyMth;
-#ifdef SV_USE_PYTHON2
 pyMth = Py_InitModule("pyMath",pyMath_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-pyMth = PyModule_Create(&pyMathmodule);
-#endif
+
+
 MathErr = PyErr_NewException("pyMath.error",NULL,NULL);
 Py_INCREF(MathErr);
 PyModule_AddObject(pyMth,"error",MathErr);
 
-#ifdef SV_USE_PYTHON3
-return pyMth;
+}
 #endif
+
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyMath(void)
+{
+  PyObject *pyMth;
+
+  pyMth = PyModule_Create(&pyMathmodule);
+  printf("PyModule_Create called\n");
+  if (pyMth==NULL) {
+    printf("Error Creating Python module!\n");
+    return NULL;
+  }
+  
+MathErr = PyErr_NewException("pyMath.error",NULL,NULL);
+Py_INCREF(MathErr);
+PyModule_AddObject(pyMth,"error",MathErr);
+Py_INCREF(pyMth);
+return pyMth;
+
 }
 #endif

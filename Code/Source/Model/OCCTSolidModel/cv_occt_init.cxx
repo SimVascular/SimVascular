@@ -303,6 +303,17 @@ PyMethodDef pyOCCT_methods[] = {
 };
 #endif
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyOCCTmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyOCCT",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyOCCT_methods
+};
+#endif
+
 #ifdef SV_USE_PYTHON
 //Must be called after the python interpreter is initiated and through
 //the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")

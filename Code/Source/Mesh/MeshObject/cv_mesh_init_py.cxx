@@ -64,7 +64,12 @@ static void pyMeshObject_dealloc(pyMeshObject* self)
   Py_TYPE(self)->tp_free((PyObject*)self);
 
 }
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpyMeshObject();
+#endif
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyMeshObject();
+#endif
 PyObject* PyRunTimeErr;
 PyObject*  cvMesh_SetMeshKernelCmd( PyObject* self, PyObject* args);
 
@@ -121,7 +126,12 @@ static void MeshPrintMethods();
 
 int Mesh_pyInit()
 {
+#ifdef SV_USE_PYTHON2
   initpyMeshObject();
+#endif
+#ifdef SV_USE_PYTHON3
+  PyInit_pyMeshObject();
+#endif
   return Py_OK;
 }
 static int pyMeshObject_init(pyMeshObject* self, PyObject* args)
@@ -232,6 +242,7 @@ static struct PyModuleDef pyMeshObjectmodule = {
 //----------------
 //initpyMeshObject
 //----------------
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpyMeshObject()
 
 {
@@ -246,22 +257,14 @@ PyMODINIT_FUNC initpyMeshObject()
   if (Py_BuildValue("i",kernel)==nullptr)
   {
     fprintf(stdout,"Unable to create MeshSystemRegistrar\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
   if(PySys_SetObject("MeshSystemRegistrar",Py_BuildValue("i",kernel))<0)
   {
     fprintf(stdout, "Unable to register MeshSystemRegistrar\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
   // Initialize
   cvMeshSystem::SetCurrentKernel( cvMeshObject::KERNEL_INVALID );
@@ -270,44 +273,77 @@ PyMODINIT_FUNC initpyMeshObject()
   if (PyType_Ready(&pyMeshObjectType)<0)
   {
     fprintf(stdout,"Error in pyMeshObjectType\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
   PyObject* pythonC;
-#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyMeshObject",pyMeshObjectModule_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pythonC = PyModule_Create(&pyMeshObjectmodule);
-#endif
+
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshObject\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
   PyRunTimeErr = PyErr_NewException("pyMeshObject.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyMeshObjectType);
   PyModule_AddObject(pythonC,"pyMeshObject",(PyObject*)&pyMeshObjectType);
-#ifdef SV_USE_PYTHON2  
   return;
-#endif
-#ifdef SV_USE_PYTHON3
-  return pythonC;
-#endif
 
 }
+#endif
 
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyMeshObject()
 
+{
+  // Associate the mesh registrar with the python interpreter so it can be
+  // retrieved by the DLLs.
+  if (gRepository==NULL)
+  {
+    gRepository = new cvRepository();
+    fprintf(stdout,"New gRepository created from cv_mesh_init\n");
+  }
+  int (*kernel)(cvMeshObject::KernelType, cvMeshSystem*)=(&cvMeshSystem::RegisterKernel);
+  if (Py_BuildValue("i",kernel)==nullptr)
+  {
+    fprintf(stdout,"Unable to create MeshSystemRegistrar\n");
+    Py_RETURN_NONE;
+
+  }
+  if(PySys_SetObject("MeshSystemRegistrar",Py_BuildValue("i",kernel))<0)
+  {
+    fprintf(stdout, "Unable to register MeshSystemRegistrar\n");
+    Py_RETURN_NONE;
+
+  }
+  // Initialize
+  cvMeshSystem::SetCurrentKernel( cvMeshObject::KERNEL_INVALID );
+
+  pyMeshObjectType.tp_new=PyType_GenericNew;
+  if (PyType_Ready(&pyMeshObjectType)<0)
+  {
+    fprintf(stdout,"Error in pyMeshObjectType\n");
+    Py_RETURN_NONE;
+  }
+  PyObject* pythonC;
+
+  pythonC = PyModule_Create(&pyMeshObjectmodule);
+  if(pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyMeshObject\n");
+    Py_RETURN_NONE;
+  }
+  PyRunTimeErr = PyErr_NewException("pyMeshObject.error",NULL,NULL);
+  PyModule_AddObject(pythonC,"error",PyRunTimeErr);
+  Py_INCREF(&pyMeshObjectType);
+  PyModule_AddObject(pythonC,"pyMeshObject",(PyObject*)&pyMeshObjectType);
+
+  return pythonC;
+
+}
+#endif
 //-------------------
 //cvMesh_NewObjectCmd
 //-------------------

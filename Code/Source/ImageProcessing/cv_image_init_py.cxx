@@ -60,7 +60,6 @@
 #endif
 
 #include "cv_globals.h"
-#ifdef SV_USE_PYTHON
 
 PyObject *ImgErr;
 PyObject *Image_ReadHeaderCmd(PyObject *self, PyObject *args);
@@ -72,9 +71,14 @@ PyObject *Image_ThresholdCmd(PyObject* self, PyObject* args);
 PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args);
 PyObject *Image_FindPathCmd(PyObject *self, PyObject *args);
 PyObject *Image_MaskInPlaceCmd(PyObject *self, PyObject *args);
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpyImage(void);
-
+#endif
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC
+PyInit_pyImage(void);
+#endif
 
 // ----------
 // Image_Init
@@ -82,7 +86,14 @@ initpyImage(void);
 int Image_pyInit()
 {
   Py_Initialize();
+
+#ifdef SV_USE_PYTHON2
   initpyImage();
+#endif
+#ifdef SV_USE_PYTHON3
+  PyInit_pyImage();
+#endif
+
 
   return Py_OK;
 
@@ -1347,27 +1358,35 @@ static struct PyModuleDef pyImagemodule = {
 // --------------------
 // initpyImage
 // --------------------
+#ifdef SV_USE_PYTHON2
+
 PyMODINIT_FUNC
 initpyImage(void)
 {
   PyObject *pyIm;
 
-#ifdef SV_USE_PYTHON2
   pyIm = Py_InitModule("pyImage",pyImage_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pyIm = PyModule_Create(&pyImagemodule);
-#endif
+
   ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
   Py_INCREF(ImgErr);
   PyModule_AddObject(pyIm,"error",ImgErr);
-#ifdef SV_USE_PYTHON2
   return;
-#endif
-#ifdef SV_USE_PYTHON3
-  return pyIm;
-#endif
+
 }
 #endif
+
+PyMODINIT_FUNC
+PyInit_pyImage(void)
+{
+  PyObject *pyIm;
+
+  pyIm = PyModule_Create(&pyImagemodule);
+  ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
+  Py_INCREF(ImgErr);
+  PyModule_AddObject(pyIm,"error",ImgErr);
+
+  return pyIm;
+}
+
 
 

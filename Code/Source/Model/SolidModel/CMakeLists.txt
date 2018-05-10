@@ -92,3 +92,6 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+
+PYTHON_ADD_MODULE(pySolid2 cv_solid_init_py.cxx)
+target_link_libraries(pySolid2 ${lib} ${PYTHON_LIBRARY})

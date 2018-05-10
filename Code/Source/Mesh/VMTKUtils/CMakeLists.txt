@@ -84,3 +84,6 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+
+PYTHON_ADD_MODULE(pyVMTKUtils cv_vmtk_utils_init_py.cxx)
+target_link_libraries(pyVMTKUtils ${lib} ${PYTHON_LIBRARY})

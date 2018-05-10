@@ -75,7 +75,12 @@ pyAdaptObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args);
 // -----
 PyObject* PyRunTimeErr;
 PyObject* Adapt_RegistrarsListCmd(PyObject* self, PyObject* args);
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpyMeshAdapt();
+#endif
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyMeshAdapt();
+#endif
 static PyObject* cvAdapt_CreateInternalMeshObjectMtd( pyAdaptObject* self, PyObject* args);
 static PyObject* cvAdapt_LoadModelMtd( pyAdaptObject* self, PyObject* args);
 static PyObject* cvAdapt_LoadMeshMtd( pyAdaptObject* self, PyObject* args);
@@ -112,7 +117,12 @@ void DeleteAdapt( pyAdaptObject* self );
 // ----------
 int Adapt_pyInit()
 {
+#ifdef SV_USE_PYTHON2
   initpyMeshAdapt();
+#endif
+#ifdef SV_USE_PYTHON3
+  PyInit_pyMeshAdapt();
+#endif
   return Py_OK;
 }
 static int pyAdaptObject_init(pyAdaptObject* self, PyObject* args)
@@ -224,6 +234,7 @@ static struct PyModuleDef pyAdaptMeshmodule = {
 };
 #endif
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpyMeshAdapt()
 {
@@ -237,12 +248,9 @@ initpyMeshAdapt()
   if (PySys_SetObject("AdaptObjectRegistrar",(PyObject*)&cvAdaptObject::gRegistrar)<0)
   {
     fprintf(stdout,"Unable to create AdaptObjectRegistrar\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
+
   }
 
   // Initialize
@@ -256,44 +264,83 @@ initpyMeshAdapt()
   if (PyType_Ready(&pyAdaptObjectType)<0)
   {
     fprintf(stdout,"Error in pyAdaptMeshType\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
 
   PyObject* pythonC;
-#ifdef SV_USE_PYTHON2  
   pythonC = Py_InitModule("pyMeshAdapt",pyAdaptMesh_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pythonC = PyModule_Create(&pyAdaptMeshmodule);
-#endif
+
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshAdapt\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
 
   PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyAdaptObjectType);
   PyModule_AddObject(pythonC,"pyAdaptObject",(PyObject*)&pyAdaptObjectType);
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    return pythonC;
-#endif
+
 
  }
+#endif
+
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC
+PyInit_pyMeshAdapt()
+{
+
+  // Associate the adapt object registrar with the python interpreter
+  if (gRepository==NULL)
+  {
+    gRepository= new cvRepository();
+    fprintf(stdout,"New gRepository created from cv_adapt_init\n");
+  }
+  if (PySys_SetObject("AdaptObjectRegistrar",(PyObject*)&cvAdaptObject::gRegistrar)<0)
+  {
+    fprintf(stdout,"Unable to create AdaptObjectRegistrar\n");
+
+    Py_RETURN_NONE;
+
+  }
+
+  // Initialize
+  cvAdaptObject::gCurrentKernel = KERNEL_INVALID;
+
+#ifdef USE_TETGEN_ADAPTOR
+  cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
+#endif
+
+  pyAdaptObjectType.tp_new=PyType_GenericNew;
+  if (PyType_Ready(&pyAdaptObjectType)<0)
+  {
+    fprintf(stdout,"Error in pyAdaptMeshType\n");
+    Py_RETURN_NONE;
+
+  }
+
+  PyObject* pythonC;
+
+  pythonC = PyModule_Create(&pyAdaptMeshmodule);
+
+  if(pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyMeshAdapt\n");
+    Py_RETURN_NONE;
+  }
+
+  PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",NULL,NULL);
+  PyModule_AddObject(pythonC,"error",PyRunTimeErr);
+  Py_INCREF(&pyAdaptObjectType);
+  PyModule_AddObject(pythonC,"pyAdaptObject",(PyObject*)&pyAdaptObjectType);
+
+    return pythonC;
+
+ }
+#endif
 // This routine is used for debugging the registrar/factory system.
 PyObject* Adapt_RegistrarsListCmd( PyObject* self, PyObject* args)
 {

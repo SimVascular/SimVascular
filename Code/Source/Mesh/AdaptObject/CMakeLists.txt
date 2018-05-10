@@ -89,3 +89,7 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
 endif()
+
+
+PYTHON_ADD_MODULE(pyMeshAdapt cv_adapt_init_py.cxx)
+target_link_libraries(pyMeshAdapt ${lib} ${PYTHON_LIBRARY})

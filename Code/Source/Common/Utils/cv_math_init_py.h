@@ -34,6 +34,7 @@
 
 #include "SimVascular.h"
 #include "svUtilsExports.h" // For exports
+#include "Python.h"
 
 #ifdef SV_USE_PYTHON
 extern "C" SV_EXPORT_UTILS int Math_pyInit( );

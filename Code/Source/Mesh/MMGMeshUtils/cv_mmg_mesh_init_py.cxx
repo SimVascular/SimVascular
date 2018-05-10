@@ -107,35 +107,41 @@ PyObject* Mmgmesh_pyInit()
   return pythonC;
 }
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpyMeshUtil()
 {
   PyObject *pythonC;
-#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pythonC = PyModule_Create(&pyMeshUtilmodule);
-#endif
+
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
-#ifdef SV_USE_PYTHON2
     return;
+
+  }
+  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
+  return;
+
+}
 #endif
+
 #ifdef SV_USE_PYTHON3
-   Py_RETURN_NONE;
-#endif
+PyMODINIT_FUNC PyInit_pyMeshUtil()
+{
+  PyObject *pythonC;
+  pythonC = PyModule_Create(&pyMeshUtilmodule);
+  if (pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyMeshUtil");
+     Py_RETURN_NONE;
   }
   PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
-#ifdef SV_USE_PYTHON2
-  return;
-#endif
-#ifdef SV_USE_PYTHON3
-  return pythonC;
-#endif
-}
 
+  return pythonC;
+
+}
+#endif
 // MMG_RemeshCmd
 // --------------
 

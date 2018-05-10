@@ -55,6 +55,7 @@ public:
     static void SaveAllProjects(mitk::DataStorage::Pointer dataStorage);
 
     static void LoadData(mitk::DataNode::Pointer dataNode);
+    static mitk::DataNode::Pointer LoadDataNode(std::string filePath);
     static mitk::DataNode::Pointer GetProjectFolderNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode);
 
     template <typename TDataFolder> static mitk::DataNode::Pointer CreateDataFolder(mitk::DataStorage::Pointer dataStorage, QString folderName, mitk::DataNode::Pointer projFolderNode=NULL);

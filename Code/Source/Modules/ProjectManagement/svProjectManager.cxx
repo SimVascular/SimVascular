@@ -60,6 +60,8 @@
 #include <vtkImageData.h>
 #include <vtkXMLImageDataWriter.h>
 
+#include <itksys/SystemTools.hxx>
+
 #include <QDir>
 #include <QDomDocument>
 #include <QDomElement>
@@ -252,8 +254,8 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
 
             try{
                 //mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath);
-                mitk::DataNode::Pointer imageNode=mitk::IOUtil::Load(imageFilePath, *dataStorage)->GetElement(0);
                 //            imageNode->SetVisibility(false);
+                mitk::DataNode::Pointer imageNode = svProjectManager::LoadDataNode(imageFilePath);
                 imageNode->SetName(imageNameList[i].toStdString());
                 dataStorage->Add(imageNode,imageFolderNode);
             }
@@ -270,7 +272,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         for(int i=0;i<fileInfoList.size();i++)
         {
             //mitk::DataNode::Pointer pathNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer pathNode=mitk::IOUtil::Load(fileInfoList[i].absoluteFilePath().toStdString(), *dataStorage)->GetElement(0);
+            mitk::DataNode::Pointer pathNode = svProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             pathNode->SetVisibility(false);
 
             svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
@@ -309,7 +311,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
             try
             {
                 //mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(filePath);
-                mitk::DataNode::Pointer segNode=mitk::IOUtil::Load(filePath, *dataStorage)->GetElement(0);
+                mitk::DataNode::Pointer segNode = svProjectManager::LoadDataNode(filePath);
                 segNode->SetVisibility(false);
 
                 svContourGroup* group=dynamic_cast<svContourGroup*>(segNode->GetData());
@@ -357,7 +359,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
             try
             {
                 //mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(filePath);
-                mitk::DataNode::Pointer modelNode=mitk::IOUtil::Load(filePath, *dataStorage)->GetElement(0);
+                mitk::DataNode::Pointer modelNode = svProjectManager::LoadDataNode(filePath);
                 if(firstModel)
                 {
                     modelNode->SetVisibility(true);
@@ -384,7 +386,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
             try
             {
             //mitk::DataNode::Pointer meshNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer meshNode=mitk::IOUtil::Load(fileInfoList[i].absoluteFilePath().toStdString(), *dataStorage)->GetElement(0);
+            mitk::DataNode::Pointer meshNode = svProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             meshNode->SetVisibility(false);
             dataStorage->Add(meshNode,meshFolderNode);
             }
@@ -401,7 +403,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         for(int i=0;i<fileInfoList.size();i++)
         {
             //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer jobNode=mitk::IOUtil::Load(fileInfoList[i].absoluteFilePath().toStdString(), *dataStorage)->GetElement(0);
+            mitk::DataNode::Pointer jobNode = svProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             jobNode->SetVisibility(false);
             dataStorage->Add(jobNode,simFolderNode);
         }
@@ -584,6 +586,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
         out << xml <<endl;
     }
 
+    return;
 }
 
 void svProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath)
@@ -901,6 +904,54 @@ void svProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     {
         dataNode->SetData(vdata[0]);
     }
+}
+
+mitk::DataNode::Pointer svProjectManager::LoadDataNode(std::string filePath)
+{
+ std::vector<mitk::BaseData::Pointer> baseDataList = mitk::IOUtil::Load(filePath);
+ if (baseDataList.empty())
+ {
+   MITK_ERROR <<"Object not added to Data Storage! Please make sure object is valid: " << filePath;
+   return NULL;
+ }
+
+ mitk::BaseData::Pointer baseData = baseDataList.front();
+
+ mitk::DataNode::Pointer node = mitk::DataNode::New();
+ node->SetData(baseData);
+
+ // path
+ mitk::StringProperty::Pointer pathProp = mitk::StringProperty::New(itksys::SystemTools::GetFilenamePath(filePath));
+ node->SetProperty(mitk::StringProperty::PATH, pathProp);
+
+ // name already defined?
+ mitk::StringProperty::Pointer nameProp = dynamic_cast<mitk::StringProperty *>(node->GetProperty("name"));
+ if (nameProp.IsNull() || (strcmp(nameProp->GetValue(), "No Name!") == 0))
+ {
+   // name already defined in BaseData
+   mitk::StringProperty::Pointer baseDataNameProp =
+     dynamic_cast<mitk::StringProperty *>(node->GetData()->GetProperty("name").GetPointer());
+   if (baseDataNameProp.IsNull() || (strcmp(baseDataNameProp->GetValue(), "No Name!") == 0))
+   {
+     // name neither defined in node, nor in BaseData -> name = filename
+     nameProp = mitk::StringProperty::New(itksys::SystemTools::GetFilenameWithoutExtension(filePath));
+     node->SetProperty("name", nameProp);
+   }
+   else
+   {
+     // name defined in BaseData!
+     nameProp = mitk::StringProperty::New(baseDataNameProp->GetValue());
+     node->SetProperty("name", nameProp);
+   }
+ }
+
+ // visibility
+ if (!node->GetProperty("visible"))
+ {
+   node->SetVisibility(true);
+ }
+
+ return node;
 }
 
 mitk::DataNode::Pointer svProjectManager::GetProjectFolderNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode)

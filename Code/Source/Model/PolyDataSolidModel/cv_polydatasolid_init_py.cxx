@@ -44,7 +44,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "cvRepository.h"
-#include "cv_solid_init.h"
+#include "cv_solid_init_py.h"
 #include "cv_polydatasolid_init_py.h"
 #include "cv_polydatasolid_utils.h"
 #include "cvSolidModel.h"
@@ -104,16 +104,19 @@ static struct PyModuleDef pySolidPolydatamodule = {
 PyObject* Polydatasolid_pyInit()
 {
 
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
+  
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
   }
-  else {
+  else
     return Py_ERROR;
-  }
-  PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
+  tmp->registrar = pySolidModelRegistrar;
+  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp); 
   // Initialize parasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
     return Py_ERROR;
@@ -134,52 +137,81 @@ PyObject* Polydatasolid_pyInit()
   return pythonC;
 }
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpySolidPolydata()
 {
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
+  
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
   }
   else {
-#ifdef SV_USE_PYTHON2
     return ;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
-  PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
+  tmp->registrar = pySolidModelRegistrar;
+  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp); 
   // Initialize parasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
-#ifdef SV_USE_PYTHON2
     return ;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
 
   PyObject *pythonC;
-#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolidPolydata", SolidPolydata_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pythonC = PyModule_Create(&pySolidPolydatamodule);
-#endif
+
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-#ifdef SV_USE_PYTHON2
     return ;
-#endif
-#ifdef SV_USE_PYTHON3
-    return pythonC;
-#endif
+
   }
 }
+#endif
+
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC
+PyInit_pySolidPolydata()
+{
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
+  
+  if (pySolidModelRegistrar != NULL) {
+          // Register this particular factory method with the main app.
+          pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
+      (FactoryMethodPtr) &pyCreatePolyDataSolid );
+  }
+  else {
+    Py_RETURN_NONE;
+
+  }
+  tmp->registrar = pySolidModelRegistrar;
+  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp); 
+  // Initialize parasolid_utils
+  if (PlyDtaUtils_Init() != SV_OK) {
+    Py_RETURN_NONE;
+
+  }
+
+  PyObject *pythonC;
+
+  pythonC = PyModule_Create(&pySolidPolydatamodule);
+
+  if (pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pySolidolydata");
+    return pythonC;
+  }
+  
+  return pythonC;
+}
+#endif
 
 PyObject* PolyDataSolid_AvailableCmd(PyObject* self, PyObject* args )
 {
@@ -191,7 +223,10 @@ PyObject* PolyDataSolid_RegistrarsListCmd(PyObject* self, PyObject* args )
   char result[2048];
   int k=0;
   PyObject *pyPtr=PyList_New(6);
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
+
   sprintf(result, "Solid model registrar ptr -> %p\n", pySolidModelRegistrar);
   fprintf(stdout,result);
   PyList_SetItem(pyPtr,0,PyBytes_FromFormat(result));

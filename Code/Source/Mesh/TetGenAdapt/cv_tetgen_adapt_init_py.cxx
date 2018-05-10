@@ -130,6 +130,7 @@ PyObject* Tetgenadapt_pyInit()
 
 }
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpyTetGenAdapt()
 {
@@ -146,37 +147,58 @@ initpyTetGenAdapt()
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
   }
   else {
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
 
   PyObject* pythonC;
-#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyTetGenAdapt", TetGenAdapt_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pythonC = PyModule_Create(&pyTetGenAdaptmodule);
-#endif
+
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
-#ifdef SV_USE_PYTHON3
-  return pythonC;
-#endif
+
 }
 
+#endif
+
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC
+PyInit_pyTetGenAdapt()
+{
+  printf("  %-12s %s\n","","TetGen Adaption Enabled");
+
+  // Associate the adapt registrar with the python interpreter so it can be
+  // retrieved by the DLLs.
+  cvFactoryRegistrar* adaptObjectRegistrar =
+    (cvFactoryRegistrar *)PySys_GetObject("AdaptObjectRegistrar");
+
+  if (adaptObjectRegistrar != NULL) {
+          // Register this particular factory method with the main app.
+          adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_TETGEN,
+      (FactoryMethodPtr) &pyCreateTetGenAdapt );
+  }
+  else {
+    Py_RETURN_NONE;
+  }
+  PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
+
+  PyObject* pythonC;
+  pythonC = PyModule_Create(&pyTetGenAdaptmodule);
+  if(pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
+    Py_RETURN_NONE;
+
+  }
+
+  return pythonC;
+}
+#endif
 PyObject*  TetGenAdapt_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","TetGen Adaption Available");

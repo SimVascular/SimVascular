@@ -92,3 +92,6 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+
+PYTHON_ADD_MODULE(pySolidOCCT cv_occt_init_py.cxx)
+target_link_libraries(pySolidOCCT ${lib} ${PYTHON_LIBRARY})

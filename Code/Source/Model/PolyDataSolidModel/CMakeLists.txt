@@ -93,3 +93,6 @@ if(SV_INSTALL_HEADERS)
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+
+PYTHON_ADD_MODULE(pySolidPolydata cv_polydatasolid_init_py.cxx)
+target_link_libraries(pySolidPolydata ${lib} ${PYTHON_LIBRARY})

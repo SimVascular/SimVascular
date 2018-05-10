@@ -58,6 +58,8 @@
 
 #include "cv_globals.h"
 
+
+
 #ifdef WIN32
 #include <windows.h>
 #include <tchar.h>
@@ -694,7 +696,7 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
   fprintf(stdout,"%s\n",pythonhomepath);
 
   _putenv_s( "PYTHONHOME", pythonhomepath );
-
+  
 
 #endif
 
@@ -875,6 +877,7 @@ RegCloseKey(hKey2);
            // Get next token
            token = strtok( NULL, seps );
          }
+         
        }
 #else
        char *custom_plugins = getenv("SV_CUSTOM_PLUGINS");
@@ -907,6 +910,7 @@ RegCloseKey(hKey2);
      } else {
        return app.run();
      }
+    
 
   }
 

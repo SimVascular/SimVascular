@@ -45,6 +45,7 @@
 #include <string.h>
 #include "cvRepository.h"
 #include "cv_solid_init.h"
+#include "cv_solid_init_py.h"
 #include "cv_occt_init_py.h"
 #include "cvSolidModel.h"
 #include "cv_arg.h"
@@ -138,7 +139,9 @@ PyObject* Occtsolid_pyInit()
 
   printf("  %-12s %s\n","OpenCASCADE:", OCC_VERSION_COMPLETE);
   //get solidModelRegistrar from sys
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
@@ -147,15 +150,15 @@ PyObject* Occtsolid_pyInit()
   else {
     return Py_ERROR;
   }
-  PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
+  tmp->registrar = pySolidModelRegistrar;
+  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp); 
   PyObject *pythonC;
 #ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
 #endif
 #ifdef SV_USE_PYTHON3
   pythonC = PyModule_Create(&pySolidOCCTmodule);
-#endif
-  if (pythonC==NULL)
+#endif  if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return Py_ERROR;
@@ -163,6 +166,7 @@ PyObject* Occtsolid_pyInit()
   return pythonC;
 }
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpySolidOCCT()
 {
@@ -183,39 +187,75 @@ initpySolidOCCT()
 
   printf("  %-12s %s\n","OpenCASCADE:", OCC_VERSION_COMPLETE);
   //get solidModelRegistrar from sys
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
   }
   else {
-#ifdef SV_USE_PYTHON2
     return ;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+
   }
   PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
   PyObject *pythonC;
-#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pythonC = PyModule_Create(&pySolidOCCTmodule);
-#endif
+
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-#ifdef SV_USE_PYTHON2
     return ;
-#endif
-#ifdef SV_USE_PYTHON3
-    pythonC;
-#endif
   }
 }
+#endif
+
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC
+PyInit_pySolidOCCT()
+{
+  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
+  //gOCCTManager = new AppStd_Application;
+  OCCTManager = XCAFApp_Application::GetApplication();
+  //if ( gOCCTManager == NULL ) {
+  //  fprintf( stderr, "error allocating gOCCTManager\n" );
+  //  return TCL_ERROR;
+  //}
+  Handle(TDocStd_Document) doc;
+  //gOCCTManager->NewDocument("Standard",doc);
+  OCCTManager->NewDocument("MDTV-XCAF",doc);
+  if ( !XCAFDoc_DocumentTool::IsXCAFDocument(doc))
+  {
+    fprintf(stdout,"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly\n");
+  }
+
+  printf("  %-12s %s\n","OpenCASCADE:", OCC_VERSION_COMPLETE);
+  //get solidModelRegistrar from sys
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
+  if (pySolidModelRegistrar != NULL) {
+          // Register this particular factory method with the main app.
+          pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
+            (FactoryMethodPtr) &pyCreateOCCTSolidModel );
+  }
+  else {
+    Py_RETURN_NONE;
+  }
+  PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
+  PyObject *pythonC;
+
+  pythonC = PyModule_Create(&pySolidOCCTmodule);
+  if (pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pySolid");
+    pythonC;
+  }
+  
+  return pythonC;
+}
+#endif
 
 PyObject* OCCTSolidModel_AvailableCmd( PyObject* self, PyObject* args)
 {
@@ -227,7 +267,9 @@ PyObject* OCCTSolidModel_RegistrarsListCmd(PyObject* self, PyObject* args )
   char result[2048];
   int k=0;
   PyObject *pyPtr=PyList_New(6);
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   sprintf(result, "Solid model registrar ptr -> %p\n", pySolidModelRegistrar);
   fprintf(stdout,result);
   PyList_SetItem(pyPtr,0,PyString_FromFormat(result));

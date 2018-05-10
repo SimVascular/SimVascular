@@ -138,6 +138,9 @@ PyMethodDef pyLevelSet_methods[] = {
     {NULL, NULL,0,NULL},
 };
 
+PyMethodDef Itkls2d_methods[] = {
+    {NULL, NULL,0,NULL},
+};
 
 static PyTypeObject pyLevelSetType = {
   PyVarObject_HEAD_INIT(NULL, 0)

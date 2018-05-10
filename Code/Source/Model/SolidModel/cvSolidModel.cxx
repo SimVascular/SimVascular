@@ -31,6 +31,7 @@
 
 #include "SimVascular.h"
 
+#include "cv_solid_init_py.h"
 #include "cvSolidModel.h"
 #include "cvPolyData.h"
 #include "cv_misc_utils.h"
@@ -107,7 +108,9 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
 cvSolidModel* cvSolidModel::pyDefaultInstantiateSolidModel()
 {
   // Get the solid model factory registrar associated with the python interpreter.
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   if (pySolidModelRegistrar==NULL)
   {
     fprintf(stdout,"Cannot get solidModelRegistrar from pySys");

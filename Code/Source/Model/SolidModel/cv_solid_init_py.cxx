@@ -77,11 +77,21 @@ int DiscreteUtils_Init();
 #endif
 
 //Python intialization functions. Called from python interpreter
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpySolid2(void);
+#endif 
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pySolid2(void);
+#endif
 int Solid_pyInit()
 {
   //Py_Initialize();
-  initpySolid2();
+#ifdef SV_USE_PYTHON2
+ initpySolid2();
+#endif 
+#ifdef SV_USE_PYTHON3
+ PyInit_pySolid2();
+#endif
   return Py_OK;
 }
 
@@ -460,6 +470,31 @@ static PyMethodDef pySolid2_methods[] = {
   {NULL, NULL}
 };
 
+static PyTypeObject pycvFactoryRegistrarType = {
+  PyVarObject_HEAD_INIT(NULL, 0)
+  "pySolid2.pycvFactoryRegistrar",             /* tp_name */
+  sizeof(pycvFactoryRegistrar),             /* tp_basicsize */
+  0,                         /* tp_itemsize */
+  0,                         /* tp_dealloc */
+  0,                         /* tp_print */
+  0,                         /* tp_getattr */
+  0,                         /* tp_setattr */
+  0,                         /* tp_compare */
+  0,                         /* tp_repr */
+  0,                         /* tp_as_number */
+  0,                         /* tp_as_sequence */
+  0,                         /* tp_as_mapping */
+  0,                         /* tp_hash */
+  0,                         /* tp_call */
+  0,                         /* tp_str */
+  0,                         /* tp_getattro */
+  0,                         /* tp_setattro */
+  0,                         /* tp_as_buffer */
+  Py_TPFLAGS_DEFAULT |
+      Py_TPFLAGS_BASETYPE,   /* tp_flags */
+  "cvFactoryRegistrar wrapper  ",           /* tp_doc */
+};
+
 #ifdef SV_USE_PYTHON3
 static struct PyModuleDef pySolid2module = {
    PyModuleDef_HEAD_INIT,
@@ -471,6 +506,7 @@ static struct PyModuleDef pySolid2module = {
 };
 #endif
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpySolid2(void)
 {
@@ -485,52 +521,95 @@ initpySolid2(void)
   #ifdef SV_USE_PARASOLID
   cvSolidModel::gCurrentKernel = SM_KT_PARASOLID;
   #endif
-  //Initialize-solidModelRegistrar
-  cvFactoryRegistrar* pySolidModelRegistrar;
-    pySolidModelRegistrar = (cvFactoryRegistrar *)&cvSolidModel::gRegistrar;
-    fprintf( stdout, "SolidModelRegistrar created from cv_solid_init\n");
-  PySys_SetObject("solidModelRegistrar", (PyObject*)pySolidModelRegistrar);
+
   pySolidModelType.tp_new=PyType_GenericNew;
+  pycvFactoryRegistrarType.tp_new = PyType_GenericNew;
   if (PyType_Ready(&pySolidModelType)<0)
   {
     fprintf(stdout,"Error in pySolidModelType");
-#ifdef SV_USE_PYTHON2
     return;
-#endif
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
+  }
+  if (PyType_Ready(&pycvFactoryRegistrarType)<0)
+  {
+    fprintf(stdout,"Error in pySolidModelType");
+    return;
   }
   //Init our defined functions
   PyObject *pythonC;
-#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pySolid2", pySolid2_methods);
-#endif
-#ifdef SV_USE_PYTHON3
-  pythonC = PyModule_Create(&pySolid2module);
-#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-#ifdef SV_USE_PYTHON2
     return;
-#endif 
-#ifdef SV_USE_PYTHON3
-    Py_RETURN_NONE;
-#endif
   }
+  
   PyRunTimeErr=PyErr_NewException("pySolid2.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
   Py_INCREF(&pySolidModelType);
+  Py_INCREF(&pycvFactoryRegistrarType);
   PyModule_AddObject(pythonC, "pySolidModel", (PyObject *)&pySolidModelType);
-#ifdef SV_USE_PYTHON2
-  return;
+  PyModule_AddObject(pythonC, "pyCvFactoryRegistrar", (PyObject *)&pycvFactoryRegistrarType);
+  
+  pycvFactoryRegistrar* tmp = PyObject_New(pycvFactoryRegistrar, &pycvFactoryRegistrarType);
+  tmp->registrar = (cvFactoryRegistrar *)&cvSolidModel::gRegistrar;
+  PySys_SetObject("solidModelRegistrar", (PyObject *)tmp);
+  
+
+}
 #endif
+
 #ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC
+PyInit_pySolid2(void)
+{
+    // Initialize-gRepository
+  if (gRepository ==NULL)
+  {
+    gRepository=new cvRepository();
+    fprintf(stdout,"New gRepository created from cv_solid_init\n");
+  }
+  //Initialize-gCurrentKernel
+  cvSolidModel::gCurrentKernel = SM_KT_INVALID;
+  #ifdef SV_USE_PARASOLID
+  cvSolidModel::gCurrentKernel = SM_KT_PARASOLID;
+  #endif
+
+  pySolidModelType.tp_new=PyType_GenericNew;
+  pycvFactoryRegistrarType.tp_new = PyType_GenericNew;
+  if (PyType_Ready(&pySolidModelType)<0)
+  {
+    fprintf(stdout,"Error in pySolidModelType");
+    Py_RETURN_NONE;
+  }
+  if (PyType_Ready(&pycvFactoryRegistrarType)<0)
+  {
+    fprintf(stdout,"Error in pySolidModelType");
+    Py_RETURN_NONE;
+  }
+  //Init our defined functions
+  PyObject *pythonC;
+  pythonC = PyModule_Create(&pySolid2module);
+  if (pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pySolid");
+    Py_RETURN_NONE;
+  }
+  
+  PyRunTimeErr=PyErr_NewException("pySolid2.error",NULL,NULL);
+  PyModule_AddObject(pythonC, "error",PyRunTimeErr);
+  Py_INCREF(&pySolidModelType);
+  Py_INCREF(&pycvFactoryRegistrarType);
+  PyModule_AddObject(pythonC, "pySolidModel", (PyObject *)&pySolidModelType);
+  PyModule_AddObject(pythonC, "pyCvFactoryRegistrar", (PyObject *)&pycvFactoryRegistrarType);
+  
+  pycvFactoryRegistrar* tmp = PyObject_New(pycvFactoryRegistrar, &pycvFactoryRegistrarType);
+  tmp->registrar = (cvFactoryRegistrar *)&cvSolidModel::gRegistrar;
+  PySys_SetObject("solidModelRegistrar", (PyObject *)tmp);
   return pythonC;
-#endif
+
 }
 
+#endif
 /*#ifdef SV_USE_PYTHON
 //Must be called after the python interpreter is initiated and through
 //the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
@@ -2104,20 +2183,16 @@ pySolidModel* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
 
 pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args)
 {
-  fprintf(stdout,"checkUnion\n");
   char *resultName;
   char *smpName=NULL;
   char *smpStr;
   char *aName;
   char *bName;
-  if (smpName)
-  {fprintf(stdout,"entered");}
   SolidModel_SimplifyT smp = SM_Simplify_All;  // DEFAULT ARG VALUE
   RepositoryDataT aType, bType;
   cvRepositoryData *gmA;
   cvRepositoryData *gmB;
   cvSolidModel *result;
-  fprintf(stdout,"checkUnion\n");
 
   if(!PyArg_ParseTuple(args,"sss|s",&resultName,&aName,&bName,&smpName))
   {
@@ -2125,13 +2200,10 @@ pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  fprintf(stdout,"checkUnion\n");
   // Parse the simplification flag if given:
   if (smpName) {
-  fprintf(stdout,"smpName");
     smp = SolidModel_SimplifyT_StrToEnum( smpName );
     if ( smp == SM_Simplify_Invalid ) {
-  fprintf(stdout,"%s\n",smpName);
       smpStr = SolidModel_SimplifyT_EnumToStr( SM_Simplify_Invalid );
       PyErr_SetString(PyRunTimeErr, smpStr );
       return Py_ERROR;
@@ -2139,10 +2211,8 @@ pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args)
   }
 
   // Do work of command:
-  fprintf(stdout,"checkUnion\n");
   // Retrieve cvSolidModel operands:
   gmA = gRepository->GetObject( aName );
-  fprintf(stdout,"checkUnion\n");
   if ( gmA == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     return Py_ERROR;
@@ -2154,7 +2224,6 @@ pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args)
   }
 
   gmB = gRepository->GetObject( bName );
-  fprintf(stdout,"checkUnion\n");
   if ( gmB == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
     return Py_ERROR;
@@ -2170,26 +2239,22 @@ pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args)
   if ( result == NULL ) {
     return Py_ERROR;
   }
-  fprintf(stdout,"checkUnion\n");
   if ( result->Union( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "union error" );
     delete result;
     return Py_ERROR;
   }
 
-  fprintf(stdout,"checkUnion\n");
   // Register the new solid:
   if ( !( gRepository->Register( resultName, result ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete result;
     return Py_ERROR;
   }
-  fprintf(stdout,"checkUnion\n");
 
   Py_INCREF(result);
   self->geom=result;
   Py_DECREF(result);
-  fprintf(stdout,"checkUnion\n");
   return self;
 }
 
