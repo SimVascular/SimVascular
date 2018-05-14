@@ -55,7 +55,8 @@ HDRS   += cvLevelSetVelocity.h cvLevelSetVelocityKGI.h \
           cvLevelSetVelocityConstant.h \
 	  cvLevelSetVelocityThreshold.h cvLevelSetVelocityPotential.h \
           cvLevelSetVelocityExponentialDecay.h cvLevelSetVelocitySmooth.h \
-          cvLevelSetVelocityImage.h
+          cvLevelSetVelocityImage.h \
+          cvIntArrayList.h cvStateArray.h cvTimer.h
 
 CXXSRCS	= cvLevelSet.cxx cvLevelSetNode.cxx \
 	  cvLevelSetStructuredGrid.cxx cvLevelSetDenseGrid.cxx \
@@ -65,7 +66,8 @@ CXXSRCS += cvLevelSetVelocity.cxx cvLevelSetVelocityKGI.cxx \
           cvLevelSetVelocityConstant.cxx \
 	  cvLevelSetVelocityThreshold.cxx cvLevelSetVelocityPotential.cxx \
           cvLevelSetVelocityExponentialDecay.cxx \
-          cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx
+          cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx \
+          cvIntArrayList.cxx cvStateArray.cxx cvTimer.cxx
 
 DLLHDRS = cv_LsetCore_init.h cv_LsetV_init.h cv_Lset_init.h
 DLLSRCS = cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx

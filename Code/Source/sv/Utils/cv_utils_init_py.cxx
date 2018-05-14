@@ -33,8 +33,6 @@
 
 #include "cv_utils_init.h"
 #include "cv_math_init_py.h"
-#include "cv_get_tcl_interp_init.h"
-
 
 int Utils_pyInit()
 {

@@ -45,6 +45,7 @@ set(CXXSRCS cvLevelSet.cxx cvLevelSetNode.cxx
   cvLevelSetVelocityThreshold.cxx cvLevelSetVelocityPotential.cxx
   cvLevelSetVelocityExponentialDecay.cxx
   cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx
+  cvIntArrayList.cxx cvStateArray.cxx cvTimer.cxx
   )
 set(HDRS cvLevelSet.h cvLevelSetNode.h
   cvLevelSetStructuredGrid.h cvLevelSetDenseGrid.h
@@ -53,6 +54,7 @@ set(HDRS cvLevelSet.h cvLevelSetNode.h
   cvLevelSetVelocityThreshold.h cvLevelSetVelocityPotential.h
   cvLevelSetVelocityExponentialDecay.h cvLevelSetVelocitySmooth.h
   cvLevelSetVelocityImage.h
+  cvIntArrayList.h cvStateArray.h cvTimer.h
   )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx)
