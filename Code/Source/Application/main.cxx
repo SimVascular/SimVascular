@@ -966,6 +966,9 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
 int Tcl_AppInit( Tcl_Interp *interp )
 {
 
+  // store interp into a global variable
+  gVtkTclInterp = interp;
+  
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
 

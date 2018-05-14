@@ -34,7 +34,6 @@
 #include "cvSolidModel.h"
 #include "cvPolyData.h"
 #include "cv_misc_utils.h"
-#include "cv_get_tcl_interp_init.h"
 #include <string.h>
 #include <assert.h>
 #include "Python.h"

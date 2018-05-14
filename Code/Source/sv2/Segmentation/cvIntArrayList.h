@@ -33,9 +33,9 @@
 #define __CVINT_ARRAY_LIST_H
 
 #include "SimVascular.h"
-#include "svUtilsExports.h" // For exports
+#include "svLSetExports.h" // For exports
 
-class SV_EXPORT_UTILS cvIntArrayList {
+class SV_EXPORT_LSET cvIntArrayList {
 
 public:
   cvIntArrayList( int size );

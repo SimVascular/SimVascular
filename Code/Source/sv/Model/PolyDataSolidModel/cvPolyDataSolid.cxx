@@ -46,7 +46,6 @@
 #include "vtkSmartPointer.h"
 #include "vtkSVLoopBooleanPolyDataFilter.h"
 #include "vtkCubeSource.h"
-#include "cv_get_tcl_interp_init.h"
 #include "cv_polydatasolid_utils.h"
 #include "cv_misc_utils.h"
 #include "cv_sys_geom.h"
