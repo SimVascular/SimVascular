@@ -30,43 +30,36 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-# --------------
-# Compiler flags
-# --------------
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
+	   $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(DEFINES)
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) \
-	   $(TCLTK_INCDIR) $(PYTHON_INCDIR) \
-	   $(VTK_INCDIRS)
+CREATE_EXPORTS_CV_ALL_CAPS=SV_UTILS
+CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_UTILS
+CREATE_EXPORTS_CV_FILE_H=svUtilsExports.h
 
-CREATE_EXPORTS_CV_ALL_CAPS=SV_REPOSITORY
-CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_REPOSITORY
-CREATE_EXPORTS_CV_FILE_H=svRepositoryExports.h
+CXXFLAGS += -DSV_EXPORT_UTILS_COMPILE
 
-CXXFLAGS += -DSV_EXPORT_REPOSITORY_COMPILE
+HDRS	= cv_misc_utils.h cv_vtk_utils.h cvTimer.h cvIntArrayList.h \
+	  cvStateArray.h cv_cgeom.h cvMath.h cv_arg.h cvFactoryRegistrar.h
 
-HDRS	= cvRepository.h cvRepositoryData.h cvDataObject.h \
-	  cvPolyData.h cvStrPts.h cvUnstructuredGrid.h \
-          cvDataSet.h
 
-CXXSRCS	= cvRepository.cxx cvRepositoryData.cxx cvDataObject.cxx \
-	  cvPolyData.cxx cvStrPts.cxx cvUnstructuredGrid.cxx \
-	  cvDataSet.cxx
+CXXSRCS	= cv_misc_utils.cxx cv_vtk_utils.cxx cvTimer.cxx cvIntArrayList.cxx \
+	  cvStateArray.cxx cv_cgeom.cxx cvMath.cxx cv_arg.cxx cvFactoryRegistrar.cxx
 
-DLLHDRS = cv_repos_init.h
-DLLSRCS = cv_repos_init.cxx
+DLLHDRS = cv_utils_init.h cv_math_init.h cv_get_tcl_interp_init.h
+DLLSRCS = cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx
 
-SVPYHDRS = cv_repos_init_py.h
-SVPYSRCS = cv_repos_init_py.cxx
+SVPYHDRS = cv_utils_init_py.h cv_math_init_py.h
+SVPYSRCS = cv_utils_init_py.cxx cv_math_init_py.cxx
 
-DLLLIBS = $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
+TARGET_LIB_NAME = $(SV_LIB_UTILS_NAME)
 
-TARGET_LIB_NAME = $(SV_LIB_REPOSITORY_NAME)
+SV_PYTHON_MODULE_NAME = pyMath
 
-SV_PYTHON_MODULE_NAME = pyRepository
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 include $(TOP)/targetlib.mk

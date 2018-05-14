@@ -524,33 +524,33 @@ endif
 
 ifeq ($(SV_USE_SHARED),1)
   SHARED_LIBDIRS += \
-          ../Code/Source/sv3/Common/Utils \
-	  ../Code/Source/sv3/Common/Repository \
+          ../Code/Source/sv/Utils \
+	  ../Code/Source/sv/Repository \
           ../Code/Source/vtkSV/Common \
           ../Code/Source/vtkSV/Filters \
           ../Code/Source/vtkSV/Modules/Boolean \
           ../Code/Source/vtkSV/Modules/Geometry \
           ../Code/Source/vtkSV/Modules/NURBS \
           ../Code/Source/vtkSV/Modules/Parameterization \
-	  ../Code/Source/sv3/Model/SolidModel \
-	  ../Code/Source/sv3/Mesh/MeshObject \
-	  ../Code/Source/sv3/Common/Geometry \
+	  ../Code/Source/sv/Model/SolidModel \
+	  ../Code/Source/sv/Mesh/MeshObject \
+	  ../Code/Source/sv/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation
 else
   LIBDIRS += \
-          ../Code/Source/sv3/Common/Utils \
-	  ../Code/Source/sv3/Common/Repository \
+          ../Code/Source/sv/Utils \
+	  ../Code/Source/sv/Repository \
           ../Code/Source/vtkSV/Common \
           ../Code/Source/vtkSV/Filters \
           ../Code/Source/vtkSV/Modules/Boolean \
           ../Code/Source/vtkSV/Modules/Geometry \
           ../Code/Source/vtkSV/Modules/NURBS \
           ../Code/Source/vtkSV/Modules/Parameterization \
-	  ../Code/Source/sv3/Model/SolidModel \
-	  ../Code/Source/sv3/Mesh/MeshObject \
-	  ../Code/Source/sv3/Common/Geometry \
+	  ../Code/Source/sv/Model/SolidModel \
+	  ../Code/Source/sv/Mesh/MeshObject \
+	  ../Code/Source/sv/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation
@@ -558,17 +558,17 @@ endif
 
 ifeq ($(SV_USE_VMTK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/VMTKUtils
+     SHARED_LIBDIRS += ../Code/Source/sv/Mesh/VMTKUtils
   else
-     LIBDIRS += ../Code/Source/sv3/Mesh/VMTKUtils
+     LIBDIRS += ../Code/Source/sv/Mesh/VMTKUtils
   endif
 endif
 
 # polydata model can depend on vmtk
 ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv3/Model/PolyDataSolidModel
+     SHARED_LIBDIRS += ../Code/Source/sv/Model/PolyDataSolidModel
 else
-     LIBDIRS += ../Code/Source/sv3/Model/PolyDataSolidModel
+     LIBDIRS += ../Code/Source/sv/Model/PolyDataSolidModel
 endif
 
 ifeq ($(SV_USE_ITK),1)
@@ -581,17 +581,17 @@ endif
 
 ifeq ($(SV_USE_MMG),1)
   ifeq ($(SV_USE_MMG_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/MMGMeshUtils
+     SHARED_LIBDIRS += ../Code/Source/sv/Mesh/MMGMeshUtils
   else
-     LIBDIRS += ../Code/Source/sv3/Mesh/MMGMeshUtils
+     LIBDIRS += ../Code/Source/sv/Mesh/MMGMeshUtils
   endif
 endif
 
 ifeq ($(SV_USE_TETGEN),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/TetGenMeshObject
+     SHARED_LIBDIRS += ../Code/Source/sv/Mesh/TetGenMeshObject
   else
-     LIBDIRS += ../Code/Source/sv3/Mesh/TetGenMeshObject
+     LIBDIRS += ../Code/Source/sv/Mesh/TetGenMeshObject
   endif
 endif
 
@@ -607,25 +607,25 @@ endif
 
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
   ifeq ($(SV_USE_MESHSIM_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/sv3/Model/MeshSimDiscreteSolidModel
+    SHARED_LIBDIRS += ../Code/Source/sv/Model/MeshSimDiscreteSolidModel
   else
-    LIBDIRS += ../Code/Source/sv3/Model/MeshSimDiscreteSolidModel
+    LIBDIRS += ../Code/Source/sv/Model/MeshSimDiscreteSolidModel
   endif
 endif
 
     ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
       ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
-        SHARED_LIBDIRS += ../Code/Source/sv3/Model/MeshSimSolidModel
+        SHARED_LIBDIRS += ../Code/Source/sv/Model/MeshSimSolidModel
       else
-        LIBDIRS += ../Code/Source/sv3/Model/MeshSimSolidModel
+        LIBDIRS += ../Code/Source/sv/Model/MeshSimSolidModel
       endif
     endif
 
 ifeq ($(SV_USE_OPENCASCADE),1)
   ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/sv3/Model/OCCTSolidModel
+    SHARED_LIBDIRS += ../Code/Source/sv/Model/OCCTSolidModel
   else
-    LIBDIRS += ../Code/Source/sv3/Model/OCCTSolidModel
+    LIBDIRS += ../Code/Source/sv/Model/OCCTSolidModel
   endif
 endif
 
@@ -633,45 +633,45 @@ endif
 
 ifeq ($(SV_USE_MESHSIM),1)
   ifeq ($(SV_USE_MESHSIM_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/MeshSimMeshObject
+     SHARED_LIBDIRS += ../Code/Source/sv/Mesh/MeshSimMeshObject
   else
-     LIBDIRS += ../Code/Source/sv3/Mesh/MeshSimMeshObject
+     LIBDIRS += ../Code/Source/sv/Mesh/MeshSimMeshObject
   endif
 endif
 
-EXECDIRS = ../Code/Source/UI
+EXECDIRS = ../Code/Source/Application
 
 # need solverio for adaptor classes so add them after adding solverio
 
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
   ifeq ($(SV_USE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/AdaptObject
+    SHARED_LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
   else
-    LIBDIRS += ../Code/Source/sv3/Mesh/AdaptObject
+    LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
   endif
 else
   ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
     ifeq ($(SV_USE_SHARED),1)
-      SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/AdaptObject
+      SHARED_LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
     else
-      LIBDIRS += ../Code/Source/sv3/Mesh/AdaptObject
+      LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
     endif
   endif
 endif
 
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
   ifeq ($(SV_USE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/TetGenAdapt
+    SHARED_LIBDIRS += ../Code/Source/sv/Mesh/TetGenAdapt
   else
-    LIBDIRS += ../Code/Source/sv3/Mesh/TetGenAdapt
+    LIBDIRS += ../Code/Source/sv/Mesh/TetGenAdapt
   endif
 endif
 
 ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
   ifeq ($(SV_USE_MESHSIM_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv3/Mesh/MeshSimAdapt
+     SHARED_LIBDIRS += ../Code/Source/sv/Mesh/MeshSimAdapt
   else
-     LIBDIRS += ../Code/Source/sv3/Mesh/MeshSimAdapt
+     LIBDIRS += ../Code/Source/sv/Mesh/MeshSimAdapt
   endif
 endif
 
