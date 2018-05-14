@@ -38,52 +38,42 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) \
-	   $(VTK_INCDIRS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
+	   $(PYTHON_INCDIR)
 
-CREATE_EXPORTS_CV_ALL_CAPS=SV_LSET
-CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_LSET
-CREATE_EXPORTS_CV_FILE_H=svLSetExports.h
+ifeq ($(SV_USE_OPENCASCADE),1)
+   CXXFLAGS += $(OPENCASCADE_INCDIR)
+endif
 
-CXXFLAGS += -DSV_EXPORT_LSET_COMPILE
+CREATE_EXPORTS_CV_ALL_CAPS=SV_SYSGEOM
+CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_SYSGEOM
+CREATE_EXPORTS_CV_FILE_H=svGeometryExports.h
 
-HDRS	= cvLevelSet.h cvLevelSetNode.h \
-	  cvLevelSetStructuredGrid.h cvLevelSetDenseGrid.h \
-          cvLevelSetSparseGrid.h
+CXXFLAGS += -DSV_EXPORT_SYSGEOM_COMPILE
 
-HDRS   += cvLevelSetVelocity.h cvLevelSetVelocityKGI.h \
-          cvLevelSetVelocityConstant.h \
-	  cvLevelSetVelocityThreshold.h cvLevelSetVelocityPotential.h \
-          cvLevelSetVelocityExponentialDecay.h cvLevelSetVelocitySmooth.h \
-          cvLevelSetVelocityImage.h \
-          cvIntArrayList.h cvStateArray.h cvTimer.h
+HDRS	= \
+  cv_sys_geom.h \
+  cv_ggems.h \
+  cv_spline.h \
+  cv_integrate_surface.h
 
-CXXSRCS	= cvLevelSet.cxx cvLevelSetNode.cxx \
-	  cvLevelSetStructuredGrid.cxx cvLevelSetDenseGrid.cxx \
-          cvLevelSetSparseGrid.cxx
+CXXSRCS	= \
+  cv_sys_geom.cxx cv_ggems.cxx \
+  cv_spline.cxx cv_integrate_surface.cxx
 
-CXXSRCS += cvLevelSetVelocity.cxx cvLevelSetVelocityKGI.cxx \
-          cvLevelSetVelocityConstant.cxx \
-	  cvLevelSetVelocityThreshold.cxx cvLevelSetVelocityPotential.cxx \
-          cvLevelSetVelocityExponentialDecay.cxx \
-          cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx \
-          cvIntArrayList.cxx cvStateArray.cxx cvTimer.cxx
+DLLHDRS = cv_geom_init.h
 
-DLLHDRS = cv_LsetCore_init.h cv_LsetV_init.h cv_Lset_init.h
-DLLSRCS = cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx
+DLLSRCS = cv_geom_init.cxx
 
-# -------
-# Targets
-# -------
-
-TARGET_LIB_NAME = $(SV_LIB_LSET_NAME)
-
-DLLLIBS = $(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
-	  $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
-	  $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+	  $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
-	  $(VMTK_LIBS)
+          $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVGEOMETRY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
+          $(VMTK_LIBS)
+
+TARGET_LIB_NAME = $(SV_LIB_GEOM_NAME)
 
 include $(TOP)/targetlib.mk
-

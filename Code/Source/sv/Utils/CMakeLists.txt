@@ -29,40 +29,41 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# Legacy Level Sets
+# Utils
 #-----------------------------------------------------------------------------
 
-set(lib ${SV_LIB_LSET_NAME})
-set(export_directive lset)
-set(export_file_name svLSetExports.h)
+set(lib ${SV_LIB_UTILS_NAME})
+set(export_directive utils)
+set(export_file_name svUtilsExports.h)
 
-list(APPEND CORELIBS ${lib})
+LIST(APPEND CORELIBS ${lib})
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
 
-set(CXXSRCS cvLevelSet.cxx cvLevelSetNode.cxx
-  cvLevelSetStructuredGrid.cxx cvLevelSetDenseGrid.cxx
-  cvLevelSetSparseGrid.cxx cvLevelSetVelocity.cxx
-  cvLevelSetVelocityKGI.cxx cvLevelSetVelocityConstant.cxx
-  cvLevelSetVelocityThreshold.cxx cvLevelSetVelocityPotential.cxx
-  cvLevelSetVelocityExponentialDecay.cxx
-  cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx
-  cvIntArrayList.cxx cvStateArray.cxx cvTimer.cxx
+
+SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
+  cv_cgeom.cxx
+  cvMath.cxx cv_arg.cxx
+  cvFactoryRegistrar.cxx
   )
-set(HDRS cvLevelSet.h cvLevelSetNode.h
-  cvLevelSetStructuredGrid.h cvLevelSetDenseGrid.h
-  cvLevelSetSparseGrid.h cvLevelSetVelocity.h
-  cvLevelSetVelocityKGI.h cvLevelSetVelocityConstant.h
-  cvLevelSetVelocityThreshold.h cvLevelSetVelocityPotential.h
-  cvLevelSetVelocityExponentialDecay.h cvLevelSetVelocitySmooth.h
-  cvLevelSetVelocityImage.h
-  cvIntArrayList.h cvStateArray.h cvTimer.h
+SET(HDRS cv_misc_utils.h cv_vtk_utils.h
+  cv_cgeom.h
+  cvMath.h cv_arg.h cvFactoryRegistrar.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_utils_init.cxx cv_math_init.cxx cv_utils_init_py.cxx cv_math_init_py.cxx)
+
+if(SV_USE_PYTHON)
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
+endif()
 
 target_link_libraries(${lib}
-  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
-  ${TCL_LIBRARY} ${TK_LIBRARY}
-  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_IMAGE_NAME})
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${SV_LIB_GLOBALS_NAME}
+  )
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)

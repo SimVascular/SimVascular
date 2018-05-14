@@ -38,52 +38,35 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) \
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) \
+	   $(TCLTK_INCDIR) $(PYTHON_INCDIR) \
 	   $(VTK_INCDIRS)
 
-CREATE_EXPORTS_CV_ALL_CAPS=SV_LSET
-CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_LSET
-CREATE_EXPORTS_CV_FILE_H=svLSetExports.h
+CREATE_EXPORTS_CV_ALL_CAPS=SV_REPOSITORY
+CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_REPOSITORY
+CREATE_EXPORTS_CV_FILE_H=svRepositoryExports.h
 
-CXXFLAGS += -DSV_EXPORT_LSET_COMPILE
+CXXFLAGS += -DSV_EXPORT_REPOSITORY_COMPILE
 
-HDRS	= cvLevelSet.h cvLevelSetNode.h \
-	  cvLevelSetStructuredGrid.h cvLevelSetDenseGrid.h \
-          cvLevelSetSparseGrid.h
+HDRS	= cvRepository.h cvRepositoryData.h cvDataObject.h \
+	  cvPolyData.h cvStrPts.h cvUnstructuredGrid.h \
+          cvDataSet.h
 
-HDRS   += cvLevelSetVelocity.h cvLevelSetVelocityKGI.h \
-          cvLevelSetVelocityConstant.h \
-	  cvLevelSetVelocityThreshold.h cvLevelSetVelocityPotential.h \
-          cvLevelSetVelocityExponentialDecay.h cvLevelSetVelocitySmooth.h \
-          cvLevelSetVelocityImage.h \
-          cvIntArrayList.h cvStateArray.h cvTimer.h
+CXXSRCS	= cvRepository.cxx cvRepositoryData.cxx cvDataObject.cxx \
+	  cvPolyData.cxx cvStrPts.cxx cvUnstructuredGrid.cxx \
+	  cvDataSet.cxx
 
-CXXSRCS	= cvLevelSet.cxx cvLevelSetNode.cxx \
-	  cvLevelSetStructuredGrid.cxx cvLevelSetDenseGrid.cxx \
-          cvLevelSetSparseGrid.cxx
+DLLHDRS = cv_repos_init.h
+DLLSRCS = cv_repos_init.cxx
 
-CXXSRCS += cvLevelSetVelocity.cxx cvLevelSetVelocityKGI.cxx \
-          cvLevelSetVelocityConstant.cxx \
-	  cvLevelSetVelocityThreshold.cxx cvLevelSetVelocityPotential.cxx \
-          cvLevelSetVelocityExponentialDecay.cxx \
-          cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx \
-          cvIntArrayList.cxx cvStateArray.cxx cvTimer.cxx
+SVPYHDRS = cv_repos_init_py.h
+SVPYSRCS = cv_repos_init_py.cxx
 
-DLLHDRS = cv_LsetCore_init.h cv_LsetV_init.h cv_Lset_init.h
-DLLSRCS = cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-# -------
-# Targets
-# -------
+TARGET_LIB_NAME = $(SV_LIB_REPOSITORY_NAME)
 
-TARGET_LIB_NAME = $(SV_LIB_LSET_NAME)
-
-DLLLIBS = $(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
-	  $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
-	  $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
-	  $(VMTK_LIBS)
+SV_PYTHON_MODULE_NAME = pyRepository
 
 include $(TOP)/targetlib.mk
-
