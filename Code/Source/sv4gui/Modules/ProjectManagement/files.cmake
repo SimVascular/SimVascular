@@ -37,6 +37,7 @@ set(H_FILES
     sv4gui_ModelFolder.h
     sv4gui_MeshFolder.h
     sv4gui_SimulationFolder.h
+    sv4gui_RepositoryFolder.h
     sv4gui_ProjectManager.h
     sv4gui_DataNodeOperation.h
     sv4gui_DataNodeOperationInterface.h
@@ -51,6 +52,7 @@ set(CPP_FILES
     sv4gui_MeshFolder.cxx
     sv4gui_ModelFolder.cxx
     sv4gui_PathFolder.cxx
+    sv4gui_RepositoryFolder.cxx
     sv4gui_ProjectFolder.cxx
     sv4gui_SegmentationFolder.cxx
     sv4gui_SimulationFolder.cxx

@@ -46,8 +46,8 @@ HDRS	= sv4_PathElement.h sv4_Spline.h
 CXXSRCS	= sv4_PathElement.cxx sv4_Spline.cxx 
 
 
-#SVPYHDRS = cv_path_init_py.h
-#SVPYSRCS = cv_path_init_py.cxx
+SVPYHDRS = sv4_PathElement_init_py.h
+SVPYSRCS = sv4_PathElement_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \

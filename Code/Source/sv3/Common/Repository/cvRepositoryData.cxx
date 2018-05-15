@@ -88,6 +88,9 @@ char *RepositoryDataT_EnumToStr( RepositoryDataT val )
   case ADAPTOR_T:
     strcpy( result, "Adaptor");
     break;
+  case PATH_T:
+    strcpy( result, "Path");
+    break;
   default:
     strcpy( result, "Invalid RepositoryData type" );
     break;

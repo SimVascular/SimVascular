@@ -35,6 +35,7 @@
 #include "SimVascular.h"
 
 #include <svPathExports.h>
+#include "cvRepositoryData.h"
 
 #include "sv4_Spline.h"
 
@@ -43,7 +44,7 @@
 #include <array>
 #include <vector>
 
-class SV_EXPORT_PATH sv4PathElement
+class SV_EXPORT_PATH sv4PathElement : public cvRepositoryData
 {
 public:
 

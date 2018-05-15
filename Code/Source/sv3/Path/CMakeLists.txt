@@ -50,7 +50,7 @@ set(CXXSRCS sv4_PathElement.cxx sv4_VtkParametricSpline.cxx sv4_Spline.cxx
 set(HDRS sv4_PathElement.h sv4_VtkParametricSpline.h sv4_Spline.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv4_PathElement_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

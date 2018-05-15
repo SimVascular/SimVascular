@@ -281,6 +281,7 @@ if(SV_USE_QT_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.modeling"
       "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
+      "Source/sv4gui/Plugins/org.sv.pythondatanodes"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application")
   endif()
 endif()

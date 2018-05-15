@@ -31,24 +31,25 @@
 #include "SimVascular.h"
 
 #include "sv4_PathElement.h"
+#include "cvRepositoryData.h"
 #include "cvMath.h"
 #include <array>
 #include <vector>
 
-sv4PathElement::sv4PathElement()
-    : m_Method(CONSTANT_TOTAL_NUMBER)
-    , m_CalculationNumber(100)
-    , m_Spacing(0)
+sv4PathElement::sv4PathElement() : cvRepositoryData( PATH_T )
 {
+    m_Method = CONSTANT_TOTAL_NUMBER;
+    m_CalculationNumber=100;
+    m_Spacing = 0;
 }
 
-sv4PathElement::sv4PathElement(const sv4PathElement &other)
-    : m_Method(other.m_Method)
-    , m_CalculationNumber(other.m_CalculationNumber)
-    , m_Spacing(other.m_Spacing)
-    , m_ControlPoints(other.m_ControlPoints)
-    , m_PathPoints(other.m_PathPoints)
+sv4PathElement::sv4PathElement(const sv4PathElement &other) : cvRepositoryData( PATH_T )
 {
+    m_Method = other.m_Method;
+    m_CalculationNumber=other.m_CalculationNumber;
+    m_Spacing=other.m_Spacing;
+    m_ControlPoints=other.m_ControlPoints;
+    m_PathPoints=other.m_PathPoints;
 }
 
 sv4PathElement::~sv4PathElement()

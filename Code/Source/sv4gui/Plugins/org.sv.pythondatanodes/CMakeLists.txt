@@ -28,22 +28,34 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Plug-ins must be ordered according to their dependencies
+project(org_sv_pythondatanodes)
 
-set(SV_PLUGINS
+set(lib org_sv_pythondatanodes)
 
-  org.sv.gui.qt.application:ON
+if(SV_USE_PYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
 
-  org.sv.projectdatanodes:ON
-  
-  org.sv.pythondatanodes:ON
+if(SV_USE_MITK_CONFIG)
+  mitk_create_plugin(
+    EXPORT_DIRECTIVE SV_PYTHONDATANODES
+    EXPORTED_INCLUDE_SUFFIXES src
+    MODULE_DEPENDS ${SV_LIB_MODULE_QTWIDGETS_NAME} ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME} ${SV_LIB_MODULE_PATH_NAME} ${SV_LIB_MODULE_SEGMENTATION_NAME} ${SV_LIB_MODULE_MODEL_NAME} ${SV_LIB_MODULE_MESH_NAME} ${SV_LIB_MODULE_SIMULATION_NAME} ${PYTHON_LIBRARY} ${SV_LIB_REPOSITORY_NAME}
+  )
+else()
+  simvascular_create_plugin(
+    EXPORT_DIRECTIVE SV_QT_PROJECTMANAGER
+    MODULE_DEPENDS ${SV_LIB_MODULE_QTWIDGETS_NAME} ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME} ${SV_LIB_MODULE_PATH_NAME} ${SV_LIB_MODULE_SEGMENTATION_NAME} ${SV_LIB_MODULE_MODEL_NAME} ${SV_LIB_MODULE_MESH_NAME} ${SV_LIB_MODULE_SIMULATION_NAME} ${PYTHON_LIBRARY} ${SV_LIB_REPOSITORY_NAME}
+  )
+endif()
 
-  org.sv.gui.qt.projectmanager:ON
-  org.sv.gui.qt.datamanager:ON
-  org.sv.gui.qt.pathplanning:ON
-  org.sv.gui.qt.segmentation:ON
-  org.sv.gui.qt.modeling:ON
-  org.sv.gui.qt.meshing:ON
-  org.sv.gui.qt.simulation:ON
+if(SV_INSTALL_LIBS)
+    install(TARGETS ${lib}
+        RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR}/plugins COMPONENT CoreExecutables
+        LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR}/plugins COMPONENT CoreLibraries
+        ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR}/plugins COMPONENT CoreLibraries
+    )
+endif()
 
-)
