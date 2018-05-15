@@ -67,15 +67,15 @@ ifeq ($(SV_USE_TETGEN),1)
         CXXFLAGS    += $(TETGEN_INCDIR)
 endif
 
-HDRS	= cvTetGenAdapt.h
+HDRS	= sv_TetGenAdapt.h
 
-CXXSRCS = cvTetGenAdapt.cxx
+CXXSRCS = sv_TetGenAdapt.cxx
 
-DLLHDRS = cv_tetgen_adapt_init.h
-DLLSRCS = cv_tetgen_adapt_init.cxx
+DLLHDRS = sv_tetgen_adapt_init.h
+DLLSRCS = sv_tetgen_adapt_init.cxx
 
-SVPYHDRS = cv_tetgen_adapt_init_py.h
-SVPYSRCS = cv_tetgen_adapt_init_py.cxx
+SVPYHDRS = sv_tetgen_adapt_init_py.h
+SVPYSRCS = sv_tetgen_adapt_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT) \
           $(SOLVERIO_LIB)

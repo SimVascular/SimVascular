@@ -37,10 +37,10 @@
 #include "sv4gui_MitkSeg3D.h"
 
 #include "SimVascular.h"
-#include "cv_sys_geom.h"
-#include "cv_vmtk_utils.h"
-#include "cvPolyData.h"
-#include "cv_polydatasolid_utils.h"
+#include "sv_sys_geom.h"
+#include "sv_vmtk_utils.h"
+#include "sv_PolyData.h"
+#include "sv_polydatasolid_utils.h"
 
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>

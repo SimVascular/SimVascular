@@ -40,13 +40,13 @@ endif()
 
 LIST(APPEND CORELIBS ${lib})
 
-SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx)
-set(HDRS cvAdaptObject.h cv_adapt_utils.h eispack.h)
+SET(CXXSRCS sv_AdaptObject.cxx sv_adapt_utils.cxx sv_eispack.cxx)
+set(HDRS sv_AdaptObject.h sv_adapt_utils.h sv_eispack.h)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-  	add_library(${lib} SHARED ${CXXSRCS} cv_adapt_init.cxx cv_adapt_init_py.cxx)
+  	add_library(${lib} SHARED ${CXXSRCS} sv_adapt_init.cxx sv_adapt_init_py.cxx)
 else()
-  	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_adapt_init.cxx cv_adapt_init_py.cxx)
+  	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_adapt_init.cxx sv_adapt_init_py.cxx)
 endif()
 
 if(SV_USE_PYTHON)

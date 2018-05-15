@@ -34,13 +34,13 @@
 #include "sv4gui_Math3.h"
 #include "sv4gui_ModelUtils.h"
 
-#include "cvPolyDataSolid.h"
-#include "cv_polydatasolid_utils.h"
+#include "sv_PolyDataSolid.h"
+#include "sv_polydatasolid_utils.h"
 #ifdef SV_USE_VMTK
-  #include "cv_vmtk_utils.h"
+  #include "sv_vmtk_utils.h"
 #endif
 #ifdef SV_USE_MMG
-  #include "cv_mmg_mesh_utils.h"
+  #include "sv_mmg_mesh_utils.h"
 #endif
 
 #include <vtkCleanPolyData.h>

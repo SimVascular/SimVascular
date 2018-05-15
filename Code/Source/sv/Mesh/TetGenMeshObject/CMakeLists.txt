@@ -42,10 +42,10 @@ endif()
 LIST(APPEND PLUGINLIBS ${lib})
 include_directories(${TETGEN_INCLUDE_DIR})
 
-SET(CXXSRCS cvTetGenMeshObject.cxx cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx)
-SET(HDRS cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h)
+SET(CXXSRCS sv_TetGenMeshObject.cxx sv_TetGenMeshSystem.cxx sv_tetgenmesh_utils.cxx)
+SET(HDRS sv_TetGenMeshObject.h sv_TetGenMeshSystem.h sv_tetgenmesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_mesh_init.cxx cv_tetgen_mesh_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_mesh_init.cxx sv_tetgen_mesh_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

@@ -45,19 +45,19 @@ endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-SET(CXXSRCS cvRepository.cxx cvRepositoryData.cxx
-  cvDataObject.cxx cvPolyData.cxx
-  cvStrPts.cxx cvUnstructuredGrid.cxx
-  cvDataSet.cxx
+SET(CXXSRCS sv_Repository.cxx sv_RepositoryData.cxx
+  sv_DataObject.cxx sv_PolyData.cxx
+  sv_StrPts.cxx sv_UnstructuredGrid.cxx
+  sv_DataSet.cxx
   )
 
-SET(HDRS cvRepository.h cvRepositoryData.h
-  cvDataObject.h cvPolyData.h
-  cvStrPts.h cvUnstructuredGrid.h
-  cvDataSet.h
+SET(HDRS sv_Repository.h sv_RepositoryData.h
+  sv_DataObject.h sv_PolyData.h
+  sv_StrPts.h sv_UnstructuredGrid.h
+  sv_DataSet.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_repos_init.cxx cv_repos_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_repos_init.cxx sv_repos_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

@@ -48,19 +48,19 @@ CREATE_EXPORTS_CV_FILE_H=svRepositoryExports.h
 
 CXXFLAGS += -DSV_EXPORT_REPOSITORY_COMPILE
 
-HDRS	= cvRepository.h cvRepositoryData.h cvDataObject.h \
-	  cvPolyData.h cvStrPts.h cvUnstructuredGrid.h \
-          cvDataSet.h
+HDRS	= sv_Repository.h sv_RepositoryData.h sv_DataObject.h \
+	  sv_PolyData.h sv_StrPts.h sv_UnstructuredGrid.h \
+          sv_DataSet.h
 
-CXXSRCS	= cvRepository.cxx cvRepositoryData.cxx cvDataObject.cxx \
-	  cvPolyData.cxx cvStrPts.cxx cvUnstructuredGrid.cxx \
-	  cvDataSet.cxx
+CXXSRCS	= sv_Repository.cxx sv_RepositoryData.cxx sv_DataObject.cxx \
+	  sv_PolyData.cxx sv_StrPts.cxx sv_UnstructuredGrid.cxx \
+	  sv_DataSet.cxx
 
-DLLHDRS = cv_repos_init.h
-DLLSRCS = cv_repos_init.cxx
+DLLHDRS = sv_repos_init.h
+DLLSRCS = sv_repos_init.cxx
 
-SVPYHDRS = cv_repos_init_py.h
-SVPYSRCS = cv_repos_init_py.cxx
+SVPYHDRS = sv_repos_init_py.h
+SVPYSRCS = sv_repos_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)

@@ -41,10 +41,10 @@ if(SV_USE_PYTHON)
 		    ${PYTHON_INCLUDE_DIR}
 		    ${PYTHON_INCLUDE_DIRS})
 endif()
-SET(CXXSRCS cv_mmg_mesh_utils.cxx)
-SET(HDRS cv_mmg_mesh_utils.h)
+SET(CXXSRCS sv_mmg_mesh_utils.cxx)
+SET(HDRS sv_mmg_mesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mmg_mesh_init.cxx cv_mmg_mesh_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_mmg_mesh_init.cxx sv_mmg_mesh_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

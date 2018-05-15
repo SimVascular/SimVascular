@@ -43,18 +43,18 @@ CREATE_EXPORTS_CV_FILE_H=svUtilsExports.h
 
 CXXFLAGS += -DSV_EXPORT_UTILS_COMPILE
 
-HDRS	= cv_misc_utils.h cv_vtk_utils.h \
-	  cv_cgeom.h cvMath.h cv_arg.h cvFactoryRegistrar.h
+HDRS	= sv_misc_utils.h sv_vtk_utils.h \
+	  sv_cgeom.h sv_Math.h sv_arg.h sv_FactoryRegistrar.h
 
 
-CXXSRCS	= cv_misc_utils.cxx cv_vtk_utils.cxx \
-	  cv_cgeom.cxx cvMath.cxx cv_arg.cxx cvFactoryRegistrar.cxx
+CXXSRCS	= sv_misc_utils.cxx sv_vtk_utils.cxx \
+	  sv_cgeom.cxx sv_Math.cxx sv_arg.cxx sv_FactoryRegistrar.cxx
 
-DLLHDRS = cv_utils_init.h cv_math_init.h
-DLLSRCS = cv_utils_init.cxx cv_math_init.cxx
+DLLHDRS = sv_utils_init.h sv_math_init.h
+DLLSRCS = sv_utils_init.cxx sv_math_init.cxx
 
-SVPYHDRS = cv_utils_init_py.h cv_math_init_py.h
-SVPYSRCS = cv_utils_init_py.cxx cv_math_init_py.cxx
+SVPYHDRS = sv_utils_init_py.h sv_math_init_py.h
+SVPYSRCS = sv_utils_init_py.cxx sv_math_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_UTILS_NAME)
 

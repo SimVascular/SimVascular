@@ -54,14 +54,14 @@ ifeq ($(SV_USE_PYTHON),1)
    CXXFLAGS += $(PYTHON_INCDIR)
 endif
 
-HDRS	= cvSolidModel.h
-CXXSRCS	= cvSolidModel.cxx
+HDRS	= sv_SolidModel.h
+CXXSRCS	= sv_SolidModel.cxx
 
-DLLHDRS = cv_solid_init.h
-DLLSRCS = cv_solid_init.cxx
+DLLHDRS = sv_solid_init.h
+DLLSRCS = sv_solid_init.cxx
 
-SVPYHDRS = cv_solid_init_py.h
-SVPYSRCS = cv_solid_init_py.cxx
+SVPYHDRS = sv_solid_init_py.h
+SVPYSRCS = sv_solid_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)

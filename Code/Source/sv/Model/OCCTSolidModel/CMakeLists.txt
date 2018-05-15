@@ -43,10 +43,10 @@ if(SV_USE_PYTHON)
 	  ${PYTHON_INCLUDE_DIRS})
 endif()
 
-set(CXXSRCS cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx)
-set(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)
+set(CXXSRCS sv_OCCTSolidModel.cxx sv_occtsolid_utils.cxx)
+set(HDRS sv_OCCTSolidModel.h sv_occtsolid_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx cv_occt_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_occt_init.cxx sv_occt_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

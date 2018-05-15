@@ -42,10 +42,10 @@ if(SV_USE_PYTHON)
 endif()
 LIST(APPEND CORELIBS ${lib})
 
-SET(CXXSRCS cvMeshObject.cxx cvMeshSystem.cxx)
-SET(HDRS cvMeshObject.h cvMeshSystem.h)
+SET(CXXSRCS sv_MeshObject.cxx sv_MeshSystem.cxx)
+SET(HDRS sv_MeshObject.h sv_MeshSystem.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mesh_init.cxx cv_mesh_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_mesh_init.cxx sv_mesh_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

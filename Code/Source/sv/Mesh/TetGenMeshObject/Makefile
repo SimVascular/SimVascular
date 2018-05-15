@@ -66,17 +66,17 @@ ifeq ($(SV_USE_VMTK),1)
   CXXFLAGS += $(VMTK_INCDIR)
 endif
 
-HDRS	= cvTetGenMeshObject.h cvTetGenMeshSystem.h \
-          cv_tetgenmesh_utils.h
+HDRS	= sv_TetGenMeshObject.h sv_TetGenMeshSystem.h \
+          sv_tetgenmesh_utils.h
 
-CXXSRCS	= cvTetGenMeshObject.cxx \
-          cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx
+CXXSRCS	= sv_TetGenMeshObject.cxx \
+          sv_TetGenMeshSystem.cxx sv_tetgenmesh_utils.cxx
 
-DLLHDRS = cv_tetgen_mesh_init.h
-DLLSRCS = cv_tetgen_mesh_init.cxx
+DLLHDRS = sv_tetgen_mesh_init.h
+DLLSRCS = sv_tetgen_mesh_init.cxx
 
-SVPYHDRS = cv_tetgen_mesh_init_py.h
-SVPYSRCS = cv_tetgen_mesh_init_py.cxx
+SVPYHDRS = sv_tetgen_mesh_init_py.h
+SVPYSRCS = sv_tetgen_mesh_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \

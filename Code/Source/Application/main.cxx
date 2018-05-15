@@ -40,7 +40,7 @@
   #include "ctkPluginFrameworkLauncher.h"
 #endif
 
-#include "cvIOstream.h"
+#include "sv_IOstream.h"
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -55,7 +55,7 @@
 #undef GetObject
 #endif
 
-#include "cv_globals.h"
+#include "sv2_globals.h"
 
 #ifdef WIN32
 #include <windows.h>

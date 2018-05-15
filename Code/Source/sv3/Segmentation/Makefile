@@ -43,18 +43,18 @@ CREATE_EXPORTS_CV_FILE_H=svSegITKExports.h
 
 CXXFLAGS += -DSV_EXPORT_SEGITK_COMPILE
 
-HDRS	=  cv_ITKLset_ITKUtils.h cvITKLevelSet.h \
-           cv_ITKLset_ConnectVTKITK.h cv_ITKLset_ITK_Macros.h \
-           cv_ITKLset_Macros.h cv_ITKLset_TCL_Macros.h \
-           cv_ITKLset_VTK_Macros.h cv_ITKLset_ImgInfo.h
+HDRS	=  sv3_ITKLset_ITKUtils.h sv3_ITKLevelSet.h \
+           sv3_ITKLset_ConnectVTKITK.h sv3_ITKLset_ITK_Macros.h \
+           sv3_ITKLset_Macros.h sv3_ITKLset_TCL_Macros.h \
+           sv3_ITKLset_VTK_Macros.h sv3_ITKLset_ImgInfo.h
 
-CXXSRCS	=  cvITKUtils.cxx cvITKLevelSet.cxx
+CXXSRCS	=  sv3_ITKUtils.cxx sv3_ITKLevelSet.cxx
 
-DLLHDRS = cv_ITKUtils_init.h cv_ITKLset2d_init.h cv_ITKLset3d_init.h cv_ITKLset_init.h
-DLLSRCS = cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx  cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx
+DLLHDRS = sv3_ITKUtils_init.h sv3_ITKLset2d_init.h sv3_ITKLset3d_init.h sv3_ITKLset_init.h
+DLLSRCS = sv3_ITKUtils_init.cxx sv3_ITKLset2d_init.cxx  sv3_ITKLset3d_init.cxx sv3_ITKLset_init.cxx
 
-SVPYHDRS = cv_ITKLset_init_py.h  cv_ITKUtils_init_py.h cv_ITKLset2d_init_py.h cv_ITKLset3d_init_py.h
-SVPYSRCS = cv_ITKLset_init_py.cxx  cv_ITKUtils_init_py.cxx cv_ITKLset2d_init_py.cxx  cv_ITKLset3d_init_py.cxx
+SVPYHDRS = sv3_ITKLset_init_py.h  sv3_ITKUtils_init_py.h sv3_ITKLset2d_init_py.h sv3_ITKLset3d_init_py.h
+SVPYSRCS = sv3_ITKLset_init_py.cxx  sv3_ITKUtils_init_py.cxx sv3_ITKLset2d_init_py.cxx  sv3_ITKLset3d_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_ITK_LSET_NAME)
 

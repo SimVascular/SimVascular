@@ -34,8 +34,8 @@
 
 #include <sv4guiModuleModelExports.h>
 
-#define __CVMISC_UTILS_H //avoid including cv_misc_utils.h from cvSolidModel.h
-#include "cvSolidModel.h"
+#define __CVMISC_UTILS_H //avoid including sv_misc_utils.h from sv_SolidModel.h
+#include "sv_SolidModel.h"
 
 #include "sv4gui_ContourGroup.h"
 

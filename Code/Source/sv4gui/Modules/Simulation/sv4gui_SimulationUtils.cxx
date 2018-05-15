@@ -32,7 +32,7 @@
 #include "sv4gui_SimulationUtils.h"
 
 #include "sv4gui_StringUtils.h"
-#include "cv_integrate_surface.h"
+#include "sv_integrate_surface.h"
 
 #include <sstream>
 #include <iostream>
