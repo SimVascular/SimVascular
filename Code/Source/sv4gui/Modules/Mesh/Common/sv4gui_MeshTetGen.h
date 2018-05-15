@@ -36,7 +36,7 @@
 
 #include <sv4gui_Mesh.h>
 
-#include <cvTetGenMeshObject.h>
+#include <sv_TetGenMeshObject.h>
 
 class SV4GUIMODULEMESH_EXPORT sv4guiMeshTetGen : public sv4guiMesh
 {

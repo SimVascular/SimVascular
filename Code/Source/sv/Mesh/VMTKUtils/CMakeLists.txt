@@ -41,10 +41,10 @@ if(SV_USE_PYTHON)
 		    ${PYTHON_INCLUDE_DIR}
 		    ${PYTHON_INCLUDE_DIRS})
 endif()
-SET(CXXSRCS cv_vmtk_utils.cxx)
-SET(HDRS cv_vmtk_utils.h)
+SET(CXXSRCS sv_vmtk_utils.cxx)
+SET(HDRS sv_vmtk_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_vmtk_utils_init.cxx cv_vmtk_utils_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_vmtk_utils_init.cxx sv_vmtk_utils_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

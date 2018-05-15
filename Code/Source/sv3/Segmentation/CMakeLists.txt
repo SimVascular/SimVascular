@@ -42,20 +42,20 @@ if(SV_USE_PYTHON)
 		    ${PYTHON_INCLUDE_DIRS})
 endif()
 
-set(CXXSRCS  cvITKUtils.cxx cvITKLevelSet.cxx)
-set(HDRS cvITKLevelSet.h cvITKLevelSetBase.h
-        cv_VascularPhaseOneLevelSetFunction.hxx
-	cv_VascularPhaseOneLevelSetImageFilter.hxx
-	cv_VascularPhaseTwoLevelSetFunction.hxx
-	cv_VascularPhaseTwoLevelSetImageFilter.hxx
-	cv_VascularLevelSetObserver.h
-        cv_ITKLset_ConnectVTKITK.h cv_ITKLset_ITK_Macros.h
-        cv_ITKLset_Macros.h cv_ITKLset_TCL_Macros.h
-        cv_ITKLset_VTK_Macros.h cv_ITKLset_ImgInfo.h
+set(CXXSRCS  sv3_ITKUtils.cxx sv3_ITKLevelSet.cxx)
+set(HDRS sv3_ITKLevelSet.h sv3_ITKLevelSetBase.h
+        sv3_VascularPhaseOneLevelSetFunction.hxx
+	sv3_VascularPhaseOneLevelSetImageFilter.hxx
+	sv3_VascularPhaseTwoLevelSetFunction.hxx
+	sv3_VascularPhaseTwoLevelSetImageFilter.hxx
+	sv3_VascularLevelSetObserver.h
+        sv3_ITKLset_ConnectVTKITK.h sv3_ITKLset_ITK_Macros.h
+        sv3_ITKLset_Macros.h sv3_ITKLset_TCL_Macros.h
+        sv3_ITKLset_VTK_Macros.h sv3_ITKLset_ImgInfo.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx 
-cv_ITKUtils_init_py.cxx cv_ITKLset2d_init_py.cxx cv_ITKLset3d_init_py.cxx cv_ITKLset_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_ITKUtils_init.cxx sv3_ITKLset2d_init.cxx sv3_ITKLset3d_init.cxx sv3_ITKLset_init.cxx 
+sv3_ITKUtils_init_py.cxx sv3_ITKLset2d_init_py.cxx sv3_ITKLset3d_init_py.cxx sv3_ITKLset_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

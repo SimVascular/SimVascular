@@ -31,7 +31,7 @@
 
 #include "sv4gui_Math3.h"
 
-#include "cvMath.h"
+#include "sv_Math.h"
 
 #include <mitkNumericConstants.h>
 #include <mitkVector.h>

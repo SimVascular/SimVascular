@@ -33,7 +33,7 @@
 
 #include <sv4guiModuleModelOCCTExports.h>
 
-#include "cv_globals.h"
+#include "sv2_globals.h"
 
 #include "sv4gui_ModelElementFactory.h"
 #include "sv4gui_ModelElementOCCT.h"

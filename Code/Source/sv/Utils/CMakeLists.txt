@@ -44,17 +44,17 @@ if(SV_USE_PYTHON)
 endif()
 
 
-SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
-  cv_cgeom.cxx
-  cvMath.cxx cv_arg.cxx
-  cvFactoryRegistrar.cxx
+SET(CXXSRCS sv_misc_utils.cxx sv_vtk_utils.cxx
+  sv_cgeom.cxx
+  sv_Math.cxx sv_arg.cxx
+  sv_FactoryRegistrar.cxx
   )
-SET(HDRS cv_misc_utils.h cv_vtk_utils.h
-  cv_cgeom.h
-  cvMath.h cv_arg.h cvFactoryRegistrar.h
+SET(HDRS sv_misc_utils.h sv_vtk_utils.h
+  sv_cgeom.h
+  sv_Math.h sv_arg.h sv_FactoryRegistrar.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_utils_init.cxx cv_math_init.cxx cv_utils_init_py.cxx cv_math_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_utils_init.cxx sv_math_init.cxx sv_utils_init_py.cxx sv_math_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

@@ -46,19 +46,19 @@ ifeq ($(SV_USE_PYTHON),1)
    CXXFLAGS += $(PYTHON_INCDIR)
 endif
 
-HDRS	= cvPolyDataSolid.h \
-          cv_polydatasolid_utils.h \
-          vtkGetBoundaryFaces.h
+HDRS	= sv_PolyDataSolid.h \
+          sv_polydatasolid_utils.h \
+          sv_vtkGetBoundaryFaces.h
 
-CXXSRCS	= cvPolyDataSolid.cxx \
-          cv_polydatasolid_utils.cxx \
-          vtkGetBoundaryFaces.cxx
+CXXSRCS	= sv_PolyDataSolid.cxx \
+          sv_polydatasolid_utils.cxx \
+          sv_vtkGetBoundaryFaces.cxx
 
-DLLHDRS = cv_polydatasolid_init.h
-DLLSRCS = cv_polydatasolid_init.cxx
+DLLHDRS = sv_polydatasolid_init.h
+DLLSRCS = sv_polydatasolid_init.cxx
 
-SVPYHDRS = cv_polydatasolid_init_py.h
-SVPYSRCS = cv_polydatasolid_init_py.cxx
+SVPYHDRS = sv_polydatasolid_init_py.h
+SVPYSRCS = sv_polydatasolid_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
 	  $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \

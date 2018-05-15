@@ -30,7 +30,7 @@
  */
 
 #include "SimVascular.h"
-#include "cvIOstream.h"
+#include "sv_IOstream.h"
 
 #include <time.h>
 #include <stdlib.h>
@@ -39,7 +39,7 @@
 #include "tk.h"
 
 #include "vtkToolkits.h"
-#include "cvVTK.h"
+#include "sv_VTK.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -50,42 +50,42 @@
 
 #include "vtkToolkits.h"
 
-#include "cv_repos_init.h"
-#include "cv_Lset_init.h"
-#include "cv_geom_init.h"
-#include "cv_image_init.h"
-#include "cv_math_init.h"
-#include "cv_post_init.h"
-#include "cv_polydatasolid_init.h"
+#include "sv_repos_init.h"
+#include "sv2_Lset_init.h"
+#include "sv_geom_init.h"
+#include "sv2_image_init.h"
+#include "sv_math_init.h"
+#include "sv2_post_init.h"
+#include "sv_polydatasolid_init.h"
 
-#include "cv_solid_init.h"
+#include "sv_solid_init.h"
 
 #ifdef SV_USE_VMTK
-  #include "cv_vmtk_utils_init.h"
+  #include "sv_vmtk_utils_init.h"
 #endif
 
 #ifdef SV_USE_MESHSIM
-  #include "cv_mesh_init.h"
+  #include "sv_mesh_init.h"
   #include "cv_meshsim_mesh_init.h"
 #endif
 
 #ifdef SV_USE_OpenCASCADE
-  #include "cv_occt_init.h"
+  #include "sv_occt_init.h"
 #endif
 
 #ifdef SV_USE_MESHSIM_ADAPTOR
-  #include "cv_adapt_init.h"
+  #include "sv_adapt_init.h"
   #include "cv_meshsim_adapt_init.h"
 #endif
 
 #ifdef SV_USE_TETGEN
-  #include "cv_mesh_init.h"
-  #include "cv_tetgen_mesh_init.h"
+  #include "sv_mesh_init.h"
+  #include "sv_tetgen_mesh_init.h"
 #endif
 
 #ifdef SV_USE_MMG
-  #include "cv_mesh_init.h"
-  #include "cv_mmg_mesh_init.h"
+  #include "sv_mesh_init.h"
+  #include "sv_mmg_mesh_init.h"
 #endif
 
 #ifdef SV_USE_MESHSIM_DISCRETE_MODEL
@@ -97,12 +97,12 @@
 #endif
 
 #ifdef SV_USE_ITK
-  #include "cv_ITKLset_init.h"
+  #include "sv3_ITKLset_init.h"
 #endif
 
 #ifdef SV_USE_TETGEN_ADAPTOR
-  #include "cv_adapt_init.h"
-  #include "cv_tetgen_adapt_init.h"
+  #include "sv_adapt_init.h"
+  #include "sv_tetgen_adapt_init.h"
 #endif
 
 #ifdef SV_USE_PYTHON

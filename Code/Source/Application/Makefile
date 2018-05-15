@@ -57,24 +57,24 @@ endif
 
 ifeq ($(SV_STATIC_BUILD),1)
 
-  COPIED_CXXSRCS += ../Common/Geometry/cv_geom_init.cxx \
-                    ../PostProcessing/cv_post_init.cxx \
-                    ../ImageProcessing/cv_image_init.cxx \
-                    ../Common/Repository/cv_repos_init.cxx \
-                    ../Model/SolidModel/cv_solid_init.cxx \
-                    ../Legacy/LevelSet/cv_LsetCore_init.cxx \
-                    ../Legacy/LevelSet/cv_LsetV_init.cxx \
-                    ../Legacy/LevelSet/cv_Lset_init.cxx \
+  COPIED_CXXSRCS += ../Common/Geometry/sv_geom_init.cxx \
+                    ../PostProcessing/sv2_post_init.cxx \
+                    ../ImageProcessing/sv2_image_init.cxx \
+                    ../Common/Repository/sv_repos_init.cxx \
+                    ../Model/SolidModel/sv_solid_init.cxx \
+                    ../Legacy/LevelSet/sv2_LsetCore_init.cxx \
+                    ../Legacy/LevelSet/sv2_LsetV_init.cxx \
+                    ../Legacy/LevelSet/sv2_Lset_init.cxx \
                     ../Common/Utils/cv_get_tcl_interp_init.cxx \
-                    ../Mesh/MeshObject/cv_mesh_init.cxx \
-                    ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
-                    ../Common/Utils/cv_math_init.cxx \
+                    ../Mesh/MeshObject/sv_mesh_init.cxx \
+                    ../Model/PolyDataSolidModel/sv_polydatasolid_init.cxx \
+                    ../Common/Utils/sv_math_init.cxx \
 
   ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-	COPIED_CXXSRCS += ../Mesh/AdaptObject/cv_adapt_init.cxx
+	COPIED_CXXSRCS += ../Mesh/AdaptObject/sv_adapt_init.cxx
   else
     ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
-	  COPIED_CXXSRCS += ../Mesh/AdaptObject/cv_adapt_init.cxx
+	  COPIED_CXXSRCS += ../Mesh/AdaptObject/sv_adapt_init.cxx
     endif
   endif
 
@@ -89,10 +89,10 @@ ifeq ($(SV_STATIC_BUILD),1)
     endif
   endif
   ifeq ($(SV_USE_TETGEN),1)
-	COPIED_CXXSRCS += ../Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx
+	COPIED_CXXSRCS += ../Mesh/TetGenMeshObject/sv_tetgen_mesh_init.cxx
   endif
   ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-	COPIED_CXXSRCS += ../Mesh/TetGenAdapt/cv_tetgen_adapt_init.cxx
+	COPIED_CXXSRCS += ../Mesh/TetGenAdapt/sv_tetgen_adapt_init.cxx
   endif
   ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     ifneq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
@@ -111,19 +111,19 @@ ifeq ($(SV_STATIC_BUILD),1)
   endif
   ifeq ($(SV_USE_OPENCASCADE),1)
     ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
-	COPIED_CXXSRCS += ../Model/OCCTSolidModel/cv_occt_init.cxx
+	COPIED_CXXSRCS += ../Model/OCCTSolidModel/sv_occt_init.cxx
     endif
   endif
   ifeq ($(SV_USE_MMG),1)
     ifneq ($(SV_USE_MMG_SHARED),1)
-	COPIED_CXXSRCS += ../Mesh/MMGMeshUtils/cv_mmg_mesh_init.cxx
+	COPIED_CXXSRCS += ../Mesh/MMGMeshUtils/sv_mmg_mesh_init.cxx
     endif
   endif
   ifeq ($(SV_USE_ITK),1)
-	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset_init.cxx
-	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKUtils_init.cxx
-	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset2d_init.cxx
-	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset3d_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKLset_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKUtils_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKLset2d_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKLset3d_init.cxx
   endif
 
   ifeq ($(SV_USE_SOLVERIO),1)

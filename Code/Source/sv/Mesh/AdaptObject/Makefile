@@ -68,15 +68,15 @@ CXXFLAGS += $(LOCAL_INCDIR) \
 	    $(TCLTK_INCDIR) \
             $(PYTHON_INCDIR)
 
-HDRS	= cvAdaptObject.h cv_adapt_utils.h eispack.h
+HDRS	= sv_AdaptObject.h sv_adapt_utils.h sv_eispack.h
 
-CXXSRCS	= cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx
+CXXSRCS	= sv_AdaptObject.cxx sv_adapt_utils.cxx sv_eispack.cxx
 
-DLLHDRS = cv_adapt_init.h
-DLLSRCS = cv_adapt_init.cxx
+DLLHDRS = sv_adapt_init.h
+DLLSRCS = sv_adapt_init.cxx
 
-SVPYHDRS = cv_adapt_init_py.h
-SVPYSRCS = cv_adapt_init_py.cxx
+SVPYHDRS = sv_adapt_init_py.h
+SVPYSRCS = sv_adapt_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_ADAPTOR_NAME)
 

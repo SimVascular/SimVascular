@@ -43,14 +43,14 @@ CREATE_EXPORTS_CV_FILE_H=svOpenCASCADEExports.h
 
 CXXFLAGS += -DSV_EXPORT_OPENCASCADE_COMPILE
 
-HDRS	= cvOCCTSolidModel.h cv_occtsolid_utils.h
-CXXSRCS	= cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx
+HDRS	= sv_OCCTSolidModel.h sv_occtsolid_utils.h
+CXXSRCS	= sv_OCCTSolidModel.cxx sv_occtsolid_utils.cxx
 
-DLLHDRS = cv_occt_init.h
-DLLSRCS = cv_occt_init.cxx
+DLLHDRS = sv_occt_init.h
+DLLSRCS = sv_occt_init.cxx
 
-SVPYHDRS = cv_occt_init_py.h
-SVPYSRCS = cv_occt_init_py.cxx
+SVPYHDRS = sv_occt_init_py.h
+SVPYSRCS = sv_occt_init_py.cxx
 
 TARGET_LIB_NAME = $(SV_LIB_OpenCASCADE_SOLID_NAME)
 

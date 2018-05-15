@@ -40,12 +40,12 @@ list(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
-	cv_spline.cxx cv_integrate_surface.cxx)
-set(HDRS cv_sys_geom.h cv_ggems.h
-	cv_spline.h cv_integrate_surface.h)
+set(CXXSRCS sv_sys_geom.cxx sv_ggems.cxx
+	sv_spline.cxx sv_integrate_surface.cxx)
+set(HDRS sv_sys_geom.h sv_ggems.h
+	sv_spline.h sv_integrate_surface.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_geom_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_geom_init.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

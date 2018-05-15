@@ -52,18 +52,18 @@ CREATE_EXPORTS_CV_FILE_H=svGeometryExports.h
 CXXFLAGS += -DSV_EXPORT_SYSGEOM_COMPILE
 
 HDRS	= \
-  cv_sys_geom.h \
-  cv_ggems.h \
-  cv_spline.h \
-  cv_integrate_surface.h
+  sv_sys_geom.h \
+  sv_ggems.h \
+  sv_spline.h \
+  sv_integrate_surface.h
 
 CXXSRCS	= \
-  cv_sys_geom.cxx cv_ggems.cxx \
-  cv_spline.cxx cv_integrate_surface.cxx
+  sv_sys_geom.cxx sv_ggems.cxx \
+  sv_spline.cxx sv_integrate_surface.cxx
 
-DLLHDRS = cv_geom_init.h
+DLLHDRS = sv_geom_init.h
 
-DLLSRCS = cv_geom_init.cxx
+DLLSRCS = sv_geom_init.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
 	  $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
