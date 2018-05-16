@@ -57,6 +57,7 @@ PyObject* sv4Path_PrintCtrlPointCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_RemovePointCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_MoveCtrlPointCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_SmoothPathCmd(pyPath* self, PyObject* args);
+PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args);
 
 
 int Path_pyInit()
@@ -72,6 +73,7 @@ static PyMethodDef pyPath_methods[]={
   {"path_removePoint",(PyCFunction)sv4Path_RemovePointCmd,METH_VARARGS,NULL},
   {"path_movePoint",(PyCFunction)sv4Path_MoveCtrlPointCmd,METH_VARARGS,NULL},
   {"path_smooth",(PyCFunction)sv4Path_SmoothPathCmd, METH_VARARGS,NULL},
+  {"path_createPath",(PyCFunction)sv4Path_CreatePathCmd, METH_NOARGS,NULL},
   {NULL,NULL}
 };
 
@@ -386,4 +388,27 @@ PyObject* sv4Path_PrintCtrlPointCmd( pyPath* self, PyObject* args)
     
     Py_RETURN_NONE; 
 }
-            
+
+// --------------------
+// sv4Path_CreatePathCmd
+// --------------------
+PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args)
+{
+    sv4PathElement* path = self->geom;
+    if (path==NULL)
+    {
+        PyErr_SetString(PyRunTimeErr,"Path does not exist.");
+        return Py_ERROR;
+    }  
+    path->CreatePathPoints();
+    int num = (path->GetPathPoints()).size();
+    if (num==0)
+    {
+        PyErr_SetString(PyRunTimeErr,"Error creating path from control points");
+        return Py_ERROR;
+    }
+    else
+        printf("Total number of path points created is: %i \n", num);
+        
+    Py_RETURN_NONE;
+}

@@ -56,6 +56,9 @@
 #include "sv4gui_ModelElementFactory.h"
 #include "sv4gui_Model.h"
 #include "sv4gui_Mesh.h"
+#include "sv4gui_Path.h"
+#include "sv4_PathElement.h"
+#include "sv4gui_PathElement.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshFactory.h"
 #include "sv4gui_PythonDataNodesPluginActivator.h"
@@ -72,12 +75,16 @@
 #include <mitkDataStorage.h>
 #include <mitkUndoController.h>
 #include <mitkIOUtil.h>
+#include <array>
+#include <vector>
 
 PyObject* PyRunTimeErr;
 
 PyObject* GUI_ImportFromRepos( PyObject* self, PyObject* args);
 
 PyObject* GUI_ExportToRepos( PyObject* self, PyObject* args);
+
+PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args);
 
 PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args);
 
@@ -92,6 +99,7 @@ PyMethodDef pyGUI_methods[] =
     {"gui_importImg",GUI_ImportImageFromFile,METH_VARARGS,NULL},
     {"gui_importfromRepos",GUI_ImportFromRepos,METH_VARARGS,NULL},
     {"gui_exportToRepos",GUI_ExportToRepos,METH_VARARGS,NULL},
+    {"gui_exportPathToRepos",GUI_ExportPathToRepos,METH_VARARGS,NULL},
     {NULL, NULL,0,NULL},
 };
 
@@ -686,4 +694,118 @@ PyObject* GUI_ExportToRepos( PyObject* self, PyObject* args)
     
     return Py_BuildValue("s","success");
     
+}
+
+// -----------------------
+//  GUI_ExportPathToRepos
+// -----------------------
+PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
+{
+    char* childName;
+    char* reposName;
+    
+    if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: nodeName, reposName");
+        return Py_ERROR;
+    }
+    
+    if(gRepository->Exists( reposName ))
+    {
+        PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
+        return Py_ERROR;
+    }
+
+    //get active data storage
+    mitk::IDataStorageReference::Pointer dsRef;
+    
+    ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
+    mitk::IDataStorageService* dss = 0;
+    ctkServiceReference dsServiceRef;
+    if (context)
+        dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
+    else 
+        printf("Error getting plugin context\n");
+    if (dsServiceRef)
+    {
+        dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
+    }
+    
+    
+    if (!dss)
+    {
+        PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
+        return Py_ERROR;
+    }
+    
+    // Get the active data storage (or the default one, if none is active)
+    dsRef = dss->GetDataStorage();
+    context->ungetService(dsServiceRef);
+
+    mitk::DataStorage::Pointer dataStorage = dsRef->GetDataStorage();
+    if (dataStorage.IsNull())
+    {
+        PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
+        return Py_ERROR;
+    }
+    
+    mitk::DataNode::Pointer node = dataStorage->GetNamedNode(childName);
+    if(node.IsNull())
+    {
+        PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
+        return Py_ERROR;
+    }
+    
+    sv4guiPath* path = dynamic_cast<sv4guiPath*> (node->GetData());
+    sv4guiPathElement* pathElem = path->GetPathElement();
+    
+    if (pathElem == NULL)
+    {
+        PyErr_SetString(PyRunTimeErr, "Error getting path from data storage");
+        return Py_ERROR;
+    }
+
+    sv4PathElement* corePath = new sv4PathElement();
+    
+    switch(pathElem->GetMethod())
+    {
+    case sv4guiPathElement::CONSTANT_TOTAL_NUMBER:
+        corePath->SetMethod(sv4PathElement::CONSTANT_TOTAL_NUMBER);
+        break;
+    case sv4guiPathElement::CONSTANT_SUBDIVISION_NUMBER:
+        corePath->SetMethod(sv4PathElement::CONSTANT_SUBDIVISION_NUMBER);
+        break;
+    case sv4guiPathElement::CONSTANT_SPACING:
+        corePath->SetMethod(sv4PathElement::CONSTANT_SPACING);
+        break;
+    default:
+        break;
+    }
+
+    corePath->SetCalculationNumber(pathElem->GetCalculationNumber());
+    corePath->SetSpacing(pathElem->GetSpacing());
+    
+    //copy control points
+    std::vector<mitk::Point3D> pts = pathElem->GetControlPoints();
+    for (int i=0; i<pts.size();i++)
+    {
+        std::array<double,3> point;
+        point[0] = pts[i][0];
+        point[1] = pts[i][1];
+        point[2] = pts[i][2];
+        corePath->InsertControlPoint(i,point);
+    }
+    
+    //create path points
+    corePath->CreatePathPoints();
+    
+    
+    if ( !( gRepository->Register( reposName, corePath ) ) )
+    {
+        PyErr_SetString(PyRunTimeErr, "error registering object in repository");
+        delete corePath;
+        return Py_ERROR;
+    }
+    
+    return Py_BuildValue("s","success");
 }

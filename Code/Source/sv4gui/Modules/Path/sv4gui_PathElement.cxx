@@ -30,6 +30,7 @@
  */
 
 #include "sv4gui_PathElement.h"
+#include "sv4_PathElement.h"
 #include "sv4gui_Math3.h"
 
 sv4guiPathElement::sv4guiPathElement()
@@ -585,3 +586,6 @@ std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiPathElement::GetExtendedPa
 
     return extendedPathPoints;
 }
+
+
+    

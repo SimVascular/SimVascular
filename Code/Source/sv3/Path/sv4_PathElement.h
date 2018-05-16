@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __SV4_PATHELEMENT_H
-#define __SV4_PATHELEMENT_H
+#ifndef __SV4_PATHELEMENT_H__
+#define __SV4_PATHELEMENT_H__
 
 #include "SimVascular.h"
 
@@ -143,4 +143,4 @@ protected:
     int m_CalculationNumber;
 };
 
-#endif // __SV4_PATHELEMENT_H
+#endif // __SV4_PATHELEMENT_H__

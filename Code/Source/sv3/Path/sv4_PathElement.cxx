@@ -397,7 +397,7 @@ double sv4PathElement::GetSpacing()
     return m_Spacing;
 }
 
-void sv4PathElement::SetMethod(sv4PathElement::CalculationMethod method)\
+void sv4PathElement::SetMethod(sv4PathElement::CalculationMethod method)
 {
     m_Method=method;
 }

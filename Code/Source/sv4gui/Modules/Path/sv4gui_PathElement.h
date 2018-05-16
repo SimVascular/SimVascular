@@ -37,6 +37,7 @@
 #include <sv4guiModulePathExports.h>
 
 #include "sv4gui_Spline.h"
+#include "sv4_PathElement.h"
 
 #include "mitkPoint.h"
 
@@ -124,7 +125,7 @@ public:
     void CalculateBoundingBox(double *bounds);
 
     std::vector<sv4guiPathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex);
-
+    
 protected:
 
     std::vector<svControlPoint> m_ControlPoints;
