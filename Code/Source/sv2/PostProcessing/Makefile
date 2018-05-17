@@ -46,15 +46,15 @@ CREATE_EXPORTS_CV_FILE_H=svPostExports.h
 
 CXXFLAGS += -DSV_EXPORT_POST_COMPILE
 
-HDRS	= cvConvertVisFiles.h cvCalculateWallShearStress.h \
-	  cvCalculateTKE.h
+HDRS	= sv2_ConvertVisFiles.h sv2_CalculateWallShearStress.h \
+	  sv2_CalculateTKE.h
 
-CXXSRCS	= cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx \
-	  cvCalculateTKE.cxx
+CXXSRCS	= sv2_ConvertVisFiles.cxx sv2_CalculateWallShearStress.cxx \
+	  sv2_CalculateTKE.cxx
 
-DLLHDRS = cv_post_init.h
+DLLHDRS = sv2_post_init.h
 
-DLLSRCS = cv_post_init.cxx
+DLLSRCS = sv2_post_init.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \

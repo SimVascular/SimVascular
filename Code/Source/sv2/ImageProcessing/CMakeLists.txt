@@ -45,18 +45,18 @@ endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-set(CXXSRCS cv_image.cxx cv_read_header.cxx
-  cv_decode.cxx cv_calc_correction_eqn.cxx
-  cv_img_threshold.cxx cvDistanceMap.cxx
-  cv_mask_image_in_place.cxx
+set(CXXSRCS sv2_image.cxx sv2_read_header.cxx
+  sv2_decode.cxx sv2_calc_correction_eqn.cxx
+  sv2_img_threshold.cxx sv2_DistanceMap.cxx
+  sv2_mask_image_in_place.cxx
   )
-set(HDRS cv_image.h cv_img_offsets.h
-  cv_decode.h cv_calc_correction_eqn.h
-  cv_img_threshold.h cvDistanceMap.h
-  cv_mask_image_in_place.h
+set(HDRS sv2_image.h sv2_img_offsets.h
+  sv2_decode.h sv2_calc_correction_eqn.h
+  sv2_img_threshold.h sv2_DistanceMap.h
+  sv2_mask_image_in_place.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_image_init.cxx cv_image_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv2_image_init.cxx sv2_image_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

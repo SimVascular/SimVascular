@@ -37,7 +37,7 @@
 #include "sv4gui_ModelElement.h"
 #include "sv4gui_ModelElementAnalytic.h"
 
-#include "cvOCCTSolidModel.h"
+#include "sv_OCCTSolidModel.h"
 
 class SV4GUIMODULEMODELOCCT_EXPORT sv4guiModelElementOCCT : public sv4guiModelElementAnalytic
 {

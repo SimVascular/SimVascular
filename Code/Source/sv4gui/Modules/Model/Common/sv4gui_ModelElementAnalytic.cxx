@@ -31,7 +31,7 @@
 
 #include "sv4gui_ModelElementAnalytic.h"
 
-#include "cv_sys_geom.h"
+#include "sv_sys_geom.h"
 
 sv4guiModelElementAnalytic::sv4guiModelElementAnalytic()
     : m_MaxDist(0)

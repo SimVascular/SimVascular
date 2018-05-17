@@ -38,8 +38,8 @@
 #include <string.h>
 #include <array>
 #include <iostream>
-#include "cvRepository.h"
-#include "cvRepositoryData.h"
+#include "sv_Repository.h"
+#include "sv_RepositoryData.h"
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
@@ -47,11 +47,12 @@
 // Globals:
 // --------
 
-#include "cv_globals.h"
+#include "sv2_globals.h"
 
 PyMODINIT_FUNC initpyPath();
 PyObject* PyRunTimeErr;
 PyObject* sv4Path_NewObjectCmd( pyPath* self, PyObject* args);
+PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_AddPointCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_PrintCtrlPointCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_RemovePointCmd( pyPath* self, PyObject* args);
@@ -68,6 +69,7 @@ int Path_pyInit()
 
 static PyMethodDef pyPath_methods[]={
   {"path_newObject", (PyCFunction)sv4Path_NewObjectCmd,METH_VARARGS,NULL},
+  {"path_getObject", (PyCFunction)sv4Path_GetObjectCmd,METH_VARARGS,NULL},
   {"path_addPoint",(PyCFunction)sv4Path_AddPointCmd,METH_VARARGS,NULL},
   {"path_printPoints",(PyCFunction)sv4Path_PrintCtrlPointCmd, METH_NOARGS,NULL},
   {"path_removePoint",(PyCFunction)sv4Path_RemovePointCmd,METH_VARARGS,NULL},
@@ -203,6 +205,53 @@ PyObject* sv4Path_NewObjectCmd( pyPath* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
+  Py_RETURN_NONE; 
+
+}
+
+// --------------------
+// sv4Path_GetObjectCmd
+// --------------------
+PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args)
+{
+  char *objName=NULL;
+  RepositoryDataT type;
+  cvRepositoryData *rd;
+  sv4PathElement *path;
+
+  if (!PyArg_ParseTuple(args,"s", &objName))
+  {
+    PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
+    return Py_ERROR;
+  }
+
+  // Do work of command:
+
+  // Retrieve source object:
+  rd = gRepository->GetObject( objName );
+  char r[2048];
+  if ( rd == NULL )
+  {
+    r[0] = '\0';
+    sprintf(r, "couldn't find object %s", objName);
+    PyErr_SetString(PyRunTimeErr,r);
+    return Py_ERROR;
+  }
+
+  type = rd->GetType();
+
+  if ( type != PATH_T )
+  {
+    r[0] = '\0';
+    sprintf(r, "%s not a path object", objName);
+    PyErr_SetString(PyRunTimeErr,r);
+    return Py_ERROR;
+  }
+  
+  path = dynamic_cast<sv4PathElement*> (rd);
+  Py_INCREF(path);
+  self->geom=path;
+  Py_DECREF(path);
   Py_RETURN_NONE; 
 
 }

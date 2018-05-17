@@ -30,12 +30,12 @@
  */
  
 #include "sv4gui_Vis_init_py.h"
-#include "cvRepository.h"
-#include "cvPolyData.h"
-#include "cvStrPts.h"
-#include "cvUnstructuredGrid.h"
-#include "cv_arg.h"
-#include "cvVTK.h"
+#include "sv_Repository.h"
+#include "sv_PolyData.h"
+#include "sv_StrPts.h"
+#include "sv_UnstructuredGrid.h"
+#include "sv_arg.h"
+#include "sv_VTK.h"
 #include "vtkTclUtil.h"
 #include "vtkPythonUtil.h"
 
@@ -47,7 +47,7 @@
 // The global cvRepository object should be allocated in the file where
 // main() lives.
 
-#include "cv_globals.h"
+#include "sv2_globals.h"
 
 #include "SimVascular.h"
 #include "Python.h"
@@ -82,6 +82,8 @@ PyObject* PyRunTimeErr;
 
 PyObject* GUI_ImportFromRepos( PyObject* self, PyObject* args);
 
+PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args);
+
 PyObject* GUI_ExportToRepos( PyObject* self, PyObject* args);
 
 PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args);
@@ -97,7 +99,8 @@ PyMODINIT_FUNC initpyGUI(void);
 PyMethodDef pyGUI_methods[] =
 {
     {"gui_importImg",GUI_ImportImageFromFile,METH_VARARGS,NULL},
-    {"gui_importfromRepos",GUI_ImportFromRepos,METH_VARARGS,NULL},
+    {"gui_importFromRepos",GUI_ImportFromRepos,METH_VARARGS,NULL},
+    {"gui_importPathFromRepos", GUI_ImportPathFromRepos, METH_VARARGS,NULL},
     {"gui_exportToRepos",GUI_ExportToRepos,METH_VARARGS,NULL},
     {"gui_exportPathToRepos",GUI_ExportPathToRepos,METH_VARARGS,NULL},
     {NULL, NULL,0,NULL},
@@ -189,20 +192,67 @@ sv4guiMitkMesh::Pointer buildMeshNode(cvRepositoryData *obj, sv4guiMesh* mesh,  
 }
 
 //------------------
+//  buildPathNode
+//------------------
+
+sv4guiPath::Pointer buildPathNode(cvRepositoryData *obj, sv4guiPath::Pointer path)
+{
+    sv4PathElement* pathElem = dynamic_cast<sv4PathElement*> (obj);
+    sv4guiPathElement* guiPath = new sv4guiPathElement();
+    
+    switch(pathElem->GetMethod())
+    {
+    case sv4PathElement::CONSTANT_TOTAL_NUMBER:
+        guiPath->SetMethod(sv4guiPathElement::CONSTANT_TOTAL_NUMBER);
+        break;
+    case sv4PathElement::CONSTANT_SUBDIVISION_NUMBER:
+        guiPath->SetMethod(sv4guiPathElement::CONSTANT_SUBDIVISION_NUMBER);
+        break;
+    case sv4PathElement::CONSTANT_SPACING:
+        guiPath->SetMethod(sv4guiPathElement::CONSTANT_SPACING);
+        break;
+    default:
+        break;
+    }
+
+    guiPath->SetCalculationNumber(pathElem->GetCalculationNumber());
+    guiPath->SetSpacing(pathElem->GetSpacing());
+    
+    //copy control points
+    std::vector<std::array<double,3> > pts = pathElem->GetControlPoints();
+    for (int i=0; i<pts.size();i++)
+    {
+        mitk::Point3D point;
+        point[0] = pts[i][0];
+        point[1] = pts[i][1];
+        point[2] = pts[i][2];
+        guiPath->InsertControlPoint(i,point);
+    }
+    
+    //create path points
+    guiPath->CreatePathPoints();
+    
+    path->SetPathElement(guiPath);
+    path->SetDataModified();
+    
+    return path;
+}
+
+//------------------
 //  AddDataNode
 //------------------
 
 int AddDataNode(mitk::DataStorage::Pointer dataStorage, 
-        cvRepositoryData *poly, mitk::DataNode::Pointer folderNode, char* childName)
+        cvRepositoryData *rd, mitk::DataNode::Pointer folderNode, char* childName)
 {
     char r[2048];
-    RepositoryDataT type = poly->GetType();
+    RepositoryDataT type = rd->GetType();
 
     mitk::DataNode::Pointer Node = mitk::DataNode::New();
     if ( type == POLY_DATA_T )
     {
         sv4guiModel::Pointer model = sv4guiModel::New();
-        model = buildModelNode(poly,model);
+        model = buildModelNode(rd,model);
         Node->SetData(model);
         Node->SetName(childName);
     }
@@ -210,11 +260,18 @@ int AddDataNode(mitk::DataStorage::Pointer dataStorage,
     {
         sv4guiMesh* mesh;
         sv4guiMitkMesh::Pointer mitkMesh = sv4guiMitkMesh::New();
-        mitkMesh = buildMeshNode(poly, mesh, mitkMesh);
+        mitkMesh = buildMeshNode(rd, mesh, mitkMesh);
         //vtkSmartPointer<vtkUnstructuredGrid> tmp = (mitkMesh->GetMesh())->GetVolumeMesh();
         //tmp -> Print(std::cout);
         Node -> SetData(mitkMesh);
         Node ->SetName(childName);
+    }
+    else if (type ==PATH_T)
+    {
+        sv4guiPath::Pointer path = sv4guiPath::New();
+        path = buildPathNode(rd,path);
+        Node -> SetData(path);
+        Node -> SetName(childName);
     }
     else
     {
@@ -514,8 +571,9 @@ PyObject* GUI_ImportFromRepos( PyObject* self, PyObject* args)
         }
       }
       else
-          folderNode = getFolderNode(dataStorage,projFolderNode,"svRepositoryFolder", folderNode);
-
+      {
+          folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiRepositoryFolder", folderNode);
+      }
       if(AddDataNode(dataStorage, obj,folderNode,childName)==Py_ERROR)
       {
           PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
@@ -808,4 +866,108 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     }
     
     return Py_BuildValue("s","success");
+}
+
+// -----------------------
+//  GUI_ImportPathFromRepos
+// -----------------------
+
+PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
+{
+    char* childName;
+    char* parentName=NULL;
+    RepositoryDataT type;
+    cvRepositoryData *obj;
+    mitk::DataNode::Pointer folderNode;
+    
+    if(!PyArg_ParseTuple(args,"s|s", &childName, &parentName))
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: childName, parentName");
+        return Py_ERROR;
+    }
+            
+    obj = gRepository->GetObject( childName );
+    if ( obj == NULL )
+    {
+        PyErr_SetString(PyRunTimeErr, "couldn't find path" );
+        return Py_ERROR;
+    }
+    
+    type = obj->GetType();
+
+    if ( type != PATH_T )
+    {
+        PyErr_SetString(PyRunTimeErr,"not a path object");
+        return Py_ERROR;
+    }
+    
+    //get active data storage
+    mitk::IDataStorageReference::Pointer dsRef;
+    
+    ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
+    mitk::IDataStorageService* dss = 0;
+    ctkServiceReference dsServiceRef;
+    if (context)
+        dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
+    else 
+        printf("Error getting plugin context\n");
+    if (dsServiceRef)
+        dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
+    
+    if (!dss)
+    {
+        PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
+        return Py_ERROR;
+    }
+    
+    // Get the active data storage (or the default one, if none is active)
+    dsRef = dss->GetDataStorage();
+    context->ungetService(dsServiceRef);
+
+    mitk::DataStorage::Pointer dataStorage = dsRef->GetDataStorage();
+    if (dataStorage.IsNull())
+    {
+        PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
+        return Py_ERROR;
+    }
+    
+    
+    //get project folder
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSubset(isProjFolder);
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+      //default adds to the repository folder
+      if(parentName)
+      {
+        if(strcmp(parentName, "Paths")==0)
+            folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiPathFolder", folderNode);
+        else
+        {
+            PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
+            return Py_ERROR;
+        }
+      }
+      else
+      {
+          folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiRepositoryFolder", folderNode);
+      }
+
+      if(AddDataNode(dataStorage, obj,folderNode,childName)==Py_ERROR)
+      {
+          PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
+          return Py_ERROR;
+      }
+    }
+    else
+    {
+            PyErr_SetString(PyRunTimeErr, "No project has been created.");
+            return Py_ERROR;
+    }
+    
+    return Py_BuildValue("s","success");
+    
+
 }

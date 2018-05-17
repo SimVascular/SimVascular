@@ -31,8 +31,8 @@
 #include "SimVascular.h"
 
 #include "sv4_PathElement.h"
-#include "cvRepositoryData.h"
-#include "cvMath.h"
+#include "sv_RepositoryData.h"
+#include "sv_Math.h"
 #include <array>
 #include <vector>
 

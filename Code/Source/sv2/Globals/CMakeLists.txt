@@ -40,8 +40,8 @@ LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-set(CXXSRCS cv_globals.cxx)
-set(HDRS cv_globals.h)
+set(CXXSRCS sv2_globals.cxx)
+set(HDRS sv2_globals.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 

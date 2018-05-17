@@ -32,7 +32,7 @@
 #include "sv4gui_MeshLegacyIO.h"
 #include "sv4gui_MitkMeshIO.h"
 
-#include "cv_polydatasolid_utils.h"
+#include "sv_polydatasolid_utils.h"
 
 #include <QDir>
 

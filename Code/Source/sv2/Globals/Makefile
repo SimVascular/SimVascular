@@ -47,8 +47,8 @@ CREATE_EXPORTS_CV_FILE_H=svGlobalsExports.h
 
 CXXFLAGS += -DSV_EXPORT_GLOBALS_COMPILE
 
-HDRS	  = cv_globals.h
-CXXSRCS = cv_globals.cxx
+HDRS	  = sv2_globals.h
+CXXSRCS = sv2_globals.cxx
 
 DLLHDRS =
 DLLSRCS =

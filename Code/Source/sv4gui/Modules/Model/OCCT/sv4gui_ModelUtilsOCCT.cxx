@@ -32,9 +32,9 @@
 #include "sv4gui_ModelUtilsOCCT.h"
 
 #include "SimVascular.h"
-#include "cv_sys_geom.h"
-#include "cvPolyData.h"
-#include "cv_polydatasolid_utils.h"
+#include "sv_sys_geom.h"
+#include "sv_PolyData.h"
+#include "sv_polydatasolid_utils.h"
 
 #include "vtkSVGlobals.h"
 

@@ -35,7 +35,7 @@
 #include "SimVascular.h"
 
 #include <svPathExports.h>
-#include "cvRepositoryData.h"
+#include "sv_RepositoryData.h"
 
 #include "sv4_Spline.h"
 

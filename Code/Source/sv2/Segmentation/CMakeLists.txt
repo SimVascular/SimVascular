@@ -38,24 +38,26 @@ set(export_file_name svLSetExports.h)
 
 list(APPEND CORELIBS ${lib})
 
-set(CXXSRCS cvLevelSet.cxx cvLevelSetNode.cxx
-  cvLevelSetStructuredGrid.cxx cvLevelSetDenseGrid.cxx
-  cvLevelSetSparseGrid.cxx cvLevelSetVelocity.cxx
-  cvLevelSetVelocityKGI.cxx cvLevelSetVelocityConstant.cxx
-  cvLevelSetVelocityThreshold.cxx cvLevelSetVelocityPotential.cxx
-  cvLevelSetVelocityExponentialDecay.cxx
-  cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx
+set(CXXSRCS sv2_LevelSet.cxx sv2_LevelSetNode.cxx
+  sv2_LevelSetStructuredGrid.cxx sv2_LevelSetDenseGrid.cxx
+  sv2_LevelSetSparseGrid.cxx sv2_LevelSetVelocity.cxx
+  sv2_LevelSetVelocityKGI.cxx sv2_LevelSetVelocityConstant.cxx
+  sv2_LevelSetVelocityThreshold.cxx sv2_LevelSetVelocityPotential.cxx
+  sv2_LevelSetVelocityExponentialDecay.cxx
+  sv2_LevelSetVelocitySmooth.cxx sv2_LevelSetVelocityImage.cxx
+  sv2_IntArrayList.cxx sv2_StateArray.cxx sv2_Timer.cxx
   )
-set(HDRS cvLevelSet.h cvLevelSetNode.h
-  cvLevelSetStructuredGrid.h cvLevelSetDenseGrid.h
-  cvLevelSetSparseGrid.h cvLevelSetVelocity.h
-  cvLevelSetVelocityKGI.h cvLevelSetVelocityConstant.h
-  cvLevelSetVelocityThreshold.h cvLevelSetVelocityPotential.h
-  cvLevelSetVelocityExponentialDecay.h cvLevelSetVelocitySmooth.h
-  cvLevelSetVelocityImage.h
+set(HDRS sv2_LevelSet.h sv2_LevelSetNode.h
+  sv2_LevelSetStructuredGrid.h sv2_LevelSetDenseGrid.h
+  sv2_LevelSetSparseGrid.h sv2_LevelSetVelocity.h
+  sv2_LevelSetVelocityKGI.h sv2_LevelSetVelocityConstant.h
+  sv2_LevelSetVelocityThreshold.h sv2_LevelSetVelocityPotential.h
+  sv2_LevelSetVelocityExponentialDecay.h sv2_LevelSetVelocitySmooth.h
+  sv2_LevelSetVelocityImage.h
+  sv2_IntArrayList.h sv2_StateArray.h sv2_Timer.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv2_LsetCore_init.cxx sv2_LsetV_init.cxx sv2_Lset_init.cxx)
 
 target_link_libraries(${lib}
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}

@@ -30,7 +30,7 @@
  */
 
 #include "sv4_Spline.h"
-#include "cvMath.h"
+#include "sv_Math.h"
 
 #include <array>
 #include <vector>

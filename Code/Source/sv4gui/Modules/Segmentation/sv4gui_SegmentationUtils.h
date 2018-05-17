@@ -38,7 +38,7 @@
 
 #include "sv4gui_PathElement.h"
 #include "sv4gui_Contour.h"
-#include "cvStrPts.h"
+#include "sv_StrPts.h"
 
 #include <deque>
 

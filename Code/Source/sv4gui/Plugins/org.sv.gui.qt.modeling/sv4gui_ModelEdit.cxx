@@ -41,7 +41,7 @@
 #include "sv4gui_ModelExtractPathsAction.h"
 #include "sv4gui_QmitkDataManagerView.h"
 
-#include "cv_polydatasolid_utils.h"
+#include "sv_polydatasolid_utils.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>

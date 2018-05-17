@@ -43,9 +43,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            $(VMTK_INCDIR) \
-	   $(SV_MMG_INCDIR) \
-           $(MESHSIM_INCDIR) \
-           $(PARASOLID_INCDIR)
+	   $(SV_MMG_INCDIR)
 
 ifeq ($(SV_USE_OPENCASCADE),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)

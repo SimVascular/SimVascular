@@ -151,6 +151,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         dir.mkdir(modelFolderName);
         dir.mkdir(meshFolderName);
         dir.mkdir(simFolderName);
+        dir.mkdir(reposFolderName);
     }else{
 
         QFile xmlFile(projectConfigFilePath);
@@ -212,7 +213,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         modelFolderName=projDesc.firstChildElement("models").attribute("folder_name");
         meshFolderName=projDesc.firstChildElement("meshes").attribute("folder_name");
         simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
-        reposFolderName=projDesc.firstChildElement("repository").attribute("folder_name");
+        //reposFolderName=projDesc.firstChildElement("repository").attribute("folder_name");
 
     }
 
@@ -247,6 +248,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     modelFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     meshFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     simFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    reposFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
     if(!newProject)
     {
