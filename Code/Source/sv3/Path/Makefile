@@ -42,12 +42,12 @@ CREATE_EXPORTS_CV_FILE_H=svPATHExports.h
 
 CXXFLAGS += -DSV_EXPORT_PATH_COMPILE
 
-HDRS	= sv4_PathElement.h sv4_Spline.h 
-CXXSRCS	= sv4_PathElement.cxx sv4_Spline.cxx 
+HDRS	= sv3_PathElement.h sv3_Spline.h 
+CXXSRCS	= sv3_PathElement.cxx sv3_Spline.cxx 
 
 
-SVPYHDRS = sv4_PathElement_init_py.h
-SVPYSRCS = sv4_PathElement_init_py.cxx
+SVPYHDRS = sv3_PathElement_init_py.h
+SVPYSRCS = sv3_PathElement_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \

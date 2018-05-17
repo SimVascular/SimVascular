@@ -45,12 +45,12 @@ endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-set(CXXSRCS sv4_PathElement.cxx sv4_VtkParametricSpline.cxx sv4_Spline.cxx 
+set(CXXSRCS sv3_PathElement.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx 
   )
-set(HDRS sv4_PathElement.h sv4_VtkParametricSpline.h sv4_Spline.h
+set(HDRS sv3_PathElement.h sv3_VtkParametricSpline.h sv3_Spline.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv4_PathElement_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_PathElement_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

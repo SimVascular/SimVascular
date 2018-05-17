@@ -57,7 +57,7 @@
 #include "sv4gui_Model.h"
 #include "sv4gui_Mesh.h"
 #include "sv4gui_Path.h"
-#include "sv4_PathElement.h"
+#include "sv3_PathElement.h"
 #include "sv4gui_PathElement.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshFactory.h"
@@ -197,18 +197,18 @@ sv4guiMitkMesh::Pointer buildMeshNode(cvRepositoryData *obj, sv4guiMesh* mesh,  
 
 sv4guiPath::Pointer buildPathNode(cvRepositoryData *obj, sv4guiPath::Pointer path)
 {
-    sv4PathElement* pathElem = dynamic_cast<sv4PathElement*> (obj);
+    sv3::PathElement* pathElem = dynamic_cast<sv3::PathElement*> (obj);
     sv4guiPathElement* guiPath = new sv4guiPathElement();
     
     switch(pathElem->GetMethod())
     {
-    case sv4PathElement::CONSTANT_TOTAL_NUMBER:
+    case sv3::PathElement::CONSTANT_TOTAL_NUMBER:
         guiPath->SetMethod(sv4guiPathElement::CONSTANT_TOTAL_NUMBER);
         break;
-    case sv4PathElement::CONSTANT_SUBDIVISION_NUMBER:
+    case sv3::PathElement::CONSTANT_SUBDIVISION_NUMBER:
         guiPath->SetMethod(sv4guiPathElement::CONSTANT_SUBDIVISION_NUMBER);
         break;
-    case sv4PathElement::CONSTANT_SPACING:
+    case sv3::PathElement::CONSTANT_SPACING:
         guiPath->SetMethod(sv4guiPathElement::CONSTANT_SPACING);
         break;
     default:
@@ -823,18 +823,18 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         return Py_ERROR;
     }
 
-    sv4PathElement* corePath = new sv4PathElement();
+    sv3::PathElement* corePath = new sv3::PathElement();
     
     switch(pathElem->GetMethod())
     {
     case sv4guiPathElement::CONSTANT_TOTAL_NUMBER:
-        corePath->SetMethod(sv4PathElement::CONSTANT_TOTAL_NUMBER);
+        corePath->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
         break;
     case sv4guiPathElement::CONSTANT_SUBDIVISION_NUMBER:
-        corePath->SetMethod(sv4PathElement::CONSTANT_SUBDIVISION_NUMBER);
+        corePath->SetMethod(sv3::PathElement::CONSTANT_SUBDIVISION_NUMBER);
         break;
     case sv4guiPathElement::CONSTANT_SPACING:
-        corePath->SetMethod(sv4PathElement::CONSTANT_SPACING);
+        corePath->SetMethod(sv3::PathElement::CONSTANT_SPACING);
         break;
     default:
         break;

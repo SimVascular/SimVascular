@@ -37,7 +37,6 @@
 #include <sv4guiModulePathExports.h>
 
 #include "sv4gui_Spline.h"
-#include "sv4_PathElement.h"
 
 #include "mitkPoint.h"
 
