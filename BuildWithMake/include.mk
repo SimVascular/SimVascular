@@ -86,14 +86,11 @@ SV_USE_GLOBALS_SHARED = 1
 # ---------------------------------------
 # Control solid modeling kernel inclusion
 # ---------------------------------------
-# Note that Geodesic allows for multiple kernels to be built into a
+# SimVascular allows for multiple kernels to be built into a
 # single executable.  In order to include a kernel, uncomment its line
 # in the following short section.  In order to exclude a kernel,
 # set the value to something other than 1 in global_overrides.mk or
 # via the make command line.
-
-SV_USE_PARASOLID = 0
-SV_USE_PARASOLID_SHARED = 1
 
 # ------------
 # Open Cascade
@@ -328,13 +325,6 @@ ifeq ($(CLUSTER), x64_macosx)
    GLOBAL_DEFINES += -DSV_USE_NOTIMER -DUNIX
 endif
 
-
-ifeq ($(SV_USE_PARASOLID),1)
-    GLOBAL_DEFINES += -DSV_USE_PARASOLID
-endif
-ifeq ($(SV_USE_PARASOLID_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_PARASOLID_SHARED
-endif
 ifeq ($(SV_USE_OPENCASCADE),1)
     GLOBAL_DEFINES += -DSV_USE_OpenCASCADE
 endif
@@ -553,14 +543,6 @@ endif
 
 #  solid modeling
 
-ifeq ($(SV_USE_PARASOLID),1)
-  ifeq ($(SV_USE_PARASOLID_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Licensed/ParasolidSolidModel
-  else
-    LIBDIRS += ../Code/Licensed/ParasolidSolidModel
-  endif
-endif
-
 ifeq ($(SV_USE_OPENCASCADE),1)
   ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
     SHARED_LIBDIRS += ../Code/Source/sv/Model/OCCTSolidModel
@@ -638,9 +620,6 @@ ifeq ($(SV_USE_MITK),1)
   ifeq ($(SV_USE_OPENCASCADE),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/OCCT
   endif
-  ifeq ($(SV_USE_PARASOLID),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/Parasolid
-  endif
 endif
 
 #
@@ -659,14 +638,12 @@ SV_LIB_MODULE_COMMON_NAME=_simvascular_module_common
 SV_LIB_MODULE_MESH_NAME=_simvascular_module_mesh
 SV_LIB_MODULE_MODEL_NAME=_simvascular_module_model
 SV_LIB_MODULE_MODEL_OCCT_NAME=_simvascular_module_model_occt
-SV_LIB_MODULE_MODEL_PARASOLID_NAME=_simvascular_module_model_parasolid
 SV_LIB_MODULE_PATH_NAME=_simvascular_module_path
 SV_LIB_MODULE_PROJECTMANAGEMENT_NAME=_simvascular_module_projectmanagement
 SV_LIB_MODULE_QTWIDGETS_NAME=_simvascular_module_qtwidgets
 SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
 SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
-SV_LIB_PARASOLID_SOLID_NAME=_simvascular_parasolid_solid
 SV_LIB_POLYDATA_SOLID_NAME=_simvascular_polydata_solid
 SV_LIB_POST_NAME=_simvascular_post
 SV_LIB_PYTHON_INTERP_NAME=_simvascular_python_interp
@@ -1017,26 +994,6 @@ endif
 # --------------------------------------
 # ***  Optional Commercial Packages  ***
 # --------------------------------------
-
-# ---------
-# Parasolid
-# ---------
-
-ifeq ($(SV_USE_PARASOLID),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_macosx.mk
-  endif
-
-endif
 
 # here's your chance to override package locations
 # ------------------------------------------------
