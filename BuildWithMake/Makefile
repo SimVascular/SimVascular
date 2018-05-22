@@ -318,6 +318,7 @@ veryclean:
 	$(RM) $(TOP)/../Tcl/Common/Visualization/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/Vis/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/General/tclIndex
+	$(RM) $(TOP)/../Tcl/External/tclxml3.2/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/GUI/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Core/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Plugins/tclIndex
