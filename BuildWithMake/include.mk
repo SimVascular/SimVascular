@@ -67,6 +67,9 @@ SV_COMPILER_VERSION = 18.0
 CXX_COMPILER_VERSION = msvc-18.0
 FORTRAN_COMPILER_VERSION = ifort
 
+# optionally override with cluster options
+# -----------------------------------------------------------------------
+
 ifeq ($(LOCAL_DIR_CLUSTER_OVERRIDES),1)
 -include cluster_overrides.mk
 else
@@ -83,14 +86,11 @@ SV_USE_GLOBALS_SHARED = 1
 # ---------------------------------------
 # Control solid modeling kernel inclusion
 # ---------------------------------------
-# Note that Geodesic allows for multiple kernels to be built into a
+# SimVascular allows for multiple kernels to be built into a
 # single executable.  In order to include a kernel, uncomment its line
 # in the following short section.  In order to exclude a kernel,
 # set the value to something other than 1 in global_overrides.mk or
 # via the make command line.
-
-SV_USE_PARASOLID = 0
-SV_USE_PARASOLID_SHARED = 1
 
 # ------------
 # Open Cascade
@@ -104,21 +104,6 @@ SV_USE_OPENCASCADE_SHARED = 1
 # --------
 
 SV_USE_SOLVERIO = 1
-
-# --------------------------------------
-# Control inclusion of meshSim functions
-# --------------------------------------
-
-SV_USE_MESHSIM = 0
-SV_USE_MESHSIM_DISCRETE_MODEL = 0
-SV_USE_MESHSIM_DISCRETE_MODEL_SHARED = 1
-SV_USE_MESHSIM_SOLID_MODEL = 0
-SV_USE_MESHSIM_SOLID_MODEL_SHARED = 1
-SV_USE_MESHSIM_ADAPTOR = 0
-SV_USE_MESHSIM_SHARED = 1
-MESHSIM_USE_LICENSE_FILE = 1
-MESHSIM_EMBED_LICENSE_KEYS = 0
-MESHSIM_LICENSE_IN_WIN32_REGISTRY = 0
 
 # -------------------------------------
 # Control inclusion of tetgen functions
@@ -340,50 +325,11 @@ ifeq ($(CLUSTER), x64_macosx)
    GLOBAL_DEFINES += -DSV_USE_NOTIMER -DUNIX
 endif
 
-
-ifeq ($(SV_USE_PARASOLID),1)
-    GLOBAL_DEFINES += -DSV_USE_PARASOLID
-endif
-ifeq ($(SV_USE_PARASOLID_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_PARASOLID_SHARED
-endif
 ifeq ($(SV_USE_OPENCASCADE),1)
     GLOBAL_DEFINES += -DSV_USE_OpenCASCADE
 endif
 ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
     GLOBAL_DEFINES += -DSV_USE_OpenCASCADE_SHARED
-endif
-
-ifeq ($(SV_USE_MESHSIM),1)
-  GLOBAL_DEFINES += -DSV_USE_MESHSIM
-  ifeq ($(SV_USE_MESHSIM_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_SHARED
-  endif
-  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_DISCRETE_MODEL
-  endif
-  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_DISCRETE_MODEL_SHARED
-  endif
-  ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_SOLID_MODEL
-  endif
-  ifeq ($(SV+USE_MESHSIM_SOLID_MODEL_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_SOLID_MODEL_SHARED
-  endif
-  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_ADAPTOR
-  endif
-  ifeq ($(SV_USE_WIN32_REGISTRY),1)
-    GLOBAL_DEFINES += -DMESHSIM_LICENSE_IN_WIN32_REGISTRY
-  else
-    ifeq ($(MESHSIM_USE_LICENSE_FILE),1)
-      GLOBAL_DEFINES += -DMESHSIM_USE_LICENSE_FILE
-    endif
-    ifeq ($(MESHSIM_EMBED_LICENSE_KEYS),1)
-      GLOBAL_DEFINES += -DMESHSIM_EMBED_LICENSE_KEYS
-    endif
-  endif
 endif
 
 ifeq ($(SV_USE_TETGEN),1)
@@ -597,30 +543,6 @@ endif
 
 #  solid modeling
 
-ifeq ($(SV_USE_PARASOLID),1)
-  ifeq ($(SV_USE_PARASOLID_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Licensed/ParasolidSolidModel
-  else
-    LIBDIRS += ../Code/Licensed/ParasolidSolidModel
-  endif
-endif
-
-ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
-  ifeq ($(SV_USE_MESHSIM_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/sv/Model/MeshSimDiscreteSolidModel
-  else
-    LIBDIRS += ../Code/Source/sv/Model/MeshSimDiscreteSolidModel
-  endif
-endif
-
-    ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
-      ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
-        SHARED_LIBDIRS += ../Code/Source/sv/Model/MeshSimSolidModel
-      else
-        LIBDIRS += ../Code/Source/sv/Model/MeshSimSolidModel
-      endif
-    endif
-
 ifeq ($(SV_USE_OPENCASCADE),1)
   ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
     SHARED_LIBDIRS += ../Code/Source/sv/Model/OCCTSolidModel
@@ -629,34 +551,13 @@ ifeq ($(SV_USE_OPENCASCADE),1)
   endif
 endif
 
-# meshing
-
-ifeq ($(SV_USE_MESHSIM),1)
-  ifeq ($(SV_USE_MESHSIM_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv/Mesh/MeshSimMeshObject
-  else
-     LIBDIRS += ../Code/Source/sv/Mesh/MeshSimMeshObject
-  endif
-endif
-
 EXECDIRS = ../Code/Source/Application
 
 # need solverio for adaptor classes so add them after adding solverio
-
-ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-  ifeq ($(SV_USE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
-  else
-    LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
-  endif
+ifeq ($(SV_USE_SHARED),1)
+  SHARED_LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
 else
-  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
-    ifeq ($(SV_USE_SHARED),1)
-      SHARED_LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
-    else
-      LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
-    endif
-  endif
+  LIBDIRS += ../Code/Source/sv/Mesh/AdaptObject
 endif
 
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
@@ -664,14 +565,6 @@ ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
     SHARED_LIBDIRS += ../Code/Source/sv/Mesh/TetGenAdapt
   else
     LIBDIRS += ../Code/Source/sv/Mesh/TetGenAdapt
-  endif
-endif
-
-ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
-  ifeq ($(SV_USE_MESHSIM_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv/Mesh/MeshSimAdapt
-  else
-     LIBDIRS += ../Code/Source/sv/Mesh/MeshSimAdapt
   endif
 endif
 
@@ -727,12 +620,6 @@ ifeq ($(SV_USE_MITK),1)
   ifeq ($(SV_USE_OPENCASCADE),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/OCCT
   endif
-  ifeq ($(SV_USE_PARASOLID),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/Parasolid
-  endif
-  ifeq ($(SV_USE_MESHSIM),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Mesh/MeshSim
-  endif
 endif
 
 #
@@ -746,24 +633,17 @@ SV_LIB_IMAGE_NAME=_simvascular_image
 SV_LIB_ITK_LSET_NAME=_simvascular_itk_lset
 SV_LIB_LSET_NAME=_simvascular_lset
 SV_LIB_MESH_NAME=_simvascular_mesh
-SV_LIB_MESHSIM_ADAPTOR_NAME=_simvascular_meshsim_adaptor
-SV_LIB_MESHSIM_DISCRETE_SOLID_NAME=_simvascular_meshsim_discrete
-SV_LIB_MESHSIM_MESH_NAME=_simvascular_meshsim_mesh
-SV_LIB_MESHSIM_SOLID_NAME=_simvascular_meshsim_solid
 SV_LIB_MMG_MESH_NAME=_simvascular_mmg_mesh
 SV_LIB_MODULE_COMMON_NAME=_simvascular_module_common
 SV_LIB_MODULE_MESH_NAME=_simvascular_module_mesh
-SV_LIB_MODULE_MESHSIM_NAME=_simvascular_module_meshsim
 SV_LIB_MODULE_MODEL_NAME=_simvascular_module_model
 SV_LIB_MODULE_MODEL_OCCT_NAME=_simvascular_module_model_occt
-SV_LIB_MODULE_MODEL_PARASOLID_NAME=_simvascular_module_model_parasolid
 SV_LIB_MODULE_PATH_NAME=_simvascular_module_path
 SV_LIB_MODULE_PROJECTMANAGEMENT_NAME=_simvascular_module_projectmanagement
 SV_LIB_MODULE_QTWIDGETS_NAME=_simvascular_module_qtwidgets
 SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
 SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
-SV_LIB_PARASOLID_SOLID_NAME=_simvascular_parasolid_solid
 SV_LIB_POLYDATA_SOLID_NAME=_simvascular_polydata_solid
 SV_LIB_POST_NAME=_simvascular_post
 SV_LIB_PYTHON_INTERP_NAME=_simvascular_python_interp
@@ -1114,46 +994,6 @@ endif
 # --------------------------------------
 # ***  Optional Commercial Packages  ***
 # --------------------------------------
-
-# ---------
-# Parasolid
-# ---------
-
-ifeq ($(SV_USE_PARASOLID),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_macosx.mk
-  endif
-
-endif
-
-# -------
-# MeshSim
-# -------
-
-ifeq ($(SV_USE_MESHSIM),1)
-
-  SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/meshsim-9.0-151017-vs12.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/meshsim-9.0-151017.x64_linux.mk
-  endif
-
-  #No meshsim for mac osx
-
-endif
 
 # here's your chance to override package locations
 # ------------------------------------------------
