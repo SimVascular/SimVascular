@@ -64,18 +64,8 @@
   #include "sv_vmtk_utils_init.h"
 #endif
 
-#ifdef SV_USE_MESHSIM
-  #include "sv_mesh_init.h"
-  #include "cv_meshsim_mesh_init.h"
-#endif
-
 #ifdef SV_USE_OpenCASCADE
   #include "sv_occt_init.h"
-#endif
-
-#ifdef SV_USE_MESHSIM_ADAPTOR
-  #include "sv_adapt_init.h"
-  #include "cv_meshsim_adapt_init.h"
 #endif
 
 #ifdef SV_USE_TETGEN
@@ -86,14 +76,6 @@
 #ifdef SV_USE_MMG
   #include "sv_mesh_init.h"
   #include "sv_mmg_mesh_init.h"
-#endif
-
-#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
-  #include "cv_discrete_init.h"
-#endif
-
-#ifdef SV_USE_PARASOLID
-  #include "cv_parasolid_solid_init.h"
 #endif
 
 #ifdef SV_USE_ITK
@@ -221,13 +203,7 @@ int SimVascular_Init( Tcl_Interp *interp )
 //#endif
 #endif
 
-#ifdef SV_USE_MESHSIM
-  if ( Mesh_Init(interp) == TCL_ERROR ) {
-      fprintf( stderr, "error on Mesh_Init\n" );
-      return TCL_ERROR;
-  }
-
-#elif defined SV_USE_TETGEN
+#ifdef SV_USE_TETGEN
   if ( Mesh_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on Mesh_Init\n" );
       return TCL_ERROR;
@@ -248,12 +224,7 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 #endif
 
-#ifdef SV_USE_MESHSIM_ADAPTOR
-  if ( Adapt_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on Adapt_Init\n" );
-    return TCL_ERROR;
-  }
-#elif defined SV_USE_TETGEN_ADAPTOR
+#ifdef SV_USE_TETGEN_ADAPTOR
   if ( Adapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Adapt_Init\n" );
     return TCL_ERROR;
@@ -265,42 +236,6 @@ int SimVascular_Init( Tcl_Interp *interp )
     fprintf( stderr, "error on TetGenAdapt_Init\n" );
     return TCL_ERROR;
   }
-#endif
-
-#ifdef SV_USE_MESHSIM
-#ifndef SV_USE_MESHSIM_SHARED
-  if ( Meshsimmesh_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on Mesh_Init\n" );
-    return TCL_ERROR;
-  }
-#endif
-#endif
-
-#ifdef SV_USE_MESHSIM_ADAPTOR
-#ifndef SV_USE_MESHSIM_SHARED
-  if ( Meshsimadapt_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on MeshSimAdapt_Init\n" );
-    return TCL_ERROR;
-  }
-#endif
-#endif
-
-#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
-#ifndef SV_USE_MESHSIM_DISCRETE_MODEL_SHARED
-  if ( Meshsimdiscretesolid_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on Mesh_Init\n" );
-    return TCL_ERROR;
-  }
-#endif
-#endif
-
-#ifdef SV_USE_PARASOLID
-#ifndef SV_USE_PARASOLID_SHARED
-  if ( Parasolidsolid_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on Parasolidsolid_Init\n" );
-    return TCL_ERROR;
-  }
-#endif
 #endif
 
 #ifdef SV_USE_ITK

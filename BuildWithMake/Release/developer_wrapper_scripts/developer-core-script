@@ -44,9 +44,6 @@ export OPEN_SOFTWARE_BINARIES_TOPLEVEL=REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL
 export LICENSED_SOFTWARE_TOPLEVEL=REPLACEME_LICENSED_SOFTWARE_TOPLEVEL
 export SV_HOME=REPLACEME_SV_HOME
 
-# MeshSim license file
-export SIM_LICENSE_FILE=$SV_HOME/REPLACEME_SIM_LICENSE_FILE
-
 #export SV_STATIC_BUILD=REPLACEME_SV_STATIC_BUILD
 
 export SV_USE_PYTHON=REPLACEME_SV_USE_PYTHON
@@ -104,16 +101,6 @@ esac
 export TCLLIBPATH=REPLACEME_VTK_TCL_LIB_PATH
 # Vtk Python additions (included above with python site-packages)
 
-# MeshSim additions
-export LD_LIBRARY_PATH=REPLACEME_MESHSIM_SO_PATH:$LD_LIBRARY_PATH
-
-# PARASOLID additions
-export LD_LIBRARY_PATH=REPLACEME_PARASOLID_SO_PATH:$LD_LIBRARY_PATH
-export P_SCHEMA=REPLACEME_P_SCHEMA
-
-# MPICH2 additions
-export LD_LIBRARY_PATH=REPLACEME_MPICH_SO_PATH:$LD_LIBRARY_PATH
-
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:REPLACEME_INTEL_COMPILER_SO_PATH
 
 # Opencascade additions
@@ -143,8 +130,6 @@ export SV_HOME=`cygpath --windows -t mixed $SV_HOME`
 export TCL_LIBRARY=`cygpath --windows -t mixed $TCL_LIBRARY`
 export TK_LIBRARY=`cygpath --windows -t mixed $TK_LIBRARY`
 export TKCXIMAGE_DLL=`cygpath --windows -t mixed $TKCXIMAGE_DLL`
-export P_SCHEMA=`cygpath --windows -t mixed $P_SCHEMA`
-export SIM_LICENSE_FILE=`cygpath --windows -t mixed $SIM_LICENSE_FILE`
 #export SV_PLUGIN_PATH=`cygpath --windows -t mixed $SV_PLUGIN_PATH`
 export PATH=$LD_LIBRARY_PATH:$PATH
 ;;
