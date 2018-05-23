@@ -829,9 +829,10 @@ int cvMath::GetInsertintIndexByDistanceSum( std::vector<std::array<double,3> > p
         //normalize and dot
         double l1=0.;
         double l2=0.;
+        double lth = sqrt(pow(n1[0],2)+pow(n1[1],2)+pow(n1[2],2));
         for (int i = 0;i<3;i++)
         {
-            n1[i] /= sqrt(pow(n1[0],2)+pow(n1[1],2)+pow(n1[2],2));
+            n1[i] /= lth;
             l1 += n1[i]*(point[i]-startPoint[i]);
             l2 += -1*n1[i]*(point[i]-endPoint[i]);
         }
@@ -878,9 +879,10 @@ int cvMath::GetInsertintIndexByProjectedDistance( std::vector<std::array<double,
             //normalize and dot
             double l1=0.;
             double l2=0.;
+            double lth =sqrt(pow(n1[0],2)+pow(n1[1],2)+pow(n1[2],2));
             for (int i = 0;i<3;i++)
             {
-                n1[i] /= sqrt(pow(n1[0],2)+pow(n1[1],2)+pow(n1[2],2));
+                n1[i] /= lth;
                 l1 += n1[i]*(point[i]-startPoint[i]);
                 l2 += -1*n1[i]*(point[i]-endPoint[i]);
             }
@@ -988,9 +990,9 @@ std::array<double,3> cvMath::GetPerpendicularNormalVector(std::array<double,3> v
 
     pvec[replaceIdx]=-dotProduct/vec[replaceIdx];
 
-
+    double lth  = sqrt(pow(pvec[0],2)+pow(pvec[1],2)+pow(pvec[2],2));
     for (int i = 0;i<3;i++)
-        pvec[i] /= sqrt(pow(pvec[0],2)+pow(pvec[1],2)+pow(pvec[2],2));
+        pvec[i] /= lth;
 
     return pvec;
 }

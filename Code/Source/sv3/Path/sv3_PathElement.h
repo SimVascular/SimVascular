@@ -59,7 +59,7 @@ public:
         std::array<double,3>  point;
     };
 
-    typedef Spline::SplinePoint sv4PathPoint;
+    typedef Spline::SplinePoint PathPoint;
 
     PathElement();
 
@@ -115,27 +115,27 @@ public:
 
     int GetCalculationNumber();
 
-    std::vector<sv4PathPoint>  GetPathPoints();
+    std::vector<PathPoint>  GetPathPoints();
 
     std::vector<std::array<double,3> > GetPathPosPoints();
 
-    sv4PathPoint GetPathPoint(int index) ;
+    PathPoint GetPathPoint(int index) ;
 
     std::array<double,3>  GetPathPosPoint(int index) ;
 
-    void SetPathPoints(std::vector<PathElement::sv4PathPoint> pathPoints);
+    void SetPathPoints(std::vector<PathElement::PathPoint> pathPoints);
 
     void CreatePathPoints() ;
 
     void CalculateBoundingBox(double *bounds);
 
-    std::vector<sv4PathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex);
+    std::vector<PathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex){};
 
 protected:
 
     std::vector<svControlPoint> m_ControlPoints;
 
-    std::vector<sv4PathPoint> m_PathPoints;
+    std::vector<PathPoint> m_PathPoints;
 
     double m_Spacing;
 

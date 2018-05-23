@@ -164,8 +164,7 @@ double Spline::GetLength(VtkParametricSpline* svpp, double t1, double t2)
 
         point1=GetPoint(svpp,tt1);
         point2=GetPoint(svpp,tt2);
-
-        double length=sqrt(pow(point2[0]-point1[0],2)+pow(point2[1]-point1[1],2)+(point2[2]-point1[2],2));
+        double length=sqrt(pow(point2[0]-point1[0],2)+pow(point2[1]-point1[1],2)+pow(point2[2]-point1[2],2));
         totalLength+=length;
     }
 
@@ -174,6 +173,7 @@ double Spline::GetLength(VtkParametricSpline* svpp, double t1, double t2)
 
 void Spline::Update()
 {
+    double length;
     m_SplinePoints.clear();
 
     VtkParametricSpline* svpp= new VtkParametricSpline();
@@ -209,11 +209,10 @@ void Spline::Update()
     default:
         break;
     }
-
     int splinePointID=0;
-
     for(int i=0;i<inputPointNumber;i++)
     {
+
         pt1=m_InputPoints[i];
 
         if(m_Method==CONSTANT_SPACING)
@@ -226,25 +225,24 @@ void Spline::Update()
         }
 
         splinePoint.pos=pt1;
-
+       
         if(i==inputPointNumber-1 &&!m_Closed)
         {
             double tx=i-1.0/interNumber/m_FurtherSubdivisionNumber;
             ptx=GetPoint(svpp,tx);
-
             splinePoint.id=splinePointID;
             splinePointID++;
             for (int i=0;i<3;i++)
                 splinePoint.tangent[i]=pt1[i]-ptx[i];
+            length = sqrt(pow(splinePoint.tangent[0],2)+pow(splinePoint.tangent[1],2)+pow(splinePoint.tangent[2],2));
             for (int i = 0;i<3;i++)
-                splinePoint.tangent[i]/=sqrt(pow(splinePoint.tangent[0],2)+pow(splinePoint.tangent[1],2)+pow(splinePoint.tangent[2],2));
+                splinePoint.tangent[i]/=length;
             cvMath *cMath = new cvMath();
             splinePoint.rotation= cMath->GetPerpendicularNormalVector(splinePoint.tangent);
             delete cMath;
             m_SplinePoints.push_back(splinePoint);
             break;
         }
-
         double txx=i+1.0/interNumber/m_FurtherSubdivisionNumber;
         ptx=GetPoint(svpp,txx);
 
@@ -252,8 +250,9 @@ void Spline::Update()
         splinePointID++;
         for (int i=0;i<3;i++)
             splinePoint.tangent[i]=ptx[i]-pt1[i];
+        length = sqrt(pow(splinePoint.tangent[0],2)+pow(splinePoint.tangent[1],2)+pow(splinePoint.tangent[2],2));
         for (int i = 0;i<3;i++)
-            splinePoint.tangent[i]/=sqrt(pow(splinePoint.tangent[0],2)+pow(splinePoint.tangent[1],2)+pow(splinePoint.tangent[2],2));
+            splinePoint.tangent[i]/=length;
         cvMath *cMath = new cvMath();
         splinePoint.rotation= cMath->GetPerpendicularNormalVector(splinePoint.tangent);
         delete cMath;
@@ -272,13 +271,16 @@ void Spline::Update()
             splinePoint.pos=pt1;
             for (int i=0;i<3;i++)
                 splinePoint.tangent[i]=ptx[i]-pt1[i];
+            length = sqrt(pow(splinePoint.tangent[0],2)+pow(splinePoint.tangent[1],2)+pow(splinePoint.tangent[2],2));
             for (int i = 0;i<3;i++)
-                splinePoint.tangent[i]/=sqrt(pow(splinePoint.tangent[0],2)+pow(splinePoint.tangent[1],2)+pow(splinePoint.tangent[2],2));
+                splinePoint.tangent[i]/=length;
             cvMath *cMath = new cvMath();
             splinePoint.rotation= cMath->GetPerpendicularNormalVector(splinePoint.tangent);
             delete cMath;
             m_SplinePoints.push_back(splinePoint);
         }
+        
+
 
     }
 

@@ -32,6 +32,7 @@
 #include "sv4gui_ModelUtils.h"
 
 #include "sv4gui_ModelElementPolyData.h"
+#include "sv3_PathElement.h"
 #include "sv4gui_PathElement.h"
 #include "sv4gui_Math3.h"
 #include "sv4gui_MitkSeg3D.h"
@@ -1253,7 +1254,7 @@ std::vector<sv4guiPathElement*> sv4guiModelUtils::CreatePathElements(sv4guiModel
         }
 
         sv4guiPathElement* pe=new sv4guiPathElement();
-        pe->SetMethod(sv4guiPathElement::CONSTANT_TOTAL_NUMBER);
+        pe->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
         pe->SetCalculationNumber(centerline->GetNumberOfPoints());
         //pe->SetControlPoints(controlPoints,false);
         pe->SetPathPoints(ConvertToPathPoints(posPoints));

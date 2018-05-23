@@ -108,56 +108,6 @@ void PathElement::InsertControlPoint(int index, std::array<double,3>  point)
     }
 }
 
-//int PathElement::GetInsertintIndexByDistance( std::array<double,3>  point)
-//{
-//    int idx=-2;
-
-//    if(m_ControlPoints.size()<2){
-//        idx=m_ControlPoints.size();
-//    }else{
-//        double dis1,dis2,minDisSum;
-//        int index=0;
-//        for (int i = 0; i < m_ControlPoints.size()-1; ++i)
-//        {
-//            dis1=point.EuclideanDistanceTo(m_ControlPoints[i].point);
-//            dis2=point.EuclideanDistanceTo(m_ControlPoints[i+1].point);
-//            if(i==0)
-//            {
-//                minDisSum=dis1+dis2;
-//                index=i;
-//            }else{
-//                if(minDisSum>(dis1+dis2)){
-//                    minDisSum=dis1+dis2;
-//                    index=i;
-//                }
-//            }
-//        }
-
-//        double* p0=m_ControlPoints[index].point;
-//        double* p1=m_ControlPoints[index+1].point;
-
-//        double* pa,pb;
-//        pa[0]=p1[0]-p0[0];
-//        pa[1]=p1[1]-p0[1];
-//        pa[2]=p1[2]-p0[2];
-//        pb[0]=point[0]-p0[0];
-//        pb[1]=point[1]-p0[1];
-//        pb[2]=point[2]-p0[2];
-
-//        double distance=(pa[0]*pb[0]+pa[1]*pb[1]+pa[2]*pb[2])/p1.EuclideanDistanceTo(p0);
-
-//        if(distance<=0)
-//        {
-//            idx=index;
-//        }else if(distance<p1.EuclideanDistanceTo(p0)){
-//            idx=index+1;
-//        }else{
-//            idx=index+2;
-//        }
-
-//    }
-//    return idx;
-//}
 
 int PathElement::GetInsertintIndexByDistance(std::array<double,3>  point)
 {
@@ -420,7 +370,7 @@ int PathElement::GetCalculationNumber()
     return m_CalculationNumber;
 }
 
-std::vector<PathElement::sv4PathPoint> PathElement::GetPathPoints()
+std::vector<PathElement::PathPoint> PathElement::GetPathPoints()
 {
     return m_PathPoints;
 }
@@ -434,9 +384,9 @@ std::vector<std::array<double,3> > PathElement::GetPathPosPoints()
     return posPoints;
 }
 
-PathElement::sv4PathPoint PathElement::GetPathPoint(int index)
+PathElement::PathPoint PathElement::GetPathPoint(int index)
 {
-    sv4PathPoint pathPoint;
+    PathElement::PathPoint pathPoint;
     if(index==-1) index=m_PathPoints.size()-1;
 
     if(index>-1 && index<m_PathPoints.size())
@@ -452,13 +402,14 @@ std::array<double,3> PathElement::GetPathPosPoint(int index)
     return GetPathPoint(index).pos;
 }
 
-void PathElement::SetPathPoints(std::vector<PathElement::sv4PathPoint> pathPoints)
+void PathElement::SetPathPoints(std::vector<PathElement::PathPoint> pathPoints)
 {
     m_PathPoints=pathPoints;
 }
 
 void PathElement::CreatePathPoints()
 {
+
     m_PathPoints.clear();
 
     int controlNumber=m_ControlPoints.size();
@@ -488,7 +439,6 @@ void PathElement::CreatePathPoints()
     default:
         break;
     }
-
     spline->SetInputPoints(GetControlPoints());
     spline->Update();//remember Update() before fetching spline points
     m_PathPoints=spline->GetSplinePoints();
@@ -532,116 +482,3 @@ void PathElement::CalculateBoundingBox(double *bounds)
     }
 }
 
-/*
-std::vector<PathElement::sv4PathPoint> PathElement::GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex)
-{
-    startingIndex=0;
-
-    if(m_PathPoints.size()<2)
-        return m_PathPoints;
-
-    double* origin;
-    mitk::Vector3D normal;
-    mitk::FillVector3D(origin,realBounds[0],realBounds[2],realBounds[4]);
-    mitk::FillVector3D(normal,1,0,0);
-    mitk::PlaneGeometry::Pointer px1 = mitk::PlaneGeometry::New();
-    px1->InitializePlane(origin,normal);
-
-    mitk::FillVector3D(normal,0,1,0);
-    mitk::PlaneGeometry::Pointer py1 = mitk::PlaneGeometry::New();
-    py1->InitializePlane(origin,normal);
-
-    mitk::FillVector3D(normal,0,0,1);
-    mitk::PlaneGeometry::Pointer pz1 = mitk::PlaneGeometry::New();
-    pz1->InitializePlane(origin,normal);
-
-    mitk::FillVector3D(origin,realBounds[1],realBounds[3],realBounds[5]);
-    mitk::FillVector3D(normal,1,0,0);
-    mitk::PlaneGeometry::Pointer px2 = mitk::PlaneGeometry::New();
-    px2->InitializePlane(origin,normal);
-
-    mitk::FillVector3D(normal,0,1,0);
-    mitk::PlaneGeometry::Pointer py2 = mitk::PlaneGeometry::New();
-    py2->InitializePlane(origin,normal);
-
-    mitk::FillVector3D(normal,0,0,1);
-    mitk::PlaneGeometry::Pointer pz2 = mitk::PlaneGeometry::New();
-    pz2->InitializePlane(origin,normal);
-
-    mitk::PlaneGeometry::Pointer planes[6]={px1,px2,py1,py2,pz1,pz2};
-
-    double* beginPathPosPoint=GetPathPoint(0).pos;
-    mitk::Vector3D beginPathDirection=-GetPathPoint(0).tangent;
-
-    double* endPathPosPoint=GetPathPoint(-1).pos;
-    mitk::Vector3D endPathDirection=GetPathPoint(-1).tangent;
-
-    double* interPoint;
-
-    bool beginFound=false;
-    for(int i=0;i<6;i++)
-    {
-        if(sv4guiMath3::GetIntersectionPoint(planes[i], beginPathPosPoint,beginPathDirection,interPoint))
-        {
-            if(sv4guiMath3::InsideBounds(interPoint,realBounds))
-            {
-                beginFound=true;
-                break;
-            }
-        }
-    }
-    double* beginPoint=interPoint;
-
-    bool endFound=false;
-    for(int i=0;i<6;i++)
-    {
-        if(sv4guiMath3::GetIntersectionPoint(planes[i], endPathPosPoint,endPathDirection,interPoint))
-        {
-            if(sv4guiMath3::InsideBounds(interPoint,realBounds))
-            {
-                endFound=true;
-                break;
-            }
-        }
-    }
-
-    double* endPoint=interPoint;
-
-    std::vector<PathElement::sv4PathPoint> beginPathPoints;
-    std::vector<PathElement::sv4PathPoint> endPathPoints;
-
-    if(beginFound)
-    {
-        std::vector<double*> controlPoints={beginPoint,beginPathPosPoint};
-
-        PathElement* pathElement=new PathElement();
-        pathElement->SetMethod(PathElement::CONSTANT_SPACING);
-        pathElement->SetSpacing(minSpacing);
-        pathElement->SetControlPoints(controlPoints);
-
-        beginPathPoints=pathElement->GetPathPoints();
-        startingIndex=beginPathPoints.size();
-    }
-
-    if(endFound)
-    {
-        std::vector<double*> controlPoints={endPathPosPoint,endPoint};
-
-        PathElement* pathElement=new PathElement();
-        pathElement->SetMethod(PathElement::CONSTANT_SPACING);
-        pathElement->SetSpacing(minSpacing);
-        pathElement->SetControlPoints(controlPoints);
-
-        endPathPoints=pathElement->GetPathPoints();
-    }
-
-    std::vector<PathElement::sv4PathPoint> extendedPathPoints=GetPathPoints();
-    if(beginFound)
-        extendedPathPoints.insert(extendedPathPoints.begin(),beginPathPoints.begin(),beginPathPoints.end()-1);
-
-    if(endFound)
-        extendedPathPoints.insert(extendedPathPoints.end(),endPathPoints.begin()+1,endPathPoints.end());
-
-    return extendedPathPoints;
-}
-*/

@@ -90,7 +90,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::ReadFile(std::string fileName
     pathElement->QueryIntAttribute("calculation_number", &calculationNumber);
     double spacing=0.0;
     pathElement->QueryDoubleAttribute("spacing", &spacing);
-    path->SetMethod( (sv4guiPathElement::CalculationMethod) method);
+    path->SetMethod( (sv3::PathElement::CalculationMethod) method);
     path->SetCalculationNumber(calculationNumber);
     path->SetSpacing(spacing);
 
@@ -129,7 +129,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::ReadFile(std::string fileName
         peElement->QueryIntAttribute("calculation_number", &calculationNumber);
         double spacing=0.0;
         peElement->QueryDoubleAttribute("spacing", &spacing);
-        pe->SetMethod( (sv4guiPathElement::CalculationMethod) method);
+        pe->SetMethod( (sv3::PathElement::CalculationMethod) method);
         pe->SetCalculationNumber(calculationNumber);
         pe->SetSpacing(spacing);
 

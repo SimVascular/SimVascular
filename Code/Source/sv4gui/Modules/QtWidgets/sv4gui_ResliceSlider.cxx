@@ -165,13 +165,11 @@ double sv4guiResliceSlider::getResliceSize()
 
 void sv4guiResliceSlider::updateReslice()
 {
-
     if(!isResliceOn()) return;
 
     if(m_PathPoints.size()==0) return;
 
 //    if(!currentDataNode) return;
-
     mitk::Image* image=NULL;
     mitk::BaseData* baseData=NULL;
     if(currentDataNode.IsNotNull())
@@ -179,7 +177,6 @@ void sv4guiResliceSlider::updateReslice()
         image= dynamic_cast<mitk::Image*>(currentDataNode->GetData());
         baseData=currentDataNode->GetData();
     }
-
 //    if(!image) return;
 
     //    if(currentSlicedGeometry)
@@ -189,7 +186,6 @@ void sv4guiResliceSlider::updateReslice()
     //    }
 
     currentSlicedGeometry=sv4guiSegmentationUtils::CreateSlicedGeometry(m_PathPoints, baseData, resliceSize);
-
     displayWidget->changeLayoutTo2x2Dand3DWidget();
 
     mitk::SliceNavigationController::Pointer intensityController=intensityWindow->GetSliceNavigationController();
@@ -201,7 +197,6 @@ void sv4guiResliceSlider::updateReslice()
     potentialController->SetInputWorldGeometry3D(currentSlicedGeometry);
     potentialController->SetViewDirection(mitk::SliceNavigationController::Original);
     potentialController->Update();
-
     if(image)
     {
         mitk::LookupTable::Pointer mitkLut = mitk::LookupTable::New();
@@ -211,7 +206,6 @@ void sv4guiResliceSlider::updateReslice()
         currentDataNode->SetProperty("LookupTable", mitkLutProp,potentialWindow->GetRenderer());
 
         currentDataNode->SetBoolProperty("show gradient", true, potentialWindow->GetRenderer());
-
         if(m_UseGeometrySpacing)
         {
             currentDataNode->SetBoolProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( true ),intensityWindow->GetRenderer());
@@ -230,7 +224,6 @@ void sv4guiResliceSlider::updateReslice()
             currentDataNode->SetBoolProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( true ),potentialWindow->GetRenderer());
         }
 
-
         mitk::VtkResliceInterpolationProperty::Pointer interProp=mitk::VtkResliceInterpolationProperty::New();
         switch(m_ResliceMode)
         {
@@ -246,7 +239,6 @@ void sv4guiResliceSlider::updateReslice()
         default:
             break;
         }
-
         currentDataNode->SetProperty("reslice interpolation", interProp,intensityWindow->GetRenderer());
         currentDataNode->SetProperty("reslice interpolation", interProp,potentialWindow->GetRenderer());
 
@@ -259,7 +251,6 @@ void sv4guiResliceSlider::updateReslice()
 
     intensityWindow->GetRenderer()->GetCameraController()->Fit();
     potentialWindow->GetRenderer()->GetCameraController()->Fit();
-
     if(!stepperSynchronized){
         connect(intensityStepper, SIGNAL(Refetch()), this, SLOT(intensityOnRefetch()));
         connect(potentialStepper, SIGNAL(Refetch()), this, SLOT(potentialOnRefetch()));
@@ -267,11 +258,8 @@ void sv4guiResliceSlider::updateReslice()
     }
 
     mitk::RenderingManager::GetInstance()->ForceImmediateUpdateAll();
-
     sliderContainer->show();
-
     setSlicePos(m_StartingSlicePos);
-
 }
 
 int sv4guiResliceSlider::getCurrentSliceIndex(){

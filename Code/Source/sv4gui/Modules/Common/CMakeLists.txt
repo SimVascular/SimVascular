@@ -40,7 +40,8 @@ simvascular_create_module(
   ${VTK_LIBRARIES}
   ${ITK_LIBRARIES}
   ${MITK_LIBRARIES}
-  ${SV_LIB_UTILS_NAME})
+  ${SV_LIB_UTILS_NAME}
+  ${SV_LIB_PATH_NAME})
 #-----------------------------------------------------------------------------
 
 if(SV_INSTALL_LIBS)
