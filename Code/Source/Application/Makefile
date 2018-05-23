@@ -48,13 +48,6 @@ HDRS	=
 
 CXXSRCS = main.cxx SimVascular_Init.cxx
 
-ifneq ($(CLUSTER),x64_cygwin)
-  ifeq ($(SV_USE_QT),1)
-    HDRS    += qttclnotifier.h
-    CXXSRCS += qttclnotifier.cxx moc_qttclnotifier.cxx
-  endif
-endif
-
 ifeq ($(SV_STATIC_BUILD),1)
 
   COPIED_CXXSRCS += ../Common/Geometry/sv_geom_init.cxx \
@@ -162,13 +155,6 @@ LFLAGS +=  \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
-#  ifneq ($(SV_USE_SHARED),1)
-#    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
-#  endif
-
-# if we want to modify apputil, uncomment here!
-#LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_apputil$(LIBLINKEXT) \
-
 endif
 
 LFLAGS +=  $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
