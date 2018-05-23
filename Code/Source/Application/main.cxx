@@ -595,63 +595,6 @@ inline bool file_exists (char* name) {
   char envvar[_MAX_ENV];
   char newvar[_MAX_ENV];
 
-#ifdef SV_USE_PARASOLID
-   //
-   //  P_SCHEMA
-   //
-
-  envvar[0]='\0';
-  getenv_s( &requiredSize, NULL, 0, "P_SCHEMA");
-  if (requiredSize >= _MAX_ENV) {
-   fprintf(stderr,"FATAL ERROR:  p_schema to long!\n");
-   exit(-1);
- }
- if (requiredSize > 0) {
-     // Get the value of the p_schema environment variable.
-   getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
-
-     //if( envvar != NULL )
-      //printf( "Original P_SCHEMA variable is: %s\n", envvar );
- }
-
-   // Attempt to change p_schema. Note that this only affects
-   // the environment variable of the current process. The command
-   // processor's environment is not changed.
-
- returnStatus2 = RegQueryValueEx(hKey2, "PSchemaDir", NULL, &dwType3,(LPBYTE)&lszValue3, &dwSize3);
-  //fprintf(stdout,"pschema: %s\n",lszValue3);
-
- if (returnStatus2 != ERROR_SUCCESS) {
-  fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV PSchemaDir not found!\n\n");
-  exit(-1);
-}
-
-
-newvar[0]='\0';
-sprintf(newvar,"%s",lszValue3);
-  //fprintf(stdout,"%s\n",newvar);
-TCHAR  shortpschema[1024]=TEXT("");
-   // convert to short filename without spaces
-if(!GetShortPathName(newvar,shortpschema,1024)) {
-     // Handle an error condition.
- printf ("GetFullPathName failed (%s) (%d)\n", newvar, GetLastError());
- _putenv_s( "P_SCHEMA", newvar );
-} else {
-     //fprintf(stdout,"ShortPathName (%s)\n",shortpschema);
-  _putenv_s( "P_SCHEMA", shortpschema );
-}
-
-getenv_s( &requiredSize, NULL, 0, "P_SCHEMA");
-
-envvar[0]='\0';
-
-   // Get the new value of the p_schema environment variable.
-getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
-
-   //if( envvar != NULL )
-   //   printf( "New P_SCHEMA variable is: %s\n", envvar );
-#endif
-
 #ifdef SV_USE_PYTHON
 
   lszValue4[0]='\0';

@@ -92,10 +92,18 @@ simvascular_add_new_external(Qt5 5.4.2 ON ON qt)
 simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
 
 #PYTHON
-simvascular_add_new_external(PYTHON 2.7.11 ON ON python)
+if(WIN32)
+  simvascular_add_new_external(PYTHON 2.7.13 ON ON python)
+else()
+  simvascular_add_new_external(PYTHON 2.7.11 ON ON python)
+endif()
 
 #FREETYPE
-simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
+if(WIN32)
+  simvascular_add_new_external(FREETYPE 2.6.3 ON OFF freetype)
+else()
+  simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
+endif()
 
 # MMG
 simvascular_add_new_external(MMG 5.1.0 ON OFF mmg)

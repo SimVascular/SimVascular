@@ -42,7 +42,7 @@ include $(TOP)/include.mk
 SV_CLUSTER = $(CLUSTER)
 
 ifneq ($(CLUSTER),x64_linux)
-  include $(TOP)/MakeHelpers/wix-3.11.x64_cygwin.mk
+  include $(TOP)/MakeHelpers/wix-3.14.x64_cygwin.mk
 endif
 
 SV_TIMESTAMP := $(shell date +"%Y-%m-%d")
@@ -61,9 +61,9 @@ else
 endif
 
 ifneq ($(CLUSTER),x64_linux)
-  all: use_subst windows-distribution msi msi-bundle msi-meshsim-and-parasolid
+  all: use_subst windows-distribution msi msi-bundle
 else
-  all: linux-distribution taritup taritup-meshsim-and-parasolid
+  all: linux-distribution taritup
 endif
 
 use_subst:
@@ -72,7 +72,7 @@ ifeq ($(CLUSTER),x64_cygwin)
 	-subst P: $(shell cygpath -w `pwd`)
 endif
 
-veryclean: use_subst msiclean msiclean-meshsim-and-parasolid msi-bundle-clean
+veryclean: use_subst msiclean msi-bundle-clean
 	-rm -f tar_files/*.tar
 	-rm -f tar_files/*.tar.gz
 	-rm -Rf $(DIST_DIR_TOP)
@@ -95,48 +95,6 @@ ifeq ($(SV_USE_PYTHON),1)
 else
 	-echo "set SV_USE_PYTHON   OFF" >> tmp/startup_configure.tcl
 endif
-
-#
-#  Create msi installer for simvascular meshsim-and-parasolid
-#
-
-msiclean-meshsim-and-parasolid:
-	-rm -f *~
-	-rm -fR package-release-meshsim-and-parasolid
-	-rm -f simvascular-meshsim-and-parasolid.msi
-	-rm -f tmp/simvascular-meshsim-and-parasolid.wixobj
-	-rm -f tmp/simvascular-meshsim-and-parasolid.wxs
-	-rm -f simvascular-meshsim-and-parasolid.wixpdb
-	-rm -f tmp/uuidgen.exe*
-	-rm -f tmp/uuidgen.obj*
-
-msi-meshsim-and-parasolid:	msiclean-meshsim-and-parasolid
-ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
-	x86_64-w64-mingw32-gcc -o tmp/uuidgen.exe windows_msi_helpers/uuidgen.c -lole32
-else
-	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
-endif
-	-rm -Rf package-release-meshsim-and-parasolid
-	-mkdir -p package-release-meshsim-and-parasolid
-	-date > package-release-meshsim-and-parasolid/release-date
-	-chmod -R a+rwx package-release-meshsim-and-parasolid
-	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
-	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*meshsim*.$(SOEXT)* package-release-meshsim-and-parasolid
-ifeq ($(SV_USE_PARASOLID),1)
-	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
-	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
-endif
-ifeq ($(SV_USE_MESHSIM_SHARED),1)
-	-cp -f $(MESHSIM_SO_PATH)/Sim*.dll package-release-meshsim-and-parasolid
-endif
-	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
-	-echo "Run candle..."
-	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/simvascular-meshsim-and-parasolid.wixobj tmp/simvascular-meshsim-and-parasolid.wxs
-	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-meshsim-and-parasolid.msi tmp/simvascular-meshsim-and-parasolid.wixobj
 
 #
 #  Create msi installer for SimVascular
@@ -179,7 +137,6 @@ msi-bundle: msi-bundle-clean mksedscript
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-bundle.exe
 
-#msi: msiclean msi-simvascular msiclean-meshsim-and-parasolid msi-meshsim-and-parasolid msi-bundle
 msi: msiclean msi-simvascular
 
 mksedscript:
@@ -215,8 +172,6 @@ ifeq ($(SV_USE_PYTHON),1)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_python_interp*.$(SOEXT)* $(DIST_DIR)
 endif
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_*.$(SOEXT)* $(DIST_DIR)
-	-rm -f $(DIST_DIR)/*parasolid*.$(SOEXT)*
-	-rm -f $(DIST_DIR)/*meshsim*.$(SOEXT)*
 	-cp -fR $(TOP)/Bin/plugins $(DIST_DIR)
 
 copy-sv-tcl-code:
@@ -248,18 +203,6 @@ copy-tcl-libs:
 	-cp -fR $(TKCXIMAGE_DLL) $(DIST_DIR)
 
 copy-external-libs:
-#	-mkdir -p $(DIST_DIR)/intel_compiler_runtime_libs
-#	-cp -f -p $(INTEL_COMPILER_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/intel_compiler_runtime_libs
-#ifeq ($(SV_USE_PARASOLID),1)
-#	-cp -f $(PARASOLID_DLLS) $(DIST_DIR)
-#	-cp -Rf $(P_SCHEMA) $(DIST_DIR)/schema
-#endif
-#ifeq ($(SV_USE_MESHSIM),1)
-#	-cp -f ../Licenses/MeshSim/license.dat $(DIST_DIR)/meshsim-license.dat
-#endif
-ifeq ($(SV_USE_LESLIB),1)
-	-cp -f ../Licenses/LesLib/license.dat $(DIST_DIR)/license.dat
-endif
 ifeq ($(SV_USE_VTK),1)
 	-cp -fd $(VTK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
 	-cp -fd $(VTK_BINDIRS)/*.$(SOEXT)* $(DIST_DIR)
@@ -357,26 +300,6 @@ common-post-distribution:
 linux-distribution: mksedscript common-pre-distribution copy-sv-executables sv-startup-configure copy-tcl-libs copy-sv-tcl-code copy-external-libs copy-external-libs-linux-only generate-wrapper-scripts common-post-distribution
 
 windows-distribution: mksedscript common-pre-distribution copy-sv-executables sv-startup-configure copy-tcl-libs copy-sv-tcl-code copy-external-libs copy-external-libs-windows-only generate-wrapper-scripts common-post-distribution
-
-taritup-meshsim-and-parasolid:
-	-mkdir tar_files
-	-rm -Rf package-release-meshsim-and-parasolid
-	-mkdir -p package-release-meshsim-and-parasolid
-	-date > package-release-meshsim-and-parasolid/release-date
-	-chmod -R a+rwx package-release-meshsim-and-parasolid
-	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
-	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_mesh*.$(SOEXT)* package-release-meshsim-and-parasolid
-ifeq ($(SV_USE_PARASOLID),1)
-	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
-	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
-endif
-ifeq ($(SV_USE_MESHSIM_SHARED),1)
-	-cp -f $(MESHSIM_SO_PATH)/*.$(SOEXT)* package-release-meshsim-and-parasolid
-endif
-	-tar --preserve-permissions --transform 's,package-release-meshsim-and-parasolid/,,g'  -cvf tar_files/simvascular-meshsim-and-parasolid-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package-release-meshsim-and-parasolid
-	-gzip tar_files/simvascular-meshsim-and-parasolid-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
 
 taritup:
 	-mkdir tar_files

@@ -28,16 +28,5 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-export ROOT=/cygdrive/c/Program\ Files\ \(x86\)/Intel/Composer\ XE\ 2011\ SP1
-export TARGET_ARCH=intel64
-export ARCH_PATH=intel64
-
-export PATH=$ROOT/bin/$TARGET_ARCH:$ROOT/redist/$ARCH_PATH/compiler:$PATH
-export PATH=$PATH:$ROOT/redist/$ARCH_PATH/mpirt
-
-export LIB=`cygpath -w "$ROOT/compiler/lib"`\;`cygpath -w "$ROOT/compiler/lib/$ARCH_PATH"`\;$LIB
-
-export INCLUDE=`cygpath -w "$ROOT/compiler/include"`\;`cygpath -w "$ROOT/compiler/include/$ARCH_PATH"`\;$INCLUDE
-
-INTEL_LICENSE_FILE=/cygdrive/c/Program\ Files\ \(x86\)/Common\ Files/Intel/Licenses
-export INTEL_LICENSE_FILE=`cygpath -m "$INTEL_LICENSE_FILE"`
+WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.14/bin
+WIXUI_WIN_PATH := C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.14/bin
