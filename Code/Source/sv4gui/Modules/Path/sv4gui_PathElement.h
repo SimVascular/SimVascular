@@ -80,8 +80,6 @@ public:
 
     sv4guiPathElement* CreateSmoothedPathElement(int sampleRate, int numModes, bool controlPointsBased = true ); //otherwise pathPointsBased
 
-    //int GetPathPointNumber();
-
     std::vector<sv4guiPathPoint>  GetPathPoints();
 
     std::vector<mitk::Point3D> GetPathPosPoints();
@@ -92,10 +90,6 @@ public:
 
     void SetPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints);
     
-    //void ControlPointsChanged();
-
-    //void CreatePathPoints() ;
-
     std::vector<sv4guiPathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex);
 
 protected:
