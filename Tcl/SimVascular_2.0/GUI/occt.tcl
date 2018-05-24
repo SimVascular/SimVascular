@@ -204,191 +204,265 @@ proc guiSV_model_create_model_opencascade {} {
 
 }
 
-# Procedure: guiSV_model_create_model_opencascade_python
-proc guiSV_model_create_model_opencascade_python {} {
-   global symbolicName
-   global createPREOPgrpKeptSelections
-   global guiBOOLEANvars
-   global gPathBrowser
-   global gFilenames
-   global gObjects
-   global gLoftedSolids
-   global gOptions
+# Procedure: guiSV_model_create_model_opencascade_simvascular
+proc guiSV_model_create_model_opencascade_simvascular {} {
+  global symbolicName
+  global createPREOPgrpKeptSelections
+  global guiBOOLEANvars
+  global gPathBrowser
+  global gFilenames
+  global gObjects
+  global gLoftedSolids
+  global gOptions
 
-   set gOptions(meshing_solid_kernel) OpenCASCADE
-   set kernel $gOptions(meshing_solid_kernel)
-   solid_setKernel -name $kernel
+  set gOptions(meshing_solid_kernel) OpenCASCADE
+  set kernel $gOptions(meshing_solid_kernel)
+  solid_setKernel -name $kernel
 
-   set tv $symbolicName(guiSV_group_tree)
-   set children [$tv children {}]
+  set tv $symbolicName(guiSV_group_tree)
+  set children [$tv children {}]
 
-   if {[lsearch -exact $children .groups.all] >= 0} {
-     set children [$tv children .groups.all]
-     if {$children == ""} {
-       return
+  if {[lsearch -exact $children .groups.all] >= 0} {
+    set children [$tv children .groups.all]
+    if {$children == ""} {
+      return
+    }
+  }
+
+  set createPREOPgrpKeptSelections {}
+  foreach child $children {
+    if {[lindex [$tv item $child -values] 0] == "X"} {
+      lappend createPREOPgrpKeptSelections [string range $child 12 end]
+    }
+  }
+
+  set modelname [guiSV_model_new_surface_name 0]
+  catch {repos_delete -obj $modelname}
+  if {[model_create $kernel $modelname] != 1} {
+    guiSV_model_delete_model $kernel $modelname
+    catch {repos_delete -obj /models/$kernel/$modelname}
+    model_create $kernel $modelname
+  }
+  guiSV_model_update_tree
+
+  set cap          $guiBOOLEANvars(add_caps_to_vessels)
+  set resample_num $gPathBrowser(solid_sample)
+
+  if {[repos_exists -obj $modelname] == 1} {
+     puts "Warning:  object $modelname existed and is being replaced."
+     repos_delete -obj $modelname
+  }
+
+  foreach grp $createPREOPgrpKeptSelections {
+     set cursolid ""
+     catch {set cursolid $gLoftedSolids($grp)}
+     # loft solid from group
+     global gPathBrowser
+     set keepgrp $gPathBrowser(currGroupName)
+     set gPathBrowser(currGroupName) $grp
+     #puts "align"
+     #vis_img_SolidAlignProfiles;
+     #puts "fit"
+     #vis_img_SolidFitCurves;
+     #puts "loft"
+     #vis_img_SolidLoftSurf;
+     #vis_img_SolidCapSurf;
+     # set it back to original
+     global gRen3dFreeze
+     set oldFreeze $gRen3dFreeze
+     set gRen3dFreeze 1
+     set vecFlag 0
+     solid_setKernel -name OpenCASCADE
+     vtksv_c_create_vessel_from_group $grp $vecFlag $resample_num $cap
+     set gRen3dFreeze $oldFreeze
+     set gPathBrowser(currGroupName) $keepgrp
+  }
+
+  set shortname [lindex $createPREOPgrpKeptSelections 0]
+  set cursolid $gLoftedSolids($shortname)
+  solid_copy -src $cursolid -dst $modelname
+  puts "copy $cursolid to preop model."
+
+  foreach i [lrange $createPREOPgrpKeptSelections 1 end] {
+    set cursolid $gLoftedSolids($i)
+    puts "union $cursolid into preop model."
+    if {[repos_type -obj $cursolid] != "SolidModel"} {
+       puts "Warning:  $cursolid is being ignored."
+       continue
+    }
+     solid_union -result /tmp/preop/$modelname -a $cursolid -b $modelname
+
+     repos_delete -obj $modelname
+     solid_copy -src /tmp/preop/$modelname -dst $modelname
+
+     repos_delete -obj /tmp/preop/$modelname
+  }
+
+  if {[repos_exists -obj /tmp/preop/$modelname] == 1} {
+    repos_delete -obj /tmp/preop/$modelname
+  }
+  global gOCCTFaceNames
+  crd_ren gRenWin_3D_ren1
+  set pretty_names {}
+  set all_ids {}
+  foreach i [$modelname GetFaceIds] {
+    catch {set type [$modelname GetFaceAttr -attr gdscName -faceId $i]}
+    catch {set parent [$modelname GetFaceAttr -attr parent -faceId $i]}
+    set facename "[string trim $type]_[string trim $parent]"
+    lappend pretty_names $facename
+    set gOCCTFaceNames($i) $facename
+    $modelname SetFaceAttr -attr gdscName -faceId $i -value $facename
+    lappend all_ids $i
+  }
+  set isdups 0
+  if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
+   set isdups 1
+   set duplist [lsort -dictionary $pretty_names]
+   foreach i [lsort -unique $pretty_names] {
+      set idx [lsearch -exact $duplist $i]
+      set duplist [lreplace $duplist $idx $idx]
+   }
+   set msg "Duplicate faces found, automatically renaming!\n\n"
+   set duplistids {}
+   set numdupslist {}
+   foreach dup $duplist {
+     set alldups [lsearch -exact -all $pretty_names $dup]
+     set numdups [expr [llength $alldups]-1]
+     lappend numdupslist $numdups
+     for {set i 0} {$i < $numdups} {incr i} {
+       set id [lindex $all_ids [lindex $alldups [expr $i+1]]]
+       lappend duplistids $id
      }
    }
-
-   set createPREOPgrpKeptSelections {}
-   foreach child $children {
-     if {[lindex [$tv item $child -values] 0] == "X"} {
-       lappend createPREOPgrpKeptSelections [string range $child 12 end]
+   set dupnum 0
+   for {set i 0} {$i < [llength $duplist]} {incr i} {
+     set dup [lindex $duplist $i]
+     set name_num 2
+     set numdups [lindex $numdupslist $i]
+     for {set j $dupnum} {$j < [expr $numdups+$dupnum]} {incr j} {
+       set dupid [lindex $duplistids $j]
+       set newname ${dup}_$name_num
+       incr name_num
+       set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
+       set gOCCTFaceNames($dupid) $newname
+       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
      }
+     set dupnum [expr $dupnum + $numdups]
    }
+  }
 
-   set modelname [guiSV_model_new_surface_name 0]
-   catch {repos_delete -obj $modelname}
-   if {[model_create $kernel $modelname] != 1} {
-     guiSV_model_delete_model $kernel $modelname
-     catch {repos_delete -obj /models/$kernel/$modelname}
-     model_create $kernel $modelname
-   }
-   guiSV_model_update_tree
+  guiSV_model_add_faces_to_tree $kernel $modelname
+  guiSV_model_display_only_given_model $modelname 1
+  if {$isdups == 1} {
+    tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+  }
 
-   set cap          $guiBOOLEANvars(add_caps_to_vessels)
-   set resample_num $gPathBrowser(solid_sample)
-   opencascade_loft_with_python $modelname $cap $resample_num
 }
 
-proc opencascade_loft_with_python {modelname cap resample_num} {
-   global symbolicName
-   global createPREOPgrpKeptSelections
-   global gFilenames
-   global gObjects
-   global gLoftedSolids
-   global gOptions
-   global guiPYLOFTvars
+proc vtksv_c_create_vessel_from_group {grp vecFlag numOutPtsInSegs cap} {
 
-   set gOptions(meshing_solid_kernel) OpenCASCADE
-   set kernel $gOptions(meshing_solid_kernel)
-   solid_setKernel -name $kernel
+    if {($grp == "") || (![group_exists $grp])} {
+	return -code error "Current group $grp not valid."
+    }
+    set sortedList [group_get $grp]
+    if {[llength $sortedList] == 0} {
+	return -code error "No profiles found for sampling."
+    }
 
-   #set modelname $gObjects(preop_solid)
+    #
+    # supersample profiles
+    #
 
-   if {[llength $createPREOPgrpKeptSelections] == 0} {
-      puts "No solid models selected.  Nothing done!"
-      return
-   }
-
-   puts "Will union together the following SolidModel objects:"
-   puts "  $createPREOPgrpKeptSelections"
-
-   if {[repos_exists -obj $modelname] == 1} {
-      puts "Warning:  object $modelname existed and is being replaced."
-      repos_delete -obj $modelname
-   }
-
-   set uDeg   $guiPYLOFTvars(uDeg)
-   set vDeg   $guiPYLOFTvars(vDeg)
-   set Du0    $guiPYLOFTvars(Du0)
-   set DuN    $guiPYLOFTvars(DuN)
-   set Dv0    $guiPYLOFTvars(Dv0)
-   set DvN    $guiPYLOFTvars(DvN)
-   set kuType $guiPYLOFTvars(kuType)
-   set kvType $guiPYLOFTvars(kvType)
-   set puType $guiPYLOFTvars(puType)
-   set pvType $guiPYLOFTvars(pvType)
-   foreach i $createPREOPgrpKeptSelections {
-      set cursolid ""
-      catch {set cursolid $gLoftedSolids($i)}
-      # loft solid from group
-      global gPathBrowser
-      set keepgrp $gPathBrowser(currGroupName)
-      set gPathBrowser(currGroupName) $i
-      #puts "align"
-      #vis_img_SolidAlignProfiles;
-      #puts "fit"
-      #vis_img_SolidFitCurves;
-      #puts "loft"
-      #vis_img_SolidLoftSurf;
-      #vis_img_SolidCapSurf;
-      # set it back to original
-      global gRen3dFreeze
-      set oldFreeze $gRen3dFreeze
-      set gRen3dFreeze 1
-      call_python_lofting $i $kuType $kvType $puType $pvType $uDeg $vDeg $Du0 $DuN $Dv0 $DvN $cap $resample_num
-      set gRen3dFreeze $oldFreeze
-      set gPathBrowser(currGroupName) $keepgrp
-   }
-    set shortname [lindex $createPREOPgrpKeptSelections 0]
-    set cursolid $gLoftedSolids($shortname)
-    solid_copy -src $cursolid -dst $modelname
-    puts "copy $cursolid to preop model."
-
-    foreach i [lrange $createPREOPgrpKeptSelections 1 end] {
-      set cursolid $gLoftedSolids($i)
-      puts "union $cursolid into preop model."
-      if {[repos_type -obj $cursolid] != "SolidModel"} {
-         puts "Warning:  $cursolid is being ignored."
-         continue
+    # sample all to the same resolution as the maximal resolution
+    set numSuperPts 0
+    foreach profile $sortedList {
+      set numpts [geom_numPts -obj $profile]
+      if {$numpts > $numSuperPts} {
+        set numSuperPts $numpts
       }
-       solid_union -result /tmp/preop/$modelname -a $cursolid -b $modelname
-
-       repos_delete -obj $modelname
-       solid_copy -src /tmp/preop/$modelname -dst $modelname
-
-       repos_delete -obj /tmp/preop/$modelname
     }
 
-    if {[repos_exists -obj /tmp/preop/$modelname] == 1} {
-      repos_delete -obj /tmp/preop/$modelname
-    }
-    global gOCCTFaceNames
-    crd_ren gRenWin_3D_ren1
-    set pretty_names {}
-    set all_ids {}
-    foreach i [$modelname GetFaceIds] {
-      catch {set type [$modelname GetFaceAttr -attr gdscName -faceId $i]}
-      catch {set parent [$modelname GetFaceAttr -attr parent -faceId $i]}
-      set facename "[string trim $type]_[string trim $parent]"
-      lappend pretty_names $facename
-      set gOCCTFaceNames($i) $facename
-      $modelname SetFaceAttr -attr gdscName -faceId $i -value $facename
-      lappend all_ids $i
-    }
-    set isdups 0
-    if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
-     set isdups 1
-     set duplist [lsort -dictionary $pretty_names]
-     foreach i [lsort -unique $pretty_names] {
-        set idx [lsearch -exact $duplist $i]
-        set duplist [lreplace $duplist $idx $idx]
-     }
-     set msg "Duplicate faces found, automatically renaming!\n\n"
-     set duplistids {}
-     set numdupslist {}
-     foreach dup $duplist {
-       set alldups [lsearch -exact -all $pretty_names $dup]
-       set numdups [expr [llength $alldups]-1]
-       lappend numdupslist $numdups
-       for {set i 0} {$i < $numdups} {incr i} {
-         set id [lindex $all_ids [lindex $alldups [expr $i+1]]]
-         lappend duplistids $id
-       }
-     }
-     set dupnum 0
-     for {set i 0} {$i < [llength $duplist]} {incr i} {
-       set dup [lindex $duplist $i]
-       set name_num 2
-       set numdups [lindex $numdupslist $i]
-       for {set j $dupnum} {$j < [expr $numdups+$dupnum]} {incr j} {
-         set dupid [lindex $duplistids $j]
-         set newname ${dup}_$name_num
-         incr name_num
-         set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
-         set gOCCTFaceNames($dupid) $newname
-         $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
-       }
-       set dupnum [expr $dupnum + $numdups]
-     }
+    if {$numOutPtsInSegs > $numSuperPts} {
+       set numSuperPts $numOutPtsInSegs
     }
 
-    guiSV_model_add_faces_to_tree $kernel $modelname
-    guiSV_model_display_only_given_model $modelname 1
-    if {$isdups == 1} {
-      tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+    if {$numSuperPts == 0} {
+      return -code error "ERROR: numSuperPts cant be zero!"
     }
- }
+
+    puts "Sampling all contours to a resolution of $numSuperPts points."
+
+    foreach profile $sortedList {
+      catch {repos_delete -obj $profile/supersample}
+      geom_sampleLoop -src $profile -num $numSuperPts -dst $profile/supersample
+    }
+
+    #
+    #  align profiles
+    #
+
+    set prof [lindex $sortedList 0]
+    catch {repos_delete -obj $prof/aligned}
+    geom_copy -src $prof/supersample -dst $prof/aligned
+
+    for {set i 1} {$i < [llength $sortedList]} {incr i} {
+
+      set p [lindex $sortedList [expr $i - 1]]
+      set q [lindex $sortedList $i]
+
+      catch {repos_delete -obj $q/aligned}
+
+      geom_alignProfile  -ref $p/aligned  -src $q/supersample -dst $q/aligned  -vecMtd $vecFlag
+
+    }
+
+    #
+    #  sample profiles
+    #
+
+    foreach profile $sortedList {
+      catch {repos_delete -obj $profile/sample}
+      geom_sampleLoop -src $profile/aligned -num $numOutPtsInSegs -dst $profile/sample
+      lappend all_segs $profile/sample
+    }
+
+    global guiPYLOFTvars
+    set uDeg   $guiPYLOFTvars(uDeg)
+    set vDeg   $guiPYLOFTvars(vDeg)
+    set Du0    $guiPYLOFTvars(Du0)
+    set DuN    $guiPYLOFTvars(DuN)
+    set Dv0    $guiPYLOFTvars(Dv0)
+    set DvN    $guiPYLOFTvars(DvN)
+    set kuType $guiPYLOFTvars(kuType)
+    set kvType $guiPYLOFTvars(kvType)
+    set puType $guiPYLOFTvars(puType)
+    set pvType $guiPYLOFTvars(pvType)
+
+    set model /tmp/model/$grp
+    catch {repos_delete -obj $model}
+
+    catch {solid_newObject -name $model}
+
+    occt_loft_vtksv_nurbs -obj $model -srclist $all_segs -vDegree $uDeg -uDegree $vDeg -uKnotSpanType $kvType -vKnotSpanType $kuType -uParametricSpanType $pvType -vParametricSpanType $puType
+
+    #Cap the solid now
+    catch {repos_delete -obj $model/capped}
+    if {$cap} {
+      solid_capSurfToSolid -src $model -dst $model/capped
+    } else {
+      solid_copy -src $model -dst $model/capped
+    }
+
+    # ugly way to keep track of solids created for each group
+    global gLoftedSolids
+    set gLoftedSolids($grp) $model/capped
+
+    foreach i [$model/capped GetFaceIds] {
+      set facename {}
+      $model/capped SetFaceAttr -attr parent -faceId $i -value $grp
+    }
+    $model/capped Print
+}
 
 proc guiSV_model_opencascade_fixup {model num} {
   global symbolicName
@@ -717,164 +791,6 @@ proc guiSV_model_blend_selected_models_occt {} {
 
   guiSV_model_add_faces_to_tree $kernel $model
   guiSV_model_update_view_model $kernel $model
-}
-
-# Procedure: guiSV_model_get_occt_more_segs {} {
-proc guiSV_model_create_model_opencascade_from_splines {} {
-  global gRen3d
-  global guiPDvars
-  global gui3Dvars
-  global gOptions
-  global guiSVvars
-
-  global guiBOOLEANvars
-  set gOptions(meshing_solid_kernel) OpenCASCADE
-  set kernel $gOptions(meshing_solid_kernel)
-  set gOptions(meshing_solid_kernel) $kernel
-  solid_setKernel -name $kernel
-
-  set ordered_names    $guiBOOLEANvars(selected_groups)
-  set ordered_names2    $guiBOOLEANvars(selected_seg3d)
-  set sampling_default $guiBOOLEANvars(sampling_default)
-  set lin_multiplier   $guiBOOLEANvars(linear_sampling_along_length_multiplier)
-  set useLinearSampleAlongLength   $guiBOOLEANvars(use_linear_sampling_along_length)
-  set numModes         $guiBOOLEANvars(num_modes_for_FFT)
-  array set overrides  $guiBOOLEANvars(sampling_overrides)
-  set useFFT           $guiBOOLEANvars(use_FFT)
-  set sample_per_segment $guiBOOLEANvars(sampling_along_length_multiplier)
-  set addCaps          $guiBOOLEANvars(add_caps_to_vessels)
-  set noInterOut       $guiBOOLEANvars(no_inter_output)
-  set tol 	       $guiBOOLEANvars(tolerance)
-  set spline           $guiBOOLEANvars(spline_type)
-
-
-  set model [guiSV_model_new_surface_name 0]
-  catch {repos_delete -obj $model}
-  if {[model_create $kernel $model] != 1} {
-    guiSV_model_delete_model $kernel $model
-    catch {repos_delete -obj /models/$kernel/$model}
-    model_create $kernel $model
-  }
-
-  foreach grp $ordered_names {
-
-    set numOutPtsInSegs $sampling_default
-
-    if [info exists overrides($grp)] {
-      set numOutPtsInSegs $overrides($grp)
-      puts "overriding default ($sampling_default) with ($numOutPtsInSegs) for ($grp)."
-    }
-
-    set vecFlag 0
-
-    set numSegs [llength [group_get $grp]]
-
-    set numOutPtsAlongLength [expr $sample_per_segment * $numSegs]
-
-    set numPtsInLinearSampleAlongLength [expr $lin_multiplier *$numOutPtsAlongLength]
-
-    puts "num pts along length: $numPtsInLinearSampleAlongLength"
-
-    set outPD /guiGROUPS/polydatasurface/$grp
-    catch {repos_delete -obj $outPD}
-
-    #global gRen3dFreeze
-    #set oldFreeze $gRen3dFreeze
-    #set gRen3dFreeze 1
-    solid_setKernel -name OpenCASCADE
-    get_even_segs_along_length $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
-    #set gRen3dFreeze $oldFreeze
-
-  }
-
-  global gLoftedSolids
-  set shortname [lindex $ordered_names 0]
-  set cursolid $gLoftedSolids($shortname)
-  solid_copy -src $cursolid -dst $model
-  puts "copy $cursolid to preop model."
-
-  foreach i [lrange $ordered_names 1 end] {
-    set cursolid $gLoftedSolids($i)
-    puts "union $cursolid into preop model."
-    if {[repos_type -obj $cursolid] != "SolidModel"} {
-       puts "Warning:  $cursolid is being ignored."
-       continue
-    }
-     solid_union -result /tmp/preop/$model -a $cursolid -b $model
-
-     repos_delete -obj $model
-     solid_copy -src /tmp/preop/$model -dst $model
-
-     repos_delete -obj /tmp/preop/$model
-  }
-
-  if {[repos_exists -obj /tmp/preop/$model] == 1} {
-    repos_delete -obj /tmp/preop/$model
-  }
-
-  #global tcl_platform
-  #if {$tcl_platform(os) == "Darwin"} {
-  #  #Find face areas and remove two smaller ones
-  #  set num [llength $createPREOPgrpKeptSelections]
-  #  if { $num > 1} {
-  #    guiSV_model_opencascade_fixup $model $num
-  #  }
-  #}
-
-  global gOCCTFaceNames
-  #crd_ren gRenWin_3D_ren1
-  set pretty_names {}
-  set all_ids {}
-  foreach i [$model GetFaceIds] {
-    catch {set type [$model GetFaceAttr -attr gdscName -faceId $i]}
-    catch {set parent [$model GetFaceAttr -attr parent -faceId $i]}
-    set facename "[string trim $type]_[string trim $parent]"
-    lappend pretty_names $facename
-    set gOCCTFaceNames($i) $facename
-    $model SetFaceAttr -attr gdscName -faceId $i -value $facename
-    lappend all_ids $i
-  }
-  set isdups 0
-  if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
-   set isdups 1
-   set duplist [lsort -dictionary $pretty_names]
-   foreach i [lsort -unique $pretty_names] {
-      set idx [lsearch -exact $duplist $i]
-      set duplist [lreplace $duplist $idx $idx]
-   }
-   set msg "Duplicate faces found, automatically renaming!\n\n"
-   set duplistids {}
-   set numdupslist {}
-   foreach dup $duplist {
-     set alldups [lsearch -exact -all $pretty_names $dup]
-     set numdups [expr [llength $alldups]-1]
-     lappend numdupslist $numdups
-     for {set i 0} {$i < $numdups} {incr i} {
-       set id [lindex $all_ids [lindex $alldups [expr $i+1]]]
-       lappend duplistids $id
-     }
-   }
-   set dupnum 0
-   for {set i 0} {$i < [llength $duplist]} {incr i} {
-     set dup [lindex $duplist $i]
-     set name_num 2
-     set numdups [lindex $numdupslist $i]
-     for {set j $dupnum} {$j < [expr $numdups+$dupnum]} {incr j} {
-       set dupid [lindex $duplistids $j]
-       set newname ${dup}_$name_num
-       incr name_num
-       set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
-       set gOCCTFaceNames($dupid) $newname
-       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
-     }
-     set dupnum [expr $dupnum + $numdups]
-   }
-  }
-  guiSV_model_add_faces_to_tree $kernel $model
-  #guiSV_model_display_only_given_model $model 1
-  if {$isdups == 1} {
-    tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
-  }
 }
 
 proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsInLinearSampleAlongLength useFFT numModes numOutPtsInSegs numOutPtsAlongLength addCaps outPD} {
@@ -1468,81 +1384,3 @@ proc guiSV_model_connect_closest_point {pd pos} {
 
   return $segPd
 }
-
-proc guiSV_model_vessel_extraction {} {
-  global gOptions
-  global symbolicName
-  global guiPDvars
-  global createPREOPgrpKeptSelections
-  global smasherInputName
-  global gPathBrowser
-  global gPathPoints
-  global gFilenames
-  global gKernel
-
-  set tv $symbolicName(guiSV_model_tree)
-  set model [guiSV_model_get_tree_current_models_selected]
-
-  if {[llength $model] != 1} {
-    return -code error "Must select model from tree and only one can be written at a time!"
-  }
-  set kernel $gKernel($model)
-  if {$kernel != "PolyData"} {
-    return -code error "Can only resegment a PolyData model"
-  }
-  solid_setKernel -name $kernel
-
-  #Get centerlines
-  guiVMTKCenterlines
-
-  #Get groups on pd
-  set pd /tmp/vtk/pd
-  set vtkpd /tmp/vtk/vtkpd
-  catch {repos_delete -obj $pd}
-  catch {$vtkpd Delete}
-  geom_grouppolydata -src /models/$kernel/$model -lines $guiPDvars(centerlines) -result $pd
-  set vtkpd [repos_exportToVtk -src $pd]
-  #repos_writeVtkPolyData -obj $pd -type ascii -file "/Users/adamupdegrove/Desktop/separated.vtk"
-
-  #Convert centerliens to pathlines (smoothed)
-  set addedPathIds [guiSV_model_convert_centerlines_to_pathlines Broken]
-
-  #Resegment vessel along pathlines
-  set vesselNames {}
-  set pathTv       $symbolicName(guiSV_path_tree)
-  set pdGroup      /tmp/vtk/pd/group/threshold
-  set spacing      $gOptions(resegment_spacing)
-  set resample_num $gPathBrowser(solid_sample)
-
-  foreach id $addedPathIds {
-    $pathTv selection set .paths.all.$id
-    set groupId [lindex [split $gPathPoints($id,name) "_"] end]
-
-    catch {repos_delete -obj $pdGroup}
-    set pdGroup [polydata_threshold_region $vtkpd 0 "GroupIds" $groupId $groupId]
-    repos_importVtkPd -src $pdGroup -dst /models/$kernel/$pdGroup
-    lappend vesselNames [guiSV_model_resegment_polydata_vessel $kernel $pdGroup $id $spacing]
-  }
-  catch {repos_delete -obj $pdGroup}
-
-  #Loft to bsplines surfaces from resegmented surface
-  puts "Relofting!"
-  set gOptions(meshing_solid_kernel) OpenCASCADE
-  set kernel $gOptions(meshing_solid_kernel)
-  solid_setKernel -name $kernel
-
-  set cap 0
-  foreach vessel $vesselNames {
-    set createPREOPgrpKeptSelections {}
-    lappend createPREOPgrpKeptSelections $vessel
-    catch {repos_delete -obj $vessel}
-    if {[model_create $kernel $vessel] != 1} {
-      guiSV_model_delete_model $kernel $vessel
-      catch {repos_delete -obj /models/$kernel/$vessel}
-      model_create $kernel $vessel
-    }
-    guiSV_model_update_tree
-    opencascade_loft_with_python $vessel $cap $resample_num
-  }
-}
-

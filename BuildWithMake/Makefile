@@ -73,14 +73,6 @@ ifeq ($(CLUSTER),x64_cygwin)
 # leave intel compilers blank for now on windows
 #	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+`cygpath -u $(INTEL_COMPILER_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH++g\"" >> tclscript
-ifeq ($(SV_USE_PARASOLID),1)
-	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+`cygpath -u $(PARASOLID_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_P_SCHEMA+`cygpath -u $(P_SCHEMA)`+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_MESHSIM),1)
-	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+`cygpath -u $(MESHSIM_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+$(SIM_LICENSE_FILE)+g\"" >> tclscript
-endif
 ifeq ($(SV_USE_VTK),1)
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+`cygpath -u $(VTK_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+`cygpath -u $(VTK_BINDIRS)`+g\"" >> tclscript
@@ -132,9 +124,6 @@ ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+$(TKCXIMAGE_DLL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+$(VTK_TCL_LIB_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+$(SIM_LICENSE_FILE)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+$(MESHSIM_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+$(PARASOLID_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_P_SCHEMA+$(P_SCHEMA)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+$(VTK_BINDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+$(VTK_LIBDIRS)+g\"" >> tclscript
@@ -184,9 +173,6 @@ ifeq ($(CLUSTER),x64_macosx)
 	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+$(TKCXIMAGE_DLL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+$(VTK_TCL_LIB_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+`cygpath -u $(SIM_LICENSE_FILE)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+$(MESHSIM_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+$(PARASOLID_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_P_SCHEMA+$(P_SCHEMA)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+$(VTK_BINDIR)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+$(VTK_LIBDIRS)+g\"" >> tclscript
@@ -235,11 +221,11 @@ common-pre-build: mksedscript post-build
 	touch ../Code/Source/Include/Make/delaunay_options.h
 
 shared-pre-build: common-pre-build
-	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
-	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module create_cppmicroservices_file
-	cd ../Code/Source/UI;$(MAKE) moc
+	cd ../Code/Source/sv4gui/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
+	cd ../Code/Source/sv4gui/Plugins;$(MAKE) moc qrc ui
+	cd ../Code/Source/sv4gui/Modules;$(MAKE) moc qrc ui
+	cd ../Code/Source/sv4gui/Modules;$(MAKE) create_exports_h us-init-module create_cppmicroservices_file
+	cd ../Code/Source/Application;$(MAKE) moc
 	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
 	for i in ${SHARED_LIBDIRS}; do ( \
 	  echo "creating exports for shared directory ($$i)"; \
@@ -248,12 +234,12 @@ shared-pre-build: common-pre-build
 	  $(MAKE) create_exports_cv_h;fi ) ; done
 
 static-pre-build: common-pre-build
-	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
-	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
-	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
-	cd ../Code/Source/UI;$(MAKE) moc
+	cd ../Code/Source/Application;$(MAKE) SV_STATIC_BUILD=1 pre
+	cd ../Code/Source/sv4gui/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
+	cd ../Code/Source/sv4gui/Plugins;$(MAKE) moc qrc ui
+	cd ../Code/Source/sv4gui/Modules;$(MAKE) moc qrc ui
+	cd ../Code/Source/sv4gui/Modules;$(MAKE) create_exports_h us-init-module
+	cd ../Code/Source/Application;$(MAKE) moc
 	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
 
 shared-build:
@@ -332,6 +318,7 @@ veryclean:
 	$(RM) $(TOP)/../Tcl/Common/Visualization/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/Vis/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/General/tclIndex
+	$(RM) $(TOP)/../Tcl/External/tclxml3.2/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/GUI/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Core/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Plugins/tclIndex

@@ -147,9 +147,8 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Tcl Python Setup
+# Tcl Setup
 include(SimVascularTclSetup)
-include(SimVascularPythonSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -175,22 +174,22 @@ endif(DOXYGEN_FOUND)
 #-----------------------------------------------------------------------------
 # Basic Core Libs
 set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
-	"Source/Common/Globals"
-	"Source/Common/Utils"
-	"Source/Common/Repository"
+	"Source/sv2/Globals"
+	"Source/sv/Utils"
+	"Source/sv/Repository"
   "Source/vtkSV/Common"
   "Source/vtkSV/Filters"
   "Source/vtkSV/Modules/Boolean"
   "Source/vtkSV/Modules/Geometry"
   "Source/vtkSV/Modules/NURBS"
   "Source/vtkSV/Modules/Parameterization"
-	"Source/ImageProcessing"
-	"Source/Common/Geometry"
-	"Source/Legacy/LevelSet"
-	"Source/Model/SolidModel"
-	"Source/PostProcessing"
-	"Source/Mesh/MeshObject"
-	"Source/Model/PolyDataSolidModel")
+	"Source/sv2/ImageProcessing"
+	"Source/sv/Geometry"
+	"Source/sv2/Segmentation"
+	"Source/sv/Model/SolidModel"
+	"Source/sv2/PostProcessing"
+	"Source/sv/Mesh/MeshObject"
+	"Source/sv/Model/PolyDataSolidModel")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -198,44 +197,40 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 #-----------------------------------------------------------------------------
 # Tetgen
 if(SV_USE_TETGEN)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenMeshObject")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/TetGenMeshObject")
 endif()
 # Meshsim
 if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/MeshSimMeshObject")
 endif()
 if(SV_USE_MESHSIM_DISCRETE_MODEL)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/MeshSimDiscreteSolidModel")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Model/MeshSimDiscreteSolidModel")
 endif()
 # Adaptors
 if(SV_USE_MESHIM_ADAPTOR OR SV_USE_TETGEN_ADAPTOR)
-    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/AdaptObject")
 endif()
 if(SV_USE_MESHSIM_ADAPTOR)
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/MeshSimAdapt")
 endif()
 if(SV_USE_TETGEN_ADAPTOR)
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/TetGenAdapt")
 endif()
 # VMTK
 if(SV_USE_VMTK)
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/VMTKUtils")
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/VMTKUtils")
 endif()
 # MMG
 if(SV_USE_MMG)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Mesh/MMGMeshUtils")
 endif()
 # ITK
 if(SV_USE_ITK)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
-endif()
-# PYTHON
-if(SV_USE_PYTHON)
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Segmentation")
 endif()
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv/Model/OCCTSolidModel")
 endif()
 # PARASOLID
 if(SV_USE_PARASOLID)
@@ -247,25 +242,25 @@ endif()
 # Modules
 if(SV_USE_QT_GUI)
   set(SV_MODULE_DIRS ${SV_MODULE_DIRS}
-    "Source/Modules/Common"
-    "Source/Modules/Path"
-    "Source/Modules/Segmentation"
-    "Source/Modules/Model/Common"
-    "Source/Modules/Mesh/Common"
-    "Source/Modules/Simulation"
-    "Source/Modules/ProjectManagement"
-    "Source/Modules/QtWidgets")
+    "Source/sv4gui/Modules/Common"
+    "Source/sv4gui/Modules/Path"
+    "Source/sv4gui/Modules/Segmentation"
+    "Source/sv4gui/Modules/Model/Common"
+    "Source/sv4gui/Modules/Mesh/Common"
+    "Source/sv4gui/Modules/Simulation"
+    "Source/sv4gui/Modules/ProjectManagement"
+    "Source/sv4gui/Modules/QtWidgets")
 
   if(SV_USE_OpenCASCADE)
-    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/OCCT")
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Model/OCCT")
   endif()
 
   if(SV_USE_PARASOLID)
-    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Model/Parasolid")
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Model/Parasolid")
   endif()
 
   if(SV_USE_MESHSIM)
-    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/Modules/Mesh/MeshSim")
+    set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Mesh/MeshSim")
   endif()
 
 endif()
@@ -277,22 +272,22 @@ endif()
 if(SV_USE_QT_GUI)
   if(NOT SV_USE_MITK_CONFIG)
     set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
-      "Source/Plugins/org.sv.projectdatanodes"
-      "Source/Plugins/org.sv.gui.qt.datamanager"
-      "Source/Plugins/org.sv.gui.qt.projectmanager"
-      "Source/Plugins/org.sv.gui.qt.pathplanning"
-      "Source/Plugins/org.sv.gui.qt.segmentation"
-      "Source/Plugins/org.sv.gui.qt.modeling"
-      "Source/Plugins/org.sv.gui.qt.meshing"
-      "Source/Plugins/org.sv.gui.qt.simulation"
-      "Source/Plugins/org.sv.gui.qt.application")
+      "Source/sv4gui/Plugins/org.sv.projectdatanodes"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.datamanager"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.projectmanager"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.pathplanning"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.segmentation"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.modeling"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.application")
   endif()
 endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Executables
-set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
+set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Application")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -348,10 +343,6 @@ if(SV_USE_THREEDSOLVER)
 endif()
 
 # Include directories that don't have targets
-if(SV_USE_ITK)
-  include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
-  include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
-endif()
 if(SV_USE_SOLVERIO)
   include_directories("${SV_SOURCE_DIR}/ThirdParty/SolverIO/simvascular_solverio")
 endif()
@@ -414,7 +405,7 @@ endforeach()
 
 #----------------------------------------------------------------------------
 # Setup Plugins for provisioning file, must after add_subdirectory for Modules
-include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/Source/sv4gui/Plugins/PluginList.cmake)
 if(SV_USE_MITK_CONFIG)
   if(SV_USE_QT_GUI)
     macro(GetMyTargetLibraries all_target_libraries varname)
@@ -424,12 +415,12 @@ if(SV_USE_MITK_CONFIG)
       ctkMacroListFilter(_tmp_list re_ctkplugin OUTPUT_VARIABLE ${varname})
     endmacro()
 
-    set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/UI^^${PROJECT_NAME}_Apps/simvascular")
+    set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/Application^^${PROJECT_NAME}_Apps/simvascular")
     message(STATUS "sv app full path: ${sv_app_fullpath}")
 
     set(sv_plugins_fullpath "")
     foreach(sv_plugin ${SV_PLUGINS})
-      list(APPEND sv_plugins_fullpath "Source/Plugins/${sv_plugin}")
+      list(APPEND sv_plugins_fullpath "Source/sv4gui/Plugins/${sv_plugin}")
     endforeach()
 
     message(STATUS "sv_plugins_fullpath: ${sv_plugins_fullpath}")

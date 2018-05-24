@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+  <extension point="org.blueberry.ui.views">
+    <view
+      id="org.sv.views.datamanager"
+      name="SV Data Manager"
+      icon="resources/DataManager_48.png"
+      class="sv4guiQmitkDataManagerView" />
+  </extension>
+
+  <extension-point id="contextMenuActions" name="Context menu actions"/>
+
+</plugin>

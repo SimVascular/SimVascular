@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.pathplanning"
+          name="SV Path Planning"
+          class="sv4guiPathEdit"
+          icon="resources/pathedit.png" />
+  </extension>
+
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
+      <contextMenuAction nodeDescriptorName="sv4guiPathFolder" label="Create Path" icon="" class="sv4guiPathCreateAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiPathFolder" label="Import Paths" icon="" class="sv4guiPathLoadAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiPathFolder" label="Export All as Legacy Paths" icon="" class="sv4guiPathLegacySaveAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiPath" label="Point 2D Size" icon="" class="sv4guiPathPoint2DSizeAction" />
+      <contextMenuAction nodeDescriptorName="sv4guiPath" label="Point 3D Size" icon="" class="sv4guiPathPoint3DSizeAction" />
+  </extension>
+
+</plugin>

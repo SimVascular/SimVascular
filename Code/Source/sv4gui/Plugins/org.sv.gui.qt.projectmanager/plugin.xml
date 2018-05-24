@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+<!--  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.projectmanager"
+          name="SV Project Manager"
+          class="sv4guiProjectManagerView"
+          icon="resources/icon.xpm" />
+  </extension>-->
+
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
+    <contextMenuAction nodeDescriptorName="sv4guiImageFolder" label="Add/Replace Image" icon="" class="sv4guiProjectAddImageAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiProjectFolder" label="Save SV Project" icon="" class="sv4guiProjectSaveAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiProjectFolder" label="Duplicate SV Project" icon="" class="sv4guiProjectDuplicateAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiProjectFolder" label="Close SV Project" icon="" class="sv4guiProjectCloseAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiModel" label="Show/Hide Edges" icon="" class="sv4guiProjectShowModelEdgesAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiModel" label="Show Full/Faces" icon="" class="sv4guiProjectShowModelFullAction" />
+  </extension>
+
+</plugin>

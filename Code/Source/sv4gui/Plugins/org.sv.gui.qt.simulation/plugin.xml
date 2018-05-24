@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.simulation"
+          name="SV Simulation"
+          class="sv4guiSimulationView"
+          icon="resources/simulation.png" />
+  </extension>
+
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
+    <contextMenuAction nodeDescriptorName="sv4guiSimulationFolder" label="Create Simulation Job" icon="" class="sv4guiSimJobCreateAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkSimJob" label="Stop Simulation" icon="" class="sv4guiSimJobStopAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkSimJob" label="Export Data Files" icon="" class="sv4guiSimJobExportAction" />
+  </extension>
+
+  <extension point="org.blueberry.ui.preferencePages">
+    <page id="org.sv.gui.qt.SimulationPreferencePage" name="SimVascular Simulation" class="sv4guiSimulationPreferencePage">
+      <keywordreference id="org.sv.gui.qt.SimulationPreferencePageKeywords"></keywordreference>
+    </page>
+  </extension>
+
+</plugin>

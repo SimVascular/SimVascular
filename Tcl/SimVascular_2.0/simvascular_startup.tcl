@@ -86,15 +86,6 @@ if {[info exists SV_BUILD_TYPE] == 0} {
   set SV_BUILD_TYPE "MAKE"
 }
 
-global SV_USE_PYTHON
-if {[info exists SV_USE_PYTHON] == 0} {
-  set SV_USE_PYTHON "OFF"
-  if [info exists env(SV_USE_PYTHON)] {
-    set SV_USE_PYTHON $env(SV_USE_PYTHON)
-  }
-  puts "Use Python: $SV_USE_PYTHON"
-}
-
 #
 #  Load SimVascular Modules (static or dynamic)
 #
@@ -133,10 +124,6 @@ set gSimVascularTclInitLibs [list \
 				 [list Tetgenadapt ${lib_prefix}simvascular_tetgen_adaptor${so_postfix}] \
 				 [list Vmtkutils ${lib_prefix}simvascular_vmtk_utils${so_postfix}] \
 				 ]
-
-if {$SV_USE_PYTHON == "ON"} {
-    lappend gSimVascularTclInitLibs [list Pythoninterp ${lib_prefix}simvascular_python_interp${so_postfix}]
-}
 
 foreach lib $gSimVascularTclInitLibs {
     if {[lindex $lib 1] == ""} {
@@ -665,14 +652,6 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
 
   #set env(HOME) $env(REALHOME)
 
-}
-
-# ------------------
-# Load Python
-# ------------------
-
-if {$SV_USE_PYTHON == "ON"} {
-  startTclPython
 }
 
 # -------------------------

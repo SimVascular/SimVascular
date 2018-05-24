@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.meshing"
+          name="SV Meshing"
+          class="sv4guiMeshEdit"
+          icon="resources/mesh.png" />
+  </extension>
+
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
+    <contextMenuAction nodeDescriptorName="sv4guiMeshFolder" label="Create Mesh" icon="" class="sv4guiMeshCreateAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkMesh" label="Export Mesh-Complete" icon="" class="sv4guiMeshLegacySaveAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkMesh" label="Load/Unload Surface Mesh" icon="" class="sv4guiMeshLoadSurfaceAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkMesh" label="Load/Unload Volume Mesh" icon="" class="sv4guiMeshLoadVolumeAction" />
+  </extension>
+
+</plugin>
