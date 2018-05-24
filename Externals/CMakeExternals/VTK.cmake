@@ -185,7 +185,10 @@ if(SV_EXTERNALS_ENABLE_PYTHON)
 endif()
 
 #Patch for vtk
-set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-vtk-6.2.0.patch)
+if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "6.2.0")
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-vtk-6.2.0.patch)
+endif()
 
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})

@@ -85,3 +85,6 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+
+PYTHON_ADD_MODULE(pyMeshUtil sv_mmg_mesh_init_py.cxx)
+target_link_libraries(pyMeshUtil ${lib} ${PYTHON_LIBRARY})

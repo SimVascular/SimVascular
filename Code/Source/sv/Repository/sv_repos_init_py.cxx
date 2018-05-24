@@ -91,7 +91,12 @@ PyObject*  Repos_SetStringCmd( PyObject* self, PyObject* args);
 
 PyObject* Repos_GetStringCmd( PyObject* self, PyObject* args);
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpyRepository(void);
+#endif
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyRepository(void);
+#endif
 
 // Label-related methods
 // ---------------------
@@ -135,7 +140,18 @@ PyMethodDef pyRepository_methods[] =
     {NULL, NULL,0,NULL},
 
 };
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyRepositorymodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyRepository",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyRepository_methods
+};
+#endif
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC initpyRepository(void)
 
 {
@@ -145,6 +161,7 @@ PyMODINIT_FUNC initpyRepository(void)
   if ( gRepository == NULL ) {
     fprintf( stderr, "error allocating gRepository\n" );
     return;
+
   }
   pyRepo = Py_InitModule("pyRepository",pyRepository_methods);
 
@@ -154,13 +171,36 @@ PyMODINIT_FUNC initpyRepository(void)
 
 }
 
+#endif
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC PyInit_pyRepository(void)
+{
+      PyObject *pyRepo;
+  gRepository = new cvRepository();
+  if ( gRepository == NULL ) {
+    fprintf( stderr, "error allocating gRepository\n" );
 
+    Py_RETURN_NONE;
+  }
+
+  pyRepo = PyModule_Create(& pyRepositorymodule);
+  PyRunTimeErr = PyErr_NewException("pyRepository.error",NULL,NULL);
+  Py_INCREF(PyRunTimeErr);
+  PyModule_AddObject(pyRepo,"error",PyRunTimeErr);
+  return pyRepo;
+}
+#endif
 int Repos_pyInit()
 
 {
 
   Py_Initialize();
+#ifdef SV_USE_PYTHON2
   initpyRepository();
+#endif
+#ifdef SV_USE_PYTHON3
+  PyInit_pyRepository();
+#endif
   return Py_OK;
 
 }

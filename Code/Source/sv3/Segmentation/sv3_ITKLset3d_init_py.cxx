@@ -188,6 +188,16 @@ static PyTypeObject pyLevelSet3dType = {
   0,                  /* tp_new */
 };
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef Itkls3dmodule = {
+   PyModuleDef_HEAD_INIT,
+   "Itkls3d",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   Itkls3d_methods
+};
+#endif
 // -------------
 // Itkls3d_Init
 // -------------
@@ -201,7 +211,12 @@ PyObject* Itkls3d_pyInit(){
     }
     PyObject *pyItkls3D;
 
+#ifdef SV_USE_PYTHON2
     pyItkls3D = Py_InitModule("Itkls3d",Itkls3d_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+    pyItkls3D = PyModule_Create(&Itkls3dmodule);
+#endif
     PyRunTimeErr3d = PyErr_NewException("Itkls3d.error",NULL,NULL);
     PyModule_AddObject(pyItkls3D,"error",PyRunTimeErr3d);
     Py_INCREF(&pyLevelSet3dType);

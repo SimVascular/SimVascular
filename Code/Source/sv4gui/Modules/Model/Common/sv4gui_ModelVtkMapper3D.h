@@ -42,7 +42,7 @@
 
 #include <vtkAssembly.h>
 #include <vtkPropAssembly.h>
-#include <vtkPainterPolyDataMapper.h>
+#include <vtkOpenGLPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkPlaneCollection.h>
 #include <vtkSmartPointer.h>
@@ -94,7 +94,7 @@ public:
 
     virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
 
-    virtual void ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor);
+    virtual void ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor);
 
     static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
 
@@ -110,7 +110,7 @@ public:
         vtkSmartPointer<vtkPlaneCollection> m_ClippingPlaneCollection;
 
 //        vtkSmartPointer<vtkActor> m_Actor;
-//        vtkSmartPointer<vtkPainterPolyDataMapper> m_VtkPolyDataMapper;
+//        vtkSmartPointer<vtkOpenGLPolyDataMapper> m_VtkPolyDataMapper;
 //        vtkSmartPointer<vtkPolyDataNormals> m_VtkPolyDataNormals;
 
 //        vtkSmartPointer<vtkDepthSortPolyData> m_DepthSort;
@@ -124,7 +124,7 @@ public:
             m_PropAssembly = vtkSmartPointer<vtkAssembly>::New();
             m_ClippingPlaneCollection = vtkSmartPointer<vtkPlaneCollection>::New();
 
-//            m_VtkPolyDataMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+//            m_VtkPolyDataMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
 //            m_VtkPolyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
 //            m_Actor = vtkSmartPointer<vtkActor>::New();
 //            m_Actor->SetMapper(m_VtkPolyDataMapper);

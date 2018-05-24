@@ -62,16 +62,16 @@ if(APPLE)
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     -sdk macosx${SV_OSX_MAJOR_VERSION}.${SV_OSX_MINOR_VERSION}
-    -openssl
-    -openssl-linked
-    -I${OPENSSL_ROOT}/include
-    -L${OPENSSL_ROOT}/lib
-    -lssl
     )
   if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
   set(SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS
     ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
     -skip webengine
+    -openssl
+    -openssl-linked
+    -I${OPENSSL_ROOT}/include
+    -L${OPENSSL_ROOT}/lib
+    -lssl
     )
   endif()
 
@@ -90,19 +90,25 @@ if("${COMPILER_VERSION}" STREQUAL "Clang")
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.4.2-clang.patch)
   elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.6.0")
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.6.0-clang.patch)
+  elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.6.3")
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.6.3-clang.patch)
   else()
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
   endif()
-  if (NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "8.0"))
+
+  if ((NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "8.0")) AND SV_EXTERNALS_${proj}_VERSION VERSION_LESS "5.6.3")
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-      COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-clang-8.0.patch)
+      COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.6.3-less-clang-8.0-greater.patch)
+  elseif((NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "8.0")) AND SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.6.3")
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+      COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-qt-5.6.3-clang-8.0-greater.patch)
   endif()
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
 endif()
 
 # Post install script
-if(APPLE)
+if(APPLE AND SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-qt-mac_osx.sh)
   configure_file(${SV_EXTERNALS_CMAKE_DIR}/Install/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
@@ -126,14 +132,16 @@ if(SV_EXTERNALS_DOWNLOAD_${proj})
     UPDATE_COMMAND ""
     )
 else()
+  #BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR} We have to do an in source build so that qt cmake files populate the private headers
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
+    BINARY_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
     PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     CONFIGURE_COMMAND ${SV_EXTERNALS_${proj}_SRC_DIR}/configure ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
+    INSTALL_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_INSTALL}
     UPDATE_COMMAND ""
     )
 endif()

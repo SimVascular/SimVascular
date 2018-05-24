@@ -37,7 +37,7 @@
 #include <berryQtIntroPart.h>
 #include <ui_sv4gui_WelcomeScreenViewControls.h>
 
-class QWebView ;
+class QWebEngineView ;
 
 class sv4guiWorkbenchIntroPart : public berry::QtIntroPart
 {
@@ -68,7 +68,7 @@ protected slots:
 protected:
 
     Ui::svWelcomeScreenViewControls* m_Controls;
-    QWebView* m_view;
+    QWebEngineView* m_view;
 };
 
 #endif /* SV4GUI_WORKBENCHINTROPART_H */

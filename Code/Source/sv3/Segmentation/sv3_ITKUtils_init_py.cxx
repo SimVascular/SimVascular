@@ -125,13 +125,28 @@ PyMethodDef Itkutils_methods[] = {
 	{NULL, NULL,0,NULL},
 	};
 
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef Itkutilsmodule = {
+   PyModuleDef_HEAD_INIT,
+   "Itkutils",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   Itkutils_methods
+};
+#endif
+
 PyObject*  Itkutils_pyInit( ){
 
 	printf("  %-12s %s\n","Itk:", itk::Version::GetITKVersion());
 
     PyObject *pyItklsUtils;
-
+#ifdef SV_USE_PYTHON2
     pyItklsUtils= Py_InitModule("Itkutils",Itkutils_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+    pyItklsUtils= PyModule_Create(&Itkutilsmodule);
+#endif
     PyRunTimeErrU = PyErr_NewException("Itkutils.error",NULL,NULL);
     PyModule_AddObject(pyItklsUtils,"error",PyRunTimeErrU);
 

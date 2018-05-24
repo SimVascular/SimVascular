@@ -77,6 +77,12 @@ if(SV_EXTERNALS_ENABLE_SWIG)
     )
 endif()
 
+#If certain mac os
+if(APPLE AND SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2.6.3")
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-gdcm-2.6.3-macos.patch)
+endif()
+
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
@@ -97,6 +103,7 @@ else()
     SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
+    PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     UPDATE_COMMAND ""
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}

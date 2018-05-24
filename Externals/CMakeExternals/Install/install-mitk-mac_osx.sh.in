@@ -238,6 +238,12 @@ for i in $(find $MITK_BLDDIR/MITK-build/lib/plugins -name "*@CMAKE_SHARED_LIBRAR
     cp -rf $i $MITK_BINDIR/bin/plugins
 done
 
+# remove simpleitk libs
+rm $MITK_BINDIR/lib/libSimpleITK*
+
+# move Python dir
+mv $MITK_BINDIR/bin/Python $MITK_BINDIR/bin/PythonCTK
+
 # create a wrapper script for python executable
 
 echo "#!/bin/sh -f" > @SV_EXTERNALS_MITK_BIN_DIR@/bin/workbench-wrapper

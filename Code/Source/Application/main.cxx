@@ -763,7 +763,7 @@ RegCloseKey(hKey2);
        pluginsToStart.push_back("org_mitk_gui_qt_basicimageprocessing");
        pluginsToStart.push_back("org_mitk_gui_qt_dicom");
        pluginsToStart.push_back("org_mitk_gui_qt_geometrytools");
-       pluginsToStart.push_back("org_mitk_gui_qt_imagecropper");
+       //pluginsToStart.push_back("org_mitk_gui_qt_imagecropper");
        pluginsToStart.push_back("org_mitk_gui_qt_imagenavigator");
        pluginsToStart.push_back("org_mitk_gui_qt_measurementtoolbox");
        pluginsToStart.push_back("org_mitk_gui_qt_python");

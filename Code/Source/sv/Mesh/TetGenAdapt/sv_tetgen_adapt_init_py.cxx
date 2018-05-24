@@ -81,6 +81,17 @@ PyMethodDef TetGenAdapt_methods[] = {
   {"tetgenadapt_registrars", TetGenAdapt_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
+
+#ifdef SV_USE_PYTHON3
+static struct PyModuleDef pyTetGenAdaptmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyTetGenAdapt",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   TetGenAdapt_methods
+};
+#endif
 // ----------
 // Tetgenmesh_Init
 // ----------
@@ -104,7 +115,12 @@ PyObject* Tetgenadapt_pyInit()
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
 
   PyObject* pythonC;
+#ifdef SV_USE_PYTHON2
   pythonC = Py_InitModule("pyTetGenAdapt", TetGenAdapt_methods);
+#endif
+#ifdef SV_USE_PYTHON3
+  pythonC = PyModule_Create(&pyTetGenAdaptmodule);
+#endif
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
@@ -114,6 +130,7 @@ PyObject* Tetgenadapt_pyInit()
 
 }
 
+#ifdef SV_USE_PYTHON2
 PyMODINIT_FUNC
 initpyTetGenAdapt()
 {
@@ -131,18 +148,57 @@ initpyTetGenAdapt()
   }
   else {
     return;
+
   }
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
 
   PyObject* pythonC;
   pythonC = Py_InitModule("pyTetGenAdapt", TetGenAdapt_methods);
+
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
     return;
+
   }
+
 }
 
+#endif
+
+#ifdef SV_USE_PYTHON3
+PyMODINIT_FUNC
+PyInit_pyTetGenAdapt()
+{
+  printf("  %-12s %s\n","","TetGen Adaption Enabled");
+
+  // Associate the adapt registrar with the python interpreter so it can be
+  // retrieved by the DLLs.
+  cvFactoryRegistrar* adaptObjectRegistrar =
+    (cvFactoryRegistrar *)PySys_GetObject("AdaptObjectRegistrar");
+
+  if (adaptObjectRegistrar != NULL) {
+          // Register this particular factory method with the main app.
+          adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_TETGEN,
+      (FactoryMethodPtr) &pyCreateTetGenAdapt );
+  }
+  else {
+    Py_RETURN_NONE;
+  }
+  PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
+
+  PyObject* pythonC;
+  pythonC = PyModule_Create(&pyTetGenAdaptmodule);
+  if(pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
+    Py_RETURN_NONE;
+
+  }
+
+  return pythonC;
+}
+#endif
 PyObject*  TetGenAdapt_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","TetGen Adaption Available");
@@ -157,13 +213,13 @@ PyObject* TetGenAdapt_RegistrarsListCmd(PyObject* self, PyObject* args)
   char result[255];
   PyObject* pyPtr=PyList_New(6);
   sprintf( result, "Adapt object registrar ptr -> %p\n", adaptObjectRegistrar );
-  PyList_SetItem(pyPtr,0,PyString_FromFormat(result));
+  PyList_SetItem(pyPtr,0,PyBytes_FromFormat(result));
 
   for (int i = 0; i < 5; i++) {
       sprintf( result,"GetFactoryMethodPtr(%i) = %p\n",
       i, (adaptObjectRegistrar->GetFactoryMethodPtr(i)));
       fprintf(stdout,result);
-      PyList_SetItem(pyPtr,i+1,PyString_FromFormat(result));
+      PyList_SetItem(pyPtr,i+1,PyBytes_FromFormat(result));
   }
   return pyPtr;
 }

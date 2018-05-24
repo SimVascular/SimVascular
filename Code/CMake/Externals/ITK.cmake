@@ -48,6 +48,7 @@ if(SV_USE_${proj})
   endif()
 
   # Find ITK
+  list(APPEND CMAKE_PREFIX_PATH ${GDCM_DIR})
   simvascular_external(${proj}
     SHARED_LIB ${SV_USE_${proj}_SHARED}
     VERSION ${${proj}_VERSION}

@@ -34,8 +34,15 @@
 
 #include "SimVascular.h"
 #include "svSolidModelExports.h" // For exports
+#include "sv_FactoryRegistrar.h"
 #include "Python.h"
 
 extern "C" SV_EXPORT_SOLID int Solid_pyInit();
+
+extern "C" SV_EXPORT_SOLID typedef struct
+{
+  PyObject_HEAD
+  cvFactoryRegistrar* registrar;
+}pycvFactoryRegistrar;
 
 #endif // __CVSOLID_INIT_H
