@@ -1374,7 +1374,7 @@ initpyImage(void)
 
 }
 #endif
-
+#ifdef SV_USE_PYTHON3
 PyMODINIT_FUNC
 PyInit_pyImage(void)
 {
@@ -1387,6 +1387,6 @@ PyInit_pyImage(void)
 
   return pyIm;
 }
-
+#endif
 
 
