@@ -178,7 +178,7 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 	"Source/sv/Utils"
 	"Source/sv/Repository"
   	"Source/sv3/Path"
-	"Source/sv3/IO"
+	"Source/sv3/Common"
   "Source/vtkSV/Common"
   "Source/vtkSV/Filters"
   "Source/vtkSV/Modules/Boolean"

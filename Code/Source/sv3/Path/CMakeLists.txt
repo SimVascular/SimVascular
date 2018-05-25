@@ -45,9 +45,9 @@ endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-set(CXXSRCS sv3_PathElement.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx 
+set(CXXSRCS sv3_PathElement.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx 
   )
-set(HDRS sv3_PathElement.h sv3_VtkParametricSpline.h sv3_Spline.h
+set(HDRS sv3_PathElement.h sv3_VtkParametricSpline.h sv3_Spline.h sv3_PathIO.h
   )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_PathElement_init_py.cxx)
@@ -58,7 +58,7 @@ endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME})
+  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME} ${SV_LIB_COMMON_NAME})
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)
