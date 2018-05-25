@@ -95,7 +95,6 @@ proc file_find {dir wildcard args} {
 	puts $outfp "<Registry Id='regid3' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='RunDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
 	puts $outfp "<Registry Id='regid4' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='TclLibDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL' />"
 	puts $outfp "<Registry Id='regid5' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='TkLibDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL' />"
-	puts $outfp "<Registry Id='regid6' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PSchemaDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\schema' />"
 	puts $outfp "<Registry Id='regid7' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='HomeDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
 	puts $outfp "<Registry Id='regid8' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonHome' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27' />"
 	puts $outfp "<Registry Id='regid9' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonPackagesDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\vtk-packages;\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
