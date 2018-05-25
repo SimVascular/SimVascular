@@ -29,36 +29,41 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# Path
+# Plugin - ITK Level Sets
 #-----------------------------------------------------------------------------
+set(lib ${SV_LIB_ITK_LSET_NAME})
+set(export_directive segitk)
+set(export_file_name svSegITKExports.h)
 
-set(lib ${SV_LIB_SEGMENTATION_NAME})
-set(export_directive segmentation)
-set(export_file_name svSegmentationExports.h)
-
-list(APPEND CORELIBS ${lib})
+list(APPEND PLUGINLIBS ${lib})
 if(SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
-	  ${PYTHON_INCLUDE_DIR}
-	  ${PYTHON_INCLUDE_DIRS})
+		    ${PYTHON_INCLUDE_DIR}
+		    ${PYTHON_INCLUDE_DIRS})
 endif()
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-
-set(CXXSRCS 
+set(CXXSRCS  sv3_ITKUtils.cxx sv3_ITKLevelSet.cxx)
+set(HDRS sv3_ITKLevelSet.h sv3_ITKLevelSetBase.h
+        sv3_VascularPhaseOneLevelSetFunction.hxx
+	sv3_VascularPhaseOneLevelSetImageFilter.hxx
+	sv3_VascularPhaseTwoLevelSetFunction.hxx
+	sv3_VascularPhaseTwoLevelSetImageFilter.hxx
+	sv3_VascularLevelSetObserver.h
+        sv3_ITKLset_ConnectVTKITK.h sv3_ITKLset_ITK_Macros.h
+        sv3_ITKLset_Macros.h sv3_ITKLset_TCL_Macros.h
+        sv3_ITKLset_VTK_Macros.h sv3_ITKLset_ImgInfo.h
   )
-set(HDRS
-  )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_ITKUtils_init.cxx sv3_ITKLset2d_init.cxx sv3_ITKLset3d_init.cxx sv3_ITKLset_init.cxx 
+sv3_ITKUtils_init_py.cxx sv3_ITKLset2d_init_py.cxx sv3_ITKLset3d_init_py.cxx sv3_ITKLset_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 target_link_libraries(${lib}
-  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME} ${SV_LIB_COMMON_NAME})
+ ${SV_LIB_REPOSITORY_NAME}
+ ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)
@@ -75,14 +80,14 @@ generate_export_header(${lib}
   EXPORT_FILE_NAME ${export_file_name})
 
 if(SV_INSTALL_LIBS)
-	install(TARGETS ${lib}
-	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
-		)
+  install(TARGETS ${lib}
+    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+    )
 endif()
 if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
-		)
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+    )
 endif()
