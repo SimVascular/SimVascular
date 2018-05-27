@@ -37,7 +37,6 @@ set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/build"
 set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/prefix"
   CACHE PATH "Directory where prefix files for externals will be put")
 #-----------------------------------------------------------------------------
-message("AHAHAHA ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}")
 
 #-----------------------------------------------------------------------------
 # Tar install directory
