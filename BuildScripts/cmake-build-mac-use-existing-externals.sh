@@ -44,10 +44,7 @@ export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #externals
-#export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/usr/local/sv/ext"
-export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Externals/Build/Externals"
-#Qt5
-export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
+export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/usr/local/sv/svExternals/bin/clang/7.0/x64/relwithdebinfo"
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -65,28 +62,12 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DSV_USE_PYTHON=ON \
    -DSV_USE_MMG=ON \
    -DSV_USE_MITK=ON \
+   -DSV_USE_Qt5=ON \
+   -DSV_USE_QT=ON \
    -DSV_USE_QT_GUI=ON \
 \
-   -DSV_USE_SYSTEM_FREETYPE=ON \
-   -DSV_USE_SYSTEM_GDCM=ON \
-   -DSV_USE_SYSTEM_ITK=ON \
-   -DSV_USE_SYSTEM_PYTHON=ON \
-   -DSV_USE_SYSTEM_OpenCASCADE=ON \
-   -DSV_USE_SYSTEM_TCL=ON \
-   -DSV_USE_SYSTEM_VTK=ON \
-   -DSV_USE_SYSTEM_MMG=ON \
-   -DSV_USE_SYSTEM_MITK=ON \
-\
-   -DSV_USE_GDCM_SHARED=ON \
-   -DSV_USE_FREETYPE_SHARED=ON \
-   -DSV_USE_ITK_SHARED=ON \
-   -DSV_USE_OpenCASCADE_SHARED=ON \
-   -DSV_USE_TCL_SHARED=ON \
-   -DSV_USE_VTK_SHARED=ON \
-\
-   -DSV_EXTERNALS_USE_TOPLEVEL_DIR=ON \
-   -DSV_EXTERNALS_TOPLEVEL_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR" \
-   -Qt5_DIR=$Qt5_DIR \
+   -DSV_EXTERNALS_USE_TOPLEVEL_BIN_DIR=ON \
+   -DSV_EXTERNALS_TOPLEVEL_BIN_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR" \
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
 

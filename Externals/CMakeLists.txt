@@ -91,6 +91,7 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # Initial options
 set(SV_EXTERNALS_LIST "")
+include(SvExtVersions)
 include(SvExtOptions)
 #-----------------------------------------------------------------------------
 

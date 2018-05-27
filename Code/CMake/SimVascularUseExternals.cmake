@@ -73,13 +73,13 @@ endif()
 ## Externals!
 # Setup the externals now
 set(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR ON)
-set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Externals-build/sv_externals")
+set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Externals-build/svExternals")
 set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin")
 set(SV_USE_QT ON)
 set(SV_USE_QT_GUI ON)
 
 configure_file("${SimVascular_CMAKE_DIR}/simvascular_download_externals.sh.in" "${CMAKE_BINARY_DIR}/simvascular_download_externals.sh" @ONLY)
-set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the svExternals build, they can be with this string")
 list(APPEND SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS -DCMAKE_MODULE_PATH:PATH="${CMAKE_MODULE_PATH}")
 #execute_process(COMMAND bash "-c"
 #  "${CMAKE_COMMAND} \
