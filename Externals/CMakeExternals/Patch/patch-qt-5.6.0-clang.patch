@@ -110,9 +110,9 @@ diff -rupN original/qtconnectivity/src/bluetooth/osx/osxbtledeviceinquiry.mm pat
              [manager scanForPeripheralsWithServices:nil options:nil];
          } // Else we ignore.
 +#if QT_MAC_PLATFORM_SDK_EQUAL_OR_ABOVE(__MAC_10_13, __IPHONE_NA)
-     } else if (state == CBCentralManagerStateUnsupported || state == CBCentralManagerStateUnauthorized) {
-+#else
 +    } else if (state == CBManagerStateUnsupported || state == CBManagerStateUnauthorized) {
++#else
+     } else if (state == CBCentralManagerStateUnsupported || state == CBCentralManagerStateUnauthorized) {
 +#endif
          if (internalState == InquiryActive) {
              [manager stopScan];
