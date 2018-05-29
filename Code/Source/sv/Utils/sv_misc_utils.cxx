@@ -113,13 +113,13 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
 
   kia = (2 * Km + tmp) / 2;
   kja = Kg / kia;
-  k1a = minimum( kia, kja );
-  k2a = maximum( kia, kja );
+  k1a = svminimum( kia, kja );
+  k2a = svmaximum( kia, kja );
 
   kib = (2 * Km - tmp) / 2;
   kjb = Kg / kib;
-  k1b = minimum( kib, kjb );
-  k2b = maximum( kib, kjb );
+  k1b = svminimum( kib, kjb );
+  k2b = svmaximum( kib, kjb );
 
   if ( ( (Km > 0.0) && (k2a > 0.0) ) ||
        ( (Km < 0.0) && (k1a < 0.0) ) ||

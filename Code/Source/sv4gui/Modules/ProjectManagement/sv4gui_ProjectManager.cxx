@@ -60,6 +60,8 @@
 #include <vtkImageData.h>
 #include <vtkXMLImageDataWriter.h>
 
+#include <itksys/SystemTools.hxx>
+
 #include <QDir>
 #include <QDomDocument>
 #include <QDomElement>
@@ -251,8 +253,9 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             std::string imageFilePath=imageFilePathList[i].toStdString();
 
             try{
-                mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath);
+                //mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath);
                 //            imageNode->SetVisibility(false);
+                mitk::DataNode::Pointer imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath);
                 imageNode->SetName(imageNameList[i].toStdString());
                 dataStorage->Add(imageNode,imageFolderNode);
             }
@@ -268,7 +271,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         QFileInfoList fileInfoList=dir1.entryInfoList(QStringList("*.pth"), QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
-            mitk::DataNode::Pointer pathNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            //mitk::DataNode::Pointer pathNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            mitk::DataNode::Pointer pathNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             pathNode->SetVisibility(false);
 
             sv4guiPath* path=dynamic_cast<sv4guiPath*>(pathNode->GetData());
@@ -306,7 +310,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
 
             try
             {
-                mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(filePath);
+                //mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(filePath);
+                mitk::DataNode::Pointer segNode = sv4guiProjectManager::LoadDataNode(filePath);
                 segNode->SetVisibility(false);
 
                 sv4guiContourGroup* group=dynamic_cast<sv4guiContourGroup*>(segNode->GetData());
@@ -353,7 +358,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
 
             try
             {
-                mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(filePath);
+                //mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(filePath);
+                mitk::DataNode::Pointer modelNode = sv4guiProjectManager::LoadDataNode(filePath);
                 if(firstModel)
                 {
                     modelNode->SetVisibility(true);
@@ -379,7 +385,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
             try
             {
-            mitk::DataNode::Pointer meshNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            //mitk::DataNode::Pointer meshNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            mitk::DataNode::Pointer meshNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             meshNode->SetVisibility(false);
             dataStorage->Add(meshNode,meshFolderNode);
             }
@@ -395,7 +402,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         fileInfoList=dirSim.entryInfoList(QStringList("*.sjb"), QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
-            mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             jobNode->SetVisibility(false);
             dataStorage->Add(jobNode,simFolderNode);
         }
@@ -578,6 +586,7 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
         out << xml <<endl;
     }
 
+    return;
 }
 
 void sv4guiProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath)
@@ -895,6 +904,54 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     {
         dataNode->SetData(vdata[0]);
     }
+}
+
+mitk::DataNode::Pointer sv4guiProjectManager::LoadDataNode(std::string filePath)
+{
+ std::vector<mitk::BaseData::Pointer> baseDataList = mitk::IOUtil::Load(filePath);
+ if (baseDataList.empty())
+ {
+   MITK_ERROR <<"Object not added to Data Storage! Please make sure object is valid: " << filePath;
+   return NULL;
+ }
+
+ mitk::BaseData::Pointer baseData = baseDataList.front();
+
+ mitk::DataNode::Pointer node = mitk::DataNode::New();
+ node->SetData(baseData);
+
+ // path
+ mitk::StringProperty::Pointer pathProp = mitk::StringProperty::New(itksys::SystemTools::GetFilenamePath(filePath));
+ node->SetProperty(mitk::StringProperty::PATH, pathProp);
+
+ // name already defined?
+ mitk::StringProperty::Pointer nameProp = dynamic_cast<mitk::StringProperty *>(node->GetProperty("name"));
+ if (nameProp.IsNull() || (strcmp(nameProp->GetValue(), "No Name!") == 0))
+ {
+   // name already defined in BaseData
+   mitk::StringProperty::Pointer baseDataNameProp =
+     dynamic_cast<mitk::StringProperty *>(node->GetData()->GetProperty("name").GetPointer());
+   if (baseDataNameProp.IsNull() || (strcmp(baseDataNameProp->GetValue(), "No Name!") == 0))
+   {
+     // name neither defined in node, nor in BaseData -> name = filename
+     nameProp = mitk::StringProperty::New(itksys::SystemTools::GetFilenameWithoutExtension(filePath));
+     node->SetProperty("name", nameProp);
+   }
+   else
+   {
+     // name defined in BaseData!
+     nameProp = mitk::StringProperty::New(baseDataNameProp->GetValue());
+     node->SetProperty("name", nameProp);
+   }
+ }
+
+ // visibility
+ if (!node->GetProperty("visible"))
+ {
+   node->SetVisibility(true);
+ }
+
+ return node;
 }
 
 mitk::DataNode::Pointer sv4guiProjectManager::GetProjectFolderNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode)
