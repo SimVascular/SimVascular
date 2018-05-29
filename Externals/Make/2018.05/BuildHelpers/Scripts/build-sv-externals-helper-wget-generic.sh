@@ -1,4 +1,4 @@
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.03/src/originals/
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.05/src/originals/
 
 mkdir Originals
 pushd Originals
@@ -23,8 +23,8 @@ if [[ $SV_SUPER_OPTIONS == *WGET_PYTHON* ]]; then
   mkdir -p python
   pushd python
   wget $PARENT_URL/python/get-pip.py
-  wget $PARENT_URL/python/Python-2.7.13.tgz
-  wget $PARENT_URL/python/python-2.7.13-cmakebuild.tar.gz
+  wget $PARENT_URL/python/Python-3.6.5.tgz
+  wget $PARENT_URL/python/python-cmake-buildsystem-2018-05-28.tar.gz
   popd
 fi
 
@@ -86,7 +86,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_HDF5* ]]; then
   mkdir -p hdf5
   pushd hdf5
   #  wget $PARENT_URL/hdf5/CMake-hdf5-1.10.1.zip
-  wget $PARENT_URL/hdf5/hdf5-1.10.1.tar.gz
+  wget $PARENT_URL/hdf5/hdf5-1.10.2.tar.gz
   popd
 fi
 
@@ -96,7 +96,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_VTK* ]]; then
   rm -Rf vtk
   mkdir -p vtk
   pushd vtk
-  wget $PARENT_URL/vtk/VTK-8.0.0.tar.gz
+  wget $PARENT_URL/vtk/VTK-8.1.1.tar.gz
   popd
 fi
 
@@ -106,7 +106,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_ITK* ]]; then
   rm -Rf itk
   mkdir -p itk
   pushd itk
-  wget $PARENT_URL/itk/InsightToolkit-4.12.2.tar.gz
+  wget $PARENT_URL/itk/InsightToolkit-4.13.0.tar.gz
   popd
 fi
 
@@ -117,7 +117,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_OPENCASCADE* ]]; then
   mkdir -p opencascade
   pushd opencascade
   wget $PARENT_URL/opencascade/opencascade-7.2.0.tgz
-  wget $PARENT_URL/opencascade/Release_Notes_7.2.0.pdf
+#  wget $PARENT_URL/opencascade/Release_Notes_7.2.0.pdf
   popd
 fi
 
@@ -137,7 +137,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_MITK* ]]; then
   rm -Rf mitk
   mkdir -p mitk
   pushd mitk
-  wget $PARENT_URL/mitk/mitk-v2018.02.0.tar.gz
+  wget $PARENT_URL/mitk/mitk-2018-04-alpha.tar.gz
   popd
 fi
 
