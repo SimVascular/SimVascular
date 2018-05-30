@@ -75,7 +75,11 @@ pyAdaptObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args);
 // -----
 PyObject* PyRunTimeErr;
 PyObject* Adapt_RegistrarsListCmd(PyObject* self, PyObject* args);
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC initpyMeshAdapt();
+#elif PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyMeshAdapt();
+#endif
 static PyObject* cvAdapt_CreateInternalMeshObjectMtd( pyAdaptObject* self, PyObject* args);
 static PyObject* cvAdapt_LoadModelMtd( pyAdaptObject* self, PyObject* args);
 static PyObject* cvAdapt_LoadMeshMtd( pyAdaptObject* self, PyObject* args);
@@ -112,7 +116,11 @@ void DeleteAdapt( pyAdaptObject* self );
 // ----------
 int Adapt_pyInit()
 {
+#if PYTHON_MAJOR_VERSION == 2
   initpyMeshAdapt();
+#elif PYTHON_MAJOR_VERSION == 3
+  PyInit_pyMeshAdapt();
+#endif
   return Py_OK;
 }
 static int pyAdaptObject_init(pyAdaptObject* self, PyObject* args)
@@ -213,7 +221,18 @@ static PyMethodDef pyAdaptMesh_methods[] = {
   {NULL, NULL}
 };
 
+#if PYTHON_MAJOR_VERSION == 3
+static struct PyModuleDef pyAdaptMeshmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyAdaptMesh",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyAdaptMesh_methods
+};
+#endif
 
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC
 initpyMeshAdapt()
 {
@@ -224,13 +243,13 @@ initpyMeshAdapt()
     gRepository= new cvRepository();
     fprintf(stdout,"New gRepository created from cv_adapt_init\n");
   }
-  fprintf(stdout,"check\n");
   if (PySys_SetObject("AdaptObjectRegistrar",(PyObject*)&cvAdaptObject::gRegistrar)<0)
   {
     fprintf(stdout,"Unable to create AdaptObjectRegistrar\n");
     return;
+
+
   }
-  fprintf(stdout,"check\n");
 
   // Initialize
   cvAdaptObject::gCurrentKernel = KERNEL_INVALID;
@@ -238,34 +257,88 @@ initpyMeshAdapt()
 #ifdef USE_TETGEN_ADAPTOR
   cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
 #endif
-  fprintf(stdout,"check\n");
 
   pyAdaptObjectType.tp_new=PyType_GenericNew;
   if (PyType_Ready(&pyAdaptObjectType)<0)
   {
     fprintf(stdout,"Error in pyAdaptMeshType\n");
     return;
+
   }
-  fprintf(stdout,"check\n");
 
   PyObject* pythonC;
   pythonC = Py_InitModule("pyMeshAdapt",pyAdaptMesh_methods);
-  fprintf(stdout,"check\n");
+
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshAdapt\n");
     return;
+
   }
-  fprintf(stdout,"check\n");
 
   PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyAdaptObjectType);
   PyModule_AddObject(pythonC,"pyAdaptObject",(PyObject*)&pyAdaptObjectType);
-  fprintf(stdout,"check\n");
-  return ;
+    return;
+
 
  }
+#endif
+
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC
+PyInit_pyMeshAdapt()
+{
+
+  // Associate the adapt object registrar with the python interpreter
+  if (gRepository==NULL)
+  {
+    gRepository= new cvRepository();
+    fprintf(stdout,"New gRepository created from cv_adapt_init\n");
+  }
+  if (PySys_SetObject("AdaptObjectRegistrar",(PyObject*)&cvAdaptObject::gRegistrar)<0)
+  {
+    fprintf(stdout,"Unable to create AdaptObjectRegistrar\n");
+
+    Py_RETURN_NONE;
+
+  }
+
+  // Initialize
+  cvAdaptObject::gCurrentKernel = KERNEL_INVALID;
+
+#ifdef USE_TETGEN_ADAPTOR
+  cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
+#endif
+
+  pyAdaptObjectType.tp_new=PyType_GenericNew;
+  if (PyType_Ready(&pyAdaptObjectType)<0)
+  {
+    fprintf(stdout,"Error in pyAdaptMeshType\n");
+    Py_RETURN_NONE;
+
+  }
+
+  PyObject* pythonC;
+
+  pythonC = PyModule_Create(&pyAdaptMeshmodule);
+
+  if(pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyMeshAdapt\n");
+    Py_RETURN_NONE;
+  }
+
+  PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",NULL,NULL);
+  PyModule_AddObject(pythonC,"error",PyRunTimeErr);
+  Py_INCREF(&pyAdaptObjectType);
+  PyModule_AddObject(pythonC,"pyAdaptObject",(PyObject*)&pyAdaptObjectType);
+
+    return pythonC;
+
+ }
+#endif
 // This routine is used for debugging the registrar/factory system.
 PyObject* Adapt_RegistrarsListCmd( PyObject* self, PyObject* args)
 {
@@ -275,11 +348,11 @@ PyObject* Adapt_RegistrarsListCmd( PyObject* self, PyObject* args)
   char result[255];
   sprintf( result, "Adapt object registrar ptr -> %p\n", adaptObjectRegistrar );
   PyObject* pyList=PyList_New(6);
-  PyList_SetItem(pyList,0,PyString_FromFormat(result));
+  PyList_SetItem(pyList,0,PyBytes_FromFormat(result));
   for (int i = 0; i < 5; i++) {
     sprintf( result, "GetFactoryMethodPtr(%i) = %p\n",
       i, (adaptObjectRegistrar->GetFactoryMethodPtr(i)));
-    PyList_SetItem(pyList,i+1,PyString_FromFormat(result));
+    PyList_SetItem(pyList,i+1,PyBytes_FromFormat(result));
   }
 
   return pyList;

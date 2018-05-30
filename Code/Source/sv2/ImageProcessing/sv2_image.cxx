@@ -258,9 +258,9 @@ double ComputePointSlope( Pixel_T *prev, Pixel_T *curr, Pixel_T *next,
   }
 
   drng = rngCurr - rngPrev;
-  lenPrev = sqrt( sqr(ddom) + sqr(drng) );
+  lenPrev = sqrt( svSqr(ddom) + svSqr(drng) );
   drng = rngCurr - rngNext;
-  lenNext = sqrt( sqr(ddom) + sqr(drng) );
+  lenNext = sqrt( svSqr(ddom) + svSqr(drng) );
 
   // Interpolate along next edge.
   if (lenPrev < lenNext) {
@@ -445,8 +445,8 @@ void Img_GetMagGradRange( Image_T *image, double rng[] )
     if ( i == 0 ) {
       currMin = currMax = mag;
     } else {
-      currMax = maximum( mag, currMax );
-      currMin = minimum( mag, currMin );
+      currMax = svmaximum( mag, currMax );
+      currMin = svminimum( mag, currMin );
     }
   }
   rng[0] = currMin;
@@ -474,8 +474,8 @@ void Img_GetXYMagGradRange( Image_T *image, double rng[] )
     if ( i == 0 ) {
       currMin = currMax = mag;
     } else {
-      currMax = maximum( mag, currMax );
-      currMin = minimum( mag, currMin );
+      currMax = svmaximum( mag, currMax );
+      currMin = svminimum( mag, currMin );
     }
   }
   rng[0] = currMin;
@@ -502,8 +502,8 @@ void Img_GetZMagGradRange( Image_T *image, double rng[] )
     if ( i == 0 ) {
       currMin = currMax = mag;
     } else {
-      currMax = maximum( mag, currMax );
-      currMin = minimum( mag, currMin );
+      currMax = svmaximum( mag, currMax );
+      currMin = svminimum( mag, currMin );
     }
   }
   rng[0] = currMin;
@@ -528,8 +528,8 @@ void Img_GetIntensityRange( Image_T *image, double rng[] )
     if ( i == 0 ) {
       currMin = currMax = datum;
     } else {
-      currMax = maximum( datum, currMax );
-      currMin = minimum( datum, currMin );
+      currMax = svmaximum( datum, currMax );
+      currMin = svminimum( datum, currMin );
     }
   }
   rng[0] = currMin;

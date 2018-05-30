@@ -96,3 +96,6 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
+
+PYTHON_ADD_MODULE(pyMeshTetgen sv_tetgen_mesh_init_py.cxx)
+target_link_libraries(pyMeshTetgen ${lib} ${PYTHON_LIBRARY})

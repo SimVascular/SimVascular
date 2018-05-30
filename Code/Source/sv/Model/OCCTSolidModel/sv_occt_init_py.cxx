@@ -30,7 +30,7 @@
  */
 
 
-/** @file cv_occtsolid_init.cxx
+/** @file sv_occtsolid_init.cxx
  *  @brief Ipmlements function to register OCCTSolidModel as a solid type
  *
  *  @author Adam Updegrove
@@ -45,6 +45,7 @@
 #include <string.h>
 #include "sv_Repository.h"
 #include "sv_solid_init.h"
+#include "sv_solid_init_py.h"
 #include "sv_occt_init_py.h"
 #include "sv_SolidModel.h"
 #include "sv_arg.h"
@@ -64,7 +65,11 @@
 
 #include "Python.h"
 #include "vtkPythonUtil.h"
+#if PYTHON_MAJOR_VERSION == 3
+#include "PyVTKObject.h"
+#elif PYTHON_MAJOR_VERSION == 2
 #include "PyVTKClass.h"
+#endif
 #include "sv2_globals.h"
 #include <TDF_Data.hxx>
 #include <TDF_Label.hxx>
@@ -106,6 +111,18 @@ PyMethodDef SolidOCCT_methods[] = {
   {NULL, NULL}
 };
 
+#if PYTHON_MAJOR_VERSION == 3
+
+static struct PyModuleDef pySolidOCCTmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pySolidOCCT",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   SolidOCCT_methods
+};
+#endif
+
 PyObject* Occtsolid_pyInit()
 {
   Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
@@ -125,7 +142,9 @@ PyObject* Occtsolid_pyInit()
 
   printf("  %-12s %s\n","OpenCASCADE:", OCC_VERSION_COMPLETE);
   //get solidModelRegistrar from sys
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
@@ -134,10 +153,14 @@ PyObject* Occtsolid_pyInit()
   else {
     return Py_ERROR;
   }
-  PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
+  tmp->registrar = pySolidModelRegistrar;
+  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
   PyObject *pythonC;
+#if PYTHON_MAJOR_VERSION == 2
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
-  if (pythonC==NULL)
+#elif PYTHON_MAJOR_VERSION == 3
+  pythonC = PyModule_Create(&pySolidOCCTmodule);
+#endif  if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return Py_ERROR;
@@ -145,6 +168,7 @@ PyObject* Occtsolid_pyInit()
   return pythonC;
 }
 
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC
 initpySolidOCCT()
 {
@@ -165,7 +189,9 @@ initpySolidOCCT()
 
   printf("  %-12s %s\n","OpenCASCADE:", OCC_VERSION_COMPLETE);
   //get solidModelRegistrar from sys
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
@@ -183,6 +209,53 @@ initpySolidOCCT()
     return ;
   }
 }
+#endif
+
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC
+PyInit_pySolidOCCT()
+{
+  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
+  //gOCCTManager = new AppStd_Application;
+  OCCTManager = XCAFApp_Application::GetApplication();
+  //if ( gOCCTManager == NULL ) {
+  //  fprintf( stderr, "error allocating gOCCTManager\n" );
+  //  return TCL_ERROR;
+  //}
+  Handle(TDocStd_Document) doc;
+  //gOCCTManager->NewDocument("Standard",doc);
+  OCCTManager->NewDocument("MDTV-XCAF",doc);
+  if ( !XCAFDoc_DocumentTool::IsXCAFDocument(doc))
+  {
+    fprintf(stdout,"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly\n");
+  }
+
+  printf("  %-12s %s\n","OpenCASCADE:", OCC_VERSION_COMPLETE);
+  //get solidModelRegistrar from sys
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
+  if (pySolidModelRegistrar != NULL) {
+          // Register this particular factory method with the main app.
+          pySolidModelRegistrar->SetFactoryMethodPtr(  SM_KT_OCCT,
+            (FactoryMethodPtr) &pyCreateOCCTSolidModel );
+  }
+  else {
+    Py_RETURN_NONE;
+  }
+  PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
+  PyObject *pythonC;
+
+  pythonC = PyModule_Create(&pySolidOCCTmodule);
+  if (pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pySolid");
+    pythonC;
+  }
+
+  return pythonC;
+}
+#endif
 
 PyObject* OCCTSolidModel_AvailableCmd( PyObject* self, PyObject* args)
 {
@@ -194,7 +267,9 @@ PyObject* OCCTSolidModel_RegistrarsListCmd(PyObject* self, PyObject* args )
   char result[2048];
   int k=0;
   PyObject *pyPtr=PyList_New(6);
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   sprintf(result, "Solid model registrar ptr -> %p\n", pySolidModelRegistrar);
   fprintf(stdout,result);
   PyList_SetItem(pyPtr,0,PyString_FromFormat(result));
@@ -209,8 +284,9 @@ PyObject* OCCTSolidModel_RegistrarsListCmd(PyObject* self, PyObject* args )
 }
 
 
+#ifdef SV_USE_PYTHON
 // --------------------
-// pySolidOCCT.convertListsToOCCTObject
+// pySolid.convertListsToOCCTObject
 // --------------------
 PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 {
@@ -318,6 +394,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 
   return Py_BuildValue("s","success");
 }
+#endif
 
 // --------------------
 // getArrayFromDoubleList
@@ -332,6 +409,7 @@ double *getArrayFromDoubleList(PyObject* listObj,int &len)
   }
   return arr;
 }
+
 
 // --------------------
 // getArrayFromDoubleList2D
@@ -350,3 +428,6 @@ double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny)
   }
   return arr;
 }
+
+
+

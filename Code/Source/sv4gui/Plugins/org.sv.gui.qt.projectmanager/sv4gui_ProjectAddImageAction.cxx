@@ -95,7 +95,8 @@ void sv4guiProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &sele
         if (imageFilePath.isEmpty())
             return;
 
-        mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
+        //mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
+        mitk::DataNode::Pointer imageNode=sv4guiProjectManager::LoadDataNode(imageFilePath.toStdString());
 
         mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
         if(imageNode.IsNull() || !isImage->CheckNode(imageNode))

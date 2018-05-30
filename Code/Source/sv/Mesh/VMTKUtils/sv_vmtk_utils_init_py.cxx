@@ -58,7 +58,12 @@
 // -----------
 #ifdef SV_USE_VMTK
 PyObject* PyRunTimeErr;
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC initpyVMTKUtils();
+#elif PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyVMTKUtils();
+#endif
+
 
 PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args);
 
@@ -87,7 +92,11 @@ PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args);
 
 int Vmtkutils_pyInit()
 {
+#if PYTHON_MAJOR_VERSION == 2
   initpyVMTKUtils();
+#elif PYTHON_MAJOR_VERSION == 3
+  PyInit_pyVMTKUtils();
+#endif
   return Py_OK;
 }
 
@@ -109,23 +118,55 @@ PyMethodDef VMTKUtils_methods[]=
   {NULL,NULL}
 };
 
+#if PYTHON_MAJOR_VERSION == 3
+static struct PyModuleDef pyVMTKUtilsmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyVMTKUtils",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   VMTKUtils_methods
+};
+#endif
 //------------------
 //initpyVMTKUtils
 //------------------
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC initpyVMTKUtils()
 {
   PyObject* pythonC;
   pythonC=Py_InitModule("pyVMTKUtils",VMTKUtils_methods);
+
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error initializing pyVMTKUtils.\n");
     return;
+
   }
   PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   return;
 }
+#endif
 
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyVMTKUtils()
+{
+  PyObject* pythonC;
+
+  pythonC = PyModule_Create(&pyVMTKUtilsmodule);
+  if (pythonC==NULL)
+  {
+    fprintf(stdout,"Error initializing pyVMTKUtils.\n");
+    Py_RETURN_NONE;
+  }
+  PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
+  PyModule_AddObject(pythonC,"error",PyRunTimeErr);
+
+  return pythonC;
+}
+
+#endif
 //--------------------
 //Geom_CenterlinesCmd
 //--------------------
@@ -507,7 +548,7 @@ PyObject* Geom_CapCmd( PyObject* self, PyObject* args)
   PyObject* pyList=PyList_New(numIds);
   for (int i = 0; i < numIds; i++) {
 	sprintf(idstring, "%i", ids[i]);
-    PyList_SetItem(pyList,i,PyString_FromFormat(idstring));
+    PyList_SetItem(pyList,i,PyBytes_FromFormat(idstring));
 	idstring[0]='\n';
   }
   delete [] ids;
