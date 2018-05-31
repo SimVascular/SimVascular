@@ -1,4 +1,4 @@
-subst S: C:/cygwin64/usr/local/sv/ext/2018.03/src
+subst S: C:/cygwin64/usr/local/sv/ext/2018.05/src
 
 rm -Rf REPLACEME_SV_TOP_BLD_DIR_NUMPY
 cp -Rf REPLACEME_SV_TOP_SRC_DIR_NUMPY REPLACEME_SV_TOP_BLD_DIR_NUMPY
