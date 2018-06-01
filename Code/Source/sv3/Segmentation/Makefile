@@ -42,12 +42,12 @@ CREATE_EXPORTS_CV_FILE_H=svSEGMENTATIONExports.h
 
 CXXFLAGS += -DSV_EXPORT_SEGMENTATION_COMPILE
 
-HDRS	= 
-CXXSRCS	= 
+HDRS	= sv3_Contour.h sv3_LevelSetContour.h sv3_SegmentationUtils.h
+CXXSRCS	= sv3_Contour.cxx sv3_LevelSetContour.cxx sv3_SegmentationUtils.cxx
 
 
-SVPYHDRS = 
-SVPYSRCS = 
+SVPYHDRS = sv3_Contour_init_py.h 
+SVPYSRCS = sv3_Contour_init_py.cxx sv3_LevelSetContour_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
@@ -56,7 +56,7 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
 
 TARGET_LIB_NAME = $(SV_LIB_SEGMENTATION_NAME)
 
-SV_PYTHON_MODULE_NAME = pySegmentation
+SV_PYTHON_MODULE_NAME = pyContour
 
 include $(TOP)/targetlib.mk
 

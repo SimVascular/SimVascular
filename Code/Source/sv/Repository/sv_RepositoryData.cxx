@@ -91,6 +91,9 @@ char *RepositoryDataT_EnumToStr( RepositoryDataT val )
   case PATH_T:
     strcpy( result, "Path");
     break;
+  case CONTOUR_T:
+    strcpy( result, "Contour");
+    break;
   default:
     strcpy( result, "Invalid RepositoryData type" );
     break;

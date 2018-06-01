@@ -45,12 +45,10 @@ endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-set(CXXSRCS 
-  )
-set(HDRS
-  )
+set(CXXSRCS sv3_Contour.cxx sv3_LevelSetContour.cxx sv3_SegmentationUtils.cxx)
+set(HDRS sv3_Contour.h sv3_LevelSetContour.h sv3_SegmentationUtils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_Contour_init_py.cxx sv3_LevelSetContour_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -58,7 +56,7 @@ endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME} ${SV_LIB_COMMON_NAME})
+  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME} ${SV_LIB_COMMON_NAME} ${SV_LIB_ITK_LSET_NAME} ${SV_LIB_PATH_NAME})
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)
