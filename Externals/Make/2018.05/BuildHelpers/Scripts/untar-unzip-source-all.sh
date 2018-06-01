@@ -48,9 +48,9 @@ fi
 # numpy
 if [[ $SV_SUPER_OPTIONS == *UNTAR_NUMPY* ]]; then
     echo "UNTAR_NUMPY"
-  rm -Rf ../numpy-1.11.1
-  tar xvf Originals/numpy/numpy-1.11.1.tar.gz
-  mv numpy-1.11.1 ..
+  rm -Rf ../numpy-1.14.3
+  tar xvf Originals/numpy/numpy-1.14.3.tar.gz
+  mv numpy-1.14.3 ..
 fi
 
 # qt
@@ -80,11 +80,9 @@ fi
 #  hdf5
 if [[ $SV_SUPER_OPTIONS == *UNTAR_HDF5* ]]; then
   echo "UNTAR_HDF5"
-  rm -Rf ../hdf5-1.10.2
-  #  unzip Originals/hdf5/CMake-hdf5-1.10.1.zip
-  #  mv CMake-hdf5-1.10.1 ../hdf5-1.10.1
-  tar xvf Originals/hdf5/hdf5-1.10.2.tar.gz
-  mv hdf5-1.10.2 ..
+  rm -Rf ../hdf5-1.10.1
+  tar xvf Originals/hdf5/hdf5-1.10.1.tar.gz
+  mv hdf5-1.10.1 ..
 fi
 
 # vtk

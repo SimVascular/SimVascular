@@ -44,7 +44,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_NUMPY* ]]; then
   rm -Rf numpy
   mkdir -p numpy
   pushd numpy
-  wget $PARENT_URL/numpy/numpy-1.11.1.tar.gz
+  wget $PARENT_URL/numpy/numpy-1.14.3.tar.gz
   popd
 fi
 
@@ -86,7 +86,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_HDF5* ]]; then
   mkdir -p hdf5
   pushd hdf5
   #  wget $PARENT_URL/hdf5/CMake-hdf5-1.10.1.zip
-  wget $PARENT_URL/hdf5/hdf5-1.10.2.tar.gz
+  wget $PARENT_URL/hdf5/hdf5-1.10.1.tar.gz
   popd
 fi
 
