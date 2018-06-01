@@ -1,0 +1,11 @@
+--- CTK-original/CMake/ctkMacroSetupQt.cmake	2018-01-23 09:19:44.000000000 -0800
++++ CTK/CMake/ctkMacroSetupQt.cmake	2018-01-22 18:20:16.000000000 -0800
+@@ -73,7 +73,7 @@
+       message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
+     endif()
+ 
+-  else()
++#  else()
+     message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
+   endif()
+ 
