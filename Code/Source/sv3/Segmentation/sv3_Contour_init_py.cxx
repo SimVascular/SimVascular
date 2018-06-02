@@ -59,8 +59,13 @@ PyMODINIT_FUNC initpyContour();
 PyObject* PyRunTimeErr;
 PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args);
 PyObject* Contour_GetObjectCmd( pyContour* self, PyObject* args);
-PyObject* Contour_CreateLSCmd( pyContour* self, PyObject* args);
+PyObject* Contour_CreateCmd( pyContour* self, PyObject* args);
+PyObject* Contour_GetAreaCmd( pyContour* self, PyObject* args);
+PyObject* Contour_GetPerimeterCmd( pyContour* self, PyObject* args);
+PyObject* Contour_GetCenterPointCmd(pyContour* self, PyObject* args);
+
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args);
+
  
 int Contour_pyInit()
 {
@@ -71,7 +76,10 @@ int Contour_pyInit()
 static PyMethodDef pyContour_methods[]={
   {"contour_newObject", (PyCFunction)Contour_NewObjectCmd,METH_VARARGS,NULL},
   {"contour_getObject", (PyCFunction)Contour_GetObjectCmd,METH_VARARGS,NULL},
-  {"contour_create", (PyCFunction)Contour_CreateCmd,METH_VARARGS,NULL},
+  {"contour_create", (PyCFunction)Contour_CreateCmd,METH_NOARGS,NULL},
+  {"contour_area", (PyCFunction)Contour_GetAreaCmd,METH_NOARGS,NULL},
+  {"contour_perimeter", (PyCFunction)Contour_GetPerimeterCmd,METH_NOARGS,NULL},
+  {"contour_center", (PyCFunction)Contour_GetCenterPointCmd, METH_NOARGS,NULL},
   {NULL,NULL}
 };
 
@@ -273,6 +281,8 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
     }
 
     vtkImageData*  slice = sv3::SegmentationUtils::GetSlicevtkImage(path->GetPathPoint(index),vtkObj, 5.0);
+    //std::cout<<"Slice dimensions: "<<slice->GetDimensions()<<std::endl;
+    //std::cout<<"Path coords: "<< path->GetPathPoint(index).pos[0]<<" "<<path->GetPathPoint(index).pos[1]<<" "<<path->GetPathPoint(index).pos[2]<<std::endl;
     // Instantiate the new mesh:
     Contour *geom = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, path->GetPathPoint(index), slice );;
     
@@ -346,8 +356,9 @@ PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
     {
         sv3::levelSetContour::svLSParam paras;
         contour->SetLevelSetParas(&paras);
+        //std::cout<<"paras: "<<paras.radius<<std::endl;
     }
-    //std::cout<<"paras: "<<paras.radius<<std::endl;
+    
     contour->CreateContourObject();
     if(contour->GetContourPointNumber()==0)
     {
@@ -360,4 +371,37 @@ PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
     Py_DECREF(contour);
     Py_RETURN_NONE; 
     
+}
+
+// --------------------
+// Contour_GetAreaCmd
+// --------------------
+PyObject* Contour_GetAreaCmd( pyContour* self, PyObject* args)
+{
+    Contour* contour = self->geom;
+    double area = contour->GetArea();
+    return Py_BuildValue("d",area);    
+}
+
+// --------------------
+// Contour_GetPerimeterCmd
+// --------------------
+PyObject* Contour_GetPerimeterCmd( pyContour* self, PyObject* args)
+{
+    Contour* contour = self->geom;
+    double perimeter = contour->GetPerimeter();
+    return Py_BuildValue("d",perimeter);    
+}
+
+// --------------------
+// Contour_GetPerimeterCmd
+// --------------------
+PyObject* Contour_GetCenterPointCmd( pyContour* self, PyObject* args)
+{
+    Contour* contour = self->geom;
+    std::array<double,3> center = contour->GetCenterPoint();
+    char output[1024];
+    output[0] = '\0';
+    sprintf(output,"(%.4f,%.4f,%.4f)",center[0],center[1],center[2]);
+    return Py_BuildValue("s",output);    
 }

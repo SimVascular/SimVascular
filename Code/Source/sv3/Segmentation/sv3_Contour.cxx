@@ -61,7 +61,7 @@ Contour::Contour(KernelType t)
       m_Closed( true ),
       m_Finished( true ),
       m_ControlPointSelectedIndex( -2 ),
-      //m_PlaneGeometry( nullptr ),
+      m_PlaneGeometry( nullptr ),
       //m_PreviewControlPointVisible( false ),
       //m_Extendable( false ),
       //m_Selected(false),
@@ -520,33 +520,32 @@ std::array<double, 3>  Contour::GetContourPoint(int index)
 
 void Contour::ContourPointsChanged()
 {
-    //CreateCenterScalingPoints();
-    //AssignCenterScalingPoints();
+    CreateCenterScalingPoints();
+    AssignCenterScalingPoints();
 }
 
-//void Contour::AssignCenterScalingPoints()
-//{
-//    if(m_ControlPoints.size()==0)
-//    {
-//        m_ControlPoints.push_back(m_CenterPoint);
-//        m_ControlPoints.push_back(m_ScalingPoint);
-//    }
-//    else if(m_ControlPoints.size()==1)
-//    {
-//        m_ControlPoints[0]=m_CenterPoint;
-//        m_ControlPoints.push_back(m_ScalingPoint);
-//    }
-//    else
-//    {
-//        m_ControlPoints[0]=m_CenterPoint;
-//        m_ControlPoints[1]=m_ScalingPoint;
-//    }
-//}
+void Contour::AssignCenterScalingPoints()
+{
+    if(m_ControlPoints.size()==0)
+    {
+        m_ControlPoints.push_back(m_CenterPoint);
+        m_ControlPoints.push_back(m_ScalingPoint);
+    }
+    else if(m_ControlPoints.size()==1)
+    {
+        m_ControlPoints[0]=m_CenterPoint;
+        m_ControlPoints.push_back(m_ScalingPoint);
+    }
+    else
+    {
+        m_ControlPoints[0]=m_CenterPoint;
+        m_ControlPoints[1]=m_ScalingPoint;
+    }
+}
 
-//void Contour::CreateCenterScalingPoints()
-//{
-//    double Sx=0,Sy=0,A=0;
-//
+void Contour::CreateCenterScalingPoints()
+{
+    double Sx=0,Sy=0, Sz=0, A=0;
 //    for(int i=0;i<m_ContourPoints.size();i++)
 //    {
 //        std::array<double, 2>  point1,point2;
@@ -560,60 +559,85 @@ void Contour::ContourPointsChanged()
 //        Sy+=(point1[1]+point2[1])*(point1[0]*point2[1]-point2[0]*point1[1]);
 //        A+=(point1[0]*point2[1]-point2[0]*point1[1]);
 //    }
-//
-//    std::array<double, 2>  center;
-//    if(A!=0)
-//    {
-//        center[0]=Sx/A/3;
-//        center[1]=Sy/A/3;
-//    }
-//    else
-//    {
-//        Sx=0;
-//        Sy=0;
-//        for(int i=0;i<m_ContourPoints.size();i++)
-//        {
-//            std::array<double, 2>  point;
-//            m_PlaneGeometry->Map(m_ContourPoints[i], point);
-//            Sx+=point[0];
-//            Sy+=point[1];
-//        }
-//        center[0]=Sx/m_ContourPoints.size();
-//        center[1]=Sy/m_ContourPoints.size();
-//    }
-//
-//    double minDis=0;
-//    bool firstTime=true;
-//
-//    for(int i=0;i<m_ContourPoints.size();i++)
-//    {
-//        std::array<double, 2>  point;
-//        m_PlaneGeometry->Map(m_ContourPoints[i], point);
-//        double dis=point.EuclideanDistanceTo(center);
-//        if(firstTime)
-//        {
-//            minDis=dis;
-//            firstTime=false;
-//        }
-//        else if(dis<minDis)
-//        {
-//            minDis=dis;
-//        }
-//    }
-//
-//    std::array<double, 2>  scalingPoint;
-//    scalingPoint[0]=center[0]+minDis/2;
-//    scalingPoint[1]=center[1];
-//
-//    m_PlaneGeometry->Map(center,m_CenterPoint);
-//    m_PlaneGeometry->Map(scalingPoint,m_ScalingPoint);
-//
-//}
 
-//std::array<double, 3>  Contour::GetCenterPoint()
-//{
-//    return m_CenterPoint;
-//}
+    std::array<double, 3>  center;
+    //if(A!=0)
+    //{
+    //    center[0]=Sx/A/3;
+    //    center[1]=Sy/A/3;
+    //}
+    //else
+    //{
+    //    Sx=0;
+    //    Sy=0;
+    //    for(int i=0;i<m_ContourPoints.size();i++)
+    //    {
+    //        std::array<double, 2>  point;
+    //        m_PlaneGeometry->Map(m_ContourPoints[i], point);
+    //        Sx+=point[0];
+    //        Sy+=point[1];
+    //    }
+    //    center[0]=Sx/m_ContourPoints.size();
+    //    center[1]=Sy/m_ContourPoints.size();
+    //}
+    
+    Sx=0;
+    Sy=0;
+    Sz = 0;
+    for(int i=0;i<m_ContourPoints.size();i++)
+    {
+        double  point[3];
+        double contourPoints[3];
+        for (int j=0;j<3;j++)
+            contourPoints[j] = m_ContourPoints[i][j];
+        m_PlaneGeometry->ProjectPoint(contourPoints, point);
+        Sx+=point[0];
+        Sy+=point[1];
+        Sz+=point[2];
+    }
+    center[0]=Sx/m_ContourPoints.size();
+    center[1]=Sy/m_ContourPoints.size();
+    center[2]=Sz/m_ContourPoints.size();
+
+    double minDis=0;
+    bool firstTime=true;
+
+    for(int i=0;i<m_ContourPoints.size();i++)
+    {
+        double point[3];
+        double contourPoints[3];
+        for (int j=0;j<3;j++)
+            contourPoints[j] = m_ContourPoints[i][j];
+        m_PlaneGeometry->ProjectPoint(contourPoints, point);
+        double dis=sqrt(pow(m_ContourPoints[i][0]-point[0],2)+pow(m_ContourPoints[i][1]-point[1],2)+pow(m_ContourPoints[i][2]-point[2],2));
+        if(firstTime)
+        {
+            minDis=dis;
+            firstTime=false;
+        }
+        else if(dis<minDis)
+        {
+            minDis=dis;
+        }
+    }
+
+    std::array<double, 3>  scalingPoint;
+    scalingPoint[0]=center[0]+minDis/2;
+    scalingPoint[1]=center[1];
+    scalingPoint[2]=center[2];
+
+    m_CenterPoint = center;
+    m_ScalingPoint = scalingPoint;
+    std::cout<<"center: "<<center[0]<<" "<<center[1]<<" "<<center[2]<<std::endl;
+    //m_PlaneGeometry->Map(center,m_CenterPoint);
+    //m_PlaneGeometry->Map(scalingPoint,m_ScalingPoint);
+
+}
+
+std::array<double, 3>  Contour::GetCenterPoint()
+{
+    return m_CenterPoint;
+}
 
 vtkSmartPointer<vtkPolyData> Contour::CreateVtkPolyDataFromContour(bool includingAllLines)
 {
@@ -794,7 +818,7 @@ void Contour::SetPathPoint(PathElement::PathPoint pathPoint)
     std::array<double, 3>  spacing;
     spacing.fill(0.1);
 
-    //m_PlaneGeometry=SegmentationUtils::CreatePlaneGeometry(pathPoint,spacing, 1.0);
+    m_PlaneGeometry=SegmentationUtils::CreatePlaneGeometry(pathPoint,spacing, 1.0);
 }
 
 int Contour::GetPathPosID(){
@@ -816,48 +840,72 @@ void Contour::SetVtkImageSlice(vtkImageData* slice)
     m_VtkImageSlice=slice;
 }
 
-std::array<double, 3>  Contour::GetCenterPoint()
+double Contour::GetArea()
 {
-    return m_ControlPoints[0];
+    double A=0;
+
+    for(int i=0;i<m_ContourPoints.size();i++)
+    {
+        double  point1[3],point2[3];
+        double contourPoints[3];
+        for (int j=0;j<3;j++)
+            contourPoints[j] = m_ContourPoints[i][j];
+        m_PlaneGeometry->ProjectPoint(contourPoints, point1);
+        if(i==m_ContourPoints.size()-1)
+        {
+            for (int j=0;j<3;j++)
+                contourPoints[j] = m_ContourPoints[0][j];
+            m_PlaneGeometry->ProjectPoint(contourPoints, point2);
+        }
+        else
+        {
+            for (int j=0;j<3;j++)
+                contourPoints[j] = m_ContourPoints[i+1][j];
+            m_PlaneGeometry->ProjectPoint(contourPoints, point2);
+        }
+        for (int j = 0; j<3; j++)
+        {
+            point1[j] = point1[j] - m_CenterPoint[j];
+            point2[j] = point2[j] - m_CenterPoint[j];
+        }
+        
+        A+=(0.5*sqrt(pow(point1[1]*point2[2]-point1[2]*point2[1],2)+
+            pow(point1[2]*point2[0]-point1[0]*point2[2],2)+
+            pow(point1[0]*point2[1]-point1[1]*point2[0],2)));
+    }
+
+    if(A<0) A=-A;
+
+    return A;
 }
 
-//double Contour::GetArea()
-//{
-//    double A=0;
-//
-//    for(int i=0;i<m_ContourPoints.size();i++)
-//    {
-//        std::array<double, 2>  point1,point2;
-//        m_PlaneGeometry->Map(m_ContourPoints[i], point1);
-//        if(i==m_ContourPoints.size()-1)
-//            m_PlaneGeometry->Map(m_ContourPoints[0], point2);
-//        else
-//            m_PlaneGeometry->Map(m_ContourPoints[i+1], point2);
-//
-//        A+=(0.5*(point1[0]*point2[1]-point2[0]*point1[1]));
-//    }
-//
-//    if(A<0) A=-A;
-//
-//    return A;
-//}
+double Contour::GetPerimeter()
+{
+    double L=0;
 
-//double Contour::GetPerimeter()
-//{
-//    double L=0;
-//
-//    for(int i=0;i<m_ContourPoints.size();i++)
-//    {
-//        std::array<double, 2>  point1,point2;
-//        m_PlaneGeometry->Map(m_ContourPoints[i], point1);
-//        if(i==m_ContourPoints.size()-1)
-//            m_PlaneGeometry->Map(m_ContourPoints[0], point2);
-//        else
-//            m_PlaneGeometry->Map(m_ContourPoints[i+1], point2);
-//
-//        L+=point1.EuclideanDistanceTo(point2);
-//    }
-//
-//    return L;
-//}
+    for(int i=0;i<m_ContourPoints.size();i++)
+    {
+        double point1[3],point2[3];
+        double contourPoints[3];
+        for (int j=0;j<3;j++)
+            contourPoints[j] = m_ContourPoints[i][j];
+        m_PlaneGeometry->ProjectPoint(contourPoints, point1);
+        if(i==m_ContourPoints.size()-1)
+        {
+            for (int j=0;j<3;j++)
+                contourPoints[j] = m_ContourPoints[0][j];
+            m_PlaneGeometry->ProjectPoint(contourPoints, point2);
+        }
+        else
+        {
+            for (int j=0;j<3;j++)
+                contourPoints[j] = m_ContourPoints[i+1][j];
+            m_PlaneGeometry->ProjectPoint(contourPoints, point2);
+        }
+
+        L+=sqrt(pow(point1[0]-point2[0],2)+pow(point1[1]-point2[1],2)+pow(point1[2]-point2[2],2));
+    }
+
+    return L;
+}
 

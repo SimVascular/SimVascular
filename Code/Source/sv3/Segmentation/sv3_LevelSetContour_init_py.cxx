@@ -55,7 +55,7 @@ using sv3::levelSetContour;
 
 levelSetContour* CreatelevelSetContour()
 {
-	return new levelSetContour(KERNEL_LEVELSET);
+	return new levelSetContour();
 }
 // Globals:
 // --------

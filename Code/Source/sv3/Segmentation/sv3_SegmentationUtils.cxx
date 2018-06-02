@@ -293,3 +293,15 @@ vtkImageData* SegmentationUtils::GetSlicevtkImage(sv3::PathElement::PathPoint pa
 
     return rs->GetOutput();
 }
+
+vtkSmartPointer<vtkPlane> SegmentationUtils::CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size)
+{
+    vtkTransform* tr=GetvtkTransform(pathPoint);
+    vtkSmartPointer<vtkPlane> planegeometry = vtkSmartPointer<vtkPlane>::New();
+
+    planegeometry->SetOrigin(pathPoint.pos[0],pathPoint.pos[1],pathPoint.pos[2]);
+    planegeometry->SetNormal(pathPoint.tangent[0],pathPoint.tangent[1],pathPoint.tangent[2]);
+
+    return planegeometry;
+}
+

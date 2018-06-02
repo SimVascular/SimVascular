@@ -57,7 +57,7 @@ class SV_EXPORT_SEGMENTATION levelSetContour : public Contour
 public:
 
     
-    levelSetContour(KernelType t);
+    levelSetContour();
     
     levelSetContour(const levelSetContour &other);
     

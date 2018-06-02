@@ -43,7 +43,7 @@
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
 #include "vtkImageData.h"
-//#include "vtkPlane.h"
+#include "vtkPlane.h"
 
 // somehow GetClassName is getting set to GetClassNameA on Windows
 #ifdef GetClassName
@@ -195,9 +195,9 @@ public:
 
     void SetSubdivisionSpacing(double spacing);
 
-    //void SetPlaneGeometry(mitk::PlaneGeometry* planeGeometry);
+    void SetPlaneGeometry(vtkSmartPointer<vtkPlane> planeGeometry);
 
-    //mitk::PlaneGeometry* GetPlaneGeometry();
+    vtkSmartPointer<vtkPlane> GetPlaneGeometry();
 
     int GetControlPointNumber();
 
@@ -263,7 +263,7 @@ public:
     void ContourPointsChanged();
 
     void CreateCenterScalingPoints();
-    //virtual void AssignCenterScalingPoints();
+    virtual void AssignCenterScalingPoints();
 
     std::array<double,3> GetCenterPoint();
 
@@ -284,7 +284,7 @@ public:
 
     void CalculateBoundingBox(double *bounds);
 
-    //bool IsOnPlane(const mitk::PlaneGeometry* planeGeometry, double precisionFactor=0.1);
+    bool IsOnPlane(const vtkSmartPointer<vtkPlane> planeGeometry, double precisionFactor=0.1);
 
     vtkImageData* GetVtkImageSlice();
 
@@ -293,9 +293,9 @@ public:
     int GetTagIndex() {return m_TagIndex;}
     void SetTagIndex(int idx) {m_TagIndex=idx;}
 
-    //double GetArea();
+    double GetArea();
 
-    //double GetPerimeter();
+    double GetPerimeter();
     
     //void CreateLSContour(svLSParam* param, double size, bool forceClosed = true);
     
@@ -331,11 +331,11 @@ public:
 
     //mitk::PlaneGeometry::Pointer m_PlaneGeometry;
     
-    //vtkSmartPointer<vtkPlane> m_PlaneGeometry;
+    vtkSmartPointer<vtkPlane> m_PlaneGeometry;
 
-    //std::array<double,3> m_CenterPoint;
+    std::array<double,3> m_CenterPoint;
 
-    //std::array<double,3> m_ScalingPoint;
+    std::array<double,3> m_ScalingPoint;
 
     int m_ControlPointSelectedIndex;
 

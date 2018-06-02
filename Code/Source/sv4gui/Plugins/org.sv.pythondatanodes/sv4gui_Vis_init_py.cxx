@@ -759,8 +759,8 @@ PyObject* GUI_ExportToRepos( PyObject* self, PyObject* args)
 // -----------------------
 PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
 {
-    char* childName;
-    char* reposName;
+    char* childName=NULL;
+    char* reposName=NULL;
     
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
@@ -774,6 +774,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         return Py_ERROR;
     }
 
+    std::cout<<"ckPath"<<std::endl;
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
     
@@ -789,6 +790,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
     
+    std::cout<<"ckPath2"<<std::endl;
     
     if (!dss)
     {
@@ -799,32 +801,33 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
-
+    std::cout<<"ckPath3"<<std::endl;
     mitk::DataStorage::Pointer dataStorage = dsRef->GetDataStorage();
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
         return Py_ERROR;
     }
-    
+    std::cout<<"ckPath4"<<std::endl;
     mitk::DataNode::Pointer node = dataStorage->GetNamedNode(childName);
     if(node.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
         return Py_ERROR;
     }
-    
+    std::cout<<"ckPath5"<<std::endl;
     sv4guiPath* path = dynamic_cast<sv4guiPath*> (node->GetData());
-    sv4guiPathElement* pathElem = path->GetPathElement();
-    
-    if (pathElem == NULL)
+    if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting path from data storage");
         return Py_ERROR;
     }
+    sv4guiPathElement* pathElem = path->GetPathElement();
+    std::cout<<"ckPath6"<<std::endl;
+
 
     sv3::PathElement* corePath = new sv3::PathElement();
-    
+    std::cout<<"ckPath7"<<std::endl;
     switch(pathElem->GetMethod())
     {
     case sv4guiPathElement::CONSTANT_TOTAL_NUMBER:
@@ -839,10 +842,10 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     default:
         break;
     }
-
+    std::cout<<"ckPath8"<<std::endl;
     corePath->SetCalculationNumber(pathElem->GetCalculationNumber());
     corePath->SetSpacing(pathElem->GetSpacing());
-    
+    std::cout<<"ckPath9"<<std::endl;
     //copy control points
     std::vector<mitk::Point3D> pts = pathElem->GetControlPoints();
     for (int i=0; i<pts.size();i++)
@@ -853,18 +856,18 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         point[2] = pts[i][2];
         corePath->InsertControlPoint(i,point);
     }
-    
+    std::cout<<"ckPath10"<<std::endl;
     //create path points
     corePath->CreatePathPoints();
     
-    
+    std::cout<<"ckPath11"<<std::endl;
     if ( !( gRepository->Register( reposName, corePath ) ) )
     {
         PyErr_SetString(PyRunTimeErr, "error registering object in repository");
         delete corePath;
         return Py_ERROR;
     }
-    
+    std::cout<<"ckPath12"<<std::endl;
     return Py_BuildValue("s","success");
 }
 

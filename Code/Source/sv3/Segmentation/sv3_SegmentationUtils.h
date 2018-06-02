@@ -40,6 +40,9 @@
 #include "sv_StrPts.h"
 #include "sv3_PathElement.h"
 #include <vtkImageData.h>
+#include "vtkSmartPointer.h"
+#include <vtkPlane.h>
+
 namespace sv3{
 class SV_EXPORT_SEGMENTATION SegmentationUtils
 {
@@ -51,6 +54,9 @@ class SV_EXPORT_SEGMENTATION SegmentationUtils
     static vtkTransform* GetvtkTransform(sv3::PathElement::PathPoint pathPoint);
     
     static vtkImageData* GetSlicevtkImage(sv3::PathElement::PathPoint pathPoint, vtkImageData* volumeimage, double size);
+    
+    static vtkSmartPointer<vtkPlane> CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size)
+;
 };
 
 }

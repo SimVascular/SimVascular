@@ -39,7 +39,6 @@
 
 #include "sv3_Contour.h"
 #include "sv3_LevelSetContour.h"
-#include "sv4gui_Math3.h"
 #include "sv3_SegmentationUtils.h"
 
 #include <vtkPoints.h>
@@ -52,7 +51,7 @@ using sv3::levelSetContour;
 using sv3::PathElement;
 using sv3::SegmentationUtils;
 
-levelSetContour::levelSetContour(KernelType t)
+levelSetContour::levelSetContour()
     : Contour( KERNEL_LEVELSET )
 {
     m_forceClosed = true;
@@ -89,7 +88,7 @@ levelSetContour* levelSetContour::CreateSmoothedContour(int fourierNumber)
     if(m_ContourPoints.size()<3)
         return this->Clone();
 
-    levelSetContour* contour=new levelSetContour(KERNEL_LEVELSET);
+    levelSetContour* contour=new levelSetContour();
     contour->SetPathPoint(m_PathPoint);
 //    contour->SetPlaneGeometry(m_PlaneGeometry);
     std::string method=m_Method;
@@ -121,8 +120,19 @@ levelSetContour* levelSetContour::CreateSmoothedContour(int fourierNumber)
 void levelSetContour::CreateContourObject()
 {
         
-    if(!m_VtkImageSlice)
+    if(m_VtkImageSlice==NULL)
+    {
+        printf("Image slice is empty.\n");
         return;
+    }
+    
+    if(m_paras == NULL)
+    {
+        printf("Level Set parameters have not been set.\n");
+        return;
+    }
+
+    std::cout <<"Path point: "<<m_PathPoint.pos[0]<<" "<<m_PathPoint.pos[1]<<" "<<m_PathPoint.pos[2]<<std::endl;
     //stage 1
     //**************************
     cvITKLevelSet *ls;
