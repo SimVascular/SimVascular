@@ -783,16 +783,16 @@ endif
 # ------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk-8.6.4.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk-8.6.4.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_linux.mk
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
 	ifeq ($(SV_USE_SYSTEM_TCLTK),0)
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk-8.6.4.x64_macosx.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_macosx.mk
 	endif
 endif
 
@@ -803,23 +803,15 @@ endif
 ifeq ($(SV_USE_VTK),1)
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk-6.2.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-	ifeq ($(SV_USE_PYTHON),1)
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk-6.2.0.x64_linux.mk
-        else
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk-6.2.0.x64_linux.mk
-        endif
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_linux.mk
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-	ifeq ($(SV_USE_PYTHON),1)
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk-6.2.0.x64_macosx.mk
-        else
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk-6.2.0.x64_macosx.mk
-	endif
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_macosx.mk
 endif
 
 endif
@@ -837,15 +829,15 @@ endif
 ifeq ($(SV_USE_GDCM),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/gdcm-2.6.1.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/gdcm.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/gdcm-2.6.1.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/gdcm.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/gdcm-2.6.1.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/gdcm.x64_macosx.mk
   endif
 
 endif
@@ -857,15 +849,15 @@ endif
 ifeq ($(SV_USE_ITK),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/itk-4.7.1.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/itk.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/itk-4.7.1.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/itk.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/itk-4.7.1.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/itk.x64_macosx.mk
   endif
 
 endif
@@ -877,15 +869,15 @@ endif
 ifeq ($(SV_USE_MITK),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mitk-2016.03.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mitk.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mitk-2016.03.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mitk.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mitk-2016.03.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mitk.x64_macosx.mk
   endif
 
 endif
@@ -902,16 +894,16 @@ endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/opencascade-7.0.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/opencascade.x64_cygwin.mk
          OPENCASCADE_DEFS = -DWNT
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/opencascade-7.0.0.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/opencascade.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/opencascade-7.0.0.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/opencascade.x64_macosx.mk
   endif
 
 endif
@@ -922,15 +914,15 @@ endif
 
 ifeq ($(SV_USE_PYTHON),1)
   ifeq ($(CLUSTER), x64_cygwin)
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/python-2.7.x64_cygwin.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/python.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/python-2.7.x64_linux.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/python.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/python-2.7.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/python.x64_macosx.mk
   endif
 endif
 
@@ -940,15 +932,15 @@ endif
 
 ifeq ($(SV_USE_FREETYPE),1)
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/freetype-2.6.3.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/freetype.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/freetype-2.6.3.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/freetype.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/freetype-2.6.3.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/freetype.x64_macosx.mk
   endif
 endif
 
@@ -959,15 +951,15 @@ endif
 ifeq ($(SV_USE_MMG),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mmg-5.1.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mmg.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mmg-5.1.0.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mmg.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mmg-5.1.0.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mmg.x64_macosx.mk
   endif
 
 endif
@@ -983,15 +975,15 @@ endif
 
 ifeq ($(SV_USE_QT),1)
   ifeq ($(CLUSTER), x64_cygwin)
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/qt-5.4.x64_cygwin.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/qt.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/qt-5.4.x64_linux.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/qt.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/qt-5.4.x64_macosx.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/qt.x64_macosx.mk
   endif
 endif
 
