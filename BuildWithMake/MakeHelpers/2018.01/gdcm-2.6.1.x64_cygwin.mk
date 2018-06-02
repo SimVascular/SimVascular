@@ -28,12 +28,20 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-ifeq ($(CLUSTER), x64_linux)
-    PYTHON_HOME   =  $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/python-2.7.11
-    PYTHON_BINDIR = $(PYTHON_HOME)/bin
-    PYTHON_INCDIR = -I$(PYTHON_HOME)/include/python2.7
-    PYTHON_LIBDIR = $(PYTHON_HOME)/lib
-    PYTHON_LIB    = $(LIBPATH_COMPILER_FLAG)$(PYTHON_LIBDIR) $(LIBFLAG)python2.7$(LIBLINKEXT)
-    SV_PYTHON_SO_PATH = $(PYTHON_LIBDIR)
-    PYTHON_SITE_PACKAGES = $(PYTHON_HOME)/lib/python2.7\:$(PYTHON_HOME)/lib/python2.7/site-packages
-endif
+GDCM_VERSION=2.6.1
+
+SV_GDCM_DEFS   =
+SV_GDCM_TOP    = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/gdcm-$(GDCM_VERSION)
+SV_GDCM_INCDIR = -I $(SV_GDCM_TOP)/include/gdcm-2.6
+SV_GDCM_LIBS   = $(LIBPATH_COMPILER_FLAG)$(SV_GDCM_TOP)/lib \
+                     $(LIBFLAG)gdcmCommon.lib \
+                     $(LIBFLAG)gdcmDICT.lib    \
+                     $(LIBFLAG)gdcmDSED.lib    \
+                     $(LIBFLAG)gdcmIOD.lib     \
+                     $(LIBFLAG)gdcmjpeg12.lib  \
+                     $(LIBFLAG)gdcmjpeg16.lib  \
+                     $(LIBFLAG)gdcmjpeg8.lib   \
+                     $(LIBFLAG)gdcmMSFF.lib
+SV_GDCM_DLLS   =  $(SV_GDCM_TOP)/bin
+SV_GDCM_SO_PATH = $(SV_GDCM_TOP)/bin
+#    SV_GDCM_LIBS  += $(LIBFLAG)Advapi32.lib $(LIBFLAG)Ws2_32.lib

@@ -28,24 +28,21 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-ifeq ($(CLUSTER), x64_linux)
-    SV_GDCM_DEFS   =
-    SV_GDCM_TOP    = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/gdcm-2.6.1
-    SV_GDCM_INCDIR = -I $(SV_GDCM_TOP)/include/gdcm-2.6
-    SV_GDCM_LIBS   = $(LIBPATH_COMPILER_FLAG)$(SV_GDCM_TOP)/lib \
-                     $(LIBFLAG)gdcmCommon$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmDICT$(LIBLINKEXT)    \
-                     $(LIBFLAG)gdcmDSED$(LIBLINKEXT)    \
-                     $(LIBFLAG)gdcmIOD$(LIBLINKEXT)    \
-                     $(LIBFLAG)gdcmjpeg12$(LIBLINKEXT)  \
-                     $(LIBFLAG)gdcmjpeg16$(LIBLINKEXT)  \
-                     $(LIBFLAG)gdcmjpeg8$(LIBLINKEXT)   \
-                     $(LIBFLAG)gdcmMSFF$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmopenjpeg$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmexpat$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmuuid$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmcharls$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmzlib$(LIBLINKEXT)
-    SV_GDCM_DLLS   =  $(SV_GDCM_TOP)/lib
-    SV_GDCM_SO_PATH = $(SV_GDCM_TOP)/lib
-endif
+TCL_VERSION=8.6.4
+TK_VERSION=8.6.4
+TCLLIB_VERSION=1.17
+TKLIB_VERSION=0.6
+
+BUILDFLAGS     += -D__NON_STD_TCL_INSTALL
+TCL_BASE       = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tcltk-$(TCL_VERSION)
+TK_BASE        = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tcltk-$(TK_VERSION)
+TCLTK_INCDIR   = -I$(TCL_BASE)/include -I$(TK_BASE)/include
+TCLTK_LIBDIR   = -L$(TCL_BASE)/lib -L$(TK_BASE)/lib
+TCLTK_DLLS     = $(TCL_BASE)/bin/tcl8.6.$(SOEXT) $(TCL_BASE)/bin/tk8.6.$(SOEXT)
+TCLTK_LIBS     = $(TCLTK_LIBDIR) -ltcl8.6 -ltk8.6
+TKCXIMAGE_BASE = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tkcximage-0.98.9/tcltk-8.6.4
+TKCXIMAGE_DLL  = $(TKCXIMAGE_BASE)/bin/Tkcximage.$(SOEXT)
+TCLTK_SO_PATH  = $(TCL_BASE)/lib
+TCL_LIBRARY    = $(TCL_BASE)/lib/tcl8.6
+TK_LIBRARY     = $(TCL_BASE)/lib/tk8.6
+TCLSH          = $(TCL_BASE)/bin/tclsh8.6

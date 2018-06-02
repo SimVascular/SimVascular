@@ -28,36 +28,20 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# ---------------------
-# Visualization toolkit
-# ---------------------
+VTK_VERSION=6.2.0
 
-VTK_SRCDIR = $(OPEN_SOFTWARE_SOURCES_TOPLEVEL)/vtk-6.2.0
-VTK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/vtk-6.2.0
+VTK_SRCDIR = $(OPEN_SOFTWARE_SOURCES_TOPLEVEL)/vtk-$(VTK_VERSION)
+VTK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/vtk-$(VTK_VERSION)
 VTK_INCLUDE_DIR_BASE = $(VTK_BINDIR)/include/vtk-6.2
-
-ifeq ($(CXX_COMPILER_VERSION), mingw-gcc)
-  VTK_LIBDIRS = $(VTK_BINDIR)/lib
-  VTK_BINDIRS = $(VTK_BINDIR)/bin
-else
-  VTK_LIBDIRS = $(VTK_BINDIR)/lib
-  VTK_BINDIRS = $(VTK_BINDIR)/bin
-endif
-
-VTK_SO_PATH = $(VTK_BINDIRS)
+VTK_LIBDIRS = $(VTK_BINDIR)/lib
+VTK_BINDIRS = $(VTK_BINDIR)/bin
+VTK_SO_PATH = $(VTK_BINDIR)/lib
 VTK_DLLS    = $(VTK_BINDIRS)/*.$(SOEXT)
 VTK_TCL_LIB_PATH = $(VTK_LIBDIRS)/tcltk/vtk-6.2
+#VTK_SYS_LIBS  = -lGLU -lX11 -lXt -lXext -lpthread -lm -lGL -lm -ldl
+VTK_SYS_LIBS  = -lpthread -lm -lm -ldl
 
-VTK_SYS_LIBS  = $(LIBFLAG)kernel32$(LIBLINKEXT) $(LIBFLAG)user32$(LIBLINKEXT) \
-                $(LIBFLAG)gdi32$(LIBLINKEXT) $(LIBFLAG)winspool$(LIBLINKEXT) $(LIBFLAG)shell32$(LIBLINKEXT) \
-                $(LIBFLAG)ole32$(LIBLINKEXT) $(LIBFLAG)oleaut32$(LIBLINKEXT) $(LIBFLAG)uuid$(LIBLINKEXT) \
-                $(LIBFLAG)comdlg32$(LIBLINKEXT) $(LIBFLAG)advapi32$(LIBLINKEXT) \
-                $(LIBFLAG)comctl32$(LIBLINKEXT) $(LIBFLAG)wsock32$(LIBLINKEXT) \
-                $(LIBFLAG)opengl32$(LIBLINKEXT) $(LIBFLAG)vfw32$(LIBLINKEXT)
-
-#
-#  don't include vtksys!!
-#
+VTK_PYTHON_PACKAGES = $(VTK_BINDIR)/lib/python2.7/site-packages
 
 VTK_INCDIRS = \
 -I$(VTK_INCLUDE_DIR_BASE) \
@@ -340,7 +324,6 @@ VTK_LIBS +=     $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
                 $(VTK_SYS_LIBS)
 
 ifeq ($(SV_USE_PYTHON),1)
-  VTK_PYTHON_PACKAGES = $(VTK_BINDIR)/lib/python2.7/site-packages
   VTK_LIBS +=  $(LIBFLAG)vtkWrappingPython27Core-6.2$(LIBLINKEXT)
 endif
 

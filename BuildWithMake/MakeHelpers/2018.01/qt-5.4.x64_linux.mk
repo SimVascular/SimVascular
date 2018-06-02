@@ -28,23 +28,26 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-ifeq ($(CLUSTER), x64_linux)
+Qt5_VERSION=5.4.2
+
 #    QT_TOP_DIR	= /opt/Qt5.4.2/5.4/gcc_64
-    QT_TOP_DIR  = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-5.4.2
-    QT_DEFS = -DUNIX -D_REENTRANT -DNDEBUG
-    QT_DEFS += -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_PLUGIN -DQT_WEBVIEW -DQT_WEBKITWIDGETS -DQT_SQL_LIB
+QT_TOP_DIR  = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-5.4.2
+QT_DEFS = -DUNIX -D_REENTRANT -DNDEBUG
+QT_DEFS += -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_PLUGIN -DQT_WEBVIEW -DQT_WEBKITWIDGETS -DQT_SQL_LIB
 
 ifeq ($(SV_USE_SHARED),0)
   QT_DEFS += -DQT_STATICPLUGIN
 endif
 
-    QT_LIBDIRS = $(QT_TOP_DIR)/lib
-    QT_BIN_LIBS = $(QT_TOP_DIR)/bin
-    QT_MOC_PARSER=$(QT_TOP_DIR)/bin/moc
-    QT_UIC_CMD=$(QT_TOP_DIR)/bin/uic
-    QT_RCC_CMD=$(QT_TOP_DIR)/bin/rcc
-    QMAKE=$(QT_TOP_DIR)/bin/qmake
-    QT_INCDIRS = \
+QT_LIBDIRS = $(QT_TOP_DIR)/lib
+QT_BIN_LIBS = $(QT_TOP_DIR)/bin
+
+QT_MOC_PARSER=$(QT_TOP_DIR)/bin/moc
+QT_UIC_CMD=$(QT_TOP_DIR)/bin/uic
+QT_RCC_CMD=$(QT_TOP_DIR)/bin/rcc
+QMAKE=$(QT_TOP_DIR)/bin/qmake
+
+QT_INCDIRS = \
       -I$(QT_TOP_DIR)/include \
       -I$(QT_TOP_DIR)/include/QtWidgets \
       -I$(QT_TOP_DIR)/include/QtGui \
@@ -55,7 +58,7 @@ endif
       -I$(QT_TOP_DIR)/include/QtWebView \
       -I$(QT_TOP_DIR)/include/QtWebKitWidgets \
       -I$(QT_TOP_DIR)/include/mkspecs/linux-g++
-    QT_MOC_INCDIRS = \
+QT_MOC_INCDIRS = \
       -I $(QT_TOP_DIR)/include \
       -I $(QT_TOP_DIR)/include/QtWidgets \
       -I $(QT_TOP_DIR)/include/QtGui \
@@ -66,7 +69,7 @@ endif
       -I $(QT_TOP_DIR)/include/QtWebKitWidgets \
       -I $(QT_TOP_DIR)/include/QtWebView \
       -I $(QT_TOP_DIR)/include/mkspecs/linux-g++
-    QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
+QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5Sql$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebKitWidgets$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Network$(LIBLINKEXT) \
@@ -82,9 +85,8 @@ endif
       $(LIBFLAG)Qt5Concurrent$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Core$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Quick$(LIBLINKEXT)
-    QT_SO_PATH=$(QT_TOP_DIR)/lib
-    QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
-endif
+QT_SO_PATH=$(QT_TOP_DIR)/lib
+QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
 
 # in Qt version of compile but not ours...
 #      $(QT_LIBDIRS)/libicuuc.so.53 \
