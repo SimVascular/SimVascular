@@ -28,20 +28,26 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-GDCM_VERSION=2.6.1
+GDCM_MAJOR_VERSION=2
+GDCM_MINOR_VERSION=6
+GDCM_PATCH_VERSION=1
+GDCM_VERSION=$(GDCM_MAJOR_VERSION).$(GDCM_MINOR_VERSION).$(GDCM_PATCH_VERSION)
+
+# NOTE: There are libraries in linux and macosx not included
+#       in windows version.  Is this a mistake?
 
 SV_GDCM_DEFS   =
 SV_GDCM_TOP    = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/gdcm-$(GDCM_VERSION)
-SV_GDCM_INCDIR = -I $(SV_GDCM_TOP)/include/gdcm-2.6
+SV_GDCM_INCDIR = -I $(SV_GDCM_TOP)/include/gdcm-$(GDCM_MAJOR_VERSION).$(GDCM_MINOR_VERSION)
 SV_GDCM_LIBS   = $(LIBPATH_COMPILER_FLAG)$(SV_GDCM_TOP)/lib \
-                     $(LIBFLAG)gdcmCommon.lib \
-                     $(LIBFLAG)gdcmDICT.lib    \
-                     $(LIBFLAG)gdcmDSED.lib    \
-                     $(LIBFLAG)gdcmIOD.lib     \
-                     $(LIBFLAG)gdcmjpeg12.lib  \
-                     $(LIBFLAG)gdcmjpeg16.lib  \
-                     $(LIBFLAG)gdcmjpeg8.lib   \
-                     $(LIBFLAG)gdcmMSFF.lib
+                     $(LIBFLAG)gdcmCommon$(LIBLINKEXT) \
+                     $(LIBFLAG)gdcmDICT$(LIBLINKEXT)    \
+                     $(LIBFLAG)gdcmDSED$(LIBLINKEXT)    \
+                     $(LIBFLAG)gdcmIOD$(LIBLINKEXT)     \
+                     $(LIBFLAG)gdcmjpeg12$(LIBLINKEXT)  \
+                     $(LIBFLAG)gdcmjpeg16$(LIBLINKEXT)  \
+                     $(LIBFLAG)gdcmjpeg8$(LIBLINKEXT)   \
+                     $(LIBFLAG)gdcmMSFF$(LIBLINKEXT)
 SV_GDCM_DLLS   =  $(SV_GDCM_TOP)/bin
 SV_GDCM_SO_PATH = $(SV_GDCM_TOP)/bin
-#    SV_GDCM_LIBS  += $(LIBFLAG)Advapi32.lib $(LIBFLAG)Ws2_32.lib
+#    SV_GDCM_LIBS  += $(LIBFLAG)Advapi32$(LIBLINKEXT) $(LIBFLAG)Ws2_32$(LIBLINKEXT)
