@@ -279,10 +279,10 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
     // create new vtk render objects (e.g. sphere for a point)
 
 #if MITK_MAJOR_VERSION == 2018 && MITK_MINOR_VERSION == 04
-    m_VtkSelectedPolyDataMapper->SetGlobalImmediateModeRendering(1);
-    m_VtkUnselectedPolyDataMapper->SetGlobalImmediateModeRendering(1);
-    m_VtkSplinePointsPolyDataMapper->SetGlobalImmediateModeRendering(1);
-    m_VtkSplinePolyDataMapper->SetGlobalImmediateModeRendering(1);
+    m_VtkSelectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
+    m_VtkUnselectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
+    m_VtkSplinePointsPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
+    m_VtkSplinePolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
 #else
     SetVtkMapperImmediateModeRendering(m_VtkSelectedPolyDataMapper);
     SetVtkMapperImmediateModeRendering(m_VtkUnselectedPolyDataMapper);
