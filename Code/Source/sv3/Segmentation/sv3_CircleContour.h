@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV3_LEVELSETCONTOUR_H
-#define SV3_LEVELSETCONTOUR_H
+#ifndef SV3_CIRCLECONTOUR_H
+#define SV3_CIRCLECONTOUR_H
 
 #include "SimVascular.h"
 
@@ -51,37 +51,43 @@
 #endif
 
 namespace sv3{
-class SV_EXPORT_SEGMENTATION levelSetContour : public Contour
+class SV_EXPORT_SEGMENTATION circleContour : public Contour
 {
 
 public:
 
     
-    levelSetContour();
+    circleContour();
     
-    levelSetContour(const levelSetContour &other);
+    circleContour(const circleContour &other);
     
-    ~levelSetContour();
+    ~circleContour();
     
-    levelSetContour* Clone();
+    circleContour* Clone();
     
-    levelSetContour* CreateSmoothedContour(int fourierNumber);
+    circleContour* CreateSmoothedContour(int fourierNumber);
+        
+    void SetLevelSetParas(svLSParam* paras) {return;};
+    
+    svLSParam* GetLevelSetParas() {return NULL;};
+    
+    virtual std::string GetClassName() override;
+
+    virtual void SetControlPoint(int index, std::array<double,3> point) override;
+
+    void SetControlPointByRadius(double radius, double* point);
+    
+    //virtual void CreateContourPoints() override;
+
+    void AssignCenterScalingPoints() override;
+
+    static Contour* CreateByFitting(Contour* contour);
     
     void CreateContourPoints();
-    
-    void SetControlPointByRadius(double radius, double* point){return;};
-    
-    void SetLevelSetParas(svLSParam* paras);
-    
-    svLSParam* GetLevelSetParas();
 
   protected:
-
-    svLSParam* m_paras;
-    
-    bool m_forceClosed;
 
   };
 
 }
-#endif // SV3_LEVELSETCONTOUR_H
+#endif // SV3_CIRCLECONTOUR_H

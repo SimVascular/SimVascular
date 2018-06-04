@@ -63,6 +63,7 @@ PyObject* Contour_CreateCmd( pyContour* self, PyObject* args);
 PyObject* Contour_GetAreaCmd( pyContour* self, PyObject* args);
 PyObject* Contour_GetPerimeterCmd( pyContour* self, PyObject* args);
 PyObject* Contour_GetCenterPointCmd(pyContour* self, PyObject* args);
+PyObject* Contour_SetControlPointsCmd(pyContour* self, PyObject* args);
 
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args);
 
@@ -80,6 +81,7 @@ static PyMethodDef pyContour_methods[]={
   {"contour_area", (PyCFunction)Contour_GetAreaCmd,METH_NOARGS,NULL},
   {"contour_perimeter", (PyCFunction)Contour_GetPerimeterCmd,METH_NOARGS,NULL},
   {"contour_center", (PyCFunction)Contour_GetCenterPointCmd, METH_NOARGS,NULL},
+  {"contour_setCtrlPts", (PyCFunction)Contour_SetControlPointsCmd, METH_VARARGS, NULL},
   {NULL,NULL}
 };
 
@@ -347,7 +349,75 @@ PyObject* Contour_GetObjectCmd( pyContour* self, PyObject* args)
 }
 
 // --------------------
-// Contour_CreateLSCmd
+// Contour_SetControlPointsCmd
+// --------------------
+PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
+{
+    PyObject *center;
+    PyObject *boundary = NULL;
+    double radius = -1.;
+    if (Contour::gCurrentKernel==KERNEL_CIRCLE)
+    {
+        if (!PyArg_ParseTuple(args,"O|dO", &center, &radius , &boundary))
+        {
+            PyErr_SetString(PyRunTimeErr, "Could not import one list and one optional list or double\
+                , center boundary and radius");
+            return Py_ERROR;
+        }
+    }
+    else
+    {
+        PyErr_SetString(PyRunTimeErr, "Kernel method does not require control points");
+        return Py_ERROR;
+    }
+  // Do work of command:
+    double ctr[3];
+    if(PyList_Size(center)!=3)
+    {
+        PyErr_SetString(PyRunTimeErr, "The length of double list must be 3");
+        return Py_ERROR;
+    }
+    for (int i = 0;i<PyList_Size(center);i++)
+    {
+        ctr[i] = PyFloat_AsDouble(PyList_GetItem(center,i));
+    }
+    
+    Contour* contour = self->geom;
+    
+    if(boundary!=NULL)
+    {
+        std::array<double,3> bound;
+        if(PyList_Size(boundary)!=3)
+        {
+            PyErr_SetString(PyRunTimeErr, "The length of double list must be 3");
+            return Py_ERROR;
+        }
+        for (int i = 0;i<PyList_Size(boundary);i++)
+        {
+            bound[i] = PyFloat_AsDouble(PyList_GetItem(boundary,i));
+        }
+        
+        contour->SetControlPoint(0,std::array<double,3>{ctr[0],ctr[1],ctr[2]});
+        contour->SetControlPoint(0,bound);
+    }
+    else if (radius>0.)
+    {
+        contour->SetControlPointByRadius(radius,ctr);
+    }
+    else
+    {
+        if (radius<=0.)
+        {
+            PyErr_SetString(PyRunTimeErr, "Must provide either a point on the \
+                circle or a positive radius value");
+            return Py_ERROR;
+        }
+    }
+    Py_RETURN_NONE; 
+}
+
+// --------------------
+// Contour_CreateCmd
 // --------------------
 PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
 {
@@ -359,7 +429,7 @@ PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
         //std::cout<<"paras: "<<paras.radius<<std::endl;
     }
     
-    contour->CreateContourObject();
+    contour->CreateContourPoints();
     if(contour->GetContourPointNumber()==0)
     {
         PyErr_SetString(PyRunTimeErr, "Error creating contour points");

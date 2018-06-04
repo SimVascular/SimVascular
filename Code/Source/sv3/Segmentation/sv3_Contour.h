@@ -230,6 +230,8 @@ public:
     virtual void PlaceControlPoints(std::array<double,3> point);
 
     void SetControlPoints(std::vector<std::array<double,3> > controlPoints, bool updateContour = true);
+    
+    virtual void SetControlPointByRadius(double radius, double* point)=0;
 
     bool IsControlPointRemovable(int index);
 
@@ -244,7 +246,7 @@ public:
     //for contour points
     //=================================
 
-    virtual void CreateContourPoints(){}
+    virtual void CreateContourPoints()=0;
     
     void CreateContour();
 
@@ -299,7 +301,7 @@ public:
     
     //void CreateLSContour(svLSParam* param, double size, bool forceClosed = true);
     
-    virtual void CreateContourObject()=0;
+    //virtual void CreateContourObject()=0;
     
     virtual void SetLevelSetParas(svLSParam* paras)=0;
     

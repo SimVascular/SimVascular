@@ -117,7 +117,7 @@ levelSetContour* levelSetContour::CreateSmoothedContour(int fourierNumber)
     return contour;
 }
 
-void levelSetContour::CreateContourObject()
+void levelSetContour::CreateContourPoints()
 {
         
     if(m_VtkImageSlice==NULL)

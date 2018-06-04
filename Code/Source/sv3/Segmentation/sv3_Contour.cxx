@@ -180,6 +180,41 @@ void Contour::SetContourID(int contourID)
     m_ContourID=contourID;
 }
 
+void Contour::SetPlaneGeometry(vtkSmartPointer<vtkPlane> planeGeometry)
+{
+//    if(m_PlaneGeometry)
+//    {
+//        m_PlaneGeometry->Delete();
+//    }
+
+//    if(planeGeometry)
+//    {
+//        m_PlaneGeometry=dynamic_cast<mitk::PlaneGeometry*>(planeGeometry->Clone().GetPointer());
+//    }
+//    else
+//    {
+//        m_PlaneGeometry=NULL;
+//    }
+
+//    m_PlaneGeometry=planeGeometry;
+
+    if(planeGeometry!=NULL)
+    {
+        m_PlaneGeometry = vtkSmartPointer<vtkPlane>::New();
+        m_PlaneGeometry->SetOrigin(planeGeometry->GetOrigin());
+        m_PlaneGeometry->SetNormal(planeGeometry->GetNormal());
+    }else{
+        m_PlaneGeometry = NULL;
+    }
+
+}
+
+vtkSmartPointer<vtkPlane> Contour::GetPlaneGeometry()
+{
+    return m_PlaneGeometry;
+}
+
+
 //bool Contour::IsSelected()
 //{
 //    return m_Selected;
@@ -882,7 +917,7 @@ double Contour::GetArea()
 double Contour::GetPerimeter()
 {
     double L=0;
-
+    
     for(int i=0;i<m_ContourPoints.size();i++)
     {
         double point1[3],point2[3];
