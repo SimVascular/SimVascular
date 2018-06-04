@@ -29,10 +29,17 @@
 set(proj ITK)
 
 # Dependencies
-set(${proj}_DEPENDENCIES "VTK")
+if(${SV_EXTERNALS_ENABLE_VTK})
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "VTK")
+endif()
 if(${SV_EXTERNALS_ENABLE_GDCM})
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "GDCM")
+endif()
+if(${SV_EXTERNALS_ENABLE_HDF5})
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "HDF5")
 endif()
 
 # Git info
@@ -59,10 +66,27 @@ if(SV_EXTERNALS_USE_QT)
     )
 endif()
 
+#if using VTK
+if(SV_EXTERNALS_ENABLE_VTK)
+  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DModule_ITKVtkGlue:BOOL=ON
+    -DVTK_DIR:PATH=${SV_EXTERNALS_VTK_CMAKE_DIR}
+    )
+endif()
+
 #If using GDCM
 if(SV_EXTERNALS_ENABLE_GDCM)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DITK_USE_SYTEM_GDCM:BOOL=ON
     -DGDCM_DIR:PATH=${SV_EXTERNALS_GDCM_CMAKE_DIR}
+    )
+endif()
+
+#if using HDF5
+if(SV_EXTERNALS_ENABLE_HDF5)
+  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DITK_USE_SYSTEM_HDF5:BOOL=ON
+    -DHDF5_DIR:PATH=${SV_EXTERNALS_HDF5_CMAKE_DIR}
     )
 endif()
 
@@ -115,8 +139,6 @@ else()
       -DITK_WRAP_PYTHON:BOOL=OFF
       -DITK_LEGACY_SILENT:BOOL=OFF
       -DModule_ITKReview:BOOL=ON
-      -DModule_ITKVtkGlue:BOOL=ON
-      -DVTK_DIR:PATH=${SV_EXTERNALS_VTK_CMAKE_DIR}
       -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
     )

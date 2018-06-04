@@ -29,60 +29,29 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# OpenCASCADE
-set(proj OpenCASCADE)
+# FREETYPE
+set(proj HDF5)
 if(SV_USE_${proj})
 
-  # If using toplevel dir, foce OpenCASCADE_DIR to be the SV_OpenCASCADE_DIR set by the
+  # If using toplevel dir, foce HDF5_DIR to be the SV_HDF5_DIR set by the
   # simvascular_add_new_external macro
   if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
-    if(WIN32)
-      set(${proj}_DIR ${SV_${proj}_DIR}/cmake CACHE PATH "Force ${proj} dir to externals" FORCE)
-      set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force OpenCASCADE DLL Path")
-    else()
-      set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/opencascade CACHE PATH "Force ${proj} dir to externals" FORCE)
-    endif()
+      set(${proj}_DIR ${SV_${proj}_DIR}/share/cmake CACHE PATH "Force ${proj} dir to externals" FORCE)
   endif()
 
-  if(NOT ${proj}_DIR)
-    set(${proj}_DIR "${proj}_DIR-NOTFOUND" CACHE PATH "Path of toplevel ${proj} dir. Specify this if ${proj} cannot be found.")
-    message(FATAL_ERROR "${proj}_DIR was not specified. Set ${proj}_DIR to the build or bin directory containing OpenCASCADEConfig.cmake")
-  endif()
+  # For itk which manually sets HDF5 dir and we need to override
+  set(CMAKE_PREFIX_PATH "${HDF5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
 
-  # Newer versionof opencascade load up duplicate compile definitions from
-  # vtk that slow down qt5 moc generation. Copy now and set afterward
-  if(${proj}_VERSION VERSION_GREATER "7.0.0")
-    get_directory_property(_defines_before COMPILE_DEFINITIONS)
-  endif()
-
-  # Find OpenCASCADE
+  # Find Freetype
   simvascular_external(${proj}
     SHARED_LIB ${SV_USE_${proj}_SHARED}
     VERSION ${${proj}_VERSION}
     REQUIRED
     )
 
-  # OpenCASCADE cmake keeps absolute filename for freetype libs used, need to find and replace for freetype being used in the project
-
-  # Get the directory of freetype being used
-  if(SV_USE_FREETYPE)
-   get_filename_component(tmp_replace_freetype_lib_name ${FREETYPE_LIBRARY} NAME)
-  endif()
-
-  # Replace if exists in lib
-  foreach(_libName ${OpenCASCADE_LIBRARIES})
-     # freetype
-     if(SV_USE_FREETYPE)
-       simvascular_property_list_find_and_replace(${_libName} INTERFACE_LINK_LIBRARIES "${tmp_replace_freetype_lib_name}" ${FREETYPE_LIBRARY})
-     endif()
-  endforeach()
-
-  if(${proj}_VERSION VERSION_GREATER "7.0.0")
-    set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS ${_defines_before})
-  endif()
-
-  # Set SV_OpenCASCADE_DIR to the toplevel OpenCASCADE if it exists
-  simvascular_get_external_path_from_include_dir(${proj})
+  # Set SV_HDF5_DIR to the directory that was found to contain HDF5
+  set(SV_${proj}_DIR ${${proj}_DIR})
 
 endif()
 #-----------------------------------------------------------------------------
+

@@ -85,6 +85,13 @@ option(SV_EXTERNALS_BUILD_MITK_WITH_PYTHON "Build MITK without python" ON)
 sv_externals_add_new_external(Qt ${SV_EXTERNALS_Qt_VERSION} ON ON qt qt)
 #-----------------------------------------------------------------------------
 
+if (SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+  #-----------------------------------------------------------------------------
+  # HDF5
+  sv_externals_add_new_external(HDF5 ${SV_EXTERNALS_HDF5_VERSION} ON ON hdf5 hdf5)
+  #-----------------------------------------------------------------------------
+endif()
+
 #-----------------------------------------------------------------------------
 # TCL
 sv_externals_add_new_external(TCL ${SV_EXTERNALS_TCL_VERSION} ON ON tcl tcltk)
