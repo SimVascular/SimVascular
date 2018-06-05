@@ -411,6 +411,19 @@ endmacro()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Separate string by periods to get portions before and after first period
+macro(simvascular_get_major_minor_patch_version version major_version minor_version patch_version)
+  string(REPLACE "." ";" version_list ${version})
+  list(GET version_list 0 ${major_version})
+  list(GET version_list 1 ${minor_version})
+  list(LENGTH version_list version_list_length)
+  if (version_list_length GREATER 2)
+    list(GET version_list 2 ${patch_version})
+  endif()
+endmacro()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 #!
 #! See http://www.cmake.org/Wiki/CMakeMacroParseArguments
 #!
@@ -1120,7 +1133,7 @@ macro(simvascular_add_new_external proj version use shared dirname)
   mark_as_advanced(SV_USE_${proj}_QT_GUI)
 
   set(${proj}_VERSION "${version}" CACHE TYPE STRING)
-  simvascular_get_major_minor_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION)
+  simvascular_get_major_minor_patch_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION ${proj}_PATCH_VERSION)
   set(SV_EXT_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${dirname}-${${proj}_VERSION})
 
   # Install rules
@@ -1293,7 +1306,7 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
 
   # Version
   set(SV_EXTERNALS_${proj}_VERSION "${version}")
-  simvascular_get_major_minor_version(${SV_EXTERNALS_${proj}_VERSION} SV_EXTERNALS_${proj}_MAJOR_VERSION SV_EXTERNALS_${proj}_MINOR_VERSION)
+  simvascular_get_major_minor_patch_version(${SV_EXTERNALS_${proj}_VERSION} SV_EXTERNALS_${proj}_MAJOR_VERSION SV_EXTERNALS_${proj}_MINOR_VERSION SV_EXTERNALS_${proj}_PATCH_VERSION)
 
   # Src, bin, build, prefic dirs
   set(${proj}_VERSION_DIR ${dirname}-${SV_EXTERNALS_${proj}_VERSION})

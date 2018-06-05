@@ -155,6 +155,7 @@ sv_externals_add_new_external(VTK ${SV_EXTERNALS_VTK_VERSION} ON ON vtk vtk)
 #-----------------------------------------------------------------------------
 # ITK
 sv_externals_add_new_external(ITK ${SV_EXTERNALS_ITK_VERSION} ON ON itk itk)
+message("AAHAH: ${SV_EXTERNALS_ITK_PATCH_VERSION}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -165,6 +166,7 @@ sv_externals_add_new_external(OpenCASCADE ${SV_EXTERNALS_OpenCASCADE_VERSION} ON
 #-----------------------------------------------------------------------------
 # MITK
 sv_externals_add_new_external(MITK ${SV_EXTERNALS_MITK_VERSION} ON ON mitk mitk)
+message("AAHAH: ${SV_EXTERNALS_MITK_PATCH_VERSION}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
