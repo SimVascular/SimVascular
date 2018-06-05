@@ -28,7 +28,7 @@
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
 set(SV_EXTERNALS_VERSION_NUMBER "2018.01" CACHE STRING "SimVascular Externals version")
-set_property(CACHE SV_EXTERNALS_VERSION_NUMBER PROPERTY STRINGS "2017.01" "2018.01" "2018.03")
+set_property(CACHE SV_EXTERNALS_VERSION_NUMBER PROPERTY STRINGS "2017.01" "2018.01" "2018.03" "2018.05")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -89,6 +89,26 @@ elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL 2018.03)
   set(SV_EXTERNALS_ITK_VERSION "4.12.2")
   set(SV_EXTERNALS_OpenCASCADE_VERSION "7.2.0")
   set(SV_EXTERNALS_MITK_VERSION "2018.02")
+
+elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL 2018.05)
+
+  set(SV_EXTERNALS_Qt_VERSION "5.6.3")
+  set(SV_EXTERNALS_HDF5_VERSION "1.10.1")
+  set(SV_EXTERNALS_TCL_VERSION "8.6.8")
+  set(SV_EXTERNALS_TK_VERSION "8.6.8")
+  set(SV_EXTERNALS_TCLLIB_VERSION "1.17")
+  set(SV_EXTERNALS_TKLIB_VERSION "0.6")
+  set(SV_EXTERNALS_PYTHON_VERSION "3.5.5")
+  set(SV_EXTERNALS_PIP_VERSION "0.0.0")
+  set(SV_EXTERNALS_NUMPY_VERSION "1.14.3")
+  set(SV_EXTERNALS_FREETYPE_VERSION "2.6.3")
+  set(SV_EXTERNALS_SWIG_VERSION "3.0.12")
+  set(SV_EXTERNALS_MMG_VERSION "5.3.9")
+  set(SV_EXTERNALS_GDCM_VERSION "2.6.3")
+  set(SV_EXTERNALS_VTK_VERSION "8.1.1")
+  set(SV_EXTERNALS_ITK_VERSION "4.13.0")
+  set(SV_EXTERNALS_OpenCASCADE_VERSION "7.2.0")
+  set(SV_EXTERNALS_MITK_VERSION "2018.04")
 
 else()
 

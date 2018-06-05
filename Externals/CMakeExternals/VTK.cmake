@@ -151,6 +151,15 @@ if(SV_EXTERNALS_USE_QT)
     -DVTK_MAKE_INSTANTIATORS:BOOL=ON
     -DVTK_WINDOWS_PYTHON_DEBUGGABLE:BOOL=OFF
     )
+  if(SV_EXTERNALS_Qt_VERSION VERSION_EQUAL "5.6.3")
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DModule_vtkGUISupportQtWebkit:BOOL=OFF
+      )
+  else()
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DModule_vtkGUISupportQtWebkit:BOOL=ON
+      )
+  endif()
 endif()
 
 #If using TCL

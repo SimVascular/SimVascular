@@ -158,7 +158,7 @@ if(${proj}_VERSION STREQUAL "2016.03")
   list(APPEND ${proj}_HEADERS
     "mitkLogoOverlay.h"                              #mitk/Modules/Overlays
     )
-elseif(${proj}_VERSION STREQUAL "2018.02")
+elseif(${proj}_VERSION VERSION_GREATER "2018.01")
   list(APPEND ${proj}_HEADERS
     "mitkLogoAnnotation.h"                           #mitk/Modules/Annotation
     )

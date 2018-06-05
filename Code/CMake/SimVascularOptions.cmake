@@ -88,6 +88,11 @@ option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be includ
 # Qt
 simvascular_add_new_external(Qt5 ${Qt5_VERSION} ON ON qt)
 
+# HDF5
+if (SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+  simvascular_add_new_external(HDF5 ${HDF5_VERSION} ON ON hdf5 hdf5)
+endif()
+
 # TCL
 simvascular_add_new_external(TCL ${TCL_VERSION} ON ON tcltk)
 
