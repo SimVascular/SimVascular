@@ -28,12 +28,27 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-ifeq ($(CLUSTER), x64_linux)
-    PYTHON_HOME   =  $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/python-2.7.11
-    PYTHON_BINDIR = $(PYTHON_HOME)/bin
-    PYTHON_INCDIR = -I$(PYTHON_HOME)/include/python2.7
-    PYTHON_LIBDIR = $(PYTHON_HOME)/lib
-    PYTHON_LIB    = $(LIBPATH_COMPILER_FLAG)$(PYTHON_LIBDIR) $(LIBFLAG)python2.7$(LIBLINKEXT)
-    SV_PYTHON_SO_PATH = $(PYTHON_LIBDIR)
-    PYTHON_SITE_PACKAGES = $(PYTHON_HOME)/lib/python2.7\:$(PYTHON_HOME)/lib/python2.7/site-packages
-endif
+GDCM_MAJOR_VERSION=2
+GDCM_MINOR_VERSION=6
+GDCM_PATCH_VERSION=1
+GDCM_VERSION=$(GDCM_MAJOR_VERSION).$(GDCM_MINOR_VERSION).$(GDCM_PATCH_VERSION)
+
+SV_GDCM_DEFS   =
+SV_GDCM_TOP    = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/gdcm-$(GDCM_VERSION)
+SV_GDCM_INCDIR = -I $(SV_GDCM_TOP)/include/gdcm-$(GDCM_MAJOR_VERSION).$(GDCM_MINOR_VERSION)
+SV_GDCM_LIBS   = $(LIBPATH_COMPILER_FLAG)$(SV_GDCM_TOP)/lib \
+                     $(LIBFLAG)gdcmCommon$(LIBLINKEXT) \
+                     $(LIBFLAG)gdcmDICT$(LIBLINKEXT)    \
+                     $(LIBFLAG)gdcmDSED$(LIBLINKEXT)    \
+                     $(LIBFLAG)gdcmIOD$(LIBLINKEXT)    \
+                     $(LIBFLAG)gdcmjpeg12$(LIBLINKEXT)  \
+                     $(LIBFLAG)gdcmjpeg16$(LIBLINKEXT)  \
+                     $(LIBFLAG)gdcmjpeg8$(LIBLINKEXT)   \
+                     $(LIBFLAG)gdcmMSFF$(LIBLINKEXT) \
+                     $(LIBFLAG)gdcmopenjpeg$(LIBLINKEXT) \
+                     $(LIBFLAG)gdcmexpat$(LIBLINKEXT) \
+                     $(LIBFLAG)gdcmuuid$(LIBLINKEXT) \
+                     $(LIBFLAG)gdcmcharls$(LIBLINKEXT) \
+                     $(LIBFLAG)gdcmzlib$(LIBLINKEXT)
+SV_GDCM_DLLS   =  $(SV_GDCM_TOP)/lib
+SV_GDCM_SO_PATH = $(SV_GDCM_TOP)/lib

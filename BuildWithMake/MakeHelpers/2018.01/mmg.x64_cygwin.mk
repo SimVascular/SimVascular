@@ -28,24 +28,15 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-ifeq ($(CLUSTER), x64_macosx)
-    SV_GDCM_DEFS   =
-    SV_GDCM_TOP    = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/gdcm-2.6.1
-    SV_GDCM_INCDIR = -I $(SV_GDCM_TOP)/include/gdcm-2.6
-    SV_GDCM_LIBS   = $(LIBPATH_COMPILER_FLAG)$(SV_GDCM_TOP)/lib \
-                     $(LIBFLAG)gdcmCommon$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmDICT$(LIBLINKEXT)    \
-                     $(LIBFLAG)gdcmDSED$(LIBLINKEXT)    \
-                     $(LIBFLAG)gdcmIOD$(LIBLINKEXT)    \
-                     $(LIBFLAG)gdcmjpeg12$(LIBLINKEXT)  \
-                     $(LIBFLAG)gdcmjpeg16$(LIBLINKEXT)  \
-                     $(LIBFLAG)gdcmjpeg8$(LIBLINKEXT)   \
-                     $(LIBFLAG)gdcmMSFF$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmopenjpeg$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmexpat$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmuuid$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmcharls$(LIBLINKEXT) \
-                     $(LIBFLAG)gdcmzlib$(LIBLINKEXT)
-    SV_GDCM_DLLS   =  $(SV_GDCM_TOP)/lib
-    SV_GDCM_SO_PATH = $(SV_GDCM_TOP)/lib
-endif
+MMG_MAJOR_VERSION=5
+MMG_MINOR_VERSION=1
+MMG_PATCH_VERSION=0
+MMG_VERSION=$(MMG_MAJOR_VERSION).$(MMG_MINOR_VERSION).$(MMG_PATCH_VERSION)
+
+SV_MMG_DEFS   =
+SV_MMG_TOP    = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/mmg-$(MMG_VERSION)
+SV_MMG_INCDIR = -I $(SV_MMG_TOP)/include
+SV_MMG_LIBS   = $(LIBPATH_COMPILER_FLAG)$(SV_MMG_TOP)/lib \
+                     $(LIBFLAG)mmg$(LIBLINKEXT) $(LIBFLAG)mmgs$(LIBLINKEXT)
+SV_MMG_DLLS   =  $(SV_MMG_TOP)/lib
+SV_MMG_SO_PATH = $(SV_MMG_TOP)/lib

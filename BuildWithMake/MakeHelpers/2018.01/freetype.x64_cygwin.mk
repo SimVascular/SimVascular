@@ -28,20 +28,15 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-ifeq ($(CLUSTER), x64_cygwin)
-    SV_GDCM_DEFS   =
-    SV_GDCM_TOP    = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/gdcm-2.6.1
-    SV_GDCM_INCDIR = -I $(SV_GDCM_TOP)/include/gdcm-2.6
-    SV_GDCM_LIBS   = $(LIBPATH_COMPILER_FLAG)$(SV_GDCM_TOP)/lib \
-                     $(LIBFLAG)gdcmCommon.lib \
-                     $(LIBFLAG)gdcmDICT.lib    \
-                     $(LIBFLAG)gdcmDSED.lib    \
-                     $(LIBFLAG)gdcmIOD.lib     \
-                     $(LIBFLAG)gdcmjpeg12.lib  \
-                     $(LIBFLAG)gdcmjpeg16.lib  \
-                     $(LIBFLAG)gdcmjpeg8.lib   \
-                     $(LIBFLAG)gdcmMSFF.lib
-    SV_GDCM_DLLS   =  $(SV_GDCM_TOP)/bin
-    SV_GDCM_SO_PATH = $(SV_GDCM_TOP)/bin
-#    SV_GDCM_LIBS  += $(LIBFLAG)Advapi32.lib $(LIBFLAG)Ws2_32.lib
-endif
+FREETYPE_MAJOR_VERSION=2
+FREETYPE_MINOR_VERSION=6
+FREETYPE_PATCH_VERSION=3
+FREETYPE_VERSION=$(FREETYPE_MAJOR_VERSION).$(FREETYPE_MINOR_VERSION).$(FREETYPE_PATCH_VERSION)
+
+SV_FREETYPE_DEFS    =
+SV_FREETYPE_TOP     = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/freetype-$(FREETYPE_VERSION)
+SV_FREETYPE_INCDIR  = -I $(SV_FREETYPE_TOP)/include/freetype$(FREETYPE_MAJOR_VERSION)
+SV_FREETYPE_LIBS    = $(LIBPATH_COMPILER_FLAG)$(SV_FREETYPE_TOP)/lib \
+                      $(LIBFLAG)freetype$(LIBLINKEXT)
+SV_FREETYPE_DLLS    = $(SV_FREETYPE_TOP)/lib
+SV_FREETYPE_SO_PATH = $(SV_FREETYPE_TOP)/lib
