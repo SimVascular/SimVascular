@@ -80,7 +80,7 @@ endif()
 #If certain mac os
 if(APPLE AND SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2.6.3")
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-gdcm-2.6.3-macos.patch)
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.03/patch-gdcm-2.6.3-macos.patch)
 endif()
 
 # Add external project

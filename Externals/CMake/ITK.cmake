@@ -94,11 +94,11 @@ endif()
 if("${SV_EXTERNALS_${proj}_VERSION}" VERSION_LESS "4.7.2" AND
     "${COMPILER_VERSION}" STREQUAL "GNU" AND
     "${CMAKE_CXX_COMPILER_VERSION}" VERSION_GREATER "5.0")
-  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-itk-4.7.1-gnu.patch)
+  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.01/patch-itk-4.7.1-gnu.patch)
 elseif("${SV_EXTERNALS_${proj}_VERSION}" VERSION_LESS "4.7.2" AND
     "${COMPILER_VERSION}" STREQUAL "Clang" AND
     NOT ("${CMAKE_CXX_COMPILER_VERSION}" LESS "9.0"))
-  set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-itk-4.7.1-clang-9.0.patch)
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.01/patch-itk-4.7.1-clang-9.0.patch)
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH "")
 endif()

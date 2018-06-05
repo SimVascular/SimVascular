@@ -77,7 +77,7 @@ set(SV_EXTERNALS_${proj}_SITE_DIR ${SV_EXTERNALS_${proj}_LIBRARY_DIR}/python${SV
 # turn off patching if 3.5
 if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "3.5.2")
   list(APPEND SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-python-3.5.2.patch)
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.03/patch-python-3.5.2.patch)
 endif()
 
 if(LINUX)
