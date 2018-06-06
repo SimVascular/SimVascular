@@ -45,10 +45,10 @@ endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-set(CXXSRCS sv3_Contour.cxx sv3_LevelSetContour.cxx sv3_SegmentationUtils.cxx sv3_CircleContour.cxx)
-set(HDRS sv3_Contour.h sv3_LevelSetContour.h sv3_SegmentationUtils.h sv3_CircleContour.h)
+set(CXXSRCS sv3_Contour.cxx sv3_LevelSetContour.cxx sv3_SegmentationUtils.cxx sv3_CircleContour.cxx sv3_PolygonContour.cxx sv3_SplinePolygonContour.cxx)
+set(HDRS sv3_Contour.h sv3_LevelSetContour.h sv3_SegmentationUtils.h sv3_CircleContour.h sv3_PolygonContour.h sv3_SplinePolygonContour.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_Contour_init_py.cxx sv3_LevelSetContour_init_py.cxx sv3_CircleContour_init_py.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_Contour_init_py.cxx sv3_LevelSetContour_init_py.cxx sv3_CircleContour_init_py.cxx sv3_PolygonContour_init_py.cxx sv3_SplinePolygonContour_init_py.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})

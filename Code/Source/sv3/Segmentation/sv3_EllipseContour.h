@@ -28,38 +28,53 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef SV3_SEGMENTATIONUTILS_H
-#define SV3_SEGMENTATIONUTILS_H
 
+#ifndef SV3_ELLIPSECONTOUR_H
+#define SV3_ELLIPSECONTOUR_H
 
 #include "SimVascular.h"
 
-#include <deque>
 #include <svSegmentationExports.h>
-#include "sv_StrPts.h"
-#include "sv3_PathElement.h"
-#include <vtkImageData.h>
-#include "vtkSmartPointer.h"
-#include <vtkPlane.h>
+
+#include "sv3_Contour.h"
 
 namespace sv3{
-class SV_EXPORT_SEGMENTATION SegmentationUtils
+class SV_EXPORT_SEGMENTATION ContourEllipse : public Contour
 {
-    public:
-    static cvStrPts* vtkImageData2cvStrPts(vtkImageData* vtkImg);
-    
-    static std::deque<int> GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed);
-    
-    static vtkTransform* GetvtkTransform(sv3::PathElement::PathPoint pathPoint);
-    
-    static vtkImageData* GetSlicevtkImage(sv3::PathElement::PathPoint pathPoint, vtkImageData* volumeimage, double size);
-    
-    static vtkSmartPointer<vtkPlane> CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size);
-    
-    static void getOrthogonalVector(double normal[3], double vec[3]);
-;
-};
 
-}
-#endif // SV3_SEGMENTATIONUTILS_H
+public:
+
+    ContourEllipse();
+
+    ContourEllipse(const ContourEllipse &other);
+
+    ~ContourEllipse();
+
+    ContourEllipse* Clone();
+    
+    ContourEllipse* CreateSmoothedContour(int fourierNumber)
+
+    virtual std::string GetClassName() override;
+
+    virtual void SetControlPoint(int index, std::array<double,3> point) override;
+
+    void CreateContourPoints();
+
+    bool AsCircle();
+
+    void SetAsCircle(bool asCircle);
+
+    void AssignCenterScalingPoints() override;
+
+    void PlaceControlPoints(std::array<double,3> point) override;
+
+    static Contour* CreateByFitting(Contour* contour);
+
+  protected:
+
+    bool m_TreatAsCircle;
+
+  };
+
+};
+#endif // SV3_ELLIPSECONTOUR_H

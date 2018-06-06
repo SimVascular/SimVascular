@@ -31,9 +31,8 @@
 
 #include "SimVascular.h"
 #include "sv_misc_utils.h"
-//#include "sv3_LevelSetContour_init_py.h"
 #include "sv3_Contour.h"
-#include "sv3_LevelSetContour.h"
+#include "sv3_PolygonContour.h"
 //#include "sv_adapt_utils.h"
 #include "sv_arg.h"
 
@@ -51,11 +50,11 @@
 // Prototypes:
 // -----------
 //
-using sv3::levelSetContour;
+using sv3::ContourPolygon;
 
-levelSetContour* CreatelevelSetContour()
+ContourPolygon* CreatePolygonContour()
 {
-	return new levelSetContour();
+	return new ContourPolygon();
 }
 // Globals:
 // --------
@@ -66,20 +65,20 @@ levelSetContour* CreatelevelSetContour()
 // Adapt
 // -----
 
-PyObject* levelSetContour_AvailableCmd(PyObject* self,PyObject* args);
+PyObject* polygonContour_AvailableCmd(PyObject* self,PyObject* args);
 
-PyObject* levelSetContour_RegistrarsListCmd(PyObject* self, PyObject* args);
+PyObject* polygonContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
-PyMethodDef levelSetContour_methods[] = {
-  {"lscontour_available", levelSetContour_AvailableCmd,METH_NOARGS,NULL},
-  {"lscontour_registrars", levelSetContour_RegistrarsListCmd,METH_NOARGS,NULL},
+PyMethodDef polygonContour_methods[] = {
+  {"polygoncontour_available", polygonContour_AvailableCmd,METH_NOARGS,NULL},
+  {"polygoncontour_registrars", polygonContour_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 
 PyMODINIT_FUNC
-initpylevelSetContour()
+initpyPolygonContour()
 {
-  printf("  %-12s %s\n","","levelSetContour Enabled");
+  printf("  %-12s %s\n","","polygonContour Enabled");
 
   // Associate the adapt registrar with the python interpreter so it can be
   // retrieved by the DLLs.
@@ -88,8 +87,8 @@ initpylevelSetContour()
 
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_LEVELSET,
-      (FactoryMethodPtr) &CreatelevelSetContour );
+          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_POLYGON,
+      (FactoryMethodPtr) &CreatePolygonContour );
   }
   else {
     return;
@@ -97,21 +96,21 @@ initpylevelSetContour()
   PySys_SetObject("ContourObjectRegistrar",(PyObject*)contourObjectRegistrar);
 
   PyObject* pythonC;
-  pythonC = Py_InitModule("pylevelSetContour", levelSetContour_methods);
+  pythonC = Py_InitModule("pyPolygonContour", polygonContour_methods);
   if(pythonC==NULL)
   {
-    fprintf(stdout,"Error in initializing pylevelSetContour\n");
+    fprintf(stdout,"Error in initializing pyPolygonContour\n");
     return;
   }
 }
 
-PyObject*  levelSetContour_AvailableCmd(PyObject* self, PyObject* args)
+PyObject*  polygonContour_AvailableCmd(PyObject* self, PyObject* args)
 {
-  return Py_BuildValue("s","levelSetContour Available");
+  return Py_BuildValue("s","polygonContour Available");
 
 }
 
-PyObject* levelSetContour_RegistrarsListCmd(PyObject* self, PyObject* args)
+PyObject* polygonContour_RegistrarsListCmd(PyObject* self, PyObject* args)
 {
   cvFactoryRegistrar *contourObjectRegistrar =
     (cvFactoryRegistrar *) PySys_GetObject("ContourObjectRegistrar");

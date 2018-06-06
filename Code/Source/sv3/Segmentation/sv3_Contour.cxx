@@ -129,7 +129,7 @@ Contour* Contour::DefaultInstantiateContourObject(KernelType t, PathElement::Pat
     fprintf(stdout,"Cannot get contourObjectRegistrar from pySys");
   }
   Contour* contour = NULL;
-  if (t == KERNEL_LEVELSET || t == KERNEL_CIRCLE || t == KERNEL_POLYGON || t == KERNEL_ELLIPSE)
+  if (t == KERNEL_LEVELSET || t == KERNEL_CIRCLE || t == KERNEL_POLYGON || t == KERNEL_SPLINEPOLYGON ||t == KERNEL_ELLIPSE)
   {
     contour = (Contour *) (contourObjectRegistrar->UseFactoryMethod( t ));
     if (contour == NULL) {

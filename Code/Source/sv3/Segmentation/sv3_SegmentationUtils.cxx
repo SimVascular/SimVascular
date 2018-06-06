@@ -305,3 +305,30 @@ vtkSmartPointer<vtkPlane> SegmentationUtils::CreatePlaneGeometry(PathElement::Pa
     return planegeometry;
 }
 
+
+void SegmentationUtils::getOrthogonalVector(double normal[3], double vec[3])
+{
+    if(normal[2]!=0.)
+    {
+        vec[0] = 1.;
+        vec[1] = 1.;
+        vec[2] = (0.-1.*normal[0]-1.*normal[1])/normal[2];
+    }
+    else if (normal[1]!=0.)
+    {
+        vec[0] = 1.;
+        vec[1] = (0.-1.*normal[0]-1.*normal[2])/normal[1];
+        vec[2] = 1.;
+    }
+    else if (normal[0]!=0.)
+    {
+        vec[0] = (0.-1.*normal[1]-1.*normal[2])/normal[0];
+        vec[1] = 1.;
+        vec[2] = 1.;
+    }
+    else
+        return;
+        
+    double lth = sqrt(pow(vec[0],2)+pow(vec[1],2)+pow(vec[2],2));
+    vec[0]/=lth; vec[1]/=lth; vec[2]/=lth; 
+}

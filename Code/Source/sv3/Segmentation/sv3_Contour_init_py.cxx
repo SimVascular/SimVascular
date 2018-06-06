@@ -64,6 +64,7 @@ PyObject* Contour_GetAreaCmd( pyContour* self, PyObject* args);
 PyObject* Contour_GetPerimeterCmd( pyContour* self, PyObject* args);
 PyObject* Contour_GetCenterPointCmd(pyContour* self, PyObject* args);
 PyObject* Contour_SetControlPointsCmd(pyContour* self, PyObject* args);
+PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args);
 
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args);
 
@@ -82,6 +83,7 @@ static PyMethodDef pyContour_methods[]={
   {"contour_perimeter", (PyCFunction)Contour_GetPerimeterCmd,METH_NOARGS,NULL},
   {"contour_center", (PyCFunction)Contour_GetCenterPointCmd, METH_NOARGS,NULL},
   {"contour_setCtrlPts", (PyCFunction)Contour_SetControlPointsCmd, METH_VARARGS, NULL},
+  {"contour_setCtrlPtsByRadius", (PyCFunction)Contour_SetControlPointsByRadiusCmd, METH_VARARGS, NULL},
   {NULL,NULL}
 };
 
@@ -202,6 +204,8 @@ PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args)
         kernel= KERNEL_CIRCLE;
     } else if (strcmp( kernelName, "Polygon" )==0 ) {
         kernel= KERNEL_POLYGON;
+    } else if (strcmp( kernelName, "SplinePolygon" )==0 ) {
+        kernel= KERNEL_SPLINEPOLYGON;
     } else if (strcmp( kernelName, "Ellipse")==0 ) {
         kernel= KERNEL_ELLIPSE;
     } else {
@@ -353,21 +357,82 @@ PyObject* Contour_GetObjectCmd( pyContour* self, PyObject* args)
 // --------------------
 PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
 {
+    PyObject *ptList=NULL;
+
+    if (!PyArg_ParseTuple(args,"O", &ptList))
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not import one list and one optional list or double\
+            , center boundary and radius");
+        return Py_ERROR;
+    }
+
+  // Do work of command:
+    int numPts = PyList_Size(ptList);
+    
+    if (Contour::gCurrentKernel==KERNEL_CIRCLE)
+    {
+        if(numPts!=2)
+        {
+            PyErr_SetString(PyRunTimeErr, "Circle contour requires two points, center and boundary");
+            return Py_ERROR;
+        }
+    }
+    else if (Contour::gCurrentKernel==KERNEL_ELLIPSE)
+    {
+        if(numPts!=4)
+        {
+            PyErr_SetString(PyRunTimeErr, "Ellipse contour requires three points, center and two boudaries");
+            return Py_ERROR;
+        }
+    }
+    else if (Contour::gCurrentKernel==KERNEL_POLYGON)
+    {
+        if(numPts<3)
+        {
+            PyErr_SetString(PyRunTimeErr, "Polygon contour requires at least three points");
+            return Py_ERROR;
+        }
+    }        
+    
+    Contour* contour = self->geom;
+    
+    std::vector<std::array<double,3> > pts(numPts);
+    std::cout<<"ck1"<<std::endl;
+    for (int i = 0; i<numPts; i++)
+    {
+        PyObject* tmpList = PyList_GetItem(ptList,i);
+        if(PyList_Size(tmpList)!=3)
+        {
+            PyErr_SetString(PyRunTimeErr, "The length of double list must be 3");
+            return Py_ERROR;
+        }
+        for (int j = 0;j<3;j++)
+        {
+            pts[i][j] = PyFloat_AsDouble(PyList_GetItem(tmpList,j));
+        }
+        std::cout<<"ck1"<<" "<<i<<" "<<pts[i][0]<<" "<<pts[i][1]<<" "<<pts[i][2]<<std::endl;
+    }
+    contour->SetControlPoints(pts);
+    std::cout<<"ck2"<<std::endl;
+    Py_RETURN_NONE; 
+}
+
+PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
+{
     PyObject *center;
-    PyObject *boundary = NULL;
     double radius = -1.;
     if (Contour::gCurrentKernel==KERNEL_CIRCLE)
     {
-        if (!PyArg_ParseTuple(args,"O|dO", &center, &radius , &boundary))
+        if (!PyArg_ParseTuple(args,"Od", &center, &radius ))
         {
-            PyErr_SetString(PyRunTimeErr, "Could not import one list and one optional list or double\
-                , center boundary and radius");
+            PyErr_SetString(PyRunTimeErr, "Could not import one list and one double\
+            , center and radius");
             return Py_ERROR;
         }
     }
     else
     {
-        PyErr_SetString(PyRunTimeErr, "Kernel method does not require control points");
+        PyErr_SetString(PyRunTimeErr, "Kernel method does not support this function");
         return Py_ERROR;
     }
   // Do work of command:
@@ -383,38 +448,21 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
     }
     
     Contour* contour = self->geom;
-    
-    if(boundary!=NULL)
-    {
-        std::array<double,3> bound;
-        if(PyList_Size(boundary)!=3)
-        {
-            PyErr_SetString(PyRunTimeErr, "The length of double list must be 3");
-            return Py_ERROR;
-        }
-        for (int i = 0;i<PyList_Size(boundary);i++)
-        {
-            bound[i] = PyFloat_AsDouble(PyList_GetItem(boundary,i));
-        }
-        
-        contour->SetControlPoint(0,std::array<double,3>{ctr[0],ctr[1],ctr[2]});
-        contour->SetControlPoint(0,bound);
-    }
-    else if (radius>0.)
+
+    if (radius>0.)
     {
         contour->SetControlPointByRadius(radius,ctr);
     }
     else
     {
-        if (radius<=0.)
-        {
-            PyErr_SetString(PyRunTimeErr, "Must provide either a point on the \
-                circle or a positive radius value");
-            return Py_ERROR;
-        }
+        PyErr_SetString(PyRunTimeErr, "Must provide either a point on the \
+            circle or a positive radius value");
+        return Py_ERROR;
+
     }
     Py_RETURN_NONE; 
 }
+
 
 // --------------------
 // Contour_CreateCmd

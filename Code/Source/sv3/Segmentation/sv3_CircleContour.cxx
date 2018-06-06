@@ -51,33 +51,6 @@ using sv3::circleContour;
 using sv3::PathElement;
 using sv3::SegmentationUtils;
 
-void getOrthogonalVector(double normal[3], double vec[3])
-{
-    if(normal[2]!=0.)
-    {
-        vec[0] = 1.;
-        vec[1] = 1.;
-        vec[2] = (0.-1.*normal[0]-1.*normal[1])/normal[2];
-    }
-    else if (normal[1]!=0.)
-    {
-        vec[0] = 1.;
-        vec[1] = (0.-1.*normal[0]-1.*normal[2])/normal[1];
-        vec[2] = 1.;
-    }
-    else if (normal[0]!=0.)
-    {
-        vec[0] = (0.-1.*normal[1]-1.*normal[2])/normal[0];
-        vec[1] = 1.;
-        vec[2] = 1.;
-    }
-    else
-        return;
-        
-    double lth = sqrt(pow(vec[0],2)+pow(vec[1],2)+pow(vec[2],2));
-    vec[0]/=lth; vec[1]/=lth; vec[2]/=lth; 
-}
-
 circleContour::circleContour()
     : Contour( KERNEL_CIRCLE )
 {
@@ -94,7 +67,7 @@ circleContour::circleContour()
 }
 
 circleContour::circleContour(const circleContour &other) 
-    : Contour( KERNEL_CIRCLE )
+    : Contour( other )
 {
 }
 
@@ -156,11 +129,11 @@ void circleContour::SetControlPoint(int index, std::array<double,3> point)
     if(index == 0)
     {
 
-        std::array<double,3> dirVec;
         if(m_ControlPoints.size()==0)
             m_ControlPoints.push_back(std::array<double,3>{projPt[0],projPt[1],projPt[2]});
         else
         {
+            std::array<double,3> dirVec;
             for (int i=0; i<3; i++)
                 dirVec[i]=projPt[i]-GetControlPoint(0)[i];
             Shift(dirVec);
@@ -194,7 +167,7 @@ void circleContour::SetControlPointByRadius(double radius, double* point)
     double* normal = m_PlaneGeometry->GetNormal();
     double vec[3];
     
-    getOrthogonalVector(normal,vec);
+    SegmentationUtils::getOrthogonalVector(normal,vec);
     
     if (vec==NULL)
         return;
@@ -238,7 +211,7 @@ Contour* circleContour::CreateByFitting(Contour* contour)
         
     double vec[3];
     
-    getOrthogonalVector(normal,vec);
+    SegmentationUtils::getOrthogonalVector(normal,vec);
     if (vec==NULL)
         return NULL;
 
@@ -317,7 +290,7 @@ void circleContour::CreateContourPoints()
     
     double* normal=m_PlaneGeometry->GetNormal();       
     double vec[3];
-    getOrthogonalVector(normal,vec);
+    SegmentationUtils::getOrthogonalVector(normal,vec);
     if(vec==NULL)
         return;
         

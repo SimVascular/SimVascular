@@ -116,11 +116,11 @@ PyObject* circleContour_RegistrarsListCmd(PyObject* self, PyObject* args)
     (cvFactoryRegistrar *) PySys_GetObject("ContourObjectRegistrar");
 
   char result[255];
-  PyObject* pyPtr=PyList_New(6);
+  PyObject* pyPtr=PyList_New(7);
   sprintf( result, "Contour object registrar ptr -> %p\n", contourObjectRegistrar );
   PyList_SetItem(pyPtr,0,PyString_FromFormat(result));
 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 6; i++) {
       sprintf( result,"GetFactoryMethodPtr(%i) = %p\n",
       i, (contourObjectRegistrar->GetFactoryMethodPtr(i)));
       fprintf(stdout,result);

@@ -28,38 +28,54 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef SV3_SEGMENTATIONUTILS_H
-#define SV3_SEGMENTATIONUTILS_H
 
+#ifndef SV3_POLYGONCONTOUR_H
+#define SV3_POLYGONCONTOUR_H
 
 #include "SimVascular.h"
 
-#include <deque>
 #include <svSegmentationExports.h>
-#include "sv_StrPts.h"
-#include "sv3_PathElement.h"
-#include <vtkImageData.h>
-#include "vtkSmartPointer.h"
-#include <vtkPlane.h>
+
+#include "sv3_Contour.h"
 
 namespace sv3{
-class SV_EXPORT_SEGMENTATION SegmentationUtils
+class SV_EXPORT_SEGMENTATION ContourPolygon : public Contour
 {
-    public:
-    static cvStrPts* vtkImageData2cvStrPts(vtkImageData* vtkImg);
+
+public:
+
+
+    ContourPolygon();
+
+    ContourPolygon(const ContourPolygon &other);
+
+    ~ContourPolygon();
+
+    ContourPolygon* Clone();
+
+    virtual std::string GetClassName() override;
     
-    static std::deque<int> GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed);
+    ContourPolygon* CreateSmoothedContour(int fourierNumber);
+
+    virtual void SetControlPoint(int index, std::array<double,3> point) override;
+
+    void CreateContourPoints();
+
+    virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
+
+    void AssignCenterScalingPoints() override;
+
+    void PlaceControlPoints(std::array<double,3> point) override;
     
-    static vtkTransform* GetvtkTransform(sv3::PathElement::PathPoint pathPoint);
+    void SetControlPointByRadius(double radius, double* point){return;};
     
-    static vtkImageData* GetSlicevtkImage(sv3::PathElement::PathPoint pathPoint, vtkImageData* volumeimage, double size);
+    void SetLevelSetParas(svLSParam* paras) {return;};
     
-    static vtkSmartPointer<vtkPlane> CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size);
-    
-    static void getOrthogonalVector(double normal[3], double vec[3]);
-;
+    svLSParam* GetLevelSetParas(){return NULL;};
+
+  protected:
+
+  };
 };
 
-}
-#endif // SV3_SEGMENTATIONUTILS_H
+#endif // SV3_POLYGONCONTOUR_H

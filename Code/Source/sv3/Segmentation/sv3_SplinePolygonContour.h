@@ -28,38 +28,45 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef SV3_SEGMENTATIONUTILS_H
-#define SV3_SEGMENTATIONUTILS_H
 
+#ifndef SV3_SPLINEPOLYGONCONTOUR_H
+#define SV3_SPLINEPOLYGONCONTOUR_H
 
 #include "SimVascular.h"
 
-#include <deque>
 #include <svSegmentationExports.h>
-#include "sv_StrPts.h"
-#include "sv3_PathElement.h"
-#include <vtkImageData.h>
-#include "vtkSmartPointer.h"
-#include <vtkPlane.h>
+
+#include "sv3_PolygonContour.h"
 
 namespace sv3{
-class SV_EXPORT_SEGMENTATION SegmentationUtils
+class SV_EXPORT_SEGMENTATION ContourSplinePolygon : public ContourPolygon
 {
-    public:
-    static cvStrPts* vtkImageData2cvStrPts(vtkImageData* vtkImg);
-    
-    static std::deque<int> GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed);
-    
-    static vtkTransform* GetvtkTransform(sv3::PathElement::PathPoint pathPoint);
-    
-    static vtkImageData* GetSlicevtkImage(sv3::PathElement::PathPoint pathPoint, vtkImageData* volumeimage, double size);
-    
-    static vtkSmartPointer<vtkPlane> CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size);
-    
-    static void getOrthogonalVector(double normal[3], double vec[3]);
-;
-};
 
+public:
+
+    ContourSplinePolygon();
+
+    ContourSplinePolygon(const ContourSplinePolygon &other);
+
+    ~ContourSplinePolygon();
+
+    ContourSplinePolygon* Clone();
+    
+    ContourSplinePolygon* CreateSmoothedContour(int fourierNumber);
+    
+    void SetLevelSetParas(svLSParam* paras) {return;};
+    
+    svLSParam* GetLevelSetParas() {return NULL;};
+
+    virtual std::string GetClassName() override;
+
+    void CreateContourPoints();
+
+    static Contour* CreateByFitting(Contour* contour, int divisionNumber = 12);
+
+  protected:
+
+  };
 }
-#endif // SV3_SEGMENTATIONUTILS_H
+
+#endif // SV3_SPLINEPOLYGONCONTOUR_H
