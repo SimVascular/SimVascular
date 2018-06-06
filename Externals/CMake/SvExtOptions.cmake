@@ -77,7 +77,7 @@ option(SV_EXTERNALS_BUILD_MITK_WITH_PYTHON "Build MITK without python" ON)
 
 # Add externals with default values of version, build_with, shared, dirname,
 # and optional install dirname. Order matters; put independent packages first
-# Must have existing "EXTERNAL_NAME.cmake" file underneath CMakeExternals
+# Must have existing "EXTERNAL_NAME.cmake" file underneath CMake
 # (i.e. Qt.cmake for Qt)
 # "EXTERNAL_NAME" "ENABLE_EXTERNAL" "BUILD_SHARED" "BUILD_DIR_NAME" "INSTALL_DIR_NAME"
 #-----------------------------------------------------------------------------

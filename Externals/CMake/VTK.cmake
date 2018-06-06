@@ -196,7 +196,7 @@ endif()
 #Patch for vtk
 if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "6.2.0")
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/Patch/patch-vtk-6.2.0.patch)
+    COMMAND patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.01/patch-vtk-6.2.0.patch)
 endif()
 
 # Add external project

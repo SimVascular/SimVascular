@@ -93,7 +93,7 @@ endif()
 if(SV_EXTERNALS_ENABLE_VTK)
   if(SV_EXTERNALS_VTK_VERSION VERSION_GREATER "8.0")
     set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-      COMMAND patch -N -p1 -i ${SV_EXTERNALS_CMAKE_DIR}/PATCH/patch-opencascade-vtk-greater-8.0.patch)
+      COMMAND patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.05/patch-opencascade-vtk-greater-8.0.patch)
   endif()
 endif()
 
