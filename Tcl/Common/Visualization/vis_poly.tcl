@@ -117,7 +117,7 @@ proc vis_pReposColor {ren objName color} {
 # Grab a given vtkPolyData object from the repository, and render it in the given rendering window.
 # And then return the actor and mapper
 
-proc vis_pReposForUpdate {ren objName color opacity} {x
+proc vis_pReposForUpdate {ren objName color opacity} {
 
     if {![repos_exists -obj $objName]} {
 	return -code error "$objName not in repository"

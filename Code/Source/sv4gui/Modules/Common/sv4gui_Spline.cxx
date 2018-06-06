@@ -91,7 +91,6 @@ mitk::Point3D sv4guiSpline::GetPoint(VtkParametricSpline* svpp, double t)
 
 void sv4guiSpline::Update()
 {
-    printf("UpdateCalled\n");
     m_SplinePoints.clear();
 
     VtkParametricSpline* svpp= new VtkParametricSpline();
@@ -127,9 +126,7 @@ void sv4guiSpline::Update()
     default:
         break;
     }
-    std::cout<<"gui: interNumber: "<<interNumber<<std::endl;
     int splinePointID=0;
-    printf("gui inputPointNumber:%i", inputPointNumber);
     for(int i=0;i<inputPointNumber;i++)
     {
         pt1=m_InputPoints[i];
@@ -139,7 +136,6 @@ void sv4guiSpline::Update()
             if(i<inputPointNumber-1||m_Closed)
             {
                 interNumber=std::ceil(GetLength(svpp,i,i+1)/m_Spacing);
-                std::cout<<"gui: interNumber2: "<<interNumber<<std::endl;
                 if(interNumber<5) interNumber=5;//make sure not too small
             }//otherwise interNumber not changes.It means using the previous value
         }
@@ -154,18 +150,12 @@ void sv4guiSpline::Update()
 
             splinePoint.id=splinePointID;
             splinePointID++;
-            //std::cout<<"GUI Pos 1 "<<pt1[0]*10000.<<" "<<pt1[1]*10000.<<" "<<pt1[2]*10000.<<std::endl;
-            //std::cout<<"GUI Pos x "<<ptx[0]*10000.<<" "<<ptx[1]*10000.<<" "<<ptx[2]*10000.<<std::endl;
             splinePoint.tangent=pt1-ptx;
-            //std::cout <<"GUI tangent p: "<<splinePoint.tangent.GetNorm()<<" "<<splinePoint.tangent[0]<<" "<<splinePoint.tangent[1]<<" "<<splinePoint.tangent[2]<<std::endl;
             splinePoint.tangent.Normalize();
-            //std::cout <<"GUI tangent: "<<splinePoint.tangent[0]<<" "<<splinePoint.tangent[1]<<" "<<splinePoint.tangent[2]<<std::endl;
             splinePoint.rotation=sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
-            //std::cout <<"GUI rotation: "<<splinePoint.rotation[0]<<" "<<splinePoint.rotation[1]<<" "<<splinePoint.rotation[2]<<std::endl;
             m_SplinePoints.push_back(splinePoint);
             break;
         }
-        std::cout<<"gui splinePointID1 "<<splinePointID<<std::endl;
         double txx=i+1.0/interNumber/m_FurtherSubdivisionNumber;
         ptx=GetPoint(svpp,txx);
 
@@ -174,10 +164,7 @@ void sv4guiSpline::Update()
         splinePoint.tangent=ptx-pt1;
         splinePoint.tangent.Normalize();
         splinePoint.rotation=sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
-        std::cout <<"GUI tangent2: "<<splinePoint.tangent[0]<<" "<<splinePoint.tangent[1]<<" "<<splinePoint.tangent[2]<<std::endl;
-        std::cout <<"GUI rotation2: "<<splinePoint.rotation[0]<<" "<<splinePoint.rotation[1]<<" "<<splinePoint.rotation[2]<<std::endl;
         m_SplinePoints.push_back(splinePoint);
-        std::cout<<"gui splinePointID2 "<<splinePointID<<std::endl;
         for(int j=1;j<interNumber;j++)
         {
             double tnew=i+j*1.0/interNumber;
@@ -192,11 +179,8 @@ void sv4guiSpline::Update()
             splinePoint.tangent=ptx-pt1;
             splinePoint.tangent.Normalize();
             splinePoint.rotation=sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
-            //std::cout <<"GUI tangent3: "<<splinePoint.tangent[0]<<" "<<splinePoint.tangent[1]<<" "<<splinePoint.tangent[2]<<std::endl;
-            //std::cout <<"GUI rotation3: "<<splinePoint.rotation[0]<<" "<<splinePoint.rotation[1]<<" "<<splinePoint.rotation[2]<<std::endl;
             m_SplinePoints.push_back(splinePoint);
         }
-        std::cout<<"gui splinePointID3 "<<splinePointID<<std::endl;
     }
 
 }
