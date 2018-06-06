@@ -77,51 +77,48 @@ option(SV_USE_MSMPI "Use MSMPI" OFF)
 
 #-----------------------------------------------------------------------------
 # Externals
-set(SV_EXTERNALS_INSTALL_PREFIX "sv_externals" CACHE PATH "Externals toplevel directory")
+set(SV_EXTERNALS_INSTALL_PREFIX "svExternals" CACHE PATH "Externals toplevel directory")
 
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/sv_externals/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}/${SV_BUILD_TYPE_DIR}" CACHE PATH "Externals toplevel bin dir")
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/svExternals/bin/${SV_COMPILER_DIR}/${SV_COMPILER_VERSION_DIR}/${SV_ARCH_DIR}/${SV_BUILD_TYPE_DIR}" CACHE PATH "Externals toplevel bin dir")
 
 option(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR "If ON, SV_EXTERNALS_TOPLEVEL_BIN_DIR will be used as location used to find external packages" OFF)
 
 option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be included in the installation" OFF)
 
 # Qt
-simvascular_add_new_external(Qt5 5.4.2 ON ON qt)
+simvascular_add_new_external(Qt5 ${Qt5_VERSION} ON ON qt)
+
+# HDF5
+if (SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+  simvascular_add_new_external(HDF5 ${HDF5_VERSION} ON ON hdf5 hdf5)
+endif()
 
 # TCL
-simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
+simvascular_add_new_external(TCL ${TCL_VERSION} ON ON tcltk)
 
 #PYTHON
-if(WIN32)
-  simvascular_add_new_external(PYTHON 2.7.13 ON ON python)
-else()
-  simvascular_add_new_external(PYTHON 2.7.11 ON ON python)
-endif()
+simvascular_add_new_external(PYTHON ${PYTHON_VERSION} ON ON python)
 
 #FREETYPE
-if(WIN32)
-  simvascular_add_new_external(FREETYPE 2.6.3 ON OFF freetype)
-else()
-  simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
-endif()
+simvascular_add_new_external(FREETYPE ${FREETYPE_VERSION} ON ON freetype)
 
 # MMG
-simvascular_add_new_external(MMG 5.1.0 ON OFF mmg)
+simvascular_add_new_external(MMG ${MMG_VERSION} ON OFF mmg)
 
 # VTK
-simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
+simvascular_add_new_external(VTK ${VTK_VERSION} ON ON vtk)
 
 # GDCM
-simvascular_add_new_external(GDCM 2.6.1 ON ON gdcm)
+simvascular_add_new_external(GDCM ${GDCM_VERSION} ON ON gdcm)
 
 # ITK
-simvascular_add_new_external(ITK 4.7.1 ON ON itk)
+simvascular_add_new_external(ITK ${ITK_VERSION} ON ON itk)
 
 # OpenCASCADE
-simvascular_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade)
+simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascade)
 
 # MITK
-simvascular_add_new_external(MITK 2016.03 ON ON mitk)
+simvascular_add_new_external(MITK ${MITK_VERSION} ON ON mitk)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

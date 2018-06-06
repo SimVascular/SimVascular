@@ -141,6 +141,7 @@ PyMethodDef pyLevelSet_methods[] = {
 PyMethodDef Itkls2d_methods[] = {
     {NULL, NULL,0,NULL},
 };
+
 static PyTypeObject pyLevelSetType = {
   PyVarObject_HEAD_INIT(NULL, 0)
   "pyLevelSet.pyLevelSet",             /* tp_name */
@@ -183,21 +184,29 @@ static PyTypeObject pyLevelSetType = {
   0,                  /* tp_new */
 };
 
-
+#if PYTHON_MAJOR_VERSION == 3
+static struct PyModuleDef Itkls2dmodule = {
+   PyModuleDef_HEAD_INIT,
+   "Itkls2d",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   Itkls2d_methods
+};
+#endif
 // -------------
 // Itkls2d_Init
 // -------------
 PyObject* Itkls2d_pyInit(){
 
 	//Usage: CVPYTHONFunctionInit(Prefix,FunctionName,TclName)
-    pyLevelSetType.tp_new=PyType_GenericNew;
-	if (PyType_Ready(&pyLevelSetType)<0)
-    {
-      fprintf(stdout,"Error in pyLevelSetType\n");
-    }
-    PyObject *pyItkls2D;
 
+    PyObject *pyItkls2D;
+#if PYTHON_MAJOR_VERSION == 2
     pyItkls2D = Py_InitModule("Itkls2d",Itkls2d_methods);
+#elif PYTHON_MAJOR_VERSION == 3
+    pyItkls2D = PyModule_Create(&Itkls2dmodule);
+#endif
     PyRunTimeErr2d = PyErr_NewException("Itkls2d.error",NULL,NULL);
     PyModule_AddObject(pyItkls2D,"error",PyRunTimeErr2d);
     Py_INCREF(&pyLevelSetType);

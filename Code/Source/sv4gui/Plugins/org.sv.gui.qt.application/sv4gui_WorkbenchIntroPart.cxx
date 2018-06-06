@@ -54,8 +54,13 @@
 #include <QMessageBox>
 #include <QtCore/qconfig.h>
 
+#if Qt5_MINOR_VERSION == 4
 #include <QWebView>
 #include <QWebPage>
+#else
+#include <QWebEngineView>
+#include <QWebEnginePage>
+#endif
 #include <QUrlQuery>
 
 #include <QString>
@@ -114,8 +119,12 @@ void sv4guiWorkbenchIntroPart::CreateQtPartControl(QWidget* parent)
         m_Controls = new Ui::svWelcomeScreenViewControls;
         m_Controls->setupUi(parent);
         // create a QWebView as well as a QWebPage and QWebFrame within the QWebview
+#if Qt5_MINOR_VERSION == 4
         m_view = new QWebView(parent);
         m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+#else
+        m_view = new QWebEngineView(parent);
+#endif
 
         QUrl urlQtResource(QString("qrc:/org.sv.gui.qt.welcomescreen/svworkbenchwelcomeview.html"),  QUrl::TolerantMode );
         m_view->load( urlQtResource );

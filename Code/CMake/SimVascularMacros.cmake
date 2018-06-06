@@ -411,6 +411,19 @@ endmacro()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Separate string by periods to get portions before and after first period
+macro(simvascular_get_major_minor_patch_version version major_version minor_version patch_version)
+  string(REPLACE "." ";" version_list ${version})
+  list(GET version_list 0 ${major_version})
+  list(GET version_list 1 ${minor_version})
+  list(LENGTH version_list version_list_length)
+  if (version_list_length GREATER 2)
+    list(GET version_list 2 ${patch_version})
+  endif()
+endmacro()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 #!
 #! See http://www.cmake.org/Wiki/CMakeMacroParseArguments
 #!
@@ -697,13 +710,13 @@ function(simvascular_create_plugin)
   qt5_add_resources(QRCSrcs ${QRC_FILES})
   set(MOC_OPTIONS "-DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
   foreach(moc_src ${MOC_H_FILES})
-    qt5_wrap_cpp(MOCSrcs ${moc_src} OPTIONS -f${moc_src} ${MOC_OPTIONS} TARGET ${lib_name})
+    qt5_wrap_cpp(MOCSrcs ${moc_src} OPTIONS -f${moc_src} ${MOC_OPTIONS} -DHAVE_QT5 TARGET ${lib_name})
   endforeach()
   #------------------------------------QT-------------------------------------
 
   #---------------------------------MANIFEST----------------------------------
   # If a file named manifest_headers.cmake exists, read it
-  set(CTK_QT_VERSION 5.4)
+  set(CTK_QT_VERSION "${Qt5_MAJOR_VERSION}.${Qt5_MINOR_VERSION}")
   set(manifest_headers_dep )
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
     include(${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
@@ -1120,7 +1133,7 @@ macro(simvascular_add_new_external proj version use shared dirname)
   mark_as_advanced(SV_USE_${proj}_QT_GUI)
 
   set(${proj}_VERSION "${version}" CACHE TYPE STRING)
-  simvascular_get_major_minor_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION)
+  simvascular_get_major_minor_patch_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION ${proj}_PATCH_VERSION)
   set(SV_EXT_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${dirname}-${${proj}_VERSION})
 
   # Install rules
@@ -1292,9 +1305,8 @@ macro(sv_externals_add_new_external proj version use shared dirname install_dirn
   #mark_as_advanced(SV_EXTERNALS_DOWNLOAD_${proj})
 
   # Version
-  set(SV_EXTERNALS_${proj}_VERSION "${version}" CACHE TYPE STRING)
-  mark_as_advanced(SV_EXTERNALS_${proj}_VERSION)
-  simvascular_get_major_minor_version(${SV_EXTERNALS_${proj}_VERSION} SV_EXTERNALS_${proj}_MAJOR_VERSION SV_EXTERNALS_${proj}_MINOR_VERSION)
+  set(SV_EXTERNALS_${proj}_VERSION "${version}")
+  simvascular_get_major_minor_patch_version(${SV_EXTERNALS_${proj}_VERSION} SV_EXTERNALS_${proj}_MAJOR_VERSION SV_EXTERNALS_${proj}_MINOR_VERSION SV_EXTERNALS_${proj}_PATCH_VERSION)
 
   # Src, bin, build, prefic dirs
   set(${proj}_VERSION_DIR ${dirname}-${SV_EXTERNALS_${proj}_VERSION})

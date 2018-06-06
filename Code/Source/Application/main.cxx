@@ -31,6 +31,7 @@
 
 #include "SimVascular.h"
 
+#include "simvascular_options.h"
 #ifdef SV_USE_QT_GUI
   #include <QApplication>
   #include <QDir>
@@ -763,7 +764,9 @@ RegCloseKey(hKey2);
        pluginsToStart.push_back("org_mitk_gui_qt_basicimageprocessing");
        pluginsToStart.push_back("org_mitk_gui_qt_dicom");
        pluginsToStart.push_back("org_mitk_gui_qt_geometrytools");
+#if MITK_MAJOR_VERSION == 2016
        pluginsToStart.push_back("org_mitk_gui_qt_imagecropper");
+#endif
        pluginsToStart.push_back("org_mitk_gui_qt_imagenavigator");
        pluginsToStart.push_back("org_mitk_gui_qt_measurementtoolbox");
        pluginsToStart.push_back("org_mitk_gui_qt_python");
@@ -912,7 +915,7 @@ int Tcl_AppInit( Tcl_Interp *interp )
 
   // store interp into a global variable
   gVtkTclInterp = interp;
-  
+
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
 

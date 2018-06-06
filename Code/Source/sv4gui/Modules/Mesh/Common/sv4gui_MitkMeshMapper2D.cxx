@@ -57,7 +57,11 @@
 #include <vtkExtractGeometry.h>
 #include <vtkDataSetMapper.h>
 #include <vtkDataSetSurfaceFilter.h>
+#if VTK_MAJOR_VERSION == 6
 #include <vtkPainterPolyDataMapper.h>
+#else
+#include <vtkOpenGLPolyDataMapper.h>
+#endif
 #include <vtkPlanes.h>
 
 sv4guiMitkMeshMapper2D::LocalStorage::LocalStorage()
@@ -266,7 +270,11 @@ void sv4guiMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *render
         surfaceFilter->Update();
         vtkSmartPointer<vtkPolyData> meshPolydata = surfaceFilter->GetOutput();
 
+#if VTK_MAJOR_VERSION == 6
         vtkSmartPointer<vtkPainterPolyDataMapper> meshMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+#else
+        vtkSmartPointer<vtkOpenGLPolyDataMapper> meshMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+#endif
         meshMapper->SetInputData(meshPolydata);
 
         vtkSmartPointer<vtkActor> meshActor= vtkSmartPointer<vtkActor>::New();

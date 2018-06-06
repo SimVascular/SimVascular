@@ -117,7 +117,7 @@ install(FILES
 install(DIRECTORY "${SV_SOURCE_DIR}/CMake"
   DESTINATION "${SV_INSTALL_CMAKE_DIR}" COMPONENT CMake)
 
-install(DIRECTORY "${SV_SOURCE_DIR}/../Externals/CMakeExternals"
+install(DIRECTORY "${SV_SOURCE_DIR}/../Externals/CMake"
   DESTINATION "${SV_INSTALL_CMAKE_DIR}/Externals" COMPONENT CMake)
 install(FILES "${SV_SOURCE_DIR}/../Externals/CMakeLists.txt"
   DESTINATION "${SV_INSTALL_CMAKE_DIR}/Externals" COMPONENT CMake)

@@ -61,11 +61,11 @@ Project(SV_EXTERNALS)
 
 #-----------------------------------------------------------------------------
 # CMake module path for both us and the real simvascular
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals"
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
   "${CMAKE_MODULE_PATH}")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../Code/CMake"
   "${CMAKE_MODULE_PATH}")
-set(SV_EXTERNALS_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals")
+set(SV_EXTERNALS_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -91,6 +91,7 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # Initial options
 set(SV_EXTERNALS_LIST "")
+include(SvExtVersions)
 include(SvExtOptions)
 #-----------------------------------------------------------------------------
 

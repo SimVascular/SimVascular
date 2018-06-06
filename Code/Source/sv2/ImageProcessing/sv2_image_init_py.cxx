@@ -60,7 +60,6 @@
 #endif
 
 #include "sv2_globals.h"
-#ifdef SV_USE_PYTHON
 
 PyObject *ImgErr;
 PyObject *Image_ReadHeaderCmd(PyObject *self, PyObject *args);
@@ -72,9 +71,13 @@ PyObject *Image_ThresholdCmd(PyObject* self, PyObject* args);
 PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args);
 PyObject *Image_FindPathCmd(PyObject *self, PyObject *args);
 PyObject *Image_MaskInPlaceCmd(PyObject *self, PyObject *args);
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC
 initpyImage(void);
-
+#elif PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC
+PyInit_pyImage(void);
+#endif
 
 // ----------
 // Image_Init
@@ -82,7 +85,13 @@ initpyImage(void);
 int Image_pyInit()
 {
   Py_Initialize();
+
+#if PYTHON_MAJOR_VERSION == 2
   initpyImage();
+#elif PYTHON_MAJOR_VERSION == 3
+  PyInit_pyImage();
+#endif
+
 
   return Py_OK;
 
@@ -1333,20 +1342,48 @@ PyMethodDef pyImage_methods[] = {
   {NULL, NULL,0,NULL},
   };
 
+#if PYTHON_MAJOR_VERSION == 3
+static struct PyModuleDef pyImagemodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyImage",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyImage_methods
+};
+#endif
 
 // --------------------
 // initpyImage
 // --------------------
+#if PYTHON_MAJOR_VERSION == 2
+
 PyMODINIT_FUNC
 initpyImage(void)
 {
-PyObject *pyIm;
+  PyObject *pyIm;
 
-pyIm = Py_InitModule("pyImage",pyImage_methods);
+  pyIm = Py_InitModule("pyImage",pyImage_methods);
 
-ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
-Py_INCREF(ImgErr);
-PyModule_AddObject(pyIm,"error",ImgErr);
+  ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
+  Py_INCREF(ImgErr);
+  PyModule_AddObject(pyIm,"error",ImgErr);
+  return;
+
+}
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC
+PyInit_pyImage(void)
+{
+  PyObject *pyIm;
+
+  pyIm = PyModule_Create(&pyImagemodule);
+  ImgErr = PyErr_NewException("pyImage.error",NULL,NULL);
+  Py_INCREF(ImgErr);
+  PyModule_AddObject(pyIm,"error",ImgErr);
+
+  return pyIm;
 }
 #endif
 

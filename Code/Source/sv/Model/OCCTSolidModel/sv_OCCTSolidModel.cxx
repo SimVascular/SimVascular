@@ -40,7 +40,9 @@
  */
 
 #include "SimVascular.h"
+
 #include "sv2_globals.h"
+#include "simvascular_options.h"
 
 #include "sv_OCCTSolidModel.h"
 #include "vtkPolyData.h"
@@ -1170,7 +1172,11 @@ int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
    }
    if (deleteFace[faceId] == 1) {
      BRepTools_ReShape remover;
-     remover.Remove(aFace,Standard_True);
+#if OpenCASCADE_MAJOR_VERSION == 7 && OpenCASCADE_MINOR_VERSION == 0
+     remover.Remove(aFace,Standard_True); // OpenCASCADE version 7.0.0
+#else
+     remover.Remove(aFace); // OpenCASCADE version 7.2.0
+#endif
      *geom_ = remover.Apply(*geom_,TopAbs_FACE);
      numFaces_--;
      //TDF_Label tmpLabel;
