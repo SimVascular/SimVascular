@@ -1148,6 +1148,202 @@ diff -rupN original/Plugins/PluginList.cmake patch/Plugins/PluginList.cmake
    org.mitk.gui.qt.overlaymanager:OFF
    org.mitk.gui.qt.igt.app.hummelprotocolmeasurements:OFF
    org.mitk.gui.qt.multilabelsegmentation:OFF
+diff -rupN original/Modules/QtWidgets/include/QmitkRenderWindow.h patch/Modules/QtWidgets/include/QmitkRenderWindow.h
+--- original/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-06-06 08:12:08.000000000 -0700
++++ patch/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-06-06 10:02:24.000000000 -0700
+@@ -88,6 +88,9 @@ public:
+   vtkRenderWindowInteractor *GetVtkRenderWindowInteractor() override { return nullptr; }
+   void FullScreenMode(bool state);
+ 
++  void SetWindowMenuEventAble(bool able);
++
++
+ protected:
+   // overloaded move handler
+   void moveEvent(QMoveEvent *event) override;
+diff -rupN original/Modules/QtWidgets/include/QmitkRenderWindowMenu.h patch/Modules/QtWidgets/include/QmitkRenderWindowMenu.h
+--- original/Modules/QtWidgets/include/QmitkRenderWindowMenu.h	2018-06-06 08:12:08.000000000 -0700
++++ patch/Modules/QtWidgets/include/QmitkRenderWindowMenu.h	2018-06-06 10:01:16.000000000 -0700
+@@ -95,6 +95,10 @@ is activated.*/
+ 
+   void NotifyNewWidgetPlanesMode(int mode);
+ 
++  void SetEventAble( bool able)
++  { m_EventAble=able; }
++
++
+ protected:
+   /*! Create menu widget. The menu contains five QPushButtons (hori-split, verti-split, full-screen, settings and close
+   button)
+@@ -322,6 +326,8 @@ protected:
+ 
+   bool m_Entered;
+ 
++  bool m_EventAble;
++
+ private:
+   mitk::BaseRenderer::Pointer m_Renderer;
+ 
+diff -rupN original/Modules/QtWidgets/src/QmitkRenderWindow.cpp patch/Modules/QtWidgets/src/QmitkRenderWindow.cpp
+--- original/Modules/QtWidgets/src/QmitkRenderWindow.cpp	2018-06-06 08:12:08.000000000 -0700
++++ patch/Modules/QtWidgets/src/QmitkRenderWindow.cpp	2018-06-06 10:03:54.000000000 -0700
+@@ -63,6 +63,11 @@ QmitkRenderWindow::~QmitkRenderWindow()
+   Destroy(); // Destroy mitkRenderWindowBase
+ }
+ 
++void QmitkRenderWindow::SetWindowMenuEventAble(bool able)
++{
++  m_MenuWidget->SetEventAble(able);
++}
++
+ void QmitkRenderWindow::SetResendQtEvents(bool resend)
+ {
+   m_ResendQtEvents = resend;
+diff -rupN original/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp patch/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp
+--- original/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp	2018-06-06 08:12:08.000000000 -0700
++++ patch/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp	2018-06-06 10:40:09.000000000 -0700
+@@ -67,6 +67,7 @@ QmitkRenderWindowMenu::QmitkRenderWindow
+     m_OldLayoutDesign(0),
+     m_FullScreenMode(false),
+     m_Entered(false),
++    m_EventAble(true),
+     m_Renderer(b),
+     m_MultiWidget(mw),
+     m_Parent(parent)
+@@ -261,10 +262,13 @@ void QmitkRenderWindowMenu::ShowMenu()
+ 
+ void QmitkRenderWindowMenu::enterEvent(QEvent * /*e*/)
+ {
+-  MITK_DEBUG << "menu enterEvent";
+-  DeferredShowMenu();
++  if(m_EventAble)
++  {
++    MITK_DEBUG << "menu enterEvent";
++    DeferredShowMenu();
+ 
+-  m_Entered = true;
++    m_Entered=true;
++  }
+ }
+ 
+ void QmitkRenderWindowMenu::DeferredHideMenu()
+@@ -356,7 +360,7 @@ void QmitkRenderWindowMenu::OnFullScreen
+     this->ChangeFullScreenIcon();
+   }
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ /// \brief
+@@ -379,7 +383,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_2DIMAGEUP;
+   emit SignalChangeLayoutDesign(LAYOUT_2DIMAGEUP);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutTo2DImagesLeft(bool)
+ {
+@@ -390,7 +394,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_2DIMAGELEFT;
+   emit SignalChangeLayoutDesign(LAYOUT_2DIMAGELEFT);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToDefault(bool)
+ {
+@@ -401,7 +405,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_DEFAULT;
+   emit SignalChangeLayoutDesign(LAYOUT_DEFAULT);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ void QmitkRenderWindowMenu::DeferredShowMenu()
+@@ -432,7 +436,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_BIG3D;
+   emit SignalChangeLayoutDesign(LAYOUT_BIG3D);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ void QmitkRenderWindowMenu::OnChangeLayoutToWidget1(bool)
+@@ -444,7 +448,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_AXIAL;
+   emit SignalChangeLayoutDesign(LAYOUT_AXIAL);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToWidget2(bool)
+ {
+@@ -455,7 +459,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_SAGITTAL;
+   emit SignalChangeLayoutDesign(LAYOUT_SAGITTAL);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToWidget3(bool)
+ {
+@@ -466,7 +470,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_CORONAL;
+   emit SignalChangeLayoutDesign(LAYOUT_CORONAL);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToRowWidget3And4(bool)
+ {
+@@ -477,7 +481,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_ROWWIDGET3AND4;
+   emit SignalChangeLayoutDesign(LAYOUT_ROWWIDGET3AND4);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToColumnWidget3And4(bool)
+ {
+@@ -488,7 +492,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_COLUMNWIDGET3AND4;
+   emit SignalChangeLayoutDesign(LAYOUT_COLUMNWIDGET3AND4);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ void QmitkRenderWindowMenu::OnChangeLayoutToSmallUpperWidget2Big3and4(bool)
+@@ -500,7 +504,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_SMALLUPPERWIDGET2BIGAND4;
+   emit SignalChangeLayoutDesign(LAYOUT_SMALLUPPERWIDGET2BIGAND4);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutTo2x2Dand3DWidget(bool)
+ {
+@@ -511,7 +515,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_2X2DAND3DWIDGET;
+   emit SignalChangeLayoutDesign(LAYOUT_2X2DAND3DWIDGET);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToLeft2Dand3DRight2D(bool)
+ {
+@@ -522,7 +526,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_LEFT2DAND3DRIGHT2D;
+   emit SignalChangeLayoutDesign(LAYOUT_LEFT2DAND3DRIGHT2D);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ void QmitkRenderWindowMenu::UpdateLayoutDesignList(int layoutDesignIndex)
 diff -rupN original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp patch/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp
 --- original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp	2018-02-26 16:59:22.000000000 -0800
 +++ patch/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp	2018-04-18 12:00:01.000000000 -0700

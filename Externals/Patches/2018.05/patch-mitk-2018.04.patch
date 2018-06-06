@@ -457,57 +457,1078 @@ diff -rupN original/Modules/Python/autoload/PythonService/mitkPythonService.cpp 
  #endif
        dlerror();
        if(dlopen(library, RTLD_NOW | RTLD_GLOBAL) == 0 )
-diff -rupN original/Plugins/PluginList.cmake patch/Plugins/PluginList.cmake
---- original/Plugins/PluginList.cmake	2018-02-26 16:59:24.000000000 -0800
-+++ patch/Plugins/PluginList.cmake	2018-04-18 12:01:23.000000000 -0700
-@@ -35,8 +35,8 @@ set(MITK_PLUGINS
-   org.mitk.gui.qt.datamanager:ON
-   org.mitk.gui.qt.datamanagerlight:OFF
-   org.mitk.gui.qt.properties:ON
--  org.mitk.gui.qt.basicimageprocessing:OFF
--  org.mitk.gui.qt.dicom:OFF
-+  org.mitk.gui.qt.basicimageprocessing:ON
-+  org.mitk.gui.qt.dicom:ON
-   org.mitk.gui.qt.dicominspector:OFF
-   org.mitk.gui.qt.diffusionimaging:OFF
-   org.mitk.gui.qt.diffusionimaging.connectomics:OFF
-@@ -53,20 +53,20 @@ set(MITK_PLUGINS
-   org.mitk.gui.qt.diffusionimaging.tractography:OFF
-   org.mitk.gui.qt.diffusionimaging.python:OFF
-   org.mitk.gui.qt.dosevisualization:OFF
--  org.mitk.gui.qt.geometrytools:OFF
-+  org.mitk.gui.qt.geometrytools:ON
-   org.mitk.gui.qt.igtexamples:OFF
-   org.mitk.gui.qt.igttracking:OFF
-   org.mitk.gui.qt.lasercontrol:OFF
-   org.mitk.gui.qt.openigtlink:OFF
--  org.mitk.gui.qt.imagecropper:OFF
-+  org.mitk.gui.qt.imagecropper:ON
-   org.mitk.gui.qt.imagenavigator:ON
-   org.mitk.gui.qt.viewnavigator:OFF
-   org.mitk.gui.qt.materialeditor:OFF
--  org.mitk.gui.qt.measurementtoolbox:OFF
-+  org.mitk.gui.qt.measurementtoolbox:ON
-   org.mitk.gui.qt.moviemaker:OFF
-   org.mitk.gui.qt.pointsetinteraction:OFF
-   org.mitk.gui.qt.pointsetinteractionmultispectrum:OFF
--  org.mitk.gui.qt.python:OFF
-+  org.mitk.gui.qt.python:ON
-   org.mitk.gui.qt.remeshing:OFF
-   org.mitk.gui.qt.segmentation:OFF
-   org.mitk.gui.qt.aicpregistration:OFF
-@@ -79,12 +79,12 @@ set(MITK_PLUGINS
-   org.mitk.gui.qt.photoacoustics.imageprocessing:OFF
-   org.mitk.gui.qt.photoacoustics.simulation:OFF
-   org.mitk.gui.qt.ultrasound:OFF
--  org.mitk.gui.qt.volumevisualization:OFF
-+  org.mitk.gui.qt.volumevisualization:ON
-   org.mitk.gui.qt.eventrecorder:OFF
-   org.mitk.gui.qt.xnat:OFF
-   org.mitk.gui.qt.igt.app.echotrack:OFF
-   org.mitk.gui.qt.spectrocamrecorder:OFF
--  org.mitk.gui.qt.classificationsegmentation:OFF
-+  org.mitk.gui.qt.classificationsegmentation:ON
-   org.mitk.gui.qt.overlaymanager:OFF
-   org.mitk.gui.qt.igt.app.hummelprotocolmeasurements:OFF
-   org.mitk.gui.qt.multilabelsegmentation:OFF
+diff -rupN original/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp patch/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp
+--- original/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp	2018-02-26 17:02:33.000000000 -0800
++++ patch/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp	2018-04-18 11:48:30.000000000 -0700
+@@ -456,10 +456,13 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
+ 
+   // Set Layout to widget
+   this->setLayout(QmitkStdMultiWidgetLayout);
+ 
++  QSplitter* previousMainSplit=m_MainSplit;
++
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+   QmitkStdMultiWidgetLayout->addWidget(m_MainSplit);
+@@ -479,6 +482,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   m_SubSplit1->addWidget(mitkWidget1Container);
+   m_SubSplit1->addWidget(mitkWidget2Container);
+   m_SubSplit1->addWidget(mitkWidget3Container);
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget3->SetWindowMenuEventAble(true);
+ 
+   // set SplitterSize for splitter top
+   QList<int> splitterSize;
+@@ -489,6 +495,7 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // insert Widget Container into splitter bottom
+   m_SubSplit2->addWidget(mitkWidget4Container);
++  mitkWidget4->SetWindowMenuEventAble(true);
+ 
+   // set SplitterSize for splitter m_LayoutSplit
+   splitterSize.clear();
+@@ -518,6 +525,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_2D_IMAGES_UP);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_2D_IMAGES_UP);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -533,6 +543,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -553,6 +569,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   m_SubSplit1->addWidget(mitkWidget1Container);
+   m_SubSplit1->addWidget(mitkWidget2Container);
+   m_SubSplit1->addWidget(mitkWidget3Container);
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget3->SetWindowMenuEventAble(true);
+ 
+   // set splitterSize of SubSplit1
+   QList<int> splitterSize;
+@@ -562,6 +581,7 @@ void QmitkStdMultiWidget::changeLayoutTo
+   m_SubSplit1->setSizes(splitterSize);
+ 
+   m_SubSplit2->addWidget(mitkWidget4Container);
++  mitkWidget4->SetWindowMenuEventAble(true);
+ 
+   // set splitterSize of Layout Split
+   splitterSize.clear();
+@@ -591,6 +611,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_2D_IMAGES_LEFT);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_2D_IMAGES_LEFT);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -664,6 +687,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -687,6 +716,11 @@ void QmitkStdMultiWidget::changeLayoutTo
+   m_SubSplit2->addWidget(mitkWidget3Container);
+   m_SubSplit2->addWidget(mitkWidget4Container);
+ 
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget3->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
+   // set splitter Size
+   QList<int> splitterSize;
+   splitterSize.push_back(1000);
+@@ -716,6 +750,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_DEFAULT);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_DEFAULT);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -731,6 +768,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -738,6 +781,20 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // add widget Splitter to main Splitter
+   m_MainSplit->addWidget(mitkWidget4Container);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget2Container);
++  layoutTemp->addWidget(mitkWidget3Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // add LevelWindow Widget to mainSplitter
+   m_MainSplit->addWidget(levelWindowWidget);
+@@ -760,6 +817,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_BIG_3D);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_BIG_3D);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+   mitk::RenderingManager::GetInstance()->SetRenderWindowFocus(mitkWidget4->GetVtkRenderWindow());
+@@ -776,6 +836,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -783,6 +849,20 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // add widget Splitter to main Splitter
+   m_MainSplit->addWidget(mitkWidget1Container);
++  mitkWidget1->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget2Container);
++  layoutTemp->addWidget(mitkWidget3Container);
++  layoutTemp->addWidget(mitkWidget4Container);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  mitkWidget4->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // add LevelWindow Widget to mainSplitter
+   m_MainSplit->addWidget(levelWindowWidget);
+@@ -805,6 +885,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_WIDGET1);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_WIDGET1);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ 
+@@ -822,6 +905,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -829,6 +918,20 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // add widget Splitter to main Splitter
+   m_MainSplit->addWidget(mitkWidget2Container);
++  mitkWidget2->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget3Container);
++  layoutTemp->addWidget(mitkWidget4Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  mitkWidget4->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // add LevelWindow Widget to mainSplitter
+   m_MainSplit->addWidget(levelWindowWidget);
+@@ -851,6 +954,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_WIDGET2);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_WIDGET2);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+   mitk::RenderingManager::GetInstance()->SetRenderWindowFocus(mitkWidget2->GetVtkRenderWindow());
+@@ -867,6 +973,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -874,6 +986,20 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // add widget Splitter to main Splitter
+   m_MainSplit->addWidget(mitkWidget3Container);
++  mitkWidget3->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget2Container);
++  layoutTemp->addWidget(mitkWidget4Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  mitkWidget4->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // add LevelWindow Widget to mainSplitter
+   m_MainSplit->addWidget(levelWindowWidget);
+@@ -896,6 +1022,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_WIDGET3);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_WIDGET3);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+   mitk::RenderingManager::GetInstance()->SetRenderWindowFocus(mitkWidget3->GetVtkRenderWindow());
+@@ -912,6 +1041,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -927,6 +1062,19 @@ void QmitkStdMultiWidget::changeLayoutTo
+   // add Widgets to splitter
+   m_LayoutSplit->addWidget(mitkWidget3Container);
+   m_LayoutSplit->addWidget(mitkWidget4Container);
++  mitkWidget3->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget2Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // set Splitter Size
+   QList<int> splitterSize;
+@@ -953,6 +1101,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_ROW_WIDGET_3_AND_4);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_ROW_WIDGET_3_AND_4);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -968,6 +1119,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -983,6 +1140,19 @@ void QmitkStdMultiWidget::changeLayoutTo
+   // add Widgets to splitter
+   m_LayoutSplit->addWidget(mitkWidget3Container);
+   m_LayoutSplit->addWidget(mitkWidget4Container);
++  mitkWidget3->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  layoutTemp->addWidget(mitkWidget2Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  mitkWidget2->SetWindowMenuEventAble(false);
++ widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // set SplitterSize
+   QList<int> splitterSize;
+@@ -1009,6 +1179,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_COLUMN_WIDGET_3_AND_4);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_COLUMN_WIDGET_3_AND_4);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -1033,6 +1206,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -1054,6 +1233,18 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   m_SubSplit2->addWidget(mitkWidget3Container);
+   m_SubSplit2->addWidget(mitkWidget4Container);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget3->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget1Container);
++  mitkWidget1->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // set Splitter Size
+   QList<int> splitterSize;
+@@ -1085,6 +1276,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_SMALL_UPPER_WIDGET2_BIG3_AND4);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_SMALL_UPPER_WIDGET2_BIG3_AND4);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -1100,6 +1294,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -1120,6 +1320,18 @@ void QmitkStdMultiWidget::changeLayoutTo
+   m_SubSplit1->addWidget(mitkWidget1Container);
+   m_SubSplit1->addWidget(mitkWidget2Container);
+   m_SubSplit2->addWidget(mitkWidget4Container);
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget3Container);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // set Splitter Size
+   QList<int> splitterSize;
+@@ -1148,6 +1360,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_2X_2D_AND_3D_WIDGET);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_2X_2D_AND_3D_WIDGET);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -1163,6 +1378,12 @@ void QmitkStdMultiWidget::changeLayoutTo
+ 
+   // create Main Layout
+   QmitkStdMultiWidgetLayout = new QHBoxLayout(this);
++  QmitkStdMultiWidgetLayout->setContentsMargins(0,0,0,0);
++
++  //Set Layout to widget
++  this->setLayout(QmitkStdMultiWidgetLayout);
++
++  QSplitter* previousMainSplit=m_MainSplit;
+ 
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+@@ -1183,6 +1404,18 @@ void QmitkStdMultiWidget::changeLayoutTo
+   m_SubSplit1->addWidget(mitkWidget1Container);
+   m_SubSplit1->addWidget(mitkWidget4Container);
+   m_SubSplit2->addWidget(mitkWidget2Container);
++  mitkWidget1->SetWindowMenuEventAble(true);
++  mitkWidget4->SetWindowMenuEventAble(true);
++  mitkWidget2->SetWindowMenuEventAble(true);
++
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget3Container);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
+ 
+   // set Splitter Size
+   QList<int> splitterSize;
+@@ -1211,6 +1444,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_2D_AND_3D_LEFT_2D_RIGHT_WIDGET);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_2D_AND_3D_LEFT_2D_RIGHT_WIDGET);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update Alle Widgets
+   this->UpdateAllWidgets();
+ }
+@@ -1235,6 +1471,8 @@ void QmitkStdMultiWidget::changeLayoutTo
+   // Set Layout to widget
+   this->setLayout(QmitkStdMultiWidgetLayout);
+ 
++  QSplitter* previousMainSplit=m_MainSplit;
++
+   // create main splitter
+   m_MainSplit = new QSplitter(this);
+   QmitkStdMultiWidgetLayout->addWidget(m_MainSplit);
+@@ -1255,12 +1491,15 @@ void QmitkStdMultiWidget::changeLayoutTo
+   {
+   case 1:
+     m_SubSplit1->addWidget(mitkWidget1Container);
++    mitkWidget1->SetWindowMenuEventAble(true);
+     break;
+   case 2:
+     m_SubSplit1->addWidget(mitkWidget2Container);
++    mitkWidget2->SetWindowMenuEventAble(true);
+     break;
+   case 3:
+     m_SubSplit1->addWidget(mitkWidget3Container);
++    mitkWidget3->SetWindowMenuEventAble(true);
+     break;
+   }
+ 
+@@ -1268,12 +1509,24 @@ void QmitkStdMultiWidget::changeLayoutTo
+   QList<int> splitterSize;
+   // insert Widget Container into splitter bottom
+   m_SubSplit2->addWidget(mitkWidget4Container);
++  mitkWidget4->SetWindowMenuEventAble(true);
+   // set SplitterSize for splitter m_LayoutSplit
+   splitterSize.clear();
+   splitterSize.push_back(700);
+   splitterSize.push_back(700);
+   m_LayoutSplit->setSizes(splitterSize);
+ 
++  QWidget* widgetTemp=new QWidget(this);
++  QHBoxLayout* layoutTemp= new QHBoxLayout(widgetTemp);
++  layoutTemp->setContentsMargins(0,0,0,0);
++  widgetTemp->setLayout(layoutTemp);
++  layoutTemp->addWidget(mitkWidget2Container);
++  layoutTemp->addWidget(mitkWidget3Container);
++  mitkWidget2->SetWindowMenuEventAble(false);
++  mitkWidget3->SetWindowMenuEventAble(false);
++  widgetTemp->hide();
++  QmitkStdMultiWidgetLayout->addWidget(widgetTemp);
++
+   // show mainSplitt
+   m_MainSplit->show();
+ 
+@@ -1312,6 +1565,9 @@ void QmitkStdMultiWidget::changeLayoutTo
+   mitkWidget3->LayoutDesignListChanged(LAYOUT_2D_UP_AND_3D_DOWN);
+   mitkWidget4->LayoutDesignListChanged(LAYOUT_2D_UP_AND_3D_DOWN);
+ 
++  if(previousMainSplit)
++    delete previousMainSplit;
++
+   // update all Widgets
+   this->UpdateAllWidgets();
+ }
+diff -rupN original/Modules/QtWidgets/include/QmitkRenderWindow.h patch/Modules/QtWidgets/include/QmitkRenderWindow.h
+--- original/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-06-06 08:12:08.000000000 -0700
++++ patch/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-06-06 10:02:24.000000000 -0700
+@@ -88,6 +88,9 @@ public:
+   vtkRenderWindowInteractor *GetVtkRenderWindowInteractor() override { return nullptr; }
+   void FullScreenMode(bool state);
+ 
++  void SetWindowMenuEventAble(bool able);
++
++
+ protected:
+   // overloaded move handler
+   void moveEvent(QMoveEvent *event) override;
+diff -rupN original/Modules/QtWidgets/include/QmitkRenderWindowMenu.h patch/Modules/QtWidgets/include/QmitkRenderWindowMenu.h
+--- original/Modules/QtWidgets/include/QmitkRenderWindowMenu.h	2018-06-06 08:12:08.000000000 -0700
++++ patch/Modules/QtWidgets/include/QmitkRenderWindowMenu.h	2018-06-06 10:01:16.000000000 -0700
+@@ -95,6 +95,10 @@ is activated.*/
+ 
+   void NotifyNewWidgetPlanesMode(int mode);
+ 
++  void SetEventAble( bool able)
++  { m_EventAble=able; }
++
++
+ protected:
+   /*! Create menu widget. The menu contains five QPushButtons (hori-split, verti-split, full-screen, settings and close
+   button)
+@@ -322,6 +326,8 @@ protected:
+ 
+   bool m_Entered;
+ 
++  bool m_EventAble;
++
+ private:
+   mitk::BaseRenderer::Pointer m_Renderer;
+ 
+diff -rupN original/Modules/QtWidgets/src/QmitkRenderWindow.cpp patch/Modules/QtWidgets/src/QmitkRenderWindow.cpp
+--- original/Modules/QtWidgets/src/QmitkRenderWindow.cpp	2018-06-06 08:12:08.000000000 -0700
++++ patch/Modules/QtWidgets/src/QmitkRenderWindow.cpp	2018-06-06 10:03:54.000000000 -0700
+@@ -63,6 +63,11 @@ QmitkRenderWindow::~QmitkRenderWindow()
+   Destroy(); // Destroy mitkRenderWindowBase
+ }
+ 
++void QmitkRenderWindow::SetWindowMenuEventAble(bool able)
++{
++  m_MenuWidget->SetEventAble(able);
++}
++
+ void QmitkRenderWindow::SetResendQtEvents(bool resend)
+ {
+   m_ResendQtEvents = resend;
+diff -rupN original/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp patch/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp
+--- original/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp	2018-06-06 08:12:08.000000000 -0700
++++ patch/Modules/QtWidgets/src/QmitkRenderWindowMenu.cpp	2018-06-06 10:40:09.000000000 -0700
+@@ -67,6 +67,7 @@ QmitkRenderWindowMenu::QmitkRenderWindow
+     m_OldLayoutDesign(0),
+     m_FullScreenMode(false),
+     m_Entered(false),
++    m_EventAble(true),
+     m_Renderer(b),
+     m_MultiWidget(mw),
+     m_Parent(parent)
+@@ -261,10 +262,13 @@ void QmitkRenderWindowMenu::ShowMenu()
+ 
+ void QmitkRenderWindowMenu::enterEvent(QEvent * /*e*/)
+ {
+-  MITK_DEBUG << "menu enterEvent";
+-  DeferredShowMenu();
++  if(m_EventAble)
++  {
++    MITK_DEBUG << "menu enterEvent";
++    DeferredShowMenu();
+ 
+-  m_Entered = true;
++    m_Entered=true;
++  }
+ }
+ 
+ void QmitkRenderWindowMenu::DeferredHideMenu()
+@@ -356,7 +360,7 @@ void QmitkRenderWindowMenu::OnFullScreen
+     this->ChangeFullScreenIcon();
+   }
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ /// \brief
+@@ -379,7 +383,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_2DIMAGEUP;
+   emit SignalChangeLayoutDesign(LAYOUT_2DIMAGEUP);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutTo2DImagesLeft(bool)
+ {
+@@ -390,7 +394,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_2DIMAGELEFT;
+   emit SignalChangeLayoutDesign(LAYOUT_2DIMAGELEFT);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToDefault(bool)
+ {
+@@ -401,7 +405,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_DEFAULT;
+   emit SignalChangeLayoutDesign(LAYOUT_DEFAULT);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ void QmitkRenderWindowMenu::DeferredShowMenu()
+@@ -432,7 +436,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_BIG3D;
+   emit SignalChangeLayoutDesign(LAYOUT_BIG3D);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ void QmitkRenderWindowMenu::OnChangeLayoutToWidget1(bool)
+@@ -444,7 +448,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_AXIAL;
+   emit SignalChangeLayoutDesign(LAYOUT_AXIAL);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToWidget2(bool)
+ {
+@@ -455,7 +459,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_SAGITTAL;
+   emit SignalChangeLayoutDesign(LAYOUT_SAGITTAL);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToWidget3(bool)
+ {
+@@ -466,7 +470,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_CORONAL;
+   emit SignalChangeLayoutDesign(LAYOUT_CORONAL);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToRowWidget3And4(bool)
+ {
+@@ -477,7 +481,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_ROWWIDGET3AND4;
+   emit SignalChangeLayoutDesign(LAYOUT_ROWWIDGET3AND4);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToColumnWidget3And4(bool)
+ {
+@@ -488,7 +492,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_COLUMNWIDGET3AND4;
+   emit SignalChangeLayoutDesign(LAYOUT_COLUMNWIDGET3AND4);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ void QmitkRenderWindowMenu::OnChangeLayoutToSmallUpperWidget2Big3and4(bool)
+@@ -500,7 +504,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_SMALLUPPERWIDGET2BIGAND4;
+   emit SignalChangeLayoutDesign(LAYOUT_SMALLUPPERWIDGET2BIGAND4);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutTo2x2Dand3DWidget(bool)
+ {
+@@ -511,7 +515,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_2X2DAND3DWIDGET;
+   emit SignalChangeLayoutDesign(LAYOUT_2X2DAND3DWIDGET);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ void QmitkRenderWindowMenu::OnChangeLayoutToLeft2Dand3DRight2D(bool)
+ {
+@@ -522,7 +526,7 @@ void QmitkRenderWindowMenu::OnChangeLayo
+   m_LayoutDesign = LAYOUT_LEFT2DAND3DRIGHT2D;
+   emit SignalChangeLayoutDesign(LAYOUT_LEFT2DAND3DRIGHT2D);
+ 
+-  DeferredShowMenu();
++  DeferredHideMenu();
+ }
+ 
+ void QmitkRenderWindowMenu::UpdateLayoutDesignList(int layoutDesignIndex)
+diff -rupN original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp patch/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp
+--- original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp	2018-06-06 08:12:10.000000000 -0700
++++ patch/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp	2018-06-06 08:27:06.000000000 -0700
+@@ -439,6 +439,16 @@ void QmitkStdMultiWidgetEditor::OnPrefer
+   bool newMode = prefs->GetBool("PACS like mouse interaction", false);
+   d->m_MouseModeToolbar->setVisible( newMode );
+   d->m_StdMultiWidget->GetMouseModeSwitcher()->SetInteractionScheme( newMode ? mitk::MouseModeSwitcher::PACS : mitk::MouseModeSwitcher::MITK );
++
++  bool showLogo = prefs->GetBool("Show Department Logo", false);
++  if(showLogo)
++  {
++    d->m_StdMultiWidget->EnableDepartmentLogo();
++  }
++  else
++  {
++    d->m_StdMultiWidget->DisableDepartmentLogo();
++  }
+ }
+ 
+ mitk::Color QmitkStdMultiWidgetEditor::HexColorToMitkColor(const QString& widgetColorInHex)
+diff -rupN original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp patch/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp
+--- original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp	2018-06-06 08:12:10.000000000 -0700
++++ patch/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp	2018-06-06 08:27:51.000000000 -0700
+@@ -109,6 +109,7 @@ bool QmitkStdMultiWidgetEditorPreference
+   m_Preferences->PutBool("Show level/window widget", m_Ui->m_ShowLevelWindowWidget->isChecked());
+   m_Preferences->PutBool("PACS like mouse interaction", m_Ui->m_PACSLikeMouseMode->isChecked());
+   m_Preferences->PutInt("Rendering Mode", m_Ui->m_RenderingMode->currentIndex());
++  m_Preferences->PutBool("Show Department Logo", m_Ui->m_ShowDepartmentLogo->isChecked());
+ 
+   return true;
+ }
+@@ -158,6 +159,7 @@ void QmitkStdMultiWidgetEditorPreference
+   m_Ui->m_PACSLikeMouseMode->setChecked(m_Preferences->GetBool("PACS like mouse interaction", false));
+   int mode= m_Preferences->GetInt("Rendering Mode",0);
+   m_Ui->m_RenderingMode->setCurrentIndex(mode);
++  m_Ui->m_ShowDepartmentLogo->setChecked(m_Preferences->GetBool("Show Department Logo", false));
+   m_Ui->m_CrosshairGapSize->setValue(m_Preferences->GetInt("crosshair gap size", 32));
+ }
+ 
+diff -rupN original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui patch/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui
+--- original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2018-06-06 08:12:10.000000000 -0700
++++ patch/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2018-06-06 08:24:53.000000000 -0700
+@@ -7,14 +7,43 @@
+     <x>0</x>
+     <y>0</y>
+     <width>518</width>
+-    <height>431</height>
++    <height>419</height>
+    </rect>
+   </property>
+   <property name="windowTitle">
+    <string>External Programs</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+-   <item row="10" column="1">
++   <property name="verticalSpacing">
++    <number>6</number>
++   </property>
++   <item row="2" column="0" colspan="3">
++    <widget class="QCheckBox" name="m_PACSLikeMouseMode">
++     <property name="layoutDirection">
++      <enum>Qt::LeftToRight</enum>
++     </property>
++     <property name="text">
++      <string>Use PACS like mouse interaction (select left mouse button action)</string>
++     </property>
++     <property name="tristate">
++      <bool>false</bool>
++     </property>
++    </widget>
++   </item>
++   <item row="1" column="0" colspan="3">
++    <widget class="QCheckBox" name="m_ShowLevelWindowWidget">
++     <property name="layoutDirection">
++      <enum>Qt::LeftToRight</enum>
++     </property>
++     <property name="text">
++      <string>Show level/window widget</string>
++     </property>
++     <property name="checked">
++      <bool>true</bool>
++     </property>
++    </widget>
++   </item>
++   <item row="11" column="1">
+     <widget class="QComboBox" name="m_RenderWindowChooser">
+      <item>
+       <property name="text">
+@@ -48,74 +77,41 @@
+      </property>
+     </widget>
+    </item>
+-   <item row="15" column="0">
+-    <widget class="QPushButton" name="m_ResetButton">
++   <item row="12" column="1">
++    <widget class="QPushButton" name="m_ColorButton1">
+      <property name="text">
+-      <string>Reset preferences</string>
++      <string/>
+      </property>
+     </widget>
+    </item>
+-   <item row="6" column="1" colspan="2">
+-    <widget class="QComboBox" name="m_RenderingMode">
+-     <item>
+-      <property name="text">
+-       <string>Standard Rendering</string>
+-      </property>
+-     </item>
+-    </widget>
+-   </item>
+-   <item row="7" column="0" colspan="3">
++   <item row="8" column="0" colspan="3">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>* Changes require restart of MITK.</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="9" column="1">
+-    <widget class="QSpinBox" name="m_CrosshairGapSize">
+-     <property name="value">
+-      <number>32</number>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="8" column="0" colspan="3">
+-    <widget class="Line" name="line_3">
+-     <property name="orientation">
+-      <enum>Qt::Horizontal</enum>
+-     </property>
+-    </widget>
++   <item row="15" column="1" colspan="2">
++    <widget class="QLineEdit" name="m_RenderWindowDecorationText"/>
+    </item>
+    <item row="14" column="0">
+-    <widget class="QLabel" name="label_8">
+-     <property name="toolTip">
+-      <string>The small text on the button left of each renderwindow.</string>
+-     </property>
+-     <property name="text">
+-      <string>Corner annotation</string>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="9" column="0">
+-    <widget class="QLabel" name="label_9">
++    <widget class="QLabel" name="label_7">
+      <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gap in the middle of the crosshair in pixels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The color is used for the following decorations (of each renderwindow):&lt;/p&gt;&lt;p&gt;Rectangle border&lt;/p&gt;&lt;p&gt;Corner annotation&lt;/p&gt;&lt;p&gt;Crosshair&lt;/p&gt;&lt;p&gt;Plane geometry helper objects (3D Planes)&lt;/p&gt;&lt;p&gt;Image navigator borders&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+-      <string>Crosshair gap size</string>
++      <string>Decoration color</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="13" column="0">
+-    <widget class="QLabel" name="label_7">
+-     <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The color is used for the following decorations (of each renderwindow):&lt;/p&gt;&lt;p&gt;Rectangle border&lt;/p&gt;&lt;p&gt;Corner annotation&lt;/p&gt;&lt;p&gt;Crosshair&lt;/p&gt;&lt;p&gt;Plane geometry helper objects (3D Planes)&lt;/p&gt;&lt;p&gt;Image navigator borders&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+-     </property>
++   <item row="7" column="0">
++    <widget class="QLabel" name="label_5">
+      <property name="text">
+-      <string>Decoration color</string>
++      <string>Rendering Mode*</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="13" column="1">
++   <item row="14" column="1">
+     <widget class="QPushButton" name="m_RenderWindowDecorationColor">
+      <property name="text">
+       <string/>
+@@ -123,67 +119,77 @@
+     </widget>
+    </item>
+    <item row="10" column="0">
+-    <widget class="QLabel" name="label_6">
++    <widget class="QLabel" name="label_9">
+      <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the renderwindow from the multi widget.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gap in the middle of the crosshair in pixels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+-      <string>Render windows</string>
++      <string>Crosshair gap size</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="1" column="0" colspan="3">
+-    <widget class="QCheckBox" name="m_ShowLevelWindowWidget">
+-     <property name="layoutDirection">
+-      <enum>Qt::LeftToRight</enum>
++   <item row="9" column="0" colspan="3">
++    <widget class="Line" name="line_3">
++     <property name="orientation">
++      <enum>Qt::Horizontal</enum>
+      </property>
+-     <property name="text">
+-      <string>Show level/window widget</string>
++    </widget>
++   </item>
++   <item row="12" column="0">
++    <widget class="QLabel" name="label_2">
++     <property name="toolTip">
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If two colors are set, a gradient background is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+-     <property name="checked">
+-      <bool>true</bool>
++     <property name="text">
++      <string>Background color</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="2" column="0" colspan="3">
+-    <widget class="QCheckBox" name="m_PACSLikeMouseMode">
+-     <property name="layoutDirection">
+-      <enum>Qt::LeftToRight</enum>
++   <item row="7" column="1" colspan="2">
++    <widget class="QComboBox" name="m_RenderingMode">
++     <item>
++      <property name="text">
++       <string>Standard Rendering</string>
++      </property>
++     </item>
++     <item>
++      <property name="text">
++       <string>Enable Multisampling (Antialiasing)</string>
++      </property>
++     </item>
++     <item>
++      <property name="text">
++       <string>Enable Depth Peeling</string>
++      </property>
++     </item>
++    </widget>
++   </item>
++   <item row="15" column="0">
++    <widget class="QLabel" name="label_8">
++     <property name="toolTip">
++      <string>The small text on the button left of each renderwindow.</string>
+      </property>
+      <property name="text">
+-      <string>Use PACS like mouse interaction (select left mouse button action)</string>
+-     </property>
+-     <property name="tristate">
+-      <bool>false</bool>
++      <string>Corner annotation</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="11" column="2">
+-    <widget class="QPushButton" name="m_ColorButton2">
++   <item row="16" column="0">
++    <widget class="QPushButton" name="m_ResetButton">
+      <property name="text">
+-      <string/>
++      <string>Reset preferences</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="3" column="0" colspan="3">
++   <item row="4" column="0" colspan="3">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+-   <item row="6" column="0">
+-    <widget class="QLabel" name="label_5">
+-     <property name="text">
+-      <string>Rendering Mode*</string>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="14" column="1" colspan="2">
+-    <widget class="QLineEdit" name="m_RenderWindowDecorationText"/>
+-   </item>
+-   <item row="11" column="1">
+-    <widget class="QPushButton" name="m_ColorButton1">
++   <item row="12" column="2">
++    <widget class="QPushButton" name="m_ColorButton2">
+      <property name="text">
+       <string/>
+      </property>
+@@ -205,6 +211,20 @@
+      </property>
+     </widget>
+    </item>
++   <item row="10" column="1">
++    <widget class="QSpinBox" name="m_CrosshairGapSize">
++     <property name="value">
++      <number>32</number>
++     </property>
++    </widget>
++   </item>
++   <item row="3" column="0">
++    <widget class="QCheckBox" name="m_ShowDepartmentLogo">
++     <property name="text">
++      <string>Show Department Logo</string>
++     </property>
++    </widget>
++   </item>
+   </layout>
+  </widget>
+  <resources/>
