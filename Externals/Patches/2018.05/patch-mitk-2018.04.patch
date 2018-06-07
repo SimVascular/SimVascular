@@ -1026,6 +1026,58 @@ diff -rupN original/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp patch/Modules/
    // update all Widgets
    this->UpdateAllWidgets();
  }
+diff -rupN original/Plugins/PluginList.cmake patch/Plugins/PluginList.cmake
+--- original/Plugins/PluginList.cmake	2018-06-07 08:36:08.000000000 -0700
++++ patch/Plugins/PluginList.cmake	2018-06-07 08:39:43.000000000 -0700
+@@ -35,8 +35,8 @@ set(MITK_PLUGINS
+   org.mitk.gui.qt.datamanager:ON
+   org.mitk.gui.qt.datamanagerlight:OFF
+   org.mitk.gui.qt.properties:ON
+-  org.mitk.gui.qt.basicimageprocessing:OFF
+-  org.mitk.gui.qt.dicom:OFF
++  org.mitk.gui.qt.basicimageprocessing:ON
++  org.mitk.gui.qt.dicom:ON
+   org.mitk.gui.qt.dicominspector:OFF
+   org.mitk.gui.qt.diffusionimaging:OFF
+   org.mitk.gui.qt.diffusionimaging.connectomics:OFF
+@@ -53,22 +53,22 @@ set(MITK_PLUGINS
+   org.mitk.gui.qt.diffusionimaging.tractography:OFF
+   org.mitk.gui.qt.diffusionimaging.python:OFF
+   org.mitk.gui.qt.dosevisualization:OFF
+-  org.mitk.gui.qt.geometrytools:OFF
++  org.mitk.gui.qt.geometrytools:ON
+   org.mitk.gui.qt.igtexamples:OFF
+   org.mitk.gui.qt.igttracking:OFF
+   org.mitk.gui.qt.lasercontrol:OFF
+   org.mitk.gui.qt.openigtlink:OFF
+-  org.mitk.gui.qt.imagecropper:OFF
++  org.mitk.gui.qt.imagecropper:ON
+   org.mitk.gui.qt.imagenavigator:ON
+   org.mitk.gui.qt.viewnavigator:OFF
+   org.mitk.gui.qt.materialeditor:OFF
+-  org.mitk.gui.qt.measurementtoolbox:OFF
++  org.mitk.gui.qt.measurementtoolbox:ON
+   org.mitk.gui.qt.moviemaker:OFF
+-  org.mitk.gui.qt.pointsetinteraction:OFF
++  org.mitk.gui.qt.pointsetinteraction:ON
+   org.mitk.gui.qt.pointsetinteractionmultispectrum:OFF
+-  org.mitk.gui.qt.python:OFF
++  org.mitk.gui.qt.python:ON
+   org.mitk.gui.qt.remeshing:OFF
+-  org.mitk.gui.qt.segmentation:OFF
++  org.mitk.gui.qt.segmentation:ON
+   org.mitk.gui.qt.aicpregistration:OFF
+   org.mitk.gui.qt.renderwindowmanager:OFF
+   org.mitk.gui.qt.toftutorial:OFF
+@@ -79,7 +79,7 @@ set(MITK_PLUGINS
+   org.mitk.gui.qt.photoacoustics.imageprocessing:OFF
+   org.mitk.gui.qt.photoacoustics.simulation:OFF
+   org.mitk.gui.qt.ultrasound:OFF
+-  org.mitk.gui.qt.volumevisualization:OFF
++  org.mitk.gui.qt.volumevisualization:ON
+   org.mitk.gui.qt.eventrecorder:OFF
+   org.mitk.gui.qt.xnat:OFF
+   org.mitk.gui.qt.igt.app.echotrack:OFF
 diff -rupN original/Modules/QtWidgets/include/QmitkRenderWindow.h patch/Modules/QtWidgets/include/QmitkRenderWindow.h
 --- original/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-06-06 08:12:08.000000000 -0700
 +++ patch/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-06-06 10:02:24.000000000 -0700

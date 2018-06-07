@@ -1095,8 +1095,8 @@ diff -rupN original/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp patch/Modules/
    this->UpdateAllWidgets();
  }
 diff -rupN original/Plugins/PluginList.cmake patch/Plugins/PluginList.cmake
---- original/Plugins/PluginList.cmake	2018-02-26 16:59:24.000000000 -0800
-+++ patch/Plugins/PluginList.cmake	2018-04-18 12:01:23.000000000 -0700
+--- original/Plugins/PluginList.cmake	2018-06-07 08:36:08.000000000 -0700
++++ patch/Plugins/PluginList.cmake	2018-06-07 08:39:43.000000000 -0700
 @@ -35,8 +35,8 @@ set(MITK_PLUGINS
    org.mitk.gui.qt.datamanager:ON
    org.mitk.gui.qt.datamanagerlight:OFF
@@ -1108,7 +1108,7 @@ diff -rupN original/Plugins/PluginList.cmake patch/Plugins/PluginList.cmake
    org.mitk.gui.qt.dicominspector:OFF
    org.mitk.gui.qt.diffusionimaging:OFF
    org.mitk.gui.qt.diffusionimaging.connectomics:OFF
-@@ -53,20 +53,20 @@ set(MITK_PLUGINS
+@@ -53,22 +53,22 @@ set(MITK_PLUGINS
    org.mitk.gui.qt.diffusionimaging.tractography:OFF
    org.mitk.gui.qt.diffusionimaging.python:OFF
    org.mitk.gui.qt.dosevisualization:OFF
@@ -1126,14 +1126,18 @@ diff -rupN original/Plugins/PluginList.cmake patch/Plugins/PluginList.cmake
 -  org.mitk.gui.qt.measurementtoolbox:OFF
 +  org.mitk.gui.qt.measurementtoolbox:ON
    org.mitk.gui.qt.moviemaker:OFF
-   org.mitk.gui.qt.pointsetinteraction:OFF
+-  org.mitk.gui.qt.pointsetinteraction:OFF
++  org.mitk.gui.qt.pointsetinteraction:ON
    org.mitk.gui.qt.pointsetinteractionmultispectrum:OFF
 -  org.mitk.gui.qt.python:OFF
 +  org.mitk.gui.qt.python:ON
    org.mitk.gui.qt.remeshing:OFF
-   org.mitk.gui.qt.segmentation:OFF
+-  org.mitk.gui.qt.segmentation:OFF
++  org.mitk.gui.qt.segmentation:ON
    org.mitk.gui.qt.aicpregistration:OFF
-@@ -79,12 +79,12 @@ set(MITK_PLUGINS
+   org.mitk.gui.qt.renderwindowmanager:OFF
+   org.mitk.gui.qt.toftutorial:OFF
+@@ -79,7 +79,7 @@ set(MITK_PLUGINS
    org.mitk.gui.qt.photoacoustics.imageprocessing:OFF
    org.mitk.gui.qt.photoacoustics.simulation:OFF
    org.mitk.gui.qt.ultrasound:OFF
@@ -1142,12 +1146,6 @@ diff -rupN original/Plugins/PluginList.cmake patch/Plugins/PluginList.cmake
    org.mitk.gui.qt.eventrecorder:OFF
    org.mitk.gui.qt.xnat:OFF
    org.mitk.gui.qt.igt.app.echotrack:OFF
-   org.mitk.gui.qt.spectrocamrecorder:OFF
--  org.mitk.gui.qt.classificationsegmentation:OFF
-+  org.mitk.gui.qt.classificationsegmentation:ON
-   org.mitk.gui.qt.overlaymanager:OFF
-   org.mitk.gui.qt.igt.app.hummelprotocolmeasurements:OFF
-   org.mitk.gui.qt.multilabelsegmentation:OFF
 diff -rupN original/Modules/QtWidgets/include/QmitkRenderWindow.h patch/Modules/QtWidgets/include/QmitkRenderWindow.h
 --- original/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-06-06 08:12:08.000000000 -0700
 +++ patch/Modules/QtWidgets/include/QmitkRenderWindow.h	2018-06-06 10:02:24.000000000 -0700
