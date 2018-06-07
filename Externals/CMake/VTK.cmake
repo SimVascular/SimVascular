@@ -111,7 +111,7 @@ elseif(MINGW)
 endif()
 
 #If using Qt
-if(SV_EXTERNALS_USE_QT)
+if(SV_EXTERNALS_ENABLE_Qt)
   #MINGW specific flags
   if(MINGW)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS

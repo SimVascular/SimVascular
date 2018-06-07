@@ -68,29 +68,23 @@ if (APPLE)
 endif()
 #-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Qt
-# First external is not built by the project but is required if building
-# MITK
-option(SV_EXTERNALS_USE_QT "Enable QT Plugin" ON)
-option(SV_EXTERNALS_BUILD_MITK_WITH_PYTHON "Build MITK without python" ON)
-
 # Add externals with default values of version, build_with, shared, dirname,
 # and optional install dirname. Order matters; put independent packages first
 # Must have existing "EXTERNAL_NAME.cmake" file underneath CMake
 # (i.e. Qt.cmake for Qt)
 # "EXTERNAL_NAME" "ENABLE_EXTERNAL" "BUILD_SHARED" "BUILD_DIR_NAME" "INSTALL_DIR_NAME"
 #-----------------------------------------------------------------------------
-# QT
+# Qt
+option(SV_EXTERNALS_USE_PREBUILT_Qt "Instead of downloading or building, use a specified Qt" OFF)
 sv_externals_add_new_external(Qt ${SV_EXTERNALS_Qt_VERSION} ON ON qt qt)
 #-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# HDF5
 if (SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
-  #-----------------------------------------------------------------------------
-  # HDF5
   sv_externals_add_new_external(HDF5 ${SV_EXTERNALS_HDF5_VERSION} ON ON hdf5 hdf5)
-  #-----------------------------------------------------------------------------
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # TCL
@@ -164,6 +158,7 @@ sv_externals_add_new_external(OpenCASCADE ${SV_EXTERNALS_OpenCASCADE_VERSION} ON
 
 #-----------------------------------------------------------------------------
 # MITK
+option(SV_EXTERNALS_BUILD_MITK_WITH_PYTHON "Build MITK with python" ON)
 sv_externals_add_new_external(MITK ${SV_EXTERNALS_MITK_VERSION} ON ON mitk mitk)
 #-----------------------------------------------------------------------------
 
