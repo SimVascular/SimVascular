@@ -28,8 +28,8 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SV3_LEVELSETCONTOUR_H
-#define SV3_LEVELSETCONTOUR_H
+#ifndef SV3_THRESHOLDCONTOUR_H
+#define SV3_THRESHOLDCONTOUR_H
 
 #include "SimVascular.h"
 
@@ -50,39 +50,43 @@
 #endif
 
 namespace sv3{
-class SV_EXPORT_SEGMENTATION levelSetContour : public Contour
+class SV_EXPORT_SEGMENTATION thresholdContour : public Contour
 {
 
 public:
 
     
-    levelSetContour();
+    thresholdContour();
     
-    levelSetContour(const levelSetContour &other);
+    thresholdContour(const thresholdContour &other);
     
-    ~levelSetContour();
+    ~thresholdContour();
     
-    levelSetContour* Clone();
+    thresholdContour* Clone();
     
     std::string GetClassName();
     
-    levelSetContour* CreateSmoothedContour(int fourierNumber);
+    thresholdContour* CreateSmoothedContour(int fourierNumber);
     
     void CreateContourPoints();
     
     void SetControlPointByRadius(double radius, double* point){return;};
     
-    void SetLevelSetParas(svLSParam* paras);
+    void SetLevelSetParas(svLSParam* paras){return;};
     
-    svLSParam* GetLevelSetParas();
+    svLSParam* GetLevelSetParas(){return NULL;};
+    
+    virtual void SetThresholdValue(double thresholdValue) override;
+    
+    virtual double GetThresholdValue() override;
 
   protected:
-
-    svLSParam* m_paras;
+  
+    double m_thresholdValue;
     
     bool m_forceClosed;
 
   };
 
 }
-#endif // SV3_LEVELSETCONTOUR_H
+#endif // SV3_THRESHOLDCONTOUR_H

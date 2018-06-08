@@ -38,62 +38,65 @@
 #include "sv_FactoryRegistrar.h"
 
 #include "sv3_Contour.h"
-#include "sv3_LevelSetContour.h"
+#include "sv3_ThresholdContour.h"
 #include "sv3_SegmentationUtils.h"
 
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkPolyData.h>
 #include <vtkImageReslice.h>
+#include <vtkPolyDataConnectivityFilter.h>
 #include <iostream>
 using sv3::Contour;
-using sv3::levelSetContour;
+using sv3::thresholdContour;
 using sv3::PathElement;
 using sv3::SegmentationUtils;
 
-levelSetContour::levelSetContour()
-    : Contour( KERNEL_LEVELSET )
+thresholdContour::thresholdContour()
+    : Contour( KERNEL_THRESHOLD )
 {
     m_forceClosed = true;
+    m_thresholdValue = 0.;
 }
 
-levelSetContour::levelSetContour(const levelSetContour &other) 
-    : Contour( KERNEL_LEVELSET )
+thresholdContour::thresholdContour(const thresholdContour &other) 
+    : Contour( KERNEL_THRESHOLD )
 {
-    m_paras = other.m_paras;
+    m_thresholdValue = other.m_thresholdValue;
     m_forceClosed = other.m_forceClosed;
 }
 
-levelSetContour::~levelSetContour()
+thresholdContour::~thresholdContour()
 {
 }
 
-void levelSetContour::SetLevelSetParas(sv3::levelSetContour::svLSParam* paras)
+thresholdContour* thresholdContour::Clone()
 {
-    m_paras = paras;
+    return new thresholdContour(*this);
 }
 
-sv3::levelSetContour::svLSParam* levelSetContour::GetLevelSetParas()
+std::string thresholdContour::GetClassName()
 {
-    return m_paras;
+    return "thresholdContour";
 }
 
-levelSetContour* levelSetContour::Clone()
+void thresholdContour::SetThresholdValue(double thresholdValue)
 {
-    return new levelSetContour(*this);
+    std::cout<<"ck"<<std::endl;
+    m_thresholdValue = thresholdValue;
 }
 
-std::string levelSetContour::GetClassName()
+double thresholdContour::GetThresholdValue()
 {
-    return "levelSetContour";
+    return m_thresholdValue;
 }
 
-levelSetContour* levelSetContour::CreateSmoothedContour(int fourierNumber)
+thresholdContour* thresholdContour::CreateSmoothedContour(int fourierNumber)
 {
     if(m_ContourPoints.size()<3)
         return this->Clone();
 
-    levelSetContour* contour=new levelSetContour();
+    thresholdContour* contour=new thresholdContour();
     contour->SetPathPoint(m_PathPoint);
 //    contour->SetPlaneGeometry(m_PlaneGeometry);
     std::string method=m_Method;
@@ -122,103 +125,40 @@ levelSetContour* levelSetContour::CreateSmoothedContour(int fourierNumber)
     return contour;
 }
 
-void levelSetContour::CreateContourPoints()
+void thresholdContour::CreateContourPoints()
 {
-        
+    if(m_ContourPoints.size()>0)
+        m_ContourPoints.clear();
+    
     if(m_VtkImageSlice==NULL)
     {
         printf("Image slice is empty.\n");
         return;
     }
-    
-    if(m_paras == NULL)
-    {
-        printf("Level Set parameters have not been set.\n");
-        return;
-    }
-
-    std::cout <<"Path point: "<<m_PathPoint.pos[0]<<" "<<m_PathPoint.pos[1]<<" "<<m_PathPoint.pos[2]<<std::endl;
-    //stage 1
-    //**************************
-    cvITKLevelSet *ls;
-    ls = new cvITKLevelSet;
-    ls->SetDebug(false);
-    ls->SetUseInputImageAsFeature(false);
-
-    cvPolyData *seedPd = NULL;
-    //    int loc[3];
-    //    loc[0] = x;
-    //    loc[1] = y;
-    //    loc[2] = z;
-    double center[3];
-    center[0] = m_paras->ctrx;
-    center[1] = m_paras->ctry;
-    //    center[2] = param->ctrz;
-    center[2] = 0.0;
-
-    cvITKLSUtil::vtkGenerateCircle(m_paras->radius,center,50,&seedPd);
-    //    vtkGenerateCircle(param->radius,center,50,&seedPd);
-
-    ls->SetMaxIterations(m_paras->maxIter1);//int
-    ls->SetMaxRMSError(m_paras->maxErr1);//double
-    ls->SetAdvectionScaling(1.0);
-    ls->SetCurvatureScaling(1.0);
 
     cvStrPts*  strPts=SegmentationUtils::vtkImageData2cvStrPts(m_VtkImageSlice);
-    ls->SetInputImage(strPts);
-    ls->SetSeed(seedPd);
+    
+    vtkSmartPointer<vtkContourFilter> contourFilter=vtkSmartPointer<vtkContourFilter>::New();
+    contourFilter->SetInputDataObject(strPts->GetVtkStructuredPoints());
+    contourFilter->SetValue(0,m_thresholdValue);
+    contourFilter->Update();
+    
+    vtkSmartPointer<vtkPolyData> uncleanContour=contourFilter->GetOutput();
+    cvPolyData* cvUncleanContour=new cvPolyData(uncleanContour);
 
-    //$itklset PhaseOneLevelSet -Kc $kThr -expRising $expRise -expFalling $expFall -sigmaFeat $gSigma1 -sigmaAdv $advSigma1
+    vtkSmartPointer<vtkPolyDataConnectivityFilter> connectFilter=vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+    connectFilter->SetInputData(uncleanContour);
+    connectFilter->SetExtractionModeToClosestPointRegion();
+    double seedPt[3] = {m_PathPoint.pos[0],m_PathPoint.pos[1],m_PathPoint.pos[2]};
+    connectFilter->SetClosestPoint(seedPt);
+    connectFilter->Update();
+    
+    vtkSmartPointer<vtkPolyData> selectedContour=connectFilter->GetOutput();
 
-    if(m_paras->sigmaFeat1 >= 0)
-    {
-        ls->SetSigmaFeature(m_paras->sigmaFeat1);
-    }
-    if(m_paras->sigmaAdv1 >= 0)
-    {
-        ls->SetSigmaAdvection(m_paras->sigmaAdv1);
-    }
-
-    ls->ComputePhaseOneLevelSet(m_paras->kc, m_paras->expFactorRising,m_paras->expFactorFalling);
-
-    cvPolyData *front1;
-    front1=ls->GetFront();
-
-    //stage 2
-    //**********************************************
-    cvITKLevelSet *ls2;
-    ls2 = new cvITKLevelSet;
-
-    ls2->SetDebug(false);
-    ls2->SetUseInputImageAsFeature(false);
-
-    ls2->SetMaxIterations(m_paras->maxIter2);
-    ls2->SetMaxRMSError(m_paras->maxErr2);
-    ls2->SetAdvectionScaling(1.0);
-    ls2->SetCurvatureScaling(1.0);
-
-    cvStrPts*  strPts2=SegmentationUtils::vtkImageData2cvStrPts(m_VtkImageSlice);
-    ls2->SetInputImage(strPts2);
-    ls2->SetSeed(front1);
-
-    if(m_paras->sigmaFeat2 >= 0)
-    {
-        ls2->SetSigmaFeature(m_paras->sigmaFeat2);
-    }
-    if(m_paras->sigmaAdv2 >= 0)
-    {
-        ls2->SetSigmaAdvection(m_paras->sigmaAdv2);
-    }
-
-    ls2->ComputePhaseTwoLevelSet(m_paras->kupp,m_paras->klow);
-
-    cvPolyData *front2;
-    front2=ls2->GetFront();
+    cvPolyData *cvSelectedContour=new cvPolyData(selectedContour);
 
     cvPolyData *dst;
-    double tol=0.001;
-    dst=sys_geom_MergePts_tol(front2, tol );
-
+    
     double pos[3],nrm[3],xhat[3];
 
     pos[0]=m_PathPoint.pos[0];
@@ -233,17 +173,11 @@ void levelSetContour::CreateContourPoints()
     xhat[1]=m_PathPoint.rotation[1];
     xhat[2]=m_PathPoint.rotation[2];
 
-    cvPolyData *dst2;
-
-    sys_geom_OrientProfile(dst, pos, nrm,xhat,&dst2);
-
-    this->SetPathPoint(m_PathPoint);
-    //this->SetPlaced(true);
-    this->SetMethod("LevelSet");
-
+    sys_geom_OrientProfile(cvSelectedContour, pos, nrm, xhat, &dst);
+    
     std::vector<std::array<double,3> > contourPoints;
-
-    vtkPolyData* pd=dst2->GetVtkPolyData();
+    
+    vtkPolyData* pd=dst->GetVtkPolyData();
     bool ifClosed;
     std::deque<int> IDList=SegmentationUtils::GetOrderedPtIDs(pd->GetLines(),ifClosed);
     double point[3];
@@ -257,6 +191,12 @@ void levelSetContour::CreateContourPoints()
         contourPoints.push_back(pt);
     }
 
+    delete cvUncleanContour;
+    delete cvSelectedContour;
+
+    this->SetPathPoint(m_PathPoint);
+    //this->SetPlaced(true);
+    this->SetMethod("Threshold");
     this->SetClosed(ifClosed||m_forceClosed);
     this->SetContourPoints(contourPoints);
 

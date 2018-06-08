@@ -65,6 +65,8 @@ PyObject* Contour_GetPerimeterCmd( pyContour* self, PyObject* args);
 PyObject* Contour_GetCenterPointCmd(pyContour* self, PyObject* args);
 PyObject* Contour_SetControlPointsCmd(pyContour* self, PyObject* args);
 PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args);
+PyObject* Contour_SetThresholdValueCmd(pyContour* self, PyObject* args);
+pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args);
 
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args);
 
@@ -84,6 +86,8 @@ static PyMethodDef pyContour_methods[]={
   {"contour_center", (PyCFunction)Contour_GetCenterPointCmd, METH_NOARGS,NULL},
   {"contour_setCtrlPts", (PyCFunction)Contour_SetControlPointsCmd, METH_VARARGS, NULL},
   {"contour_setCtrlPtsByRadius", (PyCFunction)Contour_SetControlPointsByRadiusCmd, METH_VARARGS, NULL},
+  {"contour_setThresholdValue", (PyCFunction)Contour_SetThresholdValueCmd, METH_VARARGS, NULL},
+  {"contour_createSmoothCt", (PyCFunction)Contour_CreateSmoothContour, METH_VARARGS, NULL},
   {NULL,NULL}
 };
 
@@ -200,6 +204,8 @@ PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args)
     // Do work of command:
     if (strcmp( kernelName, "LevelSet" )==0 ) {
         kernel= KERNEL_LEVELSET;
+    } else if (strcmp( kernelName, "Threshold")==0){
+        kernel=KERNEL_THRESHOLD;
     } else if (strcmp( kernelName, "Circle" )==0 ) {
         kernel= KERNEL_CIRCLE;
     } else if (strcmp( kernelName, "Polygon" )==0 ) {
@@ -290,9 +296,9 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
     //std::cout<<"Slice dimensions: "<<slice->GetDimensions()<<std::endl;
     //std::cout<<"Path coords: "<< path->GetPathPoint(index).pos[0]<<" "<<path->GetPathPoint(index).pos[1]<<" "<<path->GetPathPoint(index).pos[2]<<std::endl;
     // Instantiate the new mesh:
-    Contour *geom = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, path->GetPathPoint(index), slice );;
+    Contour *geom = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, path->GetPathPoint(index), slice );
     
-    // Register the solid:
+    // Register the contour:
     if ( !( gRepository->Register( objName, geom ) ) ) {
         PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
         delete geom;
@@ -397,7 +403,6 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
     Contour* contour = self->geom;
     
     std::vector<std::array<double,3> > pts(numPts);
-    std::cout<<"ck1"<<std::endl;
     for (int i = 0; i<numPts; i++)
     {
         PyObject* tmpList = PyList_GetItem(ptList,i);
@@ -410,10 +415,8 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
         {
             pts[i][j] = PyFloat_AsDouble(PyList_GetItem(tmpList,j));
         }
-        std::cout<<"ck1"<<" "<<i<<" "<<pts[i][0]<<" "<<pts[i][1]<<" "<<pts[i][2]<<std::endl;
     }
     contour->SetControlPoints(pts);
-    std::cout<<"ck2"<<std::endl;
     Py_RETURN_NONE; 
 }
 
@@ -523,3 +526,61 @@ PyObject* Contour_GetCenterPointCmd( pyContour* self, PyObject* args)
     sprintf(output,"(%.4f,%.4f,%.4f)",center[0],center[1],center[2]);
     return Py_BuildValue("s",output);    
 }
+
+// ----------------------------
+// Contour_SetThresholdValueCmd
+// ----------------------------
+PyObject* Contour_SetThresholdValueCmd(pyContour* self, PyObject* args)
+{
+    double threshold = 0.;
+    if (!PyArg_ParseTuple(args,"d", &threshold))
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not import double, threshold");
+        return Py_ERROR;
+    }
+    
+    if (Contour::gCurrentKernel!=KERNEL_THRESHOLD)
+    {
+        PyErr_SetString(PyRunTimeErr, "Contour type is not threshold");
+        return Py_ERROR;
+    }
+    
+    Contour* contour = self->geom;
+    contour->SetThresholdValue(threshold);
+    Py_RETURN_NONE;
+}
+    
+pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args)
+{
+    int fourierNumber = 0;
+    char* contourName;
+    if (!PyArg_ParseTuple(args,"is", &fourierNumber,&contourName))
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not import int and one char, fourierNumber, contourName");
+        return Py_ERROR;
+    }
+    
+    Contour* contour = self->geom;
+    
+    Contour *newContour = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, contour->GetPathPoint(), contour->GetVtkImageSlice() );
+    
+    newContour= contour->CreateSmoothedContour(fourierNumber);
+    
+    // Register the contour:
+    if ( !( gRepository->Register( contourName, newContour ) ) ) {
+        PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
+        delete newContour;
+        return Py_ERROR;
+    }
+        
+    Py_INCREF(newContour);
+    pyContour* pyNewCt;
+    pyNewCt = PyObject_New(pyContour, &pyContourType);
+    pyNewCt->geom=newContour;
+    Py_DECREF(newContour);
+    return pyNewCt;
+    
+}
+    
+    
+    

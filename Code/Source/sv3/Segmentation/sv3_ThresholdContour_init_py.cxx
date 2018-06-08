@@ -31,7 +31,7 @@
 #include "SimVascular.h"
 #include "sv_misc_utils.h"
 #include "sv3_Contour.h"
-#include "sv3_SplinePolygonContour.h"
+#include "sv3_ThresholdContour.h"
 //#include "sv_adapt_utils.h"
 #include "sv_arg.h"
 
@@ -49,11 +49,11 @@
 // Prototypes:
 // -----------
 //
-using sv3::ContourSplinePolygon;
+using sv3::thresholdContour;
 
-ContourSplinePolygon* CreateSplinePolygonContour()
+thresholdContour* CreateThresholdContour()
 {
-	return new ContourSplinePolygon();
+	return new thresholdContour();
 }
 // Globals:
 // --------
@@ -64,18 +64,18 @@ ContourSplinePolygon* CreateSplinePolygonContour()
 // Adapt
 // -----
 
-PyObject* splinePolygonContour_AvailableCmd(PyObject* self,PyObject* args);
+PyObject* thresholdContour_AvailableCmd(PyObject* self,PyObject* args);
 
-PyObject* splinePolygonContour_RegistrarsListCmd(PyObject* self, PyObject* args);
+PyObject* thresholdContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
-PyMethodDef splinePolygonContour_methods[] = {
-  {"splinePolygonContour_available", splinePolygonContour_AvailableCmd,METH_NOARGS,NULL},
-  {"splinePolygonContour_registrars", splinePolygonContour_RegistrarsListCmd,METH_NOARGS,NULL},
+PyMethodDef thresholdContour_methods[] = {
+  {"splinePolygonContour_available", thresholdContour_AvailableCmd,METH_NOARGS,NULL},
+  {"splinePolygonContour_registrars", thresholdContour_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 
 PyMODINIT_FUNC
-initpySplinePolygonContour()
+initpyThresholdContour()
 {
   printf("  %-12s %s\n","","splinePolygonContour Enabled");
 
@@ -86,8 +86,8 @@ initpySplinePolygonContour()
 
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_SPLINEPOLYGON,
-      (FactoryMethodPtr) &CreateSplinePolygonContour );
+          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_THRESHOLD,
+      (FactoryMethodPtr) &CreateThresholdContour );
   }
   else {
     return;
@@ -95,31 +95,31 @@ initpySplinePolygonContour()
   PySys_SetObject("ContourObjectRegistrar",(PyObject*)contourObjectRegistrar);
 
   PyObject* pythonC;
-  pythonC = Py_InitModule("pySplinePolygonContour", splinePolygonContour_methods);
+  pythonC = Py_InitModule("pyThresholdContour", thresholdContour_methods);
   if(pythonC==NULL)
   {
-    fprintf(stdout,"Error in initializing pySplinePolygonContour");
+    fprintf(stdout,"Error in initializing pyThresholdContour");
     return;
   }
 }
 
-PyObject*  splinePolygonContour_AvailableCmd(PyObject* self, PyObject* args)
+PyObject*  thresholdContour_AvailableCmd(PyObject* self, PyObject* args)
 {
-  return Py_BuildValue("s","polygonContour Available");
+  return Py_BuildValue("s","thresholdContour Available");
 
 }
 
-PyObject* splinePolygonContour_RegistrarsListCmd(PyObject* self, PyObject* args)
+PyObject* thresholdContour_RegistrarsListCmd(PyObject* self, PyObject* args)
 {
   cvFactoryRegistrar *contourObjectRegistrar =
     (cvFactoryRegistrar *) PySys_GetObject("ContourObjectRegistrar");
 
   char result[255];
-  PyObject* pyPtr=PyList_New(7);
+  PyObject* pyPtr=PyList_New(8);
   sprintf( result, "Contour object registrar ptr -> %p\n", contourObjectRegistrar );
   PyList_SetItem(pyPtr,0,PyString_FromFormat(result));
 
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 7; i++) {
       sprintf( result,"GetFactoryMethodPtr(%i) = %p\n",
       i, (contourObjectRegistrar->GetFactoryMethodPtr(i)));
       fprintf(stdout,result);
@@ -127,3 +127,4 @@ PyObject* splinePolygonContour_RegistrarsListCmd(PyObject* self, PyObject* args)
   }
   return pyPtr;
 }
+

@@ -53,6 +53,7 @@
 enum KernelType {
     KERNEL_INVALID,
     KERNEL_LEVELSET,
+    KERNEL_THRESHOLD,
     KERNEL_CIRCLE,
     KERNEL_POLYGON,
     KERNEL_SPLINEPOLYGON,
@@ -300,13 +301,16 @@ public:
 
     double GetPerimeter();
     
-    //void CreateLSContour(svLSParam* param, double size, bool forceClosed = true);
-    
-    //virtual void CreateContourObject()=0;
+    //for setting parameters:
+    //==========================================
     
     virtual void SetLevelSetParas(svLSParam* paras)=0;
     
     virtual svLSParam* GetLevelSetParas()=0;
+    
+    virtual void SetThresholdValue(double thresholdValue){return;}
+    
+    virtual double GetThresholdValue(){return 0.;}
     
   protected:
 
