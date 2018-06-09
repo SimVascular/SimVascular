@@ -193,7 +193,7 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
 
     int i;
 
-    if (numInterpPts <= 0 || numDesiredTerms <= 0 || numPts <= 0 || numInterpPts>numDesiredTerms) {
+    if (numInterpPts <= 0 || numDesiredTerms <= 0 || numPts <= 0 || numInterpPts<numDesiredTerms) {
         return SV_ERROR;
     }
 
