@@ -32,6 +32,12 @@
 #include "SimVascular.h"
 
 #include "simvascular_options.h"
+
+#ifdef SV_USE_PYTHON
+  #include "Python.h"
+#endif
+#include "vtksys/SystemTools.hxx"
+
 #ifdef SV_USE_QT_GUI
   #include <QApplication>
   #include <QDir>
@@ -75,6 +81,15 @@
   #endif // !UNICODE
 #endif
 
+#endif
+
+/* The maximum length of a file name.  */
+#if defined(PATH_MAX)
+#define SV_PYTHON_MAXPATH PATH_MAX
+#elif defined(MAXPATHLEN)
+#define SV_PYTHON_MAXPATH MAXPATHLEN
+#else
+#define SV_PYTHON_MAXPATH 16384
 #endif
 
 #ifdef WIN32
@@ -283,6 +298,158 @@ void simvascularApp::initializeLibraryPaths() {
   return;
 }
 
+#endif
+
+// -----------
+// svPythonPrependPath
+// -----------
+
+#ifdef SV_USE_PYTHON
+static void svPythonPrependPath(const char* dir)
+{
+  // Convert slashes for this platform.
+  std::string out_dir = dir;
+#if defined(_WIN32) && !defined(__CYGWIN__)
+  for(std::string::size_type i = 0; i < out_dir.length(); ++i)
+  {
+    if(out_dir[i] == '/')
+    {
+      out_dir[i] = '\\';
+    }
+  }
+#endif
+
+  // Append the path to the python sys.path object.
+  char tmpPath[] = "path";
+  PyObject* path = PySys_GetObject(tmpPath);
+  PyObject* newpath;
+  newpath = PyUnicode_FromString(out_dir.c_str());
+  PyList_Insert(path, 0, newpath);
+  Py_DECREF(newpath);
+}
+
+// -----------
+// PythonShell_Init
+// -----------
+
+int PythonShell_Init(int argc, char *argv[])
+{
+  cout << "Initializing Python Shell..." << endl;
+
+  // SETTING UP A PYTHON SHELL THE WAY VTK DOES FOR TESTING.
+  // SHOULD BE FINE SEEING
+  // AS HOW WE BUILD VTK WITH THE SAME PYTHON WE USE, BUT MIGHT WANT
+  // TO SET UP ON OUR OWN
+
+  // The following code will hack in the path for running VTK/Python
+  // from the build tree. Do not try this at home. We are
+  // professionals.
+
+  // Set the program name, so that we can ask python to provide us
+  // full path.  We need to collapse the path name to aid relative
+  // path computation for the VTK python module installation.
+  std::string av0 = vtksys::SystemTools::CollapseFullPath(argv[0]);
+#if PYTHON_MAJOR_VERSION >= 3
+  wchar_t *argv0;
+#if PY_VERSION_HEX >= 0x03050000
+  argv0 = Py_DecodeLocale(av0.c_str(), NULL);
+#elif defined(__APPLE__)
+  argv0 = _Py_DecodeUTF8_surrogateescape(av0.data(), av0.length());
+#else
+  argv0 = _Py_char2wchar(av0.c_str(), NULL);
+#endif
+  if (argv0 == 0)
+  {
+    fprintf(stderr, "Fatal simvascular python shell error: "
+                    "unable to decode the program name\n");
+    return 1;
+  }
+#else
+  static char argv0[SV_PYTHON_MAXPATH];
+  strcpy(argv0, av0.c_str());
+#endif
+  Py_SetProgramName(argv0);
+
+// CALL SIMVASCULAR PYTHON MODULES HERE
+
+//  // This function is generated, and will register any static Python modules for VTK
+//  // This needs to be done *before* Py_Initialize().
+//  CMakeLoadAllPythonModules();
+
+// CALL SIMVASCULAR PYTHON MODULES HERE
+
+  // Initialize interpreter.
+  Py_Initialize();
+
+  // Initialize python thread support. This function should first be
+  // called from the main thread, after Py_Initialize.
+//#ifndef VTK_NO_PYTHON_THREADS
+  PyEval_InitThreads();
+//#endif
+
+  // Compute the directory containing this executable.  The python
+  // sys.executable variable contains the full path to the interpreter
+  // executable.
+  char tmpExe[] = "executable";
+  PyObject *executable = PySys_GetObject(tmpExe);
+#if PYTHON_MAJOR_VERSION >= 3
+  executable = PyUnicode_EncodeFSDefault(executable);
+#endif
+  const char *exe_str = PyBytes_AsString(executable);
+  if (exe_str)
+  {
+    // Use the executable location to try to set sys.path to include
+    // the VTK python modules.
+    std::string self_dir = vtksys::SystemTools::GetFilenamePath(exe_str);
+    svPythonPrependPath(self_dir.c_str());
+  }
+#if PYTHON_MAJOR_VERSION >= 3
+  Py_DECREF(executable);
+#endif
+
+  // Ok, all done, now enter python main.
+#if PYTHON_MAJOR_VERSION >= 3
+  // Need two copies of args, because programs might modify the first
+  wchar_t **argvWide = new wchar_t *[argc];
+  wchar_t **argvWide2 = new wchar_t *[argc];
+  for (int i = 0; i < argc; i++)
+  {
+#if PY_VERSION_HEX >= 0x03050000
+    argvWide[i] = Py_DecodeLocale(argv[i], NULL);
+#elif defined(__APPLE__)
+    argvWide[i] = _Py_DecodeUTF8_surrogateescape(argv[i], strlen(argv[i]));
+#else
+    argvWide[i] = _Py_char2wchar(argv[i], NULL);
+#endif
+    argvWide2[i] = argvWide[i];
+    if (argvWide[i] == 0)
+    {
+      fprintf(stderr, "Fatal vtkpython error: "
+                      "unable to decode the command line argument #%i\n",
+                      i + 1);
+      for (int k = 0; k < i; k++)
+      {
+        PyMem_Free(argvWide2[i]);
+      }
+      PyMem_Free(argv0);
+      delete [] argvWide;
+      delete [] argvWide2;
+      return 1;
+    }
+  }
+  int res = Py_Main(argc, argvWide);
+  PyMem_Free(argv0);
+  for (int i = 0; i < argc; i++)
+  {
+    PyMem_Free(argvWide2[i]);
+  }
+  delete [] argvWide;
+  delete [] argvWide2;
+  return res;
+#else
+  return Py_Main(argc, argv);
+#endif
+}
 #endif
 
 // ----
@@ -691,6 +858,13 @@ RegCloseKey(hKey2);
 
   if(use_qt_gui) {
 
+    if (gSimVascularBatchMode == 1)
+    {
+      return PythonShell_Init(argc, argv);
+    }
+    else
+    {
+
      // intentionally remove any additional params when calling qt gui
      int single_argc = 1;
      //mitk::BaseApplication app(single_argc, argv);
@@ -841,6 +1015,7 @@ RegCloseKey(hKey2);
      }
 
      return app.run();
+    }
   }
 
 #endif
@@ -953,3 +1128,5 @@ int Tcl_AppInit( Tcl_Interp *interp )
   return TCL_OK;
 
 }
+
+
