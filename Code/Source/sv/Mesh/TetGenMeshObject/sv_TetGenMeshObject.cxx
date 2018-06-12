@@ -1414,7 +1414,6 @@ int cvTetGenMeshObject::GenerateMesh() {
         if (GenerateBoundaryLayerMesh() != SV_OK)
           return SV_ERROR;
 
-        fprintf(stdout,"HUH\n");
         if (GenerateAndMeshCaps() != SV_OK)
           return SV_ERROR;
       }
@@ -1941,7 +1940,17 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   //Then we call VMTK to generate a boundary layer mesh, and we set
   //the boundary layer mesh as the member vtkUnstructuredGrid
   //called boundarylayermesh_
-  cleaner->SetInputData(polydatasolid_);
+  vtkSmartPointer<vtkPolyDataNormals> normaler =
+    vtkSmartPointer<vtkPolyDataNormals>::New();
+  normaler->SetInputData(polydatasolid_);
+  normaler->SetConsistency(1);
+  normaler->SetAutoOrientNormals(1);
+  normaler->SetFlipNormals(0);
+  normaler->SetComputeCellNormals(0);
+  normaler->SplittingOff();
+  normaler->Update();
+
+  cleaner->SetInputData(normaler->GetOutput());
   cleaner->Update();
 
   vtkSmartPointer<vtkPolyData> originalsurfpd = vtkSmartPointer<vtkPolyData>::New();
@@ -1991,7 +2000,13 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
     // The remeshing excludes cell entity ids with value of 1. Need to
     // set all to one so that only caps are remeshed.
     polydatasolid_->DeepCopy(originalsurfpd);
-    polydatasolid_->GetCellData()->GetArray("CellEntityIds")->FillComponent(0, 1);
+    polydatasolid_->GetCellData()->RemoveArray("CellEntityIds");
+    vtkSmartPointer<vtkIntArray> newEntityIds =
+      vtkSmartPointer<vtkIntArray>::New();
+    newEntityIds->SetNumberOfTuples(polydatasolid_->GetNumberOfCells());
+    newEntityIds->FillComponent(0, 1);
+    newEntityIds->SetName("CellEntityIds");
+    polydatasolid_->GetCellData()->AddArray(newEntityIds);
   }
 
 #else

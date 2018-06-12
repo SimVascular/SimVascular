@@ -820,7 +820,7 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
     else
         cmds.push_back("option volume 0");
 
-    if(ui->checkBoxRadiusBasedT->isChecked() || ui->checkBoxBoundaryLayerT->isChecked())
+    if(ui->checkBoxRadiusBasedT->isChecked())
     {
         cmds.push_back("option UseMMG 0");
         ui->checkBoxFastMeshing->setChecked(false);
