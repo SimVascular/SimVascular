@@ -62,9 +62,6 @@ target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME}
   )
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)
@@ -93,5 +90,7 @@ if(SV_INSTALL_HEADERS)
 		)
 endif()
 
-PYTHON_ADD_MODULE(pySolid2 sv_solid_init_py.cxx)
-target_link_libraries(pySolid2 ${lib} ${PYTHON_LIBRARY})
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pySolid2 sv_solid_init_py.cxx)
+  target_link_libraries(pySolid2 ${lib} ${PYTHON_LIBRARY})
+endif()

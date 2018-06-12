@@ -45,7 +45,11 @@ LIST(APPEND CORELIBS ${lib})
 SET(CXXSRCS sv_MeshObject.cxx sv_MeshSystem.cxx)
 SET(HDRS sv_MeshObject.h sv_MeshSystem.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_mesh_init.cxx sv_mesh_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS sv_mesh_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_mesh_init.cxx )
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -86,6 +90,7 @@ if(SV_INSTALL_HEADERS)
 		)
 endif()
 
-
-PYTHON_ADD_MODULE(pyMeshObject sv_mesh_init_py.cxx)
-target_link_libraries(pyMeshObject ${lib} ${PYTHON_LIBRARY})
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyMeshObject sv_mesh_init_py.cxx)
+  target_link_libraries(pyMeshObject ${lib} ${PYTHON_LIBRARY})
+endif()

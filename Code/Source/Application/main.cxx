@@ -784,7 +784,9 @@ RegCloseKey(hKey2);
          pluginsToStart.push_back("org_sv_gui_qt_segmentation");
          pluginsToStart.push_back("org_sv_gui_qt_meshing");
          pluginsToStart.push_back("org_sv_gui_qt_simulation");
+#ifdef SV_USE_PYTHON
          pluginsToStart.push_back("org_sv_pythondatanodes");
+#endif
        }
 
         // read environment variables for custom plugins
