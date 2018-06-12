@@ -858,12 +858,14 @@ RegCloseKey(hKey2);
 
   if(use_qt_gui) {
 
+#ifdef SV_USE_PYTHON
     if (gSimVascularBatchMode == 1)
     {
       return PythonShell_Init(argc, argv);
     }
     else
     {
+#endif
 
      // intentionally remove any additional params when calling qt gui
      int single_argc = 1;
@@ -1015,7 +1017,9 @@ RegCloseKey(hKey2);
      }
 
      return app.run();
+#ifdef SV_USE_PYTHON
     }
+#endif
   }
 
 #endif
