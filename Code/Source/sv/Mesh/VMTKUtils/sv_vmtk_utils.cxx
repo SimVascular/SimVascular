@@ -1098,7 +1098,8 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
 int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
     vtkUnstructuredGrid *innerMesh, vtkUnstructuredGrid *boundaryMesh,
     vtkUnstructuredGrid *surfaceWithSize,
-    std::string cellEntityIdsArrayName)
+    std::string cellEntityIdsArrayName,
+    int newRegionBoundaryLayer)
 {
   vtkSmartPointer<vtkvmtkAppendFilter> appender =
     vtkSmartPointer<vtkvmtkAppendFilter>::New();
@@ -1112,9 +1113,56 @@ int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
   thresholder->ThresholdByUpper(1.5);
   thresholder->SetInputArrayToProcess(0,0,0,1,cellEntityIdsArrayName.c_str());
   thresholder->Update();
+  endcaps->DeepCopy(thresholder->GetOutput());
+
+  // Get model regions on tetgen mesh
+  vtkDataArray *meshFromTetGenRegionIds = meshFromTetGen->GetCellData()->GetArray("ModelRegionID");
+  if (meshFromTetGenRegionIds == NULL)
+  {
+    fprintf(stderr,"No model region id on tetgen mesh\n");
+    return SV_ERROR;
+  }
+
+  // TODO: Will need to change if same region not on all exterior of mesh
+  double minmax[2];
+  meshFromTetGenRegionIds->GetRange(minmax);
+  if (minmax[0] != minmax[1])
+  {
+    fprintf(stderr,"Cannot currently handle multi-domains on surface of tetgen mesh");
+    return SV_ERROR;
+  }
+  int modelId = minmax[0];
+
+  // Add model regions on inner mesh
+  vtkSmartPointer<vtkIntArray> innerMeshRegionIds =
+    vtkSmartPointer<vtkIntArray>::New();
+  innerMeshRegionIds->SetNumberOfTuples(innerMesh->GetNumberOfCells());
+  innerMeshRegionIds->FillComponent(0, modelId);
+  innerMeshRegionIds->SetName("ModelRegionID");
+  innerMesh->GetCellData()->AddArray(innerMeshRegionIds);
+
+  // Add model region id to caps
+  vtkSmartPointer<vtkIntArray> endCapsRegionIds =
+    vtkSmartPointer<vtkIntArray>::New();
+  endCapsRegionIds->SetNumberOfTuples(endcaps->GetNumberOfCells());
+  endCapsRegionIds->FillComponent(0, modelId);
+  endCapsRegionIds->SetName("ModelRegionID");
+  endcaps->GetCellData()->AddArray(endCapsRegionIds);
+
+  if (newRegionBoundaryLayer)
+  {
+    modelId++;
+  }
+
+  // Add model region id to boundary layer
+  vtkSmartPointer<vtkIntArray> boundaryMeshRegionIds =
+    vtkSmartPointer<vtkIntArray>::New();
+  boundaryMeshRegionIds->SetNumberOfTuples(boundaryMesh->GetNumberOfCells());
+  boundaryMeshRegionIds->FillComponent(0, modelId);
+  boundaryMeshRegionIds->SetName("ModelRegionID");
+  boundaryMesh->GetCellData()->AddArray(boundaryMeshRegionIds);
 
   //Set the input data for the mesh appender and run
-  endcaps->DeepCopy(thresholder->GetOutput());
   appender->AddInputData(innerMesh);
   appender->AddInputData(boundaryMesh);
   appender->AddInputData(meshFromTetGen);
@@ -1144,7 +1192,6 @@ int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
 int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata)
 {
   int k;
-  int modelId = 1;
   int globalId = 1;
   int numNewCells,numStartCells;
   double pt1[3];
@@ -1183,7 +1230,6 @@ int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata
   numPts = fullcopy->GetNumberOfPoints();
   numCells = fullcopy->GetNumberOfCells();
 
-
   //Remove all triangle Cells! These are triangles on surface of mesh
   //left from the append filter
   isTriangle->SetNumberOfComponents(1);
@@ -1214,6 +1260,13 @@ int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata
   numPts = fullcopy->GetNumberOfPoints();
   numCells = fullcopy->GetNumberOfCells();
 
+  vtkDataArray *currentModelRegionIds = fullcopy->GetCellData()->GetArray("ModelRegionID");
+  if (currentModelRegionIds == NULL)
+  {
+    fprintf(stderr,"Model Region Ids were not given to surface\n");
+    return SV_ERROR;
+  }
+
   //Add global node Ids to points
   for (i=0;i<numPts;i++)
   {
@@ -1226,7 +1279,7 @@ int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata
   for (i=0;i<numCells;i++)
   {
     globalElementIds->InsertValue(i,globalId);
-    modelRegionIds->InsertValue(i,modelId);
+    modelRegionIds->InsertValue(i,currentModelRegionIds->GetTuple1(i));
     globalId++;
   }
 

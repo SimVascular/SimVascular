@@ -558,6 +558,16 @@
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxConvertBLToNewRegion">
+                     <property name="text">
+                      <string>Convert Boundary Layer to New Region/Domain</string>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -929,8 +939,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>98</width>
-              <height>84</height>
+              <width>467</width>
+              <height>547</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -1024,8 +1034,8 @@ Press key &quot;S&quot; outside of any face to deselect all faces.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>167</width>
-              <height>84</height>
+              <width>467</width>
+              <height>547</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1149,8 +1159,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>323</width>
-              <height>196</height>
+              <width>467</width>
+              <height>547</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1399,8 +1409,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>237</width>
-              <height>84</height>
+              <width>467</width>
+              <height>547</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1523,8 +1533,8 @@ Click the button to add it to the left table.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>231</width>
-              <height>303</height>
+              <width>467</width>
+              <height>547</height>
              </rect>
             </property>
             <attribute name="label">

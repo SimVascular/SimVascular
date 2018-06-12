@@ -848,6 +848,12 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
                        +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString()+" "+QString::number(useConstantThickness).toStdString());
     }
 
+    if (ui->checkBoxConvertBLToNewRegion->isChecked())
+    {
+      int convertBLToNewRegion = ui->checkBoxConvertBLToNewRegion->isChecked();
+      cmds.push_back("option NewRegionBoundaryLayer");
+    }
+
     for(int i=0;i<m_TableModelLocal->rowCount();i++)
     {
         QStandardItem* itemName= m_TableModelLocal->item(i,1);
