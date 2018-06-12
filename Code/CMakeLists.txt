@@ -274,19 +274,6 @@ endif()
 # Plugins
 if(SV_USE_QT_GUI)
   if(NOT SV_USE_MITK_CONFIG)
-    if(SV_USE_PYTHON)
-      set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
-      "Source/sv4gui/Plugins/org.sv.projectdatanodes"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.datamanager"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.projectmanager"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.pathplanning"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.segmentation"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.modeling"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
-      "Source/sv4gui/Plugins/org.sv.pythondatanodes"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.application")
-    else()
       set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
       "Source/sv4gui/Plugins/org.sv.projectdatanodes"
       "Source/sv4gui/Plugins/org.sv.gui.qt.datamanager"
@@ -297,7 +284,9 @@ if(SV_USE_QT_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application")
-    endif()
+      if(SV_USE_PYTHON)
+        LIST(APPEND SV_PLUGIN_DIRS "Source/sv4gui/Plugins/org.sv.pythondatanodes")
+      endif()
   endif()
 endif()
 #-----------------------------------------------------------------------------
