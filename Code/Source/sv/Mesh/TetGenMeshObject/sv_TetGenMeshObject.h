@@ -78,7 +78,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
     double sublayerratio;
     int useconstantblthickness;
     int newregionboundarylayer;
-    int boundarylayerinward;
+    int boundarylayerdirection;
     int refinement;
     double refinedsize;
     double sphereradius;

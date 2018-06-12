@@ -135,7 +135,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.sublayerratio=0;
   meshoptions_.useconstantblthickness=0;
   meshoptions_.newregionboundarylayer=0;
-  meshoptions_.boundarylayerinward=1;
+  meshoptions_.boundarylayerdirection=1;
   meshoptions_.refinement=0;
   meshoptions_.refinedsize=0;
   meshoptions_.sphereradius=0;
@@ -218,7 +218,7 @@ cvTetGenMeshObject::cvTetGenMeshObject()
   meshoptions_.sublayerratio=0;
   meshoptions_.useconstantblthickness=0;
   meshoptions_.newregionboundarylayer=0;
-  meshoptions_.boundarylayerinward=1;
+  meshoptions_.boundarylayerdirection=1;
   meshoptions_.refinement=0;
   meshoptions_.refinedsize=0;
   meshoptions_.sphereradius=0;
@@ -1137,10 +1137,10 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   else if (!strncmp(flags,"NewRegionBoundaryLayer",22)) {
     meshoptions_.newregionboundarylayer=1;
   }
-  else if (!strncmp(flags,"BoundaryLayerInward",19)) {
+  else if (!strncmp(flags,"BoundaryLayerDirection",22)) {
     if (numValues < 1)
       return SV_ERROR;
-    meshoptions_.boundarylayerinward=values[0];
+    meshoptions_.boundarylayerdirection=values[0];
   }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
@@ -1414,6 +1414,7 @@ int cvTetGenMeshObject::GenerateMesh() {
         if (GenerateBoundaryLayerMesh() != SV_OK)
           return SV_ERROR;
 
+        fprintf(stdout,"HUH\n");
         if (GenerateAndMeshCaps() != SV_OK)
           return SV_ERROR;
       }
@@ -1943,23 +1944,23 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   cleaner->SetInputData(polydatasolid_);
   cleaner->Update();
 
-  vtkSmartPointer<vtkPolyData> cleanpd = vtkSmartPointer<vtkPolyData>::New();
-  cleanpd->DeepCopy(cleaner->GetOutput());
+  vtkSmartPointer<vtkPolyData> originalsurfpd = vtkSmartPointer<vtkPolyData>::New();
+  originalsurfpd->DeepCopy(cleaner->GetOutput());
 
-  if (VMTKUtils_ComputeSizingFunction(cleanpd,NULL,
+  if (VMTKUtils_ComputeSizingFunction(originalsurfpd,NULL,
 	"MeshSizingFunction") != SV_OK)
   {
     fprintf(stderr,"Problem when computing sizing function");
     return SV_ERROR;
   }
 
-  converter->SetInputData(cleanpd);
+  converter->SetInputData(originalsurfpd);
   converter->Update();
 
   innerblmesh_->DeepCopy(converter->GetOutput());
 
   boundarylayermesh_->DeepCopy(converter->GetOutput());
-  int negateWarpVectors = 1;
+  int negateWarpVectors = meshoptions_.boundarylayerdirection;
   int innerSurfaceCellId = 1;
   int sidewallCellEntityId = 9999;
   int useConstantThickness = meshoptions_.useconstantblthickness;
@@ -1981,7 +1982,18 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   surfacer->SetInputData(innerSurface);
   surfacer->Update();
 
-  polydatasolid_->DeepCopy(surfacer->GetOutput());
+  if (meshoptions_.boundarylayerdirection)
+  {
+    polydatasolid_->DeepCopy(surfacer->GetOutput());
+  }
+  else
+  {
+    // The remeshing excludes cell entity ids with value of 1. Need to
+    // set all to one so that only caps are remeshed.
+    polydatasolid_->DeepCopy(originalsurfpd);
+    polydatasolid_->GetCellData()->GetArray("CellEntityIds")->FillComponent(0, 1);
+  }
+
 #else
   fprintf(stderr,"Cannot generate a boundary layer mesh without VMTK\n");
   return SV_ERROR;
@@ -2059,7 +2071,6 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
     fprintf(stderr,"Problem with cap remeshing\n");
     return SV_ERROR;
   }
-  return SV_OK;
 #else
   fprintf(stderr,"Cannot generate and mesh caps without VMTK\n");
   return SV_ERROR;

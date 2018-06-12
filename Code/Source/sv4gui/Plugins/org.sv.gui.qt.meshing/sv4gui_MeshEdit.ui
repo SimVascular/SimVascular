@@ -549,6 +549,16 @@
                     </widget>
                    </item>
                    <item>
+                    <widget class="QCheckBox" name="checkBoxBoundaryLayerDirection">
+                     <property name="text">
+                      <string>Extrude Bounary Layer Inward from Wall</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
                     <widget class="QCheckBox" name="checkBoxConstantThicknessBL">
                      <property name="toolTip">
                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If selected, the same boundary layer thickness will be used throughout the entire model. If left unselected, the boundary layer thickness will scale with the local mesh edge size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -939,8 +949,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>547</height>
+              <width>100</width>
+              <height>84</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -1034,8 +1044,8 @@ Press key &quot;S&quot; outside of any face to deselect all faces.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>547</height>
+              <width>167</width>
+              <height>84</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1159,8 +1169,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>547</height>
+              <width>323</width>
+              <height>196</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1409,8 +1419,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>547</height>
+              <width>237</width>
+              <height>84</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1533,8 +1543,8 @@ Click the button to add it to the left table.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>547</height>
+              <width>231</width>
+              <height>303</height>
              </rect>
             </property>
             <attribute name="label">

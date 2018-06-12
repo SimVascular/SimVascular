@@ -846,13 +846,17 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
       int useConstantThickness = ui->checkBoxConstantThicknessBL->isChecked();
       cmds.push_back("boundaryLayer "+QString::number(ui->sbLayersT->value()).toStdString()
                        +" "+QString::number(ui->dsbPortionT->value()).toStdString()+" "+QString::number(ui->dsbRatioT->value()).toStdString()+" "+QString::number(useConstantThickness).toStdString());
+
+      int boundaryLayerDirection = ui->checkBoxBoundaryLayerDirection->isChecked();
+      cmds.push_back("option BoundaryLayerDirection "+QString::number(boundaryLayerDirection).toStdString());
+
+      if (ui->checkBoxConvertBLToNewRegion->isChecked())
+      {
+        int convertBLToNewRegion = ui->checkBoxConvertBLToNewRegion->isChecked();
+        cmds.push_back("option NewRegionBoundaryLayer");
+      }
     }
 
-    if (ui->checkBoxConvertBLToNewRegion->isChecked())
-    {
-      int convertBLToNewRegion = ui->checkBoxConvertBLToNewRegion->isChecked();
-      cmds.push_back("option NewRegionBoundaryLayer");
-    }
 
     for(int i=0;i<m_TableModelLocal->rowCount();i++)
     {
@@ -1567,6 +1571,14 @@ void sv4guiMeshEdit::UpdateTetGenGUI()
 
           item= new QStandardItem(QString::number(values[1])+" "+QString::number(values[2])+" "+QString::number(values[3]));
           m_TableModelDomains->setItem(domainsRowIndex, 2, item);
+        }
+        else if (flag == "NewRegionBoundaryLayer")
+        {
+          ui->checkBoxConvertBLToNewRegion->setChecked(true);
+        }
+        else if (flag == "BoundaryLayerDirection")
+        {
+          ui->checkBoxBoundaryLayerDirection->setChecked(true);
         }
         else
         {
