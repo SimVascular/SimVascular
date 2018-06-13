@@ -2489,10 +2489,7 @@ if (strcmp( kernelName, "Parasolid" )==0 ) {
 } else if (strcmp( kernelName, "Discrete" )==0 ) {
   kernel= SM_KT_DISCRETE;
 } else if (strcmp( kernelName, "PolyData" )==0 ) {
-  std::cout<<"PolyData"<<std::endl;
   kernel= SM_KT_POLYDATA;
-  std::cout<<kernelName<<std::endl;
-
 } else if (strcmp( kernelName, "OpenCASCADE")==0 ) {
   kernel= SM_KT_OCCT;
 } else if (strcmp( kernelName, "MeshSimSolid" )==0 ) {
@@ -2503,7 +2500,6 @@ if (strcmp( kernelName, "Parasolid" )==0 ) {
 
 if ( kernel != SM_KT_INVALID ) {
 cvSolidModel::gCurrentKernel = kernel;
-std::cout<<cvSolidModel::gCurrentKernel<<std::endl;
 return Py_BuildValue("s",kernelName);
 } else {
 PyErr_SetString(PyRunTimeErr, "solid kernel is invalid");
@@ -3510,13 +3506,11 @@ static PyObject* Solid_GetFaceIdsMtd( pySolidModel* self, PyObject* args)
   int *faces;
   char facestring[256];
   PyObject* faceList;
-  fprintf(stdout,"checkGetFaceId\n");
   int status = geom->GetFaceIds( &numFaces, &faces);
   if ( status == SV_OK ) {
     if (numFaces == 0)
     {
       Py_INCREF(Py_None);
-      fprintf(stdout,"checkGetFaceId0\n");
 
       return Py_None;
     }
@@ -3527,7 +3521,6 @@ static PyObject* Solid_GetFaceIdsMtd( pySolidModel* self, PyObject* args)
 	  facestring[0]='\n';
     }
     delete faces;
-    fprintf(stdout,"checkGetFaceId\n");
     return faceList;
   } else {
     PyErr_SetString(PyRunTimeErr, "GetFaceIds: error on object ");

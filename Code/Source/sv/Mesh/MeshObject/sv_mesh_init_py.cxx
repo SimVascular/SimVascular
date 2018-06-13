@@ -960,19 +960,12 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr,"Could not import one char and one list,flags and valuelist");
     return Py_ERROR;
   }
-  fprintf(stdout,"checkMeshOption\n");
   int numValues = PyList_Size(valueList);
-  fprintf(stdout,"checkMeshOption\n");
   double *values = new double [numValues];
-  fprintf(stdout,"checkMeshOption\n");
   for (int j=0 ; j<numValues;j++)
   {
-    std::cout<<"j: "<<j<<std::endl;;
-    std::cout<<"numValues: "<<numValues<<std::endl;;
     values[j]=PyFloat_AsDouble(PyList_GetItem(valueList,j));
-    std::cout<<"values: "<<values[j]<<std::endl;
   }
-  fprintf(stdout,"checkMeshOption: %d\n", values[0]);
   // Do work of command:
   // Get the cvPolyData:
   if ( geom->SetMeshOptions(flags,numValues,values) == SV_ERROR ) {
@@ -980,7 +973,6 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
     delete [] values;
     return Py_ERROR;
   }
-  fprintf(stdout,"checkMeshOption\n");
   delete [] values;
 
   return Py_BuildValue("s","success");
