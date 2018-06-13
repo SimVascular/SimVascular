@@ -33,6 +33,7 @@
 #define SV4GUI_PATHELEMENT_H
 
 #include "SimVascular.h"
+#include "sv3_PathElement.h"
 
 #include <sv4guiModulePathExports.h>
 
@@ -40,11 +41,9 @@
 
 #include "mitkPoint.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathElement
+class SV4GUIMODULEPATH_EXPORT sv4guiPathElement : public sv3::PathElement
 {
 public:
-
-    enum CalculationMethod {CONSTANT_TOTAL_NUMBER, CONSTANT_SUBDIVISION_NUMBER, CONSTANT_SPACING};
 
     struct svControlPoint
     {
@@ -63,8 +62,6 @@ public:
 
     sv4guiPathElement* Clone();
 
-    int GetControlPointNumber();
-
     std::vector<mitk::Point3D> GetControlPoints();
 
     svControlPoint GetsvControlPoint(int index) ;
@@ -75,39 +72,13 @@ public:
 
     int GetInsertintIndexByDistance( mitk::Point3D point);
 
-    void RemoveControlPoint(int index);
-
     void SetControlPoint(int index, mitk::Point3D point);
 
     void SetControlPoints(std::vector<mitk::Point3D> points, bool update = true);
 
-    void ControlPointsChanged();
-
-    bool IsControlPointSelected(int index) ;
-
-    void SetControlPointSelected( int index, bool selected);
-
-    void DeselectControlPoint();
-
-    int GetControlPointSelectedIndex();
-
     int SearchControlPoint( mitk::Point3D point, mitk::ScalarType distance);
 
     sv4guiPathElement* CreateSmoothedPathElement(int sampleRate, int numModes, bool controlPointsBased = true ); //otherwise pathPointsBased
-
-    int GetPathPointNumber();
-
-    void SetSpacing(double spacing);
-
-    double GetSpacing();
-
-    void SetMethod(CalculationMethod method = CONSTANT_TOTAL_NUMBER );
-
-    CalculationMethod GetMethod();
-
-    void SetCalculationNumber(int number);
-
-    int GetCalculationNumber();
 
     std::vector<sv4guiPathPoint>  GetPathPoints();
 
@@ -118,24 +89,11 @@ public:
     mitk::Point3D GetPathPosPoint(int index) ;
 
     void SetPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints);
-
-    void CreatePathPoints() ;
-
-    void CalculateBoundingBox(double *bounds);
-
+    
     std::vector<sv4guiPathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex);
 
 protected:
 
-    std::vector<svControlPoint> m_ControlPoints;
-
-    std::vector<sv4guiPathPoint> m_PathPoints;
-
-    double m_Spacing;
-
-    CalculationMethod m_Method;
-
-    int m_CalculationNumber;
 };
 
 #endif // SV4GUI_PATHELEMENT_H

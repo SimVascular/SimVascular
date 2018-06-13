@@ -34,18 +34,15 @@
 
 #include "SimVascular.h"
 
+#include "sv3_Spline.h"
 #include "sv4guiModuleCommonExports.h"
 
 #include <mitkPoint.h>
 #include <mitkVector.h>
 
-class sv4guiVtkParametricSpline;
-
-class SV4GUIMODULECOMMON_EXPORT sv4guiSpline
+class SV4GUIMODULECOMMON_EXPORT sv4guiSpline : public sv3::Spline
 {
 public:
-
-    enum CalculationMethod {CONSTANT_TOTAL_NUMBER, CONSTANT_SUBDIVISION_NUMBER, CONSTANT_SPACING};
 
     struct sv4guiSplinePoint
     {
@@ -61,26 +58,6 @@ public:
 
     virtual ~sv4guiSpline();
 
-    void SetClosed(bool closed = true);
-
-    bool IsClosed();
-
-    void SetSpacing(double spacing);
-
-    double GetSpacing();
-
-    void SetMethod(CalculationMethod method = CONSTANT_TOTAL_NUMBER );
-
-    CalculationMethod GetMethod();
-
-    void SetCalculationNumber(int number);
-
-    int GetCalculationNumber();
-
-    void SetFurtherSubdivisionNumber(int number);
-
-    int GetFurtherSubdivsionNumber();
-
     void SetInputPoints(std::vector<mitk::Point3D> inputPonits);
 
     std::vector<mitk::Point3D>  GetInputPoints();
@@ -91,21 +68,9 @@ public:
 
     void Update();
 
-    double GetLength(sv4guiVtkParametricSpline* svpp, double idx1, double idx2);
-
-    mitk::Point3D GetPoint(sv4guiVtkParametricSpline* svpp, double idx);
+    mitk::Point3D GetPoint(sv3::VtkParametricSpline* svpp, double idx);
 
 protected:
-
-    bool m_Closed;
-
-    double m_Spacing;
-
-    CalculationMethod m_Method;
-
-    int m_CalculationNumber;
-
-    int m_FurtherSubdivisionNumber; //for tangent calculation;
 
     std::vector<mitk::Point3D> m_InputPoints;
 

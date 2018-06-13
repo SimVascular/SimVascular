@@ -35,6 +35,8 @@ set(SV_PLUGINS
   org.sv.gui.qt.application:ON
 
   org.sv.projectdatanodes:ON
+  
+  org.sv.pythondatanodes:ON
 
   org.sv.gui.qt.projectmanager:ON
   org.sv.gui.qt.datamanager:ON

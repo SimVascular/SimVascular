@@ -39,6 +39,8 @@
 
 #include "SimVascular.h"
 #include "svUtilsExports.h" // For exports
+#include <array>
+#include <vector>
 
 class SV_EXPORT_UTILS cvMath {
 
@@ -70,6 +72,16 @@ public:
 
   int fitLeastSquares(int numberOfSamples,double **xt,int xOrder,double **yt,
                       int yOrder,double **mt);
+  int GetInsertintIndexByDistance( std::vector<std::array<double,3> > points, std::array<double,3> point, 
+                            bool insertOnlyIfDifferent = true, bool useDistanceSum = true);
+  
+  int GetInsertintIndexByDistanceSum( std::vector<std::array<double,3> > points, std::array<double,3> point, 
+                            bool insertOnlyIfDifferent = true);
+
+  int GetInsertintIndexByProjectedDistance( std::vector<std::array<double,3> > points, std::array<double,3> point, 
+                            bool insertOnlyIfDifferent = true);
+                            
+  std::array<double,3> GetPerpendicularNormalVector(std::array<double,3> vec);
 
   private:
   int complex_mult (double z1[], double z2[], double zout[]);

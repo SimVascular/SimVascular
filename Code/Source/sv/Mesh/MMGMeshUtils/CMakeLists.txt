@@ -44,7 +44,11 @@ endif()
 SET(CXXSRCS sv_mmg_mesh_utils.cxx)
 SET(HDRS sv_mmg_mesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_mmg_mesh_init.cxx sv_mmg_mesh_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS sv_mmg_mesh_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_mmg_mesh_init.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -86,5 +90,7 @@ if(SV_INSTALL_HEADERS)
 		)
 endif()
 
-PYTHON_ADD_MODULE(pyMeshUtil sv_mmg_mesh_init_py.cxx)
-target_link_libraries(pyMeshUtil ${lib} ${PYTHON_LIBRARY})
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyMeshUtil sv_mmg_mesh_init_py.cxx)
+  target_link_libraries(pyMeshUtil ${lib} ${PYTHON_LIBRARY})
+endif()

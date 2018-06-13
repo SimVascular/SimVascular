@@ -88,7 +88,7 @@
 #endif
 
 #ifdef SV_USE_PYTHON
-extern "C" int Tclpython_Init(Tcl_Interp *interp);
+//extern "C" int Tclpython_Init(Tcl_Interp *interp);
 #endif
 
 // ---------------
@@ -246,10 +246,10 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 
 #ifdef SV_USE_PYTHON
-  if ( Tclpython_Init(interp) == TCL_ERROR ) {
-      fprintf( stderr, "error on Tclpython_Init\n" );
-      return TCL_ERROR;
-  }
+//  if ( Tclpython_Init(interp) == TCL_ERROR ) {
+//      fprintf( stderr, "error on Tclpython_Init\n" );
+//      return TCL_ERROR;
+//  }
 #endif
 
 #endif

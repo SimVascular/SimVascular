@@ -30,7 +30,7 @@
  */
 
 #include "sv4gui_Spline.h"
-#include "sv4gui_VtkParametricSpline.h"
+#include "sv3_VtkParametricSpline.h"
 #include "sv4gui_Math3.h"
 
 #include "vtkParametricSpline.h"
@@ -38,70 +38,18 @@
 #include "vtkSpline.h"
 #include "vtkPoints.h"
 
-sv4guiSpline::sv4guiSpline()
-    : m_FurtherSubdivisionNumber(10)
+using sv3::VtkParametricSpline;
+sv4guiSpline::sv4guiSpline() : sv3::Spline()
 {
 }
 
 sv4guiSpline::sv4guiSpline(bool closed, CalculationMethod method, int furtherSubdivisionNumber)
-    : m_Closed(closed)
-    , m_Method(method)
-    , m_FurtherSubdivisionNumber(furtherSubdivisionNumber)
+    : sv3::Spline(closed, method,furtherSubdivisionNumber)
 {
 }
 
 sv4guiSpline::~sv4guiSpline()
 {
-}
-
-void sv4guiSpline::SetClosed(bool closed)
-{
-    m_Closed=closed;
-}
-
-bool sv4guiSpline::IsClosed()
-{
-    return m_Closed;
-}
-
-void sv4guiSpline::SetSpacing(double spacing)
-{
-    m_Spacing=spacing;
-}
-
-double sv4guiSpline::GetSpacing()
-{
-    return m_Spacing;
-}
-
-void sv4guiSpline::SetMethod(CalculationMethod method)
-{
-    m_Method=method;
-}
-
-sv4guiSpline::CalculationMethod sv4guiSpline::GetMethod()
-{
-    return m_Method;
-}
-
-void sv4guiSpline::SetCalculationNumber(int number)
-{
-    m_CalculationNumber=number;
-}
-
-int sv4guiSpline::GetCalculationNumber()
-{
-    return m_CalculationNumber;
-}
-
-void sv4guiSpline::SetFurtherSubdivisionNumber(int number)
-{
-    m_FurtherSubdivisionNumber=number;
-}
-
-int sv4guiSpline::GetFurtherSubdivsionNumber()
-{
-    return m_FurtherSubdivisionNumber;
 }
 
 void sv4guiSpline::SetInputPoints(std::vector<mitk::Point3D> inputPoints)
@@ -128,7 +76,7 @@ std::vector<mitk::Point3D> sv4guiSpline::GetSplinePosPoints()
     return posPoints;
 }
 
-mitk::Point3D sv4guiSpline::GetPoint(sv4guiVtkParametricSpline* svpp, double t)
+mitk::Point3D sv4guiSpline::GetPoint(VtkParametricSpline* svpp, double t)
 {
     double pt[3];
     mitk::Point3D point;
@@ -141,38 +89,11 @@ mitk::Point3D sv4guiSpline::GetPoint(sv4guiVtkParametricSpline* svpp, double t)
     return point;
 }
 
-double sv4guiSpline::GetLength(sv4guiVtkParametricSpline* svpp, double t1, double t2)
-{
-    int subdivisionNumber=10;
-    double interval=(t2-t1)/subdivisionNumber;
-
-    mitk::Point3D point1, point2;
-
-    double totalLength=0.0;
-    for(int i=0;i<subdivisionNumber;i++)
-    {
-        double tt1=t1+interval*i;
-        double tt2=t1+interval*(i+1);
-        if(i==subdivisionNumber-1)
-        {
-            tt2=t2;//make sure equal to t2, considering floating error
-        }
-
-        point1=GetPoint(svpp,tt1);
-        point2=GetPoint(svpp,tt2);
-
-        double length=point2.EuclideanDistanceTo(point1);
-        totalLength+=length;
-    }
-
-    return totalLength;
-}
-
 void sv4guiSpline::Update()
 {
     m_SplinePoints.clear();
 
-    sv4guiVtkParametricSpline* svpp= new sv4guiVtkParametricSpline();
+    VtkParametricSpline* svpp= new VtkParametricSpline();
     svpp->ParameterizeByLengthOff();
 
     if(m_Closed)
@@ -205,9 +126,7 @@ void sv4guiSpline::Update()
     default:
         break;
     }
-
     int splinePointID=0;
-
     for(int i=0;i<inputPointNumber;i++)
     {
         pt1=m_InputPoints[i];
@@ -223,6 +142,7 @@ void sv4guiSpline::Update()
 
         splinePoint.pos=pt1;
 
+
         if(i==inputPointNumber-1 &&!m_Closed)
         {
             double tx=i-1.0/interNumber/m_FurtherSubdivisionNumber;
@@ -236,7 +156,6 @@ void sv4guiSpline::Update()
             m_SplinePoints.push_back(splinePoint);
             break;
         }
-
         double txx=i+1.0/interNumber/m_FurtherSubdivisionNumber;
         ptx=GetPoint(svpp,txx);
 
@@ -246,7 +165,6 @@ void sv4guiSpline::Update()
         splinePoint.tangent.Normalize();
         splinePoint.rotation=sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
         m_SplinePoints.push_back(splinePoint);
-
         for(int j=1;j<interNumber;j++)
         {
             double tnew=i+j*1.0/interNumber;
@@ -263,7 +181,6 @@ void sv4guiSpline::Update()
             splinePoint.rotation=sv4guiMath3::GetPerpendicularNormalVector(splinePoint.tangent);
             m_SplinePoints.push_back(splinePoint);
         }
-
     }
 
 }

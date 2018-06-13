@@ -178,6 +178,8 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 	"Source/sv2/Globals"
 	"Source/sv/Utils"
 	"Source/sv/Repository"
+  	"Source/sv3/Path"
+	"Source/sv3/Common"
   "Source/vtkSV/Common"
   "Source/vtkSV/Filters"
   "Source/vtkSV/Modules/Boolean"
@@ -272,7 +274,7 @@ endif()
 # Plugins
 if(SV_USE_QT_GUI)
   if(NOT SV_USE_MITK_CONFIG)
-    set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
+      set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
       "Source/sv4gui/Plugins/org.sv.projectdatanodes"
       "Source/sv4gui/Plugins/org.sv.gui.qt.datamanager"
       "Source/sv4gui/Plugins/org.sv.gui.qt.projectmanager"
@@ -282,6 +284,9 @@ if(SV_USE_QT_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application")
+      if(SV_USE_PYTHON)
+        LIST(APPEND SV_PLUGIN_DIRS "Source/sv4gui/Plugins/org.sv.pythondatanodes")
+      endif()
   endif()
 endif()
 #-----------------------------------------------------------------------------

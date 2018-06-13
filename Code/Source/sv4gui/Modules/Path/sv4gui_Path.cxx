@@ -35,7 +35,7 @@
 sv4guiPath::sv4guiPath()
     : m_CalculateBoundingBox(true)
     , m_PathID(-1)
-    , m_Method(sv4guiPathElement::CONSTANT_TOTAL_NUMBER)
+    , m_Method(sv3::PathElement::CONSTANT_TOTAL_NUMBER)
     , m_CalculationNumber(100)
     , m_Spacing(0)
     , m_DataModified(false)
@@ -311,12 +311,12 @@ double sv4guiPath::GetSpacing() const
     return m_Spacing;
 }
 
-void sv4guiPath::SetMethod(sv4guiPathElement::CalculationMethod method)\
+void sv4guiPath::SetMethod(sv3::PathElement::CalculationMethod method)\
 {
     m_Method=method;
 }
 
-sv4guiPathElement::CalculationMethod sv4guiPath::GetMethod() const
+sv3::PathElement::CalculationMethod sv4guiPath::GetMethod() const
 {
     return m_Method;
 }
