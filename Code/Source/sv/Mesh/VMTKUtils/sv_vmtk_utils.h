@@ -93,7 +93,8 @@ SV_EXPORT_VMTK_UTILS int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh
 SV_EXPORT_VMTK_UTILS int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
     vtkUnstructuredGrid *innerMesh, vtkUnstructuredGrid *boundaryMesh,
     vtkUnstructuredGrid *surfaceWithSize,
-    std::string cellEntityIdsArrayName);
+    std::string cellEntityIdsArrayName,
+    int newRegionBoundaryLayer);
 
 SV_EXPORT_VMTK_UTILS int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata);
 

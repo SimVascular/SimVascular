@@ -128,12 +128,14 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.maxedgesize=0;
   meshoptions_.epsilon=0;
   meshoptions_.minratio=0;
-  meshoptions_.coarsen_percent=0;
+  meshoptions_.coarsenpercent=0;
   meshoptions_.boundarylayermeshflag=0;
   meshoptions_.numsublayers=0;
   meshoptions_.blthicknessfactor=0;
   meshoptions_.sublayerratio=0;
   meshoptions_.useconstantblthickness=0;
+  meshoptions_.newregionboundarylayer=0;
+  meshoptions_.boundarylayerdirection=1;
   meshoptions_.refinement=0;
   meshoptions_.refinedsize=0;
   meshoptions_.sphereradius=0;
@@ -170,74 +172,77 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
 cvTetGenMeshObject::cvTetGenMeshObject()
 : cvMeshObject()
 {
-inmesh_ = NULL;
-outmesh_ = NULL;
-polydatasolid_ = NULL;
-inputug_ = NULL;
-meshloaded_ = 0;
-loadedVolumeMesh_ = 0;
-//nodemap_ = NULL;
-pts_ = NULL;
+  inmesh_ = NULL;
+  outmesh_ = NULL;
+  polydatasolid_ = NULL;
+  inputug_ = NULL;
+  meshloaded_ = 0;
+  loadedVolumeMesh_ = 0;
+  //nodemap_ = NULL;
+  pts_ = NULL;
 
-originalpolydata_ = NULL;
-surfacemesh_ = NULL;
-volumemesh_ = NULL;
-boundarylayermesh_ = NULL;
-innerblmesh_ = NULL;
-holelist_ = NULL;
-regionlist_ = NULL;
-regionsizelist_ = NULL;
+  originalpolydata_ = NULL;
+  surfacemesh_ = NULL;
+  volumemesh_ = NULL;
+  boundarylayermesh_ = NULL;
+  innerblmesh_ = NULL;
+  holelist_ = NULL;
+  regionlist_ = NULL;
+  regionsizelist_ = NULL;
 
-meshFileName_[0] = '\0';
-solidFileName_[0] = '\0';
+  meshFileName_[0] = '\0';
+  solidFileName_[0] = '\0';
 
-solidmodeling_kernel_ = SM_KT_POLYDATA;
-numModelRegions_ = 0;
-numBoundaryRegions_ = 0;
+  solidmodeling_kernel_ = SM_KT_POLYDATA;
+  numModelRegions_ = 0;
+  numBoundaryRegions_ = 0;
 
-//All the different mesh options. Originally set to zero. Changed by calls to object from GUI
-//Specifically ->SetMeshOptions()
-meshoptions_.surfacemeshflag=0;
-meshoptions_.volumemeshflag=0;
-meshoptions_.nomerge=0;
-meshoptions_.quiet=0;
-meshoptions_.docheck=0;
-meshoptions_.verbose=0;
-meshoptions_.diagnose=0;
-meshoptions_.nobisect=0;
-meshoptions_.optlevel=0;
-meshoptions_.maxedgesize=0;
-meshoptions_.epsilon=0;
-meshoptions_.minratio=0;
-meshoptions_.coarsen_percent=0;
-meshoptions_.boundarylayermeshflag=0;
-meshoptions_.numsublayers=0;
-meshoptions_.blthicknessfactor=0;
-meshoptions_.sublayerratio=0;
-meshoptions_.refinement=0;
-meshoptions_.refinedsize=0;
-meshoptions_.sphereradius=0;
-meshoptions_.cylinderradius=0;
-meshoptions_.cylinderlength=0;
-meshoptions_.functionbasedmeshing=0;
-meshoptions_.secondarrayfunction=0;
-meshoptions_.meshwallfirst=0;
-meshoptions_.startwithvolume=0;
-meshoptions_.refinecount=0;
-meshoptions_.numberofholes=0;
-meshoptions_.numberofregions=0;
+  //All the different mesh options. Originally set to zero. Changed by calls to object from GUI
+  //Specifically ->SetMeshOptions()
+  meshoptions_.surfacemeshflag=0;
+  meshoptions_.volumemeshflag=0;
+  meshoptions_.nomerge=0;
+  meshoptions_.quiet=0;
+  meshoptions_.docheck=0;
+  meshoptions_.verbose=0;
+  meshoptions_.diagnose=0;
+  meshoptions_.nobisect=0;
+  meshoptions_.optlevel=0;
+  meshoptions_.maxedgesize=0;
+  meshoptions_.epsilon=0;
+  meshoptions_.minratio=0;
+  meshoptions_.coarsenpercent=0;
+  meshoptions_.boundarylayermeshflag=0;
+  meshoptions_.numsublayers=0;
+  meshoptions_.blthicknessfactor=0;
+  meshoptions_.sublayerratio=0;
+  meshoptions_.useconstantblthickness=0;
+  meshoptions_.newregionboundarylayer=0;
+  meshoptions_.boundarylayerdirection=1;
+  meshoptions_.refinement=0;
+  meshoptions_.refinedsize=0;
+  meshoptions_.sphereradius=0;
+  meshoptions_.cylinderradius=0;
+  meshoptions_.cylinderlength=0;
+  meshoptions_.functionbasedmeshing=0;
+  meshoptions_.secondarrayfunction=0;
+  meshoptions_.meshwallfirst=0;
+  meshoptions_.startwithvolume=0;
+  meshoptions_.refinecount=0;
+  meshoptions_.numberofholes=0;
+  meshoptions_.numberofregions=0;
 #ifdef SV_USE_MMG
-meshoptions_.usemmg=1;
+  meshoptions_.usemmg=1;
 #else
-meshoptions_.usemmg=0;
+  meshoptions_.usemmg=0;
 #endif
-meshoptions_.hausd=0;
-for (int i=0;i<3;i++)
-{
-  meshoptions_.spherecenter[i] = 0;
-  meshoptions_.cylindercenter[i] = 0;
-  meshoptions_.cylindernormal[i] = 0;
-}
+  meshoptions_.hausd=0;
+  for (int i=0;i<3;i++)
+  {
+    meshoptions_.spherecenter[i] = 0;
+    meshoptions_.cylindercenter[i] = 0;
+    meshoptions_.cylindernormal[i] = 0;
+  }
 }
 #endif
 // -----------
@@ -1014,30 +1019,30 @@ int cvTetGenMeshObject::NewMesh() {
 
 int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values) {
   if(!strncmp(flags,"GlobalEdgeSize",14)) {            //Global edge size
-       if (numValues < 1)
-   return SV_ERROR;
+     if (numValues < 1)
+       return SV_ERROR;
 
-      meshoptions_.maxedgesize=values[0];
+    meshoptions_.maxedgesize=values[0];
   }
   else if(!strncmp(flags,"LocalEdgeSize",13)) {
 
-      if (numValues < 2)
-      {
-	fprintf(stderr,"Must give face id and local edge size\n");
-	return SV_ERROR;
-      }
-      meshoptions_.functionbasedmeshing = 1;
-      //Create a new mesh sizing function and call TGenUtils to compute function.
-      //Store in the member data vtkDouble Array meshsizingfunction
-      if (TGenUtils_SetLocalMeshSize(polydatasolid_,values[0],values[1]) != SV_OK)
-        return SV_ERROR;
-      meshoptions_.secondarrayfunction = 1;
+    if (numValues < 2)
+    {
+      fprintf(stderr,"Must give face id and local edge size\n");
+      return SV_ERROR;
+    }
+    meshoptions_.functionbasedmeshing = 1;
+    //Create a new mesh sizing function and call TGenUtils to compute function.
+    //Store in the member data vtkDouble Array meshsizingfunction
+    if (TGenUtils_SetLocalMeshSize(polydatasolid_,values[0],values[1]) != SV_OK)
+      return SV_ERROR;
+    meshoptions_.secondarrayfunction = 1;
   }
   else if(!strncmp(flags,"SurfaceMeshFlag",15)) {
 #ifdef SV_USE_VMTK
-      if (numValues < 1)
-	return SV_ERROR;
-      meshoptions_.surfacemeshflag = values[0];
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.surfacemeshflag = values[0];
 #else
       fprintf(stderr,"Plugin VMTK is not being used!\
 	  In order to use surface meshing, plugin VMTK must be available!\n");
@@ -1045,29 +1050,29 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
 #endif
   }
   else if(!strncmp(flags,"VolumeMeshFlag",14)) {
-      if (numValues < 1)
-  return SV_ERROR;
-      meshoptions_.volumemeshflag = values[0];
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.volumemeshflag = values[0];
   }
   else if(!strncmp(flags,"QualityRatio",12)) {//q
-      if (numValues < 1)
-	return SV_ERROR;
-      meshoptions_.minratio=values[0];
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.minratio=values[0];
   }
   else if(!strncmp(flags,"Optimization",12)) {//O
-      if (numValues < 1)
-	return SV_ERROR;
-      meshoptions_.optlevel=(int)values[0];
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.optlevel=(int)values[0];
   }
   else if(!strncmp(flags,"Epsilon",7)) {//T
-      if (numValues < 1)
-	return SV_ERROR;
-      meshoptions_.epsilon=values[0];
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.epsilon=values[0];
   }
   else if(!strncmp(flags,"CoarsenPercent",14)) {//R
-      if (numValues < 1)
-	return SV_ERROR;
-      meshoptions_.coarsen_percent=values[0]/100;
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.coarsenpercent=values[0]/100;
   }
   else if(!strncmp(flags,"AddHole",7)) {
     if (numValues < 3)
@@ -1096,38 +1101,46 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
 
   }
   else if(!strncmp(flags,"Verbose",7)) {//V
-      meshoptions_.verbose=1;
+    meshoptions_.verbose=1;
   }
   else if(!strncmp(flags,"NoMerge",7)) {//M
-      meshoptions_.nomerge=1;
+    meshoptions_.nomerge=1;
   }
   else if(!strncmp(flags,"Check",5)) {//C
-      meshoptions_.docheck=1;
+    meshoptions_.docheck=1;
   }
   else if(!strncmp(flags,"NoBisect",8)) {//Y
-      meshoptions_.nobisect=1;
+    meshoptions_.nobisect=1;
   }
   else if(!strncmp(flags,"Quiet",5)) {//Q
-      meshoptions_.quiet=1;
+    meshoptions_.quiet=1;
   }
   else if(!strncmp(flags,"Diagnose",8)) {//d
-      meshoptions_.diagnose=1;
+    meshoptions_.diagnose=1;
   }
   else if(!strncmp(flags,"MeshWallFirst",13)) {//k
-      meshoptions_.meshwallfirst=1;
+    meshoptions_.meshwallfirst=1;
   }
   else if(!strncmp(flags,"StartWithVolume",15)) {//r
-      meshoptions_.startwithvolume=1;
+    meshoptions_.startwithvolume=1;
   }
-  else if(!strncmp(flags,"Hausd",5)) {//r
-      if (numValues < 1)
-	return SV_ERROR;
-      meshoptions_.hausd=values[0];
+  else if(!strncmp(flags,"Hausd",5)) {
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.hausd=values[0];
   }
   else if (!strncmp(flags,"UseMMG",6)){
       if (numValues < 1)
-	return SV_ERROR;
+        return SV_ERROR;
       meshoptions_.usemmg=values[0];
+  }
+  else if (!strncmp(flags,"NewRegionBoundaryLayer",22)) {
+    meshoptions_.newregionboundarylayer=1;
+  }
+  else if (!strncmp(flags,"BoundaryLayerDirection",22)) {
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.boundarylayerdirection=values[0];
   }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
@@ -1534,10 +1547,10 @@ int cvTetGenMeshObject::GenerateMesh() {
       tgb->regionattrib = 1;
     }
 #if defined(TETGEN150) || defined(TETGEN151)
-    if (meshoptions_.coarsen_percent != 0)
+    if (meshoptions_.coarsenpercent != 0)
     {
       tgb->coarsen=1;
-      tgb->coarsen_percent=meshoptions_.coarsen_percent;
+      tgb->coarsen_percent=meshoptions_.coarsenpercent;
     }
     if (meshoptions_.nomerge)
     {
@@ -1927,30 +1940,36 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   //Then we call VMTK to generate a boundary layer mesh, and we set
   //the boundary layer mesh as the member vtkUnstructuredGrid
   //called boundarylayermesh_
-  cleaner->SetInputData(polydatasolid_);
+  vtkSmartPointer<vtkPolyDataNormals> normaler =
+    vtkSmartPointer<vtkPolyDataNormals>::New();
+  normaler->SetInputData(polydatasolid_);
+  normaler->SetConsistency(1);
+  normaler->SetAutoOrientNormals(1);
+  normaler->SetFlipNormals(0);
+  normaler->SetComputeCellNormals(0);
+  normaler->SplittingOff();
+  normaler->Update();
+
+  cleaner->SetInputData(normaler->GetOutput());
   cleaner->Update();
 
-  vtkSmartPointer<vtkPolyData> cleanpd = vtkSmartPointer<vtkPolyData>::New();
-  cleanpd->DeepCopy(cleaner->GetOutput());
+  vtkSmartPointer<vtkPolyData> originalsurfpd = vtkSmartPointer<vtkPolyData>::New();
+  originalsurfpd->DeepCopy(cleaner->GetOutput());
 
-  if (VMTKUtils_ComputeSizingFunction(cleanpd,NULL,
+  if (VMTKUtils_ComputeSizingFunction(originalsurfpd,NULL,
 	"MeshSizingFunction") != SV_OK)
   {
     fprintf(stderr,"Problem when computing sizing function");
     return SV_ERROR;
   }
-  vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-  writer->SetInputData(cleanpd);
-  writer->SetFileName("/Users/adamupdegrove/Desktop/tmp/WHATHTE.vtp");
-  writer->Write();
 
-  converter->SetInputData(cleanpd);
+  converter->SetInputData(originalsurfpd);
   converter->Update();
 
   innerblmesh_->DeepCopy(converter->GetOutput());
 
   boundarylayermesh_->DeepCopy(converter->GetOutput());
-  int negateWarpVectors = 1;
+  int negateWarpVectors = meshoptions_.boundarylayerdirection;
   int innerSurfaceCellId = 1;
   int sidewallCellEntityId = 9999;
   int useConstantThickness = meshoptions_.useconstantblthickness;
@@ -1972,7 +1991,24 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   surfacer->SetInputData(innerSurface);
   surfacer->Update();
 
-  polydatasolid_->DeepCopy(surfacer->GetOutput());
+  if (meshoptions_.boundarylayerdirection)
+  {
+    polydatasolid_->DeepCopy(surfacer->GetOutput());
+  }
+  else
+  {
+    // The remeshing excludes cell entity ids with value of 1. Need to
+    // set all to one so that only caps are remeshed.
+    polydatasolid_->DeepCopy(originalsurfpd);
+    polydatasolid_->GetCellData()->RemoveArray("CellEntityIds");
+    vtkSmartPointer<vtkIntArray> newEntityIds =
+      vtkSmartPointer<vtkIntArray>::New();
+    newEntityIds->SetNumberOfTuples(polydatasolid_->GetNumberOfCells());
+    newEntityIds->FillComponent(0, 1);
+    newEntityIds->SetName("CellEntityIds");
+    polydatasolid_->GetCellData()->AddArray(newEntityIds);
+  }
+
 #else
   fprintf(stderr,"Cannot generate a boundary layer mesh without VMTK\n");
   return SV_ERROR;
@@ -2050,7 +2086,6 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
     fprintf(stderr,"Problem with cap remeshing\n");
     return SV_ERROR;
   }
-  return SV_OK;
 #else
   fprintf(stderr,"Cannot generate and mesh caps without VMTK\n");
   return SV_ERROR;
@@ -2153,9 +2188,10 @@ int cvTetGenMeshObject::AppendBoundaryLayerMesh()
 
   //We append the volume mesh from tetgen, the inner surface, and the
   //boundary layer mesh all together.
+  int newregionboundarylayer = meshoptions_.newregionboundarylayer;
   fprintf(stdout,"Appending Boundary Layer and Volume Mesh\n");
   if (VMTKUtils_AppendMesh(volumemesh_,innerblmesh_,boundarylayermesh_,
-    surfacetomesh->GetOutput(),markerListName) != SV_OK)
+    surfacetomesh->GetOutput(),markerListName, newregionboundarylayer) != SV_OK)
   {
   return SV_ERROR;
   }
@@ -2242,7 +2278,7 @@ int cvTetGenMeshObject::Adapt()
   newtgb->verbose=1;
   //newtgb->coarsen=1;
   //newtgb->coarsen_param=8;
-  //newtgb->coarsen_percent=1;
+  //newtgb->coarsenpercent=1;
 #if USE_TETGEN143
   newtgb->goodratio = 4.0;
   newtgb->goodangle = 0.88;
