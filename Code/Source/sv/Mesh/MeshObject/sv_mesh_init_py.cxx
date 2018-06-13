@@ -72,7 +72,8 @@ PyMODINIT_FUNC PyInit_pyMeshObject();
 PyObject* PyRunTimeErr;
 PyObject*  cvMesh_SetMeshKernelCmd( PyObject* self, PyObject* args);
 
-pyMeshObject* cvMesh_NewObjectCmd( pyMeshObject* self, PyObject* args);
+PyObject* cvMesh_NewObjectCmd( pyMeshObject* self, PyObject* args);
+PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args);
 PyObject* cvMesh_ListMethodsCmd( PyObject* self, PyObject* args);
 PyObject* cvMesh_LogonCmd( PyObject* self, PyObject* args);
 PyObject* cvMesh_LogoffCmd( PyObject* self, PyObject* args);
@@ -143,6 +144,7 @@ static int pyMeshObject_init(pyMeshObject* self, PyObject* args)
 //};
 static PyMethodDef pyMeshObject_methods[]={
   {"mesh_newObject", (PyCFunction)cvMesh_NewObjectCmd,METH_VARARGS,NULL},
+  {"mesh_getMesh", (PyCFunction)cvMesh_GetObjectCmd, METH_VARARGS, NULL},
   { "LoadModel", (PyCFunction)cvMesh_LoadModelMtd,METH_VARARGS,NULL},
   { "GetBoundaryFaces",(PyCFunction)cvMesh_GetBoundaryFacesMtd,METH_VARARGS,NULL},
   { "LoadMesh", (PyCFunction)cvMesh_LoadMeshMtd,METH_VARARGS,NULL},
@@ -346,7 +348,7 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
 //cvMesh_NewObjectCmd
 //-------------------
 
-pyMeshObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
+PyObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
 {
   char *resultName;
   char *meshFileName = NULL;
@@ -383,9 +385,56 @@ pyMeshObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
+// ----------------------
+// cvMesh_GetObjectCmd
+// ----------------------
+PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
+{
+  char *objName=NULL;
+  RepositoryDataT type;
+  cvRepositoryData *rd;
+  cvMeshObject *geom;
+
+  if (!PyArg_ParseTuple(args,"s", &objName))
+  {
+    PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
+    return Py_ERROR;
+  }
+
+  // Do work of command:
+
+  // Retrieve source object:
+  rd = gRepository->GetObject( objName );
+  char r[2048];
+  if ( rd == NULL )
+  {
+    r[0] = '\0';
+    sprintf(r, "couldn't find object %s", objName);
+    PyErr_SetString(PyRunTimeErr,r);
+    return Py_ERROR;
+  }
+
+  type = rd->GetType();
+
+  if ( type != MESH_T )
+  {
+    r[0] = '\0';
+    sprintf(r, "%s not a mesh object", objName);
+    PyErr_SetString(PyRunTimeErr,r);
+    return Py_ERROR;
+  }
+  
+  geom = dynamic_cast<cvMeshObject*> (rd);
+  Py_INCREF(geom);
+  self->geom=geom;
+  Py_DECREF(geom);
+  Py_RETURN_NONE; 
+  
+}
+    
 
 // ----------------------
 // cvMesh_ListMethodsCmd
@@ -911,19 +960,12 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr,"Could not import one char and one list,flags and valuelist");
     return Py_ERROR;
   }
-  fprintf(stdout,"checkMeshOption\n");
   int numValues = PyList_Size(valueList);
-  fprintf(stdout,"checkMeshOption\n");
   double *values = new double [numValues];
-  fprintf(stdout,"checkMeshOption\n");
   for (int j=0 ; j<numValues;j++)
   {
-    std::cout<<"j: "<<j<<std::endl;;
-    std::cout<<"numValues: "<<numValues<<std::endl;;
     values[j]=PyFloat_AsDouble(PyList_GetItem(valueList,j));
-    std::cout<<"values: "<<values[j]<<std::endl;
   }
-  fprintf(stdout,"checkMeshOption: %d\n", values[0]);
   // Do work of command:
   // Get the cvPolyData:
   if ( geom->SetMeshOptions(flags,numValues,values) == SV_ERROR ) {
@@ -931,7 +973,6 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
     delete [] values;
     return Py_ERROR;
   }
-  fprintf(stdout,"checkMeshOption\n");
   delete [] values;
 
   return Py_BuildValue("s","success");
