@@ -56,7 +56,7 @@ DLLSRCS = sv3_ITKUtils_init.cxx sv3_ITKLset2d_init.cxx  sv3_ITKLset3d_init.cxx s
 SVPYHDRS = sv3_ITKLset_init_py.h  sv3_ITKUtils_init_py.h sv3_ITKLset2d_init_py.h sv3_ITKLset3d_init_py.h
 SVPYSRCS = sv3_ITKLset_init_py.cxx  sv3_ITKUtils_init_py.cxx sv3_ITKLset2d_init_py.cxx  sv3_ITKLset3d_init_py.cxx
 
-TARGET_LIB_NAME = $(SV_LIB_COMMON_NAME)
+TARGET_LIB_NAME = $(SV_LIB_ITK_LSET_NAME)
 
 SV_PYTHON_MODULE_NAME = pyItkls
 
