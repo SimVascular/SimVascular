@@ -155,15 +155,13 @@ PyMODINIT_FUNC PyInit_pyGUI(void)
 {
 
   PyObject *pyGUI;
-  
+  pyGUI = PyModule_Create(&pyGUImodule);
+
   if ( gRepository == NULL ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from pyGUI\n" );
-    return;
   }
   
-  pyGUI = PyModule_Create(&pyGUImodule);
-
   PyRunTimeErr = PyErr_NewException("pyGUI.error",NULL,NULL);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyGUI,"error",PyRunTimeErr);
@@ -378,7 +376,7 @@ int AddImageFromFile(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Poi
     try
     {
         
-        mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(std::string(fileName));
+        mitk::DataNode::Pointer imageNode=sv4guiProjectManager::LoadDataNode(std::string(fileName));
 
         mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
         if(imageNode.IsNull() || !isImage->CheckNode(imageNode))
