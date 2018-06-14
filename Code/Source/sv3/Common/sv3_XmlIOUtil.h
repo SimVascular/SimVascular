@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <svCommonExports.h>
+#include <sv3CommonExports.h>
 
 #include <tinyxml.h>
 

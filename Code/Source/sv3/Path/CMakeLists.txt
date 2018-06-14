@@ -34,7 +34,7 @@
 
 set(lib ${SV_LIB_PATH_NAME})
 set(export_directive path)
-set(export_file_name svPathExports.h)
+set(export_file_name sv3PathExports.h)
 
 list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
@@ -89,4 +89,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyPath sv3_PathElement_init_py.cxx)
+  target_link_libraries(pyPath ${lib} ${PYTHON_LIBRARY})
 endif()

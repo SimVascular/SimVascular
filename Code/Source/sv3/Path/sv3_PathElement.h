@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include <svPathExports.h>
+#include <sv3PathExports.h>
 #include "sv_RepositoryData.h"
 
 #include "sv3_Spline.h"
@@ -129,7 +129,7 @@ public:
 
     void CalculateBoundingBox(double *bounds);
 
-    std::vector<PathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex){};
+    std::vector<PathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex){ std::vector<PathPoint> dummy; return dummy;};
 
 protected:
 

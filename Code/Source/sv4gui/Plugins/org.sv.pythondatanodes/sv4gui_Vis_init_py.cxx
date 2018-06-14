@@ -90,7 +90,11 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args);
 
 PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args);
 
-PyMODINIT_FUNC initpyGUI(void);
+#if PYTHON_MAJOR_VERSION == 2
+PyMODINIT_FUNC initpyGUI();
+#elif PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyGUI();
+#endif
 
 //------------------
 //  pyGUI_methods
@@ -106,10 +110,21 @@ PyMethodDef pyGUI_methods[] =
     {NULL, NULL,0,NULL},
 };
 
+#if PYTHON_MAJOR_VERSION == 3
+static struct PyModuleDef pyGUImodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyGUI",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyGUI_methods
+};
+#endif
+
 //------------------
 //  initpyGUI
 //------------------
-
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC initpyGUI(void)
 
 {
@@ -129,7 +144,34 @@ PyMODINIT_FUNC initpyGUI(void)
   PyModule_AddObject(pyGUI,"error",PyRunTimeErr);
 
 }
+#endif
 
+//------------------
+//  PyInit_pyGUI
+//------------------
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyGUI(void)
+
+{
+
+  PyObject *pyGUI;
+  
+  if ( gRepository == NULL ) {
+    gRepository = new cvRepository();
+    fprintf( stdout, "gRepository created from pyGUI\n" );
+    return;
+  }
+  
+  pyGUI = PyModule_Create(&pyGUImodule);
+
+  PyRunTimeErr = PyErr_NewException("pyGUI.error",NULL,NULL);
+  Py_INCREF(PyRunTimeErr);
+  PyModule_AddObject(pyGUI,"error",PyRunTimeErr);
+  
+  return pyGUI;
+
+}
+#endif
 
 //------------------
 //  GUI_pyInit
@@ -137,9 +179,11 @@ PyMODINIT_FUNC initpyGUI(void)
 int GUI_pyInit()
 
 {
-
-  Py_Initialize();
-  initpyGUI();
+#if PYTHON_MAJOR_VERSION == 2
+    initpyGUI();
+#elif PYTHON_MAJOR_VERSION == 3
+    PyInit_pyGUI();
+#endif
   return Py_OK;
 
 }

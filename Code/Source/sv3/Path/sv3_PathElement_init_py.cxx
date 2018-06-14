@@ -49,7 +49,11 @@
 
 #include "sv2_globals.h"
 using sv3::PathElement;
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC initpyPath();
+#elif PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyPath();
+#endif
 PyObject* PyRunTimeErr;
 PyObject* sv4Path_NewObjectCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args);
@@ -63,7 +67,11 @@ PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args);
 
 int Path_pyInit()
 {
-  initpyPath();
+#if PYTHON_MAJOR_VERSION == 2
+    initpyPath();
+#elif PYTHON_MAJOR_VERSION == 3
+    PyInit_pyPath();
+#endif
   return Py_OK;
 }
 
@@ -132,9 +140,21 @@ static PyMethodDef pyPathModule_methods[] =
     {NULL,NULL}
 };
 
+#if PYTHON_MAJOR_VERSION == 3
+static struct PyModuleDef pyPathModule = {
+   PyModuleDef_HEAD_INIT,
+   "pyPath",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   pyPathModule_methods
+};
+#endif
+
 //----------------
 //initpyPath
 //----------------
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC initpyPath()
 
 {
@@ -167,6 +187,45 @@ PyMODINIT_FUNC initpyPath()
   return ;
 
 }
+#endif
+
+#if PYTHON_MAJOR_VERSION == 3
+//----------------
+//PyInit_pyPath
+//----------------
+PyMODINIT_FUNC PyInit_pyPath()
+
+{
+  // Associate the mesh registrar with the python interpreter so it can be
+  // retrieved by the DLLs.
+  if (gRepository==NULL)
+  {
+    gRepository = new cvRepository();
+    fprintf(stdout,"New gRepository created from cv_mesh_init\n");
+  }
+
+  // Initialize
+  pyPathType.tp_new=PyType_GenericNew;
+  if (PyType_Ready(&pyPathType)<0)
+  {
+    fprintf(stdout,"Error in pyPathType\n");
+    Py_RETURN_NONE;
+  }
+  PyObject* pythonC;
+  pythonC = PyModule_Create(&pyPathModule);
+  if(pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyPath\n");
+    Py_RETURN_NONE;
+  }
+  PyRunTimeErr = PyErr_NewException("pyPath.error",NULL,NULL);
+  PyModule_AddObject(pythonC,"error",PyRunTimeErr);
+  Py_INCREF(&pyPathType);
+  PyModule_AddObject(pythonC,"pyPath",(PyObject*)&pyPathType);
+  return pythonC;
+
+}
+#endif
 
 // --------------------
 // sv4Path_NewObjectCmd

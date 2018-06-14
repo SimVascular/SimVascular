@@ -59,3 +59,7 @@ if(SV_INSTALL_LIBS)
     )
 endif()
 
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyGUI sv4gui_Vis_init_py.cxx)
+  target_link_libraries(pyGUI ${lib} ${PYTHON_LIBRARY})
+endif()
