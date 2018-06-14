@@ -196,12 +196,11 @@ PyMODINIT_FUNC initpyPath()
 PyMODINIT_FUNC PyInit_pyPath()
 
 {
-  // Associate the mesh registrar with the python interpreter so it can be
-  // retrieved by the DLLs.
+
   if (gRepository==NULL)
   {
     gRepository = new cvRepository();
-    fprintf(stdout,"New gRepository created from cv_mesh_init\n");
+    fprintf(stdout,"New gRepository created from sv3_PathElement_init\n");
   }
 
   // Initialize
