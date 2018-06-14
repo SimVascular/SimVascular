@@ -10,14 +10,12 @@ fi
 # Run the executable
 case "$SV_BATCH_MODE" in
 "1")
-case "$*" in
-"")
-$SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ -tcl
-;;
-*)
-$SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $* -tcl
-;;
-esac
+if [ -e ~/.simvascular_default_tcl ]
+then
+  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $* -tcl
+else
+  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
+fi
 ;;
 *)
 if [ -e ~/.simvascular_default_tcl ]

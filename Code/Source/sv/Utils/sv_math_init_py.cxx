@@ -120,7 +120,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
       for (int j=0;j<2;j++)
       {
         pts[i][j]=PyFloat_AsDouble(PyList_GetItem(temp,j));
-        printf("%d\n",pts[i][j]);
+        //printf("%f\n",pts[i][j]);
       }
     }
   }

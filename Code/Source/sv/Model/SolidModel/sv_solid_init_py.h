@@ -35,6 +35,7 @@
 #include "SimVascular.h"
 #include "svSolidModelExports.h" // For exports
 #include "sv_FactoryRegistrar.h"
+
 #include "Python.h"
 
 extern "C" SV_EXPORT_SOLID int Solid_pyInit();

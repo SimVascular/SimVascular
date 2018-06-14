@@ -341,9 +341,11 @@ PyObject*  Repos_DeleteCmd( PyObject* self, PyObject* args)
   }
 
   obj_t = gRepository->GetType( objName );
-  if ( obj_t == SOLID_MODEL_T || obj_t == MESH_T || obj_t == ADAPTOR_T) {
+  //if ( obj_t == SOLID_MODEL_T || obj_t == MESH_T || obj_t == ADAPTOR_T) {
+  //  return Tcl_VarEval( interp, "rename ", objName, " {}", (char *)NULL );
+  //} else {
     unreg_status = gRepository->UnRegister( objName );
-  }
+  //}
 
   if ( ! unreg_status )
   {

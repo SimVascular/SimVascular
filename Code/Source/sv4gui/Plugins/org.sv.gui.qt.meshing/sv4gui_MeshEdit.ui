@@ -549,12 +549,32 @@
                     </widget>
                    </item>
                    <item>
+                    <widget class="QCheckBox" name="checkBoxBoundaryLayerDirection">
+                     <property name="text">
+                      <string>Extrude Bounary Layer Inward from Wall</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
                     <widget class="QCheckBox" name="checkBoxConstantThicknessBL">
                      <property name="toolTip">
                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If selected, the same boundary layer thickness will be used throughout the entire model. If left unselected, the boundary layer thickness will scale with the local mesh edge size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="text">
                       <string>Use Constant Boundary Layer Thickness</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxConvertBLToNewRegion">
+                     <property name="text">
+                      <string>Convert Boundary Layer to New Region/Domain</string>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -929,7 +949,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>98</width>
+              <width>100</width>
               <height>84</height>
              </rect>
             </property>

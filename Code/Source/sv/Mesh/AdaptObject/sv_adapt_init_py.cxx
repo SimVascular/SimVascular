@@ -69,7 +69,7 @@ static void pyAdaptObject_dealloc(pyAdaptObject* self)
   Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
-pyAdaptObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args);
+PyObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args);
 
 // Adapt
 // -----
@@ -364,7 +364,7 @@ PyObject* Adapt_RegistrarsListCmd( PyObject* self, PyObject* args)
 // GetObject(name) method to get back object pointers for use inside
 // Tcl object method functions.
 
-pyAdaptObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args)
+PyObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args)
 {
   char *resultName = NULL;
 
@@ -413,7 +413,7 @@ pyAdaptObject* cvAdapt_NewObjectCmd( pyAdaptObject* self, PyObject* args)
   Py_INCREF(adaptor);
   self->geom=adaptor;
   Py_DECREF(adaptor);
-  return self;
+  Py_RETURN_NONE;
 }
 
 // -------------
