@@ -945,7 +945,9 @@ RegCloseKey(hKey2);
 #endif
        pluginsToStart.push_back("org_mitk_gui_qt_imagenavigator");
        pluginsToStart.push_back("org_mitk_gui_qt_measurementtoolbox");
+#ifdef SV_USE_PYTHON
        pluginsToStart.push_back("org_mitk_gui_qt_python");
+#endif
        pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
        pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
 

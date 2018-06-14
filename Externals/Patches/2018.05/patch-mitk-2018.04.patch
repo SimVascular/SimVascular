@@ -450,10 +450,10 @@ diff -rupN original/Modules/Python/autoload/PythonService/mitkPythonService.cpp 
  #ifndef WIN32
  #if defined (__APPLE__) || defined(MACOSX)
 -      const char* library = "libpython${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}.dylib";
-+      const char* library = "libpython${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}m.dylib";
++      const char* library = "libpython3.5m.dylib";
  #else
 -      const char* library = "libpython${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}.so";
-+      const char* library = "libpython${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}m.so";
++      const char* library = "libpython3.5m.so";
  #endif
        dlerror();
        if(dlopen(library, RTLD_NOW | RTLD_GLOBAL) == 0 )
