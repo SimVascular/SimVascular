@@ -211,12 +211,44 @@ endif
 	-/usr/bin/tclsh tclscript >> sedscript
 	-rm -f tclscript
 
-common-pre-build: mksedscript post-build
+mk_simvascular_options_h:
+	mkdir -p ../Code/Source/Include/Make
+	-echo "#ifndef _simvascular_options_h" > ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define _simvascular_options_h" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define Qt5_MAJOR_VERSION $(Qt5_MAJOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define TCL_MAJOR_VERSION $(TCL_MAJOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define PYTHON_MAJOR_VERSION $(PYTHON_MAJOR_VERSION) " >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define FREETYPE_MAJOR_VERSION $(FREETYPE_MAJOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define MMG_MAJOR_VERSION $(MMG_MAJOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define GDCM_MAJOR_VERSION $(GDCM_MAJOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define ITK_MAJOR_VERSION $(ITK_MAJOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define OpenCASCADE_MAJOR_VERSION $(OpenCASCADE_MAJOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define MITK_MAJOR_VERSION $(MITK_MAJOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define Qt5_MINOR_VERSION $(Qt5_MINOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define TCL_MINOR_VERSION $(TCL_MINOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define PYTHON_MINOR_VERSION $(PYTHON_MINOR_VERSION) " >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define FREETYPE_MINOR_VERSION $(FREETYPE_MINOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define MMG_MINOR_VERSION $(MMG_MINOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define GDCM_MINOR_VERSION $(GDCM_MINOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define ITK_MINOR_VERSION $(ITK_MINOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define OpenCASCADE_MINOR_VERSION $(OpenCASCADE_MINOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define MITK_MINOR_VERSION $(MITK_MINOR_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define Qt5_PATCH_VERSION $(Qt5_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define TCL_PATCH_VERSION $(TCL_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define PYTHON_PATCH_VERSION $(PYTHON_PATCH_VERSION) " >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define FREETYPE_PATCH_VERSION $(FREETYPE_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define MMG_PATCH_VERSION $(MMG_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define GDCM_PATCH_VERSION $(GDCM_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define ITK_PATCH_VERSION $(ITK_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define OpenCASCADE_PATCH_VERSION $(OpenCASCADE_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#define MITK_PATCH_VERSION $(MITK_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
+	-echo "#endif" >> ../Code/Source/Include/Make/simvascular_options.h
+
+common-pre-build: mksedscript mk_simvascular_options_h post-build 
 	mkdir -p Bin
 	mkdir -p Lib
 	mkdir -p Bin/plugins
 	mkdir -p ../Code/Source/Include/Make
-	touch ../Code/Source/Include/Make/simvascular_options.h
 	touch ../Code/Source/Include/Make/simvascular_version.h
 	touch ../Code/Source/Include/Make/delaunay_options.h
 

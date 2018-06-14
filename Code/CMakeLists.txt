@@ -98,6 +98,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
 #-----------------------------------------------------------------------------
 # Include Initial Options
+include(SimVascularExternalsVersions)
 include(SimVascularOptions)
 include(SimVascularDependentOptions)
 #-----------------------------------------------------------------------------
@@ -274,7 +275,7 @@ endif()
 # Plugins
 if(SV_USE_QT_GUI)
   if(NOT SV_USE_MITK_CONFIG)
-    set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
+      set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
       "Source/sv4gui/Plugins/org.sv.projectdatanodes"
       "Source/sv4gui/Plugins/org.sv.gui.qt.datamanager"
       "Source/sv4gui/Plugins/org.sv.gui.qt.projectmanager"
@@ -283,8 +284,10 @@ if(SV_USE_QT_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.modeling"
       "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
-      "Source/sv4gui/Plugins/org.sv.pythondatanodes"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application")
+      if(SV_USE_PYTHON)
+        LIST(APPEND SV_PLUGIN_DIRS "Source/sv4gui/Plugins/org.sv.pythondatanodes")
+      endif()
   endif()
 endif()
 #-----------------------------------------------------------------------------

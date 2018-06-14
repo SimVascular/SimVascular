@@ -45,7 +45,11 @@ include_directories(${TETGEN_INCLUDE_DIR})
 SET(CXXSRCS sv_TetGenMeshObject.cxx sv_TetGenMeshSystem.cxx sv_tetgenmesh_utils.cxx)
 SET(HDRS sv_TetGenMeshObject.h sv_TetGenMeshSystem.h sv_tetgenmesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_mesh_init.cxx sv_tetgen_mesh_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS sv_tetgen_mesh_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_mesh_init.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -95,4 +99,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyMeshTetgen sv_tetgen_mesh_init_py.cxx)
+  target_link_libraries(pyMeshTetgen ${lib} ${PYTHON_LIBRARY})
 endif()

@@ -129,7 +129,6 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "itkLocalVariationImageFilter.h"                 #mitk/Modules/ImageDenoising
                     "mitkGL.h"                                       #mitk/Modules/LegacyGL
                     "mitkLabel.h"                                    #mitk/Modules/Multilabel
-                    "mitkLogoOverlay.h"                              #mitk/Modules/Overlays
                     "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
                     "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
                     "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
@@ -154,6 +153,16 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "berryQtWorkbenchAdvisor.h"                      #mitk/plugins/org.blueberry.ui.qt/application
                     "berryIntroPart.h"                               #mitk/plugins/org.blueberry.ui.qt/intro
                     )
+
+if(${proj}_VERSION STREQUAL "2016.03")
+  list(APPEND ${proj}_HEADERS
+    "mitkLogoOverlay.h"                              #mitk/Modules/Overlays
+    )
+elseif(${proj}_VERSION VERSION_GREATER "2018.01")
+  list(APPEND ${proj}_HEADERS
+    "mitkLogoAnnotation.h"                           #mitk/Modules/Annotation
+    )
+endif()
 
 #-----------------------------------------------------------------------------
 # Find Libraries

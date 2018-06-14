@@ -46,6 +46,9 @@ See LICENSE.txt or http://www.mitk.org for details.
 ===================================================================*/
 
 #include "sv4gui_SurfaceVtkMapper3D.h"
+
+#include "simvascular_options.h"
+
 #include <mitkDataNode.h>
 #include <mitkProperties.h>
 #include <mitkColorProperty.h>
@@ -55,7 +58,9 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <mitkVtkScalarModeProperty.h>
 #include <mitkClippingProperty.h>
 #include <mitkSmartPointerProperty.h>
+#if MITK_MAJOR_VERSION == 2016
 #include <mitkIShaderRepository.h>
+#endif
 #include <mitkExtractSliceFilter.h>
 #include <mitkImageSliceSelector.h>
 #include <mitkCoreServices.h>
@@ -502,11 +507,13 @@ void mitk::sv4guiSurfaceVtkMapper3D::SetDefaultPropertiesForVtkProperty(mitk::Da
   }
 
   // Shaders
+#if MITK_MAJOR_VERSION == 2016
   IShaderRepository* shaderRepo = CoreServices::GetShaderRepository();
   if (shaderRepo)
   {
     shaderRepo->AddDefaultProperties(node, renderer, overwrite);
   }
+#endif
 }
 
 void mitk::sv4guiSurfaceVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)

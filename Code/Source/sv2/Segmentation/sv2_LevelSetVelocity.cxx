@@ -142,8 +142,8 @@ int cvLevelSetVelocity::UpdateTolerance()
     return SV_ERROR;
   }
   grid->GetHv( &hv[0], &hv[1], &hv[2] );
-  minh = minimum( hv[0], hv[1] );
-  minh = minimum( minh, hv[2] );
+  minh = svminimum( hv[0], hv[1] );
+  minh = svminimum( minh, hv[2] );
   tol_ = minh * CV_PHI_TOL;
 
   return SV_OK;

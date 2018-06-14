@@ -74,6 +74,16 @@ PyMethodDef Mmgmesh_methods[]=
   {NULL,NULL}
 };
 
+#if PYTHON_MAJOR_VERSION == 3
+static struct PyModuleDef pyMeshUtilmodule = {
+   PyModuleDef_HEAD_INIT,
+   "pyMeshUtil",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   Mmgmesh_methods
+};
+#endif
 // ----------
 // Mmgmesh_Init
 // ----------
@@ -81,7 +91,11 @@ PyMethodDef Mmgmesh_methods[]=
 PyObject* Mmgmesh_pyInit()
 {
   PyObject *pythonC;
+#if PYTHON_MAJOR_VERSION == 2
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
+#elif PYTHON_MAJOR_VERSION == 3
+  pythonC = PyModule_Create(&pyMeshUtilmodule);
+#endif
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
@@ -92,20 +106,41 @@ PyObject* Mmgmesh_pyInit()
   return pythonC;
 }
 
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC initpyMeshUtil()
 {
   PyObject *pythonC;
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
+
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
     return;
+
+  }
+  PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
+  return;
+
+}
+#endif
+
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyMeshUtil()
+{
+  PyObject *pythonC;
+  pythonC = PyModule_Create(&pyMeshUtilmodule);
+  if (pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyMeshUtil");
+     Py_RETURN_NONE;
   }
   PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
-  return;
-}
 
+  return pythonC;
+
+}
+#endif
 // MMG_RemeshCmd
 // --------------
 

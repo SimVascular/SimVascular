@@ -36,7 +36,7 @@ set(lib ${SV_LIB_REPOSITORY_NAME})
 set(export_directive repository)
 set(export_file_name svRepositoryExports.h)
 
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
 	  ${PYTHON_INCLUDE_DIR}
@@ -57,7 +57,11 @@ SET(HDRS sv_Repository.h sv_RepositoryData.h
   sv_DataSet.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_repos_init.cxx sv_repos_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS sv_repos_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_repos_init.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -94,4 +98,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyRepository sv_repos_init_py.cxx)
+  target_link_libraries(pyRepository ${lib} ${PYTHON_LIBRARY})
 endif()

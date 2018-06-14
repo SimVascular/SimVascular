@@ -56,7 +56,11 @@ set(HDRS sv2_image.h sv2_img_offsets.h
   sv2_mask_image_in_place.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv2_image_init.cxx sv2_image_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS sv2_image_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv2_image_init.cxx )
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -91,4 +95,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyImage sv2_image_init_py.cxx)
+  target_link_libraries(pyImage ${lib} ${PYTHON_LIBRARY})
 endif()

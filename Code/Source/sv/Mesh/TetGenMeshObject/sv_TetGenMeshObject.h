@@ -71,12 +71,14 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
     double maxedgesize;
     double epsilon;
     double minratio;
-    double coarsen_percent;
+    double coarsenpercent;
     int boundarylayermeshflag;
     int numsublayers;
     double blthicknessfactor;
     double sublayerratio;
     int useconstantblthickness;
+    int newregionboundarylayer;
+    int boundarylayerdirection;
     int refinement;
     double refinedsize;
     double sphereradius;

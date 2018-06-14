@@ -54,7 +54,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_QT* ]]; then
   rm -Rf qt
   mkdir -p qt
   pushd qt
-  wget $PARENT_URL/qt/qt-everywhere-opensource-src-5.6.0.tar.gz
+  wget $PARENT_URL/qt/qt-everywhere-opensource-src-5.6.3.tar.gz
   popd
 fi
 

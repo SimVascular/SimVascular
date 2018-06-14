@@ -42,7 +42,6 @@
 #include <mitkVtkScalarModeProperty.h>
 #include <mitkClippingProperty.h>
 #include <mitkSmartPointerProperty.h>
-#include <mitkIShaderRepository.h>
 #include <mitkExtractSliceFilter.h>
 #include <mitkImageSliceSelector.h>
 #include <mitkCoreServices.h>
@@ -154,7 +153,11 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
     bool showEdges=false;
     node->GetBoolProperty("show edges", showEdges, renderer);
 
+#if VTK_MAJOR_VERSION == 6
     vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+#else
+    vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+#endif
     mapper->SetInputData(wholePolyData);
 
     vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
@@ -196,7 +199,11 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
             if(!facePolyData)
                 continue;
 
+#if VTK_MAJOR_VERSION == 6
             vtkSmartPointer<vtkPainterPolyDataMapper> faceMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+#else
+            vtkSmartPointer<vtkOpenGLPolyDataMapper> faceMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+#endif
             faceMapper->SetInputData(facePolyData);
 
             vtkSmartPointer<vtkActor> faceActor= vtkSmartPointer<vtkActor>::New();
@@ -262,7 +269,7 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 //        surfaceFilter->Update();
 //        vtkSmartPointer<vtkPolyData> cellPolydata = surfaceFilter->GetOutput();
 
-//        vtkSmartPointer<vtkPainterPolyDataMapper> cellMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+//        vtkSmartPointer<vtkOpenGLPolyDataMapper> cellMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
 //        cellMapper->SetInputData(cellPolydata);
 
 //        vtkSmartPointer<vtkActor> cellActor= vtkSmartPointer<vtkActor>::New();
@@ -449,7 +456,11 @@ void sv4guiModelVtkMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *no
     }
 }
 
+#if VTK_MAJOR_VERSION == 6
 void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor)
+#else
+void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor)
+#endif
 {
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
 
@@ -659,12 +670,12 @@ void sv4guiModelVtkMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* 
         node->AddProperty( "material.interpolation"       , mitk::VtkInterpolationProperty::New()   , renderer, overwrite );
     }
 
-    // Shaders
-    mitk::IShaderRepository* shaderRepo = mitk::CoreServices::GetShaderRepository();
-    if (shaderRepo)
-    {
-        shaderRepo->AddDefaultProperties(node, renderer, overwrite);
-    }
+    //// Shaders
+    //mitk::IShaderRepository* shaderRepo = mitk::CoreServices::GetShaderRepository();
+    //if (shaderRepo)
+    //{
+    //    shaderRepo->AddDefaultProperties(node, renderer, overwrite);
+    //}
 }
 
 void sv4guiModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)

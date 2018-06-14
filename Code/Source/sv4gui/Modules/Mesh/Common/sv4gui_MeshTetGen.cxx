@@ -355,6 +355,17 @@ bool sv4guiMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double v
             values[2]=std::stod(params[3]);
             values[3]=std::stod(params[4]);
         }
+        else if(params[0]=="newregionboundarylayer")
+        {
+          flag="NewRegionBoundaryLayer";
+          option=true;
+        }
+        else if(paramSize==2 && params[0]=="boundarylayerdirection")
+        {
+          flag="BoundaryLayerDirection";
+          values[0]=std::stod(params[1]);
+          option=true;
+        }
         else if(paramSize==3 && (params[0]=="localedgesize" || params[0]=="localsize"))
         {
             flag="LocalEdgeSize";

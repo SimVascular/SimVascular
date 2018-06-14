@@ -36,7 +36,7 @@ set(lib ${SV_LIB_UTILS_NAME})
 set(export_directive utils)
 set(export_file_name svUtilsExports.h)
 
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
 	  ${PYTHON_INCLUDE_DIR}
@@ -54,7 +54,11 @@ SET(HDRS sv_misc_utils.h sv_vtk_utils.h
   sv_Math.h sv_arg.h sv_FactoryRegistrar.h
   )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_utils_init.cxx sv_math_init.cxx sv_utils_init_py.cxx sv_math_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS sv_utils_init_py.cxx sv_math_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_utils_init.cxx sv_math_init.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -90,4 +94,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyMath sv_math_init_py.cxx)
+  target_link_libraries(pyMath ${lib} ${PYTHON_LIBRARY})
 endif()

@@ -41,7 +41,11 @@ include_directories(${TETGEN_INCLUDE_DIR})
 set(HDRS sv_TetGenAdapt.h)
 set(CXXSRCS sv_TetGenAdapt.cxx)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_adapt_init.cxx sv_tetgen_adapt_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS sv_tetgen_adapt_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_adapt_init.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -86,4 +90,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
+endif()
+
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pyTetGenAdapt sv_tetgen_adapt_init_py.cxx)
+  target_link_libraries(pyTetGenAdapt ${lib} ${PYTHON_LIBRARY})
 endif()

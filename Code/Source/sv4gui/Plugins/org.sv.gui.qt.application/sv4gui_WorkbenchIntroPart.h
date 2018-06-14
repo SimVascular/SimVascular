@@ -37,7 +37,12 @@
 #include <berryQtIntroPart.h>
 #include <ui_sv4gui_WelcomeScreenViewControls.h>
 
-class QWebView ;
+#include "simvascular_options.h"
+#if Qt5_MINOR_VERSION == 4
+  class QWebView ;
+#else
+  class QWebEngineView ;
+#endif
 
 class sv4guiWorkbenchIntroPart : public berry::QtIntroPart
 {
@@ -68,7 +73,11 @@ protected slots:
 protected:
 
     Ui::svWelcomeScreenViewControls* m_Controls;
+#if Qt5_MINOR_VERSION == 4
     QWebView* m_view;
+#else
+    QWebEngineView* m_view;
+#endif
 };
 
 #endif /* SV4GUI_WORKBENCHINTROPART_H */

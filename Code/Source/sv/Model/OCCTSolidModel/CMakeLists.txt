@@ -46,7 +46,11 @@ endif()
 set(CXXSRCS sv_OCCTSolidModel.cxx sv_occtsolid_utils.cxx)
 set(HDRS sv_OCCTSolidModel.h sv_occtsolid_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_occt_init.cxx sv_occt_init_py.cxx)
+if(SV_USE_PYTHON)
+  list(APPEND CXXSRCS sv_occt_init_py.cxx)
+endif()
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_occt_init.cxx)
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -56,7 +60,7 @@ target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${OpenCASCADE_LIBRARIES}
 	${SV_LIB_SOLID_NAME} ${SV_LIB_REPOSITORY_NAME}
-  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_GEOM_NAME})
+  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_GEOM_NAME} ${FREETYPE_LIBRARY})
 
 if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
@@ -87,4 +91,9 @@ if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
+endif()
+
+if(PYTHON_MAJOR_VERSION EQUAL 3)
+  PYTHON_ADD_MODULE(pySolidOCCT sv_occt_init_py.cxx)
+  target_link_libraries(pySolidOCCT ${lib} ${PYTHON_LIBRARY})
 endif()

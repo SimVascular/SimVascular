@@ -36,7 +36,10 @@
 #include "sv_misc_utils.h"
 #include <string.h>
 #include <assert.h>
-#include "Python.h"
+#ifdef SV_USE_PYTHON
+  #include "Python.h"
+  #include "sv_solid_init_py.h"
+#endif
 
 // Globals:
 // --------
@@ -104,7 +107,9 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
 cvSolidModel* cvSolidModel::pyDefaultInstantiateSolidModel()
 {
   // Get the solid model factory registrar associated with the python interpreter.
-  cvFactoryRegistrar* pySolidModelRegistrar =(cvFactoryRegistrar *) PySys_GetObject("solidModelRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
+  pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
   if (pySolidModelRegistrar==NULL)
   {
     fprintf(stdout,"Cannot get solidModelRegistrar from pySys");

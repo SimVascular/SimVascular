@@ -49,12 +49,37 @@ if(SV_USE_${proj})
     message(FATAL_ERROR "${proj}_DIR was not specified. Set ${proj}_DIR to the build or bin directory containing OpenCASCADEConfig.cmake")
   endif()
 
+  # Newer versionof opencascade load up duplicate compile definitions from
+  # vtk that slow down qt5 moc generation. Copy now and set afterward
+  if(${proj}_VERSION VERSION_GREATER "7.0.0")
+    get_directory_property(_defines_before COMPILE_DEFINITIONS)
+  endif()
+
   # Find OpenCASCADE
   simvascular_external(${proj}
     SHARED_LIB ${SV_USE_${proj}_SHARED}
     VERSION ${${proj}_VERSION}
     REQUIRED
     )
+
+  # OpenCASCADE cmake keeps absolute filename for freetype libs used, need to find and replace for freetype being used in the project
+
+  # Get the directory of freetype being used
+  if(SV_USE_FREETYPE)
+   get_filename_component(tmp_replace_freetype_lib_name ${FREETYPE_LIBRARY} NAME)
+  endif()
+
+  # Replace if exists in lib
+  foreach(_libName ${OpenCASCADE_LIBRARIES})
+     # freetype
+     if(SV_USE_FREETYPE)
+       simvascular_property_list_find_and_replace(${_libName} INTERFACE_LINK_LIBRARIES "${tmp_replace_freetype_lib_name}" ${FREETYPE_LIBRARY})
+     endif()
+  endforeach()
+
+  if(${proj}_VERSION VERSION_GREATER "7.0.0")
+    set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS ${_defines_before})
+  endif()
 
   # Set SV_OpenCASCADE_DIR to the toplevel OpenCASCADE if it exists
   simvascular_get_external_path_from_include_dir(${proj})

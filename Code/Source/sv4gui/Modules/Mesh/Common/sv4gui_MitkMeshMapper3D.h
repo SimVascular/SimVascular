@@ -42,7 +42,11 @@
 
 #include <vtkAssembly.h>
 #include <vtkPropAssembly.h>
+#if VTK_MAJOR_VERSION == 6
 #include <vtkPainterPolyDataMapper.h>
+#else
+#include <vtkOpenGLPolyDataMapper.h>
+#endif
 #include <vtkActor.h>
 #include <vtkPlaneCollection.h>
 #include <vtkSmartPointer.h>
@@ -80,7 +84,11 @@ public:
 
     virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
 
+#if VTK_MAJOR_VERSION == 6
     static void ApplyAllProperties(mitk::DataNode *node, mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor, mitk::LocalStorageHandler<LocalStorage>* handler, bool clipping = true);
+#else
+    static void ApplyAllProperties(mitk::DataNode *node, mitk::BaseRenderer* renderer, vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor, mitk::LocalStorageHandler<LocalStorage>* handler, bool clipping = true);
+#endif
 
     static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
 
