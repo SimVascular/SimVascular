@@ -156,9 +156,9 @@ PyMODINIT_FUNC initpyRepository(void)
 {
 
   PyObject *pyRepo;
-  gRepository = new cvRepository();
   if ( gRepository == NULL ) {
-    fprintf( stderr, "error allocating gRepository\n" );
+    gRepository = new cvRepository();
+    fprintf(stdout, "gRepository created from sv_repos_init\n" );
     return;
 
   }

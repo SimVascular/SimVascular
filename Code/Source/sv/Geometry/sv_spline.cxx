@@ -102,6 +102,74 @@ int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
 
   return SV_OK;
 }
+#ifdef SV_USE_PYTHON
+int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
+                                  char *filename, int flag, char** output)
+{
+  SplinePoints *x;
+  SplinePoints *y;
+  int i, j;
+  int num, dimensions;
+  vtkFloatingPointType *pt;
+  int numInputPts = 0;
+  int numPaths = 1;
+  FILE *outfile;
+
+  // Get points for each path
+  for (j = 0; j < numPaths; j++)
+    {
+      // get number of points from vtkPolyData file
+      numInputPts = pd->GetNumberOfPoints();
+
+      x = sys_geom_SplinePointsInit(numInputPts, 3);
+      y = sys_geom_SplinePointsInit(numOutputPts, 3);
+
+      // Remaining lines are coordinates of points
+      for (i = 0; i < numInputPts; i++) {
+         pt = pd->GetPoint(i);
+         x->pts[i * 3] = pt[0];
+         x->pts[i * 3 + 1] = pt[1];
+         x->pts[i * 3 + 2] = pt[2];
+      }
+
+      if (sys_geom_SplinePath(x, 1, numOutputPts, flag, y) == SV_ERROR) {
+        sys_geom_SplinePointsDelete(x);
+        sys_geom_SplinePointsDelete(y);
+        return SV_ERROR;
+      }
+
+      num = y->numPts;
+      dimensions = y->dim;
+
+      // if filename is NULL, then do not generate an output file
+      if (filename != NULL) {
+        outfile = fopen(filename, "w");
+        fprintf(outfile, "pointcount=%d\nviewinterval=1.00000\nviewwindow=25.00000\nviewcount=%d\n", numOutputPts, numOutputPts);
+
+
+        for (i = 0; i < num; i++) {
+	  fprintf(outfile, "p=(%f,%f,%f) t=(%f,%f,%f) tx=(%f,%f,%f)\n", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
+        }
+        fclose(outfile);
+      }
+
+      // return the splined path to the Tcl interpreter
+      if (output != NULL) {
+        char rtnstr[2048];
+        for (i = 0; i < num; i++) {
+          rtnstr[0]='\0';
+	  sprintf(rtnstr, "p (%f,%f,%f) t (%f,%f,%f) tx (%f,%f,%f)", y->pts[dimensions * i], y->pts[dimensions * i + 1], y->pts[dimensions * i + 2], y->tangents[dimensions * i], y->tangents[dimensions * i + 1], y->tangents[dimensions * i + 2], y->rotVectors[dimensions * i], y->rotVectors[dimensions * i + 1], y->rotVectors[dimensions * i  + 2]);
+          strcpy(*output,rtnstr);
+        }
+      }
+
+      sys_geom_SplinePointsDelete(x);
+      sys_geom_SplinePointsDelete(y);
+    }
+
+  return SV_OK;
+}
+#endif
 
 /***********************************************************************
  *                                                                     *
