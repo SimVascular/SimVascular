@@ -22,7 +22,9 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="UNTAR_UNZIP_ALL"
    SV_SUPER_OPTIONS="WGET_TCL         UNTAR_TCL         BUILD_TCL         ARCHIVE_TCL         ZIP_TCL         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_PYTHON      UNTAR_PYTHON      BUILD_PYTHON      ARCHIVE_PYTHON      ZIP_PYTHON      $SV_SUPER_OPTIONS"
+#   SV_SUPER_OPTIONS="WGET_SWIG        UNTAR_SWIG        BUILD_SWIG        ARCHIVE_SWIG        ZIP_SWIG        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
+   SV_SUPER_OPTIONS="WGET_TINYXML2    UNTAR_TINYXML2    BUILD_TINYXML2    ARCHIVE_TINYXML2    ZIP_TINYXML2    $SV_SUPER_OPTIONS"
 #   SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_FREETYPE    UNTAR_FREETYPE    BUILD_FREETYPE    ARCHIVE_FREETYPE    ZIP_FREETYPE    $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_GDCM        UNTAR_GDCM        BUILD_GDCM        ARCHIVE_GDCM        ZIP_GDCM        $SV_SUPER_OPTIONS"
@@ -81,6 +83,13 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   chmod a+rx ./tmp/compile.msvc.numpy.cl.sh
   sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-python-numpy-msvc.bat > tmp/compile.msvc.numpy.bat
   chmod a+rx ./tmp/compile.msvc.numpy.bat
+fi
+
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
+  echo "CREATE_BUILD_SCRIPT_TINYXML2"
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-cmake-tinyxml2-generic.sh > tmp/compile.cmake.tinyxml2.cl.sh
+  chmod a+rx ./tmp/compile.cmake.tinyxml2.cl.sh
 fi
 
 # qt
@@ -194,6 +203,12 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.msvc.numpy.cl.sh >& ./tmp/stdout.msvc.numpy.cl.txt
+fi
+
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
+  echo "BUILD_TINYXML2"
+  ./tmp/compile.cmake.tinyxml2.cl.sh >& ./tmp/stdout.tinyxml2.cl.txt
 fi
 
 #  qt

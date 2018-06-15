@@ -487,7 +487,9 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/sv/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
-	  ../Code/Source/sv2/Segmentation
+	  ../Code/Source/sv2/Segmentation \
+	  ../Code/Source/sv3/Common \
+	  ../Code/Source/sv3/Path
 else
   LIBDIRS += \
           ../Code/Source/sv/Utils \
@@ -503,7 +505,9 @@ else
 	  ../Code/Source/sv/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
-	  ../Code/Source/sv2/Segmentation
+	  ../Code/Source/sv2/Segmentation \
+	  ../Code/Source/sv3/Common \
+	  ../Code/Source/sv3/Path
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -624,6 +628,9 @@ ifeq ($(SV_USE_MITK),1)
   ifeq ($(SV_USE_OPENCASCADE),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/OCCT
   endif
+  ifeq ($(SV_USE_PYTHON),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.pythondatanodes
+  endif
 endif
 
 #
@@ -631,6 +638,7 @@ endif
 #
 
 SV_LIB_ADAPTOR_NAME=_simvascular_adaptor
+SV_LIB_COMMON_NAME=_simvascular_common
 SV_LIB_GEOM_NAME=_simvascular_geom
 SV_LIB_GLOBALS_NAME=_simvascular_globals
 SV_LIB_IMAGE_NAME=_simvascular_image
@@ -648,6 +656,7 @@ SV_LIB_MODULE_QTWIDGETS_NAME=_simvascular_module_qtwidgets
 SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
 SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
+SV_LIB_PATH_NAME=_simvascular_path
 SV_LIB_POLYDATA_SOLID_NAME=_simvascular_polydata_solid
 SV_LIB_POST_NAME=_simvascular_post
 SV_LIB_PYTHON_INTERP_NAME=_simvascular_python_interp
@@ -663,7 +672,6 @@ SV_LIB_VTKSVFILTERS_NAME=_simvascular_vtksvfilters
 SV_LIB_VTKSVGEOMETRY_NAME=_simvascular_vtksvgeometry
 SV_LIB_VTKSVNURBS_NAME=_simvascular_vtksvnurbs
 SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
-SV_LIB_PATH_NAME=_simvascular_path
 
 #plugin names
 SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application
@@ -675,6 +683,7 @@ SV_PLUGIN_PROJECTMANAGER_NAME=org_sv_gui_qt_projectmanager
 SV_PLUGIN_SEGMENTATION_NAME=org_sv_gui_qt_segmentation
 SV_PLUGIN_SIMULATION_NAME=org_sv_gui_qt_simulation
 SV_PLUGIN_PROJECTDATANODES_NAME=org_sv_projectdatanodes
+SV_PLUGIN_PYTHONDATANODES_NAME=org_sv_pythondatanodes
 
 # Link flags, which also need to be dealt with conditionally depending
 # on which concrete classes derived from SolidModel are being

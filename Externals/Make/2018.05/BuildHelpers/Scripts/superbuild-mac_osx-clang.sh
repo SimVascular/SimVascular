@@ -21,6 +21,7 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_PYTHON      UNTAR_PYTHON      BUILD_PYTHON      ARCHIVE_PYTHON      ZIP_PYTHON      $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_SWIG        UNTAR_SWIG        BUILD_SWIG        ARCHIVE_SWIG        ZIP_SWIG        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
+   SV_SUPER_OPTIONS="WGET_TINYXML2    UNTAR_TINYXML2    BUILD_TINYXML2    ARCHIVE_TINYXML2    ZIP_TINYXML2    $SV_SUPER_OPTIONS"
    #SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_FREETYPE    UNTAR_FREETYPE    BUILD_FREETYPE    ARCHIVE_FREETYPE    ZIP_FREETYPE    $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_GDCM        UNTAR_GDCM        BUILD_GDCM        ARCHIVE_GDCM        ZIP_GDCM        $SV_SUPER_OPTIONS"
@@ -75,6 +76,13 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "CREATE_BUILD_SCRIPT_NUMPY"
   sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/compile-python-numpy-mac_osx.sh > tmp/compile.python.numpy-mac_osx.sh
   chmod a+rx ./tmp/compile.python.numpy-mac_osx.sh
+fi
+
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
+  echo "CREATE_BUILD_SCRIPT_TINYXML2"
+  sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/compile-cmake-tinyxml2-generic.sh > tmp/compile.cmake.tinyxml2.clang.sh
+  chmod a+rx ./tmp/compile.cmake.tinyxml2.clang.sh
 fi
 
 # qt
@@ -175,6 +183,12 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.python.numpy-mac_osx.sh >& ./tmp/stdout.numpy.python.txt
+fi
+
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
+  echo "BUILD_TINYXML2"
+  ./tmp/compile.cmake.tinyxml2.clang.sh >& ./tmp/stdout.tinyxml2.clang.txt
 fi
 
 #  qt
