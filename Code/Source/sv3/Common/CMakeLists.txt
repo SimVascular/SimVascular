@@ -34,7 +34,7 @@
 
 set(lib ${SV_LIB_COMMON_NAME})
 set(export_directive common)
-set(export_file_name svCommonExports.h)
+set(export_file_name sv3CommonExports.h)
 
 list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)

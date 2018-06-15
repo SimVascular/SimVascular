@@ -58,4 +58,3 @@ if(SV_INSTALL_LIBS)
         ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR}/plugins COMPONENT CoreLibraries
     )
 endif()
-

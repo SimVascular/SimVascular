@@ -33,7 +33,7 @@
 #define __SV3_PATHELEMENT_INIT_PY_H
 
 #include "SimVascular.h"
-#include "svPathExports.h"
+#include "sv3PathExports.h"
 #include "Python.h"
 
 extern "C" SV_EXPORT_PATH typedef struct

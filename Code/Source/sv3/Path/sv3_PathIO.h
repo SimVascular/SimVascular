@@ -36,7 +36,7 @@
 #include "sv3_PathElement.h"
 #include "tinyxml.h"
 
-#include <svPathExports.h>
+#include <sv3PathExports.h>
 
 namespace sv3{
 class SV_EXPORT_PATH PathIO
