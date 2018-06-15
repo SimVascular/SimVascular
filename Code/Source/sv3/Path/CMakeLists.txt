@@ -34,7 +34,7 @@
 
 set(lib ${SV_LIB_PATH_NAME})
 set(export_directive path)
-set(export_file_name svPathExports.h)
+set(export_file_name sv3PathExports.h)
 
 list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)

@@ -34,7 +34,7 @@
 
 #include "SimVascular.h"
 
-#include "svPathExports.h"
+#include "sv3PathExports.h"
 
 #include "vtkParametricSpline.h"
 namespace sv3 {
