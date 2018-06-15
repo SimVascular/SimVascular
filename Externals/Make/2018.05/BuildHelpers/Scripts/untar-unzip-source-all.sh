@@ -53,6 +53,14 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_NUMPY* ]]; then
   mv numpy-1.14.3 ..
 fi
 
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *UNTAR_TINYXML2* ]]; then
+    echo "UNTAR_TINYXML2"
+  rm -Rf ../tinyxml2-6.2.0
+  tar xvf Originals/tinyxml2/tinyxml2-6.2.0.tar.gz
+  mv tinyxml2-6.2.0 ..
+fi
+
 # qt
 if [[ $SV_SUPER_OPTIONS == *UNTAR_QT* ]]; then
     echo "UNTAR_SWIG"

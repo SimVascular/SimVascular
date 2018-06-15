@@ -48,6 +48,16 @@ if [[ $SV_SUPER_OPTIONS == *WGET_NUMPY* ]]; then
   popd
 fi
 
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *WGET_TINYXML2* ]]; then
+  echo "WGET_TINYXML2"
+  rm -Rf tinyxml2
+  mkdir -p tinyxml2
+  pushd tinyxml2
+  wget $PARENT_URL/tinyxml2/tinyxml2-6.2.0.tar.gz
+  popd
+fi
+
 # qt
 if [[ $SV_SUPER_OPTIONS == *WGET_QT* ]]; then
   echo "WGET_QT"

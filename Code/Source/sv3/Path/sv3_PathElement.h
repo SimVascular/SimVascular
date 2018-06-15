@@ -39,8 +39,6 @@
 
 #include "sv3_Spline.h"
 
-#include "mitkPoint.h"
-
 #include <array>
 #include <vector>
 
