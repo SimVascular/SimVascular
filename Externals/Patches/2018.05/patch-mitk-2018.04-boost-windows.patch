@@ -1,0 +1,12 @@
+diff -aur --new-file -x .git mitk-2018.04-original/CMakeExternals/Boost.cmake mitk-2018.04/CMakeExternals/Boost.cmake
+--- mitk-2018.04-original/CMakeExternals/Boost.cmake	2018-06-16 13:16:06.397472000 -0700
++++ mitk-2018.04/CMakeExternals/Boost.cmake	2018-06-15 17:17:56.979137100 -0700
+@@ -151,7 +151,7 @@
+   if(WIN32)
+     if(MSVC)
+       if(NOT (VISUAL_STUDIO_VERSION_MAJOR LESS 14))
+-        set(_boost_patch_cmd PATCH_COMMAND ${PATCH_COMMAND} -N -p1 -i ${CMAKE_CURRENT_LIST_DIR}/Boost.patch)
++        ###set(_boost_patch_cmd PATCH_COMMAND ${PATCH_COMMAND} -N -p1 -i ${CMAKE_CURRENT_LIST_DIR}/Boost.patch)
+       endif()
+     endif()
+   endif()
