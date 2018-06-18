@@ -1027,9 +1027,16 @@ diff -rupN original/Modules/QtWidgets/src/QmitkStdMultiWidget.cpp patch/Modules/
    this->UpdateAllWidgets();
  }
 diff -rupN original/Plugins/PluginList.cmake patch/Plugins/PluginList.cmake
---- original/Plugins/PluginList.cmake	2018-06-07 08:36:08.000000000 -0700
-+++ patch/Plugins/PluginList.cmake	2018-06-07 08:39:43.000000000 -0700
-@@ -35,8 +35,8 @@ set(MITK_PLUGINS
+--- original/Plugins/PluginList.cmake	2018-05-28 17:40:01.000000000 -0700
++++ patch/Plugins/PluginList.cmake	2018-06-18 11:46:31.000000000 -0700
+@@ -29,14 +29,14 @@ set(MITK_PLUGINS
+   org.mitk.gui.qt.extapplication:OFF
+   org.mitk.gui.qt.common:ON
+   org.mitk.gui.qt.stdmultiwidgeteditor:ON
+-  org.mitk.gui.qt.common.legacy:OFF
++  org.mitk.gui.qt.common.legacy:ON
+   org.mitk.gui.qt.cmdlinemodules:OFF
+   org.mitk.gui.qt.diffusionimagingapp:OFF
    org.mitk.gui.qt.datamanager:ON
    org.mitk.gui.qt.datamanagerlight:OFF
    org.mitk.gui.qt.properties:ON
