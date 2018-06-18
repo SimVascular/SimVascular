@@ -68,6 +68,7 @@
 #include "vtkUnstructuredGrid.h"
 
 #include <algorithm>
+#include <iterator>
 
 // ----------------------
 // MakePlane
