@@ -41,6 +41,7 @@
 #include "sv_VTK.h"
 #include "vtkTclUtil.h"
 #include "vtkPythonUtil.h"
+#include <vtkXMLPolyDataReader.h>
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -83,6 +84,8 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args);
 
 PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args);
 
+PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args );
+
 PyObject*  Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args);
 
 PyObject*  Repos_WriteVtkUnstructuredGridCmd( PyObject* self, PyObject* args);
@@ -107,6 +110,7 @@ static PyObject* Repos_GetLabelCmd( PyObject* self, PyObject* args);
 static PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args);
 
 static PyObject* Repos_ClearLabelCmd( PyObject* self, PyObject* args );
+
 // ----------
 // Repos_Methods
 // ----------
@@ -128,6 +132,7 @@ PyMethodDef pyRepository_methods[] =
     {"repos_load", Repos_LoadCmd, METH_VARARGS,NULL},
     {"repos_writeVtkPolyData", Repos_WriteVtkPolyDataCmd, METH_VARARGS,NULL},
     {"repos_readVtkPolyData", Repos_ReadVtkPolyDataCmd, METH_VARARGS,NULL},
+    {"repos_readXMLPolyData",Repos_ReadVtkXMLPolyDataCmd,METH_VARARGS,NULL},
     {"repos_writeVtkStructuredPoints", Repos_WriteVtkStructuredPointsCmd,
      METH_VARARGS,NULL},
     {"repos_getLabelKeys", Repos_GetLabelKeysCmd, METH_VARARGS,NULL},
@@ -866,15 +871,6 @@ PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
 
   // Do work of command:
 
-#ifndef WIN32
-  // Does file exist?
-  if ( access( fn, F_OK ) == -1 )
-  {
-    PyErr_SetString(PyRunTimeErr, "error accessing file ");
-    return Py_ERROR;
-  }
-#endif
-
   vtkPolyDataReader *pdReader = vtkPolyDataReader::New();
   pdReader->SetFileName( fn );
 
@@ -882,7 +878,63 @@ PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
   pdReader->Update();
 
   vtkPd = pdReader->GetOutput();
-  if ( vtkPd == NULL )
+  if ( vtkPd == NULL ||vtkPd->GetNumberOfPolys()==0 )
+  {
+    PyErr_SetString(PyRunTimeErr, "error reading file ");
+    pdReader->Delete();
+    return Py_ERROR;
+  }
+
+  if ( gRepository->Exists( objName ) )
+  {
+    PyErr_SetString(PyRunTimeErr, "obj already exists");
+    pdReader->Delete();
+    return Py_ERROR;
+  }
+
+  pd = new cvPolyData( vtkPd );
+  if ( !( gRepository->Register( objName, pd ) ) )
+  {
+    PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
+    pdReader->Delete();
+    delete pd;
+    return Py_ERROR;
+  }
+
+  PyObject* n = Py_BuildValue("s",pd->GetName());
+  pdReader->Delete();
+  return n;
+
+}
+
+// ------------------------
+// Repos_ReadVtkXMLPolyDataCmd
+// ------------------------
+
+PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
+
+{
+
+  char *objName, *fn;
+  vtkPolyData *vtkPd;
+  cvPolyData *pd;
+
+  if (!PyArg_ParseTuple(args,"ss", &objName,&fn))
+  {
+    PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: objName and fn");
+    return Py_ERROR;
+  }
+
+  // Do work of command:
+
+  vtkXMLPolyDataReader *pdReader = vtkXMLPolyDataReader::New();
+  pdReader->SetFileName( fn );
+
+  // Note that it is critical to call Update even for vtk readers.
+  pdReader->Update();
+
+  vtkPd = pdReader->GetOutput();
+  if ( vtkPd == NULL ||vtkPd->GetNumberOfPolys()==0 )
   {
     PyErr_SetString(PyRunTimeErr, "error reading file ");
     pdReader->Delete();
