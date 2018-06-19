@@ -9,9 +9,9 @@ if [[ $SV_SUPER_OPTIONS == *WGET_TCL* ]]; then
   rm -Rf tcltk
   mkdir -p tcltk
   pushd tcltk
-  wget $PARENT_URL/tcltk/tcl8.6.8-src.tar.gz
+  wget $PARENT_URL/tcltk/tcl8.6.4-src.tar.gz
   wget $PARENT_URL/tcltk/tcllib-1.17.tar.gz
-  wget $PARENT_URL/tcltk/tk8.6.8-src.tar.gz
+  wget $PARENT_URL/tcltk/tk8.6.4-src.tar.gz
   wget $PARENT_URL/tcltk/tklib-0.6.tar.tgz
   popd
 fi
