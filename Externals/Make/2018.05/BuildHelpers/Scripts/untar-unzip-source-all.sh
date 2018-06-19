@@ -99,7 +99,9 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_VTK* ]]; then
   rm -Rf ../vtk-8.1.1
   tar xvf Originals/vtk/VTK-8.1.1.tar.gz
   mv VTK-8.1.1 ../vtk-8.1.1
-#  source Patches/patch-source-vtk-6.2.sh
+  pushd ../vtk-8.1.1
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-vtk-8.1.1-windows.patch
+  popd
 fi
 
 # itk
@@ -117,7 +119,9 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_OPENCASCADE* ]]; then
   rm -Rf ../opencascade-7.2.0
   tar xvf Originals/opencascade/opencascade-7.2.0.tgz
   mv opencascade-7.2.0 ..
-#  source Patches/patch-source-opencascade-7.0.0.sh
+  pushd ../opencascade-7.2.0
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-opencascade-vtk-greater-8.0.patch
+  popd
 fi
 
 # mmg
@@ -126,7 +130,6 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MMG* ]]; then
   rm -Rf ../mmg-5.3.9
   tar xvf Originals/mmg/mmg-5.3.9.tar.gz
   mv mmg-5.3.9 ..
-#  source Patches/patch-source-mmg-5.3.9.sh
 fi
 
 # mitk
@@ -134,7 +137,9 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   echo "UNTAR_MITK"
   rm -Rf ../mitk-2018.04
   tar xvf Originals/mitk/mitk-2018-04-alpha.tar.gz
-  #cd ..
   mv mitk-2018-04-alpha ../mitk-2018.04
-#  source Patches/patch-source-mitk-2018.02.sh
+  pushd ../mitk-2018.04
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-mitk-2018.04.patch
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-mitk-2018.04-boost-windows.patch
+  popd
 fi

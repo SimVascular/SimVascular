@@ -74,7 +74,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_FREETYPE* ]]; then
   rm -Rf freetype
   mkdir -p freetype
   pushd freetype
-  wget $PARENT_URL/freetype/freetype-2.5.5.tar.gz
+  #wget $PARENT_URL/freetype/freetype-2.5.5.tar.gz
   wget $PARENT_URL/freetype/ft263.zip
   popd
 fi

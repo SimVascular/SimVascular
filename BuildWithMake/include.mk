@@ -62,9 +62,12 @@ CLUSTER = x64_cygwin
 #       should be replaced with additional variables
 
 SV_COMPILER = msvc
-SV_COMPILER_VERSION = 18.0
+#SV_COMPILER_VERSION = 18.0
+SV_COMPILER_VERSION = 19.0
 
-CXX_COMPILER_VERSION = msvc-18.0
+#CXX_COMPILER_VERSION = msvc-18.0
+CXX_COMPILER_VERSION = msvc-19.0
+
 FORTRAN_COMPILER_VERSION = ifort
 
 # optionally override with cluster options
@@ -235,28 +238,29 @@ ifeq ($(CLUSTER), x64_macosx)
   SVEXTERN_COMPILER_VERSION = clang-7.0
 endif
 
+#SV_EXTERNALS_VERSION_NUMBER = 2018.01
+SV_EXTERNALS_VERSION_NUMBER = 2018.05
+
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
     OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
-
-SV_EXTERNALS_VERSION_NUMBER = 2018.01
 
 # -------------------------------------------
 #   Release version numbers for SimVascular
@@ -404,6 +408,9 @@ ifeq ($(CLUSTER), x64_cygwin)
   endif
   ifeq ($(CXX_COMPILER_VERSION), msvc-18.0)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs12.5.x64_cygwin.mk
+  endif
+  ifeq ($(CXX_COMPILER_VERSION), msvc-19.0)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.0.x64_cygwin.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.ifort.x64_cygwin.mk
