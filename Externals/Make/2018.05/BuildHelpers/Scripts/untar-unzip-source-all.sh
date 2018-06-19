@@ -5,14 +5,14 @@
 if [[ $SV_SUPER_OPTIONS == *UNTAR_TCL* ]]; then
   echo "UNTAR_TCL"
 
-  rm -Rf ../tcl-8.6.8
-  rm -Rf ../tk-8.6.8
+  rm -Rf ../tcl-8.6.4
+  rm -Rf ../tk-8.6.4
   rm -Rf ../tcllib-1.17
   rm -Rf ../tklib-0.6
 
   #  untar tcl/tk
-  tar xvf Originals/tcltk/tcl8.6.8-src.tar.gz
-  tar xvf Originals/tcltk/tk8.6.8-src.tar.gz
+  tar xvf Originals/tcltk/tcl8.6.4-src.tar.gz
+  tar xvf Originals/tcltk/tk8.6.4-src.tar.gz
   tar xvf Originals/tcltk/tcllib-1.17.tar.gz
   tar xvf Originals/tcltk/tklib-0.6.tar.tgz
 
@@ -20,8 +20,8 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_TCL* ]]; then
   # move and rename tcl/tk
   #
 
-  mv tcl8.6.8 ../tcl-8.6.8
-  mv tk8.6.8 ../tk-8.6.8
+  mv tcl8.6.4 ../tcl-8.6.4
+  mv tk8.6.4 ../tk-8.6.4
   mv tcllib-1.17 ../tcllib-1.17
   mv tklib-0.6 ../tklib-0.6
 

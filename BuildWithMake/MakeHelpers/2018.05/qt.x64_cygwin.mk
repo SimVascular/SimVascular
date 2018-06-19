@@ -35,7 +35,7 @@ Qt5_VERSION=$(Qt5_MAJOR_VERSION).$(Qt5_MINOR_VERSION).$(Qt5_PATCH_VERSION)
 
 QT_TOP_DIR = C:/OpenSource/Qt/Qt$(Qt5_VERSION)/$(Qt5_VERSION)/msvc2015_64
 QT_DEFS    = -DNDEBUG -DWIN32 -DWIN64
-QT_DEFS    += -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_PLUGIN -DQT_WEBVIEW -DQT_WEBKITWIDGETS
+QT_DEFS    += -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_PLUGIN -DQT_WEBENGINE -DQT_WEBENGINEWIDGETS
 
 ifeq ($(SV_USE_SHARED),0)
   QT_DEFS += -DQT_STATICPLUGIN
@@ -57,7 +57,8 @@ QT_INCDIRS = \
       -I$(QT_TOP_DIR)/include/QtXml \
       -I$(QT_TOP_DIR)/include/QtConcurrent \
       -I$(QT_TOP_DIR)/include/QtNetwork \
-      -I$(QT_TOP_DIR)/include/QtWebView \
+      -I$(QT_TOP_DIR)/include/QtWebEngine \
+      -I$(QT_TOP_DIR)/include/QtWebEngineWidgets \
       -I$(QT_TOP_DIR)/include/mkspecs/win32-msvc2015
 QT_MOC_INCDIRS = \
       -I $(QT_TOP_DIR)/include \
@@ -67,10 +68,12 @@ QT_MOC_INCDIRS = \
       -I $(QT_TOP_DIR)/include/QtXml \
       -I $(QT_TOP_DIR)/include/QtConcurrent \
       -I $(QT_TOP_DIR)/include/QtNetwork \
-      -I $(QT_TOP_DIR)/include/QtWebView \
+      -I$(QT_TOP_DIR)/include/QtWebEngine \
+      -I$(QT_TOP_DIR)/include/QtWebEngineWidgets \
       -I $(QT_TOP_DIR)/include/mkspecs/win32-msvc2015
 QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
-      $(LIBFLAG)Qt5WebView$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5WebEngine$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5WebEngineWidgets$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Network$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Xml$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Widgets$(LIBLINKEXT) \

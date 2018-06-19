@@ -1,3 +1,6 @@
+# don't need the compilers, but need the S: drive!
+REPLACEME_SV_SPECIAL_COMPILER_SCRIPT
+
 GCP=cp
 GDIRNAME=dirname
 GBASENAME=basename
@@ -251,3 +254,5 @@ echo "else" >> REPLACEME_SV_TOP_BIN_DIR_MITK/bin/workbench-wrapper
 echo "  REPLACEME_SV_TOP_BIN_DIR_MITK/bin/MitkWorkbench" >> REPLACEME_SV_TOP_BIN_DIR_MITK/bin/workbench-wrapper
 echo "fi" >> REPLACEME_SV_TOP_BIN_DIR_MITK/bin/workbench-wrapper
 chmod u+w,a+rx REPLACEME_SV_TOP_BIN_DIR_MITK/bin/workbench-wrapper
+
+REPLACEME_SV_SPECIAL_COMPILER_END_SCRIPT

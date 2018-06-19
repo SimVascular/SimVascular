@@ -145,6 +145,8 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
   echo "CREATE_BUILD_SCRIPT_OPENCASCADE"
   sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-cmake-opencascade-generic.sh > tmp/compile.cmake.opencascade.cl.sh
   chmod a+rx ./tmp/compile.cmake.opencascade.cl.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/post-install-opencascade-windows.sh > tmp/post-install-opencascade-windows.sh
+  chmod a+rx ./tmp/post-install-opencascade-windows.sh
 fi
 
 # mmg
@@ -251,6 +253,7 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
   echo "BUILD_OPENCASCADE"
   ./tmp/compile.cmake.opencascade.cl.sh >& ./tmp/stdout.opencascade.cl.txt
+  ./tmp/post-install-opencascade-windows.sh >& ./tmp/stdout.post-install-windows.opencascade.txt
 fi
 
 # mmg

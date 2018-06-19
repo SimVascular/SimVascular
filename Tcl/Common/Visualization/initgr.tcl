@@ -48,8 +48,8 @@ proc initgr {renWin} {
 
     if {![cmdExists $renWin]} {
 	set ren [vis_renNew $renWin]
-	[[$renWin GetInteractor] GetInteractorStyle] \
-		SetTrackballModeToTrackball
+#	[[$renWin GetInteractor] GetInteractorStyle] \
+#		SetTrackballModeToTrackball
     } else {
 	[$renWin GetRenderers] InitTraversal
 	set ren [[$renWin GetRenderers] GetNextItem]
@@ -66,7 +66,7 @@ proc initgr {renWin} {
     if {![cmdExists mypicker]} {
 	vtkCellPicker mypicker
     }
-    mypicker SetEndPickMethod annotatePick
+#    mypicker SetEndPickMethod annotatePick
 
     iren_$renWin SetPicker mypicker
 

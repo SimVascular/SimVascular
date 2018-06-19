@@ -30,17 +30,211 @@
 
 # Visualization Toolkit (VTK) Tcl package configuration.
 #
-#  assumes exact same build options in /SV16
-#  assumes vtk 6.2
+#  assumes exact same build options in sv_externals
+
+#set sv_vtk_version 6.2
+set sv_vtk_version 8.1
+
+#catch {_tmp_vtk_version Delete}
+#vtkVersion _tmp_vtk_version
+#set sv_vtk_version "[_tmp_vtk_version GetVTKMajorVersion].[_tmp_vtk_version GetVTKMinorVersion]"
+#_tmp_vtk_version Delete
+#puts "Found vtk version ($sv_vtk_version)."
 
 set not_loaded {}
 set loaded {}
 
-set all_vtk_kits {CommonCore CommonMath CommonMisc CommonSystem CommonTransforms CommonDataModel CommonColor CommonExecutionModel FiltersCore CommonComputationalGeometry FiltersGeneral ImagingCore ImagingFourier FiltersStatistics FiltersExtraction InfovisCore FiltersGeometry FiltersSources RenderingCore RenderingFreeType RenderingContextIID ChartsCore IOCore IOGeometry IOXMLParser IOXML DomainsChemistry IOLegacy ParallelCore FiltersAMR FiltersFlowPaths FiltersGeneric ImagingSources FiltersHybrid FiltersHyperTree ImagingGeneral FiltersImaging FiltersModeling FiltersParallel FiltersParallelImaging FiltersProgrammable FiltersSMP FiltersSelection FiltersTexture FiltersVerdict IOImage ImagingHybrid InfovisLayout InteractionStyle ImagingColor RenderingAnnotation RenderingVolume InteractionWidgets ViewsCore GeovisCore IOAMR IOEnSight IOExodus RenderingOpenGL RenderingContextOpenGL RenderingGLtoPS RenderingLabel IOExport IOImport IOInfovis IOLSDyna IOMINC IOMovie IONetCDF IOPLY IOParallel IOParallelXML IOSQL IOVideo ImagingMath ImagingMorphological ImagingStatistics ImagingStencil InteractionImage RenderingFreeTypeOpenGL RenderingImage RenderingLIC RenderingLOD RenderingTk RenderingVolumeOpenGL ViewsContextIID ViewsInfovis}
+if {$sv_vtk_version == "6.2"} {
+   set all_vtk_kits [list \
+   vtkCommonCoreTcl \
+   vtkCommonMathTcl \
+   vtkCommonMiscTcl \
+   vtkCommonSystemTcl \
+   vtkCommonTransformsTcl \
+   vtkCommonDataModelTcl \
+   vtkCommonColorTcl \
+   vtkCommonExecutionModelTcl \
+   vtkFiltersCoreTcl \
+   vtkCommonComputationalGeometryTcl \
+   vtkFiltersGeneralTcl \
+   vtkImagingCoreTcl \
+   vtkImagingFourierTcl \
+   vtkFiltersStatisticsTcl \
+   vtkFiltersExtractionTcl \
+   vtkInfovisCoreTcl \
+   vtkFiltersGeometryTcl \
+   vtkFiltersSourcesTcl \
+   vtkRenderingCoreTcl \
+   vtkRenderingFreeTypeTcl \
+   vtkRenderingContextIIDTcl \
+   vtkChartsCoreTcl \
+   vtkIOCoreTcl \
+   vtkIOGeometryTcl \
+   vtkIOXMLParserTcl \
+   vtkIOXMLTcl \
+   vtkDomainsChemistryTcl \
+   vtkIOLegacyTcl \
+   vtkParallelCoreTcl \
+   vtkFiltersAMRTcl \
+   vtkFiltersFlowPathsTcl \
+   vtkFiltersGenericTcl \
+   vtkImagingSourcesTcl \
+   vtkFiltersHybridTcl \
+   vtkFiltersHyperTreeTcl \
+   vtkImagingGeneralTcl \
+   vtkFiltersImagingTcl \
+   vtkFiltersModelingTcl \
+   vtkFiltersParallelTcl \
+   vtkFiltersParallelImagingTcl \
+   vtkFiltersProgrammableTcl \
+   vtkFiltersSMPTcl \
+   vtkFiltersSelectionTcl \
+   vtkFiltersTextureTcl \
+   vtkFiltersVerdictTcl \
+   vtkIOImageTcl \
+   vtkImagingHybridTcl \
+   vtkInfovisLayoutTcl \
+   vtkInteractionStyleTcl \
+   vtkImagingColorTcl \
+   vtkRenderingAnnotationTcl \
+   vtkRenderingVolumeTcl \
+   vtkInteractionWidgetsTcl \
+   vtkViewsCoreTcl \
+   vtkGeovisCoreTcl \
+   vtkIOAMRTcl \
+   vtkIOEnSightTcl \
+   vtkIOExodusTcl \
+   vtkRenderingOpenGLTcl \
+   vtkRenderingContextOpenGLTcl \
+   vtkRenderingGLtoPSTcl \
+   vtkRenderingLabelTcl \
+   vtkIOExportTcl \
+   vtkIOImportTcl \
+   vtkIOInfovisTcl \
+   vtkIOLSDynaTcl \
+   vtkIOMINCTcl \
+   vtkIOMovieTcl \
+   vtkIONetCDFTcl \
+   vtkIOPLYTcl \
+   vtkIOParallelTcl \
+   vtkIOParallelXMLTcl \
+   vtkIOSQLTcl \
+   vtkIOVideoTcl \
+   vtkImagingMathTcl \
+   vtkImagingMorphologicalTcl \
+   vtkImagingStatisticsTcl \
+   vtkImagingStencilTcl \
+   vtkInteractionImageTcl \
+   vtkRenderingFreeTypeOpenGLTcl \
+   vtkRenderingImageTcl \
+   vtkRenderingLICTcl \
+   vtkRenderingLODTcl \
+   vtkRenderingTkTcl \
+   vtkRenderingVolumeOpenGLTcl \
+   vtkViewsContextIIDTcl \
+   vtkViewsInfovisTcl \
+   ]
+} else {
+   puts "assuming vtk 8.1"
+   set all_vtk_kits [list \
+   vtkChartsCoreTCL \
+   vtkCommonColorTCL \
+   vtkCommonComputationalGeometryTCL \
+   vtkCommonCoreTCL \
+   vtkCommonDataModelTCL \
+   vtkCommonExecutionModelTCL \
+   vtkCommonMathTCL \
+   vtkCommonMiscTCL \
+   vtkCommonSystemTCL \
+   vtkCommonTransformsTCL \
+   vtkDomainsChemistryTCL \
+   vtkFiltersAMRTCL \
+   vtkFiltersCoreTCL \
+   vtkFiltersExtractionTCL \
+   vtkFiltersFlowPathsTCL \
+   vtkFiltersGeneralTCL \
+   vtkFiltersGenericTCL \
+   vtkFiltersGeometryTCL \
+   vtkFiltersHybridTCL \
+   vtkFiltersHyperTreeTCL \
+   vtkFiltersImagingTCL \
+   vtkFiltersModelingTCL \
+   vtkFiltersParallelTCL \
+   vtkFiltersParallelImagingTCL \
+   vtkFiltersPointsTCL \
+   vtkFiltersProgrammableTCL \
+   vtkFiltersSelectionTCL \
+   vtkFiltersSMPTCL \
+   vtkFiltersSourcesTCL \
+   vtkFiltersStatisticsTCL \
+   vtkFiltersTextureTCL \
+   vtkFiltersTopologyTCL \
+   vtkFiltersVerdictTCL \
+   vtkGeovisCoreTCL \
+   vtkImagingColorTCL \
+   vtkImagingCoreTCL \
+   vtkImagingFourierTCL \
+   vtkImagingGeneralTCL \
+   vtkImagingHybridTCL \
+   vtkImagingMathTCL \
+   vtkImagingMorphologicalTCL \
+   vtkImagingSourcesTCL \
+   vtkImagingStatisticsTCL \
+   vtkImagingStencilTCL \
+   vtkInfovisCoreTCL \
+   vtkInfovisLayoutTCL \
+   vtkInteractionImageTCL \
+   vtkInteractionStyleTCL \
+   vtkInteractionWidgetsTCL \
+   vtkIOAMRTCL \
+   vtkIOCoreTCL \
+   vtkIOEnSightTCL \
+   vtkIOExodusTCL \
+   vtkIOExportTCL \
+   vtkIOExportOpenGLIITCL \
+   vtkIOGeometryTCL \
+   vtkIOImageTCL \
+   vtkIOImportTCL \
+   vtkIOInfovisTCL \
+   vtkIOLegacyTCL \
+   vtkIOLSDynaTCL \
+   vtkIOMINCTCL \
+   vtkIOMovieTCL \
+   vtkIONetCDFTCL \
+   vtkIOParallelTCL \
+   vtkIOParallelXMLTCL \
+   vtkIOPLYTCL \
+   vtkIOSQLTCL \
+   vtkIOTecplotTableTCL \
+   vtkIOVideoTCL \
+   vtkIOXMLTCL \
+   vtkIOXMLParserTCL \
+   vtkParallelCoreTCL \
+   vtkRenderingAnnotationTCL \
+   vtkRenderingChemistryOpenGLIITCL \
+   vtkRenderingContextIIDTCL \
+   vtkRenderingContextOpenGLIITCL \
+   vtkRenderingCoreTCL \
+   vtkRenderingFreeTypeTCL \
+   vtkRenderingGLtoPSOpenGLIITCL \
+   vtkRenderingImageTCL \
+   vtkRenderingLabelTCL \
+   vtkRenderingLODTCL \
+   vtkRenderingOpenGLIITCL \
+   vtkRenderingQtTCL \
+   vtkRenderingTkTCL \
+   vtkRenderingVolumeTCL \
+   vtkRenderingVolumeOpenGLIITCL \
+   vtkTestingRenderingTCL \
+   vtkViewsContextIIDTCL \
+   vtkViewsCoreTCL \
+   vtkViewsInfovisTCL \
+   ]
+}
 
 if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
     foreach kit $all_vtk_kits {
-      set myfn [file join $simvascular_home vtk${kit}TCL-6.2.dll]
+      set myfn [file join $simvascular_home vtk${kit}TCL-$sv_vtk_version.dll]
       if [catch {load $myfn vtk${kit}TCL} msg] {
         lappend not_loaded vtk${kit}TCL
       } else {
@@ -50,11 +244,11 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
     puts [format "  %-12s %s" "TclVtk:" "Dynamic Libs (not_loaded: [llength $not_loaded])"]
 } elseif {($SV_RELEASE_BUILD == 0) && ($tcl_platform(platform) == "windows")} {
     foreach kit $all_vtk_kits {
-      #set myfn [file join $simvascular_home vtk${kit}TCL-6.2.dll]
-      if [catch {load vtk${kit}TCL-6.2.dll vtk${kit}TCL} msg] {
-        lappend not_loaded vtk${kit}TCL
+      #set myfn [file join $simvascular_home vtk${kit}TCL-$sv_vtk_version.dll]
+      if [catch {load ${kit}-$sv_vtk_version.dll ${kit}} msg] {
+        lappend not_loaded ${kit}
       } else {
-        lappend loaded vtk${kit}TCL
+        lappend loaded ${kit}
       }
     }
     puts [format "  %-12s %s" "TclVtk:" "Dynamic Libs (not_loaded: [llength $not_loaded])"]

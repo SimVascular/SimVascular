@@ -30,13 +30,21 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-source CygwinHelpers/msvc_2013_x64
+export SV_EXTERNALS_VERSION_NUMBER=2018.01
+export SV_EXTERNALS_VERSION_NUMBER=2018.05
+
+if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+  source CygwinHelpers/msvc_2013_x64
+  export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.01/windows/windows/10.0/msvc/18.0/x64/relwithdebinfo/2018.01.24
+  export TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.2018.01.24
+elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+  source CygwinHelpers/msvc_2015_x64.sh
+  export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.05/windows/windows/10.0/msvc/19.0/x64/relwithdebinfo/2018.06.19
+  export TAR_FILE_PREFIX=windows.10.0.msvc.19.0.x64.relwithdebinfo.2018.06.19   
+fi
 
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/windows/windows/10.0/msvc/18.0/x64/relwithdebinfo/2018.01.24
-
-export TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.2018.01.24
 
 # default is windows
 
@@ -51,15 +59,31 @@ mkdir -p $EXTERNALS_TOP/tarfiles
 mkdir -p $EXTERNALS_TOP/bin
 
 pushd $EXTERNALS_TOP/tarfiles
-wget $PARENT_URL/$TAR_FILE_PREFIX.freetype.2.6.3.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.1.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.7.1.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2016.03.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.1.0.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.0.0.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.python.2.7.13.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
+
+if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+  wget $PARENT_URL/$TAR_FILE_PREFIX.freetype.2.6.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.7.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2016.03.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.1.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.0.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.python.2.7.13.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
+elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+  wget $PARENT_URL/$TAR_FILE_PREFIX.freetype.2.6.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.hdf5.1.10.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.13.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2018.04.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.3.9.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.2.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.python.3.5.5.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.tinyxml2.6.2.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.8.1.1.tar.gz
+fi
+
 popd
 
 pushd $EXTERNALS_TOP/bin

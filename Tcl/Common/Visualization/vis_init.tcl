@@ -74,7 +74,7 @@ proc vis_renNew {renWin} {
         set iren [format "iren_%s" $renWin]
         vtkRenderWindowInteractor $iren
         $iren SetRenderWindow $renWin
-        $iren SetUserMethod { wm deiconify .vtkInteract }
+###        $iren SetUserMethod { wm deiconify .vtkInteract }
         $iren Initialize
 
     } else {

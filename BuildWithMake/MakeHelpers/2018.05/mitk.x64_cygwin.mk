@@ -141,6 +141,7 @@ MITK_PLUGIN_LIBS += \
              $(LIBFLAG)org_mitk_gui_common$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_common$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_application$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_common_legacy$(LIBLINKEXT) \
              $(LIBFLAG)org_blueberry_ui_qt$(LIBLINKEXT) \
              $(LIBFLAG)org_blueberry_core_runtime$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_core_services$(LIBLINKEXT)
