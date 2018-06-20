@@ -97,12 +97,21 @@ sudo apt-get -y install doxygen
 #sudo ./qt-opensource-linux-x64-5.4.2.run --script ./ubuntu-qt-installer-noninteractive.qs
 
 ### install latest version of CMake
-wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.6.1-Linux-x86_64.sh
-chmod a+rx ./cmake-3.6.1-Linux-x86_64.sh
-sudo mkdir -p /usr/local/package/cmake-3.6.1
-sudo ./cmake-3.6.1-Linux-x86_64.sh --prefix=/usr/local/package/cmake-3.6.1 --skip-license
-sudo ln -s /usr/local/package/cmake-3.6.1/bin/ccmake    /usr/local/bin/ccmake
-sudo ln -s /usr/local/package/cmake-3.6.1/bin/cmake     /usr/local/bin/cmake
-sudo ln -s /usr/local/package/cmake-3.6.1/bin/cmake-gui /usr/local/bin/cmake-gui
-sudo ln -s /usr/local/package/cmake-3.6.1/bin/cpack     /usr/local/bin/cpack
-sudo ln -s /usr/local/package/cmake-3.6.1/bin/ctest     /usr/local/bin/ctest
+wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.10.3-Linux-x86_64.sh
+chmod a+rx ./cmake-3.10.3-Linux-x86_64.sh
+sudo mkdir -p /usr/local/package/cmake-3.10.3
+sudo ./cmake-3.10.3-Linux-x86_64.sh --prefix=/usr/local/package/cmake-3.10.3 --skip-license
+sudo ln -s /usr/local/package/cmake-3.10.3/bin/ccmake    /usr/local/bin/ccmake
+sudo ln -s /usr/local/package/cmake-3.10.3/bin/cmake     /usr/local/bin/cmake
+sudo ln -s /usr/local/package/cmake-3.10.3/bin/cmake-gui /usr/local/bin/cmake-gui
+sudo ln -s /usr/local/package/cmake-3.10.3/bin/cpack     /usr/local/bin/cpack
+sudo ln -s /usr/local/package/cmake-3.10.3/bin/ctest     /usr/local/bin/ctest
+
+### MITK requires a newer version of gcc
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install gcc-4.9 g++-4.9
+## Make sure to explicitly specify these compilers when configuring MITK:
+#  CMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc-4.9
+#  CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++-4.9
+
