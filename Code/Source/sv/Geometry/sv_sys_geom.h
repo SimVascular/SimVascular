@@ -136,6 +136,11 @@ SV_EXPORT_SYSGEOM int sys_geom_AvgPt( cvPolyData *src, double pt[] );
 
 SV_EXPORT_SYSGEOM int sys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
                                   char *filename, int flag, Tcl_Interp *interp);
+                                  
+#ifdef SV_USE_PYTHON
+SV_EXPORT_SYSGEOM int pysys_geom_splinePtsToPathPlan (vtkPolyData *pd,int numOutputPts,
+                                  char *filename, int flag, char** output);
+#endif
 
 SV_EXPORT_SYSGEOM int sys_geom_InterpolateScalar( cvPolyData *src, double pt[], double *scalar );
 
