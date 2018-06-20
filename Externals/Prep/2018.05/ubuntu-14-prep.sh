@@ -53,6 +53,17 @@ sudo apt-get -y install libxi-dev
 sudo apt-get -y install libxss-dev
 sudo apt-get -y install libxtst-dev
 sudo apt-get -y install libpci-dev
+# qt webengine required, but not listed on website
+sudo apt-get -y install glib-2.0-dev
+sudo apt-get -y install re2c
+# http://wiki.qt.io/QtWebEngine/How_to_Try
+#  libminizip-dev not found on ubuntu 14, maybe 16?
+sudo apt-get -y install bison build-essential gperf flex ruby python libasound2-dev libbz2-dev libcap-dev \
+libcups2-dev libdrm-dev libegl1-mesa-dev libgcrypt11-dev libnss3-dev libpci-dev libpulse-dev libudev-dev \
+libxtst-dev gyp ninja-build
+sudo apt-get -y install libssl-dev libxcursor-dev libxcomposite-dev libxdamage-dev libxrandr-dev \
+libfontconfig1-dev libxss-dev libsrtp0-dev libwebp-dev libjsoncpp-dev libopus-dev  \
+libavutil-dev libavformat-dev libavcodec-dev libevent-dev
 
 ### mitk
 sudo apt-get -y install libxmu-dev
