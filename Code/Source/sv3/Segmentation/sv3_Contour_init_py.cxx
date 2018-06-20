@@ -43,6 +43,8 @@
 #include <iostream>
 #include "sv_Repository.h"
 #include "sv_RepositoryData.h"
+#include "sv_PolyData.h"
+#include "vtkSmartPointer.h"
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
@@ -66,6 +68,10 @@ PyObject* Contour_GetCenterPointCmd(pyContour* self, PyObject* args);
 PyObject* Contour_SetControlPointsCmd(pyContour* self, PyObject* args);
 PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args);
 PyObject* Contour_SetThresholdValueCmd(pyContour* self, PyObject* args);
+PyObject* Contour_SetImageCmd(pyContour* self, PyObject* args);
+PyObject* Contour_GetPolyDataCmd(pyContour* self, PyObject* args);
+
+
 pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args);
 
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args);
@@ -88,6 +94,8 @@ static PyMethodDef pyContour_methods[]={
   {"contour_setCtrlPtsByRadius", (PyCFunction)Contour_SetControlPointsByRadiusCmd, METH_VARARGS, NULL},
   {"contour_setThresholdValue", (PyCFunction)Contour_SetThresholdValueCmd, METH_VARARGS, NULL},
   {"contour_createSmoothCt", (PyCFunction)Contour_CreateSmoothContour, METH_VARARGS, NULL},
+  {"contour_setImg", (PyCFunction)Contour_SetImageCmd, METH_VARARGS,NULL},
+  {"contour_getPolyData", (PyCFunction)Contour_GetPolyDataCmd, METH_VARARGS,NULL},
   {NULL,NULL}
 };
 
@@ -239,11 +247,10 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
     RepositoryDataT type;
     cvRepositoryData *rd;
     PathElement *path;
-    PyObject *vtkName; 
-    if (!PyArg_ParseTuple(args,"ssOi", &objName, &pathName, &vtkName, &index))
+    if (!PyArg_ParseTuple(args,"ssi", &objName, &pathName, &index))
     {
-        PyErr_SetString(PyRunTimeErr, "Could not import 1 char, 1 vtkImgae and \
-                    1 int: pathName, vtkObj abd index");
+        PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, and \
+                    1 int: objName, pathName, and index");
         return Py_ERROR;
     }
   
@@ -254,14 +261,6 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
     }
   
     // Do work of command:
-    // Look up the named vtk object:
-    vtkObj = (vtkImageData *)vtkPythonUtil::GetPointerFromObject( vtkName,
-        "vtkImageData");
-    if ( vtkObj == NULL )
-    {
-        PyErr_SetString(PyRunTimeErr, "error retrieving vtkImage object ");
-        return Py_ERROR;
-    }
     // Retrieve source object:
     rd = gRepository->GetObject( pathName );
     char r[2048];
@@ -292,11 +291,8 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
         return Py_ERROR;
     }
 
-    vtkImageData*  slice = sv3::SegmentationUtils::GetSlicevtkImage(path->GetPathPoint(index),vtkObj, 5.0);
-    //std::cout<<"Slice dimensions: "<<slice->GetDimensions()<<std::endl;
-    //std::cout<<"Path coords: "<< path->GetPathPoint(index).pos[0]<<" "<<path->GetPathPoint(index).pos[1]<<" "<<path->GetPathPoint(index).pos[2]<<std::endl;
-    // Instantiate the new mesh:
-    Contour *geom = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, path->GetPathPoint(index), slice );
+    // Instantiate the new path:
+    Contour *geom = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, path->GetPathPoint(index));
     
     // Register the contour:
     if ( !( gRepository->Register( objName, geom ) ) ) {
@@ -312,6 +308,49 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
 
 }
 
+// --------------------
+// Contour_SetImageCmd
+// --------------------
+PyObject* Contour_SetImageCmd( pyContour* self, PyObject* args)
+{
+    char *pathName=NULL;
+    vtkImageData *vtkObj;
+    int index=0;
+    RepositoryDataT type;
+    cvRepositoryData *rd;
+    PyObject *vtkName; 
+    Contour* contour = self->geom;
+    if (!PyArg_ParseTuple(args,"O", &vtkName))
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not import 1 vtkImgae");
+        return Py_ERROR;
+    }
+  
+  // Make sure the specified result object does not exist:
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
+  
+    // Do work of command:
+    // Look up the named vtk object:
+    vtkObj = (vtkImageData *)vtkPythonUtil::GetPointerFromObject( vtkName,
+        "vtkImageData");
+    if ( vtkObj == NULL )
+    {
+        PyErr_SetString(PyRunTimeErr, "error retrieving vtkImage object ");
+        return Py_ERROR;
+    }
+
+    vtkImageData*  slice = sv3::SegmentationUtils::GetSlicevtkImage(contour->GetPathPoint(),vtkObj, 5.0);
+    contour->SetVtkImageSlice(slice);
+    
+    Py_INCREF(contour);
+    self->geom=contour;
+    Py_DECREF(contour);
+    Py_RETURN_NONE; 
+
+}
 // --------------------
 // Contour_GetObjectCmd
 // --------------------
@@ -550,6 +589,9 @@ PyObject* Contour_SetThresholdValueCmd(pyContour* self, PyObject* args)
     Py_RETURN_NONE;
 }
     
+//========================
+// Contour_CreateSmoothContour
+//=========================
 pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args)
 {
     int fourierNumber = 0;
@@ -562,7 +604,7 @@ pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args)
     
     Contour* contour = self->geom;
     
-    Contour *newContour = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, contour->GetPathPoint(), contour->GetVtkImageSlice() );
+    Contour *newContour = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, contour->GetPathPoint());
     
     newContour= contour->CreateSmoothedContour(fourierNumber);
     
@@ -581,6 +623,44 @@ pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args)
     return pyNewCt;
     
 }
+
+//========================
+// Contour_GetPolyDataCmd
+//=========================
+PyObject* Contour_GetPolyDataCmd(pyContour* self, PyObject* args)
+{
+    char* dstName=NULL;
+    if (!PyArg_ParseTuple(args,"s", &dstName))
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not import char, dstName");
+        return Py_ERROR;
+    }
     
+    // Make sure the specified result object does not exist:
+    if ( gRepository->Exists( dstName ) ) {
+        PyErr_SetString(PyRunTimeErr, "object already exists");
+        return Py_ERROR;
+    }
+  
+    Contour* geom = self->geom;
     
+    vtkSmartPointer<vtkPolyData> vtkpd = geom->CreateVtkPolyDataFromContour();
+    
+    cvPolyData* pd = new cvPolyData(vtkpd);
+    
+    if (pd==NULL)
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not get polydata from object");
+        return Py_ERROR;
+    }
+    
+      // Register the result:
+    if ( !( gRepository->Register( dstName, pd ) ) ) {
+      PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
+      delete pd;
+      return Py_ERROR;
+    }
+    
+    Py_RETURN_NONE;
+}
     

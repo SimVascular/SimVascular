@@ -113,7 +113,7 @@ public:
 
     KernelType GetKernel() const {return contour_kernel_;}
     
-    static Contour* DefaultInstantiateContourObject(KernelType t, PathElement::PathPoint pathPoint, vtkImageData* slice );
+    static Contour* DefaultInstantiateContourObject(KernelType t, PathElement::PathPoint pathPoint);
     
     static KernelType gCurrentKernel;
     

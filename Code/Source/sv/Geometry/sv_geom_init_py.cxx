@@ -646,6 +646,12 @@ PyObject* Geom_CheckSurfaceCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
     return Py_ERROR;
   }
+  
+  type = src->GetType();
+  if ( type != POLY_DATA_T ) {
+    PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
+    return Py_ERROR;
+  }
 
   int stats[2];
   if ( sys_geom_checksurface( (cvPolyData*)src, stats,tol)

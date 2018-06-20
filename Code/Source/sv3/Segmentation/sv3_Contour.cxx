@@ -119,7 +119,7 @@ Contour::~Contour()
 // --------------------------------
 // DefaultInstantiateContourObject
 // --------------------------------
-Contour* Contour::DefaultInstantiateContourObject(KernelType t, PathElement::PathPoint pathPoint, vtkImageData* slice )
+Contour* Contour::DefaultInstantiateContourObject(KernelType t, PathElement::PathPoint pathPoint)
 {
   // Get the adapt object factory registrar associated with the python interpreter
   cvFactoryRegistrar* contourObjectRegistrar;
@@ -135,7 +135,6 @@ Contour* Contour::DefaultInstantiateContourObject(KernelType t, PathElement::Pat
     if (contour == NULL) {
 		  fprintf( stdout, "Unable to create contour object for kernel (%i)\n",Contour::gCurrentKernel);
     }
-    contour->SetVtkImageSlice(slice);
     contour->SetPathPoint(pathPoint);
 
   } else {
