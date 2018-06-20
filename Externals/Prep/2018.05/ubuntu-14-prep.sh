@@ -26,7 +26,10 @@ sudo apt-get -y install libxt-dev
 sudo apt-get -y install libxi-dev
 
 ### for qt/mitk
- sudo apt-get -y install libicu-dev
+sudo apt-get -y install libicu-dev
+
+### to link against qt pre-built
+sudo apt-get install libglew-dev
 
 ### for qt
 sudo apt-get -y install libfontconfig1-dev
