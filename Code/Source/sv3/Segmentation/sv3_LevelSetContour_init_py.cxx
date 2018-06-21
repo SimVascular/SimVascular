@@ -88,7 +88,7 @@ initpylevelSetContour()
 
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_LEVELSET,
+          contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_LEVELSET,
       (FactoryMethodPtr) &CreatelevelSetContour );
   }
   else {

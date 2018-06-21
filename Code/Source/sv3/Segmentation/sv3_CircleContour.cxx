@@ -52,8 +52,9 @@ using sv3::PathElement;
 using sv3::SegmentationUtils;
 
 circleContour::circleContour()
-    : Contour( KERNEL_CIRCLE )
+    : Contour()
 {
+    std::cout<<"circleContour()"<<std::endl;
     m_Method="Manual";
     m_Type="Circle";
 
@@ -77,17 +78,19 @@ circleContour::~circleContour()
 
 circleContour* circleContour::Clone()
 {
+    std::cout<<"circleContour::Clone()"<<std::endl;
     return new circleContour(*this);
 }
 
 circleContour* circleContour::CreateSmoothedContour(int fourierNumber)
 {
+    std::cout<<"circleContour::CreateSmoothedContour()"<<std::endl;
     if(m_ContourPoints.size()<3)
         return this->Clone();
 
     circleContour* contour=new circleContour();
     contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_PlaneGeometry);
+//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
     std::string method=m_Method;
     int idx=method.find("Smoothed");
     if(idx<0)
@@ -116,27 +119,41 @@ circleContour* circleContour::CreateSmoothedContour(int fourierNumber)
 
 std::string circleContour::GetClassName()
 {
+    std::cout<<"circleContour::GetClassName()"<<std::endl;
     return "circleContour";
 }
 
 void circleContour::SetControlPoint(int index, std::array<double,3> point)
 {
-    
+    std::cout<<"circleContour::SetControlPoint()"<<std::endl;
     double projPt[3];
     double pt[3];
     pt[0] = point[0]; pt[1] = point[1]; pt[2] = point[2];
-    m_PlaneGeometry->ProjectPoint(pt, projPt);
+    std::cout<<"ck1"<<std::endl;
+    if (m_vtkPlaneGeometry==NULL)
+    {
+        std::array<double, 3> PT = this->GetPathPosPoint();
+        std::cout <<"PathPosPoint: "<<PT[0]<<" "<<PT[1]<<" "<<PT[2]<<std::endl;
+    }
+    m_vtkPlaneGeometry->ProjectPoint(pt, projPt);
+    std::cout<<"ck2"<<std::endl;
     if(index == 0)
     {
 
         if(m_ControlPoints.size()==0)
+        {
+            std::cout<<"ck3"<<std::endl;
             m_ControlPoints.push_back(std::array<double,3>{projPt[0],projPt[1],projPt[2]});
+            std::cout<<"ck4"<<std::endl;
+        }
         else
         {
+            std::cout<<"ck5"<<std::endl;
             std::array<double,3> dirVec;
             for (int i=0; i<3; i++)
                 dirVec[i]=projPt[i]-GetControlPoint(0)[i];
             Shift(dirVec);
+            std::cout<<"ck6"<<std::endl;
         }
     }
     else if ( index == 1 )
@@ -152,9 +169,10 @@ void circleContour::SetControlPoint(int index, std::array<double,3> point)
 
 void circleContour::SetControlPointByRadius(double radius, double* point)
 {
+    std::cout<<"circleContour::SetControlPointByRadius()"<<std::endl;
     double centerPt[3];
     std::cout <<"Point coords: "<<point[0]<<" "<<point[1]<<" "<<point[2]<<std::endl;
-    m_PlaneGeometry->ProjectPoint(point, centerPt);
+    m_vtkPlaneGeometry->ProjectPoint(point, centerPt);
     std::cout <<"centerPt coords: "<<centerPt[0]<<" "<<centerPt[1]<<" "<<centerPt[2]<<std::endl;
     std::array<double,3> dirVec;
     if(m_ControlPoints.size()==0)
@@ -166,7 +184,7 @@ void circleContour::SetControlPointByRadius(double radius, double* point)
         Shift(dirVec);
     }
     std::array<double,3> boundaryPoint;
-    double* normal = m_PlaneGeometry->GetNormal();
+    double* normal = m_vtkPlaneGeometry->GetNormal();
     double vec[3];
     
     SegmentationUtils::getOrthogonalVector(normal,vec);
@@ -188,10 +206,12 @@ void circleContour::SetControlPointByRadius(double radius, double* point)
 
 void circleContour::AssignCenterScalingPoints()
 {
+    std::cout<<"circleContour::AssignCenterScalingPoints()"<<std::endl;
 }
 
 Contour* circleContour::CreateByFitting(Contour* contour)
 {
+    std::cout<<"circleContour::CreateByFitting()"<<std::endl;
     double area=contour->GetArea();
     double radius=sqrt(area/vnl_math::pi);
     double centerPoint[3], boundaryPoint[3];
@@ -249,6 +269,7 @@ Contour* circleContour::CreateByFitting(Contour* contour)
 
 void circleContour::CreateContourPoints()
 {
+    std::cout<<"circleContour::CreateContourPoints()"<<std::endl;
     if (m_ControlPoints.size()!=2)
     {
         fprintf(stderr, "Control points haven't been set\n");
@@ -265,9 +286,9 @@ void circleContour::CreateContourPoints()
         controlPoint1[j] = m_ControlPoints[0][j];
         controlPoint2[j] = m_ControlPoints[1][j];
     }
-    m_PlaneGeometry->ProjectPoint(controlPoint1, centerPoint );
+    m_vtkPlaneGeometry->ProjectPoint(controlPoint1, centerPoint );
 
-    m_PlaneGeometry->ProjectPoint(controlPoint2, boundaryPoint );
+    m_vtkPlaneGeometry->ProjectPoint(controlPoint2, boundaryPoint );
 
     double radius = sqrt(pow(centerPoint[0]-boundaryPoint[0],2)+ 
             pow(centerPoint[1]-boundaryPoint[1],2)+
@@ -290,7 +311,7 @@ void circleContour::CreateContourPoints()
         break;
     }
     
-    double* normal=m_PlaneGeometry->GetNormal();       
+    double* normal=m_vtkPlaneGeometry->GetNormal();       
     double vec[3];
     SegmentationUtils::getOrthogonalVector(normal,vec);
     if(vec==NULL)

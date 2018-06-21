@@ -63,13 +63,9 @@ public:
     
     ~circleContour();
     
-    circleContour* Clone();
+    virtual circleContour* Clone() override;
     
-    circleContour* CreateSmoothedContour(int fourierNumber);
-        
-    void SetLevelSetParas(svLSParam* paras) {return;};
-    
-    svLSParam* GetLevelSetParas() {return NULL;};
+    virtual circleContour* CreateSmoothedContour(int fourierNumber) override;
     
     virtual std::string GetClassName() override;
 
@@ -79,11 +75,11 @@ public:
     
     //virtual void CreateContourPoints() override;
 
-    void AssignCenterScalingPoints() override;
+    virtual void AssignCenterScalingPoints() override;
 
     static Contour* CreateByFitting(Contour* contour);
     
-    void CreateContourPoints();
+    virtual void CreateContourPoints() override;
 
   protected:
 

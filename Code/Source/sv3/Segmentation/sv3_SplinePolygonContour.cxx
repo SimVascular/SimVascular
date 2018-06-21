@@ -77,7 +77,7 @@ ContourSplinePolygon* ContourSplinePolygon::CreateSmoothedContour(int fourierNum
 
     ContourSplinePolygon* contour=new ContourSplinePolygon();
     contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_PlaneGeometry);
+//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
     std::string method=m_Method;
     int idx=method.find("Smoothed");
     if(idx<0)

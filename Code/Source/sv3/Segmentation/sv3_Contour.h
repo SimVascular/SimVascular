@@ -50,14 +50,14 @@
 #undef GetClassName
 #endif
 
-enum KernelType {
-    KERNEL_INVALID,
-    KERNEL_LEVELSET,
-    KERNEL_THRESHOLD,
-    KERNEL_CIRCLE,
-    KERNEL_POLYGON,
-    KERNEL_SPLINEPOLYGON,
-    KERNEL_ELLIPSE
+enum cKernelType {
+    cKERNEL_INVALID,
+    cKERNEL_LEVELSET,
+    cKERNEL_THRESHOLD,
+    cKERNEL_CIRCLE,
+    cKERNEL_POLYGON,
+    cKERNEL_SPLINEPOLYGON,
+    cKERNEL_ELLIPSE
 };
 
 namespace sv3{
@@ -111,11 +111,11 @@ public:
 
     };
 
-    KernelType GetKernel() const {return contour_kernel_;}
+    cKernelType GetKernel() const {return contour_kernel_;}
     
-    static Contour* DefaultInstantiateContourObject(KernelType t, PathElement::PathPoint pathPoint);
+    static Contour* DefaultInstantiateContourObject(cKernelType t, PathElement::PathPoint pathPoint);
     
-    static KernelType gCurrentKernel;
+    static cKernelType gCurrentKernel;
     
     static cvFactoryRegistrar gRegistrar;
 
@@ -125,13 +125,13 @@ public:
 
     enum ShapeType {ONLY_CONTOUR, CIRCLE, ELLIPSE,POLYGON,CURVE_POLYGON};
 
-    Contour( KernelType t );
+    Contour();
 
     Contour(const Contour &other);
 
     virtual ~Contour();
 
-    virtual Contour* Clone()=0;
+    virtual Contour* Clone(){return NULL;};
 
     virtual std::string GetClassName();
 
@@ -233,22 +233,22 @@ public:
 
     void SetControlPoints(std::vector<std::array<double,3> > controlPoints, bool updateContour = true);
     
-    virtual void SetControlPointByRadius(double radius, double* point)=0;
+    virtual void SetControlPointByRadius(double radius, double* point){return;};
 
     bool IsControlPointRemovable(int index);
 
     void SetPreviewControlPoint(std::array<double,3> point );
 
-    void HidePreviewControlPoint();
+    //void HidePreviewControlPoint();
 
-    bool IsPreviewControlPointVisible();
+    //bool IsPreviewControlPointVisible();
 
     std::array<double,3> GetPreviewControlPoint();
 
     //for contour points
     //=================================
 
-    virtual void CreateContourPoints()=0;
+    virtual void CreateContourPoints(){return;};
     
     void CreateContour();
 
@@ -259,6 +259,8 @@ public:
     int GetContourPointNumber();
 
     std::array<double,3> GetContourPoint(int index);
+    
+    std::vector<std::array<double,3> > GetContourPoints();
 
     void ClearContourPoints();
 
@@ -271,7 +273,7 @@ public:
 
     std::array<double,3> GetCenterPoint();
 
-    virtual Contour* CreateSmoothedContour(int fourierNumber = 12 )=0;
+    virtual Contour* CreateSmoothedContour(int fourierNumber = 12 ){return NULL;};
 
     //for all data
     //===================================
@@ -304,9 +306,9 @@ public:
     //for setting parameters:
     //==========================================
     
-    virtual void SetLevelSetParas(svLSParam* paras)=0;
+    virtual void SetLevelSetParas(svLSParam* paras){return;};
     
-    virtual svLSParam* GetLevelSetParas()=0;
+    virtual svLSParam* GetLevelSetParas(){return NULL;};
     
     virtual void SetThresholdValue(double thresholdValue){return;}
     
@@ -336,9 +338,9 @@ public:
 
     bool m_Finished;
 
-    //mitk::PlaneGeometry::Pointer m_PlaneGeometry;
+    //mitk::PlaneGeometry::Pointer m_vtkPlaneGeometry;
     
-    vtkSmartPointer<vtkPlane> m_PlaneGeometry;
+    vtkSmartPointer<vtkPlane> m_vtkPlaneGeometry;
 
     std::array<double,3> m_CenterPoint;
 
@@ -371,7 +373,7 @@ public:
 
     int m_TagIndex;
     
-    KernelType contour_kernel_;
+    cKernelType contour_kernel_;
 
   };
 

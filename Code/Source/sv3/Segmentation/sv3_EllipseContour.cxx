@@ -87,7 +87,7 @@ ContourEllipse* ContourEllipse::CreateSmoothedContour(int fourierNumber)
 
     ContourEllipse* contour=new ContourEllipse();
     contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_PlaneGeometry);
+//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
     std::string method=m_Method;
     int idx=method.find("Smoothed");
     if(idx<0)
@@ -159,9 +159,9 @@ void ContourEllipse::SetControlPoint(int index, std::array<double,3>  point3d)
             tmpPt3[i] = m_ControlPoints[otherIndex][i];
         }
         
-        m_PlaneGeometry->ProjectPoint(tmpPt1, centerPoint );
-        m_PlaneGeometry->ProjectPoint(tmpPt2, point );
-        m_PlaneGeometry->ProjectPoint(tmpPt3, otherPoint );
+        m_vtkPlaneGeometry->ProjectPoint(tmpPt1, centerPoint );
+        m_vtkPlaneGeometry->ProjectPoint(tmpPt2, point );
+        m_vtkPlaneGeometry->ProjectPoint(tmpPt3, otherPoint );
 
         double vec1[3], vec2[3];
         for (int i = 0; i<3; i++)
@@ -177,12 +177,12 @@ void ContourEllipse::SetControlPoint(int index, std::array<double,3>  point3d)
             else
                 vec2[1] *= -1;
             
-            double* normal = m_PlaneGeometry->GetNormal();
+            double* normal = m_vtkPlaneGeometry->GetNormal();
             vec2[2] = (-normal[0]*vec2[0]-normal[1]*vec2[1])/normal[2];
             for (int i = 0; i<3; i++)
                 otherPoint[i] = centerPoint[i]+vec2[i];
 
-            m_PlaneGeometry->ProjectPoint(otherPoint,otherPt3d);
+            m_vtkPlaneGeometry->ProjectPoint(otherPoint,otherPt3d);
 
             m_ControlPoints[otherIndex]={otherPoint[0], otherPoint[1], otherPoint[2]};
         }
@@ -199,7 +199,7 @@ void ContourEllipse::SetControlPoint(int index, std::array<double,3>  point3d)
             else
                 vec2[1] *= -1;
                 
-            double* normal = m_PlaneGeometry->GetNormal();
+            double* normal = m_vtkPlaneGeometry->GetNormal();
             vec2[2] = (-normal[0]*vec2[0]-normal[1]*vec2[1])/normal[2];
             double lth = sqrt(pow(vec2[0],2)+pow(vec2[1],2)+pow(vec2[2],2));
             for (int i = 0; i<3; i++)
@@ -209,7 +209,7 @@ void ContourEllipse::SetControlPoint(int index, std::array<double,3>  point3d)
             {
                 for(int i = 0; i<3; i++)
                     otherPoint[i] = centerPoint[i]+vec2[i];
-                m_PlaneGeometry->ProjectPoint(otherPoint,otherPt3d);
+                m_vtkPlaneGeometry->ProjectPoint(otherPoint,otherPt3d);
                 m_ControlPoints[otherIndex]=otherPt3d;
             }
             m_TreatAsCircle = false;
@@ -231,9 +231,9 @@ void ContourEllipse::CreateContourPoints()
         tmpPt2[i] = m_ControlPoints[2][i];
         tmpPt3[i] = m_ControlPoints[3][i];
     }
-    m_PlaneGeometry->ProjectPoint(tmpPt1[0], centerPoint );
-    m_PlaneGeometry->ProjectPoint(tmpPt2[2], boundaryPoint1 );
-    m_PlaneGeometry->ProjectPoint(tmpPt3[3], boundaryPoint2 );
+    m_vtkPlaneGeometry->ProjectPoint(tmpPt1[0], centerPoint );
+    m_vtkPlaneGeometry->ProjectPoint(tmpPt2[2], boundaryPoint1 );
+    m_vtkPlaneGeometry->ProjectPoint(tmpPt3[3], boundaryPoint2 );
 
     double radius1 = sqrt(pow(centerPoint[0]-boundaryPoint1[0],2) +
                             pow(centerPoint[1]-boundaryPoint1[1],2) +
@@ -289,7 +289,7 @@ void ContourEllipse::CreateContourPoints()
     rot[1][1] = rot[0][0];
     rot[1][0] = sin(acos(rot[0][0]));
     rot[0][1] = -rot[1][0];
-    double* normal = m_PlaneGeometry->GetNormal();
+    double* normal = m_vtkPlaneGeometry->GetNormal();
 
     for ( int i = start; i < end; ++i )
     {
@@ -309,7 +309,7 @@ void ContourEllipse::CreateContourPoints()
         point[0] = centerPoint[0] + vec[0];
         point[1] = centerPoint[1] + vec[1];
 
-        m_PlaneGeometry->Map(point,pt3d);
+        m_vtkPlaneGeometry->Map(point,pt3d);
 
         m_ContourPoints.push_back(pt3d);
     }

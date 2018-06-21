@@ -52,13 +52,13 @@ using sv3::PathElement;
 using sv3::SegmentationUtils;
 
 levelSetContour::levelSetContour()
-    : Contour( KERNEL_LEVELSET )
+    : Contour()
 {
     m_forceClosed = true;
 }
 
 levelSetContour::levelSetContour(const levelSetContour &other) 
-    : Contour( KERNEL_LEVELSET )
+    : Contour()
 {
     m_paras = other.m_paras;
     m_forceClosed = other.m_forceClosed;
@@ -95,7 +95,7 @@ levelSetContour* levelSetContour::CreateSmoothedContour(int fourierNumber)
 
     levelSetContour* contour=new levelSetContour();
     contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_PlaneGeometry);
+//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
     std::string method=m_Method;
     int idx=method.find("Smoothed");
     if(idx<0)

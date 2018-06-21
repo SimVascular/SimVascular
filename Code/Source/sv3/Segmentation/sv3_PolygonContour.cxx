@@ -33,7 +33,7 @@
 #include "sv_Math.h"
 
 using sv3::ContourPolygon;
-ContourPolygon::ContourPolygon() : Contour( KERNEL_POLYGON )
+ContourPolygon::ContourPolygon() : Contour()
 {
     m_Method="Manual";
     m_Type="Polygon";
@@ -72,7 +72,7 @@ ContourPolygon* ContourPolygon::CreateSmoothedContour(int fourierNumber)
 
     ContourPolygon* contour=new ContourPolygon();
     contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_PlaneGeometry);
+//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
     std::string method=m_Method;
     int idx=method.find("Smoothed");
     if(idx<0)
@@ -126,7 +126,7 @@ void ContourPolygon::SetControlPoint(int index, std::array<double,3>  point)
     double tmp[3], projPt[3];
     for (int i = 0; i<3; i++)
         tmp[i] = point[i];
-    m_PlaneGeometry->ProjectPoint(tmp, projPt);
+    m_vtkPlaneGeometry->ProjectPoint(tmp, projPt);
     if (index>=m_ControlPoints.size())
     {
         fprintf(stderr, "Unable to set control point\n");

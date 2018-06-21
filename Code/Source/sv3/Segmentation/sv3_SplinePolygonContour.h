@@ -50,17 +50,13 @@ public:
 
     ~ContourSplinePolygon();
 
-    ContourSplinePolygon* Clone();
+    virtual ContourSplinePolygon* Clone() override;
     
-    ContourSplinePolygon* CreateSmoothedContour(int fourierNumber);
-    
-    void SetLevelSetParas(svLSParam* paras) {return;};
-    
-    svLSParam* GetLevelSetParas() {return NULL;};
+    virtual ContourSplinePolygon* CreateSmoothedContour(int fourierNumber) override;
 
     virtual std::string GetClassName() override;
 
-    void CreateContourPoints();
+    virtual void CreateContourPoints() override;
 
     static Contour* CreateByFitting(Contour* contour, int divisionNumber = 12);
 

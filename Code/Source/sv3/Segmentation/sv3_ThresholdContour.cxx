@@ -53,14 +53,14 @@ using sv3::PathElement;
 using sv3::SegmentationUtils;
 
 thresholdContour::thresholdContour()
-    : Contour( KERNEL_THRESHOLD )
+    : Contour()
 {
     m_forceClosed = true;
     m_thresholdValue = 0.;
 }
 
 thresholdContour::thresholdContour(const thresholdContour &other) 
-    : Contour( KERNEL_THRESHOLD )
+    : Contour( other )
 {
     m_thresholdValue = other.m_thresholdValue;
     m_forceClosed = other.m_forceClosed;
@@ -98,7 +98,7 @@ thresholdContour* thresholdContour::CreateSmoothedContour(int fourierNumber)
 
     thresholdContour* contour=new thresholdContour();
     contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_PlaneGeometry);
+//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
     std::string method=m_Method;
     int idx=method.find("Smoothed");
     if(idx<0)

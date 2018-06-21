@@ -86,7 +86,7 @@ initpySplinePolygonContour()
 
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_SPLINEPOLYGON,
+          contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_SPLINEPOLYGON,
       (FactoryMethodPtr) &CreateSplinePolygonContour );
   }
   else {

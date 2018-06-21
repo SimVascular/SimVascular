@@ -167,7 +167,7 @@ PyMODINIT_FUNC initpyContour()
     fprintf(stdout,"New gRepository created from sv3_Contour_init\n");
   }
 
-  Contour::gCurrentKernel = KERNEL_INVALID;
+  Contour::gCurrentKernel = cKERNEL_INVALID;
   if (PySys_SetObject("ContourObjectRegistrar",(PyObject*)&Contour::gRegistrar)<0)
   {
     fprintf(stdout,"Unable to create ContourObjectRegistrar");
@@ -202,7 +202,7 @@ PyMODINIT_FUNC initpyContour()
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args)
 {
     char *kernelName;
-    KernelType kernel;
+    cKernelType kernel;
     if(!PyArg_ParseTuple(args,"s",&kernelName))
     {
         PyErr_SetString(PyRunTimeErr,"Could not import char kernelName");
@@ -211,22 +211,22 @@ PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args)
     
     // Do work of command:
     if (strcmp( kernelName, "LevelSet" )==0 ) {
-        kernel= KERNEL_LEVELSET;
+        kernel= cKERNEL_LEVELSET;
     } else if (strcmp( kernelName, "Threshold")==0){
-        kernel=KERNEL_THRESHOLD;
+        kernel=cKERNEL_THRESHOLD;
     } else if (strcmp( kernelName, "Circle" )==0 ) {
-        kernel= KERNEL_CIRCLE;
+        kernel= cKERNEL_CIRCLE;
     } else if (strcmp( kernelName, "Polygon" )==0 ) {
-        kernel= KERNEL_POLYGON;
+        kernel= cKERNEL_POLYGON;
     } else if (strcmp( kernelName, "SplinePolygon" )==0 ) {
-        kernel= KERNEL_SPLINEPOLYGON;
+        kernel= cKERNEL_SPLINEPOLYGON;
     } else if (strcmp( kernelName, "Ellipse")==0 ) {
-        kernel= KERNEL_ELLIPSE;
+        kernel= cKERNEL_ELLIPSE;
     } else {
-        kernel= KERNEL_INVALID;
+        kernel= cKERNEL_INVALID;
     }
     
-    if ( kernel != KERNEL_INVALID ) {
+    if ( kernel != cKERNEL_INVALID ) {
         Contour::gCurrentKernel = kernel;
         return Py_BuildValue("s",kernelName);
     } else {
@@ -414,7 +414,7 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
   // Do work of command:
     int numPts = PyList_Size(ptList);
     
-    if (Contour::gCurrentKernel==KERNEL_CIRCLE)
+    if (Contour::gCurrentKernel==cKERNEL_CIRCLE)
     {
         if(numPts!=2)
         {
@@ -422,7 +422,7 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
             return Py_ERROR;
         }
     }
-    else if (Contour::gCurrentKernel==KERNEL_ELLIPSE)
+    else if (Contour::gCurrentKernel==cKERNEL_ELLIPSE)
     {
         if(numPts!=4)
         {
@@ -430,7 +430,7 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
             return Py_ERROR;
         }
     }
-    else if (Contour::gCurrentKernel==KERNEL_POLYGON)
+    else if (Contour::gCurrentKernel==cKERNEL_POLYGON)
     {
         if(numPts<3)
         {
@@ -463,7 +463,7 @@ PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
 {
     PyObject *center;
     double radius = -1.;
-    if (Contour::gCurrentKernel==KERNEL_CIRCLE)
+    if (Contour::gCurrentKernel==cKERNEL_CIRCLE)
     {
         if (!PyArg_ParseTuple(args,"Od", &center, &radius ))
         {
@@ -512,7 +512,7 @@ PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
 PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
-    if (Contour::gCurrentKernel==KERNEL_LEVELSET)
+    if (Contour::gCurrentKernel==cKERNEL_LEVELSET)
     {
         sv3::levelSetContour::svLSParam paras;
         contour->SetLevelSetParas(&paras);
@@ -578,7 +578,7 @@ PyObject* Contour_SetThresholdValueCmd(pyContour* self, PyObject* args)
         return Py_ERROR;
     }
     
-    if (Contour::gCurrentKernel!=KERNEL_THRESHOLD)
+    if (Contour::gCurrentKernel!=cKERNEL_THRESHOLD)
     {
         PyErr_SetString(PyRunTimeErr, "Contour type is not threshold");
         return Py_ERROR;

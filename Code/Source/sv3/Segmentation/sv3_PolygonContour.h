@@ -51,27 +51,21 @@ public:
 
     ~ContourPolygon();
 
-    ContourPolygon* Clone();
+    virtual ContourPolygon* Clone() override;
 
     virtual std::string GetClassName() override;
     
-    ContourPolygon* CreateSmoothedContour(int fourierNumber);
+    virtual ContourPolygon* CreateSmoothedContour(int fourierNumber) override;
 
     virtual void SetControlPoint(int index, std::array<double,3> point) override;
 
-    void CreateContourPoints();
+    virtual void CreateContourPoints() override;
 
     virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
 
-    void AssignCenterScalingPoints() override;
+    virtual void AssignCenterScalingPoints() override;
 
     void PlaceControlPoints(std::array<double,3> point) override;
-    
-    void SetControlPointByRadius(double radius, double* point){return;};
-    
-    void SetLevelSetParas(svLSParam* paras) {return;};
-    
-    svLSParam* GetLevelSetParas(){return NULL;};
 
   protected:
 

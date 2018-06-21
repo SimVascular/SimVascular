@@ -86,7 +86,7 @@ initpyCircleContour()
 
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_CIRCLE,
+          contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_CIRCLE,
       (FactoryMethodPtr) &CreateCircleContour );
   }
   else {

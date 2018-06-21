@@ -86,7 +86,7 @@ initpyThresholdContour()
 
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_THRESHOLD,
+          contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_THRESHOLD,
       (FactoryMethodPtr) &CreateThresholdContour );
   }
   else {

@@ -86,7 +86,7 @@ initpyPolygonContour()
 
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          contourObjectRegistrar->SetFactoryMethodPtr( KERNEL_POLYGON,
+          contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_POLYGON,
       (FactoryMethodPtr) &CreatePolygonContour );
   }
   else {
