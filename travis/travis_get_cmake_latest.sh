@@ -41,15 +41,8 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
   sudo ln -s /usr/local/package/cmake-3.10.3/bin/ctest     /usr/local/bin/ctest
 fi
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-  wget http://simvascular.stanford.edu/downloads/public/open_source/mac_osx/cmake/cmake-3.10.3-Darwin-x86_64.sh
-  chmod a+rx ./cmake-3.10.3-Darwin-x86_64.sh
-  sudo mkdir -p /usr/local/package/cmake-3.10.3
-  sudo ./cmake-3.10.3-Darwin-x86_64.sh --prefix=/usr/local/package/cmake-3.10.3 --skip-license
-  sudo ln -s /usr/local/package/cmake-3.10.3/bin/ccmake    /usr/local/bin/ccmake
-  sudo ln -s /usr/local/package/cmake-3.10.3/bin/cmake     /usr/local/bin/cmake
-  sudo ln -s /usr/local/package/cmake-3.10.3/bin/cmake-gui /usr/local/bin/cmake-gui
-  sudo ln -s /usr/local/package/cmake-3.10.3/bin/cpack     /usr/local/bin/cpack
-  sudo ln -s /usr/local/package/cmake-3.10.3/bin/ctest     /usr/local/bin/ctest
+  wget http://simvascular.stanford.edu/downloads/public/open_source/mac_osx/cmake/cmake-3.10.3-Darwin-x86_64.tar.gz
+  # need to install here!
 fi
 
 #compilers
