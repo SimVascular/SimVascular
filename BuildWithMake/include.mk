@@ -176,10 +176,11 @@ SV_USE_VTK = 1
 SV_USE_VTK_SHARED = 1
 
 # -----------------------------------------------------
-# Compile with ITK
+# Compile with ITK (ITK uses HDF5)
 # -----------------------------------------------------
 
 SV_USE_ITK = 1
+SV_USE_HDF5 = 1
 
 # -----------------------------------------------------
 # Compile with VMTK
@@ -855,6 +856,26 @@ ifeq ($(SV_USE_GDCM),1)
 
   ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/gdcm.x64_macosx.mk
+  endif
+
+endif
+
+# ----
+# HDF5
+# ----
+
+ifeq ($(SV_USE_HDF5),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/hdf5.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/hdf5.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/hdf5.x64_macosx.mk
   endif
 
 endif

@@ -1,4 +1,4 @@
-EXTERNALS_TOP=/usr/local/sv/ext
+EXTERNALS_TOP=/usr/local/sv/ext/2018.05/release
 EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 
 #

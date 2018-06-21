@@ -153,6 +153,8 @@ mksedscript:
 	-echo "puts \"s/REPLACE_TCL_VERSION_NO/$(notdir $(TCL_LIBRARY))/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_TK_VERSION_NO/$(notdir $(TK_LIBRARY))/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_TCLSH/$(notdir $(TCLSH))/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_PYTHON_MAJOR_VERSION/$(PYTHON_MAJOR_VERSION)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_PYTHON_MINOR_VERSION/$(PYTHON_MINOR_VERSION)/g\"" | tclsh | cat >> tmp/sedscript
 
 common-pre-distribution: tmp/sedscript
 	-date > tmp/release-date
@@ -213,6 +215,9 @@ endif
 ifeq ($(SV_USE_ITK),1)
 	-cp -f $(ITK_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
 endif
+ifeq ($(SV_USE_HDF5),1)
+	-cp -f $(SV_HDF5_DLLS)/*.$(SOEXT)* $(DIST_DIR)
+endif
 ifeq ($(SV_USE_GDCM),1)
 	-cp -f $(SV_GDCM_DLLS)/*gdcm*.$(SOEXT)* $(DIST_DIR)
 ifeq ($(CLUSTER),x64_cygwin)
@@ -225,10 +230,10 @@ endif
 ifeq ($(SV_USE_PYTHON),1)
 #	-cp -fR $(PYTHON_HOME)/Lib $(DIST_DIR)/python-packages
 #	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
-	-cp -fR $(PYTHON_HOME) $(DIST_DIR)/Python27
-	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/Python27/Lib/vtk-packages
+	-cp -fR $(PYTHON_HOME) $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)
+	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/lib/python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/site-packages/vtk-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
-	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
+#	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
 endif
 ifeq ($(SV_USE_QT),1)
 ifeq ($(CLUSTER), x64_cygwin)
@@ -237,6 +242,7 @@ else
 	-cp -fd $(QT_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
+	-cp -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/qt-fonts
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -fd $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
