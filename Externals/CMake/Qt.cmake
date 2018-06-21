@@ -25,8 +25,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #-----------------------------------------------------------------------------
-# Qt
-set(proj Qt)
+# QT
+set(proj QT)
 
 # Dependencies
 set(${proj}_DEPENDENCIES "")
@@ -118,9 +118,9 @@ else()
 endif()
 
 
-# Qt externals dirs also needed
-  #Find Qt!
-set(SV_EXTERNALS_Qt5_COMPONENTS
+# QT externals dirs also needed
+  #Find QT!
+set(SV_EXTERNALS_QT5_COMPONENTS
     Concurrent
     Core
     Designer
@@ -154,7 +154,7 @@ endif()
 if(SV_EXTERNALS_USE_PREBUILT_${proj})
 
   # Find package
-  find_package(Qt5 COMPONENTS ${SV_EXTERNALS_Qt5_COMPONENTS} REQUIRED)
+  find_package(Qt5 COMPONENTS ${SV_EXTERNALS_QT5_COMPONENTS} REQUIRED)
 
   # Create empty qt to satisfy dependencies
   ExternalProject_Add(${proj}
@@ -194,7 +194,7 @@ else()
     )
 endif()
 
-# Qt variables needed later on
+# QT variables needed later on
 if(SV_EXTERNALS_USE_PREBUILT_${proj})
   set(SV_EXTERNALS_${proj}_QMAKE_EXECUTABLE ${QT_MAKE_EXECUTABLE})
   get_filename_component(SV_EXTERNALS_${proj}_TOPLEVEL_CMAKE_DIR ${Qt5_DIR} DIRECTORY)

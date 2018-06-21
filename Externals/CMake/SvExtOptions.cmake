@@ -71,12 +71,12 @@ endif()
 # Add externals with default values of version, build_with, shared, dirname,
 # and optional install dirname. Order matters; put independent packages first
 # Must have existing "EXTERNAL_NAME.cmake" file underneath CMake
-# (i.e. Qt.cmake for Qt)
+# (i.e. QT.cmake for QT)
 # "EXTERNAL_NAME" "ENABLE_EXTERNAL" "BUILD_SHARED" "BUILD_DIR_NAME" "INSTALL_DIR_NAME"
 #-----------------------------------------------------------------------------
-# Qt
-option(SV_EXTERNALS_USE_PREBUILT_Qt "Instead of downloading or building, use a specified Qt" OFF)
-sv_externals_add_new_external(Qt ${SV_EXTERNALS_Qt_VERSION} ON ON qt qt)
+# QT
+option(SV_EXTERNALS_USE_PREBUILT_QT "Instead of downloading or building, use a specified QT" OFF)
+sv_externals_add_new_external(QT ${SV_EXTERNALS_QT_VERSION} ON ON qt qt)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
