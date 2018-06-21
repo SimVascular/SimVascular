@@ -29,7 +29,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# FREETYPE
+# HDF5
 set(proj HDF5)
 if(SV_USE_${proj})
 
@@ -42,7 +42,7 @@ if(SV_USE_${proj})
   # For itk which manually sets HDF5 dir and we need to override
   set(CMAKE_PREFIX_PATH "${HDF5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
 
-  # Find Freetype
+  # Find HDF5
   simvascular_external(${proj}
     SHARED_LIB ${SV_USE_${proj}_SHARED}
     VERSION ${${proj}_VERSION}

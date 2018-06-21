@@ -35,6 +35,8 @@
 #include "stdlib.h"
 #include "math.h"
 #include <math.h>
+#include <array>
+#include <cmath>
 
 #include "sv_VTK.h"
 
@@ -403,7 +405,7 @@ double cvMath::factrl(int n)
 
 /* These functions performs operations on complex numbers_*/
 
-int cvMath::complex_mult (double z1[], double z2[], double zout[])
+int cvMath::complex_mult(double z1[], double z2[], double zout[])
 
 {
  zout[0] = z1[0]*z2[0] - z1[1]*z2[1];
@@ -747,4 +749,250 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
 
     return SV_OK;
 
+}
+
+// ------------------------------
+// GetInsertintIndexByDistance
+// ------------------------------
+int cvMath::GetInsertintIndexByDistance( std::vector<std::array<double,3> > points, std::array<double,3> point, bool insertOnlyIfDifferent, bool useDistanceSum)
+{
+    if(useDistanceSum)
+        return GetInsertintIndexByDistanceSum(points, point,insertOnlyIfDifferent);
+    else
+        return GetInsertintIndexByProjectedDistance(points, point,insertOnlyIfDifferent);
+}
+
+int cvMath::GetInsertintIndexByDistanceSum( std::vector<std::array<double,3> > points, std::array<double,3> point, bool insertOnlyIfDifferent)
+{
+    int idx=-2;
+
+    if(points.size()<2){
+        idx=points.size();
+    }else{
+        bool firstTime=true;
+        int markingIndex;
+        int insertingIndex=-2;
+        double minDist;
+
+        for(int i=0;i<points.size()-1;i++)
+        {
+            std::array<double,3> startPoint=points[i];
+            std::array<double,3> endPoint=points[i+1];
+
+            double dist1 = 0.;
+            double dist2 = 0.;
+            for (int i=0;i<3;i++)
+            {
+                dist1+=pow(startPoint[i]-point[i],2);
+                dist2+=pow(endPoint[i]-point[i],2);
+            }
+            dist1 = sqrt(dist1);
+            dist2 = sqrt(dist2);
+
+            if(dist1==0)//check if a same point already exist
+            {
+                if(insertOnlyIfDifferent)
+                    return -2;
+                else
+                    return i;
+            }
+
+            if(dist2==0)//check if a same point already exist
+            {
+                if(insertOnlyIfDifferent)
+                    return -2;
+                else
+                    return i+1;
+            }
+
+            double distSum=dist1+dist2;
+            if(firstTime){
+                markingIndex=i;
+                minDist=distSum;
+                firstTime=false;
+            }
+            else if(distSum<minDist)
+            {
+                markingIndex=i;
+                minDist=distSum;
+            }
+
+        }
+
+        std::array<double,3> startPoint=points[markingIndex];
+        std::array<double,3> endPoint=points[markingIndex+1];
+
+        std::array<double,3> n1;
+        for (int i = 0;i<3;i++)
+            n1[i] = endPoint[i] - startPoint[i];
+            
+        //normalize and dot
+        double l1=0.;
+        double l2=0.;
+        double lth = sqrt(pow(n1[0],2)+pow(n1[1],2)+pow(n1[2],2));
+        for (int i = 0;i<3;i++)
+        {
+            n1[i] /= lth;
+            l1 += n1[i]*(point[i]-startPoint[i]);
+            l2 += -1*n1[i]*(point[i]-endPoint[i]);
+        }
+
+        if(l1<=0.0)
+        {
+            insertingIndex=markingIndex;
+        }else if(l2<=0.0){
+            insertingIndex=markingIndex+2;
+        }else{
+            insertingIndex=markingIndex+1;
+        }
+
+        if(insertingIndex!=-2)
+        {
+            idx=insertingIndex;
+        }
+    }
+
+    return idx;
+}
+
+int cvMath::GetInsertintIndexByProjectedDistance( std::vector<std::array<double,3> > points, std::array<double,3> point, bool insertOnlyIfDifferent)
+{
+    int idx=-2;
+
+    if(points.size()<2){
+        idx=points.size();
+    }else{
+        bool firstTime=true;
+        int insertingIndex=-2;
+        double minDist;
+
+        for(int i=0;i<points.size()-1;i++)
+        {
+            std::array<double,3> startPoint=points[i];
+            std::array<double,3> endPoint=points[i+1];
+
+            std::array<double,3> n1;
+            
+            for (int i = 0;i<3;i++)
+                n1[i] = endPoint[i] - startPoint[i];
+            
+            //normalize and dot
+            double l1=0.;
+            double l2=0.;
+            double lth =sqrt(pow(n1[0],2)+pow(n1[1],2)+pow(n1[2],2));
+            for (int i = 0;i<3;i++)
+            {
+                n1[i] /= lth;
+                l1 += n1[i]*(point[i]-startPoint[i]);
+                l2 += -1*n1[i]*(point[i]-endPoint[i]);
+            }
+
+            std::array<double,3> crossPoint;
+            for (int i = 0;i<3;i++)
+                crossPoint[i] = startPoint[i] - n1[i]*l1;
+            
+            double dist1 = 0., dist2 = 0., dist3 = 0.;
+            for (int i=0;i<3;i++)
+            {
+                dist1+=pow(startPoint[i]-point[i],2);
+                dist2+=pow(endPoint[i]-point[i],2);
+                dist3+=pow(crossPoint[i]-point[i],2);
+            }
+            dist1 = sqrt(dist1);
+            dist2 = sqrt(dist2);
+            dist3 = sqrt(dist3);
+
+
+            if(dist1==0)//check if a same point already exist
+            {
+                if(insertOnlyIfDifferent)
+                    return -2;
+                else
+                    return i;
+            }
+
+            if(dist2==0)//check if a same point already exist
+            {
+                if(insertOnlyIfDifferent)
+                    return -2;
+                else
+                    return i+1;
+            }
+
+            if(l1>=0.0&&l2>=0.0)
+            {
+                if(firstTime || dist3<minDist)
+                {
+                    insertingIndex=i+1;
+                    minDist=dist3;
+                }
+            }
+            else if(l1<0)
+            {
+                if(firstTime || dist1<minDist)
+                {
+                    insertingIndex=i;
+                    minDist=dist1;
+                }
+            }
+            else
+            {
+                if(firstTime || dist2<minDist)
+                {
+                    insertingIndex=i+2;
+                    minDist=dist2;
+                }
+            }
+
+            firstTime=false;
+        }
+
+        idx=insertingIndex;
+    }
+
+    return idx;
+}
+
+std::array<double,3> cvMath::GetPerpendicularNormalVector(std::array<double,3> vec)
+{
+    std::array<double,3> pvec;
+
+    pvec.fill(0.);
+
+    if(vec[0]==0&&vec[1]==0&&vec[2]==0)
+    {
+        //        pvec[2]=1;
+        return pvec;
+    }
+
+    int replaceIdx;
+
+    double dotProduct=0;
+
+    if(std::abs(vec[2])>0.0001)
+    {
+        pvec[1]=1;
+        replaceIdx=2;
+        dotProduct=vec[0]*pvec[0]+vec[1]*pvec[1];
+    }
+    else if(std::abs(vec[1])>0.0001)
+    {
+        pvec[0]=1;
+        replaceIdx=1;
+        dotProduct=vec[0]*pvec[0]+vec[2]*pvec[2];
+    }
+    else
+    {
+        pvec[2]=1;
+        replaceIdx=0;
+        dotProduct=vec[1]*pvec[1]+vec[2]*pvec[2];
+    }
+
+    pvec[replaceIdx]=-dotProduct/vec[replaceIdx];
+
+    double lth  = sqrt(pow(pvec[0],2)+pow(pvec[1],2)+pow(pvec[2],2));
+    for (int i = 0;i<3;i++)
+        pvec[i] /= lth;
+
+    return pvec;
 }

@@ -31,7 +31,6 @@
 
 #include "SimVascular.h"
 
-#include "sv_solid_init_py.h"
 #include "sv_SolidModel.h"
 #include "sv_PolyData.h"
 #include "sv_misc_utils.h"
@@ -39,6 +38,7 @@
 #include <assert.h>
 #ifdef SV_USE_PYTHON
   #include "Python.h"
+  #include "sv_solid_init_py.h"
 #endif
 
 // Globals:

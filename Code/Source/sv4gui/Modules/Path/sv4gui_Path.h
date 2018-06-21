@@ -36,6 +36,7 @@
 
 #include <sv4guiModulePathExports.h>
 
+#include "sv3_PathElement.h"
 #include "sv4gui_PathElement.h"
 #include "sv4gui_PathOperation.h"
 
@@ -90,9 +91,9 @@ public:
 
     double GetSpacing() const;
 
-    void SetMethod(sv4guiPathElement::CalculationMethod method = sv4guiPathElement::CONSTANT_TOTAL_NUMBER );
+    void SetMethod(sv3::PathElement::CalculationMethod method = sv3::PathElement::CONSTANT_TOTAL_NUMBER );
 
-    sv4guiPathElement::CalculationMethod GetMethod() const;
+    sv3::PathElement::CalculationMethod GetMethod() const;
 
     void SetCalculationNumber(int number);
 
@@ -146,7 +147,7 @@ public:
 
     double m_Spacing;
 
-    sv4guiPathElement::CalculationMethod m_Method;
+    sv3::PathElement::CalculationMethod m_Method;
 
     int m_CalculationNumber;
 

@@ -30,9 +30,10 @@
  */
 
 #include "sv4gui_ContourSplinePolygon.h"
+#include "sv3_Spline.h"
 #include "sv4gui_Spline.h"
 #include "sv4gui_SegmentationUtils.h"
-#include "sv4gui_VtkParametricSpline.h"
+#include "sv3_VtkParametricSpline.h"
 
 #include "vtkSplineFilter.h"
 
@@ -115,7 +116,7 @@ sv4guiContour* sv4guiContourSplinePolygon::CreateByFitting(sv4guiContour* contou
     if(inputPointNumber<3)
         return contour->Clone();
 
-    sv4guiVtkParametricSpline* svpp= new sv4guiVtkParametricSpline();
+    sv3::VtkParametricSpline* svpp= new sv3::VtkParametricSpline();
     svpp->ParameterizeByLengthOn();
 
     if(contour->IsClosed())

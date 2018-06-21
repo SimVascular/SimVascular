@@ -202,17 +202,17 @@ void sv4guiPathCreate::CreatePath()
         switch(currentIndex)
         {
         case 0:
-            path->SetMethod(sv4guiPathElement::CONSTANT_TOTAL_NUMBER);
+            path->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
             path->SetCalculationNumber(subdivisionNum);
             path->SetSpacing(0);
             break;
         case 1:
-            path->SetMethod(sv4guiPathElement::CONSTANT_SUBDIVISION_NUMBER);
+            path->SetMethod(sv3::PathElement::CONSTANT_SUBDIVISION_NUMBER);
             path->SetCalculationNumber(subdivisionNum);
             path->SetSpacing(0);
             break;
         case 2:
-            path->SetMethod(sv4guiPathElement::CONSTANT_SPACING);
+            path->SetMethod(sv3::PathElement::CONSTANT_SPACING);
             path->SetSpacing(spacing);
             path->SetCalculationNumber(0);
             break;
@@ -286,17 +286,17 @@ void sv4guiPathCreate::CreatePath()
 
         {
         case 0:
-            changedPathElement->SetMethod(sv4guiPathElement::CONSTANT_TOTAL_NUMBER);
+            changedPathElement->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
             changedPathElement->SetCalculationNumber(subdivisionNum);
             changedPathElement->SetSpacing(0);
             break;
         case 1:
-            changedPathElement->SetMethod(sv4guiPathElement::CONSTANT_SUBDIVISION_NUMBER);
+            changedPathElement->SetMethod(sv3::PathElement::CONSTANT_SUBDIVISION_NUMBER);
             changedPathElement->SetCalculationNumber(subdivisionNum);
             changedPathElement->SetSpacing(0);
             break;
         case 2:
-            changedPathElement->SetMethod(sv4guiPathElement::CONSTANT_SPACING);
+            changedPathElement->SetMethod(sv3::PathElement::CONSTANT_SPACING);
             changedPathElement->SetSpacing(spacing);
             changedPathElement->SetCalculationNumber(0);
 

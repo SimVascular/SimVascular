@@ -5,14 +5,14 @@
 if [[ $SV_SUPER_OPTIONS == *UNTAR_TCL* ]]; then
   echo "UNTAR_TCL"
 
-  rm -Rf ../tcl-8.6.8
-  rm -Rf ../tk-8.6.8
+  rm -Rf ../tcl-8.6.4
+  rm -Rf ../tk-8.6.4
   rm -Rf ../tcllib-1.17
   rm -Rf ../tklib-0.6
 
   #  untar tcl/tk
-  tar xvf Originals/tcltk/tcl8.6.8-src.tar.gz
-  tar xvf Originals/tcltk/tk8.6.8-src.tar.gz
+  tar xvf Originals/tcltk/tcl8.6.4-src.tar.gz
+  tar xvf Originals/tcltk/tk8.6.4-src.tar.gz
   tar xvf Originals/tcltk/tcllib-1.17.tar.gz
   tar xvf Originals/tcltk/tklib-0.6.tar.tgz
 
@@ -20,8 +20,8 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_TCL* ]]; then
   # move and rename tcl/tk
   #
 
-  mv tcl8.6.8 ../tcl-8.6.8
-  mv tk8.6.8 ../tk-8.6.8
+  mv tcl8.6.4 ../tcl-8.6.4
+  mv tk8.6.4 ../tk-8.6.4
   mv tcllib-1.17 ../tcllib-1.17
   mv tklib-0.6 ../tklib-0.6
 
@@ -51,6 +51,14 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_NUMPY* ]]; then
   rm -Rf ../numpy-1.14.3
   tar xvf Originals/numpy/numpy-1.14.3.tar.gz
   mv numpy-1.14.3 ..
+fi
+
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *UNTAR_TINYXML2* ]]; then
+    echo "UNTAR_TINYXML2"
+  rm -Rf ../tinyxml2-6.2.0
+  tar xvf Originals/tinyxml2/tinyxml2-6.2.0.tar.gz
+  mv tinyxml2-6.2.0 ..
 fi
 
 # qt
@@ -91,7 +99,9 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_VTK* ]]; then
   rm -Rf ../vtk-8.1.1
   tar xvf Originals/vtk/VTK-8.1.1.tar.gz
   mv VTK-8.1.1 ../vtk-8.1.1
-#  source Patches/patch-source-vtk-6.2.sh
+  pushd ../vtk-8.1.1
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-vtk-8.1.1-windows.patch
+  popd
 fi
 
 # itk
@@ -109,7 +119,9 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_OPENCASCADE* ]]; then
   rm -Rf ../opencascade-7.2.0
   tar xvf Originals/opencascade/opencascade-7.2.0.tgz
   mv opencascade-7.2.0 ..
-#  source Patches/patch-source-opencascade-7.0.0.sh
+  pushd ../opencascade-7.2.0
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-opencascade-vtk-greater-8.0.patch
+  popd
 fi
 
 # mmg
@@ -118,7 +130,6 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MMG* ]]; then
   rm -Rf ../mmg-5.3.9
   tar xvf Originals/mmg/mmg-5.3.9.tar.gz
   mv mmg-5.3.9 ..
-#  source Patches/patch-source-mmg-5.3.9.sh
 fi
 
 # mitk
@@ -126,7 +137,9 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   echo "UNTAR_MITK"
   rm -Rf ../mitk-2018.04
   tar xvf Originals/mitk/mitk-2018-04-alpha.tar.gz
-  #cd ..
   mv mitk-2018-04-alpha ../mitk-2018.04
-#  source Patches/patch-source-mitk-2018.02.sh
+  pushd ../mitk-2018.04
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-mitk-2018.04.patch
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-mitk-2018.04-boost-windows.patch
+  popd
 fi

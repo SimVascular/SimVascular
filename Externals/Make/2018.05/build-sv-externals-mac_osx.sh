@@ -21,6 +21,7 @@ rm -Rf $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP/src
 cp -Rf BuildHelpers $EXTERNALS_TOP/src
+cp -Rf ../../Patches $EXTERNALS_TOP/src/BuildHelpers
 
 #
 # let's do it

@@ -134,12 +134,12 @@ std::vector<mitk::DataNode::Pointer> sv4guiPathLegacyIO::ReadFile(QString filePa
         for(int i=0; i<IDList.size();i++)
         {
             sv4guiPath::Pointer path = sv4guiPath::New();
-            path->SetMethod(sv4guiPathElement::CONSTANT_TOTAL_NUMBER);
+            path->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
             path->SetCalculationNumber(IDSplineNum[IDList[i]]);
             path->SetPathID(IDList[i]);
 
             sv4guiPathElement* pe = new sv4guiPathElement();
-            pe->SetMethod(sv4guiPathElement::CONSTANT_TOTAL_NUMBER);
+            pe->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
             pe->SetCalculationNumber(IDSplineNum[IDList[i]]);
 
             std::vector<mitk::Point3D> controlPoints;

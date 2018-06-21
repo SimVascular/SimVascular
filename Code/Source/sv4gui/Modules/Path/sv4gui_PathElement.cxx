@@ -32,19 +32,11 @@
 #include "sv4gui_PathElement.h"
 #include "sv4gui_Math3.h"
 
-sv4guiPathElement::sv4guiPathElement()
-    : m_Method(CONSTANT_TOTAL_NUMBER)
-    , m_CalculationNumber(100)
-    , m_Spacing(0)
+sv4guiPathElement::sv4guiPathElement(): sv3::PathElement()
 {
 }
 
-sv4guiPathElement::sv4guiPathElement(const sv4guiPathElement &other)
-    : m_Method(other.m_Method)
-    , m_CalculationNumber(other.m_CalculationNumber)
-    , m_Spacing(other.m_Spacing)
-    , m_ControlPoints(other.m_ControlPoints)
-    , m_PathPoints(other.m_PathPoints)
+sv4guiPathElement::sv4guiPathElement(const sv4guiPathElement &other): sv3::PathElement(other)
 {
 }
 
@@ -57,29 +49,31 @@ sv4guiPathElement* sv4guiPathElement::Clone()
     return new sv4guiPathElement(*this);
 }
 
-int sv4guiPathElement::GetControlPointNumber()
-{
-    return m_ControlPoints.size();
-}
-
 std::vector<mitk::Point3D> sv4guiPathElement::GetControlPoints()
 {
     std::vector<mitk::Point3D> controlPoints;
     for(int i=0;i<m_ControlPoints.size();i++)
-        controlPoints.push_back(m_ControlPoints[i].point);
-
+    {
+        mitk::Point3D pt;
+        pt[0] = m_ControlPoints[i].point[0];
+        pt[1] = m_ControlPoints[i].point[1];
+        pt[2] = m_ControlPoints[i].point[2];
+        controlPoints.push_back(pt);
+    }
     return controlPoints;
 }
 
 sv4guiPathElement::svControlPoint sv4guiPathElement::GetsvControlPoint(int index)
 {
     svControlPoint controlPoint;
-    if(index==-1) index=m_ControlPoints.size()-1;
+    sv3::PathElement::svControlPoint stdctrlpt = this -> sv3::PathElement::GetsvControlPoint(index);
+    
+    controlPoint.id = stdctrlpt.id;
+    controlPoint.selected = stdctrlpt.selected;
+    controlPoint.point[0] = stdctrlpt.point[0];
+    controlPoint.point[1] = stdctrlpt.point[1];
+    controlPoint.point[2] = stdctrlpt.point[2];
 
-    if(index>-1 && index<m_ControlPoints.size())
-    {
-        controlPoint=m_ControlPoints[index];
-    }
     return controlPoint;
 }
 
@@ -90,104 +84,43 @@ mitk::Point3D sv4guiPathElement::GetControlPoint(int index)
 
 void sv4guiPathElement::InsertControlPoint(int index, mitk::Point3D point)
 {
-    if(index==-1) index=m_ControlPoints.size();
-
-    if(index>-1 && index<=m_ControlPoints.size())
-    {
-        svControlPoint controlPoint;
-        controlPoint.point=point;
-        m_ControlPoints.insert(m_ControlPoints.begin()+index,controlPoint);
-        ControlPointsChanged();
-    }
+    std::array<double,3> stdpt;
+    stdpt[0] = point[0];
+    stdpt[1] = point[1];
+    stdpt[2] = point[2];
+    
+    this->sv3::PathElement::InsertControlPoint(index,stdpt);    
 }
-
-//int sv4guiPathElement::GetInsertintIndexByDistance( mitk::Point3D point)
-//{
-//    int idx=-2;
-
-//    if(m_ControlPoints.size()<2){
-//        idx=m_ControlPoints.size();
-//    }else{
-//        double dis1,dis2,minDisSum;
-//        int index=0;
-//        for (int i = 0; i < m_ControlPoints.size()-1; ++i)
-//        {
-//            dis1=point.EuclideanDistanceTo(m_ControlPoints[i].point);
-//            dis2=point.EuclideanDistanceTo(m_ControlPoints[i+1].point);
-//            if(i==0)
-//            {
-//                minDisSum=dis1+dis2;
-//                index=i;
-//            }else{
-//                if(minDisSum>(dis1+dis2)){
-//                    minDisSum=dis1+dis2;
-//                    index=i;
-//                }
-//            }
-//        }
-
-//        mitk::Point3D p0=m_ControlPoints[index].point;
-//        mitk::Point3D p1=m_ControlPoints[index+1].point;
-
-//        mitk::Point3D pa,pb;
-//        pa[0]=p1[0]-p0[0];
-//        pa[1]=p1[1]-p0[1];
-//        pa[2]=p1[2]-p0[2];
-//        pb[0]=point[0]-p0[0];
-//        pb[1]=point[1]-p0[1];
-//        pb[2]=point[2]-p0[2];
-
-//        double distance=(pa[0]*pb[0]+pa[1]*pb[1]+pa[2]*pb[2])/p1.EuclideanDistanceTo(p0);
-
-//        if(distance<=0)
-//        {
-//            idx=index;
-//        }else if(distance<p1.EuclideanDistanceTo(p0)){
-//            idx=index+1;
-//        }else{
-//            idx=index+2;
-//        }
-
-//    }
-//    return idx;
-//}
 
 int sv4guiPathElement::GetInsertintIndexByDistance(mitk::Point3D point)
 {
-    return sv4guiMath3::GetInsertintIndexByDistance(GetControlPoints(),point);
-}
-
-
-void sv4guiPathElement::RemoveControlPoint(int index)
-{
-    if(index==-1) index=m_ControlPoints.size()-1;
-
-    if(index>-1 && index<m_ControlPoints.size())
-    {
-        m_ControlPoints.erase(m_ControlPoints.begin()+index);
-        ControlPointsChanged();
-    }
+    std::array<double,3> stdpt;
+    stdpt[0] = point[0];
+    stdpt[1] = point[1];
+    stdpt[2] = point[2];
+    return this -> sv3::PathElement::GetInsertintIndexByDistance(stdpt);
 }
 
 void sv4guiPathElement::SetControlPoint(int index, mitk::Point3D point)
 {
-    if(index==-1) index=m_ControlPoints.size()-1;
-
-    if(index>-1 && index<m_ControlPoints.size())
-    {
-        m_ControlPoints[index].point=point;
-        ControlPointsChanged();
-    }
+    std::array<double,3> stdpt;
+    stdpt[0] = point[0];
+    stdpt[1] = point[1];
+    stdpt[2] = point[2];
+    this -> sv3::PathElement::SetControlPoint(index,stdpt);
 }
+
 
 void sv4guiPathElement::SetControlPoints(std::vector<mitk::Point3D> points, bool update)
 {
-    std::vector<svControlPoint> controlPoints;
+    std::vector<sv3::PathElement::svControlPoint> controlPoints;
     for(int i=0;i<points.size();i++)
     {
-        svControlPoint controlPoint;
+        sv3::PathElement::svControlPoint controlPoint;
         controlPoint.id=i;
-        controlPoint.point=points[i];
+        controlPoint.point[0]=points[i][0];
+        controlPoint.point[1]=points[i][1];
+        controlPoint.point[2]=points[i][2];
         controlPoints.push_back(controlPoint);
     }
     m_ControlPoints=controlPoints;
@@ -195,198 +128,70 @@ void sv4guiPathElement::SetControlPoints(std::vector<mitk::Point3D> points, bool
         ControlPointsChanged();
 }
 
-bool sv4guiPathElement::IsControlPointSelected(int index)
-{
-    bool selected=false;
-
-    if(index==-1) index=m_ControlPoints.size()-1;
-
-    if(index>-1 && index<m_ControlPoints.size())
-    {
-        selected=m_ControlPoints[index].selected;
-    }
-
-    return selected;
-}
-
-void sv4guiPathElement::SetControlPointSelected( int index, bool selected)
-{
-    if(index==-1) index=m_ControlPoints.size()-1;
-
-    if(index>-1 && index<m_ControlPoints.size())
-    {
-        if(m_ControlPoints[index].selected!=selected)
-        {
-            m_ControlPoints[index].selected=selected;
-            ControlPointsChanged();
-        }
-
-    }
-}
-
-void sv4guiPathElement::DeselectControlPoint()
-{
-    for(int i=0;i<m_ControlPoints.size();i++)
-    {
-        m_ControlPoints[i].selected=false;
-    }
-    ControlPointsChanged();
-}
-
-int sv4guiPathElement::GetControlPointSelectedIndex()
-{
-    for(int i=0;i<m_ControlPoints.size();i++)
-    {
-        if(m_ControlPoints[i].selected) return i;
-    }
-
-    return -2;
-}
-
-void sv4guiPathElement::ControlPointsChanged()
-{
-    CreatePathPoints();
-}
 
 int sv4guiPathElement::SearchControlPoint( mitk::Point3D point, mitk::ScalarType distance)
 {
-    int bestIndex = -2;
-    mitk::ScalarType bestDist = distance;
-    mitk::ScalarType dist;
+    
+    std::array<double,3> stdpt;
+    stdpt[0] = point[0];
+    stdpt[1] = point[1];
+    stdpt[2] = point[2];
+    
+    double dist = distance;
 
-    for (int i = 0; i < m_ControlPoints.size(); ++i)
-    {
-        mitk::Point3D pt=m_ControlPoints[i].point;
-
-        if(point==pt)
-        {
-            return i;
-        }
-
-        dist=point.EuclideanDistanceTo(pt);
-        if ( dist < bestDist )
-        {
-            bestIndex = i;
-            bestDist  = dist;
-        }
-    }
-
-    return bestIndex;
+    return this->sv3::PathElement::SearchControlPoint(stdpt,dist);
 }
 
 sv4guiPathElement* sv4guiPathElement::CreateSmoothedPathElement(int sampleRate, int numModes, bool controlPointsBased )
 {
-    int numPts;
-    std::vector<mitk::Point3D> originalPoints;
-
-    if(controlPointsBased)
-    {
-        numPts=m_ControlPoints.size();
-
-        if(sampleRate==0){
-            if(numPts>250){
-                sampleRate=10;
-            }else if(numPts>100){
-                sampleRate=5;
-            }else{
-                sampleRate=3;
-            }
-        }
-
-        for(int i=0;i<m_ControlPoints.size();i++)
-            originalPoints.push_back(m_ControlPoints[i].point);
-
-    }
-    else
-    {
-        numPts=m_PathPoints.size();
-
-        if(sampleRate==0){
-            if(numPts>250){
-                sampleRate=10;
-            }else if(numPts>100){
-                sampleRate=5;
-            }else{
-                sampleRate=3;
-            }
-        }
-
-        for(int i=0;i<m_PathPoints.size();i++)
-            originalPoints.push_back(m_PathPoints[i].pos);
-
-    }
-
-    std::vector<mitk::Point3D> smoothedPoints=sv4guiMath3::CreateSmoothedCurve(originalPoints,false,numModes,sampleRate,0);
-
-    sv4guiPathElement* newPathElement=new sv4guiPathElement();
-    newPathElement->SetMethod(m_Method);
-    newPathElement->SetCalculationNumber(m_CalculationNumber);
-    newPathElement->SetSpacing(m_Spacing);
-    newPathElement->SetControlPoints(smoothedPoints);
-
+    sv3::PathElement *tmp = this->sv3::PathElement::CreateSmoothedPathElement(sampleRate,numModes,controlPointsBased);
+    sv4guiPathElement* newPathElement = static_cast<sv4guiPathElement*>(tmp);
     return newPathElement;
-}
-
-int sv4guiPathElement::GetPathPointNumber()
-{
-    return m_PathPoints.size();
-}
-
-void sv4guiPathElement::SetSpacing(double spacing)
-{
-    m_Spacing=spacing;
-}
-
-double sv4guiPathElement::GetSpacing()
-{
-    return m_Spacing;
-}
-
-void sv4guiPathElement::SetMethod(sv4guiPathElement::CalculationMethod method)\
-{
-    m_Method=method;
-}
-
-sv4guiPathElement::CalculationMethod sv4guiPathElement::GetMethod()
-{
-    return m_Method;
-}
-
-void sv4guiPathElement::SetCalculationNumber(int number)
-{
-    m_CalculationNumber=number;
-}
-
-int sv4guiPathElement::GetCalculationNumber()
-{
-    return m_CalculationNumber;
 }
 
 std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiPathElement::GetPathPoints()
 {
-    return m_PathPoints;
+    std::vector<sv4guiPathElement::sv4guiPathPoint> pthPts(m_PathPoints.size());
+    for (int j = 0; j<m_PathPoints.size(); j++)
+    {
+        for (int i = 0; i<3; i++)
+        {
+            pthPts[j].pos[i]=m_PathPoints[j].pos[i];
+        }
+        mitk::FillVector3D(pthPts[j].tangent, m_PathPoints[j].tangent[0], m_PathPoints[j].tangent[1], m_PathPoints[j].tangent[2]);
+        mitk::FillVector3D(pthPts[j].rotation, m_PathPoints[j].rotation[0], m_PathPoints[j].rotation[1], m_PathPoints[j].rotation[2]);
+        pthPts[j].id = m_PathPoints[j].id;
+    }
+    return pthPts;
 }
 
 std::vector<mitk::Point3D> sv4guiPathElement::GetPathPosPoints()
 {
     std::vector<mitk::Point3D> posPoints;
     for(int i=0;i<m_PathPoints.size();i++)
-        posPoints.push_back(m_PathPoints[i].pos);
-
+    {
+        mitk::Point3D mitkpos;
+        mitkpos[0] = m_PathPoints[i].pos[0];
+        mitkpos[1] = m_PathPoints[i].pos[1];
+        mitkpos[2] = m_PathPoints[i].pos[2];
+        posPoints.push_back(mitkpos);
+    }
+        
     return posPoints;
 }
 
 sv4guiPathElement::sv4guiPathPoint sv4guiPathElement::GetPathPoint(int index)
 {
     sv4guiPathPoint pathPoint;
-    if(index==-1) index=m_PathPoints.size()-1;
-
-    if(index>-1 && index<m_PathPoints.size())
+    sv3::PathElement::PathPoint pthPt = this->sv3::PathElement::GetPathPoint(index);
+    for (int i = 0; i<3; i++)
     {
-        pathPoint=m_PathPoints[index];
+        pathPoint.pos[i] = pthPt.pos[i];
     }
-
-    return pathPoint;
+    mitk::FillVector3D(pathPoint.tangent, pthPt.tangent[0], pthPt.tangent[1], pthPt.tangent[2]);
+    mitk::FillVector3D(pathPoint.rotation, pthPt.rotation[0], pthPt.rotation[1], pthPt.rotation[2]);
+    pathPoint.id = pthPt.id;
+    return pathPoint;   
 }
 
 mitk::Point3D sv4guiPathElement::GetPathPosPoint(int index)
@@ -396,82 +201,18 @@ mitk::Point3D sv4guiPathElement::GetPathPosPoint(int index)
 
 void sv4guiPathElement::SetPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints)
 {
-    m_PathPoints=pathPoints;
-}
-
-void sv4guiPathElement::CreatePathPoints()
-{
-    m_PathPoints.clear();
-
-    int controlNumber=m_ControlPoints.size();
-
-    if(controlNumber<2)
+    std::vector<sv3::PathElement::PathPoint> pthPts(pathPoints.size());
+    for (int j = 0; j<pathPoints.size(); j++)
     {
-        return;
-    }
-
-    sv4guiSpline* spline=new sv4guiSpline();
-    spline->SetClosed(false);
-
-    switch(m_Method)
-    {
-    case CONSTANT_TOTAL_NUMBER:
-        spline->SetMethod(sv4guiSpline::CONSTANT_TOTAL_NUMBER);
-        spline->SetCalculationNumber(m_CalculationNumber);
-        break;
-    case CONSTANT_SUBDIVISION_NUMBER:
-        spline->SetMethod(sv4guiSpline::CONSTANT_SUBDIVISION_NUMBER);
-        spline->SetCalculationNumber(m_CalculationNumber);
-        break;
-    case CONSTANT_SPACING:
-        spline->SetMethod(sv4guiSpline::CONSTANT_SPACING);
-        spline->SetSpacing(m_Spacing);
-        break;
-    default:
-        break;
-    }
-
-    spline->SetInputPoints(GetControlPoints());
-    spline->Update();//remember Update() before fetching spline points
-    m_PathPoints=spline->GetSplinePoints();
-}
-
-void sv4guiPathElement::CalculateBoundingBox(double *bounds)
-{
-    for(int i=0;i<m_ControlPoints.size();i++)
-    {
-        double x=m_ControlPoints[i].point[0];
-        double y=m_ControlPoints[i].point[1];
-        double z=m_ControlPoints[i].point[2];
-
-        if(i==0){
-            bounds[0]=x;
-            bounds[1]=x;
-            bounds[2]=y;
-            bounds[3]=y;
-            bounds[4]=z;
-            bounds[5]=z;
-        }else{
-            if(x<bounds[0]) bounds[0]=x;
-            if(x>bounds[1]) bounds[1]=x;
-            if(y<bounds[2]) bounds[2]=y;
-            if(y>bounds[3]) bounds[3]=y;
-            if(z<bounds[4]) bounds[4]=z;
-            if(z>bounds[5]) bounds[5]=z;
+        for (int i = 0; i<3; i++)
+        {
+            pthPts[j].pos[i]=pathPoints[j].pos[i];
+            pthPts[j].tangent[i] = pathPoints[j].tangent[i];
+            pthPts[j].rotation[i] = pathPoints[j].rotation[i];
         }
+        pthPts[j].id = pathPoints[j].id;
     }
-
-    for (int i = 0; i < m_PathPoints.size(); i++) {
-        double x=m_PathPoints[i].pos[0];
-        double y=m_PathPoints[i].pos[1];
-        double z=m_PathPoints[i].pos[2];
-        if(x<bounds[0]) bounds[0]=x;
-        if(x>bounds[1]) bounds[1]=x;
-        if(y<bounds[2]) bounds[2]=y;
-        if(y>bounds[3]) bounds[3]=y;
-        if(z<bounds[4]) bounds[4]=z;
-        if(z>bounds[5]) bounds[5]=z;
-    }
+    m_PathPoints=pthPts;
 }
 
 std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiPathElement::GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex)
@@ -479,8 +220,7 @@ std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiPathElement::GetExtendedPa
     startingIndex=0;
 
     if(m_PathPoints.size()<2)
-        return m_PathPoints;
-
+        return GetPathPoints();
     mitk::Point3D origin;
     mitk::Vector3D normal;
     mitk::FillVector3D(origin,realBounds[0],realBounds[2],realBounds[4]);
@@ -531,6 +271,7 @@ std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiPathElement::GetExtendedPa
             }
         }
     }
+
     mitk::Point3D beginPoint=interPoint;
 
     bool endFound=false;
@@ -556,7 +297,7 @@ std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiPathElement::GetExtendedPa
         std::vector<mitk::Point3D> controlPoints={beginPoint,beginPathPosPoint};
 
         sv4guiPathElement* pathElement=new sv4guiPathElement();
-        pathElement->SetMethod(sv4guiPathElement::CONSTANT_SPACING);
+        pathElement->SetMethod(sv3::PathElement::CONSTANT_SPACING);
         pathElement->SetSpacing(minSpacing);
         pathElement->SetControlPoints(controlPoints);
 
@@ -569,7 +310,7 @@ std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiPathElement::GetExtendedPa
         std::vector<mitk::Point3D> controlPoints={endPathPosPoint,endPoint};
 
         sv4guiPathElement* pathElement=new sv4guiPathElement();
-        pathElement->SetMethod(sv4guiPathElement::CONSTANT_SPACING);
+        pathElement->SetMethod(sv3::PathElement::CONSTANT_SPACING);
         pathElement->SetSpacing(minSpacing);
         pathElement->SetControlPoints(controlPoints);
 
@@ -577,6 +318,8 @@ std::vector<sv4guiPathElement::sv4guiPathPoint> sv4guiPathElement::GetExtendedPa
     }
 
     std::vector<sv4guiPathElement::sv4guiPathPoint> extendedPathPoints=GetPathPoints();
+    
+
     if(beginFound)
         extendedPathPoints.insert(extendedPathPoints.begin(),beginPathPoints.begin(),beginPathPoints.end()-1);
 

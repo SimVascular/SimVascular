@@ -60,6 +60,7 @@
 #undef GetObject
 #endif
 
+
 // Globals:
 // --------
 
@@ -160,7 +161,8 @@ PyObject* Occtsolid_pyInit()
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
 #elif PYTHON_MAJOR_VERSION == 3
   pythonC = PyModule_Create(&pySolidOCCTmodule);
-#endif  if (pythonC==NULL)
+#endif  
+if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return Py_ERROR;
@@ -200,7 +202,8 @@ initpySolidOCCT()
   else {
     return ;
   }
-  PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
+  tmp->registrar = pySolidModelRegistrar;
+  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp); 
   PyObject *pythonC;
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
   if (pythonC==NULL)
@@ -243,7 +246,8 @@ PyInit_pySolidOCCT()
   else {
     Py_RETURN_NONE;
   }
-  PySys_SetObject("solidModelRegistrar",(PyObject*)pySolidModelRegistrar);
+  tmp->registrar = pySolidModelRegistrar;
+  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
   PyObject *pythonC;
 
   pythonC = PyModule_Create(&pySolidOCCTmodule);
@@ -284,7 +288,6 @@ PyObject* OCCTSolidModel_RegistrarsListCmd(PyObject* self, PyObject* args )
 }
 
 
-#ifdef SV_USE_PYTHON
 // --------------------
 // pySolid.convertListsToOCCTObject
 // --------------------
@@ -394,7 +397,6 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 
   return Py_BuildValue("s","success");
 }
-#endif
 
 // --------------------
 // getArrayFromDoubleList

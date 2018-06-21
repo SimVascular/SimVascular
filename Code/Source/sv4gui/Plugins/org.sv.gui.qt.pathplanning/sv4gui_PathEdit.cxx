@@ -249,6 +249,7 @@ void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     ui->labelPathName->setText(QString::fromStdString(m_PathNode->GetName()));
 
     int timeStep=GetTimeStep();
+
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
 
@@ -330,7 +331,6 @@ void sv4guiPathEdit::UpdateGUI()
     if(m_Path==NULL) return;
 
     int timeStep=GetTimeStep();
-
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
 
@@ -425,10 +425,8 @@ void sv4guiPathEdit::SetupResliceSlider()
 
 //    if(m_ImageNode.IsNull())
 //        return;
-
     if(m_Path==NULL)
         return;
-
     int timeStep=GetTimeStep();
     sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
@@ -522,7 +520,7 @@ void sv4guiPathEdit::ChangePath(){
     m_PathCreateWidget->SetPathName(ui->labelPathName->text());
     m_PathCreateWidget->SetSubdivisionType(pathElement->GetMethod());
 
-    if(pathElement->GetMethod()==sv4guiPathElement::CONSTANT_SPACING)
+    if(pathElement->GetMethod()==sv3::PathElement::CONSTANT_SPACING)
         m_PathCreateWidget->SetNumber(QString::number(pathElement->GetSpacing()));
     else
         m_PathCreateWidget->SetNumber(QString::number(pathElement->GetCalculationNumber()));
@@ -779,7 +777,7 @@ void sv4guiPathEdit::NewPath()
     if(m_Path)
     {
         m_PathCreateWidget2->SetSubdivisionType(m_Path->GetMethod());
-        if(m_Path->GetMethod()==sv4guiPathElement::CONSTANT_SPACING)
+        if(m_Path->GetMethod()==sv3::PathElement::CONSTANT_SPACING)
             m_PathCreateWidget2->SetNumber(QString::number(m_Path->GetSpacing()));
         else
             m_PathCreateWidget2->SetNumber(QString::number(m_Path->GetCalculationNumber()));

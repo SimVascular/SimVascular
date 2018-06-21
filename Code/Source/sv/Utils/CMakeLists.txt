@@ -96,5 +96,3 @@ if(SV_INSTALL_HEADERS)
 		)
 endif()
 
-PYTHON_ADD_MODULE(pyMath sv_math_init_py.cxx)
-target_link_libraries(pyMath ${lib} ${PYTHON_LIBRARY})

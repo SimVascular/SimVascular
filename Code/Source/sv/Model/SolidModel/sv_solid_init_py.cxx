@@ -101,63 +101,65 @@ static void pySolidModel_dealloc(pySolidModel* self)
 PyObject* PyRunTimeErr;
 PyObject* Solid_RegistrarsListCmd( PyObject* self, PyObject* args);
 
-pySolidModel* Solid_PolyCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_GetModelCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_CircleCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_EllipseCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_CircleCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_Box2dCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_EllipseCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_Box3dCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_Box2dCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_SphereCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_Box3dCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_SphereCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_CylinderCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_CylinderCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_TorusCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_TorusCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_IntersectCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_SubtractCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_CopyCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args);
+
+PyObject* Solid_CopyCmd( pySolidModel* self, PyObject* args);
 
 PyObject* Solid_ListMethodsCmd( pySolidModel* self, PyObject* args);
 
-pySolidModel* Solid_NewObjectCmd( pySolidModel* self, PyObject* args);
+PyObject* Solid_NewObjectCmd( pySolidModel* self, PyObject* args);
 
 PyObject* Solid_SetKernelCmd( PyObject* self, PyObject* args);
 
 PyObject* Solid_GetKernelCmd( PyObject* self, PyObject* args);
 
-//pySolidModel* Solid_PrintKernelInfoCmd( pySolidModel* self, PyObject* args);
+//PyObject* Solid_PrintKernelInfoCmd( pySolidModel* self, PyObject* args);
 
 //#ifdef SV_USE_PYTHON
 //PyObject* Solid_InitPyModulesCmd( PyObject* self, PyObject* args);
@@ -184,13 +186,13 @@ static PyObject* Solid_GetFaceNormalMtd( pySolidModel* self, PyObject* args);
 
 static PyObject* Solid_TranslateMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_RotateMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_RotateMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_ScaleMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_ScaleMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_ReflectMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_ReflectMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_Apply4x4Mtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_Apply4x4Mtd( pySolidModel* self, PyObject* args);
 
 static PyObject* Solid_PrintMtd( pySolidModel* self, PyObject* args);
 
@@ -220,17 +222,17 @@ static PyObject* Solid_GetKernelMtd( pySolidModel* self, PyObject* args);
 
 static PyObject* Solid_GetFaceIdsMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_GetBoundaryFacesMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_GetBoundaryFacesMtd( pySolidModel* self, PyObject* args);
 
 static PyObject* Solid_GetRegionIdsMtd( pySolidModel* self, PyObject* args);
 
 static PyObject* Solid_GetFaceAttrMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_SetFaceAttrMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_SetFaceAttrMtd( pySolidModel* self, PyObject* args);
 
 static PyObject* Solid_GetRegionAttrMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_SetRegionAttrMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_SetRegionAttrMtd( pySolidModel* self, PyObject* args);
 
   // Label-related methods
   // ---------------------
@@ -239,19 +241,19 @@ static PyObject* Solid_GetLabelKeysMtd( pySolidModel* self, PyObject* args);
 
 static PyObject* Solid_GetLabelMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_SetLabelMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_SetLabelMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_ClearLabelMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_ClearLabelMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_DeleteFacesMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_DeleteFacesMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_DeleteRegionMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_DeleteRegionMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_CreateEdgeBlendMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_CreateEdgeBlendMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_CombineFacesMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_CombineFacesMtd( pySolidModel* self, PyObject* args);
 
-static pySolidModel* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args);
+static PyObject* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args);
 // Helper functions
 // ----------------
 
@@ -272,6 +274,7 @@ static PyMemberDef pySolidModel_members[]={
 // pySolid_methods
 // --------------------
 static PyMethodDef pySolidModel_methods[]={
+  { "solid_getModel", (PyCFunction)Solid_GetModelCmd, METH_VARARGS, NULL},
   { "solid_poly",(PyCFunction) Solid_PolyCmd,
 		     METH_VARARGS,NULL},
   { "solid_polyPts", (PyCFunction)Solid_PolyPtsCmd,
@@ -637,6 +640,53 @@ PyObject* Solid_RegistrarsListCmd(PyObject* self, PyObject* args)
   return pyList;
 }
 
+// -----------------
+// Solid_GetModelCmd
+// -----------------
+
+PyObject* Solid_GetModelCmd( pySolidModel* self, PyObject* args)
+{
+  char *objName=NULL;
+  RepositoryDataT type;
+  cvRepositoryData *rd;
+  cvSolidModel *geom;
+
+  if (!PyArg_ParseTuple(args,"s", &objName))
+  {
+    PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
+    return Py_ERROR;
+  }
+
+  // Do work of command:
+
+  // Retrieve source object:
+  rd = gRepository->GetObject( objName );
+  char r[2048];
+  if ( rd == NULL )
+  {
+    r[0] = '\0';
+    sprintf(r, "couldn't find object %s", objName);
+    PyErr_SetString(PyRunTimeErr,r);
+    return Py_ERROR;
+  }
+
+  type = rd->GetType();
+
+  if ( type != SOLID_MODEL_T )
+  {
+    r[0] = '\0';
+    sprintf(r, "%s not a model object", objName);
+    PyErr_SetString(PyRunTimeErr,r);
+    return Py_ERROR;
+  }
+  
+  geom = dynamic_cast<cvSolidModel*> (rd);
+  Py_INCREF(geom);
+  self->geom=geom;
+  Py_DECREF(geom);
+  Py_RETURN_NONE; 
+  
+}
 // ----------------
 // Solid_PolyPtsCmd
 // ----------------
@@ -655,7 +705,7 @@ PyObject* Solid_RegistrarsListCmd(PyObject* self, PyObject* args)
 // GetObject(name) method to get back object pointers for use inside
 // Tcl object method functions.
 
-pySolidModel* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args)
 {
   char *srcName;
   char *dstName;
@@ -711,7 +761,7 @@ pySolidModel* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args)
   self->geom=geom;
   Py_DECREF(geom);
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -719,7 +769,7 @@ pySolidModel* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args)
 // Solid_PolyCmd
 // -------------
 
-pySolidModel* Solid_PolyCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args)
 {
   char *srcName;
   char *dstName;
@@ -776,7 +826,7 @@ pySolidModel* Solid_PolyCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -785,7 +835,7 @@ pySolidModel* Solid_PolyCmd( pySolidModel* self, PyObject* args)
 // ---------------
 
 // % solid_circle -result /some/obj/name -r <radius> -x <x_ctr> -y <y_ctr>
-pySolidModel* Solid_CircleCmd(pySolidModel* self, PyObject* args)
+PyObject* Solid_CircleCmd(pySolidModel* self, PyObject* args)
 {
   char *objName;
   double radius;
@@ -831,13 +881,13 @@ pySolidModel* Solid_CircleCmd(pySolidModel* self, PyObject* args)
   self->geom=geom;
   Py_DECREF(geom);
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 // ---------------
 // Solid_SphereCmd
 // ---------------
-pySolidModel* Solid_SphereCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_SphereCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   PyObject* ctrList;
@@ -891,13 +941,13 @@ if(!PyArg_ParseTuple(args,"sdO",&objName,&r,&ctrList))
  // cvRepositoryData* geom2=gRepository->GetObject(self->name);
   //cvPolyData* PD2=(self->geom)->GetPolyData(0,1.0);
  // return Py_BuildValue("s",geom->GetName());
-  return self;
+  Py_RETURN_NONE;
 }
 // ----------------
 // Solid_EllipseCmd
 // ----------------
 
-pySolidModel* Solid_EllipseCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_EllipseCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   double xr, yr;
@@ -945,7 +995,7 @@ pySolidModel* Solid_EllipseCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -956,7 +1006,7 @@ pySolidModel* Solid_EllipseCmd( pySolidModel* self, PyObject* args)
 // % solid_box2d -result /some/obj/name -h <double> -w <double> \
 //       -xctr <double> -yctr <double>
 
-pySolidModel* Solid_Box2dCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_Box2dCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   double boxDims[2];
@@ -1003,7 +1053,7 @@ pySolidModel* Solid_Box2dCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1011,7 +1061,7 @@ pySolidModel* Solid_Box2dCmd( pySolidModel* self, PyObject* args)
 // Solid_Box3dCmd
 // --------------
 
-pySolidModel* Solid_Box3dCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_Box3dCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   double dims[3];
@@ -1073,7 +1123,7 @@ pySolidModel* Solid_Box3dCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1081,7 +1131,7 @@ pySolidModel* Solid_Box3dCmd( pySolidModel* self, PyObject* args)
 // Solid_EllipsoidCmd
 // ------------------
 
-pySolidModel* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   double ctr[3];
@@ -1140,7 +1190,7 @@ pySolidModel* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1148,7 +1198,7 @@ pySolidModel* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args)
 // Solid_CylinderCmd
 // -----------------
 
-pySolidModel* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   double ctr[3];
@@ -1210,7 +1260,7 @@ pySolidModel* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1218,7 +1268,7 @@ pySolidModel* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
 // Solid_TruncatedConeCmd
 // ----------------------
 
-pySolidModel* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   double pt[3];
@@ -1278,7 +1328,7 @@ pySolidModel* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1286,7 +1336,7 @@ pySolidModel* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args)
 // Solid_TorusCmd
 // --------------
 
-pySolidModel* Solid_TorusCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_TorusCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   double ctr[3];
@@ -1347,7 +1397,7 @@ pySolidModel* Solid_TorusCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1355,7 +1405,7 @@ pySolidModel* Solid_TorusCmd( pySolidModel* self, PyObject* args)
 // Solid_Poly3dSolidCmd
 // --------------------
 
-pySolidModel* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   char *srcName;
@@ -1427,7 +1477,7 @@ pySolidModel* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1435,7 +1485,7 @@ pySolidModel* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
 // Solid_Poly3dSurfaceCmd
 // ----------------------
 
-pySolidModel* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
 {
   char *objName;
   char *srcName;
@@ -1507,7 +1557,7 @@ pySolidModel* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1515,7 +1565,7 @@ pySolidModel* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
 // Solid_ExtrudeZCmd
 // -----------------
 
-pySolidModel* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
 {
   char *srcName;
   char *dstName;
@@ -1570,7 +1620,7 @@ pySolidModel* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1578,7 +1628,7 @@ pySolidModel* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
 // Solid_ExtrudeCmd
 // ----------------
 
-pySolidModel* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
 {
   char *srcName;
   char *dstName;
@@ -1660,7 +1710,7 @@ pySolidModel* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1668,7 +1718,7 @@ pySolidModel* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
 // Solid_MakeApproxCurveLoopCmd
 // ----------------------------
 
-pySolidModel* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
 {
   char *srcName;
   char *dstName;
@@ -1726,7 +1776,7 @@ pySolidModel* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1734,7 +1784,7 @@ pySolidModel* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
 // Solid_MakeInterpCurveLoopCmd
 // ----------------------------
 
-pySolidModel* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
 {
   char *srcName;
   char *dstName;
@@ -1791,7 +1841,7 @@ pySolidModel* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1799,7 +1849,7 @@ pySolidModel* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
 // Solid_MakeLoftedSurfCmd
 // -----------------------
 
-pySolidModel* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
 {
   char *dstName;
   cvRepositoryData *src;
@@ -1887,7 +1937,7 @@ pySolidModel* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1895,7 +1945,7 @@ pySolidModel* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
 // Solid_CapSurfToSolidCmd
 // -----------------------
 
-pySolidModel* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
 {
   char *srcName;
   char *dstName;
@@ -1952,7 +2002,7 @@ pySolidModel* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -1960,7 +2010,7 @@ pySolidModel* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
 // Solid_ReadNativeCmd
 // -------------------
 
-pySolidModel* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args)
 {
   char *objName, *fileName;
 
@@ -2014,7 +2064,7 @@ pySolidModel* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -2022,7 +2072,7 @@ pySolidModel* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args)
 // Solid_CopyCmd
 // -------------
 
-pySolidModel* Solid_CopyCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_CopyCmd( pySolidModel* self, PyObject* args)
 {
   char *srcName;
   char *dstName;
@@ -2077,7 +2127,7 @@ pySolidModel* Solid_CopyCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(dstGeom);
   self->geom=dstGeom;
   Py_DECREF(dstGeom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -2085,7 +2135,7 @@ pySolidModel* Solid_CopyCmd( pySolidModel* self, PyObject* args)
 // Solid_IntersectCmd
 // ------------------
 
-pySolidModel* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
 {
   char *resultName;
   char *smpName=NULL;
@@ -2161,7 +2211,7 @@ pySolidModel* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -2169,7 +2219,7 @@ pySolidModel* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
 // Solid_UnionCmd
 // --------------
 
-pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
 {
   char *resultName;
   char *smpName=NULL;
@@ -2243,7 +2293,7 @@ pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(result);
   self->geom=result;
   Py_DECREF(result);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -2251,7 +2301,7 @@ pySolidModel* Solid_UnionCmd( pySolidModel* self, PyObject* args)
 // Solid_SubtractCmd
 // -----------------
 
-pySolidModel* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
+PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
 {
   char *resultName;
   char *smpName=NULL;
@@ -2328,7 +2378,7 @@ pySolidModel* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(result);
   self->geom=result;
   Py_DECREF(result);
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -2372,7 +2422,7 @@ PyObject* DeleteSolid( pySolidModel* self, PyObject* args)
 //------------------
 //Solid_NewObjectCmd
 //------------------
-pySolidModel* Solid_NewObjectCmd(pySolidModel* self,PyObject *args )
+PyObject* Solid_NewObjectCmd(pySolidModel* self,PyObject *args )
 {
   char *objName, *fileName;
   cvSolidModel* geom;
@@ -2416,7 +2466,7 @@ pySolidModel* Solid_NewObjectCmd(pySolidModel* self,PyObject *args )
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return self;
+  Py_RETURN_NONE;
 }
 
 // ------------------
@@ -2439,10 +2489,7 @@ if (strcmp( kernelName, "Parasolid" )==0 ) {
 } else if (strcmp( kernelName, "Discrete" )==0 ) {
   kernel= SM_KT_DISCRETE;
 } else if (strcmp( kernelName, "PolyData" )==0 ) {
-  std::cout<<"PolyData"<<std::endl;
   kernel= SM_KT_POLYDATA;
-  std::cout<<kernelName<<std::endl;
-
 } else if (strcmp( kernelName, "OpenCASCADE")==0 ) {
   kernel= SM_KT_OCCT;
 } else if (strcmp( kernelName, "MeshSimSolid" )==0 ) {
@@ -2453,7 +2500,6 @@ if (strcmp( kernelName, "Parasolid" )==0 ) {
 
 if ( kernel != SM_KT_INVALID ) {
 cvSolidModel::gCurrentKernel = kernel;
-std::cout<<cvSolidModel::gCurrentKernel<<std::endl;
 return Py_BuildValue("s",kernelName);
 } else {
 PyErr_SetString(PyRunTimeErr, "solid kernel is invalid");
@@ -2768,7 +2814,7 @@ static PyObject*  Solid_TranslateMtd( pySolidModel *self ,PyObject* args  )
 // Solid_RotateMtd
 // ---------------
 
-static pySolidModel*  Solid_RotateMtd( pySolidModel *self ,PyObject* args  )
+static PyObject*  Solid_RotateMtd( pySolidModel *self ,PyObject* args  )
 {
   PyObject*  axisList;
   double axis[3];
@@ -2799,7 +2845,7 @@ static pySolidModel*  Solid_RotateMtd( pySolidModel *self ,PyObject* args  )
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -2807,7 +2853,7 @@ static pySolidModel*  Solid_RotateMtd( pySolidModel *self ,PyObject* args  )
 // Solid_ScaleMtd
 // --------------
 
-static pySolidModel*  Solid_ScaleMtd( pySolidModel *self ,PyObject* args  )
+static PyObject*  Solid_ScaleMtd( pySolidModel *self ,PyObject* args  )
 {
   double factor;
   int status;
@@ -2827,7 +2873,7 @@ static pySolidModel*  Solid_ScaleMtd( pySolidModel *self ,PyObject* args  )
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -2835,7 +2881,7 @@ static pySolidModel*  Solid_ScaleMtd( pySolidModel *self ,PyObject* args  )
 // Solid_ReflectMtd
 // ----------------
 
-static pySolidModel* Solid_ReflectMtd( pySolidModel *self ,PyObject* args  )
+static PyObject* Solid_ReflectMtd( pySolidModel *self ,PyObject* args  )
 {
   PyObject* posList;
   PyObject* nrmList;
@@ -2875,7 +2921,7 @@ static pySolidModel* Solid_ReflectMtd( pySolidModel *self ,PyObject* args  )
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -2883,7 +2929,7 @@ static pySolidModel* Solid_ReflectMtd( pySolidModel *self ,PyObject* args  )
 // Solid_Apply4x4Mtd
 // -----------------
 
-static pySolidModel*  Solid_Apply4x4Mtd( pySolidModel *self ,PyObject* args  )
+static PyObject*  Solid_Apply4x4Mtd( pySolidModel *self ,PyObject* args  )
 {
   PyObject* matList;
   PyObject* rowList;
@@ -2924,7 +2970,7 @@ static pySolidModel*  Solid_Apply4x4Mtd( pySolidModel *self ,PyObject* args  )
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -3393,7 +3439,7 @@ static PyObject* Solid_GetLabelMtd( pySolidModel* self, PyObject* args)
 // Solid_SetLabelMtd
 // -----------------
 
-static pySolidModel* Solid_SetLabelMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_SetLabelMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   char *key, *value;
@@ -3417,7 +3463,7 @@ static pySolidModel* Solid_SetLabelMtd( pySolidModel* self, PyObject* args)
     }
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -3425,7 +3471,7 @@ static pySolidModel* Solid_SetLabelMtd( pySolidModel* self, PyObject* args)
 // Solid_ClearLabelMtd
 // -------------------
 
-static pySolidModel* Solid_ClearLabelMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_ClearLabelMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   char *key;
@@ -3445,7 +3491,7 @@ static pySolidModel* Solid_ClearLabelMtd( pySolidModel* self, PyObject* args)
 
   geom->ClearLabel( key );
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -3460,13 +3506,11 @@ static PyObject* Solid_GetFaceIdsMtd( pySolidModel* self, PyObject* args)
   int *faces;
   char facestring[256];
   PyObject* faceList;
-  fprintf(stdout,"checkGetFaceId\n");
   int status = geom->GetFaceIds( &numFaces, &faces);
   if ( status == SV_OK ) {
     if (numFaces == 0)
     {
       Py_INCREF(Py_None);
-      fprintf(stdout,"checkGetFaceId0\n");
 
       return Py_None;
     }
@@ -3477,7 +3521,6 @@ static PyObject* Solid_GetFaceIdsMtd( pySolidModel* self, PyObject* args)
 	  facestring[0]='\n';
     }
     delete faces;
-    fprintf(stdout,"checkGetFaceId\n");
     return faceList;
   } else {
     PyErr_SetString(PyRunTimeErr, "GetFaceIds: error on object ");
@@ -3489,7 +3532,7 @@ static PyObject* Solid_GetFaceIdsMtd( pySolidModel* self, PyObject* args)
 // Solid_GetBoundaryFacesMtd
 // -------------------
 //
-static pySolidModel*  Solid_GetBoundaryFacesMtd( pySolidModel* self, PyObject* args)
+static PyObject*  Solid_GetBoundaryFacesMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   double angle = 0.0;
@@ -3503,7 +3546,7 @@ static pySolidModel*  Solid_GetBoundaryFacesMtd( pySolidModel* self, PyObject* a
 
   int status = geom->GetBoundaryFaces(angle);
   if ( status == SV_OK ) {
-    return self;
+    Py_RETURN_NONE;
   } else {
     PyErr_SetString(PyRunTimeErr, "GetBoundaryFaces: error on object ");
     return Py_ERROR;
@@ -3576,7 +3619,7 @@ static PyObject* Solid_GetFaceAttrMtd( pySolidModel* self, PyObject* args)
 // Solid_SetFaceAttrMtd
 // --------------------
 
-static pySolidModel* Solid_SetFaceAttrMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_SetFaceAttrMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   char *key, *value;
@@ -3595,7 +3638,7 @@ static pySolidModel* Solid_SetFaceAttrMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -3632,7 +3675,7 @@ static PyObject* Solid_GetRegionAttrMtd( pySolidModel* self, PyObject* args)
 // Solid_SetRegionAttrMtd
 // ----------------------
 
-static pySolidModel* Solid_SetRegionAttrMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_SetRegionAttrMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   char *key, *value;
@@ -3652,7 +3695,7 @@ static pySolidModel* Solid_SetRegionAttrMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -3660,7 +3703,7 @@ static pySolidModel* Solid_SetRegionAttrMtd( pySolidModel* self, PyObject* args)
 // Solid_DeleteFacesMtd
 // --------------------
 
-static pySolidModel* Solid_DeleteFacesMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_DeleteFacesMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   int status;
@@ -3672,7 +3715,7 @@ static pySolidModel* Solid_DeleteFacesMtd( pySolidModel* self, PyObject* args)
   }
 
   if (PyList_Size(faceList) == 0) {
-      return self;
+      Py_RETURN_NONE;
   }
 
   int nfaces = 0;
@@ -3693,14 +3736,14 @@ static pySolidModel* Solid_DeleteFacesMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 // --------------------
 // Solid_DeleteRegionMtd
 // --------------------
 
-static pySolidModel* Solid_DeleteRegionMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_DeleteRegionMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   int regionid;
@@ -3720,7 +3763,7 @@ static pySolidModel* Solid_DeleteRegionMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
 
@@ -3728,7 +3771,7 @@ static pySolidModel* Solid_DeleteRegionMtd( pySolidModel* self, PyObject* args)
 // Solid_CreateEdgeBlendMtd
 // ------------------------
 
-static pySolidModel* Solid_CreateEdgeBlendMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_CreateEdgeBlendMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   int status;
@@ -3750,10 +3793,10 @@ static pySolidModel* Solid_CreateEdgeBlendMtd( pySolidModel* self, PyObject* arg
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
-static pySolidModel* Solid_CombineFacesMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_CombineFacesMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   int status;
@@ -3774,10 +3817,10 @@ static pySolidModel* Solid_CombineFacesMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }
 
-static pySolidModel* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args)
+static PyObject* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args)
 {
   cvSolidModel *geom = (self->geom);
   int status;
@@ -3790,7 +3833,7 @@ static pySolidModel* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args)
   }
 
   if (PyList_Size(excludeList) == 0) {
-      return self;
+      Py_RETURN_NONE;
   }
 
   int nfaces = 0;
@@ -3810,5 +3853,5 @@ static pySolidModel* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return self;
+  Py_RETURN_NONE;
 }

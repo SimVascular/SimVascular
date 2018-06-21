@@ -81,8 +81,13 @@ sv_externals_add_new_external(Qt ${SV_EXTERNALS_Qt_VERSION} ON ON qt qt)
 
 #-----------------------------------------------------------------------------
 # HDF5
-if (SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+if (SV_EXTERNALS_VERSION_NUMBER GREATER_EQUAL "2018.05")
   sv_externals_add_new_external(HDF5 ${SV_EXTERNALS_HDF5_VERSION} ON ON hdf5 hdf5)
+  #-----------------------------------------------------------------------------
+
+  #-----------------------------------------------------------------------------
+  # TINYXML2
+  sv_externals_add_new_external(TINYXML2 ${SV_EXTERNALS_TINYXML2_VERSION} ON ON tinyxml2 tinyxml2)
 endif()
 #-----------------------------------------------------------------------------
 

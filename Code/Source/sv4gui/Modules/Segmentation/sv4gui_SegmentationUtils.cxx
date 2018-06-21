@@ -336,9 +336,7 @@ mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(st
     mitk::SlicedGeometry3D::Pointer slicedGeo3D=mitk::SlicedGeometry3D::New();
     slicedGeo3D->SetEvenlySpaced(false);
     slicedGeo3D->InitializeSlicedGeometry(pathPoints.size());
-
     mitk::Image* image=dynamic_cast<mitk::Image*>(baseData);
-
     for(int i=0;i<pathPoints.size();i++)
     {
         mitk::PlaneGeometry::Pointer planegeometry=CreatePlaneGeometry(pathPoints[i],baseData,size,useOnlyMinimumSpacing);
@@ -348,7 +346,6 @@ mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(st
 
         slicedGeo3D->SetPlaneGeometry(planegeometry,i);
     }
-
     if(baseData)
     {
         slicedGeo3D->SetReferenceGeometry(baseData->GetTimeGeometry()->GetGeometryForTimeStep(0));

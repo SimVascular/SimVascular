@@ -108,7 +108,7 @@ PyObject* Polydatasolid_pyInit()
   PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-
+  
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
@@ -141,10 +141,10 @@ PyObject* Polydatasolid_pyInit()
 PyMODINIT_FUNC
 initpySolidPolydata()
 {
+
   PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
