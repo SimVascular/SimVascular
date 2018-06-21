@@ -38,9 +38,6 @@ git:
   submodules: false
 
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -q
-  - sudo apt-get install gcc-4.9 g++-4.9 -y
   - export NUM_THREADS=4
   - export cwd=$(pwd)
   - export BUILD_DIR=$cwd/build
@@ -52,6 +49,7 @@ before_install:
   - export SV_CODE_DIR=$cwd/Code
   - export SV_TEST_DIR=$HOME/test/
   - export SCRIPTS=$cwd/travis
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then $SCRIPTS/travis_update_ubuntu.sh; fi
   - if $WITH_CMAKE; then $SCRIPTS/travis_get_cmake_latest.sh; fi
   - if $WITH_CMAKE; then $SCRIPTS/travis_cmake_get_externals.sh; fi
   - if $USE_SYSTEM_QT; then $SCRIPTS/travis_get_qt.sh; fi
