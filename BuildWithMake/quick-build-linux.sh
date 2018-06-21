@@ -48,6 +48,8 @@ case "$osid" in
                   export EXTERNALS_BUILD_DATE=2018.01.08
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+		  echo "Error - Ubuntu 16 not build yet!"
+		  exit
                   export EXTERNALS_BUILD_DATE=2018.06.20
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
 		fi
@@ -65,9 +67,8 @@ case "$osid" in
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
                   export EXTERNALS_BUILD_DATE=2018.06.20
-                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
-                export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
                 export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
                 export EXTERNALS_SV_COMPILER_VER_NO=4.8
                 export EXTERNALS_SV_OS_DIR=ubuntu
