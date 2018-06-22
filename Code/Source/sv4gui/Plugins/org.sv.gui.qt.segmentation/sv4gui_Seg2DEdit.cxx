@@ -696,6 +696,7 @@ sv4guiContour* sv4guiSeg2DEdit::PostprocessContour(sv4guiContour* contour)
 
 void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
 {
+    std::cout<<"CreateContours"<<std::endl;
     if(m_cvImage==NULL)
         return;
 
@@ -870,6 +871,7 @@ void sv4guiSeg2DEdit::UpdatePreview()
 
 void sv4guiSeg2DEdit::FinishPreview()
 {
+    std::cout<<"FinishPreview"<<std::endl;
     if(m_PreviewContourModel.IsNull())
          return;
 
@@ -1651,6 +1653,7 @@ void sv4guiSeg2DEdit::CopyContour()
 
 void sv4guiSeg2DEdit::PasteContour()
 {
+std::cout<<"PasteContour" <<std::ends;
     if(m_CopyContour==NULL)
         return;
 

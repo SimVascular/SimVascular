@@ -189,7 +189,7 @@ void Contour::SetContourID(int contourID)
     m_ContourID=contourID;
 }
 
-void Contour::SetPlaneGeometry(vtkSmartPointer<vtkPlane> planeGeometry)
+void Contour::SetPlaneGeometry(vtkPlane * planeGeometry)
 {
 //    if(m_vtkPlaneGeometry)
 //    {
@@ -209,7 +209,7 @@ void Contour::SetPlaneGeometry(vtkSmartPointer<vtkPlane> planeGeometry)
     std::cout<<"SetPlaneGeometry() "<<std::endl;
     if(planeGeometry!=NULL)
     {
-        m_vtkPlaneGeometry = vtkSmartPointer<vtkPlane>::New();
+        m_vtkPlaneGeometry = vtkPlane::New();
         m_vtkPlaneGeometry->SetOrigin(planeGeometry->GetOrigin());
         m_vtkPlaneGeometry->SetNormal(planeGeometry->GetNormal());
     }else{
@@ -218,7 +218,7 @@ void Contour::SetPlaneGeometry(vtkSmartPointer<vtkPlane> planeGeometry)
 
 }
 
-vtkSmartPointer<vtkPlane> Contour::GetPlaneGeometry()
+vtkPlane * Contour::GetPlaneGeometry()
 {
     std::cout<<"GetPlaneGeometry() "<<std::endl;
     return m_vtkPlaneGeometry;
@@ -610,6 +610,40 @@ void Contour::ContourPointsChanged()
     AssignCenterScalingPoints();
 }
 
+Contour* Contour::CreateSmoothedContour(int fourierNumber)
+{
+    std::cout<<"CreateSmoothedContour()"<<std::endl;
+    if(m_ContourPoints.size()<3)
+        return this->Clone();
+
+    Contour* contour=new Contour();
+    contour->SetPathPoint(m_PathPoint);
+//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
+    std::string method=m_Method;
+    int idx=method.find("Smoothed");
+    if(idx<0)
+        method=method+" + Smoothed";
+
+    contour->SetMethod(method);
+    //contour->SetPlaced(true);
+    contour->SetClosed(m_Closed);
+
+    int pointNumber=m_ContourPoints.size();
+
+    int smoothedPointNumber;
+
+    if((2*pointNumber)<fourierNumber)
+        smoothedPointNumber=3*fourierNumber;
+    else
+        smoothedPointNumber=pointNumber;
+
+    cvMath *cMath = new cvMath();
+    std::vector<std::array<double, 3> > smoothedContourPoints=cMath->CreateSmoothedCurve(m_ContourPoints,m_Closed,fourierNumber,0,smoothedPointNumber);
+    delete cMath;
+    contour->SetContourPoints(smoothedContourPoints);
+
+    return contour;
+}
 void Contour::AssignCenterScalingPoints()
 {
      std::cout<<"AssignCenterScalingPoints() "<<std::endl;
@@ -639,17 +673,21 @@ void Contour::CreateCenterScalingPoints()
     Sx=0;
     Sy=0;
     Sz = 0;
+    std::cout<<"CreateCenterScalingPoints()1"<<std::endl;
     for(int i=0;i<m_ContourPoints.size();i++)
     {
         double  point[3];
         double contourPoints[3];
         for (int j=0;j<3;j++)
             contourPoints[j] = m_ContourPoints[i][j];
+        std::cout<<"CreateCenterScalingPoints()1.1"<<std::endl;
         m_vtkPlaneGeometry->ProjectPoint(contourPoints, point);
+        std::cout<<"CreateCenterScalingPoints()1.2"<<std::endl;
         Sx+=point[0];
         Sy+=point[1];
         Sz+=point[2];
     }
+    std::cout<<"CreateCenterScalingPoints()2"<<std::endl;
     center[0]=Sx/m_ContourPoints.size();
     center[1]=Sy/m_ContourPoints.size();
     center[2]=Sz/m_ContourPoints.size();
@@ -880,6 +918,9 @@ void Contour::SetPathPoint(PathElement::PathPoint pathPoint)
     spacing.fill(0.1);
 
     m_vtkPlaneGeometry=SegmentationUtils::CreatePlaneGeometry(pathPoint,spacing, 1.0);
+    printf("plane pointer is %p\n",m_vtkPlaneGeometry);
+    if(m_vtkPlaneGeometry==NULL)
+	std::cout<<"m_plane is empty"<<std::endl;
 }
 
 int Contour::GetPathPosID(){

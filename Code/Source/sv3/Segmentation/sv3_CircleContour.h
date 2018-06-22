@@ -65,8 +65,6 @@ public:
     
     virtual circleContour* Clone() override;
     
-    virtual circleContour* CreateSmoothedContour(int fourierNumber) override;
-    
     virtual std::string GetClassName() override;
 
     virtual void SetControlPoint(int index, std::array<double,3> point) override;

@@ -40,9 +40,10 @@
 
 #include <iostream>
 using namespace std;
-using sv3::ContourSplinePolygon;
-sv4guiContourSplinePolygon::sv4guiContourSplinePolygon():ContourSplinePolygon()
+sv4guiContourSplinePolygon::sv4guiContourSplinePolygon()
 {
+    m_Method="Manual";
+    m_Type="SplinePolygon";
 }
 
 sv4guiContourSplinePolygon::sv4guiContourSplinePolygon(const sv4guiContourSplinePolygon &other)
@@ -57,6 +58,54 @@ sv4guiContourSplinePolygon::~sv4guiContourSplinePolygon()
 sv4guiContourSplinePolygon* sv4guiContourSplinePolygon::Clone()
 {
     return new sv4guiContourSplinePolygon(*this);
+}
+
+std::string sv4guiContourSplinePolygon::GetClassName()
+{
+    return "sv4guiContourSplinePolygon";
+}
+
+void sv4guiContourSplinePolygon::CreateContourPoints()
+{
+    int controlNumber=GetControlPointNumber();
+
+    if(controlNumber<=2)
+    {
+        return;
+    }
+    else if(controlNumber==3)
+    {
+        m_ContourPoints.push_back(sv3::Contour::GetControlPoint(2));
+        return;
+    }
+
+    sv3::Spline* spline=new sv3::Spline();
+    spline->SetClosed(m_Closed);
+
+    switch(m_SubdivisionType)
+    {
+    case CONSTANT_TOTAL_NUMBER:
+        spline->SetMethod(sv4guiSpline::CONSTANT_TOTAL_NUMBER);
+        spline->SetCalculationNumber(m_SubdivisionNumber);
+        break;
+    case CONSTANT_SUBDIVISION_NUMBER:
+        spline->SetMethod(sv4guiSpline::CONSTANT_SUBDIVISION_NUMBER);
+        spline->SetCalculationNumber(m_SubdivisionNumber);
+        break;
+    case CONSTANT_SPACING:
+        spline->SetMethod(sv4guiSpline::CONSTANT_SPACING);
+        spline->SetSpacing(m_SubdivisionSpacing);
+        break;
+    default:
+        break;
+    }
+
+    std::vector<std::array<double,3> > controlPoints;
+    controlPoints.insert(controlPoints.begin(),m_ControlPoints.begin()+2,m_ControlPoints.end());
+
+    spline->SetInputPoints(controlPoints);
+    spline->Update();//remember Update() before fetching spline points
+    m_ContourPoints=spline->GetSplinePosPoints();
 }
 
 sv4guiContour* sv4guiContourSplinePolygon::CreateByFitting(sv4guiContour* contour, int divisionNumber)

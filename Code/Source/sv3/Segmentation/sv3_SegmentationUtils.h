@@ -55,7 +55,7 @@ class SV_EXPORT_SEGMENTATION SegmentationUtils
     
     static vtkImageData* GetSlicevtkImage(sv3::PathElement::PathPoint pathPoint, vtkImageData* volumeimage, double size);
     
-    static vtkSmartPointer<vtkPlane> CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size);
+    static vtkPlane* CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size);
     
     static void getOrthogonalVector(double normal[3], double vec[3]);
 ;

@@ -82,40 +82,6 @@ circleContour* circleContour::Clone()
     return new circleContour(*this);
 }
 
-circleContour* circleContour::CreateSmoothedContour(int fourierNumber)
-{
-    std::cout<<"circleContour::CreateSmoothedContour()"<<std::endl;
-    if(m_ContourPoints.size()<3)
-        return this->Clone();
-
-    circleContour* contour=new circleContour();
-    contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
-    std::string method=m_Method;
-    int idx=method.find("Smoothed");
-    if(idx<0)
-        method=method+" + Smoothed";
-
-    contour->SetMethod(method);
-    //contour->SetPlaced(true);
-    contour->SetClosed(m_Closed);
-
-    int pointNumber=m_ContourPoints.size();
-
-    int smoothedPointNumber;
-
-    if((2*pointNumber)<fourierNumber)
-        smoothedPointNumber=3*fourierNumber;
-    else
-        smoothedPointNumber=pointNumber;
-
-    cvMath *cMath = new cvMath();
-    std::vector<std::array<double, 3> > smoothedContourPoints=cMath->CreateSmoothedCurve(m_ContourPoints,m_Closed,fourierNumber,0,smoothedPointNumber);
-    delete cMath;
-    contour->SetContourPoints(smoothedContourPoints);
-
-    return contour;
-}
 
 std::string circleContour::GetClassName()
 {
@@ -130,12 +96,13 @@ void circleContour::SetControlPoint(int index, std::array<double,3> point)
     double pt[3];
     pt[0] = point[0]; pt[1] = point[1]; pt[2] = point[2];
     std::cout<<"ck1"<<std::endl;
-    if (m_vtkPlaneGeometry==NULL)
+    printf("Plane pointer in circle is %p\n", m_vtkPlaneGeometry);
+    if (sv3::Contour::m_vtkPlaneGeometry==NULL)
     {
         std::array<double, 3> PT = this->GetPathPosPoint();
         std::cout <<"PathPosPoint: "<<PT[0]<<" "<<PT[1]<<" "<<PT[2]<<std::endl;
     }
-    m_vtkPlaneGeometry->ProjectPoint(pt, projPt);
+    //m_vtkPlaneGeometry->ProjectPoint(pt, projPt);
     std::cout<<"ck2"<<std::endl;
     if(index == 0)
     {

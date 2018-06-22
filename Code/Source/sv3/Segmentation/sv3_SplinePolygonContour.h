@@ -52,8 +52,6 @@ public:
 
     virtual ContourSplinePolygon* Clone() override;
     
-    virtual ContourSplinePolygon* CreateSmoothedContour(int fourierNumber) override;
-
     virtual std::string GetClassName() override;
 
     virtual void CreateContourPoints() override;

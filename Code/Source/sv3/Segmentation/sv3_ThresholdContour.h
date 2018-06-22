@@ -66,8 +66,6 @@ public:
     
     std::string GetClassName();
     
-    thresholdContour* CreateSmoothedContour(int fourierNumber);
-    
     void CreateContourPoints();
     
     void SetControlPointByRadius(double radius, double* point){return;};

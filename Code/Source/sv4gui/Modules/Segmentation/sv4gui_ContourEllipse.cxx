@@ -97,8 +97,11 @@ void sv4guiContourEllipse::SetControlPoint(int index, mitk::Point3D point3d)
     }
     else if(index==1)
     {
-        Scale(ctrlPt1, ctrlPt2, point3d);
-        //Scale(m_ControlPoints[0], m_ControlPoints[index], point3d);
+        //Scale(ctrlPt1, ctrlPt2, point3d);
+        std::array<double,3> stdpt;
+        for(int i=0; i<3; i++)
+            stdpt[i] = point3d[i];
+        sv3::Contour::Scale(m_ControlPoints[0], m_ControlPoints[index], stdpt);
     }
     else if ( index < 4 )
     {
@@ -261,10 +264,11 @@ void sv4guiContourEllipse::CreateContourPoints()
         m_PlaneGeometry->Map(point,pt3d);
         
         std::array<double,3> stdPt;
-        for (int i=0; i<3; i++)
-            stdPt[i] = pt3d[i];
+        for (int j=0; j<3; j++)
+            stdPt[j] = pt3d[j];
         //m_ContourPoints.push_back(pt3d);
         m_ContourPoints.push_back(stdPt);
+        std::cout<<"Point: "<<stdPt[0]<<" "<<stdPt[1]<<" "<<stdPt[2]<<std::endl;
     }
 
 }

@@ -55,8 +55,6 @@ public:
 
     virtual std::string GetClassName() override;
     
-    virtual ContourPolygon* CreateSmoothedContour(int fourierNumber) override;
-
     virtual void SetControlPoint(int index, std::array<double,3> point) override;
 
     virtual void CreateContourPoints() override;

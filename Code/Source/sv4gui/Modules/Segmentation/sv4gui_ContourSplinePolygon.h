@@ -37,11 +37,9 @@
 #include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_ContourPolygon.h"
-#include "sv3_SplinePolygonContour.h"
 
-using sv3::ContourSplinePolygon;
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourSplinePolygon : public sv4guiContourPolygon, public ContourSplinePolygon
+class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourSplinePolygon : public sv4guiContourPolygon
 {
 
 public:
@@ -53,6 +51,10 @@ public:
     virtual ~sv4guiContourSplinePolygon();
 
     virtual sv4guiContourSplinePolygon* Clone() override;
+
+    virtual std::string GetClassName() override;
+
+    virtual void CreateContourPoints() override;
 
     static sv4guiContour* CreateByFitting(sv4guiContour* contour, int divisionNumber = 12);
 

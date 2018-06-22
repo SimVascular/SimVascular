@@ -65,39 +65,6 @@ std::string ContourPolygon::GetClassName()
     return "ContourPolygon";
 }
 
-ContourPolygon* ContourPolygon::CreateSmoothedContour(int fourierNumber)
-{
-    if(m_ContourPoints.size()<3)
-        return this->Clone();
-
-    ContourPolygon* contour=new ContourPolygon();
-    contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
-    std::string method=m_Method;
-    int idx=method.find("Smoothed");
-    if(idx<0)
-        method=method+" + Smoothed";
-
-    contour->SetMethod(method);
-    //contour->SetPlaced(true);
-    contour->SetClosed(m_Closed);
-
-    int pointNumber=m_ContourPoints.size();
-
-    int smoothedPointNumber;
-
-    if((2*pointNumber)<fourierNumber)
-        smoothedPointNumber=3*fourierNumber;
-    else
-        smoothedPointNumber=pointNumber;
-
-    cvMath *cMath = new cvMath();
-    std::vector<std::array<double, 3> > smoothedContourPoints=cMath->CreateSmoothedCurve(m_ContourPoints,m_Closed,fourierNumber,0,smoothedPointNumber);
-    delete cMath;
-    contour->SetContourPoints(smoothedContourPoints);
-
-    return contour;
-}
 
 std::vector<std::array<double,3> > CreateInterpolationPoints(std::array<double,3>  pt1, std::array<double,3>  pt2, int interNumber)
 {

@@ -162,6 +162,8 @@ void sv4guiContour::PlaceControlPoints(mitk::Point3D point)
         stdPt[i] = point[i];
         
     this->sv3::Contour::PlaceControlPoints(stdPt);
+
+    m_Placed = true;
 }
 
 void sv4guiContour::SetControlPoints(std::vector<mitk::Point3D> controlPoints, bool updateContour)
@@ -309,7 +311,7 @@ sv4guiContour* sv4guiContour::CreateSmoothedContour(int fourierNumber)
     contour->SetPlaced(true);
     contour->SetClosed(sv3contour->IsClosed());
     contour->sv3::Contour::SetContourPoints(sv3contour->GetContourPoints());
-    delete sv3contour;
+    //delete sv3contour;
     return contour;
 }
 

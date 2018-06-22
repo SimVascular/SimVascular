@@ -66,8 +66,6 @@ public:
     
     std::string GetClassName();
     
-    levelSetContour* CreateSmoothedContour(int fourierNumber);
-    
     void CreateContourPoints();
     
     void SetControlPointByRadius(double radius, double* point){return;};

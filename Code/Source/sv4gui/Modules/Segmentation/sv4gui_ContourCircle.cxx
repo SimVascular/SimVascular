@@ -30,12 +30,20 @@
  */
 
 #include "sv4gui_ContourCircle.h"
-#include "sv3_CircleContour.h"
 
-using sv3::circleContour;
 
-sv4guiContourCircle::sv4guiContourCircle():circleContour()
+sv4guiContourCircle::sv4guiContourCircle()
 {
+    m_Method="Manual";
+    m_Type="Circle";
+
+    m_MinControlPointNumber=2;
+    m_MaxControlPointNumber=2;
+    m_ControlPointNonRemovableIndices[0]=0;
+    m_ControlPointNonRemovableIndices[1]=1;
+
+    m_SubdivisionType=CONSTANT_TOTAL_NUMBER;
+    m_SubdivisionNumber=36;
 }
 
 sv4guiContourCircle::sv4guiContourCircle(const sv4guiContourCircle &other)
@@ -52,15 +60,85 @@ sv4guiContourCircle* sv4guiContourCircle::Clone()
     return new sv4guiContourCircle(*this);
 }
 
-void sv4guiContourCircle::SetControlPoint(int index, mitk::Point3D point)
+std::string sv4guiContourCircle::GetClassName()
 {
-    std::array<double,3> stdPt;
-    for (int i=0; i<3; i++)
-        stdPt[i] = point[i];
-        
-    this->sv3::circleContour::SetControlPoint(index,stdPt);
+    return "sv4guiContourCircle";
 }
 
+void sv4guiContourCircle::SetControlPoint(int index, mitk::Point3D point)
+{
+    if(index == 0)
+    {
+        mitk::Vector3D dirVec=point-GetControlPoint(index);
+        Shift(dirVec);
+    }
+    else if ( index == 1 )
+    {
+    	std::array<double,3> stdPt;
+    	for (int i=0; i<3; i++)
+        	stdPt[i] = point[i];
+        m_ControlPoints[index]=stdPt;
+        ControlPointsChanged();
+    }
+        
+}
+
+void sv4guiContourCircle::CreateContourPoints()
+{
+    mitk::Point2D centerPoint, boundaryPoint;
+
+    mitk::Point3D ctrlPt0, ctrlPt1;
+    for (int i=0; i<3; i++)
+    {
+        ctrlPt0[i]=m_ControlPoints[0][i];
+        ctrlPt1[i]=m_ControlPoints[1][i];
+    }   
+    m_PlaneGeometry->Map(ctrlPt0, centerPoint );
+
+    m_PlaneGeometry->Map(ctrlPt1, boundaryPoint );
+
+    double radius = centerPoint.EuclideanDistanceTo( boundaryPoint );
+
+    int interNumber;
+
+    switch(m_SubdivisionType)
+    {
+    case CONSTANT_TOTAL_NUMBER:
+        interNumber=m_SubdivisionNumber;
+        break;
+    case CONSTANT_SPACING:
+        interNumber=2.0*vnl_math::pi*radius/m_SubdivisionSpacing;
+        if(interNumber<m_SubdivisionNumber)
+        {
+            interNumber=m_SubdivisionNumber;
+        }
+        break;
+    default:
+        break;
+    }
+
+    std::array<double,3> stdPt;
+    for ( int i = 0; i < interNumber; ++i )
+    {
+        double alpha = (double) i * vnl_math::pi * 2.0 / interNumber;
+
+        mitk::Point2D point;
+        mitk::Point3D pt3d;
+        point[0] = centerPoint[0] + radius * cos( alpha );
+        point[1] = centerPoint[1] + radius * sin( alpha );
+
+        m_PlaneGeometry->Map(point,pt3d);
+        
+        for (int j =0; j<3; j++)
+            stdPt[j] = pt3d[j];
+        m_ContourPoints.push_back(stdPt);
+
+    }
+}
+
+void sv4guiContourCircle::AssignCenterScalingPoints()
+{
+}
 sv4guiContour* sv4guiContourCircle::CreateByFitting(sv4guiContour* contour)
 {
     std::cout<<"sv4guiContourCircle::CreateByFitting()"<<std::endl;

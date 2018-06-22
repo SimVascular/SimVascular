@@ -197,9 +197,9 @@ public:
 
     void SetSubdivisionSpacing(double spacing);
 
-    void SetPlaneGeometry(vtkSmartPointer<vtkPlane> planeGeometry);
+    void SetPlaneGeometry(vtkPlane *planeGeometry);
 
-    vtkSmartPointer<vtkPlane> GetPlaneGeometry();
+    vtkPlane* GetPlaneGeometry();
 
     int GetControlPointNumber();
 
@@ -273,7 +273,7 @@ public:
 
     std::array<double,3> GetCenterPoint();
 
-    virtual Contour* CreateSmoothedContour(int fourierNumber = 12 ){return NULL;};
+    virtual Contour* CreateSmoothedContour(int fourierNumber = 12 );
 
     //for all data
     //===================================
@@ -290,7 +290,7 @@ public:
 
     void CalculateBoundingBox(double *bounds);
 
-    bool IsOnPlane(const vtkSmartPointer<vtkPlane> planeGeometry, double precisionFactor=0.1);
+    bool IsOnPlane(const vtkPlane * planeGeometry, double precisionFactor=0.1);
 
     vtkImageData* GetVtkImageSlice();
 
@@ -340,7 +340,7 @@ public:
 
     //mitk::PlaneGeometry::Pointer m_vtkPlaneGeometry;
     
-    vtkSmartPointer<vtkPlane> m_vtkPlaneGeometry;
+    vtkPlane * m_vtkPlaneGeometry;
 
     std::array<double,3> m_CenterPoint;
 
