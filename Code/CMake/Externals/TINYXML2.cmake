@@ -36,7 +36,7 @@ if(SV_USE_${proj})
   # If using toplevel dir, TINYXML2_DIR to be the SV_TINYXML2_DIR set by the
   # simvascular_add_new_external macro
   if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
-      set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
+      set(${proj}_DIR ${SV_${proj}_DIR}/share/lib/cmake/tinyxml2 CACHE PATH "Force ${proj} dir to externals" FORCE)
   endif()
 
   # No version in tinyxml2 config files, leave version out
