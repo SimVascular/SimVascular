@@ -29,7 +29,7 @@
 set(proj MITK)
 
 # Dependencies
-set(${proj}_DEPENDENCIES "Qt")
+set(${proj}_DEPENDENCIES "QT")
 
 if(SV_EXTERNALS_ENABLE_PYTHON AND SV_EXTERNALS_BUILD_MITK_WITH_PYTHON)
   set(${proj}_DEPENDENCIES
@@ -78,11 +78,11 @@ else()
 endif()
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
-#Special for Qt, make sure that MITK uses the same libs we are!
-foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
+#Special for QT, make sure that MITK uses the same libs we are!
+foreach(comp ${SV_EXTERNALS_QT5_COMPONENTS})
   #if(Qt5${comp}_LIBRARIES)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_Qt_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
+      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_QT_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
       )
       #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
   #endif()
@@ -101,9 +101,9 @@ if(SV_EXTERNALS_ENABLE_PYTHON AND SV_EXTERNALS_BUILD_MITK_WITH_PYTHON)
     )
 endif()
 
-#If downloading Qt
+#If downloading QT
 if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "2016.03")
-  if(NOT SV_EXTERNALS_DOWNLOAD_Qt)
+  if(NOT SV_EXTERNALS_DOWNLOAD_QT)
   set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
     COMMAND patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.01/patch-mitk-2016.03-download-qt.patch)
   endif()
@@ -248,8 +248,8 @@ else()
       -DMITK_USE_Numpy:BOOL=${SV_EXTERNALS_ENABLE_NUMPY}
       -DMITK_USE_VMTK:BOOL=OFF
       -DMITK_USE_HDF5:BOOL=${SV_EXTERNALS_ENABLE_HDF5}
-      -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_Qt_CMAKE_DIR}
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_Qt_QMAKE_EXECUTABLE}
+      -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_QT_CMAKE_DIR}
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_QT_QMAKE_EXECUTABLE}
       -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
       )

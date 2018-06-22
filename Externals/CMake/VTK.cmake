@@ -66,9 +66,9 @@ if(SV_EXTERNALS_ENABLE_FREETYPE)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "FREETYPE")
 endif()
-if(SV_EXTERNALS_ENABLE_Qt)
+if(SV_EXTERNALS_ENABLE_QT)
   set(${proj}_DEPENDENCIES
-    ${${proj}_DEPENDENCIES} "Qt")
+    ${${proj}_DEPENDENCIES} "QT")
 endif()
 
 # Git info
@@ -110,8 +110,8 @@ elseif(MINGW)
     )
 endif()
 
-#If using Qt
-if(SV_EXTERNALS_USE_QT)
+#If using QT
+if(SV_EXTERNALS_ENABLE_QT)
   #MINGW specific flags
   if(MINGW)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
@@ -128,20 +128,20 @@ if(SV_EXTERNALS_USE_QT)
       )
   endif()
 
-  foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
-    #if(Qt5${comp}_LIBRARIES)
+  foreach(comp ${SV_EXTERNALS_QT5_COMPONENTS})
+    #if(QT5${comp}_LIBRARIES)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_Qt_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
+      -DQt5${comp}_DIR:PATH=${SV_EXTERNALS_QT_TOPLEVEL_CMAKE_DIR}/Qt5${comp}
       )
       #-DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
     #endif()
   endforeach()
 
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-    -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_Qt_CMAKE_DIR}
+    -DQt5_DIR:PATH:STRING=${SV_EXTERNALS_QT_CMAKE_DIR}
     -DVTK_QT_VERSION:STRING=5
     -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
-    -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_Qt_QMAKE_EXECUTABLE}
+    -DQT_QMAKE_EXECUTABLE:FILEPATH=${SV_EXTERNALS_QT_QMAKE_EXECUTABLE}
     -DModule_vtkGUISupportQt:BOOL=ON
     -DModule_vtkGUISupportQtWebkit:BOOL=ON
     -DModule_vtkGUISupportQtSQL:BOOL=ON

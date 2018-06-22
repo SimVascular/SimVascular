@@ -25,8 +25,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #-----------------------------------------------------------------------------
-# Qt
-set(proj Qt)
+# QT
+set(proj QT)
 
 # Dependencies
 set(${proj}_DEPENDENCIES "")
@@ -118,8 +118,56 @@ else()
 endif()
 
 
+# QT externals dirs also needed
+  #Find QT!
+set(SV_EXTERNALS_QT5_COMPONENTS
+    Concurrent
+    Core
+    Designer
+    Gui
+    Help
+    OpenGL
+    PrintSupport
+    Script
+    Sql
+    Svg
+    Widgets
+    Xml
+    XmlPatterns
+    UiTools
+    )
+
+if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.4.2")
+  list(APPEND SV_EXTERNALS_${proj}_COMPONENTS
+    WebKitWidgets
+    WebKit
+    )
+elseif(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "5.6.3")
+  list(APPEND SV_EXTERNALS_${proj}_COMPONENTS
+    WebEngineCore
+    WebEngineWidgets
+    WebView
+    )
+endif()
+
 # Add external project
-if(SV_EXTERNALS_DOWNLOAD_${proj})
+if(SV_EXTERNALS_USE_PREBUILT_${proj})
+
+  # Find package
+  find_package(Qt5 COMPONENTS ${SV_EXTERNALS_QT5_COMPONENTS} REQUIRED)
+
+  # Create empty qt to satisfy dependencies
+  ExternalProject_Add(${proj}
+    PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}-empty
+    SOURCE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}-empty
+    BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}-empty
+    DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    )
+elseif(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
     URL ${SV_EXTERNALS_${proj}_BINARIES_URL}
     PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
@@ -146,30 +194,16 @@ else()
     )
 endif()
 
-# Qt variables needed later on
-set(SV_EXTERNALS_${proj}_QMAKE_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/qmake)
-set(SV_EXTERNALS_${proj}_TOPLEVEL_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake)
-set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake/Qt5)
-
-# Qt externals dirs also needed
-  #Find Qt!
-set(SV_EXTERNALS_Qt5_COMPONENTS
-  Concurrent
-  Core
-  Designer
-  Gui
-  Help
-  OpenGL
-  PrintSupport
-  Script
-  Sql
-  Svg
-  WebKitWidgets
-  WebKit
-  Widgets
-  Xml
-  XmlPatterns
-  UiTools)
+# QT variables needed later on
+if(SV_EXTERNALS_USE_PREBUILT_${proj})
+  set(SV_EXTERNALS_${proj}_QMAKE_EXECUTABLE ${QT_MAKE_EXECUTABLE})
+  get_filename_component(SV_EXTERNALS_${proj}_TOPLEVEL_CMAKE_DIR ${Qt5_DIR} DIRECTORY)
+  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${Qt5_DIR})
+else()
+  set(SV_EXTERNALS_${proj}_QMAKE_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/qmake)
+  set(SV_EXTERNALS_${proj}_TOPLEVEL_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake)
+  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/cmake/Qt5)
+endif()
 #-----------------------------------------------------------------------------
 
 
