@@ -32,6 +32,10 @@
 # Qt
 set(proj Qt5)
 if(SV_USE_${proj})
+  if(SV_EXTERNALS_USE_PREBUILT_QT)
+    set(Qt5_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)
+    set(SV_Qt5_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)
+  endif()
 
   if(SV_USE_QT_GUI)
 
@@ -39,8 +43,12 @@ if(SV_USE_${proj})
     # simvascular_add_new_external macro
     if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
       set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
+      if(SV_EXTERNALS_USE_PREBUILT_QT)
+        set(Qt5_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)
+      endif()
       if(WIN32)
-        set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force Qt DLL Path")
+        get_filename_component(_win32_qt5_top_path "${${proj}_DIR}/../../../" ABSOLUTE)
+        set(${proj}_DLL_PATH "${_win32_qt5_top_path}/bin" CACHE PATH "Force Qt DLL Path" FORCE)
       endif()
     endif()
 
@@ -89,6 +97,9 @@ if(SV_USE_${proj})
         set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
       endif()
       set(QT_PLUGIN_PATH "${_Qt5_DIR}/plugins")
+      if(WIN32)
+        set(${proj}_DLL_PATH "${_Qt5_DIR}/bin" CACHE PATH "Force Qt DLL Path" FORCE)
+      endif()
     endif()
     # Need to set include dirs and libraries of Qt from individual components
     if(NOT SV_USE_MITK_CONFIG)

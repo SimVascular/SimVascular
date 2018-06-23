@@ -81,4 +81,8 @@ else()
 endif()
 
 # HDF5 variables used later on
-set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/share/cmake)
+if(WIN32)
+  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/cmake)
+else()
+  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/share/cmake)
+endif()
