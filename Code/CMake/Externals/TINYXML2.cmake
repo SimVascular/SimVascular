@@ -31,8 +31,10 @@
 #-----------------------------------------------------------------------------
 # TINYXML2
 set(proj TINYXML2)
+if(LINUX)
+  set(proj tinyxml2)
+endif()
 if(SV_USE_${proj})
-
   # If using toplevel dir, TINYXML2_DIR to be the SV_TINYXML2_DIR set by the
   # simvascular_add_new_external macro
   if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
