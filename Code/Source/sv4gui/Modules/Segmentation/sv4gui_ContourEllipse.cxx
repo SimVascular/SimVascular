@@ -268,7 +268,6 @@ void sv4guiContourEllipse::CreateContourPoints()
             stdPt[j] = pt3d[j];
         //m_ContourPoints.push_back(pt3d);
         m_ContourPoints.push_back(stdPt);
-        std::cout<<"Point: "<<stdPt[0]<<" "<<stdPt[1]<<" "<<stdPt[2]<<std::endl;
     }
 
 }

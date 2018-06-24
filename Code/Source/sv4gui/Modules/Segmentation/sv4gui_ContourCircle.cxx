@@ -141,7 +141,6 @@ void sv4guiContourCircle::AssignCenterScalingPoints()
 }
 sv4guiContour* sv4guiContourCircle::CreateByFitting(sv4guiContour* contour)
 {
-    std::cout<<"sv4guiContourCircle::CreateByFitting()"<<std::endl;
     double area=contour->GetArea();
     double radius=sqrt(area/vnl_math::pi);
     mitk::Point2D centerPoint, boundaryPoint;

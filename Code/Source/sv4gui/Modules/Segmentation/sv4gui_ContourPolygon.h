@@ -61,7 +61,7 @@ public:
 
     virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
 
-    void AssignCenterScalingPoints() override;
+    virtual void AssignCenterScalingPoints() override;
 
     void PlaceControlPoints(mitk::Point3D point) override;
 

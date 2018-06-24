@@ -69,7 +69,6 @@ Contour::Contour()
       m_MaxControlPointNumber(2),
       m_TagIndex(0)
  {
-    std::cout<<"Contour::Contour()"<<std::endl;
     for (int i=0;i<5;i++)
     {
         m_ControlPointNonRemovableIndices[i]=-2;
@@ -104,7 +103,6 @@ Contour::Contour(const Contour &other)
     //, m_Selected(other.m_Selected)
 {
 //    SetPlaneGeometry(other.m_vtkPlaneGeometry);
-    std::cout<<"Contour::Contour(const Contour &other) "<<std::endl;
     SetPathPoint(other.m_PathPoint);
 
     for(int i=0;i<5;i++){
@@ -147,45 +145,38 @@ Contour* Contour::DefaultInstantiateContourObject(cKernelType t, PathElement::Pa
 
 std::string Contour::GetClassName()
 {
-    std::cout<<"GetClassName "<<std::endl;
     return "Contour";
 }
 
 std::string Contour::GetType()
 {
-    std::cout<<"GetType() "<<std::endl;
 
     return m_Type;
 }
 
 void Contour::SetType(std::string type)
 {
-    std::cout<<"SetType() "<<std::endl;
 
     m_Type=type;
 }
 
 std::string Contour::GetMethod()
 {
-    std::cout<<"GetMethod() "<<std::endl;
     return m_Method;
 }
 
 void Contour::SetMethod(std::string method)
 {
-    std::cout<<"SetMethod() "<<std::endl;
     m_Method=method;
 }
 
 int Contour::GetContourID()
 {
-    std::cout<<"GetContourID() "<<std::endl;
     return m_ContourID;
 }
 
 void Contour::SetContourID(int contourID)
 {
-    std::cout<<"SetContourID() "<<std::endl;
     m_ContourID=contourID;
 }
 
@@ -206,7 +197,6 @@ void Contour::SetPlaneGeometry(vtkPlane * planeGeometry)
 //    }
 
 //    m_vtkPlaneGeometry=planeGeometry;
-    std::cout<<"SetPlaneGeometry() "<<std::endl;
     if(planeGeometry!=NULL)
     {
         m_vtkPlaneGeometry = vtkPlane::New();
@@ -220,7 +210,6 @@ void Contour::SetPlaneGeometry(vtkPlane * planeGeometry)
 
 vtkPlane * Contour::GetPlaneGeometry()
 {
-    std::cout<<"GetPlaneGeometry() "<<std::endl;
     return m_vtkPlaneGeometry;
 }
 
@@ -272,13 +261,11 @@ vtkPlane * Contour::GetPlaneGeometry()
 
 bool Contour::IsClosed()
 {
-    std::cout<<"IsClosed() "<<std::endl;
     return m_Closed;
 }
 
 void Contour::SetClosed(bool closed)
 {
-    std::cout<<"SetClosed() "<<std::endl;
     if(m_Closed!=closed)
     {
         m_Closed=closed;
@@ -288,25 +275,21 @@ void Contour::SetClosed(bool closed)
 
 bool Contour::IsFinished()
 {
-    std::cout<<"IsFinished() "<<std::endl;
     return m_Finished;
 }
 
 void Contour::SetFinished(bool finished)
 {
-    std::cout<<"SetFinished() "<<std::endl;
     m_Finished=finished;
 }
 
 int Contour::GetSubdivisionNumber()
 {
-    std::cout<<"GetSubdivisionNumber() "<<std::endl;
     return m_SubdivisionNumber;
 }
 
 void Contour::SetSubdivisionNumber(int number)
 {
-    std::cout<<"SetSubdivisionNumber() "<<std::endl;
     if(m_SubdivisionNumber!=number)
     {
         m_SubdivisionNumber=number;
@@ -316,13 +299,11 @@ void Contour::SetSubdivisionNumber(int number)
 
 Contour::SubdivisionType Contour::GetSubdivisionType()
 {
-    std::cout<<"GetSubdivisionType() "<<std::endl;
     return m_SubdivisionType;
 }
 
 void Contour::SetSubdivisionType(SubdivisionType subdivType)
 {
-    std::cout<<"SetSubdivisionType() "<<std::endl;
     if(m_SubdivisionType!=subdivType)
     {
         m_SubdivisionType=subdivType;
@@ -332,13 +313,11 @@ void Contour::SetSubdivisionType(SubdivisionType subdivType)
 
 double Contour::GetSubdivisionSpacing()
 {
-    std::cout<<"GetSubdivisionSpacing() "<<std::endl;
     return m_SubdivisionSpacing;
 }
 
 void Contour::SetSubdivisionSpacing(double spacing)
 {
-    std::cout<<"SetSubdivisionSpacing() "<<std::endl;
     if(m_SubdivisionSpacing!=spacing)
     {
         m_SubdivisionSpacing=spacing;
@@ -348,36 +327,30 @@ void Contour::SetSubdivisionSpacing(double spacing)
 
 int Contour::GetControlPointNumber()
 {
-    std::cout<<"GetControlPointNumber() "<<std::endl;
     return m_ControlPoints.size();
 }
 
 int Contour::GetMinControlPointNumber()
 {
-    std::cout<<"GetMinControlPointNumber() "<<std::endl;
     return m_MinControlPointNumber;
 }
 
 int Contour::GetMaxControlPointNumber()
 {
-    std::cout<<"GetMaxControlPointNumber() "<<std::endl;
     return m_MaxControlPointNumber;
 }
 
 void Contour::SetMinControlPointNumber(int number)
 {
-    std::cout<<"SetMinControlPointNumber() "<<std::endl;
     m_MinControlPointNumber=number;
 }
 
 void Contour::SetMaxControlPointNumber(int number)
 {
-    std::cout<<"SetMaxControlPointNumber() "<<std::endl;
     m_MaxControlPointNumber=number;
 }
 
 std::array<double, 3> Contour::GetControlPoint(int index){
-    std::cout<<"GetControlPoint() "<<std::endl;
     std::array<double, 3> point;
     point.fill(0);
 
@@ -395,7 +368,6 @@ std::array<double, 3> Contour::GetControlPoint(int index){
 
 void Contour::InsertControlPoint(int index, std::array<double, 3> point)
 {
-    std::cout<<"InsertControlPoint() "<<std::endl;
     if(index==-1) index=m_ControlPoints.size();
 
     if(index>-1 && index<=m_ControlPoints.size())
@@ -409,7 +381,6 @@ void Contour::InsertControlPoint(int index, std::array<double, 3> point)
 
 void Contour::RemoveControlPoint(int index)
 {
-    std::cout<<"RemoveControlPoint() "<<std::endl;
     if(index==-1) index=m_ControlPoints.size()-1;
 
     if(index>-1 && index<m_ControlPoints.size())
@@ -422,7 +393,6 @@ void Contour::RemoveControlPoint(int index)
 
 void Contour::SetControlPoint(int index, std::array<double, 3> point)
 {
-    std::cout<<"SetControlPoint() "<<std::endl;
     if(index==-1) index=m_ControlPoints.size()-1;
 
     if(index>-1 && index<m_ControlPoints.size())
@@ -451,7 +421,6 @@ void Contour::SetControlPoint(int index, std::array<double, 3> point)
 
 void Contour::SetControlPointSelectedIndex(int index)
 {
-    std::cout<<"SetControlPointSelectedIndex() "<<std::endl;
     if(index==-1) index=m_ControlPoints.size()-1;
 
     if(index>-1 && index<m_ControlPoints.size())
@@ -465,32 +434,27 @@ void Contour::SetControlPointSelectedIndex(int index)
 
 void Contour::DeselectControlPoint()
 {
-    std::cout<<"DeselectControlPoint() "<<std::endl;
     m_ControlPointSelectedIndex=-2;
 }
 
 int Contour::GetControlPointSelectedIndex()
 {
-    std::cout<<"GetControlPointSelectedIndex() "<<std::endl;
     return m_ControlPointSelectedIndex;
 }
 
 void Contour::ClearControlPoints()
 {
-    std::cout<<"ClearControlPoints() "<<std::endl;
     m_ControlPoints.clear();
 }
 
 void Contour::PlaceContour(std::array<double, 3> point)
 {
-    std::cout<<"PlaceContour() "<<std::endl;
     PlaceControlPoints(point);
     ControlPointsChanged();
 }
 
 void Contour::PlaceControlPoints(std::array<double, 3> point)
 {
-    std::cout<<"PlaceControlPoints() "<<std::endl;
     for ( unsigned int i = 0; i < GetMinControlPointNumber(); ++i )
     {
       m_ControlPoints.push_back( point );
@@ -502,7 +466,6 @@ void Contour::PlaceControlPoints(std::array<double, 3> point)
 
 void Contour::SetControlPoints(std::vector<std::array<double, 3> > controlPoints, bool updateContour)
 {
-    std::cout<<"SetControlPoints() "<<std::endl;
     m_ControlPoints=controlPoints;
     if(updateContour)
         ControlPointsChanged();
@@ -510,7 +473,6 @@ void Contour::SetControlPoints(std::vector<std::array<double, 3> > controlPoints
 
 bool Contour::IsControlPointRemovable(int index)
 {
-    std::cout<<"IsControlPointRemovable() "<<std::endl;
     for(int i=0;i<5;i++)
     {
         if(m_ControlPointNonRemovableIndices[i]==index)
@@ -543,14 +505,12 @@ bool Contour::IsControlPointRemovable(int index)
 
 void Contour::ClearContourPoints()
 {
-    std::cout<<"ClearContourPoints() "<<std::endl;
     m_ContourPoints.clear();
 }
 
 void Contour::CreateContour()
 {
     
-    std::cout<<"CreateContour() "<<std::endl;
     if(m_ControlPoints.size()<1)
     {
         return;
@@ -562,14 +522,12 @@ void Contour::CreateContour()
 }
 
 void Contour::ControlPointsChanged(){
-    std::cout<<"ControlPointsChanged() "<<std::endl;
     CreateContour();
     //    this->Modified();
 }
 
 void Contour::SetContourPoints(std::vector<std::array<double, 3> > contourPoints, bool update)
 {
-    std::cout<<"SetContourPoints() "<<std::endl;
     m_ContourPoints=contourPoints;
     if(update)
     ContourPointsChanged();
@@ -577,13 +535,11 @@ void Contour::SetContourPoints(std::vector<std::array<double, 3> > contourPoints
 
 int Contour::GetContourPointNumber()
 {
-    std::cout<<"GetContourPointNumber() "<<std::endl;
     return m_ContourPoints.size();
 }
 
 std::array<double, 3>  Contour::GetContourPoint(int index)
 {
-    std::cout<<"GetContourPoint() "<<std::endl;
     std::array<double, 3>  point;
     point.fill(0);
 
@@ -599,20 +555,17 @@ std::array<double, 3>  Contour::GetContourPoint(int index)
 
 std::vector<std::array<double,3> > Contour::GetContourPoints()
 {
-    std::cout<<"GetContourPoints() "<<std::endl;
     return m_ContourPoints;
 }
 
 void Contour::ContourPointsChanged()
 {
-     std::cout<<"ContourPointsChanged() "<<std::endl;
     CreateCenterScalingPoints();
     AssignCenterScalingPoints();
 }
 
 Contour* Contour::CreateSmoothedContour(int fourierNumber)
 {
-    std::cout<<"CreateSmoothedContour()"<<std::endl;
     if(m_ContourPoints.size()<3)
         return this->Clone();
 
@@ -646,7 +599,6 @@ Contour* Contour::CreateSmoothedContour(int fourierNumber)
 }
 void Contour::AssignCenterScalingPoints()
 {
-     std::cout<<"AssignCenterScalingPoints() "<<std::endl;
     if(m_ControlPoints.size()==0)
     {
         m_ControlPoints.push_back(m_CenterPoint);
@@ -666,28 +618,23 @@ void Contour::AssignCenterScalingPoints()
 
 void Contour::CreateCenterScalingPoints()
 {
-    std::cout<<"CreateCenterScalingPoints() "<<std::endl;
     double Sx=0,Sy=0, Sz=0, A=0;
     std::array<double, 3>  center;
     
     Sx=0;
     Sy=0;
     Sz = 0;
-    std::cout<<"CreateCenterScalingPoints()1"<<std::endl;
     for(int i=0;i<m_ContourPoints.size();i++)
     {
         double  point[3];
         double contourPoints[3];
         for (int j=0;j<3;j++)
             contourPoints[j] = m_ContourPoints[i][j];
-        std::cout<<"CreateCenterScalingPoints()1.1"<<std::endl;
         m_vtkPlaneGeometry->ProjectPoint(contourPoints, point);
-        std::cout<<"CreateCenterScalingPoints()1.2"<<std::endl;
         Sx+=point[0];
         Sy+=point[1];
         Sz+=point[2];
     }
-    std::cout<<"CreateCenterScalingPoints()2"<<std::endl;
     center[0]=Sx/m_ContourPoints.size();
     center[1]=Sy/m_ContourPoints.size();
     center[2]=Sz/m_ContourPoints.size();
@@ -725,13 +672,11 @@ void Contour::CreateCenterScalingPoints()
 
 std::array<double, 3>  Contour::GetCenterPoint()
 {
-    std::cout<<"GetCenterPoint() "<<std::endl;
     return m_CenterPoint;
 }
 
 vtkSmartPointer<vtkPolyData> Contour::CreateVtkPolyDataFromContour(bool includingAllLines)
 {
-    std::cout<<"CreateVtkPolyDataFromContour() "<<std::endl;
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
 
@@ -774,13 +719,11 @@ vtkSmartPointer<vtkPolyData> Contour::CreateVtkPolyDataFromContour(bool includin
 
 int Contour::SearchControlPointByContourPoint( int contourPointIndex )
 {
-    std::cout<<"SearchControlPointByContourPoint() "<<std::endl;
     return contourPointIndex;
 }
 
 void Contour::Shift(std::array<double, 3>  dirVec){
 
-std::cout<<"Shift() "<<std::endl;
     for(int i=0;i<m_ControlPoints.size();i++)
     {
         for (int j = 0; j<3;j++)
@@ -796,13 +739,11 @@ std::cout<<"Shift() "<<std::endl;
 
 void Contour::Scale(double scalingFactor)
 {
-    std::cout<<"Scale() "<<std::endl;
     Scale(scalingFactor, m_ControlPoints[0]);
 }
 
 void Contour::Scale(double scalingFactor, std::array<double, 3>  referencePoint)
 {
-    std::cout<<"Scale() "<<std::endl;
     std::array<double, 3>  dirVec;
 
     for(int i=0;i<m_ControlPoints.size();i++)
@@ -826,7 +767,6 @@ void Contour::Scale(double scalingFactor, std::array<double, 3>  referencePoint)
 
 void Contour::Scale(std::array<double, 3>  referencePoint, std::array<double, 3>  oldPoint, std::array<double, 3>  newPoint)
 {
-    std::cout<<"Scale() "<<std::endl;
     double dis1=sqrt(pow(oldPoint[0]-referencePoint[0],2)+pow(oldPoint[1]-referencePoint[1],2)+pow(oldPoint[2]-referencePoint[2],2));
     double dis2=sqrt(pow(newPoint[0]-referencePoint[0],2)+pow(newPoint[1]-referencePoint[1],2)+pow(newPoint[2]-referencePoint[2],2));
     double scalingFactor;
@@ -844,7 +784,6 @@ void Contour::Scale(std::array<double, 3>  referencePoint, std::array<double, 3>
 
 void Contour::CalculateBoundingBox(double *bounds)
 {
-    std::cout<<"CalculateBoundingBox() "<<std::endl;
     for(int i=0;i<m_ControlPoints.size();i++)
     {
         double x=m_ControlPoints[i][0];
@@ -905,50 +844,40 @@ void Contour::CalculateBoundingBox(double *bounds)
 
 PathElement::PathPoint Contour::GetPathPoint()
 {
-    std::cout<<"GetPathPoint() "<<std::endl;
     return m_PathPoint;
 }
 
 void Contour::SetPathPoint(PathElement::PathPoint pathPoint)
 {
-    std::cout<<"SetPathPoint() "<<std::endl;
     m_PathPoint=pathPoint;
 
     std::array<double, 3>  spacing;
     spacing.fill(0.1);
 
     m_vtkPlaneGeometry=SegmentationUtils::CreatePlaneGeometry(pathPoint,spacing, 1.0);
-    printf("plane pointer is %p\n",m_vtkPlaneGeometry);
-    if(m_vtkPlaneGeometry==NULL)
-	std::cout<<"m_plane is empty"<<std::endl;
 }
 
 int Contour::GetPathPosID(){
-    std::cout<<"GetPathPosID() "<<std::endl;
     return m_PathPoint.id;
 }
 
 std::array<double, 3>  Contour::GetPathPosPoint()
 {
-    std::cout<<"GetPathPosPoint() "<<std::endl;
     return m_PathPoint.pos;
 }
 
 vtkImageData* Contour::GetVtkImageSlice()
 {
-    std::cout<<"GetVtkImageSlice() "<<std::endl;
     return m_VtkImageSlice;
 }
 
 void Contour::SetVtkImageSlice(vtkImageData* slice)
 {
-    std::cout<<"SetVtkImageSlice() "<<std::endl;
     m_VtkImageSlice=slice;
 }
 
 double Contour::GetArea()
 {
-    std::cout<<"GetArea() "<<std::endl;
     double A=0;
 
     for(int i=0;i<m_ContourPoints.size();i++)
@@ -988,7 +917,6 @@ double Contour::GetArea()
 
 double Contour::GetPerimeter()
 {
-    std::cout<<"GetPerimeter() "<<std::endl;
     double L=0;
     
     for(int i=0;i<m_ContourPoints.size();i++)

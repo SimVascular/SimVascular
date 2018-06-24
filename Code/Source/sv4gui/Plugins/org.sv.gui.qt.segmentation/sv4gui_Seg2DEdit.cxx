@@ -934,7 +934,6 @@ void sv4guiSeg2DEdit::CreateEllipse()
 
 void sv4guiSeg2DEdit::CreateCircle()
 {
-    std::cout<<"gui create circle ck"<<std::endl;
     if(m_CurrentSegButton!=ui->btnCircle)
     {
         ResetGUI();
@@ -949,11 +948,9 @@ void sv4guiSeg2DEdit::CreateCircle()
     sv4guiContour* contour=NULL;
     if(existingContour && existingContour->GetContourPointNumber()>2)
     {
-        std::cout<<"gui create circle ck.01"<<std::endl;
         contour=sv4guiContourCircle::CreateByFitting(existingContour);
         if(contour)
         {
-            std::cout<<"gui create circle ck.02"<<std::endl;
             contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
             contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
             mitk::OperationEvent::IncCurrObjectEventId();
@@ -964,7 +961,6 @@ void sv4guiSeg2DEdit::CreateCircle()
 
     m_CurrentSegButton=ui->btnCircle;
     m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-    std::cout<<"gui create circle ck1"<<std::endl;
     m_DataInteractor->SetMethod("Circle");
 }
 

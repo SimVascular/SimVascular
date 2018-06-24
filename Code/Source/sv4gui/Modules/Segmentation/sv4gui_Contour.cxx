@@ -225,12 +225,11 @@ mitk::Point3D sv4guiContour::GetContourPoint(int index)
 void sv4guiContour::ContourPointsChanged()
 {
     sv4guiContour::CreateCenterScalingPoints();
-    this->sv3::Contour::AssignCenterScalingPoints();
+    AssignCenterScalingPoints();
 }
 
 void sv4guiContour::CreateCenterScalingPoints()
 {
-    std::cout<<"sv4gui CreateCenter"<<std::endl;
     double Sx=0,Sy=0,A=0;
 
     for(int i=0;i<m_ContourPoints.size();i++)
@@ -319,7 +318,16 @@ sv4guiContour* sv4guiContour::CreateSmoothedContour(int fourierNumber)
         return this->Clone();
     Contour* sv3contour = this->sv3::Contour::CreateSmoothedContour(fourierNumber);
     sv4guiContour* contour=new sv4guiContour();
-    contour->sv3::Contour::SetPathPoint(sv3contour->GetPathPoint());
+    sv3::PathElement::PathPoint pathPoint=sv3contour->GetPathPoint();
+    sv4guiPathElement::sv4guiPathPoint pthPt;
+    for (int i = 0; i<3; i++)
+    {
+        pthPt.pos[i]=pathPoint.pos[i];
+        pthPt.tangent[i] = pathPoint.tangent[i];
+        pthPt.rotation[i] = pathPoint.rotation[i];
+    }
+        pthPt.id = pathPoint.id;
+    contour->SetPathPoint(pthPt);
     contour->SetMethod(sv3contour->GetMethod());
     contour->SetPlaced(true);
     contour->SetClosed(sv3contour->IsClosed());
@@ -406,7 +414,6 @@ sv4guiPathElement::sv4guiPathPoint sv4guiContour::GetPathPoint()
 
 void sv4guiContour::SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint)
 {
-    std::cout<<"sv4guiContour::SetPathPoint"<<std::endl;
     sv3::PathElement::PathPoint pthPt;
     for (int i = 0; i<3; i++)
     {
@@ -433,4 +440,3 @@ mitk::Point3D sv4guiContour::GetPathPosPoint()
         mitkPt[i] = point[i];
     return mitkPt;
 }
-

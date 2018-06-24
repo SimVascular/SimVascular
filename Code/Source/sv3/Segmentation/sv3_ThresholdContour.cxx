@@ -82,7 +82,6 @@ std::string thresholdContour::GetClassName()
 
 void thresholdContour::SetThresholdValue(double thresholdValue)
 {
-    std::cout<<"ck"<<std::endl;
     m_thresholdValue = thresholdValue;
 }
 
