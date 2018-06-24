@@ -266,9 +266,9 @@ public:
 
     vtkSmartPointer<vtkPolyData> CreateVtkPolyDataFromContour(bool includingAllLines = true);
 
-    void ContourPointsChanged();
+    virtual void ContourPointsChanged();
 
-    void CreateCenterScalingPoints();
+    virtual void CreateCenterScalingPoints();
     virtual void AssignCenterScalingPoints();
 
     std::array<double,3> GetCenterPoint();

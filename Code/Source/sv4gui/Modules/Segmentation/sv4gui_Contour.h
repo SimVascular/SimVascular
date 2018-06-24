@@ -103,6 +103,10 @@ public:
 
     mitk::Point3D GetControlPoint(int index);
 
+    virtual void ContourPointsChanged() override;
+
+    virtual void CreateCenterScalingPoints() override;
+    
     void InsertControlPoint(int index, mitk::Point3D point);
 
     virtual void SetControlPoint(int index, mitk::Point3D point);
