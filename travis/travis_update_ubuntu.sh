@@ -28,31 +28,9 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#compilers
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]
-then
-  export CC="gcc"
-  export CXX="g++"
-elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
-then
-  export CC="clang"
-  export CXX="clang++"
+### install latest version of CMake for Ubuntu
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+  sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  sudo apt-get update -q
+  sudo apt-get install gcc-4.9 g++-4.9 -y
 fi
-
-#cmake
-export REPLACEME_SV_CMAKE_CMD="/usr/local/bin/cmake"
-export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
-export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
-export REPLACEME_SV_MAKE_CMD="make -j8"
-
-MAKE="make --jobs=$NUM_THREADS --keep-going"
-
-# Get externals
-mkdir -p $SV_EXTERNALS_BUILD_DIR
-pushd $SV_EXTERNALS_BUILD_DIR
-"$REPLACEME_SV_CMAKE_CMD" \
-  -G "$REPLACEME_SV_CMAKE_GENERATOR" \
-  -DSV_EXTERNALS_TOPLEVEL_BIN_DIR=$SV_EXTERNALS_BIN_DIR \
- ../
-$MAKE
-popd

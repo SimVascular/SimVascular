@@ -117,6 +117,11 @@ endif()
 
 # Add Qt if it was used
 if(SV_USE_QT OR SV_USE_QT_GUI)
+  if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
+     set_env_string_concat(QT_QPA_FONTDIR "${QT_PLUGIN_PATH}/../lib/fonts" developer_script_string)
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
+     set_env_string_concat(QT_QPA_FONTDIR "${QT_PLUGIN_PATH}/../../Src/qtbase/lib/fonts" developer_script_string)
+  endif()
   if(QT_DLL_PATH)
     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} ${QT_DLL_PATH} developer_script_string)
     set_env_string_concat(QT_PLUGIN_PATH ${QT_PLUGIN_PATH} developer_script_string)

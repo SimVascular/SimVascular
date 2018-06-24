@@ -51,8 +51,8 @@ else()
   set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
 endif()
 
-#If using Qt
-if(SV_EXTERNALS_USE_QT)
+#If using QT
+if(SV_EXTERNALS_ENABLE_QT)
   #MINGW specific flags
   if(MINGW)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS

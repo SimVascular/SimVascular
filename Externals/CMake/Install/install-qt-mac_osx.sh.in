@@ -1,37 +1,37 @@
 # paths
 
-export Qt_SRCDIR=@SV_EXTERNALS_Qt_SRC_DIR@
-export Qt_BINDIR=@SV_EXTERNALS_Qt_BIN_DIR@
-export Qt_BLDDIR=@SV_EXTERNALS_Qt_BLD_DIR@
+export QT_SRCDIR=@SV_EXTERNALS_QT_SRC_DIR@
+export QT_BINDIR=@SV_EXTERNALS_QT_BIN_DIR@
+export QT_BLDDIR=@SV_EXTERNALS_QT_BLD_DIR@
 
 # crypto fix
-cp @OPENSSL_ROOT@/lib/libcrypto.* $Qt_BINDIR/lib
-chmod 755 $Qt_BINDIR/lib/libcrypto.*
+cp @OPENSSL_ROOT@/lib/libcrypto.* $QT_BINDIR/lib
+chmod 755 $QT_BINDIR/lib/libcrypto.*
 
 # ssl fix
-cp @OPENSSL_ROOT@/lib/libssl.* $Qt_BINDIR/lib
-chmod 755 $Qt_BINDIR/lib/libssl.*
+cp @OPENSSL_ROOT@/lib/libssl.* $QT_BINDIR/lib
+chmod 755 $QT_BINDIR/lib/libssl.*
 
 # crypto lib names
-install_name_tool -id @rpath/libcrypto.dylib $Qt_BINDIR/lib/libcrypto.dylib
-install_name_tool -id @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libcrypto.1.0.0.dylib
+install_name_tool -id @rpath/libcrypto.dylib $QT_BINDIR/lib/libcrypto.dylib
+install_name_tool -id @rpath/libcrypto.1.0.0.dylib $QT_BINDIR/lib/libcrypto.1.0.0.dylib
 
 # ssl changes
-install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib $Qt_BINDIR/lib/libssl.dylib
-install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.dylib
-install_name_tool -change /usr/local/Cellar/openssl/1.0.2m/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.dylib
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib $QT_BINDIR/lib/libssl.dylib
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $QT_BINDIR/lib/libssl.dylib
+install_name_tool -change /usr/local/Cellar/openssl/1.0.2m/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $QT_BINDIR/lib/libssl.dylib
 
-install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
-install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
-install_name_tool -change /usr/local/Cellar/openssl/1.0.2m/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.dylib @rpath/libcrypto.dylib $QT_BINDIR/lib/libssl.1.0.0.dylib
+install_name_tool -change @OPENSSL_ROOT@/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $QT_BINDIR/lib/libssl.1.0.0.dylib
+install_name_tool -change /usr/local/Cellar/openssl/1.0.2m/lib/libcrypto.1.0.0.dylib @rpath/libcrypto.1.0.0.dylib $QT_BINDIR/lib/libssl.1.0.0.dylib
 
 
 # ssl lib names
-install_name_tool -id @rpath/libssl.dylib $Qt_BINDIR/lib/libssl.dylib
-install_name_tool -id @rpath/libssl.1.0.0.dylib $Qt_BINDIR/lib/libssl.1.0.0.dylib
+install_name_tool -id @rpath/libssl.dylib $QT_BINDIR/lib/libssl.dylib
+install_name_tool -id @rpath/libssl.1.0.0.dylib $QT_BINDIR/lib/libssl.1.0.0.dylib
 
 # qt executables
-for file in $Qt_BINDIR/bin/*; do
+for file in $QT_BINDIR/bin/*; do
   if [[ -x ${file} ]]; then
 
     # lib ssl
@@ -40,7 +40,7 @@ for file in $Qt_BINDIR/bin/*; do
     install_name_tool -add_rpath @loader_path/../lib ${file}
 
     # qt libs
-    for module_dir_1 in $Qt_BINDIR/lib/*; do
+    for module_dir_1 in $QT_BINDIR/lib/*; do
       if [[ -d ${module_dir_1} ]]; then
         module_name_1=$(basename $module_dir_1)
         module_split_name_1=(${module_name_1//./ })
@@ -55,7 +55,7 @@ for file in $Qt_BINDIR/bin/*; do
 done
 
 # qt module libraries
-for module_dir_1 in $Qt_BINDIR/lib/*; do
+for module_dir_1 in $QT_BINDIR/lib/*; do
   if [[ -d ${module_dir_1} ]]; then
     module_name_1=$(basename $module_dir_1)
     module_split_name_1=(${module_name_1//./ })
@@ -70,7 +70,7 @@ for module_dir_1 in $Qt_BINDIR/lib/*; do
       install_name_tool -id @rpath/${module_name_1}/Versions/5/${change_module_name_1} ${module_dir_1}/Versions/5/${change_module_name_1}
 
       # all of other qt libs
-      for module_dir_2 in $Qt_BINDIR/lib/*; do
+      for module_dir_2 in $QT_BINDIR/lib/*; do
         if [[ -d ${module_dir_2} ]]; then
           module_name_2=$(basename $module_dir_2)
           module_split_name_2=(${module_name_2//./ })
@@ -88,11 +88,11 @@ for module_dir_1 in $Qt_BINDIR/lib/*; do
 done
 
 # qt plugins
-for dir in $Qt_BINDIR/plugins/*; do
+for dir in $QT_BINDIR/plugins/*; do
   if [[ -d ${dir} ]]; then
     for plugin in ${dir}/*; do
       # qt libs
-      for module_dir_1 in $Qt_BINDIR/lib/*; do
+      for module_dir_1 in $QT_BINDIR/lib/*; do
         if [[ -d ${module_dir_1} ]]; then
           module_name_1=$(basename $module_dir_1)
           module_split_name_1=(${module_name_1//./ })

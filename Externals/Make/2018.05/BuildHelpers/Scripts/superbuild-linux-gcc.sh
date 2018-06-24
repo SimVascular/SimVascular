@@ -9,6 +9,9 @@ mkdir -p zip_output
 #
 #  Build everything, but can manually override for advanced users
 #
+#  e.g. to build only MITK:
+#   export SV_SUPER_OPTIONS="UNTAR_UNZIP_ALL WGET_MITK UNTAR_MITK BUILD_MITK ARCHIVE_MITK ZIP_MITK"
+#
 
 if [ -z "$SV_SUPER_OPTIONS" ]; then
    echo "NOTE: SV_SUPER_OPTIONS defaulting to all possible options."
@@ -22,9 +25,10 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_SWIG        UNTAR_SWIG        BUILD_SWIG        ARCHIVE_SWIG        ZIP_SWIG        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_TINYXML2    UNTAR_TINYXML2    BUILD_TINYXML2    ARCHIVE_TINYXML2    ZIP_TINYXML2    $SV_SUPER_OPTIONS"
-   SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
+#   SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_FREETYPE    UNTAR_FREETYPE    BUILD_FREETYPE    ARCHIVE_FREETYPE    ZIP_FREETYPE    $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_GDCM        UNTAR_GDCM        BUILD_GDCM        ARCHIVE_GDCM        ZIP_GDCM        $SV_SUPER_OPTIONS"
+   SV_SUPER_OPTIONS="WGET_HDF5        UNTAR_HDF5        BUILD_HDF5        ARCHIVE_HDF5        ZIP_HDF5        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_VTK         UNTAR_VTK         BUILD_VTK         ARCHIVE_VTK         ZIP_VTK         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_ITK         UNTAR_ITK         BUILD_ITK         ARCHIVE_ITK         ZIP_ITK         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_OPENCASCADE UNTAR_OPENCASCADE BUILD_OPENCASCADE ARCHIVE_OPENCASCADE ZIP_OPENCASCADE $SV_SUPER_OPTIONS"
@@ -32,6 +36,8 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_MITK        UNTAR_MITK        BUILD_MITK        ARCHIVE_MITK        ZIP_MITK        $SV_SUPER_OPTIONS"
    export SV_SUPER_OPTIONS
 fi
+
+echo "SV_SUPER_OPTIONS for build: $SV_SUPER_OPTIONS"
 
 #
 # wget all source code
@@ -49,7 +55,6 @@ source Scripts/untar-unzip-source-all.sh
 # make build scripts
 #
 
-
 #  tcl/tk 8.6
 if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   echo "CREATE_BUILD_SCRIPT_TCL"
@@ -57,7 +62,7 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   chmod a+rx ./tmp/compile.make.tcl.gcc.sh
 fi
 
-# python 2.7
+## python
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "CREATE_BUILD_SCRIPT_PYTHON"
   sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-python-linux.sh > tmp/compile.cmake.python.gcc.sh
@@ -106,6 +111,13 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_GDCM* ]]; then
   chmod a+rx ./tmp/compile.cmake.gdcm.gcc.sh
 fi
 
+# hdf5
+if [[ $SV_SUPER_OPTIONS == *BUILD_HDF5* ]]; then
+  echo "CREATE_BUILD_SCRIPT_HDF5"
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-hdf5-generic.sh > tmp/compile.cmake.hdf5.gcc.sh
+  chmod a+rx ./tmp/compile.cmake.hdf5.gcc.sh
+fi
+
 # vtk
 if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
   echo "CREATE_BUILD_SCRIPT_VTK"
@@ -125,6 +137,8 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
   echo "CREATE_BUILD_SCRIPT_OPENCASCADE"
   sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-cmake-opencascade-generic.sh > tmp/compile.cmake.opencascade.gcc.sh
   chmod a+rx ./tmp/compile.cmake.opencascade.gcc.sh
+#  sed -f CompileScripts/sed-script-x64_cygwin-options-gcc.sh CompileScripts/post-install-opencascade-linux.sh > tmp/post-install-opencascade-linux.sh
+#  chmod a+rx ./tmp/post-install-opencascade-linux.sh
 fi
 
 # mmg
@@ -167,7 +181,7 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   ./tmp/compile.make.tcl.gcc.sh >& ./tmp/stdout.tcl.txt
 fi
 
-# python 2.7
+## python
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "BUILD_PYTHON"
   ./tmp/compile.cmake.python.gcc.sh >& ./tmp/stdout.python.gcc.txt
@@ -209,6 +223,12 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_GDCM* ]]; then
   ./tmp/compile.cmake.gdcm.gcc.sh >& ./tmp/stdout.gdcm.gcc.txt
 fi
 
+# hdf5
+if [[ $SV_SUPER_OPTIONS == *BUILD_HDF5* ]]; then
+  echo "BUILD_HDF5"
+  ./tmp/compile.cmake.hdf5.gcc.sh >& ./tmp/stdout.hdf5.gcc.txt
+fi
+
 # vtk
 if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
   echo "BUILD_VTK"
@@ -225,6 +245,7 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
   echo "BUILD_OPENCASCADE"
   ./tmp/compile.cmake.opencascade.gcc.sh >& ./tmp/stdout.opencascade.gcc.txt
+#  ./tmp/post-install-opencascade-linux.sh >& ./tmp/stdout.post-install-linux.opencascade.txt
 fi
 
 # mmg

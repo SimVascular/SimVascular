@@ -66,6 +66,7 @@ MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include/mitk/ui_files \
            -I$(MITK_BINDIR)/include/mitk/AlgorithmsExt \
            -I$(MITK_BINDIR)/include/mitk/AlgorithmsExt/include \
+           -I$(MITK_BINDIR)/include/mitk/Annotation/include \
            -I$(MITK_BINDIR)/include/mitk/AppUtil/include \
            -I$(MITK_BINDIR)/include/mitk/Core \
            -I$(MITK_BINDIR)/include/mitk/Core/include \
@@ -164,7 +165,6 @@ MITK_LIBS += \
            $(LIBFLAG)CTKPluginFramework$(LIBLINKEXT) \
            $(LIBFLAG)CTKScriptingPythonCore$(LIBLINKEXT) \
            $(LIBFLAG)CTKScriptingPythonWidgets$(LIBLINKEXT) \
-           $(LIBFLAG)CTKVisualizationVTKCore$(LIBLINKEXT) \
            $(LIBFLAG)CTKWidgets$(LIBLINKEXT) \
            $(LIBFLAG)CTKXNATCore$(LIBLINKEXT) \
            $(LIBFLAG)mbilog$(LIBLINKEXT) \

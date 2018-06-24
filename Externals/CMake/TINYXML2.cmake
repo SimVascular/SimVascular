@@ -42,6 +42,11 @@ endif()
 
 set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 
+# Make custom install to install relative and move to correct location
+set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
+  COMMAND ${CMAKE_COMMAND} -E copy_directory share ${SV_EXTERNALS_${proj}_BIN_DIR}
+  )
+
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
@@ -73,7 +78,7 @@ else()
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DCMAKE_MACOSX_RPATH:BOOL=ON
       -DBUILD_TESTING:BOOL=OFF
-      -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
+      -DCMAKE_INSTALL_PREFIX:STRING=share
       ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
     )
 endif()

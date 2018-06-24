@@ -65,8 +65,8 @@ REPLACEME_SV_CMAKE_CMD -G REPLACEME_SV_CMAKE_GENERATOR \
    -DQt5Sql_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5Sql \
    -DQt5Svg_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5Svg \
    -DQt5UiTools_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5UiTools \
-   -DQt5WebKitWidgets_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5WebKitWidgets \
-   -DQt5WebKit_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5WebKit \
+   -DQt5WebEngineWidgets_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5WebEngineWidgets \
+   -DQt5WebEngine_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5WebEngine \
    -DQt5Widgets_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5Widgets \
    -DQt5XmlPatterns_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5XmlPatterns \
    -DQt5Xml_DIR:PATH=REPLACEME_SV_QT5_DIR/lib/cmake/Qt5Xml \
