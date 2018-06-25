@@ -9,5 +9,6 @@
         <file>coronal.png</file>
         <file>CreateSV.png</file>
         <file>OpenSV.png</file>
+        <file>ImageNavigator.png</file>
     </qresource>
 </RCC>
