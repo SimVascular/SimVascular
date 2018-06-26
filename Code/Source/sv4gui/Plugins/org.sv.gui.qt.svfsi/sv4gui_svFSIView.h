@@ -1,0 +1,200 @@
+
+#ifndef sv4guisvFSIVIEW_H
+#define sv4guisvFSIVIEW_H
+
+#include "sv4gui_MitksvFSIJob.h"
+#include "sv4gui_svFSIBCWidget.h"
+#include "sv4gui_QmitkFunctionality.h"
+#include "sv4gui_svFSIUtil.h"
+
+#include <sv4gui_QmitkFunctionality.h>
+#include <berryIBerryPreferences.h>
+
+#include <QWidget>
+#include <QProcess>
+#include <QMessageBox>
+#include <QListWidget>
+#include <QDoubleValidator>
+#include <QIntValidator>
+
+namespace Ui {
+class sv4guisvFSIView;
+}
+
+class sv4guisvFSIView : public sv4guiQmitkFunctionality
+{
+    Q_OBJECT
+
+public:
+    static const QString EXTENSION_ID;\
+
+    sv4guisvFSIView();
+
+    virtual ~sv4guisvFSIView();
+
+public slots:
+
+    void LoadJob();
+
+    void SetupInternalSolverPaths();
+
+    void SetNsd(const QString &text);
+
+    void AddMeshComplete();
+
+    void SelectDomain(const QString &name);
+
+    void DeleteDomain();
+
+    void ChangeDomainType(int type);
+
+    void AddEquation();
+
+    void ClearEquation();
+
+    void SelectEquation();
+
+    void SaveProps();
+
+    void AddOutput();
+
+    void ClearOutput();
+
+    void SaveOutputs();
+
+    void SaveAdvanced();
+
+    void ResetEquation();
+
+    void SaveLinearSolver();
+
+    void ShowNSWidget();
+
+    void AddBC();
+
+    void ModifyBC();
+
+    void RemoveBC();
+
+    void ShowRemesher();
+
+    void ShowEdgeSize();
+
+    void SaveRemesher();
+
+    void SaveSimParameters();
+
+    void CreateInputFile();
+
+    void RunSimulation();
+
+    void CreateNewJob();
+
+    void SaveJob();
+
+    void StopSimulation();
+
+    void Initialize();
+
+public:
+
+    virtual void CreateQtPartControl(QWidget *parent) override;
+
+    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+
+    virtual void NodeChanged(const mitk::DataNode* node) override;
+
+    virtual void NodeAdded(const mitk::DataNode* node) override;
+
+    virtual void NodeRemoved(const mitk::DataNode* node) override;
+
+//    virtual void Activated() override;
+
+//    virtual void Deactivated() override;
+
+    virtual void Visible() override;
+
+    virtual void Hidden() override;
+
+    virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+
+    void DataChanged();
+
+    QString GetJobPath();
+
+    void UpdateJobStatus();
+
+//    void ClearAll();
+
+//    void AddObservers();
+
+//    void RemoveObservers();
+
+#if defined(Q_OS_WIN)
+    QString FindLatestKey(QString key, QStringList keys);
+    QString GetRegistryValue(QString category, QString key);
+#endif
+
+private:
+    QWidget* m_Parent;
+
+    Ui::sv4guisvFSIView *ui;
+
+    sv4guiMitksvFSIJob* m_MitkJob;
+    sv4guisvFSIJob* m_Job;
+
+    mitk::DataNode::Pointer m_JobNode;
+
+    QString m_Internalsv4guisvFSISolverPath;
+    QString m_Externalsv4guisvFSISolverPath;
+    QString m_InternalMPIExecPath;
+
+    QList<QLabel *> propL;
+    QList<QLineEdit *> propB;
+
+    QDoubleValidator* m_RealVal;
+    QIntValidator* m_IntVal;
+
+    bool m_EnableSave;
+
+    sv4guisvFSIUtil sv4guisvFSIUtil;
+};
+
+class sv4guisvFSISolverProcessHandler : public QObject
+{
+    Q_OBJECT
+
+public:
+    sv4guisvFSISolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=NULL);
+    virtual ~sv4guisvFSISolverProcessHandler();
+
+    void Start();
+
+    void KillProcess();
+
+public slots:
+
+    void AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
+
+    void UpdateStatus();
+
+private:
+
+    QProcess* m_Process;
+
+    QWidget* m_Parent;
+
+    QMessageBox* m_MessageBox;
+
+    mitk::DataNode::Pointer m_JobNode;
+
+    QTimer* m_Timer;
+
+    int m_StartStep;
+
+    int m_TotalSteps;
+
+    QString m_RunDir;
+};
+
+#endif // sv4guisvFSIVIEW_H
