@@ -1,6 +1,5 @@
 #set(lib ${SV_LIB_MODULE_IMAGEPROCESSING_NAME})
 set(lib "_simvascular_module_imageprocessing")
-message("imageproc ${lib}")
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(

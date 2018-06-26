@@ -4,13 +4,16 @@
 #include <QmitkFunctionality.h>
 #include <QString>
 #include <string>
+
 #include "sv4gui_ImageProcessingUtils.h"
 #include "sv4gui_DataNodeOperationInterface.h"
 #include "sv4gui_DataNodeOperation.h"
-#include <mitkImage.h>
 #include <sv4gui_ImageSeedContainer.h>
 #include <sv4gui_ImageSeedInteractor.h>
 #include <sv4gui_ImageSeedMapper.h>
+
+#include <mitkImage.h>
+
 
 namespace Ui {
 class sv4guiImageProcessing;

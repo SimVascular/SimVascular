@@ -8,11 +8,8 @@
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
 
-#include <vtkMarchingCubes.h>
-#include <vtkImageCast.h>
 #include <itkMetaImageIO.h>
 #include <itkImageFileWriter.h>
-#include <vtkMetaImageWriter.h>
 #include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkGeodesicActiveContourLevelSetImageFilter.h"
@@ -31,12 +28,17 @@
 #include "itkGrayscaleDilateImageFilter.h"
 #include "itkGrayscaleErodeImageFilter.h"
 #include "itkBinaryBallStructuringElement.h"
-#include "vtkPolyDataConnectivityFilter.h"
-#include "vtkCellLocator.h"
 #include <itkThresholdImageFilter.h>
 #include <itkRescaleIntensityImageFilter.h>
 #include <itkCollidingFrontsImageFilter.h>
 #include <itkMinimumImageFilter.h>
+
+#include <vtkMarchingCubes.h>
+#include <vtkImageCast.h>
+#include "vtkPolyDataConnectivityFilter.h"
+#include "vtkCellLocator.h"
+#include <vtkMetaImageWriter.h>
+
 sv4guiImageProcessingUtils::sv4guiImageProcessingUtils(){
 
 }

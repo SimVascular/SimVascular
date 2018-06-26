@@ -2,20 +2,21 @@
 #include "sv4gui_ImageProcessingUtils.h"
 #include "ui_sv4gui_ImageProcessing.h"
 #include "sv4gui_VtkUtils.h"
+#include <sv4gui_ImageSeedMapper.h>
+#include <sv4gui_ImageSeedInteractor.h>
+#include <sv4gui_Seg3D.h>
+#include <sv4gui_MitkSeg3D.h>
 
 #include <vtkImageData.h>
+#include <vtkSmartPointer.h>
+
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkImage.h>
 #include <mitkImageCast.h>
-#include <vtkSmartPointer.h>
-#include <sv4gui_Seg3D.h>
-#include <sv4gui_MitkSeg3D.h>
 
-#include <sv4gui_ImageSeedMapper.h>
-#include <sv4gui_ImageSeedInteractor.h>
 
 #include <usModuleRegistry.h>
 #include <usGetModuleContext.h>

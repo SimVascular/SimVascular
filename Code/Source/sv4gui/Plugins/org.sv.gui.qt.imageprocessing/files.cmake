@@ -24,7 +24,7 @@ set(UI_FILES
 
 set(CACHED_RESOURCE_FILES
   plugin.xml
-  resources/hello.png
+  resources/image_processing.png
 )
 
 set(QRC_FILES

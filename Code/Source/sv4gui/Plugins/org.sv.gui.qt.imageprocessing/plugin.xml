@@ -5,7 +5,7 @@
     <view id="org.sv.views.imageprocessing"
           name="Image Processing"
           class="sv4guiImageProcessing"
-          icon="resources/hello.png" />
+          icon="resources/image_processing.png" />
   </extension>
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">

@@ -29,7 +29,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(lib ${SV_LIB_MODULE_SEGMENTATION_NAME})
-message("segmentation ${lib}")
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(

@@ -1,9 +1,11 @@
 #include "sv4gui_ImageSeedInteractor.h"
+#include "sv4gui_ImageSeedContainer.h"
+
 #include "mitkInteractionPositionEvent.h"
 #include "mitkInternalEvent.h"
-#include "sv4gui_ImageSeedContainer.h"
 #include "mitkBaseRenderer.h"
 #include "mitkRenderingManager.h"
+
 #include <usModuleRegistry.h>
 #include <usGetModuleContext.h>
 #include <usModule.h>

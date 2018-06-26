@@ -7,7 +7,7 @@ class sv4guiImageProcessingPluginActivator :
         public QObject, public ctkPluginActivator
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org_sv_gui_qt_hello")
+    Q_PLUGIN_METADATA(IID "org_sv_gui_qt_imageprocessing")
     Q_INTERFACES(ctkPluginActivator)
 
 public:
