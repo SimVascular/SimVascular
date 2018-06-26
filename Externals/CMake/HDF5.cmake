@@ -63,7 +63,6 @@ else()
     BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
     DEPENDS ${${proj}_DEPENDENCIES}
     PATCH_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
-    INSTALL_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_INSTALL}
     UPDATE_COMMAND ""
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
@@ -82,4 +81,8 @@ else()
 endif()
 
 # HDF5 variables used later on
-set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/share/cmake)
+if(WIN32)
+  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/cmake)
+else()
+  set(SV_EXTERNALS_${proj}_CMAKE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/share/cmake)
+endif()

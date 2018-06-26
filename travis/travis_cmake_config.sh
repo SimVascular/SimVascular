@@ -41,7 +41,7 @@ then
 fi
 
 #cmake
-export REPLACEME_SV_CMAKE_CMD="cmake"
+export REPLACEME_SV_CMAKE_CMD="/usr/local/bin/cmake"
 export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
 export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_MAKE_CMD="make -j8"

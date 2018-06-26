@@ -1,4 +1,4 @@
-EXTERNALS_TOP=/usr/local/sv/ext
+EXTERNALS_TOP=/usr/local/sv/ext/2018.05/release
 EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 
 #
@@ -71,6 +71,7 @@ rm -Rf $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP/src
 cp -Rf BuildHelpers $EXTERNALS_TOP/src
+cp -Rf ../../Patches $EXTERNALS_TOP/src/BuildHelpers
 
 #
 # let's do it

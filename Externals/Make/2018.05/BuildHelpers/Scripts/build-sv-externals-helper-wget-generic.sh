@@ -9,9 +9,9 @@ if [[ $SV_SUPER_OPTIONS == *WGET_TCL* ]]; then
   rm -Rf tcltk
   mkdir -p tcltk
   pushd tcltk
-  wget $PARENT_URL/tcltk/tcl8.6.8-src.tar.gz
+  wget $PARENT_URL/tcltk/tcl8.6.4-src.tar.gz
   wget $PARENT_URL/tcltk/tcllib-1.17.tar.gz
-  wget $PARENT_URL/tcltk/tk8.6.8-src.tar.gz
+  wget $PARENT_URL/tcltk/tk8.6.4-src.tar.gz
   wget $PARENT_URL/tcltk/tklib-0.6.tar.tgz
   popd
 fi
@@ -48,6 +48,16 @@ if [[ $SV_SUPER_OPTIONS == *WGET_NUMPY* ]]; then
   popd
 fi
 
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *WGET_TINYXML2* ]]; then
+  echo "WGET_TINYXML2"
+  rm -Rf tinyxml2
+  mkdir -p tinyxml2
+  pushd tinyxml2
+  wget $PARENT_URL/tinyxml2/tinyxml2-6.2.0.tar.gz
+  popd
+fi
+
 # qt
 if [[ $SV_SUPER_OPTIONS == *WGET_QT* ]]; then
   echo "WGET_QT"
@@ -64,7 +74,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_FREETYPE* ]]; then
   rm -Rf freetype
   mkdir -p freetype
   pushd freetype
-  wget $PARENT_URL/freetype/freetype-2.5.5.tar.gz
+  #wget $PARENT_URL/freetype/freetype-2.5.5.tar.gz
   wget $PARENT_URL/freetype/ft263.zip
   popd
 fi

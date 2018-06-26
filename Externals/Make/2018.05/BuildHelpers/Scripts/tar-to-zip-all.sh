@@ -45,6 +45,15 @@ mkdir -p zip_output_tmp
 # numpy
 # NOTE: numpy is contained in the python zip
 
+# tinyxml2
+if [[ $SV_SUPER_OPTIONS == *ZIP_TINYXML2* ]]; then
+  echo "ZIP_TINYXML2"
+  REPLACEME_TAR -C zip_output_tmp/ -xvzf tar_output/$SV_TAR_FILE_PREFIX.REPLACEME_SV_TINYXML2_DIR.tar.gz
+  pushd zip_output_tmp
+  REPLACEME_ZIP -r ../zip_output/$SV_ZIP_FILE_PREFIX.REPLACEME_SV_TINYXML2_DIR.zip REPLACEME_SV_TINYXML2_DIR
+  popd
+fi
+
 # qt
 if [[ $SV_SUPER_OPTIONS == *ZIP_QT* ]]; then
   echo "ZIP_QT"

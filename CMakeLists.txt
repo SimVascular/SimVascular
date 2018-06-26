@@ -37,7 +37,7 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.6.0)
+cmake_minimum_required(VERSION 3.7.0)
 
 if (POLICY CMP0040)
   cmake_policy(SET CMP0040 OLD)
@@ -88,6 +88,36 @@ include(SimVascularFunctionCheckCompilerFlags)
 
 #-----------------------------------------------------------------------------
 # Externals!
+
+set(SV_EXTERNALS_VERSION_NUMBER "2018.01" CACHE STRING "SimVascular Externals Release Version")
+mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
+
+if(APPLE)
+  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
+  set(SV_EXTERNALS_PREBUILT_QT_PATH "" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+elseif(LINUX)
+  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
+  if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.6.3/5.6.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)     
+  else()
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
+  endif()
+elseif(WIN32)
+  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" ON)
+  if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.6.3/5.6.3/msvc2015_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")     
+  else()
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
+  endif()
+endif()
+
+mark_as_advanced(SV_EXTERNALS_USE_PREBUILT_QT)
+mark_as_advanced(SV_EXTERNALS_PREBUILT_QT_PATH)
+
 set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals-build/svExternals/bin")
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 ExternalProject_Add(Externals
@@ -105,7 +135,10 @@ ExternalProject_Add(Externals
     -DCMAKE_MACOSX_RPATH:BOOL=ON
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_EXAMPLES:BOOL=OFF
-    -DSV_EXTERNALS_VERSION_NUMBER:STRING=2018.01
+    -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
+    -DSV_EXTERNALS_USE_PREBUILT_QT:BOOL=${SV_EXTERNALS_USE_PREBUILT_QT}
+    -DSV_EXTERNALS_PREBUILT_QT_PATH:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
+    -DQt5_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
     -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
@@ -139,7 +172,7 @@ ExternalProject_Add(SimVascular
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=ON
-    -DSV_EXTERNALS_VERSION_NUMBER:STRING=2018.01
+    -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
     -DSV_USE_FREETYPE:BOOL=ON
     ${freetype_shared_option}
     -DSV_USE_GDCM:BOOL=ON
@@ -159,6 +192,10 @@ ExternalProject_Add(SimVascular
     -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     -DQT_DLL_PATH:PATH=${qt5_installed_prefix}/bin
     -DQT_PLUGIN_PATH:PATH=${qt5_installed_prefix}/plugins
+    -DSV_EXTERNALS_USE_PREBUILT_QT:BOOL=${SV_EXTERNALS_USE_PREBUILT_QT}
+    -DSV_EXTERNALS_PREBUILT_QT_PATH:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
+    -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
+    -DQt5_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}
     ${SV_ADDITIONAL_CMAKE_ARGS}
     )
 #-----------------------------------------------------------------------------

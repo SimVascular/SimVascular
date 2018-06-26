@@ -62,9 +62,12 @@ CLUSTER = x64_cygwin
 #       should be replaced with additional variables
 
 SV_COMPILER = msvc
-SV_COMPILER_VERSION = 18.0
+#SV_COMPILER_VERSION = 18.0
+SV_COMPILER_VERSION = 19.0
 
-CXX_COMPILER_VERSION = msvc-18.0
+#CXX_COMPILER_VERSION = msvc-18.0
+CXX_COMPILER_VERSION = msvc-19.0
+
 FORTRAN_COMPILER_VERSION = ifort
 
 # optionally override with cluster options
@@ -173,10 +176,11 @@ SV_USE_VTK = 1
 SV_USE_VTK_SHARED = 1
 
 # -----------------------------------------------------
-# Compile with ITK
+# Compile with ITK (ITK uses HDF5)
 # -----------------------------------------------------
 
 SV_USE_ITK = 1
+SV_USE_HDF5 = 1
 
 # -----------------------------------------------------
 # Compile with VMTK
@@ -235,28 +239,29 @@ ifeq ($(CLUSTER), x64_macosx)
   SVEXTERN_COMPILER_VERSION = clang-7.0
 endif
 
+#SV_EXTERNALS_VERSION_NUMBER = 2018.01
+SV_EXTERNALS_VERSION_NUMBER = 2018.05
+
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
     OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
-
-SV_EXTERNALS_VERSION_NUMBER = 2018.01
 
 # -------------------------------------------
 #   Release version numbers for SimVascular
@@ -405,6 +410,9 @@ ifeq ($(CLUSTER), x64_cygwin)
   ifeq ($(CXX_COMPILER_VERSION), msvc-18.0)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs12.5.x64_cygwin.mk
   endif
+  ifeq ($(CXX_COMPILER_VERSION), msvc-19.0)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.0.x64_cygwin.mk
+  endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.ifort.x64_cygwin.mk
         GLOBAL_DEFINES += -DSV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
@@ -487,7 +495,9 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/sv/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
-	  ../Code/Source/sv2/Segmentation
+	  ../Code/Source/sv2/Segmentation \
+	  ../Code/Source/sv3/Common \
+	  ../Code/Source/sv3/Path
 else
   LIBDIRS += \
           ../Code/Source/sv/Utils \
@@ -503,7 +513,9 @@ else
 	  ../Code/Source/sv/Geometry \
 	  ../Code/Source/sv2/ImageProcessing \
 	  ../Code/Source/sv2/PostProcessing \
-	  ../Code/Source/sv2/Segmentation
+	  ../Code/Source/sv2/Segmentation \
+	  ../Code/Source/sv3/Common \
+	  ../Code/Source/sv3/Path
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -624,6 +636,9 @@ ifeq ($(SV_USE_MITK),1)
   ifeq ($(SV_USE_OPENCASCADE),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/OCCT
   endif
+  ifeq ($(SV_USE_PYTHON),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.pythondatanodes
+  endif
 endif
 
 #
@@ -631,6 +646,7 @@ endif
 #
 
 SV_LIB_ADAPTOR_NAME=_simvascular_adaptor
+SV_LIB_COMMON_NAME=_simvascular_common
 SV_LIB_GEOM_NAME=_simvascular_geom
 SV_LIB_GLOBALS_NAME=_simvascular_globals
 SV_LIB_IMAGE_NAME=_simvascular_image
@@ -648,6 +664,7 @@ SV_LIB_MODULE_QTWIDGETS_NAME=_simvascular_module_qtwidgets
 SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
 SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
+SV_LIB_PATH_NAME=_simvascular_path
 SV_LIB_POLYDATA_SOLID_NAME=_simvascular_polydata_solid
 SV_LIB_POST_NAME=_simvascular_post
 SV_LIB_PYTHON_INTERP_NAME=_simvascular_python_interp
@@ -663,7 +680,6 @@ SV_LIB_VTKSVFILTERS_NAME=_simvascular_vtksvfilters
 SV_LIB_VTKSVGEOMETRY_NAME=_simvascular_vtksvgeometry
 SV_LIB_VTKSVNURBS_NAME=_simvascular_vtksvnurbs
 SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
-SV_LIB_PATH_NAME=_simvascular_path
 
 #plugin names
 SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application
@@ -675,6 +691,7 @@ SV_PLUGIN_PROJECTMANAGER_NAME=org_sv_gui_qt_projectmanager
 SV_PLUGIN_SEGMENTATION_NAME=org_sv_gui_qt_segmentation
 SV_PLUGIN_SIMULATION_NAME=org_sv_gui_qt_simulation
 SV_PLUGIN_PROJECTDATANODES_NAME=org_sv_projectdatanodes
+SV_PLUGIN_PYTHONDATANODES_NAME=org_sv_pythondatanodes
 
 # Link flags, which also need to be dealt with conditionally depending
 # on which concrete classes derived from SolidModel are being
@@ -839,6 +856,26 @@ ifeq ($(SV_USE_GDCM),1)
 
   ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/gdcm.x64_macosx.mk
+  endif
+
+endif
+
+# ----
+# HDF5
+# ----
+
+ifeq ($(SV_USE_HDF5),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/hdf5.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/hdf5.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/hdf5.x64_macosx.mk
   endif
 
 endif

@@ -29,20 +29,27 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# FREETYPE
+# HDF5
 set(proj HDF5)
 if(SV_USE_${proj})
 
   # If using toplevel dir, foce HDF5_DIR to be the SV_HDF5_DIR set by the
   # simvascular_add_new_external macro
   if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
-      set(${proj}_DIR ${SV_${proj}_DIR}/share/cmake CACHE PATH "Force ${proj} dir to externals" FORCE)
+      if(WIN32)
+        set(${proj}_DIR ${SV_${proj}_DIR}/cmake CACHE PATH "Force ${proj} dir to externals" FORCE)
+      else()
+        set(${proj}_DIR ${SV_${proj}_DIR}/share/cmake CACHE PATH "Force ${proj} dir to externals" FORCE)
+      endif()
+      if(WIN32)
+        set(${proj}_DLL_PATH "${SV_${proj}_DIR}/bin" CACHE PATH "Force HDF5 DLL Path" FORCE)
+      endif()
   endif()
 
   # For itk which manually sets HDF5 dir and we need to override
   set(CMAKE_PREFIX_PATH "${HDF5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
 
-  # Find Freetype
+  # Find HDF5
   simvascular_external(${proj}
     SHARED_LIB ${SV_USE_${proj}_SHARED}
     VERSION ${${proj}_VERSION}

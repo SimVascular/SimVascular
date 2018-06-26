@@ -199,6 +199,13 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args);
 
 PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args);
 
+#if PYTHON_MAJOR_VERSION == 2
+PyMODINIT_FUNC initpyGeom(void);
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyGeom(void);
+#endif
+
 // Helper functions
 // ----------------
 
@@ -319,7 +326,7 @@ PyMODINIT_FUNC initpyGeom(void)
 
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-PyMODINIT_FUNC PyInit_pyRepository(void)
+PyMODINIT_FUNC PyInit_pyGeom(void)
 {
   PyObject *pyC;
   if ( gRepository == NULL ) {
@@ -824,7 +831,7 @@ one optional char, outArray and one int dataType");
   int *vals = new int[nvals];
 
   for (int i =0; i<nvals;i++)
-    vals[i] = PyInt_AsLong(PyList_GetItem(values,i));
+    vals[i] = PyLong_AsLong(PyList_GetItem(values,i));
   
   if(PyErr_Occurred()!=NULL)
   {
@@ -967,7 +974,7 @@ one optional char, outArray and one int dataType");
   int *vals = new int[nvals];
 
   for (int i =0; i<nvals;i++)
-    vals[i] = PyInt_AsLong(PyList_GetItem(values,i));
+    vals[i] = PyLong_AsLong(PyList_GetItem(values,i));
   
   if(PyErr_Occurred()!=NULL)
   {
@@ -1042,7 +1049,7 @@ one optional char, outArray and one int dataType");
   int *vals = new int[nvals];
 
   for (int i =0; i<nvals;i++)
-    vals[i] = PyInt_AsLong(PyList_GetItem(values,i));
+    vals[i] = PyLong_AsLong(PyList_GetItem(values,i));
   
   if(PyErr_Occurred()!=NULL)
   {
@@ -1618,7 +1625,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
   // Create an array, and for each id insert it into the array
   allids = new int[numIds];
   for (int i=0; i<numIds;i++)
-    allids[i]=PyInt_AsLong(PyList_GetItem(idList,i));
+    allids[i]=PyLong_AsLong(PyList_GetItem(idList,i));
 
   if(PyErr_Occurred()!=NULL)
   {
