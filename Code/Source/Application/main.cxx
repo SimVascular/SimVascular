@@ -962,6 +962,7 @@ RegCloseKey(hKey2);
          pluginsToStart.push_back("org_sv_gui_qt_segmentation");
          pluginsToStart.push_back("org_sv_gui_qt_meshing");
          pluginsToStart.push_back("org_sv_gui_qt_simulation");
+         pluginsToStart.push_back("org_sv_gui_qt_imageprocessing");
 #ifdef SV_USE_PYTHON
          pluginsToStart.push_back("org_sv_pythondatanodes");
 #endif
@@ -1137,5 +1138,3 @@ int Tcl_AppInit( Tcl_Interp *interp )
   return TCL_OK;
 
 }
-
-

@@ -1,9 +1,5 @@
-# Copyright (c) Stanford University, The Regents of the University of
-#               California, and others.
-#
+# Copyright (c) 2014-2015 The Regents of the University of California.
 # All Rights Reserved.
-#
-# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -28,23 +24,34 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Plug-ins must be ordered according to their dependencies
+project(org_sv_gui_qt_imageprocessing)
 
-set(SV_PLUGINS
+set(lib org_sv_gui_qt_imageprocessing)
 
-  org.sv.gui.qt.application:ON
+set(SV_LIB_MODULE_IMAGEPROCESSING_NAME "_simvascular_module_imageprocessing")
 
-  org.sv.projectdatanodes:ON
+if(SV_USE_MITK_CONFIG)
+  mitk_create_plugin(
+    EXPORT_DIRECTIVE SV_QT_IMAGEPROCESSING
+    EXPORTED_INCLUDE_SUFFIXES src
+    MODULE_DEPENDS MitkQtWidgets ${SV_LIB_MODULE_PATH_NAME} ${SV_LIB_MODULE_COMMON_NAME} ${SV_LIB_MODULE_IMAGEPROCESSING_NAME} ${SV_LIB_MODULE_MODEL_NAME} ${SV_LIB_MODULE_QTWIDGETS_NAME} ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME}
+  )
+else()
+  simvascular_create_plugin(
+    EXPORT_DIRECTIVE SV_QT_IMAGEPROCESSING
+    MODULE_DEPENDS MitkQtWidgets ${SV_LIB_MODULE_PATH_NAME} ${SV_LIB_MODULE_COMMON_NAME} ${SV_LIB_MODULE_IMAGEPROCESSING_NAME} ${SV_LIB_MODULE_MODEL_NAME} ${SV_LIB_MODULE_QTWIDGETS_NAME} ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME}
+  )
+endif()
 
-  org.sv.pythondatanodes:ON
+if(SV_INSTALL_LIBS)
+    install(TARGETS ${lib}
+        RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR}/plugins COMPONENT CoreExecutables
+        LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR}/plugins COMPONENT CoreLibraries
+        ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR}/plugins COMPONENT CoreLibraries
+    )
+endif()
 
-  org.sv.gui.qt.projectmanager:ON
-  org.sv.gui.qt.datamanager:ON
-  org.sv.gui.qt.pathplanning:ON
-  org.sv.gui.qt.segmentation:ON
-  org.sv.gui.qt.modeling:ON
-  org.sv.gui.qt.meshing:ON
-  org.sv.gui.qt.simulation:ON
-  org.sv.gui.qt.imageprocessing:ON
-
-)
+# foreach(so ${SimVascular_LIBRARIES})
+#   message(WARNING ${so})
+#   target_link_libraries(${lib} PRIVATE ${so})
+# endforeach()
