@@ -61,9 +61,14 @@ CXXSRCS	= \
   sv_sys_geom.cxx sv_ggems.cxx \
   sv_spline.cxx sv_integrate_surface.cxx
 
-DLLHDRS = sv_geom_init.h
+DLLHDRS = sv_geom_init.h 
 
 DLLSRCS = sv_geom_init.cxx
+
+SVPYHDRS = sv_geom_init_py.h
+SVPYSRCS = sv_geom_init_py.cxx
+
+SV_PYTHON_MODULE_NAME = pyGeom
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
 	  $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
