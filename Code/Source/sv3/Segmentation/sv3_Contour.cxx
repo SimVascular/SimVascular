@@ -530,7 +530,7 @@ void Contour::SetContourPoints(std::vector<std::array<double, 3> > contourPoints
 {
     m_ContourPoints=contourPoints;
     if(update)
-    ContourPointsChanged();
+        ContourPointsChanged();
 }
 
 int Contour::GetContourPointNumber()
@@ -599,6 +599,7 @@ Contour* Contour::CreateSmoothedContour(int fourierNumber)
 }
 void Contour::AssignCenterScalingPoints()
 {
+    
     if(m_ControlPoints.size()==0)
     {
         m_ControlPoints.push_back(m_CenterPoint);
@@ -662,9 +663,12 @@ void Contour::CreateCenterScalingPoints()
     }
 
     std::array<double, 3>  scalingPoint;
-    scalingPoint[0]=center[0]+minDis/2;
-    scalingPoint[1]=center[1];
-    scalingPoint[2]=center[2];
+    double vec[3];
+    SegmentationUtils::getOrthogonalVector(m_vtkPlaneGeometry->GetNormal(),vec);
+    scalingPoint[0]=center[0]+minDis/2*vec[0];
+    scalingPoint[1]=center[1]+minDis/2*vec[1];
+    scalingPoint[2]=center[2]+minDis/2*vec[2];
+    
 
     m_CenterPoint = center;
     m_ScalingPoint = scalingPoint;

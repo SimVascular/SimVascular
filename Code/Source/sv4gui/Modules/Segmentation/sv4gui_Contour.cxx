@@ -149,10 +149,8 @@ void sv4guiContour::SetControlPoint(int index, mitk::Point3D point)
 
 void sv4guiContour::PlaceContour(mitk::Point3D point)
 {
-    std::array<double,3> stdPt;
-    for (int i=0; i<3; i++)
-        stdPt[i] = point[i];
-    this->sv3::Contour::PlaceContour(stdPt);
+    PlaceControlPoints(point);
+    ControlPointsChanged();
 }
 
 void sv4guiContour::PlaceControlPoints(mitk::Point3D point)
@@ -210,9 +208,17 @@ void sv4guiContour::SetContourPoints(std::vector<mitk::Point3D> contourPoints, b
             stdPoints[j][i] = contourPoints[j][i];
     }
     
-    this->sv3::Contour::SetContourPoints(stdPoints,update);
+    this->sv3::Contour::SetContourPoints(stdPoints,false);
+    if(update)
+        ContourPointsChanged();
 }
 
+void sv4guiContour::SetContourPoints(std::vector<std::array<double,3> > contourPoints, bool update)
+{
+    this->sv3::Contour::SetContourPoints(contourPoints,false);
+    if(update)
+        ContourPointsChanged();
+}
 
 mitk::Point3D sv4guiContour::GetContourPoint(int index)
 {
@@ -312,6 +318,8 @@ mitk::Point3D sv4guiContour::GetCenterPoint()
     return point;
 }
 
+
+
 sv4guiContour* sv4guiContour::CreateSmoothedContour(int fourierNumber)
 {
     if(m_ContourPoints.size()<3)
@@ -331,8 +339,8 @@ sv4guiContour* sv4guiContour::CreateSmoothedContour(int fourierNumber)
     contour->SetMethod(sv3contour->GetMethod());
     contour->SetPlaced(true);
     contour->SetClosed(sv3contour->IsClosed());
-    contour->sv3::Contour::SetContourPoints(sv3contour->GetContourPoints());
-    //delete sv3contour;
+    contour->SetContourPoints(sv3contour->GetContourPoints());
+    delete sv3contour;
     return contour;
 }
 
@@ -380,13 +388,6 @@ void sv4guiContour::Scale(mitk::Point3D referencePoint, mitk::Point3D oldPoint, 
 bool sv4guiContour::IsOnPlane(const mitk::PlaneGeometry* planeGeometry, double precisionFactor)
 {
     if(m_PlaneGeometry.IsNull() || planeGeometry==NULL) return false;
-
-//    double contourThickness = m_PlaneGeometry->GetExtentInMM( 2 )*precisionFactor;
-//    if(m_PlaneGeometry->IsParallel(planeGeometry)
-//            && m_PlaneGeometry->DistanceFromPlane(planeGeometry)<contourThickness)
-//        return true;
-//    else
-//        return false;
 
     double contourThickness = planeGeometry->GetExtentInMM( 2 )*precisionFactor;
 

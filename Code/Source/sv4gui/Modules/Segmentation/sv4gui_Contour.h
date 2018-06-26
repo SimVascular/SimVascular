@@ -57,12 +57,6 @@ class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContour : public Contour
 
 public:
 
-    //enum SubdivisionType {CONSTANT_TOTAL_NUMBER, CONSTANT_SUBDIVISION_NUMBER,CONSTANT_SPACING};
-
-    //static const int INVALID_INDEX=-2;
-
-    //enum ShapeType {ONLY_CONTOUR, CIRCLE, ELLIPSE,POLYGON,CURVE_POLYGON};
-
     sv4guiContour();
 
     sv4guiContour(const sv4guiContour &other);
@@ -111,8 +105,6 @@ public:
 
     virtual void SetControlPoint(int index, mitk::Point3D point);
 
-//    virtual void SetActualControlPoint(int index, mitk::Point3D point);
-
     void PlaceContour(mitk::Point3D point);
 
     virtual void PlaceControlPoints(mitk::Point3D point);
@@ -133,6 +125,8 @@ public:
     virtual void CreateContourPoints(){}
 
     void SetContourPoints(std::vector<mitk::Point3D> contourPoints, bool update = true);
+    
+    void SetContourPoints(std::vector<std::array<double,3> > contourPoints, bool update=true);
 
     mitk::Point3D GetContourPoint(int index);
 

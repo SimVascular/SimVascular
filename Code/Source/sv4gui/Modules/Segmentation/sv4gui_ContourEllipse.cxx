@@ -81,15 +81,7 @@ void sv4guiContourEllipse::SetAsCircle(bool asCircle)
 
 void sv4guiContourEllipse::SetControlPoint(int index, mitk::Point3D point3d)
 {
-    
-    //temporary convertion here:
-    mitk::Point3D ctrlPt1, ctrlPt2;
-    for (int i=0; i<3; i++)
-    {
-        ctrlPt1[i] = m_ControlPoints[0][i];
-        ctrlPt2[i] = m_ControlPoints[index][i];
-    }
-        
+          
     if(index == 0)
     {
         mitk::Vector3D dirVec=point3d-GetControlPoint(index);
@@ -98,10 +90,7 @@ void sv4guiContourEllipse::SetControlPoint(int index, mitk::Point3D point3d)
     else if(index==1)
     {
         //Scale(ctrlPt1, ctrlPt2, point3d);
-        std::array<double,3> stdpt;
-        for(int i=0; i<3; i++)
-            stdpt[i] = point3d[i];
-        sv3::Contour::Scale(m_ControlPoints[0], m_ControlPoints[index], stdpt);
+        Scale(GetControlPoint(0), GetControlPoint(index), point3d);
     }
     else if ( index < 4 )
     {
@@ -118,13 +107,10 @@ void sv4guiContourEllipse::SetControlPoint(int index, mitk::Point3D point3d)
         mitk::Point3D otherPt3d;
 
         //m_PlaneGeometry->Map(m_ControlPoints[0], centerPoint );
-        m_PlaneGeometry->Map(ctrlPt1, centerPoint );
+        m_PlaneGeometry->Map(GetControlPoint(0), centerPoint );
         m_PlaneGeometry->Map(point3d, point );
-        mitk::Point3D ctrlPt3;
-        for(int i=0; i<3; i++)
-            ctrlPt3[i] = m_ControlPoints[otherIndex][i];
         //m_PlaneGeometry->Map(m_ControlPoints[otherIndex], otherPoint );
-        m_PlaneGeometry->Map(ctrlPt3, otherPoint );
+        m_PlaneGeometry->Map(GetControlPoint(otherIndex), otherPoint );
 
         mitk::Vector2D vec1 = point - centerPoint;
         mitk::Vector2D vec2;
@@ -144,10 +130,10 @@ void sv4guiContourEllipse::SetControlPoint(int index, mitk::Point3D point3d)
             m_PlaneGeometry->Map(otherPoint,otherPt3d);
 
             //m_ControlPoints[otherIndex]=otherPt3d;
-            std::array<double,3> stdPt;
+            std::array<double,3> stdPt2;
             for(int i=0; i<3; i++)
-                stdPt[i] = otherPt3d[i];
-            m_ControlPoints[otherIndex]=stdPt;
+                stdPt2[i] = otherPt3d[i];
+            m_ControlPoints[otherIndex]=stdPt2;
         }
         else if ( vec1.GetNorm() > 0 )
         {
@@ -168,10 +154,10 @@ void sv4guiContourEllipse::SetControlPoint(int index, mitk::Point3D point3d)
             {
                 otherPoint = centerPoint+vec2;
                 m_PlaneGeometry->Map(otherPoint,otherPt3d);
-                std::array<double,3> stdPt;
+                std::array<double,3> stdPt2;
                 for(int i=0; i<3; i++)
-                    stdPt[i] = otherPt3d[i];
-                m_ControlPoints[otherIndex]=stdPt;
+                    stdPt2[i] = otherPt3d[i];
+                m_ControlPoints[otherIndex]=stdPt2;
                 //m_ControlPoints[otherIndex]=otherPt3d;
             }
 
@@ -187,21 +173,14 @@ void sv4guiContourEllipse::CreateContourPoints()
 {
     mitk::Point2D centerPoint, boundaryPoint1,boundaryPoint2;
     //temporary convertion here:
-    mitk::Point3D ctrlPt1, ctrlPt2, ctrlPt3;
-    for (int i=0; i<3; i++)
-    {
-        ctrlPt1[i] = m_ControlPoints[0][i];
-        ctrlPt2[i] = m_ControlPoints[2][i];
-        ctrlPt3[i] = m_ControlPoints[3][i];
-    }
     
     //m_PlaneGeometry->Map(m_ControlPoints[0], centerPoint );
     //m_PlaneGeometry->Map(m_ControlPoints[2], boundaryPoint1 );
     //m_PlaneGeometry->Map(m_ControlPoints[3], boundaryPoint2 );
     
-    m_PlaneGeometry->Map(ctrlPt1, centerPoint );
-    m_PlaneGeometry->Map(ctrlPt2, boundaryPoint1 );
-    m_PlaneGeometry->Map(ctrlPt3, boundaryPoint2 );
+    m_PlaneGeometry->Map(GetControlPoint(0), centerPoint );
+    m_PlaneGeometry->Map(GetControlPoint(2), boundaryPoint1 );
+    m_PlaneGeometry->Map(GetControlPoint(3), boundaryPoint2 );
 
     double radius1 = centerPoint.EuclideanDistanceTo( boundaryPoint1 );
     double radius2 = centerPoint.EuclideanDistanceTo( boundaryPoint2 );
