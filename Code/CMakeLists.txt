@@ -175,24 +175,24 @@ endif(DOXYGEN_FOUND)
 #-----------------------------------------------------------------------------
 # Basic Core Libs
 set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
-	"Source/sv2/Globals"
-	"Source/sv/Utils"
-	"Source/sv/Repository"
-  	"Source/sv3/Path"
-	"Source/sv3/Common"
+  "Source/sv2/Globals"
+  "Source/sv/Utils"
+  "Source/sv/Repository"
+  "Source/sv3/Path"
+  "Source/sv3/Common"
   "Source/vtkSV/Common"
   "Source/vtkSV/Filters"
   "Source/vtkSV/Modules/Boolean"
   "Source/vtkSV/Modules/Geometry"
   "Source/vtkSV/Modules/NURBS"
   "Source/vtkSV/Modules/Parameterization"
-	"Source/sv2/ImageProcessing"
-	"Source/sv/Geometry"
-	"Source/sv2/Segmentation"
-	"Source/sv/Model/SolidModel"
-	"Source/sv2/PostProcessing"
-	"Source/sv/Mesh/MeshObject"
-	"Source/sv/Model/PolyDataSolidModel")
+  "Source/sv2/ImageProcessing"
+  "Source/sv/Geometry"
+  "Source/sv2/Segmentation"
+  "Source/sv/Model/SolidModel"
+  "Source/sv2/PostProcessing"
+  "Source/sv/Mesh/MeshObject"
+  "Source/sv/Model/PolyDataSolidModel")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ if(SV_USE_QT_GUI)
     "Source/sv4gui/Modules/Mesh/Common"
     "Source/sv4gui/Modules/Simulation"
     "Source/sv4gui/Modules/ProjectManagement"
-		"Source/sv4gui/Modules/QtWidgets"
+    "Source/sv4gui/Modules/QtWidgets"
     "Source/sv4gui/Modules/ImageProcessing"
      )
 
