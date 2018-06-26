@@ -164,7 +164,7 @@ void circleContour::AssignCenterScalingPoints()
 {
 }
 
-Contour* circleContour::CreateByFitting(Contour* contour)
+circleContour* circleContour::CreateByFitting(Contour* contour)
 {
     double area=contour->GetArea();
     double radius=sqrt(area/vnl_math::pi);
@@ -291,3 +291,34 @@ void circleContour::CreateContourPoints()
     
 }
 
+circleContour* circleContour::CreateSmoothedContour(int fourierNumber)
+{
+    if(m_ContourPoints.size()<3)
+        return this->Clone();
+
+    circleContour* contour=new circleContour();
+    contour->SetPathPoint(m_PathPoint);
+    std::string method=m_Method;
+    int idx=method.find("Smoothed");
+    if(idx<0)
+        method=method+" + Smoothed";
+
+    contour->SetMethod(method);
+    contour->SetClosed(m_Closed);
+
+    int pointNumber=m_ContourPoints.size();
+
+    int smoothedPointNumber;
+
+    if((2*pointNumber)<fourierNumber)
+        smoothedPointNumber=3*fourierNumber;
+    else
+        smoothedPointNumber=pointNumber;
+
+    cvMath *cMath = new cvMath();
+    std::vector<std::array<double, 3> > smoothedContourPoints=cMath->CreateSmoothedCurve(m_ContourPoints,m_Closed,fourierNumber,0,smoothedPointNumber);
+    delete cMath;
+    contour->SetContourPoints(smoothedContourPoints);
+
+    return contour;
+}

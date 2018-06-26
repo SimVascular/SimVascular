@@ -42,4 +42,10 @@ extern "C" SV_EXPORT_SEGMENTATION typedef struct
   sv3::Contour* geom;
 }pyContour;
 
+extern "C" SV_EXPORT_SEGMENTATION typedef struct
+{
+  PyObject_HEAD
+  cvFactoryRegistrar* registrar;
+}pyContourFactoryRegistrar;
+
 #endif //__SV3_CONTOUR_INIT_PY_H

@@ -147,6 +147,31 @@ static PyTypeObject pyContourType = {
   0,                  /* tp_new */
 };
 
+static PyTypeObject pyContourFactoryRegistrarType = {
+  PyVarObject_HEAD_INIT(NULL, 0)
+  "pyContour.pyContourFactoryRegistrar",             /* tp_name */
+  sizeof(pyContourFactoryRegistrar),             /* tp_basicsize */
+  0,                         /* tp_itemsize */
+  0,                         /* tp_dealloc */
+  0,                         /* tp_print */
+  0,                         /* tp_getattr */
+  0,                         /* tp_setattr */
+  0,                         /* tp_compare */
+  0,                         /* tp_repr */
+  0,                         /* tp_as_number */
+  0,                         /* tp_as_sequence */
+  0,                         /* tp_as_mapping */
+  0,                         /* tp_hash */
+  0,                         /* tp_call */
+  0,                         /* tp_str */
+  0,                         /* tp_getattro */
+  0,                         /* tp_setattro */
+  0,                         /* tp_as_buffer */
+  Py_TPFLAGS_DEFAULT |
+      Py_TPFLAGS_BASETYPE,   /* tp_flags */
+  "cvFactoryRegistrar wrapper  ",           /* tp_doc */
+};
+
 static PyMethodDef pyContourModule_methods[] =
 {
     {"SetContourKernel", (PyCFunction)Contour_SetKernelCmd, METH_VARARGS,NULL},
@@ -168,16 +193,22 @@ PyMODINIT_FUNC initpyContour()
   }
 
   Contour::gCurrentKernel = cKERNEL_INVALID;
-  if (PySys_SetObject("ContourObjectRegistrar",(PyObject*)&Contour::gRegistrar)<0)
-  {
-    fprintf(stdout,"Unable to create ContourObjectRegistrar");
-    return;
-  }
+  //if (PySys_SetObject("ContourObjectRegistrar",(PyObject*)&Contour::gRegistrar)<0)
+  //{
+  //  fprintf(stdout,"Unable to create ContourObjectRegistrar");
+  //  return;
+  //}
   // Initialize
   pyContourType.tp_new=PyType_GenericNew;
+  pyContourFactoryRegistrarType.tp_new = PyType_GenericNew;
   if (PyType_Ready(&pyContourType)<0)
   {
     fprintf(stdout,"Error in pyContourType\n");
+    return;
+  }
+  if (PyType_Ready(&pyContourFactoryRegistrarType)<0)
+  {
+    fprintf(stdout,"Error in pyContourFactoryRegistrarType\n");
     return;
   }
   PyObject* pythonC;
@@ -190,13 +221,20 @@ PyMODINIT_FUNC initpyContour()
   PyRunTimeErr = PyErr_NewException("pyContour.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyContourType);
+  Py_INCREF(&pyContourFactoryRegistrarType);
   PyModule_AddObject(pythonC,"pyContour",(PyObject*)&pyContourType);
+  PyModule_AddObject(pythonC, "pyContourFactoryRegistrar", (PyObject *)&pyContourFactoryRegistrarType);
+  
+  pyContourFactoryRegistrar* tmp = PyObject_New(pyContourFactoryRegistrar, &pyContourFactoryRegistrarType);
+  tmp->registrar = (cvFactoryRegistrar *)&Contour::gRegistrar;
+  PySys_SetObject("ContourObjectRegistrar", (PyObject *)tmp);
+  
   return ;
 
 }
 
 // ------------------
-// Solid_SetKernelCmd
+// Contour_SetKernelCmd
 // ------------------
 
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args)

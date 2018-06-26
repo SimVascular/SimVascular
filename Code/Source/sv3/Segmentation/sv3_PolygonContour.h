@@ -64,6 +64,8 @@ public:
     virtual void AssignCenterScalingPoints() override;
 
     void PlaceControlPoints(std::array<double,3> point) override;
+    
+    ContourPolygon* CreateSmoothedContour(int fourierNumber);
 
   protected:
 

@@ -77,6 +77,8 @@ public:
     virtual void SetThresholdValue(double thresholdValue) override;
     
     virtual double GetThresholdValue() override;
+    
+    thresholdContour* CreateSmoothedContour(int fourierNumber);
 
   protected:
   

@@ -34,12 +34,14 @@
 #include "sv3_ITKLset_ITKUtils.h"
 #include "sv_sys_geom.h"
 #include "sv_vtk_utils.h"
+
 #include "sv3_ITKLevelSet.h"
 #include "sv_Math.h"
 
 #include "sv3_Contour.h"
 #include "sv4gui_Math3.h"
 #include "sv3_SegmentationUtils.h"
+#include "sv3_Contour_init_py.h"
 
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
@@ -121,8 +123,9 @@ Contour::~Contour()
 Contour* Contour::DefaultInstantiateContourObject(cKernelType t, PathElement::PathPoint pathPoint)
 {
   // Get the adapt object factory registrar associated with the python interpreter
-  cvFactoryRegistrar* contourObjectRegistrar;
-  contourObjectRegistrar = (cvFactoryRegistrar *) PySys_GetObject("ContourObjectRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("ContourObjectRegistrar");
+  pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
   if (contourObjectRegistrar==NULL)
   {
     fprintf(stdout,"Cannot get contourObjectRegistrar from pySys");
@@ -182,21 +185,7 @@ void Contour::SetContourID(int contourID)
 
 void Contour::SetPlaneGeometry(vtkPlane * planeGeometry)
 {
-//    if(m_vtkPlaneGeometry)
-//    {
-//        m_vtkPlaneGeometry->Delete();
-//    }
 
-//    if(planeGeometry)
-//    {
-//        m_vtkPlaneGeometry=dynamic_cast<mitk::PlaneGeometry*>(planeGeometry->Clone().GetPointer());
-//    }
-//    else
-//    {
-//        m_vtkPlaneGeometry=NULL;
-//    }
-
-//    m_vtkPlaneGeometry=planeGeometry;
     if(planeGeometry!=NULL)
     {
         m_vtkPlaneGeometry = vtkPlane::New();
@@ -212,52 +201,6 @@ vtkPlane * Contour::GetPlaneGeometry()
 {
     return m_vtkPlaneGeometry;
 }
-
-
-//bool Contour::IsSelected()
-//{
-//    return m_Selected;
-//}
-//
-//void Contour::SetSelected(bool selected)
-//{
-//    m_Selected=selected;
-//}
-
-//bool Contour::IsHovering()
-//{
-//    return m_Hovering;
-//}
-//
-//void Contour::SetHovering(bool hovering)
-//{
-//    m_Hovering=hovering;
-//}
-//
-//bool Contour::IsPlaced()
-//{
-//    return m_Placed;
-//}
-//
-//void Contour::SetPlaced(bool placed)
-//{
-//    m_Placed=placed;
-//}
-//
-//bool Contour::IsExtendable()
-//{
-//    return m_Extendable;
-//}
-//
-//void Contour::SetExtendable(bool extendable)
-//{
-//    m_Extendable=extendable;
-//}
-//
-//Contour::ShapeType Contour::GetShape()
-//{
-//    return m_Shape;
-//}
 
 bool Contour::IsClosed()
 {
@@ -414,11 +357,6 @@ void Contour::SetControlPoint(int index, std::array<double, 3> point)
 
 }
 
-//void Contour::SetActualControlPoint(int index, std::array<double, 3> point)
-//{
-//    m_ControlPoints[index]=point;
-//}
-
 void Contour::SetControlPointSelectedIndex(int index)
 {
     if(index==-1) index=m_ControlPoints.size()-1;
@@ -460,7 +398,6 @@ void Contour::PlaceControlPoints(std::array<double, 3> point)
       m_ControlPoints.push_back( point );
     }
 
-    //m_Placed = true;
     m_ControlPointSelectedIndex = 1;
 }
 
@@ -482,27 +419,6 @@ bool Contour::IsControlPointRemovable(int index)
     return true;
 }
 
-//void Contour::SetPreviewControlPoint(std::array<double, 3>  point )
-//{
-//    m_PreviewControlPoint = point;
-//    m_PreviewControlPointVisible = true;
-//}
-//
-//void Contour::HidePreviewControlPoint()
-//{
-//    m_PreviewControlPointVisible = false;
-//}
-//
-//bool Contour::IsPreviewControlPointVisible()
-//{
-//    return m_PreviewControlPointVisible;
-//}
-//
-//std::array<double, 3>  Contour::GetPreviewControlPoint()
-//{
-//    return m_PreviewControlPoint;
-//}
-
 void Contour::ClearContourPoints()
 {
     m_ContourPoints.clear();
@@ -523,7 +439,6 @@ void Contour::CreateContour()
 
 void Contour::ControlPointsChanged(){
     CreateContour();
-    //    this->Modified();
 }
 
 void Contour::SetContourPoints(std::vector<std::array<double, 3> > contourPoints, bool update)
@@ -571,14 +486,12 @@ Contour* Contour::CreateSmoothedContour(int fourierNumber)
 
     Contour* contour=new Contour();
     contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_vtkPlaneGeometry);
     std::string method=m_Method;
     int idx=method.find("Smoothed");
     if(idx<0)
         method=method+" + Smoothed";
 
     contour->SetMethod(method);
-    //contour->SetPlaced(true);
     contour->SetClosed(m_Closed);
 
     int pointNumber=m_ContourPoints.size();
@@ -650,7 +563,7 @@ void Contour::CreateCenterScalingPoints()
         for (int j=0;j<3;j++)
             contourPoints[j] = m_ContourPoints[i][j];
         m_vtkPlaneGeometry->ProjectPoint(contourPoints, point);
-        double dis=sqrt(pow(m_ContourPoints[i][0]-point[0],2)+pow(m_ContourPoints[i][1]-point[1],2)+pow(m_ContourPoints[i][2]-point[2],2));
+        double dis=sqrt(pow(center[0]-point[0],2)+pow(center[1]-point[1],2)+pow(center[2]-point[2],2));
         if(firstTime)
         {
             minDis=dis;
@@ -668,8 +581,7 @@ void Contour::CreateCenterScalingPoints()
     scalingPoint[0]=center[0]+minDis/2*vec[0];
     scalingPoint[1]=center[1]+minDis/2*vec[1];
     scalingPoint[2]=center[2]+minDis/2*vec[2];
-    
-
+      
     m_CenterPoint = center;
     m_ScalingPoint = scalingPoint;
 }
@@ -824,27 +736,6 @@ void Contour::CalculateBoundingBox(double *bounds)
     }
 
 }
-
-//bool Contour::IsOnPlane(const mitk::PlaneGeometry* planeGeometry, double precisionFactor)
-//{
-//    if(m_vtkPlaneGeometry.IsNull() || planeGeometry==NULL) return false;
-//
-////    double contourThickness = m_vtkPlaneGeometry->GetExtentInMM( 2 )*precisionFactor;
-////    if(m_vtkPlaneGeometry->IsParallel(planeGeometry)
-////            && m_vtkPlaneGeometry->DistanceFromPlane(planeGeometry)<contourThickness)
-////        return true;
-////    else
-////        return false;
-//
-//    double contourThickness = planeGeometry->GetExtentInMM( 2 )*precisionFactor;
-//
-//    double ang=m_vtkPlaneGeometry->Angle(planeGeometry);
-//    double dis=std::abs(m_vtkPlaneGeometry->SignedDistance(planeGeometry->GetOrigin()));
-//    if( (ang<0.02||ang>3.12) && dis<contourThickness)
-//        return true;
-//    else
-//        return false;
-//}
 
 PathElement::PathPoint Contour::GetPathPoint()
 {

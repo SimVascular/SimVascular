@@ -75,7 +75,9 @@ public:
 
     virtual void AssignCenterScalingPoints() override;
 
-    static Contour* CreateByFitting(Contour* contour);
+    static circleContour* CreateByFitting(Contour* contour);
+    
+    circleContour* CreateSmoothedContour(int fourierNumber);
     
     virtual void CreateContourPoints() override;
 

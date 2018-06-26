@@ -73,6 +73,8 @@ public:
     void SetLevelSetParas(svLSParam* paras);
     
     svLSParam* GetLevelSetParas();
+    
+    levelSetContour* CreateSmoothedContour(int fourierNumber);
 
   protected:
 

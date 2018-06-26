@@ -155,26 +155,6 @@ public:
 
     void SetContourID(int contourID);
 
-//    bool IsSelected();
-//
-//    void SetSelected(bool selected=true);
-//
-//    bool IsHovering();
-//
-//    void SetHovering(bool hovering=true);
-//
-//    bool IsPlaced();
-//
-//    void SetPlaced(bool placed=true);
-//
-//    bool IsExtendable();
-//
-//    void SetExtendable(bool extendable=true);
-//
-//    bool IsInitiallyPlaced(){return m_InitiallyPlaced;}
-//
-//    void SetInitiallyPlaced(bool placed){m_InitiallyPlaced=placed;}
-
     bool IsClosed();
 
     void SetClosed(bool closed=true);
@@ -217,8 +197,6 @@ public:
 
     virtual void SetControlPoint(int index, std::array<double,3> point);
 
-//    virtual void SetActualControlPoint(int index, std::array<double,3> point);
-
     void SetControlPointSelectedIndex(int index);
 
     void DeselectControlPoint();
@@ -238,10 +216,6 @@ public:
     bool IsControlPointRemovable(int index);
 
     void SetPreviewControlPoint(std::array<double,3> point );
-
-    //void HidePreviewControlPoint();
-
-    //bool IsPreviewControlPointVisible();
 
     std::array<double,3> GetPreviewControlPoint();
 
@@ -316,17 +290,9 @@ public:
     
   protected:
 
-    //bool m_Selected;
-
-    //bool m_Hovering;
-
-    //bool m_Placed;
-
     int m_ContourID;
 
     PathElement::PathPoint m_PathPoint;
-
-    //bool m_Extendable;
 
     ShapeType m_Shape;
 
@@ -337,8 +303,6 @@ public:
     bool m_Closed;
 
     bool m_Finished;
-
-    //mitk::PlaneGeometry::Pointer m_vtkPlaneGeometry;
     
     vtkPlane * m_vtkPlaneGeometry;
 
@@ -349,6 +313,7 @@ public:
     int m_ControlPointSelectedIndex;
 
     int m_MinControlPointNumber;
+    
     int m_MaxControlPointNumber;
 
     std::vector<std::array<double,3> > m_ControlPoints;
@@ -358,10 +323,6 @@ public:
     int m_ControlPointNonRemovableIndices[5];
 
     bool m_InitiallyPlaced;
-
-    //std::array<double,3> m_PreviewControlPoint;
-
-    //bool m_PreviewControlPointVisible;
 
     vtkImageData* m_VtkImageSlice;
 

@@ -57,6 +57,8 @@ public:
     virtual void CreateContourPoints() override;
 
     static Contour* CreateByFitting(Contour* contour, int divisionNumber = 12);
+    
+    ContourSplinePolygon* CreateSmoothedContour(int fourierNumber);
 
   protected:
 

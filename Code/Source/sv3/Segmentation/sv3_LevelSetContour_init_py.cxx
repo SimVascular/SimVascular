@@ -31,8 +31,8 @@
 
 #include "SimVascular.h"
 #include "sv_misc_utils.h"
-//#include "sv3_LevelSetContour_init_py.h"
 #include "sv3_Contour.h"
+#include "sv3_Contour_init_py.h"
 #include "sv3_LevelSetContour.h"
 //#include "sv_adapt_utils.h"
 #include "sv_arg.h"
@@ -83,8 +83,9 @@ initpylevelSetContour()
 
   // Associate the adapt registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  cvFactoryRegistrar* contourObjectRegistrar =
-    (cvFactoryRegistrar *)PySys_GetObject("ContourObjectRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("ContourObjectRegistrar");
+  pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
 
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
@@ -94,7 +95,8 @@ initpylevelSetContour()
   else {
     return;
   }
-  PySys_SetObject("ContourObjectRegistrar",(PyObject*)contourObjectRegistrar);
+  tmp->registrar = contourObjectRegistrar;
+  PySys_SetObject("ContourObjectRegistrar",(PyObject*)tmp);
 
   PyObject* pythonC;
   pythonC = Py_InitModule("pylevelSetContour", levelSetContour_methods);
@@ -113,8 +115,9 @@ PyObject*  levelSetContour_AvailableCmd(PyObject* self, PyObject* args)
 
 PyObject* levelSetContour_RegistrarsListCmd(PyObject* self, PyObject* args)
 {
-  cvFactoryRegistrar *contourObjectRegistrar =
-    (cvFactoryRegistrar *) PySys_GetObject("ContourObjectRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("ContourObjectRegistrar");
+  pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
 
   char result[255];
   PyObject* pyPtr=PyList_New(8);

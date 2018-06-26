@@ -168,3 +168,35 @@ void thresholdContour::CreateContourPoints()
 
     return;
 }
+
+thresholdContour* thresholdContour::CreateSmoothedContour(int fourierNumber)
+{
+    if(m_ContourPoints.size()<3)
+        return this->Clone();
+
+    thresholdContour* contour=new thresholdContour();
+    contour->SetPathPoint(m_PathPoint);
+    std::string method=m_Method;
+    int idx=method.find("Smoothed");
+    if(idx<0)
+        method=method+" + Smoothed";
+
+    contour->SetMethod(method);
+    contour->SetClosed(m_Closed);
+
+    int pointNumber=m_ContourPoints.size();
+
+    int smoothedPointNumber;
+
+    if((2*pointNumber)<fourierNumber)
+        smoothedPointNumber=3*fourierNumber;
+    else
+        smoothedPointNumber=pointNumber;
+
+    cvMath *cMath = new cvMath();
+    std::vector<std::array<double, 3> > smoothedContourPoints=cMath->CreateSmoothedCurve(m_ContourPoints,m_Closed,fourierNumber,0,smoothedPointNumber);
+    delete cMath;
+    contour->SetContourPoints(smoothedContourPoints);
+
+    return contour;
+}
