@@ -100,8 +100,8 @@ p, li { white-space: pre-wrap; }
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>644</width>
-        <height>242</height>
+        <width>638</width>
+        <height>247</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -135,6 +135,13 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButtonUpdateStyle">
+     <property name="text">
+      <string>Update Style</string>
+     </property>
     </widget>
    </item>
    <item>
