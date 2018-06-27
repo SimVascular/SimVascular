@@ -36,6 +36,7 @@
 #include "Python.h"
 #include "sv3SegmentationExports.h"
 #include "sv3_Contour.h"
+#include "sv_FactoryRegistrar.h"
 
 
 extern "C" SV_EXPORT_SEGMENTATION typedef struct

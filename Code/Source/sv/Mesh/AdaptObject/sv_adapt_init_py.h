@@ -35,8 +35,15 @@
 #include "SimVascular.h"
 #include "Python.h"
 #include "svAdaptorExports.h" // For exports
+#include "sv_FactoryRegistrar.h"
 
 extern "C" SV_EXPORT_ADAPTOR int Adapt_pyInit();
+
+extern "C" SV_EXPORT_ADAPTOR typedef struct
+{
+  PyObject_HEAD
+  cvFactoryRegistrar* registrar;
+}pyAdaptObjectRegistrar;
 
 #if PYTHON_MAJOR_VERSION == 2
 SV_EXPORT_ADAPTOR PyMODINIT_FUNC  initpyMeshAdapt();

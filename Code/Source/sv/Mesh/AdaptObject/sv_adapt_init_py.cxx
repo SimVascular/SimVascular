@@ -221,6 +221,31 @@ static PyMethodDef pyAdaptMesh_methods[] = {
   {NULL, NULL}
 };
 
+static PyTypeObject pyAdaptObjectRegistrarType = {
+  PyVarObject_HEAD_INIT(NULL, 0)
+  "pyMeshAdapt.pyAdaptObjectRegistrar",             /* tp_name */
+  sizeof(pyAdaptObjectRegistrar),             /* tp_basicsize */
+  0,                         /* tp_itemsize */
+  0,                         /* tp_dealloc */
+  0,                         /* tp_print */
+  0,                         /* tp_getattr */
+  0,                         /* tp_setattr */
+  0,                         /* tp_compare */
+  0,                         /* tp_repr */
+  0,                         /* tp_as_number */
+  0,                         /* tp_as_sequence */
+  0,                         /* tp_as_mapping */
+  0,                         /* tp_hash */
+  0,                         /* tp_call */
+  0,                         /* tp_str */
+  0,                         /* tp_getattro */
+  0,                         /* tp_setattro */
+  0,                         /* tp_as_buffer */
+  Py_TPFLAGS_DEFAULT |
+      Py_TPFLAGS_BASETYPE,   /* tp_flags */
+  "pyAdaptObjectRegistrar wrapper  ",           /* tp_doc */
+};
+
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyAdaptMeshmodule = {
    PyModuleDef_HEAD_INIT,
@@ -243,14 +268,6 @@ initpyMeshAdapt()
     gRepository= new cvRepository();
     fprintf(stdout,"New gRepository created from cv_adapt_init\n");
   }
-  if (PySys_SetObject("AdaptObjectRegistrar",(PyObject*)&cvAdaptObject::gRegistrar)<0)
-  {
-    fprintf(stdout,"Unable to create AdaptObjectRegistrar\n");
-    return;
-
-
-  }
-
   // Initialize
   cvAdaptObject::gCurrentKernel = KERNEL_INVALID;
 
@@ -259,13 +276,17 @@ initpyMeshAdapt()
 #endif
 
   pyAdaptObjectType.tp_new=PyType_GenericNew;
+  pyAdaptObjectRegistrarType.tp_new = PyType_GenericNew;
   if (PyType_Ready(&pyAdaptObjectType)<0)
   {
     fprintf(stdout,"Error in pyAdaptMeshType\n");
     return;
-
   }
-
+  if (PyType_Ready(&pyAdaptObjectRegistrarType)<0)
+  {
+    fprintf(stdout,"Error in pyAdaptObjectRegistrarType\n");
+    return;
+  }
   PyObject* pythonC;
   pythonC = Py_InitModule("pyMeshAdapt",pyAdaptMesh_methods);
 
@@ -278,11 +299,16 @@ initpyMeshAdapt()
 
   PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
+  
   Py_INCREF(&pyAdaptObjectType);
+  Py_INCREF(&pyAdaptObjectRegistrarType);
+  PyModule_AddObject(pythonC, "pyAdaptObjectRegistrar", (PyObject *)&pyAdaptObjectRegistrarType);
   PyModule_AddObject(pythonC,"pyAdaptObject",(PyObject*)&pyAdaptObjectType);
-    return;
-
-
+    
+  pyAdaptObjectRegistrar* tmp = PyObject_New(pyAdaptObjectRegistrar, &pyAdaptObjectRegistrarType);
+  tmp->registrar = (cvFactoryRegistrar *)&cvAdaptObject::gRegistrar;
+  PySys_SetObject("AdaptObjectRegistrar", (PyObject *)tmp);
+  return;
  }
 #endif
 
@@ -297,13 +323,6 @@ PyInit_pyMeshAdapt()
     gRepository= new cvRepository();
     fprintf(stdout,"New gRepository created from cv_adapt_init\n");
   }
-  if (PySys_SetObject("AdaptObjectRegistrar",(PyObject*)&cvAdaptObject::gRegistrar)<0)
-  {
-    fprintf(stdout,"Unable to create AdaptObjectRegistrar\n");
-
-    Py_RETURN_NONE;
-
-  }
 
   // Initialize
   cvAdaptObject::gCurrentKernel = KERNEL_INVALID;
@@ -313,13 +332,18 @@ PyInit_pyMeshAdapt()
 #endif
 
   pyAdaptObjectType.tp_new=PyType_GenericNew;
+  pyAdaptObjectRegistrarType.tp_new = PyType_GenericNew;
   if (PyType_Ready(&pyAdaptObjectType)<0)
   {
     fprintf(stdout,"Error in pyAdaptMeshType\n");
     Py_RETURN_NONE;
 
   }
-
+  if (PyType_Ready(&pyAdaptObjectRegistrarType)<0)
+  {
+    fprintf(stdout,"Error in pyAdaptObjectRegistrarType\n");
+    Py_RETURN_NONE;
+  }
   PyObject* pythonC;
 
   pythonC = PyModule_Create(&pyAdaptMeshmodule);
@@ -333,9 +357,14 @@ PyInit_pyMeshAdapt()
   PyRunTimeErr = PyErr_NewException("pyMeshAdapt.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
   Py_INCREF(&pyAdaptObjectType);
+  Py_INCREF(&pyAdaptObjectRegistrarType);
+  PyModule_AddObject(pythonC, "pyAdaptObjectRegistrar", (PyObject *)&pyAdaptObjectRegistrarType);
   PyModule_AddObject(pythonC,"pyAdaptObject",(PyObject*)&pyAdaptObjectType);
-
-    return pythonC;
+  
+  pyAdaptObjectRegistrar* tmp = PyObject_New(pyAdaptObjectRegistrar, &pyAdaptObjectRegistrarType);
+  tmp->registrar = (cvFactoryRegistrar *)&cvAdaptObject::gRegistrar;
+  PySys_SetObject("AdaptObjectRegistrar", (PyObject *)tmp);
+  return pythonC;
 
  }
 #endif

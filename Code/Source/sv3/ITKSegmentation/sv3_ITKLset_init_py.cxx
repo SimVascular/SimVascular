@@ -52,22 +52,11 @@ int Itklset_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   PyInit_pyItkls();
 #endif
-
-  //Itkls2d_pyInit();
-  Itkls3d_pyInit();
-  Itkutils_pyInit();
-
   return Py_OK;
 
 }
-PyObject* hello(PyObject* self, PyObject* args)
-{
-  char *s = "Hello from C!";
-  fprintf(stdout,"%s\n",s);
-  return Py_BuildValue("s", s);
-}
+
 PyMethodDef pyItkls_methods[] = {
-    {"hello", hello, METH_VARARGS,"Say hello in C"},
     {NULL, NULL,0,NULL},
 };
 
@@ -96,12 +85,15 @@ initpyItkls(void)
     PyModule_AddObject(pyItklsm,"error",SegErr);
 
     PyObject* pyItkls2D=Itkls2d_pyInit();
+    Py_INCREF(pyItkls2D);
     PyModule_AddObject(pyItklsm,"Itkls2d",pyItkls2D);
 
     PyObject* pyItkls3D=Itkls3d_pyInit();
+    Py_INCREF(pyItkls3D);
     PyModule_AddObject(pyItklsm,"Itkls3d",pyItkls3D);
 
     PyObject* pyItkUtils=Itkutils_pyInit();
+    Py_INCREF(pyItkUtils);
     PyModule_AddObject(pyItklsm,"Itkutils",pyItkUtils);
 }
 #endif
@@ -118,12 +110,15 @@ PyInit_pyItkls(void)
     PyModule_AddObject(pyItklsm,"error",SegErr);
 
     PyObject* pyItkls2D=Itkls2d_pyInit();
+    Py_INCREF(pyItkls2D);
     PyModule_AddObject(pyItklsm,"Itkls2d",pyItkls2D);
 
     PyObject* pyItkls3D=Itkls3d_pyInit();
+    Py_INCREF(pyItkls3D);
     PyModule_AddObject(pyItklsm,"Itkls3d",pyItkls3D);
 
     PyObject* pyItkUtils=Itkutils_pyInit();
+    Py_INCREF(pyItkUtils);
     PyModule_AddObject(pyItklsm,"Itkutils",pyItkUtils);
     return pyItklsm;
 }

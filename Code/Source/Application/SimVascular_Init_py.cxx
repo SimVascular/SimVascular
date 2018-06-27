@@ -127,7 +127,7 @@ void SimVascular_pyInit()
 #endif
 
 #ifdef SV_USE_ITK
-  //initpyItkls();
+  initpyItkls();
 #endif
 
 #ifdef SV_USE_TETGEN_ADAPTOR
@@ -155,7 +155,7 @@ void SimVascular_pyInit()
     PyImport_AppendInittab("pySplinePolygonContour",PyInit_pySplinePolygonContour);
     PyImport_AppendInittab("pySolid2",PyInit_pySolid2);
     PyImport_AppendInittab("pySolidPolydata",PyInit_pySolidPolydata);
-    PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
+    //PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
     
 #ifdef SV_USE_VMTK
    PyImport_AppendInittab("pyVMTKUtils",PyInit_pyVMTKUtils);

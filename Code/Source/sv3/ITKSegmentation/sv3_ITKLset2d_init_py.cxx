@@ -200,7 +200,12 @@ static struct PyModuleDef Itkls2dmodule = {
 PyObject* Itkls2d_pyInit(){
 
 	//Usage: CVPYTHONFunctionInit(Prefix,FunctionName,TclName)
-
+    pyLevelSetType.tp_new=PyType_GenericNew;
+	if (PyType_Ready(&pyLevelSetType)<0)
+    {
+      fprintf(stdout,"Error in pyLevelSetType\n");
+    }
+    
     PyObject *pyItkls2D;
 #if PYTHON_MAJOR_VERSION == 2
     pyItkls2D = Py_InitModule("Itkls2d",Itkls2d_methods);
@@ -212,7 +217,7 @@ PyObject* Itkls2d_pyInit(){
     Py_INCREF(&pyLevelSetType);
     PyModule_AddObject(pyItkls2D,"pyLevelSet",(PyObject*)&pyLevelSetType);
 
-	return pyItkls2D;
+    return pyItkls2D;
 
 }
 

@@ -392,7 +392,7 @@ int PythonShell_Init(int argc, char *argv[])
   SimVascular_pyInit();
 #endif
 
-  //SimVascular_pyImport();
+  SimVascular_pyImport();
 
    //PyImport_ImportModule("pyRepository");
   // Initialize python thread support. This function should first be
