@@ -29,7 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SimVascular.h"
-#include "Python.h"
+#ifdef SV_USE_PYTHON
+  #include "Python.h"
+#endif
 #include "sv_StrPts.h"
 #include "sv3_ITKLset_ITKUtils.h"
 #include "sv_sys_geom.h"
@@ -41,8 +43,9 @@
 #include "sv3_Contour.h"
 #include "sv4gui_Math3.h"
 #include "sv3_SegmentationUtils.h"
-#include "sv3_Contour_init_py.h"
-
+#ifdef SV_USE_PYTHON
+  #include "sv3_Contour_init_py.h"
+#endif
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkPolyData.h>
@@ -117,6 +120,7 @@ Contour::~Contour()
 {
 }
 
+#ifdef SV_USE_PYTHON
 // --------------------------------
 // DefaultInstantiateContourObject
 // --------------------------------
@@ -146,6 +150,7 @@ Contour* Contour::DefaultInstantiateContourObject(cKernelType t, PathElement::Pa
   return contour;
 }
 
+#endif
 std::string Contour::GetClassName()
 {
     return "Contour";
