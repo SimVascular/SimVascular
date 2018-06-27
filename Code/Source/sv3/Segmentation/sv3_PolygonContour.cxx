@@ -31,6 +31,7 @@
 
 #include "sv3_PolygonContour.h"
 #include "sv_Math.h"
+#include  <cmath>
 
 using sv3::ContourPolygon;
 ContourPolygon::ContourPolygon() : Contour()

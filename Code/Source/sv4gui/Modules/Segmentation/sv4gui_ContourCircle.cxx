@@ -87,15 +87,9 @@ void sv4guiContourCircle::CreateContourPoints()
 {
     mitk::Point2D centerPoint, boundaryPoint;
 
-    mitk::Point3D ctrlPt0, ctrlPt1;
-    for (int i=0; i<3; i++)
-    {
-        ctrlPt0[i]=m_ControlPoints[0][i];
-        ctrlPt1[i]=m_ControlPoints[1][i];
-    }   
-    m_PlaneGeometry->Map(ctrlPt0, centerPoint );
+    m_PlaneGeometry->Map(GetControlPoint(0), centerPoint );
 
-    m_PlaneGeometry->Map(ctrlPt1, boundaryPoint );
+    m_PlaneGeometry->Map(GetControlPoint(1), boundaryPoint );
 
     double radius = centerPoint.EuclideanDistanceTo( boundaryPoint );
 

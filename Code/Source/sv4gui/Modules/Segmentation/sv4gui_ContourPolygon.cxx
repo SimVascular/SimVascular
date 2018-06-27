@@ -95,21 +95,16 @@ void sv4guiContourPolygon::SetControlPoint(int index, mitk::Point3D point)
 
     if(index<0||index>m_ControlPoints.size()-1) return;
 
-    mitk::Point3D stdPt;
-    for(int i=0;i<3;i++)
-        stdPt[i] = m_ControlPoints[index][i];
     
     if(index==0)
     {
-        mitk::Vector3D dirVec=point-stdPt;
+        mitk::Vector3D dirVec=point-GetControlPoint(index);
         Shift(dirVec);
     }
     else if(index==1)
     {
         mitk::Point3D tmpPt;
-        for(int i=0;i<3;i++)
-            tmpPt[i]=m_ControlPoints[0][i];
-        Scale(tmpPt, stdPt, point);
+        Scale(GetControlPoint(0), GetControlPoint(index), point);
     }
     else if(index<m_ControlPoints.size())
     {

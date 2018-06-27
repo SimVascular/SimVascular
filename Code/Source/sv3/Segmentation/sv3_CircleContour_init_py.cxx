@@ -75,6 +75,7 @@ PyMethodDef circleContour_methods[] = {
   {NULL, NULL}
 };
 
+#if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC
 initpyCircleContour()
 {
@@ -107,6 +108,53 @@ initpyCircleContour()
   }
 }
 
+#endif 
+#if PYTHON_MAJOR_VERSION == 3
+static struct PyModuleDef pyCircleContourModule = {
+   PyModuleDef_HEAD_INIT,
+   "pyCircleContour",   /* name of module */
+   "", /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   circleContour_methods
+};
+#endif
+
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC
+PyInit_pyCircleContour()
+{
+  printf("  %-12s %s\n","","circleContour Enabled");
+
+  // Associate the adapt registrar with the python interpreter so it can be
+  // retrieved by the DLLs.
+  PyObject* pyGlobal = PySys_GetObject("ContourObjectRegistrar");
+  pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
+  cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
+  
+  if (contourObjectRegistrar != NULL) {
+          // Register this particular factory method with the main app.
+          contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_CIRCLE,
+      (FactoryMethodPtr) &CreateCircleContour );
+  }
+  else {
+    Py_RETURN_NONE;
+  }
+  
+  tmp->registrar = contourObjectRegistrar;
+  PySys_SetObject("ContourObjectRegistrar",(PyObject*)tmp);
+
+  PyObject* pythonC;
+  pythonC = PyModule_Create(&pyCircleContourModule);
+  if(pythonC==NULL)
+  {
+    fprintf(stdout,"Error in initializing pyCircleContour\n");
+    Py_RETURN_NONE;
+  }
+  return pythonC;
+}
+#endif
+
 PyObject*  circleContour_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","circleContour Available");
@@ -122,13 +170,13 @@ PyObject* circleContour_RegistrarsListCmd(PyObject* self, PyObject* args)
   char result[255];
   PyObject* pyPtr=PyList_New(8);
   sprintf( result, "Contour object registrar ptr -> %p\n", contourObjectRegistrar );
-  PyList_SetItem(pyPtr,0,PyString_FromFormat(result));
+  PyList_SetItem(pyPtr,0,PyBytes_FromFormat(result));
 
   for (int i = 0; i < 7; i++) {
       sprintf( result,"GetFactoryMethodPtr(%i) = %p\n",
       i, (contourObjectRegistrar->GetFactoryMethodPtr(i)));
       fprintf(stdout,result);
-      PyList_SetItem(pyPtr,i+1,PyString_FromFormat(result));
+      PyList_SetItem(pyPtr,i+1,PyBytes_FromFormat(result));
   }
   return pyPtr;
 }

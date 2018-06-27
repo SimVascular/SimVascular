@@ -151,16 +151,16 @@ sv4guiContour* sv4guiContourSplinePolygon::CreateByFitting(sv4guiContour* contou
     controlPoints.insert(controlPoints.begin(),point);
 
     sv4guiContourSplinePolygon* newContour=new sv4guiContourSplinePolygon();
-    newContour->sv4guiContour::SetPathPoint(contour->GetPathPoint());
+    newContour->SetPathPoint(contour->GetPathPoint());
 //    newContour->SetPlaneGeometry(contour->GetPlaneGeometry());
     newContour->SetPlaced(true);
-    newContour->sv4guiContour::SetMethod(contour->sv4guiContour::GetMethod());
-    newContour->sv4guiContour::SetClosed(contour->sv4guiContour::IsClosed());
-    newContour->sv4guiContour::SetControlPoints(controlPoints);
+    newContour->SetMethod(contour->GetMethod());
+    newContour->SetClosed(contour->IsClosed());
+    newContour->SetControlPoints(controlPoints);
 
-    newContour->sv4guiContour::SetSubdivisionType(contour->sv4guiContour::GetSubdivisionType());
-    newContour->sv4guiContour::SetSubdivisionSpacing(contour->sv4guiContour::GetSubdivisionSpacing());
-    newContour->sv4guiContour::SetSubdivisionNumber(contour->sv4guiContour::GetSubdivisionNumber());
+    newContour->SetSubdivisionType(contour->GetSubdivisionType());
+    newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+    newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
 
     return newContour;
 }

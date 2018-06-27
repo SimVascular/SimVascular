@@ -35,8 +35,8 @@
 
 sv4guiContourTensionPolygon::sv4guiContourTensionPolygon()
 {
-    sv4guiContour::m_Method="Manual";
-    sv4guiContour::m_Type="TensionPolygon";
+    m_Method="Manual";
+    m_Type="TensionPolygon";
 
     m_SubdivisionRounds=5;
     m_TensionParameter=0.0625;
@@ -93,17 +93,14 @@ void sv4guiContourTensionPolygon::CreateContourPoints()
 
     int controlBeginIndex=2;
 
-    for(int i=controlBeginIndex;i<sv4guiContour::m_ControlPoints.size();i++)
+    for(int i=controlBeginIndex;i<m_ControlPoints.size();i++)
     {
         mitk::Point2D pt2d;
-        mitk::Point3D mitkPt;
-        for (int j=0; j<3; j++)
-            mitkPt[i] = sv4guiContour::m_ControlPoints[j][i];
-        sv4guiContour::m_PlaneGeometry->Map(mitkPt, pt2d );
+        m_PlaneGeometry->Map(GetControlPoint(i), pt2d );
         subdivisionPoints.push_back(pt2d);
     }
 
-    if( sv4guiContour::m_ControlPoints.size() >= sv4guiContour::GetMinControlPointNumber() )
+    if( m_ControlPoints.size() >= GetMinControlPointNumber() )
     {
 
         for( unsigned int i=0; i < m_SubdivisionRounds; i++ )
@@ -175,11 +172,11 @@ void sv4guiContourTensionPolygon::CreateContourPoints()
 
         mitk::Point3D pt3d;
 
-        sv4guiContour::m_PlaneGeometry->Map(*it, pt3d);
+        m_PlaneGeometry->Map(*it, pt3d);
         std::array<double,3> stdPt3d;
         for (int i=0; i<3; i++)
             stdPt3d[i] = pt3d[i];
-        sv4guiContour::m_ContourPoints.push_back(stdPt3d);
+        m_ContourPoints.push_back(stdPt3d);
 
     }
 
@@ -187,9 +184,9 @@ void sv4guiContourTensionPolygon::CreateContourPoints()
 
     //Replace contour points with control points at the same location;
     //The previous contour points are converted from control points by twice mapping ,so they are not exactly equal.
-    for(int i=controlBeginIndex;i<sv4guiContour::m_ControlPoints.size();i++){
+    for(int i=controlBeginIndex;i<m_ControlPoints.size();i++){
         int contourPointIndex=(i-controlBeginIndex)*(1<<m_SubdivisionRounds);
-        sv4guiContour::m_ContourPoints[contourPointIndex]=sv4guiContour::m_ControlPoints[controlBeginIndex];
+        m_ContourPoints[contourPointIndex]=m_ControlPoints[controlBeginIndex];
     }
 
 }

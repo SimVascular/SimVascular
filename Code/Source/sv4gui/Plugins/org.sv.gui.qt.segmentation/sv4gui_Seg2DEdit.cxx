@@ -696,7 +696,6 @@ sv4guiContour* sv4guiSeg2DEdit::PostprocessContour(sv4guiContour* contour)
 
 void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
 {
-    std::cout<<"CreateContours"<<std::endl;
     if(m_cvImage==NULL)
         return;
 
@@ -871,7 +870,6 @@ void sv4guiSeg2DEdit::UpdatePreview()
 
 void sv4guiSeg2DEdit::FinishPreview()
 {
-    std::cout<<"FinishPreview"<<std::endl;
     if(m_PreviewContourModel.IsNull())
          return;
 
@@ -1417,20 +1415,15 @@ void sv4guiSeg2DEdit::CreateManualCircle(bool)
             return;
         }
     }
-    std::cout<<"gui ck1"<<std::endl;
     sv4guiContour* contour=new sv4guiContourCircle();
-    std::cout<<"gui ck2"<<std::endl;
     contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-    std::cout<<"gui ck3"<<std::endl;
     contour->SetPlaced(true);
     contour->SetMethod(contour->GetMethod());
-    std::cout<<"gui ck4"<<std::endl;
     
     centerPoint[0]+=contour->GetPlaneGeometry()->GetSpacing()[0]*contour->GetPlaneGeometry()->GetBounds()[1]/2;
     centerPoint[1]+=contour->GetPlaneGeometry()->GetSpacing()[1]*contour->GetPlaneGeometry()->GetBounds()[3]/2;
     boundaryPoint[0]=centerPoint[0]+radius;
     boundaryPoint[1]=centerPoint[1];
-    std::cout<<"gui ck5"<<std::endl;
     
     mitk::Point3D pt1,pt2;
     contour->GetPlaneGeometry()->Map(centerPoint,pt1);
@@ -1438,14 +1431,10 @@ void sv4guiSeg2DEdit::CreateManualCircle(bool)
     std::vector<mitk::Point3D> controlPoints;
     controlPoints.push_back(pt1);
     controlPoints.push_back(pt2);
-    std::cout<<"gui ck6"<<std::endl;
     contour->SetControlPoints(controlPoints);
-    std::cout<<"gui ck7"<<std::endl;
     contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
-    std::cout<<"gui ck8"<<std::endl;
     contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
     
-    std::cout<<"gui ck9"<<std::endl;
 
     mitk::OperationEvent::IncCurrObjectEventId();
 
@@ -1649,7 +1638,6 @@ void sv4guiSeg2DEdit::CopyContour()
 
 void sv4guiSeg2DEdit::PasteContour()
 {
-std::cout<<"PasteContour" <<std::ends;
     if(m_CopyContour==NULL)
         return;
 
