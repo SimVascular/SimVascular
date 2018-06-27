@@ -205,10 +205,6 @@ target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
   ${CTK_LIBRARIES}
   ${QT_LIBRARIES})
 
-if(SV_USE_PYTHON)
-  target_link_libraries(${SV_EXE} PRIVATE ${PYTHON_LIBRARY})
-endif()
-
 if(WIN32)
   target_link_libraries(${SV_EXE} PRIVATE ${QT_QTMAIN_LIBRARY})
 endif()

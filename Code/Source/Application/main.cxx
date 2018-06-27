@@ -960,7 +960,15 @@ RegCloseKey(hKey2);
        pluginsToStart.push_back("org_mitk_gui_qt_imagenavigator");
        pluginsToStart.push_back("org_mitk_gui_qt_measurementtoolbox");
 #ifdef SV_USE_PYTHON
+#if PYTHON_MAJOR_VERSION == 3
+       SimVascular_pyInit();
+#endif
+       Py_Initialize();
+#if PYTHON_MAJOR_VERSION ==2
+       SimVascular_pyInit();
+#endif
        pluginsToStart.push_back("org_mitk_gui_qt_python");
+       SimVascular_pyImport();
 #endif
        pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
        pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
