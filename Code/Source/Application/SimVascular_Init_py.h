@@ -28,27 +28,14 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*
- * cv_ITKLevelSet_init.h
- *
- *  Created on: Feb 12, 2014
- *      Author: Jameson Merkow
- */
 
-#ifndef CV_ITKLSET_INIT_PY_H_
-#define CV_ITKLSET_INIT_PY_H_
+#ifndef __SIMVASCULAR_INIT_PY_H
+#define __SIMVASCULAR_INIT_PY_H
 
 #include "SimVascular.h"
-#include "Python.h"
-#include "svSegITKExports.h" // For exports
 
-extern "C" SV_EXPORT_SEGITK int Itklset_pyInit();
+extern "C" SV_DLL_EXPORT void SimVascular_pyInit();
 
-#if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_SEGITK PyMODINIT_FUNC  initpyItkls();
-#endif
-#if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SEGITK PyMODINIT_FUNC  PyInit_pyItkls();
-#endif
+extern "C" SV_DLL_EXPORT void SimVascular_pyImport();
 
-#endif /* CV_ITKLSET_INIT_PY_H_ */
+#endif // __SIMVASCULAR_INIT_PY_H

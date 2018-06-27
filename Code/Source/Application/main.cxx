@@ -35,6 +35,7 @@
 
 #ifdef SV_USE_PYTHON
   #include "Python.h"
+  #include "sv_repos_init_py.h"
 #endif
 #include "vtksys/SystemTools.hxx"
 
@@ -122,6 +123,9 @@ errno_t cv_getenv_s(
 #endif
 
 #include "SimVascular_Init.h"
+#ifdef SV_USE_PYTHON
+#include "SimVascular_Init_py.h"
+#endif
 
 #ifdef SV_USE_QT_GUI
 typedef void Tcl_MainLoopProc(void);
@@ -377,10 +381,20 @@ int PythonShell_Init(int argc, char *argv[])
 //  CMakeLoadAllPythonModules();
 
 // CALL SIMVASCULAR PYTHON MODULES HERE
+#if PYTHON_MAJOR_VERSION == 3
+
+  SimVascular_pyInit();
+#endif
 
   // Initialize interpreter.
   Py_Initialize();
+#if PYTHON_MAJOR_VERSION ==2
+  SimVascular_pyInit();
+#endif
 
+  //SimVascular_pyImport();
+
+   //PyImport_ImportModule("pyRepository");
   // Initialize python thread support. This function should first be
   // called from the main thread, after Py_Initialize.
 //#ifndef VTK_NO_PYTHON_THREADS

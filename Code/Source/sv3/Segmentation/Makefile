@@ -46,7 +46,7 @@ HDRS	= sv3_Contour.h sv3_LevelSetContour.h sv3_SegmentationUtils.h sv3_CircleCon
 CXXSRCS	= sv3_Contour.cxx sv3_LevelSetContour.cxx sv3_SegmentationUtils.cxx sv3_CircleContour.cxx sv3_PolygonContour.cxx sv3_SplinePolygonContour.cxx sv3_ThresholdContour.cxx
 
 
-SVPYHDRS = sv3_Contour_init_py.h 
+SVPYHDRS = sv3_Contour_init_py.h sv3_LevelSetContour_init_py.h sv3_CircleContour_init_py.h sv3_PolygonContour_init_py.h sv3_SplinePolygonContour_init_py.h sv3_ThresholdContour_init_py.h
 SVPYSRCS = sv3_Contour_init_py.cxx sv3_LevelSetContour_init_py.cxx sv3_CircleContour_init_py.cxx sv3_PolygonContour_init_py.cxx sv3_SplinePolygonContour_init_py.cxx sv3_ThresholdContour_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \

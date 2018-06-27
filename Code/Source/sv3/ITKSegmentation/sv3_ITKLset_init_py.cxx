@@ -46,7 +46,6 @@ PyMODINIT_FUNC PyInit_pyItkls(void);
 
 int Itklset_pyInit()
 {
-  Py_Initialize();
 
 #if PYTHON_MAJOR_VERSION == 2
   initpyItkls();

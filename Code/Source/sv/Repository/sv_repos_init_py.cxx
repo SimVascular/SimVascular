@@ -161,11 +161,10 @@ PyMODINIT_FUNC initpyRepository(void)
 {
 
   PyObject *pyRepo;
+  gRepository = new cvRepository();
   if ( gRepository == NULL ) {
-    gRepository = new cvRepository();
-    fprintf(stdout, "gRepository created from sv_repos_init\n" );
+    fprintf( stderr, "error allocating gRepository\n" );
     return;
-
   }
   pyRepo = Py_InitModule("pyRepository",pyRepository_methods);
 
@@ -198,7 +197,6 @@ int Repos_pyInit()
 
 {
 
-  Py_Initialize();
 #if PYTHON_MAJOR_VERSION == 2
   initpyRepository();
 #elif PYTHON_MAJOR_VERSION == 3
