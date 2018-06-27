@@ -38,11 +38,11 @@ eqClass::eqClass(const QString& eq)
     if ( eq == "none") {
         return;
     } else if ( eq == "Incomp. fluid" ||  eq == "fluid") {
-        outputNames << "Displacement" << "Velocity" << "Acceleration" << "Pressure" << "WSS" << "Vorticity";
+        outputNames << "Velocity" << "Acceleration" << "Pressure" << "WSS" << "Vorticity";
         fullName = "Incomp. fluid";
         physName = "fluid";
-        isOutsputed[1]=true;
-        isOutsputed[3]=true;
+        isOutsputed[0]=true;
+        isOutsputed[2]=true;
         propNames << "Density" << "Viscosity";
         propVal[0] = 1.0;
         propVal[1] = 0.04;

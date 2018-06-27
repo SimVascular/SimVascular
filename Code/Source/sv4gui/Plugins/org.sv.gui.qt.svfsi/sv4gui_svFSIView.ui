@@ -337,11 +337,14 @@
             </property>
             <item row="1" column="0">
              <widget class="QTabWidget" name="tabWidget">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="tabPosition">
                <enum>QTabWidget::North</enum>
               </property>
               <property name="currentIndex">
-               <number>2</number>
+               <number>5</number>
               </property>
               <widget class="QWidget" name="tab">
                <attribute name="title">
@@ -1426,7 +1429,7 @@
                   <item row="8" column="1">
                    <widget class="QLineEdit" name="lineEditLSAbsTol">
                     <property name="text">
-                     <string>1e-12</string>
+                     <string>1e-4</string>
                     </property>
                    </widget>
                   </item>
@@ -1455,12 +1458,12 @@
                    <widget class="QComboBox" name="comboBoxLSType">
                     <item>
                      <property name="text">
-                      <string>NS</string>
+                      <string>GMRES</string>
                      </property>
                     </item>
                     <item>
                      <property name="text">
-                      <string>GMRES</string>
+                      <string>NS</string>
                      </property>
                     </item>
                     <item>
@@ -1508,9 +1511,12 @@
                     <property name="editable">
                      <bool>false</bool>
                     </property>
+                    <property name="currentText">
+                     <string>Default</string>
+                    </property>
                     <item>
                      <property name="text">
-                      <string>Trilinos-BlockJacobi</string>
+                      <string>Default</string>
                      </property>
                     </item>
                     <item>
@@ -1553,6 +1559,9 @@
                   </item>
                   <item row="0" column="1">
                    <widget class="QComboBox" name="comboBoxRemesher">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
                     <item>
                      <property name="text">
                       <string>None</string>
@@ -1561,11 +1570,6 @@
                     <item>
                      <property name="text">
                       <string>Tetgen</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Meshsim</string>
                      </property>
                     </item>
                    </widget>

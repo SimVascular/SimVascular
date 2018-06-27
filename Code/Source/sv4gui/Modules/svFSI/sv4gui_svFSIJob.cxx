@@ -199,7 +199,7 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
 
                 out << tabS << tabS << "Min dihedral angle: " << eq.rmMinAngle <<endL;
                 out << tabS << tabS << "Max radius ratio: " << eq.rmMaxRadiusRatio << endL;
-                out << tabS << tabS << "Max radius ratio: " << eq.rmFrequency << endL;
+                out << tabS << tabS << "Remesh frequency: " << eq.rmFrequency << endL;
                 out << tabS << tabS << "Frequency for copying data: "  << eq.rmCopyFrequency << endL;
                 out << tabS << "}" << endL << endL;
             }
@@ -224,7 +224,6 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
             }
 
             if(eq.getPhysName()=="struct"){
-                out << tabS << "Equation: struct " << endL;
                 out << tabS << "Constitutive model: " << eq.constitutiveModel << endL  ;
             }
         }

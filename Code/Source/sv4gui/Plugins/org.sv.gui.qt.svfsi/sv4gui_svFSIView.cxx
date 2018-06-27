@@ -235,6 +235,8 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
     //    InitializePreferences(berryprefs);
     this->OnPreferencesChanged(berryprefs);
+
+    ui->comboBoxRemesher->setEnabled(false);
 }
 
 void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
@@ -517,6 +519,9 @@ void sv4guisvFSIView::AddMeshComplete()
 
     auto sv4guisvFSI_dir = sv4guisvFSIUtil.getsv4guisvFSIDir();
 
+    sv4guisvFSI_dir.cdUp();
+    sv4guisvFSI_dir.cd("Meshes");
+
     QString dirPath = QFileDialog::getExistingDirectory(m_Parent
                                                         , tr("Choose Mesh-Complete Directory")
                                                         , sv4guisvFSI_dir.absolutePath());
@@ -694,6 +699,7 @@ void sv4guisvFSIView::AddEquation()
         ui->listEqs->insertItem(0,item);
 //        row=0;
         includingFluid=true;
+        ui->comboBoxRemesher->setEnabled(false);
     }
     else if ( eqName == "FSI" )
     {
@@ -708,6 +714,8 @@ void sv4guisvFSIView::AddEquation()
         ui->listEqs->insertItem(1,item);
 
         includingFluid=true;
+        ui->comboBoxRemesher->setEnabled(true);
+
 //        row
     }
     else
@@ -716,6 +724,8 @@ void sv4guisvFSIView::AddEquation()
         m_Job->m_Eqs.push_back(eq);
         item= new QListWidgetItem(eqName);
         ui->listEqs->addItem(item);
+        ui->comboBoxRemesher->setEnabled(false);
+
 
     }
 
@@ -1441,7 +1451,13 @@ void sv4guisvFSIView::CreateNewJob()
     if (!sv4guisvFSI_folder_node){
       std::cout << "sv4guisvFSI folder node null\n";
     }else {
-        GetDataStorage()->Add(jobNode, sv4guisvFSI_folder_node);
+      GetDataStorage()->Add(jobNode, sv4guisvFSI_folder_node);
+      jobNode->SetSelected(true);
+      sv4guiMitksvFSIJob* mitkJob=dynamic_cast<sv4guiMitksvFSIJob*>(jobNode->GetData());
+
+      m_JobNode = jobNode;
+      m_MitkJob = mitkJob;
+      DataChanged();
     }
 }
 
