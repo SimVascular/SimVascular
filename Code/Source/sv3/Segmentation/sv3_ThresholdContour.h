@@ -33,7 +33,7 @@
 
 #include "SimVascular.h"
 
-#include <svSegmentationExports.h>
+#include <sv3SegmentationExports.h>
 
 #include "sv3_Contour.h"
 #include "sv_RepositoryData.h"

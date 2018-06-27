@@ -36,7 +36,7 @@
 #include "SimVascular.h"
 
 #include <deque>
-#include <svSegmentationExports.h>
+#include <sv3SegmentationExports.h>
 #include "sv_StrPts.h"
 #include "sv3_PathElement.h"
 #include <vtkImageData.h>

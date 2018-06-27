@@ -33,7 +33,7 @@
 #define __SV3_CONTOUR_INIT_PY_H
 
 #include "SimVascular.h"
-#include "svSegmentationExports.h"
+#include "sv3SegmentationExports.h"
 #include "Python.h"
 
 extern "C" SV_EXPORT_SEGMENTATION typedef struct

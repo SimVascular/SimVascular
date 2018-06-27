@@ -34,7 +34,7 @@
 
 set(lib ${SV_LIB_SEGMENTATION_NAME})
 set(export_directive segmentation)
-set(export_file_name svSegmentationExports.h)
+set(export_file_name sv3SegmentationExports.h)
 
 list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
