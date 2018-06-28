@@ -46,8 +46,8 @@ void sv4guisvFSIPluginActivator::start(ctkPluginContext* context)
 
   QmitkNodeDescriptorManager* descriptorManager = QmitkNodeDescriptorManager::GetInstance();
 
-  mitk::NodePredicateDataType::Pointer isProjectFolder = mitk::NodePredicateDataType::New("sv4guisvFSIFolder");
-  descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guisvFSIFolder"), QString(":svFSI.png"), isProjectFolder, descriptorManager));
+    //mitk::NodePredicateDataType::Pointer isProjectFolder = mitk::NodePredicateDataType::New("sv4guisvFSIFolder");
+    //descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guisvFSIFolder"), QString(":svFSI.png"), isProjectFolder, descriptorManager));
 
     BERRY_REGISTER_EXTENSION_CLASS(sv4guisvFSIJobCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guisvFSIView, context)
