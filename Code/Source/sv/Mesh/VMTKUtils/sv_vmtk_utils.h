@@ -90,12 +90,27 @@ SV_EXPORT_VMTK_UTILS int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh
     int useConstantThickness,
     std::string layertThicknessArrayName);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
-    vtkUnstructuredGrid *innerMesh, vtkUnstructuredGrid *boundaryMesh,
+SV_EXPORT_VMTK_UTILS int VMTKUtils_SeparateMeshes(vtkUnstructuredGrid *meshFromTetGen,
+    vtkUnstructuredGrid *boundaryMesh,
+    vtkUnstructuredGrid *innerMesh,
     vtkUnstructuredGrid *surfaceWithSize,
-    std::string cellEntityIdsArrayName,
+    vtkUnstructuredGrid *newMeshVolume,
+    vtkPolyData *newMeshSurface,
     int newRegionBoundaryLayer);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata);
+SV_EXPORT_VMTK_UTILS int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+    vtkPolyData *originalgeom,
+    std::string regionName);
+
+SV_EXPORT_VMTK_UTILS int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+    vtkPolyData *originalgeom,
+    std::string regionName,
+    vtkIdList *excluedList);
+
+SV_EXPORT_VMTK_UTILS int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+    vtkPolyData *originalgeom,
+    std::string regionName,
+    vtkIdList *onlyList,
+    int dummy);
 
 #endif //__CV_VMTK_UTILS_H

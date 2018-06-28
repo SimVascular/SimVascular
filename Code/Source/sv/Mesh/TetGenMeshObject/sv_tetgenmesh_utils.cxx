@@ -1240,8 +1240,8 @@ int TGenUtils_LoadMesh(char *filename,vtkUnstructuredGrid *result)
 }
 
 int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
-    vtkPolyData *originalgeom,std::string newName,
-    std::string originalName)
+    vtkPolyData *originalgeom,
+    std::string regionName)
 {
   int i,j,k;
   int subId;
@@ -1253,10 +1253,8 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   vtkIdType npts;
   vtkIdType *pts;
   double distance;
-  double mappingPt[3];
   double closestPt[3];
   double tolerance = 1.0;
-  double minmax[2];
   double centroid[3];
   int range;
   vtkIdType closestCell;
@@ -1267,9 +1265,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
     vtkSmartPointer<vtkCellLocator>::New();
   vtkSmartPointer<vtkGenericCell> genericCell =
     vtkSmartPointer<vtkGenericCell>::New();
-  vtkSmartPointer<vtkLongArray> currentRegionsLong =
-    vtkSmartPointer<vtkLongArray>::New();
-  vtkSmartPointer<vtkIntArray> currentRegionsInt =
+  vtkSmartPointer<vtkIntArray> currentRegions =
     vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> realRegions =
     vtkSmartPointer<vtkIntArray>::New();
@@ -1279,40 +1275,18 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   locator->SetDataSet(originalgeom);
   locator->BuildLocator();
 
-  //if (VtkUtils_PDCheckArrayName(newgeom,1,newName) != SV_OK)
-  //{
-  //  fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
-  //      	    and named 'ModelFaceID' prior to this function call\n");
-  //  return SV_ERROR;
-  //}
-  if (VtkUtils_PDCheckArrayName(originalgeom,1,originalName) != SV_OK)
+  if (VtkUtils_PDCheckArrayName(originalgeom,1,regionName) != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n");
     return SV_ERROR;
   }
 
-  //currentRegionsInt = static_cast<vtkIntArray*>(newgeom->GetCellData()->GetScalars(newName.c_str()));
-  //currentRegionsInt->GetRange(minmax,0);
-
-  realRegions = static_cast<vtkIntArray*>(originalgeom->GetCellData()->GetScalars(originalName.c_str()));
-
-  range = minmax[1]-minmax[0];
-  int *mapper;
-  mapper = new int[1+range];
-
-  for (i=0;i<range+1;i++)
-  {
-    mapper[i] = -1;
-  }
+  realRegions = static_cast<vtkIntArray*>(originalgeom->GetCellData()->GetScalars(regionName.c_str()));
 
 
   for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
   {
-    //currentValue = currentRegionsInt->GetValue(cellId);
-
-    //if (mapper[currentValue-1] == -1)
-    //{
       newgeom->GetCellPoints(cellId,npts,pts);
       //int eachValue[npts];
       vtkSmartPointer<vtkPoints> polyPts = vtkSmartPointer<vtkPoints>::New();
@@ -1321,33 +1295,220 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
       {
 	polyPtIds->InsertValue(i,i);
 	polyPts->InsertNextPoint(newgeom->GetPoint(pts[i]));
-      //}
       }
       vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
 
       locator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
 	  subId,distance);
-      currentRegionsInt->InsertValue(cellId,realRegions->GetValue(closestCell));
+      currentRegions->InsertValue(cellId,realRegions->GetValue(closestCell));
   }
 
-  //for (i=0;i<range+1;i++)
-  //{
-  //  fprintf(stderr,"Want to see mapper vals: %d is %d\n",i,mapper[i]);
-  //}
-  ////Set original region values
-  //for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
-  //{
-  //  currentValue = currentRegionsInt->GetValue(cellId);
-  //  currentRegionsInt->SetValue(cellId,mapper[currentValue-1]);
-  //}
+  newgeom->GetCellData()->RemoveArray(regionName.c_str());
+  currentRegions->SetName(regionName.c_str());
+  newgeom->GetCellData()->AddArray(currentRegions);
 
-  newgeom->GetCellData()->RemoveArray(newName.c_str());
-  currentRegionsInt->SetName(originalName.c_str());
-  newgeom->GetCellData()->AddArray(currentRegionsInt);
+  newgeom->GetCellData()->SetActiveScalars(regionName.c_str());
 
-  newgeom->GetCellData()->SetActiveScalars(originalName.c_str());
+  return SV_OK;
+}
 
-  delete [] mapper;
+int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+    vtkPolyData *originalgeom,
+    std::string regionName,
+    vtkIdList *excludeList)
+{
+  int i,j,k;
+  int subId;
+  int region;
+  int temp;
+  int flag = 1;
+  int count;
+  int bigcount;
+  vtkIdType npts;
+  vtkIdType *pts;
+  double distance;
+  double closestPt[3];
+  double tolerance = 1.0;
+  double centroid[3];
+  int range;
+  vtkIdType closestCell;
+  vtkIdType cellId;
+  vtkIdType currentValue;
+  vtkIdType realValue;
+  vtkSmartPointer<vtkCellLocator> locator =
+    vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkGenericCell> genericCell =
+    vtkSmartPointer<vtkGenericCell>::New();
+  vtkSmartPointer<vtkPolyData> originalCopy =
+    vtkSmartPointer<vtkPolyData>::New();
+
+  if (excludeList == NULL)
+  {
+    fprintf(stderr,"Cannot give NULL excludeList. Use other reset function without exclude list\n");
+    return SV_ERROR;
+  }
+
+  newgeom->BuildLinks();
+  originalgeom->BuildLinks();
+  originalCopy->DeepCopy(originalgeom);
+
+  if (VtkUtils_PDCheckArrayName(originalCopy,1, regionName) != SV_OK)
+  {
+    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+		    and named 'ModelFaceID' prior to this function call\n",  regionName.c_str());
+    return SV_ERROR;
+  }
+
+  vtkDataArray *testRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
+
+    if (VtkUtils_PDCheckArrayName(newgeom,1, regionName.c_str()) != SV_OK)
+    {
+      fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+          and named 'ModelFaceID' prior to this function call\n", regionName.c_str());
+      return SV_ERROR;
+    }
+
+    vtkDataArray *currentRegions = newgeom->GetCellData()->GetArray(regionName.c_str());
+
+    for (int i=0; i<originalCopy->GetNumberOfCells(); i++)
+    {
+      region = testRegions->GetTuple1(i);
+      if (excludeList->IsId(region) != -1)
+      {
+        originalCopy->DeleteCell(i);
+      }
+    }
+
+    originalCopy->RemoveDeletedCells();
+
+    vtkSmartPointer<vtkCleanPolyData> cleaner =
+      vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->SetInputData(originalCopy);
+    cleaner->Update();
+
+    originalCopy->DeepCopy(cleaner->GetOutput());
+    originalCopy->BuildLinks();
+
+  locator->SetDataSet(originalCopy);
+  locator->BuildLocator();
+  vtkDataArray *realRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
+
+  for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
+  {
+    currentValue = currentRegions->GetTuple1(cellId);
+    if (excludeList->IsId(currentValue) != -1)
+    {
+      continue;
+    }
+
+    newgeom->GetCellPoints(cellId,npts,pts);
+    vtkSmartPointer<vtkPoints> polyPts = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkIdTypeArray> polyPtIds = vtkSmartPointer<vtkIdTypeArray>::New();
+    for (i=0;i<npts;i++)
+    {
+      polyPtIds->InsertValue(i,i);
+      polyPts->InsertNextPoint(newgeom->GetPoint(pts[i]));
+    }
+    vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
+
+    locator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
+	subId,distance);
+    currentRegions->SetTuple1(cellId,realRegions->GetTuple1(closestCell));
+  }
+
+  newgeom->GetCellData()->SetActiveScalars(regionName.c_str());
+
+  return SV_OK;
+}
+
+int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+    vtkPolyData *originalgeom,
+    std::string regionName,
+    vtkIdList *onlyList,
+    int dummy)
+{
+  int i,j,k;
+  int subId;
+  int region;
+  int temp;
+  int flag = 1;
+  int count;
+  int bigcount;
+  vtkIdType npts;
+  vtkIdType *pts;
+  double distance;
+  double closestPt[3];
+  double tolerance = 1.0;
+  double centroid[3];
+  int range;
+  vtkIdType closestCell;
+  vtkIdType cellId;
+  vtkIdType currentValue;
+  vtkIdType realValue;
+  vtkSmartPointer<vtkCellLocator> locator =
+    vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkGenericCell> genericCell =
+    vtkSmartPointer<vtkGenericCell>::New();
+  vtkSmartPointer<vtkPolyData> originalCopy =
+    vtkSmartPointer<vtkPolyData>::New();
+
+  if (onlyList == NULL)
+  {
+    fprintf(stderr,"Cannot give NULL onlyList. Use other reset function without only list\n");
+    return SV_ERROR;
+  }
+
+  newgeom->BuildLinks();
+  originalgeom->BuildLinks();
+  originalCopy->DeepCopy(originalgeom);
+
+  if (VtkUtils_PDCheckArrayName(originalCopy,1, regionName) != SV_OK)
+  {
+    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+		    and named 'ModelFaceID' prior to this function call\n",  regionName.c_str());
+    return SV_ERROR;
+  }
+
+  vtkDataArray *testRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
+
+  if (VtkUtils_PDCheckArrayName(newgeom,1, regionName.c_str()) != SV_OK)
+  {
+    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+        and named 'ModelFaceID' prior to this function call\n", regionName.c_str());
+    return SV_ERROR;
+  }
+
+  vtkDataArray *currentRegions = newgeom->GetCellData()->GetArray(regionName.c_str());
+
+  locator->SetDataSet(originalCopy);
+  locator->BuildLocator();
+  vtkDataArray *realRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
+
+  for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
+  {
+    currentValue = currentRegions->GetTuple1(cellId);
+    if (onlyList->IsId(currentValue) == -1)
+    {
+      continue;
+    }
+
+    newgeom->GetCellPoints(cellId,npts,pts);
+    vtkSmartPointer<vtkPoints> polyPts = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkIdTypeArray> polyPtIds = vtkSmartPointer<vtkIdTypeArray>::New();
+    for (i=0;i<npts;i++)
+    {
+      polyPtIds->InsertValue(i,i);
+      polyPts->InsertNextPoint(newgeom->GetPoint(pts[i]));
+    }
+    vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
+
+    locator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
+	subId,distance);
+    currentRegions->SetTuple1(cellId,realRegions->GetTuple1(closestCell));
+  }
+
+  newgeom->GetCellData()->SetActiveScalars(regionName.c_str());
+
   return SV_OK;
 }
 

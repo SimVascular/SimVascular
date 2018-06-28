@@ -71,7 +71,6 @@
 #ifdef SV_USE_VMTK
   #include "sv_vmtk_utils.h"
   #include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
-  #include "vtkvmtkUnstructuredGridTetraFilter.h"
 #endif
 
 #ifdef SV_USE_MMG
@@ -839,18 +838,18 @@ int cvTetGenMeshObject::GetBoundaryFaces(double angle)
     return SV_ERROR;
   }
 
-  if (meshoptions_.boundarylayermeshflag)
-  {
-    if (surfacemesh_ == NULL)
-    {
-      fprintf(stderr,"Surface mesh should not be null\
-	  to get boundary layer regions\n");
-      return SV_ERROR;
-    }
+  //if (meshoptions_.boundarylayermeshflag)
+  //{
+  //  if (surfacemesh_ == NULL)
+  //  {
+  //    fprintf(stderr,"Surface mesh should not be null\
+	//  to get boundary layer regions\n");
+  //    return SV_ERROR;
+  //  }
 
-    ResetOriginalRegions("ModelFaceID","ModelFaceID");
-    surfacemesh_->DeepCopy(polydatasolid_);
-  }
+  //  ResetOriginalRegions("ModelFaceID");
+  //  surfacemesh_->DeepCopy(polydatasolid_);
+  //}
 
   return SV_OK;
 }
@@ -1886,7 +1885,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   if (meshoptions_.meshwallfirst && !meshoptions_.boundarylayermeshflag)
   {
     GenerateAndMeshCaps();
-    ResetOriginalRegions("ModelFaceID","ModelFaceID");
+    ResetOriginalRegions("ModelFaceID");
   }
 
 #else
@@ -1985,6 +1984,7 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
     return SV_ERROR;
   }
 
+
   //We take the inside surface of the boundary layer mesh and set the
   //member vtkPolyData polydatasolid_ to be equal to this. We will
   //use this to create the volume mesh with TetGen.
@@ -2028,6 +2028,7 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
 #ifdef SV_USE_VMTK
   vtkSmartPointer<vtkIdList> excluded =
     vtkSmartPointer<vtkIdList>::New();
+  int marker;
   int meshcapsonly = 1;
   int preserveedges = 0;
   int captype = 0;
@@ -2036,20 +2037,18 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
   int useSizeFunction = 0;
   int trianglesplitfactor;
   double collapseanglethreshold;
-  std::string markerListName;
   vtkSmartPointer<vtkDoubleArray> meshsizingfunction =
     vtkSmartPointer<vtkDoubleArray>::New();
+  std::string markerListName = "ModelFaceID";
   if (meshoptions_.meshwallfirst)
   {
     collapseanglethreshold = 0.2;
     trianglesplitfactor = 5.0;
-    markerListName = "CellEntityIds";
   }
   else
   {
     collapseanglethreshold = NULL;
     trianglesplitfactor = NULL;
-    markerListName = "ModelFaceID";
   }
   if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
   {
@@ -2066,6 +2065,27 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
     fprintf(stderr,"Got function caps\n");
   }
 
+  vtkDataArray *currentMarkers = polydatasolid_->GetCellData()->GetArray(markerListName.c_str());
+  if (currentMarkers == NULL)
+  {
+    excluded->SetNumberOfIds(1);
+    excluded->InsertId(0,1);
+    cellOffset = 1;
+  }
+  else
+  {
+    cellOffset = -1;
+    for (int i=0; i<polydatasolid_->GetNumberOfCells(); i++)
+    {
+      marker = currentMarkers->GetTuple1(i);
+      excluded->InsertUniqueId(marker);
+      if (marker > cellOffset)
+      {
+        cellOffset = marker;
+      }
+    }
+  }
+
   //We cap the inner surface of the boundary layer mesh
   if (VMTKUtils_Capper(polydatasolid_,captype,trioutput,cellOffset,
 	markerListName) != SV_OK)
@@ -2074,10 +2094,16 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
     return SV_ERROR;
   }
 
+  //Set caps equal to caps on original
+  if (TGenUtils_ResetOriginalRegions(polydatasolid_, originalpolydata_,
+        markerListName, excluded) != SV_OK)
+  {
+    fprintf(stderr,"Problem with name resetting on cap remeshing\n");
+    return SV_ERROR;
+  }
+
   //We use VMTK surface remeshing to remesh just the caps to be
   //the same mesh size as the inner surface of the BL mesh
-  excluded->SetNumberOfIds(1);
-  excluded->InsertId(0,1);
   if (VMTKUtils_SurfaceRemeshing(polydatasolid_,
 	meshoptions_.maxedgesize,meshcapsonly,preserveedges,
 	trianglesplitfactor,collapseanglethreshold,excluded,
@@ -2090,6 +2116,24 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
   fprintf(stderr,"Cannot generate and mesh caps without VMTK\n");
   return SV_ERROR;
 #endif
+
+  // Add wall id back on to the surface
+  vtkSmartPointer<vtkIntArray> wallIds = vtkSmartPointer<vtkIntArray>::New();
+  wallIds->SetNumberOfTuples(polydatasolid_->GetNumberOfCells());
+  wallIds->SetName("WallID");
+  wallIds->FillComponent(0, 0);
+
+  currentMarkers = polydatasolid_->GetCellData()->GetArray(markerListName.c_str());
+  for (int i=0; i<polydatasolid_->GetNumberOfCells(); i++)
+  {
+    marker = currentMarkers->GetTuple1(i);
+    if (excluded->IsId(marker) != -1)
+    {
+      wallIds->SetTuple1(i, 1);
+    }
+  }
+  polydatasolid_->GetCellData()->AddArray(wallIds);
+
 
   return SV_OK;
 }
@@ -2167,15 +2211,6 @@ int cvTetGenMeshObject::AppendBoundaryLayerMesh()
   vtkSmartPointer<vtkvmtkPolyDataToUnstructuredGridFilter>::New();
   vtkSmartPointer<vtkPolyDataNormals> newnormaler =
   vtkSmartPointer<vtkPolyDataNormals>::New();
-  std::string markerListName;
-  if (meshoptions_.boundarylayermeshflag)
-  {
-    markerListName = "CellEntityIds";
-  }
-  else
-  {
-    markerListName = "ModelFaceID";
-  }
 
   if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
     &numBoundaryRegions_,0) != SV_OK)
@@ -2188,34 +2223,24 @@ int cvTetGenMeshObject::AppendBoundaryLayerMesh()
 
   //We append the volume mesh from tetgen, the inner surface, and the
   //boundary layer mesh all together.
-  int newregionboundarylayer = meshoptions_.newregionboundarylayer;
+  vtkSmartPointer<vtkUnstructuredGrid> newVolumeMesh =
+    vtkSmartPointer<vtkUnstructuredGrid>::New();
+  vtkSmartPointer<vtkPolyData> newSurfaceMesh =
+    vtkSmartPointer<vtkPolyData>::New();
+  int giveblnewregion = meshoptions_.newregionboundarylayer;
   fprintf(stdout,"Appending Boundary Layer and Volume Mesh\n");
-  if (VMTKUtils_AppendMesh(volumemesh_,innerblmesh_,boundarylayermesh_,
-    surfacetomesh->GetOutput(),markerListName, newregionboundarylayer) != SV_OK)
+  if (VMTKUtils_SeparateMeshes(volumemesh_,boundarylayermesh_, innerblmesh_,
+    surfacetomesh->GetOutput(), newVolumeMesh, newSurfaceMesh, giveblnewregion) != SV_OK)
   {
-  return SV_ERROR;
-  }
-
-  vtkSmartPointer<vtkvmtkUnstructuredGridTetraFilter> tetrahedralizer =
-      vtkSmartPointer<vtkvmtkUnstructuredGridTetraFilter>::New();
-
-  //Tetrahedralize this mesh
-  tetrahedralizer->SetInputData(volumemesh_);
-  tetrahedralizer->Update();
-
-  //Because no surface ids are obviously retained through this complex
-  //boundary layer mesh, we must regenerate GlobalElementIds,
-  //GlobalNodeIds.
-  volumemesh_->DeepCopy(tetrahedralizer->GetOutput());
-  if (VMTKUtils_InsertIds(volumemesh_,surfacemesh_) != SV_OK)
-  {
-    fprintf(stdout,"Error adding cell and point ids\n");
     return SV_ERROR;
   }
+  volumemesh_->DeepCopy(newVolumeMesh);
 
   //We generate normals for region detection and save in surfacemesh_
-  newnormaler->SetInputData(surfacemesh_);
+  newnormaler->SetInputData(newSurfaceMesh);
   newnormaler->SplittingOff();
+  newnormaler->ComputeCellNormalsOn();
+  newnormaler->ComputePointNormalsOff();
   newnormaler->AutoOrientNormalsOn();
   newnormaler->Update();
 
@@ -2236,7 +2261,7 @@ int cvTetGenMeshObject::AppendBoundaryLayerMesh()
  * to the regions originally identified on the first surface
  * @return SV_OK if executed correctly
  */
-int cvTetGenMeshObject::ResetOriginalRegions(std::string newName,std::string originalName)
+int cvTetGenMeshObject::ResetOriginalRegions(std::string regionName)
 {
   if (polydatasolid_ == NULL || originalpolydata_ == NULL)
   {
@@ -2245,8 +2270,7 @@ int cvTetGenMeshObject::ResetOriginalRegions(std::string newName,std::string ori
     return SV_ERROR;
   }
 
-  if (TGenUtils_ResetOriginalRegions(polydatasolid_,originalpolydata_,
-	newName,originalName)
+  if (TGenUtils_ResetOriginalRegions(polydatasolid_,originalpolydata_, regionName)
       != SV_OK)
   {
     fprintf(stderr,"Error while resetting the original region values\n");
@@ -2313,7 +2337,7 @@ int cvTetGenMeshObject::Adapt()
     return SV_ERROR;
 
   if (TGenUtils_ResetOriginalRegions(surfacemesh_,originalpolydata_,
-	"ModelFaceID","ModelFaceID")
+	"ModelFaceID")
       != SV_OK)
   {
     fprintf(stderr,"Error while resetting the original region values\n");
