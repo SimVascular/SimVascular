@@ -35,7 +35,7 @@ set(SV_PLUGINS
   org.sv.gui.qt.application:ON
 
   org.sv.projectdatanodes:ON
-  
+
   org.sv.pythondatanodes:ON
 
   org.sv.gui.qt.projectmanager:ON
@@ -45,5 +45,6 @@ set(SV_PLUGINS
   org.sv.gui.qt.modeling:ON
   org.sv.gui.qt.meshing:ON
   org.sv.gui.qt.simulation:ON
+  org.sv.gui.qt.imageprocessing:ON
 
 )

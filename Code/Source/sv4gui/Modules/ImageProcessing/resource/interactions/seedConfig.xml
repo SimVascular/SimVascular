@@ -1,0 +1,30 @@
+<config>
+  <!-- Undeclared tags are filled with standard values -->
+  <!-- Mouse Events -->
+  <!-- MousePressEvents -->
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed">
+    <attribute name="EventButton" value="LeftMouseButton" />
+  </event_variant>
+
+  <event_variant class="MousePressEvent" name="SecondaryButtonPressed">
+    <attribute name="EventButton" value="RightMouseButton" />
+  </event_variant>
+
+  <!-- MouseMoveEvents -->
+  <event_variant class="MouseMoveEvent" name="MouseMove" />
+
+  <!-- MouseReleaseEvents -->
+  <event_variant class="MouseReleaseEvent" name="PrimaryButtonReleased">
+    <attribute name="EventButton" value="LeftMouseButton" />
+  </event_variant>
+
+<!-- InteractionKeyEvent -->
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_S">
+    <attribute name="Key" value="S"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_E">
+    <attribute name="Key" value="E"/>
+  </event_variant>
+
+</config>
