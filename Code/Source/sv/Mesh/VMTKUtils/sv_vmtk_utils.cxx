@@ -43,7 +43,6 @@
 
 #include "SimVascular.h"
 #include "sv_tetgenmesh_utils.h"
-#include "vtkSVIOUtils.h"
 
 #include "vtkMath.h"
 #include "vtkAppendPolyData.h"
@@ -1332,8 +1331,6 @@ int VMTKUtils_SeparateMeshes(vtkUnstructuredGrid *meshFromTetGen,
       return SV_ERROR;
     }
 
-    vtkSVIOUtils::WriteVTPFile("/Users/adamupdegrove/Desktop/tmp/SURFACE0.vtp", surface0);
-    vtkSVIOUtils::WriteVTPFile("/Users/adamupdegrove/Desktop/tmp/SURFACE1.vtp", surface1);
     // Append surfaces together
     vtkSmartPointer<vtkAppendPolyData> boundaryAppender =
       vtkSmartPointer<vtkAppendPolyData>::New();
@@ -1342,7 +1339,6 @@ int VMTKUtils_SeparateMeshes(vtkUnstructuredGrid *meshFromTetGen,
     boundaryAppender->Update();
 
     newMeshSurface->DeepCopy(boundaryAppender->GetOutput());
-    vtkSVIOUtils::WriteVTPFile("/Users/adamupdegrove/Desktop/tmp/BOUNDARYAPPENDER.vtp", newMeshSurface);
 
     // Append volumes together
     vtkSmartPointer<vtkAppendFilter> appender =
