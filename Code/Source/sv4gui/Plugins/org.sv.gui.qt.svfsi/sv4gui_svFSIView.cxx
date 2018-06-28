@@ -86,6 +86,23 @@ void sv4guisvFSIView::Initialize(){
   sv4guisvFSIUtil.setDataStorage(GetDataStorage());
   sv4guisvFSIUtil.makeDir();
   sv4guisvFSIUtil.createDataFolder();
+
+  //load all existing jobs
+  auto svFSI_dir = sv4guisvFSIUtil.getsv4guisvFSIDir();
+
+  auto files     = svFSI_dir.entryList();
+
+  for (int i = 0; i < files.size(); i++){
+    auto filename = files[i].toStdString();
+
+    if(filename.find(".fsijob") != std::string::npos){
+      auto fn = svFSI_dir.absolutePath().toStdString().append("/").append(filename);
+
+      std::cout << "loading svfsi job " << fn << "\n";
+
+      LoadJob(fn);
+    }
+  }
 }
 
 void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
@@ -1427,11 +1444,11 @@ void sv4guisvFSIView::CreateNewJob()
         return;
     }
 
-    auto sv4guisvFSI_dir = sv4guisvFSIUtil.getsv4guisvFSIDir();
+    auto dir = sv4guisvFSIUtil.getsv4guisvFSIDir().absolutePath();
 
-    QString dir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose directory to save the job")
-                                                    , sv4guisvFSI_dir.absolutePath());
+    // QString dir = QFileDialog::getExistingDirectory(m_Parent
+    //                                                 , tr("Choose directory to save the job")
+    //                                                 , sv4guisvFSI_dir.absolutePath());
 
     dir=dir.trimmed();
     if(dir.isEmpty())
@@ -1491,6 +1508,27 @@ void sv4guisvFSIView::LoadJob()
 
     auto node = mitk::IOUtil::Load(dir.toStdString().c_str(),
       *GetDataStorage())->ElementAt(0);
+
+    GetDataStorage()->Remove(node);
+
+    mitk::DataNode::Pointer sv4guisvFSI_folder_node = GetDataStorage()->GetNamedNode(sv4guisvFSI_NODE_NAME);
+
+    if (!sv4guisvFSI_folder_node){
+      std::cout << "svFSI folder node doesnt exist\n";
+      return;
+    }
+    GetDataStorage()->Add(node,sv4guisvFSI_folder_node);
+}
+
+void sv4guisvFSIView::LoadJob(std::string jobName)
+{
+    auto node = mitk::IOUtil::Load(jobName.c_str(),
+      *GetDataStorage())->ElementAt(0);
+
+    if (!node){
+      std::cout << "svFSI job with name " << jobName << " doesn't exist\n";
+      return;
+    }
 
     GetDataStorage()->Remove(node);
 
