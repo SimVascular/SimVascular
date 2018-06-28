@@ -28,27 +28,18 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(lib ${SV_LIB_MODULE_SEGMENTATION_NAME})
+#set(lib ${SV_LIB_MODULE_IMAGEPROCESSING_NAME})
+set(lib "_simvascular_module_imageprocessing")
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(
   TARGET ${lib}
-  EXPORT_DIRECTIVE sv4guiModuleSegmentation
+  EXPORT_DIRECTIVE sv4guiModuleImageProcessing
   SHARED_LIB ${SV_USE_MODULES_SHARED_LIBRARIES}
   LIBRARY_DEPENDS
-  ${QT_LIBRARIES}
-  ${VTK_LIBRARIES}
-  ${ITK_LIBRARIES}
   ${MITK_LIBRARIES}
-  ${SV_LIB_GLOBALS_NAME}
-  ${SV_LIB_UTILS_NAME}
-  ${SV_LIB_GEOM_NAME}
-  ${SV_LIB_REPOSITORY_NAME}
-  ${SV_LIB_PATH_NAME}
-  ${SV_LIB_ITK_LSET_NAME}
-  ${SV_LIB_MODULE_COMMON_NAME}
-  ${SV_LIB_MODULE_PATH_NAME}
-  ${SV_LIB_VTKSVBOOLEAN_NAME})
+  ${ITK_LIBRARIES}
+  ${QT_LIBRARIES})
 #-----------------------------------------------------------------------------
 
 if(SV_INSTALL_LIBS)
@@ -65,7 +56,7 @@ if(SV_INSTALL_HEADERS)
     set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
   endif()
   if (EXISTS ${MODULE_FILES_CMAKE})
-   include(${MODULE_FILES_CMAKE})
+    include(${MODULE_FILES_CMAKE})
   endif()
   install(FILES ${H_FILES}
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders

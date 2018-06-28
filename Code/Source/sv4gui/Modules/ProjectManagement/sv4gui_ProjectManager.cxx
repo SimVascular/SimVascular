@@ -69,54 +69,6 @@
 #include <QFile>
 #include <QTextStream>
 
-template <typename TDataFolder>
-mitk::DataNode::Pointer sv4guiProjectManager::CreateDataFolder(mitk::DataStorage::Pointer dataStorage, QString folderName, mitk::DataNode::Pointer projFolderNode)
-{
-    mitk::NodePredicateDataType::Pointer isDataFolder = mitk::NodePredicateDataType::New(TDataFolder::GetStaticNameOfClass());
-
-    mitk::DataStorage::SetOfObjects::ConstPointer rs;
-    if(projFolderNode.IsNull())
-    {
-        rs=dataStorage->GetSubset(isDataFolder);
-    }else
-    {
-        rs=dataStorage->GetDerivations (projFolderNode,isDataFolder);
-    }
-
-    bool exists=false;
-    mitk::DataNode::Pointer dataFolderNode=NULL;
-    std::string fdName=folderName.toStdString();
-
-    for(int i=0;i<rs->size();i++)
-    {
-        if(rs->GetElement(i)->GetName()==fdName)
-        {
-            exists=true;
-            dataFolderNode=rs->GetElement(i);
-            break;
-        }
-    }
-
-    if(!exists)
-    {
-        dataFolderNode=mitk::DataNode::New();
-        dataFolderNode->SetName(fdName);
-        dataFolderNode->SetVisibility(true);
-        typename TDataFolder::Pointer dataFolder=TDataFolder::New();
-        dataFolderNode->SetData(dataFolder);
-        if(projFolderNode.IsNull())
-        {
-            dataStorage->Add(dataFolderNode);
-        }else
-        {
-            dataStorage->Add(dataFolderNode,projFolderNode);
-        }
-
-    }
-
-    return dataFolderNode;
-}
-
 void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir,bool newProject)
 {
     QString projectConfigFileName=".svproj";
@@ -242,8 +194,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     mitk::DataNode::Pointer meshFolderNode=CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
     mitk::DataNode::Pointer simFolderNode=CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
     mitk::DataNode::Pointer reposFolderNode=CreateDataFolder<sv4guiRepositoryFolder>(dataStorage, reposFolderName, projectFolderNode);
-    
-    
+
+
     imageFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     pathFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     segFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
@@ -455,7 +407,7 @@ void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
     tag = doc.createElement("simulations");
     tag.setAttribute("folder_name","Simulations");
     root.appendChild(tag);
-    
+
     tag = doc.createElement("repository");
     tag.setAttribute("folder_name","Repository");
     root.appendChild(tag);
@@ -1122,4 +1074,3 @@ bool sv4guiProjectManager::DuplicateDirRecursively(const QString &srcFilePath, c
     }
     return true;
 }
-
