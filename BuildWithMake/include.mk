@@ -632,7 +632,9 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/sv4gui/Modules/ProjectManagement \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/QtWidgets \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Segmentation \
-                     -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/ImageProcessing \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/svFSI
   ifeq ($(SV_USE_OPENCASCADE),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/OCCT
   endif
@@ -655,6 +657,7 @@ SV_LIB_LSET_NAME=_simvascular_lset
 SV_LIB_MESH_NAME=_simvascular_mesh
 SV_LIB_MMG_MESH_NAME=_simvascular_mmg_mesh
 SV_LIB_MODULE_COMMON_NAME=_simvascular_module_common
+SV_LIB_MODULE_IMAGEPROCESSING_NAME=_simvascular_module_imageprocessing
 SV_LIB_MODULE_MESH_NAME=_simvascular_module_mesh
 SV_LIB_MODULE_MODEL_NAME=_simvascular_module_model
 SV_LIB_MODULE_MODEL_OCCT_NAME=_simvascular_module_model_occt
@@ -663,6 +666,7 @@ SV_LIB_MODULE_PROJECTMANAGEMENT_NAME=_simvascular_module_projectmanagement
 SV_LIB_MODULE_QTWIDGETS_NAME=_simvascular_module_qtwidgets
 SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
 SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
+SV_LIB_MODULE_SVFSI_NAME=_simvascular_module_svfsi
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
 SV_LIB_PATH_NAME=_simvascular_path
 SV_LIB_POLYDATA_SOLID_NAME=_simvascular_polydata_solid

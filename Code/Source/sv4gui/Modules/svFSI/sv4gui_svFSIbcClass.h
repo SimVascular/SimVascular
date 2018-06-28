@@ -29,47 +29,42 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guiMitksvFSIOBJECTFACTORY_H
-#define sv4guiMitksvFSIOBJECTFACTORY_H
+#ifndef SV4GUI_SVFSIBCCLASS_H
+#define SV4GUI_SVFSIBCCLASS_H
 
 #include "sv4guiModulesvFSIExports.h"
 
-#include "sv4gui_MitksvFSIJobIO.h"
+#define maxOutput 10
+#define maxProp 10
+#include <map>
+#include <QStringList>
 
-#include <mitkCoreObjectFactoryBase.h>
-
-class SV4GUIMODULESVFSI_EXPORT sv4guiMitksvFSIObjectFactory : public mitk::CoreObjectFactoryBase
-{
+class sv4guisvFSIbcClass {
 public:
-    mitkClassMacro(sv4guiMitksvFSIObjectFactory,mitk::CoreObjectFactoryBase);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
-    virtual mitk::Mapper::Pointer CreateMapper(mitk::DataNode* node, MapperSlotId slotId) override;
-    virtual void SetDefaultProperties(mitk::DataNode* node) override;
-    virtual const char* GetFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetFileExtensionsMap() override;
-    virtual const char* GetSaveFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetSaveFileExtensionsMap() override;
+    QString faceName;
 
-    void RegisterIOFactories(); //deprecatedSince{2013_09}
-protected:
-    sv4guiMitksvFSIObjectFactory();
-    ~sv4guiMitksvFSIObjectFactory();
-    void CreateFileExtensionsMap();
-    MultimapType m_FileExtensionsMap;
-    MultimapType m_SaveFileExtensionsMap;
+    QString bcGrp;
+    QString bcType;
+    QString tDep;
+    QString profile;
+    int eDrn;
+    int cplBCPtr;
+    int faIn;
+    double r;
+    double g;
+    QString gxFile;
+    QString gmFile;
+    QString gtFile;
+    bool zperm;
+    bool flux;
 
-private:
+    QString projectionFaceName;
 
+    bool imposeIntegral;
+    QString effectiveDirection;
+
+    sv4guisvFSIbcClass();
+    ~sv4guisvFSIbcClass();
 };
 
-struct SV4GUIMODULESVFSI_EXPORT Registersv4guiMitksvFSIObjectFactory{
-  Registersv4guiMitksvFSIObjectFactory();
-
-  virtual ~Registersv4guiMitksvFSIObjectFactory();
-
-  sv4guiMitksvFSIObjectFactory::Pointer m_Factory;
-  sv4guiMitksvFSIJobIO* m_MitkSimJobIO;
-};
-
-#endif // sv4guiMitksvFSIOBJECTFACTORY_H
+#endif // SV4GUI_SVFSIBCCLASS_H

@@ -32,11 +32,11 @@
 #ifndef sv4guiMitksvFSIJOBIO_H
 #define sv4guiMitksvFSIJOBIO_H
 
-#include <svFSIExports.h>
+#include "sv4guiModulesvFSIExports.h"
 
 #include <mitkAbstractFileIO.h>
 
-class SVFSI_EXPORT sv4guiMitksvFSIJobIO : public mitk::AbstractFileIO
+class SV4GUIMODULESVFSI_EXPORT sv4guiMitksvFSIJobIO : public mitk::AbstractFileIO
 {
 public:
 

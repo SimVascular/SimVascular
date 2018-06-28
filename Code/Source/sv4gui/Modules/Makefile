@@ -50,7 +50,7 @@ ifeq ($(SV_USE_MESHSIM),1)
   SVQTGUIMODULES_DIRS += Mesh/MeshSim
 endif
 
-SVQTGUIMODULES_DIRS += Simulation ProjectManagement
+SVQTGUIMODULES_DIRS += Simulation ImageProcessing svFSI ProjectManagement
 
 lib-complete: create_exports_h us-init-module moc ui qrc lib
 

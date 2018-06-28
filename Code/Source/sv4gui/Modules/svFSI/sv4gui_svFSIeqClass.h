@@ -29,69 +29,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EQCLASS_H
-#define EQCLASS_H
+#ifndef SV4GUI_SVFSIEQCLASS_H
+#define SV4GUI_SVFSIEQCLASS_H
+
+#include "sv4guiModulesvFSIExports.h"
+#include "sv4gui_svFSIbcClass.h"
+
 #define maxOutput 10
 #define maxProp 10
 #include <map>
 #include <QStringList>
 
-class bcClass {
-public:
-    QString faceName;
-
-    QString bcGrp;
-    QString bcType;
-    QString tDep;
-    QString profile;
-    int eDrn;
-    int cplBCPtr;
-    int faIn;
-    double r;
-    double g;
-    QString gxFile;
-    QString gmFile;
-    QString gtFile;
-    bool zperm;
-    bool flux;
-
-    QString projectionFaceName;
-
-    bool imposeIntegral;
-    QString effectiveDirection;
-
-    bcClass()
-    {
-        faceName="";
-        bcGrp = "NA";
-        bcType = "Steady";
-        profile = "Flat";
-        eDrn = 0;
-        cplBCPtr = -1;
-        faIn = -1;
-        r = 0.0;
-        g = 0.0;
-        gmFile = "";
-        gtFile = "";
-        gxFile = "";
-        zperm = true;
-        flux = false;
-        projectionFaceName="";
-        imposeIntegral=false;
-        effectiveDirection="";
-    }
-
-    ~bcClass() {}
-};
-
-class eqClass
+class sv4guisvFSIeqClass
 {
 public:
 
     // constructor and destructor
-    eqClass(const QString& eq="none");
-    eqClass(const eqClass& iEq) { *this = iEq; }
-    ~eqClass();
+    sv4guisvFSIeqClass(const QString& eq="none");
+    sv4guisvFSIeqClass(const sv4guisvFSIeqClass& iEq) { *this = iEq; }
+    ~sv4guisvFSIeqClass();
 
     // get and set functions for few common data between equations
     void setCoupled(const bool& coupledIn) { coupled = coupledIn; }
@@ -174,8 +130,8 @@ public:
     int rmFrequency;
     int rmCopyFrequency;
 
-    //    QList<bcClass> bcs;
-    std::map<std::string, bcClass> faceBCs;
+    //    QList<sv4guisvFSIbcClass> bcs;
+    std::map<std::string, sv4guisvFSIbcClass> faceBCs;
 
     QString domainName;
 
@@ -185,4 +141,4 @@ public:
 
 };
 
-#endif // EQCLASS_H
+#endif // SV4GUI_SVFSIEQCLASS_H

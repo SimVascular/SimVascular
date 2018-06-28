@@ -32,13 +32,13 @@
 #ifndef sv4guiMitksvFSIJOB_H
 #define sv4guiMitksvFSIJOB_H
 
-#include <svFSIExports.h>
+#include "sv4guiModulesvFSIExports.h"
 
 #include "sv4gui_svFSIJob.h"
 
 #include <mitkBaseData.h>
 
-class SVFSI_EXPORT sv4guiMitksvFSIJob : public mitk::BaseData
+class SV4GUIMODULESVFSI_EXPORT sv4guiMitksvFSIJob : public mitk::BaseData
 {
 public:
 

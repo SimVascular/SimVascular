@@ -1,3 +1,5 @@
+# Hey emacs, this is a -*- makefile -*-
+
 # Copyright (c) Stanford University, The Regents of the University of
 #               California, and others.
 #
@@ -28,24 +30,67 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(H_FILES
-    sv4gui_svFSIbcClass.h
-    sv4gui_svFSIeqClass.h
-    sv4gui_svFSIJob.h
-    sv4gui_MitksvFSIJob.h
-    sv4gui_MitksvFSIJobIO.h
+TOP=../../../../../BuildWithMake
+
+include $(TOP)/include.mk
+
+CXXFLAGS = $(GLOBAL_CXXFLAGS) \
+	   $(LOCAL_INCDIR) \
+	   $(VTK_INCDIRS) \
+	   $(TCLTK_INCDIR) \
+           $(PYTHON_INCDIR) \
+           $(QT_INCDIRS) $(QT_DEFS) \
+	   $(ITK_INCDIRS) \
+           $(MITK_INCDIRS) $(MITK_DEFS)
+
+MODULE_NAME = sv4guiModulesvFSI
+MODULE_NAME_ALL_CAPS = SV4GUIMODULESVFSI
+CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
+
+CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
+
+HDRS	= \
+    sv4gui_svFSIbcClass.h \
+    sv4gui_svFSIeqClass.h \
+    sv4gui_svFSIJob.h \
+    sv4gui_MitksvFSIJob.h \
+    sv4gui_MitksvFSIJobIO.h \
     sv4gui_MitksvFSIObjectFactory.h
-)
 
-set(CPP_FILES
-    sv4gui_svFSIbcClass.cxx
-    sv4gui_svFSIeqClass.cxx
-    sv4gui_svFSIJob.cxx
-    sv4gui_MitksvFSIJob.cxx
-    sv4gui_MitksvFSIJobIO.cxx
+CXXSRCS	= \
+    sv4gui_svFSIbcClass.cxx \
+    sv4gui_svFSIeqClass.cxx \
+    sv4gui_svFSIJob.cxx \
+    sv4gui_MitksvFSIJob.cxx \
+    sv4gui_MitksvFSIJobIO.cxx \
     sv4gui_MitksvFSIObjectFactory.cxx
-)
 
-set(RESOURCE_FILES
+CXXSRCS += us_init.cxx
 
-)
+UIFILES =
+
+RCFILES =
+
+QRCFILES =
+
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+
+DLLHDRS =
+
+DLLSRCS =
+
+DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
+
+DLLLIBS += \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
+
+TARGET_LIB_NAME = $(SV_LIB_MODULE_SIMULATION_NAME)
+
+include $(TOP)/targetlib.mk
