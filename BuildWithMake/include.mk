@@ -497,7 +497,8 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation \
 	  ../Code/Source/sv3/Common \
-	  ../Code/Source/sv3/Path
+	  ../Code/Source/sv3/Path \
+	  ../Code/Source/sv3/Segmentation
 else
   LIBDIRS += \
           ../Code/Source/sv/Utils \
@@ -515,7 +516,8 @@ else
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation \
 	  ../Code/Source/sv3/Common \
-	  ../Code/Source/sv3/Path
+	  ../Code/Source/sv3/Path \
+	  ../Code/Source/sv3/Segmentation
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -535,9 +537,9 @@ endif
 
 ifeq ($(SV_USE_ITK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv3/Segmentation
+     SHARED_LIBDIRS += ../Code/Source/sv3/ITKSegmentation
   else
-     LIBDIRS += ../Code/Source/sv3/Segmentation
+     LIBDIRS += ../Code/Source/sv3/ITKSegmentation
   endif
 endif
 
@@ -665,6 +667,7 @@ SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
 SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
 SV_LIB_PATH_NAME=_simvascular_path
+SV_LIB_SEGMENTATION_NAME=_simvascular_segmentation
 SV_LIB_POLYDATA_SOLID_NAME=_simvascular_polydata_solid
 SV_LIB_POST_NAME=_simvascular_post
 SV_LIB_PYTHON_INTERP_NAME=_simvascular_python_interp
