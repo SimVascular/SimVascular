@@ -625,6 +625,8 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.segmentation \
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.simulation \
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.application \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.svfsi \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Common \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Model/Common \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Mesh/Common \
@@ -687,12 +689,14 @@ SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
 
 #plugin names
 SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application
+SV_PLUGIN_IMAGEPROCESSING_NAME=org_sv_gui_qt_imageprocessing
 SV_PLUGIN_DATAMANAGER_NAME=org_sv_gui_qt_datamanager
 SV_PLUGIN_MESHING_NAME=org_sv_gui_qt_meshing
 SV_PLUGIN_MODELING_NAME=org_sv_gui_qt_modeling
 SV_PLUGIN_PATHPLANNING_NAME=org_sv_gui_qt_pathplanning
 SV_PLUGIN_PROJECTMANAGER_NAME=org_sv_gui_qt_projectmanager
 SV_PLUGIN_SEGMENTATION_NAME=org_sv_gui_qt_segmentation
+SV_PLUGIN_SVFSI_NAME=org_sv_gui_qt_svfsi
 SV_PLUGIN_SIMULATION_NAME=org_sv_gui_qt_simulation
 SV_PLUGIN_PROJECTDATANODES_NAME=org_sv_projectdatanodes
 SV_PLUGIN_PYTHONDATANODES_NAME=org_sv_pythondatanodes

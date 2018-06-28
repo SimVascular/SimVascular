@@ -47,6 +47,7 @@
 #include <QListWidget>
 #include <QDoubleValidator>
 #include <QIntValidator>
+#include <QSettings>
 
 namespace Ui {
 class sv4guisvFSIView;
@@ -176,8 +177,8 @@ private:
 
     mitk::DataNode::Pointer m_JobNode;
 
-    QString m_Internalsv4guisvFSISolverPath;
-    QString m_Externalsv4guisvFSISolverPath;
+    QString m_InternalSolverPath;
+    QString m_ExternalSolverPath;
     QString m_InternalMPIExecPath;
 
     QList<QLabel *> propL;

@@ -39,7 +39,7 @@
 #include <map>
 #include <QStringList>
 
-class sv4guisvFSIbcClass {
+class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIbcClass {
 public:
     QString faceName;
 

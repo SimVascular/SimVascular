@@ -40,7 +40,7 @@
 #include <map>
 #include <QStringList>
 
-class sv4guisvFSIeqClass
+class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIeqClass
 {
 public:
 
