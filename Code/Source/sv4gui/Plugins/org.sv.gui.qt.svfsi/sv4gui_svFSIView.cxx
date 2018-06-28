@@ -89,24 +89,6 @@ void sv4guisvFSIView::Initialize(){
   sv4guisvFSIUtil.makeDir();
   sv4guisvFSIUtil.createDataFolder();
 
-  //load all existing jobs
-
-  auto svFSI_dir = sv4guisvFSIUtil.getsv4guisvFSIDir();
-
-  auto files     = svFSI_dir.entryList();
-
-  for (int i = 0; i < files.size(); i++){
-    auto filename = files[i].toStdString();
-
-    if(filename.find(".fsijob") != std::string::npos){
-      auto fn = svFSI_dir.absolutePath().toStdString().append("/").append(filename);
-
-      std::cout << "loading svfsi job " << fn << "\n";
-
-      LoadJob(fn, filename.erase(filename.length()-7,7));
-    }
-  }
-
 
 }
 

@@ -50,7 +50,8 @@ simvascular_create_module(
   ${SV_LIB_MODULE_SEGMENTATION_NAME}
   ${SV_LIB_MODULE_MODEL_NAME}
   ${SV_LIB_MODULE_MESH_NAME}
-  ${SV_LIB_MODULE_SIMULATION_NAME})
+  ${SV_LIB_MODULE_SIMULATION_NAME}
+  "_simvascular_module_svfsi")
 #-----------------------------------------------------------------------------
 
 if(SV_INSTALL_LIBS)
@@ -73,4 +74,3 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
   )
 endif()
-
