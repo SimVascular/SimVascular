@@ -35,7 +35,7 @@
 
 #ifdef SV_USE_PYTHON
   #include "Python.h"
-  #include "sv_repos_init_py.h"
+  #include "sv4gui_Vis_init_py.h"
 #endif
 #include "vtksys/SystemTools.hxx"
 
@@ -962,13 +962,16 @@ RegCloseKey(hKey2);
 #ifdef SV_USE_PYTHON
 #if PYTHON_MAJOR_VERSION == 3
        SimVascular_pyInit();
+       PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
 #endif
        Py_Initialize();
 #if PYTHON_MAJOR_VERSION ==2
        SimVascular_pyInit();
+       initpyGUI();
 #endif
        pluginsToStart.push_back("org_mitk_gui_qt_python");
        SimVascular_pyImport();
+       PyImport_ImportModule("pyGUI");
 #endif
        pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
        pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
