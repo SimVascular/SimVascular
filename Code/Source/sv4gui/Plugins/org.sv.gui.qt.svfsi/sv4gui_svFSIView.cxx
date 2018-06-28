@@ -34,6 +34,8 @@
 #include "sv4gui_ProjectManager.h"
 #include "sv4gui_svFSIUtil.h"
 #include "sv4gui_eqClass.h"
+#include "sv4gui_MitkMesh.h"
+#include "sv4gui_Mesh.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -88,6 +90,7 @@ void sv4guisvFSIView::Initialize(){
   sv4guisvFSIUtil.createDataFolder();
 
   //load all existing jobs
+
   auto svFSI_dir = sv4guisvFSIUtil.getsv4guisvFSIDir();
 
   auto files     = svFSI_dir.entryList();
@@ -100,9 +103,11 @@ void sv4guisvFSIView::Initialize(){
 
       std::cout << "loading svfsi job " << fn << "\n";
 
-      LoadJob(fn);
+      LoadJob(fn, filename.erase(filename.length()-7,7));
     }
   }
+
+
 }
 
 void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
@@ -610,6 +615,11 @@ void sv4guisvFSIView::AddMeshComplete()
     {
         ui->comboBoxDomain2->addItem(QString::fromStdString(d.first));
     }
+
+    std::string outputString = std::string("Successfully loaded mesh complete ").append(
+      domain.folderName);
+
+    QMessageBox::information(m_Parent,"Mesh-complete Success", outputString.c_str());
 
     DataChanged();
 }
@@ -1520,13 +1530,15 @@ void sv4guisvFSIView::LoadJob()
     GetDataStorage()->Add(node,sv4guisvFSI_folder_node);
 }
 
-void sv4guisvFSIView::LoadJob(std::string jobName)
+void sv4guisvFSIView::LoadJob(std::string jobPath, std::string jobName)
 {
-    auto node = mitk::IOUtil::Load(jobName.c_str(),
+    if (GetDataStorage()->Exists(GetDataStorage()->GetNamedNode(jobName))) return;
+
+    auto node = mitk::IOUtil::Load(jobPath.c_str(),
       *GetDataStorage())->ElementAt(0);
 
     if (!node){
-      std::cout << "svFSI job with name " << jobName << " doesn't exist\n";
+      std::cout << "svFSI job with name " << jobPath << " doesn't exist\n";
       return;
     }
 
