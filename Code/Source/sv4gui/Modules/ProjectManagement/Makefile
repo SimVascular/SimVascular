@@ -54,6 +54,7 @@ HDRS	= \
     sv4gui_ImageFolder.h \
     sv4gui_PathFolder.h \
     sv4gui_SegmentationFolder.h \
+    sv4gui_svFSIFolder.h \
     sv4gui_ModelFolder.h \
     sv4gui_MeshFolder.h \
     sv4gui_SimulationFolder.h \
@@ -74,6 +75,7 @@ CXXSRCS	= \
     sv4gui_RepositoryFolder.cxx \
     sv4gui_ProjectFolder.cxx \
     sv4gui_SegmentationFolder.cxx \
+    sv4gui_svFSIFolder.cxx \
     sv4gui_SimulationFolder.cxx
 
 CXXSRCS += us_init.cxx
