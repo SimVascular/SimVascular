@@ -43,48 +43,27 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
 
-MODULE_NAME = sv4guiModuleProjectManagement
-MODULE_NAME_ALL_CAPS = SV4GUIMODULEPROJECTMANAGEMENT
+MODULE_NAME = sv4guiModuleImageProcessing
+MODULE_NAME_ALL_CAPS = SV4GUIMODULEIMAGEPROCESSING
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
+
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
-HDRS	= \
-    sv4gui_DataFolder.h \
-    sv4gui_ProjectFolder.h \
-    sv4gui_ImageFolder.h \
-    sv4gui_PathFolder.h \
-    sv4gui_SegmentationFolder.h \
-    sv4gui_svFSIFolder.h \
-    sv4gui_ModelFolder.h \
-    sv4gui_MeshFolder.h \
-    sv4gui_SimulationFolder.h \
-    sv4gui_RepositoryFolder.h \
-    sv4gui_ProjectManager.h \
-    sv4gui_DataNodeOperation.h \
-    sv4gui_DataNodeOperationInterface.h
+HDRS	= sv4gui_ImageProcessingUtils.h
 
-CXXSRCS	= \
-    sv4gui_DataFolder.cxx \
-    sv4gui_ProjectManager.cxx \
-    sv4gui_DataNodeOperation.cxx \
-    sv4gui_DataNodeOperationInterface.cxx \
-    sv4gui_ImageFolder.cxx \
-    sv4gui_MeshFolder.cxx \
-    sv4gui_ModelFolder.cxx \
-    sv4gui_PathFolder.cxx \
-    sv4gui_RepositoryFolder.cxx \
-    sv4gui_ProjectFolder.cxx \
-    sv4gui_SegmentationFolder.cxx \
-    sv4gui_svFSIFolder.cxx \
-    sv4gui_SimulationFolder.cxx
+CXXSRCS	= sv4gui_ImageProcessingUtils.cxx
 
 CXXSRCS += us_init.cxx
 
 UIFILES =
 
-QRCFILES =
+SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
 
-RCFILES =
+RCFILES = \
+    resource/interactions/seedConfig.xml \
+    resource/interactions/seedInteraction.xml
+
+QRCFILES =
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
@@ -94,25 +73,18 @@ DLLHDRS =
 
 DLLSRCS =
 
-# these DLLLIBS came from Segmentation and can probably be cleaned up
-# significantly!
-
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = $(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)
+TARGET_LIB_NAME = $(SV_LIB_MODULE_IMAGEPROCESSING_NAME)
 
 include $(TOP)/targetlib.mk

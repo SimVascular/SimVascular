@@ -41,71 +41,57 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
-           $(MITK_INCDIRS) $(MITK_DEFS)
-
-MODULE_NAME = sv4guiModuleProjectManagement
-MODULE_NAME_ALL_CAPS = SV4GUIMODULEPROJECTMANAGEMENT
-CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
-CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
+           $(MITK_INCDIRS) $(MITK_DEFS) \
+           -Dorg_sv_gui_qt_svfsi_EXPORTS \
+           -DUS_MODULE_NAME=sv4guiModulesvFSI
 
 HDRS	= \
-    sv4gui_DataFolder.h \
-    sv4gui_ProjectFolder.h \
-    sv4gui_ImageFolder.h \
-    sv4gui_PathFolder.h \
-    sv4gui_SegmentationFolder.h \
-    sv4gui_svFSIFolder.h \
-    sv4gui_ModelFolder.h \
-    sv4gui_MeshFolder.h \
-    sv4gui_SimulationFolder.h \
-    sv4gui_RepositoryFolder.h \
-    sv4gui_ProjectManager.h \
-    sv4gui_DataNodeOperation.h \
-    sv4gui_DataNodeOperationInterface.h
+    sv4gui_svFSIJobCreateAction.h \
+    sv4gui_svFSIUtil.h \
+    sv4gui_svFSIView.h \
+    sv4gui_svFSIBCWidget.h \
+    sv4gui_svFSIPreferencePage.h \
+    sv4gui_svFSIPluginActivator.h
 
 CXXSRCS	= \
-    sv4gui_DataFolder.cxx \
-    sv4gui_ProjectManager.cxx \
-    sv4gui_DataNodeOperation.cxx \
-    sv4gui_DataNodeOperationInterface.cxx \
-    sv4gui_ImageFolder.cxx \
-    sv4gui_MeshFolder.cxx \
-    sv4gui_ModelFolder.cxx \
-    sv4gui_PathFolder.cxx \
-    sv4gui_RepositoryFolder.cxx \
-    sv4gui_ProjectFolder.cxx \
-    sv4gui_SegmentationFolder.cxx \
-    sv4gui_svFSIFolder.cxx \
-    sv4gui_SimulationFolder.cxx
+    sv4gui_svFSIJobCreateAction.cxx \
+    sv4gui_svFSIView.cxx \
+    sv4gui_svFSIBCWidget.cxx \
+    sv4gui_svFSIPreferencePage.cxx \
+    sv4gui_svFSIPluginActivator.cxx
 
-CXXSRCS += us_init.cxx
+UIFILES = \
+    sv4gui_svFSIView.ui \
+    sv4gui_svFSIBCWidget.ui \
+    sv4gui_svFSIPreferencePage.ui
 
-UIFILES =
+QRCFILES = resources/datanode.qrc
 
-QRCFILES =
+QRCFILES += org_sv_gui_qt_svfsi_manifest.qrc \
+            org_sv_gui_qt_svfsi_cached.qrc
 
-RCFILES =
+RCFILES = \
+  plugin.xml \
+  resources/svFSI.png
 
-CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
-
-CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
+CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
 DLLSRCS =
 
-# these DLLLIBS came from Segmentation and can probably be cleaned up
-# significantly!
-
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS += \
+DLLLIBS +=  \
+          $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_SVFSI_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
@@ -113,6 +99,15 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = $(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
+
+TARGET_LIB_NAME = $(SV_PLUGIN_SVFSI_NAME)
+
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_svfsi
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_svfsi
+PLUGIN_EXPORTS_PREFIX = SV_QT_
+PLUGIN_NAME = SVFSI
+
+SV_COPY_DLL_TO_BIN_PLUGINS = 1
 
 include $(TOP)/targetlib.mk
