@@ -38,7 +38,11 @@
 
 #include <vtkAssembly.h>
 #include <vtkPropAssembly.h>
-#include <vtkPainterPolyDataMapper.h>
+#if VTK_MAJOR_VERSION == 6
+    #include <vtkPainterPolyDataMapper.h>
+#else
+    #include <vtkOpenGLPolyDataMapper.h>
+#endif
 #include <vtkActor.h>
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>

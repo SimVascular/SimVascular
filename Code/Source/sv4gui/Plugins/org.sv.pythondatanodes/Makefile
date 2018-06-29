@@ -61,7 +61,8 @@ QRCFILES = \
 QRCFILES += org_sv_pythondatanodes_manifest.qrc \
             org_sv_pythondatanodes_cached.qrc
 
-RCFILES =
+RCFILES = \
+  resources/svrepositoryfolder.png
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 

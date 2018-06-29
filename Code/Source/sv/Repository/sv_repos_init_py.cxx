@@ -135,6 +135,8 @@ PyMethodDef pyRepository_methods[] =
     {"repos_readXMLPolyData",Repos_ReadVtkXMLPolyDataCmd,METH_VARARGS,NULL},
     {"repos_writeVtkStructuredPoints", Repos_WriteVtkStructuredPointsCmd,
      METH_VARARGS,NULL},
+    {"repos_writeVtkUnstructuredGrid", Repos_WriteVtkUnstructuredGridCmd,
+     METH_VARARGS,NULL},
     {"repos_getLabelKeys", Repos_GetLabelKeysCmd, METH_VARARGS,NULL},
     {"repos_getLabel", Repos_GetLabelCmd, METH_VARARGS,NULL},
     {"repos_setLabel", Repos_SetLabelCmd, METH_VARARGS,NULL},
