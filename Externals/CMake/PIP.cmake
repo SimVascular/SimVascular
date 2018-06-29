@@ -41,6 +41,10 @@ else()
   set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_${proj}_MANUAL_SOURCE_URL}")
 endif()
 
+set(SV_EXTERNALS_${proj}_INSTALL_COMMANDS
+  COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} -m pip install matplotlib
+  )
+
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_PYTHON)
   # Empty project
@@ -64,7 +68,7 @@ else()
     DOWNLOAD_COMMAND wget ${SV_EXTERNALS_${proj}_SOURCE_URL} -P ${SV_EXTERNALS_${proj}_SRC_DIR}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} "${SV_EXTERNALS_${proj}_SRC_DIR}/get-pip.py"
-    INSTALL_COMMAND ""
+    INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMANDS}
     UPDATE_COMMAND ""
     )
 endif()

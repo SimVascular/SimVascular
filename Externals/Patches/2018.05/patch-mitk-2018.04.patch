@@ -1591,3 +1591,23 @@ diff -rupN original/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/Qm
    </layout>
   </widget>
   <resources/>
+diff -rupN original/Plugins/org.mitk.gui.qt.dicom/CMakeLists.txt patch/Plugins/org.mitk.gui.qt.dicom/CMakeLists.txt
+--- original/Plugins/org.mitk.gui.qt.dicom/CMakeLists.txt	2018-06-23 12:14:26.000000000 -0700
++++ patch/Plugins/org.mitk.gui.qt.dicom/CMakeLists.txt	2018-06-23 12:15:30.000000000 -0700
+@@ -6,7 +6,7 @@ project(org_mitk_gui_qt_dicom)
+ # Therefore we look for the the storescp command in the '../../bin' directory, too.
+ find_program(DCMTK_STORESCP
+   NAMES storescp storescp${DCMTK_CMAKE_DEBUG_POSTFIX} storescp${CMAKE_DEBUG_POSTFIX}
+-  PATHS "${DCMTK_DIR}/bin" "${DCMTK_DIR}/../bin" "${DCMTK_DIR}/../../bin"
++  PATHS "${DCMTK_DIR}/bin" "${DCMTK_DIR}/../bin" "${DCMTK_DIR}/../../bin" "${DCMTK_DIR}/../../../bin"
+   PATH_SUFFIXES Release Debug
+   DOC "Dcmtk storage provider which is used to store dicom files which are transfered over network."
+   NO_DEFAULT_PATH
+@@ -25,6 +25,7 @@ else(NOT EXISTS ${DCMTK_STORESCP})
+     EXPORT_DIRECTIVE DICOM_EXPORT
+     EXPORTED_INCLUDE_SUFFIXES src
+     MODULE_DEPENDS MitkQtWidgetsExt MitkDicomUI MitkDicomRT MitkDicomRTIO MitkRTUI MitkDICOMReader
++    WARNINGS_NO_ERRORS
+   )
+ 
+ endif()
