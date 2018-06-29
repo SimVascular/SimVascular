@@ -41,7 +41,6 @@
 #include "sv_Math.h"
 
 #include "sv3_Contour.h"
-#include "sv4gui_Math3.h"
 #include "sv3_SegmentationUtils.h"
 #ifdef SV_USE_PYTHON
   #include "sv3_Contour_init_py.h"
