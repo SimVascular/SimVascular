@@ -40,6 +40,7 @@
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
+#include <vtkConnectivityFilter.h>
 #include <vtkErrorCode.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkThreshold.h>
@@ -202,11 +203,49 @@ bool sv4guiMeshLegacyIO::WriteFiles(vtkSmartPointer<vtkPolyData> surfaceMesh, vt
         cleaner->PieceInvariantOff();
         cleaner->SetInputData(wallAppender->GetOutput());
         cleaner->Update();
-        vtpFilePath=meshDir+"/walls_combined.vtp";
-        vtpFilePath=QDir::toNativeSeparators(vtpFilePath);
-        vtpWriter->SetInputData(cleaner->GetOutput());
-        vtpWriter->SetFileName(vtpFilePath.toStdString().c_str());
-        vtpWriter->Write();
+
+        vtkSmartPointer<vtkConnectivityFilter> connectFilter = vtkSmartPointer<vtkConnectivityFilter>::New();
+        connectFilter->SetInputData(cleaner->GetOutput());
+        connectFilter->SetExtractionModeToAllRegions();
+        connectFilter->ColorRegionsOn();
+        connectFilter->Update();
+
+        if (connectFilter->GetNumberOfExtractedRegions() > 1)
+        {
+          for (int j=0; j<connectFilter->GetNumberOfExtractedRegions(); j++)
+          {
+            vtkSmartPointer<vtkThreshold> thresholder = vtkSmartPointer<vtkThreshold>::New();
+            thresholder->SetInputData(connectFilter->GetOutput());
+            thresholder->SetInputArrayToProcess(0,0,0,1,"RegionId");
+            thresholder->ThresholdBetween(j, j);
+            thresholder->Update();
+
+            vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+            surfacer->SetInputData(thresholder->GetOutput());
+            surfacer->Update();
+
+            surfacer->GetOutput()->GetCellData()->RemoveArray("RegionId");
+            surfacer->GetOutput()->GetPointData()->RemoveArray("RegionId");
+
+            vtpFilePath=meshDir+"/walls_combined_connected_region_"+QString::number(j)+".vtp";
+            vtpFilePath=QDir::toNativeSeparators(vtpFilePath);
+            vtpWriter->SetInputData(surfacer->GetOutput());
+            vtpWriter->SetFileName(vtpFilePath.toStdString().c_str());
+            vtpWriter->Write();
+          }
+
+        }
+        else
+        {
+          vtpFilePath=meshDir+"/walls_combined.vtp";
+          vtpFilePath=QDir::toNativeSeparators(vtpFilePath);
+          vtpWriter->SetInputData(cleaner->GetOutput());
+          vtpWriter->SetFileName(vtpFilePath.toStdString().c_str());
+          vtpWriter->Write();
+        }
+
+
+
     }
 
     return true;
