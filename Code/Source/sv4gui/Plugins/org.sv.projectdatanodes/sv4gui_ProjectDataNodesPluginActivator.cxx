@@ -129,9 +129,13 @@ void sv4guiProjectDataNodesPluginActivator::start(ctkPluginContext* context)
 
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitkSimJob"), QString(":svsimjob.png"), isSimJob, descriptorManager));
-    
+
     mitk::NodePredicateDataType::Pointer isRepositoryFolder = mitk::NodePredicateDataType::New("sv4guiRepositoryFolder");
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiRepositoryFolder"), QString(":svrepositoryfolder.png"), isRepositoryFolder, descriptorManager));
+
+    mitk::NodePredicateDataType::Pointer issvFSIFolder = mitk::NodePredicateDataType::New("sv4guisvFSIFolder");
+    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guisvFSIFolder"), QString(":svFSI.png"), issvFSIFolder, descriptorManager));
+
 //    SetupDataManagerDoubleClick();
 }
 

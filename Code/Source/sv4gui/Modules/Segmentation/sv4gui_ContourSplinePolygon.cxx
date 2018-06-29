@@ -40,7 +40,6 @@
 
 #include <iostream>
 using namespace std;
-
 sv4guiContourSplinePolygon::sv4guiContourSplinePolygon()
 {
     m_Method="Manual";
@@ -76,11 +75,11 @@ void sv4guiContourSplinePolygon::CreateContourPoints()
     }
     else if(controlNumber==3)
     {
-        m_ContourPoints.push_back(GetControlPoint(2));
+        m_ContourPoints.push_back(sv3::Contour::GetControlPoint(2));
         return;
     }
 
-    sv4guiSpline* spline=new sv4guiSpline();
+    sv3::Spline* spline=new sv3::Spline();
     spline->SetClosed(m_Closed);
 
     switch(m_SubdivisionType)
@@ -101,7 +100,7 @@ void sv4guiContourSplinePolygon::CreateContourPoints()
         break;
     }
 
-    std::vector<mitk::Point3D> controlPoints;
+    std::vector<std::array<double,3> > controlPoints;
     controlPoints.insert(controlPoints.begin(),m_ControlPoints.begin()+2,m_ControlPoints.end());
 
     spline->SetInputPoints(controlPoints);

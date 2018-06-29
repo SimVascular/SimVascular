@@ -38,6 +38,7 @@
 
 #include "sv4gui_ContourPolygon.h"
 
+
 class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourSplinePolygon : public sv4guiContourPolygon
 {
 

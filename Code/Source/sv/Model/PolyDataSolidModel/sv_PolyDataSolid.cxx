@@ -818,8 +818,8 @@ int cvPolyDataSolid::MakeCylinder(double r, double length, double ctr[],
   double degangle = vtkMath::DegreesFromRadians(radangle);
   vtkSmartPointer<vtkTransform> transformer =
     vtkSmartPointer<vtkTransform>::New();
-  transformer->RotateWXYZ(degangle,rotateaxis);
   transformer->Translate(ctr[0],ctr[1],ctr[2]);
+  transformer->RotateWXYZ(degangle,rotateaxis);
 
   vtkSmartPointer<vtkTransformPolyDataFilter> polyDataTransformer =
     vtkSmartPointer<vtkTransformPolyDataFilter>::New();

@@ -63,6 +63,8 @@ PyObject* sv4Path_RemovePointCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_MoveCtrlPointCmd( pyPath* self, PyObject* args);
 PyObject* sv4Path_SmoothPathCmd(pyPath* self, PyObject* args);
 PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args);
+PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args);
+PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args);
 
 
 int Path_pyInit()
@@ -84,6 +86,8 @@ static PyMethodDef pyPath_methods[]={
   {"path_movePoint",(PyCFunction)sv4Path_MoveCtrlPointCmd,METH_VARARGS,NULL},
   {"path_smooth",(PyCFunction)sv4Path_SmoothPathCmd, METH_VARARGS,NULL},
   {"path_createPath",(PyCFunction)sv4Path_CreatePathCmd, METH_NOARGS,NULL},
+  {"path_getPathPtsNum",(PyCFunction)sv4Path_GetPathPtNumberCmd, METH_NOARGS, NULL},
+  {"path_getPathPosPts",(PyCFunction)sv4Path_GetPathPosPts, METH_NOARGS, NULL},
   {NULL,NULL}
 };
 
@@ -519,3 +523,52 @@ PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args)
         
     Py_RETURN_NONE;
 }
+
+// --------------------
+// sv4Path_GetPathPtNumberCmd
+// --------------------
+PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args)
+{
+    PathElement* path = self->geom;
+    if (path==NULL)
+    {
+        PyErr_SetString(PyRunTimeErr,"Path does not exist.");
+        return Py_ERROR;
+    }  
+    
+    int num = path->GetPathPointNumber();
+    
+    return Py_BuildValue("i",num);
+}
+
+//----------------------------
+// sv4Path_GetPathPts
+//----------------------------
+PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
+{
+    PathElement* path = self->geom;
+    if (path==NULL)
+    {
+        PyErr_SetString(PyRunTimeErr,"Path does not exist.");
+        return Py_ERROR;
+    }  
+    
+    int num = path->GetPathPointNumber();
+    PyObject* tmpList = PyList_New(3);
+    PyObject* output = PyList_New(num);
+    for (int i = 0; i<num; i++)
+    {
+        std::array<double,3> pos = path->GetPathPosPoint(i);
+        for (int j=0; j<3; j++)
+            PyList_SetItem(tmpList,j,PyFloat_FromDouble(pos[j]));
+        PyList_SetItem(output,i,tmpList);
+    }
+    
+    if(PyErr_Occurred()!=NULL)
+    {
+        PyErr_SetString(PyRunTimeErr, "error generating pathpospt output");
+        return Py_ERROR;
+    }
+    
+     return output;
+} 

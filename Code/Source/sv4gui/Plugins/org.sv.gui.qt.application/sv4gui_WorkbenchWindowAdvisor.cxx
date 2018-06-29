@@ -866,7 +866,7 @@ void sv4guiWorkbenchWindowAdvisor::PostWindowCreate()
     mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextBesideIcon );
 #endif
 
-    imageNavigatorAction = new QAction(QIcon(":/org.mitk.gui.qt.ext/Slider.png"), "&Image Navigator", nullptr);
+    imageNavigatorAction = new QAction(QIcon(":/org.sv.gui.qt.application/ImageNavigator.png"), "&Image Navigator", nullptr);
     bool imageNavigatorViewFound = window->GetWorkbench()->GetViewRegistry()->Find("org.mitk.views.imagenavigator");
 
     if (imageNavigatorViewFound)

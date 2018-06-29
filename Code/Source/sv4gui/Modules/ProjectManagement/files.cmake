@@ -34,6 +34,7 @@ set(H_FILES
     sv4gui_ImageFolder.h
     sv4gui_PathFolder.h
     sv4gui_SegmentationFolder.h
+    sv4gui_svFSIFolder.h
     sv4gui_ModelFolder.h
     sv4gui_MeshFolder.h
     sv4gui_SimulationFolder.h
@@ -41,6 +42,7 @@ set(H_FILES
     sv4gui_ProjectManager.h
     sv4gui_DataNodeOperation.h
     sv4gui_DataNodeOperationInterface.h
+    
 )
 
 set(CPP_FILES
@@ -56,5 +58,6 @@ set(CPP_FILES
     sv4gui_ProjectFolder.cxx
     sv4gui_SegmentationFolder.cxx
     sv4gui_SimulationFolder.cxx
+    sv4gui_svFSIFolder.cxx
 )
 
