@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>477</width>
-    <height>907</height>
+    <height>801</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -351,7 +351,7 @@
               <x>0</x>
               <y>0</y>
               <width>467</width>
-              <height>547</height>
+              <height>441</height>
              </rect>
             </property>
             <attribute name="label">
@@ -572,9 +572,6 @@
                     <widget class="QCheckBox" name="checkBoxConvertBLToNewRegion">
                      <property name="text">
                       <string>Convert Boundary Layer to New Region/Domain</string>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -949,7 +946,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>100</width>
+              <width>98</width>
               <height>84</height>
              </rect>
             </property>
@@ -1419,7 +1416,7 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>237</width>
+              <width>234</width>
               <height>84</height>
              </rect>
             </property>
@@ -1543,7 +1540,7 @@ Click the button to add it to the left table.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>231</width>
+              <width>227</width>
               <height>303</height>
              </rect>
             </property>

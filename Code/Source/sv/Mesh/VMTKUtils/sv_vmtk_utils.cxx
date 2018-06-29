@@ -1083,7 +1083,7 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   return SV_OK;
 }
 // --------------------
-//  VMTKUtils_SeparateMesh
+//  VMTKUtils_AppendData
 // --------------------
 /**
  * @brief Function append the final combined boundary layer mesh with the
@@ -1100,9 +1100,8 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
  * The full mesh is returned in the first argument
  */
 
-int VMTKUtils_SeparateMeshes(vtkUnstructuredGrid *meshFromTetGen,
+int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen,
     vtkUnstructuredGrid *boundaryMesh,
-    vtkUnstructuredGrid *innerMesh,
     vtkUnstructuredGrid *surfaceWithSize,
     vtkUnstructuredGrid *newMeshVolume,
     vtkPolyData *newMeshSurface,
@@ -1144,15 +1143,6 @@ int VMTKUtils_SeparateMeshes(vtkUnstructuredGrid *meshFromTetGen,
   surfaceRegionIds->FillComponent(0, modelId);
   surfaceRegionIds->SetName("ModelRegionID");
   surfaceWithSize->GetCellData()->AddArray(surfaceRegionIds);
-
-  // Add model region id to surface
-  vtkSmartPointer<vtkIntArray> innerMeshRegionIds =
-    vtkSmartPointer<vtkIntArray>::New();
-  innerMeshRegionIds->SetNumberOfComponents(1);
-  innerMeshRegionIds->SetNumberOfTuples(surfaceWithSize->GetNumberOfCells());
-  innerMeshRegionIds->FillComponent(0, modelId);
-  innerMeshRegionIds->SetName("ModelRegionID");
-  innerMesh->GetCellData()->AddArray(innerMeshRegionIds);
 
   if (newRegionBoundaryLayer)
   {

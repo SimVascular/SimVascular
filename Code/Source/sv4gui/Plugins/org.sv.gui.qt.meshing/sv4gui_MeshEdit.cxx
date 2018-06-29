@@ -952,9 +952,6 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
 
     cmds.push_back("generateMesh");
 
-    if(ui->checkBoxBoundaryLayerT->isChecked())
-        cmds.push_back("getBoundaries");
-
     cmds.push_back("writeMesh");
 
     return cmds;

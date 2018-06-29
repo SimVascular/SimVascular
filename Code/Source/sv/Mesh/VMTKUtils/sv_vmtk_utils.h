@@ -90,9 +90,8 @@ SV_EXPORT_VMTK_UTILS int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh
     int useConstantThickness,
     std::string layertThicknessArrayName);
 
-SV_EXPORT_VMTK_UTILS int VMTKUtils_SeparateMeshes(vtkUnstructuredGrid *meshFromTetGen,
+SV_EXPORT_VMTK_UTILS int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen,
     vtkUnstructuredGrid *boundaryMesh,
-    vtkUnstructuredGrid *innerMesh,
     vtkUnstructuredGrid *surfaceWithSize,
     vtkUnstructuredGrid *newMeshVolume,
     vtkPolyData *newMeshSurface,

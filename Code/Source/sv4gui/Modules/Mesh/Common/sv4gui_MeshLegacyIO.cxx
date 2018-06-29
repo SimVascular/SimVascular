@@ -38,9 +38,11 @@
 
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLUnstructuredGridWriter.h>
-#include <vtkErrorCode.h>
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
+#include <vtkErrorCode.h>
+#include <vtkDataSetSurfaceFilter.h>
+#include <vtkThreshold.h>
 
 bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiModelElement* modelElement, QString meshDir)
 {
@@ -72,7 +74,67 @@ bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiMode
         volumeMesh=mesh->CreateVolumeMeshFromFile(volumeFileName);
     }
 
-    return WriteFiles(surfaceMesh, volumeMesh, modelElement, meshDir);
+    // Check to see if multi domain
+    double minmax[2];
+    surfaceMesh->GetCellData()->GetArray("ModelRegionID")->GetRange(minmax);
+    if (minmax[1] - minmax[0] > 0)
+    {
+      // Need to write multiple
+      for (int i=  (int) minmax[0]; i<=  (int) minmax[1]; i++)
+      {
+        vtkSmartPointer<vtkThreshold> surfThresholder =
+          vtkSmartPointer<vtkThreshold>::New();
+
+        surfThresholder->SetInputData(surfaceMesh);
+        surfThresholder->SetInputArrayToProcess(0,0,0,1,"ModelRegionID");
+        surfThresholder->ThresholdBetween(i,i);
+        surfThresholder->Update();
+
+        if (surfThresholder->GetOutput()->GetNumberOfCells() == 0)
+        {
+          continue;
+        }
+
+        vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
+          vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+        surfacer->SetInputData(surfThresholder->GetOutput());
+        surfacer->Update();
+
+        if (surfacer->GetOutput()->GetNumberOfCells() == 0)
+        {
+          continue;
+        }
+
+        vtkSmartPointer<vtkThreshold> volumeThresholder =
+          vtkSmartPointer<vtkThreshold>::New();
+
+        volumeThresholder->SetInputData(surfaceMesh);
+        volumeThresholder->SetInputArrayToProcess(0,0,0,1,"ModelRegionID");
+        volumeThresholder->ThresholdBetween(i,i);
+        volumeThresholder->Update();
+
+        if (volumeThresholder->GetOutput()->GetNumberOfCells() == 0)
+        {
+          continue;
+        }
+
+        fprintf(stdout,"Writing domain %d\n", i);
+        QString newDir = meshDir+"_domain-" + QString::number(i);
+        QDir().mkpath(newDir);
+        if (WriteFiles(surfacer->GetOutput(), volumeThresholder->GetOutput(), modelElement, newDir)  == false)
+        {
+          return false;
+        }
+      }
+
+      return true;
+    }
+    else
+    {
+      QDir().mkpath(meshDir);
+      return WriteFiles(surfaceMesh, volumeMesh, modelElement, meshDir);
+    }
+
 }
 
 bool sv4guiMeshLegacyIO::WriteFiles(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSmartPointer<vtkUnstructuredGrid> volumeMesh, sv4guiModelElement* modelElement, QString meshDir)

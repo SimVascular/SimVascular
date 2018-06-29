@@ -838,19 +838,6 @@ int cvTetGenMeshObject::GetBoundaryFaces(double angle)
     return SV_ERROR;
   }
 
-  //if (meshoptions_.boundarylayermeshflag)
-  //{
-  //  if (surfacemesh_ == NULL)
-  //  {
-  //    fprintf(stderr,"Surface mesh should not be null\
-	//  to get boundary layer regions\n");
-  //    return SV_ERROR;
-  //  }
-
-  //  ResetOriginalRegions("ModelFaceID");
-  //  surfacemesh_->DeepCopy(polydatasolid_);
-  //}
-
   return SV_OK;
 }
 
@@ -1605,19 +1592,6 @@ int cvTetGenMeshObject::GenerateMesh() {
   }
 #endif
 
-  return SV_OK;
-}
-
-/**
- * @brief Function to convert mesh back into vtkPolyData
- * @return *result: SV_ERROR if the output mesh doesn't exist. SV_OK if
- * function returns properly.
- * @note This function actually doesn't write a mesh! it only converts back
- * to vtkPolyData from TetGen structures. If you want to have a volume or
- * surface mesh, or manipulate the mesh, this function must be called
- */
-
-int cvTetGenMeshObject::WriteMesh(char *filename, int smsver) {
   // must have created mesh
   if (meshoptions_.volumemeshflag && !meshoptions_.boundarylayermeshflag)
   {
@@ -1639,6 +1613,22 @@ int cvTetGenMeshObject::WriteMesh(char *filename, int smsver) {
 	  &numBoundaryRegions_,1) != SV_OK)
       return SV_ERROR;
   }
+
+  return SV_OK;
+}
+
+/**
+ * @brief Function to convert mesh back into vtkPolyData
+ * @return *result: SV_ERROR if the output mesh doesn't exist. SV_OK if
+ * function returns properly.
+ * @note This function actually doesn't write a mesh! it only converts back
+ * to vtkPolyData from TetGen structures. If you want to have a volume or
+ * surface mesh, or manipulate the mesh, this function must be called
+ */
+
+int cvTetGenMeshObject::WriteMesh(char *filename, int smsver) {
+
+  // No action
 
   return SV_OK;
 }
@@ -2229,7 +2219,7 @@ int cvTetGenMeshObject::AppendBoundaryLayerMesh()
     vtkSmartPointer<vtkPolyData>::New();
   int giveblnewregion = meshoptions_.newregionboundarylayer;
   fprintf(stdout,"Appending Boundary Layer and Volume Mesh\n");
-  if (VMTKUtils_SeparateMeshes(volumemesh_,boundarylayermesh_, innerblmesh_,
+  if (VMTKUtils_AppendData(volumemesh_,boundarylayermesh_,
     surfacetomesh->GetOutput(), newVolumeMesh, newSurfaceMesh, giveblnewregion) != SV_OK)
   {
     return SV_ERROR;
