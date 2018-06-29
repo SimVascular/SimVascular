@@ -95,6 +95,7 @@ void sv4guiQmitkFunctionality::CreatePartControl(QWidget* parent)
 
   // m_Parent
   m_Parent = new QWidget;
+  m_Parent->setObjectName("svPluginEditWindow");
   //m_Parent->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
   this->CreateQtPartControl(m_Parent);
 

@@ -53,8 +53,8 @@ void sv4guiAppWorkbenchAdvisor::Initialize(berry::IWorkbenchConfigurer::Pointer 
     Q_ASSERT(styleManager);
 
     QString styleName = "CustomStyle";
-    styleManager->AddStyle("/Users/adamupdegrove/Desktop/tmp/customstyle.qss", styleName);
-    styleManager->SetStyle("/Users/adamupdegrove/Desktop/tmp/customstyle.qss");
+    styleManager->AddStyle(":/org.sv.gui.qt.application/simvascular.qss", styleName);
+    styleManager->SetStyle(":/org.sv.gui.qt.application/simvascular.qss");
 }
 
 berry::WorkbenchWindowAdvisor* sv4guiAppWorkbenchAdvisor::CreateWorkbenchWindowAdvisor(berry::IWorkbenchWindowConfigurer::Pointer configurer)

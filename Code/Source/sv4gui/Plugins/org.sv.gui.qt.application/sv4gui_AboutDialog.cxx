@@ -59,8 +59,6 @@ sv4guiAboutDialog::sv4guiAboutDialog(QWidget* parent, Qt::WindowFlags f)
 
   connect(btnModules, SIGNAL(clicked()), this, SLOT(ShowModules()));
   connect(m_GUI.m_ButtonBox, SIGNAL(rejected()), this, SLOT(reject()));
-
-  connect(m_GUI.pushButtonUpdateStyle, SIGNAL(clicked()), this, SLOT(UpdateStyle()));
 }
 
 sv4guiAboutDialog::~sv4guiAboutDialog()
