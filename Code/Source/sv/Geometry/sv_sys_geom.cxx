@@ -2732,7 +2732,6 @@ int sys_geom_InterpolateVector( cvPolyData *src, double pt[], double vect[] )
   vect[1] = vy;
   vect[2] = vz;
 
-
   vtkFloatingPointType x[3];
   vtkFloatingPointType closestPoint[3];
   vtkIdType cellId = 0;
@@ -2768,7 +2767,6 @@ int sys_geom_InterpolateVector( cvPolyData *src, double pt[], double vect[] )
   //  fprintf(stdout,"pcoords: %f %f %f cellId: %i subId; %i dist: %f\n",
   //      pcoords[0],pcoords[1],pcoords[2],cellId,subId,sqrt(dist2));
 
-
   vtkIdList *ids = vtkIdList::New();
   ids->Allocate(10,10);
   ids->Initialize();
@@ -2782,13 +2780,11 @@ int sys_geom_InterpolateVector( cvPolyData *src, double pt[], double vect[] )
       cell->Delete();
       return SV_ERROR;
   }
-
   vtkDataArray *vVectors= pd->GetPointData()->GetVectors();
 
   vtkFloatingPointType *nodeVector;
 
   int numIds = ids->GetNumberOfIds();
-
   for (int i = 0; i < numIds; i++) {
     nodeVector = vVectors->GetTuple(ids->GetId(i));
     vx += weights[i]*nodeVector[0];
@@ -2796,11 +2792,9 @@ int sys_geom_InterpolateVector( cvPolyData *src, double pt[], double vect[] )
     vz += weights[i]*nodeVector[2];
     //    fprintf(stdout,"%i: weight: %f value: %f %f %f\n", i,weights[i],nodeVector[0], nodeVector[1], nodeVector[2]);
   }
-
   ids->Delete();
   locator->Delete();
   cell->Delete();
-
   vect[0] = vx;
   vect[1] = vy;
   vect[2] = vz;

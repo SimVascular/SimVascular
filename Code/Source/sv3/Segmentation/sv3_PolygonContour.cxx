@@ -29,14 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sv4gui_ContourPolygon.h"
 #include "sv3_PolygonContour.h"
+#include "sv_Math.h"
+#include  <cmath>
 
 using sv3::ContourPolygon;
-
-sv4guiContourPolygon::sv4guiContourPolygon()
+ContourPolygon::ContourPolygon() : Contour()
 {
-    
     m_Method="Manual";
     m_Type="Polygon";
 
@@ -45,38 +44,39 @@ sv4guiContourPolygon::sv4guiContourPolygon()
 
     m_ControlPointNonRemovableIndices[0]=0;
     m_ControlPointNonRemovableIndices[1]=1;
-    m_Extendable=true;
+    //m_Extendable=true;
 }
 
-sv4guiContourPolygon::sv4guiContourPolygon(const sv4guiContourPolygon &other)
-    : sv4guiContour(other)
+ContourPolygon::ContourPolygon(const ContourPolygon &other)
+    : Contour(other)
 {
 }
 
-sv4guiContourPolygon::~sv4guiContourPolygon()
+ContourPolygon::~ContourPolygon()
 {
 }
 
-sv4guiContourPolygon* sv4guiContourPolygon::Clone()
+ContourPolygon* ContourPolygon::Clone()
 {
-    return new sv4guiContourPolygon(*this);
+    return new ContourPolygon(*this);
 }
 
-std::string sv4guiContourPolygon::GetClassName()
+std::string ContourPolygon::GetClassName()
 {
-    return "sv4guiContourPolygon";
+    return "ContourPolygon";
 }
 
-std::vector<mitk::Point3D> CreateInterpolationPoints(mitk::Point3D pt1, mitk::Point3D pt2, int interNumber)
+
+std::vector<std::array<double,3> > CreateInterpolationPoints(std::array<double,3>  pt1, std::array<double,3>  pt2, int interNumber)
 {
-    std::vector<mitk::Point3D> points;
+    std::vector<std::array<double,3> > points;
 
     double dx,dy,dz;
     dx=(pt2[0]-pt1[0])/interNumber;
     dy=(pt2[1]-pt1[1])/interNumber;
     dz=(pt2[2]-pt1[2])/interNumber;
 
-    mitk::Point3D pt;
+    std::array<double,3>  pt;
     for(int i=1;i<interNumber;i++)
     {
         pt[0]=pt1[0]+i*dx;
@@ -89,34 +89,45 @@ std::vector<mitk::Point3D> CreateInterpolationPoints(mitk::Point3D pt1, mitk::Po
     return points;
 }
 
-void sv4guiContourPolygon::SetControlPoint(int index, mitk::Point3D point)
+void ContourPolygon::SetControlPoint(int index, std::array<double,3>  point)
 {
+    double tmp[3], projPt[3];
+    for (int i = 0; i<3; i++)
+        tmp[i] = point[i];
+    m_vtkPlaneGeometry->ProjectPoint(tmp, projPt);
+    if (index>=m_ControlPoints.size())
+    {
+        fprintf(stderr, "Unable to set control point\n");
+        return;
+    }
     if(index==-1) index=m_ControlPoints.size()-1;
 
     if(index<0||index>m_ControlPoints.size()-1) return;
 
-    
     if(index==0)
     {
-        mitk::Vector3D dirVec=point-GetControlPoint(index);
+        std::array<double,3> dirVec;
+        for (int i = 0; i<3; i++)
+            dirVec[i]=projPt[i]-m_ControlPoints[index][i];
         Shift(dirVec);
     }
     else if(index==1)
     {
-        mitk::Point3D tmpPt;
-        Scale(GetControlPoint(0), GetControlPoint(index), point);
+        Scale(m_ControlPoints[0], m_ControlPoints[index], std::array<double,3>{projPt[0],projPt[1],projPt[2]});
     }
     else if(index<m_ControlPoints.size())
     {
-        for(int i=0; i<3;i++)
-            m_ControlPoints[index][i] = point[i];       
+        m_ControlPoints[index]=std::array<double,3>{projPt[0],projPt[1],projPt[2]};
         ControlPointsChanged();
     }
 }
 
-void sv4guiContourPolygon::CreateContourPoints()
+void ContourPolygon::CreateContourPoints()
 {
     //exclude the first two points
+    
+    if (m_ContourPoints.size()!=0)
+        m_ContourPoints.clear();
 
     int controlNumber=GetControlPointNumber();
 
@@ -126,26 +137,12 @@ void sv4guiContourPolygon::CreateContourPoints()
     }
     else if(controlNumber==3)
     {
-        std::array<double,3> stdpt;
-        mitk::Point3D mitkpt = GetControlPoint(2);
-        for(int i=0; i<3; i++)
-            stdpt[i]=mitkpt[i];
-        m_ContourPoints.push_back(stdpt);
+        m_ContourPoints.push_back(GetControlPoint(2));
         return;
     }
 
-
-    std::vector<mitk::Point3D> tempControlPoints(m_ControlPoints.size());
-    for(int i=0; i<m_ControlPoints.size(); i++)
-    {    
-    
-        for (int j=0; j<3; j++)
-            tempControlPoints[i][j] = m_ControlPoints[i][j];
-    }
-    mitk::Point3D tmpPt;
-    for(int i=0; i<3; i++)
-        tmpPt[i] = m_ControlPoints[2][i];
-    tempControlPoints.push_back(tmpPt);
+    std::vector<std::array<double,3> > tempControlPoints=m_ControlPoints;
+    tempControlPoints.push_back(m_ControlPoints[2]);
 
     int interNumber;
 
@@ -167,30 +164,28 @@ void sv4guiContourPolygon::CreateContourPoints()
     int controlBeginIndex=2;
     for(int i=controlBeginIndex;i<controlNumber;i++)
     {
-        mitk::Point3D pt1,pt2;
+        std::array<double,3>  pt1,pt2;
         pt1=tempControlPoints[i];
         pt2=tempControlPoints[i+1];
 
-        m_ContourPoints.push_back(std::array<double,3>{pt1[0],pt1[1],pt1[2]});
+        m_ContourPoints.push_back(pt1);
 
         if(i==controlNumber-1 &&!m_Closed) break;
 
         if(m_SubdivisionType==CONSTANT_SPACING)
         {
-            interNumber=std::ceil(pt2.EuclideanDistanceTo(pt1)/m_SubdivisionSpacing);
+            double dist = sqrt(pow(pt2[0]-pt1[0],2)+pow(pt2[1]-pt1[1],2)+pow(pt2[2]-pt1[2],2));
+            interNumber=std::ceil(dist/m_SubdivisionSpacing);
         }
 
-        std::vector<mitk::Point3D> interPoints=CreateInterpolationPoints(pt1,pt2,interNumber);
-        std::vector<std::array<double,3> > interPtsStd(interPoints.size()); 
-        for(int p=0; p<interPoints.size();p++)
-            for(int q=0; q<3;q++)
-                interPtsStd[p][q] = interPoints[p][q];
-         m_ContourPoints.insert(m_ContourPoints.end(),interPtsStd.begin(),interPtsStd.end());
+        std::vector<std::array<double,3> > interPoints=CreateInterpolationPoints(pt1,pt2,interNumber);
+
+         m_ContourPoints.insert(m_ContourPoints.end(),interPoints.begin(),interPoints.end());
     }
 
 }
 
-int sv4guiContourPolygon::SearchControlPointByContourPoint( int contourPointIndex )
+int ContourPolygon::SearchControlPointByContourPoint( int contourPointIndex )
 {
     if(contourPointIndex<-1 || contourPointIndex>=m_ContourPoints.size()) return -2;
 
@@ -214,7 +209,7 @@ int sv4guiContourPolygon::SearchControlPointByContourPoint( int contourPointInde
     return m_ControlPoints.size();
 }
 
-void sv4guiContourPolygon::AssignCenterScalingPoints()
+void ContourPolygon::AssignCenterScalingPoints()
 {
     if(m_ControlPoints.size()>1)
     {
@@ -222,8 +217,41 @@ void sv4guiContourPolygon::AssignCenterScalingPoints()
         m_ControlPoints[1]=m_ScalingPoint;
     }
 }
-void sv4guiContourPolygon::PlaceControlPoints(mitk::Point3D point)
+
+void ContourPolygon::PlaceControlPoints(std::array<double,3>  point)
 {
-    sv4guiContour::PlaceControlPoints(point);
+    Contour::PlaceControlPoints(point);
     m_ControlPointSelectedIndex = 3;
+}
+
+ContourPolygon* ContourPolygon::CreateSmoothedContour(int fourierNumber)
+{
+    if(m_ContourPoints.size()<3)
+        return this->Clone();
+
+    ContourPolygon* contour=new ContourPolygon();
+    contour->SetPathPoint(m_PathPoint);
+    std::string method=m_Method;
+    int idx=method.find("Smoothed");
+    if(idx<0)
+        method=method+" + Smoothed";
+
+    contour->SetMethod(method);
+    contour->SetClosed(m_Closed);
+
+    int pointNumber=m_ContourPoints.size();
+
+    int smoothedPointNumber;
+
+    if((2*pointNumber)<fourierNumber)
+        smoothedPointNumber=3*fourierNumber;
+    else
+        smoothedPointNumber=pointNumber;
+
+    cvMath *cMath = new cvMath();
+    std::vector<std::array<double, 3> > smoothedContourPoints=cMath->CreateSmoothedCurve(m_ContourPoints,m_Closed,fourierNumber,0,smoothedPointNumber);
+    delete cMath;
+    contour->SetContourPoints(smoothedContourPoints);
+
+    return contour;
 }

@@ -29,45 +29,61 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_CONTOURPOLYGON_H
-#define SV4GUI_CONTOURPOLYGON_H
+#ifndef SV3_CIRCLECONTOUR_H
+#define SV3_CIRCLECONTOUR_H
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <sv3SegmentationExports.h>
 
-#include "sv4gui_Contour.h"
-#include "sv3_PolygonContour.h"
+#include "sv3_Contour.h"
+#include "sv_RepositoryData.h"
+#include "sv3_PathElement.h"
 
+#include "vtkPolyData.h"
+#include "vtkSmartPointer.h"
+#include "vtkImageData.h"
+//#include "vtkPlane.h"
 
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourPolygon : public sv4guiContour
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
+namespace sv3{
+class SV_EXPORT_SEGMENTATION circleContour : public Contour
 {
 
 public:
 
-    sv4guiContourPolygon();
-
-    sv4guiContourPolygon(const sv4guiContourPolygon &other);
-
-    virtual ~sv4guiContourPolygon();
-
-    virtual sv4guiContourPolygon* Clone() override;
-
+    
+    circleContour();
+    
+    circleContour(const circleContour &other);
+    
+    ~circleContour();
+    
+    virtual circleContour* Clone() override;
+    
     virtual std::string GetClassName() override;
 
-    virtual void SetControlPoint(int index, mitk::Point3D point) override;
+    virtual void SetControlPoint(int index, std::array<double,3> point) override;
 
-    virtual void CreateContourPoints() override;
-
-    virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
+    void SetControlPointByRadius(double radius, double* point);
+    
+    //virtual void CreateContourPoints() override;
 
     virtual void AssignCenterScalingPoints() override;
 
-    virtual void PlaceControlPoints(mitk::Point3D point) override;
+    static circleContour* CreateByFitting(Contour* contour);
+    
+    circleContour* CreateSmoothedContour(int fourierNumber);
+    
+    virtual void CreateContourPoints() override;
 
   protected:
 
   };
 
-
-#endif // SV4GUI_CONTOURPOLYGON_H
+}
+#endif // SV3_CIRCLECONTOUR_H

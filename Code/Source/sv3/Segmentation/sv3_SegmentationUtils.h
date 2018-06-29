@@ -28,46 +28,38 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#ifndef SV3_SEGMENTATIONUTILS_H
+#define SV3_SEGMENTATIONUTILS_H
 
-#ifndef SV4GUI_CONTOURPOLYGON_H
-#define SV4GUI_CONTOURPOLYGON_H
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <deque>
+#include <sv3SegmentationExports.h>
+#include "sv_StrPts.h"
+#include "sv3_PathElement.h"
+#include <vtkImageData.h>
+#include "vtkSmartPointer.h"
+#include <vtkPlane.h>
 
-#include "sv4gui_Contour.h"
-#include "sv3_PolygonContour.h"
-
-
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourPolygon : public sv4guiContour
+namespace sv3{
+class SV_EXPORT_SEGMENTATION SegmentationUtils
 {
+    public:
+    static cvStrPts* vtkImageData2cvStrPts(vtkImageData* vtkImg);
+    
+    static std::deque<int> GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed);
+    
+    static vtkTransform* GetvtkTransform(sv3::PathElement::PathPoint pathPoint);
+    
+    static vtkImageData* GetSlicevtkImage(sv3::PathElement::PathPoint pathPoint, vtkImageData* volumeimage, double size);
+    
+    static vtkPlane* CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size);
+    
+    static void getOrthogonalVector(double normal[3], double vec[3]);
+;
+};
 
-public:
-
-    sv4guiContourPolygon();
-
-    sv4guiContourPolygon(const sv4guiContourPolygon &other);
-
-    virtual ~sv4guiContourPolygon();
-
-    virtual sv4guiContourPolygon* Clone() override;
-
-    virtual std::string GetClassName() override;
-
-    virtual void SetControlPoint(int index, mitk::Point3D point) override;
-
-    virtual void CreateContourPoints() override;
-
-    virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
-
-    virtual void AssignCenterScalingPoints() override;
-
-    virtual void PlaceControlPoints(mitk::Point3D point) override;
-
-  protected:
-
-  };
-
-
-#endif // SV4GUI_CONTOURPOLYGON_H
+}
+#endif // SV3_SEGMENTATIONUTILS_H

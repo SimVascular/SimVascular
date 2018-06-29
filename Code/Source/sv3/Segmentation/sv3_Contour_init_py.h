@@ -28,46 +28,24 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef SV4GUI_CONTOURPOLYGON_H
-#define SV4GUI_CONTOURPOLYGON_H
+ 
+#ifndef __SV3_CONTOUR_INIT_PY_H
+#define __SV3_CONTOUR_INIT_PY_H
 
 #include "SimVascular.h"
+#include "sv3SegmentationExports.h"
+#include "Python.h"
 
-#include <sv4guiModuleSegmentationExports.h>
-
-#include "sv4gui_Contour.h"
-#include "sv3_PolygonContour.h"
-
-
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourPolygon : public sv4guiContour
+extern "C" SV_EXPORT_SEGMENTATION typedef struct
 {
+  PyObject_HEAD
+  sv3::Contour* geom;
+}pyContour;
 
-public:
+extern "C" SV_EXPORT_SEGMENTATION typedef struct
+{
+  PyObject_HEAD
+  cvFactoryRegistrar* registrar;
+}pyContourFactoryRegistrar;
 
-    sv4guiContourPolygon();
-
-    sv4guiContourPolygon(const sv4guiContourPolygon &other);
-
-    virtual ~sv4guiContourPolygon();
-
-    virtual sv4guiContourPolygon* Clone() override;
-
-    virtual std::string GetClassName() override;
-
-    virtual void SetControlPoint(int index, mitk::Point3D point) override;
-
-    virtual void CreateContourPoints() override;
-
-    virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
-
-    virtual void AssignCenterScalingPoints() override;
-
-    virtual void PlaceControlPoints(mitk::Point3D point) override;
-
-  protected:
-
-  };
-
-
-#endif // SV4GUI_CONTOURPOLYGON_H
+#endif //__SV3_CONTOUR_INIT_PY_H

@@ -985,6 +985,11 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
 PyObject* cvMesh_LoadModelMtd( pyMeshObject* self, PyObject* args)
 {
   cvMeshObject *geom = self->geom;
+  if (geom==NULL)
+  {
+      PyErr_SetString(PyRunTimeErr,"Mesh object not registered in repository");
+      return Py_ERROR;
+  }
   char *FileName;
   if(!PyArg_ParseTuple(args,"s",&FileName))
   {

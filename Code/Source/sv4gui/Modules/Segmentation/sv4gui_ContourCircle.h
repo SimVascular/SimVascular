@@ -37,6 +37,10 @@
 #include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_Contour.h"
+#include "sv3_CircleContour.h"
+
+using sv3::circleContour;
+
 
 class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourCircle : public sv4guiContour
 {
@@ -53,11 +57,11 @@ public:
 
     virtual std::string GetClassName() override;
 
-    virtual void SetControlPoint(int index, mitk::Point3D point) override;
-
     virtual void CreateContourPoints() override;
 
-    void AssignCenterScalingPoints() override;
+    virtual void AssignCenterScalingPoints() override;
+
+    virtual void SetControlPoint(int index, mitk::Point3D point) override;
 
     static sv4guiContour* CreateByFitting(sv4guiContour* contour);
 

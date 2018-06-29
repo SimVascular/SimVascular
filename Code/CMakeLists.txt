@@ -192,7 +192,8 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
   "Source/sv/Model/SolidModel"
   "Source/sv2/PostProcessing"
   "Source/sv/Mesh/MeshObject"
-  "Source/sv/Model/PolyDataSolidModel")
+  "Source/sv/Model/PolyDataSolidModel"
+  "Source/sv3/Segmentation")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -229,7 +230,7 @@ if(SV_USE_MMG)
 endif()
 # ITK
 if(SV_USE_ITK)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/Segmentation")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/sv3/ITKSegmentation")
 endif()
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)

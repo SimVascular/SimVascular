@@ -29,33 +29,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_CONTOURPOLYGON_H
-#define SV4GUI_CONTOURPOLYGON_H
+#ifndef SV3_POLYGONCONTOUR_H
+#define SV3_POLYGONCONTOUR_H
 
 #include "SimVascular.h"
 
-#include <sv4guiModuleSegmentationExports.h>
+#include <sv3SegmentationExports.h>
 
-#include "sv4gui_Contour.h"
-#include "sv3_PolygonContour.h"
+#include "sv3_Contour.h"
 
-
-class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourPolygon : public sv4guiContour
+namespace sv3{
+class SV_EXPORT_SEGMENTATION ContourPolygon : public Contour
 {
 
 public:
 
-    sv4guiContourPolygon();
 
-    sv4guiContourPolygon(const sv4guiContourPolygon &other);
+    ContourPolygon();
 
-    virtual ~sv4guiContourPolygon();
+    ContourPolygon(const ContourPolygon &other);
 
-    virtual sv4guiContourPolygon* Clone() override;
+    ~ContourPolygon();
+
+    virtual ContourPolygon* Clone() override;
 
     virtual std::string GetClassName() override;
-
-    virtual void SetControlPoint(int index, mitk::Point3D point) override;
+    
+    virtual void SetControlPoint(int index, std::array<double,3> point) override;
 
     virtual void CreateContourPoints() override;
 
@@ -63,11 +63,13 @@ public:
 
     virtual void AssignCenterScalingPoints() override;
 
-    virtual void PlaceControlPoints(mitk::Point3D point) override;
+    void PlaceControlPoints(std::array<double,3> point) override;
+    
+    ContourPolygon* CreateSmoothedContour(int fourierNumber);
 
   protected:
 
   };
+};
 
-
-#endif // SV4GUI_CONTOURPOLYGON_H
+#endif // SV3_POLYGONCONTOUR_H
