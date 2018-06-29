@@ -32,8 +32,6 @@ project(org_sv_gui_qt_svfsi)
 
 set(lib org_sv_gui_qt_svfsi)
 
-set(SV_LIB_MODULE_SVFSI_NAME "_simvascular_module_svfsi")
-
 if(SV_USE_MITK_CONFIG)
   mitk_create_plugin(
     EXPORT_DIRECTIVE SV_QT_SVFSI
