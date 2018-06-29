@@ -98,7 +98,7 @@ void sv4guisvFSIBCWidget::Setup(sv4guiMitksvFSIJob* mitkJob, int eqIndx, bool ad
     if(m_Job==NULL || m_EqIndx<0)
         return;
 
-    eqClass& eq=m_Job->m_Eqs[m_EqIndx];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[m_EqIndx];
 
     //projection list
     ui->comboBoxProjection->clear();
@@ -107,7 +107,7 @@ void sv4guisvFSIBCWidget::Setup(sv4guiMitksvFSIJob* mitkJob, int eqIndx, bool ad
         QStringList fluidFaces;
         for(auto& d: m_Job->m_Domains)
         {
-            svDomain& domain=d.second;
+            sv4guisvFSIDomain& domain=d.second;
             if(domain.type=="fluid")
             {
                 for(std::string faceName : domain.faceNames)
@@ -122,7 +122,7 @@ void sv4guisvFSIBCWidget::Setup(sv4guiMitksvFSIJob* mitkJob, int eqIndx, bool ad
     {
         for(auto& d: m_Job->m_Domains)
         {
-            svDomain& domain=d.second;
+            sv4guisvFSIDomain& domain=d.second;
             for(std::string faceName : domain.faceNames)
                 m_AvailableFaceList<<QString::fromStdString(faceName);
         }
@@ -156,10 +156,10 @@ void sv4guisvFSIBCWidget::LoadBC()
     if(m_Job==NULL || m_EqIndx<0)
         return;
 
-    eqClass& eq=m_Job->m_Eqs[m_EqIndx];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[m_EqIndx];
 
-    bcClass bcDefault;
-    bcClass bc;
+    sv4guisvFSIbcClass bcDefault;
+    sv4guisvFSIbcClass bc;
 
     if(m_AddingBC)
     {
@@ -174,7 +174,7 @@ void sv4guisvFSIBCWidget::LoadBC()
             bc=eq.faceBCs[m_AvailableFaceList[0].toStdString()];
             foreach(QString name, m_AvailableFaceList)
             {
-                bcClass tempbc=eq.faceBCs[name.toStdString()];
+                sv4guisvFSIbcClass tempbc=eq.faceBCs[name.toStdString()];
 
                 if ( tempbc.bcGrp != bc.bcGrp ) bc.bcGrp = bcDefault.bcGrp;
                 if ( tempbc.bcType != bc.bcType ) bc.bcType = bcDefault.bcType;
@@ -402,7 +402,7 @@ void sv4guisvFSIBCWidget::SaveBC() {
     if(m_Job==NULL || m_EqIndx<0)
         return;
 
-    bcClass newBC;
+    sv4guisvFSIbcClass newBC;
 
     if ( ui->bcGrp->currentIndex() == -1 ) {
         return;
@@ -456,7 +456,7 @@ void sv4guisvFSIBCWidget::SaveBC() {
     newBC.imposeIntegral=ui->checkBoxImposeIntegral->isChecked();
     newBC.effectiveDirection=ui->lineEditDirection->text();
 
-    eqClass& eq=m_Job->m_Eqs[m_EqIndx];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[m_EqIndx];
 
     foreach ( QListWidgetItem* item , ui->faceList->selectedItems() ) {
         QString name=item->text();

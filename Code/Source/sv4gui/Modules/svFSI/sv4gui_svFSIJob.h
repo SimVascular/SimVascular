@@ -32,9 +32,9 @@
 #ifndef sv4guisvFSIJOB_H
 #define sv4guisvFSIJOB_H
 
-#include <svFSIExports.h>
+#include "sv4guiModulesvFSIExports.h"
 
-#include "sv4gui_eqClass.h"
+#include "sv4gui_svFSIeqClass.h"
 
 #include <map>
 #include <vector>
@@ -42,7 +42,7 @@
 #include <iostream>
 #include <string>
 
-struct SVFSI_EXPORT svDomain
+struct SV4GUIMODULESVFSI_EXPORT sv4guisvFSIDomain
 {
     std::string name;
     std::string folderName;
@@ -55,7 +55,7 @@ struct SVFSI_EXPORT svDomain
 
     double edgeSize; //max edge size for remesher
 
-    svDomain()
+    sv4guisvFSIDomain()
         : name("")
         , folderName("")
         , fileName("")
@@ -69,7 +69,7 @@ struct SVFSI_EXPORT svDomain
 
 };
 
-class SVFSI_EXPORT sv4guisvFSIJob
+class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIJob
 {
 
 public:
@@ -102,9 +102,9 @@ public:
 
     bool remeshing;
 
-    std::map<std::string,svDomain> m_Domains;
+    std::map<std::string,sv4guisvFSIDomain> m_Domains;
 
-    std::vector<eqClass> m_Eqs;
+    std::vector<sv4guisvFSIeqClass> m_Eqs;
 
     bool WriteFile(std::string filePath);
 

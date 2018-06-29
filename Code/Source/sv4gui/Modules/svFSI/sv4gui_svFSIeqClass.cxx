@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sv4gui_eqClass.h"
+#include "sv4gui_svFSIeqClass.h"
 
-eqClass::eqClass(const QString& eq)
+sv4guisvFSIeqClass::sv4guisvFSIeqClass(const QString& eq)
 {
     for (int i=0; i < maxOutput ; i++ ) isOutsputed[i] = false;
     for (int i=0; i < maxProp ; i++ ) propVal[i] = 0.0;
@@ -141,12 +141,12 @@ eqClass::eqClass(const QString& eq)
     rmCopyFrequency=1;
 }
 
-eqClass::~eqClass()
+sv4guisvFSIeqClass::~sv4guisvFSIeqClass()
 {
     outputNames.clear();
 }
 
-void eqClass::setPropValue( const double value, const QString propName)
+void sv4guisvFSIeqClass::setPropValue( const double value, const QString propName)
 {
     int indx=-1;
     for (int i=0 ; i < propNames.length() ; i++)
@@ -158,7 +158,7 @@ void eqClass::setPropValue( const double value, const QString propName)
 }
 
 
-int eqClass::searchOutput(const QString &outputName) const
+int sv4guisvFSIeqClass::searchOutput(const QString &outputName) const
 {
     for (int i=0 ; i < outputNames.length() ; i++)
         if ( outputName == outputNames.at(i) )
@@ -167,7 +167,7 @@ int eqClass::searchOutput(const QString &outputName) const
     return -1;
 }
 
-const QStringList eqClass::getOutputNames() const
+const QStringList sv4guisvFSIeqClass::getOutputNames() const
 {
     QStringList res;
     for (int i=0 ; i < outputNames.length() ; i++) {
@@ -176,7 +176,7 @@ const QStringList eqClass::getOutputNames() const
     return res;
 }
 
-const QStringList eqClass::getOutputCandidates() const
+const QStringList sv4guisvFSIeqClass::getOutputCandidates() const
 {
     QStringList res;
     for (int i=0 ; i < outputNames.length() ; i++) {
@@ -185,7 +185,7 @@ const QStringList eqClass::getOutputCandidates() const
     return res;
 }
 
-void eqClass::setOutputs(const QStringList& outputNameList) {
+void sv4guisvFSIeqClass::setOutputs(const QStringList& outputNameList) {
     for ( int i=0 ; i < maxOutput ; i++ ) isOutsputed[i] = false;
     for ( int i=0 ; i < outputNameList.length() ; i++ ) setOutput(outputNameList.at(i),true);
 }
