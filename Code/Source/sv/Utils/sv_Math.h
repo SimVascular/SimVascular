@@ -82,6 +82,8 @@ public:
                             bool insertOnlyIfDifferent = true);
                             
   std::array<double,3> GetPerpendicularNormalVector(std::array<double,3> vec);
+  
+  std::vector<std::array<double, 3> > CreateSmoothedCurve(std::vector<std::array<double, 3> > points, bool closed, int numModes, int sampleRate, int outputNumPts);
 
   private:
   int complex_mult (double z1[], double z2[], double zout[]);

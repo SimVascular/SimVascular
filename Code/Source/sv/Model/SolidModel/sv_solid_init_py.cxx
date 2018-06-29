@@ -805,6 +805,7 @@ PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -862,6 +863,7 @@ PyObject* Solid_CircleCmd(pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -919,6 +921,7 @@ if(!PyArg_ParseTuple(args,"sdO",&objName,&r,&ctrList))
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
   if ( geom->MakeSphere( r, ctr ) != SV_OK ) {
@@ -976,6 +979,7 @@ PyObject* Solid_EllipseCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1034,6 +1038,7 @@ PyObject* Solid_Box2dCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1104,6 +1109,7 @@ PyObject* Solid_Box3dCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1171,6 +1177,7 @@ PyObject* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1241,6 +1248,7 @@ PyObject* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1310,6 +1318,7 @@ PyObject* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1378,6 +1387,7 @@ PyObject* Solid_TorusCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1453,6 +1463,7 @@ PyObject* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1532,6 +1543,7 @@ PyObject* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1601,6 +1613,7 @@ PyObject* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1688,6 +1701,7 @@ PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     delete dist;
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1757,6 +1771,7 @@ PyObject* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1822,6 +1837,7 @@ PyObject* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -1912,6 +1928,7 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     delete [] srcs;
     return Py_ERROR;
   }
@@ -1982,6 +1999,7 @@ PyObject* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -2038,6 +2056,7 @@ PyObject* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args)
 	  geom = cvSolidModel::pyDefaultInstantiateSolidModel();
 
 	  if ( geom == NULL ) {
+	   PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
 	    return Py_ERROR;
 	  }
 
@@ -2109,6 +2128,7 @@ PyObject* Solid_CopyCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   dstGeom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( dstGeom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
   if ( dstGeom->Copy( *((cvSolidModel *)srcGeom) ) != SV_OK ) {
@@ -2192,6 +2212,7 @@ PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -2446,6 +2467,7 @@ PyObject* Solid_NewObjectCmd(pySolidModel* self,PyObject *args )
       cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID) {
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     return Py_ERROR;
   }
 
@@ -3118,11 +3140,16 @@ static PyObject*  Solid_GetPolyDataMtd( pySolidModel *self ,PyObject* args  )
   }
 
   cvSolidModel *geom =(self->geom);
+  if (geom==NULL)
+  {
+      PyErr_SetString(PyRunTimeErr, "Solid object it empty");
+      return Py_ERROR;
+  }
   // Get the cvPolyData:
   pd = geom->GetPolyData(useMaxDist, max_dist);
   //Py_DECREF(geom);
   if ( pd == NULL ) {
-    PyErr_SetString(PyRunTimeErr, "error getting cvPolyData for " );
+    PyErr_SetString(PyRunTimeErr, "error getting cvPolyData" );
     return Py_ERROR;
   }
 

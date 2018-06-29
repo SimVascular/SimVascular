@@ -996,3 +996,75 @@ std::array<double,3> cvMath::GetPerpendicularNormalVector(std::array<double,3> v
 
     return pvec;
 }
+
+std::vector<std::array<double, 3> > cvMath::CreateSmoothedCurve(std::vector<std::array<double, 3> > points, bool closed, int numModes, int sampleRate, int outputNumPts)
+{
+    std::vector<std::array<double, 3>  > outputPoints;
+    int numPts=points.size();
+
+    std::vector<std::array<double, 3>  > actualPoints;
+
+    if(sampleRate>0)
+    {
+        for(int i=0;i<numPts;i+=sampleRate){
+            actualPoints.push_back(points[i]);
+        }
+        if(sampleRate>1){
+            actualPoints.push_back(points[numPts-1]);
+        }
+        outputNumPts=actualPoints.size();
+    }
+    else if(outputNumPts>1)
+    {
+        actualPoints=points;
+    }
+    else
+    {
+        return outputPoints;
+    }
+
+    if(!closed)
+    {
+        for(int i=outputNumPts-1;i>=0;i--){
+            actualPoints.push_back(actualPoints[i]);
+        }
+    }
+
+    int actualNumPts=actualPoints.size();
+
+    cvMath *cMath = new cvMath();
+
+    double **pts = cMath->createArray(actualNumPts,3);
+    for(int i=0;i<actualNumPts;i++)
+    {
+        pts[i][0] = actualPoints[i][0];
+        pts[i][1] = actualPoints[i][1];
+        pts[i][2] = actualPoints[i][2];
+    }
+    double **outPts = NULL;
+    int isClosed=closed?1:0;
+    int rslt;
+    if(closed)
+    {
+        rslt=cMath->smoothCurve(pts, actualNumPts, 1, numModes, outputNumPts, &outPts);
+    }
+    else
+    {
+        rslt=cMath->smoothCurve(pts, actualNumPts, 0, numModes, 2*outputNumPts, &outPts);
+    }
+    delete cMath;
+    if (rslt == SV_ERROR) {
+        return outputPoints;
+    }
+
+    for(int i=0;i<outputNumPts;i++){
+        std::array<double, 3>   point;
+        point[0]=outPts[i][0];
+        point[1]=outPts[i][1];
+        point[2]=outPts[i][2];
+
+        outputPoints.push_back(point);
+    }
+
+    return outputPoints;
+}

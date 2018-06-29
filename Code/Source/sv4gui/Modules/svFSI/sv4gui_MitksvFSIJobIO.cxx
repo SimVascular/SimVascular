@@ -130,7 +130,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
 //                if (domainElement == nullptr)
 //                    continue;
 
-                svDomain domain;
+                sv4guisvFSIDomain domain;
                 domainElement->QueryStringAttribute("name", &domain.name);
                 domainElement->QueryStringAttribute("type", &domain.type);
                 domainElement->QueryStringAttribute("folder_name", &domain.folderName);
@@ -163,7 +163,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                 if(strValue=="" || strValue=="none")
                     continue;
 
-                eqClass eq=eqClass(QString::fromStdString(strValue));
+                sv4guisvFSIeqClass eq=sv4guisvFSIeqClass(QString::fromStdString(strValue));
 
                 eqElement->QueryBoolAttribute("coupled", &eq.coupled);
                 eqElement->QueryIntAttribute("minItr", &eq.minItr);
@@ -287,7 +287,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                         faceElement!=nullptr;
                         faceElement=faceElement->NextSiblingElement("face"))
                     {
-                        bcClass bc;
+                        sv4guisvFSIbcClass bc;
 
                         strValue="";
                         faceElement->QueryStringAttribute("name",&strValue);
@@ -423,7 +423,7 @@ void sv4guiMitksvFSIJobIO::Write()
 
         for(auto& md : job->m_Domains)
         {
-            svDomain& domain=md.second;
+            sv4guisvFSIDomain& domain=md.second;
 
             auto domainElement = new TiXmlElement("domain");
             dsElement->LinkEndChild(domainElement);
@@ -445,7 +445,7 @@ void sv4guiMitksvFSIJobIO::Write()
         auto eqsElement =new TiXmlElement("equations");
         jobElement->LinkEndChild(eqsElement);
 
-        for(eqClass & eq : job->m_Eqs)
+        for(sv4guisvFSIeqClass & eq : job->m_Eqs)
         {
             auto eqElement = new TiXmlElement("equation");
             eqsElement->LinkEndChild(eqElement);
@@ -504,7 +504,7 @@ void sv4guiMitksvFSIJobIO::Write()
                 for(auto& pair : job->m_Domains)
                 {
                     std::string domainName=pair.first;
-                    svDomain& domain=pair.second;
+                    sv4guisvFSIDomain& domain=pair.second;
 
                     auto sizeElement =new TiXmlElement("edge_size");
                     rmElement->LinkEndChild(sizeElement);
@@ -529,7 +529,7 @@ void sv4guiMitksvFSIJobIO::Write()
             eqElement->LinkEndChild(bcsElement);
             for ( auto& f : eq.faceBCs )
             {
-                bcClass& bc=f.second;
+                sv4guisvFSIbcClass& bc=f.second;
 
                 auto faceElement = new TiXmlElement("face");
                 bcsElement->LinkEndChild(faceElement);

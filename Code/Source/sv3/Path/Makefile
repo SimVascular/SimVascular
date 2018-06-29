@@ -64,4 +64,3 @@ TARGET_LIB_NAME = $(SV_LIB_PATH_NAME)
 SV_PYTHON_MODULE_NAME = pyPath
 
 include $(TOP)/targetlib.mk
-

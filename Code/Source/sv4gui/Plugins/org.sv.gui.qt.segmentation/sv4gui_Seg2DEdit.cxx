@@ -959,7 +959,6 @@ void sv4guiSeg2DEdit::CreateCircle()
 
     m_CurrentSegButton=ui->btnCircle;
     m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-
     m_DataInteractor->SetMethod("Circle");
 }
 
@@ -1416,28 +1415,26 @@ void sv4guiSeg2DEdit::CreateManualCircle(bool)
             return;
         }
     }
-
     sv4guiContour* contour=new sv4guiContourCircle();
     contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
     contour->SetPlaced(true);
     contour->SetMethod(contour->GetMethod());
-
+    
     centerPoint[0]+=contour->GetPlaneGeometry()->GetSpacing()[0]*contour->GetPlaneGeometry()->GetBounds()[1]/2;
     centerPoint[1]+=contour->GetPlaneGeometry()->GetSpacing()[1]*contour->GetPlaneGeometry()->GetBounds()[3]/2;
     boundaryPoint[0]=centerPoint[0]+radius;
     boundaryPoint[1]=centerPoint[1];
-
+    
     mitk::Point3D pt1,pt2;
     contour->GetPlaneGeometry()->Map(centerPoint,pt1);
     contour->GetPlaneGeometry()->Map(boundaryPoint,pt2);
     std::vector<mitk::Point3D> controlPoints;
     controlPoints.push_back(pt1);
     controlPoints.push_back(pt2);
-
     contour->SetControlPoints(controlPoints);
-
     contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
     contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+    
 
     mitk::OperationEvent::IncCurrObjectEventId();
 

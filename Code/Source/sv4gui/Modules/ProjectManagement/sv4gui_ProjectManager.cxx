@@ -110,6 +110,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         dir.mkdir(simFolderName);
         dir.mkdir(reposFolderName);
         dir.mkdir(svFSIFolderName);
+
     }else{
 
         QFile xmlFile(projectConfigFilePath);
@@ -171,6 +172,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         modelFolderName=projDesc.firstChildElement("models").attribute("folder_name");
         meshFolderName=projDesc.firstChildElement("meshes").attribute("folder_name");
         simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
+	svFSIFolderName=projDesc.firstChildElement("svFSI").attribute("folder_name");
         //reposFolderName=projDesc.firstChildElement("repository").attribute("folder_name");
 
     }
@@ -199,7 +201,6 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     mitk::DataNode::Pointer simFolderNode=CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
     mitk::DataNode::Pointer reposFolderNode=CreateDataFolder<sv4guiRepositoryFolder>(dataStorage, reposFolderName, projectFolderNode);
     mitk::DataNode::Pointer svFSIFolderNode=CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
-
 
     imageFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     pathFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
@@ -426,6 +427,10 @@ void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
 
     tag = doc.createElement("simulations");
     tag.setAttribute("folder_name","Simulations");
+    root.appendChild(tag);
+
+    tag = doc.createElement("svFSI");
+    tag.setAttribute("folder_name","svFSI");
     root.appendChild(tag);
 
     tag = doc.createElement("repository");
@@ -1041,6 +1046,7 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
+    // fix???    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
 
     std::vector<std::string> extensions;
     if(isPath->CheckNode(dataNode))

@@ -57,8 +57,9 @@ QT_INCDIRS = -I$(QT_TOP_DIR)/lib/QtWidgets.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/lib/QtXml.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/lib/QtConcurrent.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/lib/QtNetwork.framework/Versions/5/Headers \
+                 -I$(QT_TOP_DIR)/lib/QtWebEngine.framework/Versions/5/Headers \
+                 -I$(QT_TOP_DIR)/lib/QtWebEngineWidgets.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/lib/QtWebView.framework/Versions/5/Headers \
-                 -I$(QT_TOP_DIR)/lib/QtWebKitWidgets.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/mkspecs/macx-clang \
                  -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers \
                  -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AGL.framework/Headers \
@@ -70,8 +71,9 @@ QT_MOC_INCDIRS = -I$(QT_TOP_DIR)/lib/QtWidgets.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/lib/QtXml.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/lib/QtConcurrent.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/lib/QtNetwork.framework/Versions/5/Headers \
+                 -I$(QT_TOP_DIR)/lib/QtWebEngine.framework/Versions/5/Headers \
+                 -I$(QT_TOP_DIR)/lib/QtWebEngineWidgets.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/lib/QtWebView.framework/Versions/5/Headers \
-                 -I$(QT_TOP_DIR)/lib/QtWebKitWidgets.framework/Versions/5/Headers \
                  -I$(QT_TOP_DIR)/mkspecs/macx-clang \
                  -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers \
                  -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AGL.framework/Headers \
@@ -81,7 +83,8 @@ QT_SO_PATH=$(QT_TOP_DIR)/lib
 QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
 
 QT_LIBS= -F$(QT_TOP_DIR)/lib \
-             -framework QtWebKitWidgets \
+             -framework QtWebEngineWidgets \
+             -framework QtWebEngine \
              -framework QtWebView \
              -framework QtWidgets -framework QtGui -framework QtCore \
              -framework QtXml -framework QtQml -framework QtConcurrent -framework QtNetwork \

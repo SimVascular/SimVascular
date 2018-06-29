@@ -144,14 +144,14 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
   if(pylist!=NULL)
   {
   for (i = 0; i < nterms; i++) {
-    r[0] = '\0';
-    sprintf(r,"%.6le %.6le",terms[i][0],terms[i][1]);
-    PyObject *rr=PyBytes_FromString(r);
-    if(!rr)
-    {
-      Py_DECREF(pylist);
-      return NULL;
-    }
+      PyObject* rr = PyList_New(2);
+      PyList_SetItem(rr,0,PyFloat_FromDouble(terms[i][0]));
+      PyList_SetItem(rr,1,PyFloat_FromDouble(terms[i][1]));
+        if(!rr)
+        {
+        Py_DECREF(pylist);
+        return NULL;
+        }
     PyList_SET_ITEM(pylist, i, rr);
     }
   }
@@ -313,16 +313,11 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
      return Py_ERROR;
   }
 
-  // create result string
-  char r[2048];
-  r[0] = '\0';
-  sprintf(r,"%.6le",velocity);
-
   // clean up
   mathobj->deleteArray(terms,nlistterms,2);
   delete mathobj;
 
-  return Py_BuildValue("s",r);
+  return Py_BuildValue("d",velocity);
 }
 
 PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)

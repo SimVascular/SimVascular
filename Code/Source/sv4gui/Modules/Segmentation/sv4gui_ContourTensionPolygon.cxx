@@ -30,6 +30,7 @@
  */
 
 #include "sv4gui_ContourTensionPolygon.h"
+#include "sv4gui_Contour.h"
 #include <deque>
 
 sv4guiContourTensionPolygon::sv4guiContourTensionPolygon()
@@ -95,7 +96,7 @@ void sv4guiContourTensionPolygon::CreateContourPoints()
     for(int i=controlBeginIndex;i<m_ControlPoints.size();i++)
     {
         mitk::Point2D pt2d;
-        m_PlaneGeometry->Map(m_ControlPoints[i], pt2d );
+        m_PlaneGeometry->Map(GetControlPoint(i), pt2d );
         subdivisionPoints.push_back(pt2d);
     }
 
@@ -172,7 +173,10 @@ void sv4guiContourTensionPolygon::CreateContourPoints()
         mitk::Point3D pt3d;
 
         m_PlaneGeometry->Map(*it, pt3d);
-        m_ContourPoints.push_back(pt3d);
+        std::array<double,3> stdPt3d;
+        for (int i=0; i<3; i++)
+            stdPt3d[i] = pt3d[i];
+        m_ContourPoints.push_back(stdPt3d);
 
     }
 

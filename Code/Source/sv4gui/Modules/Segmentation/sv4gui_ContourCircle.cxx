@@ -31,6 +31,7 @@
 
 #include "sv4gui_ContourCircle.h"
 
+
 sv4guiContourCircle::sv4guiContourCircle()
 {
     m_Method="Manual";
@@ -73,19 +74,22 @@ void sv4guiContourCircle::SetControlPoint(int index, mitk::Point3D point)
     }
     else if ( index == 1 )
     {
-        m_ControlPoints[index]=point;
+    	std::array<double,3> stdPt;
+    	for (int i=0; i<3; i++)
+        	stdPt[i] = point[i];
+        m_ControlPoints[index]=stdPt;
         ControlPointsChanged();
     }
-
+        
 }
 
 void sv4guiContourCircle::CreateContourPoints()
 {
     mitk::Point2D centerPoint, boundaryPoint;
 
-    m_PlaneGeometry->Map(m_ControlPoints[0], centerPoint );
+    m_PlaneGeometry->Map(GetControlPoint(0), centerPoint );
 
-    m_PlaneGeometry->Map(m_ControlPoints[1], boundaryPoint );
+    m_PlaneGeometry->Map(GetControlPoint(1), boundaryPoint );
 
     double radius = centerPoint.EuclideanDistanceTo( boundaryPoint );
 
@@ -107,6 +111,7 @@ void sv4guiContourCircle::CreateContourPoints()
         break;
     }
 
+    std::array<double,3> stdPt;
     for ( int i = 0; i < interNumber; ++i )
     {
         double alpha = (double) i * vnl_math::pi * 2.0 / interNumber;
@@ -117,8 +122,10 @@ void sv4guiContourCircle::CreateContourPoints()
         point[1] = centerPoint[1] + radius * sin( alpha );
 
         m_PlaneGeometry->Map(point,pt3d);
-
-        m_ContourPoints.push_back(pt3d);
+        
+        for (int j =0; j<3; j++)
+            stdPt[j] = pt3d[j];
+        m_ContourPoints.push_back(stdPt);
 
     }
 }
@@ -126,7 +133,6 @@ void sv4guiContourCircle::CreateContourPoints()
 void sv4guiContourCircle::AssignCenterScalingPoints()
 {
 }
-
 sv4guiContour* sv4guiContourCircle::CreateByFitting(sv4guiContour* contour)
 {
     double area=contour->GetArea();

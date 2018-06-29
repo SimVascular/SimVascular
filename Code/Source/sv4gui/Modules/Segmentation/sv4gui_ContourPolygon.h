@@ -37,12 +37,13 @@
 #include <sv4guiModuleSegmentationExports.h>
 
 #include "sv4gui_Contour.h"
+#include "sv3_PolygonContour.h"
+
 
 class SV4GUIMODULESEGMENTATION_EXPORT sv4guiContourPolygon : public sv4guiContour
 {
 
 public:
-
 
     sv4guiContourPolygon();
 
@@ -60,9 +61,9 @@ public:
 
     virtual int SearchControlPointByContourPoint( int contourPointIndex ) override;
 
-    void AssignCenterScalingPoints() override;
+    virtual void AssignCenterScalingPoints() override;
 
-    void PlaceControlPoints(mitk::Point3D point) override;
+    virtual void PlaceControlPoints(mitk::Point3D point) override;
 
   protected:
 

@@ -33,9 +33,9 @@
 #include "ui_sv4gui_svFSIView.h"
 #include "sv4gui_ProjectManager.h"
 #include "sv4gui_svFSIUtil.h"
-#include "sv4gui_eqClass.h"
-#include "sv4gui_MitkMesh.h"
-#include "sv4gui_Mesh.h"
+#include "sv4gui_svFSIbcClass.h"
+#include "sv4gui_svFSIeqClass.h"
+
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -64,8 +64,8 @@ sv4guisvFSIView::sv4guisvFSIView() :
     m_Job=NULL;
     m_JobNode=NULL;
 
-    m_Internalsv4guisvFSISolverPath="";
-    m_Externalsv4guisvFSISolverPath="";
+    m_InternalSolverPath="";
+    m_ExternalSolverPath="";
 
     m_RealVal=NULL;
     m_IntVal=NULL;
@@ -296,7 +296,7 @@ void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
     }
 
     bool includingFluid=false;
-    for(eqClass& eq : m_Job->m_Eqs)
+    for(sv4guisvFSIeqClass& eq : m_Job->m_Eqs)
     {
         if(eq.physName=="FSI" || eq.physName=="fluid")
         {
@@ -383,7 +383,7 @@ void sv4guisvFSIView::OnPreferencesChanged(const berry::IBerryPreferences* prefs
     if(prefs==NULL)
         return;
 
-    m_Externalsv4guisvFSISolverPath=prefs->Get("svFSI solver path","");
+    m_ExternalSolverPath=prefs->Get("svFSI solver path","");
 }
 
 void sv4guisvFSIView::DataChanged()
@@ -447,13 +447,13 @@ void sv4guisvFSIView::SetupInternalSolverPaths()
     //flowsolver with mpi, prefer to the script one which sets some lib paths for the mpi libs from svsolver
     //Those libs are needed in Ubuntu 16, intead of using the system ones
     if(QFile(filePath=solverPathBin+"/.."+sv4guisvFSISolverName).exists())
-        m_Internalsv4guisvFSISolverPath=filePath;
+        m_InternalSolverPath=filePath;
     else if(QFile(filePath=solverPathBin+sv4guisvFSISolverName).exists())
-        m_Internalsv4guisvFSISolverPath=filePath;
+        m_InternalSolverPath=filePath;
     else if(QFile(filePath=applicationPath+"/.."+sv4guisvFSISolverName).exists())
-        m_Internalsv4guisvFSISolverPath=filePath;
+        m_InternalSolverPath=filePath;
     else if(QFile(filePath=applicationPath+sv4guisvFSISolverName).exists())
-        m_Internalsv4guisvFSISolverPath=filePath;
+        m_InternalSolverPath=filePath;
 
 #endif
 
@@ -469,7 +469,7 @@ void sv4guisvFSIView::SetupInternalSolverPaths()
 #endif
 
 #if defined(Q_OS_WIN)
-    m_InternalFlowsolverPath=GetRegistryValue("SimVascular\\svSolver","svFSI_MSMPI_EXE");
+    m_InternalSolverPath=GetRegistryValue("SimVascular\\svSolver","svFSI_MSMPI_EXE");
     QString msmpiDir=GetRegistryValue("Microsoft\\MPI","InstallRoot");
     if(msmpiDir!="")
     {
@@ -550,7 +550,7 @@ void sv4guisvFSIView::AddMeshComplete()
         return;
     }
 
-    svDomain domain;
+    sv4guisvFSIDomain domain;
     QString faceFolderName=QString::fromStdString(domain.faceFolderName); //use the default name
 
     QFileInfoList meshList=meshDir.entryInfoList(QStringList("*.vtu"));
@@ -623,7 +623,7 @@ void sv4guisvFSIView::SelectDomain(const QString &name)
         return;
     }
 
-    svDomain& domain=m_Job->m_Domains[name.toStdString()];
+    sv4guisvFSIDomain& domain=m_Job->m_Domains[name.toStdString()];
 
     if(domain.type=="fluid")
         ui->radioButtonFluid->setChecked(true);
@@ -702,7 +702,7 @@ void sv4guisvFSIView::AddEquation()
 
     if ( eqName == "Incomp. fluid")
     {
-        eqClass eq(eqName);
+        sv4guisvFSIeqClass eq(eqName);
         m_Job->m_Eqs.insert(m_Job->m_Eqs.begin(),eq);
         item= new QListWidgetItem(eqName);
         ui->listEqs->insertItem(0,item);
@@ -712,12 +712,12 @@ void sv4guisvFSIView::AddEquation()
     }
     else if ( eqName == "FSI" )
     {
-        eqClass eq(eqName);
+        sv4guisvFSIeqClass eq(eqName);
         m_Job->m_Eqs.insert(m_Job->m_Eqs.begin(),eq);
         item= new QListWidgetItem(eqName);
         ui->listEqs->insertItem(0,item);
 
-        eqClass eq2("Mesh motion");
+        sv4guisvFSIeqClass eq2("Mesh motion");
         m_Job->m_Eqs.insert(m_Job->m_Eqs.begin()+1,eq2);
         item= new QListWidgetItem("Mesh motion");
         ui->listEqs->insertItem(1,item);
@@ -729,7 +729,7 @@ void sv4guisvFSIView::AddEquation()
     }
     else
     {
-        eqClass eq(eqName);
+        sv4guisvFSIeqClass eq(eqName);
         m_Job->m_Eqs.push_back(eq);
         item= new QListWidgetItem(eqName);
         ui->listEqs->addItem(item);
@@ -766,7 +766,7 @@ void sv4guisvFSIView::ClearEquation()
 
     int row=ui->listEqs->row(items.first());
 
-    eqClass eq=m_Job->m_Eqs[row];
+    sv4guisvFSIeqClass eq=m_Job->m_Eqs[row];
 
     if ( (eq.getPhysName() == "FSI") || (eq.getPhysName() == "fluid") ) {
         ui->listAvailableEqs->item(0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -820,7 +820,7 @@ void sv4guisvFSIView::SelectEquation()
     if(row<0)
         return;
 
-    eqClass& eq=m_Job->m_Eqs[row];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[row];
 
     //properties
     ui->phys_prop_group_box->setVisible(true);
@@ -892,7 +892,7 @@ void sv4guisvFSIView::SelectEquation()
     ui->bcList->setRowCount(eq.faceBCs.size());
     int i=0;
     for (auto& f : eq.faceBCs) {
-        bcClass& bc=f.second;
+        sv4guisvFSIbcClass& bc=f.second;
         QTableWidgetItem* name = new QTableWidgetItem(bc.faceName);
         QTableWidgetItem* bcT = new QTableWidgetItem(bc.bcGrp);
         ui->bcList->setItem(i,0,name);
@@ -925,7 +925,7 @@ void sv4guisvFSIView::SaveProps()
         return;
 
     int row=ui->listEqs->row(items.first());
-    eqClass& eq=m_Job->m_Eqs[row];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[row];
 
     for ( int i=0 ; i < eq.getPropCount() ; i++ ) {
         eq.setPropValue(propB.at(i)->text().toDouble(),i);
@@ -972,7 +972,7 @@ void sv4guisvFSIView::SaveOutputs()
         return;
 
     int row=ui->listEqs->row(items.first());
-    eqClass& eq=m_Job->m_Eqs[row];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[row];
 
     QStringList outputs;
     for ( int i=0 ; i < ui->outputList->count() ; i++ )
@@ -994,7 +994,7 @@ void sv4guisvFSIView::SaveAdvanced()
         return;
 
     int row=ui->listEqs->row(items.first());
-    eqClass& eq=m_Job->m_Eqs[row];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[row];
 
     eq.setCoupled(ui->coupled->isChecked());
     eq.setMinItr(ui->minItr->value());
@@ -1020,7 +1020,7 @@ void sv4guisvFSIView::ResetEquation()
 
     int row=ui->listEqs->row(items.first());
 
-    eqClass newEq(items.first()->text());
+    sv4guisvFSIeqClass newEq(items.first()->text());
     m_Job->m_Eqs[row]=newEq;
 
     SelectEquation();
@@ -1041,7 +1041,7 @@ void sv4guisvFSIView::SaveLinearSolver()
         return;
 
     int row=ui->listEqs->row(items.first());
-    eqClass& eq=m_Job->m_Eqs[row];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[row];
 
     eq.lsType=ui->comboBoxLSType->currentText();
     eq.lsMaxItr=ui->lineEditLSMaxItr->text().toInt();
@@ -1081,13 +1081,13 @@ void sv4guisvFSIView::AddBC()
     if(bcWidget.exec()==QDialog::Rejected)
         return;
 
-    eqClass& eq=m_Job->m_Eqs[row];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[row];
 
     ui->bcList->clearContents();
     ui->bcList->setRowCount(eq.faceBCs.size());
     int i=0;
     for (auto& f : eq.faceBCs) {
-        bcClass& bc=f.second;
+        sv4guisvFSIbcClass& bc=f.second;
         QTableWidgetItem* name = new QTableWidgetItem(bc.faceName);
         QTableWidgetItem* bcT = new QTableWidgetItem(bc.bcGrp);
         ui->bcList->setItem(i,0,name);
@@ -1106,7 +1106,7 @@ void sv4guisvFSIView::ModifyBC()
         return;
 
     int eqRow=ui->listEqs->row(items.first());
-    eqClass& eq=m_Job->m_Eqs[eqRow];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[eqRow];
 
     QModelIndexList indexesOfSelectedRows = ui->bcList->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
@@ -1144,7 +1144,7 @@ void sv4guisvFSIView::RemoveBC()
         return;
 
     int eqRow=ui->listEqs->row(items.first());
-    eqClass& eq=m_Job->m_Eqs[eqRow];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[eqRow];
 
     QModelIndexList indexesOfSelectedRows = ui->bcList->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
@@ -1203,7 +1203,7 @@ void sv4guisvFSIView::SaveRemesher()
         return;
 
     int eqRow=ui->listEqs->row(items.first());
-    eqClass& eq=m_Job->m_Eqs[eqRow];
+    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[eqRow];
 
     eq.remesher=ui->comboBoxRemesher->currentText();
     eq.rmMinAngle=ui->dsbMinAngle->value();
@@ -1303,9 +1303,9 @@ void sv4guisvFSIView::RunSimulation()
     }
 
 
-    QString flowsolverPath=m_Externalsv4guisvFSISolverPath;
+    QString flowsolverPath=m_ExternalSolverPath;
     if(flowsolverPath=="")
-        flowsolverPath=m_Internalsv4guisvFSISolverPath;
+        flowsolverPath=m_InternalSolverPath;
 
     if(flowsolverPath=="")
     {

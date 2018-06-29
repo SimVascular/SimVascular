@@ -37,7 +37,7 @@ QT_TOP_DIR	= /opt/Qt$(Qt5_VERSION)/$(Qt5_VERSION)/gcc_64
 QT_QPA_FONTDIR  = /opt/Qt5.6.3/5.6.3/Src/qtbase/lib/fonts
 #QT_TOP_DIR  = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)
 QT_DEFS = -DUNIX -D_REENTRANT -DNDEBUG
-QT_DEFS += -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_PLUGIN -DQT_WEBENGINE -DQT_WEBENGINEWIDGETS -DQT_SQL_LIB
+QT_DEFS += -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_PLUGIN -DQT_WEBENGINE -DQT_WEBENGINEWIDGETS -DQT_SQL_LIB -DQT_WEBVIEW
 
 ifeq ($(SV_USE_SHARED),0)
   QT_DEFS += -DQT_STATICPLUGIN
@@ -62,6 +62,7 @@ QT_INCDIRS = \
       -I$(QT_TOP_DIR)/include/QtConcurrent \
       -I$(QT_TOP_DIR)/include/QtNetwork \
       -I$(QT_TOP_DIR)/include/QtWebEngine \
+      -I$(QT_TOP_DIR)/include/QtWebView \
       -I$(QT_TOP_DIR)/include/QtWebEngineWidgets \
       -I$(QT_TOP_DIR)/include/mkspecs/linux-g++
 QT_MOC_INCDIRS = \
@@ -74,10 +75,13 @@ QT_MOC_INCDIRS = \
       -I $(QT_TOP_DIR)/include/QtNetwork \
       -I $(QT_TOP_DIR)/include/QtWebEngineWidgets \
       -I $(QT_TOP_DIR)/include/QtWebEngine \
+      -I$(QT_TOP_DIR)/include/QtWebView \
       -I $(QT_TOP_DIR)/include/mkspecs/linux-g++
 QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5Sql$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebEngineWidgets$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5WebEngine$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5WebView$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Network$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Gui$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Qml$(LIBLINKEXT) \

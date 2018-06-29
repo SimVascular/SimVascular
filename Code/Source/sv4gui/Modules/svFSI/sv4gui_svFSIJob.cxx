@@ -112,7 +112,7 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
     out << "#------------------------------------------------------" << endL;
 
     //make sure the first domain is fluid if there are two domains.
-    std::vector<svDomain> domains;
+    std::vector<sv4guisvFSIDomain> domains;
     if (m_Domains.size()==1){
       for(auto& pair : m_Domains)
       {
@@ -152,12 +152,12 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
     out << endL;
 
     //add projection
-    for (eqClass& eq: m_Eqs) {
+    for (sv4guisvFSIeqClass& eq: m_Eqs) {
         if(eq.physName=="FSI")
         {
             for( auto& fbc : eq.faceBCs ) {
 
-                bcClass& iBc=fbc.second;
+                sv4guisvFSIbcClass& iBc=fbc.second;
                 if(iBc.bcType=="Projection")
                     out << "Add projection: " << iBc.faceName << " { Project from face: " << iBc.projectionFaceName << " }"<< endL;
 
@@ -169,7 +169,7 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
 
     out << "# Equations" << endL;
     out << "#------------------------------------------------------" << endL;
-    for (eqClass& eq: m_Eqs) {
+    for (sv4guisvFSIeqClass& eq: m_Eqs) {
 
       std::cout << "equation name " << eq.getPhysName().toStdString() << "\n";
 
@@ -193,7 +193,7 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
                 for(auto& pair : m_Domains)
                 {
                     std::string domainName=pair.first;
-                    svDomain& domain=pair.second;
+                    sv4guisvFSIDomain& domain=pair.second;
                     out << tabS << tabS << "Max edge size: " << QString::fromStdString(domainName) << " { val: " << domain.edgeSize <<" }" << endL;
                 }
 
@@ -257,7 +257,7 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
 
         for( auto& fbc : eq.faceBCs ) {
 
-            bcClass& iBc=fbc.second;
+            sv4guisvFSIbcClass& iBc=fbc.second;
 
             if(iBc.bcType=="Projection")
                 continue;

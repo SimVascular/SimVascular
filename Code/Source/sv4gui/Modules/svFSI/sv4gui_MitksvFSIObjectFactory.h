@@ -32,13 +32,13 @@
 #ifndef sv4guiMitksvFSIOBJECTFACTORY_H
 #define sv4guiMitksvFSIOBJECTFACTORY_H
 
-#include <svFSIExports.h>
+#include "sv4guiModulesvFSIExports.h"
 
 #include "sv4gui_MitksvFSIJobIO.h"
 
 #include <mitkCoreObjectFactoryBase.h>
 
-class SVFSI_EXPORT sv4guiMitksvFSIObjectFactory : public mitk::CoreObjectFactoryBase
+class SV4GUIMODULESVFSI_EXPORT sv4guiMitksvFSIObjectFactory : public mitk::CoreObjectFactoryBase
 {
 public:
     mitkClassMacro(sv4guiMitksvFSIObjectFactory,mitk::CoreObjectFactoryBase);
@@ -63,7 +63,7 @@ private:
 
 };
 
-struct SVFSI_EXPORT Registersv4guiMitksvFSIObjectFactory{
+struct SV4GUIMODULESVFSI_EXPORT Registersv4guiMitksvFSIObjectFactory{
   Registersv4guiMitksvFSIObjectFactory();
 
   virtual ~Registersv4guiMitksvFSIObjectFactory();

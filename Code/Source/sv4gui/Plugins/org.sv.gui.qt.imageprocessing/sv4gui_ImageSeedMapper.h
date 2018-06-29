@@ -38,7 +38,7 @@
 
 #include <vtkAssembly.h>
 #include <vtkPropAssembly.h>
-#include <vtkPainterPolyDataMapper.h>
+//#include <vtkPainterPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
