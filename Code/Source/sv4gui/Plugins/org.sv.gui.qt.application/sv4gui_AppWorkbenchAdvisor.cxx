@@ -52,7 +52,7 @@ void sv4guiAppWorkbenchAdvisor::Initialize(berry::IWorkbenchConfigurer::Pointer 
     berry::IQtStyleManager *styleManager = pluginContext->getService<berry::IQtStyleManager>(serviceReference);
     Q_ASSERT(styleManager);
 
-    QString styleName = "CustomStyle";
+    QString styleName = "simvascular";
     styleManager->AddStyle(":/org.sv.gui.qt.application/simvascular.qss", styleName);
     styleManager->SetStyle(":/org.sv.gui.qt.application/simvascular.qss");
 }
