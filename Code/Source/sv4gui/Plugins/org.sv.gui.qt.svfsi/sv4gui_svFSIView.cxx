@@ -36,6 +36,7 @@
 #include "sv4gui_svFSIbcClass.h"
 #include "sv4gui_svFSIeqClass.h"
 
+
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
 #include <mitkNodePredicateDataType.h>
@@ -87,6 +88,8 @@ void sv4guisvFSIView::Initialize(){
   sv4guisvFSIUtil.setDataStorage(GetDataStorage());
   sv4guisvFSIUtil.makeDir();
   sv4guisvFSIUtil.createDataFolder();
+
+
 }
 
 void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
@@ -594,6 +597,11 @@ void sv4guisvFSIView::AddMeshComplete()
     {
         ui->comboBoxDomain2->addItem(QString::fromStdString(d.first));
     }
+
+    std::string outputString = std::string("Successfully loaded mesh complete ").append(
+      domain.folderName);
+
+    QMessageBox::information(m_Parent,"Mesh-complete Success", outputString.c_str());
 
     DataChanged();
 }
@@ -1428,11 +1436,11 @@ void sv4guisvFSIView::CreateNewJob()
         return;
     }
 
-    auto sv4guisvFSI_dir = sv4guisvFSIUtil.getsv4guisvFSIDir();
+    auto dir = sv4guisvFSIUtil.getsv4guisvFSIDir().absolutePath();
 
-    QString dir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose directory to save the job")
-                                                    , sv4guisvFSI_dir.absolutePath());
+    // QString dir = QFileDialog::getExistingDirectory(m_Parent
+    //                                                 , tr("Choose directory to save the job")
+    //                                                 , sv4guisvFSI_dir.absolutePath());
 
     dir=dir.trimmed();
     if(dir.isEmpty())
@@ -1492,6 +1500,29 @@ void sv4guisvFSIView::LoadJob()
 
     auto node = mitk::IOUtil::Load(dir.toStdString().c_str(),
       *GetDataStorage())->ElementAt(0);
+
+    GetDataStorage()->Remove(node);
+
+    mitk::DataNode::Pointer sv4guisvFSI_folder_node = GetDataStorage()->GetNamedNode(sv4guisvFSI_NODE_NAME);
+
+    if (!sv4guisvFSI_folder_node){
+      std::cout << "svFSI folder node doesnt exist\n";
+      return;
+    }
+    GetDataStorage()->Add(node,sv4guisvFSI_folder_node);
+}
+
+void sv4guisvFSIView::LoadJob(std::string jobPath, std::string jobName)
+{
+    if (GetDataStorage()->Exists(GetDataStorage()->GetNamedNode(jobName))) return;
+
+    auto node = mitk::IOUtil::Load(jobPath.c_str(),
+      *GetDataStorage())->ElementAt(0);
+
+    if (!node){
+      std::cout << "svFSI job with name " << jobPath << " doesn't exist\n";
+      return;
+    }
 
     GetDataStorage()->Remove(node);
 

@@ -28,8 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#set(lib ${SV_LIB_MODULE_sv4guisvFSI_NAME})
-set(lib "_simvascular_module_svfsi")
+set(lib ${SV_LIB_MODULE_SVFSI_NAME})
 
 #-----------------------------------------------------------------------------
 # Create module

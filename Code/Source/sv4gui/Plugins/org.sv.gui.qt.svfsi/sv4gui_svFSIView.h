@@ -68,6 +68,8 @@ public slots:
 
     void LoadJob();
 
+    void LoadJob(std::string jobPath, std::string jobName);
+
     void SetupInternalSolverPaths();
 
     void SetNsd(const QString &text);

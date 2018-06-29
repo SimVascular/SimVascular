@@ -49,6 +49,7 @@
 #include "sv4gui_MitkSimJob.h"
 #include "sv4gui_MitkMeshIO.h"
 #include "sv4gui_VtkUtils.h"
+#include "sv4gui_MitksvFSIJob.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkIOUtil.h>
@@ -108,7 +109,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         dir.mkdir(meshFolderName);
         dir.mkdir(simFolderName);
         dir.mkdir(reposFolderName);
-	dir.mkdir(svFSIFolderName);
+        dir.mkdir(svFSIFolderName);
+
     }else{
 
         QFile xmlFile(projectConfigFilePath);
@@ -360,6 +362,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             }
         }
 
+        //simulation folder
         simFolderNode->SetVisibility(false);
         QDir dirSim(projPath);
         dirSim.cd(simFolderName);
@@ -370,6 +373,19 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             jobNode->SetVisibility(false);
             dataStorage->Add(jobNode,simFolderNode);
+        }
+
+        //svFSI folder
+        svFSIFolderNode->SetVisibility(false);
+        QDir dirFSI(projPath);
+        dirFSI.cd(svFSIFolderName);
+        fileInfoList=dirFSI.entryInfoList(QStringList("*.fsijob"), QDir::Files, QDir::Name);
+        for(int i=0;i<fileInfoList.size();i++)
+        {
+            //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            jobNode->SetVisibility(false);
+            dataStorage->Add(jobNode,svFSIFolderNode);
         }
     }
 
@@ -419,6 +435,10 @@ void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
 
     tag = doc.createElement("repository");
     tag.setAttribute("folder_name","Repository");
+    root.appendChild(tag);
+
+    tag = doc.createElement("svFSI");
+    tag.setAttribute("folder_name","svFSI");
     root.appendChild(tag);
 
     QString xml = doc.toString(4);
@@ -821,6 +841,50 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         dirSim.remove(QString::fromStdString(removeList[i])+".sjb");
     }
     simFolder->ClearRemoveList();
+
+
+    //svFSI Jobs
+    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guisvFSIFolder"));
+
+    mitk::DataNode::Pointer svFSIFolderNode=rs->GetElement(0);
+    std::string svFSIFolderName=svFSIFolderNode->GetName();
+    sv4guisvFSIFolder* svFSIFolder=dynamic_cast<sv4guisvFSIFolder*>(svFSIFolderNode->GetData());
+    removeList.clear();
+    if(svFSIFolder)
+        removeList=svFSIFolder->GetNodeNamesToRemove();
+
+    rs=dataStorage->GetDerivations(svFSIFolderNode,mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob"));
+
+    QDir dirFSI(QString::fromStdString(projPath));
+    dirFSI.cd(QString::fromStdString(svFSIFolderName));
+
+    for(int i=0;i<rs->size();i++)
+    {
+        mitk::DataNode::Pointer node=rs->GetElement(i);
+
+        for(int j=removeList.size()-1;j>-1;j--)
+        {
+            if(removeList[j]==node->GetName())
+                removeList.erase(removeList.begin()+j);
+        }
+
+        sv4guiMitksvFSIJob *mitkJob=dynamic_cast<sv4guiMitksvFSIJob*>(node->GetData());
+        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirFSI.exists(QString::fromStdString(node->GetName())+".fsijob")) )
+            continue;
+
+        QString	filePath=dirFSI.absoluteFilePath(QString::fromStdString(node->GetName())+".fsijob");
+        mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+
+        node->SetStringProperty("path",dirFSI.absolutePath().toStdString().c_str());
+
+        mitkJob->SetDataModified(false);
+    }
+
+    for(int i=0;i<removeList.size();i++)
+    {
+        dirFSI.remove(QString::fromStdString(removeList[i])+".fsijob");
+    }
+    svFSIFolder->ClearRemoveList();
 }
 
 void sv4guiProjectManager::SaveAllProjects(mitk::DataStorage::Pointer dataStorage)
