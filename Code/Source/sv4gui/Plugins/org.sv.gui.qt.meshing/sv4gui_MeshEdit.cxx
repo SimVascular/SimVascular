@@ -1289,6 +1289,10 @@ void sv4guiMeshEdit::UpdateTetGenGUI()
     ui->sbLayersT->setValue(2);
     ui->dsbRatioT->setValue(0.8);
 
+    ui->checkBoxBoundaryLayerDirection->setChecked(true);
+    ui->checkBoxConstantThicknessBL->setChecked(false);
+    ui->checkBoxConvertBLToNewRegion->setChecked(false);
+
     ui->checkBoxRadiusBasedT->setChecked(false);
 
     ui->checkBoxSurfaceT->setChecked(true);
