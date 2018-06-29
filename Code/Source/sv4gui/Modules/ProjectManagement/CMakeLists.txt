@@ -51,7 +51,7 @@ simvascular_create_module(
   ${SV_LIB_MODULE_MODEL_NAME}
   ${SV_LIB_MODULE_MESH_NAME}
   ${SV_LIB_MODULE_SIMULATION_NAME}
-  "_simvascular_module_svfsi")
+  ${SV_LIB_MODULE_SVFSI_NAME})
 #-----------------------------------------------------------------------------
 
 if(SV_INSTALL_LIBS)
