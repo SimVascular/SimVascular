@@ -48,6 +48,13 @@
 //#ifdef SV_USE_PYTHON
 #include "Python.h"
 extern "C" SV_EXPORT_TETGEN_MESH PyObject* Tetgenmesh_pyInit();
+
+#if PYTHON_MAJOR_VERSION == 2
+SV_EXPORT_TETGEN_MESH PyMODINIT_FUNC  initpyMeshTetgen();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+SV_EXPORT_TETGEN_MESH PyMODINIT_FUNC  PyInit_pyMeshTetgen();
+#endif
 //#endif
 #endif // __Tetgenmesh_Init
 

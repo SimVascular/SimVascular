@@ -49,4 +49,11 @@
 #include "Python.h"
 extern "C" SV_EXPORT_OPENCASCADE PyObject* Occtsolid_pyInit();
 
+#if PYTHON_MAJOR_VERSION == 2
+SV_EXPORT_OPENCASCADE PyMODINIT_FUNC  initpySolidOCCT();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+SV_EXPORT_OPENCASCADE PyMODINIT_FUNC  PyInit_pySolidOCCT();
+#endif
+
 #endif // __CV_OCCT_INIT_H

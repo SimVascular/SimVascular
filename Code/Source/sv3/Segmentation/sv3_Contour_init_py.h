@@ -33,8 +33,11 @@
 #define __SV3_CONTOUR_INIT_PY_H
 
 #include "SimVascular.h"
-#include "sv3SegmentationExports.h"
 #include "Python.h"
+#include "sv3SegmentationExports.h"
+#include "sv3_Contour.h"
+#include "sv_FactoryRegistrar.h"
+
 
 extern "C" SV_EXPORT_SEGMENTATION typedef struct
 {
@@ -47,5 +50,12 @@ extern "C" SV_EXPORT_SEGMENTATION typedef struct
   PyObject_HEAD
   cvFactoryRegistrar* registrar;
 }pyContourFactoryRegistrar;
+
+#if PYTHON_MAJOR_VERSION == 2
+SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  initpyContour();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pyContour();
+#endif
 
 #endif //__SV3_CONTOUR_INIT_PY_H

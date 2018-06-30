@@ -179,7 +179,7 @@ static PyTypeObject pyContourFactoryRegistrarType = {
   0,                         /* tp_as_buffer */
   Py_TPFLAGS_DEFAULT |
       Py_TPFLAGS_BASETYPE,   /* tp_flags */
-  "cvFactoryRegistrar wrapper  ",           /* tp_doc */
+  "pyContourFactoryRegistrar wrapper  ",           /* tp_doc */
 };
 
 static PyMethodDef pyContourModule_methods[] =

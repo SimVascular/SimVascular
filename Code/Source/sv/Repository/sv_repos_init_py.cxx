@@ -135,6 +135,8 @@ PyMethodDef pyRepository_methods[] =
     {"repos_readXMLPolyData",Repos_ReadVtkXMLPolyDataCmd,METH_VARARGS,NULL},
     {"repos_writeVtkStructuredPoints", Repos_WriteVtkStructuredPointsCmd,
      METH_VARARGS,NULL},
+    {"repos_writeVtkUnstructuredGrid", Repos_WriteVtkUnstructuredGridCmd,
+     METH_VARARGS,NULL},
     {"repos_getLabelKeys", Repos_GetLabelKeysCmd, METH_VARARGS,NULL},
     {"repos_getLabel", Repos_GetLabelCmd, METH_VARARGS,NULL},
     {"repos_setLabel", Repos_SetLabelCmd, METH_VARARGS,NULL},
@@ -161,11 +163,10 @@ PyMODINIT_FUNC initpyRepository(void)
 {
 
   PyObject *pyRepo;
+  gRepository = new cvRepository();
   if ( gRepository == NULL ) {
-    gRepository = new cvRepository();
-    fprintf(stdout, "gRepository created from sv_repos_init\n" );
+    fprintf( stderr, "error allocating gRepository\n" );
     return;
-
   }
   pyRepo = Py_InitModule("pyRepository",pyRepository_methods);
 
@@ -198,7 +199,6 @@ int Repos_pyInit()
 
 {
 
-  Py_Initialize();
 #if PYTHON_MAJOR_VERSION == 2
   initpyRepository();
 #elif PYTHON_MAJOR_VERSION == 3

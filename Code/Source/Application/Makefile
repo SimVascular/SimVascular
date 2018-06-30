@@ -48,6 +48,10 @@ HDRS	=
 
 CXXSRCS = main.cxx SimVascular_Init.cxx
 
+ifeq ($(SV_USE_PYTHON),1)
+CXXSRCS = main.cxx SimVascular_Init.cxx SimVascular_Init_py.cxx 
+endif
+
 ifeq ($(SV_STATIC_BUILD),1)
 
   COPIED_CXXSRCS += ../Common/Geometry/sv_geom_init.cxx \

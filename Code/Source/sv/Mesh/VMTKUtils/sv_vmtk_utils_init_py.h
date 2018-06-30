@@ -33,8 +33,16 @@
 #define __CVVMTK_UTILS_INIT_PY_H
 
 #include "SimVascular.h"
+#include "Python.h"
 #include "svVMTKUtilsExports.h" // For exports
 
 extern "C" SV_EXPORT_VMTK_UTILS int Vmtkutils_pyInit();
+
+#if PYTHON_MAJOR_VERSION == 2
+SV_EXPORT_VMTK_UTILS PyMODINIT_FUNC  initpyVMTKUtils();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+SV_EXPORT_VMTK_UTILS PyMODINIT_FUNC  PyInit_pyVMTKUtils();
+#endif
 
 #endif // __CVVMTK_UTILS_INIT_H

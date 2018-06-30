@@ -28,27 +28,19 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*
- * cv_ITKLevelSet_init.h
- *
- *  Created on: Feb 12, 2014
- *      Author: Jameson Merkow
- */
-
-#ifndef CV_ITKLSET_INIT_PY_H_
-#define CV_ITKLSET_INIT_PY_H_
+ 
+#ifndef __SV3_SPLINEPOLYGONCONTOUR_INIT_PY_H
+#define __SV3_SPLINEPOLYGONCONTOUR_INIT_PY_H
 
 #include "SimVascular.h"
+#include "sv3SegmentationExports.h"
 #include "Python.h"
-#include "svSegITKExports.h" // For exports
-
-extern "C" SV_EXPORT_SEGITK int Itklset_pyInit();
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_SEGITK PyMODINIT_FUNC  initpyItkls();
+SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  initpySplinePolygonContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SEGITK PyMODINIT_FUNC  PyInit_pyItkls();
+SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pySplinePolygonContour();
 #endif
 
-#endif /* CV_ITKLSET_INIT_PY_H_ */
+#endif //__SV3_SPLINEPOLYGONCONTOUR_INIT_PY_H

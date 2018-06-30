@@ -84,7 +84,6 @@ PyInit_pyImage(void);
 // ----------
 int Image_pyInit()
 {
-  Py_Initialize();
 
 #if PYTHON_MAJOR_VERSION == 2
   initpyImage();

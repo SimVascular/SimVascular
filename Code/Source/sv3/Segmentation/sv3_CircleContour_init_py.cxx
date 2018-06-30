@@ -33,6 +33,7 @@
 #include "sv3_Contour.h"
 #include "sv3_Contour_init_py.h"
 #include "sv3_CircleContour.h"
+#include "sv3_CircleContour_init_py.h"
 //#include "sv_adapt_utils.h"
 #include "sv_arg.h"
 

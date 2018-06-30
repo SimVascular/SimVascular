@@ -61,8 +61,15 @@
 #define __CVIMAGE_INIT_PY_H
 
 #include "SimVascular.h"
+#include "Python.h"
 #include "svImageExports.h" // For exports
-#include "tcl.h"
 
 extern "C" SV_EXPORT_IMAGE int Image_pyInit();
+
+#if PYTHON_MAJOR_VERSION == 2
+SV_EXPORT_IMAGE PyMODINIT_FUNC  initpyImage();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+SV_EXPORT_IMAGE PyMODINIT_FUNC  PyInit_pyImage();
+#endif
 #endif // __IMAGE_INIT_H

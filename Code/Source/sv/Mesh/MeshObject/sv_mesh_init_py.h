@@ -33,8 +33,10 @@
 #define __CVMESH_INIT_PY_H
 
 #include "SimVascular.h"
-#include "svMeshObjectExports.h"
 #include "Python.h"
+#include "svMeshObjectExports.h"
+#include "sv_MeshObject.h"
+
 
 extern "C" SV_EXPORT_MESH int Mesh_pyInit();
 extern "C" SV_EXPORT_MESH typedef struct
@@ -42,6 +44,13 @@ extern "C" SV_EXPORT_MESH typedef struct
   PyObject_HEAD
   cvMeshObject* geom;
 }pyMeshObject;
+
+#if PYTHON_MAJOR_VERSION == 2
+SV_EXPORT_MESH PyMODINIT_FUNC  initpyMeshObject();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+SV_EXPORT_MESH PyMODINIT_FUNC  PyInit_pyMeshObject();
+#endif
 
 #endif // __CVMESH_INIT_PY_H
 

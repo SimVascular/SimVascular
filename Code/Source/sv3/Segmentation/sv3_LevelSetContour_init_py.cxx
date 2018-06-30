@@ -34,6 +34,7 @@
 #include "sv3_Contour.h"
 #include "sv3_Contour_init_py.h"
 #include "sv3_LevelSetContour.h"
+#include "sv3_LevelSetContour_init_py.h"
 //#include "sv_adapt_utils.h"
 #include "sv_arg.h"
 
