@@ -47,7 +47,7 @@ extern "C" SV_EXPORT_SOLID typedef struct
 }pycvFactoryRegistrar;
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_SOLID PyMODINIT_FUNC  initpySolid2();
+PyMODINIT_FUNC  initpySolid2();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_SOLID PyMODINIT_FUNC  PyInit_pySolid2();

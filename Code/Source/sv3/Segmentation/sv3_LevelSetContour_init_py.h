@@ -37,7 +37,7 @@
 #include "Python.h"
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  initpylevelSetContour();
+PyMODINIT_FUNC  initpylevelSetContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pylevelSetContour();
