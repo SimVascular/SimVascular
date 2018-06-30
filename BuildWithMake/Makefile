@@ -111,7 +111,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_MITK),1)
-	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+`cygpath -u $(SV_MITK_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+`cygpath -u -p $(SV_MITK_SO_PATH)`+g\"" >> tclscript
 	-echo "s+REPLACEME_SV_MITK_PLUGIN_PATH+$(SV_MITK_PLUGIN_PATH)+g" >> sedscript
 endif
 endif

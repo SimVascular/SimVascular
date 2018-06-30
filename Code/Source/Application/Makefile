@@ -49,10 +49,13 @@ HDRS	=
 CXXSRCS = main.cxx SimVascular_Init.cxx
 
 ifeq ($(SV_USE_PYTHON),1)
-CXXSRCS = main.cxx SimVascular_Init.cxx SimVascular_Init_py.cxx 
+  CXXSRCS += SimVascular_Init_py.cxx
+  SV_LINK_WITH_INTERPRETER_LIBS = 1
 endif
 
 ifeq ($(SV_STATIC_BUILD),1)
+
+  SV_LINK_WITH_INTERPRETER_LIBS = 1
 
   COPIED_CXXSRCS += ../Common/Geometry/sv_geom_init.cxx \
                     ../PostProcessing/sv2_post_init.cxx \
@@ -93,27 +96,28 @@ ifeq ($(SV_STATIC_BUILD),1)
 	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKLset3d_init.cxx
   endif
 
+endif
+
+ifeq ($(SV_LINK_WITH_INTERPRETER_LIBS),1)
+
   ifeq ($(SV_USE_SOLVERIO),1)
 	LFLAGS += $(SOLVERIO_LIB)
   endif
   ifeq ($(SV_USE_TETGEN),1)
-    ifneq ($(SV_USE_SHARED),1)
-      LFLAGS += $(SVLIBFLAG)$(SV_LIB_TETGEN_MESH_NAME)$(LIBLINKEXT)
-   endif
+	LFLAGS += $(SVLIBFLAG)$(SV_LIB_TETGEN_MESH_NAME)$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT)
   endif
   ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-    ifneq ($(SV_USE_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)$(SV_LIB_TETGEN_ADAPTOR_NAME)$(LIBLINKEXT)
-        LFLAGS += $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT)
-    endif
+	LFLAGS += $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT)
   endif
   ifeq ($(SV_USE_OPENCASCADE),1)
-    ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
-    endif
+	LFLAGS += $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_VMTK),1)
+	LFLAGS += $(SVLIBFLAG)$(SV_LIB_VMTK_UTILS_NAME)$(LIBLINKEXT)
 	LFLAGS += $(VMTK_LIBS)
   endif
 
@@ -126,16 +130,16 @@ ifeq ($(SV_STATIC_BUILD),1)
   endif
 
   ifeq ($(SV_USE_MMG),1)
-    ifneq ($(SV_USE_MMG_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT)
-    endif
   endif
 
-  ifeq ($(SV_USE_PYTHON),1)
-    ifneq ($(SV_USE_PYTHON_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_PYTHON_INTERP_NAME)$(LIBLINKEXT)
-    endif
-  endif
+LFLAGS += $(SVLIBFLAG)$(SV_PLUGIN_PYTHONDATANODES_NAME)$(LIBLINKEXT)
+
+LFLAGS += \
+	$(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
+	$(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT) \
+	$(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
+	$(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
 
 endif
 
