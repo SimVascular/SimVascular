@@ -42,7 +42,7 @@ include $(TOP)/include.mk
 SV_CLUSTER = $(CLUSTER)
 
 ifneq ($(CLUSTER),x64_linux)
-  include $(TOP)/MakeHelpers/wix-3.14.x64_cygwin.mk
+  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/wix-3.14.x64_cygwin.mk
 endif
 
 SV_TIMESTAMP := $(shell date +"%Y-%m-%d")
@@ -117,7 +117,7 @@ else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
 endif
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) sv.bat $(SV_VERSION) $(SV_FULL_VER_NO) $(TCL_LIBRARY) $(TK_LIBRARY)
+	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) sv.bat $(SV_VERSION) $(SV_FULL_VER_NO) $(TCL_LIBRARY) $(TK_LIBRARY) $(PYTHON_MAJOR_VERSION) $(PYTHON_MINOR_VERSION)
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."

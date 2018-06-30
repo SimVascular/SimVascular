@@ -20,7 +20,7 @@
          DetectCondition="(MSVC_EXISTS)" Permanent="yes"
      />
      
-     <ExePackage Id="Dependency1" DisplayName="MSVC 2015 C++ Runtime Libraries" SourceFile="windows_installer_packages/vcredist_x64-MSVC-2015-update-3.exe" Vital="no"
+     <ExePackage Id="Dependency2" DisplayName="MSVC 2015 C++ Runtime Libraries" SourceFile="windows_installer_packages/vcredist_x64-MSVC-2015-update-3.exe" Vital="no"
          DetectCondition="(MSVC_EXISTS)" Permanent="yes"
      />
 

@@ -37,12 +37,23 @@ if(SV_USE_${proj})
     set(SV_Qt5_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)
   endif()
 
+  
   if(SV_USE_QT_GUI)
 
     # If using toplevel dir, foce Qt_DIR to be the SV_Qt_DIR set by the
     # simvascular_add_new_external macro
     if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
-      set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
+      if(WIN32)
+        if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
+           set(${proj}_DIR "${SV_${proj}_DIR}/msvc2013_64_opengl/lib/cmake/Qt5" CACHE PATH "Force ${proj} dir to externals" FORCE)
+        elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
+           set(${proj}_DIR "${SV_${proj}_DIR}/msvc2015_64/lib/cmake/Qt5" CACHE PATH "Force ${proj} dir to externals" FORCE)
+	else()
+	   message(FATAL_ERROR "Invalid SV_EXTERNALS_VERSION_NUMBER ${SV_EXTERNALS_VERSION_NUMBER}")
+        endif()
+      else()
+        set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
+      endif()
       if(SV_EXTERNALS_USE_PREBUILT_QT)
         set(Qt5_DIR ${SV_EXTERNALS_PREBUILT_QT_PATH} CACHE PATH "Force ${proj} dir to prebuilt Qt" FORCE)
       endif()

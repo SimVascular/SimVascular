@@ -150,6 +150,7 @@ SV_USE_SYSTEM_PYTHON = 1
 # -----------------------------------------------------
 
 SV_USE_QT = 1
+SV_EXTERNALS_PREBUILT_QT = 1
 SV_USE_SYSTEM_QT = 1
 SV_USE_QT_GUI = 1
 SV_USE_QT_GUI_SHARED = 1
@@ -244,31 +245,20 @@ SV_EXTERNALS_VERSION_NUMBER = 2018.05
 
 ifeq ($(CLUSTER), x64_cygwin)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
-    LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = 
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 # -------------------------------------------
 #   Release version numbers for SimVascular
 # -------------------------------------------
 
-SV_MAJOR_VER_NO = "18.05"
-SV_FULL_VER_NO = "18.05.22"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
@@ -284,6 +274,9 @@ endif
 SV_MAJOR_VERSION := $(shell date +"%Y")
 SV_MINOR_VERSION := $(shell date +"%m")
 SV_PATCH_VERSION := $(shell date +"%d")
+SV_MAJOR_VERSION_TWO_DIGIT := $(shell date +"%y")
+SV_MAJOR_VER_NO = "$(SV_MAJOR_VERSION_TWO_DIGIT).$(SV_MINOR_VERSION)"
+SV_FULL_VER_NO = "$(SV_MAJOR_VERSION_TWO_DIGIT).$(SV_MINOR_VERSION).$(SV_PATCH_VERSION)"
 
 ifeq ($(CLUSTER),x64_cygwin)
   SV_VERSION  = SimVascular
