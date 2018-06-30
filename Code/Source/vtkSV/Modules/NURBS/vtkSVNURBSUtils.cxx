@@ -1111,7 +1111,7 @@ int vtkSVNURBSUtils::GetMultiplicity(vtkDoubleArray *array, vtkIntArray *multipl
   for (int i=0; i<numVals-1; i++)
   {
     int count = 1;
-    while(array->GetTuple1(i+1) == array->GetTuple1(i) && i<numVals)
+    while(array->GetTuple1(i+1) == array->GetTuple1(i) && i<numVals-1)
     {
       count++;
       i++;

@@ -376,15 +376,15 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
     pd->Delete();
     return SV_ERROR;
   }
-  if (MMGUtils_PassCellArray(pd, surface, "ModelFaceID", "ModelFaceID") != SV_OK)
-  {
-    fprintf(stderr,"Error resetting regions\n");
-    MMGS_Free_all(MMG5_ARG_start,
-		  MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
-		  MMG5_ARG_end);
-    pd->Delete();
-    return SV_ERROR;
-  }
+  //if (MMGUtils_PassCellArray(pd, surface, "ModelFaceID", "ModelFaceID") != SV_OK)
+  //{
+  //  fprintf(stderr,"Error resetting regions\n");
+  //  MMGS_Free_all(MMG5_ARG_start,
+	//	  MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
+	//	  MMG5_ARG_end);
+  //  pd->Delete();
+  //  return SV_ERROR;
+  //}
   if (useSizingFunction)
   {
     if (MMGUtils_PassPointArray(pd, surface, "MeshSizingFunction", "MeshSizingFunction") != SV_OK)
