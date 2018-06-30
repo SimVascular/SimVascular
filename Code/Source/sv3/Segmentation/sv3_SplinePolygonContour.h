@@ -38,6 +38,11 @@
 
 #include "sv3_PolygonContour.h"
 
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
 namespace sv3{
 class SV_EXPORT_SEGMENTATION ContourSplinePolygon : public ContourPolygon
 {
