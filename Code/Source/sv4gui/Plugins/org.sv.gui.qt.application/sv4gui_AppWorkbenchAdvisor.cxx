@@ -33,6 +33,8 @@
 #include "sv4gui_ApplicationPluginActivator.h"
 #include "sv4gui_WorkbenchWindowAdvisor.h"
 
+#include "berryIQtStyleManager.h"
+
 const QString sv4guiAppWorkbenchAdvisor::DEFAULT_PERSPECTIVE_ID = "org.sv.application.defaultperspective";
 
 void sv4guiAppWorkbenchAdvisor::Initialize(berry::IWorkbenchConfigurer::Pointer configurer)
@@ -40,6 +42,19 @@ void sv4guiAppWorkbenchAdvisor::Initialize(berry::IWorkbenchConfigurer::Pointer 
     berry::QtWorkbenchAdvisor::Initialize(configurer);
 
     configurer->SetSaveAndRestore(true);
+
+    ctkPluginContext *pluginContext = sv4guiApplicationPluginActivator::getContext();
+    ctkServiceReference serviceReference = pluginContext->getServiceReference<berry::IQtStyleManager>();
+
+    // always granted by org.blueberry.ui.qt
+    Q_ASSERT(serviceReference);
+
+    berry::IQtStyleManager *styleManager = pluginContext->getService<berry::IQtStyleManager>(serviceReference);
+    Q_ASSERT(styleManager);
+
+    QString styleName = "simvascular";
+    styleManager->AddStyle(":/org.sv.gui.qt.application/simvascular.qss", styleName);
+    styleManager->SetStyle(":/org.sv.gui.qt.application/simvascular.qss");
 }
 
 berry::WorkbenchWindowAdvisor* sv4guiAppWorkbenchAdvisor::CreateWorkbenchWindowAdvisor(berry::IWorkbenchWindowConfigurer::Pointer configurer)
@@ -66,4 +81,16 @@ berry::WorkbenchWindowAdvisor* sv4guiAppWorkbenchAdvisor::CreateWorkbenchWindowA
 QString sv4guiAppWorkbenchAdvisor::GetInitialWindowPerspectiveId()
 {
     return DEFAULT_PERSPECTIVE_ID;
+}
+
+void sv4guiAppWorkbenchAdvisor::UpdateStyle()
+{
+  ctkPluginContext *pluginContext = sv4guiApplicationPluginActivator::getContext();
+  ctkServiceReference serviceReference = pluginContext->getServiceReference<berry::IQtStyleManager>();
+  // granted by org.blueberry.ui.qt
+  Q_ASSERT(serviceReference);
+  berry::IQtStyleManager *styleManager = pluginContext->getService<berry::IQtStyleManager>(serviceReference);
+  Q_ASSERT(styleManager);
+
+  styleManager->SetStyle("/Users/adamupdegrove/Desktop/tmp/customstyle.qss");
 }

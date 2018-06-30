@@ -3233,7 +3233,6 @@ PyObject* Geom_loftSolidCmd(PyObject* self, PyObject* args)
   double continuity = 0;
   double bias = 0;
   double tension = 0;
-
   if (!PyArg_ParseTuple(args,"Osiiiiii|iddd", &srcList,&dstName,&numOutPtsInSegs,
 &numOutPtsAlongLength,&numLinearPtsAlongLength,&numModes,&useFFT,
 &useLinearSampleAlongLength,&splineType,&bias,&tension,&continuity))
@@ -3245,14 +3244,12 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
     return Py_ERROR;
   }
 
-
   // Do work of command:
   numSrcs = PyList_Size(srcList);
 
   // Foreach src obj, check that it is in the repository and of the
   // correct type (i.e. cvSolidModel).  Also build up the array of
   // cvSolidModel*'s to pass to cvSolidModel::MakeLoftedSurf.
-
   srcs = new cvPolyData * [numSrcs];
 
   for (int i = 0; i < numSrcs; i++ ) {
@@ -3277,7 +3274,6 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
     }
     srcs[i] = (cvPolyData *) src;
   }
-
   // We're done with the src object names:
 
   // Make sure the specified result object does not exist:
@@ -3286,7 +3282,6 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
     delete [] srcs;
     return Py_ERROR;
   }
-
   if ( sys_geom_loft_solid( srcs, numSrcs,useLinearSampleAlongLength,useFFT,
 			  numOutPtsAlongLength,numOutPtsInSegs,
 			  numLinearPtsAlongLength,numModes,splineType,bias,tension,continuity,
@@ -3297,7 +3292,6 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
     delete [] srcs;
     return Py_ERROR;
   }
-
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;

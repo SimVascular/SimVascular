@@ -28,8 +28,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "sv3_SegmentationUtils.h"
+
 #include "SimVascular.h"
+#include "sv3_SegmentationUtils.h"
 #include "sv_StrPts.h"
 
 #include <vtkImageData.h>
@@ -294,7 +295,7 @@ vtkImageData* SegmentationUtils::GetSlicevtkImage(sv3::PathElement::PathPoint pa
     return rs->GetOutput();
 }
 
-vtkPlane* SegmentationUtils::CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size)
+vtkPlane* SegmentationUtils::CreatePlaneGeometry(sv3::PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size)
 {
     vtkTransform* tr=GetvtkTransform(pathPoint);
     vtkPlane* planegeometry = vtkPlane::New();

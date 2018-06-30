@@ -34,6 +34,11 @@
 
 #include "SimVascular.h"
 
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
 #include <sv3SegmentationExports.h>
 
 #include "sv3_Contour.h"

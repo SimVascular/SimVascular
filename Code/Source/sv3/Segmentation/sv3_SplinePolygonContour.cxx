@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "SimVascular.h"
+
 #include "sv3_SplinePolygonContour.h"
 #include "sv3_Spline.h"
 #include "sv3_Contour.h"
@@ -38,12 +40,16 @@
 
 #include "vtkSplineFilter.h"
 
-
 #include <iostream>
 using namespace std;
 using sv3::ContourSplinePolygon;
 using sv3::Contour;
 using sv3::Spline;
+
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
 
 ContourSplinePolygon::ContourSplinePolygon():ContourPolygon()
 {
