@@ -1507,7 +1507,14 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args)
   srcs = new cvPolyData * [numSrcs];
 
   for (int i = 0; i < numSrcs; i++ ) {
-    src = gRepository->GetObject(PyBytes_AsString(PyList_GetItem(srcList,i)));
+    char* str;
+#if PYTHON_MAJOR_VERSION == 2
+    str = PyString_AsString(PyList_GetItem(srcList,i));
+#endif
+#if PYTHON_MAJOR_VERSION ==3
+    str = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(srcList,i)));
+#endif
+    src = gRepository->GetObject(str);
     if ( src == NULL ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
       delete [] srcs;
@@ -1607,7 +1614,14 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
   faces = new cvPolyData * [numFaces];
 
   for (int i = 0; i < numFaces; i++ ) {
-    face = gRepository->GetObject(PyBytes_AsString(PyList_GetItem(faceList,i)));
+    char* str;
+#if PYTHON_MAJOR_VERSION == 2
+    str = PyString_AsString(PyList_GetItem(faceList,i));
+#endif
+#if PYTHON_MAJOR_VERSION ==3
+    str = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(faceList,i)));
+#endif
+    face=gRepository->GetObject(str);
     if ( face == NULL ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] faces;
@@ -3242,7 +3256,14 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
   srcs = new cvPolyData * [numSrcs];
 
   for (int i = 0; i < numSrcs; i++ ) {
-    src = gRepository->GetObject(PyBytes_AsString(PyList_GetItem(srcList,i)));
+    char* str;
+#if PYTHON_MAJOR_VERSION == 2
+    str = PyString_AsString(PyList_GetItem(srcList,i));
+#endif
+#if PYTHON_MAJOR_VERSION ==3
+    str = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(srcList,i)));
+#endif
+    src = gRepository->GetObject(str);
     if ( src == NULL ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] srcs;
@@ -3330,7 +3351,14 @@ uParametricSpanType,vParametricSpanType");
   srcs = new cvPolyData * [numSrcs];
 
   for (int i = 0; i < numSrcs; i++ ) {
-    src = gRepository->GetObject(PyBytes_AsString(PyList_GetItem(srcList,i)));
+    char* str;
+#if PYTHON_MAJOR_VERSION == 2
+    str = PyString_AsString(PyList_GetItem(srcList,i));
+#endif
+#if PYTHON_MAJOR_VERSION ==3
+    str = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(srcList,i)));
+#endif
+    src = gRepository->GetObject(str);
     if ( src == NULL ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] srcs;

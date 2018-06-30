@@ -1391,7 +1391,12 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     for (int i=0; i<numsrc; i++)
     {
         r[0] = '\0';
-        char* srcName = PyBytes_AsString(PyList_GetItem(srcList,i));
+#if PYTHON_MAJOR_VERSION == 2
+        char* srcName = PyString_AsString(PyList_GetItem(srcList,i));
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+        char* srcName = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(srcList,i)));
+#endif
         objs[i] = gRepository->GetObject( srcName );
         if ( objs[i] == NULL )
         {
@@ -1510,7 +1515,12 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
     char r[2048];
     for (int i=0; i<num; i++)
     {
-        strList[i] = PyBytes_AsString(PyList_GetItem(dstList,i));
+#if PYTHON_MAJOR_VERSION == 2
+        strList[i] = PyString_AsString(PyList_GetItem(dstList,i));
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+        strList[i] = PyBytes_AsString(PyUnicode_AsUTF8String(PyList_GetItem(dstList,i)));
+#endif
         r[0] = '\0';
         if(gRepository->Exists( strList[i] ))
         {
