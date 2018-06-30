@@ -30,6 +30,8 @@
  */
 
 #include "sv4gui_AboutDialog.h"
+
+#include "sv4gui_AppWorkbenchAdvisor.h"
 #include "simvascular_version.h"
 
 #include <QmitkModulesDialog.h>
@@ -101,3 +103,7 @@ void sv4guiAboutDialog::SetVersionText(const QString &text)
   m_GUI.m_VersionLabel->setText(text);
 }
 
+void sv4guiAboutDialog::UpdateStyle()
+{
+  sv4guiAppWorkbenchAdvisor::UpdateStyle();
+}

@@ -54,6 +54,8 @@ public:
 
     QString GetInitialWindowPerspectiveId() override;
 
+    static void UpdateStyle();
+
 };
 
 #endif /*SV4GUI_APPWORKBENCHADVISOR_H*/
