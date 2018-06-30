@@ -41,7 +41,7 @@ MITK_US_RESOURCE_COMPILER = $(MITK_BINDIR)/bin/RelWithDebInfo/usResourceCompiler
 MITK_LIBDIRS = $(MITK_BINDIR)/lib
 SV_MITK_PLUGIN_PATH = "$(MITK_BINDIR)/bin/RelWithDebInfo\;$(MITK_BINDIR)/bin/plugins/RelWithDebInfo"
 MITK_BINDIRS = $(MITK_BINDIR)/bin
-SV_MITK_SO_PATH = "$(MITK_BINDIRS):$(MITK_BINDIR)/bin/RelWithDebInfo:$(MITK_BINDIR)/bin/plugins/RelWithDebInfo"
+SV_MITK_SO_PATH = "$(MITK_BINDIRS);$(MITK_BINDIR)/bin/RelWithDebInfo;$(MITK_BINDIR)/bin/plugins/RelWithDebInfo"
 MITK_DLLS    = $(MITK_BINDIRS)/*.$(SOEXT)
 
 MITK_SYS_LIBS  =

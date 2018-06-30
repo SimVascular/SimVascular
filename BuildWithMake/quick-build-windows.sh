@@ -48,10 +48,8 @@ export EXTERNALS_TOP=`pwd`/ext
 
 # default is windows
 
-echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath -m $EXTERNALS_TOP/bin`" >> global_overrides.mk
-echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=`cygpath -m $EXTERNALS_TOP/build`" >> global_overrides.mk
-echo "OPEN_SOFTWARE_SOURCES_TOPLEVEL=`cygpath -m $EXTERNALS_TOP/src`" >> global_overrides.mk
-echo "LICENSED_SOFTWARE_TOPLEVEL=" >> global_overrides.mk
+echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath -m $EXTERNALS_TOP/bin`" > global_overrides.mk
+echo "SV_EXTERNALS_PREBUILT_QT=0" >> global_overrides.mk
 
 mkdir -p $EXTERNALS_TOP
 chmod -R a+rwx $EXTERNALS_TOP
@@ -68,6 +66,7 @@ if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
   wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.1.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.0.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.python.2.7.13.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.4.2.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
 elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
@@ -75,10 +74,11 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
   wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.3.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.hdf5.1.10.1.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.13.0.tar.gz
-  wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2018.04.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2018.04.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.3.9.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.2.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.python.3.5.5.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.6.3.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.tinyxml2.6.2.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.8.1.1.tar.gz

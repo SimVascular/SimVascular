@@ -234,11 +234,11 @@ if {$sv_vtk_version == "6.2"} {
 
 if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
     foreach kit $all_vtk_kits {
-      set myfn [file join $simvascular_home vtk${kit}TCL-$sv_vtk_version.dll]
-      if [catch {load $myfn vtk${kit}TCL} msg] {
-        lappend not_loaded vtk${kit}TCL
+      #set myfn [file join $simvascular_home vtk${kit}TCL-$sv_vtk_version.dll]
+      if [catch {load ${kit}-$sv_vtk_version.dll ${kit}} msg] {
+        lappend not_loaded ${kit}
       } else {
-        lappend loaded vtk${kit}TCL
+        lappend loaded ${kit}
       }
     }
     puts [format "  %-12s %s" "TclVtk:" "Dynamic Libs (not_loaded: [llength $not_loaded])"]
