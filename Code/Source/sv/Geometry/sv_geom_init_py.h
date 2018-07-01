@@ -33,8 +33,16 @@
 #define __CVGEOM_INIT_PY_H
 
 #include "SimVascular.h"
+#include "Python.h"
 #include "svGeometryExports.h" // For exports
 
 extern "C" SV_EXPORT_SYSGEOM int Geom_pyInit();
+
+#if PYTHON_MAJOR_VERSION == 2
+SV_EXPORT_SYSGEOM PyMODINIT_FUNC  initpyGeom();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+SV_EXPORT_SYSGEOM PyMODINIT_FUNC  PyInit_pyGeom();
+#endif
 
 #endif // __CVGEOM_INIT_PY_H

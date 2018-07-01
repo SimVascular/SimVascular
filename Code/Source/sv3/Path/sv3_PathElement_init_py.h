@@ -33,13 +33,22 @@
 #define __SV3_PATHELEMENT_INIT_PY_H
 
 #include "SimVascular.h"
-#include "sv3PathExports.h"
 #include "Python.h"
+#include "sv3_PathElement.h"
+#include "sv3PathExports.h"
+
 
 extern "C" SV_EXPORT_PATH typedef struct
 {
   PyObject_HEAD
   sv3::PathElement* geom;
 }pyPath;
+
+#if PYTHON_MAJOR_VERSION == 2
+SV_EXPORT_PATH PyMODINIT_FUNC  initpyPath();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+SV_EXPORT_PATH PyMODINIT_FUNC  PyInit_pyPath();
+#endif
 
 #endif //__SV3_PATHELEMENT_INIT_PY_H

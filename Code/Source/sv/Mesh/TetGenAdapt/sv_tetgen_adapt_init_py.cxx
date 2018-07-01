@@ -41,6 +41,7 @@
 #include "SimVascular.h"
 #include "sv_misc_utils.h"
 #include "sv_tetgen_adapt_init_py.h"
+#include "sv_adapt_init_py.h"
 #include "sv_TetGenAdapt.h"
 //#include "sv_adapt_utils.h"
 #include "sv_arg.h"
@@ -101,9 +102,11 @@ PyObject* Tetgenadapt_pyInit()
   printf("  %-12s %s\n","","TetGen Adaption Enabled");
 
   // Associate the adapt registrar with the python interpreter
-  cvFactoryRegistrar* adaptObjectRegistrar =
-    (cvFactoryRegistrar *)PySys_GetObject("AdaptObjectRegistrar");
 
+  PyObject* pyGlobal = PySys_GetObject("AdaptObjectRegistrar");
+  pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
+  cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
+  
   if (adaptObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
           adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_TETGEN,
@@ -112,7 +115,9 @@ PyObject* Tetgenadapt_pyInit()
   else {
     return Py_ERROR;
   }
-  PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
+  
+  tmp->registrar = adaptObjectRegistrar;
+  PySys_SetObject("AdaptModelRegistrar",(PyObject*)tmp);
 
   PyObject* pythonC;
 #if PYTHON_MAJOR_VERSION == 2
@@ -137,8 +142,10 @@ initpyTetGenAdapt()
 
   // Associate the adapt registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  cvFactoryRegistrar* adaptObjectRegistrar =
-    (cvFactoryRegistrar *)PySys_GetObject("AdaptObjectRegistrar");
+
+  PyObject* pyGlobal = PySys_GetObject("AdaptObjectRegistrar");
+  pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
+  cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
 
   if (adaptObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
@@ -149,7 +156,9 @@ initpyTetGenAdapt()
     return;
 
   }
-  PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
+  
+  tmp->registrar = adaptObjectRegistrar;
+  PySys_SetObject("AdaptModelRegistrar",(PyObject*)tmp);
 
   PyObject* pythonC;
   pythonC = Py_InitModule("pyTetGenAdapt", TetGenAdapt_methods);
@@ -173,8 +182,9 @@ PyInit_pyTetGenAdapt()
 
   // Associate the adapt registrar with the python interpreter so it can be
   // retrieved by the DLLs.
-  cvFactoryRegistrar* adaptObjectRegistrar =
-    (cvFactoryRegistrar *)PySys_GetObject("AdaptObjectRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("AdaptObjectRegistrar");
+  pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
+  cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
 
   if (adaptObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
@@ -184,7 +194,8 @@ PyInit_pyTetGenAdapt()
   else {
     Py_RETURN_NONE;
   }
-  PySys_SetObject("AdaptModelRegistrar",(PyObject*)adaptObjectRegistrar);
+  tmp->registrar = adaptObjectRegistrar;
+  PySys_SetObject("AdaptModelRegistrar",(PyObject*)tmp);
 
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyTetGenAdaptmodule);
@@ -206,8 +217,9 @@ PyObject*  TetGenAdapt_AvailableCmd(PyObject* self, PyObject* args)
 
 PyObject* TetGenAdapt_RegistrarsListCmd(PyObject* self, PyObject* args)
 {
-  cvFactoryRegistrar *adaptObjectRegistrar =
-    (cvFactoryRegistrar *) PySys_GetObject("AdaptObjectRegistrar");
+  PyObject* pyGlobal = PySys_GetObject("AdaptObjectRegistrar");
+  pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
+  cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
 
   char result[255];
   PyObject* pyPtr=PyList_New(6);

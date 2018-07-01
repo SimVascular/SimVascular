@@ -61,7 +61,8 @@ QRCFILES = \
 QRCFILES += org_sv_pythondatanodes_manifest.qrc \
             org_sv_pythondatanodes_cached.qrc
 
-RCFILES =
+RCFILES = \
+  resources/svrepositoryfolder.png
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
@@ -87,7 +88,8 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
+          $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) 
 
 EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 

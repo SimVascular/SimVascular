@@ -33,7 +33,14 @@
 #define __SV4GUI_VIS_INIT_PY_H
 
 #include "SimVascular.h"
+#include "Python.h"
 
 extern "C" int GUI_pyInit();
+
+#if PYTHON_MAJOR_VERSION == 2
+PyMODINIT_FUNC initpyGUI();
+#elif PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_pyGUI();
+#endif
 
 #endif // __SV4GUI_VIS_INIT_PY_H     

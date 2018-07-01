@@ -54,6 +54,7 @@ public:
 
 protected slots:
   void ShowModules();
+  void UpdateStyle();
 
 private:
   Ui::sv4guiAboutDialog m_GUI;

@@ -28,76 +28,34 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#include "sv3_Contour.h"
 #include "sv4gui_Contour.h"
 #include "sv4gui_Math3.h"
 #include "sv4gui_SegmentationUtils.h"
 
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
-
+using sv3::Contour;
 sv4guiContour::sv4guiContour()
-    : m_Type("Contour"),
-      m_Method(""),
+    : Contour(),
       m_Placed( false ),
-      m_Closed( true ),
-      m_Finished( true ),
-      m_ControlPointSelectedIndex( -2 ),
       m_PlaneGeometry( nullptr ),
       m_PreviewControlPointVisible( false ),
       m_Extendable( false ),
-      m_Selected(false),
-      m_MinControlPointNumber(2),
-      m_MaxControlPointNumber(2),
-      m_TagIndex(0)
- {
-    for (int i=0;i<5;i++)
-    {
-        m_ControlPointNonRemovableIndices[i]=-2;
-    }
-    m_ControlPointNonRemovableIndices[0]=0;
-    m_ControlPointNonRemovableIndices[1]=1;
-
-
-    m_SubdivisionType=CONSTANT_TOTAL_NUMBER;
-    m_SubdivisionNumber=0;
-    m_SubdivisionSpacing=0.0;
-
+      m_Selected(false)
+{
 }
 
 sv4guiContour::sv4guiContour(const sv4guiContour &other)
-    : m_Type(other.m_Type)
-    , m_Method(other.m_Method)
+    : Contour(other)
     , m_Placed(other.m_Placed)
-    , m_Closed(other.m_Closed)
-    , m_Finished(other.m_Finished)
-    , m_MinControlPointNumber(other.m_MinControlPointNumber)
-    , m_MaxControlPointNumber(other.m_MaxControlPointNumber)
-    , m_SubdivisionType(other.m_SubdivisionType)
-    , m_SubdivisionNumber(other.m_SubdivisionNumber)
-    , m_SubdivisionSpacing(other.m_SubdivisionSpacing)
-    , m_InitiallyPlaced(other.m_InitiallyPlaced)
-    , m_ControlPoints(other.m_ControlPoints)
-    , m_ContourPoints(other.m_ContourPoints)
     , m_Extendable(other.m_Extendable)
     , m_Selected(other.m_Selected)
 {
-//    SetPlaneGeometry(other.m_PlaneGeometry);
-    SetPathPoint(other.m_PathPoint);
-
-    for(int i=0;i<5;i++){
-        m_ControlPointNonRemovableIndices[i]=other.m_ControlPointNonRemovableIndices[i];
-    }
-
 }
 
 sv4guiContour::~sv4guiContour()
 {
-    //    if(m_PlaneGeometry)
-    //    {
-    //        delete m_PlaneGeometry;
-    //    }
-
 }
 
 sv4guiContour* sv4guiContour::Clone()
@@ -105,40 +63,6 @@ sv4guiContour* sv4guiContour::Clone()
     return new sv4guiContour(*this);
 }
 
-std::string sv4guiContour::GetClassName()
-{
-    return "sv4guiContour";
-}
-
-std::string sv4guiContour::GetType()
-{
-    return m_Type;
-}
-
-void sv4guiContour::SetType(std::string type)
-{
-    m_Type=type;
-}
-
-std::string sv4guiContour::GetMethod()
-{
-    return m_Method;
-}
-
-void sv4guiContour::SetMethod(std::string method)
-{
-    m_Method=method;
-}
-
-int sv4guiContour::GetContourID()
-{
-    return m_ContourID;
-}
-
-void sv4guiContour::SetContourID(int contourID)
-{
-    m_ContourID=contourID;
-}
 
 bool sv4guiContour::IsSelected()
 {
@@ -180,94 +104,8 @@ void sv4guiContour::SetExtendable(bool extendable)
     m_Extendable=extendable;
 }
 
-sv4guiContour::ShapeType sv4guiContour::GetShape()
-{
-    return m_Shape;
-}
-
-bool sv4guiContour::IsClosed()
-{
-    return m_Closed;
-}
-
-void sv4guiContour::SetClosed(bool closed)
-{
-    if(m_Closed!=closed)
-    {
-        m_Closed=closed;
-        CreateContour();
-    }
-}
-
-bool sv4guiContour::IsFinished()
-{
-    return m_Finished;
-}
-
-void sv4guiContour::SetFinished(bool finished)
-{
-    m_Finished=finished;
-}
-
-int sv4guiContour::GetSubdivisionNumber()
-{
-    return m_SubdivisionNumber;
-}
-
-void sv4guiContour::SetSubdivisionNumber(int number)
-{
-    if(m_SubdivisionNumber!=number)
-    {
-        m_SubdivisionNumber=number;
-        CreateContour();
-    }
-}
-
-sv4guiContour::SubdivisionType sv4guiContour::GetSubdivisionType()
-{
-    return m_SubdivisionType;
-}
-
-void sv4guiContour::SetSubdivisionType(SubdivisionType subdivType)
-{
-    if(m_SubdivisionType!=subdivType)
-    {
-        m_SubdivisionType=subdivType;
-        CreateContour();
-    }
-}
-
-double sv4guiContour::GetSubdivisionSpacing()
-{
-    return m_SubdivisionSpacing;
-}
-
-void sv4guiContour::SetSubdivisionSpacing(double spacing)
-{
-    if(m_SubdivisionSpacing!=spacing)
-    {
-        m_SubdivisionSpacing=spacing;
-        CreateContour();
-    }
-}
-
 void sv4guiContour::SetPlaneGeometry(mitk::PlaneGeometry* planeGeometry)
 {
-//    if(m_PlaneGeometry)
-//    {
-//        m_PlaneGeometry->Delete();
-//    }
-
-//    if(planeGeometry)
-//    {
-//        m_PlaneGeometry=dynamic_cast<mitk::PlaneGeometry*>(planeGeometry->Clone().GetPointer());
-//    }
-//    else
-//    {
-//        m_PlaneGeometry=NULL;
-//    }
-
-//    m_PlaneGeometry=planeGeometry;
 
     if(planeGeometry!=NULL)
     {
@@ -283,123 +121,30 @@ mitk::PlaneGeometry* sv4guiContour::GetPlaneGeometry()
     return m_PlaneGeometry;
 }
 
-int sv4guiContour::GetControlPointNumber()
-{
-    return m_ControlPoints.size();
-}
-
-int sv4guiContour::GetMinControlPointNumber()
-{
-    return m_MinControlPointNumber;
-}
-
-int sv4guiContour::GetMaxControlPointNumber()
-{
-    return m_MaxControlPointNumber;
-}
-
-void sv4guiContour::SetMinControlPointNumber(int number)
-{
-    m_MinControlPointNumber=number;
-}
-
-void sv4guiContour::SetMaxControlPointNumber(int number)
-{
-    m_MaxControlPointNumber=number;
-}
-
 mitk::Point3D sv4guiContour::GetControlPoint(int index){
+    
+    std::array<double,3> tmpPt = this->sv3::Contour::GetControlPoint(index);
     mitk::Point3D point;
-    point.Fill(0);
-
-    if(index==-1)
-    {
-        point=m_ControlPoints[m_ControlPoints.size()-1];
-    }
-    else if(index>-1 && index<m_ControlPoints.size())
-    {
-        point=m_ControlPoints[index];
-    }
-
+    for (int i=0; i<3; i++)
+        point[i] = tmpPt[i];
     return point;
 }
 
 void sv4guiContour::InsertControlPoint(int index, mitk::Point3D point)
 {
-    if(index==-1) index=m_ControlPoints.size();
-
-    if(index>-1 && index<=m_ControlPoints.size())
-    {
-        m_ControlPoints.insert(m_ControlPoints.begin()+index,point);
-        m_ControlPointSelectedIndex=index;
-        ControlPointsChanged();
-    }
-
-}
-
-void sv4guiContour::RemoveControlPoint(int index)
-{
-    if(index==-1) index=m_ControlPoints.size()-1;
-
-    if(index>-1 && index<m_ControlPoints.size())
-    {
-        m_ControlPoints.erase(m_ControlPoints.begin()+index);
-        ControlPointsChanged();
-    }
-
+    std::array<double,3> stdPt;
+    for (int i=0; i<3; i++)
+        stdPt[i] = point[i];
+    this->sv3::Contour::InsertControlPoint(index,stdPt);
 }
 
 void sv4guiContour::SetControlPoint(int index, mitk::Point3D point)
 {
-    if(index==-1) index=m_ControlPoints.size()-1;
+    std::array<double,3> stdPt;
+    for (int i=0; i<3; i++)
+        stdPt[i] = point[i];
+    this->sv3::Contour::SetControlPoint(index,stdPt);
 
-    if(index>-1 && index<m_ControlPoints.size())
-    {
-        if(index==0)
-        {
-            mitk::Vector3D dirVec=point-m_ControlPoints[index];
-            Shift(dirVec);
-        }
-        else if(index==1)
-        {
-            Scale(m_ControlPoints[0], m_ControlPoints[index], point);
-        }
-
-    }
-
-}
-
-//void sv4guiContour::SetActualControlPoint(int index, mitk::Point3D point)
-//{
-//    m_ControlPoints[index]=point;
-//}
-
-void sv4guiContour::SetControlPointSelectedIndex(int index)
-{
-    if(index==-1) index=m_ControlPoints.size()-1;
-
-    if(index>-1 && index<m_ControlPoints.size())
-    {
-        m_ControlPointSelectedIndex=index;
-    }else{
-        m_ControlPointSelectedIndex=-2;
-    }
-
-}
-
-void sv4guiContour::DeselectControlPoint()
-{
-    m_ControlPointSelectedIndex=-2;
-}
-
-int sv4guiContour::GetControlPointSelectedIndex()
-{
-    return m_ControlPointSelectedIndex;
-}
-
-void sv4guiContour::ClearControlPoints()
-{
-    m_ControlPoints.clear();
 }
 
 void sv4guiContour::PlaceContour(mitk::Point3D point)
@@ -410,31 +155,26 @@ void sv4guiContour::PlaceContour(mitk::Point3D point)
 
 void sv4guiContour::PlaceControlPoints(mitk::Point3D point)
 {
-    for ( unsigned int i = 0; i < GetMinControlPointNumber(); ++i )
-    {
-      m_ControlPoints.push_back( point );
-    }
+    std::array<double,3> stdPt;
+    for (int i=0; i<3; i++)
+        stdPt[i] = point[i];
+        
+    this->sv3::Contour::PlaceControlPoints(stdPt);
 
     m_Placed = true;
-    m_ControlPointSelectedIndex = 1;
 }
 
 void sv4guiContour::SetControlPoints(std::vector<mitk::Point3D> controlPoints, bool updateContour)
 {
-    m_ControlPoints=controlPoints;
-    if(updateContour)
-        ControlPointsChanged();
-}
-
-bool sv4guiContour::IsControlPointRemovable(int index)
-{
-    for(int i=0;i<5;i++)
+    std::vector<std::array<double,3> > stdPoints(controlPoints.size());
+    for (int j=0; j<controlPoints.size(); j++)
     {
-        if(m_ControlPointNonRemovableIndices[i]==index)
-            return false;
+        for(int i=0; i<3; i++)
+            stdPoints[j][i] = controlPoints[j][i];
     }
-
-    return true;
+    
+    this->sv3::Contour::SetControlPoints(stdPoints,updateContour);
+            
 }
 
 void sv4guiContour::SetPreviewControlPoint(mitk::Point3D point )
@@ -458,333 +198,116 @@ mitk::Point3D sv4guiContour::GetPreviewControlPoint()
     return m_PreviewControlPoint;
 }
 
-void sv4guiContour::ClearContourPoints()
-{
-    m_ContourPoints.clear();
-}
-
-void sv4guiContour::CreateContour()
-{
-    if(m_ControlPoints.size()<1)
-    {
-        return;
-    }
-
-    m_ContourPoints.clear();
-    CreateContourPoints();
-    ContourPointsChanged();
-}
-
-void sv4guiContour::ControlPointsChanged(){
-    CreateContour();
-    //    this->Modified();
-}
 
 void sv4guiContour::SetContourPoints(std::vector<mitk::Point3D> contourPoints, bool update)
 {
-    m_ContourPoints=contourPoints;
+    std::vector<std::array<double,3> > stdPoints(contourPoints.size());
+    for (int j=0; j<contourPoints.size(); j++)
+    {
+        for(int i=0; i<3; i++)
+            stdPoints[j][i] = contourPoints[j][i];
+    }
+    
+    this->sv3::Contour::SetContourPoints(stdPoints,false);
     if(update)
-    ContourPointsChanged();
+        ContourPointsChanged();
 }
 
-int sv4guiContour::GetContourPointNumber()
+void sv4guiContour::SetContourPoints(std::vector<std::array<double,3> > contourPoints, bool update)
 {
-    return m_ContourPoints.size();
+    this->sv3::Contour::SetContourPoints(contourPoints,false);
+    if(update)
+        ContourPointsChanged();
 }
 
 mitk::Point3D sv4guiContour::GetContourPoint(int index)
 {
     mitk::Point3D point;
-    point.Fill(0);
-
-    if(index==-1)
-        index=m_ContourPoints.size()-1;
-
-    if(index>-1 && index<m_ContourPoints.size())
-    {
-        point=m_ContourPoints[index];
-    }
+    std::array<double,3> stdpt = this->sv3::Contour::GetContourPoint(index);
+    for (int i=0; i<3; i++)
+        point[i] = stdpt[i];
     return point;
 }
 
-void sv4guiContour::ContourPointsChanged()
+mitk::Point3D sv4guiContour::GetCenterPoint()
 {
-    CreateCenterScalingPoints();
-    AssignCenterScalingPoints();
+    mitk::Point3D point;
+    std::array<double,3> stdpt = this->sv3::Contour::GetCenterPoint();
+    for (int i=0; i<3; i++)
+        point[i] = stdpt[i];
+    return point;
 }
 
-void sv4guiContour::AssignCenterScalingPoints()
-{
-    if(m_ControlPoints.size()==0)
-    {
-        m_ControlPoints.push_back(m_CenterPoint);
-        m_ControlPoints.push_back(m_ScalingPoint);
-    }
-    else if(m_ControlPoints.size()==1)
-    {
-        m_ControlPoints[0]=m_CenterPoint;
-        m_ControlPoints.push_back(m_ScalingPoint);
-    }
-    else
-    {
-        m_ControlPoints[0]=m_CenterPoint;
-        m_ControlPoints[1]=m_ScalingPoint;
-    }
-}
 
-void sv4guiContour::CreateCenterScalingPoints()
-{
-    double Sx=0,Sy=0,A=0;
-
-    for(int i=0;i<m_ContourPoints.size();i++)
-    {
-        mitk::Point2D point1,point2;
-        m_PlaneGeometry->Map(m_ContourPoints[i], point1);
-        if(i==m_ContourPoints.size()-1)
-            m_PlaneGeometry->Map(m_ContourPoints[0], point2);
-        else
-            m_PlaneGeometry->Map(m_ContourPoints[i+1], point2);
-
-        Sx+=(point1[0]+point2[0])*(point1[0]*point2[1]-point2[0]*point1[1]);
-        Sy+=(point1[1]+point2[1])*(point1[0]*point2[1]-point2[0]*point1[1]);
-        A+=(point1[0]*point2[1]-point2[0]*point1[1]);
-    }
-
-    mitk::Point2D center;
-    if(A!=0)
-    {
-        center[0]=Sx/A/3;
-        center[1]=Sy/A/3;
-    }
-    else
-    {
-        Sx=0;
-        Sy=0;
-        for(int i=0;i<m_ContourPoints.size();i++)
-        {
-            mitk::Point2D point;
-            m_PlaneGeometry->Map(m_ContourPoints[i], point);
-            Sx+=point[0];
-            Sy+=point[1];
-        }
-        center[0]=Sx/m_ContourPoints.size();
-        center[1]=Sy/m_ContourPoints.size();
-    }
-
-    double minDis=0;
-    bool firstTime=true;
-
-    for(int i=0;i<m_ContourPoints.size();i++)
-    {
-        mitk::Point2D point;
-        m_PlaneGeometry->Map(m_ContourPoints[i], point);
-        double dis=point.EuclideanDistanceTo(center);
-        if(firstTime)
-        {
-            minDis=dis;
-            firstTime=false;
-        }
-        else if(dis<minDis)
-        {
-            minDis=dis;
-        }
-    }
-
-    mitk::Point2D scalingPoint;
-    scalingPoint[0]=center[0]+minDis/2;
-    scalingPoint[1]=center[1];
-
-    m_PlaneGeometry->Map(center,m_CenterPoint);
-    m_PlaneGeometry->Map(scalingPoint,m_ScalingPoint);
-
-}
-
-//mitk::Point3D sv4guiContour::GetCenterPoint()
-//{
-//    return m_CenterPoint;
-//}
 
 sv4guiContour* sv4guiContour::CreateSmoothedContour(int fourierNumber)
 {
     if(m_ContourPoints.size()<3)
         return this->Clone();
-
+    Contour* sv3contour = this->sv3::Contour::CreateSmoothedContour(fourierNumber);
     sv4guiContour* contour=new sv4guiContour();
-    contour->SetPathPoint(m_PathPoint);
-//    contour->SetPlaneGeometry(m_PlaneGeometry);
-    std::string method=m_Method;
-    int idx=method.find("Smoothed");
-    if(idx<0)
-        method=method+" + Smoothed";
-
-    contour->SetMethod(method);
+    sv3::PathElement::PathPoint pathPoint=sv3contour->GetPathPoint();
+    sv4guiPathElement::sv4guiPathPoint pthPt;
+    for (int i = 0; i<3; i++)
+    {
+        pthPt.pos[i]=pathPoint.pos[i];
+        pthPt.tangent[i] = pathPoint.tangent[i];
+        pthPt.rotation[i] = pathPoint.rotation[i];
+    }
+        pthPt.id = pathPoint.id;
+    contour->SetPathPoint(pthPt);
+    contour->SetMethod(sv3contour->GetMethod());
     contour->SetPlaced(true);
-    contour->SetClosed(m_Closed);
-
-    int pointNumber=m_ContourPoints.size();
-
-    int smoothedPointNumber;
-
-    if((2*pointNumber)<fourierNumber)
-        smoothedPointNumber=3*fourierNumber;
-    else
-        smoothedPointNumber=pointNumber;
-
-    std::vector<mitk::Point3D> smoothedContourPoints=sv4guiMath3::CreateSmoothedCurve(m_ContourPoints,m_Closed,fourierNumber,0,smoothedPointNumber);
-
-    contour->SetContourPoints(smoothedContourPoints);
-
+    contour->SetClosed(sv3contour->IsClosed());
+    contour->SetContourPoints(sv3contour->GetContourPoints());
+    delete sv3contour;
     return contour;
 }
 
-vtkSmartPointer<vtkPolyData> sv4guiContour::CreateVtkPolyDataFromContour(bool includingAllLines)
-{
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
-
-    int pointNumber=m_ContourPoints.size();
-
-    for (int i=0; i<=pointNumber; i++)
-    {
-        if(i<pointNumber)
-        {
-            mitk::Point3D point = GetContourPoint(i);
-            points->InsertPoint(i,point[0],point[1],point[2]);
-        }
-
-        if(i>0&&i<pointNumber){
-            vtkIdType cell[2] = {i-1,i};
-            lines->InsertNextCell(2,cell);
-        }else if(i==pointNumber&&m_Closed){
-            vtkIdType cell[2] = {i-1,0};
-            lines->InsertNextCell(2,cell);
-        }
-
-    }
-
-    if(includingAllLines&&m_Closed&&m_Finished&&m_ControlPoints.size()>1)
-    {
-        mitk::Point3D point = GetControlPoint(0);
-        points->InsertPoint(pointNumber,point[0],point[1],point[2]);
-        point = GetControlPoint(1);
-        points->InsertPoint(pointNumber+1,point[0],point[1],point[2]);
-        vtkIdType cell[2] = {pointNumber,pointNumber+1};
-        lines->InsertNextCell(2,cell);
-    }
-
-    vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-    polyData->SetPoints(points);
-    polyData->SetLines(lines);
-
-    return polyData;
-}
-
-int sv4guiContour::SearchControlPointByContourPoint( int contourPointIndex )
-{
-    return contourPointIndex;
-}
 
 void sv4guiContour::Shift(mitk::Vector3D dirVec){
-
-    for(int i=0;i<m_ControlPoints.size();i++)
-    {
-        m_ControlPoints[i]=m_ControlPoints[i]+dirVec;
-    }
-
-    for(int i=0;i<m_ContourPoints.size();i++)
-    {
-        m_ContourPoints[i]=m_ContourPoints[i]+dirVec;
-    }
+    
+    std::array<double,3> stdVec;
+    
+    for (int i=0; i<3; i++)
+        stdVec[i] = dirVec[i];
+    this->sv3::Contour::Shift(stdVec);
 }
 
 void sv4guiContour::Scale(double scalingFactor)
 {
-    Scale(scalingFactor, m_ControlPoints[0]);
+    mitk::Point3D referencePoint;
+    for(int i=0; i<3; i++)
+        referencePoint = m_ControlPoints[0][i];
+    Scale(scalingFactor, referencePoint);
 }
 
 void sv4guiContour::Scale(double scalingFactor, mitk::Point3D referencePoint)
-{
-    mitk::Vector3D dirVec;
-
-    for(int i=0;i<m_ControlPoints.size();i++)
-    {
-        dirVec=m_ControlPoints[i]-referencePoint;
-        m_ControlPoints[i]=referencePoint+scalingFactor*dirVec;
-    }
-
-    for(int i=0;i<m_ContourPoints.size();i++)
-    {
-        dirVec=m_ContourPoints[i]-referencePoint;
-        m_ContourPoints[i]=referencePoint+scalingFactor*dirVec;
-    }
+{    
+    std::array<double,3> refPt;
+    
+    for (int i=0; i<3; i++)
+        refPt[i] = referencePoint[i];
+        
+    this->sv3::Contour::Scale(scalingFactor,refPt);
 }
 
 void sv4guiContour::Scale(mitk::Point3D referencePoint, mitk::Point3D oldPoint, mitk::Point3D newPoint)
 {
-    double dis1=oldPoint.EuclideanDistanceTo(referencePoint);
-    double dis2=newPoint.EuclideanDistanceTo(referencePoint);
-    double scalingFactor;
-    if(dis1==0||dis1==dis2){
-        return;
-    }else{
-        scalingFactor=dis2/dis1;
-        Scale(scalingFactor,referencePoint);
-        m_ControlPoints[1]=newPoint;//make scaling point is exactly same as new point;
-
-    }
-
-}
-
-
-void sv4guiContour::CalculateBoundingBox(double *bounds)
-{
-    for(int i=0;i<m_ControlPoints.size();i++)
+    std::array<double,3> refPt, stdOldPt,stdNewPt;
+    
+    for (int i=0; i<3; i++)
     {
-        double x=m_ControlPoints[i][0];
-        double y=m_ControlPoints[i][1];
-        double z=m_ControlPoints[i][2];
-
-        if(i==0){
-            bounds[0]=x;
-            bounds[1]=x;
-            bounds[2]=y;
-            bounds[3]=y;
-            bounds[4]=z;
-            bounds[5]=z;
-        }else{
-            if(x<bounds[0]) bounds[0]=x;
-            if(x>bounds[1]) bounds[1]=x;
-            if(y<bounds[2]) bounds[2]=y;
-            if(y>bounds[3]) bounds[3]=y;
-            if(z<bounds[4]) bounds[4]=z;
-            if(z>bounds[5]) bounds[5]=z;
-        }
+        refPt[i] = referencePoint[i];
+        stdOldPt[i] = oldPoint[i];
+        stdNewPt[i] = newPoint[i];
     }
-
-    for (int i = 0; i < m_ContourPoints.size(); i++) {
-        double x=m_ContourPoints[i][0];
-        double y=m_ContourPoints[i][1];
-        double z=m_ContourPoints[i][2];
-        if(x<bounds[0]) bounds[0]=x;
-        if(x>bounds[1]) bounds[1]=x;
-        if(y<bounds[2]) bounds[2]=y;
-        if(y>bounds[3]) bounds[3]=y;
-        if(z<bounds[4]) bounds[4]=z;
-        if(z>bounds[5]) bounds[5]=z;
-    }
-
+    this-> sv3::Contour::Scale(refPt,stdOldPt,stdNewPt);
 }
 
 bool sv4guiContour::IsOnPlane(const mitk::PlaneGeometry* planeGeometry, double precisionFactor)
 {
     if(m_PlaneGeometry.IsNull() || planeGeometry==NULL) return false;
-
-//    double contourThickness = m_PlaneGeometry->GetExtentInMM( 2 )*precisionFactor;
-//    if(m_PlaneGeometry->IsParallel(planeGeometry)
-//            && m_PlaneGeometry->DistanceFromPlane(planeGeometry)<contourThickness)
-//        return true;
-//    else
-//        return false;
 
     double contourThickness = planeGeometry->GetExtentInMM( 2 )*precisionFactor;
 
@@ -798,12 +321,30 @@ bool sv4guiContour::IsOnPlane(const mitk::PlaneGeometry* planeGeometry, double p
 
 sv4guiPathElement::sv4guiPathPoint sv4guiContour::GetPathPoint()
 {
-    return m_PathPoint;
+    sv4guiPathElement::sv4guiPathPoint pathPoint;
+    sv3::PathElement::PathPoint pthPt = this->sv3::Contour::GetPathPoint();
+    for (int i = 0; i<3; i++)
+    {
+        pathPoint.pos[i] = pthPt.pos[i];
+    }
+    mitk::FillVector3D(pathPoint.tangent, pthPt.tangent[0], pthPt.tangent[1], pthPt.tangent[2]);
+    mitk::FillVector3D(pathPoint.rotation, pthPt.rotation[0], pthPt.rotation[1], pthPt.rotation[2]);
+    pathPoint.id = pthPt.id;
+    return pathPoint; 
 }
 
 void sv4guiContour::SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint)
 {
-    m_PathPoint=pathPoint;
+    sv3::PathElement::PathPoint pthPt;
+    for (int i = 0; i<3; i++)
+    {
+        pthPt.pos[i]=pathPoint.pos[i];
+        pthPt.tangent[i] = pathPoint.tangent[i];
+        pthPt.rotation[i] = pathPoint.rotation[i];
+    }
+        pthPt.id = pathPoint.id;
+    
+    this->sv3::Contour::SetPathPoint(pthPt);
 
     mitk::Vector3D spacing;
     spacing.Fill(0.1);
@@ -811,66 +352,12 @@ void sv4guiContour::SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint)
     m_PlaneGeometry=sv4guiSegmentationUtils::CreatePlaneGeometry(pathPoint,spacing, 1.0);
 }
 
-int sv4guiContour::GetPathPosID(){
-    return m_PathPoint.id;
-}
 
 mitk::Point3D sv4guiContour::GetPathPosPoint()
 {
-    return m_PathPoint.pos;
-}
-
-vtkImageData* sv4guiContour::GetVtkImageSlice()
-{
-    return m_VtkImageSlice;
-}
-
-void sv4guiContour::SetVtkImageSlice(vtkImageData* slice)
-{
-    m_VtkImageSlice=slice;
-}
-
-mitk::Point3D sv4guiContour::GetCenterPoint()
-{
-    return m_ControlPoints[0];
-}
-
-double sv4guiContour::GetArea()
-{
-    double A=0;
-
-    for(int i=0;i<m_ContourPoints.size();i++)
-    {
-        mitk::Point2D point1,point2;
-        m_PlaneGeometry->Map(m_ContourPoints[i], point1);
-        if(i==m_ContourPoints.size()-1)
-            m_PlaneGeometry->Map(m_ContourPoints[0], point2);
-        else
-            m_PlaneGeometry->Map(m_ContourPoints[i+1], point2);
-
-        A+=(0.5*(point1[0]*point2[1]-point2[0]*point1[1]));
-    }
-
-    if(A<0) A=-A;
-
-    return A;
-}
-
-double sv4guiContour::GetPerimeter()
-{
-    double L=0;
-
-    for(int i=0;i<m_ContourPoints.size();i++)
-    {
-        mitk::Point2D point1,point2;
-        m_PlaneGeometry->Map(m_ContourPoints[i], point1);
-        if(i==m_ContourPoints.size()-1)
-            m_PlaneGeometry->Map(m_ContourPoints[0], point2);
-        else
-            m_PlaneGeometry->Map(m_ContourPoints[i+1], point2);
-
-        L+=point1.EuclideanDistanceTo(point2);
-    }
-
-    return L;
+    mitk::Point3D mitkPt;
+    std::array<double,3> point = this->sv3::Contour::GetPathPosPoint();
+    for(int i=0; i<3; i++)
+        mitkPt[i] = point[i];
+    return mitkPt;
 }

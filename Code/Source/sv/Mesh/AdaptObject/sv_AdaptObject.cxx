@@ -32,6 +32,7 @@
 #include "SimVascular.h"
 
 #include "sv_AdaptObject.h"
+#include "sv_adapt_init_py.h"
 //#include "sv_TetGenAdapt.h"
 #include "sv_MeshObject.h"
 #include "sv_misc_utils.h"
@@ -101,8 +102,10 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,
 cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject(KernelType t )
 {
   // Get the adapt object factory registrar associated with the python interpreter
-  cvFactoryRegistrar* adaptObjectRegistrar;
-  adaptObjectRegistrar = (cvFactoryRegistrar *) PySys_GetObject("AdaptObjectRegistrar");
+  
+  PyObject* pyGlobal = PySys_GetObject("AdaptObjectRegistrar");
+  pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
+  cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
   if (adaptObjectRegistrar==NULL)
   {
     fprintf(stdout,"Cannot get AdaptObjectRegistrar from pySys");

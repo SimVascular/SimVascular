@@ -29,7 +29,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(lib ${SV_LIB_MODULE_SEGMENTATION_NAME})
-
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(
@@ -47,6 +46,7 @@ simvascular_create_module(
   ${SV_LIB_REPOSITORY_NAME}
   ${SV_LIB_PATH_NAME}
   ${SV_LIB_ITK_LSET_NAME}
+  ${SV_LIB_SEGMENTATION_NAME}
   ${SV_LIB_MODULE_COMMON_NAME}
   ${SV_LIB_MODULE_PATH_NAME}
   ${SV_LIB_VTKSVBOOLEAN_NAME})
@@ -72,4 +72,3 @@ if(SV_INSTALL_HEADERS)
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
   )
 endif()
-

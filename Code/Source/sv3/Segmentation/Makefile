@@ -34,34 +34,34 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS) \
-           $(ITK_INCDIRS)  $(SV_GDCM_INCDIR)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS) $(ITK_INCDIRS)
 
-CREATE_EXPORTS_CV_ALL_CAPS=SV_SEGITK
-CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_SEGITK
-CREATE_EXPORTS_CV_FILE_H=svSegITKExports.h
+CREATE_EXPORTS_CV_ALL_CAPS=SV_SEGMENTATION
+CREATE_EXPORTS_CV_EXPORT_NAME=SV_EXPORT_SEGMENTATION
+CREATE_EXPORTS_CV_FILE_H=sv3SEGMENTATIONExports.h
 
-CXXFLAGS += -DSV_EXPORT_SEGITK_COMPILE
+CXXFLAGS += -DSV_EXPORT_SEGMENTATION_COMPILE
 
-HDRS	=  sv3_ITKLset_ITKUtils.h sv3_ITKLevelSet.h \
-           sv3_ITKLset_ConnectVTKITK.h sv3_ITKLset_ITK_Macros.h \
-           sv3_ITKLset_Macros.h sv3_ITKLset_TCL_Macros.h \
-           sv3_ITKLset_VTK_Macros.h sv3_ITKLset_ImgInfo.h
+HDRS	= sv3_Contour.h sv3_LevelSetContour.h sv3_SegmentationUtils.h sv3_CircleContour.h sv3_PolygonContour.h sv3_SplinePolygonContour.h sv3_ThresholdContour.h
+CXXSRCS	= sv3_Contour.cxx sv3_LevelSetContour.cxx sv3_SegmentationUtils.cxx sv3_CircleContour.cxx sv3_PolygonContour.cxx sv3_SplinePolygonContour.cxx sv3_ThresholdContour.cxx
 
-CXXSRCS	=  sv3_ITKUtils.cxx sv3_ITKLevelSet.cxx
 
-DLLHDRS = sv3_ITKUtils_init.h sv3_ITKLset2d_init.h sv3_ITKLset3d_init.h sv3_ITKLset_init.h
-DLLSRCS = sv3_ITKUtils_init.cxx sv3_ITKLset2d_init.cxx  sv3_ITKLset3d_init.cxx sv3_ITKLset_init.cxx
+SVPYHDRS = sv3_Contour_init_py.h sv3_LevelSetContour_init_py.h sv3_CircleContour_init_py.h sv3_PolygonContour_init_py.h sv3_SplinePolygonContour_init_py.h sv3_ThresholdContour_init_py.h
+SVPYSRCS = sv3_Contour_init_py.cxx sv3_LevelSetContour_init_py.cxx sv3_CircleContour_init_py.cxx sv3_PolygonContour_init_py.cxx sv3_SplinePolygonContour_init_py.cxx sv3_ThresholdContour_init_py.cxx
 
-SVPYHDRS = sv3_ITKLset_init_py.h  sv3_ITKUtils_init_py.h sv3_ITKLset2d_init_py.h sv3_ITKLset3d_init_py.h
-SVPYSRCS = sv3_ITKLset_init_py.cxx  sv3_ITKUtils_init_py.cxx sv3_ITKLset2d_init_py.cxx  sv3_ITKLset3d_init_py.cxx
+DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_COMMON_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = $(SV_LIB_ITK_LSET_NAME)
+DLLLIBS += $(ITK_LIBS)
 
-SV_PYTHON_MODULE_NAME = pyItkls
+TARGET_LIB_NAME = $(SV_LIB_SEGMENTATION_NAME)
 
-DLLLIBS =  $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
-	   $(ITK_LIBS) $(SV_GDCM_LIBS)
+SV_PYTHON_MODULE_NAME = pyContour
 
 include $(TOP)/targetlib.mk
+

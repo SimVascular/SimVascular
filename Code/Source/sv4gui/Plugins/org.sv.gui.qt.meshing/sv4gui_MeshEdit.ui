@@ -345,7 +345,7 @@
            <property name="currentIndex">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="page_3">
+           <widget class="QWidget" name="MeshingAdvancedOptionsWidgetPage">
             <property name="geometry">
              <rect>
               <x>0</x>

@@ -35,6 +35,7 @@
 
 #ifdef SV_USE_PYTHON
   #include "Python.h"
+  #include "sv4gui_Vis_init_py.h"
 #endif
 #include "vtksys/SystemTools.hxx"
 
@@ -122,6 +123,9 @@ errno_t cv_getenv_s(
 #endif
 
 #include "SimVascular_Init.h"
+#ifdef SV_USE_PYTHON
+#include "SimVascular_Init_py.h"
+#endif
 
 #ifdef SV_USE_QT_GUI
 typedef void Tcl_MainLoopProc(void);
@@ -377,10 +381,20 @@ int PythonShell_Init(int argc, char *argv[])
 //  CMakeLoadAllPythonModules();
 
 // CALL SIMVASCULAR PYTHON MODULES HERE
+#if PYTHON_MAJOR_VERSION == 3
+
+  SimVascular_pyInit();
+#endif
 
   // Initialize interpreter.
   Py_Initialize();
+#if PYTHON_MAJOR_VERSION ==2
+  SimVascular_pyInit();
+#endif
 
+  SimVascular_pyImport();
+
+   //PyImport_ImportModule("pyRepository");
   // Initialize python thread support. This function should first be
   // called from the main thread, after Py_Initialize.
 //#ifndef VTK_NO_PYTHON_THREADS
@@ -946,7 +960,18 @@ RegCloseKey(hKey2);
        pluginsToStart.push_back("org_mitk_gui_qt_imagenavigator");
        pluginsToStart.push_back("org_mitk_gui_qt_measurementtoolbox");
 #ifdef SV_USE_PYTHON
+#if PYTHON_MAJOR_VERSION == 3
+       SimVascular_pyInit();
+       PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
+#endif
+       Py_Initialize();
+#if PYTHON_MAJOR_VERSION ==2
+       SimVascular_pyInit();
+       initpyGUI();
+#endif
        pluginsToStart.push_back("org_mitk_gui_qt_python");
+       SimVascular_pyImport();
+       PyImport_ImportModule("pyGUI");
 #endif
        pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
        pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
@@ -962,6 +987,8 @@ RegCloseKey(hKey2);
          pluginsToStart.push_back("org_sv_gui_qt_segmentation");
          pluginsToStart.push_back("org_sv_gui_qt_meshing");
          pluginsToStart.push_back("org_sv_gui_qt_simulation");
+         pluginsToStart.push_back("org_sv_gui_qt_imageprocessing");
+         pluginsToStart.push_back("org_sv_gui_qt_svfsi");
 #ifdef SV_USE_PYTHON
          pluginsToStart.push_back("org_sv_pythondatanodes");
 #endif
@@ -1137,5 +1164,3 @@ int Tcl_AppInit( Tcl_Interp *interp )
   return TCL_OK;
 
 }
-
-

@@ -53,7 +53,8 @@ typedef enum {
   SOLID_MODEL_T,
   MESH_T,
   TEMPORALDATASET_T,
-  ADAPTOR_T
+  ADAPTOR_T,
+  CONTOUR_T
 } RepositoryDataT;
 
 SV_EXPORT_REPOSITORY RepositoryDataT RepositoryDataT_StrToEnum( char *name );

@@ -63,7 +63,7 @@ public:
 
     void AssignCenterScalingPoints() override;
 
-    void PlaceControlPoints(mitk::Point3D point) override;
+    virtual void PlaceControlPoints(mitk::Point3D point) override;
 
     static sv4guiContour* CreateByFitting(sv4guiContour* contour);
 
