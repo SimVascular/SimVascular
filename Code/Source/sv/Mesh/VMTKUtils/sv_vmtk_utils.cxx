@@ -1075,6 +1075,7 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   layerer->SetSurfaceCellIdsArrayName("ModelFaceID");
   layerer->SetIncludeSurfaceCells(1);
   layerer->SetIncludeSidewallCells(1);
+  layerer->SetNumberOfSubsteps(100);
   layerer->Update();
 
   blMesh->DeepCopy(layerer->GetOutput());

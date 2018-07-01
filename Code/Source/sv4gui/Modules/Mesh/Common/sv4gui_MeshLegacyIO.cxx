@@ -76,8 +76,11 @@ bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiMode
     }
 
     // Check to see if multi domain
-    double minmax[2];
-    surfaceMesh->GetCellData()->GetArray("ModelRegionID")->GetRange(minmax);
+    double minmax[2]; minmax[0] = 0; minmax[1] = 0;
+    if (surfaceMesh->GetCellData()->GetArray("ModelRegionID"))
+    {
+      surfaceMesh->GetCellData()->GetArray("ModelRegionID")->GetRange(minmax);
+    }
     if (minmax[1] - minmax[0] > 0)
     {
       // Need to write multiple

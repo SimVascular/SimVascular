@@ -832,6 +832,9 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
 
     cmds.push_back("option GlobalEdgeSize "+ui->lineEditGlobalEdgeSizeT->text().trimmed().toStdString());
 
+    if(ui->checkBoxBoundaryLayerT->isChecked())
+      ui->checkBoxFastMeshing->setChecked(false);
+
     if(!ui->checkBoxFastMeshing->isChecked())
         cmds.push_back("setWalls");
 

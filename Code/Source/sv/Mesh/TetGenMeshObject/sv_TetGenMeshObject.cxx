@@ -1160,6 +1160,7 @@ int cvTetGenMeshObject::SetBoundaryLayer(int type, int id, int side,
   meshoptions_.blthicknessfactor = *H;
   meshoptions_.sublayerratio = *(H+1);
   meshoptions_.useconstantblthickness = *(H+2);
+  meshoptions_.meshwallfirst = 1;
 #else
   fprintf(stderr,"Plugin VMTK is not being used! \
       In order to use boundary layer meshing, \
@@ -1838,6 +1839,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
       fprintf(stderr,"Problem with surface meshing\n");
       return SV_ERROR;
     }
+    ResetOriginalRegions("ModelFaceID");
 #ifdef SV_USE_MMG
   }
 #endif
@@ -1874,7 +1876,8 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
 
   if (meshoptions_.meshwallfirst && !meshoptions_.boundarylayermeshflag)
   {
-    GenerateAndMeshCaps();
+    if (GenerateAndMeshCaps() != SV_OK)
+      return SV_ERROR;
     ResetOriginalRegions("ModelFaceID");
   }
 
@@ -2123,7 +2126,6 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
     }
   }
   polydatasolid_->GetCellData()->AddArray(wallIds);
-
 
   return SV_OK;
 }
