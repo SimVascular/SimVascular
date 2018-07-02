@@ -35,7 +35,8 @@
 #include "sv4gui_svFSIUtil.h"
 #include "sv4gui_svFSIbcClass.h"
 #include "sv4gui_svFSIeqClass.h"
-
+#include "sv4gui_MitkMesh.h"
+#include "sv4gui_Mesh.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -560,6 +561,13 @@ void sv4guisvFSIView::AddMeshComplete()
         return;
     }
 
+    QFileInfoList vtpList=meshDir.entryInfoList(QStringList("*.vtp"));
+    if(vtpList.size()==0)
+    {
+        QMessageBox::warning(m_Parent,"No Mesh Found", "A mesh (vtp) file is not found in the folder");
+        return;
+    }
+
     QDir faceDir(dirPath+"/"+faceFolderName);
     QFileInfoList faceList=faceDir.entryInfoList(QStringList("*.vtp"));
     if(faceList.size()==0)
@@ -571,12 +579,15 @@ void sv4guisvFSIView::AddMeshComplete()
     domain.name=domainName.toStdString();
     domain.folderName=domainName.toStdString();
     domain.fileName=meshList[0].fileName().toStdString();
+    domain.surfaceName=vtpList[0].fileName().toStdString();
 
     QString jobPath=GetJobPath();
     QDir newDir;
     newDir.mkpath(jobPath+"/"+QString::fromStdString(domain.folderName)+"/"+faceFolderName);
 
     QFile::copy(meshList[0].absoluteFilePath(),jobPath+"/"+QString::fromStdString(domain.folderName)+"/"+QString::fromStdString(domain.fileName));
+
+    QFile::copy(vtpList[0].absoluteFilePath(),jobPath+"/"+QString::fromStdString(domain.folderName)+"/"+QString::fromStdString(domain.surfaceName));
 
     for(int i=0;i<faceList.size();++i)
     {
@@ -603,7 +614,46 @@ void sv4guisvFSIView::AddMeshComplete()
 
     QMessageBox::information(m_Parent,"Mesh-complete Success", outputString.c_str());
 
+
+
     DataChanged();
+    loadMesh();
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+void sv4guisvFSIView::loadMesh(){
+  auto children = GetDataStorage()->GetDerivations(m_JobNode);
+  if (!children->empty()){
+    GetDataStorage()->Remove(children);
+  }
+
+  QString jobPath = GetJobPath();
+  auto domains = m_Job->m_Domains;
+
+  for (auto itr = domains.begin(); itr != domains.end(); ++itr){
+    auto dom = itr->second;
+
+    auto folderName = dom.folderName;
+    auto surfaceName = dom.surfaceName;
+
+    auto path =
+     (jobPath+"/"+QString::fromStdString(folderName)+
+        "/"+QString::fromStdString(surfaceName)).toStdString();
+
+    std::cout << "Reading mesh file " << path << "\n";
+
+    sv4guiMesh* mesh = new sv4guiMesh();
+    mesh->ReadSurfaceFile(path);
+
+    sv4guiMitkMesh::Pointer mitkMesh = sv4guiMitkMesh::New();
+    mitkMesh->SetMesh(mesh);
+
+    mitk::DataNode::Pointer node = mitk::DataNode::New();
+    node->SetData(mitkMesh);
+    node->SetName(surfaceName);
+
+    GetDataStorage()->Add(node,m_JobNode);
+  }
 }
 
 void sv4guisvFSIView::SelectDomain(const QString &name)

@@ -47,6 +47,7 @@ struct SV4GUIMODULESVFSI_EXPORT sv4guisvFSIDomain
     std::string name;
     std::string folderName;
     std::string fileName;
+    std::string surfaceName;
     std::string type; //fluid, or solid for FSI
     int id;
 
@@ -59,6 +60,7 @@ struct SV4GUIMODULESVFSI_EXPORT sv4guisvFSIDomain
         : name("")
         , folderName("")
         , fileName("")
+        , surfaceName("")
         , type("fluid")
         , faceFolderName("mesh-surfaces")
         , id(0)
