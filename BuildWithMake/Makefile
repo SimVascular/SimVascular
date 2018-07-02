@@ -104,14 +104,15 @@ endif
 
 ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+`cygpath -u $(QT_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+`cygpath -u $(QT_PLUGIN_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+$(QT_PLUGIN_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_QPA_FONTDIR+$(QT_QPA_FONTDIR)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_MITK),1)
 	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+`cygpath -u -p $(SV_MITK_SO_PATH)`+g\"" >> tclscript
-	-echo "s+REPLACEME_SV_MITK_PLUGIN_PATH+$(SV_MITK_PLUGIN_PATH)+g" >> sedscript
+	-echo "puts \"s+REPLACEME_SV_MITK_PLUGIN_PATH+$(SV_MITK_PLUGIN_PATH)+g\"" >> tclscript
 endif
 endif
 ifeq ($(CLUSTER),x64_linux)
@@ -316,17 +317,18 @@ exec-shared-build:
 	  $(MAKE) shared;fi ) ; done
 
 post-build: mksedscript
+	-mkdir -p Bin
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > sv
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-simvascular-script >> sv
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > xfsv
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-xfsv-script >> xfsv
 	-chmod a+rx sv
 	-chmod a+rx xfsv
+	-echo "[Paths]" > Bin/qt.conf
+	-echo "Prefix=\"$(QT_TOP_DIR)\"" >> Bin/qt.conf
 #	-rm -f sedscript
 
-clean:  veryclean
-
-veryclean:
+clean:
 	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
 	  echo "super cleaning directory ($$i)"; \
 	  if [ -e $$i ];then \
@@ -352,7 +354,7 @@ veryclean:
 	for fn in $(TOP)/Bin/*; do /bin/rm -f -r $$fn; done
 	if [ -e sv ];then /bin/rm -f sv;fi
 	if [ -e xfsv ];then /bin/rm -f xfsv;fi
-	if [ -e ext ];then /bin/rm -Rf ext;fi
+	if [ -e Bin/qt.conf ];then /bin/rm -Rf Bin/qt.conf;fi
 	$(RM) $(TOP)/../Tcl/Common/Visualization/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/Vis/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/General/tclIndex
@@ -366,3 +368,5 @@ veryclean:
 	/bin/rm -fR ../Code/Source/Include/Make
 	/bin/rm -f  sedscript
 
+veryclean:  clean
+	if [ -e ext ];then /bin/rm -Rf ext;fi
