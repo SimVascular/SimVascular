@@ -222,6 +222,9 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     connect(ui->rhoInf, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
     connect(ui->stFileIncr, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
 
+    //load mesh
+    connect(ui->loadMeshButton, SIGNAL(clicked()), this, SLOT(loadMesh()));
+
     //run simulation
     SetupInternalSolverPaths();
     ui->sliderNumProcs->setDecimals(0);
