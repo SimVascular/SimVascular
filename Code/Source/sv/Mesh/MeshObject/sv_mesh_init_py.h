@@ -46,7 +46,7 @@ extern "C" SV_EXPORT_MESH typedef struct
 }pyMeshObject;
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_MESH PyMODINIT_FUNC  initpyMeshObject();
+PyMODINIT_FUNC  initpyMeshObject();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_MESH PyMODINIT_FUNC  PyInit_pyMeshObject();

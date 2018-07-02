@@ -50,7 +50,7 @@
 extern "C" SV_EXPORT_POLYDATASOLID PyObject* Polydatasolid_pyInit();
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_POLYDATASOLID PyMODINIT_FUNC  initpySolidPolydata();
+PyMODINIT_FUNC  initpySolidPolydata();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_POLYDATASOLID PyMODINIT_FUNC  PyInit_pySolidPolydata();

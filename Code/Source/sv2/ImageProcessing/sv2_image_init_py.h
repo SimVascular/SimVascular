@@ -67,7 +67,7 @@
 extern "C" SV_EXPORT_IMAGE int Image_pyInit();
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_IMAGE PyMODINIT_FUNC  initpyImage();
+PyMODINIT_FUNC  initpyImage();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_IMAGE PyMODINIT_FUNC  PyInit_pyImage();

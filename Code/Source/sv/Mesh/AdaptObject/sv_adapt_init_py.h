@@ -46,7 +46,7 @@ extern "C" SV_EXPORT_ADAPTOR typedef struct
 }pyAdaptObjectRegistrar;
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_ADAPTOR PyMODINIT_FUNC  initpyMeshAdapt();
+PyMODINIT_FUNC  initpyMeshAdapt();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_ADAPTOR PyMODINIT_FUNC  PyInit_pyMeshAdapt();

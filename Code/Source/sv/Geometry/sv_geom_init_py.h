@@ -39,7 +39,7 @@
 extern "C" SV_EXPORT_SYSGEOM int Geom_pyInit();
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_SYSGEOM PyMODINIT_FUNC  initpyGeom();
+PyMODINIT_FUNC  initpyGeom();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_SYSGEOM PyMODINIT_FUNC  PyInit_pyGeom();

@@ -52,7 +52,7 @@ extern "C" SV_EXPORT_SEGMENTATION typedef struct
 }pyContourFactoryRegistrar;
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  initpyContour();
+PyMODINIT_FUNC  initpyContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pyContour();

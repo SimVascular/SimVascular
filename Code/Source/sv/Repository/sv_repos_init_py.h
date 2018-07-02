@@ -38,7 +38,7 @@
 extern "C" SV_EXPORT_REPOSITORY int Repos_pyInit();
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_REPOSITORY PyMODINIT_FUNC initpyRepository(void);
+PyMODINIT_FUNC initpyRepository(void);
 #elif PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_REPOSITORY PyMODINIT_FUNC PyInit_pyRepository(void);
 #endif

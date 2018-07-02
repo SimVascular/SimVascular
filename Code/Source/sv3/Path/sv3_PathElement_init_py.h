@@ -45,7 +45,7 @@ extern "C" SV_EXPORT_PATH typedef struct
 }pyPath;
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_PATH PyMODINIT_FUNC  initpyPath();
+PyMODINIT_FUNC  initpyPath();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_PATH PyMODINIT_FUNC  PyInit_pyPath();

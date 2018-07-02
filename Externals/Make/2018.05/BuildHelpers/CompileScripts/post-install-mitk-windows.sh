@@ -240,6 +240,9 @@ for i in $(find $MITK_BLDDIR/MITK-build/lib/plugins -name "*.REPLACEME_SV_SO_FIL
     $GCP -fl $i $MITK_BINDIR/bin/plugins
 done
 
+# copy the MitkCore libs so they can be found at runtime by DICOM plugin and LevelWindow widget
+$GCP -fl -d $MITK_BINDIR/bin/MitkCore/$MITK_BLDTYPE/* $MITK_BINDIR/bin/MitkCore
+
 # create a wrapper script for python executable
 
 echo "#!/bin/sh -f" > REPLACEME_SV_TOP_BIN_DIR_MITK/bin/workbench-wrapper

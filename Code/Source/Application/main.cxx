@@ -35,7 +35,6 @@
 
 #ifdef SV_USE_PYTHON
   #include "Python.h"
-  #include "sv4gui_Vis_init_py.h"
 #endif
 #include "vtksys/SystemTools.hxx"
 
@@ -123,8 +122,10 @@ errno_t cv_getenv_s(
 #endif
 
 #include "SimVascular_Init.h"
-#ifdef SV_USE_PYTHON
-#include "SimVascular_Init_py.h"
+
+#ifdef SV_USE_PYTHON_EMBEDDED_IMPORTS
+  #include "SimVascular_Init_py.h"
+  #include "sv4gui_Vis_init_py.h"
 #endif
 
 #ifdef SV_USE_QT_GUI
@@ -381,18 +382,21 @@ int PythonShell_Init(int argc, char *argv[])
 //  CMakeLoadAllPythonModules();
 
 // CALL SIMVASCULAR PYTHON MODULES HERE
-#if PYTHON_MAJOR_VERSION == 3
-
-  SimVascular_pyInit();
+// Initialize interpreter.
+  
+#ifdef SV_USE_PYTHON_EMBEDDED_IMPORTS
+  #if PYTHON_MAJOR_VERSION == 3
+    SimVascular_pyInit();  
+    Py_Initialize();
+  #endif
+  #if PYTHON_MAJOR_VERSION == 2
+    Py_Initialize();
+    SimVascular_pyInit();
+  #endif
+    SimVascular_pyImport();
+#else
+    Py_Initialize();
 #endif
-
-  // Initialize interpreter.
-  Py_Initialize();
-#if PYTHON_MAJOR_VERSION ==2
-  SimVascular_pyInit();
-#endif
-
-  SimVascular_pyImport();
 
    //PyImport_ImportModule("pyRepository");
   // Initialize python thread support. This function should first be
@@ -960,18 +964,7 @@ RegCloseKey(hKey2);
        pluginsToStart.push_back("org_mitk_gui_qt_imagenavigator");
        pluginsToStart.push_back("org_mitk_gui_qt_measurementtoolbox");
 #ifdef SV_USE_PYTHON
-#if PYTHON_MAJOR_VERSION == 3
-       SimVascular_pyInit();
-       PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
-#endif
-       Py_Initialize();
-#if PYTHON_MAJOR_VERSION ==2
-       SimVascular_pyInit();
-       initpyGUI();
-#endif
        pluginsToStart.push_back("org_mitk_gui_qt_python");
-       SimVascular_pyImport();
-       PyImport_ImportModule("pyGUI");
 #endif
        pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
        pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
@@ -1047,6 +1040,23 @@ RegCloseKey(hKey2);
        ctkPlugin::StartOptions startOptions(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
        app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS, static_cast<int>(startOptions));
      }
+
+#ifdef SV_USE_PYTHON
+  #ifdef SV_USE_PYTHON_EMBEDDED_IMPORTS
+    #if PYTHON_MAJOR_VERSION == 3
+      SimVascular_pyInit();
+      PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
+      Py_Initialize();
+    #endif
+    #if PYTHON_MAJOR_VERSION ==2
+      Py_Initialize();
+      SimVascular_pyInit();
+      initpyGUI();
+    #endif
+  #else
+      Py_Initialize();  
+  #endif
+#endif
 
      return app.run();
 #ifdef SV_USE_PYTHON

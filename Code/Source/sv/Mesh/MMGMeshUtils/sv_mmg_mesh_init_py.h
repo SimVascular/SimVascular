@@ -50,7 +50,7 @@
 extern "C" SV_EXPORT_MMG PyObject* Mmgmesh_pyInit();
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_MMG PyMODINIT_FUNC  initpyMeshUtil();
+PyMODINIT_FUNC  initpyMeshUtil();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_MMG PyMODINIT_FUNC  PyInit_pyMeshUtil();

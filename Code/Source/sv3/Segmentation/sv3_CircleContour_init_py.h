@@ -37,7 +37,7 @@
 #include "Python.h"
 
 #if PYTHON_MAJOR_VERSION == 2
-SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  initpyCircleContour();
+PyMODINIT_FUNC  initpyCircleContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
 SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pyCircleContour();

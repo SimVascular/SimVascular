@@ -44,10 +44,7 @@ echo "FORTRAN_COMPILER_VERSION=ifort" >> cluster_overrides.mk
 echo "SV_COMPILER=clang" >> cluster_overrides.mk
 echo "SV_COMPILER_VERSION=8.0" >> cluster_overrides.mk
 
-echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo" >> global_overrides.mk
-echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=$EXTERNALS_TOP/build/clang/8.0/x64/relwithdebinfo" >> global_overrides.mk
-echo "OPEN_SOFTWARE_SOURCES_TOPLEVEL=$EXTERNALS_TOP/src/clang-8.0/x64/relwithdebinfo" >> global_overrides.mk
-echo "LICENSED_SOFTWARE_TOPLEVEL=" >> global_overrides.mk
+echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo" > global_overrides.mk
 
 sudo mkdir -p $EXTERNALS_TOP
 sudo chmod -R a+rwx $EXTERNALS_TOP
