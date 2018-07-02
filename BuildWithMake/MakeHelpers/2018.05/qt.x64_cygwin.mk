@@ -47,6 +47,7 @@ endif
 
 QT_LIBDIRS = $(QT_TOP_DIR)/lib
 QT_BIN_LIBS = $(QT_TOP_DIR)/bin
+QT_QPA_FONTDIR = $(QT_TOP_DIR)/lib/fonts
 
 QT_MOC_PARSER=$(QT_TOP_DIR)/bin/moc.exe
 QT_UIC_CMD=$(QT_TOP_DIR)/bin/uic.exe
