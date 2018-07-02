@@ -176,7 +176,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   int GenerateAndMeshCaps();
   int GenerateMeshSizingFunction();
   int AppendBoundaryLayerMesh();
-  int ResetOriginalRegions(std::string originalName,std::string newName);
+  int ResetOriginalRegions(std::string regionName);
 
   private:
   char meshFileName_[MAXPATHLEN];

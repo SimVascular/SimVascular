@@ -115,7 +115,6 @@ void sv4guiMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selec
         if(dir.isEmpty()) return;
 
         QString outputDir=dir+"/"+QString::fromStdString(meshNode->GetName()+"-mesh-complete");
-        QDir().mkpath(outputDir);
 
         if(!sv4guiMeshLegacyIO::WriteFiles(meshNode,model->GetModelElement(), outputDir))
         {

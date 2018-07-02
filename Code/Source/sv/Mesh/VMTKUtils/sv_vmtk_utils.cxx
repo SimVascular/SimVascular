@@ -42,8 +42,10 @@
 #include "sv_vmtk_utils.h"
 
 #include "SimVascular.h"
+#include "sv_tetgenmesh_utils.h"
 
 #include "vtkMath.h"
+#include "vtkAppendPolyData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
 #include "vtkTriangleFilter.h"
@@ -75,6 +77,7 @@
 #include "vtkvmtkSimpleCapPolyData.h"
 #include "vtkvmtkPolyDataCenterlineGroupsClipper.h"
 #include "vtkvmtkMergeCenterlines.h"
+#include "vtkvmtkUnstructuredGridTetraFilter.h"
 
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
@@ -927,6 +930,8 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
     capper->SetInputData(copypd);
     capper->SetDisplacement(0.0);
     capper->SetInPlaneDisplacement(0.0);
+    capper->SetCellEntityIdsArrayName(cellEntityIdsArrayName.c_str());
+    capper->SetCellEntityIdOffset(cellEntityIdOffset);
     capper->Update();
   }
 
@@ -1067,8 +1072,10 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   layerer->SetSidewallCellEntityId(sidewallCellEntityId);
   //1
   layerer->SetInnerSurfaceCellEntityId(innerSurfaceCellEntityId);
-  layerer->SetIncludeSurfaceCells(0);
+  layerer->SetSurfaceCellIdsArrayName("ModelFaceID");
+  layerer->SetIncludeSurfaceCells(1);
   layerer->SetIncludeSidewallCells(1);
+  layerer->SetNumberOfSubsteps(100);
   layerer->Update();
 
   blMesh->DeepCopy(layerer->GetOutput());
@@ -1077,13 +1084,12 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
   return SV_OK;
 }
 // --------------------
-//  VMTKUtils_AppendMesh
+//  VMTKUtils_AppendData
 // --------------------
 /**
  * @brief Function append the final combined boundary layer mesh with the
  * volume mesh
  * @param meshFromTetGen This is the full vtu output from TetGen
- * @param innerMesh This is the original inner surface extracted from the
  * interior of the boundary layer mesh
  * @param boundaryMesh This is the actual boundary layer mesh
  * @param surfaceWithSize This is the surface input to tetgen with the mesh
@@ -1095,25 +1101,22 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
  * The full mesh is returned in the first argument
  */
 
-int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
-    vtkUnstructuredGrid *innerMesh, vtkUnstructuredGrid *boundaryMesh,
+int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen,
+    vtkUnstructuredGrid *boundaryMesh,
     vtkUnstructuredGrid *surfaceWithSize,
-    std::string cellEntityIdsArrayName,
+    vtkUnstructuredGrid *newMeshVolume,
+    vtkPolyData *newMeshSurface,
     int newRegionBoundaryLayer)
 {
-  vtkSmartPointer<vtkvmtkAppendFilter> appender =
-    vtkSmartPointer<vtkvmtkAppendFilter>::New();
-  vtkSmartPointer<vtkThreshold> thresholder =
-    vtkSmartPointer<vtkThreshold>::New();
-  vtkSmartPointer<vtkUnstructuredGrid> endcaps =
-    vtkSmartPointer<vtkUnstructuredGrid>::New();
+  // Tetrahedralize the boundaryMesh
+  vtkSmartPointer<vtkvmtkUnstructuredGridTetraFilter> tetrahedralizer =
+    vtkSmartPointer<vtkvmtkUnstructuredGridTetraFilter>::New();
 
-  //Threshold out the endcaps from the surface
-  thresholder->SetInputData(surfaceWithSize);
-  thresholder->ThresholdByUpper(1.5);
-  thresholder->SetInputArrayToProcess(0,0,0,1,cellEntityIdsArrayName.c_str());
-  thresholder->Update();
-  endcaps->DeepCopy(thresholder->GetOutput());
+  //Tetrahedralize this mesh
+  tetrahedralizer->SetInputData(boundaryMesh);
+  tetrahedralizer->Update();
+
+  boundaryMesh->DeepCopy(tetrahedralizer->GetOutput());
 
   // Get model regions on tetgen mesh
   vtkDataArray *meshFromTetGenRegionIds = meshFromTetGen->GetCellData()->GetArray("ModelRegionID");
@@ -1133,21 +1136,14 @@ int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
   }
   int modelId = minmax[0];
 
-  // Add model regions on inner mesh
-  vtkSmartPointer<vtkIntArray> innerMeshRegionIds =
+  // Add model region id to surface
+  vtkSmartPointer<vtkIntArray> surfaceRegionIds =
     vtkSmartPointer<vtkIntArray>::New();
-  innerMeshRegionIds->SetNumberOfTuples(innerMesh->GetNumberOfCells());
-  innerMeshRegionIds->FillComponent(0, modelId);
-  innerMeshRegionIds->SetName("ModelRegionID");
-  innerMesh->GetCellData()->AddArray(innerMeshRegionIds);
-
-  // Add model region id to caps
-  vtkSmartPointer<vtkIntArray> endCapsRegionIds =
-    vtkSmartPointer<vtkIntArray>::New();
-  endCapsRegionIds->SetNumberOfTuples(endcaps->GetNumberOfCells());
-  endCapsRegionIds->FillComponent(0, modelId);
-  endCapsRegionIds->SetName("ModelRegionID");
-  endcaps->GetCellData()->AddArray(endCapsRegionIds);
+  surfaceRegionIds->SetNumberOfComponents(1);
+  surfaceRegionIds->SetNumberOfTuples(surfaceWithSize->GetNumberOfCells());
+  surfaceRegionIds->FillComponent(0, modelId);
+  surfaceRegionIds->SetName("ModelRegionID");
+  surfaceWithSize->GetCellData()->AddArray(surfaceRegionIds);
 
   if (newRegionBoundaryLayer)
   {
@@ -1157,181 +1153,526 @@ int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
   // Add model region id to boundary layer
   vtkSmartPointer<vtkIntArray> boundaryMeshRegionIds =
     vtkSmartPointer<vtkIntArray>::New();
+  boundaryMeshRegionIds->SetNumberOfComponents(1);
   boundaryMeshRegionIds->SetNumberOfTuples(boundaryMesh->GetNumberOfCells());
   boundaryMeshRegionIds->FillComponent(0, modelId);
   boundaryMeshRegionIds->SetName("ModelRegionID");
   boundaryMesh->GetCellData()->AddArray(boundaryMeshRegionIds);
 
-  //Set the input data for the mesh appender and run
-  appender->AddInputData(innerMesh);
-  appender->AddInputData(boundaryMesh);
-  appender->AddInputData(meshFromTetGen);
-  appender->AddInputData(endcaps);
-  appender->Update();
-
-  fprintf(stdout,"Mesh Appended\n");
-
-  meshFromTetGen->DeepCopy(appender->GetOutput());
-  return SV_OK;
-}
-
-// --------------------
-//  VMTKUtils_InsertIds
-// --------------------
-/**
- * @brief Function to attach GlobalElementIDs and GlobalNodeIDs to the
- * final boundary layer mesh. The original values are destroyed by the
- * complex process, so the values are reassigned.
- * @param fullmesh This is the full volumetric mesh output by TetGen, VMTK,
- * and custom procedures.
- * @param fullpolydata This should be empty coming in. It is then the
- * extracted surface from the fullmesh.
- * @return SV_OK if the Ids are attached to the surfaces without issue
- */
-
-int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata)
-{
-  int k;
-  int globalId = 1;
-  int numNewCells,numStartCells;
-  double pt1[3];
-  double pt2[3];
-  double pt3[3];
-  double pt4[3];
-  double a[3];
-  double b[3];
-  double c[3];
-  double norm[3];
-  double mydot;
-  double tmp;
-
-  vtkIdType i,j;
-  vtkIdType vtkId;
-  vtkIdType count=0;
-  vtkIdType npts = 0;
-  vtkIdType *pts = 0;
-  vtkIdType numPts,numCells;
-  vtkSmartPointer<vtkIntArray> modelRegionIds =
+  // Separate the surface and volume cells from the boundary layer mesh
+  vtkSmartPointer<vtkIntArray> isSurface =
     vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> globalNodeIds =
-    vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> globalElementIds =
-    vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> isTriangle =
-    vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkUnstructuredGrid> fullcopy =
-    vtkSmartPointer<vtkUnstructuredGrid>::New();
-  vtkSmartPointer<vtkDataSetSurfaceFilter> getSurface =
-    vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  vtkSmartPointer<vtkThreshold> thresholder =
-    vtkSmartPointer<vtkThreshold>::New();
+  isSurface->SetNumberOfComponents(1);
+  isSurface->SetNumberOfTuples(boundaryMesh->GetNumberOfCells());
+  isSurface->SetName("isSurface");
 
-  fullcopy->DeepCopy(fullmesh);
-  numPts = fullcopy->GetNumberOfPoints();
-  numCells = fullcopy->GetNumberOfCells();
-
-  //Remove all triangle Cells! These are triangles on surface of mesh
-  //left from the append filter
-  isTriangle->SetNumberOfComponents(1);
-  isTriangle->Allocate(numCells,1000);
-  isTriangle->SetNumberOfTuples(numCells);
-  isTriangle->SetName("isTriangle");
-  for (i=0;i<numCells;i++)
+  for (int i=0;i<boundaryMesh->GetNumberOfCells();i++)
   {
-    if (fullcopy->GetCellType(i) == VTK_TRIANGLE)
+    if (boundaryMesh->GetCellType(i) == VTK_TRIANGLE || boundaryMesh->GetCellType(i) == VTK_QUAD)
     {
-      isTriangle->InsertTuple1(i,1);
+      isSurface->SetTuple1(i,1);
     }
     else
     {
-      isTriangle->InsertTuple1(i,0);
+      isSurface->SetTuple1(i,0);
     }
   }
-  fullcopy->GetCellData()->AddArray(isTriangle);
-  fullcopy->GetCellData()->SetActiveScalars("isTriangle");
+  boundaryMesh->GetCellData()->AddArray(isSurface);
 
-  thresholder->SetInputData(fullcopy);
-  thresholder->SetInputArrayToProcess(0,0,0,1,"isTriangle");
+  // Threshold out the surface
+  vtkSmartPointer<vtkThreshold> thresholder =
+    vtkSmartPointer<vtkThreshold>::New();
+  thresholder->SetInputData(boundaryMesh);
+  thresholder->SetInputArrayToProcess(0,0,0,1,"isSurface");
+  thresholder->ThresholdBetween(1,1);
+  thresholder->Update();
+
+  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
+    vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+  surfacer->SetInputData(thresholder->GetOutput());
+  surfacer->Update();
+
+  vtkSmartPointer<vtkPolyData> boundaryMeshSurface =
+    vtkSmartPointer<vtkPolyData>::New();
+  boundaryMeshSurface->DeepCopy(surfacer->GetOutput());
+
+  // Threshold out the volume
+  thresholder->SetInputData(boundaryMesh);
+  thresholder->SetInputArrayToProcess(0,0,0,1,"isSurface");
   thresholder->ThresholdBetween(0,0);
   thresholder->Update();
 
-  fullcopy->DeepCopy(thresholder->GetOutput());
-  fullcopy->GetCellData()->RemoveArray("isTriangle");
-  numPts = fullcopy->GetNumberOfPoints();
-  numCells = fullcopy->GetNumberOfCells();
+  vtkSmartPointer<vtkUnstructuredGrid> boundaryMeshVolume =
+    vtkSmartPointer<vtkUnstructuredGrid>::New();
+  boundaryMeshVolume->DeepCopy(thresholder->GetOutput());
 
-  vtkDataArray *currentModelRegionIds = fullcopy->GetCellData()->GetArray("ModelRegionID");
-  if (currentModelRegionIds == NULL)
+  // Add the model face id back to the cap region that doesn't have it on surface bl
+  thresholder->SetInputData(surfaceWithSize);
+  thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
+  thresholder->ThresholdBetween(0,0);
+  thresholder->Update();
+
+  surfacer->SetInputData(thresholder->GetOutput());
+  surfacer->Update();
+
+  vtkSmartPointer<vtkPolyData> surfaceMeshCaps =
+    vtkSmartPointer<vtkPolyData>::New();
+  surfaceMeshCaps->DeepCopy(surfacer->GetOutput());
+
+  vtkDataArray *cellEntityIds = boundaryMeshSurface->GetCellData()->GetArray("CellEntityIds");
+  int entityId;
+  for (int i=0; i<boundaryMeshSurface->GetNumberOfCells(); i++)
   {
-    fprintf(stderr,"Model Region Ids were not given to surface\n");
+    entityId = cellEntityIds->GetTuple1(i);
+    if (entityId == 9999)
+    {
+      boundaryMeshSurface->GetCellData()->GetArray("ModelFaceID")->SetTuple1(i, 9999);
+    }
+  }
+
+  vtkSmartPointer<vtkIdList> onlyList =
+    vtkSmartPointer<vtkIdList>::New();
+  onlyList->InsertNextId(9999);
+  if (VMTKUtils_ResetOriginalRegions(boundaryMeshSurface, surfaceMeshCaps, "ModelFaceID", onlyList, 1) != SV_OK)
+  {
+    fprintf(stderr,"Failure in resetting model face id on boundary layer caps\n");
     return SV_ERROR;
   }
 
-  //Add global node Ids to points
-  for (i=0;i<numPts;i++)
+  if (newRegionBoundaryLayer)
   {
-    globalNodeIds->InsertValue(i,globalId);
-    globalId++;
-  }
-
-  //Add global element Ids to cells
-  globalId = 1;
-  for (i=0;i<numCells;i++)
-  {
-    globalElementIds->InsertValue(i,globalId);
-    modelRegionIds->InsertValue(i,currentModelRegionIds->GetTuple1(i));
-    globalId++;
-  }
-
-  //Make Global Ids active scalars
-  modelRegionIds->SetName("ModelRegionID");
-  fullcopy->GetCellData()->AddArray(modelRegionIds);
-  fullcopy->GetCellData()->SetActiveScalars("ModelRegionID");
-
-  globalNodeIds->SetName("GlobalNodeID");
-  fullcopy->GetPointData()->AddArray(globalNodeIds);
-  fullcopy->GetPointData()->SetActiveScalars("GlobalNodeID");
-
-  globalElementIds->SetName("GlobalElementID");
-  fullcopy->GetCellData()->AddArray(globalElementIds);
-  fullcopy->GetCellData()->SetActiveScalars("GlobalElementID");
-
-  //This is the full mesh with scalars
-  fullmesh->DeepCopy(fullcopy);
-
-  //Flip the cells within the volume if nodes are numbered wrong
-  for (i=0;i<fullmesh->GetNumberOfCells();i++)
-  {
-    fullmesh->GetCellPoints(i,npts,pts);
-    fullmesh->GetPoint(pts[0],pt1);
-    fullmesh->GetPoint(pts[1],pt2);
-    fullmesh->GetPoint(pts[2],pt3);
-    fullmesh->GetPoint(pts[3],pt4);
-
-    for (k=0;k<3;k++)
+    //Add global node Ids to tetgen volume
+    vtkSmartPointer<vtkIntArray> globalNodeIds0 =
+      vtkSmartPointer<vtkIntArray>::New();
+    globalNodeIds0->SetNumberOfTuples(meshFromTetGen->GetNumberOfPoints());
+    globalNodeIds0->SetName("GlobalNodeID");
+    int globalId = 1;
+    for (int i=0;i<meshFromTetGen->GetNumberOfPoints();i++)
     {
-      a[k] = pt2[k]-pt1[k];
-      b[k] = pt3[k]-pt1[k];
-      c[k] = pt4[k]-pt1[k];
+      globalNodeIds0->SetTuple1(i,globalId);
+      globalId++;
+    }
+    meshFromTetGen->GetPointData()->AddArray(globalNodeIds0);
+
+    //Add global node Ids to bl volume
+    vtkSmartPointer<vtkIntArray> globalNodeIds1 =
+      vtkSmartPointer<vtkIntArray>::New();
+    globalNodeIds1->SetNumberOfTuples(boundaryMeshVolume->GetNumberOfPoints());
+    globalNodeIds1->SetName("GlobalNodeID");
+    for (int i=0;i<boundaryMeshVolume->GetNumberOfPoints();i++)
+    {
+      globalNodeIds1->SetTuple1(i,globalId);
+      globalId++;
+    }
+    boundaryMeshVolume->GetPointData()->AddArray(globalNodeIds1);
+
+    //Add global node Ids to tetgen volume
+    vtkSmartPointer<vtkIntArray> globalElementIds0 =
+      vtkSmartPointer<vtkIntArray>::New();
+    globalElementIds0->SetNumberOfTuples(meshFromTetGen->GetNumberOfCells());
+    globalElementIds0->SetName("GlobalElementID");
+    globalId = 1;
+    for (int i=0;i<meshFromTetGen->GetNumberOfCells();i++)
+    {
+      globalElementIds0->SetTuple1(i,globalId);
+      globalId++;
+    }
+    meshFromTetGen->GetCellData()->AddArray(globalElementIds0);
+
+    //Add global node Ids to bl volume
+    vtkSmartPointer<vtkIntArray> globalElementIds1 =
+      vtkSmartPointer<vtkIntArray>::New();
+    globalElementIds1->SetNumberOfTuples(boundaryMeshVolume->GetNumberOfCells());
+    globalElementIds1->SetName("GlobalElementID");
+    for (int i=0;i<boundaryMeshVolume->GetNumberOfCells();i++)
+    {
+      globalElementIds1->SetTuple1(i,globalId);
+      globalId++;
+    }
+    boundaryMeshVolume->GetCellData()->AddArray(globalElementIds1);
+
+    // Extract surface of boundary layer mesh
+    surfacer->SetInputData(boundaryMeshVolume);
+    surfacer->Update();
+
+    vtkSmartPointer<vtkPolyData> surface0 =
+      vtkSmartPointer<vtkPolyData>::New();
+    surface0->DeepCopy(surfacer->GetOutput());
+
+    if (VMTKUtils_ResetOriginalRegions(surface0, boundaryMeshSurface, "ModelFaceID") != SV_OK)
+    {
+      fprintf(stderr,"Failure in resetting model face id on final mesh surface\n");
+      return SV_ERROR;
     }
 
-    vtkMath::Cross(a,b,norm);
-    mydot = vtkMath::Dot(norm,c);
+    // Extract surface of boundary layer mesh
+    surfacer->SetInputData(meshFromTetGen);
+    surfacer->Update();
 
-    if (mydot < 0)
+    vtkSmartPointer<vtkPolyData> surface1 =
+      vtkSmartPointer<vtkPolyData>::New();
+    surface1->DeepCopy(surfacer->GetOutput());
+
+    surfacer->SetInputData(surfaceWithSize);
+    surfacer->Update();
+
+    if (VMTKUtils_ResetOriginalRegions(surface1, surfacer->GetOutput(), "ModelFaceID") != SV_OK)
     {
-      tmp = pts[1];
-      pts[1] = pts[2];
-      pts[2] = tmp;
-      fullmesh->ReplaceCell(i,npts,pts);
+      fprintf(stderr,"Failure in resetting model face id on final mesh surface\n");
+      return SV_ERROR;
+    }
+
+    // Append surfaces together
+    vtkSmartPointer<vtkAppendPolyData> boundaryAppender =
+      vtkSmartPointer<vtkAppendPolyData>::New();
+    boundaryAppender->AddInputData(surface0);
+    boundaryAppender->AddInputData(surface1);
+    boundaryAppender->Update();
+
+    newMeshSurface->DeepCopy(boundaryAppender->GetOutput());
+
+    // Append volumes together
+    vtkSmartPointer<vtkAppendFilter> appender =
+      vtkSmartPointer<vtkAppendFilter>::New();
+    appender->AddInputData(boundaryMeshVolume);
+    appender->AddInputData(meshFromTetGen);
+    appender->Update();
+
+    newMeshVolume->DeepCopy(appender->GetOutput());
+
+  }
+  else
+  {
+    vtkSmartPointer<vtkvmtkAppendFilter> appender =
+      vtkSmartPointer<vtkvmtkAppendFilter>::New();
+
+    ////Set the input data for the mesh appender and run
+    appender->AddInputData(boundaryMeshVolume);
+    appender->AddInputData(meshFromTetGen);
+    appender->Update();
+
+    newMeshVolume->DeepCopy(appender->GetOutput());
+
+    //Add global node Ids to bl volume
+    vtkSmartPointer<vtkIntArray> globalNodeIds0 =
+      vtkSmartPointer<vtkIntArray>::New();
+    globalNodeIds0->SetNumberOfTuples(newMeshVolume->GetNumberOfPoints());
+    globalNodeIds0->SetName("GlobalNodeID");
+    int globalId = 1;
+    for (int i=0;i<newMeshVolume->GetNumberOfPoints();i++)
+    {
+      globalNodeIds0->SetTuple1(i,globalId);
+      globalId++;
+    }
+    newMeshVolume->GetPointData()->AddArray(globalNodeIds0);
+
+    //Add global node Ids to tetgen volume
+    vtkSmartPointer<vtkIntArray> globalElementIds0 =
+      vtkSmartPointer<vtkIntArray>::New();
+    globalElementIds0->SetNumberOfTuples(newMeshVolume->GetNumberOfCells());
+    globalElementIds0->SetName("GlobalElementID");
+    globalId = 1;
+    for (int i=0;i<newMeshVolume->GetNumberOfCells();i++)
+    {
+      globalElementIds0->SetTuple1(i,globalId);
+      globalId++;
+    }
+    newMeshVolume->GetCellData()->AddArray(globalElementIds0);
+
+    surfacer->SetInputData(newMeshVolume);
+    surfacer->Update();
+    newMeshSurface->DeepCopy(surfacer->GetOutput());
+
+    vtkSmartPointer<vtkAppendFilter> boundaryAppender =
+      vtkSmartPointer<vtkAppendFilter>::New();
+    boundaryAppender->AddInputData(boundaryMeshSurface);
+    boundaryAppender->AddInputData(surfaceMeshCaps);
+    boundaryAppender->Update();
+
+    surfacer->SetInputData(boundaryAppender->GetOutput());
+    surfacer->Update();
+    boundaryMeshSurface->DeepCopy(surfacer->GetOutput());
+
+    if (VMTKUtils_ResetOriginalRegions(newMeshSurface, boundaryMeshSurface, "ModelFaceID") != SV_OK)
+    {
+      fprintf(stderr,"Failure in resetting model face id on final mesh surface\n");
+      return SV_ERROR;
     }
   }
-
-  getSurface->SetInputData(fullcopy);
-  getSurface->Update();
-
-  fullpolydata->DeepCopy(getSurface->GetOutput());
+  fprintf(stdout,"Mesh Appended\n");
 
   return SV_OK;
 }
 
+int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+    vtkPolyData *originalgeom,
+    std::string regionName)
+{
+  int i,j,k;
+  int subId;
+  int maxIndex;
+  int temp;
+  int flag = 1;
+  int count;
+  int bigcount;
+  vtkIdType npts;
+  vtkIdType *pts;
+  double distance;
+  double closestPt[3];
+  double tolerance = 1.0;
+  double centroid[3];
+  int range;
+  vtkIdType closestCell;
+  vtkIdType cellId;
+  vtkIdType currentValue;
+  vtkIdType realValue;
+  vtkSmartPointer<vtkCellLocator> locator =
+    vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkGenericCell> genericCell =
+    vtkSmartPointer<vtkGenericCell>::New();
+  vtkSmartPointer<vtkIntArray> currentRegions =
+    vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> realRegions =
+    vtkSmartPointer<vtkIntArray>::New();
+
+  newgeom->BuildLinks();
+  originalgeom->BuildLinks();
+  locator->SetDataSet(originalgeom);
+  locator->BuildLocator();
+
+  if (VtkUtils_PDCheckArrayName(originalgeom,1,regionName) != SV_OK)
+  {
+    fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
+		    and named 'ModelFaceID' prior to this function call\n");
+    return SV_ERROR;
+  }
+
+  realRegions = static_cast<vtkIntArray*>(originalgeom->GetCellData()->GetScalars(regionName.c_str()));
+
+
+  for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
+  {
+      newgeom->GetCellPoints(cellId,npts,pts);
+      //int eachValue[npts];
+      vtkSmartPointer<vtkPoints> polyPts = vtkSmartPointer<vtkPoints>::New();
+      vtkSmartPointer<vtkIdTypeArray> polyPtIds = vtkSmartPointer<vtkIdTypeArray>::New();
+      for (i=0;i<npts;i++)
+      {
+	polyPtIds->InsertValue(i,i);
+	polyPts->InsertNextPoint(newgeom->GetPoint(pts[i]));
+      }
+      vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
+
+      locator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
+	  subId,distance);
+      currentRegions->InsertValue(cellId,realRegions->GetValue(closestCell));
+  }
+
+  newgeom->GetCellData()->RemoveArray(regionName.c_str());
+  currentRegions->SetName(regionName.c_str());
+  newgeom->GetCellData()->AddArray(currentRegions);
+
+  newgeom->GetCellData()->SetActiveScalars(regionName.c_str());
+
+  return SV_OK;
+}
+
+int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+    vtkPolyData *originalgeom,
+    std::string regionName,
+    vtkIdList *excludeList)
+{
+  int i,j,k;
+  int subId;
+  int region;
+  int temp;
+  int flag = 1;
+  int count;
+  int bigcount;
+  vtkIdType npts;
+  vtkIdType *pts;
+  double distance;
+  double closestPt[3];
+  double tolerance = 1.0;
+  double centroid[3];
+  int range;
+  vtkIdType closestCell;
+  vtkIdType cellId;
+  vtkIdType currentValue;
+  vtkIdType realValue;
+  vtkSmartPointer<vtkCellLocator> locator =
+    vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkGenericCell> genericCell =
+    vtkSmartPointer<vtkGenericCell>::New();
+  vtkSmartPointer<vtkPolyData> originalCopy =
+    vtkSmartPointer<vtkPolyData>::New();
+
+  if (excludeList == NULL)
+  {
+    fprintf(stderr,"Cannot give NULL excludeList. Use other reset function without exclude list\n");
+    return SV_ERROR;
+  }
+
+  newgeom->BuildLinks();
+  originalgeom->BuildLinks();
+  originalCopy->DeepCopy(originalgeom);
+
+  if (VtkUtils_PDCheckArrayName(originalCopy,1, regionName) != SV_OK)
+  {
+    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+		    and named 'ModelFaceID' prior to this function call\n",  regionName.c_str());
+    return SV_ERROR;
+  }
+
+  vtkDataArray *testRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
+
+    if (VtkUtils_PDCheckArrayName(newgeom,1, regionName.c_str()) != SV_OK)
+    {
+      fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+          and named 'ModelFaceID' prior to this function call\n", regionName.c_str());
+      return SV_ERROR;
+    }
+
+    vtkDataArray *currentRegions = newgeom->GetCellData()->GetArray(regionName.c_str());
+
+    for (int i=0; i<originalCopy->GetNumberOfCells(); i++)
+    {
+      region = testRegions->GetTuple1(i);
+      if (excludeList->IsId(region) != -1)
+      {
+        originalCopy->DeleteCell(i);
+      }
+    }
+
+    originalCopy->RemoveDeletedCells();
+
+    vtkSmartPointer<vtkCleanPolyData> cleaner =
+      vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->SetInputData(originalCopy);
+    cleaner->Update();
+
+    originalCopy->DeepCopy(cleaner->GetOutput());
+    originalCopy->BuildLinks();
+
+  locator->SetDataSet(originalCopy);
+  locator->BuildLocator();
+  vtkDataArray *realRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
+
+  for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
+  {
+    currentValue = currentRegions->GetTuple1(cellId);
+    if (excludeList->IsId(currentValue) != -1)
+    {
+      continue;
+    }
+
+    newgeom->GetCellPoints(cellId,npts,pts);
+    vtkSmartPointer<vtkPoints> polyPts = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkIdTypeArray> polyPtIds = vtkSmartPointer<vtkIdTypeArray>::New();
+    for (i=0;i<npts;i++)
+    {
+      polyPtIds->InsertValue(i,i);
+      polyPts->InsertNextPoint(newgeom->GetPoint(pts[i]));
+    }
+    vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
+
+    locator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
+	subId,distance);
+    currentRegions->SetTuple1(cellId,realRegions->GetTuple1(closestCell));
+  }
+
+  newgeom->GetCellData()->SetActiveScalars(regionName.c_str());
+
+  return SV_OK;
+}
+
+int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
+    vtkPolyData *originalgeom,
+    std::string regionName,
+    vtkIdList *onlyList,
+    int dummy)
+{
+  int i,j,k;
+  int subId;
+  int region;
+  int temp;
+  int flag = 1;
+  int count;
+  int bigcount;
+  vtkIdType npts;
+  vtkIdType *pts;
+  double distance;
+  double closestPt[3];
+  double tolerance = 1.0;
+  double centroid[3];
+  int range;
+  vtkIdType closestCell;
+  vtkIdType cellId;
+  vtkIdType currentValue;
+  vtkIdType realValue;
+  vtkSmartPointer<vtkCellLocator> locator =
+    vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkGenericCell> genericCell =
+    vtkSmartPointer<vtkGenericCell>::New();
+  vtkSmartPointer<vtkPolyData> originalCopy =
+    vtkSmartPointer<vtkPolyData>::New();
+
+  if (onlyList == NULL)
+  {
+    fprintf(stderr,"Cannot give NULL onlyList. Use other reset function without only list\n");
+    return SV_ERROR;
+  }
+
+  newgeom->BuildLinks();
+  originalgeom->BuildLinks();
+  originalCopy->DeepCopy(originalgeom);
+
+  if (VtkUtils_PDCheckArrayName(originalCopy,1, regionName) != SV_OK)
+  {
+    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+		    and named 'ModelFaceID' prior to this function call\n",  regionName.c_str());
+    return SV_ERROR;
+  }
+
+  vtkDataArray *testRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
+
+  if (VtkUtils_PDCheckArrayName(newgeom,1, regionName.c_str()) != SV_OK)
+  {
+    fprintf(stderr,"Array name %s does not exist. Regions must be identified \
+        and named 'ModelFaceID' prior to this function call\n", regionName.c_str());
+    return SV_ERROR;
+  }
+
+  vtkDataArray *currentRegions = newgeom->GetCellData()->GetArray(regionName.c_str());
+
+  locator->SetDataSet(originalCopy);
+  locator->BuildLocator();
+  vtkDataArray *realRegions = originalCopy->GetCellData()->GetScalars( regionName.c_str());
+
+  for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
+  {
+    currentValue = currentRegions->GetTuple1(cellId);
+    if (onlyList->IsId(currentValue) == -1)
+    {
+      continue;
+    }
+
+    newgeom->GetCellPoints(cellId,npts,pts);
+    vtkSmartPointer<vtkPoints> polyPts = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkIdTypeArray> polyPtIds = vtkSmartPointer<vtkIdTypeArray>::New();
+    for (i=0;i<npts;i++)
+    {
+      polyPtIds->InsertValue(i,i);
+      polyPts->InsertNextPoint(newgeom->GetPoint(pts[i]));
+    }
+    vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
+
+    locator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
+	subId,distance);
+    currentRegions->SetTuple1(cellId,realRegions->GetTuple1(closestCell));
+  }
+
+  newgeom->GetCellData()->SetActiveScalars(regionName.c_str());
+
+  return SV_OK;
+}

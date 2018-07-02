@@ -93,6 +93,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
 
+  vtkSetStringMacro(SurfaceCellIdsArrayName);
+  vtkGetStringMacro(SurfaceCellIdsArrayName);
+
   vtkGetMacro(InnerSurfaceCellEntityId,int);
   vtkSetMacro(InnerSurfaceCellEntityId,int);
 
@@ -145,6 +148,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkUnstructuredGrid* InnerSurface;
 
   char* CellEntityIdsArrayName;
+  char* SurfaceCellIdsArrayName;
   int InnerSurfaceCellEntityId;
   int OuterSurfaceCellEntityId;
   int SidewallCellEntityId;

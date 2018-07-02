@@ -64,6 +64,7 @@ vtkvmtkBoundaryLayerGenerator::vtkvmtkBoundaryLayerGenerator()
   this->NegateWarpVectors = 0;
 
   this->CellEntityIdsArrayName = NULL;
+  this->SurfaceCellIdsArrayName = NULL;
   this->InnerSurfaceCellEntityId = 0;
   this->OuterSurfaceCellEntityId = 0;
   this->SidewallCellEntityId = 0;
@@ -96,6 +97,11 @@ vtkvmtkBoundaryLayerGenerator::~vtkvmtkBoundaryLayerGenerator()
     {
     delete[] this->CellEntityIdsArrayName;
     this->CellEntityIdsArrayName = NULL;
+    }
+  if (this->SurfaceCellIdsArrayName)
+    {
+    delete[] this->SurfaceCellIdsArrayName;
+    this->SurfaceCellIdsArrayName = NULL;
     }
 }
 
@@ -149,6 +155,20 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     this->LayerThicknessArray = input->GetPointData()->GetArray(this->LayerThicknessArrayName);
     }
 
+  vtkDataArray *surfaceCellIdsArray = NULL;
+  vtkIntArray *outputSurfaceCellIdsArray = NULL;
+  if (this->SurfaceCellIdsArrayName != NULL)
+  {
+    if (!input->GetCellData()->GetArray(this->SurfaceCellIdsArrayName))
+    {
+      vtkErrorMacro(<< "SurfaceCellIds array with name specified does not exist!");
+      return 1;
+    }
+    surfaceCellIdsArray = input->GetCellData()->GetArray(this->SurfaceCellIdsArrayName);
+    outputSurfaceCellIdsArray = vtkIntArray::New();
+    outputSurfaceCellIdsArray->SetName(this->SurfaceCellIdsArrayName);
+  }
+
   vtkIdType i;
 
   vtkPoints* outputPoints = vtkPoints::New();
@@ -169,6 +189,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
 
   vtkIdType numberOfInputPoints = inputPoints->GetNumberOfPoints();
   vtkIdType numberOfInputCells = input->GetNumberOfCells();
+
 
   int cellType;
   cellType = input->GetCellType(0);  // TODO: check if all elements are consistent
@@ -235,6 +256,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
         }
       boundaryLayerCellArray->InsertNextCell(npts,surfacePts);
       cellEntityIdsArray->InsertNextValue(this->InnerSurfaceCellEntityId);
+      outputSurfaceCellIdsArray->InsertNextTuple1(surfaceCellIdsArray->GetTuple1(i));
       delete[] surfacePts;
       }
     }
@@ -308,6 +330,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
           }
         boundaryLayerCellArray->InsertNextCell(prismNPts,prismPts);
         cellEntityIdsArray->InsertNextValue(this->VolumeCellEntityId);
+        outputSurfaceCellIdsArray->InsertNextTuple1(-1);
 
         if (cellType == VTK_TRIANGLE)
           {
@@ -342,6 +365,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
             boundaryLayerCellArray->InsertNextCell(quadNPts,quadPts);
             boundaryLayerCellTypes->InsertNextId(VTK_QUAD);
             cellEntityIdsArray->InsertNextValue(this->SidewallCellEntityId);
+            outputSurfaceCellIdsArray->InsertNextTuple1(-1);
             }
           }
 
@@ -379,6 +403,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
 
         boundaryLayerCellArray->InsertNextCell(prismNPts,prismPts);
         cellEntityIdsArray->InsertNextValue(this->VolumeCellEntityId);
+        outputSurfaceCellIdsArray->InsertNextTuple1(-1);
 
         if (this->IncludeSidewallCells)
           {
@@ -409,6 +434,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
             boundaryLayerCellArray->InsertNextCell(quadNPts,quadPts);
             boundaryLayerCellTypes->InsertNextId(VTK_QUAD);
             cellEntityIdsArray->InsertNextValue(this->SidewallCellEntityId);
+            outputSurfaceCellIdsArray->InsertNextTuple1(-1);
             }
           }
 
@@ -462,6 +488,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
             }
           boundaryLayerCellArray->InsertNextCell(npts,surfacePts);
           cellEntityIdsArray->InsertNextValue(this->OuterSurfaceCellEntityId);
+          outputSurfaceCellIdsArray->InsertNextTuple1(surfaceCellIdsArray->GetTuple1(i));
           delete[] surfacePts;
           }
         }
@@ -481,6 +508,11 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   delete[] boundaryLayerCellTypesInt;
 
   output->GetCellData()->AddArray(cellEntityIdsArray);
+  if (outputSurfaceCellIdsArray != NULL)
+  {
+    output->GetCellData()->AddArray(outputSurfaceCellIdsArray);
+    outputSurfaceCellIdsArray->Delete();
+  }
 
   if (this->InnerSurface)
     {

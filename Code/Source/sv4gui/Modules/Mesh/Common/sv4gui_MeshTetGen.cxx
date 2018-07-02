@@ -217,48 +217,32 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
             msg="Failed in generating mesh";
             return false;
         }
-    }
-    else if(flag=="getBoundaries")
-    {
-        if(m_cvTetGenMesh->GetBoundaryFaces(50)!=SV_OK)
+
+        vtkPolyData* surfaceMesh=m_cvTetGenMesh->GetPolyData()->GetVtkPolyData();
+        vtkUnstructuredGrid* volumeMesh = NULL;
+        if (m_cvTetGenMesh->GetUnstructuredGrid() != NULL)
+          volumeMesh = m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+
+        if(surfaceMesh==NULL)
         {
-            msg="Failed in getting boundary after boundary layer meshing";
+            delete m_cvTetGenMesh;
+            m_cvTetGenMesh=NULL;
+            msg="Empty mesh created";
             return false;
+        }
+        m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
+        m_SurfaceMesh->DeepCopy(surfaceMesh);
+        if (volumeMesh!=NULL)
+        {
+          m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
+          m_VolumeMesh->DeepCopy(volumeMesh);
         }
     }
     else if(flag=="writeMesh")
     {
-        if(m_cvTetGenMesh->WriteMesh(NULL,0)==SV_OK)
-        {
-            vtkPolyData* surfaceMesh=m_cvTetGenMesh->GetPolyData()->GetVtkPolyData();
-            vtkUnstructuredGrid* volumeMesh = NULL;
-            if (m_cvTetGenMesh->GetUnstructuredGrid() != NULL)
-              volumeMesh = m_cvTetGenMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
-
-            if(surfaceMesh==NULL)
-            {
-                delete m_cvTetGenMesh;
-                m_cvTetGenMesh=NULL;
-                msg="Empty mesh created";
-                return false;
-            }
-            m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
-            m_SurfaceMesh->DeepCopy(surfaceMesh);
-            if (volumeMesh!=NULL)
-            {
-              m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
-              m_VolumeMesh->DeepCopy(volumeMesh);
-            }
-            delete m_cvTetGenMesh;//Get all data;ok to delete inner mesh
-            m_cvTetGenMesh=NULL;
-        }
-        else
-        {
-            delete m_cvTetGenMesh;
-            m_cvTetGenMesh=NULL;
-            msg="Failed in writing meshing";
-            return false;
-        }
+      // No action
+      delete m_cvTetGenMesh;//Get all data;ok to delete inner mesh
+      m_cvTetGenMesh=NULL;
     }
     else
     {

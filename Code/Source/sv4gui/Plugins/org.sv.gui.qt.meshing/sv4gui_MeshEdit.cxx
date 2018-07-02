@@ -832,6 +832,9 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
 
     cmds.push_back("option GlobalEdgeSize "+ui->lineEditGlobalEdgeSizeT->text().trimmed().toStdString());
 
+    if(ui->checkBoxBoundaryLayerT->isChecked())
+      ui->checkBoxFastMeshing->setChecked(false);
+
     if(!ui->checkBoxFastMeshing->isChecked())
         cmds.push_back("setWalls");
 
@@ -951,9 +954,6 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
     }
 
     cmds.push_back("generateMesh");
-
-    if(ui->checkBoxBoundaryLayerT->isChecked())
-        cmds.push_back("getBoundaries");
 
     cmds.push_back("writeMesh");
 
@@ -1291,6 +1291,10 @@ void sv4guiMeshEdit::UpdateTetGenGUI()
     ui->dsbPortionT->setValue(0.5);
     ui->sbLayersT->setValue(2);
     ui->dsbRatioT->setValue(0.8);
+
+    ui->checkBoxBoundaryLayerDirection->setChecked(true);
+    ui->checkBoxConstantThicknessBL->setChecked(false);
+    ui->checkBoxConvertBLToNewRegion->setChecked(false);
 
     ui->checkBoxRadiusBasedT->setChecked(false);
 
