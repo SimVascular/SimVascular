@@ -80,29 +80,46 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
       return;
   }
 
+  //hide widgets
+  ui->CFWidget->hide();
+  ui->anisotropicSmoothWidget->hide();
+  ui->binaryThresholdWidget->hide();
+  ui->ccIsosurfaceWidget->hide();
+  ui->connectedThresholdWidget->hide();
+  ui->cropImageWidget->hide();
+  //ui->fullCFWidget->hide();
+  ui->gradientMagnitudeWidget->hide();
+  ui->isosurfaceWidget->hide();
+  ui->levelsetWidget->hide();
+  ui->openCloseWidget->hide();
+  ui->resampleWidget->hide();
+  ui->smoothWidget->hide();
+  ui->thresholdWidget->hide();
+  ui->zeroLevelWidget->hide();
+  ui->editImageWidget->hide();
+  
   //display buttons
-  connect(ui->displayEditImageButton, SIGNAL(clicked()), this, SLOT(displayEditImageTab()) );
-  connect(ui->displayCropImageButton, SIGNAL(clicked()), this, SLOT(displayCropImageTab()) );
-  connect(ui->displayResampleImageButton, SIGNAL(clicked()), this, SLOT(displayResampleImageTab()) );
-  connect(ui->displaySmoothButton, SIGNAL(clicked()), this, SLOT(displaySmoothTab()) );
-  connect(ui->displayAnisotropicSmoothButton, SIGNAL(clicked()), this, SLOT(displayAnisotropicSmoothTab()) );
-  connect(ui->displayThresholdButton, SIGNAL(clicked()), this, SLOT(displayThresholdTab()) );
-  connect(ui->displayBinaryThresholdButton, SIGNAL(clicked()), this, SLOT(displayBinaryThresholdTab()) );
-  connect(ui->displayConnectedThresholdButton, SIGNAL(clicked()), this, SLOT(displayConnectedThresholdTab()) );
-  connect(ui->displayCollidingFrontsButton, SIGNAL(clicked()), this, SLOT(displayCollidingFrontsTab()) );
-  connect(ui->displayZeroLevelButton, SIGNAL(clicked()), this, SLOT(displayZeroLevelTab()) );
-  connect(ui->displayFillHolesButton, SIGNAL(clicked()), this, SLOT(displayFillHolesTab()) );
-  connect(ui->displayOpenCloseButton, SIGNAL(clicked()), this, SLOT(displayOpenCloseTab()) );
-  connect(ui->displayGradientMagnitudeButton, SIGNAL(clicked()), this, SLOT(displayGradientMagnitudeTab()) );
-  connect(ui->displayLevelSetButton, SIGNAL(clicked()), this, SLOT(displayLevelSetTab()) );
-  connect(ui->displayIsoSurfaceButton, SIGNAL(clicked()), this, SLOT(displayIsoSurfaceTab()) );
-  connect(ui->displayFullCFButton, SIGNAL(clicked()), this, SLOT(displayFullCFTab()) );
+  // connect(ui->displayEditImageButton, SIGNAL(clicked()), this, SLOT(displayEditImageTab()) );
+  // connect(ui->displayCropImageButton, SIGNAL(clicked()), this, SLOT(displayCropImageTab()) );
+  // connect(ui->displayResampleImageButton, SIGNAL(clicked()), this, SLOT(displayResampleImageTab()) );
+  // connect(ui->displaySmoothButton, SIGNAL(clicked()), this, SLOT(displaySmoothTab()) );
+  // connect(ui->displayAnisotropicSmoothButton, SIGNAL(clicked()), this, SLOT(displayAnisotropicSmoothTab()) );
+  // connect(ui->displayThresholdButton, SIGNAL(clicked()), this, SLOT(displayThresholdTab()) );
+  // connect(ui->displayBinaryThresholdButton, SIGNAL(clicked()), this, SLOT(displayBinaryThresholdTab()) );
+  // connect(ui->displayConnectedThresholdButton, SIGNAL(clicked()), this, SLOT(displayConnectedThresholdTab()) );
+  // connect(ui->displayCollidingFrontsButton, SIGNAL(clicked()), this, SLOT(displayCollidingFrontsTab()) );
+  // connect(ui->displayZeroLevelButton, SIGNAL(clicked()), this, SLOT(displayZeroLevelTab()) );
+  // connect(ui->displayFillHolesButton, SIGNAL(clicked()), this, SLOT(displayFillHolesTab()) );
+  // connect(ui->displayOpenCloseButton, SIGNAL(clicked()), this, SLOT(displayOpenCloseTab()) );
+  // connect(ui->displayGradientMagnitudeButton, SIGNAL(clicked()), this, SLOT(displayGradientMagnitudeTab()) );
+  // connect(ui->displayLevelSetButton, SIGNAL(clicked()), this, SLOT(displayLevelSetTab()) );
+  // connect(ui->displayIsoSurfaceButton, SIGNAL(clicked()), this, SLOT(displayIsoSurfaceTab()) );
+  // connect(ui->displayFullCFButton, SIGNAL(clicked()), this, SLOT(displayFullCFTab()) );
 
 
   connect(ui->seedLineEdit, SIGNAL(editingFinished()), this, SLOT(seedSize()));
 
   //more display stuff
-  connect(ui->algorithmTab, SIGNAL(currentChanged(int)), this, SLOT(tabSelected()));
 
   // getText();
   connect(ui->thresholdButton, SIGNAL(clicked()), this, SLOT(runThreshold()));
@@ -121,7 +138,6 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
   connect(ui->gradientMagnitudeButton, SIGNAL(clicked()), this, SLOT(runGradientMagnitude()));
   connect(ui->smoothButton, SIGNAL(clicked()), this, SLOT(runSmoothing()));
   connect(ui->anisotropicButton, SIGNAL(clicked()), this, SLOT(runAnisotropic()));
-  connect(ui->fillHolesButton, SIGNAL(clicked()), this, SLOT(runFillHoles()));
   connect(ui->levelSetButton, SIGNAL(clicked()), this, SLOT(runGeodesicLevelSet()));
   m_Interface= new sv4guiDataNodeOperationInterface();
 
@@ -180,113 +196,113 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
 /*******************************************************
 * Display Buttons
 ********************************************************/
-void sv4guiImageProcessing::displayEditImageTab(){          ui->algorithmTab->setCurrentIndex(0);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayCropImageTab(){          ui->algorithmTab->setCurrentIndex(1);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayResampleImageTab(){      ui->algorithmTab->setCurrentIndex(2);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displaySmoothTab(){             ui->algorithmTab->setCurrentIndex(3);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayAnisotropicSmoothTab(){  ui->algorithmTab->setCurrentIndex(4);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayThresholdTab(){          ui->algorithmTab->setCurrentIndex(5);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayBinaryThresholdTab(){    ui->algorithmTab->setCurrentIndex(6);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayConnectedThresholdTab(){ ui->algorithmTab->setCurrentIndex(7);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayCollidingFrontsTab(){    ui->algorithmTab->setCurrentIndex(8);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayZeroLevelTab(){          ui->algorithmTab->setCurrentIndex(9);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayFillHolesTab(){          ui->algorithmTab->setCurrentIndex(10);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayOpenCloseTab(){          ui->algorithmTab->setCurrentIndex(11);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayGradientMagnitudeTab(){  ui->algorithmTab->setCurrentIndex(12);ui->inputList2->setEnabled(false); }
-void sv4guiImageProcessing::displayLevelSetTab(){           ui->algorithmTab->setCurrentIndex(13); ui->inputList2->setEnabled(true);}
-void sv4guiImageProcessing::displayIsoSurfaceTab(){         ui->algorithmTab->setCurrentIndex(14); ui->inputList2->setEnabled(false);}
-void sv4guiImageProcessing::displayFullCFTab(){             ui->algorithmTab->setCurrentIndex(16); ui->inputList2->setEnabled(false);}
+// void sv4guiImageProcessing::displayEditImageTab(){          ui->algorithmTab->setCurrentIndex(0);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayCropImageTab(){          ui->algorithmTab->setCurrentIndex(1);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayResampleImageTab(){      ui->algorithmTab->setCurrentIndex(2);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displaySmoothTab(){             ui->algorithmTab->setCurrentIndex(3);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayAnisotropicSmoothTab(){  ui->algorithmTab->setCurrentIndex(4);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayThresholdTab(){          ui->algorithmTab->setCurrentIndex(5);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayBinaryThresholdTab(){    ui->algorithmTab->setCurrentIndex(6);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayConnectedThresholdTab(){ ui->algorithmTab->setCurrentIndex(7);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayCollidingFrontsTab(){    ui->algorithmTab->setCurrentIndex(8);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayZeroLevelTab(){          ui->algorithmTab->setCurrentIndex(9);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayFillHolesTab(){          ui->algorithmTab->setCurrentIndex(10);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayOpenCloseTab(){          ui->algorithmTab->setCurrentIndex(11);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayGradientMagnitudeTab(){  ui->algorithmTab->setCurrentIndex(12);ui->inputList2->setEnabled(false); }
+// void sv4guiImageProcessing::displayLevelSetTab(){           ui->algorithmTab->setCurrentIndex(13); ui->inputList2->setEnabled(true);}
+// void sv4guiImageProcessing::displayIsoSurfaceTab(){         ui->algorithmTab->setCurrentIndex(14); ui->inputList2->setEnabled(false);}
+// void sv4guiImageProcessing::displayFullCFTab(){             ui->algorithmTab->setCurrentIndex(16); ui->inputList2->setEnabled(false);}
 
 void sv4guiImageProcessing::tabSelected(){
-  if (ui->algorithmTab->currentIndex() == 13){
-    ui->inputList2->setEnabled(true);
-  }else {
-    ui->inputList2->setEnabled(false);
-  }
+  // if (ui->algorithmTab->currentIndex() == 13){
+  //   ui->inputList2->setEnabled(true);
+  // }else {
+  //   ui->inputList2->setEnabled(false);
+  // }
+  //
+  // if(ui->algorithmTab->currentIndex() <= 1){
+  //   m_SeedMapper->m_box = true;
+  // }else {
+  //   m_SeedMapper->m_box = false;
+  // }
 
-  if(ui->algorithmTab->currentIndex() <= 1){
-    m_SeedMapper->m_box = true;
-  }else {
-    m_SeedMapper->m_box = false;
-  }
-
-  switch(ui->algorithmTab->currentIndex()){
-    case 0:
-      ui->helpLabel->setText("Edit image:\n"
-        "Place start and end seed points to make a box\n"
-        "pixels in the box will have their value set to Replace Value");
-        break;
-    case 1:
-      ui->helpLabel->setText("Crop image:\n"
-        "Enter two corners of the box to crop image to");
-        break;
-    case 2:
-      ui->helpLabel->setText("Resample Image:\n"
-        "Enter the length/pixel to convert the image to");
-        break;
-    case 3:
-      ui->helpLabel->setText("Smooth:\n"
-        "Smoothing scale: size of smoothing filter, larger scale means more smoothing");
-        break;
-    case 4:
-      ui->helpLabel->setText("Anisotropic Smooth:\n"
-        "Edge preserving smoothing.\n"
-        "Iterations: number of smoothing steps (higher = more smoothing)\n"
-        "Time step: amount of smoothing per iteration, smaller = less smoothing\n"
-        "Conductance: Smoothing strength, higher means more smoothing");
-        break;
-    case 5:
-      ui->helpLabel->setText("Threshold:\n"
-        "Set all pixels with values outside upper value and lower value to 0");
-        break;
-    case 6:
-      ui->helpLabel->setText("Binary Threshold:\n"
-        "Set all pixels with values outside upper value and lower value to\n"
-        "outside value and those inside to inside value");
-        break;
-    case 7:
-      ui->helpLabel->setText("Connected Threshold:\n"
-        "Place start (red) seed points, connected threshold only keeps regions connected to seed points\n"
-        "Set all pixels with values inside upper value and lower value to\n"
-        "inside value, rest to 0");
-        break;
-    case 8:
-      ui->helpLabel->setText("Colliding Fronts:\n"
-        "Place multiple start (red) and end (green) seed points\n"
-        "Segments all pixels with values inside upper threshold and lower threshold, that are connected to seed points");
-        break;
-    case 9:
-      ui->helpLabel->setText("Zero Level:\n"
-        "Multiply image by -1 and add isovalue\n"
-        "Makes all pixels that had value isovalue now have value 0\n"
-        "Useful for level set intialization");
-        break;
-    case 10:
-      ui->helpLabel->setText("Fill Holes:\n"
-        "For a binary image, fill any holes with value of 1\n");
-        break;
-    case 11:
-      ui->helpLabel->setText("Open/Close:\n"
-        "For binary image, erode then dilate by radius pixels\n");
-        break;
-    case 12:
-      ui->helpLabel->setText("Gradient Magnitude:\n"
-        "Create new image where every pixel value is the magnitude of the gradient of the original image at that pixel\n"
-        "Gradient length scale indicates length to use when calculating the gradient");
-        break;
-    case 13:
-      ui->helpLabel->setText("Level Set:\n"
-        "Extract a segmentation based on a supplied initial level set and edge image (all scaling parameters should be between 0 and 1)\n"
-        "Propagation scaling: The balloon force, pushes front outwards\n"
-        "Advection scaling: Attracts front to edges\n"
-        "curvature scaling: Smooths and shrinks front\n");
-        break;
-    case 14:
-      ui->helpLabel->setText("IsoSurface:\n"
-        "Extract an isosurface based on an isovalue\n"
-        "Will created a 3D segmentation object in the segmentations folder");
-        break;
-  }
+  // switch(ui->algorithmTab->currentIndex()){
+  //   case 0:
+  //     ui->helpLabel->setText("Edit image:\n"
+  //       "Place start and end seed points to make a box\n"
+  //       "pixels in the box will have their value set to Replace Value");
+  //       break;
+  //   case 1:
+  //     ui->helpLabel->setText("Crop image:\n"
+  //       "Enter two corners of the box to crop image to");
+  //       break;
+  //   case 2:
+  //     ui->helpLabel->setText("Resample Image:\n"
+  //       "Enter the length/pixel to convert the image to");
+  //       break;
+  //   case 3:
+  //     ui->helpLabel->setText("Smooth:\n"
+  //       "Smoothing scale: size of smoothing filter, larger scale means more smoothing");
+  //       break;
+  //   case 4:
+  //     ui->helpLabel->setText("Anisotropic Smooth:\n"
+  //       "Edge preserving smoothing.\n"
+  //       "Iterations: number of smoothing steps (higher = more smoothing)\n"
+  //       "Time step: amount of smoothing per iteration, smaller = less smoothing\n"
+  //       "Conductance: Smoothing strength, higher means more smoothing");
+  //       break;
+  //   case 5:
+  //     ui->helpLabel->setText("Threshold:\n"
+  //       "Set all pixels with values outside upper value and lower value to 0");
+  //       break;
+  //   case 6:
+  //     ui->helpLabel->setText("Binary Threshold:\n"
+  //       "Set all pixels with values outside upper value and lower value to\n"
+  //       "outside value and those inside to inside value");
+  //       break;
+  //   case 7:
+  //     ui->helpLabel->setText("Connected Threshold:\n"
+  //       "Place start (red) seed points, connected threshold only keeps regions connected to seed points\n"
+  //       "Set all pixels with values inside upper value and lower value to\n"
+  //       "inside value, rest to 0");
+  //       break;
+  //   case 8:
+  //     ui->helpLabel->setText("Colliding Fronts:\n"
+  //       "Place multiple start (red) and end (green) seed points\n"
+  //       "Segments all pixels with values inside upper threshold and lower threshold, that are connected to seed points");
+  //       break;
+  //   case 9:
+  //     ui->helpLabel->setText("Zero Level:\n"
+  //       "Multiply image by -1 and add isovalue\n"
+  //       "Makes all pixels that had value isovalue now have value 0\n"
+  //       "Useful for level set intialization");
+  //       break;
+  //   case 10:
+  //     ui->helpLabel->setText("Fill Holes:\n"
+  //       "For a binary image, fill any holes with value of 1\n");
+  //       break;
+  //   case 11:
+  //     ui->helpLabel->setText("Open/Close:\n"
+  //       "For binary image, erode then dilate by radius pixels\n");
+  //       break;
+  //   case 12:
+  //     ui->helpLabel->setText("Gradient Magnitude:\n"
+  //       "Create new image where every pixel value is the magnitude of the gradient of the original image at that pixel\n"
+  //       "Gradient length scale indicates length to use when calculating the gradient");
+  //       break;
+  //   case 13:
+  //     ui->helpLabel->setText("Level Set:\n"
+  //       "Extract a segmentation based on a supplied initial level set and edge image (all scaling parameters should be between 0 and 1)\n"
+  //       "Propagation scaling: The balloon force, pushes front outwards\n"
+  //       "Advection scaling: Attracts front to edges\n"
+  //       "curvature scaling: Smooths and shrinks front\n");
+  //       break;
+  //   case 14:
+  //     ui->helpLabel->setText("IsoSurface:\n"
+  //       "Extract an isosurface based on an isovalue\n"
+  //       "Will created a 3D segmentation object in the segmentations folder");
+  //       break;
+  // }
 
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -914,51 +930,6 @@ void sv4guiImageProcessing::runAnisotropic(){
   }
   std::cout << "Running anisotropic\n";
   itkImage = sv4guiImageProcessingUtils::anisotropicSmooth(itkImage, iterations, timeStep, conductance);
-
-  std::cout << "Storing image\n";
-  storeImage(itkImage);
-}
-
-void sv4guiImageProcessing::runFillHoles(){
-  std::cout << " fill holes button clicked\n";
-
-  double foregroundValue =
-    std::stod(ui->fillHolesLineEdit->text().toStdString());
-
-  sv4guiImageProcessingUtils::itkImPoint itkImage = getItkImage(0);
-
-  if (!itkImage){
-    MITK_ERROR << "No image 1 selected, please select an image 1\n";
-    return;
-  }
-  std::cout << "Running fill holes\n";
-  itkImage = sv4guiImageProcessingUtils::fillHoles(itkImage, foregroundValue);
-
-  std::cout << "Storing image\n";
-  storeImage(itkImage);
-}
-
-void sv4guiImageProcessing::runGeodesicLevelSet(){
-  std::cout << " GradientMagnitude button clicked\n";
-
-  double propagation =
-    std::stod(ui->propagationLineEdit->text().toStdString());
-  double advection =
-    std::stod(ui->advectionLineEdit->text().toStdString());
-  double curvature =
-    std::stod(ui->curvatureLineEdit->text().toStdString());
-  double iterations =
-    std::stod(ui->iterationsLineEdit->text().toStdString());
-
-  sv4guiImageProcessingUtils::itkImPoint initialization = getItkImage(0);
-  sv4guiImageProcessingUtils::itkImPoint edgeImage = getItkImage(1);
-
-  if (!initialization || !edgeImage){
-    MITK_ERROR << "No image 1 or 2 selected, please select an image 1\n";
-    return;
-  }
-
-  auto itkImage = sv4guiImageProcessingUtils::geodesicLevelSet(initialization, edgeImage, propagation, advection, curvature, iterations);
 
   std::cout << "Storing image\n";
   storeImage(itkImage);
