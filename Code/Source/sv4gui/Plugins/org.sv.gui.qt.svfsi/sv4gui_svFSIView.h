@@ -66,6 +66,8 @@ public:
 
 public slots:
 
+    void loadMesh();
+
     void LoadJob();
 
     void LoadJob(std::string jobPath, std::string jobName);

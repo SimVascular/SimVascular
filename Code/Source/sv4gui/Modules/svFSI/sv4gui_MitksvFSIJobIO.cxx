@@ -135,6 +135,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                 domainElement->QueryStringAttribute("type", &domain.type);
                 domainElement->QueryStringAttribute("folder_name", &domain.folderName);
                 domainElement->QueryStringAttribute("file_name", &domain.fileName);
+                domainElement->QueryStringAttribute("surface_name", &domain.surfaceName);
                 domainElement->QueryStringAttribute("face_folder_name", &domain.faceFolderName);
 
                 for(TiXmlElement* faceElement=domainElement->FirstChildElement("face");
@@ -432,6 +433,7 @@ void sv4guiMitksvFSIJobIO::Write()
             domainElement->SetAttribute("type", domain.type);
             domainElement->SetAttribute("folder_name", domain.folderName);
             domainElement->SetAttribute("file_name",domain.fileName);
+            domainElement->SetAttribute("surface_name",domain.surfaceName);
             domainElement->SetAttribute("face_folder_name",domain.faceFolderName);
 
             for(std::string faceName : domain.faceNames)
