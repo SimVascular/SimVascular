@@ -38,12 +38,89 @@ ifeq ($(SV_EXTERNALS_PREBUILT_QT),1)
 else
   QT_TOP_DIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)/msvc2015_64
 endif
-QT_DEFS    = -DNDEBUG -DWIN32 -DWIN64
-QT_DEFS    += -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_PLUGIN -DQT_WEBENGINE -DQT_WEBENGINEWIDGETS -DQT_WEBVIEW
+
+#
+# CTK required Qt libs
+#
+# Concurrent Core Gui Network OpenGL Sql
+# Test UiTools WebEngineWidgets
+# WebKitWidgets Widgets Xml XmlPatterns
+#
+
+#
+# MITK required Qt libs
+#
+# DBus Gui Help Network OpenGL
+# PrintSupport UiTools WebEngineWidgets
+# Widgets Xml XmlPatterns
+#
+
+#
+# Combined requirements for Qt
+#
+# Concurrent
+# Core
+# DBus
+# Gui
+# Help
+# Network
+# OpenGL
+# PrintSupport
+# Sql
+# Test
+# UiTools
+# WebEngineWidgets
+# WebKitWidgets
+# Widgets
+# Xml
+# XmlPatterns
+#
+
+# don't know where flags are for DBus and UiTools
+
+QT_DEPLOY_FLAGS = --release --no-compiler-runtime --angle
+
+QT_DEPLOY_FLAGS += \
+ -clucene -concurrent -core -gui -qthelp \
+ -network -opengl -positioning -printsupport \
+ -sql -svg -test -widgets -winextras -xml -xmlpatterns \
+ -webenginecore -webengine -webenginewidgets
+
+QT_DEFS    = -DNDEBUG -DWIN32 -DWIN64 -DQT_NO_DEBUG
 
 ifeq ($(SV_USE_SHARED),0)
   QT_DEFS += -DQT_STATICPLUGIN
 endif
+
+QT_DEFS += QT_CLUCENE_LIB
+QT_DEFS += QT_CONCURRENT_LIB
+QT_DEFS += QT_CORE_LIB
+QT_DEFS += QT_DBUS_LIB
+QT_DEFS += QT_GUI_LIB
+QT_DEFS += QT_HELP_LIB
+QT_DEFS += QT_NETWORK_LIB
+QT_DEFS += QT_OPENGL_LIB
+QT_DEFS += QT_OPENGLEXTENSIONS_LIB
+QT_DEFS += QT_PLATFORMSUPPORT_LIB
+QT_DEFS += QT_POSITIONING_LIB
+QT_DEFS += QT_PRINTSUPPORT_LIB
+QT_DEFS += QT_QML_LIB
+QT_DEFS += QT_QMLTEST_LIB
+QT_DEFS += QT_SQL_LIB
+QT_DEFS += QT_SVG_LIB
+QT_DEFS += QT_TESTLIB_LIB
+QT_DEFS += QT_UIPLUGIN_LIB
+QT_DEFS += QT_UITOOLS_LIB
+QT_DEFS += QT_WEBCHANNEL_LIB
+QT_DEFS += QT_WEBENGINE_LIB
+QT_DEFS += QT_WEBENGINECORE_LIB
+QT_DEFS += QT_WEBENGINECOREHEADERS_LIB
+QT_DEFS += QT_WEBENGINEWIDGETS_LIB
+QT_DEFS += QT_WEBSOCKETS_LIB
+QT_DEFS += QT_WIDGETS_LIB
+QT_DEFS += QT_WINEXTRAS_LIB
+QT_DEFS += QT_XML_LIB
+QT_DEFS += QT_XMLPATTERNS_LIB
 
 QT_LIBDIRS = $(QT_TOP_DIR)/lib
 QT_BIN_LIBS = $(QT_TOP_DIR)/bin
@@ -74,9 +151,9 @@ QT_MOC_INCDIRS = \
       -I $(QT_TOP_DIR)/include/QtXml \
       -I $(QT_TOP_DIR)/include/QtConcurrent \
       -I $(QT_TOP_DIR)/include/QtNetwork \
-      -I$(QT_TOP_DIR)/include/QtWebEngine \
-      -I$(QT_TOP_DIR)/include/QtWebView \
-      -I$(QT_TOP_DIR)/include/QtWebEngineWidgets \
+      -I $(QT_TOP_DIR)/include/QtWebEngine \
+      -I $(QT_TOP_DIR)/include/QtWebView \
+      -I $(QT_TOP_DIR)/include/QtWebEngineWidgets \
       -I $(QT_TOP_DIR)/include/mkspecs/win32-msvc2015
 QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5WebEngine$(LIBLINKEXT) \
@@ -90,3 +167,4 @@ QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5Core$(LIBLINKEXT)
 QT_SO_PATH=$(QT_TOP_DIR)/bin
 QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
+

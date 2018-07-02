@@ -237,12 +237,16 @@ ifeq ($(SV_USE_PYTHON),1)
 endif
 ifeq ($(SV_USE_QT),1)
 ifeq ($(CLUSTER), x64_cygwin)
-	-cp -fd $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
+	-$(QT_TOP_DIR)/bin/windeployqt $(QT_DEPLOY_FLAGS) \
+                                       -plugindir `cygpath -m $(DIST_DIR)/qt-plugins` \
+                                       `cygpath -m $(DIST_DIR)/simvascular-bin.exe`
 else
 	-cp -fd $(QT_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
 endif
-	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
+#	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
 	-cp -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/qt-fonts
+	-echo "[Paths]" > $(DIST_DIR)/qt.conf
+	-echo "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -fd $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
