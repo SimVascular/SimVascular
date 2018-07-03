@@ -65,26 +65,16 @@ int cvMeshSystem::SetCurrentKernel(cvMeshObject::KernelType kernel_type)
 {
   switch (kernel_type) {
     case cvMeshObject::KERNEL_INVALID:
-      gCurrentKernel = cvMeshObject::KERNEL_INVALID;
-
+        gCurrentKernel = cvMeshObject::KERNEL_INVALID;
     case cvMeshObject::KERNEL_MESHSIM:
-      if (gMeshSystems[gCurrentKernel] != NULL)
-      {
         gCurrentKernel = cvMeshObject::KERNEL_MESHSIM;
         return SV_OK;
-      }
-      else
-        return SV_ERROR;
 
     case cvMeshObject::KERNEL_TETGEN:
-      if (gMeshSystems[gCurrentKernel] != NULL)
-      {
-	gCurrentKernel = cvMeshObject::KERNEL_TETGEN;
+    {
+        gCurrentKernel = cvMeshObject::KERNEL_TETGEN;
         return SV_OK;
-      }
-      else
-	return SV_ERROR;
-
+    }
     default:
       return SV_ERROR;
   }
@@ -100,7 +90,6 @@ int cvMeshSystem::RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSy
     gCurrentKernel = cvMeshObject::KERNEL_MESHSIM;
   else if (kernel_type == cvMeshObject::KERNEL_TETGEN)
     gCurrentKernel = cvMeshObject::KERNEL_TETGEN;
-
   gMeshSystems[gCurrentKernel] = pKernel;
   return SV_OK;
 }

@@ -137,11 +137,10 @@ Contour* Contour::DefaultInstantiateContourObject(cKernelType t, PathElement::Pa
   if (t == cKERNEL_LEVELSET || t==cKERNEL_THRESHOLD|| t == cKERNEL_CIRCLE || t == cKERNEL_POLYGON || t == cKERNEL_SPLINEPOLYGON ||t == cKERNEL_ELLIPSE)
   {
     contour = (Contour *) (contourObjectRegistrar->UseFactoryMethod( t ));
+    contour->SetPathPoint(pathPoint);
     if (contour == NULL) {
 		  fprintf( stdout, "Unable to create contour object for kernel (%i)\n",Contour::gCurrentKernel);
     }
-    contour->SetPathPoint(pathPoint);
-
   } else {
     fprintf( stdout, "current kernel is not valid (%i)\n",t);
   }

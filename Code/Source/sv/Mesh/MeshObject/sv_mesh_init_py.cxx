@@ -459,7 +459,7 @@ PyObject* cvMesh_SetMeshKernelCmd(PyObject* self, PyObject* args)
   // Do work of command:
   cvMeshObject::KernelType kernelType = cvMeshObject::GetKernelType( kernelName );
 
-  if ( kernelType != cvMeshObject::KERNEL_INVALID && cvMeshSystem::SetCurrentKernel(kernelType) ) {
+  if ( kernelType != cvMeshObject::KERNEL_INVALID && cvMeshSystem::SetCurrentKernel(kernelType)==SV_OK ) {
     return Py_BuildValue("s",kernelName);
   } else {
     PyErr_SetString(PyRunTimeErr, "Mesh kernel is not available");
