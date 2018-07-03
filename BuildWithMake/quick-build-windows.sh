@@ -48,7 +48,7 @@ export EXTERNALS_TOP=`pwd`/ext
 
 # default is windows
 
-echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath -m $EXTERNALS_TOP/bin`" > global_overrides.mk
+echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath -m $EXTERNALS_TOP/bin`" >> global_overrides.mk
 echo "SV_EXTERNALS_PREBUILT_QT=0" >> global_overrides.mk
 
 mkdir -p $EXTERNALS_TOP

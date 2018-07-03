@@ -56,6 +56,10 @@ CXXFLAGS += $(LOCAL_INCDIR) \
 	    $(PYTHON_INCDIR) \
             $(VMTK_INCDIR)
 
+ifeq ($(SV_USE_TETGEN),1)
+  CXXFLAGS += $(TETGEN_INCDIR)
+endif
+
 HDRS	= sv_vmtk_utils.h
 
 CXXSRCS	= sv_vmtk_utils.cxx
@@ -69,7 +73,7 @@ SVPYSRCS = sv_vmtk_utils_init_py.cxx
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
-	  $(ZLIB_LIBS) $(VMTK_LIBS)
+	  $(TETGEN_LIBS) $(ZLIB_LIBS) $(VMTK_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_VMTK_UTILS_NAME)
 
