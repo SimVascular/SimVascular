@@ -406,9 +406,14 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
         return Py_ERROR;
     }
 
-    // Instantiate the new path:
+    // Instantiate the new contour:
     Contour *geom = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, path->GetPathPoint(index));
     
+    if(geom==NULL)
+    {
+        PyErr_SetString(PyRunTimeErr, "Failed to create contour object");
+        return Py_ERROR;
+    }
     // Register the contour:
     if ( !( gRepository->Register( objName, geom ) ) ) {
         PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
@@ -539,7 +544,7 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
     }
     else if (Contour::gCurrentKernel==cKERNEL_ELLIPSE)
     {
-        if(numPts!=4)
+        if(numPts!=3)
         {
             PyErr_SetString(PyRunTimeErr, "Ellipse contour requires three points, center and two boudaries");
             return Py_ERROR;
@@ -555,6 +560,10 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
     }        
     
     Contour* contour = self->geom;
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     
     std::vector<std::array<double,3> > pts(numPts);
     for (int i = 0; i<numPts; i++)
@@ -605,7 +614,10 @@ PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
     }
     
     Contour* contour = self->geom;
-
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     if (radius>0.)
     {
         contour->SetControlPointByRadius(radius,ctr);
@@ -627,6 +639,10 @@ PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
 PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     if (Contour::gCurrentKernel==cKERNEL_LEVELSET)
     {
         sv3::levelSetContour::svLSParam paras;
@@ -654,6 +670,10 @@ PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
 PyObject* Contour_GetAreaCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     double area = contour->GetArea();
     return Py_BuildValue("d",area);    
 }
@@ -664,6 +684,10 @@ PyObject* Contour_GetAreaCmd( pyContour* self, PyObject* args)
 PyObject* Contour_GetPerimeterCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     double perimeter = contour->GetPerimeter();
     return Py_BuildValue("d",perimeter);    
 }
@@ -674,6 +698,10 @@ PyObject* Contour_GetPerimeterCmd( pyContour* self, PyObject* args)
 PyObject* Contour_GetCenterPointCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     std::array<double,3> center = contour->GetCenterPoint();
     char output[1024];
     output[0] = '\0';
@@ -700,6 +728,10 @@ PyObject* Contour_SetThresholdValueCmd(pyContour* self, PyObject* args)
     }
     
     Contour* contour = self->geom;
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     contour->SetThresholdValue(threshold);
     Py_RETURN_NONE;
 }
@@ -718,6 +750,10 @@ pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args)
     }
     
     Contour* contour = self->geom;
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     
     Contour *newContour = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, contour->GetPathPoint());
     
@@ -758,7 +794,10 @@ PyObject* Contour_GetPolyDataCmd(pyContour* self, PyObject* args)
     }
   
     Contour* geom = self->geom;
-    
+    if ( contour==NULL ) {
+        PyErr_SetString(PyRunTimeErr, "Contour object not created");
+        return Py_ERROR;
+    }
     vtkSmartPointer<vtkPolyData> vtkpd = geom->CreateVtkPolyDataFromContour();
     
     cvPolyData* pd = new cvPolyData(vtkpd);
