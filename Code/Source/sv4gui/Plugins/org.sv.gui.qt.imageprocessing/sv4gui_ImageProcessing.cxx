@@ -80,24 +80,6 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
       return;
   }
 
-  //hide widgets
-  ui->CFWidget->hide();
-  ui->anisotropicSmoothWidget->hide();
-  ui->binaryThresholdWidget->hide();
-  ui->ccIsosurfaceWidget->hide();
-  ui->connectedThresholdWidget->hide();
-  ui->cropImageWidget->hide();
-  //ui->fullCFWidget->hide();
-  ui->gradientMagnitudeWidget->hide();
-  ui->isosurfaceWidget->hide();
-  ui->levelsetWidget->hide();
-  ui->openCloseWidget->hide();
-  ui->resampleWidget->hide();
-  ui->smoothWidget->hide();
-  ui->thresholdWidget->hide();
-  ui->zeroLevelWidget->hide();
-  ui->editImageWidget->hide();
-  
   //display buttons
   // connect(ui->displayEditImageButton, SIGNAL(clicked()), this, SLOT(displayEditImageTab()) );
   // connect(ui->displayCropImageButton, SIGNAL(clicked()), this, SLOT(displayCropImageTab()) );
@@ -124,17 +106,14 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
   // getText();
   connect(ui->thresholdButton, SIGNAL(clicked()), this, SLOT(runThreshold()));
   connect(ui->binaryThresholdButton, SIGNAL(clicked()), this, SLOT(runBinaryThreshold()));
-  connect(ui->connectedThresholdButton, SIGNAL(clicked()), this, SLOT(runConnectedThreshold()));
   connect(ui->editImageButton, SIGNAL(clicked()), this, SLOT(runEditImage()));
   connect(ui->cropImageButton, SIGNAL(clicked()), this, SLOT(runCropImage()));
   connect(ui->resampleImageButton, SIGNAL(clicked()), this, SLOT(runResampleImage()));
   connect(ui->zeroLevelButton, SIGNAL(clicked()), this, SLOT(runZeroLevel()));
-  connect(ui->openCloseButton, SIGNAL(clicked()), this, SLOT(runOpenClose()));
   connect(ui->CFButton, SIGNAL(clicked()), this, SLOT(runCollidingFronts()));
   connect(ui->fullCFButton, SIGNAL(clicked()), this, SLOT(runFullCollidingFronts()));
 
   connect(ui->marchingCubesButton, SIGNAL(clicked()), this, SLOT(runIsovalue()));
-  connect(ui->seedMarchingCubesButton, SIGNAL(clicked()), this, SLOT(runSeedIsovalue()));
   connect(ui->gradientMagnitudeButton, SIGNAL(clicked()), this, SLOT(runGradientMagnitude()));
   connect(ui->smoothButton, SIGNAL(clicked()), this, SLOT(runSmoothing()));
   connect(ui->anisotropicButton, SIGNAL(clicked()), this, SLOT(runAnisotropic()));
@@ -518,24 +497,6 @@ void sv4guiImageProcessing::runThreshold(){
   storeImage(itkImage);
 }
 
-void sv4guiImageProcessing::runOpenClose(){
-  std::cout << "Open/close button clicked\n";
-  int radius =
-    std::stoi(ui->openCloseLineEdit->text().toStdString());
-
-  sv4guiImageProcessingUtils::itkImPoint itkImage = getItkImage(0);
-
-  if (!itkImage){
-    MITK_ERROR << "No image 1 selected, please select an image 1\n";
-    return;
-  }
-  std::cout << "Running open/close\n";
-  itkImage = sv4guiImageProcessingUtils::openClose(itkImage, radius);
-
-  std::cout << "Storing image\n";
-  storeImage(itkImage);
-}
-
 void sv4guiImageProcessing::runBinaryThreshold(){
   std::cout << " binary Threshold button clicked\n";
   double upperThreshold =
@@ -557,46 +518,6 @@ void sv4guiImageProcessing::runBinaryThreshold(){
   }
   std::cout << "Running threshold\n";
   itkImage = sv4guiImageProcessingUtils::binaryThreshold(itkImage, lowerThreshold, upperThreshold, insideValue, outsideValue);
-
-  std::cout << "Storing image\n";
-  storeImage(itkImage);
-}
-
-void sv4guiImageProcessing::runConnectedThreshold(){
-  std::cout << " Connected Threshold button clicked\n";
-
-  double upperThreshold =
-    std::stod(ui->connectedThresholdUpperLineEdit->text().toStdString());
-  double lowerThreshold =
-    std::stod(ui->connectedThresholdLowerLineEdit->text().toStdString());
-  double insideValue =
-    std::stoi(ui->connectedThresholdInsideLineEdit->text().toStdString());
-
-  sv4guiImageProcessingUtils::itkImPoint itkImage = getItkImage(0);
-
-  if (!itkImage){
-    MITK_ERROR << "No image 1 selected, please select an image 1\n";
-    return;
-  }
-
-  //seed
-  int startSeeds = m_SeedContainer->getNumStartSeeds();
-  if (startSeeds == 0) return;
-
-  auto seedVec = std::vector<std::vector<int>>();
-
-  for (int s = 0; s < startSeeds; s++){
-    auto v_start = m_SeedContainer->getStartSeed(s);
-
-    seedVec.push_back(sv4guiImageProcessingUtils::physicalPointToIndex(itkImage,
-      v_start[0], v_start[1], v_start[2]));
-  }
-  //run
-  std::cout << "upper,lower threshold: " << upperThreshold << ", " << lowerThreshold << "\n";
-
-
-  std::cout << "Running threshold\n";
-  itkImage = sv4guiImageProcessingUtils::connectedThreshold(itkImage, lowerThreshold, upperThreshold, insideValue, seedVec);
 
   std::cout << "Storing image\n";
   storeImage(itkImage);
@@ -943,24 +864,5 @@ void sv4guiImageProcessing::runIsovalue(){
   auto itkImage = getItkImage(0);
   vtkSmartPointer<vtkImageData> vtkImage = sv4guiImageProcessingUtils::itkImageToVtkImage(itkImage);
   vtkSmartPointer<vtkPolyData> vtkPd     = sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue);
-  storePolyData(vtkPd);
-}
-
-void sv4guiImageProcessing::runSeedIsovalue(){
-  std::cout << "Extracting IsoValue\n";
-  double isovalue =
-    std::stod(ui->seedMarchingCubesLineEdit->text().toStdString());
-
-  int startSeeds = m_SeedContainer->getNumStartSeeds();
-  if (startSeeds == 0) return;
-
-  auto v_start = m_SeedContainer->getStartSeed(0);
-
-  auto itkImage = getItkImage(0);
-
-  vtkSmartPointer<vtkImageData> vtkImage = sv4guiImageProcessingUtils::itkImageToVtkImage(itkImage);
-  vtkSmartPointer<vtkPolyData> vtkPd     = sv4guiImageProcessingUtils::seedMarchingCubes(vtkImage, isovalue,
-    v_start[0], v_start[1], v_start[2]);
-
   storePolyData(vtkPd);
 }
