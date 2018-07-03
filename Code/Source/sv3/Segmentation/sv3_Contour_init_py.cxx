@@ -794,7 +794,7 @@ PyObject* Contour_GetPolyDataCmd(pyContour* self, PyObject* args)
     }
   
     Contour* geom = self->geom;
-    if ( contour==NULL ) {
+    if ( geom==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
         return Py_ERROR;
     }

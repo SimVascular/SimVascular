@@ -398,7 +398,6 @@ int PythonShell_Init(int argc, char *argv[])
     Py_Initialize();
 #endif
 
-   //PyImport_ImportModule("pyRepository");
   // Initialize python thread support. This function should first be
   // called from the main thread, after Py_Initialize.
 //#ifndef VTK_NO_PYTHON_THREADS
