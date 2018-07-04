@@ -101,34 +101,24 @@ vtkSmartPointer<vtkImageData> sv4guiImageProcessingUtils::itkImageToVtkImage(sv4
   return vtkImage;
 }
 
-vtkSmartPointer<vtkPolyData> sv4guiImageProcessingUtils::marchingCubes(vtkImageData* imageData, double isovalue){
+vtkSmartPointer<vtkPolyData> sv4guiImageProcessingUtils::marchingCubes(vtkImageData* imageData, double isovalue, bool largest_cc){
   auto MC = vtkSmartPointer<vtkMarchingCubes>::New();
   MC->SetInputData(imageData);
   MC->SetValue(0,isovalue);
   MC->Update();
 
-  // auto cellLocator = vtkSmartPointer<vtkCellLocator>::New();
-  // cellLocator->SetDataSet(MC->GetOutput());
-  // cellLocator->BuildLocator();
-  //
-  // double testPoint[3] = {px, py, pz};
-  // double closestPointDistance;
-  // double closestPoint[3];
-  // vtkIdType cellId;
-  // int subId;
-  //
-  // cellLocator->FindClosestPoint(testPoint, closestPoint, cellId, subId, closestPointDistance);
-  //
-  // vtkSmartPointer<vtkPolyDataConnectivityFilter> polyDataConnectivityFilter
-  // = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-  // polyDataConnectivityFilter->SetExtractionModeToCellSeededRegions();
-  // polyDataConnectivityFilter->SetInputData(MC->GetOutput());
-  // polyDataConnectivityFilter->InitializeSeedList();
-  // polyDataConnectivityFilter->AddSeed(cellId);
-  // polyDataConnectivityFilter->Update();
+  if (!largest_cc){
+    auto pd = MC->GetOutput();
+    return pd;
+  }else{
+    vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter =
+      vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+    connectivityFilter->SetInputConnection(MC->GetOutputPort());
+    connectivityFilter->SetExtractionModeToLargestRegion();
+    connectivityFilter->Update();
+    return connectivityFilter->GetOutput();
+  }
 
-  auto pd = MC->GetOutput();
-  return pd;
 }
 
 vtkSmartPointer<vtkPolyData> sv4guiImageProcessingUtils::seedMarchingCubes(vtkImageData* imageData, double isovalue,

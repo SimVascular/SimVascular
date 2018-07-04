@@ -63,7 +63,8 @@ public:
     static itkImPoint vtkImageToItkImage(vtkImageData* imageData);
     static vtkSmartPointer<vtkImageData> itkImageToVtkImage(itkImPoint image);
 
-    static vtkSmartPointer<vtkPolyData> marchingCubes(vtkImageData* imageData, double isovalue);
+    static vtkSmartPointer<vtkPolyData> marchingCubes(vtkImageData* imageData, double isovalue,
+      bool largest_cc);
 
     static vtkSmartPointer<vtkPolyData> seedMarchingCubes(vtkImageData* imageData, double isovalue,
     double px, double py, double pz);
