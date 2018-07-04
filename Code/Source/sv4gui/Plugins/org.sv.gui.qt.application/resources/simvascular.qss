@@ -1,7 +1,38 @@
 /*
-  iconColor       = #0066ff <- This line is parsed by MITK
+  iconColor       = #0047b3 <- This line is parsed by MITK
   iconAccentColor = #ffffff <- This line is parsed by MITK
 */
+
+QMenuBar {
+    background: 1px solid #e6f2ff;
+}
+
+QMenuBar::item {
+    background: 1px solid #e6f2ff;
+}
+
+QMenuBar::item:selected { /* when selected using mouse or keyboard */
+    background: #00ccff;
+}
+
+QMenuBar::item:pressed {
+    background: #00ccff;
+}
+
+QMenu {
+    background-color: #e6f2ff; /* sets background of the menu */
+    border: 1px solid black;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+    background-color: transparent;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #00ccff;
+}
 
 berry--QCTabBar::tab {
     background: palette(window);
@@ -69,7 +100,7 @@ QToolBox::tab:selected {
 }
 
 QMainWindow {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffcccc, stop:1 #00ccff);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffcccc, stop:1 #99ddff);
 }
 
 QWidget#svPluginEditWindow {
@@ -101,3 +132,4 @@ QToolBar {
     border-bottom-right-radius: 8px;
     background: 1px solid #e6f2ff;
 }
+
