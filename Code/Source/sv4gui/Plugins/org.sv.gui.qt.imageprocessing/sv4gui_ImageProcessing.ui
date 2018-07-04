@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>458</width>
-    <height>884</height>
+    <height>917</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -101,7 +101,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>131</height>
+           <height>108</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -174,54 +174,40 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="1">
-       <widget class="QLabel" name="inputLabel2">
-        <property name="text">
-         <string>Edge Image</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="imaeNameLabel">
-        <property name="text">
-         <string>New Image Name</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
        <widget class="QLabel" name="inputLabel1">
         <property name="text">
          <string>Input image</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLineEdit" name="imageNameLineEdit">
+      <item>
+       <widget class="QComboBox" name="inputImageComboBox"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="inputLabel2">
         <property name="text">
-         <string>new_image</string>
+         <string>Edge Image</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item>
+       <widget class="QComboBox" name="edgeImageComboBox"/>
+      </item>
+      <item>
        <widget class="QLabel" name="label">
         <property name="text">
          <string>Seed Radius</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item>
        <widget class="QLineEdit" name="seedLineEdit">
         <property name="text">
          <string>0.5</string>
         </property>
        </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QComboBox" name="inputImageComboBox"/>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="edgeImageComboBox"/>
       </item>
      </layout>
     </widget>
@@ -268,7 +254,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="pipelinesPage">
          <property name="geometry">
@@ -529,8 +515,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>422</width>
-           <height>335</height>
+           <width>100</width>
+           <height>30</height>
           </rect>
          </property>
          <attribute name="label">
@@ -553,8 +539,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>128</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -602,8 +588,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>128</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -872,8 +858,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>422</width>
-           <height>335</height>
+           <width>100</width>
+           <height>30</height>
           </rect>
          </property>
          <attribute name="label">
@@ -896,8 +882,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>148</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -945,8 +931,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>148</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1173,8 +1159,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>135</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1245,8 +1231,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>135</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1363,8 +1349,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>135</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1435,8 +1421,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>135</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1506,8 +1492,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
-             <height>135</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">

@@ -83,7 +83,6 @@ public:
 public slots:
 
     //display
-    void tabSelected();
     void seedSize();
     void displayGuide(bool state);
     void displaySeeds(bool state);
@@ -95,15 +94,11 @@ public slots:
     void pipelinesTabSelected();
 
     //run buttons
-    void runSeedIsovalue();
-
     void runFullCollidingFronts();
 
     void runThreshold();
 
     void runBinaryThreshold();
-
-    void runConnectedThreshold();
 
     void runCollidingFronts();
 
@@ -117,15 +112,11 @@ public slots:
 
     void runZeroLevel();
 
-    void runOpenClose();
-
     void runSmoothing();
 
     void runAnisotropic();
 
     void runIsovalue();
-
-    void runFillHoles();
 
     void runGeodesicLevelSet();
 

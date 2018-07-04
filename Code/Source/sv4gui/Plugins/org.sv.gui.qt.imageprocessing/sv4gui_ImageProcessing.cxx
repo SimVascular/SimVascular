@@ -54,6 +54,7 @@
 #include <usModule.h>
 #include <usModuleContext.h>
 #include <QInputDialog>
+#include <QMessageBox>
 
 const QString sv4guiImageProcessing::EXTENSION_ID = "org.sv.views.imageprocessing";
 
@@ -355,7 +356,10 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessing::getItkImage(int in
 }
 
 void sv4guiImageProcessing::storeImage(sv4guiImageProcessingUtils::itkImPoint image){
-  std::string new_image_name = ui->imageNameLineEdit->text().toStdString();
+  bool ok;
+  QString new_image_name = QInputDialog::getText(m_Parent, tr("New Image Name"),
+                                       tr("Enter a name for the new image"), QLineEdit::Normal,
+                                       "", &ok);
 
   mitk::DataNode::Pointer image_folder_node = GetDataStorage()->GetNamedNode("Images");
 
@@ -364,27 +368,20 @@ void sv4guiImageProcessing::storeImage(sv4guiImageProcessingUtils::itkImPoint im
     return;
   }
 
-  mitk::DataNode::Pointer newImageNode = GetDataStorage()->GetNamedNode(new_image_name);
-  bool exists = false;
+  mitk::DataNode::Pointer newImageNode =
+    GetDataStorage()->GetNamedNode(new_image_name.toStdString());
+
   if (newImageNode){
-    exists = true;
-    bool ok;
-    QString text = QInputDialog::getText(m_Parent, tr("Overwriting image"),
-                                         tr("You are about to overwrite image, if not ok enter new name"), QLineEdit::Normal,
-                                         "", &ok);
-    if (!ok){
-      return;
-    }else if (!(text.trimmed().isEmpty())) {
-      newImageNode = mitk::DataNode::New();
-      new_image_name = text.toStdString();
-      exists = false;
-    }
-  }else{
-    newImageNode = mitk::DataNode::New();
+    QMessageBox::warning(NULL,"Image Already exists","Please use a different image name!");
+    return;
+  }
+  if(!ok){
+    return;
   }
 
-  std::cout << new_image_name << "\n";
-  newImageNode->SetName(new_image_name);
+  newImageNode = mitk::DataNode::New();
+
+  newImageNode->SetName(new_image_name.toStdString());
 
   mitk::Image::Pointer mitkImage;
 
@@ -396,13 +393,16 @@ void sv4guiImageProcessing::storeImage(sv4guiImageProcessingUtils::itkImPoint im
   newImageNode->SetData(mitkImage);
 
   std::cout << "Adding node\n";
-  if (!exists) addNode(newImageNode, image_folder_node);
+  addNode(newImageNode, image_folder_node);
 
   UpdateImageList();
 }
 
 void sv4guiImageProcessing::storePolyData(vtkSmartPointer<vtkPolyData> vtkPd){
-  std::string new_polydata_name = ui->imageNameLineEdit->text().toStdString();
+  bool ok;
+  QString new_polydata_name = QInputDialog::getText(m_Parent, tr("New 3D Segmentation Name"),
+                                       tr("Enter a name for the new 3D Segmentation"), QLineEdit::Normal,
+                                       "", &ok);
 
   mitk::DataNode::Pointer polydata_folder_node = GetDataStorage()->GetNamedNode("Segmentations");
 
@@ -410,9 +410,21 @@ void sv4guiImageProcessing::storePolyData(vtkSmartPointer<vtkPolyData> vtkPd){
     MITK_ERROR << "No image folder found\n";
     return;
   }
-  auto newPdNode = mitk::DataNode::New();
-  std::cout << new_polydata_name << "\n";
-  newPdNode->SetName(new_polydata_name);
+
+  mitk::DataNode::Pointer newPdNode =
+    GetDataStorage()->GetNamedNode(new_polydata_name.toStdString());
+
+  if (newPdNode){
+    QMessageBox::warning(NULL,"Segmentation Already exists","Please use a different segmentation name!");
+    return;
+  }
+  if(!ok){
+    return;
+  }
+
+  newPdNode = mitk::DataNode::New();
+
+  newPdNode->SetName(new_polydata_name.toStdString());
 
   sv4guiSeg3D* newSeg3D = new sv4guiSeg3D();
   newSeg3D->SetVtkPolyData(vtkPd);
@@ -469,6 +481,31 @@ void sv4guiImageProcessing::UpdateImageList(){
       ui->edgeImageComboBox->addItem(Node->GetName().c_str());
     }
   }
+}
+
+void sv4guiImageProcessing::runGeodesicLevelSet(){
+
+  double propagation =
+    std::stod(ui->propagationLineEdit->text().toStdString());
+  double advection =
+    std::stod(ui->advectionLineEdit->text().toStdString());
+  double curvature =
+    std::stod(ui->curvatureLineEdit->text().toStdString());
+  double iterations =
+    std::stod(ui->iterationsLineEdit->text().toStdString());
+
+  sv4guiImageProcessingUtils::itkImPoint initialization = getItkImage(0);
+  sv4guiImageProcessingUtils::itkImPoint edgeImage = getItkImage(1);
+
+  if (!initialization || !edgeImage){
+    MITK_ERROR << "No image 1 or 2 selected, please select an image 1\n";
+    return;
+  }
+
+  auto itkImage = sv4guiImageProcessingUtils::geodesicLevelSet(initialization, edgeImage, propagation, advection, curvature, iterations);
+
+  std::cout << "Storing image\n";
+  storeImage(itkImage);
 }
 
 void sv4guiImageProcessing::runThreshold(){
