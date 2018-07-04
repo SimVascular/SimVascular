@@ -54,7 +54,7 @@ extern "C" SV_EXPORT_TETGEN_ADAPTOR PyObject* Tetgenadapt_pyInit();
 PyMODINIT_FUNC  initpyTetGenAdapt();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_TETGEN_ADAPTOR PyMODINIT_FUNC  PyInit_pyTetGenAdapt();
+PyMODINIT_FUNC  PyInit_pyTetGenAdapt();
 #endif
 
 #endif // __CVTETGENADAPT_INIT_H

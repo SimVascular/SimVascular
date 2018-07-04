@@ -48,7 +48,7 @@ extern "C" SV_EXPORT_SEGITK int Itklset_pyInit();
 PyMODINIT_FUNC  initpyItkls();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SEGITK PyMODINIT_FUNC  PyInit_pyItkls();
+PyMODINIT_FUNC  PyInit_pyItkls();
 #endif
 
 #endif /* CV_ITKLSET_INIT_PY_H_ */

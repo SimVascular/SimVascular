@@ -34,8 +34,8 @@
 
 #include "SimVascular.h"
 
-extern "C" SV_DLL_EXPORT void SimVascular_pyInit();
+extern "C" void SimVascular_pyInit();
 
-extern "C" SV_DLL_EXPORT void SimVascular_pyImport();
+extern "C" void SimVascular_pyImport();
 
 #endif // __SIMVASCULAR_INIT_PY_H

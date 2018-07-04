@@ -42,7 +42,7 @@ extern "C" SV_EXPORT_UTILS int Math_pyInit( );
 PyMODINIT_FUNC  initpyMath();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_UTILS PyMODINIT_FUNC  PyInit_pyMath();
+PyMODINIT_FUNC  PyInit_pyMath();
 #endif
 
 #endif // __CVMATH_INIT_PY_H

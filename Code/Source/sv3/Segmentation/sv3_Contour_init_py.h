@@ -55,7 +55,7 @@ extern "C" SV_EXPORT_SEGMENTATION typedef struct
 PyMODINIT_FUNC  initpyContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pyContour();
+PyMODINIT_FUNC  PyInit_pyContour();
 #endif
 
 #endif //__SV3_CONTOUR_INIT_PY_H

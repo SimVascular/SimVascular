@@ -49,7 +49,7 @@ extern "C" SV_EXPORT_MESH typedef struct
 PyMODINIT_FUNC  initpyMeshObject();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_MESH PyMODINIT_FUNC  PyInit_pyMeshObject();
+PyMODINIT_FUNC  PyInit_pyMeshObject();
 #endif
 
 #endif // __CVMESH_INIT_PY_H

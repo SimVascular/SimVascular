@@ -40,7 +40,7 @@
 PyMODINIT_FUNC  initpyCircleContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pyCircleContour();
+PyMODINIT_FUNC  PyInit_pyCircleContour();
 #endif
 
 #endif //__SV3_CIRCLECONTOUR_INIT_PY_H
