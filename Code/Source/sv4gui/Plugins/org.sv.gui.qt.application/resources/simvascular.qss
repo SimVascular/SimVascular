@@ -1,6 +1,6 @@
 /*
   iconColor       = #0066ff <- This line is parsed by MITK
-  iconAccentColor = #000000 <- This line is parsed by MITK
+  iconAccentColor = #ffffff <- This line is parsed by MITK
 */
 
 berry--QCTabBar::tab {
@@ -16,6 +16,7 @@ berry--QCTabBar::tab {
 berry--QCTabBar::tab:only-one {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+    background-color: #e6f2ff;
     min-height: 25px;
     margin-left: -1px
 }
@@ -54,8 +55,21 @@ berry--QCTabBar QToolButton#TabCloseButton
     background: none;
 }
 
+QToolBox::tab {
+  border: 1px solid #3f3f46;
+}
+
+QToolBox::tab:hover {
+  background-color: #434346;
+}
+
+QToolBox::tab:selected {
+  background-color: #1c97ea;
+  border: 1px solid #1c97ea;
+}
+
 QMainWindow {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffcccc, stop:1  #00ccff);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffcccc, stop:1 #00ccff);
 }
 
 QWidget#svPluginEditWindow {
@@ -79,4 +93,11 @@ QWidget#StandaloneViewForm {
 
 QWidget#PageCompositeControlWidget {
     margin: 3px;
+}
+
+QToolBar {
+    border: 1px solid #3f3f46;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    background: 1px solid #e6f2ff;
 }
