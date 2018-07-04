@@ -43,7 +43,7 @@
 
 #include "svSegITKExports.h" // For exports
 
-extern "C" SV_EXPORT_SEGITK PyObject* Itkutils_pyInit();
+extern "C" PyObject* Itkutils_pyInit();
 
 
 #endif /* CV_ITKUTILS_INIT_PY_H_ */

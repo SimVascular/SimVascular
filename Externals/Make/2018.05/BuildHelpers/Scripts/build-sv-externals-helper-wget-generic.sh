@@ -126,8 +126,8 @@ if [[ $SV_SUPER_OPTIONS == *WGET_OPENCASCADE* ]]; then
   rm -Rf opencascade
   mkdir -p opencascade
   pushd opencascade
-  wget $PARENT_URL/opencascade/opencascade-7.2.0.tgz
-#  wget $PARENT_URL/opencascade/Release_Notes_7.2.0.pdf
+  wget $PARENT_URL/opencascade/opencascade-7.3.0.tgz
+#  wget $PARENT_URL/opencascade/Release_Notes_7.3.0.pdf
   popd
 fi
 

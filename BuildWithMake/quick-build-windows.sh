@@ -76,7 +76,7 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
   wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.13.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2018.04.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.3.9.tar.gz
-  wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.2.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.3.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.python.3.5.5.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.6.3.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz

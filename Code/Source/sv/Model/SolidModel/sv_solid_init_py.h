@@ -50,7 +50,7 @@ extern "C" SV_EXPORT_SOLID typedef struct
 PyMODINIT_FUNC  initpySolid2();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SOLID PyMODINIT_FUNC  PyInit_pySolid2();
+PyMODINIT_FUNC  PyInit_pySolid2();
 #endif
 
 #endif // __CVSOLID_INIT_H

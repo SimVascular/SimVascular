@@ -42,6 +42,6 @@
 #include "Python.h"
 #include "svSegITKExports.h" // For exports
 
-extern "C" SV_EXPORT_SEGITK PyObject* Itkls2d_pyInit();
+extern "C" PyObject* Itkls2d_pyInit();
 
 #endif /* CV_ITKLSET2D_INIT_H_ */

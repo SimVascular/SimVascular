@@ -42,7 +42,7 @@ extern "C" SV_EXPORT_VMTK_UTILS int Vmtkutils_pyInit();
 PyMODINIT_FUNC  initpyVMTKUtils();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_VMTK_UTILS PyMODINIT_FUNC  PyInit_pyVMTKUtils();
+PyMODINIT_FUNC  PyInit_pyVMTKUtils();
 #endif
 
 #endif // __CVVMTK_UTILS_INIT_H

@@ -40,7 +40,7 @@
 PyMODINIT_FUNC  initpyThresholdContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pyThresholdContour();
+PyMODINIT_FUNC  PyInit_pyThresholdContour();
 #endif
 
 #endif //__SV3_THRESHOLDCONTOUR_INIT_PY_H
