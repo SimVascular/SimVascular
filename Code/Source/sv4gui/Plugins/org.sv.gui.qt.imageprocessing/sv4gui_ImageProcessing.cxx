@@ -179,7 +179,7 @@ void sv4guiImageProcessing::displayGuide(bool state){
 * Display Buttons
 ********************************************************/
 void sv4guiImageProcessing::imageEditingTabSelected(){
-  ui->inputList2->setEnabled(false);
+  ui->edgeImageComboBox->setEnabled(false);
 
   switch(ui->imageEditingToolbox->currentIndex()){
     case 0:
@@ -207,7 +207,7 @@ void sv4guiImageProcessing::imageEditingTabSelected(){
 }
 
 void sv4guiImageProcessing::filteringTabSelected(){
-  ui->inputList2->setEnabled(false);
+  ui->edgeImageComboBox->setEnabled(false);
   m_SeedMapper->m_box = false;
 
   switch(ui->filteringToolbox->currentIndex()){
@@ -233,10 +233,10 @@ void sv4guiImageProcessing::filteringTabSelected(){
 }
 
 void sv4guiImageProcessing::segmentationTabSelected(){
-  ui->inputList2->setEnabled(true);
+  ui->edgeImageComboBox->setEnabled(true);
   m_SeedMapper->m_box = false;
 
-  switch(ui->filteringToolbox->currentIndex()){
+  switch(ui->segmentationToolbox->currentIndex()){
       case 0:
           ui->helpLabel->setText("Zero Level:\n"
           "Multiply image by -1 and add isovalue\n"
@@ -262,13 +262,20 @@ void sv4guiImageProcessing::segmentationTabSelected(){
           "Extract an isosurface based on an isovalue\n"
           "Will created a 3D segmentation object in the segmentations folder");
           break;
+      case 5:
+        ui->helpLabel->setText("Level Set:\n"
+          "Extract a segmentation based on a supplied initial level set and edge image (all scaling parameters should be between 0 and 1)\n"
+          "Propagation scaling: The balloon force, pushes front outwards\n"
+          "Advection scaling: Attracts front to edges\n"
+          "curvature scaling: Smooths and shrinks front\n");
+          break;
   }
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
 }
 
 void sv4guiImageProcessing::pipelinesTabSelected(){
-  ui->inputList2->setEnabled(false);
+  ui->edgeImageComboBox->setEnabled(false);
   m_SeedMapper->m_box = false;
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
@@ -291,19 +298,19 @@ void sv4guiImageProcessing::OnSelectionChanged(std::vector<mitk::DataNode*> node
 }
 
 std::string sv4guiImageProcessing::getImageName(int imageIndex){
-  QListWidgetItem* imageName;
+  QString imageName;
   if (imageIndex == 0){
-    imageName = ui->inputList1->currentItem();
+    imageName = ui->inputImageComboBox->currentText();
   }else if (imageIndex == 1){
-    imageName = ui->inputList2->currentItem();
+    imageName = ui->edgeImageComboBox->currentText();
   }
 
-  if (!imageName){
+  if (imageName.length() == 0){
     MITK_ERROR << "No image "<< imageIndex <<" selected, please select an image" << std::endl;
     return "";
   }
 
-  std::string image_str = imageName->text().toStdString();
+  std::string image_str = imageName.toStdString();
   return image_str;
 }
 
@@ -451,15 +458,15 @@ void sv4guiImageProcessing::UpdateImageList(){
     std::cout << "No images found, cannot create mask\n";
     return ;
   }
-  ui->inputList1->clear();
-  ui->inputList2->clear();
+  ui->inputImageComboBox->clear();
+  ui->edgeImageComboBox->clear();
 
   for (int i = 0; i < rs->size(); i++){
     mitk::DataNode::Pointer Node=rs->GetElement(i);
     std::cout << i << ": " << Node->GetName() << "\n";
     if ((Node->GetName() != "seeds")){
-      ui->inputList1->addItem(Node->GetName().c_str());
-      ui->inputList2->addItem(Node->GetName().c_str());
+      ui->inputImageComboBox->addItem(Node->GetName().c_str());
+      ui->edgeImageComboBox->addItem(Node->GetName().c_str());
     }
   }
 }
@@ -737,7 +744,7 @@ void sv4guiImageProcessing::runFullCollidingFronts(){
   vtkSmartPointer<vtkImageData> vtkImage =
     sv4guiImageProcessingUtils::itkImageToVtkImage(lsImage);
   vtkSmartPointer<vtkPolyData> vtkPd     =
-    sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue);
+    sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue, false);
   storePolyData(vtkPd);
 }
 
@@ -849,8 +856,11 @@ void sv4guiImageProcessing::runIsovalue(){
   double isovalue =
     std::stod(ui->marchingCubesLineEdit->text().toStdString());
 
+  bool largest_cc = ui->isoCheckBox->isChecked();
+
   auto itkImage = getItkImage(0);
   vtkSmartPointer<vtkImageData> vtkImage = sv4guiImageProcessingUtils::itkImageToVtkImage(itkImage);
-  vtkSmartPointer<vtkPolyData> vtkPd     = sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue);
+
+  vtkSmartPointer<vtkPolyData> vtkPd     = sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue, largest_cc);
   storePolyData(vtkPd);
 }

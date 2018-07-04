@@ -101,7 +101,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>107</height>
+           <height>131</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -182,15 +182,12 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="imaeNameLabel">
         <property name="text">
          <string>New Image Name</string>
         </property>
        </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QListWidget" name="inputList2"/>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="inputLabel1">
@@ -199,29 +196,32 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QListWidget" name="inputList1"/>
-      </item>
-      <item row="4" column="0">
+      <item row="3" column="0">
        <widget class="QLineEdit" name="imageNameLineEdit">
         <property name="text">
          <string>new_image</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="2" column="1">
        <widget class="QLabel" name="label">
         <property name="text">
          <string>Seed Radius</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="3" column="1">
        <widget class="QLineEdit" name="seedLineEdit">
         <property name="text">
          <string>0.5</string>
         </property>
        </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QComboBox" name="inputImageComboBox"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="edgeImageComboBox"/>
       </item>
      </layout>
     </widget>
@@ -498,14 +498,14 @@
            <widget class="QPushButton" name="fullCFButton">
             <property name="geometry">
              <rect>
-              <x>280</x>
+              <x>228</x>
               <y>180</y>
-              <width>99</width>
+              <width>151</width>
               <height>27</height>
              </rect>
             </property>
             <property name="text">
-             <string>Run</string>
+             <string>Run colliding fronts</string>
             </property>
            </widget>
            <widget class="QLabel" name="fullCFUpperThresholdLabel">
@@ -546,7 +546,7 @@
            </rect>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="imageEditingPage">
            <property name="geometry">
@@ -889,7 +889,7 @@
            </rect>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="smoothingPage">
            <property name="geometry">
@@ -1461,14 +1461,14 @@
            <widget class="QPushButton" name="marchingCubesButton">
             <property name="geometry">
              <rect>
-              <x>240</x>
+              <x>228</x>
               <y>50</y>
-              <width>99</width>
+              <width>111</width>
               <height>27</height>
              </rect>
             </property>
             <property name="text">
-             <string>isosurface</string>
+             <string>run isosurface</string>
             </property>
            </widget>
            <widget class="QLabel" name="newPolydataLabel_2">
@@ -1482,6 +1482,22 @@
             </property>
             <property name="text">
              <string>IsoValue</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="isoCheckBox">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>90</y>
+              <width>221</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>largest connect component</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </widget>
