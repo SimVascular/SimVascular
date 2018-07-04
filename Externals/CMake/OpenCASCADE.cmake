@@ -97,6 +97,13 @@ if(SV_EXTERNALS_ENABLE_VTK)
   endif()
 endif()
 
+if(APPLE)
+  if(SV_EXTERNALS_${proj}_VERSION VERSION_EQUAL "7.3.0")
+    set(SV_EXTERNALS_${proj}_CUSTOM_PATCH ${SV_EXTERNALS_${proj}_CUSTOM_PATCH}
+      COMMAND patch -N -p1 -i ${SV_EXTERNALS_SOURCE_DIR}/Patches/2018.05/patch-opencascade-7.3.0-macos.patch)
+  endif()
+endif()
+
 # Add external project
 if(SV_EXTERNALS_DOWNLOAD_${proj})
   ExternalProject_Add(${proj}
