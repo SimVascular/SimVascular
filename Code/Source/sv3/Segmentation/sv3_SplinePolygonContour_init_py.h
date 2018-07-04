@@ -40,7 +40,7 @@
 PyMODINIT_FUNC  initpySplinePolygonContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pySplinePolygonContour();
+PyMODINIT_FUNC  PyInit_pySplinePolygonContour();
 #endif
 
 #endif //__SV3_SPLINEPOLYGONCONTOUR_INIT_PY_H

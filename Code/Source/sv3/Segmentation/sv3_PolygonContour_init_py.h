@@ -40,7 +40,7 @@
 PyMODINIT_FUNC  initpyPolygonContour();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_SEGMENTATION PyMODINIT_FUNC  PyInit_pyPolygonContour();
+PyMODINIT_FUNC  PyInit_pyPolygonContour();
 #endif
 
 #endif //__SV3_POLYGONCONTOUR_INIT_PY_H

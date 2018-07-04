@@ -53,7 +53,7 @@ extern "C" SV_EXPORT_TETGEN_MESH PyObject* Tetgenmesh_pyInit();
 PyMODINIT_FUNC  initpyMeshTetgen();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_TETGEN_MESH PyMODINIT_FUNC  PyInit_pyMeshTetgen();
+PyMODINIT_FUNC  PyInit_pyMeshTetgen();
 #endif
 //#endif
 #endif // __Tetgenmesh_Init

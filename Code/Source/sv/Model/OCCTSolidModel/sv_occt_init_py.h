@@ -53,7 +53,7 @@ extern "C" SV_EXPORT_OPENCASCADE PyObject* Occtsolid_pyInit();
 PyMODINIT_FUNC  initpySolidOCCT();
 #endif
 #if PYTHON_MAJOR_VERSION == 3
-SV_EXPORT_OPENCASCADE PyMODINIT_FUNC  PyInit_pySolidOCCT();
+PyMODINIT_FUNC  PyInit_pySolidOCCT();
 #endif
 
 #endif // __CV_OCCT_INIT_H
