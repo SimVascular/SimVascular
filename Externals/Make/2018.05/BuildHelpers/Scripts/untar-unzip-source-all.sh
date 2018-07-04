@@ -116,10 +116,10 @@ fi
 # opencascade
 if [[ $SV_SUPER_OPTIONS == *UNTAR_OPENCASCADE* ]]; then
   echo "UNTAR_OPENCASCADE"
-  rm -Rf ../opencascade-7.2.0
-  tar xvf Originals/opencascade/opencascade-7.2.0.tgz
-  mv opencascade-7.2.0 ..
-  pushd ../opencascade-7.2.0
+  rm -Rf ../opencascade-7.3.0
+  tar xvf Originals/opencascade/opencascade-7.3.0.tgz
+  mv opencascade-7.3.0 ..
+  pushd ../opencascade-7.3.0
   patch -p1 < ../BuildHelpers/Patches/2018.05/patch-opencascade-vtk-greater-8.0.patch
   popd
 fi
