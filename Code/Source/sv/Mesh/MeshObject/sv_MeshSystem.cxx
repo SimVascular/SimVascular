@@ -71,10 +71,10 @@ int cvMeshSystem::SetCurrentKernel(cvMeshObject::KernelType kernel_type)
         return SV_OK;
 
     case cvMeshObject::KERNEL_TETGEN:
-    {
+    
         gCurrentKernel = cvMeshObject::KERNEL_TETGEN;
         return SV_OK;
-    }
+    
     default:
       return SV_ERROR;
   }

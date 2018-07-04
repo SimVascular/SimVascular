@@ -78,8 +78,8 @@ PyObject* TetGenAdapt_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* TetGenAdapt_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef TetGenAdapt_methods[] = {
-  {"tetgenadapt_available", TetGenAdapt_AvailableCmd,METH_NOARGS,NULL},
-  {"tetgenadapt_registrars", TetGenAdapt_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", TetGenAdapt_AvailableCmd,METH_NOARGS,NULL},
+  {"Registrars", TetGenAdapt_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 

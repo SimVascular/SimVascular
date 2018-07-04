@@ -86,8 +86,8 @@ PyObject* PolyDataSolid_AvailableCmd(PyObject* self, PyObject* args);
 PyObject* PolyDataSolid_RegistrarsListCmd( PyObject* self, PyObject* args);
 
 PyMethodDef SolidPolydata_methods[] = {
-  {"polydata_available", PolyDataSolid_AvailableCmd,METH_NOARGS,NULL},
-  {"polydatasolid_registrars", PolyDataSolid_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", PolyDataSolid_AvailableCmd,METH_NOARGS,NULL},
+  {"Registrars", PolyDataSolid_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 

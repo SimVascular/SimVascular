@@ -71,8 +71,8 @@ PyObject* splinePolygonContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* splinePolygonContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef splinePolygonContour_methods[] = {
-  {"splinePolygonContour_available", splinePolygonContour_AvailableCmd,METH_NOARGS,NULL},
-  {"splinePolygonContour_registrars", splinePolygonContour_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", splinePolygonContour_AvailableCmd,METH_NOARGS,NULL},
+  {"Registrars", splinePolygonContour_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 

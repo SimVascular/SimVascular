@@ -72,7 +72,7 @@ PyMODINIT_FUNC PyInit_pyMeshTetgen();
 #endif
 PyMethodDef MeshTetgen_methods[]=
 {
-  {"meshtetgen_available",TetGenMesh_AvailableCmd,METH_NOARGS,NULL},
+  {"Available",TetGenMesh_AvailableCmd,METH_NOARGS,NULL},
   {NULL,NULL}
 };
 

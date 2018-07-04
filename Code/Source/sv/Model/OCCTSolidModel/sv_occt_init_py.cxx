@@ -106,8 +106,8 @@ double *getArrayFromDoubleList(PyObject* listObj,int &len);
 double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny);
 
 PyMethodDef SolidOCCT_methods[] = {
-  {"opencascade_available", OCCTSolidModel_AvailableCmd,METH_NOARGS,NULL},
-  {"opencascadesolidmodel_registrars", OCCTSolidModel_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", OCCTSolidModel_AvailableCmd,METH_NOARGS,NULL},
+  {"Registrars", OCCTSolidModel_RegistrarsListCmd,METH_NOARGS,NULL},
   {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
   {NULL, NULL}
 };

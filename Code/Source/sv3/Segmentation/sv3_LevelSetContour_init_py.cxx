@@ -72,8 +72,8 @@ PyObject* levelSetContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* levelSetContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef levelSetContour_methods[] = {
-  {"lscontour_available", levelSetContour_AvailableCmd,METH_NOARGS,NULL},
-  {"lscontour_registrars", levelSetContour_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", levelSetContour_AvailableCmd,METH_NOARGS,NULL},
+  {"Registrars", levelSetContour_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 

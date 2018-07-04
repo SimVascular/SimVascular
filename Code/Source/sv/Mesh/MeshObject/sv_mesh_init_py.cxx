@@ -143,8 +143,8 @@ static int pyMeshObject_init(pyMeshObject* self, PyObject* args)
 //{NULL}
 //};
 static PyMethodDef pyMeshObject_methods[]={
-  {"mesh_newObject", (PyCFunction)cvMesh_NewObjectCmd,METH_VARARGS,NULL},
-  {"mesh_getMesh", (PyCFunction)cvMesh_GetObjectCmd, METH_VARARGS, NULL},
+  {"NewObject", (PyCFunction)cvMesh_NewObjectCmd,METH_VARARGS,NULL},
+  {"GetMesh", (PyCFunction)cvMesh_GetObjectCmd, METH_VARARGS, NULL},
   { "LoadModel", (PyCFunction)cvMesh_LoadModelMtd,METH_VARARGS,NULL},
   { "GetBoundaryFaces",(PyCFunction)cvMesh_GetBoundaryFacesMtd,METH_VARARGS,NULL},
   { "LoadMesh", (PyCFunction)cvMesh_LoadMeshMtd,METH_VARARGS,NULL},
@@ -222,10 +222,10 @@ static PyTypeObject pyMeshObjectType = {
 static PyMethodDef pyMeshObjectModule_methods[] =
 {
   //{"mesh_newObject", (PyCFunction)cvMesh_NewObjectCmd,METH_VARARGS,NULL},
-  {"mesh_listMethods",(PyCFunction)cvMesh_ListMethodsCmd,METH_NOARGS,NULL},
-  {"mesh_setKernel", (PyCFunction)cvMesh_SetMeshKernelCmd,METH_VARARGS,NULL},
-  {"mesh_logon", (PyCFunction)cvMesh_LogonCmd,METH_VARARGS,NULL},
-  {"mesh_logoff", (PyCFunction)cvMesh_LogoffCmd,METH_NOARGS,NULL},
+  {"ListMethods",(PyCFunction)cvMesh_ListMethodsCmd,METH_NOARGS,NULL},
+  {"SetKernel", (PyCFunction)cvMesh_SetMeshKernelCmd,METH_VARARGS,NULL},
+  {"Logon", (PyCFunction)cvMesh_LogonCmd,METH_VARARGS,NULL},
+  {"Logoff", (PyCFunction)cvMesh_LogoffCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 

@@ -71,8 +71,8 @@ PyObject* polygonContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* polygonContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef polygonContour_methods[] = {
-  {"polygoncontour_available", polygonContour_AvailableCmd,METH_NOARGS,NULL},
-  {"polygoncontour_registrars", polygonContour_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", polygonContour_AvailableCmd,METH_NOARGS,NULL},
+  {"Registrars", polygonContour_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 

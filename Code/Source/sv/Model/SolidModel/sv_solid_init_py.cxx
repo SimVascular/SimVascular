@@ -68,17 +68,17 @@
 
 //Python intialization functions. Called from python interpreter
 #if PYTHON_MAJOR_VERSION == 2
-PyMODINIT_FUNC initpySolid2(void);
+PyMODINIT_FUNC initpySolid(void);
 #elif PYTHON_MAJOR_VERSION == 3
-PyMODINIT_FUNC PyInit_pySolid2(void);
+PyMODINIT_FUNC PyInit_pySolid(void);
 #endif
 int Solid_pyInit()
 {
   //Py_Initialize();
 #if PYTHON_MAJOR_VERSION == 2
- initpySolid2();
+ initpySolid();
 #elif PYTHON_MAJOR_VERSION == 3
- PyInit_pySolid2();
+ PyInit_pySolid();
 #endif
   return Py_OK;
 }
@@ -274,60 +274,60 @@ static PyMemberDef pySolidModel_members[]={
 // pySolid_methods
 // --------------------
 static PyMethodDef pySolidModel_methods[]={
-  { "solid_getModel", (PyCFunction)Solid_GetModelCmd, METH_VARARGS, NULL},
-  { "solid_poly",(PyCFunction) Solid_PolyCmd,
+  { "GetModel", (PyCFunction)Solid_GetModelCmd, METH_VARARGS, NULL},
+  { "Poly",(PyCFunction) Solid_PolyCmd,
 		     METH_VARARGS,NULL},
-  { "solid_polyPts", (PyCFunction)Solid_PolyPtsCmd,
+  { "PolyPts", (PyCFunction)Solid_PolyPtsCmd,
 		     METH_VARARGS,NULL},
-  { "solid_circle", (PyCFunction)Solid_CircleCmd,
+  { "Circle", (PyCFunction)Solid_CircleCmd,
 		     METH_VARARGS,NULL},
-  { "solid_ellipse", (PyCFunction)Solid_EllipseCmd,
+  { "Ellipse", (PyCFunction)Solid_EllipseCmd,
 		     METH_VARARGS,NULL},
-  { "solid_box2d", (PyCFunction)Solid_Box2dCmd,
+  { "Box2d", (PyCFunction)Solid_Box2dCmd,
 		     METH_VARARGS,NULL},
-  { "solid_box3d", (PyCFunction)Solid_Box3dCmd,
+  { "Box3d", (PyCFunction)Solid_Box3dCmd,
 		     METH_VARARGS,NULL},
-  { "solid_sphere", (PyCFunction)Solid_SphereCmd,
+  { "Sphere", (PyCFunction)Solid_SphereCmd,
 		     METH_VARARGS,NULL},
-  { "solid_ellipsoid", (PyCFunction)Solid_EllipsoidCmd,
+  { "Ellipsoid", (PyCFunction)Solid_EllipsoidCmd,
 		     METH_VARARGS,NULL},
-  { "solid_cylinder", (PyCFunction)Solid_CylinderCmd,
+  { "Cylinder", (PyCFunction)Solid_CylinderCmd,
 		     METH_VARARGS,NULL},
-  { "solid_truncatedCone", (PyCFunction)Solid_TruncatedConeCmd,
+  { "TruncatedCone", (PyCFunction)Solid_TruncatedConeCmd,
 		     METH_VARARGS,NULL},
-  { "solid_torus", (PyCFunction)Solid_TorusCmd,
+  { "Torus", (PyCFunction)Solid_TorusCmd,
 		     METH_VARARGS,NULL},
-  { "solid_poly3dSolid", (PyCFunction)Solid_Poly3dSolidCmd,
+  { "Poly3dSolid", (PyCFunction)Solid_Poly3dSolidCmd,
 		     METH_VARARGS,NULL},
-  { "solid_poly3dSurface", (PyCFunction)Solid_Poly3dSurfaceCmd,
+  { "Poly3dSurface", (PyCFunction)Solid_Poly3dSurfaceCmd,
 		     METH_VARARGS,NULL},
-  { "solid_extrudeZ", (PyCFunction)Solid_ExtrudeZCmd,
+  { "ExtrudeZ", (PyCFunction)Solid_ExtrudeZCmd,
 		     METH_VARARGS,NULL},
-  { "solid_extrude", (PyCFunction)Solid_ExtrudeCmd,
+  { "Extrude", (PyCFunction)Solid_ExtrudeCmd,
 		     METH_VARARGS,NULL},
-  { "solid_makeApproxCurveLoop",
+  { "MakeApproxCurveLoop",
 		     (PyCFunction)Solid_MakeApproxCurveLoopCmd,
 		     METH_VARARGS,NULL},
-  { "solid_makeInterpCurveLoop",
+  { "MakeInterpCurveLoop",
 		     (PyCFunction)Solid_MakeInterpCurveLoopCmd,
 		     METH_VARARGS,NULL},
-  { "solid_makeLoftedSurf", (PyCFunction)Solid_MakeLoftedSurfCmd,
+  { "MakeLoftedSurf", (PyCFunction)Solid_MakeLoftedSurfCmd,
 		     METH_VARARGS,NULL},
-  { "solid_capSurfToSolid", (PyCFunction)Solid_CapSurfToSolidCmd,
+  { "CapSurfToSolid", (PyCFunction)Solid_CapSurfToSolidCmd,
 		     METH_VARARGS,NULL},
-  { "solid_intersect", (PyCFunction)Solid_IntersectCmd,
+  { "Intersect", (PyCFunction)Solid_IntersectCmd,
 		     METH_VARARGS,NULL},
-  { "solid_union", (PyCFunction)Solid_UnionCmd,
+  { "Union", (PyCFunction)Solid_UnionCmd,
 		     METH_VARARGS,NULL},
-  { "solid_subtract", (PyCFunction)Solid_SubtractCmd,
+  { "Subtract", (PyCFunction)Solid_SubtractCmd,
 		     METH_VARARGS,NULL},
-  { "solid_readNative", (PyCFunction)Solid_ReadNativeCmd,
+  { "ReadNative", (PyCFunction)Solid_ReadNativeCmd,
 		     METH_VARARGS,NULL},
-  { "solid_copy", (PyCFunction)Solid_CopyCmd,
+  { "Copy", (PyCFunction)Solid_CopyCmd,
 		     METH_VARARGS,NULL},
-  { "solid_methods", (PyCFunction)Solid_ListMethodsCmd,
+  { "Methods", (PyCFunction)Solid_ListMethodsCmd,
 		     METH_NOARGS,NULL},
-  { "solid_newObject", (PyCFunction)Solid_NewObjectCmd,
+  { "NewObject", (PyCFunction)Solid_NewObjectCmd,
 		     METH_VARARGS,NULL},
   { "GetClassName", (PyCFunction)Solid_GetClassNameMtd,
 		     METH_NOARGS,NULL},
@@ -413,7 +413,7 @@ static PyMethodDef pySolidModel_methods[]={
 };
 static PyTypeObject pySolidModelType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  "pySolid2.pySolidModel",             /* tp_name */
+  "pySolid.pySolidModel",             /* tp_name */
   sizeof(pySolidModel),             /* tp_basicsize */
   0,                         /* tp_itemsize */
   0,                         /* tp_dealloc */
@@ -452,18 +452,18 @@ static PyTypeObject pySolidModelType = {
   0,                         /* tp_alloc */
   0,                  /* tp_new */
 };
-static PyMethodDef pySolid2_methods[] = {
-  {"solid_registrars", (PyCFunction)Solid_RegistrarsListCmd,METH_NOARGS,NULL},
-  { "solid_setKernel", (PyCFunction)Solid_SetKernelCmd,
+static PyMethodDef pySolid_methods[] = {
+  {"Registrars", (PyCFunction)Solid_RegistrarsListCmd,METH_NOARGS,NULL},
+  { "SetKernel", (PyCFunction)Solid_SetKernelCmd,
 		     METH_VARARGS,NULL},
-  { "solid_getKernel", (PyCFunction)Solid_GetKernelCmd,
+  { "GetKernel", (PyCFunction)Solid_GetKernelCmd,
 		     METH_NOARGS,NULL},
   {NULL, NULL}
 };
 
 static PyTypeObject pycvFactoryRegistrarType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  "pySolid2.pycvFactoryRegistrar",             /* tp_name */
+  "pySolid.pycvFactoryRegistrar",             /* tp_name */
   sizeof(pycvFactoryRegistrar),             /* tp_basicsize */
   0,                         /* tp_itemsize */
   0,                         /* tp_dealloc */
@@ -487,19 +487,19 @@ static PyTypeObject pycvFactoryRegistrarType = {
 };
 
 #if PYTHON_MAJOR_VERSION == 3
-static struct PyModuleDef pySolid2module = {
+static struct PyModuleDef pySolidmodule = {
    PyModuleDef_HEAD_INIT,
-   "pySolid2",   /* name of module */
+   "pySolid",   /* name of module */
    "", /* module documentation, may be NULL */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
-   pySolid2_methods
+   pySolid_methods
 };
 #endif
 
 #if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC
-initpySolid2(void)
+initpySolid(void)
 {
     // Initialize-gRepository
   if (gRepository ==NULL)
@@ -527,14 +527,14 @@ initpySolid2(void)
   }
   //Init our defined functions
   PyObject *pythonC;
-  pythonC = Py_InitModule("pySolid2", pySolid2_methods);
+  pythonC = Py_InitModule("pySolid", pySolid_methods);
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
     return;
   }
 
-  PyRunTimeErr=PyErr_NewException("pySolid2.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pySolid.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
   Py_INCREF(&pySolidModelType);
   Py_INCREF(&pycvFactoryRegistrarType);
@@ -551,7 +551,7 @@ initpySolid2(void)
 
 #if PYTHON_MAJOR_VERSION == 3
 PyMODINIT_FUNC
-PyInit_pySolid2(void)
+PyInit_pySolid(void)
 {
     // Initialize-gRepository
   if (gRepository ==NULL)
@@ -579,14 +579,14 @@ PyInit_pySolid2(void)
   }
   //Init our defined functions
   PyObject *pythonC;
-  pythonC = PyModule_Create(&pySolid2module);
+  pythonC = PyModule_Create(&pySolidmodule);
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
     Py_RETURN_NONE;
   }
 
-  PyRunTimeErr=PyErr_NewException("pySolid2.error",NULL,NULL);
+  PyRunTimeErr=PyErr_NewException("pySolid.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
   Py_INCREF(&pySolidModelType);
   Py_INCREF(&pycvFactoryRegistrarType);
@@ -616,9 +616,9 @@ PyObject* Solid_InitPyModulesCmd( PyObject* self, PyObject* args)
 
   //Init our defined functions
   PyObject *pythonC;
-  pythonC = PyImport_ImportModule("pySolid2");
+  pythonC = PyImport_ImportModule("pySolid");
   Py_INCREF(pythonC);
-  PyModule_AddObject(PyImport_AddModule("__buildin__"), "pySolid2", pythonC);
+  PyModule_AddObject(PyImport_AddModule("__buildin__"), "pySolid", pythonC);
 
   return Py_BuildValue("s","success");
 }
@@ -835,7 +835,7 @@ PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args)
 // Solid_CircleCmd
 // ---------------
 
-// % solid_circle -result /some/obj/name -r <radius> -x <x_ctr> -y <y_ctr>
+// % Circle -result /some/obj/name -r <radius> -x <x_ctr> -y <y_ctr>
 PyObject* Solid_CircleCmd(pySolidModel* self, PyObject* args)
 {
   char *objName;
@@ -1007,7 +1007,7 @@ PyObject* Solid_EllipseCmd( pySolidModel* self, PyObject* args)
 // Solid_Box2dCmd
 // --------------
 
-// % solid_box2d -result /some/obj/name -h <double> -w <double> \
+// % Box2d -result /some/obj/name -h <double> -w <double> \
 //       -xctr <double> -yctr <double>
 
 PyObject* Solid_Box2dCmd( pySolidModel* self, PyObject* args)
