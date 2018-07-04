@@ -1329,15 +1329,15 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
 // pyImage_methods
 // --------------------
 PyMethodDef pyImage_methods[] = {
-  {"img_readHeader_5X", Image_ReadHeaderCmd, METH_VARARGS,NULL},
-  {"img_decode", Image_DecodeCmd, METH_VARARGS,NULL},
-  {"img_calcCorrectionEqn", Image_CalcCorrectionEqnCmd, METH_VARARGS,NULL},
-  {"img_calcCorrectionEqnAuto", Image_CalcCorrectionEqnAutoCmd, METH_VARARGS,NULL},
-  {"setImageThreshold", Image_ThresholdCmd, METH_VARARGS,NULL},
-  {"img_computeStructuredCoord", Image_ComputeStructuredCoordCmd, METH_VARARGS,NULL},
-  {"img_createDistanceMap", Image_CreateDistanceMapCmd, METH_VARARGS,NULL},
-  {"img_findPath", Image_FindPathCmd, METH_VARARGS,NULL},
-  {"img_mask", Image_MaskInPlaceCmd, METH_VARARGS,NULL},
+  {"ReadHeader_5X", Image_ReadHeaderCmd, METH_VARARGS,NULL},
+  {"Decode", Image_DecodeCmd, METH_VARARGS,NULL},
+  {"CalcCorrectionEqn", Image_CalcCorrectionEqnCmd, METH_VARARGS,NULL},
+  {"CalcCorrectionEqnAuto", Image_CalcCorrectionEqnAutoCmd, METH_VARARGS,NULL},
+  {"SetImageThreshold", Image_ThresholdCmd, METH_VARARGS,NULL},
+  {"ComputeStructuredCoord", Image_ComputeStructuredCoordCmd, METH_VARARGS,NULL},
+  {"CreateDistanceMap", Image_CreateDistanceMapCmd, METH_VARARGS,NULL},
+  {"FindPath", Image_FindPathCmd, METH_VARARGS,NULL},
+  {"Mask", Image_MaskInPlaceCmd, METH_VARARGS,NULL},
   {NULL, NULL,0,NULL},
   };
 

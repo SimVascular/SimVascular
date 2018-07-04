@@ -70,7 +70,7 @@ PyObject* MMG_RemeshCmd( PyObject* self, PyObject* args);
 
 PyMethodDef Mmgmesh_methods[]=
 {
-  {"mmg_remesh", MMG_RemeshCmd,METH_VARARGS,NULL},
+  {"Remesh", MMG_RemeshCmd,METH_VARARGS,NULL},
   {NULL,NULL}
 };
 

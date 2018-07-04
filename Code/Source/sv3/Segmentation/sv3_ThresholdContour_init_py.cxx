@@ -71,8 +71,8 @@ PyObject* thresholdContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* thresholdContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef thresholdContour_methods[] = {
-  {"splinePolygonContour_available", thresholdContour_AvailableCmd,METH_NOARGS,NULL},
-  {"splinePolygonContour_registrars", thresholdContour_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", thresholdContour_AvailableCmd,METH_NOARGS,NULL},
+  {"Registrars", thresholdContour_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 

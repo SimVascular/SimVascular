@@ -734,14 +734,14 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
 // pyImage_methods
 // --------------------
 static PyMethodDef pyMath_methods[] = {
-   {"math_FFT", pyMath_FFTCmd, METH_VARARGS,NULL},
-   {"math_inverseFFT", pyMath_inverseFFTCmd, METH_VARARGS,NULL},
-   {"math_computeWomersley", pyMath_computeWomersleyCmd, METH_VARARGS,NULL},
-   {"math_linearInterp", pyMath_linearInterpCmd, METH_VARARGS,NULL},
-   {"math_curveLength", pyMath_curveLengthCmd, METH_VARARGS,NULL},
-   {"math_linearInterpCurve", pyMath_linearInterpolateCurveCmd, METH_VARARGS,NULL},
-   {"math_fitLeastSquares", pyMath_fitLeastSquaresCmd, METH_VARARGS,NULL},
-   {"math_smoothCurve", pyMath_smoothCurveCmd, METH_VARARGS,NULL},
+   {"FFT", pyMath_FFTCmd, METH_VARARGS,NULL},
+   {"InverseFFT", pyMath_inverseFFTCmd, METH_VARARGS,NULL},
+   {"ComputeWomersley", pyMath_computeWomersleyCmd, METH_VARARGS,NULL},
+   {"LinearInterp", pyMath_linearInterpCmd, METH_VARARGS,NULL},
+   {"CurveLength", pyMath_curveLengthCmd, METH_VARARGS,NULL},
+   {"LinearInterpCurve", pyMath_linearInterpolateCurveCmd, METH_VARARGS,NULL},
+   {"FitLeastSquares", pyMath_fitLeastSquaresCmd, METH_VARARGS,NULL},
+   {"SmoothCurve", pyMath_smoothCurveCmd, METH_VARARGS,NULL},
   {NULL,       NULL},
   };
 

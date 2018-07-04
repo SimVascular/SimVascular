@@ -115,16 +115,16 @@ PyMODINIT_FUNC PyInit_pyGUI();
 
 PyMethodDef pyGUI_methods[] =
 {
-    {"gui_importImg",GUI_ImportImageFromFile,METH_VARARGS,NULL},
-    {"gui_importPolyDataFromRepos",GUI_ImportPolyDataFromRepos,METH_VARARGS,NULL},
-    {"gui_importUnstructedGridFromRepos",GUI_ImportUnstructuredGridFromRepos,METH_VARARGS,NULL},
-    {"gui_importPathFromRepos", GUI_ImportPathFromRepos, METH_VARARGS,NULL},
-    {"gui_importContoursFromRepos", GUI_ImportContourFromRepos, METH_VARARGS, NULL},
-    {"gui_exportModelToRepos",GUI_ExportModelToRepos,METH_VARARGS,NULL},
-    {"gui_exportMeshToRepos",GUI_ExportMeshToRepos,METH_VARARGS,NULL},
-    {"gui_exportImageToRepos",GUI_ExportImageToRepos,METH_VARARGS,NULL},
-    {"gui_exportPathToRepos",GUI_ExportPathToRepos,METH_VARARGS,NULL},
-    {"gui_exportContourToRepos", GUI_ExportContourToRepos, METH_VARARGS, NULL},
+    {"ImportImg",GUI_ImportImageFromFile,METH_VARARGS,NULL},
+    {"ImportPolyDataFromRepos",GUI_ImportPolyDataFromRepos,METH_VARARGS,NULL},
+    {"ImportUnstructedGridFromRepos",GUI_ImportUnstructuredGridFromRepos,METH_VARARGS,NULL},
+    {"ImportPathFromRepos", GUI_ImportPathFromRepos, METH_VARARGS,NULL},
+    {"ImportContoursFromRepos", GUI_ImportContourFromRepos, METH_VARARGS, NULL},
+    {"ExportModelToRepos",GUI_ExportModelToRepos,METH_VARARGS,NULL},
+    {"ExportMeshToRepos",GUI_ExportMeshToRepos,METH_VARARGS,NULL},
+    {"ExportImageToRepos",GUI_ExportImageToRepos,METH_VARARGS,NULL},
+    {"ExportPathToRepos",GUI_ExportPathToRepos,METH_VARARGS,NULL},
+    {"ExportContourToRepos", GUI_ExportContourToRepos, METH_VARARGS, NULL},
     {NULL, NULL,0,NULL},
 };
 

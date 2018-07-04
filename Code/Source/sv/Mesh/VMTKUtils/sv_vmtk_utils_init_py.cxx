@@ -106,14 +106,14 @@ int Vmtkutils_pyInit()
 PyMethodDef VMTKUtils_methods[]=
 {
 #ifdef SV_USE_VMTK
-  { "geom_centerlines", Geom_CenterlinesCmd, METH_VARARGS,NULL},
-  { "geom_grouppolydata", Geom_GroupPolyDataCmd, METH_VARARGS,NULL},
-  { "geom_distancetocenterlines", Geom_DistanceToCenterlinesCmd, METH_VARARGS,NULL},
-  { "geom_separatecenterlines", Geom_SeparateCenterlinesCmd, METH_VARARGS,NULL},
-  { "geom_mergecenterlines", Geom_MergeCenterlinesCmd, METH_VARARGS,NULL},
-  { "geom_cap", Geom_CapCmd, METH_VARARGS,NULL},
-  { "geom_cap_with_ids", Geom_CapWIdsCmd, METH_VARARGS,NULL},
-  { "geom_mapandcorrectids", Geom_MapAndCorrectIdsCmd, METH_VARARGS,NULL},
+  { "Centerlines", Geom_CenterlinesCmd, METH_VARARGS,NULL},
+  { "Grouppolydata", Geom_GroupPolyDataCmd, METH_VARARGS,NULL},
+  { "Distancetocenterlines", Geom_DistanceToCenterlinesCmd, METH_VARARGS,NULL},
+  { "Separatecenterlines", Geom_SeparateCenterlinesCmd, METH_VARARGS,NULL},
+  { "Mergecenterlines", Geom_MergeCenterlinesCmd, METH_VARARGS,NULL},
+  { "Cap", Geom_CapCmd, METH_VARARGS,NULL},
+  { "Cap_with_ids", Geom_CapWIdsCmd, METH_VARARGS,NULL},
+  { "Mapandcorrectids", Geom_MapAndCorrectIdsCmd, METH_VARARGS,NULL},
 #endif
   {NULL,NULL}
 };

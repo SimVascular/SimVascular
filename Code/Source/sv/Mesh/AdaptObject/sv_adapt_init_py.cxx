@@ -130,7 +130,7 @@ static int pyAdaptObject_init(pyAdaptObject* self, PyObject* args)
 }
 
 static PyMethodDef pyAdaptObject_methods[]={
-  {"adapt_newObject",(PyCFunction)cvAdapt_NewObjectCmd,METH_VARARGS,NULL},
+  {"NewObject",(PyCFunction)cvAdapt_NewObjectCmd,METH_VARARGS,NULL},
   { "CreateInternalMeshObject",(PyCFunction)cvAdapt_CreateInternalMeshObjectMtd, METH_VARARGS,NULL},
   { "LoadModel", (PyCFunction)cvAdapt_LoadModelMtd,METH_VARARGS,NULL},
   { "LoadMesh",(PyCFunction)cvAdapt_LoadMeshMtd,METH_VARARGS,NULL},
@@ -217,7 +217,7 @@ static PyTypeObject pyAdaptObjectType = {
   0,                  /* tp_new */
 };
 static PyMethodDef pyAdaptMesh_methods[] = {
-  {"adapt_registrars",Adapt_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Registrars",Adapt_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 

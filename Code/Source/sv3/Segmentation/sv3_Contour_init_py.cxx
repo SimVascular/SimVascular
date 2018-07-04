@@ -94,18 +94,18 @@ int Contour_pyInit()
 }
 
 static PyMethodDef pyContour_methods[]={
-  {"contour_newObject", (PyCFunction)Contour_NewObjectCmd,METH_VARARGS,NULL},
-  {"contour_getObject", (PyCFunction)Contour_GetObjectCmd,METH_VARARGS,NULL},
-  {"contour_create", (PyCFunction)Contour_CreateCmd,METH_NOARGS,NULL},
-  {"contour_area", (PyCFunction)Contour_GetAreaCmd,METH_NOARGS,NULL},
-  {"contour_perimeter", (PyCFunction)Contour_GetPerimeterCmd,METH_NOARGS,NULL},
-  {"contour_center", (PyCFunction)Contour_GetCenterPointCmd, METH_NOARGS,NULL},
-  {"contour_setCtrlPts", (PyCFunction)Contour_SetControlPointsCmd, METH_VARARGS, NULL},
-  {"contour_setCtrlPtsByRadius", (PyCFunction)Contour_SetControlPointsByRadiusCmd, METH_VARARGS, NULL},
-  {"contour_setThresholdValue", (PyCFunction)Contour_SetThresholdValueCmd, METH_VARARGS, NULL},
-  {"contour_createSmoothCt", (PyCFunction)Contour_CreateSmoothContour, METH_VARARGS, NULL},
-  {"contour_setImg", (PyCFunction)Contour_SetImageCmd, METH_VARARGS,NULL},
-  {"contour_getPolyData", (PyCFunction)Contour_GetPolyDataCmd, METH_VARARGS,NULL},
+  {"NewObject", (PyCFunction)Contour_NewObjectCmd,METH_VARARGS,NULL},
+  {"GetObject", (PyCFunction)Contour_GetObjectCmd,METH_VARARGS,NULL},
+  {"Create", (PyCFunction)Contour_CreateCmd,METH_NOARGS,NULL},
+  {"Area", (PyCFunction)Contour_GetAreaCmd,METH_NOARGS,NULL},
+  {"Perimeter", (PyCFunction)Contour_GetPerimeterCmd,METH_NOARGS,NULL},
+  {"Center", (PyCFunction)Contour_GetCenterPointCmd, METH_NOARGS,NULL},
+  {"SetCtrlPts", (PyCFunction)Contour_SetControlPointsCmd, METH_VARARGS, NULL},
+  {"SetCtrlPtsByRadius", (PyCFunction)Contour_SetControlPointsByRadiusCmd, METH_VARARGS, NULL},
+  {"SetThresholdValue", (PyCFunction)Contour_SetThresholdValueCmd, METH_VARARGS, NULL},
+  {"CreateSmoothCt", (PyCFunction)Contour_CreateSmoothContour, METH_VARARGS, NULL},
+  {"SetImg", (PyCFunction)Contour_SetImageCmd, METH_VARARGS,NULL},
+  {"GetPolyData", (PyCFunction)Contour_GetPolyDataCmd, METH_VARARGS,NULL},
   {NULL,NULL}
 };
 

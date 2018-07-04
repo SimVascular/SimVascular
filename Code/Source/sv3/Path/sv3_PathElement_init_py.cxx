@@ -78,16 +78,16 @@ int Path_pyInit()
 }
 
 static PyMethodDef pyPath_methods[]={
-  {"path_newObject", (PyCFunction)sv4Path_NewObjectCmd,METH_VARARGS,NULL},
-  {"path_getObject", (PyCFunction)sv4Path_GetObjectCmd,METH_VARARGS,NULL},
-  {"path_addPoint",(PyCFunction)sv4Path_AddPointCmd,METH_VARARGS,NULL},
-  {"path_printPoints",(PyCFunction)sv4Path_PrintCtrlPointCmd, METH_NOARGS,NULL},
-  {"path_removePoint",(PyCFunction)sv4Path_RemovePointCmd,METH_VARARGS,NULL},
-  {"path_movePoint",(PyCFunction)sv4Path_MoveCtrlPointCmd,METH_VARARGS,NULL},
-  {"path_smooth",(PyCFunction)sv4Path_SmoothPathCmd, METH_VARARGS,NULL},
-  {"path_createPath",(PyCFunction)sv4Path_CreatePathCmd, METH_NOARGS,NULL},
-  {"path_getPathPtsNum",(PyCFunction)sv4Path_GetPathPtNumberCmd, METH_NOARGS, NULL},
-  {"path_getPathPosPts",(PyCFunction)sv4Path_GetPathPosPts, METH_NOARGS, NULL},
+  {"NewObject", (PyCFunction)sv4Path_NewObjectCmd,METH_VARARGS,NULL},
+  {"GetObject", (PyCFunction)sv4Path_GetObjectCmd,METH_VARARGS,NULL},
+  {"AddPoint",(PyCFunction)sv4Path_AddPointCmd,METH_VARARGS,NULL},
+  {"PrintPoints",(PyCFunction)sv4Path_PrintCtrlPointCmd, METH_NOARGS,NULL},
+  {"RemovePoint",(PyCFunction)sv4Path_RemovePointCmd,METH_VARARGS,NULL},
+  {"MovePoint",(PyCFunction)sv4Path_MoveCtrlPointCmd,METH_VARARGS,NULL},
+  {"Smooth",(PyCFunction)sv4Path_SmoothPathCmd, METH_VARARGS,NULL},
+  {"CreatePath",(PyCFunction)sv4Path_CreatePathCmd, METH_NOARGS,NULL},
+  {"GetPathPtsNum",(PyCFunction)sv4Path_GetPathPtNumberCmd, METH_NOARGS, NULL},
+  {"GetPathPosPts",(PyCFunction)sv4Path_GetPathPosPts, METH_NOARGS, NULL},
   {NULL,NULL}
 };
 

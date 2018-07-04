@@ -113,15 +113,15 @@ PyObject *PyRunTimeErrU;
 /*! A more elaborate description... TBD
 */
 PyMethodDef Itkutils_methods[] = {
-	{"itkutils_GenerateCircle", itkutils_GenerateCircleCmd, METH_VARARGS,NULL},
-	{"itkutils_PdToImg", itkutils_PdToImgCmd, METH_VARARGS,NULL},
-	{"itkutils_PdToVol", itkutils_PdToVolCmd, METH_VARARGS,NULL},
-	{"itkutils_WriteImage", itkutils_WriteImageCmd, METH_VARARGS,NULL},
-	{"itkutils_GradientMagnitudeGaussian",itkutils_GradientMagnitudeGaussianCmd,METH_VARARGS,NULL},
-	{"itkutils_GaussianBlur", itkutils_GaussianCmd, METH_VARARGS,NULL},
-	{"itkutils_DistanceImage",itkutils_DistanceImageCmd,METH_VARARGS,NULL},
-	{"itkutils_ThresholdImage",itkutils_ThresholdImageCmd,METH_VARARGS,NULL},
-	{"itkutils_FractEdgeProximity3D",itkutils_FractEdgeProximity3DCmd,METH_VARARGS,NULL},
+	{"GenerateCircle", itkutils_GenerateCircleCmd, METH_VARARGS,NULL},
+	{"PdToImg", itkutils_PdToImgCmd, METH_VARARGS,NULL},
+	{"PdToVol", itkutils_PdToVolCmd, METH_VARARGS,NULL},
+	{"WriteImage", itkutils_WriteImageCmd, METH_VARARGS,NULL},
+	{"GradientMagnitudeGaussian",itkutils_GradientMagnitudeGaussianCmd,METH_VARARGS,NULL},
+	{"GaussianBlur", itkutils_GaussianCmd, METH_VARARGS,NULL},
+	{"DistanceImage",itkutils_DistanceImageCmd,METH_VARARGS,NULL},
+	{"ThresholdImage",itkutils_ThresholdImageCmd,METH_VARARGS,NULL},
+	{"FractEdgeProximity3D",itkutils_FractEdgeProximity3DCmd,METH_VARARGS,NULL},
 	{NULL, NULL,0,NULL},
 	};
 

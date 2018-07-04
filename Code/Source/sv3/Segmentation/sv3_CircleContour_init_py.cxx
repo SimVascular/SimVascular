@@ -71,8 +71,8 @@ PyObject* circleContour_AvailableCmd(PyObject* self,PyObject* args);
 PyObject* circleContour_RegistrarsListCmd(PyObject* self, PyObject* args);
 
 PyMethodDef circleContour_methods[] = {
-  {"circlecontour_available", circleContour_AvailableCmd,METH_NOARGS,NULL},
-  {"circlecontour_registrars", circleContour_RegistrarsListCmd,METH_NOARGS,NULL},
+  {"Available", circleContour_AvailableCmd,METH_NOARGS,NULL},
+  {"Registrars", circleContour_RegistrarsListCmd,METH_NOARGS,NULL},
   {NULL, NULL}
 };
 
