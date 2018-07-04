@@ -32,9 +32,9 @@
 #ifndef sv4guiImageProcessing_H
 #define sv4guiImageProcessing_H
 
-#include <QmitkFunctionality.h>
-#include <QString>
 #include <string>
+#include <QString>
+#include <sv4gui_QmitkFunctionality.h>
 
 #include "sv4gui_ImageProcessingUtils.h"
 #include "sv4gui_DataNodeOperationInterface.h"
@@ -50,7 +50,7 @@ namespace Ui {
 class sv4guiImageProcessing;
 }
 
-class sv4guiImageProcessing : public QmitkFunctionality
+class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 {
     Q_OBJECT
 
@@ -85,24 +85,14 @@ public slots:
     //display
     void tabSelected();
     void seedSize();
+    void displayGuide(bool state);
+    void displaySeeds(bool state);
 
     //displaay buttons
-    void displayEditImageTab();
-    void displayCropImageTab();
-    void displayResampleImageTab();
-    void displaySmoothTab();
-    void displayAnisotropicSmoothTab();
-    void displayThresholdTab();
-    void displayBinaryThresholdTab();
-    void displayConnectedThresholdTab();
-    void displayCollidingFrontsTab();
-    void displayZeroLevelTab();
-    void displayFillHolesTab();
-    void displayOpenCloseTab();
-    void displayGradientMagnitudeTab();
-    void displayLevelSetTab();
-    void displayIsoSurfaceTab();
-    void displayFullCFTab();
+    void imageEditingTabSelected();
+    void filteringTabSelected();
+    void segmentationTabSelected();
+    void pipelinesTabSelected();
 
     //run buttons
     void runSeedIsovalue();
@@ -165,6 +155,8 @@ protected:
 
   sv4guiImageProcessingUtils::itkImPoint CombinedCollidingFronts(
     sv4guiImageProcessingUtils::itkImPoint, double lower, double upper);
+
+  mitk::DataNode::Pointer m_SeedNode;
 };
 
 #endif // sv4guiImageProcessing_H

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>818</height>
+    <width>458</width>
+    <height>884</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,7 +18,46 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QWidget" name="widget_3" native="true">
+    <widget class="QWidget" name="widget_2" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <widget class="QCheckBox" name="seedCheckBox">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>28</y>
+        <width>422</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>show seed points</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="guideCheckBox">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>422</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>show help guide</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="guideWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -61,7 +100,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>486</width>
+           <width>407</width>
            <height>107</height>
           </rect>
          </property>
@@ -198,7 +237,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>450</height>
+       <height>500</height>
       </size>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -236,19 +275,19 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>501</width>
-           <height>285</height>
+           <width>422</width>
+           <height>335</height>
           </rect>
          </property>
          <attribute name="label">
           <string>Full Pipelines</string>
          </attribute>
-         <widget class="QToolBox" name="pipelinesToolBox">
+         <widget class="QToolBox" name="pipelinesToolbox">
           <property name="geometry">
            <rect>
             <x>20</x>
             <y>10</y>
-            <width>461</width>
+            <width>401</width>
             <height>261</height>
            </rect>
           </property>
@@ -260,7 +299,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>461</width>
+             <width>401</width>
              <height>230</height>
             </rect>
            </property>
@@ -270,7 +309,7 @@
            <widget class="QLabel" name="fullCFCurvatureLabel">
             <property name="geometry">
              <rect>
-              <x>209</x>
+              <x>189</x>
               <y>80</y>
               <width>121</width>
               <height>17</height>
@@ -283,7 +322,7 @@
            <widget class="QLineEdit" name="fullCFGradientLineEdit">
             <property name="geometry">
              <rect>
-              <x>40</x>
+              <x>20</x>
               <y>23</y>
               <width>113</width>
               <height>27</height>
@@ -296,9 +335,9 @@
            <widget class="QLineEdit" name="fullCFIterationsLineEdit">
             <property name="geometry">
              <rect>
-              <x>330</x>
+              <x>310</x>
               <y>110</y>
-              <width>113</width>
+              <width>81</width>
               <height>25</height>
              </rect>
             </property>
@@ -309,7 +348,7 @@
            <widget class="QLabel" name="fullCFPropagationLabel">
             <property name="geometry">
              <rect>
-              <x>190</x>
+              <x>170</x>
               <y>20</y>
               <width>141</width>
               <height>17</height>
@@ -322,7 +361,7 @@
            <widget class="QLineEdit" name="fullCFUpperThresholdLineEdit">
             <property name="geometry">
              <rect>
-              <x>40</x>
+              <x>20</x>
               <y>67</y>
               <width>113</width>
               <height>27</height>
@@ -332,7 +371,7 @@
            <widget class="QLabel" name="fullCFGradientLabel">
             <property name="geometry">
              <rect>
-              <x>30</x>
+              <x>10</x>
               <y>5</y>
               <width>151</width>
               <height>17</height>
@@ -345,7 +384,7 @@
            <widget class="QLineEdit" name="fullCFLowerThresholdLineEdit">
             <property name="geometry">
              <rect>
-              <x>40</x>
+              <x>20</x>
               <y>108</y>
               <width>113</width>
               <height>27</height>
@@ -355,7 +394,7 @@
            <widget class="QLabel" name="fullCFIterationsLabel">
             <property name="geometry">
              <rect>
-              <x>255</x>
+              <x>235</x>
               <y>110</y>
               <width>71</width>
               <height>17</height>
@@ -368,9 +407,9 @@
            <widget class="QLineEdit" name="fullCFIsoValueLineEdit">
             <property name="geometry">
              <rect>
-              <x>330</x>
+              <x>310</x>
               <y>140</y>
-              <width>113</width>
+              <width>81</width>
               <height>27</height>
              </rect>
             </property>
@@ -381,9 +420,9 @@
            <widget class="QLineEdit" name="fullCFPropagationLineEdit">
             <property name="geometry">
              <rect>
-              <x>330</x>
-              <y>17</y>
-              <width>113</width>
+              <x>310</x>
+              <y>20</y>
+              <width>81</width>
               <height>25</height>
              </rect>
             </property>
@@ -394,7 +433,7 @@
            <widget class="QLabel" name="fullCFIsoValueLabel">
             <property name="geometry">
              <rect>
-              <x>262</x>
+              <x>242</x>
               <y>142</y>
               <width>67</width>
               <height>17</height>
@@ -407,7 +446,7 @@
            <widget class="QLabel" name="fullCFLowerThresholdLabel">
             <property name="geometry">
              <rect>
-              <x>40</x>
+              <x>20</x>
               <y>91</y>
               <width>121</width>
               <height>17</height>
@@ -420,9 +459,9 @@
            <widget class="QLineEdit" name="fullCFAdvectionLineEdit">
             <property name="geometry">
              <rect>
-              <x>330</x>
+              <x>310</x>
               <y>50</y>
-              <width>113</width>
+              <width>81</width>
               <height>25</height>
              </rect>
             </property>
@@ -433,9 +472,9 @@
            <widget class="QLineEdit" name="fullCFCurvatureLineEdit">
             <property name="geometry">
              <rect>
-              <x>330</x>
+              <x>310</x>
               <y>80</y>
-              <width>113</width>
+              <width>81</width>
               <height>25</height>
              </rect>
             </property>
@@ -446,7 +485,7 @@
            <widget class="QLabel" name="fullCFAdvectionLabel">
             <property name="geometry">
              <rect>
-              <x>205</x>
+              <x>185</x>
               <y>53</y>
               <width>131</width>
               <height>17</height>
@@ -459,7 +498,7 @@
            <widget class="QPushButton" name="fullCFButton">
             <property name="geometry">
              <rect>
-              <x>330</x>
+              <x>280</x>
               <y>180</y>
               <width>99</width>
               <height>27</height>
@@ -472,7 +511,7 @@
            <widget class="QLabel" name="fullCFUpperThresholdLabel">
             <property name="geometry">
              <rect>
-              <x>40</x>
+              <x>20</x>
               <y>50</y>
               <width>121</width>
               <height>17</height>
@@ -490,8 +529,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>501</width>
-           <height>285</height>
+           <width>422</width>
+           <height>335</height>
           </rect>
          </property>
          <attribute name="label">
@@ -502,19 +541,19 @@
            <rect>
             <x>20</x>
             <y>10</y>
-            <width>461</width>
+            <width>391</width>
             <height>221</height>
            </rect>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="imageEditingPage">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>461</width>
+             <width>391</width>
              <height>128</height>
             </rect>
            </property>
@@ -563,7 +602,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>461</width>
+             <width>391</width>
              <height>128</height>
             </rect>
            </property>
@@ -586,7 +625,7 @@
            <widget class="QPushButton" name="cropImageButton">
             <property name="geometry">
              <rect>
-              <x>290</x>
+              <x>260</x>
               <y>40</y>
               <width>121</width>
               <height>25</height>
@@ -727,7 +766,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>461</width>
+             <width>391</width>
              <height>128</height>
             </rect>
            </property>
@@ -789,7 +828,7 @@
            <widget class="QPushButton" name="resampleImageButton">
             <property name="geometry">
              <rect>
-              <x>250</x>
+              <x>220</x>
               <y>80</y>
               <width>151</width>
               <height>25</height>
@@ -833,8 +872,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>501</width>
-           <height>285</height>
+           <width>422</width>
+           <height>335</height>
           </rect>
          </property>
          <attribute name="label">
@@ -843,9 +882,9 @@
          <widget class="QToolBox" name="filteringToolbox">
           <property name="geometry">
            <rect>
-            <x>20</x>
+            <x>30</x>
             <y>4</y>
-            <width>471</width>
+            <width>391</width>
             <height>241</height>
            </rect>
           </property>
@@ -857,7 +896,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
+             <width>391</width>
              <height>148</height>
             </rect>
            </property>
@@ -877,8 +916,8 @@
            <widget class="QPushButton" name="smoothButton">
             <property name="geometry">
              <rect>
-              <x>280</x>
-              <y>30</y>
+              <x>250</x>
+              <y>40</y>
               <width>111</width>
               <height>27</height>
              </rect>
@@ -906,8 +945,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>391</width>
+             <height>148</height>
             </rect>
            </property>
            <attribute name="label">
@@ -942,8 +981,8 @@
            <widget class="QLabel" name="anisotropicConductanceLabel">
             <property name="geometry">
              <rect>
-              <x>220</x>
-              <y>0</y>
+              <x>-10</x>
+              <y>70</y>
               <width>91</width>
               <height>17</height>
              </rect>
@@ -955,8 +994,8 @@
            <widget class="QPushButton" name="anisotropicButton">
             <property name="geometry">
              <rect>
-              <x>260</x>
-              <y>30</y>
+              <x>220</x>
+              <y>40</y>
               <width>161</width>
               <height>27</height>
              </rect>
@@ -968,8 +1007,8 @@
            <widget class="QLineEdit" name="anisotropicConductanceLineEdit">
             <property name="geometry">
              <rect>
-              <x>320</x>
-              <y>0</y>
+              <x>90</x>
+              <y>60</y>
               <width>113</width>
               <height>27</height>
              </rect>
@@ -1010,8 +1049,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>391</width>
+             <height>148</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1033,7 +1072,7 @@
            <widget class="QPushButton" name="gradientMagnitudeButton">
             <property name="geometry">
              <rect>
-              <x>230</x>
+              <x>160</x>
               <y>70</y>
               <width>191</width>
               <height>25</height>
@@ -1061,8 +1100,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>501</width>
-           <height>285</height>
+           <width>422</width>
+           <height>335</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1071,9 +1110,9 @@
          <widget class="QToolBox" name="segmentationToolbox">
           <property name="geometry">
            <rect>
-            <x>30</x>
+            <x>20</x>
             <y>0</y>
-            <width>451</width>
+            <width>391</width>
             <height>321</height>
            </rect>
           </property>
@@ -1085,7 +1124,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>451</width>
+             <width>391</width>
              <height>135</height>
             </rect>
            </property>
@@ -1105,7 +1144,7 @@
            <widget class="QPushButton" name="zeroLevelButton">
             <property name="geometry">
              <rect>
-              <x>220</x>
+              <x>190</x>
               <y>50</y>
               <width>191</width>
               <height>27</height>
@@ -1134,8 +1173,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>391</width>
+             <height>135</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1167,7 +1206,7 @@
            <widget class="QPushButton" name="thresholdButton">
             <property name="geometry">
              <rect>
-              <x>280</x>
+              <x>270</x>
               <y>50</y>
               <width>111</width>
               <height>27</height>
@@ -1206,8 +1245,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>391</width>
+             <height>135</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1216,7 +1255,7 @@
            <widget class="QLabel" name="binaryThresholdInsideLabel">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>70</y>
               <width>91</width>
               <height>17</height>
@@ -1229,7 +1268,7 @@
            <widget class="QLineEdit" name="binaryThresholdInsideLineEdit">
             <property name="geometry">
              <rect>
-              <x>120</x>
+              <x>110</x>
               <y>70</y>
               <width>113</width>
               <height>27</height>
@@ -1239,7 +1278,7 @@
            <widget class="QLineEdit" name="binaryThresholdOutsideLineEdit">
             <property name="geometry">
              <rect>
-              <x>120</x>
+              <x>110</x>
               <y>100</y>
               <width>113</width>
               <height>27</height>
@@ -1249,7 +1288,7 @@
            <widget class="QLineEdit" name="binaryThresholdUpperLineEdit">
             <property name="geometry">
              <rect>
-              <x>140</x>
+              <x>130</x>
               <y>10</y>
               <width>113</width>
               <height>27</height>
@@ -1259,7 +1298,7 @@
            <widget class="QLabel" name="binaryThresholdLowerLabel">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>40</y>
               <width>111</width>
               <height>17</height>
@@ -1272,7 +1311,7 @@
            <widget class="QLabel" name="binaryThresholdOutsideLabel">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>100</y>
               <width>101</width>
               <height>17</height>
@@ -1285,7 +1324,7 @@
            <widget class="QLabel" name="binaryThresholdUpperLabel">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>10</y>
               <width>121</width>
               <height>17</height>
@@ -1298,7 +1337,7 @@
            <widget class="QPushButton" name="binaryThresholdButton">
             <property name="geometry">
              <rect>
-              <x>270</x>
+              <x>230</x>
               <y>90</y>
               <width>151</width>
               <height>27</height>
@@ -1311,7 +1350,7 @@
            <widget class="QLineEdit" name="binaryThresholdLowerLineEdit">
             <property name="geometry">
              <rect>
-              <x>140</x>
+              <x>130</x>
               <y>40</y>
               <width>113</width>
               <height>27</height>
@@ -1324,8 +1363,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>391</width>
+             <height>135</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1344,7 +1383,7 @@
            <widget class="QPushButton" name="CFButton">
             <property name="geometry">
              <rect>
-              <x>230</x>
+              <x>190</x>
               <y>80</y>
               <width>191</width>
               <height>25</height>
@@ -1396,8 +1435,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>391</width>
+             <height>135</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1422,7 +1461,7 @@
            <widget class="QPushButton" name="marchingCubesButton">
             <property name="geometry">
              <rect>
-              <x>290</x>
+              <x>240</x>
               <y>50</y>
               <width>99</width>
               <height>27</height>
@@ -1451,8 +1490,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>391</width>
+             <height>135</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1526,7 +1565,7 @@
            <widget class="QPushButton" name="levelSetButton">
             <property name="geometry">
              <rect>
-              <x>310</x>
+              <x>270</x>
               <y>90</y>
               <width>101</width>
               <height>25</height>
