@@ -157,6 +157,7 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     connect(ui->maxItr, SIGNAL(editingFinished()), this, SLOT(SaveAdvanced()));
 
     //linear solver
+    ShowNSWidget();
     connect(ui->comboBoxLSType, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SaveLinearSolver()));
     connect(ui->comboBoxLSType, SIGNAL(currentTextChanged(const QString &)), this, SLOT(ShowNSWidget()));
 

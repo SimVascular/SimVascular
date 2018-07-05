@@ -232,7 +232,7 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
         if(eq.physName!="mesh")
         {
             out << tabS << "LS type: " << eq.lsType << " {" << endL;
-            if(eq.lsPreconditioner!="")
+            if(eq.lsPreconditioner!="" && eq.lsPreconditioner!="Default")
                 out << tabS << tabS << "Preconditioner: " <<eq.lsPreconditioner << endL;
 
             out << tabS << tabS << "Max iterations: " <<eq.lsMaxItr << endL;
