@@ -123,7 +123,8 @@ sv4guisvFSIeqClass::sv4guisvFSIeqClass(const QString& eq)
 
     backflowStab=0.3;
 
-    lsType="NS";//NS, GMRES, CG, BICG
+    //lsType="NS";//NS, GMRES, CG, BICG
+    lsType="GMRES";
     lsMaxItr=10;
     lsTol="1e-4";
     lsNSGMMaxItr=5;
@@ -131,8 +132,8 @@ sv4guisvFSIeqClass::sv4guisvFSIeqClass(const QString& eq)
     lsNSCGMaxItr=500;
     lsNSCGTol="1e-4";
     lsKrylovDim=50;
-    lsAbsoluteTol="1e-12";
-    lsPreconditioner="";
+    lsAbsoluteTol="1e-4";
+    lsPreconditioner="Default";
 
     remesher="None";
     rmMinAngle=10.0;
