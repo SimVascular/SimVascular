@@ -189,6 +189,12 @@ if(SV_ENABLE_DISTRIBUTION)
   append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib" install_script_string)
   append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/plugins" install_script_string)
 endif()
+
+#----------------------------------------------------------------------------
+# Qt install rules
+#----------------------------------------------------------------------------
+set_env_string_concat(QT_QPA_FONTDIR "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/fonts" install_script_string)
+
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------

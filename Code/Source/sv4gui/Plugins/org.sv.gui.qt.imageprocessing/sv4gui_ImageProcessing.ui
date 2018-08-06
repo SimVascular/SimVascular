@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>458</width>
-    <height>917</height>
+    <height>1008</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,44 +16,46 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_23">
    <item>
     <widget class="QWidget" name="widget_2" native="true">
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>50</height>
+       <height>0</height>
       </size>
      </property>
-     <widget class="QCheckBox" name="seedCheckBox">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>28</y>
-        <width>422</width>
-        <height>22</height>
-       </rect>
+     <layout class="QVBoxLayout" name="verticalLayout_11">
+      <property name="leftMargin">
+       <number>0</number>
       </property>
-      <property name="text">
-       <string>show seed points</string>
+      <property name="topMargin">
+       <number>0</number>
       </property>
-     </widget>
-     <widget class="QCheckBox" name="guideCheckBox">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>422</width>
-        <height>22</height>
-       </rect>
+      <property name="rightMargin">
+       <number>0</number>
       </property>
-      <property name="text">
-       <string>show help guide</string>
+      <property name="bottomMargin">
+       <number>0</number>
       </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
+      <item>
+       <widget class="QCheckBox" name="guideCheckBox">
+        <property name="text">
+         <string>show help guide</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="seedCheckBox">
+        <property name="text">
+         <string>show seed points</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -67,7 +69,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>150</height>
+       <height>0</height>
       </size>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -86,6 +88,12 @@
           <verstretch>1</verstretch>
          </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOn</enum>
         </property>
@@ -101,7 +109,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>108</height>
+           <height>167</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -175,6 +183,18 @@
       </sizepolicy>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QLabel" name="inputLabel1">
         <property name="text">
@@ -223,7 +243,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>500</height>
+       <height>550</height>
       </size>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -250,11 +270,11 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>0</height>
          </size>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="pipelinesPage">
          <property name="geometry">
@@ -262,824 +282,891 @@
            <x>0</x>
            <y>0</y>
            <width>422</width>
-           <height>335</height>
+           <height>385</height>
           </rect>
          </property>
          <attribute name="label">
           <string>Full Pipelines</string>
          </attribute>
-         <widget class="QToolBox" name="pipelinesToolbox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>10</y>
-            <width>401</width>
-            <height>261</height>
-           </rect>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="fullCFPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>401</width>
-             <height>230</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Colliding Fronts Segmentation</string>
-           </attribute>
-           <widget class="QLabel" name="fullCFCurvatureLabel">
-            <property name="geometry">
-             <rect>
-              <x>189</x>
-              <y>80</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QToolBox" name="pipelinesToolbox">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>100</height>
+             </size>
             </property>
-            <property name="text">
-             <string>curvature scaling</string>
+            <property name="currentIndex">
+             <number>0</number>
             </property>
+            <widget class="QWidget" name="fullCFPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>336</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Colliding Fronts Segmentation</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <widget class="QWidget" name="widget_3" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="fullCFGradientLabel">
+                   <property name="text">
+                    <string>Gradient Length Scale</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="fullCFGradientLineEdit">
+                   <property name="text">
+                    <string>0.2</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_5" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="fullCFUpperThresholdLabel">
+                   <property name="text">
+                    <string>Upper Threshold</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="fullCFUpperThresholdLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_6" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="fullCFLowerThresholdLabel">
+                   <property name="text">
+                    <string>Lower Threshold</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="fullCFLowerThresholdLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_7" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="fullCFPropagationLabel">
+                   <property name="text">
+                    <string>propagation scaling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="fullCFPropagationLineEdit">
+                   <property name="text">
+                    <string>0.7</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_8" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="fullCFAdvectionLabel">
+                   <property name="text">
+                    <string>advection scaling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="fullCFAdvectionLineEdit">
+                   <property name="text">
+                    <string>0.7</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_9" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="fullCFCurvatureLabel">
+                   <property name="text">
+                    <string>curvature scaling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="fullCFCurvatureLineEdit">
+                   <property name="text">
+                    <string>0.3</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_10" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="fullCFIterationsLabel">
+                   <property name="text">
+                    <string>iterations</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="fullCFIterationsLineEdit">
+                   <property name="text">
+                    <string>50</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_11" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="fullCFIsoValueLabel">
+                   <property name="text">
+                    <string>IsoValue</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="fullCFIsoValueLineEdit">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="fullCFButton">
+                <property name="text">
+                 <string>Run colliding fronts</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
            </widget>
-           <widget class="QLineEdit" name="fullCFGradientLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>23</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.2</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="fullCFIterationsLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>310</x>
-              <y>110</y>
-              <width>81</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>50</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="fullCFPropagationLabel">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>20</y>
-              <width>141</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>propagation scaling</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="fullCFUpperThresholdLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>67</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="fullCFGradientLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>5</y>
-              <width>151</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Gradient Length Scale</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="fullCFLowerThresholdLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>108</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="fullCFIterationsLabel">
-            <property name="geometry">
-             <rect>
-              <x>235</x>
-              <y>110</y>
-              <width>71</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>iterations</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="fullCFIsoValueLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>310</x>
-              <y>140</y>
-              <width>81</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="fullCFPropagationLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>310</x>
-              <y>20</y>
-              <width>81</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.7</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="fullCFIsoValueLabel">
-            <property name="geometry">
-             <rect>
-              <x>242</x>
-              <y>142</y>
-              <width>67</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>IsoValue</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="fullCFLowerThresholdLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>91</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Lower Threshold</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="fullCFAdvectionLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>310</x>
-              <y>50</y>
-              <width>81</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.7</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="fullCFCurvatureLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>310</x>
-              <y>80</y>
-              <width>81</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.3</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="fullCFAdvectionLabel">
-            <property name="geometry">
-             <rect>
-              <x>185</x>
-              <y>53</y>
-              <width>131</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>advection scaling</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="fullCFButton">
-            <property name="geometry">
-             <rect>
-              <x>228</x>
-              <y>180</y>
-              <width>151</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Run colliding fronts</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="fullCFUpperThresholdLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>50</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Upper Threshold</string>
-            </property>
-           </widget>
-          </widget>
-         </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="imageEditingPage">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>100</width>
-           <height>30</height>
+           <width>422</width>
+           <height>385</height>
           </rect>
          </property>
          <attribute name="label">
           <string>Cropping/Editing</string>
          </attribute>
-         <widget class="QToolBox" name="imageEditingToolbox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>10</y>
-            <width>391</width>
-            <height>221</height>
-           </rect>
-          </property>
-          <property name="currentIndex">
-           <number>2</number>
-          </property>
-          <widget class="QWidget" name="imageEditingPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Intensity Editing</string>
-           </attribute>
-           <widget class="QPushButton" name="editImageButton">
-            <property name="geometry">
-             <rect>
-              <x>200</x>
-              <y>20</y>
-              <width>121</width>
-              <height>25</height>
-             </rect>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QToolBox" name="imageEditingToolbox">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
             </property>
-            <property name="text">
-             <string>run Edit Image</string>
+            <property name="currentIndex">
+             <number>2</number>
             </property>
+            <widget class="QWidget" name="imageEditingPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>424</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Intensity Editing</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_13">
+              <item>
+               <widget class="QWidget" name="widget_16" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="editImageReplaceValueLabel">
+                   <property name="text">
+                    <string>Replace Value</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="editImageReplaceValueLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="editImageButton">
+                <property name="text">
+                 <string>run Edit Image</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="cropImagePage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>424</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Crop Image</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_12">
+              <item>
+               <widget class="QWidget" name="widget_12" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="cropImageX1Label">
+                   <property name="text">
+                    <string>x1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="cropImageX1LineEdit"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="cropImageY1Label">
+                   <property name="text">
+                    <string>y1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="cropImageY1LineEdit"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="cropImageZ1Label">
+                   <property name="text">
+                    <string>z1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="cropImageZ1LineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_13" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_11">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="cropImageX2Label">
+                   <property name="text">
+                    <string>x2</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="cropImageX2LineEdit"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="cropImageY2Label">
+                   <property name="text">
+                    <string>y2</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="cropImageY2LineEdit"/>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="cropImageZ2Label">
+                   <property name="text">
+                    <string>z2</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="cropImageZ2LineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="cropImageButton">
+                <property name="text">
+                 <string>run crop Image</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="resampleImagePage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>274</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Resample Image</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_14">
+              <item>
+               <widget class="QWidget" name="widget_17" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_12">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="resampleImageXLabel">
+                   <property name="text">
+                    <string>x spacing (cm)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="resampleImageXLineEdit">
+                   <property name="text">
+                    <string>0.05</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_18" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_13">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="resampleImageYLabel">
+                   <property name="text">
+                    <string>y spacing (cm)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="resampleImageYLineEdit">
+                   <property name="text">
+                    <string>0.05</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_19" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_14">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="resampleImageZLabel">
+                   <property name="text">
+                    <string>z spacing (cm)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="resampleImageZLineEdit">
+                   <property name="text">
+                    <string>0.05</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="resampleImageButton">
+                <property name="text">
+                 <string>run resample image</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
            </widget>
-           <widget class="QLineEdit" name="editImageReplaceValueLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>20</y>
-              <width>113</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="editImageReplaceValueLabel">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>0</y>
-              <width>101</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Replace Value</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="cropImagePage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Crop Image</string>
-           </attribute>
-           <widget class="QLabel" name="cropImageY1Label">
-            <property name="geometry">
-             <rect>
-              <x>90</x>
-              <y>0</y>
-              <width>16</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>y1</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="cropImageButton">
-            <property name="geometry">
-             <rect>
-              <x>260</x>
-              <y>40</y>
-              <width>121</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run crop Image</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="cropImageX1LineEdit">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>0</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="cropImageZ1Label">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>0</y>
-              <width>16</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>z1</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="cropImageX1Label">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>0</y>
-              <width>16</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>x1</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="cropImageY2Label">
-            <property name="geometry">
-             <rect>
-              <x>90</x>
-              <y>40</y>
-              <width>16</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>y2</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="cropImageZ1LineEdit">
-            <property name="geometry">
-             <rect>
-              <x>190</x>
-              <y>0</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="cropImageZ2LineEdit">
-            <property name="geometry">
-             <rect>
-              <x>190</x>
-              <y>40</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="cropImageX2LineEdit">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>40</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="cropImageY1LineEdit">
-            <property name="geometry">
-             <rect>
-              <x>110</x>
-              <y>0</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="cropImageY2LineEdit">
-            <property name="geometry">
-             <rect>
-              <x>110</x>
-              <y>40</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="cropImageX2Label">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>40</y>
-              <width>16</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>x2</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="cropImageZ2Label">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>40</y>
-              <width>16</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>z2</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="resampleImagePage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>391</width>
-             <height>128</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Resample Image</string>
-           </attribute>
-           <widget class="QLineEdit" name="resampleImageYLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>130</x>
-              <y>40</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.05</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="resampleImageZLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>130</x>
-              <y>81</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.05</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="resampleImageXLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>0</y>
-              <width>101</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>x spacing (cm)</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="resampleImageYLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>40</y>
-              <width>101</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>y spacing (cm)</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="resampleImageButton">
-            <property name="geometry">
-             <rect>
-              <x>220</x>
-              <y>80</y>
-              <width>151</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run resample image</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="resampleImageZLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>81</y>
-              <width>101</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>z spacing (cm)</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="resampleImageXLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>130</x>
-              <y>0</y>
-              <width>51</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.05</string>
-            </property>
-           </widget>
-          </widget>
-         </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="filteringPage">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>100</width>
-           <height>30</height>
+           <width>422</width>
+           <height>385</height>
           </rect>
          </property>
          <attribute name="label">
           <string>Filtering</string>
          </attribute>
-         <widget class="QToolBox" name="filteringToolbox">
-          <property name="geometry">
-           <rect>
-            <x>30</x>
-            <y>4</y>
-            <width>391</width>
-            <height>241</height>
-           </rect>
-          </property>
-          <property name="currentIndex">
-           <number>2</number>
-          </property>
-          <widget class="QWidget" name="smoothingPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Smoothing</string>
-           </attribute>
-           <widget class="QLineEdit" name="smoothLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>130</x>
-              <y>0</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="QToolBox" name="filteringToolbox">
+            <property name="currentIndex">
+             <number>2</number>
             </property>
+            <widget class="QWidget" name="smoothingPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>465</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Smoothing</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_15">
+              <item>
+               <widget class="QWidget" name="widget_21" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_15">
+                 <item>
+                  <widget class="QLabel" name="smoothLabel">
+                   <property name="text">
+                    <string>Smoothing scale</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="smoothLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="smoothButton">
+                <property name="text">
+                 <string>run smoothing</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="anisotropicSmoothingPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>465</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Anisotropic Smoothing</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_16">
+              <item>
+               <widget class="QWidget" name="widget_24" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_16">
+                 <item>
+                  <widget class="QLabel" name="iterationsLabel">
+                   <property name="text">
+                    <string>iterations</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="anisotropicIterationsLineEdit">
+                   <property name="text">
+                    <string>100</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_25" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_17">
+                 <item>
+                  <widget class="QLabel" name="anisotropicTimeStepLabel">
+                   <property name="text">
+                    <string>time step</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="anisotropicTimeStepLineEdit">
+                   <property name="text">
+                    <string>0.001</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_26" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_18">
+                 <item>
+                  <widget class="QLabel" name="anisotropicConductanceLabel">
+                   <property name="text">
+                    <string>Conductance</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="anisotropicConductanceLineEdit">
+                   <property name="text">
+                    <string>1.0</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="anisotropicButton">
+                <property name="text">
+                 <string>run anistropic smooth</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="gradientMagnitudePage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>274</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Gradient Magnitude</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_17">
+              <item>
+               <widget class="QWidget" name="widget_27" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_19">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="gradientMagnitudeLabel">
+                   <property name="text">
+                    <string>Gradient Length Scale</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="gradientMagnitudeLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="gradientMagnitudeButton">
+                <property name="text">
+                 <string>run Gradient Magnitude</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
            </widget>
-           <widget class="QPushButton" name="smoothButton">
-            <property name="geometry">
-             <rect>
-              <x>250</x>
-              <y>40</y>
-              <width>111</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run smoothing</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="smoothLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>0</y>
-              <width>111</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Smoothing scale</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="anisotropicSmoothingPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Anisotropic Smoothing</string>
-           </attribute>
-           <widget class="QLineEdit" name="anisotropicIterationsLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>90</x>
-              <y>0</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>100</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="anisotropicTimeStepLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>90</x>
-              <y>30</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.001</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="anisotropicConductanceLabel">
-            <property name="geometry">
-             <rect>
-              <x>-10</x>
-              <y>70</y>
-              <width>91</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Conductance</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="anisotropicButton">
-            <property name="geometry">
-             <rect>
-              <x>220</x>
-              <y>40</y>
-              <width>161</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run anistropic smooth</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="anisotropicConductanceLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>90</x>
-              <y>60</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>1.0</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="anisotropicTimeStepLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>67</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>time step</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="iterationsLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>0</y>
-              <width>67</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>iterations</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="gradientMagnitudePage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>391</width>
-             <height>148</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Gradient Magnitude</string>
-           </attribute>
-           <widget class="QLabel" name="gradientMagnitudeLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>10</y>
-              <width>161</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Gradient Length Scale</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="gradientMagnitudeButton">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>70</y>
-              <width>191</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run Gradient Magnitude</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="gradientMagnitudeLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>113</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
-         </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="segmentationPage">
          <property name="geometry">
@@ -1087,537 +1174,656 @@
            <x>0</x>
            <y>0</y>
            <width>422</width>
-           <height>335</height>
+           <height>385</height>
           </rect>
          </property>
          <attribute name="label">
           <string>Segmentation</string>
          </attribute>
-         <widget class="QToolBox" name="segmentationToolbox">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>0</y>
-            <width>391</width>
-            <height>321</height>
-           </rect>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="zeroLevelPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>391</width>
-             <height>135</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Zero Level</string>
-           </attribute>
-           <widget class="QLineEdit" name="zeroLevelLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>80</x>
-              <y>0</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QToolBox" name="segmentationToolbox">
+            <property name="currentIndex">
+             <number>5</number>
             </property>
+            <widget class="QWidget" name="zeroLevelPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>331</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Zero Level</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="QWidget" name="widget_14" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_20">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="zeroLevelLabel">
+                   <property name="text">
+                    <string>isovalue</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="zeroLevelLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="zeroLevelButton">
+                <property name="text">
+                 <string>run zero level</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_13">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="thresholdPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>331</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Threshold</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_18">
+              <item>
+               <widget class="QWidget" name="widget_15" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_21">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="thresholdUpperLabel">
+                   <property name="text">
+                    <string>Upper Threshold</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="thresholdUpperLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_20" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_22">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="thresholdLowerLabel">
+                   <property name="text">
+                    <string>Lower Threshold</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="thresholdLowerLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="thresholdButton">
+                <property name="text">
+                 <string>run threshold</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_12">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="binaryThresholdPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>331</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Binary Threshold</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_19">
+              <item>
+               <widget class="QWidget" name="widget_22" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_23">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="binaryThresholdUpperLabel">
+                   <property name="text">
+                    <string>Upper Threshold</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="binaryThresholdUpperLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_23" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_24">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="binaryThresholdLowerLabel">
+                   <property name="text">
+                    <string>Lower Threshold</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="binaryThresholdLowerLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_28" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_25">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="binaryThresholdInsideLabel">
+                   <property name="text">
+                    <string>Inside Value</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="binaryThresholdInsideLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_29" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_26">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="binaryThresholdOutsideLabel">
+                   <property name="text">
+                    <string>Outside Value</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="binaryThresholdOutsideLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="binaryThresholdButton">
+                <property name="text">
+                 <string>run binary threshold</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_11">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="CFPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>331</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Colliding Fronts</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_20">
+              <item>
+               <widget class="QWidget" name="widget_30" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_27">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="CFUpperLabel">
+                   <property name="text">
+                    <string>Upper Threshold</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="CFUpperLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_31" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_28">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="CFLowerLabel">
+                   <property name="text">
+                    <string>Lower Threshold</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="CFLowerLineEdit"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="CFButton">
+                <property name="text">
+                 <string>run colliding fronts</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_10">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="isosurfacePage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>331</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Isosurface</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_21">
+              <item>
+               <widget class="QWidget" name="widget_32" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_29">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="newPolydataLabel_2">
+                   <property name="text">
+                    <string>IsoValue</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="marchingCubesLineEdit">
+                   <property name="inputMask">
+                    <string/>
+                   </property>
+                   <property name="text">
+                    <string>isovalue</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="isoCheckBox">
+                <property name="text">
+                 <string>largest connect component</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="marchingCubesButton">
+                <property name="text">
+                 <string>run isosurface</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_9">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="levelSetPage">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>404</width>
+               <height>183</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Level Set</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_22">
+              <item>
+               <widget class="QWidget" name="widget_33" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_30">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="propagationLabel">
+                   <property name="text">
+                    <string>propagation scaling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="propagationLineEdit">
+                   <property name="text">
+                    <string>0.7</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_34" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_31">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="advectionLabel">
+                   <property name="text">
+                    <string>advection scaling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="advectionLineEdit">
+                   <property name="text">
+                    <string>0.7</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_36" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_32">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="text">
+                    <string>curvature scaling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="curvatureLineEdit">
+                   <property name="text">
+                    <string>0.3</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_37" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_33">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>iterations</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="iterationsLineEdit">
+                   <property name="text">
+                    <string>50</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="levelSetButton">
+                <property name="text">
+                 <string>run level set</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
            </widget>
-           <widget class="QPushButton" name="zeroLevelButton">
-            <property name="geometry">
-             <rect>
-              <x>190</x>
-              <y>50</y>
-              <width>191</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run zero level</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="zeroLevelLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>0</y>
-              <width>67</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>isovalue</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="thresholdPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Threshold</string>
-           </attribute>
-           <widget class="QLabel" name="thresholdUpperLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>10</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Upper Threshold</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="thresholdLowerLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>140</x>
-              <y>50</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="thresholdButton">
-            <property name="geometry">
-             <rect>
-              <x>270</x>
-              <y>50</y>
-              <width>111</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run threshold</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="thresholdLowerLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>50</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Lower Threshold</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="thresholdUpperLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>140</x>
-              <y>10</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="binaryThresholdPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Binary Threshold</string>
-           </attribute>
-           <widget class="QLabel" name="binaryThresholdInsideLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>70</y>
-              <width>91</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Inside Value</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="binaryThresholdInsideLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>110</x>
-              <y>70</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="binaryThresholdOutsideLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>110</x>
-              <y>100</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="binaryThresholdUpperLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>130</x>
-              <y>10</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="binaryThresholdLowerLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>40</y>
-              <width>111</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Lower Threshold</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="binaryThresholdOutsideLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>100</y>
-              <width>101</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Outside Value</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="binaryThresholdUpperLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>10</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Upper Threshold</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="binaryThresholdButton">
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>90</y>
-              <width>151</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run binary threshold</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="binaryThresholdLowerLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>130</x>
-              <y>40</y>
-              <width>113</width>
-              <height>27</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="CFPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Colliding Fronts</string>
-           </attribute>
-           <widget class="QLineEdit" name="CFUpperLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>140</x>
-              <y>0</y>
-              <width>113</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="CFButton">
-            <property name="geometry">
-             <rect>
-              <x>190</x>
-              <y>80</y>
-              <width>191</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run colliding fronts</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="CFLowerLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>40</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Lower Threshold</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="CFLowerLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>140</x>
-              <y>40</y>
-              <width>113</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="CFUpperLabel">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>0</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Upper Threshold</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="isosurfacePage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Isosurface</string>
-           </attribute>
-           <widget class="QLineEdit" name="marchingCubesLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>30</y>
-              <width>131</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="inputMask">
-             <string/>
-            </property>
-            <property name="text">
-             <string>isovalue</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="marchingCubesButton">
-            <property name="geometry">
-             <rect>
-              <x>228</x>
-              <y>50</y>
-              <width>111</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run isosurface</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="newPolydataLabel_2">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>10</y>
-              <width>151</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>IsoValue</string>
-            </property>
-           </widget>
-           <widget class="QCheckBox" name="isoCheckBox">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>90</y>
-              <width>221</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>largest connect component</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="levelSetPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>100</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Level Set</string>
-           </attribute>
-           <widget class="QLineEdit" name="advectionLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>31</y>
-              <width>113</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.7</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="iterationsLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>90</x>
-              <y>90</y>
-              <width>113</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>50</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="propagationLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>0</y>
-              <width>113</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.7</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="curvatureLineEdit">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>61</y>
-              <width>113</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.3</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>93</y>
-              <width>71</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>iterations</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="levelSetButton">
-            <property name="geometry">
-             <rect>
-              <x>270</x>
-              <y>90</y>
-              <width>101</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>run level set</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="propagationLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>0</y>
-              <width>141</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>propagation scaling</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_2">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>61</y>
-              <width>121</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>curvature scaling</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="advectionLabel">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>31</y>
-              <width>131</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>advection scaling</string>
-            </property>
-           </widget>
-          </widget>
-         </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
       </item>
