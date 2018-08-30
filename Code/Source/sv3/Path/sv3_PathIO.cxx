@@ -47,19 +47,25 @@ int PathIO::ReadFile(std::string fileName)
         std::cout<<"Could not open/read/parse " << fileName<<std::endl;
         return SV_ERROR;
     }
+    TiXmlElement* path = document.FirstChildElement("path");
 
-    PathElement* path = new PathElement();
-    if(Read(path, document)==SV_ERROR)
+    if(!path){
+        fprintf(stderr, "No path data.");
+        return SV_ERROR;
+    }
+        
+    TiXmlElement* pathElement=(path->FirstChildElement("timestep"))->FirstChildElement("path_element");
+
+    PathElement* svPath = new PathElement();
+    if(Read(svPath, pathElement)==SV_ERROR)
         return SV_ERROR;
 
     return SV_OK;
 }
 
-int PathIO::Read(PathElement* path, TiXmlDocument document)
+int PathIO::Read(PathElement* path, TiXmlElement* pathXml)
 {
         
-    TiXmlElement* pathXml = document.FirstChildElement("path_element");
-
     if(!pathXml){
 //        MITK_ERROR << "No path data in "<< fileName;
         std::cout << "No path element data"<<std::endl;
@@ -129,7 +135,7 @@ int PathIO::Read(PathElement* path, TiXmlDocument document)
     return SV_OK;
 }
 
-int PathIO::WriteFile(std::string fileName, PathElement* path)
+int PathIO::WriteFile(std::string fileName, PathElement* path, int id)
 {
     if(!path) return SV_ERROR;
 
@@ -141,7 +147,21 @@ int PathIO::WriteFile(std::string fileName, PathElement* path)
     version->SetAttribute("version",  "1.0" );
     document.LinkEndChild(version);
     
-    Write(path, document);
+    auto pathElem = new TiXmlElement("path");
+    //the sv3::PathElement class does not have a GetResliceSize function, temporarily ignoring here.
+    pathElem->SetAttribute("id", id);
+    pathElem->SetAttribute("method", path->GetMethod());
+    pathElem->SetAttribute("calculation_number", path->GetCalculationNumber());
+    pathElem->SetDoubleAttribute("spacing", path->GetSpacing());
+    
+    document.LinkEndChild(pathElem);
+
+    auto  timeStepElem = new TiXmlElement("timestep");
+    //Assuming there is only one timestep here for now
+    timeStepElem->SetAttribute("id",0);
+    pathElem->LinkEndChild(timeStepElem);
+    
+    Write(path, timeStepElem);
     
     if (document.SaveFile(fileName) == false)
     {
@@ -149,14 +169,14 @@ int PathIO::WriteFile(std::string fileName, PathElement* path)
         return SV_ERROR;
     }
 }
-void PathIO::Write(PathElement* path, TiXmlDocument document)
+void PathIO::Write(PathElement* path, TiXmlElement* timeStepElem)
 {
 
     auto  pathXml = new TiXmlElement("path_element");
+    timeStepElem->LinkEndChild(pathXml);
     pathXml->SetAttribute("method", path->GetMethod());
     pathXml->SetAttribute("calculation_number", path->GetCalculationNumber());
     pathXml->SetDoubleAttribute("spacing", path->GetSpacing());
-    document.LinkEndChild(pathXml);
 
     auto  controlpointsElement = new TiXmlElement("control_points");
     pathXml->LinkEndChild(controlpointsElement);

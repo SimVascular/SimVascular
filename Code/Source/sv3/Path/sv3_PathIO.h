@@ -49,11 +49,11 @@ public:
     
     int ReadFile(std::string fileName);
     
-    int Read(PathElement* path, TiXmlDocument document);
+    int Read(PathElement* path, TiXmlElement* pathXml );
     
-    void Write(PathElement* path, TiXmlDocument document);
+    void Write(PathElement* path, TiXmlElement* timeStepElem);
     
-    int WriteFile(std::string fileName, PathElement* path);
+    int WriteFile(std::string fileName, PathElement* path,int id);
             
 };
 }

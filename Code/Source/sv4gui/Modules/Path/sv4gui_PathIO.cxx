@@ -32,7 +32,7 @@
 #include "sv4gui_PathIO.h"
 #include "sv4gui_Path.h"
 #include "sv4gui_XmlIOUtil.h"
-
+#include "sv3_PathIO.h"
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
@@ -66,17 +66,13 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::ReadFile(std::string fileName
     if (!document.LoadFile(fileName))
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
-        //        MITK_ERROR << "Could not open/read/parse " << fileName;
         std::vector<mitk::BaseData::Pointer> empty;
         return empty;
     }
 
-    //    TiXmlElement* version = document.FirstChildElement("format");
-
     TiXmlElement* pathElement = document.FirstChildElement("path");
 
     if(!pathElement){
-//        MITK_ERROR << "No path data in "<< fileName;
         mitkThrow() << "No path data in "<< fileName;
     }
 
@@ -121,55 +117,12 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::ReadFile(std::string fileName
         if (peElement == nullptr)
             continue;
 
-        sv4guiPathElement* pe=new sv4guiPathElement();
-
-        int method=0;
-        peElement->QueryIntAttribute("method", &method);
-        int calculationNumber=0;
-        peElement->QueryIntAttribute("calculation_number", &calculationNumber);
-        double spacing=0.0;
-        peElement->QueryDoubleAttribute("spacing", &spacing);
-        pe->SetMethod( (sv3::PathElement::CalculationMethod) method);
-        pe->SetCalculationNumber(calculationNumber);
-        pe->SetSpacing(spacing);
-
-        //control points without updating contour points
-        TiXmlElement* controlpointsElement = peElement->FirstChildElement("control_points");
-        std::vector<mitk::Point3D> controlPoints;
-        for( TiXmlElement* pointElement = controlpointsElement->FirstChildElement("point");
-             pointElement != nullptr;
-             pointElement = pointElement->NextSiblingElement("point") )
-        {
-            if (pointElement == nullptr)
-                continue;
-
-            controlPoints.push_back(sv4guiXmlIOUtil::GetPoint(pointElement));
-        }
-        pe->SetControlPoints(controlPoints,false);
-
-        //path points
-        TiXmlElement* pathpointsElement = peElement->FirstChildElement("path_points");
-        std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints;
-        for( TiXmlElement* pointElement = pathpointsElement->FirstChildElement("path_point");
-             pointElement != nullptr;
-             pointElement = pointElement->NextSiblingElement("path_point") )
-        {
-            if (pointElement == nullptr)
-                continue;
-
-            sv4guiPathElement::sv4guiPathPoint pathPoint;
-            int id=0;
-            pointElement->QueryIntAttribute("id", &id);
-            pathPoint.id=id;
-            pathPoint.pos=sv4guiXmlIOUtil::GetPoint(pointElement->FirstChildElement("pos"));
-            pathPoint.tangent=sv4guiXmlIOUtil::GetVector(pointElement->FirstChildElement("tangent"));
-            pathPoint.rotation=sv4guiXmlIOUtil::GetVector(pointElement->FirstChildElement("rotation"));
-
-            pathPoints.push_back(pathPoint);
-        }
-        pe->SetPathPoints(pathPoints);
-
-        path->SetPathElement(pe,timestep);
+        sv3::PathElement* pe=new sv3::PathElement();
+        sv3::PathIO* svPathReader=new sv3::PathIO();
+        svPathReader->Read(pe,peElement);
+        sv4guiPathElement* guiPE= static_cast<sv4guiPathElement*>(pe);
+        delete svPathReader;
+        path->SetPathElement(guiPE,timestep);
 
     }//timestep
 
@@ -221,6 +174,10 @@ void sv4guiPathIO::Write()
         sv4guiPathElement* pe=path->GetPathElement(t);
         if(!pe) continue;
 
+        sv3::PathElement* svPe=static_cast<sv3::PathElement*>(pe);
+
+        this->sv3::PathIO::Write(svPe,timestepElement); 
+/*
         auto  peElement = new TiXmlElement("path_element");
         timestepElement->LinkEndChild(peElement);
 
@@ -249,7 +206,7 @@ void sv4guiPathIO::Write()
             pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLVectorElement("tangent", pathPoint.tangent));
             pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLVectorElement("rotation", pathPoint.rotation));
         }
-
+*/
     }
 
     std::string fileName=GetOutputLocation();

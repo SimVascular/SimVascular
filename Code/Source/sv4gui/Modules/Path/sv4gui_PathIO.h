@@ -38,7 +38,9 @@
 
 #include "mitkAbstractFileIO.h"
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPathIO : public mitk::AbstractFileIO
+#include "sv3_PathIO.h"
+
+class SV4GUIMODULEPATH_EXPORT sv4guiPathIO : public mitk::AbstractFileIO, sv3::PathIO
 {
 public:
 
