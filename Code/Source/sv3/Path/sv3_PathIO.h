@@ -34,6 +34,7 @@
 
 #include "SimVascular.h"
 #include "sv3_PathElement.h"
+#include "sv3_PathGroup.h"
 #include "tinyxml.h"
 
 #include <sv3PathExports.h>
@@ -47,13 +48,13 @@ public:
 
     ~PathIO(){};
     
-    int ReadFile(std::string fileName);
+    PathGroup* ReadFile(std::string fileName);
     
-    int Read(PathElement* path, TiXmlElement* pathXml );
+    int ReadPath(PathElement* path, TiXmlElement* pathXml );
     
-    void Write(PathElement* path, TiXmlElement* timeStepElem);
+    int Write(std::string fileName, PathGroup* pathGrp);
     
-    int WriteFile(std::string fileName, PathElement* path,int id);
+    void WritePath(PathElement* path, TiXmlElement* timeStepElem);
             
 };
 }

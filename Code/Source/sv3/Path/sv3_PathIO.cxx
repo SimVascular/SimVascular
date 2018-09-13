@@ -37,8 +37,9 @@
 #include <vector>
 using sv3::PathIO;
 using sv3::PathElement;
+using sv3::PathGroup;
 using sv3::XmlIOUtil;
-int PathIO::ReadFile(std::string fileName)
+PathGroup* PathIO::ReadFile(std::string fileName)
 {
     TiXmlDocument document;
 
@@ -50,37 +51,60 @@ int PathIO::ReadFile(std::string fileName)
     TiXmlElement* path = document.FirstChildElement("path");
 
     if(!path){
-        fprintf(stderr, "No path data.");
+        std::cout<< "No path data in "<< fileName <<std::endl;
         return SV_ERROR;
     }
+    
+    PathGroup* pathGrp = new PathGroup();
+    int pathID=0;
+    path->QueryIntAttribute("id",&pathID);
+    pathGrp->SetPathID(pathID);
+    int method=0;
+    path->QueryIntAttribute("method", &method);
+    int calculationNumber=0;
+    path->QueryIntAttribute("calculation_number", &calculationNumber);
+    double spacing=0.0;
+    path->QueryDoubleAttribute("spacing", &spacing);
+    pathGrp->SetMethod( (sv3::PathElement::CalculationMethod) method);
+    pathGrp->SetCalculationNumber(calculationNumber);
+    pathGrp->SetSpacing(spacing);
+   
         
-    TiXmlElement* pathElement=(path->FirstChildElement("timestep"))->FirstChildElement("path_element");
+    int timestep=-1;
+    for( TiXmlElement* timestepElement = path->FirstChildElement("timestep");
+         timestepElement != nullptr;
+         timestepElement = timestepElement->NextSiblingElement("timestep") )
+    {
+        if (timestepElement == nullptr)
+            continue;
 
-    PathElement* svPath = new PathElement();
-    if(Read(svPath, pathElement)==SV_ERROR)
-        return SV_ERROR;
+        timestep++;
+        pathGrp->Expand(timestep+1);
 
-    return SV_OK;
+        TiXmlElement* peElement=timestepElement->FirstChildElement("path_element");
+
+        if (peElement == nullptr)
+            continue;
+
+        PathElement* pe = new PathElement();
+        if(ReadPath(pe, peElement)==SV_ERROR)
+            return NULL;
+        
+        pathGrp->SetPathElement(pe,timestep);
+
+    }//timestep
+    
+    return pathGrp;
 }
 
-int PathIO::Read(PathElement* path, TiXmlElement* pathXml)
+int PathIO::ReadPath(PathElement* path, TiXmlElement* pathXml)
 {
         
     if(!pathXml){
-//        MITK_ERROR << "No path data in "<< fileName;
         std::cout << "No path element data"<<std::endl;
         return SV_ERROR;
     }
 
-    //std::string pathName=""
-    //pathXml->QueryStringAttribute("id",&pathName);
-    
-    //// Make sure the specified result object does not exist:
-    //if ( gRepository->Exists( pathName ) ) {
-    //    std::cout<<"path already exists."<<std::endl;
-    //    return SV_ERROR;
-    //}
-        
     int method=0;
     pathXml->QueryIntAttribute("method", &method);
     int calculationNumber=0;
@@ -135,9 +159,9 @@ int PathIO::Read(PathElement* path, TiXmlElement* pathXml)
     return SV_OK;
 }
 
-int PathIO::WriteFile(std::string fileName, PathElement* path, int id)
+int PathIO::Write(std::string fileName, PathGroup* pathGrp)
 {
-    if(!path) return SV_ERROR;
+    if(!pathGrp) return SV_ERROR;
 
     TiXmlDocument document;
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
@@ -149,27 +173,32 @@ int PathIO::WriteFile(std::string fileName, PathElement* path, int id)
     
     auto pathElem = new TiXmlElement("path");
     //the sv3::PathElement class does not have a GetResliceSize function, temporarily ignoring here.
-    pathElem->SetAttribute("id", id);
-    pathElem->SetAttribute("method", path->GetMethod());
-    pathElem->SetAttribute("calculation_number", path->GetCalculationNumber());
-    pathElem->SetDoubleAttribute("spacing", path->GetSpacing());
+    pathElem->SetAttribute("id", pathGrp->GetPathID());
+    pathElem->SetAttribute("method", pathGrp->GetMethod());
+    pathElem->SetAttribute("calculation_number", pathGrp->GetCalculationNumber());
+    pathElem->SetDoubleAttribute("spacing", pathGrp->GetSpacing());
     
     document.LinkEndChild(pathElem);
 
-    auto  timeStepElem = new TiXmlElement("timestep");
-    //Assuming there is only one timestep here for now
-    timeStepElem->SetAttribute("id",0);
-    pathElem->LinkEndChild(timeStepElem);
     
-    Write(path, timeStepElem);
-    
+    for(int t=0;t<pathGrp->GetTimeSize();t++)
+    {
+        auto  timeStepElem = new TiXmlElement("timestep");
+        timeStepElem->SetAttribute("id",t);
+        pathElem->LinkEndChild(timeStepElem);
+                
+        PathElement* pe=pathGrp->GetPathElement(t);
+        if(!pe) continue;
+        
+        WritePath(pe, timeStepElem);
+    }
     if (document.SaveFile(fileName) == false)
     {
         std::cout<< "Could not write path to " << fileName<<std::endl;
         return SV_ERROR;
     }
 }
-void PathIO::Write(PathElement* path, TiXmlElement* timeStepElem)
+void PathIO::WritePath(PathElement* path, TiXmlElement* timeStepElem)
 {
 
     auto  pathXml = new TiXmlElement("path_element");

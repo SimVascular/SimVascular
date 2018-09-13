@@ -45,9 +45,9 @@ endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-set(CXXSRCS sv3_PathElement.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx 
+set(CXXSRCS sv3_PathElement.cxx sv3_PathGroup.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx 
   )
-set(HDRS sv3_PathElement.h sv3_VtkParametricSpline.h sv3_Spline.h sv3_PathIO.h
+set(HDRS sv3_PathElement.h sv3_PathGroup.h sv3_VtkParametricSpline.h sv3_Spline.h sv3_PathIO.h
   )
 
 if(SV_USE_PYTHON)
