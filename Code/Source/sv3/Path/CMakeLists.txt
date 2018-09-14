@@ -51,7 +51,7 @@ set(HDRS sv3_PathElement.h sv3_PathGroup.h sv3_VtkParametricSpline.h sv3_Spline.
   )
 
 if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv3_PathElement_init_py.cxx)
+  list(APPEND CXXSRCS sv3_PathElement_init_py.cxx sv3_PathGroup_init_py.cxx sv3_PathIO_init_py.cxx)
 endif()
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
