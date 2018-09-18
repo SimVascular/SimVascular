@@ -62,7 +62,7 @@ PyObject* sv4PathGroup_NewObjectCmd( pyPathGroup* self, PyObject* args);
 PyObject* sv4PathGroup_GetObjectCmd( pyPathGroup* self, PyObject* args);
 PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args);
 PyObject* sv4PathGroup_GetTimeSizeCmd( pyPathGroup* self, PyObject* args);
-//pyPath* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args);
+PyObject* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args);
 PyObject* sv4PathGroup_GetPathGroupIDCmd( pyPathGroup* self, PyObject* args);
 PyObject* sv4PathGroup_SetPathGroupIDCmd(pyPathGroup* self, PyObject* args);
 PyObject* sv4PathGroup_SetSpacingCmd(pyPathGroup* self, PyObject* args);
@@ -88,7 +88,7 @@ static PyMethodDef pyPathGroup_methods[]={
   {"GetObject", (PyCFunction)sv4PathGroup_GetObjectCmd,METH_VARARGS,NULL},
   {"SetPath",(PyCFunction)sv4PathGroup_SetPathCmd,METH_VARARGS,NULL},
   {"GetTimeSize",(PyCFunction)sv4PathGroup_GetTimeSizeCmd, METH_NOARGS,NULL},
-//  {"GetPath",(PyCFunction)sv4PathGroup_GetPathCmd,METH_VARARGS,NULL},
+  {"GetPath",(PyCFunction)sv4PathGroup_GetPathCmd,METH_VARARGS,NULL},
   {"GetPathGroupID",(PyCFunction)sv4PathGroup_GetPathGroupIDCmd,METH_VARARGS,NULL},
   {"SetPathGroupID",(PyCFunction)sv4PathGroup_SetPathGroupIDCmd, METH_VARARGS,NULL},
   {"SetSpacing",(PyCFunction)sv4PathGroup_SetSpacingCmd, METH_NOARGS,NULL},
@@ -358,7 +358,7 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
     if ( type != PATH_T )
     {
         r[0] = '\0';
-        sprintf(r, "%s not a path group object", objName);
+        sprintf(r, "%s not a path object", objName);
         PyErr_SetString(PyRunTimeErrPg,r);
         return Py_ERROR;
     }
@@ -383,6 +383,7 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
     
 }
 
+
 // --------------------
 // sv4PathGroup_GetTimeSizeCmd
 // --------------------
@@ -399,39 +400,48 @@ PyObject* sv4PathGroup_GetTimeSizeCmd( pyPathGroup* self, PyObject* args)
 // --------------------
 // sv4PathGroup_GetPathCmd
 // --------------------
-// pyPath* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args)
-// {
-// 
-//     int index;
-//     if(!PyArg_ParseTuple(args,"i",&index))
-//     {
-//         PyErr_SetString(PyRunTimeErrPg,"Could not import int index");
-//         return Py_ERROR;
-//     }
-//     
-//     PathGroup* pathGrp = self->geom;
-//     if (pathGrp==NULL)
-//     {
-//         PyErr_SetString(PyRunTimeErrPg,"Path does not exist.");
-//         return Py_ERROR;
-//     }
-//     
-//     if (index<pathGrp->GetTimeSize())
-//         PathElement* path = pathGrp->GetPathElement(index);
-//     else
-//     {
-//         PyErr_SetString(PyRunTimeErrPg, "Index out of bound.")
-//         return Py_ERROR;
-//     }
-// 
-//     Py_INCREF(path);
-//     pyPath* pyPth;
-//     pyPth = PyObject_New(pyPath, &pyPathType);
-//     pyPth->geom=path;
-//     Py_DECREF(path);
-//     return pyPth;
-//     
-// }
+PyObject* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args)
+{
+
+    int index;
+    char* pathName=NULL;
+    if(!PyArg_ParseTuple(args,"si",&pathName, &index))
+    {
+        PyErr_SetString(PyRunTimeErrPg,"Could not import char pathName, int index");
+        return Py_ERROR;
+    }
+        
+    PathGroup* pathGrp = self->geom;
+    if (pathGrp==NULL)
+    {
+        PyErr_SetString(PyRunTimeErrPg,"Path does not exist.");
+        return Py_ERROR;
+    }
+    
+    // Make sure the specified result object does not exist:
+    if ( gRepository->Exists( pathName ) ) {
+        PyErr_SetString(PyRunTimeErrPg, "object already exists.");
+        return Py_ERROR;
+    }
+    
+    PathElement* path;
+    if (index<pathGrp->GetTimeSize())
+        path = pathGrp->GetPathElement(index);
+    else
+    {
+        PyErr_SetString(PyRunTimeErrPg, "Index out of bound.");
+        return Py_ERROR;
+    }
+    
+    // Register the path:
+    if ( !( gRepository->Register( pathName, path ) ) ) {
+        PyErr_SetString(PyRunTimeErrPg, "error registering obj in repository");
+        return Py_ERROR;
+    }
+  
+    Py_RETURN_NONE;
+    
+}
 
 // --------------------
 // sv4PathGroup_GetPathGroupIDCmd

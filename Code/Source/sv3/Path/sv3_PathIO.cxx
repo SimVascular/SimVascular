@@ -179,7 +179,6 @@ int PathIO::Write(std::string fileName, PathGroup* pathGrp)
     pathElem->SetDoubleAttribute("spacing", pathGrp->GetSpacing());
     
     document.LinkEndChild(pathElem);
-
     
     for(int t=0;t<pathGrp->GetTimeSize();t++)
     {
@@ -188,7 +187,11 @@ int PathIO::Write(std::string fileName, PathGroup* pathGrp)
         pathElem->LinkEndChild(timeStepElem);
                 
         PathElement* pe=pathGrp->GetPathElement(t);
-        if(!pe) continue;
+        if(!pe) 
+        {
+            std::cout<<"Warning: empty path element" <<std::endl;
+            continue;
+        }
         
         WritePath(pe, timeStepElem);
     }
@@ -197,6 +200,8 @@ int PathIO::Write(std::string fileName, PathGroup* pathGrp)
         std::cout<< "Could not write path to " << fileName<<std::endl;
         return SV_ERROR;
     }
+    
+    return SV_OK;
 }
 void PathIO::WritePath(PathElement* path, TiXmlElement* timeStepElem)
 {

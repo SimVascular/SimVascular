@@ -38,7 +38,7 @@
 using sv3::PathElement;
 using sv3::PathGroup;
 PathGroup::PathGroup()
-    : cvRepositoryData( PATH_T )
+    : cvRepositoryData( PATHGROUP_T )
     , m_CalculateBoundingBox(true)
     , m_PathID(-1)
     , m_Method(sv3::PathElement::CONSTANT_TOTAL_NUMBER)
@@ -49,7 +49,7 @@ PathGroup::PathGroup()
 }
 
 PathGroup::PathGroup(const PathGroup &other)
-    : cvRepositoryData( PATH_T )
+    : cvRepositoryData( PATHGROUP_T )
     , m_PathID(other.m_PathID)
     , m_Method(other.m_Method)
     , m_CalculationNumber(other.m_CalculationNumber)
