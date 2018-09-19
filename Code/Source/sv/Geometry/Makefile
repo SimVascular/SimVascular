@@ -61,7 +61,7 @@ CXXSRCS	= \
   sv_sys_geom.cxx sv_ggems.cxx \
   sv_spline.cxx sv_integrate_surface.cxx
 
-DLLHDRS = sv_geom_init.h 
+DLLHDRS = sv_geom_init.h
 
 DLLSRCS = sv_geom_init.cxx
 
@@ -75,7 +75,7 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVGEOMETRY_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVMSIC_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
           $(VMTK_LIBS)
 

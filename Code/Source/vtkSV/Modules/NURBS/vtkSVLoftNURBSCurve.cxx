@@ -32,16 +32,18 @@
 #include "vtkSVLoftNURBSCurve.h"
 
 #include "vtkCellData.h"
+#include "vtkErrorCode.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkMath.h"
-#include "vtkSVNURBSCurve.h"
-#include "vtkSVNURBSUtils.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
+
 #include "vtkSVGlobals.h"
+#include "vtkSVNURBSCurve.h"
+#include "vtkSVNURBSUtils.h"
 
 #include <string>
 #include <sstream>
@@ -99,9 +101,24 @@ int vtkSVLoftNURBSCurve::RequestData(
   vtkPolyData *input = vtkPolyData::GetData(inputVector[0], 0);
   vtkPolyData *output = vtkPolyData::GetData(outputVector, 0);
 
+  if (this->KnotSpanType == NULL)
+  {
+    vtkErrorMacro("Need to provide knot span type");
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
+  }
+
+  if (this->ParametricSpanType == NULL)
+  {
+    vtkErrorMacro("Need to provide parametric span type");
+    this->SetErrorCode(vtkErrorCode::UserError + 2);
+    return SV_ERROR;
+  }
+
   if (this->LoftNURBS(input, output) != SV_OK)
   {
     vtkErrorMacro("Lofting failed!");
+    this->SetErrorCode(vtkErrorCode::UserError + 3);
     return SV_ERROR;
   }
 
@@ -134,7 +151,6 @@ int vtkSVLoftNURBSCurve::FillInputPortInformation(
     {
     return SV_ERROR;
     }
-  info->Set(vtkAlgorithm::INPUT_IS_REPEATABLE(), 1);
   return SV_OK;
 }
 
@@ -160,7 +176,7 @@ int vtkSVLoftNURBSCurve::LoftNURBS(vtkPolyData *input, vtkPolyData *outputPD)
   vtkNew(vtkDoubleArray, knots);
   if (vtkSVNURBSUtils::GetKnots(U, p, ktype, knots) != SV_OK)
   {
-    fprintf(stderr,"Error getting knots\n");
+    vtkErrorMacro("Error getting knots");
     return SV_ERROR;
   }
 

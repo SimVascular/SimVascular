@@ -32,12 +32,13 @@
 #include "vtkSVNURBSCurve.h"
 
 #include "vtkCleanPolyData.h"
-#include "vtkSVNURBSUtils.h"
-#include "vtkPointData.h"
 #include "vtkObjectFactory.h"
+#include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkSparseArray.h"
+
 #include "vtkSVGlobals.h"
+#include "vtkSVNURBSUtils.h"
 
 // ----------------------
 // StandardNewMacro
@@ -57,7 +58,6 @@ vtkSVNURBSCurve::vtkSVNURBSCurve()
 
   this->ControlPointGrid   = vtkSVControlGrid::New();
   this->KnotVector         = vtkDoubleArray::New();
-  this->Weights            = vtkDoubleArray::New();
 
   this->CurveRepresentation = vtkPolyData::New();
 }
@@ -74,10 +74,6 @@ vtkSVNURBSCurve::~vtkSVNURBSCurve()
   if (this->KnotVector != NULL)
   {
     this->KnotVector->Delete();
-  }
-  if (this->Weights != NULL)
-  {
-    this->Weights->Delete();
   }
 
   if (this->CurveRepresentation != NULL)
@@ -99,7 +95,6 @@ void vtkSVNURBSCurve::DeepCopy(vtkSVNURBSCurve *src)
 
   this->ControlPointGrid->DeepCopy(src->GetControlPointGrid());
   this->KnotVector->DeepCopy(src->GetKnotVector());
-  this->Weights->DeepCopy(src->GetWeights());
 
   this->CurveRepresentation->DeepCopy(src->GetCurveRepresentation());
 }
@@ -154,18 +149,438 @@ void vtkSVNURBSCurve::SetControlPoints(vtkPoints *points1d)
   this->ControlPointGrid->SetDimensions(nCon, 1, 1);
 
   // Set the points
+  this->ControlPointGrid->GetPoints()->SetNumberOfPoints(nCon);
   this->ControlPointGrid->SetPoints(points1d);
 
   // Loop through points and set weight
+  vtkNew(vtkDoubleArray, weights);
+  weights->SetNumberOfTuples(nCon);
   for (int i=0; i<nCon; i++)
-    this->Weights->InsertTuple1(i, 1.0);
-  this->Weights->SetName("Weights");
+    weights->SetTuple1(i, 1.0);
+  weights->SetName("Weights");
 
   // Set the array on the grid
-  this->ControlPointGrid->GetPointData()->AddArray(this->Weights);
+  this->ControlPointGrid->GetPointData()->AddArray(weights);
 
   // Update number of control points
   this->NumberOfControlPoints = nCon;
+}
+
+// ----------------------
+// UpdateCurve
+// ----------------------
+void vtkSVNURBSCurve::UpdateCurve()
+{
+  this->NumberOfControlPoints = this->ControlPointGrid->GetPoints()->GetNumberOfPoints();
+  this->NumberOfKnotPoints    = this->KnotVector->GetNumberOfTuples();
+  this->Degree = this->NumberOfKnotPoints - this->NumberOfControlPoints - 1;
+}
+
+// ----------------------
+// IncreaseDegree
+// ----------------------
+int vtkSVNURBSCurve::IncreaseDegree(const int numberOfIncreases)
+{
+  // Get current info about curve degree
+  int curp = this->Degree;
+
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newKnots);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  // Increase the degree
+  vtkDoubleArray *vKnots = NULL; // just one direction for curve
+  vtkDoubleArray *newVKnots = NULL; // just one direction for curve
+  int q = 0; // just one direction for curve
+  int dir = 0; // just one directio for curve
+  if (vtkSVNURBSUtils::IncreaseDegree(this->ControlPointGrid,
+                                      this->KnotVector, curp,
+                                      vKnots, q, dir,
+                                      numberOfIncreases,
+                                      newControlPoints,
+                                      newKnots, newVKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error in raising the curve degree");
+    return SV_ERROR;
+  }
+  if (newControlPoints->GetNumberOfPoints()+curp+numberOfIncreases+1 != newKnots->GetNumberOfTuples())
+  {
+    vtkErrorMacro("Error in setting the correct control points and knots during curve degree elevation");
+    return SV_ERROR;
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetKnotVector(newKnots);
+  this->Degree = curp+numberOfIncreases;
+
+  return SV_OK;
+}
+
+// ----------------------
+// DecreaseDegree
+// ----------------------
+int vtkSVNURBSCurve::DecreaseDegree(const double tolerance)
+{
+  // Get current info about curve degree
+  int curp = this->Degree;
+
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newKnots);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  // Decrease the degree
+  if (vtkSVNURBSUtils::CurveDecreaseDegree(this->ControlPointGrid, this->KnotVector,
+                                           curp, tolerance,
+                                           newControlPoints, newKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error in lowering the curve degree");
+    return SV_ERROR;
+  }
+  if (newControlPoints->GetNumberOfPoints()+curp != newKnots->GetNumberOfTuples())
+  {
+    vtkErrorMacro("Error in setting the correct control points and knots during curve degree reduction");
+    return SV_ERROR;
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetKnotVector(newKnots);
+  this->Degree = curp-1;
+
+  return SV_ERROR;
+}
+
+// ----------------------
+// InsertKnot
+// ----------------------
+int vtkSVNURBSCurve::InsertKnot(const double newKnot, const int numberOfInserts)
+{
+  // Get current info about curve degree
+  int p = this->Degree;
+
+  // Get the location of the knot
+  int span=0;
+  vtkSVNURBSUtils::FindSpan(p, newKnot, this->KnotVector, span);
+
+  // If the value at the location is our value, we need to get current mult
+  int mult=0;
+  if(this->KnotVector->GetTuple1(span) == newKnot)
+    vtkSVNURBSUtils::FindKnotMultiplicity(span, newKnot, this->KnotVector, mult);
+
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newKnots);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  // Insert the knot
+  vtkDoubleArray *vKnots = NULL; // just one direction for curve
+  vtkDoubleArray *newVKnots = NULL; // just one direction for curve
+  int q = 0; // just one direction for curve
+  int dir = 0; // just one directio for curve
+  if (vtkSVNURBSUtils::InsertKnot(this->ControlPointGrid,
+                                  this->KnotVector, p,
+                                  vKnots, q, dir,
+                                  newKnot, span,
+                                  mult, numberOfInserts,
+                                  newControlPoints, newKnots, newVKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error on knot insertion");
+    return SV_ERROR;
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetKnotVector(newKnots);
+
+  return SV_OK;
+
+}
+
+// ----------------------
+// InsertKnots
+// ----------------------
+int vtkSVNURBSCurve::InsertKnots(vtkDoubleArray *newKnots)
+{
+  // Get current degree
+  int p = this->Degree;
+
+  // Set up new knots and new control points
+  vtkNew(vtkDoubleArray, newKnotSpan);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  vtkDoubleArray *vKnots = NULL; // just one direction for curve
+  vtkDoubleArray *newVKnots = NULL; // just one direction for curve
+  int q = 0; // just one direction for curve
+  int dir = 0; // just one directio for curve
+  if (vtkSVNURBSUtils::KnotRefinement(this->ControlPointGrid,
+                                      this->KnotVector, p,
+                                      vKnots, q,
+                                      dir, newKnots,
+                                      newControlPoints,
+                                      newKnotSpan, newVKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error in knot refinement");
+    return SV_ERROR;
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetKnotVector(newKnotSpan);
+
+  return SV_OK;
+}
+
+// ----------------------
+// RemoveKnot
+// ----------------------
+int vtkSVNURBSCurve::RemoveKnot(const double removeKnot, const int numberOfRemovals, const double tol)
+{
+  int p = this->Degree;
+  int knotIndex = -1;
+  for (int i=0; i<this->KnotVector->GetNumberOfTuples(); i++)
+  {
+    if (this->KnotVector->GetTuple1(i) == removeKnot)
+    {
+      knotIndex = i;
+      break;
+    }
+  }
+
+  if (knotIndex == -1)
+  {
+    vtkErrorMacro("Knot value was not found in span");
+    return SV_ERROR;
+  }
+
+  if (this->RemoveKnotAtIndex(knotIndex, numberOfRemovals, tol) != SV_OK)
+    return SV_ERROR;
+
+  return SV_OK;
+}
+
+// ----------------------
+// RemoveKnot
+// ----------------------
+int vtkSVNURBSCurve::RemoveKnotAtIndex(const int knotIndex, const int numberOfRemovals, const double tol)
+{
+  int p = this->Degree;
+  double removeKnot = this->KnotVector->GetTuple1(knotIndex);
+  int mult;
+  if (vtkSVNURBSUtils::FindKnotMultiplicity(knotIndex, removeKnot, this->KnotVector, mult) != SV_OK)
+  {
+    vtkErrorMacro("Error in getting multiplicity");
+    return SV_ERROR;
+  }
+
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newKnots);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  // Remove the knot
+  vtkDoubleArray *vKnots = NULL; // just one direction for curve
+  vtkDoubleArray *newVKnots = NULL; // just one direction for curve
+  int q = 0; // just one direction for curve
+  int dir = 0; // just one directio for curve
+  if (vtkSVNURBSUtils::RemoveKnot(this->ControlPointGrid,
+                                  this->KnotVector, p,
+                                  vKnots, q,
+                                  dir, removeKnot, knotIndex,
+                                  mult, numberOfRemovals,
+                                  tol,
+                                  newControlPoints,
+                                  newKnots, newVKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error on knot insertion");
+    return SV_ERROR;
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetKnotVector(newKnots);
+
+  return SV_OK;
+}
+
+// ----------------------
+// SetKnotVector
+// ----------------------
+int vtkSVNURBSCurve::SetKnotVector(vtkDoubleArray *knots)
+{
+  this->KnotVector->DeepCopy(knots);
+
+  this->NumberOfKnotPoints = this->KnotVector->GetNumberOfTuples();
+  return SV_OK;
+}
+
+// ----------------------
+// SetKnot
+// ----------------------
+int vtkSVNURBSCurve::SetKnot(const int index, const double newKnot)
+{
+  if (index >= this->NumberOfKnotPoints)
+  {
+    vtkErrorMacro("Index " << index << " outside length of knot vector: " << this->NumberOfKnotPoints);
+    return SV_ERROR;
+  }
+  if (index > 0)
+  {
+    if (this->KnotVector->GetTuple1(index-1) > newKnot)
+    {
+      vtkErrorMacro("Invalid knot inserted; " << newKnot <<
+      " must be greater than or equal to previous knot: " << this->KnotVector->GetTuple1(index-1));
+      return SV_ERROR;
+    }
+  }
+  this->KnotVector->SetTuple1(index, newKnot);
+  return SV_OK;
+}
+
+// ----------------------
+// SetKnots
+// ----------------------
+int vtkSVNURBSCurve::SetKnots(vtkIntArray *indices, vtkDoubleArray *newKnots)
+{
+  int numNewKnots = indices->GetNumberOfTuples();
+  for (int i=0; i<numNewKnots; i++)
+  {
+    if (this->SetKnot(indices->GetTuple1(i), newKnots->GetTuple1(i)) != SV_OK)
+      return SV_ERROR;
+  }
+  return SV_OK;
+}
+
+// ----------------------
+// GetKnot
+// ----------------------
+int vtkSVNURBSCurve::GetKnot(const int index, double &knotVal)
+{
+  if (index >= this->NumberOfKnotPoints)
+  {
+    vtkErrorMacro("Index " << index << " outside length of knot vector: " << this->NumberOfKnotPoints);
+    return SV_ERROR;
+  }
+  knotVal = this->KnotVector->GetTuple1(index);
+  return SV_OK;
+}
+
+// ----------------------
+// GetKnots
+// ----------------------
+int vtkSVNURBSCurve::GetKnots(vtkIntArray *indices, vtkDoubleArray *knotVals)
+{
+  int numKnotVals = indices->GetNumberOfTuples();
+  for (int i=0; i<numKnotVals; i++)
+  {
+    double returnVal;
+    if (this->GetKnot(indices->GetTuple1(i), returnVal) != SV_OK)
+      return SV_ERROR;
+    knotVals->InsertTuple1(i, returnVal);
+  }
+  return SV_OK;
+}
+
+// ----------------------
+// SetControlPointGrid
+// ----------------------
+int vtkSVNURBSCurve::SetControlPointGrid(vtkSVControlGrid *controlPoints)
+{
+  this->ControlPointGrid->DeepCopy(controlPoints);
+
+  int dims[3];
+  this->ControlPointGrid->GetDimensions(dims);
+  this->NumberOfControlPoints = dims[0];
+  return SV_OK;
+}
+// ----------------------
+// SetControlPoint
+// ----------------------
+int vtkSVNURBSCurve::SetControlPoint(const int index, const double coordinates[3], const double weight)
+{
+  this->ControlPointGrid->SetControlPoint(index, 0, 0, coordinates, weight);
+  return SV_OK;
+}
+
+// ----------------------
+// SetControlPoint
+// ----------------------
+int vtkSVNURBSCurve::SetControlPoint(const int index, const double pw[4])
+{
+  this->ControlPointGrid->SetControlPoint(index, 0, 0, pw);
+  return SV_OK;
+}
+
+// ----------------------
+// GetControlPoint
+// ----------------------
+int vtkSVNURBSCurve::GetControlPoint(const int index, double coordinates[3], double &weight)
+{
+  this->ControlPointGrid->GetControlPoint(index, 0, 0, coordinates, weight);
+  return SV_OK;
+}
+
+// ----------------------
+// GetControlPoint
+// ----------------------
+int vtkSVNURBSCurve::GetControlPoint(const int index, double pw[4])
+{
+  this->ControlPointGrid->GetControlPoint(index, 0, 0, pw);
+  return SV_OK;
+}
+
+// ----------------------
+// SetWeights
+// ----------------------
+int vtkSVNURBSCurve::SetWeights(vtkDoubleArray *weights)
+{
+  if (weights->GetNumberOfTuples() != this->ControlPointGrid->GetPoints()->GetNumberOfPoints())
+  {
+    vtkErrorMacro("Cannot set weight vector on control points as number of tuples " << weights->GetNumberOfTuples() << " does not equal the number of control points " << this->ControlPointGrid->GetPoints()->GetNumberOfPoints());
+    return SV_ERROR;
+  }
+  weights->SetName("Weights");
+  this->ControlPointGrid->GetPointData()->AddArray(weights);
+  return SV_OK;
+}
+
+// ----------------------
+// GetWeights
+// ----------------------
+int vtkSVNURBSCurve::GetWeights(vtkDoubleArray *weights)
+{
+  weights = vtkDoubleArray::SafeDownCast(this->ControlPointGrid->GetPointData()->GetArray("Weights"));
+  return SV_OK;
+}
+
+// ----------------------
+// SetWeight
+// ----------------------
+int vtkSVNURBSCurve::SetWeight(const int index, const double weight)
+{
+  vtkDataArray *weights = this->ControlPointGrid->GetPointData()->GetArray("Weights");
+  if (index >= weights->GetNumberOfTuples())
+  {
+    vtkErrorMacro("Index " << index << " outside length of weight vector: " << weights->GetNumberOfTuples());
+    return SV_ERROR;
+  }
+  weights->SetTuple1(index, weight);
+
+  return SV_ERROR;
+}
+
+// ----------------------
+// GetWeight
+// ----------------------
+int vtkSVNURBSCurve::GetWeight(const int index, double &weight)
+{
+  vtkDataArray *weights = this->ControlPointGrid->GetPointData()->GetArray("Weights");
+  if (index >= weights->GetNumberOfTuples())
+  {
+    vtkErrorMacro("Index " << index << " outside length of weight vector: " << weights->GetNumberOfTuples());
+    return SV_ERROR;
+  }
+  weight = weights->GetTuple1(index);
+
+  return SV_ERROR;
 }
 
 // ----------------------
@@ -174,6 +589,8 @@ void vtkSVNURBSCurve::SetControlPoints(vtkPoints *points1d)
 int vtkSVNURBSCurve::GeneratePolyDataRepresentation(const double spacing)
 {
   // Get number of control points and knots
+  this->NumberOfControlPoints = this->ControlPointGrid->GetNumberOfPoints();
+  this->NumberOfKnotPoints = this->KnotVector->GetNumberOfTuples();
   int nCon  = this->NumberOfControlPoints;
   int nKnot = this->NumberOfKnotPoints;
   if (nCon == 0)
@@ -231,6 +648,7 @@ int vtkSVNURBSCurve::GeneratePolyDataRepresentation(const double spacing)
     }
   }
 
+  vtkDataArray *weights = this->ControlPointGrid->GetPointData()->GetArray("Weights");
   // Last value should be 1
   Nfinal->SetValue(numDiv-1, nCon-1, 1.0);
 
@@ -241,7 +659,7 @@ int vtkSVNURBSCurve::GeneratePolyDataRepresentation(const double spacing)
     for (int j=0; j<nCon; j++)
     {
       double val       = Nfinal->GetValue(i, j);
-      double ratWeight = this->Weights->GetTuple1(j);
+      double ratWeight = weights->GetTuple1(j);
       ratVal = ratVal + val*ratWeight;
     }
     Nrational->SetTuple1(i, ratVal);
@@ -253,7 +671,7 @@ int vtkSVNURBSCurve::GeneratePolyDataRepresentation(const double spacing)
     {
       double val       = Nfinal->GetValue(i, j);
       double ratVal    = Nrational->GetTuple1(i);
-      double ratWeight = this->Weights->GetTuple1(j);
+      double ratWeight = weights->GetTuple1(j);
       Nfinal->SetValue(i, j, val*ratWeight/ratVal);
     }
   }
@@ -311,5 +729,21 @@ int vtkSVNURBSCurve::GetStructuredGridConnectivity(const int numPoints, vtkCellA
 int vtkSVNURBSCurve::GetMultiplicity(vtkIntArray *multiplicity, vtkDoubleArray *singleKnots)
 {
   vtkSVNURBSUtils::GetMultiplicity(this->KnotVector, multiplicity, singleKnots);
+  return SV_OK;
+}
+
+// ----------------------
+// ExtractBezierCurves
+// ----------------------
+int vtkSVNURBSCurve::ExtractBezierCurves(vtkSVNURBSCollection *curves)
+{
+  if (vtkSVNURBSUtils::CurveBezierExtraction(this->ControlPointGrid,
+                                             this->KnotVector,
+                                             this->Degree,
+                                             curves) != SV_OK)
+  {
+    vtkErrorMacro("Error extracting Bezier curves");
+    return SV_ERROR;
+  }
   return SV_OK;
 }

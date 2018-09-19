@@ -55,6 +55,9 @@
 #include "vtkObjectFactory.h"
 #include "vtkPlane.h"
 #include "vtkPolyData.h"
+#include "vtkUnstructuredGrid.h"
+
+#include "vtkSVGlobals.h"
 
 #include <string>
 #include <sstream>
@@ -112,6 +115,15 @@ public:
   /** \brief
    *  \param polydata to check. */
   static int CheckSurface(vtkPolyData *pd);
+
+  /** \brief
+   *  \param polydata to check.
+   *  \param numNonTriangleElements returns the number of non-triangle elements.
+   *  \param numNonManifoldEdges returns the number of non-manifold elements.
+   *  \param numOpenEdges returns the number of open edges.
+   *  \param surfaceGenus returns the surface genus. */
+
+  static int CheckSurface(vtkPolyData *pd, int &numNonTriangleCells, int &numNonManifoldEdges, int &numOpenEdges, int &surfaceGenus);
 
   //General operations
   /** \brief Gets region closest to given point.
@@ -173,6 +185,32 @@ public:
   static int ThresholdPd(vtkPolyData *pd, int minVal, int maxVal, int dataType,
                          std::string arrayName, vtkPolyData *returnPd);
 
+  /** \brief Awesome function that is wrapper around vtkThreshold
+   *  \param ug Input ug to threshold, updated in place.
+   *  \param minVal minumum value.
+   *  \param maxVal maximum value.
+   *  \param dataType 0 for point data, 1 for cell data.
+   *  \param arrayName Name of array to be used to threshold ug.
+   *  \return SV_OK */
+  static int ThresholdUg(vtkUnstructuredGrid *ug, int minVal, int maxVal, int dataType,
+                         std::string arrayName);
+
+  /** \brief Awesome function that is wrapper around vtkThreshold
+   *  \param ug Input ug to threshold.
+   *  \param minVal minumum value.
+   *  \param maxVal maximum value.
+   *  \param dataType 0 for point data, 1 for cell data.
+   *  \param arrayName Name of array to be used to threshold ug.
+   *  \param returnPd The resultant thresholded ug
+   *  \return SV_OK */
+  static int ThresholdUg(vtkUnstructuredGrid *ug, int minVal, int maxVal, int dataType,
+                         std::string arrayName, vtkUnstructuredGrid *returnUg);
+
+  /** \brief Get a polydata of the edges of the input polydata. Each edge is
+   *  a VTK_LINE cell..
+   *  \return SV_OK.  */
+  static int GetEdgePolyData(vtkPolyData *pd, vtkPolyData *edgePd);
+
   /** \brief Get centroid of points */
   static int GetCentroidOfPoints(vtkPoints *points, double centroid[3]);
 
@@ -181,10 +219,19 @@ public:
    *  \param pd The full polydata.
    *  \param arrayName Name of array to get cell data of.
    *  \param pointId The point Id to get array values of.
-   *  \param groupIds list of values on cells attached to point.
+   *  \param valList list of values on cells attached to point.
    *  \return SV_OK */
-  static int GetPointCellsValues(vtkPolyData *pd, std::string arrayName,
-                                const int pointId, vtkIdList *valList);
+  static int GetPointCellsValues(vtkPointSet *ps, std::string arrayName,
+                                 const int pointId, vtkIdList *valList);
+
+  /** \brief For an array of integers on pd, will return a list of values on neighboring cells
+   *  \param pd The full polydata.
+   *  \param arrayName Name of array to get cell data of.
+   *  \param cellId The cell Id to get neighbors values of.
+   *  \param valList list of values on cells attached to point.
+   *  \return SV_OK */
+  static int GetNeighborsCellsValues(vtkPolyData *pd, std::string arrayName,
+                                    const int cellId, vtkIdList *valList);
 
   /** \brief Perform a cut of the polydata, but with crinkle clip. Uses vtkExtractGeometry
    *  \param inPd The pd to cut.
@@ -353,7 +400,7 @@ public:
                          vtkPolyData *loop, vtkIdList *boundaryIds);
 
 
-  /** \brief Function separate multiple boundary loops. */
+  /** \brief Function to separate multiple boundary loops. */
   static int SeparateLoops(vtkPolyData *pd, vtkPolyData **loops, int numBoundaries, const double xvec[3], const double zvec[3], const int boundaryStart[2]);
 
   //@{
@@ -365,11 +412,34 @@ public:
   //@}
 
   //@{
-  /** \brief Transforms pd with the given rotation matrix.
+  /** \brief Transforms pd or ug with the given rotation matrix.
    *  return SV_OK */
   static int ApplyRotationMatrix(vtkPolyData *pd, vtkMatrix4x4 *rotMatrix);
   static int ApplyRotationMatrix(vtkPolyData *pd, double rotMatrix[16]);
+  static int ApplyRotationMatrix(vtkUnstructuredGrid *ug, vtkMatrix4x4 *rotMatrix);
+  static int ApplyRotationMatrix(vtkUnstructuredGrid *ug, double rotMatrix[16]);
   //@}
+
+  /** \brief Transforms the three points of a triangle in 3d to 2d. pt0 is
+   *   relocated to 0.0, 0.0 and pt1 is relocated to lie on the x axis.
+   *  return SV_OK */
+  static int TransformTriangleToXYPlane(double pt0[3], double pt1[3], double pt2[3],
+                                        double outPt0[3], double outPt1[3], double outPt[2]);
+
+  static int ComputeParametricDerivatives(double pt0[3], double pt1[3], double pt2[3],
+                                                    double pPt0[3], double pPt1[3], double pPt2[3],
+                                                    double dXdXi, double dXdEta,
+                                                    double dYdXi, double dYdEta,
+                                                    double dZdXi, double dZdEta);
+
+  static int ComputeJacobianDerivatives(double pt0[3], double pt1[3], double pt2[3],
+                                                  double pPt0[3], double pPt1[3], double pPt2[3],
+                                                  double dXdXi, double dXdEta,
+                                                  double dYdXi, double dYdEta,
+                                                  double dZdXi, double dZdEta);
+
+  static int GetParametricPoints(double pt0[3], double pt1[3], double pt2[3],
+                                 double pPt0[3], double pPt1[3], double pPt2[3]);
 
   /** \brief Get all angles of a polydata surface.
    *  \param cellAngles data array containing the angle values of all on mesh.
@@ -377,22 +447,73 @@ public:
    *  return SV_OK */
   static int GetPolyDataAngles(vtkPolyData *pd, vtkFloatArray *cellAngles);
 
-  //@{
-  /** \brief Convenience functions for multimaps. Not sure how long I'll keep
-   *  these.
-   *  return SV_OK */
-  static int GetAllMapKeys(std::multimap<int, int> &map, std::list<int> &list);
-  static int GetAllMapValues(std::multimap<int, int> &map, std::list<int> &list);
-  static int GetValuesFromMap(std::multimap<int, int> &map, const int key, std::list<int> &list);
-  static int GetKeysFromMap(std::multimap<int, int> &map, const int value, std::list<int> &list);
-  static int GetCommonValues(std::multimap<int, int> &map, const int keyA,
-                             const int keyB, std::list<int> &returnList);
-  static int GetUniqueNeighbors(std::multimap<int, int> &map, const int key, std::list<int> &keyVals,
-                                std::list<int> &uniqueKeys);
-  static int ListIntersection(std::list<int> &listA,
-                              std::list<int> &listB,
-                              std::list<int> &returnList);
-  //@}
+  /** \brief Function to get regions of scalar labels definied on a surface.
+   * Typically used with clustering algorithms, the regions allow quick
+   * access to the cells in the cluster and the points on the edges of the cluster.
+   */
+  static int GetRegions(vtkPolyData *pd, std::string arrayName,
+                        std::vector<Region> &allRegions);
+  static int GetSpecificRegions(vtkPolyData *pd, std::string arrayName,
+                                             std::vector<Region> &allRegions,
+                                             vtkIdList *targetRegions);
+
+  static int GetCCWPoint(vtkPolyData *pd, const int pointId, const int cellId);
+
+  static int GetCWPoint(vtkPolyData *pd, const int pointId, const int cellId);
+
+  static int CheckBoundaryEdge(vtkPolyData *pd, std::string arrayName, const int cellId, const int pointId0, const int pointId1);
+
+  static int CheckCellValuesEdge(vtkPolyData *pd, std::string arrayName, const int cellId, const int pointId0, const int pointId1);
+
+  static void SplineKnots(std::vector<int> &u, int n, int t);
+
+  static void SplineCurve(const std::vector<XYZ> &inp, int n, const std::vector<int> &knots, int t, std::vector<XYZ> &outp, int res);
+
+  static void SplinePoint(const std::vector<int> &u, int n, int t, double v, const std::vector<XYZ> &control, XYZ &output);
+
+  static double SplineBlend(int k, int t, const std::vector<int> &u, double v);
+
+  static int GetCellRingNeighbors(vtkPolyData *pd,
+                                  vtkIdList *cellIds,
+                                  int ringNumber,
+                                  int totNumberOfRings,
+                                  std::vector<std::vector<int> > &neighbors);
+
+  int GetCellDirectNeighbors(vtkPolyData *pd,
+                             std::vector<std::vector<int> > &neighbors,
+                             std::vector<int> &numNeighbors);
+
+  /** \brief Naive implementation to get most reoccuring number in list. Okay
+   *  because list size is small. */
+  static void GetMostOccuringVal(vtkIdList *idList, int &output, int &max_count);
+
+  static int SmoothBoundaries(vtkPolyData *pd, std::string arrayName);
+  static int SmoothSpecificBoundaries(vtkPolyData *pd, std::string arrayName, vtkIdList *targetRegions);
+
+  static int GetPointEdgeCells(vtkPolyData *pd, std::string arrayName,
+                               const int cellId, const int pointId,
+                               vtkIdList *sameCells);
+
+  static int CurveFitBoundaries(vtkPolyData *pd, std::string arrayName,
+                                std::vector<Region> allRegions);
+
+  /** \brief Correct cells on the boundary by updating val if they have
+   *  multiple neighboring cells of the same value */
+  static int CorrectCellBoundaries(vtkPolyData *pd, std::string cellArrayName);
+  /** \brief Correct cells on the boundary by updating val if they have
+   *  multiple neighboring cells of the same value */
+  static int CorrectSpecificCellBoundaries(vtkPolyData *pd, std::string cellArrayName,
+                                    vtkIdList *targetRegions);
+
+  /** \brief From three vectors, compute transformation from global to local */
+  static int ComputeRotationMatrix(const double from_x[3], const double from_y[3],
+                                   const double from_z[3], const double to_x[3],
+                                   const double to_y[3], const double to_z[3],
+                                   double rotMatrix[9]);
+
+  static int FindPointMatchingValues(vtkPointSet *ps, std::string arrayName, vtkIdList *matchingVals, int &returnPtId);
+  static int FindPointsMatchingValues(vtkPointSet *ps, std::string arrayName, vtkIdList *matchingVals, vtkIdList *returnPtIds);
+
 
 protected:
   vtkSVGeneralUtils();

@@ -439,7 +439,7 @@ int vtkSVMultiplePolyDataIntersectionFilter::RequestData(
   int numInputs = inputVector[0]->GetNumberOfInformationObjects();
   if (numInputs == 1)
     {
-    fprintf(stdout,"Only one input, returning input\n");
+    vtkWarningMacro("Only one input, returning input");
     output->DeepCopy(vtkPolyData::GetData(inputVector[0], 0));
     this->SetSurfaceId(output, 1);
     return SV_OK;

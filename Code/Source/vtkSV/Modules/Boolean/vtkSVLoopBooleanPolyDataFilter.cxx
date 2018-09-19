@@ -983,6 +983,7 @@ int vtkSVLoopBooleanPolyDataFilter::RequestData(
   impl->Mesh[1]->DeepCopy(polydataIntersection->GetOutput(2));
   impl->Mesh[1]->BuildLinks();
   impl->IntersectionLines->ShallowCopy(polydataIntersection->GetOutput(0));
+  outputIntersection->DeepCopy(impl->IntersectionLines);
 
   if (this->NumberOfIntersectionPoints == 0 ||
                   this->NumberOfIntersectionLines == 0)
@@ -1201,6 +1202,7 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::DetermineIntersection(
       vtkIdType nextCell = cellIds->GetId(0);
 
       //Run through intersection lines to get loops!
+      vtkDebugWithObjectMacro(this->ParentFilter,"Running loop find: " << interPt << " " <<  nextCell);
       newloop.startPt = interPt;
       int caseId=0;
       caseId = this->RunLoopFind(interPt, nextCell, usedPt, &newloop);

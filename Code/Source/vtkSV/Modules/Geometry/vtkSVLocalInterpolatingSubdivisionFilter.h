@@ -42,22 +42,15 @@
 #ifndef vtkSVLocalInterpolatingSubdivisionFilter_h
 #define vtkSVLocalInterpolatingSubdivisionFilter_h
 
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkSVGeometryModule.h" // for export
 
-class vtkCellArray;
-class vtkCellData;
-class vtkIdList;
-class vtkIntArray;
-class vtkPointData;
-class vtkPoints;
-class vtkPolyData;
+#include "vtkPolyDataAlgorithm.h"
 
 class VTKSVGEOMETRY_EXPORT vtkSVLocalInterpolatingSubdivisionFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkSVLocalInterpolatingSubdivisionFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set/get the number of subdivisions.
@@ -80,7 +73,7 @@ protected:
   vtkSVLocalInterpolatingSubdivisionFilter();
   ~vtkSVLocalInterpolatingSubdivisionFilter();
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   virtual int GenerateSubdivisionPoints (vtkPolyData *inputDS, vtkIntArray *edgeData, vtkPoints *outputPts, vtkPointData *outputPD) = 0;
   virtual void GenerateSubdivisionCells (vtkPolyData *inputDS, vtkIntArray *edgeData, vtkCellArray *outputPolys, vtkCellData *outputCD);
   int FindEdge (vtkPolyData *mesh, vtkIdType cellId, vtkIdType p1,

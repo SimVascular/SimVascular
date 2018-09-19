@@ -40,25 +40,26 @@
 
 #include "vtkSVConstrainedSmoothing.h"
 
+#include "vtkCellArray.h"
+#include "vtkCellData.h"
+#include "vtkDoubleArray.h"
+#include "vtkErrorCode.h"
+#include "vtkFloatArray.h"
+#include "vtkGenericCell.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
+#include "vtkIntArray.h"
+#include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
-#include "vtkCellArray.h"
-#include "vtkIntArray.h"
-#include "vtkDoubleArray.h"
-#include "vtkCellData.h"
+#include "vtkPolyDataNormals.h"
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
+
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 #include "vtkSVMathUtils.h"
 #include "vtkSVSparseMatrix.h"
-#include "vtkFloatArray.h"
-#include "vtkPolyDataNormals.h"
-#include "vtkGenericCell.h"
-#include "vtkMath.h"
-
 
 #include <iostream>
 
@@ -152,20 +153,23 @@ int vtkSVConstrainedSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
     //Check the input to make sure it is there
     if (numPolys < 1)
     {
-        vtkDebugMacro("No input!");
-        return SV_OK;
+      vtkErrorMacro("No input!");
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_OK;
     }
 
     if (this->UsePointArray)
     {
       if (this->PointArrayName == NULL)
       {
-        std::cout<<"No PointArrayName given." << endl;
+        vtkErrorMacro("No PointArrayName given.");
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
       if (this->GetArrays(input,0) != 1)
       {
         std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
     }
@@ -174,11 +178,13 @@ int vtkSVConstrainedSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
       if (this->CellArrayName == NULL)
       {
         std::cout<<"No CellArrayName given." << endl;
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
       if (this->GetArrays(input,1) != 1)
       {
         std::cout<<"No Cell Array Named "<<this->CellArrayName<<" on surface"<<endl;
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
     }

@@ -54,7 +54,7 @@
 
 #include "vtkSVFindSeparateRegions.h"
 #include "vtkSVGetSphereRegions.h"
-#include "vtkSVLoftPolyDataSolid.h"
+#include "vtkSVLoftSplineSurface.h"
 #include "vtkSVConstrainedSmoothing.h"
 #include "vtkSVConstrainedBlend.h"
 #include "vtkSVLocalButterflySubdivisionFilter.h"
@@ -2351,7 +2351,7 @@ int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongL
   cvPolyData *result = NULL;
   *dst = NULL;
 
-  vtkNew(vtkSVLoftPolyDataSolid,lofter);
+  vtkNew(vtkSVLoftSplineSurface,lofter);
   for (int i=0;i<numSrcs;i++)
   {
     vtkPolyData *newPd = srcs[i]->GetVtkPolyData();

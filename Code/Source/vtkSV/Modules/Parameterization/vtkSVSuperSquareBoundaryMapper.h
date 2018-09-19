@@ -47,18 +47,19 @@
 #ifndef vtkSVSuperSquareBoundaryMapper_h
 #define vtkSVSuperSquareBoundaryMapper_h
 
-#include "vtkSVBoundaryMapper.h"
 #include "vtkSVParameterizationModule.h" // For export macro
 
-#include "vtkIntArray.h"
 #include "vtkDoubleArray.h"
+#include "vtkIntArray.h"
+
+#include "vtkSVBoundaryMapper.h"
 
 class VTKSVPARAMETERIZATION_EXPORT vtkSVSuperSquareBoundaryMapper : public vtkSVBoundaryMapper
 {
 public:
   static vtkSVSuperSquareBoundaryMapper* New();
   vtkTypeMacro(vtkSVSuperSquareBoundaryMapper,vtkSVBoundaryMapper);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{
   /// \brief Vector describing how many divisions on each of the four boundaries.
@@ -78,7 +79,7 @@ protected:
   vtkSVSuperSquareBoundaryMapper();
   ~vtkSVSuperSquareBoundaryMapper();
 
-  int SetBoundaries(); // Need to implement from BoundaryMapper
+  int SetBoundaries() override; // Need to implement from BoundaryMapper
   int CalculateSquareEdgeLengths(vtkIntArray *actualIds); // Calculate square edge lengths
   int SetSquareBoundary(vtkIntArray *actualIds); // Set the boundary
 
