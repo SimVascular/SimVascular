@@ -62,7 +62,7 @@ endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_COMMON_NAME} ${SV_LIB_GEOM_NAME})
+  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_COMMON_NAME})
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)
