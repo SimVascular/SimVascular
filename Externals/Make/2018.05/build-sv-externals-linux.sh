@@ -17,6 +17,9 @@ case "$osid" in
     'Ubuntu')
 	
 	case "$osver" in
+	    'bionic')
+		export SV_EXTERN_LINUX_VERSION=ubuntu_18
+		;;
 	    'xenial')
 		export SV_EXTERN_LINUX_VERSION=ubuntu_16
 		;;
