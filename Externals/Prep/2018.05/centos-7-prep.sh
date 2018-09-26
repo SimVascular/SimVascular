@@ -9,6 +9,10 @@ sudo yum -y install rh-git29
 # needed for some makefile stuff
 sudo yum -y install tcl
 
+### to link against qt pre-built
+sudo yum -y install libglew
+sudo yum -y install libglew-devel
+
 # for qt
 sudo yum -y install rh-ruby23
 sudo yum -y install gperf
@@ -74,6 +78,15 @@ sudo ln -s /usr/local/package/cmake-3.10.3/bin/cmake-gui /usr/local/bin/cmake-gu
 sudo ln -s /usr/local/package/cmake-3.10.3/bin/cpack     /usr/local/bin/cpack
 sudo ln -s /usr/local/package/cmake-3.10.3/bin/ctest     /usr/local/bin/ctest
 
+### install Qt
+echo "Must install Qt into /opt/Qt5.6.3!"
+echo "Must instal Qt + WebView + WebEngine + Qt Scripts!"
+wget http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.6/qt-opensource-linux-x64-5.6.3.run
+chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
+sudo ./qt-opensource-linux-x64-5.6.3.run
+
+# do these need to be done every time? Maybe doesn't belong in prep script?
 scl enable devtoolset-6 bash
 scl enable rh-git29 bash
 scl enable rh-ruby23 bash
+
