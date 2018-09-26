@@ -84,6 +84,7 @@ QT_MOC_INCDIRS = \
       -I $(QT_TOP_DIR)/include/mkspecs/linux-g++
 QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5Sql$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5WebEngineCore$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebEngineWidgets$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebEngine$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebView$(LIBLINKEXT) \
@@ -100,6 +101,13 @@ QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5Core$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Quick$(LIBLINKEXT) \
       $(LIBFLAG)Qt5X11Extras$(LIBLINKEXT)
+
+# note: Qt5Positioning and Qt5Svg are required to link on
+#       centos 7, but not explicitly referenced in mitk/sv
+QT_LIBS += \
+      $(LIBFLAG)Qt5Positioning$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5Svg$(LIBLINKEXT)
+
 QT_SO_PATH=$(QT_TOP_DIR)/lib
 QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
 
