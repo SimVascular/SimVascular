@@ -83,6 +83,9 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_GDCM* ]]; then
   rm -Rf ../gdcm-2.6.3
   tar xvf Originals/gdcm/gdcm-2.6.3.tar.gz
   mv gdcm-2.6.3 ..
+  pushd ../gdcm-2.6.3
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-gdcm-2.6.3-macos.patch
+  popd
 fi
 
 #  hdf5
