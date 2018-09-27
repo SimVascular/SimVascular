@@ -67,6 +67,15 @@ if [[ $SV_SUPER_OPTIONS == *WGET_QT* ]]; then
   wget $PARENT_URL/qt/qt-everywhere-opensource-src-5.6.3.tar.gz
   popd
 fi
+if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
+  echo "WGET_QT"
+  rm -Rf qt
+  mkdir -p qt
+  pushd qt
+  wget $PARENT_URL/qt/qt-opensource-linux-x64-5.6.3.run
+  chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
+  popd
+fi
 
 # freetype
 if [[ $SV_SUPER_OPTIONS == *WGET_FREETYPE* ]]; then

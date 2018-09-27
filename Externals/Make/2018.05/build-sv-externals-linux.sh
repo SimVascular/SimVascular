@@ -5,9 +5,6 @@ EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 #  must have write permissions to dirs!
 #
 
-sudo mkdir -p /usr/local/sv
-sudo chmod a+rwx /usr/local/sv
-
 osid=$(lsb_release -si)
 osrel=$(lsb_release -sr)
 osver=$(lsb_release -sc)
@@ -66,13 +63,19 @@ esac
 #
 
 echo "Deleting previous build dir ($EXTERNALS_BUILD_TOP)"
-rm -Rf $EXTERNALS_BUILD_TOP
-mkdir -p $EXTERNALS_BUILD_TOP
+sudo rm -Rf $EXTERNALS_BUILD_TOP
+sudo mkdir -p $EXTERNALS_BUILD_TOP
 
 echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"
-rm -Rf $EXTERNALS_TOP
+sudo rm -Rf $EXTERNALS_TOP
+
+sudo mkdir -p /usr/local/sv
+sudo chmod a+rwx /usr/local/sv
+sudo chown -R $USER /usr/local/sv
+
 mkdir -p $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP/src
+ 
 cp -Rf BuildHelpers $EXTERNALS_TOP/src
 cp -Rf ../../Patches $EXTERNALS_TOP/src/BuildHelpers
 

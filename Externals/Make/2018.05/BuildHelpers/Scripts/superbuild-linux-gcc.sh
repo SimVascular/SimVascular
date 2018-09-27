@@ -25,7 +25,8 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_SWIG        UNTAR_SWIG        BUILD_SWIG        ARCHIVE_SWIG        ZIP_SWIG        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_TINYXML2    UNTAR_TINYXML2    BUILD_TINYXML2    ARCHIVE_TINYXML2    ZIP_TINYXML2    $SV_SUPER_OPTIONS"
-#   SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
+   #   SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
+   SV_SUPER_OPTIONS="WGET_BIN_QT          INSTALL_BIN_QT   ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_FREETYPE    UNTAR_FREETYPE    BUILD_FREETYPE    ARCHIVE_FREETYPE    ZIP_FREETYPE    $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_GDCM        UNTAR_GDCM        BUILD_GDCM        ARCHIVE_GDCM        ZIP_GDCM        $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_HDF5        UNTAR_HDF5        BUILD_HDF5        ARCHIVE_HDF5        ZIP_HDF5        $SV_SUPER_OPTIONS"
@@ -95,6 +96,15 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
   echo "CREATE_BUILD_SCRIPT_QT"
   sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/compile-make-qt-generic.sh > tmp/compile.make.qt.gcc.sh
   chmod a+rx ./tmp/compile.make.qt.gcc.sh
+fi
+
+# qt
+if [[ $SV_SUPER_OPTIONS == *INSTALL_BIN_QT* ]]; then
+  echo "CREATE_INSTALL_SCRIPT_QT"
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/install-qt-linux.sh > tmp/install.qt.gcc.sh
+  sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/qt.installer-noninteractive.qs> tmp/qt.installer-noninteractive.qs
+  chmod a+rx ./tmp/install.qt.gcc.sh
+  chmod a+rx ./tmp/qt.installer-noninteractive.qs
 fi
 
 # freetype
@@ -169,6 +179,16 @@ if [[ $SV_SUPER_OPTIONS == *ZIP_* ]]; then
   echo "CREATE_BUILD_SCRIPT_ZIP_FILES_ALL"
   sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh Scripts/tar-to-zip-all.sh > tmp/tar-to-zip-all.gcc.sh
   chmod a+rx ./tmp/tar-to-zip-all.gcc.sh
+fi
+
+#
+# run installers
+#
+
+# qt interactive installer
+if [[ $SV_SUPER_OPTIONS == *INSTALL_BIN_QT* ]]; then
+  echo "INSTALL_BIN_QT"
+  time ./tmp/install.qt.gcc.sh >& ./tmp/stdout.install.qt.txt
 fi
 
 #
