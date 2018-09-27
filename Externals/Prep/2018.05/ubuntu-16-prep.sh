@@ -110,8 +110,8 @@ sudo ln -s /usr/local/package/cmake-3.10.3/bin/cpack     /usr/local/bin/cpack
 sudo ln -s /usr/local/package/cmake-3.10.3/bin/ctest     /usr/local/bin/ctest
 
 ### install Qt
-echo "Must install Qt into /opt/Qt5.6.3!"
-echo "Must instal Qt + WebView + WebEngine + Qt Scripts!"
-wget http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.6/qt-opensource-linux-x64-5.6.3.run
-chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
-sudo ./qt-opensource-linux-x64-5.6.3.run
+#echo "Must install Qt into /opt/Qt5.6.3!"
+#echo "Must instal Qt + WebView + WebEngine + Qt Scripts!"
+#wget http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.6/qt-opensource-linux-x64-5.6.3.run
+#chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
+#sudo ./qt-opensource-linux-x64-5.6.3.run
