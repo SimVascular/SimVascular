@@ -73,7 +73,9 @@ sudo mkdir -p /usr/local/sv
 sudo chmod a+rwx /usr/local/sv
 sudo chown -R $USER /usr/local/sv
 
-mkdir -p $EXTERNALS_TOP
+sudo mkdir -p $EXTERNALS_TOP
+sudo chown -R $USER $EXTERNALS_TOP
+sudo chgrp -R $USER $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP/src
  
 cp -Rf BuildHelpers $EXTERNALS_TOP/src
