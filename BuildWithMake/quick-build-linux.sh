@@ -30,8 +30,10 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-export SV_EXTERNALS_VERSION_NUMBER=2018.01
+#export SV_EXTERNALS_VERSION_NUMBER=2018.01
 export SV_EXTERNALS_VERSION_NUMBER=2018.05
+
+export EXTERNALS_SV_ARCH_DIR=x64
 
 osid=$(lsb_release -si)
 osrel=$(lsb_release -sr)
@@ -40,41 +42,44 @@ osver=$(lsb_release -sc)
 case "$osid" in
 
     'Ubuntu')
-
+        export EXTERNALS_SV_OS_DIR=ubuntu
+	export EXTERNALS_SV_OS_LONG_NAME_DIR=ubuntu
+	export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
 	case "$osver" in
+	    'bionic')
+		export SV_EXTERN_LINUX_VERSION=ubuntu_18
+		export EXTERNALS_SV_FULL_OS_VER_NO=18.04
+		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+		  echo "Error - Ubuntu 18 2018.01 not built yet!"
+		  exit
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+                  export EXTERNALS_BUILD_DATE=2018.09.28
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		  fi
+		;;
 	    'xenial')
 		export SV_EXTERN_LINUX_VERSION=ubuntu_16
+		export EXTERNALS_SV_FULL_OS_VER_NO=16.04
+		export EXTERNALS_SV_COMPILER_VER_NO=5.4
 		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
                   export EXTERNALS_BUILD_DATE=2018.01.08
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
-		  echo "Error - Ubuntu 16 not build yet!"
-		  exit
-                  export EXTERNALS_BUILD_DATE=2018.06.20
-                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
+                  export EXTERNALS_BUILD_DATE=2018.09.28
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
-                export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
-                export EXTERNALS_SV_COMPILER_VER_NO=5.4
-                export EXTERNALS_SV_OS_DIR=ubuntu
-                export EXTERNALS_SV_OS_LONG_NAME_DIR=ubuntu
-                export EXTERNALS_SV_FULL_OS_VER_NO=16.04
-                export EXTERNALS_SV_ARCH_DIR=x64
 		;;
 	    'trusty')
 		export SV_EXTERN_LINUX_VERSION=ubuntu_14
+                export EXTERNALS_SV_FULL_OS_VER_NO=14.04
+                export EXTERNALS_SV_COMPILER_VER_NO=4.8
 		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
                   export EXTERNALS_BUILD_DATE=2018.01.08
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
-                  export EXTERNALS_BUILD_DATE=2018.06.20
+                  export EXTERNALS_BUILD_DATE=2018.09.28
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
-                export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
-                export EXTERNALS_SV_COMPILER_VER_NO=4.8
-                export EXTERNALS_SV_OS_DIR=ubuntu
-                export EXTERNALS_SV_OS_LONG_NAME_DIR=ubuntu
-                export EXTERNALS_SV_FULL_OS_VER_NO=14.04
-                export EXTERNALS_SV_ARCH_DIR=x64
 		;;
 	    *)
 		echo "Error!"

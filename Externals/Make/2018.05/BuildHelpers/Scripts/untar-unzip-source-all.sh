@@ -138,10 +138,10 @@ fi
 # mitk
 if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   echo "UNTAR_MITK"
-  rm -Rf ../mitk-2018.04
+  rm -Rf ../mitk-2018.04.0
   tar xvf Originals/mitk/mitk-2018-04-alpha.tar.gz
-  mv mitk-2018-04-alpha ../mitk-2018.04
-  pushd ../mitk-2018.04
+  mv mitk-2018-04-alpha ../mitk-2018.04.0
+  pushd ../mitk-2018.04.0
   patch -p1 < ../BuildHelpers/Patches/2018.05/patch-mitk-2018.04.patch
   patch -p1 < ../BuildHelpers/Patches/2018.05/patch-mitk-2018.04-boost-windows.patch
   popd
