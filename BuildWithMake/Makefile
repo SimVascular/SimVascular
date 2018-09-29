@@ -142,6 +142,7 @@ endif
 ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+$(QT_PLUGIN_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_QPA_FONTDIR+$(QT_QPA_FONTDIR)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
