@@ -6,6 +6,9 @@ sudo apt-get -y install git
 sudo apt-get -y install emacs
 sudo apt-get -y install dos2unix
 
+# needed for some makefile stuff
+sudo apt-get -y install tcl
+
 ### compilers
 sudo apt-get -y install g++
 sudo apt-get -y install gfortran
