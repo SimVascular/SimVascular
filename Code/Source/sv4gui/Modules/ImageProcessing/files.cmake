@@ -37,6 +37,6 @@ set(CPP_FILES
 )
 
 set(RESOURCE_FILES
-  interactions/seedConfig.xml
-  interactions/seedInteraction.xml
+  Interactions/seedConfig.xml
+  Interactions/seedInteraction.xml
 )
