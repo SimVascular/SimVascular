@@ -10,8 +10,8 @@ sudo yum -y install rh-git29
 sudo yum -y install tcl
 
 ### to link against qt pre-built
-sudo yum -y install libglew
-sudo yum -y install libglew-devel
+sudo yum -y install libGLEW
+sudo yum -y install libGLEW-devel
 
 # for qt
 sudo yum -y install rh-ruby23
@@ -47,19 +47,19 @@ sudo yum -y install lsb-core
 #sudo yum -y install libmpich2-dev
 
 ### for vtk
-sudo yum -y install libglu1-mesa-dev
-sudo yum -y install libxt-dev
-sudo yum -y install libxi-dev
+sudo yum -y install libGLU-devel
+sudo yum -y install libXt-devel
+sudo yum -y install libXi-devel
 
 ### for qt/mitk
- sudo yum -y install libicu-dev
+ sudo yum -y install libicu-devel
 
 ### mitk
-sudo yum -y install libXmu-dev
-sudo yum -y install libXi-dev
+sudo yum -y install libXmu-devel
+sudo yum -y install libXi-devel
 
 ### python
-sudo yum -y install libssl-dev
+sudo yum -y install openssl-devel
 
 ### gdcm/mitk
 #sudo yum -y install swig3.0
