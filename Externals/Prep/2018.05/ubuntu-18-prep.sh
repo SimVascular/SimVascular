@@ -77,6 +77,9 @@ sudo apt-get -y install libxi-dev
 sudo apt-get -y install libtiff5-dev
 sudo apt-get -y install libwrap0-dev
 
+### needed by mitk at runtime???
+sudo apt-get -y install libcanberra-gtk-module
+
 ### python
 sudo apt-get -y install libssl-dev
 
