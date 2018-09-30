@@ -258,6 +258,12 @@ endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -fd $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 endif
+ifeq ($(SV_USE_FREETYPE),1)
+	-cp -fd $(SV_FREETYPE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+endif
+ifeq ($(SV_USE_HDF5),1)
+	-cp -fd $(SV_HDF5_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+endif
 ifeq ($(SV_USE_MITK),1)
 	-mkdir -p $(DIST_DIR)/mitk
 ifeq ($(CLUSTER), x64_cygwin)
