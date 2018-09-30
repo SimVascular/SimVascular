@@ -155,6 +155,7 @@ mksedscript:
 	-echo "puts \"s/REPLACE_TCLSH/$(notdir $(TCLSH))/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_PYTHON_MAJOR_VERSION/$(PYTHON_MAJOR_VERSION)/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_PYTHON_MINOR_VERSION/$(PYTHON_MINOR_VERSION)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACEME_QT_WEBENGINE_PROC/$(QT_WEBENGINE_PROC)/g\"" | tclsh | cat >> tmp/sedscript
 
 common-pre-distribution: tmp/sedscript
 	-date > tmp/release-date
@@ -241,13 +242,18 @@ ifeq ($(CLUSTER), x64_cygwin)
 	-$(QT_TOP_DIR)/bin/windeployqt $(QT_DEPLOY_FLAGS) \
                                        -plugindir `cygpath -m $(DIST_DIR)/qt-plugins` \
                                        `cygpath -m $(DIST_DIR)/simvascular-bin.exe`
-else
-	-cp -fd $(QT_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
-endif
-#	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
 	-cp -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/qt-fonts
 	-echo "[Paths]" > $(DIST_DIR)/qt.conf
 	-echo "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
+else
+	-cp -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/qt-fonts
+	-cp -fd $(QT_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
+	-echo "[Paths]" > $(DIST_DIR)/qt.conf
+	-echo "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
+	-echo "Data=\"QtWebEngine\"" >> $(DIST_DIR)/qt.conf
+	-echo "Translations=\"QtWebEngine\"" >> $(DIST_DIR)/qt.conf
+endif
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -fd $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
