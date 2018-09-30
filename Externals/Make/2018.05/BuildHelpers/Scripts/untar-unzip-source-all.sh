@@ -64,7 +64,7 @@ fi
 # qt
 if [[ $SV_SUPER_OPTIONS == *UNTAR_QT* ]]; then
     echo "UNTAR_SWIG"
-  rm -Rf ../qt-5.6.0
+  rm -Rf ../qt-5.6.3
   tar xvf Originals/qt/qt-everywhere-opensource-src-5.6.3.tar.gz
   mv qt-everywhere-opensource-src-5.6.3 ../qt-5.6.3
 fi
@@ -83,6 +83,9 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_GDCM* ]]; then
   rm -Rf ../gdcm-2.6.3
   tar xvf Originals/gdcm/gdcm-2.6.3.tar.gz
   mv gdcm-2.6.3 ..
+  pushd ../gdcm-2.6.3
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-gdcm-2.6.3-macos.patch
+  popd
 fi
 
 #  hdf5
@@ -135,10 +138,10 @@ fi
 # mitk
 if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   echo "UNTAR_MITK"
-  rm -Rf ../mitk-2018.04
+  rm -Rf ../mitk-2018.04.0
   tar xvf Originals/mitk/mitk-2018-04-alpha.tar.gz
-  mv mitk-2018-04-alpha ../mitk-2018.04
-  pushd ../mitk-2018.04
+  mv mitk-2018-04-alpha ../mitk-2018.04.0
+  pushd ../mitk-2018.04.0
   patch -p1 < ../BuildHelpers/Patches/2018.05/patch-mitk-2018.04.patch
   patch -p1 < ../BuildHelpers/Patches/2018.05/patch-mitk-2018.04-boost-windows.patch
   popd

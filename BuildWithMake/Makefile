@@ -106,6 +106,7 @@ ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+`cygpath -u $(QT_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+$(QT_PLUGIN_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_QT_QPA_FONTDIR+$(QT_QPA_FONTDIR)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_WEBENGINE_PROC+$(QT_WEBENGINE_PROC)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
@@ -142,6 +143,8 @@ endif
 ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+$(QT_PLUGIN_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_QPA_FONTDIR+$(QT_QPA_FONTDIR)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_WEBENGINE_PROC+$(QT_WEBENGINE_PROC)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
@@ -196,6 +199,7 @@ endif
 ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+$(QT_PLUGIN_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_WEBENGINE_PROC+$(QT_WEBENGINE_PROC)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_MITK),1)
 	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
@@ -324,8 +328,14 @@ post-build: mksedscript
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-xfsv-script >> xfsv
 	-chmod a+rx sv
 	-chmod a+rx xfsv
+ifeq ($(SV_USE_QT),1)
 	-echo "[Paths]" > Bin/qt.conf
 	-echo "Prefix=\"$(QT_TOP_DIR)\"" >> Bin/qt.conf
+	-mkdir -p Bin/QtWebEngine
+	-/bin/cp -f $(QT_WEBENGINE_PATH) Bin/QtWebEngine
+	-/bin/cp -r $(QT_TOP_DIR)/resources/* Bin/QtWebEngine
+	-/bin/cp -Rf $(QT_TOP_DIR)/translations/* Bin/QtWebEngine
+endif
 #	-rm -f sedscript
 
 clean:

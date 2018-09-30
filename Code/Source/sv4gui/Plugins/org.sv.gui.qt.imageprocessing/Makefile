@@ -45,7 +45,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            -Dorg_sv_gui_qt_imageprocessing_EXPORTS \
-           -DUS_MODULE_NAME=sv4guiModuleImageprocessing
+           -DUS_MODULE_NAME=sv4guiModuleImageProcessing
 
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)
