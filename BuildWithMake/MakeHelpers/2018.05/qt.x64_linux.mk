@@ -110,7 +110,11 @@ QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
 #       centos 7, but not explicitly referenced in mitk/sv
 QT_LIBS += \
       $(LIBFLAG)Qt5Positioning$(LIBLINKEXT) \
-      $(LIBFLAG)Qt5Svg$(LIBLINKEXT)
+      $(LIBFLAG)Qt5Svg$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5OpenGL$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5Script$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5XmlPatterns$(LIBLINKEXT)
+
 
 QT_SO_PATH=$(QT_TOP_DIR)/lib
 QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins

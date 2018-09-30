@@ -145,7 +145,10 @@ MITK_PLUGIN_LIBS += \
              $(LIBFLAG)org_mitk_gui_qt_common_legacy$(LIBLINKEXT) \
              $(LIBFLAG)org_blueberry_ui_qt$(LIBLINKEXT) \
              $(LIBFLAG)org_blueberry_core_runtime$(LIBLINKEXT) \
-             $(LIBFLAG)org_mitk_core_services$(LIBLINKEXT)
+             $(LIBFLAG)org_mitk_core_services$(LIBLINKEXT) \
+             $(LIBFLAG)org_blueberry_core_commands$(LIBLINKEXT)  \
+             $(LIBFLAG)org_mitk_core_ext$(LIBLINKEXT) \
+             $(LIBFLAG)org_blueberry_core_expressions$(LIBLINKEXT)
 
 ### this library doesn't seem to be on linux
 ##         $(LIBFLAG)CTKVisualizationVTKCorePythonQt$(LIBLINKEXT)
@@ -181,6 +184,16 @@ MITK_LIBS += \
            $(LIBFLAG)MitkSegmentation$(LIBLINKEXT) \
            $(LIBFLAG)MitkSegmentationUI$(LIBLINKEXT) \
            $(LIBFLAG)MitkSurfaceInterpolation$(LIBLINKEXT) \
+           $(LIBFLAG)MitkLegacyGL$(LIBLINKEXT) \
+           $(LIBFLAG)MitkPlanarFigure$(LIBLINKEXT) \
+           $(LIBFLAG)MitkAnnotation$(LIBLINKEXT) \
+           $(LIBFLAG)MitkSceneSerializationBase$(LIBLINKEXT) \
+           $(LIBFLAG)MitkContourModel$(LIBLINKEXT) \
+           $(LIBFLAG)MitkImageStatistics$(LIBLINKEXT) \
+           $(LIBFLAG)MitkMultilabel$(LIBLINKEXT) \
+           $(LIBFLAG)MitkDICOMReader$(LIBLINKEXT) \
+           $(LIBFLAG)MitkImageExtraction$(LIBLINKEXT) \
+           $(LIBFLAG)MitkImageStatistics$(LIBLINKEXT) \
            $(LIBFLAG)PythonQt$(LIBLINKEXT) \
            $(LIBFLAG)tinyxml$(LIBLINKEXT) \
            $(LIBFLAG)PocoFoundation$(LIBLINKEXT) \
@@ -189,6 +202,38 @@ MITK_LIBS += \
            $(LIBFLAG)PocoXML$(LIBLINKEXT) \
            $(LIBFLAG)PocoZip$(LIBLINKEXT) \
            $(LIBFLAG)PocoUtil$(LIBLINKEXT) \
-           $(LIBFLAG)CppMicroServices$(LIBLINKEXT)
+           $(LIBFLAG)CppMicroServices$(LIBLINKEXT) \
+           $(LIBFLAG)CppMicroServices$(LIBLINKEXT) \
+           $(LIBFLAG)dcmdata$(LIBLINKEXT) \
+           $(LIBFLAG)dcmfg$(LIBLINKEXT) \
+           $(LIBFLAG)dcmimgle$(LIBLINKEXT) \
+           $(LIBFLAG)dcmjpeg$(LIBLINKEXT) \
+           $(LIBFLAG)dcmnet$(LIBLINKEXT) \
+           $(LIBFLAG)dcmpstat$(LIBLINKEXT) \
+           $(LIBFLAG)dcmrt$(LIBLINKEXT) \
+           $(LIBFLAG)dcmsr$(LIBLINKEXT) \
+           $(LIBFLAG)dcmtract$(LIBLINKEXT) \
+           $(LIBFLAG)dcmdsig$(LIBLINKEXT) \
+           $(LIBFLAG)dcmimage$(LIBLINKEXT) \
+           $(LIBFLAG)dcmiod$(LIBLINKEXT) \
+           $(LIBFLAG)dcmjpls$(LIBLINKEXT) \
+           $(LIBFLAG)dcmpmap$(LIBLINKEXT) \
+           $(LIBFLAG)dcmqrdb$(LIBLINKEXT) \
+           $(LIBFLAG)dcmseg$(LIBLINKEXT) \
+           $(LIBFLAG)dcmtls$(LIBLINKEXT) \
+           $(LIBFLAG)dcmwlm$(LIBLINKEXT) \
+           $(LIBFLAG)qwt$(LIBLINKEXT)  \
+           $(LIBFLAG)i2d$(LIBLINKEXT) \
+           $(LIBFLAG)ijg8$(LIBLINKEXT) \
+           $(LIBFLAG)ijg12$(LIBLINKEXT) \
+           $(LIBFLAG)ijg16$(LIBLINKEXT) \
+           $(LIBFLAG)charls$(LIBLINKEXT) \
+           $(LIBFLAG)cmr$(LIBLINKEXT) \
+           $(LIBFLAG)oflog$(LIBLINKEXT) \
+           $(LIBFLAG)ofstd$(LIBLINKEXT) \
+           $(LIBFLAG)qRestAPI$(LIBLINKEXT) \
+           $(LIBFLAG)ann$(LIBLINKEXT) \
 
 MITK_LIBS += $(MITK_PLUGIN_LIBS)
+
+MITK_LIBS += $(SV_FREETYPE_LIBS)
