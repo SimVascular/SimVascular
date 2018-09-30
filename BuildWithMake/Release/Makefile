@@ -175,6 +175,7 @@ ifeq ($(SV_USE_PYTHON),1)
 endif
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_*.$(SOEXT)* $(DIST_DIR)
 	-cp -fR $(TOP)/Bin/plugins $(DIST_DIR)
+	-cp -fR $(TOP)/Bin/QtWebEngine $(DIST_DIR)
 
 copy-sv-tcl-code:
 	-mkdir -p $(DIST_DIR)/Tcl
