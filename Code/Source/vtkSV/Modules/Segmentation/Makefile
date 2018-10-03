@@ -40,10 +40,10 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR)
 
-MODULE_NAME = vtkSVParameterization
-MODULE_NAME_ALL_CAPS = VTKSVPARAMETERIZATION
+MODULE_NAME = vtkSVSegmentation
+MODULE_NAME_ALL_CAPS = VTKSVSEGMENTATION
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
-MODULE_EXPORT_FILE_H = vtkSVParameterizationModule.h
+MODULE_EXPORT_FILE_H = vtkSVSegmentationModule.h
 
 HDRS	= \
   vtkSVPlanarMapper.h \
@@ -52,7 +52,7 @@ HDRS	= \
   vtkSVSuperSquareBoundaryMapper.h \
   vtkSVPointSetBoundaryMapper.h \
   vtkSVParameterizeSurfaceOnPolycube.h \
-  vtkSVNewParameterizeSurfaceOnPolycube.h \
+  vtkSVNewParameterizeSurfaceOnPolycube.cxx \
   vtkSVParameterizeVolumeOnPolycube.h \
   vtkSVSphericalMapper.h
 
@@ -74,8 +74,9 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
 
 DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT)
+           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT) \
+           $(SV_LIB_VTKSVPARAMETERIZATION_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = $(SV_LIB_VTKSVPARAMETERIZATION_NAME)
+TARGET_LIB_NAME = $(SV_LIB_VTKSVSEGMENTATION_NAME)
 
 include $(TOP)/targetlib.mk

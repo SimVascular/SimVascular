@@ -41,47 +41,55 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR)
 
 MODULE_NAME = vtkSVMisc
-MODULE_NAME_ALL_CAPS = VTKSVFILTERS
+MODULE_NAME_ALL_CAPS = VTKSVMISC
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 MODULE_EXPORT_FILE_H = vtkSVMiscModule.h
 
 HDRS	= \
+  vtkSVCleanUnstructuredGrid.h \
   vtkSVFindGeodesicPath.h \
   vtkSVFindSeparateRegions.h \
   vtkSVGetBoundaryFaces.h \
-  vtkSVGroupsClipper.h \
-  vtkSVPolyBallLine.h \
   vtkSVHausdorffDistance.h \
-  vtkSVMapInterpolator.h \
-  vtkSVPassDataArray.cxx \
-  vtkSVPullApartPolyData.h \
+  vtkSVSurfaceMapper.h \
+  vtkSVPassDataArray.h \
   vtkSVPlacePointsOnS2.h \
-  vtkSVCheckRotation.h \
   vtkSVGetSphereRegions.h \
-  vtkSVFillHolesFilterWithIds.h \
+  vtkSVFillHolesWithIdsFilter.h \
   vtkSVIntegrateFlowThroughSurface.h \
-  vtkSVLoftPolyDataSolid.h \
+  vtkSVLoftSplineSurface.h \
   vtkSVIntegrateAttributes.h \
-  vtkSVSurfaceVectors.h
+  vtkSVSurfaceVectors.h \
+  vtkSVPolyDataSurfaceInspector.h \
+  vtkSVCellComplexThinner.h \
+  vtkSVPolyDataEdgeSplitter.h \
+  vtkSVSeedSelector.h \
+  vtkSVPickPointSeedSelector.h \
+  vtkSVOpenProfilesSeedSelector.h \
+  vtkSVIdListSeedSelector.h
 
 CXXSRCS	= \
+  vtkSVCleanUnstructuredGrid.cxx \
   vtkSVFindGeodesicPath.cxx \
   vtkSVFindSeparateRegions.cxx \
   vtkSVGetBoundaryFaces.cxx \
-  vtkSVGroupsClipper.cxx \
-  vtkSVPolyBallLine.cxx \
   vtkSVHausdorffDistance.cxx \
-  vtkSVMapInterpolator.cxx \
+  vtkSVSurfaceMapper.cxx \
   vtkSVPassDataArray.cxx \
-  vtkSVPullApartPolyData.cxx \
   vtkSVPlacePointsOnS2.cxx \
-  vtkSVCheckRotation.cxx \
   vtkSVGetSphereRegions.cxx \
-  vtkSVFillHolesFilterWithIds.cxx \
+  vtkSVFillHolesWithIdsFilter.cxx \
   vtkSVIntegrateFlowThroughSurface.cxx \
-  vtkSVLoftPolyDataSolid.cxx \
+  vtkSVLoftSplineSurface.cxx \
   vtkSVIntegrateAttributes.cxx \
-  vtkSVSurfaceVectors.cxx
+  vtkSVSurfaceVectors.cxx \
+  vtkSVPolyDataSurfaceInspector.cxx \
+  vtkSVCellComplexThinner.cxx \
+  vtkSVPolyDataEdgeSplitter.cxx \
+  vtkSVSeedSelector.cxx \
+  vtkSVPickPointSeedSelector.cxx \
+  vtkSVOpenProfilesSeedSelector.cxx \
+  vtkSVIdListSeedSelector.cxx
 
 DLLHDRS =
 
@@ -91,6 +99,6 @@ DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
 
 DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = $(SV_LIB_VTKSVFILTERS_NAME)
+TARGET_LIB_NAME = $(SV_LIB_VTKSVMISC_NAME)
 
 include $(TOP)/targetlib.mk

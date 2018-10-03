@@ -28,6 +28,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 /**
   * \class vtkSVIntegrateFlowThroughSurface - Integrates vector dot normal.
   * \brief First this filter finds point normals for a surface.  It

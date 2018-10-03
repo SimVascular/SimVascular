@@ -1,3 +1,4 @@
+
 # Hey emacs, this is a -*- makefile -*-
 
 # Copyright (c) Stanford University, The Regents of the University of
@@ -30,7 +31,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TOP=../../../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -40,32 +41,22 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR)
 
-MODULE_NAME = vtkSVParameterization
-MODULE_NAME_ALL_CAPS = VTKSVPARAMETERIZATION
+MODULE_NAME = vtkSVIO
+MODULE_NAME_ALL_CAPS = VTKSVIO
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
-MODULE_EXPORT_FILE_H = vtkSVParameterizationModule.h
+MODULE_EXPORT_FILE_H = vtkSVIOModule.h
 
 HDRS	= \
-  vtkSVPlanarMapper.h \
-  vtkSVBoundaryMapper.h \
-  vtkSVSquareBoundaryMapper.h \
-  vtkSVSuperSquareBoundaryMapper.h \
-  vtkSVPointSetBoundaryMapper.h \
-  vtkSVParameterizeSurfaceOnPolycube.h \
-  vtkSVNewParameterizeSurfaceOnPolycube.h \
-  vtkSVParameterizeVolumeOnPolycube.h \
-  vtkSVSphericalMapper.h
+  vtkSVIOUtils.h \
+  vtkSVPolyDataRawReader.h \
+  vtkSVUnstructuredGridRawReader.h \
+  vtkSVRawWriter.h
 
 CXXSRCS	= \
-  vtkSVPlanarMapper.cxx \
-  vtkSVBoundaryMapper.cxx \
-  vtkSVSquareBoundaryMapper.cxx \
-  vtkSVSuperSquareBoundaryMapper.cxx \
-  vtkSVPointSetBoundaryMapper.cxx \
-  vtkSVParameterizeSurfaceOnPolycube.cxx \
-  vtkSVNewParameterizeSurfaceOnPolycube.cxx \
-  vtkSVParameterizeVolumeOnPolycube.cxx \
-  vtkSVSphericalMapper.cxx
+  vtkSVIOUtils.cxx \
+  vtkSVPolyDataRawReader.cxx \
+  vtkSVUnstructuredGridRawReader.cxx \
+  vtkSVRawWriter.cxx
 
 DLLHDRS =
 
@@ -73,9 +64,6 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
 
-DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT)
-
-TARGET_LIB_NAME = $(SV_LIB_VTKSVPARAMETERIZATION_NAME)
+TARGET_LIB_NAME = $(SV_LIB_VTKSVIO_NAME)
 
 include $(TOP)/targetlib.mk

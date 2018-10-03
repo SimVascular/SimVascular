@@ -1,5 +1,9 @@
-# Copyright (c) 2014-2015 The Regents of the University of California.
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
+#
 # All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -62,7 +66,7 @@ set(HDRS
   vtkSVGetBoundaryFaces.h
   vtkSVHausdorffDistance.h
   vtkSVSurfaceMapper.h
-  vtkSVPassDataArray.cxx
+  vtkSVPassDataArray.h
   vtkSVPlacePointsOnS2.h
   vtkSVGetSphereRegions.h
   vtkSVFillHolesWithIdsFilter.h
@@ -73,7 +77,7 @@ set(HDRS
   vtkSVPolyDataSurfaceInspector.h
   vtkSVCellComplexThinner.h
   vtkSVPolyDataEdgeSplitter.h
-  vtkSVSeedSelector.cxx
+  vtkSVSeedSelector.h
   vtkSVPickPointSeedSelector.h
   vtkSVOpenProfilesSeedSelector.h
   vtkSVIdListSeedSelector.h

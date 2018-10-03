@@ -55,7 +55,7 @@ set(HDRS
   vtkSVSuperSquareBoundaryMapper.h
   vtkSVPointSetBoundaryMapper.h
   vtkSVParameterizeSurfaceOnPolycube.h
-  vtkSVNewParameterizeSurfaceOnPolycube.cxx
+  vtkSVNewParameterizeSurfaceOnPolycube.h
   vtkSVParameterizeVolumeOnPolycube.h
   vtkSVSphericalMapper.h
   )

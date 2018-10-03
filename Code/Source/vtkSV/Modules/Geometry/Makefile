@@ -54,7 +54,9 @@ HDRS	= \
   vtkSVLocalLinearSubdivisionFilter.h \
   vtkSVLocalLoopSubdivisionFilter.h \
   vtkSVLocalQuadricDecimation.h \
-  vtkSVLocalSmoothPolyDataFilter.h
+  vtkSVLocalSmoothPolyDataFilter.h \
+  vtkSVSmoothVolume.h \
+  vtkSVUpdeSmoothing.h
 
 CXXSRCS	= \
   vtkSVConstrainedBlend.cxx \
@@ -65,7 +67,9 @@ CXXSRCS	= \
   vtkSVLocalLinearSubdivisionFilter.cxx \
   vtkSVLocalLoopSubdivisionFilter.cxx \
   vtkSVLocalQuadricDecimation.cxx \
-  vtkSVLocalSmoothPolyDataFilter.cxx
+  vtkSVLocalSmoothPolyDataFilter.cxx \
+  vtkSVSmoothVolume.cxx \
+  vtkSVUpdeSmoothing.cxx
 
 DLLHDRS =
 
