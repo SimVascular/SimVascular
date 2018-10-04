@@ -76,7 +76,7 @@ class sv4guisvFSIUtil {
       else{
           projFolderNode->GetStringProperty("project path", projPath);
 
-          QString QprojPath = QString::QString(projPath.c_str());
+          QString QprojPath = QString(projPath.c_str());
 
           QDir dir(QprojPath);
 
@@ -93,7 +93,7 @@ class sv4guisvFSIUtil {
     void makeDir(){
       QDir dir = getDir();
       if(dir.exists()){
-        QString Qstore_dir = QString::QString(sv4guisvFSI_DIR_PATH.c_str());
+        QString Qstore_dir = QString(sv4guisvFSI_DIR_PATH.c_str());
 
         m_StoreDir = Qstore_dir;
 
@@ -113,7 +113,7 @@ class sv4guisvFSIUtil {
       if (!projFolderNode){ return; }
       if (sv4guisvFSINode){ return; }
 
-      QString folderName = QString::QString(sv4guisvFSI_NODE_NAME.c_str());
+      QString folderName = QString(sv4guisvFSI_NODE_NAME.c_str());
       sv4guisvFSINode = svProj.CreateDataFolder<sv4guisvFSIFolder>(m_DS, folderName, projFolderNode);
     }
 
