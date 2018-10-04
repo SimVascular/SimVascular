@@ -33,12 +33,16 @@ Qt5_MINOR_VERSION=6
 Qt5_PATCH_VERSION=3
 Qt5_VERSION=$(Qt5_MAJOR_VERSION).$(Qt5_MINOR_VERSION).$(Qt5_PATCH_VERSION)
 
-ifeq ($(SV_EXTERNALS_PREBUILT_QT),1)
-  QT_TOP_DIR	  = /opt/Qt$(Qt5_VERSION)/$(Qt5_VERSION)/gcc_64
-  QT_QPA_FONTDIR  = /opt/Qt$(Qt5_VERSION)/$(Qt5_VERSION)/Src/qtbase/lib/fonts
+ifeq ($(SV_EXTERNALS_PREBUILT_QT_SYSTEM_INSTALL),1)
+  QT_TOP_DIR	    = /opt/Qt$(Qt5_VERSION)/$(Qt5_VERSION)/gcc_64
+  QT_WEBENGINE_PROC = QtWebEngineProcess
+  QT_WEBENGINE_PATH = $(QT_TOP_DIR)/libexec/$(QT_WEBENGINE_PROC)
+  QT_QPA_FONTDIR   = /opt/Qt$(Qt5_VERSION)/$(Qt5_VERSION)/Src/qtbase/lib/fonts
 else
-  QT_TOP_DIR      = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)/gcc_64
-  QT_QPA_FONTDIR  = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)/Src/qtbase/lib/fonts
+  QT_TOP_DIR      = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)/$(Qt5_VERSION)/gcc_64
+  QT_WEBENGINE_PROC = QtWebEngineProcess
+  QT_WEBENGINE_PATH = $(QT_TOP_DIR)/libexec/$(QT_WEBENGINE_PROC)
+  QT_QPA_FONTDIR  = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)/$(Qt5_VERSION)/Src/qtbase/lib/fonts
 endif
 
 QT_DEFS = -DUNIX -D_REENTRANT -DNDEBUG
@@ -84,6 +88,7 @@ QT_MOC_INCDIRS = \
       -I $(QT_TOP_DIR)/include/mkspecs/linux-g++
 QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5Sql$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5WebEngineCore$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebEngineWidgets$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebEngine$(LIBLINKEXT) \
       $(LIBFLAG)Qt5WebView$(LIBLINKEXT) \
@@ -100,6 +105,17 @@ QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
       $(LIBFLAG)Qt5Core$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Quick$(LIBLINKEXT) \
       $(LIBFLAG)Qt5X11Extras$(LIBLINKEXT)
+
+# note: Qt5Positioning and Qt5Svg are required to link on
+#       centos 7, but not explicitly referenced in mitk/sv
+QT_LIBS += \
+      $(LIBFLAG)Qt5Positioning$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5Svg$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5OpenGL$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5Script$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5XmlPatterns$(LIBLINKEXT)
+
+
 QT_SO_PATH=$(QT_TOP_DIR)/lib
 QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
 

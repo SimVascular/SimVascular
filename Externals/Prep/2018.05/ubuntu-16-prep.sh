@@ -32,7 +32,7 @@ sudo apt-get -y install libxi-dev
 sudo apt-get -y install libicu-dev
 
 ### to link against qt pre-built
-sudo apt-get install libglew-dev
+sudo apt-get -y install libglew-dev
 
 ### for qt
 sudo apt-get -y install libfontconfig1-dev
@@ -74,7 +74,7 @@ libavutil-dev libavformat-dev libavcodec-dev libevent-dev
 ### mitk
 sudo apt-get -y install libxmu-dev
 sudo apt-get -y install libxi-dev
-sudo apt-get -y install libtiff4-dev
+sudo apt-get -y install libtiff5-dev
 sudo apt-get -y install libwrap0-dev
 
 ### python
@@ -84,12 +84,11 @@ sudo apt-get -y install libssl-dev
 sudo apt-get -y install libpcre3-dev
 
 # qt webkit build
-sudo apt-get -y install ruby2.0
+sudo apt-get -y install ruby2.3
 sudo apt-get -y install gperf
 sudo apt-get -y install bison
 sudo apt-get -y install flex
 sudo apt-get -y install libxrender-dev
-
 
 ### gdcm/mitk
 #sudo apt-get -y install swig3.0
@@ -97,10 +96,10 @@ sudo apt-get -y install libxrender-dev
 # optional: mitk
 sudo apt-get -y install doxygen
 
-### install Qt
-#wget http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.4/qt-opensource-linux-x64-5.4.2.run
-#chmod a+rx ./qt-opensource-linux-x64-5.4.2.run
-#sudo ./qt-opensource-linux-x64-5.4.2.run --script ./ubuntu-qt-installer-noninteractive.qs
+# unknown: required by 16.04 compiled externals
+sudo apt-get -y install libgstreamer0.10-0
+sudo apt-get -y install libgstreamer-plugins-base0.10-0
+sudo apt-get -y install libgstreamer0.10-dev
 
 ### install latest version of CMake
 wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.10.3-Linux-x86_64.sh
@@ -113,11 +112,9 @@ sudo ln -s /usr/local/package/cmake-3.10.3/bin/cmake-gui /usr/local/bin/cmake-gu
 sudo ln -s /usr/local/package/cmake-3.10.3/bin/cpack     /usr/local/bin/cpack
 sudo ln -s /usr/local/package/cmake-3.10.3/bin/ctest     /usr/local/bin/ctest
 
-### MITK requires a newer version of gcc
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-sudo apt-get update
-sudo apt-get install gcc-4.9 g++-4.9
-## Make sure to explicitly specify these compilers when configuring MITK:
-#  CMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc-4.9
-#  CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++-4.9
-
+### install Qt
+#echo "Must install Qt into /opt/Qt5.6.3!"
+#echo "Must instal Qt + WebView + WebEngine + Qt Scripts!"
+#wget http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.6/qt-opensource-linux-x64-5.6.3.run
+#chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
+#sudo ./qt-opensource-linux-x64-5.6.3.run

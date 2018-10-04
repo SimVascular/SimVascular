@@ -103,6 +103,8 @@ s+REPLACEME_SV_TOPLEVEL_BUILDDIR+C:/sv18+g
 
 s+REPLACEME_CC+CL+g
 s/REPLACEME_CXX/CL/g
+s+REPLACEME_CMAKE_C_COMPILER++g
+s+REPLACEME_CMAKE_CXX_COMPILER++g
 s/REPLACEME_TAR/tar/g
 s/REPLACEME_ZIP/zip/g
 s+REPLACEME_SV_SPECIAL_COMPILER_SCRIPT+source CygwinHelpers/msvc_2015_x64.sh;export PATH=/cygdrive/c/Program\\ Files/doxygen/bin:/cygdrive/c/Program\\ Files\\ \\(x86\\)/Graphviz2.38/bin:/cygdrive/c/Program\\ Files/CMake/bin:$PATH;subst S: C:/cygwin64/usr/local/sv/ext/2018.05/src+g
@@ -239,6 +241,6 @@ s+REPLACEME_SV_MMG_MAKE_FILENAME+mmg.sln+g
 
 # mitk
 
-s+REPLACEME_SV_MITK_DIR+mitk-2018.04+g
-s+REPLACEME_SV_MITK_CMAKE_LIB_DIR+lib/mitk-2018.04+g
+s+REPLACEME_SV_MITK_DIR+mitk-2018.04.0+g
+s+REPLACEME_SV_MITK_CMAKE_LIB_DIR+lib/mitk-2018.04.0+g
 s+REPLACEME_SV_MITK_MAKE_FILENAME+MITK-superbuild.sln+g

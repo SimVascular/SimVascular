@@ -30,8 +30,10 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-export SV_EXTERNALS_VERSION_NUMBER=2018.01
+#export SV_EXTERNALS_VERSION_NUMBER=2018.01
 export SV_EXTERNALS_VERSION_NUMBER=2018.05
+
+export EXTERNALS_SV_ARCH_DIR=x64
 
 osid=$(lsb_release -si)
 osrel=$(lsb_release -sr)
@@ -40,41 +42,45 @@ osver=$(lsb_release -sc)
 case "$osid" in
 
     'Ubuntu')
-
+        export EXTERNALS_SV_OS_DIR=ubuntu
+	export EXTERNALS_SV_OS_LONG_NAME_DIR=ubuntu
+	export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
 	case "$osver" in
+	    'bionic')
+		export SV_EXTERN_LINUX_VERSION=ubuntu_18
+		export EXTERNALS_SV_FULL_OS_VER_NO=18.04
+		export EXTERNALS_SV_COMPILER_VER_NO=7.3
+		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+		  echo "Error - Ubuntu 18 2018.01 not built yet!"
+		  exit
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+                  export EXTERNALS_BUILD_DATE=2018.09.29
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		fi
+		;;
 	    'xenial')
 		export SV_EXTERN_LINUX_VERSION=ubuntu_16
+		export EXTERNALS_SV_FULL_OS_VER_NO=16.04
+		export EXTERNALS_SV_COMPILER_VER_NO=5.4
 		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
-                  export EXTERNALS_BUILD_DATE=2018.01.08
-                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
+		  echo "Error - Ubuntu 16 2018.01 not built yet!"
+		  exit                  
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
-		  echo "Error - Ubuntu 16 not build yet!"
-		  exit
-                  export EXTERNALS_BUILD_DATE=2018.06.20
-                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
+                  export EXTERNALS_BUILD_DATE=2018.09.29
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
-                export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
-                export EXTERNALS_SV_COMPILER_VER_NO=5.4
-                export EXTERNALS_SV_OS_DIR=ubuntu
-                export EXTERNALS_SV_OS_LONG_NAME_DIR=ubuntu
-                export EXTERNALS_SV_FULL_OS_VER_NO=16.04
-                export EXTERNALS_SV_ARCH_DIR=x64
 		;;
 	    'trusty')
 		export SV_EXTERN_LINUX_VERSION=ubuntu_14
+                export EXTERNALS_SV_FULL_OS_VER_NO=14.04
+                export EXTERNALS_SV_COMPILER_VER_NO=4.8
 		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
                   export EXTERNALS_BUILD_DATE=2018.01.08
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
-                  export EXTERNALS_BUILD_DATE=2018.06.20
+                  export EXTERNALS_BUILD_DATE=2018.09.29
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
-                export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
-                export EXTERNALS_SV_COMPILER_VER_NO=4.8
-                export EXTERNALS_SV_OS_DIR=ubuntu
-                export EXTERNALS_SV_OS_LONG_NAME_DIR=ubuntu
-                export EXTERNALS_SV_FULL_OS_VER_NO=14.04
-                export EXTERNALS_SV_ARCH_DIR=x64
 		;;
 	    *)
 		echo "Error!"
@@ -84,34 +90,38 @@ case "$osid" in
 	;;
 
     'CentOS')
-
+        export EXTERNALS_SV_OS_DIR=centos
+	export EXTERNALS_SV_OS_LONG_NAME_DIR=centos
+	export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
 	case "$osrel" in
-
-	    '7')
+	    7*)
 		export SV_EXTERN_LINUX_VERSION=centos_7
-		echo "Error - CentOS 7 Not Supported yet!"
-		exit
+		export EXTERNALS_SV_FULL_OS_VER_NO=7.5
+                export EXTERNALS_SV_COMPILER_VER_NO=6.3
+		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+		  echo "Error - Ubuntu 18 2018.01 not built yet!"
+		  exit
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+                  export EXTERNALS_BUILD_DATE=2018.09.29
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		fi
 		;;
-
-	    '6.9')
+	    6*)
 		export SV_EXTERN_LINUX_VERSION=centos_6
-		echo "Error - CentOS 6 Not Supported yet!"
-		exit
-                export EXTERNALS_BUILD_DATE=XXXX.XX.XX
-                export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
-                export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
+		export EXTERNALS_SV_FULL_OS_VER_NO=6.9
                 export EXTERNALS_SV_COMPILER_VER_NO=5.3
-                export EXTERNALS_SV_OS_DIR=centos
-                export EXTERNALS_SV_OS_LONG_NAME_DIR=centos
-                export EXTERNALS_SV_FULL_OS_VER_NO=6.9
-                export EXTERNALS_SV_ARCH_DIR=x64
+		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+		  echo "Error - CentOS 6 2018.01 not built yet!"
+		  exit
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+		  echo "Error - CentOS 6 2018.05 not built yet!"
+		  exit
+		fi
 		;;
-
 	    *)
 		echo "Error!"
 		exit
 		;;
-
 	esac
 	;;
 
@@ -167,13 +177,15 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
   wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.tinyxml2.6.2.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.8.1.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.6.3.tar.gz
 fi
 
 popd
 
 pushd $EXTERNALS_TOP/bin/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE
 for i in $EXTERNALS_TOP/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
-    tar xvzf $i
+    echo "untar $i"
+    tar xzf $i
 done
 popd
 
