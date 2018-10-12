@@ -32,7 +32,7 @@
 #include "sv4gui_PathIO.h"
 #include "sv4gui_Path.h"
 #include "sv4gui_XmlIOUtil.h"
-
+#include "sv3_PathIO.h"
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
@@ -66,34 +66,30 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::ReadFile(std::string fileName
     if (!document.LoadFile(fileName))
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
-        //        MITK_ERROR << "Could not open/read/parse " << fileName;
         std::vector<mitk::BaseData::Pointer> empty;
         return empty;
     }
 
-    //    TiXmlElement* version = document.FirstChildElement("format");
-
     TiXmlElement* pathElement = document.FirstChildElement("path");
 
     if(!pathElement){
-//        MITK_ERROR << "No path data in "<< fileName;
         mitkThrow() << "No path data in "<< fileName;
     }
 
     sv4guiPath::Pointer path = sv4guiPath::New();
-    int pathID=0;
-    pathElement->QueryIntAttribute("id",&pathID);
-    path->SetPathID(pathID);
-    int method=0;
-    pathElement->QueryIntAttribute("method", &method);
-    int calculationNumber=0;
-    pathElement->QueryIntAttribute("calculation_number", &calculationNumber);
-    double spacing=0.0;
-    pathElement->QueryDoubleAttribute("spacing", &spacing);
-    path->SetMethod( (sv3::PathElement::CalculationMethod) method);
-    path->SetCalculationNumber(calculationNumber);
-    path->SetSpacing(spacing);
-
+    sv3::PathIO* reader = new sv3::PathIO();
+    sv3::PathGroup* svPathGrp = reader->ReadFile(fileName);
+    delete reader;
+    
+    path->SetPathID(svPathGrp->GetPathID());
+    path->SetMethod(svPathGrp->GetMethod());
+    path->SetCalculationNumber(svPathGrp->GetCalculationNumber());
+    path->SetSpacing(svPathGrp->GetSpacing());
+    
+    for (int i=0; i<svPathGrp->GetTimeSize(); i++)
+        path->SetPathElement(static_cast<sv4guiPathElement*>(svPathGrp->GetPathElement(i)),i);
+        
+    //only for GUI
     double resliceSize=5.0;
     pathElement->QueryDoubleAttribute("reslice_size", &resliceSize);
     path->SetResliceSize(resliceSize);
@@ -104,77 +100,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiPathIO::ReadFile(std::string fileName
     path->SetProp("point 2D display size",point2dsize);
     path->SetProp("point size",point3dsize);
 
-    int timestep=-1;
-    for( TiXmlElement* timestepElement = pathElement->FirstChildElement("timestep");
-         timestepElement != nullptr;
-         timestepElement = timestepElement->NextSiblingElement("timestep") )
-    {
-        if (timestepElement == nullptr)
-            continue;
-
-//        timestepElement->QueryIntAttribute("id",&timestep);
-        timestep++;
-        path->Expand(timestep+1);
-
-        TiXmlElement* peElement=timestepElement->FirstChildElement("path_element");
-
-        if (peElement == nullptr)
-            continue;
-
-        sv4guiPathElement* pe=new sv4guiPathElement();
-
-        int method=0;
-        peElement->QueryIntAttribute("method", &method);
-        int calculationNumber=0;
-        peElement->QueryIntAttribute("calculation_number", &calculationNumber);
-        double spacing=0.0;
-        peElement->QueryDoubleAttribute("spacing", &spacing);
-        pe->SetMethod( (sv3::PathElement::CalculationMethod) method);
-        pe->SetCalculationNumber(calculationNumber);
-        pe->SetSpacing(spacing);
-
-        //control points without updating contour points
-        TiXmlElement* controlpointsElement = peElement->FirstChildElement("control_points");
-        std::vector<mitk::Point3D> controlPoints;
-        for( TiXmlElement* pointElement = controlpointsElement->FirstChildElement("point");
-             pointElement != nullptr;
-             pointElement = pointElement->NextSiblingElement("point") )
-        {
-            if (pointElement == nullptr)
-                continue;
-
-            controlPoints.push_back(sv4guiXmlIOUtil::GetPoint(pointElement));
-        }
-        pe->SetControlPoints(controlPoints,false);
-
-        //path points
-        TiXmlElement* pathpointsElement = peElement->FirstChildElement("path_points");
-        std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints;
-        for( TiXmlElement* pointElement = pathpointsElement->FirstChildElement("path_point");
-             pointElement != nullptr;
-             pointElement = pointElement->NextSiblingElement("path_point") )
-        {
-            if (pointElement == nullptr)
-                continue;
-
-            sv4guiPathElement::sv4guiPathPoint pathPoint;
-            int id=0;
-            pointElement->QueryIntAttribute("id", &id);
-            pathPoint.id=id;
-            pathPoint.pos=sv4guiXmlIOUtil::GetPoint(pointElement->FirstChildElement("pos"));
-            pathPoint.tangent=sv4guiXmlIOUtil::GetVector(pointElement->FirstChildElement("tangent"));
-            pathPoint.rotation=sv4guiXmlIOUtil::GetVector(pointElement->FirstChildElement("rotation"));
-
-            pathPoints.push_back(pathPoint);
-        }
-        pe->SetPathPoints(pathPoints);
-
-        path->SetPathElement(pe,timestep);
-
-    }//timestep
-
     std::vector<mitk::BaseData::Pointer> result;
     result.push_back(path.GetPointer());
+    delete svPathGrp;
     return result;
 }
 
@@ -193,7 +121,7 @@ void sv4guiPathIO::Write()
 
     const sv4guiPath* path = dynamic_cast<const sv4guiPath*>(this->GetInput());
     if(!path) return;
-
+    
     TiXmlDocument document;
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
@@ -207,6 +135,8 @@ void sv4guiPathIO::Write()
     pathElement->SetAttribute("method", path->GetMethod());
     pathElement->SetAttribute("calculation_number", path->GetCalculationNumber());
     pathElement->SetDoubleAttribute("spacing", path->GetSpacing());
+    
+    //only for GUI
     pathElement->SetDoubleAttribute("reslice_size", path->GetResliceSize());
     pathElement->SetAttribute("point_2D_display_size",path->GetProp("point 2D display size"));
     pathElement->SetAttribute("point_size",path->GetProp("point size"));
@@ -221,35 +151,9 @@ void sv4guiPathIO::Write()
         sv4guiPathElement* pe=path->GetPathElement(t);
         if(!pe) continue;
 
-        auto  peElement = new TiXmlElement("path_element");
-        timestepElement->LinkEndChild(peElement);
+        sv3::PathElement* svPe=static_cast<sv3::PathElement*>(pe);
 
-        peElement->SetAttribute("id",0);
-        peElement->SetAttribute("method", pe->GetMethod());
-        peElement->SetAttribute("calculation_number", pe->GetCalculationNumber());
-        peElement->SetDoubleAttribute("spacing", pe->GetSpacing());
-
-        auto  controlpointsElement = new TiXmlElement("control_points");
-        peElement->LinkEndChild(controlpointsElement);
-        for(int i=0;i<pe->GetControlPointNumber();i++)
-        {
-            controlpointsElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLPointElement("point",i,pe->GetControlPoint(i)));
-        }
-
-        auto  pathpointsElement = new TiXmlElement("path_points");
-        peElement->LinkEndChild(pathpointsElement);
-        for(int i=0;i<pe->GetPathPointNumber();i++)
-        {
-            auto  pathpointElement = new TiXmlElement("path_point");
-            pathpointsElement->LinkEndChild(pathpointElement);
-
-            sv4guiPathElement::sv4guiPathPoint pathPoint=pe->GetPathPoint(i);
-            pathpointElement->SetAttribute("id",pathPoint.id);
-            pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLPointElement("pos", pathPoint.pos));
-            pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLVectorElement("tangent", pathPoint.tangent));
-            pathpointElement->LinkEndChild(sv4guiXmlIOUtil::CreateXMLVectorElement("rotation", pathPoint.rotation));
-        }
-
+        this->sv3::PathIO::WritePath(svPe,timestepElement); 
     }
 
     std::string fileName=GetOutputLocation();

@@ -37,6 +37,7 @@
 #include <sv4guiModulePathExports.h>
 
 #include "sv3_PathElement.h"
+#include "sv3_PathGroup.h"
 #include "sv4gui_PathElement.h"
 #include "sv4gui_PathOperation.h"
 
@@ -50,7 +51,7 @@
 #include <iostream>
 #include <string>
 
-class SV4GUIMODULEPATH_EXPORT sv4guiPath : public mitk::BaseData
+class SV4GUIMODULEPATH_EXPORT sv4guiPath : public mitk::BaseData, public sv3::PathGroup
 {
 public:
 
@@ -64,22 +65,12 @@ public:
 
     virtual void ExecuteOperation(mitk::Operation* operation) override;
 
-    virtual unsigned int GetTimeSize() const;
-
     virtual bool IsEmptyTimeStep(unsigned int t) const override;
-
-    virtual int GetSize( unsigned int t = 0 ) const;
 
     sv4guiPathElement* GetPathElement(unsigned int t = 0) const;
 
     void SetPathElement(sv4guiPathElement* pathElement, unsigned int t = 0);
-
-    void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
-
-    int GetPathID() const;
-
-    void SetPathID(int pathID);
-
+    
 //    std::string GetPathName();
 
 //    void SetPathName(std::string pathName);
@@ -87,19 +78,7 @@ public:
     //get the max path ID of all the path nodes.
     static int GetMaxPathID(mitk::DataStorage::SetOfObjects::ConstPointer rs);
 
-    void SetSpacing(double spacing);
-
-    double GetSpacing() const;
-
-    void SetMethod(sv3::PathElement::CalculationMethod method = sv3::PathElement::CONSTANT_TOTAL_NUMBER );
-
-    sv3::PathElement::CalculationMethod GetMethod() const;
-
-    void SetCalculationNumber(int number);
-
     mitk::Point3D GetNewControlPoint();
-
-    int GetCalculationNumber() const;
 
     double GetResliceSize() const {return m_ResliceSize;}
 
@@ -136,20 +115,6 @@ public:
     virtual void ClearData() override;
 
     virtual void InitializeEmpty() override;
-
-    std::vector< sv4guiPathElement* > m_PathElementSet;
-
-    bool m_CalculateBoundingBox;
-
-    int m_PathID;
-
-//    std::string m_PathName;
-
-    double m_Spacing;
-
-    sv3::PathElement::CalculationMethod m_Method;
-
-    int m_CalculationNumber;
 
     mitk::Point3D m_NewControlPoint;
 

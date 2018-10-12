@@ -44,8 +44,8 @@ CREATE_EXPORTS_CV_FILE_H=sv3CommonExports.h
 
 CXXFLAGS += -DSV_EXPORT_COMMON_COMPILE
 
-HDRS	= sv3_XmlIOUtil.h 
-CXXSRCS	= sv3_XmlIOUtil.cxx 
+HDRS	= sv3_XmlIOUtil.h
+CXXSRCS	= sv3_XmlIOUtil.cxx
 
 
 SVPYHDRS = 

@@ -29,33 +29,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV3_PATHIO_H
-#define SV3_PATHIO_H
+#ifndef __SV3_PATHIO_INIT_PY_H
+#define __SV3_PATHIO_INIT_PY_H
 
 #include "SimVascular.h"
-#include "sv3_PathElement.h"
-#include "sv3_PathGroup.h"
-#include "tinyxml.h"
+#include "Python.h"
+#include "sv3_PathIO.h"
+#include "sv3PathExports.h"
 
-#include <sv3PathExports.h>
 
-namespace sv3{
-class SV_EXPORT_PATH PathIO
+extern "C" SV_EXPORT_PATH typedef struct
 {
-public:
+  PyObject_HEAD
+  sv3::PathIO* geom;
+}pyPathIO;
 
-    PathIO(){};
+#if PYTHON_MAJOR_VERSION == 2
+PyMODINIT_FUNC  initpyPathIO();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC  PyInit_pyPathIO();
+#endif
 
-    ~PathIO(){};
-    
-    PathGroup* ReadFile(std::string fileName);
-    
-    int ReadPath(PathElement* path, TiXmlElement* pathXml );
-    
-    int Write(std::string fileName, PathGroup* pathGrp);
-    
-    void WritePath(PathElement* path, TiXmlElement* timeStepElem);
-            
-};
-}
-#endif // SV4GUI_PATHIO_H
+#endif //__SV3_PATHIO_INIT_PY_H

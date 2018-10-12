@@ -41,6 +41,7 @@ if(SV_USE_MITK_CONFIG)
     ${SV_LIB_MODULE_SEGMENTATION_NAME}
     ${SV_LIB_MODULE_PATH_NAME}
     ${SV_LIB_MODULE_MODEL_NAME}
+    ${SV_LIB_PATH_NAME}
   )
 else()
   simvascular_create_plugin(
@@ -50,6 +51,7 @@ else()
     ${SV_LIB_MODULE_SEGMENTATION_NAME}
     ${SV_LIB_MODULE_PATH_NAME}
     ${SV_LIB_MODULE_MODEL_NAME}
+    ${SV_LIB_PATH_NAME}
   )
 endif()
 
