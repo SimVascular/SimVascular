@@ -16,14 +16,14 @@ matrix:
       compiler: clang
       osx_image: xcode7.3
       sudo: required
-      env: WITH_CMAKE=true BUILD_TEST=false SV_EXTERN_VER=2018.01 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=true BUILD_TEST=false SV_EXTERN_VER=2018.05 USE_SYSTEM_QT=false
     - os: osx
       compiler: clang
       osx_image: xcode7.3
       sudo: required
-      env: WITH_CMAKE=false BUILD_TEST=false SV_EXTERN_VER=2018.01 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=false BUILD_TEST=false SV_EXTERN_VER=2018.05 USE_SYSTEM_QT=false
   allow_failures:
-    - env: WITH_CMAKE=false BUILD_TEST=false SV_EXTERN_VER=2018.01 USE_SYSTEM_QT=false
+    - env: WITH_CMAKE=false BUILD_TEST=false SV_EXTERN_VER=2018.05 USE_SYSTEM_QT=false
     - os: osx
 
 addons:
