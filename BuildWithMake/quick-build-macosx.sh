@@ -116,5 +116,5 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
   echo ""
 fi
 
-###make fast
+make fast
 
