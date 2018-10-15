@@ -303,6 +303,37 @@ ifneq ($(SV_STATIC_BUILD),1)
 	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT)
 endif
 endif
+ifeq ($(CLUSTER),x64_macosx)
+	-install_name_tool -add_rpath $(TCLTK_SO_PATH) $(TARGET_EXE_FULL)
+	-install_name_tool -add_rpath $(VTK_TCL_LIB_PATH) $(TARGET_EXE_FULL)
+	-install_name_tool -add_rpath $(VTK_SO_PATH) $(TARGET_EXE_FULL)
+	-install_name_tool -add_rpath $(VTK_BINDIR) $(TARGET_EXE_FULL)
+	-install_name_tool -add_rpath $(VTK_LIBDIRS) $(TARGET_EXE_FULL)
+ifeq ($(SV_USE_GDCM),1)
+	-install_name_tool -add_rpath $(SV_GDCM_SO_PATH) $(TARGET_EXE_FULL)
+endif
+ifeq ($(SV_USE_HDF5),1)
+	-install_name_tool -add_rpath $(SV_HDF5_SO_PATH) $(TARGET_EXE_FULL)
+endif
+ifeq ($(SV_USE_ITK),1)
+	-install_name_tool -add_rpath $(ITK_BIN_LIBS) $(TARGET_EXE_FULL)
+endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+	-install_name_tool -add_rpath $(SV_OPENCASCADE_SO_PATH) $(TARGET_EXE_FULL)
+endif
+ifeq ($(SV_USE_QT),1)
+	-install_name_tool -add_rpath $(QT_SO_PATH) $(TARGET_EXE_FULL)
+endif
+ifeq ($(SV_USE_MITK),1)
+	-install_name_tool -add_rpath $(SV_MITK_SO_PATH) $(TARGET_EXE_FULL)
+endif
+ifeq ($(SV_USE_FREETYPE),1)
+	-install_name_tool -add_rpath $(SV_FREETYPE_SO_PATH) $(TARGET_EXE_FULL)
+endif
+ifeq ($(SV_USE_PYTHON),1)
+	-install_name_tool -add_rpath $(SV_PYTHON_SO_PATH) $(TARGET_EXE_FULL)
+endif
+endif
 	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
 	ln -s $(notdir $(TARGET_EXE_FULL)) $(TARGET_EXE)
 
