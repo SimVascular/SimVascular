@@ -89,7 +89,7 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # Externals!
 
-set(SV_EXTERNALS_VERSION_NUMBER "2018.01" CACHE STRING "SimVascular Externals Release Version")
+set(SV_EXTERNALS_VERSION_NUMBER "2018.05" CACHE STRING "SimVascular Externals Release Version")
 mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 
 if(APPLE)
