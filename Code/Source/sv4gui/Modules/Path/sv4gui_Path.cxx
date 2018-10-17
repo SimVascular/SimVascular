@@ -31,13 +31,13 @@
 
 #include "sv4gui_Path.h"
 #include "sv4gui_Math3.h"
+#include "sv3_PathElement.h"
+#include "sv3_PathGroup.h"
+
+using sv3::PathGroup;
 
 sv4guiPath::sv4guiPath()
-    : m_CalculateBoundingBox(true)
-    , m_PathID(-1)
-    , m_Method(sv3::PathElement::CONSTANT_TOTAL_NUMBER)
-    , m_CalculationNumber(100)
-    , m_Spacing(0)
+    :PathGroup()
     , m_DataModified(false)
     , m_ResliceSize(5.0)
     , m_AddingMode(SMART)
@@ -47,21 +47,13 @@ sv4guiPath::sv4guiPath()
 
 sv4guiPath::sv4guiPath(const sv4guiPath &other)
     : BaseData(other)
-    , m_PathID(other.m_PathID)
-    , m_Method(other.m_Method)
-    , m_CalculationNumber(other.m_CalculationNumber)
-    , m_Spacing(other.m_Spacing)
-    , m_PathElementSet(other.GetTimeSize())
+    , PathGroup(other)
     , m_DataModified(true)
-    , m_CalculateBoundingBox(true)
     , m_ResliceSize(other.m_ResliceSize)
     , m_AddingMode(other.m_AddingMode)
     , m_Props(other.m_Props)
 {
-    for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
-    {
-        m_PathElementSet[t]=other.GetPathElement(t)->Clone();
-    }
+
 }
 
 sv4guiPath::~sv4guiPath()
@@ -72,13 +64,13 @@ sv4guiPath::~sv4guiPath()
 void sv4guiPath::ClearData()
 {
     //may need delele each arrays inside first.
-    m_PathElementSet.clear();
+    this->sv3::PathGroup::ClearData();
     Superclass::ClearData();
 }
 
 void sv4guiPath::InitializeEmpty()
 {
-    m_PathElementSet.resize( 1 );
+    this->sv3::PathGroup::InitializeEmpty();
 
     Superclass::InitializeTimeGeometry(1);
     m_Initialized = true;
@@ -92,65 +84,32 @@ bool sv4guiPath::IsEmptyTimeStep(unsigned int t) const
 
 void sv4guiPath::Expand( unsigned int timeSteps )
 {
-    unsigned int oldSize = m_PathElementSet.size();
-
-    if ( timeSteps > oldSize )
+    this -> sv3::PathGroup::Expand(timeSteps);
+    
+    if ( timeSteps > sv3::PathGroup::GetTimeSize() )
     {
         Superclass::Expand( timeSteps );
-
-        m_PathElementSet.resize( timeSteps );
-
-        m_CalculateBoundingBox = true;
 
         this->InvokeEvent( sv4guiPathExtendTimeRangeEvent() );
     }
 }
 
-unsigned int sv4guiPath::GetTimeSize() const
-{
-    return m_PathElementSet.size();
-}
-
-int sv4guiPath::GetSize( unsigned int t ) const
-{
-    if(GetPathElement(t))
-        return GetPathElement(t)->GetControlPointNumber();
-    else
-        return 0;
-}
 
 sv4guiPathElement* sv4guiPath::GetPathElement(unsigned int t ) const
 {
-    if ( t < m_PathElementSet.size() )
-    {
-        return m_PathElementSet[t];
-    }
-    else
-    {
-        return NULL;
-    }
+    return static_cast<sv4guiPathElement*>(this->sv3::PathGroup::GetPathElement(t));
 }
 
 void sv4guiPath::SetPathElement(sv4guiPathElement* pathElement, unsigned int t)
 {
+    this->sv3::PathGroup::SetPathElement(static_cast<sv3::PathElement*>(pathElement),t);
     if(t<m_PathElementSet.size())
     {
-        m_PathElementSet[t]=pathElement;
-
         Modified();
         this->InvokeEvent( sv4guiPathSetEvent() );
     }
 }
 
-int sv4guiPath::GetPathID() const
-{
-    return m_PathID;
-}
-
-void sv4guiPath::SetPathID(int pathID)
-{
-    m_PathID=pathID;
-}
 
 int sv4guiPath::GetMaxPathID(mitk::DataStorage::SetOfObjects::ConstPointer rs)
 {
@@ -195,7 +154,7 @@ void sv4guiPath::ExecuteOperation( mitk::Operation* operation )
         return;
     }
 
-    sv4guiPathElement* originalPathElement=m_PathElementSet[timeStep];
+    sv4guiPathElement* originalPathElement=static_cast<sv4guiPathElement*>(m_PathElementSet[timeStep]);
 
     sv4guiPathElement* newPathElement=pathOperation->GetPathElement();
     int index = pathOperation->GetIndex();
@@ -290,45 +249,6 @@ void sv4guiPath::ExecuteOperation( mitk::Operation* operation )
     mitk::OperationEndEvent endevent(operation);
     ((const itk::Object*)this)->InvokeEvent(endevent);
 
-}
-
-void sv4guiPath::CalculateBoundingBox(double *bounds,unsigned int t)
-{
-    sv4guiPathElement* pathElement=GetPathElement(t);
-    if(pathElement)
-    {
-        pathElement->CalculateBoundingBox(bounds);
-    }
-}
-
-void sv4guiPath::SetSpacing(double spacing)
-{
-    m_Spacing=spacing;
-}
-
-double sv4guiPath::GetSpacing() const
-{
-    return m_Spacing;
-}
-
-void sv4guiPath::SetMethod(sv3::PathElement::CalculationMethod method)\
-{
-    m_Method=method;
-}
-
-sv3::PathElement::CalculationMethod sv4guiPath::GetMethod() const
-{
-    return m_Method;
-}
-
-void sv4guiPath::SetCalculationNumber(int number)
-{
-    m_CalculationNumber=number;
-}
-
-int sv4guiPath::GetCalculationNumber() const
-{
-    return m_CalculationNumber;
 }
 
 mitk::Point3D sv4guiPath::GetNewControlPoint()

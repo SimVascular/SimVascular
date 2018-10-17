@@ -36,12 +36,12 @@ Qt5_VERSION=$(Qt5_MAJOR_VERSION).$(Qt5_MINOR_VERSION).$(Qt5_PATCH_VERSION)
 ifeq ($(SV_EXTERNALS_PREBUILT_QT_SYSTEM_INSTALL),1)
   QT_TOP_DIR        = /usr/local/package/Qt$(Qt5_VERSION)/$(Qt5_MAJOR_VERSION).$(Qt5_MINOR_VERSION)/clang_64
   QT_WEBENGINE_PROC = QtWebEngineProcess
-  QT_WEBENGINE_PATH = $(QT_TOP_DIR)/.app/Content/Resources/$(QT_WEBENGINE_PROC)
+  QT_WEBENGINE_PATH = $(QT_TOP_DIR)/lib/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/$(QT_WEBENGINE_PROC)
   QT_QPA_FONTDIR  = /usr/local/package/Qt$(Qt5_VERSION)/$(Qt5_MAJOR_VERSION).$(Qt5_MINOR_VERSION)/Src/qtbase/lib/fonts
 else
   QT_TOP_DIR        = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)/$(Qt5_VERSION)/clang_64
   QT_WEBENGINE_PROC = QtWebEngineProcess
-  QT_WEBENGINE_PATH = $(QT_TOP_DIR)/.app/Content/Resources/$(QT_WEBENGINE_PROC)
+  QT_WEBENGINE_PATH = $(QT_TOP_DIR)/lib/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/$(QT_WEBENGINE_PROC)
   QT_QPA_FONTDIR    = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)/$(Qt5_VERSION)/Src/qtbase/lib/fonts
 endif
 

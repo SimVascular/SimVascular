@@ -44,15 +44,14 @@ CREATE_EXPORTS_CV_FILE_H=sv3PathExports.h
 
 CXXFLAGS += -DSV_EXPORT_PATH_COMPILE
 
-HDRS	= sv3_PathElement.h sv3_VtkParametricSpline.h sv3_Spline.h sv3_PathIO.h
-CXXSRCS	= sv3_PathElement.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx
+HDRS	= sv3_PathElement.h sv3_PathGroup.h sv3_VtkParametricSpline.h sv3_Spline.h sv3_PathIO.h
+CXXSRCS	= sv3_PathElement.cxx sv3_PathGroup.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx
 
 
-SVPYHDRS = sv3_PathElement_init_py.h
-SVPYSRCS = sv3_PathElement_init_py.cxx
+SVPYHDRS = sv3_PathElement_init_py.h sv3_PathGroup_init_py.h sv3_PathIO_init_py.h
+SVPYSRCS = sv3_PathElement_init_py.cxx sv3_PathGroup_init_py.cxx sv3_PathIO_init_py.cxx
 
 DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)

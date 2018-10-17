@@ -30,11 +30,30 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#export SV_EXTERNALS_VERSION_NUMBER=2018.01
+export SV_EXTERNALS_VERSION_NUMBER=2018.05
+
+export EXTERNALS_SV_ARCH_DIR=x64
+export EXTERNALS_SV_OS_DIR=mac_osx
+export EXTERNALS_SV_OS_LONG_NAME_DIR=mac_osx
+export EXTERNALS_SV_COMPILER_SHORT_NAME=clang
+export SV_EXTERN_LINUX_VERSION=
+export EXTERNALS_SV_FULL_OS_VER_NO=10.10
+export EXTERNALS_SV_COMPILER_VER_NO=7.0
+
+if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+  echo "Error - Ubuntu 18 2018.01 not built yet!"
+  exit
+elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+  export EXTERNALS_BUILD_DATE=2018.06.20
+  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
+fi
+
 export EXTERNALS_TOP=`pwd`/ext
 
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.01/darwin/mac_osx/10.11/clang/8.0/x64/relwithdebinfo/2018.01.23/
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/$SV_EXTERNALS_VERSION_NUMBER/darwin/$EXTERNALS_SV_OS_LONG_NAME_DIR/$EXTERNALS_SV_FULL_OS_VER_NO/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE/$EXTERNALS_BUILD_DATE
 
-export TAR_FILE_PREFIX=mac_osx.10.11.clang.8.0.x64.relwithdebinfo.2018.01.23
+export TAR_FILE_PREFIX=$EXTERNALS_SV_OS_LONG_NAME_DIR.$EXTERNALS_SV_FULL_OS_VER_NO.$EXTERNALS_SV_COMPILER_SHORT_NAME.$EXTERNALS_SV_COMPILER_VER_NO.$EXTERNALS_SV_ARCH_DIR.$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE.$EXTERNALS_BUILD_DATE
 
 # default is windows, so override with gnu compilers on mac_osx
 
@@ -44,30 +63,58 @@ echo "FORTRAN_COMPILER_VERSION=ifort" >> cluster_overrides.mk
 echo "SV_COMPILER=clang" >> cluster_overrides.mk
 echo "SV_COMPILER_VERSION=8.0" >> cluster_overrides.mk
 
-echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo" > global_overrides.mk
 
-sudo mkdir -p $EXTERNALS_TOP
-sudo chmod -R a+rwx $EXTERNALS_TOP
-mkdir -p $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo/tarfiles
-mkdir -p $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo
+echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE" > global_overrides.mk
 
-pushd $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo/tarfiles
-wget $PARENT_URL/$TAR_FILE_PREFIX.freetype.2.6.3.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.1.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.7.1.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2016.03.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.1.0.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.0.0.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.python.2.7.13.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
-wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
+mkdir -p $EXTERNALS_TOP
+chmod -R a+rwx $EXTERNALS_TOP
+mkdir -p $EXTERNALS_TOP/tarfiles
+mkdir -p $EXTERNALS_TOP/bin/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE
+
+pushd $EXTERNALS_TOP/tarfiles
+
+if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+  wget $PARENT_URL/$TAR_FILE_PREFIX.freetype.2.6.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.7.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2016.03.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.1.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.0.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.python.2.7.11.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.6.2.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.4.2.tar.gz
+elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+  wget $PARENT_URL/$TAR_FILE_PREFIX.freetype.2.6.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.hdf5.1.10.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.13.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2018.04.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.3.9.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.3.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.python.3.5.5.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.tinyxml2.6.2.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.8.1.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.6.3.tar.gz
+fi
+
 popd
 
-pushd $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo
-for i in $EXTERNALS_TOP/bin/clang/8.0/x64/relwithdebinfo/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
-    tar xvzf $i
+pushd $EXTERNALS_TOP/bin/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE
+for i in $EXTERNALS_TOP/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
+    echo "untar $i"
+    tar xzf $i
 done
 popd
 
-make
+if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
+  # needed for "uic" compiler for Qt
+  echo ""
+elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
+  # don't seem to need for pre-built Qt
+  echo ""
+fi
+
+make fast
 

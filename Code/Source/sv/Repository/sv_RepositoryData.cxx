@@ -91,6 +91,9 @@ char *RepositoryDataT_EnumToStr( RepositoryDataT val )
   case PATH_T:
     strcpy( result, "Path");
     break;
+  case PATHGROUP_T:
+    strcpy( result, "PathGroup");
+    break;
   case CONTOUR_T:
     strcpy( result, "Contour");
     break;

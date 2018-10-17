@@ -29,71 +29,82 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_PATHELEMENT_H
-#define SV4GUI_PATHELEMENT_H
+#ifndef SV3_PATHGROUP_H
+#define SV3_PATHGROUP_H
 
 #include "SimVascular.h"
+
+#include <sv3PathExports.h>
+
 #include "sv3_PathElement.h"
+#include "sv_RepositoryData.h"
 
-#include <sv4guiModulePathExports.h>
 
-#include "sv4gui_Spline.h"
+#include <map>
+#include <sstream>
+#include <iostream>
+#include <string>
 
-#include "mitkPoint.h"
-
-class SV4GUIMODULEPATH_EXPORT sv4guiPathElement : public sv3::PathElement
+namespace sv3{
+class SV_EXPORT_PATH PathGroup : public cvRepositoryData
 {
 public:
 
-    struct svControlPoint
-    {
-        int id=-1;
-        bool selected=false;
-        mitk::Point3D point;
-    };
-
-    typedef sv4guiSpline::sv4guiSplinePoint sv4guiPathPoint;
-
-    sv4guiPathElement();
-
-    sv4guiPathElement(const sv4guiPathElement &other);
-
-    virtual ~sv4guiPathElement();
-
-    sv4guiPathElement* Clone();
-
-    std::vector<mitk::Point3D> GetControlPoints();
-
-    svControlPoint GetsvControlPoint(int index) ;
-
-    mitk::Point3D GetControlPoint(int index);
-
-    void InsertControlPoint(int index, mitk::Point3D point);
-
-    int GetInsertintIndexByDistance( mitk::Point3D point);
-
-    void SetControlPoint(int index, mitk::Point3D point);
-
-    void SetControlPoints(std::vector<mitk::Point3D> points, bool update = true);
-
-    int SearchControlPoint( mitk::Point3D point, mitk::ScalarType distance);
-
-    sv4guiPathElement* CreateSmoothedPathElement(int sampleRate, int numModes, bool controlPointsBased = true ); //otherwise pathPointsBased
-
-    std::vector<sv4guiPathPoint>  GetPathPoints();
-
-    std::vector<mitk::Point3D> GetPathPosPoints();
-
-    sv4guiPathPoint GetPathPoint(int index) ;
-
-    mitk::Point3D GetPathPosPoint(int index) ;
-
-    void SetPathPoints(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints);
+    PathGroup();
     
-    std::vector<sv4guiPathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex);
+    PathGroup(const PathGroup &other);
+    
+    virtual ~PathGroup();
 
-protected:
+    virtual void Expand( unsigned int timeSteps );
 
-};
+    virtual unsigned int GetTimeSize() const;
 
-#endif // SV4GUI_PATHELEMENT_H
+    virtual int GetSize( unsigned int t = 0 ) const;
+
+    PathElement* GetPathElement(unsigned int t = 0) const;
+
+    void SetPathElement(PathElement* pathElement, unsigned int t = 0);
+
+    void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
+
+    int GetPathID() const;
+
+    void SetPathID(int pathID);
+
+    void SetSpacing(double spacing);
+
+    double GetSpacing() const;
+
+    void SetMethod(sv3::PathElement::CalculationMethod method = sv3::PathElement::CONSTANT_TOTAL_NUMBER );
+
+    sv3::PathElement::CalculationMethod GetMethod() const;
+
+    void SetCalculationNumber(int number);
+
+    int GetCalculationNumber() const;
+
+  protected:
+    
+    virtual void ClearData();
+
+    virtual void InitializeEmpty();
+
+    std::vector< sv3::PathElement* > m_PathElementSet;
+
+    bool m_CalculateBoundingBox;
+
+    int m_PathID;
+
+    double m_Spacing;
+
+    sv3::PathElement::CalculationMethod m_Method;
+
+    int m_CalculationNumber;
+
+  };
+
+}
+
+
+#endif // SV3_PATHGROUP_H

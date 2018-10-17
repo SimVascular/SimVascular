@@ -76,52 +76,76 @@ $(TARGET_LIB):	$(OBJS)
 	for fn in $(TARGET_LIB); do /bin/rm -f $$fn; done
 	$(AR)$(TARGET_LIB) $(OBJS)
 
+## Build platform-specific shared library.
+#
+#  A module's Qt state machine XML files, located in a module's 
+#  resource/Interactions directory, are added to it's shared library
+#  in a zip file.
+#
 ifeq ($(CLUSTER),x64_linux)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	$(SHAR) $(TARGET_SHARED)  \
              $(DLLOBJS) $(DLLLIBS) $(LFLAGS) $(SHARED_LFLAGS)
-ifdef SV_COPY_DLL_TO_BIN_PLUGINS
+
+    # Add state machine XML files.
+    ifdef SV_APPEND_CPPMICROSERVICES_TO_DLL
+	$(MITK_US_RESOURCE_COMPILER) --append $(TARGET_SHARED) ./cppmicroservices_shared/res_0.zip
+    endif
+
+    ifdef SV_COPY_DLL_TO_BIN_PLUGINS
 	mkdir -p $(TARGETLIB_TOP)/Bin/plugins
 	cp -f $(TARGET_SHARED) $(TARGETLIB_TOP)/Bin/plugins
+    endif
 endif
-endif
+
 ifeq ($(CLUSTER),x64_macosx)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	$(SHAR) $(SHARED_LFLAGS) $(TARGET_SHARED)  \
              $(DLLOBJS) $(DLLLIBS) $(LFLAGS)
-ifdef SV_COPY_DLL_TO_BIN_PLUGINS
+
+    # Add state machine XML files.
+    ifdef SV_APPEND_CPPMICROSERVICES_TO_DLL
+	$(MITK_US_RESOURCE_COMPILER) --append $(TARGET_SHARED) ./cppmicroservices_shared/res_0.zip
+    endif
+
+    ifdef SV_COPY_DLL_TO_BIN_PLUGINS
 	mkdir -p $(TARGETLIB_TOP)/Bin/plugins
 	cp -f $(TARGET_SHARED) $(TARGETLIB_TOP)/Bin/plugins
+    endif
 endif
-endif
+
 ifeq ($(CLUSTER),x64_cygwin)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
-ifneq ($(CXX_COMPILER_VERSION),mingw-gcc)
+
+    ifneq ($(CXX_COMPILER_VERSION),mingw-gcc)
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGET_SHARED)" \
              /pdb:"$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
              $(DLLOBJS) $(LFLAGS)
-else
+    else
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGET_SHARED)" \
              /pdb:"$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
              $(DLLOBJS) $(LFLAGS)
 #	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
-endif
-ifdef SV_APPEND_CPPMICROSERVICES_TO_DLL
+    endif
+
+    # Add state machine XML files.
+    ifdef SV_APPEND_CPPMICROSERVICES_TO_DLL
 	$(MITK_US_RESOURCE_COMPILER) --append $(TARGET_SHARED) ./cppmicroservices_shared/res_0.zip
-endif
-ifdef SV_COPY_DLL_TO_BIN_PLUGINS
+    endif
+
+    ifdef SV_COPY_DLL_TO_BIN_PLUGINS
 	mkdir -p $(TARGETLIB_TOP)/Bin/plugins
 	cp -f $(TARGET_SHARED) $(TARGETLIB_TOP)/Bin/plugins
 	cp -f $(TARGET_SHARED:.$(SOEXT)=.pdb) $(TARGETLIB_TOP)/Bin/plugins
-endif
+    endif
 endif
 
 ifndef NO_DEPEND
@@ -259,6 +283,11 @@ us-init-module:
 	-@echo "#include <usModuleInitialization.h>" > us_init.cxx
 	-@echo "US_INITIALIZE_MODULE" >> us_init.cxx
 
+## Create the directory to store a module's Qt state machine XML files.
+#
+#  The files are stored in a zip file that is later added to the module's
+#  shared library for access by MITK. 
+#
 create_cppmicroservices_file:
 	-rm -Rf ./cppmicroservices_shared
 	-mkdir -p ./cppmicroservices_shared/$(MODULE_NAME)/Interactions

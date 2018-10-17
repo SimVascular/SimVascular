@@ -140,6 +140,7 @@ export TCL_LIBRARY=`cygpath --windows -t mixed $TCL_LIBRARY`
 export TK_LIBRARY=`cygpath --windows -t mixed $TK_LIBRARY`
 export TKCXIMAGE_DLL=`cygpath --windows -t mixed $TKCXIMAGE_DLL`
 #export SV_PLUGIN_PATH=`cygpath --windows -t mixed $SV_PLUGIN_PATH`
+export QTWEBENGINEPROCESS_PATH=`cygpath --windows -t mixed $QTWEBENGINEPROCESS_PATH`
 export PATH=$LD_LIBRARY_PATH:$PATH
 ;;
 esac
