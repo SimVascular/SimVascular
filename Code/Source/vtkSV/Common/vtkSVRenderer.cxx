@@ -37,7 +37,6 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkTextActor.h"
 
-#include "vtkSVIOUtils.h"
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 

@@ -38,6 +38,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
+	   $(VMTK_INCDIR) \
            $(PYTHON_INCDIR)
 
 MODULE_NAME = vtkSVSegmentation
@@ -46,26 +47,44 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 MODULE_EXPORT_FILE_H = vtkSVSegmentationModule.h
 
 HDRS	= \
-  vtkSVPlanarMapper.h \
-  vtkSVBoundaryMapper.h \
-  vtkSVSquareBoundaryMapper.h \
-  vtkSVSuperSquareBoundaryMapper.h \
-  vtkSVPointSetBoundaryMapper.h \
-  vtkSVParameterizeSurfaceOnPolycube.h \
-  vtkSVNewParameterizeSurfaceOnPolycube.cxx \
-  vtkSVParameterizeVolumeOnPolycube.h \
-  vtkSVSphericalMapper.h
+  vtkSVGeneralCVT.h \
+  vtkSVEdgeWeightedCVT.h \
+  vtkSVCenterlinesBasedNormals.h \
+  vtkSVCenterlinesEdgeWeightedCVT.h \
+  vtkSVEdgeWeightedSmoother.h \
+  vtkSVPolyBallLine.h \
+  vtkSVCenterlines.h \
+  vtkSVVesselNetworkDecomposerAndParameterizer.h \
+  vtkSVNewVesselNetworkDecomposerAndParameterizer.h \
+  vtkSVCenterlineGraph.h \
+  vtkSVCenterlineGCell.h \
+  vtkSVCenterlineBranchSplitter.h \
+  vtkSVCenterlineMerger.h \
+  vtkSVCenterlineParallelTransportVectors.h \
+  vtkSVPolycubeGenerator.h \
+  vtkSVSurfaceCenterlineGrouper.h \
+  vtkSVSurfaceCenterlineAttributesPasser.h \
+  vtkSVSurfaceCuboidPatcher.h
 
 CXXSRCS	= \
-  vtkSVPlanarMapper.cxx \
-  vtkSVBoundaryMapper.cxx \
-  vtkSVSquareBoundaryMapper.cxx \
-  vtkSVSuperSquareBoundaryMapper.cxx \
-  vtkSVPointSetBoundaryMapper.cxx \
-  vtkSVParameterizeSurfaceOnPolycube.cxx \
-  vtkSVNewParameterizeSurfaceOnPolycube.cxx \
-  vtkSVParameterizeVolumeOnPolycube.cxx \
-  vtkSVSphericalMapper.cxx
+  vtkSVGeneralCVT.cxx \
+  vtkSVEdgeWeightedCVT.cxx \
+  vtkSVCenterlinesBasedNormals.cxx \
+  vtkSVCenterlinesEdgeWeightedCVT.cxx \
+  vtkSVEdgeWeightedSmoother.cxx \
+  vtkSVCenterlines.cxx \
+  vtkSVPolyBallLine.cxx \
+  vtkSVVesselNetworkDecomposerAndParameterizer.cxx \
+  vtkSVNewVesselNetworkDecomposerAndParameterizer.cxx \
+  vtkSVCenterlineGraph.cxx \
+  vtkSVCenterlineGCell.cxx \
+  vtkSVCenterlineBranchSplitter.cxx \
+  vtkSVCenterlineParallelTransportVectors.cxx \
+  vtkSVCenterlineMerger.cxx \
+  vtkSVPolycubeGenerator.cxx \
+  vtkSVSurfaceCenterlineGrouper.cxx \
+  vtkSVSurfaceCenterlineAttributesPasser.cxx \
+  vtkSVSurfaceCuboidPatcher.cxx
 
 DLLHDRS =
 
@@ -74,8 +93,11 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
 
 DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVIO_NAME)$(LIBLINKEXT) \
            $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT) \
-           $(SV_LIB_VTKSVPARAMETERIZATION_NAME)$(LIBLINKEXT)
+           $(SVLIBFLAG)$(SV_LIB_VTKSVPARAMETERIZATION_NAME)$(LIBLINKEXT)
+
+DLLLIBS += $(VMTK_LIBS)
 
 TARGET_LIB_NAME = $(SV_LIB_VTKSVSEGMENTATION_NAME)
 

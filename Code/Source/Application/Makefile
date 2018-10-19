@@ -211,11 +211,13 @@ LFLAGS += \
         $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT)
 
 LFLAGS +=  $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVIO_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT) \
            $(SVLIBFLAG)$(SV_LIB_VTKSVGEOMETRY_NAME)$(LIBLINKEXT) \
            $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
            $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVPARAMETERIZATION_NAME)$(LIBLINKEXT)
+           $(SVLIBFLAG)$(SV_LIB_VTKSVPARAMETERIZATION_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVSEGMENTATION_NAME)$(LIBLINKEXT)
 
 # need to explicitly add in globals for executable
 ifeq ($(SV_USE_GLOBALS_SHARED),1)
@@ -303,12 +305,13 @@ ifneq ($(SV_STATIC_BUILD),1)
 	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT)
 endif
 endif
+  # had to remove vtk libdirs for mine to compile on mac
+	#-install_name_tool -add_rpath $(VTK_LIBDIRS) $(TARGET_EXE_FULL)
 ifeq ($(CLUSTER),x64_macosx)
 	-install_name_tool -add_rpath $(TCLTK_SO_PATH) $(TARGET_EXE_FULL)
 	-install_name_tool -add_rpath $(VTK_TCL_LIB_PATH) $(TARGET_EXE_FULL)
 	-install_name_tool -add_rpath $(VTK_SO_PATH) $(TARGET_EXE_FULL)
 	-install_name_tool -add_rpath $(VTK_BINDIR) $(TARGET_EXE_FULL)
-	-install_name_tool -add_rpath $(VTK_LIBDIRS) $(TARGET_EXE_FULL)
 ifeq ($(SV_USE_GDCM),1)
 	-install_name_tool -add_rpath $(SV_GDCM_SO_PATH) $(TARGET_EXE_FULL)
 endif

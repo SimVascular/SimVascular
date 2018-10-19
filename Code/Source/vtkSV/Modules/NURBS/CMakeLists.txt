@@ -36,7 +36,8 @@ set(module vtkSVNURBS)
 
 #------------------------------------------------------------------------------
 # Core SRCS and HDRS
-set(SRCS vtkSVNURBSUtils.cxx
+set(SRCS
+  vtkSVNURBSUtils.cxx
   vtkSVControlGrid.cxx
   vtkSVNURBSObject.cxx
   vtkSVNURBSCurve.cxx
@@ -50,7 +51,8 @@ set(SRCS vtkSVNURBSUtils.cxx
   vtkSVPERIGEENURBSWriter.cxx
   vtkSVPERIGEENURBSCollectionWriter.cxx
   )
-set(HDRS vtkSVNURBSUtils.h
+set(HDRS
+  vtkSVNURBSUtils.h
   vtkSVControlGrid.h
   vtkSVNURBSObject.h
   vtkSVNURBSCurve.h

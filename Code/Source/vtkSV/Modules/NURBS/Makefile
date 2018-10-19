@@ -48,18 +48,32 @@ MODULE_EXPORT_FILE_H = vtkSVNURBSModule.h
 HDRS	= \
   vtkSVNURBSUtils.h \
   vtkSVControlGrid.h \
+  vtkSVNURBSObject.h \
   vtkSVNURBSCurve.h \
   vtkSVNURBSSurface.h \
+  vtkSVNURBSVolume.h \
   vtkSVLoftNURBSCurve.h \
-  vtkSVLoftNURBSSurface.h
+  vtkSVLoftNURBSSurface.h \
+  vtkSVLoftNURBSVolume.h \
+  vtkSVNURBSCollection.h \
+  vtkSVMUPFESNURBSWriter.h \
+  vtkSVPERIGEENURBSWriter.h \
+  vtkSVPERIGEENURBSCollectionWriter.h
 
 CXXSRCS	= \
   vtkSVNURBSUtils.cxx \
   vtkSVControlGrid.cxx \
+  vtkSVNURBSObject.cxx \
   vtkSVNURBSCurve.cxx \
   vtkSVNURBSSurface.cxx \
+  vtkSVNURBSVolume.cxx \
   vtkSVLoftNURBSCurve.cxx \
-  vtkSVLoftNURBSSurface.cxx
+  vtkSVLoftNURBSSurface.cxx \
+  vtkSVLoftNURBSVolume.cxx \
+  vtkSVNURBSCollection.cxx \
+  vtkSVMUPFESNURBSWriter.cxx \
+  vtkSVPERIGEENURBSWriter.cxx \
+  vtkSVPERIGEENURBSCollectionWriter.cxx
 
 DLLHDRS =
 
@@ -68,7 +82,8 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
 
 DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT)
+           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVIO_NAME)$(LIBLINKEXT)
 
 TARGET_LIB_NAME = $(SV_LIB_VTKSVNURBS_NAME)
 
