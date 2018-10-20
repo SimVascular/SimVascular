@@ -2397,20 +2397,41 @@ int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
   *dst = NULL;
 
   vtkNew(vtkSVLoftNURBSSurface,lofter);
+
+  // Set up the structured grid
+  int dim[3]; dim[0] = numSrcs; dim[1] = srcs[0]->GetVtkPolyData()->GetNumberOfPoints() + 1; dim[2] = 1;
+  vtkNew(vtkPoints, inputGridPoints);
+  inputGridPoints->SetNumberOfPoints(dim[0] * dim[1]);
+  vtkNew(vtkStructuredGrid, inputGrid);
+  inputGrid->SetPoints(inputGridPoints);
+  inputGrid->SetDimensions(dim);
+
+  // Loop through to set points on structured grid
+  int ptId;
+  int pos[3];
+  double pt[3];
   for (int i=0;i<numSrcs;i++)
   {
-    // Get input polydata for segmentation
-    vtkPolyData *newPd = srcs[i]->GetVtkPolyData();
+    for (int j=0; j<srcs[i]->GetVtkPolyData()->GetNumberOfPoints(); j++)
+    {
+      srcs[i]->GetVtkPolyData()->GetPoint(j, pt);
+      pos[0] = i; pos[1] = j; pos[2] = 0;
+      ptId = vtkStructuredData::ComputePointId(dim, pos);
+
+      inputGrid->GetPoints()->SetPoint(ptId, pt);
+    }
 
     // Get 1st point and copy to the end. For watertight surface, we need
     // to provide first point at the beginning and end.
-    double tmpPt[3];
-    newPd->GetPoint(0, tmpPt);
-    newPd->GetPoints()->InsertNextPoint(tmpPt);
-    lofter->AddInputData(newPd);
+    srcs[i]->GetVtkPolyData()->GetPoint(0, pt);
+    pos[0] = i; pos[1] = srcs[i]->GetVtkPolyData()->GetNumberOfPoints(); pos[2] = 0;
+    ptId = vtkStructuredData::ComputePointId(dim, pos);
+
+    inputGrid->GetPoints()->SetPoint(ptId, pt);
   }
 
   // Set up lofter
+  lofter->SetInputData(inputGrid);
   lofter->SetUDegree(uDegree);
   lofter->SetVDegree(vDegree);
   lofter->SetPolyDataUSpacing(uSpacing);
