@@ -72,8 +72,14 @@ if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
   rm -Rf qt
   mkdir -p qt
   pushd qt
-  wget $PARENT_URL/qt/qt-opensource-linux-x64-5.6.3.run
-  chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
+  if [[ $SV_EXTERN_OS == "linux" ]]; then
+    wget $PARENT_URL/qt/qt-opensource-linux-x64-5.6.3.run
+    chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
+  fi
+  if [[ $SV_EXTERN_OS == "mac_osx" ]]; then
+    wget $PARENT_URL/qt/qt-opensource-mac_osx-x64-5.6.3.tar.gz
+    chmod a+rx ./qt-opensource-mac_osx-x64-5.6.3.tar.gz
+  fi
   popd
 fi
 

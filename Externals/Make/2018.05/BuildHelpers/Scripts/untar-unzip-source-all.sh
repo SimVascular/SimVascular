@@ -124,6 +124,7 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_OPENCASCADE* ]]; then
   mv opencascade-7.3.0 ..
   pushd ../opencascade-7.3.0
   patch -p1 < ../BuildHelpers/Patches/2018.05/patch-opencascade-vtk-greater-8.0.patch
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-opencascade-7.3.0-macos.patch
   popd
 fi
 
