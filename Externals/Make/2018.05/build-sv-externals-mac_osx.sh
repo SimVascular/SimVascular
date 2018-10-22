@@ -1,5 +1,7 @@
-EXTERNALS_TOP=/usr/local/sv/ext
+EXTERNALS_TOP=/usr/local/sv/ext/2018.05/release
 EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
+
+SV_EXTERN_OS=mac_osx
 
 #
 #  must have write permissions to dirs!
@@ -13,13 +15,21 @@ sudo chmod a+rwx /usr/local/sv
 #
 
 echo "Deleting previous build dir ($EXTERNALS_BUILD_TOP)"
-rm -Rf $EXTERNALS_BUILD_TOP
-mkdir -p $EXTERNALS_BUILD_TOP
+sudo rm -Rf $EXTERNALS_BUILD_TOP
+sudo mkdir -p $EXTERNALS_BUILD_TOP
 
 echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"
-rm -Rf $EXTERNALS_TOP
-mkdir -p $EXTERNALS_TOP
+sudo rm -Rf $EXTERNALS_TOP
+
+sudo mkdir -p /usr/local/sv
+sudo chmod a+rwx /usr/local/sv
+sudo chown -R $USER /usr/local/sv
+
+sudo mkdir -p $EXTERNALS_TOP
+sudo chown -R $USER $EXTERNALS_TOP
+sudo chgrp -R $USER $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP/src
+ 
 cp -Rf BuildHelpers $EXTERNALS_TOP/src
 cp -Rf ../../Patches $EXTERNALS_TOP/src/BuildHelpers
 

@@ -1,6 +1,8 @@
 EXTERNALS_TOP=/usr/local/sv/ext/2018.05/release
 EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 
+SV_EXTERN_OS=linux
+
 #
 #  must have write permissions to dirs!
 #

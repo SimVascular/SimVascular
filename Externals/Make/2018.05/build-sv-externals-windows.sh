@@ -1,6 +1,8 @@
 EXTERNALS_TOP=/usr/local/sv/ext/2018.05
 EXTERNALS_BUILD_TOP=/cygdrive/c/sv18
 
+SV_EXTERN_OS=windows
+
 #
 #  must have write permissions to dirs!
 #
