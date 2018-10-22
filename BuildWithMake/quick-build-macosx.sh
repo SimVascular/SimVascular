@@ -115,8 +115,9 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
   # don't seem to need for pre-built Qt
   echo ""
   pushd $EXTERNALS_TOP/bin/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE/qt-5.6.3
-  if [ ! -f 5.6.3 ];then
-      ln -s ../qt-5.6.3 ./5.6.3
+  if [ ! -d 5.6.3 ];then
+      mkdir 5.6.3
+      ln -s ../../qt-5.6.3 ./5.6.3/clang_64
   fi
   popd
 fi
