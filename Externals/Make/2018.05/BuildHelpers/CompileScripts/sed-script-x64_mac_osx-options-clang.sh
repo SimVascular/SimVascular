@@ -180,7 +180,7 @@ s+REPLACEME_SV_VTK_CMAKE_LIB_DIR+lib/cmake/vtk-8.1+g
 s+REPLACEME_SV_VTK_MAKE_FILENAME++g
 
 # Qt
-#s+REPLACEME_SV_QT5_DIR+/usr/local/package/Qt5.6.3/5.6.3/gcc_64+g
+#s+REPLACEME_SV_QT5_DIR+/usr/local/package/Qt5.6.3/5.6.3/clang_64+g
 s+REPLACEME_SV_QT_DIR+qt-5.6.3+g
 s+REPLACEME_SV_QMAKE_EXECUTABLE+qmake+g
 
