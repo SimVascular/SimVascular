@@ -1,0 +1,18 @@
+
+# run the executable
+case "$SV_BATCH_MODE" in
+"1")
+case "$*" in
+"")
+$SV_HOME/BuildWithMake/Bin/sv.app/Contents/MacOS/sv
+;;
+*)
+$SV_HOME/BuildWithMake/Bin/sv.app/Contents/MacOS/sv $*
+;;
+esac
+;;
+*)
+$SV_HOME/BuildWithMake/Bin/sv.app/Contents/MacOS/sv $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl -tcl -qt $*
+;;
+esac
+

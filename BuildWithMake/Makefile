@@ -323,7 +323,11 @@ exec-shared-build:
 post-build: mksedscript
 	-mkdir -p Bin
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > sv
+ifeq ($(CLUSTER),x64_macosx)
+	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-simvascular-mac_osx-script >> sv
+else
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-simvascular-script >> sv
+endif
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > xfsv
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-xfsv-script >> xfsv
 	-chmod a+rx sv
@@ -335,6 +339,13 @@ ifeq ($(SV_USE_QT),1)
 	-/bin/cp -f $(QT_WEBENGINE_PATH) Bin/QtWebEngine
 	-/bin/cp -r $(QT_TOP_DIR)/resources/* Bin/QtWebEngine
 	-/bin/cp -Rf $(QT_TOP_DIR)/translations/* Bin/QtWebEngine
+ifeq ($(CLUSTER),x64_macosx)
+	-install_name_tool -add_rpath $(QT_SO_PATH) Bin/QtWebEngine/$(notdir $(QT_WEBENGINE_PATH))
+endif
+ifeq ($(CLUSTER),x64_macosx)
+	-mkdir -p Bin/sv.app/Contents/MacOS
+	-ln -s ../../../simvascular.exe Bin/sv.app/Contents/MacOS/sv
+endif
 endif
 #	-rm -f sedscript
 
