@@ -1,4 +1,4 @@
-EXTERNALS_TOP=/usr/local/sv/ext/2018.05
+EXTERNALS_TOP=/usr/local/sv/ext/2018.05/release
 EXTERNALS_BUILD_TOP=/cygdrive/c/sv18
 
 SV_EXTERN_OS=windows
@@ -6,9 +6,6 @@ SV_EXTERN_OS=windows
 #
 #  must have write permissions to dirs!
 #
-
-mkdir -p /usr/local/sv
-chmod a+rwx /usr/local/sv
 
 #
 # initial setup
@@ -20,6 +17,10 @@ mkdir -p $EXTERNALS_BUILD_TOP
 
 echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"
 rm -Rf $EXTERNALS_TOP
+
+mkdir -p /usr/local/sv
+chmod a+rwx /usr/local/sv
+
 mkdir -p $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP/src
 cp -Rf BuildHelpers $EXTERNALS_TOP/src

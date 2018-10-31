@@ -80,6 +80,10 @@ if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
     wget $PARENT_URL/qt/qt-opensource-mac_osx-x64-5.6.3.tar.gz
     chmod a+rx ./qt-opensource-mac_osx-x64-5.6.3.tar.gz
   fi
+  if [[ $SV_EXTERN_OS == "windows" ]]; then
+    wget $PARENT_URL/qt/qt-windows-release-x64-5.6.3.tar.gz
+    chmod a+rx ./qt-windows-release-x64-5.6.3.tar.gz
+  fi
   popd
 fi
 
