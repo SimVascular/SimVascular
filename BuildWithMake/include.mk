@@ -244,14 +244,20 @@ endif
 SV_EXTERNALS_VERSION_NUMBER = 2018.05
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+    SV_CMAKE_BUILD_TYPE=Release
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/release/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/release
 endif
 
 ifeq ($(CLUSTER), x64_linux)
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
+    SV_CMAKE_BUILD_TYPE=RelWithDebInfo
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
+    SV_CMAKE_BUILD_TYPE=RelWithDebInfo
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/relwithdebinfo
 endif
 
