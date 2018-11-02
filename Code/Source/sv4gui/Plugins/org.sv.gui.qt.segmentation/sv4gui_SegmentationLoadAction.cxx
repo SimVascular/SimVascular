@@ -45,6 +45,8 @@
 #include <vtkXMLPolyDataReader.h>
 
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QInputDialog>
 
 sv4guiSegmentationLoadAction::sv4guiSegmentationLoadAction()
 {
@@ -92,8 +94,25 @@ void sv4guiSegmentationLoadAction::Run(const QList<mitk::DataNode::Pointer> &sel
         if(filePath.isEmpty())
             return;
 
-        QFileInfo fi(filePath);
-        std::string baseName=fi.baseName().toStdString();
+        // QFileInfo fi(filePath);
+        // std::string baseName=fi.baseName().toStdString();
+        
+        bool ok;
+        QString text = QInputDialog::getText(NULL, tr("Segmentation Name"),
+                                        tr("Please give a segmentation name:"), QLineEdit::Normal,
+                                        "", &ok);
+        std::string baseName=text.trimmed().toStdString();
+        
+        if(baseName==""){
+            QMessageBox::warning(NULL,"Segmentation Empty","Please give a segmentation name!");
+            return;
+        }
+    
+        mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(baseName.c_str(),selectedNode);
+        if(exitingNode){
+            QMessageBox::warning(NULL,"Segmentation Already Created","Please use a different name!");
+            return;
+        }
 
 
         if(filePath.endsWith(".ctgr"))
