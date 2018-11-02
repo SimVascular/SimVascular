@@ -157,6 +157,25 @@ void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNo
                 if(model)
                 {
                     bool addNode=true;
+                    bool ok;
+                    QString text = QInputDialog::getText(NULL, tr("Model Name"),
+                                                    tr("Please give a model name:"), QLineEdit::Normal,
+                                                    "", &ok);
+                    std::string nodeName=text.trimmed().toStdString();
+                    
+                    if(nodeName==""){
+                        QMessageBox::warning(NULL,"Model Empty","Please give a model name!");
+                        return;
+                    }
+                
+                    mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(nodeName.c_str(),selectedNode);
+                    if(exitingNode){
+                        QMessageBox::warning(NULL,"Model Already Created","Please use a different model name!");
+                        return;
+                    }
+                    
+                    modelNode->SetName(nodeName);
+                    
                     sv4guiModelElement* modelElement=model->GetModelElement();
 
                     if(modelElement)
