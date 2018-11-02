@@ -104,6 +104,7 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_VTK* ]]; then
   mv VTK-8.1.1 ../vtk-8.1.1
   pushd ../vtk-8.1.1
   patch -p1 < ../BuildHelpers/Patches/2018.05/patch-vtk-8.1.1-windows.patch
+  patch -p1 < ../BuildHelpers/Patches/2018.05/patch-vtk-8.1.1-tk-windows.patch
   popd
 fi
 
