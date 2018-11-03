@@ -47,14 +47,16 @@
 NO_DEPEND = 1
 
 # -----------------------------------------------------------
-# CLUSTER = { x64_cygwin, x64_linux }
+# CLUSTER = { x64_cygwin, x64_linux, x64_macosx }
 # -----------------------------------------------------------
 
 CLUSTER = x64_cygwin
 #CLUSTER = x64_linux
+#CLUSTER = x64_macosx
 
 # ---------------------------------------------------------------------
-# CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-18.0, mingw-gcc, gcc}
+# CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-18.0, msvc-19.0, clang,
+#                          mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
@@ -62,10 +64,7 @@ CLUSTER = x64_cygwin
 #       should be replaced with additional variables
 
 SV_COMPILER = msvc
-#SV_COMPILER_VERSION = 18.0
 SV_COMPILER_VERSION = 19.0
-
-#CXX_COMPILER_VERSION = msvc-18.0
 CXX_COMPILER_VERSION = msvc-19.0
 
 FORTRAN_COMPILER_VERSION = ifort
@@ -146,7 +145,7 @@ SV_USE_PYTHON_SHARED = 1
 SV_USE_SYSTEM_PYTHON = 1
 
 # -----------------------------------------------------
-# Compile with python interpreter
+# Compile with Qt
 # -----------------------------------------------------
 
 SV_USE_QT = 1
@@ -237,7 +236,7 @@ ifeq ($(CLUSTER), x64_linux)
   SVEXTERN_COMPILER_VERSION = gnu-4.8
 endif
 ifeq ($(CLUSTER), x64_macosx)
-  SVEXTERN_COMPILER_VERSION = clang-7.0
+  SVEXTERN_COMPILER_VERSION = clang-7.3
 endif
 
 #SV_EXTERNALS_VERSION_NUMBER = 2018.01
@@ -250,14 +249,14 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
-    SV_CMAKE_BUILD_TYPE=RelWithDebInfo
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+    SV_CMAKE_BUILD_TYPE=Release
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
-    SV_CMAKE_BUILD_TYPE=RelWithDebInfo
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+    SV_CMAKE_BUILD_TYPE=Release
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)
 endif
 
@@ -295,6 +294,12 @@ ifeq ($(CLUSTER),x64_linux)
   SV_PLATFORM = x64
   SV_POSTFIX=
   SV_OS=linux
+endif
+ifeq ($(CLUSTER),x64_macosx)
+  SV_VERSION  = simvascular
+  SV_PLATFORM = x64
+  SV_POSTFIX=
+  SV_OS=macosx
 endif
 
 # --------------
