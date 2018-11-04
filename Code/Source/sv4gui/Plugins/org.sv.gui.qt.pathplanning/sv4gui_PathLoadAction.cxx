@@ -40,6 +40,8 @@
 #include <berryIPreferencesService.h>
 
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QInputDialog>
 
 sv4guiPathLoadAction::sv4guiPathLoadAction()
 {
@@ -94,13 +96,17 @@ void sv4guiPathLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
             std::vector<mitk::DataNode::Pointer> newNodes=sv4guiPathLegacyIO::ReadFile(fileName);
             for(int i=0;i<newNodes.size();i++)
             {
+                mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(newNodes[i]->GetName().c_str(),selectedNode);
+                if(exitingNode){
+                    MITK_WARN << "Path "<< newNodes[i]->GetName() << " Already Created","Please use a different path name!";
+                }
                 m_DataStorage->Add(newNodes[i],selectedNode);
             }
         }
         else if(fileName.endsWith(".pth"))
         {
-            QFileInfo fileInfo(fileName);
-            std::string nodeName=fileInfo.baseName().toStdString();
+            // QFileInfo fileInfo(fileName);
+            // std::string nodeName=fileInfo.baseName().toStdString();
 
             std::vector<mitk::BaseData::Pointer> nodedata=sv4guiPathIO::ReadFile(fileName.toStdString());
 
@@ -109,6 +115,23 @@ void sv4guiPathLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
                 mitk::BaseData::Pointer pathdata=nodedata[0];
                 if(pathdata.IsNotNull())
                 {
+                    bool ok;
+                    QString text = QInputDialog::getText(NULL, tr("Path Name"),
+                                                    tr("Please give a path name:"), QLineEdit::Normal,
+                                                    "", &ok);
+                    std::string nodeName=text.trimmed().toStdString();
+                    
+                    if(nodeName==""){
+                        QMessageBox::warning(NULL,"Path Empty","Please give a path name!");
+                        return;
+                    }
+                
+                    mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(nodeName.c_str(),selectedNode);
+                    if(exitingNode){
+                        QMessageBox::warning(NULL,"Path Already Created","Please use a different path name!");
+                        return;
+                    }
+                    
                     mitk::DataNode::Pointer pathNode = mitk::DataNode::New();
                     pathNode->SetData(pathdata);
                     pathNode->SetName(nodeName);

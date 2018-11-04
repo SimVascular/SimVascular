@@ -173,6 +173,10 @@ void sv4guiSegmentationLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer
                     }
                 }
             }
+            mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(segNodes[i]->GetName().c_str(),selectedNode);
+            if(exitingNode){
+                MITK_WARN << "Segmentation "<< segNodes[i]->GetName() << " Already Created","Please use a different name!";
+            }
             m_DataStorage->Add(segNodes[i],selectedNode);
         }
 
