@@ -34,25 +34,27 @@
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
 #include "vtkCellLocator.h"
+#include "vtkErrorCode.h"
 #include "vtkExecutive.h"
 #include "vtkFloatArray.h"
-#include "vtkMath.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
+#include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkPolygon.h"
 #include "vtkSmartPointer.h"
+#include "vtkTriangleFilter.h"
+
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
-#include "vtkTriangleFilter.h"
 
 vtkStandardNewMacro(vtkSVLocalSmoothPolyDataFilter);
 
 // The following code defines a helper class for performing mesh smoothing
 // across the surface of another mesh.
-typedef struct _vtkSmoothPoint {
+typedef struct _vtkSmoothPoint { //; prevent man page generation
     vtkIdType     cellId;  // cell
     int     subId;   // cell sub id
     double   p[3];    // parametric coords in cell
@@ -256,19 +258,22 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
   if (numPts < 1 || numCells < 1)
     {
     vtkErrorMacro(<<"No data to smooth!");
-    return 1;
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
     }
   if (this->UsePointArray)
   {
     if (this->SmoothPointArrayName == NULL)
     {
       std::cout<<"No PointArrayName given." << endl;
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
     if (this->GetSmoothArrays(input,0) != 1)
     {
       vtkErrorMacro("Need point array on mesh to be able to local smooth");
-      return 1;
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_ERROR;
     }
   }
   if (this->UseCellArray)
@@ -276,12 +281,14 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     if (this->SmoothCellArrayName == NULL)
     {
       std::cout<<"No PointArrayName given." << endl;
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
     if (this->GetSmoothArrays(input,1) != 1)
     {
       vtkErrorMacro("Need cell array on mesh to be able to local smooth");
-      return 1;
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_ERROR;
     }
   }
   if (this->ConstrainAllPoints != 1)
@@ -289,7 +296,8 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     if (this->GetSmoothArrays(input,1) != 1)
     {
       vtkErrorMacro("Need cell array to constrain points to mesh");
-      return 1;
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_ERROR;
     }
   }
 
@@ -312,7 +320,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     output->CopyStructure(input);
     output->GetPointData()->PassData(input->GetPointData());
     output->GetCellData()->PassData(input->GetCellData());
-    return 1;
+    return SV_OK;
     }
 
   // Peform topological analysis. What we're gonna do is build a connectivity
@@ -799,7 +807,7 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     }
   delete [] Verts;
 
-  return 1;
+  return SV_OK;
 }
 
 int vtkSVLocalSmoothPolyDataFilter::FillInputPortInformation(int port,
@@ -807,14 +815,14 @@ int vtkSVLocalSmoothPolyDataFilter::FillInputPortInformation(int port,
 {
   if (!this->Superclass::FillInputPortInformation(port, info))
     {
-    return 0;
+    return SV_ERROR;
     }
 
   if (port == 1)
     {
     info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
     }
-  return 1;
+  return SV_OK;
 }
 
 void vtkSVLocalSmoothPolyDataFilter::PrintSelf(ostream& os, vtkIndent indent)
@@ -888,7 +896,7 @@ int vtkSVLocalSmoothPolyDataFilter::SetFixedPoints(vtkPolyData *pd,int *fixedPoi
     for (vtkIdType pointId = 0;pointId < numPts;pointId++)
     {
       if (this->SmoothPointArray->GetValue(pointId) != 1)
-	fixedPoint[pointId] = 1;
+        fixedPoint[pointId] = 1;
     }
   }
   if (this->UseCellArray)
@@ -899,23 +907,23 @@ int vtkSVLocalSmoothPolyDataFilter::SetFixedPoints(vtkPolyData *pd,int *fixedPoi
       pd->GetCellPoints(cellId,npts,pts);
       for (int i=0; i < npts;i++)
       {
-	p1 = pts[i];
-	p2 = pts[(i+1)%(npts)];
-  vtkNew(vtkIdList, neighbors);
-	pd->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
-	vtkIdType numNei = neighbors->GetNumberOfIds();
-	if (numNei > 0)
-	{
-	  vtkIdType neighCell = neighbors->GetId(0);
-	  if (this->SmoothCellArray->GetValue(neighCell) != 1)
-	  {
-	    fixedPoint[p1] = 1;
-	    fixedPoint[p2] = 1;
-	  }
-	}
+        p1 = pts[i];
+        p2 = pts[(i+1)%(npts)];
+        vtkNew(vtkIdList, neighbors);
+        pd->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
+        vtkIdType numNei = neighbors->GetNumberOfIds();
+        if (numNei > 0)
+        {
+          vtkIdType neighCell = neighbors->GetId(0);
+          if (this->SmoothCellArray->GetValue(neighCell) != 1)
+          {
+            fixedPoint[p1] = 1;
+            fixedPoint[p2] = 1;
+          }
+        }
       }
     }
   }
 
-  return 1;
+  return SV_OK;
 }

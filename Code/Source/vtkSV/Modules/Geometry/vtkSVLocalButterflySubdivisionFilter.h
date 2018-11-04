@@ -61,12 +61,13 @@
 #ifndef vtkSVLocalButterflySubdivisionFilter_h
 #define vtkSVLocalButterflySubdivisionFilter_h
 
-#include "vtkSVLocalInterpolatingSubdivisionFilter.h"
 #include "vtkSVGeometryModule.h" // for export
 
-class vtkCellArray;
-class vtkIdList;
-class vtkIntArray;
+#include "vtkCellArray.h"
+#include "vtkIdList.h"
+#include "vtkIntArray.h"
+
+#include "vtkSVLocalInterpolatingSubdivisionFilter.h"
 
 class VTKSVGEOMETRY_EXPORT vtkSVLocalButterflySubdivisionFilter : public vtkSVLocalInterpolatingSubdivisionFilter
 {
@@ -82,7 +83,7 @@ protected:
 
 private:
   int GenerateSubdivisionPoints(vtkPolyData *inputDS, vtkIntArray *edgeData,
-                                vtkPoints *outputPts, vtkPointData *outputPD);
+                                vtkPoints *outputPts, vtkPointData *outputPD) override;
   void GenerateButterflyStencil(vtkIdType p1, vtkIdType p2, vtkPolyData *polys,
                                 vtkIdList *stencilIds, double *weights);
   void GenerateLoopStencil(vtkIdType p1, vtkIdType p2, vtkPolyData *polys,

@@ -60,7 +60,7 @@ target_link_libraries(${lib}
   ${ZLIB_LIBRARY}
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
   ${SV_LIB_POLYDATA_SOLID_NAME} ${SV_LIB_MESH_NAME}
-  ${SV_LIB_VTKSVFILTERS_NAME}
+  ${SV_LIB_VTKSVMISC_NAME}
   )
 
 # Set up for exports

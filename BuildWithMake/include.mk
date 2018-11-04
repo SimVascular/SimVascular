@@ -486,14 +486,16 @@ endif
 
 ifeq ($(SV_USE_SHARED),1)
   SHARED_LIBDIRS += \
-          ../Code/Source/sv/Utils \
+		../Code/Source/sv/Utils \
 	  ../Code/Source/sv/Repository \
-          ../Code/Source/vtkSV/Common \
-          ../Code/Source/vtkSV/Filters \
-          ../Code/Source/vtkSV/Modules/Boolean \
-          ../Code/Source/vtkSV/Modules/Geometry \
-          ../Code/Source/vtkSV/Modules/NURBS \
-          ../Code/Source/vtkSV/Modules/Parameterization \
+		../Code/Source/vtkSV/Common \
+		../Code/Source/vtkSV/IO \
+		../Code/Source/vtkSV/Modules/Misc \
+		../Code/Source/vtkSV/Modules/Boolean \
+		../Code/Source/vtkSV/Modules/Geometry \
+		../Code/Source/vtkSV/Modules/NURBS \
+		../Code/Source/vtkSV/Modules/Parameterization \
+		../Code/Source/vtkSV/Modules/Segmentation \
 	  ../Code/Source/sv/Model/SolidModel \
 	  ../Code/Source/sv/Mesh/MeshObject \
 	  ../Code/Source/sv/Geometry \
@@ -501,18 +503,19 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation \
 	  ../Code/Source/sv3/Common \
-	  ../Code/Source/sv3/Path \
-	  ../Code/Source/sv3/Segmentation
+	  ../Code/Source/sv3/Path
 else
   LIBDIRS += \
-          ../Code/Source/sv/Utils \
+		../Code/Source/sv/Utils \
 	  ../Code/Source/sv/Repository \
-          ../Code/Source/vtkSV/Common \
-          ../Code/Source/vtkSV/Filters \
-          ../Code/Source/vtkSV/Modules/Boolean \
-          ../Code/Source/vtkSV/Modules/Geometry \
-          ../Code/Source/vtkSV/Modules/NURBS \
-          ../Code/Source/vtkSV/Modules/Parameterization \
+		../Code/Source/vtkSV/Common \
+		../Code/Source/vtkSV/IO \
+		../Code/Source/vtkSV/Modules/Misc \
+		../Code/Source/vtkSV/Modules/Boolean \
+		../Code/Source/vtkSV/Modules/Geometry \
+		../Code/Source/vtkSV/Modules/NURBS \
+		../Code/Source/vtkSV/Modules/Parameterization \
+		../Code/Source/vtkSV/Modules/Segmentation \
 	  ../Code/Source/sv/Model/SolidModel \
 	  ../Code/Source/sv/Mesh/MeshObject \
 	  ../Code/Source/sv/Geometry \
@@ -520,8 +523,7 @@ else
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation \
 	  ../Code/Source/sv3/Common \
-	  ../Code/Source/sv3/Path \
-	  ../Code/Source/sv3/Segmentation
+	  ../Code/Source/sv3/Path
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -545,6 +547,13 @@ ifeq ($(SV_USE_ITK),1)
   else
      LIBDIRS += ../Code/Source/sv3/ITKSegmentation
   endif
+endif
+
+# segmentation module depends on itk segmentation code
+ifeq ($(SV_USE_SHARED),1)
+  SHARED_LIBDIRS += ../Code/Source/sv3/Segmentation
+else
+  LIBDIRS += ../Code/Source/sv3/Segmentation
 endif
 
 ifeq ($(SV_USE_MMG),1)
@@ -687,12 +696,14 @@ SV_LIB_TETGEN_ADAPTOR_NAME=_simvascular_tetgen_adaptor
 SV_LIB_TETGEN_MESH_NAME=_simvascular_tetgen_mesh
 SV_LIB_UTILS_NAME=_simvascular_utils
 SV_LIB_VMTK_UTILS_NAME=_simvascular_vmtk_utils
-SV_LIB_VTKSVBOOLEAN_NAME=_simvascular_vtksvboolean
 SV_LIB_VTKSVCOMMON_NAME=_simvascular_vtksvcommon
-SV_LIB_VTKSVFILTERS_NAME=_simvascular_vtksvfilters
+SV_LIB_VTKSVIO_NAME=_simvascular_vtksvio
+SV_LIB_VTKSVMISC_NAME=_simvascular_vtksvmisc
+SV_LIB_VTKSVBOOLEAN_NAME=_simvascular_vtksvboolean
 SV_LIB_VTKSVGEOMETRY_NAME=_simvascular_vtksvgeometry
 SV_LIB_VTKSVNURBS_NAME=_simvascular_vtksvnurbs
 SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
+SV_LIB_VTKSVSEGMENTATION_NAME=_simvascular_vtksvsegmentation
 
 #plugin names
 SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application

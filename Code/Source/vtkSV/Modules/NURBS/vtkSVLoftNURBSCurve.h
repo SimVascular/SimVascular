@@ -43,8 +43,9 @@
 #ifndef vtkSVLoftNURBSCurve_h
 #define vtkSVLoftNURBSCurve_h
 
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkSVNURBSModule.h"
+
+#include "vtkPolyDataAlgorithm.h"
 
 #include "vtkSVNURBSCurve.h"
 
@@ -54,7 +55,7 @@ public:
   static vtkSVLoftNURBSCurve *New();
 
   vtkTypeMacro(vtkSVLoftNURBSCurve,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{
   /// \brief Get and set macro for degree of output curve
@@ -103,8 +104,8 @@ protected:
 
   // Usual data generation method
   virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int, vtkInformation *);
+                          vtkInformationVector **, vtkInformationVector *) override;
+  virtual int FillInputPortInformation(int, vtkInformation *) override;
 
   /** \brief lofts a surface and generates polydata representation. */
   int LoftNURBS(vtkPolyData *input, vtkPolyData *outputPD);

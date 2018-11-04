@@ -82,11 +82,11 @@ protected:
   vtkSVLocalLoopSubdivisionFilter () {}
   ~vtkSVLocalLoopSubdivisionFilter () {}
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   int GenerateSubdivisionPoints (vtkPolyData *inputDS, vtkIntArray *edgeData,
                                  vtkPoints *outputPts,
-                                 vtkPointData *outputPD);
+                                 vtkPointData *outputPD) override;
   void GenerateEvenStencil (vtkIdType p1, vtkPolyData *polys,
                             vtkIdList *stencilIds, double *weights);
   void GenerateOddStencil (vtkIdType p1, vtkIdType p2, vtkPolyData *polys,
@@ -94,7 +94,7 @@ protected:
 
   int SetFixedCells(vtkPolyData *pd,int *noSubdivideCell);
 
-  virtual int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   vtkSVLocalLoopSubdivisionFilter(const vtkSVLocalLoopSubdivisionFilter&);  // Not implemented.

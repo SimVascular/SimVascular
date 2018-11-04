@@ -43,10 +43,12 @@
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
 #include "vtkEdgeTable.h"
+#include "vtkErrorCode.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
+
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 
@@ -112,7 +114,8 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
   if (numPts < 1 || numCells < 1)
     {
     vtkDebugMacro(<<"No data to interpolate!");
-    return 1;
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
     }
 
   //
@@ -146,9 +149,10 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
 
   if (!hasTris)
     {
-    vtkWarningMacro( << this->GetClassName() << " only operates on triangles, but this data set has no triangles to operate on.");
+    vtkErrorMacro( << this->GetClassName() << " only operates on triangles, but this data set has no triangles to operate on.");
     inputDS->Delete();
-    return 1;
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
+    return SV_ERROR;
     }
 
     if (this->UsePointArray)
@@ -156,6 +160,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
       if (this->SubdividePointArrayName == NULL)
       {
         std::cout<<"No PointArrayName given." << endl;
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
     }
@@ -164,6 +169,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
       if (this->SubdivideCellArrayName == NULL)
       {
         std::cout<<"No CellArrayName given." << endl;
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
     }
@@ -174,16 +180,18 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
     {
       if (this->GetSubdivideArrays(inputDS,1) != 1)
       {
-	vtkErrorMacro("Need cell array on mesh to be able to local subdivide");
-	return 0;
+        vtkErrorMacro("Need cell array on mesh to be able to local subdivide");
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
+        return SV_ERROR;
       }
     }
     if (this->UsePointArray)
     {
       if (this->GetSubdivideArrays(inputDS,0) != 1)
       {
-	vtkErrorMacro("Need cell array on mesh to be able to local subdivide");
-	return 0;
+        vtkErrorMacro("Need cell array on mesh to be able to local subdivide");
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
+        return SV_ERROR;
       }
     }
     // Generate topology  for the input dataset
@@ -222,7 +230,8 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
       inputDS->Delete();
       edgeData->Delete();
       vtkErrorMacro("Subdivision failed.");
-      return 0;
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_ERROR;
       }
     this->GenerateSubdivisionCells (inputDS, edgeData, outputPolys, outputCD);
 
@@ -243,7 +252,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
   output->GetCellData()->PassData(inputDS->GetCellData());
   inputDS->Delete();
 
-  return 1;
+  return SV_OK;
 }
 
 // ----------------------
@@ -286,7 +295,7 @@ int vtkSVLocalInterpolatingSubdivisionFilter::FindEdge (vtkPolyData *mesh,
       }
     }
   vtkErrorMacro("Edge should have been found... but couldn't find it!!");
-  return 0;
+  return SV_ERROR;
 }
 
 // ----------------------

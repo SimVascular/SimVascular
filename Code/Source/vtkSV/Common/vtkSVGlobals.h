@@ -41,8 +41,14 @@
 #ifndef vtkSVGlobals_h
 #define vtkSVGlobals_h
 
+#include <vector>
+
+#include "vtkSmartPointer.h"
+
+#ifndef vtkNew
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+#endif
 
 #ifndef SV_ERROR
 #define SV_ERROR 0
@@ -64,7 +70,80 @@
 #define SV_PI 3.141592653589793324
 #endif
 
+#ifndef svmaximum
 #define svmaximum(A, B) ((A) > (B) ? (A) : (B))
+#endif
+
+#ifndef svminimum
 #define svminimum(A, B) ((A) < (B) ? (A) : (B))
+#endif
+
+/// \brief directions of nodes in graph simplification
+typedef enum SV_CUBE_DIRECTIONS
+{
+  RIGHT = 0,
+  BACK,
+  LEFT,
+  FRONT,
+}
+SV_DIRECTIONS;
+
+/// \brief possible cube types
+typedef enum SV_CUBE_END_TYPES
+{
+  NONE = 0,
+  VERT_WEDGE,
+  HORZ_WEDGE,
+  C_TET_0, // Corner tets
+  C_TET_1,
+  C_TET_2,
+  C_TET_3,
+  S_TET_0, // Side tets
+  S_TET_1,
+  S_TET_2,
+  S_TET_3,
+  NOTHANDLED
+}
+SV_END_TYPES;
+
+/// \brief possible split types
+typedef enum SV_CUBE_SPLIT_TYPE
+{
+  ZERO = 0,
+  UNO,
+  BI,
+  TRI,
+  QUAD,
+  PENT,
+  TOOMANY
+}
+SV_SPLIT_TYPES;
+
+/** \brief Data structure to contain regions of cell scalar labels on a polydata surface.
+ * Typically used with clustering algorithms, this data structure allows quick
+ * access to the cells in the cluster and the points on the edges of the cluster.
+ */
+struct Region
+{
+  int Index;
+  int IndexCluster;
+
+  int NumberOfCorners;
+  std::vector<int> CornerPoints;
+
+  std::vector<std::vector<int> > BoundaryEdges;
+
+  int NumberOfElements;
+  std::vector<int> Elements;
+
+};
+
+/** \brief A small data structure to contain 3D points in a std::vector or list. */
+struct XYZ
+{
+  double x;
+  double y;
+  double z;
+};
 
 #endif

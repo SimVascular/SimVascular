@@ -32,7 +32,7 @@
 /**
  *  \class vtkSVLoftNURBSSurface
  *  \brief Filter to take an input set of points and loft a full nurbs
- *  curve using global interpolation techniques
+ *  surface using global interpolation techniques
  *
  *  \author Adam Updegrove
  *  \author updega2@gmail.com
@@ -43,8 +43,9 @@
 #ifndef vtkSVLoftNURBSSurface_h
 #define vtkSVLoftNURBSSurface_h
 
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkSVNURBSModule.h"
+
+#include "vtkPolyDataAlgorithm.h"
 
 #include "vtkSVNURBSSurface.h"
 
@@ -54,40 +55,7 @@ public:
   static vtkSVLoftNURBSSurface *New();
 
   vtkTypeMacro(vtkSVLoftNURBSSurface,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
-
-  //@{
-  /// \brief UserManagedInputs allows the user to set inputs by number instead of
-  /// using the AddInput/RemoveInput functions. Calls to
-  /// SetNumberOfInputs/SetInputConnectionByNumber should not be mixed with calls
-  /// to AddInput/RemoveInput. By default, UserManagedInputs is false.
-  vtkSetMacro(UserManagedInputs,int);
-  vtkGetMacro(UserManagedInputs,int);
-  vtkBooleanMacro(UserManagedInputs,int);
-
-  //@{
-  /// \brief Add a dataset to the list of data to append. Should not be
-  /// used when UserManagedInputs is true, use SetInputByNumber instead.
-  void AddInputData(vtkPolyData *);
-  //@}
-
-  //@{
-  /// \brief Remove a dataset from the list of data to append. Should not be
-  /// used when UserManagedInputs is true, use SetInputByNumber (NULL) instead.
-  void RemoveInputData(vtkPolyData *);
-  //@}
-
-  //@{
-  //// \brief Get any input of this filter.
-  vtkPolyData *GetInput(int idx);
-  vtkPolyData *GetInput() { return this->GetInput( 0 ); };
-  //@}
-
-  //@{
-  /// \brief Directly set(allocate) number of inputs, should only be used
-  // when UserManagedInputs is true.
-  void SetNumberOfInputs(int num);
-  //@}
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{
   /// \brief Get and set macro for degree of output surface
@@ -115,25 +83,6 @@ public:
 
   /// \brief Get the nurbs surface
   vtkGetObjectMacro(Surface, vtkSVNURBSSurface);
-
-  // Set Nth input, should only be used when UserManagedInputs is true.
-  void SetInputConnectionByNumber(int num, vtkAlgorithmOutput *input);
-  void SetInputDataByNumber(int num, vtkPolyData *ds);
-
-
-  //@{
-  /// \details ParallelStreaming is for a particular application.
-  /// It causes this filter to ask for a different piece
-  /// from each of its inputs.  If all the inputs are the same,
-  /// then the output of this append filter is the whole dataset
-  /// pieced back together.  Duplicate points are create
-  /// along the seams.  The purpose of this feature is to get
-  /// data parallelism at a course scale.  Each of the inputs
-  /// can be generated in a different process at the same time.
-  vtkSetMacro(ParallelStreaming, int);
-  vtkGetMacro(ParallelStreaming, int);
-  vtkBooleanMacro(ParallelStreaming, int);
-  //@}
 
   //@{
   /// \brief U spacing in the polydata representation when retrieved (0 - 1)
@@ -174,26 +123,14 @@ protected:
   vtkSVLoftNURBSSurface();
   ~vtkSVLoftNURBSSurface();
 
-  // Flag for selecting parallel streaming behavior
-  int ParallelStreaming;
-
   // Usual data generation method
   virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **, vtkInformationVector *);
-  virtual int RequestUpdateExtent(vtkInformation *,
-                                  vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int, vtkInformation *);
+                          vtkInformationVector **, vtkInformationVector *) override;
+  virtual int FillInputPortInformation(int, vtkInformation *) override;
 
  private:
-  // hide the superclass' AddInput() from the user and the compiler
-  void AddInputData(vtkDataObject *)
-    { vtkErrorMacro( << "AddInput() must be called with a vtkPolyData not a vtkDataObject."); };
-
   //Function to run the intersection on intersecting polydatas
-  int LoftNURBS(vtkPolyData *inputs[],int numInputs,vtkPolyData *outputPD);
-
-  //User defined booleans for filter management
-  int UserManagedInputs;
+  int LoftNURBS(vtkStructuredGrid *input, vtkPolyData *outputPD);
 
   char *UKnotSpanType;
   char *VKnotSpanType;
@@ -206,6 +143,7 @@ protected:
   double PolyDataUSpacing;
   double PolyDataVSpacing;
 
+  vtkStructuredGrid *InputGrid;
   vtkSVNURBSSurface *Surface;
 
   vtkDoubleArray *StartUDerivatives;

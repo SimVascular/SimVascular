@@ -99,10 +99,12 @@ set(SV_LIBS ${SV_LIBS}
 set(SV_LIBS ${SV_LIBS}
   VTKSVBOOLEAN
   VTKSVCOMMON
-  VTKSVFILTERS
+  VTKSVIO
+  VTKSVMISC
   VTKSVGEOMETRY
   VTKSVNURBS
-  VTKSVPARAMETERIZATION)
+  VTKSVPARAMETERIZATION
+  VTKSVSEGMENTATION)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

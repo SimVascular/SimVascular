@@ -35,6 +35,7 @@
 #include "vtkCellData.h"
 #include "vtkConnectivityFilter.h"
 #include "vtkDataSetSurfaceFilter.h"
+#include "vtkErrorCode.h"
 #include "vtkFeatureEdges.h"
 #include "vtkIdFilter.h"
 #include "vtkIdList.h"
@@ -44,9 +45,10 @@
 #include "vtkPointLocator.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
+#include "vtkUnstructuredGrid.h"
+
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
-#include "vtkUnstructuredGrid.h"
 
 #include <sstream>
 #include <map>
@@ -69,8 +71,13 @@ vtkSVBoundaryMapper::vtkSVBoundaryMapper()
 
   this->InternalIdsArrayName = NULL;
 
-  this->SetObjectXAxis(1.0, 0.0, 0.0);
-  this->SetObjectZAxis(0.0, 0.0, 1.0);
+  this->ObjectXAxis[0] = 1.0;
+  this->ObjectXAxis[1] = 0.0;
+  this->ObjectXAxis[2] = 0.0;
+
+  this->ObjectZAxis[0] = 0.0;
+  this->ObjectZAxis[1] = 0.0;
+  this->ObjectZAxis[2] = 1.0;
 }
 
 // ----------------------
@@ -122,14 +129,14 @@ int vtkSVBoundaryMapper::RequestData(vtkInformation *vtkNotUsed(request),
   if (this->PrepFilter() != SV_OK)
   {
     vtkErrorMacro("Error when mapping");
-    output->DeepCopy(this->InitialPd);
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
   if (this->RunFilter() != SV_OK)
   {
     vtkErrorMacro("Error when mapping");
-    output->DeepCopy(this->InitialPd);
+    this->SetErrorCode(vtkErrorCode::UserError + 2);
     return SV_ERROR;
   }
 
@@ -153,7 +160,7 @@ int vtkSVBoundaryMapper::PrepFilter()
   //Check the input to make sure it is there
   if (numPolys < 1)
   {
-    vtkDebugMacro("No input!");
+    vtkErrorMacro("No input!");
     return SV_ERROR;
   }
 
@@ -241,13 +248,13 @@ int vtkSVBoundaryMapper::GetBoundaryLoop()
   int count = 0;
   vtkIdType startPt = pointIds->LookupValue(
     oPointIds->GetTuple1(this->BoundaryIds->GetValue(0)));
-  //fprintf(stdout,"Start Point is!: %d\n", this->BoundaryIds->GetValue(0));
+  vtkDebugMacro("Start Point is!: " <<this->BoundaryIds->GetValue(0));
 
   // Set the boundary loop points and point data and allocate space for cells
   this->BoundaryLoop->SetPoints(this->Boundaries->GetPoints());
   this->BoundaryLoop->GetPointData()->PassData(this->Boundaries->GetPointData());
   this->BoundaryLoop->Allocate(this->Boundaries->GetNumberOfCells(), 1000);
-  //fprintf(stdout,"The value on this is!: %lld\n", startPt);
+  vtkDebugMacro("The value on this is!: " <<  startPt);
   this->Boundaries->GetPointCells(startPt,cellIds);
 
   // Get starting cell
@@ -262,16 +269,16 @@ int vtkSVBoundaryMapper::GetBoundaryLoop()
   // Run loop find to get correct loop and see if actually correct
   if (vtkSVGeneralUtils::RunLoopFind(this->Boundaries, startPt, nextCell, this->BoundaryLoop, boundaryIds) != SV_OK)
   {
-    //fprintf(stdout,"Other direction!\n");
     nextCell = cellIds->GetId(1);
     this->BoundaryLoop->DeleteCells();
     // If it failed, then try the other way!
     if (vtkSVGeneralUtils::RunLoopFind(this->Boundaries, startPt, nextCell, this->BoundaryLoop, boundaryIds) != SV_OK)
     {
-      fprintf(stdout,"Both directions didn't work!!\n");
+      vtkErrorMacro("Both directions didn't work!!");
       return SV_ERROR;
     }
   }
+  vtkDebugMacro("COMPARE: " << this->Boundaries->GetNumberOfPoints() << " " << this->BoundaryLoop->GetNumberOfPoints());
 
   return SV_OK;
 }
