@@ -112,7 +112,7 @@ bool sv4guiMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, sv4guiMode
         vtkSmartPointer<vtkThreshold> volumeThresholder =
           vtkSmartPointer<vtkThreshold>::New();
 
-        volumeThresholder->SetInputData(surfaceMesh);
+        volumeThresholder->SetInputData(volumeMesh);
         volumeThresholder->SetInputArrayToProcess(0,0,0,1,"ModelRegionID");
         volumeThresholder->ThresholdBetween(i,i);
         volumeThresholder->Update();
