@@ -12,7 +12,7 @@ $SV_HOME/BuildWithMake/Bin/simvascular.exe $*
 esac
 ;;
 *)
-$SV_HOME/BuildWithMake/Bin/simvascular.exe $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl -tcl -qt $*
+$SV_HOME/BuildWithMake/Bin/simvascular.exe $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl -tk -qt $*
 ;;
 esac
 
