@@ -153,8 +153,7 @@ if(LINUX)
 
 	SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-linux-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
-	message("INSTALLING QT.CONF")
-
+	#code needed to put qt.conf files in install directory/install package
 	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qt.conf DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/bin")
 
 	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qt_ext.conf DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/svExternals/bin" RENAME "qt.conf")
