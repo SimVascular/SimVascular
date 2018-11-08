@@ -7,22 +7,35 @@ then
   source ~/Library/Application\ Support/SimVascular/simvascular_custom_plugins.sh
 fi
 
+## [DaveP 11/7/2018] 
+#
+# This is a short-term fix for the cursor offset problem. The long-term fix will be 
+# to redo the CPack installer build.
+#
+# The sv executable needs to be in the Contents/MacOS directory or else a library
+# needed for correct cursor location is not loaded correctly. The executable is  
+# not able to resolve library locations in placed in the Contents MacOS directory 
+# so we create a soft link to it.
+#
+svexe=$SV_HOME/../MacOS/simvascular.exe
+ln -s $SV_HOME/bin/simvascular $SV_HOME/../MacOS/simvascular.exe 
+
 # Run the executable
 case "$SV_BATCH_MODE" in
 "1")
 if [ -e ~/.simvascular_default_tcl ]
 then
-  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $* -tcl
+  ${svexe} $* -tcl
 else
-  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
+  ${svexe} $*
 fi
 ;;
 *)
 if [ -e ~/.simvascular_default_tcl ]
 then
-  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $* -tcl
+  ${svexe} $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $* -tcl
 else
-  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
+  ${svexe} $*
 fi
 ;;
 esac
