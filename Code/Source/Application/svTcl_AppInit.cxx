@@ -67,10 +67,13 @@
   #endif // !UNICODE
 #endif
 
+#ifdef SV_USE_WIN32_REGISTRY
+#include "sv_use_win32_registry.h"
+#endif
+
 #endif
 
 #include "svTcl_AppInit.h"
-#include "sv_use_win32_registry.h"
 #include "SimVascular_Init.h"
 
 // -----------
