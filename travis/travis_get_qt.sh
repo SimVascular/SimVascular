@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [ "$SV_EXTERN_VER" == "2018.01" ]; then
+if [ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.01" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" ]]
     then
     export PARENT_URL=http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.4
@@ -62,7 +62,7 @@ if [ "$SV_EXTERN_VER" == "2018.01" ]; then
   fi
 fi
 
-if [ "$SV_EXTERN_VER" == "2018.05" ]; then
+if [ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.05" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" ]]
     then
     export PARENT_URL=http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.6
