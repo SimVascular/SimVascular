@@ -34,16 +34,17 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]
 then
   export CC="gcc"
   export CXX="g++"
+  export REPLACEME_SV_CMAKE_BUILD_TYPE="Release"
 elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
 then
   export CC="clang"
   export CXX="clang++"
+  export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 fi
 
 #cmake
 export REPLACEME_SV_CMAKE_CMD="/usr/local/bin/cmake"
 export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
-export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV=$SV_CODE_DIR
 
