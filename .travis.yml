@@ -45,7 +45,7 @@ before_install:
   - export SV_EXTERNALS_BUILD_DIR=$SV_EXTERNALS_DIR/build
   - export SV_EXTERNALS_BIN_DIR=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin
   - if [ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.01" ]; then export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SV_EXTERNALS_BIN_DIR/qt-5.4.2/lib"; fi
-  - if [ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.05" ]; then export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.6.3/lib"; fi
+  - if [ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.05" ]; then export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.6.3/5.6.3/gcc_64/lib"; fi
   - export SV_CODE_DIR=$cwd/Code
   - export SV_TEST_DIR=$HOME/test/
   - export SCRIPTS=$cwd/travis
