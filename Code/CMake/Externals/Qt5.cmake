@@ -40,7 +40,7 @@ if(SV_USE_${proj})
 
   
   if(SV_USE_QT_GUI)
-
+    message("Externals/Qt5.cmake Qt5_DIR initial value: ${Qt5_DIR}")
     # If using toplevel dir, foce Qt_DIR to be the SV_Qt_DIR set by the
     # simvascular_add_new_external macro
     if(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR)
@@ -54,6 +54,7 @@ if(SV_USE_${proj})
         endif()
       elseif(LINUX)
         set(${proj}_DIR ${SV_${proj}_DIR}/${Qt5_VERSION}/gcc_64/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
+	message("Externals/Qt5.cmake Qt5_DIR initial value: ${Qt5_DIR}")
       elseif(APPLE)
         set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
       else()
