@@ -6,7 +6,7 @@ matrix:
       compiler: gcc
       dist: trusty
       sudo: required
-      env: WITH_CMAKE=true BUILD_TEST=false SV_EXTERN_VER=2018.01 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=true BUILD_TEST=false SV_EXTERN_VER=2018.05 USE_SYSTEM_QT=false
     - os: linux
       compiler: gcc
       dist: trusty
