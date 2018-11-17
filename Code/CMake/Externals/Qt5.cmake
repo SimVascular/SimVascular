@@ -54,11 +54,6 @@ if(SV_USE_${proj})
         endif()
       elseif(LINUX)
         set(${proj}_DIR ${SV_${proj}_DIR}/${Qt5_VERSION}/gcc_64/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
-	message("Externals/Qt5.cmake Qt5_DIR second value: ${Qt5_DIR}")
-	execute_process(COMMAND bash -c "ls -l ${Qt5_DIR}" OUTPUT_VARIABLE lsDirOut)
-	message("lsDirOut: ${lsDirOut}")
-	execute_process(COMMAND bash -c "ls -l ${SV_Qt5_DIR}" OUTPUT_VARIABLE lsDirOut2)
-	message("lsDirOut2: ${lsDirOut2}")	
       elseif(APPLE)
         set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/Qt5 CACHE PATH "Force ${proj} dir to externals" FORCE)
       else()
@@ -72,7 +67,9 @@ if(SV_USE_${proj})
         set(${proj}_DLL_PATH "${_win32_qt5_top_path}/bin" CACHE PATH "Force Qt DLL Path" FORCE)
       endif()
     endif()
-
+    
+    message("Externals/Qt5.cmake Qt5_DIR final value: ${Qt5_DIR}")
+    
     set(SV_${proj}_COMPONENTS
       Concurrent
       Core
