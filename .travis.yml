@@ -6,24 +6,24 @@ matrix:
       compiler: gcc
       dist: trusty
       sudo: required
-      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2018.05 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: linux
       compiler: gcc
       dist: trusty
       sudo: required
-      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 USE_SYSTEM_QT=true
+      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=true
     - os: osx
       compiler: clang
       osx_image: xcode7.3
       sudo: required
-      env: WITH_CMAKE=true  SV_EXTERNALS_VERSION_NUMBER=2018.05 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=true  SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: osx
       compiler: clang
       osx_image: xcode7.3
       sudo: required
-      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
   allow_failures:
-    - env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 USE_SYSTEM_QT=false
+    - env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: osx
 
 addons:
@@ -43,9 +43,12 @@ before_install:
   - export BUILD_DIR=$cwd/build
   - export SV_EXTERNALS_BIN_DIR=$cwd/sv_externals/bin
   - export SV_CODE_DIR=$cwd/Code
+  - export SV_EXTERNALS_DIR=$cwd/Externals
+  - export SV_EXTERNALS_BUILD_DIR=$SV_EXTERNALS_DIR/build
+  - export SV_EXTERNALS_BIN_DIR=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin
   - export SCRIPTS=$cwd/travis
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then $SCRIPTS/travis_update_ubuntu.sh; fi
-  - if $USE_SYSTEM_QT; then source $SCRIPTS/travis_get_system_qt.sh; fi
+  - if $SV_EXTERNALS_USE_PREBUILT_QT; then source $SCRIPTS/travis_get_system_qt.sh; fi
   - if $WITH_CMAKE; then $SCRIPTS/travis_get_cmake_latest.sh; fi
 
 script: $SCRIPTS/travis_build.sh
