@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copyright (c) Stanford University, The Regents of the University of
 #               California, and others.
 #
@@ -28,32 +30,25 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#compilers
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]
-then
-  export CC="gcc"
-  export CXX="g++"
-  export REPLACEME_SV_CMAKE_BUILD_TYPE="Release"
-elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
-then
-  export CC="clang"
-  export CXX="clang++"
-  export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
-fi
-
-#cmake
-export REPLACEME_SV_CMAKE_CMD="/usr/local/bin/cmake"
-export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
-export REPLACEME_SV_MAKE_CMD="make -j8"
+set -e
 
 MAKE="make --jobs=$NUM_THREADS --keep-going"
 
-# Get externals
-mkdir -p $SV_EXTERNALS_BUILD_DIR
-pushd $SV_EXTERNALS_BUILD_DIR
-"$REPLACEME_SV_CMAKE_CMD" \
-  -G "$REPLACEME_SV_CMAKE_GENERATOR" \
-  -DSV_EXTERNALS_TOPLEVEL_BIN_DIR=$SV_EXTERNALS_BIN_DIR \
- ../
-$MAKE
-popd
+if $WITH_CMAKE; then
+  source $SCRIPTS/travis_cmake_build.sh
+else
+  echo "Building with just make (i.e. NOT cmake!)"
+  pushd BuildWithMake
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+  then
+     source ./quick-build-linux.sh
+  elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
+  then
+     if [ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.01" ]; then
+	 echo "QT_TOP_DIR=/opt/Qt5.4.2/5.4/clang_64" > ./pkg_overrides.mk
+     fi
+     source ./quick-build-macosx.sh
+  fi
+  popd
+fi
+
