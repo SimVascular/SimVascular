@@ -32,18 +32,18 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]
 then
   export CC="gcc"
   export CXX="g++"
-  export REPLACEME_SV_CMAKE_BUILD_TYPE="Release"
+  export SV_CMAKE_BUILD_TYPE="Release"
 elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
 then
   export CC="clang"
   export CXX="clang++"
-  export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
+  export SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 fi
 
 #cmake
-export REPLACEME_SV_CMAKE_CMD="/usr/local/bin/cmake"
-export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
-export REPLACEME_SV_MAKE_CMD="make -j8"
+export SV_CMAKE_CMD="/usr/local/bin/cmake"
+export SV_CMAKE_GENERATOR="Unix Makefiles"
+export SV_MAKE_CMD="make -j8"
 
 MAKE="make --jobs=$NUM_THREADS --keep-going"
 
@@ -52,8 +52,8 @@ mkdir -p $SV_EXTERNALS_BUILD_DIR
 mkdir -p $SV_EXTERNALS_BIN_DIR
 pushd $SV_EXTERNALS_BUILD_DIR
 
-"$REPLACEME_SV_CMAKE_CMD" \
-  -G "$REPLACEME_SV_CMAKE_GENERATOR" \
+"$SV_CMAKE_CMD" \
+  -G "$SV_CMAKE_GENERATOR" \
   -DSV_EXTERNALS_TOPLEVEL_BIN_DIR=$SV_EXTERNALS_BIN_DIR \
   -DBUILD_TESTING:BOOL=OFF \
   -DBUILD_EXAMPLES:BOOL=OFF \
@@ -79,11 +79,11 @@ echo CMAKE_BUILD_ARGS: $CMAKE_BUILD_ARGS
 
 pushd $BUILD_DIR
 
-"$REPLACEME_SV_CMAKE_CMD" \
+"$SV_CMAKE_CMD" \
 \
-   -G "$REPLACEME_SV_CMAKE_GENERATOR" \
+   -G "$SV_CMAKE_GENERATOR" \
 \
-   -DCMAKE_BUILD_TYPE="$REPLACEME_SV_CMAKE_BUILD_TYPE" \
+   -DCMAKE_BUILD_TYPE="$SV_CMAKE_BUILD_TYPE" \
    -DBUILD_SHARED_LIBS=ON \
    -DBUILD_TESTING=OFF \
 \
@@ -108,4 +108,3 @@ pushd $BUILD_DIR
 $MAKE
 
 popd
-
