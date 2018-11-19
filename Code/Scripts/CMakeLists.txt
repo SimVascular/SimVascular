@@ -133,7 +133,6 @@ if(SV_USE_QT OR SV_USE_QT_GUI)
      set_env_string_concat(QT_QPA_FONTDIR "${QT_PLUGIN_PATH}/../../Src/qtbase/lib/fonts" developer_script_string)
   endif()
 
-  message("QT_PLUGIN_PATH: ${QT_PLUGIN_PATH}")
   set_env_string_concat(QT_PLUGIN_PATH "${QT_PLUGIN_PATH}" developer_script_string)
 
   if(LINUX)
