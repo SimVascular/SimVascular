@@ -219,7 +219,9 @@ endif()
 #----------------------------------------------------------------------------
 set_env_string_concat(QT_QPA_FONTDIR "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/fonts" install_script_string)
 
+if(LINUX)
 set_env_string_concat(QTWEBENGINEPROCESS_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/bin/QtWebEngineProcess" install_script_string)
+endif()
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
