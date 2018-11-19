@@ -30,7 +30,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [ "$SV_EXTERN_VER" == "2018.01" ]; then
+if [ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.01" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" ]]
     then
     export PARENT_URL=http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.4
@@ -45,6 +45,8 @@ if [ "$SV_EXTERN_VER" == "2018.01" ]; then
     sudo tar --directory=/ -xzf ./Qt5.4.2-ubuntu-14.04.tar.gz
     rm Qt5.4.2-ubuntu-14.04.tar.gz
     popd
+    
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SV_EXTERNALS_BIN_DIR/qt-5.4.2/lib"
   elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
     then
     export PARENT_URL=http://simvascular.stanford.edu/downloads/public/open_source/mac_osx/qt/5.4
@@ -62,7 +64,7 @@ if [ "$SV_EXTERN_VER" == "2018.01" ]; then
   fi
 fi
 
-if [ "$SV_EXTERN_VER" == "2018.05" ]; then
+if [ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.05" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" ]]
     then
     export PARENT_URL=http://simvascular.stanford.edu/downloads/public/open_source/linux/qt/5.6
@@ -77,6 +79,7 @@ if [ "$SV_EXTERN_VER" == "2018.05" ]; then
     sudo tar --directory=/ -xzf ./Qt5.6.3-ubuntu-14.04.tar.gz
     rm Qt5.6.3-ubuntu-14.04.tar.gz
     popd
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib"
   elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
     then
     export PARENT_URL=http://simvascular.stanford.edu/downloads/public/open_source/mac_osx/qt/5.6
@@ -93,4 +96,3 @@ if [ "$SV_EXTERN_VER" == "2018.05" ]; then
     popd
   fi
 fi
-

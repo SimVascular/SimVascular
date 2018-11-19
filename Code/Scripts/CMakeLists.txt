@@ -117,11 +117,34 @@ endif()
 
 # Add Qt if it was used
 if(SV_USE_QT OR SV_USE_QT_GUI)
+
+   # Qt path usually contains version number and compiler version, so we
+   # need to handle it specially
+   get_filename_component(_qt5_real_path "${Qt5_DIR}/../../../" ABSOLUTE)
+   if(WIN32)
+     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${_qt5_real_path}/bin" developer_script_string)
+   else()
+     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${_qt5_real_path}/lib" developer_script_string)
+  endif()
+
   if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
      set_env_string_concat(QT_QPA_FONTDIR "${QT_PLUGIN_PATH}/../lib/fonts" developer_script_string)
   elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
      set_env_string_concat(QT_QPA_FONTDIR "${QT_PLUGIN_PATH}/../../Src/qtbase/lib/fonts" developer_script_string)
   endif()
+
+  set_env_string_concat(QT_PLUGIN_PATH "${QT_PLUGIN_PATH}" developer_script_string)
+
+  if(LINUX)
+    file(COPY ${_qt5_real_path}/libexec/QtWebEngineProcess DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    file(WRITE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf "[PATHS]\n")
+    file(APPEND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf "Prefix=${_qt5_real_path}\n")
+    file(GLOB _qt5_resources_files ${_qt5_real_path}/resources)
+    file(GLOB _qt5_translations_files ${_qt5_real_path}/translations)
+    file(COPY ${_qt5_resources_files} ${_qt5_translations_files} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    set_env_string_concat(QTWEBENGINEPROCESS_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QtWebEngineProcess" developer_script_string)
+  endif()
+
   if(QT_DLL_PATH)
     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} ${QT_DLL_PATH} developer_script_string)
     set_env_string_concat(QT_PLUGIN_PATH ${QT_PLUGIN_PATH} developer_script_string)
@@ -138,6 +161,7 @@ if(SV_USE_QT OR SV_USE_QT_GUI)
       append_env_string_concat(SV_PLUGIN_PATH "%SV_HOME%/bin/plugins" developer_script_string)
     endif()
   endif()
+
 endif()
 
 # Add Tcl path for win32

@@ -6,24 +6,24 @@ matrix:
       compiler: gcc
       dist: trusty
       sudo: required
-      env: WITH_CMAKE=true BUILD_TEST=false SV_EXTERN_VER=2018.01 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: linux
       compiler: gcc
       dist: trusty
       sudo: required
-      env: WITH_CMAKE=false BUILD_TEST=false SV_EXTERN_VER=2018.05 USE_SYSTEM_QT=true
+      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=true
     - os: osx
       compiler: clang
       osx_image: xcode7.3
       sudo: required
-      env: WITH_CMAKE=true BUILD_TEST=false SV_EXTERN_VER=2018.05 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=true  SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: osx
       compiler: clang
       osx_image: xcode7.3
       sudo: required
-      env: WITH_CMAKE=false BUILD_TEST=false SV_EXTERN_VER=2018.05 USE_SYSTEM_QT=false
+      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
   allow_failures:
-    - env: WITH_CMAKE=false BUILD_TEST=false SV_EXTERN_VER=2018.05 USE_SYSTEM_QT=false
+    - env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: osx
 
 addons:
@@ -41,18 +41,14 @@ before_install:
   - export NUM_THREADS=4
   - export cwd=$(pwd)
   - export BUILD_DIR=$cwd/build
+  - export SV_EXTERNALS_BIN_DIR=$cwd/sv_externals/bin
+  - export SV_CODE_DIR=$cwd/Code
   - export SV_EXTERNALS_DIR=$cwd/Externals
   - export SV_EXTERNALS_BUILD_DIR=$SV_EXTERNALS_DIR/build
   - export SV_EXTERNALS_BIN_DIR=$SV_EXTERNALS_BUILD_DIR/sv_externals/bin
-  - if [ "$SV_EXTERN_VER" == "2018.01" ]; then export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SV_EXTERNALS_BIN_DIR/qt-5.4.2/lib"; fi
-  - if [ "$SV_EXTERN_VER" == "2018.05" ]; then export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.6.3/lib"; fi
-  - export SV_CODE_DIR=$cwd/Code
-  - export SV_TEST_DIR=$HOME/test/
   - export SCRIPTS=$cwd/travis
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then $SCRIPTS/travis_update_ubuntu.sh; fi
+  - if $SV_EXTERNALS_USE_PREBUILT_QT; then source $SCRIPTS/travis_get_system_qt.sh; fi
   - if $WITH_CMAKE; then $SCRIPTS/travis_get_cmake_latest.sh; fi
-  - if $WITH_CMAKE; then $SCRIPTS/travis_cmake_get_externals.sh; fi
-  - if $USE_SYSTEM_QT; then $SCRIPTS/travis_get_qt.sh; fi
-  - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
 
-script: $SCRIPTS/travis_build_and_test.sh
+script: $SCRIPTS/travis_build.sh
