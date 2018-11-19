@@ -177,6 +177,17 @@ foreach(proj ${SV_EXTERNAL_SHARED_LIBS})
 	endif()
 endforeach()
 
+# Qt path usually contains version number and compiler version, so we
+# need to handle it specially
+if(SV_USE_QT OR SV_USE_QT_GUI)
+       get_filename_component(_qt5_real_path "${Qt5_DIR}/../../../" ABSOLUTE)
+       if(WIN32)
+         append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${_qt5_real_path}/bin" developer_script_string)
+       else()
+         append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${_qt5_real_path}/lib" developer_script_string)
+       endif()
+endif()
+
 # Add MITK if it was used (not sure why this isn't being added already)
 if (SV_USE_MITK)
   if (MITK_DIR)
