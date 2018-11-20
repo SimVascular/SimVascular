@@ -40,6 +40,7 @@ set TCL_LIBRARY_TAIL [file tail [lindex $argv 8]]
 set TK_LIBRARY_TAIL [file tail [lindex $argv 9]]
 set PYTHON_MAJOR_VERSION [lindex $argv 10]
 set PYTHON_MINOR_VERSION [lindex $argv 11]
+set SV_CMAKE_BUILD_TYPE [lindex $argv 12]
 
 puts "SV_FILES $SV_FILES"
 
@@ -68,7 +69,8 @@ proc file_find {dir wildcard args} {
   global TK_LIBRARY_TAIL
   global PYTHON_MAJOR_VERSION
   global PYTHON_MINOR_VERSION
-
+  global SV_CMAKE_BUILD_TYPE
+  
   if {[llength $args] == 0} {
      set rtnme {}
   } else {
@@ -107,7 +109,7 @@ proc file_find {dir wildcard args} {
 	  puts $outfp "<Registry Id='regid8' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonHome' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5' />"
 	  puts $outfp "<Registry Id='regid9' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonPackagesDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Lib\\vtk-packages;\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
 	}
-	puts $outfp "<Registry Id='regid10' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='SV_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\RelWithDebInfo;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\RelWithDebInfo;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
+	puts $outfp "<Registry Id='regid10' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='SV_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
 	puts $outfp "<Registry Id='regid11' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='QT_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\qt-plugins' />"
 
     }
