@@ -317,7 +317,27 @@ std::string sv4guiImageProcessing::getImageName(int imageIndex){
 
 mitk::Image::Pointer sv4guiImageProcessing::getImage(std::string image_name){
 
-  mitk::DataNode::Pointer image_node = GetDataStorage()->GetNamedNode(image_name);
+  mitk::DataNode::Pointer folder_node = GetDataStorage()->GetNamedNode("Images");
+
+  mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetDerivations(folder_node,mitk::NodePredicateDataType::New("Image"));
+
+  bool found = false;
+  auto image_node = folder_node;
+
+  for (int i = 0; i < rs->size(); i++){
+    auto node = rs->GetElement(i);
+
+    if (node->GetName() == image_name){
+      image_node = node;
+      found = true;
+    }
+  }
+
+  if (!found){
+    MITK_ERROR << "Image with name "<< image_name <<" not found\n";
+    return NULL;
+  }
+
   std::cout << "Got node with name " << image_node->GetName() << "\n";
 
   mitk::Image::Pointer image_data = dynamic_cast<mitk::Image*>(image_node->GetData());
