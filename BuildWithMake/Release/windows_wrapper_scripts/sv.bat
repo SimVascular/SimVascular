@@ -1,5 +1,5 @@
 @ECHO OFF
-PATH=%PATH%;%~dp0/mitk/bin/RelWithDebInfo;%~dp0/mitk/bin;%~dp0/plugins
+PATH=%PATH%;%~dp0/mitk/bin/SV_CMAKE_BUILD_TYPE;%~dp0/mitk/bin;%~dp0/plugins
 cd "%~dp0"
 "%~dp0/simvascular-bin.exe" %*
 
