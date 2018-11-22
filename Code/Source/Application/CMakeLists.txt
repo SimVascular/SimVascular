@@ -35,7 +35,20 @@ set(APP_SHOW_CONSOLE ON)
 
 set(CXXSRCS main.cxx SimVascular_Init.cxx)
 
+if(SV_USE_TCL)
+  LIST(APPEND CXXSRCS svTcl_AppInit.cxx)
+endif()
+
+if(SV_USE_QT_GUI)
+  LIST(APPEND CXXSRCS svMitkApp.cxx sv4gui_Main.cxx)
+endif()
+
+if(SV_USE_WIN32_REGISTRY)
+  LIST(APPEND CXXSRCS sv_use_win32_registry.cxx)
+endif()
+
 if(SV_USE_PYTHON)
+  LIST(APPEND CXXSRCS PythonShell_Init.cxx)
   LIST(APPEND CXXSRCS SimVascular_Init_py.cxx)
 endif()
 

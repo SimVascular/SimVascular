@@ -44,11 +44,28 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
 
-HDRS	=
+HDRS	= 
 
-CXXSRCS = main.cxx SimVascular_Init.cxx
+CXXSRCS = main.cxx SimVascular_Init.cxx 
+
+ifeq ($(SV_USE_TCL),1)
+  HDRS += svTcl_AppInit.h
+  CXXSRCS += svTcl_AppInit.cxx
+endif
+
+ifeq ($(SV_USE_QT_GUI),1)
+  HDRS += svMitkApp.h sv4gui_Main.h
+  CXXSRCS += svMitkApp.cxx sv4gui_Main.cxx
+endif
+
+ifeq ($(SV_USE_WIN32_REGISTRY),1)
+  HDRS += sv_use_win32_registry.h
+  CXXSRCS += sv_use_win32_registry.cxx
+endif
 
 ifeq ($(SV_USE_PYTHON),1)
+   HDRS    += PythonShell_Init.h
+   CXXSRCS += PythonShell_Init.cxx
 #  CXXSRCS += SimVascular_Init_py.cxx
 #  SV_LINK_WITH_INTERPRETER_LIBS = 1
 endif
