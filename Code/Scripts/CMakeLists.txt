@@ -156,8 +156,8 @@ if(SV_USE_QT OR SV_USE_QT_GUI)
       set(install_script_string "${install_script_string}# Plugins Path for Qt GUI\n")
     endif()
     if(WIN32)
-      set_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/RelWithDebInfo" developer_script_string)
-      append_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/plugins/RelWithDebInfo" developer_script_string)
+      set_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/${SV_EXTERNALS_CMAKE_BUILD_TYPE}" developer_script_string)
+      append_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/plugins/${SV_EXTERNALS_CMAKE_BUILD_TYPE}" developer_script_string)
       append_env_string_concat(SV_PLUGIN_PATH "%SV_HOME%/bin/plugins" developer_script_string)
     endif()
   endif()
@@ -316,6 +316,7 @@ append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin" 
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/lib/plugins" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/lib" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin/RelWithDebInfo" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin/Release" developer_script_string)
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------

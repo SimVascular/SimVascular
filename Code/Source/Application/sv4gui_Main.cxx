@@ -47,7 +47,7 @@
   #include <QDebug>
   #include "mitkBaseApplication.h"
   #include "ctkPluginFrameworkLauncher.h"
-  #include "svMitkApp.h"
+  #include "svMitkApp.cxx"
 #endif
 
 #include "sv_IOstream.h"

@@ -33,6 +33,12 @@
 
 #include "simvascular_options.h"
 
+// needed by cmake build to not throw errors
+// when compiling on Windows
+#ifdef WIN32
+#include "windows.h"
+#endif
+
 #include "sv_IOstream.h"
 #include <time.h>
 #include <stdlib.h>

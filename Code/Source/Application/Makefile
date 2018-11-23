@@ -55,7 +55,7 @@ endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   HDRS += svMitkApp.h sv4gui_Main.h
-  CXXSRCS += svMitkApp.cxx sv4gui_Main.cxx
+  CXXSRCS += sv4gui_Main.cxx
 endif
 
 ifeq ($(SV_USE_WIN32_REGISTRY),1)

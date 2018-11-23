@@ -34,6 +34,8 @@
 
 #include "SimVascular.h"
 
+#include "simvascular_options.h"
+
 int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workbench);
 
 #endif // SV4GUI_MAIN_H

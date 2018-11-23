@@ -39,8 +39,9 @@ if(SV_USE_TCL)
   LIST(APPEND CXXSRCS svTcl_AppInit.cxx)
 endif()
 
+# svMitkApp.cxx 
 if(SV_USE_QT_GUI)
-  LIST(APPEND CXXSRCS svMitkApp.cxx sv4gui_Main.cxx)
+  LIST(APPEND CXXSRCS sv4gui_Main.cxx)
 endif()
 
 if(SV_USE_WIN32_REGISTRY)
