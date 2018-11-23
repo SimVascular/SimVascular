@@ -29,15 +29,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_MAIN_H
-#define SV4GUI_MAIN_H
+#ifndef SV4GUI_MITKAPP_H
+#define SV4GUI_MITKAPP_H
 
 #include "SimVascular.h"
 
 #include "simvascular_options.h"
 
-int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workbench);
+#include <org_sv_gui_qt_application_Export.h>
 
-#endif // SV4GUI_MAIN_H
+#include "mitkBaseApplication.h"
 
+class SV_QT_APPLICATION sv4guiMitkApp : public mitk::BaseApplication {
 
+  public:
+
+  sv4guiMitkApp(int argc, char** argv);
+  ~sv4guiMitkApp();
+
+  protected:
+  void initializeLibraryPaths();
+
+};
+
+#endif

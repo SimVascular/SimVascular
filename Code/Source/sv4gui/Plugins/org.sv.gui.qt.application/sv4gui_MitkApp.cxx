@@ -39,7 +39,7 @@
   #include "Python.h"
 #endif
 
-#include "svMitkApp.h"
+#include "sv4gui_MitkApp.h"
 
 #include <QApplication>
 #include <QDir>
@@ -84,17 +84,17 @@
 
 #endif
 
-svMitkApp::svMitkApp(int argc, char* argv[]) : BaseApplication(argc, argv)
+sv4guiMitkApp::sv4guiMitkApp(int argc, char* argv[]) : BaseApplication(argc, argv)
 {
 }
 
-svMitkApp::~svMitkApp()
+sv4guiMitkApp::~sv4guiMitkApp()
 {
 }
 
-void svMitkApp::initializeLibraryPaths() {
+void sv4guiMitkApp::initializeLibraryPaths() {
 
-  //std::cout << "\n\n *** svMitkApp: initializeLibraryPaths! *** \n\n" << std::endl << std::flush;
+  //std::cout << "\n\n *** sv4guiMitkApp: initializeLibraryPaths! *** \n\n" << std::endl << std::flush;
 
   bool found_sv_plugin_path = false;
 

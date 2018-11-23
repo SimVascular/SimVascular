@@ -47,7 +47,7 @@
   #include <QDebug>
   #include "mitkBaseApplication.h"
   #include "ctkPluginFrameworkLauncher.h"
-  #include "svMitkApp.cxx"
+  #include "sv4gui_MitkApp.h"
 #endif
 
 #include "sv_IOstream.h"
@@ -56,10 +56,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-
-#include "tcl.h"
-#include "tk.h"
-#include "svTcl_AppInit.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -96,20 +92,12 @@
 #define SV_PYTHON_MAXPATH 16384
 #endif
 
-#include "SimVascular_Init.h"
-
-#ifdef WIN32
-#ifdef SV_USE_WIN32_REGISTRY
-  #include "sv_use_win32_registry.h"
-#endif
-#endif
-
 int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workbench) {
 
      // intentionally remove any additional params when calling qt gui
      int single_argc = 1;
      //mitk::BaseApplication app(single_argc, argv);
-     svMitkApp app(single_argc, argv);
+     sv4guiMitkApp app(single_argc, argv);
 
      // note: this command doesn't seem to work.
      // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svmodel svpath ...)

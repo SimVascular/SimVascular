@@ -53,10 +53,10 @@ ifeq ($(SV_USE_TCL),1)
   CXXSRCS += svTcl_AppInit.cxx
 endif
 
-ifeq ($(SV_USE_QT_GUI),1)
-  HDRS += svMitkApp.h sv4gui_Main.h
-  CXXSRCS += sv4gui_Main.cxx
-endif
+#ifeq ($(SV_USE_QT_GUI),1)
+#  HDRS += svMitkApp.h sv4gui_Main.h
+#  CXXSRCS += sv4gui_Main.cxx
+#endif
 
 ifeq ($(SV_USE_WIN32_REGISTRY),1)
   HDRS += sv_use_win32_registry.h
@@ -181,6 +181,7 @@ LFLAGS +=  \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_PLUGIN_APPLICATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_PROJECTDATANODES_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_MODELING_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_PATHPLANNING_NAME)$(LIBLINKEXT) \

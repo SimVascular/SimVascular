@@ -29,29 +29,72 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SVMITKAPP_H
-#define _SVMITKAPP_H
+#ifndef SV4GUI_MAINWINDOW_H
+#define SV4GUI_MAINWINDOW_H
+
+#include <org_sv_gui_qt_application_Export.h>
 
 #include "SimVascular.h"
 
-#include "simvascular_options.h"
+#include <QMainWindow>
 
-#ifdef SV_USE_QT_GUI
+//#include "svCollapsiblePane.h"
 
-#include "mitkBaseApplication.h"
+#include <mitkDataStorage.h>
+#include "QmitkStdMultiWidget.h"
 
-class svMitkApp : public mitk::BaseApplication {
+#include <ctkPythonConsole.h>
 
-  public:
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 
-  svMitkApp(int argc, char** argv);
-  ~svMitkApp();
+#include <vtkRenderWindow.h>
 
-  protected:
-  void initializeLibraryPaths();
+class SV_QT_APPLICATION sv4guiMainWindow : public QMainWindow
+{
+    Q_OBJECT
 
+public:
+    explicit sv4guiMainWindow(QWidget *parent = 0);
+    ~sv4guiMainWindow();
+    ctkPythonConsole* pythonConsole;
+
+public slots:
+    vtkRenderer* getRenderer();
+
+    vtkRenderWindow* getRenderWindow();
+
+protected:
+
+    QmitkStdMultiWidget* m_DisplayWidget;
+
+    mitk::DataStorage::Pointer m_DataStorage;
+
+    void connectViews();
+
+    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+
+private slots:
+
+    void on_actionPythonConsole_triggered();
+
+    void on_actionAxialOnly_triggered();
+
+    void on_actionSagittalOnly_triggered();
+
+    void on_actionCoronalOnly_triggered();
+
+    void on_actionLayout2DTop_triggered();
+
+    void on_actionLayout2DLeft_triggered();
+
+    void on_actionLayoutStandard_triggered();
+
+    void on_actionLayout3DOnly_triggered();
+
+private:
+
+    void initializePythonConsole();
 };
 
-#endif
-
-#endif
+#endif // SV4GUI_MAINWINDOW_H

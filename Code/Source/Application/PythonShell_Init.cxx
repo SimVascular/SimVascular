@@ -38,16 +38,6 @@
 #endif
 #include "vtksys/SystemTools.hxx"
 
-#ifdef SV_USE_QT_GUI
-  #include <QApplication>
-  #include <QDir>
-  #include <QVariant>
-  #include <QDebug>
-  #include "mitkBaseApplication.h"
-  #include "ctkPluginFrameworkLauncher.h"
-  #include "svMitkApp.h"
-#endif
-
 #include "sv_IOstream.h"
 #include <time.h>
 #include <stdlib.h>
