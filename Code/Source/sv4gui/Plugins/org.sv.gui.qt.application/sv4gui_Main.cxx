@@ -47,8 +47,9 @@
   #include <QDebug>
   #include "mitkBaseApplication.h"
   #include "ctkPluginFrameworkLauncher.h"
-  #include "sv4gui_MitkApp.h"
 #endif
+
+#include "sv4gui_MitkApp.h"
 
 #include "sv_IOstream.h"
 #include <time.h>

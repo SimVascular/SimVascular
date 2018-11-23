@@ -33,6 +33,10 @@
 
 #include "simvascular_options.h"
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #ifdef SV_USE_PYTHON
   #include "Python.h"
 #endif

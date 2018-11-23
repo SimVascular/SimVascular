@@ -161,7 +161,7 @@ if(SV_USE_QT OR SV_USE_QT_GUI)
       append_env_string_concat(SV_PLUGIN_PATH "%SV_HOME%/bin/plugins" developer_script_string)
     endif()
   endif()
-
+  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "%SV_HOME%/bin/plugins" developer_script_string)
 endif()
 
 # Add Tcl path for win32
@@ -204,8 +204,11 @@ endforeach()
 # Add MITK if it was used (not sure why this isn't being added already)
 if (SV_USE_MITK)
   if (MITK_DIR)
-    #append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/bin" developer_script_string)
-    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/lib/plugins" developer_script_string)
+    if(WIN32)
+      append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/bin/plugins/${SV_EXTERNALS_CMAKE_BUILD_TYPE}" developer_script_string)
+    else()
+      append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/lib/plugins" developer_script_string)
+    endif()
   endif()
 endif()
 

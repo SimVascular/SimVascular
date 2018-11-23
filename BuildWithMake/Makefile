@@ -268,7 +268,6 @@ shared-pre-build: common-pre-build
 	cd ../Code/Source/sv4gui/Plugins;$(MAKE) moc qrc ui
 	cd ../Code/Source/sv4gui/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/sv4gui/Modules;$(MAKE) create_exports_h us-init-module create_cppmicroservices_file
-	cd ../Code/Source/Application;$(MAKE) moc
 	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
 	for i in ${SHARED_LIBDIRS}; do ( \
 	  echo "creating exports for shared directory ($$i)"; \
@@ -282,7 +281,6 @@ static-pre-build: common-pre-build
 	cd ../Code/Source/sv4gui/Plugins;$(MAKE) moc qrc ui
 	cd ../Code/Source/sv4gui/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/sv4gui/Modules;$(MAKE) create_exports_h us-init-module
-	cd ../Code/Source/Application;$(MAKE) moc
 	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
 
 shared-build:

@@ -33,10 +33,9 @@
 #define SV4GUI_MITKAPP_H
 
 #include "SimVascular.h"
-
 #include "simvascular_options.h"
 
-#include <org_sv_gui_qt_application_Export.h>
+#include "org_sv_gui_qt_application_Export.h"
 
 #include "mitkBaseApplication.h"
 

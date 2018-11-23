@@ -29,15 +29,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef SV_USE_QT_GUI
-
 #include "SimVascular.h"
-
 #include "simvascular_options.h"
 
-#ifdef SV_USE_PYTHON
-  #include "Python.h"
-#endif
+#include <org_sv_gui_qt_application_Export.h>
 
 #include "sv4gui_MitkApp.h"
 
@@ -55,15 +50,12 @@
 #include <string.h>
 #include <iostream>
 
-#include "tcl.h"
-#include "tk.h"
-
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
 #endif
 
-#include "sv2_globals.h"
+//#include "sv2_globals.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -232,5 +224,3 @@ void sv4guiMitkApp::initializeLibraryPaths() {
 
   return;
 }
-
-#endif
