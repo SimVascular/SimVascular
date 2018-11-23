@@ -145,6 +145,18 @@ if(SV_USE_QT OR SV_USE_QT_GUI)
     set_env_string_concat(QTWEBENGINEPROCESS_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QtWebEngineProcess" developer_script_string)
   endif()
 
+  if(WIN32)
+    file(COPY ${_qt5_real_path}/bin/QtWebEngineProcess.exe DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    file(WRITE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf "[PATHS]\n")
+    file(APPEND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf "Prefix=${_qt5_real_path}\n")
+    message("qt path: ${_qt5_real_path}/resources")
+    file(GLOB _qt5_resources_files "${_qt5_real_path}/resources")
+    file(GLOB _qt5_translations_files "${_qt5_real_path}/translations")
+    message("qt files to copy: ${_qt5_resources_files} ${_qt5_translations_files}")
+    file(COPY ${_qt5_resources_files} ${_qt5_translations_files} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    set_env_string_concat(QTWEBENGINEPROCESS_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QtWebEngineProcess.exe" developer_script_string)
+  endif()
+
   if(QT_DLL_PATH)
     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} ${QT_DLL_PATH} developer_script_string)
     set_env_string_concat(QT_PLUGIN_PATH ${QT_PLUGIN_PATH} developer_script_string)
@@ -224,6 +236,9 @@ set_env_string_concat(QT_QPA_FONTDIR "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREF
 
 if(LINUX)
 set_env_string_concat(QTWEBENGINEPROCESS_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/bin/QtWebEngineProcess" install_script_string)
+endif()
+if(WIN32)
+set_env_string_concat(QTWEBENGINEPROCESS_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/bin/QtWebEngineProcess.exe" install_script_string)
 endif()
 #----------------------------------------------------------------------------
 
