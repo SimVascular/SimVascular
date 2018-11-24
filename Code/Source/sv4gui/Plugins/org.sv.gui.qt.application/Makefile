@@ -58,7 +58,9 @@ HDRS	= \
   sv4gui_WorkbenchWindowAdvisorHack.h \
   sv4gui_AboutDialog.h \
   sv4gui_WorkbenchIntroPart.h \
-  sv4gui_DefaultPerspective.h
+  sv4gui_DefaultPerspective.h \
+  sv4gui_MitkApp.h \
+  sv4gui_Main.cxx
 
 CXXSRCS	= \
   sv4gui_Application.cxx \
@@ -74,7 +76,9 @@ CXXSRCS	= \
   sv4gui_AboutDialog.cxx \
   sv4gui_WorkbenchIntroPart.cxx \
   sv4gui_DefaultPerspective.cxx \
-  sv4gui_WorkbenchWindowAdvisorHack.cxx
+  sv4gui_WorkbenchWindowAdvisorHack.cxx \
+  sv4gui_MitkApp.cxx \
+  sv4gui_Main.cxx
 
 UIFILES = \
   sv4gui_ProjectCreate.ui \

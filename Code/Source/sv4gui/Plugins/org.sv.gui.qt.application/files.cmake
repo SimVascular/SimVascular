@@ -43,6 +43,8 @@ set(CPP_FILES
   sv4gui_WorkbenchIntroPart.cxx
   sv4gui_DefaultPerspective.cxx
   sv4gui_WorkbenchWindowAdvisorHack.cxx
+  sv4gui_Main.cxx
+  sv4gui_MitkApp.cxx
 )
 
 set(MOC_H_FILES
@@ -59,6 +61,8 @@ set(MOC_H_FILES
   sv4gui_AboutDialog.h
   sv4gui_WorkbenchIntroPart.h
   sv4gui_DefaultPerspective.h
+  sv4gui_Main.h
+  sv4gui_MitkApp.h
 )
 
 set(UI_FILES

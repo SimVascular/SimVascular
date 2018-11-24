@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "svMainWindow.h"
+#include "sv4gui_MainWindow.h"
 
 #include "sv4guiApplication.h"
 #include "svDisplayEditor.h"

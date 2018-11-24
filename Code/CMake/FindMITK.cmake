@@ -245,6 +245,12 @@ set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
     ${${proj}_DIR}/dll
     ${${proj}_DIR}/lib/plugins/RelWithDebInfo
     ${${proj}_DIR}/bin/plugins/RelWithDebInfo
+    ${${proj}_DIR}/lib/plugins/Release
+    ${${proj}_DIR}/bin/plugins/Release
+    ${${proj}_DIR}/lib/plugins/Debug
+    ${${proj}_DIR}/bin/plugins/Debug
+    ${${proj}_DIR}/lib/plugins/MinSizeRel
+    ${${proj}_DIR}/bin/plugins/MinSizeRel
   )
 
 set(${proj}_PLUGIN_LIBS_MISSING ${${proj}_PLUGIN_LIBNAMES})

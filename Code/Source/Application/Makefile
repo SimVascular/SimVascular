@@ -44,11 +44,23 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
 
-HDRS	=
+HDRS	= 
 
-CXXSRCS = main.cxx SimVascular_Init.cxx
+CXXSRCS = main.cxx SimVascular_Init.cxx 
+
+ifeq ($(SV_USE_TCL),1)
+  HDRS += svTcl_AppInit.h
+  CXXSRCS += svTcl_AppInit.cxx
+endif
+
+ifeq ($(SV_USE_WIN32_REGISTRY),1)
+  HDRS += sv_use_win32_registry.h
+  CXXSRCS += sv_use_win32_registry.cxx
+endif
 
 ifeq ($(SV_USE_PYTHON),1)
+   HDRS    += PythonShell_Init.h
+   CXXSRCS += PythonShell_Init.cxx
 #  CXXSRCS += SimVascular_Init_py.cxx
 #  SV_LINK_WITH_INTERPRETER_LIBS = 1
 endif
@@ -164,6 +176,7 @@ LFLAGS +=  \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_PLUGIN_APPLICATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_PROJECTDATANODES_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_MODELING_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_PATHPLANNING_NAME)$(LIBLINKEXT) \
@@ -255,9 +268,6 @@ TARGET_EXE = $(TOP)/Bin/simvascular.exe
 shared: pre directories $(TARGET_EXE_FULL)
 
 static: pre directories $(TARGET_EXE_FULL)
-
-moc:
-	$(foreach name,$(HDRS),$(shell $(QT_MOC_PARSER) $(QT_DEFS) $(QT_MOC_INCDIRS) $(EXTRA_MOC_INCDIRS) $(name) -o moc_$(basename $(notdir $(name))).cxx))
 
 # only for static case
 $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT):
@@ -354,7 +364,6 @@ clean:
 	for fn in $(TARGET_EXE_FULL)*; do /bin/rm -f $$fn; done
 	for fn in $(basename $(TARGET_EXE_FULL)).*;do /bin/rm -f $$fn; done
 	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
-	for fn in moc_*.cxx; do /bin/rm -f $$fn;done
 	for fn in coffbase.txt; do /bin/rm -f $$fn;done
 
 veryclean: clean
