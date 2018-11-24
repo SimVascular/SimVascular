@@ -123,8 +123,8 @@ proc file_find {dir wildcard args} {
           if {[file tail $i] == $SV_EXECUTABLE} {
             global curdirID
 	    puts $outfp "<File Id='id[format %04i $id]' Name='[file tail $i]' Source='$i' DiskId='1'>"
-            puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl --ignore-pro' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
-	    puts $outfp "<Shortcut Id='ids13' Directory='DesktopFolder' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl --ignore-pro' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+            puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids13' Directory='DesktopFolder' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
             puts $outfp "</File>"
             #puts $outfp "<RemoveFolder Directory='ProgramMenuDir' Name='$SV_VERSION' On='uninstall' />"
             puts $outfp "<RemoveFile Id='ids12' On='uninstall' Name='*.*' />"
@@ -182,7 +182,7 @@ set package_id [exec tmp/uuidgen.exe 1]
 set upgrade_id [exec tmp/uuidgen.exe 1]
 
 puts $outfp "<Product Name='$SV_VERSION' Id='$product_id' UpgradeCode='$upgrade_id' Language='1033' Codepage='1252' Version='$SV_FULL_VER_NO' Manufacturer='SimVascular'>"
-puts $outfp "<Package Id='$package_id' Keywords='Installer' Description='$SV_VERSION Installer' Comments='SimVascular $SV_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' Platform='x64' SummaryCodepage='1252' />"
+puts $outfp "<Package Id='$package_id' Keywords='Installer' Description='$SV_VERSION Installer' Comments='SimVascular $SV_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='200' Languages='1033' Compressed='yes' Platform='x64' SummaryCodepage='1252' />"
 
 puts $outfp "<WixVariable Id=\"WixUILicenseRtf\" Value=\"License.rtf\" />"
 puts $outfp "<WixVariable Id=\"WixUIBannerBmp\" Value=\"windows_msi_helpers/msi-banner.bmp\" />"
