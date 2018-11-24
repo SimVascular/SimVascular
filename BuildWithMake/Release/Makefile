@@ -243,9 +243,12 @@ endif
 endif
 ifeq ($(SV_USE_QT),1)
 ifeq ($(CLUSTER), x64_cygwin)
+# need dummy exec since windeployqt no longer recognizes are exe as a qt app...
+# also need QtWebEngine in the dir with exe unless we set env variable!
+	-cp -f $(QT_WEBENGINE_PATH) $(DIST_DIR)
 	-$(QT_TOP_DIR)/bin/windeployqt $(QT_DEPLOY_FLAGS) \
                                        -plugindir `cygpath -m $(DIST_DIR)/qt-plugins` \
-                                       `cygpath -m $(DIST_DIR)/simvascular-bin.exe`
+                                       `cygpath -m $(DIST_DIR)/$(QT_WEBENGINE_PROC)`
 	-cp -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/qt-fonts
 	-echo "[Paths]" > $(DIST_DIR)/qt.conf
 	-echo "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
