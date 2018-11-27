@@ -7,13 +7,27 @@ then
   source ~/Library/Application\ Support/SimVascular/simvascular_custom_plugins.sh
 fi
 
+## [DaveP 11/27/2018] This is a short-term fix for the
+#  curson problem that appears only on OSX.
+#
+# Create a bundle directory structure and create a soft link 
+# to the executable there.
+#
+app_dir=sv.app/Contents/MacOS
+sv_exe=$SV_HOME/$app_dir/@SV_EXE@ 
+
+if [ ! -d "sv.app" ]; then
+    mkdir -p $app_dir
+    ln -s $SV_HOME/bin/@SV_EXE@ $app_dir
+fi
+
 # Run the executable
 case "$SV_BATCH_MODE" in
 "1")
-$SV_HOME/bin/@SV_EXE@ $*
+$sv_exe $*
 ;;
 *)
-@GDB@ @GDB_FLAGS@ $SV_HOME/bin/@SV_EXE@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
+@GDB@ @GDB_FLAGS@ $sv_exe $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
 ;;
 esac
 
