@@ -115,6 +115,11 @@ else()
   set(install_script_string "${install_script_string}# Externals link directories\n")
 endif()
 
+# Need to ignore registry on Windows for developer build
+if(WIN32)
+        set_env_string_concat(SV_IGNORE_WIN32_REGISTRY "1" developer_script_string)
+endif()
+
 # Add Qt if it was used
 if(SV_USE_QT OR SV_USE_QT_GUI)
 
@@ -295,6 +300,7 @@ if(SV_USE_PYTHON)
   if(SV_PYTHON_DIR)
     set_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
   endif()
+
   append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
   set_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_PYTHON_LIBRARY_DIR}/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
   if(NOT SV_ENABLE_DISTRIBUTION)
@@ -302,10 +308,16 @@ if(SV_USE_PYTHON)
   endif()
 
   # Add to PYTHONHOME or PYTHONPATH if SITE_PACAKGES information is given
-	if(VTK_PYTHON_SITE_PACKAGES)
-	  append_env_string_concat(PYTHONPATH "${VTK_PYTHON_SITE_PACKAGES}" developer_script_string)
+  if(VTK_PYTHON_SITE_PACKAGES)
+     append_env_string_concat(PYTHONPATH "${VTK_PYTHON_SITE_PACKAGES}" developer_script_string)
   endif()
-  if(PYTHON_SITE_PACKAGES)
+  
+  get_filename_component(_sv_python_site_packages "${SV_SOURCE_DIR}/../Python/site-packages" ABSOLUTE)
+  append_env_string_concat(PYTHONPATH "${_sv_python_site_packages}" developer_script_string)
+
+  append_env_string_concat(PYTHONPATH "%SV_PLUGIN_PATH%" developer_script_string)
+
+if(PYTHON_SITE_PACKAGES)
     append_env_string_concat(PYTHONPATH "${PYTHON_SITE_PACKAGES}" developer_script_string)
     append_env_string_concat(PYTHONPATH "${PYTHON_CORE_PACKAGES}" developer_script_string)
     append_env_string_concat(PATH "${PYTHON_DLL_PATH}" developer_script_string)

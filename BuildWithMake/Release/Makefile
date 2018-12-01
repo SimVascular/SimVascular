@@ -234,9 +234,9 @@ ifeq ($(SV_USE_PYTHON),1)
 #	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
 	-cp -fR $(PYTHON_HOME) $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)
 ifeq ($(CLUSTER), x64_cygwin)
-	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
+	-cp -fR $(VTK_PYTHON_PACKAGES)/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
 else
-	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/lib/python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/site-packages/vtk-packages
+	-cp -fR $(VTK_PYTHON_PACKAGES)/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/lib/python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/site-packages
 endif
 	-cp -fR $(TOP)/../Python/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
