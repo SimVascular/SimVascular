@@ -238,6 +238,7 @@ ifeq ($(CLUSTER), x64_cygwin)
 else
 	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/lib/python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/site-packages/vtk-packages
 endif
+	-cp -fR $(TOP)/../Python/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 #	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
 endif

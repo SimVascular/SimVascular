@@ -29412,10 +29412,9 @@ proc guiCV_select_project_directory {} {
      }
   }
 
-  global SV_VERSION
-  global SV_MAJOR_VER_NO
+  global SV_TIMESTAMP
 
-  if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\$SV_VERSION $SV_MAJOR_VER_NO" LastProjectDir $dir} msg] {
+  if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\SimVascular\\$SV_TIMESTAMP" LastProjectDir $dir} msg] {
        puts "ERROR updating LastProjectDir in registry! ($msg)"
   }
 }

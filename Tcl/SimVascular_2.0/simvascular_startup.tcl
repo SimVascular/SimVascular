@@ -442,10 +442,10 @@ if {![file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
 global tcl_platform
 if {$tcl_platform(platform) == "windows"} {
   package require registry
-  if [catch {set lastdir [registry get "HKEY_CURRENT_USER\\Software\\SimVascular\\$SV_VERSION" LastProjectDir]} msg] {
+  if [catch {set lastdir [registry get "HKEY_CURRENT_USER\\Software\\SimVascular\\SimVascular\\$SV_TIMESTAMP" LastProjectDir]} msg] {
     catch {cd}
     set lastdir [pwd]
-    if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\$SV_VERSION" LastProjectDir $lastdir} msg] {
+    if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\SimVascular\\$SV_TIMESTAMP" LastProjectDir $lastdir} msg] {
        puts "ERROR updating LastProjectDir in registry! ($msg)"
     }
   }
