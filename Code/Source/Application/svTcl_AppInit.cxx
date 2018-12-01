@@ -95,6 +95,8 @@ int Tcl_AppInit( Tcl_Interp *interp )
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
 
+  if(gSimVascularUseWin32Registry) {
+  
   if (Tcl_AppInt_Win32ReadRegistryVar("HomeDir", "env(SV_HOME)", interp ) == TCL_ERROR) {
     exit(-1);
   }
@@ -107,6 +109,8 @@ int Tcl_AppInit( Tcl_Interp *interp )
     exit(-1);
   }
 
+}
+  
 #endif
 #endif
 

@@ -47,6 +47,8 @@ export SV_HOME=REPLACEME_SV_HOME
 
 export SV_USE_PYTHON=REPLACEME_SV_USE_PYTHON
 
+export SV_IGNORE_WIN32_REGISTRY=1
+
 ################################################################
 # YOU PROBABLY DON'T NEED TO CHANGE ANYTHING BELOW THIS LINE.  #
 ################################################################

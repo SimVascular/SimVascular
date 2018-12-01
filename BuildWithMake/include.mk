@@ -264,7 +264,7 @@ endif
 #   Release version numbers for SimVascular
 # -------------------------------------------
 
-SV_USE_WIN32_REGISTRY=0
+SV_USE_WIN32_REGISTRY=1
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
 # if you need to override anything above, stuff it in global_overrides.mk

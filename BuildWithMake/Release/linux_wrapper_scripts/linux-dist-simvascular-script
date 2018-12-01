@@ -1,18 +1,3 @@
 
 # run the executable
-case "$SV_BATCH_MODE" in
-"1")
-case "$*" in
-"")
-$SV_HOME/simvascular-bin.exe
-;;
-*)
 $SV_HOME/simvascular-bin.exe $*
-;;
-esac
-;;
-*)
-$SV_HOME/simvascular-bin.exe $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
-;;
-esac
-

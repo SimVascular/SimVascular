@@ -323,7 +323,14 @@ svCatchDebugger() {
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
-  sv_parse_reg();
+  envstr=getenv("SV_IGNORE_WIN32_REGISTRY");
+  if (envstr != NULL) {
+    fprintf(stdout,"\n  Ignore SimVascular registry entries.\n");
+    gSimVascularUseWin32Registry = 0;
+  } else {
+    gSimVascularUseWin32Registry = 1;
+    sv_parse_reg();
+  }
 #endif
 #endif
 
