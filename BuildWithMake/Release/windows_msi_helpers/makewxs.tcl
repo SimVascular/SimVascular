@@ -123,12 +123,18 @@ proc file_find {dir wildcard args} {
           if {[file tail $i] == $SV_EXECUTABLE} {
             global curdirID
 	    puts $outfp "<File Id='id[format %04i $id]' Name='[file tail $i]' Source='$i' DiskId='1'>"
-            puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
-	    puts $outfp "<Shortcut Id='ids13' Directory='DesktopFolder' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids13' Directory='ProgramMenuDir' Name='$SV_VERSION-Python-Shell' Arguments='-python' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids14' Directory='ProgramMenuDir' Name='$SV_VERSION-Tcl-Tk' Arguments='-tk' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids15' Directory='ProgramMenuDir' Name='$SV_VERSION-Tcl-Shell' Arguments='-tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids16' Directory='DesktopFolder' Name='$SV_VERSION' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
             puts $outfp "</File>"
             #puts $outfp "<RemoveFolder Directory='ProgramMenuDir' Name='$SV_VERSION' On='uninstall' />"
             puts $outfp "<RemoveFile Id='ids12' On='uninstall' Name='*.*' />"
-            puts $outfp "<RemoveFile Id='ids13' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids13' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids14' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids15' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids16' On='uninstall' Name='*.*' />"
             puts $outfp "<RegistryValue Root=\"HKCU\" Key=\"Software\Microsoft\$SV_VERSION\" Name=\"installed\" Type=\"integer\" Value=\"1\" KeyPath=\"yes\"/>"
 
             puts $outfp "<RemoveFolder Id='RemoveProgramMenuDir' Directory='ProgramMenuDir' On='uninstall' />"

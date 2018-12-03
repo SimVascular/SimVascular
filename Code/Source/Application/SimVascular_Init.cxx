@@ -106,7 +106,8 @@ void SimVascularWelcome( Tcl_Interp *interp )
 {
   // Find the date of the executable we're running
   Tcl_Eval( interp, "puts \"\"");
-  Tcl_Eval( interp, "set simvascular_home \"$env(SV_HOME)\";"
+  Tcl_Eval( interp, "set simvascular_home \"$env(SV_HOME)\"");
+  Tcl_Eval( interp,
                   "if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {"
                       "source [file join $simvascular_home/Tcl/startup_configure.tcl];"
                       "if { [file exists [file join $simvascular_home/release-date]] } {"
@@ -122,14 +123,19 @@ void SimVascularWelcome( Tcl_Interp *interp )
                   "set SV_BUILD_STR \"unknown release\";"
                   "}");
   Tcl_Eval( interp, "puts [format \"  %-12s %s\" \"SimVascular:\" $SV_FULL_VER_NO$SV_BUILD_STR]" );
-  Tcl_Eval( interp, "puts \"  Copyright (c) 2014-2015 The Regents of the University of California.\"" );
-  Tcl_Eval( interp, "puts \"                         All Rights Reserved.\"");
+  Tcl_Eval( interp, "puts \"  Copyright (c) Stanford University, The Regents of the University of\"" );
+  Tcl_Eval( interp, "puts \"                California, and others.  All Rights Reserved.\"" );
   Tcl_Eval( interp, "puts \"\"");
-  Tcl_Eval( interp, "flush" );
-
+  Tcl_Eval( interp, "flush stdout" );
 
   Tcl_Eval( interp, "puts [format \"  %-12s %s\" \"Tcl:\" [info patchlevel]]" );
 
+  Tcl_Eval( interp, "if {$argc == 0 && [info exists tk_version]} {"
+	              "puts \"Use default gui script...\";"
+	              "source $simvascular_home/Tcl/SimVascular_2.0/simvascular_startup.tcl;"
+	            "} else {"
+	            "}");
+    
   return;
 }
 

@@ -152,6 +152,7 @@ svCatchDebugger() {
   bool use_workbench  = false;
   bool catch_debugger = false;
   bool use_provisioning_file = false;
+  bool pass_along_options = false;
   gSimVascularBatchMode = 0;
  
   ios::sync_with_stdio();
@@ -177,13 +178,18 @@ svCatchDebugger() {
   //sv_parse_registry_for_plugins();
   //exit(0);
 
+  // want to hide launch only flags from tcl/python/mitk
+  // shells
+  int pass_along_start_index = 0;
+  int pass_along_argc = 1;
+     
   if (argc != 0) {
 
-    // default to tcl gui
+    bool warnInvalid = true;
     for (int iarg = 1; iarg < argc;iarg++) {
       bool foundValid = false;
-      bool warnInvalid = false;
-      fprintf(stdout,"processing command line option: %s\n",argv[iarg]);
+      fprintf(stdout,"processing command line option (%i of %i): %s\n",iarg, argc-1, argv[iarg]);
+      fflush(stdout);
       if((!strcmp("-h",argv[iarg]))    ||
 	 (!strcmp("-help",argv[iarg])) ||
 	 (!strcmp("--help",argv[iarg]))) {
@@ -194,9 +200,10 @@ svCatchDebugger() {
 	fprintf(stdout,"  -qt, --qt-gui   : use Qt GUI (SV_BATCH_MODE overrides)\n");
 	fprintf(stdout,"  -tk, --tk-gui   : use TclTk GUI (SV_BATCH_MODE overrides)\n");	
 	fprintf(stdout,"  -d, --debug     : infinite loop for debugging\n");
-	fprintf(stdout,"  --warn          : warn if invalid cmd line params (off by default)\n");
+	fprintf(stdout,"  --warn          : warn if invalid cmd line params (on by default)\n");
 	fprintf(stdout,"  --workbench     : use mitk workbench application\n");
 	fprintf(stdout,"  --use-pro       : use the .provisioning file \n");
+	fprintf(stdout,"  --              : pass remaining params to tcl/python shells\n");
 	exit(0);
       }
       if((!strcmp("--warn",argv[iarg]))) {
@@ -255,12 +262,53 @@ svCatchDebugger() {
       }
       if((!strcmp("--use-pro",argv[iarg]))) {
 	use_provisioning_file = true;
+	foundValid = true;
+      }
+      if((!strcmp("--",argv[iarg]))) {
+	pass_along_start_index = iarg + 1;
+	if(pass_along_start_index < argc) {
+	  pass_along_options = true;
+	  pass_along_argc = argc - pass_along_start_index + 1;
+	}
+        fprintf(stdout,"  Note: remaining args passed along...\n");
+	fprintf(stdout,"    pass_along_start_index: %i\n",pass_along_start_index);
+	fprintf(stdout,"    pass_along_argc: %i\n\n",pass_along_argc);
+	fflush(stdout);
+	foundValid = true;
+	break;
       }
       if (!foundValid && warnInvalid) {
-	fprintf(stderr,"Warning:  unknown option (%s) ignored!\n",argv[iarg]);
+	fprintf(stderr,"  Warning:  unknown option (%s) ignored!\n",argv[iarg]);
+	fflush(stderr);
       }
     }
   }
+
+  char** useme_argv;
+  int useme_argc;
+  
+  useme_argv = (char**)malloc(pass_along_argc*sizeof(char*));
+  useme_argc = pass_along_argc;
+  
+  // argv[0] is the executable name
+  char* str = (char*)malloc(strlen(argv[0])+1);
+  str[0]='\0';
+  strcpy(str,argv[0]);
+  useme_argv[0] = str;
+  //fprintf(stdout,"useme_argv[0] = %s\n",useme_argv[0]);
+
+  if (pass_along_options) {
+    for (int i = 0; i < (pass_along_argc - 1);i++) {
+      char* str = (char*)malloc(strlen(argv[pass_along_start_index+i])+1);
+      str[0]='\0';
+      strcpy(str,argv[pass_along_start_index+i]);
+      useme_argv[i+1] = str;
+      //fprintf(stdout,"useme_argv[%i] = %s\n",i+1,useme_argv[i+1]);
+    }
+  }
+
+  fflush(stdout);
+  fflush(stderr);
 
   // enter infinite loop for debugger
   if (catch_debugger) {
@@ -275,27 +323,34 @@ svCatchDebugger() {
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
-  sv_parse_reg();
+  envstr=getenv("SV_IGNORE_WIN32_REGISTRY");
+  if (envstr != NULL) {
+    fprintf(stdout,"\n  Ignore SimVascular registry entries.\n");
+    gSimVascularUseWin32Registry = 0;
+  } else {
+    gSimVascularUseWin32Registry = 1;
+    sv_parse_reg();
+  }
 #endif
 #endif
 
   if (gSimVascularBatchMode == 1) {
     if (use_tcl) {    
-      Tcl_Main (argc, argv, Tcl_AppInit);
+      Tcl_Main (useme_argc, useme_argv, Tcl_AppInit);
       return 0;
     }
 #ifdef SV_USE_PYTHON
     if(use_python) {
-      return PythonShell_Init(argc, argv);
+      return PythonShell_Init(useme_argc, useme_argv);
     }
 #endif
   } else {
     if (use_tk_gui) {
-      Tk_Main( argc, argv, Tcl_AppInit );
+      Tk_Main(useme_argc, useme_argv, Tcl_AppInit );
     }
 #ifdef SV_USE_QT_GUI
     if(use_qt_gui) {
-      sv4guiMain(argc, argv, use_provisioning_file, use_workbench);
+      sv4guiMain(useme_argc, useme_argv, use_provisioning_file, use_workbench);
     }
     return 0;
 #endif

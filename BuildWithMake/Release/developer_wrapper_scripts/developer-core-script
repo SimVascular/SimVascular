@@ -47,6 +47,8 @@ export SV_HOME=REPLACEME_SV_HOME
 
 export SV_USE_PYTHON=REPLACEME_SV_USE_PYTHON
 
+export SV_IGNORE_WIN32_REGISTRY=1
+
 ################################################################
 # YOU PROBABLY DON'T NEED TO CHANGE ANYTHING BELOW THIS LINE.  #
 ################################################################
@@ -64,6 +66,16 @@ export LD_LIBRARY_PATH=REPLACEME_TCLTK_SO_PATH:$LD_LIBRARY_PATH
 export PYTHONHOME=REPLACEME_PYTHON_HOME
 export PYTHONPATH="REPLACEME_PYTHON_PACKAGES"
 export LD_LIBRARY_PATH=REPLACEME_SV_PYTHON_SO_PATH:$LD_LIBRARY_PATH
+
+case "$SV_OS" in
+"windows" )
+    export SV_SITE_PACKAGES=`cygpath --windows -t mixed $SV_HOME/Python/site-packages`
+    export PYTHONPATH="$SV_SITE_PACKAGES;$PYTHONPATH"
+  ;;
+* )
+  export PYTHONPATH=$SV_HOME/Python/site-packages:$PYTHONPATH
+ ;;
+esac
 
 # GDCM additions
 export LD_LIBRARY_PATH=REPLACEME_SV_GDCM_SO_PATH:$LD_LIBRARY_PATH
