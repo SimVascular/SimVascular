@@ -326,11 +326,11 @@ int cvTetGenAdapt::CreateInternalMeshObject(
   }
 
   char evalmestr[1024];
-  PyObject* mod=PyImport_ImportModule("pyMeshObject");
+  PyObject* mod=PyImport_ImportModule("MeshObject");
   PyObject* globals=PyModule_GetDict(mod);
 
   evalmestr[0]='\0';
-  sprintf(evalmestr,"mesh_setKernel('TetGen')");
+  sprintf(evalmestr,"SetKernel('TetGen')");
 
   if (!PyRun_String(evalmestr, Py_single_input, globals, globals))
   {
@@ -347,7 +347,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(
   }
 
   evalmestr[0]='\0';
-  sprintf(evalmestr,"%s.mesh_newObject('%s')",mesh_name,mesh_name);
+  sprintf(evalmestr,"%s.NewObject('%s')",mesh_name,mesh_name);
   if (!PyRun_String(evalmestr, Py_single_input, globals, globals))
   {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
