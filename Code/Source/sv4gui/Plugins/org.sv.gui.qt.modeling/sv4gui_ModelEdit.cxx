@@ -799,50 +799,28 @@ void sv4guiModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*se
     modelElement->ClearFaceSelection();
 
     bool useFirst=true;
-    if (indexesOfSelectedRows.size()==1)
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
     {
-        QModelIndexList::iterator it = indexesOfSelectedRows.begin();
         int row=(*it).row();
+
         QStandardItem* itemID= m_FaceListTableModel->item(row,0);
         int id=itemID->text().toInt();
-        if (modelElement->IsFaceSelected(id))
-            modelElement->SelectFaceByIndex(id,false);
-        else
+
+        modelElement->SelectFace(id);
+
+        if(useFirst)
         {
-            modelElement->SelectFaceByIndex(id,true);
-            if(useFirst)
-            {
-                double faceArea=modelElement->GetFaceArea(id);
-                QString info="Face "+QString::fromStdString(modelElement->GetFaceName(id))+": Area="+QString::number(faceArea);
-                mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
-                useFirst=false;
-            }
-        }
-    }
-    else
-    {
-        for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-            ; it != indexesOfSelectedRows.end(); it++)
-        {
-            int row=(*it).row();
-    
-            QStandardItem* itemID= m_FaceListTableModel->item(row,0);
-            int id=itemID->text().toInt();
-    
-            modelElement->SelectFace(id);
-    
-            if(useFirst)
-            {
-                double faceArea=modelElement->GetFaceArea(id);
-                QString info="Face "+QString::fromStdString(modelElement->GetFaceName(id))+": Area="+QString::number(faceArea);
-                mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
-                useFirst=false;
-            }
+            double faceArea=modelElement->GetFaceArea(id);
+            QString info="Face "+QString::fromStdString(modelElement->GetFaceName(id))+": Area="+QString::number(faceArea);
+            mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
+            useFirst=false;
         }
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
+
 
 void sv4guiModelEdit::ToggleVisibility(const QModelIndex &index){
 
