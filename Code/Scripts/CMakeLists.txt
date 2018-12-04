@@ -115,13 +115,53 @@ else()
   set(install_script_string "${install_script_string}# Externals link directories\n")
 endif()
 
+# Need to ignore registry on Windows for developer build
+if(WIN32)
+        set_env_string_concat(SV_IGNORE_WIN32_REGISTRY "1" developer_script_string)
+endif()
+
 # Add Qt if it was used
 if(SV_USE_QT OR SV_USE_QT_GUI)
+
+   # Qt path usually contains version number and compiler version, so we
+   # need to handle it specially
+   get_filename_component(_qt5_real_path "${Qt5_DIR}/../../../" ABSOLUTE)
+   if(WIN32)
+     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${_qt5_real_path}/bin" developer_script_string)
+   else()
+     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${_qt5_real_path}/lib" developer_script_string)
+  endif()
+
   if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
      set_env_string_concat(QT_QPA_FONTDIR "${QT_PLUGIN_PATH}/../lib/fonts" developer_script_string)
   elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
      set_env_string_concat(QT_QPA_FONTDIR "${QT_PLUGIN_PATH}/../../Src/qtbase/lib/fonts" developer_script_string)
   endif()
+
+  set_env_string_concat(QT_PLUGIN_PATH "${QT_PLUGIN_PATH}" developer_script_string)
+
+  if(LINUX)
+    file(COPY ${_qt5_real_path}/libexec/QtWebEngineProcess DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    file(WRITE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf "[PATHS]\n")
+    file(APPEND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf "Prefix=${_qt5_real_path}\n")
+    file(GLOB _qt5_resources_files ${_qt5_real_path}/resources)
+    file(GLOB _qt5_translations_files ${_qt5_real_path}/translations)
+    file(COPY ${_qt5_resources_files} ${_qt5_translations_files} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    set_env_string_concat(QTWEBENGINEPROCESS_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QtWebEngineProcess" developer_script_string)
+  endif()
+
+  if(WIN32)
+    file(COPY ${_qt5_real_path}/bin/QtWebEngineProcess.exe DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    file(WRITE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf "[PATHS]\n")
+    file(APPEND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf "Prefix=${_qt5_real_path}\n")
+    message("qt path: ${_qt5_real_path}/resources")
+    file(GLOB _qt5_resources_files "${_qt5_real_path}/resources")
+    file(GLOB _qt5_translations_files "${_qt5_real_path}/translations")
+    message("qt files to copy: ${_qt5_resources_files} ${_qt5_translations_files}")
+    file(COPY ${_qt5_resources_files} ${_qt5_translations_files} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    set_env_string_concat(QTWEBENGINEPROCESS_PATH "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/QtWebEngineProcess.exe" developer_script_string)
+  endif()
+
   if(QT_DLL_PATH)
     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} ${QT_DLL_PATH} developer_script_string)
     set_env_string_concat(QT_PLUGIN_PATH ${QT_PLUGIN_PATH} developer_script_string)
@@ -133,11 +173,12 @@ if(SV_USE_QT OR SV_USE_QT_GUI)
       set(install_script_string "${install_script_string}# Plugins Path for Qt GUI\n")
     endif()
     if(WIN32)
-      set_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/RelWithDebInfo" developer_script_string)
-      append_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/plugins/RelWithDebInfo" developer_script_string)
+      set_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/${SV_EXTERNALS_CMAKE_BUILD_TYPE}" developer_script_string)
+      append_env_string_concat(SV_PLUGIN_PATH "${MITK_DIR}/bin/plugins/${SV_EXTERNALS_CMAKE_BUILD_TYPE}" developer_script_string)
       append_env_string_concat(SV_PLUGIN_PATH "%SV_HOME%/bin/plugins" developer_script_string)
     endif()
   endif()
+  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "%SV_HOME%/bin/plugins" developer_script_string)
 endif()
 
 # Add Tcl path for win32
@@ -180,8 +221,11 @@ endforeach()
 # Add MITK if it was used (not sure why this isn't being added already)
 if (SV_USE_MITK)
   if (MITK_DIR)
-    #append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/bin" developer_script_string)
-    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/lib/plugins" developer_script_string)
+    if(WIN32)
+      append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/bin/plugins/${SV_EXTERNALS_CMAKE_BUILD_TYPE}" developer_script_string)
+    else()
+      append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/lib/plugins" developer_script_string)
+    endif()
   endif()
 endif()
 
@@ -195,6 +239,12 @@ endif()
 #----------------------------------------------------------------------------
 set_env_string_concat(QT_QPA_FONTDIR "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/fonts" install_script_string)
 
+if(LINUX)
+set_env_string_concat(QTWEBENGINEPROCESS_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/bin/QtWebEngineProcess" install_script_string)
+endif()
+if(WIN32)
+set_env_string_concat(QTWEBENGINEPROCESS_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/bin/QtWebEngineProcess.exe" install_script_string)
+endif()
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
@@ -250,6 +300,7 @@ if(SV_USE_PYTHON)
   if(SV_PYTHON_DIR)
     set_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
   endif()
+
   append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
   set_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_PYTHON_LIBRARY_DIR}/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
   if(NOT SV_ENABLE_DISTRIBUTION)
@@ -257,10 +308,16 @@ if(SV_USE_PYTHON)
   endif()
 
   # Add to PYTHONHOME or PYTHONPATH if SITE_PACAKGES information is given
-	if(VTK_PYTHON_SITE_PACKAGES)
-	  append_env_string_concat(PYTHONPATH "${VTK_PYTHON_SITE_PACKAGES}" developer_script_string)
+  if(VTK_PYTHON_SITE_PACKAGES)
+     append_env_string_concat(PYTHONPATH "${VTK_PYTHON_SITE_PACKAGES}" developer_script_string)
   endif()
-  if(PYTHON_SITE_PACKAGES)
+  
+  get_filename_component(_sv_python_site_packages "${SV_SOURCE_DIR}/../Python/site-packages" ABSOLUTE)
+  append_env_string_concat(PYTHONPATH "${_sv_python_site_packages}" developer_script_string)
+
+  append_env_string_concat(PYTHONPATH "%SV_PLUGIN_PATH%" developer_script_string)
+
+if(PYTHON_SITE_PACKAGES)
     append_env_string_concat(PYTHONPATH "${PYTHON_SITE_PACKAGES}" developer_script_string)
     append_env_string_concat(PYTHONPATH "${PYTHON_CORE_PACKAGES}" developer_script_string)
     append_env_string_concat(PATH "${PYTHON_DLL_PATH}" developer_script_string)
@@ -289,6 +346,7 @@ append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin" 
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/lib/plugins" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/lib" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin/RelWithDebInfo" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin/Release" developer_script_string)
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------

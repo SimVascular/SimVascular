@@ -82,7 +82,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupi
 
   virtual void MergeTracts(vtkPolyData* centerlineTracts);
 
-  void SplitCenterline(vtkPolyData* input, vtkIdType cellId, int numberOfSplittingPoints, const vtkIdType* subIds, const double* pcoords, const int* tractBlanking, vtkPolyData* splitCenterline);
+  virtual void SplitCenterline(vtkPolyData* input, vtkIdType cellId, int numberOfSplittingPoints, const vtkIdType* subIds, const double* pcoords, const int* tractBlanking, vtkPolyData* splitCenterline);
 
   void MakeGroupIdsAdjacent(vtkPolyData* centerlineTracts);
   void MakeTractIdsAdjacent(vtkPolyData* centerlineTracts);

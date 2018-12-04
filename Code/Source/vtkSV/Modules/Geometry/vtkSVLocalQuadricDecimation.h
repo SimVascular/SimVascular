@@ -41,20 +41,19 @@
 #ifndef vtkSVLocalQuadricDecimation_h
 #define vtkSVLocalQuadricDecimation_h
 
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkSVGeometryModule.h" // for export
 
-class vtkEdgeTable;
-class vtkIdList;
-class vtkPointData;
-class vtkPriorityQueue;
-class vtkDoubleArray;
+#include "vtkEdgeTable.h"
+#include "vtkDoubleArray.h"
+#include "vtkIdList.h"
+#include "vtkPolyDataAlgorithm.h"
+#include "vtkPriorityQueue.h"
 
 class VTKSVGEOMETRY_EXPORT vtkSVLocalQuadricDecimation : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkSVLocalQuadricDecimation, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkSVLocalQuadricDecimation *New();
 
   //@{
@@ -143,7 +142,7 @@ protected:
   vtkSVLocalQuadricDecimation();
   ~vtkSVLocalQuadricDecimation();
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   // Description:
   // Do the dirty work of eliminating the edge; return the number of

@@ -33,12 +33,13 @@
 
 #include "vtkCellArray.h"
 #include "vtkCleanPolyData.h"
-#include "vtkSVNURBSUtils.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkSparseArray.h"
+
 #include "vtkSVGlobals.h"
+#include "vtkSVNURBSUtils.h"
 
 // ----------------------
 // StandardNewMacro
@@ -57,20 +58,17 @@ vtkSVNURBSSurface::vtkSVNURBSSurface()
   this->UDegree                = 0;
   this->VDegree                = 0;
   this->UClamped               = 1;
+  this->VClamped               = 1;
   this->UClosed                = 0;
   this->VClosed                = 0;
 
   this->ControlPointGrid    = vtkSVControlGrid::New();
 
   for (int i=0; i<2; i++)
-  {
     this->UVKnotVectors[i] = vtkDoubleArray::New();
-    this->UVWeights[i]     = vtkDoubleArray::New();
-  }
+
   this->UKnotVector = this->UVKnotVectors[0];
   this->VKnotVector = this->UVKnotVectors[1];
-  this->UWeights = this->UVWeights[0];
-  this->VWeights = this->UVWeights[1];
 
   this->SurfaceRepresentation = vtkPolyData::New();
 }
@@ -89,10 +87,6 @@ vtkSVNURBSSurface::~vtkSVNURBSSurface()
     if (this->UVKnotVectors[i] != NULL)
     {
       this->UVKnotVectors[i]->Delete();
-    }
-    if (this->UVWeights[i] != NULL)
-    {
-      this->UVWeights[i]->Delete();
     }
   }
 
@@ -119,8 +113,6 @@ void vtkSVNURBSSurface::DeepCopy(vtkSVNURBSSurface *src)
   this->ControlPointGrid->DeepCopy(src->GetControlPointGrid());
   this->UKnotVector->DeepCopy(src->GetUKnotVector());
   this->VKnotVector->DeepCopy(src->GetVKnotVector());
-  this->UWeights->DeepCopy(src->GetUWeights());
-  this->VWeights->DeepCopy(src->GetVWeights());
 
   this->SurfaceRepresentation->DeepCopy(src->GetSurfaceRepresentation());
 }
@@ -169,6 +161,320 @@ vtkSVNURBSSurface* vtkSVNURBSSurface::GetData(vtkInformationVector* v, int i)
 }
 
 // ----------------------
+// IncreaseDegree
+// ----------------------
+int vtkSVNURBSSurface::IncreaseDegree(const int numberOfIncreases, const int dim)
+{
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newUKnots);
+  vtkNew(vtkDoubleArray, newVKnots);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  if (vtkSVNURBSUtils::IncreaseDegree(this->ControlPointGrid,
+                                      this->UKnotVector,
+                                      this->UDegree,
+                                      this->VKnotVector,
+                                      this->VDegree,
+                                      dim, numberOfIncreases,
+                                      newControlPoints,
+                                      newUKnots, newVKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error on degree elevation");
+    return SV_ERROR;
+  }
+
+  int dims[3];
+  newControlPoints->GetDimensions(dims);
+  if (dim == 0)
+  {
+    if (dims[0]+this->UDegree+numberOfIncreases+1 != newUKnots->GetNumberOfTuples())
+    {
+      vtkErrorMacro("Error in setting the correct control points and knots during surface degree elevation");
+      return SV_ERROR;
+    }
+  }
+  else if (dim == 1)
+  {
+    if (dims[1]+this->VDegree+numberOfIncreases+1 != newVKnots->GetNumberOfTuples())
+    {
+      vtkErrorMacro("Error in setting the correct control points and knots during surface degree elevation");
+      return SV_ERROR;
+    }
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetUKnotVector(newUKnots);
+  this->SetVKnotVector(newVKnots);
+  if (dim == 0)
+    this->UDegree += numberOfIncreases;
+  else if (dim == 1)
+    this->VDegree += numberOfIncreases;
+
+  return SV_OK;
+}
+
+// ----------------------
+// DecreaseDegree
+// ----------------------
+int vtkSVNURBSSurface::DecreaseDegree(const double tolerance, const int dim)
+{
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newUKnots);
+  vtkNew(vtkDoubleArray, newVKnots);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  if (vtkSVNURBSUtils::DecreaseDegree(this->ControlPointGrid,
+                                      this->UKnotVector,
+                                      this->UDegree,
+                                      this->VKnotVector,
+                                      this->VDegree,
+                                      dim,
+                                      tolerance,
+                                      newControlPoints,
+                                      newUKnots, newVKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error on degree elevation");
+    return SV_ERROR;
+  }
+
+  int dims[3];
+  newControlPoints->GetDimensions(dims);
+  if (dim == 0)
+  {
+    if (dims[0]+this->UDegree != newUKnots->GetNumberOfTuples())
+    {
+      vtkErrorMacro("Error in setting the correct control points and knots during surface degree elevation");
+      return SV_ERROR;
+    }
+  }
+  else if (dim == 1)
+  {
+    if (dims[1]+this->VDegree != newVKnots->GetNumberOfTuples())
+    {
+      vtkErrorMacro("Error in setting the correct control points and knots during surface degree elevation");
+      return SV_ERROR;
+    }
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetUKnotVector(newUKnots);
+  this->SetVKnotVector(newVKnots);
+  if (dim == 0)
+    this->UDegree -= 1;
+  else if (dim == 1)
+    this->VDegree -= 1;
+
+  return SV_OK;
+}
+
+// ----------------------
+// InsertKnot
+// ----------------------
+int vtkSVNURBSSurface::InsertKnot(const double newKnot, const int dim, const int numberOfInserts)
+{
+  int p;
+  if (dim == 0)
+    p = this->UDegree;
+  else if(dim == 1)
+    p = this->VDegree;
+
+  // Get the location of the knot
+  int span=0;
+  vtkSVNURBSUtils::FindSpan(p, newKnot, this->UVKnotVectors[dim], span);
+
+  // If the value at the location is our value, we need to get current mult
+  int mult=0;
+  if(this->UVKnotVectors[dim]->GetTuple1(span) == newKnot)
+  {
+    int i=span;
+    int count = 1;
+    while(this->UVKnotVectors[dim]->GetTuple1(i+1) == this->UVKnotVectors[dim]->GetTuple1(i) &&
+          i < this->UVKnotVectors[dim]->GetNumberOfTuples())
+    {
+      count++;
+      i++;
+    }
+    mult = count;
+  }
+
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newUKnots);
+  vtkNew(vtkDoubleArray, newVKnots);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  if (vtkSVNURBSUtils::InsertKnot(this->ControlPointGrid,
+                                  this->UKnotVector,
+                                  this->UDegree,
+                                  this->VKnotVector,
+                                  this->VDegree,
+                                  dim, newKnot, span,
+                                  mult, numberOfInserts,
+                                  newControlPoints,
+                                  newUKnots, newVKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error on knot insertion");
+    return SV_ERROR;
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetUKnotVector(newUKnots);
+  this->SetVKnotVector(newVKnots);
+
+  return SV_OK;
+}
+
+// ----------------------
+// InsertKnots
+// ----------------------
+int vtkSVNURBSSurface::InsertKnots(vtkDoubleArray *newKnots, const int dim)
+{
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newUKnotSpan);
+  vtkNew(vtkDoubleArray, newVKnotSpan);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  if (vtkSVNURBSUtils::KnotRefinement(this->ControlPointGrid,
+                                      this->UKnotVector,
+                                      this->UDegree,
+                                      this->VKnotVector,
+                                      this->VDegree,
+                                      dim, newKnots,
+                                      newControlPoints,
+                                      newUKnotSpan, newVKnotSpan) != SV_OK)
+  {
+    vtkErrorMacro("Error on knot insertion");
+    return SV_ERROR;
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetUKnotVector(newUKnotSpan);
+  this->SetVKnotVector(newVKnotSpan);
+
+  return SV_OK;
+}
+
+// ----------------------
+// RemoveKnot
+// ----------------------
+int vtkSVNURBSSurface::RemoveKnot(const double removeKnot, const int dim, const int numberOfRemovals, const double tolerance)
+{
+  int p;
+  if (dim == 0)
+    p = this->UDegree;
+  else if(dim == 1)
+    p = this->VDegree;
+
+  // Get the location of the knot
+  int knotIndex = -1;
+  for (int i=0; i<this->UVKnotVectors[dim]->GetNumberOfTuples(); i++)
+  {
+    if (this->UVKnotVectors[dim]->GetTuple1(i) == removeKnot)
+    {
+      knotIndex = i;
+      break;
+    }
+  }
+
+  if (knotIndex == -1)
+  {
+    vtkErrorMacro("Knot value was not found in span");
+    return SV_ERROR;
+  }
+
+  if (this->RemoveKnotAtIndex(knotIndex, dim, numberOfRemovals, tolerance) != SV_OK)
+    return SV_ERROR;
+
+  return SV_OK;
+}
+
+// ----------------------
+// RemoveKnotAtIndex
+// ----------------------
+int vtkSVNURBSSurface::RemoveKnotAtIndex(const int knotIndex, const int dim,
+                                         const int numberOfRemovals, const double tolerance)
+{
+  int p;
+  if (dim == 0)
+    p = this->UDegree;
+  else if(dim == 1)
+    p = this->VDegree;
+
+  double removeKnot = this->UVKnotVectors[dim]->GetTuple1(knotIndex);
+  int mult;
+  if (vtkSVNURBSUtils::FindKnotMultiplicity(knotIndex, removeKnot, this->UVKnotVectors[dim], mult) != SV_OK)
+  {
+    vtkErrorMacro("Error in getting multiplicity");
+    return SV_ERROR;
+  }
+
+  // Set up new knots and points
+  vtkNew(vtkDoubleArray, newUKnots);
+  vtkNew(vtkDoubleArray, newVKnots);
+  vtkNew(vtkSVControlGrid, newControlPoints);
+
+  if (vtkSVNURBSUtils::RemoveKnot(this->ControlPointGrid,
+                                  this->UKnotVector,
+                                  this->UDegree,
+                                  this->VKnotVector,
+                                  this->VDegree,
+                                  dim, removeKnot, knotIndex,
+                                  mult, numberOfRemovals,
+                                  tolerance,
+                                  newControlPoints,
+                                  newUKnots, newVKnots) != SV_OK)
+  {
+    vtkErrorMacro("Error on knot insertion");
+    return SV_ERROR;
+  }
+
+  // Replace existing data with new data
+  this->SetControlPointGrid(newControlPoints);
+  this->SetUKnotVector(newUKnots);
+  this->SetVKnotVector(newVKnots);
+
+  return SV_OK;
+}
+
+// ----------------------
+// SetUKnotVector
+// ----------------------
+int vtkSVNURBSSurface::SetUKnotVector(vtkDoubleArray *knots)
+{
+  this->UKnotVector->DeepCopy(knots);
+  this->NumberOfUKnotPoints = this->UKnotVector->GetNumberOfTuples();
+  return SV_OK;
+}
+
+// ----------------------
+// SetVKnotVector
+// ----------------------
+int vtkSVNURBSSurface::SetVKnotVector(vtkDoubleArray *knots)
+{
+  this->VKnotVector->DeepCopy(knots);
+  this->NumberOfVKnotPoints = this->VKnotVector->GetNumberOfTuples();
+  return SV_OK;
+}
+
+// ----------------------
+// SetControlPointGrid
+// ----------------------
+int vtkSVNURBSSurface::SetControlPointGrid(vtkSVControlGrid *controlPoints)
+{
+  this->ControlPointGrid->DeepCopy(controlPoints);
+  int dim[3];
+  controlPoints->GetDimensions(dim);
+  this->ControlPointGrid->SetDimensions(dim);
+  this->NumberOfUControlPoints = dim[0];
+  this->NumberOfVControlPoints = dim[1];
+
+ return SV_OK;
+}
+
+// ----------------------
 // SetControlPoints
 // ----------------------
 void vtkSVNURBSSurface::SetControlPoints(vtkStructuredGrid *points2d)
@@ -186,12 +492,6 @@ void vtkSVNURBSSurface::SetControlPoints(vtkStructuredGrid *points2d)
     ->SetNumberOfTuples(dim[0]*dim[1]);
   this->ControlPointGrid->GetPointData()->GetArray("Weights")
     ->FillComponent(0, 1.0);
-
-  // Set and fill the components of weights
-  this->UWeights->SetNumberOfTuples(dim[0]);
-  this->UWeights->FillComponent(0, 1.0);
-  this->VWeights->SetNumberOfTuples(dim[1]);
-  this->VWeights->FillComponent(0, 1.0);
 
   // Update number of control points
   this->NumberOfUControlPoints = dim[0];
@@ -251,6 +551,12 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
 		                                                  const double vSpacing)
 {
   // Get number of control points and knots
+  int dim[3];
+  this->ControlPointGrid->GetDimensions(dim);
+  this->NumberOfUControlPoints = dim[0];
+  this->NumberOfVControlPoints = dim[1];
+  this->NumberOfUKnotPoints = this->UKnotVector->GetNumberOfTuples();
+  this->NumberOfVKnotPoints = this->VKnotVector->GetNumberOfTuples();
   int nUCon  = this->NumberOfUControlPoints;
   int nVCon  = this->NumberOfVControlPoints;
   int nUKnot = this->NumberOfUKnotPoints;
@@ -288,11 +594,6 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
   vtkNew(vtkSparseArray<double>, NUfinal);
   NUfinal->Resize(numUDiv, nUCon);
 
-  // Get double array for rational basis functions
-  vtkNew(vtkDoubleArray, NUrational);
-  NUrational->SetNumberOfTuples(numUDiv);
-  NUrational->FillComponent(0, 0.0);
-
   // Loop through control points
   for (int i=0; i<nUCon; i++)
   {
@@ -311,30 +612,6 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
   // Last value should be 1
   NUfinal->SetValue(numUDiv-1, nUCon-1, 1.0);
 
-  // Multiply by weights for rational curve
-  for (int i=0; i<numUDiv; i++)
-  {
-    double ratVal = 0.0;
-    for (int j=0; j<nUCon; j++)
-    {
-      double val = NUfinal->GetValue(i, j);
-      double ratWeight = this->UWeights->GetTuple1(j);
-      ratVal = ratVal + val*ratWeight;
-    }
-    NUrational->SetTuple1(i, ratVal);
-  }
-  // Now that we have denominator, calculate numerators!
-  for (int i=0; i<numUDiv; i++)
-  {
-    for (int j=0; j<nUCon; j++)
-    {
-      double val       = NUfinal->GetValue(i, j);
-      double ratVal    = NUrational->GetTuple1(i);
-      double ratWeight = this->UWeights->GetTuple1(j);
-      NUfinal->SetValue(i, j, val*ratWeight/ratVal);
-    }
-  }
-
   // V direction!
   // -----------------------------------------------------------------------
   int numVDiv = ceil(1.0/vSpacing);
@@ -348,11 +625,6 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
   // Get sparse array for basis functions
   vtkNew(vtkSparseArray<double>, NVfinal);
   NVfinal->Resize(numVDiv, nVCon);
-
-  // Get double array for rational basis functions
-  vtkNew(vtkDoubleArray, NVrational);
-  NVrational->SetNumberOfTuples(numVDiv);
-  NVrational->FillComponent(0, 0.0);
 
   // Loop through control points
   for (int i=0; i<nVCon; i++)
@@ -374,49 +646,29 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
   // Last value should be 1
   NVfinal->SetValue(numVDiv-1, nVCon-1, 1.0);
 
-  // Multiply by weights for rational curve
-  for (int i=0; i<numVDiv; i++)
-  {
-    double ratVal = 0.0;
-    for (int j=0; j<nVCon; j++)
-    {
-      double val = NVfinal->GetValue(i, j);
-      double ratWeight = this->VWeights->GetTuple1(j);
-      ratVal = ratVal + val*ratWeight;
-    }
-    NVrational->SetTuple1(i, ratVal);
-  }
-  // Now that we have denominator, calculate numerators!
-  for (int i=0; i<numVDiv; i++)
-  {
-    for (int j=0; j<nVCon; j++)
-    {
-      double val       = NVfinal->GetValue(i, j);
-      double ratVal    = NVrational->GetTuple1(i);
-      double ratWeight = this->VWeights->GetTuple1(j);
-      NVfinal->SetValue(i, j, val*ratWeight/ratVal);
-    }
-  }
-
   vtkNew(vtkSparseArray<double>, NVfinalT);
   vtkSVNURBSUtils::MatrixTranspose(NVfinal, 0, NVfinalT);
   //Get the physical points on the surface!
   // -----------------------------------------------------------------------
+  // When dealing with the rational of NURBS, need to multiply points by
+  // weights when sending through matrix multiplication. However, still need
+  // fourth spot in point, weight vector because in the end, we will need
+  // to divide by the total weight
   vtkNew(vtkDenseArray<double>, tmpControlGrid);
-  vtkSVNURBSUtils::StructuredGridToTypedArray(this->ControlPointGrid, tmpControlGrid);
+  vtkSVNURBSUtils::ControlGridToTypedArraySPECIAL(this->ControlPointGrid, tmpControlGrid);
 
   // Do first matrix multiply with u basis functions
   vtkNew(vtkDenseArray<double>, tmpUGrid);
-  if (vtkSVNURBSUtils::MatrixMatrixMultiply(NUfinal, 0, tmpControlGrid, 1, tmpUGrid) != SV_OK)
+  if (vtkSVNURBSUtils::MatrixMatrixMultiply(NUfinal, 0, 1, tmpControlGrid, 1, 4, tmpUGrid) != SV_OK)
   {
-    fprintf(stderr, "Error in matrix multiply\n");
+    vtkErrorMacro("Error in matrix multiply");
     return SV_ERROR;
   }
   // Do second matrix multiply with v basis functions
   vtkNew(vtkDenseArray<double>, tmpVGrid);
-  if (vtkSVNURBSUtils::MatrixMatrixMultiply(tmpUGrid, 1, NVfinalT, 0, tmpVGrid) != SV_OK)
+  if (vtkSVNURBSUtils::MatrixMatrixMultiply(tmpUGrid, 1, 4, NVfinalT, 0, 1, tmpVGrid) != SV_OK)
   {
-    fprintf(stderr, "Error in matrix multiply\n");
+    vtkErrorMacro("Error in matrix multiply");
     return SV_ERROR;
   }
 
@@ -424,7 +676,7 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
   vtkNew(vtkStructuredGrid, finalGrid);
   vtkNew(vtkPoints, tmpVPoints);
   finalGrid->SetPoints(tmpVPoints);
-  vtkSVNURBSUtils::TypedArrayToStructuredGrid(tmpVGrid, finalGrid);
+  vtkSVNURBSUtils::TypedArrayToStructuredGridRational(tmpVGrid, finalGrid);
 
   // Get grid connectivity for pointset
   vtkNew(vtkCellArray, surfaceCells);
@@ -473,6 +725,53 @@ int vtkSVNURBSSurface::GetMultiplicity(const int dim, vtkIntArray *multiplicity,
   vtkSVNURBSUtils::GetMultiplicity(this->UVKnotVectors[dim], multiplicity, singleKnots);
   return SV_OK;
 }
+
+// ----------------------
+// ExtractBezierStrips
+// ----------------------
+int vtkSVNURBSSurface::ExtractBezierStrips(const int dim, vtkSVNURBSCollection *surfaces)
+{
+  if (vtkSVNURBSUtils::SurfaceBezierExtraction(this->ControlPointGrid,
+                                               this->UKnotVector, this->UDegree,
+                                               this->VKnotVector, this->VDegree,
+                                               dim,
+                                               surfaces) != SV_OK)
+  {
+    vtkErrorMacro("Error in extraction of the bezier strips");
+    return SV_ERROR;
+  }
+  return SV_OK;
+}
+
+// ----------------------
+// ExtractBezierStrips
+// ----------------------
+int vtkSVNURBSSurface::ExtractBezierPatches(vtkSVNURBSCollection *surfaces)
+{
+  vtkNew(vtkSVNURBSCollection, surfaceStrips);
+  this->ExtractBezierStrips(0, surfaceStrips);
+
+  for (int i=0; i<surfaceStrips->GetNumberOfItems(); i++)
+  {
+    vtkSVNURBSSurface *tmpSurface = static_cast<vtkSVNURBSSurface *>(surfaceStrips->GetItem(i));
+
+    vtkNew(vtkSVNURBSCollection, surfacePatches);
+    if (vtkSVNURBSUtils::SurfaceBezierExtraction(tmpSurface->GetControlPointGrid(),
+                                                 tmpSurface->GetUKnotVector(), tmpSurface->GetUDegree(),
+                                                 tmpSurface->GetVKnotVector(), tmpSurface->GetVDegree(),
+                                                 1,
+                                                 surfacePatches) != SV_OK)
+    {
+      vtkErrorMacro("Error in extraction of the bezier strips");
+      return SV_ERROR;
+    }
+
+    for (int j=0; j<surfacePatches->GetNumberOfItems(); j++)
+      surfaces->AddItem(surfacePatches->GetItem(j));
+  }
+  return SV_OK;
+}
+
 
 // ----------------------
 // GetStructuredGridConnectivity

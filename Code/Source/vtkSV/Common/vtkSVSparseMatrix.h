@@ -52,7 +52,7 @@ class VTKSVCOMMON_EXPORT vtkSVSparseMatrix : public vtkObject
 public:
   static vtkSVSparseMatrix *New();
   vtkTypeMacro(vtkSVSparseMatrix,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{
   /// \breif Get/Set for number of rows

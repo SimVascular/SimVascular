@@ -48,12 +48,14 @@
 #include "vtkMath.h"
 #include "vtkCellArray.h"
 #include "vtkEdgeTable.h"
+#include "vtkErrorCode.h"
 #include "vtkIdList.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
+
 #include "vtkSVGlobals.h"
 
 // ----------------------

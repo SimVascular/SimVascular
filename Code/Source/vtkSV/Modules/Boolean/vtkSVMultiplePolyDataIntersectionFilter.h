@@ -28,11 +28,10 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /**
  *  \class vtkSVMultiplePolyDataIntersectionFilter
  *  \brief This is the filter to perform the intersection between multiple
- *  vessels.
+ *  objects.
  *
  *  \author Adam Updegrove
  *  \author updega2@gmail.com
@@ -43,10 +42,10 @@
 #ifndef vtkSVMultiplePolyDataIntersectionFilter_h
 #define vtkSVMultiplePolyDataIntersectionFilter_h
 
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkSVBooleanModule.h" // For export macro
 
 #include "vtkPolyData.h"
+#include "vtkPolyDataAlgorithm.h"
 
 class VTKSVBOOLEAN_EXPORT vtkSVMultiplePolyDataIntersectionFilter : public vtkPolyDataAlgorithm
 {
@@ -54,7 +53,7 @@ public:
   static vtkSVMultiplePolyDataIntersectionFilter *New();
 
   vtkTypeMacro(vtkSVMultiplePolyDataIntersectionFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{
   /// \details UserManagedInputs allows the user to set inputs by number instead of
@@ -155,10 +154,10 @@ protected:
 
   // Usual data generation method
   virtual int RequestData(vtkInformation *,
-                          vtkInformationVector **, vtkInformationVector *);
+                          vtkInformationVector **, vtkInformationVector *) override;
   virtual int RequestUpdateExtent(vtkInformation *,
-                                  vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int, vtkInformation *);
+                                  vtkInformationVector **, vtkInformationVector *) override;
+  virtual int FillInputPortInformation(int, vtkInformation *) override;
 
   //User defined booleans for filter management
   int UserManagedInputs;

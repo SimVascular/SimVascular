@@ -715,7 +715,6 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
           }
         else
           {
-          fprintf(stdout,"Problem splitting cell\n");
           vtkDebugWithObjectMacro(this->ParentFilter, <<"Error in splitting cell!");
           }
         }
@@ -1462,7 +1461,6 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl
     {
     ptBool[ptId] = false;
     }
-  //fprintf(stdout,"Number Of Cells: %d\n", numCells);
     vtkDebugWithObjectMacro(this->ParentFilter, <<"Number Of Cells: "<<numCells);
   for (vtkIdType lineId = 0; lineId < numCells; lineId++)
     {
@@ -1829,8 +1827,6 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl::GetLoopOrientation(
     //The area is very small for these three based upon the transformed pd
     //from the cells original three points. Get a new transform from these
     //interior three points to make sure the area is correct
-    fprintf(stdout,"Very small area triangle\n");
-    fprintf(stdout,"Double check area\n");
     vtkDebugWithObjectMacro(this->ParentFilter, <<"Very Small Area Triangle");
     vtkDebugWithObjectMacro(this->ParentFilter, <<"Double check area with more accurate transform");
     vtkNew(vtkPoints, testPoints);
@@ -1869,13 +1865,11 @@ int vtkSVLoopIntersectionPolyDataFilter::Impl::GetLoopOrientation(
     newTransformer->GetOutput()->GetPoint(1, pt2);
     newTransformer->GetOutput()->GetPoint(2, pt3);
 
-    fprintf(stdout,"Area was\n");
     vtkDebugWithObjectMacro(this->ParentFilter, <<"Area was: "<<area);
     area = 0;
     area = area + (pt1[0]*pt2[1])-(pt2[0]*pt1[1]);
     area = area + (pt2[0]*pt3[1])-(pt3[0]*pt2[1]);
     area = area + (pt3[0]*pt1[1])-(pt1[0]*pt3[1]);
-    fprintf(stdout,"Corrected area is %.4f\n", area);
     vtkDebugWithObjectMacro(this->ParentFilter, <<"Corrected area is: "<<area);
     }
   if (area < 0)

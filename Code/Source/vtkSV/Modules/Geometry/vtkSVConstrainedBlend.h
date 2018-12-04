@@ -28,7 +28,6 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /** @file vtkSVConstrainedBlend.h
  *  @brief This blends using constrained smoothing, localized decimation,
  *  and localized subdivision
@@ -43,8 +42,9 @@
 #ifndef vtkSVConstrainedBlend_h
 #define vtkSVConstrainedBlend_h
 
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkSVGeometryModule.h" // for export
+
+#include "vtkPolyDataAlgorithm.h"
 #include <set>
 
 class VTKSVGEOMETRY_EXPORT vtkSVConstrainedBlend : public vtkPolyDataAlgorithm
@@ -52,7 +52,7 @@ class VTKSVGEOMETRY_EXPORT vtkSVConstrainedBlend : public vtkPolyDataAlgorithm
 public:
   static vtkSVConstrainedBlend* New();
   vtkTypeMacro(vtkSVConstrainedBlend, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{
   /// \brief Set name for cell array or point array to use for blending
@@ -136,7 +136,7 @@ protected:
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
 		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector);
+		  vtkInformationVector *outputVector) override;
 
   vtkIntArray *CellArray;
   vtkIntArray *PointArray;

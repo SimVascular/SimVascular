@@ -46,19 +46,25 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 MODULE_EXPORT_FILE_H = vtkSVParameterizationModule.h
 
 HDRS	= \
-  vtkSVGeneralizedPolycube.h \
   vtkSVPlanarMapper.h \
   vtkSVBoundaryMapper.h \
   vtkSVSquareBoundaryMapper.h \
   vtkSVSuperSquareBoundaryMapper.h \
+  vtkSVPointSetBoundaryMapper.h \
+  vtkSVParameterizeSurfaceOnPolycube.h \
+  vtkSVNewParameterizeSurfaceOnPolycube.h \
+  vtkSVParameterizeVolumeOnPolycube.h \
   vtkSVSphericalMapper.h
 
 CXXSRCS	= \
-  vtkSVGeneralizedPolycube.cxx \
   vtkSVPlanarMapper.cxx \
   vtkSVBoundaryMapper.cxx \
   vtkSVSquareBoundaryMapper.cxx \
   vtkSVSuperSquareBoundaryMapper.cxx \
+  vtkSVPointSetBoundaryMapper.cxx \
+  vtkSVParameterizeSurfaceOnPolycube.cxx \
+  vtkSVNewParameterizeSurfaceOnPolycube.cxx \
+  vtkSVParameterizeVolumeOnPolycube.cxx \
   vtkSVSphericalMapper.cxx
 
 DLLHDRS =
@@ -68,7 +74,10 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS)
 
 DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT)
+           $(SVLIBFLAG)$(SV_LIB_VTKSVIO_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVGEOMETRY_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT)
 
 TARGET_LIB_NAME = $(SV_LIB_VTKSVPARAMETERIZATION_NAME)
 

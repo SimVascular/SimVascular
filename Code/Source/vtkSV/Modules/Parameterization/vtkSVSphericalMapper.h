@@ -47,8 +47,9 @@
 #ifndef vtkSVSphericalMapper_h
 #define vtkSVSphericalMapper_h
 
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkSVParameterizationModule.h" // For exports
+
+#include "vtkPolyDataAlgorithm.h"
 
 #include "vtkEdgeTable.h"
 #include "vtkFloatArray.h"
@@ -59,7 +60,7 @@ class VTKSVPARAMETERIZATION_EXPORT vtkSVSphericalMapper : public vtkPolyDataAlgo
 public:
   static vtkSVSphericalMapper* New();
   //vtkTypeRevisionMacro(vtkSVSphericalMapper, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Print statements used for debugging
@@ -165,7 +166,7 @@ protected:
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
 		  vtkInformationVector **inputVector,
-		  vtkInformationVector *outputVector);
+		  vtkInformationVector *outputVector) override;
 
   // Main functions in filter
   int PerformMapping();

@@ -36,10 +36,36 @@ set(module vtkSVNURBS)
 
 #------------------------------------------------------------------------------
 # Core SRCS and HDRS
-set(SRCS vtkSVNURBSUtils.cxx vtkSVControlGrid.cxx vtkSVNURBSCurve.cxx vtkSVNURBSSurface.cxx
-  vtkSVLoftNURBSCurve.cxx vtkSVLoftNURBSSurface.cxx)
-set(HDRS vtkSVNURBSUtils.h   vtkSVControlGrid.h   vtkSVNURBSCurve.h   vtkSVNURBSSurface.h
-  vtkSVLoftNURBSCurve.h   vtkSVLoftNURBSSurface.h)
+set(SRCS
+  vtkSVNURBSUtils.cxx
+  vtkSVControlGrid.cxx
+  vtkSVNURBSObject.cxx
+  vtkSVNURBSCurve.cxx
+  vtkSVNURBSSurface.cxx
+  vtkSVNURBSVolume.cxx
+  vtkSVLoftNURBSCurve.cxx
+  vtkSVLoftNURBSSurface.cxx
+  vtkSVLoftNURBSVolume.cxx
+  vtkSVNURBSCollection.cxx
+  vtkSVMUPFESNURBSWriter.cxx
+  vtkSVPERIGEENURBSWriter.cxx
+  vtkSVPERIGEENURBSCollectionWriter.cxx
+  )
+set(HDRS
+  vtkSVNURBSUtils.h
+  vtkSVControlGrid.h
+  vtkSVNURBSObject.h
+  vtkSVNURBSCurve.h
+  vtkSVNURBSSurface.h
+  vtkSVNURBSVolume.h
+  vtkSVLoftNURBSCurve.h
+  vtkSVLoftNURBSSurface.h
+  vtkSVLoftNURBSVolume.h
+  vtkSVNURBSCollection.h
+  vtkSVMUPFESNURBSWriter.h
+  vtkSVPERIGEENURBSWriter.h
+  vtkSVPERIGEENURBSCollectionWriter.h
+  )
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -63,6 +89,8 @@ else()
   target_link_libraries(${lib}
     ${VTK_LIBRARIES}
     ${SV_LIB_VTKSVCOMMON_NAME}
+    ${SV_LIB_VTKSVMISC_NAME}
+    ${SV_LIB_VTKSVIO_NAME}
     )
 
   # Set up for exports
@@ -93,5 +121,22 @@ else()
       )
   endif()
 
+endif()
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# Executables
+if(VTKSV_BUILD_EXES)
+  set(EXE_LIST )
+  foreach(exe ${EXE_LIST})
+    add_executable(vtkSV${exe} ${exe}.cxx)
+    target_link_libraries(vtkSV${exe} ${VTK_LIBRARIES}
+      ${SV_LIB_VTKSVMISC_NAME}
+      ${SV_LIB_VTKSVCOMMON_NAME}
+      ${SV_LIB_VTKSVNURBS_NAME}
+      )
+    install(TARGETS vtkSV${exe}
+      RUNTIME DESTINATION ${VTKSV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables)
+  endforeach()
 endif()
 #------------------------------------------------------------------------------

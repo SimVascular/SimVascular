@@ -57,8 +57,9 @@ if(SV_USE_${proj})
     )
 
   # Set SV_HDF5_DIR to the directory that was found to contain HDF5
-  set(SV_${proj}_DIR ${${proj}_DIR})
-
+  #if(NOT LINUX)
+  #  set(SV_${proj}_DIR ${${proj}_DIR})
+  #endif()
+  
 endif()
 #-----------------------------------------------------------------------------
-

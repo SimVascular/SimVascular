@@ -92,6 +92,9 @@ include(SimVascularFunctionCheckCompilerFlags)
 set(SV_EXTERNALS_VERSION_NUMBER "2018.05" CACHE STRING "SimVascular Externals Release Version")
 mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 
+# Distribution
+option(SV_ENABLE_DISTRIBUTION "Enable Installer Build for SimVascular" OFF)
+
 if(APPLE)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
   set(SV_EXTERNALS_PREBUILT_QT_PATH "" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
@@ -105,7 +108,7 @@ elseif(LINUX)
     set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
   endif()
 elseif(WIN32)
-  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" ON)
+  option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
   if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
     set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")
   elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
@@ -173,6 +176,7 @@ ExternalProject_Add(SimVascular
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
+    -DSV_ENABLE_DISTRIBUTION:BOOL=${SV_ENABLE_DISTRIBUTION}
     -DSV_USE_FREETYPE:BOOL=ON
     ${freetype_shared_option}
     -DSV_USE_GDCM:BOOL=ON

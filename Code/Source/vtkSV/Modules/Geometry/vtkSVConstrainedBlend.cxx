@@ -41,6 +41,7 @@
 #include "vtkSVConstrainedBlend.h"
 
 #include "vtkCellData.h"
+#include "vtkErrorCode.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -158,20 +159,23 @@ int vtkSVConstrainedBlend::RequestData(vtkInformation *vtkNotUsed(request),
     //Check the input to make sure it is there
     if (numPolys < 1)
     {
-      vtkDebugMacro("No input!");
-      return SV_OK;
+      vtkErrorMacro("No input!");
+      this->SetErrorCode(vtkErrorCode::UserError + 1);
+      return SV_ERROR;
     }
 
     if (this->UsePointArray)
     {
       if (this->PointArrayName == NULL)
       {
-        std::cout<<"No PointArrayName given." << endl;
+        vtkErrorMacro("No PointArrayName given.");
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
       if (this->GetArrays(input,0) != 1)
       {
-        std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
+        vtkErrorMacro("No Point Array Named " << this->PointArrayName << " on surface");
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
     }
@@ -179,12 +183,14 @@ int vtkSVConstrainedBlend::RequestData(vtkInformation *vtkNotUsed(request),
     {
       if (this->CellArrayName == NULL)
       {
-        std::cout<<"No CellArrayName given." << endl;
+        vtkErrorMacro("No CellArrayName given.");
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
       if (this->GetArrays(input,1) != 1)
       {
-        std::cout<<"No Cell Array Named "<<this->CellArrayName<<" on surface"<<endl;
+        vtkErrorMacro("No Cell Array Named " << this->CellArrayName << " on surface");
+        this->SetErrorCode(vtkErrorCode::UserError + 1);
         return SV_ERROR;
       }
     }

@@ -34,8 +34,8 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-VTKSV_DIRS = Common Filters Modules/Boolean Modules/Geometry \
-             Modules/NURBS Modules/Parameterization
+VTKSV_DIRS = Common IO Modules/Misc Modules/Geometry Modules/Boolean \
+             Modules/NURBS Modules/Parameterization Modules/Segmentation
 
 lib-complete: create_exports_outname_h lib
 

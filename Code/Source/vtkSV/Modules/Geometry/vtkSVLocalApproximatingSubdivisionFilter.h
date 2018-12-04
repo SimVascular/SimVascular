@@ -43,21 +43,21 @@
 #ifndef vtkSVLocalApproximatingSubdivisionFilter_h
 #define vtkSVLocalApproximatingSubdivisionFilter_h
 
-#include "vtkPolyDataAlgorithm.h"
 #include "vtkSVGeometryModule.h" // for export
 
-class vtkCellArray;
-class vtkCellData;
-class vtkIdList;
-class vtkIntArray;
-class vtkPoints;
-class vtkPointData;
+#include "vtkCellArray.h"
+#include "vtkCellData.h"
+#include "vtkIdList.h"
+#include "vtkIntArray.h"
+#include "vtkPolyDataAlgorithm.h"
+#include "vtkPointData.h"
+#include "vtkPoints.h"
 
 class VTKSVGEOMETRY_EXPORT vtkSVLocalApproximatingSubdivisionFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkSVLocalApproximatingSubdivisionFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{
   /// \brief Get/Set the number of subdivision iterations to perform
@@ -88,7 +88,7 @@ protected:
   vtkSVLocalApproximatingSubdivisionFilter();
   ~vtkSVLocalApproximatingSubdivisionFilter();
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   virtual int GenerateSubdivisionPoints (vtkPolyData *inputDS,
                                           vtkIntArray *edgeData,
                                           vtkPoints *outputPts,

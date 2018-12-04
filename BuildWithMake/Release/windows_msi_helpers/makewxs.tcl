@@ -40,6 +40,7 @@ set TCL_LIBRARY_TAIL [file tail [lindex $argv 8]]
 set TK_LIBRARY_TAIL [file tail [lindex $argv 9]]
 set PYTHON_MAJOR_VERSION [lindex $argv 10]
 set PYTHON_MINOR_VERSION [lindex $argv 11]
+set SV_CMAKE_BUILD_TYPE [lindex $argv 12]
 
 puts "SV_FILES $SV_FILES"
 
@@ -68,7 +69,8 @@ proc file_find {dir wildcard args} {
   global TK_LIBRARY_TAIL
   global PYTHON_MAJOR_VERSION
   global PYTHON_MINOR_VERSION
-
+  global SV_CMAKE_BUILD_TYPE
+  
   if {[llength $args] == 0} {
      set rtnme {}
   } else {
@@ -107,7 +109,7 @@ proc file_find {dir wildcard args} {
 	  puts $outfp "<Registry Id='regid8' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonHome' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5' />"
 	  puts $outfp "<Registry Id='regid9' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonPackagesDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Lib\\vtk-packages;\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
 	}
-	puts $outfp "<Registry Id='regid10' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='SV_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\RelWithDebInfo;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\RelWithDebInfo;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
+	puts $outfp "<Registry Id='regid10' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='SV_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
 	puts $outfp "<Registry Id='regid11' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='QT_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\qt-plugins' />"
 
     }
@@ -121,12 +123,18 @@ proc file_find {dir wildcard args} {
           if {[file tail $i] == $SV_EXECUTABLE} {
             global curdirID
 	    puts $outfp "<File Id='id[format %04i $id]' Name='[file tail $i]' Source='$i' DiskId='1'>"
-            puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl --ignore-pro' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
-	    puts $outfp "<Shortcut Id='ids13' Directory='DesktopFolder' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl --ignore-pro' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids13' Directory='ProgramMenuDir' Name='$SV_VERSION-Python-Shell' Arguments='-python' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids14' Directory='ProgramMenuDir' Name='$SV_VERSION-Tcl-Tk' Arguments='-tk' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids15' Directory='ProgramMenuDir' Name='$SV_VERSION-Tcl-Shell' Arguments='-tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids16' Directory='DesktopFolder' Name='$SV_VERSION' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
             puts $outfp "</File>"
             #puts $outfp "<RemoveFolder Directory='ProgramMenuDir' Name='$SV_VERSION' On='uninstall' />"
             puts $outfp "<RemoveFile Id='ids12' On='uninstall' Name='*.*' />"
-            puts $outfp "<RemoveFile Id='ids13' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids13' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids14' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids15' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids16' On='uninstall' Name='*.*' />"
             puts $outfp "<RegistryValue Root=\"HKCU\" Key=\"Software\Microsoft\$SV_VERSION\" Name=\"installed\" Type=\"integer\" Value=\"1\" KeyPath=\"yes\"/>"
 
             puts $outfp "<RemoveFolder Id='RemoveProgramMenuDir' Directory='ProgramMenuDir' On='uninstall' />"
@@ -180,7 +188,7 @@ set package_id [exec tmp/uuidgen.exe 1]
 set upgrade_id [exec tmp/uuidgen.exe 1]
 
 puts $outfp "<Product Name='$SV_VERSION' Id='$product_id' UpgradeCode='$upgrade_id' Language='1033' Codepage='1252' Version='$SV_FULL_VER_NO' Manufacturer='SimVascular'>"
-puts $outfp "<Package Id='$package_id' Keywords='Installer' Description='$SV_VERSION Installer' Comments='SimVascular $SV_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' Platform='x64' SummaryCodepage='1252' />"
+puts $outfp "<Package Id='$package_id' Keywords='Installer' Description='$SV_VERSION Installer' Comments='SimVascular $SV_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='200' Languages='1033' Compressed='yes' Platform='x64' SummaryCodepage='1252' />"
 
 puts $outfp "<WixVariable Id=\"WixUILicenseRtf\" Value=\"License.rtf\" />"
 puts $outfp "<WixVariable Id=\"WixUIBannerBmp\" Value=\"windows_msi_helpers/msi-banner.bmp\" />"

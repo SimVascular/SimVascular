@@ -44,22 +44,23 @@
 #ifndef vtkSVSquareBoundaryMapper_h
 #define vtkSVSquareBoundaryMapper_h
 
-#include "vtkSVBoundaryMapper.h"
 #include "vtkSVParameterizationModule.h" // For exports
 
 #include "vtkIntArray.h"
+
+#include "vtkSVBoundaryMapper.h"
 
 class VTKSVPARAMETERIZATION_EXPORT vtkSVSquareBoundaryMapper : public vtkSVBoundaryMapper
 {
 public:
   static vtkSVSquareBoundaryMapper* New();
   vtkTypeMacro(vtkSVSquareBoundaryMapper,vtkSVBoundaryMapper);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
   vtkSVSquareBoundaryMapper() {}
 
-  int SetBoundaries(); // Must be implemented
+  int SetBoundaries() override; // Must be implemented
   int CalculateSquareEdgeLengths(vtkIntArray *actualIds); // Calculate square edge lengths
   int SetSquareBoundary(vtkIntArray *actualIds); // Set the square boundary
 

@@ -44,11 +44,23 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
 
-HDRS	=
+HDRS	= 
 
-CXXSRCS = main.cxx SimVascular_Init.cxx
+CXXSRCS = main.cxx SimVascular_Init.cxx 
+
+ifeq ($(SV_USE_TCL),1)
+  HDRS += svTcl_AppInit.h
+  CXXSRCS += svTcl_AppInit.cxx
+endif
+
+ifeq ($(SV_USE_WIN32_REGISTRY),1)
+  HDRS += sv_use_win32_registry.h
+  CXXSRCS += sv_use_win32_registry.cxx
+endif
 
 ifeq ($(SV_USE_PYTHON),1)
+   HDRS    += PythonShell_Init.h
+   CXXSRCS += PythonShell_Init.cxx
 #  CXXSRCS += SimVascular_Init_py.cxx
 #  SV_LINK_WITH_INTERPRETER_LIBS = 1
 endif
@@ -164,6 +176,7 @@ LFLAGS +=  \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_PLUGIN_APPLICATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_PROJECTDATANODES_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_MODELING_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_PATHPLANNING_NAME)$(LIBLINKEXT) \
@@ -211,11 +224,13 @@ LFLAGS += \
         $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT)
 
 LFLAGS +=  $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVIO_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT) \
            $(SVLIBFLAG)$(SV_LIB_VTKSVGEOMETRY_NAME)$(LIBLINKEXT) \
            $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
            $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVPARAMETERIZATION_NAME)$(LIBLINKEXT)
+           $(SVLIBFLAG)$(SV_LIB_VTKSVPARAMETERIZATION_NAME)$(LIBLINKEXT) \
+           $(SVLIBFLAG)$(SV_LIB_VTKSVSEGMENTATION_NAME)$(LIBLINKEXT)
 
 # need to explicitly add in globals for executable
 ifeq ($(SV_USE_GLOBALS_SHARED),1)
@@ -253,9 +268,6 @@ TARGET_EXE = $(TOP)/Bin/simvascular.exe
 shared: pre directories $(TARGET_EXE_FULL)
 
 static: pre directories $(TARGET_EXE_FULL)
-
-moc:
-	$(foreach name,$(HDRS),$(shell $(QT_MOC_PARSER) $(QT_DEFS) $(QT_MOC_INCDIRS) $(EXTRA_MOC_INCDIRS) $(name) -o moc_$(basename $(notdir $(name))).cxx))
 
 # only for static case
 $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT):
@@ -303,12 +315,13 @@ ifneq ($(SV_STATIC_BUILD),1)
 	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT)
 endif
 endif
+  # had to remove vtk libdirs for mine to compile on mac
+	#-install_name_tool -add_rpath $(VTK_LIBDIRS) $(TARGET_EXE_FULL)
 ifeq ($(CLUSTER),x64_macosx)
 	-install_name_tool -add_rpath $(TCLTK_SO_PATH) $(TARGET_EXE_FULL)
 	-install_name_tool -add_rpath $(VTK_TCL_LIB_PATH) $(TARGET_EXE_FULL)
 	-install_name_tool -add_rpath $(VTK_SO_PATH) $(TARGET_EXE_FULL)
 	-install_name_tool -add_rpath $(VTK_BINDIR) $(TARGET_EXE_FULL)
-	-install_name_tool -add_rpath $(VTK_LIBDIRS) $(TARGET_EXE_FULL)
 ifeq ($(SV_USE_GDCM),1)
 	-install_name_tool -add_rpath $(SV_GDCM_SO_PATH) $(TARGET_EXE_FULL)
 endif
@@ -351,7 +364,6 @@ clean:
 	for fn in $(TARGET_EXE_FULL)*; do /bin/rm -f $$fn; done
 	for fn in $(basename $(TARGET_EXE_FULL)).*;do /bin/rm -f $$fn; done
 	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
-	for fn in moc_*.cxx; do /bin/rm -f $$fn;done
 	for fn in coffbase.txt; do /bin/rm -f $$fn;done
 
 veryclean: clean

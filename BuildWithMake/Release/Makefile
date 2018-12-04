@@ -117,7 +117,7 @@ else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
 endif
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) sv.bat $(SV_VERSION) $(SV_FULL_VER_NO) $(TCL_LIBRARY) $(TK_LIBRARY) $(PYTHON_MAJOR_VERSION) $(PYTHON_MINOR_VERSION)
+	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) sv.bat $(SV_VERSION) $(SV_FULL_VER_NO) $(TCL_LIBRARY) $(TK_LIBRARY) $(PYTHON_MAJOR_VERSION) $(PYTHON_MINOR_VERSION) $(SV_CMAKE_BUILD_TYPE)
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."
@@ -233,15 +233,23 @@ ifeq ($(SV_USE_PYTHON),1)
 #	-cp -fR $(PYTHON_HOME)/Lib $(DIST_DIR)/python-packages
 #	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
 	-cp -fR $(PYTHON_HOME) $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)
-	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/lib/python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/site-packages/vtk-packages
+ifeq ($(CLUSTER), x64_cygwin)
+	-cp -fR $(VTK_PYTHON_PACKAGES)/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
+else
+	-cp -fR $(VTK_PYTHON_PACKAGES)/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/lib/python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/site-packages
+endif
+	-cp -fR $(TOP)/../Python/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 #	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
 endif
 ifeq ($(SV_USE_QT),1)
 ifeq ($(CLUSTER), x64_cygwin)
+# need dummy exec since windeployqt no longer recognizes are exe as a qt app...
+# also need QtWebEngine in the dir with exe unless we set env variable!
+	-cp -f $(QT_WEBENGINE_PATH) $(DIST_DIR)
 	-$(QT_TOP_DIR)/bin/windeployqt $(QT_DEPLOY_FLAGS) \
                                        -plugindir `cygpath -m $(DIST_DIR)/qt-plugins` \
-                                       `cygpath -m $(DIST_DIR)/simvascular-bin.exe`
+                                       `cygpath -m $(DIST_DIR)/$(QT_WEBENGINE_PROC)`
 	-cp -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/qt-fonts
 	-echo "[Paths]" > $(DIST_DIR)/qt.conf
 	-echo "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
@@ -304,7 +312,7 @@ generate-wrapper-scripts:
 	-cp -f $(SV_OS)_wrapper_scripts/$(SV_OS)-simvascular-cmdline-script $(DIST_DIR)/$(SV_VERSION)-cmdline
 	-cat $(DIST_DIR)/$(SV_VERSION) >> $(DIST_DIR)/$(SV_VERSION)-cmdline
 ifeq ($(CLUSTER),x64_cygwin)
-	-cp -f $(SV_OS)_wrapper_scripts/sv.bat $(DIST_DIR)
+	-sed s/SV_CMAKE_BUILD_TYPE/$(SV_CMAKE_BUILD_TYPE)/g $(SV_OS)_wrapper_scripts/sv.bat > $(DIST_DIR)/sv.bat
 	-chmod a+rx $(DIST_DIR)/sv.bat
 endif
 

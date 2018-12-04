@@ -28,7 +28,6 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /**
  *  \class vtkSVLocalLinearSubdivisionFilter
  *  \brief This is localized subdivision methods specifically for linear
@@ -43,13 +42,14 @@
 #ifndef vtkSVLocalLinearSubdivisionFilter_h
 #define vtkSVLocalLinearSubdivisionFilter_h
 
-#include "vtkSVLocalInterpolatingSubdivisionFilter.h"
 #include "vtkSVGeometryModule.h" // for export
 
-class vtkIntArray;
-class vtkPointData;
-class vtkPoints;
-class vtkPolyData;
+#include "vtkIntArray.h"
+#include "vtkPolyData.h"
+#include "vtkPointData.h"
+#include "vtkPoints.h"
+
+#include "vtkSVLocalInterpolatingSubdivisionFilter.h"
 
 class VTKSVGEOMETRY_EXPORT vtkSVLocalLinearSubdivisionFilter : public vtkSVLocalInterpolatingSubdivisionFilter
 {
@@ -66,7 +66,7 @@ protected:
   int GenerateSubdivisionPoints (vtkPolyData *inputDS,
                                  vtkIntArray *edgeData,
                                  vtkPoints *outputPts,
-                                 vtkPointData *outputPD);
+                                 vtkPointData *outputPD) override;
 
   int SetFixedCells(vtkPolyData *pd,int *noSubdivideCell);
 

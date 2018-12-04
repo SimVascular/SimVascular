@@ -35,8 +35,8 @@
 #include "vtkEdgeTable.h"
 #include "vtkIdList.h"
 #include "vtkObjectFactory.h"
-#include "vtkPointData.h"
 #include "vtkPolyData.h"
+#include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkSVGlobals.h"
 

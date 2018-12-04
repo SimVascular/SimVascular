@@ -49,6 +49,7 @@ simvascular_external(${proj}
   vtkFiltersFlowPaths
   vtkWrappingTcl
   vtkRenderingTk
+  vtkRenderingLabel
   vtkCommonDataModel
   vtkCommonCore
   vtkChartsCore

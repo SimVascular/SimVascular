@@ -39,6 +39,7 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
+
 #include "vtkSVGlobals.h"
 
 #include <sstream>
@@ -61,10 +62,6 @@ int vtkSVSquareBoundaryMapper::SetBoundaries()
     vtkErrorMacro("Didn't work");
     return SV_ERROR;
   }
-  //fprintf(stdout,"Square edge lengths: %.4f %.4f %.4f %.4f\n", this->BoundaryLengths[0],
-  //                                                             this->BoundaryLengths[1],
-  //                                                             this->BoundaryLengths[2],
-  //                                                             this->BoundaryLengths[3]);
 
   // Set the boundary
   if (!this->SetSquareBoundary(actualIds))
@@ -120,7 +117,6 @@ int vtkSVSquareBoundaryMapper::CalculateSquareEdgeLengths(vtkIntArray *actualIds
         if (checkPt == pointIds->LookupValue(this->BoundaryIds->GetValue(j)))
         {
           actualIds->SetValue((i+1)%4, pointIds->GetTuple1(checkPt));
-          //fprintf(stdout,"Found boundary ID!: %d\n", this->BoundaryIds->GetValue(j));
           done = 1;
         }
       }
@@ -221,7 +217,7 @@ int vtkSVSquareBoundaryMapper::SetSquareBoundary(vtkIntArray *actualIds)
     newCells->InsertCellPoint(i+1);
   }
   newCells->InsertNextCell(2);
-  newCells->InsertCellPoint(i-1);
+  newCells->InsertCellPoint(i);
   newCells->InsertCellPoint(0);
 
   // Set the points and cells

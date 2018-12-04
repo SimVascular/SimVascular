@@ -90,7 +90,7 @@ class VTKSVBOOLEAN_EXPORT vtkSVLoopIntersectionPolyDataFilter :
 public:
   static vtkSVLoopIntersectionPolyDataFilter *New();
   vtkTypeMacro(vtkSVLoopIntersectionPolyDataFilter, vtkPolyDataAlgorithm);
-  virtual void PrintSelf(ostream &os, vtkIndent indent);
+  virtual void PrintSelf(ostream &os, vtkIndent indent) override;
 
   //@{
   /// \brief Integer describing the number of intersection points and lines
@@ -179,8 +179,8 @@ protected:
   ~vtkSVLoopIntersectionPolyDataFilter();  //Destructor
 
   int RequestData(vtkInformation*, vtkInformationVector**,
-                  vtkInformationVector*);  //Update
-  int FillInputPortInformation(int, vtkInformation*); //Input,Output
+                  vtkInformationVector*) override;  //Update
+  int FillInputPortInformation(int, vtkInformation*) override; //Input,Output
 
   int NumberOfIntersectionPoints;
   int NumberOfIntersectionLines;

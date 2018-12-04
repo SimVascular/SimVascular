@@ -246,17 +246,19 @@ set(SV_BINARY_DISTRIBUTION_DIR ${SV_BINARY_HOME}/Distribution)
 
 #-----------------------------------------------------------------------------
 # Set a default build type (if none was specified)
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-	message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
+if(NOT CMAKE_BUILD_TYPE)
+	message(STATUS "Setting build type to 'Release' as none was specified.")
   unset(CMAKE_BUILD_TYPE CACHE)
-	set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build.")
+	set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build.")
 	mark_as_advanced(CMAKE_BUILD_TYPE)
 	# Set the possible values of build type for cmake-gui
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
 		"MinSizeRel" "RelWithDebInfo")
 endif()
+set(SV_EXTERNALS_CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Externals CMAKE_BUILD_TYPE" FORCE)
 string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER)
-set(SV_BUILD_TYPE_DIR "${CMAKE_BUILD_TYPE_LOWER}")
+set(SV_BUILD_TYPE_DIR "${CMAKE_BUILD_TYPE_LOWER}" CACHE STRING "Externals CMAKE_BUILD_TYPE" FORCE)
+message("SV_BUILD_TYPE_DIR: ${SV_BUILD_TYPE_DIR}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

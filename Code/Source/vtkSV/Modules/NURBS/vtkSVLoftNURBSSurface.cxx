@@ -33,18 +33,20 @@
 
 #include "vtkAlgorithmOutput.h"
 #include "vtkCellData.h"
+#include "vtkErrorCode.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
-#include "vtkPointData.h"
 #include "vtkPolyData.h"
+#include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkSVGlobals.h"
-#include "vtkSVNURBSUtils.h"
-#include "vtkSVMathUtils.h"
 #include "vtkTrivialProducer.h"
+
+#include "vtkSVGlobals.h"
+#include "vtkSVMathUtils.h"
+#include "vtkSVNURBSUtils.h"
 
 #include <string>
 #include <sstream>
@@ -60,7 +62,6 @@ vtkStandardNewMacro(vtkSVLoftNURBSSurface);
 // ----------------------
 vtkSVLoftNURBSSurface::vtkSVLoftNURBSSurface()
 {
-  this->UserManagedInputs = 0;
   this->UDegree = 2;
   this->VDegree = 2;
 
@@ -81,6 +82,7 @@ vtkSVLoftNURBSSurface::vtkSVLoftNURBSSurface()
   this->EndVDerivatives->SetNumberOfComponents(3);
   this->EndVDerivatives->SetNumberOfTuples(1);
 
+  this->InputGrid = vtkStructuredGrid::New();
   this->Surface = vtkSVNURBSSurface::New();
 
   this->UKnotSpanType        = NULL;
@@ -139,93 +141,6 @@ vtkSVLoftNURBSSurface::~vtkSVLoftNURBSSurface()
 }
 
 // ----------------------
-// AddInputData
-// ----------------------
-void vtkSVLoftNURBSSurface::AddInputData(vtkPolyData *ds)
-{
-  if (this->UserManagedInputs)
-    {
-    vtkErrorMacro(<<
-      "AddInput is not supported if UserManagedInputs is true");
-    return;
-    }
-  this->Superclass::AddInputData(ds);
-}
-
-// ----------------------
-// RemoveInputData
-// ----------------------
-void vtkSVLoftNURBSSurface::RemoveInputData(vtkPolyData *ds)
-{
-  if (this->UserManagedInputs)
-    {
-    vtkErrorMacro(<<
-      "RemoveInput is not supported if UserManagedInputs is true");
-    return;
-    }
-
-  if (!ds)
-    {
-    return;
-    }
-  int numCons = this->GetNumberOfInputConnections(0);
-  for(int i=0; i<numCons; i++)
-    {
-    if (this->GetInput(i) == ds)
-      {
-      this->RemoveInputConnection(0,
-        this->GetInputConnection(0, i));
-      }
-    }
-}
-
-// ----------------------
-// SetNumberOfInputs
-// ----------------------
-void vtkSVLoftNURBSSurface::SetNumberOfInputs(int num)
-{
-  if (!this->UserManagedInputs)
-    {
-    vtkErrorMacro(<<
-      "SetNumberOfInputs is not supported if UserManagedInputs is false");
-    return;
-    }
-
-  // Ask the superclass to set the number of connections.
-  this->SetNumberOfInputConnections(0, num);
-}
-
-// ----------------------
-// SetInputDataByNumber
-// ----------------------
-void vtkSVLoftNURBSSurface::
-SetInputDataByNumber(int num, vtkPolyData* input)
-{
-  vtkTrivialProducer* tp = vtkTrivialProducer::New();
-  tp->SetOutput(input);
-  this->SetInputConnectionByNumber(num, tp->GetOutputPort());
-  tp->Delete();
-}
-
-// ----------------------
-// SetInputConnectionByNumber
-// ----------------------
-void vtkSVLoftNURBSSurface::
-SetInputConnectionByNumber(int num,vtkAlgorithmOutput *input)
-{
-  if (!this->UserManagedInputs)
-    {
-    vtkErrorMacro(<<
-      "SetInputConnectionByNumber is not supported if UserManagedInputs "<<
-      "is false");
-    return;
-    }
-
-  // Ask the superclass to connect the input.
-  this->SetNthInputConnection(0, num, input);
-}
-
-// ----------------------
 // RequestData
 // ----------------------
 int vtkSVLoftNURBSSurface::RequestData(
@@ -235,108 +150,36 @@ int vtkSVLoftNURBSSurface::RequestData(
 {
   // get the info object
   // get the ouptut
+  vtkStructuredGrid *input = vtkStructuredGrid::GetData(inputVector[0]);
   vtkPolyData *output = vtkPolyData::GetData(outputVector, 0);
 
-  // Get number of inputs
-  int numInputs = inputVector[0]->GetNumberOfInformationObjects();
+  this->InputGrid->DeepCopy(input);
 
-  // Set up input vector
-  vtkPolyData** inputs = new vtkPolyData*[numInputs];
-  for (int idx = 0; idx < numInputs; ++idx)
-    {
-    inputs[idx] = vtkPolyData::GetData(inputVector[0],idx);
-    }
-
-  // TODO: Need to make sure knot span and parameteric span types are set
-  if (this->LoftNURBS(inputs,numInputs,output) != SV_OK)
+  if (this->UKnotSpanType == NULL ||
+      this->VKnotSpanType == NULL)
   {
-    vtkErrorMacro("Could not loft surface");
-    delete [] inputs;
+    vtkErrorMacro("Need to provide knot span types for u, v directions");
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
-  delete [] inputs;
-  return SV_OK;
-}
-
-// ----------------------
-// RequestUpdateExtent
-// ----------------------
-int vtkSVLoftNURBSSurface::RequestUpdateExtent(
-    vtkInformation *vtkNotUsed(request),
-    vtkInformationVector **inputVector,
-    vtkInformationVector *outputVector)
-{
-  // get the output info object
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-
-  int piece, numPieces, ghostLevel;
-  int idx;
-
-  piece = outInfo->Get(
-      vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER());
-  numPieces = outInfo->Get(
-      vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
-  ghostLevel = outInfo->Get(
-      vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS());
-
-  // make sure piece is valid
-  if (piece < 0 || piece >= numPieces)
-    {
+  if (this->UParametricSpanType == NULL ||
+      this->VParametricSpanType == NULL)
+  {
+    vtkErrorMacro("Need to provide parametric span types for u, v directions");
+    this->SetErrorCode(vtkErrorCode::UserError + 2);
     return SV_ERROR;
-    }
+  }
 
-  int numInputs = this->GetNumberOfInputConnections(0);
-  if (this->ParallelStreaming)
-    {
-    piece = piece * numInputs;
-    numPieces = numPieces * numInputs;
-    }
-
-  vtkInformation *inInfo;
-  // just copy the Update extent as default behavior.
-  for (idx = 0; idx < numInputs; ++idx)
-    {
-    inInfo = inputVector[0]->GetInformationObject(idx);
-    if (inInfo)
-      {
-      if (this->ParallelStreaming)
-        {
-        inInfo->Set(
-	    vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER(),
-	    piece + idx);
-        inInfo->Set(
-	    vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES(),
-                    numPieces);
-        inInfo->Set(
-	    vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS(),
-                    ghostLevel);
-        }
-      else
-        {
-        inInfo->Set(
-	    vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER(),
-                    piece);
-        inInfo->Set(
-	    vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES(),
-                    numPieces);
-        inInfo->Set(
-	    vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS(),
-                    ghostLevel);
-        }
-      }
-    }
+  // TODO: Need to make sure knot span and parameteric span types are set
+  if (this->LoftNURBS(this->InputGrid, output) != SV_OK)
+  {
+    vtkErrorMacro("Could not loft surface");
+    this->SetErrorCode(vtkErrorCode::UserError + 3);
+    return SV_ERROR;
+  }
 
   return SV_OK;
-}
-
-// ----------------------
-// GetInput
-// ----------------------
-vtkPolyData *vtkSVLoftNURBSSurface::GetInput(int idx)
-{
-  return vtkPolyData::SafeDownCast(
-    this->GetExecutive()->GetInputData(0, idx));
 }
 
 // ----------------------
@@ -346,9 +189,6 @@ void vtkSVLoftNURBSSurface::PrintSelf(ostream& os,
     vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-
-  os << "ParallelStreaming:" << (this->ParallelStreaming?"On":"Off") << endl;
-  os << "UserManagedInputs:" << (this->UserManagedInputs?"On":"Off") << endl;
 
   os << indent << "U Degree: " << this->UDegree << "\n";
   os << indent << "U Knot span type: " << this->UKnotSpanType << "\n";
@@ -390,41 +230,35 @@ void vtkSVLoftNURBSSurface::PrintSelf(ostream& os,
 int vtkSVLoftNURBSSurface::FillInputPortInformation(
     int port, vtkInformation *info)
 {
-  if (!this->Superclass::FillInputPortInformation(port, info))
-    {
-    return SV_ERROR;
-    }
-  info->Set(vtkAlgorithm::INPUT_IS_REPEATABLE(), 1);
+  info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkStructuredGrid");
   return SV_OK;
 }
 
 // ----------------------
 // LoftNURBS
 // ----------------------
-int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
+int vtkSVLoftNURBSSurface::LoftNURBS(vtkStructuredGrid *input,
     vtkPolyData *outputPD)
 {
   // Get number of control points and degree
-  int nUCon = numInputs;
-  int nVCon = inputs[0]->GetNumberOfPoints();
+  int dim[3];
+  input->GetDimensions(dim);
+  int nUCon = dim[0];
+  int nVCon = dim[1];
   int p     = this->UDegree;
   int q     = this->VDegree;
+
+  if (dim[2] != 1)
+  {
+    vtkErrorMacro("Structured grid should only have two dimensions for lofting of surface.");
+    return SV_ERROR;
+  }
 
   // Get knot span and parametric span types
   std::string kutype = this->UKnotSpanType;
   std::string kvtype = this->VKnotSpanType;
   std::string putype = this->UParametricSpanType;
   std::string pvtype = this->VParametricSpanType;
-
-  // Make sure input dimensions make sense
-  for (int i=0; i<nUCon; i++)
-  {
-    if (nVCon != inputs[i]->GetNumberOfPoints())
-    {
-      vtkErrorMacro("Input segments do not have the same number of points, cannot loft");
-      return SV_ERROR;
-    }
-  }
 
   // Check that the number of inputs enough for degree
   if (p > nUCon)
@@ -439,14 +273,18 @@ int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
   }
 
   // Set the temporary control points
-  vtkNew(vtkPoints, tmpPoints);
-  tmpPoints->SetNumberOfPoints(nUCon);
+  vtkNew(vtkPoints, tmpUPoints);
+  tmpUPoints->SetNumberOfPoints(nUCon);
   for (int i=0; i<nUCon; i++)
-    tmpPoints->SetPoint(i, inputs[i]->GetPoint(0));
+  {
+    int pos[3]; pos[0] = i; pos[1] = 0; pos[2] = 0;
+    int ptId = vtkStructuredData::ComputePointId(dim, pos);
+    tmpUPoints->SetPoint(i, input->GetPoint(ptId));
+  }
 
   // Get the input point set u representation
   vtkNew(vtkDoubleArray, U);
-  if (vtkSVNURBSUtils::GetUs(tmpPoints, putype, U) != SV_OK)
+  if (vtkSVNURBSUtils::GetUs(tmpUPoints, putype, U) != SV_OK)
   {
     return SV_ERROR;
   }
@@ -457,15 +295,24 @@ int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
   vtkNew(vtkDoubleArray, uKnots);
   if (vtkSVNURBSUtils::GetKnots(U, p, kutype, uKnots) != SV_OK)
   {
-    fprintf(stderr,"Error getting knots\n");
+    vtkErrorMacro("Error getting knots");
     return SV_ERROR;
   }
   //fprintf(stdout,"X knots\n");
   //vtkSVNURBSUtils::PrintArray(uKnots);
   //
+
+  vtkNew(vtkPoints, tmpVPoints);
+  tmpVPoints->SetNumberOfPoints(nVCon);
+  for (int i=0; i<nVCon; i++)
+  {
+    int pos[3]; pos[0] = 0; pos[1] = i; pos[2] = 0;
+    int ptId = vtkStructuredData::ComputePointId(dim, pos);
+    tmpVPoints->SetPoint(i, input->GetPoint(ptId));
+  }
   // Get the input point set v representation
   vtkNew(vtkDoubleArray, V);
-  if (vtkSVNURBSUtils::GetUs(inputs[0]->GetPoints(), pvtype, V) != SV_OK)
+  if (vtkSVNURBSUtils::GetUs(tmpVPoints, pvtype, V) != SV_OK)
   {
     return SV_ERROR;
   }
@@ -476,16 +323,11 @@ int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
   vtkNew(vtkDoubleArray, vKnots);
   if (vtkSVNURBSUtils::GetKnots(V, q, kvtype, vKnots) != SV_OK)
   {
-    fprintf(stderr,"Error getting knots\n");
+    vtkErrorMacro("Error getting knots");
     return SV_ERROR;
   }
   //fprintf(stdout,"Y knots\n");
   //vtkSVNURBSUtils::PrintArray(vKnots);
-
-  // Convert input to structured grid
-  vtkNew(vtkStructuredGrid, inputPoints);
-  if (vtkSVNURBSUtils::PolyDatasToStructuredGrid(inputs, numInputs, inputPoints) != SV_OK)
-    return SV_ERROR;
 
   // Get derivatives in fomrat we need
   vtkNew(vtkDoubleArray, DU0); DU0->DeepCopy(this->StartUDerivatives);
@@ -496,11 +338,11 @@ int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
     if (DU0->GetNumberOfTuples() == 1 ||
         DUN->GetNumberOfTuples() == 1)
     {
-      this->GetDefaultDerivatives(inputPoints, 0, DU0, DUN);
+      this->GetDefaultDerivatives(input, 0, DU0, DUN);
     }
   }
 
-  // Get derivatives in fomrat we need
+  // Get derivatives in format we need
   vtkNew(vtkDoubleArray, DV0); DV0->DeepCopy(this->StartVDerivatives);
   vtkNew(vtkDoubleArray, DVN); DVN->DeepCopy(this->EndVDerivatives);
   if (!strncmp(kvtype.c_str(), "derivative", 10))
@@ -509,7 +351,7 @@ int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
     if (DV0->GetNumberOfTuples() == 1 ||
         DVN->GetNumberOfTuples() == 1)
     {
-      this->GetDefaultDerivatives(inputPoints, 1, DV0, DVN);
+      this->GetDefaultDerivatives(input, 1, DV0, DVN);
     }
   }
 
@@ -517,7 +359,7 @@ int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
   vtkNew(vtkStructuredGrid, cPoints);
   vtkNew(vtkDoubleArray, uWeights);
   vtkNew(vtkDoubleArray, vWeights);
-  if (vtkSVNURBSUtils::GetControlPointsOfSurface(inputPoints, U, V, uWeights, vWeights,
+  if (vtkSVNURBSUtils::GetControlPointsOfSurface(input, U, V, uWeights, vWeights,
                                                uKnots, vKnots, p, q, kutype, kvtype,
                                                DU0, DUN, DV0, DVN, cPoints) != SV_OK)
   {
@@ -528,6 +370,8 @@ int vtkSVLoftNURBSSurface::LoftNURBS(vtkPolyData *inputs[], int numInputs,
   this->Surface->SetKnotVector(uKnots, 0);
   this->Surface->SetKnotVector(vKnots, 1);
   this->Surface->SetControlPoints(cPoints);
+  this->Surface->SetUDegree(p);
+  this->Surface->SetUDegree(q);
 
   // Get the polydata representation from the NURBS Surface
   this->Surface->GeneratePolyDataRepresentation(this->PolyDataUSpacing, this->PolyDataVSpacing);
@@ -547,7 +391,7 @@ int vtkSVLoftNURBSSurface::GetDefaultDerivatives(vtkStructuredGrid *input, const
 
   // Get number of values and derivatives from dim
   int numVals   = dim[comp];
-  int numDerivs = dim[-1*(comp-1)];
+  int numDerivs = dim[(comp+1)%2];
 
   // Set number of tuples for derivatives
   D0out->SetNumberOfTuples(numDerivs);
@@ -555,7 +399,7 @@ int vtkSVLoftNURBSSurface::GetDefaultDerivatives(vtkStructuredGrid *input, const
   for (int i=0; i<numDerivs; i++)
   {
     int pos[3]; pos[2] = 0;
-    pos[-1*(comp-1)] = i;
+    pos[(comp+1)%2] = i;
 
     // Get the point id
     double pt0[3]; pos[comp] = 0;

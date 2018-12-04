@@ -46,17 +46,17 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 MODULE_EXPORT_FILE_H = vtkSVCommonModule.h
 
 HDRS	= \
-  vtkSVIOUtils.h \
   vtkSVGeneralUtils.h \
   vtkSVSparseMatrix.h \
   vtkSVMathUtils.h \
-  vtkSVGlobals.h
+  vtkSVGlobals.h \
+  vtkSVRenderer.h
 
 CXXSRCS	= \
-  vtkSVIOUtils.cxx \
   vtkSVGeneralUtils.cxx \
-  vtkSVSparseMatrix.cxx \
-  vtkSVMathUtils.cxx
+  vtkSVSparseMatrix.cxx  \
+  vtkSVMathUtils.cxx  \
+  vtkSVRenderer.cxx \
 
 DLLHDRS =
 

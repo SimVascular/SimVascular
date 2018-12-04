@@ -48,6 +48,7 @@ extern SV_EXPORT_GLOBALS char projectionSetBase_[CV_STRLEN];
 
 // global variable to figure out if we are running in batch mode
 extern SV_EXPORT_GLOBALS int gSimVascularBatchMode;
+extern SV_EXPORT_GLOBALS int gSimVascularUseWin32Registry;
 
 extern SV_EXPORT_GLOBALS Tcl_Interp* gVtkTclInterp;
 extern SV_EXPORT_GLOBALS Tcl_Interp* getTclInterp();

@@ -32,6 +32,7 @@
 #include "vtkSVPlanarMapper.h"
 
 #include "vtkCellData.h"
+#include "vtkErrorCode.h"
 #include "vtkIdFilter.h"
 #include "vtkIdList.h"
 #include "vtkMath.h"
@@ -40,11 +41,12 @@
 #include "vtkPolyData.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkSmartPointer.h"
+#include "vtkUnstructuredGrid.h"
+
 #include "vtkSVBoundaryMapper.h"
-#include "vtkSVMathUtils.h"
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
-#include "vtkUnstructuredGrid.h"
+#include "vtkSVMathUtils.h"
 
 #include <iostream>
 #include <sstream>
@@ -68,7 +70,7 @@ vtkSVPlanarMapper::vtkSVPlanarMapper()
   this->PlanarPd      = vtkPolyData::New();
   this->EdgeTable     = vtkEdgeTable::New();
   this->EdgeWeights   = vtkFloatArray::New();
-  this->EdgeNeighbors = vtkIntArray::New();
+  this->EdgeNeighbors = vtkIntArray::New(); this->EdgeNeighbors->SetNumberOfComponents(2);
   this->IsBoundary    = vtkIntArray::New();
   this->Boundaries    = vtkPolyData::New();
   this->BoundaryLoop  = vtkPolyData::New();
@@ -82,6 +84,9 @@ vtkSVPlanarMapper::vtkSVPlanarMapper()
   this->Lambda = 0.5;
   this->Mu     = 0.5;
 
+  this->Dir0 = 0;
+  this->Dir1 = 1;
+  this->Dir2 = 2;
 }
 
 // ----------------------
@@ -151,6 +156,12 @@ vtkSVPlanarMapper::~vtkSVPlanarMapper()
     this->AHarm->Delete();
     this->AHarm = NULL;
   }
+
+  if (this->BoundaryMapper != NULL)
+  {
+    this->BoundaryMapper->Delete();
+    this->BoundaryMapper = NULL;
+  }
 }
 
 // ----------------------
@@ -185,14 +196,14 @@ int vtkSVPlanarMapper::RequestData(vtkInformation *vtkNotUsed(request),
   if (this->PrepFilter() != SV_OK)
   {
     vtkErrorMacro("Error when mapping");
-    output->DeepCopy(this->InitialPd);
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
   if (this->RunFilter() != SV_OK)
   {
     vtkErrorMacro("Error when mapping");
-    output->DeepCopy(this->InitialPd);
+    this->SetErrorCode(vtkErrorCode::UserError + 1);
     return SV_ERROR;
   }
 
@@ -336,8 +347,8 @@ int vtkSVPlanarMapper::SetBoundaries()
     this->ATutte->SetElement(id, id, 1.0);
 
     // Set right hand side to be point on boundary
-    this->Bu[id] = pt[0];
-    this->Bv[id] = pt[1];
+    this->Bu[id] = pt[this->Dir0];
+    this->Bv[id] = pt[this->Dir1];
   }
 
   return SV_OK;
@@ -350,6 +361,11 @@ int vtkSVPlanarMapper::SetInternalNodes()
 {
   // Get number of points
   int numPoints = this->WorkPd->GetNumberOfPoints();
+
+  vtkNew(vtkPolyData, boundaryPd);
+  boundaryPd->DeepCopy(this->BoundaryMapper->GetOutput());
+  double centroid[3];
+  vtkSVGeneralUtils::GetCentroidOfPoints(boundaryPd->GetPoints(), centroid);
 
   // Loop through points
   for (int i=0; i<numPoints; i++)
@@ -374,7 +390,7 @@ int vtkSVPlanarMapper::SetInternalNodes()
 
         // Get edge info
         vtkIdType edgeId = this->EdgeTable->IsEdge(i, p1);
-        int edgeNeighbor = this->EdgeNeighbors->GetValue(edgeId);
+        int edgeNeighbor = this->EdgeNeighbors->GetComponent(edgeId, 1);
         double weight    = this->EdgeWeights->GetValue(edgeId);
 
         // if no edge neighbor, then we can leave
@@ -397,8 +413,8 @@ int vtkSVPlanarMapper::SetInternalNodes()
       this->ATutte->SetElement(i, i, tot_tutte_weight);
 
       // Set initial values for solution vector
-      this->Xu[i] = pt[0];
-      this->Xv[i] = pt[1];
+      this->Xu[i] = centroid[this->Dir0]; //pt[this->Dir0];
+      this->Xv[i] = centroid[this->Dir1]; //pt[this->Dir1];
     }
   }
 
@@ -412,21 +428,29 @@ int vtkSVPlanarMapper::SolveSystem()
 {
   int numPoints = this->WorkPd->GetNumberOfPoints();
 
+  double epsilon = 1.0e-8;
+
   vtkSVMathUtils::ConjugateGradient(this->ATutte, &this->Bu[0], numPoints,
-                                    &this->Xu[0], 1.0e-8);
+                                    &this->Xu[0], epsilon);
   vtkSVMathUtils::ConjugateGradient(this->AHarm,  &this->Bu[0], numPoints,
-                                    &this->Xu[0], 1.0e-8);
+                                    &this->Xu[0], epsilon);
   vtkSVMathUtils::ConjugateGradient(this->ATutte, &this->Bv[0], numPoints,
-                                    &this->Xv[0], 1.0e-8);
+                                    &this->Xv[0], epsilon);
   vtkSVMathUtils::ConjugateGradient(this->AHarm,  &this->Bv[0], numPoints,
-                                    &this->Xv[0], 1.0e-8);
+                                    &this->Xv[0], epsilon);
+
+  // Get pt from boundary for stationary dir axis
+  double origPt[3];
+  this->BoundaryMapper->GetOutput()->GetPoint(0, origPt);
 
   for (int i=0; i<numPoints; i++)
   {
+
+    // New pt
     double pt[3];
-    pt[0] = this->Xu[i];
-    pt[1] = this->Xv[i];
-    pt[2] = 0.0;
+    pt[this->Dir0] = this->Xu[i];
+    pt[this->Dir1] = this->Xv[i];
+    pt[this->Dir2] = origPt[this->Dir2];
     this->PlanarPd->GetPoints()->SetPoint(i, pt);
   }
 

@@ -27,7 +27,7 @@
 
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
-set(SV_EXTERNALS_VERSION_NUMBER  "2018.01" CACHE STRING "SimVascular Externals version")
+set(SV_EXTERNALS_VERSION_NUMBER  "2018.05" CACHE STRING "SimVascular Externals version")
 set_property(CACHE SV_EXTERNALS_VERSION_NUMBER PROPERTY STRINGS "2017.01" "2018.01" "2018.03" "2018.05")
 #-----------------------------------------------------------------------------
 

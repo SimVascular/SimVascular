@@ -57,7 +57,7 @@ endif()
 target_link_libraries(${lib}
   ${VTK_LIBRARIES}
   ${SV_LIB_THIRDPARTY_VMTK_NAME}
-  ${SV_LIB_VTKSVFILTERS_NAME}
+  ${SV_LIB_VTKSVMISC_NAME}
   ${SV_LIB_UTILS_NAME}
   ${SV_LIB_REPOSITORY_NAME}
   )

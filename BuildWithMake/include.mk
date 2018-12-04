@@ -47,14 +47,16 @@
 NO_DEPEND = 1
 
 # -----------------------------------------------------------
-# CLUSTER = { x64_cygwin, x64_linux }
+# CLUSTER = { x64_cygwin, x64_linux, x64_macosx }
 # -----------------------------------------------------------
 
 CLUSTER = x64_cygwin
 #CLUSTER = x64_linux
+#CLUSTER = x64_macosx
 
 # ---------------------------------------------------------------------
-# CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-18.0, mingw-gcc, gcc}
+# CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-18.0, msvc-19.0, clang,
+#                          mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
@@ -62,10 +64,7 @@ CLUSTER = x64_cygwin
 #       should be replaced with additional variables
 
 SV_COMPILER = msvc
-#SV_COMPILER_VERSION = 18.0
 SV_COMPILER_VERSION = 19.0
-
-#CXX_COMPILER_VERSION = msvc-18.0
 CXX_COMPILER_VERSION = msvc-19.0
 
 FORTRAN_COMPILER_VERSION = ifort
@@ -146,7 +145,7 @@ SV_USE_PYTHON_SHARED = 1
 SV_USE_SYSTEM_PYTHON = 1
 
 # -----------------------------------------------------
-# Compile with python interpreter
+# Compile with Qt
 # -----------------------------------------------------
 
 SV_USE_QT = 1
@@ -237,7 +236,7 @@ ifeq ($(CLUSTER), x64_linux)
   SVEXTERN_COMPILER_VERSION = gnu-4.8
 endif
 ifeq ($(CLUSTER), x64_macosx)
-  SVEXTERN_COMPILER_VERSION = clang-7.0
+  SVEXTERN_COMPILER_VERSION = clang-7.3
 endif
 
 #SV_EXTERNALS_VERSION_NUMBER = 2018.01
@@ -250,14 +249,14 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
-    SV_CMAKE_BUILD_TYPE=RelWithDebInfo
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+    SV_CMAKE_BUILD_TYPE=Release
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    SV_LOWERCASE_CMAKE_BUILD_TYPE=relwithdebinfo
-    SV_CMAKE_BUILD_TYPE=RelWithDebInfo
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+    SV_CMAKE_BUILD_TYPE=Release
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)
 endif
 
@@ -265,7 +264,7 @@ endif
 #   Release version numbers for SimVascular
 # -------------------------------------------
 
-SV_USE_WIN32_REGISTRY=0
+SV_USE_WIN32_REGISTRY=1
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
 # if you need to override anything above, stuff it in global_overrides.mk
@@ -295,6 +294,12 @@ ifeq ($(CLUSTER),x64_linux)
   SV_PLATFORM = x64
   SV_POSTFIX=
   SV_OS=linux
+endif
+ifeq ($(CLUSTER),x64_macosx)
+  SV_VERSION  = simvascular
+  SV_PLATFORM = x64
+  SV_POSTFIX=
+  SV_OS=macosx
 endif
 
 # --------------
@@ -481,14 +486,16 @@ endif
 
 ifeq ($(SV_USE_SHARED),1)
   SHARED_LIBDIRS += \
-          ../Code/Source/sv/Utils \
+		../Code/Source/sv/Utils \
 	  ../Code/Source/sv/Repository \
-          ../Code/Source/vtkSV/Common \
-          ../Code/Source/vtkSV/Filters \
-          ../Code/Source/vtkSV/Modules/Boolean \
-          ../Code/Source/vtkSV/Modules/Geometry \
-          ../Code/Source/vtkSV/Modules/NURBS \
-          ../Code/Source/vtkSV/Modules/Parameterization \
+		../Code/Source/vtkSV/Common \
+		../Code/Source/vtkSV/IO \
+		../Code/Source/vtkSV/Modules/Misc \
+		../Code/Source/vtkSV/Modules/Boolean \
+		../Code/Source/vtkSV/Modules/Geometry \
+		../Code/Source/vtkSV/Modules/NURBS \
+		../Code/Source/vtkSV/Modules/Parameterization \
+		../Code/Source/vtkSV/Modules/Segmentation \
 	  ../Code/Source/sv/Model/SolidModel \
 	  ../Code/Source/sv/Mesh/MeshObject \
 	  ../Code/Source/sv/Geometry \
@@ -496,18 +503,19 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation \
 	  ../Code/Source/sv3/Common \
-	  ../Code/Source/sv3/Path \
-	  ../Code/Source/sv3/Segmentation
+	  ../Code/Source/sv3/Path
 else
   LIBDIRS += \
-          ../Code/Source/sv/Utils \
+		../Code/Source/sv/Utils \
 	  ../Code/Source/sv/Repository \
-          ../Code/Source/vtkSV/Common \
-          ../Code/Source/vtkSV/Filters \
-          ../Code/Source/vtkSV/Modules/Boolean \
-          ../Code/Source/vtkSV/Modules/Geometry \
-          ../Code/Source/vtkSV/Modules/NURBS \
-          ../Code/Source/vtkSV/Modules/Parameterization \
+		../Code/Source/vtkSV/Common \
+		../Code/Source/vtkSV/IO \
+		../Code/Source/vtkSV/Modules/Misc \
+		../Code/Source/vtkSV/Modules/Boolean \
+		../Code/Source/vtkSV/Modules/Geometry \
+		../Code/Source/vtkSV/Modules/NURBS \
+		../Code/Source/vtkSV/Modules/Parameterization \
+		../Code/Source/vtkSV/Modules/Segmentation \
 	  ../Code/Source/sv/Model/SolidModel \
 	  ../Code/Source/sv/Mesh/MeshObject \
 	  ../Code/Source/sv/Geometry \
@@ -515,8 +523,7 @@ else
 	  ../Code/Source/sv2/PostProcessing \
 	  ../Code/Source/sv2/Segmentation \
 	  ../Code/Source/sv3/Common \
-	  ../Code/Source/sv3/Path \
-	  ../Code/Source/sv3/Segmentation
+	  ../Code/Source/sv3/Path
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -540,6 +547,13 @@ ifeq ($(SV_USE_ITK),1)
   else
      LIBDIRS += ../Code/Source/sv3/ITKSegmentation
   endif
+endif
+
+# segmentation module depends on itk segmentation code
+ifeq ($(SV_USE_SHARED),1)
+  SHARED_LIBDIRS += ../Code/Source/sv3/Segmentation
+else
+  LIBDIRS += ../Code/Source/sv3/Segmentation
 endif
 
 ifeq ($(SV_USE_MMG),1)
@@ -682,12 +696,14 @@ SV_LIB_TETGEN_ADAPTOR_NAME=_simvascular_tetgen_adaptor
 SV_LIB_TETGEN_MESH_NAME=_simvascular_tetgen_mesh
 SV_LIB_UTILS_NAME=_simvascular_utils
 SV_LIB_VMTK_UTILS_NAME=_simvascular_vmtk_utils
-SV_LIB_VTKSVBOOLEAN_NAME=_simvascular_vtksvboolean
 SV_LIB_VTKSVCOMMON_NAME=_simvascular_vtksvcommon
-SV_LIB_VTKSVFILTERS_NAME=_simvascular_vtksvfilters
+SV_LIB_VTKSVIO_NAME=_simvascular_vtksvio
+SV_LIB_VTKSVMISC_NAME=_simvascular_vtksvmisc
+SV_LIB_VTKSVBOOLEAN_NAME=_simvascular_vtksvboolean
 SV_LIB_VTKSVGEOMETRY_NAME=_simvascular_vtksvgeometry
 SV_LIB_VTKSVNURBS_NAME=_simvascular_vtksvnurbs
 SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
+SV_LIB_VTKSVSEGMENTATION_NAME=_simvascular_vtksvsegmentation
 
 #plugin names
 SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application

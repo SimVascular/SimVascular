@@ -61,7 +61,7 @@ echo "CLUSTER=x64_macosx" > cluster_overrides.mk
 echo "CXX_COMPILER_VERSION=clang" >> cluster_overrides.mk
 echo "FORTRAN_COMPILER_VERSION=ifort" >> cluster_overrides.mk
 echo "SV_COMPILER=clang" >> cluster_overrides.mk
-echo "SV_COMPILER_VERSION=8.0" >> cluster_overrides.mk
+echo "SV_COMPILER_VERSION=7.3" >> cluster_overrides.mk
 
 
 echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE" > global_overrides.mk
