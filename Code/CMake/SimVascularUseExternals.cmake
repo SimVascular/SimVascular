@@ -119,38 +119,42 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Qt5
-simvascular_add_new_external(Qt5 5.4.2 ON ON qt)
 
-# TCL
-simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
+if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
+    simvascular_add_new_external(Qt5 5.4.2 ON ON qt)
+    simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
+    if(WIN32)
+      simvascular_add_new_external(PYTHON 2.7.13 ON ON python)
+    else()
+      simvascular_add_new_external(PYTHON 2.7.11 ON ON python)
+    endif()
+    simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
+    simvascular_add_new_external(MMG 5.1.0 ON OFF mmg)
+    simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
+    simvascular_add_new_external(GDCM 2.6.1 ON ON gdcm)
+    simvascular_add_new_external(ITK 4.7.1 ON ON itk)
+    simvascular_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade)
+    simvascular_add_new_external(MITK 2016.03 ON ON mitk)
 
-#PYTHON
-if(WIN32)
-  simvascular_add_new_external(PYTHON 2.7.13 ON ON python)
-else()
-  simvascular_add_new_external(PYTHON 2.7.11 ON ON python)
+elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+    simvascular_add_new_external(Qt5 5.6.3 ON ON qt)
+    simvascular_add_new_external(HDF5 1.10.1 ON ON hdf5)
+    simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
+    if(WIN32)
+      simvascular_add_new_external(PYTHON 2.7.13 ON ON python)
+    else()
+      simvascular_add_new_external(PYTHON 3.5.5 ON ON python)
+    endif()
+    simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
+    simvascular_add_new_external(MMG 5.3.9 ON OFF mmg)
+    simvascular_add_new_external(GDCM 2.6.3 ON ON gdcm)
+    simvascular_add_new_external(VTK 8.1.1 ON ON vtk)
+    simvascular_add_new_external(ITK 4.13.0 ON ON itk)
+    simvascular_add_new_external(OpenCASCADE 7.3.0 ON ON opencascade)
+    simvascular_add_new_external(MITK 2018.04.0 ON ON mitk)
+
 endif()
 
-#FREETYPE
-simvascular_add_new_external(FREETYPE 2.6.3 ON ON freetype)
-
-# MMG
-simvascular_add_new_external(MMG 5.1.0 ON OFF mmg)
-
-# VTK
-simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
-
-# GDCM
-simvascular_add_new_external(GDCM 2.6.1 ON ON gdcm)
-
-# ITK
-simvascular_add_new_external(ITK 4.7.1 ON ON itk)
-
-# OpenCASCADE
-simvascular_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade)
-
-# MITK
-simvascular_add_new_external(MITK 2016.03 ON ON mitk)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
