@@ -9,6 +9,7 @@ QMenuBar {
 
 QMenuBar::item {
     background: 1px solid #e6f2ff;
+    color: #000000;
 }
 
 QMenuBar::item:selected { /* when selected using mouse or keyboard */
@@ -28,6 +29,7 @@ QMenu::item {
     /* sets background of menu item. set this to something non-transparent
         if you want menu color and menu item color to be different */
     background-color: transparent;
+    color: #000000;
 }
 
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
