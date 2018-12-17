@@ -106,6 +106,22 @@ bool sv4guiMeshTetGen::SetModelElement(sv4guiModelElement* modelElement)
     return true;
 }
 
+// ----------
+//  Execute  
+// ----------
+/**
+ * @brief Execute a mesh command.
+ * @param[in] flag The command name. 
+ * @param[in] values The command numeric parameter values. 
+ * @param[in] strValues The command string parameter values. 
+ * @param[in] option True if command is an option.
+ * @param[out] msg The string describing the details of command success or failure. 
+ * @retval true if the command was successfully parsed. 
+ * @retval false if the command was not successfully parsed. 
+ * @todo The command processing code needs to be redone, creating a single place where command
+ *        names are defined, remove of all this string comparison. 
+ */
+
 bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg)
 {
     if(m_cvTetGenMesh==NULL)
@@ -210,6 +226,11 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
             return false;
         }
     }
+    else if(flag=="AllowMultipleRegions")
+    {
+        bool value = (int(values[0]) == 1);
+        m_cvTetGenMesh->SetAllowMultipleRegions(value);
+    }
     else if(flag=="generateMesh")
     {
         if(m_cvTetGenMesh->GenerateMesh()!=SV_OK)
@@ -254,10 +275,26 @@ bool sv4guiMeshTetGen::Execute(std::string flag, double values[20], std::string 
     return true;
 }
 
+// --------------
+//  ParseCommand 
+// --------------
+/**
+ * @brief Extract mesh commands from a string. 
+ * @param[in] cmd The space-separated command. 
+ * @param[out] flag The command name. 
+ * @param[out] values The command numeric parameter values. 
+ * @param[out] values The command string parameter values. 
+ * @param[out] option Set to true if command is an option.
+ * @param[out] msg The string describing the details of command success or failure. 
+ * @retval true if the command was successfully parsed. 
+ * @retval false if the command was not successfully parsed. 
+ * @todo The command processing code needs to be redone, creating a single place where command
+ *        names are defined, remove of all this string comparison. 
+ */
+
 bool sv4guiMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg)
 {
     option=false;
-
     std::string originalCmd=cmd;
     cmd=sv4guiStringUtils_trim(cmd);
 
@@ -460,6 +497,11 @@ bool sv4guiMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double v
           values[2]=std::stod(params[3]);
           values[3]=std::stod(params[4]);
           option=true;
+        }
+        else if(paramSize==2 && params[0]=="allowmultipleregions")
+        {
+          flag="AllowMultipleRegions";
+          values[0]=std::stod(params[1]);
         }
         else
         {
