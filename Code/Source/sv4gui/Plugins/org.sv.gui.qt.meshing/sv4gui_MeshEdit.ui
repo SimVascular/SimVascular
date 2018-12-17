@@ -350,8 +350,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>435</height>
+              <width>453</width>
+              <height>472</height>
              </rect>
             </property>
             <attribute name="label">
@@ -693,6 +693,13 @@
                   </layout>
                  </widget>
                 </item>
+                <item>
+                 <widget class="QCheckBox" name="checkBoxMultipleRegions">
+                  <property name="text">
+                   <string>Allow Multiple Regions</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </widget>
              </item>
@@ -947,7 +954,7 @@
               <x>0</x>
               <y>0</y>
               <width>467</width>
-              <height>435</height>
+              <height>443</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -1042,7 +1049,7 @@ Press key &quot;S&quot; outside of any face to deselect all faces.</string>
               <x>0</x>
               <y>0</y>
               <width>467</width>
-              <height>435</height>
+              <height>443</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1167,7 +1174,7 @@ Change size: righ click and hold, move.</string>
               <x>0</x>
               <y>0</y>
               <width>467</width>
-              <height>435</height>
+              <height>443</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1417,7 +1424,7 @@ Change size: righ click and hold, move.</string>
               <x>0</x>
               <y>0</y>
               <width>467</width>
-              <height>435</height>
+              <height>443</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1541,7 +1548,7 @@ Click the button to add it to the left table.</string>
               <x>0</x>
               <y>0</y>
               <width>467</width>
-              <height>435</height>
+              <height>443</height>
              </rect>
             </property>
             <attribute name="label">

@@ -953,6 +953,13 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
         }
     }
 
+    if (ui->checkBoxMultipleRegions->isChecked()) {
+        cmds.push_back("AllowMultipleRegions 1");
+    } 
+    else {
+        cmds.push_back("AllowMultipleRegions 0");
+    }
+
     cmds.push_back("generateMesh");
 
     cmds.push_back("writeMesh");
