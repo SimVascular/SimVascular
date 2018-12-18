@@ -226,6 +226,34 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
                 //            imageNode->SetVisibility(false);
                 mitk::DataNode::Pointer imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath);
                 imageNode->SetName(imageNameList[i].toStdString());
+
+                //do image transform stuff
+                std::string proj_path = projPath.toStdString();
+                auto transform_fn = proj_path+"/Images/transform.txt";
+
+                ifstream trans_file(transform_fn);
+                std::string line;
+                if (trans_file.is_open()){
+                  std::cout << "reading transform file\n";
+                  mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
+                  auto transform = image->GetGeometry()->GetVtkMatrix();
+                  //loop over transform coordinates (see ::AddImage for how
+                  //it's written)
+                  for (int j = 0; j < 3; j++){
+                    for (int i = 0; i < 3; i++){
+                      getline(trans_file, line);
+
+                      auto v = std::stod(line);
+                      std::cout << i << " " << " " << j << " " << v << "\n";
+                      transform->SetElement(i,j,v);
+                    }
+                  }
+
+                  trans_file.close();
+                  image->UpdateOutputInformation();
+                }
+
+
                 dataStorage->Add(imageNode,imageFolderNode);
             }
             catch(...)
@@ -563,8 +591,8 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
             ofstream transform_file;
             transform_file.open(transform_fn);
 
-            for (int j = 0; j < 4; j++){
-              for (int i = 0; i < 4; i++){
+            for (int j = 0; j < 3; j++){
+              for (int i = 0; i < 3; i++){
                 auto v = transform->GetElement(i,j);
 
                 transform_file << v << "\n";
