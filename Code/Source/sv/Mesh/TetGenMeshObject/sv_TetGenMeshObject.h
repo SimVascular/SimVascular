@@ -96,6 +96,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
     int refinecount;
     int usemmg;
     double hausd;
+    bool allowMultipleRegions;
   } TGoptions;
 
   public:
@@ -143,6 +144,8 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
                             double* center, double *normal);
   int SetSphereRefinement(double size, double radius, double* center);
   int SetSizeFunctionBasedMesh(double size,char *sizefunctionname);
+
+  void SetAllowMultipleRegions(bool value);
 
   //Meshing operation and post-meshing cleanup/stats functions
   int GenerateMesh();

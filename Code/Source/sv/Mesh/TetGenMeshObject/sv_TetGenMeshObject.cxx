@@ -147,6 +147,8 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.refinecount=0;
   meshoptions_.numberofholes=0;
   meshoptions_.numberofregions=0;
+  meshoptions_.allowMultipleRegions=false;
+
 #ifdef SV_USE_MMG
   meshoptions_.usemmg=1;
 #else
@@ -230,6 +232,7 @@ cvTetGenMeshObject::cvTetGenMeshObject()
   meshoptions_.refinecount=0;
   meshoptions_.numberofholes=0;
   meshoptions_.numberofregions=0;
+  meshoptions_.allowMultipleRegions=false;
 #ifdef SV_USE_MMG
   meshoptions_.usemmg=1;
 #else
@@ -310,6 +313,11 @@ int cvTetGenMeshObject::SetMeshFileName( const char* meshFileName )
     meshFileName_[0] = '\0';
 
   return SV_OK;
+}
+
+void cvTetGenMeshObject::SetAllowMultipleRegions(bool value) 
+{
+  meshoptions_.allowMultipleRegions = value;
 }
 
 int cvTetGenMeshObject::SetSolidFileName( const char* solidFileName )
@@ -1003,7 +1011,8 @@ int cvTetGenMeshObject::NewMesh() {
  * called before the options can be set
  */
 
-int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values) {
+int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values) 
+{
   if(!strncmp(flags,"GlobalEdgeSize",14)) {            //Global edge size
      if (numValues < 1)
        return SV_ERROR;
@@ -1127,6 +1136,9 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
     if (numValues < 1)
       return SV_ERROR;
     meshoptions_.boundarylayerdirection=values[0];
+  }
+  else if (!strncmp(flags,"AllowMultipleRegions",20)) {
+      meshoptions_.allowMultipleRegions = (int(values[0]) == 1);
   }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
@@ -1424,6 +1436,7 @@ int cvTetGenMeshObject::GenerateMesh() {
 #endif
   //If we are doing sphere refinement and only a volumemesh, then we need
   //to re-set up the mesh based on sizing function for sphere refinement
+ 
   if (meshoptions_.volumemeshflag && !meshoptions_.surfacemeshflag)
   {
     int meshInfo[3];
@@ -1433,10 +1446,9 @@ int cvTetGenMeshObject::GenerateMesh() {
       return SV_ERROR;
     }
 
-    if (!(meshoptions_.numberofholes > 0 ||
-          meshoptions_.numberofregions > 0))
+    if (!(meshoptions_.numberofholes > 0 || meshoptions_.numberofregions > 0))
     {
-      if (meshInfo[0] > 1)
+      if (!meshoptions_.allowMultipleRegions && meshInfo[0] > 1)
       {
         fprintf(stderr,"There are too many regions here!\n");
         fprintf(stderr,"Terminating meshing!\n");
@@ -1854,7 +1866,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   if (!(meshoptions_.numberofholes > 0 ||
         meshoptions_.numberofregions > 0))
   {
-    if (meshInfo[0] > 1)
+    if (!meshoptions_.allowMultipleRegions && meshInfo[0] > 1)
     {
       fprintf(stderr,"There are too many regions here!\n");
       fprintf(stderr,"Terminating meshing!\n");
