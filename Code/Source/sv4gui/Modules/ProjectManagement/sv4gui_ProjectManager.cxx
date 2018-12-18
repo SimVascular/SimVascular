@@ -71,6 +71,9 @@
 #include <QFile>
 #include <QTextStream>
 
+#include <iostream>
+#include <fstream>
+
 void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir,bool newProject)
 {
     QString projectConfigFileName=".svproj";
@@ -456,6 +459,8 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
 {
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
 
+    //check for existing transform and delete
+
     //add image to config
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
@@ -517,6 +522,16 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
         imagesElement.removeChild(previousImgElement);
     }
 
+    //check for existing transform and delete
+    std::string imageParentPath=projPath+"/"+imageFolderNode->GetName();
+    std::string transform_fn = imageParentPath+"/transform.txt";
+    ifstream trans_file(transform_fn);
+    if (trans_file.good()){
+      std::cout << "deleting existing transform file\n";
+      remove(transform_fn.c_str());
+    }
+
+    //continue image adding
     QDomElement imgElement = doc.createElement("image");
     if(copyIntoProject)
     {
@@ -527,7 +542,6 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
         imgElement.setAttribute("name",imageName);
         imgElement.setAttribute("path",imagePath);
 
-        std::string imageParentPath=projPath+"/"+imageFolderNode->GetName();
         std::string imagFullPath=imageParentPath+"/"+imagePath.toStdString();
         imageNode->SetStringProperty("path",imageParentPath.c_str());
         mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
@@ -543,6 +557,20 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
                 image->SetOrigin(org);
                 image->SetSpacing(scaleFactor*spacing);
             }
+
+            //transform stuff
+            auto transform = image->GetGeometry()->GetVtkMatrix();
+            ofstream transform_file;
+            transform_file.open(transform_fn);
+
+            for (int j = 0; j < 4; j++){
+              for (int i = 0; i < 4; i++){
+                auto v = transform->GetElement(i,j);
+
+                transform_file << v << "\n";
+              }
+            }
+            transform_file.close();
 
             vtkImageData* vtkImg=sv4guiVtkUtils::MitkImage2VtkImage(image);
             if(vtkImg)
