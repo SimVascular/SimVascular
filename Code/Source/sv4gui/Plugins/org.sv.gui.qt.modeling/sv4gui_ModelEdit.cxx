@@ -821,6 +821,7 @@ void sv4guiModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*se
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
+
 void sv4guiModelEdit::ToggleVisibility(const QModelIndex &index){
 
     if(!m_Model)
