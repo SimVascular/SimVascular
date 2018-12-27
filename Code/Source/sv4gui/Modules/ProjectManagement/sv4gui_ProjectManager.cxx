@@ -234,7 +234,6 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
                 ifstream trans_file(transform_fn);
                 std::string line;
                 if (trans_file.is_open()){
-                  std::cout << "reading transform file\n";
                   mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
                   auto transform = image->GetGeometry()->GetVtkMatrix();
                   //loop over transform coordinates (see ::AddImage for how
@@ -244,7 +243,6 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
                       getline(trans_file, line);
 
                       auto v = std::stod(line);
-                      std::cout << i << " " << " " << j << " " << v << "\n";
                       transform->SetElement(i,j,v);
                     }
                   }
@@ -488,8 +486,6 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
 {
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
 
-    //check for existing transform and delete
-
     //add image to config
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
@@ -556,7 +552,6 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
     std::string transform_fn = imageParentPath+"/transform.txt";
     ifstream trans_file(transform_fn);
     if (trans_file.good()){
-      std::cout << "deleting existing transform file\n";
       remove(transform_fn.c_str());
     }
 
