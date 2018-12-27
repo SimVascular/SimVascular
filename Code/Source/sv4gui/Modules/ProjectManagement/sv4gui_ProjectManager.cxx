@@ -250,6 +250,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
                   }
 
                   trans_file.close();
+                  image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
                   image->UpdateOutputInformation();
                 }
 
