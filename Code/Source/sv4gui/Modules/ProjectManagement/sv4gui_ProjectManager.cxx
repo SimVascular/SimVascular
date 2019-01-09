@@ -228,30 +228,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
                 imageNode->SetName(imageNameList[i].toStdString());
 
                 //do image transform stuff
-                std::string proj_path = projPath.toStdString();
-                auto transform_fn = proj_path+"/Images/transform.txt";
-
-                ifstream trans_file(transform_fn);
-                std::string line;
-                if (trans_file.is_open()){
-                  mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
-                  auto transform = image->GetGeometry()->GetVtkMatrix();
-                  //loop over transform coordinates (see ::AddImage for how
-                  //it's written)
-                  for (int j = 0; j < 3; j++){
-                    for (int i = 0; i < 3; i++){
-                      getline(trans_file, line);
-
-                      auto v = std::stod(line);
-                      transform->SetElement(i,j,v);
-                    }
-                  }
-
-                  trans_file.close();
-                  image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
-                  image->UpdateOutputInformation();
-                }
-
+                mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
+                setTransform(image, projPath.toStdString());
 
                 dataStorage->Add(imageNode,imageFolderNode);
             }
@@ -547,15 +525,8 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
         imagesElement.removeChild(previousImgElement);
     }
 
-    //check for existing transform and delete
-    std::string imageParentPath=projPath+"/"+imageFolderNode->GetName();
-    std::string transform_fn = imageParentPath+"/transform.txt";
-    ifstream trans_file(transform_fn);
-    if (trans_file.good()){
-      remove(transform_fn.c_str());
-    }
-
     //continue image adding
+
     QDomElement imgElement = doc.createElement("image");
     if(copyIntoProject)
     {
@@ -566,6 +537,7 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
         imgElement.setAttribute("name",imageName);
         imgElement.setAttribute("path",imagePath);
 
+        std::string imageParentPath=projPath+"/"+imageFolderNode->GetName();
         std::string imagFullPath=imageParentPath+"/"+imagePath.toStdString();
         imageNode->SetStringProperty("path",imageParentPath.c_str());
         mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
@@ -582,19 +554,10 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
                 image->SetSpacing(scaleFactor*spacing);
             }
 
-            //transform stuff
-            auto transform = image->GetGeometry()->GetVtkMatrix();
-            ofstream transform_file;
-            transform_file.open(transform_fn);
-
-            for (int j = 0; j < 3; j++){
-              for (int i = 0; i < 3; i++){
-                auto v = transform->GetElement(i,j);
-
-                transform_file << v << "\n";
-              }
-            }
-            transform_file.close();
+            //if converting from dicom to vti we need to record the original
+            //image transform so we can load it back in
+            //otherwise the vti will use an incorrect transform when reloaded
+            writeTransformFile(image, imageParentPath);
 
             vtkImageData* vtkImg=sv4guiVtkUtils::MitkImage2VtkImage(image);
             if(vtkImg)
@@ -631,6 +594,60 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
     }
 
     return;
+}
+
+/**
+Due to differing conventions in the way DICOM and .vti files treat image axes
+if we convert a dicom to a vti and then load it back in it will have an incorrect
+transform.
+
+To counteract this we write the original transform when loading in the dicom,
+then when the converted .vti is read back in, we rest the transform.
+**/
+void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
+  std::string imageParentPath){
+
+  //check for existing transform and delete
+  std::string transform_fn = imageParentPath+"/transform.txt";
+
+  auto transform = image->GetGeometry()->GetVtkMatrix();
+  ofstream transform_file;
+  transform_file.open(transform_fn);
+
+  for (int j = 0; j < 3; j++){
+    for (int i = 0; i < 3; i++){
+      auto v = transform->GetElement(i,j);
+
+      transform_file << v << "\n";
+    }
+  }
+  transform_file.close();
+}
+
+void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path){
+
+  auto transform_fn = proj_path+"/Images/transform.txt";
+
+  ifstream trans_file(transform_fn);
+  std::string line;
+  if (trans_file.is_open()){
+
+    auto transform = image->GetGeometry()->GetVtkMatrix();
+    //loop over transform coordinates (see ::AddImage for how
+    //it's written)
+    for (int j = 0; j < 3; j++){
+      for (int i = 0; i < 3; i++){
+        getline(trans_file, line);
+
+        auto v = std::stod(line);
+        transform->SetElement(i,j,v);
+      }
+    }
+
+    trans_file.close();
+    image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
+    image->UpdateOutputInformation();
+  }
 }
 
 void sv4guiProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath)
