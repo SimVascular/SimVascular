@@ -112,4 +112,7 @@ SV_EXPORT_VMTK_UTILS int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
     vtkIdList *onlyList,
     int dummy);
 
+SV_EXPORT_VMTK_UTILS void VMTKUtils_ReorderTetElements(vtkUnstructuredGrid* mesh);
+
+
 #endif //__CV_VMTK_UTILS_H
