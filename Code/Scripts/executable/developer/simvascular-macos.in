@@ -16,9 +16,9 @@ fi
 app_dir=sv.app/Contents/MacOS
 sv_exe=$SV_HOME/$app_dir/@SV_EXE@ 
 
-if [ ! -d "sv.app" ]; then
-    mkdir -p $app_dir
-    ln -s $SV_HOME/bin/@SV_EXE@ $app_dir
+if [ ! -d "$SV_HOME/sv.app" ]; then
+    mkdir -p $SV_HOME/$app_dir
+    ln -s $SV_HOME/bin/@SV_EXE@ $SV_HOME/$app_dir
 fi
 
 # Run the executable

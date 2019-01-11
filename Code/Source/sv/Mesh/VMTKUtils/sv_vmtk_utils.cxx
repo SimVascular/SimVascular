@@ -61,6 +61,9 @@
 #include "vtkGeometryFilter.h"
 #include "vtkCellArray.h"
 #include "vtkSVFillHolesWithIdsFilter.h"
+#include <vtkMeshQuality.h>
+
+#include <vtkXMLUnstructuredGridWriter.h>
 
 #include "vtkvmtkPolyDataSurfaceRemeshing.h"
 #include "vtkvmtkPolyDataSizingFunction.h"
@@ -1111,12 +1114,15 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen,
   // Tetrahedralize the boundaryMesh
   vtkSmartPointer<vtkvmtkUnstructuredGridTetraFilter> tetrahedralizer =
     vtkSmartPointer<vtkvmtkUnstructuredGridTetraFilter>::New();
-
-  //Tetrahedralize this mesh
   tetrahedralizer->SetInputData(boundaryMesh);
   tetrahedralizer->Update();
-
   boundaryMesh->DeepCopy(tetrahedralizer->GetOutput());
+
+  // The tet elements created for the boundary layer using 
+  // vtkvmtkUnstructuredGridTetraFilter have incorrect node 
+  // ordering (generate negative Jacobians) so modify their
+  // node ordering.
+  VMTKUtils_ReorderTetElements(boundaryMesh);
 
   // Get model regions on tetgen mesh
   vtkDataArray *meshFromTetGenRegionIds = meshFromTetGen->GetCellData()->GetArray("ModelRegionID");
@@ -1402,6 +1408,92 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen,
   fprintf(stdout,"Mesh Appended\n");
 
   return SV_OK;
+}
+
+//------------------------------
+// VMTKUtils_ReorderTetElements
+//------------------------------
+// Change the node ordering for tet elements.
+//
+// This is only needed for boundary layer elements that have been extruded inward
+// because the tet element node ordering is incorrect.
+//
+// It is likely that all elements in an extruded boundary layer mesh will be tets
+// and need to be reordered but just in case make a list of tet elements with negative 
+// volume and only reorder those.
+//
+// This function is called for any boundary layer mesh, extruded inward or not, so there
+// may be no elements that need to be reordered.
+
+void VMTKUtils_ReorderTetElements(vtkUnstructuredGrid* boundaryLayerMesh)
+{
+  vtkIdType numCells = boundaryLayerMesh->GetNumberOfCells();
+  vtkCellArray* cells = boundaryLayerMesh->GetCells();
+  vtkUnsignedCharArray* cellTypes = boundaryLayerMesh->GetCellTypesArray();
+
+  // Check element volumes.
+  //
+  vtkGenericCell* cell = vtkGenericCell::New();
+  vtkSmartPointer<vtkMeshQuality> qualityFilter = vtkSmartPointer<vtkMeshQuality>::New();
+  qualityFilter->SetInputData(boundaryLayerMesh);
+  qualityFilter->SetTetQualityMeasureToVolume();
+  qualityFilter->Update();
+
+  // Get the element volumes.
+  //
+  vtkDataSet* qualityMesh = qualityFilter->GetOutput();
+  vtkSmartPointer<vtkDoubleArray> qualityArray =
+      vtkDoubleArray::SafeDownCast(qualityMesh->GetCellData()->GetArray("Quality"));
+
+  // Store element IDs that have volume < 0. Need to also 
+  // store the location of element connectivity 'loc'. 
+  // 
+  std::vector<vtkIdType> negVolElements;
+  std::vector<vtkIdType> connLoc;
+  vtkIdType loc = 0;
+
+  for(vtkIdType i = 0; i < qualityArray->GetNumberOfTuples(); i++) {
+    boundaryLayerMesh->GetCell(i, cell);
+    auto numPts = cell->GetNumberOfPoints();
+
+    if ((cellTypes->GetValue(i) == VTK_TETRA) && (qualityArray->GetValue(i) < 0.0)) {
+      negVolElements.push_back(i);
+      connLoc.push_back(loc);
+    }
+
+  loc += numPts + 1;
+  }
+
+  if (negVolElements.size() == 0) {
+    return;
+  }
+
+  // Reorder the nodes of tet elements.
+  //
+  // Swapping the 1st and 2nd nodes is sufficient to create a proper node ordering.
+  //
+  std::cout << "Reorder the nodes of boundary layer tet elements ..." << std::endl;
+  vtkIdType ids[4];
+  vtkIdType id0;
+
+  for (auto i = 0; i < negVolElements.size(); ++i) { 
+    auto cellId = negVolElements[i];
+    loc = connLoc[i];
+    boundaryLayerMesh->GetCell(cellId, cell);
+    auto numPts = cell->GetNumberOfPoints();
+
+    for (vtkIdType pointInd = 0; pointInd < numPts; ++pointInd) {
+      auto id = cell->PointIds->GetId(pointInd);
+      ids[pointInd] = id;
+    }
+
+    id0 = ids[0];
+    ids[0] = ids[1];
+    ids[1] = id0;
+    cells->ReplaceCell(loc, numPts, ids);
+  }
+
+  std::cout << "Number of tet elements with changed order " << negVolElements.size() << std::endl;
 }
 
 int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
