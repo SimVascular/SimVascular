@@ -410,7 +410,8 @@ void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
     doc.appendChild(xmlNode);
 
     QDomElement root = doc.createElement("projectDescription");
-    root.setAttribute("version", "1.0");
+//    root.setAttribute("version", "1.0");
+    root.setAttribute("version", "1.1");
     doc.appendChild(root);
 
     QDomElement tag = doc.createElement("images");
