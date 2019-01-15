@@ -618,6 +618,10 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
   doc.appendChild(xmlNode);
 
   QDomElement root = doc.createElement("Transform");
+  root.setAttribute("transform_version", 1.0);
+  root.setAttribute("description", "original dicom transform to reset the .vti transform "
+    "when reloading a .vti after converting from dicom. This is needed because mitk "
+    "loads DICOMs and vtis differently.");
   doc.appendChild(root);
 
   QDomElement tag = doc.createElement("transform");
@@ -654,7 +658,7 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
     doc.setContent(&xmlFile,em);
     xmlFile.close();
 
-    auto root = doc.firstChildElement("Transform");
+    auto root = doc.firstChildElement("Transform").firstChildElement("transform");
 
     std::cout << doc.toString().toStdString() << "\n";
 
