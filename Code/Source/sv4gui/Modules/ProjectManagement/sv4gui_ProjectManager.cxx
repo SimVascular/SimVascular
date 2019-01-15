@@ -602,49 +602,78 @@ if we convert a dicom to a vti and then load it back in it will have an incorrec
 transform.
 
 To counteract this we write the original transform when loading in the dicom,
-then when the converted .vti is read back in, we rest the transform.
+then when the converted .vti is read back in, we reset the transform.
 **/
 void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
   std::string imageParentPath){
 
   //check for existing transform and delete
-  std::string transform_fn = imageParentPath+"/transform.txt";
+  std::string transform_fn = imageParentPath+"/transform.xml";
 
   auto transform = image->GetGeometry()->GetVtkMatrix();
-  ofstream transform_file;
-  transform_file.open(transform_fn);
+
+  QDomDocument doc;
+
+  QDomNode xmlNode = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+  doc.appendChild(xmlNode);
+
+  QDomElement root = doc.createElement("Transform");
+  doc.appendChild(root);
+
+  QDomElement tag = doc.createElement("transform");
 
   for (int j = 0; j < 3; j++){
     for (int i = 0; i < 3; i++){
       auto v = transform->GetElement(i,j);
-
-      transform_file << v << "\n";
+      auto label = "t"+std::to_string(i)+std::to_string(j);
+      tag.setAttribute(QString::fromStdString(label),v);
     }
   }
-  transform_file.close();
+
+  root.appendChild(tag);
+  QString xml = doc.toString(4);
+
+  QFile file( QString::fromStdString(transform_fn ) );
+
+  if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+      QTextStream out(&file);
+      out << xml <<endl;
+  }
 }
 
 void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path){
 
-  auto transform_fn = proj_path+"/Images/transform.txt";
+  auto transform_fn = proj_path+"/Images/transform.xml";
 
-  ifstream trans_file(transform_fn);
-  std::string line;
-  if (trans_file.is_open()){
+  QDomDocument doc("transform");
+
+  QFile xmlFile(QString::fromStdString(transform_fn));
+  if (xmlFile.open(QIODevice::ReadOnly)){
+    std::cout << "loading xml\n";
+    QString *em=NULL;
+    doc.setContent(&xmlFile,em);
+    xmlFile.close();
+
+    auto root = doc.firstChildElement("Transform");
+
+    std::cout << doc.toString().toStdString() << "\n";
+
+    std::cout << root.text().toStdString() << "\n";
 
     auto transform = image->GetGeometry()->GetVtkMatrix();
-    //loop over transform coordinates (see ::AddImage for how
-    //it's written)
+
+    std::cout << "starting loop\n";
     for (int j = 0; j < 3; j++){
       for (int i = 0; i < 3; i++){
-        getline(trans_file, line);
-
-        auto v = std::stod(line);
+        auto label = "t"+std::to_string(i)+std::to_string(j);
+        std::cout << label << "\n";
+        auto line = root.attribute(QString::fromStdString(label));
+        std::cout << line.toStdString() << "\n";
+        auto v = std::stod(line.toStdString());
         transform->SetElement(i,j,v);
       }
     }
 
-    trans_file.close();
     image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
     image->UpdateOutputInformation();
   }
