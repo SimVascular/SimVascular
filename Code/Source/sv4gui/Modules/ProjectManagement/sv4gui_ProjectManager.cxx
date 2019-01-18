@@ -229,7 +229,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
 
                 //do image transform stuff
                 mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
-                setTransform(image, projPath.toStdString());
+                setTransform(image, projPath.toStdString(), imageNode->GetName());
 
                 dataStorage->Add(imageNode,imageFolderNode);
             }
@@ -558,7 +558,7 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
             //if converting from dicom to vti we need to record the original
             //image transform so we can load it back in
             //otherwise the vti will use an incorrect transform when reloaded
-            writeTransformFile(image, imageParentPath);
+            writeTransformFile(image, imageParentPath, imageNode->GetName());
 
             vtkImageData* vtkImg=sv4guiVtkUtils::MitkImage2VtkImage(image);
             if(vtkImg)
@@ -606,10 +606,14 @@ To counteract this we write the original transform when loading in the dicom,
 then when the converted .vti is read back in, we reset the transform.
 **/
 void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
-  std::string imageParentPath){
+  std::string imageParentPath, std::string imageName){
 
-  //check for existing transform and delete
-  std::string transform_fn = imageParentPath+"/transform.xml";
+    QDir dir(QString::fromStdString(imageParentPath));
+
+    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".xml"));
+
+
+  auto transform_fn = FilePath.toStdString();
 
   auto transform = image->GetGeometry()->GetVtkMatrix();
 
@@ -646,9 +650,16 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
   }
 }
 
-void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path){
+void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path,
+  std::string imageName){
 
-  auto transform_fn = proj_path+"/Images/transform.xml";
+    QDir dir(QString::fromStdString(proj_path));
+    dir.cd(QString::fromStdString("Images"));
+
+    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".xml"));
+
+
+  auto transform_fn = FilePath.toStdString();
 
   QDomDocument doc("transform");
 
