@@ -55,6 +55,9 @@ public:
     static void SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath);
     static void SaveAllProjects(mitk::DataStorage::Pointer dataStorage);
 
+    static void writeTransformFile(mitk::Image* image, std::string imageParentPath, std::string imageName);
+    static void setTransform(mitk::Image* image, std::string proj_path, std::string imageName);
+
     static void LoadData(mitk::DataNode::Pointer dataNode);
     static mitk::DataNode::Pointer LoadDataNode(std::string filePath);
     static mitk::DataNode::Pointer GetProjectFolderNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode);

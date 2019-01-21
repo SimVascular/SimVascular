@@ -71,6 +71,9 @@
 #include <QFile>
 #include <QTextStream>
 
+#include <iostream>
+#include <fstream>
+
 void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir,bool newProject)
 {
     QString projectConfigFileName=".svproj";
@@ -223,6 +226,11 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
                 //            imageNode->SetVisibility(false);
                 mitk::DataNode::Pointer imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath);
                 imageNode->SetName(imageNameList[i].toStdString());
+
+                //do image transform stuff
+                mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
+                setTransform(image, projPath.toStdString(), imageNode->GetName());
+
                 dataStorage->Add(imageNode,imageFolderNode);
             }
             catch(...)
@@ -402,7 +410,8 @@ void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
     doc.appendChild(xmlNode);
 
     QDomElement root = doc.createElement("projectDescription");
-    root.setAttribute("version", "1.0");
+//    root.setAttribute("version", "1.0");
+    root.setAttribute("version", "1.1");
     doc.appendChild(root);
 
     QDomElement tag = doc.createElement("images");
@@ -517,6 +526,8 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
         imagesElement.removeChild(previousImgElement);
     }
 
+    //continue image adding
+
     QDomElement imgElement = doc.createElement("image");
     if(copyIntoProject)
     {
@@ -543,6 +554,11 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
                 image->SetOrigin(org);
                 image->SetSpacing(scaleFactor*spacing);
             }
+
+            //if converting from dicom to vti we need to record the original
+            //image transform so we can load it back in
+            //otherwise the vti will use an incorrect transform when reloaded
+            writeTransformFile(image, imageParentPath, imageNode->GetName());
 
             vtkImageData* vtkImg=sv4guiVtkUtils::MitkImage2VtkImage(image);
             if(vtkImg)
@@ -579,6 +595,104 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
     }
 
     return;
+}
+
+/**
+Due to differing conventions in the way DICOM and .vti files treat image axes
+if we convert a dicom to a vti and then load it back in it will have an incorrect
+transform.
+
+To counteract this we write the original transform when loading in the dicom,
+then when the converted .vti is read back in, we reset the transform.
+**/
+void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
+  std::string imageParentPath, std::string imageName){
+
+    QDir dir(QString::fromStdString(imageParentPath));
+
+    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".xml"));
+
+
+  auto transform_fn = FilePath.toStdString();
+
+  auto transform = image->GetGeometry()->GetVtkMatrix();
+
+  QDomDocument doc;
+
+  QDomNode xmlNode = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+  doc.appendChild(xmlNode);
+
+  QDomElement root = doc.createElement("Transform");
+  root.setAttribute("transform_version", 1.0);
+  root.setAttribute("description", "original dicom transform to reset the .vti transform "
+    "when reloading a .vti after converting from dicom. This is needed because mitk "
+    "loads DICOMs and vtis differently.");
+  doc.appendChild(root);
+
+  QDomElement tag = doc.createElement("transform");
+
+  for (int j = 0; j < 3; j++){
+    for (int i = 0; i < 3; i++){
+      auto v = transform->GetElement(i,j);
+      auto label = "t"+std::to_string(i)+std::to_string(j);
+      tag.setAttribute(QString::fromStdString(label),v);
+    }
+  }
+
+  root.appendChild(tag);
+  QString xml = doc.toString(4);
+
+  QFile file( QString::fromStdString(transform_fn ) );
+
+  if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+      QTextStream out(&file);
+      out << xml <<endl;
+  }
+}
+
+void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path,
+  std::string imageName){
+
+    QDir dir(QString::fromStdString(proj_path));
+    dir.cd(QString::fromStdString("Images"));
+
+    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".xml"));
+
+
+  auto transform_fn = FilePath.toStdString();
+
+  QDomDocument doc("transform");
+
+  QFile xmlFile(QString::fromStdString(transform_fn));
+  if (xmlFile.open(QIODevice::ReadOnly)){
+    std::cout << "loading xml\n";
+    QString *em=NULL;
+    doc.setContent(&xmlFile,em);
+    xmlFile.close();
+
+    auto root = doc.firstChildElement("Transform").firstChildElement("transform");
+
+    std::cout << doc.toString().toStdString() << "\n";
+
+    std::cout << root.text().toStdString() << "\n";
+
+    auto transform = image->GetGeometry()->GetVtkMatrix();
+
+    std::cout << "starting loop\n";
+    for (int j = 0; j < 3; j++){
+      for (int i = 0; i < 3; i++){
+        auto label = "t"+std::to_string(i)+std::to_string(j);
+        std::cout << label << "\n";
+        auto line = root.attribute(QString::fromStdString(label));
+        std::cout << line.toStdString() << "\n";
+        auto v = std::stod(line.toStdString());
+        transform->SetElement(i,j,v);
+      }
+    }
+
+    image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
+    image->UpdateOutputInformation();
+  }
 }
 
 void sv4guiProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath)
