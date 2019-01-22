@@ -174,10 +174,6 @@ svCatchDebugger() {
   }
 #endif
 
-  // parse registry for plugins!
-  //sv_parse_registry_for_plugins();
-  //exit(0);
-
   // want to hide launch only flags from tcl/python/mitk
   // shells
   int pass_along_start_index = 0;
@@ -329,7 +325,9 @@ svCatchDebugger() {
     gSimVascularUseWin32Registry = 0;
   } else {
     gSimVascularUseWin32Registry = 1;
-    sv_parse_reg();
+    sv_parse_registry_for_core_app();
+    // parse registry for plugins!
+    //sv_parse_registry_for_plugins();
   }
 #endif
 #endif

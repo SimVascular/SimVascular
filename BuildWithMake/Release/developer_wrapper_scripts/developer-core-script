@@ -151,6 +151,7 @@ case "$SV_OS" in
  "windows" )
 export OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath --windows -t mixed $OPEN_SOFTWARE_BINARIES_TOPLEVEL`
 export SV_HOME=`cygpath --windows -t mixed $SV_HOME`
+export PYTHONHOME=`cygpath --windows -t mixed $PYTHONHOME`
 export TCL_LIBRARY=`cygpath --windows -t mixed $TCL_LIBRARY`
 export TK_LIBRARY=`cygpath --windows -t mixed $TK_LIBRARY`
 export TKCXIMAGE_DLL=`cygpath --windows -t mixed $TKCXIMAGE_DLL`
