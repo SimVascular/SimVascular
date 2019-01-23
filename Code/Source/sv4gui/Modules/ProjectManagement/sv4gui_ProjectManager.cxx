@@ -610,7 +610,7 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
 
     QDir dir(QString::fromStdString(imageParentPath));
 
-    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".xml"));
+    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".transform.xml"));
 
 
   auto transform_fn = FilePath.toStdString();
@@ -656,7 +656,7 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
     QDir dir(QString::fromStdString(proj_path));
     dir.cd(QString::fromStdString("Images"));
 
-    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".xml"));
+    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".transform.xml"));
 
 
   auto transform_fn = FilePath.toStdString();
