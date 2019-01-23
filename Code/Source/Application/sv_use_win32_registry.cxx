@@ -187,13 +187,48 @@ int sv_parse_registry_for_core_app() {
   RegCloseKey(hKey);
 
   // now use code common to plugins to create/append path env vars
-  sv_parse_registry_for_plugins(mykey);
+  sv_parse_registry_for_environment_variables(mykey);
 
+  sv_parse_registry_for_plugins();
+  
   return SV_OK;
   
 }
 
-int sv_parse_registry_for_plugins(char* toplevel_key) {
+int sv_parse_registry_for_plugins() {
+  
+  HKEY hKey;
+  LONG returnStatus;
+
+  DWORD dwType=REG_SZ;
+  DWORD dwSize=2048;
+  char lszValue[2048];
+  SecureZeroMemory(lszValue,sizeof(lszValue));
+
+  // require 64-bit registry entries
+  
+  char mykey[1024];
+  mykey[0]='\0';
+  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"Plugins",SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
+  fprintf(stdout,"%s\n\n",mykey);
+ 
+  returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey);
+  if (returnStatus != ERROR_SUCCESS) {
+    fprintf(stderr,"note: SV no plugins found in registry!\n(%s)\n",mykey);
+    exit(-1);
+  } else {
+    QueryKey(hKey);
+  }
+ 
+  RegCloseKey(hKey);
+
+  // now use code common to plugins to create/append path env vars
+  sv_parse_registry_for_environment_variables(mykey);
+
+  return SV_OK;
+}
+
+int sv_parse_registry_for_environment_variables(char* toplevel_key) {
 
   HKEY hKey;
   LONG returnStatus;

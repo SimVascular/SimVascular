@@ -109,6 +109,7 @@ int sv_main_append_to_envvar(char* envvar_to_update, char* appendme);
 int sv_parse_registry_for_plugins(char* toplevel_key);
 int sv_parse_registry_for_core_app();
 int sv_main_append_to_envvar(char* envvar_to_update, char* appendme);
+int sv_parse_registry_for_environment_variables(char* toplevel_key);
 
 #endif
 #endif
