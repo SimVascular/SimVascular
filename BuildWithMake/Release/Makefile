@@ -121,7 +121,7 @@ endif
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -out $(SV_VERSION).msi tmp/sv.wixobj
+	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -sice:ICE60 -out $(SV_VERSION).msi tmp/sv.wixobj
 
 msi-bundle-clean:
 	-rm -f tmp/bundle.wixobj
