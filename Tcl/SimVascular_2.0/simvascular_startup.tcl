@@ -239,24 +239,10 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
   }
 
   if {$tcl_platform(platform) == "windows"} {
-    set parasoliddll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  SV_PARASOLID_DLL]
-
-    if {$parasoliddll != ""} {
-      puts "Found Parasolid.  Loading..."
-      load $parasoliddll Parasolidsolid
-    }
-
-    set pschema_dir [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  SV_PARASOLID_PSCHEMA_DIR]
-
-    if {$pschema_dir != ""} {
-      puts "Found Parasolid Schema Directory."
-      global env
-      set env(P_SCHEMA) $pschema_dir
-    }
+      
+      if {![catch {load lib_simvascular_parasolid_solid.dll Parasolidsolid} msg]} {
+	puts "Found Parasolid.  Loading..."
+      }
 
     set discretedll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \

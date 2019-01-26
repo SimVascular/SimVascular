@@ -197,7 +197,7 @@ int sv_parse_registry_for_core_app() {
 
 int sv_parse_registry_for_plugins() {
   
-  HKEY hKey;
+  HKEY hKey[3];
   LONG returnStatus;
 
   DWORD dwType=REG_SZ;
@@ -207,26 +207,138 @@ int sv_parse_registry_for_plugins() {
 
   // require 64-bit registry entries
   
-  char mykey[1024];
-  mykey[0]='\0';
-  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"Plugins",SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
-  fprintf(stdout,"%s\n\n",mykey);
+  char mykey[3][1024];
+  mykey[0][0]='\0';
+  sprintf(mykey[0],"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"Plugins",SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
+  fprintf(stdout,"%s\n\n",mykey[0]);
  
-  returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey);
+  returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey[0], 0L,  KEY_READ, &hKey[0]);
   if (returnStatus != ERROR_SUCCESS) {
-    fprintf(stderr,"note: SV no plugins found in registry!\n(%s)\n",mykey);
-    exit(-1);
-  } else {
-    QueryKey(hKey);
+    fprintf(stderr,"note: SV no plugins found in registry!\n(%s)\n",mykey[0]);
+    return SV_OK;
   }
+  
+  TCHAR    achKey[2][MAX_KEY_LENGTH];   // buffer for subkey name
+  DWORD    cbName[2];                   // size of name string 
+  TCHAR    achClass0[MAX_PATH] = TEXT(""); // buffer for class name
+  TCHAR    achClass1[MAX_PATH] = TEXT(""); // buffer for class name           
+  DWORD    cchClassName[2];  // size of class string
+           cchClassName[0] = MAX_PATH;
+           cchClassName[1] = MAX_PATH;
+  DWORD    cSubKeys[2];  // number of subkeys
+	   cSubKeys[0]=0;
+	   cSubKeys[1]=0; 
+  DWORD    cbMaxSubKey[2];              // longest subkey size 
+  DWORD    cchMaxClass[2];              // longest class string 
+  DWORD    cValues[2];              // number of values for key 
+  DWORD    cchMaxValue[2];          // longest value name 
+  DWORD    cbMaxValueData[2];       // longest value data 
+  DWORD    cbSecurityDescriptor[2]; // size of security descriptor 
+  FILETIME ftLastWriteTime[2];      // last write time 
  
-  RegCloseKey(hKey);
+  DWORD i, j, retCode; 
+ 
+  TCHAR  achValue[2][MAX_VALUE_NAME]; 
+  DWORD cchValue[2];
+  cchValue[0] = MAX_VALUE_NAME;
+  cchValue[1] = MAX_VALUE_NAME;
+  
+  // Get the class name and the value count. 
+  retCode = RegQueryInfoKey(
+        hKey[0],                    // key handle 
+        achClass0,                // buffer for class name 
+        &cchClassName[0],           // size of class string 
+        NULL,                    // reserved 
+        &cSubKeys[0],               // number of subkeys 
+        &cbMaxSubKey[0],            // longest subkey size 
+        &cchMaxClass[0],            // longest class string 
+        &cValues[0],                // number of values for this key 
+        &cchMaxValue[0],            // longest value name 
+        &cbMaxValueData[0],         // longest value data 
+        &cbSecurityDescriptor[0],   // security descriptor 
+        &ftLastWriteTime[0]);       // last write time 
+ 
+  // Enumerate the subkeys, until RegEnumKeyEx fails.
+  if (cSubKeys[0]) {
+    
+    printf( "\nNumber of subkeys: %d\n", cSubKeys[0]);
 
-  // now use code common to plugins to create/append path env vars
-  sv_parse_registry_for_environment_variables(mykey);
+    for (i=0; i<cSubKeys[0]; i++) {
+      
+      cbName[0] = MAX_KEY_LENGTH;
+      retCode = RegEnumKeyEx(hKey[0], i,
+                     achKey[0], 
+                     &cbName[0], 
+                     NULL, 
+                     NULL, 
+                     NULL, 
+                     &ftLastWriteTime[0]);
+      
+       if (retCode == ERROR_SUCCESS) {
+	      
+	        _tprintf(TEXT("(%d) %s\n"), i+1, achKey[0]);
+                mykey[1][0]='\0';
+                sprintf(mykey[1],"%s\\%s",mykey[0],achKey[0]);
+                fprintf(stdout,"%s\n\n",mykey[1]);
+		returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey[1], 0L,  KEY_READ, &hKey[1]);
+
+                if (returnStatus != ERROR_SUCCESS) {
+                  fprintf(stderr,"note: SV subkeys found in registry!\n(%s)\n",mykey[1]);
+                  return SV_ERROR;
+		  
+		} else {
+
+                  // Get the class name and the value count. 
+                  retCode = RegQueryInfoKey(
+                     hKey[1],                    // key handle 
+                     achClass1,                // buffer for class name 
+                     &cchClassName[1],           // size of class string 
+                     NULL,                    // reserved 
+                     &cSubKeys[1],               // number of subkeys 
+                     &cbMaxSubKey[1],            // longest subkey size 
+                     &cchMaxClass[1],            // longest class string 
+                     &cValues[1],                // number of values for this key 
+                     &cchMaxValue[1],            // longest value name 
+                     &cbMaxValueData[1],         // longest value data 
+                     &cbSecurityDescriptor[1],   // security descriptor 
+                     &ftLastWriteTime[1]);       // last write time 
+ 
+                  // Enumerate the subkeys, until RegEnumKeyEx fails.
+                  if (cSubKeys[1]) {
+                    printf( "\nNumber of sub-subkeys: %d\n", cSubKeys[1]);
+		    for (j=0; j<cSubKeys[1]; j++) {
+                      cbName[1] = MAX_KEY_LENGTH;
+                      retCode = RegEnumKeyEx(hKey[1], i,
+                         achKey[1], 
+                         &cbName[1], 
+                         NULL, 
+                         NULL, 
+                         NULL, 
+                         &ftLastWriteTime[1]);
+     
+                      if (retCode == ERROR_SUCCESS) {
+	                _tprintf(TEXT("(%d) %s\n"), i+1, achKey[1]);
+                        mykey[2][0]='\0';
+                        sprintf(mykey[2],"%s\\%s",mykey[1],achKey[1]);
+                        fprintf(stdout,"%s\n\n",mykey[2]);
+			// now use code common to plugins to create/append path env vars
+                        sv_parse_registry_for_environment_variables(mykey[2]);
+                        break;
+		      } // retCode
+		      
+		    } // j 
+		  } // cSubKeys[1]
+		  RegCloseKey(hKey[1]);
+		} // returnStatus
+       } // retCode
+    } // for i
+  }  //subKeys[0]
+  
+  RegCloseKey(hKey[0]);
 
   return SV_OK;
 }
+
 
 int sv_parse_registry_for_environment_variables(char* toplevel_key) {
 
@@ -350,7 +462,7 @@ int sv_main_append_to_envvar(char* envvar_to_update, char* appendme) {
       exit(-1);
     }
   }
-  newvar[newvarlength++]=';';
+  if (strlen(oldvar) > 0) newvar[newvarlength++]=';';
 
   // now add original value
   for (int i = 0; i < strlen(oldvar);i++) {
