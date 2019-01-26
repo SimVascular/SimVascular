@@ -244,41 +244,22 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
 	puts "Found Parasolid.  Loading..."
       }
 
-    set discretedll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  SV_MESHSIM_DISCRETE_DLL]
+      if {![catch {load lib_simvascular_meshsim_discrete_solid.dll Meshsimdiscretesolid} msg]} {
+	puts "Found MeshSim Discrete Model.  Loading..."
+      }
+      
+      if {![catch {load lib_simvascular_meshsim_solid.dll Meshsimsolid} msg]} {
+	puts "Found MeshSim Solid Model.  Loading..."
+      }
+      
+      if {![catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg]} {
+	puts "Found MeshSim Mesh.  Loading..."
+      }
+      
+      if {![catch {load lib_simvascular_meshsim_adaptor.dll Meshsimadapt} msg]} {
+	puts "Found MeshSim Adapt.  Loading..."
+      }
 
-    if {$discretedll != ""} {
-      puts "Found MeshSim Discrete Model.  Loading..."
-      load $discretedll Meshsimdiscretesolid
-    }
-
-    set meshsimsoliddll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  SV_MESHSIM_SOLID_DLL]
-
-    if {$meshsimsoliddll != ""} {
-      puts "Found MeshSim Solid Model.  Loading..."
-      load $meshsimsoliddll Meshsimsolid
-    }
-
-    set meshsimdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-  			  SV_MESHSIM_MESH_DLL]
-
-    if {$meshsimdll != ""} {
-      puts "Found MeshSim Mesh.  Loading..."
-      load $meshsimdll Meshsimmesh
-    }
-
-    set meshsimadaptdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-  			  SV_MESHSIM_ADAPT_DLL]
-
-    if {$meshsimadaptdll != ""} {
-      puts "Found MeshSim Adapt.  Loading..."
-      load $meshsimadaptdll Meshsimadapt
-    }
   }
 
 } else {
