@@ -31034,21 +31034,14 @@ proc guiMMfindMeshSimLicenseKeys {} {
     return
   }
 
-  set using32bit 0
-  if {[string range $SV_VERSION end-1 end] == "32"} {
-    set using32bit 1
-    set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular"
-  } else {
-    set using32bit 0
-    set parentkeys [list "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular"  "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular"]
-  }
+  set parentkeys [list "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Licenses"]
 
   set foundit 0
   foreach pk $parentkeys {
     set keys {}
     if [catch {set keys [registry keys $pk]}] continue
     puts "keys found: $keys"
-    if {[lsearch -exact $keys Licenses] >= 0} {
+    if {[lsearch -exact $keys MeshSim] >= 0} {
       set foundit 1
       break
     }
@@ -31058,7 +31051,7 @@ proc guiMMfindMeshSimLicenseKeys {} {
     return -code error "ERROR: could not find installed licenses for MeshSim!"
   }
 
-  return "$pk\\Licenses"
+  return "$pk\\MeshSim"
 }
 
 
@@ -31084,10 +31077,10 @@ proc guiMMinstallMeshSimLicenseKeys {} {
   set using32bit 0
   if {[string range $SV_VERSION end-1 end] == "32"} {
     set using32bit 1
-    set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Licenses"
+    set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Licenses\\MeshSim"
   } else {
     set using32bit 0
-    set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Licenses"
+    set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Licenses\\MeshSim"
   }
 
   # delete old keys just if they exist
@@ -31107,9 +31100,9 @@ proc guiMMinstallMeshSimLicenseKeys {} {
     if {[string index $line 0] == "\#"} continue
       set keyname [lindex $line 1]
       set keyname [string toupper $keyname]
-      set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Licenses"
+      set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Licenses\\MeshSim"
       catch {registry set $parentkeys MESHSIM_KEY_$keyname $line sz}
-      set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Licenses"
+      set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Licenses\\MeshSim"
       catch {registry set $parentkeys MESHSIM_KEY_$keyname $line sz}
    }
    close $licfp
