@@ -347,7 +347,7 @@ svCatchDebugger() {
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
   if (gSimVascularUseWin32Registry) {
-    fprintf(stdout,"  Reading SimVascular registry entries.\n");
+    fprintf(stdout,"\nReading SimVascular registry entries.\n\n");
     sv_parse_registry_for_core_app();
   }
 #endif

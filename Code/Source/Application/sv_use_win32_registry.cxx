@@ -58,7 +58,7 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
   RegCloseKey(hKey);
 
   if (returnStatus != ERROR_SUCCESS) {
-    fprintf(stdout,"  FATAL ERROR: Invalid application registry (%s).\n\n",regVarName);
+    fprintf(stderr,"  FATAL ERROR: Invalid application registry (%s).\n\n",regVarName);
     exit(-1);
   }
 
@@ -176,7 +176,7 @@ int sv_parse_registry_for_core_app() {
   mykey[0]='\0';
   sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
   //sprintf(mykey,"%s\\%s\\%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"SimVascular\\2018-11-30");
-  fprintf(stdout,"%s\n\n",mykey);
+  //fprintf(stdout,"%s\n\n",mykey);
  
   returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey);
   if (returnStatus != ERROR_SUCCESS) {
@@ -210,11 +210,11 @@ int sv_parse_registry_for_plugins() {
   char mykey[3][1024];
   mykey[0][0]='\0';
   sprintf(mykey[0],"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"Plugins",SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
-  fprintf(stdout,"%s\n\n",mykey[0]);
+  //fprintf(stdout,"%s\n\n",mykey[0]);
  
   returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey[0], 0L,  KEY_READ, &hKey[0]);
   if (returnStatus != ERROR_SUCCESS) {
-    fprintf(stderr,"note: SV no plugins found in registry!\n(%s)\n",mykey[0]);
+    fprintf(stdout,"Note: No SimVascular plugins found in registry.\n(%s)\n",mykey[0]);
     return SV_OK;
   }
   
@@ -261,7 +261,7 @@ int sv_parse_registry_for_plugins() {
   // Enumerate the subkeys, until RegEnumKeyEx fails.
   if (cSubKeys[0]) {
     
-    printf( "\nNumber of subkeys: %d\n", cSubKeys[0]);
+    //fprintf(stdout, "\nNumber of subkeys: %d\n", cSubKeys[0]);
 
     for (i=0; i<cSubKeys[0]; i++) {
       
@@ -276,14 +276,14 @@ int sv_parse_registry_for_plugins() {
       
        if (retCode == ERROR_SUCCESS) {
 	      
-	        _tprintf(TEXT("(%d) %s\n"), i+1, achKey[0]);
+	        _tprintf(TEXT("\nPlugin %d: %s\n"), i+1, achKey[0]);
                 mykey[1][0]='\0';
                 sprintf(mykey[1],"%s\\%s",mykey[0],achKey[0]);
-                fprintf(stdout,"%s\n\n",mykey[1]);
+                //fprintf(stdout,"%s\n\n",mykey[1]);
 		returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey[1], 0L,  KEY_READ, &hKey[1]);
 
                 if (returnStatus != ERROR_SUCCESS) {
-                  fprintf(stderr,"note: SV subkeys found in registry!\n(%s)\n",mykey[1]);
+                  fprintf(stderr,"ERROR: SV subkeys not found in registry!\n(%s)\n",mykey[1]);
                   return SV_ERROR;
 		  
 		} else {
@@ -305,7 +305,7 @@ int sv_parse_registry_for_plugins() {
  
                   // Enumerate the subkeys, until RegEnumKeyEx fails.
                   if (cSubKeys[1]) {
-                    printf( "\nNumber of sub-subkeys: %d\n", cSubKeys[1]);
+                    //fprintf(stdout, "\nNumber of sub-subkeys: %d\n", cSubKeys[1]);
 		    for (j=0; j<cSubKeys[1]; j++) {
                       cbName[1] = MAX_KEY_LENGTH;
                       retCode = RegEnumKeyEx(hKey[1], j,
@@ -317,10 +317,10 @@ int sv_parse_registry_for_plugins() {
                          &ftLastWriteTime[1]);
      
                       if (retCode == ERROR_SUCCESS) {
-	                _tprintf(TEXT("cSubKeys1 (%d) (j %i) %s\n"), i+1, j, achKey[1]);
+	                //_tprintf(TEXT("cSubKeys1 (%d) (j %i) %s\n"), i+1, j, achKey[1]);
                         mykey[2][0]='\0';
                         sprintf(mykey[2],"%s\\%s",mykey[1],achKey[1]);
-                        fprintf(stdout,"%s\n\n",mykey[2]);
+                        fprintf(stdout,"  Found plugin in registry (%s)\n",mykey[2]);
 			// now use code common to plugins to create/append path env vars
                         sv_parse_registry_for_environment_variables(mykey[2]);
                         break;
@@ -333,7 +333,8 @@ int sv_parse_registry_for_plugins() {
        } // retCode
     } // for i
   }  //subKeys[0]
-  
+
+  fprintf(stdout,"\n\n");	
   RegCloseKey(hKey[0]);
 
   return SV_OK;
@@ -349,7 +350,7 @@ int sv_parse_registry_for_environment_variables(char* toplevel_key) {
   append_env_var_key[0]='\0';
   sprintf(append_env_var_key,"%s\\%s",toplevel_key,"ENVIRONMENT_VARIABLES");
   
-  fprintf(stdout,"parse for env vars (%s)\n\n",append_env_var_key);
+  //fprintf(stdout,"parse for env vars (%s)\n\n",append_env_var_key);
   
   returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, append_env_var_key, 0L,  KEY_READ, &hKey);
   if (returnStatus != ERROR_SUCCESS) {
@@ -357,7 +358,7 @@ int sv_parse_registry_for_environment_variables(char* toplevel_key) {
     return SV_ERROR;
   }
 
-  QueryKey(hKey);
+  //QueryKey(hKey);
   
   TCHAR    achKey[MAX_KEY_LENGTH];   // buffer for subkey name
   DWORD    cbName;                   // size of name string 
@@ -399,7 +400,7 @@ int sv_parse_registry_for_environment_variables(char* toplevel_key) {
     //fprintf(stdout,"cSubKeys: %i\n",cSubKeys);
   }
   if (cValues) {
-    fprintf(stdout, "\n  Number of values: %d\n", cValues);
+    //fprintf(stdout, "\n  Number of values: %d\n", cValues);
     
     for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++) { 
       cchValue = MAX_VALUE_NAME;
@@ -416,11 +417,11 @@ int sv_parse_registry_for_environment_variables(char* toplevel_key) {
 		(LPBYTE)&lszValue,
 		&dwSize);
       if (retCode == ERROR_SUCCESS) {
-          fprintf(stdout,"value (%s) value (%s)\n",achValue,lszValue);
+	  fprintf(stdout,"  Set/Append (%s) with value (%s)\n",achValue,lszValue);
           if (returnStatus == ERROR_SUCCESS) {
             sv_main_append_to_envvar(achValue,lszValue);
           } else {
-            fprintf(stdout,"  NOTE: error reading value (%s) in (%s)\n",achValue,toplevel_key);
+            fprintf(stderr,"  WARNING: error reading value (%s) in (%s)\n",achValue,toplevel_key);
 	  }
       }
     }
@@ -476,10 +477,10 @@ int sv_main_append_to_envvar(char* envvar_to_update, char* appendme) {
 
   _putenv_s( envvar_to_update, newvar );
 
-  fprintf(stdout,"APPENDME (%s): %s\n",envvar_to_update, appendme);
-  fprintf(stdout,"ORIGINAL ENV (%s): %s\n", envvar_to_update, oldvar);
-  fprintf(stdout,"NEW ENV (%s): %s\n", envvar_to_update, newvar);
-  fprintf(stdout,"LENGTH ENV (%s): %i\n",envvar_to_update, newvarlength);
+  //fprintf(stdout,"APPENDME (%s): %s\n",envvar_to_update, appendme);
+  //fprintf(stdout,"ORIGINAL ENV (%s): %s\n", envvar_to_update, oldvar);
+  //fprintf(stdout,"NEW ENV (%s): %s\n", envvar_to_update, newvar);
+  //fprintf(stdout,"LENGTH ENV (%s): %i\n",envvar_to_update, newvarlength);
 
   return SV_OK;
 
