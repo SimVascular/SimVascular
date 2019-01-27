@@ -34,270 +34,456 @@
 
 #include "sv_use_win32_registry.h"
 
-int sv_parse_reg() {
-  
-  char rundir[255];
-  rundir[0]='\0';
-
-  HKEY hKey2;
-  LONG returnStatus2;
-
-  DWORD dwType2=REG_SZ;
-  DWORD dwSize2=255;
-  char lszValue2[255];
-  SecureZeroMemory(lszValue2,sizeof(lszValue2));
-
-  DWORD dwType3=REG_SZ;
-  DWORD dwSize3=255;
-  char lszValue3[255];
-  SecureZeroMemory(lszValue3,sizeof(lszValue3));
-
-  DWORD dwType4=REG_SZ;
-  DWORD dwSize4=1024;
-  char lszValue4[1024];
-  SecureZeroMemory(lszValue4,sizeof(lszValue4));
-
-  DWORD dwType5=REG_SZ;
-  DWORD dwSize5=1024;
-  char lszValue5[1024];
-  SecureZeroMemory(lszValue5,sizeof(lszValue5));
-
-  DWORD dwType6=REG_SZ;
-  DWORD dwSize6=1024;
-  char lszValue6[1024];
-  SecureZeroMemory(lszValue6,sizeof(lszValue6));
-
-  DWORD dwType7=REG_SZ;
-  DWORD dwSize7=255;
-  char lszValue7[255];
-  SecureZeroMemory(lszValue7,sizeof(lszValue7));
-
-  char mykey[1024];
-  mykey[0]='\0';
-  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
-
-  // we first assume that we are running on a 32-bit OS
-  returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
-  // if that fails, we check for the key hidden on a 64-bit OS
-  // if this fails, then just give up and go home
-  if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stdout,"Could not find SV registry!\n(%s)\n Looking elsewhere.....",mykey);
-    mykey[0]='\0';
-    sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
-    //fprintf(stdout,"%s\n\n",mykey);
-    returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
-  }
-  if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stderr,"FATAL ERROR: SV registry error!\n(%s)\n",mykey);
-    exit(-1);
-  }
-
-  returnStatus2 = RegQueryValueEx(hKey2, "RunDir", NULL, &dwType2,(LPBYTE)&rundir, &dwSize2);
-  //RegCloseKey(hKey2);
-
-  if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stdout,"  FATAL ERROR: Invalid application registry.  SV RunDir not found!\n\n");
-    exit(-1);
-  }
-
-  //printf("Value Read is %s\n", rundir);
-
-  // set the environment variables using the registry
-  char oldpath[_MAX_ENV];
-  char newpath[_MAX_ENV];
-  size_t requiredSize;
-
-   //
-   //  Add to PATH
-   //
-
-  oldpath[0]='\0';
-  getenv_s( &requiredSize, NULL, 0, "PATH");
-  if (requiredSize >= _MAX_ENV) {
-    fprintf(stderr,"FATAL ERROR:  path to long!\n");
-    exit(-1);
-  }
-  getenv_s( &requiredSize, oldpath, requiredSize, "PATH" );
-
-  // prepend path with location of our shared libs
-
-  int newpathlength = 0;
-  newpath[0]='\0';
-
-  for (newpathlength = 0; newpathlength < strlen(rundir);newpathlength++) {
-    newpath[newpathlength]=rundir[newpathlength];
-    if (newpathlength == _MAX_ENV) {
-      fprintf(stderr,"FATAL ERROR:  path to long!\n");
-      exit(-1);
-    }
-  }
-  newpath[newpathlength++]=';';
-
-  // need mitk path, sigh.
-  char mitkrunpath[_MAX_ENV];
-  mitkrunpath[0]='\0';
-  sprintf(mitkrunpath,"%s\\%s",rundir,"mitk/bin");
-  for (int i = 0; i < strlen(mitkrunpath);i++) {
-    newpath[newpathlength++]=mitkrunpath[i];
-    if (newpathlength == _MAX_ENV) {
-      fprintf(stderr,"FATAL ERROR:  path to long!\n");
-      exit(-1);
-    }
-  }
-  newpath[newpathlength++]=';';
-
-  // now add original path
-
-  for (int i = 0; i < strlen(oldpath);i++) {
-    newpath[newpathlength++]=oldpath[i];
-    if (newpathlength == _MAX_ENV) {
-      fprintf(stderr,"FATAL ERROR:  path to long!\n");
-      exit(-1);
-    }
-  }
-  newpath[newpathlength]='\0';
-
-  _putenv_s( "PATH", newpath );
-
-  fprintf(stdout,"ORIGINAL PATH: %s\n",oldpath);
-  //fprintf(stdout,"RUNDIR: %s\n",rundir);
-  fprintf(stdout,"NEW PATH: %s\n",newpath);
-  fprintf(stdout,"length of path: %i\n",newpathlength);
-
-   // set the environment variables using the registry
-  char envvar[_MAX_ENV];
-  char newvar[_MAX_ENV];
-
-#ifdef SV_USE_PYTHON
-
-  lszValue4[0]='\0';
-  returnStatus2 = RegQueryValueEx(hKey2, "PythonPackagesDir", NULL, &dwType4,(LPBYTE)&lszValue4, &dwSize4);
-  //returnStatus2 = RegQueryValueEx(hKey2, "Python", NULL, &dwType4,(LPBYTE)&lszValue4, &dwSize4);
-  fprintf(stdout,"PythonPackagesDir: %s\n",lszValue4);
-
-  if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV PythonPackagesDir not found!\n\n");
-    exit(-1);
-  }
-
-  char pythonpath[_MAX_ENV];
-  pythonpath[0]='\0';
-  sprintf(pythonpath,"%s",lszValue4);
-  fprintf(stdout,"%s\n",pythonpath);
-
-  _putenv_s( "PYTHONPATH", pythonpath );
-
-  lszValue7[0]='\0';
-  returnStatus2 = RegQueryValueEx(hKey2, "PythonHome", NULL, &dwType7,(LPBYTE)&lszValue7, &dwSize7);
-  fprintf(stdout,"PythonHome: %s\n",lszValue7);
-
-  if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV PythohHome not found!\n\n");
-    exit(-1);
-  }
-
-  char pythonhomepath[_MAX_ENV];
-  pythonhomepath[0]='\0';
-  sprintf(pythonhomepath,"%s",lszValue7);
-  fprintf(stdout,"%s\n",pythonhomepath);
-
-  _putenv_s( "PYTHONHOME", pythonhomepath );
-
-
-#endif
-
-#ifdef SV_USE_QT_GUI
-
-  lszValue5[0]='\0';
-  returnStatus2 = RegQueryValueEx(hKey2, "SV_PLUGIN_PATH", NULL, &dwType5,(LPBYTE)&lszValue5, &dwSize5);
-  fprintf(stdout,"SV_PLUGIN_PATH: %s\n",lszValue5);
-
-  if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV_PLUGIN_PATH not found!\n\n");
-    exit(-1);
-  }
-
-  char sv_plugin_path[_MAX_ENV];
-  sv_plugin_path[0]='\0';
-  sprintf(sv_plugin_path,"%s",lszValue5);
-  fprintf(stdout,"%s\n",sv_plugin_path);
-
-  _putenv_s( "SV_PLUGIN_PATH", sv_plugin_path );
-
-#endif
-
-#ifdef SV_USE_QT
-
-  lszValue6[0]='\0';
-  returnStatus2 = RegQueryValueEx(hKey2, "QT_PLUGIN_PATH", NULL, &dwType6,(LPBYTE)&lszValue6, &dwSize6);
-  fprintf(stdout,"QT_PLUGIN_PATH: %s\n",lszValue6);
-
-  if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stderr,"  FATAL ERROR: Invalid application registry.  QT_PLUGIN_PATH not found!\n\n");
-    exit(-1);
-  }
-
-  char qt_plugin_path[_MAX_ENV];
-  qt_plugin_path[0]='\0';
-  sprintf(qt_plugin_path,"%s",lszValue6);
-  fprintf(stdout,"%s\n",qt_plugin_path);
-
-  _putenv_s( "QT_PLUGIN_PATH", qt_plugin_path );
-
-#endif
-
-RegCloseKey(hKey2);
-}
-
-
 int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_Interp *interp ) {
 
-  HKEY hKey2;
-  LONG returnStatus2;
-  DWORD dwType2=REG_SZ;
-  DWORD dwSize2=255;
-  char lszValue2[255];
+  HKEY hKey;
+  LONG returnStatus;
+  DWORD dwType=REG_SZ;
+  DWORD dwSize=2048;
+  char lszValue[2048];
   char mykey[1024];
-  char scmd[2048];
-
+  char scmd[4096];
+  SecureZeroMemory(lszValue,sizeof(lszValue));
   mykey[0]='\0';
-  lszValue2[0]='\0';
   scmd[0]='\0';
-
-  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
-
-  // we first assume that we are running on a 32-bit OS
-  returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
-
-  // if 32-bit check fails, we check for the key hidden on a 64-bit OS
-  // if this fails, then just give up and go home
-  if (returnStatus2 != ERROR_SUCCESS) {
-    mykey[0]='\0';
-    sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
-    returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
-  }
-  if (returnStatus2 != ERROR_SUCCESS) {
+  
+  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
+  returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey);
+  if (returnStatus != ERROR_SUCCESS) {
     fprintf(stderr,"FATAL ERROR: SV registry error!\n(%s)\n",mykey);
     exit(-1);
   }
 
-  returnStatus2 = RegQueryValueEx(hKey2, regVarName, NULL, &dwType2,(LPBYTE)&lszValue2, &dwSize2);
-  RegCloseKey(hKey2);
+  returnStatus = RegQueryValueEx(hKey, regVarName, NULL, &dwType,(LPBYTE)&lszValue, &dwSize);
+  RegCloseKey(hKey);
 
-  if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stdout,"  FATAL ERROR: Invalid application registry (%s).\n\n",regVarName);
+  if (returnStatus != ERROR_SUCCESS) {
+    fprintf(stderr,"  FATAL ERROR: Invalid application registry (%s).\n\n",regVarName);
     exit(-1);
   }
 
-  PathRemoveBackslash(lszValue2);
+  PathRemoveBackslash(lszValue);
   // set the variable in tcl interpreter
-  sprintf(scmd,"set %s {%s}\n",interpVarName,lszValue2);
+  sprintf(scmd,"set %s {%s}\n",interpVarName,lszValue);
   if (Tcl_Eval(interp,scmd) == TCL_ERROR) {
     fprintf ( stderr,"error on (%s)\n",scmd);
     return TCL_ERROR;
   }
 
   return TCL_OK;
+}
+
+// QueryKey - Enumerates the subkeys of key and its associated values.
+//     hKey - Key whose subkeys and values are to be enumerated.
+
+void QueryKey(HKEY hKey) 
+{ 
+    TCHAR    achKey[MAX_KEY_LENGTH];   // buffer for subkey name
+    DWORD    cbName;                   // size of name string 
+    TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name 
+    DWORD    cchClassName = MAX_PATH;  // size of class string 
+    DWORD    cSubKeys=0;               // number of subkeys 
+    DWORD    cbMaxSubKey;              // longest subkey size 
+    DWORD    cchMaxClass;              // longest class string 
+    DWORD    cValues;              // number of values for key 
+    DWORD    cchMaxValue;          // longest value name 
+    DWORD    cbMaxValueData;       // longest value data 
+    DWORD    cbSecurityDescriptor; // size of security descriptor 
+    FILETIME ftLastWriteTime;      // last write time 
+ 
+    DWORD i, retCode; 
+ 
+    TCHAR  achValue[MAX_VALUE_NAME]; 
+    DWORD cchValue = MAX_VALUE_NAME; 
+ 
+    // Get the class name and the value count. 
+    retCode = RegQueryInfoKey(
+        hKey,                    // key handle 
+        achClass,                // buffer for class name 
+        &cchClassName,           // size of class string 
+        NULL,                    // reserved 
+        &cSubKeys,               // number of subkeys 
+        &cbMaxSubKey,            // longest subkey size 
+        &cchMaxClass,            // longest class string 
+        &cValues,                // number of values for this key 
+        &cchMaxValue,            // longest value name 
+        &cbMaxValueData,         // longest value data 
+        &cbSecurityDescriptor,   // security descriptor 
+        &ftLastWriteTime);       // last write time 
+ 
+    // Enumerate the subkeys, until RegEnumKeyEx fails.
+    
+    if (cSubKeys)
+    {
+        printf( "\nNumber of subkeys: %d\n", cSubKeys);
+
+        for (i=0; i<cSubKeys; i++) 
+        { 
+            cbName = MAX_KEY_LENGTH;
+            retCode = RegEnumKeyEx(hKey, i,
+                     achKey, 
+                     &cbName, 
+                     NULL, 
+                     NULL, 
+                     NULL, 
+                     &ftLastWriteTime); 
+            if (retCode == ERROR_SUCCESS) 
+            {
+                _tprintf(TEXT("(%d) %s\n"), i+1, achKey);
+            }
+        }
+    } 
+ 
+    // Enumerate the key values. 
+
+    if (cValues) 
+    {
+        printf( "\nNumber of values: %d\n", cValues);
+
+        for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++) 
+        { 
+            cchValue = MAX_VALUE_NAME; 
+            achValue[0] = '\0'; 
+            retCode = RegEnumValue(hKey, i, 
+                achValue, 
+                &cchValue, 
+                NULL, 
+                NULL,
+                NULL,
+                NULL);
+ 
+            if (retCode == ERROR_SUCCESS ) 
+            { 
+                _tprintf(TEXT("(%d) %s\n"), i+1, achValue); 
+            } 
+        }
+    }
+}
+
+int sv_parse_registry_for_core_app() {
+
+  HKEY hKey;
+  LONG returnStatus;
+
+  DWORD dwType=REG_SZ;
+  DWORD dwSize=2048;
+  char lszValue[2048];
+  SecureZeroMemory(lszValue,sizeof(lszValue));
+
+  // require 64-bit registry entries
+  
+  char mykey[1024];
+  mykey[0]='\0';
+  sprintf(mykey,"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
+  //sprintf(mykey,"%s\\%s\\%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"SimVascular\\2018-11-30");
+  //fprintf(stdout,"%s\n\n",mykey);
+ 
+  returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey);
+  if (returnStatus != ERROR_SUCCESS) {
+    fprintf(stderr,"FATAL ERROR: SV registry error!\n(%s)\n",mykey);
+    exit(-1);
+  }
+ 
+  RegCloseKey(hKey);
+
+  // now use code common to plugins to create/append path env vars
+  sv_parse_registry_for_environment_variables(mykey);
+
+  sv_parse_registry_for_plugins();
+  
+  return SV_OK;
+  
+}
+
+int sv_parse_registry_for_plugins() {
+  
+  HKEY hKey[3];
+  LONG returnStatus;
+
+  DWORD dwType=REG_SZ;
+  DWORD dwSize=2048;
+  char lszValue[2048];
+  SecureZeroMemory(lszValue,sizeof(lszValue));
+
+  // require 64-bit registry entries
+  
+  char mykey[3][1024];
+  mykey[0][0]='\0';
+  sprintf(mykey[0],"%s\\%s\\%s\\%s-%s-%s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,"Plugins",SV_MAJOR_VERSION,SV_MINOR_VERSION,SV_PATCH_VERSION);
+  //fprintf(stdout,"%s\n\n",mykey[0]);
+ 
+  returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey[0], 0L,  KEY_READ, &hKey[0]);
+  if (returnStatus != ERROR_SUCCESS) {
+    fprintf(stdout,"Note: No SimVascular plugins found in registry.\n(%s)\n",mykey[0]);
+    return SV_OK;
+  }
+  
+  TCHAR    achKey[2][MAX_KEY_LENGTH];   // buffer for subkey name
+  DWORD    cbName[2];                   // size of name string 
+  TCHAR    achClass0[MAX_PATH] = TEXT(""); // buffer for class name
+  TCHAR    achClass1[MAX_PATH] = TEXT(""); // buffer for class name           
+  DWORD    cchClassName[2];  // size of class string
+           cchClassName[0] = MAX_PATH;
+           cchClassName[1] = MAX_PATH;
+  DWORD    cSubKeys[2];  // number of subkeys
+	   cSubKeys[0]=0;
+	   cSubKeys[1]=0; 
+  DWORD    cbMaxSubKey[2];              // longest subkey size 
+  DWORD    cchMaxClass[2];              // longest class string 
+  DWORD    cValues[2];              // number of values for key 
+  DWORD    cchMaxValue[2];          // longest value name 
+  DWORD    cbMaxValueData[2];       // longest value data 
+  DWORD    cbSecurityDescriptor[2]; // size of security descriptor 
+  FILETIME ftLastWriteTime[2];      // last write time 
+ 
+  DWORD i, j, retCode; 
+ 
+  TCHAR  achValue[2][MAX_VALUE_NAME]; 
+  DWORD cchValue[2];
+  cchValue[0] = MAX_VALUE_NAME;
+  cchValue[1] = MAX_VALUE_NAME;
+  
+  // Get the class name and the value count. 
+  retCode = RegQueryInfoKey(
+        hKey[0],                    // key handle 
+        achClass0,                // buffer for class name 
+        &cchClassName[0],           // size of class string 
+        NULL,                    // reserved 
+        &cSubKeys[0],               // number of subkeys 
+        &cbMaxSubKey[0],            // longest subkey size 
+        &cchMaxClass[0],            // longest class string 
+        &cValues[0],                // number of values for this key 
+        &cchMaxValue[0],            // longest value name 
+        &cbMaxValueData[0],         // longest value data 
+        &cbSecurityDescriptor[0],   // security descriptor 
+        &ftLastWriteTime[0]);       // last write time 
+ 
+  // Enumerate the subkeys, until RegEnumKeyEx fails.
+  if (cSubKeys[0]) {
+    
+    //fprintf(stdout, "\nNumber of subkeys: %d\n", cSubKeys[0]);
+
+    for (i=0; i<cSubKeys[0]; i++) {
+      
+      cbName[0] = MAX_KEY_LENGTH;
+      retCode = RegEnumKeyEx(hKey[0], i,
+                     achKey[0], 
+                     &cbName[0], 
+                     NULL, 
+                     NULL, 
+                     NULL, 
+                     &ftLastWriteTime[0]);
+      
+       if (retCode == ERROR_SUCCESS) {
+	      
+	        _tprintf(TEXT("\nPlugin %d: %s\n"), i+1, achKey[0]);
+                mykey[1][0]='\0';
+                sprintf(mykey[1],"%s\\%s",mykey[0],achKey[0]);
+                //fprintf(stdout,"%s\n\n",mykey[1]);
+		returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey[1], 0L,  KEY_READ, &hKey[1]);
+
+                if (returnStatus != ERROR_SUCCESS) {
+                  fprintf(stderr,"ERROR: SV subkeys not found in registry!\n(%s)\n",mykey[1]);
+                  return SV_ERROR;
+		  
+		} else {
+
+                  // Get the class name and the value count. 
+                  retCode = RegQueryInfoKey(
+                     hKey[1],                    // key handle 
+                     achClass1,                // buffer for class name 
+                     &cchClassName[1],           // size of class string 
+                     NULL,                    // reserved 
+                     &cSubKeys[1],               // number of subkeys 
+                     &cbMaxSubKey[1],            // longest subkey size 
+                     &cchMaxClass[1],            // longest class string 
+                     &cValues[1],                // number of values for this key 
+                     &cchMaxValue[1],            // longest value name 
+                     &cbMaxValueData[1],         // longest value data 
+                     &cbSecurityDescriptor[1],   // security descriptor 
+                     &ftLastWriteTime[1]);       // last write time 
+ 
+                  // Enumerate the subkeys, until RegEnumKeyEx fails.
+                  if (cSubKeys[1]) {
+                    //fprintf(stdout, "\nNumber of sub-subkeys: %d\n", cSubKeys[1]);
+		    for (j=0; j<cSubKeys[1]; j++) {
+                      cbName[1] = MAX_KEY_LENGTH;
+                      retCode = RegEnumKeyEx(hKey[1], j,
+                         achKey[1], 
+                         &cbName[1], 
+                         NULL, 
+                         NULL, 
+                         NULL, 
+                         &ftLastWriteTime[1]);
+     
+                      if (retCode == ERROR_SUCCESS) {
+	                //_tprintf(TEXT("cSubKeys1 (%d) (j %i) %s\n"), i+1, j, achKey[1]);
+                        mykey[2][0]='\0';
+                        sprintf(mykey[2],"%s\\%s",mykey[1],achKey[1]);
+                        fprintf(stdout,"  Found plugin in registry (%s)\n",mykey[2]);
+			// now use code common to plugins to create/append path env vars
+                        sv_parse_registry_for_environment_variables(mykey[2]);
+                        break;
+		      } // retCode
+		      
+		    } // j 
+		  } // cSubKeys[1]
+		  RegCloseKey(hKey[1]);
+		} // returnStatus
+       } // retCode
+    } // for i
+  }  //subKeys[0]
+
+  fprintf(stdout,"\n\n");	
+  RegCloseKey(hKey[0]);
+
+  return SV_OK;
+}
+
+
+int sv_parse_registry_for_environment_variables(char* toplevel_key) {
+
+  HKEY hKey;
+  LONG returnStatus;
+
+  char append_env_var_key[1024];
+  append_env_var_key[0]='\0';
+  sprintf(append_env_var_key,"%s\\%s",toplevel_key,"ENVIRONMENT_VARIABLES");
+  
+  //fprintf(stdout,"parse for env vars (%s)\n\n",append_env_var_key);
+  
+  returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, append_env_var_key, 0L,  KEY_READ, &hKey);
+  if (returnStatus != ERROR_SUCCESS) {
+    fprintf(stderr,"RegistryForPlugins: SV registry error!\n(%s)\n",append_env_var_key);
+    return SV_ERROR;
+  }
+
+  //QueryKey(hKey);
+  
+  TCHAR    achKey[MAX_KEY_LENGTH];   // buffer for subkey name
+  DWORD    cbName;                   // size of name string 
+  TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name 
+  DWORD    cchClassName = MAX_PATH;  // size of class string 
+  DWORD    cSubKeys=0;               // number of subkeys 
+  DWORD    cbMaxSubKey;              // longest subkey size 
+  DWORD    cchMaxClass;              // longest class string 
+  DWORD    cValues;              // number of values for key 
+  DWORD    cchMaxValue;          // longest value name 
+  DWORD    cbMaxValueData;       // longest value data 
+  DWORD    cbSecurityDescriptor; // size of security descriptor 
+  FILETIME ftLastWriteTime;      // last write time 
+ 
+  DWORD i, retCode; 
+ 
+  TCHAR  achValue[MAX_VALUE_NAME]; 
+  DWORD cchValue = MAX_VALUE_NAME; 
+ 
+  // Get the class name and the value count. 
+  retCode = RegQueryInfoKey(
+        hKey,                    // key handle 
+        achClass,                // buffer for class name 
+        &cchClassName,           // size of class string 
+        NULL,                    // reserved 
+        &cSubKeys,               // number of subkeys 
+        &cbMaxSubKey,            // longest subkey size 
+        &cchMaxClass,            // longest class string 
+        &cValues,                // number of values for this key 
+        &cchMaxValue,            // longest value name 
+        &cbMaxValueData,         // longest value data 
+        &cbSecurityDescriptor,   // security descriptor 
+        &ftLastWriteTime);       // last write time 
+ 
+  // Enumerate the subkeys, until RegEnumKeyEx fails.
+  if (retCode != ERROR_SUCCESS) {
+    fprintf(stderr,"error reading hkey!\n\n");
+  } else {
+    //fprintf(stdout,"cSubKeys: %i\n",cSubKeys);
+  }
+  if (cValues) {
+    //fprintf(stdout, "\n  Number of values: %d\n", cValues);
+    
+    for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++) { 
+      cchValue = MAX_VALUE_NAME;
+      achValue[0] = '\0';
+      DWORD dwType=REG_SZ;
+      DWORD dwSize=2048;
+      char lszValue[2048];
+      SecureZeroMemory(lszValue,sizeof(lszValue));
+      retCode = RegEnumValue(hKey, i, 
+                achValue, 
+                &cchValue, 
+                NULL,
+		&dwType,
+		(LPBYTE)&lszValue,
+		&dwSize);
+      if (retCode == ERROR_SUCCESS) {
+	  fprintf(stdout,"  Set/Append (%s) with value (%s)\n",achValue,lszValue);
+          if (returnStatus == ERROR_SUCCESS) {
+            sv_main_append_to_envvar(achValue,lszValue);
+          } else {
+            fprintf(stderr,"  WARNING: error reading value (%s) in (%s)\n",achValue,toplevel_key);
+	  }
+      }
+    }
+  }
+  
+  RegCloseKey(hKey);
+  return SV_OK;
+  
+}
+
+int sv_main_append_to_envvar(char* envvar_to_update, char* appendme) {
+
+  // set the environment variables using the registry
+  char oldvar[_MAX_ENV];
+  char newvar[_MAX_ENV];
+  oldvar[0]='\0';
+  newvar[0]='\0';
+  size_t requiredSize;
+
+  // check that the environment variable actually exists
+  // default to empty string if it doesn't
+  
+  char* envstr=getenv(envvar_to_update);
+  if (envstr != NULL) {
+    getenv_s( &requiredSize, NULL, 0, envvar_to_update);
+    if (requiredSize >= _MAX_ENV) {
+      fprintf(stderr,"FATAL ERROR:  var (%s) to long!\n",envvar_to_update);
+      exit(-1);
+    }
+    getenv_s( &requiredSize, oldvar, requiredSize, envvar_to_update);
+  }
+  
+  int newvarlength = 0;
+
+  for (newvarlength = 0; newvarlength < strlen(appendme);newvarlength++) {
+    newvar[newvarlength]=appendme[newvarlength];
+    if (newvarlength == _MAX_ENV) {
+      fprintf(stderr,"FATAL ERROR:  var (%s) to long!\n",envvar_to_update);
+      exit(-1);
+    }
+  }
+  if (strlen(oldvar) > 0) newvar[newvarlength++]=';';
+
+  // now add original value
+  for (int i = 0; i < strlen(oldvar);i++) {
+    newvar[newvarlength++]=oldvar[i];
+    if (newvarlength == _MAX_ENV) {
+      fprintf(stderr,"FATAL ERROR:  var (%s) to long!\n",envvar_to_update);
+      exit(-1);
+    }
+  }
+  newvar[newvarlength]='\0';
+
+  _putenv_s( envvar_to_update, newvar );
+
+  //fprintf(stdout,"APPENDME (%s): %s\n",envvar_to_update, appendme);
+  //fprintf(stdout,"ORIGINAL ENV (%s): %s\n", envvar_to_update, oldvar);
+  //fprintf(stdout,"NEW ENV (%s): %s\n", envvar_to_update, newvar);
+  //fprintf(stdout,"LENGTH ENV (%s): %i\n",envvar_to_update, newvarlength);
+
+  return SV_OK;
+
 }
 
 #endif

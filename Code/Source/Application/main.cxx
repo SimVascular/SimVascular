@@ -154,29 +154,12 @@ svCatchDebugger() {
   bool use_provisioning_file = false;
   bool pass_along_options = false;
   gSimVascularBatchMode = 0;
- 
-  ios::sync_with_stdio();
 
-#ifdef BUILD_WITH_STDOUT_STDERR_REDIRECT
-  simvascularstdout = freopen( "stdout", "w", stdout );
-  // Note: freopen is deprecated; consider using freopen_s instead
-
-  if( simvascularstdout == NULL ) {
-    fprintf( stdout, "error on reassigning stdout\n" );
-    fflush ( stdout );
-  }
-  simvascularstderr = freopen( "stderr", "w", stderr );
-  // Note: freopen is deprecated; consider using freopen_s instead
-
-  if( simvascularstderr == NULL ) {
-    fprintf( stderr, "error on reassigning stderr\n" );
-    fflush ( stderr );
-  }
+#ifdef WIN32  
+  gSimVascularUseWin32Registry = 1;
 #endif
-
-  // parse registry for plugins!
-  //sv_parse_registry_for_plugins();
-  //exit(0);
+  
+  ios::sync_with_stdio();
 
   // want to hide launch only flags from tcl/python/mitk
   // shells
@@ -194,16 +177,19 @@ svCatchDebugger() {
 	 (!strcmp("-help",argv[iarg])) ||
 	 (!strcmp("--help",argv[iarg]))) {
 	fprintf(stdout,"simvascular command line options:\n");
-	fprintf(stdout,"  -h, --help      : print this info and exit\n");
-	fprintf(stdout,"  --python        : use python command line\n");
-	fprintf(stdout,"  -tcl, --tcl     : use tcl command line\n");
-	fprintf(stdout,"  -qt, --qt-gui   : use Qt GUI (SV_BATCH_MODE overrides)\n");
-	fprintf(stdout,"  -tk, --tk-gui   : use TclTk GUI (SV_BATCH_MODE overrides)\n");	
-	fprintf(stdout,"  -d, --debug     : infinite loop for debugging\n");
-	fprintf(stdout,"  --warn          : warn if invalid cmd line params (on by default)\n");
-	fprintf(stdout,"  --workbench     : use mitk workbench application\n");
-	fprintf(stdout,"  --use-pro       : use the .provisioning file \n");
-	fprintf(stdout,"  --              : pass remaining params to tcl/python shells\n");
+	fprintf(stdout,"  -h, --help               : print this info and exit\n");
+	fprintf(stdout,"  --python                 : use python command line\n");
+	fprintf(stdout,"  -tcl, --tcl              : use tcl command line\n");
+	fprintf(stdout,"  -qt, --qt-gui            : use Qt GUI (SV_BATCH_MODE overrides)\n");
+	fprintf(stdout,"  -tk, --tk-gui            : use TclTk GUI (SV_BATCH_MODE overrides)\n");	
+	fprintf(stdout,"  -d, --debug              : infinite loop for debugging\n");
+	fprintf(stdout,"  --warn                   : warn if invalid cmd line params (on by default)\n");
+	fprintf(stdout,"  --workbench              : use mitk workbench application\n");
+	fprintf(stdout,"  --use-registry           : use Windows registry entries (default) \n");
+	fprintf(stdout,"  --ignore-registry        : ignore Windows registry entries \n");
+	fprintf(stdout,"  --redirect-stdio prefix  : redirect stdout & stderr to prefix/std.out etc. \n");
+	fprintf(stdout,"  --use-pro         : use the .provisioning file \n");
+	fprintf(stdout,"  --                : pass remaining params to tcl/python shells\n");
 	exit(0);
       }
       if((!strcmp("--warn",argv[iarg]))) {
@@ -262,6 +248,43 @@ svCatchDebugger() {
       }
       if((!strcmp("--use-pro",argv[iarg]))) {
 	use_provisioning_file = true;
+	foundValid = true;
+      }
+      if((!strcmp("--ignore-registry",argv[iarg]))) {
+	gSimVascularUseWin32Registry = 0;
+	foundValid = true;
+      }
+      if((!strcmp("--use-registry",argv[iarg]))) {
+	gSimVascularUseWin32Registry = 1;
+	foundValid = true;
+      }
+      if((!strcmp("--redirect-stdio",argv[iarg]))) {
+	iarg++;
+	if(iarg >= argc) {
+	  fprintf(stdout,"error!  no prefix for redirect-stdio!");
+	  foundValid = false;
+	  break;
+	}
+	char filestdout[1024];
+	filestdout[0]='\0';
+	sprintf(filestdout,"%s-stdout.txt",argv[iarg]);
+	char filestderr[1024];
+	filestderr[0]='\0';
+	sprintf(filestderr,"%s-stderr.txt",argv[iarg]);
+	//#ifdef BUILD_WITH_STDOUT_STDERR_REDIRECT
+        simvascularstdout = freopen( filestdout, "w", stdout );
+        // Note: freopen is deprecated; consider using freopen_s instead
+        if( simvascularstdout == NULL ) {
+          fprintf( stdout, "error on reassigning stdout\n" );
+          fflush ( stdout );
+        }
+        simvascularstderr = freopen( filestderr, "w", stderr );
+        // Note: freopen is deprecated; consider using freopen_s instead
+        if( simvascularstderr == NULL ) {
+          fprintf( stderr, "error on reassigning stderr\n" );
+          fflush ( stderr );
+	}
+        //#endif
 	foundValid = true;
       }
       if((!strcmp("--",argv[iarg]))) {
@@ -323,13 +346,9 @@ svCatchDebugger() {
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
-  envstr=getenv("SV_IGNORE_WIN32_REGISTRY");
-  if (envstr != NULL) {
-    fprintf(stdout,"\n  Ignore SimVascular registry entries.\n");
-    gSimVascularUseWin32Registry = 0;
-  } else {
-    gSimVascularUseWin32Registry = 1;
-    sv_parse_reg();
+  if (gSimVascularUseWin32Registry) {
+    fprintf(stdout,"\nReading SimVascular registry entries.\n\n");
+    sv_parse_registry_for_core_app();
   }
 #endif
 #endif

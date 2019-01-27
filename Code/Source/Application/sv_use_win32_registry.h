@@ -103,6 +103,13 @@ errno_t cv_getenv_s(
 
 int sv_parse_reg();
 int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_Interp *interp );
+void QueryKey(HKEY hKey);
+int sv_parse_registry_for_plugins();
+int sv_main_append_to_envvar(char* envvar_to_update, char* appendme);
+int sv_parse_registry_for_plugins(char* toplevel_key);
+int sv_parse_registry_for_core_app();
+int sv_main_append_to_envvar(char* envvar_to_update, char* appendme);
+int sv_parse_registry_for_environment_variables(char* toplevel_key);
 
 #endif
 #endif

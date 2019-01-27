@@ -70,6 +70,8 @@ proc file_find {dir wildcard args} {
   global PYTHON_MAJOR_VERSION
   global PYTHON_MINOR_VERSION
   global SV_CMAKE_BUILD_TYPE
+  global SV_RELEASE_VERSION_NO
+  global SV_FULL_VER_NO
   
   if {[llength $args] == 0} {
      set rtnme {}
@@ -86,7 +88,7 @@ proc file_find {dir wildcard args} {
     global component_ids
     lappend component_ids $id
     set guid [exec tmp/uuidgen.exe 1]
-    puts $outfp "<Component Id='id[format %04i $id]' Guid='$guid'>"
+    puts $outfp "<Component Id='id[format %04i $id]' Guid='$guid' Win64='yes'>"
     global outputRegistry
     if {!$outputRegistry} {
         global SV_TIMESTAMP
@@ -96,22 +98,29 @@ proc file_find {dir wildcard args} {
         global SV_EXECUTABLE
         global SV_FILES
         set outputRegistry 1
-	puts $outfp "<Registry Id='regid1' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='InstallDir' Action='write' Type='string' Value='\[INSTALLDIR\]' />"
-	puts $outfp "<Registry Id='regid2' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='TimeStamp' Action='write' Type='string' Value='$SV_TIMESTAMP' />"
-	puts $outfp "<Registry Id='regid3' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='RunDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
-	puts $outfp "<Registry Id='regid4' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='TclLibDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL' />"
-	puts $outfp "<Registry Id='regid5' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='TkLibDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL' />"
-	puts $outfp "<Registry Id='regid7' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='HomeDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
-	if {$PYTHON_MAJOR_VERSION == "2"} {
-	  puts $outfp "<Registry Id='regid8' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonHome' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27' />"
-	  puts $outfp "<Registry Id='regid9' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonPackagesDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\vtk-packages;\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
-	} elseif {$PYTHON_MAJOR_VERSION == "3"} {
-	  puts $outfp "<Registry Id='regid8' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonHome' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5' />"
-	  puts $outfp "<Registry Id='regid9' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='PythonPackagesDir' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Lib\\vtk-packages;\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
-	}
-	puts $outfp "<Registry Id='regid10' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='SV_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
-	puts $outfp "<Registry Id='regid11' Root='HKLM' Key='Software\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP' Name='QT_PLUGIN_PATH' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\qt-plugins' />"
 
+        puts $outfp "<RegistryKey Root='HKLM' Key='Software\\WOW6432Node\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP'>"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='InstallDir' Value='\[INSTALLDIR\]' />"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='TimeStamp' Value='$SV_TIMESTAMP'  />"
+        #puts $outfp "  <RegistryValue Type=\"string\" Name='TclLibDir' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL'  />"
+        #puts $outfp "  <RegistryValue Type=\"string\" Name='TkLibDir' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL'  />"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='HomeDir' Value='\[INSTALLDIR\]$SV_TIMESTAMP'  />"
+	puts $outfp "</RegistryKey>"
+	
+	puts $outfp "<RegistryKey Root='HKLM' Key='Software\\WOW6432Node\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP\\ENVIRONMENT_VARIABLES'>"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin'  />"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='SV_PLUGIN_PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='QT_PLUGIN_PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\qt-plugins' />"
+	puts $outfp "  <RegistryValue Type=\"string\" Name='TCL_LIBRARY' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL'  />"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='TK_LIBRARY' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL'  />"
+	if {$PYTHON_MAJOR_VERSION == "2"} {	
+          puts $outfp "  <RegistryValue Type=\"string\" Name='PYTHONHOME' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27'  />"
+          puts $outfp "  <RegistryValue Type=\"string\" Name='PYTHONPATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib;\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
+	} elseif {$PYTHON_MAJOR_VERSION == "3"} {
+          puts $outfp "  <RegistryValue Type=\"string\" Name='PYTHONHOME' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5' />"
+	    puts $outfp "  <RegistryValue Type=\"string\" Name='PYTHONPATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Lib;\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Lib\\site-packages;\[INSTALLDIR\]$SV_TIMESTAMP' />"
+	}	
+	puts $outfp "</RegistryKey>"	
     }
     foreach i $files {
       global outfp
@@ -127,7 +136,7 @@ proc file_find {dir wildcard args} {
 	    puts $outfp "<Shortcut Id='ids13' Directory='ProgramMenuDir' Name='$SV_VERSION-Python-Shell' Arguments='-python' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
 	    puts $outfp "<Shortcut Id='ids14' Directory='ProgramMenuDir' Name='$SV_VERSION-Tcl-Tk' Arguments='-tk' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
 	    puts $outfp "<Shortcut Id='ids15' Directory='ProgramMenuDir' Name='$SV_VERSION-Tcl-Shell' Arguments='-tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
-	    puts $outfp "<Shortcut Id='ids16' Directory='DesktopFolder' Name='$SV_VERSION' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids16' Directory='DesktopFolder' Name='$SV_VERSION $SV_FULL_VER_NO' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
             puts $outfp "</File>"
             #puts $outfp "<RemoveFolder Directory='ProgramMenuDir' Name='$SV_VERSION' On='uninstall' />"
             puts $outfp "<RemoveFile Id='ids12' On='uninstall' Name='*.*' />"
@@ -228,7 +237,7 @@ puts $outfp "\t\t</Directory>"
 puts $outfp "\t</Directory>"
 
 puts $outfp "<Directory Id='ProgramMenuFolder' Name='Programs'>"
-puts $outfp "\t<Directory Id='ProgramMenuDir' Name='$SV_VERSION' />"
+puts $outfp "\t<Directory Id='ProgramMenuDir' Name='$SV_VERSION-$SV_FULL_VER_NO' />"
 puts $outfp "</Directory>"
 puts $outfp "<Directory Id='DesktopFolder' Name='Desktop' />"
 puts $outfp "</Directory>"

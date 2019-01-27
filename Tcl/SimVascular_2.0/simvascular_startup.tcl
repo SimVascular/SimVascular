@@ -239,60 +239,28 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
   }
 
   if {$tcl_platform(platform) == "windows"} {
-    set parasoliddll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  SV_PARASOLID_DLL]
+      
+      if {![catch {load lib_simvascular_parasolid_solid.dll Parasolidsolid} msg]} {
+	puts "Found Parasolid.  Loading..."
+      }
 
-    if {$parasoliddll != ""} {
-      puts "Found Parasolid.  Loading..."
-      load $parasoliddll Parasolidsolid
-    }
+     if {![catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg]} {
+	puts "Found MeshSim Mesh.  Loading..."
+      }
 
-    set pschema_dir [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  SV_PARASOLID_PSCHEMA_DIR]
+      if {![catch {load lib_simvascular_meshsim_discrete_solid.dll Meshsimdiscretesolid} msg]} {
+	puts "Found MeshSim Discrete Model.  Loading..."
+      }
+      
+      if {![catch {load lib_simvascular_meshsim_solid.dll Meshsimsolid} msg]} {
+	puts "Found MeshSim Solid Model.  Loading..."
+      }
+      
+       
+      if {![catch {load lib_simvascular_meshsim_adaptor.dll Meshsimadapt} msg]} {
+	puts "Found MeshSim Adapt.  Loading..."
+      }
 
-    if {$pschema_dir != ""} {
-      puts "Found Parasolid Schema Directory."
-      global env
-      set env(P_SCHEMA) $pschema_dir
-    }
-
-    set discretedll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  SV_MESHSIM_DISCRETE_DLL]
-
-    if {$discretedll != ""} {
-      puts "Found MeshSim Discrete Model.  Loading..."
-      load $discretedll Meshsimdiscretesolid
-    }
-
-    set meshsimsoliddll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  SV_MESHSIM_SOLID_DLL]
-
-    if {$meshsimsoliddll != ""} {
-      puts "Found MeshSim Solid Model.  Loading..."
-      load $meshsimsoliddll Meshsimsolid
-    }
-
-    set meshsimdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-  			  SV_MESHSIM_MESH_DLL]
-
-    if {$meshsimdll != ""} {
-      puts "Found MeshSim Mesh.  Loading..."
-      load $meshsimdll Meshsimmesh
-    }
-
-    set meshsimadaptdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-  			  SV_MESHSIM_ADAPT_DLL]
-
-    if {$meshsimadaptdll != ""} {
-      puts "Found MeshSim Adapt.  Loading..."
-      load $meshsimadaptdll Meshsimadapt
-    }
   }
 
 } else {
