@@ -244,6 +244,10 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
 	puts "Found Parasolid.  Loading..."
       }
 
+     if {![catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg]} {
+	puts "Found MeshSim Mesh.  Loading..."
+      }
+
       if {![catch {load lib_simvascular_meshsim_discrete_solid.dll Meshsimdiscretesolid} msg]} {
 	puts "Found MeshSim Discrete Model.  Loading..."
       }
@@ -252,10 +256,7 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
 	puts "Found MeshSim Solid Model.  Loading..."
       }
       
-      if {![catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg]} {
-	puts "Found MeshSim Mesh.  Loading..."
-      }
-      
+       
       if {![catch {load lib_simvascular_meshsim_adaptor.dll Meshsimadapt} msg]} {
 	puts "Found MeshSim Adapt.  Loading..."
       }

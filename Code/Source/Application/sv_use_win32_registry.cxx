@@ -308,7 +308,7 @@ int sv_parse_registry_for_plugins() {
                     printf( "\nNumber of sub-subkeys: %d\n", cSubKeys[1]);
 		    for (j=0; j<cSubKeys[1]; j++) {
                       cbName[1] = MAX_KEY_LENGTH;
-                      retCode = RegEnumKeyEx(hKey[1], i,
+                      retCode = RegEnumKeyEx(hKey[1], j,
                          achKey[1], 
                          &cbName[1], 
                          NULL, 
@@ -317,7 +317,7 @@ int sv_parse_registry_for_plugins() {
                          &ftLastWriteTime[1]);
      
                       if (retCode == ERROR_SUCCESS) {
-	                _tprintf(TEXT("(%d) %s\n"), i+1, achKey[1]);
+	                _tprintf(TEXT("cSubKeys1 (%d) (j %i) %s\n"), i+1, j, achKey[1]);
                         mykey[2][0]='\0';
                         sprintf(mykey[2],"%s\\%s",mykey[1],achKey[1]);
                         fprintf(stdout,"%s\n\n",mykey[2]);
@@ -349,7 +349,7 @@ int sv_parse_registry_for_environment_variables(char* toplevel_key) {
   append_env_var_key[0]='\0';
   sprintf(append_env_var_key,"%s\\%s",toplevel_key,"ENVIRONMENT_VARIABLES");
   
-  fprintf(stdout,"%s\n\n",append_env_var_key);
+  fprintf(stdout,"parse for env vars (%s)\n\n",append_env_var_key);
   
   returnStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, append_env_var_key, 0L,  KEY_READ, &hKey);
   if (returnStatus != ERROR_SUCCESS) {
@@ -396,10 +396,10 @@ int sv_parse_registry_for_environment_variables(char* toplevel_key) {
   if (retCode != ERROR_SUCCESS) {
     fprintf(stderr,"error reading hkey!\n\n");
   } else {
-    fprintf(stdout,"cSubKeys: %i\n",cSubKeys);
+    //fprintf(stdout,"cSubKeys: %i\n",cSubKeys);
   }
   if (cValues) {
-    printf( "\nNumber of values: %d\n", cValues);
+    fprintf(stdout, "\n  Number of values: %d\n", cValues);
     
     for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++) { 
       cchValue = MAX_VALUE_NAME;
@@ -476,7 +476,7 @@ int sv_main_append_to_envvar(char* envvar_to_update, char* appendme) {
 
   _putenv_s( envvar_to_update, newvar );
 
-  fprintf(stdout,"APPENDME: %s\n",appendme);
+  fprintf(stdout,"APPENDME (%s): %s\n",envvar_to_update, appendme);
   fprintf(stdout,"ORIGINAL ENV (%s): %s\n", envvar_to_update, oldvar);
   fprintf(stdout,"NEW ENV (%s): %s\n", envvar_to_update, newvar);
   fprintf(stdout,"LENGTH ENV (%s): %i\n",envvar_to_update, newvarlength);

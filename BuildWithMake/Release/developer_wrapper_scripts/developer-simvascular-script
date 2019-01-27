@@ -1,5 +1,13 @@
 
 # run the executable
-$SV_HOME/BuildWithMake/Bin/simvascular.exe $*
+
+case "$SV_OS" in
+"windows" )
+     $SV_HOME/BuildWithMake/Bin/simvascular.exe --ignore-registry $*
+  ;;
+* )
+   $SV_HOME/BuildWithMake/Bin/simvascular.exe $*
+ ;;
+esac
 
 
