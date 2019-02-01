@@ -90,6 +90,7 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
   MITK_ERROR << "Simulation job error = " << error;
   QString title = "";
   QString text = "";
+  QString status = "Simulation failed";
   QMessageBox::Icon icon = QMessageBox::Warning;
   QMessageBox messageBox(NULL); 
 
@@ -105,6 +106,27 @@ void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
 
   messageBox.setWindowTitle(title);
   messageBox.setText(text+"                                                                                         ");
+  messageBox.setIcon(icon);
+
+  if (m_Process) {
+    auto details = m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError();
+    messageBox.setDetailedText(m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError());
+  }
+
+  messageBox.exec();
+
+  sv4guiMitkSimJob* mitkJob = dynamic_cast<sv4guiMitkSimJob*>(m_JobNode->GetData());
+  if(mitkJob) {
+    mitkJob->SetStatus(status.toStdString());
+  }
+
+  m_JobNode->SetBoolProperty("running",false);
+  m_JobNode->SetDoubleProperty("running progress", 0);
+
+  mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
+
+  deleteLater();
+
 }
 
 void sv4guiSolverProcessHandler::Start()
