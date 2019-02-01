@@ -85,6 +85,28 @@ sv4guiSolverProcessHandler::~sv4guiSolverProcessHandler()
         delete m_Timer;
 }
 
+void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
+{
+  MITK_ERROR << "Simulation job error = " << error;
+  QString title = "";
+  QString text = "";
+  QMessageBox::Icon icon = QMessageBox::Warning;
+  QMessageBox messageBox(NULL); 
+
+  if (error == QProcess::FailedToStart) {
+    title = "Simulation cannot be started";
+    text = "Unable to start the mpiexec process. Either the mpiexec program is missing or you may have insufficient permissions to execute it.";
+    MITK_ERROR << text; 
+  } else {
+    title = "Simulation failed";
+    text = "Unknown error return code " + error; 
+    MITK_ERROR << text; 
+  }
+
+  messageBox.setWindowTitle(title);
+  messageBox.setText(text+"                                                                                         ");
+}
+
 void sv4guiSolverProcessHandler::Start()
 {
     if(m_Process==NULL)
@@ -93,6 +115,7 @@ void sv4guiSolverProcessHandler::Start()
     if(m_JobNode.IsNull())
         return;
 
+    connect(m_Process, &QProcess::errorOccurred, this, &sv4guiSolverProcessHandler::ProcessError);
     connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
 
     m_JobNode->SetBoolProperty("running", true);
