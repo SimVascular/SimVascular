@@ -63,6 +63,12 @@ private slots:
   void SetPostsolverPath();
 
 private:
+  void InitializeSolverLocations();
+  QString FindMpiExec(const QString& solverPathBin, const QString& applicationPath);
+  QString FindPresolverPath(const QString& solverPathBin, const QString& applicationPath);
+  QString FindSolverPath(const QString& solverPathBin, const QString& applicationPath, const bool noMPI=false);
+  QString FindPostSolverPath(const QString& solverPathBin, const QString& applicationPath);
+
   berry::IPreferences::Pointer m_Preferences;
   QScopedPointer<Ui::sv4guiSimulationPreferencePage> m_Ui;
   QWidget* m_Control;
