@@ -165,6 +165,21 @@ s+REPLACEME_SV_HDF5_MAKE_FILENAME+HDF5.sln+g
 s+REPLACEME_SV_OPENSSL_INC_DIR+C:/OpenSource/vcpkg/installed/x64-windows-static/include/openssl+g
 s+REPLACEME_SV_OPENSSL_LIBRARIES+"C:/OpenSource/vcpkg/installed/x64-windows-static/lib/ssleay32.lib;C:/OpenSource/vcpkg/installed/x64-windows-static/lib/libeay32.lib"+g
 
+# bz2 (for python, but breaks build due to binascii issues at run time)
+
+#s+REPLACEME_SV_BZ2_INC_DIR+C:/OpenSource/vcpkg/installed/x64-windows-static/include+g
+#s+REPLACEME_SV_BZ2_LIBRARY+"C:/OpenSource/vcpkg/installed/x64-windows-static/lib/bz2.lib"+g
+
+# zlib (for python, but breaks build due to binascii issues at run time)
+
+#s+REPLACEME_SV_ZLIB_INC_DIR+C:/OpenSource/vcpkg/installed/x64-windows-static/include+g
+#s+REPLACEME_SV_ZLIB_LIBRARY+"C:/OpenSource/vcpkg/installed/x64-windows-static/lib/zlib.lib"+g
+
+# sqlite3 (needed for python)
+
+s+REPLACEME_SV_SQLITE3_INC_DIR+C:/OpenSource/vcpkg/installed/x64-windows-static/include+g
+s+REPLACEME_SV_SQLITE3_LIBRARY+"C:/OpenSource/vcpkg/installed/x64-windows-static/lib/sqlite3.lib"+g
+
 # python
 
 s+REPLACEME_SV_PYTHON_VERSION+3.5.5+g
