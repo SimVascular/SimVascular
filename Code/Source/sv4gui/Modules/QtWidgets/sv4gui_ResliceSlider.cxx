@@ -438,11 +438,21 @@ void sv4guiResliceSlider::moveToClosestPathPosPoint(mitk::Point3D posPoint)
     setSlicePos(index);
 }
 
+//-------------------
+// updateResliceSize
+//-------------------
+// Change the reslice rectangle size.
+
 void sv4guiResliceSlider::updateResliceSize()
 {
     bool ok;
-    double newSize = QInputDialog::getDouble(this, tr("Change Reslice Size"),tr("Reslice Size:")
-                                          , resliceSize, 0.1, 100.0, 2, &ok);
+    double maxResliceWindowSize = 1000.0, minResliceWindowSize = 0.1;
+    auto title = QString(tr("Change Reslice Rectangle Size"));
+    auto label = QString(tr("Reslice Size"));
+    int numDecimals = 2;
+    double newSize = QInputDialog::getDouble(this, title, label, resliceSize, minResliceWindowSize, 
+        maxResliceWindowSize, numDecimals, &ok);
+
     if(ok){
         resliceSize=newSize;
         if(isResliceOn())
