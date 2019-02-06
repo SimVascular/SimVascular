@@ -190,6 +190,7 @@ copy-sv-tcl-code:
 	-cp -f $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_startup.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
 	-cp -f $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_vtk_init.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
 	-cp -f $(DIST_DIR)/UnTcl/SimVascular_2.0/launch_xf.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
+	-cp -f $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_find_external_execs.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
 	-cp -R $(DIST_DIR)/UnTcl/External $(DIST_DIR)/Tcl
 	-cp -R $(DIST_DIR)/UnTcl/Help $(DIST_DIR)/Tcl
 	-cp $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_logo.jpg $(DIST_DIR)/Tcl/SimVascular_2.0
@@ -240,6 +241,9 @@ else
 endif
 	-cp -fR $(TOP)/../Python/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fR Jupyter/share/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share
+	-cp -fR Jupyter/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
+	-cp -f Jupyter/Scripts/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Scripts
 #	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
 endif
 ifeq ($(SV_USE_QT),1)

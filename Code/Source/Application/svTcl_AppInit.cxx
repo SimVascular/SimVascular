@@ -101,13 +101,13 @@ int Tcl_AppInit( Tcl_Interp *interp )
     exit(-1);
   }
 
-  //  if (Tcl_AppInt_Win32ReadRegistryVar("TclLibDir", "tcl_library", interp ) == TCL_ERROR) {
-  //  exit(-1);
-  //}
+  if (Tcl_AppInt_Win32ReadRegistryVar("TclLibDir", "tcl_library", interp ) == TCL_ERROR) {
+    exit(-1);
+  }
 
-  // if (Tcl_AppInt_Win32ReadRegistryVar("TkLibDir", "tk_library", interp ) == TCL_ERROR) {
-  //  exit(-1);
-  //}
+  if (Tcl_AppInt_Win32ReadRegistryVar("TkLibDir", "tk_library", interp ) == TCL_ERROR) {
+    exit(-1);
+  }
 
 }
   
