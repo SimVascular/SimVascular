@@ -178,6 +178,9 @@ int sv4guiPathEdit::GetTimeStep()
 
 void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
+    auto msgPrefix = "[sv4guiPathEdit_OnSelectionChanged] ";
+    MITK_INFO << msgPrefix;
+
 //    if(!IsActivated())
     if(!IsVisible())
     {
@@ -271,6 +274,7 @@ void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     pointMoveCommand->SetCallbackFunction(this, &sv4guiPathEdit::UpdateSlice);
     m_PointMoveObserverTag = m_Path->AddObserver( sv4guiPathFinishMovePointEvent(), pointMoveCommand);
 
+    /*
     mitk::BaseData* baseData=NULL;
     if(m_ImageNode.IsNotNull())
         baseData=m_ImageNode->GetData();
@@ -283,6 +287,7 @@ void sv4guiPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
                     baseData->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
+    */
 
     SetupResliceSlider();
 
