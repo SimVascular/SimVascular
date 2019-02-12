@@ -28,6 +28,58 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if {![info exists SV_FULL_VER_NO]} {
-  source $env(SV_HOME)/Tcl/SimVascular_2.0/simvascular_startup.tcl
+proc Proc_Show {{namepat *} {file stdout}} {
+  foreach proc [info procs $namepat] {
+    set space ""
+    puts -nonewline $file "proc $proc {"
+      foreach arg [info args $proc] {
+        if [info default $proc $arg value] {
+	   puts -nonewline $file "$space{$arg $value}"
+	} else {
+	   puts -nonewline $file $space$arg
+	}
+	   set space " "
+	}
+
+	# No newline needed because info body may return a value
+	# that starts with a newline
+
+	puts -nonewline $file "} {"
+	puts -nonewline $file [info body $proc]
+	puts $file "}"
+  }
 }
+
+#set topdir Core
+#set topdir Plugins
+#set topdir GUI
+if {[llength $argv] == 0} {
+    return -code error "ERROR: no top level directory specified!"
+}
+set topdir [lindex $argv 0]
+puts "Sorting ($topdir)"
+
+set all_files [glob $topdir/*.tcl]
+file mkdir sorted-$topdir
+
+foreach i $all_files {
+    source $i
+}
+
+foreach i [info procs *] {
+  set fp [open sorted-$topdir/$i.tcl w]
+  Proc_Show $i $fp
+  close $fp  
+}
+
+foreach i {auto_load_index unknown auto_import auto_execok auto_qualify auto_load history tclLog Proc_Show} {
+    file delete sorted-$topdir/$i.tcl
+}
+
+#foreach i [lsearch tcl_rcFileName tcl_version argv0 argv tcl_interactive auto_path auto_index env tcl_pkgPath tcl_patchLevel argc tcl_library tcl_platform] {
+#}
+
+puts "[info globals]"
+
+					
+				       

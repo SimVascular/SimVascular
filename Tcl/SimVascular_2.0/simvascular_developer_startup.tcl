@@ -30,6 +30,8 @@
 
 global auto_path
 
+puts "\n\nDetected developer build!\n\n"
+
 if {$SV_RELEASE_BUILD == 0} {
   source $simvascular_home/Tcl/Common/General/tmpobj.tcl
   source $simvascular_home/Tcl/Common/General/helpers.tcl
@@ -39,9 +41,11 @@ if {$SV_RELEASE_BUILD == 0} {
 # Set up auto_path
 # ----------------
 set auto_path [linsert $auto_path 0 $simvascular_home/Tcl/SimVascular_2.0/Core]
+set auto_path [linsert $auto_path 0 $simvascular_home/Tcl/Common/General]
 
 # need package xml
 lappend auto_path [file join $simvascular_home Tcl External tclxml3.2]
+
 
 # gui stuff
 if {[info exists env(SV_BATCH_MODE)] == 0} {
@@ -60,6 +64,7 @@ if {[info exists env(SV_BATCH_MODE)] == 0} {
     set auto_path [linsert $auto_path 0 $simvascular_home/Tcl/Common/Vis]
     set auto_path [linsert $auto_path 0 $simvascular_home/Tcl/Common/General]
     set auto_path [linsert $auto_path 0 $simvascular_home/Tcl/OSMSC]
+
     package require tile
     set auto_path [linsert $auto_path 0 $simvascular_home/Tcl/SimVascular_2.0/Core]
     set auto_path [linsert $auto_path 0 $simvascular_home/Tcl/SimVascular_2.0/GUI]
