@@ -218,10 +218,11 @@ std::string sv4guiSimulationUtils::CreatePreSolverFileContent(sv4guiSimJob* job,
     }
 
     ss << "write_geombc " << outputDir <<"geombc.dat.1" << "\n";
+
     if(basicProps["IC File"]=="")
         ss << "write_restart " << outputDir <<"restart.0.1" << "\n";
 
-    if(deformable)
+    else if(deformable)
     {
         ss << "append_displacements " << outputDir <<"restart.0.1" << "\n";
     }
