@@ -168,7 +168,7 @@ if(APPLE)
   set(SV_PLATFORM_VERSION_DIR "${SV_OSX_MAJOR_VERSION}.${SV_OSX_MINOR_VERSION}" CACHE STRING "The distribution platform version being used.")
 
   ## Set the non-core plugin directory.
-  set(SV_PLUGIN_INSTALL_DIR "/usr/local/sv/svplugins/")
+  set(SV_PLUGIN_INSTALL_DIR "/usr/local/sv/svplugins")
 
 elseif(LINUX)
 
@@ -195,7 +195,7 @@ elseif(LINUX)
   set(SV_PLATFORM_VERSION_DIR "${LSB_VERSION}" CACHE STRING "The distribution platform version being used.")
 
   ## Set the non-core plugin directory.
-  set(SV_PLUGIN_INSTALL_DIR "/usr/local/sv/svplugins/")
+  set(SV_PLUGIN_INSTALL_DIR "/usr/local/sv/svplugins")
 
 elseif(WIN64)
 

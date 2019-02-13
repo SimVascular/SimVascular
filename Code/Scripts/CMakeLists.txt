@@ -306,7 +306,7 @@ if(SV_USE_PYTHON)
 
   # PYTHONPATH
   if(SV_PYTHON_DIR)
-    set_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
+    set_env_string_concat(PYTHONPATH "$PYTHONPATH:${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
   endif()
 
   append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
