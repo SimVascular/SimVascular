@@ -257,6 +257,7 @@ if(SV_USE_QT_GUI)
     "Source/sv4gui/Modules/ProjectManagement"
     "Source/sv4gui/Modules/QtWidgets"
     "Source/sv4gui/Modules/ImageProcessing"
+    "Source/sv4gui/Modules/MitkSegmentation"
     "Source/sv4gui/Modules/svFSI"
      )
 
@@ -291,6 +292,7 @@ if(SV_USE_QT_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application"
       "Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.mitksegmentation"
       "Source/sv4gui/Plugins/org.sv.gui.qt.svfsi")
       if(SV_USE_PYTHON)
         LIST(APPEND SV_PLUGIN_DIRS "Source/sv4gui/Plugins/org.sv.pythondatanodes")

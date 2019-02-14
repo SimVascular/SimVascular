@@ -58,7 +58,8 @@ set(SV_LIBS
   TETGEN_ADAPTOR
   UTILS
   VMTK_UTILS
-  SVFSI)
+  SVFSI
+  MITKSEGMENTATION)
 
 # Thirdparty libs
 set(SV_LIBS ${SV_LIBS}

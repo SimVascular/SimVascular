@@ -46,5 +46,5 @@ set(SV_PLUGINS
   org.sv.gui.qt.meshing:ON
   org.sv.gui.qt.simulation:ON
   org.sv.gui.qt.imageprocessing:ON
-
+  org.sv.gui.qt.mitksegmentation:ON
 )
