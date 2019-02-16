@@ -7,6 +7,26 @@ then
   source ~/.local/share/SimVascular/simvascular_custom_plugins.sh
 fi
 
+## Setup paths to non-core plugins.
+#
+# First check that there is a plugin install for this sv version.
+# If there is then for each plugin name sort the installed plugins 
+# by date and use the most recent.
+#
+if [ -e $SV_PLUGIN_INSTALL_DIR ]; then
+  for PLUGIN_NAME in `find  $SV_PLUGIN_INSTALL_DIR -mindepth 1 -maxdepth 1 -type d`; do
+    for FILE in `find  $PLUGIN_NAME -mindepth 1 -maxdepth 1 -type d | sort -t- -k5 -r`; do
+      if [ -e $FILE/setup.sh ]; then
+          echo "Add non-core plugin from ${FILE}"
+          source $FILE/setup.sh $FILE
+          break
+      fi
+    done
+  done
+else
+  echo "No plugins installed for current SimVascular installed version."
+fi
+
 # Run the executable
 case "$SV_BATCH_MODE" in
 "1")

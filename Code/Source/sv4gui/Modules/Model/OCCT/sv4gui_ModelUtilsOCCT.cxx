@@ -531,7 +531,7 @@ sv4guiModelElementOCCT* sv4guiModelUtilsOCCT::CreateModelElementOCCTByBlend(sv4g
             {
                 delete meocctdst;
                 MITK_ERROR << "OpenCASCADE model blending failed";
-                //                return NULL;
+                return nullptr;
             }
         }
     }
