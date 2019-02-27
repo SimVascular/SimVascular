@@ -244,6 +244,7 @@ endif
 	-cp -fR Jupyter/share/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share
 	-cp -fR Jupyter/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
 	-cp -f Jupyter/Scripts/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Scripts
+	-cp -f $(PYTHON_HOME)/bin/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Scripts
 	-sed -f tmp/sedscript Jupyter/site-packages/simvascular_tcl_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_tcl_kernel/kernel.py
 	-sed -f tmp/sedscript Jupyter/site-packages/simvascular_tk_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_tk_kernel/kernel.py
 	-sed -f tmp/sedscript Jupyter/site-packages/simvascular_python_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_python_kernel/kernel.py
