@@ -1,4 +1,4 @@
-EXTERNALS_TOP=/usr/local/sv/ext/2018.05/release/gl2
+EXTERNALS_TOP=/usr/local/sv/ext/2019.02/release/gl2
 EXTERNALS_BUILD_TOP=/cygdrive/c/sv18gl2
 
 SV_EXTERN_OS=windows
