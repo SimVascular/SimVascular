@@ -174,6 +174,21 @@ proc bctdat_getNumNodes {bctdat_file} {
 }
 
 
+# ---------
+# cmdExists
+# ---------
+
+proc cmdExists {cmd} {
+  #@author Ken Wang
+  #@c check for existence of command.
+  if {[info commands $cmd] != ""} {
+    return 1
+  } else {
+    return 0
+  }
+}
+
+
 # --------
 # findCmds
 # --------
