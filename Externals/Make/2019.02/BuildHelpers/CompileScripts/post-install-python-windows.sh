@@ -8,9 +8,12 @@ GMKDIR=mkdir
 GMV=mv
 
 $GCP -fl REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE  REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/svpython.exe
+$GCP -fl REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/*  REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts
 
 #install jupyter
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install jupyter
+#install tensorflow
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install tensorflow
 
 tmppythonpath=`echo REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE | sed s+/+\\\\\\\\\\\\\\\\+g`
 tmppythonpathlower=`echo $tmppythonpath | sed -e 's/\(.*\)/\L\1/'`
