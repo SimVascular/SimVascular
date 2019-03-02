@@ -234,7 +234,11 @@ if {$SV_RELEASE_BUILD} {
 }
 
 if {$SV_USE_TK_GUI} {
-    source [file join $env(SV_HOME) Tcl SimVascular_2.0 GUI-code.tcl]
+    if {$SV_RELEASE_BUILD} {
+	source [file join $env(SV_HOME) Tcl SimVascular_2.0 GUI-code.tcl]
+    } else {
+        source [file join $env(SV_HOME) Tcl SimVascular_2.0 GUI gui.tcl]
+    }
     catch {source [file join $env(SV_HOME) Tcl SimVascular_2.0 GUI splash.tcl]}
 }
 

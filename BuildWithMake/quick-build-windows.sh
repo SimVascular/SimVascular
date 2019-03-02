@@ -39,8 +39,8 @@ if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
   export TAR_FILE_PREFIX=windows.10.0.msvc.18.0.x64.relwithdebinfo.2018.01.24
 elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
   source CygwinHelpers/msvc_2015_x64.sh
-  export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.05/windows/windows/10.0/msvc/19.0/x64/release/2018.11.24
-  export TAR_FILE_PREFIX=windows.10.0.msvc.19.0.x64.release.2018.11.24
+  export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2018.05/windows/windows/10.0/msvc/19.0/x64/release/2019.02.15
+  export TAR_FILE_PREFIX=windows.10.0.msvc.19.0.x64.release.2019.02.15
 fi
 
 export EXTERNALS_TOP=`pwd`/ext
@@ -88,7 +88,8 @@ popd
 
 pushd $EXTERNALS_TOP/bin
 for i in $EXTERNALS_TOP/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
-    tar xvzf $i
+    echo "untar $i"
+    tar xzf $i
 done
 popd
 
