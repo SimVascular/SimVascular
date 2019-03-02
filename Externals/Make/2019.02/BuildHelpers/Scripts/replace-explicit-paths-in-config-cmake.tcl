@@ -25,21 +25,30 @@ proc file_find_multiple {dir wildcards args} {
 
 }
 
-set replaceme C:/cygwin64/usr/local/sv/ext/2019.02/release/gl2/bin/msvc/19.0/x64
+set toplevel_bin_dir REPLACEME_SV_FULLPATH_BINDIR
+
+set olddir [pwd]
+puts "$olddir"
+if {$tcl_platform(os) == "CYGWIN_NT-10.0"} {
+    set posixpath [exec cygpath -u $toplevel_bin_dir]
+    cd $posixpath
+} else {
+    cd $toplevel_bin_dir
+}
 
 set all_files {}
 
-#set all_files [file_find_multiple bin [list *Config*cmake *Targets*cmake *config*cmake]]
-set all_files [file_find_multiple bin [list *.cmake]]
+#set all_files [file_find_multiple * [list *Config*cmake *Targets*cmake *config*cmake]]
+set all_files [file_find_multiple * [list *.cmake]]
 
-puts "$all_files"
+puts "number of cmake config files to check for explicit paths: [llength $all_files]"
 
 foreach i $all_files {
     set count {}
-    catch {set count [exec grep -c $replaceme $i]}
+    catch {set count [exec grep -c $toplevel_bin_dir $i]}
     if {$count != ""} {
 	puts "working on ($i)  (count: $count)"
-	if [catch {exec sed s+$replaceme+\${SV_EXTERNALS_TOPLEVEL_BIN_DIR}+g $i > $i.new} msg] {
+	if [catch {exec sed s+$toplevel_bin_dir+\${SV_EXTERNALS_TOPLEVEL_BIN_DIR}+g $i > $i.new} msg] {
 	    puts "error on ($i): $msg"
 	} else {
 	    catch {exec mv $i $i.org}
@@ -47,4 +56,6 @@ foreach i $all_files {
 	}
     }
 }
+
+cd $olddir
 

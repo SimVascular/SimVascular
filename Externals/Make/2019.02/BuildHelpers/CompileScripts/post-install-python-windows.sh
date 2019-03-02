@@ -18,9 +18,9 @@ tmppythonpathlower=`echo $tmppythonpath | sed -e 's/\(.*\)/\L\1/'`
 for f in REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/*.exe; do
     echo "File -> $f"
     sed -e "s/$tmppythonpath/svpython.exe/g" $f > $f.tmp
-    sed -e "s/$tmppythonpathlower/svpython.exe/g" $f > $f.tmp.tmp
-#    rm $f.tmp
-#    mv $f.tmp.tmp $f
+    sed -e "s/$tmppythonpathlower/svpython.exe/g" $f.tmp > $f.tmp.tmp
+    rm $f.tmp
+    mv $f.tmp.tmp $f
 done
 
 REPLACEME_SV_SPECIAL_COMPILER_END_SCRIPT

@@ -189,6 +189,11 @@ if [[ $SV_SUPER_OPTIONS == *ZIP_* ]]; then
   chmod a+rx ./tmp/tar-to-zip-all.windows.cl.sh
 fi
 
+# should probably do this on a case-by-case basis inside of cmake builders
+echo "CREATE_POST_PROCESS_ALL_CMAKE_CONFIG"
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh Scripts/replace-explicit-paths-in-config-cmake.tcl > tmp/replace-explicit-paths-in-config-cmake.tcl
+  chmod a+rx ./tmp/replace-explicit-paths-in-config-cmake.tcl
+  
 #
 # run installers
 #
@@ -295,6 +300,11 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
   ./tmp/compile.cmake.mitk.cl.sh >& ./tmp/stdout.mitk.cl.txt
   ./tmp/post-install-mitk-windows.sh >& ./tmp/stdout.post-install-windows.mitk.txt
 fi
+
+#
+# check generated cmake configs for hardcorded paths
+#
+tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 
 #
 # create tar files for distrution
