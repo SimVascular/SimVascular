@@ -47,8 +47,8 @@ include(GetPrerequisites)
 
 #-----------------------------------------------------------------------------
 # Default Libraries
-set(${proj}_LIBNAMES SimAdvMeshing SimMeshing SimMeshTools SimModel
-	SimMeshTools SimModel SimPartitionWrapper SimPartitionedMesh SimExport)
+set(${proj}_LIBNAMES SimAdvMeshing SimDiscrete SimMeshing SimMeshTools SimModel
+	SimMeshTools SimModel SimParasolid251 SimPartitionWrapper SimPartitionedMesh SimExport)
 
 # Add requestion components
 message(STATUS "Adding requested meshsim components: ${${proj}_FIND_COMPONENTS}")
@@ -69,18 +69,23 @@ if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR}
 endif()
 
 # Set paths to search for parasolid
+set(${proj}_LIBRARIES_VERSION "") 
 if(LINUX)
   if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
     set(lib_sub_path "lib/x64_rhel5_gcc41")
+    set(${proj}_LIBRARIES_VERSION "x64_rhel5_gcc41") 
   else()
     set(lib_sub_path "lib/x64_rhel6_gcc44")
+    set(${proj}_LIBRARIES_VERSION "x64_rhel5_gcc44") 
   endif()
 elseif(APPLE)
-	set(lib_sub_path "lib/x64_rhel5_gcc41")
+  set(lib_sub_path "lib/x64_rhel5_gcc41")
 elseif(WIN32 AND IS64)
-	set(lib_sub_path "lib/x64_win_vc10")
+  set(lib_sub_path "lib/x64_win_vc10")
+  set(${proj}_LIBRARIES_VERSION "x64_win_vc10") 
 elseif(WIN32 AND NOT IS64)
-	set(lib_sub_path "lib/x86_win_vc10")
+  set(lib_sub_path "lib/x86_win_vc10")
+  set(${proj}_LIBRARIES_VERSION "x86_win_vc10") 
 endif()
 
 set(${proj}_POSSIBLE_LIB_PATHS )
@@ -123,7 +128,7 @@ if(${proj}_POSSIBLE_LIB_PATHS)
 			set(${proj}_LIBRARIES_WORK ${${proj}_LIBRARIES_WORK} "${${proj}_${lib}_LIBRARY}")
 			list(REMOVE_ITEM ${proj}_LIBS_MISSING ${lib})
 		else()
-			#message("MeshSim Library ${lib}")
+			message(STATUS "####### MeshSim Library ${lib}")
 		endif()
 	endforeach()
 endif()
