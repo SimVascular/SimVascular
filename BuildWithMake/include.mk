@@ -241,13 +241,13 @@ endif
 
 #SV_EXTERNALS_VERSION_NUMBER = 2018.01
 SV_EXTERNALS_VERSION_NUMBER = 2018.05
-SV_OPENGL_VERSION=gl2
+SV_VTK_OPENGL_VERSION=gl2
 
 ifeq ($(CLUSTER), x64_cygwin)
     SV_EXTERNALS_VERSION_NUMBER = 2019.02
     SV_LOWERCASE_CMAKE_BUILD_TYPE=release
     SV_CMAKE_BUILD_TYPE=Release
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -848,16 +848,30 @@ endif
 
 ifeq ($(SV_USE_VTK),1)
 
-ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_OPENGL_VERSION).x64_cygwin.mk
-endif
+ifeq ($(SV_EXTERNALS_VERSION_NUMBER), 2019.02)
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_cygwin.mk
+  endif
 
-ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_OPENGL_VERSION).x64_linux.mk
-endif
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_linux.mk
+  endif
 
-ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_OPENGL_VERSION).x64_macosx.mk
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_macosx.mk
+  endif
+else
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_macosx.mk
+  endif
 endif
 
 endif
