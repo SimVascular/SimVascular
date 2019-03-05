@@ -45,7 +45,7 @@ ifneq ($(CLUSTER),x64_linux)
   include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/wix-3.14.x64_cygwin.mk
 endif
 
-SV_TIMESTAMP := $(shell date +"%Y-%m-%d")
+SV_TIMESTAMP ?= $(shell date +"%Y-%m-%d")
 DIST_DIR_TOP = package/$(SV_VERSION)
 DIST_DIR := $(DIST_DIR_TOP)/$(SV_TIMESTAMP)
 

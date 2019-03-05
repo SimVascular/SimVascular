@@ -53,6 +53,12 @@ source Scripts/build-sv-externals-helper-wget-generic.sh
 source Scripts/untar-unzip-source-all.sh
 
 #
+# must have primary destination build dir for subst commands
+#
+
+sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/create-toplevel-build-dir.sh > tmp/create-toplevel-build-dir.sh
+
+#
 # make build scripts
 #
 
@@ -193,7 +199,13 @@ fi
 echo "CREATE_POST_PROCESS_ALL_CMAKE_CONFIG"
   sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh Scripts/replace-explicit-paths-in-config-cmake.tcl > tmp/replace-explicit-paths-in-config-cmake.tcl
   chmod a+rx ./tmp/replace-explicit-paths-in-config-cmake.tcl
-  
+
+#
+# make sure toplevel build directory exists
+#
+
+./tmp/create-toplevel-build-dir.sh >& ./tmp/stdout.create-toplevel-build-dir.txt
+
 #
 # run installers
 #

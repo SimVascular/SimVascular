@@ -146,5 +146,6 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   pushd ../mitk-2018.04.0
   patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.patch
   patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04-boost-windows.patch
+  #patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.0-gl1.patch
   popd
 fi

@@ -1,0 +1,46 @@
+diff -aur --new-file -x .git mitk-2018-04/Modules/AlgorithmsExt/include/vtk_glew.h mitk-2018-04-gl1/Modules/AlgorithmsExt/include/vtk_glew.h
+--- mitk-2018-04/Modules/AlgorithmsExt/include/vtk_glew.h	1969-12-31 16:00:00.000000000 -0800
++++ mitk-2018-04-gl1/Modules/AlgorithmsExt/include/vtk_glew.h	2019-03-02 19:59:15.764275500 -0800
+@@ -0,0 +1 @@
++/* dummy header */
+diff -aur --new-file -x .git mitk-2018-04/Modules/Core/include/vtk_glew.h mitk-2018-04-gl1/Modules/Core/include/vtk_glew.h
+--- mitk-2018-04/Modules/Core/include/vtk_glew.h	1969-12-31 16:00:00.000000000 -0800
++++ mitk-2018-04-gl1/Modules/Core/include/vtk_glew.h	2019-03-02 19:59:45.679055100 -0800
+@@ -0,0 +1 @@
++/* dummy header */
+diff -aur --new-file -x .git mitk-2018-04/Modules/GPGPU/vtk_glew.h mitk-2018-04-gl1/Modules/GPGPU/vtk_glew.h
+--- mitk-2018-04/Modules/GPGPU/vtk_glew.h	1969-12-31 16:00:00.000000000 -0800
++++ mitk-2018-04-gl1/Modules/GPGPU/vtk_glew.h	2019-03-02 19:59:25.951512900 -0800
+@@ -0,0 +1 @@
++/* dummy header */
+diff -aur --new-file -x .git mitk-2018-04/Modules/LegacyGL/mitkGL.h mitk-2018-04-gl1/Modules/LegacyGL/mitkGL.h
+--- mitk-2018-04/Modules/LegacyGL/mitkGL.h	2018-05-28 17:36:39.000000000 -0700
++++ mitk-2018-04-gl1/Modules/LegacyGL/mitkGL.h	2019-03-02 19:50:42.664111300 -0800
+@@ -22,8 +22,8 @@
+ #endif
+ 
+ #ifndef __APPLE__
+-//#include "GL/gl.h"
+-#include "vtk_glew.h"
++#include "GL/gl.h"
++//#include "vtk_glew.h"
+ #else
+ #include "OpenGL/gl.h"
+ #endif
+diff -aur --new-file -x .git mitk-2018-04/Modules/Segmentation/Rendering/vtk_glew.h mitk-2018-04-gl1/Modules/Segmentation/Rendering/vtk_glew.h
+--- mitk-2018-04/Modules/Segmentation/Rendering/vtk_glew.h	1969-12-31 16:00:00.000000000 -0800
++++ mitk-2018-04-gl1/Modules/Segmentation/Rendering/vtk_glew.h	2019-03-02 19:59:36.114254100 -0800
+@@ -0,0 +1 @@
++/* dummy header */
+diff -aur --new-file -x .git mitk-2018-04/SuperBuild.cmake mitk-2018-04-gl1/SuperBuild.cmake
+--- mitk-2018-04/SuperBuild.cmake	2018-05-28 17:40:02.000000000 -0700
++++ mitk-2018-04-gl1/SuperBuild.cmake	2019-03-02 19:52:57.220573400 -0800
+@@ -348,6 +348,8 @@
+   DOWNLOAD_COMMAND ""
+   CMAKE_GENERATOR ${gen}
+   CMAKE_CACHE_ARGS
++    # --------------- SimVascular options ----------------
++    -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
+     # --------------- Build options ----------------
+     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
