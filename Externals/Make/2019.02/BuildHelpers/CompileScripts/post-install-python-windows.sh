@@ -10,6 +10,16 @@ GMV=mv
 $GCP -fl REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE  REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/svpython.exe
 $GCP -fl REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/*  REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts
 
+# need pip to install things
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python.exe REPLACEME_SV_TOPLEVEL_SRCDIR/BuildHelpers/Originals/python/get-pip.py
+
+# needed to compile numpy if desired
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install Cython --install-option="--no-cython-compile"
+
+#must install torando-5.1.1 since tornado-6.0.1 breaks jupyter!!
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install tornado==5.1.1
+#install numpy
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install numpy
 #install jupyter
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install jupyter
 #install tensorflow

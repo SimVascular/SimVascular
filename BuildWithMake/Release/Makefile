@@ -125,17 +125,17 @@ endif
 
 msi-bundle-clean:
 	-rm -f tmp/bundle.wixobj
-	-rm -f simvascular-bundle.wixpdb
-	-rm -f simvascular-bundle.exe
+	-rm -f simvascular-*-bundle.wixpdb
+	-rm -f simvascular-*-bundle.exe
 	-rm -f tmp/wix-simvascular-bundle.wxs
 
 msi-bundle: msi-bundle-clean mksedscript
 	-echo "Create WXS file..."
-	-sed -f tmp/sedscript windows_installer_packages/wix-simvascular-bundle.wxs > tmp/wix-simvascular-bundle.wxs
+	-tclsh windows_msi_helpers/simvascular-bundle-make-wxs.tcl $(SV_FULL_VER_NO) tmp/wix-simvascular-bundle.wxs
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj tmp/wix-simvascular-bundle.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-bundle.exe
+	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-$(SV_FULL_VER_NO)-bundle.exe
 
 msi: msiclean msi-simvascular
 
