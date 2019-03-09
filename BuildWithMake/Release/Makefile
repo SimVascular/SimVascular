@@ -102,7 +102,7 @@ endif
 
 msiclean:
 	-rm -f *~
-	-rm -f $(SV_VERSION).msi
+	-rm -f $(SV_VERSION)*.msi
 	-rm -f tmp/simvascular.wixpdb
 	-rm -f simvascular.wixpdb
 	-rm -f tmp/sv.wixobj
@@ -110,7 +110,9 @@ msiclean:
 	-rm -f tmp/uuidgen.exe*
 	-rm -f tmp/uuidgen.obj*
 
-msi-simvascular:	msiclean
+msi-simvascular: use_subst msiclean
+	-find $(DIST_DIR) -name "*.pyc" -delete
+	-find $(DIST_DIR) -name "__pycache__" -delete
 ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
 	x86_64-w64-mingw32-gcc -o tmp/uuidgen.exe windows_msi_helpers/uuidgen.c -lole32
 else
@@ -121,7 +123,7 @@ endif
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -sice:ICE60 -out $(SV_VERSION).msi tmp/sv.wixobj
+	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -sice:ICE60 -out $(SV_VERSION)-$(SV_TIMESTAMP)-Windows-64bit.msi tmp/sv.wixobj
 
 msi-bundle-clean:
 	-rm -f tmp/bundle.wixobj
@@ -131,11 +133,11 @@ msi-bundle-clean:
 
 msi-bundle: msi-bundle-clean mksedscript
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/simvascular-bundle-make-wxs.tcl $(SV_FULL_VER_NO) tmp/wix-simvascular-bundle.wxs
+	-tclsh windows_msi_helpers/simvascular-bundle-make-wxs.tcl $(SV_VERSION) $(SV_FULL_VER_NO) $(SV_TIMESTAMP) tmp/wix-simvascular-bundle.wxs
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj tmp/wix-simvascular-bundle.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-$(SV_FULL_VER_NO)-bundle.exe
+	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out $(SV_VERSION)-$(SV_TIMESTAMP)-Windows-64bit-bundle.exe
 
 msi: msiclean msi-simvascular
 
@@ -250,6 +252,10 @@ endif
 	-sed -f tmp/sedscript Jupyter/site-packages/simvascular_python_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_python_kernel/kernel.py
 	-sed -f tmp/sedscript windows_installer_packages/wix-simvascular-bundle.wxs > tmp/wix-simvascular-bundle.wxs
 #	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
+        # need to delete byte-code compiled code if it exists since this can break
+        # installation
+	-find $(DIST_DIR) -name "*.pyc" -delete
+	-find $(DIST_DIR) -name "__pycache__" -delete
 endif
 ifeq ($(SV_USE_QT),1)
 ifeq ($(CLUSTER), x64_cygwin)
@@ -298,6 +304,10 @@ else
 	-cp -fR $(MITK_LIBDIRS)/Python $(DIST_DIR)/mitk/lib
 	-cp -f $(SV_MITK_PLUGIN_PATH)/* $(DIST_DIR)/mitk/lib/plugins
 	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/lib/plugins
+        # need to delete byte-code compiled code if it exists since this can break
+        # installation
+	-find $(DIST_DIR) -name "*.pyc" -delete
+	-find $(DIST_DIR) -name "__pycache__" -delete
 endif
 endif
 

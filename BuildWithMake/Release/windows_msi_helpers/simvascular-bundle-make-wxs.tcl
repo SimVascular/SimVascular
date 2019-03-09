@@ -28,8 +28,10 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set SV_FULL_VER_NO [lindex $argv 0]
-set out_fn [lindex $argv 1]
+set SV_VERSION [lindex $argv 0]
+set SV_FULL_VER_NO [lindex $argv 1]
+set SV_TIMESTAMP [lindex $argv 2]
+set out_fn [lindex $argv 3]
 
 set outfp [open $out_fn w]
 fconfigure $outfp -translation lf
@@ -68,7 +70,7 @@ puts $outfp "     <ExePackage Id=\"Dependency3\" DisplayName=\"MSVC 2010 C++ Run
 puts $outfp "         DetectCondition=\"(MSVC_EXISTS)\" Permanent=\"yes\""
 puts $outfp "     />"
 puts $outfp ""
-puts $outfp "     <MsiPackage Id=\"MainPackage\" SourceFile=\"simvascular.msi\" Vital=\"yes\" DisplayInternalUI=\"yes\"/>"
+puts $outfp "     <MsiPackage Id=\"MainPackage\" SourceFile=\"$SV_VERSION-$SV_TIMESTAMP-Windows-64bit.msi\" Vital=\"yes\" DisplayInternalUI=\"yes\"/>"
 puts $outfp ""
 puts $outfp "    </Chain>"
 puts $outfp ""

@@ -278,10 +278,10 @@ else
 -include $(TOP)/global_overrides.mk
 endif
 
-SV_MAJOR_VERSION := $(shell date +"%Y")
-SV_MINOR_VERSION := $(shell date +"%m")
-SV_PATCH_VERSION := $(shell date +"%d")
-SV_MAJOR_VERSION_TWO_DIGIT := $(shell date +"%y")
+SV_MAJOR_VERSION ?= $(shell date +"%Y")
+SV_MINOR_VERSION ?= $(shell date +"%m")
+SV_PATCH_VERSION ?= $(shell date +"%d")
+SV_MAJOR_VERSION_TWO_DIGIT ?= $(shell date +"%y")
 SV_MAJOR_VER_NO = "$(SV_MAJOR_VERSION_TWO_DIGIT).$(SV_MINOR_VERSION)"
 SV_FULL_VER_NO = "$(SV_MAJOR_VERSION_TWO_DIGIT).$(SV_MINOR_VERSION).$(SV_PATCH_VERSION)"
 
