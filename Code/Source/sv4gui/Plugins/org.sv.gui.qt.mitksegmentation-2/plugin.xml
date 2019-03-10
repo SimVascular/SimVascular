@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.mitksegmentation"
+          name="Hello World"
+          class="sv4guiMitkSegmentation"
+          icon="resources/hello.png" />
+  </extension>
+
+  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+      <contextMenuAction nodeDescriptorName="sv4guiMitkSegmentation" label="MitkSegmentation Context Menu" icon="" class="sv4guiMitkSegmentation"/>
+  </extension>
+
+</plugin>

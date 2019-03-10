@@ -1,52 +1,80 @@
-# Copyright (c) Stanford University, The Regents of the University of
-#               California, and others.
-#
-# All Rights Reserved.
-#
-# See Copyright-SimVascular.txt for additional details.
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject
-# to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included
-# in all copies or substantial portions of the Software.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
-# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+set(SRC_CPP_FILES
 
-set(CPP_FILES
-    sv4gui_Hello.cxx
-    sv4gui_MitkSegmentationPluginActivator.cxx
 )
 
-set(MOC_H_FILES
-    sv4gui_Hello.h
-    sv4gui_MitkSegmentationPluginActivator.h
+set(INTERNAL_CPP_FILES
+  QmitkSegmentationPreferencePage.cpp
+  mitkPluginActivator.cpp
+  QmitkSegmentationView.cpp
+  QmitkThresholdAction.cpp
+  QmitkCreatePolygonModelAction.cpp
+  #QmitkStatisticsAction.cpp
+  QmitkAutocropAction.cpp
+  QmitkDeformableClippingPlaneView.cpp
+  Common/QmitkDataSelectionWidget.cpp
+  SegmentationUtilities/QmitkSegmentationUtilitiesView.cpp
+  SegmentationUtilities/QmitkSegmentationUtilityWidget.cpp
+  SegmentationUtilities/BooleanOperations/QmitkBooleanOperationsWidget.cpp
+  SegmentationUtilities/ImageMasking/QmitkImageMaskingWidget.cpp
+  SegmentationUtilities/ContourModelToImage/QmitkContourModelToImageWidget.cpp
+  SegmentationUtilities/MorphologicalOperations/QmitkMorphologicalOperationsWidget.cpp
+  SegmentationUtilities/SurfaceToImage/QmitkSurfaceToImageWidget.cpp
 )
 
 set(UI_FILES
-    sv4gui_MitkSegmentation.ui
+  src/internal/QmitkSegmentationControls.ui
+  src/internal/QmitkDeformableClippingPlaneViewControls.ui
+  src/internal/Common/QmitkDataSelectionWidgetControls.ui
+  src/internal/SegmentationUtilities/QmitkSegmentationUtilitiesViewControls.ui
+  src/internal/SegmentationUtilities/BooleanOperations/QmitkBooleanOperationsWidgetControls.ui
+  src/internal/SegmentationUtilities/ImageMasking/QmitkImageMaskingWidgetControls.ui
+  src/internal/SegmentationUtilities/ContourModelToImage/QmitkContourModelToImageWidgetControls.ui
+  src/internal/SegmentationUtilities/MorphologicalOperations/QmitkMorphologicalOperationsWidgetControls.ui
+  src/internal/SegmentationUtilities/SurfaceToImage/QmitkSurfaceToImageWidgetControls.ui
+)
+
+set(MOC_H_FILES
+  src/internal/QmitkSegmentationPreferencePage.h
+  src/internal/mitkPluginActivator.h
+  src/internal/QmitkSegmentationView.h
+  src/internal/QmitkThresholdAction.h
+  src/internal/QmitkCreatePolygonModelAction.h
+  #src/internal/QmitkStatisticsAction.h
+  src/internal/QmitkAutocropAction.h
+  src/internal/QmitkDeformableClippingPlaneView.h
+  src/internal/Common/QmitkDataSelectionWidget.h
+  src/internal/SegmentationUtilities/QmitkSegmentationUtilitiesView.h
+  src/internal/SegmentationUtilities/QmitkSegmentationUtilityWidget.h
+  src/internal/SegmentationUtilities/BooleanOperations/QmitkBooleanOperationsWidget.h
+  src/internal/SegmentationUtilities/ImageMasking/QmitkImageMaskingWidget.h
+  src/internal/SegmentationUtilities/ContourModelToImage/QmitkContourModelToImageWidget.h
+  src/internal/SegmentationUtilities/MorphologicalOperations/QmitkMorphologicalOperationsWidget.h
+  src/internal/SegmentationUtilities/SurfaceToImage/QmitkSurfaceToImageWidget.h
 )
 
 set(CACHED_RESOURCE_FILES
+  resources/segmentation.svg
+  resources/deformablePlane.png
+  resources/clipping_plane_translate_48x48.png
+  resources/clipping_plane_rotate48x48.png
+  resources/clipping_plane_deform48x48.png
+  resources/segmentation_utilities.svg
   plugin.xml
-  resources/hello.png
 )
 
 set(QRC_FILES
-  resources/mitksegmentation.qrc
+  resources/segmentation.qrc
+  resources/SegmentationUtilities.qrc
+  resources/BooleanOperationsWidget.qrc
+  resources/MorphologicalOperationsWidget.qrc
 )
+
+set(CPP_FILES)
+
+foreach(file ${SRC_CPP_FILES})
+  set(CPP_FILES ${CPP_FILES} src/${file})
+endforeach(file ${SRC_CPP_FILES})
+
+foreach(file ${INTERNAL_CPP_FILES})
+  set(CPP_FILES ${CPP_FILES} src/internal/${file})
+endforeach(file ${INTERNAL_CPP_FILES})

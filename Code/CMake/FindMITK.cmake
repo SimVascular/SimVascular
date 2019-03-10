@@ -132,8 +132,10 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
                     "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
                     "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
+                    "mitkBooleanOperation.h"                         #mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
                     "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
                     "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
+                    "QmitkSegmentationOrganNamesHandling.cpp"        #mitk/Modules/SegmentationUI/Qmitk
                     "mitkSurfaceInterpolationController.h"           #mitk/Modules/SurfaceInterpolation
                     "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets
                     "PythonQt.h"                                     #PythonQt
@@ -315,7 +317,7 @@ set(${proj}_POSSIBLE_INCLUDE_PATHS
   "${${proj}_DIR}/include/*/*/*/*/*/*"
   )
 
-#message("${proj}_POSSIBLE_INCLUDE_PATHS: ${${proj}_POSSIBLE_INCLUDE_PATHS}")
+message("${proj}_POSSIBLE_INCLUDE_PATHS: ${${proj}_POSSIBLE_INCLUDE_PATHS}")
 #-----------------------------------------------------------------------------
 # Search for header
 set(${proj}_HEADERS_MISSING ${${proj}_HEADERS})

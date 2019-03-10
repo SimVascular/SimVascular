@@ -257,7 +257,6 @@ if(SV_USE_QT_GUI)
     "Source/sv4gui/Modules/ProjectManagement"
     "Source/sv4gui/Modules/QtWidgets"
     "Source/sv4gui/Modules/ImageProcessing"
-    "Source/sv4gui/Modules/MitkSegmentation"
     "Source/sv4gui/Modules/svFSI"
      )
 
