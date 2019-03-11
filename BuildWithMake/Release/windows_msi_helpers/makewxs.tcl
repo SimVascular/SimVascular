@@ -81,7 +81,7 @@ proc file_find {dir wildcard args} {
   }
 
   foreach j $dir {
-    set files [glob -nocomplain [file join $j $wildcard]]
+    set files [glob -nocomplain [file join $j $wildcard] [file join $j .$wildcard]]
     # print out headers
     global idno
     global outfp
@@ -131,6 +131,10 @@ proc file_find {dir wildcard args} {
 	puts $outfp "</RegistryKey>"	
     }
     foreach i $files {
+      if {[file tail $i] == "." || [file tail $i] == ".."} {
+	    #puts "skipping ($i)"
+            continue
+      }
       global outfp
       if {![file isdirectory $i]} {
         global idno
@@ -175,8 +179,9 @@ proc file_find {dir wildcard args} {
     puts $outfp "<RemoveFolder Id='id[format %04i $id]' On='uninstall' />"
     puts $outfp "</Component>"
 
-    set files [glob -nocomplain [file join $j *]]
+    set files [glob -nocomplain [file join $j *] [file join $j .*]]
     foreach i $files {
+      if {[file tail $i] == "." || [file tail $i] == ".."} continue
       if {[file isdirectory $i] == 1} {
 	if {[file tail $i] != ".svn"} {
           global outfp

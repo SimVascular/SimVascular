@@ -1,0 +1,67 @@
+diff -aur --new-file -x .git VTK-8.1.1/Rendering/Tk/vtkPythonTkWidgetsInit.cxx VTK-8.1.1-patched/Rendering/Tk/vtkPythonTkWidgetsInit.cxx
+--- VTK-8.1.1/Rendering/Tk/vtkPythonTkWidgetsInit.cxx	2018-05-11 07:34:24.000000000 -0700
++++ VTK-8.1.1-patched/Rendering/Tk/vtkPythonTkWidgetsInit.cxx	2018-10-28 10:46:05.705165700 -0700
+@@ -12,6 +12,12 @@
+      PURPOSE.  See the above copyright notice for more information.
+ 
+ =========================================================================*/
++
++#ifdef WIN32
++#include "vtkWindows.h"
++#endif
++
++
+ #include "vtkTcl.h"
+ #include "vtkTk.h"
+ 
+diff -aur --new-file -x .git VTK-8.1.1/Rendering/Tk/vtkTclTkWidgetsInit.cxx VTK-8.1.1-patched/Rendering/Tk/vtkTclTkWidgetsInit.cxx
+--- VTK-8.1.1/Rendering/Tk/vtkTclTkWidgetsInit.cxx	2018-05-11 07:34:24.000000000 -0700
++++ VTK-8.1.1-patched/Rendering/Tk/vtkTclTkWidgetsInit.cxx	2018-10-24 22:08:54.012408000 -0700
+@@ -12,6 +12,11 @@
+      PURPOSE.  See the above copyright notice for more information.
+ 
+ =========================================================================*/
++
++#ifdef WIN32
++#include "vtkWindows.h"
++#endif
++
+ #include "vtkTcl.h"
+ #include "vtkTk.h"
+ #include "vtkVersionMacros.h"
+@@ -19,7 +24,6 @@
+ #include "vtkTkRenderWidget.h"
+ #include "vtkImageData.h"
+ 
+-
+ //----------------------------------------------------------------------------
+ // Vtkrenderingtcltkwidgets_Init
+ // Called upon system startup to create the widget commands.
+diff -aur --new-file -x .git VTK-8.1.1/Rendering/Tk/vtkTkImageViewerWidget.h VTK-8.1.1-patched/Rendering/Tk/vtkTkImageViewerWidget.h
+--- VTK-8.1.1/Rendering/Tk/vtkTkImageViewerWidget.h	2018-05-11 07:34:24.000000000 -0700
++++ VTK-8.1.1-patched/Rendering/Tk/vtkTkImageViewerWidget.h	2018-10-26 08:23:04.520957100 -0700
+@@ -30,6 +30,10 @@
+ #ifndef vtkTkImageViewerWidget_h
+ #define vtkTkImageViewerWidget_h
+ 
++#ifdef WIN32
++#include "vtkWindows.h"
++#endif
++
+ #include "vtkImageViewer.h"
+ #include "vtkTcl.h"
+ #include "vtkTk.h"
+diff -aur --new-file -x .git VTK-8.1.1/Rendering/Tk/vtkTkRenderWidget.h VTK-8.1.1-patched/Rendering/Tk/vtkTkRenderWidget.h
+--- VTK-8.1.1/Rendering/Tk/vtkTkRenderWidget.h	2018-05-11 07:34:24.000000000 -0700
++++ VTK-8.1.1-patched/Rendering/Tk/vtkTkRenderWidget.h	2018-10-26 08:24:19.805911600 -0700
+@@ -31,6 +31,10 @@
+ #ifndef vtkTkRenderWidget_h
+ #define vtkTkRenderWidget_h
+ 
++#ifdef WIN32
++#include "vtkWindows.h"
++#endif
++
+ #include "vtkRenderWindow.h"
+ #include "vtkTcl.h"
+ #include "vtkWindows.h"
