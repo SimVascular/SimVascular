@@ -4,12 +4,12 @@ matrix:
   include:
     - os: linux
       compiler: gcc
-      dist: trusty
+      dist: xenial
       sudo: required
       env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: linux
       compiler: gcc
-      dist: trusty
+      dist: xenial
       sudo: required
       env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=true
     - os: osx
