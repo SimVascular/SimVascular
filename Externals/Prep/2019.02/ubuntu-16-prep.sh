@@ -79,6 +79,7 @@ sudo apt-get -y install libwrap0-dev
 
 ### python
 sudo apt-get -y install libssl-dev
+sudo apt-get -y install libsqlite3-dev
 
 # for swig-3.0.12
 sudo apt-get -y install libpcre3-dev

@@ -23,7 +23,8 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_TCL         UNTAR_TCL         BUILD_TCL         ARCHIVE_TCL         ZIP_TCL         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_PYTHON      UNTAR_PYTHON      BUILD_PYTHON      ARCHIVE_PYTHON      ZIP_PYTHON      $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_SWIG        UNTAR_SWIG        BUILD_SWIG        ARCHIVE_SWIG        ZIP_SWIG        $SV_SUPER_OPTIONS"
-   SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
+# numpy is now pip installed during postprocessing script!  Our version is incompatible with tensorflow
+#   SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_TINYXML2    UNTAR_TINYXML2    BUILD_TINYXML2    ARCHIVE_TINYXML2    ZIP_TINYXML2    $SV_SUPER_OPTIONS"
    #   SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_BIN_QT          INSTALL_BIN_QT   ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
@@ -53,6 +54,12 @@ source Scripts/build-sv-externals-helper-wget-generic.sh
 source Scripts/untar-unzip-source-all.sh
 
 #
+# must have primary destination build dir for subst commands
+#
+
+sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/create-toplevel-build-dir.sh > tmp/create-toplevel-build-dir.sh
+
+#
 # make build scripts
 #
 
@@ -68,6 +75,8 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "CREATE_BUILD_SCRIPT_PYTHON"
   sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/compile-cmake-python-mac_osx.sh > tmp/compile.cmake.python.clang.sh
   chmod a+rx ./tmp/compile.cmake.python.clang.sh
+  sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/post-install-python-mac_osx.sh > tmp/post-install-python-mac_osx.sh
+  chmod a+rx ./tmp/post-install-python-mac_osx.sh
 fi
 
 # swig
@@ -177,6 +186,17 @@ if [[ $SV_SUPER_OPTIONS == *ZIP_* ]]; then
   chmod a+rx ./tmp/tar-to-zip-all.clang.sh
 fi
 
+# should probably do this on a case-by-case basis inside of cmake builders
+echo "CREATE_POST_PROCESS_ALL_CMAKE_CONFIG"
+  sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh Scripts/replace-explicit-paths-in-config-cmake.tcl > tmp/replace-explicit-paths-in-config-cmake.tcl
+  chmod a+rx ./tmp/replace-explicit-paths-in-config-cmake.tcl
+
+#
+# make sure toplevel build directory exists
+#
+
+./tmp/create-toplevel-build-dir.sh >& ./tmp/stdout.create-toplevel-build-dir.txt
+
 #
 # run installers
 #
@@ -213,6 +233,13 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.python.numpy-mac_osx.sh >& ./tmp/stdout.numpy.python.txt
+fi
+
+## python
+## want to run post install after numpy is built
+if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
+  echo "BUILD_PYTHON post-install"
+  ./tmp/post-install-python-mac_osx.sh >& ./tmp/stdout.post-install-python-mac_osx.txt
 fi
 
 # tinyxml2
@@ -275,6 +302,11 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
   ./tmp/compile.cmake.mitk.clang.sh >& ./tmp/stdout.mitk.clang.txt
   ./tmp/post-install-mitk-mac_osx.sh >& ./tmp/stdout.post-install-mitk-mac_osx.txt
 fi
+
+#
+# check generated cmake configs for hardcorded paths
+#
+tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 
 #
 # create tar files for distrution
