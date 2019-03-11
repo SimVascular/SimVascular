@@ -58,6 +58,7 @@ source Scripts/untar-unzip-source-all.sh
 #
 
 sed -f CompileScripts/sed-script-x64_${SV_EXTERN_LINUX_VERSION}-options-gcc.sh CompileScripts/create-toplevel-build-dir.sh > tmp/create-toplevel-build-dir.sh
+chmod a+rx ./tmp/create-toplevel-build-dir.sh
 
 #
 # make build scripts

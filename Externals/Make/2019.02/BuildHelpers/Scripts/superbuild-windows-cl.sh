@@ -58,6 +58,7 @@ source Scripts/untar-unzip-source-all.sh
 #
 
 sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/create-toplevel-build-dir.sh > tmp/create-toplevel-build-dir.sh
+chmod a+rx ./tmp/create-toplevel-build-dir.sh
 
 #
 # make build scripts

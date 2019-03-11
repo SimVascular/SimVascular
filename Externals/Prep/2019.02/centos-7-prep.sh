@@ -36,6 +36,7 @@ sudo yum -y install pcre-devel
 sudo yum -y install emacs
 sudo yum -y install dos2unix
 #sudo yum -y install xterm
+sudo apt-get -y install bbe
 
 ### used by some of the SV cmake code
 sudo yum -y install lsb-core
@@ -60,6 +61,8 @@ sudo yum -y install libXi-devel
 
 ### python
 sudo yum -y install openssl-devel
+sudo yum -y install sqlite3-dev
+sudo yum -y install ncurses-dev
 
 ### gdcm/mitk
 #sudo yum -y install swig3.0
