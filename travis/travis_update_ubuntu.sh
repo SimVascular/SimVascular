@@ -28,9 +28,9 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-### install latest version of CMake for Ubuntu
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-  sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  sudo apt-get update -q
-  sudo apt-get install gcc-4.9 g++-4.9 -y
-fi
+### install newer compiler on Ubuntu 14
+#if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+#  sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+#  sudo apt-get update -q
+#  sudo apt-get install gcc-4.9 g++-4.9 -y
+#fi

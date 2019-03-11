@@ -33,6 +33,7 @@ addons:
     - libxt-dev
     - libxi-dev
     - libglew-dev
+    - libxmu-dev
 
 git:
   submodules: false
