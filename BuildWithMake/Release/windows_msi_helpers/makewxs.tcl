@@ -72,6 +72,7 @@ proc file_find {dir wildcard args} {
   global SV_CMAKE_BUILD_TYPE
   global SV_RELEASE_VERSION_NO
   global SV_FULL_VER_NO
+  global SV_TIMESTAMP
   
   if {[llength $args] == 0} {
      set rtnme {}
@@ -80,7 +81,7 @@ proc file_find {dir wildcard args} {
   }
 
   foreach j $dir {
-    set files [glob -nocomplain [file join $j $wildcard]]
+    set files [glob -nocomplain [file join $j $wildcard] [file join $j .$wildcard]]
     # print out headers
     global idno
     global outfp
@@ -102,15 +103,22 @@ proc file_find {dir wildcard args} {
         puts $outfp "<RegistryKey Root='HKLM' Key='Software\\WOW6432Node\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP'>"
         puts $outfp "  <RegistryValue Type=\"string\" Name='InstallDir' Value='\[INSTALLDIR\]' />"
         puts $outfp "  <RegistryValue Type=\"string\" Name='TimeStamp' Value='$SV_TIMESTAMP'  />"
-        #puts $outfp "  <RegistryValue Type=\"string\" Name='TclLibDir' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL'  />"
-        #puts $outfp "  <RegistryValue Type=\"string\" Name='TkLibDir' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL'  />"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='TclLibDir' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL'  />"
+        puts $outfp "  <RegistryValue Type=\"string\" Name='TkLibDir' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL'  />"
         puts $outfp "  <RegistryValue Type=\"string\" Name='HomeDir' Value='\[INSTALLDIR\]$SV_TIMESTAMP'  />"
 	puts $outfp "</RegistryKey>"
 	
 	puts $outfp "<RegistryKey Root='HKLM' Key='Software\\WOW6432Node\\SimVascular\\$SV_VERSION\\$SV_TIMESTAMP\\ENVIRONMENT_VARIABLES'>"
-        puts $outfp "  <RegistryValue Type=\"string\" Name='PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin'  />"
+	if {$PYTHON_MAJOR_VERSION == "2"} {
+	    puts $outfp "  <RegistryValue Type=\"string\" Name='PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin;\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Scripts'  />"
+	} elseif {$PYTHON_MAJOR_VERSION == "3"} {
+	    puts $outfp "  <RegistryValue Type=\"string\" Name='PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin;\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Scripts'  />"
+	} else {
+	    puts $outfp "  <RegistryValue Type=\"string\" Name='PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin'  />"
+	}
         puts $outfp "  <RegistryValue Type=\"string\" Name='SV_PLUGIN_PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\plugins\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\mitk\\bin\\$SV_CMAKE_BUILD_TYPE;\[INSTALLDIR\]$SV_TIMESTAMP\\plugins' />"
         puts $outfp "  <RegistryValue Type=\"string\" Name='QT_PLUGIN_PATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\qt-plugins' />"
+	puts $outfp "  <RegistryValue Type=\"string\" Name='TCLLIBPATH' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib'  />"
 	puts $outfp "  <RegistryValue Type=\"string\" Name='TCL_LIBRARY' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TCL_LIBRARY_TAIL'  />"
         puts $outfp "  <RegistryValue Type=\"string\" Name='TK_LIBRARY' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\lib\\$TK_LIBRARY_TAIL'  />"
 	if {$PYTHON_MAJOR_VERSION == "2"} {	
@@ -123,6 +131,10 @@ proc file_find {dir wildcard args} {
 	puts $outfp "</RegistryKey>"	
     }
     foreach i $files {
+      if {[file tail $i] == "." || [file tail $i] == ".."} {
+	    #puts "skipping ($i)"
+            continue
+      }
       global outfp
       if {![file isdirectory $i]} {
         global idno
@@ -136,7 +148,13 @@ proc file_find {dir wildcard args} {
 	    puts $outfp "<Shortcut Id='ids13' Directory='ProgramMenuDir' Name='$SV_VERSION-Python-Shell' Arguments='-python' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
 	    puts $outfp "<Shortcut Id='ids14' Directory='ProgramMenuDir' Name='$SV_VERSION-Tcl-Tk' Arguments='-tk' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
 	    puts $outfp "<Shortcut Id='ids15' Directory='ProgramMenuDir' Name='$SV_VERSION-Tcl-Shell' Arguments='-tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
-	    puts $outfp "<Shortcut Id='ids16' Directory='DesktopFolder' Name='$SV_VERSION $SV_FULL_VER_NO' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    puts $outfp "<Shortcut Id='ids16' Directory='ProgramMenuDir' Name='$SV_VERSION-Wish-Shell' Arguments='-wish' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    if {$PYTHON_MAJOR_VERSION == "2"} {
+	      puts $outfp "<Shortcut Id='ids17' Directory='ProgramMenuDir' Name='$SV_VERSION-Jupyter-Notebook' Arguments='--python -- \"\[INSTALLDIR\]$SV_TIMESTAMP\\Python27\\Scripts\\sv_jupyter_launch.py\"' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    } elseif {$PYTHON_MAJOR_VERSION == "3"} {
+	      puts $outfp "<Shortcut Id='ids17' Directory='ProgramMenuDir' Name='$SV_VERSION-Jupyter-Notebook' Arguments='--python -- \"\[INSTALLDIR\]$SV_TIMESTAMP\\Python3.5\\Scripts\\sv_jupyter_launch.py\"' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
+	    }
+	    puts $outfp "<Shortcut Id='ids18' Directory='DesktopFolder' Name='$SV_VERSION $SV_FULL_VER_NO' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
             puts $outfp "</File>"
             #puts $outfp "<RemoveFolder Directory='ProgramMenuDir' Name='$SV_VERSION' On='uninstall' />"
             puts $outfp "<RemoveFile Id='ids12' On='uninstall' Name='*.*' />"
@@ -144,6 +162,8 @@ proc file_find {dir wildcard args} {
 	    puts $outfp "<RemoveFile Id='ids14' On='uninstall' Name='*.*' />"
 	    puts $outfp "<RemoveFile Id='ids15' On='uninstall' Name='*.*' />"
 	    puts $outfp "<RemoveFile Id='ids16' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids17' On='uninstall' Name='*.*' />"
+	    puts $outfp "<RemoveFile Id='ids18' On='uninstall' Name='*.*' />"
             puts $outfp "<RegistryValue Root=\"HKCU\" Key=\"Software\Microsoft\$SV_VERSION\" Name=\"installed\" Type=\"integer\" Value=\"1\" KeyPath=\"yes\"/>"
 
             puts $outfp "<RemoveFolder Id='RemoveProgramMenuDir' Directory='ProgramMenuDir' On='uninstall' />"
@@ -159,8 +179,9 @@ proc file_find {dir wildcard args} {
     puts $outfp "<RemoveFolder Id='id[format %04i $id]' On='uninstall' />"
     puts $outfp "</Component>"
 
-    set files [glob -nocomplain [file join $j *]]
+    set files [glob -nocomplain [file join $j *] [file join $j .*]]
     foreach i $files {
+      if {[file tail $i] == "." || [file tail $i] == ".."} continue
       if {[file isdirectory $i] == 1} {
 	if {[file tail $i] != ".svn"} {
           global outfp

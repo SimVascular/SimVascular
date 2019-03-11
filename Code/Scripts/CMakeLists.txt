@@ -2,11 +2,19 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/SimVascularScriptMacros.cmake)
 file(MAKE_DIRECTORY ${TEMP_DIR}/developer ${TEMP_DIR}/install)
 
 set(core_str)
+
+## Set unix environment variables.
+#
 if(UNIX)
 	file(READ ${SV_SOURCE_DIR}/Scripts/home-locate-linux.sh locate_script)
 	set(core_str "${locate_script}\n")
 	set_env_string_concat(SV_HOME "$DIR" core_str)
+        # Set the install version used by the sv launch script to load non-core plugins.
+        string(REPLACE "." "-" SV_INSTALL_VERSION ${SV_FULL_VERSION})
+        set_env_string_concat(SV_INSTALL_VERSION "${SV_INSTALL_VERSION}" core_str)
+	set_env_string_concat(SV_PLUGIN_INSTALL_DIR "${SV_PLUGIN_INSTALL_DIR}/${SV_INSTALL_VERSION}" core_str)
 endif()
+
 if(WIN32 AND NOT UNIX)
 	set(core_str "@echo off\r\n")
 	set_env_string_concat(SV_HOME "%~dp0" core_str)
@@ -298,7 +306,7 @@ if(SV_USE_PYTHON)
 
   # PYTHONPATH
   if(SV_PYTHON_DIR)
-    set_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
+    set_env_string_concat(PYTHONPATH "$PYTHONPATH:${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
   endif()
 
   append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)

@@ -29,5 +29,5 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if {![info exists SV_FULL_VER_NO]} {
-  source $env(SV_HOME)/Tcl/simvascular_startup.tcl
+  source $env(SV_HOME)/Tcl/SimVascular_2.0/simvascular_startup.tcl
 }
