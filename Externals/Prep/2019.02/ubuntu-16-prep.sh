@@ -28,6 +28,7 @@ sudo apt-get -y install libmpich2-dev
 sudo apt-get -y install libglu1-mesa-dev
 sudo apt-get -y install libxt-dev
 sudo apt-get -y install libxi-dev
+sudo apt-get -y install mesa-utils
 
 ### for qt/mitk
 sudo apt-get -y install libicu-dev

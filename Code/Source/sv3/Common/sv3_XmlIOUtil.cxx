@@ -32,7 +32,6 @@
 #include "sv3_XmlIOUtil.h"
 #include <array>
 #include <stdexcept>
-#include <tinyxml.h>
 
 using sv3::XmlIOUtil;
 
