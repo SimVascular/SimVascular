@@ -61,8 +61,8 @@ sudo yum -y install libXi-devel
 
 ### python
 sudo yum -y install openssl-devel
-sudo yum -y install sqlite3-dev
-sudo yum -y install ncurses-dev
+sudo yum -y install sqlite-devel
+sudo yum -y install ncurses-devel
 
 ### gdcm/mitk
 #sudo yum -y install swig3.0

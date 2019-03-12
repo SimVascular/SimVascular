@@ -153,7 +153,7 @@ s+REPLACEME_SV_OPENSSL_LIBRARIES+"libssl.so;libcrypto.so"+g
 # sqlite3 (needed for python)
 
 s+REPLACEME_SV_SQLITE3_INC_DIR+/usr/include+g
-s+REPLACEME_SV_SQLITE3_LIBRARY+/usr/lib/x86_64-linux-gnu/libsqlite3.so+g
+s+REPLACEME_SV_SQLITE3_LIBRARY+/usr/lib64/libsqlite3.so+g
 
 # python
 
