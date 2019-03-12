@@ -1,3 +1,4 @@
+#EXTERNALS_TOP=/usr/local/sv/ext/2019.02/release/gl1
 EXTERNALS_TOP=/usr/local/sv/ext/2019.02/release/gl2
 EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 
@@ -23,7 +24,8 @@ case "$osid" in
 		export SV_EXTERN_LINUX_VERSION=ubuntu_16
 		;;
 	    'trusty')
-		export SV_EXTERN_LINUX_VERSION=ubuntu_14
+	        echo "Error: ubuntu_14 no longer supported!"
+		exit
 		;;   
 	    *)
 		echo "Error!"
@@ -94,5 +96,3 @@ echo "  note: see logs in stdout.superbuild.txt, tmp/stdout*, etc."
 source Scripts/superbuild-linux-gcc.sh >& stdout.superbuild.txt
 
 popd
-
-
