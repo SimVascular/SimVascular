@@ -205,7 +205,7 @@ SV_IGNORE_PROVISIONING_FILE = 1
 # Compile with tinyxml2
 # -----------------------------------------------------
 
-SV_USE_TINYXML2 = 1
+SV_USE_TINYXML2 = 0
 
 # -----------------------------------------------------
 # Compile with Optimization
