@@ -1,0 +1,49 @@
+diff -rupN original/src/IVtkVTK/IVtkVTK_ShapeData.cxx patch/src/IVtkVTK/IVtkVTK_ShapeData.cxx
+--- original/src/IVtkVTK/IVtkVTK_ShapeData.cxx	2018-06-04 06:06:19.000000000 -0700
++++ patch/src/IVtkVTK/IVtkVTK_ShapeData.cxx	2018-06-04 06:14:36.000000000 -0700
+@@ -80,9 +80,9 @@ void IVtkVTK_ShapeData::InsertVertex (co
+   vtkIdType aPointIdVTK = thePointId;
+   myPolyData->InsertNextCell (VTK_VERTEX, 1, &aPointIdVTK);
+   const vtkIdType aShapeIDVTK = theShapeID;
+-  mySubShapeIDs->InsertNextTupleValue (&aShapeIDVTK);
++  mySubShapeIDs->InsertNextTypedTuple (&aShapeIDVTK);
+   const vtkIdType aType = theMeshType;
+-  myMeshTypes->InsertNextTupleValue (&aType);
++  myMeshTypes->InsertNextTypedTuple (&aType);
+ }
+ 
+ //================================================================
+@@ -97,9 +97,9 @@ void IVtkVTK_ShapeData::InsertLine (cons
+   vtkIdType aPoints[2] = { thePointId1, thePointId2 };
+   myPolyData->InsertNextCell (VTK_LINE, 2, aPoints);
+   const vtkIdType aShapeIDVTK = theShapeID;
+-  mySubShapeIDs->InsertNextTupleValue (&aShapeIDVTK);
++  mySubShapeIDs->InsertNextTypedTuple (&aShapeIDVTK);
+   const vtkIdType aType = theMeshType;
+-  myMeshTypes->InsertNextTupleValue (&aType);
++  myMeshTypes->InsertNextTypedTuple (&aType);
+ }
+ 
+ //================================================================
+@@ -124,9 +124,9 @@ void IVtkVTK_ShapeData::InsertLine (cons
+ 
+     myPolyData->InsertNextCell (VTK_POLY_LINE, anIdList);
+     const vtkIdType aShapeIDVTK = theShapeID;
+-    mySubShapeIDs->InsertNextTupleValue (&aShapeIDVTK);
++    mySubShapeIDs->InsertNextTypedTuple (&aShapeIDVTK);
+     const vtkIdType aType = theMeshType;
+-    myMeshTypes->InsertNextTupleValue (&aType);
++    myMeshTypes->InsertNextTypedTuple (&aType);
+   }
+ }
+ 
+@@ -143,7 +143,7 @@ void IVtkVTK_ShapeData::InsertTriangle (
+   vtkIdType aPoints[3] = { thePointId1, thePointId2, thePointId3 };
+   myPolyData->InsertNextCell (VTK_TRIANGLE, 3, aPoints);
+   const vtkIdType aShapeIDVTK = theShapeID;
+-  mySubShapeIDs->InsertNextTupleValue (&aShapeIDVTK);
++  mySubShapeIDs->InsertNextTypedTuple (&aShapeIDVTK);
+   const vtkIdType aType = theMeshType;
+-  myMeshTypes->InsertNextTupleValue (&aType);
++  myMeshTypes->InsertNextTypedTuple (&aType);
+ }

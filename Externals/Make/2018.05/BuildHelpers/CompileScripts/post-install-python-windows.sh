@@ -7,15 +7,20 @@ GBASENAME=basename
 GMKDIR=mkdir
 GMV=mv
 
-# paths
-#REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE
-
 $GCP -fl REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE  REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/svpython.exe
+
+#install jupyter
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install jupyter
+
+tmppythonpath=`echo REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE | sed s+/+\\\\\\\\+g`
+tmppythonpathlower=`echo $tmppythonpath | sed -e 's/\(.*\)/\L\1/'`
 
 for f in REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/*.exe; do
     echo "File -> $f"
-    bbe -e "s/c:\\\\cygwin64\\\\usr\\\\local\\\\sv\\\\ext\\\\2018.05\\\\release\\\\bin\\\\msvc\\\\19.0\\\\x64\\\\release\\\\python-3.5.5\\\\bin\\\\python.exe/svpython.exe/g" $f > $f.tmp
-    mv $f.tmp $f
+    sed -e "s/$tmppythonpath/svpython.exe/g" $f > $f.tmp
+    sed -e "s/$tmppythonpathlower/svpython.exe/g" $f > $f.tmp.tmp
+    rm $f.tmp
+    mv $f.tmp.tmp $f
 done
 
 REPLACEME_SV_SPECIAL_COMPILER_END_SCRIPT

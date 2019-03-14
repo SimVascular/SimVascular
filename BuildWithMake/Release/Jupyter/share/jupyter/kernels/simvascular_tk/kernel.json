@@ -1,1 +1,0 @@
-{"argv": ["python", "-m", "simvascular_tk_kernel", "-f", "{connection_file}"], "display_name": "SimVascular Tk", "env": {"simvascular_tk_command": "simvascular_tk"}, "language": "tcl"}

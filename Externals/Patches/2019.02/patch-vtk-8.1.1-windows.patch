@@ -1,0 +1,21 @@
+diff -aur --new-file -x .git vtk-8.1.1-original/Rendering/Tk/CMakeLists.txt vtk-8.1.1-patched/Rendering/Tk/CMakeLists.txt
+--- vtk-8.1.1-original/Rendering/Tk/CMakeLists.txt	2018-05-11 07:34:24.000000000 -0700
++++ vtk-8.1.1-patched/Rendering/Tk/CMakeLists.txt	2018-06-16 13:14:03.056491500 -0700
+@@ -87,7 +87,7 @@
+ 
+     vtk_add_library(vtkRenderingTkTCL ${Module_TCL_SRCS})
+ 
+-    vtk_module_link_libraries(vtkRenderingTkTCL
++    vtk_module_link_libraries(vtkRenderingTkTCL vtkRendering${VTK_RENDERING_BACKEND}
+           vtkRenderingCore vtkCommonDataModel vtkCommonCoreTCL
+           vtkInteractionImage
+           ${Module_TCL_LIBS})
+@@ -126,7 +126,7 @@
+           ${X11_LIBRARIES})
+     endif()
+ 
+-    vtk_module_link_libraries(vtkRenderingPythonTkWidgets
++    vtk_module_link_libraries(vtkRenderingPythonTkWidgets vtkRendering${VTK_RENDERING_BACKEND}
+                           vtkRenderingCore vtkCommonDataModel
+                           vtkInteractionImage
+                           ${Module_PYTHON_LIBS})
