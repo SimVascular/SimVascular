@@ -28,7 +28,7 @@
 #-----------------------------------------------------------------------------
 # URLs for external downloads and git repositories
 set(SV_EXTERNALS_VERSION_NUMBER  "2018.05" CACHE STRING "SimVascular Externals version")
-set_property(CACHE SV_EXTERNALS_VERSION_NUMBER PROPERTY STRINGS "2017.01" "2018.01" "2018.03" "2018.05")
+set_property(CACHE SV_EXTERNALS_VERSION_NUMBER PROPERTY STRINGS "2017.01" "2018.01" "2018.03" "2018.05" "2019.02")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -95,6 +95,27 @@ elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.03")
   set(MITK_VERSION "2018.02")
 
 elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+
+  set(Qt5_VERSION "5.6.3")
+  set(HDF5_VERSION "1.10.1")
+  set(TINYXML2_VERSION "6.2.0")
+  set(TCL_VERSION "8.6.4")
+  set(TK_VERSION "8.6.4")
+  set(TCLLIB_VERSION "1.17")
+  set(TKLIB_VERSION "0.6")
+  set(PYTHON_VERSION "3.5.5")
+  set(PIP_VERSION "0.0.0")
+  set(NUMPY_VERSION "1.14.3")
+  set(FREETYPE_VERSION "2.6.3")
+  set(SWIG_VERSION "3.0.12")
+  set(MMG_VERSION "5.3.9")
+  set(GDCM_VERSION "2.6.3")
+  set(VTK_VERSION "8.1.1")
+  set(ITK_VERSION "4.13.0")
+  set(OpenCASCADE_VERSION "7.3.0")
+  set(MITK_VERSION "2018.04.0")
+
+elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
 
   set(Qt5_VERSION "5.6.3")
   set(HDF5_VERSION "1.10.1")

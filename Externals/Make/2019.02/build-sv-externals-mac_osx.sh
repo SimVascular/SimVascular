@@ -1,3 +1,4 @@
+#EXTERNALS_TOP=/usr/local/sv/ext/2019.02/release/gl1
 EXTERNALS_TOP=/usr/local/sv/ext/2019.02/release/gl2
 EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 

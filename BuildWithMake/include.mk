@@ -202,6 +202,12 @@ SV_USE_MITK = 1
 SV_IGNORE_PROVISIONING_FILE = 1
 
 # -----------------------------------------------------
+# Compile with tinyxml2
+# -----------------------------------------------------
+
+SV_USE_TINYXML2 = 0
+
+# -----------------------------------------------------
 # Compile with Optimization
 # -----------------------------------------------------
 
@@ -251,9 +257,10 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
+    SV_EXTERNALS_VERSION_NUMBER = 2019.02
     SV_LOWERCASE_CMAKE_BUILD_TYPE=release
     SV_CMAKE_BUILD_TYPE=Release
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
@@ -391,6 +398,10 @@ endif
 
 ifeq ($(SV_USE_GDCM),1)
   GLOBAL_DEFINES += -DSV_USE_GDCM
+endif
+
+ifeq ($(SV_USE_TINYXML2),1)
+  GLOBAL_DEFINES += -DSV_USE_TINYXML2
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -614,11 +625,13 @@ ifeq ($(SV_USE_MITK),1)
   endif
 endif
 
-ifeq ($(SV_USE_QT_GUI),1)
-  ifeq ($(SV_USE_QT_GUI_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv4gui/Plugins
-  else
-     LIBDIRS += ../Code/Source/sv4gui/Plugins
+ifeq ($(SV_USE_MITK),1)
+  ifeq ($(SV_USE_QT_GUI),1)
+    ifeq ($(SV_USE_QT_GUI_SHARED),1)
+       SHARED_LIBDIRS += ../Code/Source/sv4gui/Plugins
+    else
+       LIBDIRS += ../Code/Source/sv4gui/Plugins
+    endif
   endif
 endif
 
@@ -881,6 +894,26 @@ endif
 # ***   (less restrictive licenses)     ***
 # *** (e.g. MIT or BSD or Apache 2.0)   ***
 # -----------------------------------------
+
+# --------
+# TINYXML2
+# --------
+
+ifeq ($(SV_USE_TINYXML2),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tinyxml2.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tinyxml2.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tinyxml2.x64_macosx.mk
+  endif
+
+endif
 
 # ----
 # GDCM
