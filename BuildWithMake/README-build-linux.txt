@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
             Compiling Instructions for SimVascular on Linux
-                       Revised 2017-11-14
+                       Revised 2019-03-11
 ------------------------------------------------------------------------
 
 --------
@@ -12,41 +12,44 @@ makefiles.  You must override the deafult options to build on linux.
 
 Our base test configuration for linux is:
 
-Ubuntu 14.04 64-bit desktop (w/ patches)
+Ubuntu 16.04 64-bit desktop (w/ patches)
 Intel 7/9 processor
-gcc/g++ version 4.8.4
+gcc/g++ version 5.4
 
------------
-Major Steps
------------
+-------------------------------
+Major Steps (2019.02 externals)
+-------------------------------
 
 1. Ubuntu prerequisities
 ------------------------
 
-See:
+You must install certain system libraries before you compile:
 
-Externals/ubuntu-14-prep.sh
+% cd Externals/Prep/2019.02
+% ./ubuntu-16-prep.sh
 
-for system packages that required to build simvascular.
+2.  Building SimVascular
+------------------------
 
-2.  Install of build external open source packages
---------------------------------------------------
+% cd BuildWithMake
+% source quick-build-linux.sh
 
-For downloading pre-built binaries see the quick-build-linux.sh script:
+3. Launching SimVascular
+------------------------
 
-% ./quick-build-ubuntu-14.sh
+% cd BuildWithMake
+% ./sv       (default Qt gui)
+% ./sv -tk   (old tcl/tk gui)
 
-To build your own version:
+4. Building an Installer (optional)
+-----------------------------------
 
-% cd ../Externals
-% source build-sv-exeternals-linux.sh
+% cd BuildWithMake/Release
+% make
 
-3. Checkout SV source code
---------------------------
-% git clone https://github.com/SimVascular/SimVascular.git simvascular
+5. Override options (optional)
+------------------------------
 
-4. Override options
--------------------
 Override defaults with:
 
   * cluster_overrides.mk
@@ -56,41 +59,16 @@ Override defaults with:
 
 See include.mk for all options.
 
-5. Copy meshsim license file
-----------------------------
-If you are building with MeshSim, copy the license file
-into the appropriate directory.
-% cp license.dat simvascular/Licenses/MeshSim/license.dat
+6.  To build external open source packages (very optional)
+----------------------------------------------------------
 
-6. Build
---------
-% cd simvascular/BuildWithMake
-% make
+% cd Externals/Make/2019.02
+% source build-sv-exeternals-linux.sh
 
-7. Running developer version
-----------------------------
-% cd simvascular/BuildWithMake
-% ./sv
-
-8. Build release
------------------
-% cd simvascular/BuildWithMake/Release
-% make
-
-9. Installing a distribution
-----------------------------
-sudo tar --directory /usr/local -xvzpsf simvascular-linux-x64.*.tar.gz
-sudo /usr/local/package/simvascular/xxxxxxxx/post-install.sh
-sudo /usr/local/package/simvascular/xxxxxxxx/post-solver-install.sh
-
-% sudo apt-get install gcc-multilib
-% sudo apt-get install ia32-libs
-
-10. Optional
-------------
-
-#
-#  if you have a current nvidia graphics card
-#
-
-% sudo apt-get install nvidia-current
+## 7. Installing a distribution (out of date)
+## ----------------------------
+## sudo tar --directory /usr/local -xvzpsf simvascular-linux-x64.*.tar.gz
+## sudo /usr/local/package/simvascular/xxxxxxxx/post-install.sh
+##
+## % sudo apt-get install gcc-multilib
+## % sudo apt-get install ia32-libs

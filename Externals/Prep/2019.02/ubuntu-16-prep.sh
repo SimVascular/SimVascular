@@ -5,6 +5,7 @@ sudo apt-get -y update
 sudo apt-get -y install git
 sudo apt-get -y install emacs
 sudo apt-get -y install dos2unix
+sudo apt-get -y install bbe
 
 # needed for some makefile stuff
 sudo apt-get -y install tcl
@@ -27,6 +28,7 @@ sudo apt-get -y install libmpich2-dev
 sudo apt-get -y install libglu1-mesa-dev
 sudo apt-get -y install libxt-dev
 sudo apt-get -y install libxi-dev
+sudo apt-get -y install mesa-utils
 
 ### for qt/mitk
 sudo apt-get -y install libicu-dev
@@ -79,6 +81,8 @@ sudo apt-get -y install libwrap0-dev
 
 ### python
 sudo apt-get -y install libssl-dev
+sudo apt-get -y install libsqlite3-dev
+sudo apt-get -y install libncurses-dev
 
 # for swig-3.0.12
 sudo apt-get -y install libpcre3-dev
