@@ -1753,16 +1753,28 @@ void sv4guiModelEdit::CreateModel()
 
         if(faceNamesToCheck.size()>0)
         {
-            std::string info="There may be more cap or wall faces than supposed, such as ledges. \nPlease check those faces (highlighted) as below:";
+            std::string faceList ="";
             for(int i=0;i<faceNamesToCheck.size();i++)
             {
-                info+="\n"+faceNamesToCheck[i];
+                faceList+="\n"+faceNamesToCheck[i];
                 newModelElement->SelectFace(faceNamesToCheck[i]);
             }
 
             UpdateFaceListSelection();
 
-            QMessageBox::warning(m_Parent,"Warning",QString::fromStdString(info));
+            // Display a warning message listing the problematic faces.
+            std::string info = "There may be vessels that only partially intersect.\n\n";
+            info += "Please check the faces listed under Details and highlighted in the Face List browser.";
+            auto text = QString::fromStdString(info);
+            QString title = "A problem was encountered when creating the model";
+            QMessageBox::Icon icon = QMessageBox::Warning;
+            QMessageBox mb(NULL); 
+            mb.setWindowTitle(title);
+            mb.setText(text+"                                                                                         ");
+            mb.setIcon(icon);
+            mb.setDetailedText(QString::fromStdString(faceList));
+            mb.exec();
+
             return;
         }
 
