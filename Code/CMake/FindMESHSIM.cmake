@@ -46,11 +46,22 @@ include(GetPrerequisites)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Default Libraries
-set(${proj}_LIBNAMES SimAdvMeshing SimDiscrete SimMeshing SimMeshTools SimModel
-	SimMeshTools SimModel SimParasolid251 SimPartitionWrapper SimPartitionedMesh SimExport)
+# Set default library names, order is important.
+set(${proj}_LIBNAMES 
+    SimAdvMeshing 
+    SimMeshing 
+    SimMeshTools 
+    SimModel
+    SimMeshTools 
+    SimModel 
+    SimPartitionWrapper 
+    SimPartitionedMesh 
+    SimExport
+  )
 
-# Add requestion components
+## Add requestion components. 
+#
+# Note: Adding components does not work for plugins.
 message(STATUS "Adding requested meshsim components: ${${proj}_FIND_COMPONENTS}")
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS} ${${proj}_LIBNAMES})
 
@@ -77,6 +88,8 @@ if(LINUX)
   else()
     set(lib_sub_path "lib/x64_rhel6_gcc44")
     set(${proj}_LIBRARIES_VERSION "x64_rhel5_gcc44") 
+    # Set additional libraries, order is important.
+    set(${proj}_LIBNAMES SimDiscrete SimParasolid251 ${${proj}_LIBNAMES}) 
   endif()
 elseif(APPLE)
   set(lib_sub_path "lib/x64_rhel5_gcc41")
@@ -104,33 +117,23 @@ set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_LIBS_MISSING)
 set(${proj}_LIBRARIES_WORK "")
 if(${proj}_POSSIBLE_LIB_PATHS)
-	foreach(lib ${${proj}_LIBNAMES})
-		#find library
-		find_library(${proj}_${lib}_LIBRARY
-			NAMES
-			${lib}
-			PATHS
-			${${proj}_POSSIBLE_LIB_PATHS}
-			${${proj}_DIR} ${${proj}_DIR}/lib
-			DOC "Path to MeshSim Library ${lib}"
-			NO_DEFAULT_PATH)
-		find_library(${proj}_${lib}_LIBRARY
-			NAMES
-			${lib}
-			PATHS
-			${${proj}_POSSIBLE_LIB_PATHS}
+    foreach(lib ${${proj}_LIBNAMES})
+        #find library
+        find_library(${proj}_${lib}_LIBRARY NAMES ${lib} PATHS ${${proj}_POSSIBLE_LIB_PATHS} ${${proj}_DIR} ${${proj}_DIR}/lib
+			DOC "Path to MeshSim Library ${lib}" NO_DEFAULT_PATH)
+	find_library(${proj}_${lib}_LIBRARY NAMES ${lib} PATHS ${${proj}_POSSIBLE_LIB_PATHS}
 			${${proj}_DIR} ${${proj}_DIR}/lib
 			DOC "Path to MeshSim Library ${lib}")
-		set(${proj}_LIB_FULLNAMES ${${proj}_LIB_FULLNAMES} ${proj}_${lib}_LIBRARY)
-		mark_as_advanced(${proj}_${lib}_LIBRARY)
+        set(${proj}_LIB_FULLNAMES ${${proj}_LIB_FULLNAMES} ${proj}_${lib}_LIBRARY)
+	mark_as_advanced(${proj}_${lib}_LIBRARY)
 
-		if(${proj}_${lib}_LIBRARY)
-			set(${proj}_LIBRARIES_WORK ${${proj}_LIBRARIES_WORK} "${${proj}_${lib}_LIBRARY}")
-			list(REMOVE_ITEM ${proj}_LIBS_MISSING ${lib})
-		else()
-			message(STATUS "####### MeshSim Library ${lib}")
-		endif()
-	endforeach()
+        if(${proj}_${lib}_LIBRARY)
+            set(${proj}_LIBRARIES_WORK ${${proj}_LIBRARIES_WORK} "${${proj}_${lib}_LIBRARY}")
+            list(REMOVE_ITEM ${proj}_LIBS_MISSING ${lib})
+        else()
+            message(STATUS "####### MeshSim Library ${lib}")
+        endif()
+    endforeach()
 endif()
 #message("${proj}_LIBS_MISSING ${${proj}_LIBS_MISSING}")
 
