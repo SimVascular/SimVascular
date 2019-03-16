@@ -513,7 +513,7 @@ static PyObject* cvAdapt_CreateInternalMeshObjectMtd( pyAdaptObject* self, PyObj
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -541,7 +541,7 @@ static PyObject* cvAdapt_LoadModelMtd( pyAdaptObject* self, PyObject* args)
     return Py_ERROR;
   }//, meshFileName, solidFileName );
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -569,7 +569,7 @@ static PyObject* cvAdapt_LoadMeshMtd( pyAdaptObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -598,7 +598,7 @@ static PyObject* cvAdapt_LoadSolutionFromFileMtd( pyAdaptObject* self, PyObject*
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -626,7 +626,7 @@ static PyObject* cvAdapt_LoadYbarFromFileMtd( pyAdaptObject* self, PyObject* arg
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -653,7 +653,7 @@ static PyObject* cvAdapt_LoadAvgSpeedFromFileMtd( pyAdaptObject* self, PyObject*
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -681,7 +681,7 @@ static PyObject* cvAdapt_LoadHessianFromFileMtd( pyAdaptObject* self, PyObject* 
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -692,11 +692,11 @@ static PyObject* cvAdapt_ReadSolutionFromMeshMtd( pyAdaptObject* self, PyObject*
   cvAdaptObject *geom = self->geom;
 
   if (geom->ReadSolutionFromMesh() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -707,11 +707,11 @@ static PyObject* cvAdapt_ReadYbarFromMeshMtd( pyAdaptObject* self, PyObject* arg
   cvAdaptObject *geom = self->geom;
 
   if (geom->ReadYbarFromMesh() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -722,11 +722,11 @@ static PyObject* cvAdapt_ReadAvgSpeedFromMeshMtd( pyAdaptObject* self, PyObject*
   cvAdaptObject *geom = self->geom;
 
   if (geom->ReadAvgSpeedFromMesh() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -756,7 +756,7 @@ static PyObject* cvAdapt_SetAdaptOptionsMtd( pyAdaptObject* self, PyObject* args
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -767,12 +767,12 @@ static PyObject* cvAdapt_CheckOptionsMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom = self->geom;
 
   if (geom->CheckOptions() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -792,12 +792,12 @@ static PyObject* cvAdapt_SetMetricMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom = self->geom;
 
   if (geom->SetMetric(fileName,option,strategy) == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -808,12 +808,12 @@ static PyObject* cvAdapt_SetupMeshMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom = self->geom;
 
   if (geom->SetupMesh() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -824,12 +824,12 @@ static PyObject* cvAdapt_RunAdaptorMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom = self->geom;
 
   if (geom->RunAdaptor() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -840,7 +840,7 @@ static PyObject* cvAdapt_PrintStatsMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom = self->geom;
 
   if (geom->PrintStats() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
@@ -853,7 +853,7 @@ PyObject* cvAdapt_GetAdaptedMeshMtd( pyAdaptObject* self, PyObject* args)
 {
   cvAdaptObject *geom =self->geom;
   if (geom->GetAdaptedMesh() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
@@ -867,7 +867,7 @@ PyObject* cvAdapt_TransferSolutionMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom = self->geom;
 
   if (geom->TransferSolution() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
@@ -881,7 +881,7 @@ PyObject* cvAdapt_TransferRegionsMtd( pyAdaptObject* self, PyObject* args)
   cvAdaptObject *geom = self->geom;
 
   if (geom->TransferRegions() == SV_OK) {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     return Py_ERROR;
   }
@@ -912,7 +912,7 @@ static PyObject* cvAdapt_WriteAdaptedModelMtd( pyAdaptObject* self, PyObject* ar
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -939,7 +939,7 @@ static PyObject* cvAdapt_WriteAdaptedMeshMtd( pyAdaptObject* self, PyObject* arg
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------
@@ -966,6 +966,6 @@ static PyObject* cvAdapt_WriteAdaptedSolutionMtd( pyAdaptObject* self, PyObject*
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 

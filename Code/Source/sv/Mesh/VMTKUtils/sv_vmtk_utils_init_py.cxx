@@ -221,7 +221,7 @@ PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args)
   int ntargets = PyList_Size(targetList);
   if (nsources==0||ntargets==0)
   {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   }
 
   int *sources = new int[nsources];
@@ -609,11 +609,7 @@ PyObject* Geom_CapWIdsCmd( PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%d",num_filled);
-
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("i",num_filled);
 }
 
 PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args)
