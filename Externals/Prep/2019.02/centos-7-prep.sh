@@ -10,8 +10,8 @@ sudo yum -y install rh-git29
 sudo yum -y install tcl
 
 ### to link against qt pre-built
-sudo yum -y install libGLEW
-sudo yum -y install libGLEW-devel
+sudo yum -y install libglew
+sudo yum -y install libglew-devel
 
 # for qt
 sudo yum -y install rh-ruby23
