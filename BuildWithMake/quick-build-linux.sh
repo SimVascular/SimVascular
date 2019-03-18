@@ -31,7 +31,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #export SV_EXTERNALS_VERSION_NUMBER=2018.01
-export SV_EXTERNALS_VERSION_NUMBER=2018.05
+#export SV_EXTERNALS_VERSION_NUMBER=2018.05
+export SV_EXTERNALS_VERSION_NUMBER=2019.02
 
 export EXTERNALS_SV_ARCH_DIR=x64
 
@@ -47,6 +48,7 @@ case "$osid" in
 	export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
 	case "$osver" in
 	    'bionic')
+		export SV_EXTERNALS_VERSION_NUMBER=2018.05
 		export SV_EXTERN_LINUX_VERSION=ubuntu_18
 		export EXTERNALS_SV_FULL_OS_VER_NO=18.04
 		export EXTERNALS_SV_COMPILER_VER_NO=7.3
@@ -67,6 +69,9 @@ case "$osid" in
 		  exit                  
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
                   export EXTERNALS_BUILD_DATE=2018.09.29
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
+                  export EXTERNALS_BUILD_DATE=2019.03.11
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
@@ -96,13 +101,17 @@ case "$osid" in
 	case "$osrel" in
 	    7*)
 		export SV_EXTERN_LINUX_VERSION=centos_7
-		export EXTERNALS_SV_FULL_OS_VER_NO=7.5
                 export EXTERNALS_SV_COMPILER_VER_NO=6.3
 		if [ $SV_EXTERNALS_VERSION_NUMBER == '2018.01' ]; then
 		  echo "Error - Ubuntu 18 2018.01 not built yet!"
 		  exit
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
                   export EXTERNALS_BUILD_DATE=2018.09.29
+		  export EXTERNALS_SV_FULL_OS_VER_NO=7.5
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
+                  export EXTERNALS_BUILD_DATE=2019.03.16
+		  export EXTERNALS_SV_FULL_OS_VER_NO=7.6
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
