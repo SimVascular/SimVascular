@@ -56,6 +56,8 @@ file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_startup.tcl
 	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
 file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_vtk_init.tcl
 	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
+file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_find_external_execs.tcl
+	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
 file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_logo.jpg
 	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
 	file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/splash.gif
