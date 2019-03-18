@@ -37,6 +37,7 @@
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshLegacyIO.h"
 #include "sv4gui_SimulationUtils.h"
+#include "sv4gui_SimulationPreferences.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
@@ -298,6 +299,14 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 
 void sv4guiSimulationView::SetupInternalSolverPaths()
 {
+
+    MITK_INFO << "[sv4guiSimulationView::SetupInternalSolverPaths] ";
+    MITK_INFO << "[sv4guiSimulationView::SetupInternalSolverPaths] ";
+
+    auto defaultPrefs = new sv4guiSimulationPreferences();
+    QString mpiExec = defaultPrefs->GetMpiExec();
+    MITK_INFO << "[sv4guiSimulationView::SetupInternalSolverPaths] #### mpiExec " << mpiExec;
+
     //get path for the internal solvers
     QString solverPath="/usr/local/sv/svsolver";
     QStringList dirList=QDir(solverPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
