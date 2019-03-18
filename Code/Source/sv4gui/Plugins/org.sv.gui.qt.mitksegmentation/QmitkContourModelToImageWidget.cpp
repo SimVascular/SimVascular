@@ -16,7 +16,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include "QmitkContourModelToImageWidget.h"
 #include "mitkImage.h"
-#include "../../Common/QmitkDataSelectionWidget.h"
+#include "QmitkDataSelectionWidget.h"
 
 #include <mitkContourModelSet.h>
 #include <mitkContourModelSetToImageFilter.h>

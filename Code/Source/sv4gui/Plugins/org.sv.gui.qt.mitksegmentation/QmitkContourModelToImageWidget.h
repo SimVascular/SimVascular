@@ -17,7 +17,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QmitkContourModelToImageWidget_h
 #define QmitkContourModelToImageWidget_h
 
-#include "../QmitkSegmentationUtilityWidget.h"
+#include "QmitkSegmentationUtilityWidget.h"
 #include <ui_QmitkContourModelToImageWidgetControls.h>
 
 #include <QScopedPointer>

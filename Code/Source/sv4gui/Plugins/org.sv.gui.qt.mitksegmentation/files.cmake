@@ -1,8 +1,4 @@
-set(SRC_CPP_FILES
-
-)
-
-set(INTERNAL_CPP_FILES
+set(CPP_FILES
   QmitkSegmentationPreferencePage.cpp
   mitkPluginActivator.cpp
   QmitkSegmentationView.cpp
@@ -11,45 +7,45 @@ set(INTERNAL_CPP_FILES
   #QmitkStatisticsAction.cpp
   QmitkAutocropAction.cpp
   QmitkDeformableClippingPlaneView.cpp
-  Common/QmitkDataSelectionWidget.cpp
-  SegmentationUtilities/QmitkSegmentationUtilitiesView.cpp
-  SegmentationUtilities/QmitkSegmentationUtilityWidget.cpp
-  SegmentationUtilities/BooleanOperations/QmitkBooleanOperationsWidget.cpp
-  SegmentationUtilities/ImageMasking/QmitkImageMaskingWidget.cpp
-  SegmentationUtilities/ContourModelToImage/QmitkContourModelToImageWidget.cpp
-  SegmentationUtilities/MorphologicalOperations/QmitkMorphologicalOperationsWidget.cpp
-  SegmentationUtilities/SurfaceToImage/QmitkSurfaceToImageWidget.cpp
+  QmitkDataSelectionWidget.cpp
+  QmitkSegmentationUtilitiesView.cpp
+  QmitkSegmentationUtilityWidget.cpp
+  QmitkBooleanOperationsWidget.cpp
+  QmitkImageMaskingWidget.cpp
+  QmitkContourModelToImageWidget.cpp
+  QmitkMorphologicalOperationsWidget.cpp
+  QmitkSurfaceToImageWidget.cpp
 )
 
 set(UI_FILES
-  src/internal/QmitkSegmentationControls.ui
-  src/internal/QmitkDeformableClippingPlaneViewControls.ui
-  src/internal/Common/QmitkDataSelectionWidgetControls.ui
-  src/internal/SegmentationUtilities/QmitkSegmentationUtilitiesViewControls.ui
-  src/internal/SegmentationUtilities/BooleanOperations/QmitkBooleanOperationsWidgetControls.ui
-  src/internal/SegmentationUtilities/ImageMasking/QmitkImageMaskingWidgetControls.ui
-  src/internal/SegmentationUtilities/ContourModelToImage/QmitkContourModelToImageWidgetControls.ui
-  src/internal/SegmentationUtilities/MorphologicalOperations/QmitkMorphologicalOperationsWidgetControls.ui
-  src/internal/SegmentationUtilities/SurfaceToImage/QmitkSurfaceToImageWidgetControls.ui
+  QmitkSegmentationControls.ui
+  QmitkDeformableClippingPlaneViewControls.ui
+  QmitkDataSelectionWidgetControls.ui
+  QmitkSegmentationUtilitiesViewControls.ui
+  QmitkBooleanOperationsWidgetControls.ui
+  QmitkImageMaskingWidgetControls.ui
+  QmitkContourModelToImageWidgetControls.ui
+  QmitkMorphologicalOperationsWidgetControls.ui
+  QmitkSurfaceToImageWidgetControls.ui
 )
 
 set(MOC_H_FILES
-  src/internal/QmitkSegmentationPreferencePage.h
-  src/internal/mitkPluginActivator.h
-  src/internal/QmitkSegmentationView.h
-  src/internal/QmitkThresholdAction.h
-  src/internal/QmitkCreatePolygonModelAction.h
-  #src/internal/QmitkStatisticsAction.h
-  src/internal/QmitkAutocropAction.h
-  src/internal/QmitkDeformableClippingPlaneView.h
-  src/internal/Common/QmitkDataSelectionWidget.h
-  src/internal/SegmentationUtilities/QmitkSegmentationUtilitiesView.h
-  src/internal/SegmentationUtilities/QmitkSegmentationUtilityWidget.h
-  src/internal/SegmentationUtilities/BooleanOperations/QmitkBooleanOperationsWidget.h
-  src/internal/SegmentationUtilities/ImageMasking/QmitkImageMaskingWidget.h
-  src/internal/SegmentationUtilities/ContourModelToImage/QmitkContourModelToImageWidget.h
-  src/internal/SegmentationUtilities/MorphologicalOperations/QmitkMorphologicalOperationsWidget.h
-  src/internal/SegmentationUtilities/SurfaceToImage/QmitkSurfaceToImageWidget.h
+  QmitkSegmentationPreferencePage.h
+  mitkPluginActivator.h
+  QmitkSegmentationView.h
+  QmitkThresholdAction.h
+  QmitkCreatePolygonModelAction.h
+  #QmitkStatisticsAction.h
+  QmitkAutocropAction.h
+  QmitkDeformableClippingPlaneView.h
+  QmitkDataSelectionWidget.h
+  QmitkSegmentationUtilitiesView.h
+  QmitkSegmentationUtilityWidget.h
+  QmitkBooleanOperationsWidget.h
+  QmitkImageMaskingWidget.h
+  QmitkContourModelToImageWidget.h
+  QmitkMorphologicalOperationsWidget.h
+  QmitkSurfaceToImageWidget.h
 )
 
 set(CACHED_RESOURCE_FILES
@@ -68,13 +64,3 @@ set(QRC_FILES
   resources/BooleanOperationsWidget.qrc
   resources/MorphologicalOperationsWidget.qrc
 )
-
-set(CPP_FILES)
-
-foreach(file ${SRC_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/${file})
-endforeach(file ${SRC_CPP_FILES})
-
-foreach(file ${INTERNAL_CPP_FILES})
-  set(CPP_FILES ${CPP_FILES} src/internal/${file})
-endforeach(file ${INTERNAL_CPP_FILES})

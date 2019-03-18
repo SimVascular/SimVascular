@@ -17,7 +17,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QmitkBooleanOperationsWidget_h
 #define QmitkBooleanOperationsWidget_h
 
-#include "../QmitkSegmentationUtilityWidget.h"
+#include "QmitkSegmentationUtilityWidget.h"
 #include <ui_QmitkBooleanOperationsWidgetControls.h>
 #include <mitkBooleanOperation.h>
 

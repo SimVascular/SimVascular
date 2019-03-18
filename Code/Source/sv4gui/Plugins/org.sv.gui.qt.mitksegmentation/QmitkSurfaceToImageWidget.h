@@ -17,7 +17,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QmitkSurfaceToImageWidget_h
 #define QmitkSurfaceToImageWidget_h
 
-#include "../QmitkSegmentationUtilityWidget.h"
+#include "QmitkSegmentationUtilityWidget.h"
 #include <ui_QmitkSurfaceToImageWidgetControls.h>
 
 namespace mitk {

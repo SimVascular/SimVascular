@@ -17,7 +17,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QmitkMorphologicalOperationsWidget_h
 #define QmitkMorphologicalOperationsWidget_h
 
-#include "../QmitkSegmentationUtilityWidget.h"
+#include "QmitkSegmentationUtilityWidget.h"
 #include <ui_QmitkMorphologicalOperationsWidgetControls.h>
 #include <mitkMorphologicalOperations.h>
 

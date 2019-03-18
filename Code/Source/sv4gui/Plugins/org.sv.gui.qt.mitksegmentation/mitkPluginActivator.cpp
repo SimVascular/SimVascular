@@ -21,7 +21,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include "QmitkAutocropAction.h"
 #include "QmitkSegmentationPreferencePage.h"
 #include "QmitkDeformableClippingPlaneView.h"
-#include "SegmentationUtilities/QmitkSegmentationUtilitiesView.h"
+#include "QmitkSegmentationUtilitiesView.h"
 
 using namespace mitk;
 

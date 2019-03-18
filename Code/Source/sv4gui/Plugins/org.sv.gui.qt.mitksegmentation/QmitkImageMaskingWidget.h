@@ -17,7 +17,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QmitkImageMaskingWidget_h
 #define QmitkImageMaskingWidget_h
 
-#include "../QmitkSegmentationUtilityWidget.h"
+#include "QmitkSegmentationUtilityWidget.h"
 #include <ui_QmitkImageMaskingWidgetControls.h>
 
 #include <mitkSurface.h>

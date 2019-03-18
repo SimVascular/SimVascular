@@ -129,10 +129,13 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "itkLocalVariationImageFilter.h"                 #mitk/Modules/ImageDenoising
                     "mitkGL.h"                                       #mitk/Modules/LegacyGL
                     "mitkLabel.h"                                    #mitk/Modules/Multilabel
+                    "mitkLabelSetImage.h"                            #mitk/Modules/Multilabel
+                    "mitkLabelSetImage.cpp"                          #mitk/Modules/Multilabel
                     "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
                     "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
                     "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
                     "mitkBooleanOperation.h"                         #mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
+                    "mitkMorphologicalOperations.h"                  #mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
                     "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
                     "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
                     "QmitkSegmentationOrganNamesHandling.cpp"        #mitk/Modules/SegmentationUI/Qmitk

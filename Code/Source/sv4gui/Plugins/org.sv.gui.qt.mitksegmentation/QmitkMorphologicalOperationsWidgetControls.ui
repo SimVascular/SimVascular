@@ -121,7 +121,7 @@
         <string>Dilation</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../resources/MorphologicalOperationsWidget.qrc">
+        <iconset resource="./resources/MorphologicalOperationsWidget.qrc">
          <normaloff>:/SegmentationUtilities/MorphologicalOperations/Dilate_48x48.png</normaloff>:/SegmentationUtilities/MorphologicalOperations/Dilate_48x48.png</iconset>
        </property>
        <property name="iconSize">
@@ -150,7 +150,7 @@
         <string>Erosion</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../resources/MorphologicalOperationsWidget.qrc">
+        <iconset resource="./resources/MorphologicalOperationsWidget.qrc">
          <normaloff>:/SegmentationUtilities/MorphologicalOperations/Erode_48x48.png</normaloff>:/SegmentationUtilities/MorphologicalOperations/Erode_48x48.png</iconset>
        </property>
        <property name="iconSize">
@@ -179,7 +179,7 @@
         <string>Closing</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../resources/MorphologicalOperationsWidget.qrc">
+        <iconset resource="./resources/MorphologicalOperationsWidget.qrc">
          <normaloff>:/SegmentationUtilities/MorphologicalOperations/Closing_48x48.png</normaloff>:/SegmentationUtilities/MorphologicalOperations/Closing_48x48.png</iconset>
        </property>
        <property name="iconSize">
@@ -208,7 +208,7 @@
         <string>Opening</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../resources/MorphologicalOperationsWidget.qrc">
+        <iconset resource="./resources/MorphologicalOperationsWidget.qrc">
          <normaloff>:/SegmentationUtilities/MorphologicalOperations/Opening_48x48.png</normaloff>:/SegmentationUtilities/MorphologicalOperations/Opening_48x48.png</iconset>
        </property>
        <property name="iconSize">
@@ -240,7 +240,7 @@
         <string>Fill Holes</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../resources/MorphologicalOperationsWidget.qrc">
+        <iconset resource="./resources/MorphologicalOperationsWidget.qrc">
          <normaloff>:/SegmentationUtilities/MorphologicalOperations/FillHoles_48x48.png</normaloff>:/SegmentationUtilities/MorphologicalOperations/FillHoles_48x48.png</iconset>
        </property>
        <property name="iconSize">
@@ -275,12 +275,12 @@
   <customwidget>
    <class>QmitkDataSelectionWidget</class>
    <extends>QWidget</extends>
-   <header location="../../../internal/Common/QmitkDataSelectionWidget.h"/>
+   <header>QmitkDataSelectionWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/MorphologicalOperationsWidget.qrc"/>
+  <include location="./resources/MorphologicalOperationsWidget.qrc"/>
  </resources>
  <connections>
   <connection>

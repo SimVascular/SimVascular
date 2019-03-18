@@ -34,7 +34,7 @@
         <string>Difference</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../resources/BooleanOperationsWidget.qrc">
+        <iconset resource="resources/BooleanOperationsWidget.qrc">
          <normaloff>:/SegmentationUtilities/BooleanOperations/BooleanDifference_48x48.png</normaloff>:/SegmentationUtilities/BooleanOperations/BooleanDifference_48x48.png</iconset>
        </property>
        <property name="iconSize">
@@ -75,7 +75,7 @@
         <string>Intersection</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../resources/BooleanOperationsWidget.qrc">
+        <iconset resource="resources/BooleanOperationsWidget.qrc">
          <normaloff>:/SegmentationUtilities/BooleanOperations/BooleanIntersection_48x48.png</normaloff>:/SegmentationUtilities/BooleanOperations/BooleanIntersection_48x48.png</iconset>
        </property>
        <property name="iconSize">
@@ -116,7 +116,7 @@
         <string>Union</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../../resources/BooleanOperationsWidget.qrc">
+        <iconset resource="resources/BooleanOperationsWidget.qrc">
          <normaloff>:/SegmentationUtilities/BooleanOperations/BooleanUnion_48x48.png</normaloff>:/SegmentationUtilities/BooleanOperations/BooleanUnion_48x48.png</iconset>
        </property>
        <property name="iconSize">
@@ -160,11 +160,11 @@
   <customwidget>
    <class>QmitkDataSelectionWidget</class>
    <extends>QWidget</extends>
-   <header location="../../../../src/internal/Common/QmitkDataSelectionWidget.h"/>
+   <header>QmitkDataSelectionWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/BooleanOperationsWidget.qrc"/>
+  <include location="resources/BooleanOperationsWidget.qrc"/>
  </resources>
  <connections/>
 </ui>
