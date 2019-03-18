@@ -667,10 +667,7 @@ PyObject* Geom_CheckSurfaceCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%d %d",stats[0],stats[1]);
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("ii",stats[0],stats[1]);
 }
 
 // ------------
@@ -776,14 +773,13 @@ PyObject* Geom_CapIdSetCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[CV_STRLEN];
-  sprintf(rtnstr,"");
-  for (int i = 0; i < numfaces; i++ ) {
-    sprintf( rtnstr, "%s %d",rtnstr,doublecaps[i]);
-  }
 
+  PyObject* pylist = PyList_New(numfaces);
+  for (int i=0; i<numfaces; i++){
+      PyList_SetItem(pylist, i, PyLong_FromLong(doublecaps[i]));
+  }
   delete [] doublecaps;
-  return Py_BuildValue("s",rtnstr);
+  return pylist;
 }
 
 // ----------------
@@ -826,7 +822,7 @@ one optional char, outArray and one int dataType");
 
   int nvals = PyList_Size(values);
   if (nvals == 0) {
-      return Py_BuildValue("s","success");
+      return Py_BuildValue("N",PyBool_FromLong(1));
   }
   int *vals = new int[nvals];
 
@@ -969,7 +965,7 @@ one optional char, outArray and one int dataType");
 
   int nvals = PyList_Size(values);
   if (nvals == 0) {
-      return Py_BuildValue("s","success");
+      return Py_BuildValue("N",PyBool_FromLong(1));
   }
   int *vals = new int[nvals];
 
@@ -1042,7 +1038,7 @@ one optional char, outArray and one int dataType");
   }
 
   if (PyList_Size(values) == 0) {
-      return Py_BuildValue("s","success");
+      return Py_BuildValue("N",PyBool_FromLong(1));
   }
 
   int nvals = PyList_Size(values);
@@ -1856,11 +1852,8 @@ PyObject* Geom_NumClosedLineRegionsCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%d", num );
 
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("i",PyLong_FromLong(num));
 }
 
 
@@ -1988,7 +1981,7 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2453,12 +2446,17 @@ PyObject* Geom_GetOrderedPtsCmd(PyObject* self, PyObject* args)
   }
   
   sprintf(dummy,"");
+  PyObject* pylist = PyList_New(num);
   for (int i = 0; i < num; i++ ) {
-    sprintf( dummy, "%s %f %f %f\n", dummy,pts[3*i], pts[3*i+1], pts[3*i+2] );
+    PyObject* tmplist = PyList_New(3);
+    PyList_SetItem(tmplist, 0, PyFloat_FromDouble(pts[3*i]));
+    PyList_SetItem(tmplist, 1, PyFloat_FromDouble(pts[3*i+1]));
+    PyList_SetItem(tmplist, 2, PyFloat_FromDouble(pts[3*i+2]));
+    PyList_SetItem(pylist, i, tmplist);
   }
   delete [] pts;
 
-  return Py_BuildValue("s",dummy);
+  return pylist;
 }
 
 
@@ -2501,7 +2499,7 @@ PyObject* Geom_WriteOrderedPtsCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2544,7 +2542,7 @@ PyObject* Geom_WriteLinesCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2586,11 +2584,8 @@ PyObject* Geom_PolysClosedCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  if ( closed ) {
-    return Py_BuildValue("s","1");
-  } else {
-    return Py_BuildValue("s","0");
-  }
+  
+  return Py_BuildValue("N", PyBool_FromLong(closed));
 
 }
 
@@ -2633,11 +2628,8 @@ PyObject* Geom_SurfAreaCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%f", area );
 
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("d",area);
 }
 
 
@@ -2679,11 +2671,7 @@ PyObject* Geom_GetPolyCentroidCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%f %f %f", centroid[0], centroid[1], centroid[2] );
-
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("ddd",centroid[0], centroid[1], centroid[2]);
 }
 
 
@@ -2724,7 +2712,7 @@ PyObject* Geom_PrintTriStatsCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2766,7 +2754,7 @@ PyObject* Geom_PrintSmallPolysCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2867,12 +2855,12 @@ PyObject* Geom_BBoxCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  sprintf(dummy,"");
+  PyObject* pylist = PyList_New(6);
   for (int i = 0; i < 6; i++ ) {
-    sprintf( dummy, "%s %f ", dummy,bbox[i] );
+      PyList_SetItem(pylist, i, PyFloat_FromDouble(bbox[i]));
   }
 
-  return Py_BuildValue("s",dummy);
+  return pylist;
 
 }
 
@@ -2932,11 +2920,7 @@ PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%d", ans );
-
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("i",ans);
 }
 
 
@@ -2996,11 +2980,7 @@ PyObject* Geom_PtInPolyCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%d", ans );
-
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("i",ans);
 }
 
 
@@ -3145,11 +3125,8 @@ PyObject* Geom_NumPtsCmd(PyObject* self, PyObject* args)
 
   num = ((cvPolyData*)src)->GetVtkPolyData()->GetNumberOfPoints();
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%d", num );
 
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("i", num);
 }
 
 
@@ -3434,11 +3411,8 @@ PyObject* Geom_2dWindingNumCmd(PyObject* self, PyObject* args)
 
   wnum = sys_geom_2DWindingNum( (cvPolyData*)obj );
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%d", wnum );
 
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("i",wnum);
 }
 
 
@@ -3480,11 +3454,7 @@ PyObject* Geom_PolygonNormCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%f %f %f", n[0], n[1], n[2] );
-
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("ddd",n[0],n[1],n[2]);
 }
 
 
@@ -3526,11 +3496,7 @@ PyObject* Geom_AvgPtCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%f %f %f", pt[0], pt[1], pt[2] );
-
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("ddd",pt[0], pt[1], pt[2]);
 }
 
 
@@ -3695,7 +3661,7 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args)
 
   if (result == SV_OK) {
     if (filename !=NULL)
-    	return Py_BuildValue("s","success");
+    	return Py_BuildValue("N",PyBool_FromLong(1));
     else
 	return Py_BuildValue("s",output);
   } else {
@@ -3762,10 +3728,7 @@ PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char qstring[2048];
-  qstring[0]='\0';
-  sprintf(qstring,"%lf",q);
-  return Py_BuildValue("s",qstring);
+  return Py_BuildValue("d",q);
 }
 
 
@@ -3810,10 +3773,8 @@ PyObject* Geom_IntegrateSurface2Cmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char qstring[2048];
-  qstring[0]='\0';
-  sprintf(qstring,"%lf %lf",q,area);
-  return Py_BuildValue("s",qstring);
+
+  return Py_BuildValue("dd",q,area);
 }
 
 
@@ -3875,10 +3836,7 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char estring[2048];
-  estring[0]='\0';
-  sprintf(estring,"%lf",energy);
-  return Py_BuildValue("s",estring);
+  return Py_BuildValue("d",energy);
 }
 
 
@@ -3928,11 +3886,7 @@ PyObject* Geom_FindDistanceCmd(PyObject* self, PyObject* args)
 
   distance = ((cvPolyData*)obj)->FindDistance( pt[0], pt[1], pt[2] );
 
-  char result[2048];
-  result[0]='\0';
-  sprintf(result,"%lf",distance);
-
-  return Py_BuildValue("s",result);
+  return Py_BuildValue("d",distance);
 }
 
 
@@ -3988,10 +3942,7 @@ PyObject* Geom_InterpolateScalarCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char result[2048];
-  result[0]='\0';
-  sprintf(result,"%lf",scalar);
-  return Py_BuildValue("s",result);
+  return Py_BuildValue("d",scalar);
 }
 
 
@@ -4113,10 +4064,7 @@ PyObject* Geom_IntersectWithLineCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char result[2048];
-  result[0]='\0';
-  sprintf(result,"%lf %lf %lf",intersect[0],intersect[1],intersect[2]);
-  return Py_BuildValue("s",result);
+  return Py_BuildValue("ddd",intersect[0], intersect[1], intersect[2]);
 }
 
 
@@ -4578,11 +4526,7 @@ PyObject* Geom_IntegrateScalarSurfCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char result[255];
-  result[0]='\0';
-  sprintf(result,"%lf",flux);
-
-  return Py_BuildValue("s",result);
+  return Py_BuildValue("d",flux);
 }
 
 
@@ -4627,11 +4571,7 @@ PyObject* Geom_IntegrateScalarThreshCmd(PyObject* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char result[255];
-  result[0]='\0';
-  sprintf(result,"%lf %1f", flux, area);
-
-  return Py_BuildValue("s",result);
+  return Py_BuildValue("dd",flux, area);
 }
 
 
