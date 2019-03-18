@@ -39,11 +39,10 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QProcess>
 
-sv4guiSimulationPreferencePage::sv4guiSimulationPreferencePage()
-    : m_Preferences(nullptr)
-    , m_Ui(new Ui::sv4guiSimulationPreferencePage)
-    , m_Control(nullptr)
+sv4guiSimulationPreferencePage::sv4guiSimulationPreferencePage() : m_Preferences(nullptr), 
+    m_Ui(new Ui::sv4guiSimulationPreferencePage) , m_Control(nullptr)
 {
 }
 
@@ -56,118 +55,121 @@ sv4guiSimulationPreferencePage::~sv4guiSimulationPreferencePage()
 //---------------------------
 // Find the location of solver binaries and mpiexec.
 //
-// The locations will be displayed in the SimVascular 'Preferences->SimVascular Simulations' page
-// and used to execute a simulation.
+// The the full binary path is displayed in the SimVascular 
+// 'Preferences->SimVascular Simulations' page and used to 
+//execute a simulation.
 //
 void sv4guiSimulationPreferencePage::InitializeSolverLocations()
 {
-  auto msgPrefix = "[sv4guiSimulationPreferencePage::InitializeSoftwareLocations] ";
-  MITK_INFO << msgPrefix; 
-
-  // Set the possible locations of the solver.
+  // Set the default install location of the solver.
   QString solverInstallPath = "/usr/local/sv/svsolver";
   QStringList dirList = QDir(solverInstallPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
   if (dirList.size() != 0) {
     solverInstallPath += "/" + dirList.back();
   }
-  QString solverInstallPathBin = solverInstallPath + "/bin";
+
+  // Set the path to the SimVascular-build/bin directory.
   QString applicationPath = QCoreApplication::applicationDirPath();
-  MITK_INFO << msgPrefix << "solverInstallPath " << solverInstallPath; 
-  MITK_INFO << msgPrefix << "applicationPath " << applicationPath; 
 
-  // Get the location of the mpiexec binary.
-  QString mpiExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
-  if (mpiExecPath.isEmpty()) {
-    MITK_INFO << msgPrefix << "mpiExecPath is empty."; 
-    mpiExecPath = FindMpiExec(solverInstallPathBin, applicationPath); 
-    m_Ui->lineEditMPIExecPath->setText(mpiExecPath);
-  }
-  MITK_INFO << msgPrefix << "mpiExecPath " << mpiExecPath; 
+  // Set the solver binaries.
+  SetPreSolver(solverInstallPath, applicationPath); 
+  SetSolver(solverInstallPath, applicationPath); 
+  SetPostSolver(solverInstallPath, applicationPath); 
 
-  // Get the location of the svpre binary.
-  QString presolverPath = m_Ui->lineEditPresolverPath->text().trimmed();
-  if (presolverPath.isEmpty()) {
-    MITK_INFO << msgPrefix << "presolverPath is empty."; 
-    presolverPath = FindPresolverPath(solverInstallPathBin, applicationPath); 
-    m_Ui->lineEditPresolverPath->setText(presolverPath);
-  }
-  MITK_INFO << msgPrefix << "presolverPath " << presolverPath; 
+  // Set the mpiexec binary.
+  SetMpiExec(solverInstallPath, applicationPath); 
 
-  // Get the location of the svsolver binary.
-  QString solverPath = m_Ui->lineEditFlowsolverPath->text().trimmed();
-  if (solverPath.isEmpty()) {
-    MITK_INFO << msgPrefix << "solverPath is empty."; 
-    solverPath = FindSolverPath(solverInstallPathBin, applicationPath); 
-    m_Ui->lineEditFlowsolverPath->setText(solverPath);
-  }
-  MITK_INFO << msgPrefix << "solverPath " << solverPath; 
-
-  // Get the location of the svpost binary.
-  QString postPath = m_Ui->lineEditPostsolverPath->text().trimmed();
-  if (postPath.isEmpty()) {
-    MITK_INFO << msgPrefix << "postPath is empty."; 
-    postPath = FindPostSolverPath(solverInstallPathBin, applicationPath); 
-    m_Ui->lineEditPostsolverPath->setText(postPath);
-  }
-  MITK_INFO << msgPrefix << "postPath " << postPath; 
+  // Set the MPI implementation. 
+  SetMpiImplementation();
 }
 
-//--------------------
-// FindPostSolverPath
-//--------------------
-// Find the location of the post processing binary svpost.
+//---------------
+// SetPostSolver
+//---------------
+// Set the post processing binary svpost.
 //
-QString sv4guiSimulationPreferencePage::FindPostSolverPath(const QString& solverPathBin, const QString& applicationPath)
+// There are two locations to check:
+//
+//     1) /usr/local/svsolver/      - contains the script 'svpost'
+//
+//     2) /usr/local/svsolver/bin   - contains the binary
+//
+// Use the script version if it exists.
+//
+void sv4guiSimulationPreferencePage::SetPostSolver(const QString& solverPath, const QString& applicationPath)
 {
-  QString postPath = "";
+  QString svPost = m_Ui->lineEditPostsolverPath->text().trimmed();
+
+  if (!svPost.isEmpty()) {
+    return;
+  }
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
 
-  QString svpostName = "/svpost";
+  QString svPostName = "/svpost";
   QString filePath = "";
 
-  if(QFile(filePath=solverPathBin+svpostName).exists())
-    postPath = filePath;
-  else if(QFile(filePath=solverPathBin+"/.."+svpostName).exists())
-    postPath = filePath;
-  else if(QFile(filePath=applicationPath+svpostName).exists())
-    postPath = filePath;
-  else if(QFile(filePath=applicationPath+"/.."+svpostName).exists())
-    postPath = filePath;
+  if(QFile(filePath=solverPath+svPostName).exists()) {
+    svPost = filePath;
+  } else if(QFile(filePath=solverPath+"/bin/"+svPostName).exists()) {
+    svPost = filePath;
+  } else if(QFile(filePath=applicationPath+svPostName).exists()) {
+    svPost = filePath;
+  } else if(QFile(filePath=applicationPath+"/bin/"+svPostName).exists()) {
+    svPost = filePath;
+  }
 
 #elif defined(Q_OS_WIN)
 
-    postPath = GetRegistryValue("SimVascular\\svSolver","SVPOST_EXE");
+    svPost = GetRegistryValue("SimVascular\\svSolver","SVPOST_EXE");
 
 #endif
 
-  return postPath;
+  m_Ui->lineEditPostsolverPath->setText(svPost);
 }
 
-//-------------
-// FindMpiExec
-//-------------
-// Find the location of the post processing mpiexec binary.
+//------------
+// SetMpiExec
+//------------
+// Set the location of the MPI mpiexec binary.
 //
-QString sv4guiSimulationPreferencePage::FindMpiExec(const QString& solverPathBin, const QString& applicationPath)
+// Don't display a warning until the solver is actually used. 
+//
+void sv4guiSimulationPreferencePage::SetMpiExec(const QString& solverPath, const QString& applicationPath)
 {
-  QString mpiExecPath;
+  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
+
+  if (!mpiExec.isEmpty()) {
+    return;
+  }
+
+  QString mpiExecPath = "/usr/bin/";
+  QString filePath = "";
+  QString mpiExecName = "mpiexec";
 
 #if defined(Q_OS_LINUX)
 
-  mpiExecPath = "mpiexec";
+  if (QFile(filePath = mpiExecPath + mpiExecName).exists()) {
+    mpiExec = filePath;
+  }
 
 #elif defined(Q_OS_MAC)
 
-  QString filePath = "";
-  QString mpiexecName="/mpiexec";
+  if (QFile(filePath = mpiExecPath + mpiExecName).exists()) {
+    mpiExec = filePath;
+  }
 
-  if(QFile(filePath = solverPathBin + mpiexecName).exists())
-    mpiExecPath = filePath;
-  else if(QFile(filePath = applicationPath + "/.." + mpiexecName).exists())
-    mpiExecPath = filePath;
-  else if(QFile(filePath = applicationPath + mpiexecName).exists())
-    mpiExecPath = filePath;
+  /* [DaveP] Do we need this?
+  if(QFile(filePath = solverPath + mpiexecName).exists()) {
+    mpiExec = filePath;
+
+  } else if(QFile(filePath = applicationPath + "/.." + mpiexecName).exists()) {
+    mpiExec = filePath;
+
+  } else if(QFile(filePath = applicationPath + mpiexecName).exists()) {
+    mpiExec = filePath;
+  }
+  */
 
 #elif defined(Q_OS_WIN)
 
@@ -175,99 +177,179 @@ QString sv4guiSimulationPreferencePage::FindMpiExec(const QString& solverPathBin
 
     if (msmpiDir != "") {
       if (msmpiDir.endsWith("\\")) {
-        mpiExecPath = msmpiDir+"Bin\\mpiexec";
+        mpiExec = msmpiDir+"Bin\\mpiexec";
       } else {
-        mpiExecPath = msmpiDir+"\\Bin\\mpiexec";
+        mpiExec = msmpiDir+"\\Bin\\mpiexec";
       }
     }
 
 #endif
 
-  return mpiExecPath;
+  m_Ui->lineEditMPIExecPath->setText(mpiExec);
 }
 
-//-------------------
-// FindPresolverPath 
-//-------------------
-// Find the location of the svpre binary.
+//----------------------
+// SetMpiImplementation 
+//----------------------
+// Set the installed MPI implementation.
 //
-QString sv4guiSimulationPreferencePage::FindPresolverPath(const QString& solverPathBin, const QString& applicationPath)
+// This is neeed to unsure that MPI is installed and that the
+// correct implementation is installed for a given OS.
+//
+// Check the implementation using 'mpicc -show' and show
+// it in the Preferences panel.
+//
+// Don't display a warning until the solver is actually used. 
+//
+void sv4guiSimulationPreferencePage::SetMpiImplementation()
 {
-  QString presolverPath;
-  QString filePath="";
-  QString svpreName = "/svpre";
+  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
+
+  if (mpiExec.isEmpty()) {
+    return;
+  }
+
+  QString guiLabel("MPI Implementation: ");
+  QString implementation("Unknown");
+
+  QFileInfo fileInfo(mpiExec);
+  QString mpiExecPath = fileInfo.path();
 
 #if defined(Q_OS_LINUX)
-  if(QFile(filePath=solverPathBin+svpreName).exists())
-    presolverPath = filePath;
-  else if(QFile(filePath=solverPathBin+"/.."+svpreName).exists())
-    presolverPath = filePath;
-  else if(QFile(filePath=applicationPath+svpreName).exists())
-    presolverPath = filePath;
-  else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
-    presolverPath = filePath;
+  QProcess *checkMpi = new QProcess();
+  QString program(mpiExecPath + "/mpicc");
 
-#elif defined(Q_OS_MAC)
-  if(QFile(filePath=solverPathBin+"/.."+svpreName).exists())
-    presolverPath = filePath;
-  else if(QFile(filePath=solverPathBin+svpreName).exists())
-    presolverPath = filePath;
-  else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
-    presolverPath = filePath;
-  else if(QFile(filePath=applicationPath+svpreName).exists())
-    presolverPath = filePath;
-
-#elif defined(Q_OS_WIN)
-  presolverPath = GetRegistryValue("SimVascular\\svSolver","SVPRE_EXE");
+  if (QFile(program).exists()) {
+    QStringList arguments;
+    arguments << "-show";
+    checkMpi->setProgram(program);
+    checkMpi->setArguments(arguments);
+    checkMpi->start(program, arguments);
+    checkMpi->waitForFinished(); 
+    QString output(checkMpi->readAllStandardOutput());
+    if (output.contains("mpich")) {
+      implementation = "MPICH";
+    } else if (output.contains("openmpi")) {
+      implementation = "OpenMPI";
+    }
+  }
 
 #endif
 
-  return presolverPath;
+  m_Ui->labelMPIImplementation->setText(guiLabel + implementation);
 }
 
-//----------------
-// FindSolverPath 
-//----------------
-// Find the location of the svsolver binary, with and without mpi.
+//------------------
+// SetPresolverPath
+//------------------
+// Set the location of the svpre binary.
 //
-QString sv4guiSimulationPreferencePage::FindSolverPath(const QString& solverInstallPathBin, const QString& applicationPath, const bool noMPI)
+// There are two locations to check:
+//
+//     1) /usr/local/svsolver/      - contains the script 'svpost'
+//
+//     2) /usr/local/svsolver/bin   - contains the binary
+//
+// Use the script version if it exists.
+//
+void sv4guiSimulationPreferencePage::SetPreSolver(const QString& solverPath, const QString& applicationPath)
 {
-  QString solverPath;
+  QString svPresolver = m_Ui->lineEditPresolverPath->text().trimmed();
+
+  if (!svPresolver.isEmpty()) {
+    return;
+  }
+
+  QString filePath = "";
+  QString svPreName = "/svpre";
+
+#if defined(Q_OS_LINUX)
+  if(QFile(filePath=solverPath+svPreName).exists()) {
+    svPresolver = filePath;
+  } else if(QFile(filePath=solverPath+"/bin/"+svPreName).exists()) {
+    svPresolver = filePath;
+  } else if(QFile(filePath=applicationPath+svPreName).exists()) {
+    svPresolver = filePath;
+  } else if(QFile(filePath=applicationPath+"/bin/"+svPreName).exists()) {
+    svPresolver = filePath;
+  }
+
+#elif defined(Q_OS_MAC)
+  if(QFile(filePath=solverPath+svPreName).exists()) {
+    svPresolver = filePath;
+  } else if(QFile(filePath=solverPath+"/bin/"+svPreName).exists()) {
+    svPresolver = filePath;
+  } else if(QFile(filePath=applicationPath+"/bin/"+svPreName).exists()) {
+    svPresolver = filePath;
+  } else if(QFile(filePath=applicationPath+svPreName).exists()) {
+    svPresolver = filePath;
+  }
+
+#elif defined(Q_OS_WIN)
+  svPresolver = GetRegistryValue("SimVascular\\svSolver","SVPRE_EXE");
+
+#endif
+
+  m_Ui->lineEditPresolverPath->setText(svPresolver);
+}
+
+//-----------
+// SetSolver 
+//-----------
+// Set the svsolver binary, with or without mpi.
+//
+// There are two locations to check:
+//
+//     1) /usr/local/svsolver/      - contains the script 'svpost'
+//
+//     2) /usr/local/svsolver/bin   - contains the binary
+//
+// Use the script version if it exists.
+//
+void sv4guiSimulationPreferencePage::SetSolver(const QString& solverInstallPath, const QString& applicationPath)
+{
+  QString svSolver = m_Ui->lineEditFlowsolverPath->text().trimmed();
+
+  if (!svSolver.isEmpty()) {
+    return;
+  }
+
+  bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QString filePath = "";
-  QString svsolverName;
+  QString svSolverName;
 
-  if (noMPI) {
-    svsolverName="/svsolver";
+  if (useMPI) {
+    svSolverName="/svsolver";
   } else {
-    svsolverName="/svsolver-nompi";
+    svSolverName="/svsolver-nompi";
   }
 
   // For the flow solver with mpi, prefer to use the script one which sets 
   // paths to libs needed in Ubuntu 16. 
   //
-  if(QFile(filePath=solverInstallPathBin+"/.."+svsolverName).exists())
-    solverPath = filePath;
-  else if(QFile(filePath=solverInstallPathBin+svsolverName).exists())
-    solverPath = filePath;
-  else if(QFile(filePath=applicationPath+"/.."+svsolverName).exists())
-    solverPath = filePath;
-  else if(QFile(filePath=applicationPath+svsolverName).exists())
-    solverPath = filePath;
+  if(QFile(filePath=solverInstallPath+svSolverName).exists()) {
+    svSolver = filePath;
+  } else if(QFile(filePath=solverInstallPath+"/bin/"+svSolverName).exists()) {
+    svSolver = filePath;
+  } else if(QFile(filePath=applicationPath+svSolverName).exists()) {
+    svSolver = filePath;
+  } else if(QFile(filePath=applicationPath+"/bin/"+svSolverName).exists()) {
+    svSolver = filePath;
+  }
 
 #elif defined(Q_OS_WIN)
 
   if (noMPI) {
-    solverPath = GetRegistryValue("SimVascular\\svSolver","SVSOLVER_NOMPI_EXE");
+    svSolver = GetRegistryValue("SimVascular\\svSolver","SVSOLVER_NOMPI_EXE");
   } else {
-    solverPath = GetRegistryValue("SimVascular\\svSolver","SVSOLVER_MSMPI_EXE");
+    svSolver = GetRegistryValue("SimVascular\\svSolver","SVSOLVER_MSMPI_EXE");
   }
 
 #endif
 
-  return solverPath;
-
+  m_Ui->lineEditFlowsolverPath->setText(svSolver);
 }
 
 void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)

@@ -54,6 +54,7 @@ public:
     void PerformCancel() override;
     bool PerformOk() override;
     void Update() override;
+    void InitializeSolverLocations();
 
 private slots:
   void SetPresolverPath();
@@ -63,11 +64,11 @@ private slots:
   void SetPostsolverPath();
 
 private:
-  void InitializeSolverLocations();
-  QString FindMpiExec(const QString& solverPathBin, const QString& applicationPath);
-  QString FindPresolverPath(const QString& solverPathBin, const QString& applicationPath);
-  QString FindSolverPath(const QString& solverPathBin, const QString& applicationPath, const bool noMPI=false);
-  QString FindPostSolverPath(const QString& solverPathBin, const QString& applicationPath);
+  void SetMpiExec(const QString& solverPathBin, const QString& applicationPath);
+  void SetPreSolver(const QString& solverPathBin, const QString& applicationPath);
+  void SetSolver(const QString& solverPathBin, const QString& applicationPath);
+  void SetPostSolver(const QString& solverPathBin, const QString& applicationPath);
+  void SetMpiImplementation();
 
   berry::IPreferences::Pointer m_Preferences;
   QScopedPointer<Ui::sv4guiSimulationPreferencePage> m_Ui;
