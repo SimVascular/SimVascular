@@ -620,7 +620,7 @@ PyObject* Solid_InitPyModulesCmd( PyObject* self, PyObject* args)
   Py_INCREF(pythonC);
   PyModule_AddObject(PyImport_AddModule("__buildin__"), "pySolid", pythonC);
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 #endif*/
 
@@ -2410,7 +2410,7 @@ PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
 PyObject* Solid_ListMethodsCmd( pySolidModel* self, PyObject* args)
 {
   PrintMethods();
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2421,9 +2421,8 @@ PyObject* Solid_ObjectCmd(pySolidModel* self,PyObject* args )
 {
   if (PyTuple_Size(args)== 0 ) {
     PrintMethods();
-    return Py_BuildValue("s","sucssess");
   }
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // -----------
@@ -2605,11 +2604,8 @@ static PyObject*  Solid_FindExtentMtd( pySolidModel *self ,PyObject* args  )
   cvSolidModel *geom =(self->geom);
   status = geom->FindExtent( &extent);
   if ( status == SV_OK ) {
-    char rtnstr[255];
-    rtnstr[0]='\0';
-    sprintf( rtnstr, "%f", extent );
-    Py_BuildValue("s",rtnstr);
-    return Py_BuildValue("s","success");
+    Py_BuildValue("d",extent);
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     PyErr_SetString( PyRunTimeErr, "FindExtent: error on object" );
     return Py_ERROR;
@@ -2828,7 +2824,7 @@ static PyObject*  Solid_TranslateMtd( pySolidModel *self ,PyObject* args  )
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -3006,7 +3002,7 @@ static PyObject*  Solid_PrintMtd( pySolidModel *self ,PyObject* args  )
   // Do work of command:
   cvSolidModel *geom =(self->geom);
   geom->Print();
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -3053,7 +3049,7 @@ static PyObject* Solid_WriteNativeMtd( pySolidModel *self ,PyObject* args  )
     Py_INCREF(geom);
     self->geom=geom;
     Py_DECREF(geom);
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   }
 }
 
@@ -3080,7 +3076,7 @@ static PyObject*  Solid_WriteVtkPolyDataMtd( pySolidModel *self ,
     PyErr_SetString(PyRunTimeErr, "error writing object to file" );
     return Py_ERROR;
   } else {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   }
 }
 
@@ -3106,7 +3102,7 @@ static PyObject*  Solid_WriteGeomSimMtd( pySolidModel *self ,
     PyErr_SetString(PyRunTimeErr, "error writing object to file");
     return Py_ERROR;
   } else {
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
   }
 }
 
@@ -3162,7 +3158,7 @@ static PyObject*  Solid_GetPolyDataMtd( pySolidModel *self ,PyObject* args  )
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------------
@@ -3207,7 +3203,7 @@ static PyObject* Solid_SetVtkPolyDataMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -3255,7 +3251,7 @@ static PyObject* Solid_GetFacePolyDataMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -3284,11 +3280,7 @@ static PyObject* Solid_GetFaceNormalMtd( pySolidModel* self, PyObject* args)
     return Py_ERROR;
   }
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%lf %lf %lf",normal[0],normal[1],normal[2]);
-
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("ddd",normal[0],normal[1],normal[2]);
 }
 
 
@@ -3331,7 +3323,7 @@ static PyObject* Solid_GetDiscontinuitiesMtd( pySolidModel* self,
     return Py_ERROR;
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 

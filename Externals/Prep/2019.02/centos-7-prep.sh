@@ -10,8 +10,8 @@ sudo yum -y install rh-git29
 sudo yum -y install tcl
 
 ### to link against qt pre-built
-sudo yum -y install libGLEW
-sudo yum -y install libGLEW-devel
+sudo yum -y install libglew
+sudo yum -y install libglew-devel
 
 # for qt
 sudo yum -y install rh-ruby23
@@ -61,8 +61,8 @@ sudo yum -y install libXi-devel
 
 ### python
 sudo yum -y install openssl-devel
-sudo yum -y install sqlite3-dev
-sudo yum -y install ncurses-dev
+sudo yum -y install sqlite-devel
+sudo yum -y install ncurses-devel
 
 ### gdcm/mitk
 #sudo yum -y install swig3.0
