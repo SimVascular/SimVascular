@@ -299,14 +299,23 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 
 void sv4guiSimulationView::SetupInternalSolverPaths()
 {
+    auto msg = "[sv4guiSimulationView::SetupInternalSolverPaths] ";
+    MITK_INFO << msg << "------------------------------------------------";
 
-    MITK_INFO << "[sv4guiSimulationView::SetupInternalSolverPaths] ";
-    MITK_INFO << "[sv4guiSimulationView::SetupInternalSolverPaths] ";
+    // Set the default solver binaries.
+    auto defaultPrefs = sv4guiSimulationPreferences();
+    m_InternalMPIExecPath = defaultPrefs.GetMpiExec();
+    m_InternalFlowsolverPath = defaultPrefs.GetSolver();
+    m_InternalPostsolverPath = defaultPrefs.GetPostSolver();
+    m_InternalPresolverPath = defaultPrefs.GetPreSolver();
+    m_MpiImplementation = defaultPrefs.GetMpiImplementation();
+    MITK_INFO << msg << ">>> m_InternalMPIExecPath " << m_InternalMPIExecPath;
+    MITK_INFO << msg << ">>> m_InternalFlowsolverPath " << m_InternalFlowsolverPath;
+    MITK_INFO << msg << ">>> m_InternalPostsolverPath " << m_InternalPostsolverPath;
+    MITK_INFO << msg << ">>> m_InternalPresolverPath " << m_InternalPresolverPath;
+    MITK_INFO << msg << ">>> m_MpiImplementation " << defaultPrefs.GetMpiImplementation(m_MpiImplementation);
 
-    auto defaultPrefs = new sv4guiSimulationPreferences();
-    QString mpiExec = defaultPrefs->GetMpiExec();
-    MITK_INFO << "[sv4guiSimulationView::SetupInternalSolverPaths] #### mpiExec " << mpiExec;
-
+/*
     //get path for the internal solvers
     QString solverPath="/usr/local/sv/svsolver";
     QStringList dirList=QDir(solverPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
@@ -418,6 +427,7 @@ void sv4guiSimulationView::SetupInternalSolverPaths()
             m_InternalMPIExecPath=msmpiDir+"\\Bin\\mpiexec";
     }
 #endif
+*/
 }
 
 void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)

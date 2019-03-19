@@ -32,6 +32,8 @@
 #ifndef SV4GUI_SIMULATIONPREFERENCEPAGE_H
 #define SV4GUI_SIMULATIONPREFERENCEPAGE_H
 
+#include <sv4gui_SimulationPreferences.h>
+
 #include <berryIPreferences.h>
 #include <berryIQtPreferencePage.h>
 
@@ -73,6 +75,7 @@ private:
   berry::IPreferences::Pointer m_Preferences;
   QScopedPointer<Ui::sv4guiSimulationPreferencePage> m_Ui;
   QWidget* m_Control;
+  sv4guiSimulationPreferences m_DefaultPrefs;
 
 };
 

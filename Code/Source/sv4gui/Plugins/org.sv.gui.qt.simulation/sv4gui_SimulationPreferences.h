@@ -29,11 +29,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiSimulationPreferences class is used to determine which default binaries,
+// (svsolver, svpre and svpost) are used by the SV Simulation plugin. The class also 
+// determines which mpiexec binary is used to execute solver jobs using MPI and what
+// its implementation is: MPICH or OpenMPI. 
+//
+// An sv4guiSimulationPreferences object is used by the sv4guiSimulationPreferencePage objectc
+// to display the full path to these binaries in the Preferences -> SimVascular Simulation panel.
+//
+// The sv4guiSimulationView object, used to lauch simulation jobs, only reads values from 
+// the sv4guiSimulationPreferencePage object when a value is changed. Because of this the 
+// sv4guiSimulationView object must also use a sv4guiSimulationPreferences object to set
+// the default solver binaries.
+
 #ifndef SV4GUI_SIMULATIONPREFERENCES_H
 #define SV4GUI_SIMULATIONPREFERENCES_H
 
+#include <iostream>
+#include <map>
 #include <QString>
 
+//-----------------------------
+// sv4guiSimulationPreferences 
+//-----------------------------
 class sv4guiSimulationPreferences 
 {
 
@@ -41,22 +59,33 @@ public:
   sv4guiSimulationPreferences();
   ~sv4guiSimulationPreferences();
 
+  enum class MpiImplementation {
+    Unknown,
+    MPICH,
+    OpenMPI
+  };
+
+  const QString GetMpiImplementation(sv4guiSimulationPreferences::MpiImplementation itype);
+
   void InitializeSolverLocations();
   QString GetMpiExec();
+  MpiImplementation GetMpiImplementation();
+  QString GetPostSolver();
+  QString GetPreSolver();
+  QString GetSolver();
 
 private:
-  QString m_svPostBinary;
   QString m_mpiExec;
-  QString m_mpiImplementation;
+  MpiImplementation m_mpiImplementation;
+  QString m_svPostBinary;
   QString m_svPresolver;
   QString m_svSolver;
 
   void SetMpiExec(const QString& solverPathBin, const QString& applicationPath);
-
+  void SetMpiImplementation();
+  void SetPostSolver(const QString& solverPathBin, const QString& applicationPath);
   void SetPreSolver(const QString& solverPathBin, const QString& applicationPath);
   void SetSolver(const QString& solverPathBin, const QString& applicationPath);
-  void SetPostSolver(const QString& solverPathBin, const QString& applicationPath);
-  void SetMpiImplementation();
 
 };
 

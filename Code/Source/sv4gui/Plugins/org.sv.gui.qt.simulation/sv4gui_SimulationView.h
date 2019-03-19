@@ -40,6 +40,7 @@
 
 #include "sv4gui_ProcessHandler.h"
 #include "sv4gui_SolverProcessHandler.h"
+#include "sv4gui_SimulationPreferences.h"
 
 #include "sv4gui_ModelDataInteractor.h"
 
@@ -230,6 +231,7 @@ private:
     QString m_InternalFlowsolverNoMPIPath;
     QString m_InternalPostsolverPath;
     QString m_InternalMPIExecPath;
+    sv4guiSimulationPreferences::MpiImplementation m_MpiImplementation;
 
     QString m_ExternalPresolverPath;
     QString m_ExternalFlowsolverPath;

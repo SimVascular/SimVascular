@@ -122,6 +122,11 @@ void sv4guiSimulationPreferences::SetPostSolver(const QString& solverPath, const
   m_svPostBinary = svPost;
 }
 
+QString sv4guiSimulationPreferences::GetPostSolver()
+{
+  return m_svPostBinary;
+}
+
 //------------
 // SetMpiExec
 //------------
@@ -132,17 +137,21 @@ void sv4guiSimulationPreferences::SetPostSolver(const QString& solverPath, const
 void sv4guiSimulationPreferences::SetMpiExec(const QString& solverPath, const QString& applicationPath)
 {
   QString mpiExec = "";
-  QString mpiExecPath = "/usr/bin/";
+  QString mpiExecPath;
   QString filePath = "";
   QString mpiExecName = "mpiexec";
 
 #if defined(Q_OS_LINUX)
+
+  mpiExecPath = "/usr/bin/";
 
   if (QFile(filePath = mpiExecPath + mpiExecName).exists()) {
     mpiExec = filePath;
   }
 
 #elif defined(Q_OS_MAC)
+
+  mpiExecPath = "/usr/local/bin/";
 
   if (QFile(filePath = mpiExecPath + mpiExecName).exists()) {
     mpiExec = filePath;
@@ -197,13 +206,12 @@ QString sv4guiSimulationPreferences::GetMpiExec()
 //
 void sv4guiSimulationPreferences::SetMpiImplementation()
 {
-  QString guiLabel("MPI Implementation: ");
-  QString implementation("Unknown");
+  MpiImplementation implementation = MpiImplementation::Unknown;
 
   QFileInfo fileInfo(m_mpiExec);
   QString mpiExecPath = fileInfo.path();
 
-#if defined(Q_OS_LINUX)
+#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QProcess *checkMpi = new QProcess();
   QString program(mpiExecPath + "/mpicc");
 
@@ -216,15 +224,37 @@ void sv4guiSimulationPreferences::SetMpiImplementation()
     checkMpi->waitForFinished(); 
     QString output(checkMpi->readAllStandardOutput());
     if (output.contains("mpich")) {
-      implementation = "MPICH";
+      implementation = MpiImplementation::MPICH;
     } else if (output.contains("openmpi")) {
-      implementation = "OpenMPI";
+      implementation = MpiImplementation::OpenMPI;
     }
   }
 
 #endif
 
   m_mpiImplementation = implementation;
+}
+
+sv4guiSimulationPreferences::MpiImplementation sv4guiSimulationPreferences::GetMpiImplementation()
+{
+  return m_mpiImplementation;
+}
+
+//----------------------
+// GetMpiImplementation
+//----------------------
+// Get the MPI impementation as a string.
+//
+const QString sv4guiSimulationPreferences::GetMpiImplementation(sv4guiSimulationPreferences::MpiImplementation itype)
+{
+  const std::map<sv4guiSimulationPreferences::MpiImplementation, const QString> EnumStrings {
+    { sv4guiSimulationPreferences::MpiImplementation::MPICH, "MPICH" },
+    { sv4guiSimulationPreferences::MpiImplementation::OpenMPI, "OpenMPI" },
+    { sv4guiSimulationPreferences::MpiImplementation::Unknown, "Unknown" }
+  };
+
+  auto it = EnumStrings.find(itype);
+  return it == EnumStrings.end() ? "Unknown" : it->second;
 }
 
 //------------------
@@ -274,6 +304,11 @@ void sv4guiSimulationPreferences::SetPreSolver(const QString& solverPath, const 
 #endif
 
   m_svPresolver = svPresolver;
+}
+
+QString sv4guiSimulationPreferences::GetPreSolver()
+{
+  return m_svPresolver;
 }
 
 //-----------
@@ -328,6 +363,11 @@ void sv4guiSimulationPreferences::SetSolver(const QString& solverInstallPath, co
 #endif
 
   m_svSolver = svSolver;
+}
+
+QString sv4guiSimulationPreferences::GetSolver()
+{
+  return m_svSolver;
 }
 
 
