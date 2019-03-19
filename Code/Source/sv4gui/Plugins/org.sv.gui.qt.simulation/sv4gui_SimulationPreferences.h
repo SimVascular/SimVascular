@@ -29,51 +29,35 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_SIMULATIONPREFERENCEPAGE_H
-#define SV4GUI_SIMULATIONPREFERENCEPAGE_H
+#ifndef SV4GUI_SIMULATIONPREFERENCES_H
+#define SV4GUI_SIMULATIONPREFERENCES_H
 
-#include <berryIPreferences.h>
-#include <berryIQtPreferencePage.h>
+#include <QString>
 
-namespace Ui {
-class sv4guiSimulationPreferencePage;
-}
-
-class sv4guiSimulationPreferencePage : public QObject, public berry::IQtPreferencePage
+class sv4guiSimulationPreferences 
 {
-    Q_OBJECT
-    Q_INTERFACES(berry::IPreferencePage)
 
 public:
-    sv4guiSimulationPreferencePage();
-    ~sv4guiSimulationPreferencePage();
+  sv4guiSimulationPreferences();
+  ~sv4guiSimulationPreferences();
 
-    void CreateQtControl(QWidget* parent) override;
-    QWidget* GetQtControl() const override;
-    void Init(berry::IWorkbench::Pointer) override;
-    void PerformCancel() override;
-    bool PerformOk() override;
-    void Update() override;
-    void InitializeSolverLocations();
-
-private slots:
-  void SetPresolverPath();
-  void SetFlowsolverPath();
-  void SetMPIExecPath();
-  void SetCustomTemplatePath();
-  void SetPostsolverPath();
+  void InitializeSolverLocations();
+  QString GetMpiExec();
 
 private:
+  QString m_svPostBinary;
+  QString m_mpiExec;
+  QString m_mpiImplementation;
+  QString m_svPresolver;
+  QString m_svSolver;
+
   void SetMpiExec(const QString& solverPathBin, const QString& applicationPath);
+
   void SetPreSolver(const QString& solverPathBin, const QString& applicationPath);
   void SetSolver(const QString& solverPathBin, const QString& applicationPath);
   void SetPostSolver(const QString& solverPathBin, const QString& applicationPath);
   void SetMpiImplementation();
 
-  berry::IPreferences::Pointer m_Preferences;
-  QScopedPointer<Ui::sv4guiSimulationPreferencePage> m_Ui;
-  QWidget* m_Control;
-
 };
 
-#endif // SV4GUI_SIMULATIONPREFERENCEPAGE_H
+#endif // SV4GUI_SIMULATIONPREFERENCES_H

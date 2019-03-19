@@ -29,24 +29,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sv4gui_SimulationPreferencePage.h"
-#include "ui_sv4gui_SimulationPreferencePage.h"
+#include "sv4gui_SimulationPreferences.h"
 
-#include <berryIPreferencesService.h>
-#include <berryPlatform.h>
-
-#include <mitkExceptionMacro.h>
-
-#include <QFileDialog>
-#include <QMessageBox>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QProcess>
 
-sv4guiSimulationPreferencePage::sv4guiSimulationPreferencePage() : m_Preferences(nullptr), 
-    m_Ui(new Ui::sv4guiSimulationPreferencePage) , m_Control(nullptr)
+#include <iostream>
+
+sv4guiSimulationPreferences::sv4guiSimulationPreferences() 
 {
+  InitializeSolverLocations();
 }
 
-sv4guiSimulationPreferencePage::~sv4guiSimulationPreferencePage()
+sv4guiSimulationPreferences::~sv4guiSimulationPreferences()
 {
 }
 
@@ -59,7 +56,7 @@ sv4guiSimulationPreferencePage::~sv4guiSimulationPreferencePage()
 // 'Preferences->SimVascular Simulations' page and used to 
 //execute a simulation.
 //
-void sv4guiSimulationPreferencePage::InitializeSolverLocations()
+void sv4guiSimulationPreferences::InitializeSolverLocations()
 {
   // Set the default install location of the solver.
   QString solverInstallPath = "/usr/local/sv/svsolver";
@@ -69,7 +66,8 @@ void sv4guiSimulationPreferencePage::InitializeSolverLocations()
   }
 
   // Set the path to the SimVascular-build/bin directory.
-  QString applicationPath = QCoreApplication::applicationDirPath();
+  QString applicationPath = "";
+  //QString applicationPath = QCoreApplication::applicationDirPath();
 
   // Set the solver binaries.
   SetPreSolver(solverInstallPath, applicationPath); 
@@ -96,13 +94,9 @@ void sv4guiSimulationPreferencePage::InitializeSolverLocations()
 //
 // Use the script version if it exists.
 //
-void sv4guiSimulationPreferencePage::SetPostSolver(const QString& solverPath, const QString& applicationPath)
+void sv4guiSimulationPreferences::SetPostSolver(const QString& solverPath, const QString& applicationPath)
 {
-  QString svPost = m_Ui->lineEditPostsolverPath->text().trimmed();
-
-  if (!svPost.isEmpty()) {
-    return;
-  }
+  QString svPost = "";
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
 
@@ -125,7 +119,7 @@ void sv4guiSimulationPreferencePage::SetPostSolver(const QString& solverPath, co
 
 #endif
 
-  m_Ui->lineEditPostsolverPath->setText(svPost);
+  m_svPostBinary = svPost;
 }
 
 //------------
@@ -135,14 +129,9 @@ void sv4guiSimulationPreferencePage::SetPostSolver(const QString& solverPath, co
 //
 // Don't display a warning until the solver is actually used. 
 //
-void sv4guiSimulationPreferencePage::SetMpiExec(const QString& solverPath, const QString& applicationPath)
+void sv4guiSimulationPreferences::SetMpiExec(const QString& solverPath, const QString& applicationPath)
 {
-  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
-
-  if (!mpiExec.isEmpty()) {
-    return;
-  }
-
+  QString mpiExec = "";
   QString mpiExecPath = "/usr/bin/";
   QString filePath = "";
   QString mpiExecName = "mpiexec";
@@ -185,7 +174,12 @@ void sv4guiSimulationPreferencePage::SetMpiExec(const QString& solverPath, const
 
 #endif
 
-  m_Ui->lineEditMPIExecPath->setText(mpiExec);
+  m_mpiExec = mpiExec;
+}
+
+QString sv4guiSimulationPreferences::GetMpiExec() 
+{ 
+  return m_mpiExec; 
 }
 
 //----------------------
@@ -201,18 +195,12 @@ void sv4guiSimulationPreferencePage::SetMpiExec(const QString& solverPath, const
 //
 // Don't display a warning until the solver is actually used. 
 //
-void sv4guiSimulationPreferencePage::SetMpiImplementation()
+void sv4guiSimulationPreferences::SetMpiImplementation()
 {
-  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
-
-  if (mpiExec.isEmpty()) {
-    return;
-  }
-
   QString guiLabel("MPI Implementation: ");
   QString implementation("Unknown");
 
-  QFileInfo fileInfo(mpiExec);
+  QFileInfo fileInfo(m_mpiExec);
   QString mpiExecPath = fileInfo.path();
 
 #if defined(Q_OS_LINUX)
@@ -236,7 +224,7 @@ void sv4guiSimulationPreferencePage::SetMpiImplementation()
 
 #endif
 
-  m_Ui->labelMPIImplementation->setText(guiLabel + implementation);
+  m_mpiImplementation = implementation;
 }
 
 //------------------
@@ -252,16 +240,11 @@ void sv4guiSimulationPreferencePage::SetMpiImplementation()
 //
 // Use the script version if it exists.
 //
-void sv4guiSimulationPreferencePage::SetPreSolver(const QString& solverPath, const QString& applicationPath)
+void sv4guiSimulationPreferences::SetPreSolver(const QString& solverPath, const QString& applicationPath)
 {
-  QString svPresolver = m_Ui->lineEditPresolverPath->text().trimmed();
-
-  if (!svPresolver.isEmpty()) {
-    return;
-  }
-
   QString filePath = "";
   QString svPreName = "/svpre";
+  QString svPresolver = "";
 
 #if defined(Q_OS_LINUX)
   if(QFile(filePath=solverPath+svPreName).exists()) {
@@ -290,7 +273,7 @@ void sv4guiSimulationPreferencePage::SetPreSolver(const QString& solverPath, con
 
 #endif
 
-  m_Ui->lineEditPresolverPath->setText(svPresolver);
+  m_svPresolver = svPresolver;
 }
 
 //-----------
@@ -306,15 +289,10 @@ void sv4guiSimulationPreferencePage::SetPreSolver(const QString& solverPath, con
 //
 // Use the script version if it exists.
 //
-void sv4guiSimulationPreferencePage::SetSolver(const QString& solverInstallPath, const QString& applicationPath)
+void sv4guiSimulationPreferences::SetSolver(const QString& solverInstallPath, const QString& applicationPath)
 {
-  QString svSolver = m_Ui->lineEditFlowsolverPath->text().trimmed();
-
-  if (!svSolver.isEmpty()) {
-    return;
-  }
-
-  bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
+  bool useMPI = true;
+  QString svSolver = "";
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QString filePath = "";
@@ -349,159 +327,7 @@ void sv4guiSimulationPreferencePage::SetSolver(const QString& solverInstallPath,
 
 #endif
 
-  m_Ui->lineEditFlowsolverPath->setText(svSolver);
+  m_svSolver = svSolver;
 }
 
-void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)
-{
-    m_Control = new QWidget(parent);
-
-    m_Ui->setupUi(m_Control);
-
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    Q_ASSERT(prefService);
-
-    m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.simulation");
-
-    connect( m_Ui->toolButtonPresolver, SIGNAL(clicked()), this, SLOT(SetPresolverPath()) );
-    connect( m_Ui->toolButtonFlowsolver, SIGNAL(clicked()), this, SLOT(SetFlowsolverPath()) );
-    connect( m_Ui->toolButtonMPIExec, SIGNAL(clicked()), this, SLOT(SetMPIExecPath()) );
-    connect( m_Ui->toolButtonCustomTemplate, SIGNAL(clicked()), this, SLOT(SetCustomTemplatePath()) );
-    connect( m_Ui->toolButtonPostsolver, SIGNAL(clicked()), this, SLOT(SetPostsolverPath()) );
-
-    this->Update();
-
-    // Set the locations of the solver binaries and mpiexec.
-    InitializeSolverLocations();
-}
-
-void sv4guiSimulationPreferencePage::SetPresolverPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Presolver");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditPresolverPath->setText(filePath);
-    }
-}
-
-void sv4guiSimulationPreferencePage::SetFlowsolverPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Flowsolver");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditFlowsolverPath->setText(filePath);
-    }
-}
-
-void sv4guiSimulationPreferencePage::SetMPIExecPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MPIExec");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditMPIExecPath->setText(filePath);
-    }
-}
-
-void sv4guiSimulationPreferencePage::SetCustomTemplatePath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose Solver Custom Template");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditCustomTemplatePath->setText(filePath);
-    }
-}
-
-void sv4guiSimulationPreferencePage::SetPostsolverPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Postsolver");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditPostsolverPath->setText(filePath);
-    }
-}
-
-QWidget* sv4guiSimulationPreferencePage::GetQtControl() const
-{
-    return m_Control;
-}
-
-void sv4guiSimulationPreferencePage::Init(berry::IWorkbench::Pointer)
-{
-}
-
-void sv4guiSimulationPreferencePage::PerformCancel()
-{
-}
-
-bool sv4guiSimulationPreferencePage::PerformOk()
-{
-    QString presolverPath=m_Ui->lineEditPresolverPath->text().trimmed();
-    QString flowsolverPath=m_Ui->lineEditFlowsolverPath->text().trimmed();
-    bool useMPI=m_Ui->checkBoxUseMPI->isChecked();
-    QString MPIExecPath=m_Ui->lineEditMPIExecPath->text().trimmed();
-    bool useCustom=m_Ui->checkBoxUseCustom->isChecked();
-    QString customTemplatePath=m_Ui->lineEditCustomTemplatePath->text().trimmed();
-    QString postsolverPath=m_Ui->lineEditPostsolverPath->text().trimmed();
-
-//    if(presolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Presolver Missing","Please provide SimVascular presolver.");
-//        return false;
-//    }
-
-//    if(flowsolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Flowsolver Missing","Please provide SimVascular flowsolver.");
-//        return false;
-//    }
-
-//    if(useMPI && MPIExecPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"MPIExec Missing","Please provide mpiexec.");
-//        return false;
-//    }
-
-//    if(useCustom && customTemplatePath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Custom Template Missing","Please provide SimVascular Solver Input Template File.");
-//        return false;
-//    }
-
-//    if(postsolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Postsolver Missing","Please provide SimVascular postsolver.");
-//        return false;
-//    }
-
-    m_Preferences->Put("presolver path", presolverPath);
-
-    m_Preferences->Put("flowsolver path", flowsolverPath);
-    m_Preferences->PutBool("use mpi", useMPI);
-    if(useMPI)
-        m_Preferences->Put("mpiexec path", MPIExecPath);
-
-    m_Preferences->PutBool("use custom", useCustom);
-    if(useCustom)
-        m_Preferences->Put("solver template path", customTemplatePath);
-
-    m_Preferences->Put("postsolver path", postsolverPath);
-
-    return true;
-}
-
-void sv4guiSimulationPreferencePage::Update()
-{
-    m_Ui->lineEditPresolverPath->setText(m_Preferences->Get("presolver path",""));
-    m_Ui->lineEditFlowsolverPath->setText(m_Preferences->Get("flowsolver path",""));
-    m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
-    m_Ui->lineEditMPIExecPath->setText(m_Preferences->Get("mpiexec path",""));
-    m_Ui->checkBoxUseCustom->setChecked(m_Preferences->GetBool("use custom", false));
-    m_Ui->lineEditCustomTemplatePath->setText(m_Preferences->Get("solver template path",""));
-    m_Ui->lineEditPostsolverPath->setText(m_Preferences->Get("postsolver path",""));
-}
 
