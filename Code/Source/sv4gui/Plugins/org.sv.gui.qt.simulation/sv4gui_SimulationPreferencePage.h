@@ -29,6 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiSimulationPreferencePage class is used to process information 
+// presented in the 'Preferences->SimVascular Simulation' panel. 
+//
+// The 'Preferences->SimVascular Simulation' panel is used to show and set
+// the location of the solver binaries (svpre, svsolver and svpost) and
+// mpiexec binary used to execute a simulation.
+
 #ifndef SV4GUI_SIMULATIONPREFERENCEPAGE_H
 #define SV4GUI_SIMULATIONPREFERENCEPAGE_H
 
@@ -66,10 +73,10 @@ private slots:
   void SetPostsolverPath();
 
 private:
-  void SetMpiExec(const QString& solverPathBin, const QString& applicationPath);
-  void SetPreSolver(const QString& solverPathBin, const QString& applicationPath);
-  void SetSolver(const QString& solverPathBin, const QString& applicationPath);
-  void SetPostSolver(const QString& solverPathBin, const QString& applicationPath);
+  void SetMpiExec();
+  void SetPreSolver();
+  void SetSolver();
+  void SetPostSolver();
   void SetMpiImplementation();
 
   berry::IPreferences::Pointer m_Preferences;

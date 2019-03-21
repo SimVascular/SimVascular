@@ -65,27 +65,30 @@ public:
     OpenMPI
   };
 
-  const QString GetMpiImplementation(sv4guiSimulationPreferences::MpiImplementation itype);
+  MpiImplementation GetMpiImplementation();
+  MpiImplementation GetMpiImplementation(const QString& name);
+  const QString GetMpiName();
 
   void InitializeSolverLocations();
   QString GetMpiExec();
-  MpiImplementation GetMpiImplementation();
   QString GetPostSolver();
   QString GetPreSolver();
   QString GetSolver();
 
 private:
   QString m_mpiExec;
-  MpiImplementation m_mpiImplementation;
+  MpiImplementation m_MpiImplementation;
   QString m_svPostBinary;
   QString m_svPresolver;
   QString m_svSolver;
+  std::map<MpiImplementation, const QString> m_MpiEnumToString;
+  std::map<const QString, MpiImplementation> m_MpiStringToEnum;
 
-  void SetMpiExec(const QString& solverPathBin, const QString& applicationPath);
+  void SetMpiExec(const QString& solverInstallPath, const QString& applicationPath);
   void SetMpiImplementation();
-  void SetPostSolver(const QString& solverPathBin, const QString& applicationPath);
-  void SetPreSolver(const QString& solverPathBin, const QString& applicationPath);
-  void SetSolver(const QString& solverPathBin, const QString& applicationPath);
+  void SetPostSolver(const QString& solverInstallPath, const QString& applicationPath);
+  void SetPreSolver(const QString& solverInstallPath, const QString& applicationPath);
+  void SetSolver(const QString& solverInstallPath, const QString& applicationPath);
 
 };
 

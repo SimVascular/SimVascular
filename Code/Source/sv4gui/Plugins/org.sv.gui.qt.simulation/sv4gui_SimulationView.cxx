@@ -29,6 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <sstream>
+#include <tuple>
+
 #include "sv4gui_SimulationView.h"
 #include "ui_sv4gui_SimulationView.h"
 
@@ -103,6 +106,9 @@ sv4guiSimulationView::sv4guiSimulationView() :
     m_SolverTemplatePath="";
 
     m_ConnectionEnabled=false;
+
+    // Get the default solver binaries.
+    //m_DefaultPrefs = sv4guiSimulationPreferences();
 }
 
 sv4guiSimulationView::~sv4guiSimulationView()
@@ -298,6 +304,11 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 // Set the default solver binaries, mpiexec binary and the MPI implementation 
 // used to create and execute simulation jobs.
 //
+// If a SimVascular MITK database exists from previous SimVascular sessions then 
+// the values for the binaries are obtained from there. If the database does not
+// exist then set the values for the binaries to their default values, which
+// are the same values set for the SimVascular Simulation Preferences.
+//
 // The solver binaries are: svpre, svsolver and svpost. The value for each binary
 // contains the full path to the binary together with its name. For example, 
 //
@@ -305,27 +316,38 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 //
 // Note that the 'binary' may actually be a shell script that sets up environment
 // variables and then executes the actual binary. In that case m_FlowsolverPath
-// would be set to (on Linux) 
+// is set to (on Linux) 
 //
 //     m_FlowsolverPath = "/usr/local/sv/svsolver"
 //
 void sv4guiSimulationView::SetupInternalSolverPaths()
 {
-    auto msg = "[sv4guiSimulationView::SetupInternalSolverPaths] ";
-    MITK_INFO << msg << "------------------------------------------------";
+    auto msg = "[SetupInternalSolverPaths] ";
+    //auto msg = "[sv4guiSimulationView::SetupInternalSolverPaths] ";
+    MITK_INFO << msg << "------------------- SetupInternalSolverPaths -----------------------------";
 
-    // Set the default solver binaries.
-    auto defaultPrefs = sv4guiSimulationPreferences();
-    m_MPIExecPath = defaultPrefs.GetMpiExec();
-    m_FlowsolverPath = defaultPrefs.GetSolver();
-    m_PostsolverPath = defaultPrefs.GetPostSolver();
-    m_PresolverPath = defaultPrefs.GetPreSolver();
-    m_MpiImplementation = defaultPrefs.GetMpiImplementation();
+    // Get the solver binaries from the MITK database.
+    berry::IPreferences::Pointer dbPrefs = this->GetPreferences();
+    berry::IBerryPreferences* prefs = dynamic_cast<berry::IBerryPreferences*>(dbPrefs.GetPointer());
+
+    // Get the default solver binaries.
+    //auto defaultPrefs = sv4guiSimulationPreferences();
+
+    // Set the solver binaries.
+    m_PresolverPath = prefs->Get("presolver path", m_DefaultPrefs.GetPreSolver());
+    m_FlowsolverPath = prefs->Get("flowsolver path", m_DefaultPrefs.GetSolver()); 
+    m_PostsolverPath = prefs->Get("postsolver path", m_DefaultPrefs.GetPostSolver());
+
+    // Set the mpiexec binary and mpi implementation.
+    m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultPrefs.GetMpiExec()); 
+    auto mpiName = prefs->Get("mpi implementation", m_DefaultPrefs.GetMpiName());
+    m_MpiImplementation = m_DefaultPrefs.GetMpiImplementation(mpiName);
+
     MITK_INFO << msg << ">>> m_MPIExecPath " << m_MPIExecPath;
     MITK_INFO << msg << ">>> m_FlowsolverPath " << m_FlowsolverPath;
     MITK_INFO << msg << ">>> m_PostsolverPath " << m_PostsolverPath;
     MITK_INFO << msg << ">>> m_PresolverPath " << m_PresolverPath;
-    MITK_INFO << msg << ">>> m_MpiImplementation " << defaultPrefs.GetMpiImplementation(m_MpiImplementation);
+    MITK_INFO << msg << ">>> m_MpiImplementation " << mpiName; 
 }
 
 //----------------------
@@ -344,10 +366,11 @@ void sv4guiSimulationView::SetupInternalSolverPaths()
 //
 void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
-    MITK_INFO << "[sv4guiSimulationView::OnPreferencesChanged] ---------------------------------------------";
+    auto msg = "[OnPreferencesChanged] ";
+    MITK_INFO << msg << "-------------------- OnPreferencesChanged -------------------"; 
 
     if (prefs == NULL) {
-        MITK_INFO << "[sv4guiSimulationView::OnPreferencesChanged]  prefs is null";
+        MITK_INFO << msg << "prefs is null";
         return;
     }
 
@@ -1663,28 +1686,25 @@ void sv4guiSimulationView::CreateAllFiles()
 //
 void sv4guiSimulationView::RunJob()
 {
+    auto msg = "[RunJob] ";
+    MITK_INFO << msg << "-------------------- RunJob -------------------"; 
+
     if (!m_MitkJob) {
         return;
     }
 
-    QString jobPath=GetJobPath();
+    MITK_INFO << msg << ">>> m_MPIExecPath " << m_MPIExecPath;
+    MITK_INFO << msg << ">>> m_MpiImplementation " << m_DefaultPrefs.GetMpiName();
+
+    QString jobPath = GetJobPath();
 
     if(jobPath=="" || !QDir(jobPath).exists()) {
-        QMessageBox::warning(m_Parent,"Unable to run","Please make sure data files have been created!");
+        QMessageBox::warning(m_Parent,"Unable to run a simulation job", "Please make sure data files have been created.");
         return;
     }
 
-    QString flowsolverPath=m_FlowsolverPath;
-    if(flowsolverPath=="") {
-        if(m_UseMPI) {
-            flowsolverPath=m_FlowsolverPath;
-        } else {
-            flowsolverPath=m_FlowsolverNoMPIPath;
-        }
-    }
-
-    if(flowsolverPath=="") {
-        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please make sure flowsolver exists!");
+    // Check that the solver binaries are valid.
+    if (!CheckSolver()) {
         return;
     }
 
@@ -1702,6 +1722,7 @@ void sv4guiSimulationView::RunJob()
         }
     }
 
+/*
     QString runPath=jobPath;
     int numProcs=ui->sliderNumProcs->value();
     if(m_UseMPI && numProcs>1)
@@ -1781,6 +1802,52 @@ void sv4guiSimulationView::RunJob()
 
     sv4guiSolverProcessHandler* handler=new sv4guiSolverProcessHandler(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,m_Parent);
     handler->Start();
+*/
+
+}
+
+//-------------
+// CheckSolver
+//-------------
+// Check for valid solver binaries.
+//
+bool sv4guiSimulationView::CheckSolver()
+{
+    auto msg = "[CheckSolver] ";
+    MITK_INFO << msg << ">>> m_FlowsolverPath " << m_FlowsolverPath;
+    MITK_INFO << msg << ">>> m_PostsolverPath " << m_PostsolverPath;
+    MITK_INFO << msg << ">>> m_PresolverPath " << m_PresolverPath;
+
+    // Set binary name and path to check.
+    typedef std::tuple<QString,QString> binaryNamePath;
+    std::vector<binaryNamePath> binariesToCheck = { 
+        std::make_tuple("svSolver", m_FlowsolverPath),
+        std::make_tuple("svPre", m_PresolverPath),
+        std::make_tuple("svPost", m_PostsolverPath)
+    };
+
+    for (auto const& namePath : binariesToCheck) {
+        auto name = std::get<0>(namePath);
+        auto path = std::get<1>(namePath);
+        MITK_INFO << msg << "check: " << name << "  " <<  path;
+        //std::stringstream ss;
+        auto title = "The " + name + " executable cannot be found.";
+        auto msg1 = "The " + name + " executable cannot be found at '" + path + "'\n";
+        auto msg2 = "Please install " + name + " or set its location in the Preferences -> SimVascular Simulation page.";
+
+        if (path == "") {
+            QMessageBox::warning(m_Parent, title, msg2);
+            return false;
+        }
+
+        QFileInfo check_file(path);
+        if (!check_file.exists() || !check_file.isFile()) {
+            QMessageBox::warning(m_Parent, title, msg1+msg2);
+            return false;
+        }
+    }
+
+  return true;
 }
 
 bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)

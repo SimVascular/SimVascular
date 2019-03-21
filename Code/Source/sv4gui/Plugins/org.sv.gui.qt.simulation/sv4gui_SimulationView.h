@@ -240,6 +240,10 @@ private:
 
     bool m_ConnectionEnabled;
 
+    sv4guiSimulationPreferences m_DefaultPrefs;
+
+    bool CheckSolver();
+
 };
 
 #endif // SV4GUI_SIMULATIONVIEW_H

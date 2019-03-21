@@ -40,6 +40,19 @@
 
 sv4guiSimulationPreferences::sv4guiSimulationPreferences() 
 {
+
+  m_MpiEnumToString = { 
+    {MpiImplementation::MPICH, "MPICH"},
+    {MpiImplementation::OpenMPI, "OpenMPI"},
+    {MpiImplementation::Unknown, "Unknown"}
+  };
+
+  m_MpiStringToEnum = {
+    {"MPICH", MpiImplementation::MPICH}, 
+    {"OpenMPI", MpiImplementation::OpenMPI},
+    {"Unknown", MpiImplementation::Unknown}
+  };
+
   InitializeSolverLocations();
 }
 
@@ -196,13 +209,11 @@ QString sv4guiSimulationPreferences::GetMpiExec()
 //----------------------
 // Set the installed MPI implementation.
 //
-// This is neeed to unsure that MPI is installed and that the
+// This is needed to unsure that MPI is installed and that the
 // correct implementation is installed for a given OS.
 //
 // Check the implementation using 'mpicc -show' and show
 // it in the Preferences panel.
-//
-// Don't display a warning until the solver is actually used. 
 //
 void sv4guiSimulationPreferences::SetMpiImplementation()
 {
@@ -227,34 +238,39 @@ void sv4guiSimulationPreferences::SetMpiImplementation()
       implementation = MpiImplementation::MPICH;
     } else if (output.contains("openmpi")) {
       implementation = MpiImplementation::OpenMPI;
+    } else {
+      implementation = MpiImplementation::Unknown;
     }
   }
 
 #endif
 
-  m_mpiImplementation = implementation;
+  m_MpiImplementation = implementation;
 }
 
-sv4guiSimulationPreferences::MpiImplementation sv4guiSimulationPreferences::GetMpiImplementation()
-{
-  return m_mpiImplementation;
-}
-
-//----------------------
-// GetMpiImplementation
-//----------------------
-// Get the MPI impementation as a string.
+//------------
+// GetMpiName
+//------------
+// Get the name of the MPI implementation.
 //
-const QString sv4guiSimulationPreferences::GetMpiImplementation(sv4guiSimulationPreferences::MpiImplementation itype)
+const QString sv4guiSimulationPreferences::GetMpiName()
 {
-  const std::map<sv4guiSimulationPreferences::MpiImplementation, const QString> EnumStrings {
-    { sv4guiSimulationPreferences::MpiImplementation::MPICH, "MPICH" },
-    { sv4guiSimulationPreferences::MpiImplementation::OpenMPI, "OpenMPI" },
-    { sv4guiSimulationPreferences::MpiImplementation::Unknown, "Unknown" }
-  };
+  return m_MpiEnumToString[m_MpiImplementation];
+}
 
-  auto it = EnumStrings.find(itype);
-  return it == EnumStrings.end() ? "Unknown" : it->second;
+sv4guiSimulationPreferences::MpiImplementation
+sv4guiSimulationPreferences::GetMpiImplementation()
+{
+  return m_MpiImplementation;
+}
+
+sv4guiSimulationPreferences::MpiImplementation 
+sv4guiSimulationPreferences::GetMpiImplementation(const QString& name)
+{
+  if (m_MpiStringToEnum.find(name) == m_MpiStringToEnum.end()) {
+      return sv4guiSimulationPreferences::MpiImplementation::Unknown;
+  }
+  return m_MpiStringToEnum[name];
 }
 
 //------------------
