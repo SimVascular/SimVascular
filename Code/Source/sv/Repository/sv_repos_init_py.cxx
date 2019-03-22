@@ -308,11 +308,7 @@ PyObject*  Repos_ExistsCmd( PyObject* self, PyObject* args)
 
   exists = gRepository->Exists( name );
 
-  char rtnstr[255];
-  rtnstr[0]='\0';
-  sprintf( rtnstr, "%d", exists );
-
-  return Py_BuildValue("s",rtnstr);
+  return Py_BuildValue("N",PyBool_FromLong(exists));
 
 }
 
@@ -359,7 +355,7 @@ PyObject*  Repos_DeleteCmd( PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, r);
     return Py_ERROR;
   }
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 
 }
 
@@ -846,7 +842,7 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args )
   pdWriter->Write();
 
   pdWriter->Delete();
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 
 }
 
@@ -1019,7 +1015,7 @@ PyObject* Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args)
 
   spWriter->Delete();
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 
 }
 
@@ -1079,7 +1075,7 @@ PyObject* Repos_WriteVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
 
   spWriter->Delete();
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 
 }
 
@@ -1204,7 +1200,7 @@ PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args)
     }
   }
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 
 }
 
@@ -1244,6 +1240,6 @@ PyObject* Repos_ClearLabelCmd( PyObject* self, PyObject* args)
 
   obj->ClearLabel( key );
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 
 }

@@ -656,7 +656,7 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
         return Py_ERROR;
     }
 
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
 }
 // ---------------------
 //  GUI_ImportPolyDataFromRepos
@@ -746,7 +746,7 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     }
 
     
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
     
 
 }
@@ -835,7 +835,7 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     }
 
     
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
     
 
 }
@@ -927,7 +927,7 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
         return Py_ERROR;
     }
     
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
     
 }
 
@@ -1021,7 +1021,7 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
         return Py_ERROR;
     }
 
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
     
 }
 
@@ -1148,7 +1148,7 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
     }
 
     
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
     
 }
 
@@ -1261,7 +1261,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         delete corePath;
         return Py_ERROR;
     }
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // -----------------------
@@ -1360,7 +1360,7 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
         return Py_ERROR;
     }
 
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
     
 
 }
@@ -1491,7 +1491,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
         return Py_ERROR;
     }
 
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
     
 }
 
@@ -1598,5 +1598,5 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
             return Py_ERROR;
         }
     }
-    return Py_BuildValue("s","success");
+    return Py_BuildValue("N",PyBool_FromLong(1));
 }

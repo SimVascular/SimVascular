@@ -229,9 +229,7 @@ PyInit_pyMeshTetgen(void)
 
 PyObject*  TetGenMesh_AvailableCmd(PyObject* self, PyObject* args)
 {
-  PyErr_SetString(PyRunTimeErr, "TetGen Mesh Module Available");
-
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("s","TetGen Mesh Module Available");
 }
 
 

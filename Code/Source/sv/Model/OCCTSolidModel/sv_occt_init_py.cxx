@@ -395,7 +395,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
   delete [] uMarr;
   delete [] vMarr;
 
-  return Py_BuildValue("s","success");
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // --------------------

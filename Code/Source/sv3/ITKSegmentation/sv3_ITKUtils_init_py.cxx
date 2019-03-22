@@ -268,7 +268,7 @@ static PyObject* itkutils_PdToImgCmd( CXX_PYTHON_STDARGS )
 	}
 
 	// Return name
-	return Py_BuildValue(obj->GetName());
+	return Py_BuildValue("s", obj->GetName());
 }
 
 
