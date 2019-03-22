@@ -58,6 +58,7 @@ class sv4guiSimulationPreferences
 public:
   sv4guiSimulationPreferences();
   ~sv4guiSimulationPreferences();
+  //sv4guiSimulationPreferences& operator= (const sv4guiSimulationPreferences&){};
 
   enum class MpiImplementation {
     Unknown,
@@ -74,6 +75,7 @@ public:
   QString GetPostSolver();
   QString GetPreSolver();
   QString GetSolver();
+  static const QString UnknownBinary;
 
 private:
   QString m_mpiExec;
@@ -81,8 +83,8 @@ private:
   QString m_svPostBinary;
   QString m_svPresolver;
   QString m_svSolver;
-  std::map<MpiImplementation, const QString> m_MpiEnumToString;
-  std::map<const QString, MpiImplementation> m_MpiStringToEnum;
+  std::map<MpiImplementation, QString> m_MpiEnumToString;
+  std::map<QString, MpiImplementation> m_MpiStringToEnum;
 
   void SetMpiExec(const QString& solverInstallPath, const QString& applicationPath);
   void SetMpiImplementation();

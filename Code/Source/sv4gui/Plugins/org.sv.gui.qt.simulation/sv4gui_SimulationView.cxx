@@ -1708,6 +1708,12 @@ void sv4guiSimulationView::RunJob()
         return;
     }
 
+    // Check that mpi is installed and that the implementation 
+    // is correct for this OS.
+    if (!CheckMpi()) {
+        return;
+    }
+
     QString mpiExecPath="";
     if(m_UseMPI)
     {
@@ -1818,30 +1824,39 @@ bool sv4guiSimulationView::CheckSolver()
     MITK_INFO << msg << ">>> m_PostsolverPath " << m_PostsolverPath;
     MITK_INFO << msg << ">>> m_PresolverPath " << m_PresolverPath;
 
-    // Set binary name and path to check.
+    // Set the name and path to check for the solver binaries.
     typedef std::tuple<QString,QString> binaryNamePath;
     std::vector<binaryNamePath> binariesToCheck = { 
-        std::make_tuple("svSolver", m_FlowsolverPath),
-        std::make_tuple("svPre", m_PresolverPath),
-        std::make_tuple("svPost", m_PostsolverPath)
+        std::make_tuple("FlowSolver", m_FlowsolverPath),
+        std::make_tuple("PreSolver", m_PresolverPath),
+        std::make_tuple("PostSolver", m_PostsolverPath)
     };
 
+    // Check the name and path for the solver binaries.
     for (auto const& namePath : binariesToCheck) {
         auto name = std::get<0>(namePath);
         auto path = std::get<1>(namePath);
         MITK_INFO << msg << "check: " << name << "  " <<  path;
-        //std::stringstream ss;
         auto title = "The " + name + " executable cannot be found.";
-        auto msg1 = "The " + name + " executable cannot be found at '" + path + "'\n";
-        auto msg2 = "Please install " + name + " or set its location in the Preferences -> SimVascular Simulation page.";
 
-        if (path == "") {
-            QMessageBox::warning(m_Parent, title, msg2);
+        if ((path == "") || (path == m_DefaultPrefs.UnknownBinary)) {
+            auto msg1 = "The " + name + " executable cannot be found. \n";
+            auto msg2 = "Please install " + name + " and set its location in the Preferences->SimVascular Simulation page.";
+            QMessageBox::warning(m_Parent, title, msg1+msg2);
             return false;
         }
 
         QFileInfo check_file(path);
-        if (!check_file.exists() || !check_file.isFile()) {
+        if (!check_file.exists()) {
+            auto msg1 = "The " + name + " executable '" + path + "' cannot be found. \n";
+            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
+            QMessageBox::warning(m_Parent, title, msg1+msg2);
+            return false;
+        }
+
+        if (!check_file.isFile()) {
+            auto msg1 = "The " + name + " executable '" + path + "' does not name a file. \n";
+            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
             QMessageBox::warning(m_Parent, title, msg1+msg2);
             return false;
         }
@@ -1849,6 +1864,41 @@ bool sv4guiSimulationView::CheckSolver()
 
   return true;
 }
+
+//----------
+// CheckMpi
+//----------
+// Check for valid mpiexec and mpi implementation.
+//
+bool sv4guiSimulationView::CheckMpi()
+{
+    auto msg = "[CheckMpi] ";
+    auto mpiName = m_DefaultPrefs.GetMpiName();
+    MITK_INFO << msg << ">>> m_MPIExecPath " << m_MPIExecPath;
+    MITK_INFO << msg << ">>> m_MpiImplementation " << mpiName; 
+    QString name = "mpiexec";
+    QString path = m_MPIExecPath; 
+    auto title = "The " + name + " executable cannot be found.";
+
+    if ((path == "") || (path == m_DefaultPrefs.UnknownBinary)) {
+       auto msg1 = "The " + name + " executable cannot be found. \n";
+       auto msg2 = "Please install MPI and set its location in the Preferences->SimVascular Simulation page.";
+       QMessageBox::warning(m_Parent, title, msg1+msg2);
+       return false;
+     }
+
+    QFileInfo check_file(path);
+
+    if (!check_file.exists()) {
+        auto msg1 = "The " + name + " executable '" + path + "' cannot be found. \n";
+        auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
+        QMessageBox::warning(m_Parent, title, msg1+msg2);
+        return false;
+    }
+
+    return true;
+}
+
 
 bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {

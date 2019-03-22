@@ -243,6 +243,7 @@ private:
     sv4guiSimulationPreferences m_DefaultPrefs;
 
     bool CheckSolver();
+    bool CheckMpi();
 
 };
 

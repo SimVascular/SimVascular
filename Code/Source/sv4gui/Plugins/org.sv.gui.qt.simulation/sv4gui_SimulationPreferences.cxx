@@ -38,9 +38,15 @@
 
 #include <iostream>
 
+// Set the string value representing an unresolved binary.
+const QString sv4guiSimulationPreferences::UnknownBinary("not found");
+
+//-----------------------------
+// sv4guiSimulationPreferences
+//-----------------------------
+//
 sv4guiSimulationPreferences::sv4guiSimulationPreferences() 
 {
-
   m_MpiEnumToString = { 
     {MpiImplementation::MPICH, "MPICH"},
     {MpiImplementation::OpenMPI, "OpenMPI"},
@@ -109,7 +115,7 @@ void sv4guiSimulationPreferences::InitializeSolverLocations()
 //
 void sv4guiSimulationPreferences::SetPostSolver(const QString& solverPath, const QString& applicationPath)
 {
-  QString svPost = "";
+  QString svPost = UnknownBinary;
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
 
@@ -149,7 +155,7 @@ QString sv4guiSimulationPreferences::GetPostSolver()
 //
 void sv4guiSimulationPreferences::SetMpiExec(const QString& solverPath, const QString& applicationPath)
 {
-  QString mpiExec = "";
+  QString mpiExec = UnknownBinary;
   QString mpiExecPath;
   QString filePath = "";
   QString mpiExecName = "mpiexec";
@@ -290,7 +296,7 @@ void sv4guiSimulationPreferences::SetPreSolver(const QString& solverPath, const 
 {
   QString filePath = "";
   QString svPreName = "/svpre";
-  QString svPresolver = "";
+  QString svPresolver = UnknownBinary;
 
 #if defined(Q_OS_LINUX)
   if(QFile(filePath=solverPath+svPreName).exists()) {
@@ -343,7 +349,7 @@ QString sv4guiSimulationPreferences::GetPreSolver()
 void sv4guiSimulationPreferences::SetSolver(const QString& solverInstallPath, const QString& applicationPath)
 {
   bool useMPI = true;
-  QString svSolver = "";
+  QString svSolver = UnknownBinary;
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QString filePath = "";
