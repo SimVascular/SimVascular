@@ -329,10 +329,6 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 //
 void sv4guiSimulationView::SetupInternalSolverPaths()
 {
-    auto msg = "[SetupInternalSolverPaths] ";
-    //auto msg = "[sv4guiSimulationView::SetupInternalSolverPaths] ";
-    MITK_INFO << msg << "------------------- SetupInternalSolverPaths -----------------------------";
-
     // Get the solver binaries from the MITK database.
     berry::IPreferences::Pointer dbPrefs = this->GetPreferences();
     berry::IBerryPreferences* prefs = dynamic_cast<berry::IBerryPreferences*>(dbPrefs.GetPointer());
@@ -349,12 +345,6 @@ void sv4guiSimulationView::SetupInternalSolverPaths()
     m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultPrefs.GetMpiExec()); 
     auto mpiName = prefs->Get("mpi implementation", m_DefaultPrefs.GetMpiName());
     m_MpiImplementation = m_DefaultPrefs.GetMpiImplementation(mpiName);
-
-    MITK_INFO << msg << ">>> m_MPIExecPath " << m_MPIExecPath;
-    MITK_INFO << msg << ">>> m_FlowsolverPath " << m_FlowsolverPath;
-    MITK_INFO << msg << ">>> m_PostsolverPath " << m_PostsolverPath;
-    MITK_INFO << msg << ">>> m_PresolverPath " << m_PresolverPath;
-    MITK_INFO << msg << ">>> m_MpiImplementation " << mpiName; 
 }
 
 //----------------------
@@ -373,11 +363,7 @@ void sv4guiSimulationView::SetupInternalSolverPaths()
 //
 void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
-    auto msg = "[OnPreferencesChanged] ";
-    MITK_INFO << msg << "-------------------- OnPreferencesChanged -------------------"; 
-
     if (prefs == NULL) {
-        MITK_INFO << msg << "prefs is null";
         return;
     }
 
@@ -390,8 +376,6 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
 
     m_UseCustom = prefs->GetBool("use custom", false);
     m_SolverTemplatePath = prefs->Get("solver template path","");
-
-    MITK_INFO << "[sv4guiSimulationView::OnPreferencesChanged]  m_PresolverPath " << m_PresolverPath;
 }
 
 //--------------------
@@ -405,10 +389,6 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
 //
 void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
-    auto msg = "[sv4guiSimulationView::OnSelectionChanged]";
-    MITK_INFO << msg << "========== OnSelectionChanged =========";
-    MITK_INFO << msg << "Number of nodes " << nodes.size(); 
-
     if (!IsVisible()) {
         return;
     }
@@ -2809,10 +2789,6 @@ void sv4guiSimulationView::ExportResults()
             QString outAverageUnitsFilePath=exportDir+"/all_results-averages-from_cm-to-mmHg-L_per_min.txt";
             QString unit=ui->comboBoxSimUnits->currentText();
             bool skipWalls=ui->checkBoxSkipWalls->isChecked();
-
-            MITK_INFO << "###################### CreateFlowFiles #################";
-            MITK_INFO << ">>> meshFaceDir " << meshFaceDir;
-            MITK_INFO << ">>> skipWalls " << skipWalls;
 
             calculateFlows=sv4guiSimulationUtils::CreateFlowFiles(outFlowFilePath.toStdString(), outPressureFlePath.toStdString()
                                                               , outAverageFilePath.toStdString(), outAverageUnitsFilePath.toStdString()
