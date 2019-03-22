@@ -115,7 +115,7 @@ void sv4guiSimulationPreferencePage::SetPostSolver()
 {
   QString svPost = m_Ui->lineEditPostsolverPath->text().trimmed();
 
-  if (!svPost.isEmpty()) {
+  if (!svPost.isEmpty() && (svPost != m_DefaultPrefs.UnknownBinary)) {
     return;
   }
 
@@ -132,7 +132,7 @@ void sv4guiSimulationPreferencePage::SetMpiExec()
 {
   QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
 
-  if (!mpiExec.isEmpty()) {
+  if (!mpiExec.isEmpty() && (mpiExec != m_DefaultPrefs.UnknownBinary)) {
     return;
   }
 
@@ -149,7 +149,7 @@ void sv4guiSimulationPreferencePage::SetMpiImplementation()
 {
   QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
 
-  if (mpiExec.isEmpty()) {
+  if (mpiExec.isEmpty() || (mpiExec == m_DefaultPrefs.UnknownBinary)) {
     return;
   }
 
@@ -167,7 +167,7 @@ void sv4guiSimulationPreferencePage::SetPreSolver()
 {
   QString svPresolver = m_Ui->lineEditPresolverPath->text().trimmed();
 
-  if (!svPresolver.isEmpty()) {
+  if (!svPresolver.isEmpty() && (svPresolver != m_DefaultPrefs.UnknownBinary)) {
     return;
   }
 
@@ -184,7 +184,7 @@ void sv4guiSimulationPreferencePage::SetSolver()
 {
   QString svSolver = m_Ui->lineEditFlowsolverPath->text().trimmed();
 
-  if (!svSolver.isEmpty()) {
+  if (!svSolver.isEmpty() && (svSolver != m_DefaultPrefs.UnknownBinary)) {
     return;
   }
 
