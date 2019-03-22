@@ -10,8 +10,8 @@ sudo yum -y install rh-git29
 sudo yum -y install tcl
 
 ### to link against qt pre-built
-sudo yum -y install libGLEW
-sudo yum -y install libGLEW-devel
+sudo yum -y install libglew
+sudo yum -y install libglew-devel
 
 # for qt
 sudo yum -y install rh-ruby23
@@ -36,6 +36,7 @@ sudo yum -y install pcre-devel
 sudo yum -y install emacs
 sudo yum -y install dos2unix
 #sudo yum -y install xterm
+sudo apt-get -y install bbe
 
 ### used by some of the SV cmake code
 sudo yum -y install lsb-core
@@ -60,6 +61,8 @@ sudo yum -y install libXi-devel
 
 ### python
 sudo yum -y install openssl-devel
+sudo yum -y install sqlite-devel
+sudo yum -y install ncurses-devel
 
 ### gdcm/mitk
 #sudo yum -y install swig3.0

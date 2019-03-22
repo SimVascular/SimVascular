@@ -355,7 +355,7 @@ PyObject* Deleteitkls3d( pyLevelSet3d* self, PyObject* args )
 		Tcl_DeleteHashEntry( entryPtr );
 	}
 	delete ls;
-	return Py_BuildValue("s","success");
+	return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 PyObject* itkls3d_SetInputsMtd( pyLevelSet3d* self, PyObject* args )
@@ -426,7 +426,7 @@ PyObject* itkls3d_SetInputsMtd( pyLevelSet3d* self, PyObject* args )
 	ls->SetSeed((cvPolyData*)seedPolyData);
 
 
-	return Py_BuildValue("s","success");
+	return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -452,7 +452,7 @@ static PyObject* itkls3d_PhaseOneLevelSetMtd( pyLevelSet3d* self, PyObject* args
 
 	ls->ComputePhaseOneLevelSet(kc, expFactorRising,expFactorFalling);
 
-	return Py_BuildValue("s","success");
+	return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 static PyObject* itkls3d_PhaseTwoLevelSetMtd( pyLevelSet3d* self, PyObject* args )
@@ -480,7 +480,7 @@ static PyObject* itkls3d_PhaseTwoLevelSetMtd( pyLevelSet3d* self, PyObject* args
 
 	ls->ComputePhaseTwoLevelSet(kupp,klow);
 
-	return Py_BuildValue("s","success");
+	return Py_BuildValue("N",PyBool_FromLong(1));
 }
 static PyObject* itkls3d_GACLevelSetMtd( pyLevelSet3d* self, PyObject* args )
 {
@@ -497,7 +497,7 @@ static PyObject* itkls3d_GACLevelSetMtd( pyLevelSet3d* self, PyObject* args )
 		ls->SetSigmaFeature(sigma);
 	ls->ComputeGACLevelSet(expFactor,kappa,iso);
 
-	return Py_BuildValue("s","success");
+	return Py_BuildValue("N",PyBool_FromLong(1));
 }
 static PyObject* itkls3d_LaplacianLevelSetMtd( pyLevelSet3d* self, PyObject* args )
 {
@@ -516,7 +516,7 @@ static PyObject* itkls3d_LaplacianLevelSetMtd( pyLevelSet3d* self, PyObject* arg
 	ls->ComputeLaplacianLevelSet(expFactor,kappa,iso);
 
 
-	return Py_BuildValue("s","success");
+	return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -524,14 +524,14 @@ static PyObject* itkls3d_WriteFrontMtd( pyLevelSet3d* self, PyObject* args )
 {
 	cvITKLevelSetBase<ImageType> *ls=self->ls;
 	ls->WriteFrontImages();
-	return Py_BuildValue("s","success");
+	return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 static PyObject* itkls3d_CopyFrontToSeedMtd(pyLevelSet3d* self, PyObject* args)
 {
 	cvITKLevelSetBase<ImageType> *ls=self->ls;
 	ls->CopyFrontToSeed();
-	return Py_BuildValue("s","success");
+	return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 

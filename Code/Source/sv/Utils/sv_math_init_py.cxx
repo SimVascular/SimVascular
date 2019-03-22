@@ -454,17 +454,11 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
      return Py_ERROR;
   }
 
-  // create result string
-  char r[2048];
-  r[0] = '\0';
-  sprintf(r,"%.6le",length);
-  //Tcl_AppendElement(interp, r);
-
   // clean up
   mathobj->deleteArray(pts,nlistpts,3);
   delete mathobj;
 
-  return Py_BuildValue("s",r);
+  return Py_BuildValue("d",length);
 }
 
 PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
