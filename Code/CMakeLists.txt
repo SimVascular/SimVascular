@@ -289,6 +289,7 @@ if(SV_USE_QT_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.modeling"
       "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.simulation1d"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application"
       "Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.svfsi")
