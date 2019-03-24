@@ -1,6 +1,8 @@
 # generic
 sudo yum -y update
 
+sudo yum -y install redhat-lsb
+
 # need Developer Toolset since gcc 4.8 is too old for Qt
 #sudo yum -y install centos-release-scl
 #sudo yum -y install devtoolset-6

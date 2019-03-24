@@ -54,6 +54,10 @@ case "$osid" in
 	esac	       
 	;;
 
+    'AmazonAMI')
+        export SV_EXTERN_LINUX_VERSION=amazon_2018_03
+        ;;
+
     *)
 	 
 	echo "Error!"
