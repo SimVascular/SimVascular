@@ -81,7 +81,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO1d::Read()
         return result;
     }
 
-    sv4guiMitkSimJob::Pointer mitkSimJob = sv4guiMitkSimJob::New();
+    sv4guiMitkSimJob1d::Pointer mitkSimJob = sv4guiMitkSimJob1d::New();
     std::string modelName="";
     std::string meshName="";
     std::string status="";
@@ -95,7 +95,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO1d::Read()
     TiXmlElement* jobElement = mjElement->FirstChildElement("job");
     if(jobElement != nullptr)
     {
-        sv4guiSimJob* job=new sv4guiSimJob();
+        sv4guiSimJob1d* job=new sv4guiSimJob1d();
 
         TiXmlElement* bpElement = jobElement->FirstChildElement("basic_props");
         if(bpElement != nullptr)
@@ -269,7 +269,7 @@ void sv4guiMitkSimJobIO1d::Write()
 
     std::string fileName=GetOutputLocation();
 
-    const sv4guiMitkSimJob* mitkSimJob = dynamic_cast<const sv4guiMitkSimJob*>(this->GetInput());
+    const sv4guiMitkSimJob1d* mitkSimJob = dynamic_cast<const sv4guiMitkSimJob1d*>(this->GetInput());
     if(!mitkSimJob) return;
 
     TiXmlDocument document;
@@ -286,7 +286,7 @@ void sv4guiMitkSimJobIO1d::Write()
     mjElement->SetAttribute("status", mitkSimJob->GetStatus());
     document.LinkEndChild(mjElement);
 
-    sv4guiSimJob* job=mitkSimJob->GetSimJob();
+    sv4guiSimJob1d* job=mitkSimJob->GetSimJob();
 
     if(job)
     {
@@ -408,7 +408,7 @@ void sv4guiMitkSimJobIO1d::Write()
 mitk::IFileIO::ConfidenceLevel sv4guiMitkSimJobIO1d::GetWriterConfidenceLevel() const
 {
     if (mitk::AbstractFileIO::GetWriterConfidenceLevel() == mitk::IFileIO::Unsupported) return mitk::IFileIO::Unsupported;
-    const sv4guiMitkSimJob* input = dynamic_cast<const sv4guiMitkSimJob*>(this->GetInput());
+    const sv4guiMitkSimJob1d* input = dynamic_cast<const sv4guiMitkSimJob1d*>(this->GetInput());
     if (input)
     {
         return Supported;

@@ -32,7 +32,7 @@
 #include "sv4gui_SimJobCreate1d.h"
 #include "ui_sv4gui_SimJobCreate1d.h"
 
-#include "sv4gui_MitkSimJob.h"
+#include "sv4gui_MitkSimJob1d.h"
 #include "sv4gui_Model.h"
 #include "sv4gui_DataNodeOperation.h"
 
@@ -91,8 +91,8 @@ void sv4guiSimJobCreate1d::Activated()
     {
         mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
 
-        mitk::NodePredicateDataType::Pointer isSimFolder = mitk::NodePredicateDataType::New("sv4guiSimulationFolder");
-        mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
+        mitk::NodePredicateDataType::Pointer isSimFolder = mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder");
+        mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
 
         if(isSimFolder->CheckNode(selectedNode)){
             m_SimulationFolderNode=selectedNode;
@@ -163,7 +163,7 @@ void sv4guiSimJobCreate1d::CreateJob()
         return;
     }
 
-    sv4guiMitkSimJob::Pointer mitkJob = sv4guiMitkSimJob::New();
+    sv4guiMitkSimJob1d::Pointer mitkJob = sv4guiMitkSimJob1d::New();
     mitkJob->SetModelName(selectedModelNode->GetName());
     mitkJob->SetDataModified();
 

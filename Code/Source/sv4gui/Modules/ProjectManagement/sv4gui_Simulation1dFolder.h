@@ -29,47 +29,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_MITKSIMULATIONOBJECTFACTORY1D_H
-#define SV4GUI_MITKSIMULATIONOBJECTFACTORY1D_H
+#ifndef SV4GUI_SIMULATION1DFOLDER_H
+#define SV4GUI_SIMULATION1DFOLDER_H
 
-#include <sv4guiModuleSimulation1dExports.h>
+#include "SimVascular.h"
 
-#include "sv4gui_MitkSimJobIO1d.h"
+#include <sv4guiModuleProjectManagementExports.h>
 
-#include "mitkCoreObjectFactoryBase.h"
+#include "sv4gui_DataFolder.h"
 
-class SV4GUIMODULESIMULATION1D_EXPORT sv4guiMitkSimulationObjectFactory1d : public mitk::CoreObjectFactoryBase
+#include "mitkBaseData.h"
+
+class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiSimulation1dFolder : public sv4guiDataFolder
 {
 public:
-    mitkClassMacro(sv4guiMitkSimulationObjectFactory1d,mitk::CoreObjectFactoryBase);
+
+    mitkClassMacro(sv4guiSimulation1dFolder, sv4guiDataFolder);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
-    virtual mitk::Mapper::Pointer CreateMapper(mitk::DataNode* node, MapperSlotId slotId) override;
-    virtual void SetDefaultProperties(mitk::DataNode* node) override;
-    virtual const char* GetFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetFileExtensionsMap() override;
-    virtual const char* GetSaveFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetSaveFileExtensionsMap() override;
 
-    void RegisterIOFactories(); //deprecatedSince{2013_09}
 protected:
-    sv4guiMitkSimulationObjectFactory1d();
-    ~sv4guiMitkSimulationObjectFactory1d();
-    void CreateFileExtensionsMap();
-    MultimapType m_FileExtensionsMap;
-    MultimapType m_SaveFileExtensionsMap;
 
-private:
+    mitkCloneMacro(Self);
+
+    sv4guiSimulation1dFolder();
+    sv4guiSimulation1dFolder(const sv4guiSimulation1dFolder &other);
+    virtual ~sv4guiSimulation1dFolder();
 
 };
 
-struct SV4GUIMODULESIMULATION1D_EXPORT Registersv4guiMitkSimulationObjectFactory1d{
-  Registersv4guiMitkSimulationObjectFactory1d();
-
-  virtual ~Registersv4guiMitkSimulationObjectFactory1d();
-
-  sv4guiMitkSimulationObjectFactory1d::Pointer m_Factory;
-  sv4guiMitkSimJobIO1d* m_MitkSimJobIO;
-};
-
-#endif // SV4GUI_MITKSIMULATIONOBJECTFACTORY1D_H
+#endif // SV4GUI_SIMULATION1DFOLDER_H

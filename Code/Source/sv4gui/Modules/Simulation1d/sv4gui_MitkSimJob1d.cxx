@@ -160,7 +160,7 @@ void sv4guiMitkSimJob1d::SetRequestedRegion(const DataObject * )
 {
 }
 
-sv4guiSimJob* sv4guiMitkSimJob1d::GetSimJob(unsigned int t) const
+sv4guiSimJob1d* sv4guiMitkSimJob1d::GetSimJob(unsigned int t) const
 {
     if ( t < m_JobSet.size() )
     {
@@ -172,7 +172,7 @@ sv4guiSimJob* sv4guiMitkSimJob1d::GetSimJob(unsigned int t) const
     }
 }
 
-void sv4guiMitkSimJob1d::SetSimJob(sv4guiSimJob* job, unsigned int t)
+void sv4guiMitkSimJob1d::SetSimJob(sv4guiSimJob1d* job, unsigned int t)
 {
     if(t<m_JobSet.size())
     {

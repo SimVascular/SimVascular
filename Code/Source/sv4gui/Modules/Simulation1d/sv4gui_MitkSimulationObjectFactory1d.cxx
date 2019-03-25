@@ -60,13 +60,13 @@ mitk::Mapper::Pointer sv4guiMitkSimulationObjectFactory1d::CreateMapper(mitk::Da
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
-    if( dynamic_cast<sv4guiMitkSimJob*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL )
     {
     }
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
-    if( dynamic_cast<sv4guiMitkSimJob*>(node->GetData())!=NULL )
+    if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL )
     {
     }
   }
@@ -82,7 +82,7 @@ void sv4guiMitkSimulationObjectFactory1d::SetDefaultProperties(mitk::DataNode* n
   if(node->GetData() ==NULL)
     return;
 
-  if( dynamic_cast<sv4guiMitkSimJob*>(node->GetData())!=NULL )
+  if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL )
   {
   }
 }
@@ -123,7 +123,7 @@ Registersv4guiMitkSimulationObjectFactory1d::Registersv4guiMitkSimulationObjectF
     : m_Factory( sv4guiMitkSimulationObjectFactory1d::New() )
 {
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
-    m_MitkSimJobIO=new sv4guiMitkSimJobIO();
+    m_MitkSimJobIO=new sv4guiMitkSimJobIO1d();
 }
 
 Registersv4guiMitkSimulationObjectFactory1d::~Registersv4guiMitkSimulationObjectFactory1d()

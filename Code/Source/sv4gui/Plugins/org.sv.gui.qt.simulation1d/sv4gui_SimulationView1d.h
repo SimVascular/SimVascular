@@ -32,7 +32,7 @@
 #ifndef SV4GUI_SIMULATIONVIEW1D_H
 #define SV4GUI_SIMULATIONVIEW1D_H
 
-#include "sv4gui_MitkSimJob.h"
+#include "sv4gui_MitkSimJob1d.h"
 #include "sv4gui_Model.h"
 #include "sv4gui_CapBCWidget1d.h"
 #include "sv4gui_SplitBCWidget1d.h"
@@ -170,7 +170,7 @@ public:
 
     virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
 
-    sv4guiSimJob* CreateJob(std::string& msg, bool checkValidity = true);
+    sv4guiSimJob1d* CreateJob(std::string& msg, bool checkValidity = true);
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
 
@@ -197,7 +197,7 @@ private:
 
     Ui::sv4guiSimulationView1d *ui;
 
-    sv4guiMitkSimJob* m_MitkJob;
+    sv4guiMitkSimJob1d* m_MitkJob;
 
     sv4guiModel* m_Model;
 
@@ -219,9 +219,9 @@ private:
     QStandardItemModel* m_TableModelVar;
     QMenu* m_TableMenuVar;
 
-    sv4guiCapBCWidget* m_CapBCWidget;
+    sv4guiCapBCWidget1d* m_CapBCWidget;
 
-    sv4guiSplitBCWidget* m_SplitBCWidget;
+    sv4guiSplitBCWidget1d* m_SplitBCWidget;
 
     QStandardItemModel* m_TableModelSolver;
 

@@ -32,7 +32,7 @@
 #ifndef SV4GUI_PROCESSHANDLER1D_H
 #define SV4GUI_PROCESSHANDLER1D_H
 
-#include "sv4gui_MitkSimJob.h"
+#include "sv4gui_MitkSimJob1d.h"
 #include "sv4gui_Model.h"
 #include "sv4gui_CapBCWidget1d.h"
 #include "sv4gui_SplitBCWidget1d.h"

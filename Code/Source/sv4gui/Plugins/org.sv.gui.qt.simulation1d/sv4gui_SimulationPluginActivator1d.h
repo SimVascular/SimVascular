@@ -38,7 +38,7 @@ class sv4guiSimulationPluginActivator1d :
         public QObject, public ctkPluginActivator
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org_sv_gui_qt_simulation")
+    Q_PLUGIN_METADATA(IID "org_sv_gui_qt_simulation1d")
     Q_INTERFACES(ctkPluginActivator)
 
 public:

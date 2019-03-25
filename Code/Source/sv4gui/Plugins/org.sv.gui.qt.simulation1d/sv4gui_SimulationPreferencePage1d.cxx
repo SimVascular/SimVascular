@@ -60,7 +60,7 @@ void sv4guiSimulationPreferencePage1d::CreateQtControl(QWidget* parent)
     berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     Q_ASSERT(prefService);
 
-    m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.simulation");
+    m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.simulation1d");
 
     connect( m_Ui->toolButtonPresolver, SIGNAL(clicked()), this, SLOT(SetPresolverPath()) );
     connect( m_Ui->toolButtonFlowsolver, SIGNAL(clicked()), this, SLOT(SetFlowsolverPath()) );

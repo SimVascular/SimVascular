@@ -58,9 +58,9 @@ public:
     virtual bool VerifyRequestedRegion() override;
     virtual void SetRequestedRegion(const itk::DataObject *data) override;
 
-    sv4guiSimJob* GetSimJob(unsigned int t=0) const;
+    sv4guiSimJob1d* GetSimJob(unsigned int t=0) const;
 
-    void SetSimJob(sv4guiSimJob* job, unsigned int t=0);
+    void SetSimJob(sv4guiSimJob1d* job, unsigned int t=0);
 
     void SetMeshName(std::string meshName);
 

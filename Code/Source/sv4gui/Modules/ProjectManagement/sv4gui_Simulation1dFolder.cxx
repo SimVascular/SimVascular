@@ -29,47 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_MITKSIMULATIONOBJECTFACTORY1D_H
-#define SV4GUI_MITKSIMULATIONOBJECTFACTORY1D_H
+#include "sv4gui_Simulation1dFolder.h"
 
-#include <sv4guiModuleSimulation1dExports.h>
+sv4guiSimulation1dFolder::sv4guiSimulation1dFolder() {
+}
 
-#include "sv4gui_MitkSimJobIO1d.h"
+sv4guiSimulation1dFolder::sv4guiSimulation1dFolder(const sv4guiSimulation1dFolder &other) : sv4guiDataFolder(other) {
+}
 
-#include "mitkCoreObjectFactoryBase.h"
-
-class SV4GUIMODULESIMULATION1D_EXPORT sv4guiMitkSimulationObjectFactory1d : public mitk::CoreObjectFactoryBase
-{
-public:
-    mitkClassMacro(sv4guiMitkSimulationObjectFactory1d,mitk::CoreObjectFactoryBase);
-    itkFactorylessNewMacro(Self)
-    itkCloneMacro(Self)
-    virtual mitk::Mapper::Pointer CreateMapper(mitk::DataNode* node, MapperSlotId slotId) override;
-    virtual void SetDefaultProperties(mitk::DataNode* node) override;
-    virtual const char* GetFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetFileExtensionsMap() override;
-    virtual const char* GetSaveFileExtensions() override;
-    virtual mitk::CoreObjectFactoryBase::MultimapType GetSaveFileExtensionsMap() override;
-
-    void RegisterIOFactories(); //deprecatedSince{2013_09}
-protected:
-    sv4guiMitkSimulationObjectFactory1d();
-    ~sv4guiMitkSimulationObjectFactory1d();
-    void CreateFileExtensionsMap();
-    MultimapType m_FileExtensionsMap;
-    MultimapType m_SaveFileExtensionsMap;
-
-private:
-
-};
-
-struct SV4GUIMODULESIMULATION1D_EXPORT Registersv4guiMitkSimulationObjectFactory1d{
-  Registersv4guiMitkSimulationObjectFactory1d();
-
-  virtual ~Registersv4guiMitkSimulationObjectFactory1d();
-
-  sv4guiMitkSimulationObjectFactory1d::Pointer m_Factory;
-  sv4guiMitkSimJobIO1d* m_MitkSimJobIO;
-};
-
-#endif // SV4GUI_MITKSIMULATIONOBJECTFACTORY1D_H
+sv4guiSimulation1dFolder::~sv4guiSimulation1dFolder() {
+}

@@ -38,6 +38,7 @@
 #include "sv4gui_ModelFolder.h"
 #include "sv4gui_MeshFolder.h"
 #include "sv4gui_SimulationFolder.h"
+#include "sv4gui_Simulation1dFolder.h"
 #include "sv4gui_RepositoryFolder.h"
 #include "sv4gui_svFSIFolder.h"
 
@@ -47,6 +48,7 @@
 #include "sv4gui_Model.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MitkSimJob.h"
+#include "sv4gui_MitkSimJob1d.h"
 #include "sv4gui_MitkMeshIO.h"
 #include "sv4gui_VtkUtils.h"
 #include "sv4gui_MitksvFSIJob.h"
@@ -83,6 +85,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     QString modelFolderName="Models";
     QString meshFolderName="Meshes";
     QString simFolderName="Simulations";
+    QString sim1dFolderName="Simulations1d";
     QString reposFolderName="Repository";
     QString svFSIFolderName="svFSI";
 
@@ -111,6 +114,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         dir.mkdir(modelFolderName);
         dir.mkdir(meshFolderName);
         dir.mkdir(simFolderName);
+        dir.mkdir(sim1dFolderName);
         dir.mkdir(reposFolderName);
         dir.mkdir(svFSIFolderName);
 
@@ -175,6 +179,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         modelFolderName=projDesc.firstChildElement("models").attribute("folder_name");
         meshFolderName=projDesc.firstChildElement("meshes").attribute("folder_name");
         simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
+        sim1dFolderName=projDesc.firstChildElement("simulations1d").attribute("folder_name");
 	svFSIFolderName=projDesc.firstChildElement("svFSI").attribute("folder_name");
         //reposFolderName=projDesc.firstChildElement("repository").attribute("folder_name");
 
@@ -202,6 +207,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     mitk::DataNode::Pointer modelFolderNode=CreateDataFolder<sv4guiModelFolder>(dataStorage, modelFolderName, projectFolderNode);
     mitk::DataNode::Pointer meshFolderNode=CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
     mitk::DataNode::Pointer simFolderNode=CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
+    mitk::DataNode::Pointer sim1dFolderNode=CreateDataFolder<sv4guiSimulation1dFolder>(dataStorage, sim1dFolderName, projectFolderNode);
     mitk::DataNode::Pointer reposFolderNode=CreateDataFolder<sv4guiRepositoryFolder>(dataStorage, reposFolderName, projectFolderNode);
     mitk::DataNode::Pointer svFSIFolderNode=CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
 
@@ -211,6 +217,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     modelFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     meshFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     simFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    sim1dFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     reposFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     svFSIFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
@@ -383,6 +390,19 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             dataStorage->Add(jobNode,simFolderNode);
         }
 
+        //simulation1d folder
+        sim1dFolderNode->SetVisibility(false);
+        QDir dirSim1d(projPath);
+        dirSim1d.cd(sim1dFolderName);
+        fileInfoList=dirSim1d.entryInfoList(QStringList("*.sjb"), QDir::Files, QDir::Name);
+        for(int i=0;i<fileInfoList.size();i++)
+        {
+            //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            jobNode->SetVisibility(false);
+            dataStorage->Add(jobNode,sim1dFolderNode);
+        }
+
         //svFSI folder
         svFSIFolderNode->SetVisibility(false);
         QDir dirFSI(projPath);
@@ -436,6 +456,10 @@ void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
 
     tag = doc.createElement("simulations");
     tag.setAttribute("folder_name","Simulations");
+    root.appendChild(tag);
+
+    tag = doc.createElement("simulations1d");
+    tag.setAttribute("folder_name","Simulations1d");
     root.appendChild(tag);
 
     tag = doc.createElement("svFSI");
@@ -955,6 +979,48 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         dirSim.remove(QString::fromStdString(removeList[i])+".sjb");
     }
     simFolder->ClearRemoveList();
+
+    // Save simulations 1d jobs
+    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder"));
+    mitk::DataNode::Pointer sim1dFolderNode=rs->GetElement(0);
+    std::string sim1dFolderName=sim1dFolderNode->GetName();
+    sv4guiSimulation1dFolder* sim1dFolder=dynamic_cast<sv4guiSimulation1dFolder*>(sim1dFolderNode->GetData());
+    removeList.clear();
+    if(sim1dFolder)
+        removeList=sim1dFolder->GetNodeNamesToRemove();
+
+    rs=dataStorage->GetDerivations(sim1dFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d"));
+
+    QDir dir1dSim(QString::fromStdString(projPath));
+    dir1dSim.cd(QString::fromStdString(sim1dFolderName));
+
+    for(int i=0;i<rs->size();i++)
+    {
+        mitk::DataNode::Pointer node=rs->GetElement(i);
+
+        for(int j=removeList.size()-1;j>-1;j--)
+        {
+            if(removeList[j]==node->GetName())
+                removeList.erase(removeList.begin()+j);
+        }
+
+        sv4guiMitkSimJob1d *mitkJob=dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData());
+        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dir1dSim.exists(QString::fromStdString(node->GetName())+".sjb")) )
+            continue;
+
+        QString	filePath=dir1dSim.absoluteFilePath(QString::fromStdString(node->GetName())+".sjb");
+        mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+
+        node->SetStringProperty("path",dir1dSim.absolutePath().toStdString().c_str());
+
+        mitkJob->SetDataModified(false);
+    }
+
+    for(int i=0;i<removeList.size();i++)
+    {
+        dirSim.remove(QString::fromStdString(removeList[i])+".sjb");
+    }
+    sim1dFolder->ClearRemoveList();
 
 
     //svFSI Jobs

@@ -85,7 +85,7 @@ void sv4guiSimJobCreateAction1d::Run(const QList<mitk::DataNode::Pointer> &selec
             delete m_SimJobCreateWidget;
         }
 
-        m_SimJobCreateWidget=new sv4guiSimJobCreate(m_DataStorage, selectedNode);
+        m_SimJobCreateWidget=new sv4guiSimJobCreate1d(m_DataStorage, selectedNode);
         m_SimJobCreateWidget->show();
         m_SimJobCreateWidget->SetFocus();
     }

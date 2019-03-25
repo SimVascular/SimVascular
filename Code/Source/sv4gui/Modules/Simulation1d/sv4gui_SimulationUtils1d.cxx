@@ -45,7 +45,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkAbstractArray.h>
 
-std::string sv4guiSimulationUtils1d::CreatePreSolverFileContent(sv4guiSimJob* job, std::string outputDir)
+std::string sv4guiSimulationUtils1d::CreatePreSolverFileContent(sv4guiSimJob1d* job, std::string outputDir)
 {
     std::stringstream ss;
     std::map<std::string,int> IDs;
@@ -232,7 +232,7 @@ std::string sv4guiSimulationUtils1d::CreatePreSolverFileContent(sv4guiSimJob* jo
     return ss.str();
 }
 
-std::string sv4guiSimulationUtils1d::CreateRCRTFileContent(sv4guiSimJob* job)
+std::string sv4guiSimulationUtils1d::CreateRCRTFileContent(sv4guiSimJob1d* job)
 {
     std::stringstream ss;
     //    auto basicProps=job->GetBasicProps();
@@ -268,7 +268,7 @@ std::string sv4guiSimulationUtils1d::CreateRCRTFileContent(sv4guiSimJob* job)
         return "2\n"+ss.str();
 }
 
-std::string sv4guiSimulationUtils1d::CreateCORTFileContent(sv4guiSimJob* job)
+std::string sv4guiSimulationUtils1d::CreateCORTFileContent(sv4guiSimJob1d* job)
 {
     std::stringstream ss;
     int maxStepNumber=0;
@@ -373,7 +373,7 @@ std::string sv4guiSimulationUtils1d::CreateCORTFileContent(sv4guiSimJob* job)
     }
 }
 
-std::string sv4guiSimulationUtils1d::CreateFlowSolverFileContent(sv4guiSimJob* job)
+std::string sv4guiSimulationUtils1d::CreateFlowSolverFileContent(sv4guiSimJob1d* job)
 {
     std::stringstream ss;
     std::map<std::string,int> IDs=job->GetIDs();

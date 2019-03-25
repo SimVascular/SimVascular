@@ -48,7 +48,7 @@ class SV4GUIMODULESIMULATION1D_EXPORT sv4guiSimulationUtils1d
 
 public:
 
-    static std::string CreatePreSolverFileContent(sv4guiSimJob1d1* job, std::string outputDir="");
+    static std::string CreatePreSolverFileContent(sv4guiSimJob1d* job, std::string outputDir="");
 
     static std::string CreateRCRTFileContent(sv4guiSimJob1d* job);
 

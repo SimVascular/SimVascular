@@ -32,11 +32,11 @@
 #include "sv4gui_SimulationView1d.h"
 #include "ui_sv4gui_SimulationView1d.h"
 
-#include "sv4gui_TableCapDelegate.h"
-#include "sv4gui_TableSolverDelegate.h"
+#include "sv4gui_TableCapDelegate1d.h"
+#include "sv4gui_TableSolverDelegate1d.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshLegacyIO.h"
-#include "sv4gui_SimulationUtils.h"
+#include "sv4gui_SimulationUtils1d.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
@@ -205,7 +205,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     //for cap table
     m_TableModelCap = new QStandardItemModel(this);
     ui->tableViewCap->setModel(m_TableModelCap);
-    sv4guiTableCapDelegate* itemDelegate=new sv4guiTableCapDelegate(this);
+    sv4guiTableCapDelegate1d* itemDelegate=new sv4guiTableCapDelegate1d(this);
     ui->tableViewCap->setItemDelegateForColumn(1,itemDelegate);
 
     connect( ui->tableViewCap->selectionModel()
@@ -230,14 +230,14 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     connect( splitBCRAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSplitBCWidgetR(bool) ) );
     connect( splitBCCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSplitBCWidgetC(bool) ) );
 
-    m_CapBCWidget=new sv4guiCapBCWidget();
+    m_CapBCWidget=new sv4guiCapBCWidget1d();
     m_CapBCWidget->move(400,400);
     m_CapBCWidget->hide();
     m_CapBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     connect(m_CapBCWidget,SIGNAL(accepted()), this, SLOT(SetCapBC()));
 
-    m_SplitBCWidget=new sv4guiSplitBCWidget();
+    m_SplitBCWidget=new sv4guiSplitBCWidget1d();
     m_SplitBCWidget->move(400,400);
     m_SplitBCWidget->hide();
     m_SplitBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
@@ -270,7 +270,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     //for solver table
     m_TableModelSolver = new QStandardItemModel(this);
     ui->tableViewSolver->setModel(m_TableModelSolver);
-    sv4guiTableSolverDelegate* itemSolverDelegate=new sv4guiTableSolverDelegate(this);
+    sv4guiTableSolverDelegate1d* itemSolverDelegate=new sv4guiTableSolverDelegate1d(this);
     ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
     //for data file and run
@@ -441,7 +441,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     }
 
     mitk::DataNode::Pointer jobNode=nodes.front();
-    sv4guiMitkSimJob* mitkJob=dynamic_cast<sv4guiMitkSimJob*>(jobNode->GetData());
+    sv4guiMitkSimJob1d* mitkJob=dynamic_cast<sv4guiMitkSimJob1d*>(jobNode->GetData());
 
     if(!mitkJob)
     {
@@ -586,7 +586,7 @@ void sv4guiSimulationView1d::AddObservers()
             m_DataInteractor->SetEventConfig("sv4gui_ModelConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleModel"));
             m_DataInteractor->SetDataNode(m_ModelNode);
         }
-        m_ModelNode->SetStringProperty("interactor user","simulation");
+        m_ModelNode->SetStringProperty("interactor user","simulation1d");
         sv4guiModelDataInteractor* interactor=dynamic_cast<sv4guiModelDataInteractor*>(m_ModelNode->GetDataInteractor().GetPointer());
         if(interactor)
             interactor->SetFaceSelectionOnly();
@@ -612,7 +612,7 @@ void sv4guiSimulationView1d::RemoveObservers()
     {
         std::string user="";
         m_ModelNode->GetStringProperty("interactor user", user);
-        if(user=="simulation")
+        if(user=="simulation1d")
             m_ModelNode->SetDataInteractor(NULL);
     }
     m_DataInteractor=NULL;
@@ -635,10 +635,10 @@ void sv4guiSimulationView1d::UpdateGUIBasic()
     if(!m_MitkJob)
         return;
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job==NULL)
     {
-        job=new sv4guiSimJob();
+        job=new sv4guiSimJob1d();
     }
 
     m_TableModelBasic->clear();
@@ -1155,10 +1155,10 @@ void sv4guiSimulationView1d::UpdateGUICap()
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
     if(modelElement==NULL) return;
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job==NULL)
     {
-        job=new sv4guiSimJob();
+        job=new sv4guiSimJob1d();
     }
 
     m_TableModelCap->clear();
@@ -1370,10 +1370,10 @@ void sv4guiSimulationView1d::UpdateGUIWall()
     if(!m_MitkJob)
         return;
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job==NULL)
     {
-        job=new sv4guiSimJob();
+        job=new sv4guiSimJob1d();
     }
 
     if(job->GetWallProp("Type")=="rigid")
@@ -1455,10 +1455,10 @@ void sv4guiSimulationView1d::UpdateGUISolver()
     if(!m_MitkJob)
         return;
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job==NULL)
     {
-        job=new sv4guiSimJob();
+        job=new sv4guiSimJob1d();
     }
 
     m_TableModelSolver->clear();
@@ -1588,7 +1588,7 @@ void sv4guiSimulationView1d::UpdateGUIJob()
     int coreNum=QThread::idealThreadCount();
     ui->sliderNumProcs->setMaximum(coreNum);
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job==NULL)
         return;
 
@@ -1610,7 +1610,7 @@ void sv4guiSimulationView1d::UpdateGUIRunDir()
     if(!m_MitkJob)
         return;
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job==NULL)
         return;
 
@@ -1814,7 +1814,7 @@ void sv4guiSimulationView1d::RunJob()
     }
 
     int totalSteps=100;//initial none zero value
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job)
     {
         job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
@@ -1840,7 +1840,7 @@ void sv4guiSimulationView1d::RunJob()
         flowsolverProcess->setArguments(QStringList());
     }
 
-    sv4guiSolverProcessHandler* handler=new sv4guiSolverProcessHandler(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,m_Parent);
+    sv4guiSolverProcessHandler1d* handler=new sv4guiSolverProcessHandler1d(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,m_Parent);
     handler->Start();
 }
 
@@ -1866,7 +1866,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     mitk::StatusBar::GetInstance()->DisplayText("Creating Job");
     std::string msg;
 
-    sv4guiSimJob* job=CreateJob(msg);
+    sv4guiSimJob1d* job=CreateJob(msg);
 
     if(job==NULL)
     {
@@ -1881,7 +1881,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     dir.mkpath(outputDir);
 
     mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file...");
-    QString svpreFielContent=QString::fromStdString(sv4guiSimulationUtils::CreatePreSolverFileContent(job));
+    QString svpreFielContent=QString::fromStdString(sv4guiSimulationUtils1d::CreatePreSolverFileContent(job));
     QFile svpreFile(outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+".svpre");
     if(svpreFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -1905,7 +1905,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     }
 
     mitk::StatusBar::GetInstance()->DisplayText("Creating solver.inp");
-    QString solverFileContent=QString::fromStdString(sv4guiSimulationUtils::CreateFlowSolverFileContent(job));
+    QString solverFileContent=QString::fromStdString(sv4guiSimulationUtils1d::CreateFlowSolverFileContent(job));
     QFile solverFile(outputDir+"/solver.inp");
     if(solverFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -1922,7 +1922,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
         numStartFile.close();
     }
 
-    QString rcrtFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateRCRTFileContent(job));
+    QString rcrtFielContent=QString::fromStdString(sv4guiSimulationUtils1d::CreateRCRTFileContent(job));
     if(rcrtFielContent!="")
     {
         mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
@@ -1935,7 +1935,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
         }
     }
 
-    QString cortFielContent=QString::fromStdString(sv4guiSimulationUtils::CreateCORTFileContent(job));
+    QString cortFielContent=QString::fromStdString(sv4guiSimulationUtils1d::CreateCORTFileContent(job));
     if(cortFielContent!="")
     {
         mitk::StatusBar::GetInstance()->DisplayText("Creating cort.dat");
@@ -2025,9 +2025,9 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
             arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
             presolverProcess->setArguments(arguments);
 #if defined(Q_OS_MAC)
-            sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,false,m_Parent);
+            sv4guiProcessHandler1d* handler=new sv4guiProcessHandler1d(presolverProcess,m_JobNode,true,false,m_Parent);
 #else
-            sv4guiProcessHandler* handler=new sv4guiProcessHandler(presolverProcess,m_JobNode,true,true,m_Parent);
+            sv4guiProcessHandler1d* handler=new sv4guiProcessHandler1d(presolverProcess,m_JobNode,true,true,m_Parent);
 #endif
             handler->Start();
         }
@@ -2096,9 +2096,9 @@ void sv4guiSimulationView1d::ImportFiles()
     }
 }
 
-sv4guiSimJob* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkValidity)
+sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkValidity)
 {
-    sv4guiSimJob* job=new sv4guiSimJob();
+    sv4guiSimJob1d* job=new sv4guiSimJob1d();
 
     //for basic
     for(int i=0;i<m_TableModelBasic->rowCount();i++)
@@ -2487,7 +2487,7 @@ void sv4guiSimulationView1d::SaveToManager()
 
     std::string msg;
 
-    sv4guiSimJob* job=CreateJob(msg);
+    sv4guiSimJob1d* job=CreateJob(msg);
 
     if(job==NULL)
     {
@@ -2657,7 +2657,7 @@ void sv4guiSimulationView1d::ExportResults()
     postsolverProcess->setProgram(postsolverPath);
     postsolverProcess->setArguments(arguments);
 
-    sv4guiProcessHandler* handler=new sv4guiProcessHandler(postsolverProcess,m_JobNode,false,false,m_Parent);
+    sv4guiProcessHandler1d* handler=new sv4guiProcessHandler1d(postsolverProcess,m_JobNode,false,false,m_Parent);
     handler->Start();
 
     QString detailedInfo=handler->GetMessage();
@@ -2730,7 +2730,7 @@ void sv4guiSimulationView1d::ExportResults()
             QString unit=ui->comboBoxSimUnits->currentText();
             bool skipWalls=ui->checkBoxSkipWalls->isChecked();
 
-            calculateFlows=sv4guiSimulationUtils::CreateFlowFiles(outFlowFilePath.toStdString(), outPressureFlePath.toStdString()
+            calculateFlows=sv4guiSimulationUtils1d::CreateFlowFiles(outFlowFilePath.toStdString(), outPressureFlePath.toStdString()
                                                               , outAverageFilePath.toStdString(), outAverageUnitsFilePath.toStdString()
                                                               , vtxFilePaths,ui->checkBoxSingleFile->isChecked()
                                                               , meshFaceDir.toStdString(), meshFaceFileNames
@@ -2810,7 +2810,7 @@ void sv4guiSimulationView1d::UpdateSimJob()
     if(!m_MitkJob)
         return;
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     std::string numProcsStr="";
     if(job)
     {
@@ -2818,7 +2818,7 @@ void sv4guiSimulationView1d::UpdateSimJob()
     }
 
     std::string msg="";
-    sv4guiSimJob* newJob=CreateJob(msg,false);
+    sv4guiSimJob1d* newJob=CreateJob(msg,false);
     if(newJob==NULL)
         return;
 
@@ -2842,7 +2842,7 @@ void sv4guiSimulationView1d::UpdateSimJobNumProcs()
     if(!m_MitkJob)
         return;
 
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job)
     {
         std::string numProcsStr=QString::number((int)(ui->sliderNumProcs->value())).toStdString();

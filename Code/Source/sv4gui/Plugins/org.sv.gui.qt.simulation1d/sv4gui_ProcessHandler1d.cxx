@@ -31,11 +31,11 @@
 
 #include "sv4gui_ProcessHandler1d.h"
 
-#include "sv4gui_TableCapDelegate.h"
-#include "sv4gui_TableSolverDelegate.h"
+#include "sv4gui_TableCapDelegate1d.h"
+#include "sv4gui_TableSolverDelegate1d.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshLegacyIO.h"
-#include "sv4gui_SimulationUtils.h"
+#include "sv4gui_SimulationUtils1d.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
@@ -135,7 +135,7 @@ void sv4guiProcessHandler1d::AfterProcessFinished(int exitCode, QProcess::ExitSt
         icon=QMessageBox::Information;
         if(m_JobNode.IsNotNull())
         {
-            sv4guiMitkSimJob* mitkJob=dynamic_cast<sv4guiMitkSimJob*>(m_JobNode->GetData());
+            sv4guiMitkSimJob1d* mitkJob=dynamic_cast<sv4guiMitkSimJob1d*>(m_JobNode->GetData());
             if(mitkJob)
             {
                 mitkJob->SetStatus("Input/Data files created");

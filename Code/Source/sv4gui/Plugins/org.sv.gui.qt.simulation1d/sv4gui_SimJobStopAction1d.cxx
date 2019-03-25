@@ -33,7 +33,7 @@
 
 #include <mitkNodePredicateDataType.h>
 
-#include "sv4gui_SimulationView.h"
+#include "sv4gui_SimulationView1d.h"
 
 sv4guiSimJobStopAction1d::sv4guiSimJobStopAction1d()
     : m_Functionality(NULL)
@@ -88,8 +88,8 @@ void sv4guiSimJobStopAction1d::Run(const QList<mitk::DataNode::Pointer> &selecte
 
           if(running)
           {
-              sv4guiSolverProcessHandler* handler=NULL;
-              bool ok=selectedNode->GetPropertyValue<sv4guiSolverProcessHandler*>("process handler",handler);
+              sv4guiSolverProcessHandler1d* handler=NULL;
+              bool ok=selectedNode->GetPropertyValue<sv4guiSolverProcessHandler1d*>("process handler",handler);
 
               if(ok && handler)
               {

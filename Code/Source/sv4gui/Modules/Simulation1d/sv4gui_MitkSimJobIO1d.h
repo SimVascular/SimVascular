@@ -34,7 +34,7 @@
 
 #include <sv4guiModuleSimulation1dExports.h>
 
-#include "mitkAbstractFileIO1d.h"
+#include "mitkAbstractFileIO.h"
 
 class SV4GUIMODULESIMULATION1D_EXPORT sv4guiMitkSimJobIO1d : public mitk::AbstractFileIO
 {

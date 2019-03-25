@@ -254,6 +254,7 @@ if(SV_USE_QT_GUI)
     "Source/sv4gui/Modules/Model/Common"
     "Source/sv4gui/Modules/Mesh/Common"
     "Source/sv4gui/Modules/Simulation"
+    "Source/sv4gui/Modules/Simulation1d"
     "Source/sv4gui/Modules/ProjectManagement"
     "Source/sv4gui/Modules/QtWidgets"
     "Source/sv4gui/Modules/ImageProcessing"
