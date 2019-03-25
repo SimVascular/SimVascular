@@ -228,9 +228,10 @@ QString sv4guiSimulationPreferences::GetMpiExec()
 void sv4guiSimulationPreferences::SetMpiImplementation()
 {
   MpiImplementation implementation = MpiImplementation::Unknown;
+  m_MpiImplementation = implementation; 
 
   if (m_mpiExec == UnknownBinary) {
-      return implementation;
+      return;
   }
 
   QFileInfo fileInfo(m_mpiExec);

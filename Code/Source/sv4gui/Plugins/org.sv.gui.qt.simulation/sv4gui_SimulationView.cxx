@@ -1768,7 +1768,7 @@ void sv4guiSimulationView::WriteNumStartFile(const QString& runPath, const QStri
     auto startStep = ui->lineEditStartStepNum->text().trimmed();
 
     if (startStep == "") {
-        return false;
+        return;
     }
 
     startStepNumber = startStep.toInt();
