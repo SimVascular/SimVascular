@@ -51,7 +51,7 @@ void sv4guiSimJobCreateAction1d::Run(const QList<mitk::DataNode::Pointer> &selec
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
-    mitk::NodePredicateDataType::Pointer isSimulationFolder = mitk::NodePredicateDataType::New("sv4guiSimulationFolder");
+    mitk::NodePredicateDataType::Pointer isSimulationFolder = mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder");
 
     if(!isSimulationFolder->CheckNode(selectedNode))
     {
