@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create Simulation Job</string>
+   <string>Create 1D Simulation Job</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

@@ -40,7 +40,7 @@
 
 #include <fstream>
 
-static mitk::CustomMimeType Createsv4guiSimJobMimeType()
+static mitk::CustomMimeType Createsv4guiSimJob1dMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svjob");
     mimeType.SetCategory("SimVascular Files");
@@ -51,7 +51,7 @@ static mitk::CustomMimeType Createsv4guiSimJobMimeType()
 }
 
 sv4guiMitkSimJobIO1d::sv4guiMitkSimJobIO1d()
-    : mitk::AbstractFileIO(sv4guiMitkSimJob1d::GetStaticNameOfClass(), Createsv4guiSimJobMimeType(), "SimVascular Job")
+    : mitk::AbstractFileIO(sv4guiMitkSimJob1d::GetStaticNameOfClass(), Createsv4guiSimJob1dMimeType(), "SimVascular Job")
 {
     this->RegisterService();
 }

@@ -1089,6 +1089,8 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
+    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
+
     std::string extension="";
     if(isPath->CheckNode(dataNode))
     {
@@ -1114,6 +1116,11 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     {
         extension="sjb";
     }
+    else if(isSim1dJob->CheckNode(dataNode))
+    {
+        extension="sjb";
+    }
+
 
     std::vector<mitk::BaseData::Pointer> vdata = mitk::IOUtil::Load(path+"/"+dataNode->GetName()+"."+extension);
     if(vdata.size()>0)
@@ -1226,6 +1233,7 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
+    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
     // fix???    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
 
     std::vector<std::string> extensions;
@@ -1257,6 +1265,11 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
         extensions.push_back(".sms");
     }
     else if(isSimJob->CheckNode(dataNode))
+    {
+        extensions.push_back(".sjb");
+        extensions.push_back("");//for folder
+    }
+    else if(isSim1dJob->CheckNode(dataNode))
     {
         extensions.push_back(".sjb");
         extensions.push_back("");//for folder

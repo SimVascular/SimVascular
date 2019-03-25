@@ -91,7 +91,7 @@ void sv4guiSimJobCreateAction1d::Run(const QList<mitk::DataNode::Pointer> &selec
     }
     catch(...)
     {
-        MITK_ERROR << "Simulation Job Creation Error!";
+        MITK_ERROR << "Simulation 1D Job Creation Error!";
     }
 }
 

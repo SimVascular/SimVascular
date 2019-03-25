@@ -9,9 +9,9 @@
   </extension>
 
   <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
-    <contextMenuAction nodeDescriptorName="sv4guiSimulation1DFolder" label="Create 1D Simulation Job" icon="" class="sv4guiSimJobCreateAction1d" />
-    <contextMenuAction nodeDescriptorName="sv4guiMitkSim1DJob" label="Stop Simulation" icon="" class="sv4guiSimJobStopAction1d" />
-    <contextMenuAction nodeDescriptorName="sv4guiMitkSim1DJob" label="Export Data Files" icon="" class="sv4guiSimJobExportAction1d" />
+    <contextMenuAction nodeDescriptorName="sv4guiSimulation1dFolder" label="Create 1D Simulation Job" icon="" class="sv4guiSimJobCreateAction1d" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkSimJob1d" label="Stop Simulation" icon="" class="sv4guiSimJobStopAction1d" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkSimJob1d" label="Export Data Files" icon="" class="sv4guiSimJobExportAction1d" />
   </extension>
 
   <extension point="org.blueberry.ui.preferencePages">
