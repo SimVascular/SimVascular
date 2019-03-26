@@ -218,23 +218,32 @@ QString sv4guiSimulationPreferences::GetMpiExec()
 // This is needed to unsure that MPI is installed and that the
 // correct implementation is installed for a given OS.
 //
-// Check the implementation using 'mpicc -show' and show
+// Check the implementation using 'mpiexec -version' and show
 // it in the Preferences panel.
+//
+// Another way to check the MPI implementation is to use 'mpicc -show'
+// but it is probably better to check the actual mpiexec that will be 
+// used to run jobs.
 //
 void sv4guiSimulationPreferences::SetMpiImplementation()
 {
   MpiImplementation implementation = MpiImplementation::Unknown;
+  m_MpiImplementation = implementation; 
+
+  if (m_mpiExec == UnknownBinary) {
+      return;
+  }
 
   QFileInfo fileInfo(m_mpiExec);
   QString mpiExecPath = fileInfo.path();
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QProcess *checkMpi = new QProcess();
-  QString program(mpiExecPath + "/mpicc");
+  QString program(m_mpiExec);
 
   if (QFile(program).exists()) {
     QStringList arguments;
-    arguments << "-show";
+    arguments << "-version";
     checkMpi->setProgram(program);
     checkMpi->setArguments(arguments);
     checkMpi->start(program, arguments);
@@ -242,7 +251,7 @@ void sv4guiSimulationPreferences::SetMpiImplementation()
     QString output(checkMpi->readAllStandardOutput());
     if (output.contains("mpich")) {
       implementation = MpiImplementation::MPICH;
-    } else if (output.contains("openmpi")) {
+    } else if (output.contains("OpenRTE")) {
       implementation = MpiImplementation::OpenMPI;
     } else {
       implementation = MpiImplementation::Unknown;

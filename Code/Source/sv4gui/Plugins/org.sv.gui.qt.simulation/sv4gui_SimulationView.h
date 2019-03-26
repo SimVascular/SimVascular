@@ -62,6 +62,7 @@ class sv4guiSimulationView : public sv4guiQmitkFunctionality
 public:
 
     static const QString EXTENSION_ID;
+    static const QString MsgTitle;
 
     sv4guiSimulationView();
 
@@ -242,8 +243,9 @@ private:
 
     sv4guiSimulationPreferences m_DefaultPrefs;
 
-    bool CheckSolver();
-    bool CheckMpi();
+    void CheckSolver();
+    void CheckMpi();
+    void WriteNumStartFile(const QString& runPath, const QString& jobPath, const int numProcs, int& startStepNumber);
 
 };
 
