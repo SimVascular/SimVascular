@@ -32,7 +32,9 @@
 #include "SimVascular.h"
 
 #include "sv_AdaptObject.h"
+#ifdef SV_USE_PYTHON
 #include "sv_adapt_init_py.h"
+#endif
 //#include "sv_TetGenAdapt.h"
 #include "sv_MeshObject.h"
 #include "sv_misc_utils.h"
