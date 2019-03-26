@@ -6,6 +6,7 @@ sudo yum -y update
 #sudo yum -y install devtoolset-6
 #sudo yum -y install rh-git29
 sudo yum -y install gcc72
+sudo yum -y install gcc72-c++
 
 # needed for some makefile stuff
 sudo yum -y install tcl
