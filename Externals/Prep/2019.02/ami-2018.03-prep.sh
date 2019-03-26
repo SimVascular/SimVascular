@@ -1,8 +1,6 @@
 # generic
 sudo yum -y update
 
-sudo yum -y install redhat-lsb
-
 # need Developer Toolset since gcc 4.8 is too old for Qt
 #sudo yum -y install centos-release-scl
 #sudo yum -y install devtoolset-6
@@ -13,11 +11,12 @@ sudo yum -y install gcc72
 sudo yum -y install tcl
 
 ### to link against qt pre-built
-sudo yum -y install libglew
-sudo yum -y install libglew-devel
+sudo yum -y install libGLEW
+sudo yum -y install glew
+sudo yum -y install glew-devel
 
 # for qt
-sudo yum -y install rh-ruby23
+sudo yum -y install ruby23
 sudo yum -y install gperf
 sudo yum -y install icu
 sudo yum -y install libicu-devel
@@ -42,7 +41,7 @@ sudo yum -y install dos2unix
 sudo apt-get -y install bbe
 
 ### used by some of the SV cmake code
-sudo yum -y install lsb-core
+sudo yum -y install redhat-lsb
 
 ### cmake tools  (note: we need newer version of cmake installed below!)
 #sudo yum -y install cmake
