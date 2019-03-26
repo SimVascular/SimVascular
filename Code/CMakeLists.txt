@@ -301,7 +301,9 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Executables
-set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Application")
+if(SV_USE_QT_GUI)
+  set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Application")
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
