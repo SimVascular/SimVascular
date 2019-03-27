@@ -144,8 +144,6 @@ public slots:
 
     void UpdateSimJobNumProcs();
 
-    void SetupInternalSolverPaths();
-
     void ShowCalculateFowsWidget(bool checked = false);
 
     void ShowModel(bool checked = false);
@@ -245,7 +243,7 @@ private:
 
     void CheckSolver();
     void CheckMpi();
-    void WriteNumStartFile(const QString& runPath, const QString& jobPath, const int numProcs, int& startStepNumber);
+    int GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs);
 
 };
 

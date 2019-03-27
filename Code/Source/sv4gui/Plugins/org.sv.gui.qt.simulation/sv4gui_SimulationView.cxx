@@ -73,6 +73,8 @@
 const QString sv4guiSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
 // Set the title for QMessageBox warnings.
+//
+// Note: On MacOS the window title is ignored (as required by the Mac OS X Guidelines). 
 const QString sv4guiSimulationView::MsgTitle = "SimVascular SV Simulation";
 
 //----------------------
@@ -296,25 +298,25 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 //    ui->widgetCalculateFlows->hide();
     connect(ui->checkBoxCalculateFlows, SIGNAL(clicked(bool)), this, SLOT(ShowCalculateFowsWidget(bool)) );
 
-    SetupInternalSolverPaths();
-
-    //get paths for the external solvers
+    // Set paths for the external solvers.
     berry::IPreferences::Pointer prefs = this->GetPreferences();
     berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
-    //    InitializePreferences(berryprefs);
     this->OnPreferencesChanged(berryprefs);
 }
 
-//--------------------------
-// SetupInternalSolverPaths
-//--------------------------
-// Set the default solver binaries, mpiexec binary and the MPI implementation 
+//----------------------
+// OnPreferencesChanged 
+//----------------------
+// Set solver binaries, mpiexec binary and the MPI implementation 
 // used to create and execute simulation jobs.
+//
+// This method is called when the SV Simulation plugin is activated or when values 
+// in the Preferences Page->SimVascular Simulation panel are changed. 
 //
 // If a SimVascular MITK database exists from previous SimVascular sessions then 
 // the values for the binaries are obtained from there. If the database does not
-// exist then set the values for the binaries to their default values, which
-// are the same values set for the SimVascular Simulation Preferences.
+// exist then set the values of the binaries to their default values, which
+// are the same values set for the SimVascular Simulation Preferences page.
 //
 // The solver binaries are: svpre, svsolver and svpost. The value for each binary
 // contains the full path to the binary together with its name. For example, 
@@ -327,37 +329,6 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 //
 //     m_FlowsolverPath = "/usr/local/sv/svsolver"
 //
-void sv4guiSimulationView::SetupInternalSolverPaths()
-{
-    // Get the solver binaries from the MITK database.
-    berry::IPreferences::Pointer dbPrefs = this->GetPreferences();
-    berry::IBerryPreferences* prefs = dynamic_cast<berry::IBerryPreferences*>(dbPrefs.GetPointer());
-
-    // Get the default solver binaries.
-    //auto defaultPrefs = sv4guiSimulationPreferences();
-
-    // Set the solver binaries.
-    m_PresolverPath = prefs->Get("presolver path", m_DefaultPrefs.GetPreSolver());
-    m_FlowsolverPath = prefs->Get("flowsolver path", m_DefaultPrefs.GetSolver()); 
-    m_PostsolverPath = prefs->Get("postsolver path", m_DefaultPrefs.GetPostSolver());
-
-    // Set the mpiexec binary and mpi implementation.
-    m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultPrefs.GetMpiExec()); 
-    auto mpiName = prefs->Get("mpi implementation", m_DefaultPrefs.GetMpiName());
-    m_MpiImplementation = m_DefaultPrefs.GetMpiImplementation(mpiName);
-}
-
-//----------------------
-// OnPreferencesChanged 
-//----------------------
-// Set user-defined solver binaries, mpiexec binary and the MPI implementation 
-// used to create and execute simulation jobs.
-//
-// This method is called when the SV Simulation plugin is activated or when values 
-// in the Preferences Page->SimVascular Simulation panel are changed. In either 
-// case it seems that values are read from a MITK database and so persist between 
-// SimVascular sessions.
-//
 // The 'prefs' Get() argument names (e.g. "presolver path") are set by the 
 // sv4guiSimulationPreferencePage object.
 //
@@ -367,15 +338,15 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
         return;
     }
 
-    m_PresolverPath = prefs->Get("presolver path","");
-    m_FlowsolverPath = prefs->Get("flowsolver path","");
-    m_PostsolverPath = prefs->Get("postsolver path","");
-
-    m_UseMPI = prefs->GetBool("use mpi", true);
-    m_MPIExecPath = prefs->Get("mpiexec path","");
-
-    m_UseCustom = prefs->GetBool("use custom", false);
-    m_SolverTemplatePath = prefs->Get("solver template path","");
+    // Set the solver binaries.
+    m_PresolverPath = prefs->Get("presolver path", m_DefaultPrefs.GetPreSolver());
+    m_FlowsolverPath = prefs->Get("flowsolver path", m_DefaultPrefs.GetSolver()); 
+    m_PostsolverPath = prefs->Get("postsolver path", m_DefaultPrefs.GetPostSolver());
+    
+    // Set the mpiexec binary and mpi implementation.
+    m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultPrefs.GetMpiExec()); 
+    auto mpiName = prefs->Get("mpi implementation", m_DefaultPrefs.GetMpiName());
+    m_MpiImplementation = m_DefaultPrefs.GetMpiImplementation(mpiName);
 }
 
 //--------------------
@@ -1701,13 +1672,14 @@ void sv4guiSimulationView::RunJob()
         // Set the solver output directory.
         QString runPath = jobPath;
         int numProcs = ui->sliderNumProcs->value();
+
         if(m_UseMPI && (numProcs > 1)) {
             runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
         }
 
-        // Write numstart.dat file with the start step number.
-        int startStep = 0;
-        WriteNumStartFile(runPath, jobPath, numProcs, startStep);
+        // Get the simulation start time step and for numProcs=1
+        // write the numstart.dat file. 
+        auto startStep = GetStartTimeStep(runPath, jobPath, numProcs);
 
         // Execute the job.
         //
@@ -1746,67 +1718,89 @@ void sv4guiSimulationView::RunJob()
   }
 }
 
-//-------------------
-// WriteNumStartFile
-//-------------------
-// Write numstart.dat file with the start step number.
+//------------------
+// GetStartTimeStep 
+//------------------
+// Get the simulation start step number.
+//
+// The simulation start step number is obtained from the GUI 'Starting Step Number'
+// if it is given. If it is not then it is read from a numstart.dat file.  The numstart.dat 
+// file is written by the solver at the end of each simulation time step for which results 
+// were computed. For a numProcs=1 numstart.dat is written to PROJECT/Simulations/JOB_NAME/,
+// for numProcs=N is is written to PROJECT/Simulations/JOB_NAME/N-procs_case.
 //
 // Arguments:
 //
-//   runPath: The path to the PROJECT/Simulations/JOB_NAME/ directory that 
-//            contains solver files (e.g. solver.inp).
+//   numProcs: The number of processors used to run the simulation job.
 //
-//   jobPath: The path to the PROJECT/Simulations/JOB_NAME/ directory that
+//   runPath: The path to the PROJECT/Simulations/JOB_NAME/ directory that
 //            simulation results are written to. For a N-processor simulation
 //            it is runPath/'N-procs_case'.
 //
-void sv4guiSimulationView::WriteNumStartFile(const QString& runPath, const QString& jobPath, const int numProcs,
-    int& startStepNumber)
+//   jobPath: The path to the PROJECT/Simulations/JOB_NAME/ directory that 
+//            contains solver files (e.g. solver.inp).
+//
+// Returns:
+//
+//   startStepNumber: The simulation starting time step. 
+//   
+// 
+int sv4guiSimulationView::GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs)
 {
     auto badValue = false;
     std::string exception("Write numstart file");
+
+    // Process start time step from the GUI.
+    //
     auto startStep = ui->lineEditStartStepNum->text().trimmed();
+    auto startStepNumber = startStep.toInt();
 
-    if (startStep == "") {
-        return;
-    }
-
-    startStepNumber = startStep.toInt();
-
-    if ((startStepNumber < 0) || !IsInt(startStep.toStdString())) {
+    if (startStep == "") { 
+        startStepNumber = 0;
+    } else if ((startStepNumber < 0) || !IsInt(startStep.toStdString())) {
         QMessageBox::warning(m_Parent, MsgTitle, "The starting step number must be a positive integer.");
         throw exception; 
     }
 
-    // Check that the a restart files exists for the given starting step.
-    QString runRestart = runPath+"/restart."+startStep+".1";
-    QString jobRestart = jobPath+"/restart."+startStep+".1";
-
-    if(QDir(runPath).exists() && !QFile(runRestart).exists()) { 
-        QString msg1 = "No restart file found in " + runPath + " for the starting step number " + startStep + ".\n\n";
-        QString msg2 = "Please make sure that data files have been created for the simulation.";
-        QMessageBox::warning(m_Parent, MsgTitle, msg1);
-        throw exception; 
-    }
-
-    if((numProcs > 1) && !QFile(jobRestart).exists()) {
-        QString msg1 = "No restart file found in " + jobPath + " for the starting step number " + startStep + 
-            " and the number of processors " + numProcs + ".\n";
-        QMessageBox::warning(m_Parent, MsgTitle, msg1);
-        throw exception; 
-    }
-
-    // Write numstart.dat file.
-    auto fileName = runPath+"/numstart.dat";
+    // Read / write the numstart.dat file to runPath.
+    auto fileName = runPath + "/numstart.dat";
     QFile numStartFile(fileName);
-    if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&numStartFile);
-        out << startStep + "\n";
+
+    // A starting step has been given so check that a restart file
+    // exists for the given starting step.
+    //
+    if (startStep != "") { 
+        QString runRestart = runPath+"/restart."+startStep+".1";
+        QString jobRestart = jobPath+"/restart."+startStep+".1";
+
+        if (!QFile(runRestart).exists()) { 
+            QString msg1 = "No restart file found in " + runPath + " for the starting step number " + startStep + 
+                " and the number of processors " + numProcs + ".\n";
+            QMessageBox::warning(m_Parent, MsgTitle, msg1);
+            throw exception; 
+        }
+
+        // Write the start step to the numstart.dat file.
+        if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&numStartFile);
+            out << startStep + "\n";
+            numStartFile.close();
+        }
+
+    // No start step has been given so read it from the
+    // numstart.dat file.
+    } else if (numStartFile.open(QIODevice::ReadOnly)) {   
+        QTextStream in(&numStartFile);
+        QString stepStr = in.readLine();
+        bool ok;
+        int step = stepStr.toInt(&ok);
+        if (ok) {
+            startStepNumber = step;
+        }
         numStartFile.close();
-    } else {
-        QMessageBox::warning(m_Parent, MsgTitle, "Cannot write " + fileName + ".");
-        throw exception; 
     }
+
+    return startStepNumber;
 }
 
 //-------------
