@@ -55,7 +55,11 @@ case "$osid" in
 	;;
 
     'AmazonAMI')
-        export SV_EXTERN_LINUX_VERSION=amazon_2018_03
+        export SV_EXTERN_LINUX_VERSION=ami_2018_03
+        ;;
+
+    'Amazon')
+        export SV_EXTERN_LINUX_VERSION=amazon_2019_03
         ;;
 
     *)
