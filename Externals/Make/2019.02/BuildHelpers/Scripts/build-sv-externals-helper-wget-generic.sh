@@ -73,8 +73,34 @@ if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
   mkdir -p qt
   pushd qt
   if [[ $SV_EXTERN_OS == "linux" ]]; then
-    wget $PARENT_URL/qt/qt-opensource-linux-x64-5.6.3.run
-    chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
+     osid=$(lsb_release -si)
+     case "$osid" in
+
+       'Ubuntu')
+          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.6.3.run
+          chmod a+rx ./qt-opensource-linux-x64-5.6.3.run	
+	  ;;
+
+      'CentOS')
+          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.6.3.run
+          chmod a+rx ./qt-opensource-linux-x64-5.6.3.run
+	  ;;
+
+      'AmazonAMI')
+          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.6.3.tar.gz
+          chmod a+rx ./qt-opensource-centos-x64-5.6.3.tar.gz
+          ;;
+
+      'Amazon')
+          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.6.3.tar.gz
+          chmod a+rx ./qt-opensource-centos-x64-5.6.3.tar.gz
+          ;;
+
+      *)	 
+	echo "Error!  Invalid Linux Version!"
+	exit
+	;;
+      esac
   fi
   if [[ $SV_EXTERN_OS == "mac_osx" ]]; then
     wget $PARENT_URL/qt/qt-opensource-mac_osx-x64-5.6.3.tar.gz
