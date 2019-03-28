@@ -42,16 +42,16 @@
 
 static mitk::CustomMimeType Createsv4guiSimJob1dMimeType()
 {
-    mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svjob");
+    mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".sv1djob");
     mimeType.SetCategory("SimVascular Files");
-    mimeType.AddExtension("sjb");
-    mimeType.SetComment("SimVascular Job");
+    mimeType.AddExtension("s1djb");
+    mimeType.SetComment("SimVascular 1D Job");
 
     return mimeType;
 }
 
 sv4guiMitkSimJobIO1d::sv4guiMitkSimJobIO1d()
-    : mitk::AbstractFileIO(sv4guiMitkSimJob1d::GetStaticNameOfClass(), Createsv4guiSimJob1dMimeType(), "SimVascular Job")
+    : mitk::AbstractFileIO(sv4guiMitkSimJob1d::GetStaticNameOfClass(), Createsv4guiSimJob1dMimeType(), "SimVascular 1D Job")
 {
     this->RegisterService();
 }

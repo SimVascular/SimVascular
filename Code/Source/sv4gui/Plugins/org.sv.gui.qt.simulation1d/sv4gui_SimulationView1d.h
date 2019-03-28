@@ -69,65 +69,42 @@ public:
 public slots:
 
     void SaveToManager();
-
     void ClearAll();
-
     void AddObservers();
-
     void RemoveObservers();
-
     void UpdateFaceListSelection();
-
     void UpdateGUIBasic();
-
     void TableViewBasicDoubleClicked(const QModelIndex& index);
 
     void TableCapSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-
     void TableViewCapDoubleClicked(const QModelIndex& index);
-
     void TableViewCapContextMenuRequested(const QPoint& pos);
-
     void ShowCapBCWidget( bool checked = false );
-
     void SetDistalPressure( bool checked = false );
-
     void SetCapBC();
 
     void ShowSplitBCWidget(QString splitTarget);
     void ShowSplitBCWidgetR( bool checked = false);
     void ShowSplitBCWidgetC( bool checked = false);
-
     void SplitCapBC();
-
     void UpdateGUICap();
 
     void WallTypeSelectionChanged(int index);
-
     void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-
     void TableViewVarContextMenuRequested(const QPoint& pos);
-
     void SetVarE( bool checked = false );
-
     void SetVarThickness( bool checked = false );
-
     void UpdateGUIWall();
-
     void UpdateGUISolver();
-
     void UpdateGUIJob();
-
     void UpdateGUIRunDir();
 
-//    void ExportInputFiles();
-
-//    void ExportAllFiles();
+    // 1D Mesh slots.
+    void GenerateMesh();
+    void ReadMesh();
 
     void CreateAllFiles();
-
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
-
     void RunJob();
 
     void SetResultDir();
@@ -192,6 +169,8 @@ public:
 #endif
 
 private:
+
+    void Create1DMeshControls(QWidget *parent);
 
     QWidget* m_Parent;
 

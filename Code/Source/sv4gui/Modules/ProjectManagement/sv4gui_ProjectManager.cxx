@@ -76,6 +76,48 @@
 #include <iostream>
 #include <fstream>
 
+// The sv4guiProjectManager class is used to manage SimVascular projects. 
+//
+// The SV Data Manager contains a hierarchy of Data Nodes comprising
+// top level plugin nodes (e.g. Images, Paths, Segmentations, etc.) under 
+// under which instances of that plugin type are created and stored. 
+//
+// For example:
+//
+//     Project Node
+//
+//        Images              - Top Level Images Plugin Data Node
+//           Images-1         - Images Plugin Data Node 1
+//           Images-2         - Images Plugin Data Node 2
+//
+//        Paths               - Top Level Paths Plugin Data Node
+//           Paths-1          - Instance of Paths Plugin Data Node 
+//
+//
+// Each plugin (Images, Paths, etc.) has a unique file extension used to
+// identify a plugin type. Each plugin directory contains files for each plugin 
+// instance (name chosen by the user) with its extenstion. This stores the plugin
+// state, i.e. the values of the GUI widgets used as parameters used to perform
+// plugin operations.
+// 
+//     Images: .vti
+//     Meshes: .msh
+//     Models: .mdl 
+//     Paths:  .pth
+//     Segmentations: .ctgr
+//     Simulations: .sjb
+//     1D Simulations: .s1djb
+//     svFSI: .fsijob
+// 
+//------------
+// AddProject
+//------------
+// Create a new project or read in an existing one.
+//
+//
+// [TODO] 1) Break up this 400 line function so we can see what is going on.
+//        2) Would it somehow be possible to iterate over the different plugins, like maybe use a for loop?
+//
 void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir,bool newProject)
 {
     QString projectConfigFileName=".svproj";
@@ -198,6 +240,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     }
 
 
+    // Create the SV Data Manager top level plugin data nodes.
+    //
     mitk::DataNode::Pointer projectFolderNode= CreateDataFolder<sv4guiProjectFolder>(dataStorage,projName);
     projectFolderNode->AddProperty("project path",mitk::StringProperty::New(projPath.toStdString().c_str()));
 
@@ -221,8 +265,15 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     reposFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     svFSIFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
+    // Create the SV Data Manager plugin data nodes for an existing project.
+    //
+    // Read in the files stored under plugin directories. 
+    //
     if(!newProject)
     {
+
+        // Create Images plugin data nodes.
+        //
         imageFolderNode->SetVisibility(false);
         for(int i=0;i<imageFilePathList.size();i++)
         {
@@ -246,6 +297,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             }
         }
 
+        // Create Paths plugin data nodes.
+        //
         pathFolderNode->SetVisibility(false);
         QDir dir1(projPath);
         dir1.cd(pathFolderName);
@@ -279,6 +332,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             dataStorage->Add(pathNode,pathFolderNode);
         }
 
+        // Create Segmentations plugin data nodes.
+        //
         segFolderNode->SetVisibility(false);
         QDir dirSeg(projPath);
         dirSeg.cd(segFolderName);
@@ -328,6 +383,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             }
         }
 
+        // Create Model plugin data nodes.
+        //
         modelFolderNode->SetVisibility(false);
         QDir dirModel(projPath);
         dirModel.cd(modelFolderName);
@@ -357,6 +414,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             }
         }
 
+        // Create Meshes plugin data nodes.
+        //
         meshFolderNode->SetVisibility(false);
         QDir dirMesh(projPath);
         dirMesh.cd(meshFolderName);
@@ -377,7 +436,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             }
         }
 
-        //simulation folder
+        // Create Simulations plugin data nodes.
+        //
         simFolderNode->SetVisibility(false);
         QDir dirSim(projPath);
         dirSim.cd(simFolderName);
@@ -390,11 +450,12 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             dataStorage->Add(jobNode,simFolderNode);
         }
 
-        //simulation1d folder
+        // Create Simulations1d plugin data nodes.
+        //
         sim1dFolderNode->SetVisibility(false);
         QDir dirSim1d(projPath);
         dirSim1d.cd(sim1dFolderName);
-        fileInfoList=dirSim1d.entryInfoList(QStringList("*.sjb"), QDir::Files, QDir::Name);
+        fileInfoList=dirSim1d.entryInfoList(QStringList("*.s1djb"), QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
             //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
@@ -403,7 +464,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             dataStorage->Add(jobNode,sim1dFolderNode);
         }
 
-        //svFSI folder
+        // Create svFSI plugin data nodes.
+        //
         svFSIFolderNode->SetVisibility(false);
         QDir dirFSI(projPath);
         dirFSI.cd(svFSIFolderName);
@@ -1005,10 +1067,10 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiMitkSimJob1d *mitkJob=dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData());
-        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dir1dSim.exists(QString::fromStdString(node->GetName())+".sjb")) )
+        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dir1dSim.exists(QString::fromStdString(node->GetName())+".s1djb")) )
             continue;
 
-        QString	filePath=dir1dSim.absoluteFilePath(QString::fromStdString(node->GetName())+".sjb");
+        QString	filePath=dir1dSim.absoluteFilePath(QString::fromStdString(node->GetName())+".s1djb");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
         node->SetStringProperty("path",dir1dSim.absolutePath().toStdString().c_str());
@@ -1018,7 +1080,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
 
     for(int i=0;i<removeList.size();i++)
     {
-        dirSim.remove(QString::fromStdString(removeList[i])+".sjb");
+        dirSim.remove(QString::fromStdString(removeList[i])+".s1djb");
     }
     sim1dFolder->ClearRemoveList();
 
@@ -1118,7 +1180,7 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     }
     else if(isSim1dJob->CheckNode(dataNode))
     {
-        extension="sjb";
+        extension="s1djb";
     }
 
 
@@ -1271,7 +1333,7 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     }
     else if(isSim1dJob->CheckNode(dataNode))
     {
-        extensions.push_back(".sjb");
+        extensions.push_back(".s1djb");
         extensions.push_back("");//for folder
     }
     else

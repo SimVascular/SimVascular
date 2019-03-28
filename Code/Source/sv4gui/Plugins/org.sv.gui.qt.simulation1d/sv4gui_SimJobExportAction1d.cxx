@@ -126,7 +126,7 @@ void sv4guiSimJobExportAction1d::Run(const QList<mitk::DataNode::Pointer> &selec
             mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
             projFolderNode->GetStringProperty("project path", projPath);
 
-            rs=m_DataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulationFolder"));
+            rs=m_DataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder"));
             if (rs->size()>0)
             {
                 mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);

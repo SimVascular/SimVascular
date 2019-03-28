@@ -174,26 +174,25 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
     }
 }
 
+//---------------------
+// CreateQtPartControl
+//---------------------
+// Create connections between GUI events (signals) and callbacks (slots). 
+//
 void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 {
     m_Parent=parent;
     ui->setupUi(parent);
-
-    //    m_DisplayWidget=GetActiveStdMultiWidget();
-
-    //    if(m_DisplayWidget==NULL)
-    //    {
-    //        parent->setEnabled(false);
-    //        MITK_ERROR << "Plugin Simulation Init Error: No QmitkStdMultiWidget Available!";
-    //        return;
-    //    }
-
     ui->btnSave->hide();
-//    connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveToManager()) );
 
+    // Show Model checkbox.
     connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
 
+    // Set the toolbox ('1D Mesh', 'Basic Parameters', etc. pages) to display the first page.
     ui->toolBox->setCurrentIndex(0);
+
+    // Create 1D Mesh page controls.
+    Create1DMeshControls(parent);
 
     //for basic table
     m_TableModelBasic = new QStandardItemModel(this);
@@ -202,7 +201,8 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     connect( ui->tableViewBasic, SIGNAL(doubleClicked(const QModelIndex&))
              , this, SLOT(TableViewBasicDoubleClicked(const QModelIndex&)) );
 
-    //for cap table
+    // Inlet and Outlet BCs.
+    //
     m_TableModelCap = new QStandardItemModel(this);
     ui->tableViewCap->setModel(m_TableModelCap);
     sv4guiTableCapDelegate1d* itemDelegate=new sv4guiTableCapDelegate1d(this);
@@ -213,8 +213,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
              , this
              , SLOT( TableCapSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
-    connect( ui->tableViewCap, SIGNAL(doubleClicked(const QModelIndex&))
-             , this, SLOT(TableViewCapDoubleClicked(const QModelIndex&)) );
+    connect( ui->tableViewCap, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(TableViewCapDoubleClicked(const QModelIndex&)) );
 
     connect( ui->tableViewCap, SIGNAL(customContextMenuRequested(const QPoint&))
              , this, SLOT(TableViewCapContextMenuRequested(const QPoint&)) );
@@ -237,6 +236,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 
     connect(m_CapBCWidget,SIGNAL(accepted()), this, SLOT(SetCapBC()));
 
+    // Split Resistance BCs.
     m_SplitBCWidget=new sv4guiSplitBCWidget1d();
     m_SplitBCWidget->move(400,400);
     m_SplitBCWidget->hide();
@@ -295,6 +295,43 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     //    InitializePreferences(berryprefs);
     this->OnPreferencesChanged(berryprefs);
 }
+
+//----------------------
+// Create1DMeshControls
+//----------------------
+// Create connections between GUI events (signals) and callbacks (slots)
+// for the '1D Mesh' page.
+//
+void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
+{
+    auto msg = "[sv4guiSimulationView1d::Create1DMeshControls] ";
+    MITK_INFO << msg << "--------- Create1DMeshControls ----------"; 
+    connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(GenerateMesh()));
+    connect(ui->readMeshPushButton, SIGNAL(clicked()), this, SLOT(ReadMesh()));
+}
+
+//--------------
+// GenerateMesh
+//--------------
+//
+void sv4guiSimulationView1d::GenerateMesh()
+{
+    auto msg = "[sv4guiSimulationView1d::GenerateMesh] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- GenerateMesh ----------";
+}
+
+//----------
+// ReadMesh
+//-----------
+//
+void sv4guiSimulationView1d::ReadMesh()
+{   
+    auto msg = "[sv4guiSimulationView1d::ReadMesh] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "--------- ReadMesh ----------";
+}
+
 
 void sv4guiSimulationView1d::SetupInternalSolverPaths()
 {
@@ -811,12 +848,20 @@ void sv4guiSimulationView1d::UpdateFaceListSelection()
 
 }
 
+//--------------------------
+// TableCapSelectionChanged
+//--------------------------
+//
 void sv4guiSimulationView1d::TableCapSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
+    auto msg = "[sv4guiSimulationView1d::TableCapSelectionChanged] ";
+    MITK_INFO << msg << "------------------- TableCapSelectionChanged ----------";
+
     mitk::StatusBar::GetInstance()->DisplayText("");
 
-    if(!m_Model)
+    if (!m_Model) {
         return;
+    }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
     if(modelElement==NULL) return;
@@ -825,9 +870,7 @@ void sv4guiSimulationView1d::TableCapSelectionChanged( const QItemSelection & /*
 
     modelElement->ClearFaceSelection();
 
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin(); it != indexesOfSelectedRows.end(); it++) {
         int row=(*it).row();
         std::string name= m_TableModelCap->item(row,0)->text().toStdString();
         modelElement->SelectFace(name);
@@ -845,6 +888,8 @@ void sv4guiSimulationView1d::TableCapSelectionChanged( const QItemSelection & /*
 
 void sv4guiSimulationView1d::TableViewCapDoubleClicked(const QModelIndex& index)
 {
+    auto msg = "[sv4guiSimulationView1d::TableViewCapDoubleClicked] ";
+    MITK_INFO << msg << "------------------- TableViewCapDoubleClicked ----------";
     if(index.column()==0)
         ShowCapBCWidget();
 }
@@ -1696,7 +1741,7 @@ QString sv4guiSimulationView1d::GetJobPath()
         mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
         projFolderNode->GetStringProperty("project path", projPath);
 
-        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulationFolder"));
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder"));
         if (rs->size()>0)
         {
             mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
