@@ -1,1 +1,1 @@
-{"argv": ["python", "-m", "simvascular_python_kernel", "-f", "{connection_file}"], "display_name": "SimVascular Python", "env": {"simvascular_python_command": "simvascular_python"}, "language": "python"}
+{"argv": ["python", "-m", "simvascular_python_kernel", "--log-level=DEBUG", "-f", "{connection_file}"], "display_name": "SimVascular Python", "language": "python"}
