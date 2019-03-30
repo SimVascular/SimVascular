@@ -243,14 +243,25 @@ else
 endif
 	-cp -fR $(TOP)/../Python/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
-	-cp -fR Jupyter/share/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share
-	-cp -fR Jupyter/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
-	-cp -f Jupyter/Scripts/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Scripts
+ifeq ($(CLUSTER), x64_cygwin)
+	-cp -fR Jupyter/windows/share/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share
+	-cp -fR Jupyter/windows/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
+	-cp -f Jupyter/windows/Scripts/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Scripts
 	-cp -f $(PYTHON_HOME)/bin/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Scripts
-	-sed -f tmp/sedscript Jupyter/site-packages/simvascular_tcl_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_tcl_kernel/kernel.py
-	-sed -f tmp/sedscript Jupyter/site-packages/simvascular_tk_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_tk_kernel/kernel.py
-	-sed -f tmp/sedscript Jupyter/site-packages/simvascular_python_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_python_kernel/kernel.py
-	-sed -f tmp/sedscript windows_installer_packages/wix-simvascular-bundle.wxs > tmp/wix-simvascular-bundle.wxs
+	-sed -f tmp/sedscript Jupyter/windows/site-packages/simvascular_tcl_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_tcl_kernel/kernel.py
+	-sed -f tmp/sedscript Jupyter/windows/site-packages/simvascular_python_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_python_kernel/kernel.py
+endif
+ifeq ($(CLUSTER), x64_linux)
+	-sed -f tmp/sedscript Jupyter/linux/bin/sv_launch_jupyter.sh > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/sv_launch_jupyter.sh
+	-chmod a+rx $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/sv_launch_jupyter.sh
+	-mkdir -p $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share/jupyter/kernels/simvascular_python
+	-mkdir -p $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share/jupyter/kernels/simvascular_tcl
+	-sed -f tmp/sedscript Jupyter/linux/share/jupyter/kernels/simvascular_python/kernel.json > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share/jupyter/kernels/simvascular_python/kernel.json
+	-sed -f tmp/sedscript Jupyter/linux/share/jupyter/kernels/simvascular_tcl/kernel.json > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share/jupyter/kernels/simvascular_tcl/kernel.json
+	-cp -fR Jupyter/linux/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
+	-sed -f tmp/sedscript Jupyter/windows/site-packages/simvascular_tcl_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_tcl_kernel/kernel.py
+	-sed -f tmp/sedscript Jupyter/windows/site-packages/simvascular_python_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_python_kernel/kernel.py
+endif
 #	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
         # need to delete byte-code compiled code if it exists since this can break
         # installation
