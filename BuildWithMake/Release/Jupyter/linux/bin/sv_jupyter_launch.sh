@@ -1,4 +1,4 @@
-#!/usr/local/package/simvascular/REPLACE_SV_TIMESTAMP/PythonREPLACE_PYTHON_MAJOR_VERSION.REPLACE_PYTHON_MINOR_VERSION/bin/python-wrapper
+#!/usr/local/package/simvascular/REPLACE_SV_TIMESTAMP/PythonREPLACE_PYTHON_MAJOR_VERSION.REPLACE_PYTHON_MINOR_VERSION/bin/svpython
 
 # Copyright (c) Stanford University, The Regents of the University of
 #               California, and others.
