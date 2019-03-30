@@ -1,4 +1,4 @@
-#!/usr/local/package/simvascular/REPLACE_SV_TIMESTAMP/PythonsREPLACE_PYTHON_MAJOR_VERSION.REPLACE_PYTHON_MINOR_VERSION/bin/python-wrapper
+#!/usr/local/package/simvascular/REPLACE_SV_TIMESTAMP/PythonREPLACE_PYTHON_MAJOR_VERSION.REPLACE_PYTHON_MINOR_VERSION/bin/python-wrapper
 
 # Copyright (c) Stanford University, The Regents of the University of
 #               California, and others.
@@ -62,4 +62,4 @@ else:
    os.mkdir(sv_j_path)
 
 sv_notebook_dir_flag = '--notebook-dir=' + sv_j_path
-subprocess.run(['/usr/local/package/simvascular/REPLACE_SV_TIMESTAMP/PythonsREPLACE_PYTHON_MAJOR_VERSION.REPLACE_PYTHON_MINOR_VERSION/bin/jupyter','notebook',sv_notebook_dir_flag])
+subprocess.run(['/usr/local/package/simvascular/REPLACE_SV_TIMESTAMP/PythonREPLACE_PYTHON_MAJOR_VERSION.REPLACE_PYTHON_MINOR_VERSION/bin/jupyter','notebook',sv_notebook_dir_flag])

@@ -1,4 +1,4 @@
-{"argv":["python","-m","echo_kernel", "-f", "{connection_file}"],
+{"argv":["/usr/local/package/simvascular/REPLACE_SV_TIMESTAMP/PythonREPLACE_PYTHON_MAJOR_VERSION.REPLACE_PYTHON_MINOR_VERSION/bin/python-wrapper","-m","echo_kernel", "-f", "{connection_file}"],
  "display_name":"Echo"
 }
 
