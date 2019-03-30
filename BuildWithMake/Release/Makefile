@@ -213,6 +213,7 @@ copy-external-libs:
 ifeq ($(SV_USE_VTK),1)
 	-cp -fd $(VTK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
 	-cp -fd $(VTK_BINDIRS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fR $(VTK_TCL_LIB_PATH) $(DIST_DIR)/lib/vtk
 endif
 #ifeq ($(SV_USE_ZLIB),1)
 #	-cp -f $(ZLIB_LIBDIR)/zlib.$(SOEXT)* $(DIST_DIR)
@@ -241,25 +242,31 @@ ifeq ($(CLUSTER), x64_cygwin)
 else
 	-cp -fR $(VTK_PYTHON_PACKAGES)/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/lib/python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/site-packages
 endif
+ifeq ($(CLUSTER), x64_cygwin)
 	-cp -fR $(TOP)/../Python/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
+else
+	-cp -fR $(TOP)/../Python/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/lib/python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/site-packages
+endif
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
-	for fn in $(notdir $(wildcard $(PYTHON_HOME)/bin-alt/*)); do \
+	for fn in $(notdir $(wildcard $(PYTHON_HOME)/bin-relocate/*)); do \
 	  echo "File -> $$fn"; \
-	  sed -e "s+svpython+/usr/local/$(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/python-wrapper+g;s+/usr/local/sv/ext/2019.02/release/gl2/bin/gnu/6.3/x64/python-3.5.5+/usr/local/$(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)+g;s+bin/python-wrapper3.5+bin/python+g" $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin-alt/$$fn > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/$$fn; \
+	  sed -e "s+#!/usr/local/sv/svpython/bin/python+#!/usr/local/sv/svpython/bin/svpython+g;s+/usr/local/sv/svpython+/usr/local/$(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)+g" $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin-relocate/$$fn > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/$$fn; \
 	done
 	# undo damage to real executable from sed above
-	-cp -f $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin-alt/python $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/python
+	-cp -f $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin-relocate/python $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/python
 ifeq ($(CLUSTER), x64_cygwin)
 	-cp -fR Jupyter/windows/share/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share
 	-cp -fR Jupyter/windows/site-packages/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages
+ifeq ($(CLUSTER), x64_cygwin)
 	-cp -f Jupyter/windows/Scripts/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Scripts
+endif
 	-cp -f $(PYTHON_HOME)/bin/* $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Scripts
 	-sed -f tmp/sedscript Jupyter/windows/site-packages/simvascular_tcl_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_tcl_kernel/kernel.py
 	-sed -f tmp/sedscript Jupyter/windows/site-packages/simvascular_python_kernel/kernel.py > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/Lib/site-packages/simvascular_python_kernel/kernel.py
 endif
 ifeq ($(CLUSTER), x64_linux)
 	-sed -f tmp/sedscript Jupyter/linux/bin/sv_jupyter_launch.sh > $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/sv_jupyter_launch.sh
-	-chmod a+rx $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/sv_launch_jupyter.sh
+	-chmod a+rx $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/bin/sv_jupyter_launch.sh
 	-mkdir -p $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share/jupyter/kernels/echo
 	-mkdir -p $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share/jupyter/kernels/simvascular_python
 	-mkdir -p $(DIST_DIR)/Python$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)/share/jupyter/kernels/simvascular_tcl
@@ -347,8 +354,6 @@ generate-wrapper-scripts:
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/xfsv$(SV_POSTFIX)
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-simvascular-script >> $(DIST_DIR)/$(SV_VERSION)
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-xfsv-script >> $(DIST_DIR)/xfsv$(SV_POSTFIX)
-	-cp -f $(SV_OS)_wrapper_scripts/$(SV_OS)-simvascular-cmdline-script $(DIST_DIR)/$(SV_VERSION)-cmdline
-	-cat $(DIST_DIR)/$(SV_VERSION) >> $(DIST_DIR)/$(SV_VERSION)-cmdline
 ifeq ($(CLUSTER),x64_cygwin)
 	-sed s/SV_CMAKE_BUILD_TYPE/$(SV_CMAKE_BUILD_TYPE)/g $(SV_OS)_wrapper_scripts/sv.bat > $(DIST_DIR)/sv.bat
 	-chmod a+rx $(DIST_DIR)/sv.bat
@@ -361,7 +366,7 @@ common-post-distribution:
 	-chmod -f a+rx $(DIST_DIR)/*.sh
 	-chmod -f a+rx $(DIST_DIR)/generic_launch_script
 	-chmod -f a+rx $(DIST_DIR)/$(SV_VERSION)
-	-chmod -f a+rx $(DIST_DIR)/$(SV_VERSION)-cmdline
+	-chmod -f a+rx $(DIST_DIR)/xfsv
 	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)*
 	-chmod -f -R a+rx $(DIST_DIR)
 	-chmod -f -R u+w $(DIST_DIR)

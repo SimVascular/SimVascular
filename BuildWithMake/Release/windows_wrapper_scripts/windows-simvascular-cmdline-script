@@ -1,4 +1,0 @@
-#!/bin/bash -f
-export SV_BATCH_MODE=1
-
-
