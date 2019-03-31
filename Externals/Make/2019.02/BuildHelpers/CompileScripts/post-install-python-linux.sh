@@ -28,7 +28,7 @@ $GMKDIR REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate
 for f in REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/*; do
     shortf="${f##*/}"
     echo "File -> $f"
-    sed -e "s+REPLACEME_SV_TOP_BIN_DIR_PYTHON+/usr/local/sv/svpython+g" $f > REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/$shortf
+    sed -e "s+REPLACEME_SV_TOP_BIN_DIR_PYTHON+/usr/local/sv/svpython+g;s+#!/usr/local/sv/svpython/bin/python+#!/usr/local/sv/svpython/bin/svpython+g" $f > REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/$shortf
 done
 
 # sed destroys the actual python executable, need to overwrite with original
