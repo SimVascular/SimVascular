@@ -28,6 +28,10 @@ Notes:
    ## Same thing without a password
    %wheel	ALL=(ALL)	NOPASSWD: ALL
 
+   or on ubuntu something like (where USER is your desired account):
+
+   $USER ALL=NOPASSWD: ALL
+
 4. You must prep your system before building externals.  Run the
    appropriate script, e.g.:
 
