@@ -25,11 +25,13 @@ case "$osid" in
 
   'AmazonAMI')
      tar xzf ./Originals/qt/qt-opensource-centos-x64-5.6.3.tar.gz
+     sudo rm -Rf REPLACEME_SV_TOP_BIN_DIR_QT
      mv qt-5.6.3 REPLACEME_SV_TOP_BIN_DIR_QT 
      ;;
 
   'Amazon')
      tar xzf ./Originals/qt/qt-opensource-centos-x64-5.6.3.tar.gz
+     sudo rm -Rf REPLACEME_SV_TOP_BIN_DIR_QT
      mv qt-5.6.3 REPLACEME_SV_TOP_BIN_DIR_QT  
      ;;
 
