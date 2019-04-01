@@ -1,0 +1,3 @@
+
+# run the executable
+$SV_HOME/simvascular-bin.exe $*
