@@ -58,7 +58,7 @@ case "$osid" in
                   export EXTERNALS_BUILD_DATE=2018.09.29
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
-                  export EXTERNALS_BUILD_DATE=2019.30.31
+                  export EXTERNALS_BUILD_DATE=2019.03.31
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
@@ -73,7 +73,7 @@ case "$osid" in
                   export EXTERNALS_BUILD_DATE=2018.09.29
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
-                  export EXTERNALS_BUILD_DATE=2019.30.30
+                  export EXTERNALS_BUILD_DATE=2019.03.30
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
