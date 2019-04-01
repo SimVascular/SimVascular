@@ -176,18 +176,6 @@ void sv4guiSimulationPreferences::SetMpiExec(const QString& solverPath, const QS
     mpiExec = filePath;
   }
 
-  /* [DaveP] Do we need this?
-  if(QFile(filePath = solverPath + mpiexecName).exists()) {
-    mpiExec = filePath;
-
-  } else if(QFile(filePath = applicationPath + "/.." + mpiexecName).exists()) {
-    mpiExec = filePath;
-
-  } else if(QFile(filePath = applicationPath + mpiexecName).exists()) {
-    mpiExec = filePath;
-  }
-  */
-
 #elif defined(Q_OS_WIN)
 
     QString msmpiDir = GetRegistryValue("Microsoft\\MPI","InstallRoot");
@@ -257,6 +245,8 @@ void sv4guiSimulationPreferences::SetMpiImplementation()
       implementation = MpiImplementation::Unknown;
     }
   }
+
+#elif defined(Q_OS_WIN)
 
 #endif
 
