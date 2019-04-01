@@ -65,6 +65,7 @@ PyObject* sv4Path_SmoothPathCmd(pyPath* self, PyObject* args);
 PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args);
 PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args);
 PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args);
+PyObject* sv4Path_GetControlPts(pyPath* self, PyObject* args);
 
 
 int Path_pyInit()
@@ -88,6 +89,7 @@ static PyMethodDef pyPath_methods[]={
   {"CreatePath",(PyCFunction)sv4Path_CreatePathCmd, METH_NOARGS,NULL},
   {"GetPathPtsNum",(PyCFunction)sv4Path_GetPathPtNumberCmd, METH_NOARGS, NULL},
   {"GetPathPosPts",(PyCFunction)sv4Path_GetPathPosPts, METH_NOARGS, NULL},
+  {"GetControlPts",(PyCFunction)sv4Path_GetControlPts, METH_NOARGS, NULL},
   {NULL,NULL}
 };
 
@@ -542,7 +544,7 @@ PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args)
 }
 
 //----------------------------
-// sv4Path_GetPathPts
+// sv4Path_GetPathPosPts
 //----------------------------
 PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
 {
@@ -554,10 +556,10 @@ PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
     }  
     
     int num = path->GetPathPointNumber();
-    PyObject* tmpList = PyList_New(3);
     PyObject* output = PyList_New(num);
     for (int i = 0; i<num; i++)
     {
+        PyObject* tmpList = PyList_New(3);
         std::array<double,3> pos = path->GetPathPosPoint(i);
         for (int j=0; j<3; j++)
             PyList_SetItem(tmpList,j,PyFloat_FromDouble(pos[j]));
@@ -572,3 +574,37 @@ PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
     
      return output;
 } 
+
+//----------------------------
+// sv4Path_GetControlPts
+//----------------------------
+PyObject* sv4Path_GetControlPts(pyPath* self, PyObject* args)
+{
+    PathElement* path = self->geom;
+    if (path==NULL)
+    {
+        PyErr_SetString(PyRunTimeErr,"Path does not exist.");
+        return Py_ERROR;
+    }
+
+    int num = path->GetControlPointNumber();
+    PyObject* output = PyList_New(num);
+    for (int i = 0; i<num; i++)
+    {
+        PyObject* tmpList = PyList_New(3);
+        std::array<double,3> pos = path->GetControlPoint(i);
+        for (int j=0; j<3; j++)
+            PyList_SetItem(tmpList,j,PyFloat_FromDouble(pos[j]));
+        PyList_SetItem(output,i,tmpList);
+    }
+
+    if(PyErr_Occurred()!=NULL)
+    {
+        PyErr_SetString(PyRunTimeErr, "error generating pathcontrolpt output");
+        return Py_ERROR;
+    }
+
+     return output;
+}
+
+

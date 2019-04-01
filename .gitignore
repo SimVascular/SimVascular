@@ -1,4 +1,5 @@
 build
+__pycache__
 Code/SV3
 Code/svSolver
 Code/Licensed/ParasolidSolidModel
