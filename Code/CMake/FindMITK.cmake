@@ -130,7 +130,6 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "mitkGL.h"                                       #mitk/Modules/LegacyGL
                     "mitkLabel.h"                                    #mitk/Modules/Multilabel
                     "mitkLabelSetImage.h"                            #mitk/Modules/Multilabel
-                    "mitkLabelSetImage.cpp"                          #mitk/Modules/Multilabel
                     "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
                     "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
                     "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions

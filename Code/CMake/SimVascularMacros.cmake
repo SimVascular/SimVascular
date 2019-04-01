@@ -769,7 +769,7 @@ function(simvascular_create_plugin)
   #------------------------------CREATE PLUGIN--------------------------------
 
   foreach(depender ${_PLUGIN_MODULE_DEPENDS})
-    if(NOT "${depender}" STREQUAL "MitkQtWidgets")
+    if(NOT ("${depender}" STREQUAL "MitkQtWidgets") OR ("${depender}" STREQUAL "MitkQtWidgetsExt") OR ("${depender}" STREQUAL "MitkSegmentationUI"))
       target_link_libraries(${lib_name} PRIVATE ${depender})
     endif()
   endforeach()
