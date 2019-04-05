@@ -33,6 +33,7 @@
 #define SV4GUI_SIMULATIONVIEW1D_H
 
 #include "sv4gui_MitkSimJob1d.h"
+#include "sv4gui_Mesh.h"
 #include "sv4gui_Model.h"
 #include "sv4gui_CapBCWidget1d.h"
 #include "sv4gui_SplitBCWidget1d.h"
@@ -178,11 +179,13 @@ private:
 
     sv4guiMitkSimJob1d* m_MitkJob;
 
+    mitk::DataStorage::Pointer m_DataStorage;
+
     sv4guiModel* m_Model;
+    mitk::DataNode::Pointer m_ModelNode;
+    mitk::DataNode::Pointer m_ModelCenterlineNode;
 
     mitk::DataNode::Pointer m_JobNode;
-
-    mitk::DataNode::Pointer m_ModelNode;
 
     sv4guiModelDataInteractor::Pointer m_DataInteractor;
 
@@ -221,6 +224,11 @@ private:
     QString m_ExternalMPIExecPath;
 
     bool m_ConnectionEnabled;
+
+    mitk::DataNode::Pointer getProjectNode();
+    mitk::DataNode::Pointer GetModelFolderDataNode();
+
+    sv4guiMesh* GetDataNodeMesh();
 
 };
 

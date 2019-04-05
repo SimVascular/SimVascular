@@ -68,6 +68,10 @@
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
+//------------------------
+// sv4guiSimulationView1d
+//------------------------
+//
 sv4guiSimulationView1d::sv4guiSimulationView1d() :
     ui(new Ui::sv4guiSimulationView1d)
 {
@@ -75,6 +79,7 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() :
     m_Model=NULL;
     m_JobNode=NULL;
     m_ModelNode=NULL;
+    m_DataStorage = nullptr;
 
     m_DataInteractor=NULL;
     m_ModelSelectFaceObserverTag=-1;
@@ -135,6 +140,10 @@ sv4guiSimulationView1d::~sv4guiSimulationView1d()
         delete m_CapBCWidget;
 }
 
+//------------------
+// EnableConnection
+//------------------
+//
 void sv4guiSimulationView1d::EnableConnection(bool able)
 {
     if(able && !m_ConnectionEnabled)
@@ -181,6 +190,8 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
 //
 void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 {
+    auto msg = "[sv4guiSimulationView1d::CreateQtPartControl] ";
+    MITK_INFO << msg << "--------- CreateQtPartControl ----------"; 
     m_Parent=parent;
     ui->setupUi(parent);
     ui->btnSave->hide();
@@ -310,6 +321,66 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     connect(ui->readMeshPushButton, SIGNAL(clicked()), this, SLOT(ReadMesh()));
 }
 
+//----------------
+// getProjectNode
+//----------------
+//
+mitk::DataNode::Pointer sv4guiSimulationView1d::getProjectNode()
+{
+  if (m_DataStorage == nullptr) {
+    return nullptr;
+  }
+  mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+  mitk::DataNode::Pointer projFolderNode = m_DataStorage->GetNode(isProjFolder);
+  return projFolderNode;
+}
+
+// -----------------------
+//  GetModelFolderDataNode 
+// -----------------------
+// Get the pointer to the model folder data node.
+
+mitk::DataNode::Pointer sv4guiSimulationView1d::GetModelFolderDataNode()
+{
+  auto projFolderNode = getProjectNode();
+  mitk::DataNode::Pointer modelFolderNode;
+  auto modelFolderNodes = m_DataStorage->GetDerivations(projFolderNode, mitk::NodePredicateDataType::New("sv4guiModelFolder"));
+  if (modelFolderNodes->size() > 0) {
+    modelFolderNode = modelFolderNodes->GetElement(0);
+  }
+
+  return modelFolderNode;
+}
+
+
+// -----------------
+//  GetDataNodeMesh
+// -----------------
+//
+// Get the mesh from the Meshes data node.
+
+sv4guiMesh* sv4guiSimulationView1d::GetDataNodeMesh()
+{
+  auto projFolderNode = getProjectNode();
+  auto meshFolderNodes = m_DataStorage->GetDerivations(projFolderNode, mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
+  sv4guiMesh* mesh = nullptr;
+
+  if (meshFolderNodes->size() > 0) {
+    m_MeshFolderNode = meshFolderNodes->GetElement(0);
+    auto meshNodes = GetDataStorage()->GetDerivations(m_MeshFolderNode);
+    for (auto it = meshNodes->begin(); it != meshNodes->end(); ++it) {
+      sv4guiMitkMesh* mitkMesh = dynamic_cast<sv4guiMitkMesh*>((*it)->GetData());
+      if (mitkMesh) {
+        mesh = mitkMesh->GetMesh();
+        break;
+      }
+    }
+  }
+
+  return mesh;
+}
+
+
 //--------------
 // GenerateMesh
 //--------------
@@ -319,6 +390,32 @@ void sv4guiSimulationView1d::GenerateMesh()
     auto msg = "[sv4guiSimulationView1d::GenerateMesh] ";
     MITK_INFO << msg;
     MITK_INFO << msg << "---------- GenerateMesh ----------";
+
+    if (m_Model == nullptr) { 
+        return;
+    }
+
+    auto modelName = QString::fromStdString(m_ModelNode->GetName());
+    MITK_INFO << msg << "Model name '" << modelName << "'";
+    auto projFolderNode = getProjectNode();
+
+    std::string modelPath = "";
+    m_ModelNode->GetStringProperty("path", modelPath);
+    MITK_INFO << msg << "modelPath " << modelPath;
+
+    // Set surface mesh name.
+    QString surfaceFileName = QString::fromStdString(modelPath) + QDir::separator() + modelName + ".vtp";
+    QFileInfo check_file(surfaceFileName);
+    if (!check_file.exists() || !check_file.isFile()) {
+        MITK_INFO << msg << "**** ERROR: Model file '" << surfaceFileName << "'does not exists."; 
+        return;
+    }
+    MITK_INFO << msg << "Model file: " << surfaceFileName;
+
+    // Get centerlines geometry.
+    if (m_ModelCenterlineNode != nullptr) {
+    } 
+
 }
 
 //----------
@@ -333,6 +430,11 @@ void sv4guiSimulationView1d::ReadMesh()
 }
 
 
+//--------------------------
+// SetupInternalSolverPaths
+//--------------------------
+// Set the path to the 1D solver.
+//
 void sv4guiSimulationView1d::SetupInternalSolverPaths()
 {
     //get path for the internal solvers
@@ -448,6 +550,10 @@ void sv4guiSimulationView1d::SetupInternalSolverPaths()
 #endif
 }
 
+//----------------------
+// OnPreferencesChanged
+//----------------------
+//
 void sv4guiSimulationView1d::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
     if(prefs==NULL)
@@ -462,26 +568,44 @@ void sv4guiSimulationView1d::OnPreferencesChanged(const berry::IBerryPreferences
     m_ExternalPostsolverPath=prefs->Get("postsolver path","");
 }
 
+//--------------------
+// OnSelectionChanged
+//--------------------
+//
+// Sets:  
+//    m_ModelNode 
+//    m_Model 
+//    m_JobNode 
+//    m_MitkJob 
+//
 void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
-    //    if(!IsActivated())
-    if(!IsVisible())
-    {
+    auto msg = "[sv4guiSimulationView1d::OnSelectionChanged] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "--------- OnSelectionChanged ----------";
+
+    if(!IsVisible()) {
         return;
     }
 
-    if(nodes.size()==0)
-    {
+    if (nodes.size() == 0) {
         RemoveObservers();
         EnableTool(false);
         return;
     }
 
-    mitk::DataNode::Pointer jobNode=nodes.front();
-    sv4guiMitkSimJob1d* mitkJob=dynamic_cast<sv4guiMitkSimJob1d*>(jobNode->GetData());
+    m_DataStorage = GetDataStorage();
+    if (m_DataStorage == nullptr) {
+        MITK_INFO << msg << " m_DataStorage == nullptr";
+        return;
+    }
 
-    if(!mitkJob)
-    {
+    MITK_INFO << msg << "nodes.size() " << nodes.size();
+
+    mitk::DataNode::Pointer jobNode = nodes.front();
+    sv4guiMitkSimJob1d* mitkJob = dynamic_cast<sv4guiMitkSimJob1d*>(jobNode->GetData());
+
+    if (!mitkJob) {
         RemoveObservers();
         EnableTool(false);
         return;
@@ -495,61 +619,68 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 //        return;
 //    }
 
-    std::string modelName=mitkJob->GetModelName();
+    // Get model from Model data node.
+    //
+    std::string modelName = mitkJob->GetModelName();
+    MITK_INFO << msg << "Model name '" << modelName << "'";
 
-    mitk::DataNode::Pointer modelNode=NULL;
+    mitk::DataNode::Pointer modelNode = NULL;
+    mitk::DataNode::Pointer modelCenterlineNode = NULL;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (jobNode,isProjFolder,false);
+    mitk::DataStorage::SetOfObjects::ConstPointer rs = GetDataStorage()->GetSources (jobNode,isProjFolder,false);
 
-    if(rs->size()>0)
-    {
-        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
-
-        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiModelFolder"));
-        if (rs->size()>0)
-        {
-            mitk::DataNode::Pointer modelFolderNode=rs->GetElement(0);
-            modelNode=GetDataStorage()->GetNamedDerivedNode(modelName.c_str(),modelFolderNode);
+    if (rs->size()>0) {
+        mitk::DataNode::Pointer projFolderNode = rs->GetElement(0);
+        rs = GetDataStorage()->GetDerivations(projFolderNode, mitk::NodePredicateDataType::New("sv4guiModelFolder"));
+        if (rs->size() > 0) {
+            mitk::DataNode::Pointer modelFolderNode = rs->GetElement(0);
+            modelNode = GetDataStorage()->GetNamedDerivedNode(modelName.c_str(), modelFolderNode);
+            rs = GetDataStorage()->GetDerivations(modelNode);
+            if (rs->size() > 0) {
+                MITK_INFO << msg << "Have centerlines";
+                modelCenterlineNode = rs->GetElement(1);
+            }
         }
     }
 
-    sv4guiModel* model=NULL;
-    if(modelNode.IsNotNull())
-    {
-        model=dynamic_cast<sv4guiModel*>(modelNode->GetData());
+    sv4guiModel* model = NULL;
+
+    if(modelNode.IsNotNull()) {
+        model = dynamic_cast<sv4guiModel*>(modelNode->GetData());
     }
 
-    if(m_JobNode.IsNotNull())
+    if(m_JobNode.IsNotNull()) {
         RemoveObservers();
-
-    m_ModelNode=modelNode;
-    m_Model=model;
-    m_JobNode=jobNode;
-    m_MitkJob=mitkJob;
-
-    if(m_Model==NULL)
-    {
-        EnableTool(false);
     }
-    else
-    {
+
+    m_ModelNode = modelNode;
+    m_ModelCenterlineNode = modelCenterlineNode;
+    m_Model = model;
+    m_JobNode = jobNode;
+    m_MitkJob = mitkJob;
+
+    // Enable the toolbox pages ('1D Mesh', 'Basic Parameters', etc.)
+    // to allow input.
+    if(m_Model==NULL) {
+        EnableTool(false);
+    } else {
         EnableTool(true);
         AddObservers();
     }
 
-    //update top part
-    //======================================================================
+    // Update main GUI panel upper section.
+    //
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
     ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
     ui->checkBoxShowModel->setChecked(false);
-    if(m_ModelNode.IsNotNull())
-    {
+    if(m_ModelNode.IsNotNull()) {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
-        if(m_ModelNode->IsVisible(NULL))
+        if(m_ModelNode->IsVisible(NULL)) {
             ui->checkBoxShowModel->setChecked(true);
-    }
-    else
+        }
+    } else {
         ui->labelModelName->setText("No model found");
+    }
 
     EnableConnection(false);
 
@@ -574,6 +705,10 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
+//-------------
+// NodeChanged
+//-------------
+//
 void sv4guiSimulationView1d::NodeChanged(const mitk::DataNode* node)
 {
     if(m_JobNode.IsNotNull() && m_JobNode==node)
@@ -612,31 +747,45 @@ void sv4guiSimulationView1d::Hidden()
     RemoveObservers();
 }
 
+//--------------
+// AddObservers
+//--------------
+//
+// Enable notification of Model changes.
+//
 void sv4guiSimulationView1d::AddObservers()
 {
-    if(m_ModelNode.IsNotNull())
-    {
-        if(m_ModelNode->GetDataInteractor().IsNull())
-        {
+    auto msg = "[sv4guiSimulationView1d::AddObservers] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "--------- AddObservers ----------";
+
+    if(m_ModelNode.IsNotNull()) {
+        if(m_ModelNode->GetDataInteractor().IsNull()) {
             m_DataInteractor = sv4guiModelDataInteractor::New();
             m_DataInteractor->LoadStateMachine("sv4gui_ModelInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleModel"));
             m_DataInteractor->SetEventConfig("sv4gui_ModelConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleModel"));
             m_DataInteractor->SetDataNode(m_ModelNode);
         }
-        m_ModelNode->SetStringProperty("interactor user","simulation1d");
-        sv4guiModelDataInteractor* interactor=dynamic_cast<sv4guiModelDataInteractor*>(m_ModelNode->GetDataInteractor().GetPointer());
-        if(interactor)
+
+        m_ModelNode->SetStringProperty("interactor user", "simulation1d");
+        sv4guiModelDataInteractor* interactor = dynamic_cast<sv4guiModelDataInteractor*>(m_ModelNode->GetDataInteractor().GetPointer());
+        if (interactor) {
             interactor->SetFaceSelectionOnly();
+        }
     }
 
-    if(m_Model && m_ModelSelectFaceObserverTag==-1)
-    {
-        itk::SimpleMemberCommand<sv4guiSimulationView1d>::Pointer modelSelectFaceCommand = itk::SimpleMemberCommand<sv4guiSimulationView1d>::New();
+    if (m_Model && m_ModelSelectFaceObserverTag == -1) {
+        itk::SimpleMemberCommand<sv4guiSimulationView1d>::Pointer modelSelectFaceCommand = 
+          itk::SimpleMemberCommand<sv4guiSimulationView1d>::New();
         modelSelectFaceCommand->SetCallbackFunction(this, &sv4guiSimulationView1d::UpdateFaceListSelection);
         m_ModelSelectFaceObserverTag = m_Model->AddObserver( sv4guiModelSelectFaceEvent(), modelSelectFaceCommand);
     }
 }
 
+//-----------------
+// RemoveObservers
+//-----------------
+//
 void sv4guiSimulationView1d::RemoveObservers()
 {
     if(m_Model && m_ModelSelectFaceObserverTag!=-1)
@@ -667,15 +816,26 @@ void sv4guiSimulationView1d::ClearAll()
     ui->labelModelName->setText("");
 }
 
+//----------------
+// UpdateGUIBasic
+//----------------
+//
+// Update the 'Basic Paramaters' GUI page.
+//
 void sv4guiSimulationView1d::UpdateGUIBasic()
 {
-    if(!m_MitkJob)
+    if (!m_MitkJob) {
         return;
+    }
+
+    auto msg = "[sv4guiSimulationView1d::UpdateGUIBasic] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "--------- UpdateGUIBasic ----------";
 
     sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
-    {
-        job=new sv4guiSimJob1d();
+
+    if (job == NULL) {
+        job = new sv4guiSimJob1d();
     }
 
     m_TableModelBasic->clear();
@@ -782,16 +942,31 @@ void sv4guiSimulationView1d::TableViewBasicDoubleClicked(const QModelIndex& inde
     itemValue->setText(icFilePath);
 }
 
+//-------------------------
+// UpdateFaceListSelection
+//-------------------------
+//
+// Update the 'Inlet and Outlet BCs' face table when the faces for m_Model have 
+// been modified in the its Model plugin. 
+//
 void sv4guiSimulationView1d::UpdateFaceListSelection()
 {
-    if(!m_Model)
+    auto msg = "[sv4guiSimulationView1d::UpdateFaceListSelection] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "--------- UpdateFaceListSelection ----------";
+
+    if (!m_Model) {
         return;
+    }
 
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    sv4guiModelElement* modelElement = m_Model->GetModelElement();
 
+    if (modelElement == NULL) {
+        return;
+    }
 
-    //for tableViewCap
+    // Update the tableViewCap GUI object for inlet/outlet BCs.
+    //
     disconnect( ui->tableViewCap->selectionModel()
                 , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
                 , this
@@ -801,13 +976,12 @@ void sv4guiSimulationView1d::UpdateFaceListSelection()
 
     int count=m_TableModelCap->rowCount();
 
-    for(int i=0;i<count;i++)
-    {
-        QStandardItem* itemName= m_TableModelCap->item(i,0);
-        std::string name=itemName->text().toStdString();
+    for(int i=0; i<count; i++) {
+        QStandardItem* itemName = m_TableModelCap->item(i,0);
+        std::string name = itemName->text().toStdString();
 
-        if(modelElement->IsFaceSelected(name))
-        {
+        if(modelElement->IsFaceSelected(name)) {
+            MITK_INFO << msg << "Face is selected " << name;
             QModelIndex mIndex=m_TableModelCap->index(i,1);
             ui->tableViewCap->selectionModel()->select(mIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
         }
@@ -819,23 +993,21 @@ void sv4guiSimulationView1d::UpdateFaceListSelection()
              , SLOT( TableCapSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
 
-    //for tableViewVar
+    // Update tableViewVar, GUI Wall Properties / Variable Properties.
+    //
     disconnect( ui->tableViewVar->selectionModel()
                 , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
                 , this
                 , SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
     ui->tableViewVar->clearSelection();
-
     count=m_TableModelVar->rowCount();
 
-    for(int i=0;i<count;i++)
-    {
+    for(int i=0;i<count;i++) {
         QStandardItem* itemName= m_TableModelVar->item(i,0);
         std::string name=itemName->text().toStdString();
 
-        if(modelElement->IsFaceSelected(name))
-        {
+        if(modelElement->IsFaceSelected(name)) {
             QModelIndex mIndex=m_TableModelVar->index(i,1);
             ui->tableViewVar->selectionModel()->select(mIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
         }
@@ -886,12 +1058,18 @@ void sv4guiSimulationView1d::TableCapSelectionChanged( const QItemSelection & /*
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
+//---------------------------
+// TableViewCapDoubleClicked
+//---------------------------
+//
 void sv4guiSimulationView1d::TableViewCapDoubleClicked(const QModelIndex& index)
 {
     auto msg = "[sv4guiSimulationView1d::TableViewCapDoubleClicked] ";
-    MITK_INFO << msg << "------------------- TableViewCapDoubleClicked ----------";
-    if(index.column()==0)
+    MITK_INFO << msg << "--------- TableViewCapDoubleClicked ----------";
+
+    if (index.column()==0) {
         ShowCapBCWidget();
+    }
 }
 
 void sv4guiSimulationView1d::TableViewCapContextMenuRequested( const QPoint & pos )
@@ -899,17 +1077,22 @@ void sv4guiSimulationView1d::TableViewCapContextMenuRequested( const QPoint & po
     m_TableMenuCap->popup(QCursor::pos());
 }
 
+//-----------------
+// ShowCapBCWidget
+//-----------------
+//
 void sv4guiSimulationView1d::ShowCapBCWidget(bool)
 {
+    auto msg = "[sv4guiSimulationView1d::ShowCapBCWidget] ";
+    MITK_INFO << msg << "--------- ShowCapBCWidget ----------";
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+
+    if(indexesOfSelectedRows.size() < 1) {
         return;
     }
 
     std::map<std::string,std::string> props;
     std::string capName;
-
     int row=indexesOfSelectedRows[0].row();
 
     if(indexesOfSelectedRows.size() == 1)
@@ -1064,6 +1247,11 @@ void sv4guiSimulationView1d::ShowSplitBCWidgetC(bool)
     ShowSplitBCWidget("Capacitance");
 }
 
+
+//------------
+// SplitCapBC
+//------------
+//
 void  sv4guiSimulationView1d::SplitCapBC()
 {
     if(!m_MitkJob)
@@ -1189,6 +1377,10 @@ void  sv4guiSimulationView1d::SplitCapBC()
     }
 }
 
+//--------------
+// UpdateGUICap
+//--------------
+//
 void sv4guiSimulationView1d::UpdateGUICap()
 {
     if(!m_MitkJob)
@@ -1602,21 +1794,17 @@ void sv4guiSimulationView1d::UpdateGUIJob()
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
 
-    if(rs->size()>0)
-    {
+    if(rs->size()>0) {
         mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
 
         rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
-        if (rs->size()>0)
-        {
+        if (rs->size()>0) {
             mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
             rs=GetDataStorage()->GetDerivations(meshFolderNode);
 
-            for(int i=0;i<rs->size();i++)
-            {
+            for(int i=0;i<rs->size();i++) {
                 sv4guiMitkMesh* mitkMesh=dynamic_cast<sv4guiMitkMesh*>(rs->GetElement(i)->GetData());
-                if(mitkMesh&&mitkMesh->GetModelName()==modelName)
-                {
+                if(mitkMesh&&mitkMesh->GetModelName()==modelName) {
                     meshNames.push_back(rs->GetElement(i)->GetName());
                 }
             }
@@ -1761,6 +1949,10 @@ void sv4guiSimulationView1d::CreateAllFiles()
     CreateDataFiles(GetJobPath(), true, true, false);
 }
 
+//--------
+// RunJob
+//--------
+//
 void sv4guiSimulationView1d::RunJob()
 {
     if (QMessageBox::question(m_Parent, "Run Job", "Are you sure to run the job? It may take a while to finish.",
@@ -1889,6 +2081,10 @@ void sv4guiSimulationView1d::RunJob()
     handler->Start();
 }
 
+//-----------------
+// CreateDataFiles
+//-----------------
+//
 bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
     if(!m_MitkJob)
@@ -2141,6 +2337,10 @@ void sv4guiSimulationView1d::ImportFiles()
     }
 }
 
+//-----------
+// CreateJob
+//-----------
+//
 sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkValidity)
 {
     sv4guiSimJob1d* job=new sv4guiSimJob1d();
@@ -2544,6 +2744,10 @@ void sv4guiSimulationView1d::SaveToManager()
     m_MitkJob->SetDataModified();
 }
 
+//--------------
+// SetResultDir
+//--------------
+//
 void sv4guiSimulationView1d::SetResultDir()
 {
     berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
@@ -2840,6 +3044,12 @@ bool sv4guiSimulationView1d::AreDouble(std::string values, int* count)
     return true;
 }
 
+//------------
+// EnableTool
+//------------
+// Enable the toolbox pages ('1D Mesh', 'Basic Parameters', etc.)
+// to allow input.
+//
 void sv4guiSimulationView1d::EnableTool(bool able)
 {
     ui->widgetTop->setEnabled(able);
@@ -2850,6 +3060,10 @@ void sv4guiSimulationView1d::EnableTool(bool able)
     ui->page_5->setEnabled(able);
 }
 
+//--------------
+// UpdateSimJob
+//--------------
+//
 void sv4guiSimulationView1d::UpdateSimJob()
 {
     if(!m_MitkJob)
@@ -2872,6 +3086,10 @@ void sv4guiSimulationView1d::UpdateSimJob()
     m_MitkJob->SetDataModified();
 }
 
+//----------------------
+// UdpateSimJobMeshName
+//----------------------
+//
 void sv4guiSimulationView1d::UdpateSimJobMeshName()
 {
     if(!m_MitkJob)
@@ -2964,23 +3182,24 @@ void sv4guiSimulationView1d::UpdateJobStatus()
     double runningProgress=0;
     m_JobNode->GetBoolProperty("running",running);
     m_JobNode->GetDoubleProperty("running progress",runningProgress);
-    if(running)
-    {
+
+    if(running) {
         ui->labelJobStatus->setText("Running: "+QString::number((int)(runningProgress*100))+"% completed");
         ui->widgetRun->setEnabled(false);
-    }
-    else
-    {
+    } else {
         ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
         ui->widgetRun->setEnabled(true);
     }
 
 }
 
+//-----------
+// ShowModel
+//-----------
+//
 void sv4guiSimulationView1d::ShowModel(bool checked)
 {
-    if(m_ModelNode.IsNotNull())
-    {
+    if (m_ModelNode.IsNotNull()) {
         m_ModelNode->SetVisibility(checked);
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
