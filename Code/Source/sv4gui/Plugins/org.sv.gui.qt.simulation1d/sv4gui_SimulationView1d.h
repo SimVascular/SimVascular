@@ -32,6 +32,8 @@
 #ifndef SV4GUI_SIMULATIONVIEW1D_H
 #define SV4GUI_SIMULATIONVIEW1D_H
 
+#include <tuple>
+
 #include "sv4gui_MitkSimJob1d.h"
 #include "sv4gui_Mesh.h"
 #include "sv4gui_Model.h"
@@ -54,6 +56,8 @@
 namespace Ui {
 class sv4guiSimulationView1d;
 }
+
+typedef std::tuple<std::string,mitk::DataNode::Pointer> NameNodeTuple;
 
 class sv4guiSimulationView1d : public sv4guiQmitkFunctionality
 {
@@ -177,29 +181,30 @@ private:
 
     Ui::sv4guiSimulationView1d *ui;
 
-    sv4guiMitkSimJob1d* m_MitkJob;
-
     mitk::DataStorage::Pointer m_DataStorage;
 
     sv4guiModel* m_Model;
+    mitk::DataNode::Pointer m_ModelFolderNode;
     mitk::DataNode::Pointer m_ModelNode;
-    mitk::DataNode::Pointer m_ModelCenterlineNode;
+    std::vector<NameNodeTuple> m_ModelCenterlineNodes;
 
+    sv4guiMesh* m_Mesh;
+    mitk::DataNode::Pointer m_MeshFolderNode;
+    mitk::DataNode::Pointer m_MeshNode;
+    std::vector<NameNodeTuple> m_MeshNodes;
+
+    sv4guiMitkSimJob1d* m_MitkJob;
     mitk::DataNode::Pointer m_JobNode;
 
     sv4guiModelDataInteractor::Pointer m_DataInteractor;
-
     long m_ModelSelectFaceObserverTag;
 
     QmitkStdMultiWidget* m_DisplayWidget;
-
-    QStandardItemModel* m_TableModelBasic;
-
-    QStandardItemModel* m_TableModelCap;
     QMenu* m_TableMenuCap;
-
-    QStandardItemModel* m_TableModelVar;
     QMenu* m_TableMenuVar;
+    QStandardItemModel* m_TableModelBasic;
+    QStandardItemModel* m_TableModelCap;
+    QStandardItemModel* m_TableModelVar;
 
     sv4guiCapBCWidget1d* m_CapBCWidget;
 
@@ -229,6 +234,7 @@ private:
     mitk::DataNode::Pointer GetModelFolderDataNode();
 
     sv4guiMesh* GetDataNodeMesh();
+    mitk::DataNode::Pointer GetMeshFolderDataNode();
 
 };
 

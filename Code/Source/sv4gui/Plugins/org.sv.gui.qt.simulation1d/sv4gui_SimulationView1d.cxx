@@ -75,19 +75,24 @@ const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d"
 sv4guiSimulationView1d::sv4guiSimulationView1d() :
     ui(new Ui::sv4guiSimulationView1d)
 {
-    m_MitkJob=NULL;
-    m_Model=NULL;
-    m_JobNode=NULL;
-    m_ModelNode=NULL;
+    m_MitkJob = NULL;
+
+    m_Model = NULL;
+    m_ModelFolderNode = nullptr;
+    m_ModelNode = NULL;
+
+    m_Mesh = nullptr;
+    m_MeshFolderNode = nullptr;
+    m_MeshNode = nullptr;
+
+    m_JobNode = NULL;
     m_DataStorage = nullptr;
-
     m_DataInteractor=NULL;
-    m_ModelSelectFaceObserverTag=-1;
 
-    m_TableModelBasic=NULL;
-
-    m_TableModelCap=NULL;
-    m_TableMenuCap=NULL;
+    m_ModelSelectFaceObserverTag = -1;
+    m_TableModelBasic = NULL;
+    m_TableModelCap = NULL;
+    m_TableMenuCap = NULL;
 
     m_TableModelVar=NULL;
     m_TableMenuVar=NULL;
@@ -353,6 +358,22 @@ mitk::DataNode::Pointer sv4guiSimulationView1d::GetModelFolderDataNode()
 }
 
 
+// -----------------------
+//  GetMeshFolderDataNode 
+// -----------------------
+// Get the pointer to the mesh folder data node.
+
+mitk::DataNode::Pointer sv4guiSimulationView1d::GetMeshFolderDataNode()
+{
+  auto projFolderNode = getProjectNode();
+  mitk::DataNode::Pointer meshFolderNode;
+  auto meshFolderNodes = m_DataStorage->GetDerivations(projFolderNode, mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
+  if (meshFolderNodes->size() > 0) {
+    meshFolderNode = meshFolderNodes->GetElement(0);
+  }
+  return meshFolderNode;
+}
+
 // -----------------
 //  GetDataNodeMesh
 // -----------------
@@ -413,8 +434,8 @@ void sv4guiSimulationView1d::GenerateMesh()
     MITK_INFO << msg << "Model file: " << surfaceFileName;
 
     // Get centerlines geometry.
-    if (m_ModelCenterlineNode != nullptr) {
-    } 
+    //if (m_ModelCenterlineNode != nullptr) {
+    //} 
 
 }
 
@@ -583,6 +604,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     auto msg = "[sv4guiSimulationView1d::OnSelectionChanged] ";
     MITK_INFO << msg;
     MITK_INFO << msg << "--------- OnSelectionChanged ----------";
+    MITK_INFO << msg << "nodes.size() " << nodes.size();
 
     if(!IsVisible()) {
         return;
@@ -600,68 +622,76 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         return;
     }
 
-    MITK_INFO << msg << "nodes.size() " << nodes.size();
-
+    // Check that a job nodes exists.
     mitk::DataNode::Pointer jobNode = nodes.front();
     sv4guiMitkSimJob1d* mitkJob = dynamic_cast<sv4guiMitkSimJob1d*>(jobNode->GetData());
-
     if (!mitkJob) {
         RemoveObservers();
         EnableTool(false);
         return;
     }
 
-    //comment this section to always update
-//    if(m_JobNode==jobNode)
-//    {
-//        AddObservers();
-//        EnableTool(true);
-//        return;
-//    }
+    // Get the model and mesh folder data nodes.
+    m_ModelFolderNode = GetModelFolderDataNode();
+    m_MeshFolderNode = GetMeshFolderDataNode();
 
-    // Get model from Model data node.
+    // Get the model name (set when we create a 1d simulation).
     //
     std::string modelName = mitkJob->GetModelName();
     MITK_INFO << msg << "Model name '" << modelName << "'";
 
-    mitk::DataNode::Pointer modelNode = NULL;
-    mitk::DataNode::Pointer modelCenterlineNode = NULL;
-    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs = GetDataStorage()->GetSources (jobNode,isProjFolder,false);
+    // Set the model node. 
+    //
+    auto modelNode = m_DataStorage->GetNamedDerivedNode(modelName.c_str(), m_ModelFolderNode);
+    auto model = dynamic_cast<sv4guiModel*>(modelNode->GetData());
 
-    if (rs->size()>0) {
-        mitk::DataNode::Pointer projFolderNode = rs->GetElement(0);
-        rs = GetDataStorage()->GetDerivations(projFolderNode, mitk::NodePredicateDataType::New("sv4guiModelFolder"));
+    if (model != nullptr) {
+        modelNode->SetVisibility(false);
+        m_Model = model;
+        m_ModelNode = modelNode;
+        MITK_INFO << msg << "The model has been set.";
+        // Check for centerlines created for the model.
+        auto rs = GetDataStorage()->GetDerivations(modelNode);
         if (rs->size() > 0) {
-            mitk::DataNode::Pointer modelFolderNode = rs->GetElement(0);
-            modelNode = GetDataStorage()->GetNamedDerivedNode(modelName.c_str(), modelFolderNode);
-            rs = GetDataStorage()->GetDerivations(modelNode);
-            if (rs->size() > 0) {
-                MITK_INFO << msg << "Have centerlines";
-                modelCenterlineNode = rs->GetElement(1);
+            MITK_INFO << msg << "Have centerlines:";
+            m_ModelCenterlineNodes.clear();
+            for (auto const& node : *rs) { 
+                auto name = node->GetName();
+                MITK_INFO << msg << name;
+                m_ModelCenterlineNodes.emplace_back(name, node);
             }
+        } else { 
+            MITK_INFO << msg << "Don't have centerlines.";
         }
+    } else {
+        MITK_WARN << msg << "No model has been created!";
     }
 
-    sv4guiModel* model = NULL;
-
-    if(modelNode.IsNotNull()) {
-        model = dynamic_cast<sv4guiModel*>(modelNode->GetData());
+    // Set the mesh node. 
+    //
+    auto meshNodes = m_DataStorage->GetDerivations(m_MeshFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkMesh"));
+    if (meshNodes->size() != 0) {
+        m_MeshNodes.clear();
+        MITK_INFO << msg << "Mesh names: ";
+        for (auto const& node : *meshNodes) {
+            auto name = node->GetName();
+            MITK_INFO << msg << name; 
+            m_MeshNodes.emplace_back(name, node);
+        }
+    } else {
+      MITK_WARN << msg << "Mesh data node not found!";
     }
 
-    if(m_JobNode.IsNotNull()) {
+    if (m_JobNode.IsNotNull()) {
         RemoveObservers();
     }
 
-    m_ModelNode = modelNode;
-    m_ModelCenterlineNode = modelCenterlineNode;
-    m_Model = model;
     m_JobNode = jobNode;
     m_MitkJob = mitkJob;
 
     // Enable the toolbox pages ('1D Mesh', 'Basic Parameters', etc.)
     // to allow input.
-    if(m_Model==NULL) {
+    if(m_Model == NULL) {
         EnableTool(false);
     } else {
         EnableTool(true);
