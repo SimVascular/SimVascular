@@ -71,6 +71,24 @@ public:
 
     virtual ~sv4guiSimulationView1d();
 
+    class SurfaceModelSource {
+        public:
+            static const QString MESH_PLUGIN;
+            static const QString MODEL_PLUGIN;
+            static const QString READ_FROM_FILE;
+            static const std::vector<QString> types;
+    };
+
+    class CenterlinesSource {
+        public:
+            static const QString CALCULATE;
+            static const QString MODEL_PLUGIN;
+            static const QString READ_FROM_FILE;
+            static const std::vector<QString> types;
+    };
+
+public slots:
+
 public slots:
 
     void SaveToManager();
@@ -107,6 +125,10 @@ public slots:
     // 1D Mesh slots.
     void GenerateMesh();
     void ReadMesh();
+    void UdpateSurfaceModelSource();
+    void ReadModel();
+    void UdpateCenterlinesSource();
+    void ReadCenterlines();
 
     void CreateAllFiles();
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
@@ -182,16 +204,22 @@ private:
     Ui::sv4guiSimulationView1d *ui;
 
     mitk::DataStorage::Pointer m_DataStorage;
+    QString m_PluginOutputDirectory;
 
     sv4guiModel* m_Model;
     mitk::DataNode::Pointer m_ModelFolderNode;
     mitk::DataNode::Pointer m_ModelNode;
     std::vector<NameNodeTuple> m_ModelCenterlineNodes;
+    QString m_ModelFileName;
+    QString m_ModelSource;
 
     sv4guiMesh* m_Mesh;
     mitk::DataNode::Pointer m_MeshFolderNode;
     mitk::DataNode::Pointer m_MeshNode;
     std::vector<NameNodeTuple> m_MeshNodes;
+
+    QString m_CenterlinesFileName;
+    QString m_CenterlinesSource;
 
     sv4guiMitkSimJob1d* m_MitkJob;
     mitk::DataNode::Pointer m_JobNode;
@@ -232,6 +260,7 @@ private:
 
     mitk::DataNode::Pointer getProjectNode();
     mitk::DataNode::Pointer GetModelFolderDataNode();
+    QString GetModelFileName();
 
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();

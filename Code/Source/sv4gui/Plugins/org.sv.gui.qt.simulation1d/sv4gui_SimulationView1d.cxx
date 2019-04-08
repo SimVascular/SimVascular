@@ -68,6 +68,31 @@
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
+// Set the values of the Surface Model Origin types.
+//
+const QString sv4guiSimulationView1d::SurfaceModelSource::MESH_PLUGIN = "Mesh Plugin";
+const QString sv4guiSimulationView1d::SurfaceModelSource::MODEL_PLUGIN = "Model Plugin";
+const QString sv4guiSimulationView1d::SurfaceModelSource::READ_FROM_FILE = "Read from File";
+const std::vector<QString> sv4guiSimulationView1d::SurfaceModelSource::types = 
+{
+    sv4guiSimulationView1d::SurfaceModelSource::MESH_PLUGIN,
+    sv4guiSimulationView1d::SurfaceModelSource::MODEL_PLUGIN,
+    sv4guiSimulationView1d::SurfaceModelSource::READ_FROM_FILE
+};
+
+// Set the values of the Centerlines Origin types.
+//
+const QString sv4guiSimulationView1d::CenterlinesSource::CALCULATE = "Calculate";
+const QString sv4guiSimulationView1d::CenterlinesSource::MODEL_PLUGIN = "Model Plugin";
+const QString sv4guiSimulationView1d::CenterlinesSource::READ_FROM_FILE = "Read from File";
+const std::vector<QString> sv4guiSimulationView1d::CenterlinesSource::types = 
+{
+    sv4guiSimulationView1d::CenterlinesSource::CALCULATE,
+    sv4guiSimulationView1d::CenterlinesSource::MODEL_PLUGIN,
+    sv4guiSimulationView1d::CenterlinesSource::READ_FROM_FILE
+};
+
+
 //------------------------
 // sv4guiSimulationView1d
 //------------------------
@@ -166,6 +191,7 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
         connect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
+
         m_ConnectionEnabled=able;
     }
 
@@ -184,6 +210,7 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
         disconnect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
+
         m_ConnectionEnabled=able;
     }
 }
@@ -210,7 +237,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     // Create 1D Mesh page controls.
     Create1DMeshControls(parent);
 
-    //for basic table
+    // For basic table.
     m_TableModelBasic = new QStandardItemModel(this);
     ui->tableViewBasic->setModel(m_TableModelBasic);
 
@@ -323,7 +350,235 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     auto msg = "[sv4guiSimulationView1d::Create1DMeshControls] ";
     MITK_INFO << msg << "--------- Create1DMeshControls ----------"; 
     connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(GenerateMesh()));
-    connect(ui->readMeshPushButton, SIGNAL(clicked()), this, SLOT(ReadMesh()));
+    //connect(ui->readMeshPushButton, SIGNAL(clicked()), this, SLOT(ReadMesh()));
+
+    // Add surface model widgets.
+    //
+    connect(ui->surfaceModelComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSurfaceModelSource( )));
+    connect(ui->readModelPushButton, SIGNAL(clicked()), this, SLOT(ReadModel()) );
+    for (auto const& type : SurfaceModelSource::types) {
+        ui->surfaceModelComboBox->addItem(type);
+    }
+    m_ModelSource = SurfaceModelSource::MODEL_PLUGIN; 
+    ui->surfaceModelComboBox->setCurrentText(m_ModelSource);
+    ui->readModelPushButton->setVisible(false);
+    ui->modelFileNameLabel->setVisible(false);
+    ui->modelFileNameLineEdit->setVisible(false);
+
+    // Add centerlines widgets.
+    //
+    connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateCenterlinesSource()));
+    connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(ReadCenterlines()) );
+    for (auto const& type : CenterlinesSource::types) {
+        ui->centerlinesComboBox->addItem(type);
+    }
+    m_CenterlinesSource = CenterlinesSource::CALCULATE; 
+    ui->centerlinesComboBox->setCurrentText(m_CenterlinesSource);
+    ui->readCenterlinesPushButton->setVisible(false);
+    ui->centerlinesFileNameLabel->setVisible(false);
+    ui->centerlinesFileNameLineEdit->setVisible(false);
+}
+
+//--------------------------
+// UdpateSurfaceModelSource 
+//--------------------------
+//
+void sv4guiSimulationView1d::UdpateSurfaceModelSource()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+
+    auto msg = "[sv4guiSimulationView1d::UdpateSurfaceModelSource] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- UdpateSurfaceModelSource ----------";
+
+    auto sourceType = ui->surfaceModelComboBox->currentText();
+    //std::string sourceType = ui->surfaceModelComboBox->currentText().toStdString();
+    MITK_INFO << msg << "sourceType: " << sourceType;
+
+    auto show = (sourceType == SurfaceModelSource::READ_FROM_FILE);
+    ui->readModelPushButton->setVisible(show);
+    ui->modelFileNameLabel->setVisible(show);
+    ui->modelFileNameLineEdit->setVisible(show);
+    m_ModelSource = sourceType; 
+}
+
+//-----------
+// ReadModel
+//-----------
+//
+void sv4guiSimulationView1d::ReadModel()
+{
+    auto msg = "[sv4guiSimulationView1d::ReadModel] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- ReadModel ----------";
+
+    try {
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+
+        if (prefService) {   
+            prefs = prefService->GetSystemPreferences()->Node("/General");
+        } else {
+            prefs = berry::IPreferences::Pointer(0);
+        }
+
+        QString lastFilePath = "";
+  
+        if (prefs.IsNotNull()) {
+            lastFilePath = prefs->Get("LastFileOpenPath", "");
+        }
+  
+        if (lastFilePath == "") {
+            lastFilePath=QDir::homePath();
+        }
+  
+        m_ModelFileName = QFileDialog::getOpenFileName(NULL, tr("Import Surface Model (Choose File)"), lastFilePath,
+          tr("Surface model file (*.vtp)"));
+  
+        m_ModelFileName = m_ModelFileName.trimmed();
+  
+        if (m_ModelFileName.isEmpty()) {
+            return;
+        }
+  
+        MITK_INFO << msg << "Read surface model: " << m_ModelFileName.toStdString();
+        QFile file(m_ModelFileName);
+        QFileInfo fileInfo(file);
+        ui->modelFileNameLineEdit->setText(fileInfo.fileName());
+  
+  /*
+        m_SurfaceNetworkMesh = new sv4guiMesh();
+        m_SurfaceNetworkMesh->ReadSurfaceFile(m_MeshFileName.toStdString());
+        auto polyMesh = m_SurfaceNetworkMesh->GetSurfaceMesh();
+  
+        auto points = polyMesh->GetPoints();
+        auto numPoints = points->GetNumberOfPoints();
+        MITK_INFO << "[sv4guiPurkinjeNetworkEdit::LoadMesh] Number of points " << numPoints; 
+  
+        auto polygons = polyMesh->GetPolys();
+        auto numPolys = polygons->GetNumberOfCells();
+        MITK_INFO << "[sv4guiPurkinjeNetworkEdit::LoadMesh] Number of triangles " << numPolys; 
+  
+        m_MeshContainer->SetSurfaceMesh(m_SurfaceNetworkMesh);
+  
+        // Write mesh to project.
+        QFileInfo fileInfo(m_MeshFileName);
+        QString outFileName(fileInfo.fileName());
+        mitk::DataNode::Pointer projFolderNode = getProjectNode();
+        std::string projPath = "";
+        projFolderNode->GetStringProperty("project path", projPath);
+        QString QprojPath = QString(projPath.c_str());
+        m_MeshOutputFileName = QprojPath + "/" + m_StoreDir + "/" + outFileName;
+        MITK_INFO << "[sv4guiPurkinjeNetworkEdit::LoadMesh] m_MeshOutputFileName " <<m_MeshOutputFileName.toStdString();
+        m_SurfaceNetworkMesh->WriteSurfaceFile(m_MeshOutputFileName.toStdString());
+  */
+}
+
+  catch(...) {
+      MITK_ERROR << "Error loading Purkinje surface mesh.!";
+  }
+}
+
+//-------------------------
+// UdpateCenterlinesSource 
+//-------------------------
+//
+void sv4guiSimulationView1d::UdpateCenterlinesSource()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+
+    auto msg = "[sv4guiSimulationView1d::UdpateCenterlinesSource] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- UdpateCenterlinesSource ----------";
+
+    auto sourceType = ui->centerlinesComboBox->currentText();
+    //std::string sourceType = ui->centerlinesComboBox->currentText().toStdString();
+    MITK_INFO << msg << "sourceType: " << sourceType;
+    auto show = (sourceType == CenterlinesSource::READ_FROM_FILE);
+    ui->readCenterlinesPushButton->setVisible(show);
+    ui->centerlinesFileNameLabel->setVisible(show);
+    ui->centerlinesFileNameLineEdit->setVisible(show);
+    m_CenterlinesSource = sourceType;
+}
+
+//-----------------
+// ReadCenterlines
+//-----------------
+void sv4guiSimulationView1d::ReadCenterlines()
+{
+    auto msg = "[sv4guiSimulationView1d::ReadCenterlines]";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- ReadCenterlines ----------";
+
+    try {
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+
+        if (prefService) {   
+            prefs = prefService->GetSystemPreferences()->Node("/General");
+        } else {
+            prefs = berry::IPreferences::Pointer(0);
+        }
+
+        QString lastFilePath = "";
+  
+        if (prefs.IsNotNull()) {
+            lastFilePath = prefs->Get("LastFileOpenPath", "");
+        }
+  
+        if (lastFilePath == "") {
+            lastFilePath=QDir::homePath();
+        }
+  
+        m_CenterlinesFileName = QFileDialog::getOpenFileName(NULL, tr("Import Centerlines (Choose File)"), lastFilePath,
+          tr("Centerlines file (*.vtp)"));
+  
+        m_CenterlinesFileName = m_CenterlinesFileName.trimmed();
+  
+        if (m_CenterlinesFileName.isEmpty()) {
+            return;
+        }
+  
+        MITK_INFO << msg << "Read centerlines file: " << m_CenterlinesFileName.toStdString();
+        QFile file(m_CenterlinesFileName);
+        QFileInfo fileInfo(file);
+        ui->centerlinesFileNameLineEdit->setText(fileInfo.fileName());
+  
+  /*
+        m_SurfaceNetworkMesh = new sv4guiMesh();
+        m_SurfaceNetworkMesh->ReadSurfaceFile(m_MeshFileName.toStdString());
+        auto polyMesh = m_SurfaceNetworkMesh->GetSurfaceMesh();
+  
+        auto points = polyMesh->GetPoints();
+        auto numPoints = points->GetNumberOfPoints();
+        MITK_INFO << "[sv4guiPurkinjeNetworkEdit::LoadMesh] Number of points " << numPoints; 
+  
+        auto polygons = polyMesh->GetPolys();
+        auto numPolys = polygons->GetNumberOfCells();
+        MITK_INFO << "[sv4guiPurkinjeNetworkEdit::LoadMesh] Number of triangles " << numPolys; 
+  
+        m_MeshContainer->SetSurfaceMesh(m_SurfaceNetworkMesh);
+  
+        // Write mesh to project.
+        QFileInfo fileInfo(m_MeshFileName);
+        QString outFileName(fileInfo.fileName());
+        mitk::DataNode::Pointer projFolderNode = getProjectNode();
+        std::string projPath = "";
+        projFolderNode->GetStringProperty("project path", projPath);
+        QString QprojPath = QString(projPath.c_str());
+        m_MeshOutputFileName = QprojPath + "/" + m_StoreDir + "/" + outFileName;
+        MITK_INFO << "[sv4guiPurkinjeNetworkEdit::LoadMesh] m_MeshOutputFileName " <<m_MeshOutputFileName.toStdString();
+        m_SurfaceNetworkMesh->WriteSurfaceFile(m_MeshOutputFileName.toStdString());
+  */
+}
+
+  catch(...) {
+      MITK_ERROR << "Error loading Purkinje surface mesh.!";
+  }
 }
 
 //----------------
@@ -356,6 +611,41 @@ mitk::DataNode::Pointer sv4guiSimulationView1d::GetModelFolderDataNode()
 
   return modelFolderNode;
 }
+
+
+//------------------
+// GetModelFileName
+//------------------
+//
+// Get the name of the file containing the model surface mesh.
+//
+QString sv4guiSimulationView1d::GetModelFileName()
+{
+    auto msg = "[sv4guiSimulationView1d::GetModelFileName] ";
+    MITK_INFO << msg << "Model source '" << m_ModelSource << "'";
+    QString modelFileName;
+
+    if (m_ModelSource == SurfaceModelSource::MODEL_PLUGIN) { 
+        auto modelName = QString::fromStdString(m_ModelNode->GetName());
+        MITK_INFO << msg << "Model name '" << modelName << "'";
+        auto projFolderNode = getProjectNode();
+
+        std::string modelPath = "";
+        m_ModelNode->GetStringProperty("path", modelPath);
+        MITK_INFO << msg << "modelPath " << modelPath;
+
+        // Set surface mesh name.
+        modelFileName = QString::fromStdString(modelPath) + QDir::separator() + modelName + ".vtp";
+        QFileInfo check_file(modelFileName );
+        if (!check_file.exists() || !check_file.isFile()) {
+            MITK_INFO << msg << "**** ERROR: Model file '" << modelFileName << "'does not exists.";
+            return modelFileName;
+        }
+    }
+
+    return modelFileName;
+}
+
 
 
 // -----------------------
@@ -416,27 +706,11 @@ void sv4guiSimulationView1d::GenerateMesh()
         return;
     }
 
-    auto modelName = QString::fromStdString(m_ModelNode->GetName());
-    MITK_INFO << msg << "Model name '" << modelName << "'";
-    auto projFolderNode = getProjectNode();
+    MITK_INFO << msg << "Output directory: " << m_PluginOutputDirectory;
 
-    std::string modelPath = "";
-    m_ModelNode->GetStringProperty("path", modelPath);
-    MITK_INFO << msg << "modelPath " << modelPath;
-
-    // Set surface mesh name.
-    QString surfaceFileName = QString::fromStdString(modelPath) + QDir::separator() + modelName + ".vtp";
-    QFileInfo check_file(surfaceFileName);
-    if (!check_file.exists() || !check_file.isFile()) {
-        MITK_INFO << msg << "**** ERROR: Model file '" << surfaceFileName << "'does not exists."; 
-        return;
-    }
-    MITK_INFO << msg << "Model file: " << surfaceFileName;
-
-    // Get centerlines geometry.
-    //if (m_ModelCenterlineNode != nullptr) {
-    //} 
-
+    // Get the file name of the surface model.
+    auto modelFileName = GetModelFileName();
+    MITK_INFO << msg << "Model file: " << modelFileName;
 }
 
 //----------
@@ -630,6 +904,12 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         EnableTool(false);
         return;
     }
+    
+    std::string jobPath = "";
+    jobNode->GetStringProperty("path", jobPath);
+    MITK_INFO << msg << "jobPath " << jobPath;
+    m_PluginOutputDirectory = QString(jobPath.c_str());
+
 
     // Get the model and mesh folder data nodes.
     m_ModelFolderNode = GetModelFolderDataNode();

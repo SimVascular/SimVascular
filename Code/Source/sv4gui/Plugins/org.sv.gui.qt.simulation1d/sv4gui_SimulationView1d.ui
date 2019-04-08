@@ -166,41 +166,147 @@
          <number>0</number>
         </property>
         <widget class="QWidget" name="page_7">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>407</width>
+           <height>564</height>
+          </rect>
+         </property>
          <attribute name="label">
           <string>1D Mesh</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_18">
           <item>
            <widget class="QWidget" name="widget_3" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_19">
-             <item>
-              <widget class="QPushButton" name="generateMeshPushButton">
-               <property name="text">
-                <string>Generate 1D Mesh</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="readMeshPushButton">
-               <property name="text">
-                <string>Read 1D Mesh </string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+            <widget class="QPushButton" name="generateMeshPushButton">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>270</y>
+               <width>135</width>
+               <height>25</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Generate 1D Mesh</string>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="readModelPushButton">
+             <property name="geometry">
+              <rect>
+               <x>260</x>
+               <y>10</y>
+               <width>89</width>
+               <height>25</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Read Model</string>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="readCenterlinesPushButton">
+             <property name="geometry">
+              <rect>
+               <x>210</x>
+               <y>140</y>
+               <width>124</width>
+               <height>25</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Read Centerlines</string>
+             </property>
+            </widget>
+            <widget class="QWidget" name="">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>10</y>
+               <width>203</width>
+               <height>27</height>
+              </rect>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_22">
+                <property name="text">
+                 <string>Surface Model   </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="surfaceModelComboBox"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="">
+             <property name="geometry">
+              <rect>
+               <x>11</x>
+               <y>140</y>
+               <width>176</width>
+               <height>27</height>
+              </rect>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item>
+               <widget class="QLabel" name="label_23">
+                <property name="text">
+                 <string>Centerlines </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="centerlinesComboBox"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="">
+             <property name="geometry">
+              <rect>
+               <x>7</x>
+               <y>50</y>
+               <width>341</width>
+               <height>27</height>
+              </rect>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <item>
+               <widget class="QLabel" name="modelFileNameLabel">
+                <property name="text">
+                 <string>Model File Name</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="modelFileNameLineEdit"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>190</y>
+               <width>341</width>
+               <height>27</height>
+              </rect>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <item>
+               <widget class="QLabel" name="centerlinesFileNameLabel">
+                <property name="text">
+                 <string>Centerlines File Name</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="centerlinesFileNameLineEdit"/>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
          </layout>
