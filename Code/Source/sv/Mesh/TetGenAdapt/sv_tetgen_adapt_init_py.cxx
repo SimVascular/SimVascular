@@ -113,7 +113,7 @@ PyObject* Tetgenadapt_pyInit()
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return Py_ERROR;
   }
   
   tmp->registrar = adaptObjectRegistrar;
@@ -128,7 +128,7 @@ PyObject* Tetgenadapt_pyInit()
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return Py_ERROR;
   }
   return pythonC;
 
@@ -192,7 +192,7 @@ PyInit_pyTetGenAdapt()
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
   }
   tmp->registrar = adaptObjectRegistrar;
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)tmp);
@@ -202,7 +202,7 @@ PyInit_pyTetGenAdapt()
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
 
   }
 

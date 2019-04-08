@@ -92,7 +92,7 @@ int Image_pyInit()
 #endif
 
 
-  return SV_OK;
+  return Py_OK;
 
 }
 
@@ -110,7 +110,7 @@ PyObject *Image_ReadHeaderCmd(PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple(args,"s|i", &filename,&readProtected))
   {
     PyErr_SetString(ImgErr, "Could not import 1 char and 1 int, filename, readProtected ");
-    
+    return Py_ERROR;
   }
 
   // Do work of command
@@ -156,7 +156,7 @@ PyObject *Image_ReadHeaderCmd(PyObject *self, PyObject *args)
   if ( status == SV_ERROR ) {
     sprintf(tmpStr,"Problem reading header for ", filename );
     PyErr_SetString( ImgErr, tmpStr);
-    
+    return Py_ERROR;
   }
   PyObject *pylist=PyList_New(0);
   tmpStr[0]='\0';
@@ -300,7 +300,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple(args,"ssdd|s",&phasename,&result,&venc,&vencscale,&magname))
   {
     PyErr_SetString(ImgErr, "Could not import 2 char and 2 doubles or one optional char: phasename,result,venc,vencscale,magname");
-    
+    return Py_ERROR;
   }
 
   // Do work of command
@@ -319,7 +319,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
       sprintf(tmpStr,"couldn't find object ", magname );
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
-      
+      return Py_ERROR;
     }
 
     // Make sure image is of type STRUCTURED_PTS_T:
@@ -329,7 +329,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
 	  	      "not of type StructuredPts");
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
-      
+      return Py_ERROR;
     }
     // Retrive geometric information:
     vtkspMag = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -341,7 +341,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
     sprintf(tmpStr,"couldn't find object ", phasename );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // Make sure image is of type STRUCTURED_PTS_T:
@@ -351,7 +351,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
     "not of type StructuredPts" );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // Retrive geometric information:
@@ -364,7 +364,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
 
-    
+    return Py_ERROR;
   }
 
   vtkStructuredPoints *obj;
@@ -380,7 +380,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
     (char *)NULL);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   cvStrPts *sp = new cvStrPts( obj );
@@ -391,7 +391,7 @@ PyObject* Image_DecodeCmd(PyObject *self, PyObject *args)
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
     delete sp;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",sp->GetName());
@@ -415,7 +415,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple(args,"OOi",&regionsArg,&imagesArg,&order))
   {
     PyErr_SetString(ImgErr,"Could not import 2 tuples, and 1 int: regionsArg,imagesArg,order");
-    
+    return Py_ERROR;
   }
 
   // Do work of command
@@ -426,7 +426,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
         sprintf(tmpStr,"order must be 0,1, or 2");
         PyErr_SetString( ImgErr, tmpStr );
         tmpStr[0]='\0';
-        
+        return Py_ERROR;
   }
 
   int numRegions = PyList_Size(regionsArg);
@@ -436,14 +436,14 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
     sprintf(tmpStr,"empty list of regions" );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   if (numImages == 0) {
     sprintf(tmpStr,"empty list of images" );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
 
@@ -463,7 +463,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
         tmpStr[0]='\0';
         delete [] listPd;
         delete [] listImg;
-        
+        return Py_ERROR;
       }
 
       // Make sure region is of type POLYDATA_T:
@@ -476,7 +476,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
         tmpStr[0]='\0';
         delete [] listPd;
         delete [] listImg;
-        
+        return Py_ERROR;
       }
       listPd[i] = ((cvPolyData*)pd)->GetVtkPolyData();
     }
@@ -487,7 +487,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
       tmpStr[0]='\0';
       delete [] listPd;
       delete [] listImg;
-      
+      return Py_ERROR;
     }
   }
 
@@ -504,7 +504,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
         tmpStr[0]='\0';
         delete [] listPd;
         delete [] listImg;
-        
+        return Py_ERROR;
       }
 
       // Make sure image is of type POLYDATA_T:
@@ -517,7 +517,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
         tmpStr[0]='\0';
         delete [] listPd;
         delete [] listImg;
-        
+        return Py_ERROR;
       }
       listImg[i] = ((cvStrPts*)img)->GetVtkStructuredPoints();
 
@@ -529,7 +529,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
       tmpStr[0]='\0';
       delete [] listPd;
       delete [] listImg;
-      
+      return Py_ERROR;
     }
   }
 
@@ -556,7 +556,7 @@ PyObject*  Image_CalcCorrectionEqnCmd(PyObject *self, PyObject *args)
     sprintf(tmpStr,"error finding correction equation ");
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // return a string with the correction equation
@@ -604,7 +604,8 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
   if (!PyArg_ParseTuple(args,"OOids",&regionsArg,&imagesArg,
             &order,&factor,&objName))
   {
-    PyErr_SetString(ImgErr,"Could not import 2 tuples, 1 int, 1 double and 1 char: regionsArg,imagesArg,order,factor,objname");
+    fprintf(stderr,"Could not import 2 tuples, 1 int, 1 double and 1 char: regionsArg,imagesArg,order,factor,objname");
+    return Py_ERROR;
   }
 
   // Do work of command
@@ -616,7 +617,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
     sprintf(tmpStr,"order must be 0,1, or 2");
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-        
+        return Py_ERROR;
   }
 
   int numImages = PyList_Size(imagesArg);
@@ -625,7 +626,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
     sprintf(tmpStr,"empty list of images" );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   int numRegions =PyList_Size(regionsArg);
@@ -638,7 +639,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
     sprintf(tmpStr,"object ", objName, " already exists");
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
 
@@ -659,7 +660,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
         PyErr_SetString( ImgErr, tmpStr );
         tmpStr[0]='\0';
         delete [] listImg;
-        
+        return Py_ERROR;
       }
 
       // Make sure image is of type POLYDATA_T:
@@ -671,7 +672,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
         PyErr_SetString( ImgErr, tmpStr );
         tmpStr[0]='\0';
         delete [] listImg;
-        
+        return Py_ERROR;
       }
       listImg[i] = ((cvStrPts*)img)->GetVtkStructuredPoints();
 
@@ -682,7 +683,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
       delete [] listImg;
-      
+      return Py_ERROR;
     }
   }
 
@@ -702,7 +703,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
           tmpStr[0]='\0';
           delete [] listPd;
           delete [] listImg;
-          
+          return Py_ERROR;
         }
 
       // Make sure region is of type POLYDATA_T:
@@ -714,7 +715,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
           tmpStr[0]='\0';
           delete [] listPd;
           delete [] listImg;
-          
+          return Py_ERROR;
         }
         listPd[i] = ((cvPolyData*)pd)->GetVtkPolyData();
       }
@@ -725,7 +726,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
       tmpStr[0]='\0';
       delete [] listPd;
       delete [] listImg;
-      
+      return Py_ERROR;
       }
     }
   }
@@ -755,7 +756,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
     sprintf(tmpStr, "error finding correction equation ");
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // return a string with the correction equation
@@ -793,7 +794,7 @@ PyObject *Image_CalcCorrectionEqnAutoCmd(PyObject *self, PyObject *args )
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
     delete sp;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",r);
@@ -819,7 +820,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ssddi", &imagename,&result,&thrMin,&thrMax,&max_num_pts))
   {
     PyErr_SetString(ImgErr, "Could not import 2 chars, 2 doubles and 1 int, imagename, result, thrMin, thrMax, max_num_pts");
-    
+    return Py_ERROR;
   }
 
   // Do work of command
@@ -839,7 +840,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
       sprintf(tmpStr, "couldn't find object %s", imagename);
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
-      
+      return Py_ERROR;
     }
 
     // Make sure image is of type STRUCTURED_PTS_T:
@@ -849,7 +850,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
       sprintf(tmpStr, "error: object %s not of type StructuredPts", imagename);
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
-      
+      return Py_ERROR;
     }
     // Retrive geometric information:
     vtksp = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -861,7 +862,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
     sprintf(tmpStr, "object %s already exists",result);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   cvPolyData *obj = NULL;
@@ -872,7 +873,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
     sprintf(tmpStr, "Problem thresholding %s", imagename);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   obj->SetName( result );
@@ -883,7 +884,7 @@ PyObject* Image_ThresholdCmd(PyObject* self, PyObject* args)
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
     delete obj;
-    
+    return Py_ERROR;
   }
 
   vtkSmartPointer<vtkPolyData> polydataObj =
@@ -911,7 +912,7 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
   if (!PyArg_ParseTuple(args,"sO",&imagename, &ptList))
   {
     PyErr_SetString(ImgErr,"Could not import one char and one tuple,imagename,ptList");
-    
+    return Py_ERROR;
   }
 
   double pt[3];
@@ -922,7 +923,7 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
     if (PyErr_Occurred())
     {
       PyErr_SetString( ImgErr, "Error parsing ptlist!" );
-      
+      return Py_ERROR;
     }
   }
   char tmpStr[1024];
@@ -942,7 +943,7 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
       sprintf(tmpStr, "couldn't find object ", imagename);
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
-      
+      return Py_ERROR;
     }
 
     // Make sure image is of type STRUCTURED_PTS_T:
@@ -953,7 +954,7 @@ PyObject* Image_ComputeStructuredCoordCmd(PyObject *self, PyObject *args )
       "not of type StructuredPts" );
       PyErr_SetString( ImgErr, tmpStr );
       tmpStr[0]='\0';
-      
+      return Py_ERROR;
     }
     // Retrive geometric information:
     vtksp = ((cvStrPts*)img)->GetVtkStructuredPoints();
@@ -1018,7 +1019,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
           &thr,&dstName,&useCityBlock))
   {
     PyErr_SetString(ImgErr,"Could not import 1 char, 1 tuple, 1 double, 1 char and 1 int(bool): srcName,startList,thr, dstName,useCityBlock");
-    
+    return Py_ERROR;
   }
 
   // Do work of command
@@ -1036,7 +1037,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
     sprintf(tmpStr,  "couldn't find object ", srcName  );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // Make sure image is of type STRUCTURED_PTS_T:
@@ -1047,7 +1048,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
     "not of type StructuredPts");
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // Retrive geometric information:
@@ -1063,7 +1064,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
     if (PyErr_Occurred()||PyList_Size(startList)!=3)
     {
       PyErr_SetString( ImgErr, "Error parsing coordinate lists!" );
-      
+      return Py_ERROR;
     }
   }
 
@@ -1074,7 +1075,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
     (char *)NULL);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   vtkStructuredPoints *mapsp = NULL;
@@ -1092,7 +1093,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
     sprintf(tmpStr, "Problem creating distance map for ", srcName);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   cvStrPts *repossp = new cvStrPts( distmap->getDistanceMap() );
@@ -1106,7 +1107,7 @@ PyObject *Image_CreateDistanceMapCmd(PyObject *self, PyObject *args)
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
     delete repossp;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s", repossp->GetName());
@@ -1135,7 +1136,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
           &dstName,&useCityBlock,&maxIter,&minqstop))
   {
     PyErr_SetString(ImgErr,"Could not import 2 chars, 1 tuple or 3 optional int: srcName,stopList,dstName, useCityBlock,maIter,minqstop");
-    
+    return Py_ERROR;
   }
   // Do work of command
   char tmpStr[1024];
@@ -1152,7 +1153,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
     sprintf(tmpStr, "couldn't find object ", srcName  );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // Make sure image is of type STRUCTURED_PTS_T:
@@ -1163,7 +1164,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
     "not of type StructuredPts"  );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // Retrive geometric information:
@@ -1179,7 +1180,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
     if (PyErr_Occurred()||PyList_Size(stopList)!=3)
     {
       PyErr_SetString( ImgErr, "Error parsing coordinate lists!" );
-      
+      return Py_ERROR;
     }
   }
 
@@ -1188,7 +1189,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
     sprintf(tmpStr, "object ", dstName, " already exists");
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   vtkStructuredPoints *mapsp = NULL;
@@ -1209,7 +1210,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
     sprintf(tmpStr, "Problem finding path for ", srcName);
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   cvPolyData *dst = new cvPolyData (pd);
@@ -1222,7 +1223,7 @@ PyObject *Image_FindPathCmd( PyObject *self, PyObject *args )
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
     delete dst;
-    
+    return Py_ERROR;
   }
 
   //instead of exporting the object name, output the vtkPolydata object
@@ -1248,7 +1249,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple(args,"ss|di",&objName,&maskName,&replaceVal,&notval))
   {
     PyErr_SetString(ImgErr,"Could not import 2 chars or 1 optional double, 1 optional int: objName,maskName,replaceVal, notval");
-    
+    return Py_ERROR;
   }
 
   // Do work of command
@@ -1266,7 +1267,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
     sprintf(tmpStr, "couldn't find object ", objName  );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // Make sure image is of type STRUCTURED_PTS_T:
@@ -1277,7 +1278,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
     "not of type StructuredPts"  );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
 
@@ -1288,7 +1289,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
     sprintf(tmpStr, "couldn't find object ", maskName   );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   // Make sure mask is of type STRUCTURED_PTS_T:
@@ -1299,7 +1300,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
     "not of type StructuredPts" );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
 
@@ -1315,7 +1316,7 @@ PyObject* Image_MaskInPlaceCmd( PyObject *self, PyObject *args)
     sprintf(tmpStr, "Problem masking in place for ", objName );
     PyErr_SetString( ImgErr, tmpStr );
     tmpStr[0]='\0';
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",img->GetName());

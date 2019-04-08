@@ -80,7 +80,7 @@ int PathGroup_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
     PyInit_pyPathGroup();
 #endif
-  return SV_OK;
+  return Py_OK;
 }
 
 static PyMethodDef pyPathGroup_methods[]={
@@ -103,7 +103,7 @@ static PyMethodDef pyPathGroup_methods[]={
 static int pyPathGroup_init(pyPathGroup* self, PyObject* args)
 {
   fprintf(stdout,"pyPathGroup initialized.\n");
-  return SV_OK;
+  return Py_OK;
 }
 
 static PyTypeObject pyPathGroupType = {
@@ -221,14 +221,14 @@ PyMODINIT_FUNC PyInit_pyPathGroup()
   if (PyType_Ready(&pyPathGroupType)<0)
   {
     fprintf(stdout,"Error in pyPathGroupType\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathGroupModule);
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyPathGroup\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
   }
   PyRunTimeErrPg = PyErr_NewException("pyPathGroup.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErrPg);
@@ -250,7 +250,7 @@ PyObject* sv4PathGroup_NewObjectCmd( pyPathGroup* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&objName))
   {
     PyErr_SetString(PyRunTimeErrPg,"Could not import one char or optional char and ints");
-    
+    return Py_ERROR;
   }
   
    // Do work of command:
@@ -258,7 +258,7 @@ PyObject* sv4PathGroup_NewObjectCmd( pyPathGroup* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErrPg, "object already exists.");
-    
+    return Py_ERROR;
   }
 
   // Instantiate the new mesh:
@@ -268,13 +268,13 @@ PyObject* sv4PathGroup_NewObjectCmd( pyPathGroup* self, PyObject* args)
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErrPg, "error registering obj in repository");
     delete geom;
-    
+    return Py_ERROR;
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  Py_RETURN_NONE; 
 
 }
 
@@ -291,7 +291,7 @@ PyObject* sv4PathGroup_GetObjectCmd( pyPathGroup* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErrPg, "Could not import 1 char: objName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -304,7 +304,7 @@ PyObject* sv4PathGroup_GetObjectCmd( pyPathGroup* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
     PyErr_SetString(PyRunTimeErrPg,r);
-    
+    return Py_ERROR;
   }
 
   type = rd->GetType();
@@ -314,14 +314,14 @@ PyObject* sv4PathGroup_GetObjectCmd( pyPathGroup* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "%s not a path group object", objName);
     PyErr_SetString(PyRunTimeErrPg,r);
-    
+    return Py_ERROR;
   }
   
   path = dynamic_cast<PathGroup*> (rd);
   Py_INCREF(path);
   self->geom=path;
   Py_DECREF(path);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  Py_RETURN_NONE; 
 
 }
 
@@ -339,7 +339,7 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"si",&objName,&index))
     {
         PyErr_SetString(PyRunTimeErrPg,"Could not import path name, index");
-        
+        return Py_ERROR;
     }
     
         // Retrieve source object:
@@ -350,7 +350,7 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
         r[0] = '\0';
         sprintf(r, "couldn't find object %s", objName);
         PyErr_SetString(PyRunTimeErrPg,r);
-        
+        return Py_ERROR;
     }
     
     type = rd->GetType();
@@ -360,14 +360,14 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
         r[0] = '\0';
         sprintf(r, "%s not a path object", objName);
         PyErr_SetString(PyRunTimeErrPg,r);
-        
+        return Py_ERROR;
     }
     
     PathElement* path = static_cast<PathElement*> (rd);
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErrPg,"Path does not exist.");
-        
+        return Py_ERROR;
     }
     
     int timestepSize = self->geom->GetTimeSize();
@@ -379,7 +379,7 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
     else
         self->geom->SetPathElement(path, index);
             
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    Py_RETURN_NONE; 
     
 }
 
@@ -408,20 +408,20 @@ PyObject* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"si",&pathName, &index))
     {
         PyErr_SetString(PyRunTimeErrPg,"Could not import char pathName, int index");
-        
+        return Py_ERROR;
     }
         
     PathGroup* pathGrp = self->geom;
     if (pathGrp==NULL)
     {
         PyErr_SetString(PyRunTimeErrPg,"Path does not exist.");
-        
+        return Py_ERROR;
     }
     
     // Make sure the specified result object does not exist:
     if ( gRepository->Exists( pathName ) ) {
         PyErr_SetString(PyRunTimeErrPg, "object already exists.");
-        
+        return Py_ERROR;
     }
     
     PathElement* path;
@@ -430,16 +430,16 @@ PyObject* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args)
     else
     {
         PyErr_SetString(PyRunTimeErrPg, "Index out of bound.");
-        
+        return Py_ERROR;
     }
     
     // Register the path:
     if ( !( gRepository->Register( pathName, path ) ) ) {
         PyErr_SetString(PyRunTimeErrPg, "error registering obj in repository");
-        
+        return Py_ERROR;
     }
   
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    Py_RETURN_NONE;
     
 }
 
@@ -466,11 +466,11 @@ PyObject* sv4PathGroup_SetPathGroupIDCmd(pyPathGroup* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"i",&id))
     {
         PyErr_SetString(PyRunTimeErrPg,"Could not import int id");
-        
+        return Py_ERROR;
     }
     
     self->geom->SetPathID(id);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    Py_RETURN_NONE;
 }
 
 // --------------------
@@ -482,11 +482,11 @@ PyObject* sv4PathGroup_SetSpacingCmd(pyPathGroup* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"d",&spacing))
     {
         PyErr_SetString(PyRunTimeErrPg,"Could not import double spacing");
-        
+        return Py_ERROR;
     }
     
     self->geom->SetSpacing(spacing);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    Py_RETURN_NONE;
 }
 
 // --------------------
@@ -510,7 +510,7 @@ PyObject* sv4PathGroup_SetMethod(pyPathGroup* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"s",&method))
     {
         PyErr_SetString(PyRunTimeErrPg,"Could not import char method (total, subdivision or spacing)");
-        
+        return Py_ERROR;
     }
     
     if(strcmp(method,"total")==0)
@@ -522,9 +522,9 @@ PyObject* sv4PathGroup_SetMethod(pyPathGroup* self, PyObject* args)
     else
     {
         PyErr_SetString(PyRunTimeErrPg,"Method not recognized.");
-        
+        return Py_ERROR;
     }
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    Py_RETURN_NONE;
 }
 
 // --------------------
@@ -557,11 +557,11 @@ PyObject* sv4PathGroup_SetCalculationNumber(pyPathGroup* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"i",&number))
     {
         PyErr_SetString(PyRunTimeErrPg,"Could not import int number");
-        
+        return Py_ERROR;
     }
     
     self->geom->SetCalculationNumber(number);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    Py_RETURN_NONE;
 }
 
 // --------------------

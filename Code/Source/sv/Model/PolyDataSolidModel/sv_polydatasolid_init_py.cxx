@@ -115,12 +115,12 @@ PyObject* Polydatasolid_pyInit()
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
   }
   else
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return Py_ERROR;
   tmp->registrar = pySolidModelRegistrar;
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
   // Initialize parasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return Py_ERROR;
   }
 
   PyObject *pythonC;
@@ -132,7 +132,7 @@ PyObject* Polydatasolid_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return Py_ERROR;
   }
   return pythonC;
 }
@@ -184,14 +184,14 @@ PyInit_pySolidPolydata()
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
 
   }
   tmp->registrar = pySolidModelRegistrar;
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
   // Initialize parasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
 
   }
 
@@ -202,7 +202,7 @@ PyInit_pySolidPolydata()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolidolydata");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return pythonC;
   }
 
   return pythonC;

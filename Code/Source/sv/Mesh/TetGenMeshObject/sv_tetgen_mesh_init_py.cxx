@@ -111,16 +111,16 @@ PyObject* Tetgenmesh_pyInit()
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      return Py_ERROR;
     }
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return Py_ERROR;
   }
 
   //Initialize Tetgenutils
   if (TGenUtils_Init() != SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return Py_ERROR;
   }
   PyObject* pythonC;
 #if PYTHON_MAJOR_VERSION == 2
@@ -131,7 +131,7 @@ PyObject* Tetgenmesh_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return Py_ERROR;
   }
   return pythonC;
 }
@@ -202,15 +202,15 @@ PyInit_pyMeshTetgen(void)
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      Py_RETURN_NONE;
     }
   }
   else {
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      Py_RETURN_NONE;
   }
   //Initialize Tetgenutils
   if (TGenUtils_Init() != SV_OK) {
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      Py_RETURN_NONE;
   }
   PyObject* pythonC;
 
@@ -220,7 +220,7 @@ PyInit_pyMeshTetgen(void)
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      Py_RETURN_NONE;
   }
 
   return pythonC;

@@ -352,7 +352,7 @@ int Geom_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   PyInit_pyGeom();
 #endif
-  return SV_OK;
+  return Py_OK;
 
 }
 
@@ -373,7 +373,7 @@ PyObject* Geom_ReduceCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: \
 srcName, dstName and one double, tol");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -382,30 +382,30 @@ srcName, dstName and one double, tol");
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr,  "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_Reduce( (cvPolyData*)src, tol, (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "point merging error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository" );
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -430,7 +430,7 @@ PyObject* Geom_UnionCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: \
 aName, bName, dstName and one optional double, tol");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -439,43 +439,43 @@ aName, bName, dstName and one optional double, tol");
   srcA = gRepository->GetObject( aName );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   srcB = gRepository->GetObject( bName );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_union( (cvPolyData*)srcA, (cvPolyData*)srcB, tolerance, (cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "poly manipulation error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
 
@@ -502,7 +502,7 @@ PyObject* Geom_IntersectCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: \
 aName, bName, dstName and one optional double, tol");
-    
+    return Py_ERROR;
   }
 
 
@@ -512,43 +512,43 @@ aName, bName, dstName and one optional double, tol");
   srcA = gRepository->GetObject( aName );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   srcB = gRepository->GetObject( bName );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_intersect( (cvPolyData*)srcA, (cvPolyData*)srcB, tolerance,(cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "poly manipulation error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -574,7 +574,7 @@ PyObject* Geom_SubtractCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: \
 aName, bName, dstName and one optional double, tol");
-    
+    return Py_ERROR;
   }
 
 
@@ -584,43 +584,43 @@ aName, bName, dstName and one optional double, tol");
   srcA = gRepository->GetObject( aName );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   srcB = gRepository->GetObject( bName );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_subtract( (cvPolyData*)srcA, (cvPolyData*)srcB, tolerance, (cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "poly manipulation error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
 
@@ -641,7 +641,7 @@ PyObject* Geom_CheckSurfaceCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s|d", &tol))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char, Name and one optional double, tol");
-    
+    return Py_ERROR;
   }
 
 
@@ -651,20 +651,20 @@ PyObject* Geom_CheckSurfaceCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
   
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   int stats[2];
   if ( sys_geom_checksurface( (cvPolyData*)src, stats,tol)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error checking surface" );
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("ii",stats[0],stats[1]);
@@ -685,7 +685,7 @@ PyObject* Geom_CleanCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &srcName,&dstName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: srcName, dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -695,31 +695,31 @@ PyObject* Geom_CleanCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   dst = sys_geom_Clean( (cvPolyData*)src );
   if ( dst == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "error cleaning object" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -739,7 +739,7 @@ PyObject* Geom_CapIdSetCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &Name,&dstName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: Name, dstName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -748,13 +748,13 @@ PyObject* Geom_CapIdSetCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
   int *doublecaps;
   int numfaces=0;
@@ -763,14 +763,14 @@ PyObject* Geom_CapIdSetCmd(PyObject* self, PyObject* args)
 			  &doublecaps,&numfaces)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error setting cap ids" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete [] doublecaps;
     delete dst;
-    
+    return Py_ERROR;
   }
 
 
@@ -803,7 +803,7 @@ PyObject* Geom_SetArrayForLocalOp_FaceCmd(PyObject* self, PyObject* args){
     PyErr_SetString(PyRunTimeErr, "Could not import 3 chars, \
 Name, dstName arrayName, one list, values, \
 one optional char, outArray and one int dataType");
-    
+    return Py_ERROR;
   }
 
 
@@ -811,18 +811,18 @@ one optional char, outArray and one int dataType");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   int nvals = PyList_Size(values);
   if (nvals == 0) {
-      return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+      return Py_BuildValue("N",PyBool_FromLong(1));
   }
   int *vals = new int[nvals];
 
@@ -832,7 +832,7 @@ one optional char, outArray and one int dataType");
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr,"error parsing list");
-    
+    return Py_ERROR;
   }
   // Do work of command:
 
@@ -840,7 +840,7 @@ one optional char, outArray and one int dataType");
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error creating array on surface" );
     delete [] vals;
-    
+    return Py_ERROR;
   }
 
   delete [] vals;
@@ -848,7 +848,7 @@ one optional char, outArray and one int dataType");
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -877,26 +877,26 @@ PyObject* Geom_SetArrayForLocalOp_SphereCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, \
 Name, dstName, one double radius, one list, ctrList, \
 one optional char, outArray and one int dataType");
-    
+    return Py_ERROR;
   }
 
   // Retrieve source object:
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   nctr = PyList_Size(ctrList);
   if ( nctr != 3 ) {
     PyErr_SetString(PyRunTimeErr, "sphere requires a 3D center coordinate");
-    
+    return Py_ERROR;
   }
   for(int i=0;i<3;i++)
     ctr[i] = PyFloat_AsDouble(PyList_GetItem(ctrList,i));
@@ -904,21 +904,21 @@ one optional char, outArray and one int dataType");
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
-    
+    return Py_ERROR;
   }
   // Do work of command:
 
   if ( sys_geom_set_array_for_local_op_sphere( (cvPolyData*)src,(cvPolyData**)(&dst),radius,ctr,outArray,dataType)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error creating array on surface" );
-    
+    return Py_ERROR;
   }
 
   vtkPolyData *geom = ((cvPolyData*)(dst))->GetVtkPolyData();
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -945,7 +945,7 @@ PyObject* Geom_SetArrayForLocalOp_CellsCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, \
 Name, dstName , one list, values, \
 one optional char, outArray and one int dataType");
-    
+    return Py_ERROR;
   }
 
 
@@ -953,19 +953,19 @@ one optional char, outArray and one int dataType");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
 
   int nvals = PyList_Size(values);
   if (nvals == 0) {
-      return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+      return Py_BuildValue("N",PyBool_FromLong(1));
   }
   int *vals = new int[nvals];
 
@@ -975,7 +975,7 @@ one optional char, outArray and one int dataType");
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr,"error parsing list");
-    
+    return Py_ERROR;
   }
   // Do work of command:
 
@@ -983,7 +983,7 @@ one optional char, outArray and one int dataType");
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error creating array on surface" );
     delete [] vals;
-    
+    return Py_ERROR;
   }
 
   delete [] vals;
@@ -991,7 +991,7 @@ one optional char, outArray and one int dataType");
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1020,7 +1020,7 @@ PyObject* Geom_SetArrayForLocalOp_BlendCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "Could not import 3 chars, \
 Name, dstName, arrayName , one list, values, one double, radius,\
 one optional char, outArray and one int dataType");
-    
+    return Py_ERROR;
   }
 
 
@@ -1028,17 +1028,17 @@ one optional char, outArray and one int dataType");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   if (PyList_Size(values) == 0) {
-      return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+      return Py_BuildValue("N",PyBool_FromLong(1));
   }
 
   int nvals = PyList_Size(values);
@@ -1050,7 +1050,7 @@ one optional char, outArray and one int dataType");
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr,"error parsing list");
-    
+    return Py_ERROR;
   }
   // Do work of command:
 
@@ -1058,7 +1058,7 @@ one optional char, outArray and one int dataType");
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error creating array on surface" );
     delete [] vals;
-    
+    return Py_ERROR;
   }
 
   delete [] vals;
@@ -1066,7 +1066,7 @@ one optional char, outArray and one int dataType");
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1092,7 +1092,7 @@ PyObject* Geom_LocalDecimationCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, \
 Name, dstName , one optional double, target, \
 two optional chars, pointArrayName, cellArrayName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1102,25 +1102,25 @@ two optional chars, pointArrayName, cellArrayName");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
   if ( sys_geom_local_quadric_decimation( (cvPolyData*)src, (cvPolyData**)(&dst),target,
 			  pointArrayName,cellArrayName)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "running local decimation operation" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1147,7 +1147,7 @@ PyObject* Geom_LocalLaplacianSmoothCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, \
 Name, dstName , one optional int, numiters, one optional double, relax, \
 two optional chars, pointArrayName, cellArrayName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1157,26 +1157,26 @@ two optional chars, pointArrayName, cellArrayName");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
   if ( sys_geom_local_laplacian_smooth( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,relax,
 			  pointArrayName,cellArrayName)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "running local decimation operation" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1206,7 +1206,7 @@ Name, dstName , one optional int, numiters, \
 one optional double constrainfactor, \
 one optional int numcgsolves,\
 two optional chars, pointArrayName, cellArrayName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1216,26 +1216,26 @@ two optional chars, pointArrayName, cellArrayName");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
   if ( sys_geom_local_constrain_smooth( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,constrainfactor,numcgsolves,
 			  pointArrayName,cellArrayName)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "running local decimation operation" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1261,7 +1261,7 @@ PyObject* Geom_LocalLinearSubdivisionCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, \
 Name, dstName , one optional int, numiters, \
 two optional chars, pointArrayName, cellArrayName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1271,25 +1271,25 @@ two optional chars, pointArrayName, cellArrayName");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
   if ( sys_geom_local_linear_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,pointArrayName,cellArrayName)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "running local subdivision operation" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1315,7 +1315,7 @@ PyObject* Geom_LocalButterflySubdivisionCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, \
 Name, dstName , one optional int, numiters, \
 two optional chars, pointArrayName, cellArrayName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1325,25 +1325,25 @@ two optional chars, pointArrayName, cellArrayName");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
   if ( sys_geom_local_butterfly_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,pointArrayName,cellArrayName)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "running local subdivision operation" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1369,7 +1369,7 @@ PyObject* Geom_LocalLoopSubdivisionCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, \
 Name, dstName , one optional int, numiters, \
 two optional chars, pointArrayName, cellArrayName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1379,25 +1379,25 @@ two optional chars, pointArrayName, cellArrayName");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
   if ( sys_geom_local_loop_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,pointArrayName,cellArrayName)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "running local subdivision operation" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1431,7 +1431,7 @@ PyObject* Geom_LocalBlendCmd(PyObject* self, PyObject* args)
 Name, dstName ,\
 five optional ints, numblenditers,numsubdivisioniters,numcgsmoothiters,numlapsmoothiters,targetdecimation, \
 two optional chars, pointArrayName, cellArrayName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1441,13 +1441,13 @@ two optional chars, pointArrayName, cellArrayName");
   src = gRepository->GetObject( Name );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
   if ( sys_geom_local_blend( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numblenditers,numsubblenditers,
@@ -1456,13 +1456,13 @@ two optional chars, pointArrayName, cellArrayName");
 			  pointArrayName,cellArrayName)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "running local blend operation" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1489,7 +1489,7 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one list srcList,\
  one int, interT, one char, dstName and one optional double, tolerance");
-    
+    return Py_ERROR;
   }
 
 
@@ -1514,13 +1514,13 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args)
     if ( src == NULL ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
       delete [] srcs;
-      
+      return Py_ERROR;
     }
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
       delete [] srcs;
-      
+      return Py_ERROR;
     }
     srcs[i] = (cvPolyData *) src;
   }
@@ -1531,14 +1531,14 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args)
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
     delete [] srcs;
-    
+    return Py_ERROR;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     delete [] srcs;
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_all_union( srcs, numSrcs,interT,tolerance,(cvPolyData**)(&dst) )
@@ -1547,7 +1547,7 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args)
     delete dst;
     delete [] srcs;
     delete geom;
-    
+    return Py_ERROR;
   }
 
   vtkPolyData *dstPd;
@@ -1558,7 +1558,7 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args)
     delete geom;
     delete [] srcs;
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",geom->GetName());
@@ -1589,7 +1589,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char srcName,\
  two lists facelist and idlist, and one char dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1600,7 +1600,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
   if (numFaces != numIds)
   {
       PyErr_SetString(PyRunTimeErr,  "Number of Ids must equal number of faces!");
-      
+      return Py_ERROR;
   }
 
   // Foreach src obj, check that it is in the repository and of the
@@ -1621,13 +1621,13 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
     if ( face == NULL ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] faces;
-      
+      return Py_ERROR;
     }
     type = face->GetType();
     if ( type != POLY_DATA_T ) {
       PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
       delete [] faces;
-      
+      return Py_ERROR;
     }
     faces[i] = (cvPolyData *) face;
   }
@@ -1640,14 +1640,14 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr, "Error parsing list objects");
-    
+    return Py_ERROR;
   }
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
     delete [] faces;
     delete [] allids;
-    
+    return Py_ERROR;
   }
 
   // Retrieve cvPolyData source:
@@ -1656,14 +1656,14 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
     delete [] faces;
     delete [] allids;
-    
+    return Py_ERROR;
   }
   type = model->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
     delete [] faces;
     delete [] allids;
-    
+    return Py_ERROR;
   }
 
   // We're done with the src object names:
@@ -1673,7 +1673,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
   if ( geom == NULL ) {
     delete [] faces;
     delete [] allids;
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_assign_ids_based_on_faces((cvPolyData *)model,faces,numFaces,allids,(cvPolyData**)(&dst) )
@@ -1682,7 +1682,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
     delete dst;
     delete [] faces;
     delete [] allids;
-    
+    return Py_ERROR;
   }
 
   delete [] faces;
@@ -1694,7 +1694,7 @@ PyObject* Geom_Convert_NURBS_To_PolyCmd(PyObject* self, PyObject* args)
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
  
@@ -1716,7 +1716,7 @@ PyObject* Geom_MakePolysConsistentCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &srcName,&dstName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars, srcName, dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1726,31 +1726,31 @@ PyObject* Geom_MakePolysConsistentCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_MakePolysConsistent( (cvPolyData*)src, (cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "poly manipulation error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
 
@@ -1773,7 +1773,7 @@ PyObject* Geom_ReverseAllCellsCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &srcName,&dstName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars, srcName, dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1783,31 +1783,31 @@ PyObject* Geom_ReverseAllCellsCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_ReverseAllCells( (cvPolyData*)src, (cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "cell reversal error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
 
@@ -1828,7 +1828,7 @@ PyObject* Geom_NumClosedLineRegionsCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &srcName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one chars, srcName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1838,18 +1838,18 @@ PyObject* Geom_NumClosedLineRegionsCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_NumClosedLineRegions( (cvPolyData*)src, &num ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "region count failed" );
-    
+    return Py_ERROR;
   }
 
 
@@ -1873,7 +1873,7 @@ PyObject* Geom_GetClosedLineRegionCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sis", &srcName,&id,&dstName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one int, srcName, id, dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -1883,30 +1883,30 @@ PyObject* Geom_GetClosedLineRegionCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified destination does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_GetClosedLineRegion( (cvPolyData*)src, id, (cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "region retrieval failed" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -1930,14 +1930,14 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sOs", &objName,&posList,&resultName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one list, objName, posList and resultName");
-    
+    return Py_ERROR;
   }
 
 
   // Convert given coordinate to double's:
   if ( PyList_Size(posList) != 3 ) {
     PyErr_SetString(PyRunTimeErr,  "list must have three elements"  );
-    
+    return Py_ERROR;
   }
   for (int i=0;i<3;i++)
     pos[i] = PyFloat_AsDouble(PyList_GetItem(posList,i));
@@ -1945,7 +1945,7 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args)
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr,"list elements must be doubles");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -1954,34 +1954,34 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified result does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr,  "object  already exists" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_Pick( (cvPolyData*)obj, pos, (cvPolyData**)(&result) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "no geometry containing given pos found");
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( resultName, result ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository" );
     delete result;
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2010,7 +2010,7 @@ PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and three lists,\
  srcName, pathPosList, pathTanlist, pathXhatList,dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2020,19 +2020,19 @@ PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args)
   if(n!=3)
   {
     PyErr_SetString(PyRunTimeErr, "path_pos: 3d coordinate" );
-    
+    return Py_ERROR;
   }
   n = PyList_Size(pathTanList);
   if(n!=3)
   {
     PyErr_SetString(PyRunTimeErr, "path_tan: 3d vector" );
-    
+    return Py_ERROR;
   }
   n = PyList_Size(pathXhatList);
   if(n!=3)
   {
     PyErr_SetString(PyRunTimeErr, "path_xhat: 3d vector" );
-    
+    return Py_ERROR;
   }
 
   for (int i=0;i<3;i++)
@@ -2044,7 +2044,7 @@ PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args)
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
-    
+    return Py_ERROR;
   }
 
 
@@ -2055,32 +2055,32 @@ PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   // Check src type:
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_OrientProfile( (cvPolyData*)src, ppt, ptan, xhat,
 			       (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "orient error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -2112,7 +2112,7 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and three lists,\
  srcName, pathPosList, pathTanlist, pathXhatList,dstName");
-    
+    return Py_ERROR;
   }
 
   // Parse lists
@@ -2121,19 +2121,19 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args)
   if(n!=3)
   {
     PyErr_SetString(PyRunTimeErr, "path_pos: 3d coordinate" );
-    
+    return Py_ERROR;
   }
   n = PyList_Size(pathTanList);
   if(n!=3)
   {
     PyErr_SetString(PyRunTimeErr, "path_tan: 3d vector" );
-    
+    return Py_ERROR;
   }
   n = PyList_Size(pathXhatList);
   if(n!=3)
   {
     PyErr_SetString(PyRunTimeErr, "path_xhat: 3d vector" );
-    
+    return Py_ERROR;
   }
 
   for (int i=0;i<3;i++)
@@ -2145,7 +2145,7 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args)
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
-    
+    return Py_ERROR;
   }
   // Do work of command
   // ------------------
@@ -2154,32 +2154,32 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   // Check src type:
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_DisorientProfile( (cvPolyData*)src, ppt, ptan, xhat,
 				  (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "orient error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -2205,7 +2205,7 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import three chars and one int,\
  refName, srcName,dstName,vecMtd");
-    
+    return Py_ERROR;
   }
 
 
@@ -2216,30 +2216,30 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args)
   ref = gRepository->GetObject( refName );
   if ( ref == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
-    
+    return Py_ERROR;
   }
   type = ref->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   // Retrieve src object and check type:
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   if ( vecMtd ) {
@@ -2249,13 +2249,13 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args)
   }
   if ( dst == NULL ) {
     PyErr_SetString(PyRunTimeErr, "alignment error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -2283,7 +2283,7 @@ PyObject* Geom_TranslateCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one list,\
 srcName,vecList,dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2292,7 +2292,7 @@ srcName,vecList,dstName");
   n = PyList_Size(vecList);
   if(n!=3){  
     PyErr_SetString(PyRunTimeErr, "vec: 3d coordinate" );
-    
+    return Py_ERROR;
   }
 
   for(int i=0;i<3;i++)
@@ -2301,7 +2301,7 @@ srcName,vecList,dstName");
   if(PyErr_Occurred()!=NULL)
   {
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
-    
+    return Py_ERROR;
   }
 
   // Do work of command
@@ -2311,32 +2311,32 @@ srcName,vecList,dstName");
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   // Check src type:
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_Translate( (cvPolyData*)src, vec, (cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "translate error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -2360,7 +2360,7 @@ PyObject* Geom_ScaleAvgCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one double,\
 srcName,factor,dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2372,32 +2372,32 @@ srcName,factor,dstName");
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   // Check src type:
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_ScaleAvg( (cvPolyData*)src, factor, (cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error scaling about average point" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -2420,7 +2420,7 @@ PyObject* Geom_GetOrderedPtsCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char objName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2430,19 +2430,19 @@ PyObject* Geom_GetOrderedPtsCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Check type:
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_GetOrderedPts( (cvPolyData*)obj, &pts, &num ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "point query error" );
-    
+    return Py_ERROR;
   }
   
   sprintf(dummy,"");
@@ -2474,7 +2474,7 @@ PyObject* Geom_WriteOrderedPtsCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &objName,&fileName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars objName, fileName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2484,22 +2484,22 @@ PyObject* Geom_WriteOrderedPtsCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Check type:
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_WriteOrderedPts( (cvPolyData*)obj, fileName ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "geometry write error" );
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2517,7 +2517,7 @@ PyObject* Geom_WriteLinesCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &objName,&fileName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars objName, fileName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2527,22 +2527,22 @@ PyObject* Geom_WriteLinesCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Check type:
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_WriteLines( (cvPolyData*)obj, fileName ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "file write error" );
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2560,7 +2560,7 @@ PyObject* Geom_PolysClosedCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &srcName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one chars srcName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2570,18 +2570,18 @@ PyObject* Geom_PolysClosedCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_PolysClosed( (cvPolyData*)src, &closed ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "polygon traversal error" );
-    
+    return Py_ERROR;
   }
 
   
@@ -2604,7 +2604,7 @@ PyObject* Geom_SurfAreaCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &srcName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one chars srcName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2614,18 +2614,18 @@ PyObject* Geom_SurfAreaCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_SurfArea( (cvPolyData*)src, &area ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "surface area computation error" );
-    
+    return Py_ERROR;
   }
 
 
@@ -2647,7 +2647,7 @@ PyObject* Geom_GetPolyCentroidCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &srcName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one chars srcName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2657,18 +2657,18 @@ PyObject* Geom_GetPolyCentroidCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_getPolyCentroid( (cvPolyData*)src, centroid) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "polygon centroid computation error" );
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("ddd",centroid[0], centroid[1], centroid[2]);
@@ -2688,7 +2688,7 @@ PyObject* Geom_PrintTriStatsCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &surfName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char surfName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2698,21 +2698,21 @@ PyObject* Geom_PrintTriStatsCmd(PyObject* self, PyObject* args)
   surf = gRepository->GetObject( surfName );
   if ( surf == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object " );
-    
+    return Py_ERROR;
   }
 
   type = surf->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, " object not of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_PrintTriStats( (cvPolyData*)surf ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "surface processing error" );
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2730,7 +2730,7 @@ PyObject* Geom_PrintSmallPolysCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sd", &srcName,&sideTol))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char and one double srcName, sideTol");
-    
+    return Py_ERROR;
   }
 
 
@@ -2740,21 +2740,21 @@ PyObject* Geom_PrintSmallPolysCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_PrintSmallPolys( (cvPolyData*)src, sideTol ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "polygon processing error" );
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -2774,7 +2774,7 @@ PyObject* Geom_RmSmallPolysCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ssd", &srcName,&dstName,&sideTol))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one double srcName,dstName, sideTol");
-    
+    return Py_ERROR;
   }
 
 
@@ -2784,31 +2784,31 @@ PyObject* Geom_RmSmallPolysCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_RmSmallPolys( (cvPolyData*)src, sideTol, (cvPolyData**)(&dst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "polygon processing error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -2831,7 +2831,7 @@ PyObject* Geom_BBoxCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char objName");
-    
+    return Py_ERROR;
   }
 
 
@@ -2841,18 +2841,18 @@ PyObject* Geom_BBoxCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_BBox( (cvPolyData*)obj, bbox ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "bounding box query error" );
-    
+    return Py_ERROR;
   }
 
   PyObject* pylist = PyList_New(6);
@@ -2882,7 +2882,7 @@ PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sO", &objName,&ptList))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char and one list objName, ptList");
-    
+    return Py_ERROR;
   }
 
 
@@ -2891,14 +2891,14 @@ PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args)
 
   if ( npt != 3 ) {
     PyErr_SetString(PyRunTimeErr, "only valid for 3d objects and queries");
-    
+    return Py_ERROR;
   }
   for (int i=0; i<3;i++)
     pt[i] = PyFloat_AsDouble(PyList_GetItem(ptList,i));
 
   if(PyErr_Occurred()!=NULL){
     PyErr_SetString(PyRunTimeErr,"list elements must be doubles");
-    
+    return Py_ERROR;
   }
   // Do work of command:
 
@@ -2906,18 +2906,18 @@ PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_Classify( (cvPolyData*)obj, pt, &ans ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "classify error" );
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("i",ans);
@@ -2943,7 +2943,7 @@ PyObject* Geom_PtInPolyCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sOi", &objName,&ptList,&usePrevPoly))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, one list and one int, objName, ptList, usePrevPoly");
-    
+    return Py_ERROR;
   }
 
 
@@ -2951,14 +2951,14 @@ PyObject* Geom_PtInPolyCmd(PyObject* self, PyObject* args)
   npt=PyList_Size(ptList);
   if ( npt != 2 ) {
     PyErr_SetString(PyRunTimeErr, "pt must be two-dimensional" );
-    
+    return Py_ERROR;
   }
   for (int i=0; i<2; i++)
     pt[i] = PyFloat_AsDouble(PyList_GetItem(ptList,i));
   //The tcl script parsed a 3d pt while requesting a 2d pt
   if(PyErr_Occurred()!=NULL){
     PyErr_SetString(PyRunTimeErr,"List elements must be doubles");
-    
+    return Py_ERROR;
   }
   // Do work of command:
 
@@ -2966,18 +2966,18 @@ PyObject* Geom_PtInPolyCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_PtInPoly( (cvPolyData*)obj, pt,usePrevPoly, &ans ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "point-in-poly error" );
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("i",ans);
@@ -3000,7 +3000,7 @@ PyObject* Geom_MergePtsCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ssd", &srcName,&dstName,&tol))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one double srcName, dstName,tol");
-    
+    return Py_ERROR;
   }
 
 
@@ -3010,19 +3010,19 @@ PyObject* Geom_MergePtsCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   dst = sys_geom_MergePts_tol( (cvPolyData*)src, tol );
@@ -3030,7 +3030,7 @@ PyObject* Geom_MergePtsCmd(PyObject* self, PyObject* args)
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -3053,7 +3053,7 @@ PyObject* Geom_Warp3dPtsCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ssd", &srcName,&dstName,&scale))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one double srcName, dstName,scale");
-    
+    return Py_ERROR;
   }
 
 
@@ -3063,19 +3063,19 @@ PyObject* Geom_Warp3dPtsCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   dst = sys_geom_warp3dPts( (cvPolyData*)src, scale );
@@ -3083,7 +3083,7 @@ PyObject* Geom_Warp3dPtsCmd(PyObject* self, PyObject* args)
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -3104,7 +3104,7 @@ PyObject* Geom_NumPtsCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &srcName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char srcName");
-    
+    return Py_ERROR;
   }
 
 
@@ -3114,13 +3114,13 @@ PyObject* Geom_NumPtsCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   num = ((cvPolyData*)src)->GetVtkPolyData()->GetNumberOfPoints();
@@ -3146,7 +3146,7 @@ PyObject* Geom_sampleLoopCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sis", &srcName,&targetNumPts,&dstName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one int srcName, targetNumPts,dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -3156,32 +3156,32 @@ PyObject* Geom_sampleLoopCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   dst = sys_geom_sampleLoop( (cvPolyData*)src, targetNumPts );
 
   if ( dst == NULL ) {
     PyErr_SetString(PyRunTimeErr, "subsample loop error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -3218,7 +3218,7 @@ PyObject* Geom_loftSolidCmd(PyObject* self, PyObject* args)
 six ints, and one optional int, three optional doubles,\
 srcList, dstName, numOutPtsInSegs,numOutPtsAlongLength, numLinearPtsAlongLength,\
 numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuity");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -3241,13 +3241,13 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
     if ( src == NULL ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] srcs;
-      
+      return Py_ERROR;
     }
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
       delete [] srcs;
-      
+      return Py_ERROR;
     }
     srcs[i] = (cvPolyData *) src;
   }
@@ -3257,7 +3257,7 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
     delete [] srcs;
-    
+    return Py_ERROR;
   }
   if ( sys_geom_loft_solid( srcs, numSrcs,useLinearSampleAlongLength,useFFT,
 			  numOutPtsAlongLength,numOutPtsInSegs,
@@ -3267,12 +3267,12 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
     PyErr_SetString(PyRunTimeErr, "poly manipulation error" );
     delete dst;
     delete [] srcs;
-    
+    return Py_ERROR;
   }
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -3308,7 +3308,7 @@ PyObject* Geom_loftSolidWithNURBSCmd(PyObject* self, PyObject* args)
 srcList,dstName,uDegree,\
 vDegree,uSpacing,vSpacing,uKnotSpanType,vKnotSpanType,\
 uParametricSpanType,vParametricSpanType");
-    
+    return Py_ERROR;
   }
 
 
@@ -3333,13 +3333,13 @@ uParametricSpanType,vParametricSpanType");
     if ( src == NULL ) {
       PyErr_SetString(PyRunTimeErr,  "couldn't find object ");
       delete [] srcs;
-      
+      return Py_ERROR;
     }
     type = src->GetType();
     if ( type != POLY_DATA_T ) {
       PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
       delete [] srcs;
-      
+      return Py_ERROR;
     }
     srcs[i] = (cvPolyData *) src;
   }
@@ -3350,7 +3350,7 @@ uParametricSpanType,vParametricSpanType");
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
     delete [] srcs;
-    
+    return Py_ERROR;
   }
 
   vtkSmartPointer<vtkSVNURBSSurface> NURBSSurface =
@@ -3363,13 +3363,13 @@ uParametricSpanType,vParametricSpanType");
     PyErr_SetString(PyRunTimeErr, "poly manipulation error" );
     delete dst;
     delete [] srcs;
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -3390,7 +3390,7 @@ PyObject* Geom_2dWindingNumCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char objName");
-    
+    return Py_ERROR;
   }
 
 
@@ -3400,13 +3400,13 @@ PyObject* Geom_2dWindingNumCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   wnum = sys_geom_2DWindingNum( (cvPolyData*)obj );
@@ -3430,7 +3430,7 @@ PyObject* Geom_PolygonNormCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char objName");
-    
+    return Py_ERROR;
   }
 
 
@@ -3440,18 +3440,18 @@ PyObject* Geom_PolygonNormCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_PolygonNormal( (cvPolyData*)obj, n ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr,  "error computing normal");
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("ddd",n[0],n[1],n[2]);
@@ -3472,7 +3472,7 @@ PyObject* Geom_AvgPtCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char objName");
-    
+    return Py_ERROR;
   }
 
 
@@ -3482,18 +3482,18 @@ PyObject* Geom_AvgPtCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_AvgPt( (cvPolyData*)obj, pt ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr,  "error averaging points");
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("ddd",pt[0], pt[1], pt[2]);
@@ -3515,7 +3515,7 @@ PyObject* Geom_CopyCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &srcName,&dstName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars srcName,dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -3525,31 +3525,31 @@ PyObject* Geom_CopyCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   dst = sys_geom_DeepCopy( (cvPolyData*)src );
   if ( dst == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "error copying object" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -3571,7 +3571,7 @@ PyObject* Geom_ReorderPgnCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sis", &srcName,&start,&dstName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import two chars and one int srcName, start,dstName");
-    
+    return Py_ERROR;
   }
 
 
@@ -3581,30 +3581,30 @@ PyObject* Geom_ReorderPgnCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   dst = sys_geom_ReorderPolygon( (cvPolyData*)src, start );
   if ( dst == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "error reordering object");
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -3627,7 +3627,7 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sii|s", &srcName,&numOutputPts,&flag,&filename))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, two ints and one optional char, srcName, numOutputPts, flags, fileName");
-    
+    return Py_ERROR;
   }
 
 
@@ -3637,13 +3637,13 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   // if no filename is specified, pass the interp to the spline code to create
@@ -3661,12 +3661,12 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args)
 
   if (result == SV_OK) {
     if (filename !=NULL)
-    	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    	return Py_BuildValue("N",PyBool_FromLong(1));
     else
 	return Py_BuildValue("s",output);
   } else {
     PyErr_SetString(PyRunTimeErr, "Error getting splinePtsToPathPlan");
-    
+    return Py_ERROR;
   }
 
 }
@@ -3688,14 +3688,14 @@ PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sOi", &objName,&nrmList,&tensorType))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, one list, ont int, objName, nrmList,tensorType");
-    
+    return Py_ERROR;
   }
 
 
     // Convert given coordinate to double's:
     if ( PyList_Size(nrmList) != 3 ) {
       PyErr_SetString(PyRunTimeErr,  "list must have three elements");
-      
+      return Py_ERROR;
     }
       
     for (int i=0; i<3;i++)
@@ -3703,7 +3703,7 @@ PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args)
     if(PyErr_Occurred()!=NULL)
     {
       PyErr_SetString(PyRunTimeErr, "list elements must all be double's");
-      
+      return Py_ERROR;
     }
 
 
@@ -3713,19 +3713,19 @@ PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   double q = 0.0;
   if ( sys_geom_IntegrateSurface((cvPolyData*)obj, tensorType, nrm, &q) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error calculating surface integral");
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("d",q);
@@ -3746,7 +3746,7 @@ PyObject* Geom_IntegrateSurface2Cmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"si", &objName,&tensorType))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, ont int, objName,tensorType");
-    
+    return Py_ERROR;
   }
 
 
@@ -3757,20 +3757,20 @@ PyObject* Geom_IntegrateSurface2Cmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   double q = 0.0;
   double area = 0.0;
   if ( sys_geom_IntegrateSurface2((cvPolyData*)obj, tensorType, &q, &area) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error calculating surface integral");
-    
+    return Py_ERROR;
   }
 
 
@@ -3794,7 +3794,7 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sOd", &objName,&nrmList,&rho))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, one list, one double, objName, nrmList,rho");
-    
+    return Py_ERROR;
   }
 
 
@@ -3802,7 +3802,7 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args)
 
     if ( PyList_Size(nrmList) != 3 ) {
       PyErr_SetString(PyRunTimeErr,  "list must have three elements");
-      
+      return Py_ERROR;
     }
     for(int i = 0; i<3; i++)
     {
@@ -3811,7 +3811,7 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args)
     if (PyErr_Occurred()!=NULL)
     {      
       PyErr_SetString(PyRunTimeErr, "list elements must all be double's");
-      
+      return Py_ERROR;
     }
 
 
@@ -3821,19 +3821,19 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   double energy = 0.0;
   if ( sys_geom_IntegrateEnergy((cvPolyData*)obj, rho, nrm, &energy) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error calculating surface integral");
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("d",energy);
@@ -3857,7 +3857,7 @@ PyObject* Geom_FindDistanceCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sO", &objName,&ptList))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, one list, ont int, objName, ptList");
-    
+    return Py_ERROR;
   }
 
 
@@ -3865,7 +3865,7 @@ PyObject* Geom_FindDistanceCmd(PyObject* self, PyObject* args)
   npt = PyList_Size(ptList);
   if ( npt != 3 ) {
     PyErr_SetString(PyRunTimeErr, "only valid for 3d objects and queries");
-    
+    return Py_ERROR;
   }
   for(int i=0; i<3; i++)
     pt[i] = PyFloat_AsDouble(PyList_GetItem(ptList,i));
@@ -3875,13 +3875,13 @@ PyObject* Geom_FindDistanceCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   distance = ((cvPolyData*)obj)->FindDistance( pt[0], pt[1], pt[2] );
@@ -3906,7 +3906,7 @@ PyObject* Geom_InterpolateScalarCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sO", &objName,&ptList))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, one list, ont int, objName, ptList");
-    
+    return Py_ERROR;
   }
 
 
@@ -3915,7 +3915,7 @@ PyObject* Geom_InterpolateScalarCmd(PyObject* self, PyObject* args)
 
   if ( npt != 3 ) {
     PyErr_SetString(PyRunTimeErr, "only valid for 3d objects and queries");
-    
+    return Py_ERROR;
   }
 
   for(int i = 0; i<3; i++)
@@ -3927,19 +3927,19 @@ PyObject* Geom_InterpolateScalarCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   double scalar = 0.0;
   if ( sys_geom_InterpolateScalar((cvPolyData*)obj, pt, &scalar) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error interpolating scalar");
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("d",scalar);
@@ -3962,7 +3962,7 @@ PyObject* Geom_InterpolateVectorCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sO", &objName,&ptList))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, one list, ont int, objName, ptList");
-    
+    return Py_ERROR;
   }
 
 
@@ -3971,7 +3971,7 @@ PyObject* Geom_InterpolateVectorCmd(PyObject* self, PyObject* args)
 
   if ( npt != 3 ) {
     PyErr_SetString(PyRunTimeErr, "only valid for 3d objects and queries");
-    
+    return Py_ERROR;
   }
   for (int i=0; i<3; i++)
   {
@@ -3983,13 +3983,13 @@ PyObject* Geom_InterpolateVectorCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   double vect[3];
@@ -3998,7 +3998,7 @@ PyObject* Geom_InterpolateVectorCmd(PyObject* self, PyObject* args)
   vect[2] = 0.0;
   if ( sys_geom_InterpolateVector((cvPolyData*)obj, pt, vect) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error interpolating vector");
-    
+    return Py_ERROR;
   }
 
   PyObject* pList = PyList_New(3);
@@ -4025,7 +4025,7 @@ PyObject* Geom_IntersectWithLineCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sOO", &objName,&p0List,&p1List))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char, two lists, ont int, objName, p0List,p1List");
-    
+    return Py_ERROR;
   }
 
 
@@ -4035,7 +4035,7 @@ PyObject* Geom_IntersectWithLineCmd(PyObject* self, PyObject* args)
 
   if ( npt0 != 3 || npt1 != 3 ) {
     PyErr_SetString(PyRunTimeErr, "only valid for 3d objects and queries");
-    
+    return Py_ERROR;
   }
   for (int i=0; i<3; i++)
   {
@@ -4049,19 +4049,19 @@ PyObject* Geom_IntersectWithLineCmd(PyObject* self, PyObject* args)
   obj = gRepository->GetObject( objName );
   if ( obj == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object" );
-    
+    return Py_ERROR;
   }
 
   type = obj->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   double intersect[3];
   if ( sys_geom_IntersectWithLine((cvPolyData*)obj, p0, p1, intersect) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error intersecting vtkPolyData with line");
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("ddd",intersect[0], intersect[1], intersect[2]);
@@ -4089,7 +4089,7 @@ PyObject* Geom_AddPointDataCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import three chars,two ints\
 srcNameA, srcNameB,dstName,scflag,vflag");
-    
+    return Py_ERROR;
   }
 
 
@@ -4099,33 +4099,33 @@ srcNameA, srcNameB,dstName,scflag,vflag");
   srcA = gRepository->GetObject( srcNameA );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
@@ -4139,13 +4139,13 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "point data math error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -4173,7 +4173,7 @@ PyObject* Geom_SubtractPointDataCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import three chars,two ints\
 srcNameA, srcNameB,dstName,scflag,vflag");
-    
+    return Py_ERROR;
   }
 
 
@@ -4183,33 +4183,33 @@ srcNameA, srcNameB,dstName,scflag,vflag");
   srcA = gRepository->GetObject( srcNameA );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
@@ -4223,13 +4223,13 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "point data math error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -4257,7 +4257,7 @@ PyObject* Geom_MultiplyPointDataCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import three chars,two ints\
 srcNameA, srcNameB,dstName,scflag,vflag");
-    
+    return Py_ERROR;
   }
 
 
@@ -4267,33 +4267,33 @@ srcNameA, srcNameB,dstName,scflag,vflag");
   srcA = gRepository->GetObject( srcNameA );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
@@ -4307,13 +4307,13 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "point data math error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
 
@@ -4342,7 +4342,7 @@ PyObject* Geom_DividePointDataCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import three chars,two ints\
 srcNameA, srcNameB,dstName,scflag,vflag");
-    
+    return Py_ERROR;
   }
 
 
@@ -4352,33 +4352,33 @@ srcNameA, srcNameB,dstName,scflag,vflag");
   srcA = gRepository->GetObject( srcNameA );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
@@ -4392,13 +4392,13 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "point data math error" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -4426,7 +4426,7 @@ PyObject* Geom_ProjectCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import three chars,two ints\
 srcNameA, srcNameB,dstName,scflag,vflag");
-    
+    return Py_ERROR;
   }
 
 
@@ -4436,33 +4436,33 @@ srcNameA, srcNameB,dstName,scflag,vflag");
   srcA = gRepository->GetObject( srcNameA );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
@@ -4476,13 +4476,13 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   if ( sys_geom_Project( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error projecting polydata point data" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());
@@ -4503,7 +4503,7 @@ PyObject* Geom_IntegrateScalarSurfCmd(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &srcName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char,srcName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -4512,18 +4512,18 @@ PyObject* Geom_IntegrateScalarSurfCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_IntegrateScalarSurf( (cvPolyData*)src, &flux ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "surface area computation error" );
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("d",flux);
@@ -4547,7 +4547,7 @@ PyObject* Geom_IntegrateScalarThreshCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import one char and one double\
 ,srcName,wssthresh");
-    
+    return Py_ERROR;
   }
 
 
@@ -4557,18 +4557,18 @@ PyObject* Geom_IntegrateScalarThreshCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   if ( sys_geom_IntegrateScalarThresh( (cvPolyData*)src, wssthresh, &flux, &area) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "surface area computation error" );
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("dd",flux, area);
@@ -4596,7 +4596,7 @@ PyObject* Geom_ReplacePointDataCmd(PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "Could not import three chars,two ints\
 srcNameA, srcNameB,dstName,scflag,vflag");
-    
+    return Py_ERROR;
   }
 
 
@@ -4606,33 +4606,33 @@ srcNameA, srcNameB,dstName,scflag,vflag");
   srcA = gRepository->GetObject( srcNameA );
   if ( srcA == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
   // Retrieve source object:
   srcB = gRepository->GetObject( srcNameB );
   if ( srcB == NULL ) {
     PyErr_SetString(PyRunTimeErr,  "couldn't find object");
-    
+    return Py_ERROR;
   }
 
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   type = srcA->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   type = srcB->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,  "object not of type cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
@@ -4646,13 +4646,13 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   if ( sys_geom_ReplacePointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error replacing point data" );
-    
+    return Py_ERROR;
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr,  "error registering obj in repository");
     delete dst;
-    
+    return Py_ERROR;
   }
 
   return Py_BuildValue("s",dst->GetName());

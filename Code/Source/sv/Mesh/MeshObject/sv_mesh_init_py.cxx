@@ -131,12 +131,12 @@ int Mesh_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   PyInit_pyMeshObject();
 #endif
-  return SV_OK;
+  return Py_OK;
 }
 static int pyMeshObject_init(pyMeshObject* self, PyObject* args)
 {
   fprintf(stdout,"pyMeshObject initialized.\n");
-  return SV_OK;
+  return Py_OK;
 }
 
 //static PyMemberDef pyMeshObject_members[]={
@@ -309,13 +309,13 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
   if (Py_BuildValue("i",kernel)==nullptr)
   {
     fprintf(stdout,"Unable to create MeshSystemRegistrar\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
 
   }
   if(PySys_SetObject("MeshSystemRegistrar",Py_BuildValue("i",kernel))<0)
   {
     fprintf(stdout, "Unable to register MeshSystemRegistrar\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
 
   }
   // Initialize
@@ -325,7 +325,7 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
   if (PyType_Ready(&pyMeshObjectType)<0)
   {
     fprintf(stdout,"Error in pyMeshObjectType\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
   }
   PyObject* pythonC;
 
@@ -333,7 +333,7 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshObject\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    Py_RETURN_NONE;
   }
   PyRunTimeErr = PyErr_NewException("pyMeshObject.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
@@ -357,7 +357,7 @@ PyObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s|ss",&resultName,&meshFileName,&solidFileName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and two optional chars, resultname,meshFileName, solidFileName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -365,27 +365,27 @@ PyObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists.");
-    
+    return Py_ERROR;
   }
 
   // Instantiate the new mesh:
   cvMeshObject *geom;
   geom = cvMeshSystem::DefaultInstantiateMeshObject(meshFileName, solidFileName );
   if ( geom == NULL ) {
-    PyErr_SetString(PyRunTimeErr, "geom is NULL."); 
+    return Py_ERROR;
   }
 
   // Register the solid:
   if ( !( gRepository->Register( resultName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    
+    return Py_ERROR;
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  Py_RETURN_NONE;
 }
 
 // ----------------------
@@ -401,7 +401,7 @@ PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -414,7 +414,7 @@ PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    
+    return Py_ERROR;
   }
 
   type = rd->GetType();
@@ -424,14 +424,14 @@ PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "%s not a mesh object", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    
+    return Py_ERROR;
   }
   
   geom = dynamic_cast<cvMeshObject*> (rd);
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  Py_RETURN_NONE; 
   
 }
     
@@ -443,7 +443,7 @@ PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
 PyObject* cvMesh_ListMethodsCmd(PyObject* self, PyObject* args)
 {
   MeshPrintMethods( );
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 PyObject* cvMesh_SetMeshKernelCmd(PyObject* self, PyObject* args)
@@ -453,7 +453,7 @@ PyObject* cvMesh_SetMeshKernelCmd(PyObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&kernelName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, kernelname.");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -463,7 +463,7 @@ PyObject* cvMesh_SetMeshKernelCmd(PyObject* self, PyObject* args)
     return Py_BuildValue("s",kernelName);
   } else {
     PyErr_SetString(PyRunTimeErr, "Mesh kernel is not available");
-    
+    return Py_ERROR;
   }
 }
 
@@ -549,7 +549,7 @@ static PyObject*  cvMesh_GetKernelMtd( pyMeshObject* self, PyObject* args)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr,"error updating.");
+      return Py_ERROR;
     }
   }
   kernelType = geom->GetMeshKernel();
@@ -558,7 +558,7 @@ static PyObject*  cvMesh_GetKernelMtd( pyMeshObject* self, PyObject* args)
 
   if ( kernelType == SM_KT_INVALID ) {
     fprintf(stderr,"Invalid kernel type\n");
-    PyErr_SetString(PyRunTimeErr, "Invalid kernel type");
+    return Py_ERROR;
   } else {
     return Py_BuildValue("s",kernelName);
   }
@@ -576,13 +576,13 @@ static PyObject* cvMesh_PrintMtd( pyMeshObject* self, PyObject* args)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr,"error update.");
+      return Py_ERROR;
     }
   }
   if (geom->pyPrint() == SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
-    PyErr_SetString(PyRunTimeErr, "error print.");
+    return Py_ERROR;
   }
 
 }
@@ -597,9 +597,9 @@ static PyObject* cvMesh_UpdateMtd( pyMeshObject* self, PyObject* args)
   cvMeshObject *geom = self->geom;
 
   if (geom->Update() == SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
-    PyErr_SetString(PyRunTimeErr,"error update.");
+    return Py_ERROR;
   }
 }
 
@@ -616,7 +616,7 @@ PyObject* cvMesh_SetSolidKernelMtd(pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&kernelName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, kernelName.");
-    
+    return Py_ERROR;
   }
     // Do work of command:
   kernel = SolidModel_KernelT_StrToEnum( kernelName );
@@ -625,7 +625,7 @@ PyObject* cvMesh_SetSolidKernelMtd(pyMeshObject* self, PyObject* args)
     return Py_BuildValue("s",kernelName);
   } else {
     PyErr_SetString(PyRunTimeErr,SolidModel_KernelT_EnumToStr( SM_KT_INVALID ));
-    
+    return Py_ERROR;
   }
 }
 
@@ -641,14 +641,14 @@ static PyObject* cvMesh_WriteMetisAdjacencyMtd( pyMeshObject* self, PyObject* ar
   if(!PyArg_ParseTuple(args,"s",&fn))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, fn.");
-    
+    return Py_ERROR;
   }
 
   if (geom->GetMeshLoaded() == 0)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
   // Do work of command:
@@ -656,9 +656,9 @@ static PyObject* cvMesh_WriteMetisAdjacencyMtd( pyMeshObject* self, PyObject* ar
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error writing object ");
-    
+    return Py_ERROR;
   } else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return Py_BuildValue("N",PyBool_FromLong(1));
   }
 }
 
@@ -674,7 +674,7 @@ static PyObject* cvMesh_GetPolyDataMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&resultName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, resultName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -683,30 +683,30 @@ static PyObject* cvMesh_GetPolyDataMtd( pyMeshObject* self, PyObject* args)
   {
     if (geom->Update() == SV_ERROR)
     {
-        
-        PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+    return Py_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetPolyData();
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData" );
+    return Py_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete pd;
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------------
@@ -721,7 +721,7 @@ static PyObject* cvMesh_GetSolidMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&resultName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, resultName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -730,29 +730,30 @@ static PyObject* cvMesh_GetSolidMtd( pyMeshObject* self, PyObject* args)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    
+    return Py_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetSolid();
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData");
+    return Py_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj ");
     delete pd;
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------------
@@ -769,21 +770,21 @@ static PyObject* cvMesh_SetVtkPolyDataMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&objName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, objName");
-    
+    return Py_ERROR;
   }
 
   if (geom->GetMeshLoaded() == 0)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
   // Do work of command:
   type = gRepository->GetType( objName );
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj must be of type cvPolyData");
-    
+    return Py_ERROR;
   }
 
   obj = gRepository->GetObject( objName );
@@ -793,17 +794,17 @@ static PyObject* cvMesh_SetVtkPolyDataMtd( pyMeshObject* self, PyObject* args)
     break;
   default:
     PyErr_SetString(PyRunTimeErr, "error in SetVtkPolyData");
-    
+    return Py_ERROR;
     break;
   }
 
   // set the vtkPolyData:
   if(!geom->SetVtkPolyDataObject(pd))
   {
-    PyErr_SetString(PyRunTimeErr, "error set vtk polydate object.");
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // -------------------------------
@@ -818,7 +819,7 @@ static PyObject* cvMesh_GetUnstructuredGridMtd( pyMeshObject* self, PyObject* ar
   if(!PyArg_ParseTuple(args,"s",&resultName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, resultName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -827,30 +828,30 @@ static PyObject* cvMesh_GetUnstructuredGridMtd( pyMeshObject* self, PyObject* ar
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    
+    return Py_ERROR;
   }
 
   // Get the cvUnstructuredGrid:
   ug = geom->GetUnstructuredGrid();
   if ( ug == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData" );
-    
+    return Py_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, ug ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj " );
     delete ug;
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -867,38 +868,38 @@ static PyObject* cvMesh_GetFacePolyDataMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"si",&resultName,&face))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and one int, resultName, face");
-    
+    return Py_ERROR;
   }
   // Do work of command:
   if (geom->GetMeshLoaded() == 0)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    
+    return Py_ERROR;
   }
 
   // Get the cvPolyData:
   pd = geom->GetFacePolyData(face);
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData ");
-    
+    return Py_ERROR;
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete pd;
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 //
@@ -912,7 +913,7 @@ PyObject* cvMesh_LogonCmd(PyObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&logFileName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, logFileName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -922,10 +923,10 @@ PyObject* cvMesh_LogonCmd(PyObject* self, PyObject* args)
   // read in the results file
   if (meshKernel == NULL || meshKernel->LogOn(logFileName) == SV_ERROR) {
       PyErr_SetString(PyRunTimeErr, "error opening logfile");
-      
+      return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -939,10 +940,10 @@ PyObject* cvMesh_LogoffCmd( PyObject* self, PyObject* args)
 
   if (meshKernel == NULL || meshKernel->LogOff() == SV_ERROR) {
       PyErr_SetString(PyRunTimeErr, "error turning off logfile ");
-      
+      return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // -------------------------
@@ -957,7 +958,7 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sO",&flags,&valueList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and one list,flags and valuelist");
-    
+    return Py_ERROR;
   }
   int numValues = PyList_Size(valueList);
   double *values = new double [numValues];
@@ -970,11 +971,11 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
   if ( geom->SetMeshOptions(flags,numValues,values) == SV_ERROR ) {
     PyErr_SetString(PyRunTimeErr, "error in method ");
     delete [] values;
-    
+    return Py_ERROR;
   }
   delete [] values;
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 //
@@ -987,13 +988,13 @@ PyObject* cvMesh_LoadModelMtd( pyMeshObject* self, PyObject* args)
   if (geom==NULL)
   {
       PyErr_SetString(PyRunTimeErr,"Mesh object not registered in repository");
-      
+      return Py_ERROR;
   }
   char *FileName;
   if(!PyArg_ParseTuple(args,"s",&FileName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char,FileName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -1002,10 +1003,10 @@ PyObject* cvMesh_LoadModelMtd( pyMeshObject* self, PyObject* args)
   fprintf(stderr,"Filename: %s\n",FileName);
   if (geom->LoadModel(FileName) == SV_ERROR) {
       PyErr_SetString(PyRunTimeErr, "error loading solid model");
-      
+      return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // -------------------
@@ -1019,15 +1020,15 @@ PyObject* cvMesh_GetBoundaryFacesMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"d",&angle))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one double,angle");
-    
+    return Py_ERROR;
   }
 
   int status = geom->GetBoundaryFaces(angle);
   if ( status == SV_OK ) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
     PyErr_SetString(PyRunTimeErr, "GetBoundaryFaces: error on object");
-    
+    return Py_ERROR;
   }
 }
 
@@ -1037,6 +1038,30 @@ PyObject* cvMesh_GetBoundaryFacesMtd( pyMeshObject* self, PyObject* args)
 //
 // LoadDiscreteModel
 //
+
+int cvMesh_LoadDiscreteModelMtd( pyMeshObject* self, PyObject* args)
+{
+  cvMeshObject *geom = self->geom;
+  char *FileName;
+
+  };
+  if ( argc == 2 ) {
+    return Py_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 2,
+    return Py_ERROR;
+  }
+
+  // Do work of command:
+
+  // read in the results file
+  if (geom->LoadDiscreteModel(FileName) == SV_ERROR) {
+      PyErr_SetString(PyRunTimeErr, "error loading solid model", (char *)NULL);
+      return Py_ERROR;
+  }
+
+  return Py_OK;
+}
 
 */
 
@@ -1050,7 +1075,7 @@ PyObject* cvMesh_LoadMeshMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s|s",&FileName, &SurfFileName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char or one optional char,FileName, SurfFileName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -1058,10 +1083,10 @@ PyObject* cvMesh_LoadMeshMtd( pyMeshObject* self, PyObject* args)
   // read in the results file
   if (geom->LoadMesh(FileName,SurfFileName) == SV_ERROR) {
       PyErr_SetString(PyRunTimeErr, "error loading mesh ");
-      
+      return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 PyObject* cvMesh_WriteStatsMtd( pyMeshObject* self, PyObject* args)
@@ -1072,7 +1097,7 @@ PyObject* cvMesh_WriteStatsMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&FileName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char ,FileName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -1080,17 +1105,17 @@ PyObject* cvMesh_WriteStatsMtd( pyMeshObject* self, PyObject* args)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
 
   // read in the results file
   if (geom->WriteStats(FileName) == SV_ERROR) {
       PyErr_SetString(PyRunTimeErr, "error writing stats file ");
-      
+      return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 PyObject* cvMesh_AdaptMtd( pyMeshObject* self, PyObject* args)
@@ -1101,14 +1126,14 @@ PyObject* cvMesh_AdaptMtd( pyMeshObject* self, PyObject* args)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
   // Do work of command:
   if (geom->Adapt() == SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return Py_BuildValue("N",PyBool_FromLong(1));
   } else {
-    PyErr_SetString(PyRunTimeErr, "error adapt.");
+    return Py_ERROR;
   }
 }
 
@@ -1120,7 +1145,7 @@ PyObject* cvMesh_WriteMeshMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s|i",&FileName,&smsver))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and one optional int ,FileName, smsver");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -1128,17 +1153,17 @@ PyObject* cvMesh_WriteMeshMtd( pyMeshObject* self, PyObject* args)
   {
     if (geom->Update() == SV_ERROR)
     {
-      PyErr_SetString(PyRunTimeErr, "error update.");
+      return Py_ERROR;
     }
   }
 
   // read in the results file
   if (geom->WriteMesh(FileName,smsver) == SV_ERROR) {
       PyErr_SetString(PyRunTimeErr, "error writing mesh ");
-      
+      return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -1151,10 +1176,10 @@ PyObject* cvMesh_NewMeshMtd( pyMeshObject* self, PyObject* args)
   if (geom->NewMesh() == SV_ERROR)
   {
       PyErr_SetString(PyRunTimeErr, "error creating new mesh ");
-      
+      return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -1168,10 +1193,10 @@ PyObject* cvMesh_GenerateMeshMtd( pyMeshObject* self, PyObject* args)
   if (geom->GenerateMesh() == SV_ERROR)
   {
       PyErr_SetString(PyRunTimeErr, "Error generating mesh ");
-      
+      return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -1191,23 +1216,23 @@ static PyObject* cvMesh_SetSphereRefinementMtd( pyMeshObject* self, PyObject* ar
   if(!PyArg_ParseTuple(args,"ddO",&size,&r,&ctrList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two doubles and one list, size, r, ctrList");
-    
+    return Py_ERROR;
   }
   nctr=PyList_Size(ctrList);
   if ( nctr != 3 )
   {
     PyErr_SetString(PyRunTimeErr,"sphere requires a 3D center coordinate");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
 
   if ( geom->SetSphereRefinement(size,r,ctr) == SV_ERROR )   {
     PyErr_SetString(PyRunTimeErr, "error in method " );
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // -------------------------------
@@ -1223,17 +1248,17 @@ static PyObject* cvMesh_SetSizeFunctionBasedMeshMtd( pyMeshObject* self, PyObjec
   if(!PyArg_ParseTuple(args,"ds",&size,&functionName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one double and one char, size and functionName");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
 
   if ( geom->SetSizeFunctionBasedMesh(size,functionName) == SV_ERROR ) {
     PyErr_SetString(PyRunTimeErr, "error in setting size function" );
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -1257,7 +1282,7 @@ static PyObject* cvMesh_SetCylinderRefinementMtd( pyMeshObject* self, PyObject* 
   if(!PyArg_ParseTuple(args,"ddOO",&size,&r, &length,&ctrList,&nrmList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two doubles and two lists, size, r, ctrList,nrmList.");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
@@ -1265,22 +1290,22 @@ static PyObject* cvMesh_SetCylinderRefinementMtd( pyMeshObject* self, PyObject* 
   nnrm=PyList_Size(nrmList);
   if ( nctr != 3 ) {
     PyErr_SetString(PyRunTimeErr,"sphere requires a 3D center coordinate");
-    
+    return Py_ERROR;
   }
 
   if ( nnrm != 3 ) {
     PyErr_SetString(PyRunTimeErr,"norm must be 3D");
-    
+    return Py_ERROR;
   }
 
   // Do work of command:
 
   if ( geom->SetCylinderRefinement(size,r,length,ctr,nrm) == SV_ERROR ) {
     PyErr_SetString(PyRunTimeErr, "error in method ");
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
@@ -1301,7 +1326,7 @@ static PyObject* cvMesh_SetBoundaryLayerMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"iiiiO",&type,&id,&side,&nL,&Hlist))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import four ints and one list, type, id, side, nL, Hlist.");
-    
+    return Py_ERROR;
   }
 
   // Parse coordinate lists:
@@ -1316,10 +1341,10 @@ static PyObject* cvMesh_SetBoundaryLayerMtd( pyMeshObject* self, PyObject* args)
   if ( geom->SetBoundaryLayer(type,id,side,nL,H) == SV_ERROR ) {
     PyErr_SetString(PyRunTimeErr, "error in method ");
     delete [] H;
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 // ----------------------------
@@ -1334,7 +1359,7 @@ static PyObject* cvMesh_SetWallsMtd( pyMeshObject* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"O",&wallsList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one list, wallsList");
-    
+    return Py_ERROR;
   }
 
 
@@ -1350,10 +1375,10 @@ static PyObject* cvMesh_SetWallsMtd( pyMeshObject* self, PyObject* args)
   if ( geom->SetWalls(numWalls,walls) == SV_ERROR ) {
     PyErr_SetString(PyRunTimeErr, "error in method ");
     delete [] walls;
-    
+    return Py_ERROR;
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return Py_BuildValue("N",PyBool_FromLong(1));
 }
 
 
