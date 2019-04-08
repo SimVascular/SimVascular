@@ -152,7 +152,7 @@ PyObject* Occtsolid_pyInit()
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
   }
   else {
-    return Py_ERROR;
+    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
   }
   tmp->registrar = pySolidModelRegistrar;
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
@@ -165,7 +165,7 @@ PyObject* Occtsolid_pyInit()
 if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-    return Py_ERROR;
+    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
   }
   return pythonC;
 }
@@ -244,7 +244,7 @@ PyInit_pySolidOCCT()
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
   }
   else {
-    Py_RETURN_NONE;
+    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
   }
   tmp->registrar = pySolidModelRegistrar;
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
@@ -395,7 +395,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
   delete [] uMarr;
   delete [] vMarr;
 
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 // --------------------
