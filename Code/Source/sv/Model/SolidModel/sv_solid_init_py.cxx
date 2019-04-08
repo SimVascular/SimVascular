@@ -80,7 +80,7 @@ int Solid_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
  PyInit_pySolid();
 #endif
-  return Py_OK;
+  return SV_OK;
 }
 
 typedef struct
@@ -263,7 +263,7 @@ static void PrintMethods();
 static int pySolidModel_init(pySolidModel* self, PyObject* args)
 {
   fprintf(stdout,"pySolid Model tp_init called\n");
-  return Py_OK;
+  return SV_OK;
 }
 
 //All functions listed and initiated as pySolid_methods declared here
@@ -570,12 +570,12 @@ PyInit_pySolid(void)
   if (PyType_Ready(&pySolidModelType)<0)
   {
     fprintf(stdout,"Error in pySolidModelType");
-    Py_RETURN_NONE;
+    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
   }
   if (PyType_Ready(&pycvFactoryRegistrarType)<0)
   {
     fprintf(stdout,"Error in pySolidModelType");
-    Py_RETURN_NONE;
+    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
   }
   //Init our defined functions
   PyObject *pythonC;
@@ -583,7 +583,7 @@ PyInit_pySolid(void)
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-    Py_RETURN_NONE;
+    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
   }
 
   PyRunTimeErr=PyErr_NewException("pySolid.error",NULL,NULL);
@@ -620,7 +620,7 @@ PyObject* Solid_InitPyModulesCmd( PyObject* self, PyObject* args)
   Py_INCREF(pythonC);
   PyModule_AddObject(PyImport_AddModule("__buildin__"), "pySolid", pythonC);
 
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 #endif*/
 
@@ -654,7 +654,7 @@ PyObject* Solid_GetModelCmd( pySolidModel* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -667,7 +667,7 @@ PyObject* Solid_GetModelCmd( pySolidModel* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    return Py_ERROR;
+    
   }
 
   type = rd->GetType();
@@ -677,14 +677,14 @@ PyObject* Solid_GetModelCmd( pySolidModel* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "%s not a model object", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    return Py_ERROR;
+    
   }
   
   geom = dynamic_cast<cvSolidModel*> (rd);
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE; 
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
   
 }
 // ----------------
@@ -715,45 +715,45 @@ PyObject* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ss",&srcName,&dstName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two chars.");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    return Py_ERROR;
+    
   }
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
-    return Py_ERROR;
+    
   }
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
-    return Py_ERROR;
+    PyErr_SetString(PyRunTimeErr,"geom is NULL");
   }
 
   // Create the polygon solid:
   if ( geom->MakePoly2dPts( (cvPolyData *)pd ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "polygon solid creation error" );
-    return Py_ERROR;
+    
   }
 
   // Register the solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Make a new Tcl command:
@@ -761,7 +761,7 @@ PyObject* Solid_PolyPtsCmd( pySolidModel* self, PyObject* args)
   self->geom=geom;
   Py_DECREF(geom);
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -779,7 +779,7 @@ PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ss",&srcName,&dstName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two chars.");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -787,39 +787,39 @@ PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args)
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Retrieve cvPolyData source:
   pd = gRepository->GetObject( srcName );
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   // Create the polygon solid:
   if ( geom->MakePoly2d( (cvPolyData *)pd ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "polygon solid creation error" );
-    return Py_ERROR;
+    
   }
 
   // Register the solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Make a new Tcl command:
@@ -827,7 +827,7 @@ PyObject* Solid_PolyCmd( pySolidModel* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -845,45 +845,44 @@ PyObject* Solid_CircleCmd(pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sddd",&objName,&radius,&(ctr[0]),&(ctr[1])))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and three doubles");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
   if ( radius <= 0.0 ) {
     PyErr_SetString(PyRunTimeErr,"radius must be positive");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr,"object already exists" );
-    return Py_ERROR ;
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeCircle( radius, ctr ) != SV_OK ) {
      PyErr_SetString(PyRunTimeErr, "circle solid creation error");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 // ---------------
@@ -899,13 +898,13 @@ PyObject* Solid_SphereCmd( pySolidModel* self, PyObject* args)
 if(!PyArg_ParseTuple(args,"sdO",&objName,&r,&ctrList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, one double and one list");
-    return Py_ERROR;
+    
   }
 
   if (PyList_Size(ctrList)!=3)
   {
     PyErr_SetString(PyRunTimeErr,"sphere requires a 3D center coordinate");
-    return Py_ERROR;
+    
   }
   for(int i=0;i<PyList_Size(ctrList);i++)
   {
@@ -916,24 +915,24 @@ if(!PyArg_ParseTuple(args,"sdO",&objName,&r,&ctrList))
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
   if ( geom->MakeSphere( r, ctr ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "sphere solid creation error");
     delete geom;
-    return Py_ERROR;
+    
   }
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom) ) ) {
      PyErr_SetString(PyRunTimeErr,"error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
@@ -944,7 +943,7 @@ if(!PyArg_ParseTuple(args,"sdO",&objName,&r,&ctrList))
  // cvRepositoryData* geom2=gRepository->GetObject(self->name);
   //cvPolyData* PD2=(self->geom)->GetPolyData(0,1.0);
  // return Py_BuildValue("s",geom->GetName());
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 // ----------------
 // Solid_EllipseCmd
@@ -960,46 +959,46 @@ PyObject* Solid_EllipseCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sdddd",&objName,&xr,&yr,&(ctr[0]),&(ctr[1])))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and four doubles.");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
 
   if ( ( xr <= 0.0 ) || ( yr <= 0.0 ) ) {
     PyErr_SetString(PyRunTimeErr, "radii must be positive");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeEllipse( xr, yr, ctr ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "ellipse solid creation error" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1020,45 +1019,45 @@ PyObject* Solid_Box2dCmd( pySolidModel* self, PyObject* args)
                        ,&(ctr[0]),&(ctr[1])))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and four doubles.");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
   if ( ( boxDims[0] <= 0.0 ) || ( boxDims[1] <= 0.0 ) ) {
     PyErr_SetString(PyRunTimeErr, "height and width must be positive");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeBox2d( boxDims, ctr ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "box solid creation error");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1077,13 +1076,13 @@ PyObject* Solid_Box3dCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sOO",&objName,&dimList,&ctrList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and two doubles.");
-    return Py_ERROR;
+    
   }
 
   if (PyList_Size(dimList)>3||PyList_Size(ctrList)>3)
   {
      PyErr_SetString(PyRunTimeErr,"error in list dimension");
-     return Py_ERROR;
+     
   }
   for (int i=0;i<PyList_Size(dimList);i++)
   {
@@ -1097,39 +1096,39 @@ PyObject* Solid_Box3dCmd( pySolidModel* self, PyObject* args)
 
   if ( ( dims[0] <= 0.0 ) || ( dims[1] <= 0.0 ) || ( dims[2] <= 0.0 ) ) {
     PyErr_SetString(PyRunTimeErr, "all dims must be positive" );
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exist" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeBox3d( dims, ctr ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "box solid creation error" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1148,19 +1147,19 @@ PyObject* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sOO",&objName,&rList,&ctrList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char and two doubles.");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
   if (PyList_Size(ctrList)!=3)
   {
      PyErr_SetString(PyRunTimeErr,"ellipsoid requires a 3D center coordinate");
-     return Py_ERROR;
+     
   }
   if (PyList_Size(rList)!=3)
   {
      PyErr_SetString(PyRunTimeErr,"ellipsoid requires a 3D radius vector.");
-    return Py_ERROR;
+    
   }
 
   for (int i=0;i<3;i++)
@@ -1171,33 +1170,33 @@ PyObject* Solid_EllipsoidCmd( pySolidModel* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeEllipsoid( r, ctr ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "sphere solid creation error" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1219,19 +1218,19 @@ PyObject* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sddOO",&objName,&r,&l,&ctrList,&axisList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char, two doubles and two lists");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
   if (PyList_Size(ctrList)!=3)
   {
      PyErr_SetString(PyRunTimeErr,"cylinder requires a 3D center coordinate");
-     return Py_ERROR;
+     
   }
   if (PyList_Size(axisList)!=3)
   {
      PyErr_SetString(PyRunTimeErr,"ellipsoid requires a 3D axis vector.");
-    return Py_ERROR;
+    
   }
 
   for (int i=0;i<3;i++)
@@ -1242,33 +1241,33 @@ PyObject* Solid_CylinderCmd( pySolidModel* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeCylinder( r, l, ctr, axis ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "cylinder solid creation error" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1289,19 +1288,19 @@ PyObject* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sddOO",&objName,&r1,&r2,&ptList,&dirList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char,two doubles and two lists.");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
   if (PyList_Size(ptList)!=3)
   {
      PyErr_SetString(PyRunTimeErr,"truncatedCone requires a 3D coordinate");
-     return Py_ERROR;
+     
   }
   if (PyList_Size(dirList)!=3)
   {
      PyErr_SetString(PyRunTimeErr,"truncatedCone requires a 3D direction vector.");
-    return Py_ERROR;
+    
   }
 
   for (int i=0;i<3;i++)
@@ -1312,32 +1311,32 @@ PyObject* Solid_TruncatedConeCmd( pySolidModel* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeTruncatedCone( pt, dir, r1, r2 ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "cylinder solid creation error" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1358,19 +1357,19 @@ PyObject* Solid_TorusCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sddOO",&objName,&rmaj,&rmin,&ctrList,&axisList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char,two doubles and two lists.");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
   if (PyList_Size(ctrList)!=3)
   {
      PyErr_SetString(PyRunTimeErr,"torus requires a 3D center coordinate");
-     return Py_ERROR;
+     
   }
   if (PyList_Size(axisList)!=3)
   {
      PyErr_SetString(PyRunTimeErr,"ellipsoid requires a 3D axis vector.");
-    return Py_ERROR;
+    
   }
 
   for (int i=0;i<3;i++)
@@ -1381,33 +1380,33 @@ PyObject* Solid_TorusCmd( pySolidModel* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeTorus( rmaj, rmin, ctr, axis ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "torus solid creation error" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1430,14 +1429,14 @@ PyObject* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sssd",&objName,&srcName,&facetMethodName,&angle))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import three char and one double.");
-    return Py_ERROR;
+    
   }
 
   facetMethod = SolidModel_FacetT_StrToEnum( facetMethodName );
   if ( facetMethod == SM_Facet_Invalid ) {
     facetStr = SolidModel_FacetT_EnumToStr( SM_Facet_Invalid );
     PyErr_SetString(PyRunTimeErr, facetStr);
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -1446,49 +1445,49 @@ PyObject* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
   pd = gRepository->GetObject( srcName );
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
-    return Py_ERROR;
+    
   }
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData" );
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->SetPoly3dFacetMethod( facetMethod ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error selecting facet method ");
     delete geom;
-    return Py_ERROR;
+    
   }
   if ( geom->MakePoly3dSolid( (cvPolyData*)pd , angle ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "polygonal solid creation error" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1510,14 +1509,14 @@ PyObject* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sss",&objName,&srcName,&facetMethodName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import three chars.");
-    return Py_ERROR;
+    
   }
 
   facetMethod = SolidModel_FacetT_StrToEnum( facetMethodName );
   if ( facetMethod == SM_Facet_Invalid ) {
     facetStr = SolidModel_FacetT_EnumToStr( SM_Facet_Invalid );
     PyErr_SetString(PyRunTimeErr, facetStr );
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -1526,50 +1525,50 @@ PyObject* Solid_Poly3dSurfaceCmd( pySolidModel* self, PyObject* args)
   pd = gRepository->GetObject( srcName );
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   type = pd->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object  already exists" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->SetPoly3dFacetMethod( facetMethod ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error selecting facet method " );
     delete geom;
-    return Py_ERROR;
+    
   }
   if ( geom->MakePoly3dSurface( (cvPolyData*)pd ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "solid polygonal surface creation error");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1588,7 +1587,7 @@ PyObject* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ssd",&srcName,&dstName,&dist))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two chars and one double.");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
@@ -1596,44 +1595,44 @@ PyObject* Solid_ExtrudeZCmd( pySolidModel* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   type = src->GetType();
   if ( type != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel" );
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->ExtrudeZ( (cvSolidModel *)src, dist ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error in solid extrusion" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1656,7 +1655,7 @@ PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ssOO",&srcName,&dstName,&pt1List,&pt2List))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two strings and two lists");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -1664,7 +1663,7 @@ PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
   if (PyList_Size(pt1List)>3||PyList_Size(pt2List)>3)
   {
      PyErr_SetString(PyRunTimeErr,"error in list dimension ");
-     return Py_ERROR;
+     
   }
 
   for (int i=0;i<PyList_Size(pt1List);i++)
@@ -1679,18 +1678,18 @@ PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   type = src->GetType();
   if ( type != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel" );
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   dist = new double*[2];
@@ -1702,14 +1701,14 @@ PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
   if ( geom == NULL ) {
     delete dist;
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->Extrude( (cvSolidModel *)src, dist ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error in solid extrusion" );
     delete geom;
     delete dist;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
@@ -1717,14 +1716,14 @@ PyObject* Solid_ExtrudeCmd( pySolidModel* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
     delete dist;
-    return Py_ERROR;
+    
   }
 
   delete dist;
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1745,7 +1744,7 @@ PyObject* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ssdi",&srcName,&dstName,&tol,&closed))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two chars, one double and one int.");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -1754,44 +1753,44 @@ PyObject* Solid_MakeApproxCurveLoopCmd( pySolidModel* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData" );
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object  already exists");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeApproxCurveLoop( (cvPolyData *)src, tol, closed ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error in curve loop construction" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1812,7 +1811,7 @@ PyObject* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ss|i",&srcName,&dstName,&closed))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two chars and one int");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
@@ -1820,44 +1819,44 @@ PyObject* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeInterpCurveLoop( (cvPolyData *)src, closed ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error in curve loop construction" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1883,7 +1882,7 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"Os|iidddi",&srcList,&dstName,&continuity,&partype,&w1,&w2,&w3,&smoothing))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one list, one string or optional three ints and three doubles.");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
@@ -1891,7 +1890,7 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
 
   if ( numSrcs < 2 ) {
     PyErr_SetString(PyRunTimeErr, "need >= 2 curve cvSolidModel's to loft surface");
-    return Py_ERROR;
+    
   }
 
   // Foreach src obj, check that it is in the repository and of the
@@ -1905,13 +1904,13 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
     if ( src == NULL ) {
       PyErr_SetString(PyRunTimeErr,"Couldn't find object ");
       delete [] srcs;
-      return Py_ERROR;
+      
     }
     type = src->GetType();
     if ( type != SOLID_MODEL_T ) {
 	    PyErr_SetString(PyRunTimeErr,"src not of type cvSolidModel");
       delete [] srcs;
-      return Py_ERROR;
+      
     }
     srcs[i] = (cvSolidModel *) src;
   }
@@ -1922,7 +1921,7 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
     delete [] srcs;
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
@@ -1930,7 +1929,7 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
     delete [] srcs;
-    return Py_ERROR;
+    
   }
 
   if ( geom->MakeLoftedSurf( srcs, numSrcs , dstName,
@@ -1938,7 +1937,7 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "error in curve loop construction" );
     delete [] srcs;
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // We're done with the srcs array:
@@ -1948,13 +1947,13 @@ PyObject* Solid_MakeLoftedSurfCmd( pySolidModel* self, PyObject* args)
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -1973,7 +1972,7 @@ PyObject* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ss",&srcName,&dstName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two chars");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -1981,46 +1980,46 @@ PyObject* Solid_CapSurfToSolidCmd( pySolidModel* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
 
   type = src->GetType();
   if ( type != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel" );
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->CapSurfToSolid( (cvSolidModel *)src ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error in cap / bound operation" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( dstName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2035,14 +2034,14 @@ PyObject* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ss",&objName,&fileName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two chars");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
@@ -2057,33 +2056,31 @@ PyObject* Solid_ReadNativeCmd( pySolidModel* self, PyObject* args)
 
 	  if ( geom == NULL ) {
 	   PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-	    return Py_ERROR;
+	    
 	  }
 
 	  if ( geom->ReadNative( fileName ) != SV_OK ) {
 	    PyErr_SetString(PyRunTimeErr, "file read error" );
 	    delete geom;
-	    return Py_ERROR;
+	    
 	  }
 
 	  // Register the new solid:
 	  if ( !( gRepository->Register( objName, geom ) ) ) {
 	    PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
 	    delete geom;
-	    return Py_ERROR;
+	    
 	  }
 
   }
 
   else {
     fprintf( stdout, "current kernel is not valid (%i)\n",cvSolidModel::gCurrentKernel);
-    //PyErr_SetString(PyRunTimeErr, "current kernel is not valid" );
-    return Py_ERROR;
-  }
+    PyErr_SetString(PyRunTimeErr, "current kernel is not valid" );}
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2102,7 +2099,7 @@ PyObject* Solid_CopyCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ss",&srcName,&dstName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two chars");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -2111,43 +2108,43 @@ PyObject* Solid_CopyCmd( pySolidModel* self, PyObject* args)
   srcGeom = gRepository->GetObject( srcName );
   if ( srcGeom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   src_t = gRepository->GetType( srcName );
   if ( src_t != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel" );
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified destination object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   dstGeom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( dstGeom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
   if ( dstGeom->Copy( *((cvSolidModel *)srcGeom) ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "cvSolidModel copy error" );
     delete dstGeom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( dstName, dstGeom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete dstGeom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(dstGeom);
   self->geom=dstGeom;
   Py_DECREF(dstGeom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2170,7 +2167,7 @@ PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sss|s",&resultName,&aName,&bName,&smpName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import three chars or one optional char smpName");
-    return Py_ERROR;
+    
   }
 
 
@@ -2180,7 +2177,7 @@ PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
     if ( smp == SM_Simplify_Invalid ) {
       smpStr = SolidModel_SimplifyT_EnumToStr( SM_Simplify_Invalid );
       PyErr_SetString(PyRunTimeErr, smpStr );
-      return Py_ERROR;
+      
     }
   }
 
@@ -2190,49 +2187,49 @@ PyObject* Solid_IntersectCmd( pySolidModel* self, PyObject* args)
   gmA = gRepository->GetObject( aName );
   if ( gmA == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   aType = gRepository->GetType( aName );
   if ( aType != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel");
-    return Py_ERROR;
+    
   }
 
   gmB = gRepository->GetObject( bName );
   if ( gmB == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   bType = gRepository->GetType( bName );
   if ( bType != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object  not of type cvSolidModel" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
   if ( geom->Intersect( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "intersection error" );
     delete geom;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( resultName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2256,7 +2253,7 @@ PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sss|s",&resultName,&aName,&bName,&smpName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import three chars or one optional char smpName");
-    return Py_ERROR;
+    
   }
 
   // Parse the simplification flag if given:
@@ -2265,7 +2262,7 @@ PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
     if ( smp == SM_Simplify_Invalid ) {
       smpStr = SolidModel_SimplifyT_EnumToStr( SM_Simplify_Invalid );
       PyErr_SetString(PyRunTimeErr, smpStr );
-      return Py_ERROR;
+      
     }
   }
 
@@ -2274,47 +2271,47 @@ PyObject* Solid_UnionCmd( pySolidModel* self, PyObject* args)
   gmA = gRepository->GetObject( aName );
   if ( gmA == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   aType = gRepository->GetType( aName );
   if ( aType != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel");
-    return Py_ERROR;
+    
   }
 
   gmB = gRepository->GetObject( bName );
   if ( gmB == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   bType = gRepository->GetType( bName );
   if ( bType != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   result = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( result == NULL ) {
-    return Py_ERROR;
+    PyErr_SetString(PyRunTimeErr,"result is NULL");
   }
   if ( result->Union( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "union error" );
     delete result;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( resultName, result ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete result;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(result);
   self->geom=result;
   Py_DECREF(result);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2338,7 +2335,7 @@ PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"sss|s",&resultName,&aName,&bName,&smpName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import three chars or one optional char smpName");
-    return Py_ERROR;
+    
   }
 
   // Parse the simplification flag if given:
@@ -2347,7 +2344,7 @@ PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
     if ( smp == SM_Simplify_Invalid ) {
       smpStr = SolidModel_SimplifyT_EnumToStr( SM_Simplify_Invalid );
       PyErr_SetString(PyRunTimeErr, smpStr );
-      return Py_ERROR;
+      
     }
   }
 
@@ -2357,49 +2354,49 @@ PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
   gmA = gRepository->GetObject( aName );
   if ( gmA == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   aType = gRepository->GetType( aName );
   if ( aType != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel");
-    return Py_ERROR;
+    
   }
 
   gmB = gRepository->GetObject( bName );
   if ( gmB == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
   bType = gRepository->GetType( bName );
   if ( bType != SOLID_MODEL_T ) {
     PyErr_SetString(PyRunTimeErr, "object not of type cvSolidModel" );
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new solid:
   result = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( result == NULL ) {
-    return Py_ERROR;
+    PyErr_SetString(PyRunTimeErr,"geom is NULL");
   }
 
   if ( result->Subtract( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "subtract error" );
     delete result;
-    return Py_ERROR;
+    
   }
 
   // Register the new solid:
   if ( !( gRepository->Register( resultName, result ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete result;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(result);
   self->geom=result;
   Py_DECREF(result);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2410,7 +2407,7 @@ PyObject* Solid_SubtractCmd( pySolidModel* self, PyObject* args)
 PyObject* Solid_ListMethodsCmd( pySolidModel* self, PyObject* args)
 {
   PrintMethods();
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2422,7 +2419,7 @@ PyObject* Solid_ObjectCmd(pySolidModel* self,PyObject* args )
   if (PyTuple_Size(args)== 0 ) {
     PrintMethods();
   }
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 // -----------
@@ -2449,13 +2446,13 @@ PyObject* Solid_NewObjectCmd(pySolidModel* self,PyObject *args )
   if(!PyArg_ParseTuple(args,"s",&objName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import char objName");
-    return Py_ERROR;
+    
   }
   // Do work of command:
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exist");
-    return Py_ERROR;
+    
   }
   // Instantiate the new solid:
 
@@ -2467,7 +2464,7 @@ PyObject* Solid_NewObjectCmd(pySolidModel* self,PyObject *args )
   geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if ( geom == NULL ) {
     PyErr_SetString(PyRunTimeErr, "Error creating solid object" );
-    return Py_ERROR;
+    
   }
 
    // Register the new solid:
@@ -2475,19 +2472,19 @@ PyObject* Solid_NewObjectCmd(pySolidModel* self,PyObject *args )
    {
      PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
    }
   }
   else {
     fprintf( stdout, "current kernel is not valid (%i)\n",cvSolidModel::gCurrentKernel);
     //PyErr_SetString(PyRunTimeErr, "current kernel is not valid", TCL_STATIC );
-    return Py_ERROR;
+    PyErr_SetString(PyRunTimeErr,"kernel is invalid");
   }
   // Allocate new object in python
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 // ------------------
@@ -2501,7 +2498,7 @@ SolidModel_KernelT kernel;
 if(!PyArg_ParseTuple(args,"s",&kernelName))
 {
   PyErr_SetString(PyRunTimeErr,"Could not import char kernelName");
-  return Py_ERROR;
+  
 }
 
 // Do work of command:
@@ -2524,7 +2521,7 @@ cvSolidModel::gCurrentKernel = kernel;
 return Py_BuildValue("s",kernelName);
 } else {
 PyErr_SetString(PyRunTimeErr, "solid kernel is invalid");
-return Py_ERROR;
+
 }
 }
 // ------------------
@@ -2605,10 +2602,10 @@ static PyObject*  Solid_FindExtentMtd( pySolidModel *self ,PyObject* args  )
   status = geom->FindExtent( &extent);
   if ( status == SV_OK ) {
     Py_BuildValue("d",extent);
-    return Py_BuildValue("N",PyBool_FromLong(1));
+    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
   } else {
     PyErr_SetString( PyRunTimeErr, "FindExtent: error on object" );
-    return Py_ERROR;
+    
   }
 }
 
@@ -2626,12 +2623,12 @@ static PyObject*  Solid_FindCentroidMtd( pySolidModel *self ,PyObject* args )
   cvSolidModel *geom =(self->geom);
   if ( geom->GetSpatialDim( &tdim ) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "couldn't get spatial dim of object " );
-    return Py_ERROR;
+    
   }
   if ( ( tdim != 2 ) && ( tdim != 3 ) ) {
     sprintf( tmp, "spatial dim %d  not supported", tdim );
     PyErr_SetString(PyRunTimeErr,tmp);
-    return Py_ERROR;
+    
   }
   status = geom->FindCentroid( centroid );
   PyObject* tmpPy=PyList_New(3);
@@ -2645,7 +2642,7 @@ static PyObject*  Solid_FindCentroidMtd( pySolidModel *self ,PyObject* args )
     return tmpPy;
   } else {
     PyErr_SetString(PyRunTimeErr, "FindCentroid: error on object ");
-    return Py_ERROR;
+    
   }
 }
 
@@ -2664,7 +2661,7 @@ static PyObject*  Solid_GetTopoDimMtd( pySolidModel *self ,PyObject* args  )
     return Py_BuildValue("d",tdim);
   } else {
     PyErr_SetString(PyRunTimeErr, "GetTopoDim: error on object ");
-    return Py_ERROR;
+    
   }
 }
 
@@ -2683,7 +2680,7 @@ static PyObject*  Solid_GetSpatialDimMtd( pySolidModel *self ,PyObject* args  )
     return Py_BuildValue("d",sdim);
   } else {
     PyErr_SetString(PyRunTimeErr,"GetSpatialDim: error on object ");
-    return Py_ERROR;
+    
   }
 }
 
@@ -2703,7 +2700,7 @@ static PyObject*  Solid_ClassifyPtMtd( pySolidModel *self ,PyObject* args  )
   if(!PyArg_ParseTuple(args,"dd|di",&x,&y,&z,&v))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two doubles, x, y, or double z or int v");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -2719,7 +2716,7 @@ static PyObject*  Solid_ClassifyPtMtd( pySolidModel *self ,PyObject* args  )
       status = geom->ClassifyPt( x, y, v, &ans );
     } else {
       PyErr_SetString(PyRunTimeErr, "object must be of topological and spatial dimension 2" );
-      return Py_ERROR;
+      
     }
   }
 
@@ -2727,7 +2724,7 @@ static PyObject*  Solid_ClassifyPtMtd( pySolidModel *self ,PyObject* args  )
     return Py_BuildValue("d",ans);
   } else {
     PyErr_SetString(PyRunTimeErr,"ClassifyPt: error on object " );
-    return Py_ERROR;
+    
   }
 }
 
@@ -2748,13 +2745,13 @@ static PyObject*  Solid_DistanceMtd( pySolidModel *self ,PyObject* args  )
   if(!PyArg_ParseTuple(args,"Od",&posList,&upperLimit))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one list and one double");
-    return Py_ERROR;
+    
   }
 
   if (PyList_Size(posList)>3)
   {
     PyErr_SetString(PyRunTimeErr,"posList Dimension is greater than 3!");
-    return Py_ERROR;
+    
   }
   npos = PyList_Size(posList);
   for(int i=0;i<npos;i++)
@@ -2765,14 +2762,14 @@ static PyObject*  Solid_DistanceMtd( pySolidModel *self ,PyObject* args  )
   status = geom->GetSpatialDim( &sdim );
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr,"error retrieving spatial dim of obj " );
-    return Py_ERROR;
+    
   }
   if ( ( sdim == 3 ) && ( npos != 3 ) ) {
     PyErr_SetString(PyRunTimeErr, "objects in 3 spatial dims require a 3D position");
-    return Py_ERROR;
+    
   } else if ( ( sdim == 2 ) && ( npos != 2 ) ) {
      PyErr_SetString(PyRunTimeErr,"objects in 2 spatial dims require a 2D position");
-    return Py_ERROR;
+    
   }
 
   status = geom->Distance( pos, upperLimit, &dist );
@@ -2781,7 +2778,7 @@ static PyObject*  Solid_DistanceMtd( pySolidModel *self ,PyObject* args  )
     return Py_BuildValue("d",dist);
   } else {
     PyErr_SetString(PyRunTimeErr, "Distance: error on object ");
-    return Py_ERROR;
+    
   }
 }
 
@@ -2800,13 +2797,13 @@ static PyObject*  Solid_TranslateMtd( pySolidModel *self ,PyObject* args  )
   if(PyArg_ParseTuple(args,"O",&vecList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import list");
-    return Py_ERROR;
+    
   }
 
   if (PyList_Size(vecList)>3)
   {
     PyErr_SetString(PyRunTimeErr,"vecList Dimension is greater than 3!");
-    return Py_ERROR;
+    
   }
   nvec = PyList_Size(vecList);
   for(int i=0;i<nvec;i++)
@@ -2818,13 +2815,13 @@ static PyObject*  Solid_TranslateMtd( pySolidModel *self ,PyObject* args  )
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "Translate: error on object " );
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2843,13 +2840,13 @@ static PyObject*  Solid_RotateMtd( pySolidModel *self ,PyObject* args  )
   if(!PyArg_ParseTuple(args,"Od",&axisList,&rad))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one list and one double");
-    return Py_ERROR;
+    
   }
   naxis = PyList_Size(axisList);
   if (naxis>3)
   {
     PyErr_SetString(PyRunTimeErr,"posList Dimension is greater than 3!");
-    return Py_ERROR;
+    
   }
 
   for(int i=0;i<naxis;i++)
@@ -2860,10 +2857,10 @@ static PyObject*  Solid_RotateMtd( pySolidModel *self ,PyObject* args  )
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "Rotate: error on object ");
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2879,7 +2876,7 @@ static PyObject*  Solid_ScaleMtd( pySolidModel *self ,PyObject* args  )
   if(!PyArg_ParseTuple(args,"d",&factor))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one double");
-    return Py_ERROR;
+    
   }
 
     // Do work of command:
@@ -2888,10 +2885,10 @@ static PyObject*  Solid_ScaleMtd( pySolidModel *self ,PyObject* args  )
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "Scale: error on object " );
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2912,13 +2909,13 @@ static PyObject* Solid_ReflectMtd( pySolidModel *self ,PyObject* args  )
   if(!PyArg_ParseTuple(args,"OO",&posList,&nrmList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two lists");
-    return Py_ERROR;
+    
   }
 
   if (PyList_Size(posList)>3||PyList_Size(nrmList)>3)
   {
     PyErr_SetString(PyRunTimeErr,"List Dimension is greater than 3!");
-    return Py_ERROR;
+    
   }
 
   for(int i=0;i<PyList_Size(posList);i++)
@@ -2936,10 +2933,10 @@ static PyObject* Solid_ReflectMtd( pySolidModel *self ,PyObject* args  )
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "Reflect: error on object ");
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -2958,13 +2955,13 @@ static PyObject*  Solid_Apply4x4Mtd( pySolidModel *self ,PyObject* args  )
   if(!PyArg_ParseTuple(args,"O",&matList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import matList");
-    return Py_ERROR;
+    
   }
 
   if (PyList_Size(matList)!=4)
   {
     PyErr_SetString(PyRunTimeErr,"Matrix Row  Dimension is not  4!");
-    return Py_ERROR;
+    
   }
 
   for(int i=0;i<PyList_Size(matList);i++)
@@ -2973,7 +2970,7 @@ static PyObject*  Solid_Apply4x4Mtd( pySolidModel *self ,PyObject* args  )
     if (PyList_Size(rowList)!=4)
     {
       PyErr_SetString(PyRunTimeErr,"Matrix Column Dimension is not  4!");
-      return Py_ERROR;
+      
     }
     for(int j=0;j<PyList_Size(rowList);j++)
     mat[i][j]=PyFloat_AsDouble(PyList_GetItem(rowList,j));
@@ -2985,10 +2982,10 @@ static PyObject*  Solid_Apply4x4Mtd( pySolidModel *self ,PyObject* args  )
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "Apply4x4: error on object"  );
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3002,7 +2999,7 @@ static PyObject*  Solid_PrintMtd( pySolidModel *self ,PyObject* args  )
   // Do work of command:
   cvSolidModel *geom =(self->geom);
   geom->Print();
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3036,20 +3033,20 @@ static PyObject* Solid_WriteNativeMtd( pySolidModel *self ,PyObject* args  )
   if(!PyArg_ParseTuple(args,"s|i",&fn,&file_version))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import char filename or int fileversion");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
   status = geom->WriteNative( file_version , fn );
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error writing object to file" );
-    return Py_ERROR;
+    
   } else {
 
     Py_INCREF(geom);
     self->geom=geom;
     Py_DECREF(geom);
-    return Py_BuildValue("N",PyBool_FromLong(1));
+    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
   }
 }
 
@@ -3067,16 +3064,16 @@ static PyObject*  Solid_WriteVtkPolyDataMtd( pySolidModel *self ,
   if(!PyArg_ParseTuple(args,"s",&fn))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import char filename");
-    return Py_ERROR;
+    
   }
 
     // Do work of command:
   status = geom->WriteVtkPolyData( fn );
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error writing object to file" );
-    return Py_ERROR;
+    
   } else {
-    return Py_BuildValue("N",PyBool_FromLong(1));
+    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
   }
 }
 
@@ -3094,15 +3091,15 @@ static PyObject*  Solid_WriteGeomSimMtd( pySolidModel *self ,
   if(!PyArg_ParseTuple(args,"s",&fn))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import char filename");
-    return Py_ERROR;
+    
   }
    // Do work of command:
   status = geom->WriteGeomSim( fn );
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error writing object to file");
-    return Py_ERROR;
+    
   } else {
-    return Py_BuildValue("N",PyBool_FromLong(1));
+    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
   }
 }
 
@@ -3120,7 +3117,7 @@ static PyObject*  Solid_GetPolyDataMtd( pySolidModel *self ,PyObject* args  )
   if(!PyArg_ParseTuple(args,"s|d",&resultName,&max_dist))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import char resultName or int max_dist");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -3132,33 +3129,33 @@ static PyObject*  Solid_GetPolyDataMtd( pySolidModel *self ,PyObject* args  )
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   cvSolidModel *geom =(self->geom);
   if (geom==NULL)
   {
       PyErr_SetString(PyRunTimeErr, "Solid object it empty");
-      return Py_ERROR;
+      
   }
   // Get the cvPolyData:
   pd = geom->GetPolyData(useMaxDist, max_dist);
   //Py_DECREF(geom);
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData" );
-    return Py_ERROR;
+    
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete pd;
-    return Py_ERROR;
+    
   }
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 // ----------------------
@@ -3176,7 +3173,7 @@ static PyObject* Solid_SetVtkPolyDataMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&objName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string");
-    return Py_ERROR;
+    
   }
 
 
@@ -3184,7 +3181,7 @@ static PyObject* Solid_SetVtkPolyDataMtd( pySolidModel* self, PyObject* args)
   type = gRepository->GetType( objName );
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "object must be of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   obj = gRepository->GetObject( objName );
@@ -3194,16 +3191,16 @@ static PyObject* Solid_SetVtkPolyDataMtd( pySolidModel* self, PyObject* args)
     break;
   default:
     PyErr_SetString(PyRunTimeErr, "error in SetVtkPolyData" );
-    return Py_ERROR;
+    
     break;
   }
   // set the vtkPolyData:
   if(!geom->SetVtkPolyDataObject(pd))
   {
-    return Py_ERROR;
+    PyErr_SetString(PyRunTimeErr,"error set vtk polydata object.");
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3222,7 +3219,7 @@ static PyObject* Solid_GetFacePolyDataMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"si|d",&resultName,&faceid,&max_dist))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string, one int and one double");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -3234,24 +3231,24 @@ static PyObject* Solid_GetFacePolyDataMtd( pySolidModel* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Get the cvPolyData:
   pd = geom->GetFacePolyData(faceid,useMaxDist,max_dist);
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error getting cvPolyData for ");
-    return Py_ERROR;
+    
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete pd;
-    return Py_ERROR;
+    
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3268,7 +3265,7 @@ static PyObject* Solid_GetFaceNormalMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"idd",&faceid,&u,&v))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one int and two doubles");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -3277,7 +3274,7 @@ static PyObject* Solid_GetFaceNormalMtd( pySolidModel* self, PyObject* args)
 
   if ( geom->GetFaceNormal(faceid,u,v,normal) == SV_ERROR ) {
     PyErr_SetString(PyRunTimeErr, "error getting Normal for face. ");
-    return Py_ERROR;
+    
   }
 
   return Py_BuildValue("ddd",normal[0],normal[1],normal[2]);
@@ -3298,7 +3295,7 @@ static PyObject* Solid_GetDiscontinuitiesMtd( pySolidModel* self,
   if(!PyArg_ParseTuple(args,"s",&resultName))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -3306,24 +3303,24 @@ static PyObject* Solid_GetDiscontinuitiesMtd( pySolidModel* self,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Get the cvPolyData:
   pd = geom->GetDiscontinuities();
   if ( pd == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error getting discontinuities");
-    return Py_ERROR;
+    
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, pd ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete pd;
-    return Py_ERROR;
+    
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(1));
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3342,7 +3339,7 @@ static pySolidModel* Solid_GetAxialIsoparametricCurveMtd( pySolidModel* self,
   if(!PyArg_ParseTuple(args,"sd",&resultName,&prm))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string and one double");
-    return Py_ERROR;
+    
   }
 
 
@@ -3351,26 +3348,26 @@ static pySolidModel* Solid_GetAxialIsoparametricCurveMtd( pySolidModel* self,
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Get the isoparametric curve on the given surface at the given
   // parameter value:
   if ( ( prm < 0.0 ) || ( prm > 1.0 ) ) {
     PyErr_SetString(PyRunTimeErr, "parameter value must be between 0.0 and 1.0");
-    return Py_ERROR;
+    
   }
   curve = geom->GetAxialIsoparametricCurve( prm );
   if ( curve == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error getting isoparametric curve for");
-    return Py_ERROR;
+    
   }
 
   // Register the result:
   if ( !( gRepository->Register( resultName, curve ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete curve;
-    return Py_ERROR;
+    
   }
 
   PyErr_SetString(PyRunTimeErr, curve->GetName());
@@ -3399,7 +3396,7 @@ static PyObject* Solid_GetKernelMtd( pySolidModel* self, PyObject* args)
 
   if ( kernelType == SM_KT_INVALID ) {
     PyErr_SetString(PyRunTimeErr, kernelName);
-    return Py_ERROR;
+    
   } else {
     return Py_BuildValue("s",kernelName);
   }
@@ -3440,7 +3437,7 @@ static PyObject* Solid_GetLabelMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&key))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string");
-    return Py_ERROR;
+    
   }
 
 
@@ -3448,7 +3445,7 @@ static PyObject* Solid_GetLabelMtd( pySolidModel* self, PyObject* args)
 
   if ( ! geom->GetLabel( key, &value ) ) {
     PyErr_SetString(PyRunTimeErr, "key not found" );
-    return Py_ERROR;
+    
   }
   return Py_BuildValue("s",value);
 }
@@ -3466,7 +3463,7 @@ static PyObject* Solid_SetLabelMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ss",&key,&value))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two strings");
-    return Py_ERROR;
+    
   }
 
 
@@ -3475,14 +3472,14 @@ static PyObject* Solid_SetLabelMtd( pySolidModel* self, PyObject* args)
   if ( ! geom->SetLabel( key, value ) ) {
     if ( geom->IsLabelPresent( key ) ) {
       PyErr_SetString(PyRunTimeErr, "key already in use");
-      return Py_ERROR;
+      
     } else {
       PyErr_SetString(PyRunTimeErr, "error setting label" );
-      return Py_ERROR;
+      
     }
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3498,19 +3495,19 @@ static PyObject* Solid_ClearLabelMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s",&key))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
 
   if ( ! geom->IsLabelPresent( key ) ) {
     PyErr_SetString(PyRunTimeErr, "key not found");
-    return Py_ERROR;
+    
   }
 
   geom->ClearLabel( key );
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3543,7 +3540,7 @@ static PyObject* Solid_GetFaceIdsMtd( pySolidModel* self, PyObject* args)
     return faceList;
   } else {
     PyErr_SetString(PyRunTimeErr, "GetFaceIds: error on object ");
-    return Py_ERROR;
+    
   }
 }
 
@@ -3559,16 +3556,16 @@ static PyObject*  Solid_GetBoundaryFacesMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"d",&angle))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one double");
-    return Py_ERROR;
+    
   }
 
 
   int status = geom->GetBoundaryFaces(angle);
   if ( status == SV_OK ) {
-    Py_RETURN_NONE;
+    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
   } else {
     PyErr_SetString(PyRunTimeErr, "GetBoundaryFaces: error on object ");
-    return Py_ERROR;
+    
   }
 }
 
@@ -3601,7 +3598,7 @@ static PyObject* Solid_GetRegionIdsMtd( pySolidModel* self, PyObject* args)
     return regionList;
   } else {
     PyErr_SetString(PyRunTimeErr, "GetRegionIds: error on object ");
-    return Py_ERROR;
+    
   }
 }
 
@@ -3619,14 +3616,14 @@ static PyObject* Solid_GetFaceAttrMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"si",&key, &faceid))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string and one int");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
 
   if ( ! geom->GetFaceAttribute( key, faceid, &value ) ) {
     PyErr_SetString(PyRunTimeErr, "attribute not found");
-    return Py_ERROR;
+    
   }
 
 
@@ -3647,17 +3644,17 @@ static PyObject* Solid_SetFaceAttrMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ssi",&key,&value,&faceid))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two strings and one int");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
 
   if ( ! geom->SetFaceAttribute( key, faceid, value ) ) {
     PyErr_SetString(PyRunTimeErr, "attribute could not be set");
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3674,7 +3671,7 @@ static PyObject* Solid_GetRegionAttrMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"si",&key, &regionid))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one string and one int");
-    return Py_ERROR;
+    
   }
 
 
@@ -3682,7 +3679,7 @@ static PyObject* Solid_GetRegionAttrMtd( pySolidModel* self, PyObject* args)
 
   if ( ! geom->GetRegionAttribute( key, regionid, &value ) ) {
     PyErr_SetString(PyRunTimeErr, "attribute not found");
-    return Py_ERROR;
+    
   }
 
 
@@ -3703,7 +3700,7 @@ static PyObject* Solid_SetRegionAttrMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ssi",&key,&value,&regionid))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two strings and one int");
-    return Py_ERROR;
+    
   }
 
 
@@ -3711,10 +3708,10 @@ static PyObject* Solid_SetRegionAttrMtd( pySolidModel* self, PyObject* args)
 
   if ( ! geom->SetRegionAttribute( key, regionid, value ) ) {
     PyErr_SetString(PyRunTimeErr, "attribute could not be set" );
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3730,11 +3727,11 @@ static PyObject* Solid_DeleteFacesMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"O",&faceList))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one list");
-    return Py_ERROR;
+    
   }
 
   if (PyList_Size(faceList) == 0) {
-      Py_RETURN_NONE;
+      return Py_BuildValue("N",PyBool_FromLong(SV_OK));
   }
 
   int nfaces = 0;
@@ -3752,10 +3749,10 @@ static PyObject* Solid_DeleteFacesMtd( pySolidModel* self, PyObject* args)
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "DeleteFaces: error on object");
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 // --------------------
@@ -3771,7 +3768,7 @@ static PyObject* Solid_DeleteRegionMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"i",&regionid))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one int");
-    return Py_ERROR;
+    
   }
   // Do work of command:
 
@@ -3779,10 +3776,10 @@ static PyObject* Solid_DeleteRegionMtd( pySolidModel* self, PyObject* args)
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "DeleteRegion: error on object");
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 
@@ -3802,17 +3799,17 @@ static PyObject* Solid_CreateEdgeBlendMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"iid|i",&faceA,&faceB,&radius,&filletshape))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two ints, one double or one optional int");
-    return Py_ERROR;
+    
   }
 
   status = geom->CreateEdgeBlend( faceA, faceB, radius, filletshape );
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "CreateEdgeBlend: error on object ");
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 static PyObject* Solid_CombineFacesMtd( pySolidModel* self, PyObject* args)
@@ -3825,7 +3822,7 @@ static PyObject* Solid_CombineFacesMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"ii",&faceid1,&faceid2))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import two ints");
-    return Py_ERROR;
+    
   }
 
 
@@ -3833,10 +3830,10 @@ static PyObject* Solid_CombineFacesMtd( pySolidModel* self, PyObject* args)
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "Combine Faces: Error");
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }
 
 static PyObject* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args)
@@ -3848,11 +3845,11 @@ static PyObject* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"Od",&excludeList,&size))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one list and one double");
-    return Py_ERROR;
+    
   }
 
   if (PyList_Size(excludeList) == 0) {
-      Py_RETURN_NONE;
+      return Py_BuildValue("N",PyBool_FromLong(SV_OK));
   }
 
   int nfaces = 0;
@@ -3869,8 +3866,8 @@ static PyObject* Solid_RemeshFaceMtd( pySolidModel* self, PyObject* args)
 
   if ( status != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "Remesh Face: Error");
-    return Py_ERROR;
+    
   }
 
-  Py_RETURN_NONE;
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
 }

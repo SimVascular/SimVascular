@@ -76,7 +76,7 @@ int Math_pyInit( )
 #elif PYTHON_MAJOR_VERSION == 3
   PyInit_pyMath();
 #endif
-  return Py_OK;
+  return SV_OK;
 }
 
 // -----------
@@ -102,7 +102,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    return Py_ERROR;
+    
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -135,7 +135,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in fft");
      mathobj->deleteArray(pts,nlistpts,2);
      delete mathobj;
-     return Py_ERROR;
+     
   }
 
   // create result string
@@ -189,7 +189,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(termsArg)){
     PyErr_SetString( MathErr, "termsArg is not a list");
-    return Py_ERROR;
+    
   }
   int nlistterms = PyList_Size(termsArg);
   if (nlistterms < 0)   return NULL;
@@ -224,7 +224,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in inverse fft" );
      mathobj->deleteArray(terms,nlistterms,2);
      delete mathobj;
-     return Py_ERROR;
+     
   }
 
   // create result string
@@ -278,7 +278,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(termsArg)){
     PyErr_SetString( MathErr, "termsArg not a list");
-    return Py_ERROR;
+    
   }
   int nlistterms = PyList_Size(termsArg);
   if (nlistterms < 0)   return NULL;
@@ -310,7 +310,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in calculate worm" );
      mathobj->deleteArray(terms,nlistterms,2);
      delete mathobj;
-     return Py_ERROR;
+     
   }
 
   // clean up
@@ -338,7 +338,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
 
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    return Py_ERROR;
+    
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -376,7 +376,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in linear interpolation");
      mathobj->deleteArray(pts,nlistpts,2);
      delete mathobj;
-     return Py_ERROR;
+     
   }
 
   // create result string
@@ -420,7 +420,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    return Py_ERROR;
+    
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -451,7 +451,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error finding curve length" );
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return Py_ERROR;
+     
   }
 
   // clean up
@@ -477,7 +477,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    return Py_ERROR;
+    
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -508,7 +508,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in linear interpolation" );
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return Py_ERROR;
+     
   }
 
   // create result string
@@ -561,7 +561,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!(PyList_Check(xtermsArg)||PyList_Check(ytermsArg))){
     PyErr_SetString( MathErr, "xtermsArg or ytermsArg is not a list");
-    return Py_ERROR;
+    
   }
   int numberOfSamples = PyList_Size(xtermsArg);
   int numberOfSamplesY = PyList_Size(ytermsArg);
@@ -619,7 +619,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
       mathobj->deleteArray(yt,numberOfSamples,yOrder);
       delete mathobj;
       delete temp;
-      return Py_ERROR;
+      
   }
 
   // create result string
@@ -670,7 +670,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg is not a list");
-    return Py_ERROR;
+    
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -696,7 +696,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in smoothing curve");
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     return Py_ERROR;
+     
   }
 
   // create result string

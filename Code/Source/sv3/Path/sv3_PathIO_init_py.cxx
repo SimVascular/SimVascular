@@ -69,7 +69,7 @@ int PathIO_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
     PyInit_pyPathIO();
 #endif
-  return Py_OK;
+  return SV_OK;
 }
 
 static PyMethodDef pyPathIO_methods[]={
@@ -83,7 +83,7 @@ static PyMethodDef pyPathIO_methods[]={
 static int pyPathIO_init(pyPathIO* self, PyObject* args)
 {
   fprintf(stdout,"pyPathIO initialized.\n");
-  return Py_OK;
+  return SV_OK;
 }
 
 static PyTypeObject pyPathIOType = {
@@ -201,14 +201,14 @@ PyMODINIT_FUNC PyInit_pyPathIO()
   if (PyType_Ready(&pyPathIOType)<0)
   {
     fprintf(stdout,"Error in pyPathIOType\n");
-    Py_RETURN_NONE;
+    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathIOModule);
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyPathIO\n");
-    Py_RETURN_NONE;
+    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
   }
   PyRunTimeErrIO = PyErr_NewException("pyPathIO.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErrIO);
@@ -230,7 +230,7 @@ PyObject* sv4PathIO_NewObjectCmd( pyPathIO* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE; 
+  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
 
 }
 
@@ -246,20 +246,20 @@ PyObject* sv4PathIO_ReadPathGroupCmd( pyPathIO* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"ss",&objName,&fn))
     {
         PyErr_SetString(PyRunTimeErrIO,"Could not import two chars, objName, fn");
-        return Py_ERROR;
+        
     }
     
     // Make sure the specified result object does not exist:
     if ( gRepository->Exists( objName ) ) {
         PyErr_SetString(PyRunTimeErrIO, "object already exists.");
-        return Py_ERROR;
+        
     }
 
     PathIO* pathIO = self->geom;
     if (pathIO==NULL)
     {
         PyErr_SetString(PyRunTimeErrIO,"PathIO does not exist.");
-        return Py_ERROR;
+        
     }
     
     std::string str(fn);
@@ -267,20 +267,20 @@ PyObject* sv4PathIO_ReadPathGroupCmd( pyPathIO* self, PyObject* args)
     if(pthGrp==NULL)
     {
         PyErr_SetString(PyRunTimeErrIO,"Error reading file");
-        return Py_ERROR;
+        
     }
 
     // Register the object:
     if ( !( gRepository->Register( objName, pthGrp ) ) ) {
         PyErr_SetString(PyRunTimeErrIO, "error registering obj in repository");
         delete pthGrp;
-        return Py_ERROR;
+        
     }
     
     Py_INCREF(pathIO);
     self->geom=pathIO;
     Py_DECREF(pathIO);
-    Py_RETURN_NONE; 
+    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
     
 }
 
@@ -299,7 +299,7 @@ PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"ss",&objName, &fn))
     {
         PyErr_SetString(PyRunTimeErrIO,"Could not import two chars, objName, fn");
-        return Py_ERROR;
+        
     }
 
     // Do work of command:
@@ -312,7 +312,7 @@ PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
         r[0] = '\0';
         sprintf(r, "couldn't find object %s", objName);
         PyErr_SetString(PyRunTimeErrIO,r);
-        return Py_ERROR;
+        
     }
     
     type = rd->GetType();
@@ -322,7 +322,7 @@ PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
         r[0] = '\0';
         sprintf(r, "%s not a path group object", objName);
         PyErr_SetString(PyRunTimeErrIO,r);
-        return Py_ERROR;
+        
     }
     
     pathGrp = dynamic_cast<PathGroup*> (rd);
@@ -330,17 +330,17 @@ PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
     if (self->geom==NULL)
     {
         PyErr_SetString(PyRunTimeErrIO,"PathIO does not exist.");
-        return Py_ERROR;
+        
     }
     
     std::string str(fn);
     if(self->geom->Write(str,pathGrp)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErrIO, "Could not write path.");
-        return Py_ERROR;
+        
     }
     
-    Py_RETURN_NONE; 
+    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
     
 }
 
@@ -358,7 +358,7 @@ PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"ss",&objName, &fn))
     {
         PyErr_SetString(PyRunTimeErrIO,"Could not import two chars, objName, fn");
-        return Py_ERROR;
+        
     }
 
     // Do work of command:
@@ -371,7 +371,7 @@ PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
         r[0] = '\0';
         sprintf(r, "couldn't find object %s", objName);
         PyErr_SetString(PyRunTimeErrIO,r);
-        return Py_ERROR;
+        
     }
     
     type = rd->GetType();
@@ -381,7 +381,7 @@ PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
         r[0] = '\0';
         sprintf(r, "%s not a path object", objName);
         PyErr_SetString(PyRunTimeErrIO,r);
-        return Py_ERROR;
+        
     }
     
     path = dynamic_cast<PathElement*> (rd);
@@ -389,7 +389,7 @@ PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
     if (self->geom==NULL)
     {
         PyErr_SetString(PyRunTimeErrIO,"PathIO does not exist.");
-        return Py_ERROR;
+        
     }
     
     PathGroup* pathGrp = new PathGroup();
@@ -400,8 +400,8 @@ PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
     if(self->geom->Write(str,pathGrp)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErrIO, "Could not write path.");
-        return Py_ERROR;
+        
     }
     
-    Py_RETURN_NONE; 
+    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
 } 
