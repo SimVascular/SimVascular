@@ -171,7 +171,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>564</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -183,8 +183,8 @@
             <widget class="QPushButton" name="generateMeshPushButton">
              <property name="geometry">
               <rect>
-               <x>10</x>
-               <y>270</y>
+               <x>0</x>
+               <y>330</y>
                <width>135</width>
                <height>25</height>
               </rect>
@@ -193,119 +193,146 @@
               <string>Generate 1D Mesh</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="readModelPushButton">
+            <widget class="QGroupBox" name="groupBox">
              <property name="geometry">
               <rect>
-               <x>260</x>
-               <y>10</y>
-               <width>89</width>
-               <height>25</height>
+               <x>0</x>
+               <y>0</y>
+               <width>391</width>
+               <height>131</height>
               </rect>
              </property>
-             <property name="text">
-              <string>Read Model</string>
+             <property name="title">
+              <string>Surface Model</string>
              </property>
+             <widget class="QPushButton" name="readModelPushButton">
+              <property name="geometry">
+               <rect>
+                <x>270</x>
+                <y>30</y>
+                <width>111</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Read Model</string>
+              </property>
+             </widget>
+             <widget class="QWidget" name="layoutWidget">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>70</y>
+                <width>341</width>
+                <height>27</height>
+               </rect>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <item>
+                <widget class="QLabel" name="modelFileNameLabel">
+                 <property name="text">
+                  <string>Model File Name</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="modelFileNameLineEdit"/>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="">
+              <property name="geometry">
+               <rect>
+                <x>12</x>
+                <y>30</y>
+                <width>181</width>
+                <height>26</height>
+               </rect>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="QLabel" name="label_22">
+                 <property name="text">
+                  <string>Source   </string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="surfaceModelComboBox"/>
+               </item>
+              </layout>
+             </widget>
             </widget>
-            <widget class="QPushButton" name="readCenterlinesPushButton">
+            <widget class="QGroupBox" name="groupBox_2">
              <property name="geometry">
               <rect>
-               <x>210</x>
-               <y>140</y>
-               <width>124</width>
-               <height>25</height>
+               <x>0</x>
+               <y>160</y>
+               <width>381</width>
+               <height>131</height>
               </rect>
              </property>
-             <property name="text">
-              <string>Read Centerlines</string>
+             <property name="title">
+              <string>Centerlines</string>
              </property>
-            </widget>
-            <widget class="QWidget" name="">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>10</y>
-               <width>203</width>
-               <height>27</height>
-              </rect>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_11">
-              <item>
-               <widget class="QLabel" name="label_22">
-                <property name="text">
-                 <string>Surface Model   </string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="surfaceModelComboBox"/>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="">
-             <property name="geometry">
-              <rect>
-               <x>11</x>
-               <y>140</y>
-               <width>176</width>
-               <height>27</height>
-              </rect>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_12">
-              <item>
-               <widget class="QLabel" name="label_23">
-                <property name="text">
-                 <string>Centerlines </string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="centerlinesComboBox"/>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="">
-             <property name="geometry">
-              <rect>
-               <x>7</x>
-               <y>50</y>
-               <width>341</width>
-               <height>27</height>
-              </rect>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_13">
-              <item>
-               <widget class="QLabel" name="modelFileNameLabel">
-                <property name="text">
-                 <string>Model File Name</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="modelFileNameLineEdit"/>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>190</y>
-               <width>341</width>
-               <height>27</height>
-              </rect>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_14">
-              <item>
-               <widget class="QLabel" name="centerlinesFileNameLabel">
-                <property name="text">
-                 <string>Centerlines File Name</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="centerlinesFileNameLineEdit"/>
-              </item>
-             </layout>
+             <widget class="QComboBox" name="centerlinesComboBox">
+              <property name="geometry">
+               <rect>
+                <x>80</x>
+                <y>30</y>
+                <width>104</width>
+                <height>26</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_23">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>30</y>
+                <width>61</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Source</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="readCenterlinesPushButton">
+              <property name="geometry">
+               <rect>
+                <x>230</x>
+                <y>30</y>
+                <width>124</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Read Centerlines</string>
+              </property>
+             </widget>
+             <widget class="QWidget" name="layoutWidget">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>80</y>
+                <width>341</width>
+                <height>27</height>
+               </rect>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_14">
+               <item>
+                <widget class="QLabel" name="centerlinesFileNameLabel">
+                 <property name="text">
+                  <string>Centerlines File Name</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="centerlinesFileNameLineEdit"/>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </widget>
           </item>
@@ -317,7 +344,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>564</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -354,7 +381,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>564</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -418,7 +445,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>564</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -768,7 +795,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>564</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -805,7 +832,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>564</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">
@@ -985,7 +1012,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>564</height>
+           <height>552</height>
           </rect>
          </property>
          <attribute name="label">

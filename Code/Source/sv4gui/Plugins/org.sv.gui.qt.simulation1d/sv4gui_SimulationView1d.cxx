@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <Python.h>
+
 #include "sv4gui_SimulationView1d.h"
 #include "ui_sv4gui_SimulationView1d.h"
 
@@ -37,6 +39,7 @@
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshLegacyIO.h"
 #include "sv4gui_SimulationUtils1d.h"
+#include "sv4gui_SimulationPython1d.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
@@ -67,6 +70,7 @@
 #include <QApplication>
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
+const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
 
 // Set the values of the Surface Model Origin types.
 //
@@ -97,8 +101,7 @@ const std::vector<QString> sv4guiSimulationView1d::CenterlinesSource::types =
 // sv4guiSimulationView1d
 //------------------------
 //
-sv4guiSimulationView1d::sv4guiSimulationView1d() :
-    ui(new Ui::sv4guiSimulationView1d)
+sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationView1d)
 {
     m_MitkJob = NULL;
 
@@ -349,7 +352,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 {
     auto msg = "[sv4guiSimulationView1d::Create1DMeshControls] ";
     MITK_INFO << msg << "--------- Create1DMeshControls ----------"; 
-    connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(GenerateMesh()));
+    connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(Generate1DMesh()));
     //connect(ui->readMeshPushButton, SIGNAL(clicked()), this, SLOT(ReadMesh()));
 
     // Add surface model widgets.
@@ -407,6 +410,9 @@ void sv4guiSimulationView1d::UdpateSurfaceModelSource()
 //-----------
 // ReadModel
 //-----------
+//
+// Sets:
+//    m_ModelFileName
 //
 void sv4guiSimulationView1d::ReadModel()
 {
@@ -692,11 +698,18 @@ sv4guiMesh* sv4guiSimulationView1d::GetDataNodeMesh()
 }
 
 
-//--------------
-// GenerateMesh
-//--------------
+//----------------
+// Generate1DMesh
+//----------------
 //
-void sv4guiSimulationView1d::GenerateMesh()
+// python generate-1d-mesh.py 
+//     --output-directory <dir>  
+//     --centerlines-input-file <clFile.vtp> 
+//     --compute-mesh 
+//     --write-mesh-file 
+//     --mesh-output-file <meshFile>.vtp
+//
+void sv4guiSimulationView1d::Generate1DMesh()
 {
     auto msg = "[sv4guiSimulationView1d::GenerateMesh] ";
     MITK_INFO << msg;
@@ -709,8 +722,34 @@ void sv4guiSimulationView1d::GenerateMesh()
     MITK_INFO << msg << "Output directory: " << m_PluginOutputDirectory;
 
     // Get the file name of the surface model.
-    auto modelFileName = GetModelFileName();
+    auto modelFileName = m_ModelFileName;
     MITK_INFO << msg << "Model file: " << modelFileName;
+
+    if (m_CenterlinesFileName.isEmpty()) {
+        QMessageBox::warning(NULL, "1D Simulation", "No centerlines have been calculated or centerlines source file set.");
+        MITK_ERROR << "No centerlines file is defined.";
+        return;
+    }
+    MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
+
+    // Set parameters.
+    std::map<std::string, std::string> params;
+    sv4guiSimulationPython1dParamNames paramNames;
+    auto outputDirectory = m_PluginOutputDirectory.toStdString();
+    auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
+    auto meshFileName = MESH_FILE_NAME.toStdString();
+
+    params.insert(std::pair<std::string,std::string>(paramNames.OUTPUT_DIRECTORY, outputDirectory));
+    params.insert(std::pair<std::string,std::string>(paramNames.CENTERLINE_INPUT_FILE, inputCenterlinesFile));
+    params.insert(std::pair<std::string,std::string>(paramNames.COMPUTE_MESH, "1"));
+    params.insert(std::pair<std::string,std::string>(paramNames.WRITE_MESH_FILE, "1"));
+    params.insert(std::pair<std::string,std::string>(paramNames.MESH_OUTPUT_FILE, meshFileName));
+
+    // Execute the generate-1d-mesh.py script.
+    auto pythonInterface = sv4guiSimulationPython1d();
+    pythonInterface.GenerateMesh(params);
+
+
 }
 
 //----------
@@ -866,8 +905,10 @@ void sv4guiSimulationView1d::OnPreferencesChanged(const berry::IBerryPreferences
 //--------------------
 // OnSelectionChanged
 //--------------------
+// Process a change in the Data Manager nodes.
 //
 // Sets:  
+//    m_ModelFileName if it is not already set.
 //    m_ModelNode 
 //    m_Model 
 //    m_JobNode 
@@ -908,8 +949,8 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     std::string jobPath = "";
     jobNode->GetStringProperty("path", jobPath);
     MITK_INFO << msg << "jobPath " << jobPath;
+    //m_PluginOutputDirectory = GetJobPath();
     m_PluginOutputDirectory = QString(jobPath.c_str());
-
 
     // Get the model and mesh folder data nodes.
     m_ModelFolderNode = GetModelFolderDataNode();
@@ -929,6 +970,9 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         modelNode->SetVisibility(false);
         m_Model = model;
         m_ModelNode = modelNode;
+        if (m_ModelFileName.isEmpty()) {
+            m_ModelFileName = GetModelFileName();
+        }
         MITK_INFO << msg << "The model has been set.";
         // Check for centerlines created for the model.
         auto rs = GetDataStorage()->GetDerivations(modelNode);

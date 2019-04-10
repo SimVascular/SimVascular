@@ -66,6 +66,7 @@ class sv4guiSimulationView1d : public sv4guiQmitkFunctionality
 public:
 
     static const QString EXTENSION_ID;
+    static const QString MESH_FILE_NAME;
 
     sv4guiSimulationView1d();
 
@@ -123,7 +124,7 @@ public slots:
     void UpdateGUIRunDir();
 
     // 1D Mesh slots.
-    void GenerateMesh();
+    void Generate1DMesh();
     void ReadMesh();
     void UdpateSurfaceModelSource();
     void ReadModel();
