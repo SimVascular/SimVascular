@@ -49,14 +49,14 @@ class sv4guiSimulationPython1dParamNames
   public: 
     sv4guiSimulationPython1dParamNames() {
       allNames.insert(BOUNDARY_SURFACE_DIR);
-      allNames.insert(CENTERLINE_INPUT_FILE);
+      allNames.insert(CENTERLINES_INPUT_FILE);
       allNames.insert(COMPUTE_MESH);
       allNames.insert(MESH_OUTPUT_FILE);
       allNames.insert(OUTPUT_DIRECTORY);
       allNames.insert(WRITE_MESH_FILE);
     }
     const std::string BOUNDARY_SURFACE_DIR = "boundary_surfaces_directory";
-    const std::string CENTERLINE_INPUT_FILE = "centerlines_input_file";
+    const std::string CENTERLINES_INPUT_FILE = "centerlines_input_file";
     const std::string COMPUTE_MESH = "compute_mesh";
     const std::string MESH_OUTPUT_FILE = "mesh_output_file";
     const std::string OUTPUT_DIRECTORY = "output_directory";
@@ -69,10 +69,10 @@ class sv4guiSimulationPython1d
   public:
     sv4guiSimulationPython1d();
     ~sv4guiSimulationPython1d(); 
-    bool GenerateMesh(const std::map<std::string, std::string>& params); 
+    std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
+    bool GenerateMesh(const std::string& outputDir, const std::string& centerlinesFile, const std::string& meshFile);
+    std::string StartCommand();
     bool WriteMesh(const std::string fileName);
-    std::string CreateCommand(const std::string infile, const std::string outfile);
-    bool CheckParameters(const std::map<std::string, std::string>& params);
     bool WriteParameters(const std::string fileName, std::map<std::string, std::string>& params);
 
     std::string name; 
@@ -80,6 +80,7 @@ class sv4guiSimulationPython1d
     vtkSmartPointer<vtkPolyData> meshPolyData;
     sv4guiSimulationPython1dParamNames parameterNames;
     std::map<std::string, std::string> parameterValues;
+    const std::string pythonModuleName = "generate_1d_mesh";
 };
 
 #endif //SV4GUI_SIMULATION_PYTHON1D_H

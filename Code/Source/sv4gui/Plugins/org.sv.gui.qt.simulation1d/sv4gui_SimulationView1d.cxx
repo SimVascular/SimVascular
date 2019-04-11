@@ -113,6 +113,9 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationVi
     m_MeshFolderNode = nullptr;
     m_MeshNode = nullptr;
 
+    m_1DMeshContainer = nullptr;
+    m_1DMeshMapper = nullptr;
+
     m_JobNode = NULL;
     m_DataStorage = nullptr;
     m_DataInteractor=NULL;
@@ -340,6 +343,27 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
     //    InitializePreferences(berryprefs);
     this->OnPreferencesChanged(berryprefs);
+
+    if (m_1DMeshMapper == nullptr) {
+        m_1DMeshContainer = sv4guiSimulation1DMeshContainer::New();
+        auto m_1DMeshNode = mitk::DataNode::New();
+        m_1DMeshNode->SetData(m_1DMeshContainer);
+        m_1DMeshNode->SetVisibility(true);
+        m_1DMeshNode->SetName("1D-Mesh");
+
+        // Create 1D Mesh node under 'Simularions1d' node.
+        auto parentNode = GetDataStorage()->GetNamedNode("Simulations1d");
+        if (parentNode) {
+          GetDataStorage()->Add(m_1DMeshNode, parentNode);
+        }
+
+        m_1DMeshMapper = sv4guiSimulation1DMeshMapper::New();
+        m_1DMeshMapper->SetDataNode(m_1DMeshNode);
+        m_1DMeshMapper->m_box = false;
+        m_1DMeshNode->SetMapper(mitk::BaseRenderer::Standard3D, m_1DMeshMapper);
+
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
 }
 
 //----------------------
@@ -380,6 +404,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     ui->readCenterlinesPushButton->setVisible(false);
     ui->centerlinesFileNameLabel->setVisible(false);
     ui->centerlinesFileNameLineEdit->setVisible(false);
+    ui->calculateCenterlinesPushButton->setVisible(true);
 }
 
 //--------------------------
@@ -491,6 +516,9 @@ void sv4guiSimulationView1d::ReadModel()
 // UdpateCenterlinesSource 
 //-------------------------
 //
+// Sets:
+//   m_CenterlinesSource 
+//
 void sv4guiSimulationView1d::UdpateCenterlinesSource()
 {
     if (!m_MitkJob) {
@@ -502,13 +530,18 @@ void sv4guiSimulationView1d::UdpateCenterlinesSource()
     MITK_INFO << msg << "---------- UdpateCenterlinesSource ----------";
 
     auto sourceType = ui->centerlinesComboBox->currentText();
-    //std::string sourceType = ui->centerlinesComboBox->currentText().toStdString();
     MITK_INFO << msg << "sourceType: " << sourceType;
-    auto show = (sourceType == CenterlinesSource::READ_FROM_FILE);
-    ui->readCenterlinesPushButton->setVisible(show);
-    ui->centerlinesFileNameLabel->setVisible(show);
-    ui->centerlinesFileNameLineEdit->setVisible(show);
     m_CenterlinesSource = sourceType;
+
+    // Show or hide widgets depending on centerline source.
+    //
+    auto showRead = (sourceType == CenterlinesSource::READ_FROM_FILE);
+    ui->readCenterlinesPushButton->setVisible(showRead);
+    ui->centerlinesFileNameLabel->setVisible(showRead);
+    ui->centerlinesFileNameLineEdit->setVisible(showRead);
+
+    auto showCalculate = (sourceType == CenterlinesSource::CALCULATE);
+    ui->calculateCenterlinesPushButton->setVisible(showCalculate);
 }
 
 //-----------------
@@ -732,25 +765,43 @@ void sv4guiSimulationView1d::Generate1DMesh()
     }
     MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
 
-    // Set parameters.
-    std::map<std::string, std::string> params;
-    sv4guiSimulationPython1dParamNames paramNames;
     auto outputDirectory = m_PluginOutputDirectory.toStdString();
     auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
     auto meshFileName = MESH_FILE_NAME.toStdString();
 
-    params.insert(std::pair<std::string,std::string>(paramNames.OUTPUT_DIRECTORY, outputDirectory));
-    params.insert(std::pair<std::string,std::string>(paramNames.CENTERLINE_INPUT_FILE, inputCenterlinesFile));
-    params.insert(std::pair<std::string,std::string>(paramNames.COMPUTE_MESH, "1"));
-    params.insert(std::pair<std::string,std::string>(paramNames.WRITE_MESH_FILE, "1"));
-    params.insert(std::pair<std::string,std::string>(paramNames.MESH_OUTPUT_FILE, meshFileName));
-
     // Execute the generate-1d-mesh.py script.
     auto pythonInterface = sv4guiSimulationPython1d();
-    pythonInterface.GenerateMesh(params);
+    pythonInterface.GenerateMesh(outputDirectory, inputCenterlinesFile, meshFileName);
 
-
+    // Read and display the 1D mesh.
+    auto fileName = outputDirectory + "/" + meshFileName;
+    Read1DMesh(fileName);
 }
+
+//------------
+// Read1DMesh
+//------------
+//
+sv4guiMesh* sv4guiSimulationView1d::Read1DMesh(std::string fileName)
+{
+    auto msg = "[sv4guiSimulationView1d::Read1DMesh] ";
+    MITK_INFO << msg; 
+    MITK_INFO << msg << "Read surface network " << fileName;
+/*
+    m_1DMesh = new sv4guiMesh();
+    m_1DMesh->ReadVolumeFile(fileName);
+    m_1DMeshContainer->SetSurfaceNetworkMesh(m_1DMesh);
+*/
+
+/*
+    if (ui->networkCheckBox->isChecked()) {
+      showNetwork(true);
+    } else {
+      showNetwork(false);
+    }
+*/
+}
+
 
 //----------
 // ReadMesh

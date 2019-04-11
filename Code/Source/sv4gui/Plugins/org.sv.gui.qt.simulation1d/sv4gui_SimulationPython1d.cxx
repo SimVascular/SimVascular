@@ -53,45 +53,38 @@ sv4guiSimulationPython1d::~sv4guiSimulationPython1d()
 {
 }
 
-//-----------------
-// CheckParameters
-//-----------------
-// Check the parameters used by the Python script.
-//
-bool sv4guiSimulationPython1d::CheckParameters(const std::map<std::string, std::string>& params)
-{
-  std::map<std::string, std::string>::const_iterator it;
-  for (it = params.begin(); it != params.end(); ++it) {
-    MITK_INFO << '\t' << it->first << '\t' << it->second;
-    if (parameterNames.allNames.find(it->first) == parameterNames.allNames.end()) {
-      MITK_ERROR << "Unknown parameter name " << it->first;
-      return false;
-    }
-  }
-
-  return true;
-}
-
 //--------------
 // GenerateMesh   
 //--------------
 // Generate a 1D mesh. 
 //
-// python generate-1d-mesh.py 
-//     --output-directory <dir>  
-//     --centerlines-input-file <clFile.vtp> 
-//     --compute-mesh 
-//     --write-mesh-file 
-//     --mesh-output-file <meshFile>.vtp
+// Script arguments: 
 //
-bool sv4guiSimulationPython1d::GenerateMesh(const std::map<std::string,std::string>& params) 
+//     output-directory: The output directory to write the mesh file.
+//     centerlines-input-file: The input centerlines geometry (.vtp format). 
+//     compute-mesh: Switch to enable computing just the mesh.
+//     write-mesh-file: Switch to enable writing a mesh file.
+//     mesh-output-file: The name of the mesh file to write (.vtp format).
+//
+bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const std::string& centerlinesFile,
+                                            const std::string& meshFile) 
 {
   std::string msg = "[sv4guiSimulationPython1d::GenerateMesh] ";
   MITK_INFO << msg << "---------- GenerateMesh ----------";
+  sv4guiSimulationPython1dParamNames paramNames;
 
-  if (!CheckParameters(params)) {
-      return false;
-  }
+  // Create the script command.
+  auto last = true;
+  auto cmd = StartCommand();
+  cmd += AddArgument(paramNames.OUTPUT_DIRECTORY, outputDir);
+  cmd += AddArgument(paramNames.CENTERLINES_INPUT_FILE, centerlinesFile);
+  cmd += AddArgument(paramNames.COMPUTE_MESH, "true");
+  cmd += AddArgument(paramNames.WRITE_MESH_FILE, "true");
+  cmd += AddArgument(paramNames.MESH_OUTPUT_FILE, meshFile, last);
+  MITK_INFO << msg << "Execute cmd " << cmd;
+  PyRun_SimpleString(cmd.c_str());
+  MITK_INFO << msg << "Done!";
+
 
 /*
   // Write the surface mesh to a .vtp file.
@@ -114,53 +107,32 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::map<std::string,std::stri
 */
 }
 
-//---------------
-// CreateCommand
-//---------------
-// Create the Python command used to execute the generate-1d-mesh script. 
+//--------------
+// StartCommand 
+//--------------
+// Start a command.
 //
-// The command will import the module generate-1d-mesh and execute the 
-// generate-1d-mesh.run() function.
-//
-// The parmeters used by the Python code are stored as a map in 
-// the sv4guiSimulationPython1d data member 'parameterValues'.
-//
-std::string sv4guiSimulationPython1d::CreateCommand(const std::string infile, const std::string outfile)
+std::string sv4guiSimulationPython1d::StartCommand()
 {
-  auto msgPrefix = "[sv4guiSimulationPython1d::CreateCommand] ";
-  std::string cmd;
-
-  // Get the values of the main parameters used by the fractal tree code.
-  //
-/*
-  auto avg_branch_length = parameterValues[parameterNames.AvgBranchLength];
-  auto branch_angle = parameterValues[parameterNames.BranchAngle];
-  auto branch_seg_length = parameterValues[parameterNames.BranchSegLength];
-  auto init_node = parameterValues[parameterNames.FirstPoint];
-  auto num_branch_gen = parameterValues[parameterNames.NumBranchGenerations];
-  auto repulsive_parameter = parameterValues[parameterNames.RepulsiveParameter];
-  auto second_node = parameterValues[parameterNames.SecondPoint];
-
-  // Create the command to generate the network.
-  //
-  std::string cmd;
-  cmd += "import fractal_tree\n";
-  cmd += "fractal_tree.run(";
-  // Required parameters.
-  cmd += "infile='" + infile + "',";
-  cmd += "outfile='" + outfile + "',";
-  cmd += "init_node='[" + init_node + "]',";
-  cmd += "second_node='[" + second_node +  "]',";
-  // Optional parameters.
-  cmd += "avg_branch_length='" + avg_branch_length +  "',";
-  cmd += "branch_angle='" + branch_angle + "',";
-  cmd += "branch_seg_length='" + branch_seg_length + "',";
-  cmd += "num_branch_gen='" + num_branch_gen + "',";
-  cmd += "repulsive_parameter='" + repulsive_parameter + "'";
-  cmd += ")\n"; 
-
-*/
+  std::string cmd = "import " + pythonModuleName + "\n";
+  cmd += pythonModuleName + ".run(";
   return cmd;
+}
+
+//-------------
+// AddArgument
+//-------------
+// Add an argument to a command string.
+//
+std::string sv4guiSimulationPython1d::AddArgument(const std::string& name, const std::string& value, bool last)
+{
+    std::string arg = name + "='" + value + "'";
+    if (last)  {
+        arg += ")\n";
+    } else {
+        arg += ",";
+    }
+    return arg;
 }
 
 //-----------
