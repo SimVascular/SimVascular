@@ -40,8 +40,8 @@
 #include "sv4gui_CapBCWidget1d.h"
 #include "sv4gui_SplitBCWidget1d.h"
 #include "sv4gui_QmitkFunctionality.h"
-#include "sv4gui_Simulation1DMeshContainer.h"
-#include "sv4gui_Simulation1DMeshMapper.h"
+#include "sv4gui_SimulationLinesContainer.h"
+#include "sv4gui_SimulationLinesMapper.h"
 
 #include "sv4gui_ProcessHandler1d.h"
 #include "sv4gui_SolverProcessHandler1d.h"
@@ -222,11 +222,14 @@ private:
     std::vector<NameNodeTuple> m_MeshNodes;
 
     QString m_CenterlinesFileName;
+    QString m_CenterlinesOutputFileName;
     QString m_CenterlinesSource;
+    sv4guiSimulationLinesMapper::Pointer m_CenterlinesMapper;
+    sv4guiSimulationLinesContainer::Pointer m_CenterlinesContainer;
 
     mitk::DataNode::Pointer m_Mesh1DNode;
-    sv4guiSimulation1DMeshMapper::Pointer m_1DMeshMapper;
-    sv4guiSimulation1DMeshContainer::Pointer m_1DMeshContainer;
+    sv4guiSimulationLinesMapper::Pointer m_1DMeshMapper;
+    sv4guiSimulationLinesContainer::Pointer m_1DMeshContainer;
     sv4guiMesh* m_1DMesh;
 
     sv4guiMitkSimJob1d* m_MitkJob;

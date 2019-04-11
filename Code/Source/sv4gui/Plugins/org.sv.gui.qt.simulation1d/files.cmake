@@ -35,8 +35,8 @@ set(CPP_FILES
     sv4gui_SplitBCWidget1d.cxx
     sv4gui_TableCapDelegate1d.cxx
     sv4gui_TableSolverDelegate1d.cxx
-    sv4gui_Simulation1DMeshContainer.cxx
-    sv4gui_Simulation1DMeshMapper.cxx
+    sv4gui_SimulationLinesContainer.cxx
+    sv4gui_SimulationLinesMapper.cxx
     sv4gui_SimulationView1d.cxx
     sv4gui_SimulationPreferencePage1d.cxx
     sv4gui_SimulationPython1d.cxx
@@ -54,8 +54,8 @@ set(MOC_H_FILES
     sv4gui_SplitBCWidget1d.h
     sv4gui_TableCapDelegate1d.h
     sv4gui_TableSolverDelegate1d.h
-    sv4gui_Simulation1DMeshContainer.h
-    sv4gui_Simulation1DMeshMapper.h
+    sv4gui_SimulationLinesContainer.h
+    sv4gui_SimulationLinesMapper.h
     sv4gui_SimulationView1d.h
     sv4gui_SimulationPreferencePage1d.h
     sv4gui_SimulationPython1d.h

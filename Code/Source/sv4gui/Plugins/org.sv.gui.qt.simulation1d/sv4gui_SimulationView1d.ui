@@ -171,7 +171,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>552</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
@@ -240,13 +240,13 @@
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <property name="geometry">
                <rect>
                 <x>12</x>
                 <y>30</y>
                 <width>181</width>
-                <height>26</height>
+                <height>27</height>
                </rect>
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_11">
@@ -262,6 +262,19 @@
                </item>
               </layout>
              </widget>
+             <widget class="Line" name="line">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>120</y>
+                <width>391</width>
+                <height>16</height>
+               </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
             </widget>
             <widget class="QGroupBox" name="groupBox_2">
              <property name="geometry">
@@ -269,7 +282,7 @@
                <x>0</x>
                <y>160</y>
                <width>381</width>
-               <height>131</height>
+               <height>151</height>
               </rect>
              </property>
              <property name="title">
@@ -301,8 +314,8 @@
              <widget class="QPushButton" name="readCenterlinesPushButton">
               <property name="geometry">
                <rect>
-                <x>230</x>
-                <y>30</y>
+                <x>0</x>
+                <y>70</y>
                 <width>124</width>
                 <height>25</height>
                </rect>
@@ -311,39 +324,53 @@
                <string>Read Centerlines</string>
               </property>
              </widget>
-             <widget class="QWidget" name="layoutWidget">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>80</y>
-                <width>341</width>
-                <height>27</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_14">
-               <item>
-                <widget class="QLabel" name="centerlinesFileNameLabel">
-                 <property name="text">
-                  <string>Centerlines File Name</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="centerlinesFileNameLineEdit"/>
-               </item>
-              </layout>
-             </widget>
              <widget class="QPushButton" name="calculateCenterlinesPushButton">
               <property name="geometry">
                <rect>
-                <x>200</x>
-                <y>30</y>
+                <x>0</x>
+                <y>70</y>
                 <width>161</width>
                 <height>32</height>
                </rect>
               </property>
               <property name="text">
                <string>Calculate Centerlines </string>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="centerlinesFileNameLineEdit">
+              <property name="geometry">
+               <rect>
+                <x>160</x>
+                <y>120</y>
+                <width>184</width>
+                <height>25</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QLabel" name="centerlinesFileNameLabel">
+              <property name="geometry">
+               <rect>
+                <x>5</x>
+                <y>120</y>
+                <width>149</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Centerlines File Name</string>
+              </property>
+             </widget>
+             <widget class="QCheckBox" name="showCenterLinesCheckBox">
+              <property name="geometry">
+               <rect>
+                <x>260</x>
+                <y>30</y>
+                <width>92</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Show</string>
               </property>
              </widget>
             </widget>
@@ -357,7 +384,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>552</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
@@ -394,7 +421,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>552</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
@@ -458,7 +485,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>552</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
@@ -808,7 +835,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>552</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
@@ -845,7 +872,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>552</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1025,7 +1052,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>552</height>
+           <height>564</height>
           </rect>
          </property>
          <attribute name="label">
