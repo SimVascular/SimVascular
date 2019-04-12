@@ -184,7 +184,7 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>330</y>
+               <y>340</y>
                <width>135</width>
                <height>25</height>
               </rect>
@@ -198,9 +198,22 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>391</width>
+               <width>388</width>
                <height>131</height>
               </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QGroupBox { 
+border-width: 2px;  
+ border-color: rgb(85, 87, 83); 
+border-style: outset;
+ }
+
+QGroupBox::title {
+    subcontrol-origin: padding;
+    subcontrol-position: top left;
+    padding: 0 5px;
+ }</string>
              </property>
              <property name="title">
               <string>Surface Model</string>
@@ -262,19 +275,6 @@
                </item>
               </layout>
              </widget>
-             <widget class="Line" name="line">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>120</y>
-                <width>391</width>
-                <height>16</height>
-               </rect>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
             </widget>
             <widget class="QGroupBox" name="groupBox_2">
              <property name="geometry">
@@ -284,6 +284,19 @@
                <width>381</width>
                <height>151</height>
               </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QGroupBox { 
+border-width: 2px;  
+ border-color: rgb(85, 87, 83); 
+border-style: outset;
+ }
+
+QGroupBox::title {
+    subcontrol-origin: padding;
+    subcontrol-position: top left;
+    padding: 0 5px;
+ }</string>
              </property>
              <property name="title">
               <string>Centerlines</string>
@@ -314,7 +327,7 @@
              <widget class="QPushButton" name="readCenterlinesPushButton">
               <property name="geometry">
                <rect>
-                <x>0</x>
+                <x>10</x>
                 <y>70</y>
                 <width>124</width>
                 <height>25</height>
@@ -327,14 +340,14 @@
              <widget class="QPushButton" name="calculateCenterlinesPushButton">
               <property name="geometry">
                <rect>
-                <x>0</x>
+                <x>200</x>
                 <y>70</y>
                 <width>161</width>
-                <height>32</height>
+                <height>26</height>
                </rect>
               </property>
               <property name="text">
-               <string>Calculate Centerlines </string>
+               <string>Extract Centerlines </string>
               </property>
              </widget>
              <widget class="QLineEdit" name="centerlinesFileNameLineEdit">
@@ -373,6 +386,19 @@
                <string>Show</string>
               </property>
              </widget>
+             <widget class="QPushButton" name="selectModelFacesPushButton">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>70</y>
+                <width>161</width>
+                <height>26</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Select Inlet Faces</string>
+              </property>
+             </widget>
             </widget>
            </widget>
           </item>
@@ -383,8 +409,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>564</height>
+           <width>86</width>
+           <height>75</height>
           </rect>
          </property>
          <attribute name="label">
@@ -420,8 +446,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>564</height>
+           <width>86</width>
+           <height>75</height>
           </rect>
          </property>
          <attribute name="label">
@@ -484,8 +510,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>564</height>
+           <width>339</width>
+           <height>217</height>
           </rect>
          </property>
          <attribute name="label">
@@ -834,8 +860,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>564</height>
+           <width>86</width>
+           <height>75</height>
           </rect>
          </property>
          <attribute name="label">
@@ -871,8 +897,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>564</height>
+           <width>234</width>
+           <height>177</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1051,8 +1077,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>564</height>
+           <width>360</width>
+           <height>333</height>
           </rect>
          </property>
          <attribute name="label">

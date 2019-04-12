@@ -41,6 +41,7 @@
 #include "sv4gui_SimulationUtils1d.h"
 #include "sv4gui_SimulationPython1d.h"
 
+#include "sv4gui_SimulationExtractCenterlines1d.h"
 #include "sv_polydatasolid_utils.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
@@ -350,6 +351,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     this->OnPreferencesChanged(berryprefs);
 
     // Create container and mapper used to display the 1D mesh.
+/*
     if (m_1DMeshMapper == nullptr) {
         m_1DMeshContainer = sv4guiSimulationLinesContainer::New();
 
@@ -393,6 +395,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
         m_CenterlinesMapper->SetColor(0.0, 1.0, 0.0);
         m_CenterlinesNode->SetMapper(mitk::BaseRenderer::Standard3D, m_CenterlinesMapper);
     }
+*/
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -426,7 +429,9 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     // Add centerlines widgets.
     //
     connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateCenterlinesSource()));
-    connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(ReadCenterlines()) );
+    connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(ReadCenterlines()));
+    connect(ui->calculateCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(CalculateCenterlines()) );
+    connect(ui->selectModelFacesPushButton, SIGNAL(clicked()), this, SLOT(SelectModelFaces()));
     for (auto const& type : CenterlinesSource::types) {
         ui->centerlinesComboBox->addItem(type);
     }
@@ -436,6 +441,14 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     ui->centerlinesFileNameLabel->setVisible(false);
     ui->centerlinesFileNameLineEdit->setVisible(false);
     ui->calculateCenterlinesPushButton->setVisible(true);
+
+    // Add model face selection widget.
+    m_ModelFaceSelectionWidget = new sv4guiCapSelectionWidget();
+    m_ModelFaceSelectionWidget->move(400,400);
+    m_ModelFaceSelectionWidget->hide();
+    m_ModelFaceSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+    // Set callback when 'OK' button is selected. 
+    connect(m_ModelFaceSelectionWidget, SIGNAL(accepted()), this, SLOT(AddModelFaces()));
 }
 
 //--------------------------
@@ -543,6 +556,82 @@ void sv4guiSimulationView1d::ReadModel()
   }
 }
 
+//------------------
+// SelectModelFaces
+//------------------
+//
+void sv4guiSimulationView1d::SelectModelFaces()
+{
+    if (!m_Model) {
+        return;
+    }
+
+    auto msg = "[sv4guiSimulationView1d::SelectModelFaces] ";
+    MITK_INFO << msg << "--------- SelectModelFaces ----------"; 
+
+/*
+    if (m_ModelType != "PolyData") {
+      QMessageBox::warning(m_Parent,"Error","Cannot currently extract centerlines of anyting other than a PolyData model");
+      return;
+    }
+
+    int timeStep=GetTimeStep();
+*/
+    int timeStep = 0;
+
+    sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
+    std::vector<sv4guiModelElement::svFace*> faces = modelElement->GetFaces();
+    std::vector<std::string> caps;
+    MITK_INFO << msg << "Number of model faces: " << faces.size();
+
+    int rowIndex=-1;
+
+    for(int i = 0; i < faces.size(); i++) {
+        if (faces[i] == NULL) {
+            continue;
+        }
+
+        if (faces[i]->type == "cap") {
+            caps.push_back(faces[i]->name);
+        }
+    }
+
+    m_ModelFaceSelectionWidget->SetTableView(caps, modelElement, "PolyData");
+    //m_ModelFaceSelectionWidget->SetTableView(caps, modelElement, m_ModelType);
+    m_ModelFaceSelectionWidget->show();
+}
+
+//---------------
+// AddModelFaces
+//---------------
+// Save the names and face IDs for the inlet faces selected 
+// from the m_ModelFaceSelectionWidget.
+//
+// Modifies:
+//   m_ModelInletFaceNames
+//   m_ModelInletFaceIds
+//
+void sv4guiSimulationView1d::AddModelFaces()
+{
+    if (!m_Model) {
+        return;
+    }
+
+    auto msg = "[sv4guiSimulationView1d::AddModelFaces] ";
+    MITK_INFO << msg << "--------- AddModelFaces ----------"; 
+    int timeStep = 0;
+    sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
+    std::vector<std::string> capNames = m_ModelFaceSelectionWidget->GetUsedCapNames();
+    MITK_INFO << msg << "Number of inlet faces selected: " << capNames.size(); 
+
+    for (const auto& name : capNames) {
+        MITK_INFO << msg << "Inlet face: " << name; 
+        m_ModelInletFaceNames.push_back(name);
+        m_ModelInletFaceIds.push_back(modelElement->GetFaceID(name));
+    }
+
+}
+
 //-------------------------
 // UdpateCenterlinesSource 
 //-------------------------
@@ -573,6 +662,43 @@ void sv4guiSimulationView1d::UdpateCenterlinesSource()
 
     auto showCalculate = (sourceType == CenterlinesSource::CALCULATE);
     ui->calculateCenterlinesPushButton->setVisible(showCalculate);
+}
+
+//----------------------
+// CalculateCenterlines
+//----------------------
+//
+void sv4guiSimulationView1d::CalculateCenterlines()
+{
+    auto msg = "[sv4guiSimulationView1d::CalculateCenterlines]";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- CalculateCenterlines ----------";
+    MITK_INFO << msg << "Number of inlet faces: " <<  m_ModelInletFaceIds.size();
+
+    if (m_ModelInletFaceIds.size() == 0) {
+        MITK_WARN << "No inlet faces selected.";
+        QMessageBox::warning(NULL, "1D Simulation", "No inlet faces selected.");
+        return;
+    }
+
+    // Set the name of the file to write centerlines to.
+    m_CenterlinesFileName = m_PluginOutputDirectory + "/centerlines.vtp";
+
+    // Create an object to execute the centerline extraction.
+    //
+    sv4guiSimulationExtractCenterlines1d* extractCenterlines = new sv4guiSimulationExtractCenterlines1d();
+    extractCenterlines->SetDataStorage(this->GetDataStorage());
+    extractCenterlines->SetFunctionality(this);
+    extractCenterlines->SetSourceCapIds(m_ModelInletFaceIds);
+    extractCenterlines->m_JobNode = m_JobNode;
+    extractCenterlines->m_CenterlinesFileName = m_CenterlinesFileName; 
+
+    // Set the Modeling data node as the source of the surface mesh.
+    QList<mitk::DataNode::Pointer> selectedNode;
+    selectedNode.push_back(m_ModelNode);
+
+    // Execute the centerlines extraction.
+    extractCenterlines->Run(selectedNode);
 }
 
 //-----------------

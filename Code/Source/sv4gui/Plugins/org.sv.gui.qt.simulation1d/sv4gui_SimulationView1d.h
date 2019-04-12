@@ -43,6 +43,7 @@
 #include "sv4gui_SimulationLinesContainer.h"
 #include "sv4gui_SimulationLinesMapper.h"
 
+#include "sv4gui_CapSelectionWidget.h"
 #include "sv4gui_ProcessHandler1d.h"
 #include "sv4gui_SolverProcessHandler1d.h"
 
@@ -132,28 +133,26 @@ public slots:
     void ReadModel();
     void UdpateCenterlinesSource();
     void ReadCenterlines();
+    void CalculateCenterlines();
+    void SelectModelFaces();
+    void AddModelFaces();
+    void ShowModel(bool checked = false);
 
     void CreateAllFiles();
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
     void RunJob();
 
+    void ExportResults();
     void SetResultDir();
 
-    void ExportResults();
-
     void UpdateJobStatus();
-
     void UpdateSimJob();
-
     void UdpateSimJobMeshName();
-
     void UpdateSimJobNumProcs();
 
     void SetupInternalSolverPaths();
 
     void ShowCalculateFowsWidget(bool checked = false);
-
-    void ShowModel(bool checked = false);
 
 public:
 
@@ -215,6 +214,9 @@ private:
     std::vector<NameNodeTuple> m_ModelCenterlineNodes;
     QString m_ModelFileName;
     QString m_ModelSource;
+    sv4guiCapSelectionWidget* m_ModelFaceSelectionWidget;
+    std::vector<std::string> m_ModelInletFaceNames;
+    std::vector<int> m_ModelInletFaceIds;
 
     sv4guiMesh* m_Mesh;
     mitk::DataNode::Pointer m_MeshFolderNode;
