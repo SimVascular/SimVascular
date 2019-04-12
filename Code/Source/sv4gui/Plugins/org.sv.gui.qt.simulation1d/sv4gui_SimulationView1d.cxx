@@ -623,7 +623,7 @@ void sv4guiSimulationView1d::ReadCenterlines()
         //
         auto geom = vtkPolyData::New();
 
-        if (PlyDtaUtils_ReadNative(m_CenterlinesFileName.toStdString().c_str(), geom) != SV_OK) {
+        if (PlyDtaUtils_ReadNative(&*m_CenterlinesFileName.toStdString().begin(), geom) != SV_OK) {
             MITK_WARN << msg << "Unable to read centerlines from " << m_CenterlinesFileName;
             return;
         }
@@ -818,8 +818,9 @@ sv4guiMesh* sv4guiSimulationView1d::Read1DMesh(std::string fileName)
     // Read 1D mesh into vtkPolyData object.
     //
     auto geom = vtkPolyData::New();
+    //char *p = const_cast<char *> (.c_str());
 
-    if (PlyDtaUtils_ReadNative(fileName.c_str(), geom) != SV_OK) {
+    if (PlyDtaUtils_ReadNative(&*fileName.begin(), geom) != SV_OK) {
         MITK_WARN << msg << "Unable to read 1D mesh " << fileName;
         return nullptr;
     }
