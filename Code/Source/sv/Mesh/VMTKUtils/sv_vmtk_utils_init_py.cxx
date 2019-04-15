@@ -30,6 +30,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -158,7 +159,7 @@ PyMODINIT_FUNC PyInit_pyVMTKUtils()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error initializing pyVMTKUtils.\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
@@ -221,7 +222,7 @@ PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args)
   int ntargets = PyList_Size(targetList);
   if (nsources==0||ntargets==0)
   {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
   }
 
   int *sources = new int[nsources];

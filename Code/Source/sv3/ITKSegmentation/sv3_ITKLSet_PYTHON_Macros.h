@@ -66,7 +66,7 @@
                 PyErr_SetString(PyRunTimeErr, "Could not import cv_type");      \
             }																	 \
 			ls->Set##property(input); 											\
-		    return Py_BuildValue("N",PyBool_FromLong(SV_OK));	\
+		    return SV_PYTHON_OK;	\
 		}																		\
 
 

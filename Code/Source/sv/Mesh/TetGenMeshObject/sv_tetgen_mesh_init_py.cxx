@@ -39,6 +39,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "sv_misc_utils.h"
 #include "sv_tetgen_mesh_init.h"
 #include "sv_TetGenMeshSystem.h"
@@ -111,16 +112,16 @@ PyObject* Tetgenmesh_pyInit()
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      return SV_PYTHON_ERROR;
     }
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
 
   //Initialize Tetgenutils
   if (TGenUtils_Init() != SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyObject* pythonC;
 #if PYTHON_MAJOR_VERSION == 2
@@ -131,7 +132,7 @@ PyObject* Tetgenmesh_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   return pythonC;
 }
@@ -202,15 +203,15 @@ PyInit_pyMeshTetgen(void)
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
     if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) != SV_OK)) {
       //printf("  TetGen module registered\n");
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      return SV_PYTHON_ERROR;
     }
   }
   else {
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      return SV_PYTHON_ERROR;
   }
   //Initialize Tetgenutils
   if (TGenUtils_Init() != SV_OK) {
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      return SV_PYTHON_ERROR;
   }
   PyObject* pythonC;
 
@@ -220,7 +221,7 @@ PyInit_pyMeshTetgen(void)
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshTetgen.\n");
-      return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+      return SV_PYTHON_ERROR;
   }
 
   return pythonC;

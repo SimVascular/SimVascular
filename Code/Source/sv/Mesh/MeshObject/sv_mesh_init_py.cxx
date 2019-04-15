@@ -30,6 +30,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "sv_MeshSystem.h"
 #include "sv_MeshObject.h"
 #include "sv_mesh_init_py.h"
@@ -309,13 +310,13 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
   if (Py_BuildValue("i",kernel)==nullptr)
   {
     fprintf(stdout,"Unable to create MeshSystemRegistrar\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
 
   }
   if(PySys_SetObject("MeshSystemRegistrar",Py_BuildValue("i",kernel))<0)
   {
     fprintf(stdout, "Unable to register MeshSystemRegistrar\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
 
   }
   // Initialize
@@ -325,7 +326,7 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
   if (PyType_Ready(&pyMeshObjectType)<0)
   {
     fprintf(stdout,"Error in pyMeshObjectType\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyObject* pythonC;
 
@@ -333,7 +334,7 @@ PyMODINIT_FUNC PyInit_pyMeshObject()
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshObject\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErr = PyErr_NewException("pyMeshObject.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
@@ -385,7 +386,7 @@ PyObject* cvMesh_NewObjectCmd(pyMeshObject* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // ----------------------
@@ -431,7 +432,7 @@ PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  return SV_PYTHON_OK; 
   
 }
     
@@ -443,7 +444,7 @@ PyObject* cvMesh_GetObjectCmd( pyMeshObject* self, PyObject* args)
 PyObject* cvMesh_ListMethodsCmd(PyObject* self, PyObject* args)
 {
   MeshPrintMethods( );
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 PyObject* cvMesh_SetMeshKernelCmd(PyObject* self, PyObject* args)
@@ -580,7 +581,7 @@ static PyObject* cvMesh_PrintMtd( pyMeshObject* self, PyObject* args)
     }
   }
   if (geom->pyPrint() == SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
   } else {
     PyErr_SetString(PyRunTimeErr, "error print.");
   }
@@ -597,7 +598,7 @@ static PyObject* cvMesh_UpdateMtd( pyMeshObject* self, PyObject* args)
   cvMeshObject *geom = self->geom;
 
   if (geom->Update() == SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
   } else {
     PyErr_SetString(PyRunTimeErr,"error update.");
   }
@@ -658,7 +659,7 @@ static PyObject* cvMesh_WriteMetisAdjacencyMtd( pyMeshObject* self, PyObject* ar
     PyErr_SetString(PyRunTimeErr, "error writing object ");
     
   } else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
   }
 }
 
@@ -706,7 +707,7 @@ static PyObject* cvMesh_GetPolyDataMtd( pyMeshObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // ----------------------
@@ -752,7 +753,7 @@ static PyObject* cvMesh_GetSolidMtd( pyMeshObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // ----------------------
@@ -803,7 +804,7 @@ static PyObject* cvMesh_SetVtkPolyDataMtd( pyMeshObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "error set vtk polydate object.");
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // -------------------------------
@@ -850,7 +851,7 @@ static PyObject* cvMesh_GetUnstructuredGridMtd( pyMeshObject* self, PyObject* ar
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -898,7 +899,7 @@ static PyObject* cvMesh_GetFacePolyDataMtd( pyMeshObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 //
@@ -925,7 +926,7 @@ PyObject* cvMesh_LogonCmd(PyObject* self, PyObject* args)
       
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -942,7 +943,7 @@ PyObject* cvMesh_LogoffCmd( PyObject* self, PyObject* args)
       
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // -------------------------
@@ -974,7 +975,7 @@ static PyObject* cvMesh_SetMeshOptionsMtd( pyMeshObject* self, PyObject* args)
   }
   delete [] values;
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 //
@@ -1005,7 +1006,7 @@ PyObject* cvMesh_LoadModelMtd( pyMeshObject* self, PyObject* args)
       
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // -------------------
@@ -1024,7 +1025,7 @@ PyObject* cvMesh_GetBoundaryFacesMtd( pyMeshObject* self, PyObject* args)
 
   int status = geom->GetBoundaryFaces(angle);
   if ( status == SV_OK ) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
   } else {
     PyErr_SetString(PyRunTimeErr, "GetBoundaryFaces: error on object");
     
@@ -1061,7 +1062,7 @@ PyObject* cvMesh_LoadMeshMtd( pyMeshObject* self, PyObject* args)
       
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 PyObject* cvMesh_WriteStatsMtd( pyMeshObject* self, PyObject* args)
@@ -1090,7 +1091,7 @@ PyObject* cvMesh_WriteStatsMtd( pyMeshObject* self, PyObject* args)
       
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 PyObject* cvMesh_AdaptMtd( pyMeshObject* self, PyObject* args)
@@ -1106,7 +1107,7 @@ PyObject* cvMesh_AdaptMtd( pyMeshObject* self, PyObject* args)
   }
   // Do work of command:
   if (geom->Adapt() == SV_OK) {
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
   } else {
     PyErr_SetString(PyRunTimeErr, "error adapt.");
   }
@@ -1138,7 +1139,7 @@ PyObject* cvMesh_WriteMeshMtd( pyMeshObject* self, PyObject* args)
       
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -1154,7 +1155,7 @@ PyObject* cvMesh_NewMeshMtd( pyMeshObject* self, PyObject* args)
       
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -1171,7 +1172,7 @@ PyObject* cvMesh_GenerateMeshMtd( pyMeshObject* self, PyObject* args)
       
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -1207,7 +1208,7 @@ static PyObject* cvMesh_SetSphereRefinementMtd( pyMeshObject* self, PyObject* ar
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // -------------------------------
@@ -1233,7 +1234,7 @@ static PyObject* cvMesh_SetSizeFunctionBasedMeshMtd( pyMeshObject* self, PyObjec
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -1280,7 +1281,7 @@ static PyObject* cvMesh_SetCylinderRefinementMtd( pyMeshObject* self, PyObject* 
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -1319,7 +1320,7 @@ static PyObject* cvMesh_SetBoundaryLayerMtd( pyMeshObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // ----------------------------
@@ -1353,7 +1354,7 @@ static PyObject* cvMesh_SetWallsMtd( pyMeshObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 

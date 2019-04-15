@@ -30,6 +30,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -822,7 +823,7 @@ one optional char, outArray and one int dataType");
 
   int nvals = PyList_Size(values);
   if (nvals == 0) {
-      return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+      return SV_PYTHON_OK;
   }
   int *vals = new int[nvals];
 
@@ -965,7 +966,7 @@ one optional char, outArray and one int dataType");
 
   int nvals = PyList_Size(values);
   if (nvals == 0) {
-      return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+      return SV_PYTHON_OK;
   }
   int *vals = new int[nvals];
 
@@ -1038,7 +1039,7 @@ one optional char, outArray and one int dataType");
   }
 
   if (PyList_Size(values) == 0) {
-      return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+      return SV_PYTHON_OK;
   }
 
   int nvals = PyList_Size(values);
@@ -1981,7 +1982,7 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -2499,7 +2500,7 @@ PyObject* Geom_WriteOrderedPtsCmd(PyObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -2542,7 +2543,7 @@ PyObject* Geom_WriteLinesCmd(PyObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -2712,7 +2713,7 @@ PyObject* Geom_PrintTriStatsCmd(PyObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -2754,7 +2755,7 @@ PyObject* Geom_PrintSmallPolysCmd(PyObject* self, PyObject* args)
     
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 
@@ -3661,7 +3662,7 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args)
 
   if (result == SV_OK) {
     if (filename !=NULL)
-    	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    	return SV_PYTHON_OK;
     else
 	return Py_BuildValue("s",output);
   } else {

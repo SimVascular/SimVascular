@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "Python.h"
 
 #include "sv3_PathElement.h"
@@ -214,14 +215,14 @@ PyMODINIT_FUNC PyInit_pyPath()
   if (PyType_Ready(&pyPathType)<0)
   {
     fprintf(stdout,"Error in pyPathType\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathModule);
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyPath\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErr = PyErr_NewException("pyPath.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
@@ -269,7 +270,7 @@ PyObject* sv4Path_NewObjectCmd( pyPath* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  return SV_PYTHON_OK; 
 
 }
 
@@ -316,7 +317,7 @@ PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args)
   Py_INCREF(path);
   self->geom=path;
   Py_DECREF(path);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  return SV_PYTHON_OK; 
 
 }
 
@@ -369,7 +370,7 @@ PyObject* sv4Path_AddPointCmd( pyPath* self, PyObject* args)
     Py_INCREF(path);
     self->geom=path;
     Py_DECREF(path);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -404,7 +405,7 @@ PyObject* sv4Path_RemovePointCmd( pyPath* self, PyObject* args)
     Py_INCREF(path);
     self->geom=path;
     Py_DECREF(path);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -446,7 +447,7 @@ PyObject* sv4Path_MoveCtrlPointCmd( pyPath* self, PyObject* args)
     Py_INCREF(path);
     self->geom=path;
     Py_DECREF(path);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -479,7 +480,7 @@ PyObject* sv4Path_SmoothPathCmd( pyPath* self, PyObject* args)
     Py_INCREF(path);
     self->geom=path;
     Py_DECREF(path);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -497,7 +498,7 @@ PyObject* sv4Path_PrintCtrlPointCmd( pyPath* self, PyObject* args)
         PySys_WriteStdout("Point %i, %f, %f, %f \n",i, pt[0],pt[1],pt[2]);
     }
     
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
 }
 
 // --------------------
@@ -521,7 +522,7 @@ PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args)
     else
         printf("Total number of path points created is: %i \n", num);
         
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
 
 // --------------------

@@ -31,6 +31,8 @@
 
 #include "SimVascular.h"
 #include "Python.h"
+#include "SimVascular_python.h"
+
 
 #include "sv_repos_init_py.h"
 #include "sv_Repository.h"
@@ -185,7 +187,7 @@ PyMODINIT_FUNC PyInit_pyRepository(void)
   if ( gRepository == NULL ) {
     fprintf( stderr, "error allocating gRepository\n" );
 
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
 
   pyRepo = PyModule_Create(& pyRepositorymodule);
@@ -355,7 +357,7 @@ PyObject*  Repos_DeleteCmd( PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, r);
     
   }
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 
 }
 
@@ -842,7 +844,7 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args )
   pdWriter->Write();
 
   pdWriter->Delete();
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 
 }
 
@@ -1015,7 +1017,7 @@ PyObject* Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args)
 
   spWriter->Delete();
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 
 }
 
@@ -1075,7 +1077,7 @@ PyObject* Repos_WriteVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
 
   spWriter->Delete();
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 
 }
 
@@ -1200,7 +1202,7 @@ PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args)
     }
   }
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 
 }
 
@@ -1240,6 +1242,6 @@ PyObject* Repos_ClearLabelCmd( PyObject* self, PyObject* args)
 
   obj->ClearLabel( key );
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 
 }

@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "Python.h"
 
 #include "sv3_PathGroup.h"
@@ -221,14 +222,14 @@ PyMODINIT_FUNC PyInit_pyPathGroup()
   if (PyType_Ready(&pyPathGroupType)<0)
   {
     fprintf(stdout,"Error in pyPathGroupType\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathGroupModule);
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyPathGroup\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErrPg = PyErr_NewException("pyPathGroup.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErrPg);
@@ -274,7 +275,7 @@ PyObject* sv4PathGroup_NewObjectCmd( pyPathGroup* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  return SV_PYTHON_OK; 
 
 }
 
@@ -321,7 +322,7 @@ PyObject* sv4PathGroup_GetObjectCmd( pyPathGroup* self, PyObject* args)
   Py_INCREF(path);
   self->geom=path;
   Py_DECREF(path);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  return SV_PYTHON_OK; 
 
 }
 
@@ -379,7 +380,7 @@ PyObject* sv4PathGroup_SetPathCmd( pyPathGroup* self, PyObject* args)
     else
         self->geom->SetPathElement(path, index);
             
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -439,7 +440,7 @@ PyObject* sv4PathGroup_GetPathCmd( pyPathGroup* self, PyObject* args)
         
     }
   
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
     
 }
 
@@ -470,7 +471,7 @@ PyObject* sv4PathGroup_SetPathGroupIDCmd(pyPathGroup* self, PyObject* args)
     }
     
     self->geom->SetPathID(id);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
 
 // --------------------
@@ -486,7 +487,7 @@ PyObject* sv4PathGroup_SetSpacingCmd(pyPathGroup* self, PyObject* args)
     }
     
     self->geom->SetSpacing(spacing);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
 
 // --------------------
@@ -524,7 +525,7 @@ PyObject* sv4PathGroup_SetMethod(pyPathGroup* self, PyObject* args)
         PyErr_SetString(PyRunTimeErrPg,"Method not recognized.");
         
     }
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
 
 // --------------------
@@ -561,7 +562,7 @@ PyObject* sv4PathGroup_SetCalculationNumber(pyPathGroup* self, PyObject* args)
     }
     
     self->geom->SetCalculationNumber(number);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
 
 // --------------------

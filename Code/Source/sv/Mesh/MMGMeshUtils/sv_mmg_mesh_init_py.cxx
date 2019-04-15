@@ -39,6 +39,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "sv_misc_utils.h"
 #include "sv_mmg_mesh_init.h"
 #include "sv_arg.h"
@@ -99,7 +100,7 @@ PyObject* Mmgmesh_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);
@@ -132,7 +133,7 @@ PyMODINIT_FUNC PyInit_pyMeshUtil()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyMeshUtil");
-     return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+     return SV_PYTHON_ERROR;
   }
   PyRunTimeErr=PyErr_NewException("pyMeshUtil.error",NULL,NULL);
   PyModule_AddObject(pythonC, "error",PyRunTimeErr);

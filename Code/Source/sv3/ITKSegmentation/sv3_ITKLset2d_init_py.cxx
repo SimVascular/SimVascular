@@ -36,6 +36,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "sv3_ITKLSet_PYTHON_Macros.h"
 #include "Python.h"
 
@@ -306,7 +307,7 @@ PyObject* Deleteitkls2d(pyLevelSet* self, PyObject* args )
 		Tcl_DeleteHashEntry( entryPtr );
 	}
 	delete ls;
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
@@ -379,7 +380,7 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 	ls->SetSeed((cvPolyData*)seedPolyData);
 
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 /*
@@ -411,7 +412,7 @@ static PyObject* itkls2d_PhaseOneLevelSetMtd( pyLevelSet* self, PyObject* args  
 
 	ls->ComputePhaseOneLevelSet(kc, expFactorRising,expFactorFalling);
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 static PyObject* itkls2d_PhaseTwoLevelSetMtd( pyLevelSet* self, PyObject* args  )
@@ -438,7 +439,7 @@ static PyObject* itkls2d_PhaseTwoLevelSetMtd( pyLevelSet* self, PyObject* args  
 
 	ls->ComputePhaseTwoLevelSet(kupp,klow);
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 static PyObject* itkls2d_GACLevelSetMtd( pyLevelSet* self, PyObject* args  )
 {
@@ -456,14 +457,14 @@ static PyObject* itkls2d_GACLevelSetMtd( pyLevelSet* self, PyObject* args  )
 	ls->ComputeGACLevelSet(expFactor);
 
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 static PyObject* itkls2d_WriteFrontMtd(pyLevelSet* self, PyObject* args)
 {
 	cvITKLevelSet *ls=self->ls;
 	ls->WriteFrontImages();
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 
