@@ -30,6 +30,7 @@
  */
  
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "sv3_PathElement.h"
 #include "sv3_Contour.h"
 #include "sv3_LevelSetContour.h"
@@ -281,19 +282,19 @@ PyMODINIT_FUNC PyInit_pyContour()
   if (PyType_Ready(&pyContourType)<0)
   {
     fprintf(stdout,"Error in pyContourType\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   if (PyType_Ready(&pyContourFactoryRegistrarType)<0)
   {
     fprintf(stdout,"Error in pyContourFactoryRegistrarType\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyContourModule);
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyContour\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErr = PyErr_NewException("pyContour.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
@@ -424,7 +425,7 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
     Py_INCREF(geom);
     self->geom=geom;
     Py_DECREF(geom);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
 
 }
 
@@ -468,7 +469,7 @@ PyObject* Contour_SetImageCmd( pyContour* self, PyObject* args)
     Py_INCREF(contour);
     self->geom=contour;
     Py_DECREF(contour);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
 
 }
 // --------------------
@@ -514,7 +515,7 @@ PyObject* Contour_GetObjectCmd( pyContour* self, PyObject* args)
   Py_INCREF(contour);
   self->geom=contour;
   Py_DECREF(contour);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  return SV_PYTHON_OK; 
 }
 
 // --------------------
@@ -580,7 +581,7 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
         }
     }
     contour->SetControlPoints(pts);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
 }
 
 PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
@@ -629,7 +630,7 @@ PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
         
 
     }
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
 }
 
 
@@ -660,7 +661,7 @@ PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
     Py_INCREF(contour);
     self->geom=contour;
     Py_DECREF(contour);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -733,7 +734,7 @@ PyObject* Contour_SetThresholdValueCmd(pyContour* self, PyObject* args)
         
     }
     contour->SetThresholdValue(threshold);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
     
 //========================
@@ -815,6 +816,6 @@ PyObject* Contour_GetPolyDataCmd(pyContour* self, PyObject* args)
       
     }
     
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
     

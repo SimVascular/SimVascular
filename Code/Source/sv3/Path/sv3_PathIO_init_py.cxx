@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "Python.h"
 
 #include "sv3_PathIO.h"
@@ -201,14 +202,14 @@ PyMODINIT_FUNC PyInit_pyPathIO()
   if (PyType_Ready(&pyPathIOType)<0)
   {
     fprintf(stdout,"Error in pyPathIOType\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathIOModule);
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyPathIO\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErrIO = PyErr_NewException("pyPathIO.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErrIO);
@@ -230,7 +231,7 @@ PyObject* sv4PathIO_NewObjectCmd( pyPathIO* self, PyObject* args)
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+  return SV_PYTHON_OK; 
 
 }
 
@@ -280,7 +281,7 @@ PyObject* sv4PathIO_ReadPathGroupCmd( pyPathIO* self, PyObject* args)
     Py_INCREF(pathIO);
     self->geom=pathIO;
     Py_DECREF(pathIO);
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -340,7 +341,7 @@ PyObject* sv4PathIO_WritePathGroupCmd( pyPathIO* self, PyObject* args)
         
     }
     
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -403,5 +404,5 @@ PyObject* sv4PathIO_WrtiePathCmd(pyPathIO* self, PyObject* args)
         
     }
     
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK)); 
+    return SV_PYTHON_OK; 
 } 

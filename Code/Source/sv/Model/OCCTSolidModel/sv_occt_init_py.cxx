@@ -40,6 +40,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -152,7 +153,7 @@ PyObject* Occtsolid_pyInit()
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   tmp->registrar = pySolidModelRegistrar;
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
@@ -165,7 +166,7 @@ PyObject* Occtsolid_pyInit()
 if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   return pythonC;
 }
@@ -244,7 +245,7 @@ PyInit_pySolidOCCT()
             (FactoryMethodPtr) &pyCreateOCCTSolidModel );
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   tmp->registrar = pySolidModelRegistrar;
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
@@ -395,7 +396,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
   delete [] uMarr;
   delete [] vMarr;
 
-  return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+  return SV_PYTHON_OK;
 }
 
 // --------------------

@@ -39,6 +39,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "sv_misc_utils.h"
 #include "sv_tetgen_adapt_init_py.h"
 #include "sv_adapt_init_py.h"
@@ -113,7 +114,7 @@ PyObject* Tetgenadapt_pyInit()
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   
   tmp->registrar = adaptObjectRegistrar;
@@ -128,7 +129,7 @@ PyObject* Tetgenadapt_pyInit()
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   return pythonC;
 
@@ -192,7 +193,7 @@ PyInit_pyTetGenAdapt()
       (FactoryMethodPtr) &pyCreateTetGenAdapt );
   }
   else {
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
   }
   tmp->registrar = adaptObjectRegistrar;
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)tmp);
@@ -202,7 +203,7 @@ PyInit_pyTetGenAdapt()
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyTetGenAdapt\n");
-    return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    return SV_PYTHON_ERROR;
 
   }
 

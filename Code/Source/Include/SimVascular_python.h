@@ -29,13 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sv4gui_RepositoryFolder.h"
+#ifndef SIMVASCULAR_PYTHON_H
 
-sv4guiRepositoryFolder::sv4guiRepositoryFolder() {
-}
+#include "Python.h"
+#define SV_PYTHON_OK          Py_BuildValue("N",PyBool_FromLong(1))
+#define SV_PYTHON_ERROR       Py_BuildValue("N",PyBool_FromLong(0))
 
-sv4guiRepositoryFolder::sv4guiRepositoryFolder(const sv4guiRepositoryFolder &other) : sv4guiDataFolder(other) {
-}
 
-sv4guiRepositoryFolder::~sv4guiRepositoryFolder() {
-}
+#endif  /* SIMVASCULAR_PYTHON_H */
+

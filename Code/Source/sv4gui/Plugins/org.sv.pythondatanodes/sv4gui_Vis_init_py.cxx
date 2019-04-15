@@ -28,7 +28,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+#include "SimVascular.h"
+#include "SimVascular_python.h"
+
 #include "sv4gui_Vis_init_py.h"
 #include "sv_Repository.h"
 #include "sv_PolyData.h"
@@ -656,7 +658,7 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
         
     }
 
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
 // ---------------------
 //  GUI_ImportPolyDataFromRepos
@@ -746,7 +748,7 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     }
 
     
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
     
 
 }
@@ -835,7 +837,7 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     }
 
     
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
     
 
 }
@@ -927,7 +929,7 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
         
     }
     
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
     
 }
 
@@ -1004,7 +1006,7 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
     
     cvUnstructuredGrid *cvug;
     sv4guiMitkMesh* mitkMesh = dynamic_cast<sv4guiMitkMesh*> (node->GetData());
-    if (!mitkMesh) return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    if (!mitkMesh) return SV_PYTHON_ERROR;
     sv4guiMesh* mesh = mitkMesh->GetMesh();
     vtkSmartPointer<vtkUnstructuredGrid> ug = mesh->GetVolumeMesh();
     if(ug == NULL)
@@ -1020,7 +1022,7 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
         
     }
 
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
     
 }
 
@@ -1096,7 +1098,7 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
     }
     
     mitk::Image* image=dynamic_cast<mitk::Image*>(node->GetData());
-    if (!image) return Py_BuildValue("N",PyBool_FromLong(SV_ERROR));
+    if (!image) return SV_PYTHON_ERROR;
     vtkImageData* vtkObj=MitkImage2VtkImage(image);
     if (vtkObj)
     {
@@ -1147,7 +1149,7 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
     }
 
     
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
     
 }
 
@@ -1260,7 +1262,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         delete corePath;
         
     }
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }
 
 // -----------------------
@@ -1359,7 +1361,7 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
         
     }
 
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
     
 
 }
@@ -1489,7 +1491,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
         
     }
 
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
     
 }
 
@@ -1596,5 +1598,5 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
             
         }
     }
-    return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+    return SV_PYTHON_OK;
 }

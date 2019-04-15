@@ -36,6 +36,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "Python.h"
 #include "sv3_ITKLSet_PYTHON_Macros.h"
 
@@ -355,7 +356,7 @@ PyObject* Deleteitkls3d( pyLevelSet3d* self, PyObject* args )
 		Tcl_DeleteHashEntry( entryPtr );
 	}
 	delete ls;
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 PyObject* itkls3d_SetInputsMtd( pyLevelSet3d* self, PyObject* args )
@@ -426,7 +427,7 @@ PyObject* itkls3d_SetInputsMtd( pyLevelSet3d* self, PyObject* args )
 	ls->SetSeed((cvPolyData*)seedPolyData);
 
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 
@@ -452,7 +453,7 @@ static PyObject* itkls3d_PhaseOneLevelSetMtd( pyLevelSet3d* self, PyObject* args
 
 	ls->ComputePhaseOneLevelSet(kc, expFactorRising,expFactorFalling);
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 static PyObject* itkls3d_PhaseTwoLevelSetMtd( pyLevelSet3d* self, PyObject* args )
@@ -480,7 +481,7 @@ static PyObject* itkls3d_PhaseTwoLevelSetMtd( pyLevelSet3d* self, PyObject* args
 
 	ls->ComputePhaseTwoLevelSet(kupp,klow);
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 static PyObject* itkls3d_GACLevelSetMtd( pyLevelSet3d* self, PyObject* args )
 {
@@ -497,7 +498,7 @@ static PyObject* itkls3d_GACLevelSetMtd( pyLevelSet3d* self, PyObject* args )
 		ls->SetSigmaFeature(sigma);
 	ls->ComputeGACLevelSet(expFactor,kappa,iso);
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 static PyObject* itkls3d_LaplacianLevelSetMtd( pyLevelSet3d* self, PyObject* args )
 {
@@ -516,7 +517,7 @@ static PyObject* itkls3d_LaplacianLevelSetMtd( pyLevelSet3d* self, PyObject* arg
 	ls->ComputeLaplacianLevelSet(expFactor,kappa,iso);
 
 
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 
@@ -524,14 +525,14 @@ static PyObject* itkls3d_WriteFrontMtd( pyLevelSet3d* self, PyObject* args )
 {
 	cvITKLevelSetBase<ImageType> *ls=self->ls;
 	ls->WriteFrontImages();
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 static PyObject* itkls3d_CopyFrontToSeedMtd(pyLevelSet3d* self, PyObject* args)
 {
 	cvITKLevelSetBase<ImageType> *ls=self->ls;
 	ls->CopyFrontToSeed();
-	return Py_BuildValue("N",PyBool_FromLong(SV_OK));
+	return SV_PYTHON_OK;
 }
 
 
