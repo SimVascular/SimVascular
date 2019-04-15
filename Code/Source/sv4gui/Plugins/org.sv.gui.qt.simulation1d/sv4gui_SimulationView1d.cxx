@@ -400,6 +400,42 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
+//--------------
+// Update1DMesh
+//--------------
+// Create container and mapper used to display the 1D mesh.
+//
+void sv4guiSimulationView1d::Update1DMesh()
+{
+    if (m_1DMeshMapper == nullptr) {
+        m_1DMeshContainer = sv4guiSimulationLinesContainer::New();
+
+        // Create 1D Mesh node under 'Simulations1d' node.
+        auto m_1DMeshNode = mitk::DataNode::New();
+        m_1DMeshNode->SetData(m_1DMeshContainer);
+        m_1DMeshNode->SetVisibility(true);
+        m_1DMeshNode->SetName("1D-Mesh");
+        auto parentNode = GetDataStorage()->GetNamedNode("Simulations1d");
+        if (parentNode) {
+          GetDataStorage()->Add(m_1DMeshNode, parentNode);
+        }
+      
+        // Create mapper to display the 1d mesh.
+        m_1DMeshMapper = sv4guiSimulationLinesMapper::New();
+        m_1DMeshMapper->SetDataNode(m_1DMeshNode);
+        m_1DMeshMapper->m_box = false;
+        m_1DMeshMapper->SetColor(1.0, 0.0, 0.0);
+        m_1DMeshNode->SetMapper(mitk::BaseRenderer::Standard3D, m_1DMeshMapper);
+    }
+
+    auto meshGeometry = Read1DMesh(m_1DMeshFileName.toStdString());
+
+    if (meshGeometry != nullptr) { 
+        m_1DMeshContainer->SetMesh(meshGeometry);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
+}
+
 //----------------------
 // Create1DMeshControls
 //----------------------
@@ -429,7 +465,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     // Add centerlines widgets.
     //
     connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateCenterlinesSource()));
-    connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(ReadCenterlines()));
+    connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(SelectCenterlinesFile()));
     connect(ui->calculateCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(CalculateCenterlines()) );
     connect(ui->selectModelFacesPushButton, SIGNAL(clicked()), this, SLOT(SelectModelFaces()));
     for (auto const& type : CenterlinesSource::types) {
@@ -661,6 +697,7 @@ void sv4guiSimulationView1d::UdpateCenterlinesSource()
     ui->centerlinesFileNameLineEdit->setVisible(showRead);
 
     auto showCalculate = (sourceType == CenterlinesSource::CALCULATE);
+    ui->selectModelFacesPushButton->setVisible(showCalculate);
     ui->calculateCenterlinesPushButton->setVisible(showCalculate);
 }
 
@@ -701,15 +738,63 @@ void sv4guiSimulationView1d::CalculateCenterlines()
     extractCenterlines->Run(selectedNode);
 }
 
-//-----------------
-// ReadCenterlines
-//-----------------
+//-------------------
+// UpdateCenterlines
+//-------------------
+// Read and display the centerlines geometry. 
 //
-void sv4guiSimulationView1d::ReadCenterlines()
+// If no Centerlines Data Node is defined then create one. 
+// The centerlines geometry is read from a file, defined by 
+// m_CenterlinesFileName, and used to define the mehs for 
+// m_CenterlinesContainer.
+// 
+void sv4guiSimulationView1d::UpdateCenterlines()
 {
-    auto msg = "[sv4guiSimulationView1d::ReadCenterlines]";
+    auto msg = "[sv4guiSimulationView1d::UpdateCenterlines]";
     MITK_INFO << msg;
-    MITK_INFO << msg << "---------- ReadCenterlines ----------";
+    MITK_INFO << msg << "---------- Update ----------";
+    MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
+
+    // Create the container and mapper used to display the centerlines.
+    //
+    if (m_CenterlinesMapper == nullptr) {
+        m_CenterlinesContainer = sv4guiSimulationLinesContainer::New();
+
+        // Create 'Centerlines' node under 'Simularions1d' node.
+        auto m_CenterlinesNode = mitk::DataNode::New();
+        m_CenterlinesNode->SetData(m_CenterlinesContainer);
+        m_CenterlinesNode->SetVisibility(true);
+        m_CenterlinesNode->SetName("Centerlines");
+        auto parentNode = GetDataStorage()->GetNamedNode("Simulations1d");
+        if (parentNode) {
+          GetDataStorage()->Add(m_CenterlinesNode, parentNode);
+        }
+
+        // Create mapper to display the centerlines.
+        m_CenterlinesMapper = sv4guiSimulationLinesMapper::New();
+        m_CenterlinesMapper->SetDataNode(m_CenterlinesNode);
+        m_CenterlinesMapper->m_box = false;
+        m_CenterlinesMapper->SetColor(0.0, 1.0, 0.0);
+        m_CenterlinesNode->SetMapper(mitk::BaseRenderer::Standard3D, m_CenterlinesMapper);
+    }
+
+    auto centerlinesGeometry = ReadCenterlines(m_CenterlinesFileName.toStdString());
+
+    if (centerlinesGeometry != nullptr) { 
+        m_CenterlinesContainer->SetMesh(centerlinesGeometry);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
+}
+
+//-----------------------
+// SelectCenterlinesFile 
+//-----------------------
+//
+void sv4guiSimulationView1d::SelectCenterlinesFile()
+{
+    auto msg = "[sv4guiSimulationView1d::SelectCenterlinesFile]";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- SelectCenterlinesFile ----------";
 
     try {
         berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
@@ -740,35 +825,39 @@ void sv4guiSimulationView1d::ReadCenterlines()
             return;
         }
   
-        MITK_INFO << msg << "Read centerlines file: " << m_CenterlinesFileName.toStdString();
         QFile file(m_CenterlinesFileName);
         QFileInfo fileInfo(file);
         ui->centerlinesFileNameLineEdit->setText(fileInfo.fileName());
 
-        // Display centerlines.
-        //
-        auto geom = vtkPolyData::New();
-
-        if (PlyDtaUtils_ReadNative(&*m_CenterlinesFileName.toStdString().begin(), geom) != SV_OK) {
-            MITK_WARN << msg << "Unable to read centerlines from " << m_CenterlinesFileName;
-            return;
-        }
-
-        MITK_INFO << msg << "Done! ";
-        m_CenterlinesContainer->SetMesh(geom);
-        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-  
-        // Write centerlines to project.
-        //
-        /*
-        QFileInfo outFileInfo(m_CenterlinesFileName);
-        QString outFileName(outFileInfo.fileName());
-        m_CenterlinesOutputFileName = m_PluginOutputDirectory + "/" + outFileName;
-        MITK_INFO << msg << "Write centerlines to '" << m_CenterlinesOutputFileName << "'";
-        */
     } catch(...) {
         MITK_ERROR << "Error loading centerlines geometry.";
+        return;
     }
+
+    // Update Centerlines Data Node with centerlines geometry.
+    UpdateCenterlines();
+}
+
+//-----------------
+// ReadCenterlines
+//-----------------
+//
+vtkSmartPointer<vtkPolyData> sv4guiSimulationView1d::ReadCenterlines(const std::string fileName)
+{
+    auto msg = "[sv4guiSimulationView1d::ReadCenterlines] ";
+    MITK_INFO << msg << "---------- ReadCenterlines ----------";
+    MITK_INFO << msg << "Read centerlines file: " << fileName;
+
+    // Read centerlines.
+    vtkSmartPointer<vtkPolyData> geom = vtkPolyData::New();
+    //auto geom = vtkPolyData::New();
+
+    if (PlyDtaUtils_ReadNative(const_cast<char*>(fileName.c_str()), geom) != SV_OK) {
+        MITK_WARN << msg << "Unable to read centerlines from " << m_CenterlinesFileName;
+        return nullptr;
+    }
+
+    return geom;
 }
 
 //----------------
@@ -895,9 +984,9 @@ sv4guiMesh* sv4guiSimulationView1d::GetDataNodeMesh()
 //
 void sv4guiSimulationView1d::Generate1DMesh()
 {
-    auto msg = "[sv4guiSimulationView1d::GenerateMesh] ";
+    auto msg = "[sv4guiSimulationView1d::Generate1DMesh] ";
     MITK_INFO << msg;
-    MITK_INFO << msg << "---------- GenerateMesh ----------";
+    MITK_INFO << msg << "---------- Generate1DMesh ----------";
 
     if (m_Model == nullptr) { 
         return;
@@ -924,9 +1013,27 @@ void sv4guiSimulationView1d::Generate1DMesh()
     auto pythonInterface = sv4guiSimulationPython1d();
     pythonInterface.GenerateMesh(outputDirectory, inputCenterlinesFile, meshFileName);
 
-    // Read and display the 1D mesh.
     auto fileName = outputDirectory + "/" + meshFileName;
-    Read1DMesh(fileName);
+    m_1DMeshFileName = m_PluginOutputDirectory + "/" + MESH_FILE_NAME; 
+
+    // Read and display the 1D mesh.
+    Update1DMesh();
+
+/*
+    MITK_INFO << msg << "Mesh file: " << fileName;
+    auto meshGeometry = Read1DMesh(fileName);
+    if (meshGeometry != nullptr) { 
+        m_1DMeshContainer->SetMesh(meshGeometry);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+        //if (ui->networkCheckBox->isChecked()) {
+          //showNetwork(true);
+        //} else {
+          //showNetwork(false);
+        //}
+    }
+*/
+
 }
 
 //------------
@@ -935,35 +1042,24 @@ void sv4guiSimulationView1d::Generate1DMesh()
 // Read a 1D mesh into a vtkPolyData object and
 // display it.
 //
-sv4guiMesh* sv4guiSimulationView1d::Read1DMesh(std::string fileName)
+vtkSmartPointer<vtkPolyData> sv4guiSimulationView1d::Read1DMesh(const std::string fileName)
 {
     auto msg = "[sv4guiSimulationView1d::Read1DMesh] ";
     MITK_INFO << msg; 
-    MITK_INFO << msg << "Read 1D mesh " << fileName;
+    MITK_INFO << msg << "---------- Read1DMesh ---------- "; 
+    MITK_INFO << msg << "Read mesh file name: " << fileName;
 
     // Read 1D mesh into vtkPolyData object.
     //
-    auto geom = vtkPolyData::New();
-    //char *p = const_cast<char *> (.c_str());
+    vtkSmartPointer<vtkPolyData> geom = vtkPolyData::New();
 
-    if (PlyDtaUtils_ReadNative(&*fileName.begin(), geom) != SV_OK) {
+    if (PlyDtaUtils_ReadNative(const_cast<char *>(fileName.c_str()), geom) != SV_OK) {
         MITK_WARN << msg << "Unable to read 1D mesh " << fileName;
         return nullptr;
     }
     MITK_INFO << msg << "Done! ";
-
-    m_1DMeshContainer->SetMesh(geom);
-
-/*
-    if (ui->networkCheckBox->isChecked()) {
-      showNetwork(true);
-    } else {
-      showNetwork(false);
-    }
-*/
-    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    return geom;
 }
-
 
 //----------
 // ReadMesh

@@ -58,7 +58,7 @@ class SV_QT_SIMULATION1D sv4guiSimulationExtractCenterlines1d : public QObject, 
     void SetDataStorage(mitk::DataStorage *dataStorage) override;
     void SetSmoothed(bool smoothed) override {}
     void SetDecimated(bool decimated) override {}
-    void SetFunctionality(berry::QtViewPart *functionality) override {}
+    void SetFunctionality(berry::QtViewPart *functionality) override { m_View = functionality; }
     vtkSmartPointer<vtkPolyData> GetCenterlineGeometry();
 
     // Custom functionality
@@ -80,6 +80,7 @@ class SV_QT_SIMULATION1D sv4guiSimulationExtractCenterlines1d : public QObject, 
 
     std::vector<int> m_SourceCapIds;
     vtkSmartPointer<vtkPolyData> m_CenterlineGeometry; 
+    berry::QtViewPart* m_View;
 
     class WorkThread : public QThread
     {

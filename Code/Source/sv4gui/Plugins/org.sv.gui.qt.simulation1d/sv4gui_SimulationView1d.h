@@ -93,8 +93,6 @@ public:
 
 public slots:
 
-public slots:
-
     void SaveToManager();
     void ClearAll();
     void AddObservers();
@@ -132,7 +130,7 @@ public slots:
     void UdpateSurfaceModelSource();
     void ReadModel();
     void UdpateCenterlinesSource();
-    void ReadCenterlines();
+    void SelectCenterlinesFile();
     void CalculateCenterlines();
     void SelectModelFaces();
     void AddModelFaces();
@@ -177,6 +175,9 @@ public:
     virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
 
     sv4guiSimJob1d* CreateJob(std::string& msg, bool checkValidity = true);
+
+    void UpdateCenterlines();
+    vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
 
@@ -229,7 +230,8 @@ private:
     sv4guiSimulationLinesMapper::Pointer m_CenterlinesMapper;
     sv4guiSimulationLinesContainer::Pointer m_CenterlinesContainer;
 
-    mitk::DataNode::Pointer m_Mesh1DNode;
+    QString m_1DMeshFileName;
+    mitk::DataNode::Pointer m_1DMeshNode;
     sv4guiSimulationLinesMapper::Pointer m_1DMeshMapper;
     sv4guiSimulationLinesContainer::Pointer m_1DMeshContainer;
     sv4guiMesh* m_1DMesh;
@@ -278,8 +280,8 @@ private:
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();
 
-    sv4guiMesh* Read1DMesh(std::string fileName);
-
+    void Update1DMesh();
+    vtkSmartPointer<vtkPolyData> Read1DMesh(const std::string fileName);
 
 };
 

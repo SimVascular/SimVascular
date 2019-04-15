@@ -30,6 +30,7 @@
  */
 
 #include "sv4gui_SimulationExtractCenterlines1d.h"
+#include "sv4gui_SimulationView1d.h"
 
 #include "sv4gui_ModelLegacyIO.h"
 #include "sv4gui_ModelUtils.h"
@@ -71,6 +72,11 @@ sv4guiSimulationExtractCenterlines1d::~sv4guiSimulationExtractCenterlines1d()
 //
 void sv4guiSimulationExtractCenterlines1d::UpdateStatus()
 {
+    auto msg = "[sv4guiSimulationExtractCenterlines1d::UpdateStatus]";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- UpdateStatus ----------";
+    MITK_INFO << msg << "Write centerlines to '" << m_CenterlinesFileName << "'"; 
+ 
     mitk::OperationEvent::IncCurrObjectEventId();
 
     // Write the centerline geometry to a file.
@@ -93,6 +99,10 @@ void sv4guiSimulationExtractCenterlines1d::UpdateStatus()
 
     m_ProjFolderNode->SetBoolProperty("thread running",false);
     mitk::StatusBar::GetInstance()->DisplayText(m_Thread->GetStatus().toStdString().c_str());
+
+    // Update centerlines information in the view.
+    sv4guiSimulationView1d* view = dynamic_cast<sv4guiSimulationView1d*>(m_View);
+    view->UpdateCenterlines();
 }
 
 //-----------------
@@ -114,6 +124,9 @@ void sv4guiSimulationExtractCenterlines1d::SetSourceCapIds(std::vector<int> sour
 //
 void sv4guiSimulationExtractCenterlines1d::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
+    auto msg = "[sv4guiSimulationExtractCenterlines1d::Run]";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- Run ----------";
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
     sv4guiModel* model = dynamic_cast<sv4guiModel*>(selectedNode->GetData());
@@ -147,6 +160,7 @@ void sv4guiSimulationExtractCenterlines1d::Run(const QList<mitk::DataNode::Point
         return;
     }
 
+    MITK_INFO << msg << "Extracting centerlines"; 
     mitk::StatusBar::GetInstance()->DisplayText("Extracting centerlines from the surface model.");
 
     m_Thread = new WorkThread(m_DataStorage, selectedNode, m_SourceCapIds);
