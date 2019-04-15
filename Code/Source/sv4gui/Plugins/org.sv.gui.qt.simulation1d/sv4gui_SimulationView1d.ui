@@ -103,19 +103,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="checkBoxShowModel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Show Model</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QLabel" name="labelJobName">
         <property name="text">
@@ -171,7 +158,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>564</height>
+           <height>570</height>
           </rect>
          </property>
          <attribute name="label">
@@ -180,14 +167,23 @@
          <layout class="QVBoxLayout" name="verticalLayout_18">
           <item>
            <widget class="QWidget" name="widget_3" native="true">
+            <property name="statusTip">
+             <string extracomment="1D mesh generation."/>
+            </property>
             <widget class="QPushButton" name="generateMeshPushButton">
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>340</y>
+               <y>380</y>
                <width>135</width>
                <height>25</height>
               </rect>
+             </property>
+             <property name="statusTip">
+              <string extracomment="Generate a 1D mesh from centerlines geometry."/>
+             </property>
+             <property name="whatsThis">
+              <string extracomment="Generate a 1D mesh from centerlines geometry."/>
              </property>
              <property name="text">
               <string>Generate 1D Mesh</string>
@@ -199,7 +195,7 @@
                <x>0</x>
                <y>0</y>
                <width>388</width>
-               <height>131</height>
+               <height>151</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -221,11 +217,14 @@ QGroupBox::title {
              <widget class="QPushButton" name="readModelPushButton">
               <property name="geometry">
                <rect>
-                <x>270</x>
-                <y>30</y>
+                <x>10</x>
+                <y>80</y>
                 <width>111</width>
                 <height>25</height>
                </rect>
+              </property>
+              <property name="whatsThis">
+               <string extracomment="Read a surface model."/>
               </property>
               <property name="text">
                <string>Read Model</string>
@@ -235,7 +234,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>10</x>
-                <y>70</y>
+                <y>110</y>
                 <width>341</width>
                 <height>27</height>
                </rect>
@@ -271,16 +270,71 @@ QGroupBox::title {
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="surfaceModelComboBox"/>
+                <widget class="QComboBox" name="surfaceModelComboBox">
+                 <property name="statusTip">
+                  <string extracomment="Select the source of the surface model. "/>
+                 </property>
+                 <property name="whatsThis">
+                  <string extracomment="Select the source of the surface model. "/>
+                 </property>
+                </widget>
                </item>
               </layout>
+             </widget>
+             <widget class="QCheckBox" name="checkBoxShowModel">
+              <property name="geometry">
+               <rect>
+                <x>270</x>
+                <y>30</y>
+                <width>109</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Show</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="comboBoxMeshName">
+              <property name="geometry">
+               <rect>
+                <x>140</x>
+                <y>80</y>
+                <width>211</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="statusTip">
+               <string extracomment="Select a mesh as a surface model."/>
+              </property>
+              <property name="whatsThis">
+               <string extracomment="Select a mesh as a surface model."/>
+              </property>
+             </widget>
+             <widget class="QLabel" name="meshNameLabel">
+              <property name="geometry">
+               <rect>
+                <x>20</x>
+                <y>70</y>
+                <width>91</width>
+                <height>41</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Mesh name</string>
+              </property>
              </widget>
             </widget>
             <widget class="QGroupBox" name="groupBox_2">
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>160</y>
+               <y>180</y>
                <width>381</width>
                <height>151</height>
               </rect>
@@ -306,9 +360,15 @@ QGroupBox::title {
                <rect>
                 <x>80</x>
                 <y>30</y>
-                <width>104</width>
+                <width>121</width>
                 <height>26</height>
                </rect>
+              </property>
+              <property name="statusTip">
+               <string extracomment="Select the source of the surface model centerlines geometry."/>
+              </property>
+              <property name="whatsThis">
+               <string extracomment="Select the source of the surface model centerlines geometry."/>
               </property>
              </widget>
              <widget class="QLabel" name="label_23">
@@ -345,6 +405,12 @@ QGroupBox::title {
                 <width>161</width>
                 <height>26</height>
                </rect>
+              </property>
+              <property name="statusTip">
+               <string extracomment="Extract centerlines for a surface model."/>
+              </property>
+              <property name="whatsThis">
+               <string extracomment="Extract centerlines for a surface model."/>
               </property>
               <property name="text">
                <string>Extract Centerlines </string>
@@ -395,6 +461,12 @@ QGroupBox::title {
                 <height>26</height>
                </rect>
               </property>
+              <property name="statusTip">
+               <string extracomment="Select the inlet faces of the surface model."/>
+              </property>
+              <property name="whatsThis">
+               <string extracomment="Select the inlet faces of the surface model."/>
+              </property>
               <property name="text">
                <string>Select Inlet Faces</string>
               </property>
@@ -409,8 +481,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>86</width>
-           <height>75</height>
+           <width>407</width>
+           <height>570</height>
           </rect>
          </property>
          <attribute name="label">
@@ -446,8 +518,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>86</width>
-           <height>75</height>
+           <width>407</width>
+           <height>570</height>
           </rect>
          </property>
          <attribute name="label">
@@ -510,8 +582,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>339</width>
-           <height>217</height>
+           <width>407</width>
+           <height>570</height>
           </rect>
          </property>
          <attribute name="label">
@@ -860,8 +932,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>86</width>
-           <height>75</height>
+           <width>407</width>
+           <height>570</height>
           </rect>
          </property>
          <attribute name="label">
@@ -897,8 +969,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>234</width>
-           <height>177</height>
+           <width>407</width>
+           <height>570</height>
           </rect>
          </property>
          <attribute name="label">
@@ -956,49 +1028,35 @@ QGroupBox::title {
                 <property name="spacing">
                  <number>5</number>
                 </property>
-                <item row="2" column="0" colspan="3">
-                 <widget class="QPushButton" name="btnImportFiles">
-                  <property name="text">
-                   <string>Import Extra Files (Optional) ...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QLabel" name="label_12">
-                  <property name="text">
-                   <string>Starting Step Number:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="7" column="0" colspan="3">
-                 <widget class="QPushButton" name="btnRunJob">
-                  <property name="text">
-                   <string>Run Simulation</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label_11">
                   <property name="text">
                    <string>Number of Processes:</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="2">
-                 <widget class="QLineEdit" name="lineEditStartStepNum">
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_12">
                   <property name="text">
-                   <string/>
+                   <string>Starting Step Number:</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0" colspan="3">
+                <item row="6" column="0" colspan="2">
+                 <widget class="QPushButton" name="btnRunJob">
+                  <property name="text">
+                   <string>Run Simulation</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="2">
                  <widget class="QPushButton" name="btnCreateAllFiles">
                   <property name="text">
-                   <string>Create Data Files for Simulation</string>
+                   <string>Create Files for Simulation</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="2">
+                <item row="2" column="1">
                  <widget class="ctkSliderWidget" name="sliderNumProcs" native="true">
                   <property name="decimals" stdset="0">
                    <number>0</number>
@@ -1014,7 +1072,7 @@ QGroupBox::title {
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0" colspan="3">
+                <item row="0" column="0" colspan="2">
                  <widget class="QWidget" name="widget_15" native="true">
                   <layout class="QHBoxLayout" name="horizontalLayout_7">
                    <property name="spacing">
@@ -1032,23 +1090,14 @@ QGroupBox::title {
                    <property name="bottomMargin">
                     <number>0</number>
                    </property>
-                   <item>
-                    <widget class="QLabel" name="label_18">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="text">
-                      <string>Choose Mesh: </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QComboBox" name="comboBoxMeshName"/>
-                   </item>
                   </layout>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="lineEditStartStepNum">
+                  <property name="text">
+                   <string/>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -1077,8 +1126,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>360</width>
-           <height>333</height>
+           <width>407</width>
+           <height>570</height>
           </rect>
          </property>
          <attribute name="label">

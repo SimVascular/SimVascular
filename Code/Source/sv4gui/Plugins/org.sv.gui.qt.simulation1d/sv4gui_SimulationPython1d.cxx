@@ -84,27 +84,36 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
   MITK_INFO << msg << "Execute cmd " << cmd;
   PyRun_SimpleString(cmd.c_str());
   MITK_INFO << msg << "Done!";
+}
 
+//---------------------
+// GenerateSolverInput
+//---------------------
+//
+// Script arguments: 
+//
+//     output-directory: The output directory to write the mesh file.
+//     centerlines-input-file: The input centerlines geometry (.vtp format). 
+//     write-solver-file: Switch to enable writing a solver file.
+//     solver-output-file: The name of the solver input file to write.
+//
+bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string& outputDir, const std::string& centerlinesFile,
+                                                   const std::string& solverFile, const sv4guiSimJob1d* job)
+{
+  std::string msg = "[sv4guiSimulationPython1d::GenerateSolverInput] ";
+  MITK_INFO << msg << "---------- GenerateSolverInput ----------";
+  sv4guiSimulationPython1dParamNames paramNames;
 
-/*
-  // Write the surface mesh to a .vtp file.
-  auto meshFileName = outputPath + "/" + this->name + ".vtp";
-  WriteMesh(meshFileName);
-  MITK_INFO << msgPrefix << "Input surface mesh file " << meshFileName;
- 
-  // Set output file prefix.
-  auto outfile = outputPath + "/" + this->name;
-  MITK_INFO << msgPrefix << "Output network file " << outfile;
-
-  // Execute the Python command used to generate the Purkinje network. 
-  auto cmd = CreateCommand(meshFileName, outfile);
-  MITK_INFO << msgPrefix << "Execute cmd " << cmd;
+  // Create the script command.
+  auto last = true;
+  auto cmd = StartCommand();
+  cmd += AddArgument(paramNames.OUTPUT_DIRECTORY, outputDir);
+  cmd += AddArgument(paramNames.CENTERLINES_INPUT_FILE, centerlinesFile);
+  cmd += AddArgument(paramNames.WRITE_SOLVER_FILE, "true");
+  cmd += AddArgument(paramNames.SOLVER_OUTPUT_FILE, solverFile, last);
+  MITK_INFO << msg << "Execute cmd " << cmd;
   PyRun_SimpleString(cmd.c_str());
-  MITK_INFO << msgPrefix << "Done!";
-
-  // Set the name of the file containing the network of 1D elements.
-  this->networkFileName = outputPath + "/" + this->name + ".vtu";
-*/
+  MITK_INFO << msg << "Done!";
 }
 
 //--------------

@@ -74,6 +74,7 @@
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
+const QString sv4guiSimulationView1d::SOLVER_FILE_NAME = "solver.in";
 
 // Set the values of the Surface Model Origin types.
 //
@@ -185,6 +186,7 @@ sv4guiSimulationView1d::~sv4guiSimulationView1d()
 //------------------
 // EnableConnection
 //------------------
+// [DaveP] Not sure why this is needed.
 //
 void sv4guiSimulationView1d::EnableConnection(bool able)
 {
@@ -201,7 +203,7 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         connect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
+        //connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
         connect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
 
         m_ConnectionEnabled=able;
@@ -220,7 +222,7 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         disconnect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         disconnect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
+        //disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
         disconnect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
 
         m_ConnectionEnabled=able;
@@ -332,7 +334,6 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 //    connect(ui->btnExportInputFiles, SIGNAL(clicked()), this, SLOT(ExportInputFiles()) );
 //    connect(ui->btnExportAllFiles, SIGNAL(clicked()), this, SLOT(ExportAllFiles()) );
     connect(ui->btnCreateAllFiles, SIGNAL(clicked()), this, SLOT(CreateAllFiles()) );
-    connect(ui->btnImportFiles, SIGNAL(clicked()), this, SLOT(ImportFiles()) );
     connect(ui->btnRunJob, SIGNAL(clicked()), this, SLOT(RunJob()) );
 
     //for export results
@@ -349,53 +350,6 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
     //    InitializePreferences(berryprefs);
     this->OnPreferencesChanged(berryprefs);
-
-    // Create container and mapper used to display the 1D mesh.
-/*
-    if (m_1DMeshMapper == nullptr) {
-        m_1DMeshContainer = sv4guiSimulationLinesContainer::New();
-
-        // Create 1D Mesh node under 'Simulations1d' node.
-        auto m_1DMeshNode = mitk::DataNode::New();
-        m_1DMeshNode->SetData(m_1DMeshContainer);
-        m_1DMeshNode->SetVisibility(true);
-        m_1DMeshNode->SetName("1D-Mesh");
-        auto parentNode = GetDataStorage()->GetNamedNode("Simulations1d");
-        if (parentNode) {
-          GetDataStorage()->Add(m_1DMeshNode, parentNode);
-        }
-      
-        // Create mapper to display the 1d mesh.
-        m_1DMeshMapper = sv4guiSimulationLinesMapper::New();
-        m_1DMeshMapper->SetDataNode(m_1DMeshNode);
-        m_1DMeshMapper->m_box = false;
-        m_1DMeshMapper->SetColor(1.0, 0.0, 0.0);
-        m_1DMeshNode->SetMapper(mitk::BaseRenderer::Standard3D, m_1DMeshMapper);
-    }
-
-    // Create the container and mapper used to display the centerlines.
-    //
-    if (m_CenterlinesMapper == nullptr) {
-        m_CenterlinesContainer = sv4guiSimulationLinesContainer::New();
-
-        // Create 'Centerlines' node under 'Simularions1d' node.
-        auto m_CenterlinesNode = mitk::DataNode::New();
-        m_CenterlinesNode->SetData(m_CenterlinesContainer);
-        m_CenterlinesNode->SetVisibility(true);
-        m_CenterlinesNode->SetName("Centerlines");
-        auto parentNode = GetDataStorage()->GetNamedNode("Simulations1d");
-        if (parentNode) {
-          GetDataStorage()->Add(m_CenterlinesNode, parentNode);
-        }
-
-        // Create mapper to display the centerlines.
-        m_CenterlinesMapper = sv4guiSimulationLinesMapper::New();
-        m_CenterlinesMapper->SetDataNode(m_CenterlinesNode);
-        m_CenterlinesMapper->m_box = false;
-        m_CenterlinesMapper->SetColor(0.0, 1.0, 0.0);
-        m_CenterlinesNode->SetMapper(mitk::BaseRenderer::Standard3D, m_CenterlinesMapper);
-    }
-*/
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -453,14 +407,19 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     //
     connect(ui->surfaceModelComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSurfaceModelSource( )));
     connect(ui->readModelPushButton, SIGNAL(clicked()), this, SLOT(ReadModel()) );
+    connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int)), this, SLOT(UdpateSurfaceMeshName()));
+
     for (auto const& type : SurfaceModelSource::types) {
         ui->surfaceModelComboBox->addItem(type);
     }
+
     m_ModelSource = SurfaceModelSource::MODEL_PLUGIN; 
     ui->surfaceModelComboBox->setCurrentText(m_ModelSource);
     ui->readModelPushButton->setVisible(false);
     ui->modelFileNameLabel->setVisible(false);
     ui->modelFileNameLineEdit->setVisible(false);
+    ui->meshNameLabel->setVisible(false);
+    ui->comboBoxMeshName->setVisible(false);
 
     // Add centerlines widgets.
     //
@@ -477,6 +436,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     ui->centerlinesFileNameLabel->setVisible(false);
     ui->centerlinesFileNameLineEdit->setVisible(false);
     ui->calculateCenterlinesPushButton->setVisible(true);
+    ui->calculateCenterlinesPushButton->setEnabled(false);
 
     // Add model face selection widget.
     m_ModelFaceSelectionWidget = new sv4guiCapSelectionWidget();
@@ -490,6 +450,10 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 //--------------------------
 // UdpateSurfaceModelSource 
 //--------------------------
+// Set the source of a surface model.
+//
+// Modifies:
+//     m_ModelSource 
 //
 void sv4guiSimulationView1d::UdpateSurfaceModelSource()
 {
@@ -505,10 +469,17 @@ void sv4guiSimulationView1d::UdpateSurfaceModelSource()
     //std::string sourceType = ui->surfaceModelComboBox->currentText().toStdString();
     MITK_INFO << msg << "sourceType: " << sourceType;
 
-    auto show = (sourceType == SurfaceModelSource::READ_FROM_FILE);
-    ui->readModelPushButton->setVisible(show);
-    ui->modelFileNameLabel->setVisible(show);
-    ui->modelFileNameLineEdit->setVisible(show);
+    auto showModel = (sourceType == SurfaceModelSource::MODEL_PLUGIN);
+
+    auto showRead = (sourceType == SurfaceModelSource::READ_FROM_FILE);
+    ui->readModelPushButton->setVisible(showRead);
+    ui->modelFileNameLabel->setVisible(showRead);
+    ui->modelFileNameLineEdit->setVisible(showRead);
+
+    auto showMesh = (sourceType == SurfaceModelSource::MESH_PLUGIN);
+    ui->meshNameLabel->setVisible(showMesh);
+    ui->comboBoxMeshName->setVisible(showMesh);
+
     m_ModelSource = sourceType; 
 }
 
@@ -666,11 +637,14 @@ void sv4guiSimulationView1d::AddModelFaces()
         m_ModelInletFaceIds.push_back(modelElement->GetFaceID(name));
     }
 
+    // Enable execute centerlines button.
+    ui->calculateCenterlinesPushButton->setEnabled(true);
 }
 
 //-------------------------
 // UdpateCenterlinesSource 
 //-------------------------
+// Update GUI depending on centerlines source.
 //
 // Sets:
 //   m_CenterlinesSource 
@@ -699,6 +673,7 @@ void sv4guiSimulationView1d::UdpateCenterlinesSource()
     auto showCalculate = (sourceType == CenterlinesSource::CALCULATE);
     ui->selectModelFacesPushButton->setVisible(showCalculate);
     ui->calculateCenterlinesPushButton->setVisible(showCalculate);
+    ui->calculateCenterlinesPushButton->setEnabled(false);
 }
 
 //----------------------
@@ -743,10 +718,9 @@ void sv4guiSimulationView1d::CalculateCenterlines()
 //-------------------
 // Read and display the centerlines geometry. 
 //
-// If no Centerlines Data Node is defined then create one. 
-// The centerlines geometry is read from a file, defined by 
-// m_CenterlinesFileName, and used to define the mehs for 
-// m_CenterlinesContainer.
+// If no Centerlines Data Node is defined then create one. The centerlines geometry 
+// is read from a file, defined by m_CenterlinesFileName, and used to define the 
+// 1D mesh for m_CenterlinesContainer.
 // 
 void sv4guiSimulationView1d::UpdateCenterlines()
 {
@@ -789,6 +763,10 @@ void sv4guiSimulationView1d::UpdateCenterlines()
 //-----------------------
 // SelectCenterlinesFile 
 //-----------------------
+// Select a centerlines file using a file browser.
+//
+// Modifies:
+//    m_CenterlinesFileName 
 //
 void sv4guiSimulationView1d::SelectCenterlinesFile()
 {
@@ -827,7 +805,8 @@ void sv4guiSimulationView1d::SelectCenterlinesFile()
   
         QFile file(m_CenterlinesFileName);
         QFileInfo fileInfo(file);
-        ui->centerlinesFileNameLineEdit->setText(fileInfo.fileName());
+        ui->centerlinesFileNameLineEdit->setText(m_CenterlinesFileName);
+        //ui->centerlinesFileNameLineEdit->setText(fileInfo.fileName());
 
     } catch(...) {
         MITK_ERROR << "Error loading centerlines geometry.";
@@ -841,6 +820,7 @@ void sv4guiSimulationView1d::SelectCenterlinesFile()
 //-----------------
 // ReadCenterlines
 //-----------------
+// Read centerline geometry from a vtp file.
 //
 vtkSmartPointer<vtkPolyData> sv4guiSimulationView1d::ReadCenterlines(const std::string fileName)
 {
@@ -891,7 +871,6 @@ mitk::DataNode::Pointer sv4guiSimulationView1d::GetModelFolderDataNode()
   return modelFolderNode;
 }
 
-
 //------------------
 // GetModelFileName
 //------------------
@@ -924,8 +903,6 @@ QString sv4guiSimulationView1d::GetModelFileName()
 
     return modelFileName;
 }
-
-
 
 // -----------------------
 //  GetMeshFolderDataNode 
@@ -969,7 +946,6 @@ sv4guiMesh* sv4guiSimulationView1d::GetDataNodeMesh()
 
   return mesh;
 }
-
 
 //----------------
 // Generate1DMesh
@@ -2446,51 +2422,88 @@ void sv4guiSimulationView1d::UpdateGUISolver()
     ui->tableViewSolver->setColumnHidden(3,true);
 }
 
+//--------------
+// UpdateGUIJob
+//--------------
+//
 void sv4guiSimulationView1d::UpdateGUIJob()
 {
-    if(!m_MitkJob)
+    if (!m_MitkJob) {
         return;
-
-    std::string modelName=m_MitkJob->GetModelName();
-    std::vector<std::string> meshNames;
-
-    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
-
-    if(rs->size()>0) {
-        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
-
-        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
-        if (rs->size()>0) {
-            mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
-            rs=GetDataStorage()->GetDerivations(meshFolderNode);
-
-            for(int i=0;i<rs->size();i++) {
-                sv4guiMitkMesh* mitkMesh=dynamic_cast<sv4guiMitkMesh*>(rs->GetElement(i)->GetData());
-                if(mitkMesh&&mitkMesh->GetModelName()==modelName) {
-                    meshNames.push_back(rs->GetElement(i)->GetName());
-                }
-            }
-        }
     }
 
+    auto meshNames = GetMeshNames();
     ui->comboBoxMeshName->clear();
-    for(int i=0;i<meshNames.size();i++)
-        ui->comboBoxMeshName->addItem(QString::fromStdString(meshNames[i]));
+    ui->comboBoxMeshName->addItem(" ");
 
-    int foundIndex=ui->comboBoxMeshName->findText(QString::fromStdString(m_MitkJob->GetMeshName()));
+    for (auto const& meshName : meshNames) {
+        ui->comboBoxMeshName->addItem(QString::fromStdString(meshName));
+    }
+
+    int foundIndex = ui->comboBoxMeshName->findText(QString::fromStdString(m_MitkJob->GetMeshName()));
     ui->comboBoxMeshName->setCurrentIndex(foundIndex);
 
     int coreNum=QThread::idealThreadCount();
     ui->sliderNumProcs->setMaximum(coreNum);
 
     sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
-        return;
 
-    std::string pNum=job->GetRunProp("Number of Processes");
-    ui->sliderNumProcs->setValue(pNum==""?1:QString::fromStdString(pNum).toInt());
+    if (job == NULL) {
+        return;
+    }
+
+    std::string pNum = job->GetRunProp("Number of Processes");
+    ui->sliderNumProcs->setValue(pNum== "" ? 1 : QString::fromStdString(pNum).toInt());
 }
+
+//-----------------------
+// UdpateSurfaceMeshName
+//-----------------------
+//
+void sv4guiSimulationView1d::UdpateSurfaceMeshName()
+{
+    auto msg = "[sv4guiSimulationView1d::UdpateSurfaceMeshName] ";
+    MITK_INFO << msg << "--------- UdpateSurfaceMeshName ----------"; 
+    auto meshName = ui->comboBoxMeshName->currentText().toStdString();
+
+    if (meshName != "") {
+        auto mesh = GetSurfaceMesh(meshName);
+    }
+    MITK_INFO << msg << "Mesh name: " << meshName;
+}
+
+//--------------
+// GetMeshNames
+//--------------
+//
+std::vector<std::string> sv4guiSimulationView1d::GetMeshNames()
+{
+    std::string modelName = m_MitkJob->GetModelName();
+    std::vector<std::string> meshNames;
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    if (rs->size() > 0) {
+        mitk::DataNode::Pointer projFolderNode = rs->GetElement(0);
+        rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
+
+        if (rs->size() > 0) {
+            mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+            rs=GetDataStorage()->GetDerivations(meshFolderNode);
+
+            for (int i = 0; i < rs->size(); i++) {
+                sv4guiMitkMesh* mitkMesh = dynamic_cast<sv4guiMitkMesh*>(rs->GetElement(i)->GetData());
+                if (mitkMesh && mitkMesh->GetModelName() == modelName) {
+                    meshNames.push_back(rs->GetElement(i)->GetName());
+                }
+            }
+        }
+    }
+
+    return meshNames;
+}
+
 
 void sv4guiSimulationView1d::UpdateGUIRunDir()
 {
@@ -2517,62 +2530,6 @@ void sv4guiSimulationView1d::UpdateGUIRunDir()
     QString runDir=pNum=="1"?jobPath:jobPath+"/"+QString::fromStdString(pNum)+"-procs_case";
     ui->lineEditResultDir->setText(runDir);
 }
-
-//void sv4guiSimulationView1d::ExportInputFiles()
-//{
-//    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-//    berry::IPreferences::Pointer prefs;
-//    if (prefService)
-//    {
-//        prefs = prefService->GetSystemPreferences()->Node("/General");
-//    }
-//    else
-//    {
-//        prefs = berry::IPreferences::Pointer(0);
-//    }
-
-//    QString lastFileSavePath=QString();
-//    if(prefs.IsNotNull())
-//    {
-//        lastFileSavePath = prefs->Get("LastFileSavePath", "");
-//    }
-
-//    QString dir = QFileDialog::getExistingDirectory(m_Parent
-//                                                    , tr("Choose Directory")
-//                                                    , lastFileSavePath);
-
-//    if(dir.isEmpty()) return;
-
-//    CreateDataFiles(dir, false, true, true);
-//}
-
-//void sv4guiSimulationView1d::ExportAllFiles()
-//{
-//    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-//    berry::IPreferences::Pointer prefs;
-//    if (prefService)
-//    {
-//        prefs = prefService->GetSystemPreferences()->Node("/General");
-//    }
-//    else
-//    {
-//        prefs = berry::IPreferences::Pointer(0);
-//    }
-
-//    QString lastFileSavePath=QString();
-//    if(prefs.IsNotNull())
-//    {
-//        lastFileSavePath = prefs->Get("LastFileSavePath", "");
-//    }
-
-//    QString dir = QFileDialog::getExistingDirectory(m_Parent
-//                                                    , tr("Choose Directory")
-//                                                    , lastFileSavePath);
-
-//    if(dir.isEmpty()) return;
-
-//    CreateDataFiles(dir, true, true, true);
-//}
 
 QString sv4guiSimulationView1d::GetJobPath()
 {
@@ -2604,12 +2561,24 @@ QString sv4guiSimulationView1d::GetJobPath()
     return jobPath;
 }
 
+//----------------
+// CreateAllFiles
+//----------------
+//
+// Create files for a simulation.
+//
+// [Davep] Not sure why we have this function.
+//
 void sv4guiSimulationView1d::CreateAllFiles()
 {
     if(!m_MitkJob)
         return;
 
-    CreateDataFiles(GetJobPath(), true, true, false);
+    auto outputAllFiles = true;
+    auto updateJob = true; 
+    auto createFolder = false;
+
+    CreateDataFiles(GetJobPath(), outputAllFiles, updateJob, createFolder);
 }
 
 //--------
@@ -2618,14 +2587,17 @@ void sv4guiSimulationView1d::CreateAllFiles()
 //
 void sv4guiSimulationView1d::RunJob()
 {
+/*
     if (QMessageBox::question(m_Parent, "Run Job", "Are you sure to run the job? It may take a while to finish.",
                               QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
     {
       return;
     }
+*/
 
-    if(!m_MitkJob)
+    if (!m_MitkJob) {
         return;
+    }
 
     QString jobPath=GetJobPath();
     if(jobPath=="" || !QDir(jobPath).exists())
@@ -2748,201 +2720,92 @@ void sv4guiSimulationView1d::RunJob()
 // CreateDataFiles
 //-----------------
 //
+// Create files for a simulation.
+//
 bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
-    if(!m_MitkJob)
-        return false;
+    auto msg = "[sv4guiSimulationView1d::CreateDataFiles] ";
+    MITK_INFO << msg << "--------- CreateDataFiles ----------"; 
+    MITK_INFO << msg << "Output directory: " << outputDir;
+    MITK_INFO << msg << "Output pulgin directory: " << m_PluginOutputDirectory;
 
-    if(outputDir=="")
-        return false;
-
-    sv4guiModelElement* modelElement=NULL;
-
-    if(m_Model)
-        modelElement=m_Model->GetModelElement();
-
-    if(modelElement==NULL)
-    {
-        QMessageBox::warning(m_Parent,"Model Unavailable","Please make sure the model exists ans is valid.");
+    if (!m_MitkJob) {
         return false;
     }
 
+    if (outputDir == "") {
+        return false;
+    }
+
+    // Create a job object storing all the parameters needed for a simulation.
+    //
     mitk::StatusBar::GetInstance()->DisplayText("Creating Job");
-    std::string msg;
+    std::string jobMsg;
+    sv4guiSimJob1d* job = CreateJob(jobMsg);
 
-    sv4guiSimJob1d* job=CreateJob(msg);
-
-    if(job==NULL)
-    {
-        QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
+    if (job == nullptr) {
+        QMessageBox::warning(m_Parent, "Parameter Values Error", QString::fromStdString(msg));
         return false;
     }
-
-    if(createFolder)
-        outputDir=outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-files";
 
     QDir dir(outputDir);
     dir.mkpath(outputDir);
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file...");
-    QString svpreFielContent=QString::fromStdString(sv4guiSimulationUtils1d::CreatePreSolverFileContent(job));
-    QFile svpreFile(outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+".svpre");
-    if(svpreFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&svpreFile);
-        out<<svpreFielContent;
-        svpreFile.close();
-    }
-
-    auto capProps=job->GetCapProps();
-    auto it = capProps.begin();
-    while(it != capProps.end())
-    {
-        if(it->first!=""&&it->second["BC Type"]=="Prescribed Velocities")
-        {
-            auto props=it->second;
-            std::ofstream out(outputDir.toStdString()+"/"+it->first+".flow");
-            out << props["Flow Rate"];
-            out.close();
-        }
-        it++;
-    }
-
-    mitk::StatusBar::GetInstance()->DisplayText("Creating solver.inp");
-    QString solverFileContent=QString::fromStdString(sv4guiSimulationUtils1d::CreateFlowSolverFileContent(job));
-    QFile solverFile(outputDir+"/solver.inp");
-    if(solverFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&solverFile);
-        out<<solverFileContent;
-        solverFile.close();
-    }
-
-    QFile numStartFile(outputDir+"/numstart.dat");
-    if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&numStartFile);
-        out<<"0\n";
-        numStartFile.close();
-    }
-
-    QString rcrtFielContent=QString::fromStdString(sv4guiSimulationUtils1d::CreateRCRTFileContent(job));
-    if(rcrtFielContent!="")
-    {
-        mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
-        QFile rcrtFile(outputDir+"/rcrt.dat");
-        if(rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream out(&rcrtFile);
-            out<<rcrtFielContent;
-            rcrtFile.close();
-        }
-    }
-
-    QString cortFielContent=QString::fromStdString(sv4guiSimulationUtils1d::CreateCORTFileContent(job));
-    if(cortFielContent!="")
-    {
-        mitk::StatusBar::GetInstance()->DisplayText("Creating cort.dat");
-        QFile cortFile(outputDir+"/cort.dat");
-        if(cortFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream out(&cortFile);
-            out<<cortFielContent;
-            cortFile.close();
-        }
-    }
-
-    std::string meshName="";
-    if(outputAllFiles)
-    {
-        meshName=ui->comboBoxMeshName->currentText().toStdString();
-
-        mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-        mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
-
-        sv4guiMesh* mesh=NULL;
-        mitk::DataNode::Pointer projFolderNode=NULL;
-        mitk::DataNode::Pointer meshNode=NULL;
-
-        if(rs->size()>0)
-        {
-            projFolderNode=rs->GetElement(0);
-
-            rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
-            if (rs->size()>0)
-            {
-                mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
-
-                meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
-                if(meshNode.IsNotNull())
-                {
-                    sv4guiMitkMesh* mitkMesh=dynamic_cast<sv4guiMitkMesh*>(meshNode->GetData());
-                    if(mitkMesh)
-                    {
-                        mesh=mitkMesh->GetMesh();
-                    }
-                }
-            }
-        }
-
-        if(mesh==NULL)
-        {
-            QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.");
-            return false;
-        }
-
-        mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
-        QString meshCompletePath=outputDir+"/mesh-complete";
-        dir.mkpath(meshCompletePath);
-        WaitCursorOn();
-        bool ok=sv4guiMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath);
-        WaitCursorOff();
-        if(!ok)
-        {
-            QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
-            return false;
-        }
-
-        QString presolverPath=m_ExternalPresolverPath;
-        if(presolverPath=="")
-            presolverPath=m_InternalPresolverPath;
-
-//        if(presolverPath=="" || !QFile(presolverPath).exists())
-        if(presolverPath=="")
-        {
-            QMessageBox::warning(m_Parent,"Presolver Missing","Please make sure presolver exists!");
-        }
-        else
-        {
-            QString icFile=(QString::fromStdString(job->GetBasicProp("IC File"))).trimmed();
-            if(icFile!="" && QFile(icFile).exists())
-            {
-                QString newFilePath=outputDir+"/restart.0.1";
-                QFile::copy(icFile, newFilePath);
-            }
-
-            mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
-            QProcess *presolverProcess = new QProcess(m_Parent);
-            presolverProcess->setWorkingDirectory(outputDir);
-            presolverProcess->setProgram(presolverPath);
-            QStringList arguments;
-            arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
-            presolverProcess->setArguments(arguments);
-#if defined(Q_OS_MAC)
-            sv4guiProcessHandler1d* handler=new sv4guiProcessHandler1d(presolverProcess,m_JobNode,true,false,m_Parent);
-#else
-            sv4guiProcessHandler1d* handler=new sv4guiProcessHandler1d(presolverProcess,m_JobNode,true,true,m_Parent);
-#endif
-            handler->Start();
-        }
-    }
-
     m_MitkJob->SetSimJob(job);
-    m_MitkJob->SetMeshName(meshName);
+    //m_MitkJob->SetMeshName(meshName);
     m_MitkJob->SetDataModified();
+
+    // Check centerlines have been generated.
+    if (m_CenterlinesFileName.isEmpty()) {
+        QMessageBox::warning(NULL, "1D Simulation", "No centerlines have been calculated or centerlines source file set.");
+        MITK_ERROR << "No centerlines file is defined.";
+        return;
+    }
+    MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
+
+    auto outputDirectory = outputDir.toStdString();
+    auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
+    auto solverFileName = SOLVER_FILE_NAME.toStdString();
+
+    // Execute the generate-1d-mesh.py script.
+    auto pythonInterface = sv4guiSimulationPython1d();
+    pythonInterface.GenerateSolverInput(outputDirectory, inputCenterlinesFile, solverFileName, job);
 
     return true;
 }
+
+//----------------
+// GetSurfaceMesh
+//----------------
+// Get a surface mesh from a Mesh Folder.
+//
+sv4guiMesh* sv4guiSimulationView1d::GetSurfaceMesh(const std::string meshName)
+{
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs = GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    sv4guiMesh* mesh = NULL;
+    mitk::DataNode::Pointer projFolderNode = NULL;
+    mitk::DataNode::Pointer meshNode = NULL;
+
+    if (rs->size()>0) {
+        projFolderNode = rs->GetElement(0);
+        rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
+
+        if (rs->size()>0) {
+            mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+
+            meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
+            if(meshNode.IsNotNull()) {
+                sv4guiMitkMesh* mitkMesh=dynamic_cast<sv4guiMitkMesh*>(meshNode->GetData());
+                if(mitkMesh) {
+                    mesh=mitkMesh->GetMesh();
+                }
+            }
+        }
+    }
+}
+
 
 void sv4guiSimulationView1d::ImportFiles()
 {
@@ -3003,73 +2866,97 @@ void sv4guiSimulationView1d::ImportFiles()
 //-----------
 // CreateJob
 //-----------
+// Create a simulation job.
+//
+// Creates a sv4guiSimJob1d object and sets all the parameters needed 
+// for a simulation in that object.
 //
 sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkValidity)
 {
-    sv4guiSimJob1d* job=new sv4guiSimJob1d();
+    sv4guiSimJob1d* job = new sv4guiSimJob1d();
 
-    //for basic
-    for(int i=0;i<m_TableModelBasic->rowCount();i++)
-    {
-        std::string par=m_TableModelBasic->item(i,0)->text().toStdString();
-        std::string values=m_TableModelBasic->item(i,1)->text().trimmed().toStdString();
+    if (!SetBasicParameters(job, msg)) {
+        delete job;
+        return nullptr;
+    }
 
-        if(checkValidity)
-        {
-//            if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Period" || par=="Initial Pressure")
-            if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Initial Pressure")
-            {
-                if(!IsDouble(values))
-                {
-                    msg=par + " value error: " + values;
-                    delete job;
-                    return NULL;
-                }
+    if (!SetCapBcs(job, msg)) {
+        delete job;
+        return nullptr;
+    }
+
+    if (!SetWallProperites(job, msg)) {
+        delete job;
+        return nullptr;
+    }
+
+    if (!SetSolverParameters(job, msg)) {
+        delete job;
+        return nullptr;
+    }
+
+    return job;
+}
+
+//--------------------
+// SetBasicParameters
+//--------------------
+// Set the basic physical constants and velocity initial conditions
+// for the simulation.
+//
+bool sv4guiSimulationView1d::SetBasicParameters(sv4guiSimJob1d* job, std::string& msg)
+{
+    for(int i=0;i<m_TableModelBasic->rowCount();i++) {
+        std::string par = m_TableModelBasic->item(i,0)->text().toStdString();
+        std::string values = m_TableModelBasic->item(i,1)->text().trimmed().toStdString();
+
+        if ((par == "Fluid Density") || (par=="Fluid Viscosity") || (par=="Initial Pressure")) {
+            if(!IsDouble(values)) {
+                msg=par + " value error: " + values;
+                return false;
             }
-            else if(par=="Initial Velocities")
-            {
-                int count=0;
+        } else if(par=="Initial Velocities") {
+            int count=0;
+            QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            values=list.join(" ").toStdString();
 
-                QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-                values=list.join(" ").toStdString();
-
-                if(!AreDouble(values,&count) || count!=3)
-                {
-                    msg=par + " value error: " + values;
-                    delete job;
-                    return NULL;
-                }
-            }
+            if(!AreDouble(values,&count) || count!=3) {
+                msg=par + " value error: " + values;
+                return false;
+             }
         }
 
         job->SetBasicProp(par,values);
     }
 
-    //for cap bc
-    for(int i=0;i<m_TableModelCap->rowCount();i++)
-    {
+    return true;
+}
+
+//-----------
+// SetCapBcs
+//-----------
+//
+bool sv4guiSimulationView1d::SetCapBcs(sv4guiSimJob1d* job, std::string& msg)
+{
+    auto checkValidity = false;
+
+    for(int i=0;i<m_TableModelCap->rowCount();i++) {
         std::string capName=m_TableModelCap->item(i,0)->text().toStdString();
         std::string bcType=m_TableModelCap->item(i,1)->text().trimmed().toStdString();
 
-        if(bcType=="Prescribed Velocities")
-        {
+        if(bcType=="Prescribed Velocities") {
             std::string flowrateContent=m_TableModelCap->item(i,9)->text().trimmed().toStdString();
             std::string period=m_TableModelCap->item(i,5)->text().trimmed().toStdString();
 
-            if(checkValidity)
-            {
-                if(flowrateContent=="")
-                {
+            if(checkValidity) {
+                if(flowrateContent=="") {
                     msg=capName + ": no flowrate data";
-                    delete job;
-                    return NULL;
+                    return false;
                 }
 
-                if(period=="")
-                {
+                if(period=="") {
                     msg=capName + ": no period for flowrate data";
-                    delete job;
-                    return NULL;
+                    return false;
                 }
             }
 
@@ -3087,9 +2974,8 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
             job->SetCapProp(capName,"Flip Normal", flip);
             job->SetCapProp(capName,"Flow Rate", flowrateContent);
             job->SetCapProp(capName,"Original File", originalFile);
-        }
-        else if(bcType!="")
-        {
+
+        } else if(bcType!="") {
             std::string values=m_TableModelCap->item(i,2)->text().trimmed().toStdString();
             std::string pressure=m_TableModelCap->item(i,3)->text().trimmed().toStdString();
             std::string originalFile=m_TableModelCap->item(i,10)->text().trimmed().toStdString();
@@ -3099,78 +2985,53 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
             std::string RValues=m_TableModelCap->item(i,14)->text().trimmed().toStdString();
             std::string CValues=m_TableModelCap->item(i,15)->text().trimmed().toStdString();
 
-            if(checkValidity)
-            {
-                if(bcType=="Resistance")
-                {
-                    if(!IsDouble(values))
-                    {
+            if(checkValidity) {
+                if(bcType=="Resistance") {
+                    if(!IsDouble(values)) {
                         msg=capName + " R value error: " + values;
-                        delete job;
-                        return NULL;
+                        return false;
                     }
-                }
-                else if(bcType=="RCR")
-                {
+                } else if(bcType=="RCR") {
                     int count=0;
-
                     QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
                     values=list.join(" ").toStdString();
 
-                    if(!AreDouble(values,&count)||count!=3)
-                    {
+                    if(!AreDouble(values,&count)||count!=3) {
                         msg=capName + " RCR values error: " + values;
-                        delete job;
-                        return NULL;
+                        return false;
                     }
-                }
-                else if(bcType=="Coronary")
-                {
+                } else if(bcType=="Coronary") {
                     int count=0;
-
                     QStringList list = QString(values.c_str()).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
                     values=list.join(" ").toStdString();
 
-                    if(!AreDouble(values,&count)||count!=5)
-                    {
+                    if(!AreDouble(values,&count)||count!=5) {
                         msg=capName + " Coronary values error: " + values;
-                        delete job;
-                        return NULL;
+                        return false;
                     }
 
-                    if(timedPressure=="")
-                    {
+                    if(timedPressure=="") {
                         msg=capName + ": no Pim data";
-                        delete job;
-                        return NULL;
+                        return false;
                     }
 
-                    if(pressurePeriod=="" || !IsDouble(pressurePeriod))
-                    {
+                    if(pressurePeriod=="" || !IsDouble(pressurePeriod)) {
                         msg=capName + " coronary period error: " + pressurePeriod;
-                        delete job;
-                        return NULL;
-                    }
+                        return false;
+                    } 
 
-                    if(pressureScaling=="" || !IsDouble(pressureScaling))
-                    {
+                    if(pressureScaling=="" || !IsDouble(pressureScaling)) {
                         msg=capName + " coronary pressure scaling error: " + pressureScaling;
-                        delete job;
-                        return NULL;
+                        return false;
                     }
                 }
 
-                if(pressure!="")
-                {
-                    if(!IsDouble(pressure))
-                    {
+                if(pressure!="") {
+                    if(!IsDouble(pressure)) {
                         msg=capName + " pressure error: " + pressure;
-                        delete job;
-                        return NULL;
+                        return false;
                     }
-                }
-                else
-                {
+                } else {
                     pressure="0";
                 }
             }
@@ -3179,30 +3040,35 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
             job->SetCapProp(capName,"Values", values);
             job->SetCapProp(capName,"Pressure",pressure);
 
-            if(bcType=="Coronary")
-            {
+            if(bcType=="Coronary") {
                 job->SetCapProp(capName,"Timed Pressure", timedPressure);
                 job->SetCapProp(capName,"Pressure Period", pressurePeriod);
                 job->SetCapProp(capName,"Pressure Scaling",pressureScaling);
                 job->SetCapProp(capName,"Original File", originalFile);
             }
 
-            if(bcType=="RCR" || bcType=="Coronary")
-            {
+            if(bcType=="RCR" || bcType=="Coronary") {
                 job->SetCapProp(capName,"R Values", RValues);
                 job->SetCapProp(capName,"C Values", CValues);
             }
         }
     }
 
-    //for wall and var
-    int wallTypeIndex=ui->comboBoxWallType->currentIndex();
-    if(wallTypeIndex==0)
-    {
+    return true;
+}
+
+//-------------------
+// SetWallProperites
+//-------------------
+//
+bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string& msg)
+{
+    auto checkValidity = false;
+    int wallTypeIndex = ui->comboBoxWallType->currentIndex();
+
+    if(wallTypeIndex==0) {
         job->SetWallProp("Type","rigid");
-    }
-    else if(wallTypeIndex==1)
-    {
+    } else if(wallTypeIndex==1) {
         std::string thickness=ui->lineEditThickness->text().trimmed().toStdString();
         std::string modulus=ui->lineEditE->text().trimmed().toStdString();
         std::string nu=ui->lineEditNu->text().trimmed().toStdString();
@@ -3210,55 +3076,39 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
         std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
         std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
 
-        if(checkValidity)
-        {
-            if(!IsDouble(thickness))
-            {
+        if(checkValidity) {
+            if(!IsDouble(thickness)) {
                 msg="wall thickness error: " + thickness;
-                delete job;
-                return NULL;
+                return false;
             }
 
-            if(!IsDouble(modulus))
-            {
+            if(!IsDouble(modulus)) {
                 msg="wall elastic modulus error: " + modulus;
-                delete job;
-                return NULL;
+                return false;
             }
 
-            if(!IsDouble(nu))
-            {
+            if(!IsDouble(nu)) {
                 msg="wall Poisson ratio error: " + nu;
-                delete job;
-                return NULL;
+                return false;
             }
 
-            if(!IsDouble(kcons))
-            {
+            if(!IsDouble(kcons)) {
                 msg="wall shear constant error: " + kcons;
-                delete job;
-                return NULL;
+                return false;
             }
 
-            if(wallDensity!="")
-            {
-                if(!IsDouble(wallDensity))
-                {
+            if(wallDensity!="") {
+                if(!IsDouble(wallDensity)) {
                     msg="wall density error: " + wallDensity;
-                    delete job;
-                    return NULL;
+                    return false;
                 }
-            }
-            else
-            {
+            } else {
                 wallDensity=job->GetBasicProp("Fluid Density");
             }
 
-            if(!IsDouble(pressure))
-            {
+            if(!IsDouble(pressure)) {
                 msg="wall pressure error: " + pressure;
-                delete job;
-                return NULL;
+                return false;
             }
         }
 
@@ -3269,49 +3119,36 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
         job->SetWallProp("Shear Constant",kcons);
         job->SetWallProp("Density",wallDensity);
         job->SetWallProp("Pressure",pressure);
-    }
-    else if(wallTypeIndex==2)
-    {
+
+    } else if(wallTypeIndex==2) {
         std::string nu=ui->lineEditNu->text().trimmed().toStdString();
         std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
         std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
         std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
 
-        if(checkValidity)
-        {
-            if(!IsDouble(nu))
-            {
+        if(checkValidity) {
+            if(!IsDouble(nu)) {
                 msg="wall Poisson ratio error: " + nu;
-                delete job;
-                return NULL;
+                return false;
             }
 
-            if(!IsDouble(kcons))
-            {
+            if(!IsDouble(kcons)) {
                 msg="wall shear constant error: " + kcons;
-                delete job;
-                return NULL;
+                return false;
             }
 
-            if(wallDensity!="")
-            {
-                if(!IsDouble(wallDensity))
-                {
+            if(wallDensity!="") {
+                if(!IsDouble(wallDensity)) {
                     msg="wall density error: " + wallDensity;
-                    delete job;
-                    return NULL;
+                    return false;
                 }
-            }
-            else
-            {
+            } else {
                 wallDensity=job->GetBasicProp("Fluid Density");
             }
 
-            if(!IsDouble(pressure))
-            {
+            if(!IsDouble(pressure)) {
                 msg="wall pressure error: " + pressure;
-                delete job;
-                return NULL;
+                return false;
             }
         }
 
@@ -3321,26 +3158,20 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
         job->SetWallProp("Density",wallDensity);
         job->SetWallProp("Pressure",pressure);
 
-        for(int i=0;i<m_TableModelVar->rowCount();i++)
-        {
-            std::string faceName=m_TableModelVar->item(i,0)->text().toStdString();
-            std::string thickness=m_TableModelVar->item(i,2)->text().trimmed().toStdString();
-            std::string modulus=m_TableModelVar->item(i,3)->text().trimmed().toStdString();
+        for(int i=0;i<m_TableModelVar->rowCount();i++) {
+            std::string faceName = m_TableModelVar->item(i,0)->text().toStdString();
+            std::string thickness = m_TableModelVar->item(i,2)->text().trimmed().toStdString();
+            std::string modulus = m_TableModelVar->item(i,3)->text().trimmed().toStdString();
 
-            if(checkValidity)
-            {
-                if(thickness!="" && !IsDouble(thickness))
-                {
+            if(checkValidity) {
+                if(thickness!="" && !IsDouble(thickness)) {
                     msg="wall thickness error: " + thickness;
-                    delete job;
-                    return NULL;
+                    return false;
                 }
 
-                if(modulus!="" && !IsDouble(modulus))
-                {
+                if(modulus!="" && !IsDouble(modulus)) {
                     msg="wall elastic modulus error: " + modulus;
-                    delete job;
-                    return NULL;
+                    return false;
                 }
             }
 
@@ -3349,44 +3180,47 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
         }
     }
 
-    for(int i=0;i<m_TableModelSolver->rowCount();i++)
-    {
+    return true;
+}
+
+//---------------------
+// SetSolverParameters
+//---------------------
+//
+bool sv4guiSimulationView1d::SetSolverParameters(sv4guiSimJob1d* job, std::string& msg)
+{
+    auto checkValidity = false;
+
+    for(int i=0;i<m_TableModelSolver->rowCount();i++) {
         std::string parName=m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
         QStandardItem* valueItem=m_TableModelSolver->item(i,1);
-        if(valueItem==NULL)
+        if(valueItem==NULL) {
             continue;
+        }
 
         std::string value=valueItem->text().trimmed().toStdString();
         std::string type=m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
 
-        if(checkValidity )
-        {
-            if(value=="")
-            {
-                msg=parName+ " missing value";
-                delete job;
-                return NULL;
-            }
-            else if(type=="int"&&!IsInt(value))
-            {
+        if(checkValidity ) {
+            if(value == "") {
+                msg = parName+ " missing value";
+                return false;
+            } else if(type=="int"&&!IsInt(value)) {
                 msg=parName+ " value error: " + value;
-                delete job;
-                return NULL;
-            }
-            else if(type=="double"&&!IsDouble(value))
-            {
+                return false;
+            } else if(type=="double"&&!IsDouble(value)) {
                 msg=parName+ " value error: " + value;
-                delete job;
-                return NULL;
+                return false;
             }
         }
 
         job->SetSolverProp(parName, value);
     }
 
-
-    return job;
+    return true;
 }
+
+
 
 void sv4guiSimulationView1d::SaveToManager()
 {
@@ -3746,20 +3580,6 @@ void sv4guiSimulationView1d::UpdateSimJob()
 
     newJob->SetRunProp("Number of Processes",numProcsStr);
     m_MitkJob->SetSimJob(newJob);
-    m_MitkJob->SetDataModified();
-}
-
-//----------------------
-// UdpateSimJobMeshName
-//----------------------
-//
-void sv4guiSimulationView1d::UdpateSimJobMeshName()
-{
-    if(!m_MitkJob)
-        return;
-
-    std::string meshName=ui->comboBoxMeshName->currentText().toStdString();
-    m_MitkJob->SetMeshName(meshName);
     m_MitkJob->SetDataModified();
 }
 

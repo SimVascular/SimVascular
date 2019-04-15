@@ -31,6 +31,18 @@
 
 #include "sv4gui_MitkSimJob1d.h"
 
+const std::string sv4guiMitkSimJob1d::JobBasicParameters::FLUID_DENSITY = "Fluid Density";
+const std::string sv4guiMitkSimJob1d::JobBasicParameters::FLUID_VISCOSITY = "Fluid Viscosity";
+const std::string sv4guiMitkSimJob1d::JobBasicParameters::INITIAL_PRESSURE = "Initial Pressure";
+const std::string sv4guiMitkSimJob1d::JobBasicParameters::INITIAL_VELOCITIES = "Initial Velocities";
+const std::vector<std::string> sv4guiMitkSimJob1d::JobBasicParameters::names = 
+{
+    sv4guiMitkSimJob1d::JobBasicParameters::FLUID_DENSITY,
+    sv4guiMitkSimJob1d::JobBasicParameters::FLUID_VISCOSITY,
+    sv4guiMitkSimJob1d::JobBasicParameters::INITIAL_PRESSURE,
+    sv4guiMitkSimJob1d::JobBasicParameters::INITIAL_VELOCITIES
+};
+
 sv4guiMitkSimJob1d::sv4guiMitkSimJob1d()
     : m_CalculateBoundingBox(true)
 //    , m_Job(NULL)

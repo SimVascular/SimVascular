@@ -42,6 +42,15 @@ class SV4GUIMODULESIMULATION1D_EXPORT sv4guiMitkSimJob1d : public mitk::BaseData
 {
 public:
 
+    class JobBasicParameters {
+        public:
+            static const std::string FLUID_DENSITY;
+            static const std::string FLUID_VISCOSITY;
+            static const std::string INITIAL_PRESSURE;
+            static const std::string INITIAL_VELOCITIES;
+            static const std::vector<std::string> names;
+    };
+
     mitkClassMacro(sv4guiMitkSimJob1d, mitk::BaseData);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)

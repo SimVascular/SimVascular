@@ -70,6 +70,7 @@ public:
 
     static const QString EXTENSION_ID;
     static const QString MESH_FILE_NAME;
+    static const QString SOLVER_FILE_NAME;
 
     sv4guiSimulationView1d();
 
@@ -145,7 +146,7 @@ public slots:
 
     void UpdateJobStatus();
     void UpdateSimJob();
-    void UdpateSimJobMeshName();
+    void UdpateSurfaceMeshName();
     void UpdateSimJobNumProcs();
 
     void SetupInternalSolverPaths();
@@ -279,9 +280,17 @@ private:
 
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();
+    std::vector<std::string> GetMeshNames();
+    sv4guiMesh* GetSurfaceMesh(const std::string meshName);
+    void UpdateSurfaceMesh();
 
     void Update1DMesh();
     vtkSmartPointer<vtkPolyData> Read1DMesh(const std::string fileName);
+
+    bool SetBasicParameters(sv4guiSimJob1d* job, std::string& msg);
+    bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg);
+    bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg);
+    bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg);
 
 };
 
