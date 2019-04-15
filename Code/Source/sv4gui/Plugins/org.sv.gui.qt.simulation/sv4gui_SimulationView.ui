@@ -160,15 +160,15 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>5</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="page">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>594</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -204,8 +204,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>594</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -268,8 +268,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>594</height>
+           <width>239</width>
+           <height>206</height>
           </rect>
          </property>
          <attribute name="label">
@@ -618,8 +618,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>594</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -656,7 +656,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>594</height>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -744,6 +744,9 @@
                 </item>
                 <item row="4" column="2">
                  <widget class="QLineEdit" name="lineEditStartStepNum">
+                  <property name="toolTip">
+                   <string>The time step from which to restart a simulation. Leave blank to continue a simulation from the last completed time step. </string>
+                  </property>
                   <property name="text">
                    <string/>
                   </property>
@@ -836,7 +839,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>594</height>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
