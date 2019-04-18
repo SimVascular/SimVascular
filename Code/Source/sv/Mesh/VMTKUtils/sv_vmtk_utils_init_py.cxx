@@ -30,6 +30,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -97,7 +98,7 @@ int Vmtkutils_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   PyInit_pyVMTKUtils();
 #endif
-  return Py_OK;
+  return SV_OK;
 }
 
 //-----------------
@@ -158,7 +159,7 @@ PyMODINIT_FUNC PyInit_pyVMTKUtils()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error initializing pyVMTKUtils.\n");
-    Py_RETURN_NONE;
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErr=PyErr_NewException("pyVMTKUtils.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
@@ -190,38 +191,38 @@ PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr,
 	"Could not import three chars and two list, geomName, sourceList,"
 	"targetList, linesName, voronoiName");
-    return Py_ERROR;
+    
   }
 
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
   if ( geomSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object" );
-    return Py_ERROR;
+    
   }
 
   type = geomSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, " obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( linesName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   if ( gRepository->Exists( voronoiName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   int nsources = PyList_Size(sourceList);
   int ntargets = PyList_Size(targetList);
   if (nsources==0||ntargets==0)
   {
-    return Py_BuildValue("N",PyBool_FromLong(1));
+    return SV_PYTHON_OK;
   }
 
   int *sources = new int[nsources];
@@ -240,7 +241,7 @@ PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args)
   if ( sys_geom_centerlines( (cvPolyData*)geomSrc, sources, nsources, targets, ntargets, (cvPolyData**)(&linesDst), (cvPolyData**)(&voronoiDst))
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr,"error creating centerlines");
-    return Py_ERROR;
+    
   }
 
   delete [] sources;
@@ -250,14 +251,14 @@ PyObject* Geom_CenterlinesCmd( PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete linesDst;
     delete voronoiDst;
-    return Py_ERROR;
+    
   }
 
   if ( !( gRepository->Register( voronoiName, voronoiDst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete linesDst;
     delete voronoiDst;
-    return Py_ERROR;
+    
   }
 
 
@@ -283,32 +284,32 @@ PyObject* Geom_GroupPolyDataCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
 	"Could not import three chars, geomName,linesName, groupedName");
-    return Py_ERROR;
+    
   }
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
   if ( geomSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
 
   type = geomSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Retrieve source object:
   linesSrc = gRepository->GetObject( linesName );
   if ( linesSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
 
   type = linesSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -316,13 +317,13 @@ PyObject* Geom_GroupPolyDataCmd( PyObject* self, PyObject* args)
   if ( sys_geom_grouppolydata( (cvPolyData*)geomSrc, (cvPolyData*)linesSrc, (cvPolyData**)(&groupedDst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error getting grouped polydata" );
-    return Py_ERROR;
+    
   }
 
   if ( !( gRepository->Register( groupedName, groupedDst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete groupedDst;
-    return Py_ERROR;
+    
   }
 
 
@@ -344,33 +345,33 @@ PyObject* Geom_DistanceToCenterlinesCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
 	"Could not import three chars, geomName,linesName, distanceName");
-    return Py_ERROR;
+    
   }
 
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
   if ( geomSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object" );
-    return Py_ERROR;
+    
   }
 
   type = geomSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Retrieve source object:
   linesSrc = gRepository->GetObject( linesName );
   if ( linesSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
 
   type = linesSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -378,13 +379,13 @@ PyObject* Geom_DistanceToCenterlinesCmd( PyObject* self, PyObject* args)
   if ( sys_geom_distancetocenterlines( (cvPolyData*)geomSrc, (cvPolyData*)linesSrc, (cvPolyData**)(&distanceDst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error getting distance to centerlines" );
-    return Py_ERROR;
+    
   }
 
   if ( !( gRepository->Register( distanceName, distanceDst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete distanceDst;
-    return Py_ERROR;
+    
   }
 
 
@@ -404,19 +405,19 @@ PyObject* Geom_SeparateCenterlinesCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
 	"Could not import two chars,linesName, separateName");
-    return Py_ERROR;
+    
   }
   // Retrieve source object:
   linesSrc = gRepository->GetObject( linesName );
   if ( linesSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
-    return Py_ERROR;
+    
   }
 
   type = linesSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -424,13 +425,13 @@ PyObject* Geom_SeparateCenterlinesCmd( PyObject* self, PyObject* args)
   if ( sys_geom_separatecenterlines( (cvPolyData*)linesSrc, (cvPolyData**)(&separateDst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error grouping centerlines" );
-    return Py_ERROR;
+    
   }
 
   if ( !( gRepository->Register( separateName, separateDst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete separateDst;
-    return Py_ERROR;
+    
   }
 
   return Py_BuildValue("s",separateDst->GetName()) ;
@@ -451,19 +452,19 @@ PyObject* Geom_MergeCenterlinesCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
 	"Could not import two chars and one int, linesName,mergeName, mergeblanked");
-    return Py_ERROR;
+    
   }
   // Retrieve source object:
   linesSrc = gRepository->GetObject( linesName );
   if ( linesSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
-    return Py_ERROR;
+    
   }
 
   type = linesSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -471,13 +472,13 @@ PyObject* Geom_MergeCenterlinesCmd( PyObject* self, PyObject* args)
   if ( sys_geom_mergecenterlines( (cvPolyData*)linesSrc, mergeblanked, (cvPolyData**)(&mergeDst) )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error merging centerlines" );
-    return Py_ERROR;
+    
   }
 
   if ( !( gRepository->Register( mergeName, mergeDst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete mergeDst;
-    return Py_ERROR;
+    
   }
 
 
@@ -503,25 +504,25 @@ PyObject* Geom_CapCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
 	"Could not import three chars, geomName,cappedName, captype");
-    return Py_ERROR;
+    
   }
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
   if ( geomSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
-    return Py_ERROR;
+    
   }
 
   type = geomSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( cappedName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists" );
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -529,13 +530,13 @@ PyObject* Geom_CapCmd( PyObject* self, PyObject* args)
   if ( sys_geom_cap( (cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst), &numIds,&ids,captype )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr,"error capping model" );
-    return Py_ERROR;
+    
   }
 
   if ( !( gRepository->Register( cappedName, cappedDst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete cappedDst;
-    return Py_ERROR;
+    
   }
 
 //  Tcl_SetResult( interp, cappedDst->GetName() );
@@ -543,7 +544,7 @@ PyObject* Geom_CapCmd( PyObject* self, PyObject* args)
   if (numIds == 0)
   {
     PyErr_SetString(PyRunTimeErr, "No Ids Found" );
-    return Py_ERROR;
+    
   }
   PyObject* pyList=PyList_New(numIds);
   for (int i = 0; i < numIds; i++) {
@@ -573,25 +574,25 @@ PyObject* Geom_CapWIdsCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
 	"Could not import two chars and two ints, geomName,cappedName, fillId,filltype");
-    return Py_ERROR;
+    
   }
   // Retrieve source object:
   geomSrc = gRepository->GetObject( geomName );
   if ( geomSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
 
   type = geomSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr,"obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( cappedName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -600,13 +601,13 @@ PyObject* Geom_CapWIdsCmd( PyObject* self, PyObject* args)
 	,fillId,num_filled,filltype)
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error capping model" );
-    return Py_ERROR;
+    
   }
 
   if ( !( gRepository->Register( cappedName, cappedDst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete cappedDst;
-    return Py_ERROR;
+    
   }
 
   return Py_BuildValue("i",num_filled);
@@ -631,38 +632,38 @@ PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args)
     PyErr_SetString(PyRunTimeErr,
 	"Could not import five chars, originalName,newName, resultName"
 	"originalArray, newArray");
-    return Py_ERROR;
+    
   }
   // Retrieve source object:
   geomSrc = gRepository->GetObject( originalName );
   if ( geomSrc == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
-    return Py_ERROR;
+    
   }
 
   // Retrieve source object:
   geomNew = gRepository->GetObject( newName );
   if ( geomNew == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    return Py_ERROR;
+    
   }
 
   type = geomSrc->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   type = geomNew->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    return Py_ERROR;
+    
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( resultName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -670,13 +671,13 @@ PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args)
   if ( sys_geom_mapandcorrectids( (cvPolyData*)geomSrc, (cvPolyData*)geomNew, (cvPolyData**)(&geomDst), originalArray,newArray )
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "error correcting ids" );
-    return Py_ERROR;
+    
   }
 
   if ( !( gRepository->Register( resultName, geomDst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geomDst;
-    return Py_ERROR;
+    
   }
 
 

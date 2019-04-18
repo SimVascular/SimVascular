@@ -6,34 +6,35 @@ GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
 GMV=mv
-
-$GCP -fl REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE  REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/svpython.exe
-$GCP -fl REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/*  REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts
+GRM=rm
 
 # need pip to install things
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python.exe REPLACEME_SV_TOPLEVEL_SRCDIR/BuildHelpers/Originals/python/get-pip.py
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python REPLACEME_SV_TOPLEVEL_SRCDIR/BuildHelpers/Originals/python/get-pip.py
 
 # needed to compile numpy if desired
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install Cython --install-option="--no-cython-compile"
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install Cython --install-option="--no-cython-compile"
 
 #must install torando-5.1.1 since tornado-6.0.1 breaks jupyter!!
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install tornado==5.1.1
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tornado==5.1.1
 #install numpy
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install numpy
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install numpy
 #install jupyter
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install jupyter
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install jupyter
 #install tensorflow
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/pip.exe install tensorflow
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tensorflow
 
-tmppythonpath=`echo REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE | sed s+/+\\\\\\\\\\\\\\\\+g`
-tmppythonpathlower=`echo $tmppythonpath | sed -e 's/\(.*\)/\L\1/'`
+$GMKDIR REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate
 
-for f in REPLACEME_SV_TOP_BIN_DIR_PYTHON/Scripts/*.exe; do
+for f in REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/*; do
+    shortf="${f##*/}"
     echo "File -> $f"
-    sed -e "s/$tmppythonpath/svpython.exe/g" $f > $f.tmp
-    sed -e "s/$tmppythonpathlower/svpython.exe/g" $f.tmp > $f.tmp.tmp
-    rm $f.tmp
-    mv $f.tmp.tmp $f
+    sed -e "s+REPLACEME_SV_TOP_BIN_DIR_PYTHON+/usr/local/sv/svpython+g;s+#!/usr/local/sv/svpython/bin/python+#!/usr/local/sv/svpython/bin/svpython+g" $f > REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/$shortf
 done
+
+# sed destroys the actual python executable, need to overwrite with original
+$GRM -f REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/python
+$GRM -f REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/python3*
+$GCP -f REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/ 
+$GCP -f REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python3* REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/
 
 REPLACEME_SV_SPECIAL_COMPILER_END_SCRIPT

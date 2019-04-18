@@ -37,5 +37,5 @@
 int Utils_pyInit()
 {
   Math_pyInit();
-  return Py_OK;
+  return SV_OK;
 }

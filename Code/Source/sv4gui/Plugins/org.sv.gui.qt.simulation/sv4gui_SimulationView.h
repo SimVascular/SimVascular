@@ -62,6 +62,7 @@ class sv4guiSimulationView : public sv4guiQmitkFunctionality
 public:
 
     static const QString EXTENSION_ID;
+    static const QString MsgTitle;
 
     sv4guiSimulationView();
 
@@ -142,8 +143,6 @@ public slots:
     void UdpateSimJobMeshName();
 
     void UpdateSimJobNumProcs();
-
-    void SetupInternalSolverPaths();
 
     void ShowCalculateFowsWidget(bool checked = false);
 
@@ -242,8 +241,9 @@ private:
 
     sv4guiSimulationPreferences m_DefaultPrefs;
 
-    bool CheckSolver();
-    bool CheckMpi();
+    void CheckSolver();
+    void CheckMpi();
+    int GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs);
 
 };
 

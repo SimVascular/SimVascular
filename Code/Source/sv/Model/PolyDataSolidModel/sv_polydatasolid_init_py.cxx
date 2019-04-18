@@ -40,6 +40,7 @@
  */
 
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -115,12 +116,12 @@ PyObject* Polydatasolid_pyInit()
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
   }
   else
-    return Py_ERROR;
+    return SV_PYTHON_ERROR;
   tmp->registrar = pySolidModelRegistrar;
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
   // Initialize parasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
-    return Py_ERROR;
+    return SV_PYTHON_ERROR;
   }
 
   PyObject *pythonC;
@@ -132,7 +133,7 @@ PyObject* Polydatasolid_pyInit()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
-    return Py_ERROR;
+    return SV_PYTHON_ERROR;
   }
   return pythonC;
 }
@@ -184,14 +185,14 @@ PyInit_pySolidPolydata()
       (FactoryMethodPtr) &pyCreatePolyDataSolid );
   }
   else {
-    Py_RETURN_NONE;
+    return SV_PYTHON_ERROR;
 
   }
   tmp->registrar = pySolidModelRegistrar;
   PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
   // Initialize parasolid_utils
   if (PlyDtaUtils_Init() != SV_OK) {
-    Py_RETURN_NONE;
+    return SV_PYTHON_ERROR;
 
   }
 
@@ -202,7 +203,7 @@ PyInit_pySolidPolydata()
   if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolidolydata");
-    return pythonC;
+    return SV_PYTHON_ERROR;
   }
 
   return pythonC;

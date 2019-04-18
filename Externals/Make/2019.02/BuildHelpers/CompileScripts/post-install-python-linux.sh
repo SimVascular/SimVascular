@@ -6,8 +6,7 @@ GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
 GMV=mv
-
-$GCP -fl REPLACEME_SV_TOP_BIN_DIR_PYTHON/REPLACEME_SV_PYTHON_EXECUTABLE  REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/svpython
+GRM=rm
 
 # need pip to install things
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python REPLACEME_SV_TOPLEVEL_SRCDIR/BuildHelpers/Originals/python/get-pip.py
@@ -24,12 +23,18 @@ REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install jupyter
 #install tensorflow
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tensorflow
 
-$GMKDIR REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-alt
+$GMKDIR REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate
 
 for f in REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/*; do
     shortf="${f##*/}"
     echo "File -> $f"
-    sed -e "s+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python+svpython+g" $f > REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-alt/$shortf
+    sed -e "s+REPLACEME_SV_TOP_BIN_DIR_PYTHON+/usr/local/sv/svpython+g;s+#!/usr/local/sv/svpython/bin/python+#!/usr/local/sv/svpython/bin/svpython+g" $f > REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/$shortf
 done
+
+# sed destroys the actual python executable, need to overwrite with original
+$GRM -f REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/python
+$GRM -f REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/python3*
+$GCP -f REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/ 
+$GCP -df REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python3* REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate/
 
 REPLACEME_SV_SPECIAL_COMPILER_END_SCRIPT

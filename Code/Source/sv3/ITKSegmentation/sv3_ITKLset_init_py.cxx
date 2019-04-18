@@ -52,7 +52,7 @@ int Itklset_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
   PyInit_pyItkls();
 #endif
-  return Py_OK;
+  return SV_OK;
 
 }
 

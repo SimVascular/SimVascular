@@ -22,7 +22,7 @@ sudo apt-get -y install lsb-core
 #sudo apt-get -y install cmake-qt-gui
 
 ### for flowsolver
-sudo apt-get -y install libmpich2-dev
+sudo apt-get -y install libmpich-dev
 
 ### for vtk
 sudo apt-get -y install libglu1-mesa-dev
@@ -90,7 +90,7 @@ sudo apt-get -y install libncurses-dev
 sudo apt-get -y install libpcre3-dev
 
 # qt webkit build
-sudo apt-get -y install ruby2.3
+sudo apt-get -y install ruby
 sudo apt-get -y install gperf
 sudo apt-get -y install bison
 sudo apt-get -y install flex
@@ -103,9 +103,11 @@ sudo apt-get -y install libxrender-dev
 sudo apt-get -y install doxygen
 
 # unknown: required by 16.04 compiled externals
-sudo apt-get -y install libgstreamer0.10-0
-sudo apt-get -y install libgstreamer-plugins-base0.10-0
-sudo apt-get -y install libgstreamer0.10-dev
+sudo apt-get -y install libgstreamer-gl11.0-0
+sudo apt-get -y install libgstreamer1.0-0
+sudo apt-get -y install libgstreamer-plugins-base1.0-0
+sudo apt-get -y install libgstreamer-plugins-base1.0-dev
+sudo apt-get -y install libgstreamer1.0-dev
 
 ### install latest version of CMake
 wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.10.3-Linux-x86_64.sh
