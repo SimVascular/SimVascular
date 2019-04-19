@@ -232,40 +232,41 @@ std::string sv4guiSimulationUtils1d::CreatePreSolverFileContent(sv4guiSimJob1d* 
     return ss.str();
 }
 
-std::string sv4guiSimulationUtils1d::CreateRCRTFileContent(sv4guiSimJob1d* job)
+//-----------------------
+// CreateRCRTFileContent
+//-----------------------
+//
+std::string sv4guiSimulationUtils1d::CreateRCRTFileContent(const sv4guiSimJob1d* job)
 {
     std::stringstream ss;
-    //    auto basicProps=job->GetBasicProps();
-
-    auto capProps=job->GetCapProps();
+    auto capProps = job->GetCapProps();
     auto it = capProps.begin();
-    while(it != capProps.end())
-    {
-        if(it->first!="")
-        {
-            auto props=it->second;
-            if(props["BC Type"]=="RCR")
-            {
-                auto values=sv4guiStringUtils_split(props["Values"],' ');
-                if(values.size()==3)
-                {
-                    ss << "2\n";
-                    ss << values[0] <<"\n";
-                    ss << values[1] <<"\n";
-                    ss << values[2] <<"\n";
-                    ss << "0.0 " << props["Pressure"] <<"\n";
-                    //                    ss << basicProps["Period"] << " " << props["Pressure"] <<"\n";
-                    ss << "1.0 " << props["Pressure"] <<"\n";
-                }
+
+    for (auto const& cap : capProps) {
+        if (cap.first == "") {
+            continue;
+        }
+        auto props = cap.second;
+
+        if (props["BC Type"] == "RCR") {
+            auto values = sv4guiStringUtils_split(props["Values"],' ');
+            if (values.size() == 3) {
+                ss << cap.first + "\n";
+                ss << "2\n";
+                ss << values[0] <<"\n";
+                ss << values[1] <<"\n";
+                ss << values[2] <<"\n";
+                ss << "0.0 " << props["Pressure"] <<"\n";
+                ss << "1.0 " << props["Pressure"] <<"\n";
             }
         }
-        it++;
     }
-
-    if(ss.str()=="")
+   
+    if (ss.str() == "") {
         return "";
-    else
-        return "2\n"+ss.str();
+    } else {
+        return "2\n" + ss.str();
+   }
 }
 
 std::string sv4guiSimulationUtils1d::CreateCORTFileContent(sv4guiSimJob1d* job)

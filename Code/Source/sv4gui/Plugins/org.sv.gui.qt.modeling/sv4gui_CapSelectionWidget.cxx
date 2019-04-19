@@ -134,6 +134,27 @@ std::vector<std::string> sv4guiCapSelectionWidget::GetUsedCapNames()
     return capNames;
 }
 
+std::vector<std::string> sv4guiCapSelectionWidget::GetUnselectedCapNames()
+{
+    std::vector<std::string> capNames;
+
+    if(m_TableModel==NULL) {
+        return capNames;
+    }
+
+    int rowCount=m_TableModel->rowCount();
+
+    for(int i=0;i<rowCount;i++) {
+        QModelIndex index= m_TableModel->index(i,1, QModelIndex());
+        if(index.data(Qt::CheckStateRole) != Qt::Checked){
+            QModelIndex idx= m_TableModel->index(i,0, QModelIndex());
+            capNames.push_back(idx.data().toString().toStdString());
+        }
+    }
+    return capNames;
+}
+
+
 void sv4guiCapSelectionWidget::Confirm()
 {
     hide();

@@ -50,7 +50,7 @@ public:
 
     static std::string CreatePreSolverFileContent(sv4guiSimJob1d* job, std::string outputDir="");
 
-    static std::string CreateRCRTFileContent(sv4guiSimJob1d* job);
+    static std::string CreateRCRTFileContent(const sv4guiSimJob1d* job);
 
     static std::string CreateCORTFileContent(sv4guiSimJob1d* job);
 

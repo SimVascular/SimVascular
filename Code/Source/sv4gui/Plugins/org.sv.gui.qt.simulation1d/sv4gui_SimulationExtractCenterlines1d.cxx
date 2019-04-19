@@ -208,6 +208,7 @@ vtkSmartPointer<vtkPolyData> sv4guiSimulationExtractCenterlines1d::GetCenterline
 //-----------------
 // WorkThread::run
 //-----------------
+// Execute the worker thread to calculate centerlines.
 //
 void sv4guiSimulationExtractCenterlines1d::WorkThread::run()
 {
@@ -222,7 +223,7 @@ void sv4guiSimulationExtractCenterlines1d::WorkThread::run()
         return;
     }
 
-    sv4guiModelElement* modelElement=model->GetModelElement();
+    sv4guiModelElement* modelElement = model->GetModelElement();
     if (!modelElement) {
         return;
     }
@@ -242,7 +243,7 @@ void sv4guiSimulationExtractCenterlines1d::WorkThread::run()
 
         m_CenterlineGeometry = sv4guiModelUtils::CreateCenterlines(modelElement, sourceCapIds);
 
-        // Add for Centerlines Data Node.
+        // Add Centerlines Data Node.
         //
         m_CenterlinesModelNode = mm_DataStorage->GetNamedDerivedNode("Full_Centerlines", m_SelectedNode);
         mitk::Surface::Pointer centerlinesSurface;

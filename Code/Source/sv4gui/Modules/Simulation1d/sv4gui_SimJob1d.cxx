@@ -81,7 +81,7 @@ void sv4guiSimJob1d::SetCapProps(std::map<std::string,std::map<std::string,std::
     m_CapProps=capProps;
 }
 
-std::map<std::string,std::map<std::string,std::string> > sv4guiSimJob1d::GetCapProps()
+std::map<std::string,std::map<std::string,std::string> > sv4guiSimJob1d::GetCapProps() const
 {
     return m_CapProps;
 }

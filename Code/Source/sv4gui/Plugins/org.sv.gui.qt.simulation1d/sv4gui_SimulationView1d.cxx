@@ -73,8 +73,12 @@
 #include <QApplication>
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
+
+// Set the names of the files written as output.
+//
 const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
 const QString sv4guiSimulationView1d::SOLVER_FILE_NAME = "solver.in";
+const QString sv4guiSimulationView1d::RCR_BC_FILE_NAME = "rcrt.dat";
 
 // Set the values of the Surface Model Origin types.
 //
@@ -405,9 +409,9 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 
     // Add surface model widgets.
     //
-    connect(ui->surfaceModelComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSurfaceModelSource( )));
+    connect(ui->surfaceModelComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSurfaceModelSource( )));
     connect(ui->readModelPushButton, SIGNAL(clicked()), this, SLOT(ReadModel()) );
-    connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int)), this, SLOT(UdpateSurfaceMeshName()));
+    connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateSurfaceMeshName()));
 
     for (auto const& type : SurfaceModelSource::types) {
         ui->surfaceModelComboBox->addItem(type);
@@ -423,7 +427,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 
     // Add centerlines widgets.
     //
-    connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateCenterlinesSource()));
+    connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateCenterlinesSource()));
     connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(SelectCenterlinesFile()));
     connect(ui->calculateCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(CalculateCenterlines()) );
     connect(ui->selectModelFacesPushButton, SIGNAL(clicked()), this, SLOT(SelectModelFaces()));
@@ -448,22 +452,22 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 }
 
 //--------------------------
-// UdpateSurfaceModelSource 
+// UpdateSurfaceModelSource 
 //--------------------------
 // Set the source of a surface model.
 //
 // Modifies:
 //     m_ModelSource 
 //
-void sv4guiSimulationView1d::UdpateSurfaceModelSource()
+void sv4guiSimulationView1d::UpdateSurfaceModelSource()
 {
     if (!m_MitkJob) {
         return;
     }
 
-    auto msg = "[sv4guiSimulationView1d::UdpateSurfaceModelSource] ";
+    auto msg = "[sv4guiSimulationView1d::UpdateSurfaceModelSource] ";
     MITK_INFO << msg;
-    MITK_INFO << msg << "---------- UdpateSurfaceModelSource ----------";
+    MITK_INFO << msg << "---------- UpdateSurfaceModelSource ----------";
 
     auto sourceType = ui->surfaceModelComboBox->currentText();
     //std::string sourceType = ui->surfaceModelComboBox->currentText().toStdString();
@@ -564,8 +568,43 @@ void sv4guiSimulationView1d::ReadModel()
 }
 
 //------------------
+// SetModelCapFaces
+//------------------
+//
+void sv4guiSimulationView1d::SetModelCapFaces()
+{
+    if (!m_Model) {
+        return;
+    }
+    auto msg = "[sv4guiSimulationView1d::SetModelCapFaces] ";
+    MITK_INFO << msg << "--------- SetModelCapFaces ----------"; 
+
+    int timeStep = 0;
+    sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
+    std::vector<sv4guiModelElement::svFace*> faces = modelElement->GetFaces();
+    m_ModelCapFaceNames.clear();
+
+    for (auto const& face : faces) {
+        if ((face == nullptr) || (face->type != "cap")) {
+            continue;
+        }
+        m_ModelCapFaceNames.push_back(face->name);
+        MITK_INFO << msg << "Model cap face: " << face->name;
+    }
+
+    MITK_INFO << msg << "Number of model cap faces: " << m_ModelCapFaceNames.size();
+}
+
+//------------------
 // SelectModelFaces
 //------------------
+// Select the inlet faces of a surface model.
+//
+// The model cap faces are displayed as checkable
+// rows in a GUI popup table.
+//
+// The inlet faces are used to compute centerlines from
+// the surface model.
 //
 void sv4guiSimulationView1d::SelectModelFaces()
 {
@@ -584,23 +623,19 @@ void sv4guiSimulationView1d::SelectModelFaces()
 
     int timeStep=GetTimeStep();
 */
+    // Create a vector of caps names from the model faces.
+    //
     int timeStep = 0;
-
     sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
     std::vector<sv4guiModelElement::svFace*> faces = modelElement->GetFaces();
     std::vector<std::string> caps;
     MITK_INFO << msg << "Number of model faces: " << faces.size();
 
-    int rowIndex=-1;
-
-    for(int i = 0; i < faces.size(); i++) {
-        if (faces[i] == NULL) {
+    for (auto const& face : faces) {
+        if ((face == nullptr) || (face->type != "cap")) {
             continue;
         }
-
-        if (faces[i]->type == "cap") {
-            caps.push_back(faces[i]->name);
-        }
+        caps.push_back(face->name);
     }
 
     m_ModelFaceSelectionWidget->SetTableView(caps, modelElement, "PolyData");
@@ -617,6 +652,7 @@ void sv4guiSimulationView1d::SelectModelFaces()
 // Modifies:
 //   m_ModelInletFaceNames
 //   m_ModelInletFaceIds
+//   m_ModelOutletFaceNames
 //
 void sv4guiSimulationView1d::AddModelFaces()
 {
@@ -626,15 +662,26 @@ void sv4guiSimulationView1d::AddModelFaces()
 
     auto msg = "[sv4guiSimulationView1d::AddModelFaces] ";
     MITK_INFO << msg << "--------- AddModelFaces ----------"; 
+
     int timeStep = 0;
     sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
-    std::vector<std::string> capNames = m_ModelFaceSelectionWidget->GetUsedCapNames();
-    MITK_INFO << msg << "Number of inlet faces selected: " << capNames.size(); 
-
-    for (const auto& name : capNames) {
+    std::vector<std::string> inletFaceNames = m_ModelFaceSelectionWidget->GetUsedCapNames();
+    MITK_INFO << msg << "Number of inlet faces selected: " << inletFaceNames.size(); 
+    m_ModelInletFaceNames.clear();
+    for (const auto& name : inletFaceNames) {
         MITK_INFO << msg << "Inlet face: " << name; 
         m_ModelInletFaceNames.push_back(name);
         m_ModelInletFaceIds.push_back(modelElement->GetFaceID(name));
+    }
+
+    // Set the unselected outlet faces.
+    //
+    std::vector<std::string> outletFaceNames = m_ModelFaceSelectionWidget->GetUnselectedCapNames();
+    MITK_INFO << msg << "Number of outlet faces not selected: " << outletFaceNames.size();
+    m_ModelOutletFaceNames.clear();
+    for (const auto& name : outletFaceNames) {
+        MITK_INFO << msg << "Outlet face: " << name;
+        m_ModelOutletFaceNames.push_back(name);
     }
 
     // Enable execute centerlines button.
@@ -642,22 +689,22 @@ void sv4guiSimulationView1d::AddModelFaces()
 }
 
 //-------------------------
-// UdpateCenterlinesSource 
+// UpdateCenterlinesSource 
 //-------------------------
 // Update GUI depending on centerlines source.
 //
 // Sets:
 //   m_CenterlinesSource 
 //
-void sv4guiSimulationView1d::UdpateCenterlinesSource()
+void sv4guiSimulationView1d::UpdateCenterlinesSource()
 {
     if (!m_MitkJob) {
         return;
     }
 
-    auto msg = "[sv4guiSimulationView1d::UdpateCenterlinesSource] ";
+    auto msg = "[sv4guiSimulationView1d::UpdateCenterlinesSource] ";
     MITK_INFO << msg;
-    MITK_INFO << msg << "---------- UdpateCenterlinesSource ----------";
+    MITK_INFO << msg << "---------- UpdateCenterlinesSource ----------";
 
     auto sourceType = ui->centerlinesComboBox->currentText();
     MITK_INFO << msg << "sourceType: " << sourceType;
@@ -674,6 +721,38 @@ void sv4guiSimulationView1d::UdpateCenterlinesSource()
     ui->selectModelFacesPushButton->setVisible(showCalculate);
     ui->calculateCenterlinesPushButton->setVisible(showCalculate);
     ui->calculateCenterlinesPushButton->setEnabled(false);
+}
+
+//------------------------
+// SetCenterlinesGeometry
+//------------------------
+// Set the centerline geometry if it exists.
+//
+// If the centerline geometry file exists in the
+// project directory then read and display it.
+//
+// Modifies:
+//   m_CenterlinesFileName 
+//
+void sv4guiSimulationView1d::SetCenterlinesGeometry()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+
+    auto msg = "[sv4guiSimulationView1d::SetCenterlinesGeometry] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- SetCenterlinesGeometry ----------";
+    auto fileName = m_PluginOutputDirectory + "/centerlines.vtp";
+    MITK_INFO << msg << "File name: " << fileName;
+
+    QFileInfo check_file(fileName);
+
+    if (check_file.exists() && check_file.isFile()) {
+        MITK_INFO << msg << "Centerlines file exists.";
+        m_CenterlinesFileName = fileName;
+        UpdateCenterlines();
+    }
 }
 
 //----------------------
@@ -1306,6 +1385,8 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         EnableTool(true);
         AddObservers();
     }
+
+    SetCenterlinesGeometry();
 
     // Update main GUI panel upper section.
     //
@@ -2457,13 +2538,13 @@ void sv4guiSimulationView1d::UpdateGUIJob()
 }
 
 //-----------------------
-// UdpateSurfaceMeshName
+// UpdateSurfaceMeshName
 //-----------------------
 //
-void sv4guiSimulationView1d::UdpateSurfaceMeshName()
+void sv4guiSimulationView1d::UpdateSurfaceMeshName()
 {
-    auto msg = "[sv4guiSimulationView1d::UdpateSurfaceMeshName] ";
-    MITK_INFO << msg << "--------- UdpateSurfaceMeshName ----------"; 
+    auto msg = "[sv4guiSimulationView1d::UpdateSurfaceMeshName] ";
+    MITK_INFO << msg << "--------- UpdateSurfaceMeshName ----------"; 
     auto meshName = ui->comboBoxMeshName->currentText().toStdString();
 
     if (meshName != "") {
@@ -2719,8 +2800,12 @@ void sv4guiSimulationView1d::RunJob()
 //-----------------
 // CreateDataFiles
 //-----------------
-//
 // Create files for a simulation.
+//
+// Files are written to the PROJECT/Simulations1d/JOB_NAME directory.
+//
+// Arguments:
+//   outputDir: The directory to write the files to. 
 //
 bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
@@ -2736,6 +2821,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     if (outputDir == "") {
         return false;
     }
+
 
     // Create a job object storing all the parameters needed for a simulation.
     //
@@ -2759,9 +2845,12 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     if (m_CenterlinesFileName.isEmpty()) {
         QMessageBox::warning(NULL, "1D Simulation", "No centerlines have been calculated or centerlines source file set.");
         MITK_ERROR << "No centerlines file is defined.";
-        return;
+        return false;
     }
     MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
+
+    // Write boundary condition files.
+    WriteRcrFile(outputDir, job);
 
     auto outputDirectory = outputDir.toStdString();
     auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
@@ -2769,10 +2858,40 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
 
     // Execute the generate-1d-mesh.py script.
     auto pythonInterface = sv4guiSimulationPython1d();
-    pythonInterface.GenerateSolverInput(outputDirectory, inputCenterlinesFile, solverFileName, job);
+    //pythonInterface.GenerateSolverInput(outputDirectory, inputCenterlinesFile, solverFileName, job);
 
     return true;
 }
+
+//--------------
+// WriteRcrFile
+//--------------
+// Write the RCR boundary conditions file.
+//
+void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, const sv4guiSimJob1d* job)
+{
+    auto msg = "[sv4guiSimulationView1d::WriteRcrFile] ";
+    MITK_INFO << msg << "--------- WriteRcrFile ----------"; 
+    MITK_INFO << msg << "Output directory: " << outputDir;
+    QString rcrtFielContent = QString::fromStdString(sv4guiSimulationUtils1d::CreateRCRTFileContent(job));
+    MITK_INFO << msg << "rcrtFielContent: " << rcrtFielContent;
+
+    if (rcrtFielContent == "") {
+        return;
+    }
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
+    QFile rcrtFile(outputDir + "/" + RCR_BC_FILE_NAME);
+
+    if (rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&rcrtFile);
+        out << rcrtFielContent;
+        rcrtFile.close();
+    }
+
+
+}
+
 
 //----------------
 // GetSurfaceMesh

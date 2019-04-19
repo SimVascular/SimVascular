@@ -71,6 +71,7 @@ public:
     static const QString EXTENSION_ID;
     static const QString MESH_FILE_NAME;
     static const QString SOLVER_FILE_NAME;
+    static const QString RCR_BC_FILE_NAME;
 
     sv4guiSimulationView1d();
 
@@ -128,9 +129,9 @@ public slots:
     // 1D Mesh slots.
     void Generate1DMesh();
     void ReadMesh();
-    void UdpateSurfaceModelSource();
+    void UpdateSurfaceModelSource();
     void ReadModel();
-    void UdpateCenterlinesSource();
+    void UpdateCenterlinesSource();
     void SelectCenterlinesFile();
     void CalculateCenterlines();
     void SelectModelFaces();
@@ -146,7 +147,7 @@ public slots:
 
     void UpdateJobStatus();
     void UpdateSimJob();
-    void UdpateSurfaceMeshName();
+    void UpdateSurfaceMeshName();
     void UpdateSimJobNumProcs();
 
     void SetupInternalSolverPaths();
@@ -181,6 +182,7 @@ public:
     vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
+    void WriteRcrFile(const QString outputDir, const sv4guiSimJob1d* job);
 
     bool IsDouble(std::string value);
 
@@ -219,6 +221,8 @@ private:
     sv4guiCapSelectionWidget* m_ModelFaceSelectionWidget;
     std::vector<std::string> m_ModelInletFaceNames;
     std::vector<int> m_ModelInletFaceIds;
+    std::vector<std::string> m_ModelCapFaceNames;
+    std::vector<std::string> m_ModelOutletFaceNames;
 
     sv4guiMesh* m_Mesh;
     mitk::DataNode::Pointer m_MeshFolderNode;
@@ -277,6 +281,7 @@ private:
     mitk::DataNode::Pointer getProjectNode();
     mitk::DataNode::Pointer GetModelFolderDataNode();
     QString GetModelFileName();
+    void SetModelCapFaces();
 
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();
@@ -286,6 +291,8 @@ private:
 
     void Update1DMesh();
     vtkSmartPointer<vtkPolyData> Read1DMesh(const std::string fileName);
+
+    void SetCenterlinesGeometry();
 
     bool SetBasicParameters(sv4guiSimJob1d* job, std::string& msg);
     bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg);
