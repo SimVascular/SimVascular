@@ -69,9 +69,12 @@ class sv4guiSimulationView1d : public sv4guiQmitkFunctionality
 public:
 
     static const QString EXTENSION_ID;
+
+    // The names of files written by this class.
     static const QString MESH_FILE_NAME;
     static const QString SOLVER_FILE_NAME;
     static const QString RCR_BC_FILE_NAME;
+    static const QString OUTLET_FACE_NAMES_FILE_NAME;
 
     sv4guiSimulationView1d();
 
@@ -183,6 +186,7 @@ public:
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
     void WriteRcrFile(const QString outputDir, const sv4guiSimJob1d* job);
+    void WriteOutletFaceNames(const QString outputDir);
 
     bool IsDouble(std::string value);
 

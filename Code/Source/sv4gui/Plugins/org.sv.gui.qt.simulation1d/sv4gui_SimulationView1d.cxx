@@ -79,6 +79,7 @@ const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d"
 const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
 const QString sv4guiSimulationView1d::SOLVER_FILE_NAME = "solver.in";
 const QString sv4guiSimulationView1d::RCR_BC_FILE_NAME = "rcrt.dat";
+const QString sv4guiSimulationView1d::OUTLET_FACE_NAMES_FILE_NAME = "outlet_face_names.dat";
 
 // Set the values of the Surface Model Origin types.
 //
@@ -2849,14 +2850,23 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     }
     MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
 
-    // Write boundary condition files.
-    WriteRcrFile(outputDir, job);
+    // Check that an inlet and outlet faces have been identified.
+    if (m_ModelOutletFaceNames.size() == 0) {
+        QMessageBox::warning(NULL, "1D Simulation", "No inlet face has been selected.");
+        MITK_ERROR << "No inlet face has been defined.";
+        return false;
+    }
 
+    // Write the data files needed to generate a solver input file.
+    WriteRcrFile(outputDir, job);
+    WriteOutletFaceNames(outputDir);
+
+    // Execute the Python script to generate the 1D solver input file.
+    //
     auto outputDirectory = outputDir.toStdString();
     auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
     auto solverFileName = SOLVER_FILE_NAME.toStdString();
 
-    // Execute the generate-1d-mesh.py script.
     auto pythonInterface = sv4guiSimulationPython1d();
     //pythonInterface.GenerateSolverInput(outputDirectory, inputCenterlinesFile, solverFileName, job);
 
@@ -2888,10 +2898,29 @@ void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, const sv4guiS
         out << rcrtFielContent;
         rcrtFile.close();
     }
-
-
 }
 
+//----------------------
+// WriteOutletFaceNames
+//----------------------
+// Write the outlet face names.
+//
+void sv4guiSimulationView1d::WriteOutletFaceNames(const QString outputDir)
+{
+    auto msg = "[sv4guiSimulationView1d::WriteRcrFileWriteOutletFaceNames] ";
+    MITK_INFO << msg << "--------- WriteOutletFaceNames ----------";
+
+    QFile outletNamesFile(outputDir + "/" + OUTLET_FACE_NAMES_FILE_NAME);
+
+    if (outletNamesFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&outletNamesFile);
+
+        for (auto const& name : m_ModelOutletFaceNames) {
+            out << QString::fromStdString(name + "\n");
+        }
+        outletNamesFile.close();
+    }
+}
 
 //----------------
 // GetSurfaceMesh
