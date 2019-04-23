@@ -29,7 +29,7 @@
        </rect>
       </property>
       <attribute name="label">
-       <string>Page 1</string>
+       <string>Multi path segmentation</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="page_2">
@@ -42,7 +42,7 @@
        </rect>
       </property>
       <attribute name="label">
-       <string>Page 2</string>
+       <string>Single path segmentation</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
