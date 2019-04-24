@@ -74,15 +74,23 @@
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
-// Set the names of the files written as output.
+// Set the title for QMessageBox warnings.
 //
+// Note: On MacOS the window title is ignored (as required by the Mac OS X Guidelines). 
+const QString sv4guiSimulationView1d::MsgTitle = "SimVascular SV 1D Simulation";
+
+// Set solver default name and install location.
+const QString sv4guiSimulationView1d::SOLVER_EXECUTABLE_NAME = "OneDSolver";
+const QString sv4guiSimulationView1d::SOLVER_INSTALL_DIRECTORY = "/usr/local/sv/oneDSolver";
+const QString sv4guiSimulationView1d::SOLVER_INSTALL_SUB_DIRECTORY = "/bin";
+
+// Set the names of the files written as output.
 const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
 const QString sv4guiSimulationView1d::SOLVER_FILE_NAME = "solver.in";
 const QString sv4guiSimulationView1d::RCR_BC_FILE_NAME = "rcrt.dat";
 const QString sv4guiSimulationView1d::OUTLET_FACE_NAMES_FILE_NAME = "outlet_face_names.dat";
 
 // Set the values of the Surface Model Origin types.
-//
 const QString sv4guiSimulationView1d::SurfaceModelSource::MESH_PLUGIN = "Mesh Plugin";
 const QString sv4guiSimulationView1d::SurfaceModelSource::MODEL_PLUGIN = "Model Plugin";
 const QString sv4guiSimulationView1d::SurfaceModelSource::READ_FROM_FILE = "Read from File";
@@ -245,10 +253,8 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     MITK_INFO << msg << "--------- CreateQtPartControl ----------"; 
     m_Parent=parent;
     ui->setupUi(parent);
-    ui->btnSave->hide();
+    //ui->btnSave->hide();
 
-    // Show Model checkbox.
-    connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
 
     // Set the toolbox ('1D Mesh', 'Basic Parameters', etc. pages) to display the first page.
     ui->toolBox->setCurrentIndex(0);
@@ -405,14 +411,13 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 {
     auto msg = "[sv4guiSimulationView1d::Create1DMeshControls] ";
     MITK_INFO << msg << "--------- Create1DMeshControls ----------"; 
-    connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(Generate1DMesh()));
-    //connect(ui->readMeshPushButton, SIGNAL(clicked()), this, SLOT(ReadMesh()));
 
     // Add surface model widgets.
     //
     connect(ui->surfaceModelComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSurfaceModelSource( )));
     connect(ui->readModelPushButton, SIGNAL(clicked()), this, SLOT(ReadModel()) );
     connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateSurfaceMeshName()));
+    connect(ui->showModelCheckBox, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
 
     for (auto const& type : SurfaceModelSource::types) {
         ui->surfaceModelComboBox->addItem(type);
@@ -444,12 +449,18 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     ui->calculateCenterlinesPushButton->setEnabled(false);
 
     // Add model face selection widget.
+    //
     m_ModelFaceSelectionWidget = new sv4guiCapSelectionWidget();
     m_ModelFaceSelectionWidget->move(400,400);
     m_ModelFaceSelectionWidget->hide();
     m_ModelFaceSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
     // Set callback when 'OK' button is selected. 
     connect(m_ModelFaceSelectionWidget, SIGNAL(accepted()), this, SLOT(AddModelFaces()));
+
+    // Generate Mesh.
+    //
+    connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(Generate1DMesh()));
+    connect(ui->showMeshCheckBox, SIGNAL(clicked(bool)), this, SLOT(Show1DMesh(bool)) );
 }
 
 //--------------------------
@@ -475,6 +486,8 @@ void sv4guiSimulationView1d::UpdateSurfaceModelSource()
     MITK_INFO << msg << "sourceType: " << sourceType;
 
     auto showModel = (sourceType == SurfaceModelSource::MODEL_PLUGIN);
+    ui->modelNameLabel->setVisible(showModel);
+    ui->labelModelName->setVisible(showModel);
 
     auto showRead = (sourceType == SurfaceModelSource::READ_FROM_FILE);
     ui->readModelPushButton->setVisible(showRead);
@@ -1093,6 +1106,21 @@ void sv4guiSimulationView1d::Generate1DMesh()
 }
 
 //------------
+// Show1DMesh
+//------------
+//
+void sv4guiSimulationView1d::Show1DMesh()
+{
+    auto msg = "[sv4guiSimulationView1d::Show1DMesh] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "---------- Show1DMesh ----------";
+
+    if (m_Model == nullptr) { 
+        return;
+    }
+}
+
+//------------
 // Read1DMesh
 //------------
 // Read a 1D mesh into a vtkPolyData object and
@@ -1393,11 +1421,11 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     //
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
     ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
-    ui->checkBoxShowModel->setChecked(false);
+    ui->showModelCheckBox->setChecked(false);
     if(m_ModelNode.IsNotNull()) {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
         if(m_ModelNode->IsVisible(NULL)) {
-            ui->checkBoxShowModel->setChecked(true);
+            ui->showModelCheckBox->setChecked(true);
         }
     } else {
         ui->labelModelName->setText("No model found");
@@ -1540,7 +1568,6 @@ void sv4guiSimulationView1d::ClearAll()
 //----------------
 // UpdateGUIBasic
 //----------------
-//
 // Update the 'Basic Paramaters' GUI page.
 //
 void sv4guiSimulationView1d::UpdateGUIBasic()
@@ -2427,7 +2454,7 @@ void sv4guiSimulationView1d::UpdateGUISolver()
     int colCount=solverHeaders.size();
     m_TableModelSolver->setColumnCount(colCount);
 
-    QString templateFilePath=":solvertemplate.xml";
+    QString templateFilePath=":solvertemplate1d.xml";
     if(m_UseCustom)
         templateFilePath=m_SolverTemplatePath;
 
@@ -2438,7 +2465,7 @@ void sv4guiSimulationView1d::UpdateGUISolver()
         return;
     }
 
-    QDomDocument doc("solvertemplate");
+    QDomDocument doc("solvertemplate1d");
     //    QString *em=NULL;
     if(!doc.setContent(&xmlFile))
     {
@@ -2653,8 +2680,9 @@ QString sv4guiSimulationView1d::GetJobPath()
 //
 void sv4guiSimulationView1d::CreateAllFiles()
 {
-    if(!m_MitkJob)
+    if (!m_MitkJob) {
         return;
+    }
 
     auto outputAllFiles = true;
     auto updateJob = true; 
@@ -2666,136 +2694,98 @@ void sv4guiSimulationView1d::CreateAllFiles()
 //--------
 // RunJob
 //--------
+// Execute a 1D simulation job.
 //
 void sv4guiSimulationView1d::RunJob()
 {
-/*
-    if (QMessageBox::question(m_Parent, "Run Job", "Are you sure to run the job? It may take a while to finish.",
-                              QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
-    {
-      return;
-    }
-*/
+    auto msg = "[sv4guiSimulationView1d::RunJob] ";
+    MITK_INFO << msg << "--------- RunJob ----------"; 
 
     if (!m_MitkJob) {
         return;
     }
 
-    QString jobPath=GetJobPath();
-    if(jobPath=="" || !QDir(jobPath).exists())
-    {
+    QString jobPath = GetJobPath();
+    if ((jobPath == "") || !QDir(jobPath).exists()) {
         QMessageBox::warning(m_Parent,"Unable to run","Please make sure data files have been created!");
         return;
     }
+    MITK_INFO << msg << "Job path: " << jobPath;
 
-    QString flowsolverPath=m_ExternalFlowsolverPath;
-    if(flowsolverPath=="")
-    {
-        if(m_UseMPI)
-            flowsolverPath=m_InternalFlowsolverPath;
-        else
-            flowsolverPath=m_InternalFlowsolverNoMPIPath;
+    // Get the solver executable.
+    auto solverExecutable = GetSolverExecutable();
+    if (solverExecutable == nullptr) {
+        return; 
+    } 
+
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+
+/*
+    if (job) {
+        QString tstr = QString::fromStdString(job->GetSolverProp("Number of Timesteps"));
+        totalSteps = tstr.toInt();
     }
-
-    if(flowsolverPath=="")
-    {
-        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please make sure flowsolver exists!");
-        return;
-    }
-
-    QString mpiExecPath="";
-    if(m_UseMPI)
-    {
-        mpiExecPath=m_ExternalMPIExecPath;
-        if(mpiExecPath=="")
-            mpiExecPath=m_InternalMPIExecPath;
-
-        if(mpiExecPath=="")
-        {
-            QMessageBox::warning(m_Parent,"MPIExec Missing","Please make sure mpiexec exists!");
-            return;
-        }
-    }
-
-    QString runPath=jobPath;
-    int numProcs=ui->sliderNumProcs->value();
-    if(m_UseMPI && numProcs>1)
-    {
-        runPath=jobPath+"/"+QString::number(numProcs)+"-procs_case";
-    }
-
-    std::string startingNumber=ui->lineEditStartStepNum->text().trimmed().toStdString();
-    if(startingNumber!="")
-    {
-        if(!IsInt(startingNumber))
-        {
-            QMessageBox::warning(m_Parent,"Parameter Error","Please provide starting step number in correct format.");
-            return;
-        }
-
-        QString runRestart=runPath+"/restart."+QString::fromStdString(startingNumber)+".1";
-        QString jobRestart=jobPath+"/restart."+QString::fromStdString(startingNumber)+".1";
-
-        if( (QDir(runPath).exists() && !QFile(runRestart).exists())
-                || (numProcs>1 && !QDir(runPath).exists() && !QFile(jobRestart).exists()) )
-        {
-            QMessageBox::warning(m_Parent,"Unable to run","Please make sure starting step number is right");
-            return;
-        }
-
-        QFile numStartFile(runPath+"/numstart.dat");
-        if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream out(&numStartFile);
-            out<<QString::fromStdString(startingNumber+"\n");
-            numStartFile.close();
-        }
-
-    }
-
-    int startStep=0;
-    QFile numFile(runPath+"/numstart.dat");
-    if (numFile.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&numFile);
-        QString stepStr=in.readLine();
-        bool ok;
-        int step=stepStr.toInt(&ok);
-        if(ok)
-            startStep=step;
-
-        numFile.close();
-    }
-
-    int totalSteps=100;//initial none zero value
-    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    if(job)
-    {
-        job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
-        QString tstr=QString::fromStdString(job->GetSolverProp("Number of Timesteps"));
-        totalSteps=tstr.toInt();
-    }
+*/
 
     mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
 
-    QProcess *flowsolverProcess = new QProcess(m_Parent);
-    flowsolverProcess->setWorkingDirectory(jobPath);
+    QProcess* solverProcess = new QProcess(m_Parent);
+    solverProcess->setWorkingDirectory(jobPath);
+    solverProcess->setProgram(solverExecutable);
 
-    if(m_UseMPI)
-    {
-        QStringList arguments;
-        arguments << "-n" << QString::number(numProcs)<< flowsolverPath;
-        flowsolverProcess->setProgram(mpiExecPath);
-        flowsolverProcess->setArguments(arguments);
-    }
-    else
-    {
-        flowsolverProcess->setProgram(flowsolverPath);
-        flowsolverProcess->setArguments(QStringList());
-    }
+    QStringList arguments;
+    arguments << m_SolverInputFile;
+    solverProcess->setArguments(arguments);
 
-    sv4guiSolverProcessHandler1d* handler=new sv4guiSolverProcessHandler1d(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,m_Parent);
+    int startStep = 0;
+    int totalSteps = 2000;
+
+    sv4guiSolverProcessHandler1d* handler = new sv4guiSolverProcessHandler1d(solverProcess, m_JobNode, startStep, totalSteps, 
+        jobPath, m_Parent);
     handler->Start();
+}
+
+//---------------------
+// GetSolverExecutable
+//---------------------
+//
+QString sv4guiSimulationView1d::GetSolverExecutable()
+{
+    auto msg = "[sv4guiSimulationView1d::GetSolverExecutable] ";
+    MITK_INFO << msg << "--------- GetSolverExecutable ----------"; 
+    auto solverExecutable = SOLVER_INSTALL_DIRECTORY + "/" + SOLVER_EXECUTABLE_NAME;
+    auto solverInstallPath = SOLVER_INSTALL_DIRECTORY;
+
+    if (!QDir(solverInstallPath).exists()) {
+        auto msg1 = "The 1D solver was not found.\n"; 
+        auto msg2 = "Please install the 1D solver in '" + solverInstallPath + "'.\n"; 
+        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2); 
+        return nullptr;
+    }
+
+    // Set the install path.
+    QStringList dirList = QDir(solverInstallPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
+    if (dirList.size() != 0) {
+      solverInstallPath += "/" + dirList.back();
+    } else {
+        auto msg1 = "The 1D solver was not found.\n"; 
+        auto msg2 = "Please install the 1D solver in '" + solverInstallPath + "'.\n"; 
+        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2); 
+        return nullptr;
+    }
+    MITK_INFO << msg << "solverInstallPath: " << solverInstallPath;
+
+    // Set the solver executable.
+    solverExecutable = solverInstallPath + "/" + SOLVER_INSTALL_SUB_DIRECTORY + "/" + SOLVER_EXECUTABLE_NAME; 
+    if (!QFile::exists(solverExecutable)) {
+        auto msg1 = "The 1D solver was not found.\n"; 
+        auto msg2 = "Please install the 1D solver in '" + solverInstallPath + "'.\n"; 
+        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2); 
+        return nullptr;
+    }
+    MITK_INFO << msg << "solverExecutable: " << solverExecutable;
+
+  return solverExecutable; 
 }
 
 //-----------------
@@ -2807,6 +2797,11 @@ void sv4guiSimulationView1d::RunJob()
 //
 // Arguments:
 //   outputDir: The directory to write the files to. 
+//
+// Files written:
+//    sv4guiSimulationView1d::OUTLET_FACE_NAMES_FILE_NAME
+//    sv4guiSimulationView1d::SOLVER_FILE_NAME
+//    sv4guiSimulationView1d::RCR_BC_FILE_NAME (optional)
 //
 bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
@@ -2822,7 +2817,6 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     if (outputDir == "") {
         return false;
     }
-
 
     // Create a job object storing all the parameters needed for a simulation.
     //
@@ -2842,7 +2836,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     //m_MitkJob->SetMeshName(meshName);
     m_MitkJob->SetDataModified();
 
-    // Check centerlines have been generated.
+    // Check that centerlines have been generated.
     if (m_CenterlinesFileName.isEmpty()) {
         QMessageBox::warning(NULL, "1D Simulation", "No centerlines have been calculated or centerlines source file set.");
         MITK_ERROR << "No centerlines file is defined.";
@@ -2850,8 +2844,8 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     }
     MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
 
-    // Check that an inlet and outlet faces have been identified.
-    if (m_ModelOutletFaceNames.size() == 0) {
+    // Check that inlet and outlet faces have been identified.
+    if ((m_ModelInletFaceNames.size() == 0) || (m_ModelOutletFaceNames.size() == 0)) {
         QMessageBox::warning(NULL, "1D Simulation", "No inlet face has been selected.");
         MITK_ERROR << "No inlet face has been defined.";
         return false;
@@ -2861,14 +2855,42 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     WriteRcrFile(outputDir, job);
     WriteOutletFaceNames(outputDir);
 
-    // Execute the Python script to generate the 1D solver input file.
+    // Set the parameters used by the Python script.
     //
-    auto outputDirectory = outputDir.toStdString();
-    auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
-    auto solverFileName = SOLVER_FILE_NAME.toStdString();
-
     auto pythonInterface = sv4guiSimulationPython1d();
-    //pythonInterface.GenerateSolverInput(outputDirectory, inputCenterlinesFile, solverFileName, job);
+    auto params = pythonInterface.m_ParameterNames;
+
+    auto outDir = outputDir.toStdString();
+    auto outletFacesFileName = outDir + "/" + OUTLET_FACE_NAMES_FILE_NAME.toStdString();
+    auto inflowFileName = outDir + "/" + "inflow.flow"; 
+    auto outflowBcFileName = outDir + "/" + RCR_BC_FILE_NAME.toStdString(); 
+    auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
+
+    pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, outDir);
+    pythonInterface.AddParameter(params.UNITS, "mm");
+
+    pythonInterface.AddParameter(params.CENTERLINES_INPUT_FILE, m_CenterlinesFileName.toStdString()); 
+    pythonInterface.AddParameter(params.OUTLET_FACE_NAMES_INPUT_FILE, outletFacesFileName); 
+
+    pythonInterface.AddParameter(params.UNIFORM_BC, "false"); 
+    pythonInterface.AddParameter(params.INFLOW_INPUT_FILE, inflowFileName); 
+    pythonInterface.AddParameter(params.OUTFLOW_BC_TYPE, "rcr"); 
+    pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outflowBcFileName); 
+
+    pythonInterface.AddParameter(params.WRITE_SOLVER_FILE, "true"); 
+    pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName); 
+
+    // Execute the Python script to generate the 1D solver input file.
+    pythonInterface.GenerateSolverInput(job);
+
+    auto solverInputFile = outputDir + "/" + SOLVER_FILE_NAME;
+    if (!QFile::exists(solverInputFile)) {
+        QMessageBox::warning(NULL, MsgTitle, "Creating the 1D solver input file has failed.");
+        return false;
+    }
+
+    m_SolverInputFile = solverInputFile; 
+    MITK_INFO << msg << "Solver input file: " << m_SolverInputFile;
 
     return true;
 }
@@ -2884,7 +2906,7 @@ void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, const sv4guiS
     MITK_INFO << msg << "--------- WriteRcrFile ----------"; 
     MITK_INFO << msg << "Output directory: " << outputDir;
     QString rcrtFielContent = QString::fromStdString(sv4guiSimulationUtils1d::CreateRCRTFileContent(job));
-    MITK_INFO << msg << "rcrtFielContent: " << rcrtFielContent;
+    //MITK_INFO << msg << "rcrtFielContent: " << rcrtFielContent;
 
     if (rcrtFielContent == "") {
         return;
@@ -3051,6 +3073,10 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
 //--------------------
 // Set the basic physical constants and velocity initial conditions
 // for the simulation.
+//
+// This sets properies in the sv4guiSimJob1d object.
+//
+// Modified: job
 //
 bool sv4guiSimulationView1d::SetBasicParameters(sv4guiSimJob1d* job, std::string& msg)
 {

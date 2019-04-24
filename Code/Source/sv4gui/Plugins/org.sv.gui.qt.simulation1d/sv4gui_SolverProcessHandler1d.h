@@ -32,7 +32,7 @@
 #ifndef SV4GUI_SOLVERPROCESSHANDLER1D_H
 #define SV4GUI_SOLVERPROCESSHANDLER1D_H
 
-#include "sv4gui_ProcessHandler1d.h"
+#include "sv4gui_ProcessHandler.h"
 
 #include "sv4gui_MitkSimJob1d.h"
 #include "sv4gui_Model.h"
@@ -67,6 +67,8 @@ public slots:
 
     void UpdateStatus();
 
+    void ProcessError(QProcess::ProcessError error);
+
 private:
 
     QProcess* m_Process;
@@ -86,4 +88,4 @@ private:
     QString m_RunDir;
 };
 
-#endif // SV4GUI_SOLVERPROCESSHANDLER_H
+#endif // SV4GUI_SOLVERPROCESSHANDLER1D_H

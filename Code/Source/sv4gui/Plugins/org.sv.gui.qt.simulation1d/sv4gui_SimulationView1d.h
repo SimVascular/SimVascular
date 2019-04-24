@@ -69,12 +69,16 @@ class sv4guiSimulationView1d : public sv4guiQmitkFunctionality
 public:
 
     static const QString EXTENSION_ID;
+    static const QString MsgTitle;
+    static const QString SOLVER_EXECUTABLE_NAME;
+    static const QString SOLVER_INSTALL_DIRECTORY;
+    static const QString SOLVER_INSTALL_SUB_DIRECTORY;
 
     // The names of files written by this class.
     static const QString MESH_FILE_NAME;
-    static const QString SOLVER_FILE_NAME;
-    static const QString RCR_BC_FILE_NAME;
     static const QString OUTLET_FACE_NAMES_FILE_NAME;
+    static const QString RCR_BC_FILE_NAME;
+    static const QString SOLVER_FILE_NAME;
 
     sv4guiSimulationView1d();
 
@@ -131,15 +135,19 @@ public slots:
 
     // 1D Mesh slots.
     void Generate1DMesh();
+    void Show1DMesh();
+
     void ReadMesh();
-    void UpdateSurfaceModelSource();
-    void ReadModel();
+
     void UpdateCenterlinesSource();
     void SelectCenterlinesFile();
     void CalculateCenterlines();
-    void SelectModelFaces();
+
     void AddModelFaces();
+    void ReadModel();
+    void SelectModelFaces();
     void ShowModel(bool checked = false);
+    void UpdateSurfaceModelSource();
 
     void CreateAllFiles();
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
@@ -264,6 +272,8 @@ private:
 
     QStandardItemModel* m_TableModelSolver;
 
+    QString m_SolverInputFile;
+
     QString m_InternalPresolverPath;
     QString m_InternalFlowsolverPath;
     QString m_InternalFlowsolverNoMPIPath;
@@ -302,6 +312,7 @@ private:
     bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg);
     bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg);
     bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg);
+    QString GetSolverExecutable();
 
 };
 

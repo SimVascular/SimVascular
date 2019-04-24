@@ -52,7 +52,13 @@ class sv4guiProcessHandler1d : public QObject
     Q_OBJECT
 
 public:
-    sv4guiProcessHandler1d(QProcess* process, mitk::DataNode::Pointer jobNode, bool multithreading=true, bool stoppable=true, QWidget* parent=NULL);
+
+    sv4guiProcessHandler1d(QProcess* process, mitk::DataNode::Pointer jobNode, bool multithreading=false, 
+        bool stoppable=true, QWidget* parent=NULL);
+
+    //sv4guiProcessHandler1d(QProcess* process, mitk::DataNode::Pointer jobNode, bool multithreading=true, 
+    //    bool stoppable=true, QWidget* parent=NULL);
+
     virtual ~sv4guiProcessHandler1d();
 
     void Start();

@@ -89,16 +89,28 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
 //---------------------
 // GenerateSolverInput
 //---------------------
+// Generate a 1D solver input file.
 //
 // Script arguments: 
+//
+//    python generate_1d_mesh.py \
+//        --output-directory $PWD/output \
+//        --units mm \
+//        --centerlines-input-file ${cl_file} \
+//        --outlet-face-names-input-file ${outlet_face_names_file} \
+//        --uniform-bc false \
+//        --inflow-input-file ${inflow_file} \
+//        --outflow-bc-type rcr \
+//        --outflow-bc-input-file ${outflow_bc_input_file} \
+//        --write-solver-file   \
+//        --solver-output-file solver.in
 //
 //     output-directory: The output directory to write the mesh file.
 //     centerlines-input-file: The input centerlines geometry (.vtp format). 
 //     write-solver-file: Switch to enable writing a solver file.
 //     solver-output-file: The name of the solver input file to write.
 //
-bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string& outputDir, const std::string& centerlinesFile,
-                                                   const std::string& solverFile, const sv4guiSimJob1d* job)
+bool sv4guiSimulationPython1d::GenerateSolverInput(const sv4guiSimJob1d* job)
 {
   std::string msg = "[sv4guiSimulationPython1d::GenerateSolverInput] ";
   MITK_INFO << msg << "---------- GenerateSolverInput ----------";
@@ -107,10 +119,12 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string& outputDir,
   // Create the script command.
   auto last = true;
   auto cmd = StartCommand();
-  cmd += AddArgument(paramNames.OUTPUT_DIRECTORY, outputDir);
-  cmd += AddArgument(paramNames.CENTERLINES_INPUT_FILE, centerlinesFile);
-  cmd += AddArgument(paramNames.WRITE_SOLVER_FILE, "true");
-  cmd += AddArgument(paramNames.SOLVER_OUTPUT_FILE, solverFile, last);
+  for (auto const& param : m_ParameterValues) {
+      cmd += AddArgument(param.first, param.second);
+  }
+  cmd.pop_back();
+  cmd += ")\n";
+
   MITK_INFO << msg << "Execute cmd " << cmd;
   PyRun_SimpleString(cmd.c_str());
   MITK_INFO << msg << "Done!";
@@ -142,6 +156,11 @@ std::string sv4guiSimulationPython1d::AddArgument(const std::string& name, const
         arg += ",";
     }
     return arg;
+}
+
+bool sv4guiSimulationPython1d::AddParameter(const std::string& name, const std::string& value)
+{
+    m_ParameterValues.insert(std::pair<std::string,std::string>(name, value));
 }
 
 //-----------

@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="solvertemplate.xml">solvertemplate.xml</file>
+        <file alias="solvertemplate1d.xml">solvertemplate1d.xml</file>
     </qresource>
 </RCC>
