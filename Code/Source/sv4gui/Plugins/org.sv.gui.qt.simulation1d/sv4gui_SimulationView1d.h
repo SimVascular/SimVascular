@@ -233,7 +233,6 @@ private:
     sv4guiCapSelectionWidget* m_ModelFaceSelectionWidget;
     std::vector<std::string> m_ModelInletFaceNames;
     std::vector<int> m_ModelInletFaceIds;
-    std::vector<std::string> m_ModelCapFaceNames;
     std::vector<std::string> m_ModelOutletFaceNames;
 
     sv4guiMesh* m_Mesh;
@@ -295,7 +294,6 @@ private:
     mitk::DataNode::Pointer getProjectNode();
     mitk::DataNode::Pointer GetModelFolderDataNode();
     QString GetModelFileName();
-    void SetModelCapFaces();
 
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();

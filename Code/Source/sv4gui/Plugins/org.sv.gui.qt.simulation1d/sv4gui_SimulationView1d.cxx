@@ -101,7 +101,12 @@ const std::vector<QString> sv4guiSimulationView1d::SurfaceModelSource::types =
     sv4guiSimulationView1d::SurfaceModelSource::READ_FROM_FILE
 };
 
-// Set the values of the Centerlines Origin types.
+// Set the values of the Centerlines Source types.
+//
+// There are three sources of centerlines:
+//   1) Calculate - centerlines are calculated using vmtk.
+//   2) Model Plugin - centerlines are calculated using vmtk by the Model Plugin.
+//   3) Read from a file - centerlines are read from a VTK .vtp file.
 //
 const QString sv4guiSimulationView1d::CenterlinesSource::CALCULATE = "Calculate";
 const QString sv4guiSimulationView1d::CenterlinesSource::MODEL_PLUGIN = "Model Plugin";
@@ -170,6 +175,10 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationVi
     m_ConnectionEnabled=false;
 }
 
+//-------------------------
+// ~sv4guiSimulationView1d
+//-------------------------
+//
 sv4guiSimulationView1d::~sv4guiSimulationView1d()
 {
     delete ui;
@@ -217,7 +226,7 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         connect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         //connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
-        connect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
+        //connect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
 
         m_ConnectionEnabled=able;
     }
@@ -236,7 +245,7 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         disconnect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         //disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
-        disconnect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
+        //disconnect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
 
         m_ConnectionEnabled=able;
     }
@@ -256,7 +265,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     //ui->btnSave->hide();
 
 
-    // Set the toolbox ('1D Mesh', 'Basic Parameters', etc. pages) to display the first page.
+    // Set the toolbox to display the first ('1D Mesh') tab.
     ui->toolBox->setCurrentIndex(0);
 
     // Create 1D Mesh page controls.
@@ -266,8 +275,8 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     m_TableModelBasic = new QStandardItemModel(this);
     ui->tableViewBasic->setModel(m_TableModelBasic);
 
-    connect( ui->tableViewBasic, SIGNAL(doubleClicked(const QModelIndex&))
-             , this, SLOT(TableViewBasicDoubleClicked(const QModelIndex&)) );
+    connect(ui->tableViewBasic, SIGNAL(doubleClicked(const QModelIndex&)), this, 
+      SLOT(TableViewBasicDoubleClicked(const QModelIndex&)) );
 
     // Inlet and Outlet BCs.
     //
@@ -276,15 +285,14 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     sv4guiTableCapDelegate1d* itemDelegate=new sv4guiTableCapDelegate1d(this);
     ui->tableViewCap->setItemDelegateForColumn(1,itemDelegate);
 
-    connect( ui->tableViewCap->selectionModel()
-             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-             , this
-             , SLOT( TableCapSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+    connect(ui->tableViewCap->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), 
+      this, SLOT(TableCapSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
-    connect( ui->tableViewCap, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(TableViewCapDoubleClicked(const QModelIndex&)) );
+    connect(ui->tableViewCap, SIGNAL(doubleClicked(const QModelIndex&)), this, 
+      SLOT(TableViewCapDoubleClicked(const QModelIndex&)) );
 
-    connect( ui->tableViewCap, SIGNAL(customContextMenuRequested(const QPoint&))
-             , this, SLOT(TableViewCapContextMenuRequested(const QPoint&)) );
+    connect(ui->tableViewCap, SIGNAL(customContextMenuRequested(const QPoint&)), this, 
+      SLOT(TableViewCapContextMenuRequested(const QPoint&)) );
 
     m_TableMenuCap=new QMenu(ui->tableViewCap);
     QAction* setBCAction=m_TableMenuCap->addAction("Set BC");
@@ -341,11 +349,10 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     sv4guiTableSolverDelegate1d* itemSolverDelegate=new sv4guiTableSolverDelegate1d(this);
     ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
-    //for data file and run
-//    connect(ui->btnExportInputFiles, SIGNAL(clicked()), this, SLOT(ExportInputFiles()) );
-//    connect(ui->btnExportAllFiles, SIGNAL(clicked()), this, SLOT(ExportAllFiles()) );
+    // Create files and Run Simulation toolbox tab. 
     connect(ui->btnCreateAllFiles, SIGNAL(clicked()), this, SLOT(CreateAllFiles()) );
-    connect(ui->btnRunJob, SIGNAL(clicked()), this, SLOT(RunJob()) );
+    connect(ui->RunSimulationPushButton, SIGNAL(clicked()), this, SLOT(RunJob()) );
+    ui->RunSimulationPushButton->setEnabled(false);
 
     //for export results
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
@@ -369,6 +376,9 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 // Update1DMesh
 //--------------
 // Create container and mapper used to display the 1D mesh.
+//
+// The mesh geometry is created by calling the 1D mesh generation
+// Python script and written as VTK (.vtp) file.
 //
 void sv4guiSimulationView1d::Update1DMesh()
 {
@@ -405,7 +415,7 @@ void sv4guiSimulationView1d::Update1DMesh()
 // Create1DMeshControls
 //----------------------
 // Create connections between GUI events (signals) and callbacks (slots)
-// for the '1D Mesh' page.
+// for the '1D Mesh' toolbox tab.
 //
 void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 {
@@ -582,34 +592,6 @@ void sv4guiSimulationView1d::ReadModel()
 }
 
 //------------------
-// SetModelCapFaces
-//------------------
-//
-void sv4guiSimulationView1d::SetModelCapFaces()
-{
-    if (!m_Model) {
-        return;
-    }
-    auto msg = "[sv4guiSimulationView1d::SetModelCapFaces] ";
-    MITK_INFO << msg << "--------- SetModelCapFaces ----------"; 
-
-    int timeStep = 0;
-    sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
-    std::vector<sv4guiModelElement::svFace*> faces = modelElement->GetFaces();
-    m_ModelCapFaceNames.clear();
-
-    for (auto const& face : faces) {
-        if ((face == nullptr) || (face->type != "cap")) {
-            continue;
-        }
-        m_ModelCapFaceNames.push_back(face->name);
-        MITK_INFO << msg << "Model cap face: " << face->name;
-    }
-
-    MITK_INFO << msg << "Number of model cap faces: " << m_ModelCapFaceNames.size();
-}
-
-//------------------
 // SelectModelFaces
 //------------------
 // Select the inlet faces of a surface model.
@@ -637,6 +619,7 @@ void sv4guiSimulationView1d::SelectModelFaces()
 
     int timeStep=GetTimeStep();
 */
+
     // Create a vector of caps names from the model faces.
     //
     int timeStep = 0;
@@ -682,11 +665,21 @@ void sv4guiSimulationView1d::AddModelFaces()
     std::vector<std::string> inletFaceNames = m_ModelFaceSelectionWidget->GetUsedCapNames();
     MITK_INFO << msg << "Number of inlet faces selected: " << inletFaceNames.size(); 
     m_ModelInletFaceNames.clear();
+    m_ModelInletFaceIds.clear();
     for (const auto& name : inletFaceNames) {
         MITK_INFO << msg << "Inlet face: " << name; 
         m_ModelInletFaceNames.push_back(name);
         m_ModelInletFaceIds.push_back(modelElement->GetFaceID(name));
     }
+
+    if ( m_ModelInletFaceNames.size() > 1) {
+        auto msg = "Only one inlet face may be selected.\n";
+        MITK_WARN << msg; 
+        QMessageBox::warning(NULL, MsgTitle, msg);
+        m_ModelInletFaceNames.clear();
+        m_ModelInletFaceIds.clear();
+        return;
+    } 
 
     // Set the unselected outlet faces.
     //
@@ -1420,7 +1413,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     // Update main GUI panel upper section.
     //
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
-    ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+    ui->JobStatusLabel->setText(QString::fromStdString(m_MitkJob->GetStatus()));
     ui->showModelCheckBox->setChecked(false);
     if(m_ModelNode.IsNotNull()) {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
@@ -1561,7 +1554,7 @@ void sv4guiSimulationView1d::ClearAll()
     m_ModelNode=NULL;
 
     ui->labelJobName->setText("");
-    ui->labelJobStatus->setText("");
+    ui->JobStatusLabel->setText("");
     ui->labelModelName->setText("");
 }
 
@@ -2552,17 +2545,17 @@ void sv4guiSimulationView1d::UpdateGUIJob()
     int foundIndex = ui->comboBoxMeshName->findText(QString::fromStdString(m_MitkJob->GetMeshName()));
     ui->comboBoxMeshName->setCurrentIndex(foundIndex);
 
-    int coreNum=QThread::idealThreadCount();
-    ui->sliderNumProcs->setMaximum(coreNum);
+    //int coreNum=QThread::idealThreadCount();
+    //ui->sliderNumProcs->setMaximum(coreNum);
 
-    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
 
     if (job == NULL) {
         return;
     }
 
-    std::string pNum = job->GetRunProp("Number of Processes");
-    ui->sliderNumProcs->setValue(pNum== "" ? 1 : QString::fromStdString(pNum).toInt());
+    //std::string pNum = job->GetRunProp("Number of Processes");
+    //ui->sliderNumProcs->setValue(pNum== "" ? 1 : QString::fromStdString(pNum).toInt());
 }
 
 //-----------------------
@@ -2891,6 +2884,8 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
 
     m_SolverInputFile = solverInputFile; 
     MITK_INFO << msg << "Solver input file: " << m_SolverInputFile;
+    ui->RunSimulationPushButton->setEnabled(true);
+    ui->JobStatusLabel->setText("Simulation files have been created.");
 
     return true;
 }
@@ -3762,11 +3757,10 @@ void sv4guiSimulationView1d::UpdateSimJobNumProcs()
     if(!m_MitkJob)
         return;
 
-    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    if(job)
-    {
-        std::string numProcsStr=QString::number((int)(ui->sliderNumProcs->value())).toStdString();
-        job->SetRunProp("Number of Processes",numProcsStr);
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+    if(job) {
+        //std::string numProcsStr=QString::number((int)(ui->sliderNumProcs->value())).toStdString();
+        //job->SetRunProp("Number of Processes",numProcsStr);
         m_MitkJob->SetDataModified();
     }
 }
@@ -3841,10 +3835,11 @@ void sv4guiSimulationView1d::UpdateJobStatus()
     m_JobNode->GetDoubleProperty("running progress",runningProgress);
 
     if(running) {
-        ui->labelJobStatus->setText("Running: "+QString::number((int)(runningProgress*100))+"% completed");
+        ui->JobStatusLabel->setText("Simulation running");
+        //ui->JobStatusLabel->setText("Simulatin Running: "+QString::number((int)(runningProgress*100))+"% completed");
         ui->widgetRun->setEnabled(false);
     } else {
-        ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+        ui->JobStatusLabel->setText(QString::fromStdString(m_MitkJob->GetStatus()));
         ui->widgetRun->setEnabled(true);
     }
 

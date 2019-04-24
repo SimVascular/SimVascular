@@ -90,7 +90,7 @@
        </widget>
       </item>
       <item row="1" column="1" colspan="2">
-       <widget class="QLabel" name="labelJobStatus">
+       <widget class="QLabel" name="JobStatusLabel">
         <property name="text">
          <string/>
         </property>
@@ -131,7 +131,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>581</height>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -433,7 +433,7 @@ QGroupBox::title {
              <widget class="QPushButton" name="calculateCenterlinesPushButton">
               <property name="geometry">
                <rect>
-                <x>200</x>
+                <x>10</x>
                 <y>70</y>
                 <width>161</width>
                 <height>26</height>
@@ -515,7 +515,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>581</height>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -552,7 +552,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>581</height>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -616,7 +616,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>581</height>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -966,7 +966,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>581</height>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1003,7 +1003,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>581</height>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1061,22 +1061,11 @@ QGroupBox::title {
                 <property name="spacing">
                  <number>5</number>
                 </property>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_11">
-                  <property name="text">
-                   <string>Number of Processes:</string>
+                <item row="4" column="0" colspan="2">
+                 <widget class="QPushButton" name="RunSimulationPushButton">
+                  <property name="toolTip">
+                   <string>Run a 1D simulation.</string>
                   </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_12">
-                  <property name="text">
-                   <string>Starting Step Number:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="6" column="0" colspan="2">
-                 <widget class="QPushButton" name="btnRunJob">
                   <property name="text">
                    <string>Run Simulation</string>
                   </property>
@@ -1086,22 +1075,6 @@ QGroupBox::title {
                  <widget class="QPushButton" name="btnCreateAllFiles">
                   <property name="text">
                    <string>Create Files for Simulation</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="ctkSliderWidget" name="sliderNumProcs" native="true">
-                  <property name="decimals" stdset="0">
-                   <number>0</number>
-                  </property>
-                  <property name="pageStep" stdset="0">
-                   <double>40.000000000000000</double>
-                  </property>
-                  <property name="minimum" stdset="0">
-                   <double>1.000000000000000</double>
-                  </property>
-                  <property name="maximum" stdset="0">
-                   <double>64.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -1124,13 +1097,6 @@ QGroupBox::title {
                     <number>0</number>
                    </property>
                   </layout>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="lineEditStartStepNum">
-                  <property name="text">
-                   <string/>
-                  </property>
                  </widget>
                 </item>
                </layout>
@@ -1160,7 +1126,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>581</height>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1612,13 +1578,6 @@ QGroupBox::title {
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

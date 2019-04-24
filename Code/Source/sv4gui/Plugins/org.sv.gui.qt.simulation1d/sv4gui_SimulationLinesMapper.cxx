@@ -103,7 +103,7 @@ void sv4guiSimulationLinesMapper::GenerateDataForRenderer(mitk::BaseRenderer* re
     vtkSmartPointer<vtkActor> polyMeshActor = vtkSmartPointer<vtkActor>::New();
     polyMeshActor->SetMapper(meshMapper);
     polyMeshActor->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]);
-    polyMeshActor->GetProperty()->SetLineWidth(3.0);
+    polyMeshActor->GetProperty()->SetLineWidth(2.0);
     local_storage->m_PropAssembly->AddPart(polyMeshActor);
   }
 
