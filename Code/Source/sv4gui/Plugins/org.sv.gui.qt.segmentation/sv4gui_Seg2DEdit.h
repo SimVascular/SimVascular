@@ -212,6 +212,10 @@ public:
 
     void QuitPreviewInteraction();
 
+    //ml additions
+    void setupMLui();
+    void initialize();
+
 protected:
 
     bool eventFilter(QObject *obj, QEvent *ev);
@@ -281,6 +285,9 @@ protected:
     sv4guiContourGroupCreate* m_ContourGroupCreateWidget;
 
     bool m_UpdatingGUI;
+
+    // ml additions
+    std::string m_imageFilePath;
 
 };
 

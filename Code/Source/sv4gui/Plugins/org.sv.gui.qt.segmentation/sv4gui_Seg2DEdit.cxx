@@ -67,6 +67,14 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include <QDir>
+#include <QString>
+#include <QDomDocument>
+#include <QDomElement>
+#include <QFile>
+#include <QAbstractItemView>
+#include <QListWidgetItem>
+
 #include <iostream>
 using namespace std;
 
@@ -206,6 +214,9 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     ui->btnDelete->setShortcut(QKeySequence("Ctrl+D"));
 
     ui->listWidget->installEventFilter(this);
+
+    //ml additions
+    setupMLui();
 }
 
 void sv4guiSeg2DEdit::Visible()
@@ -1419,12 +1430,12 @@ void sv4guiSeg2DEdit::CreateManualCircle(bool)
     contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
     contour->SetPlaced(true);
     contour->SetMethod(contour->GetMethod());
-    
+
     centerPoint[0]+=contour->GetPlaneGeometry()->GetSpacing()[0]*contour->GetPlaneGeometry()->GetBounds()[1]/2;
     centerPoint[1]+=contour->GetPlaneGeometry()->GetSpacing()[1]*contour->GetPlaneGeometry()->GetBounds()[3]/2;
     boundaryPoint[0]=centerPoint[0]+radius;
     boundaryPoint[1]=centerPoint[1];
-    
+
     mitk::Point3D pt1,pt2;
     contour->GetPlaneGeometry()->Map(centerPoint,pt1);
     contour->GetPlaneGeometry()->Map(boundaryPoint,pt2);
@@ -1434,7 +1445,7 @@ void sv4guiSeg2DEdit::CreateManualCircle(bool)
     contour->SetControlPoints(controlPoints);
     contour->SetSubdivisionType(sv4guiContour::CONSTANT_SPACING);
     contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
-    
+
 
     mitk::OperationEvent::IncCurrObjectEventId();
 
@@ -1816,4 +1827,90 @@ void sv4guiSeg2DEdit::SelectContour3D()
         if(index>-1)
             ui->listWidget->setCurrentRow(index);
     }
+}
+
+/*
+machine learning additions
+*/
+void sv4guiSeg2DEdit::setupMLui(){
+  //connect(ui->multiSegButton, SIGNAL(clicked()), this, SLOT(segmentPaths()));
+
+  //connect(ui->selectAllPathsCheckBox, SIGNAL(clicked()), this, SLOT(selectAllPaths()));
+
+  //connect(ui->sampleNetButton, SIGNAL(clicked()), this, SLOT(sampleNetwork()));
+
+  //updatePaths();
+
+  initialize();
+}
+
+void sv4guiSeg2DEdit::initialize(){
+  std::cout << "initializing\n";
+  mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+  mitk::DataNode::Pointer projFolderNode = GetDataStorage()->GetNode (isProjFolder);
+
+
+  if (projFolderNode){
+    std::string projPath;
+    projFolderNode->GetStringProperty("project path", projPath);
+    std::cout << "path " << projPath << "\n";
+
+    QString QprojPath = QString(projPath.c_str());
+
+    QDir dir(QprojPath);
+
+    QString projectConfigFileName=".svproj";
+
+    QString projectConfigFilePath=dir.absoluteFilePath(projectConfigFileName);
+
+    std::string projConfigFile = projectConfigFilePath.toStdString();
+
+    std::cout << "config filename " << projConfigFile << "\n";
+
+    //get image path
+    QDomDocument doc("svproj");
+    QString imageFolderName="Images";
+
+    QFile xmlFile(projectConfigFilePath);
+    xmlFile.open(QIODevice::ReadOnly);
+
+    QString *em=NULL;
+    doc.setContent(&xmlFile,em);
+    xmlFile.close();
+
+    QDomElement projDesc      = doc.firstChildElement("projectDescription");
+    QDomElement imagesElement = projDesc.firstChildElement("images");
+    imageFolderName           = imagesElement.attribute("folder_name");
+    QDomNodeList imageList    = imagesElement.elementsByTagName("image");
+
+    QDomNode imageNode = imageList.item(0);
+    QDomElement imageElement=imageNode.toElement();
+
+    QString inProj    = imageElement.attribute("in_project");
+    QString imageName = imageElement.attribute("name");
+    QString imagePath = imageElement.attribute("path");
+
+    if(inProj=="yes")
+    {
+        if(imagePath!="")
+        {
+            m_imageFilePath = (projPath
+            +"/"+imageFolderName.toStdString()+"/"+imagePath.toStdString());
+        }
+        else if(imageName!="")
+        {
+            m_imageFilePath = (projPath
+            +"/"+imageFolderName.toStdString()+"/"+imageName.toStdString());
+        }
+    }
+    else
+    {
+        m_imageFilePath = imageElement.attribute("path").toStdString();
+    }
+
+    std::cout << "Image filePath: " << m_imageFilePath << "\n";
+
+    //ml_utils = svMLUtils::getInstance("googlenet_c30_train300k_aug10_clean");
+    //ml_utils->setImage(m_imageFilePath);
+  }//end if projectfoldernode
 }
