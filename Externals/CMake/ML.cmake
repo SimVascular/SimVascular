@@ -12,7 +12,8 @@ set(ML_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${proj}-${SV_EXTERNALS_ML_VERSIO
 
 #file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/python_packages)
 
-ExternalProject_Add("seg_regression"
+ExternalProject_Add("${proj}_seg_regression"
+  PREFIX_DIR        ""
   SOURCE_DIR        ${ML_BIN_DIR}/seg_regression
   GIT_REPOSITORY    "https://github.com/gmaher/seg_regression.git"
   GIT_TAG           "master"
@@ -23,22 +24,38 @@ ExternalProject_Add("seg_regression"
   INSTALL_COMMAND   ""
 )
 
-ExternalProject_Add("networks"
+ExternalProject_Add("${proj}_networks"
   URL               http://simvascular.stanford.edu/downloads/public/machine_learning/networks.tar
+  PREFIX_DIR        ""
   DOWNLOAD_DIR      ${ML_SRC_DIR}
   SOURCE_DIR        ${ML_BIN_DIR}/seg_regression/results
   UPDATE_COMMAND    ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
-  DEPENDS "seg_regression"
+  DEPENDS "${proj}_seg_regression"
 )
 
-ExternalProject_Add("python_packages"
-  DOWNLOAD_COMMAND  ""
-  BUILD_COMMAND     ""
-  UPDATE_COMMAND    ""
-  DEPENDS "seg_regression" ${${proj}_DEPENDENCIES}
-  CONFIGURE_COMMAND ${SV_EXTERNALS_PYTHON_EXECUTABLE} -m pip install -r ${ML_BIN_DIR}/seg_regression/requirements.txt
-  INSTALL_COMMAND   ""
-)
+if(SV_EXTERNALS_DOWNLOAD_PYTHON)
+  # Empty project
+  ExternalProject_Add(${proj}_python_packages
+    PREFIX_DIR ""
+    SOURCE_DIR ${ML_SRC_DIR}
+    BINARY_DIR ${ML_BLD_DIR}
+    DEPENDS ${${proj}_DEPENDENCIES}
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+    )
+else()
+  ExternalProject_Add("${proj}_python_packages"
+    DOWNLOAD_COMMAND  ""
+    BUILD_COMMAND     ""
+    UPDATE_COMMAND    ""
+    DEPENDS "${proj}_seg_regression" ${${proj}_DEPENDENCIES}
+    CONFIGURE_COMMAND ""
+    INSTALL_COMMAND   ${SV_EXTERNALS_PYTHON_EXECUTABLE} -m pip install -r ${ML_BIN_DIR}/seg_regression/requirements.txt
+  )
+endif()
