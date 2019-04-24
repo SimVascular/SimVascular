@@ -35,7 +35,7 @@ if(SV_INSTALL_HEADERS)
 endif()
 
 #############################################################
-# Github and python stuff
+# python stuff
 #############################################################
 include_directories(${PYTHON_INCLUDE_PATH}
   ${PYTHON_INCLUDE_DIR}
