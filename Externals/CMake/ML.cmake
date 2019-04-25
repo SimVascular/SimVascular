@@ -1,4 +1,4 @@
-set(proj ML)
+set(proj ml)
 
 message(WARNING "*****************ML CMAKE********************")
 
@@ -15,7 +15,7 @@ set(ML_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${proj}-${SV_EXTERNALS_ML_VERSIO
 
 ExternalProject_Add("${proj}_seg_regression"
   PREFIX            ${ML_PFX_DIR}
-  SOURCE_DIR        ${ML_BIN_DIR}/seg_regression
+  SOURCE_DIR        ${ML_BIN_DIR}/bin/seg_regression
   GIT_REPOSITORY    "https://github.com/gmaher/seg_regression.git"
   GIT_TAG           "master"
   UPDATE_COMMAND    ""
@@ -29,7 +29,7 @@ ExternalProject_Add("${proj}_networks"
   URL               http://simvascular.stanford.edu/downloads/public/machine_learning/networks.tar
   PREFIX            ${ML_PFX_DIR}
   DOWNLOAD_DIR      ${ML_SRC_DIR}
-  SOURCE_DIR        ${ML_BIN_DIR}/seg_regression/results
+  SOURCE_DIR        ${ML_BIN_DIR}/bin/seg_regression/results
   UPDATE_COMMAND    ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
