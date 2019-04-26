@@ -66,3 +66,18 @@ if(SV_INSTALL_HEADERS)
   )
 endif()
 
+## Install python script.
+#
+# This is a hack for now, want to move this to externals I think.
+#
+install(FILES python/centerlines.py
+              python/generate_1d_mesh.py
+              python/__init__.py
+              python/manage.py
+              python/mesh.py
+              python/parameters.py
+              python/utils.py
+              python/vis_results.py
+        DESTINATION sv_1d_simulation_python 
+)
+
