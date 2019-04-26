@@ -48,7 +48,8 @@ sv4guiMitkSimJob1d::sv4guiMitkSimJob1d()
 //    , m_Job(NULL)
     , m_MeshName("")
     , m_ModelName("")
-    , m_Status("No Data Files")
+    , m_Status("Inlet face needs to be selected")
+    //, m_Status("No Data Files")
     , m_DataModified(false)
 {
     this->InitializeEmpty();

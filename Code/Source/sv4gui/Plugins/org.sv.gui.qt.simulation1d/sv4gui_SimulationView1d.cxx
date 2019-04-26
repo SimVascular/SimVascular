@@ -74,6 +74,9 @@
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
+// Base label names for the GUI.
+static const QString InletFaceNameLabel = "Inlet face: ";
+
 // Set the title for QMessageBox warnings.
 //
 // Note: On MacOS the window title is ignored (as required by the Mac OS X Guidelines). 
@@ -117,7 +120,6 @@ const std::vector<QString> sv4guiSimulationView1d::CenterlinesSource::types =
     sv4guiSimulationView1d::CenterlinesSource::MODEL_PLUGIN,
     sv4guiSimulationView1d::CenterlinesSource::READ_FROM_FILE
 };
-
 
 //------------------------
 // sv4guiSimulationView1d
@@ -428,6 +430,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     connect(ui->readModelPushButton, SIGNAL(clicked()), this, SLOT(ReadModel()) );
     connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateSurfaceMeshName()));
     connect(ui->showModelCheckBox, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
+    //ui->InletFaceNameLabel->setText(InletFaceNameLabel + "**Not selected**");
 
     for (auto const& type : SurfaceModelSource::types) {
         ui->surfaceModelComboBox->addItem(type);
@@ -446,7 +449,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateCenterlinesSource()));
     connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(SelectCenterlinesFile()));
     connect(ui->calculateCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(CalculateCenterlines()) );
-    connect(ui->selectModelFacesPushButton, SIGNAL(clicked()), this, SLOT(SelectModelFaces()));
+    connect(ui->selectModelFacesPushButton, SIGNAL(clicked()), this, SLOT(SelectModelInletFaces()));
     for (auto const& type : CenterlinesSource::types) {
         ui->centerlinesComboBox->addItem(type);
     }
@@ -465,7 +468,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     m_ModelFaceSelectionWidget->hide();
     m_ModelFaceSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
     // Set callback when 'OK' button is selected. 
-    connect(m_ModelFaceSelectionWidget, SIGNAL(accepted()), this, SLOT(AddModelFaces()));
+    connect(m_ModelFaceSelectionWidget, SIGNAL(accepted()), this, SLOT(SetModelInletFaces()));
 
     // Generate Mesh.
     //
@@ -591,9 +594,9 @@ void sv4guiSimulationView1d::ReadModel()
   }
 }
 
-//------------------
-// SelectModelFaces
-//------------------
+//------------------------
+// SelectModelInletFaces
+//------------------------
 // Select the inlet faces of a surface model.
 //
 // The model cap faces are displayed as checkable
@@ -602,7 +605,7 @@ void sv4guiSimulationView1d::ReadModel()
 // The inlet faces are used to compute centerlines from
 // the surface model.
 //
-void sv4guiSimulationView1d::SelectModelFaces()
+void sv4guiSimulationView1d::SelectModelInletFaces()
 {
     if (!m_Model) {
         return;
@@ -640,9 +643,9 @@ void sv4guiSimulationView1d::SelectModelFaces()
     m_ModelFaceSelectionWidget->show();
 }
 
-//---------------
-// AddModelFaces
-//---------------
+//--------------------
+// SetModelInletFaces
+//--------------------
 // Save the names and face IDs for the inlet faces selected 
 // from the m_ModelFaceSelectionWidget.
 //
@@ -651,7 +654,7 @@ void sv4guiSimulationView1d::SelectModelFaces()
 //   m_ModelInletFaceIds
 //   m_ModelOutletFaceNames
 //
-void sv4guiSimulationView1d::AddModelFaces()
+void sv4guiSimulationView1d::SetModelInletFaces()
 {
     if (!m_Model) {
         return;
@@ -680,6 +683,7 @@ void sv4guiSimulationView1d::AddModelFaces()
         m_ModelInletFaceIds.clear();
         return;
     } 
+    ui->InletFaceNameLabel->setText(InletFaceNameLabel + QString(m_ModelInletFaceNames[0].c_str()));
 
     // Set the unselected outlet faces.
     //
@@ -692,6 +696,7 @@ void sv4guiSimulationView1d::AddModelFaces()
     }
 
     // Enable execute centerlines button.
+    //ui->JobStatusLabel->setText("Inlet face selected.");
     ui->calculateCenterlinesPushButton->setEnabled(true);
 }
 

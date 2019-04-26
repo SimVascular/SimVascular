@@ -143,9 +143,9 @@ public slots:
     void SelectCenterlinesFile();
     void CalculateCenterlines();
 
-    void AddModelFaces();
+    void SetModelInletFaces();
     void ReadModel();
-    void SelectModelFaces();
+    void SelectModelInletFaces();
     void ShowModel(bool checked = false);
     void UpdateSurfaceModelSource();
 

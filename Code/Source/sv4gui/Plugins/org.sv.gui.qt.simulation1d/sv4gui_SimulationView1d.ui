@@ -171,6 +171,9 @@
                <height>151</height>
               </rect>
              </property>
+             <property name="toolTip">
+              <string>Surface model source and inlet face selection.</string>
+             </property>
              <property name="styleSheet">
               <string notr="true">QGroupBox { 
 border-width: 2px;  
@@ -213,6 +216,13 @@ QGroupBox::title {
                </rect>
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <item>
+                <widget class="QLabel" name="InletFaceNameLabel">
+                 <property name="text">
+                  <string>Inlet: </string>
+                 </property>
+                </widget>
+               </item>
                <item>
                 <widget class="QLabel" name="modelFileNameLabel">
                  <property name="text">
@@ -299,7 +309,7 @@ QGroupBox::title {
                </rect>
               </property>
               <property name="text">
-               <string>Model Name:</string>
+               <string>Model:</string>
               </property>
              </widget>
              <widget class="QPushButton" name="selectModelFacesPushButton">
