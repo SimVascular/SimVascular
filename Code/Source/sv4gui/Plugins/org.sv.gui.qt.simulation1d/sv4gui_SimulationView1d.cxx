@@ -1892,33 +1892,43 @@ void sv4guiSimulationView1d::SetDistalPressure(bool)
     }
 }
 
+//----------
+// SetCapBC
+//----------
+// Set the GUI values for inlet / outler (cap) boundary conditions
+// table in the 'Inlet and Outlet BCs' toolbox tab.
+//
+// The GUI values are updated from m_CapBCWidget properties.
+//
+// This is called when values in the 'Set Inlet/Outlet BCs' popup values 
+// are changed (sv4guiCapBCWidget1d class).
+//
+// Modifies:
+//     m_TableModelCap
+//
 void  sv4guiSimulationView1d::SetCapBC()
 {
+    auto msg = "[sv4guiSimulationView1d::SetCapBC] ";
+    MITK_INFO << msg << "--------- SetCapBC ----------"; 
+
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+    if(indexesOfSelectedRows.size() < 1) {
         return;
     }
 
-    std::map<std::string, std::string> props=m_CapBCWidget->GetProps();
+    std::map<std::string, std::string> props = m_CapBCWidget->GetProps();
 
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
-        int row=(*it).row();
-
+    for (auto const& item : indexesOfSelectedRows) {
+        auto row = item.row();
         m_TableModelCap->item(row,1)->setText(QString::fromStdString(props["BC Type"]));
-        if(props["BC Type"]=="Resistance" || props["BC Type"]=="RCR" || props["BC Type"]=="Coronary")
-        {
+
+        if(props["BC Type"]=="Resistance" || props["BC Type"]=="RCR" || props["BC Type"]=="Coronary") {
             m_TableModelCap->item(row,2)->setText(QString::fromStdString(props["Values"]));
-        }
-        else if(props["BC Type"]=="Prescribed Velocities")
-        {
-            if(props["Flow Rate"]!="")
+        } else if(props["BC Type"]=="Prescribed Velocities") {
+            if(props["Flow Rate"]!="") {
                 m_TableModelCap->item(row,2)->setText("Assigned");
-        }
-        else
-        {
+            }
+        } else {
             m_TableModelCap->item(row,2)->setText("");
         }
 
@@ -1939,27 +1949,26 @@ void  sv4guiSimulationView1d::SetCapBC()
     }
 }
 
+//-------------------
+// ShowSplitBCWidget
+//-------------------
+//
 void sv4guiSimulationView1d::ShowSplitBCWidget(QString splitTarget)
 {
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+    if(indexesOfSelectedRows.size() < 1) {
         return;
     }
 
     QString lastBCType="";
-    for(int i=0;i<indexesOfSelectedRows.size();i++)
-    {
-        int row=indexesOfSelectedRows[i].row();
+    for (auto const& item : indexesOfSelectedRows) {
+        auto row = item.row();
         QString BCType=m_TableModelCap->item(row,1)->text().trimmed();
 
-        if(BCType=="")
-        {
+        if(BCType=="") {
             QMessageBox::warning(m_Parent,"BC Type Missing","Please speficify BC type for the caps!");
             return;
-        }
-        else if(BCType!=lastBCType && lastBCType!="")
-        {
+        } else if(BCType!=lastBCType && lastBCType!="") {
             QMessageBox::warning(m_Parent,"BC Type Inconsistent","Please split BC for the caps of the same BC type!");
             return;
         }
@@ -1967,8 +1976,7 @@ void sv4guiSimulationView1d::ShowSplitBCWidget(QString splitTarget)
         lastBCType=BCType;
     }
 
-    if(lastBCType=="Resistance" && splitTarget=="Capacitance")
-    {
+    if(lastBCType=="Resistance" && splitTarget=="Capacitance") {
         QMessageBox::warning(m_Parent,"Warning","Can't split capacitance for BC type Resistance!");
         return;
     }
@@ -1995,22 +2003,17 @@ void sv4guiSimulationView1d::ShowSplitBCWidgetC(bool)
 //
 void  sv4guiSimulationView1d::SplitCapBC()
 {
-    if(!m_MitkJob)
+    if(!m_MitkJob || !m_Model || !m_SplitBCWidget) {
         return;
-
-    if(!m_Model)
-        return;
-
-    if(!m_SplitBCWidget)
-        return;
+    }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL)
+    if(modelElement==NULL) {
         return;
+    }
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+    if(indexesOfSelectedRows.size() < 1) {
         return;
     }
 
@@ -2024,41 +2027,34 @@ void  sv4guiSimulationView1d::SplitCapBC()
 
     double totalMurrayArea=0;
     std::vector<double> faceMurrayArea;
-    for(int i=0;i<indexesOfSelectedRows.size();i++)
-    {
-        int row=indexesOfSelectedRows[i].row();
+    for (auto const& item : indexesOfSelectedRows) {
+        auto row = item.row();
         std::string faceName=m_TableModelCap->item(row,0)->text().trimmed().toStdString();
         double murrayArea=pow(modelElement->GetFaceArea(modelElement->GetFaceID(faceName)),murrayCoefficient/2);
         totalMurrayArea+=murrayArea;
         faceMurrayArea.push_back(murrayArea);
     }
 
-    for(int i=0;i<indexesOfSelectedRows.size();i++)
-    {
+    for(int i=0;i<indexesOfSelectedRows.size();i++) {
         int row=indexesOfSelectedRows[i].row();
 
-        if(splitTarget=="Resistance")
-        {
+        if(splitTarget=="Resistance") {
             double murrayRatio=totalMurrayArea/faceMurrayArea[i];
-            if(bcType=="Resistance")
-            {
+            if(bcType=="Resistance") {
                 m_TableModelCap->item(row,2)->setText(QString::number(murrayRatio*totalValue));
-            }
-            else if(bcType=="RCR")
-            {
+            } else if(bcType=="RCR") {
                 QString Rp=QString::number(murrayRatio*totalValue*percentage1);
                 QString CC="0";
                 QString Rd=QString::number(murrayRatio*totalValue*percentage2);
-
                 QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
-                if(list.size()==1)
+
+                if(list.size()==1) {
                     CC=list[0];
+                }
 
                 m_TableModelCap->item(row,2)->setText(Rp+" "+CC+" "+Rd);
                 m_TableModelCap->item(row,14)->setText(Rp+" "+Rd);
-            }
-            else if(bcType=="Coronary")
-            {
+            } else if(bcType=="Coronary") {
                 QString Ra=QString::number(murrayRatio*totalValue*percentage1);
                 QString Ca="0";
                 QString Ram=QString::number(murrayRatio*totalValue*percentage2);
@@ -2066,8 +2062,7 @@ void  sv4guiSimulationView1d::SplitCapBC()
                 QString Rv=QString::number(murrayRatio*totalValue*percentage3);
 
                 QStringList list = m_TableModelCap->item(row,15)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
-                if(list.size()==2)
-                {
+                if(list.size()==2) {
                     Ca=list[0];
                     Cim=list[1];
                 }
@@ -2075,28 +2070,22 @@ void  sv4guiSimulationView1d::SplitCapBC()
                 m_TableModelCap->item(row,2)->setText(Ra+" "+Ca+" "+Ram+" "+Cim+" "+Rv);
                 m_TableModelCap->item(row,14)->setText(Ra+" "+Ram+" "+Rv);
             }
-        }
-        else if(splitTarget=="Capacitance")
-        {
+        } else if(splitTarget=="Capacitance") {
             double murrayRatio=faceMurrayArea[i]/totalMurrayArea;
-            if(bcType=="RCR")
-            {
+            if(bcType=="RCR") {
                 QString Rp="0";
                 QString CC=QString::number(murrayRatio*totalValue);
                 QString Rd="0";
 
                 QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
-                if(list.size()==2)
-                {
+                if(list.size()==2) {
                     Rp=list[0];
                     Rd=list[1];
                 }
 
                 m_TableModelCap->item(row,2)->setText(Rp+" "+CC+" "+Rd);
                 m_TableModelCap->item(row,15)->setText(CC);
-            }
-            else if(bcType=="Coronary")
-            {
+            } else if(bcType=="Coronary") {
                 QString Ra="0";
                 QString Ca=QString::number(murrayRatio*totalValue*percentage1);
                 QString Ram="0";
@@ -2104,8 +2093,7 @@ void  sv4guiSimulationView1d::SplitCapBC()
                 QString Rv="0";
 
                 QStringList list = m_TableModelCap->item(row,14)->text().split(QRegExp("[(),{}\\s]"), QString::SkipEmptyParts);
-                if(list.size()==3)
-                {
+                if(list.size()==3) {
                     Ra=list[0];
                     Ram=list[1];
                     Rv=list[2];
@@ -2121,21 +2109,28 @@ void  sv4guiSimulationView1d::SplitCapBC()
 //--------------
 // UpdateGUICap
 //--------------
+// Set the GUI values for inlet / outler (cap) boundary conditions
+// table in the 'Inlet and Outlet BCs' toolbox tab.
+//
+// The GUI values are updated from sv4guiSimJob1d properties?
+//
+// Modifies:
+//     m_TableModelCap
+//
 //
 void sv4guiSimulationView1d::UpdateGUICap()
 {
-    if(!m_MitkJob)
+    if(!m_MitkJob || !m_Model) {
         return;
-
-    if(!m_Model)
-        return;
+    }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
+    if(modelElement==NULL) {
+        return;
+    }
 
     sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
-    {
+    if(job==NULL) {
         job=new sv4guiSimJob1d();
     }
 
@@ -2151,11 +2146,12 @@ void sv4guiSimulationView1d::UpdateGUICap()
 
     std::vector<int> ids=modelElement->GetCapFaceIDs();
     int rowIndex=-1;
-    for(int i=0;i<ids.size();i++)
-    {
-        sv4guiModelElement::svFace* face=modelElement->GetFace(ids[i]);
-        if(face==NULL )
+
+    for (auto const& id : ids) {
+        sv4guiModelElement::svFace* face=modelElement->GetFace(id);
+        if(face==NULL ) {
             continue;
+        }
 
         rowIndex++;
         m_TableModelCap->insertRow(rowIndex);
@@ -2172,8 +2168,8 @@ void sv4guiSimulationView1d::UpdateGUICap()
 
         item= new QStandardItem(QString::fromStdString(job->GetCapProp(face->name,"Values")));
         m_TableModelCap->setItem(rowIndex, 2, item);
-        if(bcType=="Prescribed Velocities" && job->GetCapProp(face->name,"Flow Rate")!="")
-        {
+
+        if(bcType=="Prescribed Velocities" && job->GetCapProp(face->name,"Flow Rate")!="") {
             item= new QStandardItem(QString::fromStdString("Assigned"));
             m_TableModelCap->setItem(rowIndex, 2, item);
         }
@@ -2214,18 +2210,13 @@ void sv4guiSimulationView1d::UpdateGUICap()
         QString RValues="";
         QString CValues="";
         QStringList list =QString::fromStdString(job->GetCapProp(face->name,"Values")).split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-        if(bcType=="RCR")
-        {
-            if(list.size()==3)
-            {
+        if(bcType=="RCR") {
+            if(list.size()==3) {
                 RValues=list[0]+" "+list[2];
                 CValues=list[1];
             }
-        }
-        else if(bcType=="Coronary")
-        {
-            if(list.size()==5)
-            {
+        } else if(bcType=="Coronary") {
+            if(list.size()==5) {
                 RValues=list[0]+" "+list[2]+" "+list[4];
                 CValues=list[1]+" "+list[3];
             }
@@ -2243,11 +2234,16 @@ void sv4guiSimulationView1d::UpdateGUICap()
     ui->tableViewCap->horizontalHeader()->resizeSection(1,100);
     ui->tableViewCap->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
-    for(int i=3;i<capHeaders.size();i++)
+    for(int i=3;i<capHeaders.size();i++) {
         ui->tableViewCap->setColumnHidden(i,true);
+    }
 
 }
 
+//--------------------------
+// WallTypeSelectionChanged
+//--------------------------
+//
 void sv4guiSimulationView1d::WallTypeSelectionChanged(int index)
 {
     switch(index)
@@ -2271,10 +2267,15 @@ void sv4guiSimulationView1d::WallTypeSelectionChanged(int index)
     }
 }
 
+//--------------------------
+// TableVarSelectionChanged
+//--------------------------
+//
 void sv4guiSimulationView1d::TableVarSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
-    if(!m_Model)
+    if(!m_Model) {
         return;
+    }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
     if(modelElement==NULL) return;
@@ -2283,10 +2284,8 @@ void sv4guiSimulationView1d::TableVarSelectionChanged( const QItemSelection & /*
 
     modelElement->ClearFaceSelection();
 
-    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-         ; it != indexesOfSelectedRows.end(); it++)
-    {
-        int row=(*it).row();
+    for (auto const& item : indexesOfSelectedRows) {
+        auto row = item.row();
         std::string name= m_TableModelVar->item(row,0)->text().toStdString();
         modelElement->SelectFace(name);
     }
@@ -2843,22 +2842,35 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
         MITK_ERROR << "No inlet face has been defined.";
         return false;
     }
+    auto inletFaceName = m_ModelInletFaceNames[0];
+
+    // Check that an inlet flow rate file has been specified.
+    if (job->GetCapProp(inletFaceName, "Original File") == "") {
+        auto msg = "A flow rate file for the inlet face '" + inletFaceName + "' has not been defined.";
+        MITK_WARN << msg; 
+        QMessageBox::warning(NULL, MsgTitle, QString(msg.c_str())); 
+        return false;
+    }
 
     // Write the data files needed to generate a solver input file.
+    //
     WriteRcrFile(outputDir, job);
     WriteOutletFaceNames(outputDir);
+    auto flowFileName = WriteFlowFile(outputDir, job);
 
     // Set the parameters used by the Python script.
     //
     auto pythonInterface = sv4guiSimulationPython1d();
     auto params = pythonInterface.m_ParameterNames;
 
+    auto modelName = m_ModelNode->GetName();
     auto outDir = outputDir.toStdString();
     auto outletFacesFileName = outDir + "/" + OUTLET_FACE_NAMES_FILE_NAME.toStdString();
-    auto inflowFileName = outDir + "/" + "inflow.flow"; 
+    auto inflowFileName = outDir + "/" + flowFileName; 
     auto outflowBcFileName = outDir + "/" + RCR_BC_FILE_NAME.toStdString(); 
     auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
 
+    pythonInterface.AddParameter(params.MODEL_NAME, modelName);
     pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, outDir);
     pythonInterface.AddParameter(params.UNITS, "mm");
 
@@ -2874,8 +2886,12 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName); 
 
     // Execute the Python script to generate the 1D solver input file.
-    pythonInterface.GenerateSolverInput(job);
+    auto statusMsg = "Generating simulation files ..."; 
+    ui->JobStatusLabel->setText(statusMsg);
+    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+    pythonInterface.GenerateSolverInput(outDir, job);
 
+    // Check for success.
     auto solverInputFile = outputDir + "/" + SOLVER_FILE_NAME;
     if (!QFile::exists(solverInputFile)) {
         QMessageBox::warning(NULL, MsgTitle, "Creating the 1D solver input file has failed.");
@@ -2883,11 +2899,46 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     }
 
     m_SolverInputFile = solverInputFile; 
-    MITK_INFO << msg << "Solver input file: " << m_SolverInputFile;
     ui->RunSimulationPushButton->setEnabled(true);
-    ui->JobStatusLabel->setText("Simulation files have been created.");
+    MITK_INFO << msg << "Solver input file: " << m_SolverInputFile;
+
+    statusMsg = "Simulation files have been created."; 
+    ui->JobStatusLabel->setText(statusMsg);
+    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
 
     return true;
+}
+
+//---------------
+// WriteFlowFile
+//---------------
+// Write the inlet face flow rate file.
+//
+// The flow rate file is set by the user using the 'Set Inlet/Outlet BCs' popup 
+// called up from the 'Inlet and Outlet BCs' toolbox tab and processed using the
+// sv4guiCapBCWidget1d object. The sv4guiSimJob1d object stores the flow rate
+// file name (without path) and its contents.
+//
+std::string sv4guiSimulationView1d::WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job)
+{
+    auto inletFaceName = m_ModelInletFaceNames[0];
+    auto flowFileName = job->GetCapProp(inletFaceName, "Original File");
+    auto flowFileContent = QString::fromStdString(job->GetCapProp(inletFaceName, "Flow Rate"));
+    auto flowFile = outputDir + "/" + QString(flowFileName.c_str());
+    mitk::StatusBar::GetInstance()->DisplayText("Writing flow rate file.");
+    QFile flowFileWriter(flowFile);
+
+    if (flowFileWriter.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream output(&flowFileWriter);
+        output << flowFileContent;
+        flowFileWriter.close();
+    } else {
+        auto msg = "Unable to write flow rate file '" + flowFile + "'";
+        MITK_ERROR << msg; 
+        QMessageBox::critical(NULL, MsgTitle, msg);
+    }
+
+    return flowFileName;
 }
 
 //--------------
@@ -2907,7 +2958,7 @@ void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, const sv4guiS
         return;
     }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
+    mitk::StatusBar::GetInstance()->DisplayText("Writing rcrt.dat");
     QFile rcrtFile(outputDir + "/" + RCR_BC_FILE_NAME);
 
     if (rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -3104,27 +3155,38 @@ bool sv4guiSimulationView1d::SetBasicParameters(sv4guiSimJob1d* job, std::string
 //-----------
 // SetCapBcs
 //-----------
+// Set the values for inlet / outler (cap) boundary conditions.
+//
+// These values are taken from the GUI values for inlet / outlet 
+// (cap) boundary conditions table in the 'Inlet and Outlet BCs' 
+// toolbox tab (m_TableModelCap).
+//
+// Modifies:
+//     job.props[]
 //
 bool sv4guiSimulationView1d::SetCapBcs(sv4guiSimJob1d* job, std::string& msg)
 {
+    auto imsg = "[sv4guiSimulationView1d::SetCapBcs] ";
+    MITK_INFO << imsg << "--------- SetCapBcs ----------"; 
+
     auto checkValidity = false;
 
-    for(int i=0;i<m_TableModelCap->rowCount();i++) {
-        std::string capName=m_TableModelCap->item(i,0)->text().toStdString();
-        std::string bcType=m_TableModelCap->item(i,1)->text().trimmed().toStdString();
+    for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
+        std::string capName = m_TableModelCap->item(i,0)->text().toStdString();
+        std::string bcType = m_TableModelCap->item(i,1)->text().trimmed().toStdString();
 
-        if(bcType=="Prescribed Velocities") {
-            std::string flowrateContent=m_TableModelCap->item(i,9)->text().trimmed().toStdString();
-            std::string period=m_TableModelCap->item(i,5)->text().trimmed().toStdString();
+        if (bcType == "Prescribed Velocities") {
+            std::string flowrateContent  = m_TableModelCap->item(i,9)->text().trimmed().toStdString();
+            std::string period = m_TableModelCap->item(i,5)->text().trimmed().toStdString();
 
             if(checkValidity) {
-                if(flowrateContent=="") {
-                    msg=capName + ": no flowrate data";
+                if(flowrateContent == "") {
+                    msg = capName + ": no flowrate data";
                     return false;
                 }
 
-                if(period=="") {
-                    msg=capName + ": no period for flowrate data";
+                if(period == "") {
+                    msg = capName + ": no period for flowrate data";
                     return false;
                 }
             }

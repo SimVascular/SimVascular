@@ -195,6 +195,7 @@ public:
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
     void WriteRcrFile(const QString outputDir, const sv4guiSimJob1d* job);
     void WriteOutletFaceNames(const QString outputDir);
+    std::string WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job);
 
     bool IsDouble(std::string value);
 

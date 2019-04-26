@@ -62,6 +62,7 @@ class sv4guiSimulationPython1dParamNames
       allNames.insert(COMPUTE_MESH);
       allNames.insert(INFLOW_INPUT_FILE);
       allNames.insert(MESH_OUTPUT_FILE);
+      allNames.insert(MODEL_NAME);
       allNames.insert(OUTFLOW_BC_INPUT_FILE);
       allNames.insert(OUTFLOW_BC_TYPE);
       allNames.insert(OUTLET_FACE_NAMES_INPUT_FILE);
@@ -77,6 +78,7 @@ class sv4guiSimulationPython1dParamNames
     const std::string COMPUTE_MESH = "compute_mesh";
     const std::string INFLOW_INPUT_FILE = "inflow_input_file";
     const std::string MESH_OUTPUT_FILE = "mesh_output_file";
+    const std::string MODEL_NAME = "model_name";
     const std::string OUTFLOW_BC_INPUT_FILE = "outflow_bc_input_file";
     const std::string OUTFLOW_BC_TYPE = "outflow_bc_type";
     const std::string OUTLET_FACE_NAMES_INPUT_FILE = "outlet_face_names_input_file";
@@ -111,7 +113,7 @@ class sv4guiSimulationPython1d
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value);
     bool GenerateMesh(const std::string& outputDir, const std::string& centerlinesFile, const std::string& meshFile);
-    bool GenerateSolverInput(const sv4guiSimJob1d* job);
+    bool GenerateSolverInput(const std::string outputDirectory, const sv4guiSimJob1d* job);
     std::string StartCommand();
     bool WriteMesh(const std::string fileName);
     bool WriteParameters(const std::string fileName, std::map<std::string, std::string>& params);

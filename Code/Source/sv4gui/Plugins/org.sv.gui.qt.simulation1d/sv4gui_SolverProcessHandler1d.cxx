@@ -96,7 +96,7 @@ void sv4guiSolverProcessHandler1d::ProcessError(QProcess::ProcessError error)
 
   if (error == QProcess::FailedToStart) {
     title = "Simulation cannot be started";
-    text = "Unable to start the mpiexec process. Either the mpiexec program is missing or you may have insufficient permissions to execute it.";
+    text = "Unable to execute the 1D solver.";
     MITK_ERROR << text; 
   } else {
     title = "Simulation failed";
@@ -227,34 +227,6 @@ void sv4guiSolverProcessHandler1d::AfterProcessFinished(int exitCode, QProcess::
 
 void sv4guiSolverProcessHandler1d::UpdateStatus()
 {
-    int currentStep=0;
-    QString info="";
-
-    QFile historFile(m_RunDir+"/histor.dat");
-    if (historFile.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&historFile);
-        QString content=in.readAll();
-
-        QStringList list=content.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-        info=list.last();
-
-        list=info.split(QRegExp("\\s+"),QString::SkipEmptyParts);
-        QString stepStr=list.first();
-        bool ok;
-        int step=stepStr.toInt(&ok);
-        if(ok)
-            currentStep=step;
-
-        historFile.close();
-    }
-
-    double progress=0;
-    if(currentStep>m_StartStep && m_TotalSteps>0)
-        progress=(currentStep-m_StartStep)*1.0/m_TotalSteps;
-
-    m_JobNode->SetDoubleProperty("running progress", progress);
-
-    QString status=QString::fromStdString(m_JobNode->GetName())+": running, " +QString::number((int)(progress*100))+"% completed. Info: "+info;
+    QString status = QString::fromStdString(m_JobNode->GetName())+": running";
     mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
 }

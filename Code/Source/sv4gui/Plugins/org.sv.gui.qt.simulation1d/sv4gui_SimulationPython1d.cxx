@@ -33,6 +33,7 @@
 
 #include <map>
 #include "sv4gui_SimulationPython1d.h"
+#include "sv4gui_SimulationView1d.h"
 #include <mitkLogMacros.h>
 #include <QMessageBox>
 
@@ -82,8 +83,23 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
   cmd += AddArgument(paramNames.WRITE_MESH_FILE, "true");
   cmd += AddArgument(paramNames.MESH_OUTPUT_FILE, meshFile, last);
   MITK_INFO << msg << "Execute cmd " << cmd;
-  PyRun_SimpleString(cmd.c_str());
+  //PyRun_SimpleString(cmd.c_str());
   MITK_INFO << msg << "Done!";
+
+  PyObject *pName, *pModule;
+
+  //std::string cmd = "import " + pythonModuleName + "\n";
+  //cmd += pythonModuleName + ".run(";
+
+  pName = PyUnicode_DecodeFSDefault(pythonModuleName.c_str());
+
+  pModule = PyImport_Import(pName);
+  Py_DECREF(pName);
+
+  if (pModule != NULL) {
+      MITK_INFO << msg << "Module is not null";
+  }
+ 
 }
 
 //---------------------
@@ -110,12 +126,88 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
 //     write-solver-file: Switch to enable writing a solver file.
 //     solver-output-file: The name of the solver input file to write.
 //
-bool sv4guiSimulationPython1d::GenerateSolverInput(const sv4guiSimJob1d* job)
+bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirectory, const sv4guiSimJob1d* job)
 {
   std::string msg = "[sv4guiSimulationPython1d::GenerateSolverInput] ";
   MITK_INFO << msg << "---------- GenerateSolverInput ----------";
   sv4guiSimulationPython1dParamNames paramNames;
 
+  // Import the 1D mesh generation module.
+  //
+  auto pyName = PyUnicode_DecodeFSDefault((char*)pythonModuleName.c_str());
+  auto pyModule = PyImport_Import(pyName);
+
+  if (pyModule == nullptr) {
+      auto msg = "Unable to load the Python '" + QString(pythonModuleName.c_str()) + "' module.";
+      MITK_ERROR << msg;
+      QMessageBox::warning(NULL, sv4guiSimulationView1d::MsgTitle, msg);
+      return false;
+  } 
+
+  // Get the module interface function that executes 
+  // module functions based on input arguments. 
+  //
+  auto pyFuncName = (char*)"run_from_c";
+  auto pyDict = PyModule_GetDict(pyModule);
+  auto pyFunc = PyDict_GetItemString(pyDict, (char*)pyFuncName);
+
+  if (!PyCallable_Check(pyFunc)) {
+      auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(pythonModuleName.c_str()) + "' module.";
+      MITK_ERROR << msg;
+      QMessageBox::warning(NULL, sv4guiSimulationView1d::MsgTitle, msg);
+      return false;
+  }
+
+  // Create an argument containing the output directory.
+  // This is used to write a script log file to the
+  // solver job directory.
+  //
+  auto dummyArgs = PyTuple_New(1);
+  auto dummyValue = PyUnicode_DecodeFSDefault(outputDirectory.c_str());
+  PyTuple_SetItem(dummyArgs, 0, dummyValue);
+
+  // Create the **kwarg arguments that are the input arguments to the module.
+  //
+  MITK_INFO << msg << "Add arguments ... ";
+  auto kwargs = PyDict_New();
+  for (auto const& param : m_ParameterValues) {
+      MITK_INFO << msg << param.first; 
+      PyDict_SetItemString(kwargs, param.first.c_str(), PyUnicode_DecodeFSDefault(param.second.c_str()));
+  }
+  MITK_INFO << msg << "Done.";
+
+  // Execute the Python script.
+  //
+  MITK_INFO << msg << "Execute script ...";
+  auto result = PyObject_Call(pyFunc, dummyArgs, kwargs);
+  MITK_INFO << msg << "Done.";
+
+  // Check for errors.
+  PyErr_Print();
+
+  if (result) {
+      auto uResult = PyUnicode_FromObject(result);
+      auto sResult = std::string(PyUnicode_AsUTF8(uResult));
+      if ((sResult.find("error") != std::string::npos) || (sResult.find("ERROR") != std::string::npos)) {
+          QMessageBox mb(nullptr);
+          mb.setWindowTitle(sv4guiSimulationView1d::MsgTitle);
+          mb.setText("The generation of the solver input file failed.");
+          mb.setIcon(QMessageBox::Warning);
+          mb.setDetailedText(QString(sResult.c_str()));
+          mb.setDefaultButton(QMessageBox::Ok);
+          mb.exec();
+      }
+  }
+
+  Py_DECREF(pyFunc);
+  Py_DECREF(pyDict);
+  Py_DECREF(pyName);
+  Py_DECREF(pyModule);
+  Py_DECREF(dummyArgs);
+  Py_DECREF(dummyValue);
+  Py_DECREF(kwargs);
+
+/*
   // Create the script command.
   auto last = true;
   auto cmd = StartCommand();
@@ -128,6 +220,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const sv4guiSimJob1d* job)
   MITK_INFO << msg << "Execute cmd " << cmd;
   PyRun_SimpleString(cmd.c_str());
   MITK_INFO << msg << "Done!";
+*/
 }
 
 //--------------
