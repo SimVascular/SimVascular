@@ -261,6 +261,10 @@ if(SV_USE_QT_GUI)
     "Source/sv4gui/Modules/svFSI"
      )
 
+  #if(SV_USE_ONEDSOLVER)
+   # set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Simulation1d")
+  #endif()
+
   if(SV_USE_OpenCASCADE)
     set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Model/OCCT")
   endif()
