@@ -29,7 +29,103 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <Python.h>
+// The sv4guiSimulationView1d class methods defined here provide an interface to
+// the 1D Simulation Tool Qt GUI widgets used to create the input files needed to 
+// run a 1D simulation. The 1D solver (sv1dsolver) can be run from the GUI or from 
+// the command line.
+//
+// The 1D Simulation Tool uses a surface model created by a Modeling Tool. The surface 
+// model is used to create geometry identifying vessel centerlines, branches and
+// bifurcations. The centerlines geometry is used to create a 1D finite element mesh.
+//
+// The input files neeed to run a simulation are created using the following steps
+//
+//   1) Select an inlet face from a model surface.
+//
+//      GUI widgets used:
+//        selectModelFacesPushButton
+//        m_ModelFaceSelectionWidget
+//
+//      Methods called:
+//        SelectModelInletFaces() - Displays a table (m_ModelFaceSelectionWidget) used to select 
+//                                  the inlet face name.
+//        SetModelInletFaces() - Set the names and face IDs for the inlet faces selected from 
+//                               the m_ModelFaceSelectionWidget.
+//      Data set:
+//        m_ModelInletFaceNames
+//        m_ModelInletFaceIds
+//        m_ModelOutletFaceNames
+//        job->SetModelProp("Inlet Face Name", ...)
+//
+//   2) Calculate centerlines using model surface and inlet face name 
+//
+//      GUI widgets used:
+//        CalculateCenterlinesPushButton
+//
+//      Methods called:
+//        CalculateCenterlines()
+//        UpdateCenterlines()
+//        sv4guiSimulationExtractCenterlines1d::Run()
+//
+//      Data set:
+//        m_CenterlinesContainer
+//        m_CenterlinesFileName
+//        m_CenterlinesMapper
+//        m_CenterlinesNode
+//
+//   3) Set inlet and outlet boundary conditions 
+//
+//      This uses the sv4guiCapBCWidget1d class and m_TableModelCap.
+//
+//      GUI widgets used: 
+//        m_TableModelCap - QStandardItemModel which provides a generic model for storing custom data.
+//        tableViewCap
+//        m_CapBCWidget - sv4guiCapBCWidget1d
+//
+//      Methods called:
+//        CreateJob()
+//        SetCapBC() - modifies m_TableModelCap
+//        SetCapBcs() - job->SetCapProp()
+//        ShowCapBCWidget()
+//        UpdateSimJob() - called when any parameter changed
+//
+//      Data set:
+//        m_TableModelCap->item()
+//        job->SetCapProp()
+//
+//   4) Set solver parameters 
+//
+//      GUI widgets used: 
+//        m_TableModelSolver - QStandardItemModel which provides a generic model for storing custom data.
+//
+//      Methods called:
+//        CreateJob()
+//        SetBasicParameters()
+//        SetCapBcs() - job->SetCapProp()
+//        SetSolverParameters() - job->SetSolverProp()
+//        SetWallProperites()
+//        UpdateGUISolver() - modifies m_TableModelSolver
+//        UpdateSimJob() - called when any parameter changed
+//
+//      Data set:
+//        job 
+//        m_TableModelSolver
+//
+//   5) Create simulation files 
+//
+//      GUI widgets used: 
+//        CreateSimulationFilesButton
+//
+//      Methods called:
+//        CreateDataFiles()
+//        CreateJob()
+//        CreateSimulationFiles()
+//        WriteOutletFaceNames()
+//        WriteRcrFile()
+//
+//      Data set:
+//        None - writes simulation files.
+//
 
 #include "sv4gui_SimulationView1d.h"
 #include "ui_sv4gui_SimulationView1d.h"
@@ -86,6 +182,7 @@ const QString sv4guiSimulationView1d::MsgTitle = "SimVascular SV 1D Simulation";
 const QString sv4guiSimulationView1d::SOLVER_EXECUTABLE_NAME = "OneDSolver";
 const QString sv4guiSimulationView1d::SOLVER_INSTALL_DIRECTORY = "/usr/local/sv/oneDSolver";
 const QString sv4guiSimulationView1d::SOLVER_INSTALL_SUB_DIRECTORY = "/bin";
+const QString sv4guiSimulationView1d::SOLVER_LOG_FILE_NAME = "sv1dsolver.log";
 
 // Set the names of the files written as output.
 const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
@@ -120,6 +217,12 @@ const std::vector<QString> sv4guiSimulationView1d::CenterlinesSource::types =
     sv4guiSimulationView1d::CenterlinesSource::MODEL_PLUGIN,
     sv4guiSimulationView1d::CenterlinesSource::READ_FROM_FILE
 };
+
+const QString sv4guiSimulationView1d::DataInputStateName::INLET_FACE = "Inlet face name";
+const QString sv4guiSimulationView1d::DataInputStateName::CENTERLINES = "Centerlines";
+const QString sv4guiSimulationView1d::DataInputStateName::BOUNDRY_CONDITIONS = "Boundary conditions";
+const QString sv4guiSimulationView1d::DataInputStateName::SOLVER_PARAMETERS = "Solver parameters";
+const QString sv4guiSimulationView1d::DataInputStateName::SIMULATION_FILES = "Simulation files";
 
 //------------------------
 // sv4guiSimulationView1d
@@ -258,14 +361,22 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
 //---------------------
 // Create connections between GUI events (signals) and callbacks (slots). 
 //
+// The m_TableModelCap widget is a QStandardItemModel object that provides a generic model 
+// for storing custom data.
+//
+// Modifies: 
+//   m_TableModelCap 
+//
 void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 {
     auto msg = "[sv4guiSimulationView1d::CreateQtPartControl] ";
     MITK_INFO << msg << "--------- CreateQtPartControl ----------"; 
     m_Parent=parent;
     ui->setupUi(parent);
-    //ui->btnSave->hide();
 
+    // Hide Job Status for now, can't get it to work. 
+    ui->JobStatusNameLabel->hide();
+    ui->JobStatusValueLabel->hide();
 
     // Set the toolbox to display the first ('1D Mesh') tab.
     ui->toolBox->setCurrentIndex(0);
@@ -282,6 +393,8 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 
     // Inlet and Outlet BCs.
     //
+    // The QStandardItemModel object provides a generic model for storing custom data.
+    //
     m_TableModelCap = new QStandardItemModel(this);
     ui->tableViewCap->setModel(m_TableModelCap);
     sv4guiTableCapDelegate1d* itemDelegate=new sv4guiTableCapDelegate1d(this);
@@ -296,18 +409,18 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     connect(ui->tableViewCap, SIGNAL(customContextMenuRequested(const QPoint&)), this, 
       SLOT(TableViewCapContextMenuRequested(const QPoint&)) );
 
-    m_TableMenuCap=new QMenu(ui->tableViewCap);
-    QAction* setBCAction=m_TableMenuCap->addAction("Set BC");
-    QAction* setPressureAction=m_TableMenuCap->addAction("Set Distal Pressure");
+    m_TableMenuCap = new QMenu(ui->tableViewCap);
+    QAction* setBCAction = m_TableMenuCap->addAction("Set BC");
+    QAction* setPressureAction = m_TableMenuCap->addAction("Set Distal Pressure");
     connect( setBCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowCapBCWidget(bool) ) );
     connect( setPressureAction, SIGNAL( triggered(bool) ) , this, SLOT( SetDistalPressure(bool) ) );
 
-    QAction* splitBCRAction=m_TableMenuCap->addAction("Split Resistance");
-    QAction* splitBCCAction=m_TableMenuCap->addAction("Split Capacitance");
+    QAction* splitBCRAction = m_TableMenuCap->addAction("Split Resistance");
+    QAction* splitBCCAction = m_TableMenuCap->addAction("Split Capacitance");
     connect( splitBCRAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSplitBCWidgetR(bool) ) );
     connect( splitBCCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSplitBCWidgetC(bool) ) );
 
-    m_CapBCWidget=new sv4guiCapBCWidget1d();
+    m_CapBCWidget = new sv4guiCapBCWidget1d();
     m_CapBCWidget->move(400,400);
     m_CapBCWidget->hide();
     m_CapBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
@@ -315,26 +428,23 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     connect(m_CapBCWidget,SIGNAL(accepted()), this, SLOT(SetCapBC()));
 
     // Split Resistance BCs.
-    m_SplitBCWidget=new sv4guiSplitBCWidget1d();
+    m_SplitBCWidget = new sv4guiSplitBCWidget1d();
     m_SplitBCWidget->move(400,400);
     m_SplitBCWidget->hide();
     m_SplitBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     connect(m_SplitBCWidget,SIGNAL(accepted()), this, SLOT(SplitCapBC()));
 
-    //for wall panel and var table
+    // Wall panel and var table.
     connect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(WallTypeSelectionChanged(int )));
-
     ui->widgetConstant->hide();
     ui->widgetVariable->hide();
 
     m_TableModelVar = new QStandardItemModel(this);
     ui->tableViewVar->setModel(m_TableModelVar);
 
-    connect( ui->tableViewVar->selectionModel()
-             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-             , this
-             , SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+    connect(ui->tableViewVar->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection&)), 
+      this, SLOT(TableVarSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
     connect( ui->tableViewVar, SIGNAL(customContextMenuRequested(const QPoint&))
              , this, SLOT(TableViewVarContextMenuRequested(const QPoint&)) );
@@ -345,15 +455,18 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     connect( setVarThicknessAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarThickness(bool) ) );
     connect( setVarEAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarE(bool) ) );
 
-    //for solver table
+    // Solver parameters table.
+    //
     m_TableModelSolver = new QStandardItemModel(this);
     ui->tableViewSolver->setModel(m_TableModelSolver);
-    sv4guiTableSolverDelegate1d* itemSolverDelegate=new sv4guiTableSolverDelegate1d(this);
+    sv4guiTableSolverDelegate1d* itemSolverDelegate = new sv4guiTableSolverDelegate1d(this);
     ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
     // Create files and Run Simulation toolbox tab. 
-    connect(ui->btnCreateAllFiles, SIGNAL(clicked()), this, SLOT(CreateAllFiles()) );
+    connect(ui->CreateSimulationFilesButton, SIGNAL(clicked()), this, SLOT(CreateSimulationFiles()) );
     connect(ui->RunSimulationPushButton, SIGNAL(clicked()), this, SLOT(RunJob()) );
+    // Disable these until the prerequisite data has be defined.
+    ui->CreateSimulationFilesButton->setEnabled(false);
     ui->RunSimulationPushButton->setEnabled(false);
 
     //for export results
@@ -448,7 +561,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     //
     connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateCenterlinesSource()));
     connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(SelectCenterlinesFile()));
-    connect(ui->calculateCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(CalculateCenterlines()) );
+    connect(ui->CalculateCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(CalculateCenterlines()) );
     connect(ui->selectModelFacesPushButton, SIGNAL(clicked()), this, SLOT(SelectModelInletFaces()));
     for (auto const& type : CenterlinesSource::types) {
         ui->centerlinesComboBox->addItem(type);
@@ -458,8 +571,8 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     ui->readCenterlinesPushButton->setVisible(false);
     ui->centerlinesFileNameLabel->setVisible(false);
     ui->centerlinesFileNameLineEdit->setVisible(false);
-    ui->calculateCenterlinesPushButton->setVisible(true);
-    ui->calculateCenterlinesPushButton->setEnabled(false);
+    ui->CalculateCenterlinesPushButton->setVisible(true);
+    ui->CalculateCenterlinesPushButton->setEnabled(false);
 
     // Add model face selection widget.
     //
@@ -482,7 +595,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 // Set the source of a surface model.
 //
 // Modifies:
-//     m_ModelSource 
+//   m_ModelSource 
 //
 void sv4guiSimulationView1d::UpdateSurfaceModelSource()
 {
@@ -605,7 +718,7 @@ void sv4guiSimulationView1d::ReadModel()
 // The inlet faces are used to compute centerlines from
 // the surface model.
 //
-void sv4guiSimulationView1d::SelectModelInletFaces()
+void sv4guiSimulationView1d::SelectModelInletFaces(bool show)
 {
     if (!m_Model) {
         return;
@@ -640,14 +753,20 @@ void sv4guiSimulationView1d::SelectModelInletFaces()
 
     m_ModelFaceSelectionWidget->SetTableView(caps, modelElement, "PolyData");
     //m_ModelFaceSelectionWidget->SetTableView(caps, modelElement, m_ModelType);
-    m_ModelFaceSelectionWidget->show();
+
+    if (show) {
+        m_ModelFaceSelectionWidget->show();
+    }
 }
 
 //--------------------
 // SetModelInletFaces
 //--------------------
-// Save the names and face IDs for the inlet faces selected 
-// from the m_ModelFaceSelectionWidget.
+// Set the names and face IDs for the inlet faces selected from the m_ModelFaceSelectionWidget.
+//
+// Currently only a single inlet face may be selected.
+//
+// This also sets the outlet faces.
 //
 // Modifies:
 //   m_ModelInletFaceNames
@@ -660,15 +779,21 @@ void sv4guiSimulationView1d::SetModelInletFaces()
         return;
     }
 
-    auto msg = "[sv4guiSimulationView1d::AddModelFaces] ";
-    MITK_INFO << msg << "--------- AddModelFaces ----------"; 
+    auto msg = "[sv4guiSimulationView1d::SetModelFaces] ";
+    MITK_INFO << msg << "--------- SetModelFaces ----------"; 
 
     int timeStep = 0;
-    sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
     std::vector<std::string> inletFaceNames = m_ModelFaceSelectionWidget->GetUsedCapNames();
     MITK_INFO << msg << "Number of inlet faces selected: " << inletFaceNames.size(); 
+    if (inletFaceNames.size() == 0) {
+        return;
+    }
+
     m_ModelInletFaceNames.clear();
     m_ModelInletFaceIds.clear();
+    m_ModelOutletFaceNames.clear();
+    sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
+
     for (const auto& name : inletFaceNames) {
         MITK_INFO << msg << "Inlet face: " << name; 
         m_ModelInletFaceNames.push_back(name);
@@ -689,15 +814,28 @@ void sv4guiSimulationView1d::SetModelInletFaces()
     //
     std::vector<std::string> outletFaceNames = m_ModelFaceSelectionWidget->GetUnselectedCapNames();
     MITK_INFO << msg << "Number of outlet faces not selected: " << outletFaceNames.size();
-    m_ModelOutletFaceNames.clear();
     for (const auto& name : outletFaceNames) {
         MITK_INFO << msg << "Outlet face: " << name;
         m_ModelOutletFaceNames.push_back(name);
     }
 
+    // Set the inlet face name in the job.
+    auto job = m_MitkJob->GetSimJob();
+    if (job != nullptr) {
+        job->SetModelProp("Inlet Face Name", m_ModelInletFaceNames[0]);
+    }
+
     // Enable execute centerlines button.
-    //ui->JobStatusLabel->setText("Inlet face selected.");
-    ui->calculateCenterlinesPushButton->setEnabled(true);
+    if (m_CenterlinesFileName == "") { 
+        ui->JobStatusValueLabel->setText("Centerlines have not been calculated");
+    } else {
+        ui->JobStatusValueLabel->setText("Simulation files have not been created");
+        MITK_INFO << msg << "Job status: " << "Simulation files have not been created"; 
+    }
+
+    // Once an inlet face has been selected then centerlines may be calculated.
+    ui->CalculateCenterlinesPushButton->setEnabled(true);
+
 }
 
 //-------------------------
@@ -731,8 +869,8 @@ void sv4guiSimulationView1d::UpdateCenterlinesSource()
 
     auto showCalculate = (sourceType == CenterlinesSource::CALCULATE);
     ui->selectModelFacesPushButton->setVisible(showCalculate);
-    ui->calculateCenterlinesPushButton->setVisible(showCalculate);
-    ui->calculateCenterlinesPushButton->setEnabled(false);
+    ui->CalculateCenterlinesPushButton->setVisible(showCalculate);
+    ui->CalculateCenterlinesPushButton->setEnabled(false);
 }
 
 //------------------------
@@ -778,9 +916,13 @@ void sv4guiSimulationView1d::CalculateCenterlines()
     MITK_INFO << msg << "---------- CalculateCenterlines ----------";
     MITK_INFO << msg << "Number of inlet faces: " <<  m_ModelInletFaceIds.size();
 
+    if (!CheckInputState(DataInputStateType::CENTERLINES)) {
+        return;
+    }
+
     if (m_ModelInletFaceIds.size() == 0) {
         MITK_WARN << "No inlet faces selected.";
-        QMessageBox::warning(NULL, "1D Simulation", "No inlet faces selected.");
+        QMessageBox::warning(NULL, MsgTitle, "No inlet faces selected.");
         return;
     }
 
@@ -848,6 +990,7 @@ void sv4guiSimulationView1d::UpdateCenterlines()
     if (centerlinesGeometry != nullptr) { 
         m_CenterlinesContainer->SetMesh(centerlinesGeometry);
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+        SetInputState(DataInputStateType::CENTERLINES, true);
     }
 }
 
@@ -857,7 +1000,7 @@ void sv4guiSimulationView1d::UpdateCenterlines()
 // Select a centerlines file using a file browser.
 //
 // Modifies:
-//    m_CenterlinesFileName 
+//   m_CenterlinesFileName 
 //
 void sv4guiSimulationView1d::SelectCenterlinesFile()
 {
@@ -1418,7 +1561,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     // Update main GUI panel upper section.
     //
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
-    ui->JobStatusLabel->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+    ui->JobStatusValueLabel->setText(QString::fromStdString(m_MitkJob->GetStatus()));
     ui->showModelCheckBox->setChecked(false);
     if(m_ModelNode.IsNotNull()) {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
@@ -1430,6 +1573,8 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     }
 
     EnableConnection(false);
+
+    UpdateModelGUI();
 
     UpdateGUIBasic();
 
@@ -1465,8 +1610,7 @@ void sv4guiSimulationView1d::NodeChanged(const mitk::DataNode* node)
 
         bool updateRunDir=false;
         m_JobNode->GetBoolProperty("update rundir",updateRunDir);
-        if(updateRunDir)
-        {
+        if(updateRunDir) {
             UpdateGUIRunDir();
             m_JobNode->SetBoolProperty("update rundir",false);
         }
@@ -1559,8 +1703,51 @@ void sv4guiSimulationView1d::ClearAll()
     m_ModelNode=NULL;
 
     ui->labelJobName->setText("");
-    ui->JobStatusLabel->setText("");
+    ui->JobStatusValueLabel->setText("");
     ui->labelModelName->setText("");
+}
+
+//----------------
+// UpdateModelGUI
+//----------------
+// Update the surface model GUI.
+//
+// If an inlet face has been previously set and stored for the job
+// (in the .s1djb file) then set that name in the checkable
+// rows of the GUI popup table m_ModelFaceSelectionWidget.
+//
+void sv4guiSimulationView1d::UpdateModelGUI()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+
+    auto msg = "[sv4guiSimulationView1d::UpdateModelGUI] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "--------- UpdateModelGUI ----------";
+
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+
+    if (job == NULL) {
+        job = new sv4guiSimJob1d();
+    }
+
+    auto inletFaceName = job->GetModelProp("Inlet Face Name");
+    MITK_INFO << msg << "inletFaceName: " << inletFaceName;
+    if (inletFaceName == "") { 
+        return;
+    }
+
+    // Set cap face names for the m_ModelFaceSelectionWidget.
+    auto show = false;
+    SelectModelInletFaces(show);
+
+    // Select the inlet face programmatically. 
+    std::set<std::string> capNames = { inletFaceName }; 
+    m_ModelFaceSelectionWidget->SetUsedCapNames(capNames);
+
+    // Set the face name for this object from name set in m_ModelFaceSelectionWidget.
+    SetModelInletFaces();
 }
 
 //----------------
@@ -1631,14 +1818,17 @@ void sv4guiSimulationView1d::UpdateGUIBasic()
     ui->tableViewBasic->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 }
 
+//-----------------------------
+// TableViewBasicDoubleClicked
+//-----------------------------
+//
 void sv4guiSimulationView1d::TableViewBasicDoubleClicked(const QModelIndex& index)
 {
     if(index.column()!=0)
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewBasic->selectionModel()->selectedRows();
-    if(indexesOfSelectedRows.size() < 1)
-    {
+    if(indexesOfSelectedRows.size() < 1) {
         return;
     }
 
@@ -1693,7 +1883,7 @@ void sv4guiSimulationView1d::TableViewBasicDoubleClicked(const QModelIndex& inde
 //-------------------------
 //
 // Update the 'Inlet and Outlet BCs' face table when the faces for m_Model have 
-// been modified in the its Model plugin. 
+// been modified in the Model plugin. 
 //
 void sv4guiSimulationView1d::UpdateFaceListSelection()
 {
@@ -1826,6 +2016,9 @@ void sv4guiSimulationView1d::TableViewCapContextMenuRequested( const QPoint & po
 //-----------------
 // ShowCapBCWidget
 //-----------------
+// Show the m_CapBCWidget (sv4guiCapBCWidget1d) popup.
+//
+// Sets values stored in m_TableModelCap.
 //
 void sv4guiSimulationView1d::ShowCapBCWidget(bool)
 {
@@ -1839,29 +2032,29 @@ void sv4guiSimulationView1d::ShowCapBCWidget(bool)
 
     std::map<std::string,std::string> props;
     std::string capName;
-    int row=indexesOfSelectedRows[0].row();
+    int row = indexesOfSelectedRows[0].row();
 
     if(indexesOfSelectedRows.size() == 1)
         capName=m_TableModelCap->item(row,0)->text().toStdString();
     else
         capName="multiple faces";
 
-    props["BC Type"]=m_TableModelCap->item(row,1)->text().toStdString();
-    props["Values"]=m_TableModelCap->item(row,2)->text().toStdString();
-    props["Pressure"]=m_TableModelCap->item(row,3)->text().toStdString();
-    props["Analytic Shape"]=m_TableModelCap->item(row,4)->text().toStdString();
-    props["Period"]=m_TableModelCap->item(row,5)->text().toStdString();
-    props["Point Number"]=m_TableModelCap->item(row,6)->text().toStdString();
-    props["Fourier Modes"]=m_TableModelCap->item(row,7)->text().toStdString();
-    props["Flip Normal"]=m_TableModelCap->item(row,8)->text().toStdString();
-    props["Flow Rate"]=m_TableModelCap->item(row,9)->text().toStdString();
-    props["File"]=m_TableModelCap->item(row,10)->text().toStdString();
-    props["Original File"]=m_TableModelCap->item(row,10)->text().toStdString();
-    props["Timed Pressure"]=m_TableModelCap->item(row,11)->text().toStdString();
-    props["Pressure Period"]=m_TableModelCap->item(row,12)->text().toStdString();
-    props["Pressure Scaling"]=m_TableModelCap->item(row,13)->text().toStdString();
-    props["R Values"]=m_TableModelCap->item(row,14)->text().toStdString();
-    props["C Values"]=m_TableModelCap->item(row,15)->text().toStdString();
+    props["BC Type"] = m_TableModelCap->item(row,1)->text().toStdString();
+    props["Values"] = m_TableModelCap->item(row,2)->text().toStdString();
+    props["Pressure"] = m_TableModelCap->item(row,3)->text().toStdString();
+    props["Analytic Shape"] = m_TableModelCap->item(row,4)->text().toStdString();
+    props["Period"] = m_TableModelCap->item(row,5)->text().toStdString();
+    props["Point Number"] = m_TableModelCap->item(row,6)->text().toStdString();
+    props["Fourier Modes"] = m_TableModelCap->item(row,7)->text().toStdString();
+    props["Flip Normal"] = m_TableModelCap->item(row,8)->text().toStdString();
+    props["Flow Rate"] = m_TableModelCap->item(row,9)->text().toStdString();
+    props["File"] = m_TableModelCap->item(row,10)->text().toStdString();
+    props["Original File"] = m_TableModelCap->item(row,10)->text().toStdString();
+    props["Timed Pressure"] = m_TableModelCap->item(row,11)->text().toStdString();
+    props["Pressure Period"] = m_TableModelCap->item(row,12)->text().toStdString();
+    props["Pressure Scaling"] = m_TableModelCap->item(row,13)->text().toStdString();
+    props["R Values"] = m_TableModelCap->item(row,14)->text().toStdString();
+    props["C Values"] = m_TableModelCap->item(row,15)->text().toStdString();
 
     m_CapBCWidget->UpdateGUI(capName,props);
 
@@ -1909,7 +2102,7 @@ void sv4guiSimulationView1d::SetDistalPressure(bool)
 // are changed (sv4guiCapBCWidget1d class).
 //
 // Modifies:
-//     m_TableModelCap
+//   m_TableModelCap
 //
 void  sv4guiSimulationView1d::SetCapBC()
 {
@@ -1957,6 +2150,9 @@ void  sv4guiSimulationView1d::SetCapBC()
 //-------------------
 // ShowSplitBCWidget
 //-------------------
+// Show popup to set data for split resistance and capacitance. 
+//
+// This is show when right clicking on BCs in the Inlet / Outlet toolbox page. 
 //
 void sv4guiSimulationView1d::ShowSplitBCWidget(QString splitTarget)
 {
@@ -2120,7 +2316,7 @@ void  sv4guiSimulationView1d::SplitCapBC()
 // The GUI values are updated from sv4guiSimJob1d properties?
 //
 // Modifies:
-//     m_TableModelCap
+//   m_TableModelCap
 //
 //
 void sv4guiSimulationView1d::UpdateGUICap()
@@ -2347,25 +2543,30 @@ void sv4guiSimulationView1d::SetVarE(bool)
     }
 }
 
+//---------------
+// UpdateGUIWall
+//---------------
+//
 void sv4guiSimulationView1d::UpdateGUIWall()
 {
-    if(!m_MitkJob)
+    if(!m_MitkJob) {
         return;
+    }
 
     sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
-    {
+    if(job==NULL) {
         job=new sv4guiSimJob1d();
     }
 
-    if(job->GetWallProp("Type")=="rigid")
+    if(job->GetWallProp("Type")=="rigid") {
         ui->comboBoxWallType->setCurrentIndex(0);
-    else if(job->GetWallProp("Type")=="deformable")
+    } else if(job->GetWallProp("Type")=="deformable") {
         ui->comboBoxWallType->setCurrentIndex(1);
-    else if(job->GetWallProp("Type")=="variable")
+    } else if(job->GetWallProp("Type")=="variable") {
         ui->comboBoxWallType->setCurrentIndex(2);
-    else
+    } else {
         ui->comboBoxWallType->setCurrentIndex(0);
+    }
 
     ui->lineEditThickness->setText(QString::fromStdString(job->GetWallProp("Thickness")));
     ui->lineEditE->setText(QString::fromStdString(job->GetWallProp("Elastic Modulus")));
@@ -2432,56 +2633,71 @@ void sv4guiSimulationView1d::UpdateGUIWall()
     ui->tableViewVar->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
 }
 
+//-----------------
+// UpdateGUISolver
+//-----------------
+//
 void sv4guiSimulationView1d::UpdateGUISolver()
 {
-    if(!m_MitkJob)
+    if(!m_MitkJob) {
         return;
+    }
 
-    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    if(job==NULL)
-    {
-        job=new sv4guiSimJob1d();
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+    if(job == NULL) {
+        job = new sv4guiSimJob1d();
     }
 
     m_TableModelSolver->clear();
 
+    // Set table column headers.
+    //
     QStringList solverHeaders;
     solverHeaders << "Parameter" << "Value" << "Type" << "Value List";
     m_TableModelSolver->setHorizontalHeaderLabels(solverHeaders);
-    int colCount=solverHeaders.size();
+    int colCount = solverHeaders.size();
     m_TableModelSolver->setColumnCount(colCount);
 
+    // Read solver parameter names.
+    //
     QString templateFilePath=":solvertemplate1d.xml";
-    if(m_UseCustom)
+    if(m_UseCustom) {
         templateFilePath=m_SolverTemplatePath;
+    }
 
     QFile xmlFile(templateFilePath);
-    if(!xmlFile.open(QIODevice::ReadOnly))
-    {
+    if(!xmlFile.open(QIODevice::ReadOnly)) {
         QMessageBox::warning(m_Parent,"Info Missing","Solver Parameter Table template file not found");
         return;
     }
 
     QDomDocument doc("solvertemplate1d");
-    //    QString *em=NULL;
-    if(!doc.setContent(&xmlFile))
-    {
+    if(!doc.setContent(&xmlFile)) {
         QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
         return;
     }
     xmlFile.close();
 
+    // Setup parameter table.
+    //
     QDomElement templateElement = doc.firstChildElement("template");
     QDomNodeList sectionList=templateElement.elementsByTagName("section");
     int rowIndex=-1;
-    for(int i=0;i<sectionList.size();i++)
-    {
-        QDomNode sectionNode=sectionList.item(i);
-        if(sectionNode.isNull()) continue;
+
+    for(int i=0;i<sectionList.size();i++) {
+        QDomNode sectionNode = sectionList.item(i);
+
+        if(sectionNode.isNull()) {
+            continue;
+        }
 
         QDomElement sectionElement=sectionNode.toElement();
-        if(sectionElement.isNull()) continue;
 
+        if (sectionElement.isNull()) {
+            continue;
+        }
+
+        // Add a row.
         QString name=sectionElement.attribute("name");
         rowIndex++;
         QStandardItem* item= new QStandardItem(name);
@@ -2492,8 +2708,7 @@ void sv4guiSimulationView1d::UpdateGUISolver()
         ui->tableViewSolver->setSpan(rowIndex,0,1,colCount);
 
         QDomNodeList parList=sectionElement.elementsByTagName("param");
-        for(int j=0;j<parList.size();j++)
-        {
+        for(int j=0;j<parList.size();j++) {
             QDomNode parNode=parList.item(j);
             if(parNode.isNull()) continue;
 
@@ -2667,15 +2882,14 @@ QString sv4guiSimulationView1d::GetJobPath()
     return jobPath;
 }
 
-//----------------
-// CreateAllFiles
-//----------------
-//
+//-----------------------
+// CreateSimulationFiles
+//-----------------------
 // Create files for a simulation.
 //
 // [Davep] Not sure why we have this function.
 //
-void sv4guiSimulationView1d::CreateAllFiles()
+void sv4guiSimulationView1d::CreateSimulationFiles()
 {
     if (!m_MitkJob) {
         return;
@@ -2715,6 +2929,11 @@ void sv4guiSimulationView1d::RunJob()
         return; 
     } 
 
+    // Set job properties used to write solver log.
+    //
+    m_JobNode->SetStringProperty("output directory", GetJobPath().toStdString().c_str());
+    m_JobNode->SetStringProperty("solver log file", sv4guiSimulationView1d::SOLVER_LOG_FILE_NAME.toStdString().c_str());
+
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
 
 /*
@@ -2724,7 +2943,7 @@ void sv4guiSimulationView1d::RunJob()
     }
 */
 
-    mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
+    mitk::StatusBar::GetInstance()->DisplayText("Running simulation ...");
 
     QProcess* solverProcess = new QProcess(m_Parent);
     solverProcess->setWorkingDirectory(jobPath);
@@ -2815,6 +3034,10 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
         return false;
     }
 
+    if (!CheckInputState(DataInputStateType::SIMULATION_FILES)) {
+        return false;
+    }
+
     // Create a job object storing all the parameters needed for a simulation.
     //
     mitk::StatusBar::GetInstance()->DisplayText("Creating Job");
@@ -2892,7 +3115,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
 
     // Execute the Python script to generate the 1D solver input file.
     auto statusMsg = "Generating simulation files ..."; 
-    ui->JobStatusLabel->setText(statusMsg);
+    ui->JobStatusValueLabel->setText(statusMsg);
     mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
     pythonInterface.GenerateSolverInput(outDir, job);
 
@@ -2908,7 +3131,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     MITK_INFO << msg << "Solver input file: " << m_SolverInputFile;
 
     statusMsg = "Simulation files have been created."; 
-    ui->JobStatusLabel->setText(statusMsg);
+    ui->JobStatusValueLabel->setText(statusMsg);
     mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
 
     return true;
@@ -3092,6 +3315,8 @@ void sv4guiSimulationView1d::ImportFiles()
 // Creates a sv4guiSimJob1d object and sets all the parameters needed 
 // for a simulation in that object.
 //
+// This is called when any parameter is changed: basic, BCs, solver, ...
+//
 sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkValidity)
 {
     sv4guiSimJob1d* job = new sv4guiSimJob1d();
@@ -3127,7 +3352,8 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
 //
 // This sets properies in the sv4guiSimJob1d object.
 //
-// Modified: job
+// Modifies: 
+//   job
 //
 bool sv4guiSimulationView1d::SetBasicParameters(sv4guiSimJob1d* job, std::string& msg)
 {
@@ -3167,7 +3393,7 @@ bool sv4guiSimulationView1d::SetBasicParameters(sv4guiSimJob1d* job, std::string
 // toolbox tab (m_TableModelCap).
 //
 // Modifies:
-//     job.props[]
+//   job.props[]
 //
 bool sv4guiSimulationView1d::SetCapBcs(sv4guiSimJob1d* job, std::string& msg)
 {
@@ -3419,33 +3645,83 @@ bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string&
     return true;
 }
 
+
+//------------
+// CheckState
+//------------
+// Check the state of the input data.
+//
+// typedef std::tuple<DataInputStateType, QString, bool> DataInputStateTuple;
+//
+bool sv4guiSimulationView1d::CheckInputState(DataInputStateType checkType)
+{
+    auto msg = "[sv4guiSimulationView1d::CheckInputState] ";
+    MITK_INFO << msg << "---------- CheckInputState ---------"; 
+    bool allPassed = true;
+
+    for (auto const& state : dataInputState) {
+        auto stype = std::get<0>(state);
+        auto name = std::get<1>(state);
+        auto passed = std::get<2>(state);
+        allPassed |= passed;
+        if (stype == checkType) {
+            break;
+        }
+        MITK_INFO << msg << ">>> Name: " << name;
+        MITK_INFO << msg << "    passed: " << passed;
+    }
+
+    return allPassed;
+}
+
+//---------------
+// SetInputState
+//---------------
+//
+void sv4guiSimulationView1d::SetInputState(DataInputStateType checkType, bool value)
+{
+    for (auto& state : dataInputState) {
+        auto stype = std::get<0>(state);
+        if (stype == checkType) {
+            std::get<2>(state) = value;
+            break;
+        }
+    }
+}
+
 //---------------------
 // SetSolverParameters
 //---------------------
+// Set solver parameters in an sv4guiSimJob1d object.
 //
-bool sv4guiSimulationView1d::SetSolverParameters(sv4guiSimJob1d* job, std::string& msg)
+// This is called when a parameter value is changed.
+//
+bool sv4guiSimulationView1d::SetSolverParameters(sv4guiSimJob1d* job, std::string& emsg)
 {
+    auto msg = "[sv4guiSimulationView1d::SetSolverParameters] ";
+    MITK_INFO << msg << "---------- SetSolverParameters ---------"; 
     auto checkValidity = false;
 
-    for(int i=0;i<m_TableModelSolver->rowCount();i++) {
-        std::string parName=m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
-        QStandardItem* valueItem=m_TableModelSolver->item(i,1);
-        if(valueItem==NULL) {
+    for (int i = 0; i < m_TableModelSolver->rowCount();i++) {
+        std::string parName = m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
+        QStandardItem* valueItem = m_TableModelSolver->item(i,1);
+        if (valueItem == NULL) {
             continue;
         }
 
-        std::string value=valueItem->text().trimmed().toStdString();
-        std::string type=m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
+        std::string value = valueItem->text().trimmed().toStdString();
+        std::string type = m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
+        MITK_INFO << msg << "type: " << type << "  value: " << value;
 
         if(checkValidity ) {
             if(value == "") {
-                msg = parName+ " missing value";
+                emsg = parName+ " missing value";
                 return false;
             } else if(type=="int"&&!IsInt(value)) {
-                msg=parName+ " value error: " + value;
+                emsg=parName+ " value error: " + value;
                 return false;
             } else if(type=="double"&&!IsDouble(value)) {
-                msg=parName+ " value error: " + value;
+                emsg=parName+ " value error: " + value;
                 return false;
             }
         }
@@ -3465,10 +3741,9 @@ void sv4guiSimulationView1d::SaveToManager()
 
     std::string msg;
 
-    sv4guiSimJob1d* job=CreateJob(msg);
+    sv4guiSimJob1d* job = CreateJob(msg);
 
-    if(job==NULL)
-    {
+    if(job==NULL) {
         QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
         return;
     }
@@ -3521,32 +3796,31 @@ void sv4guiSimulationView1d::SetResultDir()
     ui->lineEditResultDir->setText(dir);
 }
 
+//---------------
+// ExportResults
+//---------------
+//
 void sv4guiSimulationView1d::ExportResults()
 {
     QString postsolverPath=m_ExternalPostsolverPath;
     if(postsolverPath=="")
         postsolverPath=m_InternalPostsolverPath;
 
-    if(postsolverPath=="" || !QFile(postsolverPath).exists())
-    {
+    if(postsolverPath=="" || !QFile(postsolverPath).exists()) {
         QMessageBox::warning(m_Parent,"Postsolver Missing","Please make sure postsolver exists!");
         return;
     }
 
     berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     berry::IPreferences::Pointer prefs;
-    if (prefService)
-    {
+    if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
+    } else {
         prefs = berry::IPreferences::Pointer(0);
     }
 
     QString lastFileSavePath="";
-    if(prefs.IsNotNull())
-    {
+    if(prefs.IsNotNull()) {
         lastFileSavePath = prefs->Get("LastFileSavePath", "");
     }
     if(lastFileSavePath=="")
@@ -3639,7 +3913,10 @@ void sv4guiSimulationView1d::ExportResults()
     postsolverProcess->setProgram(postsolverPath);
     postsolverProcess->setArguments(arguments);
 
-    sv4guiProcessHandler1d* handler=new sv4guiProcessHandler1d(postsolverProcess,m_JobNode,false,false,m_Parent);
+    auto multithreading = false;
+    auto stoppable = false;
+
+    sv4guiProcessHandler1d* handler=new sv4guiProcessHandler1d(postsolverProcess,m_JobNode,multithreading,stoppable,m_Parent);
     handler->Start();
 
     QString detailedInfo=handler->GetMessage();
@@ -3796,25 +4073,36 @@ void sv4guiSimulationView1d::EnableTool(bool able)
 //--------------
 // UpdateSimJob
 //--------------
+// Update a job when a parameter has changed.
+//
+// This is called when any BC, basic, and solver parameters are changed.
 //
 void sv4guiSimulationView1d::UpdateSimJob()
 {
-    if(!m_MitkJob)
-        return;
+    auto msg = "[sv4guiSimulationView1d::UpdateSimJob] ";
+    MITK_INFO << msg << "---------- UpdateSimJob ---------"; 
 
-    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    std::string numProcsStr="";
-    if(job)
-    {
-        numProcsStr=job->GetRunProp("Number of Processes");
+    if (!m_MitkJob) {
+        return;
     }
 
-    std::string msg="";
-    sv4guiSimJob1d* newJob=CreateJob(msg,false);
-    if(newJob==NULL)
-        return;
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+    /*
+    std::string numProcsStr="";
+    if(job) {
+        numProcsStr=job->GetRunProp("Number of Processes");
+    }
+    */
 
-    newJob->SetRunProp("Number of Processes",numProcsStr);
+    // Create a new job.
+    //
+    std::string emsg = "";
+    sv4guiSimJob1d* newJob = CreateJob(emsg, false);
+    if (newJob == NULL) {
+        return;
+    }
+
+    //newJob->SetRunProp("Number of Processes",numProcsStr);
     m_MitkJob->SetSimJob(newJob);
     m_MitkJob->SetDataModified();
 }
@@ -3891,10 +4179,15 @@ QString sv4guiSimulationView1d::GetRegistryValue(QString category, QString key)
 }
 #endif
 
+//-----------------
+// UpdateJobStatus
+//-----------------
+//
 void sv4guiSimulationView1d::UpdateJobStatus()
 {
-    if(m_JobNode.IsNull())
+    if(m_JobNode.IsNull()) {
         return;
+    }
 
     bool running=false;
     double runningProgress=0;
@@ -3902,11 +4195,11 @@ void sv4guiSimulationView1d::UpdateJobStatus()
     m_JobNode->GetDoubleProperty("running progress",runningProgress);
 
     if(running) {
-        ui->JobStatusLabel->setText("Simulation running");
+        ui->JobStatusValueLabel->setText("Simulation running");
         //ui->JobStatusLabel->setText("Simulatin Running: "+QString::number((int)(runningProgress*100))+"% completed");
         ui->widgetRun->setEnabled(false);
     } else {
-        ui->JobStatusLabel->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+        ui->JobStatusValueLabel->setText(QString::fromStdString(m_MitkJob->GetStatus()));
         ui->widgetRun->setEnabled(true);
     }
 

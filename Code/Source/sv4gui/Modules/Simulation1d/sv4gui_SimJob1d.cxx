@@ -38,12 +38,9 @@ sv4guiSimJob1d::sv4guiSimJob1d()
 }
 
 sv4guiSimJob1d::sv4guiSimJob1d(const sv4guiSimJob1d &other)
-    : m_BasicProps(other.m_BasicProps)
-    , m_CapProps(other.m_CapProps)
-    , m_WallProps(other.m_WallProps)
-    , m_VarProps(other.m_VarProps)
-    , m_SolverProps(other.m_SolverProps)
-    , m_RunProps(other.m_RunProps)
+    : m_ModelProps(other.m_ModelProps), m_BasicProps(other.m_BasicProps), m_CapProps(other.m_CapProps), 
+      m_WallProps(other.m_WallProps), m_VarProps(other.m_VarProps), m_SolverProps(other.m_SolverProps), 
+      m_RunProps(other.m_RunProps)
 {
 }
 
@@ -55,6 +52,35 @@ sv4guiSimJob1d* sv4guiSimJob1d::Clone()
 {
     return new sv4guiSimJob1d(*this);
 }
+
+
+///////////////////////////////////////////////////////////
+//                   M o d e l  P r o p s               //
+/////////////////////////////////////////////////////////
+
+void sv4guiSimJob1d::SetModelProps(std::map<std::string,std::string> basicProps)
+{
+    m_ModelProps=basicProps;
+}
+
+std::map<std::string,std::string> sv4guiSimJob1d::GetModelProps()
+{
+    return m_ModelProps;
+}
+
+void sv4guiSimJob1d::SetModelProp(const std::string& key, std::string value)
+{
+    m_ModelProps[key]=value;
+}
+
+std::string sv4guiSimJob1d::GetModelProp(const std::string& key)
+{
+    return m_ModelProps[key];
+}
+
+///////////////////////////////////////////////////////////
+//                   B a s i c  P r o p s               //
+/////////////////////////////////////////////////////////
 
 void sv4guiSimJob1d::SetBasicProps(std::map<std::string,std::string> basicProps)
 {

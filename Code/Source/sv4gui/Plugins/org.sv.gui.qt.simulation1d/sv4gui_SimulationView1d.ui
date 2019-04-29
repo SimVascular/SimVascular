@@ -70,7 +70,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="JobStatusNameLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -90,7 +90,7 @@
        </widget>
       </item>
       <item row="1" column="1" colspan="2">
-       <widget class="QLabel" name="JobStatusLabel">
+       <widget class="QLabel" name="JobStatusValueLabel">
         <property name="text">
          <string/>
         </property>
@@ -123,7 +123,7 @@
          <string>Generate a 1D mesh from the surface model.</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="page_7">
          <property name="geometry">
@@ -131,7 +131,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>600</height>
+           <height>581</height>
           </rect>
          </property>
          <attribute name="label">
@@ -440,7 +440,7 @@ QGroupBox::title {
                <string>Read Centerlines</string>
               </property>
              </widget>
-             <widget class="QPushButton" name="calculateCenterlinesPushButton">
+             <widget class="QPushButton" name="CalculateCenterlinesPushButton">
               <property name="geometry">
                <rect>
                 <x>10</x>
@@ -525,7 +525,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>600</height>
+           <height>581</height>
           </rect>
          </property>
          <attribute name="label">
@@ -562,7 +562,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>600</height>
+           <height>581</height>
           </rect>
          </property>
          <attribute name="label">
@@ -626,7 +626,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>600</height>
+           <height>581</height>
           </rect>
          </property>
          <attribute name="label">
@@ -976,7 +976,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>600</height>
+           <height>581</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1013,7 +1013,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>600</height>
+           <height>581</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1082,7 +1082,7 @@ QGroupBox::title {
                  </widget>
                 </item>
                 <item row="1" column="0" colspan="2">
-                 <widget class="QPushButton" name="btnCreateAllFiles">
+                 <widget class="QPushButton" name="CreateSimulationFilesButton">
                   <property name="text">
                    <string>Create Files for Simulation</string>
                   </property>
@@ -1136,7 +1136,7 @@ QGroupBox::title {
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>600</height>
+           <height>581</height>
           </rect>
          </property>
          <attribute name="label">

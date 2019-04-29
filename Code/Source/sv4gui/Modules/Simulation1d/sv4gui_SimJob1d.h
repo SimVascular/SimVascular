@@ -52,6 +52,11 @@ public:
 
     virtual sv4guiSimJob1d* Clone();
 
+    void SetModelProps(std::map<std::string,std::string> modelProps);
+    std::map<std::string,std::string> GetModelProps();
+    void SetModelProp(const std::string& key, std::string value);
+    std::string GetModelProp(const std::string& key);
+
     void SetBasicProps(std::map<std::string,std::string> basicProps);
     std::map<std::string,std::string> GetBasicProps();
     void SetBasicProp(const std::string& key, std::string value);
@@ -93,6 +98,7 @@ public:
 
   protected:
 
+    std::map<std::string,std::string> m_ModelProps;
     std::map<std::string,std::string> m_BasicProps;
     std::map<std::string,std::map<std::string,std::string> > m_CapProps;
     std::map<std::string,std::string> m_WallProps;

@@ -29,6 +29,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiSimulationView1d class provides an interface to the 1D Simulation Tool
+// Qt GUI widgets used to create the input files needed to run a 1D simulation. 
+// A 1D simulation can be run from the GUI or from the command line.
+//
 #ifndef SV4GUI_SIMULATIONVIEW1D_H
 #define SV4GUI_SIMULATIONVIEW1D_H
 
@@ -73,6 +77,7 @@ public:
     static const QString SOLVER_EXECUTABLE_NAME;
     static const QString SOLVER_INSTALL_DIRECTORY;
     static const QString SOLVER_INSTALL_SUB_DIRECTORY;
+    static const QString SOLVER_LOG_FILE_NAME;
 
     // The names of files written by this class.
     static const QString MESH_FILE_NAME;
@@ -83,6 +88,33 @@ public:
     sv4guiSimulationView1d();
 
     virtual ~sv4guiSimulationView1d();
+
+    enum class DataInputStateType {
+        INLET_FACE,
+        CENTERLINES,
+        BOUNDRY_CONDITIONS,
+        SOLVER_PARAMETERS,
+        SIMULATION_FILES,
+        ALL
+    };
+
+    class DataInputStateName {
+        public:
+            static const QString INLET_FACE;
+            static const QString CENTERLINES;
+            static const QString BOUNDRY_CONDITIONS;
+            static const QString SOLVER_PARAMETERS;
+            static const QString SIMULATION_FILES;
+    };
+
+    typedef std::tuple<DataInputStateType, QString, bool> DataInputStateTuple;
+    std::vector<DataInputStateTuple> dataInputState = {
+        std::make_tuple(DataInputStateType::INLET_FACE, DataInputStateName::INLET_FACE, false),
+        std::make_tuple(DataInputStateType::CENTERLINES, DataInputStateName::CENTERLINES, false),
+        std::make_tuple(DataInputStateType::BOUNDRY_CONDITIONS, DataInputStateName::BOUNDRY_CONDITIONS, false),
+        std::make_tuple(DataInputStateType::SOLVER_PARAMETERS, DataInputStateName::SOLVER_PARAMETERS, false),
+        std::make_tuple(DataInputStateType::SIMULATION_FILES, DataInputStateName::SIMULATION_FILES, false)
+    };
 
     class SurfaceModelSource {
         public:
@@ -108,6 +140,7 @@ public slots:
     void RemoveObservers();
     void UpdateFaceListSelection();
     void UpdateGUIBasic();
+    void UpdateModelGUI();
     void TableViewBasicDoubleClicked(const QModelIndex& index);
 
     void TableCapSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
@@ -145,11 +178,11 @@ public slots:
 
     void SetModelInletFaces();
     void ReadModel();
-    void SelectModelInletFaces();
+    void SelectModelInletFaces(bool show = true);
     void ShowModel(bool checked = false);
     void UpdateSurfaceModelSource();
 
-    void CreateAllFiles();
+    void CreateSimulationFiles();
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
     void RunJob();
 
@@ -312,6 +345,9 @@ private:
     bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg);
     bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg);
     QString GetSolverExecutable();
+
+    bool CheckInputState(DataInputStateType type = DataInputStateType::ALL);
+    void SetInputState(DataInputStateType checkType, bool state);
 
 };
 

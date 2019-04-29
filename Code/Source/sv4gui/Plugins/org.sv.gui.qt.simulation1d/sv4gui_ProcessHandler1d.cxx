@@ -84,24 +84,28 @@ sv4guiProcessHandler1d::~sv4guiProcessHandler1d()
         delete m_MessageBox;
 }
 
+//-------
+// Start
+//-------
+//
 void sv4guiProcessHandler1d::Start()
 {
-    if(m_Process==NULL)
+    if(m_Process==NULL) {
         return;
+    }
 
-    if(m_MultiThreading)
+    if(m_MultiThreading) {
         connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
+    }
 
     m_Process->start();
 
-    if(!m_MultiThreading)
-    {
+    if(!m_MultiThreading) {
         m_Process->waitForFinished(-1);
-        m_Message=m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError();
+        m_Message = m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError();
     }
 
-    if(m_MultiThreading && m_Stoppable)
-    {
+    if(m_MultiThreading && m_Stoppable) {
         m_MessageBox= new QMessageBox(m_Parent);
         m_MessageBox->setWindowTitle("Processing");
         m_MessageBox->setText("Processing data and creating files...                                 ");
@@ -110,15 +114,19 @@ void sv4guiProcessHandler1d::Start()
         m_MessageBox->setDefaultButton(QMessageBox::Ok);
 
         int ret = m_MessageBox->exec();
-        if(ret==QMessageBox::Abort && m_Process)
+        if(ret==QMessageBox::Abort && m_Process) {
             m_Process->kill();
+        }
     }
 }
 
+//----------------------
+// AfterProcessFinished
+//----------------------
+//
 void sv4guiProcessHandler1d::AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    if(m_MessageBox)
-    {
+    if(m_MessageBox) {
         delete m_MessageBox;
         m_MessageBox=NULL;
     }
@@ -128,24 +136,20 @@ void sv4guiProcessHandler1d::AfterProcessFinished(int exitCode, QProcess::ExitSt
     QMessageBox::Icon icon=QMessageBox::NoIcon;
     QMessageBox mb(m_Parent);
 
-    if(exitStatus==QProcess::NormalExit)
-    {
+    if(exitStatus==QProcess::NormalExit) {
         title="Finished";
-        text="Data files have been created.                                                                                         ";
+        text="Data files have been created.";
         icon=QMessageBox::Information;
-        if(m_JobNode.IsNotNull())
-        {
+
+        if(m_JobNode.IsNotNull()) {
             sv4guiMitkSimJob1d* mitkJob=dynamic_cast<sv4guiMitkSimJob1d*>(m_JobNode->GetData());
-            if(mitkJob)
-            {
+            if(mitkJob) {
                 mitkJob->SetStatus("Input/Data files created");
                 m_JobNode->SetBoolProperty("dummy",true);//trigger NodeChanged to update job status
                 mitk::StatusBar::GetInstance()->DisplayText("Data files have been created: restart, geombc, etc.");
             }
         }
-    }
-    else
-    {
+    } else {
         title="Not finished";
         text="Failed to finish creating data files.                                                                                 ";
         icon=QMessageBox::Warning;

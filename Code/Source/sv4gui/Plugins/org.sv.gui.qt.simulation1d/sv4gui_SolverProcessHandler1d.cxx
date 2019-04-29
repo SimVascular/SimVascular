@@ -85,6 +85,13 @@ sv4guiSolverProcessHandler1d::~sv4guiSolverProcessHandler1d()
         delete m_Timer;
 }
 
+//--------------
+// ProcessError
+//--------------
+// Display information for a process that has failed with an unknown error.
+//
+// This handles jobs that for some reason were not able to start.,
+//
 void sv4guiSolverProcessHandler1d::ProcessError(QProcess::ProcessError error)
 {
   MITK_ERROR << "Simulation job error = " << error;
@@ -129,15 +136,21 @@ void sv4guiSolverProcessHandler1d::ProcessError(QProcess::ProcessError error)
 
 }
 
+//-------
+// Start
+//-------
+// Start a job process.
+//
 void sv4guiSolverProcessHandler1d::Start()
 {
-    if(m_Process==NULL)
+    if ((m_Process == NULL) || (m_JobNode.IsNull())) {
         return;
+    }
 
-    if(m_JobNode.IsNull())
-        return;
-
+    // Set callback for if an error occurs with the process.
     connect(m_Process, &QProcess::errorOccurred, this, &sv4guiSolverProcessHandler1d::ProcessError);
+
+    // Set callback for the finished process. 
     connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
 
     m_JobNode->SetBoolProperty("running", true);
@@ -161,15 +174,12 @@ void sv4guiSolverProcessHandler1d::KillProcess()
 //----------------------
 // AfterProcessFinished
 //----------------------
-//
+// Display information for a finished process.
 //
 void sv4guiSolverProcessHandler1d::AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    if(m_JobNode.IsNull()) {
-        return;
-    }
-
-    if (!m_Process) {
+    // [DaveP] how can it be that these guys are null?
+    if(m_JobNode.IsNull() || !m_Process) {
         return;
     }
 
@@ -221,6 +231,29 @@ void sv4guiSolverProcessHandler1d::AfterProcessFinished(int exitCode, QProcess::
     // Set job progress. 
     m_JobNode->SetBoolProperty("running",false);
     m_JobNode->SetDoubleProperty("running progress", 0);
+
+    // Write the solver log file.
+    //
+    // TODO[DaveP] The solver should write its own log file.
+    //
+    std::string solverLogFileName;
+    std::string outputDir;
+    m_JobNode->GetStringProperty("output directory", outputDir);
+    m_JobNode->GetStringProperty("solver log file", solverLogFileName);
+    MITK_INFO << "[sv4guiSolverProcessHandler1d::AfterProcessFinished] " << "outputDir: " << outputDir;
+
+    auto logFileName = outputDir + "/" + solverLogFileName;
+    QFile logFileWriter(QString(logFileName.c_str()));
+    MITK_INFO << "[sv4guiSolverProcessHandler1d::AfterProcessFinished] " << "solver log file: " << logFileName;
+
+    if (logFileWriter.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream output(&logFileWriter);
+        output << stdOutput;
+        output << stdError;
+        logFileWriter.close();
+    } else {
+        MITK_INFO << "Can't write solver log file '" << logFileName << "'";
+    }
 
     deleteLater();
 }

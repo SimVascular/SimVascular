@@ -36,6 +36,8 @@
 
 #include "mitkAbstractFileIO.h"
 
+#include <tinyxml.h>
+
 class SV4GUIMODULESIMULATION1D_EXPORT sv4guiMitkSimJobIO1d : public mitk::AbstractFileIO
 {
 public:
@@ -51,6 +53,11 @@ public:
 
 private:
     sv4guiMitkSimJobIO1d* IOClone() const override;
+    std::map<std::string,std::string> GetProps(TiXmlElement* jobElement, const std::string& propName);
+    std::map<std::string,std::map<std::string,std::string> > GetMapProps(TiXmlElement* jobElement, 
+      const std::string& propName1, const std::string& propName2);
+
+
 };
 
 #endif // SV4GUI_MITKSIMJOBIO_H

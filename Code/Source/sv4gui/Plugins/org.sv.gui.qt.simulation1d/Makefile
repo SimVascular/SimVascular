@@ -42,54 +42,54 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_simulation_EXPORTS \
-           -DUS_MODULE_NAME=sv4guiModuleSimulation
+           -Dorg_sv_gui_qt_simulation1d_EXPORTS \
+           -DUS_MODULE_NAME=sv4guiModuleSimulation1d
 
 HDRS	= \
-    sv4gui_SimJobCreate.h \
-    sv4gui_SimJobCreateAction.h \
-    sv4gui_CapBCWidget.h \
-    sv4gui_SplitBCWidget.h \
-    sv4gui_TableCapDelegate.h \
-    sv4gui_TableSolverDelegate.h \
-    sv4gui_SimulationView.h \
-    sv4gui_SimulationPreferencePage.h \
-    sv4gui_SimJobStopAction.h \
-    sv4gui_SimJobExportAction.h \
-    sv4gui_SimulationPluginActivator.h \
-    sv4gui_ProcessHandler.h \
-    sv4gui_SolverProcessHandler.h
+    sv4gui_SimJobCreate1d.h \
+    sv4gui_SimJobCreateAction1d.h \
+    sv4gui_CapBCWidget1d.h \
+    sv4gui_SplitBCWidget1d.h \
+    sv4gui_TableCapDelegate1d.h \
+    sv4gui_TableSolverDelegate1d.h \
+    sv4gui_SimulationView1d.h \
+    sv4gui_SimulationPreferencePage1d.h \
+    sv4gui_SimJobStopAction1d.h \
+    sv4gui_SimJobExportAction1d.h \
+    sv4gui_SimulationPluginActivator1d.h \
+    sv4gui_ProcessHandler1d.h \
+    sv4gui_SolverProcessHandler1d.h
 
 CXXSRCS	= \
-    sv4gui_SimJobCreate.cxx \
-    sv4gui_SimJobCreateAction.cxx \
-    sv4gui_CapBCWidget.cxx \
-    sv4gui_SplitBCWidget.cxx \
-    sv4gui_TableCapDelegate.cxx \
-    sv4gui_TableSolverDelegate.cxx \
-    sv4gui_SimulationView.cxx \
-    sv4gui_SimulationPreferencePage.cxx \
-    sv4gui_SimJobStopAction.cxx \
-    sv4gui_SimJobExportAction.cxx \
-    sv4gui_SimulationPluginActivator.cxx \
-    sv4gui_ProcessHandler.cxx \
-    sv4gui_SolverProcessHandler.cxx
+    sv4gui_SimJobCreate1d.cxx \
+    sv4gui_SimJobCreateAction1d.cxx \
+    sv4gui_CapBCWidget1d.cxx \
+    sv4gui_SplitBCWidget1d.cxx \
+    sv4gui_TableCapDelegate1d.cxx \
+    sv4gui_TableSolverDelegate1d.cxx \
+    sv4gui_SimulationView1d.cxx \
+    sv4gui_SimulationPreferencePage1d.cxx \
+    sv4gui_SimJobStopAction1d.cxx \
+    sv4gui_SimJobExportAction1d.cxx \
+    sv4gui_SimulationPluginActivator1d.cxx \
+    sv4gui_ProcessHandler1d.cxx \
+    sv4gui_SolverProcessHandler1d.cxx
 
 UIFILES = \
-    sv4gui_SimJobCreate.ui \
-    sv4gui_CapBCWidget.ui \
-    sv4gui_SplitBCWidget.ui \
-    sv4gui_SimulationPreferencePage.ui \
-    sv4gui_SimulationView.ui
+    sv4gui_SimJobCreate1d.ui \
+    sv4gui_CapBCWidget1d.ui \
+    sv4gui_SplitBCWidget1d.ui \
+    sv4gui_SimulationPreferencePage1d.ui \
+    sv4gui_SimulationView1d.ui
 
-QRCFILES = resources/simulation.qrc
+QRCFILES = resources/simulation1d.qrc
 
-QRCFILES += org_sv_gui_qt_simulation_manifest.qrc \
-            org_sv_gui_qt_simulation_cached.qrc
+QRCFILES += org_sv_gui_qt_simulation1d_manifest.qrc \
+            org_sv_gui_qt_simulation1d_cached.qrc
 
 RCFILES = \
   plugin.xml \
-  resources/simulation.png
+  resources/simulation1d.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
@@ -120,10 +120,10 @@ EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
 TARGET_LIB_NAME = $(SV_PLUGIN_SIMULATION_NAME)
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_simulation
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_simulation
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_simulation1d
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_simulation1d
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = SIMULATION
+PLUGIN_NAME = SIMULATION1D
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 
