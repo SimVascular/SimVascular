@@ -57,6 +57,8 @@ public:
     void SetTableView(std::vector<std::string> caps, sv4guiModelElement* modelElement, std::string type);
 
     std::vector<std::string> GetUsedCapNames();
+    std::vector<std::string> GetUnselectedCapNames();
+    void SetUsedCapNames(std::set<std::string> capNames);
 
 public slots:
 

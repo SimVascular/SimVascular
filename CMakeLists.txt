@@ -86,6 +86,9 @@ include(SimVascularFunctionCheckCompilerFlags)
 # No objects built directly with project. Not needed!
 #-----------------------------------------------------------------------------
 
+# Optionally build the 1D solver plugin.
+option(SV_USE_ONEDSOLVER "Enable building the 1D solver plugin" OFF)
+
 #-----------------------------------------------------------------------------
 # Externals!
 

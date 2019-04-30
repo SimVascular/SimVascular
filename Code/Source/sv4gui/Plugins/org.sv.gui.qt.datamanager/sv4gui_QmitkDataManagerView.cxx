@@ -965,6 +965,7 @@ void sv4guiQmitkDataManagerView::NodeChanged(const mitk::DataNode* node)
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiModelFolder"));
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiSimulationFolder"));
+    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder"));
 
     if(predicateTypes->CheckNode(node)){
         bool previousVisible=false;
