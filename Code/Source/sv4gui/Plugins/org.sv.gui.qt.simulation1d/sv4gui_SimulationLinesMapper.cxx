@@ -56,7 +56,7 @@ sv4guiSimulationLinesMapper::~sv4guiSimulationLinesMapper()
 void sv4guiSimulationLinesMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 {
   auto msgPrefix = "[sv4guiSimulationLinesMapper::GenerateDataForRenderer] ";
-  //MITK_INFO << msgPrefix; 
+  //MITK_INFO << msgPrefix << "--------- GenerateDataForRenderer ---------"; 
 
   // make ls propassembly
   mitk::DataNode* node = GetDataNode();
@@ -86,7 +86,6 @@ void sv4guiSimulationLinesMapper::GenerateDataForRenderer(mitk::BaseRenderer* re
     return;
   }
 
-
   // [DaveP] Do we need to remove?
   // local_storage->m_PropAssembly->GetParts()->RemoveAllItems();
 
@@ -94,8 +93,8 @@ void sv4guiSimulationLinesMapper::GenerateDataForRenderer(mitk::BaseRenderer* re
   //
   auto mesh = container->GetMesh();
   auto newMesh = container->IsNewMesh();
-
   if ((mesh != nullptr) && newMesh) {
+    MITK_INFO << msgPrefix << "###### Add mesh #######";
     local_storage->m_PropAssembly->GetParts()->RemoveAllItems();
     vtkSmartPointer<vtkDataSetMapper> meshMapper = vtkSmartPointer<vtkDataSetMapper>::New();
     meshMapper->SetInputData(mesh);
@@ -105,10 +104,16 @@ void sv4guiSimulationLinesMapper::GenerateDataForRenderer(mitk::BaseRenderer* re
     polyMeshActor->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]);
     polyMeshActor->GetProperty()->SetLineWidth(2.0);
     local_storage->m_PropAssembly->AddPart(polyMeshActor);
-  }
+  } 
 
-  container->SetNewMesh(false);
-  local_storage->m_PropAssembly->VisibilityOn();
+  if (mesh == nullptr) {
+    MITK_INFO << msgPrefix << "mesh is null";
+    MITK_INFO << msgPrefix << "###### RemoveAllItems #######";
+    local_storage->m_PropAssembly->GetParts()->RemoveAllItems();
+  } else {
+      container->SetNewMesh(false);
+      local_storage->m_PropAssembly->VisibilityOn();
+  }
 }
 
 void sv4guiSimulationLinesMapper::SetColor(const float red, const float green, const float blue)

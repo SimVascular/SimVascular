@@ -64,7 +64,9 @@
 //
 //      Methods called:
 //        CalculateCenterlines()
+//        SetCenterlinesGeometry()
 //        UpdateCenterlines()
+//        ---- 
 //        sv4guiSimulationExtractCenterlines1d::Run()
 //
 //      Data set:
@@ -185,10 +187,11 @@ const QString sv4guiSimulationView1d::SOLVER_INSTALL_SUB_DIRECTORY = "/bin";
 const QString sv4guiSimulationView1d::SOLVER_LOG_FILE_NAME = "sv1dsolver.log";
 
 // Set the names of the files written as output.
+const QString sv4guiSimulationView1d::INLET_FACE_NAMES_FILE_NAME = "inlet_face_names.dat";
 const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
+const QString sv4guiSimulationView1d::OUTLET_FACE_NAMES_FILE_NAME = "outlet_face_names.dat";
 const QString sv4guiSimulationView1d::SOLVER_FILE_NAME = "solver.in";
 const QString sv4guiSimulationView1d::RCR_BC_FILE_NAME = "rcrt.dat";
-const QString sv4guiSimulationView1d::OUTLET_FACE_NAMES_FILE_NAME = "outlet_face_names.dat";
 
 // Set the values of the Surface Model Origin types.
 const QString sv4guiSimulationView1d::SurfaceModelSource::MESH_PLUGIN = "Mesh Plugin";
@@ -245,6 +248,7 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationVi
 
     m_CenterlinesContainer = nullptr;
     m_CenterlinesMapper = nullptr;
+    m_CenterlinesNode = nullptr;
 
     m_JobNode = NULL;
     m_DataStorage = nullptr;
@@ -497,8 +501,12 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 //
 void sv4guiSimulationView1d::Update1DMesh()
 {
-    if (m_1DMeshMapper == nullptr) {
+    auto msg = "[sv4guiSimulationView1d::Update1DMesh] ";
+    MITK_INFO << msg << "--------- Update1DMesh ----------"; 
+
+    if ((m_1DMeshMapper == nullptr) || (m_1DMeshContainer == nullptr)) {
         m_1DMeshContainer = sv4guiSimulationLinesContainer::New();
+        MITK_INFO << msg << "Create m_1DMeshContainer";
 
         // Create 1D Mesh node under 'Simulations1d' node.
         auto m_1DMeshNode = mitk::DataNode::New();
@@ -563,6 +571,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(SelectCenterlinesFile()));
     connect(ui->CalculateCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(CalculateCenterlines()) );
     connect(ui->selectModelFacesPushButton, SIGNAL(clicked()), this, SLOT(SelectModelInletFaces()));
+    connect(ui->showCenterLinesCheckBox, SIGNAL(clicked(bool)), this, SLOT(ShowCenterlines(bool)) );
     for (auto const& type : CenterlinesSource::types) {
         ui->centerlinesComboBox->addItem(type);
     }
@@ -573,6 +582,7 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     ui->centerlinesFileNameLineEdit->setVisible(false);
     ui->CalculateCenterlinesPushButton->setVisible(true);
     ui->CalculateCenterlinesPushButton->setEnabled(false);
+    ui->showCenterLinesCheckBox->setChecked(true);
 
     // Add model face selection widget.
     //
@@ -779,8 +789,8 @@ void sv4guiSimulationView1d::SetModelInletFaces()
         return;
     }
 
-    auto msg = "[sv4guiSimulationView1d::SetModelFaces] ";
-    MITK_INFO << msg << "--------- SetModelFaces ----------"; 
+    auto msg = "[sv4guiSimulationView1d::SetModelInletFaces] ";
+    MITK_INFO << msg << "--------- SetModelInletFaces ----------"; 
 
     int timeStep = 0;
     std::vector<std::string> inletFaceNames = m_ModelFaceSelectionWidget->GetUsedCapNames();
@@ -820,10 +830,20 @@ void sv4guiSimulationView1d::SetModelInletFaces()
     }
 
     // Set the inlet face name in the job.
+    //
+    // [DaveP] This does not work because the job it not
+    // written until I don't know when.
+    //
+    /*
     auto job = m_MitkJob->GetSimJob();
     if (job != nullptr) {
         job->SetModelProp("Inlet Face Name", m_ModelInletFaceNames[0]);
+        job->Write();
     }
+    */
+
+    // Write the inlet face names to a file.
+    WriteInletFaceNames(m_PluginOutputDirectory);
 
     // Enable execute centerlines button.
     if (m_CenterlinesFileName == "") { 
@@ -836,6 +856,46 @@ void sv4guiSimulationView1d::SetModelInletFaces()
     // Once an inlet face has been selected then centerlines may be calculated.
     ui->CalculateCenterlinesPushButton->setEnabled(true);
 
+}
+
+//-----------
+// ShowModel
+//-----------
+// Set the visibility of the surface model.
+//
+void sv4guiSimulationView1d::ShowModel(bool checked)
+{
+    if (m_ModelNode.IsNotNull()) {
+        m_ModelNode->SetVisibility(checked);
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    }
+}
+
+//------------
+// ResetModel
+//------------
+// Reset data and GUI widgets when the model has changed. 
+//
+//
+void sv4guiSimulationView1d::ResetModel()
+{
+    auto msg = "[sv4guiSimulationView1d::ResetModel] ";
+    MITK_INFO << msg << "---------- ResetModel ---------"; 
+    MITK_INFO << msg << "m_1DMeshContainer: " << m_1DMeshContainer;
+
+    // [DaveP] Can't figure out how to remove centerlines geometry 
+    // so just hide it for now.
+    //m_CenterlinesContainer->DeleteMesh();
+    m_CenterlinesNode->SetVisibility(false);
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+    // Disable GUI buttons.
+    //
+    //ui->CalculateCenterlinesPushButton->setEnabled(false);
+    ui->CreateSimulationFilesButton->setEnabled(false);
+    ui->RunSimulationPushButton->setEnabled(false);
+
+    QMessageBox::warning(NULL, MsgTitle, "The model has changed. Centerlines and simulation files need to be regenerated.");
 }
 
 //-------------------------
@@ -878,8 +938,8 @@ void sv4guiSimulationView1d::UpdateCenterlinesSource()
 //------------------------
 // Set the centerline geometry if it exists.
 //
-// If the centerline geometry file exists in the
-// project directory then read and display it.
+// If the centerline geometry file exists in the project directory 
+// then read and display it.
 //
 // Modifies:
 //   m_CenterlinesFileName 
@@ -957,25 +1017,27 @@ void sv4guiSimulationView1d::CalculateCenterlines()
 // 
 void sv4guiSimulationView1d::UpdateCenterlines()
 {
-    auto msg = "[sv4guiSimulationView1d::UpdateCenterlines]";
+    auto msg = "[sv4guiSimulationView1d::UpdateCenterlines] ";
     MITK_INFO << msg;
-    MITK_INFO << msg << "---------- Update ----------";
+    MITK_INFO << msg << "---------- UpdateCenterlines ----------";
     MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
+
+    if (m_JobNode == nullptr) {
+        MITK_WARN << msg << "m_JobNode is null";
+        return;
+    }
 
     // Create the container and mapper used to display the centerlines.
     //
     if (m_CenterlinesMapper == nullptr) {
         m_CenterlinesContainer = sv4guiSimulationLinesContainer::New();
 
-        // Create 'Centerlines' node under 'Simularions1d' node.
-        auto m_CenterlinesNode = mitk::DataNode::New();
+        // Create 'Centerlines' node under 'Simularions1d/JOB_NAME' node.
+        m_CenterlinesNode = mitk::DataNode::New();
         m_CenterlinesNode->SetData(m_CenterlinesContainer);
         m_CenterlinesNode->SetVisibility(true);
         m_CenterlinesNode->SetName("Centerlines");
-        auto parentNode = GetDataStorage()->GetNamedNode("Simulations1d");
-        if (parentNode) {
-          GetDataStorage()->Add(m_CenterlinesNode, parentNode);
-        }
+        GetDataStorage()->Add(m_CenterlinesNode, m_JobNode);
 
         // Create mapper to display the centerlines.
         m_CenterlinesMapper = sv4guiSimulationLinesMapper::New();
@@ -985,13 +1047,34 @@ void sv4guiSimulationView1d::UpdateCenterlines()
         m_CenterlinesNode->SetMapper(mitk::BaseRenderer::Standard3D, m_CenterlinesMapper);
     }
 
+    m_CenterlinesNode->SetVisibility(true);
     auto centerlinesGeometry = ReadCenterlines(m_CenterlinesFileName.toStdString());
 
     if (centerlinesGeometry != nullptr) { 
         m_CenterlinesContainer->SetMesh(centerlinesGeometry);
-        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+        // If centerlines are created then simulation files can be created.
+        ui->CreateSimulationFilesButton->setEnabled(true);
         SetInputState(DataInputStateType::CENTERLINES, true);
     }
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+//-----------------
+// ShowCenterlines
+//-----------------
+// Set centerlines geometry visibility.
+//
+// This is the Qt widget showCenterLinesCheckBox callback.
+//
+void sv4guiSimulationView1d::ShowCenterlines(bool checked)
+{
+    if (m_CenterlinesNode == nullptr) {
+        return;
+    }
+
+    m_CenterlinesNode->SetVisibility(checked);
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //-----------------------
@@ -1480,12 +1563,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         return;
     }
     
-    std::string jobPath = "";
-    jobNode->GetStringProperty("path", jobPath);
-    MITK_INFO << msg << "jobPath " << jobPath;
-    //m_PluginOutputDirectory = GetJobPath();
-    m_PluginOutputDirectory = QString(jobPath.c_str());
-
     // Get the model and mesh folder data nodes.
     m_ModelFolderNode = GetModelFolderDataNode();
     m_MeshFolderNode = GetMeshFolderDataNode();
@@ -1499,11 +1576,27 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     //
     auto modelNode = m_DataStorage->GetNamedDerivedNode(modelName.c_str(), m_ModelFolderNode);
     auto model = dynamic_cast<sv4guiModel*>(modelNode->GetData());
+    auto resetModel = false;
 
     if (model != nullptr) {
-        modelNode->SetVisibility(false);
+        //modelNode->SetVisibility(false);
         m_Model = model;
         m_ModelNode = modelNode;
+        // [DaveP] can't get time the model node's data was last modified.
+        //auto lastTimeModified = m_ModelNode->GetDataReferenceChangedTime();
+        //auto lastTimeModified = m_ModelNode->GetMTime();
+        //MITK_INFO << msg << "#### The last time the model has been modified: " << lastTimeModified;
+        std::string timeModified;
+        m_ModelNode->GetStringProperty("time modified", timeModified);
+        MITK_INFO << msg << "Model time modified: " << m_ModelNodeTimeModified; 
+
+        // The model has changed so reset the data the depends on the surface model. 
+        if ((timeModified != "") && (timeModified != m_ModelNodeTimeModified)) {
+            //ResetModel();
+            resetModel = true;
+        }
+        m_ModelNodeTimeModified = timeModified;
+
         if (m_ModelFileName.isEmpty()) {
             m_ModelFileName = GetModelFileName();
         }
@@ -1547,9 +1640,19 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     m_JobNode = jobNode;
     m_MitkJob = mitkJob;
 
-    // Enable the toolbox pages ('1D Mesh', 'Basic Parameters', etc.)
-    // to allow input.
-    if(m_Model == NULL) {
+    // Set the plugin output directory.
+    //
+    //std::string jobPath = "";
+    //jobNode->GetStringProperty("path", jobPath);
+    //MITK_INFO << msg << "jobPath " << jobPath;
+    m_PluginOutputDirectory = GetJobPath();
+    //m_PluginOutputDirectory = QString(jobPath.c_str());
+    //QString jobPath=GetJobPath();
+    MITK_INFO << msg << "Set m_PluginOutputDirectory to: " << m_PluginOutputDirectory;
+
+    // Enable the toolbox pages ('1D Mesh', 'Basic Parameters', etc.) to allow input.
+    //
+    if (m_Model == NULL) {
         EnableTool(false);
     } else {
         EnableTool(true);
@@ -1562,7 +1665,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     //
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
     ui->JobStatusValueLabel->setText(QString::fromStdString(m_MitkJob->GetStatus()));
-    ui->showModelCheckBox->setChecked(false);
+    ui->showModelCheckBox->setChecked(true);
     if(m_ModelNode.IsNotNull()) {
         ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
         if(m_ModelNode->IsVisible(NULL)) {
@@ -1593,6 +1696,10 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     UpdateJobStatus();
 
     EnableConnection(true);
+
+    if (resetModel) { 
+        ResetModel();
+    }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -1726,15 +1833,18 @@ void sv4guiSimulationView1d::UpdateModelGUI()
     MITK_INFO << msg;
     MITK_INFO << msg << "--------- UpdateModelGUI ----------";
 
+    /* [DaveP] This does not work well.
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
-
     if (job == NULL) {
         job = new sv4guiSimJob1d();
     }
-
     auto inletFaceName = job->GetModelProp("Inlet Face Name");
     MITK_INFO << msg << "inletFaceName: " << inletFaceName;
-    if (inletFaceName == "") { 
+    */
+
+    auto inletFaceNames = ReadInletFaceNames(m_PluginOutputDirectory);
+
+    if (inletFaceNames.size() == 0) { 
         return;
     }
 
@@ -1743,7 +1853,7 @@ void sv4guiSimulationView1d::UpdateModelGUI()
     SelectModelInletFaces(show);
 
     // Select the inlet face programmatically. 
-    std::set<std::string> capNames = { inletFaceName }; 
+    std::set<std::string> capNames = { inletFaceNames[0] }; 
     m_ModelFaceSelectionWidget->SetUsedCapNames(capNames);
 
     // Set the face name for this object from name set in m_ModelFaceSelectionWidget.
@@ -2852,30 +2962,33 @@ void sv4guiSimulationView1d::UpdateGUIRunDir()
     ui->lineEditResultDir->setText(runDir);
 }
 
+//------------
+// GetJobPath
+//------------
+//
 QString sv4guiSimulationView1d::GetJobPath()
 {
-    QString jobPath="";
+    QString jobPath = "";
 
-    if(m_JobNode.IsNull())
+    if (m_JobNode.IsNull()) {
         return jobPath;
+    }
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
 
-    std::string projPath="";
-    std::string simFolderName="";
+    std::string projPath = "";
+    std::string simFolderName = "";
 
-    if(rs->size()>0)
-    {
-        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+    if (rs->size() > 0) {
+        mitk::DataNode::Pointer projFolderNode = rs->GetElement(0);
         projFolderNode->GetStringProperty("project path", projPath);
+        rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder"));
 
-        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder"));
-        if (rs->size()>0)
-        {
-            mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
-            simFolderName=simFolderNode->GetName();
-            jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
+        if (rs->size() > 0) {
+            mitk::DataNode::Pointer simFolderNode = rs->GetElement(0);
+            simFolderName = simFolderNode->GetName();
+            jobPath = QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
         }
     }
 
@@ -3193,6 +3306,53 @@ void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, const sv4guiS
         QTextStream out(&rcrtFile);
         out << rcrtFielContent;
         rcrtFile.close();
+    }
+}
+
+//--------------------
+// ReadInletFaceNames
+//--------------------
+// Read the inlet face names.
+//
+std::vector<std::string> sv4guiSimulationView1d::ReadInletFaceNames(const QString outputDir)
+{
+    auto msg = "[sv4guiSimulationView1d::ReadInletFaceNames] ";
+    MITK_INFO << msg << "--------- ReadInletFaceNames ----------";
+
+    std::vector<std::string> inletFaceNames;
+    QFile inletNamesFile(outputDir + "/" + INLET_FACE_NAMES_FILE_NAME);
+
+    if (inletNamesFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&inletNamesFile);
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            MITK_INFO << msg << "line: '" << line << "'";
+            inletFaceNames.emplace_back(line.toStdString());
+        }
+        inletNamesFile.close();
+    }
+    return inletFaceNames;
+}
+
+//---------------------
+// WriteInletFaceNames
+//---------------------
+// Write the inlet face names.
+//
+void sv4guiSimulationView1d::WriteInletFaceNames(const QString outputDir)
+{
+    auto msg = "[sv4guiSimulationView1d::WriteInletFaceNames] ";
+    MITK_INFO << msg << "--------- WriteInletFaceNames ----------";
+
+    QFile inletNamesFile(outputDir + "/" + INLET_FACE_NAMES_FILE_NAME);
+
+    if (inletNamesFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&inletNamesFile);
+
+        for (auto const& name : m_ModelInletFaceNames) {
+            out << QString::fromStdString(name + "\n");
+        }
+        inletNamesFile.close();
     }
 }
 
@@ -4205,14 +4365,3 @@ void sv4guiSimulationView1d::UpdateJobStatus()
 
 }
 
-//-----------
-// ShowModel
-//-----------
-//
-void sv4guiSimulationView1d::ShowModel(bool checked)
-{
-    if (m_ModelNode.IsNotNull()) {
-        m_ModelNode->SetVisibility(checked);
-        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-    }
-}

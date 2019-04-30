@@ -80,6 +80,7 @@ public:
     static const QString SOLVER_LOG_FILE_NAME;
 
     // The names of files written by this class.
+    static const QString INLET_FACE_NAMES_FILE_NAME;
     static const QString MESH_FILE_NAME;
     static const QString OUTLET_FACE_NAMES_FILE_NAME;
     static const QString RCR_BC_FILE_NAME;
@@ -175,6 +176,7 @@ public slots:
     void UpdateCenterlinesSource();
     void SelectCenterlinesFile();
     void CalculateCenterlines();
+    void ShowCenterlines(bool checked=false);
 
     void SetModelInletFaces();
     void ReadModel();
@@ -226,8 +228,10 @@ public:
     vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
+    std::vector<std::string> ReadInletFaceNames(const QString outputDir);
     void WriteRcrFile(const QString outputDir, const sv4guiSimJob1d* job);
     void WriteOutletFaceNames(const QString outputDir);
+    void WriteInletFaceNames(const QString outputDir);
     std::string WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job);
 
     bool IsDouble(std::string value);
@@ -261,6 +265,7 @@ private:
     sv4guiModel* m_Model;
     mitk::DataNode::Pointer m_ModelFolderNode;
     mitk::DataNode::Pointer m_ModelNode;
+    std::string m_ModelNodeTimeModified;
     std::vector<NameNodeTuple> m_ModelCenterlineNodes;
     QString m_ModelFileName;
     QString m_ModelSource;
@@ -279,6 +284,7 @@ private:
     QString m_CenterlinesSource;
     sv4guiSimulationLinesMapper::Pointer m_CenterlinesMapper;
     sv4guiSimulationLinesContainer::Pointer m_CenterlinesContainer;
+    mitk::DataNode::Pointer m_CenterlinesNode;
 
     QString m_1DMeshFileName;
     mitk::DataNode::Pointer m_1DMeshNode;
@@ -328,6 +334,7 @@ private:
     mitk::DataNode::Pointer getProjectNode();
     mitk::DataNode::Pointer GetModelFolderDataNode();
     QString GetModelFileName();
+    void ResetModel();
 
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();
