@@ -52,8 +52,12 @@ HDRS	= \
     sv4gui_SplitBCWidget1d.h \
     sv4gui_TableCapDelegate1d.h \
     sv4gui_TableSolverDelegate1d.h \
+    sv4gui_SimulationExtractCenterlines1d.h \
+    sv4gui_SimulationLinesContainer.h \
+    sv4gui_SimulationLinesMapper.h \
     sv4gui_SimulationView1d.h \
     sv4gui_SimulationPreferencePage1d.h \
+    sv4gui_SimulationPython1d.h \
     sv4gui_SimJobStopAction1d.h \
     sv4gui_SimJobExportAction1d.h \
     sv4gui_SimulationPluginActivator1d.h \
@@ -67,8 +71,12 @@ CXXSRCS	= \
     sv4gui_SplitBCWidget1d.cxx \
     sv4gui_TableCapDelegate1d.cxx \
     sv4gui_TableSolverDelegate1d.cxx \
+    sv4gui_SimulationExtractCenterlines1d.cxx \
+    sv4gui_SimulationLinesContainer.cxx \
+    sv4gui_SimulationLinesMapper.cxx \
     sv4gui_SimulationView1d.cxx \
     sv4gui_SimulationPreferencePage1d.cxx \
+    sv4gui_SimulationPython1d.cxx \
     sv4gui_SimJobStopAction1d.cxx \
     sv4gui_SimJobExportAction1d.cxx \
     sv4gui_SimulationPluginActivator1d.cxx \
@@ -101,15 +109,18 @@ DLLSRCS =
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS +=  \
+          $(SVLIBFLAG)$(SV_PLUGIN_MODELING_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION1D_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
@@ -118,7 +129,7 @@ DLLLIBS +=  \
 
 EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-TARGET_LIB_NAME = $(SV_PLUGIN_SIMULATION_NAME)
+TARGET_LIB_NAME = $(SV_PLUGIN_SIMULATION1D_NAME)
 
 PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_simulation1d
 PLUGIN_EXPORTS_NAME = org_sv_gui_qt_simulation1d

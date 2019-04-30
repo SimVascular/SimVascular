@@ -3248,6 +3248,7 @@ sv4guiMesh* sv4guiSimulationView1d::GetSurfaceMesh(const std::string meshName)
             }
         }
     }
+    return mesh;
 }
 
 

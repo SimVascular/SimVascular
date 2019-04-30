@@ -32,6 +32,8 @@
 #ifndef SV4GUI_CAPSELECTIONWIDGET_H
 #define SV4GUI_CAPSELECTIONWIDGET_H
 
+#include "org_sv_gui_qt_modeling_Export.h"
+
 #include <QWidget>
 #include <QAction>
 #include <QStandardItemModel>
@@ -43,10 +45,10 @@
 #include "sv4gui_LoftParamWidget.h"
 
 namespace Ui {
-class sv4guiCapSelectionWidget;
+class SV_QT_MODELING sv4guiCapSelectionWidget;
 }
 
-class sv4guiCapSelectionWidget : public QWidget
+class SV_QT_MODELING sv4guiCapSelectionWidget : public QWidget
 {
     Q_OBJECT
 
