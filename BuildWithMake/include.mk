@@ -663,6 +663,7 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/sv4gui/Modules/QtWidgets \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Segmentation \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation1d \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/ImageProcessing \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/svFSI
   ifeq ($(SV_USE_OPENCASCADE),1)
@@ -696,6 +697,7 @@ SV_LIB_MODULE_PROJECTMANAGEMENT_NAME=_simvascular_module_projectmanagement
 SV_LIB_MODULE_QTWIDGETS_NAME=_simvascular_module_qtwidgets
 SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
 SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
+SV_LIB_MODULE_SIMULATION1D_NAME=_simvascular_module_simulation1d
 SV_LIB_MODULE_SVFSI_NAME=_simvascular_module_svfsi
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
 SV_LIB_PATH_NAME=_simvascular_path
@@ -727,8 +729,10 @@ SV_PLUGIN_MODELING_NAME=org_sv_gui_qt_modeling
 SV_PLUGIN_PATHPLANNING_NAME=org_sv_gui_qt_pathplanning
 SV_PLUGIN_PROJECTMANAGER_NAME=org_sv_gui_qt_projectmanager
 SV_PLUGIN_SEGMENTATION_NAME=org_sv_gui_qt_segmentation
+SV_PLUGIN_SEGMENTATION1D_NAME=org_sv_gui_qt_segmentation1d
 SV_PLUGIN_SVFSI_NAME=org_sv_gui_qt_svfsi
 SV_PLUGIN_SIMULATION_NAME=org_sv_gui_qt_simulation
+SV_PLUGIN_SIMULATION1D_NAME=org_sv_gui_qt_simulation1d
 SV_PLUGIN_PROJECTDATANODES_NAME=org_sv_projectdatanodes
 SV_PLUGIN_PYTHONDATANODES_NAME=org_sv_pythondatanodes
 

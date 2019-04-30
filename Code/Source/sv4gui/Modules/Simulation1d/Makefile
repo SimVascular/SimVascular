@@ -43,25 +43,25 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
 
-MODULE_NAME = sv4guiModuleSimulation
-MODULE_NAME_ALL_CAPS = SV4GUIMODULESIMULATION
+MODULE_NAME = sv4guiModuleSimulation1d
+MODULE_NAME_ALL_CAPS = SV4GUIMODULESIMULATION1D
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    sv4gui_SimJob.h \
-    sv4gui_MitkSimJob.h \
-    sv4gui_MitkSimJobIO.h \
-    sv4gui_SimulationUtils.h \
-    sv4gui_MitkSimulationObjectFactory.h
+    sv4gui_SimJob1d.h \
+    sv4gui_MitkSimJob1d.h \
+    sv4gui_MitkSimJobIO1d.h \
+    sv4gui_SimulationUtils1d.h \
+    sv4gui_MitkSimulationObjectFactory1d.h
 
 CXXSRCS	= \
-    sv4gui_SimJob.cxx \
-    sv4gui_MitkSimJob.cxx \
-    sv4gui_MitkSimJobIO.cxx \
-    sv4gui_SimulationUtils.cxx \
-    sv4gui_MitkSimulationObjectFactory.cxx
+    sv4gui_SimJob1d.cxx \
+    sv4gui_MitkSimJob1d.cxx \
+    sv4gui_MitkSimJobIO1d.cxx \
+    sv4gui_SimulationUtils1d.cxx \
+    sv4gui_MitkSimulationObjectFactory1d.cxx
 
 CXXSRCS += us_init.cxx
 
@@ -89,6 +89,6 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-TARGET_LIB_NAME = $(SV_LIB_MODULE_SIMULATION_NAME)
+TARGET_LIB_NAME = $(SV_LIB_MODULE_SIMULATION1D_NAME)
 
 include $(TOP)/targetlib.mk
