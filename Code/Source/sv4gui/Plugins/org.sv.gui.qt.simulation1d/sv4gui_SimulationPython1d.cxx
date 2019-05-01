@@ -99,7 +99,7 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
   if (pModule != NULL) {
       MITK_INFO << msg << "Module is not null";
   }
- 
+  return SV_OK;
 }
 
 //---------------------
@@ -223,6 +223,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   PyRun_SimpleString(cmd.c_str());
   MITK_INFO << msg << "Done!";
 */
+  return SV_OK;
 }
 
 //--------------
@@ -256,6 +257,7 @@ std::string sv4guiSimulationPython1d::AddArgument(const std::string& name, const
 bool sv4guiSimulationPython1d::AddParameter(const std::string& name, const std::string& value)
 {
     m_ParameterValues.insert(std::pair<std::string,std::string>(name, value));
+    return SV_OK;
 }
 
 //-----------
@@ -272,6 +274,7 @@ bool sv4guiSimulationPython1d::WriteMesh(const std::string fileName)
   writer->SetInputData(this->meshPolyData);
   writer->Write();
 */
+  return SV_ERROR;
 }
 
 //-----------------
@@ -282,5 +285,5 @@ bool sv4guiSimulationPython1d::WriteMesh(const std::string fileName)
 bool sv4guiSimulationPython1d::WriteParameters(const std::string fileName, 
     std::map<std::string, std::string>& params)
 {
-
+  return SV_ERROR;
 }
