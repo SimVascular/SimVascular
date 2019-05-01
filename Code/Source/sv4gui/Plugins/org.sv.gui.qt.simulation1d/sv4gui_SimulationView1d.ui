@@ -123,7 +123,7 @@
          <string>Generate a 1D mesh from the surface model.</string>
         </property>
         <property name="currentIndex">
-         <number>5</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="page_7">
          <property name="geometry">
@@ -190,7 +190,7 @@ QGroupBox::title {
              <property name="title">
               <string>Surface Model</string>
              </property>
-             <widget class="QPushButton" name="readModelPushButton">
+             <widget class="QPushButton" name="ReadModelPushButton">
               <property name="geometry">
                <rect>
                 <x>10</x>
@@ -524,8 +524,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>581</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -561,8 +561,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>581</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -625,8 +625,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>581</height>
+           <width>239</width>
+           <height>206</height>
           </rect>
          </property>
          <attribute name="label">
@@ -975,8 +975,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>581</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1135,8 +1135,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>581</height>
+           <width>282</width>
+           <height>293</height>
           </rect>
          </property>
          <attribute name="label">

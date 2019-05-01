@@ -171,7 +171,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   MITK_INFO << msg << "Add arguments ... ";
   auto kwargs = PyDict_New();
   for (auto const& param : m_ParameterValues) {
-      MITK_INFO << msg << param.first; 
+      MITK_INFO << msg << param.first << "   " << param.second; 
       PyDict_SetItemString(kwargs, param.first.c_str(), PyUnicode_DecodeFSDefault(param.second.c_str()));
   }
   MITK_INFO << msg << "Done.";
@@ -199,6 +199,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
       }
   }
 
+/* [DaveP] This is causing a crash, figure out later.
   Py_DECREF(pyFunc);
   Py_DECREF(pyDict);
   Py_DECREF(pyName);
@@ -206,6 +207,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   Py_DECREF(dummyArgs);
   Py_DECREF(dummyValue);
   Py_DECREF(kwargs);
+*/
 
 /*
   // Create the script command.

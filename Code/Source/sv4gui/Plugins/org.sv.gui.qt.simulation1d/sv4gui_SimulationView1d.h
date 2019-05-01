@@ -82,6 +82,7 @@ public:
     // The names of files written by this class.
     static const QString INLET_FACE_NAMES_FILE_NAME;
     static const QString MESH_FILE_NAME;
+    static const QString MODEL_SURFACE_FILE_NAME;
     static const QString OUTLET_FACE_NAMES_FILE_NAME;
     static const QString RCR_BC_FILE_NAME;
     static const QString SOLVER_FILE_NAME;
@@ -98,6 +99,28 @@ public:
         SIMULATION_FILES,
         ALL
     };
+
+    // Used to access the columns in Model Cap BC Table.
+    //enum class TableModelCapType {
+    enum TableModelCapType : int {
+        Name = 0,
+        BCType = 1,
+        Values = 2, 
+        Pressure = 3, 
+        AnalyticShape = 4, 
+        Period = 5, 
+        PointNumber = 6,
+        FourierModes = 7,
+        FlipNormal = 8,
+        FlowRate = 9,
+        OriginalFile = 10,
+        TimedPressure = 11, 
+        PressurePeriod =  12,
+        PressureScaling = 13, 
+        RValues = 14, 
+        CValues = 15
+    };
+
 
     class DataInputStateName {
         public:
@@ -179,7 +202,7 @@ public slots:
     void ShowCenterlines(bool checked=false);
 
     void SetModelInletFaces();
-    void ReadModel();
+    void SelectModelFile();
     void SelectModelInletFaces(bool show = true);
     void ShowModel(bool checked = false);
     void UpdateSurfaceModelSource();
@@ -335,6 +358,7 @@ private:
     mitk::DataNode::Pointer GetModelFolderDataNode();
     QString GetModelFileName();
     void ResetModel();
+    void WriteModel();
 
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();
@@ -347,12 +371,13 @@ private:
 
     void SetCenterlinesGeometry();
 
-    bool SetBasicParameters(sv4guiSimJob1d* job, std::string& msg);
-    bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg);
-    bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg);
-    bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg);
+    bool SetBasicParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
+    bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
+    bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
+    bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     QString GetSolverExecutable();
 
+    bool CheckBCsInputState(bool checkValidity=true);
     bool CheckInputState(DataInputStateType type = DataInputStateType::ALL);
     void SetInputState(DataInputStateType checkType, bool state);
 

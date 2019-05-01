@@ -94,7 +94,7 @@ void sv4guiSimulationLinesMapper::GenerateDataForRenderer(mitk::BaseRenderer* re
   auto mesh = container->GetMesh();
   auto newMesh = container->IsNewMesh();
   if ((mesh != nullptr) && newMesh) {
-    MITK_INFO << msgPrefix << "###### Add mesh #######";
+    //MITK_INFO << msgPrefix << "###### Add mesh #######";
     local_storage->m_PropAssembly->GetParts()->RemoveAllItems();
     vtkSmartPointer<vtkDataSetMapper> meshMapper = vtkSmartPointer<vtkDataSetMapper>::New();
     meshMapper->SetInputData(mesh);
@@ -104,6 +104,7 @@ void sv4guiSimulationLinesMapper::GenerateDataForRenderer(mitk::BaseRenderer* re
     polyMeshActor->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]);
     polyMeshActor->GetProperty()->SetLineWidth(2.0);
     local_storage->m_PropAssembly->AddPart(polyMeshActor);
+    container->SetNewMesh(false);
   } 
 
   if (mesh == nullptr) {

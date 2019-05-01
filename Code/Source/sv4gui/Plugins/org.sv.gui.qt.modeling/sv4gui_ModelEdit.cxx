@@ -328,7 +328,12 @@ void sv4guiModelEdit::Hidden()
     RemoveObservers();
 }
 
+//------------------
+// SetTimeModified
+//------------------
 // Set the time that the model surface was updated.
+//
+//
 void sv4guiModelEdit::SetTimeModified()
 {
     if (m_ModelNode != nullptr) {
@@ -400,8 +405,6 @@ void sv4guiModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     UpdateGUI();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-
-    SetTimeModified();
 }
 
 void sv4guiModelEdit::UpdateGUI()
