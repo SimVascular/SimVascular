@@ -123,7 +123,7 @@
          <string>Generate a 1D mesh from the surface model.</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>6</number>
         </property>
         <widget class="QWidget" name="page_7">
          <property name="geometry">
@@ -1282,7 +1282,7 @@ QGroupBox::title {
                       </font>
                      </property>
                      <property name="text">
-                      <string>Result Dir (containing restart files):</string>
+                      <string>Results Directory:</string>
                      </property>
                     </widget>
                    </item>
@@ -1445,20 +1445,6 @@ QGroupBox::title {
                 <property name="spacing">
                  <number>5</number>
                 </property>
-                <item row="2" column="1">
-                 <widget class="QCheckBox" name="checkBoxToRestart">
-                  <property name="text">
-                   <string>Last Step to restart.x.0</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QCheckBox" name="checkBoxSingleFile">
-                  <property name="text">
-                   <string>As Single File</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_17">
                   <property name="font">
@@ -1472,27 +1458,7 @@ QGroupBox::title {
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QCheckBox" name="checkBoxVolume">
-                  <property name="text">
-                   <string>Volume Mesh</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QCheckBox" name="checkBoxSurface">
-                  <property name="text">
-                   <string>Surface Mesh</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0" colspan="2">
+                <item row="1" column="0" colspan="2">
                  <widget class="QFrame" name="frame_3">
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
@@ -1516,16 +1482,6 @@ QGroupBox::title {
                    <property name="bottomMargin">
                     <number>5</number>
                    </property>
-                   <item>
-                    <widget class="QCheckBox" name="checkBoxCalculateFlows">
-                     <property name="text">
-                      <string>Calculate Flows</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
                    <item>
                     <widget class="QWidget" name="widgetCalculateFlows" native="true">
                      <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -1554,30 +1510,6 @@ QGroupBox::title {
                         </property>
                         <property name="text">
                          <string>Sim Units</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QComboBox" name="comboBoxSimUnits">
-                        <item>
-                         <property name="text">
-                          <string>cm</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>mm</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QCheckBox" name="checkBoxSkipWalls">
-                        <property name="text">
-                         <string>Skip Walls</string>
-                        </property>
-                        <property name="checked">
-                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
@@ -1610,6 +1542,9 @@ QGroupBox::title {
                 </property>
                 <item>
                  <widget class="QPushButton" name="btnExportResults">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>Convert ...</string>
                   </property>

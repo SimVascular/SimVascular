@@ -489,9 +489,6 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
 
-//    ui->widgetCalculateFlows->hide();
-    connect(ui->checkBoxCalculateFlows, SIGNAL(clicked(bool)), this, SLOT(ShowCalculateFowsWidget(bool)) );
-
     SetupInternalSolverPaths();
 
     //get paths for the external solvers
@@ -4224,8 +4221,11 @@ void sv4guiSimulationView1d::SetResultDir()
 // ExportResults
 //---------------
 //
+// [DaveP] I don't know if we will be converting results data or not.
+//
 void sv4guiSimulationView1d::ExportResults()
 {
+/* 
     QString postsolverPath=m_ExternalPostsolverPath;
     if(postsolverPath=="")
         postsolverPath=m_InternalPostsolverPath;
@@ -4446,6 +4446,7 @@ void sv4guiSimulationView1d::ExportResults()
     mb.exec();
 
     mitk::StatusBar::GetInstance()->DisplayText("Results converting finished.");
+*/
 }
 
 bool sv4guiSimulationView1d::IsInt(std::string value)
