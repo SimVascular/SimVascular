@@ -74,7 +74,7 @@ def parse_args():
     parser.add_argument(cmd(Args.COMPUTE_MESH), const=True, nargs='?', default=False, 
       help="If given or value is set to 1 then compute a mesh from centerlines..")
 
-    parser.add_argument(cmd(Args.ELEMENT_SIZE), type=float,
+    parser.add_argument(cmd(Args.ELEMENT_SIZE), 
       help="The finite element size in a vessel segment.")
 
     parser.add_argument(cmd(Args.INFLOW_INPUT_FILE), 
@@ -185,8 +185,8 @@ def set_parameters(**kwargs):
       (kwargs.get(Args.COMPUTE_MESH) in true_values)
 
     if kwargs.get(Args.ELEMENT_SIZE): 
-        params.element_size = kwargs.get(Args.ELEMENT_SIZE)
-    logger.info("Element sizeoutput: %f" % params.element_size)
+        params.element_size = float(kwargs.get(Args.ELEMENT_SIZE))
+    logger.info("Element size: %f" % params.element_size)
 
     if kwargs.get(Args.INFLOW_INPUT_FILE):
         params.inflow_input_file = kwargs.get(Args.INFLOW_INPUT_FILE)
@@ -284,7 +284,6 @@ def set_parameters(**kwargs):
             logger.error("The units value '%s' was not recognized. Valid values are mm or cm." % units)
             return None
     logger.info("Units: %s" % params.units)
-
 
     if kwargs.get(Args.WALL_PROPERTIES_INPUT_FILE):
         params.wall_properties_input_file = kwargs.get(Args.WALL_PROPERTIES_INPUT_FILE)
@@ -400,6 +399,7 @@ def run(**kwargs):
     ## Set input parameters.
     params = set_parameters(**kwargs)
     if not params:
+        logger.error("Error in parameters.")
         return False
 
     centerlines = None 

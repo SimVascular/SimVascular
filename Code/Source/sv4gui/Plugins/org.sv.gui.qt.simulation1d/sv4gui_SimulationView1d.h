@@ -122,8 +122,10 @@ public:
         CValues = 15
     };
 
-    // This class defines the states associated
-    // with data input to the tool.
+    // This class defines the states associated with data input to the tool.
+    //
+    // [DaveP] The idea is to check states in sequence but not sure if this
+    // is really needed.
     //
     class DataInputStateName {
         public:
@@ -220,7 +222,6 @@ public slots:
     void UpdateJobStatus();
     void UpdateSimJob();
     void UpdateSurfaceMeshName();
-    void UpdateSimJobNumProcs();
 
     void SetupInternalSolverPaths();
 
@@ -297,6 +298,7 @@ private:
     QString m_ModelSource;
     sv4guiCapSelectionWidget* m_ModelFaceSelectionWidget;
     std::vector<std::string> m_ModelInletFaceNames;
+    bool m_ModelInletFaceSelected;
     std::vector<int> m_ModelInletFaceIds;
     std::vector<std::string> m_ModelOutletFaceNames;
 
@@ -305,6 +307,7 @@ private:
     mitk::DataNode::Pointer m_MeshNode;
     std::vector<NameNodeTuple> m_MeshNodes;
 
+    bool m_CenterlinesCalculated;
     QString m_CenterlinesFileName;
     QString m_CenterlinesOutputFileName;
     QString m_CenterlinesSource;
@@ -357,6 +360,7 @@ private:
     QString m_ExternalMPIExecPath;
 
     bool m_ConnectionEnabled;
+    bool m_SimulationFilesCreated = false;
 
     mitk::DataNode::Pointer getProjectNode();
     mitk::DataNode::Pointer GetModelFolderDataNode();
@@ -383,7 +387,8 @@ private:
 
     bool CheckBCsInputState(bool checkValidity=true);
     bool CheckInputState(DataInputStateType type = DataInputStateType::ALL);
-    void SetInputState(DataInputStateType checkType, bool state);
+    bool CheckSolverInputState(bool checkValidity=true);
+    void SetInputState(DataInputStateType checkType, bool value);
 
 };
 

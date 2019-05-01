@@ -172,7 +172,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   MITK_INFO << msg << "Add arguments ... ";
   auto kwargs = PyDict_New();
   for (auto const& param : m_ParameterValues) {
-      MITK_INFO << msg << param.first << "   " << param.second; 
+      MITK_INFO << msg << param.first << "   " << "'" << param.second << "'"; 
       PyDict_SetItemString(kwargs, param.first.c_str(), PyUnicode_DecodeFSDefault(param.second.c_str()));
   }
   MITK_INFO << msg << "Done.";
@@ -190,6 +190,8 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
       auto uResult = PyUnicode_FromObject(result);
       auto sResult = std::string(PyUnicode_AsUTF8(uResult));
       if ((sResult.find("error") != std::string::npos) || (sResult.find("ERROR") != std::string::npos)) {
+          MITK_WARN << "The generation of the solver input file failed.";
+          MITK_WARN << "Returned message: " << QString(sResult.c_str()); 
           QMessageBox mb(nullptr);
           mb.setWindowTitle(sv4guiSimulationView1d::MsgTitle);
           mb.setText("The generation of the solver input file failed.");

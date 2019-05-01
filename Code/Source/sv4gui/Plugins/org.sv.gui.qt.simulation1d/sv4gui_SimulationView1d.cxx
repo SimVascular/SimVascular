@@ -54,6 +54,7 @@
 //      Data set:
 //        m_ModelInletFaceNames
 //        m_ModelInletFaceIds
+//        m_ModelInletFaceSelected
 //        m_ModelOutletFaceNames
 //        job->SetModelProp("Inlet Face Name", ...)
 //
@@ -70,6 +71,7 @@
 //        sv4guiSimulationExtractCenterlines1d::Run()
 //
 //      Data set:
+//        m_CenterlinesCalculated
 //        m_CenterlinesContainer
 //        m_CenterlinesFileName
 //        m_CenterlinesMapper
@@ -243,6 +245,7 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationVi
     m_Model = NULL;
     m_ModelFolderNode = nullptr;
     m_ModelNode = NULL;
+    m_ModelInletFaceSelected = false;
 
     m_Mesh = nullptr;
     m_MeshFolderNode = nullptr;
@@ -252,6 +255,7 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationVi
     m_1DMeshMapper = nullptr;
     m_1DMeshElementSize = 0.1;
 
+    m_CenterlinesCalculated = false;
     m_CenterlinesContainer = nullptr;
     m_CenterlinesMapper = nullptr;
     m_CenterlinesNode = nullptr;
@@ -288,6 +292,8 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationVi
     m_ExternalMPIExecPath="";
 
     m_ConnectionEnabled=false;
+
+    m_SimulationFilesCreated = false;
 }
 
 //-------------------------
@@ -340,8 +346,6 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         connect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        //connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
-        //connect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
 
         m_ConnectionEnabled=able;
     }
@@ -360,7 +364,6 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         disconnect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         //disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
-        //disconnect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
 
         m_ConnectionEnabled=able;
     }
@@ -469,6 +472,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 
     // Solver parameters table.
     //
+    // The table format is read from resources/solvertemplate1d.xml. 
     m_TableModelSolver = new QStandardItemModel(this);
     ui->tableViewSolver->setModel(m_TableModelSolver);
     sv4guiTableSolverDelegate1d* itemSolverDelegate = new sv4guiTableSolverDelegate1d(this);
@@ -822,8 +826,9 @@ void sv4guiSimulationView1d::SelectModelInletFaces(bool show)
 // This also sets the outlet faces.
 //
 // Modifies:
-//   m_ModelInletFaceNames
 //   m_ModelInletFaceIds
+//   m_ModelInletFaceNames
+//   m_ModelInletFaceSelected
 //   m_ModelOutletFaceNames
 //
 void sv4guiSimulationView1d::SetModelInletFaces()
@@ -842,6 +847,7 @@ void sv4guiSimulationView1d::SetModelInletFaces()
         return;
     }
 
+    m_ModelInletFaceSelected = false;
     m_ModelInletFaceNames.clear();
     m_ModelInletFaceIds.clear();
     m_ModelOutletFaceNames.clear();
@@ -862,6 +868,8 @@ void sv4guiSimulationView1d::SetModelInletFaces()
         return;
     } 
     ui->InletFaceNameLabel->setText(InletFaceNameLabel + QString(m_ModelInletFaceNames[0].c_str()));
+    m_ModelInletFaceSelected = true;
+    MITK_INFO << msg << "####### m_ModelInletFaceSelected: " << m_ModelInletFaceSelected; 
 
     // Set the unselected outlet faces.
     //
@@ -889,7 +897,7 @@ void sv4guiSimulationView1d::SetModelInletFaces()
     WriteInletFaceNames(m_PluginOutputDirectory);
 
     // Enable execute centerlines button.
-    if (m_CenterlinesFileName == "") { 
+    if (!m_CenterlinesCalculated) { 
         ui->JobStatusValueLabel->setText("Centerlines have not been calculated");
     } else {
         ui->JobStatusValueLabel->setText("Simulation files have not been created");
@@ -898,7 +906,6 @@ void sv4guiSimulationView1d::SetModelInletFaces()
 
     // Once an inlet face has been selected then centerlines may be calculated.
     ui->CalculateCenterlinesPushButton->setEnabled(true);
-
 }
 
 //-----------
@@ -942,8 +949,16 @@ void sv4guiSimulationView1d::ResetModel()
     ui->CreateSimulationFilesButton->setEnabled(false);
     ui->RunSimulationPushButton->setEnabled(false);
 
+    // Set empty centerlines file name to 
+    m_CenterlinesFileName = "";
+    m_CenterlinesCalculated = false;
+
     // Write the model surface.
     WriteModel(); 
+
+    // Reset data state flags.
+    m_CenterlinesCalculated = false;
+    m_SimulationFilesCreated = false;
 
     QMessageBox::warning(NULL, MsgTitle, "The model has changed. Centerlines and simulation files need to be regenerated.");
 }
@@ -993,6 +1008,7 @@ void sv4guiSimulationView1d::UpdateCenterlinesSource()
 //
 // Modifies:
 //   m_CenterlinesFileName 
+//   m_CenterlinesCalculated 
 //
 void sv4guiSimulationView1d::SetCenterlinesGeometry()
 {
@@ -1011,6 +1027,7 @@ void sv4guiSimulationView1d::SetCenterlinesGeometry()
     if (check_file.exists() && check_file.isFile()) {
         MITK_INFO << msg << "Centerlines file exists.";
         m_CenterlinesFileName = fileName;
+        m_CenterlinesCalculated = true;
         UpdateCenterlines();
     }
 }
@@ -1026,11 +1043,7 @@ void sv4guiSimulationView1d::CalculateCenterlines()
     MITK_INFO << msg << "---------- CalculateCenterlines ----------";
     MITK_INFO << msg << "Number of inlet faces: " <<  m_ModelInletFaceIds.size();
 
-    if (!CheckInputState(DataInputStateType::CENTERLINES)) {
-        return;
-    }
-
-    if (m_ModelInletFaceIds.size() == 0) {
+    if (!m_ModelInletFaceSelected) {
         MITK_WARN << "No inlet faces selected.";
         QMessageBox::warning(NULL, MsgTitle, "No inlet faces selected.");
         return;
@@ -1102,10 +1115,13 @@ void sv4guiSimulationView1d::UpdateCenterlines()
 
     if (centerlinesGeometry != nullptr) { 
         m_CenterlinesContainer->SetMesh(centerlinesGeometry);
-        // If centerlines are created then simulation files can be created.
-        ui->CreateSimulationFilesButton->setEnabled(true);
-        SetInputState(DataInputStateType::CENTERLINES, true);
+        m_CenterlinesCalculated = true;
+    } else {
+        m_CenterlinesCalculated = false;
     }
+
+    // Check input data state to update GUI.
+    CheckInputState();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -1336,7 +1352,7 @@ void sv4guiSimulationView1d::Generate1DMesh()
     auto modelFileName = m_ModelFileName;
     MITK_INFO << msg << "Model file: " << modelFileName;
 
-    if (m_CenterlinesFileName.isEmpty()) {
+    if (!m_CenterlinesCalculated) {
         QMessageBox::warning(NULL, MsgTitle, "No centerlines have been calculated or centerlines source file set.");
         MITK_ERROR << "No centerlines file is defined.";
         return;
@@ -1771,8 +1787,8 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         ResetModel();
     }
 
-    // Check if all BCs have been set.
-    CheckBCsInputState();
+    // Check the state of the input data.
+    CheckInputState();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -2856,8 +2872,8 @@ void sv4guiSimulationView1d::UpdateGUISolver()
     // Read solver parameter names.
     //
     QString templateFilePath=":solvertemplate1d.xml";
-    if(m_UseCustom) {
-        templateFilePath=m_SolverTemplatePath;
+    if (m_UseCustom) {
+        templateFilePath = m_SolverTemplatePath;
     }
 
     QFile xmlFile(templateFilePath);
@@ -3232,9 +3248,11 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
         return false;
     }
 
+    /*
     if (!CheckInputState(DataInputStateType::SIMULATION_FILES)) {
         return false;
     }
+    */
 
     // Create a job object storing all the parameters needed for a simulation.
     //
@@ -3255,7 +3273,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     m_MitkJob->SetDataModified();
 
     // Check that centerlines have been generated.
-    if (m_CenterlinesFileName.isEmpty()) {
+    if (!m_CenterlinesCalculated) {
         QMessageBox::warning(NULL, MsgTitle, "No centerlines have been calculated or centerlines source file set.");
         MITK_ERROR << "No centerlines file is defined.";
         return false;
@@ -3263,7 +3281,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
 
     // Check that inlet and outlet faces have been identified.
-    if ((m_ModelInletFaceNames.size() == 0) || (m_ModelOutletFaceNames.size() == 0)) {
+    if (!m_ModelInletFaceSelected || (m_ModelOutletFaceNames.size() == 0)) {
         QMessageBox::warning(NULL, MsgTitle, "No inlet face has been selected.");
         MITK_ERROR << "No inlet face has been defined.";
         return false;
@@ -3316,7 +3334,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     auto statusMsg = "Generating simulation files ..."; 
     ui->JobStatusValueLabel->setText(statusMsg);
     mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
-    pythonInterface.GenerateSolverInput(outDir, job);
+    auto status = pythonInterface.GenerateSolverInput(outDir, job);
 
     // Check for success.
     auto solverInputFile = outputDir + "/" + SOLVER_FILE_NAME;
@@ -3332,6 +3350,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     statusMsg = "Simulation files have been created."; 
     ui->JobStatusValueLabel->setText(statusMsg);
     mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+    m_SimulationFilesCreated = true;
 
     return true;
 }
@@ -3896,33 +3915,63 @@ bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string&
     return true;
 }
 
-
-//------------
-// CheckState
-//------------
+//-----------------
+// CheckInputState
+//-----------------
 // Check the state of the input data.
 //
-// typedef std::tuple<DataInputStateType, QString, bool> DataInputStateTuple;
+// Enable GUI push buttons depending on the state of the tool input data. 
+// For example, if all inlet / outlet BC and solver paramater data have
+// been input then the 'CreateSimulationFilesButton' push button is enabled.
 //
 bool sv4guiSimulationView1d::CheckInputState(DataInputStateType checkType)
 {
     auto msg = "[sv4guiSimulationView1d::CheckInputState] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "#####################################################################";
     MITK_INFO << msg << "---------- CheckInputState ---------"; 
-    bool allPassed = true;
 
-    for (auto const& state : dataInputState) {
-        auto stype = std::get<0>(state);
-        auto name = std::get<1>(state);
-        auto passed = std::get<2>(state);
-        allPassed |= passed;
-        if (stype == checkType) {
-            break;
-        }
-        MITK_INFO << msg << ">>> Name: " << name;
-        MITK_INFO << msg << "    passed: " << passed;
+    ui->CalculateCenterlinesPushButton->setEnabled(false);
+    ui->CreateSimulationFilesButton->setEnabled(false);
+    ui->RunSimulationPushButton->setEnabled(false);
+
+    MITK_INFO << msg << "m_ModelInletFaceSelected: " << m_ModelInletFaceSelected;
+    MITK_INFO << msg << "m_CenterlinesCalculated: " << m_CenterlinesCalculated;
+
+    // Check if an inlet face has been selected. 
+    if (!m_ModelInletFaceSelected) {
+        return false;
+    }
+    ui->CalculateCenterlinesPushButton->setEnabled(true);
+
+    // Check if centerlines have been generated.
+    if (!m_CenterlinesCalculated) { 
+        return false;
     }
 
-    return allPassed;
+    // If all the BCs and solver parameters have been set then 
+    // allow creating simulation files.
+    //
+    if (!CheckSolverInputState()) {
+        MITK_INFO << msg << "CheckSolverInputState: false";
+        return false;
+    } 
+
+    if (!CheckBCsInputState()) { 
+        MITK_INFO << msg << "CheckBCsInputState: false";
+        return false;
+    }
+
+    ui->CreateSimulationFilesButton->setEnabled(true);
+
+    if (!m_SimulationFilesCreated) { 
+        MITK_INFO << msg << "Simulation files have not been created.";
+        return false;
+    }
+
+    ui->RunSimulationPushButton->setEnabled(true);
+
+    return true;
 }
 
 //--------------------
@@ -4006,8 +4055,43 @@ bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
         QMessageBox::warning(m_Parent, MsgTitle, "Inlet / Outlet BC parameter values error.\n" + QString::fromStdString(errorMsg));
     }
 
-    // If all the BCs have been set then allow creating simulation files.
-    ui->CreateSimulationFilesButton->setEnabled(passed);
+
+    return passed;
+}
+
+//-----------------------
+// CheckSolverInputState 
+//-----------------------
+// Check the state of the input solver parameters data.
+//
+// The primary check is to make sure all of the data has been set.
+//
+// We don't need to check the paramaeter values here, this is 
+// done in SetSolverParameters().
+//
+bool sv4guiSimulationView1d::CheckSolverInputState(bool validate)
+{
+    auto msg = "[sv4guiSimulationView1d::CheckSolverInputState] ";
+    MITK_INFO << msg << "---------- CheckSolverInputState ---------";
+    MITK_INFO << msg << "validate: " << validate;
+    bool passed = true;
+    std::string errorMsg = "";
+
+    for (int i = 0; i < m_TableModelSolver->rowCount();i++) {
+        std::string parName = m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
+        QStandardItem* valueItem = m_TableModelSolver->item(i,1);
+        MITK_INFO << msg << "parName: : " << parName << "  value: " << valueItem;
+        // Check for section header (e.g. "Time Step Parameters").
+        if (valueItem == NULL) {
+            continue;
+        }
+        std::string type = m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
+        std::string value = valueItem->text().trimmed().toStdString();
+        if (value == "") {
+            passed = false;
+            break;
+        }
+    }
 
     return passed;
 }
@@ -4069,8 +4153,10 @@ bool sv4guiSimulationView1d::SetSolverParameters(sv4guiSimJob1d* job, std::strin
     return true;
 }
 
-
-
+//---------------
+// SaveToManager
+//---------------
+//
 void sv4guiSimulationView1d::SaveToManager()
 {
     if (!m_MitkJob) {
@@ -4447,21 +4533,8 @@ void sv4guiSimulationView1d::UpdateSimJob()
     m_MitkJob->SetSimJob(newJob);
     m_MitkJob->SetDataModified();
 
-    // Check if all BCs have been set.
-    CheckBCsInputState();
-}
-
-void sv4guiSimulationView1d::UpdateSimJobNumProcs()
-{
-    if(!m_MitkJob)
-        return;
-
-    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
-    if(job) {
-        //std::string numProcsStr=QString::number((int)(ui->sliderNumProcs->value())).toStdString();
-        //job->SetRunProp("Number of Processes",numProcsStr);
-        m_MitkJob->SetDataModified();
-    }
+    // Check input state of all data. 
+    CheckInputState();
 }
 
 void sv4guiSimulationView1d::ShowCalculateFowsWidget(bool checked)
