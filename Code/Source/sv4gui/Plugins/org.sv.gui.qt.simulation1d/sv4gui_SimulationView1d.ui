@@ -131,7 +131,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>581</height>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -143,25 +143,6 @@
             <property name="statusTip">
              <string extracomment="1D mesh generation."/>
             </property>
-            <widget class="QPushButton" name="generateMeshPushButton">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>380</y>
-               <width>135</width>
-               <height>25</height>
-              </rect>
-             </property>
-             <property name="statusTip">
-              <string extracomment="Generate a 1D mesh from centerlines geometry."/>
-             </property>
-             <property name="whatsThis">
-              <string extracomment="Generate a 1D mesh from centerlines geometry."/>
-             </property>
-             <property name="text">
-              <string>Generate 1D Mesh</string>
-             </property>
-            </widget>
             <widget class="QGroupBox" name="groupBox">
              <property name="geometry">
               <rect>
@@ -502,18 +483,86 @@ QGroupBox::title {
               </property>
              </widget>
             </widget>
-            <widget class="QCheckBox" name="showMeshCheckBox">
+            <widget class="QGroupBox" name="groupBox_3">
              <property name="geometry">
               <rect>
-               <x>310</x>
-               <y>383</y>
-               <width>61</width>
-               <height>20</height>
+               <x>0</x>
+               <y>360</y>
+               <width>381</width>
+               <height>151</height>
               </rect>
              </property>
-             <property name="text">
-              <string>Show</string>
+             <property name="styleSheet">
+              <string notr="true">QGroupBox { 
+border-width: 2px;  
+ border-color: rgb(85, 87, 83); 
+border-style: outset;
+ }
+
+QGroupBox::title {
+    subcontrol-origin: padding;
+    subcontrol-position: top left;
+    padding: 0 5px;
+ }</string>
              </property>
+             <property name="title">
+              <string>Mesh</string>
+             </property>
+             <widget class="QLineEdit" name="ElementSizeLineEdit">
+              <property name="geometry">
+               <rect>
+                <x>110</x>
+                <y>30</y>
+                <width>101</width>
+                <height>25</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QLabel" name="ElementSizeLabel">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>30</y>
+                <width>91</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Element size</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="generateMeshPushButton">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>110</y>
+                <width>135</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="statusTip">
+               <string extracomment="Generate a 1D mesh from centerlines geometry."/>
+              </property>
+              <property name="whatsThis">
+               <string extracomment="Generate a 1D mesh from centerlines geometry."/>
+              </property>
+              <property name="text">
+               <string>Generate 1D Mesh</string>
+              </property>
+             </widget>
+             <widget class="QCheckBox" name="showMeshCheckBox">
+              <property name="geometry">
+               <rect>
+                <x>290</x>
+                <y>110</y>
+                <width>61</width>
+                <height>20</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Show</string>
+              </property>
+             </widget>
             </widget>
            </widget>
           </item>
@@ -524,8 +573,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>86</width>
+           <height>75</height>
           </rect>
          </property>
          <attribute name="label">
@@ -561,8 +610,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>86</width>
+           <height>75</height>
           </rect>
          </property>
          <attribute name="label">
@@ -625,8 +674,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>239</width>
-           <height>206</height>
+           <width>339</width>
+           <height>217</height>
           </rect>
          </property>
          <attribute name="label">
@@ -975,8 +1024,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>86</width>
+           <height>75</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1012,8 +1061,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>407</width>
-           <height>581</height>
+           <width>198</width>
+           <height>70</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1135,8 +1184,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>282</width>
-           <height>293</height>
+           <width>360</width>
+           <height>333</height>
           </rect>
          </property>
          <attribute name="label">
