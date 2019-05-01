@@ -102,6 +102,7 @@ public:
 
     // Used to access the columns in Model Cap BC Table.
     //enum class TableModelCapType {
+    //
     enum TableModelCapType : int {
         Name = 0,
         BCType = 1,
@@ -121,7 +122,9 @@ public:
         CValues = 15
     };
 
-
+    // This class defines the states associated
+    // with data input to the tool.
+    //
     class DataInputStateName {
         public:
             static const QString INLET_FACE;
@@ -193,7 +196,7 @@ public slots:
     // 1D Mesh slots.
     void Generate1DMesh();
     void Show1DMesh();
-
+    void SetElementSize(QString);
     void ReadMesh();
 
     void UpdateCenterlinesSource();
@@ -314,6 +317,7 @@ private:
     sv4guiSimulationLinesMapper::Pointer m_1DMeshMapper;
     sv4guiSimulationLinesContainer::Pointer m_1DMeshContainer;
     sv4guiMesh* m_1DMesh;
+    double m_1DMeshElementSize;
 
     sv4guiMitkSimJob1d* m_MitkJob;
     mitk::DataNode::Pointer m_JobNode;

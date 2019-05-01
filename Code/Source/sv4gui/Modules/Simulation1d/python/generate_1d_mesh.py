@@ -28,6 +28,7 @@ class Args(object):
     CENTERLINE_OUTPUT_FILE = "centerlines_output_file"
     COMPUTE_CENTERLINES = "compute_centerlines"
     COMPUTE_MESH = "compute_mesh"
+    ELEMENT_SIZE = "element_size"
     INLET_FACE_INPUT_FILE = "inlet_face_input_file"
     INFLOW_INPUT_FILE = "inflow_input_file"
     MESH_OUTPUT_FILE = "mesh_output_file"
@@ -72,6 +73,9 @@ def parse_args():
 
     parser.add_argument(cmd(Args.COMPUTE_MESH), const=True, nargs='?', default=False, 
       help="If given or value is set to 1 then compute a mesh from centerlines..")
+
+    parser.add_argument(cmd(Args.ELEMENT_SIZE), type=float,
+      help="The finite element size in a vessel segment.")
 
     parser.add_argument(cmd(Args.INFLOW_INPUT_FILE), 
       help="The name of the file to read inflow data from.")
@@ -179,6 +183,10 @@ def set_parameters(**kwargs):
     # argument is given with no value. Otherwise it is set to the value given.
     params.compute_mesh = (kwargs.get(Args.COMPUTE_MESH) == True) or \
       (kwargs.get(Args.COMPUTE_MESH) in true_values)
+
+    if kwargs.get(Args.ELEMENT_SIZE): 
+        params.element_size = kwargs.get(Args.ELEMENT_SIZE)
+    logger.info("Element sizeoutput: %f" % params.element_size)
 
     if kwargs.get(Args.INFLOW_INPUT_FILE):
         params.inflow_input_file = kwargs.get(Args.INFLOW_INPUT_FILE)

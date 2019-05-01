@@ -1012,7 +1012,7 @@ class Mesh(object):
         outflow_bc = params.outflow_bc_type
         outflow_bc_uc = params.outflow_bc_type.upper()   # 1D solve needs upper case.
         uniform_material = params.uniform_material
-        dx = params.dx 
+        dx = params.element_size
         min_num_elems = params.min_num_elems
         inflow_data = self.inflow_data
 

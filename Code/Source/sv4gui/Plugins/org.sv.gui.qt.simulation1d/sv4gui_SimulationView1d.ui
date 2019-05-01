@@ -220,7 +220,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>310</x>
-                <y>10</y>
+                <y>6</y>
                 <width>61</width>
                 <height>23</height>
                </rect>
@@ -297,7 +297,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>190</x>
-                <y>40</y>
+                <y>34</y>
                 <width>161</width>
                 <height>26</height>
                </rect>
@@ -319,7 +319,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>10</x>
-                <y>40</y>
+                <y>37</y>
                 <width>54</width>
                 <height>16</height>
                </rect>
@@ -332,7 +332,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>65</x>
-                <y>40</y>
+                <y>34</y>
                 <width>104</width>
                 <height>26</height>
                </rect>
@@ -355,9 +355,9 @@ QGroupBox::title {
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>180</y>
+               <y>170</y>
                <width>381</width>
-               <height>151</height>
+               <height>141</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -447,7 +447,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>160</x>
-                <y>120</y>
+                <y>107</y>
                 <width>184</width>
                 <height>25</height>
                </rect>
@@ -457,7 +457,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>5</x>
-                <y>120</y>
+                <y>107</y>
                 <width>149</width>
                 <height>25</height>
                </rect>
@@ -470,7 +470,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>310</x>
-                <y>10</y>
+                <y>6</y>
                 <width>61</width>
                 <height>23</height>
                </rect>
@@ -487,9 +487,9 @@ QGroupBox::title {
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>360</y>
+               <y>330</y>
                <width>381</width>
-               <height>151</height>
+               <height>101</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -512,17 +512,23 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>110</x>
-                <y>30</y>
+                <y>28</y>
                 <width>101</width>
                 <height>25</height>
                </rect>
+              </property>
+              <property name="toolTip">
+               <string>The finite element size in a vessel segment.</string>
+              </property>
+              <property name="text">
+               <string>0.1</string>
               </property>
              </widget>
              <widget class="QLabel" name="ElementSizeLabel">
               <property name="geometry">
                <rect>
                 <x>10</x>
-                <y>30</y>
+                <y>28</y>
                 <width>91</width>
                 <height>25</height>
                </rect>
@@ -535,7 +541,7 @@ QGroupBox::title {
               <property name="geometry">
                <rect>
                 <x>10</x>
-                <y>110</y>
+                <y>68</y>
                 <width>135</width>
                 <height>25</height>
                </rect>
@@ -553,8 +559,8 @@ QGroupBox::title {
              <widget class="QCheckBox" name="showMeshCheckBox">
               <property name="geometry">
                <rect>
-                <x>290</x>
-                <y>110</y>
+                <x>310</x>
+                <y>10</y>
                 <width>61</width>
                 <height>20</height>
                </rect>
@@ -573,8 +579,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>86</width>
-           <height>75</height>
+           <width>407</width>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -610,8 +616,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>86</width>
-           <height>75</height>
+           <width>407</width>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -674,8 +680,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>339</width>
-           <height>217</height>
+           <width>407</width>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1024,8 +1030,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>86</width>
-           <height>75</height>
+           <width>407</width>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1061,8 +1067,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>198</width>
-           <height>70</height>
+           <width>407</width>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1184,8 +1190,8 @@ QGroupBox::title {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>360</width>
-           <height>333</height>
+           <width>407</width>
+           <height>600</height>
           </rect>
          </property>
          <attribute name="label">

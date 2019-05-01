@@ -107,11 +107,12 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
 //---------------------
 // Generate a 1D solver input file.
 //
-// Script arguments: 
+// Example script arguments: 
 //
 //    python generate_1d_mesh.py \
 //        --output-directory $PWD/output \
 //        --units mm \
+//        --element_size 0.01 \
 //        --centerlines-input-file ${cl_file} \
 //        --outlet-face-names-input-file ${outlet_face_names_file} \
 //        --uniform-bc false \

@@ -44,7 +44,7 @@ class Parameters():
         self.CENTERLINES_OUTLET_FILE_NAME = "centerlines_outlets.dat"
 
         # Mesh size in a vessel segment.
-        self.dx = 0.1
+        self.element_size = 0.1
 
         # Min number of elements for a segment.
         self.min_num_elems = 10

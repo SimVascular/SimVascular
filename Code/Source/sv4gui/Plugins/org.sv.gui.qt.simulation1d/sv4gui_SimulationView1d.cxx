@@ -250,6 +250,7 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationVi
 
     m_1DMeshContainer = nullptr;
     m_1DMeshMapper = nullptr;
+    m_1DMeshElementSize = 0.1;
 
     m_CenterlinesContainer = nullptr;
     m_CenterlinesMapper = nullptr;
@@ -604,8 +605,12 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     //
     connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(Generate1DMesh()));
     connect(ui->showMeshCheckBox, SIGNAL(clicked(bool)), this, SLOT(Show1DMesh(bool)) );
+    connect(ui->ElementSizeLineEdit, SIGNAL(textChanged(QString)), this, SLOT(SetElementSize(QString)));
+    // [DaveP] Hide these for now.
+    ui->generateMeshPushButton->hide();
+    ui->showMeshCheckBox->hide();
 
-    // By default disable push buttons used to calculare centerlines, 
+    // By default disable push buttons used to calculate centerlines, 
     // create simulation files and run a simulation.
     //
     ui->CalculateCenterlinesPushButton->setEnabled(false);
@@ -1382,6 +1387,20 @@ void sv4guiSimulationView1d::Show1DMesh()
     if (m_Model == nullptr) { 
         return;
     }
+}
+
+//----------------
+// SetElementSize
+//----------------
+//
+void sv4guiSimulationView1d::SetElementSize(QString valueArg)
+{
+    std::string value = valueArg.toStdString();
+    if (!IsDouble(value)) {
+        QMessageBox::warning(m_Parent, MsgTitle, "The element size is not a float value."); 
+        return;
+    }
+    m_1DMeshElementSize = std::stod(value);
 }
 
 //------------
@@ -3280,6 +3299,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     pythonInterface.AddParameter(params.MODEL_NAME, modelName);
     pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, outDir);
     pythonInterface.AddParameter(params.UNITS, "mm");
+    pythonInterface.AddParameter(params.ELEMENT_SIZE, std::to_string(m_1DMeshElementSize));
 
     pythonInterface.AddParameter(params.CENTERLINES_INPUT_FILE, m_CenterlinesFileName.toStdString()); 
     pythonInterface.AddParameter(params.OUTLET_FACE_NAMES_INPUT_FILE, outletFacesFileName); 

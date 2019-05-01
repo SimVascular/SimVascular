@@ -60,6 +60,7 @@ class sv4guiSimulationPython1dParamNames
       allNames.insert(BOUNDARY_SURFACE_DIR);
       allNames.insert(CENTERLINES_INPUT_FILE);
       allNames.insert(COMPUTE_MESH);
+      allNames.insert(ELEMENT_SIZE);
       allNames.insert(INFLOW_INPUT_FILE);
       allNames.insert(MESH_OUTPUT_FILE);
       allNames.insert(MODEL_NAME);
@@ -77,6 +78,7 @@ class sv4guiSimulationPython1dParamNames
     const std::string CENTERLINES_INPUT_FILE = "centerlines_input_file";
     const std::string COMPUTE_MESH = "compute_mesh";
     const std::string INFLOW_INPUT_FILE = "inflow_input_file";
+    const std::string ELEMENT_SIZE = "element_size";
     const std::string MESH_OUTPUT_FILE = "mesh_output_file";
     const std::string MODEL_NAME = "model_name";
     const std::string OUTFLOW_BC_INPUT_FILE = "outflow_bc_input_file";
