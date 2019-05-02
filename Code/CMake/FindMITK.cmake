@@ -74,6 +74,7 @@ set(${proj}_LIBNAMES CppMicroServices
                      MitkDataTypesExt
                      MitkImageDenoising
                      MitkMapperExt
+                     MitkMultilabel
                      MitkQtWidgets
                      MitkQtWidgetsExt
                      MitkSceneSerialization
