@@ -46,6 +46,7 @@
 #include "sv4gui_QmitkFunctionality.h"
 #include "sv4gui_SimulationLinesContainer.h"
 #include "sv4gui_SimulationLinesMapper.h"
+#include "sv4gui_SimulationPython1d.h"
 
 #include "sv4gui_CapSelectionWidget.h"
 #include "sv4gui_ProcessHandler1d.h"
@@ -85,6 +86,7 @@ public:
     static const QString MODEL_SURFACE_FILE_NAME;
     static const QString OUTLET_FACE_NAMES_FILE_NAME;
     static const QString RCR_BC_FILE_NAME;
+    static const QString RESISTANCE_BC_FILE_NAME;
     static const QString SOLVER_FILE_NAME;
 
     sv4guiSimulationView1d();
@@ -100,8 +102,19 @@ public:
         ALL
     };
 
+    // Used to access the rows in Model Solver BC Table.
+    //
+    // Mimics the entries in resources/solvertemplate1d.xml.
+    //
+    enum TableModelSolverRow : int {
+        TimeStepParameters = 0,
+        NumberofTimesteps = 1,
+        TimeStepSize = 2,
+        OutputControl = 3,
+        NumberofTimeStepsSavingData = 4
+    };
+
     // Used to access the columns in Model Cap BC Table.
-    //enum class TableModelCapType {
     //
     enum TableModelCapType : int {
         Name = 0,
@@ -256,10 +269,12 @@ public:
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
     std::vector<std::string> ReadInletFaceNames(const QString outputDir);
-    void WriteRcrFile(const QString outputDir, const sv4guiSimJob1d* job);
-    void WriteOutletFaceNames(const QString outputDir);
+    void WriteBCFiles(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void WriteInletFaceNames(const QString outputDir);
-    std::string WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job);
+    void WriteOutletFaceNames(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteRcrFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteResistanceFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
 
     bool IsDouble(std::string value);
 

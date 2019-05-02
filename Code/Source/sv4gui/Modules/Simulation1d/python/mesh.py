@@ -99,6 +99,7 @@ class Mesh(object):
         self.seg_head = None
         self.seg_rear = None 
         self.nodes = None 
+        self.num_elements = None
         self.user_outlet_paths = None 
         self.bc_list = None
         self.bc_map = None
@@ -488,10 +489,26 @@ class Mesh(object):
         bc_map = dict()
 
         if outflow_bc == OutflowBoundaryConditionType.RESISTANCE:
-            with open(bc_file) as rfile:
-                for line in rfile:
-                    bc_list.append(float(line))
-            #__with open(bc_file) as rfile
+            self.logger.info("Read resistance BCs ...")
+            try:
+                with open(bc_file) as rfile:
+                    for line in rfile:
+                        face_name, value = line.strip().split(' ')
+                        self.logger.info("Face %s  value %s" % (face_name, value))
+                        if not face_name[0].isalpha():
+                            msg = "The resistance file is in the wrong format, expecting face name / value pairs."
+                            self.logger.error(msg)
+                            raise RuntimeError(msg)
+                        #value = float(rfile.readline())
+                        bc_list.append(value)
+                        pathID = self.outlet_face_names_index[face_name]
+                        bc_map[face_name] = (pathID,value)
+                #__with open(bc_file) as rfile
+            except Exception as e:
+                msg = "The resistance file is in the wrong format, expecting face name / value pairs.\n"
+                self.logger.error(msg)
+                msg = "Exception: " + str(e) + "\n"
+                raise RuntimeError(msg)
 
             if len(bc_list) != len(outlet_face_names):
                 msg = "The number of BC values %d do not match the number of outlets %d." % (len(bc_list), len(outlet_face_names))
@@ -1018,6 +1035,7 @@ class Mesh(object):
 
         self.logger.info("Uniform BC: %s" % uniform_bc)
         self.logger.info("Outflow BC: %s" % outflow_bc)
+        self.num_elements = 0
 
         for i in range(0,num_seg):
            if uniform_material:
@@ -1029,6 +1047,8 @@ class Mesh(object):
 
            if numfe < min_num_elems:
                numfe = min_num_elems
+
+           self.num_elements += numfe 
 
            ofile.write("SEGMENT" + sp + "Group"+ str(seg_list[i])+"_Seg"+str(i) + sp + str(i) + sp + 
              str(group_length[seg_list[i]]) + sp + str(numfe) + sp + str(seg_head[i]) + sp + 

@@ -139,7 +139,6 @@
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshLegacyIO.h"
 #include "sv4gui_SimulationUtils1d.h"
-#include "sv4gui_SimulationPython1d.h"
 
 #include "sv4gui_SimulationExtractCenterlines1d.h"
 #include "sv_polydatasolid_utils.h"
@@ -198,6 +197,7 @@ const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
 const QString sv4guiSimulationView1d::MODEL_SURFACE_FILE_NAME = "model_surface.vtp";
 const QString sv4guiSimulationView1d::OUTLET_FACE_NAMES_FILE_NAME = "outlet_face_names.dat";
 const QString sv4guiSimulationView1d::RCR_BC_FILE_NAME = "rcrt.dat";
+const QString sv4guiSimulationView1d::RESISTANCE_BC_FILE_NAME = "resistance.dat";
 const QString sv4guiSimulationView1d::SOLVER_FILE_NAME = "solver.in";
 
 // Set the values of the Surface Model Origin types.
@@ -3220,15 +3220,22 @@ QString sv4guiSimulationView1d::GetSolverExecutable()
 //-----------------
 // Create files for a simulation.
 //
+// A Python script is executed to generate a 1D mesh and
+// create a input file for the 1D solver.
+//
 // Files are written to the PROJECT/Simulations1d/JOB_NAME directory.
 //
 // Arguments:
 //   outputDir: The directory to write the files to. 
 //
 // Files written:
-//    sv4guiSimulationView1d::OUTLET_FACE_NAMES_FILE_NAME
-//    sv4guiSimulationView1d::SOLVER_FILE_NAME
-//    sv4guiSimulationView1d::RCR_BC_FILE_NAME (optional)
+//   OUTLET_FACE_NAMES_FILE_NAME
+//   SOLVER_FILE_NAME
+//   RCR_BC_FILE_NAME or RESISTANCE_BC_FILE_NAME 
+//
+// Modifies:
+//   m_SolverInputFile = solverInputFile;
+//   m_SimulationFilesCreated = true;
 //
 bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
@@ -3293,39 +3300,39 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
         return false;
     }
 
-    // Write the data files needed to generate a solver input file.
-    //
-    WriteRcrFile(outputDir, job);
-    WriteOutletFaceNames(outputDir);
-    auto flowFileName = WriteFlowFile(outputDir, job);
-
     // Set the parameters used by the Python script.
     //
     auto pythonInterface = sv4guiSimulationPython1d();
     auto params = pythonInterface.m_ParameterNames;
 
     auto modelName = m_ModelNode->GetName();
-    auto outDir = outputDir.toStdString();
-    auto outletFacesFileName = outDir + "/" + OUTLET_FACE_NAMES_FILE_NAME.toStdString();
-    auto inflowFileName = outDir + "/" + flowFileName; 
-    auto outflowBcFileName = outDir + "/" + RCR_BC_FILE_NAME.toStdString(); 
-    auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
-
     pythonInterface.AddParameter(params.MODEL_NAME, modelName);
+
+    auto outDir = outputDir.toStdString();
     pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, outDir);
+
     pythonInterface.AddParameter(params.UNITS, "mm");
     pythonInterface.AddParameter(params.ELEMENT_SIZE, std::to_string(m_1DMeshElementSize));
-
     pythonInterface.AddParameter(params.CENTERLINES_INPUT_FILE, m_CenterlinesFileName.toStdString()); 
-    pythonInterface.AddParameter(params.OUTLET_FACE_NAMES_INPUT_FILE, outletFacesFileName); 
 
+    // Set parameter and write outlet face names to a file.
+    WriteOutletFaceNames(outputDir, job, pythonInterface);
+
+    // Set bc paramaters and write the bc data files.
     pythonInterface.AddParameter(params.UNIFORM_BC, "false"); 
-    pythonInterface.AddParameter(params.INFLOW_INPUT_FILE, inflowFileName); 
-    pythonInterface.AddParameter(params.OUTFLOW_BC_TYPE, "rcr"); 
-    pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outflowBcFileName); 
+    WriteBCFiles(outputDir, job, pythonInterface);
 
+    auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
     pythonInterface.AddParameter(params.WRITE_SOLVER_FILE, "true"); 
     pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName); 
+
+    // Add solver parameters.
+    auto numTimeSteps = m_TableModelSolver->item(TableModelSolverRow::NumberofTimesteps,1)->text().trimmed().toStdString();
+    pythonInterface.AddParameter(params.NUM_TIME_STEPS, numTimeSteps);
+    auto timeStep = m_TableModelSolver->item(TableModelSolverRow::TimeStepSize,1)->text().trimmed().toStdString();
+    pythonInterface.AddParameter(params.TIME_STEP, timeStep);
+    auto saveFreq = m_TableModelSolver->item(TableModelSolverRow::NumberofTimeStepsSavingData,1)->text().trimmed().toStdString();
+    pythonInterface.AddParameter(params.SAVE_DATA_FREQUENCY, saveFreq);
 
     // Execute the Python script to generate the 1D solver input file.
     auto statusMsg = "Generating simulation files ..."; 
@@ -3352,24 +3359,72 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     return true;
 }
 
+//--------------
+// WriteBCFiles
+//--------------
+// Write boundary condition files and set the parameters used 
+// by the Python script.
+//
+// Files written:
+//   inlet flow file    
+//   rcr or resistance boundary conditions
+//
+void sv4guiSimulationView1d::WriteBCFiles(const QString outputDir, sv4guiSimJob1d* job, 
+  sv4guiSimulationPython1d& pythonInterface)
+{
+    auto msg = "[sv4guiSimulationView1d::WriteBCFiles] ";
+    MITK_INFO << msg << "--------- WriteBCFiles ----------";
+    std::string bcType;
+
+    // Write the inflow BC data.
+    WriteFlowFile(outputDir, job, pythonInterface);
+
+    // Find the BC type.
+    //
+    // [DaveP] Can only have one BC type, resistance or rcr?
+    //
+    for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
+        bcType = m_TableModelCap->item(i,1)->text().trimmed().toStdString();
+        if (bcType != "Prescribed Velocities") {
+            break;
+        }
+    }
+    MITK_INFO << msg << "bcType: " << bcType;
+    auto params = pythonInterface.m_ParameterNames;
+
+    if (bcType == "RCR") {
+        WriteRcrFile(outputDir, job, pythonInterface);
+    } else if (bcType == "Resistance") {
+        WriteResistanceFile(outputDir, job, pythonInterface);
+    }
+}
+
 //---------------
 // WriteFlowFile
 //---------------
-// Write the inlet face flow rate file.
+// Write the inlet face flow rate file and set the parameter used 
+// by the Python script.
 //
 // The flow rate file is set by the user using the 'Set Inlet/Outlet BCs' popup 
 // called up from the 'Inlet and Outlet BCs' toolbox tab and processed using the
 // sv4guiCapBCWidget1d object. The sv4guiSimJob1d object stores the flow rate
 // file name (without path) and its contents.
 //
-std::string sv4guiSimulationView1d::WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job)
+void sv4guiSimulationView1d::WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job, 
+    sv4guiSimulationPython1d& pythonInterface)
 {
+    auto msg = "[sv4guiSimulationView1d::WriteFlowFile] ";
+    MITK_INFO << msg << "--------- WriteFlowFile ----------";
+    MITK_INFO << msg << "Output directory: " << outputDir;
+
+    // Write flow file.
+    //
     auto inletFaceName = m_ModelInletFaceNames[0];
     auto flowFileName = job->GetCapProp(inletFaceName, "Original File");
     auto flowFileContent = QString::fromStdString(job->GetCapProp(inletFaceName, "Flow Rate"));
     auto flowFile = outputDir + "/" + QString(flowFileName.c_str());
-    mitk::StatusBar::GetInstance()->DisplayText("Writing flow rate file.");
     QFile flowFileWriter(flowFile);
+    MITK_INFO << msg << "inletFaceName: " << inletFaceName;
 
     if (flowFileWriter.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream output(&flowFileWriter);
@@ -3381,15 +3436,57 @@ std::string sv4guiSimulationView1d::WriteFlowFile(const QString outputDir, sv4gu
         QMessageBox::critical(NULL, MsgTitle, msg);
     }
 
-    return flowFileName;
+    // Add script parameter.
+    auto params = pythonInterface.m_ParameterNames;
+    pythonInterface.AddParameter(params.INFLOW_INPUT_FILE, flowFile.toStdString()); 
+}
+
+//---------------------
+// WriteResistanceFile
+//---------------------
+// Write the resistance boundary conditions file and set the parameters used 
+// by the Python script.
+//
+void sv4guiSimulationView1d::WriteResistanceFile(const QString outputDir, sv4guiSimJob1d* job,
+  sv4guiSimulationPython1d& pythonInterface)
+{
+    auto msg = "[sv4guiSimulationView1d::WriteResistanceFile] ";
+    MITK_INFO << msg << "--------- WriteResistanceFile ----------";
+    MITK_INFO << msg << "Output directory: " << outputDir;
+
+    // Set the Python script parameters.
+    std::string bcType = "Resistance";
+    auto outflowBcFileName = outputDir + "/" + RESISTANCE_BC_FILE_NAME;
+    auto params = pythonInterface.m_ParameterNames;
+    pythonInterface.AddParameter(params.OUTFLOW_BC_TYPE, "resistance");
+    pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outflowBcFileName.toStdString());
+
+    // Write the resistance bc data to a file.
+    //
+    QFile resFile(outflowBcFileName);
+
+    if (resFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&resFile);
+
+        for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
+            auto capName = m_TableModelCap->item(i,0)->text();
+            if (m_TableModelCap->item(i,1)->text().trimmed().toStdString() == bcType) { 
+                auto values = m_TableModelCap->item(i,2)->text().trimmed();
+                out << capName << " " << values << "\n"; 
+            }
+        }
+        resFile.close();
+    }
 }
 
 //--------------
 // WriteRcrFile
 //--------------
-// Write the RCR boundary conditions file.
+// Write the RCR boundary conditions file and set the parameters used 
+// by the Python script.
 //
-void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, const sv4guiSimJob1d* job)
+void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, sv4guiSimJob1d* job, 
+  sv4guiSimulationPython1d& pythonInterface)
 {
     auto msg = "[sv4guiSimulationView1d::WriteRcrFile] ";
     MITK_INFO << msg << "--------- WriteRcrFile ----------"; 
@@ -3401,14 +3498,19 @@ void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, const sv4guiS
         return;
     }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Writing rcrt.dat");
-    QFile rcrtFile(outputDir + "/" + RCR_BC_FILE_NAME);
+    auto outflowBcFileName = outputDir + "/" + RCR_BC_FILE_NAME; 
+    auto params = pythonInterface.m_ParameterNames;
+    pythonInterface.AddParameter(params.OUTFLOW_BC_TYPE, "rcr"); 
+    pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outflowBcFileName.toStdString()); 
 
+    // Write rcr data.
+    QFile rcrtFile(outflowBcFileName);
     if (rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&rcrtFile);
         out << rcrtFielContent;
         rcrtFile.close();
     }
+    return;
 }
 
 //--------------------
@@ -3461,23 +3563,29 @@ void sv4guiSimulationView1d::WriteInletFaceNames(const QString outputDir)
 //----------------------
 // WriteOutletFaceNames
 //----------------------
-// Write the outlet face names.
+// Write the outlet face names and set the parameters used 
+// by the Python script.
 //
-void sv4guiSimulationView1d::WriteOutletFaceNames(const QString outputDir)
+void sv4guiSimulationView1d::WriteOutletFaceNames(const QString outputDir, sv4guiSimJob1d* job, 
+  sv4guiSimulationPython1d& pythonInterface)
 {
     auto msg = "[sv4guiSimulationView1d::WriteRcrFileWriteOutletFaceNames] ";
     MITK_INFO << msg << "--------- WriteOutletFaceNames ----------";
 
-    QFile outletNamesFile(outputDir + "/" + OUTLET_FACE_NAMES_FILE_NAME);
-
+    // Write the outlet names to a file.
+    auto outletFacesFileName = outputDir + "/" + OUTLET_FACE_NAMES_FILE_NAME;
+    QFile outletNamesFile(outletFacesFileName);
     if (outletNamesFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&outletNamesFile);
-
         for (auto const& name : m_ModelOutletFaceNames) {
             out << QString::fromStdString(name + "\n");
         }
         outletNamesFile.close();
     }
+
+    // Set the script parameter.
+    auto params = pythonInterface.m_ParameterNames;
+    pythonInterface.AddParameter(params.OUTLET_FACE_NAMES_INPUT_FILE, outletFacesFileName.toStdString()); 
 }
 
 //----------------
@@ -3995,18 +4103,25 @@ bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
     bool passed = true;
     std::string errorMsg = "";
 
+    // Create map to check that there is one PRESCRIBED_VELOCITIES bc
+    // and other bc's of the same type.
+    std::map<std::string,int> bcTypeCount;
+    for (auto const& bcType : sv4guiCapBCWidget1d::BCType::types) {
+        bcTypeCount[bcType] = 0;
+    }
+
     for (int row = 0; row < m_TableModelCap->rowCount(); row ++) {
         QStandardItem* itemName = m_TableModelCap->item(row, TableModelCapType::Name);
         std::string capName = itemName->text().toStdString();
         auto bcType = m_TableModelCap->item(row,TableModelCapType::BCType)->text().toStdString(); 
         auto values = m_TableModelCap->item(row,TableModelCapType::Values)->text().trimmed().toStdString();
         MITK_INFO << msg << "cap name: " << capName << "   bc type: " << bcType << "  values: " << values; 
-
         if (!sv4guiCapBCWidget1d::BCType::isValid(bcType) || (values == "")) { 
             MITK_INFO << msg << "BC type not set";
             passed = false;
             break;
         }
+        bcTypeCount[bcType] += 1;
 
         if (!validate) {
             continue;
@@ -4048,10 +4163,20 @@ bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
         }
     }
 
+    if (bcTypeCount[sv4guiCapBCWidget1d::BCType::PRESCRIBED_VELOCITIES] != 1) {
+        errorMsg = "There must be one prescribed velocity boundary condition.";
+        passed = false;
+    }
+
+    if ((bcTypeCount[sv4guiCapBCWidget1d::BCType::RESISTANCE] != 0) && 
+        (bcTypeCount[sv4guiCapBCWidget1d::BCType::RCR] != 0)) {
+        errorMsg = "Outlet boundary conditions can not be of mixed type. They must all be of type rcr or resistance.";
+        passed = false;
+    }
+
     if (errorMsg != "") {
         QMessageBox::warning(m_Parent, MsgTitle, "Inlet / Outlet BC parameter values error.\n" + QString::fromStdString(errorMsg));
     }
-
 
     return passed;
 }

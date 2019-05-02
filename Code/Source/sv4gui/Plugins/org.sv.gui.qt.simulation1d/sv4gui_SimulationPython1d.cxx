@@ -199,6 +199,9 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
           mb.setDetailedText(QString(sResult.c_str()));
           mb.setDefaultButton(QMessageBox::Ok);
           mb.exec();
+      } else {
+          //QMessageBox::information(NULL, sv4guiSimulationView1d::MsgTitle, QString(sResult.c_str()));
+          MITK_INFO << QString(sResult.c_str()); 
       }
   }
 

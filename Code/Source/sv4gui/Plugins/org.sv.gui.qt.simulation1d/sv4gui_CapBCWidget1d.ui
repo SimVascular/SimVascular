@@ -98,6 +98,11 @@
         </item>
         <item>
          <property name="text">
+          <string>Resistance</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>RCR</string>
          </property>
         </item>

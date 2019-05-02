@@ -64,11 +64,14 @@ class sv4guiSimulationPython1dParamNames
       allNames.insert(INFLOW_INPUT_FILE);
       allNames.insert(MESH_OUTPUT_FILE);
       allNames.insert(MODEL_NAME);
+      allNames.insert(NUM_TIME_STEPS);
       allNames.insert(OUTFLOW_BC_INPUT_FILE);
       allNames.insert(OUTFLOW_BC_TYPE);
       allNames.insert(OUTLET_FACE_NAMES_INPUT_FILE);
       allNames.insert(OUTPUT_DIRECTORY);
+      allNames.insert(SAVE_DATA_FREQUENCY);
       allNames.insert(SOLVER_OUTPUT_FILE);
+      allNames.insert(TIME_STEP);
       allNames.insert(UNIFORM_BC);
       allNames.insert(UNITS);
       allNames.insert(WRITE_MESH_FILE);
@@ -81,11 +84,15 @@ class sv4guiSimulationPython1dParamNames
     const std::string ELEMENT_SIZE = "element_size";
     const std::string MESH_OUTPUT_FILE = "mesh_output_file";
     const std::string MODEL_NAME = "model_name";
+    const std::string NUM_TIME_STEPS = "num_time_steps";
+
     const std::string OUTFLOW_BC_INPUT_FILE = "outflow_bc_input_file";
     const std::string OUTFLOW_BC_TYPE = "outflow_bc_type";
     const std::string OUTLET_FACE_NAMES_INPUT_FILE = "outlet_face_names_input_file";
     const std::string OUTPUT_DIRECTORY = "output_directory";
+    const std::string SAVE_DATA_FREQUENCY = "save_data_frequency";
     const std::string SOLVER_OUTPUT_FILE = "solver_output_file";
+    const std::string TIME_STEP = "time_step"; 
     const std::string UNIFORM_BC = "uniform_bc";
     const std::string UNITS = "units";
     const std::string WRITE_MESH_FILE = "write_mesh_file";
