@@ -935,8 +935,15 @@ void sv4guiSimulationView1d::ResetModel()
     MITK_INFO << msg << "---------- ResetModel ---------"; 
     MITK_INFO << msg << "m_1DMeshContainer: " << m_1DMeshContainer;
 
+    // If the model is remeshed before centerlines are created then 
+    // there will not be any m_1DMeshContainer or m_CenterlinesNode defined.
+    if ((m_1DMeshContainer == nullptr) || (m_CenterlinesNode == nullptr)) {
+        return;
+    }
+
     // [DaveP] Can't figure out how to remove centerlines geometry 
     // so just hide it for now.
+    //
     //m_CenterlinesContainer->DeleteMesh();
     m_CenterlinesNode->SetVisibility(false);
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -1632,6 +1639,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     if (!mitkJob) {
         RemoveObservers();
         EnableTool(false);
+        MITK_INFO << msg << " mitkJob == nullptr";
         return;
     }
 
@@ -3300,6 +3308,9 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
         return false;
     }
 
+    m_SimulationFilesCreated = false;
+    m_SolverInputFile = ""; 
+
     // Set the parameters used by the Python script.
     //
     auto pythonInterface = sv4guiSimulationPython1d();
@@ -3311,7 +3322,7 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     auto outDir = outputDir.toStdString();
     pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, outDir);
 
-    pythonInterface.AddParameter(params.UNITS, "mm");
+    pythonInterface.AddParameter(params.UNITS, "cm");
     pythonInterface.AddParameter(params.ELEMENT_SIZE, std::to_string(m_1DMeshElementSize));
     pythonInterface.AddParameter(params.CENTERLINES_INPUT_FILE, m_CenterlinesFileName.toStdString()); 
 
@@ -3340,14 +3351,12 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
     auto status = pythonInterface.GenerateSolverInput(outDir, job);
 
-    // Check for success.
-    auto solverInputFile = outputDir + "/" + SOLVER_FILE_NAME;
-    if (!QFile::exists(solverInputFile)) {
+    if (!status) {
         QMessageBox::warning(NULL, MsgTitle, "Creating the 1D solver input file has failed.");
         return false;
     }
 
-    m_SolverInputFile = solverInputFile; 
+    m_SolverInputFile = outputDir + "/" + SOLVER_FILE_NAME;
     ui->RunSimulationPushButton->setEnabled(true);
     MITK_INFO << msg << "Solver input file: " << m_SolverInputFile;
 
