@@ -89,8 +89,20 @@ vtkPolyData* sv4guiSimulationLinesContainer::GetMesh()
   return m_Mesh;
 }
 
+void sv4guiSimulationLinesContainer::DeleteMesh()
+{
+  if (m_Mesh == nullptr) {
+      return;
+  }
+  //MITK_INFO << "########## sv4guiSimulationLinesContainer::DeleteMesh #############";
+  //delete m_Mesh;
+  m_Mesh = nullptr;
+  m_NewMesh = false;
+}
+
 void sv4guiSimulationLinesContainer::SetMesh(vtkPolyData* mesh)
 {
+  //MITK_INFO << "########## sv4guiSimulationLinesContainer::SetMesh #############";
   m_Mesh = mesh;
   m_NewMesh = true;
 }

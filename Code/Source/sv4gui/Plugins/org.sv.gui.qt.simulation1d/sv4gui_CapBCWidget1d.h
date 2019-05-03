@@ -33,6 +33,7 @@
 #define SV4GUI_CAPBCWIDGET1D_H
 
 #include <QWidget>
+#include <set>
 
 namespace Ui {
 class sv4guiCapBCWidget1d;
@@ -46,6 +47,16 @@ public:
     explicit sv4guiCapBCWidget1d(QWidget *parent = 0);
 
     ~sv4guiCapBCWidget1d();
+
+    // This class defines valid boundary condition types.
+    class BCType {
+      public:
+        static const std::string PRESCRIBED_VELOCITIES;
+        static const std::string RCR;
+        static const std::string RESISTANCE;
+        static const std::set<std::string> types;
+        static bool isValid(const std::string& bcType);
+    };
 
     void UpdateGUI(std::string capName, std::map<std::string, std::string> props);
 

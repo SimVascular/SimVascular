@@ -46,6 +46,7 @@
 #include "sv4gui_QmitkFunctionality.h"
 #include "sv4gui_SimulationLinesContainer.h"
 #include "sv4gui_SimulationLinesMapper.h"
+#include "sv4gui_SimulationPython1d.h"
 
 #include "sv4gui_CapSelectionWidget.h"
 #include "sv4gui_ProcessHandler1d.h"
@@ -80,9 +81,12 @@ public:
     static const QString SOLVER_LOG_FILE_NAME;
 
     // The names of files written by this class.
+    static const QString INLET_FACE_NAMES_FILE_NAME;
     static const QString MESH_FILE_NAME;
+    static const QString MODEL_SURFACE_FILE_NAME;
     static const QString OUTLET_FACE_NAMES_FILE_NAME;
     static const QString RCR_BC_FILE_NAME;
+    static const QString RESISTANCE_BC_FILE_NAME;
     static const QString SOLVER_FILE_NAME;
 
     sv4guiSimulationView1d();
@@ -98,6 +102,44 @@ public:
         ALL
     };
 
+    // Used to access the rows in Model Solver BC Table.
+    //
+    // Mimics the entries in resources/solvertemplate1d.xml.
+    //
+    enum TableModelSolverRow : int {
+        TimeStepParameters = 0,
+        NumberofTimesteps = 1,
+        TimeStepSize = 2,
+        OutputControl = 3,
+        NumberofTimeStepsSavingData = 4
+    };
+
+    // Used to access the columns in Model Cap BC Table.
+    //
+    enum TableModelCapType : int {
+        Name = 0,
+        BCType = 1,
+        Values = 2, 
+        Pressure = 3, 
+        AnalyticShape = 4, 
+        Period = 5, 
+        PointNumber = 6,
+        FourierModes = 7,
+        FlipNormal = 8,
+        FlowRate = 9,
+        OriginalFile = 10,
+        TimedPressure = 11, 
+        PressurePeriod =  12,
+        PressureScaling = 13, 
+        RValues = 14, 
+        CValues = 15
+    };
+
+    // This class defines the states associated with data input to the tool.
+    //
+    // [DaveP] The idea is to check states in sequence but not sure if this
+    // is really needed.
+    //
     class DataInputStateName {
         public:
             static const QString INLET_FACE;
@@ -169,15 +211,16 @@ public slots:
     // 1D Mesh slots.
     void Generate1DMesh();
     void Show1DMesh();
-
+    void SetElementSize(QString);
     void ReadMesh();
 
     void UpdateCenterlinesSource();
     void SelectCenterlinesFile();
     void CalculateCenterlines();
+    void ShowCenterlines(bool checked=false);
 
     void SetModelInletFaces();
-    void ReadModel();
+    void SelectModelFile();
     void SelectModelInletFaces(bool show = true);
     void ShowModel(bool checked = false);
     void UpdateSurfaceModelSource();
@@ -192,7 +235,6 @@ public slots:
     void UpdateJobStatus();
     void UpdateSimJob();
     void UpdateSurfaceMeshName();
-    void UpdateSimJobNumProcs();
 
     void SetupInternalSolverPaths();
 
@@ -226,9 +268,13 @@ public:
     vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
-    void WriteRcrFile(const QString outputDir, const sv4guiSimJob1d* job);
-    void WriteOutletFaceNames(const QString outputDir);
-    std::string WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job);
+    std::vector<std::string> ReadInletFaceNames(const QString outputDir);
+    void WriteBCFiles(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteInletFaceNames(const QString outputDir);
+    void WriteOutletFaceNames(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteRcrFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteResistanceFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
 
     bool IsDouble(std::string value);
 
@@ -261,11 +307,13 @@ private:
     sv4guiModel* m_Model;
     mitk::DataNode::Pointer m_ModelFolderNode;
     mitk::DataNode::Pointer m_ModelNode;
+    std::string m_ModelNodeTimeModified;
     std::vector<NameNodeTuple> m_ModelCenterlineNodes;
     QString m_ModelFileName;
     QString m_ModelSource;
     sv4guiCapSelectionWidget* m_ModelFaceSelectionWidget;
     std::vector<std::string> m_ModelInletFaceNames;
+    bool m_ModelInletFaceSelected;
     std::vector<int> m_ModelInletFaceIds;
     std::vector<std::string> m_ModelOutletFaceNames;
 
@@ -274,17 +322,20 @@ private:
     mitk::DataNode::Pointer m_MeshNode;
     std::vector<NameNodeTuple> m_MeshNodes;
 
+    bool m_CenterlinesCalculated;
     QString m_CenterlinesFileName;
     QString m_CenterlinesOutputFileName;
     QString m_CenterlinesSource;
     sv4guiSimulationLinesMapper::Pointer m_CenterlinesMapper;
     sv4guiSimulationLinesContainer::Pointer m_CenterlinesContainer;
+    mitk::DataNode::Pointer m_CenterlinesNode;
 
     QString m_1DMeshFileName;
     mitk::DataNode::Pointer m_1DMeshNode;
     sv4guiSimulationLinesMapper::Pointer m_1DMeshMapper;
     sv4guiSimulationLinesContainer::Pointer m_1DMeshContainer;
     sv4guiMesh* m_1DMesh;
+    double m_1DMeshElementSize;
 
     sv4guiMitkSimJob1d* m_MitkJob;
     mitk::DataNode::Pointer m_JobNode;
@@ -324,10 +375,13 @@ private:
     QString m_ExternalMPIExecPath;
 
     bool m_ConnectionEnabled;
+    bool m_SimulationFilesCreated = false;
 
     mitk::DataNode::Pointer getProjectNode();
     mitk::DataNode::Pointer GetModelFolderDataNode();
     QString GetModelFileName();
+    void ResetModel();
+    void WriteModel();
 
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();
@@ -340,14 +394,16 @@ private:
 
     void SetCenterlinesGeometry();
 
-    bool SetBasicParameters(sv4guiSimJob1d* job, std::string& msg);
-    bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg);
-    bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg);
-    bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg);
+    bool SetBasicParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
+    bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
+    bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
+    bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     QString GetSolverExecutable();
 
+    bool CheckBCsInputState(bool checkValidity=true);
     bool CheckInputState(DataInputStateType type = DataInputStateType::ALL);
-    void SetInputState(DataInputStateType checkType, bool state);
+    bool CheckSolverInputState(bool checkValidity=true);
+    void SetInputState(DataInputStateType checkType, bool value);
 
 };
 

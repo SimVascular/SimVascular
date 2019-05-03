@@ -28,6 +28,7 @@ class Args(object):
     CENTERLINE_OUTPUT_FILE = "centerlines_output_file"
     COMPUTE_CENTERLINES = "compute_centerlines"
     COMPUTE_MESH = "compute_mesh"
+    ELEMENT_SIZE = "element_size"
     INLET_FACE_INPUT_FILE = "inlet_face_input_file"
     INFLOW_INPUT_FILE = "inflow_input_file"
     MESH_OUTPUT_FILE = "mesh_output_file"
@@ -73,6 +74,9 @@ def parse_args():
     parser.add_argument(cmd(Args.COMPUTE_MESH), const=True, nargs='?', default=False, 
       help="If given or value is set to 1 then compute a mesh from centerlines..")
 
+    parser.add_argument(cmd(Args.ELEMENT_SIZE), 
+      help="The finite element size in a vessel segment.")
+
     parser.add_argument(cmd(Args.INFLOW_INPUT_FILE), 
       help="The name of the file to read inflow data from.")
 
@@ -82,13 +86,13 @@ def parse_args():
     parser.add_argument(cmd(Args.MESH_OUTPUT_FILE), 
       help="The name of the file to write the mesh to.")
 
-    parser.add_argument(cmd(Args.MINIMUM_NUMBER_ELEMENTS), type=int,
+    parser.add_argument(cmd(Args.MINIMUM_NUMBER_ELEMENTS), 
       help="The minimum number of finite elements per segment.")
 
     parser.add_argument(cmd(Args.MODEL_NAME), required=True,
       help="The name of the model.")
 
-    parser.add_argument(cmd(Args.NUM_TIME_STEPS), type=int,
+    parser.add_argument(cmd(Args.NUM_TIME_STEPS),
       help="The number of simulation time steps.")
 
     parser.add_argument(cmd(Args.OUTFLOW_BC_INPUT_FILE), 
@@ -100,7 +104,7 @@ def parse_args():
     parser.add_argument(cmd(Args.OUTPUT_DIRECTORY), required=True, 
       help="The directory where output files are written.")
 
-    parser.add_argument(cmd(Args.SAVE_DATA_FREQUENCY), type=int,  
+    parser.add_argument(cmd(Args.SAVE_DATA_FREQUENCY), 
       help="The frequency to save data as the number of time steps between saves.")
 
     parser.add_argument(cmd(Args.SOLVER_OUTPUT_FILE), 
@@ -109,7 +113,7 @@ def parse_args():
     parser.add_argument(cmd(Args.SURFACE_MODEL), 
       help="The surface model used to compute centerlines.")
 
-    parser.add_argument(cmd(Args.TIME_STEP), type=float,
+    parser.add_argument(cmd(Args.TIME_STEP), 
       help="The simulation time step.")
 
     parser.add_argument(cmd(Args.UNIFORM_BC),
@@ -142,6 +146,7 @@ def set_parameters(**kwargs):
     call to the 'run()' function, in which case parser.parse_args() is not called
     and so we need to check here if required arguments have been passed.
     """
+    print(kwargs)
     logger.info("Parse arguments ...")
 
     ## Create a Parameters object to store parameters.
@@ -179,6 +184,10 @@ def set_parameters(**kwargs):
     # argument is given with no value. Otherwise it is set to the value given.
     params.compute_mesh = (kwargs.get(Args.COMPUTE_MESH) == True) or \
       (kwargs.get(Args.COMPUTE_MESH) in true_values)
+
+    if kwargs.get(Args.ELEMENT_SIZE): 
+        params.element_size = float(kwargs.get(Args.ELEMENT_SIZE))
+    logger.info("Element size: %f" % params.element_size)
 
     if kwargs.get(Args.INFLOW_INPUT_FILE):
         params.inflow_input_file = kwargs.get(Args.INFLOW_INPUT_FILE)
@@ -220,7 +229,7 @@ def set_parameters(**kwargs):
     logger.info("Model name: %s" % params.model_name)
 
     if kwargs.get(Args.NUM_TIME_STEPS):
-        params.num_time_steps = kwargs.get(Args.NUM_TIME_STEPS)
+        params.num_time_steps = int(kwargs.get(Args.NUM_TIME_STEPS))
     logger.info("Number of time steps: %d" % params.num_time_steps)
 
     if kwargs.get(Args.OUTFLOW_BC_INPUT_FILE):
@@ -246,8 +255,8 @@ def set_parameters(**kwargs):
         logger.info("Outlet face names file: '%s'." % params.outlet_face_names_file)
 
     if kwargs.get(Args.SAVE_DATA_FREQUENCY):
-        params.save_data_freq = kwargs.get(Args.SAVE_DATA_FREQUENCY)
-    logger.info("Save data frequency: %s" % params.save_data_freq)
+        params.save_data_freq = int(kwargs.get(Args.SAVE_DATA_FREQUENCY))
+    logger.info("Save data frequency: %d" % params.save_data_freq)
 
     if kwargs.get(Args.SOLVER_OUTPUT_FILE):
         params.solver_output_file = kwargs.get(Args.SOLVER_OUTPUT_FILE)
@@ -261,7 +270,7 @@ def set_parameters(**kwargs):
             return None
 
     if kwargs.get(Args.TIME_STEP):
-        params.time_step = (kwargs.get(Args.TIME_STEP) in true_values)
+        params.time_step = float(kwargs.get(Args.TIME_STEP))
     logger.info("Simulation time step: %f" % params.time_step)
 
     if kwargs.get(Args.UNIFORM_BC):
@@ -276,7 +285,6 @@ def set_parameters(**kwargs):
             logger.error("The units value '%s' was not recognized. Valid values are mm or cm." % units)
             return None
     logger.info("Units: %s" % params.units)
-
 
     if kwargs.get(Args.WALL_PROPERTIES_INPUT_FILE):
         params.wall_properties_input_file = kwargs.get(Args.WALL_PROPERTIES_INPUT_FILE)
@@ -392,6 +400,7 @@ def run(**kwargs):
     ## Set input parameters.
     params = set_parameters(**kwargs)
     if not params:
+        logger.error("Error in parameters.")
         return False
 
     centerlines = None 
@@ -412,7 +421,8 @@ def run(**kwargs):
     mesh = Mesh()
     mesh.generate(params, centerlines)
 
-    return True
+    result = "num_nodes=%d\n num_elements=%d\n" % (len(mesh.nodes), mesh.num_elements)
+    return result
 
 def run_from_c(*args, **kwargs):
     """ Execute the 1D mesh generation using passed parameters from c++
@@ -424,7 +434,8 @@ def run_from_c(*args, **kwargs):
     msg = "status:ok\n"
 
     try:
-        run(**kwargs)
+        result = run(**kwargs)
+        msg += result 
     except Exception as e:
         msg = "status:error\n"
         msg += "exception:" + str(e) + "\n"
@@ -438,9 +449,6 @@ def run_from_c(*args, **kwargs):
         msg += file.read()
 
     return msg
-
-    if not run(**kwargs):
-        sys.exit(1)
 
 if __name__ == '__main__':
     init_logging()

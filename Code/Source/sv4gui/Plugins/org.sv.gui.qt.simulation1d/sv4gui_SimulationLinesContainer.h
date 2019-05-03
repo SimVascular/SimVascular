@@ -67,6 +67,7 @@ class sv4guiSimulationLinesContainer : public mitk::BaseData {
     std::vector<double> hoverPoint = std::vector<double>();
 
     void SetMesh(vtkPolyData* mesh);
+    void DeleteMesh();
     vtkPolyData* GetMesh();
     bool IsNewMesh();
     void SetNewMesh(bool value);

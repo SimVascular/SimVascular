@@ -107,11 +107,12 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
 //---------------------
 // Generate a 1D solver input file.
 //
-// Script arguments: 
+// Example script arguments: 
 //
 //    python generate_1d_mesh.py \
 //        --output-directory $PWD/output \
 //        --units mm \
+//        --element_size 0.01 \
 //        --centerlines-input-file ${cl_file} \
 //        --outlet-face-names-input-file ${outlet_face_names_file} \
 //        --uniform-bc false \
@@ -171,7 +172,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   MITK_INFO << msg << "Add arguments ... ";
   auto kwargs = PyDict_New();
   for (auto const& param : m_ParameterValues) {
-      MITK_INFO << msg << param.first; 
+      MITK_INFO << msg << param.first << "   " << "'" << param.second << "'"; 
       PyDict_SetItemString(kwargs, param.first.c_str(), PyUnicode_DecodeFSDefault(param.second.c_str()));
   }
   MITK_INFO << msg << "Done.";
@@ -189,6 +190,8 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
       auto uResult = PyUnicode_FromObject(result);
       auto sResult = std::string(PyUnicode_AsUTF8(uResult));
       if ((sResult.find("error") != std::string::npos) || (sResult.find("ERROR") != std::string::npos)) {
+          MITK_WARN << "The generation of the solver input file failed.";
+          MITK_WARN << "Returned message: " << QString(sResult.c_str()); 
           QMessageBox mb(nullptr);
           mb.setWindowTitle(sv4guiSimulationView1d::MsgTitle);
           mb.setText("The generation of the solver input file failed.");
@@ -196,9 +199,13 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
           mb.setDetailedText(QString(sResult.c_str()));
           mb.setDefaultButton(QMessageBox::Ok);
           mb.exec();
+      } else {
+          //QMessageBox::information(NULL, sv4guiSimulationView1d::MsgTitle, QString(sResult.c_str()));
+          MITK_INFO << QString(sResult.c_str()); 
       }
   }
 
+/* [DaveP] This is causing a crash, figure out later.
   Py_DECREF(pyFunc);
   Py_DECREF(pyDict);
   Py_DECREF(pyName);
@@ -206,6 +213,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   Py_DECREF(dummyArgs);
   Py_DECREF(dummyValue);
   Py_DECREF(kwargs);
+*/
 
 /*
   // Create the script command.

@@ -45,6 +45,24 @@
 
 #include <sstream>
 
+// Redefine MITK_INFO to deactivate all of the debugging statements.
+#define MITK_INFO MITK_DEBUG
+
+// Set boundary condition types.
+const std::string sv4guiCapBCWidget1d::BCType::PRESCRIBED_VELOCITIES = "Prescribed Velocities";
+const std::string sv4guiCapBCWidget1d::BCType::RCR = "RCR";
+const std::string sv4guiCapBCWidget1d::BCType::RESISTANCE = "Resistance";
+const std::set<std::string> sv4guiCapBCWidget1d::BCType::types = {
+    sv4guiCapBCWidget1d::BCType::PRESCRIBED_VELOCITIES,
+    sv4guiCapBCWidget1d::BCType::RCR, 
+    sv4guiCapBCWidget1d::BCType::RESISTANCE
+}; 
+// Check for a valid BC type.
+bool sv4guiCapBCWidget1d::BCType::isValid(const std::string& bcType) 
+{
+    return types.find(bcType) != types.end();
+};
+
 //---------------------
 // sv4guiCapBCWidget1d
 //---------------------
@@ -315,17 +333,17 @@ void sv4guiCapBCWidget1d::LoadFlowrateFromFile()
         prefs = berry::IPreferences::Pointer(0);
     }
 
-    QString lastFileOpenPath="";
+    QString lastFileOpenPath = "";
     if(prefs.IsNotNull()) {
         lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
     }
-    if(lastFileOpenPath=="")
+    if(lastFileOpenPath=="") {
         lastFileOpenPath=QDir::homePath();
-
+    }
     QString flowrateFilePath = QFileDialog::getOpenFileName(this, tr("Load Flow File"), lastFileOpenPath, tr("All Files (*)"));
 
-    flowrateFilePath=flowrateFilePath.trimmed();
-    if(flowrateFilePath.isEmpty()) {
+    flowrateFilePath = flowrateFilePath.trimmed();
+    if (flowrateFilePath.isEmpty()) {
         return;
     }
 
@@ -352,23 +370,23 @@ void sv4guiCapBCWidget1d::LoadFlowrateFromFile()
         QString line;
 
         while(1) {
-            line=in.readLine();
+            line = in.readLine();
 
             if(line.isNull()) {
                 break;
             }
 
-            if(line.contains("#")) {
+            if (line.contains("#")) {
                 continue;
             }
 
             QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
 
-            if(list.size()!=2) {
+            if(list.size() != 2) {
                 continue;
             }
 
-            inflowPeriod=list[0];
+            inflowPeriod = list[0];
         }
 
         inputFile2.close();
