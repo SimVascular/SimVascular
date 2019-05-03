@@ -45,6 +45,8 @@
 #include "sv4gui_LevelSet2DWidget.h"
 #include "sv4gui_LoftParamWidget.h"
 
+#include "sv4gui_MLUtils.h"
+
 #include <QmitkSliceWidget.h>
 #include <QmitkSliderNavigatorWidget.h>
 #include <QmitkStepperAdapter.h>
@@ -182,6 +184,9 @@ public slots:
 
     void UpdatePathPoint(int pos);
 
+    // ml stuff
+    void selectAllPaths();
+
 public:
 
     void SelectContour(int index);
@@ -215,6 +220,7 @@ public:
     //ml additions
     void setupMLui();
     void initialize();
+    void updatePaths();
 
 protected:
 
@@ -288,6 +294,7 @@ protected:
 
     // ml additions
     std::string m_imageFilePath;
+    sv4gui_MLUtils* ml_utils;
 
 };
 

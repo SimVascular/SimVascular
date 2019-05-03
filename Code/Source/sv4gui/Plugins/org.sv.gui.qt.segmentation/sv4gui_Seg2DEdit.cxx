@@ -1835,11 +1835,11 @@ machine learning additions
 void sv4guiSeg2DEdit::setupMLui(){
   //connect(ui->multiSegButton, SIGNAL(clicked()), this, SLOT(segmentPaths()));
 
-  //connect(ui->selectAllPathsCheckBox, SIGNAL(clicked()), this, SLOT(selectAllPaths()));
+  connect(ui->selectAllPathsCheckBox, SIGNAL(clicked()), this, SLOT(selectAllPaths()));
 
   //connect(ui->sampleNetButton, SIGNAL(clicked()), this, SLOT(sampleNetwork()));
 
-  //updatePaths();
+  updatePaths();
 
   initialize();
 }
@@ -1913,4 +1913,41 @@ void sv4guiSeg2DEdit::initialize(){
     //ml_utils = svMLUtils::getInstance("googlenet_c30_train300k_aug10_clean");
     //ml_utils->setImage(m_imageFilePath);
   }//end if projectfoldernode
+}
+
+void sv4guiSeg2DEdit::selectAllPaths(){
+  bool checked = (ui->selectAllPathsCheckBox->checkState() == Qt::Checked);
+
+  for (int i = 0; i < ui->pathList->count(); i++){
+    if (checked){
+      ui->pathList->item(i)->setCheckState(Qt::Checked);
+    }else{
+      ui->pathList->item(i)->setCheckState(Qt::Unchecked);
+    }
+  }
+}
+
+void sv4guiSeg2DEdit::updatePaths(){
+  auto path_folder_node = GetDataStorage()->GetNamedNode("Paths");
+  auto rs       = GetDataStorage()->GetDerivations(path_folder_node);
+
+  if (rs->size() == 0){
+    std::cout << "No paths found\n";
+    return ;
+  }
+
+  ui->pathList->clear();
+
+  for (int i = 0; i < rs->size(); i++){
+    mitk::DataNode::Pointer Node=rs->GetElement(i);
+    std::cout << i << ": " << Node->GetName() << "\n";
+
+    //auto q_name = QString(Node->GetName().c_str());
+
+    auto item = new QListWidgetItem(Node->GetName().c_str(), ui->pathList);
+    item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+    item->setCheckState(Qt::Unchecked);
+
+    ui->pathList->addItem(item);
+  }
 }
