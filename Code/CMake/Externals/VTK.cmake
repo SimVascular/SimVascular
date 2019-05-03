@@ -62,6 +62,7 @@ simvascular_external(${proj}
   vtkIOPLY
   vtkIOXML
   vtkImagingStencil
+  vtkParallelCore
   vtktiff
   ${${proj}_PYTHON_MODULES}
   NO_DEFAULT_PATH
