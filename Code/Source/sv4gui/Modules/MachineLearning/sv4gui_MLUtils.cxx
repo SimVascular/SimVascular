@@ -20,8 +20,8 @@ sv4gui_MLUtils::sv4gui_MLUtils(std::string network_type){
 
   Py_Initialize();
   PyRun_SimpleString("import sys");
-  PyRun_SimpleString("sys.path.append(\"/home/marsdenlab/projects/SV/SimVascular-Plugin-MachineLearning/build/lib/python_packages\")");
-  PyRun_SimpleString("sys.path.append(\"/home/marsdenlab/projects/SV/SimVascular-Plugin-MachineLearning/build/lib/seg_regression\")");
+  // PyRun_SimpleString("sys.path.append(\"/home/marsdenlab/projects/SV/SimVascular-Plugin-MachineLearning/build/lib/python_packages\")");
+  // PyRun_SimpleString("sys.path.append(\"/home/marsdenlab/projects/SV/SimVascular-Plugin-MachineLearning/build/lib/seg_regression\")");
 
   PyRun_SimpleString("print(sys.path)");
   PyRun_SimpleString("print(sys.version)");
