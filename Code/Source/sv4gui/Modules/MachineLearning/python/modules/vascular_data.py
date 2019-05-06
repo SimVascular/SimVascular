@@ -3,11 +3,11 @@ import vtk
 import skimage
 from skimage.measure import grid_points_in_poly
 import re
-import scipy
-from scipy.interpolate import UnivariateSpline
+#import scipy
+#from scipy.interpolate import UnivariateSpline
 from vtk import vtkImageExport
 from vtk.util import numpy_support
-from scipy.ndimage import rotate
+#from scipy.ndimage import rotate
 
 import os
 
