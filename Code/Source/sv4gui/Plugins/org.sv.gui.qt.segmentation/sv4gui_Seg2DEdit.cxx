@@ -1910,8 +1910,8 @@ void sv4guiSeg2DEdit::initialize(){
 
     std::cout << "Image filePath: " << m_imageFilePath << "\n";
 
-    //ml_utils = svMLUtils::getInstance("googlenet_c30_train300k_aug10_clean");
-    //ml_utils->setImage(m_imageFilePath);
+    ml_utils = sv4gui_MLUtils::getInstance("googlenet_c30_train300k_aug10_clean");
+    ml_utils->setImage(m_imageFilePath);
   }//end if projectfoldernode
 }
 

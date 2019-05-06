@@ -26,7 +26,7 @@ sv4gui_MLUtils::sv4gui_MLUtils(std::string network_type){
   PyRun_SimpleString("print(sys.path)");
   PyRun_SimpleString("print(sys.version)");
 
-  py_wrapper_mod = PyImport_ImportModule("sv_wrapper");
+  py_wrapper_mod = PyImport_ImportModule("sv_ml.sv_wrapper");
   if (py_wrapper_mod == NULL){
     std::cout << "error failed to import sv_wrapper module\n";
   }
