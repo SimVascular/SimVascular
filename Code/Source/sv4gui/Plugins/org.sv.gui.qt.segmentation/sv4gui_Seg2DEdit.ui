@@ -67,7 +67,7 @@
         <string>Interval</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="msgButton_2">
+      <widget class="QPushButton" name="multiSegButton">
        <property name="geometry">
         <rect>
          <x>130</x>
@@ -138,8 +138,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>400</width>
-        <height>660</height>
+        <width>393</width>
+        <height>621</height>
        </rect>
       </property>
       <attribute name="label">

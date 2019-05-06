@@ -1833,7 +1833,7 @@ void sv4guiSeg2DEdit::SelectContour3D()
 machine learning additions
 */
 void sv4guiSeg2DEdit::setupMLui(){
-  //connect(ui->multiSegButton, SIGNAL(clicked()), this, SLOT(segmentPaths()));
+  connect(ui->multiSegButton, SIGNAL(clicked()), this, SLOT(segmentPaths()));
 
   connect(ui->selectAllPathsCheckBox, SIGNAL(clicked()), this, SLOT(selectAllPaths()));
 
@@ -1950,4 +1950,122 @@ void sv4guiSeg2DEdit::updatePaths(){
 
     ui->pathList->addItem(item);
   }
+}
+
+void sv4guiSeg2DEdit::segmentPaths(){
+  //paths
+  auto path_folder_node = GetDataStorage()->GetNamedNode("Paths");
+  auto paths_list       = GetDataStorage()->GetDerivations(path_folder_node);
+
+  m_selected_paths.clear();
+
+  for (int i = 0; i < ui->pathList->count(); i++){
+    if (ui->pathList->item(i)->checkState() == Qt::Checked){
+      auto name = ui->pathList->item(i)->text().toStdString();
+      m_selected_paths.push_back(name);
+      std::cout << "selected " << name << "\n";
+    }
+  }
+
+  for (int i = 0; i < m_selected_paths.size(); i++){
+    auto path_name = m_selected_paths[i];
+
+    for (int j = 0; j < paths_list->size(); j++){
+      auto path_node = paths_list->GetElement(j);
+
+      if (path_node->GetName() == path_name){
+        m_current_path_node = path_node;
+        std::cout << "segmenting " << path_name << "\n";
+
+        createContourGroup(path_name);
+
+        segmentPath();
+
+        break;
+      }
+
+    }
+  }
+}
+
+void sv4guiSeg2DEdit::createContourGroup(std::string path_name){
+  auto seg_folder_node = GetDataStorage()->GetNamedNode("Segmentations");
+
+  m_current_group = sv4guiContourGroup::New();
+  m_current_group->SetPathName(path_name);
+  m_current_group->SetDataModified();
+
+  sv4guiPath* selectedPath=dynamic_cast<sv4guiPath*>(m_current_path_node->GetData());
+
+  m_current_group->SetPathID(selectedPath->GetPathID());
+
+  auto seg_node = mitk::DataNode::New();
+  seg_node->SetName(path_name);
+  seg_node->SetData(m_current_group);
+
+  GetDataStorage()->Add(seg_node, seg_folder_node);
+}
+
+void sv4guiSeg2DEdit::segmentPath(){
+  auto path = dynamic_cast<sv4guiPath*>(m_current_path_node->GetData());
+
+  auto path_element = path->GetPathElement(0);
+
+  auto path_points = path_element->GetPathPoints();
+
+  int n = 0;
+
+  m_interval = std::stoi(ui->intervalEdit->text().toStdString());
+  m_numFourierModes = std::stoi(ui->intervalEdit->text().toStdString());
+
+  for(int k = 0; k < path_points.size(); k += m_interval){
+
+    doSegmentation(path_points[k], k, n);
+    n+=1;
+
+  }
+}
+
+void sv4guiSeg2DEdit::doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point,
+int index, int n_){
+
+
+  std::vector<std::vector<double>> points = ml_utils->segmentPathPoint(path_point);
+
+  if (points.size() <= 0){
+    std::cout << "contour " << index << " empty points\n";
+    return;
+  }
+
+  sv4guiContour* contour = new sv4guiContour();
+
+  //create contour and add points
+  contour->SetPathPoint(path_point);
+  contour->SetPlaced(true);
+  contour->SetMethod("ML");
+
+  std::vector<mitk::Point3D> contourPoints;
+  mitk::Point3D pt;
+
+  for (int i = 0; i < points.size(); i++){
+    pt[0] = points[i][0];
+    pt[1] = points[i][1];
+    pt[2] = points[i][2];
+
+    contourPoints.push_back(pt);
+  }
+
+  contour->SetClosed(true);
+
+  contour->SetContourPoints(contourPoints);
+  contour = contour->CreateSmoothedContour(m_numFourierModes);
+
+  m_current_group->IsEmptyTimeStep(0);
+
+  m_current_group->InsertContour(n_, contour, 0);
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+void sv4guiSeg2DEdit::sampleNetwork(){
+  ml_utils->sampleNetwork();
 }

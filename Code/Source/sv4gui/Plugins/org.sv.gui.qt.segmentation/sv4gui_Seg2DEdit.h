@@ -186,6 +186,8 @@ public slots:
 
     // ml stuff
     void selectAllPaths();
+    void segmentPaths();
+    void sampleNetwork();
 
 public:
 
@@ -221,6 +223,10 @@ public:
     void setupMLui();
     void initialize();
     void updatePaths();
+    void createContourGroup(std::string path_name);
+    void segmentPath();
+    void doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point,
+    int index, int n_);
 
 protected:
 
@@ -295,6 +301,16 @@ protected:
     // ml additions
     std::string m_imageFilePath;
     sv4gui_MLUtils* ml_utils;
+
+    int m_interval = 50;
+
+    int m_numFourierModes = 7;
+
+    mitk::DataNode::Pointer m_current_path_node;
+
+    std::vector<std::string> m_selected_paths;
+
+    sv4guiContourGroup::Pointer m_current_group;
 
 };
 
