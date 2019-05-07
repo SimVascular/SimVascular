@@ -174,6 +174,7 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnLevelSet, SIGNAL(clicked()), this, SLOT(CreateLSContour()) );
     connect(ui->btnThreshold, SIGNAL(clicked()), this, SLOT(CreateThresholdContour()) );
+    connect(ui->btnML, SIGNAL(clicked()), this, SLOT(CreateMLContour()) );
     connect(ui->btnCircle, SIGNAL(clicked()), this, SLOT(CreateCircle()) );
     connect(ui->btnEllipse, SIGNAL(clicked()), this, SLOT(CreateEllipse()) );
     connect(ui->btnSplinePoly, SIGNAL(clicked()), this, SLOT(CreateSplinePoly()) );
@@ -761,6 +762,9 @@ void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
             case THRESHOLD_METHOD:
                 contour=sv4guiSegmentationUtils::CreateThresholdContour(ui->resliceSlider->getPathPoint(posID),m_cvImage->GetVtkStructuredPoints(),ui->sliderThreshold->value(), ui->resliceSlider->getResliceSize());
                 break;
+            case ML_METHOD:
+                contour=doMLContour(ui->resliceSlider->getPathPoint(posID));
+                break;
             default:
                 break;
         }
@@ -867,6 +871,26 @@ void sv4guiSeg2DEdit::CreateThresholdContour()
     m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
     PreparePreviewInteraction("Threshold");
+
+}
+
+void sv4guiSeg2DEdit::CreateMLContour()
+{
+    if(m_cvImage==NULL)
+        return;
+
+    if(m_CurrentSegButton!=ui->btnML)
+    {
+        ResetGUI();
+
+        m_CurrentSegButton=ui->btnML;
+
+        SetSecondaryWidgetsVisible(true);
+
+        return;
+    }
+
+    CreateContours(ML_METHOD);
 
 }
 
@@ -1837,11 +1861,18 @@ void sv4guiSeg2DEdit::setupMLui(){
 
   connect(ui->selectAllPathsCheckBox, SIGNAL(clicked()), this, SLOT(selectAllPaths()));
 
-  //connect(ui->sampleNetButton, SIGNAL(clicked()), this, SLOT(sampleNetwork()));
+  // connect(ui->sampleNetButton, SIGNAL(clicked()), this, SLOT(sampleNetwork()));
+
+  connect(ui->segToolbox, SIGNAL(currentChanged(int)),
+    this, SLOT(segTabSelected()));
 
   updatePaths();
 
   initialize();
+}
+
+void sv4guiSeg2DEdit::segTabSelected(){
+  std::cout << "select seg tab\n";
 }
 
 void sv4guiSeg2DEdit::initialize(){
@@ -1912,6 +1943,7 @@ void sv4guiSeg2DEdit::initialize(){
 
     ml_utils = sv4gui_MLUtils::getInstance("googlenet_c30_train300k_aug10_clean");
     ml_utils->setImage(m_imageFilePath);
+
   }//end if projectfoldernode
 }
 
@@ -2029,12 +2061,23 @@ void sv4guiSeg2DEdit::segmentPath(){
 void sv4guiSeg2DEdit::doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point,
 int index, int n_){
 
+  sv4guiContour* contour = doMLContour(path_point);
 
+  contour = contour->CreateSmoothedContour(m_numFourierModes);
+
+  m_current_group->IsEmptyTimeStep(0);
+
+  m_current_group->InsertContour(n_, contour, 0);
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+
+sv4guiContour* sv4guiSeg2DEdit::doMLContour(sv4guiPathElement::sv4guiPathPoint path_point){
   std::vector<std::vector<double>> points = ml_utils->segmentPathPoint(path_point);
 
   if (points.size() <= 0){
-    std::cout << "contour " << index << " empty points\n";
-    return;
+    std::cout << "contour empty points\n";
+    return NULL;
   }
 
   sv4guiContour* contour = new sv4guiContour();
@@ -2058,14 +2101,10 @@ int index, int n_){
   contour->SetClosed(true);
 
   contour->SetContourPoints(contourPoints);
-  contour = contour->CreateSmoothedContour(m_numFourierModes);
 
-  m_current_group->IsEmptyTimeStep(0);
-
-  m_current_group->InsertContour(n_, contour, 0);
-  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  return contour;
 }
 
-void sv4guiSeg2DEdit::sampleNetwork(){
-  ml_utils->sampleNetwork();
-}
+// void sv4guiSeg2DEdit::sampleNetwork(){
+//   ml_utils->sampleNetwork();
+// }

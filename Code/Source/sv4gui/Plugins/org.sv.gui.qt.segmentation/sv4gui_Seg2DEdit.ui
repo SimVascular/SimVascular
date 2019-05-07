@@ -15,9 +15,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
-    <widget class="QToolBox" name="toolBox">
+    <widget class="QToolBox" name="segToolbox">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
@@ -138,8 +138,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>393</width>
-        <height>621</height>
+        <width>400</width>
+        <height>660</height>
        </rect>
       </property>
       <attribute name="label">
@@ -711,6 +711,13 @@ If &quot;Preset&quot; on,  a contour is created with a specified threshold value
                  </widget>
                 </item>
                 <item>
+                 <widget class="QPushButton" name="btnML">
+                  <property name="text">
+                   <string>NN</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLabel" name="label_2">
                   <property name="text">
                    <string/>
@@ -890,6 +897,7 @@ Then, press key Delete to remove the shown contour.</string>
                <zorder>label_3</zorder>
                <zorder>label_4</zorder>
                <zorder>label_5</zorder>
+               <zorder>btnML</zorder>
               </widget>
              </item>
             </layout>

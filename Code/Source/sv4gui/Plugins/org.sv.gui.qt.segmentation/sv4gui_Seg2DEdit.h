@@ -79,7 +79,7 @@ class sv4guiSeg2DEdit : public sv4guiQmitkFunctionality
 
 public:
 
-    enum SegmentationMethod {LEVELSET_METHOD, THRESHOLD_METHOD, REGION_GROWING_METHOD};
+    enum SegmentationMethod {LEVELSET_METHOD, THRESHOLD_METHOD, REGION_GROWING_METHOD, ML_METHOD};
 
     static const QString EXTENSION_ID;
 
@@ -187,7 +187,9 @@ public slots:
     // ml stuff
     void selectAllPaths();
     void segmentPaths();
-    void sampleNetwork();
+    //void sampleNetwork();
+    void segTabSelected();
+    void CreateMLContour();
 
 public:
 
@@ -227,6 +229,7 @@ public:
     void segmentPath();
     void doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point,
     int index, int n_);
+    sv4guiContour* doMLContour(sv4guiPathElement::sv4guiPathPoint path_point);
 
 protected:
 
