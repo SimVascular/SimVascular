@@ -643,7 +643,7 @@ class Mesh(object):
             tmpAout = params.Acoef * tmpAout/len(group_elems[i])
  
             if (tmpAin < tmpAout) and (group_terminal[i] != 2):
-                self.logger.warning("warning! Ain < Aout in group id = ",i)
+                self.logger.warning("warning! Ain < Aout in group id = %d" % i)
                 self.logger.warning("set Ain = Aout")
                 tmpAin = tmpAout
 
