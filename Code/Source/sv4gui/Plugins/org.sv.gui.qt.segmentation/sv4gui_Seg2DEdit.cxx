@@ -174,7 +174,7 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnLevelSet, SIGNAL(clicked()), this, SLOT(CreateLSContour()) );
     connect(ui->btnThreshold, SIGNAL(clicked()), this, SLOT(CreateThresholdContour()) );
-    connect(ui->btnML, SIGNAL(clicked()), this, SLOT(CreateMLContour()) );
+
     connect(ui->btnCircle, SIGNAL(clicked()), this, SLOT(CreateCircle()) );
     connect(ui->btnEllipse, SIGNAL(clicked()), this, SLOT(CreateEllipse()) );
     connect(ui->btnSplinePoly, SIGNAL(clicked()), this, SLOT(CreateSplinePoly()) );
@@ -218,6 +218,7 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     //ml additions
     setupMLui();
+    m_Parent->setEnabled(true);
 }
 
 void sv4guiSeg2DEdit::Visible()
@@ -254,6 +255,7 @@ int sv4guiSeg2DEdit::GetTimeStep()
 
 void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
+
 //    if(!IsActivated())
     if(!IsVisible())
     {
@@ -264,7 +266,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     {
         ui->resliceSlider->turnOnReslice(false);
         ClearAll();
-        m_Parent->setEnabled(false);
+        //m_Parent->setEnabled(false);
         return;
     }
 
@@ -282,14 +284,15 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_ContourGroup=dynamic_cast<sv4guiContourGroup*>(groupNode->GetData());
     if(!m_ContourGroup)
     {
+        std::cout << "no contour group selected\n";
         ui->resliceSlider->turnOnReslice(false);
         ClearAll();
-        m_Parent->setEnabled(false);
+        //m_Parent->setEnabled(false);
         return;
     }
 
     m_Parent->setEnabled(true);
-
+    ui->segToolbox->setCurrentIndex(1);
 //    std::string groupPathName=m_ContourGroup->GetPathName();
     int  groupPathID=m_ContourGroup->GetPathID();
 
@@ -1866,13 +1869,33 @@ void sv4guiSeg2DEdit::setupMLui(){
   connect(ui->segToolbox, SIGNAL(currentChanged(int)),
     this, SLOT(segTabSelected()));
 
+  connect(ui->btnML, SIGNAL(clicked()), this, SLOT(CreateMLContour()) );
+
   updatePaths();
 
   initialize();
+
+  ui->segToolbox->setCurrentIndex(0);
+
 }
 
 void sv4guiSeg2DEdit::segTabSelected(){
   std::cout << "select seg tab\n";
+  switch(ui->segToolbox->currentIndex()){
+    case 0:
+    break;
+
+    case 1:
+      std::cout << "single path selected\n";
+      if(!m_ContourGroup)
+      {
+          ui->resliceSlider->turnOnReslice(false);
+          ClearAll();
+          ui->segToolbox->setCurrentIndex(0);
+          QMessageBox::warning(NULL,"No segmentation selected","Create, or Select a segmentation before choosing single path segmentation!");
+      }
+    break;
+  }
 }
 
 void sv4guiSeg2DEdit::initialize(){
