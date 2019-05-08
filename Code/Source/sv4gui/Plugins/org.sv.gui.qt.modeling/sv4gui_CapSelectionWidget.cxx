@@ -134,6 +134,55 @@ std::vector<std::string> sv4guiCapSelectionWidget::GetUsedCapNames()
     return capNames;
 }
 
+void sv4guiCapSelectionWidget::SetUsedCapNames(std::set<std::string> capNames)
+{
+    auto msg = "[sv4guiCapSelectionWidget::SetUsedCapNames] ";
+    MITK_INFO << msg << "---------- SetUsedCapNames ----------";
+
+    if(m_TableModel==NULL) {
+        MITK_INFO << msg << "m_TableModel==NULL"; 
+        return;
+    }
+
+    int rowCount = m_TableModel->rowCount();
+    MITK_INFO << msg << "rowCount: " << rowCount;
+
+    for (int i = 0; i < rowCount; i++) {
+        QModelIndex index = m_TableModel->index(i,1, QModelIndex());
+        QModelIndex idx = m_TableModel->index(i,0, QModelIndex());
+        auto capName = idx.data().toString().toStdString();
+        MITK_INFO << msg << "capName: " << capName;
+        if (capNames.find(capName) != capNames.end()) { 
+            MITK_INFO << msg << "found capName: " << capName;
+            QStandardItem* item = m_TableModel->item(i,1);
+            item->setCheckState(Qt::Checked);
+        }
+    }
+
+}
+
+
+std::vector<std::string> sv4guiCapSelectionWidget::GetUnselectedCapNames()
+{
+    std::vector<std::string> capNames;
+
+    if(m_TableModel==NULL) {
+        return capNames;
+    }
+
+    int rowCount=m_TableModel->rowCount();
+
+    for(int i=0;i<rowCount;i++) {
+        QModelIndex index= m_TableModel->index(i,1, QModelIndex());
+        if(index.data(Qt::CheckStateRole) != Qt::Checked){
+            QModelIndex idx= m_TableModel->index(i,0, QModelIndex());
+            capNames.push_back(idx.data().toString().toStdString());
+        }
+    }
+    return capNames;
+}
+
+
 void sv4guiCapSelectionWidget::Confirm()
 {
     hide();

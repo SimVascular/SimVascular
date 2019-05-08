@@ -375,10 +375,10 @@ void sv4guiSimulationPreferences::SetSolver(const QString& solverInstallPath, co
 
 #elif defined(Q_OS_WIN)
 
-  if (noMPI) {
-    svSolver = GetRegistryValue("SimVascular\\svSolver","SVSOLVER_NOMPI_EXE");
-  } else {
+  if (useMPI) {
     svSolver = GetRegistryValue("SimVascular\\svSolver","SVSOLVER_MSMPI_EXE");
+  } else {
+    svSolver = GetRegistryValue("SimVascular\\svSolver","SVSOLVER_NOMPI_EXE");
   }
 
 #endif

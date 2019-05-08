@@ -254,12 +254,17 @@ if(SV_USE_QT_GUI)
     "Source/sv4gui/Modules/Model/Common"
     "Source/sv4gui/Modules/Mesh/Common"
     "Source/sv4gui/Modules/Simulation"
+    "Source/sv4gui/Modules/Simulation1d"
     "Source/sv4gui/Modules/ProjectManagement"
     "Source/sv4gui/Modules/QtWidgets"
     "Source/sv4gui/Modules/ImageProcessing"
     "Source/sv4gui/Modules/svFSI"
 		"Source/sv4gui/Modules/MachineLearning"
      )
+
+  #if(SV_USE_ONEDSOLVER)
+   # set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Simulation1d")
+  #endif()
 
   if(SV_USE_OpenCASCADE)
     set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Model/OCCT")
@@ -290,6 +295,7 @@ if(SV_USE_QT_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.modeling"
       "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.simulation1d"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application"
       "Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.svfsi")

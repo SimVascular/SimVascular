@@ -221,6 +221,11 @@ protected:
 
     bool m_LocalOperationforBlendRegion;
 
+private:
+    void SetTimeModified();
+
+
+
 };
 
 #endif // SV4GUI_MODELEDIT_H

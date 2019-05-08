@@ -91,7 +91,9 @@ private:
   void SetPostSolver(const QString& solverInstallPath, const QString& applicationPath);
   void SetPreSolver(const QString& solverInstallPath, const QString& applicationPath);
   void SetSolver(const QString& solverInstallPath, const QString& applicationPath);
-
+  QString GetRegistryValue(char* s1, char* s2) {
+    return NULL;
+  }
 };
 
 #endif // SV4GUI_SIMULATIONPREFERENCES_H

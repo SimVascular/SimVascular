@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="solvertemplate1d.xml">solvertemplate1d.xml</file>
+    </qresource>
+</RCC>

@@ -1648,7 +1648,7 @@ void sv4guiSimulationView::RunJob()
         return;
     }
 
-    // Check that the directory for a job have been created.
+    // Check that the directory for a job has been created.
     //
     QString jobPath = GetJobPath();
 
@@ -1773,9 +1773,10 @@ int sv4guiSimulationView::GetStartTimeStep(const QString& runPath, const QString
         QString runRestart = runPath+"/restart."+startStep+".1";
         QString jobRestart = jobPath+"/restart."+startStep+".1";
 
-        if (!QFile(runRestart).exists()) { 
+        if ( (QDir(runPath).exists() && !QFile(runRestart).exists()) || 
+             ((numProcs > 1) && !QDir(runPath).exists() && !QFile(jobRestart).exists()) ) {
             QString msg1 = "No restart file found in " + runPath + " for the starting step number " + startStep + 
-                " and the number of processors " + numProcs + ".\n";
+                " and the number of processors " + QString::number(numProcs) + ".\n";
             QMessageBox::warning(m_Parent, MsgTitle, msg1);
             throw exception; 
         }

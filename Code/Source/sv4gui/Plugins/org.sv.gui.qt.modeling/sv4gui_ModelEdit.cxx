@@ -64,6 +64,8 @@
 #include <QVBoxLayout>
 
 #include <iostream>
+#include <time.h> 
+
 using namespace std;
 
 const QString sv4guiModelEdit::EXTENSION_ID = "org.sv.views.modeling";
@@ -324,6 +326,20 @@ void sv4guiModelEdit::Hidden()
 {
     //    ClearAll();
     RemoveObservers();
+}
+
+//------------------
+// SetTimeModified
+//------------------
+// Set the time that the model surface was updated.
+//
+//
+void sv4guiModelEdit::SetTimeModified()
+{
+    if (m_ModelNode != nullptr) {
+        time_t time = std::time(NULL); 
+        m_ModelNode->SetStringProperty("time modified", ctime(&time)); 
+    }
 }
 
 int sv4guiModelEdit::GetTimeStep()
@@ -2170,6 +2186,9 @@ void sv4guiModelEdit::ModelOperate(int operationType)
     mitk::StatusBar::GetInstance()->DisplayText("Model processing done");
 
     m_LocalOperationforBlendRegion=false;
+
+    // Set the time that the model surface was modified.
+    SetTimeModified();
 }
 
 void sv4guiModelEdit::ShowSphereInteractor(bool checked)
