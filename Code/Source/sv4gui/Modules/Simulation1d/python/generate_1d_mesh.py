@@ -431,18 +431,19 @@ def run_from_c(*args, **kwargs):
     """
     output_dir = args[0]
     init_logging(output_dir)
-    msg = "status:ok\n"
+    msg = "Status: OK\n"
 
     try:
         result = run(**kwargs)
         msg += result 
     except Exception as e:
-        msg = "status:error\n"
-        msg += "exception:" + str(e) + "\n"
+        logger.error(str(e))
+        msg = "Status: Error\n"
+        msg += "Error: " + str(e) + "\n"
 
     ## Attach log file to returned result.
     #
-    msg = "log file:\n"
+    msg += "Log:\n"
     log_file_name = path.join(output_dir, get_log_file_name())
 
     with open(log_file_name, 'r') as file:
