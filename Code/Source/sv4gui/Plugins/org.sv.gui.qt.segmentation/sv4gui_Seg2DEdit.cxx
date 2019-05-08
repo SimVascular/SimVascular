@@ -890,6 +890,8 @@ void sv4guiSeg2DEdit::CreateMLContour()
 
         SetSecondaryWidgetsVisible(true);
 
+        initialize();
+
         return;
     }
 
@@ -1873,8 +1875,6 @@ void sv4guiSeg2DEdit::setupMLui(){
 
   updatePaths();
 
-  initialize();
-
   ui->segToolbox->setCurrentIndex(0);
 
 }
@@ -1883,6 +1883,7 @@ void sv4guiSeg2DEdit::segTabSelected(){
   std::cout << "select seg tab\n";
   switch(ui->segToolbox->currentIndex()){
     case 0:
+          initialize();
     break;
 
     case 1:
@@ -1899,7 +1900,14 @@ void sv4guiSeg2DEdit::segTabSelected(){
 }
 
 void sv4guiSeg2DEdit::initialize(){
-  std::cout << "initializing\n";
+  bool ml_init;
+  GetDataStorage()->GetNamedNode("Segmentations")->GetBoolProperty("ml_init",ml_init);
+
+  if(!ml_init){
+    QMessageBox::warning(NULL,"Initializing machine learning","SimVascular ML segmentation is about to be loaded, this may take a minute");
+    GetDataStorage()->GetNamedNode("Segmentations")->SetBoolProperty("ml_init",true);
+  }
+
   mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
   mitk::DataNode::Pointer projFolderNode = GetDataStorage()->GetNode (isProjFolder);
 
@@ -1907,7 +1915,6 @@ void sv4guiSeg2DEdit::initialize(){
   if (projFolderNode){
     std::string projPath;
     projFolderNode->GetStringProperty("project path", projPath);
-    std::cout << "path " << projPath << "\n";
 
     QString QprojPath = QString(projPath.c_str());
 
@@ -1918,8 +1925,6 @@ void sv4guiSeg2DEdit::initialize(){
     QString projectConfigFilePath=dir.absoluteFilePath(projectConfigFileName);
 
     std::string projConfigFile = projectConfigFilePath.toStdString();
-
-    std::cout << "config filename " << projConfigFile << "\n";
 
     //get image path
     QDomDocument doc("svproj");
@@ -1962,12 +1967,11 @@ void sv4guiSeg2DEdit::initialize(){
         m_imageFilePath = imageElement.attribute("path").toStdString();
     }
 
-    std::cout << "Image filePath: " << m_imageFilePath << "\n";
-
     ml_utils = sv4gui_MLUtils::getInstance("googlenet_c30_train300k_aug10_clean");
     ml_utils->setImage(m_imageFilePath);
 
   }//end if projectfoldernode
+
 }
 
 void sv4guiSeg2DEdit::selectAllPaths(){

@@ -315,6 +315,8 @@ protected:
 
     sv4guiContourGroup::Pointer m_current_group;
 
+    bool m_MLinitialized = false;
+
 };
 
 #endif // SV4GUI_SEG2DEDIT_H
