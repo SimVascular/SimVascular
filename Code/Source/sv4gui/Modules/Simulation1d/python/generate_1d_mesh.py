@@ -420,8 +420,8 @@ def run(**kwargs):
     ## Generate a 1D mesh.
     mesh = Mesh()
     mesh.generate(params, centerlines)
-
-    result = "num_nodes=%d\n num_elements=%d\n" % (len(mesh.nodes), mesh.num_elements)
+    logger.info("Generated %d segments, %d nodes and %d elements." % (mesh.num_seg, len(mesh.nodes), mesh.num_elements))
+    result = "Mesh: num_nodes=%d num_elements=%d num_segs=%d\n" % (len(mesh.nodes), mesh.num_elements, mesh.num_seg)
     return result
 
 def run_from_c(*args, **kwargs):
