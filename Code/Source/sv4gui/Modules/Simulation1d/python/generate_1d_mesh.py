@@ -397,11 +397,12 @@ def compute_centerlines(params):
 def run(**kwargs):
     """ Execute the 1D mesh generation using passed parameters.
     """
+    result = ""
     ## Set input parameters.
     params = set_parameters(**kwargs)
     if not params:
         logger.error("Error in parameters.")
-        return False
+        return result
 
     centerlines = None 
 
@@ -415,7 +416,7 @@ def run(**kwargs):
 
     if not centerlines:
         logger.error("No centerlines calculated or read in.")
-        sys.exit(1)
+        return result
 
     ## Generate a 1D mesh.
     mesh = Mesh()
