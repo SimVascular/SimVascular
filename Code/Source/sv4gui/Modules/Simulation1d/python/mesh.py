@@ -657,8 +657,8 @@ class Mesh(object):
             if (tmpAin < tmpAout) and (group_terminal[i] != 2):
                 temp_elem_id = self.group_elems[i][0]
                 temp_path_id = centerline_list[temp_elem_id]
-                face_name = outlet_face_names[temp_path_id]
-                self.logger.warning("Ain < Aout for group id %d, face name %s" % (i, face_name))
+                face_name = self.outlet_face_names[temp_path_id]
+                self.logger.warning("Ain < Aout for group id %d, face name '%s'" % (i, face_name))
                 self.logger.warning("This will cause problems for the 1D solver so setting Ain = Aout")
                 tmpAin = tmpAout
 
