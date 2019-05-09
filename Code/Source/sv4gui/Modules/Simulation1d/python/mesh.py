@@ -12,6 +12,7 @@ followed by 1st point to the last point.
 """
 from os import path 
 import logging
+import re
 from manage import get_logger_name
 from parameters import OutflowBoundaryConditionType 
 from collections import OrderedDict 
@@ -238,8 +239,9 @@ class Mesh(object):
                     temp_conn.append(tempgroupid)
             #__for j in range(len(group_elems[pargroupid])-1,0,-1)
 
-            if len(temp_conn)>3:
-                self.logger.error( "there are more than 2 child segments for groupid %s" % str(pargroupid))
+            if len(temp_conn) > 3:
+                msg = "There are more than 2 child segments for groupid %s" % str(pargroupid)
+                raise RuntimeError(msg)
 
             connectivity.append(temp_conn)
         #__for i in range(num_seg)
@@ -267,19 +269,30 @@ class Mesh(object):
     def read_inflow_file(self, params):
         """ Read the inflow file.
 
-        Format:   
+        The file can be formatted as space- or comma-separated value pairs.
+
+        Example:   
             <time1>  <flow1>
             <time2>  <flow2>
             ...
             <timeN>  <flowN>
         """
+        self.logger.info("Read inflow BC ...")
         inflow_data = []
         inflow_file = params.inflow_input_file 
-        with open(inflow_file, "r") as ofile:
-            for line in ofile:
-                values = line.strip().split()
-                inflow_data.append(FlowData(time=float(values[0]), flow=float(values[1])))
-        #__with open(inflow_file, "r") as ofile
+
+        try:
+            with open(inflow_file, "r") as ofile:
+                for line in ofile:
+                    values = re.split("[, ]+", line.strip())
+                    inflow_data.append(FlowData(time=float(values[0]), flow=float(values[1])))
+            #__with open(inflow_file, "r") as ofile
+
+        except Exception as e:
+            msg = "The inflow file is in the wrong format, expecting space- or comma-separated value pairs.\n"
+            self.logger.error(msg)
+            raise RuntimeError(str(e))
+
         self.inflow_data = inflow_data
 
     def write_mesh(self, params, centerline_list, group_list):
@@ -497,7 +510,6 @@ class Mesh(object):
                         self.logger.info("Face %s  value %s" % (face_name, value))
                         if not face_name[0].isalpha():
                             msg = "The resistance file is in the wrong format, expecting face name / value pairs."
-                            self.logger.error(msg)
                             raise RuntimeError(msg)
                         #value = float(rfile.readline())
                         bc_list.append(value)
@@ -507,12 +519,10 @@ class Mesh(object):
             except Exception as e:
                 msg = "The resistance file is in the wrong format, expecting face name / value pairs.\n"
                 self.logger.error(msg)
-                msg = "Exception: " + str(e) + "\n"
-                raise RuntimeError(msg)
+                raise RuntimeError(str(e))
 
             if len(bc_list) != len(outlet_face_names):
                 msg = "The number of BC values %d do not match the number of outlets %d." % (len(bc_list), len(outlet_face_names))
-                self.logger.error(msg)
                 raise RuntimeError(msg)
 
         elif outflow_bc == OutflowBoundaryConditionType.RCR:
@@ -643,7 +653,7 @@ class Mesh(object):
             tmpAout = params.Acoef * tmpAout/len(group_elems[i])
  
             if (tmpAin < tmpAout) and (group_terminal[i] != 2):
-                self.logger.warning("warning! Ain < Aout in group id = ",i)
+                self.logger.warning("warning! Ain < Aout in group id = %d" % i)
                 self.logger.warning("set Ain = Aout")
                 tmpAin = tmpAout
 

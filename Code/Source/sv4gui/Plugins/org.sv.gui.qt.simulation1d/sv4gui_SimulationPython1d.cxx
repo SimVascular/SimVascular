@@ -186,9 +186,14 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   // Check for errors.
   PyErr_Print();
 
+  // If the solver input file has been successfully generated then
+  // show the number of nodes, segments and elements generated.
+  // Otherwise display error messages and the script log file.
+  //
   if (result) {
       auto uResult = PyUnicode_FromObject(result);
       auto sResult = std::string(PyUnicode_AsUTF8(uResult));
+
       if ((sResult.find("error") != std::string::npos) || (sResult.find("ERROR") != std::string::npos)) {
           MITK_WARN << "The generation of the solver input file failed.";
           MITK_WARN << "Returned message: " << QString(sResult.c_str()); 
@@ -199,9 +204,31 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
           mb.setDetailedText(QString(sResult.c_str()));
           mb.setDefaultButton(QMessageBox::Ok);
           mb.exec();
+
+      // Display mesh information.
+      //
       } else {
-          //QMessageBox::information(NULL, sv4guiSimulationView1d::MsgTitle, QString(sResult.c_str()));
           MITK_INFO << QString(sResult.c_str()); 
+          std::string token;
+          std::istringstream tokenStream(sResult);
+          char delimiter = '\n';
+          int num_nodes, num_elems, num_segs;
+          bool meshInfoFound = false;
+          while (std::getline(tokenStream, token, delimiter)) {
+             if (sscanf(token.c_str(), "Mesh: num_nodes=%d num_elements=%d num_segs=%d", &num_nodes, &num_elems, &num_segs)) {
+                 meshInfoFound = true;
+                 break;
+             }
+          }
+
+          if (meshInfoFound) { 
+              QString rmsg = "A solver input file has been successfully generated.\n"; 
+              rmsg += "Number of segments: " + QString::number(num_segs) + "\n"; 
+              rmsg += "Number of nodes: " + QString::number(num_nodes) + "\n"; 
+              rmsg += "Number of elements: " + QString::number(num_elems) + "\n"; 
+              MITK_INFO << msg << rmsg; 
+              QMessageBox::information(NULL, sv4guiSimulationView1d::MsgTitle, rmsg);
+          }
       }
   }
 
