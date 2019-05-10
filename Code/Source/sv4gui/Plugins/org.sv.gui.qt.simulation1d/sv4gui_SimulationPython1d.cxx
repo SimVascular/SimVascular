@@ -190,16 +190,29 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   // show the number of nodes, segments and elements generated.
   // Otherwise display error messages and the script log file.
   //
+  // Search for the Python logger ERROR or WARNING messages in the 
+  // returned result to determine if the script failed.
+  //
   if (result) {
       auto uResult = PyUnicode_FromObject(result);
       auto sResult = std::string(PyUnicode_AsUTF8(uResult));
 
-      if ((sResult.find("error") != std::string::npos) || (sResult.find("ERROR") != std::string::npos)) {
+      if (sResult.find("ERROR") != std::string::npos) {
           MITK_WARN << "The generation of the solver input file failed.";
           MITK_WARN << "Returned message: " << QString(sResult.c_str()); 
           QMessageBox mb(nullptr);
           mb.setWindowTitle(sv4guiSimulationView1d::MsgTitle);
           mb.setText("The generation of the solver input file failed.");
+          mb.setIcon(QMessageBox::Critical);
+          mb.setDetailedText(QString(sResult.c_str()));
+          mb.setDefaultButton(QMessageBox::Ok);
+          mb.exec();
+
+      } else if (sResult.find("WARNING") != std::string::npos) {
+          QString wmsg = "A solver input file has been generated with warnings.\n"; 
+          QMessageBox mb(nullptr);
+          mb.setWindowTitle(sv4guiSimulationView1d::MsgTitle);
+          mb.setText(wmsg);
           mb.setIcon(QMessageBox::Warning);
           mb.setDetailedText(QString(sResult.c_str()));
           mb.setDefaultButton(QMessageBox::Ok);
