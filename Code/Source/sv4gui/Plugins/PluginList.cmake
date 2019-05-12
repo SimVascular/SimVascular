@@ -47,5 +47,7 @@ set(SV_PLUGINS
   org.sv.gui.qt.simulation:ON
   org.sv.gui.qt.simulation1d:ON
   org.sv.gui.qt.imageprocessing:ON
-  org.sv.gui.qt.mitksegmentation:ON
 )
+if(SV_USE_MITK_SEGMENTATION)
+    LIST(APPEND SV_PLUGINS org.sv.gui.qt.mitksegmentation:ON)
+endif()

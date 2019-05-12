@@ -769,9 +769,15 @@ function(simvascular_create_plugin)
   #------------------------------CREATE PLUGIN--------------------------------
 
   foreach(depender ${_PLUGIN_MODULE_DEPENDS})
-      if(NOT (("${depender}" STREQUAL "MitkQtWidgets") OR ("${depender}" STREQUAL "MitkMultilabel")))
-        target_link_libraries(${lib_name} PRIVATE ${depender})
-    endif()
+      if(SV_USE_MITK_SEGMENTATION)
+        if(NOT (("${depender}" STREQUAL "MitkQtWidgets") OR ("${depender}" STREQUAL "MitkMultilabel")))
+            target_link_libraries(${lib_name} PRIVATE ${depender})
+        endif()
+     else()
+        if(NOT ("${depender}" STREQUAL "MitkQtWidgets") )
+            target_link_libraries(${lib_name} PRIVATE ${depender})
+        endif()
+     endif()
   endforeach()
   #---------------------------------MITK DEPENDS-----------------------------
   #simvascular_get_target_libraries(MITK_MODULE_DEPENDS "")

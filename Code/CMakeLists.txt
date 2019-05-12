@@ -297,10 +297,12 @@ if(SV_USE_QT_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation1d"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application"
       "Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.mitksegmentation"
       "Source/sv4gui/Plugins/org.sv.gui.qt.svfsi")
       if(SV_USE_PYTHON)
         LIST(APPEND SV_PLUGIN_DIRS "Source/sv4gui/Plugins/org.sv.pythondatanodes")
+      endif()
+      if(SV_USE_MITK_SEGMENTATION)
+        LIST(APPEND SV_PLUGIN_DIRS "Source/sv4gui/Plugins/org.sv.gui.qt.mitksegmentation")
       endif()
   endif()
 endif()
