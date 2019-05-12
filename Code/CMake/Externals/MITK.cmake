@@ -57,8 +57,7 @@ if(SV_USE_${proj})
       MitkImageDenoising
       MitkSegmentationUI
       MitkSegmentation
-      MitkSceneSerialization
-      MitkQtWidgetsExt)
+      MitkSceneSerialization)
 
     # Reset VTK vars
     set(VTK_DIR ${TEMP_VTK_DIR} CACHE PATH "Must reset VTK dir after processing ${proj}" FORCE)

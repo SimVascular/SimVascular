@@ -18,13 +18,13 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include "mitkIContextMenuAction.h"
 
-#include "org_mitk_gui_qt_segmentation_Export.h"
+#include "org_sv_gui_qt_mitksegmentation_Export.h"
 
 #include "vector"
 #include "mitkDataNode.h"
 #include "mitkImage.h"
 
-class MITK_QT_SEGMENTATION QmitkAutocropAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MITKSEGMENTATION QmitkAutocropAction : public QObject, public mitk::IContextMenuAction
 {
   Q_OBJECT
   Q_INTERFACES(mitk::IContextMenuAction)

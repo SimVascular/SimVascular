@@ -24,7 +24,7 @@ namespace mitk
   class PluginActivator : public berry::AbstractUICTKPlugin
   {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org_mitk_gui_qt_segmentation")
+    Q_PLUGIN_METADATA(IID "org_sv_gui_qt_mitksegmentation")
     Q_INTERFACES(ctkPluginActivator)
 
   public:

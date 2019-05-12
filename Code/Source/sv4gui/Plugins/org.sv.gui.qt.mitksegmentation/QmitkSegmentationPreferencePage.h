@@ -18,7 +18,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QmitkSegmentationPreferencePage_h_included
 #define QmitkSegmentationPreferencePage_h_included
 
-#include "org_mitk_gui_qt_segmentation_Export.h"
+#include "org_sv_gui_qt_mitksegmentation_Export.h"
 #include <berryIPreferences.h>
 #include "berryIQtPreferencePage.h"
 
@@ -27,7 +27,7 @@ class QCheckBox;
 class QRadioButton;
 class QDoubleSpinBox;
 
-class MITK_QT_SEGMENTATION QmitkSegmentationPreferencePage : public QObject, public berry::IQtPreferencePage
+class SV_QT_MITKSEGMENTATION QmitkSegmentationPreferencePage : public QObject, public berry::IQtPreferencePage
 {
   Q_OBJECT
   Q_INTERFACES(berry::IPreferencePage)

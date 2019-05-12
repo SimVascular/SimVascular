@@ -16,7 +16,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QMITKCREATEPOLYGONMODELACTION_H
 #define QMITKCREATEPOLYGONMODELACTION_H
 
-#include <org_mitk_gui_qt_segmentation_Export.h>
+#include <org_sv_gui_qt_mitksegmentation_Export.h>
 
 // Parent classes
 #include <QObject>
@@ -25,7 +25,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 // Data members
 #include <mitkDataNode.h>
 
-class MITK_QT_SEGMENTATION QmitkCreatePolygonModelAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MITKSEGMENTATION QmitkCreatePolygonModelAction : public QObject, public mitk::IContextMenuAction
 {
   Q_OBJECT
   Q_INTERFACES(mitk::IContextMenuAction)

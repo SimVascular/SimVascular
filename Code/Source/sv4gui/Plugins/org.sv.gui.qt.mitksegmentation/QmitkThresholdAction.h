@@ -16,7 +16,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QMITKTHRESHOLDACTION_H
 #define QMITKTHRESHOLDACTION_H
 
-#include <org_mitk_gui_qt_segmentation_Export.h>
+#include <org_sv_gui_qt_mitksegmentation_Export.h>
 
 // Parent classes
 #include <QObject>
@@ -27,7 +27,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <mitkToolManager.h>
 
 
-class MITK_QT_SEGMENTATION QmitkThresholdAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MITKSEGMENTATION QmitkThresholdAction : public QObject, public mitk::IContextMenuAction
 {
   Q_OBJECT
   Q_INTERFACES(mitk::IContextMenuAction)
