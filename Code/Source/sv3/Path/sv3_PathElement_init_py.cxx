@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SimVascular.h"
+#include "SimVascular_python.h"
 #include "Python.h"
 
 #include "sv3_PathElement.h"
@@ -65,6 +66,7 @@ PyObject* sv4Path_SmoothPathCmd(pyPath* self, PyObject* args);
 PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args);
 PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args);
 PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args);
+PyObject* sv4Path_GetControlPts(pyPath* self, PyObject* args);
 
 
 int Path_pyInit()
@@ -74,7 +76,7 @@ int Path_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
     PyInit_pyPath();
 #endif
-  return Py_OK;
+  return SV_OK;
 }
 
 static PyMethodDef pyPath_methods[]={
@@ -88,13 +90,14 @@ static PyMethodDef pyPath_methods[]={
   {"CreatePath",(PyCFunction)sv4Path_CreatePathCmd, METH_NOARGS,NULL},
   {"GetPathPtsNum",(PyCFunction)sv4Path_GetPathPtNumberCmd, METH_NOARGS, NULL},
   {"GetPathPosPts",(PyCFunction)sv4Path_GetPathPosPts, METH_NOARGS, NULL},
+  {"GetControlPts",(PyCFunction)sv4Path_GetControlPts, METH_NOARGS, NULL},
   {NULL,NULL}
 };
 
 static int pyPath_init(pyPath* self, PyObject* args)
 {
   fprintf(stdout,"pyPath initialized.\n");
-  return Py_OK;
+  return SV_OK;
 }
 
 static PyTypeObject pyPathType = {
@@ -212,14 +215,14 @@ PyMODINIT_FUNC PyInit_pyPath()
   if (PyType_Ready(&pyPathType)<0)
   {
     fprintf(stdout,"Error in pyPathType\n");
-    Py_RETURN_NONE;
+    return SV_PYTHON_ERROR;
   }
   PyObject* pythonC;
   pythonC = PyModule_Create(&pyPathModule);
   if(pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pyPath\n");
-    Py_RETURN_NONE;
+    return SV_PYTHON_ERROR;
   }
   PyRunTimeErr = PyErr_NewException("pyPath.error",NULL,NULL);
   PyModule_AddObject(pythonC,"error",PyRunTimeErr);
@@ -243,7 +246,7 @@ PyObject* sv4Path_NewObjectCmd( pyPath* self, PyObject* args)
   if(!PyArg_ParseTuple(args,"s|sii",&objName,&methodName,&calcNum,&splacing))
   {
     PyErr_SetString(PyRunTimeErr,"Could not import one char or optional char and ints");
-    return Py_ERROR;
+    
   }
   
    // Do work of command:
@@ -251,7 +254,7 @@ PyObject* sv4Path_NewObjectCmd( pyPath* self, PyObject* args)
   // Make sure the specified result object does not exist:
   if ( gRepository->Exists( objName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists.");
-    return Py_ERROR;
+    
   }
 
   // Instantiate the new mesh:
@@ -261,13 +264,13 @@ PyObject* sv4Path_NewObjectCmd( pyPath* self, PyObject* args)
   if ( !( gRepository->Register( objName, geom ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete geom;
-    return Py_ERROR;
+    
   }
 
   Py_INCREF(geom);
   self->geom=geom;
   Py_DECREF(geom);
-  Py_RETURN_NONE; 
+  return SV_PYTHON_OK; 
 
 }
 
@@ -284,7 +287,7 @@ PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
-    return Py_ERROR;
+    
   }
 
   // Do work of command:
@@ -297,7 +300,7 @@ PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    return Py_ERROR;
+    
   }
 
   type = rd->GetType();
@@ -307,14 +310,14 @@ PyObject* sv4Path_GetObjectCmd( pyPath* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "%s not a path object", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    return Py_ERROR;
+    
   }
   
   path = dynamic_cast<PathElement*> (rd);
   Py_INCREF(path);
   self->geom=path;
   Py_DECREF(path);
-  Py_RETURN_NONE; 
+  return SV_PYTHON_OK; 
 
 }
 
@@ -330,14 +333,14 @@ PyObject* sv4Path_AddPointCmd( pyPath* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"O|i",&pyList,&index))
     {
         PyErr_SetString(PyRunTimeErr,"Could not import list");
-        return Py_ERROR;
+        
     }
     
     PathElement* path = self->geom;
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
-        return Py_ERROR;
+        
     }
     
     std::array<double,3> point;
@@ -348,7 +351,7 @@ PyObject* sv4Path_AddPointCmd( pyPath* self, PyObject* args)
     if(path->SearchControlPoint(point,0)!=-2)
     {
         PyErr_SetString(PyRunTimeErr,"Point already exists");
-        return Py_ERROR;
+        
     }
 
     if (index!=-2)
@@ -356,7 +359,7 @@ PyObject* sv4Path_AddPointCmd( pyPath* self, PyObject* args)
         if(index>(path->GetControlPoints()).size())
         {
             PyErr_SetString(PyRunTimeErr,"Index exceeds path length");
-            return Py_ERROR;
+            
         }
     }
     else
@@ -367,7 +370,7 @@ PyObject* sv4Path_AddPointCmd( pyPath* self, PyObject* args)
     Py_INCREF(path);
     self->geom=path;
     Py_DECREF(path);
-    Py_RETURN_NONE; 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -381,7 +384,7 @@ PyObject* sv4Path_RemovePointCmd( pyPath* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"i",&index))
     {
         PyErr_SetString(PyRunTimeErr,"Could not import int, index");
-        return Py_ERROR;
+        
     }
     
     
@@ -389,13 +392,12 @@ PyObject* sv4Path_RemovePointCmd( pyPath* self, PyObject* args)
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
-        return Py_ERROR;
+        
     }
     
     if(index>=(path->GetControlPoints()).size())
     {
         PyErr_SetString(PyRunTimeErr,"Index exceeds path length");
-        Py_ERROR;
     }
     
     path->RemoveControlPoint(index);
@@ -403,7 +405,7 @@ PyObject* sv4Path_RemovePointCmd( pyPath* self, PyObject* args)
     Py_INCREF(path);
     self->geom=path;
     Py_DECREF(path);
-    Py_RETURN_NONE; 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -418,14 +420,14 @@ PyObject* sv4Path_MoveCtrlPointCmd( pyPath* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"Oi",&pyList,&index))
     {
         PyErr_SetString(PyRunTimeErr,"Could not import list and index");
-        return Py_ERROR;
+        
     }
     
     PathElement* path = self->geom;
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
-        return Py_ERROR;
+        
     }
     
     std::array<double,3> point;
@@ -436,7 +438,6 @@ PyObject* sv4Path_MoveCtrlPointCmd( pyPath* self, PyObject* args)
     if(index>=(path->GetControlPoints()).size())
     {
         PyErr_SetString(PyRunTimeErr,"Index exceeds path length");
-        Py_ERROR;
     }
 
 
@@ -446,7 +447,7 @@ PyObject* sv4Path_MoveCtrlPointCmd( pyPath* self, PyObject* args)
     Py_INCREF(path);
     self->geom=path;
     Py_DECREF(path);
-    Py_RETURN_NONE; 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -462,14 +463,14 @@ PyObject* sv4Path_SmoothPathCmd( pyPath* self, PyObject* args)
     {
         PyErr_SetString(PyRunTimeErr,"Could not import three integers \
                                 sampleRate, numModes and controlPointsBased");
-        return Py_ERROR;
+        
     }
     
     PathElement* path = self->geom;
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
-        return Py_ERROR;
+        
     }  
     
     bool controlPointsBasedBool=controlPointsBased==1?true:false;
@@ -479,7 +480,7 @@ PyObject* sv4Path_SmoothPathCmd( pyPath* self, PyObject* args)
     Py_INCREF(path);
     self->geom=path;
     Py_DECREF(path);
-    Py_RETURN_NONE; 
+    return SV_PYTHON_OK; 
     
 }
 
@@ -497,7 +498,7 @@ PyObject* sv4Path_PrintCtrlPointCmd( pyPath* self, PyObject* args)
         PySys_WriteStdout("Point %i, %f, %f, %f \n",i, pt[0],pt[1],pt[2]);
     }
     
-    Py_RETURN_NONE; 
+    return SV_PYTHON_OK; 
 }
 
 // --------------------
@@ -509,19 +510,19 @@ PyObject* sv4Path_CreatePathCmd(pyPath* self, PyObject* args)
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
-        return Py_ERROR;
+        
     }  
     path->CreatePathPoints();
     int num = (path->GetPathPoints()).size();
     if (num==0)
     {
         PyErr_SetString(PyRunTimeErr,"Error creating path from control points");
-        return Py_ERROR;
+        
     }
     else
         printf("Total number of path points created is: %i \n", num);
         
-    Py_RETURN_NONE;
+    return SV_PYTHON_OK;
 }
 
 // --------------------
@@ -533,7 +534,7 @@ PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args)
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
-        return Py_ERROR;
+        
     }  
     
     int num = path->GetPathPointNumber();
@@ -542,7 +543,7 @@ PyObject* sv4Path_GetPathPtNumberCmd(pyPath* self, PyObject* args)
 }
 
 //----------------------------
-// sv4Path_GetPathPts
+// sv4Path_GetPathPosPts
 //----------------------------
 PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
 {
@@ -550,14 +551,14 @@ PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr,"Path does not exist.");
-        return Py_ERROR;
+        
     }  
     
     int num = path->GetPathPointNumber();
-    PyObject* tmpList = PyList_New(3);
     PyObject* output = PyList_New(num);
     for (int i = 0; i<num; i++)
     {
+        PyObject* tmpList = PyList_New(3);
         std::array<double,3> pos = path->GetPathPosPoint(i);
         for (int j=0; j<3; j++)
             PyList_SetItem(tmpList,j,PyFloat_FromDouble(pos[j]));
@@ -567,8 +568,40 @@ PyObject* sv4Path_GetPathPosPts(pyPath* self, PyObject* args)
     if(PyErr_Occurred()!=NULL)
     {
         PyErr_SetString(PyRunTimeErr, "error generating pathpospt output");
-        return Py_ERROR;
+        
     }
     
      return output;
 } 
+
+//----------------------------
+// sv4Path_GetControlPts
+//----------------------------
+PyObject* sv4Path_GetControlPts(pyPath* self, PyObject* args)
+{
+    PathElement* path = self->geom;
+    if (path==NULL)
+    {
+        PyErr_SetString(PyRunTimeErr,"Path does not exist.");
+    }
+
+    int num = path->GetControlPointNumber();
+    PyObject* output = PyList_New(num);
+    for (int i = 0; i<num; i++)
+    {
+        PyObject* tmpList = PyList_New(3);
+        std::array<double,3> pos = path->GetControlPoint(i);
+        for (int j=0; j<3; j++)
+            PyList_SetItem(tmpList,j,PyFloat_FromDouble(pos[j]));
+        PyList_SetItem(output,i,tmpList);
+    }
+
+    if(PyErr_Occurred()!=NULL)
+    {
+        PyErr_SetString(PyRunTimeErr, "error generating pathcontrolpt output");
+    }
+
+     return output;
+}
+
+

@@ -191,6 +191,7 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
          pluginsToStart.push_back("org_sv_gui_qt_segmentation");
          pluginsToStart.push_back("org_sv_gui_qt_meshing");
          pluginsToStart.push_back("org_sv_gui_qt_simulation");
+         pluginsToStart.push_back("org_sv_gui_qt_simulation1d");
          pluginsToStart.push_back("org_sv_gui_qt_imageprocessing");
          pluginsToStart.push_back("org_sv_gui_qt_svfsi");
          pluginsToStart.push_back("org_sv_gui_qt_mitksegmentation");

@@ -2,11 +2,19 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/SimVascularScriptMacros.cmake)
 file(MAKE_DIRECTORY ${TEMP_DIR}/developer ${TEMP_DIR}/install)
 
 set(core_str)
+
+## Set unix environment variables.
+#
 if(UNIX)
 	file(READ ${SV_SOURCE_DIR}/Scripts/home-locate-linux.sh locate_script)
 	set(core_str "${locate_script}\n")
 	set_env_string_concat(SV_HOME "$DIR" core_str)
+        # Set the install version used by the sv launch script to load non-core plugins.
+        string(REPLACE "." "-" SV_INSTALL_VERSION ${SV_FULL_VERSION})
+        set_env_string_concat(SV_INSTALL_VERSION "${SV_INSTALL_VERSION}" core_str)
+	set_env_string_concat(SV_PLUGIN_INSTALL_DIR "${SV_PLUGIN_INSTALL_DIR}/${SV_INSTALL_VERSION}" core_str)
 endif()
+
 if(WIN32 AND NOT UNIX)
 	set(core_str "@echo off\r\n")
 	set_env_string_concat(SV_HOME "%~dp0" core_str)
@@ -296,6 +304,10 @@ if(SV_USE_PYTHON)
   endif()
   set_env_string_concat(PYTHONHOME "${ENV_SV_HOME}/${SV_INSTALL_PYTHON_RUNTIME_DIR}/.." install_script_string)
 
+  # hack needed by tensorflow to work with hdf5 we are building
+  set_env_string_concat(HDF5_DISABLE_VERSION_CHECK "1" developer_script_string)
+  set_env_string_concat(HDF5_DISABLE_VERSION_CHECK "1" install_script_string)
+
   # PYTHONPATH
   if(SV_PYTHON_DIR)
     set_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
@@ -314,8 +326,16 @@ if(SV_USE_PYTHON)
   
   get_filename_component(_sv_python_site_packages "${SV_SOURCE_DIR}/../Python/site-packages" ABSOLUTE)
   append_env_string_concat(PYTHONPATH "${_sv_python_site_packages}" developer_script_string)
+  append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/Python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
 
+  append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/sv_1d_simulation_python" install_script_string)
+  append_env_string_concat(PYTHONPATH "${SV_SOURCE_DIR}/Source/sv4gui/Modules/Simulation1d/python" developer_script_string)
+  
+if(WIN32)
   append_env_string_concat(PYTHONPATH "%SV_PLUGIN_PATH%" developer_script_string)
+else()
+  append_env_string_concat(PYTHONPATH "$SV_PLUGIN_PATH" developer_script_string)
+endif()
 
 if(PYTHON_SITE_PACKAGES)
     append_env_string_concat(PYTHONPATH "${PYTHON_SITE_PACKAGES}" developer_script_string)

@@ -68,6 +68,8 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "CREATE_BUILD_SCRIPT_PYTHON"
   sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-cmake-python-windows.sh > tmp/compile.cmake.python.cl.sh
   chmod a+rx ./tmp/compile.cmake.python.cl.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/post-install-python-windows.sh > tmp/post-install-python-windows.sh
+  chmod a+rx ./tmp/compile.cmake.python.cl.sh
 fi
 
 # swig
@@ -207,7 +209,7 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   ./tmp/compile.make.tcl.cl.sh >& ./tmp/stdout.tcl.txt
 fi
 
-## python 2.7
+## python
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "BUILD_PYTHON"
   ./tmp/compile.cmake.python.cl.sh >& ./tmp/stdout.python.cl.txt
@@ -223,6 +225,13 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.msvc.numpy.cl.sh >& ./tmp/stdout.msvc.numpy.cl.txt
+fi
+
+## python
+## want to run post install after numpy is built
+if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
+  echo "BUILD_PYTHON post-install"
+  ./tmp/post-install-python-windows.sh >& ./tmp/stdout.post-install-python-windows.txt
 fi
 
 # tinyxml2

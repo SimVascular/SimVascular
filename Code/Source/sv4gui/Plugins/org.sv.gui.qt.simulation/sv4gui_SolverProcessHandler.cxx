@@ -85,6 +85,50 @@ sv4guiSolverProcessHandler::~sv4guiSolverProcessHandler()
         delete m_Timer;
 }
 
+void sv4guiSolverProcessHandler::ProcessError(QProcess::ProcessError error)
+{
+  MITK_ERROR << "Simulation job error = " << error;
+  QString title = "";
+  QString text = "";
+  QString status = "Simulation failed";
+  QMessageBox::Icon icon = QMessageBox::Warning;
+  QMessageBox messageBox(NULL); 
+
+  if (error == QProcess::FailedToStart) {
+    title = "Simulation cannot be started";
+    text = "Unable to start the mpiexec process. Either the mpiexec program is missing or you may have insufficient permissions to execute it.";
+    MITK_ERROR << text; 
+  } else {
+    title = "Simulation failed";
+    text = "Unknown error return code " + error; 
+    MITK_ERROR << text; 
+  }
+
+  messageBox.setWindowTitle(title);
+  messageBox.setText(text+"                                                                                         ");
+  messageBox.setIcon(icon);
+
+  if (m_Process) {
+    auto details = m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError();
+    messageBox.setDetailedText(m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError());
+  }
+
+  messageBox.exec();
+
+  sv4guiMitkSimJob* mitkJob = dynamic_cast<sv4guiMitkSimJob*>(m_JobNode->GetData());
+  if(mitkJob) {
+    mitkJob->SetStatus(status.toStdString());
+  }
+
+  m_JobNode->SetBoolProperty("running",false);
+  m_JobNode->SetDoubleProperty("running progress", 0);
+
+  mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
+
+  deleteLater();
+
+}
+
 void sv4guiSolverProcessHandler::Start()
 {
     if(m_Process==NULL)
@@ -93,6 +137,7 @@ void sv4guiSolverProcessHandler::Start()
     if(m_JobNode.IsNull())
         return;
 
+    connect(m_Process, &QProcess::errorOccurred, this, &sv4guiSolverProcessHandler::ProcessError);
     connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
 
     m_JobNode->SetBoolProperty("running", true);
@@ -113,29 +158,49 @@ void sv4guiSolverProcessHandler::KillProcess()
         m_Process->kill();
 }
 
+//----------------------
+// AfterProcessFinished
+//----------------------
+//
+//
 void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    if(m_JobNode.IsNull())
+    if(m_JobNode.IsNull()) {
         return;
+    }
 
-    QString title="";
-    QString text="";
+    if (!m_Process) {
+        return;
+    }
+
+    QString title = "SimVascular SV Simulation";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
     QMessageBox mb(NULL); //svSimualtionView maybe doesn't exist.
     QString status="";
 
-    if(exitStatus==QProcess::NormalExit)
-    {
-        title="Finished";
-        text="Job "+QString::fromStdString(m_JobNode->GetName())+": Finished.";
+    auto jobName = QString::fromStdString(m_JobNode->GetName()); 
+    QString text = "Simulation job '" + jobName + "' ";
+
+    auto exitCodeString = QString::number(exitCode); 
+    QString stdError = QString(m_Process->readAllStandardError());
+    QString stdOutput = QString(m_Process->readAllStandardOutput());
+
+    // Show simulation completion status.
+    //
+    if (exitCode != 0) {
+        text += "has failed with non-zero exit code " + exitCodeString + ".";
+        icon = QMessageBox::Warning;
+        status="Simulation failed";
+        MITK_WARN << "Simulation job '" + jobName + "' has failed with non-zero exit code.";
+        MITK_WARN << "Exit code: " + exitCodeString; 
+        MITK_WARN << "Error: " + stdError; 
+    } else if (exitStatus == QProcess::NormalExit) { 
+        text += "has finished.";
         icon=QMessageBox::Information;
         status="Simulation done";
         m_JobNode->SetBoolProperty("update rundir",true);
-    }
-    else
-    {
-        title="Not finished";
-        text="Job "+QString::fromStdString(m_JobNode->GetName())+": Failed to finish.";
+    } else {
+        text += "has crashed.";
         icon=QMessageBox::Warning;
         status="Simulation failed";
     }
@@ -143,20 +208,19 @@ void sv4guiSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::Ex
     mb.setWindowTitle(title);
     mb.setText(text+"                                                                                         ");
     mb.setIcon(icon);
-
-    if(m_Process)
-        mb.setDetailedText(m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError());
-
+    mb.setDetailedText(stdOutput + "\n" + stdError);
     mb.exec();
 
-    sv4guiMitkSimJob* mitkJob=dynamic_cast<sv4guiMitkSimJob*>(m_JobNode->GetData());
-    if(mitkJob)
+    // Set job status. 
+    sv4guiMitkSimJob* mitkJob = dynamic_cast<sv4guiMitkSimJob*>(m_JobNode->GetData());
+    if (mitkJob) {
         mitkJob->SetStatus(status.toStdString());
+    }
+    mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
 
+    // Set job progress. 
     m_JobNode->SetBoolProperty("running",false);
     m_JobNode->SetDoubleProperty("running progress", 0);
-
-    mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
 
     deleteLater();
 }

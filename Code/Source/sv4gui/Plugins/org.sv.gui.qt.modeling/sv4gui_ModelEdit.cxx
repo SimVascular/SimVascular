@@ -64,6 +64,8 @@
 #include <QVBoxLayout>
 
 #include <iostream>
+#include <time.h> 
+
 using namespace std;
 
 const QString sv4guiModelEdit::EXTENSION_ID = "org.sv.views.modeling";
@@ -324,6 +326,20 @@ void sv4guiModelEdit::Hidden()
 {
     //    ClearAll();
     RemoveObservers();
+}
+
+//------------------
+// SetTimeModified
+//------------------
+// Set the time that the model surface was updated.
+//
+//
+void sv4guiModelEdit::SetTimeModified()
+{
+    if (m_ModelNode != nullptr) {
+        time_t time = std::time(NULL); 
+        m_ModelNode->SetStringProperty("time modified", ctime(&time)); 
+    }
 }
 
 int sv4guiModelEdit::GetTimeStep()
@@ -1753,16 +1769,28 @@ void sv4guiModelEdit::CreateModel()
 
         if(faceNamesToCheck.size()>0)
         {
-            std::string info="There may be more cap or wall faces than supposed, such as ledges. \nPlease check those faces (highlighted) as below:";
+            std::string faceList ="";
             for(int i=0;i<faceNamesToCheck.size();i++)
             {
-                info+="\n"+faceNamesToCheck[i];
+                faceList+="\n"+faceNamesToCheck[i];
                 newModelElement->SelectFace(faceNamesToCheck[i]);
             }
 
             UpdateFaceListSelection();
 
-            QMessageBox::warning(m_Parent,"Warning",QString::fromStdString(info));
+            // Display a warning message listing the problematic faces.
+            std::string info = "There may be vessels that only partially intersect.\n\n";
+            info += "Please check the faces listed under Details and highlighted in the Face List browser.";
+            auto text = QString::fromStdString(info);
+            QString title = "A problem was encountered when creating the model";
+            QMessageBox::Icon icon = QMessageBox::Warning;
+            QMessageBox mb(NULL); 
+            mb.setWindowTitle(title);
+            mb.setText(text+"                                                                                         ");
+            mb.setIcon(icon);
+            mb.setDetailedText(QString::fromStdString(faceList));
+            mb.exec();
+
             return;
         }
 
@@ -2158,6 +2186,9 @@ void sv4guiModelEdit::ModelOperate(int operationType)
     mitk::StatusBar::GetInstance()->DisplayText("Model processing done");
 
     m_LocalOperationforBlendRegion=false;
+
+    // Set the time that the model surface was modified.
+    SetTimeModified();
 }
 
 void sv4guiModelEdit::ShowSphereInteractor(bool checked)

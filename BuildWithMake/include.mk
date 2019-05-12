@@ -202,6 +202,12 @@ SV_USE_MITK = 1
 SV_IGNORE_PROVISIONING_FILE = 1
 
 # -----------------------------------------------------
+# Compile with tinyxml2
+# -----------------------------------------------------
+
+SV_USE_TINYXML2 = 0
+
+# -----------------------------------------------------
 # Compile with Optimization
 # -----------------------------------------------------
 
@@ -240,24 +246,25 @@ ifeq ($(CLUSTER), x64_macosx)
 endif
 
 #SV_EXTERNALS_VERSION_NUMBER = 2018.01
-SV_EXTERNALS_VERSION_NUMBER = 2018.05
+SV_EXTERNALS_VERSION_NUMBER = 2019.02
+SV_VTK_OPENGL_VERSION=gl2
 
 ifeq ($(CLUSTER), x64_cygwin)
     SV_LOWERCASE_CMAKE_BUILD_TYPE=release
     SV_CMAKE_BUILD_TYPE=Release
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 ifeq ($(CLUSTER), x64_linux)
     SV_LOWERCASE_CMAKE_BUILD_TYPE=release
     SV_CMAKE_BUILD_TYPE=Release
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
     SV_LOWERCASE_CMAKE_BUILD_TYPE=release
     SV_CMAKE_BUILD_TYPE=Release
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 # -------------------------------------------
@@ -276,10 +283,10 @@ else
 -include $(TOP)/global_overrides.mk
 endif
 
-SV_MAJOR_VERSION := $(shell date +"%Y")
-SV_MINOR_VERSION := $(shell date +"%m")
-SV_PATCH_VERSION := $(shell date +"%d")
-SV_MAJOR_VERSION_TWO_DIGIT := $(shell date +"%y")
+SV_MAJOR_VERSION ?= $(shell date +"%Y")
+SV_MINOR_VERSION ?= $(shell date +"%m")
+SV_PATCH_VERSION ?= $(shell date +"%d")
+SV_MAJOR_VERSION_TWO_DIGIT ?= $(shell date +"%y")
 SV_MAJOR_VER_NO = "$(SV_MAJOR_VERSION_TWO_DIGIT).$(SV_MINOR_VERSION)"
 SV_FULL_VER_NO = "$(SV_MAJOR_VERSION_TWO_DIGIT).$(SV_MINOR_VERSION).$(SV_PATCH_VERSION)"
 
@@ -389,6 +396,10 @@ endif
 
 ifeq ($(SV_USE_GDCM),1)
   GLOBAL_DEFINES += -DSV_USE_GDCM
+endif
+
+ifeq ($(SV_USE_TINYXML2),1)
+  GLOBAL_DEFINES += -DSV_USE_TINYXML2
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -612,11 +623,13 @@ ifeq ($(SV_USE_MITK),1)
   endif
 endif
 
-ifeq ($(SV_USE_QT_GUI),1)
-  ifeq ($(SV_USE_QT_GUI_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/sv4gui/Plugins
-  else
-     LIBDIRS += ../Code/Source/sv4gui/Plugins
+ifeq ($(SV_USE_MITK),1)
+  ifeq ($(SV_USE_QT_GUI),1)
+    ifeq ($(SV_USE_QT_GUI_SHARED),1)
+       SHARED_LIBDIRS += ../Code/Source/sv4gui/Plugins
+    else
+       LIBDIRS += ../Code/Source/sv4gui/Plugins
+    endif
   endif
 endif
 
@@ -650,6 +663,7 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/sv4gui/Modules/QtWidgets \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Segmentation \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation1d \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/ImageProcessing \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/svFSI
   ifeq ($(SV_USE_OPENCASCADE),1)
@@ -683,6 +697,7 @@ SV_LIB_MODULE_PROJECTMANAGEMENT_NAME=_simvascular_module_projectmanagement
 SV_LIB_MODULE_QTWIDGETS_NAME=_simvascular_module_qtwidgets
 SV_LIB_MODULE_SEGMENTATION_NAME=_simvascular_module_segmentation
 SV_LIB_MODULE_SIMULATION_NAME=_simvascular_module_simulation
+SV_LIB_MODULE_SIMULATION1D_NAME=_simvascular_module_simulation1d
 SV_LIB_MODULE_SVFSI_NAME=_simvascular_module_svfsi
 SV_LIB_OpenCASCADE_SOLID_NAME=_simvascular_opencascade_solid
 SV_LIB_PATH_NAME=_simvascular_path
@@ -714,8 +729,10 @@ SV_PLUGIN_MODELING_NAME=org_sv_gui_qt_modeling
 SV_PLUGIN_PATHPLANNING_NAME=org_sv_gui_qt_pathplanning
 SV_PLUGIN_PROJECTMANAGER_NAME=org_sv_gui_qt_projectmanager
 SV_PLUGIN_SEGMENTATION_NAME=org_sv_gui_qt_segmentation
+SV_PLUGIN_SEGMENTATION1D_NAME=org_sv_gui_qt_segmentation1d
 SV_PLUGIN_SVFSI_NAME=org_sv_gui_qt_svfsi
 SV_PLUGIN_SIMULATION_NAME=org_sv_gui_qt_simulation
+SV_PLUGIN_SIMULATION1D_NAME=org_sv_gui_qt_simulation1d
 SV_PLUGIN_PROJECTDATANODES_NAME=org_sv_projectdatanodes
 SV_PLUGIN_PYTHONDATANODES_NAME=org_sv_pythondatanodes
 
@@ -846,16 +863,30 @@ endif
 
 ifeq ($(SV_USE_VTK),1)
 
-ifeq ($(CLUSTER), x64_cygwin)
+ifeq ($(SV_EXTERNALS_VERSION_NUMBER), 2019.02)
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_macosx.mk
+  endif
+else
+  ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_cygwin.mk
-endif
+  endif
 
-ifeq ($(CLUSTER), x64_linux)
+  ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_linux.mk
-endif
+  endif
 
-ifeq ($(CLUSTER), x64_macosx)
+  ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_macosx.mk
+  endif
 endif
 
 endif
@@ -865,6 +896,26 @@ endif
 # ***   (less restrictive licenses)     ***
 # *** (e.g. MIT or BSD or Apache 2.0)   ***
 # -----------------------------------------
+
+# --------
+# TINYXML2
+# --------
+
+ifeq ($(SV_USE_TINYXML2),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tinyxml2.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tinyxml2.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tinyxml2.x64_macosx.mk
+  endif
+
+endif
 
 # ----
 # GDCM

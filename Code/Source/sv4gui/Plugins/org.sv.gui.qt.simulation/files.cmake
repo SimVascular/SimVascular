@@ -42,6 +42,7 @@ set(CPP_FILES
     sv4gui_SimulationPluginActivator.cxx
     sv4gui_ProcessHandler.cxx
     sv4gui_SolverProcessHandler.cxx
+    sv4gui_SimulationPreferences.cxx
 )
 
 set(MOC_H_FILES
@@ -58,6 +59,7 @@ set(MOC_H_FILES
     sv4gui_SimulationPluginActivator.h
     sv4gui_ProcessHandler.h
     sv4gui_SolverProcessHandler.h
+    sv4gui_SimulationPreferences.h
 )
 
 set(UI_FILES

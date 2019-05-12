@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template >
+    <format version="1.0" />
+    <section name="Time Step Parameters">
+        <param name="Number of Timesteps" value="" type="int" />
+        <param name="Time Step Size" value="" type="double" />
+    </section>
+    <section name="Output Control">
+        <param name="Number of Timesteps between Saving Data" value="20" type="int" />
+    </section>
+</template>

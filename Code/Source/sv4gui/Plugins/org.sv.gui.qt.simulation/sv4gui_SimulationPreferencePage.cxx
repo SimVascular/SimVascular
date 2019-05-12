@@ -29,6 +29,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiSimulationPreferencePage class is used to process information 
+// about the location of the solver binaries (svpre, svsolver and svpost) 
+// and the mpiexec binary used to execute a simulation presented in the 
+// 'Preferences->SimVascular Simulation' panel. 
+//
+// sv4guiSimulationPreferencePage methods are used to 
+//
+//     1) Process GUI events 
+//
+//     2) Set the values of the solver binaries in the MITK database 
+//
+// The MITK database provides persistence for solver binary values between 
+// SimVascular sessions.
+//
+// The values of the solver binaries are set from the MITK database if it 
+// exists. Otherwise they are set using their default values obtained using
+// an sv4guiSimulationPreferences() object.
+//
+// Pressing the SimVascular Simulation' panel 'OK' button calls the PerformOk() 
+// method which saves the solver binary values into the MITK database.
+//  
+
 #include "sv4gui_SimulationPreferencePage.h"
 #include "ui_sv4gui_SimulationPreferencePage.h"
 
@@ -39,18 +61,142 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QProcess>
 
-sv4guiSimulationPreferencePage::sv4guiSimulationPreferencePage()
-    : m_Preferences(nullptr)
-    , m_Ui(new Ui::sv4guiSimulationPreferencePage)
-    , m_Control(nullptr)
+//--------------------------------
+// sv4guiSimulationPreferencePage
+//--------------------------------
+// Constructor.
+//
+sv4guiSimulationPreferencePage::sv4guiSimulationPreferencePage() : m_Preferences(nullptr), 
+    m_Ui(new Ui::sv4guiSimulationPreferencePage) , m_Control(nullptr)
 {
+  // Set the default locations of the solver binaries.
+  m_DefaultPrefs = sv4guiSimulationPreferences();
 }
 
 sv4guiSimulationPreferencePage::~sv4guiSimulationPreferencePage()
 {
 }
 
+//---------------------------
+// InitializeSolverLocations
+//---------------------------
+// Find the location of solver binaries and mpiexec.
+//
+// The the full binary path is displayed in the SimVascular 
+// 'Preferences->SimVascular Simulations' page and used to 
+// execute a simulation.
+//
+// If the values for the binaries and mpiexec are not already
+// set in the SimVascular MITK database then they set to their
+// default values set in the sv4guiSimulationPreferences method.
+//
+void sv4guiSimulationPreferencePage::InitializeSolverLocations()
+{
+  // Set the solver binaries.
+  SetPreSolver(); 
+  SetSolver(); 
+  SetPostSolver(); 
+
+  // Set the mpiexec binary.
+  SetMpiExec(); 
+
+  // Set the MPI implementation. 
+  SetMpiImplementation();
+}
+
+//---------------
+// SetPostSolver
+//---------------
+// Set the post processing binary svpost.
+//
+void sv4guiSimulationPreferencePage::SetPostSolver()
+{
+  QString svPost = m_Ui->lineEditPostsolverPath->text().trimmed();
+
+  if (!svPost.isEmpty() && (svPost != m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
+
+  svPost = m_DefaultPrefs.GetPostSolver();
+  m_Ui->lineEditPostsolverPath->setText(svPost);
+}
+
+//------------
+// SetMpiExec
+//------------
+// Set the location of the MPI mpiexec binary.
+//
+void sv4guiSimulationPreferencePage::SetMpiExec()
+{
+  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
+
+  if (!mpiExec.isEmpty() && (mpiExec != m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
+
+  mpiExec = m_DefaultPrefs.GetMpiExec();
+  m_Ui->lineEditMPIExecPath->setText(mpiExec);
+}
+
+//----------------------
+// SetMpiImplementation 
+//----------------------
+// Set the installed MPI implementation.
+//
+void sv4guiSimulationPreferencePage::SetMpiImplementation()
+{
+  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
+
+  if (mpiExec.isEmpty() || (mpiExec == m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
+
+  QString guiLabel("MPI Implementation: ");
+  auto implStr = m_DefaultPrefs.GetMpiName();
+  m_Ui->labelMPIImplementation->setText(guiLabel + implStr);
+}
+
+//------------------
+// SetPresolverPath
+//------------------
+// Set the location of the svpre binary.
+//
+void sv4guiSimulationPreferencePage::SetPreSolver()
+{
+  QString svPresolver = m_Ui->lineEditPresolverPath->text().trimmed();
+
+  if (!svPresolver.isEmpty() && (svPresolver != m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
+
+  svPresolver = m_DefaultPrefs.GetPreSolver();
+  m_Ui->lineEditPresolverPath->setText(svPresolver);
+}
+
+//-----------
+// SetSolver 
+//-----------
+// Set the svsolver binary, with or without mpi.
+//
+void sv4guiSimulationPreferencePage::SetSolver()
+{
+  QString svSolver = m_Ui->lineEditFlowsolverPath->text().trimmed();
+
+  if (!svSolver.isEmpty() && (svSolver != m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
+
+  bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
+  svSolver = m_DefaultPrefs.GetSolver();
+  m_Ui->lineEditFlowsolverPath->setText(svSolver);
+}
+
+//-----------------
+// CreateQtControl
+//-----------------
+//
 void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)
 {
     m_Control = new QWidget(parent);
@@ -69,8 +215,16 @@ void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)
     connect( m_Ui->toolButtonPostsolver, SIGNAL(clicked()), this, SLOT(SetPostsolverPath()) );
 
     this->Update();
+
+    // Set the locations of the solver binaries and mpiexec.
+    InitializeSolverLocations();
 }
 
+//------------------
+// SetPresolverPath
+//------------------
+// Process the GUI event to set the svpre path.
+//
 void sv4guiSimulationPreferencePage::SetPresolverPath()
 {
     QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Presolver");
@@ -81,6 +235,11 @@ void sv4guiSimulationPreferencePage::SetPresolverPath()
     }
 }
 
+//-------------------
+// SetFlowsolverPath
+//-------------------
+// Process the GUI event to set the svsolver path.
+//
 void sv4guiSimulationPreferencePage::SetFlowsolverPath()
 {
     QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Flowsolver");
@@ -91,6 +250,11 @@ void sv4guiSimulationPreferencePage::SetFlowsolverPath()
     }
 }
 
+//----------------
+// SetMPIExecPath
+//----------------
+// Process the GUI event to set the mpiexec path.
+//
 void sv4guiSimulationPreferencePage::SetMPIExecPath()
 {
     QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MPIExec");
@@ -111,6 +275,11 @@ void sv4guiSimulationPreferencePage::SetCustomTemplatePath()
     }
 }
 
+//-------------------
+// SetPostsolverPath 
+//-------------------
+// Process the GUI event to set the svpost path.
+//
 void sv4guiSimulationPreferencePage::SetPostsolverPath()
 {
     QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Postsolver");
@@ -134,62 +303,49 @@ void sv4guiSimulationPreferencePage::PerformCancel()
 {
 }
 
+//-----------
+// PerformOk
+//-----------
+// Process the 'OK' button GUI event.
+//
 bool sv4guiSimulationPreferencePage::PerformOk()
 {
-    QString presolverPath=m_Ui->lineEditPresolverPath->text().trimmed();
-    QString flowsolverPath=m_Ui->lineEditFlowsolverPath->text().trimmed();
-    bool useMPI=m_Ui->checkBoxUseMPI->isChecked();
-    QString MPIExecPath=m_Ui->lineEditMPIExecPath->text().trimmed();
-    bool useCustom=m_Ui->checkBoxUseCustom->isChecked();
-    QString customTemplatePath=m_Ui->lineEditCustomTemplatePath->text().trimmed();
-    QString postsolverPath=m_Ui->lineEditPostsolverPath->text().trimmed();
+    // Get the solver paths from the GUI.
+    QString presolverPath = m_Ui->lineEditPresolverPath->text().trimmed();
+    QString flowsolverPath = m_Ui->lineEditFlowsolverPath->text().trimmed();
+    bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
+    QString MPIExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
+    bool useCustom = m_Ui->checkBoxUseCustom->isChecked();
+    QString customTemplatePath = m_Ui->lineEditCustomTemplatePath->text().trimmed();
+    QString postsolverPath = m_Ui->lineEditPostsolverPath->text().trimmed();
 
-//    if(presolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Presolver Missing","Please provide SimVascular presolver.");
-//        return false;
-//    }
-
-//    if(flowsolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Flowsolver Missing","Please provide SimVascular flowsolver.");
-//        return false;
-//    }
-
-//    if(useMPI && MPIExecPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"MPIExec Missing","Please provide mpiexec.");
-//        return false;
-//    }
-
-//    if(useCustom && customTemplatePath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Custom Template Missing","Please provide SimVascular Solver Input Template File.");
-//        return false;
-//    }
-
-//    if(postsolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Postsolver Missing","Please provide SimVascular postsolver.");
-//        return false;
-//    }
-
+    // Set the values of the solver paths in the MITK database.
     m_Preferences->Put("presolver path", presolverPath);
-
     m_Preferences->Put("flowsolver path", flowsolverPath);
     m_Preferences->PutBool("use mpi", useMPI);
-    if(useMPI)
-        m_Preferences->Put("mpiexec path", MPIExecPath);
-
     m_Preferences->PutBool("use custom", useCustom);
-    if(useCustom)
-        m_Preferences->Put("solver template path", customTemplatePath);
-
     m_Preferences->Put("postsolver path", postsolverPath);
+
+    // MPI implementation.
+    m_Preferences->Put("mpi implementation", m_DefaultPrefs.GetMpiName());
+
+    if(useMPI) {
+        m_Preferences->Put("mpiexec path", MPIExecPath);
+    }
+
+    if(useCustom) {
+        m_Preferences->Put("solver template path", customTemplatePath);
+    }
 
     return true;
 }
 
+//--------
+// Update
+//--------
+// Update the GUI with the solver path values from the
+// MITK database.
+//
 void sv4guiSimulationPreferencePage::Update()
 {
     m_Ui->lineEditPresolverPath->setText(m_Preferences->Get("presolver path",""));

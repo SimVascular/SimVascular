@@ -29,6 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <sstream>
+#include <tuple>
+
 #include "sv4gui_SimulationView.h"
 #include "ui_sv4gui_SimulationView.h"
 
@@ -37,6 +40,7 @@
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshLegacyIO.h"
 #include "sv4gui_SimulationUtils.h"
+#include "sv4gui_SimulationPreferences.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
@@ -68,6 +72,15 @@
 
 const QString sv4guiSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
+// Set the title for QMessageBox warnings.
+//
+// Note: On MacOS the window title is ignored (as required by the Mac OS X Guidelines). 
+const QString sv4guiSimulationView::MsgTitle = "SimVascular SV Simulation";
+
+//----------------------
+// sv4guiSimulationView
+//----------------------
+//
 sv4guiSimulationView::sv4guiSimulationView() :
     ui(new Ui::sv4guiSimulationView)
 {
@@ -91,22 +104,20 @@ sv4guiSimulationView::sv4guiSimulationView() :
 
     m_TableModelSolver=NULL;
 
-    m_InternalPresolverPath="";
-    m_InternalFlowsolverPath="";
-    m_InternalFlowsolverNoMPIPath="";
-    m_InternalPostsolverPath="";
-    m_InternalMPIExecPath="";
+    m_PresolverPath="";
+    m_FlowsolverPath="";
+    m_FlowsolverNoMPIPath="";
+    m_PostsolverPath="";
+    m_MPIExecPath="";
 
-    m_ExternalPresolverPath="";
-    m_ExternalFlowsolverPath="";
-    m_ExternalFlowsolverNoMPIPath="";
     m_UseMPI=true;
     m_UseCustom=false;
     m_SolverTemplatePath="";
-    m_ExternalPostsolverPath="";
-    m_ExternalMPIExecPath="";
 
     m_ConnectionEnabled=false;
+
+    // Get the default solver binaries.
+    //m_DefaultPrefs = sv4guiSimulationPreferences();
 }
 
 sv4guiSimulationView::~sv4guiSimulationView()
@@ -287,154 +298,73 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 //    ui->widgetCalculateFlows->hide();
     connect(ui->checkBoxCalculateFlows, SIGNAL(clicked(bool)), this, SLOT(ShowCalculateFowsWidget(bool)) );
 
-    SetupInternalSolverPaths();
-
-    //get paths for the external solvers
+    // Set paths for the external solvers.
     berry::IPreferences::Pointer prefs = this->GetPreferences();
     berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
-    //    InitializePreferences(berryprefs);
     this->OnPreferencesChanged(berryprefs);
 }
 
-void sv4guiSimulationView::SetupInternalSolverPaths()
-{
-    //get path for the internal solvers
-    QString solverPath="/usr/local/sv/svsolver";
-    QStringList dirList=QDir(solverPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
-    if(dirList.size()!=0)
-        solverPath+="/"+dirList.back();
-
-    QString solverPathBin=solverPath+"/bin";
-
-    QString applicationPath=QCoreApplication::applicationDirPath();
-    QString svpreName="/svpre";
-    QString svsolverName="/svsolver";
-    QString svsolverNoMPIName="/svsolver-nompi";
-    QString svpostName="/svpost";
-
-    m_InternalMPIExecPath="mpiexec";
-
-    QString filePath="";
-
-#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-    //flowsolver with mpi, prefer to the script one which sets some lib paths for the mpi libs from svsolver
-    //Those libs are needed in Ubuntu 16, intead of using the system ones
-    if(QFile(filePath=solverPathBin+"/.."+svsolverName).exists())
-        m_InternalFlowsolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+svsolverName).exists())
-        m_InternalFlowsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svsolverName).exists())
-        m_InternalFlowsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svsolverName).exists())
-        m_InternalFlowsolverPath=filePath;
-
-    //svpost
-    if(QFile(filePath=solverPathBin+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+"/.."+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-#endif
-
-#if defined(Q_OS_LINUX)
-    //svpre
-    if(QFile(filePath=solverPathBin+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-
-    //flowsolver with no mpi
-    if(QFile(filePath=solverPathBin+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=solverPathBin+"/.."+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=applicationPath+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-
-    //mpiexec
-    //user the system one; issue happens if use the one from svsolver or application in Ubuntu 16
-#endif
-
-#if defined(Q_OS_MAC)
-    //svpre
-    if(QFile(filePath=solverPathBin+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-
-    //flowsolver with no mpi
-    if(QFile(filePath=solverPathBin+"/.."+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=solverPathBin+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=applicationPath+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-
-    //mpiexec
-    QString mpiexecName="/mpiexec";
-    if(QFile(filePath=solverPathBin+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-    else if(QFile(filePath=applicationPath+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-#endif
-
-#if defined(Q_OS_WIN)
-    m_InternalPresolverPath=GetRegistryValue("SimVascular\\svSolver","SVPRE_EXE");
-    m_InternalFlowsolverPath=GetRegistryValue("SimVascular\\svSolver","SVSOLVER_MSMPI_EXE");
-    m_InternalFlowsolverNoMPIPath=GetRegistryValue("SimVascular\\svSolver","SVSOLVER_NOMPI_EXE");
-    m_InternalPostsolverPath=GetRegistryValue("SimVascular\\svSolver","SVPOST_EXE");
-    QString msmpiDir=GetRegistryValue("Microsoft\\MPI","InstallRoot");
-    if(msmpiDir!="")
-    {
-        if(msmpiDir.endsWith("\\"))
-            m_InternalMPIExecPath=msmpiDir+"Bin\\mpiexec";
-        else
-            m_InternalMPIExecPath=msmpiDir+"\\Bin\\mpiexec";
-    }
-#endif
-}
-
+//----------------------
+// OnPreferencesChanged 
+//----------------------
+// Set solver binaries, mpiexec binary and the MPI implementation 
+// used to create and execute simulation jobs.
+//
+// This method is called when the SV Simulation plugin is activated or when values 
+// in the Preferences Page->SimVascular Simulation panel are changed. 
+//
+// If a SimVascular MITK database exists from previous SimVascular sessions then 
+// the values for the binaries are obtained from there. If the database does not
+// exist then set the values of the binaries to their default values, which
+// are the same values set for the SimVascular Simulation Preferences page.
+//
+// The solver binaries are: svpre, svsolver and svpost. The value for each binary
+// contains the full path to the binary together with its name. For example, 
+//
+//     m_FlowsolverPath = "/usr/local/sv/bin/svsolver"
+//
+// Note that the 'binary' may actually be a shell script that sets up environment
+// variables and then executes the actual binary. In that case m_FlowsolverPath
+// is set to (on Linux) 
+//
+//     m_FlowsolverPath = "/usr/local/sv/svsolver"
+//
+// The 'prefs' Get() argument names (e.g. "presolver path") are set by the 
+// sv4guiSimulationPreferencePage object.
+//
 void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
-    if(prefs==NULL)
-        return;
-
-    m_ExternalPresolverPath=prefs->Get("presolver path","");
-    m_ExternalFlowsolverPath=prefs->Get("flowsolver path","");
-    m_UseMPI=prefs->GetBool("use mpi", true);
-    m_ExternalMPIExecPath=prefs->Get("mpiexec path","");
-    m_UseCustom=prefs->GetBool("use custom", false);
-    m_SolverTemplatePath=prefs->Get("solver template path","");
-    m_ExternalPostsolverPath=prefs->Get("postsolver path","");
-}
-
-void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
-{
-    //    if(!IsActivated())
-    if(!IsVisible())
-    {
+    if (prefs == NULL) {
         return;
     }
 
-    if(nodes.size()==0)
-    {
+    // Set the solver binaries.
+    m_PresolverPath = prefs->Get("presolver path", m_DefaultPrefs.GetPreSolver());
+    m_FlowsolverPath = prefs->Get("flowsolver path", m_DefaultPrefs.GetSolver()); 
+    m_PostsolverPath = prefs->Get("postsolver path", m_DefaultPrefs.GetPostSolver());
+    
+    // Set the mpiexec binary and mpi implementation.
+    m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultPrefs.GetMpiExec()); 
+    auto mpiName = prefs->Get("mpi implementation", m_DefaultPrefs.GetMpiName());
+    m_MpiImplementation = m_DefaultPrefs.GetMpiImplementation(mpiName);
+}
+
+//--------------------
+// OnSelectionChanged
+//--------------------
+// Update the SV Simulation plugin panel when an SV Simulation plugin is selected from the
+// SV Data Manager.
+//
+// This method is also called when SimVascular starts and there is a SV Simulation plugin 
+// panel left over from a previous session. In this case nodes.size()==0.
+//
+void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+{
+    if (!IsVisible()) {
+        return;
+    }
+
+    if(nodes.size()==0) {
         RemoveObservers();
         EnableTool(false);
         return;
@@ -450,16 +380,7 @@ void sv4guiSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes
         return;
     }
 
-    //comment this section to always update
-//    if(m_JobNode==jobNode)
-//    {
-//        AddObservers();
-//        EnableTool(true);
-//        return;
-//    }
-
     std::string modelName=mitkJob->GetModelName();
-
     mitk::DataNode::Pointer modelNode=NULL;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (jobNode,isProjFolder,false);
@@ -1716,132 +1637,261 @@ void sv4guiSimulationView::CreateAllFiles()
     CreateDataFiles(GetJobPath(), true, true, false);
 }
 
+//--------
+// RunJob
+//--------
+// Run a simulation job.
+//
 void sv4guiSimulationView::RunJob()
 {
-    if (QMessageBox::question(m_Parent, "Run Job", "Are you sure to run the job? It may take a while to finish.",
-                              QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
-    {
-      return;
-    }
-
-    if(!m_MitkJob)
-        return;
-
-    QString jobPath=GetJobPath();
-    if(jobPath=="" || !QDir(jobPath).exists())
-    {
-        QMessageBox::warning(m_Parent,"Unable to run","Please make sure data files have been created!");
+    if (!m_MitkJob) {
         return;
     }
 
-    QString flowsolverPath=m_ExternalFlowsolverPath;
-    if(flowsolverPath=="")
-    {
-        if(m_UseMPI)
-            flowsolverPath=m_InternalFlowsolverPath;
-        else
-            flowsolverPath=m_InternalFlowsolverNoMPIPath;
-    }
+    // Check that the directory for a job has been created.
+    //
+    QString jobPath = GetJobPath();
 
-    if(flowsolverPath=="")
-    {
-        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please make sure flowsolver exists!");
+    if ((jobPath == "") || !QDir(jobPath).exists()) {
+        QString msg1 = "The simulation job cannot be run.\n\n";
+        QString msg2 = "Please make sure that data files have been created for the simulation.";
+        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
         return;
     }
 
-    QString mpiExecPath="";
-    if(m_UseMPI)
-    {
-        mpiExecPath=m_ExternalMPIExecPath;
-        if(mpiExecPath=="")
-            mpiExecPath=m_InternalMPIExecPath;
+    // Checks throw exceptions if they fail.
 
-        if(mpiExecPath=="")
-        {
-            QMessageBox::warning(m_Parent,"MPIExec Missing","Please make sure mpiexec exists!");
-            return;
+    try {
+
+        // Check that the solver binaries are valid.
+        CheckSolver();
+
+        // Check that mpi is installed and that the implementation is MPICH.
+        CheckMpi();
+
+        // Set the solver output directory.
+        QString runPath = jobPath;
+        int numProcs = ui->sliderNumProcs->value();
+
+        if(m_UseMPI && (numProcs > 1)) {
+            runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
         }
+
+        // Get the simulation start time step and for numProcs=1
+        // write the numstart.dat file. 
+        auto startStep = GetStartTimeStep(runPath, jobPath, numProcs);
+
+        // Execute the job.
+        //
+        int totalSteps=100;
+        sv4guiSimJob* job = m_MitkJob->GetSimJob();
+
+        if (!job) {
+            QMessageBox::warning(m_Parent, MsgTitle, "Cannot start job, simulation job does not exist.");
+            throw std::string("Job does not exist"); 
+        }
+
+        job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
+        totalSteps = QString::fromStdString(job->GetSolverProp("Number of Timesteps")).toInt();
+        mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
+
+        QProcess* flowsolverProcess = new QProcess(m_Parent);
+        flowsolverProcess->setWorkingDirectory(jobPath);
+
+        if (m_UseMPI) {
+            QStringList arguments;
+            arguments << "-n" << QString::number(numProcs) << m_FlowsolverPath;
+            flowsolverProcess->setProgram(m_MPIExecPath);
+            flowsolverProcess->setArguments(arguments);
+        } else {
+            flowsolverProcess->setProgram(m_FlowsolverPath);
+            flowsolverProcess->setArguments(QStringList());
+        }
+
+        sv4guiSolverProcessHandler* handler = new sv4guiSolverProcessHandler(flowsolverProcess, m_JobNode, 
+            startStep, totalSteps, runPath, m_Parent);
+
+        handler->Start();
+
+  } catch (std::string exception) {
+      std::cout << "Run job failed with: " <<  exception << std::endl; 
+  }
+}
+
+//------------------
+// GetStartTimeStep 
+//------------------
+// Get the simulation start step number.
+//
+// The simulation start step number is obtained from the GUI 'Starting Step Number'
+// if it is given. If it is not then it is read from a numstart.dat file.  The numstart.dat 
+// file is written by the solver at the end of each simulation time step for which results 
+// were computed. For a numProcs=1 numstart.dat is written to PROJECT/Simulations/JOB_NAME/,
+// for numProcs=N is is written to PROJECT/Simulations/JOB_NAME/N-procs_case.
+//
+// Arguments:
+//
+//   numProcs: The number of processors used to run the simulation job.
+//
+//   runPath: The path to the PROJECT/Simulations/JOB_NAME/ directory that
+//            simulation results are written to. For a N-processor simulation
+//            it is runPath/'N-procs_case'.
+//
+//   jobPath: The path to the PROJECT/Simulations/JOB_NAME/ directory that 
+//            contains solver files (e.g. solver.inp).
+//
+// Returns:
+//
+//   startStepNumber: The simulation starting time step. 
+//   
+// 
+int sv4guiSimulationView::GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs)
+{
+    auto badValue = false;
+    std::string exception("Write numstart file");
+
+    // Process start time step from the GUI.
+    //
+    auto startStep = ui->lineEditStartStepNum->text().trimmed();
+    auto startStepNumber = startStep.toInt();
+
+    if (startStep == "") { 
+        startStepNumber = 0;
+    } else if ((startStepNumber < 0) || !IsInt(startStep.toStdString())) {
+        QMessageBox::warning(m_Parent, MsgTitle, "The starting step number must be a positive integer.");
+        throw exception; 
     }
 
-    QString runPath=jobPath;
-    int numProcs=ui->sliderNumProcs->value();
-    if(m_UseMPI && numProcs>1)
-    {
-        runPath=jobPath+"/"+QString::number(numProcs)+"-procs_case";
-    }
+    // Read / write the numstart.dat file to runPath.
+    auto fileName = runPath + "/numstart.dat";
+    QFile numStartFile(fileName);
 
-    std::string startingNumber=ui->lineEditStartStepNum->text().trimmed().toStdString();
-    if(startingNumber!="")
-    {
-        if(!IsInt(startingNumber))
-        {
-            QMessageBox::warning(m_Parent,"Parameter Error","Please provide starting step number in correct format.");
-            return;
+    // A starting step has been given so check that a restart file
+    // exists for the given starting step.
+    //
+    if (startStep != "") { 
+        QString runRestart = runPath+"/restart."+startStep+".1";
+        QString jobRestart = jobPath+"/restart."+startStep+".1";
+
+        if ( (QDir(runPath).exists() && !QFile(runRestart).exists()) || 
+             ((numProcs > 1) && !QDir(runPath).exists() && !QFile(jobRestart).exists()) ) {
+            QString msg1 = "No restart file found in " + runPath + " for the starting step number " + startStep + 
+                " and the number of processors " + QString::number(numProcs) + ".\n";
+            QMessageBox::warning(m_Parent, MsgTitle, msg1);
+            throw exception; 
         }
 
-        QString runRestart=runPath+"/restart."+QString::fromStdString(startingNumber)+".1";
-        QString jobRestart=jobPath+"/restart."+QString::fromStdString(startingNumber)+".1";
-
-        if( (QDir(runPath).exists() && !QFile(runRestart).exists())
-                || (numProcs>1 && !QDir(runPath).exists() && !QFile(jobRestart).exists()) )
-        {
-            QMessageBox::warning(m_Parent,"Unable to run","Please make sure starting step number is right");
-            return;
-        }
-
-        QFile numStartFile(runPath+"/numstart.dat");
-        if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
+        // Write the start step to the numstart.dat file.
+        if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
             QTextStream out(&numStartFile);
-            out<<QString::fromStdString(startingNumber+"\n");
+            out << startStep + "\n";
             numStartFile.close();
         }
 
-    }
-
-    int startStep=0;
-    QFile numFile(runPath+"/numstart.dat");
-    if (numFile.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&numFile);
-        QString stepStr=in.readLine();
+    // No start step has been given so read it from the
+    // numstart.dat file.
+    } else if (numStartFile.open(QIODevice::ReadOnly)) {   
+        QTextStream in(&numStartFile);
+        QString stepStr = in.readLine();
         bool ok;
-        int step=stepStr.toInt(&ok);
-        if(ok)
-            startStep=step;
-
-        numFile.close();
+        int step = stepStr.toInt(&ok);
+        if (ok) {
+            startStepNumber = step;
+        }
+        numStartFile.close();
     }
 
-    int totalSteps=100;//initial none zero value
-    sv4guiSimJob* job=m_MitkJob->GetSimJob();
-    if(job)
-    {
-        job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
-        QString tstr=QString::fromStdString(job->GetSolverProp("Number of Timesteps"));
-        totalSteps=tstr.toInt();
+    return startStepNumber;
+}
+
+//-------------
+// CheckSolver
+//-------------
+// Check for valid solver binaries.
+//
+void sv4guiSimulationView::CheckSolver()
+{
+    std::string exception("Check solver");
+
+    // Set the name and path to check for the solver binaries.
+    typedef std::tuple<QString,QString> binaryNamePath;
+    std::vector<binaryNamePath> binariesToCheck = { 
+        std::make_tuple("FlowSolver", m_FlowsolverPath),
+        std::make_tuple("PreSolver", m_PresolverPath),
+        std::make_tuple("PostSolver", m_PostsolverPath)
+    };
+
+    // Check the name and path for the solver binaries.
+    //
+    for (auto const& namePath : binariesToCheck) {
+        auto name = std::get<0>(namePath);
+        auto path = std::get<1>(namePath);
+
+        if ((path == "") || (path == m_DefaultPrefs.UnknownBinary)) {
+            auto msg1 = "The " + name + " executable cannot be found. \n";
+            auto msg2 = "Please install " + name + " and set its location in the Preferences->SimVascular Simulation page.";
+            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+            throw exception; 
+        }
+
+        QFileInfo check_file(path);
+        if (!check_file.exists()) {
+            auto msg1 = "The " + name + " executable '" + path + "' cannot be found. \n\n";
+            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
+            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+            throw exception; 
+        }
+
+        if (!check_file.isFile()) {
+            auto msg1 = "The " + name + " executable '" + path + "' does not name a file. \n";
+            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
+            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+            throw exception; 
+        }
+    }
+}
+
+//----------
+// CheckMpi
+//----------
+// Check for valid mpiexec binary and MPI implementation.
+//
+// svSolver needs the MPICH MPI implementation.
+//
+void sv4guiSimulationView::CheckMpi()
+{
+    std::string exception("Check MPI");
+
+    // Check for valid mpiexec.
+    //
+    QString name = "mpiexec";
+    QString path = m_MPIExecPath; 
+
+    if ((path == "") || (path == m_DefaultPrefs.UnknownBinary)) {
+        auto msg1 = "The " + name + " executable cannot be found. \n\n";
+        auto msg2 = "Please install MPI and set its location in the Preferences->SimVascular Simulation page.";
+        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+        throw exception; 
+     }
+
+    QFileInfo check_file(path);
+
+    if (!check_file.exists()) {
+        auto msg1 = "The " + name + " executable '" + path + "' cannot be found. \n\n";
+        auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
+        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+        throw exception; 
     }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
-
-    QProcess *flowsolverProcess = new QProcess(m_Parent);
-    flowsolverProcess->setWorkingDirectory(jobPath);
-
-    if(m_UseMPI)
-    {
-        QStringList arguments;
-        arguments << "-n" << QString::number(numProcs)<< flowsolverPath;
-        flowsolverProcess->setProgram(mpiExecPath);
-        flowsolverProcess->setArguments(arguments);
-    }
-    else
-    {
-        flowsolverProcess->setProgram(flowsolverPath);
-        flowsolverProcess->setArguments(QStringList());
-    }
-
-    sv4guiSolverProcessHandler* handler=new sv4guiSolverProcessHandler(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,m_Parent);
-    handler->Start();
+    // Check the MPI implementation.
+    //
+    auto mpiName = m_DefaultPrefs.GetMpiName();
+    if (m_MpiImplementation != sv4guiSimulationPreferences::MpiImplementation::MPICH) {
+       QString msg1 = "svSolver requires MPICH but an MPICH MPI implementation was not found.\n";
+       QString msg2 = "Please install MPICH MPI or set the location of an MPICH mpiexec in the Preferences->SimVascular Simulation page.";
+       QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+       throw exception; 
+    } 
 }
 
 bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
@@ -1999,9 +2049,9 @@ bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFile
             return false;
         }
 
-        QString presolverPath=m_ExternalPresolverPath;
+        QString presolverPath=m_PresolverPath;
         if(presolverPath=="")
-            presolverPath=m_InternalPresolverPath;
+            presolverPath=m_PresolverPath;
 
 //        if(presolverPath=="" || !QFile(presolverPath).exists())
         if(presolverPath=="")
@@ -2539,11 +2589,15 @@ void sv4guiSimulationView::SetResultDir()
     ui->lineEditResultDir->setText(dir);
 }
 
+//---------------
+// ExportResults
+//---------------
+//
 void sv4guiSimulationView::ExportResults()
 {
-    QString postsolverPath=m_ExternalPostsolverPath;
+    QString postsolverPath=m_PostsolverPath;
     if(postsolverPath=="")
-        postsolverPath=m_InternalPostsolverPath;
+        postsolverPath=m_PostsolverPath;
 
     if(postsolverPath=="" || !QFile(postsolverPath).exists())
     {
@@ -2722,6 +2776,7 @@ void sv4guiSimulationView::ExportResults()
 
         if( convertedFilesExit && meshFaceDirExits && meshFaceFilesExist )
         {
+
 
             QString outPressureFlePath=exportDir+"/all_results-pressures.txt";
             QString outFlowFilePath=exportDir+"/all_results-flows.txt";

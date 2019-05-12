@@ -50,6 +50,7 @@
 #include "sv4gui_Model.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MitkSimJob.h"
+#include "sv4gui_MitkSimJob1d.h"
 
 #include <QMenu>
 #include <QMenuBar>
@@ -690,6 +691,8 @@ void sv4guiWorkbenchWindowAdvisor::PostWindowCreate()
                 idx=5;
             else if(viewID=="org.sv.views.simulation")
                 idx=6;
+            else if(viewID=="org.sv.views.simulation1d")
+                idx=7;
             else
             {
                 svIdx++;
@@ -1176,6 +1179,7 @@ void sv4guiWorkbenchWindowAdvisor::ShowSVView()
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
+    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
 
     if( selectedNode.IsNotNull() && dynamic_cast<mitk::Image*>(selectedNode->GetData()) )
     {
@@ -1206,6 +1210,10 @@ void sv4guiWorkbenchWindowAdvisor::ShowSVView()
     else if(isSimJob->CheckNode(selectedNode))
     {
        page->ShowView("org.sv.views.simulation");
+    }
+    else if(isSim1dJob->CheckNode(selectedNode))
+    {
+       page->ShowView("org.sv.views.simulation1d");
     }
 }
 
@@ -1726,6 +1734,7 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("sv4guiModelFolder");
     mitk::NodePredicateDataType::Pointer isMeshFolder = mitk::NodePredicateDataType::New("sv4guiMeshFolder");
     mitk::NodePredicateDataType::Pointer isSimFolder = mitk::NodePredicateDataType::New("sv4guiSimulationFolder");
+    mitk::NodePredicateDataType::Pointer isSim1dFolder = mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder");
 
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("sv4guiPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("sv4guiContourGroup");
@@ -1733,6 +1742,7 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("sv4guiModel");
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
+    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
 
     mitk::DataNode::Pointer parentNode=NULL;
 
@@ -1788,6 +1798,7 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
         else
             return;
     }
+
     else if(isSimJob->CheckNode(m_CopyDataNode))
     {
         if(isSimFolder->CheckNode(node))
@@ -1801,6 +1812,21 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
         else
             return;
     }
+
+    else if(isSim1dJob->CheckNode(m_CopyDataNode))
+    {
+        if(isSim1dFolder->CheckNode(node))
+            parentNode=node;
+        else if(isSim1dJob->CheckNode(node))
+        {
+            mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
+            if(rs->size()>0)
+                parentNode=rs->GetElement(0);
+        }
+        else
+            return;
+    }
+
     else
     {
         return;
@@ -1854,6 +1880,14 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     if(simJob)
     {
         sv4guiMitkSimJob::Pointer copyJob=simJob->Clone();
+        copyJob->SetStatus("No Data Files");
+        newNode->SetData(copyJob);
+    }
+
+    sv4guiMitkSimJob1d* simJob1d=dynamic_cast<sv4guiMitkSimJob1d*>(m_CopyDataNode->GetData());
+    if(simJob1d)
+    {
+        sv4guiMitkSimJob1d::Pointer copyJob=simJob1d->Clone();
         copyJob->SetStatus("No Data Files");
         newNode->SetData(copyJob);
     }

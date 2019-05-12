@@ -67,6 +67,8 @@ public slots:
 
     void UpdateStatus();
 
+    void ProcessError(QProcess::ProcessError error);
+
 private:
 
     QProcess* m_Process;

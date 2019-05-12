@@ -28,7 +28,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+#include "SimVascular.h"
+#include "SimVascular_python.h"
+
 #include "sv4gui_Vis_init_py.h"
 #include "sv_Repository.h"
 #include "sv_PolyData.h"
@@ -200,7 +202,7 @@ int GUI_pyInit()
 #elif PYTHON_MAJOR_VERSION == 3
     PyInit_pyGUI();
 #endif
-  return Py_OK;
+  return SV_OK;
 
 }
 
@@ -444,13 +446,13 @@ mitk::DataNode::Pointer getFolderNode(mitk::DataStorage::Pointer dataStorage,
         if (folderNode.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Error getting a pointer to the folderNode.");
-            return Py_ERROR;
+            
         }
     }
     else
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to the folderNode.");
-        return Py_ERROR;
+        
     }
     
     return folderNode;
@@ -472,7 +474,7 @@ mitk::DataNode::Pointer getProjectFolderNode(mitk::DataStorage::Pointer dataStor
     else
     {
             PyErr_SetString(PyRunTimeErr, "No project has been created.");
-            return Py_ERROR;
+            
     }
     return projFolderNode;
 }
@@ -591,7 +593,7 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"ss|sid", &fileName, &childName, &parentName, &copy, &factor))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: fileName, childName and optional char, int, double parentName, copy, factor");
-        return Py_ERROR;
+        
     }
     
         //get active data storage
@@ -613,7 +615,7 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -624,7 +626,7 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     
     //get project folder
@@ -638,25 +640,25 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
     {
         printf(parentName);
         PyErr_SetString(PyRunTimeErr, "Not a valid folder name for images");
-        return Py_ERROR;
+        
     }
     mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
     if (existingNode)
     {
         PyErr_SetString(PyRunTimeErr, "Image with the same name alreay exists");
-        return Py_ERROR;
+        
     }
     }
     else
         folderNode = getFolderNode(dataStorage,projFolderNode,"svRepositoryFolder");
     
-    if(AddImageFromFile(dataStorage,folderNode,fileName,childName,copy,factor)==Py_ERROR)
+    if(AddImageFromFile(dataStorage,folderNode,fileName,childName,copy,factor)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        return Py_ERROR;
+        
     }
 
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
 }
 // ---------------------
 //  GUI_ImportPolyDataFromRepos
@@ -671,14 +673,14 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"s|s", &childName, &parentName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: childName, parentName");
-        return Py_ERROR;
+        
     }
             
     obj = gRepository->GetObject( childName );
     if ( obj == NULL )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find PolyData" );
-        return Py_ERROR;
+        
     }
     
 
@@ -701,7 +703,7 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -712,7 +714,7 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     
     
@@ -726,27 +728,27 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     else
     {
         PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
-        return Py_ERROR;
+        
     }
     mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
     if (existingNode)
     {
         PyErr_SetString(PyRunTimeErr, "Object with the same name alreay exists");
-        return Py_ERROR;
+        
     }
     }
     else
     {
         folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiRepositoryFolder");
     }
-    if(AddDataNode(dataStorage, obj,folderNode,childName)==Py_ERROR)
+    if(AddDataNode(dataStorage, obj,folderNode,childName)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        return Py_ERROR;
+        
     }
 
     
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
     
 
 }
@@ -763,14 +765,14 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"s|s", &childName, &parentName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: childName, parentName");
-        return Py_ERROR;
+        
     }
             
     obj = gRepository->GetObject( childName );
     if ( obj == NULL )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find unstructured grid" );
-        return Py_ERROR;
+        
     }
     
     //get active data storage
@@ -791,7 +793,7 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -802,7 +804,7 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     
     //get project folder
@@ -815,27 +817,27 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     else
     {
         PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
-        return Py_ERROR;
+        
     }
     mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
     if (existingNode)
     {
         PyErr_SetString(PyRunTimeErr, "Object with the same name alreay exists");
-        return Py_ERROR;
+        
     }
     }
     else
     {
         folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiRepositoryFolder");
     }
-    if(AddDataNode(dataStorage, obj,folderNode,childName)==Py_ERROR)
+    if(AddDataNode(dataStorage, obj,folderNode,childName)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        return Py_ERROR;
+        
     }
 
     
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
     
 
 }
@@ -850,13 +852,13 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: nodeName, reposName");
-        return Py_ERROR;
+        
     }
     
     if(gRepository->Exists( reposName ))
     {
         PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-        return Py_ERROR;
+        
     }
 
     //get active data storage
@@ -878,7 +880,7 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -889,7 +891,7 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     mitk::DataNode::Pointer folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiModelFolder");
@@ -901,13 +903,13 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            return Py_ERROR;
+            
         }
     }
     if(node.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-        return Py_ERROR;
+        
     }
 
     sv4guiModel* model = dynamic_cast<sv4guiModel*> (node->GetData());
@@ -916,7 +918,7 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     if (pd == NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting polydata from data storage");
-        return Py_ERROR;
+        
     }
 
     cvPolyData* cvpd = new cvPolyData( pd );
@@ -924,10 +926,10 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     {
         PyErr_SetString(PyRunTimeErr, "error registering object in repository");
         delete cvpd;
-        return Py_ERROR;
+        
     }
     
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
     
 }
 
@@ -943,13 +945,13 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: nodeName, reposName");
-        return Py_ERROR;
+        
     }
     
     if(gRepository->Exists( reposName ))
     {
         PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-        return Py_ERROR;
+        
     }
 
     //get active data storage
@@ -971,7 +973,7 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -982,7 +984,7 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     mitk::DataNode::Pointer folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiMeshFolder");
@@ -994,34 +996,33 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            return Py_ERROR;
+            
         }
     }
     if(node.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-        return Py_ERROR;
     }
     
     cvUnstructuredGrid *cvug;
     sv4guiMitkMesh* mitkMesh = dynamic_cast<sv4guiMitkMesh*> (node->GetData());
-    if (!mitkMesh) return Py_ERROR;
+    if (!mitkMesh) return SV_PYTHON_ERROR;
     sv4guiMesh* mesh = mitkMesh->GetMesh();
     vtkSmartPointer<vtkUnstructuredGrid> ug = mesh->GetVolumeMesh();
     if(ug == NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting data from data storage");
-        return Py_ERROR;
+        
     }
     cvug = new cvUnstructuredGrid(ug);
     if ( !( gRepository->Register( reposName, cvug ) ) )
     {
         PyErr_SetString(PyRunTimeErr, "error registering object in repository");
         delete cvug;
-        return Py_ERROR;
+        
     }
 
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
     
 }
 
@@ -1036,13 +1037,13 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: nodeName, reposName");
-        return Py_ERROR;
+        
     }
     
     if(gRepository->Exists( reposName ))
     {
         PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-        return Py_ERROR;
+        
     }
 
     //get active data storage
@@ -1064,7 +1065,7 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -1075,7 +1076,7 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     mitk::DataNode::Pointer folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiImageFolder");
@@ -1087,17 +1088,17 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            return Py_ERROR;
+            
         }
     }
     if(node.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-        return Py_ERROR;
+        
     }
     
     mitk::Image* image=dynamic_cast<mitk::Image*>(node->GetData());
-    if (!image) return Py_ERROR;
+    if (!image) return SV_PYTHON_ERROR;
     vtkImageData* vtkObj=MitkImage2VtkImage(image);
     if (vtkObj)
     {
@@ -1138,17 +1139,17 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
         {
             PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
             delete sp;
-            return Py_ERROR;
+            
         }
     }
     else
     {
         PyErr_SetString(PyRunTimeErr, "Error getting vtk object from mitk image.");
-        return Py_ERROR;
+        
     }
 
     
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
     
 }
 
@@ -1163,13 +1164,13 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: nodeName, reposName");
-        return Py_ERROR;
+        
     }
     
     if(gRepository->Exists( reposName ))
     {
         PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-        return Py_ERROR;
+        
     }
 
     //get active data storage
@@ -1191,7 +1192,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -1201,7 +1202,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     mitk::DataNode::Pointer folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiPathFolder");
@@ -1213,14 +1214,14 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            return Py_ERROR;
+            
         }
     }
     sv4guiPath* path = dynamic_cast<sv4guiPath*> (node->GetData());
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting path from data storage");
-        return Py_ERROR;
+        
     }
     sv4guiPathElement* pathElem = path->GetPathElement();
 
@@ -1259,9 +1260,9 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     {
         PyErr_SetString(PyRunTimeErr, "error registering object in repository");
         delete corePath;
-        return Py_ERROR;
+        
     }
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
 }
 
 // -----------------------
@@ -1279,14 +1280,14 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"s|s", &childName, &parentName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: childName, parentName");
-        return Py_ERROR;
+        
     }
             
     obj = gRepository->GetObject( childName );
     if ( obj == NULL )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find path" );
-        return Py_ERROR;
+        
     }
     
     type = obj->GetType();
@@ -1294,7 +1295,7 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
     if ( type != PATH_T )
     {
         PyErr_SetString(PyRunTimeErr,"not a path object");
-        return Py_ERROR;
+        
     }
     
     //get active data storage
@@ -1313,7 +1314,7 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -1324,7 +1325,7 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     
     
@@ -1340,13 +1341,13 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
             if (existingNode)
             {
                 PyErr_SetString(PyRunTimeErr, "Path with the same name alreay exists");
-                return Py_ERROR;
+                
             }
         }
         else
         {
             PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
-            return Py_ERROR;
+            
         }
     }
     else
@@ -1354,13 +1355,13 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
         folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiRepositoryFolder");
     }
 
-    if(AddDataNode(dataStorage, obj,folderNode,childName)==Py_ERROR)
+    if(AddDataNode(dataStorage, obj,folderNode,childName)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        return Py_ERROR;
+        
     }
 
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
     
 
 }
@@ -1382,7 +1383,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"sOs|s", &childName, &srcList, &pathName, &parentName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars and one list: childName, srcList and parentName");
-        return Py_ERROR;
+        
     }
         
     int numsrc = PyList_Size(srcList);
@@ -1402,7 +1403,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
         {
             sprintf(r, "Couldn't find contour %s", srcName);
             PyErr_SetString(PyRunTimeErr, r );
-            return Py_ERROR;
+            
         }
     
         type = objs[i]->GetType();
@@ -1411,7 +1412,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
         {
             sprintf(r, "Not a contour object: %s", srcName);
             PyErr_SetString(PyRunTimeErr,r);
-            return Py_ERROR;
+            
         }
     }
        //get active data storage
@@ -1430,7 +1431,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -1441,7 +1442,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
       
     //get project folder
@@ -1460,7 +1461,6 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     if (path.IsNull())
     {
         printf("Segmentations require path; no path was found");
-        //return Py_ERROR;
     }
     //default adds to the repository folder
     if(parentName)
@@ -1472,26 +1472,26 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
             if (existingNode)
             {
                 PyErr_SetString(PyRunTimeErr, "Segmentation with the same name alreay exists");
-                return Py_ERROR;
+                
             }
         }
         else
         {
             PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
-            return Py_ERROR;
+            
         }
     }
     else
     {
         folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiRepositoryFolder");
     }
-    if(AddContourDataNode(dataStorage, objs,folderNode,childName,pathName,path)==Py_ERROR)
+    if(AddContourDataNode(dataStorage, objs,folderNode,childName,pathName,path)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        return Py_ERROR;
+        
     }
 
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
     
 }
 
@@ -1507,7 +1507,7 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
     if(!PyArg_ParseTuple(args,"sO", &childName,&dstList))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import one char and one list: nodeName, dstList");
-        return Py_ERROR;
+        
     }
     
     int num = PyList_Size(dstList);
@@ -1526,7 +1526,7 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
         {
             sprintf(r, "Name %s already exists in the repository", strList[i]);
             PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-            return Py_ERROR;
+            
         }
     }
     //get active data storage
@@ -1548,7 +1548,7 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        return Py_ERROR;
+        
     }
     
     // Get the active data storage (or the default one, if none is active)
@@ -1558,7 +1558,7 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        return Py_ERROR;
+        
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     mitk::DataNode::Pointer folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiSegmentationFolder");
@@ -1570,14 +1570,14 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            return Py_ERROR;
+            
         }
     }
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*> (node->GetData());
     if (group==NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting contour group from data storage");
-        return Py_ERROR;
+        
     }
     for (int i=0; i<num; i++)
     {
@@ -1589,14 +1589,14 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
         {
             sprintf(r, "Error getting polydata from contour %s", r);
             PyErr_SetString(PyRunTimeErr, r);
-            return Py_ERROR;
+            
         } 
         cvPolyData* cvpd = new cvPolyData( contourPd );
         if ( !( gRepository->Register( strList[i], cvpd ) ) )
         {
             PyErr_SetString(PyRunTimeErr, "error registering object in repository");
-            return Py_ERROR;
+            
         }
     }
-    return Py_BuildValue("s","success");
+    return SV_PYTHON_OK;
 }

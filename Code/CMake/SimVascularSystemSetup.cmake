@@ -167,6 +167,9 @@ if(APPLE)
   # Set the os version number
   set(SV_PLATFORM_VERSION_DIR "${SV_OSX_MAJOR_VERSION}.${SV_OSX_MINOR_VERSION}" CACHE STRING "The distribution platform version being used.")
 
+  ## Set the non-core plugin directory.
+  set(SV_PLUGIN_INSTALL_DIR "/usr/local/sv/svplugins")
+
 elseif(LINUX)
 
   # To get the distriubtion and the version, we need to use lsb
@@ -190,6 +193,9 @@ elseif(LINUX)
   # Set the distrib and version
   set(SV_PLATFORM_DIR "${_platform_lower}" CACHE STRING "The distribution platform being used.")
   set(SV_PLATFORM_VERSION_DIR "${LSB_VERSION}" CACHE STRING "The distribution platform version being used.")
+
+  ## Set the non-core plugin directory.
+  set(SV_PLUGIN_INSTALL_DIR "/usr/local/sv/svplugins")
 
 elseif(WIN64)
 
