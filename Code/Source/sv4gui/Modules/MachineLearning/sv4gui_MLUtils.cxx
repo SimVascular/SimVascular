@@ -48,7 +48,7 @@ sv4gui_MLUtils* sv4gui_MLUtils::getInstance(std::string network_type){
 
 sv4gui_MLUtils::sv4gui_MLUtils(std::string network_type){
 
-  Py_Initialize();
+  //Py_Initialize();
   PyRun_SimpleString("import sys");
   // PyRun_SimpleString("sys.path.append(\"/home/marsdenlab/projects/SV/SimVascular-Plugin-MachineLearning/build/lib/python_packages\")");
   // PyRun_SimpleString("sys.path.append(\"/home/marsdenlab/projects/SV/SimVascular-Plugin-MachineLearning/build/lib/seg_regression\")");
@@ -85,7 +85,7 @@ sv4gui_MLUtils::~sv4gui_MLUtils(){
   Py_DECREF(py_wrapper_mod);
   Py_DECREF(py_wrapper_class);
   Py_DECREF(py_wrapper_inst);
-  Py_Finalize();
+  //Py_Finalize();
 }
 
 std::string sv4gui_MLUtils::setImage(std::string image_path){
