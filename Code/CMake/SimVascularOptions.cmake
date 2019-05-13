@@ -170,7 +170,7 @@ option(SV_NO_PYTHONQT_ALL "Option to use PythonQt_all" ON)
 
 option(SV_USE_MITK_CONFIG "Option to use MITKConfig.cmake" OFF)
 
-option(SV_USE_MITK_SEGMENTATION "Option to add the mitk segmentation plugin" ON)
+option(SV_USE_MITK_SEGMENTATION "Option to add the mitk segmentation plugin" OFF)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
