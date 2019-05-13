@@ -113,7 +113,10 @@ void sv4guiProjectDataNodesPluginActivator::start(ctkPluginContext* context)
 
     mitk::NodePredicateDataType::Pointer isSeg3D = mitk::NodePredicateDataType::New("sv4guiMitkSeg3D");
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitkSeg3D"), QString(":svseg3d.png"), isSeg3D, descriptorManager));
-
+#ifdef SV_USE_MITK_SEGMENTATION
+    mitk::NodePredicateDataType::Pointer isSeg3DMITK = mitk::NodePredicateDataType::New("sv4guiMitkSeg3DMITK");
+    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitkSeg3DMITK"), QString(":svseg3d.png"), isSeg3DMITK, descriptorManager));
+#endif
     mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("sv4guiModelFolder");
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiModelFolder"), QString(":svmodelfolder.png"), isModelFolder, descriptorManager));
 

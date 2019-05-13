@@ -85,6 +85,9 @@ set(${proj}_LIBNAMES CppMicroServices
                      mbilog
                      PocoFoundation
                      PocoUtil)
+if(SV_USE_MITK_SEGMENTATION)
+    list(APPEND ${proj}_LIBNAMES MitkMultilabel)
+endif()
 
 set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
                             org_mitk_gui_common
@@ -163,7 +166,14 @@ elseif(${proj}_VERSION VERSION_GREATER "2018.01")
     "mitkLogoAnnotation.h"                           #mitk/Modules/Annotation
     )
 endif()
-
+if(SV_USE_MITK_SEGMENTATION)
+    list(APPEND ${proj}_HEADERS
+        "mitkLabelSetImage.h"                            #mitk/Modules/Multilabel
+        "mitkBooleanOperation.h"                         #mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
+        "mitkMorphologicalOperations.h"                  #mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
+        "QmitkSegmentationOrganNamesHandling.cpp"        #mitk/Modules/SegmentationUI/Qmitk
+        )
+endif()
 #-----------------------------------------------------------------------------
 # Find Libraries
 #-----------------------------------------------------------------------------
@@ -315,7 +325,6 @@ set(${proj}_POSSIBLE_INCLUDE_PATHS
   "${${proj}_DIR}/include/*/*/*/*/*/*"
   )
 
-#message("${proj}_POSSIBLE_INCLUDE_PATHS: ${${proj}_POSSIBLE_INCLUDE_PATHS}")
 #-----------------------------------------------------------------------------
 # Search for header
 set(${proj}_HEADERS_MISSING ${${proj}_HEADERS})

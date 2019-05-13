@@ -1,0 +1,57 @@
+/*===================================================================
+
+The Medical Imaging Interaction Toolkit (MITK)
+
+Copyright (c) German Cancer Research Center,
+Division of Medical and Biological Informatics.
+All rights reserved.
+
+This software is distributed WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE.
+
+See LICENSE.txt or http://www.mitk.org for details.
+
+===================================================================*/
+#ifndef QMITKTHRESHOLDACTION_H
+#define QMITKTHRESHOLDACTION_H
+
+#include <org_sv_gui_qt_mitksegmentation_Export.h>
+
+// Parent classes
+#include <QObject>
+#include <mitkIContextMenuAction.h>
+
+// Data members
+#include <mitkDataStorage.h>
+#include <mitkToolManager.h>
+
+
+class SV_QT_MITKSEGMENTATION QmitkThresholdAction : public QObject, public mitk::IContextMenuAction
+{
+  Q_OBJECT
+  Q_INTERFACES(mitk::IContextMenuAction)
+
+public:
+  QmitkThresholdAction();
+  ~QmitkThresholdAction();
+
+  // IContextMenuAction
+  void Run(const QList<mitk::DataNode::Pointer> &selectedNodes) override;
+  void SetDataStorage(mitk::DataStorage *dataStorage) override;
+  void SetSmoothed(bool smoothed) override;
+  void SetDecimated(bool decimated) override;
+  void SetFunctionality(berry::QtViewPart* view) override;
+
+  void OnThresholdingToolManagerToolModified();
+
+private:
+  QmitkThresholdAction(const QmitkThresholdAction &);
+  QmitkThresholdAction & operator=(const QmitkThresholdAction &);
+
+  mitk::DataNode::Pointer m_SelectedNode;
+  mitk::DataStorage::Pointer m_DataStorage;
+  mitk::ToolManager::Pointer m_ThresholdingToolManager;
+};
+
+#endif

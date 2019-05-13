@@ -1,0 +1,66 @@
+set(CPP_FILES
+  QmitkSegmentationPreferencePage.cpp
+  mitkPluginActivator.cpp
+  QmitkSegmentationView.cpp
+  QmitkThresholdAction.cpp
+  QmitkCreatePolygonModelAction.cpp
+  #QmitkStatisticsAction.cpp
+  QmitkAutocropAction.cpp
+  QmitkDeformableClippingPlaneView.cpp
+  QmitkDataSelectionWidget.cpp
+  QmitkSegmentationUtilitiesView.cpp
+  QmitkSegmentationUtilityWidget.cpp
+  QmitkBooleanOperationsWidget.cpp
+  QmitkImageMaskingWidget.cpp
+  QmitkContourModelToImageWidget.cpp
+  QmitkMorphologicalOperationsWidget.cpp
+  QmitkSurfaceToImageWidget.cpp
+)
+
+set(UI_FILES
+  QmitkSegmentationControls.ui
+  QmitkDeformableClippingPlaneViewControls.ui
+  QmitkDataSelectionWidgetControls.ui
+  QmitkSegmentationUtilitiesViewControls.ui
+  QmitkBooleanOperationsWidgetControls.ui
+  QmitkImageMaskingWidgetControls.ui
+  QmitkContourModelToImageWidgetControls.ui
+  QmitkMorphologicalOperationsWidgetControls.ui
+  QmitkSurfaceToImageWidgetControls.ui
+)
+
+set(MOC_H_FILES
+  QmitkSegmentationPreferencePage.h
+  mitkPluginActivator.h
+  QmitkSegmentationView.h
+  QmitkThresholdAction.h
+  QmitkCreatePolygonModelAction.h
+  #QmitkStatisticsAction.h
+  QmitkAutocropAction.h
+  QmitkDeformableClippingPlaneView.h
+  QmitkDataSelectionWidget.h
+  QmitkSegmentationUtilitiesView.h
+  QmitkSegmentationUtilityWidget.h
+  QmitkBooleanOperationsWidget.h
+  QmitkImageMaskingWidget.h
+  QmitkContourModelToImageWidget.h
+  QmitkMorphologicalOperationsWidget.h
+  QmitkSurfaceToImageWidget.h
+)
+
+set(CACHED_RESOURCE_FILES
+  resources/segmentation.svg
+  resources/deformablePlane.png
+  resources/clipping_plane_translate_48x48.png
+  resources/clipping_plane_rotate48x48.png
+  resources/clipping_plane_deform48x48.png
+  resources/segmentation_utilities.svg
+  plugin.xml
+)
+
+set(QRC_FILES
+  resources/segmentation.qrc
+  resources/SegmentationUtilities.qrc
+  resources/BooleanOperationsWidget.qrc
+  resources/MorphologicalOperationsWidget.qrc
+)
