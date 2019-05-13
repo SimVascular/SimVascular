@@ -177,7 +177,6 @@ for i in $(find $MITK_BLDDIR/MITK-build -name "*Config.h"); do
 done
 
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/ContourModel/DataManagement
-           $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/ContourModel/Algorithms
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/CppMicroServices/core/src/module
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/CppMicroServices/core/src/service
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/CppMicroServices/core/src/util
@@ -204,7 +203,6 @@ done
            $GMKDIR -p $MITK_BINDIR/include/mitk/Utilities/mbilog
 
 	   $GCP -fl $MITK_SRCDIR/Modules/ContourModel/DataManagement/*.h $MITK_BINDIR/include/mitk/Modules/ContourModel/DataManagement
-	   $GCP -fl $MITK_SRCDIR/Modules/ContourModel/Algorithms/*.h $MITK_BINDIR/include/mitk/Modules/ContourModel/Algorithms
            $GCP -fl $MITK_SRCDIR/Modules/CppMicroServices/core/src/module/*.h $MITK_BINDIR/include/mitk/Modules/CppMicroServices/core/src/module
            $GCP -fl $MITK_SRCDIR/Modules/CppMicroServices/core/src/service/*.h $MITK_BINDIR/include/mitk/Modules/CppMicroServices/core/src/service
            $GCP -fl $MITK_SRCDIR/Modules/CppMicroServices/core/src/util/*.h $MITK_BINDIR/include/mitk/Modules/CppMicroServices/core/src/util
