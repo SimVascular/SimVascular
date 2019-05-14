@@ -1,10 +1,10 @@
 set(H_FILES
-    sv4gui_MLUtils.h
+    sv4gui_MachineLearningUtils.h
     json.hpp
 )
 
 set(CPP_FILES
-    sv4gui_MLUtils.cxx
+    sv4gui_MachineLearningUtils.cxx
 )
 
 #set(RESOURCE_FILES
