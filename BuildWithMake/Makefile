@@ -255,7 +255,21 @@ mk_simvascular_options_h:
 	-echo "#define MITK_PATCH_VERSION $(MITK_PATCH_VERSION)" >> ../Code/Source/Include/Make/simvascular_options.h
 	-echo "#endif" >> ../Code/Source/Include/Make/simvascular_options.h
 
-common-pre-build: mksedscript mk_simvascular_options_h post-build 
+machine-learning-network:
+	if [[ ! -e ../Python/site-packages/sv_ml/results ]];  then \
+	  /bin/rm -Rf results; \
+	  /bin/rm -Rf ../Python/site-packages/sv_ml/results; \
+	  /bin/rm -f networks.tar; \
+	  mkdir results; \
+	  wget http://simvascular.stanford.edu/downloads/public/machine_learning/networks.tar .; \
+	  cd results; tar xvf ../networks.tar;cd ..; \
+	  /bin/mv results ../Python/site-packages/sv_ml/results; \
+	  /bin/rm -f networks.tar; \
+	fi
+
+#	-/bin/rm -f networks.tar
+
+common-pre-build: mksedscript mk_simvascular_options_h machine-learning-network post-build 
 	mkdir -p Bin
 	mkdir -p Lib
 	mkdir -p Bin/plugins
@@ -397,3 +411,4 @@ clean:
 
 veryclean:  clean
 	if [ -e ext ];then /bin/rm -Rf ext;fi
+	if [ -e ../Python/site-packages/sv_ml/results ];then /bin/rm -Rf ../Python/site-packages/sv_ml/results;fi
