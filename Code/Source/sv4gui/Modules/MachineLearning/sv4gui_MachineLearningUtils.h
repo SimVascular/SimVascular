@@ -29,8 +29,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUIMLUTILS_H
-#define SV4GUIMLUTILS_H
+#ifndef SV4GUIMACHINELEARNINGUTILS_H
+#define SV4GUIMACHINELEARNINGUTILS_H
+
+#include "SimVascular.h"
+#include "sv4guiModuleMachineLearningExports.h"
 
 //needed because clash between QT slots keyword and python stuff
 //see https://stackoverflow.com/questions/23068700/embedding-python3-in-qt-5
@@ -45,14 +48,14 @@
 #include "sv4gui_Path.h"
 #include "sv4gui_ContourGroup.h"
 
-class  sv4gui_MLUtils
+class SV4GUIMODULEMACHINELEARNING_EXPORT sv4gui_MachineLearningUtils
 {
 
 public:
 
-    static sv4gui_MLUtils* getInstance(std::string network_type);
+    static sv4gui_MachineLearningUtils* getInstance(std::string network_type);
 
-    virtual ~sv4gui_MLUtils();
+    virtual ~sv4gui_MachineLearningUtils();
 
     std::string setImage(std::string image_path);
 
@@ -61,9 +64,9 @@ public:
     void sampleNetwork();
 
 private:
-  sv4gui_MLUtils(std::string network_type);
+  sv4gui_MachineLearningUtils(std::string network_type);
 
-  static sv4gui_MLUtils* instance;
+  static sv4gui_MachineLearningUtils* instance;
 
 protected:
 
@@ -72,4 +75,4 @@ protected:
   PyObject* py_wrapper_inst;
 };
 
-#endif /* SV4GUIMLUTILS_H */
+#endif /* SV4GUIMACHINELEARNINGUTILS_H */

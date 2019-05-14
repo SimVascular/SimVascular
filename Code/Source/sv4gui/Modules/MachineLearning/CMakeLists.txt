@@ -34,7 +34,7 @@ set(lib "_simvascular_module_ml")
 # Create module
 simvascular_create_module(
   TARGET ${lib}
-  EXPORT_DIRECTIVE sv4guimoduleML
+  EXPORT_DIRECTIVE sv4guiModuleMachineLearning
   SHARED_LIB ${SV_USE_MODULES_SHARED_LIBRARIES}
   LIBRARY_DEPENDS
   ${MITK_LIBRARIES}

@@ -28,7 +28,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "sv4gui_MLUtils.h"
+#include "sv4gui_MachineLearningUtils.h"
 #include <json.hpp>
 #include <iostream>
 
@@ -37,16 +37,16 @@ using json = nlohmann::json;
 //see https://stackoverflow.com/questions/16777126/pyobject-callmethod-with-keyword-arguments
 //for some examples of calling python code from C++
 
-sv4gui_MLUtils* sv4gui_MLUtils::instance = 0;
+sv4gui_MachineLearningUtils* sv4gui_MachineLearningUtils::instance = 0;
 
-sv4gui_MLUtils* sv4gui_MLUtils::getInstance(std::string network_type){
+sv4gui_MachineLearningUtils* sv4gui_MachineLearningUtils::getInstance(std::string network_type){
   if (instance == 0){
-    instance = new sv4gui_MLUtils(network_type);
+    instance = new sv4gui_MachineLearningUtils(network_type);
   }
   return instance;
 }
 
-sv4gui_MLUtils::sv4gui_MLUtils(std::string network_type){
+sv4gui_MachineLearningUtils::sv4gui_MachineLearningUtils(std::string network_type){
 
   //Py_Initialize();
   PyRun_SimpleString("import sys");
@@ -80,15 +80,15 @@ sv4gui_MLUtils::sv4gui_MLUtils(std::string network_type){
 
 }
 
-sv4gui_MLUtils::~sv4gui_MLUtils(){
-  std::cout << "sv4gui_MLUtils destructor\n";
+sv4gui_MachineLearningUtils::~sv4gui_MachineLearningUtils(){
+  std::cout << "sv4gui_MachineLearningUtils destructor\n";
   Py_DECREF(py_wrapper_mod);
   Py_DECREF(py_wrapper_class);
   Py_DECREF(py_wrapper_inst);
   //Py_Finalize();
 }
 
-std::string sv4gui_MLUtils::setImage(std::string image_path){
+std::string sv4gui_MachineLearningUtils::setImage(std::string image_path){
   PyObject* py_res = PyObject_CallMethod(py_wrapper_inst, "set_image",
                         "s", image_path.c_str());
 
@@ -102,7 +102,7 @@ std::string sv4gui_MLUtils::setImage(std::string image_path){
   return std::string(cstr);
 }
 
-std::vector<std::vector<double>> sv4gui_MLUtils::segmentPathPoint(sv4guiPathElement::sv4guiPathPoint path_point){
+std::vector<std::vector<double>> sv4gui_MachineLearningUtils::segmentPathPoint(sv4guiPathElement::sv4guiPathPoint path_point){
 
   std::vector<std::vector<double>> empty_points;
 
@@ -147,7 +147,7 @@ std::vector<std::vector<double>> sv4gui_MLUtils::segmentPathPoint(sv4guiPathElem
   return points;
 }
 
-void sv4gui_MLUtils::sampleNetwork(){
+void sv4gui_MachineLearningUtils::sampleNetwork(){
   PyObject* py_res = PyObject_CallMethod(py_wrapper_inst, "sample", "");
 
   if (py_res == NULL){
