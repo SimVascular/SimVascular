@@ -1967,7 +1967,7 @@ void sv4guiSeg2DEdit::initialize(){
         m_imageFilePath = imageElement.attribute("path").toStdString();
     }
 
-    ml_utils = sv4gui_MLUtils::getInstance("googlenet_c30_train300k_aug10_clean");
+    ml_utils = sv4gui_MachineLearningUtils::getInstance("googlenet_c30_train300k_aug10_clean");
     ml_utils->setImage(m_imageFilePath);
 
   }//end if projectfoldernode

@@ -45,7 +45,7 @@
 #include "sv4gui_LevelSet2DWidget.h"
 #include "sv4gui_LoftParamWidget.h"
 
-#include "sv4gui_MLUtils.h"
+#include "sv4gui_MachineLearningUtils.h"
 
 #include <QmitkSliceWidget.h>
 #include <QmitkSliderNavigatorWidget.h>
@@ -303,7 +303,7 @@ protected:
 
     // ml additions
     std::string m_imageFilePath;
-    sv4gui_MLUtils* ml_utils;
+    sv4gui_MachineLearningUtils* ml_utils;
 
     int m_interval = 50;
 
@@ -315,7 +315,7 @@ protected:
 
     sv4guiContourGroup::Pointer m_current_group;
 
-    bool m_MLinitialized = false;
+    bool m_MachineLearninginitialized = false;
 
 };
 
