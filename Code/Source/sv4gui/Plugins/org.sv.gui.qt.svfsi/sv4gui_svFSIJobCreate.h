@@ -29,48 +29,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guisvFSIJobCreateACTION_H
-#define sv4guisvFSIJobCreateACTION_H
+#ifndef SV4GUI_SVFSICREATE_H
+#define SV4GUI_SVFSICREATE_H
 
-#include <org_sv_gui_qt_svfsi_Export.h>
+#include "sv4gui_DataNodeOperationInterface.h"
+#include <mitkDataStorage.h>
+#include <QWidget>
 
-#include "sv4gui_svFSIJobCreate.h"
+namespace Ui {
+class sv4guisvFSIJobCreate;
+}
 
-//#include "sv4gui_DataNodeOperationInterface.h"
-//#include <mitkIContextMenuAction.h>
-
-#include <sv4gui_mitkIContextMenuAction.h>
-
-#include <mitkDataNode.h>
-
-#include <QObject>
-
-class SV_QT_SVFSI sv4guisvFSIJobCreateAction : public QObject, public svmitk::IContextMenuAction 
+class sv4guisvFSIJobCreate : public QWidget
 {
-  Q_OBJECT
-  Q_INTERFACES(svmitk::IContextMenuAction)
+    Q_OBJECT
 
 public:
-  sv4guisvFSIJobCreateAction();
-  ~sv4guisvFSIJobCreateAction();
 
-  // IContextMenuAction
-  void Run(const QList<mitk::DataNode::Pointer> &selectedNodes) override;
-  void SetDataStorage(mitk::DataStorage *dataStorage) override;
-  void SetSmoothed(bool smoothed) override {}
-  void SetDecimated(bool decimated) override {}
-  void SetFunctionality(berry::QtViewPart *functionality) override;
+    sv4guisvFSIJobCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, int timeStep = 0);
 
-private:
-  sv4guisvFSIJobCreateAction(const sv4guisvFSIJobCreateAction &);
-  sv4guisvFSIJobCreateAction & operator=(const sv4guisvFSIJobCreateAction &);
+    virtual ~sv4guisvFSIJobCreate();
 
-  mitk::DataStorage::Pointer m_DataStorage;
-  berry::QtViewPart *m_Functionality;
+public slots:
 
-  sv4guisvFSIJobCreate* m_svFSIJobCreateWidget;
+    void CreateJob();
 
-  //sv4guiDataNodeOperationInterface* m_Interface;
+    void Cancel();
+
+    void SetFocus();
+
+    void Activated();
+
+protected:
+
+    Ui::sv4guisvFSIJobCreate *ui;
+
+    QWidget* m_Parent;
+
+    mitk::DataNode::Pointer m_SimulationFolderNode;
+
+    mitk::DataNode::Pointer m_ModelFolderNode;
+
+    mitk::DataStorage::Pointer m_DataStorage;
+
+    mitk::DataNode::Pointer m_SelecteNode;
+
+    int m_TimeStep;
+
+    sv4guiDataNodeOperationInterface* m_Interface;
 };
 
-#endif
+#endif // SV4GUI_SVFSICREATE_H

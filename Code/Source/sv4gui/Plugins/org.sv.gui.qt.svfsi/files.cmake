@@ -33,6 +33,7 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
+    sv4gui_svFSIJobCreate.cxx
     sv4gui_svFSIJobCreateAction.cxx
     sv4gui_svFSIView.cxx
     sv4gui_svFSIBCWidget.cxx
@@ -41,6 +42,7 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
+    sv4gui_svFSIJobCreate.h
     sv4gui_svFSIJobCreateAction.h
     sv4gui_svFSIUtil.h
     sv4gui_svFSIView.h
@@ -50,6 +52,7 @@ set(MOC_H_FILES
 )
 
 set(UI_FILES
+    sv4gui_svFSIJobCreate.ui
     sv4gui_svFSIView.ui
     sv4gui_svFSIBCWidget.ui
     sv4gui_svFSIPreferencePage.ui
