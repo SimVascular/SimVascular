@@ -20,7 +20,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 // Parent classes
 #include <QObject>
-#include <mitkIContextMenuAction.h>
+#include <sv4gui_mitkIContextMenuAction.h>
 
 // Data members
 #include <mitkDataStorage.h>
@@ -33,10 +33,10 @@ See LICENSE.txt or http://www.mitk.org for details.
 class QDialog;
 
 /** \deprecatedSince{2013_09} The interaction for the Otsu image filter was revised and moved to the segmentation plugin view. */
-class DEPRECATED() SV_QT_MITKSEGMENTATION QmitkOtsuAction : public QObject, public mitk::IContextMenuAction
+class DEPRECATED() SV_QT_MITKSEGMENTATION QmitkOtsuAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   QmitkOtsuAction();

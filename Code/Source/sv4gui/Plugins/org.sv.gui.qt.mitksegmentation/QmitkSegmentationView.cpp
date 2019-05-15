@@ -49,7 +49,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include <mitkWorkbenchUtil.h>
 
-const std::string QmitkSegmentationView::VIEW_ID = "org.mitk.views.segmentation";
+const std::string QmitkSegmentationView::VIEW_ID = "org.sv.views.mitksegmentation";
 
 QmitkSegmentationView::QmitkSegmentationView()
   : m_Parent(nullptr)

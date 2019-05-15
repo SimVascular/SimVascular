@@ -89,6 +89,8 @@ include(SimVascularFunctionCheckCompilerFlags)
 # Optionally build the 1D solver plugin.
 option(SV_USE_ONEDSOLVER "Enable building the 1D solver plugin" OFF)
 
+# Optionally build the MITK segmentation plugin
+option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" OFF)
 #-----------------------------------------------------------------------------
 # Externals!
 
@@ -193,7 +195,7 @@ ExternalProject_Add(SimVascular
     -DSV_USE_Qt5:BOOL=ON
     -DSV_USE_QT:BOOL=ON
     -DSV_USE_QT_GUI:BOOL=ON
-    -DSV_USE_MITK_SEGMENTATION:BOOL=OFF
+    -DSV_USE_MITK_SEGMENTATION:BOOL=${SV_USE_MITK_SEGMENTATION}
     -DSV_USE_SOLVERIO:BOOL=ON
     -DSV_USE_TETGEN_ADAPTOR:BOOL=ON
     -DSV_EXTERNALS_USE_TOPLEVEL_BIN_DIR:BOOL=ON

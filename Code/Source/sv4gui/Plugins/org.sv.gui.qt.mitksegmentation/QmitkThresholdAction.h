@@ -19,18 +19,18 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <org_sv_gui_qt_mitksegmentation_Export.h>
 
 // Parent classes
+#include <sv4gui_mitkIContextMenuAction.h>
 #include <QObject>
-#include <mitkIContextMenuAction.h>
 
 // Data members
 #include <mitkDataStorage.h>
 #include <mitkToolManager.h>
 
 
-class SV_QT_MITKSEGMENTATION QmitkThresholdAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MITKSEGMENTATION QmitkThresholdAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   QmitkThresholdAction();

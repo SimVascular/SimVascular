@@ -16,7 +16,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef QMITK_AUTOCROPACTION_H
 #define QMITK_AUTOCROPACTION_H
 
-#include "mitkIContextMenuAction.h"
+#include "sv4gui_mitkIContextMenuAction.h"
 
 #include "org_sv_gui_qt_mitksegmentation_Export.h"
 
@@ -24,10 +24,10 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include "mitkDataNode.h"
 #include "mitkImage.h"
 
-class SV_QT_MITKSEGMENTATION QmitkAutocropAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MITKSEGMENTATION QmitkAutocropAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
 

@@ -20,15 +20,15 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 // Parent classes
 #include <QObject>
-#include <mitkIContextMenuAction.h>
+#include <sv4gui_mitkIContextMenuAction.h>
 
 // Data members
 #include <mitkDataNode.h>
 
-class SV_QT_MITKSEGMENTATION QmitkCreatePolygonModelAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_MITKSEGMENTATION QmitkCreatePolygonModelAction : public QObject, public svmitk::IContextMenuAction
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   QmitkCreatePolygonModelAction();

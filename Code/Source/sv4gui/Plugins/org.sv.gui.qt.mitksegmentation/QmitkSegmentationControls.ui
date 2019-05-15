@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>237</width>
+    <width>255</width>
     <height>591</height>
    </rect>
   </property>
@@ -125,7 +125,7 @@
            <string>&amp;New...</string>
           </property>
           <property name="icon">
-           <iconset resource="../../resources/segmentation.qrc">
+           <iconset resource="resources/segmentation.qrc">
             <normaloff>:/segmentation/btnNew.png</normaloff>:/segmentation/btnNew.png</iconset>
           </property>
           <property name="toolButtonStyle">
@@ -490,7 +490,7 @@
   <include location="global">QmitkSlicesInterpolator.h</include>
  </includes>
  <resources>
-  <include location="../../resources/segmentation.qrc"/>
+  <include location="resources/segmentation.qrc"/>
  </resources>
  <connections/>
 </ui>

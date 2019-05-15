@@ -41,7 +41,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <vtkPlaneSource.h>
 
 
-const std::string QmitkDeformableClippingPlaneView::VIEW_ID = "org.mitk.views.deformableclippingplane";
+const std::string QmitkDeformableClippingPlaneView::VIEW_ID = "org.sv.views.deformableclippingplane";
 
 QmitkDeformableClippingPlaneView::QmitkDeformableClippingPlaneView()
   : QmitkAbstractView()

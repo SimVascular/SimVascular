@@ -56,7 +56,7 @@ void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selected
   {
     // Get preference properties for smoothing and decimation
     IPreferencesService* prefService = Platform::GetPreferencesService();
-    IPreferences::Pointer segPref = prefService->GetSystemPreferences()->Node("/org.mitk.views.segmentation");
+    IPreferences::Pointer segPref = prefService->GetSystemPreferences()->Node("/org.sv.views.mitksegmentation");
 
     bool smoothingHint = segPref->GetBool("smoothing hint", true);
     ScalarType smoothing = segPref->GetDouble("smoothing value", 1.0);
