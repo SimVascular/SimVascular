@@ -18,9 +18,11 @@ See LICENSE.txt or http://www.mitk.org for details.
 // MITK
 #include <mitkShowSegmentationAsSmoothedSurface.h>
 #include <mitkShowSegmentationAsSurface.h>
+#include <mitkManualSegmentationToSurfaceFilter.h>
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
-
+#include <mitkDataNode.h>
+#include <vtkPolyDataNormals.h>
 #include <mitkIRenderWindowPart.h>
 #include <mitkIRenderingManager.h>
 
@@ -29,6 +31,15 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <berryIPreferences.h>
 #include <berryPlatform.h>
 #include <berryIWorkbenchPage.h>
+#include <QInputDialog>
+#include <QMessageBox>
+
+// VTK
+#include <vtkPolyDataNormals.h>
+
+// SV
+#include <sv4gui_Seg3D.h>
+#include <sv4gui_MitkSeg3D.h>
 
 using namespace berry;
 using namespace mitk;
@@ -40,6 +51,77 @@ QmitkCreatePolygonModelAction::QmitkCreatePolygonModelAction()
 
 QmitkCreatePolygonModelAction::~QmitkCreatePolygonModelAction()
 {
+}
+
+Surface::Pointer ConvertBinaryImageToSurface(ShowSegmentationAsSurface::Pointer surfaceFilter, Image::Pointer binaryImage, double reductionRate=0.8, double gaussianSD=1.5, bool IsSmoothed=false)
+{
+    bool smooth = true;
+    surfaceFilter->GetParameter("Smooth", smooth);
+
+    bool applyMedian = true;
+    surfaceFilter->GetParameter("Apply median", applyMedian);
+
+    bool decimateMesh = true;
+    surfaceFilter->GetParameter("Decimate mesh", decimateMesh);
+
+    unsigned int medianKernelSize = 3;
+    surfaceFilter->GetParameter("Median kernel size", medianKernelSize);
+
+    auto filter = ManualSegmentationToSurfaceFilter::New();
+    filter->SetInput(binaryImage);
+    filter->SetThreshold(0.5);
+    filter->SetUseGaussianImageSmooth(smooth);
+    filter->SetSmooth(smooth);
+    filter->SetMedianFilter3D(applyMedian);
+
+    if (smooth)
+    {
+      filter->InterpolationOn();
+      filter->SetGaussianStandardDeviation(gaussianSD);
+    }
+
+    if (applyMedian)
+      filter->SetMedianKernelSize(medianKernelSize, medianKernelSize, medianKernelSize);
+    // Fix to avoid VTK warnings (see T5390)
+    if (binaryImage->GetDimension() > 3)
+      decimateMesh = false;
+
+    if (decimateMesh)
+    {
+      filter->SetDecimate(ImageToSurfaceFilter::QuadricDecimation);
+      filter->SetTargetReduction(reductionRate);
+    }
+    else
+    {
+      filter->SetDecimate(ImageToSurfaceFilter::NoDecimation);
+    }
+    filter->UpdateLargestPossibleRegion();
+
+    auto surface = filter->GetOutput();
+    auto polyData = surface->GetVtkPolyData();
+
+    if (nullptr == polyData)
+      throw std::logic_error("Could not create polygon model");
+
+    polyData->SetVerts(nullptr);
+    polyData->SetLines(nullptr);
+    if (smooth || applyMedian || decimateMesh)
+    {
+      auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+
+      normals->AutoOrientNormalsOn();
+      normals->FlipNormalsOff();
+      normals->SetInputData(polyData);
+
+      normals->Update();
+
+      surface->SetVtkPolyData(normals->GetOutput());
+    }
+    else
+    {
+      surface->SetVtkPolyData(polyData);
+    }
+    return surface;
 }
 
 void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selectedNodes)
@@ -91,6 +173,7 @@ void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selected
     surfaceFilter->SetParameter("Median kernel size", 3u);
     surfaceFilter->SetParameter("Decimate mesh", m_IsDecimated);
     surfaceFilter->SetParameter("Decimation rate", (float) decimation);
+    std::cout<<decimation<<std::endl;
 
     if (m_IsSmoothed)
     {
@@ -107,11 +190,54 @@ void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selected
     }
 
     surfaceFilter->StartAlgorithm();
+    Surface::Pointer mitksurf = ConvertBinaryImageToSurface(surfaceFilter, image, decimation, sqrtf(smoothing));
+    vtkSmartPointer<vtkPolyData> vtkPd = mitksurf->GetVtkPolyData();
+    
+    bool ok;
+    QString new_polydata_name = QInputDialog::getText(0, tr("New 3D Segmentation Name"),
+                                        tr("Enter a name for the new 3D Segmentation"), QLineEdit::Normal,
+                                        "", &ok);
+    
+    mitk::DataNode::Pointer polydata_folder_node = m_DataStorage->GetNamedNode("Segmentations");
+    
+    if (!polydata_folder_node){
+        MITK_ERROR << "No image folder found\n";
+        return;
+    }
+    
+    mitk::DataNode::Pointer newPdNode =
+        m_DataStorage->GetNamedNode(new_polydata_name.toStdString());
+    
+    if (newPdNode){
+        QMessageBox::warning(NULL,"Segmentation Already exists","Please use a different segmentation name!");
+        return;
+    }
+    if(!ok){
+        return;
+    }
+    
+    newPdNode = mitk::DataNode::New();
+    
+    newPdNode->SetName(new_polydata_name.toStdString());
+    
+    sv4guiSeg3D* newSeg3D = new sv4guiSeg3D();
+    newSeg3D->SetVtkPolyData(vtkPd);
+    
+    sv4guiMitkSeg3D::Pointer mitkSeg3D = sv4guiMitkSeg3D::New();
+    mitkSeg3D->SetSeg3D(newSeg3D);
+    mitkSeg3D->SetDataModified();
+    
+    newPdNode->SetData(mitkSeg3D);
+    
+    std::cout << "Adding node\n";
+    m_DataStorage->Add(newPdNode, polydata_folder_node);
   }
-  catch(...)
+  catch(char *excp)
   {
-    MITK_ERROR << "Surface creation failed!";
+    MITK_ERROR << "Surface creation failed! " << excp;
   }
+  
+
 }
 
 void QmitkCreatePolygonModelAction::OnSurfaceCalculationDone()
@@ -137,3 +263,4 @@ void QmitkCreatePolygonModelAction::SetDecimated(bool decimated)
 void QmitkCreatePolygonModelAction::SetFunctionality(QtViewPart *)
 {
 }
+
