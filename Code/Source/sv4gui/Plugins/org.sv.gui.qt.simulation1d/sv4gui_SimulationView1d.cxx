@@ -172,6 +172,9 @@
 #include <QVBoxLayout>
 #include <QApplication>
 
+// Include job property names (e.g. Basic::FLUID_DENSITY).
+using namespace SimJob1dProperty;
+
 // Redefine MITK_INFO to deactivate all of the debugging statements.
 //#define MITK_INFO MITK_DEBUG
 
@@ -377,6 +380,8 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
 // The m_TableModelCap widget is a QStandardItemModel object that provides a generic model 
 // for storing custom data.
 //
+// Note that this is called only once for all instances of this tool.
+//
 // Modifies: 
 //   m_TableModelCap 
 //
@@ -549,6 +554,8 @@ void sv4guiSimulationView1d::Update1DMesh()
 // Create connections between GUI events (signals) and callbacks (slots)
 // for the '1D Mesh' toolbox tab.
 //
+// Note that this is called only once for all instances of this tool.
+//
 void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 {
     auto msg = "[sv4guiSimulationView1d::Create1DMeshControls] ";
@@ -560,7 +567,8 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     connect(ui->ReadModelPushButton, SIGNAL(clicked()), this, SLOT(SelectModelFile()) );
     connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateSurfaceMeshName()));
     connect(ui->showModelCheckBox, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
-    //ui->InletFaceNameLabel->setText(InletFaceNameLabel + "**Not selected**");
+    ui->labelModelName->setText("");
+    ui->InletFaceNameLabel->setText("");
 
     for (auto const& type : SurfaceModelSource::types) {
         ui->surfaceModelComboBox->addItem(type);
@@ -866,7 +874,7 @@ void sv4guiSimulationView1d::SetModelInletFaces()
     } 
     ui->InletFaceNameLabel->setText(InletFaceNameLabel + QString(m_ModelInletFaceNames[0].c_str()));
     m_ModelInletFaceSelected = true;
-    MITK_INFO << msg << "####### m_ModelInletFaceSelected: " << m_ModelInletFaceSelected; 
+    MITK_INFO << msg << "m_ModelInletFaceSelected: " << m_ModelInletFaceSelected; 
 
     // Set the unselected outlet faces.
     //
@@ -1586,8 +1594,9 @@ void sv4guiSimulationView1d::SetupInternalSolverPaths()
 //
 void sv4guiSimulationView1d::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
-    if(prefs==NULL)
+    if (prefs == NULL) {
         return;
+    }
 
     m_ExternalPresolverPath=prefs->Get("presolver path","");
     m_ExternalFlowsolverPath=prefs->Get("flowsolver path","");
@@ -1603,6 +1612,14 @@ void sv4guiSimulationView1d::OnPreferencesChanged(const berry::IBerryPreferences
 //--------------------
 // Process a change in the Data Manager nodes.
 //
+// Note that this method will be called when
+//   1) There is no project defined 
+//      If not project is defined then nodes.size() = 0.
+//   2) The tool panel is closed
+//   3) The tool Data Node is selected 
+//   4) ANY tool Data Node is selected 
+//      If the node selected is not this tool type then mitkJob = nullptr.
+//
 // Sets:  
 //    m_ModelFileName if it is not already set.
 //    m_ModelNode 
@@ -1614,13 +1631,19 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 {
     auto msg = "[sv4guiSimulationView1d::OnSelectionChanged] ";
     MITK_INFO << msg;
+    MITK_INFO << msg;
+    MITK_INFO << msg;
+    MITK_INFO << msg << "#####################################################################";
     MITK_INFO << msg << "--------- OnSelectionChanged ----------";
+    MITK_INFO << msg << "#####################################################################";
     MITK_INFO << msg << "nodes.size() " << nodes.size();
 
-    if(!IsVisible()) {
+    if (!IsVisible()) {
         return;
     }
 
+    // Check if a project is defined. 
+    //
     if (nodes.size() == 0) {
         RemoveObservers();
         EnableTool(false);
@@ -1634,6 +1657,10 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     }
 
     // Check that a job nodes exists.
+    //
+    // If the node selected is not a 1D Simulation Tool Data Node 
+    // then mitkJob == nullptr.
+    //
     mitk::DataNode::Pointer jobNode = nodes.front();
     sv4guiMitkSimJob1d* mitkJob = dynamic_cast<sv4guiMitkSimJob1d*>(jobNode->GetData());
     if (!mitkJob) {
@@ -1649,6 +1676,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 
     m_JobNode = jobNode;
     m_MitkJob = mitkJob;
+    MITK_INFO << msg << "Job name: " << m_JobNode->GetName(); 
 
     // Set the plugin output directory.
     m_PluginOutputDirectory = GetJobPath();
@@ -1693,10 +1721,10 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         std::string timeModified;
         m_ModelNode->GetStringProperty("time modified", timeModified);
         MITK_INFO << msg;
-        MITK_INFO << msg << "#############################";
+        MITK_INFO << msg << "-----------------------------";
         MITK_INFO << msg << "Model time modified: " << timeModified; 
         MITK_INFO << msg << "m_ModelNodeTimeModified: " << m_ModelNodeTimeModified; 
-        MITK_INFO << msg << "#############################";
+        MITK_INFO << msg << "-----------------------------";
 
         // The model has changed so reset the data the depends on the surface model. 
         if ((timeModified != "") && (timeModified != m_ModelNodeTimeModified)) {
@@ -1969,7 +1997,7 @@ void sv4guiSimulationView1d::UpdateGUIBasic()
     MITK_INFO << msg;
     MITK_INFO << msg << "--------- UpdateGUIBasic ----------";
 
-    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
 
     if (job == NULL) {
         job = new sv4guiSimJob1d();
@@ -1986,12 +2014,12 @@ void sv4guiSimulationView1d::UpdateGUIBasic()
     QList<QStandardItem*> valueList;
     QString value;
 
-    parList<<new QStandardItem("Fluid Density");
-    value=QString::fromStdString(job->GetBasicProp("Fluid Density"));
+    parList<<new QStandardItem(stoqt(Basic::FLUID_DENSITY));
+    value = QString::fromStdString(job->GetBasicProp(Basic::FLUID_DENSITY));
     valueList<<new QStandardItem(value==""?QString("1.06"):value);
 
-    parList<<new QStandardItem("Fluid Viscosity");
-    value=QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
+    parList<<new QStandardItem(stoqt(Basic::FLUID_VISCOSITY));
+    value = QString::fromStdString(job->GetBasicProp(Basic::FLUID_VISCOSITY));
     valueList<<new QStandardItem(value==""?QString("0.04"):value);
 
 //    parList<<new QStandardItem("Period");
@@ -2225,10 +2253,11 @@ void sv4guiSimulationView1d::TableViewCapContextMenuRequested( const QPoint & po
 void sv4guiSimulationView1d::ShowCapBCWidget(bool)
 {
     auto msg = "[sv4guiSimulationView1d::ShowCapBCWidget] ";
+    MITK_INFO << msg;
     MITK_INFO << msg << "--------- ShowCapBCWidget ----------";
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
 
-    if(indexesOfSelectedRows.size() < 1) {
+    if (indexesOfSelectedRows.size() < 1) {
         return;
     }
 
@@ -2236,10 +2265,10 @@ void sv4guiSimulationView1d::ShowCapBCWidget(bool)
     std::string capName;
     int row = indexesOfSelectedRows[0].row();
 
-    if(indexesOfSelectedRows.size() == 1) {
-        capName=m_TableModelCap->item(row,0)->text().toStdString();
+    if (indexesOfSelectedRows.size() == 1) {
+        capName = m_TableModelCap->item(row,0)->text().toStdString();
     } else {
-        capName="multiple faces";
+        capName = "multiple faces";
     }
 
     props["BC Type"] = m_TableModelCap->item(row,1)->text().toStdString();
@@ -4042,7 +4071,7 @@ bool sv4guiSimulationView1d::CheckInputState(DataInputStateType checkType)
 {
     auto msg = "[sv4guiSimulationView1d::CheckInputState] ";
     MITK_INFO << msg;
-    MITK_INFO << msg << "#####################################################################";
+    //MITK_INFO << msg << "#####################################################################";
     MITK_INFO << msg << "---------- CheckInputState ---------"; 
 
     ui->CalculateCenterlinesPushButton->setEnabled(false);

@@ -29,6 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiMitkSimJobIO1d class is used to read and write  job data to 
+// XML (.sv1djob) file.
+
 #ifndef SV4GUI_MITKSIMJOBIO1D_H
 #define SV4GUI_MITKSIMJOBIO1D_H
 

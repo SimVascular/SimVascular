@@ -31,16 +31,22 @@
 
 #include "sv4gui_SimJob1d.h"
 
-sv4guiSimJob1d::sv4guiSimJob1d()
-    : m_VelocityCapNumber(0)
-    , m_PressureCapNumber(0)
+//----------------
+// sv4guiSimJob1d
+//----------------
+//
+sv4guiSimJob1d::sv4guiSimJob1d() : m_VelocityCapNumber(0), m_PressureCapNumber(0)
 {
 }
 
-sv4guiSimJob1d::sv4guiSimJob1d(const sv4guiSimJob1d &other)
-    : m_ModelProps(other.m_ModelProps), m_BasicProps(other.m_BasicProps), m_CapProps(other.m_CapProps), 
-      m_WallProps(other.m_WallProps), m_VarProps(other.m_VarProps), m_SolverProps(other.m_SolverProps), 
-      m_RunProps(other.m_RunProps)
+//----------------
+// sv4guiSimJob1d
+//----------------
+// Copy a sv4guiSimJob1d object.
+//
+sv4guiSimJob1d::sv4guiSimJob1d(const sv4guiSimJob1d &other) : m_ModelProps(other.m_ModelProps), 
+    m_BasicProps(other.m_BasicProps), m_CapProps(other.m_CapProps), m_WallProps(other.m_WallProps), 
+    m_VarProps(other.m_VarProps), m_SolverProps(other.m_SolverProps), m_RunProps(other.m_RunProps)
 {
 }
 
@@ -60,7 +66,7 @@ sv4guiSimJob1d* sv4guiSimJob1d::Clone()
 
 void sv4guiSimJob1d::SetModelProps(std::map<std::string,std::string> basicProps)
 {
-    m_ModelProps=basicProps;
+    m_ModelProps = basicProps;
 }
 
 std::map<std::string,std::string> sv4guiSimJob1d::GetModelProps()

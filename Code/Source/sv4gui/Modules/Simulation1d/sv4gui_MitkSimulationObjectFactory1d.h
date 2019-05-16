@@ -63,11 +63,10 @@ private:
 
 };
 
-struct SV4GUIMODULESIMULATION1D_EXPORT Registersv4guiMitkSimulationObjectFactory1d{
+// [DaveP] How is this struct used?
+struct SV4GUIMODULESIMULATION1D_EXPORT Registersv4guiMitkSimulationObjectFactory1d {
   Registersv4guiMitkSimulationObjectFactory1d();
-
   virtual ~Registersv4guiMitkSimulationObjectFactory1d();
-
   sv4guiMitkSimulationObjectFactory1d::Pointer m_Factory;
   sv4guiMitkSimJobIO1d* m_MitkSimJobIO;
 };
