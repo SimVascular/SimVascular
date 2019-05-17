@@ -1,0 +1,31 @@
+
+
+
+  props["BC Type"] = m_TableModelCap->item(row,1)->text().toStdString();
+  props["Values"] = m_TableModelCap->item(row,2)->text().toStdString();
+  ...
+  m_CapBCWidget->UpdateGUI(capName,props);
+   
+
+
+  std::map<std::string, std::string> props = m_CapBCWidget->GetProps();
+  for (auto const& item : indexesOfSelectedRows) {
+    auto row = item.row();
+    MITK_INFO << msg << "row: " << row;
+    m_TableModelCap->item(row,1)->setText(QString::fromStdString(props["BC Type"]));
+
+
+  job->SetCapProp(capName,"BC Type", bcType);
+  job->SetCapProp(capName,"Analytic Shape", shape);
+  job->SetCapProp(capName,"Period", period);
+ 
+
+- when reading xml
+
+  auto basicProps = GetProps(jobElement, "basic_props");
+  job->SetBasicProps(basicProps);
+
+  auto modelProps = GetProps(jobElement, "model_props");
+  job->SetModelProps(modelProps);
+
+

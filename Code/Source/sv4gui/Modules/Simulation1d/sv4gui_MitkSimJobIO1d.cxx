@@ -29,6 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiMitkSimJobIO1d class methods are used to read and write 
+// job data to XML (.sv1djob) file.
+  
 #include "sv4gui_MitkSimJobIO1d.h"
 
 #include "sv4gui_MitkSimJob1d.h"
@@ -48,8 +51,15 @@ static mitk::CustomMimeType Createsv4guiSimJob1dMimeType()
     return mimeType;
 }
 
-sv4guiMitkSimJobIO1d::sv4guiMitkSimJobIO1d()
-    : mitk::AbstractFileIO(sv4guiMitkSimJob1d::GetStaticNameOfClass(), Createsv4guiSimJob1dMimeType(), "SimVascular 1D Job")
+//----------------------
+// sv4guiMitkSimJobIO1d
+//----------------------
+// Register a reader.
+//
+// This is called when SV starts.
+//
+sv4guiMitkSimJobIO1d::sv4guiMitkSimJobIO1d() : mitk::AbstractFileIO(sv4guiMitkSimJob1d::GetStaticNameOfClass(), 
+    Createsv4guiSimJob1dMimeType(), "SimVascular 1D Job")
 {
     this->RegisterService();
 }
@@ -59,13 +69,20 @@ sv4guiMitkSimJobIO1d::sv4guiMitkSimJobIO1d()
 //------
 // Read in a job .s1djb xml file.
 //
+// This is called when a project is opened.
+//
 std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO1d::Read()
 {
-    std::vector<mitk::BaseData::Pointer> result;
+    auto msg = "[sv4guiMitkSimJobIO1d::Read] ";
+    MITK_INFO << msg << "============================================="; 
+    MITK_INFO << msg << "================ Read ======================="; 
 
+    std::vector<mitk::BaseData::Pointer> result;
     TiXmlDocument document;
 
-    std::string fileName=GetInputLocation();
+    std::string fileName = GetInputLocation();
+    MITK_INFO << msg << "fileName: " << fileName;
+    MITK_INFO << msg << "============================================="; 
 
     if (!document.LoadFile(fileName)) {
         mitkThrow() << "Could not open/read/parse " << fileName;
@@ -203,11 +220,19 @@ sv4guiMitkSimJobIO1d::GetMapProps(TiXmlElement* jobElement, const std::string& p
 //-------
 // Write a job .s1djb xml file.
 //
+// This is only called when the project is saved.
+//
 void sv4guiMitkSimJobIO1d::Write()
 {
-    ValidateOutputLocation();
+    auto msg = "[sv4guiMitkSimJobIO1d::Write] ";
+    MITK_INFO << msg << "============================================="; 
+    MITK_INFO << msg << "================ Write ======================="; 
 
-    std::string fileName=GetOutputLocation();
+    ValidateOutputLocation();
+    std::string fileName = GetOutputLocation();
+
+    MITK_INFO << msg << "fileName: " << fileName;
+    MITK_INFO << msg << "============================================="; 
 
     const sv4guiMitkSimJob1d* mitkSimJob = dynamic_cast<const sv4guiMitkSimJob1d*>(this->GetInput());
     if(!mitkSimJob) return;

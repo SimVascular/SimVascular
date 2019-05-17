@@ -405,6 +405,10 @@ private:
     bool CheckSolverInputState(bool checkValidity=true);
     void SetInputState(DataInputStateType checkType, bool value);
 
+    static QString stoqt(const std::string& s) {
+      return QString::fromStdString(s);
+    }
+
 };
 
 #endif // SV4GUI_SIMULATION1DVIEW_H

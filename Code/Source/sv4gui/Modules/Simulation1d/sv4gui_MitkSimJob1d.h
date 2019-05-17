@@ -29,34 +29,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiMitkSimJob1d class provides an interface between an sv4guiSimJob1d 
+// and the MITK framework. 
+//
+// The mitk::BaseData class provides GUI interaction and I/O.
+//
+//
 #ifndef SV4GUI_MITKSIMJOB1D_H
 #define SV4GUI_MITKSIMJOB1D_H
 
 #include <sv4guiModuleSimulation1dExports.h>
-
 #include "sv4gui_SimJob1d.h"
-
 #include "mitkBaseData.h"
 
 class SV4GUIMODULESIMULATION1D_EXPORT sv4guiMitkSimJob1d : public mitk::BaseData
 {
-public:
-
-    class JobBasicParameters {
-        public:
-            static const std::string FLUID_DENSITY;
-            static const std::string FLUID_VISCOSITY;
-            static const std::string INITIAL_PRESSURE;
-            static const std::string INITIAL_VELOCITIES;
-            static const std::vector<std::string> names;
-    };
-
+  public:
     mitkClassMacro(sv4guiMitkSimJob1d, mitk::BaseData);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
     virtual void Expand( unsigned int timeSteps = 1 ) override;
-//    virtual void ExecuteOperation(mitk::Operation *operation) override;
     virtual bool IsEmptyTimeStep(unsigned int t) const override;
     virtual unsigned int GetTimeSize() const;
     void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
@@ -87,18 +80,13 @@ public:
     void SetDataModified(bool modified = true){m_DataModified=modified;}
 
   protected:
-
     mitkCloneMacro(Self);
-
     sv4guiMitkSimJob1d();
     sv4guiMitkSimJob1d(const sv4guiMitkSimJob1d &other);
     virtual ~sv4guiMitkSimJob1d();
-
-//    virtual void PrintSelf(std::ostream& os, itk::Indent indent) const override;
     virtual void ClearData() override;
     virtual void InitializeEmpty() override;
 
-//    sv4guiSimJob* m_Job;
     std::vector<sv4guiSimJob1d*> m_JobSet;
 
     bool m_CalculateBoundingBox;

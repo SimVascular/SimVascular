@@ -42,6 +42,10 @@
 
 #include <QLibrary>
 
+// Register object factories used to read and write tool data files.
+//
+// [DaveP] Where and how these objects are referenced is a mystery.
+//
 static Registersv4guiPathObjectFactory registersv4guiPathObjectFactory;
 static Registersv4guiSegmentationObjectFactory registersv4guiSegmentationObjectFactory;
 static Registersv4guiModelObjectFactory registersv4guiModelObjectFactory;

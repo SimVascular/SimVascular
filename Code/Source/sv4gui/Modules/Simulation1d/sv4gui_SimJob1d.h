@@ -29,28 +29,70 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiSimJob1d class is used to store data for 1D simulation job.
+//
+// The data for a 1D simulation job is defined as a set of properties
+// used to define the simulation model, boundary conditions, physical 
+// parameters (e.g. density) and solver parameters (e.g. time step).
+//
+// Job properties are stored as key / value pairs usin a c++ map
+// of type std::map<std::string,std::string>. There are maps for
+//
+//    m_ModelProps - 
+//    m_BasicProps - 
+//    m_CapProps - 
+//    m_WallProps - 
+//    m_VarProps - 
+//    m_SolverProps - 
+//    m_RunProps - 
+//
 #ifndef SV4GUI_SIMJOB1D_H
 #define SV4GUI_SIMJOB1D_H
 
 #include <sv4guiModuleSimulation1dExports.h>
 
+#include <iostream>
 #include <map>
 #include <sstream>
-#include <iostream>
 #include <string>
+#include <vector>
+
+// Define the names used to access parameters from the
+// property maps. 
+//
+namespace SimJob1dProperty {
+
+  // Basic (physical) parameters.
+  namespace Basic {
+    const std::string FLUID_DENSITY = "Fluid Density";
+    const std::string FLUID_VISCOSITY = "Fluid Viscosity";
+    const std::string INITIAL_PRESSURE = "Initial Pressure";
+    const std::string INITIAL_VELOCITIES = "Initial Velocities";
+    const std::vector<std::string> names = {
+      FLUID_DENSITY, FLUID_VISCOSITY, INITIAL_PRESSURE, INITIAL_VELOCITIES
+      };
+  };
+
+  namespace BC {
+    const std::string TYPE = "BC TYPE";
+    const std::string ANALYTIC_SHAPE = "Analytic Shape";
+    const std::string PERIOD = "Period";
+    const std::string PRESCRIBED_VELOCITIES = "Prescribed Velocities";
+    const std::string PRESSURE = "Pressure";
+    const std::string RCR = "RCR";
+  };
+
+
+};
 
 class SV4GUIMODULESIMULATION1D_EXPORT sv4guiSimJob1d
 {
-
-public:
-
+  public:
     sv4guiSimJob1d();
-
     sv4guiSimJob1d(const sv4guiSimJob1d &other);
+    virtual sv4guiSimJob1d* Clone();
 
     virtual ~sv4guiSimJob1d();
-
-    virtual sv4guiSimJob1d* Clone();
 
     void SetModelProps(std::map<std::string,std::string> modelProps);
     std::map<std::string,std::string> GetModelProps();
@@ -97,19 +139,18 @@ public:
     int GetPressureCapNumber();
 
   protected:
-
-    std::map<std::string,std::string> m_ModelProps;
     std::map<std::string,std::string> m_BasicProps;
     std::map<std::string,std::map<std::string,std::string> > m_CapProps;
-    std::map<std::string,std::string> m_WallProps;
-    std::map<std::string,std::map<std::string,std::string> > m_VarProps;
-    std::map<std::string,std::string> m_SolverProps;
+    std::map<std::string,std::string> m_ModelProps;
     std::map<std::string,std::string> m_RunProps;
+    std::map<std::string,std::string> m_SolverProps;
+    std::map<std::string,std::map<std::string,std::string> > m_VarProps;
+    std::map<std::string,std::string> m_WallProps;
 
     std::map<std::string,int> m_IDs;
 
-    int m_VelocityCapNumber; //for caps with prescribed velosities
-    int m_PressureCapNumber; //for caps with prescribed velosities
+    int m_VelocityCapNumber; //for caps with prescribed velocities
+    int m_PressureCapNumber; //for caps with prescribed velocities
 
   };
 

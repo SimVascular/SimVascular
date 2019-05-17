@@ -38,14 +38,15 @@
 #include "mitkDataNode.h"
 #include "mitkCoreObjectFactory.h"
 
-sv4guiMitkSimulationObjectFactory1d::sv4guiMitkSimulationObjectFactory1d()
-  : mitk::CoreObjectFactoryBase()
+//-------------------------------------
+// sv4guiMitkSimulationObjectFactory1d
+//-------------------------------------
+//
+sv4guiMitkSimulationObjectFactory1d::sv4guiMitkSimulationObjectFactory1d() : mitk::CoreObjectFactoryBase()
 {
   static bool alreadyDone = false;
-  if (!alreadyDone)
-  {
+  if (!alreadyDone) {
     MITK_DEBUG << "sv4guiMitkSimulationObjectFactory1d c'tor" << std::endl;
-
     alreadyDone = true;
   }
 }
@@ -54,39 +55,46 @@ sv4guiMitkSimulationObjectFactory1d::~sv4guiMitkSimulationObjectFactory1d()
 {
 }
 
+//--------------
+// CreateMapper
+//--------------
+//
 mitk::Mapper::Pointer sv4guiMitkSimulationObjectFactory1d::CreateMapper(mitk::DataNode* node, MapperSlotId id)
 {
-  mitk::Mapper::Pointer newMapper=NULL;
+  mitk::Mapper::Pointer newMapper = NULL;
 
-  if ( id == mitk::BaseRenderer::Standard2D )
-  {
-    if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL )
-    {
+  if ( id == mitk::BaseRenderer::Standard2D ) {
+    if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL ) {
     }
-  }
-  else if ( id == mitk::BaseRenderer::Standard3D )
-  {
-    if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL )
-    {
+  } else if ( id == mitk::BaseRenderer::Standard3D ) {
+    if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL ) {
     }
   }
   return newMapper;
 }
 
+//----------------------
+// SetDefaultProperties
+//----------------------
+//
 void sv4guiMitkSimulationObjectFactory1d::SetDefaultProperties(mitk::DataNode* node)
 {
-
-  if(node==NULL)
+  if (node==NULL) {
     return;
+  }
 
-  if(node->GetData() ==NULL)
+  if(node->GetData() ==NULL) {
     return;
+  }
 
-  if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL )
-  {
+  if( dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData())!=NULL ) {
   }
 }
 
+//-------------------
+// GetFileExtensions
+//-------------------
+//
 const char* sv4guiMitkSimulationObjectFactory1d::GetFileExtensions()
 {
   std::string fileExtension;
@@ -119,11 +127,19 @@ void sv4guiMitkSimulationObjectFactory1d::RegisterIOFactories()
 {
 }
 
+//---------------------------------------------
+// Registersv4guiMitkSimulationObjectFactory1d
+//---------------------------------------------
+// Register the sv4guiMitkSimJobIO1d for reading and writing
+// job xml files.
+//
+// [DaveP] How the m_MitkSimJobIO object is used is a mystery. 
+//
 Registersv4guiMitkSimulationObjectFactory1d::Registersv4guiMitkSimulationObjectFactory1d()
     : m_Factory( sv4guiMitkSimulationObjectFactory1d::New() )
 {
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
-    m_MitkSimJobIO=new sv4guiMitkSimJobIO1d();
+    m_MitkSimJobIO = new sv4guiMitkSimJobIO1d();
 }
 
 Registersv4guiMitkSimulationObjectFactory1d::~Registersv4guiMitkSimulationObjectFactory1d()
