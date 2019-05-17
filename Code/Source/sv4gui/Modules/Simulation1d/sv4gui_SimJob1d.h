@@ -57,8 +57,7 @@
 #include <string>
 #include <vector>
 
-// Define the names used to access parameters from the
-// property maps. 
+// Define property names.
 //
 namespace SimJob1dProperty {
 
@@ -79,20 +78,91 @@ namespace SimJob1dProperty {
     const std::string PERIOD = "Period";
     const std::string PRESCRIBED_VELOCITIES = "Prescribed Velocities";
     const std::string PRESSURE = "Pressure";
+    const std::string RESISTANCE = "Resistance";
     const std::string RCR = "RCR";
   };
-
-
 };
 
+enum class SimJob1dPropertyBcType
+{
+  Unknown = 0,
+  PrescribedVelocities = 1,
+  Resistance = 2,
+  RCR = 3
+};
+
+class SimJob1dPropertyBcRCR
+{
+  public:
+    std::string Rp;
+    std::string C;
+    std::string Rd;
+};
+
+//-----------------------
+// sv4guiSimBcResistance
+//-----------------------
+//
+class sv4guiSimBcResistance
+{
+  public:
+    std::string Resistance;
+};
+
+//----------------------------------------
+// SimJob1dPropertyBcPrescribedVelocities
+//----------------------------------------
+//
+class SimJob1dPropertyBcPrescribedVelocities
+{
+  public:
+    std::string analyticShape;
+    std::string flipNormal;
+    std::string fourierModes;
+    std::string period;
+    std::string pointNumber;
+};
+
+//---------------------
+// sv4guiSimProperty1d
+//---------------------
+//
+class sv4guiSimProperty1d
+{ 
+  public:
+    SimJob1dPropertyBcType bcType;
+    SimJob1dPropertyBcPrescribedVelocities prescribedVelocitiesBC;
+    sv4guiSimBcResistance resistanceBC;
+    SimJob1dPropertyBcRCR rcrBC;
+    static const std::map<std::string, SimJob1dPropertyBcType> BCTypeMap;
+
+    void SetBcType(SimJob1dPropertyBcType bcType);
+    SimJob1dPropertyBcType GetBcType();
+    SimJob1dPropertyBcType GetBcType(const std::string& value);
+
+    void SetAnalyticShape(const std::string& value);
+    std::string GetAnalyticShape();
+
+    void SetPointNumber(const std::string& value);
+    std::string GetPointNumber();
+
+    void SetResistance(const std::string& value);
+    std::string GetResistance();
+};
+
+//----------------
+// sv4guiSimJob1d
+//----------------
+//
 class SV4GUIMODULESIMULATION1D_EXPORT sv4guiSimJob1d
 {
   public:
     sv4guiSimJob1d();
     sv4guiSimJob1d(const sv4guiSimJob1d &other);
     virtual sv4guiSimJob1d* Clone();
-
     virtual ~sv4guiSimJob1d();
+
+    sv4guiSimProperty1d properties;
 
     void SetModelProps(std::map<std::string,std::string> modelProps);
     std::map<std::string,std::string> GetModelProps();

@@ -31,6 +31,93 @@
 
 #include "sv4gui_SimJob1d.h"
 
+using namespace SimJob1dProperty;
+
+const std::map<std::string, SimJob1dPropertyBcType> sv4guiSimProperty1d::BCTypeMap = {
+  {BC::PRESCRIBED_VELOCITIES, SimJob1dPropertyBcType::PrescribedVelocities},
+  {BC::RESISTANCE, SimJob1dPropertyBcType::Resistance},
+  {BC::RCR, SimJob1dPropertyBcType::RCR}
+};
+
+//-----------
+// SetBcType
+//-----------
+//
+void sv4guiSimProperty1d::SetBcType(SimJob1dPropertyBcType value) 
+{ 
+  this->bcType = value; 
+}
+
+SimJob1dPropertyBcType sv4guiSimProperty1d::GetBcType() 
+{ 
+  return bcType; 
+};
+
+SimJob1dPropertyBcType sv4guiSimProperty1d::GetBcType(const std::string& value)
+{
+  auto it = BCTypeMap.find(value);
+
+  if (it == BCTypeMap.end()) {
+     return SimJob1dPropertyBcType::Unknown;
+  }
+  return it->second;
+}
+
+//------------------
+// SetAnalyticShape
+//------------------
+//
+void sv4guiSimProperty1d::SetAnalyticShape(const std::string& value) 
+{
+  if (bcType != SimJob1dPropertyBcType::PrescribedVelocities) {
+    return;
+  }
+
+  prescribedVelocitiesBC.analyticShape = value;
+}
+
+std::string sv4guiSimProperty1d::GetAnalyticShape()
+{
+  return prescribedVelocitiesBC.analyticShape;
+}
+
+//----------------
+// SetPointNumber
+//----------------
+//
+void sv4guiSimProperty1d::SetPointNumber(const std::string& value)
+{
+  if (bcType != SimJob1dPropertyBcType::PrescribedVelocities) {
+    return;
+  }
+
+  prescribedVelocitiesBC.pointNumber = value;
+}
+
+std::string sv4guiSimProperty1d::GetPointNumber()
+{
+  return prescribedVelocitiesBC.pointNumber;
+}
+
+//---------------
+// SetResistance
+//---------------
+//
+void sv4guiSimProperty1d::SetResistance(const std::string& value) 
+{
+  if (bcType != SimJob1dPropertyBcType::Resistance) {
+    std::cout << "ERROR: " << std::endl;
+    return;
+  }
+
+  resistanceBC.Resistance = value;
+}
+
+std::string sv4guiSimProperty1d::GetResistance()
+{
+  return resistanceBC.Resistance;
+}
+
 //----------------
 // sv4guiSimJob1d
 //----------------

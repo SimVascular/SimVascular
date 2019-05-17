@@ -34,6 +34,7 @@
 
 #include "sv4gui_CapBCWidget1d.h"
 #include "ui_sv4gui_CapBCWidget1d.h"
+#include "sv4gui_SimJob1d.h"
 
 #include <berryIPreferencesService.h>
 #include <berryIPreferences.h>
@@ -175,8 +176,28 @@ void sv4guiCapBCWidget1d::UpdateGUI(std::string capName, std::map<std::string, s
 //
 bool sv4guiCapBCWidget1d::CreateProps()
 {
+  {
+
+    sv4guiSimProperty1d properties;
+
+    auto bcType = properties.GetBcType(ui->comboBoxBCType->currentText().toStdString());
     std::map<std::string, std::string> props;
 
+    if (bcType == SimJob1dPropertyBcType::PrescribedVelocities) {
+        properties.SetBcType(bcType);
+        properties.SetAnalyticShape(ui->comboBoxShape->currentText().toStdString());
+        QString pointNum = ui->lineEditPointNumber->text().trimmed();
+        if (!IsDouble(pointNum)) {
+            QMessageBox::warning(this,"Point Number Error","Please provide value in a correct format!");
+            return false;
+        }
+        properties.SetPointNumber(pointNum.toStdString());
+    } 
+
+
+   }
+
+    std::map<std::string, std::string> props;
     std::string bcType=ui->comboBoxBCType->currentText().toStdString();
 
     if(bcType=="Prescribed Velocities") {
