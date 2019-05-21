@@ -199,6 +199,7 @@ SV_USE_GDCM = 1
 # -----------------------------------------------------
 
 SV_USE_MITK = 1
+SV_USE_MITK_SEGMENTATION = 1
 SV_IGNORE_PROVISIONING_FILE = 1
 
 # -----------------------------------------------------
@@ -388,6 +389,10 @@ endif
 
 ifeq ($(SV_USE_MITK),1)
   GLOBAL_DEFINES += -DSV_USE_MITK
+endif
+
+ifeq ($(SV_USE_MITK_SEGMENTATION),1)
+  GLOBAL_DEFINES += -DSV_USE_MITK_SEGMENTATION
 endif
 
 ifeq ($(SV_IGNORE_PROVISIONING_FILE),1)
@@ -667,6 +672,9 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation1d \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/ImageProcessing \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/svFSI
+  ifeq ($(SV_USE_MITK_SEGMENTATION),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.mitksegmentation
+  endif
   ifeq ($(SV_USE_OPENCASCADE),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/OCCT
   endif
