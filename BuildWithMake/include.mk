@@ -656,6 +656,7 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing \
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.svfsi \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Common \
+                     -I$(TOP)/../Code/Source/sv4gui/Modules/MachineLearning \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Model/Common \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Mesh/Common \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Path \
@@ -689,6 +690,7 @@ SV_LIB_MESH_NAME=_simvascular_mesh
 SV_LIB_MMG_MESH_NAME=_simvascular_mmg_mesh
 SV_LIB_MODULE_COMMON_NAME=_simvascular_module_common
 SV_LIB_MODULE_IMAGEPROCESSING_NAME=_simvascular_module_imageprocessing
+SV_LIB_MODULE_MACHINELEARNING_NAME=_simvascular_module_machinelearning
 SV_LIB_MODULE_MESH_NAME=_simvascular_module_mesh
 SV_LIB_MODULE_MODEL_NAME=_simvascular_module_model
 SV_LIB_MODULE_MODEL_OCCT_NAME=_simvascular_module_model_occt

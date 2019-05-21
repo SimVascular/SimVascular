@@ -127,6 +127,12 @@ sv_externals_add_new_external(NUMPY ${SV_EXTERNALS_NUMPY_VERSION} ON ON numpy no
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# ML
+sv_externals_add_new_external(ML ${SV_EXTERNALS_ML_VERSION} ON ON ml ml)
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
 # FREETYPE
 sv_externals_add_new_external(FREETYPE ${SV_EXTERNALS_FREETYPE_VERSION} ON ON freetype freetype)
 #-----------------------------------------------------------------------------

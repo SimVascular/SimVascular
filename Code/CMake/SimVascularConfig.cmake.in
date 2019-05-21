@@ -60,7 +60,7 @@ endif()
 
 set(SimVascular_BINARY_DIR "@SV_CONF_BINARY_DIR@")
 if ("${SimVascular_BINARY_DIR}" STREQUAL "")
-  set(SimVascular_BINARY_DIR "${SimVacular_CONFIG_DIR}/../../..")
+  set(SimVascular_BINARY_DIR "${SimVascular_CONFIG_DIR}/../../..")
 endif()
 #-----------------------------------------------------------------------------
 

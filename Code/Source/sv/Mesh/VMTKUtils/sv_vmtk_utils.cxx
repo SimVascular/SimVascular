@@ -124,13 +124,14 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
 
   fprintf(stderr,"NumSources %d\n",nsources);
   fprintf(stderr,"NumTargets %d\n",ntargets);
+
   for (pointId = 0;pointId<nsources;pointId++)
   {
-    capInletIds->InsertNextId(*sources+pointId);
+    capInletIds->InsertNextId(sources[pointId]);
   }
   for (pointId = 0;pointId<ntargets;pointId++)
   {
-    capOutletIds->InsertNextId(*targets+pointId);
+    capOutletIds->InsertNextId(targets[pointId]);
   }
 
   vtkNew(vtkvmtkPolyDataCenterlines,centerLiner);

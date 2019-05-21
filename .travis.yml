@@ -6,24 +6,24 @@ matrix:
       compiler: gcc
       dist: xenial
       sudo: required
-      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
+      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.02 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: linux
       compiler: gcc
       dist: xenial
       sudo: required
-      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=true
+      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2019.02 SV_EXTERNALS_USE_PREBUILT_QT=true
     - os: osx
       compiler: clang
       osx_image: xcode7.3
       sudo: required
-      env: WITH_CMAKE=true  SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
+      env: WITH_CMAKE=true  SV_EXTERNALS_VERSION_NUMBER=2019.02 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: osx
       compiler: clang
       osx_image: xcode7.3
       sudo: required
-      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
+      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2019.02 SV_EXTERNALS_USE_PREBUILT_QT=false
   allow_failures:
-    - env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2018.05 SV_EXTERNALS_USE_PREBUILT_QT=false
+    - env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2019.02 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: osx
 
 addons:

@@ -34,7 +34,7 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path
+SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path MachineLearning
 
 SVQTGUIMODULES_DIRS += Model/Common
 

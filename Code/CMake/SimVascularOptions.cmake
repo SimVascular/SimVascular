@@ -124,6 +124,9 @@ simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascad
 
 # MITK
 simvascular_add_new_external(MITK ${MITK_VERSION} ON ON mitk)
+
+# MITK
+simvascular_add_new_external(ml ${ML_VERSION} ON ON ml)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

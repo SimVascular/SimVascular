@@ -45,6 +45,8 @@
 #include "sv4gui_LevelSet2DWidget.h"
 #include "sv4gui_LoftParamWidget.h"
 
+#include "sv4gui_MachineLearningUtils.h"
+
 #include <QmitkSliceWidget.h>
 #include <QmitkSliderNavigatorWidget.h>
 #include <QmitkStepperAdapter.h>
@@ -77,7 +79,7 @@ class sv4guiSeg2DEdit : public sv4guiQmitkFunctionality
 
 public:
 
-    enum SegmentationMethod {LEVELSET_METHOD, THRESHOLD_METHOD, REGION_GROWING_METHOD};
+    enum SegmentationMethod {LEVELSET_METHOD, THRESHOLD_METHOD, REGION_GROWING_METHOD, ML_METHOD};
 
     static const QString EXTENSION_ID;
 
@@ -182,6 +184,13 @@ public slots:
 
     void UpdatePathPoint(int pos);
 
+    // ml stuff
+    void selectAllPaths();
+    void segmentPaths();
+    //void sampleNetwork();
+    void segTabSelected();
+    void CreateMLContour();
+
 public:
 
     void SelectContour(int index);
@@ -211,6 +220,16 @@ public:
     void PreparePreviewInteraction(QString method);
 
     void QuitPreviewInteraction();
+
+    //ml additions
+    void setupMLui();
+    void initialize();
+    void updatePaths();
+    void createContourGroup(std::string path_name);
+    void segmentPath();
+    void doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point,
+    int index, int n_);
+    sv4guiContour* doMLContour(sv4guiPathElement::sv4guiPathPoint path_point);
 
 protected:
 
@@ -281,6 +300,22 @@ protected:
     sv4guiContourGroupCreate* m_ContourGroupCreateWidget;
 
     bool m_UpdatingGUI;
+
+    // ml additions
+    std::string m_imageFilePath;
+    sv4gui_MachineLearningUtils* ml_utils;
+
+    int m_interval = 50;
+
+    int m_numFourierModes = 7;
+
+    mitk::DataNode::Pointer m_current_path_node;
+
+    std::vector<std::string> m_selected_paths;
+
+    sv4guiContourGroup::Pointer m_current_group;
+
+    bool m_MachineLearninginitialized = false;
 
 };
 
