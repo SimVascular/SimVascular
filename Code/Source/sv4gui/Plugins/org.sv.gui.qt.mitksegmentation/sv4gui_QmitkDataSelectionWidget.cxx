@@ -14,8 +14,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkDataSelectionWidget.h"
-#include "mitkPluginActivator.h"
+#include "sv4gui_QmitkDataSelectionWidget.h"
+#include "sv4gui_mitkPluginActivator.h"
 
 #include <berryIWorkbench.h>
 

@@ -14,7 +14,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkSegmentationPreferencePage.h"
+#include "sv4gui_QmitkSegmentationPreferencePage.h"
 
 #include <QLabel>
 #include <QPushButton>

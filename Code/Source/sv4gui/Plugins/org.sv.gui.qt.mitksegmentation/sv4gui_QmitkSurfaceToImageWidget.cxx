@@ -14,7 +14,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkSurfaceToImageWidget.h"
+#include "sv4gui_QmitkSurfaceToImageWidget.h"
 
 #include <mitkException.h>
 #include <mitkExceptionMacro.h>

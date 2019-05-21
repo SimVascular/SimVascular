@@ -14,8 +14,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkBooleanOperationsWidget.h"
-#include "QmitkDataSelectionWidget.h"
+#include "sv4gui_QmitkBooleanOperationsWidget.h"
+#include "sv4gui_QmitkDataSelectionWidget.h"
 #include <mitkException.h>
 #include <mitkSliceNavigationController.h>
 #include <cassert>

@@ -14,12 +14,12 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkSegmentationUtilitiesView.h"
-#include "QmitkBooleanOperationsWidget.h"
-#include "QmitkContourModelToImageWidget.h"
-#include "QmitkImageMaskingWidget.h"
-#include "QmitkMorphologicalOperationsWidget.h"
-#include "QmitkSurfaceToImageWidget.h"
+#include "sv4gui_QmitkSegmentationUtilitiesView.h"
+#include "sv4gui_QmitkBooleanOperationsWidget.h"
+#include "sv4gui_QmitkContourModelToImageWidget.h"
+#include "sv4gui_QmitkImageMaskingWidget.h"
+#include "sv4gui_QmitkMorphologicalOperationsWidget.h"
+#include "sv4gui_QmitkSurfaceToImageWidget.h"
 
 QmitkSegmentationUtilitiesView::QmitkSegmentationUtilitiesView()
   : m_BooleanOperationsWidget(nullptr),

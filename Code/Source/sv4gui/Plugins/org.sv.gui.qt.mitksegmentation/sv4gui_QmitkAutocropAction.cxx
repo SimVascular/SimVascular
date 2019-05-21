@@ -13,7 +13,7 @@ A PARTICULAR PURPOSE.
 See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
-#include "QmitkAutocropAction.h"
+#include "sv4gui_QmitkAutocropAction.h"
 
 #include "mitkAutoCropImageFilter.h"
 #include "mitkImageCast.h"

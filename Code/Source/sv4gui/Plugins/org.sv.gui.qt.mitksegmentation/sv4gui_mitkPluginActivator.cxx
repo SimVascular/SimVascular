@@ -13,15 +13,15 @@ A PARTICULAR PURPOSE.
 See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
-#include "mitkPluginActivator.h"
+#include "sv4gui_mitkPluginActivator.h"
 
-#include "QmitkSegmentationView.h"
-#include "QmitkThresholdAction.h"
-#include "QmitkCreatePolygonModelAction.h"
-#include "QmitkAutocropAction.h"
-#include "QmitkSegmentationPreferencePage.h"
-#include "QmitkDeformableClippingPlaneView.h"
-#include "QmitkSegmentationUtilitiesView.h"
+#include "sv4gui_QmitkSegmentationView.h"
+#include "sv4gui_QmitkThresholdAction.h"
+#include "sv4gui_QmitkCreatePolygonModelAction.h"
+#include "sv4gui_QmitkAutocropAction.h"
+#include "sv4gui_QmitkSegmentationPreferencePage.h"
+#include "sv4gui_QmitkDeformableClippingPlaneView.h"
+#include "sv4gui_QmitkSegmentationUtilitiesView.h"
 
 using namespace mitk;
 

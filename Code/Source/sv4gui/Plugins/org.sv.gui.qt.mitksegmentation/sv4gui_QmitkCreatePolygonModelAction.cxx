@@ -13,7 +13,7 @@ A PARTICULAR PURPOSE.
 See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
-#include "QmitkCreatePolygonModelAction.h"
+#include "sv4gui_QmitkCreatePolygonModelAction.h"
 
 // MITK
 #include <mitkShowSegmentationAsSmoothedSurface.h>

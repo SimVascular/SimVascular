@@ -14,8 +14,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QmitkSegmentationUtilityWidget_h
-#define QmitkSegmentationUtilityWidget_h
+#ifndef sv4gui_QmitkSegmentationUtilityWidget_h
+#define sv4gui_QmitkSegmentationUtilityWidget_h
 
 #include <QWidget>
 

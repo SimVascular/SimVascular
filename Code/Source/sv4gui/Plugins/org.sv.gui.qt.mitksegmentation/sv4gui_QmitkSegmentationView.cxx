@@ -27,7 +27,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include <berryIWorkbenchPage.h>
 
-#include "QmitkSegmentationView.h"
+#include "sv4gui_QmitkSegmentationView.h"
 
 #include <mitkSurfaceToImageFilter.h>
 
@@ -35,7 +35,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include "mitkApplicationCursor.h"
 #include "mitkSegmentationObjectFactory.h"
-#include "mitkPluginActivator.h"
+#include "sv4gui_mitkPluginActivator.h"
 #include "mitkCameraController.h"
 #include "mitkLabelSetImage.h"
 

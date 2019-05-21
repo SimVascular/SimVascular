@@ -14,7 +14,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkSegmentationUtilityWidget.h"
+#include "sv4gui_QmitkSegmentationUtilityWidget.h"
 
 QmitkSegmentationUtilityWidget::QmitkSegmentationUtilityWidget(mitk::SliceNavigationController* timeNavigationController, QWidget* parent)
   : QWidget(parent)

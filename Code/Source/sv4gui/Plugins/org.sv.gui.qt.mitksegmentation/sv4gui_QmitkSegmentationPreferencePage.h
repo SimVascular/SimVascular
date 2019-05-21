@@ -15,8 +15,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 ===================================================================*/
 
 
-#ifndef QmitkSegmentationPreferencePage_h_included
-#define QmitkSegmentationPreferencePage_h_included
+#ifndef sv4gui_QmitkSegmentationPreferencePage_h_included
+#define sv4gui_QmitkSegmentationPreferencePage_h_included
 
 #include "org_sv_gui_qt_mitksegmentation_Export.h"
 #include <berryIPreferences.h>

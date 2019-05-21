@@ -13,7 +13,7 @@ A PARTICULAR PURPOSE.
 See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
-#include "QmitkThresholdAction.h"
+#include "sv4gui_QmitkThresholdAction.h"
 
 // MITK
 #include <mitkBinaryThresholdTool.h>

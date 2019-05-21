@@ -13,7 +13,7 @@ A PARTICULAR PURPOSE.
 See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
-#include "QmitkOtsuAction.h"
+#include "sv4gui_QmitkOtsuAction.h"
 
 // MITK
 #include <itkOtsuMultipleThresholdsImageFilter.h>

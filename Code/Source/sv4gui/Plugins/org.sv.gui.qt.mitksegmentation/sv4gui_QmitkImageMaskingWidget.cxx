@@ -14,9 +14,9 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkImageMaskingWidget.h"
+#include "sv4gui_QmitkImageMaskingWidget.h"
 #include "mitkImage.h"
-#include "QmitkDataSelectionWidget.h"
+#include "sv4gui_QmitkDataSelectionWidget.h"
 
 #include <mitkException.h>
 #include <mitkExceptionMacro.h>

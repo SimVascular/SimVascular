@@ -14,10 +14,10 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QmitkMorphologicalOperationsWidget_h
-#define QmitkMorphologicalOperationsWidget_h
+#ifndef sv4gui_QmitkMorphologicalOperationsWidget_h
+#define sv4gui_QmitkMorphologicalOperationsWidget_h
 
-#include "QmitkSegmentationUtilityWidget.h"
+#include "sv4gui_QmitkSegmentationUtilityWidget.h"
 #include <ui_QmitkMorphologicalOperationsWidgetControls.h>
 #include <mitkMorphologicalOperations.h>
 

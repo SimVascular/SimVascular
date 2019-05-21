@@ -14,7 +14,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkDeformableClippingPlaneView.h"
+#include "sv4gui_QmitkDeformableClippingPlaneView.h"
 
 #include "mitkClippingPlaneInteractor3D.h"
 #include "mitkHeightFieldSurfaceClipImageFilter.h"

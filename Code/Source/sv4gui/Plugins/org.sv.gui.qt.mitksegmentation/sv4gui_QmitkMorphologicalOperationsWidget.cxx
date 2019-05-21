@@ -14,7 +14,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#include "QmitkMorphologicalOperationsWidget.h"
+#include "sv4gui_QmitkMorphologicalOperationsWidget.h"
 #include <mitkProgressBar.h>
 #include <mitkSliceNavigationController.h>
 #include <QCheckBox>

@@ -14,10 +14,10 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QmitkBooleanOperationsWidget_h
-#define QmitkBooleanOperationsWidget_h
+#ifndef sv4gui_QmitkBooleanOperationsWidget_h
+#define sv4gui_QmitkBooleanOperationsWidget_h
 
-#include "QmitkSegmentationUtilityWidget.h"
+#include "sv4gui_QmitkSegmentationUtilityWidget.h"
 #include <ui_QmitkBooleanOperationsWidgetControls.h>
 #include <mitkBooleanOperation.h>
 

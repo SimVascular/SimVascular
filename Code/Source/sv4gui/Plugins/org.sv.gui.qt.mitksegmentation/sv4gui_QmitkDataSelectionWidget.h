@@ -14,8 +14,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 ===================================================================*/
 
-#ifndef QmitkDataSelectionWidget_h
-#define QmitkDataSelectionWidget_h
+#ifndef sv4gui_QmitkDataSelectionWidget_h
+#define sv4gui_QmitkDataSelectionWidget_h
 
 #include <ui_QmitkDataSelectionWidgetControls.h>
 #include <mitkDataNode.h>
