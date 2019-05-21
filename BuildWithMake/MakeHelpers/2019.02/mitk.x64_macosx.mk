@@ -98,6 +98,8 @@ MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include/mitk/Modules/Segmentation/Algorithms \
            -I$(MITK_BINDIR)/include/mitk/Modules/Segmentation/Controllers \
            -I$(MITK_BINDIR)/include/mitk/Modules/Segmentation/Interactions \
+           -I$(MITK_BINDIR)/include/mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations \
+           -I$(MITK_BINDIR)/include/mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations \
            -I$(MITK_BINDIR)/include/mitk/Modules/SegmentationUI/Qmitk \
            -I$(MITK_BINDIR)/include/mitk/Modules/SurfaceInterpolation \
            -I$(MITK_BINDIR)/include/mitk/Modules/ContourModel \
@@ -183,6 +185,9 @@ MITK_LIBS += \
            $(LIBFLAG)MitkSceneSerialization$(LIBLINKEXT) \
            $(LIBFLAG)MitkSegmentation$(LIBLINKEXT) \
            $(LIBFLAG)MitkSegmentationUI$(LIBLINKEXT) \
+           $(LIBFLAG)MitkMultilabel$(LIBLINKEXT) \
+           $(LIBFLAG)MitkMultilabelIO$(LIBLINKEXT) \
+           $(LIBFLAG)MitkContourModel$(LIBLINKEXT) \
            $(LIBFLAG)MitkSurfaceInterpolation$(LIBLINKEXT) \
            $(LIBFLAG)MitkLegacyGL$(LIBLINKEXT) \
            $(LIBFLAG)MitkPlanarFigure$(LIBLINKEXT) \
