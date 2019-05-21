@@ -18,7 +18,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #define sv4gui_QmitkBooleanOperationsWidget_h
 
 #include "sv4gui_QmitkSegmentationUtilityWidget.h"
-#include <ui_QmitkBooleanOperationsWidgetControls.h>
+#include <ui_sv4gui_QmitkBooleanOperationsWidgetControls.h>
 #include <mitkBooleanOperation.h>
 
 class QmitkBooleanOperationsWidget : public QmitkSegmentationUtilityWidget

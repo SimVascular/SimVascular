@@ -23,7 +23,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include <berryIBerryPreferences.h>
 
-#include "ui_QmitkSegmentationControls.h"
+#include "ui_sv4gui_QmitkSegmentationControls.h"
 
 class QmitkRenderWindow;
 

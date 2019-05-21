@@ -17,7 +17,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #ifndef sv4gui_QmitkSegmentationUtilitiesView_h
 #define sv4gui_QmitkSegmentationUtilitiesView_h
 
-#include <ui_QmitkSegmentationUtilitiesViewControls.h>
+#include <ui_sv4gui_QmitkSegmentationUtilitiesViewControls.h>
 #include <mitkIRenderWindowPartListener.h>
 #include <QmitkAbstractView.h>
 

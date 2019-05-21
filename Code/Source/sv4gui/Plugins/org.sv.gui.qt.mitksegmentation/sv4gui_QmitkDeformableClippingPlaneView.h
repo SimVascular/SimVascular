@@ -18,7 +18,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #define _QMITKDEFORMABLECLIPPINGPLANEVIEW_H_INCLUDED
 
 
-#include <ui_QmitkDeformableClippingPlaneViewControls.h>
+#include <ui_sv4gui_QmitkDeformableClippingPlaneViewControls.h>
 #include <mitkImage.h>
 #include <QmitkAbstractView.h>
 

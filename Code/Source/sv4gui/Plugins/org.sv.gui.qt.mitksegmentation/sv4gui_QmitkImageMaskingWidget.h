@@ -18,7 +18,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #define sv4gui_QmitkImageMaskingWidget_h
 
 #include "sv4gui_QmitkSegmentationUtilityWidget.h"
-#include <ui_QmitkImageMaskingWidgetControls.h>
+#include <ui_sv4gui_QmitkImageMaskingWidgetControls.h>
 
 #include <mitkSurface.h>
 

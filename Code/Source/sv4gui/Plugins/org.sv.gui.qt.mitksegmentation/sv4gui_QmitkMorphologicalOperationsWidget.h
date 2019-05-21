@@ -18,7 +18,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #define sv4gui_QmitkMorphologicalOperationsWidget_h
 
 #include "sv4gui_QmitkSegmentationUtilityWidget.h"
-#include <ui_QmitkMorphologicalOperationsWidgetControls.h>
+#include <ui_sv4gui_QmitkMorphologicalOperationsWidgetControls.h>
 #include <mitkMorphologicalOperations.h>
 
 /** \brief GUI class for morphological segmentation tools.
