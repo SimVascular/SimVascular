@@ -3,7 +3,7 @@
 
   <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.imageprocessing"
-          name="Image Processing"
+          name="Colliding Fronts"
           class="sv4guiImageProcessing"
           icon="resources/image_processing.png" />
   </extension>

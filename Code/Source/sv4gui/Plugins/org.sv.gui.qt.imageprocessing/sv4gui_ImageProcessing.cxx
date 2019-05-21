@@ -153,6 +153,7 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
 
     m_SeedNode = seedNode;
     m_SeedNode->SetName("seeds");
+    displaySeeds(true);
 
   }
 }
