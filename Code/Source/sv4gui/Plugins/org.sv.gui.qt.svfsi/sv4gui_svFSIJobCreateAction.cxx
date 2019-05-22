@@ -43,20 +43,23 @@
 #include <QMessageBox>
 
 sv4guisvFSIJobCreateAction::sv4guisvFSIJobCreateAction()
-    : m_Functionality(NULL)
+    : m_svFSIJobCreateWidget(NULL), m_Functionality(NULL)
 {
-    m_Interface=new sv4guiDataNodeOperationInterface;
+    //m_Interface=new sv4guiDataNodeOperationInterface;
 }
 
 sv4guisvFSIJobCreateAction::~sv4guisvFSIJobCreateAction()
 {
+    if(m_svFSIJobCreateWidget) {
+        delete m_svFSIJobCreateWidget;
+    }
 }
 
 void sv4guisvFSIJobCreateAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
-    mitk::NodePredicateDataType::Pointer isSimulationFolder = mitk::NodePredicateDataType::New("svSimulationFolder");
+    mitk::NodePredicateDataType::Pointer isSimulationFolder = mitk::NodePredicateDataType::New("sv4guisvFSIFolder");
 
     if(!isSimulationFolder->CheckNode(selectedNode))
     {
@@ -85,6 +88,8 @@ void sv4guisvFSIJobCreateAction::Run(const QList<mitk::DataNode::Pointer> &selec
 //            timeStep=timeNavigationController->GetTime()->GetPos();
 //        }
 
+
+        /* [DaveP]
         bool ok;
         QString text = QInputDialog::getText(NULL, tr("Create sv4guisvFSI Job"),
                                              tr("Job Name:"), QLineEdit::Normal,
@@ -124,10 +129,17 @@ void sv4guisvFSIJobCreateAction::Run(const QList<mitk::DataNode::Pointer> &selec
             mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
         }
         m_Interface->ExecuteOperation(doOp);
+*/
 
-    }
-    catch(...)
-    {
+        if(m_svFSIJobCreateWidget) {
+            delete m_svFSIJobCreateWidget;
+        }   
+        
+        m_svFSIJobCreateWidget = new sv4guisvFSIJobCreate(m_DataStorage, selectedNode);
+        m_svFSIJobCreateWidget->show();
+        m_svFSIJobCreateWidget->SetFocus();
+
+    } catch(...) {
         MITK_ERROR << "svFSI Job Creation Error!";
     }
 }

@@ -267,17 +267,12 @@ void sv4guiQmitkDataManagerView::CreateQtPartControl(QWidget* parent)
   m_ConfElements.clear();
 
   int i=1;
-  for (cmActionsIt = cmActions.begin()
-    ; cmActionsIt != cmActions.end()
-    ; ++cmActionsIt)
-  {
+  for (cmActionsIt = cmActions.begin(); cmActionsIt != cmActions.end(); ++cmActionsIt) {
     QString cmNodeDescriptorName = (*cmActionsIt)->GetAttribute("nodeDescriptorName");
     QString cmLabel = (*cmActionsIt)->GetAttribute("label");
     QString cmClass = (*cmActionsIt)->GetAttribute("class");
-    if(!cmNodeDescriptorName.isEmpty() &&
-       !cmLabel.isEmpty() &&
-       !cmClass.isEmpty())
-    {
+
+    if(!cmNodeDescriptorName.isEmpty() && !cmLabel.isEmpty() && !cmClass.isEmpty()) {
       QString cmIcon = (*cmActionsIt)->GetAttribute("icon");
       // create context menu entry here
       tmpDescriptor = QmitkNodeDescriptorManager::GetInstance()->GetDescriptor(cmNodeDescriptorName);
@@ -546,6 +541,24 @@ void sv4guiQmitkDataManagerView::OnPreferencesChanged(const berry::IBerryPrefere
 
 }
 
+//-----------------------------------
+// NodeTableViewContextMenuRequested
+//-----------------------------------
+// Process righ-click on a Data Node. 
+//
+// This displays a node's context menu that allows selecting standard
+// menu items
+//    Gloval Reinit
+//    Save   
+//    Show onlt selected nodes
+//    Toggle visibility        
+//    Details
+//
+// and menu items specificy to the type (e.g. Images, Meshes, Models) of Data Node
+//    Images: Add / Replace image 
+//    Meshes: Create mesh
+//
+//
 void sv4guiQmitkDataManagerView::NodeTableViewContextMenuRequested( const QPoint & pos )
 {
   QModelIndex selectedProxy = m_NodeTreeView->indexAt ( pos );
@@ -553,27 +566,23 @@ void sv4guiQmitkDataManagerView::NodeTableViewContextMenuRequested( const QPoint
   mitk::DataNode::Pointer node = m_NodeTreeModel->GetNode(selected);
   QList<mitk::DataNode::Pointer> selectedNodes = this->GetCurrentSelection();
 
-  if(!selectedNodes.isEmpty())
-  {
+  if(!selectedNodes.isEmpty()) {
     m_NodeMenu->clear();
     QList<QAction*> actions;
-    if(selectedNodes.size() == 1 )
-    {
+    if(selectedNodes.size() == 1) {
       actions = QmitkNodeDescriptorManager::GetInstance()->GetActions(node);
-
-      for(QList<QAction*>::iterator it = actions.begin(); it != actions.end(); ++it)
-      {
+      for(QList<QAction*>::iterator it = actions.begin(); it != actions.end(); ++it) {
         (*it)->setData(QVariant::fromValue(node.GetPointer()));
       }
-    }
-    else
+    } else {
       actions = QmitkNodeDescriptorManager::GetInstance()->GetActions(selectedNodes);
+    }
 
-    if (!m_ShowInActions.isEmpty())
-    {
+    if (!m_ShowInActions.isEmpty()) {
       QMenu* showInMenu = m_NodeMenu->addMenu("Show In");
       showInMenu->addActions(m_ShowInActions);
     }
+
     m_NodeMenu->addActions(actions);
     m_NodeMenu->popup(QCursor::pos());
   }
@@ -965,6 +974,7 @@ void sv4guiQmitkDataManagerView::NodeChanged(const mitk::DataNode* node)
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiModelFolder"));
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiMeshFolder"));
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiSimulationFolder"));
+    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guisvFSIFolder"));
     predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder"));
 
     if(predicateTypes->CheckNode(node)){

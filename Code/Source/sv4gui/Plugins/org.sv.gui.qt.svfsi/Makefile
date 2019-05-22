@@ -46,6 +46,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            -DUS_MODULE_NAME=sv4guiModulesvFSI
 
 HDRS	= \
+    sv4gui_svFSIJobCreate.h \
     sv4gui_svFSIJobCreateAction.h \
     sv4gui_svFSIUtil.h \
     sv4gui_svFSIView.h \
@@ -54,6 +55,7 @@ HDRS	= \
     sv4gui_svFSIPluginActivator.h
 
 CXXSRCS	= \
+    sv4gui_svFSIJobCreate.cxx \
     sv4gui_svFSIJobCreateAction.cxx \
     sv4gui_svFSIView.cxx \
     sv4gui_svFSIBCWidget.cxx \
@@ -61,6 +63,7 @@ CXXSRCS	= \
     sv4gui_svFSIPluginActivator.cxx
 
 UIFILES = \
+    sv4gui_svFSIJobCreate.ui \
     sv4gui_svFSIView.ui \
     sv4gui_svFSIBCWidget.ui \
     sv4gui_svFSIPreferencePage.ui
@@ -90,6 +93,7 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SVFSI_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
