@@ -40,12 +40,13 @@ SVQTGUIEXT_DIRS = org.sv.projectdatanodes \
                   org.sv.gui.qt.datamanager \
                   org.sv.gui.qt.pathplanning \
                   org.sv.gui.qt.segmentation \
+                  org.sv.gui.qt.mitksegmentation \
                   org.sv.gui.qt.modeling \
                   org.sv.gui.qt.meshing \
                   org.sv.gui.qt.simulation \
                   org.sv.gui.qt.simulation1d \
                   org.sv.gui.qt.imageprocessing \
-				  org.sv.gui.qt.svfsi  \
+                  org.sv.gui.qt.svfsi  \
                   org.sv.gui.qt.application
 
 lib-complete: moc ui qrc lib

@@ -37,7 +37,7 @@
   </extension>
 
    <extension point="org.blueberry.ui.keywords">
-    <keyword id="org.mitk.gui.qt.QmitkSegmentationPreferencePageKeywords" label="data manager"></keyword>
+    <keyword id="org.sv.gui.qt.QmitkSegmentationPreferencePageKeywords" label="data manager"></keyword>
   </extension>
 
   <extension point="org.sv.gui.qt.datamanager.contextMenuActions">

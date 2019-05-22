@@ -1,51 +1,81 @@
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
+#
+# All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject
+# to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 set(CPP_FILES
-  QmitkSegmentationPreferencePage.cpp
-  mitkPluginActivator.cpp
-  QmitkSegmentationView.cpp
-  QmitkThresholdAction.cpp
-  QmitkCreatePolygonModelAction.cpp
-  #QmitkStatisticsAction.cpp
-  QmitkAutocropAction.cpp
-  QmitkDeformableClippingPlaneView.cpp
-  QmitkDataSelectionWidget.cpp
-  QmitkSegmentationUtilitiesView.cpp
-  QmitkSegmentationUtilityWidget.cpp
-  QmitkBooleanOperationsWidget.cpp
-  QmitkImageMaskingWidget.cpp
-  QmitkContourModelToImageWidget.cpp
-  QmitkMorphologicalOperationsWidget.cpp
-  QmitkSurfaceToImageWidget.cpp
+  sv4gui_QmitkSegmentationPreferencePage.cpp
+  sv4gui_mitkPluginActivator.cpp
+  sv4gui_QmitkSegmentationView.cpp
+  sv4gui_QmitkThresholdAction.cpp
+  sv4gui_QmitkCreatePolygonModelAction.cpp
+  #sv4gui_QmitkStatisticsAction.cpp
+  sv4gui_QmitkAutocropAction.cpp
+  sv4gui_QmitkDeformableClippingPlaneView.cpp
+  sv4gui_QmitkDataSelectionWidget.cpp
+  sv4gui_QmitkSegmentationUtilitiesView.cpp
+  sv4gui_QmitkSegmentationUtilityWidget.cpp
+  sv4gui_QmitkBooleanOperationsWidget.cpp
+  sv4gui_QmitkImageMaskingWidget.cpp
+  sv4gui_QmitkContourModelToImageWidget.cpp
+  sv4gui_QmitkMorphologicalOperationsWidget.cpp
+  sv4gui_QmitkSurfaceToImageWidget.cpp
 )
 
 set(UI_FILES
-  QmitkSegmentationControls.ui
-  QmitkDeformableClippingPlaneViewControls.ui
-  QmitkDataSelectionWidgetControls.ui
-  QmitkSegmentationUtilitiesViewControls.ui
-  QmitkBooleanOperationsWidgetControls.ui
-  QmitkImageMaskingWidgetControls.ui
-  QmitkContourModelToImageWidgetControls.ui
-  QmitkMorphologicalOperationsWidgetControls.ui
-  QmitkSurfaceToImageWidgetControls.ui
+  sv4gui_QmitkSegmentationControls.ui
+  sv4gui_QmitkDeformableClippingPlaneViewControls.ui
+  sv4gui_QmitkDataSelectionWidgetControls.ui
+  sv4gui_QmitkSegmentationUtilitiesViewControls.ui
+  sv4gui_QmitkBooleanOperationsWidgetControls.ui
+  sv4gui_QmitkImageMaskingWidgetControls.ui
+  sv4gui_QmitkContourModelToImageWidgetControls.ui
+  sv4gui_QmitkMorphologicalOperationsWidgetControls.ui
+  sv4gui_QmitkSurfaceToImageWidgetControls.ui
 )
 
 set(MOC_H_FILES
-  QmitkSegmentationPreferencePage.h
-  mitkPluginActivator.h
-  QmitkSegmentationView.h
-  QmitkThresholdAction.h
-  QmitkCreatePolygonModelAction.h
-  #QmitkStatisticsAction.h
-  QmitkAutocropAction.h
-  QmitkDeformableClippingPlaneView.h
-  QmitkDataSelectionWidget.h
-  QmitkSegmentationUtilitiesView.h
-  QmitkSegmentationUtilityWidget.h
-  QmitkBooleanOperationsWidget.h
-  QmitkImageMaskingWidget.h
-  QmitkContourModelToImageWidget.h
-  QmitkMorphologicalOperationsWidget.h
-  QmitkSurfaceToImageWidget.h
+  sv4gui_QmitkSegmentationPreferencePage.h
+  sv4gui_mitkPluginActivator.h
+  sv4gui_QmitkSegmentationView.h
+  sv4gui_QmitkThresholdAction.h
+  sv4gui_QmitkCreatePolygonModelAction.h
+  #sv4gui_QmitkStatisticsAction.h
+  sv4gui_QmitkAutocropAction.h
+  sv4gui_QmitkDeformableClippingPlaneView.h
+  sv4gui_QmitkDataSelectionWidget.h
+  sv4gui_QmitkSegmentationUtilitiesView.h
+  sv4gui_QmitkSegmentationUtilityWidget.h
+  sv4gui_QmitkBooleanOperationsWidget.h
+  sv4gui_QmitkImageMaskingWidget.h
+  sv4gui_QmitkContourModelToImageWidget.h
+  sv4gui_QmitkMorphologicalOperationsWidget.h
+  sv4gui_QmitkSurfaceToImageWidget.h
 )
 
 set(CACHED_RESOURCE_FILES
