@@ -186,7 +186,6 @@ MITK_LIBS += \
            $(LIBFLAG)MitkSegmentation$(LIBLINKEXT) \
            $(LIBFLAG)MitkSegmentationUI$(LIBLINKEXT) \
            $(LIBFLAG)MitkMultilabel$(LIBLINKEXT) \
-           $(LIBFLAG)MitkMultilabelIO$(LIBLINKEXT) \
            $(LIBFLAG)MitkContourModel$(LIBLINKEXT) \
            $(LIBFLAG)MitkSurfaceInterpolation$(LIBLINKEXT) \
            $(LIBFLAG)MitkLegacyGL$(LIBLINKEXT) \
