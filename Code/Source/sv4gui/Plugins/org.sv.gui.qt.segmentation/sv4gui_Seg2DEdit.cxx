@@ -1875,24 +1875,21 @@ void sv4guiSeg2DEdit::setupMLui(){
 
   updatePaths();
 
-  ui->segToolbox->setCurrentIndex(0);
-
 }
 
 void sv4guiSeg2DEdit::segTabSelected(){
   std::cout << "select seg tab\n";
   switch(ui->segToolbox->currentIndex()){
-    case 0:
-          initialize();
+    case 1:
     break;
 
-    case 1:
+    case 0:
       std::cout << "single path selected\n";
       if(!m_ContourGroup)
       {
           ui->resliceSlider->turnOnReslice(false);
           ClearAll();
-          ui->segToolbox->setCurrentIndex(0);
+          ui->segToolbox->setCurrentIndex(1);
           QMessageBox::warning(NULL,"No segmentation selected","Create, or Select a segmentation before choosing single path segmentation!");
       }
     break;
@@ -2013,6 +2010,7 @@ void sv4guiSeg2DEdit::updatePaths(){
 
 void sv4guiSeg2DEdit::segmentPaths(){
   //paths
+  initialize();
   auto path_folder_node = GetDataStorage()->GetNamedNode("Paths");
   auto paths_list       = GetDataStorage()->GetDerivations(path_folder_node);
 
