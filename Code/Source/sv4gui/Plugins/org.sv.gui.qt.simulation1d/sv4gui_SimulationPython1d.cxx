@@ -91,7 +91,7 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
   //std::string cmd = "import " + pythonModuleName + "\n";
   //cmd += pythonModuleName + ".run(";
 
-  pName = PyUnicode_DecodeFSDefault(pythonModuleName.c_str());
+  pName = PyUnicode_DecodeFSDefault(m_PythonModuleName.c_str());
 
   pModule = PyImport_Import(pName);
   Py_DECREF(pName);
@@ -135,11 +135,11 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
 
   // Import the 1D mesh generation module.
   //
-  auto pyName = PyUnicode_DecodeFSDefault((char*)pythonModuleName.c_str());
+  auto pyName = PyUnicode_DecodeFSDefault((char*)m_PythonModuleName.c_str());
   auto pyModule = PyImport_Import(pyName);
 
   if (pyModule == nullptr) {
-      auto msg = "Unable to load the Python '" + QString(pythonModuleName.c_str()) + "' module.";
+      auto msg = "Unable to load the Python '" + QString(m_PythonModuleName.c_str()) + "' module.";
       MITK_ERROR << msg;
       QMessageBox::warning(NULL, sv4guiSimulationView1d::MsgTitle, msg);
       return false;
@@ -153,7 +153,7 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
   auto pyFunc = PyDict_GetItemString(pyDict, (char*)pyFuncName);
 
   if (!PyCallable_Check(pyFunc)) {
-      auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(pythonModuleName.c_str()) + "' module.";
+      auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(m_PythonModuleName.c_str()) + "' module.";
       MITK_ERROR << msg;
       QMessageBox::warning(NULL, sv4guiSimulationView1d::MsgTitle, msg);
       return false;
@@ -279,8 +279,8 @@ bool sv4guiSimulationPython1d::GenerateSolverInput(const std::string outputDirec
 //
 std::string sv4guiSimulationPython1d::StartCommand()
 {
-  std::string cmd = "import " + pythonModuleName + "\n";
-  cmd += pythonModuleName + ".run(";
+  std::string cmd = "import " + m_PythonModuleName + "\n";
+  cmd += m_PythonModuleName + ".run(";
   return cmd;
 }
 
