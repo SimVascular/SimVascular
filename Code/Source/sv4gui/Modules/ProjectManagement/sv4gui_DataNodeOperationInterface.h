@@ -58,5 +58,7 @@ private:
 
 };
 
+bool sv4gui_IValidDataNodeName(const std::string& name);
+
 
 #endif // SV4GUI_DATANODEOPERATIONINTERFACE_H

@@ -29,10 +29,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <regex>
+
 #include "sv4gui_DataNodeOperationInterface.h"
 
 #include "sv4gui_ProjectManager.h"
 #include "sv4gui_DataNodeOperation.h"
+
+
+bool sv4gui_IValidDataNodeName(const std::string& name) 
+{
+  std::regex regex("^[_0-9a-zA-Z]*$");
+  std::smatch match;
+  std::regex_search(name, match, regex);
+  return (match.size() != 0);
+}
+
 
 sv4guiDataNodeOperationInterface::sv4guiDataNodeOperationInterface()
 {
