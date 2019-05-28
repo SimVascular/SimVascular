@@ -157,6 +157,16 @@ void sv4guiSimJobCreate1d::CreateJob()
         return;
     }
 
+    if (!sv4guiDataNodeOperationInterface::IsValidDataNodeName(jobName)) {
+        auto validName = QString::fromStdString(sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg);
+        auto jobName = ui->lineEditJobName->text().trimmed();
+        QString msg = "The name '" + jobName + "' is not valid.\n" +
+                      "Job names " + validName + ".\n";
+        QMessageBox::warning(NULL, "Simulation 1D", msg);
+        return;
+    }
+
+
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(jobName.c_str(),m_SimulationFolderNode);
     if(exitingNode){
         QMessageBox::warning(NULL,"Job Already Created","Please use a different job name!");
