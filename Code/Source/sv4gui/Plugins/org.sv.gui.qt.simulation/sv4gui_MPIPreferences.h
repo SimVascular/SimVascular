@@ -63,7 +63,8 @@ public:
   enum class MpiImplementation {
     Unknown,
     MPICH,
-    OpenMPI
+    OpenMPI,
+    MSMPI
   };
 
   MpiImplementation GetMpiImplementation();
@@ -75,6 +76,12 @@ public:
   static const QString UnknownBinary;
 
 private:
+
+#ifdef WIN32
+  QString FindLatestKey(QString key, QStringList keys);
+  QString GetRegistryValue(QString category, QString key);
+#endif
+  
   QString m_mpiExec;
   MpiImplementation m_MpiImplementation;
   std::map<MpiImplementation, QString> m_MpiEnumToString;
@@ -82,9 +89,7 @@ private:
 
   void SetMpiExec(const QString& solverInstallPath, const QString& applicationPath);
   void SetMpiImplementation();
-  QString GetRegistryValue(char* s1, char* s2) {
-    return NULL;
-  }
+
 };
 
 #endif // SV4GUI_MPIPREFERENCES_H

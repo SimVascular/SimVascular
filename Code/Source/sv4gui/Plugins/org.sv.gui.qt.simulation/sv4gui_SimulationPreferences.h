@@ -49,6 +49,10 @@
 #include <map>
 #include <QString>
 
+#ifdef WIN32
+  #include "sv4gui_win32_use_registry.h"
+#endif
+
 //-----------------------------
 // sv4guiSimulationPreferences 
 //-----------------------------
@@ -63,7 +67,8 @@ public:
   enum class MpiImplementation {
     Unknown,
     MPICH,
-    OpenMPI
+    OpenMPI,
+    MSMPI
   };
 
   MpiImplementation GetMpiImplementation();

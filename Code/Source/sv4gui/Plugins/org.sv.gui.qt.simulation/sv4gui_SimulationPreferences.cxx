@@ -50,12 +50,14 @@ sv4guiSimulationPreferences::sv4guiSimulationPreferences()
   m_MpiEnumToString = { 
     {MpiImplementation::MPICH, "MPICH"},
     {MpiImplementation::OpenMPI, "OpenMPI"},
+    {MpiImplementation::MSMPI, "MSMPI"},
     {MpiImplementation::Unknown, "Unknown"}
   };
 
   m_MpiStringToEnum = {
     {"MPICH", MpiImplementation::MPICH}, 
     {"OpenMPI", MpiImplementation::OpenMPI},
+    {"MSMPI", MpiImplementation::MSMPI},
     {"Unknown", MpiImplementation::Unknown}
   };
 
@@ -88,6 +90,8 @@ void sv4guiSimulationPreferences::InitializeSolverLocations()
   QString applicationPath = "";
   //QString applicationPath = QCoreApplication::applicationDirPath();
 
+sv4gui_parse_registry_for_svsolver();
+  
   // Set the solver binaries.
   SetPreSolver(solverInstallPath, applicationPath); 
   SetSolver(solverInstallPath, applicationPath); 
@@ -133,7 +137,7 @@ void sv4guiSimulationPreferences::SetPostSolver(const QString& solverPath, const
   }
 
 #elif defined(Q_OS_WIN)
-
+  
     svPost = GetRegistryValue("SimVascular\\svSolver","SVPOST_EXE");
 
 #endif

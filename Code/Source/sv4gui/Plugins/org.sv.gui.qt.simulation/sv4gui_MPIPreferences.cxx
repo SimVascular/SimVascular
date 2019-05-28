@@ -35,6 +35,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QProcess>
+#include <QSettings>
 
 #include <iostream>
 
@@ -50,12 +51,14 @@ sv4guiMPIPreferences::sv4guiMPIPreferences()
   m_MpiEnumToString = { 
     {MpiImplementation::MPICH, "MPICH"},
     {MpiImplementation::OpenMPI, "OpenMPI"},
+    {MpiImplementation::MSMPI, "MSMPI"},
     {MpiImplementation::Unknown, "Unknown"}
   };
 
   m_MpiStringToEnum = {
     {"MPICH", MpiImplementation::MPICH}, 
     {"OpenMPI", MpiImplementation::OpenMPI},
+    {"MSMPI",MpiImplementation::MSMPI},
     {"Unknown", MpiImplementation::Unknown}
   };
 
@@ -95,6 +98,59 @@ void sv4guiMPIPreferences::InitializeMPILocation()
   SetMpiImplementation();
 }
 
+
+#ifdef WIN32
+
+//---------------
+// FindLatestKey
+//---------------
+
+QString sv4guiMPIPreferences::FindLatestKey(QString key, QStringList keys)
+{
+    keys.sort();
+
+    QString latestKey="";
+    for(int i=keys.size()-1;i>-1;i--)
+    {
+        if(keys[i].endsWith("/"+key))
+        {
+            latestKey=keys[i];
+            break;
+        }
+    }
+
+    return latestKey;
+}
+
+//------------------
+// GetRegistryValue
+//------------------
+
+QString sv4guiMPIPreferences::GetRegistryValue(QString category, QString key)
+{
+    QString value="";
+    QStringList keys;
+    QString latestKey="";
+    
+    QSettings settings2(category, QSettings::NativeFormat);
+    value=settings2.value(key).toString().trimmed();
+    if(value!="")
+        return value;
+
+    keys=settings2.allKeys();
+    latestKey=FindLatestKey(key,keys);
+    if(latestKey!="")
+    {
+        value=settings2.value(latestKey).toString().trimmed();
+        if(value!="")
+            return value;
+    }
+
+    return "";
+}
+
+#endif
+
 //------------
 // SetMpiExec
 //------------
@@ -126,14 +182,14 @@ void sv4guiMPIPreferences::SetMpiExec(const QString& solverPath, const QString& 
   }
 
 #elif defined(Q_OS_WIN)
-
-    QString msmpiDir = GetRegistryValue("Microsoft\\MPI","InstallRoot");
+  
+  QString msmpiDir = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\MPI","InstallRoot");
 
     if (msmpiDir != "") {
       if (msmpiDir.endsWith("\\")) {
-        mpiExec = msmpiDir+"Bin\\mpiexec";
+        mpiExec = msmpiDir+"Bin\\mpiexec.exe";
       } else {
-        mpiExec = msmpiDir+"\\Bin\\mpiexec";
+        mpiExec = msmpiDir+"\\Bin\\mpiexec.exe";
       }
     }
 
@@ -196,7 +252,7 @@ void sv4guiMPIPreferences::SetMpiImplementation()
   }
 
 #elif defined(Q_OS_WIN)
-
+  implementation = MpiImplementation::MSMPI;
 #endif
 
   m_MpiImplementation = implementation;
