@@ -41,6 +41,7 @@
 #include "sv4gui_ProcessHandler.h"
 #include "sv4gui_SolverProcessHandler.h"
 #include "sv4gui_SimulationPreferences.h"
+#include "sv4gui_MPIPreferences.h"
 
 #include "sv4gui_ModelDataInteractor.h"
 
@@ -225,11 +226,11 @@ private:
 
     QStandardItemModel* m_TableModelSolver;
 
-    sv4guiSimulationPreferences::MpiImplementation m_MpiImplementation;
+    sv4guiMPIPreferences::MpiImplementation m_MpiImplementation;
 
     QString m_PresolverPath;
     QString m_FlowsolverPath;
-    QString m_FlowsolverNoMPIPath;
+    QString m_FlowsolverNOMPIPath;
     QString m_PostsolverPath;
 
     QString m_MPIExecPath;
@@ -240,8 +241,10 @@ private:
     bool m_ConnectionEnabled;
 
     sv4guiSimulationPreferences m_DefaultPrefs;
+    sv4guiMPIPreferences m_DefaultMPIPrefs;
 
     void CheckSolver();
+    void CheckSolverNOMPI();
     void CheckMpi();
     int GetStartTimeStep(const QString& runPath, const QString& jobPath, const int numProcs);
 

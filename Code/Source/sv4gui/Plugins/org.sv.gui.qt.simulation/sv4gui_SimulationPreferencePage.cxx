@@ -96,7 +96,8 @@ void sv4guiSimulationPreferencePage::InitializeSolverLocations()
 {
   // Set the solver binaries.
   SetPreSolver(); 
-  SetSolver(); 
+  SetSolver();
+  SetSolverNOMPI();
   SetPostSolver();
 }
 
@@ -147,9 +148,25 @@ void sv4guiSimulationPreferencePage::SetSolver()
     return;
   }
 
-  //bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
   svSolver = m_DefaultPrefs.GetSolver();
   m_Ui->lineEditFlowsolverPath->setText(svSolver);
+}
+
+//---------------
+// SetSolverNOMPI 
+//---------------
+// Set the svsolver binary, with or without mpi.
+//
+void sv4guiSimulationPreferencePage::SetSolverNOMPI()
+{
+  QString svSolverNOMPI = m_Ui->lineEditFlowsolverNOMPIPath->text().trimmed();
+
+  if (!svSolverNOMPI.isEmpty() && (svSolverNOMPI != m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
+
+  svSolverNOMPI = m_DefaultPrefs.GetSolverNOMPI();
+  m_Ui->lineEditFlowsolverNOMPIPath->setText(svSolverNOMPI);
 }
 
 //-----------------
@@ -169,6 +186,7 @@ void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)
 
     connect( m_Ui->toolButtonPresolver, SIGNAL(clicked()), this, SLOT(SetPresolverPath()) );
     connect( m_Ui->toolButtonFlowsolver, SIGNAL(clicked()), this, SLOT(SetFlowsolverPath()) );
+    connect( m_Ui->toolButtonFlowsolverNOMPI, SIGNAL(clicked()), this, SLOT(SetFlowsolverNOMPIPath()) );
     connect( m_Ui->toolButtonCustomTemplate, SIGNAL(clicked()), this, SLOT(SetCustomTemplatePath()) );
     connect( m_Ui->toolButtonPostsolver, SIGNAL(clicked()), this, SLOT(SetPostsolverPath()) );
 
@@ -205,6 +223,21 @@ void sv4guiSimulationPreferencePage::SetFlowsolverPath()
     if (!filePath.isEmpty())
     {
         m_Ui->lineEditFlowsolverPath->setText(filePath);
+    }
+}
+
+//-----------------------
+// SetFlowsolverPathNOMPI
+//-----------------------
+// Process the GUI event to set the svsolver path.
+//
+void sv4guiSimulationPreferencePage::SetFlowsolverNOMPIPath()
+{
+    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Flowsolver NO MPI");
+
+    if (!filePath.isEmpty())
+    {
+        m_Ui->lineEditFlowsolverNOMPIPath->setText(filePath);
     }
 }
 
@@ -261,7 +294,8 @@ bool sv4guiSimulationPreferencePage::PerformOk()
     // Get the solver paths from the GUI.
     QString presolverPath = m_Ui->lineEditPresolverPath->text().trimmed();
     QString flowsolverPath = m_Ui->lineEditFlowsolverPath->text().trimmed();
-    //bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
+    QString flowsolverNOMPIPath = m_Ui->lineEditFlowsolverNOMPIPath->text().trimmed();
+    bool useMPI = m_Ui->useMPIsvSolver->isChecked();
     bool useCustom = m_Ui->checkBoxUseCustom->isChecked();
     QString customTemplatePath = m_Ui->lineEditCustomTemplatePath->text().trimmed();
     QString postsolverPath = m_Ui->lineEditPostsolverPath->text().trimmed();
@@ -269,7 +303,8 @@ bool sv4guiSimulationPreferencePage::PerformOk()
     // Set the values of the solver paths in the MITK database.
     m_Preferences->Put("presolver path", presolverPath);
     m_Preferences->Put("flowsolver path", flowsolverPath);
-    //m_Preferences->PutBool("use mpi", useMPI);
+    m_Preferences->Put("flowsolver nompi path", flowsolverNOMPIPath);
+    m_Preferences->PutBool("use mpi", useMPI);
     m_Preferences->PutBool("use custom", useCustom);
     m_Preferences->Put("postsolver path", postsolverPath);
 
@@ -290,6 +325,7 @@ void sv4guiSimulationPreferencePage::Update()
 {
     m_Ui->lineEditPresolverPath->setText(m_Preferences->Get("presolver path",""));
     m_Ui->lineEditFlowsolverPath->setText(m_Preferences->Get("flowsolver path",""));
+    m_Ui->lineEditFlowsolverNOMPIPath->setText(m_Preferences->Get("flowsolver nompi path",""));
     //m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
     m_Ui->checkBoxUseCustom->setChecked(m_Preferences->GetBool("use custom", false));
     m_Ui->lineEditCustomTemplatePath->setText(m_Preferences->Get("solver template path",""));

@@ -68,12 +68,14 @@ public:
 private slots:
   void SetPresolverPath();
   void SetFlowsolverPath();
+  void SetFlowsolverNOMPIPath();
   void SetCustomTemplatePath();
   void SetPostsolverPath();
 
 private:
   void SetPreSolver();
   void SetSolver();
+  void SetSolverNOMPI();
   void SetPostSolver();
 
   berry::IPreferences::Pointer m_Preferences;

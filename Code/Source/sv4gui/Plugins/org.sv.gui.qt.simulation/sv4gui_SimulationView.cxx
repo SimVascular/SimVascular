@@ -106,7 +106,7 @@ sv4guiSimulationView::sv4guiSimulationView() :
 
     m_PresolverPath="";
     m_FlowsolverPath="";
-    m_FlowsolverNoMPIPath="";
+    m_FlowsolverNOMPIPath="";
     m_PostsolverPath="";
     m_MPIExecPath="";
 
@@ -340,13 +340,15 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
 
     // Set the solver binaries.
     m_PresolverPath = prefs->Get("presolver path", m_DefaultPrefs.GetPreSolver());
-    m_FlowsolverPath = prefs->Get("flowsolver path", m_DefaultPrefs.GetSolver()); 
+    m_FlowsolverPath = prefs->Get("flowsolver path", m_DefaultPrefs.GetSolver());
+    m_FlowsolverNOMPIPath = prefs->Get("flowsolver nompi path", m_DefaultPrefs.GetSolverNOMPI());
     m_PostsolverPath = prefs->Get("postsolver path", m_DefaultPrefs.GetPostSolver());
-    
+
     // Set the mpiexec binary and mpi implementation.
-    m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultPrefs.GetMpiExec()); 
-    auto mpiName = prefs->Get("mpi implementation", m_DefaultPrefs.GetMpiName());
-    m_MpiImplementation = m_DefaultPrefs.GetMpiImplementation(mpiName);
+    m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultMPIPrefs.GetMpiExec()); 
+    auto mpiName = prefs->Get("mpi implementation", m_DefaultMPIPrefs.GetMpiName());
+    m_MpiImplementation = m_DefaultMPIPrefs.GetMpiImplementation(mpiName);
+    m_UseMPI = prefs->GetBool("use mpi",false);
 }
 
 //--------------------
@@ -1663,17 +1665,25 @@ void sv4guiSimulationView::RunJob()
 
     try {
 
-        // Check that the solver binaries are valid.
-        CheckSolver();
-
-        // Check that mpi is installed and that the implementation is MPICH.
-        CheckMpi();
-
+        if(m_UseMPI) {
+          // Check that the solver binaries are valid.
+          CheckSolver();
+          // Check that mpi is installed and that the implementation is MPICH or MSMPI.
+          CheckMpi();
+        } else {
+	  CheckSolverNOMPI();
+        }
+	
         // Set the solver output directory.
         QString runPath = jobPath;
         int numProcs = ui->sliderNumProcs->value();
 
-        if(m_UseMPI && (numProcs > 1)) {
+	if(!m_UseMPI && (numProcs > 1)) {
+            QMessageBox::warning(m_Parent, MsgTitle, "Cannot specify > 1 procs when not using MPI!");
+            throw std::string("Cannot specify > 1 procs when not using MPI");
+        }
+	
+        if(numProcs > 1) {
             runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
         }
 
@@ -1704,7 +1714,7 @@ void sv4guiSimulationView::RunJob()
             flowsolverProcess->setProgram(m_MPIExecPath);
             flowsolverProcess->setArguments(arguments);
         } else {
-            flowsolverProcess->setProgram(m_FlowsolverPath);
+            flowsolverProcess->setProgram(m_FlowsolverNOMPIPath);
             flowsolverProcess->setArguments(QStringList());
         }
 
@@ -1851,6 +1861,54 @@ void sv4guiSimulationView::CheckSolver()
     }
 }
 
+//-----------------
+// CheckSolverNOMPI
+//-----------------
+// Check for valid solver binaries.
+//
+void sv4guiSimulationView::CheckSolverNOMPI()
+{
+    std::string exception("Check nompi solver");
+
+    // Set the name and path to check for the solver binaries.
+    typedef std::tuple<QString,QString> binaryNamePath;
+    std::vector<binaryNamePath> binariesToCheck = { 
+        std::make_tuple("FlowSolverNOMPI", m_FlowsolverNOMPIPath),
+        std::make_tuple("PreSolver", m_PresolverPath),
+        std::make_tuple("PostSolver", m_PostsolverPath)
+    };
+
+    // Check the name and path for the solver binaries.
+    //
+    for (auto const& namePath : binariesToCheck) {
+        auto name = std::get<0>(namePath);
+        auto path = std::get<1>(namePath);
+
+        if ((path == "") || (path == m_DefaultPrefs.UnknownBinary)) {
+            auto msg1 = "The " + name + " executable cannot be found. \n";
+            auto msg2 = "Please install " + name + " and set its location in the Preferences->SimVascular Simulation page.";
+            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+            throw exception; 
+        }
+
+        QFileInfo check_file(path);
+        if (!check_file.exists()) {
+            auto msg1 = "The " + name + " executable '" + path + "' cannot be found. \n\n";
+            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
+            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+            throw exception; 
+        }
+
+        if (!check_file.isFile()) {
+            auto msg1 = "The " + name + " executable '" + path + "' does not name a file. \n";
+            auto msg2 = "Please set the " + name + " executable in the Preferences->SimVascular Simulation page.";
+            QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
+            throw exception; 
+        }
+    }
+}
+
+
 //----------
 // CheckMpi
 //----------
@@ -1883,15 +1941,17 @@ void sv4guiSimulationView::CheckMpi()
         throw exception; 
     }
 
+    // only msmpi allowed on win32
+    #ifndef WIN32
     // Check the MPI implementation.
-    //
     auto mpiName = m_DefaultPrefs.GetMpiName();
     if (m_MpiImplementation != sv4guiSimulationPreferences::MpiImplementation::MPICH) {
        QString msg1 = "svSolver requires MPICH but an MPICH MPI implementation was not found.\n";
        QString msg2 = "Please install MPICH MPI or set the location of an MPICH mpiexec in the Preferences->SimVascular Simulation page.";
        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
        throw exception; 
-    } 
+    }
+    #endif
 }
 
 bool sv4guiSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
