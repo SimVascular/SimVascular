@@ -47,6 +47,10 @@ set(CPP_FILES
     sv4gui_MPIPreferences.cxx
 )
 
+if(SV_USE_WIN32_REGISTRY)
+  LIST(APPEND CXXSRCS sv4gui_win32_use_registry.cxx)
+endif()
+
 set(MOC_H_FILES
     sv4gui_SimJobCreate.h
     sv4gui_SimJobCreateAction.h

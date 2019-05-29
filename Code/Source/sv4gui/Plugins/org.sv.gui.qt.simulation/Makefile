@@ -61,8 +61,7 @@ HDRS	= \
     sv4gui_SimJobExportAction.h \
     sv4gui_SimulationPluginActivator.h \
     sv4gui_ProcessHandler.h \
-    sv4gui_SolverProcessHandler.h \
-    sv4gui_win32_use_registry.h
+    sv4gui_SolverProcessHandler.h
 
 CXXSRCS	= \
     sv4gui_SimJobCreate.cxx \
@@ -80,8 +79,12 @@ CXXSRCS	= \
     sv4gui_SimJobExportAction.cxx \
     sv4gui_SimulationPluginActivator.cxx \
     sv4gui_ProcessHandler.cxx \
-    sv4gui_SolverProcessHandler.cxx \
-    sv4gui_win32_use_registry.cxx
+    sv4gui_SolverProcessHandler.cxx
+
+ifeq ($(SV_USE_WIN32_REGISTRY),1)
+  HDRS += sv4gui_win32_use_registry.h
+  CXXSRCS += sv4gui_win32_use_registry.cxx
+endif
 
 UIFILES = \
     sv4gui_SimJobCreate.ui \
