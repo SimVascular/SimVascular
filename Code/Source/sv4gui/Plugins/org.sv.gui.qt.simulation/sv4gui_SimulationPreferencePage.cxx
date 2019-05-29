@@ -97,13 +97,7 @@ void sv4guiSimulationPreferencePage::InitializeSolverLocations()
   // Set the solver binaries.
   SetPreSolver(); 
   SetSolver(); 
-  SetPostSolver(); 
-
-  // Set the mpiexec binary.
-  SetMpiExec(); 
-
-  // Set the MPI implementation. 
-  SetMpiImplementation();
+  SetPostSolver();
 }
 
 //---------------
@@ -121,41 +115,6 @@ void sv4guiSimulationPreferencePage::SetPostSolver()
 
   svPost = m_DefaultPrefs.GetPostSolver();
   m_Ui->lineEditPostsolverPath->setText(svPost);
-}
-
-//------------
-// SetMpiExec
-//------------
-// Set the location of the MPI mpiexec binary.
-//
-void sv4guiSimulationPreferencePage::SetMpiExec()
-{
-  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
-
-  if (!mpiExec.isEmpty() && (mpiExec != m_DefaultPrefs.UnknownBinary)) {
-    return;
-  }
-
-  mpiExec = m_DefaultPrefs.GetMpiExec();
-  m_Ui->lineEditMPIExecPath->setText(mpiExec);
-}
-
-//----------------------
-// SetMpiImplementation 
-//----------------------
-// Set the installed MPI implementation.
-//
-void sv4guiSimulationPreferencePage::SetMpiImplementation()
-{
-  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
-
-  if (mpiExec.isEmpty() || (mpiExec == m_DefaultPrefs.UnknownBinary)) {
-    return;
-  }
-
-  QString guiLabel("MPI Implementation: ");
-  auto implStr = m_DefaultPrefs.GetMpiName();
-  m_Ui->labelMPIImplementation->setText(guiLabel + implStr);
 }
 
 //------------------
@@ -188,7 +147,7 @@ void sv4guiSimulationPreferencePage::SetSolver()
     return;
   }
 
-  bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
+  //bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
   svSolver = m_DefaultPrefs.GetSolver();
   m_Ui->lineEditFlowsolverPath->setText(svSolver);
 }
@@ -210,7 +169,6 @@ void sv4guiSimulationPreferencePage::CreateQtControl(QWidget* parent)
 
     connect( m_Ui->toolButtonPresolver, SIGNAL(clicked()), this, SLOT(SetPresolverPath()) );
     connect( m_Ui->toolButtonFlowsolver, SIGNAL(clicked()), this, SLOT(SetFlowsolverPath()) );
-    connect( m_Ui->toolButtonMPIExec, SIGNAL(clicked()), this, SLOT(SetMPIExecPath()) );
     connect( m_Ui->toolButtonCustomTemplate, SIGNAL(clicked()), this, SLOT(SetCustomTemplatePath()) );
     connect( m_Ui->toolButtonPostsolver, SIGNAL(clicked()), this, SLOT(SetPostsolverPath()) );
 
@@ -250,20 +208,10 @@ void sv4guiSimulationPreferencePage::SetFlowsolverPath()
     }
 }
 
-//----------------
-// SetMPIExecPath
-//----------------
-// Process the GUI event to set the mpiexec path.
+//-----------------------
+// SetCustomTemplatePath
+//-----------------------
 //
-void sv4guiSimulationPreferencePage::SetMPIExecPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MPIExec");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditMPIExecPath->setText(filePath);
-    }
-}
 
 void sv4guiSimulationPreferencePage::SetCustomTemplatePath()
 {
@@ -313,8 +261,7 @@ bool sv4guiSimulationPreferencePage::PerformOk()
     // Get the solver paths from the GUI.
     QString presolverPath = m_Ui->lineEditPresolverPath->text().trimmed();
     QString flowsolverPath = m_Ui->lineEditFlowsolverPath->text().trimmed();
-    bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
-    QString MPIExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
+    //bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
     bool useCustom = m_Ui->checkBoxUseCustom->isChecked();
     QString customTemplatePath = m_Ui->lineEditCustomTemplatePath->text().trimmed();
     QString postsolverPath = m_Ui->lineEditPostsolverPath->text().trimmed();
@@ -322,16 +269,9 @@ bool sv4guiSimulationPreferencePage::PerformOk()
     // Set the values of the solver paths in the MITK database.
     m_Preferences->Put("presolver path", presolverPath);
     m_Preferences->Put("flowsolver path", flowsolverPath);
-    m_Preferences->PutBool("use mpi", useMPI);
+    //m_Preferences->PutBool("use mpi", useMPI);
     m_Preferences->PutBool("use custom", useCustom);
     m_Preferences->Put("postsolver path", postsolverPath);
-
-    // MPI implementation.
-    m_Preferences->Put("mpi implementation", m_DefaultPrefs.GetMpiName());
-
-    if(useMPI) {
-        m_Preferences->Put("mpiexec path", MPIExecPath);
-    }
 
     if(useCustom) {
         m_Preferences->Put("solver template path", customTemplatePath);
@@ -350,8 +290,7 @@ void sv4guiSimulationPreferencePage::Update()
 {
     m_Ui->lineEditPresolverPath->setText(m_Preferences->Get("presolver path",""));
     m_Ui->lineEditFlowsolverPath->setText(m_Preferences->Get("flowsolver path",""));
-    m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
-    m_Ui->lineEditMPIExecPath->setText(m_Preferences->Get("mpiexec path",""));
+    //m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
     m_Ui->checkBoxUseCustom->setChecked(m_Preferences->GetBool("use custom", false));
     m_Ui->lineEditCustomTemplatePath->setText(m_Preferences->Get("solver template path",""));
     m_Ui->lineEditPostsolverPath->setText(m_Preferences->Get("postsolver path",""));

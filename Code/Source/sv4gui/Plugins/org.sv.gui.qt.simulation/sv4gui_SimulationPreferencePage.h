@@ -68,16 +68,13 @@ public:
 private slots:
   void SetPresolverPath();
   void SetFlowsolverPath();
-  void SetMPIExecPath();
   void SetCustomTemplatePath();
   void SetPostsolverPath();
 
 private:
-  void SetMpiExec();
   void SetPreSolver();
   void SetSolver();
   void SetPostSolver();
-  void SetMpiImplementation();
 
   berry::IPreferences::Pointer m_Preferences;
   QScopedPointer<Ui::sv4guiSimulationPreferencePage> m_Ui;
