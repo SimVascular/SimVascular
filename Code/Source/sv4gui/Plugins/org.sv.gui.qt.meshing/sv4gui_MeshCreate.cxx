@@ -220,6 +220,15 @@ void sv4guiMeshCreate::CreateMesh()
         meshName=selectedModelNode->GetName();
     }
 
+    if (!sv4guiDataNodeOperationInterface::IsValidDataNodeName(meshName)) {
+        auto validName = QString::fromStdString(sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg);
+        auto meshName = ui->lineEditMeshName->text().trimmed();
+        QString msg = "The name '" +  meshName + "' is not valid.\n" +
+                      "Mesh names " + validName + ".\n";
+        QMessageBox::warning(NULL, "Path", msg);
+        return;
+    }
+
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(meshName.c_str(),m_MeshFolderNode);
     if(exitingNode){
         QMessageBox::warning(NULL,"Mesh Already Created","Please use a different mesh name!");

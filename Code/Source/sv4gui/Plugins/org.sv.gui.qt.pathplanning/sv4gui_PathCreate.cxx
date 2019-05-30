@@ -158,18 +158,14 @@ void sv4guiPathCreate::SetCreatePath(bool create)
 //
 void sv4guiPathCreate::CreatePath()
 {
-    auto msg = "[sv4guiPathCreate::CreatePath] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "########################################";
-    MITK_INFO << msg << "                CreatePath              ";
-    MITK_INFO << msg << "########################################";
-
     auto pathName = ui->lineEditPathName->text().trimmed().toStdString();
-    MITK_INFO << msg << "Path name: " << pathName;
 
-    if (!sv4gui_IValidDataNodeName(pathName)) { 
-        MITK_WARN << msg << "Path name '" << pathName << "' is not valid.";
-        QMessageBox::warning(NULL, "Path", "Path name is not valid.\n");
+    if (!sv4guiDataNodeOperationInterface::IsValidDataNodeName(pathName)) { 
+        auto validName = QString::fromStdString(sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg);
+        auto pname = ui->lineEditPathName->text().trimmed();
+        QString msg = "The name '" + pname + "' is not valid.\n" + 
+                      "Path names " + validName + ".\n"; 
+        QMessageBox::warning(NULL, "Path", msg); 
         return;
     }
 

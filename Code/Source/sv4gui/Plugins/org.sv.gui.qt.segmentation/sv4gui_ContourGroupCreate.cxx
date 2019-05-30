@@ -126,24 +126,26 @@ void sv4guiContourGroupCreate::SetFocus( )
     ui->comboBox->setFocus();
 }
 
+//-------------
+// CreateGroup
+//-------------
+//
 void sv4guiContourGroupCreate::CreateGroup()
 {
     QString selectedPathName=ui->comboBox->currentText();
-    if(selectedPathName=="")
-    {
+    if(selectedPathName=="") {
         QMessageBox::warning(NULL,"No Path Selected","Please select a path!");
         return;
     }
 
     mitk::DataNode::Pointer selectedPathNode=m_DataStorage->GetNamedDerivedNode(selectedPathName.toStdString().c_str(),m_PathFolderNode);
 
-    if(selectedPathNode.IsNull())
-    {
+    if(selectedPathNode.IsNull()) {
         QMessageBox::warning(NULL,"No Path Found!","Please select a existing path!");
         return;
     }
 
-    std::string groupName=ui->lineEditGroupName->text().trimmed().toStdString();
+    std::string groupName = ui->lineEditGroupName->text().trimmed().toStdString();
 
     if(groupName==""){
         groupName=selectedPathNode->GetName();
@@ -152,6 +154,15 @@ void sv4guiContourGroupCreate::CreateGroup()
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(groupName.c_str(),m_SegFolderNode);
     if(exitingNode){
         QMessageBox::warning(NULL,"Contour Group Already Created","Please use a different group name!");
+        return;
+    }
+
+    if (!sv4guiDataNodeOperationInterface::IsValidDataNodeName(groupName)) {
+        auto validName = QString::fromStdString(sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg);
+        auto groupName = ui->lineEditGroupName->text().trimmed();
+        QString msg = "The name '" + groupName + "' is not valid.\n" +
+                      "Contour group names " + validName + ".\n";
+        QMessageBox::warning(NULL, "Contour group", msg);
         return;
     }
 

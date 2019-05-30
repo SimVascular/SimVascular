@@ -48,6 +48,9 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiDataNodeOperationInterface : pu
 
 public:
 
+    static std::string ValidDataNodeNameMsg;
+    static bool IsValidDataNodeName(const std::string& name);
+
     sv4guiDataNodeOperationInterface();
     ~sv4guiDataNodeOperationInterface();
 
