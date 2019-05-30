@@ -1944,8 +1944,8 @@ void sv4guiSimulationView::CheckMpi()
     // only msmpi allowed on win32
     #ifndef WIN32
     // Check the MPI implementation.
-    auto mpiName = m_DefaultPrefs.GetMpiName();
-    if (m_MpiImplementation != sv4guiSimulationPreferences::MpiImplementation::MPICH) {
+    auto mpiName = m_DefaultMPIPrefs.GetMpiName();
+    if (m_MpiImplementation != sv4guiMPIPreferences::MpiImplementation::MPICH) {
        QString msg1 = "svSolver requires MPICH but an MPICH MPI implementation was not found.\n";
        QString msg2 = "Please install MPICH MPI or set the location of an MPICH mpiexec in the Preferences->SimVascular Simulation page.";
        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
