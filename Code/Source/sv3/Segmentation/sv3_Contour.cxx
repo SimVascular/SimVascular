@@ -71,7 +71,8 @@ Contour::Contour()
       //m_Selected(false),
       m_MinControlPointNumber(2),
       m_MaxControlPointNumber(2),
-      m_TagIndex(0)
+      m_TagIndex(0),
+      m_CenterPoint{0.0,0.0,0.0}
  {
     for (int i=0;i<5;i++)
     {
