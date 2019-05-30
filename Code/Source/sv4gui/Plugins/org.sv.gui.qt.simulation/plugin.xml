@@ -19,5 +19,11 @@
       <keywordreference id="org.sv.gui.qt.SimulationPreferencePageKeywords"></keywordreference>
     </page>
   </extension>
+  
+  <extension point="org.blueberry.ui.preferencePages">
+    <page id="org.sv.gui.qt.MPIPreferencePage" name="MPI" class="sv4guiMPIPreferencePage">
+      <keywordreference id="org.sv.gui.qt.MPIPreferencePageKeywords"></keywordreference>
+    </page>
+  </extension>
 
 </plugin>

@@ -29,44 +29,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sv4gui_SimulationPluginActivator.h"
-#include "sv4gui_SimJobCreateAction.h"
-#include "sv4gui_SimulationPreferencePage.h"
-#include "sv4gui_MPIPreferencePage.h"
-#include "sv4gui_SimulationView.h"
-#include "sv4gui_SimJobStopAction.h"
-#include "sv4gui_SimJobExportAction.h"
+#ifndef _SV4GUI_USE_WIN32_REGISTRY_H
+#define _SV4GUI_USE_WIN32_REGISTRY_H
 
-//sv4guiSimulationPluginActivator* sv4guiSimulationPluginActivator::m_Instance = nullptr;
-//ctkPluginContext* sv4guiSimulationPluginActivator::m_Context = nullptr;
+#include "SimVascular.h"
 
-void sv4guiSimulationPluginActivator::start(ctkPluginContext* context)
-{
-//    m_Instance = this;
-//    m_Context = context;
+#include "simvascular_options.h"
 
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobCreateAction, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimulationPreferencePage, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiMPIPreferencePage, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimulationView, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobStopAction, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobExportAction, context)
-}
+// The following is needed for Windows
+#ifdef GetObject
+#undef GetObject
+#endif
 
-void sv4guiSimulationPluginActivator::stop(ctkPluginContext* context)
-{
-//    Q_UNUSED(context)
+#include <windows.h>
+#include <tchar.h>
+#include "Shlwapi.h"
+#include <Shlobj.h>
 
-//    m_Context = nullptr;
-//    m_Instance = nullptr;
-}
+#define BUFSIZE 1024
+#define BUF_SIZE 1024
 
-//ctkPluginContext* sv4guiSimulationPluginActivator::GetContext()
-//{
-//  return m_Context;
-//}
+#ifndef GetShortPathName
+  #ifdef UNICODE
+    #define GetShortPathName GetShortPathNameW
+  #else
+    #define GetShortPathName GetShortPathNameA
+  #endif // !UNICODE
+#endif
 
-//sv4guiSimulationPluginActivator* sv4guiSimulationPluginActivator::GetInstance()
-//{
-//    return m_Instance;
-//}
+#include <windows.h>
+#include <stdio.h>
+#include <tchar.h>
+
+#define MAX_KEY_LENGTH 255
+#define MAX_VALUE_NAME 16383
+
+#ifdef WIN32
+#ifdef SV_USE_WIN32_REGISTRY
+
+void sv4guiQueryKey(HKEY hKey);
+int sv4gui_parse_registry_for_svsolver(char* keytofind, char* rtnval);
+int sv4gui_parse_registry_for_svsolver_internal(char* toplevel_key, char* keytofind, char* rtnval);
+
+#endif
+#endif
+
+#endif // _SV4GUI_USE_WIN32_REGISTRY_H

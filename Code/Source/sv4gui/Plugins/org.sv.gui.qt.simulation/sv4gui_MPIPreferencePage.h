@@ -29,44 +29,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sv4gui_SimulationPluginActivator.h"
-#include "sv4gui_SimJobCreateAction.h"
-#include "sv4gui_SimulationPreferencePage.h"
-#include "sv4gui_MPIPreferencePage.h"
-#include "sv4gui_SimulationView.h"
-#include "sv4gui_SimJobStopAction.h"
-#include "sv4gui_SimJobExportAction.h"
+// The sv4guiMPIPreferencePage class is used to process information 
+// presented in the 'Preferences->SimVascular Simulation' panel. 
+//
+// The 'Preferences->SimVascular Simulation' panel is used to show and set
+// the location of the solver binaries (svpre, svsolver and svpost) and
+// mpiexec binary used to execute a simulation.
 
-//sv4guiSimulationPluginActivator* sv4guiSimulationPluginActivator::m_Instance = nullptr;
-//ctkPluginContext* sv4guiSimulationPluginActivator::m_Context = nullptr;
+#ifndef SV4GUI_MPIPREFERENCEPAGE_H
+#define SV4GUI_MPIPREFERENCEPAGE_H
 
-void sv4guiSimulationPluginActivator::start(ctkPluginContext* context)
-{
-//    m_Instance = this;
-//    m_Context = context;
+#include <sv4gui_MPIPreferences.h>
 
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobCreateAction, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimulationPreferencePage, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiMPIPreferencePage, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimulationView, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobStopAction, context)
-    BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobExportAction, context)
+#include <berryIPreferences.h>
+#include <berryIQtPreferencePage.h>
+
+namespace Ui {
+class sv4guiMPIPreferencePage;
 }
 
-void sv4guiSimulationPluginActivator::stop(ctkPluginContext* context)
+class sv4guiMPIPreferencePage : public QObject, public berry::IQtPreferencePage
 {
-//    Q_UNUSED(context)
+    Q_OBJECT
+    Q_INTERFACES(berry::IPreferencePage)
 
-//    m_Context = nullptr;
-//    m_Instance = nullptr;
-}
+public:
+    sv4guiMPIPreferencePage();
+    ~sv4guiMPIPreferencePage();
 
-//ctkPluginContext* sv4guiSimulationPluginActivator::GetContext()
-//{
-//  return m_Context;
-//}
+    void CreateQtControl(QWidget* parent) override;
+    QWidget* GetQtControl() const override;
+    void Init(berry::IWorkbench::Pointer) override;
+    void PerformCancel() override;
+    bool PerformOk() override;
+    void Update() override;
+    void InitializeMPILocation();
 
-//sv4guiSimulationPluginActivator* sv4guiSimulationPluginActivator::GetInstance()
-//{
-//    return m_Instance;
-//}
+private slots:
+  void SetMPIExecPath();
+
+private:
+  void SetMpiExec();
+  void SetMpiImplementation();
+
+  berry::IPreferences::Pointer m_Preferences;
+  QScopedPointer<Ui::sv4guiMPIPreferencePage> m_Ui;
+  QWidget* m_Control;
+  sv4guiMPIPreferences m_DefaultPrefs;
+
+};
+
+#endif // SV4GUI_MPIPREFERENCEPAGE_H

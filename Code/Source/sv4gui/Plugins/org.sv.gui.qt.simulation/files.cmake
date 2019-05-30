@@ -37,13 +37,19 @@ set(CPP_FILES
     sv4gui_TableSolverDelegate.cxx
     sv4gui_SimulationView.cxx
     sv4gui_SimulationPreferencePage.cxx
+    sv4gui_MPIPreferencePage.cxx
     sv4gui_SimJobStopAction.cxx
     sv4gui_SimJobExportAction.cxx
     sv4gui_SimulationPluginActivator.cxx
     sv4gui_ProcessHandler.cxx
     sv4gui_SolverProcessHandler.cxx
     sv4gui_SimulationPreferences.cxx
+    sv4gui_MPIPreferences.cxx
 )
+
+if(SV_USE_WIN32_REGISTRY)
+  LIST(APPEND CXXSRCS sv4gui_win32_use_registry.cxx)
+endif()
 
 set(MOC_H_FILES
     sv4gui_SimJobCreate.h
@@ -54,12 +60,14 @@ set(MOC_H_FILES
     sv4gui_TableSolverDelegate.h
     sv4gui_SimulationView.h
     sv4gui_SimulationPreferencePage.h
+    sv4gui_MPIPreferencePage.h
     sv4gui_SimJobStopAction.h
     sv4gui_SimJobExportAction.h
     sv4gui_SimulationPluginActivator.h
     sv4gui_ProcessHandler.h
     sv4gui_SolverProcessHandler.h
     sv4gui_SimulationPreferences.h
+    sv4gui_MPIPreferences.h
 )
 
 set(UI_FILES
@@ -68,6 +76,7 @@ set(UI_FILES
     sv4gui_SplitBCWidget.ui
     sv4gui_SimulationPreferencePage.ui
     sv4gui_SimulationView.ui
+    sv4gui_MPIPreferencePage.ui
 )
 
 set(CACHED_RESOURCE_FILES

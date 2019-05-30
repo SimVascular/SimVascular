@@ -29,58 +29,67 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiSimulationPreferences class is used to determine which default binaries,
+// The sv4guiMPIPreferences class is used to determine which default binaries,
 // (svsolver, svpre and svpost) are used by the SV Simulation plugin. The class also 
 // determines which mpiexec binary is used to execute solver jobs using MPI and what
 // its implementation is: MPICH or OpenMPI. 
 //
-// An sv4guiSimulationPreferences object is used by the sv4guiSimulationPreferencePage objectc
+// An sv4guiMPIPreferences object is used by the sv4guiSimulationPreferencePage objectc
 // to display the full path to these binaries in the Preferences -> SimVascular Simulation panel.
 //
 // The sv4guiSimulationView object, used to lauch simulation jobs, only reads values from 
 // the sv4guiSimulationPreferencePage object when a value is changed. Because of this the 
-// sv4guiSimulationView object must also use a sv4guiSimulationPreferences object to set
+// sv4guiSimulationView object must also use a sv4guiMPIPreferences object to set
 // the default solver binaries.
 
-#ifndef SV4GUI_SIMULATIONPREFERENCES_H
-#define SV4GUI_SIMULATIONPREFERENCES_H
+#ifndef SV4GUI_MPIPREFERENCES_H
+#define SV4GUI_MPIPREFERENCES_H
 
 #include <iostream>
 #include <map>
 #include <QString>
 
-#ifdef WIN32
-  #include "sv4gui_win32_use_registry.h"
-#endif
-
 //-----------------------------
-// sv4guiSimulationPreferences 
+// sv4guiMPIPreferences 
 //-----------------------------
-class sv4guiSimulationPreferences 
+class sv4guiMPIPreferences 
 {
 
 public:
-  sv4guiSimulationPreferences();
-  ~sv4guiSimulationPreferences();
+  sv4guiMPIPreferences();
+  ~sv4guiMPIPreferences();
+  //sv4guiMPIPreferences& operator= (const sv4guiMPIPreferences&){};
 
-  void InitializeSolverLocations();
-  QString GetPostSolver();
-  QString GetPreSolver();
-  QString GetSolver();
-  QString GetSolverNOMPI();
+  enum class MpiImplementation {
+    Unknown,
+    MPICH,
+    OpenMPI,
+    MSMPI
+  };
+
+  MpiImplementation GetMpiImplementation();
+  MpiImplementation GetMpiImplementation(const QString& name);
+  const QString GetMpiName();
+
+  void InitializeMPILocation();
+  QString GetMpiExec();
   static const QString UnknownBinary;
 
 private:
-  QString m_svPostBinary;
-  QString m_svPresolver;
-  QString m_svSolver;
-  QString m_svSolverNOMPI;
 
-  void SetPostSolver(const QString& solverInstallPath, const QString& applicationPath);
-  void SetPreSolver(const QString& solverInstallPath, const QString& applicationPath);
-  void SetSolver(const QString& solverInstallPath, const QString& applicationPath);
-  void SetSolverNOMPI(const QString& solverInstallPath, const QString& applicationPath);
+#ifdef WIN32
+  QString FindLatestKey(QString key, QStringList keys);
+  QString GetRegistryValue(QString category, QString key);
+#endif
+  
+  QString m_mpiExec;
+  MpiImplementation m_MpiImplementation;
+  std::map<MpiImplementation, QString> m_MpiEnumToString;
+  std::map<QString, MpiImplementation> m_MpiStringToEnum;
+
+  void SetMpiExec(const QString& solverInstallPath, const QString& applicationPath);
+  void SetMpiImplementation();
 
 };
 
-#endif // SV4GUI_SIMULATIONPREFERENCES_H
+#endif // SV4GUI_MPIPREFERENCES_H
