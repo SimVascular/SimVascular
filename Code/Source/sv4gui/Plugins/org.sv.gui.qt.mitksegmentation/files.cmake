@@ -29,22 +29,22 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(CPP_FILES
-  sv4gui_QmitkSegmentationPreferencePage.cpp
-  sv4gui_mitkPluginActivator.cpp
-  sv4gui_QmitkSegmentationView.cpp
-  sv4gui_QmitkThresholdAction.cpp
-  sv4gui_QmitkCreatePolygonModelAction.cpp
-  #sv4gui_QmitkStatisticsAction.cpp
-  sv4gui_QmitkAutocropAction.cpp
-  sv4gui_QmitkDeformableClippingPlaneView.cpp
-  sv4gui_QmitkDataSelectionWidget.cpp
-  sv4gui_QmitkSegmentationUtilitiesView.cpp
-  sv4gui_QmitkSegmentationUtilityWidget.cpp
-  sv4gui_QmitkBooleanOperationsWidget.cpp
-  sv4gui_QmitkImageMaskingWidget.cpp
-  sv4gui_QmitkContourModelToImageWidget.cpp
-  sv4gui_QmitkMorphologicalOperationsWidget.cpp
-  sv4gui_QmitkSurfaceToImageWidget.cpp
+  sv4gui_QmitkSegmentationPreferencePage.cxx
+  sv4gui_mitkPluginActivator.cxx
+  sv4gui_QmitkSegmentationView.cxx
+  sv4gui_QmitkThresholdAction.cxx
+  sv4gui_QmitkCreatePolygonModelAction.cxx
+  #sv4gui_QmitkStatisticsAction.cxx
+  sv4gui_QmitkAutocropAction.cxx
+  sv4gui_QmitkDeformableClippingPlaneView.cxx
+  sv4gui_QmitkDataSelectionWidget.cxx
+  sv4gui_QmitkSegmentationUtilitiesView.cxx
+  sv4gui_QmitkSegmentationUtilityWidget.cxx
+  sv4gui_QmitkBooleanOperationsWidget.cxx
+  sv4gui_QmitkImageMaskingWidget.cxx
+  sv4gui_QmitkContourModelToImageWidget.cxx
+  sv4gui_QmitkMorphologicalOperationsWidget.cxx
+  sv4gui_QmitkSurfaceToImageWidget.cxx
 )
 
 set(UI_FILES
