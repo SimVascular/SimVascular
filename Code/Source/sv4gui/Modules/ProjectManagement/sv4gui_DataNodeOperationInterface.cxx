@@ -36,7 +36,7 @@
 #include "sv4gui_ProjectManager.h"
 #include "sv4gui_DataNodeOperation.h"
 
-// Message defining valid Data Node names.
+// Messege defining valid Data Node names.
 //
 // This text is used to display a warning message in a popup window 
 // when an invalid name is given.
