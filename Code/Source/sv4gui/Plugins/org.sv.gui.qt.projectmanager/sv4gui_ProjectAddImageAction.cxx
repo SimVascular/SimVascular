@@ -31,6 +31,7 @@
 
 #include "sv4gui_ProjectAddImageAction.h"
 #include "sv4gui_ProjectManager.h"
+#include "sv4gui_DataNodeOperationInterface.h"
 
 #include <berryIPreferencesService.h>
 #include <berryIPreferences.h>
@@ -142,6 +143,14 @@ void sv4guiProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &sele
 
         QString imageName = QInputDialog::getText(NULL, tr("Assign Image Name"),
                                                                 tr("Image name:"), QLineEdit::Normal);
+
+        if (!sv4guiDataNodeOperationInterface::IsValidDataNodeName(imageName.toStdString())) {
+            auto validName = QString::fromStdString(sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg);
+            QString msg = "The name '" +  imageName + "' is not valid.\n" +
+                          "Image names " + validName + ".\n";
+            QMessageBox::warning(NULL, "Images", msg);
+            return;
+         }
 
         mitk::StatusBar::GetInstance()->DisplayText("Adding or replacing image");
         QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
