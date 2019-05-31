@@ -42,7 +42,7 @@
 // when an invalid name is given.
 //
 std::string sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg = 
-  "must start with an alphanumeric character followed by alphanumeric characters, underscores, or single dashes, and dots.";
+  "must start with an alphanumeric character followed by alphanumeric characters, underscores, or single dashes and dots.";
 
 //---------------------
 // IsValidDataNodeName

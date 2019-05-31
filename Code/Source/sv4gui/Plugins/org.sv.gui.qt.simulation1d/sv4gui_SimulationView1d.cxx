@@ -3187,7 +3187,10 @@ void sv4guiSimulationView1d::RunJob()
 QString sv4guiSimulationView1d::GetSolverExecutable()
 {
     auto msg = "[sv4guiSimulationView1d::GetSolverExecutable] ";
-    MITK_INFO << msg << "--------- GetSolverExecutable ----------"; 
+    MITK_INFO << msg << "--------- GetSolverExecutable ----------";
+#ifdef WIN32
+    auto solverExecutable = "svOneDSolver.exe";
+#else
     auto solverExecutable = SOLVER_INSTALL_DIRECTORY + "/" + SOLVER_EXECUTABLE_NAME;
     auto solverInstallPath = SOLVER_INSTALL_DIRECTORY;
 
@@ -3218,9 +3221,11 @@ QString sv4guiSimulationView1d::GetSolverExecutable()
         QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2); 
         return nullptr;
     }
+#endif
+
     MITK_INFO << msg << "solverExecutable: " << solverExecutable;
 
-  return solverExecutable; 
+    return solverExecutable;
 }
 
 //-----------------
