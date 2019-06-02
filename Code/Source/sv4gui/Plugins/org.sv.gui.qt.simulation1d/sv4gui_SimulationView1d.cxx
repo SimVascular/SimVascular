@@ -177,9 +177,6 @@
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
-// Base label names for the GUI.
-static const QString InletFaceNameLabel = "Inlet face: ";
-
 // Set the title for QMessageBox warnings.
 //
 // Note: On MacOS the window title is ignored (as required by the Mac OS X Guidelines). 
@@ -294,6 +291,8 @@ sv4guiSimulationView1d::sv4guiSimulationView1d() : ui(new Ui::sv4guiSimulationVi
     m_ConnectionEnabled=false;
 
     m_SimulationFilesCreated = false;
+
+    m_CenterlinesSource = CenterlinesSource::CALCULATE;
 }
 
 //-------------------------
@@ -556,42 +555,44 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 
     // Add surface model widgets.
     //
-    connect(ui->surfaceModelComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSurfaceModelSource( )));
-    connect(ui->ReadModelPushButton, SIGNAL(clicked()), this, SLOT(SelectModelFile()) );
-    connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateSurfaceMeshName()));
-    connect(ui->showModelCheckBox, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
-    //ui->InletFaceNameLabel->setText(InletFaceNameLabel + "**Not selected**");
+    //connect(ui->surfaceModelComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSurfaceModelSource( )));
+    //connect(ui->ReadModelPushButton, SIGNAL(clicked()), this, SLOT(SelectModelFile()) );
+    //connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateSurfaceMeshName()));
+    //connect(ui->showModelCheckBox, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
+    ui->InletFaceNameLabel->setText("");
 
     for (auto const& type : SurfaceModelSource::types) {
-        ui->surfaceModelComboBox->addItem(type);
+        //ui->surfaceModelComboBox->addItem(type);
     }
 
     m_ModelSource = SurfaceModelSource::MODEL_PLUGIN; 
-    ui->surfaceModelComboBox->setCurrentText(m_ModelSource);
-    ui->ReadModelPushButton->setVisible(false);
-    ui->modelFileNameLabel->setVisible(false);
-    ui->modelFileNameLineEdit->setVisible(false);
-    ui->meshNameLabel->setVisible(false);
-    ui->comboBoxMeshName->setVisible(false);
+    //ui->surfaceModelComboBox->setCurrentText(m_ModelSource);
+    ui->ModelNameLabel->setText("");
+    // [TODO:DaveP] Maybe add read model later.
+    //ui->ReadModelPushButton->setVisible(false);
+    //ui->modelFileNameLabel->setVisible(false);
+    //ui->modelFileNameLineEdit->setVisible(false);
+    //ui->meshNameLabel->setVisible(false);
+    //ui->comboBoxMeshName->setVisible(false);
 
     // Add centerlines widgets.
     //
-    connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateCenterlinesSource()));
-    connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(SelectCenterlinesFile()));
+    //connect(ui->centerlinesComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateCenterlinesSource()));
+    //connect(ui->readCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(SelectCenterlinesFile()));
     connect(ui->CalculateCenterlinesPushButton, SIGNAL(clicked()), this, SLOT(CalculateCenterlines()) );
     connect(ui->selectModelFacesPushButton, SIGNAL(clicked()), this, SLOT(SelectModelInletFaces()));
-    connect(ui->showCenterLinesCheckBox, SIGNAL(clicked(bool)), this, SLOT(ShowCenterlines(bool)) );
+    //connect(ui->showCenterLinesCheckBox, SIGNAL(clicked(bool)), this, SLOT(ShowCenterlines(bool)) );
     for (auto const& type : CenterlinesSource::types) {
-        ui->centerlinesComboBox->addItem(type);
+        //ui->centerlinesComboBox->addItem(type);
     }
     m_CenterlinesSource = CenterlinesSource::CALCULATE; 
-    ui->centerlinesComboBox->setCurrentText(m_CenterlinesSource);
-    ui->readCenterlinesPushButton->setVisible(false);
-    ui->centerlinesFileNameLabel->setVisible(false);
-    ui->centerlinesFileNameLineEdit->setVisible(false);
+    //ui->centerlinesComboBox->setCurrentText(m_CenterlinesSource);
+    //ui->readCenterlinesPushButton->setVisible(false);
+    //ui->centerlinesFileNameLabel->setVisible(false);
+    //ui->centerlinesFileNameLineEdit->setVisible(false);
     ui->CalculateCenterlinesPushButton->setVisible(true);
     ui->CalculateCenterlinesPushButton->setEnabled(false);
-    ui->showCenterLinesCheckBox->setChecked(true);
+    //ui->showCenterLinesCheckBox->setChecked(true);
 
     // Add model face selection widget.
     //
@@ -604,12 +605,12 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 
     // Generate Mesh.
     //
-    connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(Generate1DMesh()));
-    connect(ui->showMeshCheckBox, SIGNAL(clicked(bool)), this, SLOT(Show1DMesh(bool)) );
+    //connect(ui->generateMeshPushButton, SIGNAL(clicked()), this, SLOT(Generate1DMesh()));
+    //connect(ui->showMeshCheckBox, SIGNAL(clicked(bool)), this, SLOT(Show1DMesh(bool)) );
     connect(ui->ElementSizeLineEdit, SIGNAL(textChanged(QString)), this, SLOT(SetElementSize(QString)));
     // [DaveP] Hide these for now.
-    ui->generateMeshPushButton->hide();
-    ui->showMeshCheckBox->hide();
+    //ui->generateMeshPushButton->hide();
+    //ui->showMeshCheckBox->hide();
 
     // By default disable push buttons used to calculate centerlines, 
     // create simulation files and run a simulation.
@@ -637,24 +638,24 @@ void sv4guiSimulationView1d::UpdateSurfaceModelSource()
     MITK_INFO << msg;
     MITK_INFO << msg << "---------- UpdateSurfaceModelSource ----------";
 
-    auto sourceType = ui->surfaceModelComboBox->currentText();
+    //auto sourceType = ui->surfaceModelComboBox->currentText();
     //std::string sourceType = ui->surfaceModelComboBox->currentText().toStdString();
-    MITK_INFO << msg << "sourceType: " << sourceType;
+    //MITK_INFO << msg << "sourceType: " << sourceType;
 
-    auto showModel = (sourceType == SurfaceModelSource::MODEL_PLUGIN);
-    ui->modelNameLabel->setVisible(showModel);
-    ui->labelModelName->setVisible(showModel);
+    //auto showModel = (sourceType == SurfaceModelSource::MODEL_PLUGIN);
+    //ui->ModelNameLabel->setVisible(showModel);
 
-    auto showRead = (sourceType == SurfaceModelSource::READ_FROM_FILE);
-    ui->ReadModelPushButton->setVisible(showRead);
-    ui->modelFileNameLabel->setVisible(showRead);
-    ui->modelFileNameLineEdit->setVisible(showRead);
+    //auto showRead = (sourceType == SurfaceModelSource::READ_FROM_FILE);
+    // [TODO:DaveP] Maybe add read model later.
+    //ui->ReadModelPushButton->setVisible(showRead);
+    //ui->modelFileNameLabel->setVisible(showRead);
+    //ui->modelFileNameLineEdit->setVisible(showRead);
 
-    auto showMesh = (sourceType == SurfaceModelSource::MESH_PLUGIN);
-    ui->meshNameLabel->setVisible(showMesh);
-    ui->comboBoxMeshName->setVisible(showMesh);
+    //auto showMesh = (sourceType == SurfaceModelSource::MESH_PLUGIN);
+    //ui->meshNameLabel->setVisible(showMesh);
+    //ui->comboBoxMeshName->setVisible(showMesh);
 
-    m_ModelSource = sourceType; 
+    //m_ModelSource = sourceType; 
 }
 
 //-----------------
@@ -702,10 +703,13 @@ void sv4guiSimulationView1d::SelectModelFile()
             return;
         }
   
+        // [TODO:DaveP] Maybe add read model later.
+        /*
         MITK_INFO << msg << "Read surface model: " << m_ModelFileName.toStdString();
         QFile file(m_ModelFileName);
         QFileInfo fileInfo(file);
         ui->modelFileNameLineEdit->setText(fileInfo.fileName());
+        */
   
   /*
         m_SurfaceNetworkMesh = new sv4guiMesh();
@@ -864,7 +868,7 @@ void sv4guiSimulationView1d::SetModelInletFaces()
         m_ModelInletFaceIds.clear();
         return;
     } 
-    ui->InletFaceNameLabel->setText(InletFaceNameLabel + QString(m_ModelInletFaceNames[0].c_str()));
+    ui->InletFaceNameLabel->setText(QString(m_ModelInletFaceNames[0].c_str()));
     m_ModelInletFaceSelected = true;
     MITK_INFO << msg << "####### m_ModelInletFaceSelected: " << m_ModelInletFaceSelected; 
 
@@ -985,21 +989,21 @@ void sv4guiSimulationView1d::UpdateCenterlinesSource()
     MITK_INFO << msg;
     MITK_INFO << msg << "---------- UpdateCenterlinesSource ----------";
 
-    auto sourceType = ui->centerlinesComboBox->currentText();
-    MITK_INFO << msg << "sourceType: " << sourceType;
-    m_CenterlinesSource = sourceType;
+    //auto sourceType = ui->centerlinesComboBox->currentText();
+    //MITK_INFO << msg << "sourceType: " << sourceType;
+    //m_CenterlinesSource = sourceType;
 
     // Show or hide widgets depending on centerline source.
     //
-    auto showRead = (sourceType == CenterlinesSource::READ_FROM_FILE);
-    ui->readCenterlinesPushButton->setVisible(showRead);
-    ui->centerlinesFileNameLabel->setVisible(showRead);
-    ui->centerlinesFileNameLineEdit->setVisible(showRead);
+    //auto showRead = (sourceType == CenterlinesSource::READ_FROM_FILE);
+    //ui->readCenterlinesPushButton->setVisible(showRead);
+    //ui->centerlinesFileNameLabel->setVisible(showRead);
+    //ui->centerlinesFileNameLineEdit->setVisible(showRead);
 
-    auto showCalculate = (sourceType == CenterlinesSource::CALCULATE);
-    ui->selectModelFacesPushButton->setVisible(showCalculate);
-    ui->CalculateCenterlinesPushButton->setVisible(showCalculate);
-    ui->CalculateCenterlinesPushButton->setEnabled(false);
+    //auto showCalculate = (sourceType == CenterlinesSource::CALCULATE);
+    //ui->selectModelFacesPushButton->setVisible(showCalculate);
+    //ui->CalculateCenterlinesPushButton->setVisible(showCalculate);
+    //ui->CalculateCenterlinesPushButton->setEnabled(false);
 }
 
 //------------------------
@@ -1192,7 +1196,7 @@ void sv4guiSimulationView1d::SelectCenterlinesFile()
   
         QFile file(m_CenterlinesFileName);
         QFileInfo fileInfo(file);
-        ui->centerlinesFileNameLineEdit->setText(m_CenterlinesFileName);
+        //ui->centerlinesFileNameLineEdit->setText(m_CenterlinesFileName);
         //ui->centerlinesFileNameLineEdit->setText(fileInfo.fileName());
 
     } catch(...) {
@@ -1755,15 +1759,15 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     //
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
     ui->JobStatusValueLabel->setText(QString::fromStdString(m_MitkJob->GetStatus()));
-    ui->showModelCheckBox->setChecked(true);
+    //ui->showModelCheckBox->setChecked(true);
     if(m_ModelNode.IsNotNull()) {
         m_ModelNode->SetProperty("material.representation", mitk::VtkRepresentationProperty::New(VTK_WIREFRAME));
-        ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+        ui->ModelNameLabel->setText(QString::fromStdString(m_ModelNode->GetName()));
         if (m_ModelNode->IsVisible(NULL)) {
-            ui->showModelCheckBox->setChecked(true);
+            //ui->showModelCheckBox->setChecked(true);
         }
     } else {
-        ui->labelModelName->setText("No model found");
+        ui->ModelNameLabel->setText("No model found");
     }
 
     EnableConnection(false);
@@ -1905,7 +1909,7 @@ void sv4guiSimulationView1d::ClearAll()
 
     ui->labelJobName->setText("");
     ui->JobStatusValueLabel->setText("");
-    ui->labelModelName->setText("");
+    ui->ModelNameLabel->setText("");
 }
 
 //----------------
@@ -2969,6 +2973,7 @@ void sv4guiSimulationView1d::UpdateGUIJob()
         return;
     }
 
+    /* [TODO:Davep] May add using mesh later. 
     auto meshNames = GetMeshNames();
     ui->comboBoxMeshName->clear();
     ui->comboBoxMeshName->addItem(" ");
@@ -2979,6 +2984,7 @@ void sv4guiSimulationView1d::UpdateGUIJob()
 
     int foundIndex = ui->comboBoxMeshName->findText(QString::fromStdString(m_MitkJob->GetMeshName()));
     ui->comboBoxMeshName->setCurrentIndex(foundIndex);
+    */
 
     //int coreNum=QThread::idealThreadCount();
     //ui->sliderNumProcs->setMaximum(coreNum);
@@ -2999,6 +3005,7 @@ void sv4guiSimulationView1d::UpdateGUIJob()
 //
 void sv4guiSimulationView1d::UpdateSurfaceMeshName()
 {
+    /* [TODO:Davep] May add using mesh later. 
     auto msg = "[sv4guiSimulationView1d::UpdateSurfaceMeshName] ";
     MITK_INFO << msg << "--------- UpdateSurfaceMeshName ----------"; 
     auto meshName = ui->comboBoxMeshName->currentText().toStdString();
@@ -3007,6 +3014,7 @@ void sv4guiSimulationView1d::UpdateSurfaceMeshName()
         auto mesh = GetSurfaceMesh(meshName);
     }
     MITK_INFO << msg << "Mesh name: " << meshName;
+    */
 }
 
 //--------------
