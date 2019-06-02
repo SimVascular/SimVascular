@@ -135,24 +135,41 @@ void sv4guiPathCreate::ResetNumberSpacing(int index)
     }
 }
 
+//---------------
+// SetCreatePath
+//---------------
+//
 void sv4guiPathCreate::SetCreatePath(bool create)
 {
-    m_CreatePath=create;
-    if(create){
+    m_CreatePath = create;
+
+    if (create) {
         setWindowTitle("Create New Path");
         ui->lineEditPathName->setEnabled(true);
-    }else{
+    } else {
         ui->lineEditPathName->setEnabled(false);
         setWindowTitle("Change Current Path");
     }
 }
 
+//------------
+// CreatePath
+//------------
+//
 void sv4guiPathCreate::CreatePath()
 {
-    std::string pathName=ui->lineEditPathName->text().trimmed().toStdString();
+    auto pathName = ui->lineEditPathName->text().trimmed().toStdString();
 
-    if(m_CreatePath)
-    {
+    if (!sv4guiDataNodeOperationInterface::IsValidDataNodeName(pathName)) { 
+        auto validName = QString::fromStdString(sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg);
+        auto pname = ui->lineEditPathName->text().trimmed();
+        QString msg = "The name '" + pname + "' is not valid.\n" + 
+                      "Path names " + validName + ".\n"; 
+        QMessageBox::warning(NULL, "Path", msg); 
+        return;
+    }
+
+    if(m_CreatePath) {
         if(pathName==""){
             QMessageBox::warning(NULL,"Path Empty","Please give a path name!");
             return;
