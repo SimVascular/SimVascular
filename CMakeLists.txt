@@ -87,10 +87,10 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 
 # Optionally build the 1D solver plugin.
-option(SV_USE_ONEDSOLVER "Enable building the 1D solver plugin" OFF)
+option(SV_USE_ONEDSOLVER "Enable building the 1D solver plugin" ON)
 
 # Optionally build the MITK segmentation plugin
-option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" OFF)
+option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" ON)
 #-----------------------------------------------------------------------------
 # Externals!
 
