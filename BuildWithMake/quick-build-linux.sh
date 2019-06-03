@@ -116,7 +116,7 @@ case "$osid" in
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
 		  export EXTERNALS_SV_FULL_OS_VER_NO=7.6
-                  export EXTERNALS_BUILD_DATE=2019.03.30
+                  export EXTERNALS_BUILD_DATE=2019.06.03
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
