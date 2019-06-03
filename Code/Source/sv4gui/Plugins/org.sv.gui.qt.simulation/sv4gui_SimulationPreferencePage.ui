@@ -22,6 +22,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_5">
       <item>
        <widget class="QCheckBox" name="useMPIsvSolver">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Use svSolver with MPI</string>
         </property>

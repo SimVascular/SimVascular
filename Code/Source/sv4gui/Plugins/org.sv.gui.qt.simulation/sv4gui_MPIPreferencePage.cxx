@@ -125,7 +125,14 @@ void sv4guiMPIPreferencePage::SetMpiExec()
 //
 void sv4guiMPIPreferencePage::SetMpiImplementation()
 {
+  auto msg = "[sv4guiMPIPreferencePage::SetMpiImplementation] ";
+  std::cout << msg << std::endl; 
+  std::cout << msg << "####################################################" << std::endl; 
+  std::cout << msg << "               SetMpiImplementation                 " << std::endl; 
+  std::cout << msg << "####################################################" << std::endl; 
+
   QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
+  std::cout << msg << "mpiExec: " << mpiExec.toStdString() << std::endl; 
 
   if (mpiExec.isEmpty() || (mpiExec == m_DefaultPrefs.UnknownBinary)) {
     return;
@@ -133,6 +140,7 @@ void sv4guiMPIPreferencePage::SetMpiImplementation()
 
   QString guiLabel("MPI Implementation: ");
   auto implStr = m_DefaultPrefs.GetMpiName();
+  std::cout << msg << "implStr: " << implStr.toStdString() << std::endl; 
   m_Ui->labelMPIImplementation->setText(guiLabel + implStr);
 }
 
@@ -150,12 +158,29 @@ void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
     Q_ASSERT(prefService);
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.simulation");
-    connect( m_Ui->toolButtonMPIExec, SIGNAL(clicked()), this, SLOT(SetMPIExecPath()) );
+    connect( m_Ui->toolButtonMPIExec, SIGNAL(clicked()), this, SLOT(SelectMPIExecPath()) );
+    connect(m_Ui->lineEditMPIExecPath, SIGNAL(returnPressed()), this, SLOT(SetMPIExecPath()) ); 
+    //connect(m_Ui->lineEditMPIExecPath, SIGNAL(selectionChanged()), this, SLOT(SetMPIExecPath()) ); 
+    //connect(m_Ui->lineEditMPIExecPath, SIGNAL(textChanged(QString)), this, SLOT(SetMPIExecPath()) ); 
 
     this->Update();
 
     // Set the locations of the solver binaries and mpiexec.
     InitializeMPILocation();
+}
+
+//-------------------
+// SelectMPIExecPath
+//-------------------
+//
+void sv4guiMPIPreferencePage::SelectMPIExecPath()
+{
+    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MPIExec");
+
+    if (!filePath.isEmpty()) {
+        m_Ui->lineEditMPIExecPath->setText(filePath);
+        SetMPIExecPath();
+    }
 }
 
 //----------------
@@ -165,11 +190,15 @@ void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
 //
 void sv4guiMPIPreferencePage::SetMPIExecPath()
 {
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MPIExec");
+    auto msg = "[sv4guiMPIPreferencePage::SetMPIExecPath] ";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "------------------------------ SetMPIExecPath -----------------------";
+    auto filePath = m_Ui->lineEditMPIExecPath->text().trimmed();
+    MITK_INFO << msg << "filePath: " << filePath.toStdString();
 
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditMPIExecPath->setText(filePath);
+    if (!filePath.isEmpty()) {
+        m_DefaultPrefs.SetMpiImplementation(filePath);
+        SetMpiImplementation();
     }
 }
 

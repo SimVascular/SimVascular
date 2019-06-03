@@ -66,6 +66,7 @@ public:
     void InitializeMPILocation();
 
 private slots:
+  void SelectMPIExecPath();
   void SetMPIExecPath();
 
 private:

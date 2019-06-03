@@ -110,7 +110,7 @@ sv4guiSimulationView::sv4guiSimulationView() :
     m_PostsolverPath="";
     m_MPIExecPath="";
 
-    m_UseMPI=true;
+    m_UseMPI=false;
     m_UseCustom=false;
     m_SolverTemplatePath="";
 
@@ -203,6 +203,7 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 //    connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveToManager()) );
 
     connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
+    connect(ui->UseMpiCheckBox, SIGNAL(clicked(bool)), this, SLOT(UseMpi(bool)) );
 
     ui->toolBox->setCurrentIndex(0);
 
@@ -348,7 +349,7 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
     m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultMPIPrefs.GetMpiExec()); 
     auto mpiName = prefs->Get("mpi implementation", m_DefaultMPIPrefs.GetMpiName());
     m_MpiImplementation = m_DefaultMPIPrefs.GetMpiImplementation(mpiName);
-    m_UseMPI = prefs->GetBool("use mpi",false);
+    // [DaveP] m_UseMPI = prefs->GetBool("use mpi",false);
 }
 
 //--------------------
@@ -1678,12 +1679,18 @@ void sv4guiSimulationView::RunJob()
         QString runPath = jobPath;
         int numProcs = ui->sliderNumProcs->value();
 
+        /* [DaveP] sort of useless check.
 	if(!m_UseMPI && (numProcs > 1)) {
             QMessageBox::warning(m_Parent, MsgTitle, "Cannot specify > 1 procs when not using MPI!");
             throw std::string("Cannot specify > 1 procs when not using MPI");
         }
+        */
+
+	if (!m_UseMPI) {
+            numProcs = 1;
+        }
 	
-        if(numProcs > 1) {
+        if (numProcs > 1) {
             runPath = jobPath+"/"+QString::number(numProcs)+"-procs_case";
         }
 
@@ -3055,3 +3062,20 @@ void sv4guiSimulationView::ShowModel(bool checked)
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 }
+
+//--------
+// UseMpi
+//--------
+// Process 'Use MPI' check box selection.
+//
+// Disable number of processors if MPI is not selected. Use disable rather 
+// than show/hide, which does not work for labels.
+//
+void sv4guiSimulationView::UseMpi(bool checked)
+{
+    ui->sliderNumProcs->setEnabled(checked);
+    ui->StartingStepLabel->setEnabled(checked);
+    m_UseMPI = checked;
+}
+
+

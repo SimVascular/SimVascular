@@ -218,17 +218,30 @@ QString sv4guiMPIPreferences::GetMpiExec()
 // but it is probably better to check the actual mpiexec that will be 
 // used to run jobs.
 //
-void sv4guiMPIPreferences::SetMpiImplementation()
+void sv4guiMPIPreferences::SetMpiImplementation(const QString& mpiExec)
 {
+  auto msg = "[sv4guiMPIPreferences::SetMpiImplementation] ";
+  std::cout << msg << std::endl;
+  std::cout << msg << "##################################################" << std::endl;
+  std::cout << msg << "    sv4guiMPIPreferences::SetMpiImplementation    " << std::endl;
+  std::cout << msg << "##################################################" << std::endl;
+
   MpiImplementation implementation = MpiImplementation::Unknown;
   m_MpiImplementation = implementation; 
+
+  if (mpiExec != "") {
+      std::cout << msg << "mpiExec: " << mpiExec.toStdString() << std::endl;
+      m_mpiExec = mpiExec; 
+  }
 
   if (m_mpiExec == UnknownBinary) {
       return;
   }
 
+  std::cout << msg << "m_mpiExec: " << m_mpiExec.toStdString() << std::endl;
   QFileInfo fileInfo(m_mpiExec);
   QString mpiExecPath = fileInfo.path();
+  std::cout << msg << "mpiExecPath: " << mpiExecPath.toStdString() << std::endl;
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QProcess *checkMpi = new QProcess();
@@ -256,6 +269,8 @@ void sv4guiMPIPreferences::SetMpiImplementation()
 #endif
 
   m_MpiImplementation = implementation;
+
+  std::cout << msg << "implementation: " << GetMpiName().toStdString() << std::endl;
 }
 
 //------------

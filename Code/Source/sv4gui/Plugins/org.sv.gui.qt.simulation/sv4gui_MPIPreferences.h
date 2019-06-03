@@ -75,6 +75,8 @@ public:
   QString GetMpiExec();
   static const QString UnknownBinary;
 
+  void SetMpiImplementation(const QString& = "");
+
 private:
 
 #ifdef WIN32
@@ -88,7 +90,6 @@ private:
   std::map<QString, MpiImplementation> m_MpiStringToEnum;
 
   void SetMpiExec(const QString& solverInstallPath, const QString& applicationPath);
-  void SetMpiImplementation();
 
 };
 
