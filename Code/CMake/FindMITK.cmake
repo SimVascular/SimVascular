@@ -171,7 +171,6 @@ if(SV_USE_MITK_SEGMENTATION)
         "mitkLabelSetImage.h"                            #mitk/Modules/Multilabel
         "mitkBooleanOperation.h"                         #mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
         "mitkMorphologicalOperations.h"                  #mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
-        "QmitkSegmentationOrganNamesHandling.cpp"        #mitk/Modules/SegmentationUI/Qmitk
         )
 endif()
 #-----------------------------------------------------------------------------
