@@ -225,7 +225,7 @@ public:
     void setupMLui();
     void initialize();
     void updatePaths();
-    void createContourGroup(std::string path_name);
+    void createContourGroup(std::string path_name, std::string seg_name);
     void segmentPath();
     void doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point,
     int index, int n_);

@@ -1989,14 +1989,14 @@ void sv4guiSeg2DEdit::updatePaths(){
     std::cout << "No data storage found in sv4guiSeg2DEdit::updatePaths\n";
     return ;
   }
-  
+
   auto path_folder_node = dss->GetNamedNode("Paths");
 
   if(path_folder_node == nullptr) {
     std::cout << "No path_folder_node found in sv4guiSeg2DEdit::updatePaths\n";
     return ;
   }
-  
+
   auto rs       = dss->GetDerivations(path_folder_node);
 
   if (rs->size() == 0){
@@ -2026,11 +2026,31 @@ void sv4guiSeg2DEdit::segmentPaths(){
   auto path_folder_node = GetDataStorage()->GetNamedNode("Paths");
   auto paths_list       = GetDataStorage()->GetDerivations(path_folder_node);
 
+  auto seg_folder_node = GetDataStorage()->GetNamedNode("Segmentations");
+  auto seg_nodes = GetDataStorage()->GetDerivations(seg_folder_node);
   m_selected_paths.clear();
 
+  bool ok;
+  QString seg_code = QInputDialog::getText(m_Parent, tr("Segmentation Name"),
+                                       tr("Enter a name to append to the new segmentations"), QLineEdit::Normal,
+                                       "", &ok);
+
+  std::cout << "seg name " << seg_code.toStdString() << "\n";
   for (int i = 0; i < ui->pathList->count(); i++){
     if (ui->pathList->item(i)->checkState() == Qt::Checked){
       auto name = ui->pathList->item(i)->text().toStdString();
+      auto new_seg_name = name+"_"+seg_code.toStdString();
+
+      for (int j = 0; j < seg_nodes->size(); j++){
+        auto seg_node = seg_nodes->GetElement(j);
+        auto seg_name = seg_node->GetName();
+        if (seg_name == new_seg_name){
+          QMessageBox::warning(NULL,("Segmentation " + seg_name +" already exists").c_str(),"Please use a different segmentation name!");
+          m_selected_paths.clear();
+          return;
+        }
+      }
+
       m_selected_paths.push_back(name);
       std::cout << "selected " << name << "\n";
     }
@@ -2046,7 +2066,7 @@ void sv4guiSeg2DEdit::segmentPaths(){
         m_current_path_node = path_node;
         std::cout << "segmenting " << path_name << "\n";
 
-        createContourGroup(path_name);
+        createContourGroup(path_name, path_name+"_"+seg_code.toStdString());
 
         segmentPath();
 
@@ -2057,7 +2077,7 @@ void sv4guiSeg2DEdit::segmentPaths(){
   }
 }
 
-void sv4guiSeg2DEdit::createContourGroup(std::string path_name){
+void sv4guiSeg2DEdit::createContourGroup(std::string path_name, std::string seg_name){
   auto seg_folder_node = GetDataStorage()->GetNamedNode("Segmentations");
 
   m_current_group = sv4guiContourGroup::New();
@@ -2069,7 +2089,7 @@ void sv4guiSeg2DEdit::createContourGroup(std::string path_name){
   m_current_group->SetPathID(selectedPath->GetPathID());
 
   auto seg_node = mitk::DataNode::New();
-  seg_node->SetName(path_name);
+  seg_node->SetName(seg_name);
   seg_node->SetData(m_current_group);
 
   GetDataStorage()->Add(seg_node, seg_folder_node);
