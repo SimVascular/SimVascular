@@ -13,25 +13,17 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5">
+  <layout class="QHBoxLayout" name="horizontalLayout_11">
    <item>
-    <widget class="QToolBox" name="segToolbox">
+    <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="page_2">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>400</width>
-        <height>660</height>
-       </rect>
-      </property>
-      <attribute name="label">
-       <string>Single path segmentation</string>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Single-Path</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QWidget" name="widget_8" native="true">
          <property name="sizePolicy">
@@ -432,13 +424,13 @@
                    <item>
                     <widget class="QSpinBox" name="spinBoxSmoothNumber">
                      <property name="minimum">
-                      <number>5</number>
+                      <number>1</number>
                      </property>
                      <property name="maximum">
-                      <number>20</number>
+                      <number>12</number>
                      </property>
                      <property name="value">
-                      <number>12</number>
+                      <number>4</number>
                      </property>
                     </widget>
                    </item>
@@ -482,7 +474,7 @@
                       <number>40</number>
                      </property>
                      <property name="value">
-                      <number>12</number>
+                      <number>10</number>
                      </property>
                     </widget>
                    </item>
@@ -599,7 +591,7 @@ If &quot;Preset&quot; on,  a contour is created with a specified threshold value
                 <item>
                  <widget class="QPushButton" name="btnML">
                   <property name="text">
-                   <string>NN</string>
+                   <string>Mach. Learning</string>
                   </property>
                  </widget>
                 </item>
@@ -794,119 +786,124 @@ Then, press key Delete to remove the shown contour.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>400</width>
-        <height>660</height>
-       </rect>
-      </property>
-      <attribute name="label">
-       <string>Multi path segmentation</string>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Multi-vessel Path</string>
       </attribute>
-      <widget class="QLineEdit" name="fourierEdit">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>320</y>
-         <width>113</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>7</string>
-       </property>
-      </widget>
-      <widget class="QListWidget" name="pathList">
-       <property name="geometry">
-        <rect>
-         <x>70</x>
-         <y>80</y>
-         <width>256</width>
-         <height>192</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="intervalLabel">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>290</y>
-         <width>67</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Interval</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="multiSegButton">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>410</y>
-         <width>131</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Segment Paths</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="selectAllPathsCheckBox">
-       <property name="geometry">
-        <rect>
-         <x>70</x>
-         <y>60</y>
-         <width>131</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>select all paths</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_7">
-       <property name="geometry">
-        <rect>
-         <x>70</x>
-         <y>40</y>
-         <width>67</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Paths</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="intervalEdit">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>290</y>
-         <width>113</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>10</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="fourierLabel">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>320</y>
-         <width>101</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Fourier Modes</string>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Select Paths</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QCheckBox" name="selectAllPathsCheckBox">
+            <property name="text">
+             <string>use all paths</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QListWidget" name="pathList"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Parameters</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QWidget" name="widget_10" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QLabel" name="intervalLabel">
+               <property name="minimumSize">
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Interval:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="intervalEdit">
+               <property name="text">
+                <string>10</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_11" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <item>
+              <widget class="QLabel" name="fourierLabel">
+               <property name="minimumSize">
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Fourier Modes:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="fourierEdit">
+               <property name="text">
+                <string>7</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="multiSegButton">
+         <property name="text">
+          <string>Segment Using Machine Learning</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

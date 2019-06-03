@@ -58,8 +58,7 @@
 
 const QString sv4guisvFSIView::EXTENSION_ID = "org.sv.views.svfsi";
 
-sv4guisvFSIView::sv4guisvFSIView() :
-    ui(new Ui::sv4guisvFSIView)
+sv4guisvFSIView::sv4guisvFSIView() : ui(new Ui::sv4guisvFSIView)
 {
     m_MitkJob=NULL;
     m_Job=NULL;

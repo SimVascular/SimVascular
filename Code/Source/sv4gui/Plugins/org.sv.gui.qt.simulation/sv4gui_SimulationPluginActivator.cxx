@@ -32,6 +32,7 @@
 #include "sv4gui_SimulationPluginActivator.h"
 #include "sv4gui_SimJobCreateAction.h"
 #include "sv4gui_SimulationPreferencePage.h"
+#include "sv4gui_MPIPreferencePage.h"
 #include "sv4gui_SimulationView.h"
 #include "sv4gui_SimJobStopAction.h"
 #include "sv4gui_SimJobExportAction.h"
@@ -46,6 +47,7 @@ void sv4guiSimulationPluginActivator::start(ctkPluginContext* context)
 
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimulationPreferencePage, context)
+    BERRY_REGISTER_EXTENSION_CLASS(sv4guiMPIPreferencePage, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimulationView, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobStopAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(sv4guiSimJobExportAction, context)

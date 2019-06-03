@@ -34,17 +34,21 @@
 
 #include <org_sv_gui_qt_svfsi_Export.h>
 
-#include "sv4gui_DataNodeOperationInterface.h"
+#include "sv4gui_svFSIJobCreate.h"
 
-#include <mitkIContextMenuAction.h>
+//#include "sv4gui_DataNodeOperationInterface.h"
+//#include <mitkIContextMenuAction.h>
+
+#include <sv4gui_mitkIContextMenuAction.h>
+
 #include <mitkDataNode.h>
 
 #include <QObject>
 
-class SV_QT_SVFSI sv4guisvFSIJobCreateAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_SVFSI sv4guisvFSIJobCreateAction : public QObject, public svmitk::IContextMenuAction 
 {
   Q_OBJECT
-  Q_INTERFACES(mitk::IContextMenuAction)
+  Q_INTERFACES(svmitk::IContextMenuAction)
 
 public:
   sv4guisvFSIJobCreateAction();
@@ -64,7 +68,9 @@ private:
   mitk::DataStorage::Pointer m_DataStorage;
   berry::QtViewPart *m_Functionality;
 
-  sv4guiDataNodeOperationInterface* m_Interface;
+  sv4guisvFSIJobCreate* m_svFSIJobCreateWidget;
+
+  //sv4guiDataNodeOperationInterface* m_Interface;
 };
 
 #endif

@@ -49,6 +49,10 @@
 #include <map>
 #include <QString>
 
+#ifdef WIN32
+  #include "sv4gui_win32_use_registry.h"
+#endif
+
 //-----------------------------
 // sv4guiSimulationPreferences 
 //-----------------------------
@@ -58,42 +62,25 @@ class sv4guiSimulationPreferences
 public:
   sv4guiSimulationPreferences();
   ~sv4guiSimulationPreferences();
-  //sv4guiSimulationPreferences& operator= (const sv4guiSimulationPreferences&){};
-
-  enum class MpiImplementation {
-    Unknown,
-    MPICH,
-    OpenMPI
-  };
-
-  MpiImplementation GetMpiImplementation();
-  MpiImplementation GetMpiImplementation(const QString& name);
-  const QString GetMpiName();
 
   void InitializeSolverLocations();
-  QString GetMpiExec();
   QString GetPostSolver();
   QString GetPreSolver();
   QString GetSolver();
+  QString GetSolverNOMPI();
   static const QString UnknownBinary;
 
 private:
-  QString m_mpiExec;
-  MpiImplementation m_MpiImplementation;
   QString m_svPostBinary;
   QString m_svPresolver;
   QString m_svSolver;
-  std::map<MpiImplementation, QString> m_MpiEnumToString;
-  std::map<QString, MpiImplementation> m_MpiStringToEnum;
+  QString m_svSolverNOMPI;
 
-  void SetMpiExec(const QString& solverInstallPath, const QString& applicationPath);
-  void SetMpiImplementation();
   void SetPostSolver(const QString& solverInstallPath, const QString& applicationPath);
   void SetPreSolver(const QString& solverInstallPath, const QString& applicationPath);
   void SetSolver(const QString& solverInstallPath, const QString& applicationPath);
-  QString GetRegistryValue(char* s1, char* s2) {
-    return NULL;
-  }
+  void SetSolverNOMPI(const QString& solverInstallPath, const QString& applicationPath);
+
 };
 
 #endif // SV4GUI_SIMULATIONPREFERENCES_H

@@ -199,6 +199,7 @@ SV_USE_GDCM = 1
 # -----------------------------------------------------
 
 SV_USE_MITK = 1
+SV_USE_MITK_SEGMENTATION = 1
 SV_IGNORE_PROVISIONING_FILE = 1
 
 # -----------------------------------------------------
@@ -388,6 +389,10 @@ endif
 
 ifeq ($(SV_USE_MITK),1)
   GLOBAL_DEFINES += -DSV_USE_MITK
+endif
+
+ifeq ($(SV_USE_MITK_SEGMENTATION),1)
+  GLOBAL_DEFINES += -DSV_USE_MITK_SEGMENTATION
 endif
 
 ifeq ($(SV_IGNORE_PROVISIONING_FILE),1)
@@ -667,6 +672,9 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/sv4gui/Modules/Simulation1d \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/ImageProcessing \
                      -I$(TOP)/../Code/Source/sv4gui/Modules/svFSI
+  ifeq ($(SV_USE_MITK_SEGMENTATION),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.mitksegmentation
+  endif
   ifeq ($(SV_USE_OPENCASCADE),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/sv4gui/Modules/Model/OCCT
   endif
@@ -727,6 +735,7 @@ SV_PLUGIN_APPLICATION_NAME=org_sv_gui_qt_application
 SV_PLUGIN_IMAGEPROCESSING_NAME=org_sv_gui_qt_imageprocessing
 SV_PLUGIN_DATAMANAGER_NAME=org_sv_gui_qt_datamanager
 SV_PLUGIN_MESHING_NAME=org_sv_gui_qt_meshing
+SV_PLUGIN_MITKSEGMENTATION_NAME=org_sv_gui_qt_mitksegmentation
 SV_PLUGIN_MODELING_NAME=org_sv_gui_qt_modeling
 SV_PLUGIN_PATHPLANNING_NAME=org_sv_gui_qt_pathplanning
 SV_PLUGIN_PROJECTMANAGER_NAME=org_sv_gui_qt_projectmanager

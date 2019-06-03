@@ -265,6 +265,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string 
                     contourPoints.push_back(sv4guiXmlIOUtil::GetPoint(pointElement));
                 }
                 contour->SetContourPoints(contourPoints,false);
+                contour->ContourPointsChanged(); // Calculate contour center.
             }
 
             group->InsertContour(-1,contour,timestep);

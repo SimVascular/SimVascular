@@ -117,7 +117,7 @@ class sv4guiSimulationPython1d
     vtkSmartPointer<vtkPolyData> meshPolyData;
     sv4guiSimulationPython1dParamNames m_ParameterNames;
     std::map<std::string, std::string> m_ParameterValues;
-    const std::string pythonModuleName = "generate_1d_mesh";
+    const std::string m_PythonModuleName = "sv_1d_simulation";
 
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value);

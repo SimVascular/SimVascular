@@ -84,6 +84,10 @@ void sv4guiModelCreate::SetFocus( )
     ui->lineEditModelName->setFocus();
 }
 
+//-------------
+// CreateModel
+//-------------
+//
 void sv4guiModelCreate::CreateModel()
 {
     mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("sv4guiModelFolder");
@@ -116,6 +120,17 @@ void sv4guiModelCreate::CreateModel()
         QMessageBox::warning(NULL,"Model Empty","Please give a model name!");
         return;
     }
+
+    if (!sv4guiDataNodeOperationInterface::IsValidDataNodeName(modelName)) {
+        auto validName = QString::fromStdString(sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg);
+        auto modelName = ui->lineEditModelName->text().trimmed();
+        QString msg = "The name '" + modelName + "' is not valid.\n" +
+                      "Model names " + validName + ".\n";
+        QMessageBox::warning(NULL, "Model", msg);
+        return;
+    }
+
+
 
     mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(modelName.c_str(),m_ModelFolderNode);
     if(exitingNode){

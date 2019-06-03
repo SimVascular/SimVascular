@@ -44,8 +44,8 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
   export TAR_FILE_PREFIX=windows.10.0.msvc.19.0.x64.release.2019.02.15
 elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
   source CygwinHelpers/msvc_2015_x64.sh
-  export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2019.02/windows/windows/10.0/msvc/19.0/x64/release/2019.03.06
-  export TAR_FILE_PREFIX=windows.10.0.msvc.19.0.x64.release.2019.03.06
+  export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2019.02/windows/windows/10.0/msvc/19.0/x64/release/2019.05.21
+  export TAR_FILE_PREFIX=windows.10.0.msvc.19.0.x64.release.2019.05.21
 fi
 
 export EXTERNALS_TOP=`pwd`/ext

@@ -8,7 +8,7 @@
           icon="resources/svFSI.png" />
   </extension>
 
- <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+ <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
     <contextMenuAction nodeDescriptorName="sv4guisvFSIFolder" label="Create svFSI Job" icon="" class="sv4guisvFSIJobCreateAction" />
   </extension>
 

@@ -29,10 +29,47 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <regex>
+
 #include "sv4gui_DataNodeOperationInterface.h"
 
 #include "sv4gui_ProjectManager.h"
 #include "sv4gui_DataNodeOperation.h"
+
+// Messege defining valid Data Node names.
+//
+// This text is used to display a warning message in a popup window 
+// when an invalid name is given.
+//
+std::string sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg = 
+  "must start with an alphanumeric character followed by alphanumeric characters, underscores, or single dashes and dots.";
+
+//---------------------
+// IsValidDataNodeName
+//---------------------
+// Check that a Data Node name is valid.
+//
+// This function is called when a user creates a new tool instance and specfies a name. For example, 
+// right clicking on the 'Paths' Data Node and selecting 'Create Path'. Names with spaces and certain 
+// non-alphanumeric characters can cause problems when the names are used as file names. 
+//
+// A valid name 
+//    1) Starts with a letter, number or _.
+//    2) Has no spaces.
+//    3) Can use underscores (_) or single dot (.), dash (-) as separators. 
+//    4) Does not start or end with a dot or dash.
+//
+// [Note] Using '\\w' in the regex permits underscores at the start and end 
+// of names, as well as repeated underscores.
+//
+bool sv4guiDataNodeOperationInterface::IsValidDataNodeName(const std::string& name) 
+{
+  if (name.size() == 0) { 
+      return false;
+  }
+  std::regex regex("^\\w(\\-?\\.?\\w)*$");
+  return regex_match(name, regex);
+}
 
 sv4guiDataNodeOperationInterface::sv4guiDataNodeOperationInterface()
 {
