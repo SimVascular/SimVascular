@@ -2104,8 +2104,8 @@ void sv4guiSeg2DEdit::segmentPath(){
 
   int n = 0;
 
-  m_interval = std::stoi(ui->intervalEdit->text().toStdString());
-  m_numFourierModes = std::stoi(ui->intervalEdit->text().toStdString());
+  m_interval = ui->intervalEdit->value();
+  m_numFourierModes = ui->intervalEdit->value();
 
   for(int k = 0; k < path_points.size(); k += m_interval){
 
