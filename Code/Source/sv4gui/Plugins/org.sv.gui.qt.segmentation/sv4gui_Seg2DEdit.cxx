@@ -1984,8 +1984,20 @@ void sv4guiSeg2DEdit::selectAllPaths(){
 }
 
 void sv4guiSeg2DEdit::updatePaths(){
-  auto path_folder_node = GetDataStorage()->GetNamedNode("Paths");
-  auto rs       = GetDataStorage()->GetDerivations(path_folder_node);
+  auto dss = GetDataStorage();
+  if(dss.IsNull()) {
+    std::cout << "No data storage found in sv4guiSeg2DEdit::updatePaths\n";
+    return ;
+  }
+  
+  auto path_folder_node = dss->GetNamedNode("Paths");
+
+  if(path_folder_node == nullptr) {
+    std::cout << "No path_folder_node found in sv4guiSeg2DEdit::updatePaths\n";
+    return ;
+  }
+  
+  auto rs       = dss->GetDerivations(path_folder_node);
 
   if (rs->size() == 0){
     std::cout << "No paths found\n";
