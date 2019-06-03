@@ -260,9 +260,8 @@ machine-learning-network:
 	  /bin/rm -Rf results; \
 	  /bin/rm -Rf ../Python/site-packages/sv_ml/results; \
 	  /bin/rm -f networks.tar; \
-	  mkdir results; \
 	  wget http://simvascular.stanford.edu/downloads/public/machine_learning/networks.tar .; \
-	  cd results; tar xvf ../networks.tar;cd ..; \
+	  tar xvf ./networks.tar; \
 	  /bin/mv results ../Python/site-packages/sv_ml/results; \
 	  /bin/rm -f networks.tar; \
 	fi

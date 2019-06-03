@@ -292,7 +292,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     }
 
     m_Parent->setEnabled(true);
-    ui->segToolbox->setCurrentIndex(1);
+    ////remove_toolbox     ui->segToolbox->setCurrentIndex(1);
 //    std::string groupPathName=m_ContourGroup->GetPathName();
     int  groupPathID=m_ContourGroup->GetPathID();
 
@@ -1868,8 +1868,8 @@ void sv4guiSeg2DEdit::setupMLui(){
 
   // connect(ui->sampleNetButton, SIGNAL(clicked()), this, SLOT(sampleNetwork()));
 
-  connect(ui->segToolbox, SIGNAL(currentChanged(int)),
-    this, SLOT(segTabSelected()));
+  ////remove_toolbox  connect(ui->segToolbox, SIGNAL(currentChanged(int)),
+  ////remove_toolbox   this, SLOT(segTabSelected()));
 
   connect(ui->btnML, SIGNAL(clicked()), this, SLOT(CreateMLContour()) );
 
@@ -1879,21 +1879,21 @@ void sv4guiSeg2DEdit::setupMLui(){
 
 void sv4guiSeg2DEdit::segTabSelected(){
   std::cout << "select seg tab\n";
-  switch(ui->segToolbox->currentIndex()){
-    case 1:
-    break;
+  ////remove_toolbox   switch(ui->segToolbox->currentIndex()){
+  ////remove_toolbox   case 1:
+  ////remove_toolbox   break;
 
-    case 0:
+  ////remove_toolbox   case 0:
       std::cout << "single path selected\n";
       if(!m_ContourGroup)
       {
           ui->resliceSlider->turnOnReslice(false);
           ClearAll();
-          ui->segToolbox->setCurrentIndex(1);
+          ////remove_toolbox  ui->segToolbox->setCurrentIndex(1);
           QMessageBox::warning(NULL,"No segmentation selected","Create, or Select a segmentation before choosing single path segmentation!");
       }
-    break;
-  }
+      ////remove_toolbox     break;
+      ////remove_toolbox  }
 }
 
 void sv4guiSeg2DEdit::initialize(){
