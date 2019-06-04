@@ -134,7 +134,7 @@ std::vector<std::vector<double>> sv4gui_MachineLearningUtils::segmentPathPoint(s
 
   std::string result = std::string(cstr);
 
-  std::cout << "result " << result << "\n";
+  //std::cout << "result " << result << "\n";
 
   if (result == ""){
     std::cout << "Error segmenting, sv_wrapper returned null\n";

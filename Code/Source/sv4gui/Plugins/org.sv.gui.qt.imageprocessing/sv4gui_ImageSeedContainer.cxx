@@ -137,8 +137,6 @@ std::vector<int> sv4guiImageSeedContainer::findNearestSeed(double x, double y, d
 }
 
 void sv4guiImageSeedContainer::deleteSeed(int startIndex, int endIndex){
-  std::cout << "Deleting " << startIndex << " " << endIndex << "\n";
-  std::cout << "startSeeds size " << m_startSeeds.size() << "\n";
 
   if (m_startSeeds.size() <= startIndex)
     return;
