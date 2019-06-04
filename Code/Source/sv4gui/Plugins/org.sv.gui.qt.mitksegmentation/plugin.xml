@@ -31,7 +31,7 @@
   </extension>
 
   <extension point="org.blueberry.ui.preferencePages">
-    <page id="org.sv.gui.qt.QmitkSegmentationPreferencePage" name="Segmentation" class="QmitkSegmentationPreferencePage">
+    <page id="org.sv.gui.qt.QmitkSegmentationPreferencePage" name="MITKSegmentation" class="QmitkSegmentationPreferencePage">
       <keywordreference id="org.sv.gui.qt.QmitkSegmentationPreferencePageKeywords"></keywordreference>
     </page>
   </extension>
