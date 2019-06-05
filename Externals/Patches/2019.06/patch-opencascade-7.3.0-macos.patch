@@ -1,0 +1,17 @@
+diff -rupN original/src/AdvApp2Var/AdvApp2Var_ApproxF2var.hxx patch/src/AdvApp2Var/AdvApp2Var_ApproxF2var.hxx
+--- original/src/AdvApp2Var/AdvApp2Var_ApproxF2var.hxx	2018-07-04 07:20:35.000000000 -0700
++++ patch/src/AdvApp2Var/AdvApp2Var_ApproxF2var.hxx	2018-07-04 07:29:27.000000000 -0700
+@@ -52,7 +52,12 @@ Standard_EXPORT static int mma2fnc_(inte
+ 				    doublereal *tabdec, 
+ 				    doublereal *errmax, 
+ 				    doublereal *errmoy, 
+-				    integer *iercod);
++				    integer *iercod)
++#ifndef __APPLE__
++;
++#else
++__attribute__((optnone));
++#endif
+ 
+ 
+ Standard_EXPORT static int mma2roo_(integer *nbpntu, 
