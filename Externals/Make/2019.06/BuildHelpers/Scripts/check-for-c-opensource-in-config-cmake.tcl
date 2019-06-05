@@ -25,7 +25,7 @@ proc file_find_multiple {dir wildcards args} {
 
 }
 
-#set replaceme C:/cygwin64/usr/local/sv/ext/2019.02/release/gl2/bin/msvc/19.0/x64/release
+#set replaceme C:/cygwin64/usr/local/sv/ext/2019.06/release/gl2/bin/msvc/19.0/x64/release
 set replaceme C:/OpenSource
 
 set all_files {}

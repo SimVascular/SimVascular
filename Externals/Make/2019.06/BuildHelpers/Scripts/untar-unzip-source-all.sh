@@ -84,7 +84,7 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_GDCM* ]]; then
   tar xf Originals/gdcm/gdcm-2.6.3.tar.gz
   mv gdcm-2.6.3 ..
   pushd ../gdcm-2.6.3
-  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-gdcm-2.6.3-macos.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-gdcm-2.6.3-macos.patch
   popd
 fi
 
@@ -103,8 +103,8 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_VTK* ]]; then
   tar xf Originals/vtk/VTK-8.1.1.tar.gz
   mv VTK-8.1.1 ../vtk-8.1.1
   pushd ../vtk-8.1.1
-  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-vtk-8.1.1-windows.patch
-  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-vtk-8.1.1-tk-windows.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-vtk-8.1.1-windows.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-vtk-8.1.1-tk-windows.patch
   popd
 fi
 
@@ -124,8 +124,8 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_OPENCASCADE* ]]; then
   tar xf Originals/opencascade/opencascade-7.3.0.tgz
   mv opencascade-7.3.0 ..
   pushd ../opencascade-7.3.0
-  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-opencascade-vtk-greater-8.0.patch
-  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-opencascade-7.3.0-macos.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-opencascade-vtk-greater-8.0.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-opencascade-7.3.0-macos.patch
   popd
 fi
 
@@ -144,8 +144,8 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   tar xf Originals/mitk/mitk-2018-04-alpha.tar.gz
   mv mitk-2018-04-alpha ../mitk-2018.04.0
   pushd ../mitk-2018.04.0
-  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.patch
-  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04-boost-windows.patch
-  #patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.0-gl1.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04-boost-windows.patch
+  #patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04.0-gl1.patch
   popd
 fi
