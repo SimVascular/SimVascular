@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="toolTip">
+   <string>The MPI preferences page is used to display the location of the mpiexec program and its implementation (OpenMPI or MPICH). The location of the mpiexec program can also be set.</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="QFrame" name="frame">
@@ -22,8 +25,8 @@
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
        <widget class="QWidget" name="widget_3" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="leftMargin">
@@ -40,6 +43,9 @@
          </property>
          <item>
           <widget class="QCheckBox" name="checkBoxUseMPI">
+           <property name="toolTip">
+            <string>This check box is used to select using MPI to execute solver simulations.</string>
+           </property>
            <property name="text">
             <string>Use MPI   </string>
            </property>
@@ -51,7 +57,7 @@
         </layout>
        </widget>
       </item>
-      <item>
+      <item row="1" column="0" colspan="2">
        <widget class="QWidget" name="widget_6" native="true">
         <layout class="QGridLayout" name="gridLayout_5">
          <property name="leftMargin">
@@ -69,7 +75,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>MPIExec:</string>
+            <string>mpiexec</string>
            </property>
           </widget>
          </item>
@@ -82,6 +88,9 @@
          </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="lineEditMPIExecPath">
+           <property name="toolTip">
+            <string>This text box is used to display and set the full path to the mpiexec binary. The absolute path to the executable is displayed and may be different than what was selected or typed in. </string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -90,10 +99,26 @@
         </layout>
        </widget>
       </item>
-      <item>
+      <item row="2" column="0">
        <widget class="QLabel" name="labelMPIImplementation">
         <property name="text">
-         <string>MPI Implementation: Unknown</string>
+         <string>MPI Implementation</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="MpiImplementationLineEdit">
+        <property name="toolTip">
+         <string>The text box displays the MPI implementation of the mpiexec program.</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLineEdit {
+
+background-color: rgb(220,220,220);
+
+
+
+}</string>
         </property>
        </widget>
       </item>

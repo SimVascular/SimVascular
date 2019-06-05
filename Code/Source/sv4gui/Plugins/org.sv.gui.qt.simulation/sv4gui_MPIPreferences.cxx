@@ -220,17 +220,10 @@ QString sv4guiMPIPreferences::GetMpiExec()
 //
 void sv4guiMPIPreferences::SetMpiImplementation(const QString& mpiExec)
 {
-  auto msg = "[sv4guiMPIPreferences::SetMpiImplementation] ";
-  std::cout << msg << std::endl;
-  std::cout << msg << "##################################################" << std::endl;
-  std::cout << msg << "    sv4guiMPIPreferences::SetMpiImplementation    " << std::endl;
-  std::cout << msg << "##################################################" << std::endl;
-
   MpiImplementation implementation = MpiImplementation::Unknown;
   m_MpiImplementation = implementation; 
 
   if (mpiExec != "") {
-      std::cout << msg << "mpiExec: " << mpiExec.toStdString() << std::endl;
       m_mpiExec = mpiExec; 
   }
 
@@ -238,10 +231,8 @@ void sv4guiMPIPreferences::SetMpiImplementation(const QString& mpiExec)
       return;
   }
 
-  std::cout << msg << "m_mpiExec: " << m_mpiExec.toStdString() << std::endl;
   QFileInfo fileInfo(m_mpiExec);
   QString mpiExecPath = fileInfo.path();
-  std::cout << msg << "mpiExecPath: " << mpiExecPath.toStdString() << std::endl;
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QProcess *checkMpi = new QProcess();
@@ -269,8 +260,6 @@ void sv4guiMPIPreferences::SetMpiImplementation(const QString& mpiExec)
 #endif
 
   m_MpiImplementation = implementation;
-
-  std::cout << msg << "implementation: " << GetMpiName().toStdString() << std::endl;
 }
 
 //------------
