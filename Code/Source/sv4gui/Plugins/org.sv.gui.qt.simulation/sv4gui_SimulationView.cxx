@@ -347,7 +347,7 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
 
     // Set the mpiexec binary and mpi implementation.
     m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultMPIPrefs.GetMpiExec()); 
-    auto mpiName = prefs->Get("mpi implementation", m_DefaultMPIPrefs.GetMpiName());
+    auto mpiName = prefs->Get("mpi implementation", m_DefaultMPIPrefs.GetMpiImplementationName());
     m_MpiImplementation = m_DefaultMPIPrefs.GetMpiImplementation(mpiName);
     // [DaveP] m_UseMPI = prefs->GetBool("use mpi",false);
 }
@@ -1951,7 +1951,7 @@ void sv4guiSimulationView::CheckMpi()
     // only msmpi allowed on win32
     #ifndef WIN32
     // Check the MPI implementation.
-    auto mpiName = m_DefaultMPIPrefs.GetMpiName();
+    auto mpiName = m_DefaultMPIPrefs.GetMpiImplementationName();
     if (m_MpiImplementation != sv4guiMPIPreferences::MpiImplementation::MPICH) {
        QString msg1 = "svSolver requires MPICH but an MPICH MPI implementation was not found.\n";
        QString msg2 = "Please install MPICH MPI or set the location of an MPICH mpiexec in the Preferences->SimVascular Simulation page.";

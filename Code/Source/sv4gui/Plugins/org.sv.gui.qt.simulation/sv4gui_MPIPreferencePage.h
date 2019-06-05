@@ -77,7 +77,6 @@ public:
 
 private slots:
   void SelectMPIExecPath();
-  void SetMPIExecPath();
 
 private:
   void SetMpiExec();

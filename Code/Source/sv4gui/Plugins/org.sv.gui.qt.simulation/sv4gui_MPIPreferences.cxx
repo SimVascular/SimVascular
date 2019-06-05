@@ -49,17 +49,17 @@ const QString sv4guiMPIPreferences::UnknownBinary("not found");
 sv4guiMPIPreferences::sv4guiMPIPreferences() 
 {
   m_MpiEnumToString = { 
-    {MpiImplementation::MPICH, "MPICH"},
-    {MpiImplementation::OpenMPI, "OpenMPI"},
-    {MpiImplementation::MSMPI, "MSMPI"},
-    {MpiImplementation::Unknown, "Unknown"}
+    {MpiImplementation::MPICH,   sv4guiMPIPreferencesImplementationNames::MPICH},
+    {MpiImplementation::OpenMPI, sv4guiMPIPreferencesImplementationNames::OpenMPI},
+    {MpiImplementation::MSMPI,   sv4guiMPIPreferencesImplementationNames::MSMPI},
+    {MpiImplementation::Unknown, sv4guiMPIPreferencesImplementationNames::Unknown}
   };
 
   m_MpiStringToEnum = {
-    {"MPICH", MpiImplementation::MPICH}, 
-    {"OpenMPI", MpiImplementation::OpenMPI},
-    {"MSMPI",MpiImplementation::MSMPI},
-    {"Unknown", MpiImplementation::Unknown}
+    {sv4guiMPIPreferencesImplementationNames::MPICH,   MpiImplementation::MPICH}, 
+    {sv4guiMPIPreferencesImplementationNames::OpenMPI, MpiImplementation::OpenMPI},
+    {sv4guiMPIPreferencesImplementationNames::MSMPI,   MpiImplementation::MSMPI},
+    {sv4guiMPIPreferencesImplementationNames::Unknown, MpiImplementation::Unknown}
   };
 
   InitializeMPILocation();
@@ -154,9 +154,7 @@ QString sv4guiMPIPreferences::GetRegistryValue(QString category, QString key)
 //------------
 // SetMpiExec
 //------------
-// Set the location of the MPI mpiexec binary.
-//
-// Don't display a warning until the solver is actually used. 
+// Set mpiexec to its platform-dependent default locations 
 //
 void sv4guiMPIPreferences::SetMpiExec(const QString& solverPath, const QString& applicationPath)
 {
@@ -198,6 +196,22 @@ void sv4guiMPIPreferences::SetMpiExec(const QString& solverPath, const QString& 
   m_mpiExec = mpiExec;
 }
 
+//------------
+// SetMpiExec
+//------------
+// Set the location of the MPI mpiexec binary directly.
+//
+void sv4guiMPIPreferences::SetMpiExec(const QString& filePath)
+{
+  m_mpiExec = filePath;
+  SetMpiImplementation();
+}
+
+//------------
+// GetMpiExec
+//------------
+// Get the location of the MPI mpiexec binary.
+//
 QString sv4guiMPIPreferences::GetMpiExec() 
 { 
   return m_mpiExec; 
@@ -208,7 +222,21 @@ QString sv4guiMPIPreferences::GetMpiExec()
 //----------------------
 // Set the installed MPI implementation.
 //
-// This is needed to unsure that MPI is installed and that the
+void sv4guiMPIPreferences::SetMpiImplementation()
+{
+  if (m_mpiExec == UnknownBinary) {
+    return;
+  }
+
+  m_MpiImplementation = DetermineMpiImplementation(m_mpiExec);
+}
+
+//----------------------------
+// DetermineMpiImplementation
+//----------------------------
+// Determine the MPI implementation from the mpiexec program.
+//
+// This is needed to ensure that MPI is installed and that the
 // correct implementation is installed for a given OS.
 //
 // Check the implementation using 'mpiexec -version' and show
@@ -218,25 +246,16 @@ QString sv4guiMPIPreferences::GetMpiExec()
 // but it is probably better to check the actual mpiexec that will be 
 // used to run jobs.
 //
-void sv4guiMPIPreferences::SetMpiImplementation(const QString& mpiExec)
+sv4guiMPIPreferences::MpiImplementation sv4guiMPIPreferences::DetermineMpiImplementation(const QString& mpiExecName)
 {
   MpiImplementation implementation = MpiImplementation::Unknown;
-  m_MpiImplementation = implementation; 
 
-  if (mpiExec != "") {
-      m_mpiExec = mpiExec; 
-  }
-
-  if (m_mpiExec == UnknownBinary) {
-      return;
-  }
-
-  QFileInfo fileInfo(m_mpiExec);
+  QFileInfo fileInfo(mpiExecName);
   QString mpiExecPath = fileInfo.path();
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
   QProcess *checkMpi = new QProcess();
-  QString program(m_mpiExec);
+  QString program(mpiExecName);
 
   if (QFile(program).exists()) {
     QStringList arguments;
@@ -244,7 +263,7 @@ void sv4guiMPIPreferences::SetMpiImplementation(const QString& mpiExec)
     checkMpi->setProgram(program);
     checkMpi->setArguments(arguments);
     checkMpi->start(program, arguments);
-    checkMpi->waitForFinished(); 
+    checkMpi->waitForFinished();
     QString output(checkMpi->readAllStandardOutput());
     if (output.contains("mpich")) {
       implementation = MpiImplementation::MPICH;
@@ -259,17 +278,22 @@ void sv4guiMPIPreferences::SetMpiImplementation(const QString& mpiExec)
   implementation = MpiImplementation::MSMPI;
 #endif
 
-  m_MpiImplementation = implementation;
+  return implementation;
 }
 
-//------------
-// GetMpiName
-//------------
+//--------------------------
+// GetMpiImplementationName
+//--------------------------
 // Get the name of the MPI implementation.
 //
-const QString sv4guiMPIPreferences::GetMpiName()
+const QString sv4guiMPIPreferences::GetMpiImplementationName()
 {
   return m_MpiEnumToString[m_MpiImplementation];
+}
+
+const QString sv4guiMPIPreferences::GetMpiImplementationName(const sv4guiMPIPreferences::MpiImplementation implementation)
+{
+  return m_MpiEnumToString[implementation];
 }
 
 sv4guiMPIPreferences::MpiImplementation

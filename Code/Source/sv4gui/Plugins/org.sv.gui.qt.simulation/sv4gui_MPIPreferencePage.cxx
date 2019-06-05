@@ -48,6 +48,10 @@
 // Pressing the 'MPI' panel 'OK' button calls the PerformOk() method which saves the MPI 
 // information into the MITK database.
 //  
+// Restrict selecting mpiexec to the file browser because the MPI diaglog page closes when 
+// pressing enter in the 'mpiexec' text box. This does not allow for correcting for misspelled 
+// paths, a warning box appears and the dialog window closes.
+//
 #include "sv4gui_MPIPreferencePage.h"
 #include "ui_sv4gui_MPIPreferencePage.h"
 #include "sv4gui_MPIPreferences.h"
@@ -82,12 +86,14 @@ sv4guiMPIPreferencePage::~sv4guiMPIPreferencePage()
 //-----------------
 // Set the GUI widgets event/callbacks.
 //
-// The values for the GUI are tried to be set from the MITK 
-// database by calling Update(). InitializeMPILocation() is then
-// called to set values not in the database. 
+// The values for the GUI are first set from the MITK database if the exists 
+// by calling Update(). InitializeMPILocation() is then called to set values 
+// not in the database. 
 //
-// [Note:DaveP] The MPI diaglog page closes when pressing enter in the
-// 'mpiexec' text box. 
+// Restrict selecting mpiexec to the file browser because the MPI diaglog page 
+// closes when pressing enter in the 'mpiexec' text box. This does not allow
+// for correcting for misspelled paths, a warning box appears and the dialog
+// window closes.
 //
 void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
 {
@@ -103,7 +109,9 @@ void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
 
     // Set widgets event/callbacks.
     connect(m_Ui->toolButtonMPIExec, SIGNAL(clicked()), this, SLOT(SelectMPIExecPath()) );
-    connect(m_Ui->lineEditMPIExecPath, SIGNAL(returnPressed()), this, SLOT(SetMPIExecPath()) );
+
+    // Allow setting the mpiexec path only using the file browser.
+    m_Ui->lineEditMPIExecPath->setReadOnly(true);
     m_Ui->MpiImplementationLineEdit->setReadOnly(true);
 
     // Update the GUI with values from the MITK database.
@@ -170,6 +178,9 @@ void sv4guiMPIPreferencePage::SetMpiExec()
 //----------------------
 // Set the installed MPI implementation.
 //
+// If the GUI value is not set then set it using the sv4guiMPIPreferences 
+// object m_DefaultPrefs.
+//
 void sv4guiMPIPreferencePage::SetMpiImplementation()
 {
   QString mpiImpl = m_Ui->MpiImplementationLineEdit->text().trimmed();
@@ -178,7 +189,7 @@ void sv4guiMPIPreferencePage::SetMpiImplementation()
     return;
   }
 
-  mpiImpl = m_DefaultPrefs.GetMpiName();
+  mpiImpl = m_DefaultPrefs.GetMpiImplementationName();
   m_Ui->MpiImplementationLineEdit->setText(mpiImpl);
 }
 
@@ -191,33 +202,31 @@ void sv4guiMPIPreferencePage::SelectMPIExecPath()
 {
     QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MPIExec");
 
-    if (!filePath.isEmpty()) {
-        m_Ui->lineEditMPIExecPath->setText(filePath);
-        SetMPIExecPath();
+    if (filePath.isEmpty()) {
+        return;
     }
-}
 
-//----------------
-// SetMPIExecPath
-//----------------
-// Process the GUI event to set the mpiexec path in a text box.
-//
-// Call m_DefaultPrefs.SetMpiImplementation() to determine the
-// MPI implementation and returned using m_DefaultPrefs.GetMpiName().
-//
-void sv4guiMPIPreferencePage::SetMPIExecPath()
-{
-    auto filePath = m_Ui->lineEditMPIExecPath->text().trimmed();
+    QFileInfo check_file(filePath);
 
-    // Get the MPI implementation from the mpiexec path 
-    // and update the GUI.
-    //
-    if (!filePath.isEmpty()) {
-        m_DefaultPrefs.SetMpiImplementation(filePath);
-        auto mpiImpl = m_DefaultPrefs.GetMpiName();
-        m_Ui->MpiImplementationLineEdit->setText(mpiImpl);
-        PerformOk();
+    if (!check_file.exists() || !check_file.isFile()) {
+        QString msg = "The mpiexec program '" + filePath + "' cannot be found."; 
+        QMessageBox::warning(nullptr, "MPI Preferences", msg);
+        return;
     }
+
+    // Get the MPI implementation from the mpiexec path.
+    auto mpiImpl = m_DefaultPrefs.DetermineMpiImplementation(filePath);
+
+    if (mpiImpl == sv4guiMPIPreferences::MpiImplementation::Unknown) {
+        QString msg = "'" + filePath + "' is not a valid mpiexec program."; 
+        QMessageBox::warning(nullptr, "MPI Preferences", msg);
+        return;
+    }
+
+    // Update the GUI.
+    auto mpiImplName = m_DefaultPrefs.GetMpiImplementationName(mpiImpl);
+    m_Ui->MpiImplementationLineEdit->setText(mpiImplName);
+    m_Ui->lineEditMPIExecPath->setText(filePath);
 }
 
 QWidget* sv4guiMPIPreferencePage::GetQtControl() const
@@ -242,19 +251,20 @@ void sv4guiMPIPreferencePage::PerformCancel()
 //
 bool sv4guiMPIPreferencePage::PerformOk()
 {
-    // Get the solver paths from the GUI
-    bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
-    QString MPIExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
+    // Get the MPI information from the GUI.
+    auto useMPI = m_Ui->checkBoxUseMPI->isChecked();
+    auto mpiExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
+    auto mpiImpl = m_Ui->MpiImplementationLineEdit->text().trimmed();
 
     // Set use MPI. 
     m_Preferences->PutBool(sv4guiMPIPreferenceDBKey::USE_MPI, useMPI);
     
     // Set MPI implementation.
-    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, m_DefaultPrefs.GetMpiName());
+    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, mpiImpl); 
 
     // Set mpiexec path.
     if (useMPI) {
-        m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, MPIExecPath);
+        m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, mpiExecPath);
     }
 
     return true;
