@@ -63,6 +63,8 @@
 #include <QMessageBox>
 #include <QProcess>
 
+using namespace sv4guiSimulationPreferenceDBKey;
+
 //--------------------------------
 // sv4guiSimulationPreferencePage
 //--------------------------------
@@ -295,21 +297,19 @@ bool sv4guiSimulationPreferencePage::PerformOk()
     QString presolverPath = m_Ui->lineEditPresolverPath->text().trimmed();
     QString flowsolverPath = m_Ui->lineEditFlowsolverPath->text().trimmed();
     QString flowsolverNOMPIPath = m_Ui->lineEditFlowsolverNOMPIPath->text().trimmed();
-    bool useMPI = m_Ui->useMPIsvSolver->isChecked();
     bool useCustom = m_Ui->checkBoxUseCustom->isChecked();
     QString customTemplatePath = m_Ui->lineEditCustomTemplatePath->text().trimmed();
     QString postsolverPath = m_Ui->lineEditPostsolverPath->text().trimmed();
 
     // Set the values of the solver paths in the MITK database.
-    m_Preferences->Put("presolver path", presolverPath);
-    m_Preferences->Put("flowsolver path", flowsolverPath);
-    m_Preferences->Put("flowsolver nompi path", flowsolverNOMPIPath);
-    m_Preferences->PutBool("use mpi", useMPI);
-    m_Preferences->PutBool("use custom", useCustom);
-    m_Preferences->Put("postsolver path", postsolverPath);
+    m_Preferences->Put(PRE_SOLVER_PATH, presolverPath);
+    m_Preferences->Put(FLOW_SOLVER_PATH, flowsolverPath);
+    m_Preferences->Put(FLOW_SOLVER_NO_MPI_PATH, flowsolverNOMPIPath);
+    m_Preferences->PutBool(USE_CUSTOM, useCustom);
+    m_Preferences->Put(POST_SOLVER_PATH, postsolverPath);
 
-    if(useCustom) {
-        m_Preferences->Put("solver template path", customTemplatePath);
+    if (useCustom) {
+        m_Preferences->Put(SOLVER_TEMPLATE_PATH, customTemplatePath);
     }
 
     return true;

@@ -55,7 +55,6 @@ class sv4guiMPIPreferencePage;
 namespace sv4guiMPIPreferenceDBKey {
     const QString MPI_EXEC_PATH = "mpiexec path";
     const QString MPI_IMPLEMENTATION = "mpi implementation";
-    const QString USE_MPI = "use mpi";
 };
 
 class sv4guiMPIPreferencePage : public QObject, public berry::IQtPreferencePage

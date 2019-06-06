@@ -41,19 +41,6 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item>
-          <widget class="QCheckBox" name="checkBoxUseMPI">
-           <property name="toolTip">
-            <string>This check box is used to select using MPI to execute solver simulations.</string>
-           </property>
-           <property name="text">
-            <string>Use MPI   </string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>

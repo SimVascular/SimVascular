@@ -168,7 +168,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>595</height>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -205,7 +205,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>595</height>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -269,7 +269,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>595</height>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -619,7 +619,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>595</height>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -656,7 +656,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>595</height>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -758,7 +758,7 @@
                  </widget>
                 </item>
                 <item row="3" column="1" colspan="2">
-                 <widget class="QLabel" name="label_11">
+                 <widget class="QLabel" name="NumberProcessesLabel">
                   <property name="text">
                    <string>Number of Processes:</string>
                   </property>
@@ -831,7 +831,7 @@
            <x>0</x>
            <y>0</y>
            <width>407</width>
-           <height>595</height>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">

@@ -39,8 +39,10 @@
 #include "sv4gui_TableSolverDelegate.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshLegacyIO.h"
+#include "sv4gui_MPIPreferencePage.h"
 #include "sv4gui_SimulationUtils.h"
 #include "sv4gui_SimulationPreferences.h"
+#include "sv4gui_SimulationPreferencePage.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
@@ -69,6 +71,8 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QApplication>
+
+using namespace sv4guiSimulationPreferenceDBKey;
 
 const QString sv4guiSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
@@ -185,29 +189,24 @@ void sv4guiSimulationView::EnableConnection(bool able)
     }
 }
 
+//---------------------
+// CreateQtPartControl
+//---------------------
+// Set the GUI widgets event/callbacks.
+//
 void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
 {
     m_Parent=parent;
     ui->setupUi(parent);
-
-    //    m_DisplayWidget=GetActiveStdMultiWidget();
-
-    //    if(m_DisplayWidget==NULL)
-    //    {
-    //        parent->setEnabled(false);
-    //        MITK_ERROR << "Plugin Simulation Init Error: No QmitkStdMultiWidget Available!";
-    //        return;
-    //    }
-
     ui->btnSave->hide();
-//    connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveToManager()) );
 
+    // Upper panel.
     connect(ui->checkBoxShowModel, SIGNAL(clicked(bool)), this, SLOT(ShowModel(bool)) );
-    connect(ui->UseMpiCheckBox, SIGNAL(clicked(bool)), this, SLOT(UseMpi(bool)) );
 
+    // Set toolbox page (Basic Parameters).
     ui->toolBox->setCurrentIndex(0);
 
-    //for basic table
+    // for basic table
     m_TableModelBasic = new QStandardItemModel(this);
     ui->tableViewBasic->setModel(m_TableModelBasic);
 
@@ -285,14 +284,24 @@ void sv4guiSimulationView::CreateQtPartControl( QWidget *parent )
     sv4guiTableSolverDelegate* itemSolverDelegate=new sv4guiTableSolverDelegate(this);
     ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
-    //for data file and run
-//    connect(ui->btnExportInputFiles, SIGNAL(clicked()), this, SLOT(ExportInputFiles()) );
-//    connect(ui->btnExportAllFiles, SIGNAL(clicked()), this, SLOT(ExportAllFiles()) );
+    ///////////////////////////////////////////////////
+    // Create Files and Run Simulation toolbox tab  //
+    /////////////////////////////////////////////////
+    //
+    // Don't use MPI by default so disable sliderNumProcs, etc.
+    //
     connect(ui->btnCreateAllFiles, SIGNAL(clicked()), this, SLOT(CreateAllFiles()) );
     connect(ui->btnImportFiles, SIGNAL(clicked()), this, SLOT(ImportFiles()) );
     connect(ui->btnRunJob, SIGNAL(clicked()), this, SLOT(RunJob()) );
+    connect(ui->UseMpiCheckBox, SIGNAL(clicked(bool)), this, SLOT(UseMpi(bool)) );
+    ui->NumberProcessesLabel->setEnabled(false);
+    ui->sliderNumProcs->setEnabled(false);
 
-    //for export results
+    ///////////////////////////////////////////////////
+    //           Convert Results toolbox tab        //
+    /////////////////////////////////////////////////
+    // Widgets for exporting results.
+    //
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
 
@@ -340,14 +349,14 @@ void sv4guiSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* 
     }
 
     // Set the solver binaries.
-    m_PresolverPath = prefs->Get("presolver path", m_DefaultPrefs.GetPreSolver());
-    m_FlowsolverPath = prefs->Get("flowsolver path", m_DefaultPrefs.GetSolver());
-    m_FlowsolverNOMPIPath = prefs->Get("flowsolver nompi path", m_DefaultPrefs.GetSolverNOMPI());
-    m_PostsolverPath = prefs->Get("postsolver path", m_DefaultPrefs.GetPostSolver());
+    m_PresolverPath = prefs->Get(PRE_SOLVER_PATH, m_DefaultPrefs.GetPreSolver());
+    m_FlowsolverPath = prefs->Get(FLOW_SOLVER_PATH, m_DefaultPrefs.GetSolver());
+    m_FlowsolverNOMPIPath = prefs->Get(FLOW_SOLVER_NO_MPI_PATH, m_DefaultPrefs.GetSolverNOMPI());
+    m_PostsolverPath = prefs->Get(POST_SOLVER_PATH, m_DefaultPrefs.GetPostSolver());
 
     // Set the mpiexec binary and mpi implementation.
-    m_MPIExecPath = prefs->Get("mpiexec path", m_DefaultMPIPrefs.GetMpiExec()); 
-    auto mpiName = prefs->Get("mpi implementation", m_DefaultMPIPrefs.GetMpiImplementationName());
+    m_MPIExecPath = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, m_DefaultMPIPrefs.GetMpiExec()); 
+    auto mpiName = prefs->Get(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, m_DefaultMPIPrefs.GetMpiImplementationName());
     m_MpiImplementation = m_DefaultMPIPrefs.GetMpiImplementation(mpiName);
     // [DaveP] m_UseMPI = prefs->GetBool("use mpi",false);
 }
@@ -3074,7 +3083,7 @@ void sv4guiSimulationView::ShowModel(bool checked)
 void sv4guiSimulationView::UseMpi(bool checked)
 {
     ui->sliderNumProcs->setEnabled(checked);
-    ui->StartingStepLabel->setEnabled(checked);
+    ui->NumberProcessesLabel->setEnabled(checked);
     m_UseMPI = checked;
 }
 

@@ -129,9 +129,6 @@ void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
 //
 void sv4guiMPIPreferencePage::Update()
 {
-    auto useMpi = m_Preferences->GetBool(sv4guiMPIPreferenceDBKey::USE_MPI, true);
-    m_Ui->checkBoxUseMPI->setChecked(useMpi);
-
     auto mpiexcPath = m_Preferences->Get(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH,"");
     m_Ui->lineEditMPIExecPath->setText(mpiexcPath);
 
@@ -252,20 +249,14 @@ void sv4guiMPIPreferencePage::PerformCancel()
 bool sv4guiMPIPreferencePage::PerformOk()
 {
     // Get the MPI information from the GUI.
-    auto useMPI = m_Ui->checkBoxUseMPI->isChecked();
     auto mpiExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
     auto mpiImpl = m_Ui->MpiImplementationLineEdit->text().trimmed();
 
-    // Set use MPI. 
-    m_Preferences->PutBool(sv4guiMPIPreferenceDBKey::USE_MPI, useMPI);
-    
     // Set MPI implementation.
     m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, mpiImpl); 
 
     // Set mpiexec path.
-    if (useMPI) {
-        m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, mpiExecPath);
-    }
+    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, mpiExecPath);
 
     return true;
 }
