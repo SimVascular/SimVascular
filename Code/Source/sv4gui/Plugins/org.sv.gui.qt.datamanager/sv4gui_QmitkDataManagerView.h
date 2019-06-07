@@ -214,6 +214,7 @@ protected:
   virtual void CreateQtPartControl(QWidget* parent) override;
 
   void SetFocus() override;
+  void OnNodeVisibilityChanged();
 
   ///
   /// \brief Shows a file open dialog.
