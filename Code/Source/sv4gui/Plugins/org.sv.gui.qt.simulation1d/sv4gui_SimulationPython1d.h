@@ -60,6 +60,7 @@ class sv4guiSimulationPython1dParamNames
       allNames.insert(BOUNDARY_SURFACE_DIR);
       allNames.insert(CENTERLINES_INPUT_FILE);
       allNames.insert(COMPUTE_MESH);
+      allNames.insert(DENSITY);
       allNames.insert(ELEMENT_SIZE);
       allNames.insert(INFLOW_INPUT_FILE);
       allNames.insert(MESH_OUTPUT_FILE);
@@ -74,10 +75,12 @@ class sv4guiSimulationPython1dParamNames
       allNames.insert(TIME_STEP);
       allNames.insert(UNIFORM_BC);
       allNames.insert(UNITS);
+      allNames.insert(VISCOSITY);
       allNames.insert(WRITE_MESH_FILE);
       allNames.insert(WRITE_SOLVER_FILE);
     }
     const std::string BOUNDARY_SURFACE_DIR = "boundary_surfaces_directory";
+    const std::string DENSITY = "density";
     const std::string CENTERLINES_INPUT_FILE = "centerlines_input_file";
     const std::string COMPUTE_MESH = "compute_mesh";
     const std::string INFLOW_INPUT_FILE = "inflow_input_file";
@@ -95,6 +98,7 @@ class sv4guiSimulationPython1dParamNames
     const std::string TIME_STEP = "time_step"; 
     const std::string UNIFORM_BC = "uniform_bc";
     const std::string UNITS = "units";
+    const std::string VISCOSITY = "viscosity";
     const std::string WRITE_MESH_FILE = "write_mesh_file";
     const std::string WRITE_SOLVER_FILE = "write_solver_file";
 
