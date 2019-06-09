@@ -67,8 +67,10 @@ chmod a+rx ./tmp/create-toplevel-build-dir.sh
 #  tcl/tk 8.6
 if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   echo "CREATE_BUILD_SCRIPT_TCL"
-  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/tcl-windows-generic.sh > tmp/compile.make.tcl.cl.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-make-tcl-windows.sh > tmp/compile.make.tcl.cl.sh
   chmod a+rx ./tmp/compile.make.tcl.cl.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-tcl-msvc.bat > tmp/compile.tcl.msvc.bat
+  chmod a+rx ./tmp/compile.tcl.msvc.bat
 fi
 
 ## python

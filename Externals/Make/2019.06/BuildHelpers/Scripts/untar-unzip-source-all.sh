@@ -25,6 +25,10 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_TCL* ]]; then
   mv tcllib-1.17 ../tcllib-1.17
   mv tklib-0.6 ../tklib-0.6
 
+  pushd ../tk-8.6.4
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-tk-8.6.4.patch
+  popd
+
 fi
 
 #  python
@@ -64,9 +68,9 @@ fi
 # qt
 if [[ $SV_SUPER_OPTIONS == *UNTAR_QT* ]]; then
     echo "UNTAR_SWIG"
-  rm -Rf ../qt-5.6.3
-  tar xf Originals/qt/qt-everywhere-opensource-src-5.6.3.tar.gz
-  mv qt-everywhere-opensource-src-5.6.3 ../qt-5.6.3
+  rm -Rf ../qt-5.12.3
+  tar xf Originals/qt/qt-everywhere-opensource-src-5.12.3.tar.gz
+  mv qt-everywhere-opensource-src-5.12.3 ../qt-5.12.3
 fi
 
 # freetype2
@@ -111,9 +115,9 @@ fi
 # itk
 if [[ $SV_SUPER_OPTIONS == *UNTAR_ITK* ]]; then
   echo "UNTAR_ITK"
-  rm -Rf ../itk-4.13.0
-  tar xf Originals/itk/InsightToolkit-4.13.0.tar.gz
-  mv InsightToolkit-4.13.0 ../itk-4.13.0
+  rm -Rf ../itk-4.13.2
+  tar xf Originals/itk/InsightToolkit-4.13.2.tar.gz
+  mv InsightToolkit-4.13.2 ../itk-4.13.2
 ### do we still need this???  source Patches/patch-source-itk-4.12.2.sh
 fi
 
@@ -140,10 +144,10 @@ fi
 # mitk
 if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   echo "UNTAR_MITK"
-  rm -Rf ../mitk-2018.04.0
-  tar xf Originals/mitk/mitk-2018-04-alpha.tar.gz
-  mv mitk-2018-04-alpha ../mitk-2018.04.0
-  pushd ../mitk-2018.04.0
+  rm -Rf ../mitk-2018.04.2
+  tar xf Originals/mitk/mitk-2018.04.2.tar.gz
+  mv mitk-2018.04.2 ..
+  pushd ../mitk-2018.04.2
   patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04.patch
   patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04-boost-windows.patch
   #patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04.0-gl1.patch
