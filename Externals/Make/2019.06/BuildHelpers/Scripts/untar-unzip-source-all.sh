@@ -146,7 +146,7 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   echo "UNTAR_MITK"
   rm -Rf ../mitk-2018.04.2
   tar xf Originals/mitk/mitk-2018.04.2.tar.gz
-  mv mitk-2018.04.2 ..
+  mv mitk ../mitk-2018.04.2
   pushd ../mitk-2018.04.2
   patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04.patch
   patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04-boost-windows.patch

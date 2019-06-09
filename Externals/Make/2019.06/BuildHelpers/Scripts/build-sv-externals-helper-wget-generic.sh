@@ -192,7 +192,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_MITK* ]]; then
   rm -Rf mitk
   mkdir -p mitk
   pushd mitk
-  wget $PARENT_URL/mitk/mitk.2018.04.2.tar.gz
+  wget $PARENT_URL/mitk/mitk-2018.04.2.tar.gz
   popd
 fi
 
