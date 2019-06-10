@@ -173,6 +173,14 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->checkBoxShowPath, SIGNAL(clicked(bool)), this, SLOT(ShowPath(bool)) );
 
     connect(ui->btnLevelSet, SIGNAL(clicked()), this, SLOT(CreateLSContour()) );
+
+    // [TODO:DaveP] Level sets does not work on Windows so disable it 
+    // until we can fix the problem.
+    #ifdef WIN32
+    ui->btnLevelSet->setEnabled(false);
+    ui->btnLevelSet->setToolTip("Level sets do not work on Windows and have been temporarily disabled.");
+    #endif
+
     connect(ui->btnThreshold, SIGNAL(clicked()), this, SLOT(CreateThresholdContour()) );
 
     connect(ui->btnCircle, SIGNAL(clicked()), this, SLOT(CreateCircle()) );
