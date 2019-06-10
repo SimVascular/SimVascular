@@ -218,7 +218,18 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
 
     //ml additions
     setupMLui();
-    m_Parent->setEnabled(true);
+
+    // If m_ContourGroup is null then the panel is not associated with any 
+    // contour group. This happens when tool panels from previous sessions
+    // are created when SV starts.
+    //
+/*
+    if (m_ContourGroup == nullptr) { 
+        //m_Parent->setEnabled(false);
+    } else {
+        m_Parent->setEnabled(true);
+    }
+*/
 }
 
 void sv4guiSeg2DEdit::Visible()
@@ -1291,8 +1302,7 @@ void sv4guiSeg2DEdit::LoftContourGroup()
 
 void sv4guiSeg2DEdit::ShowLoftWidget()
 {
-    svLoftingParam *param=m_ContourGroup->GetLoftingParam();
-
+    svLoftingParam *param = m_ContourGroup->GetLoftingParam();
     m_LoftWidget->UpdateGUI(param);
     m_LoftWidget->show();
 }
