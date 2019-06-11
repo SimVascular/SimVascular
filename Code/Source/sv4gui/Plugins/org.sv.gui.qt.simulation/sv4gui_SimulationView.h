@@ -149,6 +149,8 @@ public slots:
 
     void ShowModel(bool checked = false);
 
+    void UseMpi(bool checked = false);
+
 public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;

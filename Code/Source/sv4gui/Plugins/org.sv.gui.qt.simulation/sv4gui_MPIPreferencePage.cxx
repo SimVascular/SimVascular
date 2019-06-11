@@ -29,30 +29,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiMPIPreferencePage class is used to process information 
-// about the location of the solver binaries (svpre, svsolver and svpost) 
-// and the mpiexec binary used to execute a simulation presented in the 
-// 'Preferences->SimVascular Simulation' panel. 
+// The sv4guiMPIPreferencePage class is used to process information about the location 
+// of the MPI mpiexec binary and its implementation (OpenMPI or MPICH). The mpiexec binary 
+// is used to execute a simulation presented in the 'Preferences->SimVascular Simulation' 
+// web page. 
 //
 // sv4guiMPIPreferencePage methods are used to 
 //
 //     1) Process GUI events 
 //
-//     2) Set the values of the solver binaries in the MITK database 
+//     2) Set MPI information in the MITK database 
 //
-// The MITK database provides persistence for solver binary values between 
-// SimVascular sessions.
+// The MITK database provides persistence for MPI information between SimVascular sessions.
 //
-// The values of the solver binaries are set from the MITK database if it 
-// exists. Otherwise they are set using their default values obtained using
-// an sv4guiMPIPreferences() object.
+// MPI information is set from the MITK database if it exists. Otherwise they are set using 
+// the values obtained using an sv4guiMPIPreferences() object.
 //
-// Pressing the SimVascular Simulation' panel 'OK' button calls the PerformOk() 
-// method which saves the solver binary values into the MITK database.
+// Pressing the 'MPI' panel 'OK' button calls the PerformOk() method which saves the MPI 
+// information into the MITK database.
 //  
-
+// Restrict selecting mpiexec to the file browser because the MPI diaglog page closes when 
+// pressing enter in the 'mpiexec' text box. This does not allow for correcting for misspelled 
+// paths, a warning box appears and the dialog window closes.
+//
 #include "sv4gui_MPIPreferencePage.h"
 #include "ui_sv4gui_MPIPreferencePage.h"
+#include "sv4gui_MPIPreferences.h"
 
 #include <berryIPreferencesService.h>
 #include <berryPlatform.h>
@@ -63,9 +65,9 @@
 #include <QMessageBox>
 #include <QProcess>
 
-//--------------------------------
+//-------------------------
 // sv4guiMPIPreferencePage
-//--------------------------------
+//-------------------------
 // Constructor.
 //
 sv4guiMPIPreferencePage::sv4guiMPIPreferencePage() : m_Preferences(nullptr), 
@@ -79,20 +81,67 @@ sv4guiMPIPreferencePage::~sv4guiMPIPreferencePage()
 {
 }
 
-//---------------------------
-// InitializeSolverLocations
-//---------------------------
-// Find the location of solver binaries and mpiexec.
+//-----------------
+// CreateQtControl
+//-----------------
+// Set the GUI widgets event/callbacks.
 //
-// The the full binary path is displayed in the SimVascular 
-// 'Preferences->SimVascular Simulations' page and used to 
-// execute a simulation.
+// The values for the GUI are first set from the MITK database if the exists 
+// by calling Update(). InitializeMPILocation() is then called to set values 
+// not in the database. 
 //
-// If the values for the binaries and mpiexec are not already
-// set in the SimVascular MITK database then they set to their
-// default values set in the sv4guiMPIPreferences method.
+// Restrict selecting mpiexec to the file browser because the MPI diaglog page 
+// closes when pressing enter in the 'mpiexec' text box. This does not allow
+// for correcting for misspelled paths, a warning box appears and the dialog
+// window closes.
 //
-void sv4guiMPIPreferencePage::InitializeMPILocation()
+void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
+{
+    m_Control = new QWidget(parent);
+
+    m_Ui->setupUi(m_Control);
+
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    Q_ASSERT(prefService);
+
+    // Get the preference values from the MITK database.
+    m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.simulation");
+
+    // Set widgets event/callbacks.
+    connect(m_Ui->toolButtonMPIExec, SIGNAL(clicked()), this, SLOT(SelectMPIExecPath()) );
+
+    // Allow setting the mpiexec path only using the file browser.
+    m_Ui->lineEditMPIExecPath->setReadOnly(true);
+    m_Ui->MpiImplementationLineEdit->setReadOnly(true);
+
+    // Update the GUI with values from the MITK database.
+    this->Update();
+
+    // Set the MPI information (e.g. mpiexec path) if they have not already been. 
+    SetMpiInformation();
+}
+
+//--------
+// Update
+//--------
+// Update the GUI with the MPI information from the MITK 
+// database if it exists.
+//
+void sv4guiMPIPreferencePage::Update()
+{
+    auto mpiexcPath = m_Preferences->Get(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH,"");
+    m_Ui->lineEditMPIExecPath->setText(mpiexcPath);
+
+    auto mpiImpl = m_Preferences->Get(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, ""); 
+    m_Ui->MpiImplementationLineEdit->setText(mpiImpl);
+}
+
+//-------------------
+// SetMpiInformation 
+//-------------------
+// Set the MPI information.
+//
+void sv4guiMPIPreferencePage::SetMpiInformation()
 {
   // Set the mpiexec binary.
   SetMpiExec(); 
@@ -105,6 +154,9 @@ void sv4guiMPIPreferencePage::InitializeMPILocation()
 // SetMpiExec
 //------------
 // Set the location of the MPI mpiexec binary.
+//
+// If the GUI value is not set then set it using the sv4guiMPIPreferences 
+// object m_DefaultPrefs.
 //
 void sv4guiMPIPreferencePage::SetMpiExec()
 {
@@ -123,54 +175,55 @@ void sv4guiMPIPreferencePage::SetMpiExec()
 //----------------------
 // Set the installed MPI implementation.
 //
+// If the GUI value is not set then set it using the sv4guiMPIPreferences 
+// object m_DefaultPrefs.
+//
 void sv4guiMPIPreferencePage::SetMpiImplementation()
 {
-  QString mpiExec = m_Ui->lineEditMPIExecPath->text().trimmed();
+  QString mpiImpl = m_Ui->MpiImplementationLineEdit->text().trimmed();
 
-  if (mpiExec.isEmpty() || (mpiExec == m_DefaultPrefs.UnknownBinary)) {
+  if (!mpiImpl.isEmpty() && (mpiImpl != m_DefaultPrefs.UnknownBinary)) {
     return;
   }
 
-  QString guiLabel("MPI Implementation: ");
-  auto implStr = m_DefaultPrefs.GetMpiName();
-  m_Ui->labelMPIImplementation->setText(guiLabel + implStr);
+  mpiImpl = m_DefaultPrefs.GetMpiImplementationName();
+  m_Ui->MpiImplementationLineEdit->setText(mpiImpl);
 }
 
-//-----------------
-// CreateQtControl
-//-----------------
+//-------------------
+// SelectMPIExecPath
+//-------------------
+// Process the GUI event to select the location of mpiexec using a file browser.
 //
-void sv4guiMPIPreferencePage::CreateQtControl(QWidget* parent)
-{
-    m_Control = new QWidget(parent);
-
-    m_Ui->setupUi(m_Control);
-
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    Q_ASSERT(prefService);
-
-    m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.simulation");
-    connect( m_Ui->toolButtonMPIExec, SIGNAL(clicked()), this, SLOT(SetMPIExecPath()) );
-
-    this->Update();
-
-    // Set the locations of the solver binaries and mpiexec.
-    InitializeMPILocation();
-}
-
-//----------------
-// SetMPIExecPath
-//----------------
-// Process the GUI event to set the mpiexec path.
-//
-void sv4guiMPIPreferencePage::SetMPIExecPath()
+void sv4guiMPIPreferencePage::SelectMPIExecPath()
 {
     QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MPIExec");
 
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditMPIExecPath->setText(filePath);
+    if (filePath.isEmpty()) {
+        return;
     }
+
+    QFileInfo check_file(filePath);
+
+    if (!check_file.exists() || !check_file.isFile()) {
+        QString msg = "The mpiexec program '" + filePath + "' cannot be found."; 
+        QMessageBox::warning(nullptr, "MPI Preferences", msg);
+        return;
+    }
+
+    // Get the MPI implementation from the mpiexec path.
+    auto mpiImpl = m_DefaultPrefs.DetermineMpiImplementation(filePath);
+
+    if (mpiImpl == sv4guiMPIPreferences::MpiImplementation::Unknown) {
+        QString msg = "'" + filePath + "' is not a valid mpiexec program."; 
+        QMessageBox::warning(nullptr, "MPI Preferences", msg);
+        return;
+    }
+
+    // Update the GUI.
+    auto mpiImplName = m_DefaultPrefs.GetMpiImplementationName(mpiImpl);
+    m_Ui->MpiImplementationLineEdit->setText(mpiImplName);
+    m_Ui->lineEditMPIExecPath->setText(filePath);
 }
 
 QWidget* sv4guiMPIPreferencePage::GetQtControl() const
@@ -191,34 +244,21 @@ void sv4guiMPIPreferencePage::PerformCancel()
 //-----------
 // Process the 'OK' button GUI event.
 //
+// Stores values from the GUI into the MITK database.
+//
 bool sv4guiMPIPreferencePage::PerformOk()
 {
-    // Get the solver paths from the GUI
-    bool useMPI = m_Ui->checkBoxUseMPI->isChecked();
-    QString MPIExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
+    // Get the MPI information from the GUI.
+    auto mpiExecPath = m_Ui->lineEditMPIExecPath->text().trimmed();
+    auto mpiImpl = m_Ui->MpiImplementationLineEdit->text().trimmed();
 
-    // Set the values of the solver paths in the MITK database.
-    m_Preferences->PutBool("use mpi", useMPI);
-    
-    // MPI implementation.
-    m_Preferences->Put("mpi implementation", m_DefaultPrefs.GetMpiName());
+    // Set MPI implementation.
+    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_IMPLEMENTATION, mpiImpl); 
 
-    if(useMPI) {
-        m_Preferences->Put("mpiexec path", MPIExecPath);
-    }
+    // Set mpiexec path.
+    m_Preferences->Put(sv4guiMPIPreferenceDBKey::MPI_EXEC_PATH, mpiExecPath);
 
     return true;
 }
 
-//--------
-// Update
-//--------
-// Update the GUI with the solver path values from the
-// MITK database.
-//
-void sv4guiMPIPreferencePage::Update()
-{
-    m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
-    m_Ui->lineEditMPIExecPath->setText(m_Preferences->Get("mpiexec path",""));
-}
 
