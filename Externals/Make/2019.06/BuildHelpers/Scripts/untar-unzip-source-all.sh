@@ -148,8 +148,7 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   tar xf Originals/mitk/mitk-2018.04.2.tar.gz
   mv mitk ../mitk-2018.04.2
   pushd ../mitk-2018.04.2
-  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04.patch
-  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04-boost-windows.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04.2-2019-06-11.patch
   #patch -p1 < ../BuildHelpers/Patches/2019.06/patch-mitk-2018.04.0-gl1.patch
   popd
 fi
