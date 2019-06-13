@@ -68,9 +68,9 @@ fi
 # qt
 if [[ $SV_SUPER_OPTIONS == *UNTAR_QT* ]]; then
     echo "UNTAR_SWIG"
-  rm -Rf ../qt-5.12.3
-  tar xf Originals/qt/qt-everywhere-opensource-src-5.12.3.tar.gz
-  mv qt-everywhere-opensource-src-5.12.3 ../qt-5.12.3
+  rm -Rf ../qt-5.11.3
+  tar xf Originals/qt/qt-everywhere-opensource-src-5.11.3.tar.gz
+  mv qt-everywhere-opensource-src-5.11.3 ../qt-5.11.3
 fi
 
 # freetype2

@@ -64,7 +64,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_QT* ]]; then
   rm -Rf qt
   mkdir -p qt
   pushd qt
-  wget $PARENT_URL/qt/qt-everywhere-opensource-src-5.12.3.tar.gz
+  wget $PARENT_URL/qt/qt-everywhere-opensource-src-5.11.3.tar.gz
   popd
 fi
 if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
@@ -77,23 +77,23 @@ if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
      case "$osid" in
 
        'Ubuntu')
-          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.12.3.run
-          chmod a+rx ./qt-opensource-linux-x64-5.12.3.run	
+          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.11.3.run
+          chmod a+rx ./qt-opensource-linux-x64-5.11.3.run	
 	  ;;
 
       'CentOS')
-          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.12.3.run
-          chmod a+rx ./qt-opensource-linux-x64-5.12.3.run
+          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.11.3.run
+          chmod a+rx ./qt-opensource-linux-x64-5.11.3.run
 	  ;;
 
       'AmazonAMI')
-          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.12.3.tar.gz
-          chmod a+rx ./qt-opensource-centos-x64-5.12.3.tar.gz
+          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.11.3.tar.gz
+          chmod a+rx ./qt-opensource-centos-x64-5.11.3.tar.gz
           ;;
 
       'Amazon')
-          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.12.3.tar.gz
-          chmod a+rx ./qt-opensource-centos-x64-5.12.3.tar.gz
+          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.11.3.tar.gz
+          chmod a+rx ./qt-opensource-centos-x64-5.11.3.tar.gz
           ;;
 
       *)	 
@@ -103,12 +103,12 @@ if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
       esac
   fi
   if [[ $SV_EXTERN_OS == "mac_osx" ]]; then
-    wget $PARENT_URL/qt/qt-opensource-mac_osx-x64-5.12.3.tar.gz
-    chmod a+rx ./qt-opensource-mac_osx-x64-5.12.3.tar.gz
+    wget $PARENT_URL/qt/qt-opensource-mac_osx-x64-5.11.3.tar.gz
+    chmod a+rx ./qt-opensource-mac_osx-x64-5.11.3.tar.gz
   fi
   if [[ $SV_EXTERN_OS == "windows" ]]; then
-    wget $PARENT_URL/qt/qt-windows-release-x64-5.12.3.tar.gz
-    chmod a+rx ./qt-windows-release-x64-5.12.3.tar.gz
+    wget $PARENT_URL/qt/qt-windows-release-x64-5.11.3.tar.gz
+    chmod a+rx ./qt-windows-release-x64-5.11.3.tar.gz
   fi
   popd
 fi

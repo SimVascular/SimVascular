@@ -62,6 +62,7 @@
 #include <QMessageBox>
 #include <QScrollArea>
 #include <QVBoxLayout>
+#include <QItemSelection>
 
 #include <iostream>
 #include <time.h> 

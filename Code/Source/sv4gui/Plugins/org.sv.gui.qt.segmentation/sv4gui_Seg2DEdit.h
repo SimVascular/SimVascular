@@ -68,6 +68,7 @@
 #include <QSlider>
 #include <QPushButton>
 #include <QWidget>
+#include <QItemSelection>
 
 namespace Ui {
 class sv4guiSeg2DEdit;

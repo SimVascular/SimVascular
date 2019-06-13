@@ -185,6 +185,8 @@ done
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Algorithms
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Controllers
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Interactions
+	   $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
+	   $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
 
