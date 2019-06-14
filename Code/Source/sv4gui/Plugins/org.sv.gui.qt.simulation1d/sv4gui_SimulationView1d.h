@@ -164,6 +164,27 @@ public:
         std::make_tuple(DataInputStateType::SIMULATION_FILES, DataInputStateName::SIMULATION_FILES, false)
     };
 
+    // The MaterialModel class defines the names and parameters 
+    // for 1D simulation material models.
+    //
+    class MaterialModel {
+        public:
+            static const QString LINEAR;
+            static const QString OLUFSEN;
+            static const std::vector<QString> names;
+            class LinearParameters {
+                static double Ehr = 0.0;
+                static double referencePressure = 0.0;
+            };
+            class OlufsenParameters {
+                static double k1 = 0.0;
+                static double k2 = -22.5267;
+                static double k3 = 2.65e5;
+                static double exponent = 0.0;
+                static double referencePressure = 0.0;
+            };
+    };
+
     class SurfaceModelSource {
         public:
             static const QString MESH_PLUGIN;
@@ -204,7 +225,7 @@ public slots:
     void SplitCapBC();
     void UpdateGUICap();
 
-    void WallTypeSelectionChanged(int index);
+    void SelectMaterialModel(int index);
     void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
     void TableViewVarContextMenuRequested(const QPoint& pos);
     void SetVarE( bool checked = false );
@@ -302,6 +323,7 @@ public:
 private:
 
     void Create1DMeshControls(QWidget *parent);
+    void CreateWallPropertiesControls(QWidget *parent);
 
     QWidget* m_Parent;
 
