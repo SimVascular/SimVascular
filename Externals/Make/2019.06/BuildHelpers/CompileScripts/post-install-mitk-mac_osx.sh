@@ -2,6 +2,7 @@ GCP=cp
 GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
+GMV=mv
 
 # paths
 
@@ -52,6 +53,8 @@ $GCP -f  $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/REPLACEME_SV
 $GCP -f  $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/REPLACEME_SV_LIB_FILE_PREFIXPythonQt.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib
 
 # CTK
+
+$GMV -f $MITK_BINDIR/bin/Python $MITK_BINDIR/bin/PythonCTK
 
 $GMKDIR -p $MITK_BINDIR/include/ctk
 

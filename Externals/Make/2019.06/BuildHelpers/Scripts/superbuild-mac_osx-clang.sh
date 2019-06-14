@@ -307,7 +307,7 @@ fi
 #
 # check generated cmake configs for hardcorded paths
 #
-tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+#tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 
 #
 # create tar files for distrution

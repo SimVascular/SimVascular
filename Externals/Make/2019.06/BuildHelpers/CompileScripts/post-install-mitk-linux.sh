@@ -3,6 +3,7 @@ GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
 GRM=rm
+GMV=mv
 
 # paths
 
@@ -58,6 +59,8 @@ $GRM -Rf  $MITK_BINDIR/bin/*.REPLACEME_SV_SO_FILE_EXTENSION*
 $GRM -Rf  $MITK_BINDIR/bin/plugins
 
 # CTK
+
+$GMV -f $MITK_BINDIR/bin/Python $MITK_BINDIR/bin/PythonCTK
 
 $GMKDIR -p $MITK_BINDIR/include/ctk
 
