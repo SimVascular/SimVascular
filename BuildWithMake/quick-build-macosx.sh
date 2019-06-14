@@ -156,10 +156,13 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2018.05' ]; then
       mkdir 5.6.3
       ln -s ../../qt-5.6.3 ./5.6.3/clang_64
       pop
+  fi
 elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
-  # Nothing to do for qt
+    # Nothing to do for qt
+    echo ""
 elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
-  # Nothing to do for qt
+    # Nothing to do for qt
+    echo ""
 fi
 
 make fast
