@@ -115,6 +115,7 @@ QT_LIBS += \
       $(LIBFLAG)Qt5Script$(LIBLINKEXT) \
       $(LIBFLAG)Qt5XmlPatterns$(LIBLINKEXT)
 
+QT_LIBS += $(LIBFLAG)Qt5QuickWidgets$(LIBLINKEXT)
 
 QT_SO_PATH=$(QT_TOP_DIR)/lib
 QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
