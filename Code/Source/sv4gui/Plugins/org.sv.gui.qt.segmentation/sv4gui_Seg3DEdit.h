@@ -40,6 +40,8 @@
 
 #include <ctkRangeWidget.h>
 
+#include <QItemSelection>
+
 namespace Ui {
 class sv4guiSeg3DEdit;
 }

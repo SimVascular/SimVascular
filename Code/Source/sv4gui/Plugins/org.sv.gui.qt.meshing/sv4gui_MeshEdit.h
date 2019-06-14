@@ -45,6 +45,7 @@
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QItemDelegate>
+#include <QItemSelection>
 
 namespace Ui {
 class sv4guiMeshEdit;

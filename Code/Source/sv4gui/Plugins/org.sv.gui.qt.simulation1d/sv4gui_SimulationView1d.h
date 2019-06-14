@@ -60,6 +60,7 @@
 #include <QStandardItemModel>
 #include <QProcess>
 #include <QMessageBox>
+#include <QItemSelection>
 
 namespace Ui {
 class sv4guiSimulationView1d;

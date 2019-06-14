@@ -57,6 +57,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QApplication>
+#include <QItemSelection>
 
 #include <iostream>
 using namespace std;
