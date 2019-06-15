@@ -144,16 +144,28 @@ svCatchDebugger() {
  int main( int argc, char *argv[] )
  {
 
-  // default to tcl gui
+  // default to qt gui if built
+  // default to python if built
   bool use_tcl = false;
   bool use_tk_gui = false;
   bool use_python  = true;
   bool use_qt_gui  = true;
+  gSimVascularBatchMode = 0;
+ 
+#ifndef SV_USE_PYTHON
+  use_python  = false;
+  use_tcl = true;
+#endif
+
+#ifndef SV_USE_QT_GUI
+  use_qt_gui  = false;
+  use_tk_gui = true;
+#endif
+  
   bool use_workbench  = false;
   bool catch_debugger = false;
   bool use_provisioning_file = false;
   bool pass_along_options = false;
-  gSimVascularBatchMode = 0;
 
 #ifdef WIN32  
   gSimVascularUseWin32Registry = 1;
@@ -178,24 +190,33 @@ svCatchDebugger() {
 	 (!strcmp("--help",argv[iarg]))) {
 	fprintf(stdout,"simvascular command line options:\n");
 	fprintf(stdout,"  -h, --help               : print this info and exit\n");
+#ifdef SV_USE_PYTHON
 	fprintf(stdout,"  --python                 : use python command line\n");
+#endif
+#ifdef SV_USE_TCL
 	fprintf(stdout,"  -tcl, --tcl              : use tcl command line\n");
+	fprintf(stdout,"  -tk, --tk-gui            : use TclTk GUI (SV_BATCH_MODE overrides)\n");
+#endif
+#ifdef SV_USE_QT_GUI
 	fprintf(stdout,"  -qt, --qt-gui            : use Qt GUI (SV_BATCH_MODE overrides)\n");
-	fprintf(stdout,"  -tk, --tk-gui            : use TclTk GUI (SV_BATCH_MODE overrides)\n");	
-	fprintf(stdout,"  -d, --debug              : infinite loop for debugging\n");
-	fprintf(stdout,"  --warn                   : warn if invalid cmd line params (on by default)\n");
 	fprintf(stdout,"  --workbench              : use mitk workbench application\n");
+	fprintf(stdout,"  --use-pro                : use the .provisioning file \n");
+#endif
+#ifdef WIN32
 	fprintf(stdout,"  --use-registry           : use Windows registry entries (default) \n");
 	fprintf(stdout,"  --ignore-registry        : ignore Windows registry entries \n");
+#endif	
+	fprintf(stdout,"  -d, --debug              : infinite loop for debugging\n");
+	fprintf(stdout,"  --warn                   : warn if invalid cmd line params (on by default)\n");
 	fprintf(stdout,"  --redirect-stdio prefix  : redirect stdout & stderr to prefix/std.out etc. \n");
-	fprintf(stdout,"  --use-pro         : use the .provisioning file \n");
-	fprintf(stdout,"  --                : pass remaining params to tcl/python shells\n");
+	fprintf(stdout,"  --                       : pass remaining params to tcl/python shells\n");
 	exit(0);
       }
       if((!strcmp("--warn",argv[iarg]))) {
 	warnInvalid = true;
 	foundValid = true;
       }
+#ifdef SV_USE_PYTHON
       if((!strcmp("-python",argv[iarg]))    ||
 	 (!strcmp("--python",argv[iarg]))) {
 	use_tcl = false;
@@ -205,6 +226,8 @@ svCatchDebugger() {
 	gSimVascularBatchMode = 1;
 	foundValid = true;
       }
+#endif
+#ifdef SV_USE_TCL
       if((!strcmp("-tcl",argv[iarg]))    ||
 	 (!strcmp("--tcl",argv[iarg]))) {
 	use_tcl = true;
@@ -212,15 +235,6 @@ svCatchDebugger() {
 	use_tk_gui = false;
 	use_qt_gui = false;
 	gSimVascularBatchMode = 1;
-	foundValid = true;
-      }
-      if((!strcmp("-qt",argv[iarg]))    ||
-	 (!strcmp("--qt-gui",argv[iarg]))) {
-	use_tcl = false;
-	use_python = true;
-	use_tk_gui = false;
-	use_qt_gui = true;
-	gSimVascularBatchMode = 0;
 	foundValid = true;
       }
       if((!strcmp("-tk",argv[iarg]))    ||
@@ -232,9 +246,15 @@ svCatchDebugger() {
 	gSimVascularBatchMode = 0;
 	foundValid = true;
       }
-      if((!strcmp("-d",argv[iarg]))    ||
-	 (!strcmp("--debug",argv[iarg]))) {
-	catch_debugger = true;
+#endif
+#ifdef SV_USE_QT_GUI
+      if((!strcmp("-qt",argv[iarg]))    ||
+	 (!strcmp("--qt-gui",argv[iarg]))) {
+	use_tcl = false;
+	use_python = true;
+	use_tk_gui = false;
+	use_qt_gui = true;
+	gSimVascularBatchMode = 0;
 	foundValid = true;
       }
       if((!strcmp("--workbench",argv[iarg]))) {
@@ -250,12 +270,20 @@ svCatchDebugger() {
 	use_provisioning_file = true;
 	foundValid = true;
       }
+#endif
+#ifdef WIN32
       if((!strcmp("--ignore-registry",argv[iarg]))) {
 	gSimVascularUseWin32Registry = 0;
 	foundValid = true;
       }
       if((!strcmp("--use-registry",argv[iarg]))) {
 	gSimVascularUseWin32Registry = 1;
+	foundValid = true;
+      }
+#endif
+      if((!strcmp("-d",argv[iarg]))    ||
+	 (!strcmp("--debug",argv[iarg]))) {
+	catch_debugger = true;
 	foundValid = true;
       }
       if((!strcmp("--redirect-stdio",argv[iarg]))) {

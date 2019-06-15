@@ -43,6 +43,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(TETGEN_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
+           $(SV_TINYXML_INCDIR) $(SV_TINYXML2_INCDIR) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            $(MESHSIM_INCDIR) \
            $(PARASOLID_INCDIR) \
@@ -126,6 +127,14 @@ DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
 
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(OPENCASCADE_LIBS)
+endif
+
+ifeq ($(SV_USE_TINYXML),1)
+  DLLLIBS += $(SV_TINYXML_LIBS)
+endif
+
+ifeq ($(SV_USE_TINYXML2),1)
+  DLLLIBS += $(SV_TINYXML2_LIBS)
 endif
 
 EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
