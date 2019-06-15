@@ -205,9 +205,10 @@ SV_USE_MITK_SEGMENTATION = 1
 SV_IGNORE_PROVISIONING_FILE = 1
 
 # -----------------------------------------------------
-# Compile with tinyxml2
+# Compile with tinyxml and/or tinyxml2
 # -----------------------------------------------------
 
+SV_USE_TINYXML  = 1
 SV_USE_TINYXML2 = 0
 
 # -----------------------------------------------------
@@ -813,6 +814,18 @@ ifeq ($(SV_USE_ZLIB),1)
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
   ZLIB_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_ZLIB_NAME)$(LIBLINKEXT)
+endif
+
+# -------
+# tinyxml
+# -------
+
+ifeq ($(SV_USE_TINYXML),1)
+  SV_LIB_THIRDPARTY_TINYXML_NAME=_simvascular_thirdparty_tinyxml
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tinyxml
+  TINYXML_TOP = $(TOP)/../Code/ThirdParty/tinyxml
+  TINYXML_INCDIR  = -I $(TINYXML_TOP)
+  TINYXML_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_TINYXML_NAME)$(LIBLINKEXT)
 endif
 
 # --------
