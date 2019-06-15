@@ -88,6 +88,11 @@ option(SV_EXTERNALS_INSTALL_HEADERS "If ON, The externals headers will be includ
 # Qt
 simvascular_add_new_external(Qt5 ${Qt5_VERSION} ON ON qt)
 
+# ML
+if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.02")
+  simvascular_add_new_external(ml ${ML_VERSION} ON ON ml)
+endif()
+
 # HDF5
 if (SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
   simvascular_add_new_external(HDF5 ${HDF5_VERSION} ON ON hdf5 hdf5)
@@ -124,9 +129,6 @@ simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascad
 
 # MITK
 simvascular_add_new_external(MITK ${MITK_VERSION} ON ON mitk)
-
-# MITK
-simvascular_add_new_external(ml ${ML_VERSION} ON ON ml)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

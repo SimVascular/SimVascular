@@ -1,14 +1,15 @@
 ****************************************************************
                       Building Externals
-                          2019-03-29
+                          2019-06-14
 ****************************************************************
 
---> The current externals build is "2019.02"  <--
+--> The current externals build is "2019.06"  <--
 
 Notes:
 
 1. It may be possible to build externals on some platforms
-   using CMake, but the "make" scripts are the preferred method
+   using CMake, but the "make" scripts are the preferred method.
+   The CMake build hasn't been tested since 2018.05 externals.
 
 2. Windows can only be built using Cygwin and make
 
@@ -35,7 +36,7 @@ Notes:
 4. You must prep your system before building externals.  Run the
    appropriate script, e.g.:
 
-   % cd Prep/2019.02
+   % cd Prep/2019.06
    % ./centos-7-prep.sh
 
    you only need to run prep once even if you rebuild multiple
@@ -61,7 +62,7 @@ source scl_source enable rh-ruby23
 
 6. Build them all, e.g.:
 
-   % cd Make/2019.02
+   % cd Make/2019.06
    % source ./build-sv-externals-linux.sh
 
 7. Check out ~/.bashrc and make sure that you don't:
@@ -72,3 +73,6 @@ source scl_source enable rh-ruby23
 8. Running Centos in virtualbox requires:
 
    export MESA_GL_VERSION_OVERRIDE=3.2
+
+9. Building Qt from source doesn't work!  You must use
+   the binary download.
