@@ -43,8 +43,6 @@ endif()
 #-----------------------------------------------------------------------------
 # WIN32
 if(WIN32)
-	option(SV_USE_WIN32_REGISTRY "Use Windows registry to obtain certain settings (install mode)" OFF)
-	mark_as_advanced(SV_USE_WIN32_REGISTRY)
 
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DWINDOWS -DWIN32")
 	if(NOT IS64)
@@ -70,6 +68,13 @@ if(WIN32)
 	set (CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} Shlwapi.lib")
 
 	option(SV_USE_TKCXIMAGE "Use TKCXImage (Legacy)" OFF)
+
+	option(SV_USE_WIN32_REGISTRY "Use Windows registry to obtain certain settings (install mode)" ON)
+	mark_as_advanced(SV_USE_WIN32_REGISTRY)
+	if (SV_USE_WIN32_REGISTRY)
+	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_WIN32_REGISTRY")
+	endif()
+	
 endif()
 #-----------------------------------------------------------------------------
 
