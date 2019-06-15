@@ -32,7 +32,8 @@
 
 #export SV_EXTERNALS_VERSION_NUMBER=2018.01
 #export SV_EXTERNALS_VERSION_NUMBER=2018.05
-export SV_EXTERNALS_VERSION_NUMBER=2019.02
+#export SV_EXTERNALS_VERSION_NUMBER=2019.02
+export SV_EXTERNALS_VERSION_NUMBER=2019.06
 
 export EXTERNALS_SV_ARCH_DIR=x64
 
@@ -60,6 +61,9 @@ case "$osid" in
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
                   export EXTERNALS_BUILD_DATE=2019.05.21
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
+                  export EXTERNALS_BUILD_DATE=2019.06.13
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
 	    'xenial')
@@ -75,6 +79,9 @@ case "$osid" in
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
                   export EXTERNALS_BUILD_DATE=2019.05.21
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
+                  export EXTERNALS_BUILD_DATE=2019.06.13
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
 	    'trusty')
@@ -88,6 +95,9 @@ case "$osid" in
                   export EXTERNALS_BUILD_DATE=2018.09.29
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
+		  echo "Error - Ubuntu 14 no longer supported!"
+		  exit
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
 		  echo "Error - Ubuntu 14 no longer supported!"
 		  exit
 		fi
@@ -118,6 +128,10 @@ case "$osid" in
 		  export EXTERNALS_SV_FULL_OS_VER_NO=7.6
                   export EXTERNALS_BUILD_DATE=2019.06.03
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
+		  export EXTERNALS_SV_FULL_OS_VER_NO=7.6
+                  export EXTERNALS_BUILD_DATE=2019.06.13
+                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
 	    6*)
@@ -131,6 +145,9 @@ case "$osid" in
 		  echo "Error - CentOS 6 2018.05 not supported!"
 		  exit
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
+		  echo "Error - CentOS 6 2018.05 not supported!"
+		  exit
+		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
 		  echo "Error - CentOS 6 2018.05 not supported!"
 		  exit
 		fi
@@ -164,6 +181,7 @@ echo "FORTRAN_COMPILER_VERSION=gfortran" >> cluster_overrides.mk
 echo "SV_COMPILER=gnu" >> cluster_overrides.mk
 echo "SV_COMPILER_VERSION=$EXTERNALS_SV_COMPILER_VER_NO" >> cluster_overrides.mk
 
+echo "SV_EXTERNALS_VERSION_NUMBER=$SV_EXTERNALS_VERSION_NUMBER" >> global_overrides.mk
 echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/$EXTERNALS_SV_COMPILER_SHORT_NAME/$EXTERNALS_SV_COMPILER_VER_NO/$EXTERNALS_SV_ARCH_DIR/$EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE" > global_overrides.mk
 
 mkdir -p $EXTERNALS_TOP
@@ -210,6 +228,19 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
   wget $PARENT_URL/$TAR_FILE_PREFIX.tinyxml2.6.2.0.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.8.1.1.tar.gz
   wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.6.3.tar.gz
+elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
+  wget $PARENT_URL/$TAR_FILE_PREFIX.freetype.2.6.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.gdcm.2.6.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.hdf5.1.10.1.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.itk.4.13.2.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mitk.2018.04.2.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.mmg.5.3.9.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.opencascade.7.3.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.python.3.5.5.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.qt.5.11.3.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.tcltk.8.6.4.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.tinyxml2.6.2.0.tar.gz
+  wget $PARENT_URL/$TAR_FILE_PREFIX.vtk.8.1.1.tar.gz
 fi
 
 popd
