@@ -37,7 +37,7 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.7.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 if (POLICY CMP0040)
   cmake_policy(SET CMP0040 OLD)
@@ -94,7 +94,7 @@ option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" O
 #-----------------------------------------------------------------------------
 # Externals!
 
-set(SV_EXTERNALS_VERSION_NUMBER "2019.02" CACHE STRING "SimVascular Externals Release Version")
+set(SV_EXTERNALS_VERSION_NUMBER "2019.06" CACHE STRING "SimVascular Externals Release Version")
 mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 
 # Distribution
@@ -107,8 +107,12 @@ elseif(LINUX)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
   if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
     set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
-  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
-    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.6.3/5.6.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)     
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.6.3/5.6.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.6.3/5.6.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "/opt/Qt5.11.3/5.11.3/gcc_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
   else()
     set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
   endif()
@@ -116,8 +120,12 @@ elseif(WIN32)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
   if(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.01")
     set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")
-  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2018.05")
-    set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.6.3/5.6.3/msvc2015_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")     
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2018.05")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.6.3/5.6.3/msvc2015_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_EQUAL "2019.02")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.6.3/5.6.3/msvc2015_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")
+  elseif(SV_EXTERNALS_VERSION_NUMBER VERSION_GREATER_EQUAL "2019.06")
+    set(SV_EXTERNALS_PREBUILT_QT_PATH "C:/OpenSource/Qt/Qt5.11.3/5.11.3/msvc2017_64/lib/cmake/Qt5" CACHE PATH "Qt5 Cmake Config File Path")
   else()
     set(SV_EXTERNALS_PREBUILT_QT_PATH "" FORCE)
   endif()
