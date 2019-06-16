@@ -80,6 +80,13 @@ sv_externals_add_new_external(QT ${SV_EXTERNALS_QT_VERSION} ON ON qt qt)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# ML
+if (SV_EXTERNALS_VERSION_NUMBER GREATER_EQUAL "2019.02")
+  sv_externals_add_new_external(ML ${SV_EXTERNALS_ML_VERSION} ON ON ml ml)
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # HDF5
 if (SV_EXTERNALS_VERSION_NUMBER GREATER_EQUAL "2018.05")
   sv_externals_add_new_external(HDF5 ${SV_EXTERNALS_HDF5_VERSION} ON ON hdf5 hdf5)
@@ -125,12 +132,6 @@ sv_externals_add_new_external(PIP ${SV_EXTERNALS_PIP_VERSION} ON ON pip none)
 # NUMPY
 sv_externals_add_new_external(NUMPY ${SV_EXTERNALS_NUMPY_VERSION} ON ON numpy none)
 #-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# ML
-sv_externals_add_new_external(ML ${SV_EXTERNALS_ML_VERSION} ON ON ml ml)
-#-----------------------------------------------------------------------------
-
 
 #-----------------------------------------------------------------------------
 # FREETYPE
