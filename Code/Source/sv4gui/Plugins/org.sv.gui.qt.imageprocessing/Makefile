@@ -48,7 +48,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            -Dorg_sv_gui_qt_imageprocessing_EXPORTS \
            -DUS_MODULE_NAME=sv4guiModuleImageProcessing
 
-ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 

@@ -28,6 +28,10 @@ project(org_sv_gui_qt_imageprocessing)
 
 set(lib org_sv_gui_qt_imageprocessing)
 
+if(SV_USE_TINYXML)
+  include_directories(${TINYXML_INCLUDE_DIR})
+endif()
+
 set(SV_LIB_MODULE_IMAGEPROCESSING_NAME "_simvascular_module_imageprocessing")
 
 if(SV_USE_MITK_CONFIG)

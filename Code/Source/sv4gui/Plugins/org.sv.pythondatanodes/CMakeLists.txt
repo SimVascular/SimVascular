@@ -38,6 +38,10 @@ if(SV_USE_PYTHON)
 	  ${PYTHON_INCLUDE_DIRS})
 endif()
 
+if(SV_USE_TINYXML)
+  include_directories(${TINYXML_INCLUDE_DIR})
+endif()
+
 if(SV_USE_MITK_CONFIG)
   mitk_create_plugin(
     EXPORT_DIRECTIVE SV_PYTHONDATANODES

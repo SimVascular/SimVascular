@@ -125,7 +125,7 @@ simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascad
 # MITK
 simvascular_add_new_external(MITK ${MITK_VERSION} ON ON mitk)
 
-# MITK
+# ML
 simvascular_add_new_external(ml ${ML_VERSION} ON ON ml)
 #-----------------------------------------------------------------------------
 
@@ -141,7 +141,9 @@ option(SV_USE_TETGEN "Enable Tetgen Meshing Plugin" ON)
 
 option(SV_USE_TETGEN_ADAPTOR "Option to use open source mesh adaption" ON)
 
-option(SV_USE_PYTHON "Use Python" OFF)
+option(SV_USE_TINYXML "Use TinyXML" ON)
+
+option(SV_USE_PYTHON "Use Python" ON)
 
 option(SV_USE_TCL "Use Tcl" ON)
 

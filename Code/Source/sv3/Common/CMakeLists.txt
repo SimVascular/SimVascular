@@ -43,7 +43,7 @@ if(SV_USE_PYTHON)
 	  ${PYTHON_INCLUDE_DIRS})
 endif()
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
 
 set(CXXSRCS sv3_XmlIOUtil.cxx)
 set(HDRS sv3_XmlIOUtil.h)

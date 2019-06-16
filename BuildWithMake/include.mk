@@ -155,7 +155,6 @@ SV_EXTERNALS_PREBUILT_QT_SYSTEM_INSTALL = 0
 SV_USE_SYSTEM_QT = 1
 SV_USE_QT_GUI = 1
 SV_USE_QT_GUI_SHARED = 1
-SV_USE_OPENCASCADE_QT_GUI = 1
 
 # -----------------------------------------------------
 # Compile with freetype

@@ -1,66 +1,57 @@
-cmake_minimum_required(VERSION 2.8.4)
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
+#
+# All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject
+# to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-project(tinyxml)
+# Set  the minimum  required version  of cmake  for a  project.
+cmake_minimum_required(VERSION 3.10)
+project(TINYXML)
 
-set(${PROJECT_NAME}_MAJOR_VERSION 2)
-set(${PROJECT_NAME}_MINOR_VERSION 6)
-set(${PROJECT_NAME}_PATCH_VERSION 2)
-set(${PROJECT_NAME}_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
+# source files for tinyxml
+SET(SRCS tinyxml.cxx tinyxmlparser.cxx tinyxmlerror.cxx tinystr.cxx)
+SET(HDRS tinystr.h tinyxml.h)
 
+set(lib ${SV_LIB_THIRDPARTY_TINYXML_NAME})
+if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+  add_library(${lib} SHARED ${SRCS})
+else()
+  add_library(${lib} STATIC ${SRCS})
+endif()
 
-set(tinyxml_HEADERS
-  tinystr.h
-  tinyxml.h
-)
-
-set(tinyxml_SOURCES
-  tinyxml.cpp
-  tinyxmlparser.cpp
-  tinyxmlerror.cpp
-  tinystr.cpp
-)
-
-add_library(tinyxml ${tinyxml_HEADERS} ${tinyxml_SOURCES})
-set_target_properties(tinyxml PROPERTIES
-                      SOVERSION ${${PROJECT_NAME}_VERSION})
-
-set(${PROJECT_NAME}_LIBRARIES tinyxml)
-
-# Install support
-
-install(TARGETS ${${PROJECT_NAME}_LIBRARIES} EXPORT ${PROJECT_NAME}_TARGETS
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include/${PROJECT_NAME}
-)
-install(FILES ${tinyxml_HEADERS}
-  DESTINATION include/${PROJECT_NAME}
-)
-
-# Config files
-configure_file(
-  ${PROJECT_NAME}Config.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-  @ONLY
-)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}ConfigVersion.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
-  @ONLY
-)
-
-export(EXPORT ${PROJECT_NAME}_TARGETS
-  FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake
-)
-
-set(config_package_location lib/cmake/${PROJECT_NAME})
-install(EXPORT ${PROJECT_NAME}_TARGETS
-  FILE ${PROJECT_NAME}Targets.cmake
-  DESTINATION ${config_package_location}
-)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-  DESTINATION ${config_package_location}
-)
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ThirdPartyExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ThirdPartyLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ThirdPartyLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
+        install(FILES ${HDRS}
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/tinyxml COMPONENT ThirdPartyHeaders
+		)
+endif()
