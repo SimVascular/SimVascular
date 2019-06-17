@@ -1134,8 +1134,6 @@ endfunction()
 macro(simvascular_add_new_external proj version use shared dirname)
   option(SV_USE_${proj} "Enable ${proj} Plugin" ${use})
   option(SV_USE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
-  ###option(SV_USE_${proj}_QT_GUI "Build ${proj} in the Qt GUI" ${use})
-  ###mark_as_advanced(SV_USE_${proj}_QT_GUI)
 
   set(${proj}_VERSION "${version}" CACHE TYPE STRING)
   simvascular_get_major_minor_patch_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION ${proj}_PATCH_VERSION)

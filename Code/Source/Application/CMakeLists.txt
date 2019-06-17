@@ -200,7 +200,11 @@ target_link_libraries(${SV_EXE} PRIVATE
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_POLYDATA_SOLID_NAME}
   ${SV_LIB_VTKSVCOMMON_NAME} ${SV_LIB_VTKSVFILTERS_NAME}
   ${SV_LIB_VTKSVGEOMETRY_NAME} ${SV_LIB_VTKSVBOOLEAN_NAME}
-  ${SV_LIB_VTKSVNURBS_NAME} ${SV_LIB_VTKSVPARAMETERIZATION_NAME} ${SV_LIB_PATH_NAME} ${SV_LIB_SEGMENTATION_NAME} org_sv_pythondatanodes org_sv_gui_qt_application)
+  ${SV_LIB_VTKSVNURBS_NAME} ${SV_LIB_VTKSVPARAMETERIZATION_NAME} ${SV_LIB_PATH_NAME} ${SV_LIB_SEGMENTATION_NAME})
+
+if(SV_USE_SV4_GUI)
+  target_link_libraries(${SV_EXE} org_sv_pythondatanodes org_sv_gui_qt_application)
+endif()
 
 target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -209,11 +213,16 @@ target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
   ${INTELRUNTIME_LIBRARIES}
   ${MMG_LIBRARY}
   ${FREETYPE_LIBRARY}
-  ${PYTHON_LIBRARY}
-  ${MITK_LIBRARIES}
-  ${MITK_PLUGIN_LIBRARIES}
-  ${CTK_LIBRARIES}
-  ${QT_LIBRARIES})
+  ${PYTHON_LIBRARY})
+
+if(SV_USE_MITK)
+  target_link_libraries(${SV_EXE} ${MITK_LIBRARIES}
+           ${MITK_PLUGIN_LIBRARIES} ${CTK_LIBRARIES})
+endif()
+
+if(SV_USE_QT)
+  target_link_libraries(${SV_EXE} ${QT_LIBRARIES})
+endif()
 
 if(WIN32)
   target_link_libraries(${SV_EXE} PRIVATE ${QT_QTMAIN_LIBRARY})

@@ -153,8 +153,8 @@ SV_USE_SYSTEM_PYTHON = 1
 SV_USE_QT = 1
 SV_EXTERNALS_PREBUILT_QT_SYSTEM_INSTALL = 0
 SV_USE_SYSTEM_QT = 1
-SV_USE_QT_GUI = 1
-SV_USE_QT_GUI_SHARED = 1
+SV_USE_SV4_GUI = 1
+SV_USE_SV4_GUI_SHARED = 1
 
 # -----------------------------------------------------
 # Compile with freetype
@@ -377,8 +377,8 @@ endif
 
 ifeq ($(SV_USE_QT),1)
     GLOBAL_DEFINES += -DSV_USE_QT
-  ifeq ($(SV_USE_QT_GUI),1)
-    GLOBAL_DEFINES += -DSV_USE_QT_GUI
+  ifeq ($(SV_USE_SV4_GUI),1)
+    GLOBAL_DEFINES += -DSV_USE_SV4_GUI
   endif
 endif
 
@@ -637,8 +637,8 @@ ifeq ($(SV_USE_MITK),1)
 endif
 
 ifeq ($(SV_USE_MITK),1)
-  ifeq ($(SV_USE_QT_GUI),1)
-    ifeq ($(SV_USE_QT_GUI_SHARED),1)
+  ifeq ($(SV_USE_SV4_GUI),1)
+    ifeq ($(SV_USE_SV4_GUI_SHARED),1)
        SHARED_LIBDIRS += ../Code/Source/sv4gui/Plugins
     else
        LIBDIRS += ../Code/Source/sv4gui/Plugins

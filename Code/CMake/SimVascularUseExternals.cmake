@@ -76,7 +76,7 @@ set(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR ON)
 set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Externals-build/svExternals")
 set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin")
 set(SV_USE_QT ON)
-set(SV_USE_QT_GUI ON)
+set(SV_USE_SV4_GUI ON)
 
 configure_file("${SimVascular_CMAKE_DIR}/simvascular_download_externals.sh.in" "${CMAKE_BINARY_DIR}/simvascular_download_externals.sh" @ONLY)
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the svExternals build, they can be with this string")

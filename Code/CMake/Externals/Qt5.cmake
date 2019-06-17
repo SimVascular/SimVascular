@@ -39,7 +39,7 @@ if(SV_USE_${proj})
   endif()
 
   
-  if(SV_USE_QT_GUI)
+  if(SV_USE_SV4_GUI)
     message("Externals/Qt5.cmake Qt5_DIR initial value: ${Qt5_DIR}")
     # If using toplevel dir, foce Qt_DIR to be the SV_Qt_DIR set by the
     # simvascular_add_new_external macro

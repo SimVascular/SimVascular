@@ -58,6 +58,10 @@ target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME} ${SV_LIB_UTILS_NAME} ${ITK_LIBRARIES} ${MITK_LIBRARIES})
 
+if(SV_USE_TINYXML)
+  target_link_libraries(${lib} ${TINYXML_LIBRARY})
+endif()
+
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)
 set(_export_macro_names

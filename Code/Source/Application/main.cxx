@@ -38,7 +38,7 @@
 #endif
 #include "vtksys/SystemTools.hxx"
 
-#ifdef SV_USE_QT_GUI
+#ifdef SV_USE_SV4_GUI
   #include <QApplication>
   #include <QDir>
   #include <QVariant>
@@ -125,7 +125,7 @@ svCatchDebugger() {
 //  Note: Static Modules don't seem to work for MITK plugins.
 //        This code should return an error for now.
 //
-// #ifdef SV_USE_QT_GUI
+// #ifdef SV_USE_SV4_GUI
 //   #ifdef QT_STATICPLUGIN
 //      //Q_IMPORT_PLUGIN(...)
 //   #endif
@@ -157,7 +157,7 @@ svCatchDebugger() {
   use_tcl = true;
 #endif
 
-#ifndef SV_USE_QT_GUI
+#ifndef SV_USE_SV4_GUI
   use_qt_gui  = false;
   use_tk_gui = true;
 #endif
@@ -197,7 +197,7 @@ svCatchDebugger() {
 	fprintf(stdout,"  -tcl, --tcl              : use tcl command line\n");
 	fprintf(stdout,"  -tk, --tk-gui            : use TclTk GUI (SV_BATCH_MODE overrides)\n");
 #endif
-#ifdef SV_USE_QT_GUI
+#ifdef SV_USE_SV4_GUI
 	fprintf(stdout,"  -qt, --qt-gui            : use Qt GUI (SV_BATCH_MODE overrides)\n");
 	fprintf(stdout,"  --workbench              : use mitk workbench application\n");
 	fprintf(stdout,"  --use-pro                : use the .provisioning file \n");
@@ -247,7 +247,7 @@ svCatchDebugger() {
 	foundValid = true;
       }
 #endif
-#ifdef SV_USE_QT_GUI
+#ifdef SV_USE_SV4_GUI
       if((!strcmp("-qt",argv[iarg]))    ||
 	 (!strcmp("--qt-gui",argv[iarg]))) {
 	use_tcl = false;
@@ -395,7 +395,7 @@ svCatchDebugger() {
     if (use_tk_gui) {
       Tk_Main(useme_argc, useme_argv, Tcl_AppInit );
     }
-#ifdef SV_USE_QT_GUI
+#ifdef SV_USE_SV4_GUI
     if(use_qt_gui) {
       sv4guiMain(useme_argc, useme_argv, use_provisioning_file, use_workbench);
     }
