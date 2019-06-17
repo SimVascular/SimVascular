@@ -223,13 +223,11 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     // contour group. This happens when tool panels from previous sessions
     // are created when SV starts.
     //
-/*
     if (m_ContourGroup == nullptr) { 
-        //m_Parent->setEnabled(false);
+        ui->SinglePathTab->setEnabled(false);
     } else {
-        m_Parent->setEnabled(true);
+        ui->SinglePathTab->setEnabled(true);
     }
-*/
 }
 
 void sv4guiSeg2DEdit::Visible()
@@ -277,7 +275,7 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     {
         ui->resliceSlider->turnOnReslice(false);
         ClearAll();
-        //m_Parent->setEnabled(false);
+        ui->SinglePathTab->setEnabled(false);
         return;
     }
 
@@ -298,11 +296,12 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         std::cout << "no contour group selected\n";
         ui->resliceSlider->turnOnReslice(false);
         ClearAll();
-        //m_Parent->setEnabled(false);
+        ui->SinglePathTab->setEnabled(false);
         return;
     }
 
     m_Parent->setEnabled(true);
+    ui->SinglePathTab->setEnabled(true);
     ////remove_toolbox     ui->segToolbox->setCurrentIndex(1);
 //    std::string groupPathName=m_ContourGroup->GetPathName();
     int  groupPathID=m_ContourGroup->GetPathID();

@@ -19,7 +19,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="SinglePathTab">
       <attribute name="title">
        <string>Single-Path</string>
       </attribute>
@@ -786,7 +786,7 @@ Then, press key Delete to remove the shown contour.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="MultiVesselTab">
       <attribute name="title">
        <string>Multi-vessel Path</string>
       </attribute>
