@@ -71,7 +71,6 @@ berry::WorkbenchWindowAdvisor* sv4guiAppWorkbenchAdvisor::CreateWorkbenchWindowA
     // Exclude some views from the normal view list
     QList<QString> excludeViews;
     excludeViews.push_back("org.mitk.views.modules");
-    excludeViews.push_back("org.mitk.views.segmentation");
     excludeViews.push_back( "org.blueberry.ui.internal.introview" );
     advisor->SetViewExcludeList(excludeViews);
 
