@@ -159,7 +159,8 @@ svCatchDebugger() {
 
 #ifndef SV_USE_SV4_GUI
   use_qt_gui  = false;
-  use_tk_gui = true;
+  // default to python console instead of tcl gui
+  //use_tk_gui = true;
 #endif
   
   bool use_workbench  = false;
