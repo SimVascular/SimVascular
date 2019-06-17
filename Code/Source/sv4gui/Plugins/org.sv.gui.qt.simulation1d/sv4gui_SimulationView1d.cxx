@@ -173,7 +173,7 @@
 #include <QApplication>
 
 // Redefine MITK_INFO to deactivate all of the debugging statements.
-//#define MITK_INFO MITK_DEBUG
+#define MITK_INFO MITK_DEBUG
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
@@ -2002,6 +2002,7 @@ void sv4guiSimulationView1d::UpdateGUIBasic()
 //    value=QString::fromStdString(job->GetBasicProp("Period"));
 //    valueList<<new QStandardItem(value==""?QString("1.0"):value);
 
+    /* [TODO:DaveP] Maybe add these later.
     parList<<new QStandardItem("IC File");
     value=QString::fromStdString(job->GetBasicProp("IC File"));
     valueList<<new QStandardItem(value);
@@ -2012,11 +2013,10 @@ void sv4guiSimulationView1d::UpdateGUIBasic()
 
     parList<<new QStandardItem("Initial Velocities");
     value=QString::fromStdString(job->GetBasicProp("Initial Velocities"));
-//    valueList<<new QStandardItem(value==""?QString("0 0 0"):value);
     valueList<<new QStandardItem(value==""?QString("0.0001 0.0001 0.0001"):value);
+    */
 
-    for(int i=0;i<parList.size();i++)
-    {
+    for(int i=0;i<parList.size();i++) {
         parList[i]->setEditable(false);
         m_TableModelBasic->setItem(i, 0, parList[i]);
         m_TableModelBasic->setItem(i, 1, valueList[i]);
@@ -3241,8 +3241,8 @@ QString sv4guiSimulationView1d::GetSolverExecutable()
 //-----------------
 // Create files for a simulation.
 //
-// A Python script is executed to generate a 1D mesh and
-// create a input file for the 1D solver.
+// A sv4guiSimulationPython1d object is used to execute a Python script to generate 
+// a 1D mesh and create a input file for the 1D solver.
 //
 // Files are written to the PROJECT/Simulations1d/JOB_NAME directory.
 //
@@ -3324,11 +3324,14 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     m_SimulationFilesCreated = false;
     m_SolverInputFile = ""; 
 
-    // Set the parameters used by the Python script.
+   // Create a sv4guiSimulationPython1d used to execute a Python script
+   // and get the parameter names used by that script.
     //
     auto pythonInterface = sv4guiSimulationPython1d();
     auto params = pythonInterface.m_ParameterNames;
 
+    // Set the parameters used by the Python script.
+    //
     auto modelName = m_ModelNode->GetName();
     pythonInterface.AddParameter(params.MODEL_NAME, modelName);
 
@@ -3349,6 +3352,12 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
     pythonInterface.AddParameter(params.WRITE_SOLVER_FILE, "true"); 
     pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName); 
+
+    // Add basic physical parameters.
+    auto density = m_TableModelBasic->item(TableModelBasicRow::Density,1)->text().trimmed().toStdString();
+    pythonInterface.AddParameter(params.DENSITY, density);
+    auto viscosity = m_TableModelBasic->item(TableModelBasicRow::Viscosity,1)->text().trimmed().toStdString();
+    pythonInterface.AddParameter(params.VISCOSITY, viscosity);
 
     // Add solver parameters.
     auto numTimeSteps = m_TableModelSolver->item(TableModelSolverRow::NumberofTimesteps,1)->text().trimmed().toStdString();

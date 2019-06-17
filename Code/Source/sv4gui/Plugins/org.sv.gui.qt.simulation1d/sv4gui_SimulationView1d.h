@@ -60,6 +60,7 @@
 #include <QStandardItemModel>
 #include <QProcess>
 #include <QMessageBox>
+#include <QItemSelection>
 
 namespace Ui {
 class sv4guiSimulationView1d;
@@ -112,6 +113,12 @@ public:
         TimeStepSize = 2,
         OutputControl = 3,
         NumberofTimeStepsSavingData = 4
+    };
+
+    // Used to access the rows in Model Basic Table.
+    enum TableModelBasicRow : int {
+        Density = 0,
+        Viscosity = 1,
     };
 
     // Used to access the columns in Model Cap BC Table.

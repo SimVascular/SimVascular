@@ -65,7 +65,16 @@ pushd $SV_EXTERNALS_BUILD_DIR
 $MAKE
 popd
 
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.6.3/5.6.3/gcc_64/lib"
+if [[ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.05" ]]
+then
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.6.3/5.6.3/gcc_64/lib"
+elif [[ "$SV_EXTERNALS_VERSION_NUMBER" == "2019.02" ]]
+then
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.6.3/5.6.3/gcc_64/lib"
+elif [[ "$SV_EXTERNALS_VERSION_NUMBER" == "2019.06" ]]
+then
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.11.3/5.11.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.11.3/5.11.3/gcc_64/lib"
+fi
 
 mkdir -p $BUILD_DIR
 

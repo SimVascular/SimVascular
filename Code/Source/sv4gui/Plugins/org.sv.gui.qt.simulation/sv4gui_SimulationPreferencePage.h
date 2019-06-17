@@ -48,6 +48,19 @@ namespace Ui {
 class sv4guiSimulationPreferencePage;
 }
 
+// Define MITK Database keys.
+//
+// The keys are used to store property values in a MITK database.
+//
+namespace sv4guiSimulationPreferenceDBKey {
+    const QString FLOW_SOLVER_NO_MPI_PATH = "flowsolver nompi path";
+    const QString FLOW_SOLVER_PATH = "flowsolver path";
+    const QString POST_SOLVER_PATH = "postsolver path";
+    const QString PRE_SOLVER_PATH = "presolver path";
+    const QString SOLVER_TEMPLATE_PATH = "solver template path";
+    const QString USE_CUSTOM = "use custom";
+};
+
 class sv4guiSimulationPreferencePage : public QObject, public berry::IQtPreferencePage
 {
     Q_OBJECT

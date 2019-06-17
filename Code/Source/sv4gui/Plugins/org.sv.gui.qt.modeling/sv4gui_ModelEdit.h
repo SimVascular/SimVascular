@@ -44,6 +44,7 @@
 #include <vtkBoxWidget.h>
 
 #include <QWidget>
+#include <QItemSelection>
 
 namespace Ui {
 class sv4guiModelEdit;

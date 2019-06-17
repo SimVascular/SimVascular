@@ -49,6 +49,17 @@
 #include <map>
 #include <QString>
 
+// Define MITK Database keys.
+//
+// The keys are used to store property values in a MITK database.
+//
+namespace sv4guiMPIPreferencesImplementationNames {
+    const QString MPICH = "MPICH";
+    const QString MSMPI = "MSMPI";
+    const QString OpenMPI = "OpenMPI";
+    const QString Unknown = "Unknown";
+};
+
 //-----------------------------
 // sv4guiMPIPreferences 
 //-----------------------------
@@ -69,11 +80,16 @@ public:
 
   MpiImplementation GetMpiImplementation();
   MpiImplementation GetMpiImplementation(const QString& name);
-  const QString GetMpiName();
+  const QString GetMpiImplementationName();
+  const QString GetMpiImplementationName(const MpiImplementation);
+  MpiImplementation DetermineMpiImplementation(const QString& mpiExecName);
 
   void InitializeMPILocation();
   QString GetMpiExec();
   static const QString UnknownBinary;
+
+  void SetMpiExec(const QString& filePath);
+  void SetMpiImplementation();
 
 private:
 
@@ -88,7 +104,6 @@ private:
   std::map<QString, MpiImplementation> m_MpiStringToEnum;
 
   void SetMpiExec(const QString& solverInstallPath, const QString& applicationPath);
-  void SetMpiImplementation();
 
 };
 

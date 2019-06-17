@@ -51,6 +51,7 @@
 #include <QStandardItemModel>
 #include <QProcess>
 #include <QMessageBox>
+#include <QItemSelection>
 
 namespace Ui {
 class sv4guiSimulationView;
@@ -148,6 +149,8 @@ public slots:
     void ShowCalculateFowsWidget(bool checked = false);
 
     void ShowModel(bool checked = false);
+
+    void UseMpi(bool checked = false);
 
 public:
 

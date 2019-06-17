@@ -45,6 +45,7 @@
 #include <mitkDataNode.h>
 #include <mitkDataInteractor.h>
 #include <mitkImage.h>
+#include <QItemSelection>
 
 namespace Ui {
   class sv4guiPathEdit;

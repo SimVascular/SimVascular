@@ -64,8 +64,10 @@ CLUSTER = x64_cygwin
 #       should be replaced with additional variables
 
 SV_COMPILER = msvc
-SV_COMPILER_VERSION = 19.0
-CXX_COMPILER_VERSION = msvc-19.0
+#SV_COMPILER_VERSION = 19.0
+#CXX_COMPILER_VERSION = msvc-19.0
+SV_COMPILER_VERSION = 19.16
+CXX_COMPILER_VERSION = msvc-19.16
 
 FORTRAN_COMPILER_VERSION = ifort
 
@@ -240,14 +242,15 @@ ifeq ($(CLUSTER), x64_cygwin)
   SVEXTERN_COMPILER_VERSION = $(CXX_COMPILER_VERSION)
 endif
 ifeq ($(CLUSTER), x64_linux)
-  SVEXTERN_COMPILER_VERSION = gnu-4.8
+  SVEXTERN_COMPILER_VERSION = gnu-5.4
 endif
 ifeq ($(CLUSTER), x64_macosx)
-  SVEXTERN_COMPILER_VERSION = clang-7.3
+  SVEXTERN_COMPILER_VERSION = clang-8.1
 endif
 
 #SV_EXTERNALS_VERSION_NUMBER = 2018.01
-SV_EXTERNALS_VERSION_NUMBER = 2019.02
+#SV_EXTERNALS_VERSION_NUMBER = 2019.02
+SV_EXTERNALS_VERSION_NUMBER = 2019.06
 SV_VTK_OPENGL_VERSION=gl2
 
 ifeq ($(CLUSTER), x64_cygwin)
@@ -432,6 +435,9 @@ ifeq ($(CLUSTER), x64_cygwin)
   endif
   ifeq ($(CXX_COMPILER_VERSION), msvc-19.0)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.0.x64_cygwin.mk
+  endif
+  ifeq ($(CXX_COMPILER_VERSION), msvc-19.16)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.16.x64_cygwin.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.ifort.x64_cygwin.mk
@@ -874,7 +880,6 @@ endif
 
 ifeq ($(SV_USE_VTK),1)
 
-ifeq ($(SV_EXTERNALS_VERSION_NUMBER), 2019.02)
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_cygwin.mk
   endif
@@ -886,19 +891,6 @@ ifeq ($(SV_EXTERNALS_VERSION_NUMBER), 2019.02)
   ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_macosx.mk
   endif
-else
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.x64_macosx.mk
-  endif
-endif
 
 endif
 

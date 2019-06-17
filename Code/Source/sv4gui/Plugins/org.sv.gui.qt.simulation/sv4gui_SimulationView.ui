@@ -167,8 +167,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>407</width>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -204,8 +204,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>407</width>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -268,8 +268,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>239</width>
-           <height>206</height>
+           <width>407</width>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -618,8 +618,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>407</width>
+           <height>586</height>
           </rect>
          </property>
          <attribute name="label">
@@ -699,82 +699,6 @@
              <item>
               <widget class="QWidget" name="widgetRun" native="true">
                <layout class="QGridLayout" name="gridLayout">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <property name="spacing">
-                 <number>5</number>
-                </property>
-                <item row="2" column="0" colspan="3">
-                 <widget class="QPushButton" name="btnImportFiles">
-                  <property name="text">
-                   <string>Import Extra Files (Optional) ...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QLabel" name="label_12">
-                  <property name="text">
-                   <string>Starting Step Number:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="7" column="0" colspan="3">
-                 <widget class="QPushButton" name="btnRunJob">
-                  <property name="text">
-                   <string>Run Simulation</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_11">
-                  <property name="text">
-                   <string>Number of Processes:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="2">
-                 <widget class="QLineEdit" name="lineEditStartStepNum">
-                  <property name="toolTip">
-                   <string>The time step from which to restart a simulation. Leave blank to continue a simulation from the last completed time step. </string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0" colspan="3">
-                 <widget class="QPushButton" name="btnCreateAllFiles">
-                  <property name="text">
-                   <string>Create Data Files for Simulation</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="ctkSliderWidget" name="sliderNumProcs" native="true">
-                  <property name="decimals" stdset="0">
-                   <number>0</number>
-                  </property>
-                  <property name="pageStep" stdset="0">
-                   <double>40.000000000000000</double>
-                  </property>
-                  <property name="minimum" stdset="0">
-                   <double>1.000000000000000</double>
-                  </property>
-                  <property name="maximum" stdset="0">
-                   <double>64.000000000000000</double>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="0" colspan="3">
                  <widget class="QWidget" name="widget_15" native="true">
                   <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -812,6 +736,74 @@
                   </layout>
                  </widget>
                 </item>
+                <item row="1" column="0" colspan="3">
+                 <widget class="QPushButton" name="btnCreateAllFiles">
+                  <property name="text">
+                   <string>Create Data Files for Simulation</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" colspan="3">
+                 <widget class="QPushButton" name="btnImportFiles">
+                  <property name="text">
+                   <string>Import Extra Files (Optional) ...</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QCheckBox" name="UseMpiCheckBox">
+                  <property name="text">
+                   <string>Use MPI</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1" colspan="2">
+                 <widget class="QLabel" name="NumberProcessesLabel">
+                  <property name="text">
+                   <string>Number of Processes:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="3">
+                 <widget class="ctkSliderWidget" name="sliderNumProcs" native="true">
+                  <property name="decimals" stdset="0">
+                   <number>0</number>
+                  </property>
+                  <property name="pageStep" stdset="0">
+                   <double>40.000000000000000</double>
+                  </property>
+                  <property name="minimum" stdset="0">
+                   <double>1.000000000000000</double>
+                  </property>
+                  <property name="maximum" stdset="0">
+                   <double>64.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0" colspan="2">
+                 <widget class="QLabel" name="StartingStepLabel">
+                  <property name="text">
+                   <string>Starting Step Number:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="2" colspan="2">
+                 <widget class="QLineEdit" name="lineEditStartStepNum">
+                  <property name="toolTip">
+                   <string>The time step from which to restart a simulation. Leave blank to continue a simulation from the last completed time step. </string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QPushButton" name="btnRunJob">
+                  <property name="text">
+                   <string>Run Simulation</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </widget>
              </item>
@@ -822,8 +814,8 @@
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>20</width>
-                 <height>40</height>
+                 <width>17</width>
+                 <height>553</height>
                 </size>
                </property>
               </spacer>

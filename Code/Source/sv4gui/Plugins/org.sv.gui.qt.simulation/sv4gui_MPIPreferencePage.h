@@ -48,6 +48,15 @@ namespace Ui {
 class sv4guiMPIPreferencePage;
 }
 
+// Define MITK Database keys.
+//
+// The keys are used to store property values in a MITK database.
+//
+namespace sv4guiMPIPreferenceDBKey {
+    const QString MPI_EXEC_PATH = "mpiexec path";
+    const QString MPI_IMPLEMENTATION = "mpi implementation";
+};
+
 class sv4guiMPIPreferencePage : public QObject, public berry::IQtPreferencePage
 {
     Q_OBJECT
@@ -63,10 +72,10 @@ public:
     void PerformCancel() override;
     bool PerformOk() override;
     void Update() override;
-    void InitializeMPILocation();
+    void SetMpiInformation();
 
 private slots:
-  void SetMPIExecPath();
+  void SelectMPIExecPath();
 
 private:
   void SetMpiExec();
