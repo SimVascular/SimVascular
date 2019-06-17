@@ -176,7 +176,9 @@ int sv4guiMain(int argc, char *argv[],bool use_provisioning_file, bool use_workb
 #ifdef SV_USE_PYTHON
        pluginsToStart.push_back("org_mitk_gui_qt_python");
 #endif
-       pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
+       if (use_workbench){
+         pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
+       }
        pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
        // SimVascular plugins
        if (!use_workbench) {
