@@ -231,6 +231,17 @@ const QString sv4guiSimulationView1d::DataInputStateName::BOUNDRY_CONDITIONS = "
 const QString sv4guiSimulationView1d::DataInputStateName::SOLVER_PARAMETERS = "Solver parameters";
 const QString sv4guiSimulationView1d::DataInputStateName::SIMULATION_FILES = "Simulation files";
 
+// Set default material model parameters.
+//
+const double sv4guiSimulationView1d::MaterialModel::LinearParameters::Ehr = 0.0;
+const double sv4guiSimulationView1d::MaterialModel::LinearParameters::referencePressure = 0.0;
+//
+const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k1 = 0.0;
+const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k2 = -22.5267; 
+const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k3 = 2.65e5;
+const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::exponent = 0.0;
+const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::referencePressure = 0.0;
+
 // Set material model names.
 //
 const QString sv4guiSimulationView1d::MaterialModel::LINEAR = "Linear";

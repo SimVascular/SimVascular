@@ -173,15 +173,15 @@ public:
             static const QString OLUFSEN;
             static const std::vector<QString> names;
             class LinearParameters {
-                static double Ehr = 0.0;
-                static double referencePressure = 0.0;
+                static const double Ehr;
+                static const double referencePressure;
             };
             class OlufsenParameters {
-                static double k1 = 0.0;
-                static double k2 = -22.5267;
-                static double k3 = 2.65e5;
-                static double exponent = 0.0;
-                static double referencePressure = 0.0;
+                static const double k1;
+                static const double k2;
+                static const double k3;
+                static const double exponent;
+                static const double referencePressure;
             };
     };
 
