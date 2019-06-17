@@ -85,9 +85,17 @@ class sv4guiSimulationPython1dParamNames
     const std::string COMPUTE_MESH = "compute_mesh";
     const std::string INFLOW_INPUT_FILE = "inflow_input_file";
     const std::string ELEMENT_SIZE = "element_size";
+
+    const std::string MATERIAL_MODEL = "material_model";
     const std::string MESH_OUTPUT_FILE = "mesh_output_file";
     const std::string MODEL_NAME = "model_name";
     const std::string NUM_TIME_STEPS = "num_time_steps";
+
+    const std::string OLUFSEN_MATERIAL_K1 = "olufsen_material_k1";
+    const std::string OLUFSEN_MATERIAL_K2 = "olufsen_material_k2";
+    const std::string OLUFSEN_MATERIAL_K3 = "olufsen_material_k3";
+    const std::string OLUFSEN_MATERIAL_EXP = "olufsen_material_exp";
+    const std::string OLUFSEN_MATERIAL_PRESSURE = "olufsen_material_pressure";
 
     const std::string OUTFLOW_BC_INPUT_FILE = "outflow_bc_input_file";
     const std::string OUTFLOW_BC_TYPE = "outflow_bc_type";

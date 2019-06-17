@@ -173,15 +173,17 @@ public:
             static const QString OLUFSEN;
             static const std::vector<QString> names;
             class LinearParameters {
-                static const double Ehr;
-                static const double referencePressure;
+                public:
+                    static const double Ehr;
+                    static const double referencePressure;
             };
             class OlufsenParameters {
-                static const double k1;
-                static const double k2;
-                static const double k3;
-                static const double exponent;
-                static const double referencePressure;
+                public:
+                    static const QString k1;
+                    static const QString k2;
+                    static const QString k3;
+                    static const QString exponent;
+                    static const QString referencePressure;
             };
     };
 
@@ -294,6 +296,7 @@ public:
     void UpdateCenterlines();
     vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
+    void AddWallPropertiesParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
     std::vector<std::string> ReadInletFaceNames(const QString outputDir);
     void WriteBCFiles(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);

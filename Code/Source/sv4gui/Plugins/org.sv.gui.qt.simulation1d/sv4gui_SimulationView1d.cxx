@@ -236,19 +236,20 @@ const QString sv4guiSimulationView1d::DataInputStateName::SIMULATION_FILES = "Si
 const double sv4guiSimulationView1d::MaterialModel::LinearParameters::Ehr = 0.0;
 const double sv4guiSimulationView1d::MaterialModel::LinearParameters::referencePressure = 0.0;
 //
-const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k1 = 0.0;
-const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k2 = -22.5267; 
-const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k3 = 2.65e5;
-const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::exponent = 0.0;
-const double sv4guiSimulationView1d::MaterialModel::OlufsenParameters::referencePressure = 0.0;
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k1 = "0.0";
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k2 = "-22.5267"; 
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k3 = "2.65e5";
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::exponent = "0.0";
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::referencePressure = "0.0";
 
 // Set material model names.
 //
-const QString sv4guiSimulationView1d::MaterialModel::LINEAR = "Linear";
-const QString sv4guiSimulationView1d::MaterialModel::OLUFSEN = "Olufsen";
+const QString sv4guiSimulationView1d::MaterialModel::LINEAR = "LINEAR";
+const QString sv4guiSimulationView1d::MaterialModel::OLUFSEN = "OLUFSEN";
 const std::vector<QString> sv4guiSimulationView1d::MaterialModel::names = 
 {
-   sv4guiSimulationView1d::MaterialModel::LINEAR, 
+   // [TODO:Davep] Currentliy only the OLUFSEN is supported.
+   //sv4guiSimulationView1d::MaterialModel::LINEAR, 
    sv4guiSimulationView1d::MaterialModel::OLUFSEN
 };
 
@@ -353,42 +354,24 @@ sv4guiSimulationView1d::~sv4guiSimulationView1d()
 //
 void sv4guiSimulationView1d::EnableConnection(bool able)
 {
-    if(able && !m_ConnectionEnabled)
-    {
-/*
+    if(able && !m_ConnectionEnabled) {
         connect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
-        connect(ui->lineEditThickness, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditE, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditNu, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditKcons, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditWallDensity, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        //connect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-*/
 
         m_ConnectionEnabled=able;
     }
 
-    if(!able && m_ConnectionEnabled)
-    {
-/*
+    if(!able && m_ConnectionEnabled) {
         disconnect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
-        disconnect(ui->lineEditThickness, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditE, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditNu, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditKcons, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditWallDensity, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
         disconnect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
         //disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
-*/
-
         m_ConnectionEnabled=able;
     }
 }
@@ -651,6 +634,8 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 // Create connections between GUI events (signals) and callbacks (slots)
 // for the 'Wall Properties' toolbox tab.
 //
+// [TODO:Davep] Currently only the OLUFSEN is supported.
+//
 void sv4guiSimulationView1d::CreateWallPropertiesControls(QWidget *parent)
 {
     // Setup the material model combination box.
@@ -661,11 +646,25 @@ void sv4guiSimulationView1d::CreateWallPropertiesControls(QWidget *parent)
     }
 
     // Setup Linear material parameters.
-    connect(ui->LinearMatProp_Ehr_LineEdit, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+    //connect(ui->LinearMatProp_Ehr_LineEdit, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
 
     // Setup Olufsen material parameters.
-    connect(ui->OlufsenMatProp_k1_LineEdit, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+    auto signal = SIGNAL(returnPressed());
+    //auto signal = SIGNAL(textChanged(QString));
+    connect(ui->OlufsenMatProp_k1_LineEdit, signal, this, SLOT(UpdateSimJob()));
+    connect(ui->OlufsenMatProp_k2_LineEdit, signal, this, SLOT(UpdateSimJob()));
+    connect(ui->OlufsenMatProp_k3_LineEdit, signal, this, SLOT(UpdateSimJob()));
+    connect(ui->OlufsenMatProp_Exp_LineEdit, signal, this, SLOT(UpdateSimJob()));
+    connect(ui->OlufsenMatProp_Pressure_LineEdit, signal, this, SLOT(UpdateSimJob()));
 
+    ui->OlufsenMatProp_k1_LineEdit->setText(MaterialModel::OlufsenParameters::k1);
+    ui->OlufsenMatProp_k2_LineEdit->setText(MaterialModel::OlufsenParameters::k2);
+    ui->OlufsenMatProp_k3_LineEdit->setText(MaterialModel::OlufsenParameters::k3);
+    ui->OlufsenMatProp_Exp_LineEdit->setText(MaterialModel::OlufsenParameters::exponent);
+    ui->OlufsenMatProp_Pressure_LineEdit->setText(MaterialModel::OlufsenParameters::referencePressure);
+
+    //ui->MaterialModelComboBox->setCurrentIndex(0);
+    //ui->MaterialModel_StackedWidget->setCurrentIndex(0);
 }
 
 //--------------------------
@@ -1669,13 +1668,14 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     MITK_INFO << msg << "--------- OnSelectionChanged ----------";
     MITK_INFO << msg << "nodes.size() " << nodes.size();
 
-    if(!IsVisible()) {
+    if (!IsVisible()) {
         return;
     }
 
     if (nodes.size() == 0) {
         RemoveObservers();
         EnableTool(false);
+        m_Parent->setEnabled(false);
         return;
     }
 
@@ -1691,6 +1691,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     if (!mitkJob) {
         RemoveObservers();
         EnableTool(false);
+        m_Parent->setEnabled(false);
         MITK_INFO << msg << " mitkJob == nullptr";
         return;
     }
@@ -1701,6 +1702,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 
     m_JobNode = jobNode;
     m_MitkJob = mitkJob;
+    m_Parent->setEnabled(true);
 
     // Set the plugin output directory.
     m_PluginOutputDirectory = GetJobPath();
@@ -1771,7 +1773,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
                 m_ModelCenterlineNodes.emplace_back(name, node);
             }
         } else { 
-            MITK_INFO << msg << "Don't have centerlines.";
+            MITK_INFO << msg << "Don't have centerlines from Model Tool.";
         }
     } else {
         MITK_WARN << msg << "No model has been created!";
@@ -2717,35 +2719,13 @@ void sv4guiSimulationView1d::UpdateGUICap()
 //
 void sv4guiSimulationView1d::SelectMaterialModel(int index)
 {
-    auto msg = "[sv4guiSimulationView1d::SelectMaterialModel] ";
-    MITK_INFO << msg << "---------- SelectMaterialModel ----------  ";
+    //auto msg = "[sv4guiSimulationView1d::SelectMaterialModel] ";
+    //MITK_INFO << msg << "---------- SelectMaterialModel ----------  ";
     auto matModelName = MaterialModel::names[index]; 
-    MITK_INFO << msg << "matModelName: " << matModelName;
+    //MITK_INFO << msg << "matModelName: " << matModelName;
 
     // Show widgets for the selected material model.
     ui->MaterialModel_StackedWidget->setCurrentIndex(index);
-
-/*
-    switch(index)
-    {
-    case 0:
-        ui->widgetConstant->hide();
-        ui->widgetVariable->hide();
-        break;
-    case 1:
-        ui->widgetThicknessE->show();
-        ui->widgetConstant->show();
-        ui->widgetVariable->hide();
-        break;
-    case 2:
-        ui->widgetThicknessE->hide();
-        ui->widgetConstant->show();
-        ui->widgetVariable->show();
-        break;
-    default:
-        break;
-    }
-*/
 }
 
 //--------------------------
@@ -2835,7 +2815,7 @@ void sv4guiSimulationView1d::SetVarE(bool)
 //
 void sv4guiSimulationView1d::UpdateGUIWall()
 {
-    if(!m_MitkJob) {
+    if (!m_MitkJob) {
         return;
     }
 
@@ -2848,84 +2828,37 @@ void sv4guiSimulationView1d::UpdateGUIWall()
         job = new sv4guiSimJob1d();
     }
 
-    if(job->GetWallProp("Type")=="rigid") {
-        ui->MaterialModelComboBox->setCurrentIndex(0);
-    } else if(job->GetWallProp("Type")=="deformable") {
-        ui->MaterialModelComboBox->setCurrentIndex(1);
-    } else if(job->GetWallProp("Type")=="variable") {
-        ui->MaterialModelComboBox->setCurrentIndex(2);
+    auto materialModel = QString::fromStdString(job->GetWallProp("Material Model"));
+    auto it = std::find(MaterialModel::names.begin(), MaterialModel::names.end(), materialModel);
+    if (it != MaterialModel::names.end()) {
+        auto index = std::distance(MaterialModel::names.begin(), it);
+        ui->MaterialModelComboBox->setCurrentIndex(index);
     } else {
-        ui->MaterialModelComboBox->setCurrentIndex(0);
+        return;
     }
 
-    /*
-    ui->lineEditThickness->setText(QString::fromStdString(job->GetWallProp("Thickness")));
-    ui->lineEditE->setText(QString::fromStdString(job->GetWallProp("Elastic Modulus")));
+    if (materialModel == MaterialModel::OLUFSEN) { 
+        auto k1 = QString::fromStdString(job->GetWallProp("Olufsen Material K1")); 
+        auto k2 = QString::fromStdString(job->GetWallProp("Olufsen Material K2")); 
+        auto k3 = QString::fromStdString(job->GetWallProp("Olufsen Material K3")); 
+        auto exponent = QString::fromStdString(job->GetWallProp("Olufsen Material Exponent")); 
+        auto pressure = QString::fromStdString(job->GetWallProp("Olufsen Material Pressure")); 
+        ui->OlufsenMatProp_k1_LineEdit->setText(k1);
+        ui->OlufsenMatProp_k2_LineEdit->setText(k2);
+        ui->OlufsenMatProp_k3_LineEdit->setText(k3);
+        ui->OlufsenMatProp_Exp_LineEdit->setText(exponent);
+        ui->OlufsenMatProp_Pressure_LineEdit->setText(pressure);
+    }
 
-    QString pratio=QString::fromStdString(job->GetWallProp("Poisson Ratio"));
-    if(pratio=="")
-        pratio="0.5";
-    QString kconst=QString::fromStdString(job->GetWallProp("Shear Constant"));
-    if(kconst=="")
-        kconst="0.833333";
-    */
-
-    // dp ui->lineEditNu->setText(pratio);
-    // dp ui->lineEditKcons->setText(kconst);
-
-    // dp ui->lineEditWallDensity->setText(QString::fromStdString(job->GetWallProp("Density")));
-    // dp ui->lineEditPressure->setText(QString::fromStdString(job->GetWallProp("Pressure")));
-
-    if(!m_Model)
+    if (!m_Model) {
         return;
+    }
 
     sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
 
-
-    /* dp 
-    m_TableModelVar->clear();
-
-    QStringList varHeaders;
-    varHeaders << "Name" << "Type" << "Thickness" << "E. Modulus";
-    m_TableModelVar->setHorizontalHeaderLabels(varHeaders);
-    m_TableModelVar->setColumnCount(4);
-
-    std::vector<sv4guiModelElement::svFace*> faces=modelElement->GetFaces();
-    int rowIndex=-1;
-    for(int i=0;i<faces.size();i++)
-    {
-        sv4guiModelElement::svFace* face=faces[i];
-        if(face==NULL )
-            continue;
-
-        rowIndex++;
-        m_TableModelVar->insertRow(rowIndex);
-
-        QStandardItem* item;
-
-        item= new QStandardItem(QString::fromStdString(face->name));
-        item->setEditable(false);
-        m_TableModelVar->setItem(rowIndex, 0, item);
-
-        item= new QStandardItem(QString::fromStdString(face->type));
-        item->setEditable(false);
-        m_TableModelVar->setItem(rowIndex, 1, item);
-
-        item= new QStandardItem(QString::fromStdString(job->GetVarProp(face->name,"Thickness")));
-        m_TableModelVar->setItem(rowIndex, 2, item);
-
-        item= new QStandardItem(QString::fromStdString(job->GetVarProp(face->name,"Elastic Modulus")));
-        m_TableModelVar->setItem(rowIndex, 3, item);
+    if (modelElement == NULL) {
+        return;
     }
-
-    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-    ui->tableViewVar->horizontalHeader()->resizeSection(1,60);
-    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    ui->tableViewVar->horizontalHeader()->resizeSection(2,80);
-    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
-    */
 }
 
 //-----------------
@@ -2939,7 +2872,8 @@ void sv4guiSimulationView1d::UpdateGUISolver()
     }
 
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
-    if(job == NULL) {
+
+    if (job == NULL) {
         job = new sv4guiSimJob1d();
     }
 
@@ -3434,6 +3368,9 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     auto viscosity = m_TableModelBasic->item(TableModelBasicRow::Viscosity,1)->text().trimmed().toStdString();
     pythonInterface.AddParameter(params.VISCOSITY, viscosity);
 
+    // Add wall properties. 
+    AddWallPropertiesParameters(job, pythonInterface);
+
     // Add solver parameters.
     auto numTimeSteps = m_TableModelSolver->item(TableModelSolverRow::NumberofTimesteps,1)->text().trimmed().toStdString();
     pythonInterface.AddParameter(params.NUM_TIME_STEPS, numTimeSteps);
@@ -3463,6 +3400,31 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     m_SimulationFilesCreated = true;
 
     return true;
+}
+
+//-----------------------------
+// AddWallPropertiesParameters
+//-----------------------------
+// Add wall properties parameters for the Python script.
+//
+void sv4guiSimulationView1d::AddWallPropertiesParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface)
+{
+    auto params = pythonInterface.m_ParameterNames;
+    auto materialModel = job->GetWallProp("Material Model");
+    pythonInterface.AddParameter(params.MATERIAL_MODEL, materialModel);
+
+    if (QString::fromStdString(materialModel) == MaterialModel::OLUFSEN) { 
+        auto k1 = job->GetWallProp("Olufsen Material K1"); 
+        auto k2 = job->GetWallProp("Olufsen Material K2"); 
+        auto k3 = job->GetWallProp("Olufsen Material K3"); 
+        auto exponent = job->GetWallProp("Olufsen Material Exponent"); 
+        auto pressure = job->GetWallProp("Olufsen Material Pressure"); 
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_K1, k1);
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_K2, k2);
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_K3, k3);
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_EXP, exponent);
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_PRESSURE, pressure);
+    }
 }
 
 //--------------
@@ -4004,127 +3966,27 @@ bool sv4guiSimulationView1d::SetCapBcs(sv4guiSimJob1d* job, std::string& msg, bo
 //-------------------
 // SetWallProperites
 //-------------------
+// Set the job wall properties data.
 //
-bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string& msg, bool checkValidity)
+bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string& errorMsg, bool checkValidity)
 {
-    int wallTypeIndex = ui->MaterialModelComboBox->currentIndex();
+    auto msg = "[sv4guiSimulationView1d::SetWallProperites] ";
+    MITK_INFO << msg << "--------- SetWallProperites ----------"; 
+    int materialModelIndex = ui->MaterialModelComboBox->currentIndex();
+    MITK_INFO << msg << "materialModelIndex: " << materialModelIndex;
 
-    if(wallTypeIndex==0) {
-        job->SetWallProp("Type","rigid");
-    } else if(wallTypeIndex==1) {
-        // dp std::string thickness=ui->lineEditThickness->text().trimmed().toStdString();
-        // dp std::string modulus=ui->lineEditE->text().trimmed().toStdString();
-        // dp std::string nu=ui->lineEditNu->text().trimmed().toStdString();
-        // dp std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
-        // dp std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
-        // dp std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
-
-        /* dp
-        if(checkValidity) {
-            if(!IsDouble(thickness)) {
-                msg="wall thickness error: " + thickness;
-                return false;
-            }
-
-            if(!IsDouble(modulus)) {
-                msg="wall elastic modulus error: " + modulus;
-                return false;
-            }
-
-            if(!IsDouble(nu)) {
-                msg="wall Poisson ratio error: " + nu;
-                return false;
-            }
-
-            if(!IsDouble(kcons)) {
-                msg="wall shear constant error: " + kcons;
-                return false;
-            }
-
-            if(wallDensity!="") {
-                if(!IsDouble(wallDensity)) {
-                    msg="wall density error: " + wallDensity;
-                    return false;
-                }
-            } else {
-                wallDensity=job->GetBasicProp("Fluid Density");
-            }
-
-            if(!IsDouble(pressure)) {
-                msg="wall pressure error: " + pressure;
-                return false;
-            }
-        }
-        */
-
-        job->SetWallProp("Type","deformable");
-        // dp job->SetWallProp("Thickness",thickness);
-        // dp job->SetWallProp("Elastic Modulus",modulus);
-        // dp job->SetWallProp("Poisson Ratio",nu);
-        // dp job->SetWallProp("Shear Constant",kcons);
-        // dp job->SetWallProp("Density",wallDensity);
-        // dp job->SetWallProp("Pressure",pressure);
-
-    } else if(wallTypeIndex==2) {
-        // dp std::string nu=ui->lineEditNu->text().trimmed().toStdString();
-        // dp std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
-        // dp std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
-        // dp std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
-
-        /* dp
-        if(checkValidity) {
-            if(!IsDouble(nu)) {
-                msg="wall Poisson ratio error: " + nu;
-                return false;
-            }
-
-            if(!IsDouble(kcons)) {
-                msg="wall shear constant error: " + kcons;
-                return false;
-            }
-
-            if(wallDensity!="") {
-                if(!IsDouble(wallDensity)) {
-                    msg="wall density error: " + wallDensity;
-                    return false;
-                }
-            } else {
-                wallDensity=job->GetBasicProp("Fluid Density");
-            }
-
-            if(!IsDouble(pressure)) {
-                msg="wall pressure error: " + pressure;
-                return false;
-            }
-        }
-        */
-
-        job->SetWallProp("Type","variable");
-        // dp job->SetWallProp("Poisson Ratio",nu);
-        // dp job->SetWallProp("Shear Constant",kcons);
-        // dp job->SetWallProp("Density",wallDensity);
-        // dp job->SetWallProp("Pressure",pressure);
-
-        for(int i=0;i<m_TableModelVar->rowCount();i++) {
-            std::string faceName = m_TableModelVar->item(i,0)->text().toStdString();
-            std::string thickness = m_TableModelVar->item(i,2)->text().trimmed().toStdString();
-            std::string modulus = m_TableModelVar->item(i,3)->text().trimmed().toStdString();
-
-            if(checkValidity) {
-                if(thickness!="" && !IsDouble(thickness)) {
-                    msg="wall thickness error: " + thickness;
-                    return false;
-                }
-
-                if(modulus!="" && !IsDouble(modulus)) {
-                    msg="wall elastic modulus error: " + modulus;
-                    return false;
-                }
-            }
-
-            job->SetVarProp(faceName,"Thickness", thickness);
-            job->SetVarProp(faceName,"Elastic Modulus", modulus);
-        }
+    if (materialModelIndex == 0) {
+        auto k1 = ui->OlufsenMatProp_k1_LineEdit->text().trimmed().toStdString();
+        auto k2 = ui->OlufsenMatProp_k2_LineEdit->text().trimmed().toStdString();
+        auto k3 = ui->OlufsenMatProp_k3_LineEdit->text().trimmed().toStdString();
+        auto exponent = ui->OlufsenMatProp_Exp_LineEdit->text().trimmed().toStdString();
+        auto pressure = ui->OlufsenMatProp_Pressure_LineEdit->text().trimmed().toStdString();
+        job->SetWallProp("Material Model", MaterialModel::OLUFSEN.toStdString());
+        job->SetWallProp("Olufsen Material K1", k1); 
+        job->SetWallProp("Olufsen Material K2", k2); 
+        job->SetWallProp("Olufsen Material K3", k3); 
+        job->SetWallProp("Olufsen Material Exponent", exponent); 
+        job->SetWallProp("Olufsen Material Pressure", pressure); 
     }
 
     return true;
@@ -4747,12 +4609,6 @@ void sv4guiSimulationView1d::UpdateSimJob()
     }
 
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
-    /*
-    std::string numProcsStr="";
-    if(job) {
-        numProcsStr=job->GetRunProp("Number of Processes");
-    }
-    */
 
     // Create a new job.
     //
@@ -4765,7 +4621,6 @@ void sv4guiSimulationView1d::UpdateSimJob()
         return;
     }
 
-    //newJob->SetRunProp("Number of Processes",numProcsStr);
     m_MitkJob->SetSimJob(newJob);
     m_MitkJob->SetDataModified();
 
