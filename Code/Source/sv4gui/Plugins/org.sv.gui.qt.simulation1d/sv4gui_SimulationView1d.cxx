@@ -173,7 +173,7 @@
 #include <QApplication>
 
 // Redefine MITK_INFO to deactivate all of the debugging statements.
-//#define MITK_INFO MITK_DEBUG
+#define MITK_INFO MITK_DEBUG
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
@@ -354,25 +354,22 @@ sv4guiSimulationView1d::~sv4guiSimulationView1d()
 //
 void sv4guiSimulationView1d::EnableConnection(bool able)
 {
-    if(able && !m_ConnectionEnabled) {
-        connect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
-        //connect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+    auto slot = SLOT(UpdateSimJob());
 
-        m_ConnectionEnabled=able;
+    if (able && !m_ConnectionEnabled) {
+        connect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
+        connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        m_ConnectionEnabled = able;
     }
 
-    if(!able && m_ConnectionEnabled) {
-        disconnect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        disconnect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
-        disconnect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        //disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
-        m_ConnectionEnabled=able;
+    if (!able && m_ConnectionEnabled) {
+        disconnect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        disconnect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        disconnect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
+        disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        m_ConnectionEnabled = able;
     }
 }
 
@@ -417,21 +414,18 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     //
     m_TableModelCap = new QStandardItemModel(this);
     ui->tableViewCap->setModel(m_TableModelCap);
-    sv4guiTableCapDelegate1d* itemDelegate=new sv4guiTableCapDelegate1d(this);
+    sv4guiTableCapDelegate1d* itemDelegate = new sv4guiTableCapDelegate1d(this);
     ui->tableViewCap->setItemDelegateForColumn(1,itemDelegate);
 
     connect(ui->tableViewCap->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), 
       this, SLOT(TableCapSelectionChanged(const QItemSelection&, const QItemSelection&)));
-
-    connect(ui->tableViewCap, SIGNAL(doubleClicked(const QModelIndex&)), this, 
-      SLOT(TableViewCapDoubleClicked(const QModelIndex&)) );
-
-    connect(ui->tableViewCap, SIGNAL(customContextMenuRequested(const QPoint&)), this, 
-      SLOT(TableViewCapContextMenuRequested(const QPoint&)) );
+    connect(ui->tableViewCap, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(TableViewCapDoubleClicked(const QModelIndex&)));
+    connect(ui->tableViewCap, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(TableViewCapContextMenuRequested(const QPoint&)));
 
     m_TableMenuCap = new QMenu(ui->tableViewCap);
     QAction* setBCAction = m_TableMenuCap->addAction("Set BC");
-    connect( setBCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowCapBCWidget(bool) ) );
+    connect(setBCAction, SIGNAL(triggered(bool)) , this, SLOT(ShowCapBCWidget(bool)));
+
     /* [DaveP] I don't think we needs these.
     QAction* setPressureAction = m_TableMenuCap->addAction("Set Distal Pressure");
     connect( setPressureAction, SIGNAL( triggered(bool) ) , this, SLOT( SetDistalPressure(bool) ) );
@@ -446,7 +440,6 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     m_CapBCWidget->move(400,400);
     m_CapBCWidget->hide();
     m_CapBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
-
     connect(m_CapBCWidget,SIGNAL(accepted()), this, SLOT(SetCapBC()));
 
     // Split Resistance BCs.
@@ -649,22 +642,37 @@ void sv4guiSimulationView1d::CreateWallPropertiesControls(QWidget *parent)
     //connect(ui->LinearMatProp_Ehr_LineEdit, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
 
     // Setup Olufsen material parameters.
+    //
     auto signal = SIGNAL(returnPressed());
-    //auto signal = SIGNAL(textChanged(QString));
-    connect(ui->OlufsenMatProp_k1_LineEdit, signal, this, SLOT(UpdateSimJob()));
-    connect(ui->OlufsenMatProp_k2_LineEdit, signal, this, SLOT(UpdateSimJob()));
-    connect(ui->OlufsenMatProp_k3_LineEdit, signal, this, SLOT(UpdateSimJob()));
-    connect(ui->OlufsenMatProp_Exp_LineEdit, signal, this, SLOT(UpdateSimJob()));
-    connect(ui->OlufsenMatProp_Pressure_LineEdit, signal, this, SLOT(UpdateSimJob()));
+    auto slot = SLOT(UpdateSimJob());
+    connect(ui->OlufsenMatProp_K1_LineEdit, signal, this, slot);
+    connect(ui->OlufsenMatProp_K1_LineEdit, signal, this, slot); 
+    connect(ui->OlufsenMatProp_K3_LineEdit, signal, this, slot);
+    connect(ui->OlufsenMatProp_Exponent_LineEdit, signal, this, slot);
+    connect(ui->OlufsenMatProp_Pressure_LineEdit, signal, this, slot);
 
-    ui->OlufsenMatProp_k1_LineEdit->setText(MaterialModel::OlufsenParameters::k1);
-    ui->OlufsenMatProp_k2_LineEdit->setText(MaterialModel::OlufsenParameters::k2);
-    ui->OlufsenMatProp_k3_LineEdit->setText(MaterialModel::OlufsenParameters::k3);
-    ui->OlufsenMatProp_Exp_LineEdit->setText(MaterialModel::OlufsenParameters::exponent);
+    // Create a validator that allows only valid float input.
+    QDoubleValidator *validDouble = new QDoubleValidator(this);
+    validDouble->setNotation(QDoubleValidator::ScientificNotation);
+
+    // Set default values.
+    ui->OlufsenMatProp_K1_LineEdit->setText(MaterialModel::OlufsenParameters::k1);
+    ui->OlufsenMatProp_K1_LineEdit->setValidator(validDouble);
+    ui->OlufsenMatProp_K2_LineEdit->setText(MaterialModel::OlufsenParameters::k2);
+    ui->OlufsenMatProp_K2_LineEdit->setValidator(validDouble);
+    ui->OlufsenMatProp_K3_LineEdit->setText(MaterialModel::OlufsenParameters::k3);
+    ui->OlufsenMatProp_K3_LineEdit->setValidator(validDouble);
+    // [TODO:DaveP] The expoennt and pressure parameters are not implemented yet.
+    ui->OlufsenMatProp_Exponent_Label->setEnabled(false);
+    ui->OlufsenMatProp_Exponent_LineEdit->setEnabled(false);
+    ui->OlufsenMatProp_Pressure_Label->setEnabled(false);
+    ui->OlufsenMatProp_Pressure_LineEdit->setEnabled(false);
+    /*
+    ui->OlufsenMatProp_Exponent_LineEdit->setText(MaterialModel::OlufsenParameters::exponent);
+    ui->OlufsenMatProp_Exponent_LineEdit->setValidator(validDouble);
     ui->OlufsenMatProp_Pressure_LineEdit->setText(MaterialModel::OlufsenParameters::referencePressure);
-
-    //ui->MaterialModelComboBox->setCurrentIndex(0);
-    //ui->MaterialModel_StackedWidget->setCurrentIndex(0);
+    ui->OlufsenMatProp_Pressure_LineEdit->setValidator(validDouble);
+    */
 }
 
 //--------------------------
@@ -2020,8 +2028,8 @@ void sv4guiSimulationView1d::UpdateGUIBasic()
     }
 
     auto msg = "[sv4guiSimulationView1d::UpdateGUIBasic] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "--------- UpdateGUIBasic ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "--------- UpdateGUIBasic ----------";
 
     sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
 
@@ -2820,14 +2828,16 @@ void sv4guiSimulationView1d::UpdateGUIWall()
     }
 
     auto msg = "[sv4guiSimulationView1d::UpdateGUIWall] ";
-    MITK_INFO << msg << "--------- UpdateGUIWall ----------"; 
+    //MITK_INFO << msg << "--------- UpdateGUIWall ----------"; 
 
-    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
 
     if (job == NULL) {
         job = new sv4guiSimJob1d();
     }
 
+    // Update material model.
+    //
     auto materialModel = QString::fromStdString(job->GetWallProp("Material Model"));
     auto it = std::find(MaterialModel::names.begin(), MaterialModel::names.end(), materialModel);
     if (it != MaterialModel::names.end()) {
@@ -2843,22 +2853,13 @@ void sv4guiSimulationView1d::UpdateGUIWall()
         auto k3 = QString::fromStdString(job->GetWallProp("Olufsen Material K3")); 
         auto exponent = QString::fromStdString(job->GetWallProp("Olufsen Material Exponent")); 
         auto pressure = QString::fromStdString(job->GetWallProp("Olufsen Material Pressure")); 
-        ui->OlufsenMatProp_k1_LineEdit->setText(k1);
-        ui->OlufsenMatProp_k2_LineEdit->setText(k2);
-        ui->OlufsenMatProp_k3_LineEdit->setText(k3);
-        ui->OlufsenMatProp_Exp_LineEdit->setText(exponent);
+        ui->OlufsenMatProp_K1_LineEdit->setText(k1);
+        ui->OlufsenMatProp_K2_LineEdit->setText(k2);
+        ui->OlufsenMatProp_K3_LineEdit->setText(k3);
+        ui->OlufsenMatProp_Exponent_LineEdit->setText(exponent);
         ui->OlufsenMatProp_Pressure_LineEdit->setText(pressure);
     }
 
-    if (!m_Model) {
-        return;
-    }
-
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
-
-    if (modelElement == NULL) {
-        return;
-    }
 }
 
 //-----------------
@@ -2867,6 +2868,7 @@ void sv4guiSimulationView1d::UpdateGUIWall()
 //
 void sv4guiSimulationView1d::UpdateGUISolver()
 {
+    //MITK_INFO << "--------- UpdateGUISolver ----------"; 
     if(!m_MitkJob) {
         return;
     }
@@ -2978,6 +2980,7 @@ void sv4guiSimulationView1d::UpdateGUISolver()
 //
 void sv4guiSimulationView1d::UpdateGUIJob()
 {
+    //MITK_INFO << "--------- UpdateGUIJob ----------"; 
     if (!m_MitkJob) {
         return;
     }
@@ -3061,6 +3064,7 @@ std::vector<std::string> sv4guiSimulationView1d::GetMeshNames()
 
 void sv4guiSimulationView1d::UpdateGUIRunDir()
 {
+    //MITK_INFO << "--------- UpdateGUIRunDir ----------";
     ui->lineEditResultDir->clear();
 
     if(m_JobNode.IsNull())
@@ -3146,7 +3150,7 @@ void sv4guiSimulationView1d::CreateSimulationFiles()
 void sv4guiSimulationView1d::RunJob()
 {
     auto msg = "[sv4guiSimulationView1d::RunJob] ";
-    MITK_INFO << msg << "--------- RunJob ----------"; 
+    //MITK_INFO << msg << "--------- RunJob ----------"; 
 
     if (!m_MitkJob) {
         return;
@@ -3976,10 +3980,10 @@ bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string&
     MITK_INFO << msg << "materialModelIndex: " << materialModelIndex;
 
     if (materialModelIndex == 0) {
-        auto k1 = ui->OlufsenMatProp_k1_LineEdit->text().trimmed().toStdString();
-        auto k2 = ui->OlufsenMatProp_k2_LineEdit->text().trimmed().toStdString();
-        auto k3 = ui->OlufsenMatProp_k3_LineEdit->text().trimmed().toStdString();
-        auto exponent = ui->OlufsenMatProp_Exp_LineEdit->text().trimmed().toStdString();
+        auto k1 = ui->OlufsenMatProp_K1_LineEdit->text().trimmed().toStdString();
+        auto k2 = ui->OlufsenMatProp_K2_LineEdit->text().trimmed().toStdString();
+        auto k3 = ui->OlufsenMatProp_K3_LineEdit->text().trimmed().toStdString();
+        auto exponent = ui->OlufsenMatProp_Exponent_LineEdit->text().trimmed().toStdString();
         auto pressure = ui->OlufsenMatProp_Pressure_LineEdit->text().trimmed().toStdString();
         job->SetWallProp("Material Model", MaterialModel::OLUFSEN.toStdString());
         job->SetWallProp("Olufsen Material K1", k1); 
@@ -4693,6 +4697,7 @@ QString sv4guiSimulationView1d::GetRegistryValue(QString category, QString key)
 //
 void sv4guiSimulationView1d::UpdateJobStatus()
 {
+    MITK_INFO << "---------- UpdateJobStatus ---------"; 
     if(m_JobNode.IsNull()) {
         return;
     }

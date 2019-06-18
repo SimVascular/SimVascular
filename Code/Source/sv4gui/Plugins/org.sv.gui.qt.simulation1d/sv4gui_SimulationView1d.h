@@ -228,6 +228,7 @@ public slots:
     void UpdateGUICap();
 
     void SelectMaterialModel(int index);
+
     void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
     void TableViewVarContextMenuRequested(const QPoint& pos);
     void SetVarE( bool checked = false );
