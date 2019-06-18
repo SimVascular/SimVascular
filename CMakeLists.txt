@@ -197,7 +197,7 @@ ExternalProject_Add(SimVascular
     ${freetype_shared_option}
     -DSV_USE_GDCM:BOOL=ON
     -DSV_USE_ITK:BOOL=ON
-    -DSV_USE_MITK:BOOL=OFF
+    -DSV_USE_MITK:BOOL=ON
     -DSV_USE_MITK_CONFIG:BOOL=OFF
     -DSV_USE_MMG:BOOL=ON
     -DSV_USE_MPICH2:BOOL=OFF

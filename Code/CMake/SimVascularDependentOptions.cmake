@@ -282,5 +282,10 @@ if(SV_USE_SV4_GUI)
 
   set(SV_USE_Qt5 "ON" CACHE BOOL "Force ON" FORCE)
   set(SV_USE_Qt5_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+else()
+  # Not perfect, but download of externals crashes if CppMicroServices isn't
+  # present so leave mitk on originally and then turn off if need be
+  set(SV_USE_MITK "OFF" CACHE BOOL "Force OFF" FORCE)
+  set(SV_USE_MITK_SHARED "OFF" CACHE BOOL "Force OFF" FORCE)
 endif()
 #-----------------------------------------------------------------------------

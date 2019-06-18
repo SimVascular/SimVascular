@@ -817,6 +817,7 @@ function(simvascular_create_plugin)
 endfunction()
 #-----------------------------------------------------------------------------
 
+if(SV_USE_MITK)
 #-----------------------------------------------------------------------------
 function(simvascular_create_module)
 
@@ -891,6 +892,8 @@ function(simvascular_create_module)
 
 endfunction()
 #-----------------------------------------------------------------------------
+endif()
+
 #-----------------------------------------------------------------------------
 #! \ingroup CMakeUtilities
 function(simvascular_extract_option_name_and_value my_opt var_opt_name var_opt_value)
