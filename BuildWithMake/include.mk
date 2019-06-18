@@ -153,9 +153,8 @@ SV_USE_SYSTEM_PYTHON = 1
 SV_USE_QT = 1
 SV_EXTERNALS_PREBUILT_QT_SYSTEM_INSTALL = 0
 SV_USE_SYSTEM_QT = 1
-SV_USE_QT_GUI = 1
-SV_USE_QT_GUI_SHARED = 1
-SV_USE_OPENCASCADE_QT_GUI = 1
+SV_USE_SV4_GUI = 1
+SV_USE_SV4_GUI_SHARED = 1
 
 # -----------------------------------------------------
 # Compile with freetype
@@ -205,9 +204,10 @@ SV_USE_MITK_SEGMENTATION = 1
 SV_IGNORE_PROVISIONING_FILE = 1
 
 # -----------------------------------------------------
-# Compile with tinyxml2
+# Compile with tinyxml and/or tinyxml2
 # -----------------------------------------------------
 
+SV_USE_TINYXML  = 1
 SV_USE_TINYXML2 = 0
 
 # -----------------------------------------------------
@@ -377,8 +377,8 @@ endif
 
 ifeq ($(SV_USE_QT),1)
     GLOBAL_DEFINES += -DSV_USE_QT
-  ifeq ($(SV_USE_QT_GUI),1)
-    GLOBAL_DEFINES += -DSV_USE_QT_GUI
+  ifeq ($(SV_USE_SV4_GUI),1)
+    GLOBAL_DEFINES += -DSV_USE_SV4_GUI
   endif
 endif
 
@@ -392,18 +392,20 @@ endif
 
 ifeq ($(SV_USE_MITK),1)
   GLOBAL_DEFINES += -DSV_USE_MITK
-endif
-
-ifeq ($(SV_USE_MITK_SEGMENTATION),1)
-  GLOBAL_DEFINES += -DSV_USE_MITK_SEGMENTATION
-endif
-
-ifeq ($(SV_IGNORE_PROVISIONING_FILE),1)
-  GLOBAL_DEFINES += -DSV_IGNORE_PROVISIONING_FILE
+  ifeq ($(SV_USE_MITK_SEGMENTATION),1)
+    GLOBAL_DEFINES += -DSV_USE_MITK_SEGMENTATION
+  endif
+  ifeq ($(SV_IGNORE_PROVISIONING_FILE),1)
+    GLOBAL_DEFINES += -DSV_IGNORE_PROVISIONING_FILE
+  endif
 endif
 
 ifeq ($(SV_USE_GDCM),1)
   GLOBAL_DEFINES += -DSV_USE_GDCM
+endif
+
+ifeq ($(SV_USE_TINYXML),1)
+  GLOBAL_DEFINES += -DSV_USE_TINYXML
 endif
 
 ifeq ($(SV_USE_TINYXML2),1)
@@ -635,8 +637,8 @@ ifeq ($(SV_USE_MITK),1)
 endif
 
 ifeq ($(SV_USE_MITK),1)
-  ifeq ($(SV_USE_QT_GUI),1)
-    ifeq ($(SV_USE_QT_GUI_SHARED),1)
+  ifeq ($(SV_USE_SV4_GUI),1)
+    ifeq ($(SV_USE_SV4_GUI_SHARED),1)
        SHARED_LIBDIRS += ../Code/Source/sv4gui/Plugins
     else
        LIBDIRS += ../Code/Source/sv4gui/Plugins
@@ -813,6 +815,18 @@ ifeq ($(SV_USE_ZLIB),1)
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
   ZLIB_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_ZLIB_NAME)$(LIBLINKEXT)
+endif
+
+# -------
+# tinyxml
+# -------
+
+ifeq ($(SV_USE_TINYXML),1)
+  SV_LIB_THIRDPARTY_TINYXML_NAME=_simvascular_thirdparty_tinyxml
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tinyxml
+  SV_TINYXML_TOP = $(TOP)/../Code/ThirdParty/tinyxml
+  SV_TINYXML_INCDIR  = -I $(SV_TINYXML_TOP)
+  SV_TINYXML_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_TINYXML_NAME)$(LIBLINKEXT)
 endif
 
 # --------

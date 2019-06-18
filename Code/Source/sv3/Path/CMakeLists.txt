@@ -43,7 +43,7 @@ if(SV_USE_PYTHON)
 	  ${PYTHON_INCLUDE_DIRS})
 endif()
 
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
 
 set(CXXSRCS sv3_PathElement.cxx sv3_PathGroup.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx 
   )
@@ -63,6 +63,10 @@ endif()
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_COMMON_NAME})
+
+if(SV_USE_TINYXML)
+  target_link_libraries(${lib} ${TINYXML_LIBRARY})
+endif()
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)

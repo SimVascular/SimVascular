@@ -129,6 +129,7 @@ simvascular_add_new_external(OpenCASCADE ${OpenCASCADE_VERSION} ON ON opencascad
 
 # MITK
 simvascular_add_new_external(MITK ${MITK_VERSION} ON ON mitk)
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -143,7 +144,9 @@ option(SV_USE_TETGEN "Enable Tetgen Meshing Plugin" ON)
 
 option(SV_USE_TETGEN_ADAPTOR "Option to use open source mesh adaption" ON)
 
-option(SV_USE_PYTHON "Use Python" OFF)
+option(SV_USE_TINYXML "Use TinyXML" ON)
+
+option(SV_USE_PYTHON "Use Python" ON)
 
 option(SV_USE_TCL "Use Tcl" ON)
 
@@ -167,7 +170,7 @@ option(SV_USE_MODULES_SHARED_LIBRARIES "Option to build the thirdparty libs as s
 
 #-----------------------------------------------------------------------------
 # Option to build qt GUI
-option(SV_USE_QT_GUI "Option to build the SimVascular QT GUI" ON)
+option(SV_USE_SV4_GUI "Option to build the SimVascular QT GUI" ON)
 
 option(SV_USE_QT "Option to build the SimVascular QT" ON)
 

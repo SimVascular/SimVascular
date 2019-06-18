@@ -36,7 +36,7 @@
 
 #include <sv3CommonExports.h>
 
-#include <tinyxml.h>
+#include <simvascular_tinyxml.h>
 
 #include <list>
 #include <array>

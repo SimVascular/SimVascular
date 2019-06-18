@@ -38,7 +38,7 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.7.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 if (POLICY CMP0040)
 	cmake_policy(SET CMP0040 OLD)
@@ -246,7 +246,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Modules
-if(SV_USE_QT_GUI)
+if(SV_USE_SV4_GUI)
   set(SV_MODULE_DIRS ${SV_MODULE_DIRS}
     "Source/sv4gui/Modules/Common"
     "Source/sv4gui/Modules/Path"
@@ -284,7 +284,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Plugins
-if(SV_USE_QT_GUI)
+if(SV_USE_SV4_GUI)
   if(NOT SV_USE_MITK_CONFIG)
       set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
       "Source/sv4gui/Plugins/org.sv.projectdatanodes"
@@ -431,7 +431,7 @@ endforeach()
 # Setup Plugins for provisioning file, must after add_subdirectory for Modules
 include(${CMAKE_CURRENT_SOURCE_DIR}/Source/sv4gui/Plugins/PluginList.cmake)
 if(SV_USE_MITK_CONFIG)
-  if(SV_USE_QT_GUI)
+  if(SV_USE_SV4_GUI)
     macro(GetMyTargetLibraries all_target_libraries varname)
       set(re_ctkplugin "^org_sv_[a-zA-Z0-9_]+$")
       set(_tmp_list)
@@ -467,7 +467,7 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
-if(SV_USE_QT_GUI)
+if(SV_USE_SV4_GUI)
   include(SimVascularInstallQt)
 endif()
 include(SimVascularInstallLibs)

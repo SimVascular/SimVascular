@@ -35,7 +35,7 @@ TOP=../../../../BuildWithMake
 include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(PYTHON_INCDIR) $(VTK_INCDIRS) \
-           $(SV_TINYXML2_INCDIR)
+           $(SV_TINYXML_INCDIR) $(SV_TINYXML2_INCDIR)
 
 # hack until we don't use tinyxml from mitk
 ifeq ($(SV_USE_MITK),0)
@@ -65,8 +65,9 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT)
 
-# hack until we don't use tinyxml from mitk
-DLLLIBS += $(LIBPATH_COMPILER_FLAG)$(MITK_BINDIR)/lib $(LIBFLAG)tinyxml$(LIBLINKEXT)
+ifeq ($(SV_USE_TINYXML),1)
+  DLLLIBS += $(SV_TINYXML_LIBS)
+endif
 
 ifeq ($(SV_USE_TINYXML2),1)
   DLLLIBS += $(SV_TINYXML2_LIBS)

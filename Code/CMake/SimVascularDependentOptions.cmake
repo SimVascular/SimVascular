@@ -74,7 +74,11 @@ if(WIN32)
 	if (SV_USE_WIN32_REGISTRY)
 	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_WIN32_REGISTRY")
 	endif()
-	
+        if(SV_USE_SV4_GUI)
+	  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+        else()
+	  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
+	endif()
 endif()
 #-----------------------------------------------------------------------------
 
@@ -246,7 +250,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Gui Options: Qt GUI
-if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
+if(SV_USE_SV4_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
   SimVascularFunctionCheckCompilerFlags("-std=c++11" SimVascular_CXX11_FLAG)
   if(NOT SimVascular_CXX11_FLAG)
     # Older gcc compilers use -std=c++0x
@@ -258,7 +262,7 @@ if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
   endif()
 endif()
 
-if(SV_USE_QT_GUI)
+if(SV_USE_SV4_GUI)
   set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
   set(SV_USE_ITK "ON" CACHE BOOL "Force ON" FORCE)
@@ -270,7 +274,18 @@ if(SV_USE_QT_GUI)
   set(SV_USE_GDCM "ON" CACHE BOOL "Force ON" FORCE)
   set(SV_USE_GDCM_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-  #set(SV_USE_PYTHON "ON" CACHE BOOL "Force ON" FORCE)
-  #set(SV_USE_PYTHON_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_PYTHON "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_PYTHON_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+
+  set(SV_USE_QT "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_QT_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+
+  set(SV_USE_Qt5 "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_Qt5_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+else()
+  # Not perfect, but download of externals crashes if CppMicroServices isn't
+  # present so leave mitk on originally and then turn off if need be
+  set(SV_USE_MITK "OFF" CACHE BOOL "Force OFF" FORCE)
+  set(SV_USE_MITK_SHARED "OFF" CACHE BOOL "Force OFF" FORCE)
 endif()
 #-----------------------------------------------------------------------------

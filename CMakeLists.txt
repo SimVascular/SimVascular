@@ -100,6 +100,9 @@ mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 # Distribution
 option(SV_ENABLE_DISTRIBUTION "Enable Installer Build for SimVascular" OFF)
 
+# sv4gui
+option(SV_USE_SV4_GUI "Enable SV MITK/Qt Based GUI" ON)
+
 if(APPLE)
   option(SV_EXTERNALS_USE_PREBUILT_QT "Use Externally Installed Qt5" OFF)
   set(SV_EXTERNALS_PREBUILT_QT_PATH "" CACHE PATH "Qt5 Cmake Config File Path" FORCE)
@@ -202,7 +205,7 @@ ExternalProject_Add(SimVascular
     -DSV_USE_PYTHON:BOOL=ON
     -DSV_USE_Qt5:BOOL=ON
     -DSV_USE_QT:BOOL=ON
-    -DSV_USE_QT_GUI:BOOL=ON
+    -DSV_USE_SV4_GUI:BOOL=${SV_USE_SV4_GUI}
     -DSV_USE_MITK_SEGMENTATION:BOOL=${SV_USE_MITK_SEGMENTATION}
     -DSV_USE_SOLVERIO:BOOL=ON
     -DSV_USE_TETGEN_ADAPTOR:BOOL=ON

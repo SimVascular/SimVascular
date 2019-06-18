@@ -32,7 +32,9 @@ project(org_sv_gui_qt_segmentation)
 
 set(lib org_sv_gui_qt_segmentation)
 
-set(SV_LIB_MODULE_ML_NAME "_simvascular_module_ml")
+if(SV_USE_TINYXML)
+  include_directories(${TINYXML_INCLUDE_DIR})
+endif()
 
 if(SV_USE_MITK_CONFIG)
   mitk_create_plugin(

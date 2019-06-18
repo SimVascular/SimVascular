@@ -278,7 +278,7 @@ common-pre-build: mksedscript mk_simvascular_options_h machine-learning-network 
 
 shared-pre-build: common-pre-build
 ifeq ($(SV_USE_MITK),1)
-ifeq ($(SV_USE_QT_GUI),1)
+ifeq ($(SV_USE_SV4_GUI),1)
 	cd ../Code/Source/sv4gui/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
 	cd ../Code/Source/sv4gui/Plugins;$(MAKE) moc qrc ui
 endif
@@ -295,7 +295,7 @@ endif
 static-pre-build: common-pre-build
 	cd ../Code/Source/Application;$(MAKE) SV_STATIC_BUILD=1 pre
 ifeq ($(SV_USE_MITK),1)
-ifeq ($(SV_USE_QT_GUI),1)
+ifeq ($(SV_USE_SV4_GUI),1)
 	cd ../Code/Source/sv4gui/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
 	cd ../Code/Source/sv4gui/Plugins;$(MAKE) moc qrc ui
 	cd ../Code/Source/sv4gui/Modules;$(MAKE) moc qrc ui

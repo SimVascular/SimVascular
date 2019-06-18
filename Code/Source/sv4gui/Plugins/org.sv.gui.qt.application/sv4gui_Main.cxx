@@ -40,7 +40,7 @@
 #endif
 #include "vtksys/SystemTools.hxx"
 
-#ifdef SV_USE_QT_GUI
+#ifdef SV_USE_SV4_GUI
   #include <QApplication>
   #include <QDir>
   #include <QVariant>

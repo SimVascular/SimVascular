@@ -129,7 +129,7 @@ if(WIN32)
 endif()
 
 # Add Qt if it was used
-if(SV_USE_QT OR SV_USE_QT_GUI)
+if(SV_USE_QT OR SV_USE_SV4_GUI)
 
    # Qt path usually contains version number and compiler version, so we
    # need to handle it specially

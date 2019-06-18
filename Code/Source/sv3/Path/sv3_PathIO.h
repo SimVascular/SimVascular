@@ -35,7 +35,7 @@
 #include "SimVascular.h"
 #include "sv3_PathElement.h"
 #include "sv3_PathGroup.h"
-#include "tinyxml.h"
+#include "simvascular_tinyxml.h"
 
 #include <sv3PathExports.h>
 

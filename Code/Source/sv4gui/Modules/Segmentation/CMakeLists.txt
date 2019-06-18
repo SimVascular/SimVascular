@@ -52,6 +52,8 @@ simvascular_create_module(
   ${SV_LIB_VTKSVBOOLEAN_NAME})
 #-----------------------------------------------------------------------------
 
+include_directories(${TINYXML_INCLUDE_DIR})
+
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib}
     RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables

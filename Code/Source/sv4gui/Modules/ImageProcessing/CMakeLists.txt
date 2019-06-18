@@ -28,8 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#set(lib ${SV_LIB_MODULE_IMAGEPROCESSING_NAME})
-set(lib "_simvascular_module_imageprocessing")
+set(lib ${SV_LIB_MODULE_IMAGEPROCESSING_NAME})
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(
@@ -41,6 +40,8 @@ simvascular_create_module(
   ${ITK_LIBRARIES}
   ${QT_LIBRARIES})
 #-----------------------------------------------------------------------------
+
+include_directories(${TINYXML_INCLUDE_DIR})
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib}
