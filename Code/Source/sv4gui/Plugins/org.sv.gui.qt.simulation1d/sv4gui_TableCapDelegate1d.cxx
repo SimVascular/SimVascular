@@ -43,12 +43,12 @@ QWidget* sv4guiTableCapDelegate1d::createEditor(QWidget *parent, const QStyleOpt
     switch(column){
     case 1:
     {
-        QComboBox* cb=new QComboBox(parent);
+        QComboBox* cb = new QComboBox(parent);
         cb->addItem("Prescribed Velocities");
         cb->addItem("Resistance");
         cb->addItem("RCR");
-        cb->addItem("Coronary");
-//        cb->addItem("Impedance");
+        //cb->addItem("Coronary");
+        //cb->addItem("Impedance");
         return cb;
     }
     default:

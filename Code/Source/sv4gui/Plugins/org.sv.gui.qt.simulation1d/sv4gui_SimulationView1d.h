@@ -165,6 +165,29 @@ public:
         std::make_tuple(DataInputStateType::SIMULATION_FILES, DataInputStateName::SIMULATION_FILES, false)
     };
 
+    // The MaterialModel class defines the names and parameters 
+    // for 1D simulation material models.
+    //
+    class MaterialModel {
+        public:
+            static const QString LINEAR;
+            static const QString OLUFSEN;
+            static const std::vector<QString> names;
+            class LinearParameters {
+                public:
+                    static const double Ehr;
+                    static const double referencePressure;
+            };
+            class OlufsenParameters {
+                public:
+                    static const QString k1;
+                    static const QString k2;
+                    static const QString k3;
+                    static const QString exponent;
+                    static const QString referencePressure;
+            };
+    };
+
     class SurfaceModelSource {
         public:
             static const QString MESH_PLUGIN;
@@ -205,7 +228,8 @@ public slots:
     void SplitCapBC();
     void UpdateGUICap();
 
-    void WallTypeSelectionChanged(int index);
+    void SelectMaterialModel(int index);
+
     void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
     void TableViewVarContextMenuRequested(const QPoint& pos);
     void SetVarE( bool checked = false );
@@ -274,6 +298,7 @@ public:
     void UpdateCenterlines();
     vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
+    void AddWallPropertiesParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
     std::vector<std::string> ReadInletFaceNames(const QString outputDir);
     void WriteBCFiles(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
@@ -303,6 +328,7 @@ public:
 private:
 
     void Create1DMeshControls(QWidget *parent);
+    void CreateWallPropertiesControls(QWidget *parent);
 
     QWidget* m_Parent;
 

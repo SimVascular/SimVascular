@@ -231,6 +231,28 @@ const QString sv4guiSimulationView1d::DataInputStateName::BOUNDRY_CONDITIONS = "
 const QString sv4guiSimulationView1d::DataInputStateName::SOLVER_PARAMETERS = "Solver parameters";
 const QString sv4guiSimulationView1d::DataInputStateName::SIMULATION_FILES = "Simulation files";
 
+// Set default material model parameters.
+//
+const double sv4guiSimulationView1d::MaterialModel::LinearParameters::Ehr = 0.0;
+const double sv4guiSimulationView1d::MaterialModel::LinearParameters::referencePressure = 0.0;
+//
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k1 = "0.0";
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k2 = "-22.5267"; 
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k3 = "2.65e5";
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::exponent = "0.0";
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::referencePressure = "0.0";
+
+// Set material model names.
+//
+const QString sv4guiSimulationView1d::MaterialModel::LINEAR = "LINEAR";
+const QString sv4guiSimulationView1d::MaterialModel::OLUFSEN = "OLUFSEN";
+const std::vector<QString> sv4guiSimulationView1d::MaterialModel::names = 
+{
+   // [TODO:Davep] Currentliy only the OLUFSEN is supported.
+   //sv4guiSimulationView1d::MaterialModel::LINEAR, 
+   sv4guiSimulationView1d::MaterialModel::OLUFSEN
+};
+
 //------------------------
 // sv4guiSimulationView1d
 //------------------------
@@ -332,39 +354,22 @@ sv4guiSimulationView1d::~sv4guiSimulationView1d()
 //
 void sv4guiSimulationView1d::EnableConnection(bool able)
 {
-    if(able && !m_ConnectionEnabled)
-    {
-        connect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        connect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
-        connect(ui->lineEditThickness, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditE, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditNu, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditKcons, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditWallDensity, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        connect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+    auto slot = SLOT(UpdateSimJob());
 
-        m_ConnectionEnabled=able;
+    if (able && !m_ConnectionEnabled) {
+        connect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
+        connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        m_ConnectionEnabled = able;
     }
 
-    if(!able && m_ConnectionEnabled)
-    {
-        disconnect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        disconnect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
-        disconnect(ui->lineEditThickness, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditE, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditNu, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditKcons, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditWallDensity, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-        disconnect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
-        //disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
-
-        m_ConnectionEnabled=able;
+    if (!able && m_ConnectionEnabled) {
+        disconnect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        disconnect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        disconnect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
+        disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        m_ConnectionEnabled = able;
     }
 }
 
@@ -382,7 +387,7 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
 void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 {
     auto msg = "[sv4guiSimulationView1d::CreateQtPartControl] ";
-    MITK_INFO << msg << "--------- CreateQtPartControl ----------"; 
+    //MITK_INFO << msg << "--------- CreateQtPartControl ----------"; 
     m_Parent=parent;
     ui->setupUi(parent);
 
@@ -409,21 +414,18 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     //
     m_TableModelCap = new QStandardItemModel(this);
     ui->tableViewCap->setModel(m_TableModelCap);
-    sv4guiTableCapDelegate1d* itemDelegate=new sv4guiTableCapDelegate1d(this);
+    sv4guiTableCapDelegate1d* itemDelegate = new sv4guiTableCapDelegate1d(this);
     ui->tableViewCap->setItemDelegateForColumn(1,itemDelegate);
 
     connect(ui->tableViewCap->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), 
       this, SLOT(TableCapSelectionChanged(const QItemSelection&, const QItemSelection&)));
-
-    connect(ui->tableViewCap, SIGNAL(doubleClicked(const QModelIndex&)), this, 
-      SLOT(TableViewCapDoubleClicked(const QModelIndex&)) );
-
-    connect(ui->tableViewCap, SIGNAL(customContextMenuRequested(const QPoint&)), this, 
-      SLOT(TableViewCapContextMenuRequested(const QPoint&)) );
+    connect(ui->tableViewCap, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(TableViewCapDoubleClicked(const QModelIndex&)));
+    connect(ui->tableViewCap, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(TableViewCapContextMenuRequested(const QPoint&)));
 
     m_TableMenuCap = new QMenu(ui->tableViewCap);
     QAction* setBCAction = m_TableMenuCap->addAction("Set BC");
-    connect( setBCAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowCapBCWidget(bool) ) );
+    connect(setBCAction, SIGNAL(triggered(bool)) , this, SLOT(ShowCapBCWidget(bool)));
+
     /* [DaveP] I don't think we needs these.
     QAction* setPressureAction = m_TableMenuCap->addAction("Set Distal Pressure");
     connect( setPressureAction, SIGNAL( triggered(bool) ) , this, SLOT( SetDistalPressure(bool) ) );
@@ -438,7 +440,6 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     m_CapBCWidget->move(400,400);
     m_CapBCWidget->hide();
     m_CapBCWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
-
     connect(m_CapBCWidget,SIGNAL(accepted()), this, SLOT(SetCapBC()));
 
     // Split Resistance BCs.
@@ -449,11 +450,10 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 
     connect(m_SplitBCWidget,SIGNAL(accepted()), this, SLOT(SplitCapBC()));
 
-    // Wall panel and var table.
-    connect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(WallTypeSelectionChanged(int )));
-    ui->widgetConstant->hide();
-    ui->widgetVariable->hide();
+    // Wall properties panel. 
+    CreateWallPropertiesControls(parent);
 
+    /*
     m_TableModelVar = new QStandardItemModel(this);
     ui->tableViewVar->setModel(m_TableModelVar);
 
@@ -468,6 +468,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     QAction* setVarEAction=m_TableMenuVar->addAction("Set Elastic Modulus ");
     connect( setVarThicknessAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarThickness(bool) ) );
     connect( setVarEAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarE(bool) ) );
+    */
 
     // Solver parameters table.
     //
@@ -510,11 +511,11 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 void sv4guiSimulationView1d::Update1DMesh()
 {
     auto msg = "[sv4guiSimulationView1d::Update1DMesh] ";
-    MITK_INFO << msg << "--------- Update1DMesh ----------"; 
+    //MITK_INFO << msg << "--------- Update1DMesh ----------"; 
 
     if ((m_1DMeshMapper == nullptr) || (m_1DMeshContainer == nullptr)) {
         m_1DMeshContainer = sv4guiSimulationLinesContainer::New();
-        MITK_INFO << msg << "Create m_1DMeshContainer";
+        //MITK_INFO << msg << "Create m_1DMeshContainer";
 
         // Create 1D Mesh node under 'Simulations1d' node.
         auto m_1DMeshNode = mitk::DataNode::New();
@@ -551,7 +552,7 @@ void sv4guiSimulationView1d::Update1DMesh()
 void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
 {
     auto msg = "[sv4guiSimulationView1d::Create1DMeshControls] ";
-    MITK_INFO << msg << "--------- Create1DMeshControls ----------"; 
+    //MITK_INFO << msg << "--------- Create1DMeshControls ----------"; 
 
     // Add surface model widgets.
     //
@@ -620,6 +621,60 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     ui->RunSimulationPushButton->setEnabled(false);
 }
 
+//------------------------------
+// CreateWallPropertiesControls
+//------------------------------
+// Create connections between GUI events (signals) and callbacks (slots)
+// for the 'Wall Properties' toolbox tab.
+//
+// [TODO:Davep] Currently only the OLUFSEN is supported.
+//
+void sv4guiSimulationView1d::CreateWallPropertiesControls(QWidget *parent)
+{
+    // Setup the material model combination box.
+    //
+    connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int)), this, SLOT(SelectMaterialModel(int)));
+    for (auto const& name : MaterialModel::names) {
+        ui->MaterialModelComboBox->addItem(name);
+    }
+
+    // Setup Linear material parameters.
+    //connect(ui->LinearMatProp_Ehr_LineEdit, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+
+    // Setup Olufsen material parameters.
+    //
+    auto signal = SIGNAL(returnPressed());
+    auto slot = SLOT(UpdateSimJob());
+    connect(ui->OlufsenMatProp_K1_LineEdit, signal, this, slot);
+    connect(ui->OlufsenMatProp_K1_LineEdit, signal, this, slot); 
+    connect(ui->OlufsenMatProp_K3_LineEdit, signal, this, slot);
+    connect(ui->OlufsenMatProp_Exponent_LineEdit, signal, this, slot);
+    connect(ui->OlufsenMatProp_Pressure_LineEdit, signal, this, slot);
+
+    // Create a validator that allows only valid float input.
+    QDoubleValidator *validDouble = new QDoubleValidator(this);
+    validDouble->setNotation(QDoubleValidator::ScientificNotation);
+
+    // Set default values.
+    ui->OlufsenMatProp_K1_LineEdit->setText(MaterialModel::OlufsenParameters::k1);
+    ui->OlufsenMatProp_K1_LineEdit->setValidator(validDouble);
+    ui->OlufsenMatProp_K2_LineEdit->setText(MaterialModel::OlufsenParameters::k2);
+    ui->OlufsenMatProp_K2_LineEdit->setValidator(validDouble);
+    ui->OlufsenMatProp_K3_LineEdit->setText(MaterialModel::OlufsenParameters::k3);
+    ui->OlufsenMatProp_K3_LineEdit->setValidator(validDouble);
+    // [TODO:DaveP] The expoennt and pressure parameters are not implemented yet.
+    ui->OlufsenMatProp_Exponent_Label->setEnabled(false);
+    ui->OlufsenMatProp_Exponent_LineEdit->setEnabled(false);
+    ui->OlufsenMatProp_Pressure_Label->setEnabled(false);
+    ui->OlufsenMatProp_Pressure_LineEdit->setEnabled(false);
+    /*
+    ui->OlufsenMatProp_Exponent_LineEdit->setText(MaterialModel::OlufsenParameters::exponent);
+    ui->OlufsenMatProp_Exponent_LineEdit->setValidator(validDouble);
+    ui->OlufsenMatProp_Pressure_LineEdit->setText(MaterialModel::OlufsenParameters::referencePressure);
+    ui->OlufsenMatProp_Pressure_LineEdit->setValidator(validDouble);
+    */
+}
+
 //--------------------------
 // UpdateSurfaceModelSource 
 //--------------------------
@@ -635,8 +690,8 @@ void sv4guiSimulationView1d::UpdateSurfaceModelSource()
     }
 
     auto msg = "[sv4guiSimulationView1d::UpdateSurfaceModelSource] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- UpdateSurfaceModelSource ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- UpdateSurfaceModelSource ----------";
 
     //auto sourceType = ui->surfaceModelComboBox->currentText();
     //std::string sourceType = ui->surfaceModelComboBox->currentText().toStdString();
@@ -671,8 +726,8 @@ void sv4guiSimulationView1d::UpdateSurfaceModelSource()
 void sv4guiSimulationView1d::SelectModelFile()
 {
     auto msg = "[sv4guiSimulationView1d::SelectModelFile] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- SelectModelFile ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- SelectModelFile ----------";
 
     try {
         berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
@@ -752,8 +807,8 @@ void sv4guiSimulationView1d::SelectModelFile()
 void sv4guiSimulationView1d::WriteModel()
 {
     auto msg = "[sv4guiSimulationView1d::WriteModel] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- WriteModel ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- WriteModel ----------";
 
     if ((m_ModelNode == nullptr) || (m_Model == nullptr)) {
         return;
@@ -783,7 +838,7 @@ void sv4guiSimulationView1d::SelectModelInletFaces(bool show)
     }
 
     auto msg = "[sv4guiSimulationView1d::SelectModelFaces] ";
-    MITK_INFO << msg << "--------- SelectModelFaces ----------"; 
+    //MITK_INFO << msg << "--------- SelectModelFaces ----------"; 
 
 /*
     if (m_ModelType != "PolyData") {
@@ -800,7 +855,7 @@ void sv4guiSimulationView1d::SelectModelInletFaces(bool show)
     sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
     std::vector<sv4guiModelElement::svFace*> faces = modelElement->GetFaces();
     std::vector<std::string> caps;
-    MITK_INFO << msg << "Number of model faces: " << faces.size();
+    //MITK_INFO << msg << "Number of model faces: " << faces.size();
 
     for (auto const& face : faces) {
         if ((face == nullptr) || (face->type != "cap")) {
@@ -839,11 +894,11 @@ void sv4guiSimulationView1d::SetModelInletFaces()
     }
 
     auto msg = "[sv4guiSimulationView1d::SetModelInletFaces] ";
-    MITK_INFO << msg << "--------- SetModelInletFaces ----------"; 
+    //MITK_INFO << msg << "--------- SetModelInletFaces ----------"; 
 
     int timeStep = 0;
     std::vector<std::string> inletFaceNames = m_ModelFaceSelectionWidget->GetUsedCapNames();
-    MITK_INFO << msg << "Number of inlet faces selected: " << inletFaceNames.size(); 
+    //MITK_INFO << msg << "Number of inlet faces selected: " << inletFaceNames.size(); 
     if (inletFaceNames.size() == 0) {
         return;
     }
@@ -855,7 +910,7 @@ void sv4guiSimulationView1d::SetModelInletFaces()
     sv4guiModelElement* modelElement = m_Model->GetModelElement(timeStep);
 
     for (const auto& name : inletFaceNames) {
-        MITK_INFO << msg << "Inlet face: " << name; 
+        //MITK_INFO << msg << "Inlet face: " << name; 
         m_ModelInletFaceNames.push_back(name);
         m_ModelInletFaceIds.push_back(modelElement->GetFaceID(name));
     }
@@ -870,14 +925,14 @@ void sv4guiSimulationView1d::SetModelInletFaces()
     } 
     ui->InletFaceNameLabel->setText(QString(m_ModelInletFaceNames[0].c_str()));
     m_ModelInletFaceSelected = true;
-    MITK_INFO << msg << "####### m_ModelInletFaceSelected: " << m_ModelInletFaceSelected; 
+    //MITK_INFO << msg << "####### m_ModelInletFaceSelected: " << m_ModelInletFaceSelected; 
 
     // Set the unselected outlet faces.
     //
     std::vector<std::string> outletFaceNames = m_ModelFaceSelectionWidget->GetUnselectedCapNames();
-    MITK_INFO << msg << "Number of outlet faces not selected: " << outletFaceNames.size();
+    //MITK_INFO << msg << "Number of outlet faces not selected: " << outletFaceNames.size();
     for (const auto& name : outletFaceNames) {
-        MITK_INFO << msg << "Outlet face: " << name;
+        //MITK_INFO << msg << "Outlet face: " << name;
         m_ModelOutletFaceNames.push_back(name);
     }
 
@@ -902,7 +957,7 @@ void sv4guiSimulationView1d::SetModelInletFaces()
         ui->JobStatusValueLabel->setText("Centerlines have not been calculated");
     } else {
         ui->JobStatusValueLabel->setText("Simulation files have not been created");
-        MITK_INFO << msg << "Job status: " << "Simulation files have not been created"; 
+        //MITK_INFO << msg << "Job status: " << "Simulation files have not been created"; 
     }
 
     // Once an inlet face has been selected then centerlines may be calculated.
@@ -936,8 +991,8 @@ void sv4guiSimulationView1d::ShowModel(bool checked)
 void sv4guiSimulationView1d::ResetModel()
 {
     auto msg = "[sv4guiSimulationView1d::ResetModel] ";
-    MITK_INFO << msg << "---------- ResetModel ---------"; 
-    MITK_INFO << msg << "m_1DMeshContainer: " << m_1DMeshContainer;
+    //MITK_INFO << msg << "---------- ResetModel ---------"; 
+   // MITK_INFO << msg << "m_1DMeshContainer: " << m_1DMeshContainer;
 
     // If the model is remeshed before centerlines are created then 
     // there will not be any m_1DMeshContainer or m_CenterlinesNode defined.
@@ -986,8 +1041,8 @@ void sv4guiSimulationView1d::UpdateCenterlinesSource()
     }
 
     auto msg = "[sv4guiSimulationView1d::UpdateCenterlinesSource] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- UpdateCenterlinesSource ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- UpdateCenterlinesSource ----------";
 
     //auto sourceType = ui->centerlinesComboBox->currentText();
     //MITK_INFO << msg << "sourceType: " << sourceType;
@@ -1025,15 +1080,15 @@ void sv4guiSimulationView1d::SetCenterlinesGeometry()
     }
 
     auto msg = "[sv4guiSimulationView1d::SetCenterlinesGeometry] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- SetCenterlinesGeometry ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- SetCenterlinesGeometry ----------";
     auto fileName = m_PluginOutputDirectory + "/centerlines.vtp";
-    MITK_INFO << msg << "File name: " << fileName;
+    //MITK_INFO << msg << "File name: " << fileName;
 
     QFileInfo check_file(fileName);
 
     if (check_file.exists() && check_file.isFile()) {
-        MITK_INFO << msg << "Centerlines file exists.";
+        //MITK_INFO << msg << "Centerlines file exists.";
         m_CenterlinesFileName = fileName;
         m_CenterlinesCalculated = true;
         UpdateCenterlines();
@@ -1047,9 +1102,9 @@ void sv4guiSimulationView1d::SetCenterlinesGeometry()
 void sv4guiSimulationView1d::CalculateCenterlines()
 {
     auto msg = "[sv4guiSimulationView1d::CalculateCenterlines]";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- CalculateCenterlines ----------";
-    MITK_INFO << msg << "Number of inlet faces: " <<  m_ModelInletFaceIds.size();
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- CalculateCenterlines ----------";
+    //MITK_INFO << msg << "Number of inlet faces: " <<  m_ModelInletFaceIds.size();
 
     if (!m_ModelInletFaceSelected) {
         MITK_WARN << "No inlet faces selected.";
@@ -1089,9 +1144,9 @@ void sv4guiSimulationView1d::CalculateCenterlines()
 void sv4guiSimulationView1d::UpdateCenterlines()
 {
     auto msg = "[sv4guiSimulationView1d::UpdateCenterlines] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- UpdateCenterlines ----------";
-    MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- UpdateCenterlines ----------";
+    //MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
 
     if (m_JobNode == nullptr) {
         MITK_WARN << msg << "m_JobNode is null";
@@ -1162,8 +1217,8 @@ void sv4guiSimulationView1d::ShowCenterlines(bool checked)
 void sv4guiSimulationView1d::SelectCenterlinesFile()
 {
     auto msg = "[sv4guiSimulationView1d::SelectCenterlinesFile]";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- SelectCenterlinesFile ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- SelectCenterlinesFile ----------";
 
     try {
         berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
@@ -1216,8 +1271,8 @@ void sv4guiSimulationView1d::SelectCenterlinesFile()
 vtkSmartPointer<vtkPolyData> sv4guiSimulationView1d::ReadCenterlines(const std::string fileName)
 {
     auto msg = "[sv4guiSimulationView1d::ReadCenterlines] ";
-    MITK_INFO << msg << "---------- ReadCenterlines ----------";
-    MITK_INFO << msg << "Read centerlines file: " << fileName;
+    //MITK_INFO << msg << "---------- ReadCenterlines ----------";
+    //MITK_INFO << msg << "Read centerlines file: " << fileName;
 
     // Read centerlines.
     vtkSmartPointer<vtkPolyData> geom = vtkPolyData::New();
@@ -1275,7 +1330,7 @@ mitk::DataNode::Pointer sv4guiSimulationView1d::GetModelFolderDataNode()
 QString sv4guiSimulationView1d::GetModelFileName()
 {
     auto msg = "[sv4guiSimulationView1d::GetModelFileName] ";
-    MITK_INFO << msg << "Model source '" << m_ModelSource << "'";
+    //MITK_INFO << msg << "Model source '" << m_ModelSource << "'";
     QString modelFileName;
 
     if (m_ModelSource == SurfaceModelSource::MODEL_PLUGIN) { 
@@ -1347,25 +1402,25 @@ sv4guiMesh* sv4guiSimulationView1d::GetDataNodeMesh()
 void sv4guiSimulationView1d::Generate1DMesh()
 {
     auto msg = "[sv4guiSimulationView1d::Generate1DMesh] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- Generate1DMesh ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- Generate1DMesh ----------";
 
     if (m_Model == nullptr) { 
         return;
     }
 
-    MITK_INFO << msg << "Output directory: " << m_PluginOutputDirectory;
+    //MITK_INFO << msg << "Output directory: " << m_PluginOutputDirectory;
 
     // Get the file name of the surface model.
     auto modelFileName = m_ModelFileName;
-    MITK_INFO << msg << "Model file: " << modelFileName;
+    //MITK_INFO << msg << "Model file: " << modelFileName;
 
     if (!m_CenterlinesCalculated) {
         QMessageBox::warning(NULL, MsgTitle, "No centerlines have been calculated or centerlines source file set.");
         MITK_ERROR << "No centerlines file is defined.";
         return;
     }
-    MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
+    //MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
 
     auto outputDirectory = m_PluginOutputDirectory.toStdString();
     auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
@@ -1405,8 +1460,8 @@ void sv4guiSimulationView1d::Generate1DMesh()
 void sv4guiSimulationView1d::Show1DMesh()
 {
     auto msg = "[sv4guiSimulationView1d::Show1DMesh] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "---------- Show1DMesh ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "---------- Show1DMesh ----------";
 
     if (m_Model == nullptr) { 
         return;
@@ -1436,9 +1491,9 @@ void sv4guiSimulationView1d::SetElementSize(QString valueArg)
 vtkSmartPointer<vtkPolyData> sv4guiSimulationView1d::Read1DMesh(const std::string fileName)
 {
     auto msg = "[sv4guiSimulationView1d::Read1DMesh] ";
-    MITK_INFO << msg; 
-    MITK_INFO << msg << "---------- Read1DMesh ---------- "; 
-    MITK_INFO << msg << "Read mesh file name: " << fileName;
+    //MITK_INFO << msg; 
+    //MITK_INFO << msg << "---------- Read1DMesh ---------- "; 
+    //MITK_INFO << msg << "Read mesh file name: " << fileName;
 
     // Read 1D mesh into vtkPolyData object.
     //
@@ -1448,7 +1503,7 @@ vtkSmartPointer<vtkPolyData> sv4guiSimulationView1d::Read1DMesh(const std::strin
         MITK_WARN << msg << "Unable to read 1D mesh " << fileName;
         return nullptr;
     }
-    MITK_INFO << msg << "Done! ";
+    //MITK_INFO << msg << "Done! ";
     return geom;
 }
 
@@ -1459,8 +1514,8 @@ vtkSmartPointer<vtkPolyData> sv4guiSimulationView1d::Read1DMesh(const std::strin
 void sv4guiSimulationView1d::ReadMesh()
 {   
     auto msg = "[sv4guiSimulationView1d::ReadMesh] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "--------- ReadMesh ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "--------- ReadMesh ----------";
 }
 
 
@@ -1621,13 +1676,14 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     MITK_INFO << msg << "--------- OnSelectionChanged ----------";
     MITK_INFO << msg << "nodes.size() " << nodes.size();
 
-    if(!IsVisible()) {
+    if (!IsVisible()) {
         return;
     }
 
     if (nodes.size() == 0) {
         RemoveObservers();
         EnableTool(false);
+        m_Parent->setEnabled(false);
         return;
     }
 
@@ -1643,6 +1699,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     if (!mitkJob) {
         RemoveObservers();
         EnableTool(false);
+        m_Parent->setEnabled(false);
         MITK_INFO << msg << " mitkJob == nullptr";
         return;
     }
@@ -1653,6 +1710,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 
     m_JobNode = jobNode;
     m_MitkJob = mitkJob;
+    m_Parent->setEnabled(true);
 
     // Set the plugin output directory.
     m_PluginOutputDirectory = GetJobPath();
@@ -1723,7 +1781,7 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
                 m_ModelCenterlineNodes.emplace_back(name, node);
             }
         } else { 
-            MITK_INFO << msg << "Don't have centerlines.";
+            MITK_INFO << msg << "Don't have centerlines from Model Tool.";
         }
     } else {
         MITK_WARN << msg << "No model has been created!";
@@ -1852,8 +1910,8 @@ void sv4guiSimulationView1d::Hidden()
 void sv4guiSimulationView1d::AddObservers()
 {
     auto msg = "[sv4guiSimulationView1d::AddObservers] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "--------- AddObservers ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "--------- AddObservers ----------";
 
     if(m_ModelNode.IsNotNull()) {
         if(m_ModelNode->GetDataInteractor().IsNull()) {
@@ -1928,8 +1986,8 @@ void sv4guiSimulationView1d::UpdateModelGUI()
     }
 
     auto msg = "[sv4guiSimulationView1d::UpdateModelGUI] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "--------- UpdateModelGUI ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "--------- UpdateModelGUI ----------";
 
     /* [DaveP] This does not work well.
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
@@ -1970,8 +2028,8 @@ void sv4guiSimulationView1d::UpdateGUIBasic()
     }
 
     auto msg = "[sv4guiSimulationView1d::UpdateGUIBasic] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "--------- UpdateGUIBasic ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "--------- UpdateGUIBasic ----------";
 
     sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
 
@@ -2096,8 +2154,8 @@ void sv4guiSimulationView1d::TableViewBasicDoubleClicked(const QModelIndex& inde
 void sv4guiSimulationView1d::UpdateFaceListSelection()
 {
     auto msg = "[sv4guiSimulationView1d::UpdateFaceListSelection] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "--------- UpdateFaceListSelection ----------";
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "--------- UpdateFaceListSelection ----------";
 
     if (!m_Model) {
         return;
@@ -2123,7 +2181,7 @@ void sv4guiSimulationView1d::UpdateFaceListSelection()
         std::string name = itemName->text().toStdString();
 
         if(modelElement->IsFaceSelected(name)) {
-            MITK_INFO << msg << "Face is selected " << name;
+            //MITK_INFO << msg << "Face is selected " << name;
             QModelIndex mIndex=m_TableModelCap->index(i,1);
             ui->tableViewCap->selectionModel()->select(mIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
         }
@@ -2137,6 +2195,7 @@ void sv4guiSimulationView1d::UpdateFaceListSelection()
 
     // Update tableViewVar, GUI Wall Properties / Variable Properties.
     //
+/*
     disconnect( ui->tableViewVar->selectionModel()
                 , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
                 , this
@@ -2159,6 +2218,7 @@ void sv4guiSimulationView1d::UpdateFaceListSelection()
              , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
              , this
              , SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+*/
 
 }
 
@@ -2169,7 +2229,7 @@ void sv4guiSimulationView1d::UpdateFaceListSelection()
 void sv4guiSimulationView1d::TableCapSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
     auto msg = "[sv4guiSimulationView1d::TableCapSelectionChanged] ";
-    MITK_INFO << msg << "------------------- TableCapSelectionChanged ----------";
+    //MITK_INFO << msg << "------------------- TableCapSelectionChanged ----------";
 
     mitk::StatusBar::GetInstance()->DisplayText("");
 
@@ -2207,7 +2267,7 @@ void sv4guiSimulationView1d::TableCapSelectionChanged( const QItemSelection & /*
 void sv4guiSimulationView1d::TableViewCapDoubleClicked(const QModelIndex& index)
 {
     auto msg = "[sv4guiSimulationView1d::TableViewCapDoubleClicked] ";
-    MITK_INFO << msg << "--------- TableViewCapDoubleClicked ----------";
+    //MITK_INFO << msg << "--------- TableViewCapDoubleClicked ----------";
 
     if (index.column()==0) {
         ShowCapBCWidget();
@@ -2229,7 +2289,7 @@ void sv4guiSimulationView1d::TableViewCapContextMenuRequested( const QPoint & po
 void sv4guiSimulationView1d::ShowCapBCWidget(bool)
 {
     auto msg = "[sv4guiSimulationView1d::ShowCapBCWidget] ";
-    MITK_INFO << msg << "--------- ShowCapBCWidget ----------";
+    //MITK_INFO << msg << "--------- ShowCapBCWidget ----------";
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
 
     if(indexesOfSelectedRows.size() < 1) {
@@ -2263,8 +2323,8 @@ void sv4guiSimulationView1d::ShowCapBCWidget(bool)
     props["R Values"] = m_TableModelCap->item(row,14)->text().toStdString();
     props["C Values"] = m_TableModelCap->item(row,15)->text().toStdString();
 
-    MITK_INFO << msg << "capName: " << capName;
-    MITK_INFO << msg << "props[Flow Rate]: " << props["Flow Rate"];
+    //MITK_INFO << msg << "capName: " << capName;
+    //MITK_INFO << msg << "props[Flow Rate]: " << props["Flow Rate"];
 
     m_CapBCWidget->UpdateGUI(capName,props);
 
@@ -2317,7 +2377,7 @@ void sv4guiSimulationView1d::SetDistalPressure(bool)
 void  sv4guiSimulationView1d::SetCapBC()
 {
     auto msg = "[sv4guiSimulationView1d::SetCapBC] ";
-    MITK_INFO << msg << "--------- SetCapBC ----------"; 
+    //MITK_INFO << msg << "--------- SetCapBC ----------"; 
     QModelIndexList indexesOfSelectedRows = ui->tableViewCap->selectionModel()->selectedRows();
 
     if (indexesOfSelectedRows.size() < 1) {
@@ -2331,7 +2391,7 @@ void  sv4guiSimulationView1d::SetCapBC()
 
     for (auto const& item : indexesOfSelectedRows) {
         auto row = item.row();
-        MITK_INFO << msg << "row: " << row; 
+        //MITK_INFO << msg << "row: " << row; 
         m_TableModelCap->item(row,1)->setText(QString::fromStdString(props["BC Type"]));
 
         if (props["BC Type"] == "Resistance" || props["BC Type"] == "RCR" || props["BC Type"] == "Coronary") {
@@ -2661,31 +2721,19 @@ void sv4guiSimulationView1d::UpdateGUICap()
 
 }
 
-//--------------------------
-// WallTypeSelectionChanged
-//--------------------------
+//---------------------
+// SelectMaterialModel
+//---------------------
 //
-void sv4guiSimulationView1d::WallTypeSelectionChanged(int index)
+void sv4guiSimulationView1d::SelectMaterialModel(int index)
 {
-    switch(index)
-    {
-    case 0:
-        ui->widgetConstant->hide();
-        ui->widgetVariable->hide();
-        break;
-    case 1:
-        ui->widgetThicknessE->show();
-        ui->widgetConstant->show();
-        ui->widgetVariable->hide();
-        break;
-    case 2:
-        ui->widgetThicknessE->hide();
-        ui->widgetConstant->show();
-        ui->widgetVariable->show();
-        break;
-    default:
-        break;
-    }
+    //auto msg = "[sv4guiSimulationView1d::SelectMaterialModel] ";
+    //MITK_INFO << msg << "---------- SelectMaterialModel ----------  ";
+    auto matModelName = MaterialModel::names[index]; 
+    //MITK_INFO << msg << "matModelName: " << matModelName;
+
+    // Show widgets for the selected material model.
+    ui->MaterialModel_StackedWidget->setCurrentIndex(index);
 }
 
 //--------------------------
@@ -2694,6 +2742,7 @@ void sv4guiSimulationView1d::WallTypeSelectionChanged(int index)
 //
 void sv4guiSimulationView1d::TableVarSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
+/*
     if(!m_Model) {
         return;
     }
@@ -2712,6 +2761,7 @@ void sv4guiSimulationView1d::TableVarSelectionChanged( const QItemSelection & /*
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+*/
 }
 
 void sv4guiSimulationView1d::TableViewVarContextMenuRequested( const QPoint & pos )
@@ -2721,6 +2771,7 @@ void sv4guiSimulationView1d::TableViewVarContextMenuRequested( const QPoint & po
 
 void sv4guiSimulationView1d::SetVarThickness(bool)
 {
+/*
     QModelIndexList indexesOfSelectedRows = ui->tableViewVar->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
     {
@@ -2739,10 +2790,12 @@ void sv4guiSimulationView1d::SetVarThickness(bool)
         int row=(*it).row();
         m_TableModelVar->item(row,2)->setText(thickness);
     }
+*/
 }
 
 void sv4guiSimulationView1d::SetVarE(bool)
 {
+/*
     QModelIndexList indexesOfSelectedRows = ui->tableViewVar->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
     {
@@ -2761,6 +2814,7 @@ void sv4guiSimulationView1d::SetVarE(bool)
         int row=(*it).row();
         m_TableModelVar->item(row,3)->setText(modulus);
     }
+*/
 }
 
 //---------------
@@ -2769,88 +2823,43 @@ void sv4guiSimulationView1d::SetVarE(bool)
 //
 void sv4guiSimulationView1d::UpdateGUIWall()
 {
-    if(!m_MitkJob) {
+    if (!m_MitkJob) {
         return;
     }
 
-    sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
-    if(job==NULL) {
-        job=new sv4guiSimJob1d();
+    auto msg = "[sv4guiSimulationView1d::UpdateGUIWall] ";
+    //MITK_INFO << msg << "--------- UpdateGUIWall ----------"; 
+
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+
+    if (job == NULL) {
+        job = new sv4guiSimJob1d();
     }
 
-    if(job->GetWallProp("Type")=="rigid") {
-        ui->comboBoxWallType->setCurrentIndex(0);
-    } else if(job->GetWallProp("Type")=="deformable") {
-        ui->comboBoxWallType->setCurrentIndex(1);
-    } else if(job->GetWallProp("Type")=="variable") {
-        ui->comboBoxWallType->setCurrentIndex(2);
+    // Update material model.
+    //
+    auto materialModel = QString::fromStdString(job->GetWallProp("Material Model"));
+    auto it = std::find(MaterialModel::names.begin(), MaterialModel::names.end(), materialModel);
+    if (it != MaterialModel::names.end()) {
+        auto index = std::distance(MaterialModel::names.begin(), it);
+        ui->MaterialModelComboBox->setCurrentIndex(index);
     } else {
-        ui->comboBoxWallType->setCurrentIndex(0);
-    }
-
-    ui->lineEditThickness->setText(QString::fromStdString(job->GetWallProp("Thickness")));
-    ui->lineEditE->setText(QString::fromStdString(job->GetWallProp("Elastic Modulus")));
-
-    QString pratio=QString::fromStdString(job->GetWallProp("Poisson Ratio"));
-    if(pratio=="")
-        pratio="0.5";
-    QString kconst=QString::fromStdString(job->GetWallProp("Shear Constant"));
-    if(kconst=="")
-        kconst="0.833333";
-
-    ui->lineEditNu->setText(pratio);
-    ui->lineEditKcons->setText(kconst);
-
-    ui->lineEditWallDensity->setText(QString::fromStdString(job->GetWallProp("Density")));
-    ui->lineEditPressure->setText(QString::fromStdString(job->GetWallProp("Pressure")));
-
-    if(!m_Model)
         return;
-
-    sv4guiModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL) return;
-
-    m_TableModelVar->clear();
-
-    QStringList varHeaders;
-    varHeaders << "Name" << "Type" << "Thickness" << "E. Modulus";
-    m_TableModelVar->setHorizontalHeaderLabels(varHeaders);
-    m_TableModelVar->setColumnCount(4);
-
-    std::vector<sv4guiModelElement::svFace*> faces=modelElement->GetFaces();
-    int rowIndex=-1;
-    for(int i=0;i<faces.size();i++)
-    {
-        sv4guiModelElement::svFace* face=faces[i];
-        if(face==NULL )
-            continue;
-
-        rowIndex++;
-        m_TableModelVar->insertRow(rowIndex);
-
-        QStandardItem* item;
-
-        item= new QStandardItem(QString::fromStdString(face->name));
-        item->setEditable(false);
-        m_TableModelVar->setItem(rowIndex, 0, item);
-
-        item= new QStandardItem(QString::fromStdString(face->type));
-        item->setEditable(false);
-        m_TableModelVar->setItem(rowIndex, 1, item);
-
-        item= new QStandardItem(QString::fromStdString(job->GetVarProp(face->name,"Thickness")));
-        m_TableModelVar->setItem(rowIndex, 2, item);
-
-        item= new QStandardItem(QString::fromStdString(job->GetVarProp(face->name,"Elastic Modulus")));
-        m_TableModelVar->setItem(rowIndex, 3, item);
     }
 
-    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-    ui->tableViewVar->horizontalHeader()->resizeSection(1,60);
-    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    ui->tableViewVar->horizontalHeader()->resizeSection(2,80);
-    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+    if (materialModel == MaterialModel::OLUFSEN) { 
+        auto k1 = QString::fromStdString(job->GetWallProp("Olufsen Material K1")); 
+        auto k2 = QString::fromStdString(job->GetWallProp("Olufsen Material K2")); 
+        auto k3 = QString::fromStdString(job->GetWallProp("Olufsen Material K3")); 
+        auto exponent = QString::fromStdString(job->GetWallProp("Olufsen Material Exponent")); 
+        auto pressure = QString::fromStdString(job->GetWallProp("Olufsen Material Pressure")); 
+        ui->OlufsenMatProp_K1_LineEdit->setText(k1);
+        ui->OlufsenMatProp_K2_LineEdit->setText(k2);
+        ui->OlufsenMatProp_K3_LineEdit->setText(k3);
+        ui->OlufsenMatProp_Exponent_LineEdit->setText(exponent);
+        ui->OlufsenMatProp_Pressure_LineEdit->setText(pressure);
+    }
+
 }
 
 //-----------------
@@ -2859,12 +2868,14 @@ void sv4guiSimulationView1d::UpdateGUIWall()
 //
 void sv4guiSimulationView1d::UpdateGUISolver()
 {
+    //MITK_INFO << "--------- UpdateGUISolver ----------"; 
     if(!m_MitkJob) {
         return;
     }
 
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
-    if(job == NULL) {
+
+    if (job == NULL) {
         job = new sv4guiSimJob1d();
     }
 
@@ -2969,6 +2980,7 @@ void sv4guiSimulationView1d::UpdateGUISolver()
 //
 void sv4guiSimulationView1d::UpdateGUIJob()
 {
+    //MITK_INFO << "--------- UpdateGUIJob ----------"; 
     if (!m_MitkJob) {
         return;
     }
@@ -3052,6 +3064,7 @@ std::vector<std::string> sv4guiSimulationView1d::GetMeshNames()
 
 void sv4guiSimulationView1d::UpdateGUIRunDir()
 {
+    //MITK_INFO << "--------- UpdateGUIRunDir ----------";
     ui->lineEditResultDir->clear();
 
     if(m_JobNode.IsNull())
@@ -3137,7 +3150,7 @@ void sv4guiSimulationView1d::CreateSimulationFiles()
 void sv4guiSimulationView1d::RunJob()
 {
     auto msg = "[sv4guiSimulationView1d::RunJob] ";
-    MITK_INFO << msg << "--------- RunJob ----------"; 
+    //MITK_INFO << msg << "--------- RunJob ----------"; 
 
     if (!m_MitkJob) {
         return;
@@ -3359,6 +3372,9 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     auto viscosity = m_TableModelBasic->item(TableModelBasicRow::Viscosity,1)->text().trimmed().toStdString();
     pythonInterface.AddParameter(params.VISCOSITY, viscosity);
 
+    // Add wall properties. 
+    AddWallPropertiesParameters(job, pythonInterface);
+
     // Add solver parameters.
     auto numTimeSteps = m_TableModelSolver->item(TableModelSolverRow::NumberofTimesteps,1)->text().trimmed().toStdString();
     pythonInterface.AddParameter(params.NUM_TIME_STEPS, numTimeSteps);
@@ -3388,6 +3404,31 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     m_SimulationFilesCreated = true;
 
     return true;
+}
+
+//-----------------------------
+// AddWallPropertiesParameters
+//-----------------------------
+// Add wall properties parameters for the Python script.
+//
+void sv4guiSimulationView1d::AddWallPropertiesParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface)
+{
+    auto params = pythonInterface.m_ParameterNames;
+    auto materialModel = job->GetWallProp("Material Model");
+    pythonInterface.AddParameter(params.MATERIAL_MODEL, materialModel);
+
+    if (QString::fromStdString(materialModel) == MaterialModel::OLUFSEN) { 
+        auto k1 = job->GetWallProp("Olufsen Material K1"); 
+        auto k2 = job->GetWallProp("Olufsen Material K2"); 
+        auto k3 = job->GetWallProp("Olufsen Material K3"); 
+        auto exponent = job->GetWallProp("Olufsen Material Exponent"); 
+        auto pressure = job->GetWallProp("Olufsen Material Pressure"); 
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_K1, k1);
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_K2, k2);
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_K3, k3);
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_EXP, exponent);
+        pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_PRESSURE, pressure);
+    }
 }
 
 //--------------
@@ -3929,123 +3970,27 @@ bool sv4guiSimulationView1d::SetCapBcs(sv4guiSimJob1d* job, std::string& msg, bo
 //-------------------
 // SetWallProperites
 //-------------------
+// Set the job wall properties data.
 //
-bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string& msg, bool checkValidity)
+bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string& errorMsg, bool checkValidity)
 {
-    int wallTypeIndex = ui->comboBoxWallType->currentIndex();
+    auto msg = "[sv4guiSimulationView1d::SetWallProperites] ";
+    MITK_INFO << msg << "--------- SetWallProperites ----------"; 
+    int materialModelIndex = ui->MaterialModelComboBox->currentIndex();
+    MITK_INFO << msg << "materialModelIndex: " << materialModelIndex;
 
-    if(wallTypeIndex==0) {
-        job->SetWallProp("Type","rigid");
-    } else if(wallTypeIndex==1) {
-        std::string thickness=ui->lineEditThickness->text().trimmed().toStdString();
-        std::string modulus=ui->lineEditE->text().trimmed().toStdString();
-        std::string nu=ui->lineEditNu->text().trimmed().toStdString();
-        std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
-        std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
-        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
-
-        if(checkValidity) {
-            if(!IsDouble(thickness)) {
-                msg="wall thickness error: " + thickness;
-                return false;
-            }
-
-            if(!IsDouble(modulus)) {
-                msg="wall elastic modulus error: " + modulus;
-                return false;
-            }
-
-            if(!IsDouble(nu)) {
-                msg="wall Poisson ratio error: " + nu;
-                return false;
-            }
-
-            if(!IsDouble(kcons)) {
-                msg="wall shear constant error: " + kcons;
-                return false;
-            }
-
-            if(wallDensity!="") {
-                if(!IsDouble(wallDensity)) {
-                    msg="wall density error: " + wallDensity;
-                    return false;
-                }
-            } else {
-                wallDensity=job->GetBasicProp("Fluid Density");
-            }
-
-            if(!IsDouble(pressure)) {
-                msg="wall pressure error: " + pressure;
-                return false;
-            }
-        }
-
-        job->SetWallProp("Type","deformable");
-        job->SetWallProp("Thickness",thickness);
-        job->SetWallProp("Elastic Modulus",modulus);
-        job->SetWallProp("Poisson Ratio",nu);
-        job->SetWallProp("Shear Constant",kcons);
-        job->SetWallProp("Density",wallDensity);
-        job->SetWallProp("Pressure",pressure);
-
-    } else if(wallTypeIndex==2) {
-        std::string nu=ui->lineEditNu->text().trimmed().toStdString();
-        std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
-        std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
-        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
-
-        if(checkValidity) {
-            if(!IsDouble(nu)) {
-                msg="wall Poisson ratio error: " + nu;
-                return false;
-            }
-
-            if(!IsDouble(kcons)) {
-                msg="wall shear constant error: " + kcons;
-                return false;
-            }
-
-            if(wallDensity!="") {
-                if(!IsDouble(wallDensity)) {
-                    msg="wall density error: " + wallDensity;
-                    return false;
-                }
-            } else {
-                wallDensity=job->GetBasicProp("Fluid Density");
-            }
-
-            if(!IsDouble(pressure)) {
-                msg="wall pressure error: " + pressure;
-                return false;
-            }
-        }
-
-        job->SetWallProp("Type","variable");
-        job->SetWallProp("Poisson Ratio",nu);
-        job->SetWallProp("Shear Constant",kcons);
-        job->SetWallProp("Density",wallDensity);
-        job->SetWallProp("Pressure",pressure);
-
-        for(int i=0;i<m_TableModelVar->rowCount();i++) {
-            std::string faceName = m_TableModelVar->item(i,0)->text().toStdString();
-            std::string thickness = m_TableModelVar->item(i,2)->text().trimmed().toStdString();
-            std::string modulus = m_TableModelVar->item(i,3)->text().trimmed().toStdString();
-
-            if(checkValidity) {
-                if(thickness!="" && !IsDouble(thickness)) {
-                    msg="wall thickness error: " + thickness;
-                    return false;
-                }
-
-                if(modulus!="" && !IsDouble(modulus)) {
-                    msg="wall elastic modulus error: " + modulus;
-                    return false;
-                }
-            }
-
-            job->SetVarProp(faceName,"Thickness", thickness);
-            job->SetVarProp(faceName,"Elastic Modulus", modulus);
-        }
+    if (materialModelIndex == 0) {
+        auto k1 = ui->OlufsenMatProp_K1_LineEdit->text().trimmed().toStdString();
+        auto k2 = ui->OlufsenMatProp_K2_LineEdit->text().trimmed().toStdString();
+        auto k3 = ui->OlufsenMatProp_K3_LineEdit->text().trimmed().toStdString();
+        auto exponent = ui->OlufsenMatProp_Exponent_LineEdit->text().trimmed().toStdString();
+        auto pressure = ui->OlufsenMatProp_Pressure_LineEdit->text().trimmed().toStdString();
+        job->SetWallProp("Material Model", MaterialModel::OLUFSEN.toStdString());
+        job->SetWallProp("Olufsen Material K1", k1); 
+        job->SetWallProp("Olufsen Material K2", k2); 
+        job->SetWallProp("Olufsen Material K3", k3); 
+        job->SetWallProp("Olufsen Material Exponent", exponent); 
+        job->SetWallProp("Olufsen Material Pressure", pressure); 
     }
 
     return true;
@@ -4063,16 +4008,16 @@ bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string&
 bool sv4guiSimulationView1d::CheckInputState(DataInputStateType checkType)
 {
     auto msg = "[sv4guiSimulationView1d::CheckInputState] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "#####################################################################";
-    MITK_INFO << msg << "---------- CheckInputState ---------"; 
+    //MITK_INFO << msg;
+    //MITK_INFO << msg << "#####################################################################";
+    //MITK_INFO << msg << "---------- CheckInputState ---------"; 
 
     ui->CalculateCenterlinesPushButton->setEnabled(false);
     ui->CreateSimulationFilesButton->setEnabled(false);
     ui->RunSimulationPushButton->setEnabled(false);
 
-    MITK_INFO << msg << "m_ModelInletFaceSelected: " << m_ModelInletFaceSelected;
-    MITK_INFO << msg << "m_CenterlinesCalculated: " << m_CenterlinesCalculated;
+    //MITK_INFO << msg << "m_ModelInletFaceSelected: " << m_ModelInletFaceSelected;
+    //MITK_INFO << msg << "m_CenterlinesCalculated: " << m_CenterlinesCalculated;
 
     // Check if an inlet face has been selected. 
     if (!m_ModelInletFaceSelected) {
@@ -4089,19 +4034,19 @@ bool sv4guiSimulationView1d::CheckInputState(DataInputStateType checkType)
     // allow creating simulation files.
     //
     if (!CheckSolverInputState()) {
-        MITK_INFO << msg << "CheckSolverInputState: false";
+        //MITK_INFO << msg << "CheckSolverInputState: false";
         return false;
     } 
 
     if (!CheckBCsInputState()) { 
-        MITK_INFO << msg << "CheckBCsInputState: false";
+        //MITK_INFO << msg << "CheckBCsInputState: false";
         return false;
     }
 
     ui->CreateSimulationFilesButton->setEnabled(true);
 
     if (!m_SimulationFilesCreated) { 
-        MITK_INFO << msg << "Simulation files have not been created.";
+        //MITK_INFO << msg << "Simulation files have not been created.";
         return false;
     }
 
@@ -4129,8 +4074,8 @@ bool sv4guiSimulationView1d::CheckInputState(DataInputStateType checkType)
 bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
 {
     auto msg = "[sv4guiSimulationView1d::CheckBCsInputState] ";
-    MITK_INFO << msg << "---------- CheckBCsInputState ---------"; 
-    MITK_INFO << msg << "validate: " << validate;
+    //MITK_INFO << msg << "---------- CheckBCsInputState ---------"; 
+    //MITK_INFO << msg << "validate: " << validate;
     bool passed = true;
     std::string errorMsg = "";
 
@@ -4146,9 +4091,9 @@ bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
         std::string capName = itemName->text().toStdString();
         auto bcType = m_TableModelCap->item(row,TableModelCapType::BCType)->text().toStdString(); 
         auto values = m_TableModelCap->item(row,TableModelCapType::Values)->text().trimmed().toStdString();
-        MITK_INFO << msg << "cap name: " << capName << "   bc type: " << bcType << "  values: " << values; 
+        //MITK_INFO << msg << "cap name: " << capName << "   bc type: " << bcType << "  values: " << values; 
         if (!sv4guiCapBCWidget1d::BCType::isValid(bcType) || (values == "")) { 
-            MITK_INFO << msg << "BC type not set";
+            //MITK_INFO << msg << "BC type not set";
             passed = false;
             break;
         }
@@ -4172,7 +4117,7 @@ bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
             values = list.join(" ").toStdString();
             int count = 0;
             if (!AreDouble(values,&count) || (count != 3)) {
-                MITK_INFO << msg << "   count: " << count;
+                //MITK_INFO << msg << "   count: " << count;
                 if (count == 3) {
                     errorMsg = capName + ": RCR values are not floats. Values: " + values;
                 } else {
@@ -4225,15 +4170,15 @@ bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
 bool sv4guiSimulationView1d::CheckSolverInputState(bool validate)
 {
     auto msg = "[sv4guiSimulationView1d::CheckSolverInputState] ";
-    MITK_INFO << msg << "---------- CheckSolverInputState ---------";
-    MITK_INFO << msg << "validate: " << validate;
+    //MITK_INFO << msg << "---------- CheckSolverInputState ---------";
+    //MITK_INFO << msg << "validate: " << validate;
     bool passed = true;
     std::string errorMsg = "";
 
     for (int i = 0; i < m_TableModelSolver->rowCount();i++) {
         std::string parName = m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
         QStandardItem* valueItem = m_TableModelSolver->item(i,1);
-        MITK_INFO << msg << "parName: : " << parName << "  value: " << valueItem;
+        //MITK_INFO << msg << "parName: : " << parName << "  value: " << valueItem;
         // Check for section header (e.g. "Time Step Parameters").
         if (valueItem == NULL) {
             continue;
@@ -4274,7 +4219,7 @@ void sv4guiSimulationView1d::SetInputState(DataInputStateType checkType, bool va
 bool sv4guiSimulationView1d::SetSolverParameters(sv4guiSimJob1d* job, std::string& emsg, bool checkValidity)
 {
     auto msg = "[sv4guiSimulationView1d::SetSolverParameters] ";
-    MITK_INFO << msg << "---------- SetSolverParameters ---------"; 
+    //MITK_INFO << msg << "---------- SetSolverParameters ---------"; 
 
     for (int i = 0; i < m_TableModelSolver->rowCount();i++) {
         std::string parName = m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
@@ -4285,7 +4230,7 @@ bool sv4guiSimulationView1d::SetSolverParameters(sv4guiSimJob1d* job, std::strin
 
         std::string value = valueItem->text().trimmed().toStdString();
         std::string type = m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
-        MITK_INFO << msg << "type: " << type << "  value: " << value;
+        //MITK_INFO << msg << "type: " << type << "  value: " << value;
 
         if(checkValidity ) {
             if(value == "") {
@@ -4668,12 +4613,6 @@ void sv4guiSimulationView1d::UpdateSimJob()
     }
 
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
-    /*
-    std::string numProcsStr="";
-    if(job) {
-        numProcsStr=job->GetRunProp("Number of Processes");
-    }
-    */
 
     // Create a new job.
     //
@@ -4686,7 +4625,6 @@ void sv4guiSimulationView1d::UpdateSimJob()
         return;
     }
 
-    //newJob->SetRunProp("Number of Processes",numProcsStr);
     m_MitkJob->SetSimJob(newJob);
     m_MitkJob->SetDataModified();
 
@@ -4759,6 +4697,7 @@ QString sv4guiSimulationView1d::GetRegistryValue(QString category, QString key)
 //
 void sv4guiSimulationView1d::UpdateJobStatus()
 {
+    MITK_INFO << "---------- UpdateJobStatus ---------"; 
     if(m_JobNode.IsNull()) {
         return;
     }
