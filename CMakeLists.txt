@@ -139,6 +139,16 @@ mark_as_advanced(SV_EXTERNALS_PREBUILT_QT_PATH)
 
 set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals-build/svExternals/bin")
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+
+# Note: only download mitk if needed, but need to download Qt
+# because of VTK dependence regardless
+set(SV_CMAKE_DOWLOAD_MITK_EXTERNAL "ON" CACHE BOOL "Force ON" FORCE)
+if(DEFINED SV_USE_SV4_GUI)
+  if(NOT SV_USE_SV4_GUI)
+    set(SV_CMAKE_DOWLOAD_MITK_EXTERNAL "OFF" CACHE BOOL "Force OFF" FORCE)
+  endif()
+endif()
+
 ExternalProject_Add(Externals
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals-build
@@ -154,6 +164,7 @@ ExternalProject_Add(Externals
     -DCMAKE_MACOSX_RPATH:BOOL=ON
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_EXAMPLES:BOOL=OFF
+    -DSV_USE_MITK:BOOL=${SV_CMAKE_DOWLOAD_MITK_EXTERNAL}
     -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
     -DSV_EXTERNALS_USE_PREBUILT_QT:BOOL=${SV_EXTERNALS_USE_PREBUILT_QT}
     -DSV_EXTERNALS_PREBUILT_QT_PATH:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}

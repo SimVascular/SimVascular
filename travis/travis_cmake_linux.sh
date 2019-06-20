@@ -28,17 +28,9 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]
-then
-  export CC="gcc"
-  export CXX="g++"
-  export SV_CMAKE_BUILD_TYPE="Release"
-elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
-then
-  export CC="clang"
-  export CXX="clang++"
-  export SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
-fi
+export CC="gcc"
+export CXX="g++"
+export SV_CMAKE_BUILD_TYPE="Release"
 
 #cmake
 export SV_CMAKE_CMD="/usr/local/bin/cmake"
