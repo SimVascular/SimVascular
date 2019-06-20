@@ -98,6 +98,15 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
 #-----------------------------------------------------------------------------
 # Include Initial Options
+# NOTE: seems like SimVascularDependentOptions should be read BEFORE
+# including SimVascularExternalVersions.  This seems to break things,
+# so for now repeating code to ignore mitk when buiding without sv4gui
+if(DEFINED SV_USE_SV4_GUI)
+  if(NOT SV_USE_SV4_GUI)
+    set(SV_USE_MITK "OFF" CACHE BOOL "Force OFF" FORCE)
+    set(SV_USE_MITK_SHARED "OFF" CACHE BOOL "Force OFF" FORCE)
+  endif()
+endif()
 include(SimVascularExternalsVersions)
 include(SimVascularOptions)
 include(SimVascularDependentOptions)
