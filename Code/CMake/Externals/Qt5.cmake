@@ -39,7 +39,7 @@ if(SV_USE_${proj})
   endif()
 
   
-  if(SV_USE_SV4_GUI)
+  
     message("Externals/Qt5.cmake Qt5_DIR initial value: ${Qt5_DIR}")
     # If using toplevel dir, foce Qt_DIR to be the SV_Qt_DIR set by the
     # simvascular_add_new_external macro
@@ -90,7 +90,7 @@ if(SV_USE_${proj})
         get_filename_component(_win32_qt5_top_path "${${proj}_DIR}/../../../" ABSOLUTE)
         set(${proj}_DLL_PATH "${_win32_qt5_top_path}/bin" CACHE PATH "Force Qt DLL Path" FORCE)
       endif()
-    endif()
+    
     
     message("Externals/Qt5.cmake Qt5_DIR final value: ${Qt5_DIR}")
     

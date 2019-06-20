@@ -35,7 +35,17 @@ set -e
 MAKE="make --jobs=$NUM_THREADS --keep-going"
 
 if $WITH_CMAKE; then
-  source $SCRIPTS/travis_cmake_build.sh
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+  then
+     source $SCRIPTS/travis_cmake_linux.sh
+  elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
+  then
+     source $SCRIPTS/travis_cmake_macosx.sh
+  elif [[ "$TRAVIS_OS_NAME" == "windows" ]]
+  then
+     echo "$SCRIPTS/travis_cmake_windows.bat $cwd $SV_EXTERNALS_VERSION_NUMBER"
+     $SCRIPTS/travis_cmake_windows.bat $cwd $SV_EXTERNALS_VERSION_NUMBER
+  fi
 else
   echo "Building with just make (i.e. NOT cmake!)"
   pushd BuildWithMake
@@ -48,6 +58,9 @@ else
 	 echo "QT_TOP_DIR=/opt/Qt5.4.2/5.4/clang_64" > ./pkg_overrides.mk
      fi
      source ./quick-build-macosx.sh
+  elif [[ "$TRAVIS_OS_NAME" == "windows" ]]
+  then
+     echo "ERROR: Make not working yet for travis/Windows platform!"
   fi
   popd
 fi

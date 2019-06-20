@@ -161,6 +161,7 @@ svCatchDebugger() {
   use_qt_gui  = false;
   // default to python console instead of tcl gui
   //use_tk_gui = true;
+  gSimVascularBatchMode = 1;
 #endif
   
   bool use_workbench  = false;
