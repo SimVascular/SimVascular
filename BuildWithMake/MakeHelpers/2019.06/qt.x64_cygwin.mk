@@ -37,12 +37,12 @@ ifeq ($(SV_EXTERNALS_PREBUILT_QT_SYSTEM_INSTALL),1)
   QT_TOP_DIR        = C:/OpenSource/Qt/Qt$(Qt5_VERSION)/$(Qt5_VERSION)/msvc2017_64
   QT_WEBENGINE_PROC = QtWebEngineProcess.exe
   QT_WEBENGINE_PATH = $(QT_TOP_DIR)/bin/$(QT_WEBENGINE_PROC)
-  QT_QPA_FONTDIR    =
+  QT_QPA_FONTDIR    = $(QT_TOP_DIR)/resources
 else
   QT_TOP_DIR        = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/qt-$(Qt5_VERSION)/$(Qt5_VERSION)/msvc2017_64
   QT_WEBENGINE_PROC = QtWebEngineProcess.exe
   QT_WEBENGINE_PATH = $(QT_TOP_DIR)/bin/$(QT_WEBENGINE_PROC)
-  QT_QPA_FONTDIR    =
+  QT_QPA_FONTDIR    = $(QT_TOP_DIR)/resources
 endif
 
 #
@@ -87,7 +87,7 @@ endif
 QT_DEPLOY_FLAGS = --release --no-compiler-runtime --angle
 
 QT_DEPLOY_FLAGS += \
- -clucene -concurrent -core -gui -qthelp \
+ -concurrent -core -gui -qthelp \
  -network -opengl -positioning -printsupport \
  -sql -svg -test -widgets -winextras -xml -xmlpatterns \
  -webenginecore -webengine -webenginewidgets
@@ -130,7 +130,6 @@ QT_DEFS += -DQT_XMLPATTERNS_LIB
 
 QT_LIBDIRS = $(QT_TOP_DIR)/lib
 QT_BIN_LIBS = $(QT_TOP_DIR)/bin
-QT_QPA_FONTDIR = $(QT_TOP_DIR)/lib/fonts
 
 QT_MOC_PARSER=$(QT_TOP_DIR)/bin/moc.exe
 QT_UIC_CMD=$(QT_TOP_DIR)/bin/uic.exe

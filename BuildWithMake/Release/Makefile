@@ -332,7 +332,8 @@ ifeq ($(CLUSTER), x64_cygwin)
 	-$(QT_TOP_DIR)/bin/windeployqt $(QT_DEPLOY_FLAGS) \
                                        -plugindir `cygpath -m $(DIST_DIR)/qt-plugins` \
                                        `cygpath -m $(DIST_DIR)/$(QT_WEBENGINE_PROC)`
-	-$(GCP) -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/qt-fonts
+	-$(GCP) -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/fonts
+	-$(GCP) -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/resources
 	-$(GECHO) "[Paths]" > $(DIST_DIR)/qt.conf
 	-$(GECHO) "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
 else
