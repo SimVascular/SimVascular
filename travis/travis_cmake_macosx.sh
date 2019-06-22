@@ -41,13 +41,13 @@ MAKE="make --jobs=$NUM_THREADS --keep-going"
 
 if [[ "$SV_EXTERNALS_VERSION_NUMBER" == "2018.05" ]]
 then
-  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.6.3/5.6.3/gcc_64/lib"
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$BUILD_DIR/Externals-build/svExternals/bin/qt-5.6.3/5.6.3/gcc_64/lib"
 elif [[ "$SV_EXTERNALS_VERSION_NUMBER" == "2019.02" ]]
 then
-  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.6.3/5.6.3/gcc_64/lib"
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.6.3/5.6.3/gcc_64/lib:$BUILD_DIR/Externals-build/svExternals/bin/qt-5.6.3/5.6.3/gcc_64/lib"
 elif [[ "$SV_EXTERNALS_VERSION_NUMBER" == "2019.06" ]]
 then
-  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.11.3/5.11.3/gcc_64/lib:$SV_EXTERNALS_BIN_DIR/qt-5.11.3/5.11.3/gcc_64/lib"
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/Qt5.11.3/5.11.3/gcc_64/lib:$BUILD_DIR/Externals-build/svExternals/bin/qt-5.11.3/5.11.3/gcc_64/lib"
 fi
 
 mkdir -p $BUILD_DIR
@@ -68,7 +68,7 @@ pushd $BUILD_DIR
    -DSV_EXTERNALS_PREBUILT_QT_PATH:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH} \
    -DQt5_DIR:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH} \
 \
- "$SV_CODE_DIR"
+ "$cwd"
 
 $MAKE
 
