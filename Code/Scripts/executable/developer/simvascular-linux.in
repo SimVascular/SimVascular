@@ -28,12 +28,5 @@ else
 fi
 
 # Run the executable
-case "$SV_BATCH_MODE" in
-"1")
 $SV_HOME/bin/@SV_EXE@ $*
-;;
-*)
-@GDB@ @GDB_FLAGS@ $SV_HOME/bin/@SV_EXE@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
-;;
-esac
 

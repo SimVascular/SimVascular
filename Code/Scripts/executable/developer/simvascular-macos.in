@@ -42,12 +42,4 @@ if [ ! -d "$SV_HOME/sv.app" ]; then
 fi
 
 # Run the executable
-case "$SV_BATCH_MODE" in
-"1")
 $sv_exe $*
-;;
-*)
-@GDB@ @GDB_FLAGS@ $sv_exe $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
-;;
-esac
-

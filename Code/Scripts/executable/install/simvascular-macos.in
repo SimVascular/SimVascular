@@ -44,22 +44,4 @@ svexe=$SV_HOME/../MacOS/simvascular.exe
 ln -s $SV_HOME/bin/simvascular $SV_HOME/../MacOS/simvascular.exe 
 
 # Run the executable
-case "$SV_BATCH_MODE" in
-"1")
-if [ -e ~/.simvascular_default_tcl ]
-then
-  ${svexe} $* -tcl
-else
-  ${svexe} $*
-fi
-;;
-*)
-if [ -e ~/.simvascular_default_tcl ]
-then
-  ${svexe} $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $* -tcl
-else
-  ${svexe} $*
-fi
-;;
-esac
-
+${svexe} $*
