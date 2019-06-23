@@ -175,8 +175,8 @@ public:
             static const std::vector<QString> names;
             class LinearParameters {
                 public:
-                    static const double Ehr;
-                    static const double referencePressure;
+                    static const QString Ehr;
+                    static const QString referencePressure;
             };
             class OlufsenParameters {
                 public:

@@ -86,6 +86,9 @@ class sv4guiSimulationPython1dParamNames
     const std::string INFLOW_INPUT_FILE = "inflow_input_file";
     const std::string ELEMENT_SIZE = "element_size";
 
+    const std::string LINEAR_MATERIAL_EHR = "linear_material_ehr";
+    const std::string LINEAR_MATERIAL_PRESSURE = "linear_material_pressure";
+
     const std::string MATERIAL_MODEL = "material_model";
     const std::string MESH_OUTPUT_FILE = "mesh_output_file";
     const std::string MODEL_NAME = "model_name";
