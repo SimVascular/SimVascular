@@ -65,26 +65,58 @@ ifeq ($(SV_USE_PYTHON),1)
 #  SV_LINK_WITH_INTERPRETER_LIBS = 1
 endif
 
-# ignore undefined symbols in shared libs
-LFLAGS += -Wl,--unresolved-symbols=ignore-in-shared-libs
+# special linker flags
+ifeq ($(CLUSTER), x64_cygwin)
+  LINK_EXE_LFLAGS = $(GLOBAL_LFLAGS)
+endif
+ifeq ($(CLUSTER), x64_linux)
+  LINK_EXE_LFLAGS = $(GLOBAL_LFLAGS)
+  #ignore undefined symbols in shared libs
+  LINK_EXE_LFLAGS += -Wl,--unresolved-symbols=ignore-in-shared-libs
+endif
+ifeq ($(CLUSTER), x64_macosx)
+  LINK_EXE_LFLAGS = $(GLOBAL_LFLAGS)
+endif
+
 # sv libs
-LFLAGS += $(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
+LINK_EXE_LFLAGS += $(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_APPLICATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
 # vtk libs
-LFLAGS += $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
+LINK_EXE_LFLAGS += $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 	  $(LIBFLAG)vtkCommonCore-$(VTK_MAJOR_VERSION).$(VTK_MINOR_VERSION)$(LIBLINKEXT) \
           $(LIBFLAG)vtksys-$(VTK_MAJOR_VERSION).$(VTK_MINOR_VERSION)$(LIBLINKEXT)
 
 # qt libs
-LFLAGS += $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
+ifeq ($(CLUSTER), x64_cygwin)
+  LINK_EXE_LFLAGS += $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
 	$(SVLIBFLAG)Qt5Sql$(LIBLINKEXT) \
 	$(SVLIBFLAG)Qt5Qml$(LIBLINKEXT) \
-	$(SVLIBFLAG)Qt5Core $(LIBLINKEXT)
+	$(SVLIBFLAG)Qt5Core$(LIBLINKEXT)
+endif
+ifeq ($(CLUSTER), x64_linux)
+  LINK_EXE_LFLAGS += $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
+	$(SVLIBFLAG)Qt5Sql$(LIBLINKEXT) \
+	$(SVLIBFLAG)Qt5Qml$(LIBLINKEXT) \
+	$(SVLIBFLAG)Qt5Core$(LIBLINKEXT)
+endif
+ifeq ($(CLUSTER), x64_macosx)
+  LINK_EXE_LFLAGS += $(QT_LIBS)
+endif
+
+ifeq ($(SV_USE_PYTHON),1)
+  LINK_EXE_LFLAGS += $(TCLTK_LIBS)
+endif
+
+ifeq ($(SV_USE_TCL),1)
+  LINK_EXE_LFLAGS += $(PYTHON_LIB)
+endif
+
+LINK_EXE_LFLAGS += $(CXX_LIBS)
 
 # system libs needed by vtk
-LFLAGS += $(VTK_SYS_LIBS)
+LINK_EXE_LFLAGS += $(VTK_SYS_LIBS)
 
 SRCS	= $(CXXSRCS) $(foreach name,$(COPIED_CXXSRCS),$(lastword $(subst /, ,$(name))))
 
@@ -133,7 +165,7 @@ $(TARGET_EXE_FULL): $(OBJS)
 	for fn in $(TARGET_EXE_FULL); do /bin/rm -f $$fn; done
 	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(OBJS) \
-        $(LFLAGS) $(TCLTK_LIBS) $(PYTHON_LIB) $(CXX_LIBS)
+        $(LINK_EXE_LFLAGS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 ifeq ($(CLUSTER),x64_cygwin)
 ifneq ($(SV_STATIC_BUILD),1)
