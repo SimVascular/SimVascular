@@ -65,205 +65,32 @@ ifeq ($(SV_USE_PYTHON),1)
 #  SV_LINK_WITH_INTERPRETER_LIBS = 1
 endif
 
-ifeq ($(SV_STATIC_BUILD),1)
-
-  SV_LINK_WITH_INTERPRETER_LIBS = 1
-
-  COPIED_CXXSRCS += ../Common/Geometry/sv_geom_init.cxx \
-                    ../PostProcessing/sv2_post_init.cxx \
-                    ../ImageProcessing/sv2_image_init.cxx \
-                    ../Common/Repository/sv_repos_init.cxx \
-                    ../Model/SolidModel/sv_solid_init.cxx \
-                    ../Legacy/LevelSet/sv2_LsetCore_init.cxx \
-                    ../Legacy/LevelSet/sv2_LsetV_init.cxx \
-                    ../Legacy/LevelSet/sv2_Lset_init.cxx \
-                    ../Common/Utils/cv_get_tcl_interp_init.cxx \
-                    ../Mesh/MeshObject/sv_mesh_init.cxx \
-                    ../Model/PolyDataSolidModel/sv_polydatasolid_init.cxx \
-                    ../Common/Utils/sv_math_init.cxx \
-
-  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-	COPIED_CXXSRCS += ../Mesh/AdaptObject/sv_adapt_init.cxx
-  endif
-  ifeq ($(SV_USE_TETGEN),1)
-	COPIED_CXXSRCS += ../Mesh/TetGenMeshObject/sv_tetgen_mesh_init.cxx
-  endif
-  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-	COPIED_CXXSRCS += ../Mesh/TetGenAdapt/sv_tetgen_adapt_init.cxx
-  endif
-  ifeq ($(SV_USE_OPENCASCADE),1)
-    ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
-	COPIED_CXXSRCS += ../Model/OCCTSolidModel/sv_occt_init.cxx
-    endif
-  endif
-  ifeq ($(SV_USE_MMG),1)
-    ifneq ($(SV_USE_MMG_SHARED),1)
-	COPIED_CXXSRCS += ../Mesh/MMGMeshUtils/sv_mmg_mesh_init.cxx
-    endif
-  endif
-  ifeq ($(SV_USE_ITK),1)
-	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKLset_init.cxx
-	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKUtils_init.cxx
-	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKLset2d_init.cxx
-	COPIED_CXXSRCS += ../Segmentation/ITK/sv3_ITKLset3d_init.cxx
-  endif
-
-endif
-
-ifeq ($(SV_LINK_WITH_INTERPRETER_LIBS),1)
-
-  ifeq ($(SV_USE_SOLVERIO),1)
-	LFLAGS += $(SOLVERIO_LIB)
-  endif
-  ifeq ($(SV_USE_TETGEN),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_TETGEN_MESH_NAME)$(LIBLINKEXT)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT)
-  endif
-  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_TETGEN_ADAPTOR_NAME)$(LIBLINKEXT)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT)
-  endif
-  ifeq ($(SV_USE_OPENCASCADE),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT)
-  endif
-
-  ifeq ($(SV_USE_VMTK),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_VMTK_UTILS_NAME)$(LIBLINKEXT)
-	LFLAGS += $(VMTK_LIBS)
-  endif
-
-  ifeq ($(SV_USE_ITK),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT)
-  endif
-
-  ifeq ($(SV_USE_SOLVERIO),1)
-	LFLAGS += $(SOLVERIO_LIB)
-  endif
-
-  ifeq ($(SV_USE_MMG),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT)
-  endif
-
-#LFLAGS += $(SVLIBFLAG)$(SV_PLUGIN_PYTHONDATANODES_NAME)$(LIBLINKEXT)
-
-LFLAGS += \
-	$(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
-	$(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT) \
-	$(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
-	$(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT)
-
-endif
-
-LFLAGS += $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT)
-
-ifeq ($(SV_USE_SV4_GUI),1)
-LFLAGS +=  \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_IMAGEPROCESSING_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_OCCT_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MACHINELEARNING_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION1D_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SVFSI_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+# ignore undefined symbols in shared libs
+LFLAGS += -Wl,--unresolved-symbols=ignore-in-shared-libs
+# sv libs
+LFLAGS += $(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_APPLICATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_PROJECTDATANODES_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_MODELING_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_PATHPLANNING_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_PROJECTMANAGER_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_SEGMENTATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_DATAMANAGER_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_SVFSI_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_SIMULATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_SIMULATION1D_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_PLUGIN_PROJECTDATANODES_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
-  ifeq ($(SV_USE_VMTK),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_VMTK_UTILS_NAME)$(LIBLINKEXT)
-	LFLAGS += $(VMTK_LIBS)
-  endif
-  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_TETGEN_ADAPTOR_NAME)$(LIBLINKEXT)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT)
-  endif
-  ifeq ($(SV_USE_TETGEN),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_TETGEN_MESH_NAME)$(LIBLINKEXT)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_MESH_NAME)$(LIBLINKEXT)
-  endif
-  ifeq ($(SV_USE_OPENCASCADE),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_OpenCASCADE_SOLID_NAME)$(LIBLINKEXT)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT)
-  endif
-  ifeq ($(SV_USE_MMG),1)
-	LFLAGS += $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT)
-  endif
+# vtk libs
+LFLAGS += $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
+	  $(LIBFLAG)vtkCommonCore-$(VTK_MAJOR_VERSION).$(VTK_MINOR_VERSION)$(LIBLINKEXT) \
+          $(LIBFLAG)vtksys-$(VTK_MAJOR_VERSION).$(VTK_MINOR_VERSION)$(LIBLINKEXT)
 
-endif
+# qt libs
+LFLAGS += $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
+	$(SVLIBFLAG)Qt5Sql$(LIBLINKEXT) \
+	$(SVLIBFLAG)Qt5Qml$(LIBLINKEXT) \
+	$(SVLIBFLAG)Qt5Core $(LIBLINKEXT)
 
-LFLAGS += \
-	$(SVLIBFLAG)$(SV_LIB_COMMON_NAME)$(LIBLINKEXT) \
-	$(SVLIBFLAG)$(SV_LIB_IMAGE_NAME)$(LIBLINKEXT) \
-	$(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT) \
-	$(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
-	$(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
-	$(SVLIBFLAG)$(SV_LIB_SOLID_NAME)$(LIBLINKEXT) \
-        $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT)
-
-LFLAGS +=  $(SVLIBFLAG)$(SV_LIB_VTKSVCOMMON_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVIO_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVGEOMETRY_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVPARAMETERIZATION_NAME)$(LIBLINKEXT) \
-           $(SVLIBFLAG)$(SV_LIB_VTKSVSEGMENTATION_NAME)$(LIBLINKEXT)
-
-# need to explicitly add in globals for executable
-ifeq ($(SV_USE_GLOBALS_SHARED),1)
-  LFLAGS += $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
-else
-  LFLAGS += $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
-endif
+# system libs needed by vtk
+LFLAGS += $(VTK_SYS_LIBS)
 
 SRCS	= $(CXXSRCS) $(foreach name,$(COPIED_CXXSRCS),$(lastword $(subst /, ,$(name))))
 
 DEPS	= $(SRCS:.cxx=.d)
 
 OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
-
-### nate: why did I include this, for static libs maybe?
-#ifeq ($(SV_USE_MITK),1)
-#OBJS    += \
-#../Modules/Common/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-#../Modules/Model/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-#../Modules/Path/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-#../Modules/ProjectManagement/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-#../Modules/QtAppBase/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-#../Modules/QtWidgets/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-#../Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
-#endif
-
-# only for static case?
-#ifeq ($(SV_USE_MITK),1)
-#   OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
-#endif
 
 TARGET_EXE_FULL = $(TOP)/Bin/simvascular-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/simvascular.exe
@@ -305,11 +132,8 @@ $(TARGET_EXE_FULL): $(OBJS)
 	for fn in $(basename $(TARGET_EXE)).pdb; do /bin/rm -f $$fn; done
 	for fn in $(TARGET_EXE_FULL); do /bin/rm -f $$fn; done
 	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
-	$(LINK_EXE)$(TARGET_EXE_FULL) $(LFLAGS) $(OBJS) \
-        $(LFLAGS) \
-        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(MITK_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
-        $(ZLIB_LIBS) $(MPICH_LIBS) $(OPENCASCADE_LIBS) $(TCLTK_LIBS) $(CXX_LIBS) \
-        $(PYTHON_LIB) $(SV_GDCM_LIBS) $(QT_LIBS) $(SV_FREETYPE_LIBS) $(SV_MMG_LIBS) $(SV_HDF5_LIBS)
+	$(LINK_EXE)$(TARGET_EXE_FULL) $(OBJS) \
+        $(LFLAGS) $(TCLTK_LIBS) $(PYTHON_LIB) $(CXX_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 ifeq ($(CLUSTER),x64_cygwin)
 ifneq ($(SV_STATIC_BUILD),1)
