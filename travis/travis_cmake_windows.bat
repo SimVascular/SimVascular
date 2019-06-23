@@ -1,3 +1,33 @@
+REM Copyright (c) Stanford University, The Regents of the University of
+REM               California, and others.
+REM 
+REM All Rights Reserved.
+REM 
+REM See Copyright-SimVascular.txt for additional details.
+REM 
+REM Permission is hereby granted, free of charge, to any person obtaining
+REM a copy of this software and associated documentation files (the
+REM "Software"), to deal in the Software without restriction, including
+REM without limitation the rights to use, copy, modify, merge, publish,
+REM distribute, sublicense, and/or sell copies of the Software, and to
+REM permit persons to whom the Software is furnished to do so, subject
+REM to the following conditions:
+REM 
+REM The above copyright notice and this permission notice shall be included
+REM in all copies or substantial portions of the Software.
+REM 
+REM THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+REM IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+REM TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+REM PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+REM OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+REM EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+REM PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+REM PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+REM LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+REM NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+REM SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 REM @echo off
 REM script for travis build using MSVC 2017
 
