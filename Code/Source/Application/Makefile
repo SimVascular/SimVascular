@@ -83,17 +83,22 @@ LINK_EXE_LFLAGS += $(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_PLUGIN_APPLICATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 
+# mitk libs only needed to link on win32
+ifeq ($(SV_USE_MITK),1)
+  ifeq ($(CLUSTER), x64_cygwin)
+    LINK_EXE_LFLAGS += $(MITK_LIBS)
+  endif
+endif
+
 # vtk libs
 LINK_EXE_LFLAGS += $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 	  $(LIBFLAG)vtkCommonCore-$(VTK_MAJOR_VERSION).$(VTK_MINOR_VERSION)$(LIBLINKEXT) \
           $(LIBFLAG)vtksys-$(VTK_MAJOR_VERSION).$(VTK_MINOR_VERSION)$(LIBLINKEXT)
 
 # qt libs
+ifeq ($(SV_USE_QT),1)
 ifeq ($(CLUSTER), x64_cygwin)
-  LINK_EXE_LFLAGS += $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
-	$(SVLIBFLAG)Qt5Sql$(LIBLINKEXT) \
-	$(SVLIBFLAG)Qt5Qml$(LIBLINKEXT) \
-	$(SVLIBFLAG)Qt5Core$(LIBLINKEXT)
+  LINK_EXE_LFLAGS += $(QT_LIBS)
 endif
 ifeq ($(CLUSTER), x64_linux)
   LINK_EXE_LFLAGS += $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
@@ -103,6 +108,7 @@ ifeq ($(CLUSTER), x64_linux)
 endif
 ifeq ($(CLUSTER), x64_macosx)
   LINK_EXE_LFLAGS += $(QT_LIBS)
+endif
 endif
 
 ifeq ($(SV_USE_TCL),1)
