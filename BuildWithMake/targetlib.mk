@@ -62,6 +62,21 @@ ifneq ($(TARGET_LIB_NAME),$(SV_LIB_GLOBALS_NAME))
   DLLLIBS += $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
 endif
 
+LFLAGS += $(VTK_LIBS)
+
+ifeq ($(SV_USE_TCL),1)
+  LFLAGS += $(TCLTK_LIBS)
+endif
+
+ifeq ($(SV_USE_PYTHON),1)
+  LFLAGS += $(PYTHON_LIB)
+endif
+
+LFLAGS += $(CXX_LIBS)
+
+# system libs needed by vtk
+LFLAGS += $(VTK_SYS_LIBS)
+
 all:	lib
 
 directories:
@@ -86,8 +101,8 @@ ifeq ($(CLUSTER),x64_linux)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
-	$(SHAR) $(TARGET_SHARED)  \
-             $(DLLOBJS) $(DLLLIBS) $(LFLAGS) $(SHARED_LFLAGS)
+	$(SHAR) $(TARGET_SHARED) $(SHARED_LFLAGS) \
+             $(DLLOBJS) $(DLLLIBS) $(LFLAGS)
 
     # Add state machine XML files.
     ifdef SV_APPEND_CPPMICROSERVICES_TO_DLL

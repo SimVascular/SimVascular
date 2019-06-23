@@ -105,11 +105,11 @@ ifeq ($(CLUSTER), x64_macosx)
   LINK_EXE_LFLAGS += $(QT_LIBS)
 endif
 
-ifeq ($(SV_USE_PYTHON),1)
+ifeq ($(SV_USE_TCL),1)
   LINK_EXE_LFLAGS += $(TCLTK_LIBS)
 endif
 
-ifeq ($(SV_USE_TCL),1)
+ifeq ($(SV_USE_PYTHON),1)
   LINK_EXE_LFLAGS += $(PYTHON_LIB)
 endif
 

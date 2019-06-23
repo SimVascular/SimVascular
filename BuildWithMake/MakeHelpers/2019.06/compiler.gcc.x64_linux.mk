@@ -67,7 +67,7 @@ ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += -g
 endif
     GLOBAL_LFLAGS   += -lm
-    SHARED_LFLAGS   = -Wl,-z,defs
+    SHARED_LFLAGS   = -Wl,-z,defs -Wl,--unresolved-symbols=ignore-in-shared-libs
     STATIC_FLAG     =
     DYNAMIC_FLAG    =
     TEMPLATE_AR     = $(AR)
