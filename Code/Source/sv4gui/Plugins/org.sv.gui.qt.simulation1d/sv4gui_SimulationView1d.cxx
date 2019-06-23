@@ -233,13 +233,13 @@ const QString sv4guiSimulationView1d::DataInputStateName::SIMULATION_FILES = "Si
 
 // Set default material model parameters.
 //
-const double sv4guiSimulationView1d::MaterialModel::LinearParameters::Ehr = 0.0;
-const double sv4guiSimulationView1d::MaterialModel::LinearParameters::referencePressure = 0.0;
+const QString sv4guiSimulationView1d::MaterialModel::LinearParameters::Ehr = "1.0e7";
+const QString sv4guiSimulationView1d::MaterialModel::LinearParameters::referencePressure = "0.0";
 //
 const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k1 = "0.0";
 const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k2 = "-22.5267"; 
-const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k3 = "2.65e5";
-const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::exponent = "0.0";
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::k3 = "1.0e7";
+const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::exponent = "1.0";
 const QString sv4guiSimulationView1d::MaterialModel::OlufsenParameters::referencePressure = "0.0";
 
 // Set material model names.
@@ -248,8 +248,7 @@ const QString sv4guiSimulationView1d::MaterialModel::LINEAR = "LINEAR";
 const QString sv4guiSimulationView1d::MaterialModel::OLUFSEN = "OLUFSEN";
 const std::vector<QString> sv4guiSimulationView1d::MaterialModel::names = 
 {
-   // [TODO:Davep] Currentliy only the OLUFSEN is supported.
-   //sv4guiSimulationView1d::MaterialModel::LINEAR, 
+   sv4guiSimulationView1d::MaterialModel::LINEAR, 
    sv4guiSimulationView1d::MaterialModel::OLUFSEN
 };
 
@@ -633,46 +632,49 @@ void sv4guiSimulationView1d::CreateWallPropertiesControls(QWidget *parent)
 {
     // Setup the material model combination box.
     //
-    connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int)), this, SLOT(SelectMaterialModel(int)));
+    connect(ui->MaterialModelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SelectMaterialModel(int)));
     for (auto const& name : MaterialModel::names) {
         ui->MaterialModelComboBox->addItem(name);
     }
-
-    // Setup Linear material parameters.
-    //connect(ui->LinearMatProp_Ehr_LineEdit, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
-
-    // Setup Olufsen material parameters.
-    //
-    auto signal = SIGNAL(returnPressed());
-    auto slot = SLOT(UpdateSimJob());
-    connect(ui->OlufsenMatProp_K1_LineEdit, signal, this, slot);
-    connect(ui->OlufsenMatProp_K1_LineEdit, signal, this, slot); 
-    connect(ui->OlufsenMatProp_K3_LineEdit, signal, this, slot);
-    connect(ui->OlufsenMatProp_Exponent_LineEdit, signal, this, slot);
-    connect(ui->OlufsenMatProp_Pressure_LineEdit, signal, this, slot);
+    ui->MaterialModelComboBox->setCurrentIndex(0);
 
     // Create a validator that allows only valid float input.
     QDoubleValidator *validDouble = new QDoubleValidator(this);
     validDouble->setNotation(QDoubleValidator::ScientificNotation);
 
-    // Set default values.
+    // Setup Linear material parameters.
+    //
+    auto signal = SIGNAL(returnPressed());
+    auto slot = SLOT(UpdateSimJob());
+    connect(ui->LinearMatProp_Ehr_LineEdit, signal, this, slot); 
+    ui->LinearMatProp_Ehr_LineEdit->setText(MaterialModel::LinearParameters::Ehr);
+    ui->LinearMatProp_Ehr_LineEdit->setValidator(validDouble);
+
+    connect(ui->LinearMatProp_Pressure_LineEdit, signal, this, slot); 
+    ui->LinearMatProp_Pressure_LineEdit->setText(MaterialModel::LinearParameters::referencePressure);
+    ui->LinearMatProp_Pressure_LineEdit->setValidator(validDouble);
+
+    // Setup Olufsen material parameters.
+    //
+    connect(ui->OlufsenMatProp_K1_LineEdit, signal, this, slot);
     ui->OlufsenMatProp_K1_LineEdit->setText(MaterialModel::OlufsenParameters::k1);
     ui->OlufsenMatProp_K1_LineEdit->setValidator(validDouble);
+      
+    connect(ui->OlufsenMatProp_K2_LineEdit, signal, this, slot); 
     ui->OlufsenMatProp_K2_LineEdit->setText(MaterialModel::OlufsenParameters::k2);
     ui->OlufsenMatProp_K2_LineEdit->setValidator(validDouble);
+    
+    connect(ui->OlufsenMatProp_K3_LineEdit, signal, this, slot);
     ui->OlufsenMatProp_K3_LineEdit->setText(MaterialModel::OlufsenParameters::k3);
     ui->OlufsenMatProp_K3_LineEdit->setValidator(validDouble);
-    // [TODO:DaveP] The expoennt and pressure parameters are not implemented yet.
-    ui->OlufsenMatProp_Exponent_Label->setEnabled(false);
-    ui->OlufsenMatProp_Exponent_LineEdit->setEnabled(false);
-    ui->OlufsenMatProp_Pressure_Label->setEnabled(false);
-    ui->OlufsenMatProp_Pressure_LineEdit->setEnabled(false);
-    /*
+
+    connect(ui->OlufsenMatProp_Exponent_LineEdit, signal, this, slot);
     ui->OlufsenMatProp_Exponent_LineEdit->setText(MaterialModel::OlufsenParameters::exponent);
     ui->OlufsenMatProp_Exponent_LineEdit->setValidator(validDouble);
+
+    connect(ui->OlufsenMatProp_Pressure_LineEdit, signal, this, slot);
     ui->OlufsenMatProp_Pressure_LineEdit->setText(MaterialModel::OlufsenParameters::referencePressure);
     ui->OlufsenMatProp_Pressure_LineEdit->setValidator(validDouble);
-    */
 }
 
 //--------------------------
@@ -2718,7 +2720,6 @@ void sv4guiSimulationView1d::UpdateGUICap()
     for(int i=3;i<capHeaders.size();i++) {
         ui->tableViewCap->setColumnHidden(i,true);
     }
-
 }
 
 //---------------------
@@ -2734,6 +2735,8 @@ void sv4guiSimulationView1d::SelectMaterialModel(int index)
 
     // Show widgets for the selected material model.
     ui->MaterialModel_StackedWidget->setCurrentIndex(index);
+
+    UpdateSimJob();
 }
 
 //--------------------------
@@ -2860,6 +2863,12 @@ void sv4guiSimulationView1d::UpdateGUIWall()
         ui->OlufsenMatProp_Pressure_LineEdit->setText(pressure);
     }
 
+    else if (materialModel == MaterialModel::LINEAR) { 
+        auto Ehr = QString::fromStdString(job->GetWallProp("Linear Material Ehr")); 
+        auto pressure = QString::fromStdString(job->GetWallProp("Linear Material Pressure")); 
+        ui->LinearMatProp_Ehr_LineEdit->setText(Ehr);
+        ui->LinearMatProp_Pressure_LineEdit->setText(pressure);
+    }
 }
 
 //-----------------
@@ -3428,6 +3437,12 @@ void sv4guiSimulationView1d::AddWallPropertiesParameters(sv4guiSimJob1d* job, sv
         pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_K3, k3);
         pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_EXP, exponent);
         pythonInterface.AddParameter(params.OLUFSEN_MATERIAL_PRESSURE, pressure);
+
+    } else if (QString::fromStdString(materialModel) == MaterialModel::LINEAR) { 
+        auto Ehr = job->GetWallProp("Linear Material Ehr"); 
+        auto pressure = job->GetWallProp("Linear Material Pressure"); 
+        pythonInterface.AddParameter(params.LINEAR_MATERIAL_EHR, Ehr);
+        pythonInterface.AddParameter(params.LINEAR_MATERIAL_PRESSURE, pressure);
     }
 }
 
@@ -3978,8 +3993,9 @@ bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string&
     MITK_INFO << msg << "--------- SetWallProperites ----------"; 
     int materialModelIndex = ui->MaterialModelComboBox->currentIndex();
     MITK_INFO << msg << "materialModelIndex: " << materialModelIndex;
+    auto materialModel = MaterialModel::names[materialModelIndex]; 
 
-    if (materialModelIndex == 0) {
+    if (materialModel == MaterialModel::OLUFSEN) { 
         auto k1 = ui->OlufsenMatProp_K1_LineEdit->text().trimmed().toStdString();
         auto k2 = ui->OlufsenMatProp_K2_LineEdit->text().trimmed().toStdString();
         auto k3 = ui->OlufsenMatProp_K3_LineEdit->text().trimmed().toStdString();
@@ -3991,6 +4007,14 @@ bool sv4guiSimulationView1d::SetWallProperites(sv4guiSimJob1d* job, std::string&
         job->SetWallProp("Olufsen Material K3", k3); 
         job->SetWallProp("Olufsen Material Exponent", exponent); 
         job->SetWallProp("Olufsen Material Pressure", pressure); 
+    }
+
+    else if (materialModel == MaterialModel::LINEAR) { 
+        auto Ehr = ui->LinearMatProp_Ehr_LineEdit->text().trimmed().toStdString();
+        auto pressure = ui->LinearMatProp_Pressure_LineEdit->text().trimmed().toStdString();
+        job->SetWallProp("Material Model", MaterialModel::LINEAR.toStdString());
+        job->SetWallProp("Linear Material Ehr", Ehr); 
+        job->SetWallProp("Linear Material Pressure", pressure); 
     }
 
     return true;
