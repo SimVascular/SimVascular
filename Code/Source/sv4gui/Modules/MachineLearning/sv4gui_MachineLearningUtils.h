@@ -57,6 +57,8 @@ public:
 
     virtual ~sv4gui_MachineLearningUtils();
 
+    bool ok();
+
     std::string setImage(std::string image_path);
 
     std::vector<std::vector<double>> segmentPathPoint(sv4guiPathElement::sv4guiPathPoint path_point);

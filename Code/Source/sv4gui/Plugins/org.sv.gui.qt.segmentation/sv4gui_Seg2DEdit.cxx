@@ -219,11 +219,11 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     //ml additions
     setupMLui();
 
-    // If m_ContourGroup is null then the panel is not associated with any 
+    // If m_ContourGroup is null then the panel is not associated with any
     // contour group. This happens when tool panels from previous sessions
     // are created when SV starts.
     //
-    if (m_ContourGroup == nullptr) { 
+    if (m_ContourGroup == nullptr) {
         ui->SinglePathTab->setEnabled(false);
     } else {
         ui->SinglePathTab->setEnabled(true);
@@ -1973,8 +1973,10 @@ void sv4guiSeg2DEdit::initialize(){
         m_imageFilePath = imageElement.attribute("path").toStdString();
     }
 
-    ml_utils = sv4gui_MachineLearningUtils::getInstance("googlenet_c30_train300k_aug10_clean");
-    ml_utils->setImage(m_imageFilePath);
+    if(!ml_init){
+      ml_utils = sv4gui_MachineLearningUtils::getInstance("googlenet_c30_train300k_aug10_clean");
+      ml_utils->setImage(m_imageFilePath);
+    }
 
   }//end if projectfoldernode
 
@@ -2032,6 +2034,12 @@ void sv4guiSeg2DEdit::updatePaths(){
 void sv4guiSeg2DEdit::segmentPaths(){
   //paths
   initialize();
+
+  if ( !ml_utils->ok() ){
+    QMessageBox::warning(NULL,"Machine Learning Error", "Machine Learning segmentation was not loaded properly, please restart or check your installation.");
+    return NULL;
+  }
+
   auto path_folder_node = GetDataStorage()->GetNamedNode("Paths");
   auto paths_list       = GetDataStorage()->GetDerivations(path_folder_node);
 
@@ -2139,6 +2147,11 @@ int index, int n_){
 
 
 sv4guiContour* sv4guiSeg2DEdit::doMLContour(sv4guiPathElement::sv4guiPathPoint path_point){
+  if ( !ml_utils->ok() ){
+    QMessageBox::warning(NULL,"Machine Learning Error", "Machine Learning segmentation was not loaded properly, please restart or check your installation.");
+    return NULL;
+  }
+
   std::vector<std::vector<double>> points = ml_utils->segmentPathPoint(path_point);
 
   if (points.size() <= 0){

@@ -88,6 +88,10 @@ sv4gui_MachineLearningUtils::~sv4gui_MachineLearningUtils(){
   //Py_Finalize();
 }
 
+bool sv4gui_MachineLearningUtils::ok(){
+  return !(py_wrapper_inst == NULL);
+}
+
 std::string sv4gui_MachineLearningUtils::setImage(std::string image_path){
   PyObject* py_res = PyObject_CallMethod(py_wrapper_inst, "set_image",
                         "s", image_path.c_str());
