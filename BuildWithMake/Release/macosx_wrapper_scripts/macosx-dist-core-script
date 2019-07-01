@@ -77,5 +77,8 @@ export TCLLIBPATH=$SV_HOME/lib/vtk
 # macosx
 
 export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DYLD_LIBRARY_PATH
+# uncomment if you need to check paths on resolved
+# shared libs at runtime
+# export DYLD_PRINT_LIBRARIES=1
 
 

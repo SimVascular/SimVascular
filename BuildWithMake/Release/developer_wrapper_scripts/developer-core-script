@@ -143,6 +143,7 @@ esac
 
 # needed for macosx
 export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
+export DYLD_PRINT_LIBRARIES=1
 
 # need to convert to dos style paths on windows
 case "$SV_OS" in
