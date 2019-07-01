@@ -123,7 +123,7 @@ s+REPLACEME_SV_LOWERCASE_CMAKE_BUILD_TYPE+release+g
 
 s+REPLACEME_SV_OS_DIR+mac_osx+g
 s+REPLACEME_SV_OS_LONG_NAME_DIR+mac_osx+g
-s+REPLACEME_SV_OS_VER_NO+10.13+g
+s+REPLACEME_SV_OS_VER_NO+10+g
 s+REPLACEME_SV_OS_MINOR_VER_NO+13+g
 s+REPLACEME_SV_COMPILER_SHORT_NAME+clang+g
 s+REPLACEME_SV_COMPILER_VER_NO+8.1+g
@@ -145,9 +145,9 @@ s+REPLACEME_SV_HDF5_DIR+hdf5-1.10.1+g
 s+REPLACEME_SV_HDF5_CMAKE_LIB_DIR+share/cmake+g
 s+REPLACEME_SV_HDF5_MAKE_FILENAME++g
 
-# openssl (needed for python)  where is this on mac???
-#s+REPLACEME_SV_OPENSSL_INC_DIR+/usr/include/openssl+g
-#s+REPLACEME_SV_OPENSSL_LIBRARIES+"libssl.dylib;libcrypto.dylib"+g
+# openssl (needed for python) from brew (static libs)
+s+REPLACEME_SV_OPENSSL_INC_DIR+/usr/local/opt/openssl/include+g
+s+REPLACEME_SV_OPENSSL_LIBRARIES+"/usr/local/opt/openssl/lib/libssl.a"+g
 
 # sqlite3 (needed for python)
 
