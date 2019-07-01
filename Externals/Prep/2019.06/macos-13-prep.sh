@@ -1,3 +1,13 @@
+###
+### sudo times out to quickly on macos, try extending to 90 min
+###
+### sudo visudo
+###
+### Add the following default:
+###
+### Defaults timestamp_timeout=90
+### 
+
 #
 #  MacOS requires brew to be installed (see www.brew.sh)
 #
