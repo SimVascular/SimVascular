@@ -325,9 +325,9 @@ endif
 	-$(GFIND) $(DIST_DIR) -name "__pycache__" -delete
 endif
 ifeq ($(SV_USE_QT),1)
-ifeq ($(CLUSTER), x64_cygwin)
-# need dummy exec since windeployqt no longer recognizes are exe as a qt app...
-# also need QtWebEngine in the dir with exe unless we set env variable!
+  ifeq ($(CLUSTER), x64_cygwin)
+  # need dummy exec since windeployqt no longer recognizes are exe as a qt app...
+  # also need QtWebEngine in the dir with exe unless we set env variable!
 	-$(GCP) -f $(QT_WEBENGINE_PATH) $(DIST_DIR)
 	-$(QT_TOP_DIR)/bin/windeployqt $(QT_DEPLOY_FLAGS) \
                                        -plugindir `cygpath -m $(DIST_DIR)/qt-plugins` \
@@ -336,7 +336,20 @@ ifeq ($(CLUSTER), x64_cygwin)
 	-$(GCP) -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/resources
 	-$(GECHO) "[Paths]" > $(DIST_DIR)/qt.conf
 	-$(GECHO) "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
-else
+  endif
+  ifeq ($(CLUSTER), x64_macosx)
+  # need dummy exec since maceployqt no longer recognizes are exe as a qt app...
+  # also need QtWebEngine in the dir with exe unless we set env variable!
+	-$(GCP) -f $(QT_WEBENGINE_PATH) $(DIST_DIR)
+	-$(GCP) -fR $(QT_QPA_FONTDIR)/* $(DIST_DIR)/QtWebEngine
+	-$(GCP) -fd $(QT_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
+	-$(GCP) -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
+	-$(GECHO) "[Paths]" > $(DIST_DIR)/qt.conf
+	-$(GECHO) "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
+	-$(GECHO) "Data=\"QtWebEngine\"" >> $(DIST_DIR)/qt.conf
+	-$(GECHO) "Translations=\"QtWebEngine\"" >> $(DIST_DIR)/qt.conf
+  endif
+  ifeq ($(CLUSTER), x64_linux)
 	-$(GCP) -fR $(QT_QPA_FONTDIR) $(DIST_DIR)/qt-fonts
 	-$(GCP) -fd $(QT_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
 	-$(GCP) -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins
@@ -344,7 +357,7 @@ else
 	-$(GECHO) "Prefix=\".\"" >> $(DIST_DIR)/qt.conf
 	-$(GECHO) "Data=\"QtWebEngine\"" >> $(DIST_DIR)/qt.conf
 	-$(GECHO) "Translations=\"QtWebEngine\"" >> $(DIST_DIR)/qt.conf
-endif
+  endif
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-$(GCP) -fd $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)

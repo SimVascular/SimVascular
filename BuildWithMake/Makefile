@@ -199,6 +199,7 @@ endif
 ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+$(QT_PLUGIN_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_QPA_FONTDIR+$(QT_QPA_FONTDIR)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_QT_WEBENGINE_PROC+$(QT_WEBENGINE_PROC)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_MITK),1)
