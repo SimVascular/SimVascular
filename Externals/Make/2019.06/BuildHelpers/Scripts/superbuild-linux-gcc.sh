@@ -220,24 +220,28 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   echo "BUILD_TCL"
   ./tmp/compile.make.tcl.gcc.sh >& ./tmp/stdout.tcl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 ## python
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "BUILD_PYTHON"
   ./tmp/compile.cmake.python.gcc.sh >& ./tmp/stdout.python.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 #  swig
 if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
   echo "BUILD_SWIG"
   time ./tmp/compile.make.swig.gcc.sh >& ./tmp/stdout.swig.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.python.numpy-linux.sh >& ./tmp/stdout.numpy.python.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 ## python
@@ -245,61 +249,71 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "BUILD_PYTHON post-install"
   ./tmp/post-install-python-linux.sh >& ./tmp/stdout.post-install-python-linux.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # tinyxml2
 if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
   echo "BUILD_TINYXML2"
   ./tmp/compile.cmake.tinyxml2.gcc.sh >& ./tmp/stdout.tinyxml2.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 #  qt
 if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
   echo "BUILD_QT"
   time ./tmp/compile.make.qt.gcc.sh >& ./tmp/stdout.qt.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # freetype
 if [[ $SV_SUPER_OPTIONS == *BUILD_FREETYPE* ]]; then
   echo "BUILD_FREETYPE"
   ./tmp/compile.cmake.freetype.gcc.sh >& ./tmp/stdout.freetype.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # gdcm
 if [[ $SV_SUPER_OPTIONS == *BUILD_GDCM* ]]; then
   echo "BUILD_GDCM"
   ./tmp/compile.cmake.gdcm.gcc.sh >& ./tmp/stdout.gdcm.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # hdf5
 if [[ $SV_SUPER_OPTIONS == *BUILD_HDF5* ]]; then
   echo "BUILD_HDF5"
   ./tmp/compile.cmake.hdf5.gcc.sh >& ./tmp/stdout.hdf5.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # vtk
 if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
   echo "BUILD_VTK"
   ./tmp/compile.cmake.vtk.gcc.sh >& ./tmp/stdout.vtk.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # itk
 if [[ $SV_SUPER_OPTIONS == *BUILD_ITK* ]]; then
   echo "BUILD_ITK"
   ./tmp/compile.cmake.itk.gcc.sh >& ./tmp/stdout.itk.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # opencascade
 if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
   echo "BUILD_OPENCASCADE"
   ./tmp/compile.cmake.opencascade.gcc.sh >& ./tmp/stdout.opencascade.gcc.txt
-#  ./tmp/post-install-opencascade-linux.sh >& ./tmp/stdout.post-install-linux.opencascade.txt
+  #  ./tmp/post-install-opencascade-linux.sh >& ./tmp/stdout.post-install-linux.opencascade.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # mmg
 if [[ $SV_SUPER_OPTIONS == *BUILD_MMG* ]]; then
   echo "BUILD_MMG"
   ./tmp/compile.cmake.mmg.gcc.sh >& ./tmp/stdout.mmg.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # mitk
@@ -307,6 +321,7 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
   echo "BUILD_MITK"
   ./tmp/compile.cmake.mitk.gcc.sh >& ./tmp/stdout.mitk.gcc.txt
   ./tmp/post-install-mitk-linux.sh >& ./tmp/stdout.post-install-mitk-linux.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 #
