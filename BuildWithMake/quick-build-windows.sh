@@ -53,8 +53,8 @@ elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
   export SV_COMPILER_VERSION=19.16
   export CXX_COMPILER_VERSION=msvc-19.16
   # compiler must now be present on the cmd line
-  export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2019.06/windows/windows/10.0/msvc/19.16/x64/release/2019.06.14
-  export TAR_FILE_PREFIX=windows.10.0.msvc.19.16.x64.release.2019.06.14
+  export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2019.06/windows/windows/10.0/msvc/19.16/x64/release/2019.07.05
+  export TAR_FILE_PREFIX=windows.10.0.msvc.19.16.x64.release.2019.07.05
 fi
 
 export EXTERNALS_TOP=`pwd`/ext
