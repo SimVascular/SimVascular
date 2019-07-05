@@ -129,7 +129,7 @@ s+REPLACEME_SV_CMAKE_CMD+/cygdrive/c/Program\\ Files/CMake/bin/cmake.exe+g
 s+REPLACEME_SV_CMAKE_OBJECT_PATH_MAX+128+g
 
 # additional needs for building python on win32
-s+REPLACEME_SV_CL_LAUNCH_SCRIPT+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat"+g
+s+REPLACEME_SV_CL_LAUNCH_SCRIPT+"REM C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat"+g
 s+REPLACEME_SV_CMAKE_ASM_COMPILER+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/cl.exe"+g
 s+REPLACEME_SV_CMAKE_ASM_MASM_COMPILER+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/ml64.exe"+g
 
