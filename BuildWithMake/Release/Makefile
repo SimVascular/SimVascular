@@ -56,6 +56,7 @@ ifeq ($(CLUSTER),x64_cygwin)
   GRM=rm
   GSED=sed
   GTAR=tar
+  GZIP=gzip
 endif
 
 ifeq ($(CLUSTER),x64_linux)
@@ -69,6 +70,7 @@ ifeq ($(CLUSTER),x64_linux)
   GRM=rm
   GSED=sed
   GTAR=tar
+  GZIP=gzip
 endif
 
 ifeq ($(CLUSTER),x64_macosx)
@@ -82,6 +84,7 @@ ifeq ($(CLUSTER),x64_macosx)
   GRM=grm
   GSED=gsed
   GTAR=gtar
+  GZIP=gzip
 endif
 
 SV_TIMESTAMP ?= $(shell $(GDATE) +"%Y-%m-%d")
@@ -116,6 +119,7 @@ veryclean: use_subst msiclean msi-bundle-clean
 	-$(GRM) -f tar_files/*.tar.gz
 	-$(GRM) -Rf $(DIST_DIR_TOP)
 	-$(GRM) -Rf package
+	-$(GRM) -Rf SimVascularLibsAndHeaders
 	-$(GRM) -Rf tmp/*
 
 #
@@ -414,6 +418,35 @@ ifeq ($(CLUSTER),x64_cygwin)
 	-$(GCHMOD) a+rx $(DIST_DIR)/sv.bat
 endif
 
+#SV_BUNDLE_FOR_PLUGINS_HDRS:=$(shell $(GFIND) ../../Code/Source -name "*.h")
+
+sv-bundle-for-plugins:
+	-$(GRM) -Rf SimVascularLibsAndHeaders
+	-$(GRM) tar_files/simvascular-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar*
+# copy required make files
+	-$(GMKDIR) -p SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/BuildWithMake
+	-$(GCP) ../*.mk SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/BuildWithMake
+	-$(GCP) -R ../MakeHelpers SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/BuildWithMake
+	-$(GCP) -R ../TclHelpers SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/BuildWithMake
+# copy libs
+	-$(GCP) -R ../Lib SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/BuildWithMake
+# copy ThirdParty
+	-$(GMKDIR) -p SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code
+	-$(GCP) -R ../../Code/ThirdParty SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code
+#  copy headers
+	-$(GMKDIR) -p SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Include
+	-for i in $(shell $(GFIND) ../../Code/Source -name "*.h"); do \
+	     echo "$$i  $(shell $(GBASENAME) $$i)" ; \
+	    $(GCP) -fl $$i SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Include; \
+	 done
+	-for i in $(shell $(GFIND) ../../Code/Source -name "*.hxx"); do \
+	     echo "$$i  $(shell $(GBASENAME) $$i)" ; \
+	    $(GCP) -fl $$i SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Include; \
+	 done
+	-$(GMKDIR) tar_files
+	-$(GTAR) --preserve-permissions -cvf tar_files/simvascular-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar SimVascularLibsAndHeaders
+	-$(GZIP) tar_files/simvascular-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar
+
 common-post-distribution:
 	-$(GSED) -f tmp/sedscript platform_independent_scripts/post-install.sh > $(DIST_DIR)/post-install.sh
 	-$(GSED) -f tmp/sedscript platform_independent_scripts/generic-launch-script > $(DIST_DIR)/generic_launch_script
@@ -433,4 +466,4 @@ windows-distribution: mksedscript common-pre-distribution copy-sv-executables sv
 taritup:
 	-$(GMKDIR) tar_files
 	-$(GTAR) --preserve-permissions -cvf tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package
-	-gzip tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
+	-$(GZIP) tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
