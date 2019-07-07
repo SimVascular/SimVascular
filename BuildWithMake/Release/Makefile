@@ -103,7 +103,7 @@ else
 endif
 
 ifeq ($(CLUSTER),x64_cygwin)
-  all: use_subst windows-distribution msi msi-bundle
+  all: use_subst windows-distribution msi msi-bundle sv-bundle-for-plugins
 else
   all: linux-distribution taritup
 endif
