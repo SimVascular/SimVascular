@@ -418,8 +418,6 @@ ifeq ($(CLUSTER),x64_cygwin)
 	-$(GCHMOD) a+rx $(DIST_DIR)/sv.bat
 endif
 
-#SV_BUNDLE_FOR_PLUGINS_HDRS:=$(shell $(GFIND) ../../Code/Source -name "*.h")
-
 sv-bundle-for-plugins:
 	-$(GRM) -Rf SimVascularLibsAndHeaders
 	-$(GRM) tar_files/simvascular-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar*
@@ -434,14 +432,14 @@ sv-bundle-for-plugins:
 	-$(GMKDIR) -p SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code
 	-$(GCP) -R ../../Code/ThirdParty SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code
 #  copy headers
-	-$(GMKDIR) -p SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Include
+	-$(GMKDIR) -p SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Source/Include
 	-for i in $(shell $(GFIND) ../../Code/Source -name "*.h"); do \
 	     echo "$$i  $(shell $(GBASENAME) $$i)" ; \
-	    $(GCP) -fl $$i SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Include; \
+	    $(GCP) -fl $$i SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Source/Include; \
 	 done
 	-for i in $(shell $(GFIND) ../../Code/Source -name "*.hxx"); do \
 	     echo "$$i  $(shell $(GBASENAME) $$i)" ; \
-	    $(GCP) -fl $$i SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Include; \
+	    $(GCP) -fl $$i SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Source/Include; \
 	 done
 	-$(GMKDIR) tar_files
 	-$(GTAR) --preserve-permissions -cvf tar_files/simvascular-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar SimVascularLibsAndHeaders
