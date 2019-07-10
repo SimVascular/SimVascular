@@ -420,7 +420,7 @@ endif
 
 sv-bundle-for-plugins:
 	-$(GRM) -Rf SimVascularLibsAndHeaders
-	-$(GRM) tar_files/simvascular-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar*
+	-$(GRM) tar_files/simvascular-make-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar*
 # copy required make files
 	-$(GMKDIR) -p SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/BuildWithMake
 	-$(GCP) ../*.mk SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/BuildWithMake
@@ -442,8 +442,8 @@ sv-bundle-for-plugins:
 	    $(GCP) -fl $$i SimVascularLibsAndHeaders/$(SV_TIMESTAMP)/Code/Source/Include; \
 	 done
 	-$(GMKDIR) tar_files
-	-$(GTAR) --preserve-permissions -cvf tar_files/simvascular-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar SimVascularLibsAndHeaders
-	-$(GZIP) tar_files/simvascular-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar
+	-$(GTAR) --preserve-permissions -cvf tar_files/simvascular-make-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar SimVascularLibsAndHeaders
+	-$(GZIP) tar_files/simvascular-make-libs-headers-$(SV_OS)-$(SV_PLATFORM).$(SV_TIMESTAMP).tar
 
 common-post-distribution:
 	-$(GSED) -f tmp/sedscript platform_independent_scripts/post-install.sh > $(DIST_DIR)/post-install.sh
