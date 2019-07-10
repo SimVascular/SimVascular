@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "sv4gui_MachineLearningUtils.h"
-#include <json.hpp>
+#include <sv4gui_json.hxx>
 #include <iostream>
 
 using json = nlohmann::json;

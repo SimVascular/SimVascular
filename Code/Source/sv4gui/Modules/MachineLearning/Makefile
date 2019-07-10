@@ -53,7 +53,7 @@ CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 HDRS	= \
     sv4gui_MachineLearningUtils.h
 
-### json.hpp
+### sv4gui_json.hxx
 
 CXXSRCS	= \
     sv4gui_MachineLearningUtils.cxx

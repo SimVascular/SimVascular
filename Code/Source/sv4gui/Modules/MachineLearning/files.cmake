@@ -1,6 +1,6 @@
 set(H_FILES
     sv4gui_MachineLearningUtils.h
-    json.hpp
+    sv4gui_json.hxx
 )
 
 set(CPP_FILES
