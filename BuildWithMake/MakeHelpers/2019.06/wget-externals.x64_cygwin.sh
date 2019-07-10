@@ -32,21 +32,29 @@
 
 export SV_EXTERNALS_VERSION_NUMBER=2019.06
 
+if [ -z "$SV_EXTERNALS_RELEASE_DATE" ]; then
+  export SV_EXTERNALS_RELEASE_DATE=2019.07.05
+fi
+
 export SV_COMPILER_VERSION=19.16
 export CXX_COMPILER_VERSION=msvc-19.16
 # compiler must now be present on the cmd line
-export EXTERNALS_PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2019.06/windows/windows/10.0/msvc/19.16/x64/release/2019.07.05
-export EXTERNALS_TAR_FILE_PREFIX=windows.10.0.msvc.19.16.x64.release.2019.07.05
+export EXTERNALS_PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2019.06/windows/windows/10.0/msvc/19.16/x64/release/$SV_EXTERNALS_RELEASE_DATE
+export EXTERNALS_TAR_FILE_PREFIX=windows.10.0.msvc.19.16.x64.release.$SV_EXTERNALS_RELEASE_DATE
 
 export EXTERNALS_TOP=`pwd`/ext
 
 # default is windows
 
-echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath -m $EXTERNALS_TOP/bin`" >> global_overrides.mk
-echo "SV_EXTERNALS_PREBUILT_QT=0" >> global_overrides.mk
+echo "CLUSTER=x64_cygwin" > cluster_overrides.mk
+echo "SV_COMPILER=msvc" >> cluster_overrides.mk
+echo "SV_COMPILER_VERSION=$SV_COMPILER_VERSION" >> cluster_overrides.mk
+echo "CXX_COMPILER_VERSION=$CXX_COMPILER_VERSION" >> cluster_overrides.mk
+echo "FORTRAN_COMPILER_VERSION=ifort" >> cluster_overrides.mk
+
 echo "SV_EXTERNALS_VERSION_NUMBER=$SV_EXTERNALS_VERSION_NUMBER" >> global_overrides.mk
-echo "SV_COMPILER_VERSION=$SV_COMPILER_VERSION" >> global_overrides.mk
-echo "CXX_COMPILER_VERSION=$CXX_COMPILER_VERSION" >> global_overrides.mk
+echo "SV_EXTERNALS_RELEASE_DATE=$SV_EXTERNALS_RELEASE_DATE" >> global_overrides.mk
+echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath -m $EXTERNALS_TOP/bin`" >> global_overrides.mk
 
 mkdir -p $EXTERNALS_TOP
 chmod -R a+rwx $EXTERNALS_TOP

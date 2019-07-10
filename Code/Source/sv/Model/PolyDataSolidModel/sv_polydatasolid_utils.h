@@ -50,7 +50,7 @@
 #include "svPolyDataSolidExports.h" // For exports
 
 #include "sv_PolyData.h"
-#include "sv_LispList.h"
+#include "sv_LispList.hxx"
 #include "sv_vtk_utils.h"
 
 /* ------ */

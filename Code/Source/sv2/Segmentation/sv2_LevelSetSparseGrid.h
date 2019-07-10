@@ -36,7 +36,7 @@
 #include "svLSetExports.h" // For exports
 #include "sv2_LevelSetStructuredGrid.h"
 #include "sv2_StateArray.h"
-#include "sv_LispList.h"
+#include "sv_LispList.hxx"
 
 
 // It's probably true that none of these enum's should be exposed in
