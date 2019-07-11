@@ -1072,8 +1072,9 @@ one optional char, outArray and one int dataType");
 //  Name (string): Name of the source object.
 //  dstName (string): Name of the desired destination object.
 //  target (double, optional): Target level of precision for decimation.
-//  pointArrayName (string, optional): Sets a custom name for the internal point array.
-//  cellArrayName (string, optional): Sets a custom name for the internal cell Array.
+//  pointArrayName (string, optional): Sets a custom name for the internal point
+//  array. cellArrayName (string, optional): Sets a custom name for the internal
+//  cell Array.
 // Returns:
 //  String: Name of the destination object
 
@@ -1127,10 +1128,11 @@ two optional chars, pointArrayName, cellArrayName");
 // Args:
 //  Name (string): Name of the source object.
 //  dstName (string): Name of the desired destination object.
-//  numiters (int, optional): Number of iterations used in the Laplace Transform?
-//  relax (double, optional): Relax factor used in the Laplace Transform?
-//  pointArrayName (string, optional): Sets a custom name for the internal point array.
-//  cellArrayName (string, optional): Sets a custom name for the internal cell Array.
+//  numiters (int, optional): Number of iterations used in the Laplace
+//  Transform? relax (double, optional): Relax factor used in the Laplace
+//  Transform? pointArrayName (string, optional): Sets a custom name for the
+//  internal point array. cellArrayName (string, optional): Sets a custom name
+//  for the internal cell Array.
 // Returns:
 //  String: Name of the destination object
 
@@ -1187,9 +1189,10 @@ two optional chars, pointArrayName, cellArrayName");
 //  dstName (string): Name of the desired destination object.
 //  numiters (int, optional): Number of iterations used for smoothing.
 //  constrainFactor (double, optional): ?
-//  numcgsolves (int, optional): Sets the number of gradient solves to run through.
-//  pointArrayName (string, optional): Sets a custom name for the internal point array.
-//  cellArrayName (string, optional): Sets a custom name for the internal cell Array.
+//  numcgsolves (int, optional): Sets the number of gradient solves to run
+//  through. pointArrayName (string, optional): Sets a custom name for the
+//  internal point array. cellArrayName (string, optional): Sets a custom name
+//  for the internal cell Array.
 // Returns:
 //  String: Name of the destination object
 
@@ -1249,8 +1252,9 @@ PyObject* Geom_LocalConstrainSmoothCmd(PyObject* self, PyObject* args) {
 //  Name (string): Name of the source object.
 //  dstName (string): Name of the desired destination object.
 //  numiters (int, optional): Number of iterations used for subdividing.
-//  pointArrayName (string, optional): Sets a custom name for the internal point array.
-//  cellArrayName (string, optional): Sets a custom name for the internal cell Array.
+//  pointArrayName (string, optional): Sets a custom name for the internal point
+//  array. cellArrayName (string, optional): Sets a custom name for the internal
+//  cell Array.
 // Returns:
 //  String: Name of the destination object
 
@@ -1305,8 +1309,9 @@ two optional chars, pointArrayName, cellArrayName");
 //  Name (string): Name of the source object.
 //  dstName (string): Name of the desired destination object.
 //  numiters (int, optional): Number of iterations used for subdividing.
-//  pointArrayName (string, optional): Sets a custom name for the internal point array.
-//  cellArrayName (string, optional): Sets a custom name for the internal cell Array.
+//  pointArrayName (string, optional): Sets a custom name for the internal point
+//  array. cellArrayName (string, optional): Sets a custom name for the internal
+//  cell Array.
 // Returns:
 //  String: Name of the destination object
 
@@ -1361,8 +1366,9 @@ two optional chars, pointArrayName, cellArrayName");
 //  Name (string): Name of the source object.
 //  dstName (string): Name of the desired destination object.
 //  numiters (int, optional): Number of iterations used for subdividing.
-//  pointArrayName (string, optional): Sets a custom name for the internal point array.
-//  cellArrayName (string, optional): Sets a custom name for the internal cell Array.
+//  pointArrayName (string, optional): Sets a custom name for the internal point
+//  array. cellArrayName (string, optional): Sets a custom name for the internal
+//  cell Array.
 // Returns:
 //  String: Name of the destination object
 
@@ -1417,12 +1423,13 @@ two optional chars, pointArrayName, cellArrayName");
 //  Name (string): Name of the source object.
 //  dstName (string): Name of the desired destination object.
 //  numblenditers (int, optional): Number of iterations used for blending.
-//  numsubdivisioniters (int, optional): Number of iterations used for subdividing.
-//  numcgsmoothiters (int, optional): Number of iterations used for cg smoothing.
-//  numlapsmoothingiters (int, optional): Number of iterations used for lap smoothing.
-//  targetdecimation (double, optional): Sets the degree of decimation.
-//  pointArrayName (string, optional): Sets a custom name for the internal point array.
-//  cellArrayName (string, optional): Sets a custom name for the internal cell Array.
+//  numsubdivisioniters (int, optional): Number of iterations used for
+//  subdividing. numcgsmoothiters (int, optional): Number of iterations used for
+//  cg smoothing. numlapsmoothingiters (int, optional): Number of iterations
+//  used for lap smoothing. targetdecimation (double, optional): Sets the degree
+//  of decimation. pointArrayName (string, optional): Sets a custom name for the
+//  internal point array. cellArrayName (string, optional): Sets a custom name
+//  for the internal cell Array.
 // Returns:
 //  String: Name of the destination object
 
@@ -1581,8 +1588,9 @@ PyObject* Geom_All_UnionCmd(PyObject* self, PyObject* args) {
 // Args:
 //  srcName (string): Name of the source poly data object.
 //  faceList (PyObject*): List of face geometries to convert.
-//  idList (PyObject*): List of ids of the face geometries to convert. Must be of the same size as the faceList argument.
-//  dstName (string): Name of the desired destination object.
+//  idList (PyObject*): List of ids of the face geometries to convert. Must be
+//  of the same size as the faceList argument. dstName (string): Name of the
+//  desired destination object.
 // Returns:
 //  String: Name of the newly converted geometry.
 
@@ -1968,6 +1976,14 @@ PyObject* Geom_PickCmd(PyObject* self, PyObject* args) {
 // ---------------------
 // Geom_OrientProfileCmd
 // ---------------------
+// Args:
+//  srcName (string): Name of the source poly data object.
+//  pathPosList (PyObject*): List for 3D coordinate position.
+//  pathTanList (PyObject*): List for 3D vector?
+//  pathXhatList (PyObject*): List for 3D vector?
+//  dstName (string): Name of the desired destination object.
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2052,6 +2068,14 @@ PyObject* Geom_OrientProfileCmd(PyObject* self, PyObject* args) {
 // ------------------------
 // Geom_DisorientProfileCmd
 // ------------------------
+// Args:
+//  srcName (string): Name of the source poly data object.
+//  pathPosList (PyObject*): List for 3D coordinate position.
+//  pathTanList (PyObject*): List for 3D vector?
+//  pathXhatList (PyObject*): List for 3D vector?
+//  dstName (string): Name of the desired destination object.
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2135,6 +2159,15 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args) {
 // --------------------
 // Geom_AlignProfileCmd
 // --------------------
+// Args:
+//  refName (string): ?
+//  srcName (string): Name of the source poly data object.
+//  dstName (string): Name of the desired destination object.
+//  vecMtd (int): Boolean value controlling whether refName is aligned by
+//  distance
+//                (false, 0) or not (true, 1).
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args) {
   char* refName;
@@ -2158,6 +2191,7 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args) {
   // Retrieve ref object and check type:
   ref = gRepository->GetObject(refName);
   if (ref == NULL) {
+    // TODO: This error message is ambiguous and unspecific
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
   }
   type = ref->GetType();
@@ -2168,6 +2202,7 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args) {
   // Retrieve src object and check type:
   src = gRepository->GetObject(srcName);
   if (src == NULL) {
+    // TODO: This error message is ambiguous and unspecific
     PyErr_SetString(PyRunTimeErr, "couldn't find object");
   }
   type = src->GetType();
@@ -2200,6 +2235,12 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args) {
 // -----------------
 // Geom_TranslateCmd
 // -----------------
+// Args:
+//  srcName (string): Name of the source poly data object.
+//  vecList (PyObject*): List for decimal 3D coordinate value.
+//  dstName (string): Name of the desired destination object.
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Geom_TranslateCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2269,6 +2310,12 @@ srcName,vecList,dstName");
 // ----------------
 // Geom_ScaleAvgCmd
 // ----------------
+// Args:
+//  srcName (string): Name of the source data object.
+//  factor (double): Scale factor for input data.
+//  dstName (string): Name of the desired destination object.
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Geom_ScaleAvgCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2320,6 +2367,10 @@ srcName,factor,dstName");
 // ---------------------
 // Geom_GetOrderedPtsCmd
 // ---------------------
+// Args:
+//  objName (string): Name of object to decompose.
+// Returns:
+//  List[double]: Ordered list of points.
 
 PyObject* Geom_GetOrderedPtsCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -2368,6 +2419,14 @@ PyObject* Geom_GetOrderedPtsCmd(PyObject* self, PyObject* args) {
 // -----------------------
 // Geom_WriteOrderedPtsCmd
 // -----------------------
+//
+// Writes an ordered pair of data from objName to fileName.
+//
+// Args:
+//  objName (string): Name of object to write to file.
+//  fileName (string): Name of file to write to.
+// Returns:
+//  Nothing, function is void.
 
 PyObject* Geom_WriteOrderedPtsCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -2404,6 +2463,14 @@ PyObject* Geom_WriteOrderedPtsCmd(PyObject* self, PyObject* args) {
 // ------------------
 // Geom_WriteLinesCmd
 // ------------------
+//
+// Writes lines of data from objName to fileName.
+//
+// Args:
+//  objName (string): Name of object to write to file.
+//  fileName (string): Name of file to write to.
+// Returns:
+//  Nothing, function is void.
 
 PyObject* Geom_WriteLinesCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -2440,6 +2507,13 @@ PyObject* Geom_WriteLinesCmd(PyObject* self, PyObject* args) {
 // -------------------
 // Geom_PolysClosedCmd
 // -------------------
+//
+// Checks to see if the supplied polygon from srcName is a closed shape.
+//
+// Args:
+//  srcName (string): Name of the source object to process.
+// Returns:
+//  Boolean: Is the supplied polygon closed?
 
 PyObject* Geom_PolysClosedCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2474,6 +2548,13 @@ PyObject* Geom_PolysClosedCmd(PyObject* self, PyObject* args) {
 // ----------------
 // Geom_SurfAreaCmd
 // ----------------
+//
+// Calculates the surface area of the supplied shape (srcName).
+//
+// Args:
+//  srcName (string): Name of the source object to process.
+// Returns:
+//  double: Surface area of the supplied shape.
 
 PyObject* Geom_SurfAreaCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2508,6 +2589,13 @@ PyObject* Geom_SurfAreaCmd(PyObject* self, PyObject* args) {
 // -----------------------
 // Geom_GetPolyCentroidCmd
 // -----------------------
+//
+// Calculates the supplied polygon's centroid.
+//
+// Args:
+//  srcName (string): Name of the source object to process.
+// Returns:
+//  List[double]: Supplied polygon's centroid.
 
 PyObject* Geom_GetPolyCentroidCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2542,6 +2630,10 @@ PyObject* Geom_GetPolyCentroidCmd(PyObject* self, PyObject* args) {
 // ---------------------
 // Geom_PrintTriStatsCmd
 // ---------------------
+// Args:
+//  surfName (string): Name of the source object to process.
+// Returns:
+//  Nothing, the function is void.
 
 PyObject* Geom_PrintTriStatsCmd(PyObject* self, PyObject* args) {
   char* surfName;
@@ -2575,6 +2667,11 @@ PyObject* Geom_PrintTriStatsCmd(PyObject* self, PyObject* args) {
 // -----------------------
 // Geom_PrintSmallPolysCmd
 // -----------------------
+// Args:
+//  srcName (string): Name of the source object to process.
+//  sideTol (double): ?
+// Returns:
+//  Nothing, the function is void.
 
 PyObject* Geom_PrintSmallPolysCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2611,6 +2708,12 @@ PyObject* Geom_PrintSmallPolysCmd(PyObject* self, PyObject* args) {
 // --------------------
 // Geom_RmSmallPolysCmd
 // --------------------
+// Args:
+//  srcName (string): Name of the source object to process.
+//  dstName (string): Name of the desired destination object.
+//  sideTol (double): ?
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Geom_RmSmallPolysCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2660,6 +2763,10 @@ PyObject* Geom_RmSmallPolysCmd(PyObject* self, PyObject* args) {
 // ------------
 // Geom_BBoxCmd
 // ------------
+// Args:
+//  objName (string): Name of the object to be processed.
+// Returns:
+//  List[double]: ?
 
 PyObject* Geom_BBoxCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -2701,6 +2808,11 @@ PyObject* Geom_BBoxCmd(PyObject* self, PyObject* args) {
 // ----------------
 // Geom_ClassifyCmd
 // ----------------
+// Args:
+//  objName (string): Name of the object to be processed.
+//  ptList (PyObject*): ?
+// Returns:
+//  int: ?
 
 PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -2751,6 +2863,14 @@ PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args) {
 // ----------------
 // Geom_PtInPolyCmd
 // ----------------
+// Args:
+//  objName (string): Name of poly data object to be processed.
+//  ptList (PyObject*): Single point expressed in two dimensions with decimal
+//  precision. usePrevPoly (int): Use the previous polygon (non-zero number,
+//  true), or no (0, false).
+// Returns:
+//  int: Output value. Returns 1 if the point specified is inside the polygon,
+//  -1 if not.
 
 PyObject* Geom_PtInPolyCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -2802,6 +2922,12 @@ PyObject* Geom_PtInPolyCmd(PyObject* self, PyObject* args) {
 // ----------------
 // Geom_MergePtsCmd
 // ----------------
+// Args:
+//  srcName (string): Name of the source object to be processed.
+//  dstName (string): Desired name of the output object.
+//  tol (double): ?
+// Returns:
+//  String: Name of the output object.
 
 PyObject* Geom_MergePtsCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2848,6 +2974,16 @@ PyObject* Geom_MergePtsCmd(PyObject* self, PyObject* args) {
 // -----------------
 // Geom_Warp3dPtsCmd
 // -----------------
+//
+// Performs a 3D warp on the source object's points by the provided scale
+// factor.
+//
+// Args:
+//  srcName (string): Name of the source object to be processed.
+//  dstName (string): Desired name of the output object.
+//  scale (double): Scale factor for the warp operation.
+// Returns:
+//  String: Name of the output object.
 
 PyObject* Geom_Warp3dPtsCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2894,6 +3030,13 @@ PyObject* Geom_Warp3dPtsCmd(PyObject* self, PyObject* args) {
 // --------------
 // Geom_NumPtsCmd
 // --------------
+//
+// Returns the number of points contained in the source object.
+//
+// Args:
+//  srcName (string): Name of the source object to be processed.
+// Returns:
+//  int: Number of points in the source object.
 
 PyObject* Geom_NumPtsCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2926,6 +3069,12 @@ PyObject* Geom_NumPtsCmd(PyObject* self, PyObject* args) {
 // ---------------------
 // Geom_sampleLoopCmd
 // ---------------------
+// Args:
+//  srcName (string): Name of the source object to be processed.
+//  targetNumPts (int): Desired number of points to process? Must be < 3.
+//  dstName (string): Desired name of the output object.
+// Returns:
+//  String: Name of the output object.
 
 PyObject* Geom_sampleLoopCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -2976,6 +3125,21 @@ PyObject* Geom_sampleLoopCmd(PyObject* self, PyObject* args) {
 // ---------------------
 // Geom_loftSolidCmd
 // ---------------------
+// Args:
+//  srcList (PyObject*): Names of the source objects to be processed.
+//  dstName (string): Desired name of the output object.
+//  numOutPtsInSegs (int): ?
+//  numOutPtsAlongLength (int): ?
+//  numLinearPtsAlongPath (int): ?
+//  numModes (int): ?
+//  useFFT (int): ?
+//  useLinearSampleAlongLength (int): ?
+//  splineType (int, optional): ?
+//  bias (double, optional): ?
+//  tension (double, optional): ?
+//  continuity (double, optional): ?
+// Returns:
+//  String: Name of the output object.
 
 PyObject* Geom_loftSolidCmd(PyObject* self, PyObject* args) {
   int numSrcs;
@@ -3061,6 +3225,17 @@ numModes,useFFT, useLinearSampleAlongLength, splineType, bias,tension, continuit
 // ---------------------
 // Geom_loftSolidWithNURBSCmd
 // ---------------------
+// Args:
+//  srcList (PyObject*): Names of the source objects to be processed.
+//  dstName (string): Desired name of the output object.
+// The following parameters are duplicated for the "v" component. e.g. vDegree,
+// vSpacing.
+//  uDegree (int): ?
+//  uSpacing (double): ?
+//  uKnotSpanType (string): ?
+//  uParametricSpanType (string): ?
+// Returns:
+//  String: Name of the output object.
 
 PyObject* Geom_loftSolidWithNURBSCmd(PyObject* self, PyObject* args) {
   int numSrcs;
@@ -3151,6 +3326,13 @@ uParametricSpanType,vParametricSpanType");
 // --------------------
 // Geom_2dWindingNumCmd
 // --------------------
+//
+// Returns the count of all windings in the specified object?
+//
+// Args:
+//  objName (string): Name of the object to be processed.
+// Returns:
+//  int: Count of all windings in the object?
 
 PyObject* Geom_2dWindingNumCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3183,6 +3365,10 @@ PyObject* Geom_2dWindingNumCmd(PyObject* self, PyObject* args) {
 // -------------------
 // Geom_PolygonNormCmd
 // -------------------
+// Args:
+//  objName (string): Name of the object to be processed.
+// Returns:
+//  List[double]: ?
 
 PyObject* Geom_PolygonNormCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3217,6 +3403,13 @@ PyObject* Geom_PolygonNormCmd(PyObject* self, PyObject* args) {
 // -------------
 // Geom_AvgPtCmd
 // -------------
+//
+// Returns the average of the points in the provided object.
+//
+// Args:
+//  objName (string): Name of the object to be processed.
+// Returns:
+//  List[double]: Average of all points in the source object.
 
 PyObject* Geom_AvgPtCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3251,6 +3444,14 @@ PyObject* Geom_AvgPtCmd(PyObject* self, PyObject* args) {
 // ------------
 // Geom_CopyCmd
 // ------------
+//
+// Makes a deep copy of the provided object with the provided name.
+//
+// Args:
+//  srcName (string): Name of the source object to process.
+//  dstName (string): Name of the desired destination object.
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Geom_CopyCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -3297,6 +3498,12 @@ PyObject* Geom_CopyCmd(PyObject* self, PyObject* args) {
 // ------------------
 // Geom_ReorderPgnCmd
 // ------------------
+// Args:
+//  srcName (string): Name of the source object to process.
+//  start (int): Start index for the reorder process.
+//  dstName (string): Name of the desired destination object.
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Geom_ReorderPgnCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -3345,6 +3552,20 @@ PyObject* Geom_ReorderPgnCmd(PyObject* self, PyObject* args) {
 // ---------------------------
 // Geom_SplinePtsToPathPlanCmd
 // ---------------------------
+//
+// Converts a provided spline path to a list of coordinate points.
+//
+// Args:
+//  srcName (string): Name of the source object to process.
+//  numOutputPts (int): Number of output points to calculate from the spline
+//  path. flag (int): Match end points of spline to output path (non-zero, true)
+//  or not (0, false). filename (string, optional): Desired file name for saving
+//  output.
+// Returns:
+//  IF filename is provided
+//    Nothing, function is void.
+//  ELSE
+//    String: Path output that wasn't saved to a file.
 
 PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -3402,6 +3623,12 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args) {
 // ------------------------
 // Geom_IntegrateSurfaceCmd
 // ------------------------
+// Args:
+//  objName (string): Name of the object to be processed.
+//  nrmList (PyObject*): ?
+//  tensorType (int): Process scalars (0) or process vectors (1).
+// Returns:
+//  int: ?
 
 PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3453,6 +3680,11 @@ PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args) {
 // -------------------------
 // Geom_IntegrateSurface2Cmd
 // -------------------------
+// Args:
+//  objName (string): Name of the object to be processed.
+//  tensorType (int): Process scalars (0) or process vectors (1).
+// Returns:
+//  List[double]: ?
 
 PyObject* Geom_IntegrateSurface2Cmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3491,6 +3723,12 @@ PyObject* Geom_IntegrateSurface2Cmd(PyObject* self, PyObject* args) {
 // -----------------------
 // Geom_IntegrateEnergyCmd
 // -----------------------
+// Args:
+//  objName (string): Name of the object to be processed.
+//  nrmList (PyObject*): ?
+//  rho (double): ?
+// Returns:
+//  double: Total energy.
 
 PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3542,6 +3780,11 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args) {
 // --------------------
 // Geom_FindDistanceCmd
 // --------------------
+// Args:
+//  objName (string): Name of the object to be processed.
+//  ptList (PyObject*): Input point list.
+// Returns:
+//  double: Calculated distance.
 
 PyObject* Geom_FindDistanceCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3586,6 +3829,11 @@ PyObject* Geom_FindDistanceCmd(PyObject* self, PyObject* args) {
 // -------------------------
 // Geom_InterpolateScalarCmd
 // -------------------------
+// Args:
+//  objName (string): Name of the object to be processed.
+//  ptList (PyObject*): Input point list.
+// Returns:
+//  double: Calculated scalar.
 
 PyObject* Geom_InterpolateScalarCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3635,6 +3883,11 @@ PyObject* Geom_InterpolateScalarCmd(PyObject* self, PyObject* args) {
 // -------------------------
 // Geom_InterpolateVectorCmd
 // -------------------------
+// Args:
+//  objName (string): Name of the object to be processed.
+//  ptList (PyObject*): Input point list.
+// Returns:
+//  List[double]: Points from interpolated vector?
 
 PyObject* Geom_InterpolateVectorCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3689,6 +3942,12 @@ PyObject* Geom_InterpolateVectorCmd(PyObject* self, PyObject* args) {
 // -------------------------
 // Geom_IntersectWithLineCmd
 // -------------------------
+// Args:
+//  objName (string): Name of the object to be processed.
+//  p0List (PyObject*): 3D coordinate set 0.
+//  p1List (PyObject*): 3D coordinate set 1.
+// Returns:
+//  List[double]: Intersection points between object and points?
 
 PyObject* Geom_IntersectWithLineCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3741,6 +4000,16 @@ PyObject* Geom_IntersectWithLineCmd(PyObject* self, PyObject* args) {
 // --------------------
 // Geom_AddPointDataCmd
 // --------------------
+// Args:
+//  srcNameA (string): First source object.
+//  srcNameB (string): Second source object.
+//  dstName (string): Name of the desired destination object.
+//  scflag (int): Working with scalars (non-zero, true) or not (0, false). If
+//  false, vflag must be true.
+//  vflag (int): Working with vectors (non-zero, true) or not (0, false). If
+//  false, scflag must be true.
+// Returns:
+//  String: Name of destination object.
 
 PyObject* Geom_AddPointDataCmd(PyObject* self, PyObject* args) {
   char* srcNameA;
@@ -3758,7 +4027,7 @@ PyObject* Geom_AddPointDataCmd(PyObject* self, PyObject* args) {
                         &vflag)) {
     PyErr_SetString(PyRunTimeErr,
                     "Could not import three chars,two ints\
-srcNameA, srcNameB,dstName,scflag,vflag");
+                    srcNameA, srcNameB,dstName,scflag,vflag");
   }
 
   // Do work of command:
@@ -3815,6 +4084,16 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 // -------------------------
 // Geom_SubtractPointDataCmd
 // -------------------------
+// Args:
+//  srcNameA (string): First source object.
+//  srcNameB (string): Second source object.
+//  dstName (string): Name of the desired destination object.
+//  scflag (int): Working with scalars (non-zero, true) or not (0, false). If
+//  false, vflag must be true.
+//  vflag (int): Working with vectors (non-zero, true) or not (0, false). If
+//  false, scflag must be true.
+// Returns:
+//  String: Name of destination object.
 
 PyObject* Geom_SubtractPointDataCmd(PyObject* self, PyObject* args) {
   char* srcNameA;
@@ -3832,7 +4111,7 @@ PyObject* Geom_SubtractPointDataCmd(PyObject* self, PyObject* args) {
                         &vflag)) {
     PyErr_SetString(PyRunTimeErr,
                     "Could not import three chars,two ints\
-srcNameA, srcNameB,dstName,scflag,vflag");
+                    srcNameA, srcNameB,dstName,scflag,vflag");
   }
 
   // Do work of command:
@@ -3889,6 +4168,16 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 // -------------------------
 // Geom_MultiplyPointDataCmd
 // -------------------------
+// Args:
+//  srcNameA (string): First source object.
+//  srcNameB (string): Second source object.
+//  dstName (string): Name of the desired destination object.
+//  scflag (int): Working with scalars (non-zero, true) or not (0, false). If
+//  false, vflag must be true.
+//  vflag (int): Working with vectors (non-zero, true) or not (0, false). If
+//  false, scflag must be true.
+// Returns:
+//  String: Name of destination object.
 
 PyObject* Geom_MultiplyPointDataCmd(PyObject* self, PyObject* args) {
   char* srcNameA;
@@ -3906,7 +4195,7 @@ PyObject* Geom_MultiplyPointDataCmd(PyObject* self, PyObject* args) {
                         &vflag)) {
     PyErr_SetString(PyRunTimeErr,
                     "Could not import three chars,two ints\
-srcNameA, srcNameB,dstName,scflag,vflag");
+                    srcNameA, srcNameB,dstName,scflag,vflag");
   }
 
   // Do work of command:
@@ -3963,6 +4252,16 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 // -----------------------
 // Geom_DividePointDataCmd
 // -----------------------
+// Args:
+//  srcNameA (string): First source object.
+//  srcNameB (string): Second source object.
+//  dstName (string): Name of the desired destination object.
+//  scflag (int): Working with scalars (non-zero, true) or not (0, false). If
+//  false, vflag must be true.
+//  vflag (int): Working with vectors (non-zero, true) or not (0, false). If
+//  false, scflag must be true.
+// Returns:
+//  String: Name of destination object.
 
 PyObject* Geom_DividePointDataCmd(PyObject* self, PyObject* args) {
   char* srcNameA;
@@ -3980,7 +4279,7 @@ PyObject* Geom_DividePointDataCmd(PyObject* self, PyObject* args) {
                         &vflag)) {
     PyErr_SetString(PyRunTimeErr,
                     "Could not import three chars,two ints\
-srcNameA, srcNameB,dstName,scflag,vflag");
+                    srcNameA, srcNameB,dstName,scflag,vflag");
   }
 
   // Do work of command:
@@ -4037,6 +4336,16 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 // ---------------
 // Geom_ProjectCmd
 // ---------------
+// Args:
+//  srcNameA (string): First source object.
+//  srcNameB (string): Second source object.
+//  dstName (string): Name of the desired destination object.
+//  scflag (int): Working with scalars (non-zero, true) or not (0, false). If
+//  false, vflag must be true.
+//  vflag (int): Working with vectors (non-zero, true) or not (0, false). If
+//  false, scflag must be true.
+// Returns:
+//  String: Name of destination object.
 
 PyObject* Geom_ProjectCmd(PyObject* self, PyObject* args) {
   char* srcNameA;
@@ -4054,7 +4363,7 @@ PyObject* Geom_ProjectCmd(PyObject* self, PyObject* args) {
                         &vflag)) {
     PyErr_SetString(PyRunTimeErr,
                     "Could not import three chars,two ints\
-srcNameA, srcNameB,dstName,scflag,vflag");
+                    srcNameA, srcNameB,dstName,scflag,vflag");
   }
 
   // Do work of command:
@@ -4111,6 +4420,10 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 // ---------------------------
 // Geom_IntegrateScalarSurfCmd
 // ---------------------------
+// Args:
+//  srcName (string): Name of the source object to be processed.
+// Returns:
+//  double: ?
 
 PyObject* Geom_IntegrateScalarSurfCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -4145,6 +4458,11 @@ PyObject* Geom_IntegrateScalarSurfCmd(PyObject* self, PyObject* args) {
 // -----------------------------
 // Geom_IntegrateScalarThreshCmd
 // -----------------------------
+// Args:
+//  srcName (string): Name of the source object to be processed.
+//  wssthresh (double): ?
+// Returns:
+//  List[double]: ?
 
 PyObject* Geom_IntegrateScalarThreshCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -4157,7 +4475,7 @@ PyObject* Geom_IntegrateScalarThreshCmd(PyObject* self, PyObject* args) {
   if (!PyArg_ParseTuple(args, "sd", &srcName, &wssthresh)) {
     PyErr_SetString(PyRunTimeErr,
                     "Could not import one char and one double\
-,srcName,wssthresh");
+                    ,srcName,wssthresh");
   }
 
   // Do work of command:
@@ -4184,6 +4502,16 @@ PyObject* Geom_IntegrateScalarThreshCmd(PyObject* self, PyObject* args) {
 // -------------------------
 // Geom_ReplacePointDataCmd
 // ------------------------
+// Args:
+//  srcNameA (string): First source object.
+//  srcNameB (string): Second source object.
+//  dstName (string): Name of the desired destination object.
+//  scflag (int): Working with scalars (non-zero, true) or not (0, false). If
+//  false, vflag must be true.
+//  vflag (int): Working with vectors (non-zero, true) or not (0, false). If
+//  false, scflag must be true.
+// Returns:
+//  String: Name of destination object.
 
 PyObject* Geom_ReplacePointDataCmd(PyObject* self, PyObject* args) {
   char* srcNameA;
