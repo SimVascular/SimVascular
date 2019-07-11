@@ -3,6 +3,7 @@ GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
 GRM=rm
+GMV=mv
 
 # paths
 
@@ -58,6 +59,8 @@ $GRM -Rf  $MITK_BINDIR/bin/*.REPLACEME_SV_SO_FILE_EXTENSION*
 $GRM -Rf  $MITK_BINDIR/bin/plugins
 
 # CTK
+
+$GMV -f $MITK_BINDIR/bin/Python $MITK_BINDIR/bin/PythonCTK
 
 $GMKDIR -p $MITK_BINDIR/include/ctk
 
@@ -189,6 +192,8 @@ done
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Algorithms
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Controllers
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Interactions
+	   $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
+	   $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
 

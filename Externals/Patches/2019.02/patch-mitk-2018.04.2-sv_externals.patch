@@ -1,0 +1,55 @@
+diff -aur --new-file -x .git mitk-2018.04.2/CMakeLists.txt mitk-2018.04.2-modified/CMakeLists.txt
+--- mitk-2018.04.2/CMakeLists.txt	2019-07-04 22:25:56.506349300 -0700
++++ mitk-2018.04.2-modified/CMakeLists.txt	2019-07-02 13:48:23.243031100 -0700
+@@ -16,6 +16,13 @@
+ # Superbuild Option - Enabled by default
+ #-----------------------------------------------------------------------------
+ 
++#
++# SimVascular additions
++#
++set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "C:/foo" CACHE PATH "")
++mark_as_advanced(SV_EXTERNALS_TOPLEVEL_BIN_DIR)
++message("SV_EXTERNALS_TOPLEVEL_BIN_DIR:  ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}")
++
+ option(MITK_USE_SUPERBUILD "Build MITK and the projects it depends on via SuperBuild.cmake." ON)
+ 
+ if(MITK_USE_SUPERBUILD)
+@@ -179,7 +186,7 @@
+                     "Please move the MITK build directory to a directory with a shorter path." )
+   endif()
+ endif()
+-
++      
+ #-----------------------------------------------------------------------------
+ # Additional MITK Options (also shown during superbuild)
+ #-----------------------------------------------------------------------------
+@@ -797,7 +804,7 @@
+         #files.
+         set(_temp_EP_${_package}_dir ${${_package}_DIR})
+       endif(DEFINED ${_package}_DIR)
+-
++      message("SV_EXTERNALS_TOPLEVEL_BIN_DIR:  ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}")
+       find_package(${_package} QUIET CONFIG)
+       string(TOUPPER "${_package}" _package_uc)
+       if(NOT (${_package}_FOUND OR ${_package_uc}_FOUND))
+diff -aur --new-file -x .git mitk-2018.04.2/SuperBuild.cmake mitk-2018.04.2-modified/SuperBuild.cmake
+--- mitk-2018.04.2/SuperBuild.cmake	2019-06-04 23:14:01.000000000 -0700
++++ mitk-2018.04.2-modified/SuperBuild.cmake	2019-07-04 14:09:42.468435000 -0700
+@@ -149,6 +149,7 @@
+ endif()
+ 
+ set(ep_common_args
++  -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
+   -DCMAKE_CXX_EXTENSIONS:STRING=${CMAKE_CXX_EXTENSIONS}
+   -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
+   -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
+@@ -352,6 +353,8 @@
+   DOWNLOAD_COMMAND ""
+   CMAKE_GENERATOR ${gen}
+   CMAKE_CACHE_ARGS
++    # --------------- SimVascular Options ----------
++    -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
+     # --------------- Build options ----------------
+     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}

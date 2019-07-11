@@ -86,7 +86,7 @@ s+REPLACEME_SV_SPECIAL_TOP_BIN_DIR_PYTHON+REPLACEME_SV_SPECIAL_TOPLEVEL_BINDIR/R
 # 
 #
 
-s+REPLACEME_SV_SPECIAL_COMPILER_SCRIPT+source CygwinHelpers/msvc_2015_x64.sh;export PATH=/cygdrive/c/Program\\ Files/doxygen/bin:/cygdrive/c/Program\\ Files\\ \\(x86\\)/Graphviz2.38/bin:/cygdrive/c/Program\\ Files/CMake/bin:$PATH;subst S: C:/cygwin64/usr/local/sv/ext/2019.02/REPLACEME_SV_LOWERCASE_CMAKE_BUILD_TYPE/REPLACEME_SHORT_GL_NAME/src;subst B: REPLACEME_SV_FULLPATH_BUILDDIR+g
+s+REPLACEME_SV_SPECIAL_COMPILER_SCRIPT+export PATH=/cygdrive/c/Program\\ Files/doxygen/bin:/cygdrive/c/Program\\ Files\\ \\(x86\\)/Graphviz2.38/bin:/cygdrive/c/Program\\ Files/CMake/bin:$PATH;subst S: C:/cygwin64/usr/local/sv/ext/2019.02/REPLACEME_SV_LOWERCASE_CMAKE_BUILD_TYPE/REPLACEME_SHORT_GL_NAME/src;subst B: REPLACEME_SV_FULLPATH_BUILDDIR+g
 s+REPLACEME_SV_SPECIAL_COMPILER_END_SCRIPT+subst S: /D;subst B: /D+g
 
 #
@@ -120,13 +120,18 @@ s+REPLACEME_SV_LIB_FILE_EXTENSION+lib+g
 s+REPLACEME_SV_SO_FILE_EXTENSION+dll+g
 
 # note: must use devenv for mitk
-s+REPLACEME_SV_CMAKE_GENERATOR+"Visual Studio 14 2015 Win64"+g
+s+REPLACEME_SV_CMAKE_GENERATOR+"Visual Studio 15 2017 Win64"+g
 s+REPLACEME_SV_MAKE_CMD+devenv.exe+g
 s+REPLACEME_SV_MAKE_BUILD_PARAMETERS+/build REPLACEME_SV_CMAKE_BUILD_TYPE /project ALL_BUILD /projectconfig REPLACEME_SV_CMAKE_BUILD_TYPE /out ./stdout.devenv.build.txt+g
 s+REPLACEME_SV_MAKE_INSTALL_PARAMETERS+/build REPLACEME_SV_CMAKE_BUILD_TYPE /project INSTALL /projectconfig REPLACEME_SV_CMAKE_BUILD_TYPE /out ./stdout.devenv.install.txt +g
 
 s+REPLACEME_SV_CMAKE_CMD+/cygdrive/c/Program\\ Files/CMake/bin/cmake.exe+g
 s+REPLACEME_SV_CMAKE_OBJECT_PATH_MAX+128+g
+
+# additional needs for building python on win32
+s+REPLACEME_SV_CL_LAUNCH_SCRIPT+"REM C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat"+g
+s+REPLACEME_SV_CMAKE_ASM_COMPILER+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/cl.exe"+g
+s+REPLACEME_SV_CMAKE_ASM_MASM_COMPILER+"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/ml64.exe"+g
 
 # build with some debug info
 #s+REPLACEME_SV_CMAKE_BUILD_TYPE+RelWithDebInfo+g
@@ -140,7 +145,7 @@ s+REPLACEME_SV_OS_DIR+win+g
 s+REPLACEME_SV_OS_LONG_NAME_DIR+windows+g
 s+REPLACEME_SV_OS_VER_NO+10.0+g
 s+REPLACEME_SV_COMPILER_SHORT_NAME+msvc+g
-s+REPLACEME_SV_COMPILER_VER_NO+19.0+g
+s+REPLACEME_SV_COMPILER_VER_NO+19.16+g
 s+REPLACEME_SV_ARCH_DIR+x64+g
 
 # swig
@@ -218,8 +223,8 @@ s+REPLACEME_SV_VTK_OPENGL_VERSION+OpenGL2+g
 
 # Qt
 
-#s+REPLACEME_SV_QT5_DIR+C:/OpenSource/Qt/Qt5.6.3/5.6.3/msvc2015_64+g
 s+REPLACEME_SV_QT_DIR+qt-5.6.3+g
+s+REPLACEME_SV_QT_VERSION+5.6.3+g
 s+REPLACEME_SV_QMAKE_EXECUTABLE+qmake.exe+g
 
 # Tcl/Tk
