@@ -117,9 +117,7 @@ static PyObject* Repos_ClearLabelCmd( PyObject* self, PyObject* args );
 // Repos_Methods
 // ----------
 PyMethodDef pyRepository_methods[] =
-
 {
-
     {"List", Repos_ListCmd, METH_NOARGS,NULL},
     {"Exists", Repos_ExistsCmd, METH_VARARGS,NULL},
     {"Delete", Repos_DeleteCmd, METH_VARARGS,NULL},
@@ -146,7 +144,6 @@ PyMethodDef pyRepository_methods[] =
     {"Setstring", Repos_SetStringCmd, METH_VARARGS,NULL},
     {"Getstring", Repos_GetStringCmd, METH_VARARGS,NULL},
     {NULL, NULL,0,NULL},
-
 };
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyRepositorymodule = {
@@ -213,6 +210,14 @@ int Repos_pyInit()
 // -------------
 // Repos_PassCmd
 // -------------
+//
+// Renames the provided object with the name given.
+//
+// Args:
+//  stringPd (string): Object to be renamed.
+//  string (string): Name to give to object.
+// Returns:
+//  String: ?
 
 PyObject* Repos_SetStringCmd( PyObject* self, PyObject* args)
 
@@ -225,7 +230,6 @@ PyObject* Repos_SetStringCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &stringPd, &string))
   {
   PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: stringPd, string");
-  
   }
 
   // Retrieve source object:
@@ -233,7 +237,6 @@ PyObject* Repos_SetStringCmd( PyObject* self, PyObject* args)
   if ( pd == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object stringPd");
-    
   }
 
   pd->SetName( string );
@@ -242,11 +245,20 @@ PyObject* Repos_SetStringCmd( PyObject* self, PyObject* args)
   rtnstr[0]='\0';
   sprintf( rtnstr, "%s", string );
   return Py_BuildValue("s",rtnstr);
-
 }
 
-PyObject* Repos_GetStringCmd( PyObject* self, PyObject* args)
+// -------------
+// Repos_GetStringCmd
+// -------------
+//
+// Gets the name of the provided object.
+//
+// Args:
+//  stringPd (string): Object to be processed.
+// Returns:
+//  String: Name of the provided object.
 
+PyObject* Repos_GetStringCmd( PyObject* self, PyObject* args)
 {
 
   char *stringPd;
@@ -255,7 +267,7 @@ PyObject* Repos_GetStringCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &stringPd))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: stringPd");
-    
+
   }
 
   // Retrieve source object:
@@ -263,7 +275,7 @@ PyObject* Repos_GetStringCmd( PyObject* self, PyObject* args)
   if ( pd == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object stringPd");
-    
+
   }
   return Py_BuildValue("s",pd->GetName());
 
@@ -272,9 +284,15 @@ PyObject* Repos_GetStringCmd( PyObject* self, PyObject* args)
 // -------------
 // Repos_ListCmd
 // -------------
+//
+// Returns a list of all objects in the repository by name.
+//
+// Args:
+//  None
+// Returns:
+//  List[string]: List of all objects in repository by name.
 
 PyObject* Repos_ListCmd( PyObject* self, PyObject* args)
-
 {
 
   char *name;
@@ -294,9 +312,15 @@ PyObject* Repos_ListCmd( PyObject* self, PyObject* args)
 // ---------------
 // Repos_ExistsCmd
 // ---------------
+//
+// Returns whether or not the provided object exists.
+//
+// Args:
+//  name (string): Name of query object.
+// Returns:
+//  boolean: Does the provided object exist?
 
 PyObject*  Repos_ExistsCmd( PyObject* self, PyObject* args)
-
 {
 
   char *name;
@@ -305,7 +329,7 @@ PyObject*  Repos_ExistsCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &name))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: name");
-    
+
   }
 
   exists = gRepository->Exists( name );
@@ -317,9 +341,15 @@ PyObject*  Repos_ExistsCmd( PyObject* self, PyObject* args)
 // ---------------
 // Repos_DeleteCmd
 // ---------------
+//
+// Deletes the provided object.
+//
+// Args:
+//  objName (string): Name of object to be deleted.
+// Returns:
+//  Nothing, function is void.
 
 PyObject*  Repos_DeleteCmd( PyObject* self, PyObject* args)
-
 {
 
   char *objName;
@@ -330,7 +360,7 @@ PyObject*  Repos_DeleteCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
-    
+
   }
 
   // Do work of command:
@@ -340,7 +370,7 @@ PyObject*  Repos_DeleteCmd( PyObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r,"object %s not in repository",objName);
     PyErr_SetString(PyRunTimeErr, r);
-    
+
   }
 
   obj_t = gRepository->GetType( objName );
@@ -355,19 +385,24 @@ PyObject*  Repos_DeleteCmd( PyObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r,"error deleting object %s", objName);
     PyErr_SetString(PyRunTimeErr, r);
-    
+
   }
   return SV_PYTHON_OK;
 
 }
 
-
 // -------------
 // Repos_TypeCmd
 // -------------
+//
+// Returns the type of the provided object.
+//
+// Args:
+//  objName (string): Name of object to be analyzed.
+// Returns:
+//  string: Type of objName.
 
 PyObject* Repos_TypeCmd( PyObject* self, PyObject* args)
-
 {
 
   char *name;
@@ -377,7 +412,6 @@ PyObject* Repos_TypeCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &name))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: name");
-    
   }
 
   char r[2048];
@@ -386,7 +420,6 @@ PyObject* Repos_TypeCmd( PyObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "object %s not found", name);
     PyErr_SetString(PyRunTimeErr,r);
-    
   }
 
   type = gRepository->GetType( name );
@@ -396,13 +429,19 @@ PyObject* Repos_TypeCmd( PyObject* self, PyObject* args)
 
 }
 
-
 // --------------------
 // Repos_ImportVtkPdCmd
 // --------------------
+//
 // The idea here is that we want to take an interpreter-level name for
 // a vtk object, and use that to look up a pointer to that object and
 // then to create a cvRepositoryData object from that pointer.
+//
+// Args:
+//  vtkName (PyObject*): ?
+//  objName (string): Name of the object to be processed.
+// Returns:
+//  string: Name of output object.
 
 PyObject* Repos_ImportVtkPdCmd( PyObject* self, PyObject* args)
 
@@ -418,7 +457,7 @@ PyObject* Repos_ImportVtkPdCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
       "Could not import 1 tuple and 1 char: vtkName,name");
-    
+
   }
 
   // Look up the named vtk object:
@@ -430,7 +469,7 @@ PyObject* Repos_ImportVtkPdCmd( PyObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "error retrieving vtk object %s", objName);
     PyErr_SetString(PyRunTimeErr, r);
-    
+
   }
 
   // Is the specified repository object name already in use?
@@ -439,7 +478,7 @@ PyObject* Repos_ImportVtkPdCmd( PyObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "obj %s already exists", objName);
     PyErr_SetString(PyRunTimeErr, r);
-    
+
   }
 
   pd = new cvPolyData( vtkObj );
@@ -450,17 +489,20 @@ PyObject* Repos_ImportVtkPdCmd( PyObject* self, PyObject* args)
     sprintf(r, "error registering obj %s in repository", objName);
     PyErr_SetString(PyRunTimeErr, r);
     delete pd;
-    
+
   }
 
   return Py_BuildValue("s",pd->GetName());
 
 }
 
-
 // --------------------
 // Repos_ExportToVtkCmd
 // --------------------
+// Args:
+//  objName (string): Name of object to export.
+// Returns:
+//  PyObject*: Generated VTK object
 
 PyObject* Repos_ExportToVtkCmd( PyObject* self, PyObject* args)
 
@@ -474,7 +516,7 @@ PyObject* Repos_ExportToVtkCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
-    
+
   }
 
   // Do work of command:
@@ -487,7 +529,7 @@ PyObject* Repos_ExportToVtkCmd( PyObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    
+
   }
 
   // Check type (be aware that this implementation is not
@@ -509,7 +551,7 @@ PyObject* Repos_ExportToVtkCmd( PyObject* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "%s not a data object", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    
+
   }
 
   // vtkTclGetObjectFromPointer takes a vtkObject * and does either:
@@ -534,19 +576,24 @@ PyObject* Repos_ExportToVtkCmd( PyObject* self, PyObject* args)
 
 }
 
-
 // --------------------
 // Repos_ImportVtkSpCmd
 // --------------------
+//
 // Note that for images, vtkImageToStructuredPoints must be applied in
 // the interpreter before calling this command.  We could pull that
 // conversion inside this function, but there was mention on the vtk
 // mailing list a while back about how image caches would be going
 // away in vtk 3.0, and so I don't want to code in something that's
 // going to become obsolete.
+//
+// Args:
+//  vtkName (PyObject*): Name of the source VTK object.
+//  objName (string): Desired name of the destination object.
+// Returns:
+//  string: Name of the destination object.
 
 PyObject* Repos_ImportVtkSpCmd( PyObject* self, PyObject* args)
-
 {
 
   PyObject *vtkName;
@@ -555,8 +602,9 @@ PyObject* Repos_ImportVtkSpCmd( PyObject* self, PyObject* args)
   cvStrPts *sp;
   if (!PyArg_ParseTuple(args,"Os", &vtkName,&objName))
   {
+    // TODO: This is odd, vtkName is a PyObject*, but is declared here as a char...
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: vtkName, objName");
-    
+
   }
 
   // Look up the named vtk object:
@@ -565,14 +613,14 @@ PyObject* Repos_ImportVtkSpCmd( PyObject* self, PyObject* args)
   if ( vtkObj == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "error retrieving vtk object ");
-    
+
   }
 
   // Is the specified repository object name already in use?
   if ( gRepository->Exists( objName ) )
   {
     PyErr_SetString(PyRunTimeErr, "obj already exists");
-    
+
   }
 
   sp = new cvStrPts( vtkObj );
@@ -581,7 +629,7 @@ PyObject* Repos_ImportVtkSpCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete sp;
-    
+
   }
   return Py_BuildValue("s",sp->GetName());
 
@@ -591,6 +639,11 @@ PyObject* Repos_ImportVtkSpCmd( PyObject* self, PyObject* args)
 // ----------------------------------
 // Repos_ImportVtkUnstructuredGridCmd
 // ----------------------------------
+// Args:
+//  vtkName (PyObject*): Name of the source VTK object.
+//  objName (string): Desired name of the destination object.
+// Returns:
+//  string: Name of the destination object.
 
 PyObject* Repos_ImportVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
 
@@ -605,7 +658,7 @@ PyObject* Repos_ImportVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"Os", &vtkName,&objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: vtkName, objName");
-    
+
   }
 
   // Look up the named vtk object:
@@ -614,14 +667,14 @@ PyObject* Repos_ImportVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
   if ( vtkObj == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "error retrieving vtk object ");
-    
+
   }
 
   // Is the specified repository object name already in use?
   if ( gRepository->Exists( objName ) )
   {
     PyErr_SetString(PyRunTimeErr, "obj already exists");
-    
+
   }
 
   sp = new cvUnstructuredGrid( vtkObj );
@@ -630,19 +683,22 @@ PyObject* Repos_ImportVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     delete sp;
-    
+
   }
   return Py_BuildValue("s",sp->GetName());
-
 }
 
 
 // ---------------------
 // Repos_ImportVtkImgCmd
 // ---------------------
+// Args:
+//  vtkName (PyObject*): Name of the source VTK object.
+//  objName (string): Desired name of the destination object.
+// Returns:
+//  string: Name of the destination object.
 
 PyObject* Repos_ImportVtkImgCmd( PyObject* self, PyObject* args )
-
 {
 
   PyObject *vtkName=NULL;
@@ -653,7 +709,7 @@ PyObject* Repos_ImportVtkImgCmd( PyObject* self, PyObject* args )
   if (!PyArg_ParseTuple(args,"Os", &vtkName,&objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: vtkName, objName");
-    
+
   }
 
   // Look up the named vtk object:
@@ -662,13 +718,13 @@ PyObject* Repos_ImportVtkImgCmd( PyObject* self, PyObject* args )
   if ( vtkObj == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "error retrieving vtk object ");
-    
+
   }
   // Is the specified repository object name already in use?
   if ( gRepository->Exists( objName ) )
   {
     PyErr_SetString(PyRunTimeErr, "obj already exists");
-    
+
   }
 
   vtkStructuredPoints *mysp = vtkStructuredPoints::New();
@@ -718,7 +774,7 @@ PyObject* Repos_ImportVtkImgCmd( PyObject* self, PyObject* args )
   {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete sp;
-    
+
   }
   return Py_BuildValue("s",sp->GetName());
 
@@ -728,6 +784,10 @@ PyObject* Repos_ImportVtkImgCmd( PyObject* self, PyObject* args )
 // -------------
 // Repos_SaveCmd
 // -------------
+// Args:
+//  filename (string): Name of the file where the repository should be saved.
+// Returns:
+//  string: Message confirming that the repository was successfully saved.
 
 PyObject* Repos_SaveCmd( PyObject* self, PyObject* args )
 
@@ -739,7 +799,7 @@ PyObject* Repos_SaveCmd( PyObject* self, PyObject* args )
   if (!PyArg_ParseTuple(args,"s", &filename))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: filename");
-    
+
   }
 
 
@@ -747,8 +807,9 @@ PyObject* Repos_SaveCmd( PyObject* self, PyObject* args )
   if ( !saveResult )
   {
     PyErr_SetString(PyRunTimeErr, "error saving repository");
-    
+
   }
+  // TODO: Is this really more effective than just returning true or not returning at all?
   return Py_BuildValue("s","repository successfully saved");
 
 }
@@ -758,6 +819,10 @@ PyObject* Repos_SaveCmd( PyObject* self, PyObject* args )
 // -------------
 // Repos_LoadCmd
 // -------------
+// Args:
+//  filename (string): Name of the file where the repository should be loaded from.
+// Returns:
+//  string: Message confirming that the repository was successfully loaded.
 
 PyObject* Repos_LoadCmd( PyObject* self, PyObject* args)
 
@@ -769,14 +834,14 @@ PyObject* Repos_LoadCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &filename))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: filename");
-    
+
   }
 
   loadResult = gRepository->Load( filename );
   if ( !loadResult )
   {
     PyErr_SetString(PyRunTimeErr, "error loading repository" );
-    
+
   }
   return Py_BuildValue("s","repository successfully load");
 
@@ -786,11 +851,18 @@ PyObject* Repos_LoadCmd( PyObject* self, PyObject* args)
 // -------------------------
 // Repos_WriteVtkPolyDataCmd
 // -------------------------
-
+//
 // I'm making this command part of the cvRepository package.  Note
 // however that it only applies to objects in the cvRepository which are
 // based on vtkPolyData.  See vtk/common/vtkSetGet.h for the macro
 // used for methods like SetFileName.
+//
+// Args:
+//  objName (string): Name of source polydata object.
+//  ft (string): (FileType) Write to binary ("bin") or write to ASCII ("ascii").
+//  fn (string): (FileName) Desired output file name.
+// Returns:
+//  Nothing, function is void.
 
 PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args )
 
@@ -805,7 +877,7 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args )
   if (!PyArg_ParseTuple(args,"sss", &objName,&ft,&fn))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: objName,ft and fn");
-    
+
   }
 
   // Do work of command:
@@ -815,7 +887,7 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args )
   {
     sprintf(r,"\"&s\" must be of type cvPolyData",objName);
     PyErr_SetString(PyRunTimeErr, r);
-    
+
   }
 
   obj = gRepository->GetObject( objName );
@@ -826,7 +898,7 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args )
     break;
   default:
   PyErr_SetString(PyRunTimeErr, "error in GetVtkPolyData" );
-    
+
     break;
   }
 
@@ -852,6 +924,11 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args )
 // ------------------------
 // Repos_ReadVtkPolyDataCmd
 // ------------------------
+// Args:
+//  objName (string): Desired name of destination object.
+//  fn (string): (FileName) Name of the source file.
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
 
@@ -864,7 +941,7 @@ PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
   if (!PyArg_ParseTuple(args,"ss", &objName,&fn))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: objName and fn");
-    
+
   }
 
   // Do work of command:
@@ -880,14 +957,14 @@ PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
   {
     PyErr_SetString(PyRunTimeErr, "error reading file ");
     pdReader->Delete();
-    
+
   }
 
   if ( gRepository->Exists( objName ) )
   {
     PyErr_SetString(PyRunTimeErr, "obj already exists");
     pdReader->Delete();
-    
+
   }
 
   pd = new cvPolyData( vtkPd );
@@ -896,7 +973,7 @@ PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     pdReader->Delete();
     delete pd;
-    
+
   }
 
   PyObject* n = Py_BuildValue("s",pd->GetName());
@@ -908,6 +985,11 @@ PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args )
 // ------------------------
 // Repos_ReadVtkXMLPolyDataCmd
 // ------------------------
+// Args:
+//  objName (string): Desired name of destination object.
+//  fn (string): (FileName) Name of the source file.
+// Returns:
+//  String: Name of the destination object.
 
 PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
 
@@ -920,7 +1002,7 @@ PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
   if (!PyArg_ParseTuple(args,"ss", &objName,&fn))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: objName and fn");
-    
+
   }
 
   // Do work of command:
@@ -936,14 +1018,14 @@ PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
   {
     PyErr_SetString(PyRunTimeErr, "error reading file ");
     pdReader->Delete();
-    
+
   }
 
   if ( gRepository->Exists( objName ) )
   {
     PyErr_SetString(PyRunTimeErr, "obj already exists");
     pdReader->Delete();
-    
+
   }
 
   pd = new cvPolyData( vtkPd );
@@ -952,7 +1034,7 @@ PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
     pdReader->Delete();
     delete pd;
-    
+
   }
 
   PyObject* n = Py_BuildValue("s",pd->GetName());
@@ -961,10 +1043,16 @@ PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
 
 }
 
-
 // ---------------------------------
 // Repos_WriteVtkStructuredPointsCmd
 // ---------------------------------
+// Args:
+//  objName (string): Desired name of destination object.
+//  ft (string): (FileType) Write to binary ("bin") or write to ASCII ("ascii").
+//  fn (string): (FileName) Name of the source file.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args)
 
 {
@@ -977,7 +1065,7 @@ PyObject* Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
       "Could not import 3 chars: objName,ft-type and fn-file");
-    
+
   }
 
   // Do work of command:
@@ -987,7 +1075,7 @@ PyObject* Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args)
   {
     sprintf(r,"\"%s\" must be of a structured points type",objName);
     PyErr_SetString(PyRunTimeErr, r);
-    
+
   }
 
   obj = gRepository->GetObject( objName );
@@ -998,7 +1086,7 @@ PyObject* Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args)
     break;
   default:
     PyErr_SetString(PyRunTimeErr, "error in GetVtkStructuredPoints" );
-    
+
     break;
   }
 
@@ -1025,6 +1113,13 @@ PyObject* Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args)
 // ---------------------------------
 // Repos_WriteVtkUnstructuredGridCmd
 // ---------------------------------
+// Args:
+//  objName (string): Desired name of destination object.
+//  ft (string): (FileType) Write to binary ("bin") or write to ASCII ("ascii").
+//  fn (string): (FileName) Name of the source file.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* Repos_WriteVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
 
 {
@@ -1039,7 +1134,7 @@ PyObject* Repos_WriteVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
   {
     PyErr_SetString(PyRunTimeErr,
       "Could not import 3 chars: objName,ft-type and fn-file");
-    
+
   }
 
   // Do work of command:
@@ -1047,7 +1142,7 @@ PyObject* Repos_WriteVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
   if ( type != UNSTRUCTURED_GRID_T )
   {
     PyErr_SetString(PyRunTimeErr, "\"%s\" must be of a structured points type");
-    
+
   }
 
   obj = gRepository->GetObject( objName );
@@ -1058,7 +1153,7 @@ PyObject* Repos_WriteVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
     break;
   default:
   PyErr_SetString(PyRunTimeErr, "error in GetVtkUnstructuredGrid" );
-    
+
     break;
   }
 
@@ -1085,6 +1180,13 @@ PyObject* Repos_WriteVtkUnstructuredGridCmd( PyObject* self, PyObject* args)
 // ---------------------
 // Repos_GetLabelKeysCmd
 // ---------------------
+//
+// Returns all of the label keys contained in the source object.
+//
+// Args:
+//  objName (string): Source object to be processed.
+// Returns:
+//  List[string]: List of label keys from the source object.
 
 PyObject* Repos_GetLabelKeysCmd( PyObject* self, PyObject* args)
 
@@ -1098,7 +1200,7 @@ PyObject* Repos_GetLabelKeysCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
-    
+
   }
 
   // Do work of command:
@@ -1107,7 +1209,7 @@ PyObject* Repos_GetLabelKeysCmd( PyObject* self, PyObject* args)
   if ( obj == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
-    
+
   }
 
   obj->GetLabelKeys( &numKeys, &keys );
@@ -1127,6 +1229,14 @@ PyObject* Repos_GetLabelKeysCmd( PyObject* self, PyObject* args)
 // -----------------
 // Repos_GetLabelCmd
 // -----------------
+//
+// Extracts the label found at key in the source object.
+//
+// Args:
+//  objName (string): Source object to be processed.
+//  key (string): Label key to search for.
+// Returns:
+//  string: Label obtained from the source object.
 
 PyObject* Repos_GetLabelCmd( PyObject* self, PyObject* args)
 
@@ -1139,7 +1249,7 @@ PyObject* Repos_GetLabelCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &objName,&key))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: objName,key");
-    
+
   }
 
   // Do work of command:
@@ -1148,13 +1258,13 @@ PyObject* Repos_GetLabelCmd( PyObject* self, PyObject* args)
   if ( obj == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    
+
   }
 
-  if ( ! obj->GetLabel( key, &value ) )
+  if ( !obj->GetLabel( key, &value ) )
   {
     PyErr_SetString(PyRunTimeErr, "key not found" );
-    
+
   }
 
   return Py_BuildValue("s",value);
@@ -1165,6 +1275,16 @@ PyObject* Repos_GetLabelCmd( PyObject* self, PyObject* args)
 // -----------------
 // Repos_SetLabelCmd
 // -----------------
+//
+// Sets the label at key in the source object.
+//
+// Args:
+//  objName (string): Source object to be processed.
+//  key (string): Key to set with label value.
+//  value (string): Label to set at location key.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args)
 
 {
@@ -1176,7 +1296,7 @@ PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"sss", &objName,&key,&value))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: objName,key and value");
-    
+
   }
 
   // Do work of command:
@@ -1185,7 +1305,7 @@ PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args)
   if ( obj == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object " );
-    
+
   }
 
   if ( ! obj->SetLabel( key, value ) )
@@ -1193,12 +1313,12 @@ PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args)
     if ( !obj->IsLabelPresent( key ) )
     {
       PyErr_SetString(PyRunTimeErr, "key already in use");
-      
+
     }
     else
     {
       PyErr_SetString(PyRunTimeErr, "error setting label ");
-      
+
     }
   }
 
@@ -1210,6 +1330,14 @@ PyObject* Repos_SetLabelCmd( PyObject* self, PyObject* args)
 // -------------------
 // Repos_ClearLabelCmd
 // -------------------
+//
+// Removes the label at key in the source object.
+//
+// Args:
+//  objName (string): Source object to be processed.
+//  key (string): Key for which the label will be removed..
+// Returns:
+//  Nothing, the function is void.
 
 PyObject* Repos_ClearLabelCmd( PyObject* self, PyObject* args)
 
@@ -1222,7 +1350,7 @@ PyObject* Repos_ClearLabelCmd( PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &objName,&key))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: objName,key");
-    
+
   }
 
   // Do work of command:
@@ -1231,13 +1359,13 @@ PyObject* Repos_ClearLabelCmd( PyObject* self, PyObject* args)
   if ( obj == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "couldn't find object" );
-    
+
   }
 
   if ( ! obj->IsLabelPresent( key ) )
   {
     PyErr_SetString(PyRunTimeErr, "key not found");
-    
+
   }
 
   obj->ClearLabel( key );
