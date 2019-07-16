@@ -87,7 +87,7 @@ initpyCircleContour()
   PyObject* pyGlobal = PySys_GetObject("ContourObjectRegistrar");
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
-  
+
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_CIRCLE,
@@ -96,7 +96,7 @@ initpyCircleContour()
   else {
     return;
   }
-  
+
   tmp->registrar = contourObjectRegistrar;
   PySys_SetObject("ContourObjectRegistrar",(PyObject*)tmp);
 
@@ -109,7 +109,7 @@ initpyCircleContour()
   }
 }
 
-#endif 
+#endif
 #if PYTHON_MAJOR_VERSION == 3
 static struct PyModuleDef pyCircleContourModule = {
    PyModuleDef_HEAD_INIT,
@@ -132,7 +132,7 @@ PyInit_pyCircleContour()
   PyObject* pyGlobal = PySys_GetObject("ContourObjectRegistrar");
   pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
-  
+
   if (contourObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
           contourObjectRegistrar->SetFactoryMethodPtr( cKERNEL_CIRCLE,
@@ -141,7 +141,7 @@ PyInit_pyCircleContour()
   else {
     Py_RETURN_NONE;
   }
-  
+
   tmp->registrar = contourObjectRegistrar;
   PySys_SetObject("ContourObjectRegistrar",(PyObject*)tmp);
 
@@ -156,11 +156,32 @@ PyInit_pyCircleContour()
 }
 #endif
 
-PyObject*  circleContour_AvailableCmd(PyObject* self, PyObject* args)
+// --------------------------
+// circleContour_AvailableCmd
+// --------------------------
+//
+// Returns simple string message.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Message.
+
+PyObject* circleContour_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","circleContour Available");
-
 }
+
+// -------------------------------
+// circleContour_RegistrarsListCmd
+// -------------------------------
+//
+// Returns a list of all of the items in the registrar.
+//
+// Args:
+//  None.
+// Returns:
+//  PyObject*: String list of items.
 
 PyObject* circleContour_RegistrarsListCmd(PyObject* self, PyObject* args)
 {

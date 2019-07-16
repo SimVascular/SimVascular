@@ -149,16 +149,38 @@ PyInit_pylevelSetContour()
     fprintf(stdout,"Error in initializing pylevelSetContour\n");
     Py_RETURN_NONE;
   }
-  
+
   return pythonC;
 }
 #endif
+
+// ----------------------------
+// levelSetContour_AvailableCmd
+// ----------------------------
+//
+// Returns simple string message.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Message.
 
 PyObject*  levelSetContour_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","levelSetContour Available");
 
 }
+
+// ---------------------------------
+// levelSetContour_RegistrarsListCmd
+// ---------------------------------
+//
+// Returns a list of the items in the registrar.
+//
+// Args:
+//  None.
+// Returns:
+//  PyObject*: List of items.
 
 PyObject* levelSetContour_RegistrarsListCmd(PyObject* self, PyObject* args)
 {

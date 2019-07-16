@@ -28,7 +28,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include "SimVascular.h"
 #include "SimVascular_python.h"
 #include "sv3_PathElement.h"
@@ -82,7 +82,7 @@ pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args);
 
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args);
 
- 
+
 int Contour_pyInit()
 {
 #if PYTHON_MAJOR_VERSION == 2
@@ -248,11 +248,11 @@ PyMODINIT_FUNC initpyContour()
   Py_INCREF(&pyContourFactoryRegistrarType);
   PyModule_AddObject(pythonC,"pyContour",(PyObject*)&pyContourType);
   PyModule_AddObject(pythonC, "pyContourFactoryRegistrar", (PyObject *)&pyContourFactoryRegistrarType);
-  
+
   pyContourFactoryRegistrar* tmp = PyObject_New(pyContourFactoryRegistrar, &pyContourFactoryRegistrarType);
   tmp->registrar = (cvFactoryRegistrar *)&Contour::gRegistrar;
   PySys_SetObject("ContourObjectRegistrar", (PyObject *)tmp);
-  
+
   return ;
 
 }
@@ -302,18 +302,26 @@ PyMODINIT_FUNC PyInit_pyContour()
   Py_INCREF(&pyContourFactoryRegistrarType);
   PyModule_AddObject(pythonC,"pyContour",(PyObject*)&pyContourType);
   PyModule_AddObject(pythonC, "pyContourFactoryRegistrar", (PyObject *)&pyContourFactoryRegistrarType);
-  
+
   pyContourFactoryRegistrar* tmp = PyObject_New(pyContourFactoryRegistrar, &pyContourFactoryRegistrarType);
   tmp->registrar = (cvFactoryRegistrar *)&Contour::gRegistrar;
   PySys_SetObject("ContourObjectRegistrar", (PyObject *)tmp);
-  
+
   return pythonC;
 
 }
 #endif
+
 // ------------------
 // Contour_SetKernelCmd
 // ------------------
+//
+// Sets the kernel to be used for contour tasks.
+//
+// Args:
+//  kernelName (string): LevelSet, Threshold, Circle, Polygon, SplinePolygon, or Ellipse.
+// Returns:
+//  Nothing, function is void.
 
 PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args)
 {
@@ -322,9 +330,9 @@ PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args)
     if(!PyArg_ParseTuple(args,"s",&kernelName))
     {
         PyErr_SetString(PyRunTimeErr,"Could not import char kernelName");
-        
+
     }
-    
+
     // Do work of command:
     if (strcmp( kernelName, "LevelSet" )==0 ) {
         kernel= cKERNEL_LEVELSET;
@@ -341,19 +349,29 @@ PyObject* Contour_SetKernelCmd( PyObject* self, PyObject *args)
     } else {
         kernel= cKERNEL_INVALID;
     }
-    
+
     if ( kernel != cKERNEL_INVALID ) {
         Contour::gCurrentKernel = kernel;
         return Py_BuildValue("s",kernelName);
     } else {
         PyErr_SetString(PyRunTimeErr, "contour kernel is invalid");
-        
+
     }
 }
 
 // --------------------
 // Contour_NewObjectCmd
 // --------------------
+//
+// Creates a new contour object.
+//
+// Args:
+//  objName (string): Desired name of the contour object.
+//  pathName (string): Path to source data object.
+//  index (int): Index from where in the source data the contour object will start.
+// Returns:
+//  Nothing, the function is void.
+
 PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
 {
     char *objName = NULL;
@@ -367,15 +385,15 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars, and \
                     1 int: objName, pathName, and index");
-        
+
     }
-  
+
   // Make sure the specified result object does not exist:
     if ( gRepository->Exists( objName ) ) {
         PyErr_SetString(PyRunTimeErr, "object already exists.");
-        
+
     }
-  
+
     // Do work of command:
     // Retrieve source object:
     rd = gRepository->GetObject( pathName );
@@ -385,53 +403,60 @@ PyObject* Contour_NewObjectCmd( pyContour* self, PyObject* args)
         r[0] = '\0';
         sprintf(r, "couldn't find object %s", pathName);
         PyErr_SetString(PyRunTimeErr,r);
-        
+
     }
-    
+
     type = rd->GetType();
-    
+
     if ( type != PATH_T )
     {
         r[0] = '\0';
         sprintf(r, "%s not a path object", pathName);
         PyErr_SetString(PyRunTimeErr,r);
-        
+
     }
-    
+
     path = dynamic_cast<PathElement*> (rd);
-    
+
     int numPathPts = path->GetPathPointNumber();
     if (index>=numPathPts)
     {
         PyErr_SetString(PyRunTimeErr, "Index exceed number of path points");
-        
+
     }
 
     // Instantiate the new contour:
     Contour *geom = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, path->GetPathPoint(index));
-    
+
     if(geom==NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Failed to create contour object");
-        
+
     }
     // Register the contour:
     if ( !( gRepository->Register( objName, geom ) ) ) {
         PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
         delete geom;
-        
+
     }
-    
+
     Py_INCREF(geom);
     self->geom=geom;
     Py_DECREF(geom);
-    return SV_PYTHON_OK; 
-
+    return SV_PYTHON_OK;
 }
 
 // --------------------
 // Contour_SetImageCmd
 // --------------------
+//
+// Sets the contour's image reference.
+//
+// Args:
+//  vtkName (string): Name of the image object.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* Contour_SetImageCmd( pyContour* self, PyObject* args)
 {
     char *pathName=NULL;
@@ -439,20 +464,20 @@ PyObject* Contour_SetImageCmd( pyContour* self, PyObject* args)
     int index=0;
     RepositoryDataT type;
     cvRepositoryData *rd;
-    PyObject *vtkName; 
+    PyObject *vtkName;
     Contour* contour = self->geom;
     if (!PyArg_ParseTuple(args,"O", &vtkName))
     {
-        PyErr_SetString(PyRunTimeErr, "Could not import 1 vtkImgae");
-        
+        PyErr_SetString(PyRunTimeErr, "Could not import 1 vtkImage");
+
     }
-  
+
   // Make sure the specified result object does not exist:
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
-  
+
     // Do work of command:
     // Look up the named vtk object:
     vtkObj = (vtkImageData *)vtkPythonUtil::GetPointerFromObject( vtkName,
@@ -460,21 +485,29 @@ PyObject* Contour_SetImageCmd( pyContour* self, PyObject* args)
     if ( vtkObj == NULL )
     {
         PyErr_SetString(PyRunTimeErr, "error retrieving vtkImage object ");
-        
+
     }
 
     vtkImageData*  slice = sv3::SegmentationUtils::GetSlicevtkImage(contour->GetPathPoint(),vtkObj, 5.0);
     contour->SetVtkImageSlice(slice);
-    
+
     Py_INCREF(contour);
     self->geom=contour;
     Py_DECREF(contour);
-    return SV_PYTHON_OK; 
-
+    return SV_PYTHON_OK;
 }
+
 // --------------------
 // Contour_GetObjectCmd
 // --------------------
+//
+// Loads in the contour object with the provided name.
+//
+// Args:
+//  objName (string): Name of the source object.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* Contour_GetObjectCmd( pyContour* self, PyObject* args)
 {
   char *objName=NULL;
@@ -485,7 +518,7 @@ PyObject* Contour_GetObjectCmd( pyContour* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"s", &objName))
   {
     PyErr_SetString(PyRunTimeErr, "Could not import 1 char: objName");
-    
+
   }
 
   // Do work of command:
@@ -498,7 +531,7 @@ PyObject* Contour_GetObjectCmd( pyContour* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "couldn't find object %s", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    
+
   }
 
   type = rd->GetType();
@@ -508,19 +541,27 @@ PyObject* Contour_GetObjectCmd( pyContour* self, PyObject* args)
     r[0] = '\0';
     sprintf(r, "%s not a contour object", objName);
     PyErr_SetString(PyRunTimeErr,r);
-    
+
   }
-  
+
   contour = dynamic_cast<Contour*> (rd);
   Py_INCREF(contour);
   self->geom=contour;
   Py_DECREF(contour);
-  return SV_PYTHON_OK; 
+  return SV_PYTHON_OK;
 }
 
 // --------------------
 // Contour_SetControlPointsCmd
 // --------------------
+//
+// Sets the list of control points to define the shape.
+//
+// Args:
+//  ptList (PyObject*): List of two control points to define the shape.
+// Returns:
+// Notihng, function is void.
+
 PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
 {
     PyObject *ptList=NULL;
@@ -529,18 +570,18 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
     {
         PyErr_SetString(PyRunTimeErr, "Could not import one list and one optional list or double\
             , center boundary and radius");
-        
+
     }
 
   // Do work of command:
     int numPts = PyList_Size(ptList);
-    
+
     if (Contour::gCurrentKernel==cKERNEL_CIRCLE)
     {
         if(numPts!=2)
         {
             PyErr_SetString(PyRunTimeErr, "Circle contour requires two points, center and boundary");
-            
+
         }
     }
     else if (Contour::gCurrentKernel==cKERNEL_ELLIPSE)
@@ -548,7 +589,7 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
         if(numPts!=3)
         {
             PyErr_SetString(PyRunTimeErr, "Ellipse contour requires three points, center and two boudaries");
-            
+
         }
     }
     else if (Contour::gCurrentKernel==cKERNEL_POLYGON)
@@ -556,16 +597,16 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
         if(numPts<3)
         {
             PyErr_SetString(PyRunTimeErr, "Polygon contour requires at least three points");
-            
+
         }
-    }        
-    
+    }
+
     Contour* contour = self->geom;
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
-    
+
     std::vector<std::array<double,3> > pts(numPts);
     for (int i = 0; i<numPts; i++)
     {
@@ -573,7 +614,7 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
         if(PyList_Size(tmpList)!=3)
         {
             PyErr_SetString(PyRunTimeErr, "The length of double list must be 3");
-            
+
         }
         for (int j = 0;j<3;j++)
         {
@@ -581,8 +622,20 @@ PyObject* Contour_SetControlPointsCmd( pyContour* self, PyObject* args)
         }
     }
     contour->SetControlPoints(pts);
-    return SV_PYTHON_OK; 
+    return SV_PYTHON_OK;
 }
+
+// -----------------------------------
+// Contour_SetControlPointsByRadiusCmd
+// -----------------------------------
+//
+// Sets the control points automatically by the provided radius.
+//
+// Args:
+//  center (PyObject*): Two-dimensional point to define the center of the shape.
+//  radius (double): Radius to use to set control points.
+// Returns:
+//  Nothing, functions is void.
 
 PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
 {
@@ -594,30 +647,30 @@ PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
         {
             PyErr_SetString(PyRunTimeErr, "Could not import one list and one double\
             , center and radius");
-            
+
         }
     }
     else
     {
         PyErr_SetString(PyRunTimeErr, "Kernel method does not support this function");
-        
+
     }
   // Do work of command:
     double ctr[3];
     if(PyList_Size(center)!=3)
     {
         PyErr_SetString(PyRunTimeErr, "The length of double list must be 3");
-        
+
     }
     for (int i = 0;i<PyList_Size(center);i++)
     {
         ctr[i] = PyFloat_AsDouble(PyList_GetItem(center,i));
     }
-    
+
     Contour* contour = self->geom;
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
     if (radius>0.)
     {
@@ -627,22 +680,29 @@ PyObject* Contour_SetControlPointsByRadiusCmd(pyContour* self, PyObject* args)
     {
         PyErr_SetString(PyRunTimeErr, "Must provide either a point on the \
             circle or a positive radius value");
-        
+
 
     }
-    return SV_PYTHON_OK; 
+    return SV_PYTHON_OK;
 }
-
 
 // --------------------
 // Contour_CreateCmd
 // --------------------
+//
+// ?
+//
+// Args:
+//  None.
+// Returns:
+//  None.
+
 PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
     if (Contour::gCurrentKernel==cKERNEL_LEVELSET)
     {
@@ -650,96 +710,136 @@ PyObject* Contour_CreateCmd( pyContour* self, PyObject* args)
         contour->SetLevelSetParas(&paras);
         //std::cout<<"paras: "<<paras.radius<<std::endl;
     }
-    
+
     contour->CreateContourPoints();
     if(contour->GetContourPointNumber()==0)
     {
         PyErr_SetString(PyRunTimeErr, "Error creating contour points");
-        
+
     }
-    
+
     Py_INCREF(contour);
     self->geom=contour;
     Py_DECREF(contour);
-    return SV_PYTHON_OK; 
-    
+    return SV_PYTHON_OK;
 }
 
 // --------------------
 // Contour_GetAreaCmd
 // --------------------
+//
+// Returns the area of the defined contour.
+//
+// Args:
+//  None.
+// Returns:
+//  double: Contour area.
+
 PyObject* Contour_GetAreaCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
     double area = contour->GetArea();
-    return Py_BuildValue("d",area);    
+    return Py_BuildValue("d",area);
 }
 
 // --------------------
 // Contour_GetPerimeterCmd
 // --------------------
+//
+// Returns the perimeter of the defined contour.
+//
+// Args:
+//  None.
+// Returns:
+//  double: Contour perimeter.
+
 PyObject* Contour_GetPerimeterCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
     double perimeter = contour->GetPerimeter();
-    return Py_BuildValue("d",perimeter);    
+    return Py_BuildValue("d",perimeter);
 }
 
 // --------------------
-// Contour_GetPerimeterCmd
+// Contour_GetCenterPointCmd
 // --------------------
+//
+// Returns the center point of the defined contour.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Center point of contour.
+
 PyObject* Contour_GetCenterPointCmd( pyContour* self, PyObject* args)
 {
     Contour* contour = self->geom;
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
     std::array<double,3> center = contour->GetCenterPoint();
     char output[1024];
     output[0] = '\0';
     sprintf(output,"(%.4f,%.4f,%.4f)",center[0],center[1],center[2]);
-    return Py_BuildValue("s",output);    
+    return Py_BuildValue("s",output);
 }
 
 // ----------------------------
 // Contour_SetThresholdValueCmd
 // ----------------------------
+//
+// Sets the threshold value.
+//
+// Args:
+//  threshold (double): Desired threshold value.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* Contour_SetThresholdValueCmd(pyContour* self, PyObject* args)
 {
     double threshold = 0.;
     if (!PyArg_ParseTuple(args,"d", &threshold))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import double, threshold");
-        
+
     }
-    
+
     if (Contour::gCurrentKernel!=cKERNEL_THRESHOLD)
     {
         PyErr_SetString(PyRunTimeErr, "Contour type is not threshold");
-        
+
     }
-    
+
     Contour* contour = self->geom;
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
     contour->SetThresholdValue(threshold);
     return SV_PYTHON_OK;
 }
-    
-//========================
+
+// ---------------------------
 // Contour_CreateSmoothContour
-//=========================
+// ---------------------------
+//
+// Create smoothed contour from unsmoothed contour.
+//
+// Args:
+//  fourierNumber (int): Fourier number to use for the smoothing operation.
+//  contourName (string): Name of the source contour object.
+// Returns:
+//  pyContour*: Newly smoothed pyContour object.
+
 pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args)
 {
     int fourierNumber = 0;
@@ -747,75 +847,81 @@ pyContour* Contour_CreateSmoothContour(pyContour* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"is", &fourierNumber,&contourName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import int and one char, fourierNumber, contourName");
-        
+
     }
-    
+
     Contour* contour = self->geom;
     if ( contour==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
-    
+
     Contour *newContour = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, contour->GetPathPoint());
-    
+
     newContour= contour->CreateSmoothedContour(fourierNumber);
-    
+
     // Register the contour:
     if ( !( gRepository->Register( contourName, newContour ) ) ) {
         PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
         delete newContour;
-        
+
     }
-        
+
     Py_INCREF(newContour);
     pyContour* pyNewCt;
     pyNewCt = PyObject_New(pyContour, &pyContourType);
     pyNewCt->geom=newContour;
     Py_DECREF(newContour);
     return pyNewCt;
-    
 }
 
-//========================
+// ----------------------
 // Contour_GetPolyDataCmd
-//=========================
+// ----------------------
+//
+// Exports the contour geometry to a polydata object of the specified name.
+//
+// Args:
+//  dstName (string): Name of the desired polydata object.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* Contour_GetPolyDataCmd(pyContour* self, PyObject* args)
 {
     char* dstName=NULL;
     if (!PyArg_ParseTuple(args,"s", &dstName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import char, dstName");
-        
+
     }
-    
+
     // Make sure the specified result object does not exist:
     if ( gRepository->Exists( dstName ) ) {
         PyErr_SetString(PyRunTimeErr, "object already exists");
-        
+
     }
-  
+
     Contour* geom = self->geom;
     if ( geom==NULL ) {
         PyErr_SetString(PyRunTimeErr, "Contour object not created");
-        
+
     }
     vtkSmartPointer<vtkPolyData> vtkpd = geom->CreateVtkPolyDataFromContour();
-    
+
     cvPolyData* pd = new cvPolyData(vtkpd);
-    
+
     if (pd==NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Could not get polydata from object");
-        
+
     }
-    
+
       // Register the result:
     if ( !( gRepository->Register( dstName, pd ) ) ) {
       PyErr_SetString(PyRunTimeErr, "error registering obj in repository" );
       delete pd;
-      
+
     }
-    
+
     return SV_PYTHON_OK;
 }
-    

@@ -154,11 +154,32 @@ PyInit_pySplinePolygonContour()
 }
 #endif
 
-PyObject*  splinePolygonContour_AvailableCmd(PyObject* self, PyObject* args)
+// ---------------------------------
+// splinePolygonContour_AvailableCmd
+// ---------------------------------
+//
+// Returns a simple string message.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Message.
+
+PyObject* splinePolygonContour_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","polygonContour Available");
-
 }
+
+// --------------------------------------
+// splinePolygonContour_RegistrarsListCmd
+// --------------------------------------
+//
+// Returns a list of all of the items in the registrar.
+//
+// Args:
+//  None.
+// Returns:
+//  PyObject*: List of items.
 
 PyObject* splinePolygonContour_RegistrarsListCmd(PyObject* self, PyObject* args)
 {

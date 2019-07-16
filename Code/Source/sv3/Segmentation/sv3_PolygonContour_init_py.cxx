@@ -154,11 +154,32 @@ PyInit_pyPolygonContour()
 }
 #endif
 
-PyObject*  polygonContour_AvailableCmd(PyObject* self, PyObject* args)
+// ---------------------------
+// polygonContour_AvailableCmd
+// ---------------------------
+//
+// Returns simple string message.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Message.
+
+PyObject* polygonContour_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","polygonContour Available");
-
 }
+
+// --------------------------------
+// polygonContour_RegistrarsListCmd
+// --------------------------------
+//
+// Returns a string list of items listed in the registrar.
+//
+// Args:
+//  None.
+// Returns:
+//  PyObject*: String list of items in the registrar?
 
 PyObject* polygonContour_RegistrarsListCmd(PyObject* self, PyObject* args)
 {

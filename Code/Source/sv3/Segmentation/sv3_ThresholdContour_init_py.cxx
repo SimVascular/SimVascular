@@ -154,11 +154,33 @@ PyInit_pyThresholdContour()
 }
 #endif
 
-PyObject*  thresholdContour_AvailableCmd(PyObject* self, PyObject* args)
+// -----------------------------
+// thresholdContour_AvailableCmd
+// -----------------------------
+//
+// Returns simple string message.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Message.
+
+PyObject* thresholdContour_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","thresholdContour Available");
 
 }
+
+// ----------------------------------
+// thresholdContour_RegistrarsListCmd
+// ----------------------------------
+//
+// Returns a list of the items in the registrar.
+//
+// Args:
+//  None.
+// Returns:
+//  PyObject*: List of items.
 
 PyObject* thresholdContour_RegistrarsListCmd(PyObject* self, PyObject* args)
 {
