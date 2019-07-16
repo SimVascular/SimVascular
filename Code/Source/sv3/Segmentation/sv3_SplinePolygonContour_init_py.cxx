@@ -158,7 +158,7 @@ PyInit_pySplinePolygonContour()
 // splinePolygonContour_AvailableCmd
 // ---------------------------------
 //
-// Returns a simple string message.
+// Returns a simple string indicating module availability.
 //
 // Args:
 //  None.

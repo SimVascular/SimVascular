@@ -107,7 +107,7 @@ PyObject* Tetgenadapt_pyInit()
   PyObject* pyGlobal = PySys_GetObject("AdaptObjectRegistrar");
   pyAdaptObjectRegistrar* tmp = (pyAdaptObjectRegistrar *) pyGlobal;
   cvFactoryRegistrar* adaptObjectRegistrar =tmp->registrar;
-  
+
   if (adaptObjectRegistrar != NULL) {
           // Register this particular factory method with the main app.
           adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_TETGEN,
@@ -116,7 +116,7 @@ PyObject* Tetgenadapt_pyInit()
   else {
     return SV_PYTHON_ERROR;
   }
-  
+
   tmp->registrar = adaptObjectRegistrar;
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)tmp);
 
@@ -157,7 +157,7 @@ initpyTetGenAdapt()
     return;
 
   }
-  
+
   tmp->registrar = adaptObjectRegistrar;
   PySys_SetObject("AdaptModelRegistrar",(PyObject*)tmp);
 
@@ -210,11 +210,33 @@ PyInit_pyTetGenAdapt()
   return pythonC;
 }
 #endif
-PyObject*  TetGenAdapt_AvailableCmd(PyObject* self, PyObject* args)
+
+// ------------------------
+// TetGenAdapt_AvailableCmd
+// ------------------------
+//
+// Returns simple string message indicating module availability.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Message.
+
+PyObject* TetGenAdapt_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","TetGen Adaption Available");
-
 }
+
+// -----------------------------
+// TetGenAdapt_RegistrarsListCmd
+// -----------------------------
+//
+// Returns a list of all items in the registrar.
+//
+// Args:
+//  None.
+// Returns:
+//  PyObject*: List of items.
 
 PyObject* TetGenAdapt_RegistrarsListCmd(PyObject* self, PyObject* args)
 {

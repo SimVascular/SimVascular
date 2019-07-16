@@ -228,7 +228,18 @@ PyInit_pyMeshTetgen(void)
 }
 #endif
 
-PyObject*  TetGenMesh_AvailableCmd(PyObject* self, PyObject* args)
+// ------------------------
+// TetGenMesh_AvailableCmd
+// ------------------------
+//
+// Returns simple string indicating module availability.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Message.
+
+PyObject* TetGenMesh_AvailableCmd(PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s","TetGen Mesh Module Available");
 }

@@ -160,7 +160,7 @@ PyInit_pyCircleContour()
 // circleContour_AvailableCmd
 // --------------------------
 //
-// Returns simple string message.
+// Returns simple string indicating module availability.
 //
 // Args:
 //  None.

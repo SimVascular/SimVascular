@@ -158,7 +158,7 @@ PyInit_pyPolygonContour()
 // polygonContour_AvailableCmd
 // ---------------------------
 //
-// Returns simple string message.
+// Returns simple string indicating module availabilty.
 //
 // Args:
 //  None.

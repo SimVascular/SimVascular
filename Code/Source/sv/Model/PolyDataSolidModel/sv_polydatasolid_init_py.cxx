@@ -109,7 +109,7 @@ PyObject* Polydatasolid_pyInit()
   PyObject* pyGlobal = PySys_GetObject("solidModelRegistrar");
   pycvFactoryRegistrar* tmp = (pycvFactoryRegistrar *) pyGlobal;
   cvFactoryRegistrar* pySolidModelRegistrar =tmp->registrar;
-  
+
   if (pySolidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
           pySolidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
@@ -210,10 +210,32 @@ PyInit_pySolidPolydata()
 }
 #endif
 
+// --------------------------
+// PolyDataSolid_AvailableCmd
+// --------------------------
+//
+// Returns simple string indicating module availabilty.
+//
+// Args:
+//  None.
+// Returns:
+//  string: Message.
+
 PyObject* PolyDataSolid_AvailableCmd(PyObject* self, PyObject* args )
 {
   return Py_BuildValue("s","PolyData Solid Module Available");
 }
+
+// -------------------------------
+// PolyDataSolid_RegistrarsListCmd
+// -------------------------------
+//
+// Returns a list of all items in the registrar.
+//
+// Args:
+//  None.
+// Returns:
+//  PyObject*: List of items.
 
 PyObject* PolyDataSolid_RegistrarsListCmd(PyObject* self, PyObject* args )
 {

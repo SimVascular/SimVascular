@@ -158,7 +158,7 @@ PyInit_pyThresholdContour()
 // thresholdContour_AvailableCmd
 // -----------------------------
 //
-// Returns simple string message.
+// Returns simple string indicating module availability.
 //
 // Args:
 //  None.

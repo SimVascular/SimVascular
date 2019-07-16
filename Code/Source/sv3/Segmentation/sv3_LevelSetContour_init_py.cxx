@@ -158,7 +158,7 @@ PyInit_pylevelSetContour()
 // levelSetContour_AvailableCmd
 // ----------------------------
 //
-// Returns simple string message.
+// Returns simple string indicating module availability.
 //
 // Args:
 //  None.
