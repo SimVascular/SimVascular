@@ -82,6 +82,15 @@ int Math_pyInit( )
 // -----------
 // Math_FFTCmd
 // -----------
+//
+// Performs a FFT operation on the provided list of points.
+//
+// Args:
+//  pointsArg (PyObject*): List of input points.
+//  nterms (int): Number of terms to use in the FFT.
+//  numInterpPoints (int): Number of interpolation points to sample for the FFT.
+// Returns:
+//  List[double]: List of FFT terms.
 
 static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
 {
@@ -102,7 +111,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    
+
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -135,7 +144,7 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in fft");
      mathobj->deleteArray(pts,nlistpts,2);
      delete mathobj;
-     
+
   }
 
   // create result string
@@ -168,6 +177,17 @@ static PyObject *pyMath_FFTCmd(PyObject *self, PyObject *args)
 // ------------------
 // Math_inverseFFTCmd
 // ------------------
+//
+// Performs a reverse FFT on the provided input terms.
+//
+// Args:
+//  termsArg (PyObject*): List of input terms.
+//  t0 (int): ?
+//  dt (int): Discrete time step to use in reverse FFT.
+//  omega (double): ?
+//  numPts (int): Number of points in the desired output list.
+// Returns:
+//  List[double]: List of points output by the reverse FFT.
 
 PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
 {
@@ -189,7 +209,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(termsArg)){
     PyErr_SetString( MathErr, "termsArg is not a list");
-    
+
   }
   int nlistterms = PyList_Size(termsArg);
   if (nlistterms < 0)   return NULL;
@@ -224,7 +244,7 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in inverse fft" );
      mathobj->deleteArray(terms,nlistterms,2);
      delete mathobj;
-     
+
   }
 
   // create result string
@@ -257,6 +277,20 @@ PyObject *pyMath_inverseFFTCmd(PyObject *self, PyObject *args)
 // ------------------------
 // Math_computeWomersleyCmd
 // ------------------------
+//
+// Computes the Womersley Number for the given parameters.
+//
+// Args:
+//  termsArg (PyObject*): List of input terms.
+//  time (double): ?
+//  viscosity (double): Viscosity of the fluid being calculated for.
+//  omega (double): Angular oscillation frequency.
+//  density (double): Density of the fluid being calculated for.
+//  radmax (double): Nominal radius of the orifice being caluclated for.
+//  radius (double): ?
+// Returns:
+//  double: Womersley number for the provided conditions.
+
 PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
 {
   double time = 0;
@@ -278,7 +312,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(termsArg)){
     PyErr_SetString( MathErr, "termsArg not a list");
-    
+
   }
   int nlistterms = PyList_Size(termsArg);
   if (nlistterms < 0)   return NULL;
@@ -310,7 +344,7 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in calculate worm" );
      mathobj->deleteArray(terms,nlistterms,2);
      delete mathobj;
-     
+
   }
 
   // clean up
@@ -319,6 +353,19 @@ PyObject *pyMath_computeWomersleyCmd(PyObject *self, PyObject *args)
 
   return Py_BuildValue("d",velocity);
 }
+
+// ----------------------
+// pyMath_linearInterpCmd
+// ----------------------
+//
+// Linearly interpolates the given number of points in between each pair in the
+// provided list.
+//
+// Args:
+//  pointsArg (PyObject*): List of points to be interpolated.
+//  numInterpPoints (int): Number of points to interpolate between each source point.
+// Returns:
+// List[double]: List of output points, with interpolation.
 
 PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
 {
@@ -338,7 +385,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
 
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    
+
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -376,7 +423,7 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in linear interpolation");
      mathobj->deleteArray(pts,nlistpts,2);
      delete mathobj;
-     
+
   }
 
   // create result string
@@ -405,6 +452,18 @@ PyObject *pyMath_linearInterpCmd(PyObject *self, PyObject *args)
   return pylist;
 }
 
+// ---------------------
+// pyMath_curveLengthCmd
+// ---------------------
+//
+// Calculates the length of the curve sampled by the provided list of points.
+//
+// Args:
+//  pointsArg (PyObject*): List of input points to define the curve.
+//  closed (int): Include the distance between the first and last point (non-zero, true) or no (0, false).
+// Returns:
+// double: Arc length of curve.
+
 PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
 {
   int closed = 0;
@@ -420,7 +479,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    
+
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -451,7 +510,7 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error finding curve length" );
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     
+
   }
 
   // clean up
@@ -460,6 +519,19 @@ PyObject *pyMath_curveLengthCmd(PyObject *self, PyObject *args)
 
   return Py_BuildValue("d",length);
 }
+
+// --------------------------------
+// pyMath_linearInterpolateCurveCmd
+// --------------------------------
+//
+// Linearly interpolate points in between those provided to define a curve.
+//
+// Args:
+//  pointsArg (PyObject*): List of input points.
+//  closed (int): Interolate between the first point and the last (non-zero, true) or not (0, false).
+//  numInterpPoints (int): Number of points to interpolate between each source pair.
+// Returns:
+//  List[double]: Output points with interpolation.
 
 PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
 {
@@ -477,7 +549,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg not a list");
-    
+
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -508,7 +580,7 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in linear interpolation" );
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     
+
   }
 
   // create result string
@@ -537,10 +609,20 @@ PyObject *pyMath_linearInterpolateCurveCmd(PyObject *self, PyObject *args)
   return pylist;
 }
 
-
 // -----------------------
 // Math_fitLeastSquaresCmd
 // -----------------------
+//
+//
+//
+// Args:
+//  xtermsArg (PyObject*): List of input x-terms. Must have identical length to ytermsArg.
+//  ytermsArg (PyObject*): List of input y-terms. Must have identical length to xtermsArg.
+//  xOrder (int): ?
+//  yOrder (int): ?
+// Returns:
+// List: ?
+
 PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
 {
   int xOrder = 0;
@@ -553,7 +635,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
                          &ytermsArg,
                         &xOrder,&yOrder))
   {
-      PyErr_SetString(MathErr, "Could not import 2 tuple and 2 int:xtermsArg, termsArg,xOrder,yOrder");
+      PyErr_SetString(MathErr, "Could not import 2 tuple and 2 int: xtermsArg, termsArg,xOrder,yOrder");
       return NULL;
   }
 
@@ -561,7 +643,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!(PyList_Check(xtermsArg)||PyList_Check(ytermsArg))){
     PyErr_SetString( MathErr, "xtermsArg or ytermsArg is not a list");
-    
+
   }
   int numberOfSamples = PyList_Size(xtermsArg);
   int numberOfSamplesY = PyList_Size(ytermsArg);
@@ -619,7 +701,7 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
       mathobj->deleteArray(yt,numberOfSamples,yOrder);
       delete mathobj;
       delete temp;
-      
+
   }
 
   // create result string
@@ -627,18 +709,18 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   PyObject *pylist=PyList_New(xOrder);
   if(pylist!=NULL)
   {
-  for (i = 0; i < xOrder; i++) {
-    r[0] = '\0';
-    for (j = 0; j < yOrder; j++) {
-    sprintf(r,"%.6le ",mt[i][j]);
-    PyObject *rr=PyBytes_FromString(r);
-    if(!rr)
-    {
-      Py_DECREF(pylist);
-      return NULL;
-    }
-    PyList_SET_ITEM(pylist, i, rr);
-  }
+    for (i = 0; i < xOrder; i++) {
+      r[0] = '\0';
+      for (j = 0; j < yOrder; j++) {
+      sprintf(r,"%.6le ",mt[i][j]);
+      PyObject *rr=PyBytes_FromString(r);
+      if(!rr)
+      {
+        Py_DECREF(pylist);
+        return NULL;
+      }
+      PyList_SET_ITEM(pylist, i, rr);
+      }
     }
   }
 
@@ -651,6 +733,19 @@ PyObject *pyMath_fitLeastSquaresCmd(PyObject *self, PyObject *args)
   return pylist;
 }
 
+// ---------------------
+// pyMath_smoothCurveCmd
+// ---------------------
+//
+// Smooths the curve defined by the provided points list.
+//
+// Args:
+//  pointsArg (PyObject*): List of input points.
+//  closed (int): Smooth between the first and last point (non-zero, true) or no (0, fales).
+//  numModes (int): Number of modes to be maintained throughout the operation.
+//  numInterpPoints (int): Number of points to add between each pair of source points.
+// Returns:
+//  List[double]: Ouput points list with smoothing.
 
 PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
 {
@@ -670,7 +765,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
   // Do work of command
   if (!PyList_Check(pointsArg)){
     PyErr_SetString( MathErr, "pointsArg is not a list");
-    
+
   }
   int nlistpts = PyList_Size(pointsArg);
   if (nlistpts < 0)   return NULL;
@@ -696,7 +791,7 @@ PyObject *pyMath_smoothCurveCmd(PyObject *self, PyObject *args)
      PyErr_SetString( MathErr, "error in smoothing curve");
      mathobj->deleteArray(pts,nlistpts,3);
      delete mathobj;
-     
+
   }
 
   // create result string
