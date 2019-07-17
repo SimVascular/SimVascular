@@ -25,6 +25,10 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_TCL* ]]; then
   mv tcllib-1.17 ../tcllib-1.17
   mv tklib-0.6 ../tklib-0.6
 
+  pushd ../tk-8.6.4
+  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-tk-8.6.4.patch
+  popd
+
 fi
 
 #  python
@@ -147,5 +151,7 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.patch
   patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04-boost-windows.patch
   #patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.0-gl1.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.2-dcmtk.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.2-sv_externals.patch
   popd
 fi

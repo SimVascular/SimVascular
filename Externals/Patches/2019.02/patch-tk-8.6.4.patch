@@ -1,0 +1,82 @@
+diff -aur --new-file tk-8.6.4/generic/tk.h tk-8.6.4-patched/generic/tk.h
+--- tk-8.6.4/generic/tk.h	2015-02-26 09:13:44.000000000 -0800
++++ tk-8.6.4-patched/generic/tk.h	2019-06-09 13:30:46.371990100 -0700
+@@ -16,6 +16,12 @@
+ #ifndef _TK
+ #define _TK
+ 
++#ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
++#include <windows.h>
++#undef WIN32_LEAN_AND_MEAN
++#endif
++
+ #include <tcl.h>
+ #if (TCL_MAJOR_VERSION != 8) || (TCL_MINOR_VERSION < 6)
+ #	error Tk 8.6 must be compiled with tcl.h from Tcl 8.6 or better
+diff -aur --new-file tk-8.6.4/generic/tkInt.h tk-8.6.4-patched/generic/tkInt.h
+--- tk-8.6.4/generic/tkInt.h	2015-02-26 09:13:18.000000000 -0800
++++ tk-8.6.4-patched/generic/tkInt.h	2019-06-09 13:30:46.401910300 -0700
+@@ -15,6 +15,12 @@
+ #ifndef _TKINT
+ #define _TKINT
+ 
++#ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
++#include <windows.h>
++#undef WIN32_LEAN_AND_MEAN
++#endif
++
+ #ifndef _TKPORT
+ #include "tkPort.h"
+ #endif
+diff -aur --new-file tk-8.6.4/generic/tkStubLib.c tk-8.6.4-patched/generic/tkStubLib.c
+--- tk-8.6.4/generic/tkStubLib.c	2015-02-26 09:13:18.000000000 -0800
++++ tk-8.6.4-patched/generic/tkStubLib.c	2019-06-09 13:30:46.404902200 -0700
+@@ -11,6 +11,12 @@
+  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+  */
+ 
++#ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
++#include <windows.h>
++#undef WIN32_LEAN_AND_MEAN
++#endif
++
+ #include "tkInt.h"
+ 
+ #ifdef _WIN32
+diff -aur --new-file tk-8.6.4/win/tkWinPort.h tk-8.6.4-patched/win/tkWinPort.h
+--- tk-8.6.4/win/tkWinPort.h	2015-02-26 09:13:18.000000000 -0800
++++ tk-8.6.4-patched/win/tkWinPort.h	2019-06-09 13:30:47.082091300 -0700
+@@ -14,6 +14,12 @@
+ #ifndef _WINPORT
+ #define _WINPORT
+ 
++#ifdef _WIN32
++#define WIN32_LEAN_AND_MEAN
++#include <windows.h>
++#undef WIN32_LEAN_AND_MEAN
++#endif
++
+ /*
+  *---------------------------------------------------------------------------
+  * The following sets of #includes and #ifdefs are required to get Tcl to
+diff -aur --new-file tk-8.6.4/win/winMain.c tk-8.6.4-patched/win/winMain.c
+--- tk-8.6.4/win/winMain.c	2015-02-26 09:13:18.000000000 -0800
++++ tk-8.6.4-patched/win/winMain.c	2019-06-09 13:30:47.124976600 -0700
+@@ -12,10 +12,13 @@
+  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+  */
+ 
+-#include "tk.h"
++#ifdef _WIN32
+ #define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+ #undef WIN32_LEAN_AND_MEAN
++#endif
++
++#include "tk.h"
+ #include <locale.h>
+ #include <stdlib.h>
+ #include <tchar.h>

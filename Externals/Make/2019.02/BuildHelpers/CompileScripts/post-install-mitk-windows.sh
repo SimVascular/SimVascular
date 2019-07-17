@@ -5,6 +5,7 @@ GCP=cp
 GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
+GMV=mv
 
 # paths
 
@@ -55,6 +56,8 @@ $GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/REPLACEME
 $GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/REPLACEME_SV_LIB_FILE_PREFIXPythonQt.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib
 
 # CTK
+
+$GMV -f $MITK_BINDIR/bin/Python $MITK_BINDIR/bin/PythonCTK
 
 $GMKDIR -p $MITK_BINDIR/include/ctk
 
@@ -185,6 +188,8 @@ done
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Algorithms
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Controllers
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Interactions
+	   $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
+	   $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
 

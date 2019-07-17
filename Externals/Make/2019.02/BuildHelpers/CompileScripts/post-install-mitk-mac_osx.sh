@@ -2,6 +2,7 @@ GCP=cp
 GDIRNAME=dirname
 GBASENAME=basename
 GMKDIR=mkdir
+GMV=mv
 
 # paths
 
@@ -52,6 +53,8 @@ $GCP -f  $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/REPLACEME_SV
 $GCP -f  $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/REPLACEME_SV_LIB_FILE_PREFIXPythonQt.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib
 
 # CTK
+
+$GMV -f $MITK_BINDIR/bin/Python $MITK_BINDIR/bin/PythonCTK
 
 $GMKDIR -p $MITK_BINDIR/include/ctk
 
@@ -183,6 +186,8 @@ done
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Algorithms
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Controllers
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Interactions
+	   $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
+	   $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
 
@@ -213,8 +218,8 @@ done
            $GCP -f $MITK_SRCDIR/Modules/Segmentation/Algorithms/*.h $MITK_BINDIR/include/mitk/Modules/Segmentation/Algorithms
            $GCP -f $MITK_SRCDIR/Modules/Segmentation/Controllers/*.h $MITK_BINDIR/include/mitk/Modules/Segmentation/Controllers
            $GCP -f $MITK_SRCDIR/Modules/Segmentation/Interactions/*.h $MITK_BINDIR/include/mitk/Modules/Segmentation/Interactions
-	   $GCP -fl $MITK_SRCDIR/Modules/Segmentation/SegmentationUtilities/BooleanOperations/*.h $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
-	   $GCP -fl $MITK_SRCDIR/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations/*.h $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperation
+	   $GCP -f $MITK_SRCDIR/Modules/Segmentation/SegmentationUtilities/BooleanOperations/*.h $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/BooleanOperations
+	   $GCP -f $MITK_SRCDIR/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations/*.h $MITK_BINDIR/include/mitk/Modules/Segmentation/SegmentationUtilities/MorphologicalOperations
            $GCP -f $MITK_SRCDIR/Modules/SegmentationUI/Qmitk/*.h $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GCP -f $MITK_SRCDIR/Modules/SurfaceInterpolation/*.h $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
            $GCP -f $MITK_SRCDIR/Utilities/mbilog/*.h $MITK_BINDIR/include/mitk/Utilities/mbilog

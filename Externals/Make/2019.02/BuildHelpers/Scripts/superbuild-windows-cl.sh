@@ -67,8 +67,10 @@ chmod a+rx ./tmp/create-toplevel-build-dir.sh
 #  tcl/tk 8.6
 if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   echo "CREATE_BUILD_SCRIPT_TCL"
-  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/tcl-windows-generic.sh > tmp/compile.make.tcl.cl.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-make-tcl-windows.sh > tmp/compile.make.tcl.cl.sh
   chmod a+rx ./tmp/compile.make.tcl.cl.sh
+  sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-tcl-msvc.bat > tmp/compile.tcl.msvc.bat
+  chmod a+rx ./tmp/compile.tcl.msvc.bat
 fi
 
 ## python
@@ -226,24 +228,28 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
   echo "BUILD_TCL"
   ./tmp/compile.make.tcl.cl.sh >& ./tmp/stdout.tcl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 ## python
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "BUILD_PYTHON"
   ./tmp/compile.cmake.python.cl.sh >& ./tmp/stdout.python.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 #  swig
 if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
   echo "BUILD_SWIG"
   time ./tmp/compile.make.swig.cl.sh >& ./tmp/stdout.swig.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # numpy
 if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
   echo "BUILD_NUMPY"
   ./tmp/compile.msvc.numpy.cl.sh >& ./tmp/stdout.msvc.numpy.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 ## python
@@ -251,48 +257,56 @@ fi
 if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
   echo "BUILD_PYTHON post-install"
   ./tmp/post-install-python-windows.sh >& ./tmp/stdout.post-install-python-windows.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # tinyxml2
 if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
   echo "BUILD_TINYXML2"
   ./tmp/compile.cmake.tinyxml2.cl.sh >& ./tmp/stdout.tinyxml2.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 #  qt
 if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
   echo "BUILD_QT"
   time ./tmp/compile.qt.msvc.sh >& ./tmp/stdout.qt.msvc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # freetype
 if [[ $SV_SUPER_OPTIONS == *BUILD_FREETYPE* ]]; then
   echo "BUILD_FREETYPE"
   ./tmp/compile.cmake.freetype.cl.sh >& ./tmp/stdout.freetype.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # gdcm
 if [[ $SV_SUPER_OPTIONS == *BUILD_GDCM* ]]; then
   echo "BUILD_GDCM"
   ./tmp/compile.cmake.gdcm.cl.sh >& ./tmp/stdout.gdcm.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl  
 fi
 
 # hdf5
 if [[ $SV_SUPER_OPTIONS == *BUILD_HDF5* ]]; then
   echo "BUILD_HDF5"
   ./tmp/compile.cmake.hdf5.cl.sh >& ./tmp/stdout.hdf5.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # vtk
 if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
   echo "BUILD_VTK"
   ./tmp/compile.cmake.vtk.cl.sh >& ./tmp/stdout.vtk.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # itk
 if [[ $SV_SUPER_OPTIONS == *BUILD_ITK* ]]; then
   echo "BUILD_ITK"
   ./tmp/compile.cmake.itk.cl.sh >& ./tmp/stdout.itk.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # opencascade
@@ -300,12 +314,14 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
   echo "BUILD_OPENCASCADE"
   ./tmp/compile.cmake.opencascade.cl.sh >& ./tmp/stdout.opencascade.cl.txt
   ./tmp/post-install-opencascade-windows.sh >& ./tmp/stdout.post-install-windows.opencascade.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # mmg
 if [[ $SV_SUPER_OPTIONS == *BUILD_MMG* ]]; then
   echo "BUILD_MMG"
   ./tmp/compile.cmake.mmg.cl.sh >& ./tmp/stdout.mmg.cl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 # mitk
@@ -313,6 +329,7 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
   echo "BUILD_MITK"
   ./tmp/compile.cmake.mitk.cl.sh >& ./tmp/stdout.mitk.cl.txt
   ./tmp/post-install-mitk-windows.sh >& ./tmp/stdout.post-install-windows.mitk.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
 #
