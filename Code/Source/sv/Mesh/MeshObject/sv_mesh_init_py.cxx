@@ -83,27 +83,10 @@ PyObject* cvMesh_LogoffCmd( PyObject* self, PyObject* args);
 // Mesh methods
 // --------------------
 static PyObject* cvMesh_GetKernelMtd( pyMeshObject* self, PyObject* args);
-static PyObject* cvMesh_Prin//
-//
-//
-// Args:
-//
-// Returns:
-//tMtd( pyMeshObject* self, PyObject* args);
-static PyObject* cvMesh_Upda//
-//
-//
-// Args:
-//
-// Returns:
-//teMtd( pyMeshObject* self, PyObject* args);
-static PyObject* cvMesh_Writ//
-//
-//
-// Args:
-//
-// Returns:
-//eMetisAdjacencyMtd( pyMeshObject* self, PyObject* args);
+static PyObject* cvMesh_GetKernelMtd( pyMeshObject* self, PyObject* args);
+static PyObject* cvMesh_PrintMtd( pyMeshObject* self, PyObject* args);
+static PyObject* cvMesh_UpdateMtd( pyMeshObject* self, PyObject* args);
+static PyObject* cvMesh_WriteMetisAdjacencyMtd( pyMeshObject* self, PyObject* args);
 static PyObject* cvMesh_GetPolyDataMtd( pyMeshObject* self, PyObject* args);
 static PyObject* cvMesh_GetSolidMtd( pyMeshObject* self, PyObject* args);
 static PyObject* cvMesh_SetVtkPolyDataMtd( pyMeshObject* self, PyObject* args);
