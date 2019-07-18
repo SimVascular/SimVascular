@@ -142,8 +142,23 @@ PyMODINIT_FUNC PyInit_pyMeshUtil()
 
 }
 #endif
+
+// -------------
 // MMG_RemeshCmd
-// --------------
+// -------------
+//
+// Remeshes the provided source object with the provided parameters.
+//
+// Args:
+//  srcName (string): Name of the source object.
+//  dstName (string): Desired name of the destination object.
+//  hmin (double, optional): Minimum edge size.
+//  hmax (double, optional): Maximim edge size.
+//  angle (double, optional): ?
+//  hgrad (double, optional): ?
+//  hausd (double, optional): ?
+// Returns:
+//  string: Name of the destination object.
 
 PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
 {
@@ -172,19 +187,19 @@ PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
   src = gRepository->GetObject( srcName );
   if ( src == NULL ) {
     PyErr_SetString(PyRunTimeErr, "couldn't find object ");
-    
+
   }
 
   // Make sure the specified dst object does not exist:
   if ( gRepository->Exists( dstName ) ) {
     PyErr_SetString(PyRunTimeErr, "object already exists");
-    
+
   }
 
   type = src->GetType();
   if ( type != POLY_DATA_T ) {
     PyErr_SetString(PyRunTimeErr, "obj not of type cvPolyData");
-    
+
   }
 
   vtkPolyData *surfacepd;
@@ -196,19 +211,19 @@ PyObject* MMG_RemeshCmd(PyObject* self, PyObject* args)
   if ( MMGUtils_SurfaceRemeshing( surfacepd, hmin, hmax, hausd, angle, hgrad,
 	useSizingFunction, meshSizingFunction, numAddedRefines) != SV_OK ) {
     PyErr_SetString(PyRunTimeErr, "remeshing error");
-    
+
   }
 
   dst = new cvPolyData(surfacepd);
   if ( dst == NULL ) {
     PyErr_SetString(PyRunTimeErr, "error remeshing obj in repository");
-    
+
   }
 
   if ( !( gRepository->Register( dstName, dst ) ) ) {
     PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
     delete dst;
-    
+
   }
   return Py_BuildValue("s",dst->GetName());
 }
