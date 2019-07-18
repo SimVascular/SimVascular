@@ -206,7 +206,7 @@ PyObject* Itkls2d_pyInit(){
     {
       fprintf(stdout,"Error in pyLevelSetType\n");
     }
-    
+
     PyObject *pyItkls2D;
 #if PYTHON_MAJOR_VERSION == 2
     pyItkls2D = Py_InitModule("Itkls2d",Itkls2d_methods);
@@ -256,20 +256,20 @@ static pyLevelSet* itkls2d_NewCmd( pyLevelSet* self, PyObject* args )
 	if(!PyArg_ParseTuple(args, "s",&lsName))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 1 char, lsname");
-		
+
 	}
 
 	// Make sure this is a new object name:
 	if ( !NewName( lsName ) ) {
 		PyErr_SetString(PyRunTimeErr2d, "ITKLevelSetCore object already exists");
-		
+
 	}
 
 	// Allocate new cvLevelSet object:
 	ls = new cvITKLevelSet;
 	if ( ls == NULL ) {
 		PyErr_SetString(PyRunTimeErr2d,"error allocating object");
-		
+
 	}
 
 	strcpy( ls->tclName_, lsName );
@@ -277,7 +277,7 @@ static pyLevelSet* itkls2d_NewCmd( pyLevelSet* self, PyObject* args )
 	if ( !newEntry ) {
 		PyErr_SetString(PyRunTimeErr2d, "error updating cvLevelSet hash table");
 		delete ls;
-		
+
 	}
 	Tcl_SetHashValue( entryPtr, (ClientData)ls );
 
@@ -320,7 +320,7 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 	if(!PyArg_ParseTuple(args, "ss",&inputImageName,&seedPdName))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 2 chars");
-		
+
 	}
 
 
@@ -336,7 +336,7 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 			char temp[2048];
 			sprintf(temp,"couldn't find object ", inputImageName, (char *)NULL );
 			PyErr_SetString(PyRunTimeErr2d, temp );
-			
+
 		}
 		printf("Found Object\n");
 		// Make sure image is of type STRUCTURED_PTS_T:
@@ -345,7 +345,7 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 			char temp[2048];
 			sprintf(temp,"error: object ", inputImageName, "not of type StructuredPts", (char *)NULL);
 			PyErr_SetString(PyRunTimeErr2d, temp );
-			
+
 		}
 	}
 
@@ -363,7 +363,7 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 			char temp[2048];
 			sprintf(temp,"couldn't find object ", seedPdName, (char *)NULL );
 			PyErr_SetString(PyRunTimeErr2d, temp );
-			
+
 		}
 		printf("Found Object\n");
 		// Make sure image is of type STRUCTURED_PTS_T:
@@ -372,7 +372,7 @@ PyObject* itkls2d_SetInputsMtd( pyLevelSet* self, PyObject* args  )
 			char temp[2048];
 			sprintf(temp,"error: object ", seedPdName, "not of type PolyData", (char *)NULL);
 			PyErr_SetString(PyRunTimeErr2d, temp );
-			
+
 		}
 	}
 
@@ -401,7 +401,6 @@ static PyObject* itkls2d_PhaseOneLevelSetMtd( pyLevelSet* self, PyObject* args  
 					&sigmaFeat,&sigmaAdv))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 5 doubles");
-		
 	}
 	std::cout << "sigmaFeat " << sigmaFeat << std::endl;
 
@@ -425,7 +424,6 @@ static PyObject* itkls2d_PhaseTwoLevelSetMtd( pyLevelSet* self, PyObject* args  
 					&sigmaFeat,&sigmaAdv))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 4 doubles");
-		
 	}
 
 
@@ -441,6 +439,7 @@ static PyObject* itkls2d_PhaseTwoLevelSetMtd( pyLevelSet* self, PyObject* args  
 
 	return SV_PYTHON_OK;
 }
+
 static PyObject* itkls2d_GACLevelSetMtd( pyLevelSet* self, PyObject* args  )
 {
 	cvITKLevelSet *ls=self->ls;
@@ -450,12 +449,9 @@ static PyObject* itkls2d_GACLevelSetMtd( pyLevelSet* self, PyObject* args  )
 	if (!PyArg_ParseTuple(args,"d|d",&expFactor,&sigma))
 	{
 		PyErr_SetString(PyRunTimeErr2d,"Could not import 2 doubles");
-		
 	}
 
-
 	ls->ComputeGACLevelSet(expFactor);
-
 
 	return SV_PYTHON_OK;
 }
@@ -466,7 +462,3 @@ static PyObject* itkls2d_WriteFrontMtd(pyLevelSet* self, PyObject* args)
 	ls->WriteFrontImages();
 	return SV_PYTHON_OK;
 }
-
-
-
-

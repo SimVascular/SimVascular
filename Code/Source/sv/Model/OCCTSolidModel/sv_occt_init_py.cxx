@@ -162,7 +162,7 @@ PyObject* Occtsolid_pyInit()
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
 #elif PYTHON_MAJOR_VERSION == 3
   pythonC = PyModule_Create(&pySolidOCCTmodule);
-#endif  
+#endif
 if (pythonC==NULL)
   {
     fprintf(stdout,"Error in initializing pySolid");
@@ -204,7 +204,7 @@ initpySolidOCCT()
     return ;
   }
   tmp->registrar = pySolidModelRegistrar;
-  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp); 
+  PySys_SetObject("solidModelRegistrar",(PyObject*)tmp);
   PyObject *pythonC;
   pythonC = Py_InitModule("pySolidOCCT", SolidOCCT_methods);
   if (pythonC==NULL)
@@ -262,10 +262,32 @@ PyInit_pySolidOCCT()
 }
 #endif
 
+// ---------------------------
+// OCCTSolidModel_AvailableCmd
+// ---------------------------
+//
+// Returns simple message indicating module availability.
+//
+// Args:
+//  None.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* OCCTSolidModel_AvailableCmd( PyObject* self, PyObject* args)
 {
   return Py_BuildValue("s", "OpenCASCADE Solid Module Available");
 }
+
+// --------------------------------
+// OCCTSolidModel_RegistrarsListCmd
+// --------------------------------
+//
+// Returns a list of all items in the registrar.
+//
+// Args:
+//  None.
+// Returns:
+//  List[PyObject*]: List of items.
 
 PyObject* OCCTSolidModel_RegistrarsListCmd(PyObject* self, PyObject* args )
 {
@@ -292,6 +314,25 @@ PyObject* OCCTSolidModel_RegistrarsListCmd(PyObject* self, PyObject* args )
 // --------------------
 // pySolid.convertListsToOCCTObject
 // --------------------
+//
+// Converts lists to OCCT Objects.
+//
+// Args:
+//  objName (string): Name of source object.
+//  X (PyList_Type*): ?
+//  Y (PyList_Type*): ?
+//  Z (PyList_Type*): ?
+//  uKnots (PyList_Type*): ?
+//  vKnots (PyList_Type*): ?
+//  uMults (PyList_Type*): u multiplicity array.
+//  vMults (PyList_Type*): v multiplicity array.
+//  uDeg (PyList_Type*): ?
+//  vDeg (PyList_Type*): ?
+//  p (int): ?
+//  q (int): ?
+// Returns:
+//  Nothing, function is void.
+
 PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 {
   //Call cvOCCTSolidModel function to create BSpline surf
@@ -306,14 +347,14 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
   int p=0,q=0;
   PyObject *X,*Y,*Z,*uKnots,*vKnots,*uMults,*vMults,*uDeg,*vDeg;
   if (!PyArg_ParseTuple(args,"sO!O!O!O!O!O!O!ii",&objName,
-						&PyList_Type,&X,
-					        &PyList_Type,&Y,
-					        &PyList_Type,&Z,
-					        &PyList_Type,&uKnots,
-						&PyList_Type,&vKnots,
-						&PyList_Type,&uMults,
-						&PyList_Type,&vMults,
-						&p,&q))
+                        &PyList_Type,&X,
+                        &PyList_Type,&Y,
+                        &PyList_Type,&Z,
+                        &PyList_Type,&uKnots,
+                        &PyList_Type,&vKnots,
+                        &PyList_Type,&uMults,
+                        &PyList_Type,&vMults,
+                        &p,&q))
   {
     fprintf(stderr,"Could not import 1 char, 7 tuples, and 2 ints: X,Y,Z,uKnots,vKnots,uMults,vMults,uDeg,vDeg");
     return NULL;
