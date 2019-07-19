@@ -153,13 +153,13 @@ PyMODINIT_FUNC initpyGUI(void)
 {
 
   PyObject *pyGUI;
-  
+
   if ( gRepository == NULL ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from pyGUI\n" );
     return;
   }
-  
+
   pyGUI = Py_InitModule("pyGUI",pyGUI_methods);
 
   PyRunTimeErr = PyErr_NewException("pyGUI.error",NULL,NULL);
@@ -184,11 +184,11 @@ PyMODINIT_FUNC PyInit_pyGUI(void)
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from pyGUI\n" );
   }
-  
+
   PyRunTimeErr = PyErr_NewException("pyGUI.error",NULL,NULL);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(pyGUI,"error",PyRunTimeErr);
-  
+
   return pyGUI;
 
 }
@@ -209,7 +209,7 @@ int GUI_pyInit()
 
 }
 
-//------------------xc 
+//------------------xc
 //  buildModelNode
 //------------------
 sv4guiModel::Pointer buildModelNode(cvRepositoryData *poly,sv4guiModel::Pointer model)
@@ -222,7 +222,7 @@ sv4guiModel::Pointer buildModelNode(cvRepositoryData *poly,sv4guiModel::Pointer 
     sv4guiModelElementAnalytic* meAnalytic=dynamic_cast<sv4guiModelElementAnalytic*>(me);
     if(meAnalytic)
         meAnalytic->SetWholeVtkPolyData(meAnalytic->CreateWholeVtkPolyData());
-    
+
     model->SetType(me->GetType());
     model->SetModelElement(me);
     model->SetDataModified();
@@ -239,10 +239,10 @@ sv4guiMitkMesh::Pointer buildMeshNode(cvRepositoryData *obj, sv4guiMesh* mesh,  
     meshObj = (vtkUnstructuredGrid*)((cvDataObject *)obj)->GetVtkPtr();
     meshObj -> Print(std::cout);
     //get surface polydata from the unstructured grid
-    vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter = 
+    vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter =
     vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
     surfaceFilter->SetInputData(meshObj);
-    surfaceFilter->Update(); 
+    surfaceFilter->Update();
     vtkSmartPointer<vtkPolyData> polydata = surfaceFilter->GetOutput();
     //set surface and volume mesh to the sv4guiMesh
     mesh = sv4guiMeshFactory::CreateMesh("TetGen");
@@ -264,7 +264,7 @@ sv4guiPath::Pointer buildPathNode(cvRepositoryData *obj, sv4guiPath::Pointer pat
 {
     sv3::PathElement* pathElem = dynamic_cast<sv3::PathElement*> (obj);
     sv4guiPathElement* guiPath = new sv4guiPathElement();
-    
+
     switch(pathElem->GetMethod())
     {
     case sv3::PathElement::CONSTANT_TOTAL_NUMBER:
@@ -282,7 +282,7 @@ sv4guiPath::Pointer buildPathNode(cvRepositoryData *obj, sv4guiPath::Pointer pat
 
     guiPath->SetCalculationNumber(pathElem->GetCalculationNumber());
     guiPath->SetSpacing(pathElem->GetSpacing());
-    
+
     //copy control points
     std::vector<std::array<double,3> > pts = pathElem->GetControlPoints();
     for (int i=0; i<pts.size();i++)
@@ -293,13 +293,13 @@ sv4guiPath::Pointer buildPathNode(cvRepositoryData *obj, sv4guiPath::Pointer pat
         point[2] = pts[i][2];
         guiPath->InsertControlPoint(i,point);
     }
-    
+
     //create path points
     guiPath->CreatePathPoints();
-    
+
     path->SetPathElement(guiPath);
     path->SetDataModified();
-    
+
     return path;
 }
 
@@ -312,7 +312,7 @@ sv4guiContourGroup::Pointer buildContourNode(std::vector<cvRepositoryData *> obj
     group->SetPathName(str);
     for (int j = 0; j<objs.size(); j++)
     {
-        
+
         sv3::Contour* sv3contour = dynamic_cast<sv3::Contour*> (objs[j]);
         sv4guiContour* contour = new sv4guiContour();
         sv3::PathElement::PathPoint pathPoint=sv3contour->GetPathPoint();
@@ -332,16 +332,16 @@ sv4guiContourGroup::Pointer buildContourNode(std::vector<cvRepositoryData *> obj
 
         group->InsertContour(j, contour);
         group->SetDataModified();
-        
+
     }
-    
+
     return group;
 }
 //------------------
 //  AddDataNode
 //------------------
 
-int AddDataNode(mitk::DataStorage::Pointer dataStorage, 
+int AddDataNode(mitk::DataStorage::Pointer dataStorage,
         cvRepositoryData *rd, mitk::DataNode::Pointer folderNode, char* childName)
 {
     char r[2048];
@@ -390,9 +390,9 @@ int AddDataNode(mitk::DataStorage::Pointer dataStorage,
         mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
     }
     interface->ExecuteOperation(doOp);
-    
+
     return SV_OK;
-    
+
 }
 
 //------------------
@@ -432,8 +432,8 @@ int RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Point
 //  AddContourDataNode
 //------------------
 
-int AddContourDataNode(mitk::DataStorage::Pointer dataStorage, 
-        std::vector<cvRepositoryData *>rd, mitk::DataNode::Pointer folderNode, 
+int AddContourDataNode(mitk::DataStorage::Pointer dataStorage,
+        std::vector<cvRepositoryData *>rd, mitk::DataNode::Pointer folderNode,
         char* childName, char* pathName, sv4guiPath::Pointer path)
 {
 
@@ -460,16 +460,16 @@ int AddContourDataNode(mitk::DataStorage::Pointer dataStorage,
         mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
     }
     interface->ExecuteOperation(doOp);
-    
+
     return SV_OK;
-    
+
 }
 
 //------------------
 //  getFolderNode
 //------------------
 
-mitk::DataNode::Pointer getFolderNode(mitk::DataStorage::Pointer dataStorage, 
+mitk::DataNode::Pointer getFolderNode(mitk::DataStorage::Pointer dataStorage,
         mitk::DataNode::Pointer projFolderNode, char* folderName)
 {
     mitk::DataStorage::SetOfObjects::ConstPointer rs=
@@ -483,18 +483,16 @@ mitk::DataNode::Pointer getFolderNode(mitk::DataStorage::Pointer dataStorage,
         {
             MITK_ERROR << "Error getting a pointer to the folderNode.";
             return nullptr;
-            
         }
     }
     else
     {
         MITK_ERROR <<"Error getting a pointer to the folderNode.";
         return nullptr;
-        
     }
-    
+
     return folderNode;
-    
+
 }
 
 //---------------------
@@ -511,10 +509,8 @@ mitk::DataNode::Pointer getProjectFolderNode(mitk::DataStorage::Pointer dataStor
     }
     else
     {
-            
         MITK_ERROR <<"No project has been created.";
         return nullptr;
-            
     }
     return projFolderNode;
 }
@@ -526,16 +522,16 @@ mitk::DataNode::Pointer searchDataNode(mitk::DataStorage::Pointer dataStorage, m
     char* nodeName, char* folderName)
 {
 
-    mitk::DataNode::Pointer pathFolderNode = 
+    mitk::DataNode::Pointer pathFolderNode =
             getFolderNode(dataStorage,projFolderNode,folderName);
     mitk::DataNode::Pointer exitingNode=NULL;
     if(pathFolderNode.IsNull())
         exitingNode=dataStorage->GetNamedNode(nodeName);
     else
         exitingNode=dataStorage->GetNamedDerivedNode(nodeName,pathFolderNode);
-    
+
     return exitingNode;
-    
+
 }
 
 //-----------------
@@ -546,7 +542,7 @@ int AddImageFromFile(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Poi
 {
     try
     {
-        
+
         mitk::DataNode::Pointer imageNode=sv4guiProjectManager::LoadDataNode(std::string(fileName));
 
         mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
@@ -616,10 +612,24 @@ vtkImageData* MitkImage2VtkImage(mitk::Image* image)
 
     return newVtkImg;
 }
+
 //Python bindings to add data nodes to the data manager and export data to repository
-//-------------------------
+
+// -------------------------
 // GUI_ImportImageFromFile
-//-------------------------
+// -------------------------
+//
+// Imports an image into the project from the specified path.
+//
+// Args:
+//  fileName (string): Path to the file to import.
+//  childName (string): Name of the new object in the project.
+//  parentName (string, optional): Object to place above new image in the hierarchy?
+//  copy (int, optional): Copy the image into the project (non-zero, true) or no (0, false).
+//  factor (double, optional): Scale factor to enlarge/shrink the image by for viewing.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
 {
     char* fileName;
@@ -628,36 +638,36 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
     int copy = 0;
     double factor = 0.;
     mitk::DataNode::Pointer folderNode;
-    
-    
+
+
     if(!PyArg_ParseTuple(args,"ss|sid", &fileName, &childName, &parentName, &copy, &factor))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: fileName, childName and optional char, int, double parentName, copy, factor");
-        
+
     }
-    
+
         //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
     {
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
-    
-    
+
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -666,9 +676,9 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
-    
+
     //get project folder
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -679,78 +689,88 @@ PyObject* GUI_ImportImageFromFile( PyObject* self, PyObject* args)
     //default adds to the repository folder
     if(parentName)
     {
-    if(strcmp(parentName, "Images")==0)
-        folderNode = getFolderNode(dataStorage,projFolderNode,"svImageFolder");
-    else
-    {
-        printf(parentName);
-        PyErr_SetString(PyRunTimeErr, "Not a valid folder name for images");
-        
-    }
-    mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
-    if (existingNode)
-    {
-        PyErr_SetString(PyRunTimeErr, "Image with the same name alreay exists");
-        
-    }
+        if(strcmp(parentName, "Images")==0)
+            folderNode = getFolderNode(dataStorage,projFolderNode,"svImageFolder");
+        else
+        {
+            printf(parentName);
+            PyErr_SetString(PyRunTimeErr, "Not a valid folder name for images");
+
+        }
+        mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
+        if (existingNode)
+        {
+            PyErr_SetString(PyRunTimeErr, "Image with the same name alreay exists");
+
+        }
     }
     else
         folderNode = getFolderNode(dataStorage,projFolderNode,"svRepositoryFolder");
-    
+
     if(AddImageFromFile(dataStorage,folderNode,fileName,childName,copy,factor)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        
+
     }
 
     return SV_PYTHON_OK;
 }
+
 // ---------------------
 //  GUI_ImportPolyDataFromRepos
 // ---------------------
+//
+// Imports a polydata object from the repository.
+//
+// Args:
+//  childName (string): Name of the polydata object to import.
+//  parentName (string, optional): Object to place above the new one in the hierarchy?
+// Returns:
+//  Nothing, function is void.
+
 PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
 {
     char* childName;
     char* parentName=NULL;
     cvRepositoryData *obj;
     mitk::DataNode::Pointer folderNode;
-    
+
     if(!PyArg_ParseTuple(args,"s|s", &childName, &parentName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: childName, parentName");
-        
+
     }
-            
+
     obj = gRepository->GetObject( childName );
     if ( obj == NULL )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find PolyData" );
-        
+
     }
-    
+
 
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
     {
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
-    
-    
+
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -759,10 +779,10 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
-    
-    
+
+
     //get project folder
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -773,19 +793,19 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     //default adds to the repository folder
     if(parentName)
     {
-    if(strcmp(parentName, "Models")==0)
-        folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiModelFolder");
-    else
-    {
-        PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
-        
-    }
-    mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
-    if (existingNode)
-    {
-        PyErr_SetString(PyRunTimeErr, "Object with the same name alreay exists");
-        
-    }
+        if(strcmp(parentName, "Models")==0)
+            folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiModelFolder");
+        else
+        {
+            PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
+
+        }
+        mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
+        if (existingNode)
+        {
+            PyErr_SetString(PyRunTimeErr, "Object with the same name alreay exists");
+
+        }
     }
     else
     {
@@ -794,58 +814,65 @@ PyObject* GUI_ImportPolyDataFromRepos( PyObject* self, PyObject* args)
     if(AddDataNode(dataStorage, obj,folderNode,childName)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        
+
     }
 
-    
     return SV_PYTHON_OK;
-    
-
 }
+
 // ---------------------
-//  GUI_ImportUnstructuredGridFromRepos
+// GUI_ImportUnstructuredGridFromRepos
 // ---------------------
+//
+// Imports and unstructured grid object from the repository.
+//
+// Args:
+//  childName (string): Name of the object to import.
+//  parentName (string, optional): Object to place above the new one in the hierarchy?
+// Returns:
+//  Nothing, function is void.
+
 PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
 {
     char* childName;
     char* parentName=NULL;
     cvRepositoryData *obj;
     mitk::DataNode::Pointer folderNode;
-    
+
     if(!PyArg_ParseTuple(args,"s|s", &childName, &parentName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: childName, parentName");
-        
+
     }
-            
+
     obj = gRepository->GetObject( childName );
     if ( obj == NULL )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find unstructured grid" );
-        
+
     }
-    
+
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
     {
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
-    
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -854,9 +881,9 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
-    
+
     //get project folder
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -867,19 +894,19 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
       //default adds to the repository folder
     if(parentName)
     {
-    if(strcmp(parentName, "Meshes")==0)
-        folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiMeshFolder");
-    else
-    {
-        PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
-        
-    }
-    mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
-    if (existingNode)
-    {
-        PyErr_SetString(PyRunTimeErr, "Object with the same name alreay exists");
-        
-    }
+        if(strcmp(parentName, "Meshes")==0)
+            folderNode = getFolderNode(dataStorage,projFolderNode,"sv4guiMeshFolder");
+        else
+        {
+            PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
+
+        }
+        mitk::DataNode::Pointer existingNode=dataStorage->GetNamedDerivedNode(childName,folderNode);
+        if (existingNode)
+        {
+            PyErr_SetString(PyRunTimeErr, "Object with the same name alreay exists");
+
+        }
     }
     else
     {
@@ -888,56 +915,62 @@ PyObject* GUI_ImportUnstructuredGridFromRepos( PyObject* self, PyObject* args)
     if(AddDataNode(dataStorage, obj,folderNode,childName)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        
     }
 
-    
     return SV_PYTHON_OK;
-    
-
 }
+
 // ------------------
-//  GUI_ExportModelToRepos
+// GUI_ExportModelToRepos
 // ------------------
+//
+// Exports the provided model to the repository.
+//
+// Args:
+//  childName (string): Name of the model to export to the repository.
+//  repoName (string): Desired name of the model in the repository.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
 {
     char* childName;
     char* reposName;
-    
+
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
+        // TODO: This error message should read 2 chars, not 3
         PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: nodeName, reposName");
-        
     }
-    
+
     if(gRepository->Exists( reposName ))
     {
         PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-        
+
     }
 
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
     {
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
-    
-    
+
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -946,7 +979,7 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -963,13 +996,13 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            
+
         }
     }
     if(node.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-        
+
     }
 
     sv4guiModel* model = dynamic_cast<sv4guiModel*> (node->GetData());
@@ -978,7 +1011,7 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     if (pd == NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting polydata from data storage");
-        
+
     }
 
     cvPolyData* cvpd = new cvPolyData( pd );
@@ -986,56 +1019,63 @@ PyObject* GUI_ExportModelToRepos( PyObject* self, PyObject* args)
     {
         PyErr_SetString(PyRunTimeErr, "error registering object in repository");
         delete cvpd;
-        
-    }
-    
-    return SV_PYTHON_OK;
-    
-}
 
+    }
+
+    return SV_PYTHON_OK;
+}
 
 // ------------------
 //  GUI_ExportMeshToRepos
 // ------------------
+//
+// Exports the provided mesh to the repository.
+//
+// Args:
+//  childName (string): Name of the mesh to export to the repository.
+//  repoName (string): Desired name of the mesh in the repository.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
 {
     char* childName;
     char* reposName;
-    
+
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: nodeName, reposName");
-        
+
     }
-    
+
     if(gRepository->Exists( reposName ))
     {
         PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-        
+
     }
 
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
     {
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
-    
-    
+
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -1044,7 +1084,7 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -1061,14 +1101,14 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            
+
         }
     }
     if(node.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
     }
-    
+
     cvUnstructuredGrid *cvug;
     sv4guiMitkMesh* mitkMesh = dynamic_cast<sv4guiMitkMesh*> (node->GetData());
     if (!mitkMesh) return SV_PYTHON_ERROR;
@@ -1077,62 +1117,70 @@ PyObject* GUI_ExportMeshToRepos( PyObject* self, PyObject* args)
     if(ug == NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting data from data storage");
-        
+
     }
     cvug = new cvUnstructuredGrid(ug);
     if ( !( gRepository->Register( reposName, cvug ) ) )
     {
         PyErr_SetString(PyRunTimeErr, "error registering object in repository");
         delete cvug;
-        
+
     }
 
     return SV_PYTHON_OK;
-    
 }
 
 // ------------------
-//  GUI_ExportImageToRepos
+// GUI_ExportImageToRepos
 // ------------------
+//
+// Exports the provided image to the repository.
+//
+// Args:
+//  childName (string): Name of the image to export to the repository.
+//  repoName (string): Desired name of the image in the repository.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
 {
     char* childName;
     char* reposName;
-    
+
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 3 chars: nodeName, reposName");
-        
+
     }
-    
+
     if(gRepository->Exists( reposName ))
     {
         PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-        
+
     }
 
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
     {
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
-    
-    
+
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -1141,7 +1189,7 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -1158,15 +1206,15 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            
+
         }
     }
     if(node.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-        
+
     }
-    
+
     mitk::Image* image=dynamic_cast<mitk::Image*>(node->GetData());
     if (!image) return SV_PYTHON_ERROR;
     vtkImageData* vtkObj=MitkImage2VtkImage(image);
@@ -1177,15 +1225,15 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
         mysp->ShallowCopy(vtkObj);
         // need to shift the origin like what used to be done
         // in vtkImageToStructuredPoints class
-        
+
         int whole[6];
         int extent[6];
         double *spacing, origin[3];
-        
+
         vtkObj->GetExtent(whole);
         spacing = vtkObj->GetSpacing();
         vtkObj->GetOrigin(origin);
-        
+
         origin[0] += spacing[0] * whole[0];
         origin[1] += spacing[1] * whole[2];
         whole[1] -= whole[0];
@@ -1209,62 +1257,67 @@ PyObject* GUI_ExportImageToRepos( PyObject* self, PyObject* args)
         {
             PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
             delete sp;
-            
+
         }
     }
     else
     {
         PyErr_SetString(PyRunTimeErr, "Error getting vtk object from mitk image.");
-        
+
     }
 
-    
     return SV_PYTHON_OK;
-    
 }
 
 // -----------------------
-//  GUI_ExportPathToRepos
+// GUI_ExportPathToRepos
 // -----------------------
+//
+// Exports the provided path to the repository.
+//
+// Args:
+//  childName (string): Name of the path to export to the repository.
+//  repoName (string): Desired name of the path in the repository.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
 {
     char* childName=NULL;
     char* reposName=NULL;
-    
+
     if(!PyArg_ParseTuple(args,"ss", &childName,&reposName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: nodeName, reposName");
-        
     }
-    
+
     if(gRepository->Exists( reposName ))
     {
         PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-        
     }
 
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
     {
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
-    
-    
+
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -1272,7 +1325,7 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -1289,14 +1342,14 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            
+
         }
     }
     sv4guiPath* path = dynamic_cast<sv4guiPath*> (node->GetData());
     if (path==NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting path from data storage");
-        
+
     }
     sv4guiPathElement* pathElem = path->GetPathElement();
 
@@ -1304,17 +1357,17 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     sv3::PathElement* corePath = new sv3::PathElement();
     switch(pathElem->GetMethod())
     {
-    case sv4guiPathElement::CONSTANT_TOTAL_NUMBER:
-        corePath->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
-        break;
-    case sv4guiPathElement::CONSTANT_SUBDIVISION_NUMBER:
-        corePath->SetMethod(sv3::PathElement::CONSTANT_SUBDIVISION_NUMBER);
-        break;
-    case sv4guiPathElement::CONSTANT_SPACING:
-        corePath->SetMethod(sv3::PathElement::CONSTANT_SPACING);
-        break;
-    default:
-        break;
+        case sv4guiPathElement::CONSTANT_TOTAL_NUMBER:
+            corePath->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
+            break;
+        case sv4guiPathElement::CONSTANT_SUBDIVISION_NUMBER:
+            corePath->SetMethod(sv3::PathElement::CONSTANT_SUBDIVISION_NUMBER);
+            break;
+        case sv4guiPathElement::CONSTANT_SPACING:
+            corePath->SetMethod(sv3::PathElement::CONSTANT_SPACING);
+            break;
+        default:
+            break;
     }
     corePath->SetCalculationNumber(pathElem->GetCalculationNumber());
     corePath->SetSpacing(pathElem->GetSpacing());
@@ -1330,19 +1383,27 @@ PyObject* GUI_ExportPathToRepos( PyObject* self, PyObject* args)
     }
     //create path points
     corePath->CreatePathPoints();
-    
+
     if ( !( gRepository->Register( reposName, corePath ) ) )
     {
         PyErr_SetString(PyRunTimeErr, "error registering object in repository");
         delete corePath;
-        
+
     }
     return SV_PYTHON_OK;
 }
 
 // -----------------------
-//  GUI_ImportPathFromRepos
+// GUI_ImportPathFromRepos
 // -----------------------
+//
+// Imports the provided path from the repository.
+//
+// Args:
+//  childName (string): Name of the path to import to the repository.
+//  parentName (string, optional): Object to place above the new one in the hierarchy?
+// Returns:
+//  Nothing, function is void.
 
 PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
 {
@@ -1351,47 +1412,47 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
     RepositoryDataT type;
     cvRepositoryData *obj;
     mitk::DataNode::Pointer folderNode;
-    
+
     if(!PyArg_ParseTuple(args,"s|s", &childName, &parentName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars: childName, parentName");
-        
+
     }
-            
+
     obj = gRepository->GetObject( childName );
     if ( obj == NULL )
     {
         PyErr_SetString(PyRunTimeErr, "couldn't find path" );
-        
+
     }
-    
+
     type = obj->GetType();
 
     if ( type != PATH_T )
     {
         PyErr_SetString(PyRunTimeErr,"not a path object");
-        
+
     }
-    
+
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
-    
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -1400,10 +1461,10 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
-    
-    
+
+
     //get project folder
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -1421,13 +1482,13 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
             if (existingNode)
             {
                 PyErr_SetString(PyRunTimeErr, "Path with the same name alreay exists");
-                
+
             }
         }
         else
         {
             PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
-            
+
         }
     }
     else
@@ -1438,17 +1499,25 @@ PyObject* GUI_ImportPathFromRepos( PyObject* self, PyObject* args)
     if(AddDataNode(dataStorage, obj,folderNode,childName)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        
+
     }
 
     return SV_PYTHON_OK;
-    
-
 }
 
 // -----------------------
-//  GUI_ImportContourFromRepos
+// GUI_ImportContourFromRepos
 // -----------------------
+//
+// Imports the provided contour group from the repository.
+//
+// Args:
+//  childName (string): ?
+//  srcList (PyObject*): List of contour names to import into the repository.
+//  pathName (string): File path to save the contour group to?
+//  parentName (string, optional): Object to place above the new one in the hierarchy?
+// Returns:
+//  Nothing, function is void.
 
 PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
 {
@@ -1459,13 +1528,13 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     RepositoryDataT type;
 
     mitk::DataNode::Pointer folderNode;
-    
+
     if(!PyArg_ParseTuple(args,"sOs|s", &childName, &srcList, &pathName, &parentName))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import 2 chars and one list: childName, srcList and parentName");
-        
+
     }
-        
+
     int numsrc = PyList_Size(srcList);
     std::vector<cvRepositoryData *> objs(numsrc);
     char r[2048];
@@ -1483,37 +1552,37 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
         {
             sprintf(r, "Couldn't find contour %s", srcName);
             PyErr_SetString(PyRunTimeErr, r );
-            
+
         }
-    
+
         type = objs[i]->GetType();
         r[0] = '\0';
         if ( type != CONTOUR_T )
         {
             sprintf(r, "Not a contour object: %s", srcName);
             PyErr_SetString(PyRunTimeErr,r);
-            
+
         }
     }
        //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
+
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
-    
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
+
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -1522,9 +1591,9 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
+
     }
-      
+
     //get project folder
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -1542,7 +1611,7 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     }
     else
         path = dynamic_cast<sv4guiPath*> (pathNode->GetData());
-        
+
     if (path.IsNull())
     {
         printf("Segmentations require path; no path was found");
@@ -1557,13 +1626,13 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
             if (existingNode)
             {
                 PyErr_SetString(PyRunTimeErr, "Segmentation with the same name alreay exists");
-                
+
             }
         }
         else
         {
             PyErr_SetString(PyRunTimeErr, "No folder with specified name.");
-            
+
         }
     }
     else
@@ -1573,28 +1642,34 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args)
     if(AddContourDataNode(dataStorage, objs,folderNode,childName,pathName,path)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error adding data nodes");
-        
+
     }
 
     return SV_PYTHON_OK;
-    
 }
 
 // -----------------------
-//  GUI_ExportContourToRepos
+// GUI_ExportContourToRepos
 // -----------------------
+//
+// Exports the provided contour group to the repository.
+//
+// Args:
+//  childName (string): Name of the contour to export to the repository.
+//  dstList (PyObject*): List of names to export contour objects with.
+// Returns:
+//  Nothing, function is void.
+
 PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
 {
     char* childName=NULL;
     PyObject* dstList=NULL;
-    
-    
+
     if(!PyArg_ParseTuple(args,"sO", &childName,&dstList))
     {
         PyErr_SetString(PyRunTimeErr, "Could not import one char and one list: nodeName, dstList");
-        
     }
-    
+
     int num = PyList_Size(dstList);
     std::vector<char*> strList(num);
     char r[2048];
@@ -1611,31 +1686,28 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
         {
             sprintf(r, "Name %s already exists in the repository", strList[i]);
             PyErr_SetString(PyRunTimeErr, "Name already exists in the repository");
-            
         }
     }
     //get active data storage
     mitk::IDataStorageReference::Pointer dsRef;
-    
     ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
     mitk::IDataStorageService* dss = 0;
     ctkServiceReference dsServiceRef;
     if (context)
         dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
-    else 
+    else
         printf("Error getting plugin context\n");
     if (dsServiceRef)
     {
         dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
     }
-    
-    
+
+
     if (!dss)
     {
         PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
-        
     }
-    
+
     // Get the active data storage (or the default one, if none is active)
     dsRef = dss->GetDataStorage();
     context->ungetService(dsServiceRef);
@@ -1643,7 +1715,6 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
     if (dataStorage.IsNull())
     {
         PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
-        
     }
     mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
     if (projFolderNode.IsNull())
@@ -1660,14 +1731,12 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
         if (node.IsNull())
         {
             PyErr_SetString(PyRunTimeErr, "Data node does not exist.");
-            
         }
     }
     sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*> (node->GetData());
     if (group==NULL)
     {
         PyErr_SetString(PyRunTimeErr, "Error getting contour group from data storage");
-        
     }
     for (int i=0; i<num; i++)
     {
@@ -1679,13 +1748,11 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
         {
             sprintf(r, "Error getting polydata from contour %s", r);
             PyErr_SetString(PyRunTimeErr, r);
-            
-        } 
+        }
         cvPolyData* cvpd = new cvPolyData( contourPd );
         if ( !( gRepository->Register( strList[i], cvpd ) ) )
         {
             PyErr_SetString(PyRunTimeErr, "error registering object in repository");
-            
         }
     }
     return SV_PYTHON_OK;
