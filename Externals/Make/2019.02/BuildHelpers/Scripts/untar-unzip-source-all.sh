@@ -153,5 +153,6 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_MITK* ]]; then
   #patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.0-gl1.patch
   patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.2-dcmtk.patch
   patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.2-sv_externals.patch
+  patch -p1 < ../BuildHelpers/Patches/2019.02/patch-mitk-2018.04.0-msvc2017.patch
   popd
 fi

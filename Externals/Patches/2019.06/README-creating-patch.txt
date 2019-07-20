@@ -1,3 +1,8 @@
+#
+#  Old example of the proper use of a diff command to create a patch
+#  (in this case from a git repository).
+#
+
 export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/src/originals/
 
 export SV_PATCH_BRANCH_MITK_NAME=simvascular-patch-2016.03.0
