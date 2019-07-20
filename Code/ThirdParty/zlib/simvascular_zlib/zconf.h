@@ -234,7 +234,7 @@
 #  endif
 #endif
 
-#if defined (__BEOS__)
+#if defined (__BEOS__) && !defined (__HAIKU__)
 #  ifdef ZLIB_DLL
 #    ifdef ZLIB_INTERNAL
 #      define ZEXPORT   __declspec(dllexport)
@@ -287,7 +287,7 @@ typedef uLong FAR uLongf;
    typedef Byte       *voidp;
 #endif
 
-/* SV_ZLIB_CHANGE - Added to mangle function names */
+/* KITWARE_ZLIB_CHANGE - Since VTK/ITK/CMake use CMake, not ./configure, we can go ahead and test HAVE_UNISTD_H */
 #ifdef HAVE_UNISTD_H
 #  include <sys/types.h> /* for off_t */
 #  include <unistd.h>    /* for SEEK_* and off_t */
@@ -331,6 +331,18 @@ typedef uLong FAR uLongf;
 #   pragma map(inflate_table,"INTABL")
 #   pragma map(inflate_fast,"INFA")
 #   pragma map(inflate_copyright,"INCOPY")
+#endif
+
+/* KITWARE_ZLIB_CHANGE - Added to suppress complier warnings */
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4127 ) /* cond expr is constant */
+#pragma warning ( disable : 4131 ) /* old style declaration */
+#pragma warning ( disable : 4244 ) /* conversion loss of data */
+#endif
+#if defined(__BORLANDC__)
+#pragma warn -8004 /* assigned a value that is never used */
+#pragma warn -8008 /* condition is always true */
+#pragma warn -8066 /* unreachable code */
 #endif
 
 #endif /* ZCONF_H */
