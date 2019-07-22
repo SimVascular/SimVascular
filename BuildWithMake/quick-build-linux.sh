@@ -48,14 +48,14 @@ case "$osid" in
 	case "$osver" in
 	    'disco')
 		# use 18.04 externals for now
-		export SV_EXTERN_LINUX_VERSION=ubuntu_18
-		export EXTERNALS_SV_FULL_OS_VER_NO=18.04
-		export EXTERNALS_SV_COMPILER_VER_NO=7.3
+		export SV_EXTERN_LINUX_VERSION=ubuntu_19
+		export EXTERNALS_SV_FULL_OS_VER_NO=19.04
+		export EXTERNALS_SV_COMPILER_VER_NO=8.3
 		if [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
-                  export EXTERNALS_BUILD_DATE=2019.07.11
-                  export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+		  echo "Error - no 2019.02 for ubuntu 19!"
+		  exit
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
-                  export EXTERNALS_BUILD_DATE=2019.07.13
+                  export EXTERNALS_BUILD_DATE=2019.07.22
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;
