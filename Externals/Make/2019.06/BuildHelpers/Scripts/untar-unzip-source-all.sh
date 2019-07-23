@@ -39,6 +39,11 @@ if [[ $SV_SUPER_OPTIONS == *UNTAR_PYTHON* ]]; then
   mv  python-cmake-buildsystem-2018-05-28 ../python-3.5.5
   tar xf Originals/python/Python-3.5.5.tgz
   mv Python-3.5.5 ../python-3.5.5
+
+  pushd ../python-3.5.5/Python-3.5.5
+  patch -p1 < ../../BuildHelpers/Patches/2019.06/patch-python-3.5.5-gnu8.patch
+  popd
+
 fi
 
 # swig

@@ -1,0 +1,14 @@
+diff -aur --new-file -x .git Python-3.5.5-original/Modules/posixmodule.c Python-3.5.5/Modules/posixmodule.c
+--- Python-3.5.5-original/Modules/posixmodule.c	2018-02-04 15:40:56.000000000 -0800
++++ Python-3.5.5/Modules/posixmodule.c	2019-07-22 10:52:30.453828997 -0700
+@@ -50,6 +50,10 @@
+ #endif
+ 
+ #ifdef HAVE_SYS_TYPES_H
++#ifdef __GNUC__ > 7
++  /* GNU C Library: major(), minor(), makedev() */
++  #include <sys/sysmacros.h>
++#endif
+ #include <sys/types.h>
+ #endif /* HAVE_SYS_TYPES_H */
+ 
