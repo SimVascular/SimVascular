@@ -2164,8 +2164,7 @@ PyObject* Geom_DisorientProfileCmd(PyObject* self, PyObject* args) {
 //  srcName (string): Name of the source poly data object.
 //  dstName (string): Name of the desired destination object.
 //  vecMtd (int): Boolean value controlling whether refName is aligned by
-//  distance
-//                (false, 0) or not (true, 1).
+//                distance (false, 0) or not (true, 1).
 // Returns:
 //  String: Name of the destination object.
 
