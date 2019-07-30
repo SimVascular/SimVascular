@@ -105,6 +105,8 @@ PyObject* GUI_ImportContourFromRepos( PyObject* self, PyObject* args);
 
 PyObject* GUI_ExportContourToRepos(PyObject* self, PyObject* args);
 
+PyObject* GUI_RemoveDataNode(PyObject* self, PyObject* args);
+
 #if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC initpyGUI();
 #elif PYTHON_MAJOR_VERSION == 3
@@ -127,6 +129,7 @@ PyMethodDef pyGUI_methods[] =
     {"ExportImageToRepos",GUI_ExportImageToRepos,METH_VARARGS,NULL},
     {"ExportPathToRepos",GUI_ExportPathToRepos,METH_VARARGS,NULL},
     {"ExportContourToRepos", GUI_ExportContourToRepos, METH_VARARGS, NULL},
+    {"RemoveDataNode", GUI_RemoveDataNode, METH_VARARGS, NULL},
     {NULL, NULL,0,NULL},
 };
 
@@ -384,6 +387,36 @@ int AddDataNode(mitk::DataStorage::Pointer dataStorage,
     {
         sv4guiDataNodeOperation* undoOp = new sv4guiDataNodeOperation(sv4guiDataNodeOperation::OpREMOVEDATANODE,dataStorage,Node,folderNode);
         mitk::OperationEvent *operationEvent = new mitk::OperationEvent(interface, doOp, undoOp, "Add DataNode");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    }
+    interface->ExecuteOperation(doOp);
+    
+    return SV_OK;
+    
+}
+
+//------------------
+//  RemoveDataNode
+//------------------
+
+int RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer folderNode, char* childName)
+{
+
+    
+    mitk::DataNode::Pointer childNode =dataStorage->GetNamedDerivedNode(childName,folderNode); 
+    if (!folderNode.IsNull())
+    {
+        dataStorage->Remove(childNode);
+    }
+    
+    mitk::OperationEvent::IncCurrObjectEventId();
+    sv4guiDataNodeOperationInterface* interface=new sv4guiDataNodeOperationInterface;
+    bool undoEnabled=true;
+    sv4guiDataNodeOperation* doOp = new sv4guiDataNodeOperation(sv4guiDataNodeOperation::OpREMOVEDATANODE,dataStorage,childNode,folderNode);
+    if(undoEnabled)
+    {
+        sv4guiDataNodeOperation* undoOp = new sv4guiDataNodeOperation(sv4guiDataNodeOperation::OpADDDATANODE,dataStorage,childNode,folderNode);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(interface, doOp, undoOp, "Remove DataNode");
         mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
     }
     interface->ExecuteOperation(doOp);
@@ -1654,3 +1687,76 @@ PyObject* GUI_ExportContourToRepos( PyObject* self, PyObject* args)
     }
     return SV_PYTHON_OK;
 }
+
+
+// -----------------------
+//  GUI_RemoveDataNode
+// -----------------------
+PyObject* GUI_RemoveDataNode( PyObject* self, PyObject* args)
+{
+    char* childName=NULL;
+    char* parentName=NULL;
+    
+    
+    if(!PyArg_ParseTuple(args,"ss", &childName,&parentName))
+    {
+        PyErr_SetString(PyRunTimeErr, "Could not import two chars, childName, and folderName");
+        return SV_PYTHON_ERROR;
+    }
+    
+    //get active data storage
+    mitk::IDataStorageReference::Pointer dsRef;
+    
+    ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
+    mitk::IDataStorageService* dss = 0;
+    ctkServiceReference dsServiceRef;
+    if (context)
+        dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
+    else 
+        printf("Error getting plugin context\n");
+    if (dsServiceRef)
+    {
+        dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
+    }
+    
+    
+    if (!dss)
+    {
+        PyErr_SetString(PyRunTimeErr,"IDataStorageService service not available.");
+        
+    }
+    
+    // Get the active data storage (or the default one, if none is active)
+    dsRef = dss->GetDataStorage();
+    context->ungetService(dsServiceRef);
+
+    mitk::DataStorage::Pointer dataStorage = dsRef->GetDataStorage();
+    if (dataStorage.IsNull())
+    {
+        PyErr_SetString(PyRunTimeErr, "Error getting a pointer to dataStorage.");
+        return SV_PYTHON_ERROR;
+    }
+    
+  
+    //get project folder
+    mitk::DataNode::Pointer projFolderNode = getProjectFolderNode(dataStorage);
+    if (projFolderNode.IsNull())
+    {
+        PyErr_SetString(PyRunTimeErr, "Error finding project folder node; project may not be created");
+        return SV_PYTHON_ERROR;
+    }
+    
+    mitk::DataNode::Pointer parentNode=dataStorage->GetNamedDerivedNode(parentName,projFolderNode);
+    
+    if(RemoveDataNode(dataStorage, parentNode,childName)==SV_ERROR)
+    {
+        PyErr_SetString(PyRunTimeErr, "Error removing data nodes");
+        return SV_PYTHON_ERROR;
+    }
+
+    
+    return SV_PYTHON_OK;
+    
+
+}
+
