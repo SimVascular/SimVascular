@@ -3128,11 +3128,14 @@ PyObject* Geom_sampleLoopCmd(PyObject* self, PyObject* args) {
 //  srcList (PyObject*): Names of the source objects to be processed.
 //  dstName (string): Desired name of the output object.
 //  numOutPtsInSegs (int): ?
-//  numOutPtsAlongLength (int): ?
+//  numOutPtsAlongLength (int): Including endpoints, how many contours to
+//                              interpolate between the end caps.
 //  numLinearPtsAlongPath (int): ?
 //  numModes (int): ?
 //  useFFT (int): ?
-//  useLinearSampleAlongLength (int): ?
+//  useLinearSampleAlongLength (int): Linearly interpolate contours (see
+//                                    numOutPtsAlongLength) (non-zero, true)
+//                                    or no (0, false).
 //  splineType (int, optional): ?
 //  bias (double, optional): ?
 //  tension (double, optional): ?
