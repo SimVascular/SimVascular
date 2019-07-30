@@ -401,12 +401,15 @@ int AddDataNode(mitk::DataStorage::Pointer dataStorage,
 
 int RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer folderNode, char* childName)
 {
-
-    
     mitk::DataNode::Pointer childNode =dataStorage->GetNamedDerivedNode(childName,folderNode); 
-    if (!folderNode.IsNull())
+    
+    if (folderNode && childNode)
     {
         dataStorage->Remove(childNode);
+    }
+    else
+    {
+        return SV_ERROR;
     }
     
     mitk::OperationEvent::IncCurrObjectEventId();
@@ -1747,7 +1750,11 @@ PyObject* GUI_RemoveDataNode( PyObject* self, PyObject* args)
     }
     
     mitk::DataNode::Pointer parentNode=dataStorage->GetNamedDerivedNode(parentName,projFolderNode);
-    
+    if(!parentNode)
+    {
+        PyErr_SetString(PyRunTimeErr, "Folder node not found");
+        return SV_PYTHON_ERROR;
+    }
     if(RemoveDataNode(dataStorage, parentNode,childName)==SV_ERROR)
     {
         PyErr_SetString(PyRunTimeErr, "Error removing data nodes");
