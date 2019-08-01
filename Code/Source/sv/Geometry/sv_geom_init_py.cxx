@@ -1423,13 +1423,13 @@ two optional chars, pointArrayName, cellArrayName");
 //  Name (string): Name of the source object.
 //  dstName (string): Name of the desired destination object.
 //  numblenditers (int, optional): Number of iterations used for blending.
-//  numsubdivisioniters (int, optional): Number of iterations used for
-//  subdividing. numcgsmoothiters (int, optional): Number of iterations used for
-//  cg smoothing. numlapsmoothingiters (int, optional): Number of iterations
-//  used for lap smoothing. targetdecimation (double, optional): Sets the degree
-//  of decimation. pointArrayName (string, optional): Sets a custom name for the
-//  internal point array. cellArrayName (string, optional): Sets a custom name
-//  for the internal cell Array.
+//  numsubdivisioniters (int, optional): Number of iterations used for subdividing.
+//  numcgsmoothiters (int, optional): Number of iterations used for cg smoothing.
+//  numlapsmoothingiters (int, optional): Number of iterations used for lap smoothing.
+//  targetdecimation (double, optional): Sets the degree of decimation.
+//  pointArrayName (string, optional): Sets a custom name for the internal point
+//                                     array.
+//  cellArrayName (string, optional): Sets a name for the internal cell array.
 // Returns:
 //  String: Name of the destination object
 
@@ -1448,6 +1448,7 @@ PyObject* Geom_LocalBlendCmd(PyObject* self, PyObject* args) {
   cvRepositoryData* dst = NULL;
   RepositoryDataT type;
 
+  // TODO: One two many integer params? Only takes 4, not 5.
   if (!PyArg_ParseTuple(args, "ss|iiiiidss", &Name, &dstName, &numblenditers,
                         &numsubdivisioniters, &numcgsmoothiters,
                         &numlapsmoothiters, &targetdecimation, &pointArrayName,
