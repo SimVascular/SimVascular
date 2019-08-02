@@ -624,9 +624,10 @@ aName, bName, dstName and one optional double, tol");
 // ----------------
 // Args:
 //  Name (string): Name of the source object.
-//  tol (double): ?
+//  tol (double, optional): ?
 // Returns:
-//  List[int]: Statistics from transformation?
+//  List[int]: Statistics from surface check. [number of free edges, number of
+//             bad edges]
 
 PyObject* Geom_CheckSurfaceCmd(PyObject* self, PyObject* args) {
   char* Name;
@@ -634,9 +635,7 @@ PyObject* Geom_CheckSurfaceCmd(PyObject* self, PyObject* args) {
   RepositoryDataT type;
   double tol = 1e-6;
 
-  // TODO: What is going on here? ParseTuple looks like it should have another
-  // argument to recieve the templated string parameter.
-  if (!PyArg_ParseTuple(args, "s|d", &tol)) {
+  if (!PyArg_ParseTuple(args, "s|d", &Name, &tol)) {
     PyErr_SetString(
         PyRunTimeErr,
         "Could not import 1 char, Name and one optional double, tol");
@@ -2834,11 +2833,15 @@ PyObject* Geom_BBoxCmd(PyObject* self, PyObject* args) {
 // ----------------
 // Geom_ClassifyCmd
 // ----------------
+//
+// Classifies whether or not the provided point is on the surface of the
+// provided geometry.
+//
 // Args:
 //  objName (string): Name of the object to be processed.
-//  ptList (PyObject*): ?
+//  ptList (PyObject*): 3D point (coordinate) list for input point.
 // Returns:
-//  int: ?
+//  int: 1 IF ptList is on surface objName, ELSE -1.
 
 PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args) {
   char* objName;

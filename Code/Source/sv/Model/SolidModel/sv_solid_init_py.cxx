@@ -1619,7 +1619,7 @@ PyObject* Solid_Poly3dSolidCmd( pySolidModel* self, PyObject* args)
 //
 // Args:
 //  objName (string): Desired name of destination object.
-//  srcName (string): Name of source plydata object to process.
+//  srcName (string): Name of source polydata object to process.
 //  facetMethodName (string): ?
 // Returns:
 //  Nothing, function is void.
@@ -2031,11 +2031,11 @@ PyObject* Solid_MakeInterpCurveLoopCmd( pySolidModel* self, PyObject* args)
 // Solid_MakeLoftedSurfCmd
 // -----------------------
 //
-// Creates lofted surface from the sources provided.
+// Creates lofted surface from the solid model sources provided.
 //
 // Args:
-//  srcList (PyObject*): List of names of the source objects to modify.
-//  dstName (string): Desired name of the destination object.
+//  srcList (PyObject*): List of names of solid model source objects to merge.
+//  dstName (string): Desired name of the destination lofted surface object.
 //  continuity (int, optional): ?
 //  partype (int, optional): ?
 //  w1 (double, optional): ?
