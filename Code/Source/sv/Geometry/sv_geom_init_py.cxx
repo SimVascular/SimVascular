@@ -2895,8 +2895,11 @@ PyObject* Geom_ClassifyCmd(PyObject* self, PyObject* args) {
 // Args:
 //  objName (string): Name of poly data object to be processed.
 //  ptList (PyObject*): Single point expressed in two dimensions with decimal
-//                      precision. usePrevPoly (int): Use the previous polygon
-//                      (non-zero number, true), or no (0, false).
+//                      precision.
+//  usePrevPoly (int): Use the previous polygon (non-zero number, true), or no
+//                     (0, false). NOTE: API doesn't provide protection against
+//                     invalid use of this parameter. If set to true and there
+//                     were no recently used polygon, the program WILL crash!
 // Returns:
 //  int: Output value. Returns 1 if the point specified is inside the polygon,
 //       -1 if not.
@@ -3590,9 +3593,11 @@ PyObject* Geom_ReorderPgnCmd(PyObject* self, PyObject* args) {
 // Args:
 //  srcName (string): Name of the source object to process.
 //  numOutputPts (int): Number of output points to calculate from the spline
-//  path. flag (int): Match end points of spline to output path (non-zero, true)
-//  or not (0, false). filename (string, optional): Desired file name for saving
-//  output.
+//                      path.
+//  flag (int): Match end points of spline to output path (non-zero, true)
+//              or not (0, false).
+//  filename (string, optional): Desired file name for saving
+//                               output.
 // Returns:
 //  IF filename is provided
 //    Nothing, function is void.
