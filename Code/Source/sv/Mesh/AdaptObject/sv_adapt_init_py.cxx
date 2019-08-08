@@ -133,47 +133,28 @@ static int pyAdaptObject_init(pyAdaptObject* self, PyObject* args)
 static PyMethodDef pyAdaptObject_methods[]={
   {"NewObject",(PyCFunction)cvAdapt_NewObjectCmd,METH_VARARGS,NULL},
   { "CreateInternalMeshObject",(PyCFunction)cvAdapt_CreateInternalMeshObjectMtd, METH_VARARGS,NULL},
-  { "LoadModel", (PyCFunction)cvAdapt_LoadModelMtd,METH_VARARGS,NULL},
+  { "LoadModel",(PyCFunction)cvAdapt_LoadModelMtd,METH_VARARGS,NULL},
   { "LoadMesh",(PyCFunction)cvAdapt_LoadMeshMtd,METH_VARARGS,NULL},
-  { "LoadSolutionFromFile",
-    (PyCFunction)cvAdapt_LoadSolutionFromFileMtd,METH_VARARGS,NULL},
-  { "LoadYbarFromFile",
-    (PyCFunction)cvAdapt_LoadYbarFromFileMtd,METH_VARARGS,NULL},
-  { "LoadAvgSpeedFromFile",
-    (PyCFunction)cvAdapt_LoadAvgSpeedFromFileMtd,METH_VARARGS,NULL},
-  { "LoadHessianFromFile",
-    (PyCFunction)cvAdapt_LoadHessianFromFileMtd,METH_VARARGS,NULL},
-  { "ReadSolutionFromMesh",
-    (PyCFunction)cvAdapt_ReadSolutionFromMeshMtd,METH_VARARGS,NULL},
-  { "ReadYbarFromMesh",
-    (PyCFunction)cvAdapt_ReadYbarFromMeshMtd,METH_VARARGS,NULL},
-  { "ReadAvgSpeedFromMesh",
-    (PyCFunction)cvAdapt_ReadAvgSpeedFromMeshMtd,METH_VARARGS,NULL},
-  { "SetAdaptOptions",
-    (PyCFunction)cvAdapt_SetAdaptOptionsMtd,METH_VARARGS,NULL},
-  { "CheckOptions",
-    (PyCFunction)cvAdapt_CheckOptionsMtd,METH_VARARGS,NULL},
-  { "SetMetric",
-    (PyCFunction)cvAdapt_SetMetricMtd,METH_VARARGS,NULL},
-  { "SetupMesh",
-    (PyCFunction)cvAdapt_SetupMeshMtd,METH_VARARGS,NULL},
-  { "RunAdaptor",
-    (PyCFunction)cvAdapt_RunAdaptorMtd,METH_VARARGS,NULL},
-  { "PrintStats",
-    (PyCFunction)cvAdapt_PrintStatsMtd,METH_VARARGS,NULL},
-  { "GetAdaptedMesh",
-    (PyCFunction)cvAdapt_GetAdaptedMeshMtd,METH_VARARGS,NULL},
-  { "TransferSolution",
-    (PyCFunction)cvAdapt_TransferSolutionMtd,METH_VARARGS,NULL},
-  { "TransferRegions",
-    (PyCFunction)cvAdapt_TransferRegionsMtd,METH_VARARGS,NULL},
-  { "WriteAdaptedModel",
-    (PyCFunction)cvAdapt_WriteAdaptedModelMtd,METH_VARARGS,NULL},
-  { "WriteAdaptedMesh",
-    (PyCFunction)cvAdapt_WriteAdaptedMeshMtd,METH_VARARGS,NULL},
-  { "WriteAdaptedSolution",
-    (PyCFunction)cvAdapt_WriteAdaptedSolutionMtd,METH_VARARGS,NULL},
- {NULL}
+  { "LoadSolutionFromFile",(PyCFunction)cvAdapt_LoadSolutionFromFileMtd,METH_VARARGS,NULL},
+  { "LoadYbarFromFile",(PyCFunction)cvAdapt_LoadYbarFromFileMtd,METH_VARARGS,NULL},
+  { "LoadAvgSpeedFromFile",(PyCFunction)cvAdapt_LoadAvgSpeedFromFileMtd,METH_VARARGS,NULL},
+  { "LoadHessianFromFile",(PyCFunction)cvAdapt_LoadHessianFromFileMtd,METH_VARARGS,NULL},
+  { "ReadSolutionFromMesh",(PyCFunction)cvAdapt_ReadSolutionFromMeshMtd,METH_VARARGS,NULL},
+  { "ReadYbarFromMesh",(PyCFunction)cvAdapt_ReadYbarFromMeshMtd,METH_VARARGS,NULL},
+  { "ReadAvgSpeedFromMesh",(PyCFunction)cvAdapt_ReadAvgSpeedFromMeshMtd,METH_VARARGS,NULL},
+  { "SetAdaptOptions",(PyCFunction)cvAdapt_SetAdaptOptionsMtd,METH_VARARGS,NULL},
+  { "CheckOptions",(PyCFunction)cvAdapt_CheckOptionsMtd,METH_VARARGS,NULL},
+  { "SetMetric",(PyCFunction)cvAdapt_SetMetricMtd,METH_VARARGS,NULL},
+  { "SetupMesh",(PyCFunction)cvAdapt_SetupMeshMtd,METH_VARARGS,NULL},
+  { "RunAdaptor",(PyCFunction)cvAdapt_RunAdaptorMtd,METH_VARARGS,NULL},
+  { "PrintStats",(PyCFunction)cvAdapt_PrintStatsMtd,METH_VARARGS,NULL},
+  { "GetAdaptedMesh",(PyCFunction)cvAdapt_GetAdaptedMeshMtd,METH_VARARGS,NULL},
+  { "TransferSolution",(PyCFunction)cvAdapt_TransferSolutionMtd,METH_VARARGS,NULL},
+  { "TransferRegions",(PyCFunction)cvAdapt_TransferRegionsMtd,METH_VARARGS,NULL},
+  { "WriteAdaptedModel",(PyCFunction)cvAdapt_WriteAdaptedModelMtd,METH_VARARGS,NULL},
+  { "WriteAdaptedMesh",(PyCFunction)cvAdapt_WriteAdaptedMeshMtd,METH_VARARGS,NULL},
+  { "WriteAdaptedSolution",(PyCFunction)cvAdapt_WriteAdaptedSolutionMtd,METH_VARARGS,NULL},
+  {NULL}
 };
 
 static PyTypeObject pyAdaptObjectType = {
@@ -368,6 +349,7 @@ PyInit_pyMeshAdapt()
 
  }
 #endif
+
 // This routine is used for debugging the registrar/factory system.
 PyObject* Adapt_RegistrarsListCmd( PyObject* self, PyObject* args)
 {

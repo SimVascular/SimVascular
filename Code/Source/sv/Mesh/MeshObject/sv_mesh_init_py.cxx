@@ -1171,18 +1171,6 @@ PyObject* cvMesh_GetBoundaryFacesMtd( pyMeshObject* self, PyObject* args)
   }
 }
 
-// TODO: This is a useless ifdef; it guards nothing...
-#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
-
-/*
-//
-// LoadDiscreteModel
-//
-
-*/
-
-#endif
-
 // ------------------
 // cvMesh_LoadMeshMtd
 // ------------------
@@ -1261,7 +1249,7 @@ PyObject* cvMesh_WriteStatsMtd( pyMeshObject* self, PyObject* args)
 // cvMesh_AdaptMtd
 // ---------------
 //
-// Calls the adapt function on the mesh geometry object.
+// Performs and adaptation operation with the previously configured settings.
 //
 // Args:
 //  None.
@@ -1355,7 +1343,7 @@ PyObject* cvMesh_NewMeshMtd( pyMeshObject* self, PyObject* args)
 // cvMesh_GenerateMeshMtd
 // ------------------------
 //
-// Calls the generate mesh function on the mesh geometry object.
+// Performs a mesh generation operation using previously configured settings.
 //
 // Args:
 //  None.
@@ -1377,9 +1365,13 @@ PyObject* cvMesh_GenerateMeshMtd( pyMeshObject* self, PyObject* args)
 // -------------------------------
 // cvMesh_SetSphereRefinementMtd
 // -------------------------------
+//
+// Sets parameters for the sphere refinement mesh enhancement option.
+//
 // Args:
-//  size (double): ?
-//  r (double): ?
+//  size (double): Side length to impose on meshed geometry that falls within
+//                 the defined spherical volume.
+//  r (double): Radius of the sphere.
 //  ctrList (PyObject): 3D sphere center coordinate.
 // Returns:
 //  Nothing, function is void.
@@ -1420,7 +1412,7 @@ static PyObject* cvMesh_SetSphereRefinementMtd( pyMeshObject* self, PyObject* ar
 // cvMesh_SetSizeFunctionBasedMeshMtd
 // -------------------------------
 // Args:
-//  size (double): ?
+//  size (double): Side length to impose on meshed geometry.
 //  functionName (string): ?
 // Returns:
 //  Nothing, function is void.
@@ -1451,8 +1443,8 @@ static PyObject* cvMesh_SetSizeFunctionBasedMeshMtd( pyMeshObject* self, PyObjec
 // cvMesh_SetCylinderRefinementMtd
 // ---------------------------------
 // Args:
-//  size (double): ?
-//  r (double): ?
+//  size (double): Side length to impose on meshed geometry.
+//  r (double): Radius of cylinder base?
 //  ctrList (PyObject*): 3D sphere center coordinate.
 //  nrmList (PyObject*): ?
 // Returns:
@@ -1503,6 +1495,9 @@ static PyObject* cvMesh_SetCylinderRefinementMtd( pyMeshObject* self, PyObject* 
 // ----------------------------
 // cvMesh_SetBoundaryLayerMtd
 // ----------------------------
+//
+// Sets parameters for the boundary layer mesh enhancement option.
+//
 // Args:
 //  type (int): ?
 //  id (int): ?
@@ -1550,7 +1545,7 @@ static PyObject* cvMesh_SetBoundaryLayerMtd( pyMeshObject* self, PyObject* args)
 // cvMesh_SetWallsMtd
 // ----------------------------
 //
-// Sets the walls list in the mesh geometry object.
+// Sets the walls list for the boundary layer mesh enhancement option.
 //
 // Args:
 //  wallsList (PyObject*): List of walls.
@@ -1586,8 +1581,6 @@ static PyObject* cvMesh_SetWallsMtd( pyMeshObject* self, PyObject* args)
 
   return SV_PYTHON_OK;
 }
-
-
 
 // --------------------------
 // cvMesh_GetModelFaceInfoMtd
