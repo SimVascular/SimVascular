@@ -1823,6 +1823,9 @@ PyObject* Geom_ReverseAllCellsCmd(PyObject* self, PyObject* args) {
 // ----------------------------
 // Geom_NumClosedLineRegionsCmd
 // ----------------------------
+//
+// Returns the number of closed line regions present in the source object.
+//
 // Args:
 //  srcName (string): Name of the source poly data object.
 // Returns:
@@ -1860,6 +1863,9 @@ PyObject* Geom_NumClosedLineRegionsCmd(PyObject* self, PyObject* args) {
 // ---------------------------
 // Geom_GetClosedLineRegionCmd
 // ---------------------------
+//
+// Creates a new object with all of the closed line regions in the source object.
+//
 // Args:
 //  srcName (string): Name of the source poly data object.
 //  id (int): ?
@@ -2238,6 +2244,9 @@ PyObject* Geom_AlignProfileCmd(PyObject* self, PyObject* args) {
 // -----------------
 // Geom_TranslateCmd
 // -----------------
+//
+// Translates the provided geometry by the amount specified in vecList.
+//
 // Args:
 //  srcName (string): Name of the source poly data object.
 //  vecList (PyObject*): List for decimal 3D coordinate value.
@@ -2313,6 +2322,9 @@ srcName,vecList,dstName");
 // ----------------
 // Geom_ScaleAvgCmd
 // ----------------
+//
+// Scales the provided geometry by the indicated scale factor.
+//
 // Args:
 //  srcName (string): Name of the source data object.
 //  factor (double): Scale factor for input data.
@@ -2370,6 +2382,9 @@ srcName,factor,dstName");
 // ---------------------
 // Geom_GetOrderedPtsCmd
 // ---------------------
+//
+// Returns an ordered list of all points in the provided geometry.
+//
 // Args:
 //  objName (string): Name of object to decompose.
 // Returns:
@@ -2423,7 +2438,7 @@ PyObject* Geom_GetOrderedPtsCmd(PyObject* self, PyObject* args) {
 // Geom_WriteOrderedPtsCmd
 // -----------------------
 //
-// Writes an ordered pair of data from objName to fileName.
+// Writes an ordered set of points from objName into fileName.
 //
 // Args:
 //  objName (string): Name of object to write to file.
@@ -2674,9 +2689,12 @@ PyObject* Geom_PrintTriStatsCmd(PyObject* self, PyObject* args) {
 // -----------------------
 // Geom_PrintSmallPolysCmd
 // -----------------------
+//
+// Prints a list of polygons in the provided solid with side lengths < sideTol.
+//
 // Args:
 //  srcName (string): Name of the source object to process.
-//  sideTol (double): ?
+//  sideTol (double): Max side length which to print out.
 // Returns:
 //  Nothing, the function is void.
 
@@ -3429,7 +3447,7 @@ PyObject* Geom_PolygonNormCmd(PyObject* self, PyObject* args) {
 // Geom_AvgPtCmd
 // -------------
 //
-// Returns the average of the points in the provided object.
+// Returns the average of the points in the provided object. (center of mass)
 //
 // Args:
 //  objName (string): Name of the object to be processed.
@@ -3655,7 +3673,7 @@ PyObject* Geom_SplinePtsToPathPlanCmd(PyObject* self, PyObject* args) {
 //  nrmList (PyObject*): ?
 //  tensorType (int): Process scalars (0) or process vectors (1).
 // Returns:
-//  int: ?
+//  int: Integrated result?
 
 PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3711,7 +3729,7 @@ PyObject* Geom_IntegrateSurfaceCmd(PyObject* self, PyObject* args) {
 //  objName (string): Name of the object to be processed.
 //  tensorType (int): Process scalars (0) or process vectors (1).
 // Returns:
-//  List[double]: ?
+//  List[double]: List of integrated results?
 
 PyObject* Geom_IntegrateSurface2Cmd(PyObject* self, PyObject* args) {
   char* objName;
@@ -3807,6 +3825,9 @@ PyObject* Geom_IntegrateEnergyCmd(PyObject* self, PyObject* args) {
 // --------------------
 // Geom_FindDistanceCmd
 // --------------------
+//
+// Finds the minimum distance between the provided geometry and provided point.
+//
 // Args:
 //  objName (string): Name of the object to be processed.
 //  ptList (PyObject*): Input 3D point coordinate.
@@ -3969,6 +3990,10 @@ PyObject* Geom_InterpolateVectorCmd(PyObject* self, PyObject* args) {
 // -------------------------
 // Geom_IntersectWithLineCmd
 // -------------------------
+//
+// Returns a list of intersection points between the provided object and a line
+// defined by the two provided points.
+//
 // Args:
 //  objName (string): Name of the object to be processed.
 //  p0List (PyObject*): 3D coordinate set 0.
@@ -4027,6 +4052,9 @@ PyObject* Geom_IntersectWithLineCmd(PyObject* self, PyObject* args) {
 // --------------------
 // Geom_AddPointDataCmd
 // --------------------
+//
+// Sums the point data of the two source objects.
+//
 // Args:
 //  srcNameA (string): First source object.
 //  srcNameB (string): Second source object.
@@ -4088,10 +4116,11 @@ PyObject* Geom_AddPointDataCmd(PyObject* self, PyObject* args) {
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
   sys_geom_math_vector v = SYS_GEOM_NO_VECTOR;
-  if (scflag) {
+  if((scflag && vflag) || (!scflag && !vflag)) {
+    PyErr_SetString(PyRunTimeErr, "scflag XOR vflag must be true");
+  } else if (scflag) {
     sc = SYS_GEOM_ADD_SCALAR;
-  }
-  if (vflag) {
+  } else if (vflag) {
     v = SYS_GEOM_ADD_VECTOR;
   }
 
@@ -4111,6 +4140,9 @@ PyObject* Geom_AddPointDataCmd(PyObject* self, PyObject* args) {
 // -------------------------
 // Geom_SubtractPointDataCmd
 // -------------------------
+//
+// Takes the difference between the two source objects.
+//
 // Args:
 //  srcNameA (string): First source object.
 //  srcNameB (string): Second source object.
@@ -4172,11 +4204,12 @@ PyObject* Geom_SubtractPointDataCmd(PyObject* self, PyObject* args) {
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
   sys_geom_math_vector v = SYS_GEOM_NO_VECTOR;
-  if (scflag) {
-    sc = SYS_GEOM_SUBTRACT_SCALAR;
-  }
-  if (vflag) {
-    v = SYS_GEOM_SUBTRACT_VECTOR;
+  if((scflag && vflag) || (!scflag && !vflag)) {
+    PyErr_SetString(PyRunTimeErr, "scflag XOR vflag must be true");
+  } else if (scflag) {
+    sc = SYS_GEOM_ADD_SCALAR;
+  } else if (vflag) {
+    v = SYS_GEOM_ADD_VECTOR;
   }
 
   if (sys_geom_mathPointData((cvPolyData*)srcA, (cvPolyData*)srcB, sc, v,
@@ -4279,6 +4312,9 @@ PyObject* Geom_MultiplyPointDataCmd(PyObject* self, PyObject* args) {
 // -----------------------
 // Geom_DividePointDataCmd
 // -----------------------
+//
+// Takes the quotient of the two source objects. (srcNameA / srcNameB)?
+//
 // Args:
 //  srcNameA (string): First source object.
 //  srcNameB (string): Second source object.
@@ -4340,11 +4376,12 @@ PyObject* Geom_DividePointDataCmd(PyObject* self, PyObject* args) {
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
   sys_geom_math_vector v = SYS_GEOM_NO_VECTOR;
-  if (scflag) {
-    sc = SYS_GEOM_DIVIDE_SCALAR;
-  }
-  if (vflag) {
-    v = SYS_GEOM_DIVIDE_VECTOR;
+  if((scflag && vflag) || (!scflag && !vflag)) {
+    PyErr_SetString(PyRunTimeErr, "scflag XOR vflag must be true");
+  } else if (scflag) {
+    sc = SYS_GEOM_ADD_SCALAR;
+  } else if (vflag) {
+    v = SYS_GEOM_ADD_VECTOR;
   }
 
   if (sys_geom_mathPointData((cvPolyData*)srcA, (cvPolyData*)srcB, sc, v,
@@ -4424,10 +4461,11 @@ PyObject* Geom_ProjectCmd(PyObject* self, PyObject* args) {
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
   sys_geom_math_vector v = SYS_GEOM_NO_VECTOR;
-  if (scflag) {
+  if((scflag && vflag) || (!scflag && !vflag)) {
+    PyErr_SetString(PyRunTimeErr, "scflag XOR vflag must be true");
+  } else if (scflag) {
     sc = SYS_GEOM_ADD_SCALAR;
-  }
-  if (vflag) {
+  } else if (vflag) {
     v = SYS_GEOM_ADD_VECTOR;
   }
 
@@ -4450,7 +4488,7 @@ PyObject* Geom_ProjectCmd(PyObject* self, PyObject* args) {
 // Args:
 //  srcName (string): Name of the source object to be processed.
 // Returns:
-//  double: ?
+//  double: Integrated result?
 
 PyObject* Geom_IntegrateScalarSurfCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -4489,7 +4527,7 @@ PyObject* Geom_IntegrateScalarSurfCmd(PyObject* self, PyObject* args) {
 //  srcName (string): Name of the source object to be processed.
 //  wssthresh (double): ?
 // Returns:
-//  List[double]: ?
+//  List[double]: List of integrated results?
 
 PyObject* Geom_IntegrateScalarThreshCmd(PyObject* self, PyObject* args) {
   char* srcName;
@@ -4590,10 +4628,11 @@ srcNameA, srcNameB,dstName,scflag,vflag");
 
   sys_geom_math_scalar sc = SYS_GEOM_NO_SCALAR;
   sys_geom_math_vector v = SYS_GEOM_NO_VECTOR;
-  if (scflag) {
+  if((scflag && vflag) || (!scflag && !vflag)) {
+    PyErr_SetString(PyRunTimeErr, "scflag XOR vflag must be true");
+  } else if (scflag) {
     sc = SYS_GEOM_ADD_SCALAR;
-  }
-  if (vflag) {
+  } else if (vflag) {
     v = SYS_GEOM_ADD_VECTOR;
   }
 
