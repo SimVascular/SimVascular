@@ -196,6 +196,13 @@ public:
             static const std::vector<QString> types;
     };
 
+    class SegmentExportType {
+        public:
+            static const QString ALL;
+            static const QString OUTLET;
+            static const std::vector<QString> types;
+    };
+
     class CenterlinesSource {
         public:
             static const QString CALCULATE;
@@ -260,6 +267,8 @@ public slots:
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
     void RunJob();
 
+    // Convert Results slots.
+    void SelectSegmentExportType(int index);
     void ExportResults();
     void SetResultDir();
 
@@ -437,6 +446,8 @@ private:
     bool CheckInputState(DataInputStateType type = DataInputStateType::ALL);
     bool CheckSolverInputState(bool checkValidity=true);
     void SetInputState(DataInputStateType checkType, bool value);
+
+    QString GetExportResultsDir();
 
 };
 

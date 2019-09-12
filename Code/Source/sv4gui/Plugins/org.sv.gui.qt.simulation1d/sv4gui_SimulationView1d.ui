@@ -93,15 +93,15 @@
          <string>Generate a 1D mesh from the surface model.</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>6</number>
         </property>
         <widget class="QWidget" name="page_7">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -255,8 +255,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -292,8 +292,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -356,8 +356,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -615,8 +615,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -652,8 +652,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -775,8 +775,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -948,7 +948,7 @@ background-color: white
                    </font>
                   </property>
                   <property name="text">
-                   <string>Steps:</string>
+                   <string>Time</string>
                   </property>
                  </widget>
                 </item>
@@ -973,7 +973,7 @@ background-color: white
                    <item>
                     <widget class="QLabel" name="label_14">
                      <property name="text">
-                      <string>Start:</string>
+                      <string>Start</string>
                      </property>
                     </widget>
                    </item>
@@ -983,22 +983,12 @@ background-color: white
                    <item>
                     <widget class="QLabel" name="label_15">
                      <property name="text">
-                      <string>Stop:</string>
+                      <string>Stop</string>
                      </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QLineEdit" name="lineEditStop"/>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_16">
-                     <property name="text">
-                      <string>Increment:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="lineEditIncrement"/>
                    </item>
                   </layout>
                  </widget>
@@ -1015,21 +1005,6 @@ background-color: white
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QGridLayout" name="gridLayout_2">
-                <property name="leftMargin">
-                 <number>5</number>
-                </property>
-                <property name="topMargin">
-                 <number>5</number>
-                </property>
-                <property name="rightMargin">
-                 <number>5</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>5</number>
-                </property>
-                <property name="spacing">
-                 <number>5</number>
-                </property>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_17">
                   <property name="font">
@@ -1043,65 +1018,21 @@ background-color: white
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0" colspan="2">
-                 <widget class="QFrame" name="frame_3">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>Segment</string>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QComboBox" name="SegmentExportComboBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_17">
-                   <property name="spacing">
-                    <number>5</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>5</number>
-                   </property>
-                   <item>
-                    <widget class="QWidget" name="widgetCalculateFlows" native="true">
-                     <layout class="QHBoxLayout" name="horizontalLayout_10">
-                      <property name="spacing">
-                       <number>5</number>
-                      </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QLabel" name="label_21">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="text">
-                         <string>Sim Units</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
                  </widget>
                 </item>
                </layout>
@@ -1128,7 +1059,7 @@ background-color: white
                 <item>
                  <widget class="QPushButton" name="btnExportResults">
                   <property name="enabled">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                   <property name="text">
                    <string>Convert ...</string>
