@@ -59,9 +59,14 @@ class sv4guiSimulationPythonConvert1dParamNames
     sv4guiSimulationPythonConvert1dParamNames() {
       allNames.insert(OUTPUT_DIRECTORY);
     }
+    const std::string DATA_NAMES = "data_names";
     const std::string OUTPUT_DIRECTORY = "output_directory";
+    const std::string OUTPUT_FILE_NAME = "output_file_name";
+    const std::string OUTPUT_FORMAT = "output_format";
     const std::string OUTLET_SEGMENTS = "outlet_segments";
     const std::string RESULTS_DIRECTORY = "results_directory";
+    const std::string SOLVER_FILE_NAME = "solver_file_name";
+    const std::string TIME_RANGE = "time_range";
     std::set<std::string> allNames;
 };
 

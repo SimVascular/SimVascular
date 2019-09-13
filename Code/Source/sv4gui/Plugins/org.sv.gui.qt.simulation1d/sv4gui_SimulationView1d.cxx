@@ -4432,9 +4432,17 @@ void sv4guiSimulationView1d::ExportResults()
    auto params = pythonInterface.m_ParameterNames;
 
    pythonInterface.AddParameter(params.RESULTS_DIRECTORY, resultDir.toStdString());
-   pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, exportDir.toStdString());
+   pythonInterface.AddParameter(params.SOLVER_FILE_NAME, "solver.in");
 
-   pythonInterface.AddParameter(params.OUTLET_SEGMENTS); 
+   pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, exportDir.toStdString());
+   pythonInterface.AddParameter(params.OUTPUT_FILE_NAME, jobName.toStdString());
+
+   pythonInterface.AddParameter(params.DATA_NAMES, "flow"); 
+
+   pythonInterface.AddParameter(params.TIME_RANGE, "0.0,0.8"); 
+
+   // Convert resuls for all outlet segments.
+   pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
 
    // Execute the Python script to generate the 1D solver input file.
    auto statusMsg = "Converting simulation files ..."; 
