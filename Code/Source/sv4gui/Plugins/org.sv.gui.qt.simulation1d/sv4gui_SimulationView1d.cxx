@@ -263,6 +263,22 @@ const std::vector<QString> sv4guiSimulationView1d::SegmentExportType::types =
    sv4guiSimulationView1d::SegmentExportType::OUTLET
 };
 
+// Set export data names.
+//
+const QString sv4guiSimulationView1d::DataExportName::AREA = "area";
+const QString sv4guiSimulationView1d::DataExportName::FLOW = "flow";
+const QString sv4guiSimulationView1d::DataExportName::PRESSURE = "pressure";
+const QString sv4guiSimulationView1d::DataExportName::WSS = "wss";
+const QString sv4guiSimulationView1d::DataExportName::RE = "Re";
+const std::vector<QString> sv4guiSimulationView1d::DataExportName::names =
+{
+   sv4guiSimulationView1d::DataExportName::AREA,
+   sv4guiSimulationView1d::DataExportName::FLOW,
+   sv4guiSimulationView1d::DataExportName::PRESSURE,
+   sv4guiSimulationView1d::DataExportName::RE,
+   sv4guiSimulationView1d::DataExportName::WSS
+};
+
 
 //------------------------
 // sv4guiSimulationView1d
@@ -496,13 +512,21 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     ui->CreateSimulationFilesButton->setEnabled(false);
     ui->RunSimulationPushButton->setEnabled(false);
 
-    // Convert Results.
+    // Convert Results toolbox tab.
     //
     connect(ui->SegmentExportComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SelectSegmentExportType(int)));
     for (auto const& type : SegmentExportType::types) {
         ui->SegmentExportComboBox->addItem(type);
     }
     ui->SegmentExportComboBox->setCurrentIndex(1);
+
+    for (auto const& name : DataExportName::names) {
+        ui->DataExportListWidget->addItem(name);
+        //QListWidgetItem *listItem = new QListWidgetItem(name, listWidget);
+        //listItem->setCheckState(Qt::Unchecked);
+        //ui->DataExportListWidget->addItem(listItem);
+    }
+    ui->DataExportListWidget->setSelectionMode(QListWidget::MultiSelection);
 
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
@@ -4433,16 +4457,32 @@ void sv4guiSimulationView1d::ExportResults()
 
    pythonInterface.AddParameter(params.RESULTS_DIRECTORY, resultDir.toStdString());
    pythonInterface.AddParameter(params.SOLVER_FILE_NAME, "solver.in");
-
    pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, exportDir.toStdString());
    pythonInterface.AddParameter(params.OUTPUT_FILE_NAME, jobName.toStdString());
 
-   pythonInterface.AddParameter(params.DATA_NAMES, "flow"); 
+   // Set the data names to convert.
+   //
+   std::string dataNames;
+   auto selectedItems = ui->DataExportListWidget->selectedItems();
+   for (auto const& item : selectedItems) {
+       auto dataName = item->text().toStdString();
+       MITK_INFO << msg << "Selected data name: " << dataName; 
+       dataNames += dataName + ",";
+   }
+   dataNames.pop_back();
+   pythonInterface.AddParameter(params.DATA_NAMES, dataNames); 
 
-   pythonInterface.AddParameter(params.TIME_RANGE, "0.0,0.8"); 
+   // Set time range of data to export.
+   auto timeRange = startTimeStr + "," + stopTimeStr;
+   pythonInterface.AddParameter(params.TIME_RANGE, timeRange.toStdString()); 
 
-   // Convert resuls for all outlet segments.
-   pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
+   // Set convert resuls for all or only outlet segments.
+   auto segmentExportType = ui->SegmentExportComboBox->currentText();
+   if (segmentExportType == sv4guiSimulationView1d::SegmentExportType::ALL) {
+       pythonInterface.AddParameter(params.ALL_SEGMENTS, "true"); 
+   } else {
+     pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
+   }
 
    // Execute the Python script to generate the 1D solver input file.
    auto statusMsg = "Converting simulation files ..."; 
@@ -4452,38 +4492,12 @@ void sv4guiSimulationView1d::ExportResults()
 
    if (!status) {
        QMessageBox::warning(NULL, MsgTitle, "Converting 1D solver results has failed.");
-       return false;
+       return;
    }
 
-
-/*
-    QString msg = "";
-
-    if(convertedFilesExit)
-    {
-        msg="Results have been converted.";
-        if(!meshFaceDirExits)
-            msg=msg+"\nNo mesh face dir exits.";
-        else if(!meshFaceFilesExist)
-            msg=msg+"\nNo mesh face files exit.";
-        else if(!calculateFlows)
-            msg=msg+"\nFail to calculate flows.";
-    }
-    else
-        msg="Results not converted.";
-
-    msg=msg+"                                                                                        ";
-
-    QMessageBox mb(m_Parent);
-    mb.setWindowTitle("Finished");
-    mb.setText(msg);
-    mb.setIcon(QMessageBox::Information);
-    mb.setDetailedText(detailedInfo);
-    mb.setDefaultButton(QMessageBox::Ok);
-    mb.exec();
-
-    mitk::StatusBar::GetInstance()->DisplayText("Results converting finished.");
-*/
+   statusMsg = "Simulation files have been converted.";
+   ui->JobStatusValueLabel->setText(statusMsg);
+   mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
 }
 
 //---------------------
@@ -4606,13 +4620,6 @@ void sv4guiSimulationView1d::UpdateSimJob()
     // Check input state of all data. 
     CheckInputState();
 }
-
-/*
-void sv4guiSimulationView1d::ShowCalculateFowsWidget(bool checked)
-{
-    ui->widgetCalculateFlows->setVisible(checked);
-}
-*/
 
 #if defined(Q_OS_WIN)
 QString sv4guiSimulationView1d::FindLatestKey(QString key, QStringList keys)

@@ -150,6 +150,10 @@ bool sv4guiSimulationPythonConvert1d::ConvertResults(const std::string outputDir
           mb.setDetailedText(QString(sResult.c_str()));
           mb.setDefaultButton(QMessageBox::Ok);
           mb.exec();
+      } else {
+          QString rmsg = "1D solver files have been successfully converted.\n";
+          MITK_INFO << msg << rmsg;
+          QMessageBox::information(NULL, sv4guiSimulationView1d::MsgTitle, rmsg);
       }
   }
 

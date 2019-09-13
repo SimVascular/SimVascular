@@ -203,6 +203,16 @@ public:
             static const std::vector<QString> types;
     };
 
+   class DataExportName {
+        public:
+            static const QString AREA;
+            static const QString FLOW;
+            static const QString PRESSURE;
+            static const QString RE;
+            static const QString WSS;
+            static const std::vector<QString> names;
+    };
+
     class CenterlinesSource {
         public:
             static const QString CALCULATE;
@@ -277,8 +287,6 @@ public slots:
     void UpdateSurfaceMeshName();
 
     void SetupInternalSolverPaths();
-
-    void ShowCalculateFowsWidget(bool checked = false);
 
 public:
 
