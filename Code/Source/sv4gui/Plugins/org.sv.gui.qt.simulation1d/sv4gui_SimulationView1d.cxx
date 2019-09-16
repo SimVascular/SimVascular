@@ -424,6 +424,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 
     // Set the toolbox to display the first ('1D Mesh') tab.
     ui->toolBox->setCurrentIndex(0);
+    connect(ui->toolBox, SIGNAL(currentChanged(const int)), this, SLOT(ToolBoxChanged(const int)) );
 
     // Create 1D Mesh page controls.
     Create1DMeshControls(parent);
@@ -514,12 +515,21 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 
     // Convert Results toolbox tab.
     //
+    // Create a validator that allows only valid time input.
+    QDoubleValidator *validTime = new QDoubleValidator(this);
+    validTime->setNotation(QDoubleValidator::ScientificNotation);
+    validTime->setBottom(0.0);
+    ui->lineEditStart->setValidator(validTime);
+    ui->lineEditStop->setValidator(validTime);
+
+    // Set segement export types.
     connect(ui->SegmentExportComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SelectSegmentExportType(int)));
     for (auto const& type : SegmentExportType::types) {
         ui->SegmentExportComboBox->addItem(type);
     }
     ui->SegmentExportComboBox->setCurrentIndex(1);
 
+    // Set data names.
     for (auto const& name : DataExportName::names) {
         ui->DataExportListWidget->addItem(name);
         //QListWidgetItem *listItem = new QListWidgetItem(name, listWidget);
@@ -541,6 +551,38 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     this->OnPreferencesChanged(berryprefs);
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+//----------------
+// ToolBoxChanged
+//----------------
+// Process a toolbox tab change.
+//
+void sv4guiSimulationView1d::ToolBoxChanged(int index)
+{
+    // If changed to Convert Results then try to display convert time range.
+    //
+    if (index == 6) {
+        auto numTimeStepsStr = m_TableModelSolver->item(TableModelSolverRow::NumberofTimesteps,1)->text().trimmed();
+        auto timeStepStr = m_TableModelSolver->item(TableModelSolverRow::TimeStepSize,1)->text().trimmed();
+
+        if (!(numTimeStepsStr.isEmpty() and timeStepStr.isEmpty())) { 
+            auto numTimeSteps = std::stoi(numTimeStepsStr.toStdString());
+            auto timeStep = std::stod(timeStepStr.toStdString());
+            auto startTimeStr = ui->lineEditStart->text();
+            auto stopTimeStr = ui->lineEditStop->text();
+
+            // Set time range if values have not been set.
+            //
+            if (startTimeStr.isEmpty()) {  
+                ui->lineEditStart->setText("0.0");
+            }
+            if (stopTimeStr.isEmpty()) { 
+                auto maxTime = numTimeSteps * timeStep;
+                ui->lineEditStop->setText(QString::number(maxTime));
+            }
+        }
+    }
 }
 
 //--------------
@@ -4397,55 +4439,39 @@ void sv4guiSimulationView1d::SelectSegmentExportType(int index)
     //auto type = SegmentExportType::types[index]; 
     auto type = ui->SegmentExportComboBox->currentText();
     MITK_INFO << msg << "Export type: " << type; 
-
 }
 
 //---------------
 // ExportResults
 //---------------
 //
+// [TODO:DaveP] This callback brings up a file browser to set the export directory.
+// Make that a separate step.
+//
 void sv4guiSimulationView1d::ExportResults()
 {
     auto msg = "sv4guiSimulationView1d::ExportResults";
     MITK_INFO << msg << "--------- ExportResults ----------"; 
-    QString exportDir = GetExportResultsDir();
-
-    if (exportDir.isEmpty()) {
-        return;
-    }
-
-    MITK_INFO << msg << "Export dir: " << exportDir; 
-
-    QString jobName("");
-
-    if (m_JobNode.IsNotNull()) {
-        jobName = QString::fromStdString(m_JobNode->GetName())+"-";
-    }
-    MITK_INFO << msg << "jobName: " << jobName; 
-
-    exportDir = exportDir + "/" + jobName + "converted-results";
-    QDir exdir(exportDir);
-    exdir.mkpath(exportDir);
 
     QString resultDir = ui->lineEditResultDir->text();
+    if (resultDir.isEmpty()) { 
+        QMessageBox::warning(m_Parent, "1D Simultation", "No results directory has been set.");
+        return;
+    }
     QDir rdir(resultDir);
-
     if (!rdir.exists()) {
         QMessageBox::warning(m_Parent, "1D Simultation", "The results directory does not exist.");
         return;
     }
 
-    // Get the start time for exporting results.
+    // Get the start/end time for exporting results.
     QString startTimeStr = ui->lineEditStart->text().trimmed();
-    if (!IsDouble(startTimeStr.toStdString())) {
-        QMessageBox::warning(m_Parent,"1D Simulation", "The given start time is not a float.");
-        return;
-    }
-
-    // Get the end time for exporting results.
+    auto startTime = std::stod(startTimeStr.toStdString());
     QString stopTimeStr = ui->lineEditStop->text().trimmed();
-    if (!IsDouble(stopTimeStr.toStdString())) {
-        QMessageBox::warning(m_Parent,"1D Simulation", "The given stop time is not a float.");
+    auto stopTime = std::stod(stopTimeStr.toStdString());
+
+    if (stopTime < stopTime) { 
+        QMessageBox::warning(m_Parent,"1D Simulation", "The stop time must be larger than the start time.");
         return;
     }
 
@@ -4456,14 +4482,17 @@ void sv4guiSimulationView1d::ExportResults()
    auto params = pythonInterface.m_ParameterNames;
 
    pythonInterface.AddParameter(params.RESULTS_DIRECTORY, resultDir.toStdString());
-   pythonInterface.AddParameter(params.SOLVER_FILE_NAME, "solver.in");
-   pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, exportDir.toStdString());
-   pythonInterface.AddParameter(params.OUTPUT_FILE_NAME, jobName.toStdString());
+   pythonInterface.AddParameter(params.SOLVER_FILE_NAME, SOLVER_FILE_NAME.toStdString());
 
    // Set the data names to convert.
    //
    std::string dataNames;
    auto selectedItems = ui->DataExportListWidget->selectedItems();
+   if (selectedItems.size() == 0) { 
+        QMessageBox::warning(m_Parent,"1D Simulation", "No data names are selected to convert.");
+        return;
+   }
+
    for (auto const& item : selectedItems) {
        auto dataName = item->text().toStdString();
        MITK_INFO << msg << "Selected data name: " << dataName; 
@@ -4483,6 +4512,28 @@ void sv4guiSimulationView1d::ExportResults()
    } else {
      pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
    }
+
+   // Set the export directory last so other parameters can
+   // be first checked.
+   //
+   QString exportDir = GetExportResultsDir();
+   if (exportDir.isEmpty()) {
+       return;
+   }
+   MITK_INFO << msg << "Export dir: " << exportDir; 
+
+   QString jobName("");
+   if (m_JobNode.IsNotNull()) {
+       jobName = QString::fromStdString(m_JobNode->GetName());
+   }
+   MITK_INFO << msg << "jobName: " << jobName; 
+
+   exportDir = exportDir + "/" + jobName + "-converted-results";
+   QDir exdir(exportDir);
+   exdir.mkpath(exportDir);
+
+   pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, exportDir.toStdString());
+   pythonInterface.AddParameter(params.OUTPUT_FILE_NAME, jobName.toStdString());
 
    // Execute the Python script to generate the 1D solver input file.
    auto statusMsg = "Converting simulation files ..."; 

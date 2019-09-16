@@ -100,8 +100,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -255,8 +255,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -292,8 +292,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -356,8 +356,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -615,8 +615,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -652,8 +652,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -775,8 +775,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>528</height>
+           <width>399</width>
+           <height>567</height>
           </rect>
          </property>
          <attribute name="label">
@@ -852,7 +852,7 @@ background-color: white
                       </font>
                      </property>
                      <property name="text">
-                      <string>Results Directory:</string>
+                      <string>Results Directory</string>
                      </property>
                     </widget>
                    </item>
@@ -1014,7 +1014,7 @@ background-color: white
                    </sizepolicy>
                   </property>
                   <property name="toolTip">
-                   <string>Set the type of segments to convert data. Select &lt;b&gt;Outlet&lt;/b&gt; to convert data only for segments that have an outlet boundary condition. &lt;b&gt;All&lt;b&gt; is for all segments.</string>
+                   <string>Set the segment type used to convert data. Select &lt;b&gt;Outlet&lt;/b&gt; to convert data only for segments that have an outlet boundary condition. Select &lt;b&gt;All&lt;/b&gt; for converting data for all segments.</string>
                   </property>
                  </widget>
                 </item>

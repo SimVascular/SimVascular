@@ -255,6 +255,7 @@ public slots:
     void UpdateGUISolver();
     void UpdateGUIJob();
     void UpdateGUIRunDir();
+    void ToolBoxChanged(int index);
 
     // 1D Mesh slots.
     void Generate1DMesh();
