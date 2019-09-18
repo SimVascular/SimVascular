@@ -282,6 +282,7 @@ public slots:
     void SelectSegmentExportType(int index);
     void ExportResults();
     void SetResultDir();
+    void SetConvertDir();
 
     void UpdateJobStatus();
     void UpdateSimJob();
