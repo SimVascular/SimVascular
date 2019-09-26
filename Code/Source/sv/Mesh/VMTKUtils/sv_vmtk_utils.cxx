@@ -1249,6 +1249,7 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen,
   if (newRegionBoundaryLayer)
   {
     //Add global node Ids to tetgen volume
+    // [TODO:DaveP] Fix me!
     vtkSmartPointer<vtkIntArray> globalNodeIds0 =
       vtkSmartPointer<vtkIntArray>::New();
     globalNodeIds0->SetNumberOfTuples(meshFromTetGen->GetNumberOfPoints());
