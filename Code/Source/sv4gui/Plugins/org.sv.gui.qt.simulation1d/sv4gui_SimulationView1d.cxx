@@ -133,6 +133,7 @@
 
 #include "sv4gui_SimulationView1d.h"
 #include "ui_sv4gui_SimulationView1d.h"
+#include "sv4gui_SimulationPythonConvert1d.h"
 
 #include "sv4gui_TableCapDelegate1d.h"
 #include "sv4gui_TableSolverDelegate1d.h"
@@ -251,6 +252,33 @@ const std::vector<QString> sv4guiSimulationView1d::MaterialModel::names =
    sv4guiSimulationView1d::MaterialModel::LINEAR, 
    sv4guiSimulationView1d::MaterialModel::OLUFSEN
 };
+
+// Set segment export types.
+//
+const QString sv4guiSimulationView1d::SegmentExportType::ALL = "All";
+const QString sv4guiSimulationView1d::SegmentExportType::OUTLET = "Outlet";
+const std::vector<QString> sv4guiSimulationView1d::SegmentExportType::types =
+{
+   sv4guiSimulationView1d::SegmentExportType::ALL,
+   sv4guiSimulationView1d::SegmentExportType::OUTLET
+};
+
+// Set export data names.
+//
+const QString sv4guiSimulationView1d::DataExportName::AREA = "area";
+const QString sv4guiSimulationView1d::DataExportName::FLOW = "flow";
+const QString sv4guiSimulationView1d::DataExportName::PRESSURE = "pressure";
+const QString sv4guiSimulationView1d::DataExportName::WSS = "wss";
+const QString sv4guiSimulationView1d::DataExportName::RE = "Re";
+const std::vector<QString> sv4guiSimulationView1d::DataExportName::names =
+{
+   sv4guiSimulationView1d::DataExportName::AREA,
+   sv4guiSimulationView1d::DataExportName::FLOW,
+   sv4guiSimulationView1d::DataExportName::PRESSURE,
+   sv4guiSimulationView1d::DataExportName::RE,
+   sv4guiSimulationView1d::DataExportName::WSS
+};
+
 
 //------------------------
 // sv4guiSimulationView1d
@@ -396,6 +424,7 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 
     // Set the toolbox to display the first ('1D Mesh') tab.
     ui->toolBox->setCurrentIndex(0);
+    connect(ui->toolBox, SIGNAL(currentChanged(const int)), this, SLOT(ToolBoxChanged(const int)) );
 
     // Create 1D Mesh page controls.
     Create1DMeshControls(parent);
@@ -484,9 +513,34 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     ui->CreateSimulationFilesButton->setEnabled(false);
     ui->RunSimulationPushButton->setEnabled(false);
 
-    //for export results
-    connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
-    connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
+    // Convert Results toolbox tab.
+    //
+    // Create a validator that allows only valid time input.
+    QDoubleValidator *validTime = new QDoubleValidator(this);
+    validTime->setNotation(QDoubleValidator::ScientificNotation);
+    validTime->setBottom(0.0);
+    ui->lineEditStart->setValidator(validTime);
+    ui->lineEditStop->setValidator(validTime);
+
+    // Set segement export types.
+    connect(ui->SegmentExportComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SelectSegmentExportType(int)));
+    for (auto const& type : SegmentExportType::types) {
+        ui->SegmentExportComboBox->addItem(type);
+    }
+    ui->SegmentExportComboBox->setCurrentIndex(1);
+
+    // Set data names.
+    for (auto const& name : DataExportName::names) {
+        ui->DataExportListWidget->addItem(name);
+        //QListWidgetItem *listItem = new QListWidgetItem(name, listWidget);
+        //listItem->setCheckState(Qt::Unchecked);
+        //ui->DataExportListWidget->addItem(listItem);
+    }
+    ui->DataExportListWidget->setSelectionMode(QListWidget::MultiSelection);
+
+    connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()));
+    connect(ui->toolButtonConvertDir, SIGNAL(clicked()), this, SLOT(SetConvertDir()));
+    connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()));
 
     SetupInternalSolverPaths();
 
@@ -497,6 +551,38 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
     this->OnPreferencesChanged(berryprefs);
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+//----------------
+// ToolBoxChanged
+//----------------
+// Process a toolbox tab change.
+//
+void sv4guiSimulationView1d::ToolBoxChanged(int index)
+{
+    // If changed to Convert Results then try to display convert time range.
+    //
+    if (index == 6) {
+        auto numTimeStepsStr = m_TableModelSolver->item(TableModelSolverRow::NumberofTimesteps,1)->text().trimmed();
+        auto timeStepStr = m_TableModelSolver->item(TableModelSolverRow::TimeStepSize,1)->text().trimmed();
+
+        if (!(numTimeStepsStr.isEmpty() and timeStepStr.isEmpty())) { 
+            auto numTimeSteps = std::stoi(numTimeStepsStr.toStdString());
+            auto timeStep = std::stod(timeStepStr.toStdString());
+            auto startTimeStr = ui->lineEditStart->text();
+            auto stopTimeStr = ui->lineEditStop->text();
+
+            // Set time range if values have not been set.
+            //
+            if (startTimeStr.isEmpty()) {  
+                ui->lineEditStart->setText("0.0");
+            }
+            if (stopTimeStr.isEmpty()) { 
+                auto maxTime = numTimeSteps * timeStep;
+                ui->lineEditStop->setText(QString::number(maxTime));
+            }
+        }
+    }
 }
 
 //--------------
@@ -2728,15 +2814,16 @@ void sv4guiSimulationView1d::UpdateGUICap()
 //
 void sv4guiSimulationView1d::SelectMaterialModel(int index)
 {
-    //auto msg = "[sv4guiSimulationView1d::SelectMaterialModel] ";
-    //MITK_INFO << msg << "---------- SelectMaterialModel ----------  ";
+    auto msg = "[sv4guiSimulationView1d::SelectMaterialModel] ";
+    MITK_INFO << msg << "---------- SelectMaterialModel ----------  ";
     auto matModelName = MaterialModel::names[index]; 
     //MITK_INFO << msg << "matModelName: " << matModelName;
 
     // Show widgets for the selected material model.
     ui->MaterialModel_StackedWidget->setCurrentIndex(index);
 
-    UpdateSimJob();
+    // [DaveP] 09/17/2019 why are we calling this?
+    //UpdateSimJob();
 }
 
 //--------------------------
@@ -2831,17 +2918,21 @@ void sv4guiSimulationView1d::UpdateGUIWall()
     }
 
     auto msg = "[sv4guiSimulationView1d::UpdateGUIWall] ";
-    //MITK_INFO << msg << "--------- UpdateGUIWall ----------"; 
+    MITK_INFO << msg << "--------- UpdateGUIWall ----------"; 
 
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
 
     if (job == NULL) {
         job = new sv4guiSimJob1d();
+        MITK_INFO << msg << " job is null, create new one."; 
+    } else {
+        MITK_INFO << msg << " job is not null."; 
     }
 
     // Update material model.
     //
     auto materialModel = QString::fromStdString(job->GetWallProp("Material Model"));
+    MITK_INFO << msg << "materialModel: " << materialModel; 
     auto it = std::find(MaterialModel::names.begin(), MaterialModel::names.end(), materialModel);
     if (it != MaterialModel::names.end()) {
         auto index = std::distance(MaterialModel::names.begin(), it);
@@ -2877,15 +2968,19 @@ void sv4guiSimulationView1d::UpdateGUIWall()
 //
 void sv4guiSimulationView1d::UpdateGUISolver()
 {
-    //MITK_INFO << "--------- UpdateGUISolver ----------"; 
-    if(!m_MitkJob) {
+    auto msg = "[sv4guiSimulationView1d::UpdateGUISolver]";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "--------- UpdateGUISolver ----------"; 
+    if (!m_MitkJob) {
         return;
     }
 
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
-
     if (job == NULL) {
         job = new sv4guiSimJob1d();
+        MITK_INFO << msg << " job is null, create new one."; 
+    } else {
+        MITK_INFO << msg << " job is not null."; 
     }
 
     m_TableModelSolver->clear();
@@ -2899,6 +2994,8 @@ void sv4guiSimulationView1d::UpdateGUISolver()
     m_TableModelSolver->setColumnCount(colCount);
 
     // Read solver parameter names.
+    //
+    // This sets up parameter names displayed in the table.
     //
     QString templateFilePath=":solvertemplate1d.xml";
     if (m_UseCustom) {
@@ -2921,47 +3018,63 @@ void sv4guiSimulationView1d::UpdateGUISolver()
     // Setup parameter table.
     //
     QDomElement templateElement = doc.firstChildElement("template");
-    QDomNodeList sectionList=templateElement.elementsByTagName("section");
-    int rowIndex=-1;
+    QDomNodeList sectionList = templateElement.elementsByTagName("section");
+    int rowIndex = -1;
+    MITK_INFO << msg << "sectionList.size(): " << sectionList.size();
 
-    for(int i=0;i<sectionList.size();i++) {
+    auto numTimeSteps = QString::fromStdString(job->GetSolverProp("Number of Timesteps"));
+    MITK_INFO << msg << "numTimeSteps: " << numTimeSteps;
+
+    for (int i = 0; i < sectionList.size(); i++) {
         QDomNode sectionNode = sectionList.item(i);
-
-        if(sectionNode.isNull()) {
+        if (sectionNode.isNull()) {
             continue;
         }
 
-        QDomElement sectionElement=sectionNode.toElement();
+        QDomElement sectionElement = sectionNode.toElement();
 
         if (sectionElement.isNull()) {
             continue;
         }
 
         // Add a row.
-        QString name=sectionElement.attribute("name");
+        QString name = sectionElement.attribute("name");
+        MITK_INFO << msg << "name: " << name;
         rowIndex++;
-        QStandardItem* item= new QStandardItem(name);
+        QStandardItem* item = new QStandardItem(name);
         item->setEditable(false);
         QBrush brushGray(Qt::lightGray);
         item->setBackground(brushGray);
         m_TableModelSolver->setItem(rowIndex, 0, item);
         ui->tableViewSolver->setSpan(rowIndex,0,1,colCount);
 
-        QDomNodeList parList=sectionElement.elementsByTagName("param");
-        for(int j=0;j<parList.size();j++) {
-            QDomNode parNode=parList.item(j);
-            if(parNode.isNull()) continue;
+        QDomNodeList parList = sectionElement.elementsByTagName("param");
+        MITK_INFO << msg << "parList.size(): " << parList.size();
+        for(int j = 0; j < parList.size(); j++) {
+            QDomNode parNode = parList.item(j);
+            if (parNode.isNull()) {
+                MITK_INFO << msg << "parNode.isNull";
+                continue;
+            }
 
             QDomElement parElement=parNode.toElement();
-            if(parElement.isNull()) continue;
+            if (parElement.isNull()) {
+                MITK_INFO << msg << "parElement.isNull()";
+                continue;
+            }
 
             rowIndex++;
-            QStandardItem* item= new QStandardItem(parElement.attribute("name"));
+            QStandardItem* item = new QStandardItem(parElement.attribute("name"));
             item->setEditable(false);
             item->setToolTip(parElement.attribute("name"));
             m_TableModelSolver->setItem(rowIndex, 0, item);
+            MITK_INFO << msg << "rowIndex: " << rowIndex;
 
-            std::string value=job->GetSolverProp(parElement.attribute("name").toStdString());
+            auto attName = parElement.attribute("name").toStdString();
+            MITK_INFO << msg << "attName: " << attName;
+
+            std::string value = job->GetSolverProp(parElement.attribute("name").toStdString());
+            MITK_INFO << msg << "value: " << value;
             item= new QStandardItem(value==""?parElement.attribute("value"):QString::fromStdString(value));
             m_TableModelSolver->setItem(rowIndex, 1, item);
 
@@ -2981,6 +3094,7 @@ void sv4guiSimulationView1d::UpdateGUISolver()
 
     ui->tableViewSolver->setColumnHidden(2,true);
     ui->tableViewSolver->setColumnHidden(3,true);
+
 }
 
 //--------------
@@ -3070,21 +3184,28 @@ std::vector<std::string> sv4guiSimulationView1d::GetMeshNames()
     return meshNames;
 }
 
-
+//-----------------
+// UpdateGUIRunDir
+//-----------------
+//
 void sv4guiSimulationView1d::UpdateGUIRunDir()
 {
     //MITK_INFO << "--------- UpdateGUIRunDir ----------";
     ui->lineEditResultDir->clear();
+    ui->lineEditConvertDir->clear();
 
-    if(m_JobNode.IsNull())
+    if(m_JobNode.IsNull()) {
         return;
+    }
 
     QString jobPath=GetJobPath();
-    if(jobPath=="")
+    if(jobPath=="") {
         return;
+    }
 
-    if(!m_MitkJob)
+    if(!m_MitkJob) {
         return;
+    }
 
     sv4guiSimJob1d* job=m_MitkJob->GetSimJob();
     if(job==NULL)
@@ -3094,7 +3215,7 @@ void sv4guiSimulationView1d::UpdateGUIRunDir()
     if(pNum=="")
         return;
 
-    QString runDir=pNum=="1"?jobPath:jobPath+"/"+QString::fromStdString(pNum)+"-procs_case";
+    QString runDir =pNum=="1"?jobPath:jobPath+"/"+QString::fromStdString(pNum)+"-procs_case";
     ui->lineEditResultDir->setText(runDir);
 }
 
@@ -4301,277 +4422,259 @@ void sv4guiSimulationView1d::SaveToManager()
 //--------------
 // SetResultDir
 //--------------
+// Set the directory containing the 1D simulation results.
 //
 void sv4guiSimulationView1d::SetResultDir()
 {
     berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     berry::IPreferences::Pointer prefs;
-    if (prefService)
-    {
-        prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
-        prefs = berry::IPreferences::Pointer(0);
-    }
 
-    QString lastFileOpenPath="";
-    QString currentPath=ui->lineEditResultDir->text().trimmed();
-    if(currentPath!="" && QDir(currentPath).exists())
-        lastFileOpenPath=currentPath;
-    else if(prefs.IsNotNull())
-    {
-        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
-    }
-    if(lastFileOpenPath=="")
-        lastFileOpenPath=QDir::homePath();
-
-    QString dir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose Result Directory")
-                                                    , lastFileOpenPath);
-
-    dir=dir.trimmed();
-    if(dir.isEmpty()) return;
-
-    if(prefs.IsNotNull())
-    {
-        prefs->Put("LastFileOpenPath", dir);
-        prefs->Flush();
-    }
-
-    ui->lineEditResultDir->setText(dir);
-}
-
-//---------------
-// ExportResults
-//---------------
-//
-// [DaveP] I don't know if we will be converting results data or not.
-//
-void sv4guiSimulationView1d::ExportResults()
-{
-/* 
-    QString postsolverPath=m_ExternalPostsolverPath;
-    if(postsolverPath=="")
-        postsolverPath=m_InternalPostsolverPath;
-
-    if(postsolverPath=="" || !QFile(postsolverPath).exists()) {
-        QMessageBox::warning(m_Parent,"Postsolver Missing","Please make sure postsolver exists!");
-        return;
-    }
-
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
     if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
     } else {
         prefs = berry::IPreferences::Pointer(0);
     }
 
-    QString lastFileSavePath="";
+    QString lastFileOpenPath = "";
+    QString currentPath=ui->lineEditResultDir->text().trimmed();
+
+    if (currentPath != "" && QDir(currentPath).exists()) {
+        lastFileOpenPath=currentPath;
+    } else if(prefs.IsNotNull()) {
+        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+    }
+
+    if (lastFileOpenPath == "") {
+        lastFileOpenPath=QDir::homePath();
+    }
+
+    QString dir = QFileDialog::getExistingDirectory(m_Parent, tr("Choose Result Directory") , lastFileOpenPath);
+    dir = dir.trimmed();
+
+    if (dir.isEmpty()) {
+        return;
+    }
+
+    if (prefs.IsNotNull()) {
+        prefs->Put("LastFileOpenPath", dir);
+        prefs->Flush();
+    }
+
+    QDir rdir(dir);
+    if (!rdir.exists()) {
+        QMessageBox::warning(m_Parent, "1D Simultation", "The results directory does not exist.");
+        return;
+    }
+
+    ui->lineEditResultDir->setText(dir);
+}
+
+//---------------
+// SetConvertDir
+//---------------
+// Set the directory for writing converted 1D simulation results.
+//
+// [TODO:DaveP] The code in this function is duplicated all over SV.
+// Make this a utility function.
+// 
+void sv4guiSimulationView1d::SetConvertDir()
+{
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+
+    if (prefService) {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    } else {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFileOpenPath = "";
+    QString currentPath = ui->lineEditConvertDir->text().trimmed();
+
+    if (currentPath != "" && QDir(currentPath).exists()) {
+        lastFileOpenPath=currentPath;
+    } else if(prefs.IsNotNull()) {
+        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+    }
+
+    if (lastFileOpenPath == "") {
+        lastFileOpenPath=QDir::homePath();
+    }
+
+    QString dir = QFileDialog::getExistingDirectory(m_Parent, tr("Choose directory to write converted files.") , lastFileOpenPath);
+
+    dir = dir.trimmed();
+
+    if (dir.isEmpty()) {
+        return;
+    }
+
     if(prefs.IsNotNull()) {
+        prefs->Put("LastFileOpenPath", dir);
+        prefs->Flush();
+    }
+
+    QDir rdir(dir);
+    if (!rdir.exists()) {
+        QMessageBox::warning(m_Parent, "1D Simultation", "The convert directory does not exist.");
+        return;
+    }
+
+    ui->lineEditConvertDir->setText(dir);
+}
+
+//-------------------------
+// SelectSegmentExportType
+//-------------------------
+//
+void sv4guiSimulationView1d::SelectSegmentExportType(int index)
+{
+    auto msg = "sv4guiSimulationView1d::SelectSegmentExportType";
+    MITK_INFO << msg << "--------- SelectSegmentExportType ----------"; 
+    //auto type = SegmentExportType::types[index]; 
+    auto type = ui->SegmentExportComboBox->currentText();
+    MITK_INFO << msg << "Export type: " << type; 
+}
+
+//---------------
+// ExportResults
+//---------------
+//
+void sv4guiSimulationView1d::ExportResults()
+{
+    auto msg = "sv4guiSimulationView1d::ExportResults";
+    MITK_INFO << msg << "--------- ExportResults ----------"; 
+
+    QString resultDir = ui->lineEditResultDir->text();
+    if (resultDir.isEmpty()) { 
+        QMessageBox::warning(m_Parent, "1D Simultation", "No results directory has been set.");
+        return;
+    }
+
+    QString convertDir = ui->lineEditConvertDir->text();
+    if (convertDir.isEmpty()) { 
+        QMessageBox::warning(m_Parent, "1D Simultation", "No convert directory has been set.");
+        return;
+    }
+
+    // Get the start/end time for exporting results.
+    QString startTimeStr = ui->lineEditStart->text().trimmed();
+    auto startTime = std::stod(startTimeStr.toStdString());
+    QString stopTimeStr = ui->lineEditStop->text().trimmed();
+    auto stopTime = std::stod(stopTimeStr.toStdString());
+
+    if (stopTime < stopTime) { 
+        QMessageBox::warning(m_Parent,"1D Simulation", "The stop time must be larger than the start time.");
+        return;
+    }
+
+   // Create a sv4guiSimulationPythonConvert1d object used to execute a Python 
+   // script and get the parameter names used by that script.
+   //
+   auto pythonInterface = sv4guiSimulationPythonConvert1d();
+   auto params = pythonInterface.m_ParameterNames;
+
+   pythonInterface.AddParameter(params.RESULTS_DIRECTORY, resultDir.toStdString());
+   pythonInterface.AddParameter(params.SOLVER_FILE_NAME, SOLVER_FILE_NAME.toStdString());
+
+   // Set the data names to convert.
+   //
+   std::string dataNames;
+   auto selectedItems = ui->DataExportListWidget->selectedItems();
+   if (selectedItems.size() == 0) { 
+        QMessageBox::warning(m_Parent,"1D Simulation", "No data names are selected to convert.");
+        return;
+   }
+
+   for (auto const& item : selectedItems) {
+       auto dataName = item->text().toStdString();
+       MITK_INFO << msg << "Selected data name: " << dataName; 
+       dataNames += dataName + ",";
+   }
+   dataNames.pop_back();
+   pythonInterface.AddParameter(params.DATA_NAMES, dataNames); 
+
+   // Set time range of data to export.
+   auto timeRange = startTimeStr + "," + stopTimeStr;
+   pythonInterface.AddParameter(params.TIME_RANGE, timeRange.toStdString()); 
+
+   // Set convert resuls for all or only outlet segments.
+   auto segmentExportType = ui->SegmentExportComboBox->currentText();
+   if (segmentExportType == sv4guiSimulationView1d::SegmentExportType::ALL) {
+       pythonInterface.AddParameter(params.ALL_SEGMENTS, "true"); 
+   } else {
+     pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
+   }
+
+   QString jobName("");
+   if (m_JobNode.IsNotNull()) {
+       jobName = QString::fromStdString(m_JobNode->GetName());
+   }
+   MITK_INFO << msg << "jobName: " << jobName; 
+
+   convertDir = convertDir + "/" + jobName + "-converted-results";
+   QDir exdir(convertDir);
+   exdir.mkpath(convertDir);
+
+   pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, convertDir.toStdString());
+   pythonInterface.AddParameter(params.OUTPUT_FILE_NAME, jobName.toStdString());
+
+   // Execute the Python script to generate the 1D solver input file.
+   //
+   // The script writes a log file to the convert directory.
+   //
+   auto statusMsg = "Converting simulation files ..."; 
+   ui->JobStatusValueLabel->setText(statusMsg);
+   mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+   auto status = pythonInterface.ConvertResults(convertDir.toStdString());
+
+   if (!status) {
+       QMessageBox::warning(NULL, MsgTitle, "Converting 1D solver results has failed.");
+       return;
+   }
+
+   statusMsg = "1D simulation files have been converted.";
+   ui->JobStatusValueLabel->setText(statusMsg);
+   mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+}
+
+//---------------------
+// GetExportResultsDir
+//---------------------
+//
+QString sv4guiSimulationView1d::GetExportResultsDir()
+{
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+
+    if (prefService) {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    } else {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFileSavePath = "";
+    if (prefs.IsNotNull()) {
         lastFileSavePath = prefs->Get("LastFileSavePath", "");
     }
-    if(lastFileSavePath=="")
+
+    if (lastFileSavePath == "") {
         lastFileSavePath=QDir::homePath();
+    }
 
-    QString exportDir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose Export Directory")
-                                                    , lastFileSavePath);
+    QString exportDir = QFileDialog::getExistingDirectory(m_Parent , tr("Choose Export Directory"), lastFileSavePath);
+    exportDir = exportDir.trimmed();
 
-    exportDir=exportDir.trimmed();
-    if(exportDir.isEmpty())
-        return;
+    if (exportDir.isEmpty()) {
+        return exportDir;
+    }
 
-    if(prefs.IsNotNull())
-     {
+    if (prefs.IsNotNull()) {
          prefs->Put("LastFileSavePath", exportDir);
          prefs->Flush();
      }
 
-    QString jobName("");
-    if(m_JobNode.IsNotNull())
-        jobName=QString::fromStdString(m_JobNode->GetName())+"-";
-
-    exportDir=exportDir+"/"+jobName+"converted-results";
-    QDir exdir(exportDir);
-    exdir.mkpath(exportDir);
-
-    QString resultDir=ui->lineEditResultDir->text();
-    QDir rdir(resultDir);
-    if(!rdir.exists())
-    {
-        QMessageBox::warning(m_Parent,"Result dir not exists","Please provide valid result dir");
-        return;
-    }
-
-    QString startNo=ui->lineEditStart->text().trimmed();
-    if(!IsInt(startNo.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Start Step Error","Please provide start step number in correct format.");
-        return;
-    }
-
-    QString stopNo=ui->lineEditStop->text().trimmed();
-    if(!IsInt(stopNo.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Stop Step Error","Please provide stop step number in correct format.");
-        return;
-    }
-
-    QString increment=ui->lineEditIncrement->text().trimmed();
-    if(!IsInt(increment.toStdString()))
-    {
-        QMessageBox::warning(m_Parent,"Increment Error","Please provide increment in correct format.");
-        return;
-    }
-
-    QStringList arguments;
-    arguments << "-all";
-    arguments << "-indir" << resultDir;
-    arguments << "-outdir" << exportDir;
-    arguments << "-start" << startNo;
-    arguments << "-stop" << stopNo;
-    arguments << "-incr" << increment;
-    if(ui->checkBoxSingleFile->isChecked())
-        arguments << "-vtkcombo";
-
-    if(ui->checkBoxVolume->isChecked())
-    {
-       if(ui->checkBoxSingleFile->isChecked())
-           arguments << "-vtu" << "all_results.vtu";
-       else
-           arguments << "-vtu" << "all_results";
-    }
-
-    if(ui->checkBoxSurface->isChecked())
-    {
-       if(ui->checkBoxSingleFile->isChecked())
-           arguments << "-vtp" << "all_results.vtp";
-       else
-           arguments << "-vtp" << "all_results";
-    }
-
-    if(ui->checkBoxToRestart->isChecked())
-        arguments << "-ph" << "-laststep";
-
-    mitk::StatusBar::GetInstance()->DisplayText("Exporting results.");
-
-    QProcess *postsolverProcess = new QProcess(m_Parent);
-    postsolverProcess->setWorkingDirectory(exportDir);
-    postsolverProcess->setProgram(postsolverPath);
-    postsolverProcess->setArguments(arguments);
-
-    auto multithreading = false;
-    auto stoppable = false;
-
-    sv4guiProcessHandler1d* handler=new sv4guiProcessHandler1d(postsolverProcess,m_JobNode,multithreading,stoppable,m_Parent);
-    handler->Start();
-
-    QString detailedInfo=handler->GetMessage();
-    delete handler;
-
-    bool convertedFilesExit=true;
-    bool meshFaceDirExits=true;
-    bool meshFaceFilesExist=true;
-    bool calculateFlows=true;
-
-    if(ui->checkBoxCalculateFlows->isChecked())
-    {
-        convertedFilesExit=false;
-        meshFaceDirExits=false;
-        meshFaceFilesExist=false;
-        calculateFlows=false;
-
-        QString meshFaceDir=GetJobPath()+"/mesh-complete/mesh-surfaces";
-        meshFaceDirExits=QDir(meshFaceDir).exists();
-        std::vector<std::string> meshFaceFileNames;
-        if(meshFaceDirExits)
-        {
-            QStringList filters;
-            filters<<"*.vtp";
-            QStringList fileList=QDir(meshFaceDir).entryList(filters, QDir::Files);
-            meshFaceFilesExist=(fileList.size()>0);
-            for(int i=0;i<fileList.size();i++)
-                meshFaceFileNames.push_back(fileList[i].toStdString());
-        }
-
-        std::vector<std::string> vtxFilePaths;
-
-        if(ui->checkBoxSingleFile->isChecked())
-        {
-            QString vtpResultFilePath=exportDir+"/all_results.vtp";
-            QString vtuResultFilePath=exportDir+"/all_results.vtu";
-
-            if(QFile(vtpResultFilePath).exists())
-                vtxFilePaths.push_back(vtpResultFilePath.toStdString());
-            else if(QFile(vtuResultFilePath).exists())
-                vtxFilePaths.push_back(vtuResultFilePath.toStdString());
-        }
-        else
-        {
-            QStringList filters;
-            filters<<"all_results_*.vtp";
-            QStringList fileList=QDir(exportDir).entryList(filters, QDir::Files, QDir::Name);
-
-            if(fileList.size()==0)
-            {
-                filters.clear();
-                filters<<"all_results_*.vtu";
-                fileList=QDir(exportDir).entryList(filters, QDir::Files, QDir::Name);
-            }
-
-            for(int i=0;i<fileList.size();i++)
-                vtxFilePaths.push_back((exportDir+"/"+fileList[i]).toStdString());
-
-        }
-
-        convertedFilesExit=(vtxFilePaths.size()>0);
-
-        if( convertedFilesExit && meshFaceDirExits && meshFaceFilesExist )
-        {
-
-            QString outPressureFlePath=exportDir+"/all_results-pressures.txt";
-            QString outFlowFilePath=exportDir+"/all_results-flows.txt";
-            QString outAverageFilePath=exportDir+"/all_results-averages.txt";
-            QString outAverageUnitsFilePath=exportDir+"/all_results-averages-from_cm-to-mmHg-L_per_min.txt";
-            QString unit=ui->comboBoxSimUnits->currentText();
-            bool skipWalls=ui->checkBoxSkipWalls->isChecked();
-
-            calculateFlows=sv4guiSimulationUtils1d::CreateFlowFiles(outFlowFilePath.toStdString(), outPressureFlePath.toStdString()
-                                                              , outAverageFilePath.toStdString(), outAverageUnitsFilePath.toStdString()
-                                                              , vtxFilePaths,ui->checkBoxSingleFile->isChecked()
-                                                              , meshFaceDir.toStdString(), meshFaceFileNames
-                                                              , unit.toStdString(), skipWalls);
-        }
-    }
-
-    QString msg="";
-    if(convertedFilesExit)
-    {
-        msg="Results have been converted.";
-        if(!meshFaceDirExits)
-            msg=msg+"\nNo mesh face dir exits.";
-        else if(!meshFaceFilesExist)
-            msg=msg+"\nNo mesh face files exit.";
-        else if(!calculateFlows)
-            msg=msg+"\nFail to calculate flows.";
-    }
-    else
-        msg="Results not converted.";
-
-    msg=msg+"                                                                                        ";
-
-    QMessageBox mb(m_Parent);
-    mb.setWindowTitle("Finished");
-    mb.setText(msg);
-    mb.setIcon(QMessageBox::Information);
-    mb.setDetailedText(detailedInfo);
-    mb.setDefaultButton(QMessageBox::Ok);
-    mb.exec();
-
-    mitk::StatusBar::GetInstance()->DisplayText("Results converting finished.");
-*/
+    return exportDir;
 }
 
 bool sv4guiSimulationView1d::IsInt(std::string value)
@@ -4654,11 +4757,6 @@ void sv4guiSimulationView1d::UpdateSimJob()
 
     // Check input state of all data. 
     CheckInputState();
-}
-
-void sv4guiSimulationView1d::ShowCalculateFowsWidget(bool checked)
-{
-    ui->widgetCalculateFlows->setVisible(checked);
 }
 
 #if defined(Q_OS_WIN)

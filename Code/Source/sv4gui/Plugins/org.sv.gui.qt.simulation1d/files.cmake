@@ -41,6 +41,7 @@ set(CPP_FILES
     sv4gui_SimulationView1d.cxx
     sv4gui_SimulationPreferencePage1d.cxx
     sv4gui_SimulationPython1d.cxx
+    sv4gui_SimulationPythonConvert1d.cxx
     sv4gui_SimJobStopAction1d.cxx
     sv4gui_SimJobExportAction1d.cxx
     sv4gui_SimulationPluginActivator1d.cxx
@@ -61,6 +62,7 @@ set(MOC_H_FILES
     sv4gui_SimulationView1d.h
     sv4gui_SimulationPreferencePage1d.h
     sv4gui_SimulationPython1d.h
+    sv4gui_SimulationPythonConvert1d.h
     sv4gui_SimJobStopAction1d.h
     sv4gui_SimJobExportAction1d.h
     sv4gui_SimulationPluginActivator1d.h

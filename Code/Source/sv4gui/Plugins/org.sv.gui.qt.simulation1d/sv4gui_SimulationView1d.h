@@ -196,6 +196,23 @@ public:
             static const std::vector<QString> types;
     };
 
+    class SegmentExportType {
+        public:
+            static const QString ALL;
+            static const QString OUTLET;
+            static const std::vector<QString> types;
+    };
+
+   class DataExportName {
+        public:
+            static const QString AREA;
+            static const QString FLOW;
+            static const QString PRESSURE;
+            static const QString RE;
+            static const QString WSS;
+            static const std::vector<QString> names;
+    };
+
     class CenterlinesSource {
         public:
             static const QString CALCULATE;
@@ -238,6 +255,7 @@ public slots:
     void UpdateGUISolver();
     void UpdateGUIJob();
     void UpdateGUIRunDir();
+    void ToolBoxChanged(int index);
 
     // 1D Mesh slots.
     void Generate1DMesh();
@@ -260,16 +278,17 @@ public slots:
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
     void RunJob();
 
+    // Convert Results slots.
+    void SelectSegmentExportType(int index);
     void ExportResults();
     void SetResultDir();
+    void SetConvertDir();
 
     void UpdateJobStatus();
     void UpdateSimJob();
     void UpdateSurfaceMeshName();
 
     void SetupInternalSolverPaths();
-
-    void ShowCalculateFowsWidget(bool checked = false);
 
 public:
 
@@ -437,6 +456,8 @@ private:
     bool CheckInputState(DataInputStateType type = DataInputStateType::ALL);
     bool CheckSolverInputState(bool checkValidity=true);
     void SetInputState(DataInputStateType checkType, bool value);
+
+    QString GetExportResultsDir();
 
 };
 

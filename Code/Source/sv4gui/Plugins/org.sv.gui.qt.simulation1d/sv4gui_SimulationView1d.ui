@@ -93,7 +93,7 @@
          <string>Generate a 1D mesh from the surface model.</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>6</number>
         </property>
         <widget class="QWidget" name="page_7">
          <property name="geometry">
@@ -800,22 +800,7 @@ background-color: white
           </property>
           <item>
            <widget class="QWidget" name="widget_11" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_14">
-             <property name="spacing">
-              <number>5</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
               <widget class="QFrame" name="frame_2">
                <property name="frameShape">
@@ -867,7 +852,7 @@ background-color: white
                       </font>
                      </property>
                      <property name="text">
-                      <string>Results Directory:</string>
+                      <string>Results Directory</string>
                      </property>
                     </widget>
                    </item>
@@ -916,6 +901,105 @@ background-color: white
               </widget>
              </item>
              <item>
+              <widget class="QFrame" name="frame_3">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_17">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>5</number>
+                </property>
+                <property name="topMargin">
+                 <number>5</number>
+                </property>
+                <property name="rightMargin">
+                 <number>5</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>5</number>
+                </property>
+                <item>
+                 <widget class="QWidget" name="widget_20" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_3">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_21">
+                     <property name="font">
+                      <font>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Convert Directory</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_8" native="true">
+                  <layout class="QGridLayout" name="gridLayout_9">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="horizontalSpacing">
+                    <number>0</number>
+                   </property>
+                   <property name="verticalSpacing">
+                    <number>5</number>
+                   </property>
+                   <item row="0" column="1">
+                    <widget class="QToolButton" name="toolButtonConvertDir">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLineEdit" name="lineEditConvertDir">
+                     <property name="toolTip">
+                      <string>The directory to write the converted results files. </string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
               <widget class="QFrame" name="frame_13">
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
@@ -948,7 +1032,7 @@ background-color: white
                    </font>
                   </property>
                   <property name="text">
-                   <string>Steps:</string>
+                   <string>Time</string>
                   </property>
                  </widget>
                 </item>
@@ -973,32 +1057,30 @@ background-color: white
                    <item>
                     <widget class="QLabel" name="label_14">
                      <property name="text">
-                      <string>Start:</string>
+                      <string>Start</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEditStart"/>
+                    <widget class="QLineEdit" name="lineEditStart">
+                     <property name="toolTip">
+                      <string>Set the start time for the range of times to convert data. The time is a float simulation time value.</string>
+                     </property>
+                    </widget>
                    </item>
                    <item>
                     <widget class="QLabel" name="label_15">
                      <property name="text">
-                      <string>Stop:</string>
+                      <string>Stop</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEditStop"/>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_16">
-                     <property name="text">
-                      <string>Increment:</string>
+                    <widget class="QLineEdit" name="lineEditStop">
+                     <property name="toolTip">
+                      <string>Set the stop time for the range of times to convert data. The time is a float simulation time value.</string>
                      </property>
                     </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="lineEditIncrement"/>
                    </item>
                   </layout>
                  </widget>
@@ -1015,93 +1097,44 @@ background-color: white
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QGridLayout" name="gridLayout_2">
-                <property name="leftMargin">
-                 <number>5</number>
-                </property>
-                <property name="topMargin">
-                 <number>5</number>
-                </property>
-                <property name="rightMargin">
-                 <number>5</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>5</number>
-                </property>
-                <property name="spacing">
-                 <number>5</number>
-                </property>
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_17">
-                  <property name="font">
-                   <font>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
+                 <widget class="QLabel" name="label_2">
                   <property name="text">
-                   <string>Options:</string>
+                   <string>Segments</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0" colspan="2">
-                 <widget class="QFrame" name="frame_3">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
+                <item row="0" column="1">
+                 <widget class="QComboBox" name="SegmentExportComboBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
+                  <property name="toolTip">
+                   <string>Set the segment type used to convert data. Select &lt;b&gt;Outlet&lt;/b&gt; to convert data only for segments that have an outlet boundary condition. Select &lt;b&gt;All&lt;/b&gt; for converting data for all segments.</string>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_17">
-                   <property name="spacing">
-                    <number>5</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>5</number>
-                   </property>
-                   <item>
-                    <widget class="QWidget" name="widgetCalculateFlows" native="true">
-                     <layout class="QHBoxLayout" name="horizontalLayout_10">
-                      <property name="spacing">
-                       <number>5</number>
-                      </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QLabel" name="label_21">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="text">
-                         <string>Sim Units</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>Data</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QListWidget" name="DataExportListWidget">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Set the data names to convert.</string>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -1125,17 +1158,20 @@ background-color: white
                 <property name="bottomMargin">
                  <number>5</number>
                 </property>
-                <item>
-                 <widget class="QPushButton" name="btnExportResults">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string>Convert ...</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnExportResults">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="toolTip">
+                <string>Select the output directory for the converted files and start the conversion process.</string>
+               </property>
+               <property name="text">
+                <string>Convert ...</string>
+               </property>
               </widget>
              </item>
              <item>
