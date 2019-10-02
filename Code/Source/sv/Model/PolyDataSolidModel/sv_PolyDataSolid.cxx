@@ -782,53 +782,57 @@ int cvPolyDataSolid::MakeSphere(double r, double ctr[])
   return SV_OK;
 }
 
-// ----------------
+//--------------
 // MakeCylinder
-// ----------------
-/**
- * Creates a Cylinder
- * @param r
- * @param ctr
- * @param length
- * @param axis
- * @return *result a sphere
- */
-
-int cvPolyDataSolid::MakeCylinder(double r, double length, double ctr[],
-    				  double axis[] )
+//--------------
+//
+// Create a cylinder aligned with an axis.
+//
+// A VTK cylinder is by default oriented along the vector [0, 1, 0].
+// The cylinder is rotated by the angle between [0, 1, 0] and axis about 
+// the vector [0, 1, 0] x axis.  
+//
+// Arguments:
+//   r: Cylinder radius.
+//   length: Cylinder length. 
+//   center: Cylinder center. 
+//   axis: Cylinder axis. 
+//
+int cvPolyDataSolid::MakeCylinder(double r, double length, double center[3], double axis[3] )
 {
   if ( geom_ != NULL ) {
     return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
 
-  vtkSmartPointer<vtkCylinderSource> cylinder =
-    vtkSmartPointer<vtkCylinderSource>::New();
+  // Create a cylinder oriented along [0.0, 1.0, 0.0].
+  vtkSmartPointer<vtkCylinderSource> cylinder = vtkSmartPointer<vtkCylinderSource>::New();
   cylinder->SetCenter(0.0,0.0,0.0);
   cylinder->SetHeight(length);
   cylinder->SetRadius(r);
   cylinder->SetResolution(50);
   cylinder->Update();
 
-  double vec[3]; vec[0] = 0.0; vec[1] = 1.0; vec[2] = 0.0;
-  double rotateaxis[3]; vtkMath::Cross(axis,vec,rotateaxis);
-  double tmpcross[3];
-  vtkMath::Cross(axis,vec,tmpcross);
-  double radangle = atan2(vtkMath::Norm(tmpcross), vtkMath::Dot(axis,vec));
-  double degangle = vtkMath::DegreesFromRadians(radangle);
-  vtkSmartPointer<vtkTransform> transformer =
-    vtkSmartPointer<vtkTransform>::New();
-  transformer->Translate(ctr[0],ctr[1],ctr[2]);
-  transformer->RotateWXYZ(degangle,rotateaxis);
+  // Define the transformation rotating the default cylinder 
+  // to the given axis.
+  double vec[3] = {0.0, 1.0, 0.0}; 
+  double rotateAxis[3], tmpCross[3];
+  vtkMath::Cross(vec, axis, rotateAxis);
+  vtkMath::Cross(vec, axis, tmpCross);
+  auto radangle = acos(vtkMath::Dot(axis,vec));
+  auto degangle = vtkMath::DegreesFromRadians(radangle);
+  vtkSmartPointer<vtkTransform> transformer = vtkSmartPointer<vtkTransform>::New();
+  transformer->Translate(center[0],center[1],center[2]);
+  transformer->RotateWXYZ(degangle, rotateAxis);
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> polyDataTransformer =
-    vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  // Transform the cylinder geometry.
+  vtkSmartPointer<vtkTransformPolyDataFilter> polyDataTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   polyDataTransformer->SetInputData(cylinder->GetOutput());
   polyDataTransformer->SetTransform(transformer);
   polyDataTransformer->Update();
 
-  vtkSmartPointer<vtkTriangleFilter> triangulator =
-    vtkSmartPointer<vtkTriangleFilter>::New();
+  // Get the transformed cylinder geometry.
+  vtkSmartPointer<vtkTriangleFilter> triangulator = vtkSmartPointer<vtkTriangleFilter>::New();
   triangulator->SetInputData(polyDataTransformer->GetOutput());
   triangulator->Update();
 
