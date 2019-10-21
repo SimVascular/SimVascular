@@ -198,13 +198,12 @@ void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selected
     // set filter parameter
     surfaceFilter->SetDataStorage(*m_DataStorage);
     surfaceFilter->SetPointerParameter("Input", image);
-    surfaceFilter->SetPointerParameter("Group node", selectedNode);
-    surfaceFilter->SetParameter("Show result", true);
-    surfaceFilter->SetParameter("Sync visibility", false);
+    //surfaceFilter->SetPointerParameter("Group node", selectedNode);
+    //surfaceFilter->SetParameter("Show result", true);
+    //surfaceFilter->SetParameter("Sync visibility", false);
     surfaceFilter->SetParameter("Median kernel size", 3u);
     surfaceFilter->SetParameter("Decimate mesh", m_IsDecimated);
     surfaceFilter->SetParameter("Decimation rate", (float) decimation);
-    std::cout<<decimation<<std::endl;
 
     if (m_IsSmoothed)
     {
@@ -260,7 +259,6 @@ void QmitkCreatePolygonModelAction::Run(const QList<DataNode::Pointer> &selected
     
     newPdNode->SetData(mitkSeg3D);
     
-    std::cout << "Adding node\n";
     m_DataStorage->Add(newPdNode, polydata_folder_node);
   }
   catch(char *excp)

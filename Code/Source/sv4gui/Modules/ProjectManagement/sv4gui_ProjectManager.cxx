@@ -223,7 +223,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         meshFolderName=projDesc.firstChildElement("meshes").attribute("folder_name");
         simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
         sim1dFolderName=projDesc.firstChildElement("simulations1d").attribute("folder_name");
-	svFSIFolderName=projDesc.firstChildElement("svFSI").attribute("folder_name");
+	    svFSIFolderName=projDesc.firstChildElement("svFSI").attribute("folder_name");
         //reposFolderName=projDesc.firstChildElement("repository").attribute("folder_name");
 
     }
@@ -276,6 +276,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         // Create Images plugin data nodes.
         //
         imageFolderNode->SetVisibility(false);
+        mitk::DataNode::Pointer imageNode;
         for(int i=0;i<imageFilePathList.size();i++)
         {
             std::string imageFilePath=imageFilePathList[i].toStdString();
@@ -283,7 +284,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             try{
                 //mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath);
                 //            imageNode->SetVisibility(false);
-                mitk::DataNode::Pointer imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath);
+                imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath);
                 imageNode->SetName(imageNameList[i].toStdString());
 
                 //do image transform stuff
@@ -384,6 +385,29 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             }
         }
 
+        // Create MITK segmentation data nodes
+        fileInfoList=dirSeg.entryInfoList(QStringList("*.vti"), QDir::Files, QDir::Name);
+        for(int i=0;i<fileInfoList.size();i++)
+        {
+            std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
+
+            try{
+                mitk::DataNode::Pointer mitkSegNode = sv4guiProjectManager::LoadDataNode(filePath);
+                mitkSegNode->SetVisibility(false);
+
+                //do image transform stuff
+                mitk::Image* image=dynamic_cast<mitk::Image*>(mitkSegNode->GetData());
+                setTransform(image, projPath.toStdString(), imageNode->GetName());
+
+                dataStorage->Add(mitkSegNode,imageNode);
+                //dataStorage->Add(mitkSegNode, segFolderNode);
+            }
+            catch(...)
+            {
+                MITK_ERROR << "Failed to load segmentation image (maybe non-existing or unsupported data type): " << filePath;
+            }
+        }
+        
         // Create Model plugin data nodes.
         //
         modelFolderNode->SetVisibility(false);
@@ -800,6 +824,8 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
     std::string projPath;
     projFolderNode->GetStringProperty("project path",projPath);
 
+
+
     //save paths
     mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiPathFolder"));
 
@@ -906,6 +932,35 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         dirSeg.remove(QString::fromStdString(removeList[i])+".vtp");
     }
     segFolder->ClearRemoveList();
+    
+    //save 3d mitk segmentation
+    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiImageFolder"));
+    mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
+    
+    rs=dataStorage->GetDerivations(imageFolderNode);
+    mitk::DataNode::Pointer imageNode=rs->GetElement(0);
+    rs=dataStorage->GetDerivations(imageNode);
+    
+    for (int i=0;i<rs->size();i++)
+    {
+        mitk::DataNode::Pointer node=rs->GetElement(i);
+        mitk::Image::Pointer segmentation=dynamic_cast<mitk::Image*>(node->GetData());
+        if(segmentation.IsNull())
+            continue;
+        QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".vti");
+        //mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+        vtkImageData* vtkImg=sv4guiVtkUtils::MitkImage2VtkImage(segmentation);
+        if(vtkImg)
+        {
+            vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+            writer->SetFileName(filePath.toStdString().c_str());
+            writer->SetInputData(vtkImg);
+            writer->Write();
+        }
+
+        node->SetStringProperty("3dseg",dirSeg.absolutePath().toStdString().c_str());
+
+    }
 
     //save models
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiModelFolder"));
