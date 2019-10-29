@@ -536,6 +536,8 @@ void sv4guiPathEdit::ChangePath(){
 
 void sv4guiPathEdit::AddPoint(mitk::Point3D point)
 {
+    MITK_INFO << "===================== sv4guiPathEdit::AddPoint =====================";
+
     if(m_Path==NULL){
         QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
         return;
@@ -575,7 +577,11 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
       }
     case sv4guiPath::BEFORE:
         {
-          index= ui->listWidget->selectionModel()->selectedRows().front().row();
+          auto rows = ui->listWidget->selectionModel()->selectedRows();
+          if (rows.size() == 0) {
+            return; 
+          }
+          index = rows.front().row();
           if (index < 0)
           {
             QMessageBox::information(NULL,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
@@ -585,7 +591,11 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
         }
     case sv4guiPath::AFTER:
         {
-          index= ui->listWidget->selectionModel()->selectedRows().front().row()+1;
+          auto rows = ui->listWidget->selectionModel()->selectedRows();
+          if (rows.size() == 0) {
+            return; 
+          }
+          index= rows.front().row()+1;
           if (index < 0)
           {
             QMessageBox::information(NULL,"No Point Selected","For 'Before' or 'After' mode, please select a point in the control point list!");
@@ -596,6 +606,8 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
     default:
         break;
     }
+
+    MITK_INFO << ">>> index: " << index; 
 
     if(index!=-2 ){
 
