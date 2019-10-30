@@ -36,7 +36,12 @@
 #  MESHSIM_INCLUDE_DIR, include search path
 #  MESHSIM_FOUND, If false, do not try to use this library.
 #  If a particular library is missing it will show up in the GUI and the user may set it.
-
+#
+#  On Linux the MeshSim library SimParasolid<version> must match the Parasolid 
+#  library version we are building the SV Parasoild plugin with.
+#
+#      parasolid-30.0 -> SimParasolid300 
+#
 set(proj MESHSIM)
 include(FindPackageHandleStandardArgs)
 include(GetPrerequisites)
@@ -88,11 +93,10 @@ if(LINUX)
   else()
     set(lib_sub_path "lib/x64_rhel6_gcc44")
     set(${proj}_LIBRARIES_VERSION "x64_rhel5_gcc44") 
-    # Set additional libraries, order is important.
-    set(${proj}_LIBNAMES SimDiscrete SimParasolid251 ${${proj}_LIBNAMES}) 
+    ## Set additional libraries, order is important.
+    # Important: Change SimParasolid300 to match Parasolid library we are using. 
+    set(${proj}_LIBNAMES SimDiscrete SimParasolid300 ${${proj}_LIBNAMES}) 
   endif()
-elseif(APPLE)
-  set(lib_sub_path "lib/x64_rhel5_gcc41")
 elseif(WIN32 AND IS64)
   set(lib_sub_path "lib/x64_win_vc10")
   set(${proj}_LIBRARIES_VERSION "x64_win_vc10") 
