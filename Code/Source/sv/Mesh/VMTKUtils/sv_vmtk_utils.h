@@ -114,5 +114,12 @@ SV_EXPORT_VMTK_UTILS int VMTKUtils_ResetOriginalRegions(vtkPolyData *newgeom,
 
 SV_EXPORT_VMTK_UTILS void VMTKUtils_ReorderTetElements(vtkUnstructuredGrid* mesh);
 
+SV_EXPORT_VMTK_UTILS int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMesh, int modelID, 
+    vtkUnstructuredGrid* surfaceWithSize, vtkSmartPointer<vtkPolyData>& boundaryMeshSurface, vtkSmartPointer<vtkPolyData>& surfaceMeshCaps,
+    vtkSmartPointer<vtkUnstructuredGrid>& boundaryMeshVolume);
+
+SV_EXPORT_VMTK_UTILS int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, vtkUnstructuredGrid *surfaceWithSize,
+  vtkUnstructuredGrid *newMeshVolume, vtkPolyData* newMeshSurface, vtkSmartPointer<vtkUnstructuredGrid>& boundaryMeshVolume,
+  vtkSmartPointer<vtkPolyData>& boundaryMeshSurface);
 
 #endif //__CV_VMTK_UTILS_H
