@@ -59,6 +59,7 @@
 #include "tcl.h"
 #include "tk.h"
 #include "svTcl_AppInit.h"
+#include <vtkObject.h>
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -382,6 +383,8 @@ svCatchDebugger() {
   }
 #endif
 #endif
+
+  vtkObject::GlobalWarningDisplayOff();
 
   if (gSimVascularBatchMode == 1) {
     if (use_tcl) {    
