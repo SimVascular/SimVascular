@@ -4,6 +4,11 @@ matrix:
   include:
     - os: linux
       compiler: gcc
+      dist: bionic
+      sudo: required
+      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
+    - os: linux
+      compiler: gcc
       dist: xenial
       sudo: required
       env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
