@@ -566,7 +566,7 @@ void sv4guiSimulationView1d::ToolBoxChanged(int index)
         auto numTimeStepsStr = m_TableModelSolver->item(TableModelSolverRow::NumberofTimesteps,1)->text().trimmed();
         auto timeStepStr = m_TableModelSolver->item(TableModelSolverRow::TimeStepSize,1)->text().trimmed();
 
-        if (!(numTimeStepsStr.isEmpty() and timeStepStr.isEmpty())) { 
+        if (!(numTimeStepsStr.isEmpty() && timeStepStr.isEmpty())) { 
             auto numTimeSteps = std::stoi(numTimeStepsStr.toStdString());
             auto timeStep = std::stod(timeStepStr.toStdString());
             auto startTimeStr = ui->lineEditStart->text();
