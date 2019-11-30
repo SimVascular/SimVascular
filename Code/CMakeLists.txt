@@ -39,22 +39,6 @@
 
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.10.0)
-
-if (POLICY CMP0040)
-	cmake_policy(SET CMP0040 OLD)
-endif()
-if (POLICY CMP0046)
-	cmake_policy(SET CMP0046 OLD)
-endif()
-if (POLICY CMP0053)
-	cmake_policy(SET CMP0053 OLD)
-endif()
-if (POLICY CMP0054)
-	cmake_policy(SET CMP0054 OLD)
-endif()
-if (POLICY CMP0025) # Compiler ID when using clang set to clang not appleclang
-  cmake_policy(SET CMP0025 OLD)
-endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

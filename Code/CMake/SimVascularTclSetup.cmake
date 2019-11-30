@@ -83,7 +83,8 @@ foreach(tcl_file ${TCL_CONFIG_FILES})
     COMMAND ${CMAKE_COMMAND} -E copy ${tcl_file} ${SV_BINARY_TCL_DIR}
     COMMENT "Copying ${tcl_file}..."
     )
-  add_dependencies(copy-tcl ${tcl_file})
+  # causing error for cmake > 3.0
+  #add_dependencies(copy-tcl ${tcl_file})
 endforeach()
 
 #-----------------------------------------------------------------------------
