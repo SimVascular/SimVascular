@@ -797,8 +797,10 @@ void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
             if(contour)
                 delete contour;
 
-            if(posList.size()==1)
-                QMessageBox::warning(NULL,"No Valid Contour Created","Contour not created and added since it's invalid");
+            if(posList.size()==1) {
+                QMessageBox::warning(NULL, "2D Segmentation", 
+                  "The image could not be segmented using the current parameter settings.\nThe image widow may also not contain enough data (pixel values) to distinguish a vessel boundary.");
+            }
         }
 
         mitk::ProgressBar::GetInstance()->Progress(1);
