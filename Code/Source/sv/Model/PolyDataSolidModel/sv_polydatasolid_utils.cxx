@@ -251,6 +251,10 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
 // -------------------
 // PlyDtaUtils_ReadNative
 // -------------------
+// [TODO:DaveP] Remove using strings to test for file type.
+// Actually we should not be even calling this function with an unknown file type,
+// should be checked when the file name is obtained.
+//
 /**
  * @brief Function to load in a solid file
  * @param *filename Pointer to a char filename of the file to read in
@@ -265,8 +269,11 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
 
 int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result)
 {
-  const char *extension = strrchr(filename,'.');
-  extension = extension +1;
+  // Get the lowercase file extention.
+  std::string strFileName(filename);
+  auto strExtension = strFileName.substr(strFileName.find_last_of(".") + 1);
+  transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+  const char *extension = strExtension.c_str();
 
   //Stereolithography Input
   if (!strncmp(extension,"stl",3)) {

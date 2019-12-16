@@ -56,10 +56,14 @@ sv4guiModelLoadAction::~sv4guiModelLoadAction()
 {
 }
 
+//----------------------------
+// sv4guiModelLoadAction::Run
+//----------------------------
+// Import a solid model.
+//
 void sv4guiModelLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
-
     mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("sv4guiModelFolder");
 
     if(!isModelFolder->CheckNode(selectedNode))

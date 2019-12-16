@@ -1303,8 +1303,11 @@ int cvOCCTSolidModel::ReadNative( char *filename )
   if (geom_ != NULL)
     this->RemoveShape();
 
-  const char *extension = strrchr(filename,'.');
-  extension = extension+1;
+  // Get the lowercase file extension.
+  std::string strFileName(filename);
+  auto strExtension = strFileName.substr(strFileName.find_last_of(".") + 1);
+  transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+  const char *extension = strExtension.c_str();
 
   Handle(Message_ProgressIndicator) progress;
   BRep_Builder builder;
