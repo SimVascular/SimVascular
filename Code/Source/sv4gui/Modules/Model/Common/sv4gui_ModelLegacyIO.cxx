@@ -40,6 +40,7 @@
 #include <QList>
 #include <QFile>
 #include <QFileInfo>
+#include <QMessageBox>
 #include <QTextStream>
 #include <QDir>
 
@@ -47,13 +48,18 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkErrorCode.h>
 
+//-------------------------------
+// sv4guiModelLegacyIO::ReadFile
+//-------------------------------
+// Read in a solid model file.
+//
 mitk::DataNode::Pointer sv4guiModelLegacyIO::ReadFile(QString filePath, QString preferredType)
 {
     mitk::DataNode::Pointer modelNode=NULL;
 
     QFileInfo fileInfo(filePath);
     QString baseName = fileInfo.baseName();
-    QString suffix=fileInfo.suffix();
+    QString suffix=fileInfo.suffix().toLower();
     QString filePath2=filePath+".facenames";
 
     std::vector<sv4guiModelElement::svFace*> faces;
@@ -108,11 +114,14 @@ mitk::DataNode::Pointer sv4guiModelLegacyIO::ReadFile(QString filePath, QString 
         modelType=preferredType.toStdString();
 
     sv4guiModelElement* me=sv4guiModelElementFactory::CreateModelElement(modelType);
-    if(me==NULL)
+    if(me==NULL) {
+        QMessageBox::warning(nullptr, "SV Modeling", "Solid model '" + suffix + "' files are not supported.");
         return modelNode;
+    }
 
     if(!me->ReadFile(filePath.toStdString()))
     {
+        QMessageBox::warning(nullptr, "SV Modeling", "Unable to read the Solid model file.");
         delete me;
         return modelNode;
     }
