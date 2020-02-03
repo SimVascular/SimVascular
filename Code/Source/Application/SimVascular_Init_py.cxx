@@ -60,6 +60,7 @@
 #include "sv3_ThresholdContour_init_py.h"
 #include "sv3_SplinePolygonContour_init_py.h"
 #include "sv3_PolygonContour_init_py.h"
+#include "sv3_PathIO_init_py.h"
 //#include "sv4gui_Vis_init_py.h"
 
 #ifdef SV_USE_VMTK
@@ -155,6 +156,7 @@ void SimVascular_pyInit()
     PyImport_AppendInittab("pySplinePolygonContour",PyInit_pySplinePolygonContour);
     PyImport_AppendInittab("pySolid",PyInit_pySolid);
     PyImport_AppendInittab("pySolidPolydata",PyInit_pySolidPolydata);
+    PyImport_AppendInittab("pyPathIO",PyInit_pyPathIO);
     //PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
     
 #ifdef SV_USE_VMTK
@@ -198,6 +200,7 @@ void SimVascular_pyImport()
   PyImport_ImportModule("pyGeom");
   PyImport_ImportModule("pyImage");
   PyImport_ImportModule("pyPath");
+  PyImport_ImportModule("pyPathIO");
   
   PyImport_ImportModule("pyContour");
   PyImport_ImportModule("pyThresholdContour");

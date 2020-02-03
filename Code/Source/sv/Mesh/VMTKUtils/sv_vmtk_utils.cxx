@@ -75,6 +75,7 @@
 #include "sv_polydatasolid_utils.h"
 #include "vtkvmtkPolyDataDistanceToCenterlines.h"
 #include "vtkvmtkPolyDataCenterlines.h"
+#include "vtkvmtkPolyDataCenterlineSections.h"
 #include "vtkvmtkCenterlineBranchExtractor.h"
 #include "vtkvmtkCapPolyData.h"
 #include "vtkvmtkSimpleCapPolyData.h"
@@ -258,6 +259,46 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
   }
   catch (...) {
     fprintf(stderr,"ERROR in centerline separation.\n");
+    fflush(stderr);
+    return SV_ERROR;
+  }
+
+  return SV_OK;
+}
+
+int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cvPolyData **lines_out, cvPolyData **surface_out, cvPolyData **sections)
+{
+  vtkPolyData *cent = lines_in->GetVtkPolyData();
+  vtkPolyData *surf = surface_in->GetVtkPolyData();
+  cvPolyData *result1 = NULL;
+  cvPolyData *result2 = NULL;
+  cvPolyData *result3 = NULL;
+  *lines_out = NULL;
+  *sections = NULL;
+
+  vtkNew(vtkvmtkPolyDataCenterlineSections, cross_sections);
+  try {
+    std::cout<<"Calculating cross-sections..."<<endl;
+    cross_sections->SetInputData(surf);
+    cross_sections->SetCenterlines(cent);
+    cross_sections->SetCenterlineSectionAreaArrayName("CenterlineSectionArea");
+    cross_sections->SetCenterlineSectionClosedArrayName("CenterlineSectionClosed");
+    cross_sections->SetCenterlineSectionBifurcationArrayName("CenterlineSectionBifurcation");
+    cross_sections->SetCenterlineSectionNormalArrayName("CenterlineSectionNormal");
+	cross_sections->SetCenterlineSectionMaxSizeArrayName("CenterlineSectionMaxSize");
+	cross_sections->SetCenterlineSectionMinSizeArrayName("CenterlineSectionMinSize");
+	cross_sections->SetCenterlineSectionShapeArrayName("CenterlineSectionShape");
+    cross_sections->Update();
+
+    result1 = new cvPolyData( cross_sections->GetCenterlines() );
+    *lines_out = result1;
+    result2 = new cvPolyData( cross_sections->GetOutput() );
+    *sections = result2;
+    result3 = new cvPolyData( cross_sections->GetSurface() );
+    *surface_out = result3;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in centerline cross-section calculation.\n");
     fflush(stderr);
     return SV_ERROR;
   }

@@ -1135,18 +1135,24 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd,
         delete [] targets;
         return NULL;
     }
-    delete src;
     delete voronoi;
     delete [] sources;
     delete [] targets;
 
     cvPolyData *centerlines=NULL;
-    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != SV_OK )
+    cvPolyData *surf_grouped=NULL;
+    cvPolyData *sections=NULL;
+    if ( sys_geom_centerlinesections(tempCenterlines, src, &centerlines, &surf_grouped, &sections) != SV_OK )
     {
-        delete tempCenterlines;
+        delete src;
+        delete centerlines;
+        delete surf_grouped;
+        delete sections;
         return NULL;
     }
-    delete tempCenterlines;
+    delete src;
+    delete surf_grouped;
+    delete sections;
 
     return centerlines->GetVtkPolyData();
 }

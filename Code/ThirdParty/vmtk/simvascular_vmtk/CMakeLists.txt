@@ -54,6 +54,7 @@ set(CXXSRCS vtkvmtkBoundaryLayerGenerator.cxx
 	vtkvmtkCenterlineUtilities.cxx vtkvmtkCenterlineSplittingAndGroupingFilter.cxx
   vtkvmtkPolyDataCenterlineGroupsClipper.cxx vtkvmtkMergeCenterlines.cxx
   vtkvmtkCenterlineBifurcationReferenceSystems.cxx vtkvmtkReferenceSystemUtilities.cxx
+  vtkvmtkPolyDataBranchSections.cxx vtkvmtkPolyDataCenterlineSections.cxx vtkvmtkPolyDataBranchUtilities.cxx
 	)
 SET(HDRS vtkvmtkAppendFilter.h
 	vtkvmtkBoundaryLayerGenerator.h vtkvmtkBoundaryReferenceSystems.h
@@ -76,6 +77,7 @@ SET(HDRS vtkvmtkAppendFilter.h
 	vtkvmtkCenterlineUtilities.h vtkvmtkCenterlineSplittingAndGroupingFilter.h
   vtkvmtkPolyDataCenterlineGroupsClipper.h vtkvmtkMergeCenterlines.h
   vtkvmtkCenterlineBifurcationReferenceSystems.h vtkvmtkReferenceSystemUtilities.h
+  vtkvmtkPolyDataBranchSections.h vtkvmtkPolyDataCenterlineSections.h vtkvmtkPolyDataCenterlineSections.h
 	)
 
 if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
