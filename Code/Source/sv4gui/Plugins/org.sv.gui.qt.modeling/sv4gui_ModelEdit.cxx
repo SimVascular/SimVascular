@@ -698,6 +698,10 @@ void sv4guiModelEdit::SetupFaceListTable()
     m_FaceListTableModel->setHorizontalHeaderLabels(faceListHeaders);
     m_FaceListTableModel->setColumnCount(6);
 
+    // Block signals to m_FaceListTableModel so that the UpdateFaceData() 
+    // callback does not get called when adding rows/cols to the table. 
+    m_FaceListTableModel->blockSignals(true);
+
     int rowIndex=-1;
 
     for(int i=0;i<faces.size();i++)
@@ -755,6 +759,9 @@ void sv4guiModelEdit::SetupFaceListTable()
     ui->tableViewFaceList->horizontalHeader()->resizeSection(5,60);
 
     ui->tableViewFaceList->setColumnHidden(0,true);
+
+    // Unblock signals to m_FaceListTableModel.
+    m_FaceListTableModel->blockSignals(false);
 
     m_OperatingWholeTableModel=false;
 }
@@ -1175,6 +1182,10 @@ void sv4guiModelEdit::SetupBlendTable()
 
     int rowIndex=-1;
 
+    // Block signals to m_BlendTableModel so events are not processed 
+    // when adding rows/cols to the table. 
+    m_BlendTableModel->blockSignals(true);
+
     for(int i=0;i<faces.size();i++)
     {
         if(faces[i]==NULL || faces[i]->type=="cap" || faces[i]->type=="inlet" || faces[i]->type=="outlet" || faces[i]->name.substr(0,10)=="wall_blend")
@@ -1249,6 +1260,7 @@ void sv4guiModelEdit::SetupBlendTable()
     ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
     ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+    m_BlendTableModel->blockSignals(false);
 }
 
 void sv4guiModelEdit::UpdatePolyDataBlendParam()
