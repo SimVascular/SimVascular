@@ -81,12 +81,22 @@ sv4guiModelVtkMapper3D::~sv4guiModelVtkMapper3D()
 //-------------------------
 // GenerateDataForRenderer
 //-------------------------
+// Create vtk mappers and actors for each face in the model and
+// set face colors, edge visibility, etc.
+//
+// This method is called when the graphics window is updated (e.g. the view is rotated).
+// Mappers and actors are created only if face geometry is modified. The GetFaceMapperAndActor()
+// function sets/gets a mapper and actor for each face using the face's polydata as a key
+// into a map. When face geometry changes its polydata pointer changes and a new entry for that 
+// face is added to the map.
+//
+// The ResetFaceMapperAndActor() function sets a reference flag for each face to false before
+// the list of faces is processed. GetFaceMapperAndActor() sets the reference flag to true for
+// each face it adds or retrieves. The UpdateFaceMapperAndActor() function then removes 
+// map elements that are no longer used (i.e. the reference flag is false). 
 //
 void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 {
-    //std::cout << " " << std::endl;
-    //std::cout << "========== sv4guiModelVtkMapper3D  GenerateDataForRenderer ==========" << std::endl;
-
     mitk::DataNode* node = GetDataNode();
     if (node == NULL) {
         return;
@@ -127,16 +137,14 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
         return;
     }
 
+    // Show a single surface or all of the faces with their
+    // individual attributes (e.g. color).
+    //
     bool showWholeSurface = false;
     node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
     bool showFaces = true;
     node->GetBoolProperty("show faces", showFaces, renderer);
 
-    // Get the number of model faces.
-    //
-    // [TODO:DaveP] If you delete all of the model faces then showWholeSurface=true
-    // but nothing is displayed.
-    //
     if (modelElem->GetFaceNumber() == 0) {
         showWholeSurface = true;
     }
@@ -160,35 +168,30 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 
     // Create a mapper and actor for 'wholePolyData'.
     //
-    // [TODO:DaveP] I don't think this is needed.
+    // This is used for the 'Show/Full Faces' Model Data Node menu option. 
     //
-    /*
-#if VTK_MAJOR_VERSION == 6
-    vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
-#else
-    vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
-#endif
-    mapper->SetInputData(wholePolyData);
+    if (showWholeSurface) { 
+        #if VTK_MAJOR_VERSION == 6
+        vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+        #else
+        vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
+        #endif
+        mapper->SetInputData(wholePolyData);
 
-    vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
-    actor->SetMapper(mapper);
-    Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
-    ApplyAllProperties(renderer, mapper, actor);
+        vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
+        actor->SetMapper(mapper);
+        Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
+        ApplyAllProperties(renderer, mapper, actor);
 
-    if (showEdges) {
-        actor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
-        actor->GetProperty()->SetEdgeVisibility(1);
-        actor->GetProperty()->SetLineWidth(0.5);
+        if (showEdges) {
+            actor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
+            actor->GetProperty()->SetEdgeVisibility(1);
+            actor->GetProperty()->SetLineWidth(0.5);
+        }
+
+        localStorage->m_Actor=actor;
+        localStorage->m_PropAssembly->AddPart(actor);
     }
-
-    localStorage->m_Actor=actor;
-    std::cout << "[GenerateDataForRenderer] showWholeSurface: " << showWholeSurface << std::endl;
-    std::cout << "[GenerateDataForRenderer] showFaces: " << showFaces << std::endl;
-
-    if(showWholeSurface) {
-        localStorage->m_PropAssembly->AddPart(actor );
-    }
-    */
 
     // Display model faces.
     //
@@ -197,6 +200,7 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
     if (showFaces) {
         float selectedColor[3] = { 1.0f, 1.0f, 0.0f };
         node->GetColor(selectedColor, renderer, "face selected color");
+        // Set face mappers and actors to unreferenced.
         ResetFaceMapperAndActor();
 
         for (int i = 0; i < modelElem->GetFaces().size(); i++) {
@@ -213,19 +217,16 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
             if (!facePolyData) {
                 continue;
             }
-            //std::cout << "[GenerateDataForRenderer] face: " << face << "  facePolyData: " << facePolyData << std::endl;
 
+            // Get a vtk mapper and actor for the face.
+            //
             #if VTK_MAJOR_VERSION == 6
             auto faceMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
             #else
-            //auto faceMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
             vtkOpenGLPolyDataMapper* faceMapper;
             #endif
-
             vtkActor* faceActor;
             GetFaceMapperAndActor(face, &faceMapper, &faceActor);
-            //auto faceActor = vtkSmartPointer<vtkActor>::New();
-
             faceMapper->SetInputData(facePolyData);
             faceActor->SetMapper(faceMapper);
 
@@ -242,11 +243,15 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
                 faceActor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
                 faceActor->GetProperty()->SetEdgeVisibility(1);
                 faceActor->GetProperty()->SetLineWidth(0.51);
+            } else {
+                faceActor->GetProperty()->SetEdgeVisibility(0);
             }
 
             localStorage->m_PropAssembly->AddPart(faceActor);
             localStorage->m_FaceActors.push_back(faceActor);
         }
+
+        // Remove unreferenced face mappers and actors.
         UpdateFaceMapperAndActor();
     }
 
@@ -280,35 +285,19 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
         vtkSmartPointer<vtkUnstructuredGrid> selected=vtkSmartPointer<vtkUnstructuredGrid>::New();
         selected->ShallowCopy(extractSelection->GetOutput());
 
-//        vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-//        surfaceFilter->SetInputData(selected);
-//        surfaceFilter->Update();
-//        vtkSmartPointer<vtkPolyData> cellPolydata = surfaceFilter->GetOutput();
-
-//        vtkSmartPointer<vtkOpenGLPolyDataMapper> cellMapper = vtkSmartPointer<vtkOpenGLPolyDataMapper>::New();
-//        cellMapper->SetInputData(cellPolydata);
-
-//        vtkSmartPointer<vtkActor> cellActor= vtkSmartPointer<vtkActor>::New();
-//        cellActor->SetMapper(cellMapper);
-
-//        ApplyAllProperties(renderer, cellMapper, cellActor);
-//        cellActor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
-
         vtkSmartPointer<vtkDataSetMapper> cellMapper=vtkSmartPointer<vtkDataSetMapper>::New();
         cellMapper->SetInputData(selected);
 
         vtkSmartPointer<vtkActor> cellActor= vtkSmartPointer<vtkActor>::New();
         cellActor->SetMapper(cellMapper);
         cellActor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
-//        cellActor->GetProperty()->SetEdgeColor(selectedColor[0], selectedColor[1], selectedColor[2]);
-//        cellActor->GetProperty()->SetEdgeVisibility(1);
-//        cellActor->GetProperty()->SetLineWidth(3);
 
         localStorage->m_PropAssembly->AddPart(cellActor);
     }
 
-    if(visible)
+    if (visible) {
         localStorage->m_PropAssembly->VisibilityOn();
+    }
 }
 
 //-----------------------
@@ -316,8 +305,8 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 //-----------------------
 // Get the vtk mapper and actor for the given face.
 //
-// First try to lookup the mapper and actor in the faceMapperActor[] map. 
-// If it is not there then create them and add them the faceMapperActor[].
+// First try to lookup the mapper and actor in the faceMapperActor[] map
+// using the face vtk polydata. If it is not there then add them the faceMapperActor[].
 //
 // There does not seem to be a way to tell when face data has changed using mitk
 // so use the face polydata. That works even when an undo is performed.
@@ -331,9 +320,9 @@ void sv4guiModelVtkMapper3D::GetFaceMapperAndActor(sv4guiModelElement::svFace* f
 
     try {
         auto mapperActor = this->faceMapperActor.at(facePolyData);
-        mapper = std::get<0>(mapperActor);
-        actor = std::get<1>(mapperActor);
-        std::get<2>(this->faceMapperActor[facePolyData]) = true;
+        mapper = std::get<FaceMapperActorTupleIndex::MAPPER>(mapperActor);
+        actor = std::get<FaceMapperActorTupleIndex::ACTOR>(mapperActor);
+        std::get<FaceMapperActorTupleIndex::REF>(this->faceMapperActor[facePolyData]) = true;
     } catch (const std::out_of_range& except) {
         mapper = vtkOpenGLPolyDataMapper::New();
         actor = vtkActor::New();
@@ -347,22 +336,25 @@ void sv4guiModelVtkMapper3D::GetFaceMapperAndActor(sv4guiModelElement::svFace* f
 //-------------------------
 // ResetFaceMapperAndActor
 //-------------------------
-// Reset the reference tuple element for each entry in the face 
-// Mapper/Actor map to false. 
+// Reset the reference tuple element for each entry in the faceMapperActor[] 
+// map to false. 
+//
+// This is used to determine if entries in faceMapperActor[] are no longer
+// being used.
 //
 void sv4guiModelVtkMapper3D::ResetFaceMapperAndActor()
 {
     for (auto& elem : this->faceMapperActor) {
         auto facePolyData = elem.first;
         auto mapperActor = elem.second;
-        std::get<2>(this->faceMapperActor[elem.first]) = false;
+        std::get<FaceMapperActorTupleIndex::REF>(this->faceMapperActor[elem.first]) = false;
     }
 }
 
 //--------------------------
 // UpdateFaceMapperAndActor
 //--------------------------
-// Update the face Mapper/Actor map to remove entries that are 
+// Update the faceMapperActor[] map to remove entries that are 
 // no longer being referenced. 
 //
 void sv4guiModelVtkMapper3D::UpdateFaceMapperAndActor()
@@ -370,11 +362,11 @@ void sv4guiModelVtkMapper3D::UpdateFaceMapperAndActor()
     for (auto it = this->faceMapperActor.cbegin(); it != this->faceMapperActor.cend(); ) {
         auto facePolyData = it->first;
         auto mapperActor = it->second;
-        bool ref = std::get<2>(mapperActor);
+        bool ref = std::get<FaceMapperActorTupleIndex::REF>(mapperActor);
         if (!ref) {
-            auto mapper = std::get<0>(mapperActor);
+            auto mapper = std::get<FaceMapperActorTupleIndex::MAPPER>(mapperActor);
             mapper->Delete();
-            auto actor = std::get<1>(mapperActor);
+            auto actor = std::get<FaceMapperActorTupleIndex::ACTOR>(mapperActor);
             actor->Delete();
             this->faceMapperActor.erase(it++); 
         } else {
@@ -558,6 +550,10 @@ void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vt
     // VTK Properties
     ApplyMitkPropertiesToVtkProperty( this->GetDataNode(), actor->GetProperty(), renderer );
 
+    // [TODO:DaveP] I don't know how all of these properties are set, doesn't 
+    // seem to affect the display.
+    //
+    #ifdef ApplyAllProperties_full
     mitk::TransferFunctionProperty::Pointer transferFuncProp;
     this->GetDataNode()->GetProperty(transferFuncProp, "Surface.TransferFunction", renderer);
     if (transferFuncProp.IsNotNull() )
@@ -714,6 +710,7 @@ void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vt
     {
         mapper->RemoveAllClippingPlanes();
     }
+    #endif
 }
 
 vtkProp *sv4guiModelVtkMapper3D::GetVtkProp(mitk::BaseRenderer *renderer)

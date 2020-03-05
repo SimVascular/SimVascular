@@ -54,9 +54,10 @@
 
 // Define a tuple for storing face mapper/actor in a map for reuse.
 //
-// The bool element is a flag used to identify if a mapper/actor is
-// no longer being used.
+// The bool element is a reference flag used to identify if a mapper/actor
+// is no longer being used.
 //
+enum FaceMapperActorTupleIndex { MAPPER=0,    ACTOR=1,  REF=2 };
 typedef std::tuple<vtkOpenGLPolyDataMapper*, vtkActor*, bool> FaceMapperActor;
 
 /* Properties that can be set for surfaces and influence the sv4guiModelVtkMapper3D are:
