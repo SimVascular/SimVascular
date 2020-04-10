@@ -42,7 +42,7 @@ Notes:
    you only need to run prep once even if you rebuild multiple
    times (as long as the script doesn't get updated!).
 
-5. On CentOS, you must also use the updated toolchain:
+5. On CentOS 7, you must also use the updated toolchain:
 
    scl enable devtoolset-6 bash
    scl enable rh-git29 bash
@@ -59,6 +59,13 @@ source scl_source enable rh-git29
 %cat /etc/profile.d/enablerh-ruby23.sh 
 #!/bin/bash
 source scl_source enable rh-ruby23
+ 
+   CentOS may require you to specify:
+
+   % xhost +
+
+   and disable internet connectivity to run the Qt installer,
+   but you need internet access to build MITK
 
 6. Build them all, e.g.:
 

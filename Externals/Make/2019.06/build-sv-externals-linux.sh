@@ -41,6 +41,9 @@ case "$osid" in
 
 	case "$osrel" in
 
+	    8*)
+		export SV_EXTERN_LINUX_VERSION=centos_8
+		;;
 	    7*)
 		export SV_EXTERN_LINUX_VERSION=centos_7
 		;;
