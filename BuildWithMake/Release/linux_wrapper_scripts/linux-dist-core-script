@@ -56,7 +56,7 @@ export LD_LIBRARY_PATH=$PYTHONHOME:$LD_LIBRARY_PATH
 #export LD_LIBRARY_PATH=$SV_HOME/intel_compiler_runtime_libs:$LD_LIBRARY_PATH
 
 # MITK additions
-export LD_LIBRARY_PATH=$SV_HOME/mitk/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$SV_HOME/mitk/lib:$SV_HOME/mitk/lib64:$LD_LIBRARY_PATH
 export SV_PLUGIN_PATH=$SV_HOME/mitk/lib/plugins
 
 # SV plugins for MITK

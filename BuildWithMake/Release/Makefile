@@ -382,8 +382,10 @@ ifeq ($(CLUSTER), x64_cygwin)
 else
 	-$(GMKDIR) -p $(DIST_DIR)/mitk/bin
 	-$(GMKDIR) -p $(DIST_DIR)/mitk/lib/plugins
+	-$(GMKDIR) -p $(DIST_DIR)/mitk/lib64
 	-$(GCP) -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
 	-$(GCP) -f $(MITK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)/mitk/lib
+	-$(GCP) -f $(MITK_LIB64DIR)/*.$(SOEXT)* $(DIST_DIR)/mitk/lib64
 	-$(GCP) -fR $(MITK_LIBDIRS)/MitkCore $(DIST_DIR)/mitk/lib
 	-$(GCP) -fR $(MITK_LIBDIRS)/MitkPython $(DIST_DIR)/mitk/lib
 	-$(GCP) -fR $(MITK_LIBDIRS)/Python $(DIST_DIR)/mitk/lib
