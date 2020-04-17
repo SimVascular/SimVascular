@@ -345,10 +345,10 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
 void vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
 {
     // modify this array to ensure bifurcations are only where they should be
-    vtkIntArray* isBifurcation = this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionBifurcationArrayName);
+    vtkIntArray* isBifurcation = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionBifurcationArrayName));
 
     // make sure geometrical bifurcation points are included
-    vtkIntArray* bf_id = this->Centerlines->GetPointData()->GetArray(this->BifurcationIdArrayNameTmp);
+    vtkIntArray* bf_id = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->BifurcationIdArrayNameTmp));
     for (int i = 0; i < this->Centerlines->GetNumberOfPoints(); i++)
         if (bf_id->GetValue(i) == 1)
             isBifurcation->SetValue(i, 1);
@@ -472,10 +472,9 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
     // order nodes according to GlobalNodeId
     vtkPoints* points = vtkPoints::New();
     vtkCellArray* lines = vtkCellArray::New();
-    vtkCell* cell = vtkCell::New();
 
-    vtkIntArray* globalIdArray = this->Centerlines->GetPointData()->GetArray(this->GlobalNodeIdArrayName);
-    vtkIntArray* globalIdArrayInverse = this->Centerlines->GetPointData()->GetArray(this->GlobalNodeIdArrayName);
+    vtkIntArray* globalIdArray = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->GlobalNodeIdArrayName));
+    vtkIntArray* globalIdArrayInverse = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->GlobalNodeIdArrayName));
     vtkIdList* globalMap = vtkIdList::New();
     vtkIdList* globalMapInverse = vtkIdList::New();
 
@@ -500,7 +499,7 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
     // create new elements
     for (int i=0; i < this->Centerlines->GetNumberOfCells(); i++)
     {
-        cell = this->Centerlines->GetCell(i);
+    	vtkCell* cell = this->Centerlines->GetCell(i);
         vtkLine* line = vtkLine::New();
         for (int j=0; j < cell->GetNumberOfPoints(); j++)
             line->GetPointIds()->SetId(j, globalMap->GetId(cell->GetPointId(j)));
@@ -577,7 +576,7 @@ void vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo,
     connect->SetExtractionModeToAllRegions();
     connect->ColorRegionsOn();
     connect->Update();
-    vtkPolyData* connected = connect->GetOutput();
+    vtkPolyData* connected = vtkPolyData::SafeDownCast(connect->GetOutput());
 
     // map connect points to global id
     vtkIntArray* connectGlobalId = connected->GetPointData()->GetArray(this->GlobalNodeIdArrayName);
@@ -610,7 +609,7 @@ void vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo,
         thresh->Update();
 
         // map thresh points to global id
-        vtkIntArray* threshGlobalId = thresh->GetOutput()->GetPointData()->GetArray(this->GlobalNodeIdArrayName);
+        vtkIntArray* threshGlobalId = vtkIntArray::SafeDownCast(thresh->GetOutput()->GetPointData()->GetArray(this->GlobalNodeIdArrayName));
         vtkIdList* threshToGlobal = vtkIdList::New();
         for (int j = 0; j < thresh->GetOutput()->GetNumberOfPoints(); j++)
             threshToGlobal->InsertNextId(threshGlobalId->GetValue(j));
@@ -783,8 +782,8 @@ void vtkvmtkPolyDataCenterlineSections::BranchSurface(char* nameThis, char* name
     locator->BuildLocator();
 
     // get arrays
-    vtkDoubleArray* centRadius = this->Centerlines->GetPointData()->GetArray(this->RadiusArrayName);
-    vtkDoubleArray* normals = this->Surface->GetPointData()->GetArray("Normals");
+    vtkDoubleArray* centRadius = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->RadiusArrayName));
+    vtkDoubleArray* normals = vtkDoubleArray::SafeDownCast(this->Surface->GetPointData()->GetArray("Normals"));
     vtkDataArray* otherCent = this->Centerlines->GetPointData()->GetArray(nameOther);
     vtkDataArray* thisCent = this->Centerlines->GetPointData()->GetArray(nameThis);
 
@@ -1128,7 +1127,6 @@ void vtkvmtkPolyDataCenterlineSections::CalculateTangent()
 
     // initialize
     vtkIdList* cellIds = vtkIdList::New();
-    vtkCell* cell = vtkCell::New();
 
     double point[3], point0[3], point1[3];
     double distance;
@@ -1169,7 +1167,7 @@ void vtkvmtkPolyDataCenterlineSections::CalculateTangent()
             // calculate tangent on each connected centerline cell
             for (int c = 0; c < cellIds->GetNumberOfIds(); c++)
             {
-                cell = this->Centerlines->GetCell(cellIds->GetId(c));
+            	vtkCell* cell = this->Centerlines->GetCell(cellIds->GetId(c));
                 this->Centerlines->GetPoint(cell->GetPointId(0), point0);
                 this->Centerlines->GetPoint(cell->GetPointId(1), point1);
                 distance = sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
@@ -1197,10 +1195,10 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     }
 
     // get old arrays
-    vtkDoubleArray* radius = polydata->GetPointData()->GetArray(this->RadiusArrayName);
-    vtkDoubleArray* normals = polydata->GetPointData()->GetArray(this->CenterlineSectionNormalArrayName);
-    vtkIntArray* bifurcation = polydata->GetPointData()->GetArray(this->BifurcationIdArrayNameTmp);
-    vtkIntArray* branch = polydata->GetPointData()->GetArray(this->BranchIdArrayNameTmp);
+    vtkDoubleArray* radius = vtkDoubleArray::SafeDownCast(polydata->GetPointData()->GetArray(this->RadiusArrayName));
+    vtkDoubleArray* normals = vtkDoubleArray::SafeDownCast(polydata->GetPointData()->GetArray(this->CenterlineSectionNormalArrayName));
+    vtkIntArray* bifurcation = vtkIntArray::SafeDownCast(polydata->GetPointData()->GetArray(this->BifurcationIdArrayNameTmp));
+    vtkIntArray* branch = vtkIntArray::SafeDownCast(polydata->GetPointData()->GetArray(this->BranchIdArrayNameTmp));
 
     // create new arrays
     vtkDoubleArray* radius_new = vtkDoubleArray::New();
