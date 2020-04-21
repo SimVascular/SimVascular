@@ -411,7 +411,7 @@ void vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
                 {
                     // don't remove if there is at least one other connected branch point
                     bifurcationOthers = isBifurcation->GetTuple1(cellPoints->GetId(k));
-                    if ((cellPoints->GetId(k) != i) and (bifurcationOthers == 0))
+                    if ((cellPoints->GetId(k) != i) && (bifurcationOthers == 0))
                         remove = false;
                 }
             }
@@ -734,7 +734,7 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
         shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,point,sizeRange);
         intersectCenterline = vtkvmtkPolyDataBranchSections::ComputeBranchCenterlineIntersections(section,this->Centerlines,point,tangent);
         intersectSurface = vtkvmtkPolyDataBranchSections::ComputeBranchSurfaceIntersections(section,this->BranchIdArrayNameTmp);
-        if((intersectCenterline == 1) and (intersectSurface == 1))
+        if((intersectCenterline == 1) && (intersectSurface == 1))
             bifurcation = 0;
 
         // store in sections
@@ -783,9 +783,9 @@ void vtkvmtkPolyDataCenterlineSections::BranchSurface(char* nameThis, char* name
 
     // get arrays
     vtkDoubleArray* centRadius = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->RadiusArrayName));
-    vtkDoubleArray* normals = vtkDoubleArray::SafeDownCast(this->Surface->GetPointData()->GetArray("Normals"));
-    vtkDataArray* otherCent = this->Centerlines->GetPointData()->GetArray(nameOther);
-    vtkDataArray* thisCent = this->Centerlines->GetPointData()->GetArray(nameThis);
+    vtkDataArray* normals = vtkDataArray::SafeDownCast(this->Surface->GetPointData()->GetArray("Normals"));
+    vtkDataArray* otherCent = vtkDataArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(nameOther));
+    vtkDataArray* thisCent = vtkDataArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(nameThis));
 
     vtkIdList* cellIds = vtkIdList::New();
     vtkIdList* surfPointIds = vtkIdList::New();
@@ -891,7 +891,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
             int i = cell->GetPointId(p);
 
             // add point and line only if point hasn't been added yet
-            if ((pointIds->IsId(i) == -1) and (i > 0))
+            if ((pointIds->IsId(i) == -1) && (i > 0))
             {
                 // add point
                 points->InsertNextPoint(centerlines->GetPoint(i));
@@ -958,7 +958,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
 
         // get number of cells connected to this point
         polydata->GetPointCells(p, cellIds);
-        if (cellIds->GetNumberOfIds() == 1 and p != 0)
+        if ((cellIds->GetNumberOfIds() == 1) && (p != 0))
             // outlet
             branchId++;
         else if (cellIds->GetNumberOfIds() > 2)
@@ -1019,7 +1019,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
             // loop all downstream branches
             for (int j = 0; j < branchIdsDownstream->GetNumberOfIds(); j++)
                 for (int k = 0; k < polydata->GetNumberOfPoints(); k++)
-                    if (branch->GetValue(k) == branchIdsDownstream->GetId(j) and closePoints->IsId(k) > -1)
+                    if ((branch->GetValue(k) == branchIdsDownstream->GetId(j)) && (closePoints->IsId(k) > -1))
                         bifurcation->SetValue(k, 2);
         }
     }
@@ -1047,7 +1047,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
 
             // loop all downstream branches
             for (int k = 0; k < polydata->GetNumberOfPoints(); k++)
-                if (branch->GetValue(k) == branchIdCap and closePoints->IsId(k) > -1)
+                if ((branch->GetValue(k) == branchIdCap) && (closePoints->IsId(k) > -1))
                     smoothing->SetValue(k, 1);
         }
     }
@@ -1064,7 +1064,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
         for (int i = 0; i < branchId; i++)
             for (int k = 1; k < polydata->GetNumberOfPoints() - 1; k++)
                 // check if all three points are within branch
-                if (branch->GetValue(k - 1) == i and branch->GetValue(k) == i and branch->GetValue(k + 1) == i)
+                if ((branch->GetValue(k - 1) == i) && (branch->GetValue(k) == i) && (branch->GetValue(k + 1) == i))
                 {
                     // select point and surroundings
                     points->GetPoint(k - 1, point0);
