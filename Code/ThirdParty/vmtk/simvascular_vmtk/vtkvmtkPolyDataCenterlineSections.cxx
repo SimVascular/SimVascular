@@ -18,6 +18,7 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+//SimVascular Changes: completely re-wrote code except for parts of ComputeCenterlineSections
 
 #include "vtkvmtkPolyDataCenterlineSections.h"
 #include "vtkvmtkPolyDataBranchSections.h"
@@ -64,13 +65,13 @@ vtkvmtkPolyDataCenterlineSections::vtkvmtkPolyDataCenterlineSections()
 {
     this->Centerlines = vtkPolyData::New();
     this->Surface = vtkPolyData::New();
-    this->RadiusArrayName = "MaximumInscribedSphereRadius";
-    this->GlobalNodeIdArrayName = "GlobalNodeId";
-    this->BifurcationIdArrayNameTmp = "BifurcationIdTmp";
-    this->BifurcationIdArrayName = "BifurcationId";
-    this->BranchIdArrayNameTmp = "BranchIdTmp";
-    this->BranchIdArrayName = "BranchId";
-    this->PathArrayName = "Path";
+    this->RadiusArrayName = NULL;
+    this->GlobalNodeIdArrayName = NULL;
+    this->BifurcationIdArrayNameTmp = NULL;
+    this->BifurcationIdArrayName = NULL;
+    this->BranchIdArrayNameTmp = NULL;
+    this->BranchIdArrayName = NULL;
+    this->PathArrayName = NULL;
     this->CenterlineSectionAreaArrayName = NULL;
     this->CenterlineSectionMinSizeArrayName = NULL;
     this->CenterlineSectionMaxSizeArrayName = NULL;
@@ -94,7 +95,48 @@ vtkvmtkPolyDataCenterlineSections::~vtkvmtkPolyDataCenterlineSections()
         this->Surface = NULL;
     }
 
+    if (this->RadiusArrayName)
+    {
+        delete[] this->RadiusArrayName;
+        this->RadiusArrayName = NULL;
+    }
 
+    if (this->GlobalNodeIdArrayName)
+    {
+        delete[] this->GlobalNodeIdArrayName;
+        this->GlobalNodeIdArrayName = NULL;
+    }
+
+    if (this->BifurcationIdArrayNameTmp)
+    {
+        delete[] this->BifurcationIdArrayNameTmp;
+        this->BifurcationIdArrayNameTmp = NULL;
+    }
+
+    if (this->BifurcationIdArrayName)
+    {
+        delete[] this->BifurcationIdArrayName;
+        this->BifurcationIdArrayName = NULL;
+    }
+
+    if (this->BranchIdArrayNameTmp)
+    {
+        delete[] this->BranchIdArrayNameTmp;
+        this->BranchIdArrayNameTmp = NULL;
+    }
+
+    if (this->BranchIdArrayName)
+    {
+        delete[] this->BranchIdArrayName;
+        this->BranchIdArrayName = NULL;
+    }
+
+    if (this->PathArrayName)
+    {
+        delete[] this->PathArrayName;
+        this->PathArrayName = NULL;
+    }
+    
     if (this->CenterlineSectionAreaArrayName)
     {
         delete[] this->CenterlineSectionAreaArrayName;
@@ -848,7 +890,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     vtkPolyData* centerlines = cleaner->GetOutput();
 
     // check if geometry is one piece
-    if (not this->IsOnePiece(cleaner->GetOutput()))
+    if (!(this->IsOnePiece(cleaner->GetOutput())))
     {
         vtkErrorMacro(<< "Input centerline consists of more than one piece");
         return;

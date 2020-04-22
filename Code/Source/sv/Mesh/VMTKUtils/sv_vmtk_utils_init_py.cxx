@@ -753,7 +753,6 @@ PyObject* Geom_CenterlineSectionsCmd( PyObject* self, PyObject* args)
 
   // Do work of command:
 
-  //sys_geom_centerlinesections(tempCenterlines2, src, sources, numSourcePts, targets, numTargetPts, &centerlines, &sections)
   if ( sys_geom_centerlinesections( (cvPolyData*)centSrc, (cvPolyData*)surfSrc, (cvPolyData**)(&centDst), (cvPolyData**)(&surfDst), (cvPolyData**)(&sectionsDst))
        != SV_OK ) {
     PyErr_SetString(PyRunTimeErr,"error creating centerlines");

@@ -18,14 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineSections - Extract a set of vessel sections from a surface along a centerline.
+// .NAME vtkvmtkPolyDataCenterlineSections - Indicate centerline branches and bifurcations and calculate cross-sectional area.
 // .SECTION Description
-//  The set of vessel sections contain the profile as well as the the following information about the section:
-//  - Centerline Section Area
-//  - Centerline Section Min Size
-//  - Centerline Section Max Size
-//  - Centerline Section Shape
-//  - Centerline Section Closed
+// ...
 
 #ifndef __vtkvmtkPolyDataCenterlineSections_h
 #define __vtkvmtkPolyDataCenterlineSections_h
@@ -69,14 +64,37 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
   vtkSetStringMacro(CenterlineSectionNormalArrayName);
   vtkGetStringMacro(CenterlineSectionNormalArrayName);
 
+  vtkSetStringMacro(RadiusArrayName);
+  vtkGetStringMacro(RadiusArrayName);
+
+  vtkSetStringMacro(GlobalNodeIdArrayName);
+  vtkGetStringMacro(GlobalNodeIdArrayName);
+
+  vtkSetStringMacro(BifurcationIdArrayNameTmp);
+  vtkGetStringMacro(BifurcationIdArrayNameTmp);
+
+  vtkSetStringMacro(BifurcationIdArrayName);
+  vtkGetStringMacro(BifurcationIdArrayName);
+
+  vtkSetStringMacro(BranchIdArrayNameTmp);
+  vtkGetStringMacro(BranchIdArrayNameTmp);
+
+  vtkSetStringMacro(BranchIdArrayName);
+  vtkGetStringMacro(BranchIdArrayName);
+
+  vtkSetStringMacro(PathArrayName);
+  vtkGetStringMacro(PathArrayName);
+
   protected:
   vtkvmtkPolyDataCenterlineSections();
   ~vtkvmtkPolyDataCenterlineSections();  
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
+  // based on original vmtk function
   void ComputeCenterlineSections(vtkPolyData* output);
 
+  // new functions to detect branches/bifurcations
   void CleanBifurcation();
   void ConnectivityCenterline(vtkPolyData* geo, char* nameThis, char* nameOther);
   void GroupCenterline();

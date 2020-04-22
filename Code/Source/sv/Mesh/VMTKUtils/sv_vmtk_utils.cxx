@@ -266,6 +266,24 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
   return SV_OK;
 }
 
+/* -------------- */
+/* sys_geom_centerlinesections */
+/* -------------- */
+
+/** @author Martin Pfaller
+ *  @author pfaller@stanford.edu
+ *  @author Stanford University
+ *
+ *  @brief Function to indicate centerline branches and bifurcations and calculate cross-sectional area
+ *  @param *lines_in from centerline extraction, the centerlines to be used
+ *  @param *surface_in surface geometry
+ *  @note  The point array names are the ones from vmtkcenterlinesections and "BranchId", "BifurcationId", "Path", "GlobalNodeId"
+ *  @param **lines_out cleaned and connected centerline with point arrays describing branching attached
+ *  @param **surface_out as surface_in with point arrays "BranchId", "BifurcationId"
+ *  @param **sections cross-sections of the surface geometry along the centerline
+ *  @return SV_OK if the VTMK function executes properly
+ */
+
 int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cvPolyData **lines_out, cvPolyData **surface_out, cvPolyData **sections)
 {
   vtkPolyData *cent = lines_in->GetVtkPolyData();
@@ -281,6 +299,19 @@ int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cv
     std::cout<<"Calculating cross-sections..."<<endl;
     cross_sections->SetInputData(surf);
     cross_sections->SetCenterlines(cent);
+    
+    // for branch/bifurcation splitting
+    cross_sections->SetGlobalNodeIdArrayName("GlobalNodeId");
+    cross_sections->SetBifurcationIdArrayNameTmp("BifurcationIdTmp");
+    cross_sections->SetBifurcationIdArrayName("BifurcationId");
+    cross_sections->SetBranchIdArrayNameTmp("BranchIdTmp");
+    cross_sections->SetBranchIdArrayName("BranchId");
+    cross_sections->SetPathArrayName("Path");
+
+    // from vmtkcenterlines
+    cross_sections->SetRadiusArrayName("MaximumInscribedSphereRadius");
+    
+    // from vmtkcenterlinesections
     cross_sections->SetCenterlineSectionAreaArrayName("CenterlineSectionArea");
     cross_sections->SetCenterlineSectionClosedArrayName("CenterlineSectionClosed");
     cross_sections->SetCenterlineSectionBifurcationArrayName("CenterlineSectionBifurcation");
@@ -288,6 +319,7 @@ int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cv
 	cross_sections->SetCenterlineSectionMaxSizeArrayName("CenterlineSectionMaxSize");
 	cross_sections->SetCenterlineSectionMinSizeArrayName("CenterlineSectionMinSize");
 	cross_sections->SetCenterlineSectionShapeArrayName("CenterlineSectionShape");
+	
     cross_sections->Update();
 
     result1 = new cvPolyData( cross_sections->GetCenterlines() );
