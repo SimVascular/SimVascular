@@ -82,7 +82,8 @@ HDRS	= vtkvmtkAppendFilter.h \
           vtkvmtkMergeCenterlines.h \
           vtkvmtkCenterlineBifurcationReferenceSystems.h \
           vtkvmtkReferenceSystemUtilities.h \
-          vtkvmtkPolyDataCenterlineSections.h
+          vtkvmtkPolyDataCenterlineSections.h \
+	  vtkvmtkPolyDataBranchSections.h
 
 CXXSRCS	=  vtkvmtkBoundaryLayerGenerator.cxx \
            vtkvmtkMath.cxx \
@@ -122,7 +123,8 @@ CXXSRCS	=  vtkvmtkBoundaryLayerGenerator.cxx \
            vtkvmtkMergeCenterlines.cxx \
            vtkvmtkCenterlineBifurcationReferenceSystems.cxx \
            vtkvmtkReferenceSystemUtilities.cxx \
-           vtkvmtkPolyDataCenterlineSections.cxx
+           vtkvmtkPolyDataCenterlineSections.cxx \
+	   vtkvmtkPolyDataBranchSections.cxx
 
 DLLHDRS =
 
