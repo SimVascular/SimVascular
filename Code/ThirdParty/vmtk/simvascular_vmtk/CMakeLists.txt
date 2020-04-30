@@ -77,7 +77,7 @@ SET(HDRS vtkvmtkAppendFilter.h
 	vtkvmtkCenterlineUtilities.h vtkvmtkCenterlineSplittingAndGroupingFilter.h
   vtkvmtkPolyDataCenterlineGroupsClipper.h vtkvmtkMergeCenterlines.h
   vtkvmtkCenterlineBifurcationReferenceSystems.h vtkvmtkReferenceSystemUtilities.h
-  vtkvmtkPolyDataBranchSections.h vtkvmtkPolyDataCenterlineSections.h vtkvmtkPolyDataCenterlineSections.h
+  vtkvmtkPolyDataBranchSections.h vtkvmtkPolyDataCenterlineSections.h vtkvmtkPolyDataBranchUtilities.h 
 	)
 
 if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)

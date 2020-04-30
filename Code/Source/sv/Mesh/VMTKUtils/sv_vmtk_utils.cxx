@@ -296,7 +296,7 @@ int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cv
 
   vtkNew(vtkvmtkPolyDataCenterlineSections, cross_sections);
   try {
-    std::cout<<"Calculating cross-sections..."<<endl;
+    std::cout<<"Calculating CenterlineSections..."<<endl;
     cross_sections->SetInputData(surf);
     cross_sections->SetCenterlines(cent);
     

@@ -311,17 +311,21 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     surfaceNormals->Delete();
 
     // generate a clean, simply connected centerline
+    std::cout<<"  Generating clean centerline"<<endl;
     this->GenerateCleanCenterline();
 
     // initialize normal array
+    std::cout<<"  Generating surface normals"<<endl;
     this->Centerlines->GetPointData()->AddArray(centerlineNormalArray);
     int numberOfCenterlinePoints = this->Centerlines->GetNumberOfPoints();
     centerlineNormalArray->SetNumberOfTuples(numberOfCenterlinePoints);
 
     // calculate centerline tangent vectors (= section normal vectors)
+    std::cout<<"  Calculating centerline tangents"<<endl;
     this->CalculateTangent();
 
     // add additional points at caps to prevent bifurcations at caps
+    std::cout<<"  Refining centerline at caps"<<endl;
     this->RefineCapPoints();
 
     // initialize centerline arrays
@@ -342,25 +346,31 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     centerlineBifurcationArray->SetNumberOfTuples(numberOfCenterlinePoints);
 
     // preliminary color surface according to centerline BranchIdTmp to allow bifurcation detection
+    std::cout<<"  Rough coloring surface branches"<<endl;
     this->BranchSurface(this->BranchIdArrayNameTmp, this->BifurcationIdArrayNameTmp);
 
     // slice centerline to get cross-sectional area and detect bifurcation regions
+    std::cout<<"  Slicing surface at "<<this->Centerlines->GetNumberOfPoints()<<" centerline points"<<endl;
     this->ComputeCenterlineSections(output);
 
     // clean up centerline bifurcation detection
+    std::cout<<"  Cleaning centerline bifurcations"<<endl;
     this->CleanBifurcation();
 
     // split into bifurcations and branches
+    std::cout<<"  Splitting centerline in branches and bifurcations"<<endl;
     this->GroupCenterline();
 
     // final color surface according to centerline BranchId and BifurcationId
+    std::cout<<"  Coloring surface branches"<<endl;
     this->BranchSurface(this->BranchIdArrayName, this->BifurcationIdArrayName);
+    std::cout<<"  Coloring surface bifurcations"<<endl;
     this->BranchSurface(this->BifurcationIdArrayName, this->BranchIdArrayName);
 
     // delete temporary arrays
+    std::cout<<"  Finishing"<<endl;
     this->Centerlines->GetPointData()->RemoveArray(this->BifurcationIdArrayNameTmp);
     this->Centerlines->GetPointData()->RemoveArray(this->BranchIdArrayNameTmp);
-    this->Surface->GetPointData()->RemoveArray(this->BranchIdArrayNameTmp);
 
     outputPoints->Delete();
     outputPolys->Delete();
@@ -380,6 +390,7 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     centerlineClosedArray->Delete();
     centerlineBifurcationArray->Delete();
 
+    std::cout<<"  Done!"<<endl;
     return 1;
 }
 
@@ -729,10 +740,15 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
 
     vtkIdList* cellIds = vtkIdList::New();
     double point[3], tangent[3];
+    const int n_point = this->Centerlines->GetNumberOfPoints();
 
     // loop all centerline points
-    for (int p = 0; p < this->Centerlines->GetNumberOfPoints(); p++)
+    for (int p = 0; p < n_point; p++)
     {
+    	// progress report
+    	if ((p % (n_point / 10) == 0) || (p == n_point - 1))
+    		std::cout<<"    "<<p * 100 / (n_point - 1)<<"%"<<endl;
+    	
         // get centerline point and tangent (= section normal)
         this->Centerlines->GetPoint(p, point);
         centerlineNormalArray->GetTuple(p, tangent);
