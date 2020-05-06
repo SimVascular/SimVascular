@@ -98,8 +98,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : pub
   vtkGetMacro(ReverseDirection,int);
   vtkBooleanMacro(ReverseDirection,int);
 
-  static double ComputeBranchSectionArea(vtkPolyData* branchSection);
-  static double ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2]);
+  static double ComputeBranchSectionArea(vtkPolygon* sectionPolygon);
+  static double ComputeBranchSectionShape(vtkPolygon* sectionPolygon, double center[3], double sizeRange[2]);
   static int ComputeBranchCenterlineIntersections(vtkPolyData* section, vtkPolyData* centerline, double origin[3], double normal[3]);
   static bool InsidePolygon(vtkPoints* polygon, double* point);
   static int ComputeBranchSurfaceIntersections(vtkPolyData* section, const char* idsArrayName);

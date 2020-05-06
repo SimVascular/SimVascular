@@ -58,6 +58,8 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
+#define vtkNew(type,name) vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
 
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlineSections);
 
@@ -241,53 +243,53 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
         return 1;
     }
 
-    vtkPoints* outputPoints = vtkPoints::New();
-    vtkCellArray* outputPolys = vtkCellArray::New();
+    vtkNew(vtkPoints, outputPoints);
+    vtkNew(vtkCellArray, outputPolys);
 
     output->SetPoints(outputPoints);
     output->SetPolys(outputPolys);
 
-    vtkDoubleArray* centerlineSectionAreaArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineSectionAreaArray);
     centerlineSectionAreaArray->SetName(this->CenterlineSectionAreaArrayName);
 
-    vtkDoubleArray* centerlineSectionShapeArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineSectionShapeArray);
     centerlineSectionShapeArray->SetName(this->CenterlineSectionShapeArrayName);
 
-    vtkDoubleArray* centerlineSectionMinSizeArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineSectionMinSizeArray);
     centerlineSectionMinSizeArray->SetName(this->CenterlineSectionMinSizeArrayName);
 
-    vtkDoubleArray* centerlineSectionMaxSizeArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineSectionMaxSizeArray);
     centerlineSectionMaxSizeArray->SetName(this->CenterlineSectionMaxSizeArrayName);
 
-    vtkIntArray* centerlineSectionClosedArray = vtkIntArray::New();
+    vtkNew(vtkIntArray, centerlineSectionClosedArray);
     centerlineSectionClosedArray->SetName(this->CenterlineSectionClosedArrayName);
 
-    vtkIntArray* centerlineSectionBifurcationArray = vtkIntArray::New();
+    vtkNew(vtkIntArray, centerlineSectionBifurcationArray);
     centerlineSectionBifurcationArray->SetName(this->CenterlineSectionBifurcationArrayName);
 
-    vtkIntArray* centerlineSectionGlobalNodeIdArray = vtkIntArray::New();
+    vtkNew(vtkIntArray, centerlineSectionGlobalNodeIdArray);
     centerlineSectionGlobalNodeIdArray->SetName(this->GlobalNodeIdArrayName);
 
-    vtkDoubleArray* centerlineAreaArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineAreaArray);
     centerlineAreaArray->SetName(this->CenterlineSectionAreaArrayName);
 
-    vtkDoubleArray* centerlineShapeArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineShapeArray);
     centerlineShapeArray->SetName(this->CenterlineSectionShapeArrayName);
 
-    vtkDoubleArray* centerlineMinSizeArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineMinSizeArray);
     centerlineMinSizeArray->SetName(this->CenterlineSectionMinSizeArrayName);
 
-    vtkDoubleArray* centerlineMaxSizeArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineMaxSizeArray);
     centerlineMaxSizeArray->SetName(this->CenterlineSectionMaxSizeArrayName);
 
-    vtkDoubleArray* centerlineNormalArray = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, centerlineNormalArray);
     centerlineNormalArray->SetName(this->CenterlineSectionNormalArrayName);
     centerlineNormalArray->SetNumberOfComponents(3);
 
-    vtkIntArray* centerlineClosedArray = vtkIntArray::New();
+    vtkNew(vtkIntArray, centerlineClosedArray);
     centerlineClosedArray->SetName(this->CenterlineSectionClosedArrayName);
 
-    vtkIntArray* centerlineBifurcationArray = vtkIntArray::New();
+    vtkNew(vtkIntArray, centerlineBifurcationArray);
     centerlineBifurcationArray->SetName(this->CenterlineSectionBifurcationArrayName);
 
     output->GetCellData()->AddArray(centerlineSectionAreaArray);
@@ -299,7 +301,7 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     output->GetCellData()->AddArray(centerlineSectionGlobalNodeIdArray);
 
     // generate surface normals
-    vtkPolyDataNormals* surfaceNormals = vtkPolyDataNormals::New();
+    vtkNew(vtkPolyDataNormals, surfaceNormals);
     surfaceNormals->SetInputData(input);
     surfaceNormals->SplittingOff();
     surfaceNormals->AutoOrientNormalsOn();
@@ -308,7 +310,6 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     surfaceNormals->Update();
 
     this->Surface->DeepCopy(surfaceNormals->GetOutput());
-    surfaceNormals->Delete();
 
     // generate a clean, simply connected centerline
     std::cout<<"  Generating clean centerline"<<endl;
@@ -368,28 +369,9 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     this->BranchSurface(this->BifurcationIdArrayName, this->BranchIdArrayName);
 
     // delete temporary arrays
-    std::cout<<"  Finishing"<<endl;
     this->Centerlines->GetPointData()->RemoveArray(this->BifurcationIdArrayNameTmp);
     this->Centerlines->GetPointData()->RemoveArray(this->BranchIdArrayNameTmp);
-
-    outputPoints->Delete();
-    outputPolys->Delete();
-
-    centerlineSectionAreaArray->Delete();
-    centerlineSectionMinSizeArray->Delete();
-    centerlineSectionMaxSizeArray->Delete();
-    centerlineSectionShapeArray->Delete();
-    centerlineSectionClosedArray->Delete();
-    centerlineSectionBifurcationArray->Delete();
-
-    centerlineAreaArray->Delete();
-    centerlineMinSizeArray->Delete();
-    centerlineMaxSizeArray->Delete();
-    centerlineShapeArray->Delete();
-    centerlineNormalArray->Delete();
-    centerlineClosedArray->Delete();
-    centerlineBifurcationArray->Delete();
-
+    
     std::cout<<"  Done!"<<endl;
     return 1;
 }
@@ -407,19 +389,19 @@ void vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
             isBifurcation->SetValue(i, 1);
 
     // preliminary split of the centerline
-    vtkPolyData* bifurcations = vtkPolyData::New();
-    vtkPolyData* branches = vtkPolyData::New();
+    vtkNew(vtkPolyData, bifurcations);
+    vtkNew(vtkPolyData, branches);
     this->SplitCenterline(bifurcations, branches);
 
     // connectivity filter on bifurcations
-    vtkConnectivityFilter* connect = vtkConnectivityFilter::New();
+    vtkNew(vtkConnectivityFilter, connect);
     connect->SetExtractionModeToAllRegions();
     connect->ColorRegionsOn();
     connect->SetInputData(bifurcations);
     connect->Update();
 
     // threshold each bifurcation
-    vtkThreshold* thresh = vtkThreshold::New();
+    vtkNew(vtkThreshold, thresh);
     thresh->SetInputData(connect->GetOutput());
     thresh->SetInputArrayToProcess(0, 0, 0, 1, "RegionId");
 
@@ -431,7 +413,7 @@ void vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
         thresh->Update();
 
         // not a real bifurcation if it contains only one BranchId
-        vtkIdList* branchIds = vtkIdList::New();
+        vtkNew(vtkIdList, branchIds);
         for (int j = 0; j < thresh->GetOutput()->GetNumberOfPoints(); j++)
             branchIds->InsertUniqueId(thresh->GetOutput()->GetPointData()->GetArray(this->BranchIdArrayNameTmp)->GetTuple1(j));
 
@@ -442,8 +424,8 @@ void vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
     }
 
     // exclude branches that consist of a single point
-    vtkIdList* pointCells = vtkIdList::New();
-    vtkIdList* cellPoints = vtkIdList::New();
+    vtkNew(vtkIdList, pointCells);
+    vtkNew(vtkIdList, cellPoints);
 
     bool remove;
     int bifurcationThis, bifurcationOthers;
@@ -492,8 +474,8 @@ void vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
 void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
 {
     // split centerline in bifurcations and branches
-    vtkPolyData* bifurcations = vtkPolyData::New();
-    vtkPolyData* branches = vtkPolyData::New();
+	vtkNew(vtkPolyData, bifurcations);
+	vtkNew(vtkPolyData, branches);
     this->SplitCenterline(bifurcations, branches);
 
     // enumerate all bifurcations and branches
@@ -501,14 +483,14 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
     this->ConnectivityCenterline(branches, this->BranchIdArrayName, this->BifurcationIdArrayName);
 
     // bring bifurcations and branches back together
-    vtkAppendFilter* append = vtkAppendFilter::New();
+	vtkNew(vtkAppendFilter, append);
     append->AddInputData(bifurcations);
     append->AddInputData(branches);
     append->MergePointsOn();
     append->Update();
 
     // convert vtkUnstructerdGrid to vtkPolyData
-    vtkGeometryFilter* geo = vtkGeometryFilter::New();
+	vtkNew(vtkGeometryFilter, geo);
     geo->SetInputData(append->GetOutput());
     geo->Update();
 
@@ -520,16 +502,15 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
     }
 
     this->Centerlines->DeepCopy(geo->GetOutput());
-    geo->Delete();
 
     // order nodes according to GlobalNodeId
-    vtkPoints* points = vtkPoints::New();
-    vtkCellArray* lines = vtkCellArray::New();
+	vtkNew(vtkPoints, points);
+	vtkNew(vtkCellArray, lines);
 
     vtkIntArray* globalIdArray = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->GlobalNodeIdArrayName));
     vtkIntArray* globalIdArrayInverse = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->GlobalNodeIdArrayName));
-    vtkIdList* globalMap = vtkIdList::New();
-    vtkIdList* globalMapInverse = vtkIdList::New();
+	vtkNew(vtkIdList, globalMap);
+	vtkNew(vtkIdList, globalMapInverse);
 
     int local_id;
     double point[3];
@@ -553,14 +534,14 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
     for (int i=0; i < this->Centerlines->GetNumberOfCells(); i++)
     {
     	vtkCell* cell = this->Centerlines->GetCell(i);
-        vtkLine* line = vtkLine::New();
+    	vtkNew(vtkLine, line);
         for (int j=0; j < cell->GetNumberOfPoints(); j++)
             line->GetPointIds()->SetId(j, globalMap->GetId(cell->GetPointId(j)));
         lines->InsertNextCell(line);
     }
 
     // create new vtkPolyData
-    vtkPolyData* polydata_ordered = vtkPolyData::New();
+	vtkNew(vtkPolyData, polydata_ordered);
     polydata_ordered->SetPoints(points);
     polydata_ordered->SetLines(lines);
     polydata_ordered->Modified();
@@ -569,8 +550,8 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
     polydata_ordered->GetPointData()->DeepCopy(this->Centerlines->GetPointData());
 
     // sort arrays
-    vtkSortDataArray* sort = vtkSortDataArray::New();
-    vtkIntArray* sortArray = vtkIntArray::New();
+	vtkNew(vtkSortDataArray, sort);
+	vtkNew(vtkIntArray, sortArray);
 
     for (int i=0; i < polydata_ordered->GetPointData()->GetNumberOfArrays(); i++)
     {
@@ -578,20 +559,19 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
         sort->Sort(sortArray, polydata_ordered->GetPointData()->GetAbstractArray(i));
     }
     this->Centerlines->DeepCopy(polydata_ordered);
-    polydata_ordered->Delete();
 }
 
 
 void vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcations, vtkPolyData* branches)
 {
     // map point data to cell data
-    vtkPointDataToCellData* map = vtkPointDataToCellData::New();
+	vtkNew(vtkPointDataToCellData, map);
     map->SetInputData(this->Centerlines);
     map->PassPointDataOn();
     map->Update();
 
     // threshold according to bifurcation cell array
-    vtkThreshold* thresh = vtkThreshold::New();
+	vtkNew(vtkThreshold, thresh);
     thresh->SetInputData(map->GetOutput());
     thresh->SetInputArrayToProcess(0, 0, 0, 1, this->CenterlineSectionBifurcationArrayName);
 
@@ -601,7 +581,7 @@ void vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcation
         thresh->Update();
 
         // convert vtkUnstructerdGrid to vtkPolyData
-        vtkGeometryFilter* geo = vtkGeometryFilter::New();
+    	vtkNew(vtkGeometryFilter, geo);
         geo->SetInputData(thresh->GetOutput());
         geo->Update();
 
@@ -614,17 +594,14 @@ void vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcation
             bifurcations->DeepCopy(geo->GetOutput());
             break;
         }
-        geo->Delete();
     }
-    thresh->Delete();
-    map->Delete();
 }
 
 
 void vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo, char* nameThis, char* nameOther)
 {
     // color geometry by connectivity
-    vtkConnectivityFilter* connect = vtkConnectivityFilter::New();
+	vtkNew(vtkConnectivityFilter, connect);
     connect->SetInputData(geo);
     connect->SetExtractionModeToAllRegions();
     connect->ColorRegionsOn();
@@ -633,20 +610,20 @@ void vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo,
 
     // map connect points to global id
     vtkIntArray* connectGlobalId = vtkIntArray::SafeDownCast(connected->GetPointData()->GetArray(this->GlobalNodeIdArrayName));
-    vtkIdList* connectToGlobal = vtkIdList::New();
+	vtkNew(vtkIdList, connectToGlobal);
     for (int j = 0; j < connected->GetNumberOfPoints(); j++)
         connectToGlobal->InsertNextId(connectGlobalId->GetValue(j));
 
     // add path array for each segment to geometry
     vtkDataArray* regionId = connected->GetPointData()->GetArray("RegionId");
-    vtkDoubleArray* path = vtkDoubleArray::New();
+	vtkNew(vtkDoubleArray, path);
     path->SetNumberOfValues(connected->GetNumberOfPoints());
     path->SetName(this->PathArrayName);
     path->Fill(-1);
     connected->GetPointData()->AddArray(path);
 
     // threshold according to RegionId cells
-    vtkThreshold* thresh = vtkThreshold::New();
+    vtkNew(vtkThreshold, thresh);
     thresh->SetInputData(connected);
     thresh->SetInputArrayToProcess(0, 0, 0, 1, "RegionId");
 
@@ -663,7 +640,7 @@ void vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo,
 
         // map thresh points to global id
         vtkIntArray* threshGlobalId = vtkIntArray::SafeDownCast(thresh->GetOutput()->GetPointData()->GetArray(this->GlobalNodeIdArrayName));
-        vtkIdList* threshToGlobal = vtkIdList::New();
+        vtkNew(vtkIdList, threshToGlobal);
         for (int j = 0; j < thresh->GetOutput()->GetNumberOfPoints(); j++)
             threshToGlobal->InsertNextId(threshGlobalId->GetValue(j));
 
@@ -700,13 +677,12 @@ void vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo,
 
     // rename RegionId
     geo->DeepCopy(connected);
-    connect->Delete();
     geo->GetPointData()->GetArray("RegionId")->SetName(nameThis);
     geo->GetCellData()->GetArray("RegionId")->SetName(nameThis);
 
     // add empty array
-    vtkIdTypeArray* idsPoints = vtkIdTypeArray::New();
-    vtkIdTypeArray* idsCell = vtkIdTypeArray::New();
+    vtkNew(vtkIdTypeArray, idsPoints);
+    vtkNew(vtkIdTypeArray, idsCell);
     idsPoints->SetNumberOfValues(geo->GetNumberOfPoints());
     idsCell->SetNumberOfValues(geo->GetNumberOfCells());
     idsPoints->SetName(nameOther);
@@ -738,7 +714,7 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
     vtkIntArray* centerlineClosedArray = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionClosedArrayName));
     vtkIntArray* centerlineBifurcationArray = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionBifurcationArrayName));
 
-    vtkIdList* cellIds = vtkIdList::New();
+    vtkNew(vtkIdList, cellIds);
     double point[3], tangent[3];
     const int n_point = this->Centerlines->GetNumberOfPoints();
 
@@ -747,7 +723,7 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
     {
     	// progress report
     	if ((p % (n_point / 10) == 0) || (p == n_point - 1))
-    		std::cout<<"    "<<p * 100 / (n_point - 1)<<"%"<<endl;
+    		std::cout<<"    "<<(p + 1) * 100 / (n_point - 1)<<"%"<<endl;
     	
         // get centerline point and tangent (= section normal)
         this->Centerlines->GetPoint(p, point);
@@ -767,12 +743,21 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
         }
 
         // slice surface geometry
-        vtkPolyData* section = vtkPolyData::New();
+        vtkNew(vtkPolyData, section);
         bool closed = false;
         vtkvmtkPolyDataBranchSections::ExtractCylinderSection(this->Surface,point,tangent,section,closed);
+        
+        // skip malformed sections
+        if (section->GetNumberOfPoints() < 4)
+            continue;
 
         // build slice geometry
         section->BuildCells();
+        if (section->GetNumberOfCells() == 0)
+            continue;
+        vtkPolygon* sectionPolygon = vtkPolygon::SafeDownCast(section->GetCell(0));
+
+        // save section
         vtkPoints* sectionCellPoints = section->GetCell(0)->GetPoints();
         int numberOfSectionCellPoints = sectionCellPoints->GetNumberOfPoints();
         centerlineSectionPolys->InsertNextCell(numberOfSectionCellPoints);
@@ -788,8 +773,8 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
         int intersectCenterline, intersectSurface;
         int bifurcation = 1;
 
-        area = vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(section);
-        shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,point,sizeRange);
+        area = vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(sectionPolygon);
+        shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(sectionPolygon,point,sizeRange);
         intersectCenterline = vtkvmtkPolyDataBranchSections::ComputeBranchCenterlineIntersections(section,this->Centerlines,point,tangent);
         intersectSurface = vtkvmtkPolyDataBranchSections::ComputeBranchSurfaceIntersections(section,this->BranchIdArrayNameTmp);
         if((intersectCenterline == 1) && (intersectSurface == 1))
@@ -811,7 +796,6 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
         centerlineShapeArray->InsertValue(p,shape);
         centerlineClosedArray->InsertValue(p,closed);
         centerlineBifurcationArray->InsertValue(p,bifurcation);
-        section->Delete();
     }
 }
 
@@ -819,22 +803,22 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
 void vtkvmtkPolyDataCenterlineSections::BranchSurface(char* nameThis, char* nameOther)
 {
     // output id array
-    vtkIntArray* thisSurf = vtkIntArray::New();
+	vtkNew(vtkIntArray, thisSurf);
     thisSurf->SetName(nameThis);
     thisSurf->SetNumberOfValues(this->Surface->GetNumberOfPoints());
     thisSurf->Fill(-1);
     this->Surface->GetPointData()->AddArray(thisSurf);
 
     // output distance array
-    vtkDoubleArray* surfDist = vtkDoubleArray::New();
+    vtkNew(vtkDoubleArray, surfDist);
     surfDist->SetNumberOfValues(this->Surface->GetNumberOfPoints());
     surfDist->Fill(-1);
 
     // build locator for surface points
-    vtkPolyData *dataset = vtkPolyData::New();
+    vtkNew(vtkPolyData, dataset);
     dataset->SetPoints(this->Surface->GetPoints());
 
-    vtkPointLocator* locator = vtkPointLocator::New();
+    vtkNew(vtkPointLocator, locator);
     locator->Initialize();
     locator->SetDataSet(dataset);
     locator->BuildLocator();
@@ -845,8 +829,8 @@ void vtkvmtkPolyDataCenterlineSections::BranchSurface(char* nameThis, char* name
     vtkDataArray* otherCent = vtkDataArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(nameOther));
     vtkDataArray* thisCent = vtkDataArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(nameThis));
 
-    vtkIdList* cellIds = vtkIdList::New();
-    vtkIdList* surfPointIds = vtkIdList::New();
+    vtkNew(vtkIdList, cellIds);
+    vtkNew(vtkIdList, surfPointIds);
     int thisId, otherId;
     double p_cent[3], p_surf[3], normal[3], diff[3];
     double radius, dist, dist_n;
@@ -899,7 +883,7 @@ void vtkvmtkPolyDataCenterlineSections::BranchSurface(char* nameThis, char* name
 void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
 {
     // remove duplicate points
-    vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+	vtkNew(vtkCleanPolyData, cleaner);
     cleaner->SetInputData(this->Centerlines);
     cleaner->PointMergingOn();
     cleaner->Update();
@@ -913,21 +897,21 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     }
 
     // build connected centerline geometry
-    vtkPoints* points = vtkPoints::New();
-    vtkCellArray* lines = vtkCellArray::New();
+	vtkNew(vtkPoints, points);
+	vtkNew(vtkCellArray, lines);
 
     // keep track of added points
-    vtkIdList* pointIds = vtkIdList::New();
+	vtkNew(vtkIdList, pointIds);
     pointIds->Initialize();
 
     // copy radius array from centerline
-    vtkDoubleArray* radius = vtkDoubleArray::New();
+	vtkNew(vtkDoubleArray, radius);
     radius->SetName(this->RadiusArrayName);
     radius->SetNumberOfValues(centerlines->GetNumberOfPoints());
     radius->Fill(0.0);
 
     // create unique id for each point
-    vtkIntArray* nodeId = vtkIntArray::New();
+	vtkNew(vtkIntArray, nodeId);
     nodeId->SetName(this->GlobalNodeIdArrayName);
     nodeId->SetNumberOfValues(centerlines->GetNumberOfPoints());
     nodeId->Fill(0);
@@ -958,7 +942,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
                 // add line connecting this point and previous point
                 int id_prev = pointIds->IsId(cell->GetPointId(p - 1));
                 int id_this = pointIds->IsId(cell->GetPointId(p));
-                vtkLine* line = vtkLine::New();
+                vtkNew(vtkLine, line);
                 line->GetPointIds()->SetId(0, id_prev);
                 line->GetPointIds()->SetId(1, id_this);
                 lines->InsertNextCell(line);
@@ -973,7 +957,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     }
 
     // create polydata
-    vtkPolyData* polydata = vtkPolyData::New();
+	vtkNew(vtkPolyData, polydata);
     polydata->SetPoints(points);
     polydata->SetLines(lines);
     polydata->Modified();
@@ -991,8 +975,8 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     }
 
     // add preliminary arrays for branches and bifurcations based on element connectivity
-    vtkIntArray* bifurcation = vtkIntArray::New();
-    vtkIntArray* branch = vtkIntArray::New();
+	vtkNew(vtkIntArray, bifurcation);
+	vtkNew(vtkIntArray, branch);
     bifurcation->SetName(this->BifurcationIdArrayNameTmp);
     branch->SetName(this->BranchIdArrayNameTmp);
     bifurcation->SetNumberOfValues(polydata->GetNumberOfPoints());
@@ -1007,7 +991,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     polydata->GetPointData()->AddArray(nodeId);
 
     // go through tree and color each branch/bifurcation
-    vtkIdList* cellIds = vtkIdList::New();
+	vtkNew(vtkIdList, cellIds);
     int branchId = 0;
     for (int p = 0; p < polydata->GetNumberOfPoints(); p++)
     {
@@ -1028,17 +1012,17 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     }
 
     // build locator for centerline points
-    vtkPolyData *dataset = vtkPolyData::New();
+	vtkNew(vtkPolyData, dataset);
     dataset->SetPoints(polydata->GetPoints());
 
-    vtkPointLocator* locator = vtkPointLocator::New();
+	vtkNew(vtkPointLocator, locator);
     locator->Initialize();
     locator->SetDataSet(dataset);
     locator->BuildLocator();
 
-    vtkIdList* pointCells = vtkIdList::New();
-    vtkIdList* cellPoints = vtkIdList::New();
-    vtkIdList* closePoints = vtkIdList::New();
+	vtkNew(vtkIdList, pointCells);
+	vtkNew(vtkIdList, cellPoints);
+	vtkNew(vtkIdList, closePoints);
 
     double point[3];
 
@@ -1060,7 +1044,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
             int branchIdUpstream = branch->GetValue(i);
 
             // get downstream Branch Ids
-            vtkIdList* branchIdsDownstream = vtkIdList::New();
+        	vtkNew(vtkIdList, branchIdsDownstream);
             for (int j = 0; j < pointCells->GetNumberOfIds(); j++)
             {
                 // loop all points attached to cell
@@ -1083,7 +1067,7 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     }
 
     // mark points within two 2 * sphere radius of caps for smoothing
-    vtkIntArray* smoothing = vtkIntArray::New();
+	vtkNew(vtkIntArray, smoothing);
     smoothing->SetNumberOfValues(polydata->GetNumberOfPoints());
     smoothing->Fill(0);
 
@@ -1167,7 +1151,6 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
                 }
 
     this->Centerlines->DeepCopy(polydata);
-    polydata->Delete();
 }
 
 
@@ -1175,16 +1158,16 @@ void vtkvmtkPolyDataCenterlineSections::CalculateTangent()
 {
 
     // build locator for surface points
-    vtkPolyData *dataset = vtkPolyData::New();
+	vtkNew(vtkPolyData, dataset);
     dataset->SetPoints(this->Surface->GetPoints());
 
-    vtkPointLocator* locator = vtkPointLocator::New();
+	vtkNew(vtkPointLocator, locator);
     locator->Initialize();
     locator->SetDataSet(dataset);
     locator->BuildLocator();
 
     // initialize
-    vtkIdList* cellIds = vtkIdList::New();
+	vtkNew(vtkIdList, cellIds);
 
     double point[3], point0[3], point1[3];
     double distance;
@@ -1243,7 +1226,7 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     vtkPolyData* polydata = this->Centerlines;
 
     // count number of caps
-    vtkIdList* cellIds = vtkIdList::New();
+    vtkNew(vtkIdList, cellIds);
     int n_cap = 0;
     for (int i = 0; i < polydata->GetNumberOfPoints(); i++)
     {
@@ -1259,11 +1242,11 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     vtkIntArray* branch = vtkIntArray::SafeDownCast(polydata->GetPointData()->GetArray(this->BranchIdArrayNameTmp));
 
     // create new arrays
-    vtkDoubleArray* radius_new = vtkDoubleArray::New();
-    vtkDoubleArray* normals_new = vtkDoubleArray::New();
-    vtkIntArray* bifurcation_new = vtkIntArray::New();
-    vtkIntArray* branch_new = vtkIntArray::New();
-    vtkIntArray* nodeId_new = vtkIntArray::New();
+    vtkNew(vtkDoubleArray, radius_new);
+    vtkNew(vtkDoubleArray, normals_new);
+    vtkNew(vtkIntArray, bifurcation_new);
+    vtkNew(vtkIntArray, branch_new);
+    vtkNew(vtkIntArray, nodeId_new);
 
     radius_new->SetName(this->RadiusArrayName);
     normals_new->SetName(this->CenterlineSectionNormalArrayName);
@@ -1285,9 +1268,9 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     nodeId_new->Fill(0);
 
     // create new points
-    vtkPoints* points = vtkPoints::New();
-    vtkCellArray* lines = vtkCellArray::New();
-    vtkIdList* inserted = vtkIdList::New();
+    vtkNew(vtkPoints, points);
+    vtkNew(vtkCellArray, lines);
+    vtkNew(vtkIdList, inserted);
 
     double point_c[3], point_i[3], point_new[3], tangent_c[3], tangent_i[3], tangent_new[3];
     double radius_c, radius_i;
@@ -1345,7 +1328,7 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
             radius_new->SetValue(i_new, 0.5 * (radius->GetTuple1(i) + radius->GetTuple1(i - sign)));
 
             // insert new element
-            vtkLine* line = vtkLine::New();
+            vtkNew(vtkLine, line);
             if (i == 0)
             {
                 line->GetPointIds()->SetId(0, 0);
@@ -1379,7 +1362,7 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
         inserted->InsertNextId(i + n_cap);
         if (i > 0)
         {
-            vtkLine* line = vtkLine::New();
+            vtkNew(vtkLine, line);
             for (int j=0; j<2; j++)
                 line->GetPointIds()->SetId(j, inserted->GetId(polydata->GetCell(i - 1)->GetPointId(j)));
             lines->InsertNextCell(line);
@@ -1392,7 +1375,7 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     }
 
     // create new polydata
-    vtkPolyData* polydata_new = vtkPolyData::New();
+    vtkNew(vtkPolyData, polydata_new);
     polydata_new->SetPoints(points);
     polydata_new->SetLines(lines);
     polydata_new->Modified();
@@ -1404,13 +1387,12 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     polydata_new->GetPointData()->AddArray(normals_new);
 
     polydata->DeepCopy(polydata_new);
-    polydata_new->Delete();
 }
 
 bool vtkvmtkPolyDataCenterlineSections::IsOnePiece(vtkPolyData* inp)
 {
     // check if geometry is one piece
-    vtkConnectivityFilter* connectivity = vtkConnectivityFilter::New();
+    vtkNew(vtkConnectivityFilter, connectivity);
     connectivity->SetInputData(inp);
     connectivity->SetExtractionModeToAllRegions();
     connectivity->ColorRegionsOn();
