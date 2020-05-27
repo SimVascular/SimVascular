@@ -197,50 +197,50 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
 
     if (!this->Centerlines)
     {
-        vtkErrorMacro(<<"Centerlines not set");
-        return 1;
+        fprintf(stderr,"Centerlines not set");
+        return SV_ERROR;
     }
 
     if (!this->CenterlineSectionAreaArrayName)
     {
-        vtkErrorMacro(<<"CenterlineSectionAreaArrayName not specified");
-        return 1;
+        fprintf(stderr,"CenterlineSectionAreaArrayName not specified");
+        return SV_ERROR;
     }
 
     if (!CenterlineSectionMinSizeArrayName)
     {
-        vtkErrorMacro(<<"CenterlineSectionMinSizeArrayName not specified");
-        return 1;
+        fprintf(stderr,"CenterlineSectionMinSizeArrayName not specified");
+        return SV_ERROR;
     }
 
     if (!CenterlineSectionMaxSizeArrayName)
     {
-        vtkErrorMacro(<<"CenterlineSectionMaxSizeArrayName not specified");
-        return 1;
+        fprintf(stderr,"CenterlineSectionMaxSizeArrayName not specified");
+        return SV_ERROR;
     }
 
     if (!CenterlineSectionShapeArrayName)
     {
-        vtkErrorMacro(<<"CenterlineSectionShapeArrayName not specified");
-        return 1;
+        fprintf(stderr,"CenterlineSectionShapeArrayName not specified");
+        return SV_ERROR;
     }
 
     if (!CenterlineSectionClosedArrayName)
     {
-        vtkErrorMacro(<<"CenterlineSectionClosedArrayName not specified");
-        return 1;
+        fprintf(stderr,"CenterlineSectionClosedArrayName not specified");
+        return SV_ERROR;
     }
 
     if (!CenterlineSectionBifurcationArrayName)
     {
-        vtkErrorMacro(<<"CenterlineSectionBifurcationArrayName not specified");
-        return 1;
+        fprintf(stderr,"CenterlineSectionBifurcationArrayName not specified");
+        return SV_ERROR;
     }
 
     if (!CenterlineSectionNormalArrayName)
     {
-        vtkErrorMacro(<<"CenterlineSectionNormalArrayName not specified");
-        return 1;
+        fprintf(stderr,"CenterlineSectionNormalArrayName not specified");
+        return SV_ERROR;
     }
 
     vtkNew(vtkPoints, outputPoints);
@@ -301,6 +301,7 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     output->GetCellData()->AddArray(centerlineSectionGlobalNodeIdArray);
 
     // generate surface normals
+    std::cout<<"  Generating surface normals"<<endl;
     vtkNew(vtkPolyDataNormals, surfaceNormals);
     surfaceNormals->SetInputData(input);
     surfaceNormals->SplittingOff();
@@ -313,21 +314,32 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
 
     // generate a clean, simply connected centerline
     std::cout<<"  Generating clean centerline"<<endl;
-    this->GenerateCleanCenterline();
+    if (this->GenerateCleanCenterline() == SV_ERROR)
+    {
+        fprintf(stderr,"GenerateCleanCenterline failed");
+        return SV_ERROR;
+    }
 
     // initialize normal array
-    std::cout<<"  Generating surface normals"<<endl;
     this->Centerlines->GetPointData()->AddArray(centerlineNormalArray);
     int numberOfCenterlinePoints = this->Centerlines->GetNumberOfPoints();
     centerlineNormalArray->SetNumberOfTuples(numberOfCenterlinePoints);
 
     // calculate centerline tangent vectors (= section normal vectors)
     std::cout<<"  Calculating centerline tangents"<<endl;
-    this->CalculateTangent();
+    if (this->CalculateTangent() == SV_ERROR)
+    {
+        fprintf(stderr,"CalculateTangent failed");
+        return SV_ERROR;
+    }
 
     // add additional points at caps to prevent bifurcations at caps
     std::cout<<"  Refining centerline at caps"<<endl;
-    this->RefineCapPoints();
+    if (this->RefineCapPoints() == SV_ERROR)
+    {
+        fprintf(stderr,"RefineCapPoints failed");
+        return SV_ERROR;
+    }
 
     // initialize centerline arrays
     this->Centerlines->GetPointData()->AddArray(centerlineAreaArray);
@@ -346,38 +358,67 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     centerlineClosedArray->SetNumberOfTuples(numberOfCenterlinePoints);
     centerlineBifurcationArray->SetNumberOfTuples(numberOfCenterlinePoints);
 
+    // initialize (important if values can't be computed at some point)
+    centerlineAreaArray->Fill(0);
+    centerlineMinSizeArray->Fill(0);
+    centerlineMaxSizeArray->Fill(0);
+    centerlineShapeArray->Fill(0);
+    centerlineClosedArray->Fill(0);
+    centerlineBifurcationArray->Fill(1);
+
     // preliminary color surface according to centerline BranchIdTmp to allow bifurcation detection
     std::cout<<"  Rough coloring surface branches"<<endl;
-    this->BranchSurface(this->BranchIdArrayNameTmp, this->BifurcationIdArrayNameTmp);
+    if (this->BranchSurface(this->BranchIdArrayNameTmp, this->BifurcationIdArrayNameTmp) == SV_ERROR)
+    {
+        fprintf(stderr,"BranchSurface failed");
+        return SV_ERROR;
+    }
 
     // slice centerline to get cross-sectional area and detect bifurcation regions
     std::cout<<"  Slicing surface at "<<this->Centerlines->GetNumberOfPoints()<<" centerline points"<<endl;
-    this->ComputeCenterlineSections(output);
+    if (this->ComputeCenterlineSections(output) == SV_ERROR)
+    {
+        fprintf(stderr,"ComputeCenterlineSections failed");
+        return SV_ERROR;
+    }
 
     // clean up centerline bifurcation detection
     std::cout<<"  Cleaning centerline bifurcations"<<endl;
-    this->CleanBifurcation();
+    if (this->CleanBifurcation() == SV_ERROR)
+    {
+        fprintf(stderr,"CleanBifurcation failed");
+        return SV_ERROR;
+    }
 
     // split into bifurcations and branches
     std::cout<<"  Splitting centerline in branches and bifurcations"<<endl;
-    this->GroupCenterline();
+    if (this->GroupCenterline() == SV_ERROR)
+    {
+        fprintf(stderr,"GroupCenterline failed");
+        return SV_ERROR;
+    }
 
     // final color surface according to centerline BranchId and BifurcationId
     std::cout<<"  Coloring surface branches"<<endl;
-    this->BranchSurface(this->BranchIdArrayName, this->BifurcationIdArrayName);
-    std::cout<<"  Coloring surface bifurcations"<<endl;
-    this->BranchSurface(this->BifurcationIdArrayName, this->BranchIdArrayName);
+    if (this->BranchSurface(this->BranchIdArrayName, this->BifurcationIdArrayName) == SV_ERROR)
+    {
+        fprintf(stderr,"BranchSurface failed");
+        return SV_ERROR;
+    }
 
-    // delete temporary arrays
-    this->Centerlines->GetPointData()->RemoveArray(this->BifurcationIdArrayNameTmp);
-    this->Centerlines->GetPointData()->RemoveArray(this->BranchIdArrayNameTmp);
-    
+    std::cout<<"  Coloring surface bifurcations"<<endl;
+    if (this->BranchSurface(this->BifurcationIdArrayName, this->BranchIdArrayName) == SV_ERROR)
+    {
+        fprintf(stderr,"BranchSurface failed");
+        return SV_ERROR;
+    }
+
     std::cout<<"  Done!"<<endl;
-    return 1;
+    return SV_OK;
 }
 
 
-void vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
+int vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
 {
     // modify this array to ensure bifurcations are only where they should be
     vtkIntArray* isBifurcation = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionBifurcationArrayName));
@@ -468,10 +509,11 @@ void vtkvmtkPolyDataCenterlineSections::CleanBifurcation()
         }
     }
 
+    return SV_OK;
 }
 
 
-void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
+int vtkvmtkPolyDataCenterlineSections::GroupCenterline()
 {
     // split centerline in bifurcations and branches
 	vtkNew(vtkPolyData, bifurcations);
@@ -494,14 +536,14 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
     geo->SetInputData(append->GetOutput());
     geo->Update();
 
+    this->Centerlines->DeepCopy(geo->GetOutput());
+
     // check if geometry is one piece
     if (!(this->IsOnePiece(geo->GetOutput())))
     {
-        vtkErrorMacro(<< "Input centerline consists of more than one piece");
-        return;
+        fprintf(stderr, "Input centerline consists of more than one piece");
+        return SV_ERROR;
     }
-
-    this->Centerlines->DeepCopy(geo->GetOutput());
 
     // order nodes according to GlobalNodeId
 	vtkNew(vtkPoints, points);
@@ -559,10 +601,12 @@ void vtkvmtkPolyDataCenterlineSections::GroupCenterline()
         sort->Sort(sortArray, polydata_ordered->GetPointData()->GetAbstractArray(i));
     }
     this->Centerlines->DeepCopy(polydata_ordered);
+
+    return SV_OK;
 }
 
 
-void vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcations, vtkPolyData* branches)
+int vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcations, vtkPolyData* branches)
 {
     // map point data to cell data
 	vtkNew(vtkPointDataToCellData, map);
@@ -585,20 +629,17 @@ void vtkvmtkPolyDataCenterlineSections::SplitCenterline(vtkPolyData* bifurcation
         geo->SetInputData(thresh->GetOutput());
         geo->Update();
 
-        switch (i)
-        {
-        case 0:
+        if (i == 0)
             branches->DeepCopy(geo->GetOutput());
-            break;
-        case 1:
+		else if (i == 1)
             bifurcations->DeepCopy(geo->GetOutput());
-            break;
-        }
     }
+
+    return SV_OK;
 }
 
 
-void vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo, char* nameThis, char* nameOther)
+int vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo, char* nameThis, char* nameOther)
 {
     // color geometry by connectivity
 	vtkNew(vtkConnectivityFilter, connect);
@@ -691,9 +732,11 @@ void vtkvmtkPolyDataCenterlineSections::ConnectivityCenterline(vtkPolyData* geo,
     idsCell->Fill(-1);
     geo->GetPointData()->AddArray(idsPoints);
     geo->GetCellData()->AddArray(idsCell);
+
+    return SV_OK;
 }
 
-void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* output)
+int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* output)
 {
     vtkPoints* centerlineSectionPoints = output->GetPoints();
     vtkCellArray* centerlineSectionPolys = output->GetPolys();
@@ -749,12 +792,18 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
         
         // skip malformed sections
         if (section->GetNumberOfPoints() < 4)
+        {
+            std::cout<<"    Skipping point "<<p<<" (less than 4 section points)"<<endl;
             continue;
+        }
 
         // build slice geometry
         section->BuildCells();
         if (section->GetNumberOfCells() == 0)
+        {
+            std::cout<<"    Skipping point "<<p<<" (empty section)"<<endl;
             continue;
+        }
         vtkPolygon* sectionPolygon = vtkPolygon::SafeDownCast(section->GetCell(0));
 
         // save section
@@ -797,11 +846,25 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* o
         centerlineClosedArray->InsertValue(p,closed);
         centerlineBifurcationArray->InsertValue(p,bifurcation);
     }
+
+    return SV_OK;
 }
 
 
-void vtkvmtkPolyDataCenterlineSections::BranchSurface(char* nameThis, char* nameOther)
+int vtkvmtkPolyDataCenterlineSections::BranchSurface(char* nameThis, char* nameOther)
 {
+	if (!(this->Centerlines->GetPointData()->HasArray(nameThis)))
+	{
+		fprintf(stderr, "nameThis not found in Centerline");
+		return SV_ERROR;
+	}
+
+	if (!(this->Centerlines->GetPointData()->HasArray(nameOther)))
+	{
+		fprintf(stderr, "nameOther not found in Centerline");
+		return SV_ERROR;
+	}
+
     // output id array
 	vtkNew(vtkIntArray, thisSurf);
     thisSurf->SetName(nameThis);
@@ -877,10 +940,12 @@ void vtkvmtkPolyDataCenterlineSections::BranchSurface(char* nameThis, char* name
             }
         }
     }
+
+    return SV_OK;
 }
 
 
-void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
+int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
 {
     // remove duplicate points
 	vtkNew(vtkCleanPolyData, cleaner);
@@ -892,8 +957,8 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     // check if geometry is one piece
     if (!(this->IsOnePiece(cleaner->GetOutput())))
     {
-        vtkErrorMacro(<< "Input centerline consists of more than one piece");
-        return;
+        fprintf(stderr, "Input centerline consists of more than one piece");
+        return SV_ERROR;
     }
 
     // build connected centerline geometry
@@ -965,13 +1030,13 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     // check mesh consistency
     if (polydata->GetNumberOfPoints() != cleaner->GetOutput()->GetNumberOfPoints())
     {
-        vtkErrorMacro(<< "Number of points mismatch");
-        return;
+        fprintf(stderr, "Number of points mismatch");
+        return SV_ERROR;
     }
     if (polydata->GetNumberOfPoints() != polydata->GetNumberOfCells() + 1)
     {
-        vtkErrorMacro(<< "Number of cells mismatch");
-        return;
+        fprintf(stderr, "Number of cells mismatch");
+        return SV_ERROR;
     }
 
     // add preliminary arrays for branches and bifurcations based on element connectivity
@@ -1151,10 +1216,12 @@ void vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
                 }
 
     this->Centerlines->DeepCopy(polydata);
+
+    return SV_OK;
 }
 
 
-void vtkvmtkPolyDataCenterlineSections::CalculateTangent()
+int vtkvmtkPolyDataCenterlineSections::CalculateTangent()
 {
 
     // build locator for surface points
@@ -1219,9 +1286,11 @@ void vtkvmtkPolyDataCenterlineSections::CalculateTangent()
         }
         centerlineNormalArray->InsertTuple(p, tangent);
     }
+
+    return SV_OK;
 }
 
-void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
+int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
 {
     vtkPolyData* polydata = this->Centerlines;
 
@@ -1387,6 +1456,8 @@ void vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     polydata_new->GetPointData()->AddArray(normals_new);
 
     polydata->DeepCopy(polydata_new);
+
+    return SV_OK;
 }
 
 bool vtkvmtkPolyDataCenterlineSections::IsOnePiece(vtkPolyData* inp)

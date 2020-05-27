@@ -22,6 +22,9 @@ Version:   $Revision: 1.1 $
 // .SECTION Description
 // ...
 
+#define SV_OK                 1
+#define SV_ERROR              0
+
 #ifndef __vtkvmtkPolyDataCenterlineSections_h
 #define __vtkvmtkPolyDataCenterlineSections_h
 
@@ -92,17 +95,17 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   // based on original vmtk function
-  void ComputeCenterlineSections(vtkPolyData* output);
+  int ComputeCenterlineSections(vtkPolyData* output);
 
   // new functions to detect branches/bifurcations
-  void CleanBifurcation();
-  void ConnectivityCenterline(vtkPolyData* geo, char* nameThis, char* nameOther);
-  void GroupCenterline();
-  void SplitCenterline(vtkPolyData* branches, vtkPolyData* bifurcations);
-  void GenerateCleanCenterline();
-  void BranchSurface(char* nameBranch, char* nameBifurcation);
-  void CalculateTangent();
-  void RefineCapPoints();
+  int CleanBifurcation();
+  int ConnectivityCenterline(vtkPolyData* geo, char* nameThis, char* nameOther);
+  int GroupCenterline();
+  int SplitCenterline(vtkPolyData* branches, vtkPolyData* bifurcations);
+  int GenerateCleanCenterline();
+  int BranchSurface(char* nameBranch, char* nameBifurcation);
+  int CalculateTangent();
+  int RefineCapPoints();
 
   bool IsOnePiece(vtkPolyData* inp);
 
