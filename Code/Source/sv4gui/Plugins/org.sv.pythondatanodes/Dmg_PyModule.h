@@ -29,59 +29,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiPythonDataNodesPluginActivator object provides access to 
-// a ctkPluginContext object, the execution context of a plugin within 
-// the framework used to access other methods that interact with the framework.
-//
-// This object is only created when running SV with the GUI, it is not 
-// created when running the SV Python interface from the command line.
-//
-#include "sv4gui_PythonDataNodesPluginActivator.h"
-#include <service/cm/ctkConfigurationAdmin.h>
-#include <service/cm/ctkConfiguration.h>
+#ifndef SV4GUI_DMG_INIT_PY_H
+#define SV4GUI_DMG_INIT_PY_H
 
-#include <iostream>
+#include "SimVascular.h"
+#include "Python.h"
+#include "sv4gui_ContourGroup.h"
+#include "sv4gui_Model.h"
 
-ctkPluginContext* sv4guiPythonDataNodesPluginActivator::m_Context = nullptr;
-sv4guiPythonDataNodesPluginActivator* sv4guiPythonDataNodesPluginActivator::m_Inst = nullptr;
+#if PYTHON_MAJOR_VERSION == 2
+PyMODINIT_FUNC initpyDmg();
+#elif PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_PyDmg();
+#endif
 
-sv4guiPythonDataNodesPluginActivator::sv4guiPythonDataNodesPluginActivator()
-{
-  m_Inst = this;
-}
-
-sv4guiPythonDataNodesPluginActivator::~sv4guiPythonDataNodesPluginActivator()
-{
-}
-
-sv4guiPythonDataNodesPluginActivator* sv4guiPythonDataNodesPluginActivator::GetDefault()
-{
-  return m_Inst;
-}
-
-//-------
-// start
-//-------
-// Start the plugin.
-//
-void sv4guiPythonDataNodesPluginActivator::start(ctkPluginContext* context)
-{
-  berry::AbstractUICTKPlugin::start(context);
-  this->m_Context = context;
-}
-
-//------
-// stop
-//------
-// Stop the plugin.
-//
-void sv4guiPythonDataNodesPluginActivator::stop(ctkPluginContext* context)
-{
-  this->m_Context = nullptr;
-}
-
-ctkPluginContext* sv4guiPythonDataNodesPluginActivator::GetContext()
-{
-  return m_Context;
-}
-
+#endif 

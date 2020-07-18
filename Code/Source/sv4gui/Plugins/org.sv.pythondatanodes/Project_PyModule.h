@@ -29,59 +29,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiPythonDataNodesPluginActivator object provides access to 
-// a ctkPluginContext object, the execution context of a plugin within 
-// the framework used to access other methods that interact with the framework.
+// This is currently not used.
+
+#ifndef SV4_PROJECT_PYTHON_MODULE_H
+#define SV4_PROJECT_PYTHON_MODULE_H
+
+#include "SimVascular.h"
+#include "Python.h"
+
+//-----------
+// PyProject 
+//-----------
 //
-// This object is only created when running SV with the GUI, it is not 
-// created when running the SV Python interface from the command line.
+// [TODO:DaveP] is extern needed?
 //
-#include "sv4gui_PythonDataNodesPluginActivator.h"
-#include <service/cm/ctkConfigurationAdmin.h>
-#include <service/cm/ctkConfiguration.h>
-
-#include <iostream>
-
-ctkPluginContext* sv4guiPythonDataNodesPluginActivator::m_Context = nullptr;
-sv4guiPythonDataNodesPluginActivator* sv4guiPythonDataNodesPluginActivator::m_Inst = nullptr;
-
-sv4guiPythonDataNodesPluginActivator::sv4guiPythonDataNodesPluginActivator()
+typedef struct
 {
-  m_Inst = this;
-}
+  PyObject_HEAD
+  int id;
+} PyProject;
 
-sv4guiPythonDataNodesPluginActivator::~sv4guiPythonDataNodesPluginActivator()
-{
-}
 
-sv4guiPythonDataNodesPluginActivator* sv4guiPythonDataNodesPluginActivator::GetDefault()
-{
-  return m_Inst;
-}
+#if PYTHON_MAJOR_VERSION == 2
+PyMODINIT_FUNC  initpyProject();
+#endif
+#if PYTHON_MAJOR_VERSION == 3
+PyMODINIT_FUNC PyInit_PyProject();
+#endif
 
-//-------
-// start
-//-------
-// Start the plugin.
-//
-void sv4guiPythonDataNodesPluginActivator::start(ctkPluginContext* context)
-{
-  berry::AbstractUICTKPlugin::start(context);
-  this->m_Context = context;
-}
-
-//------
-// stop
-//------
-// Stop the plugin.
-//
-void sv4guiPythonDataNodesPluginActivator::stop(ctkPluginContext* context)
-{
-  this->m_Context = nullptr;
-}
-
-ctkPluginContext* sv4guiPythonDataNodesPluginActivator::GetContext()
-{
-  return m_Context;
-}
-
+#endif 
