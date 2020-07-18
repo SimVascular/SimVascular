@@ -297,6 +297,12 @@ void Contour::SetMaxControlPointNumber(int number)
     m_MaxControlPointNumber=number;
 }
 
+std::vector<std::array<double,3> > Contour::GetControlPoints()
+{
+    return m_ControlPoints;
+}
+
+
 std::array<double, 3> Contour::GetControlPoint(int index){
     std::array<double, 3> point;
     point.fill(0);

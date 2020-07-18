@@ -124,6 +124,35 @@ void circleContour::SetControlPoint(int index, std::array<double,3> point)
 
 }
 
+//-----------
+// GetRadius
+//-----------
+// Get the circle radius.
+//
+double circleContour::GetRadius()
+{
+  auto cpt1 = GetControlPoint(0);
+  auto cpt2 = GetControlPoint(1);
+
+  double mag = 0.0;
+  for (int i = 0; i < 3; i++) {
+      mag += (cpt1[i]-cpt2[i]) * (cpt1[i]-cpt2[i]);
+  }
+
+  return sqrt(mag);
+}
+
+//-----------
+// SetRadius
+//-----------
+//
+void circleContour::SetRadius(double radius)
+{
+  auto center = GetControlPoint(0);
+  SetControlPointByRadius(radius, center.data());
+}
+
+
 void circleContour::SetControlPointByRadius(double radius, double* point)
 {
     double centerPt[3];

@@ -65,14 +65,24 @@ std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::Read()
 
 std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string fileName)
 {
+    auto group = CreateGroupFromFile(fileName);
+    std::vector<mitk::BaseData::Pointer> result;
+    result.push_back(group.GetPointer());
+    return result;
+}
+
+sv4guiContourGroup::Pointer
+sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
+{
     TiXmlDocument document;
+    sv4guiContourGroup::Pointer group = sv4guiContourGroup::New();
 
     if (!document.LoadFile(fileName))
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
         //        MITK_ERROR << "Could not open/read/parse " << fileName;
         std::vector<mitk::BaseData::Pointer> empty;
-        return empty;
+        return group;
     }
 
     //    TiXmlElement* version = document.FirstChildElement("format");
@@ -83,8 +93,6 @@ std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string 
 //        MITK_ERROR << "No ContourGroup data in "<< fileName;
         mitkThrow() << "No ContourGroup data in "<< fileName;
     }
-
-    sv4guiContourGroup::Pointer group = sv4guiContourGroup::New();
 
     group->SetPathName(groupElement->Attribute("path_name"));
     int pathID=0;
@@ -195,6 +203,10 @@ std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string 
                 ct->SetTensionParameter(tensionParam);
             }
 
+            int contourID;
+            contourElement->QueryIntAttribute("id", &contourID);
+            contour->SetContourID(contourID);
+
             std::string method;
             contourElement->QueryStringAttribute("method", &method);
             contour->SetMethod(method);
@@ -273,9 +285,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string 
 
     }//timestep
 
-    std::vector<mitk::BaseData::Pointer> result;
-    result.push_back(group.GetPointer());
-    return result;
+    return group;;
 }
 
 mitk::IFileIO::ConfidenceLevel sv4guiContourGroupIO::GetReaderConfidenceLevel() const

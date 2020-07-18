@@ -214,6 +214,8 @@ public:
 
     int GetMaxFaceID() const;
 
+    std::map<std::string,int> GetFaceNameIDMap() const;
+
     int GetFaceNumber() const;
 
     std::string GetFaceName(int id) const;

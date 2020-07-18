@@ -1,0 +1,33 @@
+//-----------------------
+// PyPolygonGenerateData
+//-----------------------
+// Generate the PyPolygonSegmentation and SV Contour data from
+// a list of control points.
+//
+void PyPolygonGenerateData(PyUtilApiFunction& api, PyPolygonSegmentation* polygonSeg, const std::vector<std::array<double,3>>& points)
+{
+  auto contour = polygonSeg->super.contour; 
+
+  // Create SV control points, adding two points for center and scale.
+  //
+  std::vector<std::array<double,3>> controlPoints; 
+  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0}); 
+  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0}); 
+  for (auto pt : points) {
+      controlPoints.push_back(pt);
+  }
+
+  // Set object data.
+  polygonSeg->controlPoints = points; 
+  polygonSeg->center = PyUtilComputePointsCenter(points);
+  polygonSeg->normal = PyUtilComputeNormalFromlPoints(points);
+
+  // Define plane.
+  auto plane = vtkSmartPointer<vtkPlane>::New();
+  plane->SetOrigin(polygonSeg->center.data());
+  plane->SetNormal(polygonSeg->normal.data());
+  contour->SetPlaneGeometry(plane);
+
+  // Need to set control points after defining the plane. 
+  contour->SetControlPoints(controlPoints);
+}

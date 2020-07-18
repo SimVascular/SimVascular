@@ -57,6 +57,8 @@ public:
 
     static sv4guiMitkMesh::Pointer ReadFromFile(std::string fileName, bool readSurfaceMesh, bool readVolumeMesh);
 
+   static void WriteGroupToFile(sv4guiMitkMesh* mitkMesh, std::string& fileName);
+
 private:
     sv4guiMitkMeshIO* IOClone() const override;
 

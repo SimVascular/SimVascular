@@ -33,7 +33,7 @@
 #define SV4GUI_MODELIO_H
 
 #include <sv4guiModuleModelExports.h>
-
+#include "sv4gui_Model.h"
 #include "mitkAbstractFileIO.h"
 
 class SV4GUIMODULEMODEL_EXPORT sv4guiModelIO : public mitk::AbstractFileIO
@@ -45,9 +45,11 @@ public:
     using mitk::AbstractFileReader::Read;
     std::vector<mitk::BaseData::Pointer> Read() override;
     static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
+    static sv4guiModel::Pointer CreateGroupFromFile(std::string fileName);
     mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
     void Write() override;
+    void WriteGroupToFile(sv4guiModel* model, std::string& fileName);
     mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 
 private:

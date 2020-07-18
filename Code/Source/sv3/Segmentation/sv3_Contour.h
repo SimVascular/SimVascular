@@ -57,7 +57,8 @@ enum cKernelType {
     cKERNEL_CIRCLE,
     cKERNEL_POLYGON,
     cKERNEL_SPLINEPOLYGON,
-    cKERNEL_ELLIPSE
+    cKERNEL_ELLIPSE,
+    cKERNEL_CONTOUR
 };
 
 namespace sv3{
@@ -196,6 +197,8 @@ public:
     void RemoveControlPoint(int index);
 
     virtual void SetControlPoint(int index, std::array<double,3> point);
+
+    std::vector<std::array<double,3> > GetControlPoints();
 
     void SetControlPointSelectedIndex(int index);
 

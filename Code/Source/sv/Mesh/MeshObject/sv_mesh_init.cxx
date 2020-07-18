@@ -1670,7 +1670,7 @@ static int cvMesh_GetModelFaceInfoMtd( ClientData clientData, Tcl_Interp *interp
   }
 
   char info[99999];
-  geom->GetModelFaceInfo(info);
+  //geom->GetModelFaceInfo(info);
 
   Tcl_SetResult( interp, info, TCL_VOLATILE );
 

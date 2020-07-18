@@ -39,6 +39,9 @@
 
 #include "sv3_Spline.h"
 
+#include "vtkPolyData.h"
+#include "vtkSmartPointer.h"
+
 #include <array>
 #include <vector>
 
@@ -128,6 +131,8 @@ public:
     void CalculateBoundingBox(double *bounds);
 
     std::vector<PathPoint> GetExtendedPathPoints(double realBounds[6], double minSpacing, int& startingIndex){ std::vector<PathPoint> dummy; return dummy;};
+
+   vtkSmartPointer<vtkPolyData> CreateVtkPolyDataFromPath(bool fromControlPoints);
 
 protected:
 
