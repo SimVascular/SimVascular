@@ -29,9 +29,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SimVascular.h"
-#ifdef SV_USE_PYTHON
-  #include "Python.h"
-#endif
 #include "sv_StrPts.h"
 #include "sv3_ITKLset_ITKUtils.h"
 #include "sv_sys_geom.h"
@@ -42,20 +39,17 @@
 
 #include "sv3_Contour.h"
 #include "sv3_SegmentationUtils.h"
-#ifdef SV_USE_PYTHON
-  #include "sv3_Contour_init_py.h"
-#endif
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkPolyData.h>
 #include <vtkImageReslice.h>
 #include <iostream>
+
 using sv3::Contour;
 using sv3::PathElement;
 using sv3::SegmentationUtils;
 
 cKernelType Contour::gCurrentKernel;
-cvFactoryRegistrar Contour::gRegistrar;
 
 Contour::Contour()
     : cvRepositoryData( CONTOUR_T ),
@@ -82,6 +76,7 @@ Contour::Contour()
     m_ControlPointNonRemovableIndices[1]=1;
 
 
+    m_ContourID = 0;
     m_SubdivisionType=CONSTANT_TOTAL_NUMBER;
     m_SubdivisionNumber=0;
     m_SubdivisionSpacing=0.0;
@@ -113,43 +108,12 @@ Contour::Contour(const Contour &other)
     for(int i=0;i<5;i++){
         m_ControlPointNonRemovableIndices[i]=other.m_ControlPointNonRemovableIndices[i];
     }
-
 }
 
 Contour::~Contour()
 {
 }
 
-#ifdef SV_USE_PYTHON
-// --------------------------------
-// DefaultInstantiateContourObject
-// --------------------------------
-Contour* Contour::DefaultInstantiateContourObject(cKernelType t, PathElement::PathPoint pathPoint)
-{
-  // Get the adapt object factory registrar associated with the python interpreter
-  PyObject* pyGlobal = PySys_GetObject("ContourObjectRegistrar");
-  pyContourFactoryRegistrar* tmp = (pyContourFactoryRegistrar *) pyGlobal;
-  cvFactoryRegistrar* contourObjectRegistrar =tmp->registrar;
-  if (contourObjectRegistrar==NULL)
-  {
-    fprintf(stdout,"Cannot get contourObjectRegistrar from pySys");
-  }
-  Contour* contour = NULL;
-  if (t == cKERNEL_LEVELSET || t==cKERNEL_THRESHOLD|| t == cKERNEL_CIRCLE || t == cKERNEL_POLYGON || t == cKERNEL_SPLINEPOLYGON ||t == cKERNEL_ELLIPSE)
-  {
-    contour = (Contour *) (contourObjectRegistrar->UseFactoryMethod( t ));
-    contour->SetPathPoint(pathPoint);
-    if (contour == NULL) {
-		  fprintf( stdout, "Unable to create contour object for kernel (%i)\n",Contour::gCurrentKernel);
-    }
-  } else {
-    fprintf( stdout, "current kernel is not valid (%i)\n",t);
-  }
-
-  return contour;
-}
-
-#endif
 std::string Contour::GetClassName()
 {
     return "Contour";

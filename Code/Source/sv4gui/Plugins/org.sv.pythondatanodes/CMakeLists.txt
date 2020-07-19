@@ -32,12 +32,6 @@ project(org_sv_pythondatanodes)
 
 set(lib org_sv_pythondatanodes)
 
-if(SV_USE_PYTHON)
-	include_directories(${PYTHON_INCLUDE_PATH}
-	  ${PYTHON_INCLUDE_DIR}
-	  ${PYTHON_INCLUDE_DIRS})
-endif()
-
 if(SV_USE_TINYXML)
   include_directories(${TINYXML_INCLUDE_DIR})
 endif()

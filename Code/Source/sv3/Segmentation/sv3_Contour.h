@@ -113,18 +113,13 @@ public:
     };
 
     cKernelType GetKernel() const {return contour_kernel_;}
-    
-    static Contour* DefaultInstantiateContourObject(cKernelType t, PathElement::PathPoint pathPoint);
+    void SetKernel(cKernelType ktype) {contour_kernel_ = ktype;}
     
     static cKernelType gCurrentKernel;
     
-    static cvFactoryRegistrar gRegistrar;
-
     enum SubdivisionType {CONSTANT_TOTAL_NUMBER, CONSTANT_SUBDIVISION_NUMBER,CONSTANT_SPACING};
 
     static const int INVALID_INDEX=-2;
-
-    enum ShapeType {ONLY_CONTOUR, CIRCLE, ELLIPSE,POLYGON,CURVE_POLYGON};
 
     Contour();
 
@@ -163,8 +158,6 @@ public:
     bool IsFinished();
 
     void SetFinished(bool finished=true);
-
-    ShapeType GetShape();
 
     int GetSubdivisionNumber();
 
@@ -296,8 +289,6 @@ public:
     int m_ContourID;
 
     PathElement::PathPoint m_PathPoint;
-
-    ShapeType m_Shape;
 
     std::string m_Method;
 

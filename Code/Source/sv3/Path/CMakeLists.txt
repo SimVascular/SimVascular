@@ -37,11 +37,6 @@ set(export_directive path)
 set(export_file_name sv3PathExports.h)
 
 list(APPEND CORELIBS ${lib})
-if(SV_USE_PYTHON)
-	include_directories(${PYTHON_INCLUDE_PATH}
-	  ${PYTHON_INCLUDE_DIR}
-	  ${PYTHON_INCLUDE_DIRS})
-endif()
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
 
@@ -50,15 +45,7 @@ set(CXXSRCS sv3_PathElement.cxx sv3_PathGroup.cxx sv3_VtkParametricSpline.cxx sv
 set(HDRS sv3_PathElement.h sv3_PathGroup.h sv3_VtkParametricSpline.h sv3_Spline.h sv3_PathIO.h
   )
 
-if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv3_PathElement_init_py.cxx sv3_PathGroup_init_py.cxx sv3_PathIO_init_py.cxx)
-endif()
-
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

@@ -86,41 +86,46 @@ std::string circleContour::GetClassName()
     return "circleContour";
 }
 
+//-----------------
+// SetControlPoint
+//-----------------
+// Set the value of a control point.
+//
+// This sets the circle center (index=0) or boundary point (index=1).
+//
 void circleContour::SetControlPoint(int index, std::array<double,3> point)
 {
     double projPt[3];
     double pt[3];
     pt[0] = point[0]; pt[1] = point[1]; pt[2] = point[2];
-    printf("Plane pointer in circle is %p\n", m_vtkPlaneGeometry);
-    if (sv3::Contour::m_vtkPlaneGeometry==NULL)
-    {
-        std::array<double, 3> PT = this->GetPathPosPoint();
-        std::cout <<"PathPosPoint: "<<PT[0]<<" "<<PT[1]<<" "<<PT[2]<<std::endl;
-    }
-    //m_vtkPlaneGeometry->ProjectPoint(pt, projPt);
-    if(index == 0)
-    {
 
-        if(m_ControlPoints.size()==0)
-        {
+    // Project the point onto the plane.
+    m_vtkPlaneGeometry->ProjectPoint(point.data(), projPt);
+
+    // Set the circle center.
+    //
+    if (index == 0) {
+        if (m_ControlPoints.size() == 0) {
             m_ControlPoints.push_back(std::array<double,3>{projPt[0],projPt[1],projPt[2]});
-        }
-        else
-        {
+        } else {
             std::array<double,3> dirVec;
-            for (int i=0; i<3; i++)
-                dirVec[i]=projPt[i]-GetControlPoint(0)[i];
+            for (int i = 0; i < 3; i++) {
+                dirVec[i] = projPt[i] - GetControlPoint(0)[i];
+            }
             Shift(dirVec);
         }
-    }
-    else if ( index == 1 )
-    {
-        if(m_ControlPoints.size()<2)
+
+    // Set the circle radius.
+    //
+    } else if (index == 1) {
+        if (m_ControlPoints.size() < 2) {
             m_ControlPoints.push_back(std::array<double,3>{projPt[0],projPt[1],projPt[2]});
-        else
-            m_ControlPoints[1]=std::array<double,3>{projPt[0],projPt[1],projPt[2]};
+        } else {
+            m_ControlPoints[1] = std::array<double,3>{projPt[0],projPt[1],projPt[2]};
+        }
         ControlPointsChanged();
     }
+
 
 }
 

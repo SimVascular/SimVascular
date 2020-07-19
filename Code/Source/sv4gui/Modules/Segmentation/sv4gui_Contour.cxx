@@ -44,6 +44,7 @@ sv4guiContour::sv4guiContour()
       m_Extendable( false ),
       m_Selected(false)
 {
+  SetKernel(cKernelType::cKERNEL_CONTOUR);
 }
 
 sv4guiContour::sv4guiContour(const sv4guiContour &other)
@@ -52,6 +53,7 @@ sv4guiContour::sv4guiContour(const sv4guiContour &other)
     , m_Extendable(other.m_Extendable)
     , m_Selected(other.m_Selected)
 {
+  SetKernel(cKernelType::cKERNEL_CONTOUR);
 }
 
 sv4guiContour::~sv4guiContour()

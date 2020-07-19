@@ -36,23 +36,10 @@ set(export_directive vmtk_utils)
 set(export_file_name svVMTKUtilsExports.h)
 
 include_directories(${MMG_INCLUDE_DIR})
-if(SV_USE_PYTHON)
-	include_directories(${PYTHON_INCLUDE_PATH}
-		    ${PYTHON_INCLUDE_DIR}
-		    ${PYTHON_INCLUDE_DIRS})
-endif()
 SET(CXXSRCS sv_vmtk_utils.cxx)
 SET(HDRS sv_vmtk_utils.h)
 
-if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv_vmtk_utils_init_py.cxx)
-endif()
-
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_vmtk_utils_init.cxx)
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 target_link_libraries(${lib}
   ${VTK_LIBRARIES}

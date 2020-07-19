@@ -171,8 +171,8 @@ SetOcctSolidTypeFields(PyTypeObject& solidType)
 void
 InitOcct()
 {
-  //std::cout << "[InitOcct] " << std::endl;
-  //std::cout << "[InitOcct] ========= InitOcct ========== " << std::endl;
+  std::cout << "[InitOcct] " << std::endl;
+  std::cout << "[InitOcct] ========= InitOcct ========== " << std::endl;
   Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
   OCCTManager = XCAFApp_Application::GetApplication();
   Handle(TDocStd_Document) doc;
@@ -181,12 +181,12 @@ InitOcct()
   if (!XCAFDoc_DocumentTool::IsXCAFDocument(doc)) {
     fprintf(stdout,"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly.\n");
   }
-
-  printf("  %-12s %s\n","Python API OpenCASCADE:", OCC_VERSION_COMPLETE);
+  printf("%-12s %s\n","[InitOcct] Python API OpenCASCADE version:", OCC_VERSION_COMPLETE);
 
   // Register the file extensions: brep, step, iges and stl. 
   auto registerFunction = new sv4guiRegisterOCCTFunction();
 
+  std::cout << "[InitOcct] Done. " << std::endl;
 }
 
 

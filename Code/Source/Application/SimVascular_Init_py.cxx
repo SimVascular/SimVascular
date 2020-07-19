@@ -46,48 +46,121 @@
 
 #include "vtkToolkits.h"
 
-#include "sv_repos_init_py.h"
-#include "sv_geom_init_py.h"
-#include "sv2_image_init_py.h"
-#include "sv_math_init_py.h"
-#include "sv_polydatasolid_init_py.h"
+//#include "sv_repos_init_py.h"
+#include "Geometry_PyModule.h"
+//#include "sv2_image_init_py.h"
+#include "Math_PyModule.h"
+//#include "sv_polydatasolid_init_py.h"
 
-#include "sv_solid_init_py.h"
-#include "sv3_PathElement_init_py.h"
-#include "sv3_Contour_init_py.h"
-#include "sv3_CircleContour_init_py.h"
-#include "sv3_LevelSetContour_init_py.h"
-#include "sv3_ThresholdContour_init_py.h"
-#include "sv3_SplinePolygonContour_init_py.h"
-#include "sv3_PolygonContour_init_py.h"
+#include "Modeling_PyModule.h"
+#include "PathPlanning_PyModule.h"
+//#include "sv3_PathGroup_init_py.h"
+#include "Segmentation_PyModule.h"
+//#include "sv3_CircleContour_init_py.h"
+//#include "sv3_LevelSetContour_init_py.h"
+//#include "sv3_ThresholdContour_init_py.h"
+//#include "sv3_SplinePolygonContour_init_py.h"
+//#include "sv3_PolygonContour_init_py.h"
+#include "Project_PyModule.h"
 //#include "sv4gui_Vis_init_py.h"
 
 #ifdef SV_USE_VMTK
-  #include "sv_vmtk_utils_init_py.h"
-#endif
-
-#ifdef SV_USE_OpenCASCADE
-  #include "sv_occt_init_py.h"
+  #include "Vmtk_PyModule.h"
 #endif
 
 #ifdef SV_USE_TETGEN
-  #include "sv_mesh_init_py.h"
-  #include "sv_tetgen_mesh_init_py.h"
+  #include "Meshing_PyModule.h"
 #endif
 
 #ifdef SV_USE_MMG
-  #include "sv_mesh_init_py.h"
-  #include "sv_mmg_mesh_init_py.h"
-#endif
-
-#ifdef SV_USE_ITK
-  #include "sv3_ITKLset_init_py.h"
+  #include "MeshUtils_PyModule.h"
 #endif
 
 #ifdef SV_USE_TETGEN_ADAPTOR
-  #include "sv_adapt_init_py.h"
-  #include "sv_tetgen_adapt_init_py.h"
+  //#include "sv_adapt_init_py.h"
+  //#include "sv_tetgen_adapt_init_py.h"
 #endif
+
+//---------------------------------------------------------------------------
+//                           PYTHON_MAJOR_VERSION 3                         
+//---------------------------------------------------------------------------
+
+#if PYTHON_MAJOR_VERSION == 3
+
+//--------------------
+// SimVascular_pyInit
+//--------------------
+// Initialize the SV Python C API modules.
+//
+// The module names and initialization functions are implemented 
+// in *init_py.{cxx,h} files for most sv pipeline functionality:
+// Mesh, Path, Model, etc.
+//
+void SimVascular_pyInit()
+{
+    //-----------------
+    // Primary modules
+    //-----------------
+    //
+    printf("Loading Python Modules ...\n");
+    //PyImport_AppendInittab("circle_contour",PyInit_pyCircleContour);
+    PyImport_AppendInittab("segmentation", PyInit_PySegmentation);
+    PyImport_AppendInittab("geometry", PyInit_PyGeometry);
+    //PyImport_AppendInittab("image", PyInit_pyImage);
+    //PyImport_AppendInittab("levelset_contour",PyInit_pylevelSetContour);
+    // [DaveP] Don't expose math module.
+    //PyImport_AppendInittab("math", PyInit_PyMath);
+    PyImport_AppendInittab("pathplanning", PyInit_PyPathplanning);
+    //PyImport_AppendInittab("path_group", PyInit_PyPathGroup);
+    //PyImport_AppendInittab("polygon_contour",PyInit_pyPolygonContour);
+    //PyImport_AppendInittab("project", PyInit_PyProject);
+    //PyImport_AppendInittab("repository", PyInit_pyRepository);
+    PyImport_AppendInittab("modeling", PyInit_PyModeling);
+    //PyImport_AppendInittab("solid_polydata",PyInit_pySolidPolydata);
+    //PyImport_AppendInittab("spline_polygon_contour",PyInit_pySplinePolygonContour);
+    //PyImport_AppendInittab("threshold_contour", PyInit_pyThresholdContour);
+
+    // [TODO:DaveP] why is pyGUI not loaded here?
+    //PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
+    
+    //------------------
+    // Optional modules
+    //------------------
+
+    #ifdef SV_USE_VMTK
+    PyImport_AppendInittab("vmtk", PyInit_PyVmtk);
+    #endif
+
+    #ifdef SV_USE_OpenCASCADE
+    //PyImport_AppendInittab("solid_occt", PyInit_pySolidOCCT);
+    #endif
+
+    #ifdef SV_USE_TETGEN
+    PyImport_AppendInittab("meshing", PyInit_PyMeshing);
+    //PyImport_AppendInittab("tetgen_mesh", PyInit_pyMeshTetgen);
+    #endif
+
+    #ifdef SV_USE_MMG
+    //PyImport_AppendInittab("meshing", PyInit_PyMeshingObject);
+    PyImport_AppendInittab("mesh_utils", PyInit_PyMeshUtils);
+    #endif
+
+    #ifdef SV_USE_ITK
+    // [TODO:DaveP] don't expose this for now.
+    //PyImport_AppendInittab("itk_levelset", PyInit_pyItkls);
+    #endif
+
+    #ifdef SV_USE_TETGEN_ADAPTOR
+    //PyImport_AppendInittab("mesh_adapt",PyInit_pyMeshAdapt);
+    //PyImport_AppendInittab("tetgen_adapt",PyInit_pyTetGenAdapt);
+    #endif
+
+}
+#endif
+
+//---------------------------------------------------------------------------
+//                           PYTHON_MAJOR_VERSION 2                         
+//---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION ==2
 void SimVascular_pyInit()
@@ -134,58 +207,6 @@ void SimVascular_pyInit()
   initpyMeshAdapt();
   initpyTetGenAdapt();
 #endif
-    
-}
-#endif
-
-#if PYTHON_MAJOR_VERSION ==3
-void SimVascular_pyInit()
-{
-    printf("Loading Python Modules\n");
-    PyImport_AppendInittab("pyRepository",PyInit_pyRepository);
-    PyImport_AppendInittab("pyMath",PyInit_pyMath);
-    PyImport_AppendInittab("pyGeom",PyInit_pyGeom);
-    PyImport_AppendInittab("pyImage",PyInit_pyImage);
-    PyImport_AppendInittab("pyPath",PyInit_pyPath);
-    PyImport_AppendInittab("pyContour",PyInit_pyContour);
-    PyImport_AppendInittab("pyThresholdContour",PyInit_pyThresholdContour);
-    PyImport_AppendInittab("pylevelSetContour",PyInit_pylevelSetContour);
-    PyImport_AppendInittab("pyCircleContour",PyInit_pyCircleContour);
-    PyImport_AppendInittab("pyPolygonContour",PyInit_pyPolygonContour);
-    PyImport_AppendInittab("pySplinePolygonContour",PyInit_pySplinePolygonContour);
-    PyImport_AppendInittab("pySolid",PyInit_pySolid);
-    PyImport_AppendInittab("pySolidPolydata",PyInit_pySolidPolydata);
-    //PyImport_AppendInittab("pyGUI",PyInit_pyGUI);
-    
-#ifdef SV_USE_VMTK
-   PyImport_AppendInittab("pyVMTKUtils",PyInit_pyVMTKUtils);
-#endif
-
-#ifdef SV_USE_OpenCASCADE
-   PyImport_AppendInittab("pySolidOCCT",PyInit_pySolidOCCT);
-#endif
-
-#ifdef SV_USE_TETGEN
-  PyImport_AppendInittab("pyMeshObject",PyInit_pyMeshObject);
-  PyImport_AppendInittab("pyMeshTetgen",PyInit_pyMeshTetgen);
-#endif
-
-#ifdef SV_USE_MMG
-  PyImport_AppendInittab("pyMeshObject",PyInit_pyMeshObject);
-  PyImport_AppendInittab("pyMeshUtil",PyInit_pyMeshUtil);
-#endif
-
-#ifdef SV_USE_ITK
-  PyImport_AppendInittab("pyItkls",PyInit_pyItkls);
-#endif
-
-#ifdef SV_USE_TETGEN_ADAPTOR
-  PyImport_AppendInittab("pyMeshAdapt",PyInit_pyMeshAdapt);
-  PyImport_AppendInittab("pyTetGenAdapt",PyInit_pyTetGenAdapt);
-#endif
-
-
-
     
 }
 #endif

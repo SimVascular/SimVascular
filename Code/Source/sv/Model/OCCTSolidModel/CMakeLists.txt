@@ -37,34 +37,17 @@ set(export_directive opencascade)
 set(export_file_name svOpenCASCADEExports.h)
 
 list(APPEND CORELIBS ${lib})
-if(SV_USE_PYTHON)
-	include_directories(${PYTHON_INCLUDE_PATH}
-	  ${PYTHON_INCLUDE_DIR}
-	  ${PYTHON_INCLUDE_DIRS})
-endif()
 
 set(CXXSRCS sv_OCCTSolidModel.cxx sv_occtsolid_utils.cxx)
 set(HDRS sv_OCCTSolidModel.h sv_occtsolid_utils.h)
 
-if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv_occt_init_py.cxx)
-endif()
-
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_occt_init.cxx)
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${OpenCASCADE_LIBRARIES}
 	${SV_LIB_SOLID_NAME} ${SV_LIB_REPOSITORY_NAME}
   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_GEOM_NAME} ${FREETYPE_LIBRARY})
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 # Set up for exports
 string(TOUPPER ${export_directive} EXPORT_NAME)

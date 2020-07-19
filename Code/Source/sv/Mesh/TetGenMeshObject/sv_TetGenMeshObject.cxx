@@ -1473,10 +1473,13 @@ int cvTetGenMeshObject::GenerateMesh() {
   if (surfacemesh_ != NULL)
   {
     surfacemesh_->Delete();
+    surfacemesh_ = nullptr;
   }
+
   if (volumemesh_ != NULL)
   {
     volumemesh_->Delete();
+    volumemesh_ = nullptr;
   }
 
 //All these complicated options exist if using VMTK. Should be stopped prior
@@ -1692,9 +1695,13 @@ int cvTetGenMeshObject::GenerateMesh() {
   // must have created mesh
   if (meshoptions_.volumemeshflag && !meshoptions_.boundarylayermeshflag)
   {
+    std::cout << "############# GenerateMesh ###########" << std::endl;
+    std::cout << "[GenerateMesh] outmesh_: " << outmesh_ << std::endl;
+
     if (outmesh_ == NULL) {
       return SV_ERROR;
     }
+    std::cout << "[GenerateMesh] surfacemesh_: " << surfacemesh_ << std::endl;
     if (surfacemesh_ != NULL)
     {
       surfacemesh_->Delete();
@@ -1706,6 +1713,8 @@ int cvTetGenMeshObject::GenerateMesh() {
 
     surfacemesh_ = vtkPolyData::New();
     volumemesh_ = vtkUnstructuredGrid::New();
+    std::cout << "[GenerateMesh] TGenUtils_ConvertToVTK " << std::endl;
+
     if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
 	  &numBoundaryRegions_,1) != SV_OK)
       return SV_ERROR;
