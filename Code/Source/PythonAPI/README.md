@@ -32,12 +32,19 @@ The code is organized using seprate files for modules and classes defined for th
 
 For example the **pathplanning** module code is contained in the files
 ```
+PathPlanningGroup_PyClass.cxx
+PathPlanningPath_PyClass.cxx
+PathPlanningSubdivMethod_PyClass.cxx
 PathPlanning_PyModule.cxx
 PathPlanning_PyModule.h
-PathPlanningPath_PyClass.cxx
-PathPlanningGroup_PyClass.cxx
-PathPlanningGroup_PyClass.h
-PathPlanningSubdivMethod_PyClass.cxx
+```
+
+A module's class code is included directly by the module's source. For example the **pathplanning** module source code **PathPlanning_PyModule.cxx** includes its class definitions using
+```
+#include "PathPlanningSubdivMethod_PyClass.cxx"
+#include "PathPlanningPathFrame_PyClass.cxx"
+#include "PathPlanningPath_PyClass.cxx"
+#include "PathPlanningGroup_PyClass.cxx"
 ```
 
 # Implementing Python Extensions in C++
