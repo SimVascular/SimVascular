@@ -58,11 +58,12 @@ Python extension modules and classes have been implemented using certain coding 
 A Python module is defined using specific data structures and initialization functions. 
 
 - **PyModuleDef** struct: Creates a module definition instance.
-- **PyMODINIT_FUNC**: Initialization function. This function is exported from the shared libraries which loads the API.
+- **PyMODINIT_FUNC**: Initialization function. This function is exported from the shared library which loads the API and is executed when the module is loaded from \_\_init\_\_py. It initializes the sructures used by classes to store data and adds the class name to the module.
 
 
 ## Defining a Class
 
+A Python class is defined using specific data structures and initialization functions. A class is defined using a **PyTypeObject** struct that sets up the class's constructor, destructor, methods, and documentation. The class member data is defined by a struct that is passed to each class method. 
 
 # Modules
 
