@@ -63,7 +63,13 @@ A Python module is defined using specific data structures and initialization fun
 
 ## Defining a Class
 
-A Python class is defined using specific data structures and initialization functions. A class is defined using a **PyTypeObject** struct that sets up the class's constructor, destructor, methods, and documentation. The class member data is defined by a struct that is passed to each class method. 
+A Python class is defined using specific data structures and initialization functions. 
+
+- **PyTypeObject** struct: Defines the class type. The class member data is defined by a struct that is passed to each class method. 
+- **Init()** function: Defines the class \_\_init__() method used to initialize an object after it is created.
+- **New()** function: Defines the class \_\_new__() method used to create a new instance of an object. 
+- **Dealloc()** function: Defines the class \_\_del__() method called as soon as all references of the object are deleted.
+- **SetPyPathTypeFields()** function: Set the PyTypeObject fields that stores class data.
 
 # Modules
 
