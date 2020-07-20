@@ -75,7 +75,7 @@ A Python class is defined using specific data structures and initialization func
 
 ## _pathplanning_ Module
 
-The **path** module code is contained in the files
+The **pathplanning** module code is contained in the files
 ```
 PathPlanningGroup_PyClass.cxx
 PathPlanningPathFrame_PyClass.cxx
