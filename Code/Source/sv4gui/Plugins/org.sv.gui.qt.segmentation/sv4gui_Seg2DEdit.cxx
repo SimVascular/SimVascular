@@ -219,11 +219,11 @@ void sv4guiSeg2DEdit::CreateQtPartControl( QWidget *parent )
     //ml additions
     setupMLui();
 
-    // If m_ContourGroup is null then the panel is not associated with any 
+    // If m_ContourGroup is null then the panel is not associated with any
     // contour group. This happens when tool panels from previous sessions
     // are created when SV starts.
     //
-    if (m_ContourGroup == nullptr) { 
+    if (m_ContourGroup == nullptr) {
         ui->SinglePathTab->setEnabled(false);
     } else {
         ui->SinglePathTab->setEnabled(true);
@@ -798,7 +798,7 @@ void sv4guiSeg2DEdit::CreateContours(SegmentationMethod method)
                 delete contour;
 
             if(posList.size()==1) {
-                QMessageBox::warning(NULL, "2D Segmentation", 
+                QMessageBox::warning(NULL, "2D Segmentation",
                   "The image could not be segmented using the current parameter settings.\nThe image widow may also not contain enough data (pixel values) to distinguish a vessel boundary.");
             }
         }
@@ -1907,6 +1907,15 @@ void sv4guiSeg2DEdit::segTabSelected(){
       ////remove_toolbox  }
 }
 
+/**
+ * Function to initialize the SV machine learning module
+ *
+ * This function uses the project folder node to find the filename of the image
+ * volume being used.
+ * It then loads the machine learning module with the specified neural network
+ * and sets the image volume path.
+ *
+ */
 void sv4guiSeg2DEdit::initialize(){
   bool ml_init;
   GetDataStorage()->GetNamedNode("Segmentations")->GetBoolProperty("ml_init",ml_init);
@@ -1982,6 +1991,9 @@ void sv4guiSeg2DEdit::initialize(){
 
 }
 
+/**
+ * Function to check/uncheck all paths when the all paths checkbox is checked
+ */
 void sv4guiSeg2DEdit::selectAllPaths(){
   bool checked = (ui->selectAllPathsCheckBox->checkState() == Qt::Checked);
 
@@ -1994,6 +2006,10 @@ void sv4guiSeg2DEdit::selectAllPaths(){
   }
 }
 
+/**
+ * Function to update the list of selected paths in the multi path checklist.
+ *
+ */
 void sv4guiSeg2DEdit::updatePaths(){
   auto dss = GetDataStorage();
   if(dss.IsNull()) {
@@ -2031,6 +2047,14 @@ void sv4guiSeg2DEdit::updatePaths(){
   }
 }
 
+/**
+ * Function to segment all paths selected in the multi path segmentation list
+ *
+ * For each selected path, the suffix code specified during segmentations
+ * is used to create a new contour group (if it does not already exist)
+ * this contour group is then segmented using the segmentPath function
+ *
+ */
 void sv4guiSeg2DEdit::segmentPaths(){
   //paths
   initialize();
@@ -2088,6 +2112,14 @@ void sv4guiSeg2DEdit::segmentPaths(){
   }
 }
 
+/**
+ * Function to create an empty contour group and add it to the datamangaer.
+ *
+ * Used when running multipath segmentation
+ *
+ * @param path_name, name of the associated path
+ * @param seg_name, name of the segmentation to be created
+ */
 void sv4guiSeg2DEdit::createContourGroup(std::string path_name, std::string seg_name){
   auto seg_folder_node = GetDataStorage()->GetNamedNode("Segmentations");
 
@@ -2106,6 +2138,12 @@ void sv4guiSeg2DEdit::createContourGroup(std::string path_name, std::string seg_
   GetDataStorage()->Add(seg_node, seg_folder_node);
 }
 
+/**
+ * Function to use machine learning to segment a path at discrete intervals
+ *
+ * The current path node is obtained from the multipath checklist
+ *
+ */
 void sv4guiSeg2DEdit::segmentPath(){
   auto path = dynamic_cast<sv4guiPath*>(m_current_path_node->GetData());
 
@@ -2126,6 +2164,13 @@ void sv4guiSeg2DEdit::segmentPath(){
   }
 }
 
+/**
+ * Function to generate a machine learning contour, apply fourier smoothing
+ * insert the contour into the correct contour group and
+ * update the rendering manager.
+ *
+ * @param path_point an instance of a SimVascular PathPoint object
+ */
 void sv4guiSeg2DEdit::doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point,
 int index, int n_){
 
@@ -2139,7 +2184,16 @@ int index, int n_){
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
-
+/**
+ * Function to use the machine learning module to segment a path point.
+ *
+ * This function passes the designated path point to the ML module
+ * and receives a vector of double vectors in return.
+ * The double vectors are then converted into a sv4guiContour
+ *
+ * @param path_point an instance of a SimVascular PathPoint object
+ * @return contour, the corresponding segmented contour (sv4guiContour instance)
+ */
 sv4guiContour* sv4guiSeg2DEdit::doMLContour(sv4guiPathElement::sv4guiPathPoint path_point){
   std::vector<std::vector<double>> points = ml_utils->segmentPathPoint(path_point);
 
