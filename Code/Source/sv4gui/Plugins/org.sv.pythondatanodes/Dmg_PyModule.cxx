@@ -577,7 +577,7 @@ PyDoc_STRVAR(Dmg_get_model_doc,
    Args: \n\
      name (str): The model node name. \n\
    \n\
-   Returns an sv.solid.Group object.  \n\
+   Returns an sv.modeling.Series object.  \n\
 ");
 
 static PyObject * 
@@ -613,15 +613,15 @@ Dmg_get_model(PyObject* self, PyObject* args)
   // Get the model group.
   auto model = dynamic_cast<sv4guiModel*>(modelNode->GetData());
 
-  // Create a PyModelingGroup object.
-  return CreatePyModelingGroup(model);
+  // Create a PyModelingSeries object.
+  return CreatePyModelingSeries(model);
 }
 
 //--------------
 // Dmg_get_mesh 
 //--------------
 //
-// [TODO:DaveP] Should this return a sv.meshing.Group? 
+// [TODO:DaveP] Should this return a sv.meshing.Series? 
 //
 PyDoc_STRVAR(Dmg_get_mesh_doc,
   "get_mesh(name) \n\ 
@@ -687,7 +687,7 @@ Dmg_get_mesh(PyObject* self, PyObject* args)
 // Dmg_get_path
 //--------------
 //
-// [TODO:DaveP] Should this return a sv.path.Group? 
+// [TODO:DaveP] Should this return a sv.pathplanning.Series? 
 //
 PyDoc_STRVAR(Dmg_get_path_doc,
   "get_path(name) \n\ 
@@ -1011,7 +1011,7 @@ PyDoc_STRVAR(Dmg_add_model_doc,
    \n\
    Args:                                    \n\
      name (str): The name for the model data node. \n\
-     model (sv.solid.Group object): The model group object from which to create the model node.\n\
+     model (sv.modeling.Series object): The model series object from which to create the model node.\n\
    \n\
 ");
 
@@ -1023,7 +1023,7 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
   char* modelName = NULL;
   PyObject* modelArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelName, &PyModelingGroupType, &modelArg)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelName, &PyModelingSeriesType, &modelArg)) {
       return api.argsError();
   }
 
@@ -1031,7 +1031,7 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
   //
   // [TODO:DaveP] How to add group? What to do with other modelers?
   // 
-  auto pyModel = (PyModelingGroup*)modelArg;
+  auto pyModel = (PyModelingSeries*)modelArg;
   auto solidGroup = pyModel->solidGroup;
   auto solidModelElement = solidGroup->GetModelElement(0);
   auto polydata = solidModelElement->GetWholeVtkPolyData();
@@ -1136,7 +1136,7 @@ Dmg_get_segmentation(PyObject* self, PyObject* args)
   //
   //auto groupCopy = group->Clone();
   //return CreatePyContourGroup(groupCopy);
-  return CreatePySegmentationGroup(group);
+  return CreatePySegmentationSeries(group);
 }
 
 //----------------------

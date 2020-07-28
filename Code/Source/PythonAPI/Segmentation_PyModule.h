@@ -45,7 +45,7 @@
 // Need to define US_MODULE_NAME because we are including sv4gui_ContourGroupIO.h.
 #define US_MODULE_NAME 
 
-PyObject* CreatePySegmentationGroup(sv4guiContourGroup* contourGroup);
+PyObject* CreatePySegmentationSeries(sv4guiContourGroup* contourGroup);
 
 // Define the signature for the function used to copy sv4guiContour 
 // object data to sv3::Contour objects.

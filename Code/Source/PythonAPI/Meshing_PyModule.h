@@ -45,18 +45,22 @@ typedef cvMeshObject * (*CreateMesherObjectFunction)();
 
 extern "C" SV_EXPORT_MESH void PyAPI_InitMeshSim(CreateMesherObjectFunction createObject);
 
-//----------------
-// PyMeshingGroup
-//----------------
+//-----------------
+// PyMeshingSeries
+//-----------------
+// The meshing.Series class is used to store data for
+// time-varying meshes.
 //
-typedef struct PyMeshingGroup
+// In SV time-varying meshe are stored in the sv4guiMitkMesh class. 
+//
+typedef struct PyMeshingSeries
 {
   PyObject_HEAD
   sv4guiMitkMesh::Pointer meshingGroupPointer;
   sv4guiMitkMesh* meshingGroup;
   int id;
   std::string fileName;
-} PyMeshingGroup;
+} PyMeshingSeries;
 
 // [TODO:DaveP] why is this in the header, it is not
 // referenced anywhere else.

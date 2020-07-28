@@ -45,7 +45,7 @@
 
 //extern "C" SV_EXPORT_SOLID int Solid_PyInit();
 
-extern PyTypeObject PyModelingGroupType;
+extern PyTypeObject PyModelingSeriesType;
 
 typedef cvSolidModel * (*CreateSolidModelObjectFunction)();
 
@@ -53,19 +53,23 @@ extern "C" SV_EXPORT_SOLID void PyAPI_InitParasolid(CreateSolidModelObjectFuncti
 
 SolidModel_KernelT ModelingKernelNameToEnum(std::string name);
 
-PyObject * CreatePyModelingGroup(sv4guiModel::Pointer solidGroup);
+PyObject * CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
 
 //-----------------
-// PyModelingGroup
+// PyModelingSeries 
 //-----------------
+// The modeling.Series class is used to store data for
+// time-varying models.
 //
-typedef struct PyModelingGroup
+// In SV time-varying meshe are stored in the sv4guiModel class. 
+//
+typedef struct PyModelingSeries 
 {
   PyObject_HEAD
   sv4guiModel::Pointer solidGroupPointer;
   sv4guiModel* solidGroup;
   int id;
-} PyModelingGroup;
+} PyModelingSeries;
 
 extern "C" SV_EXPORT_SOLID typedef struct
 {

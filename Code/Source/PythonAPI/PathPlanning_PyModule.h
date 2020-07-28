@@ -51,16 +51,16 @@ typedef struct
 } PyPath;
 
 //-------------
-// PyPathGroup
+// PyPathSeries 
 //-------------
-// Define the SV Python Group class.
+// Define the SV Python path planning Series class.
 //
 typedef struct
 {
   PyObject_HEAD
   sv3::PathGroup* pathGroup;
   int id;
-} PyPathGroup;
+} PyPathSeries; 
 
 //-------------
 // PyPathFrame 

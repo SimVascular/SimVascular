@@ -62,11 +62,11 @@
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject* PyRunTimeErr;
 
-// Include the definitions for the CalculationMethod, Path and Group classes.
+// Include the definitions for the CalculationMethod, Path and Series classes.
 #include "PathPlanningSubdivMethod_PyClass.cxx"
 #include "PathPlanningPathFrame_PyClass.cxx"
 #include "PathPlanningPath_PyClass.cxx"
-#include "PathPlanningGroup_PyClass.cxx"
+#include "PathPlanningSeries_PyClass.cxx"
 
 ////////////////////////////////////////////////////////
 //          M o d u l e  D e f i n i t i o n          //
@@ -155,11 +155,11 @@ PyMODINIT_FUNC PyInit_PyPathplanning()
       return nullptr;
   }
 
-  // Setup the PathGroup class type.
+  // Setup the PathSeries class type.
   //
-  SetPyPathGroupTypeFields(PyPathGroupType);
-  if (PyType_Ready(&PyPathGroupType) < 0) {
-      fprintf(stdout,"Error in PyPathGroupType\n");
+  SetPyPathSeriesTypeFields(PyPathSeriesType);
+  if (PyType_Ready(&PyPathSeriesType) < 0) {
+      fprintf(stdout,"Error in PyPathSeriesType\n");
       return nullptr;
   }
 
@@ -191,9 +191,9 @@ PyMODINIT_FUNC PyInit_PyPathplanning()
   Py_INCREF(&PyPathFrameType);
   PyModule_AddObject(module, PATH_FRAME_CLASS, (PyObject*)&PyPathFrameType);
 
-  // Add PathGroup class.
-  Py_INCREF(&PyPathGroupType);
-  PyModule_AddObject(module, PATH_GROUP_CLASS, (PyObject*)&PyPathGroupType);
+  // Add PathSeries class.
+  Py_INCREF(&PyPathSeriesType);
+  PyModule_AddObject(module, PATHPLANNING_SERIES_CLASS, (PyObject*)&PyPathSeriesType);
 
   // Add PathSubdivisionMethod class.
   Py_INCREF(&PyPathSubdivisionMethodType);

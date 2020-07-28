@@ -124,8 +124,8 @@ std::map<SolidModel_KernelT, std::string> modelingValidFileFormats = {
 #include "ModelingPolyData_PyClass.cxx"
 #include "ModelingModeler_PyClass.cxx"
 
-// Include solid.Group definition.
-#include "ModelingGroup_PyClass.cxx"
+// Include modeling.Series definition.
+#include "ModelingSeries_PyClass.cxx"
 
 //---------------------
 // PySolidModelCtorMap
@@ -383,10 +383,10 @@ PyInit_PyModeling(void)
     return SV_PYTHON_ERROR;
   }
 
-  // Initialize the group class type.
-  SetModelingGroupTypeFields(PyModelingGroupType);
-  if (PyType_Ready(&PyModelingGroupType) < 0) {
-      std::cout << "Error creating SolidGroup type" << std::endl;
+  // Initialize the Series class type.
+  SetModelingSeriesTypeFields(PyModelingSeriesType);
+  if (PyType_Ready(&PyModelingSeriesType) < 0) {
+      std::cout << "Error creating Series type" << std::endl;
       return nullptr;
   }
 
@@ -437,9 +437,9 @@ PyInit_PyModeling(void)
   Py_INCREF(&PyModelingModelType);
   PyModule_AddObject(module, MODELING_MODEL_CLASS, (PyObject *)&PyModelingModelType);
 
-  // Add the 'SolidGroup' class.
-  Py_INCREF(&PyModelingGroupType);
-  PyModule_AddObject(module, MODELING_GROUP_CLASS, (PyObject *)&PyModelingGroupType);
+  // Add the 'Series' class.
+  Py_INCREF(&PyModelingSeriesType);
+  PyModule_AddObject(module, MODELING_SERIES_CLASS, (PyObject *)&PyModelingSeriesType);
 
   // Add the 'OpenCascade' class.
   Py_INCREF(&PyOcctSolidType);

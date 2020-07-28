@@ -224,8 +224,8 @@ static PyMethodDef PySegmentationModuleMethods[] =
 #include "SegmentationSplinePolygon_PyClass.cxx"
 #include "SegmentationThreshold_PyClass.cxx"
 
-// Include segmentation.Group definition.
-#include "SegmentationGroup_PyClass.cxx"
+// Include segmentation.Series definition.
+#include "SegmentationSeries_PyClass.cxx"
 
 //-----------------------
 // PySegmentationCtorMap
@@ -354,9 +354,9 @@ PyInit_PySegmentation()
   }
 
   // Initialize the group class type.
-  SetSegmentationGroupTypeFields(PySegmentationGroupType);
-  if (PyType_Ready(&PySegmentationGroupType) < 0) {
-      std::cout << "Error creating SegmentationGroup type" << std::endl;
+  SetSegmentationSeriesTypeFields(PySegmentationSeriesType);
+  if (PyType_Ready(&PySegmentationSeriesType) < 0) {
+      std::cout << "Error creating SegmentationSeries type" << std::endl;
       return nullptr;
   }
 
@@ -431,9 +431,9 @@ PyInit_PySegmentation()
   Py_INCREF(&PySegmentationType);
   PyModule_AddObject(module, SEGMENTATION_CLASS, (PyObject*)&PySegmentationType);
 
-  // Add the 'Group' object.
-  Py_INCREF(&PySegmentationGroupType);
-  PyModule_AddObject(module, SEGMENTATION_GROUP_CLASS, (PyObject*)&PySegmentationGroupType);
+  // Add the 'Series' object.
+  Py_INCREF(&PySegmentationSeriesType);
+  PyModule_AddObject(module, SEGMENTATION_SERIES_CLASS, (PyObject*)&PySegmentationSeriesType);
 
   // Add the 'Circle' class.
   Py_INCREF(&PyCircleSegmentationType);

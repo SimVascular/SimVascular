@@ -29,12 +29,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API modeling module group class. 
-// It provides an interface to the SV solid model group class.
+// The functions defined here implement the SV Python API modeling module Series class. 
+// It provides an interface to read in a model time-series from SV meshing .mdl files. 
 //
-// The class name is 'Group'. It is referenced from the modeling module as 'modeling.Group'.
+// The class is referenced from the modeling module as 'modeling.Series'.
 //
-//     aorta_solid_group = modeling.Group()
+//     models = modeling.Series()
+//
+// The SV modeling group code this interfaces to resides in sv4gui/Modules/Modeling/Common which 
+// uses MITK manage time-varying meshes.
 //
 #include "sv4gui_ModelIO.h"
 
@@ -42,17 +45,17 @@
 //          U t i l i t y  F u n c t i o n s        //
 //////////////////////////////////////////////////////
 
-//--------------------
-// ModelingGroup_read
-//--------------------
-// Read in an SV .mdl file and create a ModelingGroup object
+//---------------------
+// ModelingSeries_read
+//---------------------
+// Read in an SV .mdl file and create a sv4guiModel::Pointer object
 // from its contents.
 //
 sv4guiModel::Pointer 
-ModelingGroup_read(char* fileName)
+ModelingSeries_read(char* fileName)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  std::cout << "[ModelingGroup_read] File name: " << fileName << std::endl;
+  std::cout << "[ModelingSeries_read] File name: " << fileName << std::endl;
   sv4guiModel::Pointer group;
 
   try {
@@ -64,7 +67,7 @@ ModelingGroup_read(char* fileName)
 
   auto solidGroup = dynamic_cast<sv4guiModel*>(group.GetPointer());
   int numSolids = solidGroup->GetTimeSize();
-  std::cout << "[ModelingGroup_read] Number of solids: " << numSolids << std::endl;
+  std::cout << "[ModelingSeries_read] Number of solids: " << numSolids << std::endl;
 
   return group;
 }
@@ -73,48 +76,50 @@ ModelingGroup_read(char* fileName)
 //       G r o u p  C l a s s  M e t h o d s        //
 //////////////////////////////////////////////////////
 //
-// SV Python solid.Group methods. 
+// SV Python modeling.Series methods. 
 
 //------------------------------
-// ModelingGroup_get_num_models 
+// ModelingSeries_get_num_times 
 //------------------------------
 //
-PyDoc_STRVAR(ModelingGroup_get_num_models_doc,
-  "get_num_models() \n\ 
+PyDoc_STRVAR(ModelingSeries_get_num_times_doc,
+  "get_num_times() \n\ 
   \n\
-  Get the number of solid models in the group. \n\
-  \n\
-  Returns (int): The number of solid models in the group.\n\
+   Get the number of time points in the series. \n\
+   \n\
+   Returns (int): The number of time points in the series.\n\
 ");
 
 static PyObject * 
-ModelingGroup_get_num_models(PyModelingGroup* self, PyObject* args)
+ModelingSeries_get_num_times(PyModelingSeries* self, PyObject* args)
 {
   auto solidGroup = self->solidGroup;
   int numSolidModels = solidGroup->GetTimeSize();
   return Py_BuildValue("i", numSolidModels); 
 }
 
-//-------------------------------
-// ModelingGroup_get_solid_model 
-//-------------------------------
-PyDoc_STRVAR(ModelingGroup_get_model_doc,
-  "get_model(time) \n\ 
+//--------------------------
+// ModelingSeries_get_model 
+//--------------------------
+//
+PyDoc_STRVAR(ModelingSeries_get_model_doc,
+  "get_model(time=0) \n\ 
    \n\
    Get the solid model object for a given time. \n\
    \n\
    Args: \n\
-     time (int): The time step to get the solid model for. 0 <= time < number of models in the group. \n\
+     time Optional[int]): The time step to get the solid model for. \n\
+         0 <= time < number of time points in the series.           \n\
    \n\
    Returns (ModelingModel object): The ModelingModel object for the solid model.\n\
 ");
 
 static PyObject * 
-ModelingGroup_get_model(PyModelingGroup* self, PyObject* args, PyObject* kwargs)
+ModelingSeries_get_model(PyModelingSeries* self, PyObject* args, PyObject* kwargs)
 {
-  auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
+  auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
   static char *keywords[] = {"time", NULL};
-  int index;
+  int index = 0;
   char* solidName = NULL;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &index)) {
@@ -158,11 +163,11 @@ ModelingGroup_get_model(PyModelingGroup* self, PyObject* args, PyObject* kwargs)
   return CreatePyModelingModelObject(solidModel);
 }
 
-//---------------------
-// ModelingGroup_write
-//---------------------
+//----------------------
+// ModelingSeries_write
+//----------------------
 //
-PyDoc_STRVAR(ModelingGroup_write_doc,
+PyDoc_STRVAR(ModelingSeries_write_doc,
   "write(file_name) \n\ 
    \n\
    Write the modeling group to an SV .mdl format file.\n\
@@ -175,7 +180,7 @@ PyDoc_STRVAR(ModelingGroup_write_doc,
 ");
 
 static PyObject *
-ModelingGroup_write(PyModelingGroup* self, PyObject* args, PyObject* kwargs)
+ModelingSeries_write(PyModelingSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   static char *keywords[] = {"file_name", NULL};
@@ -202,80 +207,80 @@ ModelingGroup_write(PyModelingGroup* self, PyObject* args, PyObject* kwargs)
 //          C l a s s    D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
 
-static char* MODELING_GROUP_CLASS = "Group";
+static char* MODELING_SERIES_CLASS = "Series";
 // Dotted name that includes both the module name and the name of the 
 // type within the module.
-static char* MODELING_GROUP_MODULE_CLASS = "modeling.Group";
+static char* MODELING_SERIES_MODULE_CLASS = "modeling.Series";
 
 // Doc width extent.
 //   ----------------------------------------------------------------------   \n\
 
-PyDoc_STRVAR(ModelingGroup_doc, 
-  "SimVascular modeling Group class. \n\
+PyDoc_STRVAR(ModelingSeries_doc, 
+  "SimVascular modeling Series class. \n\
    \n\
-   Group(file_name) \n\
+   Series(file_name) \n\
    \n\
-   The modeling Group class provides an interface to SV modeling group      \n\
-   functionality. Models created from time-varying image data are stored    \n\
-   in a modeling group.                                                     \n\
+   The modeling Series class provides an interface to SV time-varying       \n\
+   models. Models created from time-varying image data are stored in this   \n\
+   class.                                                                   \n\
    \n\
-   A Group object can be created with the name of an SV .mdl model group    \n\
-   file. The file is read and Model objects are created for each model      \n\
-   defined in it.                                                           \n\
+   A Series object can be created with the name of an SV .mdl modelinng     \n\
+   file. The file is read and Model objects are created for each time       \n\
+   point defined in the file.                                               \n\
    \n\
-   Example: Creating a modeling group object from a .mdl file               \n\
+   Example: Creating a modeling Series object from a .mdl file              \n\
    \n\
-       group = sv.modeling.Group(\"demo.mdl\")                              \n\
+       model_series = sv.modeling.Series(\"demo.mdl\")                      \n\
    \n\
    Args:\n\
-     file_name (Optional[str]): The name of an SV .mdl model group file. \n\
+     file_name (Optional[str]): The name of an SV .mdl modeling file.       \n\
    \n\
 ");
 
-//------------------------
-// PyModelingGroupMethods 
-//------------------------
-// Define the methods for the contour.Group class.
+//-------------------------
+// PyModelingSeriesMethods 
+//-------------------------
+// Define the methods for the modeling.Series class.
 //
-static PyMethodDef PyModelingGroupMethods[] = {
+static PyMethodDef PyModelingSeriesMethods[] = {
 
-  {"get_model", (PyCFunction)ModelingGroup_get_model, METH_VARARGS|METH_KEYWORDS, ModelingGroup_get_model_doc},
+  {"get_model", (PyCFunction)ModelingSeries_get_model, METH_VARARGS|METH_KEYWORDS, ModelingSeries_get_model_doc},
 
-  {"get_num_models", (PyCFunction)ModelingGroup_get_num_models, METH_VARARGS, ModelingGroup_get_num_models_doc},
+  {"get_num_times", (PyCFunction)ModelingSeries_get_num_times, METH_VARARGS, ModelingSeries_get_num_times_doc},
 
-  {"write", (PyCFunction)ModelingGroup_write, METH_VARARGS|METH_KEYWORDS, ModelingGroup_write_doc},
+  {"write", (PyCFunction)ModelingSeries_write, METH_VARARGS|METH_KEYWORDS, ModelingSeries_write_doc},
 
   {NULL, NULL}
 };
 
-//---------------------
-// PyModelingGroupType 
-//---------------------
-// Define the Python type that stores ModelingGroup data. 
+//----------------------
+// PyModelingSeriesType 
+//----------------------
+// Define the Python type that stores ModelingSeries data. 
 //
 // Can't set all the fields here because g++ does not suppor non-trivial 
 // designated initializers. 
 //
-PyTypeObject PyModelingGroupType = {
+PyTypeObject PyModelingSeriesType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  MODELING_GROUP_MODULE_CLASS,     
-  sizeof(PyModelingGroup)
+  MODELING_SERIES_MODULE_CLASS,     
+  sizeof(PyModelingSeries)
 };
 
-//----------------------
-// PyModelingGroup_init
-//----------------------
+//-----------------------
+// PyModelingSeries_init
+//-----------------------
 // This is the __init__() method for the modeling.Group class. 
 //
 // This function is used to initialize an object after it is created.
 //
 // Arguments:
 //
-//   fileName - An SV .mdl modeling file. A new ModelingGroup object is 
+//   fileName - An SV .mdl modeling file. A new ModelingSeries object is 
 //     created from the contents of the file. (optional)
 //
 static int 
-PyModelingGroupInit(PyModelingGroup* self, PyObject* args)
+PyModelingSeriesInit(PyModelingSeries* self, PyObject* args)
 {
   static int numObjs = 1;
   auto api = PyUtilApiFunction("|s", PyRunTimeErr, __func__);
@@ -285,92 +290,91 @@ PyModelingGroupInit(PyModelingGroup* self, PyObject* args)
       return 1;
   }
   if (fileName != nullptr) {
-      self->solidGroupPointer = ModelingGroup_read(fileName);
+      self->solidGroupPointer = ModelingSeries_read(fileName);
       self->solidGroup = dynamic_cast<sv4guiModel*>(self->solidGroupPointer.GetPointer());
   } else {
       self->solidGroup = sv4guiModel::New();
   }
   if (self->solidGroup == nullptr) { 
-      std::cout << "[PyModelingGroupInit] ERROR reading File name: " << fileName << std::endl;
+      std::cout << "[PyModelingSeriesInit] ERROR reading File name: " << fileName << std::endl;
       return -1;
   }
   numObjs += 1;
   return 0;
 }
 
-//--------------------
-// PyModelingGroupNew 
-//--------------------
+//---------------------
+// PyModelingSeriesNew 
+//---------------------
 // Object creation function, equivalent to the Python __new__() method. 
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
-PyModelingGroupNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
+PyModelingSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyModelingGroupNew] PyModelingGroupNew " << std::endl;
+  std::cout << "[PyModelingSeriesNew] PyModelingSeriesNew " << std::endl;
   auto self = (PyModelingModel*)type->tp_alloc(type, 0);
   //auto self = (PyContour*)type->tp_alloc(type, 0);
   if (self == NULL) {
-      std::cout << "[PyModelingGroupNew] ERROR: Can't allocate type." << std::endl;
+      std::cout << "[PyModelingSeriesNew] ERROR: Can't allocate type." << std::endl;
       return nullptr; 
   }
   return (PyObject *) self;
 }
 
-//------------------------
-// PyModelingGroupDealloc 
-//------------------------
+//-------------------------
+// PyModelingSeriesDealloc 
+//-------------------------
 //
 static void
-PyModelingGroupDealloc(PyModelingGroup* self)
+PyModelingSeriesDealloc(PyModelingSeries* self)
 {
-  std::cout << "[PyModelingGroupDealloc] Free PyModelingGroup" << std::endl;
+  std::cout << "[PyModelingSeriesDealloc] Free PyModelingSeries" << std::endl;
   // Can't delete solidGroup because it has a protected detructor.
   //delete self->solidGroup;
   Py_TYPE(self)->tp_free(self);
 }
 
-//----------------------------
-// SetModelingGroupTypeFields 
-//----------------------------
+//-----------------------------
+// SetModelingSeriesTypeFields 
+//-----------------------------
 // Set the Python type object fields that stores Contour data. 
 //
 // Need to set the fields here because g++ does not suppor non-trivial 
 // designated initializers. 
 //
 static void
-SetModelingGroupTypeFields(PyTypeObject& solidType)
+SetModelingSeriesTypeFields(PyTypeObject& solidType)
 {
   // Doc string for this type.
-  solidType.tp_doc = ModelingGroup_doc; 
+  solidType.tp_doc = ModelingSeries_doc; 
   // Object creation function, equivalent to the Python __new__() method. 
   // The generic handler creates a new instance using the tp_alloc field.
-  solidType.tp_new = PyModelingGroupNew;
+  solidType.tp_new = PyModelingSeriesNew;
   solidType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
-  solidType.tp_init = (initproc)PyModelingGroupInit;
-  solidType.tp_dealloc = (destructor)PyModelingGroupDealloc;
-  solidType.tp_methods = PyModelingGroupMethods;
+  solidType.tp_init = (initproc)PyModelingSeriesInit;
+  solidType.tp_dealloc = (destructor)PyModelingSeriesDealloc;
+  solidType.tp_methods = PyModelingSeriesMethods;
 }
 
-//-----------------------
-// CreatePyModelingGroup
-//----------------------
-// Create a PyModelingGroupType object.
+//------------------------
+// CreatePyModelingSeries
+//------------------------
+// Create a PyModelingSeriesType object.
 //
 // If the 'solidGroup' argument is not null then use that 
-// for the PyModelingGroupType.solidGroup data.
+// for the PyModelingSeriesType.solidGroup data.
 //
 PyObject *
-CreatePyModelingGroup(sv4guiModel::Pointer solidGroup)
+CreatePyModelingSeries(sv4guiModel::Pointer solidGroup)
 {
-  auto solidGroupObj = PyObject_CallObject((PyObject*)&PyModelingGroupType, NULL);
-  auto pyModelingGroup = (PyModelingGroup*)solidGroupObj;
-
+  auto modelingSeriesObj = PyObject_CallObject((PyObject*)&PyModelingSeriesType, NULL);
+  auto pyModelingSeries = (PyModelingSeries*)modelingSeriesObj;
   if (solidGroup != nullptr) {
-      //delete pyModelingGroup->solidGroup;
-      pyModelingGroup->solidGroup = solidGroup;
+      //delete pyModelingSeries->solidGroup;
+      pyModelingSeries->solidGroup = solidGroup;
   }
 
-  return solidGroupObj;
+  return modelingSeriesObj;
 }
 

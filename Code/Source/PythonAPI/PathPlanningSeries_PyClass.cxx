@@ -29,41 +29,40 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API 'pathplanning' module 'Group' class. 
+// The functions defined here implement the SV Python API path planning module 'Series' class. 
+// It provides an interface to read in a path time-series from SV path planning .pth files. 
 //
-//     path_group = pathplanning.Group()
+// The class is referenced from the path plannning module as 'pathplanning.Series'.
 //
-// The Python Group class is implemented using the PyPathGroup struct defined in PathPlanning_PyModule.h. 
+//     paths = pathplanning.Series()
 //
-//   PyPathGroup:
-//      Attributes: None 
-//      Data members: 
-//         sv3::PathGroup* pathGroup; 
-//
+// The SV path group code this interfaces to resides in sv4gui/Modules/Path/Common which 
+// uses MITK manage time-varying meshes.
+
 #include "sv3_PathGroup.h"
 #include "sv3_PathIO.h"
 
 using sv3::PathGroup;
 
-static PyObject * CreatePyPathGroup(PathGroup* pathGroup);
+static PyObject * CreatePyPathSeries(PathGroup* pathPaths);
 
 //////////////////////////////////////////////////////
 //          U t i l i t y  F u n c t i o n s        //
 //////////////////////////////////////////////////////
 
-//----------------
-// PathGroup_read
-//----------------
-// Read in an SV .pth file and create a PathGroup object
+//-----------------
+// PathSeries_read
+//-----------------
+// Read in an SV .pth file and create a PathSeries object
 // from its contents.
 //
-static sv3::PathGroup * 
-PathGroup_read(char* fileName)
+static sv3::PathGroup* 
+PathSeries_read(char* fileName)
 {
-  std::cout << "========== PathGroup_read ==========" << std::endl;
+  std::cout << "========== PathSeries_read ==========" << std::endl;
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
 
-  std::cout << "[PathGroup_read] fileName: " << fileName << std::endl;
+  std::cout << "[PathSeries_read] fileName: " << fileName << std::endl;
   sv3::PathGroup* pathGroup;
 
   try {
@@ -73,7 +72,7 @@ PathGroup_read(char* fileName)
           return nullptr;
       }
       int numElements = pathGroup->GetTimeSize();
-      std::cout << "[PathGroup_read] numElements: " << numElements << std::endl;
+      std::cout << "[PathSeries_read] numElements: " << numElements << std::endl;
 
   } catch (const std::exception& readException) {
       api.error("Error reading file '" + std::string(fileName) + "': " + readException.what());
@@ -93,13 +92,13 @@ PathGroup_read(char* fileName)
 //          C l a s s   M e t h o d s               //
 //////////////////////////////////////////////////////
 //
-// SV Python Path Group methods. 
+// SV Python Path Paths methods. 
 
-//----------------------------------
-// PathGroup_get_calculation_number 
-//----------------------------------
+//-----------------------------------
+// PathSeries_get_calculation_number 
+//-----------------------------------
 //
-PyDoc_STRVAR(PathGroup_get_calculation_number_doc,
+PyDoc_STRVAR(PathSeries_get_calculation_number_doc,
   "get_calculation_number() \n\ 
    \n\
    Get the path group's calculation number. \n\
@@ -108,58 +107,58 @@ PyDoc_STRVAR(PathGroup_get_calculation_number_doc,
 ");
 
 static PyObject * 
-PathGroup_get_calculation_number(PyPathGroup* self, PyObject* args)
+PathSeries_get_calculation_number(PyPathSeries* self, PyObject* args)
 {
   int number = self->pathGroup->GetCalculationNumber();
   return Py_BuildValue("i", number);
 }
 
 //-------------------------
-// PathGroup_get_num_paths 
+// PathSeries_get_num_times 
 //-------------------------
 //
-PyDoc_STRVAR(PathGroup_get_num_paths_doc,
-  "get_num_paths() \n\ 
+PyDoc_STRVAR(PathSeries_get_num_times_doc,
+  "get_num_times() \n\ 
    \n\
-   Get the number of paths stored in the group.  \n\
+   Get the number of time steps paths are defined for.  \n\
    \n\
-   Returns (int): The number of paths stored in the group. \n\
+   Returns (int): The number of time steps paths are defined for. \n\
 ");
 
 static PyObject * 
-PathGroup_get_num_paths(PyPathGroup* self, PyObject* args)
+PathSeries_get_num_times(PyPathSeries* self, PyObject* args)
 {
   int timestepSize = self->pathGroup->GetTimeSize();
   return Py_BuildValue("i", timestepSize); 
 }
 
-//--------------------
-// PathGroup_get_path 
-//--------------------
-PyDoc_STRVAR(PathGroup_get_path_doc,
-  "get_path(time) \n\ 
+//---------------------
+// PathSeries_get_path 
+//---------------------
+PyDoc_STRVAR(PathSeries_get_path_doc,
+  "get_path(time=0) \n\ 
    \n\
    Get the path for a given time. \n\
    \n\
    Args: \n\
-     time (int): The time to get the path for. \n\
+     time (Optional[int]): The time to get the path for. \n\
    \n\
    Returns (sv.path.Path object): The path object for the given time.\n\
 ");
 
 static PyObject * 
-PathGroup_get_path(PyPathGroup* self, PyObject* args)
+PathSeries_get_path(PyPathSeries* self, PyObject* args)
 {
-  auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
-  int index;
+  auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
+  int index = 0;
   char* pathName = NULL;
 
   if (!PyArg_ParseTuple(args, api.format, &index)) {
      return api.argsError();
   }
         
-  auto pathGroup = self->pathGroup;
-  int numPaths = pathGroup->GetTimeSize();
+  auto pathPaths = self->pathGroup;
+  int numPaths = pathPaths->GetTimeSize();
 
   if (index > numPaths-1) {
       api.error("The index argument '" + std::to_string(index) + "' is must be between 0 and " +
@@ -168,34 +167,34 @@ PathGroup_get_path(PyPathGroup* self, PyObject* args)
   }
 
   // Create a PyPath object from the path and return it as a PyObject*.
-  auto path = pathGroup->GetPathElement(index);
+  auto path = pathPaths->GetPathElement(index);
   return CreatePyPath(path);
 }
 
-//-----------------------
-// PathGroup_get_path_id 
-//-----------------------
+//------------------------
+// PathSeries_get_path_id 
+//------------------------
 //
-PyDoc_STRVAR(PathGroup_get_path_id_doc,
+PyDoc_STRVAR(PathSeries_get_path_id_doc,
   "get_path_id() \n\ 
    \n\
-   Get the path group id. \n\
+   Get the path time ID. \n\
    \n\
-   Returns (int): The ID of the path group.\n\
+   Returns (int): The time ID of the path series. \n\
 ");
 
 static PyObject * 
-PathGroup_get_path_id(PyPathGroup* self, PyObject* args)
+PathSeries_get_path_id(PyPathSeries* self, PyObject* args)
 {
   int id = self->pathGroup->GetPathID();
   return Py_BuildValue("i", id); 
 }
 
-//--------------------
-// PathGroup_set_path 
-//--------------------
+//---------------------
+// PathSeries_set_path 
+//---------------------
 //
-PyDoc_STRVAR(PathGroup_set_path_doc,
+PyDoc_STRVAR(PathSeries_set_path_doc,
   "set_path(path, time) \n\ 
    \n\
    Set the path for a given time. \n\
@@ -206,7 +205,7 @@ PyDoc_STRVAR(PathGroup_set_path_doc,
 ");
 
 static PyObject * 
-PathGroup_set_path(PyPathGroup* self, PyObject* args, PyObject* kwargs)
+PathSeries_set_path(PyPathSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!I", PyRunTimeErr, __func__);
   static char *keywords[] = {"path", "time", NULL};
@@ -217,7 +216,7 @@ PathGroup_set_path(PyPathGroup* self, PyObject* args, PyObject* kwargs)
      return api.argsError();
   }
 
-  auto pmsg = "[PathGroup_set_path] ";
+  auto pmsg = "[PathSeries_set_path] ";
   std::cout << pmsg << std::endl;
 
   // Get the PathElement object.
@@ -243,11 +242,11 @@ PathGroup_set_path(PyPathGroup* self, PyObject* args, PyObject* kwargs)
   return Py_None; 
 }
     
-//-----------------------
-// PathGroup_set_path_id
-//-----------------------
+//------------------------
+// PathSeries_set_path_id
+//------------------------
 //
-PyDoc_STRVAR(PathGroup_set_path_id_doc,
+PyDoc_STRVAR(PathSeries_set_path_id_doc,
   "set_path_id(id) \n\ 
    \n\
    Set the ID for the path group. \n\
@@ -257,7 +256,7 @@ PyDoc_STRVAR(PathGroup_set_path_id_doc,
 ");
 
 static PyObject * 
-PathGroup_set_path_id(PyPathGroup* self, PyObject* args)
+PathSeries_set_path_id(PyPathSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
   int id;
@@ -270,11 +269,11 @@ PathGroup_set_path_id(PyPathGroup* self, PyObject* args)
   return Py_None;
 }
 
-//-----------------------
-// PathGroup_set_spacing 
-//-----------------------
+//------------------------
+// PathSeries_set_spacing 
+//------------------------
 //
-PyDoc_STRVAR(PathGroup_set_spacing_doc,
+PyDoc_STRVAR(PathSeries_set_spacing_doc,
   "set_spacing(spacing) \n\ 
    \n\
    Set the spacing used by the SPACING method. \n\
@@ -284,7 +283,7 @@ PyDoc_STRVAR(PathGroup_set_spacing_doc,
 ");
 
 static PyObject * 
-PathGroup_set_spacing(PyPathGroup* self, PyObject* args)
+PathSeries_set_spacing(PyPathSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("d", PyRunTimeErr, __func__);
   double spacing;
@@ -297,11 +296,11 @@ PathGroup_set_spacing(PyPathGroup* self, PyObject* args)
   return Py_None;
 }
 
-//-----------------------
-// PathGroup_get_spacing 
-//-----------------------
+//------------------------
+// PathSeries_get_spacing 
+//------------------------
 //
-PyDoc_STRVAR(PathGroup_get_spacing_doc,
+PyDoc_STRVAR(PathSeries_get_spacing_doc,
   "get_spacing() \n\ 
    \n\
    Get the spacing for the path group. \n\
@@ -310,17 +309,17 @@ PyDoc_STRVAR(PathGroup_get_spacing_doc,
 ");
 
 static PyObject * 
-PathGroup_get_spacing(PyPathGroup* self, PyObject* args)
+PathSeries_get_spacing(PyPathSeries* self, PyObject* args)
 {
   double spacing = self->pathGroup->GetSpacing();
   return Py_BuildValue("d", spacing); 
 }
 
-//----------------------
-// PathGroup_set_method 
-//----------------------
+//-----------------------
+// PathSeries_set_method 
+//-----------------------
 //
-PyDoc_STRVAR(PathGroup_set_method_doc,
+PyDoc_STRVAR(PathSeries_set_method_doc,
   "set_method(method) \n\ 
    \n\
    Set the path group method. \n\
@@ -330,7 +329,7 @@ PyDoc_STRVAR(PathGroup_set_method_doc,
 ");
 
 static PyObject * 
-PathGroup_set_method(PyPathGroup* self, PyObject* args)
+PathSeries_set_method(PyPathSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   char* methodName;
@@ -354,11 +353,11 @@ PathGroup_set_method(PyPathGroup* self, PyObject* args)
   return Py_None;
 }
 
-//----------------------
-// PathGroup_get_method 
-//----------------------
+//-----------------------
+// PathSeries_get_method 
+//-----------------------
 //
-PyDoc_STRVAR(PathGroup_get_method_doc,
+PyDoc_STRVAR(PathSeries_get_method_doc,
   "get_method() \n\ 
    \n\
    Get the path group method. \n\
@@ -367,7 +366,7 @@ PyDoc_STRVAR(PathGroup_get_method_doc,
 ");
 
 static PyObject * 
-PathGroup_get_method(PyPathGroup* self, PyObject* args)
+PathSeries_get_method(PyPathSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   PathElement::CalculationMethod method = self->pathGroup->GetMethod();
@@ -388,11 +387,11 @@ PathGroup_get_method(PyPathGroup* self, PyObject* args)
   return Py_BuildValue("s", methodName.c_str());
 }
 
-//----------------------------------
-// PathGroup_set_calculation_number 
-//----------------------------------
+//-----------------------------------
+// PathSeries_set_calculation_number 
+//-----------------------------------
 //
-PyDoc_STRVAR(PathGroup_set_calculation_number_doc,
+PyDoc_STRVAR(PathSeries_set_calculation_number_doc,
   "set_calculation_number(number) \n\ 
    \n\
    Set the path group's calculation number. \n\
@@ -402,7 +401,7 @@ PyDoc_STRVAR(PathGroup_set_calculation_number_doc,
 ");
 
 static PyObject * 
-PathGroup_set_calculation_number(PyPathGroup* self, PyObject* args)
+PathSeries_set_calculation_number(PyPathSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
   int number;
@@ -417,11 +416,11 @@ PathGroup_set_calculation_number(PyPathGroup* self, PyObject* args)
 }
 
 
-//-----------------
-// PathGroup_write
-//-----------------
+//------------------
+// PathSeries_write
+//------------------
 //
-PyDoc_STRVAR(PathGroup_write_doc,
+PyDoc_STRVAR(PathSeries_write_doc,
   "write(file_name) \n\ 
    \n\
    Write the path group to an SV .pth file.\n\
@@ -431,7 +430,7 @@ PyDoc_STRVAR(PathGroup_write_doc,
 ");
 
 static PyObject *
-PathGroup_write(PyPathGroup* self, PyObject* args)
+PathSeries_write(PyPathSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   char* fileName = NULL;
@@ -458,82 +457,82 @@ PathGroup_write(PyPathGroup* self, PyObject* args)
 //          C l a s s    D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
 
-static char* PATH_GROUP_CLASS = "Group";
+static char* PATHPLANNING_SERIES_CLASS = "Series";
 // Dotted name that includes both the module name and 
 // the name of the type within the module.
-static char* PATHPLANNINNG_GROUP_MODULE_CLASS = "pathplanning.Group";
+static char* PATHPLANNINNG_SERIES_MODULE_CLASS = "pathplanning.Series";
 
-//---------------
-// PathGroup_doc 
-//---------------
-// Define the Group class documentation.
+//----------------
+// PathSeries_doc 
+//----------------
+// Define the Paths class documentation.
 //
-PyDoc_STRVAR(PathGroup_doc,
-   "The Group class provides methods for querying, creating, and modifying SV path planning group objects.\n\
+PyDoc_STRVAR(PathSeries_doc,
+   "The Paths class provides methods for querying, creating, and modifying SV path planning group objects.\n\
    \n\
 ");
 
-//--------------------
-// PyPathGroupMethods 
-//--------------------
-// Define the methods for the path.Group class.
+//---------------------
+// PyPathSeriesMethods 
+//---------------------
+// Define the methods for the path.Paths class.
 //
 // [TODO:DaveP] I'm not sure if some of these original methods make sense for
 // path groups: the values for group calculation number, _method, etc. don't 
 // change. 
 //
-static PyMethodDef PyPathGroupMethods[] = {
-  {"get_calculation_number", (PyCFunction)PathGroup_get_calculation_number, METH_NOARGS, PathGroup_get_calculation_number_doc},
-  {"get_method", (PyCFunction)PathGroup_get_method, METH_NOARGS, PathGroup_get_method_doc}, 
-  {"get_path", (PyCFunction)PathGroup_get_path, METH_VARARGS, PathGroup_get_path_doc},
-  {"get_path_id", (PyCFunction)PathGroup_get_path_id,METH_VARARGS,PathGroup_get_path_id_doc},
-  {"get_spacing", (PyCFunction)PathGroup_get_spacing, METH_NOARGS, PathGroup_get_spacing_doc},
-  {"get_num_paths", (PyCFunction)PathGroup_get_num_paths, METH_NOARGS, PathGroup_get_num_paths_doc},
+static PyMethodDef PyPathSeriesMethods[] = {
+  {"get_calculation_number", (PyCFunction)PathSeries_get_calculation_number, METH_NOARGS, PathSeries_get_calculation_number_doc},
+  {"get_method", (PyCFunction)PathSeries_get_method, METH_NOARGS, PathSeries_get_method_doc}, 
+  {"get_path", (PyCFunction)PathSeries_get_path, METH_VARARGS, PathSeries_get_path_doc},
+  {"get_path_id", (PyCFunction)PathSeries_get_path_id,METH_VARARGS,PathSeries_get_path_id_doc},
+  {"get_spacing", (PyCFunction)PathSeries_get_spacing, METH_NOARGS, PathSeries_get_spacing_doc},
+  {"get_num_times", (PyCFunction)PathSeries_get_num_times, METH_NOARGS, PathSeries_get_num_times_doc},
 
-  {"set_calculation_number", (PyCFunction)PathGroup_set_calculation_number, METH_NOARGS, PathGroup_set_calculation_number_doc},
-  {"set_method", (PyCFunction)PathGroup_set_method, METH_VARARGS, PathGroup_set_method_doc},
-  {"set_path", (PyCFunction)PathGroup_set_path, METH_VARARGS|METH_KEYWORDS, PathGroup_set_path_doc},
-  {"set_path_id", (PyCFunction)PathGroup_set_path_id, METH_VARARGS,PathGroup_set_path_id_doc},
-  {"set_spacing", (PyCFunction)PathGroup_set_spacing, METH_VARARGS, PathGroup_set_spacing_doc},
+  {"set_calculation_number", (PyCFunction)PathSeries_set_calculation_number, METH_NOARGS, PathSeries_set_calculation_number_doc},
+  {"set_method", (PyCFunction)PathSeries_set_method, METH_VARARGS, PathSeries_set_method_doc},
+  {"set_path", (PyCFunction)PathSeries_set_path, METH_VARARGS|METH_KEYWORDS, PathSeries_set_path_doc},
+  {"set_path_id", (PyCFunction)PathSeries_set_path_id, METH_VARARGS,PathSeries_set_path_id_doc},
+  {"set_spacing", (PyCFunction)PathSeries_set_spacing, METH_VARARGS, PathSeries_set_spacing_doc},
 
-  {"write", (PyCFunction)PathGroup_write, METH_VARARGS, PathGroup_write_doc},
+  {"write", (PyCFunction)PathSeries_write, METH_VARARGS, PathSeries_write_doc},
 
   {NULL, NULL}
 };
 
-//-----------------
-// PyPathGroupType 
-//-----------------
-// Define the Python type that stores PathGroup data. 
+//------------------
+// PyPathSeriesType 
+//------------------
+// Define the Python type that stores PathSeries data. 
 //
 // Can't set all the fields here because g++ does not suppor non-trivial 
 // designated initializers. 
 //
-static PyTypeObject PyPathGroupType = {
+static PyTypeObject PyPathSeriesType = {
   PyVarObject_HEAD_INIT(NULL, 0)
   // Dotted name that includes both the module name and 
   // the name of the type within the module.
-  PATHPLANNINNG_GROUP_MODULE_CLASS, 
-  sizeof(PyPathGroup)
+  PATHPLANNINNG_SERIES_MODULE_CLASS, 
+  sizeof(PyPathSeries)
 };
 
-//------------------
-// PyPathGroup_init
-//------------------
-// This is the __init__() method for the path.Group class. 
+//-------------------
+// PyPathSeries_init
+//-------------------
+// This is the __init__() method for the path.Paths class. 
 //
-// This implements the Python __init__ method for the Group class. 
+// This implements the Python __init__ method for the Paths class. 
 // It is called after calling the __new__ method.
 //
 // Args:
-//   fileName (str): An SV .pth file. A new PathGroup object is created from 
+//   fileName (str): An SV .pth file. A new PathSeries object is created from 
 //       the contents of the file. (optional)
 //
 static int 
-PyPathGroupInit(PyPathGroup* self, PyObject* args)
+PyPathSeriesInit(PyPathSeries* self, PyObject* args)
 {
   static int numObjs = 1;
-  std::cout << "[PyPathGroupInit] New PathGroup object: " << numObjs << std::endl;
+  std::cout << "[PyPathSeriesInit] New PathSeries object: " << numObjs << std::endl;
   auto api = PyUtilApiFunction("|s", PyRunTimeErr, __func__);
   char* fileName = nullptr;
   if (!PyArg_ParseTuple(args, api.format, &fileName)) {
@@ -541,8 +540,8 @@ PyPathGroupInit(PyPathGroup* self, PyObject* args)
       return 1;
   }
   if (fileName != nullptr) {
-      std::cout << "[PyPathGroupInit] File name: " << fileName << std::endl;
-      self->pathGroup = PathGroup_read(fileName);
+      std::cout << "[PyPathSeriesInit] File name: " << fileName << std::endl;
+      self->pathGroup = PathSeries_read(fileName);
   } else {
       self->pathGroup = new sv3::PathGroup();
   }
@@ -550,16 +549,16 @@ PyPathGroupInit(PyPathGroup* self, PyObject* args)
   return 0;
 }
 
-//----------------
-// PyPathGroupNew 
-//----------------
+//------------------
+// PyPathSeriesNew 
+//-----------------
 // This implements the Python __new__ method. It is called before the
 // __init__ method.
 //
 static PyObject *
-PyPathGroupNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
+PyPathSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyPathGroupNew] PyPathGroupNew " << std::endl;
+  std::cout << "[PyPathSeriesNew] PyPathSeriesNew " << std::endl;
   auto self = (PyPath*)type->tp_alloc(type, 0);
   if (self != NULL) {
       self->id = 1;
@@ -567,60 +566,60 @@ PyPathGroupNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   return (PyObject*)self;
 }
 
-//--------------------
-// PyPathGroupDealloc 
-//--------------------
+//---------------------
+// PyPathSeriesDealloc 
+//---------------------
 //
 static void
-PyPathGroupDealloc(PyPathGroup* self)
+PyPathSeriesDealloc(PyPathSeries* self)
 {
-  std::cout << "[PyPathGroupDealloc] **** Free PyPathGroup **** " << std::endl;
+  std::cout << "[PyPathSeriesDealloc] **** Free PyPathSeries **** " << std::endl;
   delete self->pathGroup;
   Py_TYPE(self)->tp_free(self);
 }
 
-//------------------------
-// SetPathGroupTypeFields 
-//------------------------
+//-------------------------
+// SetPathSeriesTypeFields 
+//-------------------------
 // Set the Python type object fields that stores Path data. 
 //
 // Need to set the fields here because g++ does not suppor non-trivial 
 // designated initializers. 
 //
 static void
-SetPyPathGroupTypeFields(PyTypeObject& pathType)
+SetPyPathSeriesTypeFields(PyTypeObject& pathType)
 {
   // Doc string for this type.
-  pathType.tp_doc = PathGroup_doc;
+  pathType.tp_doc = PathSeries_doc;
   // Object creation function, equivalent to the Python __new__() method. 
   // The generic handler creates a new instance using the tp_alloc field.
-  pathType.tp_new = PyPathGroupNew;
+  pathType.tp_new = PyPathSeriesNew;
   pathType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
-  pathType.tp_init = (initproc)PyPathGroupInit;
-  pathType.tp_dealloc = (destructor)PyPathGroupDealloc;
-  pathType.tp_methods = PyPathGroupMethods;
+  pathType.tp_init = (initproc)PyPathSeriesInit;
+  pathType.tp_dealloc = (destructor)PyPathSeriesDealloc;
+  pathType.tp_methods = PyPathSeriesMethods;
 }
 
-//-------------------
-// CreatePyPathGroup
-//-------------------
-// Create a PyPathGroupType object.
+//--------------------
+// CreatePyPathSeries
+//--------------------
+// Create a PyPathSeriesType object.
 //
-// If the 'pathGroup' argument is not null then use that 
-// for the PyPathGroupType.pathGroup data.
+// If the 'pathPaths' argument is not null then use that 
+// for the PyPathSeriesType.pathPaths data.
 //
 PyObject *
-CreatePyPathGroup(PathGroup* pathGroup)
+CreatePyPathSeries(PathGroup* pathGroup)
 {
-  std::cout << "[CreatePyPathGroup] Create PathGroup object ... " << std::endl;
-  auto pathGroupObj = PyObject_CallObject((PyObject*)&PyPathGroupType, NULL);
-  auto pyPathGroup = (PyPathGroup*)pathGroupObj;
+  std::cout << "[CreatePyPathSeries] Create PathSeries object ... " << std::endl;
+  auto pathPathsObj = PyObject_CallObject((PyObject*)&PyPathSeriesType, NULL);
+  auto pyPathSeries = (PyPathSeries*)pathPathsObj;
 
   if (pathGroup != nullptr) {
-      delete pyPathGroup->pathGroup;
-      pyPathGroup->pathGroup = pathGroup;
+      delete pyPathSeries->pathGroup;
+      pyPathSeries->pathGroup = pathGroup;
   }
-  std::cout << "[CreatePyPath] pyPathGroup id: " << pyPathGroup->id << std::endl;
-  return pathGroupObj;
+  std::cout << "[CreatePyPath] pyPathSeries id: " << pyPathSeries->id << std::endl;
+  return pathPathsObj;
 }
 
