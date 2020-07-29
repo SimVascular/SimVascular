@@ -184,8 +184,8 @@ Segmentation_create(PySegmentation* self, PyObject* args)
 static char* SEGMENTATION_MODULE = "segmentation";
 
 // Contour module exception.
-static char* SEGMENTATION_MODULE_EXCEPTION = "segmentation.SegmentationError";
-static char* SEGMENTATION_MODULE_EXCEPTION_OBJECT = "SegmentationError";
+static char* SEGMENTATION_MODULE_EXCEPTION = "segmentation.Error";
+static char* SEGMENTATION_MODULE_EXCEPTION_OBJECT = "Error";
 
 //------------------------
 // SegmentationModule_doc

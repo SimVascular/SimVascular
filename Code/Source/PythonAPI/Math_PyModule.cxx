@@ -615,8 +615,8 @@ Math_smooth_curve(PyObject *self, PyObject *args)
 ////////////////////////////////////////////////////////
 
 static char* MATH_MODULE = "math";
-static char* MATH_MODULE_EXCEPTION = "math.MathError";
-static char* MATH_MODULE_EXCEPTION_OBJECT = "MathError";
+static char* MATH_MODULE_EXCEPTION = "math.Error";
+static char* MATH_MODULE_EXCEPTION_OBJECT = "Error";
 
 PyDoc_STRVAR(MathModule_doc, "math module functions");
 

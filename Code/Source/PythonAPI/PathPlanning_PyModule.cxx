@@ -73,8 +73,8 @@ static PyObject* PyRunTimeErr;
 ////////////////////////////////////////////////////////
 
 static char* PATHPLANNING_MODULE = "pathplanning";
-static char* PATHPLANNING_MODULE_EXCEPTION = "pathplanning.PathPlanningError";
-static char* PATHPLANNING_MODULE_EXCEPTION_OBJECT = "PathPlanningError";
+static char* PATHPLANNING_MODULE_EXCEPTION = "pathplanning.Error";
+static char* PATHPLANNING_MODULE_EXCEPTION_OBJECT = "Error";
 
 //------------------------
 // PathPlanningModule_doc

@@ -230,8 +230,8 @@ ModelingCheckFileFormat(PyUtilApiFunction& api, SolidModel_KernelT kernel, std::
 ////////////////////////////////////////////////////////
 
 static char* MODELING_MODULE = "modeling";
-static char* MODELING_MODULE_EXCEPTION = "modeling.ModelingError";
-static char* MODELING_MODULE_EXCEPTION_OBJECT = "ModelingError";
+static char* MODELING_MODULE_EXCEPTION = "modeling.Error";
+static char* MODELING_MODULE_EXCEPTION_OBJECT = "Error";
 
 PyDoc_STRVAR(Solid_module_doc, 
   "SimVascular modeling module. \n\

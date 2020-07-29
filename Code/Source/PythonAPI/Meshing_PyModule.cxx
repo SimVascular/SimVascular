@@ -235,8 +235,8 @@ static PyMethodDef PyMeshingModuleMethods[] =
 // interpreter when the module is loaded.
 
 static char* MESHING_MODULE = "meshing";
-static char* MESHING_MODULE_EXCEPTION = "meshing.MeshingError";
-static char* MESHING_MODULE_EXCEPTION_OBJECT = "MeshingError";
+static char* MESHING_MODULE_EXCEPTION = "meshing.Error";
+static char* MESHING_MODULE_EXCEPTION_OBJECT = "Error";
 
 PyDoc_STRVAR(Meshing_module_doc, 
   "SimVascular meshing module. \n\

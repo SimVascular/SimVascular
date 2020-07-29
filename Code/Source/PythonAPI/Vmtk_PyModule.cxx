@@ -952,8 +952,8 @@ Geom_map_and_correct_ids(PyObject* self, PyObject* args)
 ////////////////////////////////////////////////////////
 
 static char* VMTK_MODULE = "vmtk";
-static char* VMTK_EXCEPTION = "vmtk.VmtkError";
-static char* VMTK_EXCEPTION_OBJECT = "VmtkError";
+static char* VMTK_EXCEPTION = "vmtk.Error";
+static char* VMTK_EXCEPTION_OBJECT = "Error";
 
 PyDoc_STRVAR(VmtkModule_doc, 
   "SimVascular vmtk module functions. \n\

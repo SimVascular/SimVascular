@@ -174,8 +174,8 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
 ////////////////////////////////////////////////////////
 
 static char* MESH_UTILS_MODULE = "mesh_utils";
-static char* MESH_UTILS_EXCEPTION = "mesh_utils.MeshUtilsError";
-static char* MESH_UTILS_EXCEPTION_OBJECT = "MeshUtilsError";
+static char* MESH_UTILS_EXCEPTION = "mesh_utils.Error";
+static char* MESH_UTILS_EXCEPTION_OBJECT = "Error";
 
 PyDoc_STRVAR(MeshUtils_doc, "mesh_util functions");
 

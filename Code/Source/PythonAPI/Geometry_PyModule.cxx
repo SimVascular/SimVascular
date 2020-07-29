@@ -3821,8 +3821,8 @@ Geom_replace_point_data(PyObject* self, PyObject* args)
 ////////////////////////////////////////////////////////
 
 static char* GEOMETRY_MODULE = "geometry";
-static char* GEOMETRY_EXCEPTION = "geometry.GeometryError";
-static char* GEOMETRY_EXCEPTION_OBJECT = "GeometryError";
+static char* GEOMETRY_EXCEPTION = "geometry.Error";
+static char* GEOMETRY_EXCEPTION_OBJECT = "Error";
 
 PyDoc_STRVAR(GeometryModule_doc, 
   "SimVascular geometry module. \n\
