@@ -191,16 +191,23 @@ static char* SEGMENTATION_MODULE_EXCEPTION_OBJECT = "Error";
 // SegmentationModule_doc
 //------------------------
 //
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(SegmentationModule_doc,
    "SimVascular segmentation module. \n\
    \n\
-   The segmentation module provides an interface for SV segmentation methods. A segmentation defines the contour geometry of a \n\
-   region of interest using various 2D image segmentation methods. The segmentation module provides several classes used to create \n\
-   and modify 2D segmentations using circle, ellipse, level set, polygon, spline polygon and threshold methods. \n\ 
+   The segmentation module provides an interface for SV segmentation methods. \n\
+   A segmentation defines the contour geometry of a region of interest using  \n\
+   various 2D image segmentation methods. The segmentation module provides several  \n\
+   classes used to create and modify 2D segmentations using circle, ellipse,  \n\ 
+   level set, polygon, spline polygon and threshold methods.                  \n\ 
    \n\
-   \n\ Circle, ellipse, polygon, and spline polygon methods are used to manually define the segmentation region using a set of control points. \n\ 
+   Circle, ellipse, polygon, and spline polygon methods are used to manually  \n\
+   define the segmentation region using a set of control points.              \n\ 
    \n\
-   \n\ The level set and threshold methods compute the segmentation region automatically based on image properties and option settings. \n\
+   The level set and threshold methods compute the segmentation region        \n\ 
+   automatically based on image properties and option settings. \n\
    \n\
 ");
 

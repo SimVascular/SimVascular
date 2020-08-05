@@ -110,18 +110,30 @@ static char* PATH_SUBDIVISION_METHOD_MODULE_CLASS = "pathplanning.SubdivisionMet
 // The name of the CalculationMethod class veriable that contains all of the method types.
 static char* PATH_SUBDIVISION_METHOD_CLASS_VARIBLE_NAMES = "names";
 
+//---------------------------
+// PathSubdivisionMethod_doc 
+//---------------------------
+// Define the SubdivisionMethod class documentation.
+//
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PathSubdivisionMethod_doc, 
-   "The SubdivisionMethod class provides the names used to set the subdivision method for a path as class variables. \n\
+   "The SubdivisionMethod class provides the names used to set the subdivision\n\
+   method for a path as class variables.                                     \n\
    \n\
-    The subdivision method is used to determine the number of path curve points N created between two adjacent control points. \n\
+   The subdivision method is used to determine the number of path curve    \n\
+   points N created between two adjacent control points.                   \n\
    \n\
    Valid subdivision method names are: \n\ 
    \n\
-      SPACING - Divide the distance D between adjacent control points by a given spacing value S: N = D/S - 1 \n\
+      SPACING - Divide the distance D between adjacent control points by a \n\
+                given spacing value S: N = D/S - 1 \n\
    \n\
       SUBDIVISION - Set N to a given subdivision number. \n\
    \n\
-      TOTAL - Appoximate the total number of path points using the number of control points Nc and total numner Nt: N = (Nt-1)/(Nc-1) - 1 \n\
+      TOTAL - Appoximate the total number of path points using the number of \n\
+              control points Nc and total numner Nt: N = (Nt-1)/(Nc-1) - 1 \n\
    \n\
 ");
 

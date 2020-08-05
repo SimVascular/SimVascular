@@ -186,7 +186,6 @@ PyDoc_STRVAR(PolygonSegmentation_get_control_points_doc,
    \n\
    Get the control points for a polygon segmentation. \n\
    \n\
-   \n\
    Returns  (list(list([float,float,float])): The list of control points. \n\
 ");
 
@@ -259,7 +258,6 @@ PyDoc_STRVAR(PolygonSegmentation_get_normal_doc,
    \n\
    Get the normal of the polygon segmentation. \n\
    \n\
-   \n\
    Returns (list([float,float,float]): The polygon segmentation normal. \n\
 ");
 
@@ -277,14 +275,22 @@ PolygonSegmentation_get_normal(PyPolygonSegmentation* self, PyObject* args, PyOb
 static char* SEGMENTATION_POLYGON_CLASS = "Polygon";
 static char* SEGMENTATION_POLYGON_MODULE_CLASS = "segmentation.Polygon";
 
+//--------------------------------
+// PyPolygonSegmentationClass_doc
+//--------------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PyPolygonSegmentationClass_doc, 
-   "PyPolygon(control_points)  \n\
+   "Polygon(control_points)  \n\
    \n\
-   The PolygonSegmentation class provides an interface for creating a polygon segmentation. \n\
-   A polygon segmentation is defined by a list of control points defining its boundary.     \n\
+   The Polygon class provides an interface for creating a polygon          \n\
+   segmentation. A polygon segmentation is defined by a list of control    \n\
+   points defining its boundary.                                           \n\
    \n\
    Args: \n\
-     points (list(list([float,float,float])): The list of control points. \n\
+     control_points (list(list([float,float,float]))): The list of control \n\
+        points.                                                            \n\
    \n\
 ");
 

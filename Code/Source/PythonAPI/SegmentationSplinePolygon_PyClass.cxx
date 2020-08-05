@@ -157,7 +157,6 @@ PyDoc_STRVAR(SplinePolygonSegmentation_get_center_doc,
    \n\
    Get the center of the polygon segmentation. \n\
    \n\
-   \n\
    Returns (list([float,float,float]): The polygon segmentation center. \n\
 ");
 
@@ -177,8 +176,7 @@ PyDoc_STRVAR(SplinePolygonSegmentation_get_control_points_doc,
    \n\
    Get the control points for a polygon segmentation. \n\
    \n\
-   \n\
-   Returns  (list(list([float,float,float])): The list of control points. \n\
+   Returns  (list(list([float,float,float]))): The list of control points. \n\
 ");
 
 static PyObject*
@@ -205,7 +203,7 @@ PyDoc_STRVAR(SplinePolygonSegmentation_get_normal_doc,
    \n\
    Get the normal of the plane the spline polygon segmentation lies in. \n\
    \n\
-   Returns (list([float,float,float]): The spline polygon segmentation normal. \n\
+   Returns (list([float,float,float])): The spline polygon segmentation normal. \n\
 ");
 
 static PyObject*
@@ -224,6 +222,7 @@ PyDoc_STRVAR(SplinePolygonSegmentation_get_subdivision_params_doc,
    \n\
    Get the subdivision parameters used to control the interpolating spline. \n\
    \n\
+   Returns (str, float, int): The subdivision type, spacing and number. \n\
 ");
 
 static PyObject*
@@ -287,7 +286,7 @@ PyDoc_STRVAR(SplinePolygonSegmentation_set_control_points_doc,
    Set the control points for a polygon segmentation. \n\
    \n\
    Args: \n\
-     points (list(list([float,float,float])): The list of control points. \n\
+     points (list(list([float,float,float]))): The list of control points. \n\
    \n\
 ");
 
@@ -332,9 +331,10 @@ PyDoc_STRVAR(SplinePolygonSegmentation_set_subdivision_params_doc,
    Set the subdivision parameters used to control the interpolating spline. \n\
    \n\
    Args: \n\
-     type (str): The subdivision type. Valid types: CONSTANT_SPACING, CONSTANT_SUBDIVISION_NUMBER, or CONSTANT_TOTAL_NUMBER. \n\
-     spacing (float): The subdivision spacing. \n\
-     number (int): The number of subdivisions. \n\
+     type (Optional[str): The subdivision type. Valid types: CONSTANT_SPACING,\n\
+        CONSTANT_SUBDIVISION_NUMBER, or CONSTANT_TOTAL_NUMBER.             \n\
+     spacing (Optional[float]): The subdivision spacing. \n\
+     number (Optional[int]): The number of subdivisions. \n\
    \n\
 ");
 
@@ -397,10 +397,11 @@ SplinePolygonSegmentation_set_subdivision_params(PySplinePolygonSegmentation* se
 PyDoc_STRVAR(SplinePolygonSegmentation_set_subdivision_type_doc,
   "set_subdivision_type(type)  \n\
    \n\
-   Set the subdivision type of the interpolating spline. \n\
+   Set the subdivision type of the interpolating spline.                   \n\
    \n\
    Args: \n\
-     type (str): The subdivision type. Valid types: CONSTANT_SPACING, CONSTANT_SUBDIVISION_NUMBER, or CONSTANT_TOTAL_NUMBER. \n\
+     type (str): The subdivision type. Valid types: CONSTANT_SPACING,       \n\
+        CONSTANT_SUBDIVISION_NUMBER, or CONSTANT_TOTAL_NUMBER. \n\
    \n\
 ");
 
@@ -441,7 +442,25 @@ SplinePolygonSegmentation_set_subdivision_type(PySplinePolygonSegmentation* self
 static char* SEGMENTATION_SPLINE_POLYGON_CLASS = "SplinePolygon";
 static char* SEGMENTATION_SPLINE_POLYGON_MODULE_CLASS = "segmentation.SplinePolygon";
 
-PyDoc_STRVAR(PySplineSplinePolygonSegmentationClass_doc, "circle segmentation functions");
+//--------------------------------------------
+// PySplineSplinePolygonSegmentationClass_doc
+//--------------------------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
+PyDoc_STRVAR(PySplinePolygonSegmentationClass_doc, 
+   "SplinePolygon(control_points)  \n\
+   \n\
+   The SplinePolygon class provides an interface for creating a spline     \n\
+   curve interpolating a set of control points.                            \n\
+   \n\
+   Control points can be defined using any segmentation type.              \n\
+   \n\
+   Args: \n\
+     control_points (list(list([float,float,float]))): The list of 3D      \n\
+        control points.                                                    \n\
+   \n\
+");
 
 //------------------------------------------
 // PySplineSplinePolygonSegmentationMethods 
@@ -576,7 +595,7 @@ static void
 SetSplinePolygonSegmentationTypeFields(PyTypeObject& contourType)
  {
   // Doc string for this type.
-  contourType.tp_doc = "SplinePolygon Segmentation objects";
+  contourType.tp_doc = PySplinePolygonSegmentationClass_doc; 
 
   // Object creation function, equivalent to the Python __new__() method. 
   // The generic handler creates a new instance using the tp_alloc field.

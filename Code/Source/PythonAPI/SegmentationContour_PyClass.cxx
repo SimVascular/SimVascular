@@ -207,14 +207,21 @@ ContourSegmentation_set_contour_points(PyContourSegmentation* self, PyObject* ar
 static char* SEGMENTATION_CONTOUR_CLASS = "Contour";
 static char* SEGMENTATION_CONTOUR_MODULE_CLASS = "segmentation.Contour";
 
+//--------------------------------
+// PyContourSegmentationClass_doc
+//--------------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PyContourSegmentationClass_doc, 
    "Contour(contour_points)  \n\
    \n\
-   The ContourSegmentation class provides an interface for creating a contour segmentation. \n\
-   A contur segmentation is defined by a set of 3D points. \n\
+   The Contour class provides an interface for creating a contour          \n\
+   segmentation. A contur segmentation is defined by a set of 3D points.   \n\
    \n\
    Args: \n\
-     points(list([float,float,float]): The list of 3D points defining the contour. \n\
+     contour_points (list([float,float,float])): The list of 3D points     \n\
+        defining the contour.                                              \n\
    \n\
 ");
 

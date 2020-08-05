@@ -154,12 +154,13 @@ PyModelingModelCtorMapType PyModelingModelCtorMap = {
 static cvSolidModel *
 CreateCvSolidModel(SolidModel_KernelT kernel)
 {
-  //std::cout << "[CreateCvSolidModel] ========== CreateCvSolidModel ==========" << std::endl;
+  std::cout << "[CreateCvSolidModel] ========== CreateCvSolidModel ==========" << std::endl;
   cvSolidModel* solidModel;
 
   try {
       solidModel = CvSolidModelCtorMap[kernel]();
   } catch (...) {
+      std::cout << "[CreateCvSolidModel] ERROR " << std::endl;
       return nullptr;
   }
 
@@ -289,11 +290,12 @@ static PyMethodDef PyModelingModuleMethods[] = {
 static PyObject *
 CreatePyModelingModelObject(SolidModel_KernelT kernel)
 {
-  //std::cout << "[CreatePyModelingModelObject] ========== CreatePyModelingModelObject ==========" << std::endl;
+  std::cout << "[CreatePyModelingModelObject] ========== CreatePyModelingModelObject ==========" << std::endl;
   auto cvSolidModel = CreateCvSolidModel(kernel);
   if (cvSolidModel == nullptr) { 
       return nullptr;
   }
+  std::cout << "[CreatePyModelingModelObject] cvSolidModel: " << cvSolidModel << std::endl;
 
   return CreatePyModelingModelObject(cvSolidModel);
 }

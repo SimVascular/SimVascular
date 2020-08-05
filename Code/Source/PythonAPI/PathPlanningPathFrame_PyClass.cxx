@@ -79,8 +79,22 @@ PyPathFrameGetData(PyObject* object, int& id, std::array<double,3>&  position, s
 static char* PATH_FRAME_CLASS = "PathFrame";
 static char* PATH_FRAME_MODULE_CLASS = "pathplanning.PathFrame";
 
+//-------------------
+// PathPathFrame_doc
+//-------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PathPathFrame_doc, 
-   "The PathFrame class provides  \n\
+   "The PathFrame class stores data a path's interpolating spline position, \n\
+   tangent, and normal data.                                               \n\
+   \n\
+   A coordinate frame is defined by                                        \n\
+   \n\
+      id (int): The ID of a path point.                                       \n\
+      point (list([float,float,float])): A 3D path point.                     \n\
+      normal (list([float,float,float])): The normal to the path point.       \n\
+      tangent (list([float,float,float])): The tangent to the path point.     \n\
    \n\
 ");
 

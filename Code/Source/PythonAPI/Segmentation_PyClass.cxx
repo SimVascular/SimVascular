@@ -118,9 +118,6 @@ PyDoc_STRVAR(Segmentation_get_points_doc,
    \n\
    Get the segmentation contour points. \n\
    \n\
-   Args:                                    \n\
-     None \n\
-   \n\
    Returns list([x,y,z]): The list of contour points. \n\
 ");
 
@@ -157,9 +154,6 @@ PyDoc_STRVAR(Segmentation_get_control_points_doc,
    \n\
    Get the center of the contour. \n\
    \n\
-   Args:                                    \n\
-     None \n\
-   \n\
    Returns list([x,y,z]): The center of the contour. \n\
 ");
 
@@ -194,9 +188,6 @@ PyDoc_STRVAR(Segmentation_get_id_doc,
    \n\
    Get the contour ID. \n\
    \n\
-   Args:                                    \n\
-     None \n\
-   \n\
    Returns int: The contour id. \n\
 ");
 
@@ -218,9 +209,6 @@ PyDoc_STRVAR(Segmentation_get_path_point_doc,
   "get_path_point()  \n\ 
    \n\
    Get the contour path point. \n\
-   \n\
-   Args:                                    \n\
-     None \n\
    \n\
    Returns dict(pos:[x,y,z], tangent:[x,y,z], rotation:[x,y,z]): The contour path point. \n\
 ");
@@ -246,8 +234,6 @@ PyDoc_STRVAR(Segmentation_get_type_doc,
    \n\
    Get the contour type. \n\
    \n\
-   Args: \n\
-     None \n\
    Returns (str): contour type. \n\
 ");
 
@@ -269,8 +255,6 @@ PyDoc_STRVAR(Segmentation_get_polydata_doc,
    \n\
    Get the contour type. \n\
    \n\
-   Args: \n\
-     None \n\
    Returns (str): contour type. \n\
 ");
 
@@ -495,9 +479,6 @@ PyDoc_STRVAR(Segmentation_get_area_doc,
    \n\
    Get the area of the contour. \n\
    \n\
-   Args:                                    \n\
-     None \n\
-   \n\
    Returns: Area (float) of the contour. \n\
 ");
 
@@ -523,9 +504,6 @@ PyDoc_STRVAR(Segmentation_get_perimeter_doc,
   "Contour.perimeter()  \n\ 
    \n\
    Get the length of the contour perimeter. \n\
-   \n\
-   Args:                                    \n\
-     None \n\
    \n\
    Returns: Length (float) of the contour perimeter. \n\
 ");

@@ -104,10 +104,12 @@ PyDoc_STRVAR(ModelingModeler_box_doc,
 ");
 
 static PyObject * 
-ModelingModeler_box(PyModelingModel* self, PyObject* args, PyObject* kwargs)
+ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   std::cout << "[ModelingModeler_box] ========== ModelingModeler_box ==========" << std::endl;
+  std::cout << "[ModelingModel_box] Self: " << self << std::endl;
   std::cout << "[ModelingModel_box] Kernel: " << self->kernel << std::endl;
+  std::cout << "[ModelingModeler_box] self->id: " << self->id << std::endl;
   auto api = PyUtilApiFunction("O!ddd", PyRunTimeErr, __func__);
   static char *keywords[] = {"center", "width", "height", "length", NULL};
   double width = 1.0;
@@ -153,6 +155,7 @@ ModelingModeler_box(PyModelingModel* self, PyObject* args, PyObject* kwargs)
   std::cout << "[ModelingModel_box] Length: " << length << std::endl;
 
   // Create the new solid object.
+  std::cout << "[ModelingModel_box] Create modeling model object for kernel " << self->kernel << std::endl;
   auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
   auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel; 
   if (model == NULL) {
@@ -162,6 +165,7 @@ ModelingModeler_box(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 
   // Create the box solid.
   //
+  std::cout << "[ModelingModel_box] Create the box solid " << std::endl;
   double dims[3] = {width, height, length};
   if (model->MakeBox3d(dims, center) != SV_OK) {
       Py_DECREF(pyModelingModelObj);
@@ -756,6 +760,8 @@ static PyMethodDef PyModelingModelerMethods[] = {
 static int
 PyModelingModelerInit(PyModelingModeler* self, PyObject* args, PyObject *kwds)
 {
+  std::cout << std::endl;
+  std::cout << "[PyModelingModelerInit] ========== PyModelingModelerInit ==========" << std::endl;
   auto api = PyUtilApiFunction("", PyRunTimeErr, "ModelingModeler");
   static int numObjs = 1;
   std::cout << "[PyModelingModelerInit] New PyModelingModeler object: " << numObjs << std::endl;
@@ -763,13 +769,16 @@ PyModelingModelerInit(PyModelingModeler* self, PyObject* args, PyObject *kwds)
   if (!PyArg_ParseTuple(args, "s", &kernelName)) {
       return -1;
   }
-  std::cout << "[PyModelingModelerInit] Kernel name: " << kernelName << std::endl;
   auto kernel = kernelNameEnumMap.at(std::string(kernelName));
+  std::cout << "[PyModelingModelerInit] Kernel name: " << kernelName << std::endl;
+  std::cout << "[PyModelingModelerInit] Kernel: " << kernel << std::endl;
 
   self->id = numObjs;
   self->kernel = kernel;
   self->kernelName = Py_BuildValue("s", kernelName); 
   numObjs += 1;
+  std::cout << "[PyModelingModelerInit] self->id: " << self->id << std::endl;
+  std::cout << "[PyModelingModelerInit] Kernel: " << kernel << std::endl;
   return 0;
 }
 
@@ -791,6 +800,8 @@ static PyTypeObject PyModelingModelerType = {
 static PyObject *
 PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+  std::cout << std::endl;
+  std::cout << "[PyModelingModelerNew] ========== PyModelingModelerNew ==========" << std::endl;
   std::cout << "[PyModelingModelerNew] New ModelingModeler" << std::endl;
   auto api = PyUtilApiFunction("s", PyRunTimeErr, "Modeler");
   char* kernelName = nullptr; 
@@ -798,7 +809,7 @@ PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
       return api.argsError();
   }
 
-  std::cout << "[PyModelingModelerNew] Kernel: " << kernelName << std::endl;
+  std::cout << "[PyModelingModelerNew] Kernel name: " << kernelName << std::endl;
   SolidModel_KernelT kernel;
 
   try {
@@ -810,6 +821,8 @@ PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
       return nullptr;
   }
 
+  std::cout << "[PyModelingModelerNew] Kernel: " << kernel << std::endl;
+
   try {
     auto ctore = CvSolidModelCtorMap.at(kernel);
   } catch (const std::out_of_range& except) {
@@ -819,9 +832,10 @@ PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
   auto self = (PyModelingModeler*)type->tp_alloc(type, 0);
   if (self != NULL) {
-      //self->id = 1;
+      self->id = 0;
   }
 
+  std::cout << "[PyModelingModelerNew] self: " << self << std::endl;
   return (PyObject *) self;
 }
 
@@ -832,6 +846,7 @@ PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyModelingModelerDealloc(PyModelingModeler* self)
 {
+  std::cout << "[PyModelingModelerDealloc] **** PyModelingModelerDealloc ****" << std::endl;
   std::cout << "[PyModelingModelerDealloc] Free PyModelingModeler: " << self->id << std::endl;
   //delete self->solidModel;
   Py_TYPE(self)->tp_free(self);

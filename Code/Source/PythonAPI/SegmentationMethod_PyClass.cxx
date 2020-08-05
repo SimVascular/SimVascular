@@ -80,6 +80,14 @@ SegmentationMethod_get_name(cKernelType contourType)
 //
 // Python 'Methods' class methods. 
 
+PyDoc_STRVAR(SegmentationMethod_get_names_doc,
+   "get_names()  \n\
+   \n\
+   Get the segmentation method names. \n\
+   \n\
+   Returns (list([str])): The list of segmentation method names. \n\
+");
+
 static PyObject *
 SegmentationMethod_get_names()
 {
@@ -98,7 +106,7 @@ SegmentationMethod_get_names()
 //---------------------------
 //
 static PyMethodDef SegmentationMethodMethods[] = {
-  { "get_names", (PyCFunction)SegmentationMethod_get_names, METH_NOARGS, NULL},
+  { "get_names", (PyCFunction)SegmentationMethod_get_names, METH_NOARGS, SegmentationMethod_get_names_doc},
   {NULL, NULL}
 };
 
@@ -111,7 +119,25 @@ static char* SEGMENTATION_METHOD_MODULE_CLASS = "segmentation.Method";
 // The name of the Kernel class veriable that contains all of the kernel types.
 static char* SEGMENTATION_METHOD_CLASS_VARIBLE_NAMES = "names";
 
-PyDoc_STRVAR(SegmentationMethodClass_doc, "segmentation method class functions.");
+//-----------------------------
+// SegmentationMethodClass_doc
+//-----------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
+PyDoc_STRVAR(SegmentationMethodClass_doc, 
+   "Method()  \n\
+   \n\
+   The Method class provides the names used to set the name of the method  \n\
+   used to create a segmentation from imaging data.                        \n\
+   \n\
+   Valid segmentation method names are: \n\ 
+   \n\
+      LEVEL_SET - Use the level set method to create a segmentation.       \n\
+   \n\
+      THRESHOLD - Use thresholding to create a segmentation.               \n\
+   \n\
+");
 
 //--------------------------
 // PySegmentationMethodType 
@@ -154,9 +180,15 @@ SetSegmentationMethodTypes(PyTypeObject& contourType)
   //std::cout << "[SetSegmentationMethodTypes] " << std::endl;
   //std::cout << "[SetSegmentationMethodTypes] =============== SetSegmentationMethodTypes ==========" << std::endl;
 
+  // Set the names that the API uses, different from what SV cKernelType is used for.
+  std::set<std::string> validTypes = {"LEVEL_SET", "THRESHOLD"};
+
   // Add kernel types to SegmentationMethodType dictionary.
   for (auto const& entry : kernelNameEnumMap) {
       auto name = entry.first.c_str();
+      if (validTypes.find(name) == validTypes.end()) {
+          continue;
+      }
       //std::cout << "[SetSegmentationMethodTypes] name: " << name << std::endl;
       if (PyDict_SetItemString(contourType.tp_dict, name, PyUnicode_FromString(name))) {
           std::cout << "Error initializing Python API contour kernel types." << std::endl;

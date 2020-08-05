@@ -467,8 +467,25 @@ static char* PATHPLANNINNG_SERIES_MODULE_CLASS = "pathplanning.Series";
 //----------------
 // Define the Paths class documentation.
 //
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PathSeries_doc,
-   "The Paths class provides methods for querying, creating, and modifying SV path planning group objects.\n\
+   "Series(file_name=None)  \n\
+   \n\
+   The Series class stores time-varying Path objects.                        \n\
+   \n\
+   The Series class can be used to read in an SV project .pth XML file and    \n\
+   extract path data derived from time-varying imaging data. The path data for \n\
+   a given timestep element is identified using a discrete integer time step. \n\
+   \n\
+   Example: Read in an SV project .pth file.                                  \n\
+   \n\
+      path_series = sv.pathplanning.Series('aorta.pth')                       \n\
+   \n\
+   \n\
+   Args: \n\
+     file_name (Optional[str]): The name of an SV .pth file. \n\
    \n\
 ");
 

@@ -976,8 +976,12 @@ static char* PATHPLANNING_MODULE_CLASS = "pathplanning.Path";
 //---------------
 // Define the Path class documentation.
 //
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PathClass_doc,
-   "The Path class provides methods for querying, creating, and modifying SV path planning objects.\n\
+   "The Path class provides methods for querying, creating, and modifying SV  \n\
+    path planning objects.                                                    \n\
    \n\
 ");
 

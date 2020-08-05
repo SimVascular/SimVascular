@@ -73,11 +73,10 @@ void PyCircleCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourOb
 //
 PyDoc_STRVAR(CircleSegmentation_get_center_doc,
   "get_center() \n\ 
-   \n\
-   Get the circle segmentation center. \n\
-   \n\
-   Returns (list([float,float,float]): The circle center. \n\
-   \n\
+  \n\
+  Get the circle segmentation center. \n\
+  \n\
+  Returns (list([float,float,float])): The circle center. \n\
 ");
 
 static PyObject*
@@ -322,24 +321,33 @@ CircleSegmentation_set_radius(PyCircleSegmentation* self, PyObject* args)
 static char* SEGMENTATION_CIRCLE_CLASS = "Circle";
 static char* SEGMENTATION_CIRCLE_MODULE_CLASS = "segmentation.Circle";
 
+//-------------------------------
+// PyCircleSegmentationClass_doc
+//-------------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PyCircleSegmentationClass_doc, 
    "Circle(radius, center=None, normal=None, frame=None)  \n\
    \n\
-   The CircleSegmentation class provides an interface for creating a circle segmentation. \n\
-   A circle segmentation is defined by a radius, a 3D point defining its center and a normal. \n\
-   The normal defines its orientation (i.e. the plane the circle lies in). \n\
+   The Circle class provides an interface for creating a circle segmentation. \n\
+   A circle segmentation is defined by a radius, a 3D point defining its      \n\
+   center and a normal. The normal defines its orientation (i.e. the plane the\n\
+   circle lies in).                                                           \n\
    \n\
-   A CircleSegmentation object is created using a radius, center and normal or a PathFrame object. \n\
+   A Circle object is created using a radius, center and normal or a PathFrame\n\
+   object.                                                                    \n\
    \n\
-   \n\
-   A PathFrame object contains a path's interpolating spline (curve points) position, tangent, and normal data \n\
-   at a given location. The position is used for the circle center, the tangent for its normal.\n\
+   A PathFrame object contains a path's interpolating spline (curve points)   \n\
+   position, tangent, and normal data at a given location. The position is    \n\
+   used for the circle center, the tangent for its normal.\n\
    \n\
    Args: \n\
      radius (float): The circle radius. \n\
      center (list([float,float,float]): The circle center. \n\
      normal(list([float,float,float]): The circle normal direction. \n\
-     frame (Optional[PathFrame]): A PathFrame object defing the circle's center and coordinate frame. \n\
+     frame (Optional[PathFrame]): A PathFrame object defing the circle's   \n\
+        center and coordinate frame. \n\
    \n\
 ");
 
