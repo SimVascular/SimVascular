@@ -39,6 +39,14 @@ using json = nlohmann::json;
 
 sv4gui_MachineLearningUtils* sv4gui_MachineLearningUtils::instance = 0;
 
+/**
+ * Function to get an instance of the machine learning module.
+ *
+ * This function helps to prevent reloading the ML module if it has already been loaded
+ *
+ * @param network_type Name of the desired neural network to use (see sv_ml python ML code)
+ * @return the machine learning module instance
+ */
 sv4gui_MachineLearningUtils* sv4gui_MachineLearningUtils::getInstance(std::string network_type){
   if (instance == 0){
     instance = new sv4gui_MachineLearningUtils(network_type);
@@ -46,6 +54,13 @@ sv4gui_MachineLearningUtils* sv4gui_MachineLearningUtils::getInstance(std::strin
   return instance;
 }
 
+/**
+ * Function to interface between C++ and sv_ml python code
+ *
+ * This function mostly just loads the sv_wrapper modulem and creates an SVWrapper object
+ *
+ * @param network_type Name of the desired neural network to use (see sv_ml python ML code)
+ */
 sv4gui_MachineLearningUtils::sv4gui_MachineLearningUtils(std::string network_type){
 
   //Py_Initialize();
@@ -80,6 +95,9 @@ sv4gui_MachineLearningUtils::sv4gui_MachineLearningUtils(std::string network_typ
 
 }
 
+/**
+ * Destructor to properly clean up references to the python objects
+ */
 sv4gui_MachineLearningUtils::~sv4gui_MachineLearningUtils(){
   std::cout << "sv4gui_MachineLearningUtils destructor\n";
   Py_DECREF(py_wrapper_mod);
@@ -88,6 +106,14 @@ sv4gui_MachineLearningUtils::~sv4gui_MachineLearningUtils(){
   //Py_Finalize();
 }
 
+/**
+ * Function to tell the sv_ml python code which image volume to use.
+ *
+ * This function points the SVWrapper class to the correct medical image volume file
+ *
+ * @param image_path filename of the image volume to be segmented
+ * @return cstr string indicating successful call of the function
+ */
 std::string sv4gui_MachineLearningUtils::setImage(std::string image_path){
   PyObject* py_res = PyObject_CallMethod(py_wrapper_inst, "set_image",
                         "s", image_path.c_str());
@@ -102,6 +128,16 @@ std::string sv4gui_MachineLearningUtils::setImage(std::string image_path){
   return std::string(cstr);
 }
 
+/**
+ * Function to use the python SVWrapper object to segment a path point.
+ *
+ * This function constructs a JSON object containing the path point information
+ * and then passes that to the SVWrapper python object where it is segmented
+ * using the earlier loaded neural network.
+ *
+ * @param path_point an instance of a SimVascular PathPoint object
+ * @return points, a vector of vectors of doubles indicating the segmented contour
+ */
 std::vector<std::vector<double>> sv4gui_MachineLearningUtils::segmentPathPoint(sv4guiPathElement::sv4guiPathPoint path_point){
 
   std::vector<std::vector<double>> empty_points;
@@ -147,6 +183,9 @@ std::vector<std::vector<double>> sv4gui_MachineLearningUtils::segmentPathPoint(s
   return points;
 }
 
+/**
+ * Function to sample a new dropout mask for the network (currently unused).
+ */
 void sv4gui_MachineLearningUtils::sampleNetwork(){
   PyObject* py_res = PyObject_CallMethod(py_wrapper_inst, "sample", "");
 
