@@ -44,6 +44,7 @@
 #include "vtkTclUtil.h"
 #include "vtkPythonUtil.h"
 #include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -87,6 +88,8 @@ PyObject* Repos_WriteVtkPolyDataCmd( PyObject* self, PyObject* args);
 PyObject* Repos_ReadVtkPolyDataCmd( PyObject* self, PyObject* args);
 
 PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args );
+
+PyObject* Repos_WriteVtkXMLPolyDataCmd( PyObject* self, PyObject* args );
 
 PyObject*  Repos_WriteVtkStructuredPointsCmd( PyObject* self, PyObject* args);
 
@@ -135,6 +138,7 @@ PyMethodDef pyRepository_methods[] =
     {"WriteVtkPolyData", Repos_WriteVtkPolyDataCmd, METH_VARARGS,NULL},
     {"ReadVtkPolyData", Repos_ReadVtkPolyDataCmd, METH_VARARGS,NULL},
     {"ReadXMLPolyData",Repos_ReadVtkXMLPolyDataCmd,METH_VARARGS,NULL},
+    {"WriteXMLPolyData",Repos_WriteVtkXMLPolyDataCmd,METH_VARARGS,NULL},
     {"WriteVtkStructuredPoints", Repos_WriteVtkStructuredPointsCmd,
      METH_VARARGS,NULL},
     {"WriteVtkUnstructuredGrid", Repos_WriteVtkUnstructuredGridCmd,
@@ -932,7 +936,7 @@ PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
   pdReader->Update();
 
   vtkPd = pdReader->GetOutput();
-  if ( vtkPd == NULL ||vtkPd->GetNumberOfPolys()==0 )
+  if ( vtkPd == NULL )
   {
     PyErr_SetString(PyRunTimeErr, "error reading file ");
     pdReader->Delete();
@@ -961,6 +965,48 @@ PyObject* Repos_ReadVtkXMLPolyDataCmd( PyObject* self, PyObject* args )
 
 }
 
+
+
+// ---------------------------------
+// Repos_WriteVtkXMLPolyDataCmd
+// ---------------------------------
+PyObject* Repos_WriteVtkXMLPolyDataCmd( PyObject* self, PyObject* args)
+
+{
+
+  char *objName, *fn;
+  RepositoryDataT type;
+  cvRepositoryData *obj;
+  vtkStructuredPoints *sp;
+  if (!PyArg_ParseTuple(args,"ss", &objName,&fn))
+  {
+    PyErr_SetString(PyRunTimeErr,
+      "Could not import 2 chars: objName, and filename");
+    return NULL;
+  }
+
+  // Do work of command:
+  char r[1024];
+  type = gRepository->GetType( objName );
+  if ( type != POLY_DATA_T )
+  {
+    sprintf(r,"\"%s\" must be of a PolyData type",objName);
+    PyErr_SetString(PyRunTimeErr, r);
+    return NULL;
+  }
+
+  obj = gRepository->GetObject( objName );
+  sp = ((cvStrPts *)obj)->GetVtkStructuredPoints();
+
+  vtkXMLPolyDataWriter *spWriter = vtkXMLPolyDataWriter::New();
+  spWriter->SetInputDataObject( sp );
+  spWriter->SetFileName( fn );
+  spWriter->Write();
+  spWriter->Delete();
+
+  return SV_PYTHON_OK;
+
+}
 
 // ---------------------------------
 // Repos_WriteVtkStructuredPointsCmd
