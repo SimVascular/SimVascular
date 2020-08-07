@@ -238,6 +238,12 @@ static char* MESHING_MODULE = "meshing";
 static char* MESHING_MODULE_EXCEPTION = "meshing.Error";
 static char* MESHING_MODULE_EXCEPTION_OBJECT = "Error";
 
+//--------------------
+// Meshing_module_doc
+//--------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(Meshing_module_doc, 
   "SimVascular meshing module. \n\
    \n\

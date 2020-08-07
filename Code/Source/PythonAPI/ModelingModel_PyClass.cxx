@@ -29,15 +29,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Define the Python 'modeling.Model' class used to for solid modeling. 
+// Define the Python 'modeling.Model' class used as a base class for
+// the PolyData, OpenCascade and Parasolid classes. 
 //
-// The 'modeling.Model' class provides methods that operate directly on 
-// the solid model, for example, getting vtk polydata representing the 
-// model surface.
+// This class is not exposed.
 //
-//----------------------
+//-----------------
 // PyModelingModel 
-//----------------------
+//-----------------
 // The Python modeling.Model class internal data.
 //
 typedef struct {
@@ -62,10 +61,10 @@ std::set<int>
 ModelingModelGetFaceIDs(PyUtilApiFunction& api, PyModelingModel* self)
 {
   std::set<int> faceIDs;
+  auto model = self->solidModel;
 
   int numFaces;
   int *faces;
-  auto model = self->solidModel;
 
   if (model->GetFaceIds(&numFaces, &faces) != SV_OK) {
       api.error("The model has no face IDs.");
@@ -379,7 +378,23 @@ static char* MODELING_MODEL_CLASS = "Model";
 // the name of the type within the module.
 static char* MODELING_MODEL_MODULE_CLASS = "modeling.Model";
 
-PyDoc_STRVAR(ModelingModelClass_doc, "modeling model class methods.");
+//------------------------
+// ModelingModelClass_doc
+//------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
+PyDoc_STRVAR(ModelingModelClass_doc,
+   "Model() \n\
+   \n\
+   ----------------------------------------------------------------------  \n\
+   The Model class is use to represent 3D solid models of each solid       \n\
+   modeling kernel.                                                        \n\
+   \n\
+   Args: \n\
+     kernel (str): The solid modeling kernel name from the Kernel class.   \n\
+   \n\
+");
 
 //------------------------
 // PyModelingModelMethods
@@ -456,7 +471,7 @@ static PyTypeObject PyModelingModelType = {
 static PyObject *
 PyModelingModelNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyModelingModelNew] New ModelingModel" << std::endl;
+  //std::cout << "[PyModelingModelNew] New ModelingModel" << std::endl;
   auto api = PyUtilApiFunction("s", PyRunTimeErr, "ModelingModel");
   char* kernelName = nullptr; 
   if (!PyArg_ParseTuple(args, api.format, &kernelName)) {
@@ -489,7 +504,7 @@ PyModelingModelNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyModelingModelDealloc(PyModelingModel* self)
 {
-  std::cout << "[PyModelingModelDealloc] Free PyModelingModel: " << self->id << std::endl;
+  //std::cout << "[PyModelingModelDealloc] Free PyModelingModel: " << self->id << std::endl;
   // [TODO:DaveP] what to do here?
   //delete self->solidModel;
   Py_TYPE(self)->tp_free(self);

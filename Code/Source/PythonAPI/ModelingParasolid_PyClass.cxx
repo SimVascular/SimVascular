@@ -107,11 +107,15 @@ ParasolidSolid_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 static char* MODELING_PARAMODELING_CLASS = "Parasolid";
 static char* MODELING_PARAMODELING_MODULE_CLASS = "modeling.Parasolid";
 
-PyDoc_STRVAR(PyParasolidSolidClass_doc, 
-  "SimVascular Parasolid class. \n\
-   \n\
-   The Parasolid class provides an interface to SV Parasolid modeler        \n\
-   functionality. \n\
+//---------------------------
+// PyParasolidSolidClass_doc 
+//---------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
+PyDoc_STRVAR(PyParasolidSolidClass_doc,
+  "The modeling Parasolid class is used to represent a Parasolid solid     \n\
+   model.                                                                  \n\
 ");
 
 //-------------------------

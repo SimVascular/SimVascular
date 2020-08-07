@@ -64,11 +64,15 @@ cvOCCTSolidModel * pyCreateOcctSolid()
 static char* MODELING_OCCT_CLASS = "OpenCascade";
 static char* MODELING_OCCT_MODULE_CLASS = "modeling.OpenCascade";
 
+//----------------------
+// PyOcctSolidClass_doc
+//----------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PyOcctSolidClass_doc, 
-  "SimVascular OpenCascade class. \n\
-   \n\
-   The modeling OpenCascade class provides an interface to SV Open Cascade  \n\
-   modeler functionality. \n\
+  "The modeling OpenCascade class is used to represent an Open Cascade    \n\
+   solid model.                                                           \n\
 ");
 
 PyMethodDef PyOcctSolidMethods[] = {

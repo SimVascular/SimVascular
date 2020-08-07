@@ -147,21 +147,25 @@ static char* MODELING_KERNEL_MODULE_CLASS = "modeling.Kernel";
 // The name of the Kernel class veriable that contains all of the kernel types.
 static char* MODELING_KERNEL_CLASS_VARIBLE_NAMES = "names";
 
+//-------------------------
+// ModelingKernelClass_doc
+//-------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(ModelingKernelClass_doc, 
-   "SimVascular modeling Kernel class. \n\
+   "The Kernel class provides the kernel names used to create Modeling     \n\
+   objects. The kernel names are stored as class attributes and are        \n\
+   referenced using the class name.                                        \n\
    \n\
-   The Kernel class provides the kernel names used to create Modeling       \n\
-   objects. The kernel names are stored as class attributes and are         \n\
-   referenced using the class name.                                         \n\
+   The modeling kernel names are                                           \n\
+       (1) Kernel.POLYDATA                                                 \n\
+       (2) Kernel.OPENCASCADE                                              \n\
+       (3) Kernel.PARASOLID                                                \n\
    \n\
-   The modeling kernel names are                                            \n\
-       (1) Kernel.POLYDATA                                                  \n\
-       (2) Kernel.OPENCASCADE                                               \n\
-       (3) Kernel.PARASOLID                                                 \n\
+   Example: Using the Kernel.POLYDATA kernel name to create a modeler      \n\
    \n\
-   Example: Using the Kernel.POLYDATA kernel name to create a modeler       \n\
-   \n\
-       modeler = sv.modeling.Modeler(sv.modeling.Kernel.POLYDATA)           \n\
+       modeler = sv.modeling.Modeler(sv.modeling.Kernel.POLYDATA)          \n\
    \n\
 ");
 

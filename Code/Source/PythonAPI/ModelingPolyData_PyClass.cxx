@@ -122,11 +122,15 @@ ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* k
 static char* MODELING_POLYDATA_CLASS = "PolyData";
 static char* MODELING_POLYDATA_MODULE_CLASS = "modeling.PolyData";
 
-PyDoc_STRVAR(PyPolyDataSolidClass_doc, 
-  "SimVascular PolyData class. \n\
-   \n\
-   The PolyData class provides an interface to SV PolyData modeler          \n\
-   functionality. \n\
+//--------------------------
+// PyPolyDataSolidClass_doc 
+//--------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
+PyDoc_STRVAR(PyPolyDataSolidClass_doc,
+  "The modeling PolyData class is used to represent anPolyData solid       \n\
+   model.                                                                  \n\
 ");
 
 //------------------------
