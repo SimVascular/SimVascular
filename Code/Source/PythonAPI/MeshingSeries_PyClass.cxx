@@ -190,16 +190,18 @@ MeshingSeries_get_num_times(PyMeshingSeries* self, PyObject* args)
 //-----------------------
 // MeshingSeries_get_mesh 
 //-----------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
 //
 PyDoc_STRVAR(MeshingSeries_get_mesh_doc,
   "get_mesh(time=0) \n\ 
    \n\
-   Get the mesh object for the given time. The meshing options read from    \n\
-   the SV mesh .msh file are also returned.                                 \n\
+   Get the mesh object for the given time. The meshing options read from   \n\
+   the SV mesh .msh file are also returned.                                \n\
    \n\
-   Example: Getting the mesh and options for time 0                         \n\
+   Example: Getting the mesh and options for time 0                        \n\
    \n\
-       mesh, options = mesh_series(time=0)                                  \n\
+       mesh, options = mesh_series(time=0)                                 \n\
    \n\
    Args: \n\
      time (Optional[int]): The time to get the mesh for.                    \n\
@@ -207,7 +209,6 @@ PyDoc_STRVAR(MeshingSeries_get_mesh_doc,
    \n\
    Returns mesher and options objects for the meshing kernel defined for    \n\
        the series. \n\
-   \n\
 ");
 
 static PyObject * 
@@ -344,13 +345,14 @@ static char* MESHING_SERIES_CLASS = "Series";
 // type within the module.
 static char* MESHING_SERIES_MODULE_CLASS = "meshing.Series";
 
+//-------------------
+// MeshingSeries_doc 
+//-------------------
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
-
+//
 PyDoc_STRVAR(MeshingSeries_doc,
-  "SimVascular meshing Series class. \n\
-   \n\
-   Series(file_name) \n\
+  "Series(file_name) \n\
    \n\
    The meshing Series class provides an interface to SV time-varying meshes.  \n\
    A time series of meshes created from time-varying model data are stored in \n\
@@ -366,12 +368,11 @@ PyDoc_STRVAR(MeshingSeries_doc,
    \n\
    Args:\n\
      file_name (Optional[str]): The name of an SV .msh meshing file.          \n\
-   \n\
 ");
 
-//-----------------------
+//------------------------
 // PyMeshingSeriesMethods 
-//-----------------------
+//------------------------
 // Define the methods for the contour.Group class.
 //
 static PyMethodDef PyMeshingSeriesMethods[] = {

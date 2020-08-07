@@ -233,15 +233,16 @@ static char* MESHING_MESHSIM_CLASS = "MeshSim";
 // the name of the type within the module.
 static char* MESHING_MESHSIM_MODULE_CLASS = "meshing.MeshSim";
 
+//----------------------
+// PyMeshingMeshSim_doc
+//----------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PyMeshingMeshSim_doc, 
-   "SimVascular MeshSim mesher class. \n\
-   \n\
-   The MeshSim class provides an interface for creating tetrahedral finite  \n\
-   element meshes from Parasolid solid models using the commercial MeshSim  \n\
-   mesh generator.                                                          \n\
-   \n\
-   The MeshSim class inherits most of its methods from the Mesher base class. \n\
-   \n\
+   "The MeshSim class provides an interface for creating tetrahedral finite \n\
+    element meshes from Parasolid solid models using the commercial MeshSim \n\
+    mesh generator.                                                         \n\
 ");
 
 //-------------------------

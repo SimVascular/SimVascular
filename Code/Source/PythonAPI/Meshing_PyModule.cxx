@@ -247,23 +247,23 @@ static char* MESHING_MODULE_EXCEPTION_OBJECT = "Error";
 PyDoc_STRVAR(Meshing_module_doc, 
   "SimVascular meshing module. \n\
    \n\
-   The meshing module provides an interface to SV meshing functionality     \n\
-   used to generate a finite element tetrahedral mesh from a solid model.   \n\
+   The meshing module provides an interface to SV meshing functionality    \n\
+   used to generate a finite element tetrahedral mesh from a solid model.  \n\
    \n\
-   Methods are provided for setting meshing parameters, generating meshes   \n\
-   and extracting mesh results as VTK unstructured mesh objects.            \n\
+   Methods are provided for setting meshing parameters, generating meshes  \n\
+   and extracting mesh results as VTK unstructured mesh objects.           \n\
    \n\
-   Two mesh generation software components are supported:                   \n\
+   Two mesh generation software components are supported:                  \n\
        (1) TetGen  \n\
        (2) MeshSim \n\
    \n\
-   TetGen is an open source software package used to generate meshes from   \n\
-   PolyData solid models.                                                   \n\
+   TetGen is an open source software package used to generate meshes from  \n\
+   PolyData solid models.                                                  \n\
    \n\
-   MeshSim is a commercial software package used to generate meshes from    \n\
-   Parasolid solid models. Using MeshSim requires purchasing a license      \n\
-   from Simmetrix, a Parasolid license from Siemens and SV plugins providing \n\
-   an interface to the software.                                             \n\
+   MeshSim is a commercial software package used to generate meshes from   \n\
+   Parasolid solid models. Using MeshSim requires purchasing a license from\n\
+   Simmetrix, a Parasolid license from Siemens and SV plugins providing an \n\
+   an interface to the software.                                           \n\
    \n\
    Meshing kernels are identified using the meshing.Kernel class:           \n\
        (1) Kernel.TETGEN                                                    \n\

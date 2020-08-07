@@ -899,7 +899,7 @@ PyTetGenOptionsCreateFromList(cvMeshObject* mesher, std::vector<std::string>& op
 // Methods for the TetGenOptions class.
 
 //------------------------------------------------
-// PyTetGenOptions_create_add_subdomain_parameter
+// PyTetGenOptions_add_subdomain_parameter
 //------------------------------------------------
 // [TODO:DaveP] figure out what the parameters are.
 //
@@ -960,11 +960,11 @@ PyTetGenOptions_AddSubdomain(PyMeshingTetGenOptions* self, PyObject* args, PyObj
 */
 
 //-------------------------------
-// PyTetGenOptions_LocalEdgeSize
+// PyTetGenOptions_local_edge_size
 //-------------------------------
 //
-PyDoc_STRVAR(PyTetGenOptions_LocalEdgeSize_doc,
-  "LocalEdgeSize(face_id, size)  \n\ 
+PyDoc_STRVAR(PyTetGenOptions_local_edge_size_doc,
+  "local_edge_size(face_id, size)  \n\ 
   \n\
   Create a value for the local_edge_size option. \n\
   \n\
@@ -974,7 +974,7 @@ PyDoc_STRVAR(PyTetGenOptions_LocalEdgeSize_doc,
 ");
 
 static PyObject *
-PyTetGenOptions_LocalEdgeSize(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
+PyTetGenOptions_local_edge_size(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("id", PyRunTimeErr, __func__);
   static char *keywords[] = { TetGenOption::LocalEdgeSize_FaceIDParam, TetGenOption::LocalEdgeSize_EdgeSizeParam, NULL }; 
@@ -998,10 +998,11 @@ PyTetGenOptions_LocalEdgeSize(PyMeshingTetGenOptions* self, PyObject* args, PyOb
 //----------------------------
 //
 PyDoc_STRVAR(PyTetGenOptions_get_values_doc,
-" get_values()  \n\ 
+  "get_values()  \n\ 
   \n\
   Get the names and values of TetGen mesh generation options. \n\
   \n\
+  Returns (dict): A dict containing options as name/value pairs.       \n\ 
 ");
 
 static PyObject *
@@ -1118,12 +1119,12 @@ PyTetGenOptions_set_defaults(PyMeshingTetGenOptions* self)
   Py_RETURN_NONE;
 }
 
-//----------------------------------
-// PyTetGenOptions_SphereRefinement
-//----------------------------------
+//-----------------------------------
+// PyTetGenOptions_sphere_refinement
+//-----------------------------------
 //
-PyDoc_STRVAR(PyTetGenOptions_SphereRefinement_doc,
-  "SphereRefinement(edge_size, radius, center)  \n\ 
+PyDoc_STRVAR(PyTetGenOptions_sphere_refinement_doc,
+  "sphere_refinement(edge_size, radius, center)  \n\ 
   \n\
   Create a sphere refinement value. \n\
   \n\
@@ -1134,7 +1135,7 @@ PyDoc_STRVAR(PyTetGenOptions_SphereRefinement_doc,
 ");
 
 static PyObject *
-PyTetGenOptions_SphereRefinement(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
+PyTetGenOptions_sphere_refinement(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("ddO", PyRunTimeErr, __func__);
   static char *keywords[] = { TetGenOption::SphereRefinement_EdgeSizeParam, TetGenOption::SphereRefinement_RadiusParam, 
@@ -1178,8 +1179,8 @@ PyTetGenOptions_SphereRefinement(PyMeshingTetGenOptions* self, PyObject* args, P
 static PyMethodDef PyTetGenOptionsMethods[] = {
   //{"AddSubdomain", (PyCFunction)PyTetGenOptions_AddSubdomain, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_AddSubdomain_doc},
   {"get_values", (PyCFunction)PyTetGenOptions_get_values, METH_NOARGS, PyTetGenOptions_get_values_doc},
-  {"LocalEdgeSize", (PyCFunction)PyTetGenOptions_LocalEdgeSize, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_LocalEdgeSize_doc},
-  {"SphereRefinement", (PyCFunction)PyTetGenOptions_SphereRefinement, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_SphereRefinement_doc},
+  {"local_edge_size", (PyCFunction)PyTetGenOptions_local_edge_size, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_local_edge_size_doc},
+  {"sphere_refinement", (PyCFunction)PyTetGenOptions_sphere_refinement, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_sphere_refinement_doc},
   {NULL, NULL}
 };
 
@@ -1286,6 +1287,14 @@ PyDoc_STRVAR(quality_ratio_doc,
    he quality measure for the mesh. This number corresponds to the ratio   \n\
    between the radius of the circumsphere of an element and the maximum    \n\ 
    edge size.                                                              \n\
+   \n\
+");
+
+PyDoc_STRVAR(radius_meshing_compute_centerlines_doc, 
+  "Type: bool                                                             \n\
+   Default: False                                                         \n\
+   \n\
+   If True then enable computing centerlines for radius-based meshing.    \n\
    \n\
 ");
 
@@ -1421,7 +1430,8 @@ static PyMemberDef PyTetGenOptionsMembers[] = {
     {TetGenOption::QualityRatio, T_DOUBLE, offsetof(PyMeshingTetGenOptions, quality_ratio), 0, quality_ratio_doc},
     //{TetGenOption::Quiet, T_OBJECT_EX, offsetof(PyMeshingTetGenOptions, quiet), 0, "Quiet"},
 
-    {TetGenOption::RadiusMeshingComputeCenterlines, T_BOOL, offsetof(PyMeshingTetGenOptions, radius_meshing_compute_centerlines), 0, "radius_meshing_compute_centerlines"},
+    {TetGenOption::RadiusMeshingComputeCenterlines, T_BOOL, offsetof(PyMeshingTetGenOptions, 
+        radius_meshing_compute_centerlines), 0, radius_meshing_compute_centerlines_doc},
     {TetGenOption::RadiusMeshingOn, T_BOOL, offsetof(PyMeshingTetGenOptions, radius_meshing_on), 0, radius_meshing_on_doc},
 
     {TetGenOption::SphereRefinementOn, T_BOOL, offsetof(PyMeshingTetGenOptions, sphere_refinement_on), 0, sphere_refinement_on_doc},
@@ -1760,27 +1770,31 @@ PyGetSetDef PyTetGenOptionsGetSets[] = {
 static char* MESHING_TETGEN_OPTIONS_CLASS = "TetGenOptions";
 static char* MESHING_TETGEN_OPTIONS_MODULE_CLASS = "meshing.TetGenOptions";
 
+//------------------------
+// TetGenOptionsClass_doc
+//------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 // [TODO:DaveP] Check defaults.
 //
 PyDoc_STRVAR(TetGenOptionsClass_doc, 
-   "SimVascular TetGen options class. \n\
+   "TetGenOptions(global_edge_size=None, surface_mesh_flag=None,            \n\
+                 volume_mesh_flag=None)                                     \n\
    \n\
-   TetGenOptions(global_edge_size=None, surface_mesh_flag=None,               \n\
-                 volume_mesh_flag=None)                                       \n\
+   The TetGenOptions class stores parameter values used to control how      \n\
+   TetGen generates a finite element mesh.                                  \n\
    \n\
-   ----------------------------------------------------------------------     \n\
-   The TetGenOptions class stores parameter values used to control how        \n\
-   TetGen generates a finite element mesh.                                    \n\
+   Example: Create a TetGen options object with default parameter values    \n\
    \n\
-   Example: Create a TetGen options object                                    \n\
-   \n\
-       options = sv.meshing.TetGenOptions()                                   \n\
+       options = sv.meshing.TetGenOptions()                                 \n\
    \n\
    Args: \n\
-     global_edge_size (Optional[float]): The maxium length of an element edge.   \n\
-     surface_mesh_flag (Optional[bool]): If True then perform surface remeshing. \n\
-     volume_mesh_flag (Optional[bool]): If True then generate a volume mesh.     \n\
-   \n\
+     global_edge_size (Optional[float]): The maxium length of an element    \n\
+        edge.                                                               \n\
+     surface_mesh_flag (Optional[bool]): If True then perform surface       \n\
+         remeshing.                                                         \n\
+     volume_mesh_flag (Optional[bool]): If True then generate a volume mesh.\n\
 ");
 
 //---------------------

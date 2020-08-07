@@ -133,7 +133,6 @@ PyDoc_STRVAR(Mesher_compute_model_boundary_faces_doc,
    \n\
    Compute the boundary faces for the solid model. \n\
    \n\
-   ----------------------------------------------------------------------   \n\
    This method needs to be called only for PolyData solid models that do    \n\
    not have face information already defined (e.g. models from STL files).  \n\
    It does not need to be called for OpenCascade or Parasolid models.       \n\
@@ -177,10 +176,9 @@ PyDoc_STRVAR(Mesher_generate_mesh_doc,
    \n\
    Generate a mesh using the supplied meshing parameters. \n\
    \n\
-   ----------------------------------------------------------------------   \n\
    Args: \n\
-     options (meshing.TetGenOptions): The meshing parameters used to   \n\
-         generate a mesh. \n\
+     options (meshing.TetGenOptions): The meshing parameters used to        \n\
+         generate a mesh.                                                   \n\
 ");
 
 static PyObject * 
@@ -204,7 +202,6 @@ Mesher_generate_mesh(PyMeshingMesher* self, PyObject* args)
 PyDoc_STRVAR(Mesher_get_face_polydata_doc,
   "get_face_polydata(face_id)  \n\ 
    \n\
-   ----------------------------------------------------------------------   \n\
    Get the mesh face VTK PolyData for the given face ID.  \n\
    \n\
    Args: \n\
@@ -266,11 +263,9 @@ Mesher_get_kernel(PyMeshingMesher* self, PyObject* args)
 //-----------------
 //
 PyDoc_STRVAR(Mesher_get_mesh_doc,
-" get_mesh()  \n\ 
+  "get_mesh()  \n\ 
   \n\
   Get the mesh that has been generated. \n\
-  \n\
-  Args:                                    \n\
 ");
 
 static PyObject * 
@@ -305,7 +300,6 @@ PyDoc_STRVAR(Mesher_get_model_face_ids_doc,
   Get the mesh solid model face IDs. \n\
   \n\
   Returns list([int]): The list of integer face IDs. \n\
-  \n\
 ");
 
 static PyObject * 
@@ -333,15 +327,15 @@ Mesher_get_model_face_ids(PyMeshingMesher* self, PyObject* args)
 //---------------------------
 // Mesher_get_model_polydata 
 //---------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
 //
 PyDoc_STRVAR(Mesher_get_model_polydata_doc,
-  "get_model_polydata  \n\ 
+  "get_model_polydata()  \n\ 
    \n\
-   ----------------------------------------------------------------------   \n\
    Get the VTK PolyData for the mesh solid model. \n\
    \n\
-   Returns (vtkPolyData): The VTK PolyData object for the mesh solid model.  \n\
-   \n\
+   Returns (vtkPolyData): The VTK PolyData object for the mesh solid model. \n\
 ");
 
 static PyObject * 
@@ -372,15 +366,14 @@ Mesher_get_model_polydata(PyMeshingMesher* self, PyObject* args)
 //------------------
 //
 PyDoc_STRVAR(Mesher_load_mesh_doc,
-  "load_mesh(volume_file, surface_file)  \n\ 
+  "load_mesh(volume_file, surface_file=None)  \n\ 
    \n\
-   ----------------------------------------------------------------------   \n\
    Load a mesh from a VTK .vtu file.                                        \n\
    \n\
    Args: \n\
-     volume_file (str): The name of the VTK .vtu file containing a            \n\
-         volume mesh. \n\
-     surface_file (Optionla[str]): The name of the VTK .vtp file containing a            \n\
+     volume_file (str): The name of the VTK .vtu file containing a           \n\
+         volume mesh.                                                        \n\
+     surface_file (Optionla[str]): The name of the VTK .vtp file containing a\n\
          surface mesh. \n\
 ");
 
@@ -450,7 +443,6 @@ PyDoc_STRVAR(Mesher_get_surface_doc,
    Get the mesh surface as VTK PolyData. \n\
    \n\
    Returns (vtkPolyData): The VTK PolyData object for the mesh surface.  \n\
-   \n\
 ");
 
 static PyObject * 
@@ -486,7 +478,6 @@ PyDoc_STRVAR(Mesher_set_boundary_layer_options_doc,
   "set_boundary_layer(number_of_layers, edge_size_fraction, layer_decreasing_ratio, \n\
        constant_thickness)  \n\ 
    \n\
-   ----------------------------------------------------------------------   \n\
    Set the options for boundary layer meshing. \n\
    \n\
    Args: \n\
@@ -498,7 +489,6 @@ PyDoc_STRVAR(Mesher_set_boundary_layer_options_doc,
          successive boundary layers. \n\
      constant_thickness (bool): If True then the boundary layers will have a \n\
          constant thickness. \n\
-   \n\
 ");
 
 static PyObject * 
@@ -549,13 +539,11 @@ PyDoc_STRVAR(Mesher_set_walls_doc,
    This function must be called prior to meshing to identify model wall     \n\
    and cap faces.                                                           \n\
    \n\
-   ----------------------------------------------------------------------   \n\
    A solid model must be loaded before calling this function. The solid     \n\
    model must have boundary faces defined for it.                           \n\
    \n\
    Args: \n\
      face_ids (list[int]): The face IDs to set to type wall. \n\
-   \n\
 ");
 
 static PyObject * 

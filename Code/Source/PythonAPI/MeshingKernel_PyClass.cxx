@@ -79,6 +79,18 @@ MeshingKernel_get_name(cvMeshObject::KernelType kernelType)
 //
 // Python 'Kernel' class methods. 
 
+//-------------------------
+// MeshingKernel_get_names
+//-------------------------
+//
+PyDoc_STRVAR(ModelingKernel_get_names_doc,
+  "get_names()  \n\ 
+   \n\
+   Get the meshing kernel names. \n\
+   \n\
+   Returns (list[str]) - The list of meshing kernel names.\n\
+");
+
 static PyObject *
 MeshingKernel_get_names()
 {
@@ -92,12 +104,12 @@ MeshingKernel_get_names()
   return nameList; 
 }
 
-//-------------------
+//----------------------
 // MeshingKernelMethods
-//-------------------
+//----------------------
 //
 static PyMethodDef MeshingKernelMethods[] = {
-  { "get_names", (PyCFunction)MeshingKernel_get_names, METH_NOARGS, NULL},
+  { "get_names", (PyCFunction)MeshingKernel_get_names, METH_NOARGS, ModelingKernel_get_names_doc},
   {NULL, NULL}
 };
 
@@ -110,22 +122,25 @@ static char* MESHING_KERNEL_MODULE_CLASS = "meshing.Kernel";
 // The name of the Kernel class veriable that contains all of the kernel types.
 static char* MESHING_KERNEL_CLASS_VARIBLE_NAMES = "names";
 
+//---------------------
+// PyMeshingKernel_doc
+//---------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PyMeshingKernel_doc, 
-   "SimVascular meshing Kernel class. \n\
-   \n\
-   ----------------------------------------------------------------------   \n\
-   The Kernel class provides the kernel names used to generate finite       \n\
-   element meshes. The kernel names are stored as class attributes and are  \n\
-   referenced using the class name.                                         \n\
-   \n\
-   A meshing kernel names are                                               \n\
-       (1) Kernel.TETGEN                                                    \n\
-       (2) Kernel.MESHSIM                                                   \n\
-   \n\
-   Example: Using the Kernel.TETGEN kernel name to create a TetGen mesher   \n\
-   \n\
-       mesher = sv.meshing.create_mesher(sv.meshing.Kernel.TETGEN)          \n\
-   \n\
+   "The Kernel class provides the kernel names used to generate finite       \n\
+    element meshes. The kernel names are stored as class attributes and are  \n\
+    referenced using the class name.                                         \n\
+    \n\
+    A meshing kernel names are                                               \n\
+        (1) Kernel.MESHSIM                                                   \n\
+        (2) Kernel.TETGEN                                                    \n\
+    \n\
+    Example: Using the Kernel.TETGEN kernel name to create a TetGen mesher   \n\
+    \n\
+        mesher = sv.meshing.create_mesher(sv.meshing.Kernel.TETGEN)          \n\
+    \n\
 ");
 
 //------------------------------------

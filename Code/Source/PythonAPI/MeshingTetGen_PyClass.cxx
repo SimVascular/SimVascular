@@ -493,10 +493,14 @@ static char* MESHING_TETGEN_CLASS = "TetGen";
 // the name of the type within the module.
 static char* MESHING_TETGEN_MODULE_CLASS = "meshing.TetGen";
 
+//---------------------
+// PyMeshingTetGen_doc
+//---------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(PyMeshingTetGen_doc, 
-   "SimVascular TetGen mesher class. \n\
-   \n\
-   The TetGen class provides an interface for creating tetrahedral finite  \n\
+   "The TetGen class provides an interface for creating tetrahedral finite  \n\
    element meshes from PolyData solid models using the TetGen open source  \n\
    mesh generator.                                                         \n\
    \n\
