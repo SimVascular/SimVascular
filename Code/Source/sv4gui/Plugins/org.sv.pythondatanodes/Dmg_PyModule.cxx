@@ -503,11 +503,11 @@ PyDoc_STRVAR(Dmg_add_mesh_doc,
    \n\
    Add a mesh to the SV Data Manager Meshes node. \n\
    \n\
-   Args:                                    \n\
-     name (str): The name of the mesh data node. \n\
-     mesh (vtkUnstructuredGrid object): The vtkUnstructuredGrid object.\n\
-     model (str): The name of the SV Data Manager Models node associated with the mesh. \n\
-   \n\
+   Args: \n\
+     name (str): The name of the mesh data node.                           \n\
+     mesh (vtkUnstructuredGrid object): The vtkUnstructuredGrid object.    \n\
+     model (str): The name of the SV Data Manager Models node associated   \n\
+        with the mesh.                                                     \n\
 ");
 
 static PyObject * 
@@ -695,7 +695,7 @@ PyDoc_STRVAR(Dmg_get_path_doc,
    Get a path from the SV Data Manager Paths node. \n\
    \n\
    Args: \n\
-     name (str): Then name of the path data node. \n\
+     name (str): The name of the path data node. \n\
    \n\
    Returns an sv.path.Path object.  \n\
 ");
@@ -758,10 +758,9 @@ PyDoc_STRVAR(Dmg_add_path_doc,
    \n\
    Add a path to the SV Data Manager Paths node. \n\
    \n\
-   Args:                                    \n\
-     name (str): The name of the path data node. \n\
+   Args: \n\
+     name (str): The name of the path data node.                           \n\
      path (sv.path.Path object): The path object to create the path node from. \n\
-   \n\
 ");
 
 static PyObject * 
@@ -828,8 +827,8 @@ PyDoc_STRVAR(Dmg_add_segmentation_doc,
    Args: \n\
      name (str): The name of the segmentations data node to add. \n\
      path (str): The name of the path data node used by the segmentation. \n\
-     segmentations (list[sv.contour.Contour object]): The list of segmentation objects defined for a vessel segmentation.\n\
-   \n\
+     segmentations (list[Segmentation]): The list of segmentation objects \n\
+        defined for a vessel segmentation.                                \n\
 ");
 
 static PyObject * 
@@ -910,14 +909,16 @@ PyDoc_STRVAR(Dmg_add_geometry_doc,
    \n\
    Add a vtkPolyData object to the SV Data Manager. \n\
    \n\
-   The geometry is added to the SV Data Manger under the given plugin and node, and is displayed in the SV graphics window.\n\
+   The geometry is added to the SV Data Manger under the given plugin and  \n\
+   node, and is displayed in the SV graphics window.\n\
    \n\
-   Args:                                    \n\
+   Args: \n\
      name (str): The name of the data node. \n\
-     geometry (vtkPolyData object): The vtkPolyData to add to the SV Data Manager. \n\
-     plugin (str): The name of the plugin the data node resides under. Valid names: Image, Mesh, Model, Path, or Segmentation. \n\
-     node (str): The date node name to add the geomerty. \n\
-   \n\
+     geometry (vtkPolyData object): The vtkPolyData to add to the SV Data  \n\
+        Manager.                                                           \n\
+     plugin (str): The name of the plugin the data node resides under.     \n\
+        Valid names: Image, Mesh, Model, Path, or Segmentation.            \n\
+     node (str): The date node name to add the geomerty to.                \n\
 ");
 
 static PyObject * 
@@ -1009,10 +1010,10 @@ PyDoc_STRVAR(Dmg_add_model_doc,
    \n\
    Add a model to the SV Data Manager Models node. \n\
    \n\
-   Args:                                    \n\
+   Args: \n\
      name (str): The name for the model data node. \n\
-     model (sv.modeling.Series object): The model series object from which to create the model node.\n\
-   \n\
+     model (sv.modeling.Series object): The model series object from which \n\
+        to create the model node.                                          \n\
 ");
 
 static PyObject * 
@@ -1091,7 +1092,7 @@ PyDoc_STRVAR(Dmg_get_segmentation_doc,
    Args:                                                          \n\
      name (str): The segmentation node name. \n\
    \n\
-   Returns an sv.segmentation.Group object. \n\
+   Returns an sv.segmentation.Series object. \n\
 ");
 
 static PyObject * 
@@ -1195,10 +1196,49 @@ Dmg_remove_data_node(PyObject* self, PyObject* args)
 ////////////////////////////////////////////////////////
 
 static char* DMG_MODULE = "dmg";
-static char* DMG_EXCEPTION = "dmg.DmgError";
-static char* DMG_EXCEPTION_OBJECT = "DmgError";
+static char* DMG_EXCEPTION = "dmg.Error";
+static char* DMG_EXCEPTION_OBJECT = "Error";
 
-PyDoc_STRVAR(DmgModule_doc, "dmg module functions");
+//---------------
+// DmgModule_doc
+//---------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
+PyDoc_STRVAR(DmgModule_doc,
+  "SimVascular dmg module. \n\
+   \n\
+   The dmg (data manager) module provides an interface for accessing the   \n\
+   SV Data Manager, the panel located on the left side of the main window  \n\
+   that organizes the data defined for a SimVascular project as a          \n\
+   hierarchical tree of data nodes. The Data Manager organizes data nodes  \n\
+   into predefined primary data node types according to the tools that     \n\
+   create them                                                             \n\ 
+   \n\
+       1) Images                                                           \n\
+       2) Meshes                                                           \n\
+       3) Models                                                           \n\
+       4) Paths                                                            \n\
+       5) Segmentations                                                    \n\
+       6) Simulations                                                      \n\
+       7) Simulations1d                                                    \n\
+       8) svFSI                                                            \n\
+   \n\
+   When new data is added to the project a new data node is added under the\n\
+   appropriate data node type with a user-defined name.                    \n\
+   \n\
+   IMPORTANT Scripts accessing a project's data nodes shown in the         \n\
+   SV Data Manager must use the GUI Python Console because data nodes are  \n\
+   only defined when SimVascular is executed with the GUI.                 \n\
+   \n\
+   The dmg module does not define any classes. All access to the           \n\
+   SV Data Manager though functions defined for the module.                \n\
+   \n\
+   Example: Getting data from the 'aorta' data node                        \n\
+   \n\
+      >>> path = sv.dmg.get_path('aorta')                                  \n\
+   \n\
+");
 
 //--------------
 // PyDmgMethods 
