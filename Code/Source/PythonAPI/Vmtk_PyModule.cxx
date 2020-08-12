@@ -180,12 +180,15 @@ ConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vect
 //
 PyDoc_STRVAR(Vmtk_cap_doc,
   "cap(surface, use_center)  \n\ 
-  \n\
-  Fill the holes in a surface mesh with planar faces. \n\
-  \n\
-  Args:                                    \n\
-    surface (vtkPolyData): A polygonal surface. \n\
-    use_center (bool): If true then planar faces are constructed using polygons connected to hole centers. \n\
+   \n\
+   Fill the holes in a surface mesh with planar faces.                     \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): A polygonal surface. \n\
+     use_center (bool): If true then the planar faces are constructed using   \n\
+        polygons connected to hole centers.                                   \n\
+   \n\
+   Returns (vtkPolyData): The capped geometry.                                 \n\
 ");
 
 static PyObject *
@@ -254,12 +257,22 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
 //-------------------
 //
 PyDoc_STRVAR(Vmtk_cap_with_ids_doc,
-  "cap_with_ids(name)  \n\ 
-  \n\
-  ??? Add the unstructured grid mesh to the repository. \n\
-  \n\
-  Args:                                    \n\
-    name (str): Name in the repository to store the unstructured grid. \n\
+  "cap_with_ids(surface, fill_id=0, increment_id=True)  \n\ 
+   \n\
+   Fill the holes in a surface mesh with planar faces and adding data      \n\
+   arrays to the returned vtkPolyData object identifying faces.            \n\
+   \n\
+   A cell data array named 'ModelFaceID' is added used to assign an integer\n\
+   face ID to each cell (polygon) in the vtkPolyData object.               \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): A polygonal surface.                           \n\
+     fill_id (int): The initial face ID to use.                            \n\
+     increment_id (bool): If True then assign each face a new ID starting  \n\
+        from 'fill_id' and incremented by 1, else assign each face the     \n\
+        same ID.                                                           \n\
+   \n\
+   Returns (vtkPolyData): The capped geometry.                             \n\
 ");
 
 static PyObject *
@@ -273,7 +286,8 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
   PyObject* fillIdArg = nullptr;
   PyObject* incIdArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyInt_Type, &fillIdArg, &PyBool_Type, &incIdArg)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyInt_Type, &fillIdArg, 
+        &PyBool_Type, &incIdArg)) {
       return api.argsError();
   }
 
@@ -285,7 +299,7 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
   //   2 - start from fillid and give each new cap a value increasing from this
   //
   int fillId = 0; 
-  int fillType = 0;
+  int fillType = 2;
 
   if (fillIdArg != nullptr) { 
       fillId = PyInt_AsLong(fillIdArg);
@@ -333,15 +347,21 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
 //------------------
 //
 PyDoc_STRVAR(Vmtk_centerlines_doc,
-  "centerlines(surface, inlet_ids, outlet_ids, use_face_ids=False)  \n\ 
-  \n\
-  Calculate the centerlines for a closed surface. \n\
-  \n\
-  Args:                                    \n\
-    surface (vtkPolyData): The vtkPolyData object representing a closed surface. \n\
-    inlet_ids (list[int]): The list of integer IDs identifying the vessel inlet faces. \n\
-    outlet_ids (list[int]): The list of integer IDs identifying the vessel outlet faces. \n\
-    use_face_ids (bool): (optional) If True then the input IDs are face IDs, else they are node IDs. \n\
+   "centerlines(surface, inlet_ids, outlet_ids, use_face_ids=False)         \n\ 
+   \n\
+   Compute the centerlines for a closed surface.                            \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): The vtkPolyData object representing a closed   \n\
+        surface. \n\
+     inlet_ids (list[int]): The list of integer IDs identifying the vessel \n\
+        inlet faces.                                                       \n\
+     outlet_ids (list[int]): The list of integer IDs identifying the vessel\n\
+        outlet faces. \n\
+     use_face_ids (bool): If True then the input IDs are face IDs, else    \n\
+        they are node IDs.                                                 \n\
+   \n\
+   Returns (vtkPolyData): The centerlines geometry (lines) and data.       \n\
 ");
 
 static PyObject * 
@@ -454,14 +474,17 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 //
 PyDoc_STRVAR(Vmtk_distance_to_centerlines_doc,
   "distance_to_centerlines(surface, centerlines)  \n\ 
-  \n\
-  Compute the distance beteen centerlines and surface points. \n\
-  \n\
-  Args:                                    \n\
-    surface (vtkPolyData): The vtkPolyData object representing a closed surface. \n\
-    centerlines (vtkPolyData): The vtkPolyData object returned from a centerlines calculation. \n\
-  \n\
-  Returns a vtkPolyData object of the original surface with a 'DistanceToCenterlines' point data array storing the distances.\n\
+   \n\
+   Compute the distance beteen centerlines and surface points.             \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): The vtkPolyData object representing a closed   \n\
+        surface.                                                           \n\
+     centerlines (vtkPolyData): The vtkPolyData object returned from a     \n\
+        centerlines calculation. \n\
+   \n\
+   Returns (vtkPolyData): The vtkPolyData  object of the original surface  \n\
+      with a 'DistanceToCenterlines' point data array storing the distances.\n\
 ");
 
 static PyObject *
@@ -500,6 +523,10 @@ Vmtk_distance_to_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 
   return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
 }
+
+//====================================================================================================
+//                                        O l d   M e t h o d s 
+//====================================================================================================
 
 #ifdef VMTK_PYMODULE_OLD_METHODS
 
@@ -955,11 +982,17 @@ static char* VMTK_MODULE = "vmtk";
 static char* VMTK_EXCEPTION = "vmtk.Error";
 static char* VMTK_EXCEPTION_OBJECT = "Error";
 
+//----------------
+// VmtkModule_doc
+//----------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(VmtkModule_doc, 
   "SimVascular vmtk module functions. \n\
    \n\
-   All functions use vtkPolyData object as arguments. vtkPolyData objects is a dataset that \n\
-   represents vertices, lines, polygons, and triangle strips. \n\
+   All functions use vtkPolyData objects as arguments. A vtkPolyData       \n\
+   objects is a dataset that represents vertices, lines, and polygons.     \n\
 ");
 
 //---------------
