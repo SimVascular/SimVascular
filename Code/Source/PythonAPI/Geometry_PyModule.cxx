@@ -151,20 +151,19 @@ GetGeometryObjects(PyUtilApiFunction& api, PyObject* objList)
 PyDoc_STRVAR(Geom_align_profile_doc,
   "align_profile(reference, align, use_distance=True) \n\ 
    \n\
-   ----------------------------------------------------------------------   \n\
-   Align a profile represented as a closed curve with a given reference     \n\
-   profile also represented as a closed curve.                              \n\
+   Align a profile represented as a closed curve with a given reference    \n\
+   profile also represented as a closed curve.                             \n\
    \n\
-   The profile is aligned by reordering its points.                         \n\
+   The profile is aligned by reordering its points.                        \n\
    \n\
    Args: \n\
-     reference (vtkPolyData): The profile to align to.                      \n\
-     align (vtkPolyData): The profile to align to the reference.            \n\
-     use_distance (Optional[bool]): If True then align profile initial      \n\
-       points using the minium distance between points. If False then align \n\
-       profile initial points using the angle beteenn points.               \n\
+     reference (vtkPolyData): The profile to align to.                     \n\
+     align (vtkPolyData): The profile to align to the reference.           \n\
+     use_distance (Optional[bool]): If True then align profile initial     \n\
+       points using the minium distance between points. If False then align\n\
+       profile initial points using the angle beteenn points.              \n\
    \n\
-   Rerutns (vtkPolyData): The aligned profile.                              \n\
+   Returns (vtkPolyData): The aligned profile.                             \n\
 ");
 
 static PyObject * 
@@ -220,12 +219,11 @@ Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
 PyDoc_STRVAR(Geom_average_point_doc,
   "average_point(polydata) \n\ 
    \n\
-   ----------------------------------------------------------------------   \n\
-   Calculate the average point for the points of a VTK PolyData object.     \n\
+   Calculate the average point for the points of a VTK PolyData object.    \n\
    \n\
    Args: \n\
-     polydata (vtkPolyData): The vtkPolyData object to compute the average  \n\
-       point for.                                                           \n\
+     polydata (vtkPolyData): The vtkPolyData object to compute the average \n\
+       point for.                                                          \n\
    \n\
    Returns list([float, float, float]): The average point. \n\
 ");
@@ -263,12 +261,12 @@ Geom_average_point(PyObject* self, PyObject* args)
 PyDoc_STRVAR(Geom_point_inside_doc,
   "point_inside(polydata, point) \n\ 
    \n\
-   Determine if a 3D point is inside or outside of a solid.                 \n\
+   Determine if a 3D point is inside or outside of a solid.                \n\
    \n\
    Args: \n\
-     polydata (vtkPolyData): The vtkPolyData object representing a solid    \n\
+     polydata (vtkPolyData): The vtkPolyData object representing a solid   \n\
         as a closed surface \n\
-     point ([float, float, float]): The 3D point to classify.               \n\
+     point ([float, float, float]): The 3D point to classify.              \n\
    \n\
    Returns True if the point is inside the solid, False if it is outside.  \n\
 ");
@@ -318,15 +316,15 @@ Geom_point_inside(PyObject* self, PyObject* args, PyObject* kwargs)
 PyDoc_STRVAR(Geom_interpolate_closed_curve_doc,
   "interpolate_closed_curve(polydata, number_of_points) \n\ 
    \n\
-   Generate a list of 3D points linearly interpolated between the points    \n\
-   of a closed 3D curve.                                                    \n\
+   Generate a list of 3D points linearly interpolated between the points   \n\
+   of a closed 3D curve.                                                   \n\
    \n\
    Args: \n\
-     polydata (vtkPolyData): The vtkPolyData object representing a closed   \n\
-        curve.                                                              \n\
-     number_of_points (int): The number of points to generate.              \n\
+     polydata (vtkPolyData): The vtkPolyData object representing a closed  \n\
+        curve.                                                             \n\
+     number_of_points (int): The number of points to generate.             \n\
    \n\
-   Returns list([float, float, float]): The list of interpolated points.    \n\
+   Returns list([float, float, float]): The list of interpolated points.   \n\
 ");
 
 static PyObject * 
@@ -368,6 +366,8 @@ Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
 //------------------
 //
 // [TODO:DaveP] I need to finish implementing this. 
+//
+//   ----------------------------------------------------------------------  \n\
 //
 PyDoc_STRVAR(Geom_local_blend_doc,
   "local_blend(kernel)                                    \n\ 
@@ -433,7 +433,6 @@ Geom_local_blend(PyObject* self, PyObject* args)
 PyDoc_STRVAR(Geom_loft_doc,
   "loft(polydata_list, loft_options) \n\ 
    \n\
-   ----------------------------------------------------------------------   \n\
    Create a lofted surface from a list of polydata curves.                  \n\
    \n\
    The loft method fits a surface through two or more profile curves that   \n\
@@ -557,8 +556,8 @@ PyDoc_STRVAR(Geom_loft_nurbs_doc,
    Args: \n\
      polydata_list (list[vtkPolyData]): The list of vtkPolyData objects     \n\
         representing the profile curves defining a surface.                 \n\
-     loft_options (sv.geometry.LoftNurbsOptions): The LoftNurbsOptions object \n\
-        containing lofting parameter values.                                \n\
+     loft_options (sv.geometry.LoftNurbsOptions): The LoftNurbsOptions      \n\
+        object containing lofting parameter values.                         \n\
    \n\
    Returns (vtkPolyData): The vtkPolyData object of the lofted surface.     \n\
 ");
@@ -3824,12 +3823,17 @@ static char* GEOMETRY_MODULE = "geometry";
 static char* GEOMETRY_EXCEPTION = "geometry.Error";
 static char* GEOMETRY_EXCEPTION_OBJECT = "Error";
 
+//--------------------
+// GeometryModule_doc
+//--------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(GeometryModule_doc, 
   "SimVascular geometry module. \n\
    \n\
-   ----------------------------------------------------------------------     \n\
    The geometry module provides functions for performing geometric operations \n\ 
-   on vtkPolyData objects used to represents vertices, lines and polygons.   \n\
+   on vtkPolyData objects used to represents vertices, lines and polygons. \n\
 ");
 
 //---------------

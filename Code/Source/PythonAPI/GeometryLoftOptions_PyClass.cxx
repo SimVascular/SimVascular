@@ -146,6 +146,7 @@ PyDoc_STRVAR(PyLoftOptions_get_values_doc,
   \n\
   Get the names and values of loft options. \n\
   \n\
+  Returns (dict): A dict with key/value pairs for each option name/value.  \n\
 ");
 
 static PyObject *
@@ -186,7 +187,6 @@ PyDoc_STRVAR(interpolate_spline_points_doc,
    Default: True                                                           \n\ 
    \n\
    If True then Use linear interpolation between spline sample points.     \n\
-   \n\
 ");
 
 PyDoc_STRVAR(num_long_points_doc,
@@ -194,7 +194,6 @@ PyDoc_STRVAR(num_long_points_doc,
    Default: 100                                                            \n\ 
    \n\
    The number of longitudinal points created for the lofted surface.       \n\
-   \n\
 ");
 
 PyDoc_STRVAR(num_spline_points_doc,
@@ -202,7 +201,6 @@ PyDoc_STRVAR(num_spline_points_doc,
    Default: 20                                                             \n\ 
    \n\
    The number of spline sample points used with linear interpolation.      \n\
-   \n\
 ");
 
 static PyMemberDef PyLoftOptionsMembers[] = {
@@ -225,16 +223,20 @@ static PyMemberDef PyLoftOptionsMembers[] = {
 static char* GEOMETRY_LOFT_OPTIONS_CLASS = "LoftOptions";
 static char* GEOMETRY_LOFT_OPTIONS_MODULE_CLASS = "geometry.LoftOptions";
 
+//----------------------
+// LoftOptionsClass_doc
+//----------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(LoftOptionsClass_doc, 
-   "SimVascular loft options class. \n\
-   \n\
-   The LoftOptions class stores parameter values used to control how          \n\
-   lofted surfaces are generated.                                             \n\
-   \n\
-   Example: Create a loft options object                                      \n\
-   \n\
-       options = sv.geometry.LoftOptions()                                    \n\
-   \n\
+   "The LoftOptions class stores parameter values used to control how lofted\n\
+    lofted surfaces are generated.                                          \n\
+    \n\
+    Example: Create a loft options object                                   \n\
+    \n\
+        options = sv.geometry.LoftOptions()                                 \n\
+    \n\
 ");
 
 //-------------------

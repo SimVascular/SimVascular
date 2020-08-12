@@ -239,7 +239,6 @@ PyDoc_STRVAR(u_degree_doc,
    The degree value controls the surface curvature in the logitudinal     \n\
    direction of the lofted surface. Degree can be thought of as constraining \n\ 
    the surface’s freedom to bend: 1=linear, 2=quadratic, 3=cubic, etc.    \n\ 
-   \n\
 ");
 
 PyDoc_STRVAR(v_degree_doc,
@@ -249,7 +248,6 @@ PyDoc_STRVAR(v_degree_doc,
    The degree value controls the surface curvature in the circumferential \n\
    direction of the lofted surface. Degree can be thought of as constraining \n\
    the surface’s freedom to bend: 1=linear, 2=quadratic, 3=cubic, etc.    \n\ 
-   \n\
 ");
 
 PyDoc_STRVAR(u_knot_span_type_doc,
@@ -257,7 +255,6 @@ PyDoc_STRVAR(u_knot_span_type_doc,
    Default: 'derivative'                                                  \n\ 
    \n\
    How the knot vector divides the parametric space in a u knot interval. \n\
-   \n\
 ");
 
 PyDoc_STRVAR(v_knot_span_type_doc,
@@ -265,7 +262,6 @@ PyDoc_STRVAR(v_knot_span_type_doc,
    Default: 'average'                                                     \n\ 
    \n\
    How the knot vector divides the parametric space in a v knot interval. \n\
-   \n\
 ");
 
 PyDoc_STRVAR(u_parameter_span_type_doc,
@@ -273,15 +269,13 @@ PyDoc_STRVAR(u_parameter_span_type_doc,
    Default: 'centripetal'                                                 \n\ 
    \n\
    How the parametric space is constructed.                               \n\
-   \n\
 ");
 
 PyDoc_STRVAR(v_parameter_span_type_doc,
-  "Type: str                                                              \n\
-   Default: 'chord'                                                       \n\ 
+  "Type: str                                                               \n\
+   Default: 'chord'                                                        \n\ 
    \n\
-   How the parametric space is constructed.                               \n\
-   \n\
+   How the parametric space is constructed.                                 \n\
 ");
 
 PyDoc_STRVAR(knot_span_types_doc,
@@ -294,7 +288,6 @@ PyDoc_STRVAR(knot_span_types_doc,
        (1) AVERAGE = 'average'                                              \n\
        (2) DERIVATIVE = 'derivative'                                        \n\
        (3) EQUAL = 'equal'                                                  \n\
-   \n\
 ");
 
 PyDoc_STRVAR(paramertic_span_types_doc,
@@ -307,7 +300,6 @@ PyDoc_STRVAR(paramertic_span_types_doc,
        (1) CENTRIPETAL = 'centripetal'                                      \n\
        (2) CHORD = 'chord'                                                  \n\
        (3) EQUAL = 'equal'                                                  \n\
-   \n\
 ");
 
 static PyMemberDef PyLoftNurbsOptionsMembers[] = {
@@ -334,7 +326,21 @@ static PyMemberDef PyLoftNurbsOptionsMembers[] = {
 static char* GEOMETRY_LOFT_NURBS_OPTIONS_CLASS = "LoftNurbsOptions";
 static char* GEOMETRY_LOFT_NURBS_OPTIONS_MODULE_CLASS = "geometry.LoftNurbsOptions";
 
-PyDoc_STRVAR(LoftNurbsOptionsClass_doc, "Geometry loft nurbs options methods.");
+//---------------------------
+// LoftNurbsOptionsClass_doc
+//---------------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
+PyDoc_STRVAR(LoftNurbsOptionsClass_doc, 
+   "The LoftNurbsOptions class stores parameter values used to control how  \n\ 
+    lofted NURBS surfaces are generated.                                    \n\
+    \n\
+    Example: Create a loft nurbs options object                             \n\
+    \n\
+        options = sv.geometry.LoftNurbsOptions()                            \n\
+    \n\
+");
 
 //------------------------
 // PyLoftNurbsOptionsType 
