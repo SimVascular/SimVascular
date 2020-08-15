@@ -138,7 +138,7 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
 
   vtkNew(vtkvmtkPolyDataCenterlines,centerLiner);
   try {
-    std::cout<<"Getting Center Lines..."<<endl;
+    //std::cout<<"Getting Center Lines..."<<endl;
     centerLiner->SetInputData(geom);
     centerLiner->SetSourceSeedIds(capInletIds);
     centerLiner->SetTargetSeedIds(capOutletIds);
@@ -195,7 +195,7 @@ int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked,
 
   vtkNew(vtkvmtkMergeCenterlines, merger);
   try {
-    std::cout<<"Merging Sections..."<<endl;
+    //std::cout<<"Merging Sections..."<<endl;
     merger->SetInputData(geom);
     merger->SetBlankingArrayName("Blanking");
     merger->SetRadiusArrayName("MaximumInscribedSphereRadius");
@@ -246,7 +246,7 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
 
   vtkNew(vtkvmtkCenterlineBranchExtractor,brancher);
   try {
-    std::cout<<"Grouping Sections..."<<endl;
+    //std::cout<<"Grouping Sections..."<<endl;
     brancher->SetInputData(geom);
     brancher->SetBlankingArrayName("Blanking");
     brancher->SetRadiusArrayName("MaximumInscribedSphereRadius");
@@ -293,7 +293,7 @@ int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,
 
   vtkNew(vtkvmtkPolyDataCenterlineGroupsClipper,grouper);
   try {
-    std::cout<<"Branching PolyData..."<<endl;
+    //std::cout<<"Branching PolyData..."<<endl;
     grouper->SetInputData(geom);
     grouper->SetCenterlines(centerlines);
     grouper->SetCenterlineGroupIdsArrayName("GroupIds");
@@ -343,7 +343,7 @@ int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,
 
   vtkNew(vtkvmtkPolyDataDistanceToCenterlines,distancer);
   try {
-    std::cout<<"Getting Distance to Center Lines..."<<endl;
+    //std::cout<<"Getting Distance to Center Lines..."<<endl;
     distancer->SetInputData(geom);
     distancer->SetCenterlines(centerlines);
     distancer->SetUseRadiusInformation(1);
@@ -482,7 +482,7 @@ int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
 
   try {
 
-    std::cout<<"Capping Surface..."<<endl;
+    //std::cout<<"Capping Surface..."<<endl;
     vtkSmartPointer<vtkSVFillHolesWithIdsFilter> capper =
 	    vtkSmartPointer<vtkSVFillHolesWithIdsFilter>::New();
     capper->SetInputData(geom);
@@ -1183,7 +1183,7 @@ int VMTKUtils_AppendData(vtkUnstructuredGrid *meshFromTetGen, vtkUnstructuredGri
   // This is used for FSI to define the outer boundary layer as a solid. 
   //
   if (newRegionBoundaryLayer) {
-    std::cout << "Create new region boundary layer ... " << std::endl; 
+    //std::cout << "Create new region boundary layer ... " << std::endl; 
 
     VMTKUtils_CreateNewBoundaryLayerRegion(meshFromTetGen, surfaceWithSize, newMeshVolume, newMeshSurface, boundaryMeshVolume, 
       boundaryMeshSurface);
@@ -1308,7 +1308,7 @@ int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, 
 {
   // Create points hash table.
   //
-  std::cout << "Create unique IDs. " << std::endl; 
+  //std::cout << "Create unique IDs. " << std::endl; 
   auto pointsHash = vtkSmartPointer<vtkCoincidentPoints>::New();
   auto numVolPoints = meshFromTetGen->GetNumberOfPoints();
   auto volPoints = meshFromTetGen->GetPoints();
@@ -1332,8 +1332,8 @@ int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, 
   //
   // IDs range from 1 to meshFromTetGen->GetNumberOfPoints().
   //
-  std::cout << "Add node IDs to meshFromTetGen. " << std::endl; 
-  std::cout << "  Number of points: " << meshFromTetGen->GetNumberOfPoints() << std::endl; 
+  //std::cout << "Add node IDs to meshFromTetGen. " << std::endl; 
+  //std::cout << "  Number of points: " << meshFromTetGen->GetNumberOfPoints() << std::endl; 
   auto globalNodeIds0 = vtkSmartPointer<vtkIntArray>::New();
   globalNodeIds0->SetNumberOfTuples(meshFromTetGen->GetNumberOfPoints());
   globalNodeIds0->SetName("GlobalNodeID");
@@ -1342,7 +1342,7 @@ int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, 
     globalNodeIds0->SetTuple1(i,globalNodeID);
     globalNodeID++;
   }
-  std::cout << "  globalNodeID: " << globalNodeID<< std::endl; 
+  //std::cout << "  globalNodeID: " << globalNodeID<< std::endl; 
   meshFromTetGen->GetPointData()->AddArray(globalNodeIds0);
 
   // Add global node IDs to boundary mesh.
@@ -1350,8 +1350,8 @@ int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, 
   // There are duplicate nodes on the interior/boundary layer interface
   // so we use the node IDs from the meshFromTetGen.
   //
-  std::cout << "Add node IDs to boundaryMeshVolume. " << std::endl; 
-  std::cout << "  Number of points: " << boundaryMeshVolume->GetNumberOfPoints() << std::endl; 
+  //std::cout << "Add node IDs to boundaryMeshVolume. " << std::endl; 
+  //std::cout << "  Number of points: " << boundaryMeshVolume->GetNumberOfPoints() << std::endl; 
   auto globalNodeIds1 = vtkSmartPointer<vtkIntArray>::New();
   globalNodeIds1->SetNumberOfTuples(boundaryMeshVolume->GetNumberOfPoints());
   globalNodeIds1->SetName("GlobalNodeID");
@@ -1373,7 +1373,7 @@ int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, 
     }
     globalNodeIds1->SetTuple1(i,id);
   }
-  std::cout << "  globalNodeID: " << globalNodeID << std::endl; 
+  //std::cout << "  globalNodeID: " << globalNodeID << std::endl; 
   boundaryMeshVolume->GetPointData()->AddArray(globalNodeIds1);
 
   // Add element IDs to interior mesh.
@@ -1438,16 +1438,16 @@ int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, 
   newMeshVolume->DeepCopy(appender->GetOutput());
   auto nodeIDs = vtkIntArray::SafeDownCast(newMeshVolume->GetPointData()->GetArray("GlobalNodeID"));
 
-  std::cout << "New volume mesh. " << std::endl; 
-  std::cout << "  Number of points: " << newMeshVolume->GetNumberOfPoints() << std::endl; 
-  std::cout << "  Number of node IDs: " << nodeIDs->GetNumberOfTuples() << std::endl; 
+  //std::cout << "New volume mesh. " << std::endl; 
+  //std::cout << "  Number of points: " << newMeshVolume->GetNumberOfPoints() << std::endl; 
+  //std::cout << "  Number of node IDs: " << nodeIDs->GetNumberOfTuples() << std::endl; 
   std::vector<int> ids;
   for (int i = 0; i < nodeIDs->GetNumberOfTuples(); i++) {
     auto id = nodeIDs->GetValue(i);
     ids.push_back(id);
   }
   std::sort(ids.begin(), ids.end());
-  std::cout << "    ID range: " << ids[0] << ", " << ids.back() << std::endl;
+  //std::cout << "    ID range: " << ids[0] << ", " << ids.back() << std::endl;
 
   newMeshVolume->DeepCopy(appender->GetOutput());
   return SV_OK;
@@ -1594,7 +1594,7 @@ void VMTKUtils_ReorderTetElements(vtkUnstructuredGrid* boundaryLayerMesh)
   //
   // Swapping the 1st and 2nd nodes is sufficient to create a proper node ordering.
   //
-  std::cout << "Reorder the nodes of boundary layer tet elements ..." << std::endl;
+  //std::cout << "Reorder the nodes of boundary layer tet elements ..." << std::endl;
   vtkIdType ids[4];
   vtkIdType id0;
 
@@ -1615,7 +1615,7 @@ void VMTKUtils_ReorderTetElements(vtkUnstructuredGrid* boundaryLayerMesh)
     cells->ReplaceCell(loc, numPts, ids);
   }
 
-  std::cout << "Number of tet elements with changed order " << negVolElements.size() << std::endl;
+  //std::cout << "Number of tet elements with changed order " << negVolElements.size() << std::endl;
 }
 
 //--------------------------------
