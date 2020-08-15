@@ -61,6 +61,7 @@
 #include "PyUtils.h"
 #include "sv2_globals.h"
 #include "vtkPythonUtil.h"
+#include "sv4gui_ModelUtils.h"
 
 // Needed for Windows
 #ifdef GetObject
@@ -70,9 +71,10 @@
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
 
-// Include the definition for the geometry.LoftOptions and geometry.LoftNurbsOptions classes. 
+// Include the definition for the geometry options classes. 
 #include "GeometryLoftOptions_PyClass.cxx"
 #include "GeometryLoftNurbsOptions_PyClass.cxx"
+#include "GeometryBlendOptions_PyClass.cxx"
 
 //////////////////////////////////////////////////////
 //        U t i l i t y     F u n c t i o n s       //
@@ -365,12 +367,8 @@ Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
 // Geom_local_blend 
 //------------------
 //
-// [TODO:DaveP] I need to finish implementing this. 
-//
-//   ----------------------------------------------------------------------  \n\
-//
 PyDoc_STRVAR(Geom_local_blend_doc,
-  "local_blend(kernel)                                    \n\ 
+  "local_blend(surface, faces, options)                                    \n\ 
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -379,48 +377,81 @@ PyDoc_STRVAR(Geom_local_blend_doc,
 ");
 
 static PyObject * 
-Geom_local_blend(PyObject* self, PyObject* args)
+Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-  auto api = PyUtilApiFunction("ss|iiiiidss", PyRunTimeErr, __func__);
-  char *srcName;
-  char *dstName;
-  char *pointArrayName = 0;
-  char *cellArrayName = 0;
-  int numblenditers = 2;
-  int numsubblenditers = 2;
-  int numsubdivisioniters = 1;
-  int numcgsmoothiters = 3;
-  int numlapsmoothiters = 50;
-  double targetdecimation = 0.01;
+  std::cout << " " << std::endl;
+  std::cout << "========== Geom_local_blend ==========" << std::endl;
+  auto api = PyUtilApiFunction("OO!O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", "faces", "options", NULL};
+  PyObject* surfaceArg;
+  PyObject* facesArg;
+  PyObject* blendOptsArg;
 
-  if (!PyArg_ParseTuple(args, api.format, &srcName, &dstName, &numblenditers, &numsubdivisioniters, &numcgsmoothiters, 
-    &numlapsmoothiters, &targetdecimation, &pointArrayName, &cellArrayName)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &facesArg, 
+        &PyBlendOptionsType, &blendOptsArg)) {
       return api.argsError();
   }
 
-/*
-  auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
+  // Get the vtkPolyData objectsfrom the Python object.
+  //
+  auto surfPolydata = GetVtkPolyData(api, surfaceArg);
+  if (surfPolydata == nullptr) {
       return nullptr;
   }
 
-  if (RepositoryGeometryExists(api, dstName)) {
-      return nullptr;
+  // Extract blend option values from the BlendOptions object.
+  //
+  int numBlendIters = BlendOptionsGetInt(blendOptsArg, BlendOptions::NUM_BLEND_ITERATIONS);
+  int numSubblendIters = BlendOptionsGetInt(blendOptsArg, BlendOptions::NUM_SUBBLEND_ITERATIONS);
+  int numSubdivisionIters = BlendOptionsGetInt(blendOptsArg, BlendOptions::NUM_SUBDIVISION_ITERATIONS);
+  int numCgSmoothIters = BlendOptionsGetInt(blendOptsArg, BlendOptions::NUM_CGSMOOTH_ITERATIONS);
+  int numLapSmoothIters = BlendOptionsGetInt(blendOptsArg, BlendOptions::NUM_LAPSMOOTH_ITERATIONS);
+  double targetDecimation = BlendOptionsGetDouble(blendOptsArg, BlendOptions::TARGET_DECIMATION);
+  std::cout << "[Geom_local_blend] numBlendIters: " << numBlendIters << std::endl;
+  std::cout << "[Geom_local_blend] numSubblendIters: " << numSubblendIters << std::endl;
+  std::cout << "[Geom_local_blend] numSubdivisionIters: " << numSubdivisionIters << std::endl;
+  std::cout << "[Geom_local_blend] numCgSmoothIters: " << numCgSmoothIters << std::endl;
+  std::cout << "[Geom_local_blend] numLapSmoothIters: " << numLapSmoothIters << std::endl;
+  std::cout << "[Geom_local_blend] targetDecimation: " << targetDecimation << std::endl;
+
+  // Set svBlendParam parameters.
+  sv4guiModelElement::svBlendParam params;
+  params.numblenditers = numBlendIters; 
+  params.numsubblenditers = numSubblendIters;
+  params.numsubdivisioniters = numSubdivisionIters;
+  params.numcgsmoothiters = numCgSmoothIters;
+  params.numlapsmoothiters = numLapSmoothIters;
+  params.targetdecimation = targetDecimation;
+
+  // Compute data needed for blending. 
+  //
+  std::vector<sv4guiModelElement::svBlendParamRadius> blendRadii;
+  vtkSmartPointer<vtkPolyData> lastsurfPolydata = surfPolydata;
+  int numFaces = PyList_Size(facesArg);
+  for (int i = 0; i < numFaces; i++) {
+      int faceID1, faceID2; 
+      double radius;
+      PyObject* radiusFace = PyList_GetItem(facesArg, i);
+      if (!GetRadiusFaceValues(radiusFace, faceID1, faceID2, radius)) {
+          std::string valErrorMsg;
+          std::string itemStr;
+          PyUtilGetPyErrorInfo(radiusFace, valErrorMsg, itemStr);
+          std::string msg = itemStr + ": " + valErrorMsg;
+          api.error(msg);
+          return nullptr;
+      }
+
+      blendRadii.push_back(sv4guiModelElement::svBlendParamRadius(faceID1, faceID2, radius));
+
+      lastsurfPolydata = sv4guiModelUtils::CreatePolyDataByBlend(lastsurfPolydata, faceID1, faceID2, radius, &params);
+
+      if (lastsurfPolydata == nullptr) { 
+          api.error("Failed creating blend data.");
+          return nullptr;
+      }
   }
 
-  cvPolyData *dst;
-  if (sys_geom_local_blend(src, &dst, numblenditers,numsubblenditers, numsubdivisioniters, numcgsmoothiters, numlapsmoothiters, targetdecimation,
-     pointArrayName,cellArrayName) != SV_OK ) {
-      api.error("Error in the local blend operation on geometry '" + std::string(srcName) + ".");
-      return nullptr;
-  }
-
-  if (!AddGeometryToRepository(api, dstName, dst)) {
-      return nullptr;
-  }
-
-  return Py_BuildValue("s",dst->GetName());
-*/
+  return vtkPythonUtil::GetObjectFromPointer(lastsurfPolydata);
 }
 
 //-----------
@@ -3851,9 +3882,7 @@ PyMethodDef PyGeomMethods[] =
 
   {"interpolate_closed_curve", (PyCFunction)Geom_interpolate_closed_curve, METH_VARARGS|METH_KEYWORDS, Geom_interpolate_closed_curve_doc},
 
-
-  // [TODO:DaveP] I need to finish implementing this. 
-  // {"local_blend", Geom_local_blend, METH_VARARGS, Geom_local_blend_doc},
+  {"local_blend", (PyCFunction)Geom_local_blend, METH_VARARGS|METH_KEYWORDS, Geom_local_blend_doc},
 
   {"loft", (PyCFunction)Geom_loft, METH_VARARGS|METH_KEYWORDS, Geom_loft_doc},
 
@@ -4047,6 +4076,13 @@ PyInit_PyGeometry(void)
 {
   //std::cout << "========== load geometry module ==========" << std::endl;
 
+  // Initialize the BlenOptions class type.
+  SetBlendOptionsTypeFields(PyBlendOptionsType);
+  if (PyType_Ready(&PyBlendOptionsType) < 0) {
+    fprintf(stdout,"Error in PyBlendOptionsClassType\n");
+    return SV_PYTHON_ERROR;
+  }
+
   // Initialize the LoftOptions class type.
   SetLoftOptionsTypeFields(PyLoftOptionsType);
   if (PyType_Ready(&PyLoftOptionsType) < 0) {
@@ -4067,6 +4103,11 @@ PyInit_PyGeometry(void)
   PyRunTimeErr = PyErr_NewException(GEOMETRY_EXCEPTION, NULL, NULL);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(module, GEOMETRY_EXCEPTION_OBJECT, PyRunTimeErr);
+
+  // Add the 'BlendOptions' class.
+  Py_INCREF(&PyBlendOptionsType);
+  PyModule_AddObject(module, GEOMETRY_BLEND_OPTIONS_CLASS, (PyObject*)&PyBlendOptionsType);
+  SetBlendOptionsClassTypes(PyBlendOptionsType);
 
   // Add the 'LoftOptions' class.
   Py_INCREF(&PyLoftOptionsType);

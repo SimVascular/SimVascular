@@ -462,6 +462,27 @@ PyUtilGetVtkObject(PyUtilApiFunction& api, vtkSmartPointer<vtkPolyData> polydata
   return pyObject;
 }
 
+//----------------------
+// PyUtilGetVtkPolyData 
+//----------------------
+// Get the vtkPolyData object from the Python vtkPolyData object.
+//
+static vtkPolyData *
+PyUtilGetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
+{
+  vtkPolyData* polydata = nullptr;
+
+ if (!PyVTKObject_Check(obj)) {
+      api.error("The polydata argument is not a vtkPolyData object.");
+  }
+
+  polydata = (vtkPolyData*)vtkPythonUtil::GetPointerFromObject(obj, "vtkPolyData");
+  if (polydata == nullptr) {
+      api.error("The polydata argument is not a vtkPolyData object.");
+  }
+  return polydata;
+}
+
 //--------------------
 // PyUtilGetFrameData 
 //--------------------
