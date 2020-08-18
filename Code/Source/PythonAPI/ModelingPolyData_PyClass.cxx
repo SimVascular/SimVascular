@@ -115,6 +115,42 @@ ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* k
   Py_RETURN_NONE;
 }
 
+//------------------------------
+// ModelingPolyData_set_surface 
+//------------------------------
+//
+// Delete faces only works for PolyData. 
+//
+PyDoc_STRVAR(ModelingPolyData_set_surface_doc,
+  "set_surface(surface)  \n\ 
+  \n\
+  Set the PolyData surface defining the model. \n\
+  \n\
+  Args: \n\
+    surface (vtkPolyData): The vtkPolyData object representing the surface. \n\
+");
+
+static PyObject *
+ModelingPolyData_set_surface(PyModelingModel* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", NULL};
+  PyObject* surfaceArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg)) {
+      return api.argsError();
+  }
+
+  auto polydata = PyUtilGetVtkPolyData(api, surfaceArg);
+  if (polydata == nullptr) { 
+      return nullptr;
+  }
+
+  self->solidModel->SetVtkPolyDataObject(polydata);
+
+  Py_RETURN_NONE;
+}
+
 ////////////////////////////////////////////////////////
 //          C l a s s    D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
@@ -129,7 +165,7 @@ static char* MODELING_POLYDATA_MODULE_CLASS = "modeling.PolyData";
 //   \n\----------------------------------------------------------------------  \n\
 //
 PyDoc_STRVAR(PyPolyDataSolidClass_doc,
-  "The modeling PolyData class is used to represent anPolyData solid       \n\
+  "The modeling PolyData class is used to represent a PolyData solid       \n\
    model.                                                                  \n\
 ");
 
@@ -145,6 +181,8 @@ PyMethodDef PyPolyDataSolidMethods[] = {
   // [TODO:DaveP] This should be implemented. 
   // { "remesh_faces", (PyCFunction)ModelingPolyData_remesh_faces, METH_NOARGS|METH_KEYWORDS, ModelingPolyData_remesh_faces_doc},
 
+  { "set_surface", (PyCFunction)ModelingPolyData_set_surface, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_set_surface_doc},
+
   {NULL, NULL}
 };
 
@@ -155,13 +193,32 @@ PyMethodDef PyPolyDataSolidMethods[] = {
 //
 // This function is used to initialize an object after it is created.
 //
+// [TODO:DaveP] I'm not sure if it makes sense to have a constructor argument or not.
+//
 static int
-PyPolyDataSolidInit(PyPolyDataSolid* self, PyObject* args, PyObject *kwds)
+PyPolyDataSolidInit(PyPolyDataSolid* self, PyObject* args, PyObject *kwargs)
 { 
-  static int numObjs = 1;
-  std::cout << "[PyPolyDataSolidInit] New PolyDataSolid object: " << numObjs << std::endl;
+  auto api = PyUtilApiFunction("|O", PyRunTimeErr, "PolyDataSolid");
+  static char *keywords[] = {"surface", NULL};
+  PyObject* surfaceArg = nullptr;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg)) {
+      return -1;
+  }
+
+  std::cout << "[PyPolyDataSolidInit] New PolyDataSolid object: " << std::endl;
   self->super.solidModel = new cvPolyDataSolid();
-  numObjs += 1;
+  self->super.kernel = SM_KT_POLYDATA;
+
+  if (surfaceArg != nullptr) {
+      auto polydata = PyUtilGetVtkPolyData(api, surfaceArg);
+      if (polydata == nullptr) { 
+          return -1;
+      }
+      //auto cvPolydata = new cvPolyData(polydata);
+      self->super.solidModel->SetVtkPolyDataObject(polydata);
+  }
+
   return 0;
 }
 

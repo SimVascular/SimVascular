@@ -467,7 +467,7 @@ PyUtilGetVtkObject(PyUtilApiFunction& api, vtkSmartPointer<vtkPolyData> polydata
 //----------------------
 // Get the vtkPolyData object from the Python vtkPolyData object.
 //
-static vtkPolyData *
+vtkPolyData *
 PyUtilGetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
 {
   vtkPolyData* polydata = nullptr;

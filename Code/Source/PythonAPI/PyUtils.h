@@ -100,6 +100,8 @@ bool PyUtilGetPointVectorData(PyObject *pointsObj, std::vector<std::array<double
 
 PyObject* PyUtilGetVtkObject(PyUtilApiFunction& api, vtkSmartPointer<vtkPolyData> polydata);
 
+vtkPolyData * PyUtilGetVtkPolyData(PyUtilApiFunction& api, PyObject* obj);
+
 PyObject * PyUtilPointVectorDataToPyList(const std::vector<std::array<double,3>>& points);
 
 PyObject* PyUtilResetException(PyObject * PyRunTimeErr);
