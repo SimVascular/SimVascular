@@ -1965,25 +1965,25 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
     return NULL;
   }
 
-  printf( "Aligning profile [%s]\n", src->GetName() );
+  // printf( "Aligning profile [%s]\n", src->GetName() );
 
   // If src normal opposes ref normal, then invert src.  This is
   // reasonable because this alignment function is only meant for use
   // with neighboring curves which are changing direction gradually.
   if ( Dot( refNrm[0], refNrm[1], refNrm[2], srcNrm[0], srcNrm[1],
 	    srcNrm[2] ) < 0.0 ) {
-      fprintf(stdout,"  Reversing src.\n");
+      //fprintf(stdout,"  Reversing src.\n");
       VtkUtils_ReverseAllCells( src->GetVtkPolyData() );
   }
 
   // Get ref and src points:
   if ( sys_geom_GetOrderedPts( ref, &refPts, &numRefPts ) != SV_OK ) {
-    printf( "ERR: get ref ordered points failed\n" );
+    printf( "ERROR: get ref ordered points failed\n" );
     return NULL;
   }
   if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != SV_OK ) {
     delete [] refPts;
-    printf( "ERR: get src ordered points failed\n" );
+    printf( "ERROR: get src ordered points failed\n" );
     return NULL;
   }
 
@@ -2027,7 +2027,7 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
     }
   }
 
-  fprintf(stdout,"  refPtId: %i  dstPtId: %i  d2min: %lf\n",refPtId,dstPtId,d2min);
+  //fprintf(stdout,"  refPtId: %i  dstPtId: %i  d2min: %lf\n",refPtId,dstPtId,d2min);
 
   delete [] srcPts;
   delete [] refPts;
@@ -2040,7 +2040,7 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
 
   // No re-alignment:
   if ( refPtId == dstPtId ) {
-    printf( "  NOTE: no adjustment to alignment [%s]\n", src->GetName() );
+    //printf( "  NOTE: no adjustment to alignment [%s]\n", src->GetName() );
     dst = new cvPolyData( src );
     return dst;
   }
@@ -2051,7 +2051,7 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
       ix = dstPtId + (numRefPts -refPtId);
   }
 
-  fprintf(stdout,"  ix: %i\n",ix);
+  //fprintf(stdout,"  ix: %i\n",ix);
 
   dst = sys_geom_ReorderPolygon(src, ix);
 
@@ -3342,11 +3342,13 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Adding array in sphere\n");
   fprintf(stdout,"Out Array Name: %s\n",outarrayname);
   fprintf(stdout,"Radius: %.3f\n",radius);
   fprintf(stdout,"Center: %.3f %.3f %.3f\n",center[0],center[1],center[2]);
   fprintf(stdout,"Datatype: %d\n",datatype);
+  */
 
   vtkNew(vtkPolyData,tmp);
   tmp->DeepCopy(geom);
@@ -3446,11 +3448,13 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Adding array on face\n");
   fprintf(stdout,"Given Array Name: %s\n",inarrayname);
   fprintf(stdout,"Target Array Name: %s\n",outarrayname);
   fprintf(stdout,"Array Type: %d\n",datatype);
   fprintf(stdout,"Number of Ids: %d\n",nvals);
+  */
 
   double range[2];
   int max;
@@ -3662,12 +3666,14 @@ int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outp
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Adding face blend\n");
   fprintf(stdout,"Given Array Name: %s\n",inarrayname);
   fprintf(stdout,"Target Array Name: %s\n",outarrayname);
   fprintf(stdout,"Array Type: %d\n",datatype);
   fprintf(stdout,"Number of Ids: %d\n",nvals);
   fprintf(stdout,"Radius: %.4f\n",radius);
+  */
 
   double range[2];
   int max;
@@ -3739,10 +3745,13 @@ int sys_geom_local_quadric_decimation( cvPolyData *pd,cvPolyData **outpd, double
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Running local decimation\n");
   fprintf(stdout,"Target Decimation: %.4f\n",target);
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  */
+
   try {
     vtkNew(vtkSVLocalQuadricDecimation,decimator);
     decimator->SetInputData(geom);
@@ -3799,11 +3808,14 @@ int sys_geom_local_laplacian_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Running local smoothing\n");
   fprintf(stdout,"Num Iters: %d\n",numiters);
   fprintf(stdout,"Relax: %.4f\n",relax);
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  */
+
   try {
     vtkNew(vtkSVLocalSmoothPolyDataFilter,smoother);
     smoother->SetInputData(geom);
@@ -3870,11 +3882,14 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Running local smoothing\n");
   fprintf(stdout,"Num Iters: %d\n",numiters);
   fprintf(stdout,"Constrain: %.4f\n",constrainfactor);
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  */
+
   try {
     vtkNew(vtkSVConstrainedSmoothing,smoother);
     smoother->SetInputData(geom);
@@ -3939,10 +3954,13 @@ int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int nu
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Running local subdivision\n");
   fprintf(stdout,"Num Iters: %d\n",numiters);
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  */
+
   try {
     vtkNew(vtkSVLocalLinearSubdivisionFilter,subdivider);
     subdivider->SetInputData(geom);
@@ -3998,10 +4016,13 @@ int sys_geom_local_butterfly_subdivision( cvPolyData *pd,cvPolyData **outpd, int
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Running local subdivision\n");
   fprintf(stdout,"Num Iters: %d\n",numiters);
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  */
+
   try {
     vtkNew(vtkSVLocalButterflySubdivisionFilter,subdivider);
     subdivider->SetInputData(geom);
@@ -4057,10 +4078,13 @@ int sys_geom_local_loop_subdivision( cvPolyData *pd,cvPolyData **outpd, int numi
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Running local subdivision\n");
   fprintf(stdout,"Num Iters: %d\n",numiters);
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  */
+
   try {
     vtkNew(vtkSVLocalLoopSubdivisionFilter,subdivider);
     subdivider->SetInputData(geom);
@@ -4119,10 +4143,13 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
+  /*
   fprintf(stdout,"Running local subdivision\n");
   fprintf(stdout,"Num Iters: %d\n",numblenditers);
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  */
+
   try {
     vtkNew(vtkSVConstrainedBlend,blender);
     blender->SetInputData(geom);

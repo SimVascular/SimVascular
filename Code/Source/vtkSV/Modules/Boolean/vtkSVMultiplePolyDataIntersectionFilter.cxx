@@ -242,7 +242,7 @@ int vtkSVMultiplePolyDataIntersectionFilter::ExecuteIntersection(
 	//Bounding boxes intersect!
         if (this->IntersectionTable[i][j] == 1)
           {
-	    std::cout<<"UNIONING "<<i<<" and "<<j<<endl;
+	    //std::cout<<"UNIONING "<<i<<" and "<<j<<endl;
 	    this->IntersectionTable[i][j] = -1;
 	    this->IntersectionTable[j][i] = -1;
 

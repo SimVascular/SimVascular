@@ -105,12 +105,24 @@ mitk::IFileIO::ConfidenceLevel sv4guiMitkMeshIO::GetReaderConfidenceLevel() cons
 void sv4guiMitkMeshIO::Write()
 {
     ValidateOutputLocation();
+    std::string fileName = GetOutputLocation();
+    //const sv4guiMitkMesh* mitkMesh = dynamic_cast<const sv4guiMitkMesh*>(this->GetInput());
+    auto mitkMesh = dynamic_cast<const sv4guiMitkMesh*>(this->GetInput());
 
-    std::string fileName=GetOutputLocation();
+    if (!mitkMesh) {
+       return;
+    }
 
-    const sv4guiMitkMesh* mitkMesh = dynamic_cast<const sv4guiMitkMesh*>(this->GetInput());
-    if(!mitkMesh) return;
+    WriteGroupToFile(const_cast<sv4guiMitkMesh*>(mitkMesh), fileName);
+}
 
+//------------------
+// WriteGroupToFile
+//------------------
+// Write a mesh group to a .msh file.
+//
+void sv4guiMitkMeshIO::WriteGroupToFile(sv4guiMitkMesh* mitkMesh, std::string& fileName)
+{
     TiXmlDocument document;
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );

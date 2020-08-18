@@ -65,6 +65,8 @@ public:
 
     virtual sv4guiContour* Clone();
 
+    void CopyContourData(sv3::Contour* contour);
+
     sv4guiPathElement::sv4guiPathPoint GetPathPoint();
 
     void SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint);

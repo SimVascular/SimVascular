@@ -39,24 +39,11 @@ set(export_file_name svSolidModelExports.h)
 list(APPEND CORELIBS ${lib})
 
 include_directories(${TETGEN_INCLUDE_DIR})
-if(SV_USE_PYTHON)
-	include_directories(${PYTHON_INCLUDE_PATH}
-		    ${PYTHON_INCLUDE_DIR}
-		    ${PYTHON_INCLUDE_DIRS})
-endif()
 
 set(CXXSRCS sv_SolidModel.cxx)
 set(HDRS    sv_SolidModel.h)
 
-if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv_solid_init_py.cxx)
-endif()
-
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_solid_init.cxx)
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

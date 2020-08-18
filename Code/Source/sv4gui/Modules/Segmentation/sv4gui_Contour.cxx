@@ -44,6 +44,7 @@ sv4guiContour::sv4guiContour()
       m_Extendable( false ),
       m_Selected(false)
 {
+  SetKernel(cKernelType::cKERNEL_CONTOUR);
 }
 
 sv4guiContour::sv4guiContour(const sv4guiContour &other)
@@ -52,6 +53,7 @@ sv4guiContour::sv4guiContour(const sv4guiContour &other)
     , m_Extendable(other.m_Extendable)
     , m_Selected(other.m_Selected)
 {
+  SetKernel(cKernelType::cKERNEL_CONTOUR);
 }
 
 sv4guiContour::~sv4guiContour()
@@ -63,6 +65,57 @@ sv4guiContour* sv4guiContour::Clone()
     return new sv4guiContour(*this);
 }
 
+//-----------------
+// CopyContourData
+//-----------------
+// Copy the data in this object to the given sv3::Contour object.
+//
+// This is used by the Python API.
+//
+void sv4guiContour::CopyContourData(sv3::Contour* contour)
+{
+  #ifdef dbg_CopyContourData
+  std::cout << "[CopyContourData] ========== sv4guiContour::CopyContourData ========== " << std::endl;
+  std::cout << "[CopyContourData] sv3::Contour class name: " << contour->GetClassName() << std::endl;
+  #endif
+
+  // Need to set certain data before setting control points;
+  // causes contour points to be generated.
+  //
+  contour->SetContourID(this->GetContourID());
+  contour->SetMethod(this->GetMethod());
+  contour->SetType(this->GetType());
+
+  contour->SetPlaneGeometry(this->Contour::GetPlaneGeometry());
+  contour->SetPathPoint(this->Contour::GetPathPoint());
+
+  contour->SetClosed(this->IsClosed());
+  contour->SetFinished(this->IsFinished());
+
+  contour->SetSubdivisionNumber(this->GetSubdivisionNumber());
+  contour->SetSubdivisionType(this->GetSubdivisionType());
+  contour->SetSubdivisionSpacing(this->GetSubdivisionSpacing());
+
+  contour->SetControlPoints(this->GetControlPoints());
+
+  // If there are no contour points then get them from this object.
+  //
+  auto contourPoints = contour->GetContourPoints();
+  if (contourPoints.size() == 0) {
+      contour->SetContourPoints(this->GetContourPoints());
+  }
+
+  #ifdef dbg_CopyContourData
+  std::cout << "[CopyContourData] sv3::Contour data: " << std::endl;
+  std::cout << "[CopyContourData]   ID: " << contour->GetContourID() << std::endl;
+  std::cout << "[CopyContourData]   Type: " << contour->GetType() << std::endl;
+  std::cout << "[CopyContourData]   Method: " << contour->GetMethod() << std::endl;
+  std::cout << "[CopyContourData]   Number of control points: " << contour->GetControlPoints().size() << std::endl;
+  std::cout << "[CopyContourData]   Number of contour points: " << contour->GetContourPoints().size() << std::endl;
+  std::cout << "[CopyContourData]   MinControlPointNumber: " << contour->GetMinControlPointNumber() << std::endl;
+  std::cout << "[CopyContourData] Done. " << std::endl;
+  #endif
+}
 
 bool sv4guiContour::IsSelected()
 {

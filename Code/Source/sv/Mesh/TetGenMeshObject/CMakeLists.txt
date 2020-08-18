@@ -34,26 +34,13 @@
 set(lib ${SV_LIB_TETGEN_MESH_NAME})
 set(export_directive tetgen_mesh)
 set(export_file_name svTetGenMeshExports.h)
-if(SV_USE_PYTHON)
-	include_directories(${PYTHON_INCLUDE_PATH}
-		    ${PYTHON_INCLUDE_DIR}
-		    ${PYTHON_INCLUDE_DIRS})
-endif()
 LIST(APPEND PLUGINLIBS ${lib})
 include_directories(${TETGEN_INCLUDE_DIR})
 
 SET(CXXSRCS sv_TetGenMeshObject.cxx sv_TetGenMeshSystem.cxx sv_tetgenmesh_utils.cxx)
 SET(HDRS sv_TetGenMeshObject.h sv_TetGenMeshSystem.h sv_tetgenmesh_utils.h)
 
-if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv_tetgen_mesh_init_py.cxx)
-endif()
-
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_mesh_init.cxx)
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 if(SV_USE_VMTK)
   SET(OPTLIBS ${SV_LIB_VMTK_UTILS_NAME})

@@ -305,6 +305,39 @@ cvTetGenMeshObject::~cvTetGenMeshObject()
     regionsizelist_->Delete();
 }
 
+//-----------------------------
+// EnableSizeFunctionBasedMesh
+//-----------------------------
+// Enable meshing based on a size function.
+//
+// This is only called by the Python API.
+//
+void cvTetGenMeshObject::EnableSizeFunctionBasedMesh()
+{
+  meshoptions_.functionbasedmeshing = 1;
+}
+
+//------------------------------
+// DisableSizeFunctionBasedMesh  
+//------------------------------
+// Disable meshing based on a size function.
+//
+// This is only called by the Python API.
+//
+void cvTetGenMeshObject::DisableSizeFunctionBasedMesh()
+{
+  meshoptions_.functionbasedmeshing = 0;
+}
+
+//--------------------------------
+// SizeFunctionBasedMeshIsEnabled
+//--------------------------------
+//
+bool cvTetGenMeshObject::SizeFunctionBasedMeshIsEnabled()
+{
+  return (meshoptions_.functionbasedmeshing == 1);
+}
+
 int cvTetGenMeshObject::SetMeshFileName( const char* meshFileName )
 {
   if (meshFileName != NULL)
@@ -572,6 +605,21 @@ cvPolyData* cvTetGenMeshObject::GetSolid() {
 
 }
 
+//-----------
+// HasSolid
+//-----------
+// Check if the mesh has a solid model defined for it.
+//
+bool cvTetGenMeshObject::HasSolid() {
+
+  if (polydatasolid_ == NULL) {
+    return false;
+  }
+
+  return true;
+}
+
+
 // -----------------------
 // GetPolyData
 // -----------------------
@@ -596,6 +644,25 @@ cvPolyData* cvTetGenMeshObject::GetPolyData() {
 
 }
 
+//---------------
+// HasSurfaceMesh
+//---------------
+// Check if a surface mesh has been generated.
+//
+bool cvTetGenMeshObject::HasSurfaceMesh()
+{
+  return (surfacemesh_ != NULL);
+}
+
+//---------------
+// HasVolumeMesh
+//---------------
+// Check if a volume mesh has been generated.
+//
+bool cvTetGenMeshObject::HasVolumeMesh()
+{
+  return (volumemesh_ != NULL);
+}
 
 // --------------------
 //  GetUnstructuredGrid
@@ -998,6 +1065,23 @@ int cvTetGenMeshObject::NewMesh() {
   return SV_OK;
 }
 
+//------------------------------
+// GenerateLocalSizeSizingArray
+//------------------------------
+//
+int
+cvTetGenMeshObject::GenerateLocalSizeSizingArray(int faceID, double edgeSize)
+{
+  meshoptions_.functionbasedmeshing = 1;
+
+  if (TGenUtils_SetLocalMeshSize(polydatasolid_, faceID, edgeSize) != SV_OK) {
+      return SV_ERROR;
+  }   
+  meshoptions_.secondarrayfunction = 1;
+
+  return SV_OK;
+}
+
 // --------------------
 //  SetMeshOptions
 // --------------------
@@ -1389,10 +1473,13 @@ int cvTetGenMeshObject::GenerateMesh() {
   if (surfacemesh_ != NULL)
   {
     surfacemesh_->Delete();
+    surfacemesh_ = nullptr;
   }
+
   if (volumemesh_ != NULL)
   {
     volumemesh_->Delete();
+    volumemesh_ = nullptr;
   }
 
 //All these complicated options exist if using VMTK. Should be stopped prior
@@ -1608,9 +1695,13 @@ int cvTetGenMeshObject::GenerateMesh() {
   // must have created mesh
   if (meshoptions_.volumemeshflag && !meshoptions_.boundarylayermeshflag)
   {
+    std::cout << "############# GenerateMesh ###########" << std::endl;
+    std::cout << "[GenerateMesh] outmesh_: " << outmesh_ << std::endl;
+
     if (outmesh_ == NULL) {
       return SV_ERROR;
     }
+    std::cout << "[GenerateMesh] surfacemesh_: " << surfacemesh_ << std::endl;
     if (surfacemesh_ != NULL)
     {
       surfacemesh_->Delete();
@@ -1622,6 +1713,8 @@ int cvTetGenMeshObject::GenerateMesh() {
 
     surfacemesh_ = vtkPolyData::New();
     volumemesh_ = vtkUnstructuredGrid::New();
+    std::cout << "[GenerateMesh] TGenUtils_ConvertToVTK " << std::endl;
+
     if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
 	  &numBoundaryRegions_,1) != SV_OK)
       return SV_ERROR;
@@ -1679,49 +1772,40 @@ cvPolyData* cvTetGenMeshObject::GetFacePolyData (int orgfaceid) {
 
 }
 
-/**
- * @brief Function to return the list of face ids used by the mesh
- * @param rtnstr char string containg the list of ids
- * @return SV_OK if the function executes properly
- */
-
-int cvTetGenMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
-
-  int i=0;
-  int max = 0;
-  char tmpstr[99999];
-  rtnstr[0]='\0';
-
+//------------------
+// GetModelFaceInfo
+//------------------
+// Get the list of face ids used by the mesh.
+//
+int cvTetGenMeshObject::GetModelFaceInfo(std::vector<int>& faceIDs)
+{
+  // [TODO:DaveP] What else can the kernel be?
+  //
   if (solidmodeling_kernel_ == SM_KT_POLYDATA) {
-    if (VtkUtils_PDCheckArrayName(originalpolydata_,1,"ModelFaceID") != SV_OK)
-    {
-      fprintf(stderr,"ModelFaceID does not exist\n");
-      return SV_ERROR;
-    }
+      if (VtkUtils_PDCheckArrayName(originalpolydata_,1,"ModelFaceID") != SV_OK) {
+          fprintf(stderr,"ModelFaceID does not exist\n");
+          return SV_ERROR;
+      }
 
-    int *faces;
-    int numFaces = 0;
-    if (PlyDtaUtils_GetFaceIds(originalpolydata_,&numFaces,&faces) != SV_OK)
-    {
-      fprintf(stderr,"Could not get face ids\n");
-      return SV_ERROR;
-    }
+      // Get face IDs.
+      int *faces;
+      int numFaces = 0;
+      if (PlyDtaUtils_GetFaceIds(originalpolydata_, &numFaces, &faces) != SV_OK) {
+          fprintf(stderr,"Could not get face ids\n");
+          return SV_ERROR;
+      }
 
-    for(i=0;i<numFaces;i++)
-    {
-      tmpstr[0] = '\0';
-      char *namestr;
-      sprintf(tmpstr,"%s {%i %i {%s}} ",rtnstr,faces[i],faces[i],"");
-      rtnstr[0]='\0';
-      sprintf(rtnstr,"%s",tmpstr);
-    }
-    delete [] faces;
+      // Store face IDs into the returned string.
+      for (int i = 0; i < numFaces; i++) {
+          faceIDs.push_back(faces[i]);
+      }
 
+      delete [] faces;
   }
 
   return SV_OK;
-
 }
+
 
 /**
  * @brief Function to set the PolyData member object

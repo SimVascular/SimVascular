@@ -41,15 +41,7 @@ include_directories(${TETGEN_INCLUDE_DIR})
 set(HDRS sv_TetGenAdapt.h)
 set(CXXSRCS sv_TetGenAdapt.cxx)
 
-if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv_tetgen_adapt_init_py.cxx)
-endif()
-
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_tetgen_adapt_init.cxx)
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 target_link_libraries(${lib}
 	${ZLIB_LIBRARY} ${VTK_LIBRARIES}

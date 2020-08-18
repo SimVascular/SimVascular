@@ -57,7 +57,8 @@ enum cKernelType {
     cKERNEL_CIRCLE,
     cKERNEL_POLYGON,
     cKERNEL_SPLINEPOLYGON,
-    cKERNEL_ELLIPSE
+    cKERNEL_ELLIPSE,
+    cKERNEL_CONTOUR
 };
 
 namespace sv3{
@@ -112,18 +113,13 @@ public:
     };
 
     cKernelType GetKernel() const {return contour_kernel_;}
-    
-    static Contour* DefaultInstantiateContourObject(cKernelType t, PathElement::PathPoint pathPoint);
+    void SetKernel(cKernelType ktype) {contour_kernel_ = ktype;}
     
     static cKernelType gCurrentKernel;
     
-    static cvFactoryRegistrar gRegistrar;
-
     enum SubdivisionType {CONSTANT_TOTAL_NUMBER, CONSTANT_SUBDIVISION_NUMBER,CONSTANT_SPACING};
 
     static const int INVALID_INDEX=-2;
-
-    enum ShapeType {ONLY_CONTOUR, CIRCLE, ELLIPSE,POLYGON,CURVE_POLYGON};
 
     Contour();
 
@@ -163,8 +159,6 @@ public:
 
     void SetFinished(bool finished=true);
 
-    ShapeType GetShape();
-
     int GetSubdivisionNumber();
 
     void SetSubdivisionNumber(int number);
@@ -196,6 +190,8 @@ public:
     void RemoveControlPoint(int index);
 
     virtual void SetControlPoint(int index, std::array<double,3> point);
+
+    std::vector<std::array<double,3> > GetControlPoints();
 
     void SetControlPointSelectedIndex(int index);
 
@@ -293,8 +289,6 @@ public:
     int m_ContourID;
 
     PathElement::PathPoint m_PathPoint;
-
-    ShapeType m_Shape;
 
     std::string m_Method;
 

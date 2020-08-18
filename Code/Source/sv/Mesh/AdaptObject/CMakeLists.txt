@@ -32,29 +32,15 @@ set(lib ${SV_LIB_ADAPTOR_NAME})
 set(export_directive adaptor)
 set(export_file_name svAdaptorExports.h)
 
-if(SV_USE_PYTHON)
-	include_directories(${PYTHON_INCLUDE_PATH}
-		    ${PYTHON_INCLUDE_DIR}
-		    ${PYTHON_INCLUDE_DIRS})
-endif()
-
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS sv_AdaptObject.cxx sv_adapt_utils.cxx sv_eispack.cxx)
 set(HDRS sv_AdaptObject.h sv_adapt_utils.h sv_eispack.h)
 
-if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv_adapt_init_py.cxx)
-endif()
-
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
   	add_library(${lib} SHARED ${CXXSRCS} sv_adapt_init.cxx)
 else()
   	add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv_adapt_init.cxx)
-endif()
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 target_link_libraries(${lib}

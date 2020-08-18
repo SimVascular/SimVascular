@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_PYTHONDATANODESPLUGINACTIVATOR_H
-#define SV4GUI_PYTHONDATANODESPLUGINACTIVATOR_H
+#ifndef SV4GUI_PYTHON_DATANODES_PLUGIN_ACTIVATOR_H
+#define SV4GUI_PYTHON_DATANODES_PLUGIN_ACTIVATOR_H
 
 #include <ctkPluginActivator.h>
 #include <QString>
@@ -42,22 +42,18 @@ class sv4guiPythonDataNodesPluginActivator : public berry::AbstractUICTKPlugin
     Q_PLUGIN_METADATA(IID "org_sv_pythondatanodes")
     Q_INTERFACES(ctkPluginActivator)
 
-public:
-
+  public:
     sv4guiPythonDataNodesPluginActivator();
     ~sv4guiPythonDataNodesPluginActivator();
     
     static sv4guiPythonDataNodesPluginActivator* GetDefault();
-
     void start(ctkPluginContext* context) override;
     void stop(ctkPluginContext* context) override;
-    
     static ctkPluginContext* GetContext();
 
-
-private:
+  private:
     static ctkPluginContext* m_Context;
-    static sv4guiPythonDataNodesPluginActivator* inst;
+    static sv4guiPythonDataNodesPluginActivator* m_Inst;
 };
 
-#endif // SV4GUI_PYTHONDATANODESPLUGINACTIVATOR_H
+#endif 
