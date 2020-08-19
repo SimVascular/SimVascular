@@ -424,6 +424,14 @@ Mesher_load_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
   }
   auto mesher = self->mesher;
 
+  // Check if file exists.
+  if (FILE *file = fopen(fileName, "r")) {
+      fclose(file);
+  } else {
+      api.error("Unable to open the file '" + std::string(fileName) + "' for reading."); 
+      return nullptr;
+  }   
+
   // Read in the solid model file.
   if (mesher->LoadModel(fileName) == SV_ERROR) {
       api.error("Error loading a solid model from the file '" + std::string(fileName) + "'."); 
