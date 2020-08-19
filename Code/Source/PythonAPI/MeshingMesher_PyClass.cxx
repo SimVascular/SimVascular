@@ -383,10 +383,28 @@ Mesher_load_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
   auto api = PyUtilApiFunction("s|s", PyRunTimeErr, __func__); 
   static char *keywords[] = {"volume_file", "surface_file", NULL};
   char *volumeFileName;
-  char *surfFileName = 0;
+  char *surfFileName = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &volumeFileName, &surfFileName)) {
     return api.argsError();
+  }
+
+  // Check if files exists.
+  //
+  if (FILE *file = fopen(volumeFileName, "r")) {
+      fclose(file);
+  } else {
+      api.error("Unable to open the file '" + std::string(volumeFileName) + "' for reading.");
+      return nullptr;
+  }
+
+  if (surfFileName != nullptr) {
+      if (FILE *file = fopen(surfFileName, "r")) {
+          fclose(file);
+      } else {
+          api.error("Unable to open the file '" + std::string(volumeFileName) + "' for reading.");
+          return nullptr;
+      }
   }
 
   // Read in the mesh file.
