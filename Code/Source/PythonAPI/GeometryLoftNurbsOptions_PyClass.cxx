@@ -442,10 +442,15 @@ SetLoftNurbsOptionsTypeFields(PyTypeObject& loftOpts)
   PyDict_SetItemString(PyLoftNurbsOptions_KnotSpanType.tp_dict, "DERIVATIVE", Py_BuildValue("s", "derivative"));
   PyDict_SetItemString(PyLoftNurbsOptions_KnotSpanType.tp_dict, "EQUAL", Py_BuildValue("s", "equal"));
   */
-
   SetLoftNurbsOptions_KnotSpanTypeFields(PyLoftNurbsOptions_KnotSpanType);
   PyType_Ready(&PyLoftNurbsOptions_KnotSpanType);
   SetPyLoftNurbsOptions_KnotSpanTypes(PyLoftNurbsOptions_KnotSpanType);
+
+  // Add ParametricSpanType types. 
+  //
+  SetLoftNurbsOptions_ParametricSpanTypeFields(PyLoftNurbsOptions_ParametricSpanType);
+  PyType_Ready(&PyLoftNurbsOptions_ParametricSpanType);
+  SetPyLoftNurbsOptions_ParametricSpanTypes(PyLoftNurbsOptions_ParametricSpanType);
 
 };
 
