@@ -29,15 +29,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API 'pathplanning' module 'Path' class. 
+// The functions defined here implement the SV Python API 'pathplanning' module 'Path' class.
 //
 //     path = pathplanning.Path()
 //
-// The Python Path class is implemented using the PyPath struct defined in PathPlanning_PyModule.h. 
+// The Python Path class is implemented using the PyPath struct defined in PathPlanning_PyModule.h.
 //
 //   PyPath:
-//      Attributes: None 
-//      Data members: 
+//      Attributes: None
+//      Data members:
 //         sv3::PathElement* path;
 
 // Declare SV object that stores path data.
@@ -70,11 +70,11 @@ GetPathElement(PyUtilApiFunction& api, PyPath* self)
 // Python 'Path' class methods.
 
 //------------------------
-// Path_add_control_point 
+// Path_add_control_point
 //------------------------
 //
 PyDoc_STRVAR(Path_add_control_point_doc,
-  "add_control_point(point, index=None) \n\ 
+  "add_control_point(point, index=None) \n\
    \n\
    Add a control point to a path. \n\
    \n\
@@ -86,7 +86,7 @@ PyDoc_STRVAR(Path_add_control_point_doc,
      index (Optional[int]): The index into the current list of control points to add the control point. 0 <= index <= number of path control points - 1\n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_add_control_point(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("O!|i", PyRunTimeErr, __func__);
@@ -113,15 +113,15 @@ Path_add_control_point(PyPath* self, PyObject* args)
   std::array<double,3> point;
   point[0] = PyFloat_AsDouble(PyList_GetItem(pointArg,0));
   point[1] = PyFloat_AsDouble(PyList_GetItem(pointArg,1));
-  point[2] = PyFloat_AsDouble(PyList_GetItem(pointArg,2));    
+  point[2] = PyFloat_AsDouble(PyList_GetItem(pointArg,2));
 
-  // Check if the control point is already 
+  // Check if the control point is already
   // defined for the path.
   //
   // [TODO:DaveP] Get rid of this '-2'? What about '-1'?
   //
   if (path->SearchControlPoint(point,0) !=- 2) {
-      auto msg = "The control point (" + std::to_string(point[0]) + ", " + std::to_string(point[1]) + ", " + 
+      auto msg = "The control point (" + std::to_string(point[0]) + ", " + std::to_string(point[1]) + ", " +
         std::to_string(point[2]) + ") has already been defined for the path.";
       api.error(msg);
       return nullptr;
@@ -130,9 +130,9 @@ Path_add_control_point(PyPath* self, PyObject* args)
   // Set the path control point by index or by point.
   //
   int numPts = path->GetControlPoints().size();
-  if (index != -2) { 
+  if (index != -2) {
       if ((index >= numPts) || (index < 0)) {
-          auto msg = "The 'index' argument " + std::to_string(index) + " must be >= 0 and < the number of control points -1 (" + 
+          auto msg = "The 'index' argument " + std::to_string(index) + " must be >= 0 and < the number of control points -1 (" +
                 std::to_string(numPts-1 ) + ").";
           api.error(msg);
           return nullptr;
@@ -146,7 +146,7 @@ Path_add_control_point(PyPath* self, PyObject* args)
   // The path curve points are generated each time a new control point is added.
   //
   path->InsertControlPoint(index, point);
-  return SV_PYTHON_OK; 
+  return SV_PYTHON_OK;
 }
 
 //-------------------------
@@ -154,14 +154,14 @@ Path_add_control_point(PyPath* self, PyObject* args)
 //-------------------------
 //
 PyDoc_STRVAR(Path_get_control_points_doc,
-  "get_control_points() \n\ 
+  "get_control_points() \n\
    \n\
    Get the path's control points. \n\
    \n\
    Returns (list(list[float,float,float])): The list of the path's control points. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_get_control_points(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
@@ -174,9 +174,9 @@ Path_get_control_points(PyPath* self, PyObject* args)
   if (num == 0) {
     api.error("The path does not have control points defined for it.");
     return nullptr;
-  }  
+  }
 
-  // [TODO:DaveP] Do we need to Py_INCREF() here? 
+  // [TODO:DaveP] Do we need to Py_INCREF() here?
   //
   PyObject* output = PyList_New(num);
   for (int i = 0; i < num; i++) {
@@ -201,7 +201,7 @@ Path_get_control_points(PyPath* self, PyObject* args)
 //----------------------
 //
 PyDoc_STRVAR(Path_get_curve_frame_doc,
-  "get_curve_frame(index) \n\ 
+  "get_curve_frame(index) \n\
    \n\
    Get the coordinate frame at the path's interpolating curve at a given location. \n\
    \n\
@@ -211,7 +211,7 @@ PyDoc_STRVAR(Path_get_curve_frame_doc,
    Returns (list([float,float,float])): The path's curve normal at the given location. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_get_curve_frame(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
@@ -230,12 +230,12 @@ Path_get_curve_frame(PyPath* self, PyObject* args)
   if (num == 0) {
     api.error("The path does not have points created for it.");
     return nullptr;
-  }  
+  }
 
   if ((indexArg < 0) || (indexArg >= num)) {
     api.error("The 'index' argument must be between 0 and " + std::to_string(num-1) + ".");
     return nullptr;
-  }  
+  }
 
   auto pathPoint = path->GetPathPoint(indexArg);
   auto pathFrameObj = CreatePyPathFrame(pathPoint);
@@ -244,11 +244,11 @@ Path_get_curve_frame(PyPath* self, PyObject* args)
 }
 
 //-----------------------
-// Path_get_curve_normal 
+// Path_get_curve_normal
 //-----------------------
 //
 PyDoc_STRVAR(Path_get_curve_normal_doc,
-  "get_curve_normal(index) \n\ 
+  "get_curve_normal(index) \n\
    \n\
    Get the normal to the path's interpolating curve at a given location. \n\
    \n\
@@ -258,7 +258,7 @@ PyDoc_STRVAR(Path_get_curve_normal_doc,
    Returns (list([float,float,float])): The path's curve normal at the given location. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_get_curve_normal(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
@@ -277,23 +277,23 @@ Path_get_curve_normal(PyPath* self, PyObject* args)
   if (num == 0) {
     api.error("The path does not have points created for it.");
     return nullptr;
-  }  
+  }
 
   if ((indexArg < 0) || (indexArg >= num)) {
     api.error("The 'index' argument must be between 0 and " + std::to_string(num-1) + ".");
     return nullptr;
-  }  
+  }
 
   auto pathPoint = path->GetPathPoint(indexArg);
   return Py_BuildValue("[d, d, d]", pathPoint.rotation[0], pathPoint.rotation[1], pathPoint.rotation[2]);
 }
 
 //----------------------
-// Path_get_curve_point 
+// Path_get_curve_point
 //----------------------
 //
 PyDoc_STRVAR(Path_get_curve_point_doc,
-  "get_curve_point(index) \n\ 
+  "get_curve_point(index) \n\
    \n\
    Get the point on the path's interpolating curve at a given location. \n\
    \n\
@@ -303,7 +303,7 @@ PyDoc_STRVAR(Path_get_curve_point_doc,
    Returns (list([float,float,float])): The path's curve point at the given location. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_get_curve_point(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
@@ -322,7 +322,7 @@ Path_get_curve_point(PyPath* self, PyObject* args)
   if (num == 0) {
     api.error("The path does not have curve points created for it.");
     return nullptr;
-  }  
+  }
 
  if ((index >= num) || (index < 0)) {
       auto msg = "The 'index' argument " + std::to_string(index) + " must be >= 0 and < the number of curve points (" + std::to_string(num) + ").";
@@ -339,27 +339,27 @@ Path_get_curve_point(PyPath* self, PyObject* args)
 //-----------------------
 //
 PyDoc_STRVAR(Path_get_curve_points_doc,
-  "get_curve_points() \n\ 
+  "get_curve_points() \n\
    \n\
    Get the points along the path's interpolating curve. \n\
    \n\
    Returns (list(list[float,float,float])): The list of the path's interpolating curve points. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_get_curve_points(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto path = GetPathElement(api, self);
   if (path == NULL) {
     return nullptr;
-  }  
-    
+  }
+
   int num = path->GetPathPointNumber();
   if (num == 0) {
     api.error("The path does not have points created for it.");
     return nullptr;
-  }  
+  }
 
   PyObject* output = PyList_New(num);
 
@@ -370,21 +370,21 @@ Path_get_curve_points(PyPath* self, PyObject* args)
         PyList_SetItem(tmpList,j,PyFloat_FromDouble(pos[j]));
         PyList_SetItem(output,i,tmpList);
     }
-    
+
   if(PyErr_Occurred()!=NULL) {
     api.error("error generating pathpospt output");
     return nullptr;
   }
-    
+
   return output;
-} 
+}
 
 //-------------------------
-// Path_get_curve_polydata 
+// Path_get_curve_polydata
 //-------------------------
 //
 PyDoc_STRVAR(Path_get_curve_polydata_doc,
-  "get_curve_polydata() \n\ 
+  "get_curve_polydata() \n\
    \n\
    Get the vtkPolyData object representing the path's interpolating curve. \n\
    \n\
@@ -408,16 +408,16 @@ Path_get_curve_polydata(PyPath* self, PyObject* args)
       api.error("Could not get polydata for the path's interpolating curve..");
       return nullptr;
   }
-   
+
   return vtkPythonUtil::GetObjectFromPointer(polydata);
 }
 
 //------------------------
-// Path_get_curve_tangent 
+// Path_get_curve_tangent
 //------------------------
 //
 PyDoc_STRVAR(Path_get_curve_tangent_doc,
-  "get_curve_tangent(index) \n\ 
+  "get_curve_tangent(index) \n\
    \n\
    Get the tangent to the path's interpolating curve at a given location. \n\
    \n\
@@ -427,7 +427,7 @@ PyDoc_STRVAR(Path_get_curve_tangent_doc,
    Returns (list([float,float,float])): The path's curve tangent at the given location. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_get_curve_tangent(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
@@ -446,12 +446,12 @@ Path_get_curve_tangent(PyPath* self, PyObject* args)
   if (num == 0) {
     api.error("The path does not have points created for it.");
     return nullptr;
-  }  
+  }
 
   if ((indexArg < 0) || (indexArg >= num)) {
     api.error("The path 'index' argument must be between 0 and " + std::to_string(num-1) + ".");
     return nullptr;
-  }  
+  }
 
   auto pathPoint = path->GetPathPoint(indexArg);
   return Py_BuildValue("[d, d, d]", pathPoint.tangent[0], pathPoint.tangent[1], pathPoint.tangent[2]);
@@ -462,32 +462,32 @@ Path_get_curve_tangent(PyPath* self, PyObject* args)
 //---------------------------
 //
 PyDoc_STRVAR(Path_get_num_curve_points_doc,
-  "get_num_curve_points() \n\ 
+  "get_num_curve_points() \n\
    \n\
    Get the number of points along the path's interpolating curve. \n\
    \n\
    Returns (int): The number of points along the path's interpolating curve. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_get_num_curve_points(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto path = GetPathElement(api, self);
   if (path == NULL) {
     return nullptr;
-  }  
+  }
 
   int num = path->GetPathPointNumber();
   return Py_BuildValue("i", num);
 }
 
 //---------------------------
-// Path_get_num_subdivisions 
+// Path_get_num_subdivisions
 //---------------------------
 //
 PyDoc_STRVAR(Path_get_num_subdivisions_doc,
-  "get_num_subdivisions() \n\ 
+  "get_num_subdivisions() \n\
    \n\
    Get the path group's calculation number. \n\
    \n\
@@ -501,18 +501,18 @@ Path_get_num_subdivisions(PyPath* self, PyObject* args)
   auto path = GetPathElement(api, self);
   if (path == NULL) {
     return nullptr;
-  }  
+  }
 
   int number = path->GetCalculationNumber();
   return Py_BuildValue("i", number);
 }
 
 //----------------------------
-//Path_get_subdivision_method 
+//Path_get_subdivision_method
 //----------------------------
 //
 PyDoc_STRVAR(Path_get_subdivision_method_doc,
-  "get_subdivision_method() \n\ 
+  "get_subdivision_method() \n\
    \n\
    Get the path's subdivision method. \n\
    \n\
@@ -542,16 +542,16 @@ Path_get_subdivision_method(PyPath* self, PyObject* args)
       api.error("No subdivision method is set.");
       return nullptr;
   }
-   
+
   return Py_BuildValue("s", methodName.c_str());
 }
 
 //------------------------------
-// Path_get_subdivision_spacing 
+// Path_get_subdivision_spacing
 //------------------------------
 //
 PyDoc_STRVAR(Path_get_subdivision_spacing_doc,
-  "get_subdivision_spacing() \n\ 
+  "get_subdivision_spacing() \n\
    \n\
    Get the path's subdivsion spacing value. \n\
    \n\
@@ -576,7 +576,7 @@ Path_get_subdivision_spacing(PyPath* self, PyObject* args)
 //---------------------------
 //
 PyDoc_STRVAR(Path_remove_control_point_doc,
-  "remove_control_point(index) \n\ 
+  "remove_control_point(index) \n\
    \n\
    Remove a control point from a path. \n\
    \n\
@@ -584,7 +584,7 @@ PyDoc_STRVAR(Path_remove_control_point_doc,
      index (int): The index into the path's list of control points of the control point to remove. 0 <= index <= number of control points - 1. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_remove_control_point(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("i", PyRunTimeErr, __func__);
@@ -603,17 +603,17 @@ Path_remove_control_point(PyPath* self, PyObject* args)
   if (numPts == 0) {
     api.error("The path does not have control points defined for it.");
     return nullptr;
-  }  
+  }
 
   if ((index >= numPts) || (index < 0)) {
-      auto msg = "The 'index' argument " + std::to_string(index) + " must be >= 0 and < the number of control points (" + 
+      auto msg = "The 'index' argument " + std::to_string(index) + " must be >= 0 and < the number of control points (" +
             std::to_string(numPts-1) + ").";
       api.error(msg);
       return nullptr;
   }
   path->RemoveControlPoint(index);
 
-  return SV_PYTHON_OK; 
+  return SV_PYTHON_OK;
 }
 
 //----------------------------
@@ -621,7 +621,7 @@ Path_remove_control_point(PyPath* self, PyObject* args)
 //----------------------------
 //
 PyDoc_STRVAR(Path_replace_control_point_doc,
-  "replace_control_point(index, point) \n\ 
+  "replace_control_point(index, point) \n\
    \n\
    Replace a control point in a path. \n\
    \n\
@@ -630,7 +630,7 @@ PyDoc_STRVAR(Path_replace_control_point_doc,
      point (list[float,float,float]): A list of three floats represent the coordinates of a 3D point. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_replace_control_point(PyPath* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("iO!", PyRunTimeErr, __func__);
@@ -640,7 +640,7 @@ Path_replace_control_point(PyPath* self, PyObject* args)
   if (!PyArg_ParseTuple(args, api.format, &index, &PyList_Type, &pointArg)) {
       return api.argsError();
   }
-    
+
   auto path = GetPathElement(api, self);
   if (path == NULL) {
       return nullptr;
@@ -650,17 +650,17 @@ Path_replace_control_point(PyPath* self, PyObject* args)
   if (numPts == 0) {
     api.error("The path does not have control points defined for it.");
     return nullptr;
-  }  
+  }
 
   std::string msg;
   if (!PyUtilCheckPointData(pointArg, msg)) {
       api.error("The 'point' argument " + msg);
       return nullptr;
   }
-    
-  if ((index >= numPts) || (index < 0)) { 
-      auto msg = "The 'index' argument " + std::to_string(index) + " must be >= 0 and < the number of control points (" + 
-            std::to_string(numPts-1) + ")."; 
+
+  if ((index >= numPts) || (index < 0)) {
+      auto msg = "The 'index' argument " + std::to_string(index) + " must be >= 0 and < the number of control points (" +
+            std::to_string(numPts-1) + ").";
       api.error(msg);
       return nullptr;
   }
@@ -668,10 +668,10 @@ Path_replace_control_point(PyPath* self, PyObject* args)
   std::array<double,3> point;
   point[0] = PyFloat_AsDouble(PyList_GetItem(pointArg,0));
   point[1] = PyFloat_AsDouble(PyList_GetItem(pointArg,1));
-  point[2] = PyFloat_AsDouble(PyList_GetItem(pointArg,2));    
+  point[2] = PyFloat_AsDouble(PyList_GetItem(pointArg,2));
   path->SetControlPoint(index, point);
-        
-  return SV_PYTHON_OK; 
+
+  return SV_PYTHON_OK;
 }
 
 //-------------------------
@@ -679,7 +679,7 @@ Path_replace_control_point(PyPath* self, PyObject* args)
 //-------------------------
 //
 PyDoc_STRVAR(Path_set_control_points_doc,
-  "set_control_points(points) \n\ 
+  "set_control_points(points) \n\
    \n\
    Set the path's control points. \n\
    \n\
@@ -705,7 +705,7 @@ Path_set_control_points(PyPath* self, PyObject* args)
   int numPts = PyList_Size(pointsArg);
   for (int i = 0; i < numPts; i++) {
       PyObject* ptObj = PyList_GetItem(pointsArg,i);
-      std::string msg; 
+      std::string msg;
       //double point[3];
       std::array<double,3> point;
       if (!PyUtilGetPointData(ptObj, msg, point.data())) {
@@ -729,7 +729,7 @@ Path_set_control_points(PyPath* self, PyObject* args)
 //---------------------------
 //
 PyDoc_STRVAR(Path_set_num_subdivisions_doc,
-  "set_num_subdivisions(number) \n\ 
+  "set_num_subdivisions(number) \n\
    \n\
    Set the number of subdivisions used for the TOTAL and SUBDIVISION subdivision methods. \n\
    \n\
@@ -756,7 +756,7 @@ Path_set_num_subdivisions(PyPath* self, PyObject* args)
       api.error("The 'number' argument must be > 0.");
       return nullptr;
   }
-  
+
   path->SetCalculationNumber(number);
   return Py_None;
 }
@@ -766,7 +766,7 @@ Path_set_num_subdivisions(PyPath* self, PyObject* args)
 //-----------------------------
 //
 PyDoc_STRVAR(Path_set_subdivision_method_doc,
-  "set_subdivision_method(method, num_subdiv=None, num_total=None, spacing=None) \n\ 
+  "set_subdivision_method(method, num_subdiv=None, num_total=None, spacing=None) \n\
    \n\
    Set the subdivision method and paramters used to determine the number of path curve points created between two adjacent control points. \n\
    \n\
@@ -782,15 +782,15 @@ PyDoc_STRVAR(Path_set_subdivision_method_doc,
 
 static PyObject *
 Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
-{ 
+{
   auto api = PyUtilApiFunction("s|O!O!O!", PyRunTimeErr, __func__);
   static char *keywords[] = {"method", "num_div", "num_total", "spacing", NULL};
   char* methodName;
   PyObject* numDivObj = nullptr;
   PyObject* numTotalObj = nullptr;
   PyObject* spacingObj = nullptr;
-  
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &methodName, &PyInt_Type, &numDivObj, &PyInt_Type, &numTotalObj, 
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &methodName, &PyInt_Type, &numDivObj, &PyInt_Type, &numTotalObj,
         &PyFloat_Type, &spacingObj)) {
       return api.argsError();
   }
@@ -799,11 +799,11 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
   if (path == NULL) {
       return nullptr;
   }
-  
+
   // Set the subdision method.
   //
   PathElement::CalculationMethod method;
-  
+
   try {
       method = subdivMethodNameTypeMap.at(std::string(methodName));
   } catch (const std::out_of_range& except) {
@@ -817,7 +817,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
   // Set the parameters for the SPACING method.
   //
   if (method == sv3::PathElement::CONSTANT_SPACING) {
-      if (spacingObj == nullptr) { 
+      if (spacingObj == nullptr) {
           api.error("The SPACING method requires a 'spacing' value.");
           return nullptr;
       }
@@ -838,7 +838,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
   // Set the parameters for the SUBDIVISION method.
   //
   } else if (method == sv3::PathElement::CONSTANT_SUBDIVISION_NUMBER) {
-      if (numDivObj == nullptr) { 
+      if (numDivObj == nullptr) {
           api.error("The SUBDIVISION method requires a 'num_div' value.");
           return nullptr;
       }
@@ -859,7 +859,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
   // Set the parameters for the TOTAL method.
   //
   } else if (method == sv3::PathElement::CONSTANT_TOTAL_NUMBER) {
-      if (numTotalObj == nullptr) { 
+      if (numTotalObj == nullptr) {
           api.error("The TOTAL method requires a 'num_total' value.");
           return nullptr;
       }
@@ -884,7 +884,7 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
       api.error(msg);
       return nullptr;
   }
-  
+
   // Generate path curve points.
   path->ControlPointsChanged();
 
@@ -892,14 +892,14 @@ Path_set_subdivision_method(PyPath* self, PyObject* args, PyObject* kwargs)
 }
 
 //-------------
-// Path_smooth 
+// Path_smooth
 //-------------
 //
 // [TODO:DaveP] This does not constrain the path end points so
 // what use is it really?
 //
 PyDoc_STRVAR(Path_smooth_doc,
-  "smooth(sample_rate, num_modes, smooth_control_pts=False) \n\ 
+  "smooth(sample_rate, num_modes, smooth_control_pts=False) \n\
    \n\
    Smooth a path's control points or curve points as a source. \n\
    \n\
@@ -907,18 +907,18 @@ PyDoc_STRVAR(Path_smooth_doc,
      sample_rate (int): The rate used to sample the source points for smoothing. \n\
         A sample rate of 2 uses every other point for smoothing. \n\
      num_modes (int): The number of Fourier modes used to reconstuct the source points. \n\
-        The lower the number of modes the more the source points are smoothed. \n\ 
+        The lower the number of modes the more the source points are smoothed. \n\
      control_point_based (Optional[bool]): If True then smooth control points; otherwise smooth curve points. \n\
    \n\
    Returns (sv.path.Path object): A new smoothed path. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Path_smooth(PyPath* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("ii|O!", PyRunTimeErr, __func__);
   static char *keywords[] = {"sample_rate", "num_modes", "smooth_control_pts", NULL};
-  int sampleRate, numModes; 
+  int sampleRate, numModes;
   PyObject *smoothControlPtsArg = nullptr;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &sampleRate, &numModes, &PyBool_Type, &smoothControlPtsArg)) {
@@ -928,7 +928,7 @@ Path_smooth(PyPath* self, PyObject* args, PyObject* kwargs)
   auto path = GetPathElement(api, self);
   if (path == NULL) {
       return nullptr;
-  }  
+  }
 
   int numPts = path->GetControlPoints().size();
   if (numPts == 0) {
@@ -951,10 +951,10 @@ Path_smooth(PyPath* self, PyObject* args, PyObject* kwargs)
       api.error("The 'num_modes' argument must be > 0.");
       return nullptr;
   }
-    
+
   auto newPath = path->CreateSmoothedPathElement(sampleRate, numModes, controlPointsBased);
 
-  if (newPath == nullptr) { 
+  if (newPath == nullptr) {
       api.error("Unable to smooth the path.");
       return nullptr;
   }
@@ -967,7 +967,7 @@ Path_smooth(PyPath* self, PyObject* args, PyObject* kwargs)
 ////////////////////////////////////////////////////////
 
 static char* PATH_CLASS = "Path";
-// Dotted name that includes both the module name and 
+// Dotted name that includes both the module name and
 // the name of the type within the module.
 static char* PATHPLANNING_MODULE_CLASS = "pathplanning.Path";
 
@@ -986,7 +986,7 @@ PyDoc_STRVAR(PathClass_doc,
 ");
 
 //---------------
-// PyPathMethods 
+// PyPathMethods
 //---------------
 // Path class methods.
 //
@@ -1022,25 +1022,25 @@ static PyMethodDef PyPathMethods[] = {
 };
 
 //------------
-// PyPathType 
+// PyPathType
 //------------
-// Define the Python type object that stores Path data. 
+// Define the Python type object that stores Path data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 PyTypeObject PyPathType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  PATHPLANNING_MODULE_CLASS, 
+  PATHPLANNING_MODULE_CLASS,
   sizeof(PyPath)
 };
 
 //------------
 // PyPathInit
 //------------
-// This is the __init__() method for the Path class. 
+// This is the __init__() method for the Path class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -1056,9 +1056,9 @@ PyPathInit(PyPath* self, PyObject* args, PyObject *kwds)
 }
 
 //-----------
-// PyPathNew 
+// PyPathNew
 //-----------
-// Object creation function, equivalent to the Python __new__() method. 
+// Object creation function, equivalent to the Python __new__() method.
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
@@ -1074,7 +1074,7 @@ PyPathNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //---------------
-// PyPathDealloc 
+// PyPathDealloc
 //---------------
 //
 static void
@@ -1086,19 +1086,19 @@ PyPathDealloc(PyPath* self)
 }
 
 //-------------------
-// SetPathTypeFields 
+// SetPathTypeFields
 //-------------------
-// Set the Python type object fields that stores Path data. 
+// Set the Python type object fields that stores Path data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetPyPathTypeFields(PyTypeObject& pathType)
 {
   // Doc string for this type.
-  pathType.tp_doc = PathClass_doc; 
-  // Object creation function, equivalent to the Python __new__() method. 
+  pathType.tp_doc = PathClass_doc;
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   pathType.tp_new = PyPathNew;
   pathType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
@@ -1110,9 +1110,9 @@ SetPyPathTypeFields(PyTypeObject& pathType)
 //--------------
 // CreatePyPath
 //--------------
-// Create a PyPath object. 
+// Create a PyPath object.
 //
-// If the path argument is not null then use it 
+// If the path argument is not null then use it
 // for the PyPath object.
 //
 PyObject *
@@ -1123,8 +1123,8 @@ CreatePyPath(PathElement* path)
   auto pyPath = (PyPath*)pathObj;
 
   if (path != nullptr) {
-      delete pyPath->path; 
-      pyPath->path = path; 
+      delete pyPath->path;
+      pyPath->path = path;
   }
   std::cout << "[CreatePyPath] pyPath id: " << pyPath->id << std::endl;
   std::cout << "[CreatePyPath] pathObj ref count: " << Py_REFCNT(pathObj) << std::endl;

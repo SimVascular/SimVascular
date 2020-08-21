@@ -31,7 +31,7 @@
 
 // This is currently not used.
 
-// The functions defined here implement the SV Python API 'Project' class. 
+// The functions defined here implement the SV Python API 'Project' class.
 //
 
 //////////////////////////////////////////////////////
@@ -41,11 +41,11 @@
 // Python 'Project' class methods.
 
 //-----------------
-// sv4Project_open  
+// sv4Project_open
 //-----------------
 //
 PyDoc_STRVAR(sv4Project_open_doc,
-  "open(project_dir) \n\ 
+  "open(project_dir) \n\
    \n\
    Open a SimVascular project. \n\
    \n\
@@ -53,7 +53,7 @@ PyDoc_STRVAR(sv4Project_open_doc,
      project_dir (str): The project directory path. \n\
 ");
 
-static PyObject * 
+static PyObject *
 sv4Project_open(PyProject* self, PyObject* args)
 {
   auto api = SvPyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -63,7 +63,7 @@ sv4Project_open(PyProject* self, PyObject* args)
       return api.argsError();
   }
 
-  return SV_PYTHON_OK; 
+  return SV_PYTHON_OK;
 }
 
 ////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ static char* PROJECT_MODULE_CLASS = "project.Project";
 PyDoc_STRVAR(ProjectClass_doc, "Project class functions.");
 
 //------------------
-// PyProjectMethods 
+// PyProjectMethods
 //------------------
 // Project class methods.
 //
@@ -88,25 +88,25 @@ static PyMethodDef PyProjectClassMethods[] = {
 };
 
 //--------------------
-// PyProjectClassType 
+// PyProjectClassType
 //--------------------
-// Define the Python type object that stores Project data. 
+// Define the Python type object that stores Project data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 PyTypeObject PyProjectClassType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  PROJECT_MODULE_CLASS, 
+  PROJECT_MODULE_CLASS,
   sizeof(PyProject)
 };
 
 //---------------
 // PyProjectInit
 //---------------
-// This is the __init__() method for the Project class. 
+// This is the __init__() method for the Project class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -124,9 +124,9 @@ PyProjectInit(PyProject* self, PyObject* args, PyObject *kwds)
 }
 
 //--------------
-// PyProjectNew 
+// PyProjectNew
 //--------------
-// Object creation function, equivalent to the Python __new__() method. 
+// Object creation function, equivalent to the Python __new__() method.
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
@@ -156,19 +156,19 @@ PyProjectDealloc(PyProject* self)
 }
 
 //-------------------
-// SetProjectTypeFields 
+// SetProjectTypeFields
 //-------------------
-// Set the Python type object fields that stores Project data. 
+// Set the Python type object fields that stores Project data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetPyProjectTypeFields(PyTypeObject& projectType)
 {
   // Doc string for this type.
   projectType.tp_doc = "Project  objects";
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   projectType.tp_new = PyProjectNew;
   projectType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
@@ -180,7 +180,7 @@ SetPyProjectTypeFields(PyTypeObject& projectType)
 //-----------------
 // CreatePyProject
 //-----------------
-// 
+//
 PyObject *
 CreatePyProject()
 {
@@ -190,8 +190,8 @@ CreatePyProject()
   auto pyProject = (PyProject*)projectObj;
 
   if (project != nullptr) {
-      delete pyProject->project; 
-      pyProject->project = project; 
+      delete pyProject->project;
+      pyProject->project = project;
   }
   std::cout << "[CreatePyProject] pyProject id: " << pyProject->id << std::endl;
   return projectObj;

@@ -42,9 +42,9 @@ ifeq ($(SV_USE_TCL),1)
   DLLOBJS  += $(addprefix $(OBJ_DIR)/,$(DLLSRCS:.cxx=.$(OBJECTEXT)))
 endif
 
-ifeq ($(SV_USE_PYTHON),1)
-  DLLOBJS  += $(addprefix $(OBJ_DIR)/,$(SVPYSRCS:.cxx=.$(OBJECTEXT)))
-endif
+#ifeq ($(SV_USE_PYTHON),1)
+#  DLLOBJS  += $(addprefix $(OBJ_DIR)/,$(SVPYSRCS:.cxx=.$(OBJECTEXT)))
+#endif
 
 SRCS	= $(CXXSRCS)
 

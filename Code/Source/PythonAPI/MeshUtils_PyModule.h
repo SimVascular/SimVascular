@@ -33,7 +33,9 @@
 #define MESH_UTILS_INIT_H
 
 #include "SimVascular.h"
-#include "svMMGExports.h" 
+
+#include "svPythonAPIExports.h"
+ 
 #include "Python.h"
 
 #if PYTHON_MAJOR_VERSION == 2

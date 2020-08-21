@@ -34,7 +34,7 @@
 //
 // Span types are strings stored as class attributes (see SetPyLoftNurbsOptions_KnotSpanTypes).
 //
-// The classes are used to create objects contained in the LoftNurbsOptions object 
+// The classes are used to create objects contained in the LoftNurbsOptions object
 // (see LoftNurbsOptionsSetDefaults).
 
 ////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ typedef struct {
 } PyLoftNurbsOptions_KnotSpan;
 
 // Define a map between type names and values. The values
-// need to match those used in SV. 
+// need to match those used in SV.
 //
 static std::map<std::string,std::string> knotSpanTypeNames =
 {
@@ -59,13 +59,13 @@ static char* KNOT_SPAN_TYPE_CLASS = "KnotSpanType";
 static char* KNOT_SPAN_TYPE_MODULE_CLASS = "geometry.LoftNurbsOptions.KnotSpanType";
 
 //---------------------------------
-// PyLoftNurbsOptions_KnotSpanType 
+// PyLoftNurbsOptions_KnotSpanType
 //---------------------------------
 //
 static PyTypeObject PyLoftNurbsOptions_KnotSpanType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = KNOT_SPAN_TYPE_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyLoftNurbsOptions_KnotSpan)
+  KNOT_SPAN_TYPE_MODULE_CLASS,
+  sizeof(PyLoftNurbsOptions_KnotSpan)
 };
 
 //------------------------------------
@@ -87,7 +87,7 @@ PyLoftNurbsOptions_KnotSpanTypeNew(PyTypeObject *type, PyObject *args, PyObject 
 // PyLoftNurbsOptions_KnotSpanTypeInit
 //-------------------------------------
 //
-static int 
+static int
 PyLoftNurbsOptions_KnotSpanTypeInit(PyLoftNurbsOptions_KnotSpan* self, PyObject *args, PyObject *kwds)
 {
   return 0;
@@ -96,7 +96,7 @@ PyLoftNurbsOptions_KnotSpanTypeInit(PyLoftNurbsOptions_KnotSpan* self, PyObject 
 //------------------------------------------
 // SetPyLoftNurbsOptions_KnotSpanTypeFields
 //------------------------------------------
-// Set the Python type object fields that stores Kernel data. 
+// Set the Python type object fields that stores Kernel data.
 //
 static void
 SetLoftNurbsOptions_KnotSpanTypeFields(PyTypeObject& knotType)
@@ -137,7 +137,7 @@ typedef struct {
 } PyLoftNurbsOptions_ParametricSpan;
 
 // Define a map between type names and values. The values
-// need to match those used in SV. 
+// need to match those used in SV.
 //
 static std::map<std::string,std::string> parametricSpanTypeNames =
 {
@@ -150,13 +150,13 @@ static char* PARAMETRIC_SPAN_TYPE_CLASS = "ParametricSpanType";
 static char* PARAMETRIC_SPAN_TYPE_MODULE_CLASS = "geometry.LoftNurbsOptions.ParametricSpanType";
 
 //---------------------------------------
-// PyLoftNurbsOptions_ParametricSpanType 
+// PyLoftNurbsOptions_ParametricSpanType
 //---------------------------------------
 //
 static PyTypeObject PyLoftNurbsOptions_ParametricSpanType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = PARAMETRIC_SPAN_TYPE_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyLoftNurbsOptions_ParametricSpan)
+  PARAMETRIC_SPAN_TYPE_MODULE_CLASS,
+  sizeof(PyLoftNurbsOptions_ParametricSpan)
 };
 
 //------------------------------------------
@@ -178,7 +178,7 @@ PyLoftNurbsOptions_ParametricSpanTypeNew(PyTypeObject *type, PyObject *args, PyO
 // PyLoftNurbsOptions_ParametricSpanTypeInit
 //-------------------------------------------
 //
-static int 
+static int
 PyLoftNurbsOptions_ParametricSpanTypeInit(PyLoftNurbsOptions_ParametricSpan* self, PyObject *args, PyObject *kwds)
 {
   return 0;
@@ -187,7 +187,7 @@ PyLoftNurbsOptions_ParametricSpanTypeInit(PyLoftNurbsOptions_ParametricSpan* sel
 //------------------------------------------------
 // SetPyLoftNurbsOptions_ParametricSpanTypeFields
 //------------------------------------------------
-// Set the Python type object fields that stores Kernel data. 
+// Set the Python type object fields that stores Kernel data.
 //
 static void
 SetLoftNurbsOptions_ParametricSpanTypeFields(PyTypeObject& paramType)

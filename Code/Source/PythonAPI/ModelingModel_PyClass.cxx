@@ -30,12 +30,12 @@
  */
 
 // Define the Python 'modeling.Model' class used as a base class for
-// the PolyData, OpenCascade and Parasolid classes. 
+// the PolyData, OpenCascade and Parasolid classes.
 //
 // This class is not exposed.
 //
 //-----------------
-// PyModelingModel 
+// PyModelingModel
 //-----------------
 // The Python modeling.Model class internal data.
 //
@@ -88,14 +88,14 @@ ModelingModelGetFaceIDs(PyUtilApiFunction& api, PyModelingModel* self)
 //              C l a s s   M e t h o d s                      //
 /////////////////////////////////////////////////////////////////
 //
-// Python API functions for the Python solid.Model class. 
+// Python API functions for the Python solid.Model class.
 
 //--------------------------------------
 // ModelingModel_compute_boundary_faces
 //--------------------------------------
 //
 PyDoc_STRVAR(ModelingModel_compute_boundary_faces_doc,
-  "compute_boundary_faces(angle)  \n\ 
+  "compute_boundary_faces(angle)  \n\
    \n\
    Compute the boundary faces for the solid model. \n\
    \n\
@@ -141,7 +141,7 @@ ModelingModel_compute_boundary_faces(PyModelingModel* self, PyObject* args, PyOb
 
   // Get the face IDs.
   auto faceIDs = ModelingModelGetFaceIDs(api, self);
-  if (faceIDs.size() == 0) { 
+  if (faceIDs.size() == 0) {
       return nullptr;
   }
 
@@ -158,11 +158,11 @@ ModelingModel_compute_boundary_faces(PyModelingModel* self, PyObject* args, PyOb
 }
 
 //----------------------------
-// ModelingModel_get_face_ids 
+// ModelingModel_get_face_ids
 //----------------------------
 //
 PyDoc_STRVAR(ModelingModel_get_face_ids_doc,
-  "get_face_ids()  \n\ 
+  "get_face_ids()  \n\
    \n\
    Get the model face IDs. \n\
    \n\
@@ -172,12 +172,12 @@ PyDoc_STRVAR(ModelingModel_get_face_ids_doc,
    Returns list([int]): The list of integer face IDs. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModel_get_face_ids(PyModelingModel* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
 
-  auto model = self->solidModel; 
+  auto model = self->solidModel;
 
   // Get the face IDs.
   auto faceIDs = ModelingModelGetFaceIDs(api, self);
@@ -201,7 +201,7 @@ ModelingModel_get_face_ids(PyModelingModel* self, PyObject* args)
 //---------------------------------
 //
 PyDoc_STRVAR(ModelingModel_get_face_polydata_doc,
-   "get_face_polydata(face_id)  \n\ 
+   "get_face_polydata(face_id)  \n\
    \n\
    Get the polydata geometry for a face.  \n\
    \n\
@@ -211,7 +211,7 @@ PyDoc_STRVAR(ModelingModel_get_face_polydata_doc,
    Returns (vtkPolyData object): The vtkPolyData object containing the face geometry.  \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModel_get_face_polydata(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("i|d", PyRunTimeErr, __func__);
@@ -219,7 +219,7 @@ ModelingModel_get_face_polydata(PyModelingModel* self, PyObject* args, PyObject*
   int faceID;
   double max_dist = -1.0;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &faceID, &max_dist)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &faceID, &max_dist)) {
       return api.argsError();
   }
 
@@ -236,7 +236,7 @@ ModelingModel_get_face_polydata(PyModelingModel* self, PyObject* args, PyObject*
       return nullptr;
   }
 
-  if (faceIDs.count(faceID) == 0) { 
+  if (faceIDs.count(faceID) == 0) {
       api.error("The face ID argument is not a valid face ID for the model.");
       return nullptr;
   }
@@ -261,7 +261,7 @@ ModelingModel_get_face_polydata(PyModelingModel* self, PyObject* args, PyObject*
       return nullptr;
   }
 
-  return PyUtilGetVtkObject(api, polydata); 
+  return PyUtilGetVtkObject(api, polydata);
 }
 
 //----------------------------
@@ -269,14 +269,14 @@ ModelingModel_get_face_polydata(PyModelingModel* self, PyObject* args, PyObject*
 //----------------------------
 //
 PyDoc_STRVAR(ModelingModel_get_polydata_doc,
-   "get_polydata()  \n\ 
+   "get_polydata()  \n\
    \n\
    Get the polydata geometry for the model.  \n\
    \n\
    Returns (vtkPolyData object): The vtkPolyData object containing the model geometry.  \n\
 ");
 
-static PyObject *  
+static PyObject *
 ModelingModel_get_polydata(PyModelingModel *self, PyObject* args)
 {
   auto api = PyUtilApiFunction("|d", PyRunTimeErr, __func__);
@@ -286,7 +286,7 @@ ModelingModel_get_polydata(PyModelingModel *self, PyObject* args)
       return api.argsError();
   }
 
-  auto model = self->solidModel; 
+  auto model = self->solidModel;
 
   int useMaxDist = 0;
   if (max_dist > 0) {
@@ -303,7 +303,7 @@ ModelingModel_get_polydata(PyModelingModel *self, PyObject* args)
       return nullptr;
   }
 
-  return PyUtilGetVtkObject(api, polydata); 
+  return PyUtilGetVtkObject(api, polydata);
 }
 
 //---------------------
@@ -311,7 +311,7 @@ ModelingModel_get_polydata(PyModelingModel *self, PyObject* args)
 //---------------------
 //
 PyDoc_STRVAR(ModelingModel_write_doc,
-   "write(file_name, format)  \n\ 
+   "write(file_name, format)  \n\
    \n\
    Write the solid model to a file in its native format. \n\
    \n\
@@ -328,7 +328,7 @@ PyDoc_STRVAR(ModelingModel_write_doc,
      format (str): The native format to write the model to. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModel_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("ss|i", PyRunTimeErr, __func__);
@@ -337,7 +337,7 @@ ModelingModel_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
   char* fileFormat;
   int fileVersion = 0;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName, &fileFormat, &fileVersion)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName, &fileFormat, &fileVersion)) {
       return api.argsError();
   }
 
@@ -349,7 +349,7 @@ ModelingModel_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  // Add format as file extension. 
+  // Add format as file extension.
   fullFileName += "." + std::string(fileFormat);
   std::vector<char> cstr(fullFileName.c_str(), fullFileName.c_str() + fullFileName.size() + 1);
 
@@ -360,8 +360,8 @@ ModelingModel_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 
   auto model = self->solidModel;
   if (model->WriteNative(fileVersion, cstr.data()) != SV_OK) {
-      api.error("Error writing the solid model to the file '" + std::string(fileName) + 
-        "' using version '" + std::to_string(fileVersion)+"'."); 
+      api.error("Error writing the solid model to the file '" + std::string(fileName) +
+        "' using version '" + std::to_string(fileVersion)+"'.");
       return nullptr;
   }
 
@@ -374,7 +374,7 @@ ModelingModel_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 
 static char* MODELING_MODEL_CLASS = "Model";
 
-// Dotted name that includes both the module name and 
+// Dotted name that includes both the module name and
 // the name of the type within the module.
 static char* MODELING_MODEL_MODULE_CLASS = "modeling.Model";
 
@@ -399,7 +399,7 @@ PyDoc_STRVAR(ModelingModelClass_doc,
 //------------------------
 // PyModelingModelMethods
 //------------------------
-// Define method names for ModelingModel class 
+// Define method names for ModelingModel class
 //
 static PyMethodDef PyModelingModelMethods[] = {
 
@@ -418,9 +418,9 @@ static PyMethodDef PyModelingModelMethods[] = {
 };
 
 //---------------------
-// PyModelingModelInit 
+// PyModelingModelInit
 //---------------------
-// This is the __init__() method for the ModelingModel class. 
+// This is the __init__() method for the ModelingModel class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -429,7 +429,7 @@ PyModelingModelInit(PyModelingModel* self, PyObject* args, PyObject *kwds)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, "ModelingModel");
   static int numObjs = 1;
-  char* kernelName = nullptr; 
+  char* kernelName = nullptr;
   if (!PyArg_ParseTuple(args, "s", &kernelName)) {
       return -1;
   }
@@ -444,28 +444,28 @@ PyModelingModelInit(PyModelingModel* self, PyObject* args, PyObject *kwds)
   }
 
   self->id = numObjs;
-  self->kernel = kernel; 
-  self->solidModel = solidModel; 
+  self->kernel = kernel;
+  self->solidModel = solidModel;
   numObjs += 1;
   return 0;
 }
 
 //---------------------
-// PyModelingModelType 
+// PyModelingModelType
 //---------------------
 // This is the definition of the ModelingModel class.
 //
-// The type object stores a large number of values, mostly C function pointers, 
+// The type object stores a large number of values, mostly C function pointers,
 // each of which implements a small part of the type’s functionality.
 //
 static PyTypeObject PyModelingModelType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = MODELING_MODEL_MODULE_CLASS, 
-  .tp_basicsize = sizeof(PyModelingModel) 
+  MODELING_MODEL_MODULE_CLASS,
+  sizeof(PyModelingModel)
 };
 
 //--------------------
-// PyModelingModelNew 
+// PyModelingModelNew
 //--------------------
 //
 static PyObject *
@@ -473,7 +473,7 @@ PyModelingModelNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   //std::cout << "[PyModelingModelNew] New ModelingModel" << std::endl;
   auto api = PyUtilApiFunction("s", PyRunTimeErr, "ModelingModel");
-  char* kernelName = nullptr; 
+  char* kernelName = nullptr;
   if (!PyArg_ParseTuple(args, api.format, &kernelName)) {
       return api.argsError();
   }
@@ -498,7 +498,7 @@ PyModelingModelNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //------------------------
-// PyModelingModelDealloc 
+// PyModelingModelDealloc
 //------------------------
 //
 static void
@@ -511,19 +511,19 @@ PyModelingModelDealloc(PyModelingModel* self)
 }
 
 //----------------------------
-// SetModelingModelTypeFields 
+// SetModelingModelTypeFields
 //----------------------------
-// Set the Python type object fields that stores ModelingModel data. 
+// Set the Python type object fields that stores ModelingModel data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetModelingModelTypeFields(PyTypeObject& solidModelType)
 {
   // Doc string for this type.
-  solidModelType.tp_doc = ModelingModelClass_doc; 
-  // Object creation function, equivalent to the Python __new__() method. 
+  solidModelType.tp_doc = ModelingModelClass_doc;
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   solidModelType.tp_new = PyModelingModelNew;
   //solidModelType.tp_new = PyType_GenericNew,
@@ -534,9 +534,9 @@ SetModelingModelTypeFields(PyTypeObject& solidModelType)
 };
 
 //-------------------------
-// CreateModelingModelType 
+// CreateModelingModelType
 //-------------------------
-static PyModelingModel * 
+static PyModelingModel *
 CreateModelingModelType()
 {
   return PyObject_New(PyModelingModel, &PyModelingModelType);

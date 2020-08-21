@@ -33,10 +33,12 @@
 #define VMTK_PYMODULE_H 
 
 #include "SimVascular.h"
-#include "Python.h"
-#include "svVMTKUtilsExports.h" // For exports
 
-extern "C" SV_EXPORT_VMTK_UTILS int Vmtkutils_pyInit();
+#include "svPythonAPIExports.h"
+
+#include "Python.h"
+
+extern "C" SV_EXPORT_PYTHON_API int Vmtkutils_pyInit();
 
 #if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC  initpyVMTKUtils();

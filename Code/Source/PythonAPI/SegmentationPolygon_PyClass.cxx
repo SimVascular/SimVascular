@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This is the implementation of the SV Python API polygon segmentation class. 
+// This is the implementation of the SV Python API polygon segmentation class.
 //
-// The class name is 'segmentation.Polygon'. 
+// The class name is 'segmentation.Polygon'.
 //
 // In SV the polygon segmentation uses a list of control points with implicit meaning
 //
@@ -40,7 +40,7 @@
 //    control_points[2] = 1st control point on the polygon boundary
 //    control_points[3] = 2nd control point on the polygon boundary
 //
-// To hide these details the API uses control points to only define the polygon boundary. 
+// To hide these details the API uses control points to only define the polygon boundary.
 // The SV control points are constructed using the boundary control points and other data.
 //
 #include "SimVascular.h"
@@ -86,12 +86,12 @@ typedef struct {
 //////////////////////////////////////////////////////
 
 //-------------------------------
-// PyPolygonCopySegmentationData 
+// PyPolygonCopySegmentationData
 //-------------------------------
 // Copy segmentation data from an sv4guiContour object into
 // a Contour object.
 //
-// After copying the PyPolygonSegmentation data that the API 
+// After copying the PyPolygonSegmentation data that the API
 // user will access is set.
 //
 void PyPolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
@@ -108,7 +108,7 @@ void PyPolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourO
   contour->GetPlaneGeometry()->GetNormal(normal);
   polygonContour->normal = {normal[0], normal[1], normal[2]};
 
-  // Copy control points omittinng the first two which 
+  // Copy control points omittinng the first two which
   // are the polygon center and scaling factor.
   //
   auto controlPoints = contour->GetControlPoints();
@@ -125,19 +125,19 @@ void PyPolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourO
 //
 void PyPolygonGenerateData(PyUtilApiFunction& api, PyPolygonSegmentation* polygonSeg, const std::vector<std::array<double,3>>& points)
 {
-  auto contour = polygonSeg->super.contour; 
+  auto contour = polygonSeg->super.contour;
 
   // Create SV control points, adding two points for center and scale.
   //
-  std::vector<std::array<double,3>> controlPoints; 
-  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0}); 
-  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0}); 
+  std::vector<std::array<double,3>> controlPoints;
+  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0});
+  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0});
   for (auto pt : points) {
       controlPoints.push_back(pt);
   }
 
   // Set object data.
-  polygonSeg->controlPoints = points; 
+  polygonSeg->controlPoints = points;
   polygonSeg->center = PyUtilComputePointsCenter(points);
   polygonSeg->normal = PyUtilComputeNormalFromlPoints(points);
 
@@ -147,7 +147,7 @@ void PyPolygonGenerateData(PyUtilApiFunction& api, PyPolygonSegmentation* polygo
   plane->SetNormal(polygonSeg->normal.data());
   contour->SetPlaneGeometry(plane);
 
-  // Need to set control points after defining the plane. 
+  // Need to set control points after defining the plane.
   contour->SetControlPoints(controlPoints);
 }
 
@@ -155,10 +155,10 @@ void PyPolygonGenerateData(PyUtilApiFunction& api, PyPolygonSegmentation* polygo
 //          C l a s s    M e t h o d s              //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 //--------------------------------
-// PolygonSegmentation_get_center 
+// PolygonSegmentation_get_center
 //--------------------------------
 //
 PyDoc_STRVAR(PolygonSegmentation_get_center_doc,
@@ -178,7 +178,7 @@ PolygonSegmentation_get_center(PyPolygonSegmentation* self, PyObject* args, PyOb
 }
 
 //----------------------------------------
-// PolygonSegmentation_get_control_points 
+// PolygonSegmentation_get_control_points
 //----------------------------------------
 //
 PyDoc_STRVAR(PolygonSegmentation_get_control_points_doc,
@@ -197,7 +197,7 @@ PolygonSegmentation_get_control_points(PyPolygonSegmentation* self, PyObject* ar
   auto contour = self->super.contour;
   auto control_points = contour->GetControlPoints();
   for (auto pt : control_points) {
-      std::cout << "[PolygonSegmentation_get_control_points] pt: " << pt[0] << " " << pt[1] << " " << pt[2] << std::endl; 
+      std::cout << "[PolygonSegmentation_get_control_points] pt: " << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
   }
   */
   auto control_points = self->controlPoints;
@@ -205,7 +205,7 @@ PolygonSegmentation_get_control_points(PyPolygonSegmentation* self, PyObject* ar
 }
 
 //----------------------------------------
-// PolygonSegmentation_set_control_points 
+// PolygonSegmentation_set_control_points
 //----------------------------------------
 //
 PyDoc_STRVAR(PolygonSegmentation_set_control_points_doc,
@@ -250,7 +250,7 @@ PolygonSegmentation_set_control_points(PyPolygonSegmentation* self, PyObject* ar
 }
 
 //--------------------------------
-// PolygonSegmentation_get_normal 
+// PolygonSegmentation_get_normal
 //--------------------------------
 //
 PyDoc_STRVAR(PolygonSegmentation_get_normal_doc,
@@ -281,7 +281,7 @@ static char* SEGMENTATION_POLYGON_MODULE_CLASS = "segmentation.Polygon";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PyPolygonSegmentationClass_doc, 
+PyDoc_STRVAR(PyPolygonSegmentationClass_doc,
    "Polygon(control_points)  \n\
    \n\
    The Polygon class provides an interface for creating a polygon          \n\
@@ -308,13 +308,13 @@ PyMethodDef PyPolygonSegmentationMethods[] = {
 };
 
 //---------------------------
-// PyPolygonSegmentationInit 
+// PyPolygonSegmentationInit
 //---------------------------
-// This is the __init__() method for the Segmentation class. 
+// This is the __init__() method for the Segmentation class.
 //
 // This function is used to initialize an object after it is created.
 //
-// A Polygon segmentation can be created directly using argument data or 
+// A Polygon segmentation can be created directly using argument data or
 // from reading contour group in which case no arguements are required.
 //
 static int
@@ -345,9 +345,9 @@ PyPolygonSegmentationInit(PyPolygonSegmentation* self, PyObject* args, PyObject 
 
   // Extract control point data.
   //
-  if (pointsArg != nullptr) { 
+  if (pointsArg != nullptr) {
       std::string msg;
-      std::vector<std::array<double,3>> points; 
+      std::vector<std::array<double,3>> points;
       if (!PyUtilGetPointVectorData(pointsArg, points, msg)) {
           api.error("The 'points' argument " + msg);
           return -1;
@@ -369,12 +369,12 @@ PyPolygonSegmentationInit(PyPolygonSegmentation* self, PyObject* args, PyObject 
 }
 
 //--------------------------
-// PyPolygonSegmentationNew 
+// PyPolygonSegmentationNew
 //--------------------------
 //
 static PyObject *
 PyPolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{ 
+{
   std::cout << "[PyPolygonSegmentationNew] PyPolygonSegmentationNew " << std::endl;
   auto self = (PyPolygonSegmentation*)type->tp_alloc(type, 0);
   if (self != NULL) {
@@ -384,48 +384,48 @@ PyPolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //------------------------------
-// PyPolygonSegmentationDealloc 
+// PyPolygonSegmentationDealloc
 //------------------------------
 //
 static void
 PyPolygonSegmentationDealloc(PyPolygonSegmentation* self)
-{ 
+{
   std::cout << "[PyPolygonSegmentationDealloc] Free PyPolygonSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);
 }
 
 //---------------------------
-// PyPolygonSegmentationType 
+// PyPolygonSegmentationType
 //---------------------------
-// Define the Python type object that stores Segmentation data. 
+// Define the Python type object that stores Segmentation data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static PyTypeObject PyPolygonSegmentationType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = SEGMENTATION_POLYGON_MODULE_CLASS, 
-  .tp_basicsize = sizeof(PyPolygonSegmentation)
+  SEGMENTATION_POLYGON_MODULE_CLASS,
+  sizeof(PyPolygonSegmentation)
 };
 
 //----------------------------------
-// SetPolygonSegmentationTypeFields 
+// SetPolygonSegmentationTypeFields
 //----------------------------------
-// Set the Python type object fields that stores Segmentation  data. 
+// Set the Python type object fields that stores Segmentation  data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetPolygonSegmentationTypeFields(PyTypeObject& contourType)
  {
   // Doc string for this type.
-  contourType.tp_doc = PyPolygonSegmentationClass_doc; 
+  contourType.tp_doc = PyPolygonSegmentationClass_doc;
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   contourType.tp_new = PyPolygonSegmentationNew;
   //.tp_new = PyType_GenericNew,

@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API Threshold class. 
+// The functions defined here implement the SV Python API Threshold class.
 //
 #include "SimVascular.h"
 #include "sv_misc_utils.h"
@@ -87,7 +87,7 @@ thresholdContour* CreateThresholdContour()
 //////////////////////////////////////////////////////
 //          C l a s s    M e t h o d s              //
 //////////////////////////////////////////////////////
-// Python class methods. 
+// Python class methods.
 
 ////////////////////////////////////////////////////////
 //          C l a s s    D e f i n i t i o n          //
@@ -108,9 +108,9 @@ PyMethodDef PyThresholdSegmentationMethods[] = {
 
 
 //-----------------------------
-// PyThresholdSegmentationInit 
+// PyThresholdSegmentationInit
 //-----------------------------
-// This is the __init__() method for the Segmentation class. 
+// This is the __init__() method for the Segmentation class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -120,18 +120,18 @@ PyThresholdSegmentationInit(PyThresholdSegmentation* self, PyObject* args, PyObj
   static int numObjs = 1;
   std::cout << "[PyThresholdSegmentationInit] New Threshold Segmentation object: " << numObjs << std::endl;
   self->super.contour = new thresholdContour();
-  self->super.CopySv4ContourData = PyThresholdCopySegmentationData; 
+  self->super.CopySv4ContourData = PyThresholdCopySegmentationData;
   numObjs += 1;
   return 0;
 }
 
 //----------------------------
-// PyThresholdSegmentationNew 
+// PyThresholdSegmentationNew
 //----------------------------
 //
 static PyObject *
 PyThresholdSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{ 
+{
   std::cout << "[PyThresholdSegmentationNew] PyThresholdSegmentationNew " << std::endl;
   auto self = (PyThresholdSegmentation*)type->tp_alloc(type, 0);
   if (self != NULL) {
@@ -141,40 +141,40 @@ PyThresholdSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //--------------------------------
-// PyThresholdSegmentationDealloc 
+// PyThresholdSegmentationDealloc
 //--------------------------------
 //
 static void
 PyThresholdSegmentationDealloc(PyThresholdSegmentation* self)
-{ 
+{
   std::cout << "[PyThresholdSegmentationDealloc] Free PyThresholdSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);
 }
 
 //-----------------------------
-// PyThresholdSegmentationType 
+// PyThresholdSegmentationType
 //-----------------------------
-// Define the Python type object that stores Segmentation data. 
+// Define the Python type object that stores Segmentation data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static PyTypeObject PyThresholdSegmentationType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = SEGMENTATION_THRESHOLD_MODULE_CLASS, 
-  .tp_basicsize = sizeof(PyThresholdSegmentation)
+  SEGMENTATION_THRESHOLD_MODULE_CLASS,
+  sizeof(PyThresholdSegmentation)
 };
 
 //------------------------------------
-// SetThresholdSegmentationTypeFields 
+// SetThresholdSegmentationTypeFields
 //------------------------------------
-// Set the Python type object fields that stores Segmentation data. 
+// Set the Python type object fields that stores Segmentation data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetThresholdSegmentationTypeFields(PyTypeObject& contourType)
@@ -182,7 +182,7 @@ SetThresholdSegmentationTypeFields(PyTypeObject& contourType)
   // Doc string for this type.
   contourType.tp_doc = "Threshold segmentation objects";
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   contourType.tp_new = PyThresholdSegmentationNew;
   //.tp_new = PyType_GenericNew,

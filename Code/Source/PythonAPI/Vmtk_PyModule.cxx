@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API VMTK utils module. 
+// The functions defined here implement the SV Python API VMTK utils module.
 //
-// The module name is 'vmtk'. 
+// The module name is 'vmtk'.
 //
 
 #include "SimVascular.h"
@@ -96,14 +96,14 @@ GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
 //
 // The face ID is mapped to the node ID that is closest to the face center.
 //
-static std::vector<int> 
+static std::vector<int>
 ConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vector<int>& faceIds)
 {
   std::vector<int> nodeIds;
   int numCells = polydata->GetNumberOfCells();
   auto points = polydata->GetPoints();
   auto cellData = vtkIntArray::SafeDownCast(polydata->GetCellData()->GetArray("ModelFaceID"));
-  if (cellData == nullptr) { 
+  if (cellData == nullptr) {
       api.error("No 'ModelFaceID' data found for the input polydata.");
       return nodeIds;
   }
@@ -118,7 +118,7 @@ ConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vect
               cellIds.push_back(i);
           }
       }
-      if (cellIds.size() == 0) { 
+      if (cellIds.size() == 0) {
           api.error("No node found for face ID '" + std::to_string(faceID) + "'.");
           return nodeIds;
       }
@@ -142,9 +142,9 @@ ConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vect
           }
       }
 
-      center[0] /= numFacePts; 
-      center[1] /= numFacePts; 
-      center[2] /= numFacePts; 
+      center[0] /= numFacePts;
+      center[1] /= numFacePts;
+      center[2] /= numFacePts;
 
       // Find the closest node.
       double min_d = 1e6;
@@ -154,7 +154,7 @@ ConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vect
           auto dx = point[0] - center[0];
           auto dy = point[1] - center[1];
           auto dz = point[2] - center[2];
-          auto d = dx*dx + dy*dy + dz*dz; 
+          auto d = dx*dx + dy*dy + dz*dz;
           if (d < min_d) {
               min_d = d;
               min_id = id;
@@ -170,7 +170,7 @@ ConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vect
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
 //
-// Python 'vmtk' module methods. 
+// Python 'vmtk' module methods.
 
 #ifdef SV_USE_VMTK
 
@@ -179,7 +179,7 @@ ConvertFaceIdsToNodeIds(PyUtilApiFunction& api, vtkPolyData* polydata, std::vect
 //----------
 //
 PyDoc_STRVAR(Vmtk_cap_doc,
-  "cap(surface, use_center)  \n\ 
+  "cap(surface, use_center)  \n\
    \n\
    Fill the holes in a surface mesh with planar faces.                     \n\
    \n\
@@ -203,10 +203,10 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
       return api.argsError();
   }
 
-  // Set cap type. 
+  // Set cap type.
   //
-  //  This determines whether to cap regularly or cap with a point  in the center. 
-  //      0 - regular, 
+  //  This determines whether to cap regularly or cap with a point  in the center.
+  //      0 - regular,
   //      1 - point in center
   int captype = 0;
   if ((useCenterArg != nullptr) && PyObject_IsTrue(useCenterArg)) {
@@ -227,13 +227,13 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
   int numIds, *ids;
   if (sys_geom_cap(&cvSurfPolydata, &result, &numIds, &ids, captype) != SV_OK) {
     api.error("Error capping model.");
-    return nullptr; 
+    return nullptr;
   }
 
 /*
   // [TODO:DaveP] what are the IDs that were not found?
   if (numIds == 0) {
-      api.error("No cap IDs were found."); 
+      api.error("No cap IDs were found.");
       return nullptr;
   }
 
@@ -257,7 +257,7 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
 //-------------------
 //
 PyDoc_STRVAR(Vmtk_cap_with_ids_doc,
-  "cap_with_ids(surface, fill_id=0, increment_id=True)  \n\ 
+  "cap_with_ids(surface, fill_id=0, increment_id=True)  \n\
    \n\
    Fill the holes in a surface mesh with planar faces and adding data      \n\
    arrays to the returned vtkPolyData object identifying faces.            \n\
@@ -286,29 +286,29 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
   PyObject* fillIdArg = nullptr;
   PyObject* incIdArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyInt_Type, &fillIdArg, 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyInt_Type, &fillIdArg,
         &PyBool_Type, &incIdArg)) {
       return api.argsError();
   }
 
-  // Set fill ID and fill type. 
+  // Set fill ID and fill type.
   //
-  // fill type: How to assign ids to caps on polydata. 
-  //   0 - start from 1 and each cap gets a new id. 
+  // fill type: How to assign ids to caps on polydata.
+  //   0 - start from 1 and each cap gets a new id.
   //   1 - give every cap the same id (fillid).
   //   2 - start from fillid and give each new cap a value increasing from this
   //
-  int fillId = 0; 
+  int fillId = 0;
   int fillType = 2;
 
-  if (fillIdArg != nullptr) { 
+  if (fillIdArg != nullptr) {
       fillId = PyInt_AsLong(fillIdArg);
-      if (fillId < 0) { 
+      if (fillId < 0) {
           api.error("Cap fill ID must be >= 0.");
           return nullptr;
       }
 
-      if (incIdArg != nullptr) { 
+      if (incIdArg != nullptr) {
           if (PyObject_IsTrue(incIdArg)) {
               fillType = 2;
           } else {
@@ -343,11 +343,11 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //------------------
-// Vmtk_centerlines 
+// Vmtk_centerlines
 //------------------
 //
 PyDoc_STRVAR(Vmtk_centerlines_doc,
-   "centerlines(surface, inlet_ids, outlet_ids, use_face_ids=False)         \n\ 
+   "centerlines(surface, inlet_ids, outlet_ids, use_face_ids=False)         \n\
    \n\
    Compute the centerlines for a closed surface.                            \n\
    \n\
@@ -364,7 +364,7 @@ PyDoc_STRVAR(Vmtk_centerlines_doc,
    Returns (vtkPolyData): The centerlines geometry (lines) and data.       \n\
 ");
 
-static PyObject * 
+static PyObject *
 Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "========== Vmtk_centerlines ==========" << std::endl;
@@ -375,7 +375,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   PyObject* outletIdsArg;
   PyObject* useFaceIdsArg = nullptr;
   bool useFaceIds = false;
- 
+
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &inletIdsArg, &PyList_Type, &outletIdsArg,
           &PyBool_Type, &useFaceIdsArg)) {
       return api.argsError();
@@ -387,7 +387,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   //
   std::vector<int> sources;
   int numInletIds = PyList_Size(inletIdsArg);
-  if (numInletIds == 0) { 
+  if (numInletIds == 0) {
     api.error("The 'inlet_ids' argument is empty.");
     return nullptr;
   }
@@ -422,11 +422,11 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 
   // Check for IDs given as both sources and targets.
   //
-  std::vector<int> commonIds; 
+  std::vector<int> commonIds;
   std::set_intersection(sources.begin(), sources.end(), targets.begin(), targets.end(), std::back_inserter(commonIds));
   if (commonIds.size() != 0) {
-      std::ostringstream ids; 
-      std::copy(commonIds.begin(), commonIds.end()-1, std::ostream_iterator<int>(ids, ", ")); 
+      std::ostringstream ids;
+      std::copy(commonIds.begin(), commonIds.end()-1, std::ostream_iterator<int>(ids, ", "));
       ids << commonIds.back();
       api.error("The 'inlet_ids' and 'outlet_ids' arguments contain identical IDs '" + ids.str() + "'.");
       return nullptr;
@@ -446,7 +446,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   if (useFaceIdsArg != nullptr) {
       useFaceIds = PyObject_IsTrue(useFaceIdsArg);
   }
-  if (useFaceIds) { 
+  if (useFaceIds) {
       sources = ConvertFaceIdsToNodeIds(api, surfPolydata, sources);
       targets = ConvertFaceIdsToNodeIds(api, surfPolydata, targets);
       if ((sources.size() == 0) || (targets.size() == 0)) {
@@ -461,7 +461,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 
   if (sys_geom_centerlines(&cvSurfPolydata, sources.data(), numInletIds, targets.data(), numOutletIds, &linesDst, &voronoiDst) != SV_OK) {
       api.error("Error calculating centerlines.");
-      return nullptr; 
+      return nullptr;
   }
   std::cout << "[Vmtk_centerlines] Done. " << std::endl;
 
@@ -473,7 +473,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 //------------------------------
 //
 PyDoc_STRVAR(Vmtk_distance_to_centerlines_doc,
-  "distance_to_centerlines(surface, centerlines)  \n\ 
+  "distance_to_centerlines(surface, centerlines)  \n\
    \n\
    Compute the distance beteen centerlines and surface points.             \n\
    \n\
@@ -518,24 +518,24 @@ Vmtk_distance_to_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   cvPolyData* result = nullptr;
   if (sys_geom_distancetocenterlines(&cvSurfPolydata, &cvLinesPolydata, &result) != SV_OK) {
       api.error("Error getting distance to centerlines.");
-      return nullptr; 
+      return nullptr;
   }
 
   return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
 }
 
 //====================================================================================================
-//                                        O l d   M e t h o d s 
+//                                        O l d   M e t h o d s
 //====================================================================================================
 
 #ifdef VMTK_PYMODULE_OLD_METHODS
 
 //------------------
-// Geom_centerlines 
+// Geom_centerlines
 //------------------
 //
 PyDoc_STRVAR(Geom_centerlines_doc,
-  " Geom_centerlines(name)  \n\ 
+  " Geom_centerlines(name)  \n\
   \n\
   ??? Add the unstructured grid mesh to the repository. \n\
   \n\
@@ -543,7 +543,7 @@ PyDoc_STRVAR(Geom_centerlines_doc,
     name (str): Name in the repository to store the unstructured grid. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_centerlines(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOOss", PyRunTimeErr, __func__);
@@ -552,7 +552,7 @@ Geom_centerlines(PyObject* self, PyObject* args)
   PyObject* targetList;
   char *linesName;
   char *voronoiName;
- 
+
   char *usage;
   cvRepositoryData *linesDst = NULL;
   cvRepositoryData *voronoiDst = NULL;
@@ -564,18 +564,18 @@ Geom_centerlines(PyObject* self, PyObject* args)
 
   auto geomSrc = GetRepositoryData(api, geomName, POLY_DATA_T);
   if (geomSrc == nullptr) {
-    return nullptr; 
+    return nullptr;
   }
 
   // Make sure the specified dst object does not exist:
   if (gRepository->Exists(linesName)) {
     api.error("The object '"+std::string(linesName)+"' is already in the repository.");
-    return nullptr; 
+    return nullptr;
   }
 
   if (gRepository->Exists(voronoiName)) {
     api.error("The object '"+std::string(voronoiName)+"' is already in the repository.");
-    return nullptr; 
+    return nullptr;
   }
 
   // [TODO:DaveP] should this be an error?
@@ -606,10 +606,10 @@ Geom_centerlines(PyObject* self, PyObject* args)
   }
 
 
-  if (sys_geom_centerlines((cvPolyData*)geomSrc, sources.data(), nsources, targets.data(), ntargets, (cvPolyData**)&linesDst, 
+  if (sys_geom_centerlines((cvPolyData*)geomSrc, sources.data(), nsources, targets.data(), ntargets, (cvPolyData**)&linesDst,
     (cvPolyData**)&voronoiDst) != SV_OK ) {
     api.error("Error creating centerlines.");
-    return nullptr; 
+    return nullptr;
   }
 
   if (!gRepository->Register(linesName, linesDst)) {
@@ -630,11 +630,11 @@ Geom_centerlines(PyObject* self, PyObject* args)
 }
 
 //---------------------
-// Geom_group_polydata 
+// Geom_group_polydata
 //---------------------
 //
 PyDoc_STRVAR(Geom_group_polydata_doc,
-  "group_polydata(name)  \n\ 
+  "group_polydata(name)  \n\
   \n\
   ??? Add the unstructured grid mesh to the repository. \n\
   \n\
@@ -671,7 +671,7 @@ Geom_group_polydata(PyObject* self, PyObject* args)
   cvRepositoryData *groupedDst = NULL;
   if (sys_geom_grouppolydata((cvPolyData*)geomSrc, (cvPolyData*)linesSrc, (cvPolyData**)&groupedDst) != SV_OK) {
       api.error("Error grouping polydata.");
-      return nullptr; 
+      return nullptr;
   }
 
   if (!gRepository->Register(groupedName, groupedDst)) {
@@ -689,7 +689,7 @@ Geom_group_polydata(PyObject* self, PyObject* args)
 //---------------------------
 //
 PyDoc_STRVAR(Geom_separate_centerlines_doc,
-  "separate_centerlines_doc(name)  \n\ 
+  "separate_centerlines_doc(name)  \n\
   \n\
   ??? Add the unstructured grid mesh to the repository. \n\
   \n\
@@ -718,7 +718,7 @@ Geom_separate_centerlines(PyObject* self, PyObject* args)
   cvRepositoryData *separateDst = NULL;
   if (sys_geom_separatecenterlines((cvPolyData*)linesSrc, (cvPolyData**)&separateDst) != SV_OK) {
       api.error("Error creating separate centerlines.");
-      return nullptr; 
+      return nullptr;
   }
 
   if (!gRepository->Register(separateName, separateDst)) {
@@ -735,7 +735,7 @@ Geom_separate_centerlines(PyObject* self, PyObject* args)
 //------------------------
 //
 PyDoc_STRVAR(Geom_merge_centerlines_doc,
-  "merge_centerlines(name)  \n\ 
+  "merge_centerlines(name)  \n\
   \n\
   ??? Add the unstructured grid mesh to the repository. \n\
   \n\
@@ -766,7 +766,7 @@ Geom_merge_centerlines(PyObject* self, PyObject* args)
   cvRepositoryData *mergeDst = NULL;
   if (sys_geom_mergecenterlines((cvPolyData*)linesSrc, mergeblanked, (cvPolyData**)&mergeDst) != SV_OK) {
       api.error("Error merging centerlines.");
-      return nullptr; 
+      return nullptr;
   }
 
   if (!gRepository->Register(mergeName, mergeDst)) {
@@ -783,7 +783,7 @@ Geom_merge_centerlines(PyObject* self, PyObject* args)
 //-----------
 //
 PyDoc_STRVAR(Geom_cap_doc,
-  "cap_doc(name)  \n\ 
+  "cap_doc(name)  \n\
   \n\
   ??? Add the unstructured grid mesh to the repository. \n\
   \n\
@@ -812,7 +812,7 @@ Geom_cap(PyObject* self, PyObject* args)
   // Make sure the specified dst object does not exist:
   if (gRepository->Exists(cappedName)) {
     api.error("The object '"+std::string(cappedName)+"' is already in the repository.");
-    return nullptr; 
+    return nullptr;
   }
 
   // Perform cap operation.
@@ -821,7 +821,7 @@ Geom_cap(PyObject* self, PyObject* args)
   int numIds, *ids;
   if (sys_geom_cap((cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst), &numIds, &ids, captype) != SV_OK) {
     api.error("Error capping model.");
-    return nullptr; 
+    return nullptr;
   }
 
   if (!gRepository->Register(cappedName, cappedDst)) {
@@ -832,7 +832,7 @@ Geom_cap(PyObject* self, PyObject* args)
 
  // [TODO:DaveP] what are the IDs that were not found?
   if (numIds == 0) {
-      api.error("No cap IDs were found."); 
+      api.error("No cap IDs were found.");
       return nullptr;
   }
 
@@ -854,7 +854,7 @@ Geom_cap(PyObject* self, PyObject* args)
 //-------------------
 //
 PyDoc_STRVAR(Geom_cap_with_ids_doc,
-  "cap_with_ids(name)  \n\ 
+  "cap_with_ids(name)  \n\
   \n\
   ??? Add the unstructured grid mesh to the repository. \n\
   \n\
@@ -913,7 +913,7 @@ Geom_cap_with_ids(PyObject* self, PyObject* args)
 //--------------------------
 //
 PyDoc_STRVAR(Geom_map_and_correct_ids_doc,
-  "map_and_correct_ids(name)  \n\ 
+  "map_and_correct_ids(name)  \n\
   \n\
   ??? Add the unstructured grid mesh to the repository. \n\
   \n\
@@ -949,7 +949,7 @@ Geom_map_and_correct_ids(PyObject* self, PyObject* args)
   // Make sure the specified dst object does not exist:
   if (gRepository->Exists(resultName)) {
       api.error("The object '"+std::string(resultName)+"' is already in the repository.");
-      return nullptr; 
+      return nullptr;
   }
 
   // Perform map and correct IDs operation.
@@ -988,7 +988,7 @@ static char* VMTK_EXCEPTION_OBJECT = "Error";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(VmtkModule_doc, 
+PyDoc_STRVAR(VmtkModule_doc,
   "SimVascular vmtk module functions. \n\
    \n\
    All functions use vtkPolyData objects as arguments. A vtkPolyData       \n\
@@ -996,7 +996,7 @@ PyDoc_STRVAR(VmtkModule_doc,
 ");
 
 //---------------
-// PyVmtkMethods 
+// PyVmtkMethods
 //---------------
 // vmtk module methods.
 //
@@ -1032,30 +1032,30 @@ PyMethodDef PyVmtkMethods[] =
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python interpreter 
+// Define the initialization function called by the Python interpreter
 // when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 
 static struct PyModuleDef PyVmtkModule = {
    m_base,
-   VMTK_MODULE, 
-   VmtkModule_doc, 
-   perInterpreterStateSize, 
+   VMTK_MODULE,
+   VmtkModule_doc,
+   perInterpreterStateSize,
    PyVmtkMethods
 };
 
@@ -1064,7 +1064,7 @@ static struct PyModuleDef PyVmtkModule = {
 //---------------
 // The initialization function called by the Python interpreter when the module is loaded.
 //
-PyMODINIT_FUNC 
+PyMODINIT_FUNC
 PyInit_PyVmtk()
 {
   //std::cout << "========== load vmtk module ==========" << std::endl;
@@ -1086,7 +1086,7 @@ PyInit_PyVmtk()
 #endif
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 

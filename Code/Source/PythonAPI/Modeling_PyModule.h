@@ -33,27 +33,29 @@
 #define PYAPI_MODELING_MODULE_H
 
 #include "SimVascular.h"
+
+#include "svPythonAPIExports.h"
+
 #include "sv4gui_Model.h"
-#include "svSolidModelExports.h" // For exports
 #include "sv_FactoryRegistrar.h"
 #include "sv_SolidModel.h"
 
 // Need to define this when including sv4gui_ModelIO.h..
-#define US_MODULE_NAME
+//nate#define US_MODULE_NAME 
 
 #include "Python.h"
 
-//extern "C" SV_EXPORT_SOLID int Solid_PyInit();
+//extern "C" SV_EXPORT_PYTHON_API int Solid_PyInit();
 
-extern PyTypeObject PyModelingSeriesType;
+extern SV_EXPORT_PYTHON_API PyTypeObject PyModelingSeriesType;
 
 typedef cvSolidModel * (*CreateSolidModelObjectFunction)();
 
-extern "C" SV_EXPORT_SOLID void PyAPI_InitParasolid(CreateSolidModelObjectFunction createObject);
+extern "C" SV_EXPORT_PYTHON_API void PyAPI_InitParasolid(CreateSolidModelObjectFunction createObject);
 
-SolidModel_KernelT ModelingKernelNameToEnum(std::string name);
+SolidModel_KernelT SV_EXPORT_PYTHON_API ModelingKernelNameToEnum(std::string name);
 
-PyObject * CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
+SV_EXPORT_PYTHON_API PyObject * CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
 
 //-----------------
 // PyModelingSeries 
@@ -71,7 +73,7 @@ typedef struct PyModelingSeries
   int id;
 } PyModelingSeries;
 
-extern "C" SV_EXPORT_SOLID typedef struct
+extern "C" SV_EXPORT_PYTHON_API typedef struct
 {
   PyObject_HEAD
   cvFactoryRegistrar* registrar;

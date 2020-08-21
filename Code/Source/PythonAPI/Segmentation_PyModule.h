@@ -33,8 +33,10 @@
 #define PYAPI_SEGMENTATION_PYMODULE_H 
 
 #include "SimVascular.h"
-#include "Python.h"
+
 #include "svPythonAPIExports.h"
+
+#include "Python.h"
 #include "sv3_Contour.h"
 #include "sv_FactoryRegistrar.h"
 #include "sv4gui_ContourGroup.h"
@@ -43,9 +45,9 @@
 #include "PathPlanning_PyModule.h"
 
 // Need to define US_MODULE_NAME because we are including sv4gui_ContourGroupIO.h.
-#define US_MODULE_NAME 
+//#define US_MODULE_NAME 
 
-PyObject* CreatePySegmentationSeries(sv4guiContourGroup* contourGroup);
+SV_EXPORT_PYTHON_API PyObject* CreatePySegmentationSeries(sv4guiContourGroup::Pointer contourGroup);
 
 // Define the signature for the function used to copy sv4guiContour 
 // object data to sv3::Contour objects.

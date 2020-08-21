@@ -30,7 +30,7 @@
  */
 
 // Define the Python 'meshing.TetGenAdaptiveOptions' class that encapsulates the parameters
-// used for generating a mesh using TetGen adaptive meshing. Options are stored as Python class 
+// used for generating a mesh using TetGen adaptive meshing. Options are stored as Python class
 // attributes and are set directly in the object created from that class.
 //
 //     options = sv.meshing.TetGenOptions(
@@ -41,20 +41,20 @@
 // and sometimes a count.
 //
 #ifndef PYAPI_MESHING_TETGEN_ADAPTIVE_OPTIONS_H
-#define PYAPI_MESHING_TETGEN_ADAPTIVE_OPTIONS_H 
+#define PYAPI_MESHING_TETGEN_ADAPTIVE_OPTIONS_H
 
 #include <string>
 #include <structmember.h>
 
 //------------------------------
-// PyMeshingTetGenAdaptOpt 
+// PyMeshingTetGenAdaptOpt
 //------------------------------
-// Define the MeshingOptions. 
+// Define the MeshingOptions.
 //
-// hmax: Global Max Edge Size: Specify a maximum target edge size. No edge size will be larger than 
+// hmax: Global Max Edge Size: Specify a maximum target edge size. No edge size will be larger than
 //     this size, even if the adaptor identifies that the solution does not require an edge length this small.
 //
-// hmin: Global Min Edge Size: Specify a minimum target edge size. No edge size will be smaller than 
+// hmin: Global Min Edge Size: Specify a minimum target edge size. No edge size will be smaller than
 //     this size, even if the adaptor identifies that solution needs a edge length smaller than this.
 //
 // instep: simulation file start step number if using multiple simulation steps.
@@ -71,8 +71,8 @@
 //
 // polynomial_order: Polynomial order of the data (currently only 1). Don't expose this to the user.
 //
-// ratio: Error Reduction Factor. Value multiplied by the average interpolation error in order to get a target uniform 
-//     local error distribution. This should be a value between zero and one. A smaller factor will attempt to achieve a 
+// ratio: Error Reduction Factor. Value multiplied by the average interpolation error in order to get a target uniform
+//     local error distribution. This should be a value between zero and one. A smaller factor will attempt to achieve a
 //     mesh with smaller error.
 //
 // sphere: this parameter does not appear to be set anywhere.
@@ -81,7 +81,7 @@
 //
 // strategy: meshing strategy. values=isotropic. should be named 'method' ?
 //
-// SV uses the 'end_step' option for both the simulation end step and step. The Python API 
+// SV uses the 'end_step' option for both the simulation end step and step. The Python API
 // has both a 'step' and a 'end_step' option.
 //
 typedef struct {
@@ -99,12 +99,12 @@ typedef struct {
   int step_increment;              // SV step_incr;
   int use_isotropic_meshing;       // SV strategy;
 
-  // These options have no counterpart in sv options but are used 
+  // These options have no counterpart in sv options but are used
   // to clarify setting options (e.g. sv uses outstep for two differnt
   // things.
   //
   bool use_multiple_steps;
-  int step; 
+  int step;
 } PyMeshingTetGenAdaptOpt;
 
 //-------------------
@@ -113,43 +113,43 @@ typedef struct {
 // PyMeshingTetGenAdaptOpt attribute names.
 //
 namespace TetGenAdaptOption {
-  char* max_edge_size = "max_edge_size";                      
-  char* min_edge_size = "min_edge_size";                      
-  char* start_step = "start_step";                      
-  char* metric_option = "metric_option";                      
-  char* end_step = "end_step";                      
-  //char* polynomial_order = "polynomial_order";                      
-  char* error_reduction_factor = "error_reduction_factor";                      
-  //char* sphere = "sphere";                      
-  char* step_increment = "step_increment";                      
-  char* use_isotropic_meshing = "use_isotropic_meshing";                      
+  char* max_edge_size = "max_edge_size";
+  char* min_edge_size = "min_edge_size";
+  char* start_step = "start_step";
+  char* metric_option = "metric_option";
+  char* end_step = "end_step";
+  //char* polynomial_order = "polynomial_order";
+  char* error_reduction_factor = "error_reduction_factor";
+  //char* sphere = "sphere";
+  char* step_increment = "step_increment";
+  char* use_isotropic_meshing = "use_isotropic_meshing";
   // Not SV options.
-  char* step = "step";                      
-  char* use_multiple_steps = "use_multiple_steps";                      
+  char* step = "step";
+  char* use_multiple_steps = "use_multiple_steps";
 
   // Parameter names for the 'sphere' option.
   //
-  std::string SphereOption_Type = "dictionary "; 
-  std::string SphereOption_Format = "{ 'coordinate':[x,y,z], 'region_size':int }";            
-  std::string SphereOption_Desc = SphereOption_Type + SphereOption_Format; 
+  std::string SphereOption_Type = "dictionary ";
+  std::string SphereOption_Format = "{ 'coordinate':[x,y,z], 'region_size':int }";
+  std::string SphereOption_Desc = SphereOption_Type + SphereOption_Format;
   // Use char* for these because they are used in the Python C API functions.
-  char* SphereOption_CoordinateParam = "coordinate";            
-  char* SphereOption_RegionSizeParam = "region_size";            
+  char* SphereOption_CoordinateParam = "coordinate";
+  char* SphereOption_RegionSizeParam = "region_size";
 
   // Create a map beteen Python and SV names. The SV names are needed when
   // setting mesh options.
   //
   std::map<std::string,char*> pyToSvNameMap = {
-      {std::string(end_step), "outstep"},                      
-      {std::string(error_reduction_factor), "ratio"},                      
-      {std::string(max_edge_size), "hmax"}, 
-      //{std::string(metric_option), "metric_option"}, 
-      {std::string(min_edge_size), "hmin"},                      
-      //{std::string(polynomial_order), "poly"},                      
-      //{std::string(sphere), "sphere"},                      
-      {std::string(start_step), "instep"},                      
-      {std::string(step_increment), "step_incr"},                      
-      //{std::string(use_isotropic_meshing), "use_isotropic_meshing"}                      
+      {std::string(end_step), "outstep"},
+      {std::string(error_reduction_factor), "ratio"},
+      {std::string(max_edge_size), "hmax"},
+      //{std::string(metric_option), "metric_option"},
+      {std::string(min_edge_size), "hmin"},
+      //{std::string(polynomial_order), "poly"},
+      //{std::string(sphere), "sphere"},
+      {std::string(start_step), "instep"},
+      {std::string(step_increment), "step_incr"},
+      //{std::string(use_isotropic_meshing), "use_isotropic_meshing"}
    };
 
 };
@@ -163,7 +163,7 @@ namespace TetGenAdaptOption {
 //--------------------------
 // Get attribute values from the MeshingOptions object.
 //
-static bool 
+static bool
 PyTetGenAdaptOptGetValue(PyObject* meshingOptions, std::string name, double& value)
 {
   //std::cout << "[PyTetGenAdaptOptGetValues] " << std::endl;
@@ -171,7 +171,7 @@ PyTetGenAdaptOptGetValue(PyObject* meshingOptions, std::string name, double& val
   auto obj = PyObject_GetAttrString(meshingOptions, name.c_str());
   if (obj == Py_None) {
       return false;
-  } 
+  }
   if (obj == nullptr) {
       std::cout << "[PyTetGenAdaptOptGetValues] Error: option name '" << name << "' not defined." << std::endl;
       return false;
@@ -198,7 +198,7 @@ PyTetGenAdaptOptGetValue(PyObject* meshingOptions, std::string name, double& val
 //-----------------------------
 //
 PyDoc_STRVAR(PyTetGenAdaptOpt_get_values_doc,
-" get_values()  \n\ 
+" get_values()  \n\
   \n\
   Get the names and values of TetGen adaptive mesh generation options. \n\
   \n\
@@ -247,7 +247,7 @@ PyTetGenAdaptOpt_set_defaults(PyMeshingTetGenAdaptOpt* self)
 }
 
 //-------------------------
-// PyTetGenAdaptOptMethods 
+// PyTetGenAdaptOptMethods
 //-------------------------
 //
 static PyMethodDef PyTetGenAdaptOptMethods[] = {
@@ -264,27 +264,27 @@ static PyMethodDef PyTetGenAdaptOptMethods[] = {
 //
 // The attributes can be set/get directly in from the MeshingOptions object.
 //
-PyDoc_STRVAR(end_step_doc, 
+PyDoc_STRVAR(end_step_doc,
 " Simulation end step (int). The last simulation step. \n\
 ");
 
-PyDoc_STRVAR(error_reduction_factor_doc, 
+PyDoc_STRVAR(error_reduction_factor_doc,
 " Error reduction factor (float). The value multiplied by the average interpolation error in order to get a target uniform \n\
   local error distribution. This should be a value between zero and one. A smaller factor will attempt to achieve a \n\
   mesh with smaller error.\n\
 ");
 
-PyDoc_STRVAR(max_edge_size_doc, 
+PyDoc_STRVAR(max_edge_size_doc,
 " Global maximum edge size (float). Specify a maximum target edge size. No edge size will be larger than  \n\
  this size, even if the adaptor identifies that the solution does not require an edge length this small. \n\
 ");
 
-PyDoc_STRVAR(min_edge_size_doc, 
+PyDoc_STRVAR(min_edge_size_doc,
 " Global minimum edge size (float). Specify a minimum target edge size. No edge size will be smaller than  \n\
   this size, even if the adaptor identifies that solution needs a edge length smaller than this. \n\
 ");
 
-PyDoc_STRVAR(use_isotropic_meshing_doc, 
+PyDoc_STRVAR(use_isotropic_meshing_doc,
 " Use an isotropic meshing methods (bool). This is currently the only option. \n\
 ");
 
@@ -305,7 +305,7 @@ static PyMemberDef PyTetGenAdaptOptMembers[] = {
     {TetGenAdaptOption::use_multiple_steps, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_multiple_steps), 0, use_multiple_steps_doc},
 
     {TetGenAdaptOption::use_isotropic_meshing, T_BOOL, offsetof(PyMeshingTetGenAdaptOpt, use_isotropic_meshing), READONLY, use_isotropic_meshing_doc},
-    {NULL, NULL}  
+    {NULL, NULL}
 };
 
 ////////////////////////////////////////////////////////
@@ -347,7 +347,7 @@ PyTetGenOptions_set_error_reduction_factor(PyMeshingTetGenAdaptOpt* self, PyObje
 }
 
 //------
-// step 
+// step
 //------
 //
 static PyObject*
@@ -379,10 +379,10 @@ PyTetGenOptions_set_step(PyMeshingTetGenAdaptOpt* self, PyObject* arg, void* clo
 //
 PyGetSetDef PyTetGenAdaptOptGetSets[] = {
 
-    { TetGenAdaptOption::error_reduction_factor, 
+    { TetGenAdaptOption::error_reduction_factor,
           (getter)PyTetGenOptions_get_error_reduction_factor, (setter)PyTetGenOptions_set_error_reduction_factor, NULL,  error_reduction_factor_doc },
 
-    { TetGenAdaptOption::step, 
+    { TetGenAdaptOption::step,
           (getter)PyTetGenOptions_get_step, (setter)PyTetGenOptions_set_step, NULL,  NULL },
 
     {NULL, NULL}
@@ -399,40 +399,40 @@ static char* MESHING_TETGEN_ADAPTIVE_OPTIONS_MODULE_CLASS = "meshing.TetGenAdapt
 PyDoc_STRVAR(TetGenAdaptOptClass_doc, "TetGen adaptive meshing options class functions");
 
 //----------------------
-// PyTetGenAdaptOptType 
+// PyTetGenAdaptOptType
 //----------------------
-// Define the Python type object that implements the meshing.MeshingOptions class. 
+// Define the Python type object that implements the meshing.MeshingOptions class.
 //
 static PyTypeObject PyTetGenAdaptOptType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = MESHING_TETGEN_ADAPTIVE_OPTIONS_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyMeshingTetGenAdaptOpt)
+  MESHING_TETGEN_ADAPTIVE_OPTIONS_MODULE_CLASS,
+  sizeof(PyMeshingTetGenAdaptOpt)
 };
 
 //-----------------------
 // PyTetGenAdaptOpt_init
 //-----------------------
-// This is the __init__() method for the meshing.MeshingOptions class. 
+// This is the __init__() method for the meshing.MeshingOptions class.
 //
 // This function is used to initialize an object after it is created.
 //
 // Arguments:
 //
-static int 
+static int
 PyTetGenAdaptOptInit(PyMeshingTetGenAdaptOpt* self, PyObject* args, PyObject* kwargs)
 {
   static int numObjs = 1;
   //std::cout << "[PyTetGenAdaptOptInit] New MeshingOptions object: " << numObjs << std::endl;
 /*
   auto api = PyUtilApiFunction("d|O!O!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = { TetGenAdaptOption::GlobalEdgeSize, TetGenAdaptOption::SurfaceMeshFlag, TetGenAdaptOption::VolumeMeshFlag, 
+  static char *keywords[] = { TetGenAdaptOption::GlobalEdgeSize, TetGenAdaptOption::SurfaceMeshFlag, TetGenAdaptOption::VolumeMeshFlag,
                               TetGenAdaptOption::MeshWallFirst, NULL};
   double global_edge_size = 0.0;
   PyObject* surface_mesh_flag = NULL;
   PyObject* volume_mesh_flag = NULL;
   PyObject* mesh_wall_first = NULL;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &global_edge_size, &PyBool_Type, &surface_mesh_flag, 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &global_edge_size, &PyBool_Type, &surface_mesh_flag,
         &PyBool_Type, &volume_mesh_flag, &PyBool_Type, &mesh_wall_first)) {
       api.argsError();
       return -1;
@@ -458,9 +458,9 @@ PyTetGenAdaptOptInit(PyMeshingTetGenAdaptOpt* self, PyObject* args, PyObject* kw
 }
 
 //---------------------
-// PyTetGenAdaptOptNew 
+// PyTetGenAdaptOptNew
 //---------------------
-// Object creation function, equivalent to the Python __new__() method. 
+// Object creation function, equivalent to the Python __new__() method.
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
@@ -470,13 +470,13 @@ PyTetGenAdaptOptNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   auto self = (PyMeshingTetGenAdaptOpt*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyTetGenAdaptOptNew] ERROR: Can't allocate type." << std::endl;
-      return nullptr; 
+      return nullptr;
   }
   return (PyObject *) self;
 }
 
 //-------------------------
-// PyTetGenAdaptOptDealloc 
+// PyTetGenAdaptOptDealloc
 //-------------------------
 //
 static void
@@ -487,15 +487,15 @@ PyTetGenAdaptOptDealloc(PyMeshingTetGenAdaptOpt* self)
 }
 
 //-----------------------------
-// SetTetGenAdaptOptTypeFields 
+// SetTetGenAdaptOptTypeFields
 //-----------------------------
-// Set the Python type object fields that stores loft option data. 
+// Set the Python type object fields that stores loft option data.
 //
 static void
 SetTetGenAdaptOptTypeFields(PyTypeObject& meshingOpts)
  {
   //std::cout << "[SetTetGenAdaptOptTypeFields] ################ SetTetGenAdaptOptTypeFields ######## " << std::endl;
-  meshingOpts.tp_doc = TetGenAdaptOptClass_doc; 
+  meshingOpts.tp_doc = TetGenAdaptOptClass_doc;
   meshingOpts.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   meshingOpts.tp_dict = PyDict_New();
   meshingOpts.tp_new = PyTetGenAdaptOptNew;
@@ -529,11 +529,11 @@ SetTetGenAdaptOptTypes(PyTypeObject& meshingOptsType)
 
   std::cout << "[SetMeshingOptionsClassTypes] Done! " << std::endl;
 */
- 
+
 };
 
 //--------------------------
-// CreateTetGenAdaptOptType 
+// CreateTetGenAdaptOptType
 //--------------------------
 //
 static PyObject *

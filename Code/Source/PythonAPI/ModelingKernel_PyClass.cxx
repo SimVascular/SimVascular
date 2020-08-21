@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Define the Python 'modeling.Kernel' class that encapsulates solid modeling kernel types. 
+// Define the Python 'modeling.Kernel' class that encapsulates solid modeling kernel types.
 //
 #ifndef PYAPI_MODELING_KERNEL_H
 #define PYAPI_MODELING_KERNEL_H
@@ -54,7 +54,7 @@ static std::map<std::string,SolidModel_KernelT> kernelNameEnumMap =
 };
 
 // The list of valid kernel names, used in error messages.
-static std::string kernelValidNames = "DISCRETE, MESHSIMSOLID, OPENCASCADE, PARASOLID, or POLYDATA"; 
+static std::string kernelValidNames = "DISCRETE, MESHSIMSOLID, OPENCASCADE, PARASOLID, or POLYDATA";
 
 //----------------------
 // ModelingKernelObject
@@ -71,15 +71,15 @@ PyObject_HEAD
 //////////////////////////////////////////////////////
 
 //-----------------------
-// ModelingKernelGetName 
+// ModelingKernelGetName
 //-----------------------
 // Get the string equivalent to the enum.
 //
-std::string 
+std::string
 ModelingKernelEnumToName(SolidModel_KernelT kernelType)
 {
   for (auto const& entry : kernelNameEnumMap) {
-      if (kernelType == entry.second) { 
+      if (kernelType == entry.second) {
           return entry.first;
       }
   }
@@ -87,11 +87,11 @@ ModelingKernelEnumToName(SolidModel_KernelT kernelType)
 }
 
 //--------------------------
-// ModelingKernelNameToEnum 
+// ModelingKernelNameToEnum
 //--------------------------
-// Get the enum for the given name. 
+// Get the enum for the given name.
 //
-SolidModel_KernelT 
+SolidModel_KernelT
 ModelingKernelNameToEnum(std::string name)
 {
   for (auto const& entry : kernelNameEnumMap) {
@@ -106,10 +106,10 @@ ModelingKernelNameToEnum(std::string name)
 //          C l a s s    M e t h o d s                //
 ////////////////////////////////////////////////////////
 //
-// Python 'Kernel' class methods. 
+// Python 'Kernel' class methods.
 
 PyDoc_STRVAR(ModelingKernel_get_names_doc,
-  "get_names()  \n\ 
+  "get_names()  \n\
    \n\
    Get the modeling kernel names. \n\
    \n\
@@ -126,7 +126,7 @@ ModelingKernel_get_names()
       PyList_SetItem(nameList, n, PyUnicode_FromString(name));
       n += 1;
   }
-  return nameList; 
+  return nameList;
 }
 
 //-----------------------
@@ -153,7 +153,7 @@ static char* MODELING_KERNEL_CLASS_VARIBLE_NAMES = "names";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(ModelingKernelClass_doc, 
+PyDoc_STRVAR(ModelingKernelClass_doc,
    "The Kernel class provides the kernel names used to create Modeling     \n\
    objects. The kernel names are stored as class attributes and are        \n\
    referenced using the class name.                                        \n\
@@ -172,23 +172,23 @@ PyDoc_STRVAR(ModelingKernelClass_doc,
 //------------------------------------
 // Define the SolidType type object
 //------------------------------------
-// Define the Python type object that stores contour.kernel types. 
+// Define the Python type object that stores contour.kernel types.
 //
 static PyTypeObject PyModelingKernelType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = MODELING_KERNEL_MODULE_CLASS,
-  .tp_basicsize = sizeof(ModelingKernelObject)
+  MODELING_KERNEL_MODULE_CLASS,
+  sizeof(ModelingKernelObject)
 };
 
 //----------------------------
 // SetModelingKernelTypeFields
 //----------------------------
-// Set the Python type object fields that stores Kernel data. 
+// Set the Python type object fields that stores Kernel data.
 //
 static void
 SetModelingKernelTypeFields(PyTypeObject& contourType)
  {
-  contourType.tp_doc = ModelingKernelClass_doc; 
+  contourType.tp_doc = ModelingKernelClass_doc;
   contourType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   contourType.tp_methods = ModelingKernelMethods;
   contourType.tp_dict = PyDict_New();
@@ -199,8 +199,8 @@ SetModelingKernelTypeFields(PyTypeObject& contourType)
 //------------------------
 // Set the kernel names in the ModelingKernelType dictionary.
 //
-// The names in the ModelingKernelType dictionary are 
-// referenced as a string class variable for the Python 
+// The names in the ModelingKernelType dictionary are
+// referenced as a string class variable for the Python
 // Kernel class.
 //
 static void

@@ -33,6 +33,9 @@
 #define PYAPI_PATH_PLANNING_MODULE_H 
 
 #include "SimVascular.h"
+
+#include "svPythonAPIExports.h"
+
 #include "Python.h"
 #include "sv3_PathElement.h"
 #include "sv3_PathGroup.h"
@@ -79,8 +82,8 @@ typedef struct {
   PyObject* tangent;
 } PyPathFrame;
 
-PyObject * CreatePyPath(sv3::PathElement* path = nullptr);
-extern PyTypeObject PyPathType;
+SV_EXPORT_PYTHON_API PyObject * CreatePyPath(sv3::PathElement* path = nullptr);
+extern SV_EXPORT_PYTHON_API PyTypeObject PyPathType;
 
 #if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC  initpyPath();

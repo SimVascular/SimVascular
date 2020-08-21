@@ -30,6 +30,10 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#find . -type f | grep cxx | xargs sed -i 's/[ \t]*$//'
+#find . -type f | grep cxx | xargs sed -i 's/.tp_name = //g'
+#find . -type f | grep cxx | xargs sed -i 's/.tp_basicsize = //g'
+
 TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
@@ -44,14 +48,18 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(SV_TINYXML_INCDIR) $(SV_TINYXML2_INCDIR) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            -Dorg_sv_pythondatanodes_EXPORTS \
-           -DUS_MODULE_NAME=svpythondatanodes
+           -DUS_MODULE_NAME=svpythondatanodes \
+           -I../../../PythonAPI \
+           $(ZLIB_INCDIR)
 
+# removed sv4gui_Vis_init_py.h
 HDRS	= \
-  sv4gui_Vis_init_py.h \
-  sv4gui_PythonDataNodesPluginActivator.h
+  sv4gui_PythonDataNodesPluginActivator.h \
+  Dmg_PyModule.h
 
+# removed sv4gui_Vis_init_py.cxx
 CXXSRCS	= \
-  sv4gui_Vis_init_py.cxx \
+  Dmg_PyModule.cxx \
   sv4gui_PythonDataNodesPluginActivator.cxx
 
 UIFILES =
@@ -75,6 +83,9 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
+#          $(SVLIBFLAG)$(SV_PYTHON_MODULE_NAME)$(LIBLINKEXT) \
+#
+
 DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
@@ -90,7 +101,9 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) 
+          $(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_PYTHON_API_NAME)$(LIBLINKEXT)
+
 
 ifeq ($(SV_USE_TINYXML),1)
   DLLLIBS += $(SV_TINYXML_LIBS)

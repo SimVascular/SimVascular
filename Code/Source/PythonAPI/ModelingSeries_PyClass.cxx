@@ -29,14 +29,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API modeling module Series class. 
-// It provides an interface to read in a model time-series from SV meshing .mdl files. 
+// The functions defined here implement the SV Python API modeling module Series class.
+// It provides an interface to read in a model time-series from SV meshing .mdl files.
 //
 // The class is referenced from the modeling module as 'modeling.Series'.
 //
 //     models = modeling.Series()
 //
-// The SV modeling group code this interfaces to resides in sv4gui/Modules/Modeling/Common which 
+// The SV modeling group code this interfaces to resides in sv4gui/Modules/Modeling/Common which
 // uses MITK manage time-varying meshes.
 //
 #include "sv4gui_ModelIO.h"
@@ -51,7 +51,7 @@
 // Read in an SV .mdl file and create a sv4guiModel::Pointer object
 // from its contents.
 //
-sv4guiModel::Pointer 
+sv4guiModel::Pointer
 ModelingSeries_read(char* fileName)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
@@ -76,34 +76,34 @@ ModelingSeries_read(char* fileName)
 //       G r o u p  C l a s s  M e t h o d s        //
 //////////////////////////////////////////////////////
 //
-// SV Python modeling.Series methods. 
+// SV Python modeling.Series methods.
 
 //------------------------------
-// ModelingSeries_get_num_times 
+// ModelingSeries_get_num_times
 //------------------------------
 //
 PyDoc_STRVAR(ModelingSeries_get_num_times_doc,
-  "get_num_times() \n\ 
+  "get_num_times() \n\
   \n\
    Get the number of time points in the series. \n\
    \n\
    Returns (int): The number of time points in the series.\n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingSeries_get_num_times(PyModelingSeries* self, PyObject* args)
 {
   auto solidGroup = self->solidGroup;
   int numSolidModels = solidGroup->GetTimeSize();
-  return Py_BuildValue("i", numSolidModels); 
+  return Py_BuildValue("i", numSolidModels);
 }
 
 //--------------------------
-// ModelingSeries_get_model 
+// ModelingSeries_get_model
 //--------------------------
 //
 PyDoc_STRVAR(ModelingSeries_get_model_doc,
-  "get_model(time=0) \n\ 
+  "get_model(time=0) \n\
    \n\
    Get the solid model object for a given time. \n\
    \n\
@@ -114,7 +114,7 @@ PyDoc_STRVAR(ModelingSeries_get_model_doc,
    Returns (ModelingModel object): The ModelingModel object for the solid model.\n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingSeries_get_model(PyModelingSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
@@ -156,9 +156,9 @@ ModelingSeries_get_model(PyModelingSeries* self, PyObject* args, PyObject* kwarg
       auto polydata = solidModelElement->GetWholeVtkPolyData();
       solidModel = new cvPolyDataSolid();
       solidModel->SetVtkPolyDataObject(polydata);
-  } 
+  }
 
-  // Create a PySolidModel object from the SV cvSolidModel 
+  // Create a PySolidModel object from the SV cvSolidModel
   // object and return it as a PyObject.
   return CreatePyModelingModelObject(solidModel);
 }
@@ -168,7 +168,7 @@ ModelingSeries_get_model(PyModelingSeries* self, PyObject* args, PyObject* kwarg
 //----------------------
 //
 PyDoc_STRVAR(ModelingSeries_write_doc,
-  "write(file_name) \n\ 
+  "write(file_name) \n\
    \n\
    Write the modeling group to an SV .mdl format file.\n\
    \n\
@@ -208,14 +208,14 @@ ModelingSeries_write(PyModelingSeries* self, PyObject* args, PyObject* kwargs)
 ////////////////////////////////////////////////////////
 
 static char* MODELING_SERIES_CLASS = "Series";
-// Dotted name that includes both the module name and the name of the 
+// Dotted name that includes both the module name and the name of the
 // type within the module.
 static char* MODELING_SERIES_MODULE_CLASS = "modeling.Series";
 
 // Doc width extent.
 //   ----------------------------------------------------------------------   \n\
 
-PyDoc_STRVAR(ModelingSeries_doc, 
+PyDoc_STRVAR(ModelingSeries_doc,
   "SimVascular modeling Series class. \n\
    \n\
    Series(file_name) \n\
@@ -238,7 +238,7 @@ PyDoc_STRVAR(ModelingSeries_doc,
 ");
 
 //-------------------------
-// PyModelingSeriesMethods 
+// PyModelingSeriesMethods
 //-------------------------
 // Define the methods for the modeling.Series class.
 //
@@ -254,32 +254,32 @@ static PyMethodDef PyModelingSeriesMethods[] = {
 };
 
 //----------------------
-// PyModelingSeriesType 
+// PyModelingSeriesType
 //----------------------
-// Define the Python type that stores ModelingSeries data. 
+// Define the Python type that stores ModelingSeries data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 PyTypeObject PyModelingSeriesType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  MODELING_SERIES_MODULE_CLASS,     
+  MODELING_SERIES_MODULE_CLASS,
   sizeof(PyModelingSeries)
 };
 
 //-----------------------
 // PyModelingSeries_init
 //-----------------------
-// This is the __init__() method for the modeling.Group class. 
+// This is the __init__() method for the modeling.Group class.
 //
 // This function is used to initialize an object after it is created.
 //
 // Arguments:
 //
-//   fileName - An SV .mdl modeling file. A new ModelingSeries object is 
+//   fileName - An SV .mdl modeling file. A new ModelingSeries object is
 //     created from the contents of the file. (optional)
 //
-static int 
+static int
 PyModelingSeriesInit(PyModelingSeries* self, PyObject* args)
 {
   static int numObjs = 1;
@@ -295,7 +295,7 @@ PyModelingSeriesInit(PyModelingSeries* self, PyObject* args)
   } else {
       self->solidGroup = sv4guiModel::New();
   }
-  if (self->solidGroup == nullptr) { 
+  if (self->solidGroup == nullptr) {
       std::cout << "[PyModelingSeriesInit] ERROR reading File name: " << fileName << std::endl;
       return -1;
   }
@@ -304,9 +304,9 @@ PyModelingSeriesInit(PyModelingSeries* self, PyObject* args)
 }
 
 //---------------------
-// PyModelingSeriesNew 
+// PyModelingSeriesNew
 //---------------------
-// Object creation function, equivalent to the Python __new__() method. 
+// Object creation function, equivalent to the Python __new__() method.
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
@@ -317,13 +317,13 @@ PyModelingSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   //auto self = (PyContour*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyModelingSeriesNew] ERROR: Can't allocate type." << std::endl;
-      return nullptr; 
+      return nullptr;
   }
   return (PyObject *) self;
 }
 
 //-------------------------
-// PyModelingSeriesDealloc 
+// PyModelingSeriesDealloc
 //-------------------------
 //
 static void
@@ -336,19 +336,19 @@ PyModelingSeriesDealloc(PyModelingSeries* self)
 }
 
 //-----------------------------
-// SetModelingSeriesTypeFields 
+// SetModelingSeriesTypeFields
 //-----------------------------
-// Set the Python type object fields that stores Contour data. 
+// Set the Python type object fields that stores Contour data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetModelingSeriesTypeFields(PyTypeObject& solidType)
 {
   // Doc string for this type.
-  solidType.tp_doc = ModelingSeries_doc; 
-  // Object creation function, equivalent to the Python __new__() method. 
+  solidType.tp_doc = ModelingSeries_doc;
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   solidType.tp_new = PyModelingSeriesNew;
   solidType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
@@ -362,7 +362,7 @@ SetModelingSeriesTypeFields(PyTypeObject& solidType)
 //------------------------
 // Create a PyModelingSeriesType object.
 //
-// If the 'solidGroup' argument is not null then use that 
+// If the 'solidGroup' argument is not null then use that
 // for the PyModelingSeriesType.solidGroup data.
 //
 PyObject *

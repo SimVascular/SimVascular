@@ -32,11 +32,11 @@
 // Define the Python 'geometry.BlendOptions' class that encapsulates the paramters
 // used for creating a blended surface.
 //
-// A blended surface is created from a list of faces 
+// A blended surface is created from a list of faces
 //
 //
 #ifndef PYAPI_GEOMETRY_BLEND_OPTIONS_H
-#define PYAPI_GEOMETRY_BLEND_OPTIONS_H 
+#define PYAPI_GEOMETRY_BLEND_OPTIONS_H
 
 #include <iostream>
 #include <map>
@@ -45,11 +45,11 @@
 #include <structmember.h>
 
 //------------------
-// BlendOptionsClass 
+// BlendOptionsClass
 //------------------
-// Define the BlendOptionsClass. 
+// Define the BlendOptionsClass.
 //
-// num_spline_points: The number of points to sample a spline if using linear 
+// num_spline_points: The number of points to sample a spline if using linear
 //    interpolation between sample points.
 //
 // num_long_points: The number of longitudinal points used to sample splines.
@@ -68,9 +68,9 @@ typedef struct {
 
 // PyBlendOptions attribute names.
 //
-// The varible name is the name used in SV, 
+// The varible name is the name used in SV,
 // lower case string is the Python option name.
-// 
+//
 namespace BlendOptions {
   char* NUM_BLEND_ITERATIONS = "num_blend_iterations";
   char* NUM_SUBBLEND_ITERATIONS = "num_subblend_iterations";
@@ -100,7 +100,7 @@ static int
 BlendOptionsGetInt(PyObject* blendOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(blendOptions, name.c_str());
-  if (obj == nullptr) { 
+  if (obj == nullptr) {
       std::cout << "Internal error: The '" + name + "' BlendOptions paramater is not correctly setup." << std::endl;
       return 0;
   }
@@ -110,15 +110,15 @@ BlendOptionsGetInt(PyObject* blendOptions, std::string name)
 }
 
 //-------------------------
-// PyBlendOptionsGetDouble 
+// PyBlendOptionsGetDouble
 //-------------------------
 // Get a double atttibute from the BlendOptions object.
 //
-static double 
+static double
 BlendOptionsGetDouble(PyObject* blendOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(blendOptions, name.c_str());
-  if (obj == nullptr) { 
+  if (obj == nullptr) {
       std::cout << "Internal error: The '" + name + "' BlendOptions paramater is not correctly setup." << std::endl;
       return 0;
   }
@@ -130,15 +130,15 @@ BlendOptionsGetDouble(PyObject* blendOptions, std::string name)
 //------------------------
 // GetRadiusFaceValues
 //------------------------
-// Get the parameter values for the RadiusFace option. 
+// Get the parameter values for the RadiusFace option.
 //
 bool
-GetRadiusFaceValues(PyObject* obj, int& faceID1, int& faceID2, double& radius) 
+GetRadiusFaceValues(PyObject* obj, int& faceID1, int& faceID2, double& radius)
 {
   //std::cout << "[GetRadiusFaceValues] ========== GetRadiusFaceValues ==========" << std::endl;
   //std::cout << "[GetRadiusFaceValues] obj: " << obj << std::endl;
   using namespace BlendOptions;
-  static std::string errorMsg = RadiusFace_ErrorMsg; 
+  static std::string errorMsg = RadiusFace_ErrorMsg;
   faceID1 = 0;
   faceID2 = 0;
   radius = 0.0;
@@ -201,7 +201,7 @@ GetRadiusFaceValues(PyObject* obj, int& faceID1, int& faceID2, double& radius)
 //
 
 PyDoc_STRVAR(PyBlendOptions_get_values_doc,
-  "get_values()  \n\ 
+  "get_values()  \n\
   \n\
   Get the names and values of blend options. \n\
   \n\
@@ -244,14 +244,14 @@ static PyMethodDef PyBlendOptionsMethods[] = {
 
 PyDoc_STRVAR(num_blend_iterations_doc,
   "Type: int                                                               \n\
-   Default: 2                                                              \n\ 
+   Default: 2                                                              \n\
    \n\
    The number of iterations for the blending operation.                    \n\
 ");
 
 PyDoc_STRVAR(num_subblend_iterations_doc,
   "Type: int                                                               \n\
-   Default: 3                                                              \n\ 
+   Default: 3                                                              \n\
    \n\
    The number of iterations for the blending operation.                    \n\
 ");
@@ -259,28 +259,28 @@ PyDoc_STRVAR(num_subblend_iterations_doc,
 
 PyDoc_STRVAR(num_subdivision_iterations_doc,
   "Type: int                                                               \n\
-   Default: 1                                                              \n\ 
+   Default: 1                                                              \n\
    \n\
    The number of iterations for the blending operation.                    \n\
 ");
 
 PyDoc_STRVAR(num_cgsmooth_iterations_doc,
   "Type: int                                                               \n\
-   Default: 2                                                              \n\ 
+   Default: 2                                                              \n\
    \n\
    The number of iterations for the blending operation.                    \n\
 ");
 
 PyDoc_STRVAR(num_lapsmooth_iterations_doc,
   "Type: int                                                               \n\
-   Default: 50                                                             \n\ 
+   Default: 50                                                             \n\
    \n\
    The number of iterations for the blending operation.                    \n\
 ");
 
 PyDoc_STRVAR(target_decimation_doc,
   "Type: float                                                             \n\
-   Default: 0.01                                                           \n\ 
+   Default: 0.01                                                           \n\
    \n\
    The number of iterations for the blending operation.                    \n\
 ");
@@ -292,7 +292,7 @@ static PyMemberDef PyBlendOptionsMembers[] = {
     {BlendOptions::NUM_CGSMOOTH_ITERATIONS, T_INT, offsetof(PyBlendOptions, num_cgsmooth_iterations), 0, num_cgsmooth_iterations_doc},
     {BlendOptions::NUM_LAPSMOOTH_ITERATIONS, T_INT, offsetof(PyBlendOptions, num_lapsmooth_iterations), 0, num_lapsmooth_iterations_doc},
     {BlendOptions::TARGET_DECIMATION, T_DOUBLE, offsetof(PyBlendOptions, target_decimation), 0, target_decimation_doc},
-    {NULL}  
+    {NULL}
 };
 
 ////////////////////////////////////////////////////////
@@ -308,7 +308,7 @@ static char* GEOMETRY_BLEND_OPTIONS_MODULE_CLASS = "geometry.BlendOptions";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(BlendOptionsClass_doc, 
+PyDoc_STRVAR(BlendOptionsClass_doc,
    "The BlendOptions class stores parameter values used to control how       \n\
     blended surfaces are generated.                                         \n\
     \n\
@@ -319,24 +319,24 @@ PyDoc_STRVAR(BlendOptionsClass_doc,
 ");
 
 //--------------------
-// PyBlendOptionsType 
+// PyBlendOptionsType
 //--------------------
-// Define the Python type object that implements the geometry.BlendOptions class. 
+// Define the Python type object that implements the geometry.BlendOptions class.
 //
 static PyTypeObject PyBlendOptionsType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = GEOMETRY_BLEND_OPTIONS_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyBlendOptions)
+  GEOMETRY_BLEND_OPTIONS_MODULE_CLASS,
+  sizeof(PyBlendOptions)
 };
 
 //--------------------
 // PyBlendOptions_init
 //--------------------
-// This is the __init__() method for the geometry.BlendOptions class. 
+// This is the __init__() method for the geometry.BlendOptions class.
 //
 // This function is used to initialize an object after it is created.
 //
-static int 
+static int
 PyBlendOptionsInit(PyBlendOptions* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "[PyBlendOptionsInit] New BlendOptions object: " << std::endl;
@@ -353,9 +353,9 @@ PyBlendOptionsInit(PyBlendOptions* self, PyObject* args, PyObject* kwargs)
 }
 
 //-------------------
-// PyBlendOptionsNew 
+// PyBlendOptionsNew
 //-------------------
-// Object creation function, equivalent to the Python __new__() method. 
+// Object creation function, equivalent to the Python __new__() method.
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
@@ -365,13 +365,13 @@ PyBlendOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   auto self = (PyBlendOptions*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyBlendOptionsNew] ERROR: Can't allocate type." << std::endl;
-      return nullptr; 
+      return nullptr;
   }
   return (PyObject *) self;
 }
 
 //-----------------------
-// PyBlendOptionsDealloc 
+// PyBlendOptionsDealloc
 //-----------------------
 //
 static void
@@ -384,12 +384,12 @@ PyBlendOptionsDealloc(PyBlendOptions* self)
 //---------------------------
 // SetBlendOptionsTypeFields
 //---------------------------
-// Set the Python type object fields that stores loft option data. 
+// Set the Python type object fields that stores loft option data.
 //
 static void
 SetBlendOptionsTypeFields(PyTypeObject& loftOpts)
  {
-  loftOpts.tp_doc = BlendOptionsClass_doc; 
+  loftOpts.tp_doc = BlendOptionsClass_doc;
   loftOpts.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   loftOpts.tp_dict = PyDict_New();
   loftOpts.tp_new = PyBlendOptionsNew;
@@ -422,7 +422,7 @@ SetBlendOptionsClassTypes(PyTypeObject& loftOptsType)
 
   std::cout << "[SetBlendOptionsClassTypes] Done! " << std::endl;
 */
- 
+
 };
 
 #endif

@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Define the Python 'meshing.Kernel' class that encapsulates meshing kernel types. 
+// Define the Python 'meshing.Kernel' class that encapsulates meshing kernel types.
 //
 #ifndef PYAPI_MESHING_KERNEL_H
 #define PYAPI_MESHING_KERNEL_H
@@ -51,7 +51,7 @@ static std::map<std::string,cvMeshObject::KernelType> kernelNameEnumMap =
 };
 
 // The list of valid kernel names, used in error messages.
-static std::string kernelValidNames = "GMSH, MESHSIM, or TETGEN"; 
+static std::string kernelValidNames = "GMSH, MESHSIM, or TETGEN";
 
 //-----------------
 // PyMeshingKernel
@@ -62,11 +62,11 @@ typedef struct {
 PyObject_HEAD
 } PyMeshingKernel;
 
-std::string 
+std::string
 MeshingKernel_get_name(cvMeshObject::KernelType kernelType)
 {
   for (auto const& entry : kernelNameEnumMap) {
-      if (kernelType == entry.second) { 
+      if (kernelType == entry.second) {
           return entry.first;
       }
   }
@@ -77,14 +77,14 @@ MeshingKernel_get_name(cvMeshObject::KernelType kernelType)
 //          C l a s s    M e t h o d s                //
 ////////////////////////////////////////////////////////
 //
-// Python 'Kernel' class methods. 
+// Python 'Kernel' class methods.
 
 //-------------------------
 // MeshingKernel_get_names
 //-------------------------
 //
 PyDoc_STRVAR(ModelingKernel_get_names_doc,
-  "get_names()  \n\ 
+  "get_names()  \n\
    \n\
    Get the meshing kernel names. \n\
    \n\
@@ -101,7 +101,7 @@ MeshingKernel_get_names()
       PyList_SetItem(nameList, n, PyUnicode_FromString(name));
       n += 1;
   }
-  return nameList; 
+  return nameList;
 }
 
 //----------------------
@@ -128,7 +128,7 @@ static char* MESHING_KERNEL_CLASS_VARIBLE_NAMES = "names";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PyMeshingKernel_doc, 
+PyDoc_STRVAR(PyMeshingKernel_doc,
    "The Kernel class provides the kernel names used to generate finite       \n\
     element meshes. The kernel names are stored as class attributes and are  \n\
     referenced using the class name.                                         \n\
@@ -146,23 +146,23 @@ PyDoc_STRVAR(PyMeshingKernel_doc,
 //------------------------------------
 // Define the MeshingType type object
 //------------------------------------
-// Define the Python type object that stores contour.kernel types. 
+// Define the Python type object that stores contour.kernel types.
 //
 static PyTypeObject PyMeshingKernelType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = MESHING_KERNEL_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyMeshingKernel)
+  MESHING_KERNEL_MODULE_CLASS,
+  sizeof(PyMeshingKernel)
 };
 
 //----------------------------
 // SetPyMeshingKernelTypeFields
 //----------------------------
-// Set the Python type object fields that stores Kernel data. 
+// Set the Python type object fields that stores Kernel data.
 //
 static void
 SetMeshingKernelTypeFields(PyTypeObject& contourType)
  {
-  contourType.tp_doc = PyMeshingKernel_doc; 
+  contourType.tp_doc = PyMeshingKernel_doc;
   contourType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   contourType.tp_methods = MeshingKernelMethods;
   contourType.tp_dict = PyDict_New();
@@ -173,8 +173,8 @@ SetMeshingKernelTypeFields(PyTypeObject& contourType)
 //-----------------------
 // Set the kernel names in the MeshingKernelType dictionary.
 //
-// The names in the MeshingKernelType dictionary are 
-// referenced as a string class variable for the Python 
+// The names in the MeshingKernelType dictionary are
+// referenced as a string class variable for the Python
 // Kernel class.
 //
 static void

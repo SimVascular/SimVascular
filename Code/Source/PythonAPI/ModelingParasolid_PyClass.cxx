@@ -29,12 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API Parasolid solid class. 
+// The functions defined here implement the SV Python API Parasolid solid class.
 //
 // The class name is 'modeling.Parasolid'.
 
 //------------------
-// PyParasolidSolid 
+// PyParasolidSolid
 //------------------
 // Define the ParasolidSolid class (type).
 //
@@ -47,14 +47,14 @@ CreateSolidModelObjectFunction PyCreateParasolidSolidObject = nullptr;
 //////////////////////////////////////////////////////
 //          C l a s s    M e t h o d s              //
 //////////////////////////////////////////////////////
-// ParasolidSolid class methods. 
+// ParasolidSolid class methods.
 
 //----------------------
-// ParasolidSolid_write 
+// ParasolidSolid_write
 //----------------------
 //
 PyDoc_STRVAR(ParasolidSolid_write_doc,
-" write(file_name)  \n\ 
+" write(file_name)  \n\
   \n\
   Write the solid model to a file in the Parasolid .xmt_txt format. \n\
   \n\
@@ -79,7 +79,7 @@ ParasolidSolid_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
   std::cout << "[ParasolidSolid_write] " << std::endl;
   std::cout << "[ParasolidSolid_write] kernel: " << self->kernel << std::endl;
 
-  // Add format as file extension. 
+  // Add format as file extension.
   //
   std::string fullFileName = std::string(fileName);
   auto extension = fullFileName.substr(fullFileName.find_last_of(".") + 1);
@@ -108,7 +108,7 @@ static char* MODELING_PARAMODELING_CLASS = "Parasolid";
 static char* MODELING_PARAMODELING_MODULE_CLASS = "modeling.Parasolid";
 
 //---------------------------
-// PyParasolidSolidClass_doc 
+// PyParasolidSolidClass_doc
 //---------------------------
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
@@ -128,16 +128,16 @@ PyMethodDef PyParasolidSolidMethods[] = {
 };
 
 //----------------------
-// PyParasolidSolidInit 
+// PyParasolidSolidInit
 //----------------------
 // This function is used to initialize an object after it is created.
 //
-// This implements the Python __init__ method for the Contour class. 
+// This implements the Python __init__ method for the Contour class.
 // It is called after calling the __new__ method.
 //
 static int
 PyParasolidSolidInit(PyParasolidSolid* self, PyObject* args, PyObject *kwds)
-{ 
+{
   static int numObjs = 1;
   std::cout << "[PyParasolidSolidInit] New ParasolidSolid object: " << numObjs << std::endl;
   //self->super.solidModel = new cvPARAMODELINGSolidModel();
@@ -146,7 +146,7 @@ PyParasolidSolidInit(PyParasolidSolid* self, PyObject* args, PyObject *kwds)
 }
 
 //---------------------
-// PyParasolidSolidNew 
+// PyParasolidSolidNew
 //---------------------
 // Create a new instance of a ParasolidSolid object.
 //
@@ -165,7 +165,7 @@ PyParasolidSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //-------------------------
-// PyParasolidSolidDealloc 
+// PyParasolidSolidDealloc
 //-------------------------
 //
 static void
@@ -177,36 +177,36 @@ PyParasolidSolidDealloc(PyParasolidSolid* self)
 }
 
 //---------------------------
-// PyParasolidSolidType 
+// PyParasolidSolidType
 //---------------------------
-// Define the Python type object that stores ParasolidSolid data. 
+// Define the Python type object that stores ParasolidSolid data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 PyTypeObject PyParasolidSolidType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = MODELING_PARAMODELING_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyParasolidSolid)
+  MODELING_PARAMODELING_MODULE_CLASS,
+  sizeof(PyParasolidSolid)
 };
 
 //----------------------------
 // SetParasolidSolidTypeFields
 //----------------------------
-// Set the Python type object fields that stores ParasolidSolid data. 
+// Set the Python type object fields that stores ParasolidSolid data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 void
 SetParasolidSolidTypeFields(PyTypeObject& solidType)
  {
   // Doc string for this type.
-  solidType.tp_doc = PyParasolidSolidClass_doc; 
+  solidType.tp_doc = PyParasolidSolidClass_doc;
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   solidType.tp_new = PyParasolidSolidNew;
   //.tp_new = PyType_GenericNew,
@@ -232,7 +232,7 @@ PyAPI_InitParasolid(CreateSolidModelObjectFunction create_object)
 {
   // Set the function to create Parasolid modeling objects.
   PyCreateParasolidSolidObject = create_object;
-  
+
   // Add a method to create a Parasolid modeling object.
   CvSolidModelCtorMap[SolidModel_KernelT::SM_KT_PARASOLID] = []()-> cvSolidModel*{ return PyCreateParasolidSolidObject(); };
 }

@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Define the Python 'meshing.AdaptiveKernel' class that encapsulates adaptive meshing kernel types. 
+// Define the Python 'meshing.AdaptiveKernel' class that encapsulates adaptive meshing kernel types.
 //
 #ifndef PYAPI_MESHING_ADAPTIVE_KERNEL_H
 #define PYAPI_MESHING_ADAPTIVE_KERNEL_H
@@ -40,7 +40,7 @@
 #include <string>
 #include <structmember.h>
 
-#include "sv_AdaptObject.h";
+#include "sv_AdaptObject.h"
 
 // Define a map between mesh kernel name and enum type.
 //
@@ -52,7 +52,7 @@ static std::map<std::string,KernelType> adaptKernelNameEnumMap =
 };
 
 // The list of valid kernel names, used in error messages.
-static std::string adaptKernelValidNames = "MESHSIM or TETGEN"; 
+static std::string adaptKernelValidNames = "MESHSIM or TETGEN";
 
 //----------------------------
 // MeshingAdaptiveKernel
@@ -63,11 +63,11 @@ typedef struct {
 PyObject_HEAD
 } MeshingAdaptiveKernel;
 
-std::string 
+std::string
 MeshingAdaptiveKernel_get_name(KernelType kernelType)
 {
   for (auto const& entry : adaptKernelNameEnumMap) {
-      if (kernelType == entry.second) { 
+      if (kernelType == entry.second) {
           return entry.first;
       }
   }
@@ -78,7 +78,7 @@ MeshingAdaptiveKernel_get_name(KernelType kernelType)
 //          C l a s s    M e t h o d s                //
 ////////////////////////////////////////////////////////
 //
-// Python 'Kernel' class methods. 
+// Python 'Kernel' class methods.
 
 static PyObject *
 MeshingAdaptiveKernel_get_names()
@@ -90,7 +90,7 @@ MeshingAdaptiveKernel_get_names()
       PyList_SetItem(nameList, n, PyUnicode_FromString(name));
       n += 1;
   }
-  return nameList; 
+  return nameList;
 }
 
 //------------------------------
@@ -116,23 +116,23 @@ PyDoc_STRVAR(MeshingAdaptiveKernel_doc, "adaptive meshing kernel class functions
 //--------------------------------------------
 // Define the MeshingAdaptiveType type object
 //--------------------------------------------
-// Define the Python type object that stores contour.kernel types. 
+// Define the Python type object that stores contour.kernel types.
 //
 static PyTypeObject PyMeshingAdaptiveKernelType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = MESHING_ADAPTIVE_KERNEL_MODULE_CLASS,
-  .tp_basicsize = sizeof(MeshingAdaptiveKernel)
+  MESHING_ADAPTIVE_KERNEL_MODULE_CLASS,
+  sizeof(MeshingAdaptiveKernel)
 };
 
 //-----------------------------------------
 // SetMeshingAdaptiveKernelTypeFields
 //-----------------------------------------
-// Set the Python type object fields that stores Kernel data. 
+// Set the Python type object fields that stores Kernel data.
 //
 static void
 SetMeshingAdaptiveKernelTypeFields(PyTypeObject& kernelType)
  {
-  kernelType.tp_doc = MeshingAdaptiveKernel_doc; 
+  kernelType.tp_doc = MeshingAdaptiveKernel_doc;
   kernelType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   kernelType.tp_methods = MeshingAdaptiveKernelMethods;
   kernelType.tp_dict = PyDict_New();
@@ -143,8 +143,8 @@ SetMeshingAdaptiveKernelTypeFields(PyTypeObject& kernelType)
 //-------------------------------
 // Set the kernel names in the MeshingAdaptiveKernelType dictionary.
 //
-// The names in the MeshingAdaptiveKernelType dictionary are 
-// referenced as a string class variable for the Python 
+// The names in the MeshingAdaptiveKernelType dictionary are
+// referenced as a string class variable for the Python
 // Kernel class.
 //
 static void
