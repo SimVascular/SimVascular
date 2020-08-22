@@ -406,7 +406,41 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
   int numSubdivisionIters = BlendOptionsGetInt(blendOptsArg, BlendOptions::NUM_SUBDIVISION_ITERATIONS);
   int numCgSmoothIters = BlendOptionsGetInt(blendOptsArg, BlendOptions::NUM_CGSMOOTH_ITERATIONS);
   int numLapSmoothIters = BlendOptionsGetInt(blendOptsArg, BlendOptions::NUM_LAPSMOOTH_ITERATIONS);
-  double targetDecimation = BlendOptionsGetDouble(blendOptsArg, BlendOptions::TARGET_DECIMATION);
+  // The API uses a percent, SV uses the value percent/100.
+  double targetDecimation = BlendOptionsGetDouble(blendOptsArg, BlendOptions::TARGET_DECIMATION) / 100.0;
+
+  // Check values.
+  //
+  if (numBlendIters < 1) { 
+      api.error("The 'num_blend_operations' parameter must be > 0.");
+      return nullptr;
+  }
+
+  if (numSubblendIters < 1) { 
+      api.error("The 'num_subblend_operations' parameter must be > 0.");
+      return nullptr;
+  }
+
+  if (numSubdivisionIters < 0) { 
+      api.error("The 'num_subdivision_operations' parameter must be >= 0.");
+      return nullptr;
+  }
+
+  if (numCgSmoothIters < 0) { 
+      api.error("The 'num_cgsmooth_iterations' parameter must be >= 0.");
+      return nullptr;
+  }
+
+  if (numLapSmoothIters < 1) { 
+      api.error("The 'num_cgsmooth_iterations' parameter must be > 0.");
+      return nullptr;
+  }
+
+  if (targetDecimation < 0.0) { 
+      api.error("The 'target_decimation' parameter must be > 0.0.");
+      return nullptr;
+  }
+
   std::cout << "[Geom_local_blend] numBlendIters: " << numBlendIters << std::endl;
   std::cout << "[Geom_local_blend] numSubblendIters: " << numSubblendIters << std::endl;
   std::cout << "[Geom_local_blend] numSubdivisionIters: " << numSubdivisionIters << std::endl;

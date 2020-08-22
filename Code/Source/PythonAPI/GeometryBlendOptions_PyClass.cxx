@@ -72,11 +72,11 @@ typedef struct {
 // lower case string is the Python option name.
 // 
 namespace BlendOptions {
-  char* NUM_BLEND_ITERATIONS = "num_blend_iterations";
-  char* NUM_SUBBLEND_ITERATIONS = "num_subblend_iterations";
-  char* NUM_SUBDIVISION_ITERATIONS = "num_subdivision_iterations";
+  char* NUM_BLEND_ITERATIONS = "num_blend_operations";
+  char* NUM_SUBBLEND_ITERATIONS = "num_subblend_operations";
+  char* NUM_SUBDIVISION_ITERATIONS = "num_subdivision_operations";
   char* NUM_CGSMOOTH_ITERATIONS = "num_cgsmooth_iterations";
-  char* NUM_LAPSMOOTH_ITERATIONS = "num_lapsmooth_iterations";
+  char* NUM_LAPSMOOTH_ITERATIONS = "num_lapsmooth_operations";
   char* TARGET_DECIMATION = "target_decimation";
 
   // Parameter names for the 'radius_face' option.
@@ -240,49 +240,58 @@ static PyMethodDef PyBlendOptionsMethods[] = {
 //
 // The attributes can be set/get directly in from the BlendOptions object.
 //
-// [TODO:Dave] I'm only exposing some of the options for now.
-
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
+//
 PyDoc_STRVAR(num_blend_iterations_doc,
   "Type: int                                                               \n\
    Default: 2                                                              \n\ 
    \n\
-   The number of iterations for the blending operation.                    \n\
+   The number of times to perform blending operations. A series of subbblend\n\
+   opertations and a subdivision operation is performed for each blending  \n\
+   operation.                                                              \n\
 ");
 
 PyDoc_STRVAR(num_subblend_iterations_doc,
   "Type: int                                                               \n\
    Default: 3                                                              \n\ 
    \n\
-   The number of iterations for the blending operation.                    \n\
+   The number of subdivision operations to be performed within each blending\n\
+   operation. Each subbblend operation performs: constrained smoothing,    \n\
+   Laplacian smoothing, and decimation operations.                         \n\
 ");
-
 
 PyDoc_STRVAR(num_subdivision_iterations_doc,
   "Type: int                                                               \n\
    Default: 1                                                              \n\ 
    \n\
-   The number of iterations for the blending operation.                    \n\
+   The number of subdivisions operations to perform at the end of each     \n\
+   blending operation. Each triangle in the surface is divided into four   \n\
+   new triangles for each subdivision operation.                           \n\
 ");
 
 PyDoc_STRVAR(num_cgsmooth_iterations_doc,
   "Type: int                                                               \n\
    Default: 2                                                              \n\ 
    \n\
-   The number of iterations for the blending operation.                    \n\
+   The number of conjugate gradient iterations used in the constrained     \n\
+   constrained smoothing computation performed for each subbblend operation.\n\
 ");
 
 PyDoc_STRVAR(num_lapsmooth_iterations_doc,
   "Type: int                                                               \n\
    Default: 50                                                             \n\ 
    \n\
-   The number of iterations for the blending operation.                    \n\
+   The number of laplacian smoothing operations to perform for each        \n\
+   subbblend operation.                                                    \n\
 ");
 
 PyDoc_STRVAR(target_decimation_doc,
   "Type: float                                                             \n\
-   Default: 0.01                                                           \n\ 
+   Default: 1.0                                                            \n\ 
    \n\
-   The number of iterations for the blending operation.                    \n\
+   The percent of triangles to remove from the smoothed surface each       \n\
+   subblend operation.                                                     \n\
 ");
 
 static PyMemberDef PyBlendOptionsMembers[] = {
@@ -347,7 +356,7 @@ PyBlendOptionsInit(PyBlendOptions* self, PyObject* args, PyObject* kwargs)
   self->num_subdivision_iterations = 1;
   self->num_cgsmooth_iterations = 2;
   self->num_lapsmooth_iterations = 50;
-  self->target_decimation = 0.01;
+  self->target_decimation = 1.0;
 
   return 0;
 }
