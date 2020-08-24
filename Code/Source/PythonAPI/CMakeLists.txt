@@ -53,6 +53,11 @@ list (APPEND CXXSRCS
   Vmtk_PyModule.cxx
 )
 
+# hack to define US_MODULE_NAME because we are including sv4gui_ContourGroupIO.h
+set_source_files_properties(Segmentation_PyModule.cxx PROPERTIES COMPILE_OPTIONS "-DUS_MODULE_NAME=sv4guiModulePythonAPI")
+set_source_files_properties(Meshing_PyModule.cxx PROPERTIES COMPILE_OPTIONS "-DUS_MODULE_NAME=sv4guiModulePythonAPI")
+set_source_files_properties(Modeling_PyModule.cxx PROPERTIES COMPILE_OPTIONS "-DUS_MODULE_NAME=sv4guiModulePythonAPI")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib} ${PYTHON_LIBRARY} ${org_sv_pythondatanodes} )
