@@ -633,6 +633,14 @@ ifeq ($(SV_USE_MITK),1)
   endif
 endif
 
+ifeq ($(SV_USE_PYTHON),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/PythonAPI
+  else
+     LIBDIRS += ../Code/Source/PythonAPI
+  endif
+endif
+
 SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 
 # -------------------------
