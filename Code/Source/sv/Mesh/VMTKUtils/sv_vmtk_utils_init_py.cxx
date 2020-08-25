@@ -81,6 +81,8 @@ PyObject* Geom_CapCmd( PyObject* self, PyObject* args);
 PyObject* Geom_CapWIdsCmd( PyObject* self, PyObject* args);
 
 PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args);
+
+PyObject* Geom_CenterlineSectionsCmd( PyObject* self, PyObject* args);
 #endif
 
 // Helper functions
@@ -112,6 +114,7 @@ PyMethodDef VMTKUtils_methods[]=
   { "Distancetocenterlines", Geom_DistanceToCenterlinesCmd, METH_VARARGS,NULL},
   { "Separatecenterlines", Geom_SeparateCenterlinesCmd, METH_VARARGS,NULL},
   { "Mergecenterlines", Geom_MergeCenterlinesCmd, METH_VARARGS,NULL},
+  { "CenterlineSections", Geom_CenterlineSectionsCmd, METH_VARARGS,NULL},
   { "Cap", Geom_CapCmd, METH_VARARGS,NULL},
   { "Cap_with_ids", Geom_CapWIdsCmd, METH_VARARGS,NULL},
   { "Mapandcorrectids", Geom_MapAndCorrectIdsCmd, METH_VARARGS,NULL},
@@ -682,5 +685,105 @@ PyObject* Geom_MapAndCorrectIdsCmd( PyObject* self, PyObject* args)
 
 
   return Py_BuildValue("s",geomDst->GetName()) ;
+}
+//--------------------
+//Geom_CenterlineSectionsCmd
+//--------------------
+PyObject* Geom_CenterlineSectionsCmd( PyObject* self, PyObject* args)
+{
+  char *usage;
+  char *centInName;
+  char *surfInName;
+  char *centOutName;
+  char *surfOutName;
+  char *sectionsName;
+  cvRepositoryData *centSrc;
+  cvRepositoryData *surfSrc;
+  cvRepositoryData *centDst = NULL;
+  cvRepositoryData *surfDst = NULL;
+  cvRepositoryData *sectionsDst = NULL;
+  RepositoryDataT type;
+
+  if (!PyArg_ParseTuple(args,"sssss",&centInName,&surfInName,&centOutName,&surfOutName,&sectionsName))
+  {
+    PyErr_SetString(PyRunTimeErr,
+	"Could not import four chars: centInName, surfInName, centOutName, surfOutName, sectionsName");
+  }
+
+  // Retrieve source object:
+  centSrc = gRepository->GetObject( centInName );
+  if ( centSrc == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "couldn't find object" );
+
+  }
+
+  type = centSrc->GetType();
+  if ( type != POLY_DATA_T ) {
+    PyErr_SetString(PyRunTimeErr, " obj not of type cvPolyData");
+
+  }
+
+  surfSrc = gRepository->GetObject( surfInName );
+  if ( surfSrc == NULL ) {
+    PyErr_SetString(PyRunTimeErr, "couldn't find object" );
+
+  }
+
+  type = surfSrc->GetType();
+  if ( type != POLY_DATA_T ) {
+    PyErr_SetString(PyRunTimeErr, " obj not of type cvPolyData");
+
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( centOutName ) ) {
+    PyErr_SetString(PyRunTimeErr, "object already exists");
+
+  }
+
+  if ( gRepository->Exists( surfOutName ) ) {
+    PyErr_SetString(PyRunTimeErr, "object already exists");
+
+  }
+
+  if ( gRepository->Exists( sectionsName ) ) {
+    PyErr_SetString(PyRunTimeErr, "object already exists");
+
+  }
+
+  // Do work of command:
+
+  if ( sys_geom_centerlinesections( (cvPolyData*)centSrc, (cvPolyData*)surfSrc, (cvPolyData**)(&centDst), (cvPolyData**)(&surfDst), (cvPolyData**)(&sectionsDst))
+       != SV_OK ) {
+    PyErr_SetString(PyRunTimeErr,"error creating centerlines");
+
+  }
+
+  if ( !( gRepository->Register( centOutName, centDst ) ) ) {
+    PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
+    delete centDst;
+    delete surfDst;
+    delete sectionsDst;
+
+  }
+
+  if ( !( gRepository->Register( surfOutName, surfDst ) ) ) {
+    PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
+    delete centDst;
+    delete surfDst;
+    delete sectionsDst;
+
+  }
+
+  if ( !( gRepository->Register( sectionsName, sectionsDst ) ) ) {
+    PyErr_SetString(PyRunTimeErr, "error registering obj in repository");
+    delete centDst;
+    delete surfDst;
+    delete sectionsDst;
+
+  }
+
+
+  return Py_BuildValue("[ss]", centDst->GetName(), sectionsDst->GetName());
 }
 #endif
