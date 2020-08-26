@@ -70,6 +70,10 @@ public:
     virtual void SetControlPoint(int index, std::array<double,3> point) override;
 
     void SetControlPointByRadius(double radius, double* point);
+
+    double GetRadius();
+
+    void SetRadius(double radius);
     
     //virtual void CreateContourPoints() override;
 

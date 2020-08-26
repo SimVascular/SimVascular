@@ -29,20 +29,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiPythonDataNodesPluginActivator object provides access to 
+// a ctkPluginContext object, the execution context of a plugin within 
+// the framework used to access other methods that interact with the framework.
+//
+// This object is only created when running SV with the GUI, it is not 
+// created when running the SV Python interface from the command line.
+//
 #include "sv4gui_PythonDataNodesPluginActivator.h"
 #include <service/cm/ctkConfigurationAdmin.h>
 #include <service/cm/ctkConfiguration.h>
 
-
-
+#include <iostream>
 
 ctkPluginContext* sv4guiPythonDataNodesPluginActivator::m_Context = nullptr;
-
-sv4guiPythonDataNodesPluginActivator* sv4guiPythonDataNodesPluginActivator::inst = nullptr;
+sv4guiPythonDataNodesPluginActivator* sv4guiPythonDataNodesPluginActivator::m_Inst = nullptr;
 
 sv4guiPythonDataNodesPluginActivator::sv4guiPythonDataNodesPluginActivator()
 {
-    inst = this;
+  m_Inst = this;
 }
 
 sv4guiPythonDataNodesPluginActivator::~sv4guiPythonDataNodesPluginActivator()
@@ -51,35 +56,32 @@ sv4guiPythonDataNodesPluginActivator::~sv4guiPythonDataNodesPluginActivator()
 
 sv4guiPythonDataNodesPluginActivator* sv4guiPythonDataNodesPluginActivator::GetDefault()
 {
-  return inst;
+  return m_Inst;
 }
 
-
+//-------
+// start
+//-------
+// Start the plugin.
+//
 void sv4guiPythonDataNodesPluginActivator::start(ctkPluginContext* context)
 {
-//    m_Instance = this;
-//    m_Context = context;
-    berry::AbstractUICTKPlugin::start(context);
-    printf("activator.start\n");
-    this->m_Context = context;
-
+  berry::AbstractUICTKPlugin::start(context);
+  this->m_Context = context;
 }
 
+//------
+// stop
+//------
+// Stop the plugin.
+//
 void sv4guiPythonDataNodesPluginActivator::stop(ctkPluginContext* context)
 {
-//    Q_UNUSED(context)
-    this->m_Context = nullptr;
-//    m_Context = nullptr;
-//    m_Instance = nullptr;
+  this->m_Context = nullptr;
 }
 
 ctkPluginContext* sv4guiPythonDataNodesPluginActivator::GetContext()
 {
-    printf("activator.getcontext\n");
   return m_Context;
 }
 
-//svModelingPluginActivator* svModelingPluginActivator::GetInstance()
-//{
-//    return m_Instance;
-//}

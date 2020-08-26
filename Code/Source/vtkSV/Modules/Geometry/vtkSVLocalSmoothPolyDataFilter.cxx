@@ -869,13 +869,13 @@ int vtkSVLocalSmoothPolyDataFilter::GetSmoothArrays(vtkPolyData *object, int typ
   {
     if (type == 0)
     {
-	    std::cout<<"Point Array exists!"<<endl;
+	    //std::cout<<"Point Array exists!"<<endl;
       this->SmoothPointArray = vtkIntArray::SafeDownCast(
 	  object->GetPointData()->GetArray(this->SmoothPointArrayName));
     }
     else
     {
-	    std::cout<<"Cell Array exists!"<<endl;
+	    //std::cout<<"Cell Array exists!"<<endl;
       this->SmoothCellArray = vtkIntArray::SafeDownCast(
 	  object->GetCellData()->GetArray(this->SmoothCellArrayName));
     }

@@ -318,8 +318,8 @@ int vtkSVConstrainedSmoothing::ConstainedSmooth(vtkPolyData *original,vtkPolyDat
   vtkFloatArray *normals;
   normals = vtkFloatArray::SafeDownCast(
     normaler->GetOutput()->GetPointData()->GetNormals());
-  std::cout<<"num normals: "<<normals->GetNumberOfTuples()<<endl;
-  std::cout<<"Num points: "<<numPoints<<endl;
+  //std::cout<<"num normals: "<<normals->GetNumberOfTuples()<<endl;
+  //std::cout<<"Num points: "<<numPoints<<endl;
 
   int totalEqs = numPoints*6 - this->NumFixedPoints;
   //Set up spartse matrix for conjugate gradient solve

@@ -153,7 +153,7 @@ int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a,
   vtkSVMathUtils::InnerProduct(r, r, a_trans->GetNumberOfRows(), rs_old);
 
   if (sqrt(rs_old) < epsilon) {
-    printf("The initial solution is good.\n");
+    //printf("The initial solution is good.\n");
     delete [] r;
     delete [] p;
     delete [] temp;
@@ -188,7 +188,7 @@ int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a,
     if (sqrt(rs_new) < epsilon)
     {
       /// DEBUG ///
-      printf("rs_new = %.20lf\n", rs_new);
+      //printf("rs_new = %.20lf\n", rs_new);
 
       break;
     }
@@ -204,8 +204,8 @@ int vtkSVMathUtils::ConjugateGradient(vtkSVSparseMatrix *a,
   }
 
   /// DEBUG ///
-  printf("rs_old = %.20lf\n", rs_old);
-  printf("iterations = %d\n", iteration);
+  //printf("rs_old = %.20lf\n", rs_old);
+  //printf("iterations = %d\n", iteration);
 
   delete [] r;
   delete [] p;

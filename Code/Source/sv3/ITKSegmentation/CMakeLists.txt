@@ -36,11 +36,6 @@ set(export_directive segitk)
 set(export_file_name svSegITKExports.h)
 
 list(APPEND PLUGINLIBS ${lib})
-if(SV_USE_PYTHON)
-	include_directories(${PYTHON_INCLUDE_PATH}
-		    ${PYTHON_INCLUDE_DIR}
-		    ${PYTHON_INCLUDE_DIRS})
-endif()
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
 
 set(CXXSRCS  sv3_ITKUtils.cxx sv3_ITKLevelSet.cxx)
@@ -55,15 +50,7 @@ set(HDRS sv3_ITKLevelSet.h sv3_ITKLevelSetBase.h
         sv3_ITKLset_VTK_Macros.h sv3_ITKLset_ImgInfo.h
   )
 
-if(SV_USE_PYTHON)
-  list(APPEND CXXSRCS sv3_ITKUtils_init_py.cxx sv3_ITKLset2d_init_py.cxx sv3_ITKLset3d_init_py.cxx sv3_ITKLset_init_py.cxx)
-endif()
-
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} sv3_ITKUtils_init.cxx sv3_ITKLset2d_init.cxx sv3_ITKLset3d_init.cxx sv3_ITKLset_init.cxx )
-
-if(SV_USE_PYTHON)
-  target_link_libraries(${lib} ${PYTHON_LIBRARY})
-endif()
 
 target_link_libraries(${lib}
  ${SV_LIB_REPOSITORY_NAME}

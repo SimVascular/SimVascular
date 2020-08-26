@@ -1368,7 +1368,7 @@ static PyObject* cvMesh_GetModelFaceInfoMtd( pyMeshObject* self, PyObject* args)
   cvMeshObject *geom = self->geom;
 
   char info[99999];
-  geom->GetModelFaceInfo(info);
+  //geom->GetModelFaceInfo(info);
 
   return Py_BuildValue("s",info);
 }

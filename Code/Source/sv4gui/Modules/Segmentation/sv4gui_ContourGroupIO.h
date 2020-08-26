@@ -33,7 +33,7 @@
 #define SV4GUI_CONTOURGROUPIO_H
 
 #include "SimVascular.h"
-
+#include "sv4gui_ContourGroup.h"
 #include <sv4guiModuleSegmentationExports.h>
 
 #include "mitkAbstractFileIO.h"
@@ -48,6 +48,8 @@ public:
     std::vector<mitk::BaseData::Pointer> Read() override;
     static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
     mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
+
+   static sv4guiContourGroup::Pointer CreateGroupFromFile(std::string fileName);
 
     void Write() override;
     mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;

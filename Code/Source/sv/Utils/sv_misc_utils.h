@@ -29,12 +29,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CVMISC_UTILS_H
-#define __CVMISC_UTILS_H
 
+#ifndef SV_MISC_UTILS_H
+#define SV_MISC_UTILS_H
 
 #include <math.h>
-
 
 #define svmaximum(A, B) ((A) > (B) ? (A) : (B))
 #define svminimum(A, B) ((A) < (B) ? (A) : (B))

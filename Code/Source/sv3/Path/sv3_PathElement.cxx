@@ -482,3 +482,33 @@ void PathElement::CalculateBoundingBox(double *bounds)
     }
 }
 
+//---------------------------
+// CreateVtkPolyDataFromPath
+//---------------------------
+// Get the geometry for the path control or path curve
+// points as vtkPolyData.
+//
+vtkSmartPointer<vtkPolyData>
+PathElement::CreateVtkPolyDataFromPath(bool fromControlPoints)
+{
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+  auto numCurvePoints = m_PathPoints.size();
+
+  for (int i = 0; i <= numCurvePoints; i++) {
+     std::array<double, 3> point = m_PathPoints[i].pos;
+     points->InsertPoint(i, point[0], point[1], point[2]);
+
+     if ((i > 0) && (i < numCurvePoints)) {
+         vtkIdType cell[2] = {i-1,i};
+         lines->InsertNextCell(2,cell);
+      }
+  }
+
+  vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+  polyData->SetPoints(points);
+  polyData->SetLines(lines);
+
+  return polyData;
+}
+

@@ -131,6 +131,8 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   int GetBoundaryFaces(double angle);
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
+  bool HasVolumeMesh();
+  bool HasSurfaceMesh();
 
   //Set curve sizes and other mesh options
   int SetMeshOptions(char *flags,int numValues, double *values);
@@ -147,6 +149,13 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
 
   void SetAllowMultipleRegions(bool value);
 
+  // Add these methods to generate mesh sizing arrays separate
+  // from option processing.
+  int GenerateLocalSizeSizingArray(int faceID, double edgeSize);
+  void EnableSizeFunctionBasedMesh();
+  void DisableSizeFunctionBasedMesh();
+  bool SizeFunctionBasedMeshIsEnabled();
+
   //Meshing operation and post-meshing cleanup/stats functions
   int GenerateMesh();
   int WriteMesh(char *filename, int smsver);
@@ -159,8 +168,9 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   int GetNodeCoords(int node);
   cvPolyData *GetPolyData();
   cvPolyData *GetSolid();
+  bool HasSolid();
   cvUnstructuredGrid *GetUnstructuredGrid();
-  int GetModelFaceInfo(char rtnstr[99999]);
+  int GetModelFaceInfo(std::vector<int>& faceIDs);
 
   // queries for bc's
   cvPolyData* GetFacePolyData (int orgfaceid);

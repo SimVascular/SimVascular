@@ -775,26 +775,23 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
 
   QFile xmlFile(QString::fromStdString(transform_fn));
   if (xmlFile.open(QIODevice::ReadOnly)){
-    std::cout << "loading xml\n";
+    //std::cout << "loading xml\n";
     QString *em=NULL;
     doc.setContent(&xmlFile,em);
     xmlFile.close();
 
     auto root = doc.firstChildElement("Transform").firstChildElement("transform");
-
-    std::cout << doc.toString().toStdString() << "\n";
-
-    std::cout << root.text().toStdString() << "\n";
-
+    //std::cout << doc.toString().toStdString() << "\n";
+    //std::cout << root.text().toStdString() << "\n";
     auto transform = image->GetGeometry()->GetVtkMatrix();
 
-    std::cout << "starting loop\n";
+    //std::cout << "starting loop\n";
     for (int j = 0; j < 3; j++){
       for (int i = 0; i < 3; i++){
         auto label = "t"+std::to_string(i)+std::to_string(j);
-        std::cout << label << "\n";
+        //std::cout << label << "\n";
         auto line = root.attribute(QString::fromStdString(label));
-        std::cout << line.toStdString() << "\n";
+        //std::cout << line.toStdString() << "\n";
         auto v = std::stod(line.toStdString());
         transform->SetElement(i,j,v);
       }

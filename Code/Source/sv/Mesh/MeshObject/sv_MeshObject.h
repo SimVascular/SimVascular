@@ -133,8 +133,11 @@ public:
   virtual int GetNodeCoords(int node) = 0;
   virtual cvPolyData *GetPolyData() = 0;
   virtual cvPolyData *GetSolid() = 0;
+  virtual bool HasSolid() = 0;
   virtual cvUnstructuredGrid *GetUnstructuredGrid() = 0;
-  virtual int GetModelFaceInfo(char rtnstr[99999]) = 0;
+  virtual int GetModelFaceInfo(std::vector<int>& faceIDs) = 0;
+  virtual bool HasVolumeMesh() = 0;
+  virtual bool HasSurfaceMesh() = 0;
 
   // queries for bc's
   virtual cvPolyData* GetFacePolyData (int orgfaceid) = 0;

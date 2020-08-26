@@ -69,8 +69,18 @@ std::vector<mitk::BaseData::Pointer> sv4guiModelIO::Read()
 
 std::vector<mitk::BaseData::Pointer> sv4guiModelIO::ReadFile(std::string fileName)
 {
-    std::vector<mitk::BaseData::Pointer> result;
+    auto group = CreateGroupFromFile(fileName);
+    std::vector<mitk::BaseData::Pointer> result { group.GetPointer() };
+    return result;
+}
 
+//---------------------
+// CreateGroupFromFile
+//---------------------
+// Create a sv4guiModel group from a file.
+//
+sv4guiModel::Pointer sv4guiModelIO::CreateGroupFromFile(std::string fileName)
+{
     TiXmlDocument document;
 
     if (!document.LoadFile(fileName))
@@ -329,8 +339,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiModelIO::ReadFile(std::string fileNam
 
     }//timestep
 
-    result.push_back(model.GetPointer());
-    return result;
+    return model;
 }
 
 mitk::IFileIO::ConfidenceLevel sv4guiModelIO::GetReaderConfidenceLevel() const
@@ -345,12 +354,25 @@ mitk::IFileIO::ConfidenceLevel sv4guiModelIO::GetReaderConfidenceLevel() const
 void sv4guiModelIO::Write()
 {
     ValidateOutputLocation();
-
-    std::string fileName=GetOutputLocation();
-
+    std::string fileName = GetOutputLocation();
     const sv4guiModel* model = dynamic_cast<const sv4guiModel*>(this->GetInput());
-    if(!model) return;
 
+    if (!model) {
+      return;
+    }
+
+    WriteGroupToFile(const_cast<sv4guiModel*>(model), fileName);
+}
+
+//------------------
+// WriteGroupToFile
+//------------------
+// Write a model group to a .mdl file.
+//
+// This method can be called from the Python API. 
+//
+void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
+{
     TiXmlDocument document;
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
