@@ -29,10 +29,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API meshing module. 
+// The functions defined here implement the SV Python API meshing module.
 //
-// A Python exception sv.meshing.MeshingError is defined for this module. 
-// The exception can be used in a Python 'try' statement with an 'except' clause 
+// A Python exception sv.meshing.MeshingError is defined for this module.
+// The exception can be used in a Python 'try' statement with an 'except' clause
 // like this
 //
 //    except sv.meshing.MeshingError:
@@ -70,7 +70,7 @@
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
 
-// Include meshing Kernel class that defines a map between 
+// Include meshing Kernel class that defines a map between
 // mesh kernel name and enum type.
 #include "MeshingKernel_PyClass.cxx"
 
@@ -79,7 +79,7 @@ static PyObject * PyRunTimeErr;
 //-----------------
 // Define an object factory for creating cvMeshObject objects.
 //
-// An entry for KERNEL_MESHSIM is added later in PyAPI_InitMeshSim() 
+// An entry for KERNEL_MESHSIM is added later in PyAPI_InitMeshSim()
 // if the MeshSim interface is defined (by loading the MeshSim plugin).
 //
 using MesherCtorMapType = std::map<cvMeshObject::KernelType, std::function<cvMeshObject*()>>;
@@ -87,20 +87,20 @@ MesherCtorMapType CvMesherCtorMap = {
     {cvMeshObject::KERNEL_TETGEN, []() -> cvMeshObject* { return new cvTetGenMeshObject(); } },
 };
 
-// Include the definition for the meshing.TetGenOptions classes 
+// Include the definition for the meshing.TetGenOptions classes
 #include "MeshingTetGenOptions_PyClass.cxx"
 
-// Include the definition for the meshing.MeshSimOptions class. 
+// Include the definition for the meshing.MeshSimOptions class.
 #include "MeshingMeshSimOptions_PyClass.cxx"
 
 // Include mesh.Mesher definition.
 #include "MeshingMesher_PyClass.cxx"
 
-// Include adaptive meshing Kernel class that defines a map between 
+// Include adaptive meshing Kernel class that defines a map between
 // adaptive mesh kernel name and enum type.
 #include "MeshingAdaptKernel_PyClass.cxx"
 
-// Include the definition for the meshing.TetGenApaptiveOptions classes. 
+// Include the definition for the meshing.TetGenApaptiveOptions classes.
 #include "MeshingTetGenAdaptOptions_PyClass.cxx"
 
 // Include mesh.Adaptive definition.
@@ -110,14 +110,14 @@ MesherCtorMapType CvMesherCtorMap = {
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 //-------------------------
-// PyMeshing_create_mesher 
+// PyMeshing_create_mesher
 //-------------------------
 //
 PyDoc_STRVAR(PyMeshing_create_adaptive_mesher_doc,
-  "create_adaptive_mesher(kernel)  \n\ 
+  "create_adaptive_mesher(kernel)  \n\
    \n\
    Create an adaptive mesh generator. \n\
    \n\
@@ -155,7 +155,7 @@ PyMeshing_create_adaptive_mesher(PyTypeObject *type, PyObject* args)
 }
 
 //-------------------------
-// PyMeshing_create_mesher 
+// PyMeshing_create_mesher
 //-------------------------
 // [TODO:DaveP] I'm not sure if we want this or not since
 // a mesher can be created using a class name
@@ -163,7 +163,7 @@ PyMeshing_create_adaptive_mesher(PyTypeObject *type, PyObject* args)
 //     mesher = sv.meshing.TetGen()
 //
 PyDoc_STRVAR(PyMeshing_create_mesher_doc,
-  "create_mesher(kernel)  \n\ 
+  "create_mesher(kernel)  \n\
    \n\
    Create a mesher object for the given kernel. \n\
    \n\
@@ -202,7 +202,7 @@ PyMeshing_create_mesher(PyTypeObject *type, PyObject* args)
 
   // Create a mesher for the given kernel.
   auto mesher = PyMesherCreateObject(kernel);
-  if (mesher == nullptr) { 
+  if (mesher == nullptr) {
       api.error("Unable to create a mesher for the '" + std::string(kernelName) + "' kernel." );
       return nullptr;
   }
@@ -231,7 +231,7 @@ static PyMethodDef PyMeshingModuleMethods[] =
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python 
+// Define the initialization function called by the Python
 // interpreter when the module is loaded.
 
 static char* MESHING_MODULE = "meshing";
@@ -244,7 +244,7 @@ static char* MESHING_MODULE_EXCEPTION_OBJECT = "Error";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(Meshing_module_doc, 
+PyDoc_STRVAR(Meshing_module_doc,
   "SimVascular meshing module. \n\
    \n\
    The meshing module provides an interface to SV meshing functionality    \n\
@@ -275,26 +275,26 @@ PyDoc_STRVAR(Meshing_module_doc,
 #include "MeshingSeries_PyClass.cxx"
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 
 static struct PyModuleDef PyMeshingModule = {
    m_base,
-   MESHING_MODULE, 
+   MESHING_MODULE,
    Meshing_module_doc,
-   perInterpreterStateSize, 
+   perInterpreterStateSize,
    PyMeshingModuleMethods
 };
 
@@ -303,13 +303,13 @@ static struct PyModuleDef PyMeshingModule = {
 //------------------
 // The initialization function called by the Python interpreter when the module is loaded.
 //
-PyMODINIT_FUNC 
+PyMODINIT_FUNC
 PyInit_PyMeshing()
 {
   std::cout << "[PyInit_PyMeshing] ========== load meshing module ==========" << std::endl;
 
   //--------------------------
-  // Initialize Meshing Types 
+  // Initialize Meshing Types
   //--------------------------
   //
   // Initialize the TetGenOptions class type.
@@ -364,7 +364,7 @@ PyInit_PyMeshing()
   }
 
   //-----------------------------------
-  // Initialize Adaptive Meshing Types 
+  // Initialize Adaptive Meshing Types
   //-----------------------------------
   //
   // Initialize the TetGenAdaptiveOptions class type.
@@ -414,7 +414,7 @@ PyInit_PyMeshing()
   PyModule_AddObject(module, MESHING_MODULE_EXCEPTION_OBJECT, PyRunTimeErr);
 
   //---------------------
-  // Add Meshing Classes 
+  // Add Meshing Classes
   //---------------------
   //
   // Add the 'meshing.TetGenOptions' class.
@@ -430,8 +430,8 @@ PyInit_PyMeshing()
   */
 
   // Add the 'meshing.Mesher' class.
-  // 
-  // Don't expose the 'meshing.Mesher' class, it is a base class and should 
+  //
+  // Don't expose the 'meshing.Mesher' class, it is a base class and should
   // not be used to create objects.
   //
   //Py_INCREF(&PyMeshingMesherType);
@@ -464,7 +464,7 @@ PyInit_PyMeshing()
   }
 
   //------------------------------
-  // Add Adaptive Meshing Classes 
+  // Add Adaptive Meshing Classes
   //------------------------------
   //
   // Add the 'meshing.TetGenAdaptiveOptions' class.
@@ -474,7 +474,7 @@ PyInit_PyMeshing()
 
   // Add the 'meshing.Adaptive' class.
   //
-  // Don't expose the 'meshing.Adaptive' class, it is a base class and should 
+  // Don't expose the 'meshing.Adaptive' class, it is a base class and should
   // not be used to create objects.
   //
   //Py_INCREF(&PyMeshingAdaptiveType);
@@ -500,7 +500,7 @@ PyInit_PyMeshing()
 #endif
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 //----------------

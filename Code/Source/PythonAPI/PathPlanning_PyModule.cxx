@@ -29,11 +29,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API path planning Module. 
+// The functions defined here implement the SV Python API path planning Module.
 //
-// The module name is 'pathplanning'. 
+// The module name is 'pathplanning'.
 //
-// A Python exception sv.pathplanning.PathError is defined for this module. 
+// A Python exception sv.pathplanning.PathError is defined for this module.
 // The exception can be used in a Python 'try' statement with an 'except' clause.
 //
 #include "SimVascular.h"
@@ -88,7 +88,7 @@ static char* PATHPLANNING_MODULE_EXCEPTION_OBJECT = "Error";
 PyDoc_STRVAR(PathPlanningModule_doc,
    "SimVascular pathplanning module. \n\
    \n\
-   The pathplanning module provides an interface for SV path planning. Paths  \n\ 
+   The pathplanning module provides an interface for SV path planning. Paths  \n\
    model vessel centerlines using a small number of manually selected control \n\
    points. Path geometry is represented by a set of curve points sampled from \n\
    a spline passing through the control points. Path curve points are used to \n\
@@ -108,35 +108,35 @@ static PyMethodDef PyPathPlanningModuleMethods[] =
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python 
+// Define the initialization function called by the Python
 // interpreter when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 //
 static struct PyModuleDef PyPathPlanningModule = {
    m_base,
    PATHPLANNING_MODULE,
-   PathPlanningModule_doc, 
+   PathPlanningModule_doc,
    perInterpreterStateSize,
    PyPathPlanningModuleMethods
 };
 
 //-----------------------
-// PyInit_PyPathplanning 
+// PyInit_PyPathplanning
 //-----------------------
 // The initialization function called by the Python interpreter when the module is loaded.
 //
@@ -213,7 +213,7 @@ PyMODINIT_FUNC PyInit_PyPathplanning()
 #endif
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 2

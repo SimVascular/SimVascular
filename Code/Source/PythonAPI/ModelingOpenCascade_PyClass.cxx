@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API Open Cascade solid class. 
+// The functions defined here implement the SV Python API Open Cascade solid class.
 //
 // The class name is 'modeling.OpenCascade'.
 
@@ -39,7 +39,7 @@
 #include "sv4gui_RegisterOCCTFunction.h"
 
 //-------------
-// PyOcctSolid 
+// PyOcctSolid
 //-------------
 // Define the OcctSolid class (type).
 //
@@ -55,7 +55,7 @@ cvOCCTSolidModel * pyCreateOcctSolid()
 //////////////////////////////////////////////////////
 //          C l a s s    M e t h o d s              //
 //////////////////////////////////////////////////////
-// OcctSolid class methods. 
+// OcctSolid class methods.
 
 ////////////////////////////////////////////////////////
 //          C l a s s    D e f i n i t i o n          //
@@ -70,7 +70,7 @@ static char* MODELING_OCCT_MODULE_CLASS = "modeling.OpenCascade";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PyOcctSolidClass_doc, 
+PyDoc_STRVAR(PyOcctSolidClass_doc,
   "The modeling OpenCascade class is used to represent an Open Cascade    \n\
    solid model.                                                           \n\
 ");
@@ -80,15 +80,15 @@ PyMethodDef PyOcctSolidMethods[] = {
 };
 
 //-----------------
-// PyOcctSolidInit 
+// PyOcctSolidInit
 //-----------------
-// This is the __init__() method for the OcctSolid class. 
+// This is the __init__() method for the OcctSolid class.
 //
 // This function is used to initialize an object after it is created.
 //
 static int
 PyOcctSolidInit(PyOcctSolid* self, PyObject* args, PyObject *kwds)
-{ 
+{
   static int numObjs = 1;
   //std::cout << "[PyOcctSolidInit] New OcctSolid object: " << numObjs << std::endl;
   self->super.solidModel = new cvOCCTSolidModel();
@@ -97,7 +97,7 @@ PyOcctSolidInit(PyOcctSolid* self, PyObject* args, PyObject *kwds)
 }
 
 //----------------
-// PyOcctSolidNew 
+// PyOcctSolidNew
 //----------------
 //
 static PyObject *
@@ -112,7 +112,7 @@ PyOcctSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //--------------------
-// PyOcctSolidDealloc 
+// PyOcctSolidDealloc
 //--------------------
 //
 static void
@@ -124,36 +124,36 @@ PyOcctSolidDealloc(PyOcctSolid* self)
 }
 
 //----------------------
-// PyOcctSolidType 
+// PyOcctSolidType
 //----------------------
-// Define the Python type object that stores OcctSolid data. 
+// Define the Python type object that stores OcctSolid data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 PyTypeObject PyOcctSolidType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = MODELING_OCCT_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyOcctSolid)
+  MODELING_OCCT_MODULE_CLASS,
+  sizeof(PyOcctSolid)
 };
 
 //------------------------
 // SetOcctSolidTypeFields
 //------------------------
-// Set the Python type object fields that stores OcctSolid data. 
+// Set the Python type object fields that stores OcctSolid data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 void
 SetOcctSolidTypeFields(PyTypeObject& solidType)
  {
   // Doc string for this type.
-  solidType.tp_doc = PyOcctSolidClass_doc; 
+  solidType.tp_doc = PyOcctSolidClass_doc;
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   solidType.tp_new = PyOcctSolidNew;
   //.tp_new = PyType_GenericNew,
@@ -187,7 +187,7 @@ InitOcct()
   }
   printf("%-12s %s\n","[InitOcct] Python API OpenCASCADE version:", OCC_VERSION_COMPLETE);
 
-  // Register the file extensions: brep, step, iges and stl. 
+  // Register the file extensions: brep, step, iges and stl.
   auto registerFunction = new sv4guiRegisterOCCTFunction();
 
   std::cout << "[InitOcct] Done. " << std::endl;

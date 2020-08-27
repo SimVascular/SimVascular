@@ -29,14 +29,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API meshing module 'Series' class. 
-// It provides an interface to read in a mesh time-series from SV meshing .msh files. 
+// The functions defined here implement the SV Python API meshing module 'Series' class.
+// It provides an interface to read in a mesh time-series from SV meshing .msh files.
 //
 // The class is referenced from the meshing module as 'meshing.Series'.
 //
 //     meshes = meshing.Series()
 //
-// The SV meshing group code this interfaces to resides in sv4gui/Modules/Mesh/Common which 
+// The SV meshing group code this interfaces to resides in sv4gui/Modules/Mesh/Common which
 // uses MITK manage time-varying meshes.
 //
 #include "sv4gui_MitkMeshIO.h"
@@ -55,12 +55,12 @@ extern sv4guiModel::Pointer ModelingSeries_read(char* fileName);
 // Read in an SV .msh file and create a MeshingSeries object
 // from its contents.
 //
-static sv4guiMitkMesh::Pointer 
+static sv4guiMitkMesh::Pointer
 MeshingSeriesRead(char* fileName)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   sv4guiMitkMesh::Pointer group;
-  bool readSurfaceMesh = false; 
+  bool readSurfaceMesh = false;
   bool readVolumeMesh = false;
 
   // Read in the .msh file.
@@ -85,11 +85,11 @@ MeshingSeriesRead(char* fileName)
 //-----------------------
 // Set the solid model associated with the mesher.
 //
-// This will try to load the solid model .mdl file from 
+// This will try to load the solid model .mdl file from
 // the SV project's Models directory.
 //
-bool 
-MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv4guiMitkMesh* meshingGroup, 
+bool
+MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv4guiMitkMesh* meshingGroup,
     int index, std::string fileName, std::map<std::string,int>& faceIDMap)
 {
 
@@ -123,7 +123,7 @@ MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv4guiMitkMe
   }
   auto solidModelElement = solidGroup->GetModelElement(index);
 
-  // Set the mesher solid modeling kernel. 
+  // Set the mesher solid modeling kernel.
   auto solidType = solidGroup->GetType();
   std::transform(solidType.begin(), solidType.end(), solidType.begin(), ::toupper);
   auto solidKernel = ModelingKernelNameToEnum(solidType);
@@ -135,11 +135,11 @@ MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv4guiMitkMe
   // information so hack it here.
   //
   std::string ext;
-  if (solidKernel == SM_KT_POLYDATA) { 
+  if (solidKernel == SM_KT_POLYDATA) {
       ext = ".vtp";
-  } else if(solidKernel == SM_KT_OCCT) { 
+  } else if(solidKernel == SM_KT_OCCT) {
       ext = ".brep";
-  } else if (solidKernel == SM_KT_PARASOLID) { 
+  } else if (solidKernel == SM_KT_PARASOLID) {
       ext = ".xmt_txt";
   }
 
@@ -152,7 +152,7 @@ MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv4guiMitkMe
   // Set wall face IDs.
   std::vector<int> wallFaceIDs = solidModelElement->GetWallFaceIDs();
   if (mesher->SetWalls(wallFaceIDs.size(), &wallFaceIDs[0]) != SV_OK) {
-      api.error("Error setting wall IDs."); 
+      api.error("Error setting wall IDs.");
       return false;
   }
 
@@ -166,35 +166,35 @@ MeshingSeriesSetModel(PyUtilApiFunction& api, cvMeshObject* mesher, sv4guiMitkMe
 //       G r o u p  C l a s s  M e t h o d s        //
 //////////////////////////////////////////////////////
 //
-// SV Python meshing.Series methods. 
+// SV Python meshing.Series methods.
 
 //----------------------------
-// MeshingSeries_get_num_times 
+// MeshingSeries_get_num_times
 //----------------------------
 //
 PyDoc_STRVAR(MeshingSeries_get_num_times_doc,
-  "get_num_times() \n\ 
+  "get_num_times() \n\
    \n\
    Get the number of time points in the series. \n\
    \n\
    Returns (int): The number of time points in the series.\n\
 ");
 
-static PyObject * 
+static PyObject *
 MeshingSeries_get_num_times(PyMeshingSeries* self, PyObject* args)
 {
   int numSeries = self->meshingGroup->GetTimeSize();
-  return Py_BuildValue("i", numSeries); 
+  return Py_BuildValue("i", numSeries);
 }
 
 //-----------------------
-// MeshingSeries_get_mesh 
+// MeshingSeries_get_mesh
 //-----------------------
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
 PyDoc_STRVAR(MeshingSeries_get_mesh_doc,
-  "get_mesh(time=0) \n\ 
+  "get_mesh(time=0) \n\
    \n\
    Get the mesh object for the given time. The meshing options read from   \n\
    the SV mesh .msh file are also returned.                                \n\
@@ -211,7 +211,7 @@ PyDoc_STRVAR(MeshingSeries_get_mesh_doc,
        the series. \n\
 ");
 
-static PyObject * 
+static PyObject *
 MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
 {
   std::cout << std::endl;
@@ -266,7 +266,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
   // Set the solid model associated with the mesher.
   std::map<std::string,int> faceIDMap;
   auto fileName = self->fileName;
-  if (!MeshingSeriesSetModel(api, mesher, meshingGroup, time, fileName, faceIDMap)) { 
+  if (!MeshingSeriesSetModel(api, mesher, meshingGroup, time, fileName, faceIDMap)) {
       return nullptr;
   }
 
@@ -279,7 +279,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
   auto surfFileName = fileName + ".vtp";
   mesher->LoadMesh(const_cast<char*>(volFileName.c_str()), const_cast<char*>(surfFileName.c_str()));
 
-  // Create an options object and set meshing parameters from the 
+  // Create an options object and set meshing parameters from the
   // command history read from the .msh file.
   //
   // Options must be processed after the solid model is loaded.
@@ -294,7 +294,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
   }
 
   // Return mesh and options objects.
-  return Py_BuildValue("N,N", pyMesherObj, options); 
+  return Py_BuildValue("N,N", pyMesherObj, options);
 }
 
 //--------------------
@@ -304,7 +304,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
 // [TODO:DaveP] finish implementing this.
 //
 PyDoc_STRVAR(MeshingSeries_write_doc,
-  "write(file_name) \n\ 
+  "write(file_name) \n\
    \n\
    Write the mesh group to an SV .msh file.\n\
    \n\
@@ -333,7 +333,7 @@ MeshingSeries_write(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
-  Py_RETURN_NONE; 
+  Py_RETURN_NONE;
 }
 
 ////////////////////////////////////////////////////////
@@ -341,12 +341,12 @@ MeshingSeries_write(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
 ////////////////////////////////////////////////////////
 
 static char* MESHING_SERIES_CLASS = "Series";
-// Dotted name that includes both the module name and the name of the 
+// Dotted name that includes both the module name and the name of the
 // type within the module.
 static char* MESHING_SERIES_MODULE_CLASS = "meshing.Series";
 
 //-------------------
-// MeshingSeries_doc 
+// MeshingSeries_doc
 //-------------------
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
@@ -371,7 +371,7 @@ PyDoc_STRVAR(MeshingSeries_doc,
 ");
 
 //------------------------
-// PyMeshingSeriesMethods 
+// PyMeshingSeriesMethods
 //------------------------
 // Define the methods for the contour.Group class.
 //
@@ -387,31 +387,31 @@ static PyMethodDef PyMeshingSeriesMethods[] = {
 };
 
 //---------------------
-// PyMeshingSeriesType 
+// PyMeshingSeriesType
 //---------------------
-// Define the Python type that stores MeshingSeries data. 
+// Define the Python type that stores MeshingSeries data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 PyTypeObject PyMeshingSeriesType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  MESHING_SERIES_MODULE_CLASS,     
+  MESHING_SERIES_MODULE_CLASS,
   sizeof(PyMeshingSeries)
 };
 
 //----------------------
 // PyMeshingSeries_init
 //----------------------
-// This is the __init__() method for the meshing.Group class. 
+// This is the __init__() method for the meshing.Group class.
 //
 // This function is used to initialize an object after it is created.
 //
 // Arguments:
-//   fileName (optional): An SV .msh file. A new MeshingSeries object is created from 
-//     the contents of the file. 
+//   fileName (optional): An SV .msh file. A new MeshingSeries object is created from
+//     the contents of the file.
 //
-static int 
+static int
 PyMeshingSeriesInit(PyMeshingSeries* self, PyObject* args)
 {
   //std::cout << "[PyMeshingSeriesInit] New MeshingSeries object: " << numObjs << std::endl;
@@ -431,7 +431,7 @@ PyMeshingSeriesInit(PyMeshingSeries* self, PyObject* args)
       self->meshingGroup = sv4guiMitkMesh::New();
   }
 
-  if (self->meshingGroup == nullptr) { 
+  if (self->meshingGroup == nullptr) {
       std::cout << "[PyMeshingSeriesInit] ERROR reading File name: " << fileName << std::endl;
       return -1;
   }
@@ -440,9 +440,9 @@ PyMeshingSeriesInit(PyMeshingSeries* self, PyObject* args)
 }
 
 //--------------------
-// PyMeshingSeriesNew 
+// PyMeshingSeriesNew
 //--------------------
-// Object creation function, equivalent to the Python __new__() method. 
+// Object creation function, equivalent to the Python __new__() method.
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
@@ -452,13 +452,13 @@ PyMeshingSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   auto self = (PyMeshingSeries*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyMeshingSeriesNew] ERROR: Can't allocate type." << std::endl;
-      return nullptr; 
+      return nullptr;
   }
   return (PyObject *) self;
 }
 
 //------------------------
-// PyMeshingSeriesDealloc 
+// PyMeshingSeriesDealloc
 //------------------------
 //
 static void
@@ -471,19 +471,19 @@ PyMeshingSeriesDealloc(PyMeshingSeries* self)
 }
 
 //----------------------------
-// SetMeshingSeriesTypeFields 
+// SetMeshingSeriesTypeFields
 //----------------------------
-// Set the Python type object fields that stores Contour data. 
+// Set the Python type object fields that stores Contour data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetMeshingSeriesTypeFields(PyTypeObject& solidType)
 {
   // Doc string for this type.
-  solidType.tp_doc = MeshingSeries_doc; 
-  // Object creation function, equivalent to the Python __new__() method. 
+  solidType.tp_doc = MeshingSeries_doc;
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   solidType.tp_new = PyMeshingSeriesNew;
   solidType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
@@ -497,7 +497,7 @@ SetMeshingSeriesTypeFields(PyTypeObject& solidType)
 //-----------------------
 // Create a PyMeshingSeriesType object.
 //
-// If the 'meshingGroup' argument is not null then use that 
+// If the 'meshingGroup' argument is not null then use that
 // for the PyMeshingSeriesType.meshingGroup data.
 //
 PyObject *

@@ -31,14 +31,14 @@
 
 // The functions defined here implement the SV Python API 'segmentation' module.
 //
-// A Python exception sv.segmentation.SegmentationError is defined for this module. 
+// A Python exception sv.segmentation.SegmentationError is defined for this module.
 // The exception can be used in a Python 'try' statement with an 'except' clause.
 //
 // SV uses sv4guiContour and sv3::Contour classes to represent segmentation
 // data. sv4guiContour objects are created when reading in segmentation
-// groups from a .ctgr file. 
+// groups from a .ctgr file.
 //
-// The sv4guiContour inheritance looks like 
+// The sv4guiContour inheritance looks like
 //
 //   sv4guiContour : public sv3::Contour
 //     sv4guiContourCircle : public sv4guiContour
@@ -56,7 +56,7 @@
 //     sv3::ContourPolygon : public sv3::Contour
 //       sv3::ContourSplinePolygon : public sv3::ContourPolygon
 //
-// Thus sv4guiContourCircle does not inherit from sv3::circleContour. 
+// Thus sv4guiContourCircle does not inherit from sv3::circleContour.
 //
 // The Python API uses only the sv3::Contour class because it is closer
 // to the segmentation parameters and geometry.
@@ -84,7 +84,7 @@
 #include <string.h>
 #include <array>
 #include <map>
-#include <functional> 
+#include <functional>
 #include <iostream>
 #include "sv_Repository.h"
 #include "sv_RepositoryData.h"
@@ -101,9 +101,9 @@
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
 
-// Prototypes for creating Python segmentation objects. 
+// Prototypes for creating Python segmentation objects.
 static PySegmentation* PyCreateSegmentationType();
-static PyObject * PyCreateSegmentation(cKernelType contourType); 
+static PyObject * PyCreateSegmentation(cKernelType contourType);
 static PyObject * PyCreateSegmentation(sv4guiContour* contour);
 //static PyObject * PyCreateSegmentation(sv3::Contour* contour);
 
@@ -137,12 +137,12 @@ void PySegmentationCopySv4ContourData(sv4guiContour* sv4Contour, sv3::Contour* c
 // Define the 'segmentation' module methods.
 
 //---------------------
-// Segmentation_create 
+// Segmentation_create
 //---------------------
 // [TODO:DaveP] DO we need this?
 //
 PyDoc_STRVAR(Segmentation_create_doc,
-  "Segmentation_create()  \n\ 
+  "Segmentation_create()  \n\
    \n\
    Set the control points for the contour. \n\
    \n\
@@ -150,7 +150,7 @@ PyDoc_STRVAR(Segmentation_create_doc,
      None \n\
 ");
 
-static PyObject* 
+static PyObject*
 Segmentation_create(PySegmentation* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -200,13 +200,13 @@ PyDoc_STRVAR(SegmentationModule_doc,
    The segmentation module provides an interface for SV segmentation methods. \n\
    A segmentation defines the contour geometry of a region of interest using  \n\
    various 2D image segmentation methods. The segmentation module provides several  \n\
-   classes used to create and modify 2D segmentations using circle, ellipse,  \n\ 
-   level set, polygon, spline polygon and threshold methods.                  \n\ 
+   classes used to create and modify 2D segmentations using circle, ellipse,  \n\
+   level set, polygon, spline polygon and threshold methods.                  \n\
    \n\
    Circle, ellipse, polygon, and spline polygon methods are used to manually  \n\
-   define the segmentation region using a set of control points.              \n\ 
+   define the segmentation region using a set of control points.              \n\
    \n\
-   The level set and threshold methods compute the segmentation region        \n\ 
+   The level set and threshold methods compute the segmentation region        \n\
    automatically based on image properties and option settings. \n\
    \n\
 ");
@@ -254,7 +254,7 @@ PySegmentationCtorMapType PySegmentationCtorMap = {
 // PyCreateSegmentation
 //----------------------
 // Create a Python Segmentation object for the given kernel type.
-// 
+//
 static PyObject *
 PyCreateSegmentation(cKernelType contourType)
 {
@@ -267,7 +267,7 @@ PyCreateSegmentation(cKernelType contourType)
       contourObj = PySegmentationCtorMap[contourType]();
   } catch (const std::bad_function_call& except) {
       std::cout << "[PyCreateSegmentation(cKernelType)] ERROR: unknown contourType: " << contourType << std::endl;
-      return nullptr; 
+      return nullptr;
   }
 
   std::cout << "[PyCreateSegmentation(cKernelType)] Done. " << std::endl;
@@ -279,7 +279,7 @@ PyCreateSegmentation(cKernelType contourType)
 //----------------------
 // Create a Python Segmentation object for the given sv4guiContour object.
 //
-// sv4guiContour objects are created when a segmentation group is read 
+// sv4guiContour objects are created when a segmentation group is read
 // in from an SV .ctgr file. However, the API uses only sv3::Contour
 // objects so we need to create sv3::Contour objects from sv4guiContour objects.
 //
@@ -316,39 +316,39 @@ PyCreateSegmentation(sv4guiContour* contour)
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python 
+// Define the initialization function called by the Python
 // interpreter when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 static struct PyModuleDef PySegmentationModule = {
    m_base,
-   SEGMENTATION_MODULE,   
-   SegmentationModule_doc, 
-   perInterpreterStateSize,  
+   SEGMENTATION_MODULE,
+   SegmentationModule_doc,
+   perInterpreterStateSize,
    PySegmentationModuleMethods
 };
 
 //-----------------------
-// PyInit_PySegmentation 
+// PyInit_PySegmentation
 //-----------------------
-// The initialization function called by the Python interpreter 
+// The initialization function called by the Python interpreter
 // when the module is loaded.
 //
-PyMODINIT_FUNC 
+PyMODINIT_FUNC
 PyInit_PySegmentation()
 {
   std::cout << "========== load segmentation module ==========" << std::endl;
@@ -484,7 +484,7 @@ PyInit_PySegmentation()
 #endif
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 //----------------

@@ -33,15 +33,15 @@
 // used for creating a lofted surface.
 //
 // A lofted suface is created from a list of profile curves that define the shape
-// of the surface. Profile points are used to create interpolating spline curves 
-// along the length of the surface. 
+// of the surface. Profile points are used to create interpolating spline curves
+// along the length of the surface.
 //
 // [DaveP] I'm not exposing some of these parameters becuase they don't make
 // sense or don't work correctly.
 //
-//   use_fft: does not make sense, changes geometry? 
+//   use_fft: does not make sense, changes geometry?
 //
-// The SV GUI only exposes 
+// The SV GUI only exposes
 //
 //   Sampling ( numOutPtsInSegs ) = 60
 //   Number of Points per Segment ( samplePerSegment ) = 12
@@ -50,7 +50,7 @@
 //   Num Modes: 20
 //
 #ifndef PYAPI_GEOMETRY_LOFT_OPTIONS_H
-#define PYAPI_GEOMETRY_LOFT_OPTIONS_H 
+#define PYAPI_GEOMETRY_LOFT_OPTIONS_H
 
 #include <iostream>
 #include <map>
@@ -59,11 +59,11 @@
 #include <structmember.h>
 
 //------------------
-// LoftOptionsClass 
+// LoftOptionsClass
 //------------------
-// Define the LoftOptionsClass. 
+// Define the LoftOptionsClass.
 //
-// num_spline_points: The number of points to sample a spline if using linear 
+// num_spline_points: The number of points to sample a spline if using linear
 //    interpolation between sample points.
 //
 // num_long_points: The number of longitudinal points used to sample splines.
@@ -76,7 +76,7 @@ PyObject_HEAD
   double continuity;
   int num_long_points;
   int num_modes;
-  int num_spline_points;   
+  int num_spline_points;
   int spline_type;
   double tension;
   int use_fft;
@@ -85,18 +85,18 @@ PyObject_HEAD
 
 // PyLoftOptions attribute names.
 //
-// The varible name is the name used in SV, 
+// The varible name is the name used in SV,
 // lower case string is the Python option name.
-// 
+//
 namespace LoftOptions {
   char* NUM_OUT_PTS_ALONG_LENGTH = "num_spline_points";
   char* NUM_LINEAR_PTS_ALONG_LENGTH = "num_long_points";
-  char* NUM_MODES = "num_modes"; 
-  char* USE_FFT = "use_fft"; 
+  char* NUM_MODES = "num_modes";
+  char* USE_FFT = "use_fft";
   char* USE_LINEAR_SAMPLE_ALONG_LENGTH = "interpolate_spline_points";
-  char* SPLINE_TYPE = "spline_type"; 
-  char* BIAS = "bias"; 
-  char* TENSION = "tension"; 
+  char* SPLINE_TYPE = "spline_type";
+  char* BIAS = "bias";
+  char* TENSION = "tension";
   char* CONTINUITY = "continuity";
 };
 
@@ -109,7 +109,7 @@ static int
 LoftOptionsGetInt(PyObject* loftOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(loftOptions, name.c_str());
-  if (obj == nullptr) { 
+  if (obj == nullptr) {
       std::cout << "Internal error: The '" + name + "' LoftOptions paramater is not correctly setup." << std::endl;
       return 0;
   }
@@ -119,15 +119,15 @@ LoftOptionsGetInt(PyObject* loftOptions, std::string name)
 }
 
 //------------------------
-// PyLoftOptionsGetDouble 
+// PyLoftOptionsGetDouble
 //------------------------
 // Get a double atttibute from the LoftOptions object.
 //
-static double 
+static double
 LoftOptionsGetDouble(PyObject* loftOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(loftOptions, name.c_str());
-  if (obj == nullptr) { 
+  if (obj == nullptr) {
       std::cout << "Internal error: The '" + name + "' LoftOptions paramater is not correctly setup." << std::endl;
       return 0;
   }
@@ -142,7 +142,7 @@ LoftOptionsGetDouble(PyObject* loftOptions, std::string name)
 //
 
 PyDoc_STRVAR(PyLoftOptions_get_values_doc,
-  "get_values()  \n\ 
+  "get_values()  \n\
   \n\
   Get the names and values of loft options. \n\
   \n\
@@ -184,21 +184,21 @@ static PyMethodDef PyLoftOptionsMethods[] = {
 
 PyDoc_STRVAR(interpolate_spline_points_doc,
   "Type: bool                                                              \n\
-   Default: True                                                           \n\ 
+   Default: True                                                           \n\
    \n\
    If True then Use linear interpolation between spline sample points.     \n\
 ");
 
 PyDoc_STRVAR(num_long_points_doc,
   "Type: int                                                               \n\
-   Default: 100                                                            \n\ 
+   Default: 100                                                            \n\
    \n\
    The number of longitudinal points created for the lofted surface.       \n\
 ");
 
 PyDoc_STRVAR(num_spline_points_doc,
   "Type: int                                                               \n\
-   Default: 20                                                             \n\ 
+   Default: 20                                                             \n\
    \n\
    The number of spline sample points used with linear interpolation.      \n\
 ");
@@ -213,7 +213,7 @@ static PyMemberDef PyLoftOptionsMembers[] = {
     //{LoftOptions::TENSION, T_DOUBLE, offsetof(PyLoftOptions, tension), 0, "first name"},
     //{LoftOptions::USE_FFT, T_BOOL, offsetof(PyLoftOptions, use_fft), 0, "first name"},
     {LoftOptions::USE_LINEAR_SAMPLE_ALONG_LENGTH, T_BOOL, offsetof(PyLoftOptions, interpolate_spline_points), 0, interpolate_spline_points_doc},
-    {NULL}  
+    {NULL}
 };
 
 ////////////////////////////////////////////////////////
@@ -229,7 +229,7 @@ static char* GEOMETRY_LOFT_OPTIONS_MODULE_CLASS = "geometry.LoftOptions";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(LoftOptionsClass_doc, 
+PyDoc_STRVAR(LoftOptionsClass_doc,
    "The LoftOptions class stores parameter values used to control how lofted\n\
     lofted surfaces are generated.                                          \n\
     \n\
@@ -240,29 +240,29 @@ PyDoc_STRVAR(LoftOptionsClass_doc,
 ");
 
 //-------------------
-// PyLoftOptionsType 
+// PyLoftOptionsType
 //-------------------
-// Define the Python type object that implements the geometry.LoftOptions class. 
+// Define the Python type object that implements the geometry.LoftOptions class.
 //
 static PyTypeObject PyLoftOptionsType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = GEOMETRY_LOFT_OPTIONS_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyLoftOptions)
+  GEOMETRY_LOFT_OPTIONS_MODULE_CLASS,
+  sizeof(PyLoftOptions)
 };
 
 //--------------------
 // PyLoftOptions_init
 //--------------------
-// This is the __init__() method for the geometry.LoftOptions class. 
+// This is the __init__() method for the geometry.LoftOptions class.
 //
 // This function is used to initialize an object after it is created.
 //
 // Arguments:
 //
-//   fileName - An SV .ctgr pth file. A new LoftOptions object is created from 
+//   fileName - An SV .ctgr pth file. A new LoftOptions object is created from
 //     the contents of the file. (optional)
 //
-static int 
+static int
 PyLoftOptionsInit(PyLoftOptions* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "[PyLoftOptionsInit] New LoftOptions object: " << std::endl;
@@ -293,9 +293,9 @@ PyLoftOptionsInit(PyLoftOptions* self, PyObject* args, PyObject* kwargs)
 }
 
 //------------------
-// PyLoftOptionsNew 
+// PyLoftOptionsNew
 //------------------
-// Object creation function, equivalent to the Python __new__() method. 
+// Object creation function, equivalent to the Python __new__() method.
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
@@ -305,13 +305,13 @@ PyLoftOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   auto self = (PyLoftOptions*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyLoftOptionsNew] ERROR: Can't allocate type." << std::endl;
-      return nullptr; 
+      return nullptr;
   }
   return (PyObject *) self;
 }
 
 //----------------------
-// PyLoftOptionsDealloc 
+// PyLoftOptionsDealloc
 //----------------------
 //
 static void
@@ -324,12 +324,12 @@ PyLoftOptionsDealloc(PyLoftOptions* self)
 //--------------------------
 // SetLoftOptionsTypeFields
 //--------------------------
-// Set the Python type object fields that stores loft option data. 
+// Set the Python type object fields that stores loft option data.
 //
 static void
 SetLoftOptionsTypeFields(PyTypeObject& loftOpts)
  {
-  loftOpts.tp_doc = LoftOptionsClass_doc; 
+  loftOpts.tp_doc = LoftOptionsClass_doc;
   loftOpts.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   loftOpts.tp_dict = PyDict_New();
   loftOpts.tp_new = PyLoftOptionsNew;
@@ -362,7 +362,7 @@ SetLoftOptionsClassTypes(PyTypeObject& loftOptsType)
 
   std::cout << "[SetLoftOptionsClassTypes] Done! " << std::endl;
 */
- 
+
 };
 
 #endif

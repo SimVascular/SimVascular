@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API level set segmentation class. 
+// The functions defined here implement the SV Python API level set segmentation class.
 //
 // The class name is 'segmentation.LevelSet'.
 //
@@ -55,7 +55,7 @@
 #endif
 
 //------------------------
-// PyLevelSetSegmentation 
+// PyLevelSetSegmentation
 //------------------------
 // Define the LevelSet class (type).
 //
@@ -81,7 +81,7 @@ void PyLevelSetCopySegmentationData(sv4guiContour* sv4Contour,  PyObject* contou
 //          C l a s s    M e t h o d s              //
 //////////////////////////////////////////////////////
 //
-// Python LevelSet class methods. 
+// Python LevelSet class methods.
 
 ////////////////////////////////////////////////////////
 //          C l a s s    D e f i n i t i o n          //
@@ -96,15 +96,15 @@ PyDoc_STRVAR(PyLevelSetSegmentationClass_doc, "level set segmentation functions"
 //-------------------------------
 // PyLevelSetSegmentationMethods
 //-------------------------------
-//  
+//
 PyMethodDef PyLevelSetSegmentationMethods[] = {
   {NULL, NULL}
 };
 
 //----------------------------
-// PyLevelSetSegmentationInit 
+// PyLevelSetSegmentationInit
 //----------------------------
-// This is the __init__() method for the LevelSet class. 
+// This is the __init__() method for the LevelSet class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -120,7 +120,7 @@ PyLevelSetSegmentationInit(PyLevelSetSegmentation* self, PyObject* args, PyObjec
 }
 
 //---------------------------
-// PyLevelSetSegmentationNew 
+// PyLevelSetSegmentationNew
 //---------------------------
 //
 static PyObject *
@@ -135,7 +135,7 @@ PyLevelSetSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //-------------------------------
-// PyLevelSetSegmentationDealloc 
+// PyLevelSetSegmentationDealloc
 //-------------------------------
 //
 static void
@@ -149,24 +149,24 @@ PyLevelSetSegmentationDealloc(PyLevelSetSegmentation* self)
 //------------------------------------
 // Define the ContourType type object
 //------------------------------------
-// Define the Python type object that stores Segmentation data. 
+// Define the Python type object that stores Segmentation data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static PyTypeObject PyLevelSetSegmentationType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = SEGMENTATION_LEVELSET_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyLevelSetSegmentation)
+  SEGMENTATION_LEVELSET_MODULE_CLASS,
+  sizeof(PyLevelSetSegmentation)
 };
 
 //-----------------------------------
-// SetLevelSetSegmentationTypeFields 
+// SetLevelSetSegmentationTypeFields
 //-----------------------------------
-// Set the Python type object fields that stores LevelSet data. 
+// Set the Python type object fields that stores LevelSet data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetLevelSetSegmentationTypeFields(PyTypeObject& contourType)
@@ -174,7 +174,7 @@ SetLevelSetSegmentationTypeFields(PyTypeObject& contourType)
   // Doc string for this type.
   contourType.tp_doc = "LevelSet Segmentation objects";
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   contourType.tp_new = PyLevelSetSegmentationNew;
   //.tp_new = PyType_GenericNew,

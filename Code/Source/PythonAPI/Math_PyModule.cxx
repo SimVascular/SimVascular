@@ -29,12 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API math module. 
+// The functions defined here implement the SV Python API math module.
 //
-// The module name is 'math'. 
+// The module name is 'math'.
 //
-// A Python exception sv.math.MathError is defined for this module. 
-// The exception can be used in a Python 'try' statement with an 'except' clause 
+// A Python exception sv.math.MathError is defined for this module.
+// The exception can be used in a Python 'try' statement with an 'except' clause
 // like this
 //
 //    except sv.math.MathError:
@@ -83,7 +83,7 @@ GetPointsFromList(PyUtilApiFunction& api, PyObject* listArg, int dim, const std:
   }
 
   int listSize = PyList_Size(listArg);
-  if (listSize == 0) { 
+  if (listSize == 0) {
       api.error("The " + argName + " argument is empty.");
       return nullptr;
   }
@@ -93,11 +93,11 @@ GetPointsFromList(PyUtilApiFunction& api, PyObject* listArg, int dim, const std:
   double **points = cvMath().createArray(listSize, dim);
   for (int i = 0; i < listSize; i++) {
       PyObject *temp = PyList_GetItem(listArg,i);
-      if (temp == nullptr) { 
+      if (temp == nullptr) {
           api.error("The " + std::to_string(i) + "th element of the " + argName + "argument is not defined.");
           return nullptr;
       }
-      if (PyList_Size(temp) != dim) { 
+      if (PyList_Size(temp) != dim) {
           api.error("The " + std::to_string(i) + "th element of the " + argName + " argument list != "+std::to_string(dim)+".");
           return nullptr;
       }
@@ -113,14 +113,14 @@ GetPointsFromList(PyUtilApiFunction& api, PyObject* listArg, int dim, const std:
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 //------------
-// Math_fft 
+// Math_fft
 //------------
 //
 PyDoc_STRVAR(Math_fft_doc,
-  "fft(kernel)                                    \n\ 
+  "fft(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -128,7 +128,7 @@ PyDoc_STRVAR(Math_fft_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Math_fft(PyObject *self, PyObject *args)
 {
   auto api = PyUtilApiFunction("Oii", PyRunTimeErr, __func__);
@@ -145,7 +145,7 @@ Math_fft(PyObject *self, PyObject *args)
   // Get an array of points from the pointsArgs list.
   int dim = 2;
   auto pts = GetPointsFromList(api, pointsArg, dim, "points");
-  if (pts == nullptr) { 
+  if (pts == nullptr) {
       return nullptr;
   }
   int nlistpts = PyList_Size(pointsArg);
@@ -174,11 +174,11 @@ Math_fft(PyObject *self, PyObject *args)
 }
 
 //--------------------
-// Math_inverse_fft 
+// Math_inverse_fft
 //--------------------
 //
 PyDoc_STRVAR(Math_inverse_fft_doc,
-  "inverse_fft(kernel)  \n\ 
+  "inverse_fft(kernel)  \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -186,7 +186,7 @@ PyDoc_STRVAR(Math_inverse_fft_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Math_inverse_fft(PyObject *self, PyObject *args)
 {
   auto api = PyUtilApiFunction("Odddi", PyRunTimeErr, __func__);
@@ -220,7 +220,7 @@ Math_inverse_fft(PyObject *self, PyObject *args)
 
   // Create result string
   //
-  // [TODO:DaveP] This converts results to a string, not 
+  // [TODO:DaveP] This converts results to a string, not
   //    a list list the fft function above.
   //
   char r[2048];
@@ -240,13 +240,13 @@ Math_inverse_fft(PyObject *self, PyObject *args)
 }
 
 //--------------------------
-// Math_compute_womersley 
+// Math_compute_womersley
 //--------------------------
 //
 // [TODO:DaveP] need keyword args here.
 //
 PyDoc_STRVAR(Math_compute_womersley_doc,
-  "compute_womersley(kernel)                                    \n\ 
+  "compute_womersley(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -300,7 +300,7 @@ Math_compute_womersley(PyObject *self, PyObject *args)
 //---------------------------
 //
 PyDoc_STRVAR(Math_linear_interpolate_doc,
-  "linear_interpolate(kernel)                                    \n\ 
+  "linear_interpolate(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -308,7 +308,7 @@ PyDoc_STRVAR(Math_linear_interpolate_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Math_linear_interpolate(PyObject *self, PyObject *args)
 {
   auto api = PyUtilApiFunction("Oi", PyRunTimeErr, __func__);
@@ -361,7 +361,7 @@ Math_linear_interpolate(PyObject *self, PyObject *args)
 //---------------------
 //
 PyDoc_STRVAR(Math_curve_length_doc,
-  "curve_length(points, closed=False) \n\ 
+  "curve_length(points, closed=False) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -416,7 +416,7 @@ Math_curve_length(PyObject *self, PyObject *args, PyObject* kwargs)
 //---------------------------------
 //
 PyDoc_STRVAR(Math_linear_interpolate_curve_doc,
-  "inear_interpolate_curve(kernel)                                    \n\ 
+  "inear_interpolate_curve(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -424,7 +424,7 @@ PyDoc_STRVAR(Math_linear_interpolate_curve_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Math_linear_interpolate_curve(PyObject *self, PyObject *args)
 {
   auto api = PyUtilApiFunction("Oii", PyRunTimeErr, __func__);
@@ -471,11 +471,11 @@ Math_linear_interpolate_curve(PyObject *self, PyObject *args)
 }
 
 //---------------------------
-// Math_fit_least_squares 
+// Math_fit_least_squares
 //---------------------------
 //
 PyDoc_STRVAR(Math_fit_least_squares_doc,
-  "fit_least_squares(kernel)                                    \n\ 
+  "fit_least_squares(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -500,7 +500,7 @@ Math_fit_least_squares(PyObject *self, PyObject *args)
   int numberOfSamples = PyList_Size(xtermsArg);
   int numberOfSamplesY = PyList_Size(ytermsArg);
   if (numberOfSamples!= numberOfSamplesY) {
-      api.error("The number of x terms ("+std::to_string(numberOfSamples)+") != the number of y terms ("+std::to_string(numberOfSamplesY)+"."); 
+      api.error("The number of x terms ("+std::to_string(numberOfSamples)+") != the number of y terms ("+std::to_string(numberOfSamplesY)+".");
       return nullptr;
   }
 
@@ -554,7 +554,7 @@ Math_fit_least_squares(PyObject *self, PyObject *args)
 //---------------------
 //
 PyDoc_STRVAR(Math_smooth_curve_doc,
-  "smooth_curve(kernel)                                    \n\ 
+  "smooth_curve(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -621,7 +621,7 @@ static char* MATH_MODULE_EXCEPTION_OBJECT = "Error";
 PyDoc_STRVAR(MathModule_doc, "math module functions");
 
 //---------------
-// PyMathMethods 
+// PyMathMethods
 //---------------
 // math module methods.
 //
@@ -654,38 +654,38 @@ static PyMethodDef PyMathMethods[] = {
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python 
+// Define the initialization function called by the Python
 // interpreter when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 static struct PyModuleDef PyMathModule = {
    m_base,
-   MATH_MODULE,  
-   MathModule_doc, 
-   perInterpreterStateSize, 
+   MATH_MODULE,
+   MathModule_doc,
+   perInterpreterStateSize,
    PyMathMethods
 };
 
 //---------------
-// PyInit_PyMath 
+// PyInit_PyMath
 //---------------
 // The initialization function called by the Python interpreter when the module is loaded.
 //
-PyMODINIT_FUNC 
+PyMODINIT_FUNC
 PyInit_PyMath(void)
 {
   std::cout << "========== load math module ==========" << std::endl;
@@ -707,13 +707,13 @@ PyInit_PyMath(void)
 #endif
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 2
 
 //-------------
-// initpyMath 
+// initpyMath
 //-------------
 PyMODINIT_FUNC
 initpyMath(void)

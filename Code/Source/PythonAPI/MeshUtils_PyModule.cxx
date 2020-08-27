@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API mesh_utils Module. 
+// The functions defined here implement the SV Python API mesh_utils Module.
 //
 // [TODO:DaveP] This should be incorporated into the meshing module?
 //
@@ -89,10 +89,10 @@ GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 PyDoc_STRVAR(MeshUtils_remesh_doc,
-" remesh(surface, hmin=0.1, hmax=0.1, angle=45.0, hgrad=1.1, hausd=0.01, log_file=None)  \n\ 
+" remesh(surface, hmin=0.1, hmax=0.1, angle=45.0, hgrad=1.1, hausd=0.01, log_file=None)  \n\
   \n\
   ??? Add the unstructured grid mesh to the repository. \n\
   \n\
@@ -102,7 +102,7 @@ PyDoc_STRVAR(MeshUtils_remesh_doc,
 // MMG_remesh
 //------------
 //
-static PyObject * 
+static PyObject *
 MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O|ddddds", PyRunTimeErr, __func__);
@@ -119,9 +119,9 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
       return api.argsError();
   }
 
-  // Redirect stdout to the 'mesh.log' file. 
+  // Redirect stdout to the 'mesh.log' file.
   //
-  // [TODO:DaveP] this does not work for mmg or doesn't work on ubunutu? 
+  // [TODO:DaveP] this does not work for mmg or doesn't work on ubunutu?
   //
   // [TODO:DaveP] put this in py utils as a class.
   //
@@ -148,7 +148,7 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   int numAddedRefines = 0;
   vtkDoubleArray *meshSizingFunction = NULL;
 
-  if (MMGUtils_SurfaceRemeshing(surfPolydata, hmin, hmax, hausd, angle, hgrad, useSizingFunction, meshSizingFunction, 
+  if (MMGUtils_SurfaceRemeshing(surfPolydata, hmin, hmax, hausd, angle, hgrad, useSizingFunction, meshSizingFunction,
           numAddedRefines) != SV_OK) {
       api.error("Remeshing failed.");
       return nullptr;
@@ -193,30 +193,30 @@ PyMethodDef PyMeshUtilsMethods[] =
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python 
+// Define the initialization function called by the Python
 // interpreter when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 
 static struct PyModuleDef PyMeshUtilsModule = {
    m_base,
-   MESH_UTILS_MODULE,  
+   MESH_UTILS_MODULE,
    MeshUtils_doc,
-   perInterpreterStateSize,       
+   perInterpreterStateSize,
    PyMeshUtilsMethods
 };
 
@@ -225,7 +225,7 @@ static struct PyModuleDef PyMeshUtilsModule = {
 //--------------------
 // The initialization function called by the Python interpreter when the module is loaded.
 //
-PyMODINIT_FUNC 
+PyMODINIT_FUNC
 PyInit_PyMeshUtils()
 {
   //std::cout << "========== load mesh_utils module ==========" << std::endl;
@@ -247,7 +247,7 @@ PyInit_PyMeshUtils()
 #endif
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 2
@@ -269,12 +269,12 @@ PyMODINIT_FUNC initpyMeshUtil()
 }
 
 PyObject* Mmgmesh_pyInit()
-{ 
+{
   PyObject *pythonC;
   pythonC = Py_InitModule("pyMeshUtil", Mmgmesh_methods);
 
   if (pythonC==NULL)
-  { 
+  {
     fprintf(stdout,"Error in initializing pyMeshUtil");
     return SV_PYTHON_ERROR;
   }

@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Define the Python 'segmentation.Method' class that encapsulates segmentation method types. 
+// Define the Python 'segmentation.Method' class that encapsulates segmentation method types.
 //
 
 #include <iostream>
@@ -63,11 +63,11 @@ typedef struct {
 PyObject_HEAD
 } SegmentationMethodObject;
 
-std::string 
+std::string
 SegmentationMethod_get_name(cKernelType contourType)
 {
   for (auto const& entry : kernelNameEnumMap) {
-      if (contourType == entry.second) { 
+      if (contourType == entry.second) {
           return entry.first;
       }
   }
@@ -78,7 +78,7 @@ SegmentationMethod_get_name(cKernelType contourType)
 //          C l a s s    M e t h o d s                //
 ////////////////////////////////////////////////////////
 //
-// Python 'Methods' class methods. 
+// Python 'Methods' class methods.
 
 PyDoc_STRVAR(SegmentationMethod_get_names_doc,
    "get_names()  \n\
@@ -98,7 +98,7 @@ SegmentationMethod_get_names()
       PyList_SetItem(nameList, n, PyUnicode_FromString(name));
       n += 1;
   }
-  return nameList; 
+  return nameList;
 }
 
 //---------------------------
@@ -125,13 +125,13 @@ static char* SEGMENTATION_METHOD_CLASS_VARIBLE_NAMES = "names";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(SegmentationMethodClass_doc, 
+PyDoc_STRVAR(SegmentationMethodClass_doc,
    "Method()  \n\
    \n\
    The Method class provides the names used to set the name of the method  \n\
    used to create a segmentation from imaging data.                        \n\
    \n\
-   Valid segmentation method names are: \n\ 
+   Valid segmentation method names are: \n\
    \n\
       LEVEL_SET - Use the level set method to create a segmentation.       \n\
    \n\
@@ -140,25 +140,25 @@ PyDoc_STRVAR(SegmentationMethodClass_doc,
 ");
 
 //--------------------------
-// PySegmentationMethodType 
+// PySegmentationMethodType
 //--------------------------
-// Define the Python type object that stores segmentation.Method types. 
+// Define the Python type object that stores segmentation.Method types.
 //
 static PyTypeObject PySegmentationMethodType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = SEGMENTATION_METHOD_MODULE_CLASS,
-  .tp_basicsize = sizeof(SegmentationMethodObject)
+  SEGMENTATION_METHOD_MODULE_CLASS,
+  sizeof(SegmentationMethodObject)
 };
 
 //---------------------------------
 // SetSegmentationMethodTypeFields
 //---------------------------------
-// Set the Python type object fields that stores Kernel data. 
+// Set the Python type object fields that stores Kernel data.
 //
 static void
 SetSegmentationMethodTypeFields(PyTypeObject& contourType)
  {
-  contourType.tp_doc = SegmentationMethodClass_doc; 
+  contourType.tp_doc = SegmentationMethodClass_doc;
   contourType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   contourType.tp_methods = SegmentationMethodMethods;
   contourType.tp_dict = PyDict_New();
@@ -169,7 +169,7 @@ SetSegmentationMethodTypeFields(PyTypeObject& contourType)
 //----------------------------
 // Set the kernel names in the SegmentationMethodType dictionary.
 //
-// The names in the SegmentationMethodType dictionary are referenced as a string class variable 
+// The names in the SegmentationMethodType dictionary are referenced as a string class variable
 // for the Python Kernel class referenced like.
 //
 //    sv.segmentation.Method.CIRCLE -> "CIRCLE"
