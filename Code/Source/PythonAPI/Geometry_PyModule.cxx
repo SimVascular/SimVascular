@@ -29,13 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API 'geometry' module. 
+// The functions defined here implement the SV Python API 'geometry' module.
 //
-// There are no classes defined for this module. All module methods take  
+// There are no classes defined for this module. All module methods take
 // vtkPolyData Python objects as arguments.
 //
-// A Python exception sv.geometry.GeometryError is defined for this module. 
-// The exception can be used in a Python 'try' statement with an 'except' clause 
+// A Python exception sv.geometry.GeometryError is defined for this module.
+// The exception can be used in a Python 'try' statement with an 'except' clause
 // like this
 //
 //    except sv.geometry.GeometryError:
@@ -71,7 +71,7 @@
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
 
-// Include the definition for the geometry options classes. 
+// Include the definition for the geometry options classes.
 #include "GeometryLoftOptions_PyClass.cxx"
 #include "GeometryLoftNurbsOptions_PyClass.cxx"
 #include "GeometryBlendOptions_PyClass.cxx"
@@ -85,10 +85,10 @@ static PyObject * PyRunTimeErr;
 //----------------
 // Get the vtkPolyData object from the Python vtkPolyData object.
 //
-static vtkPolyData * 
+static vtkPolyData *
 GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
 {
-  vtkPolyData* polydata = nullptr; 
+  vtkPolyData* polydata = nullptr;
 
  if (!PyVTKObject_Check(obj)) {
       api.error("The polydata argument is not a vtkPolyData object.");
@@ -104,12 +104,12 @@ GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
 //--------------------
 // GetGeometryObjects
 //--------------------
-// Create a list of cvPolyData objects from a list of 
+// Create a list of cvPolyData objects from a list of
 // vtkPolyData objects.
 //
 // [TODO:DaveP] It would be good to use shared_ptr here
 // to manage deleting cvPolyData objects but the sys_geom
-// functions don't use them. 
+// functions don't use them.
 //
 static std::vector<cvPolyData*>
 GetGeometryObjects(PyUtilApiFunction& api, PyObject* objList)
@@ -117,7 +117,7 @@ GetGeometryObjects(PyUtilApiFunction& api, PyObject* objList)
   std::vector<cvPolyData*> cvPolyDataList;
   auto numObjs = PyList_Size(objList);
 
-  if (numObjs == 0) { 
+  if (numObjs == 0) {
       api.error("The polydata list argument is empty.");
       return cvPolyDataList;
   }
@@ -144,14 +144,14 @@ GetGeometryObjects(PyUtilApiFunction& api, PyObject* objList)
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
 //
-// Python 'geometry' module methods. 
+// Python 'geometry' module methods.
 
 //--------------------
-// Geom_align_profile 
+// Geom_align_profile
 //--------------------
 //
 PyDoc_STRVAR(Geom_align_profile_doc,
-  "align_profile(reference, align, use_distance=True) \n\ 
+  "align_profile(reference, align, use_distance=True) \n\
    \n\
    Align a profile represented as a closed curve with a given reference    \n\
    profile also represented as a closed curve.                             \n\
@@ -168,7 +168,7 @@ PyDoc_STRVAR(Geom_align_profile_doc,
    Returns (vtkPolyData): The aligned profile.                             \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "========== Geom_align_profile ==========" << std::endl;
@@ -215,11 +215,11 @@ Geom_align_profile(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //--------------------
-// Geom_average_point 
+// Geom_average_point
 //--------------------
 //
 PyDoc_STRVAR(Geom_average_point_doc,
-  "average_point(polydata) \n\ 
+  "average_point(polydata) \n\
    \n\
    Calculate the average point for the points of a VTK PolyData object.    \n\
    \n\
@@ -230,7 +230,7 @@ PyDoc_STRVAR(Geom_average_point_doc,
    Returns list([float, float, float]): The average point. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_average_point(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
@@ -244,7 +244,7 @@ Geom_average_point(PyObject* self, PyObject* args)
   auto polydata = GetVtkPolyData(api, pdObj);
   if (polydata == nullptr) {
       return nullptr;
-  } 
+  }
 
   double pt[3];
   cvPolyData cvPolydata(polydata);
@@ -257,11 +257,11 @@ Geom_average_point(PyObject* self, PyObject* args)
 }
 
 //---------------------
-// Geom_classify_point 
+// Geom_classify_point
 //---------------------
 //
 PyDoc_STRVAR(Geom_point_inside_doc,
-  "point_inside(polydata, point) \n\ 
+  "point_inside(polydata, point) \n\
    \n\
    Determine if a 3D point is inside or outside of a solid.                \n\
    \n\
@@ -273,7 +273,7 @@ PyDoc_STRVAR(Geom_point_inside_doc,
    Returns True if the point is inside the solid, False if it is outside.  \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_point_inside(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "========== Geom_point_inside ==========" << std::endl;
@@ -290,7 +290,7 @@ Geom_point_inside(PyObject* self, PyObject* args, PyObject* kwargs)
   auto polydata = GetVtkPolyData(api, pdObj);
   if (polydata == nullptr) {
       return nullptr;
-  } 
+  }
 
   // Get the point data.
   double point[3];
@@ -312,11 +312,11 @@ Geom_point_inside(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //-------------------------------
-// Geom_interpolate_closed_curve 
+// Geom_interpolate_closed_curve
 //-------------------------------
 //
 PyDoc_STRVAR(Geom_interpolate_closed_curve_doc,
-  "interpolate_closed_curve(polydata, number_of_points) \n\ 
+  "interpolate_closed_curve(polydata, number_of_points) \n\
    \n\
    Generate a list of 3D points linearly interpolated between the points   \n\
    of a closed 3D curve.                                                   \n\
@@ -329,7 +329,7 @@ PyDoc_STRVAR(Geom_interpolate_closed_curve_doc,
    Returns list([float, float, float]): The list of interpolated points.   \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("Oi", PyRunTimeErr, __func__);
@@ -350,7 +350,7 @@ Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
   auto polydata = GetVtkPolyData(api, pdObj);
   if (polydata == nullptr) {
       return nullptr;
-  } 
+  }
 
   cvPolyData cvPolydata(polydata);
   auto result = sys_geom_sampleLoop(&cvPolydata, numSamples);
@@ -364,11 +364,11 @@ Geom_interpolate_closed_curve(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //------------------
-// Geom_local_blend 
+// Geom_local_blend
 //------------------
 //
 PyDoc_STRVAR(Geom_local_blend_doc,
-  "local_blend(surface, faces, options)                                    \n\ 
+  "local_blend(surface, faces, options)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -376,7 +376,7 @@ PyDoc_STRVAR(Geom_local_blend_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   std::cout << " " << std::endl;
@@ -387,7 +387,7 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
   PyObject* facesArg;
   PyObject* blendOptsArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &facesArg, 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &facesArg,
         &PyBlendOptionsType, &blendOptsArg)) {
       return api.argsError();
   }
@@ -411,32 +411,32 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
 
   // Check values.
   //
-  if (numBlendIters < 1) { 
+  if (numBlendIters < 1) {
       api.error("The 'num_blend_operations' parameter must be > 0.");
       return nullptr;
   }
 
-  if (numSubblendIters < 1) { 
+  if (numSubblendIters < 1) {
       api.error("The 'num_subblend_operations' parameter must be > 0.");
       return nullptr;
   }
 
-  if (numSubdivisionIters < 0) { 
+  if (numSubdivisionIters < 0) {
       api.error("The 'num_subdivision_operations' parameter must be >= 0.");
       return nullptr;
   }
 
-  if (numCgSmoothIters < 0) { 
+  if (numCgSmoothIters < 0) {
       api.error("The 'num_cgsmooth_iterations' parameter must be >= 0.");
       return nullptr;
   }
 
-  if (numLapSmoothIters < 1) { 
+  if (numLapSmoothIters < 1) {
       api.error("The 'num_cgsmooth_iterations' parameter must be > 0.");
       return nullptr;
   }
 
-  if (targetDecimation < 0.0) { 
+  if (targetDecimation < 0.0) {
       api.error("The 'target_decimation' parameter must be > 0.0.");
       return nullptr;
   }
@@ -450,20 +450,20 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
 
   // Set svBlendParam parameters.
   sv4guiModelElement::svBlendParam params;
-  params.numblenditers = numBlendIters; 
+  params.numblenditers = numBlendIters;
   params.numsubblenditers = numSubblendIters;
   params.numsubdivisioniters = numSubdivisionIters;
   params.numcgsmoothiters = numCgSmoothIters;
   params.numlapsmoothiters = numLapSmoothIters;
   params.targetdecimation = targetDecimation;
 
-  // Compute data needed for blending. 
+  // Compute data needed for blending.
   //
   std::vector<sv4guiModelElement::svBlendParamRadius> blendRadii;
   vtkSmartPointer<vtkPolyData> lastsurfPolydata = surfPolydata;
   int numFaces = PyList_Size(facesArg);
   for (int i = 0; i < numFaces; i++) {
-      int faceID1, faceID2; 
+      int faceID1, faceID2;
       double radius;
       PyObject* radiusFace = PyList_GetItem(facesArg, i);
       if (!GetRadiusFaceValues(radiusFace, faceID1, faceID2, radius)) {
@@ -479,7 +479,7 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
 
       lastsurfPolydata = sv4guiModelUtils::CreatePolyDataByBlend(lastsurfPolydata, faceID1, faceID2, radius, &params);
 
-      if (lastsurfPolydata == nullptr) { 
+      if (lastsurfPolydata == nullptr) {
           api.error("Failed creating blend data.");
           return nullptr;
       }
@@ -489,19 +489,19 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //-----------
-// Geom_loft 
+// Geom_loft
 //-----------
 //
 // [TODO:DaveP] We may need to add input curve resampling and alignment here
 // in order to get lofting to work.
 //
 PyDoc_STRVAR(Geom_loft_doc,
-  "loft(polydata_list, loft_options) \n\ 
+  "loft(polydata_list, loft_options) \n\
    \n\
    Create a lofted surface from a list of polydata curves.                  \n\
    \n\
    The loft method fits a surface through two or more profile curves that   \n\
-   define the surface shape. This is typically used to create a surface of  \n\ 
+   define the surface shape. This is typically used to create a surface of  \n\
    a vessel from a group of contours segmenting the vessel's lumen.         \n\
    \n\
    The surface is created using splines interpolating profile points along  \n\
@@ -516,7 +516,7 @@ PyDoc_STRVAR(Geom_loft_doc,
    Returns (vtkPolyData): The vtkPolyData object of the lofted surface.     \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   #ifdef dbg_Geom_loft
@@ -549,9 +549,9 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
   int numProfilePoints = 0;
   for (auto const& profile : cvPolyDataList) {
       int numPoints = profile->GetVtkPolyData()->GetNumberOfPoints();
-      if (numProfilePoints == 0) { 
+      if (numProfilePoints == 0) {
           numProfilePoints = numPoints;
-      } else if (numPoints != numProfilePoints) { 
+      } else if (numPoints != numProfilePoints) {
           api.error("Profiles do not have the same number of points.");
           return nullptr;
       }
@@ -561,7 +561,7 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
   //
   // Most of these are not used for now.
   //
-  int numOutPtsInSegs = numProfilePoints; 
+  int numOutPtsInSegs = numProfilePoints;
   int numOutPtsAlongLength = LoftOptionsGetInt(loftOptsArg, LoftOptions::NUM_OUT_PTS_ALONG_LENGTH);
   int numLinearPtsAlongLength = LoftOptionsGetInt(loftOptsArg, LoftOptions::NUM_LINEAR_PTS_ALONG_LENGTH);
   int numModes = 0; /*LoftOptionsGetInt(loftOptsArg, LoftOptions::NUM_MODES); */
@@ -592,8 +592,8 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
   auto numSrcs = cvPolyDataList.size();
   cvPolyData *result;
 
-  auto status = sys_geom_loft_solid(cvPolyDataList.data(), numSrcs, useLinearSampleAlongLength, useFFT, numOutPtsAlongLength, 
-                                    numOutPtsInSegs, numLinearPtsAlongLength, numModes, splineType, bias, tension, continuity, 
+  auto status = sys_geom_loft_solid(cvPolyDataList.data(), numSrcs, useLinearSampleAlongLength, useFFT, numOutPtsAlongLength,
+                                    numOutPtsInSegs, numLinearPtsAlongLength, numModes, splineType, bias, tension, continuity,
                                     &result);
 
   if (status != SV_OK) {
@@ -610,12 +610,12 @@ Geom_loft(PyObject* self, PyObject* args, PyObject* kwargs)
 //-----------------
 //
 PyDoc_STRVAR(Geom_loft_nurbs_doc,
-  "loft_nurbs(polydata_list, loft_options) \n\ 
+  "loft_nurbs(polydata_list, loft_options) \n\
    \n\
    Create a lofted NURBS surface from a list of polydata curves.            \n\
    \n\
    The loft method fits a surface through two or more profile curves that   \n\
-   define the surface shape. This is typically used to create a surface of  \n\ 
+   define the surface shape. This is typically used to create a surface of  \n\
    a vessel from a group of contours segmenting the vessel's lumen.         \n\
    \n\
    Args: \n\
@@ -640,7 +640,7 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   PyObject* objListArg;
   PyObject* loftOptsArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &objListArg, 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &objListArg,
         &PyLoftNurbsOptionsType, &loftOptsArg)) {
       return api.argsError();
   }
@@ -691,13 +691,13 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   std::cout << "[Geom_loft_nurbs] vParametricSpanType: " << vParametricSpanType << std::endl;
   #endif
 
-  // Reset uDegree and vDegree if they are larger 
-  // than the number of profile curves. 
+  // Reset uDegree and vDegree if they are larger
+  // than the number of profile curves.
   //
   if (uDegree >= numProfiles) {
       uDegree = numProfiles - 1;
   }
- 
+
   if (vDegree >= numProfilePoints) {
       vDegree = numProfilePoints - 1;
   }
@@ -706,12 +706,12 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   //
   cvPolyData *result;
   vtkSmartPointer<vtkSVNURBSSurface> NURBSSurface = vtkSmartPointer<vtkSVNURBSSurface>::New();
-  auto status = sys_geom_loft_solid_with_nurbs(cvPolyDataList.data(), numProfiles, uDegree, vDegree, uSpacing, vSpacing, 
+  auto status = sys_geom_loft_solid_with_nurbs(cvPolyDataList.data(), numProfiles, uDegree, vDegree, uSpacing, vSpacing,
           uKnotSpanType, vKnotSpanType, uParametricSpanType, vParametricSpanType, NURBSSurface, &result);
 
   // [TODO:DaveP] Is this correct?
   /*
-  for (auto cvPolyData : cvPolyDataList) { 
+  for (auto cvPolyData : cvPolyDataList) {
       delete cvPolyData;
   }
   */
@@ -726,7 +726,7 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //===================================================================================
-//                                  O l d    M e t h o d s 
+//                                  O l d    M e t h o d s
 //===================================================================================
 //
 // [TODO:DaveP] There were a lot of methods originally defined for this module.
@@ -740,7 +740,7 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
 //-------------
 //
 PyDoc_STRVAR(Geom_reduce_doc,
-  "reduce(kernel)                                    \n\ 
+  "reduce(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -748,7 +748,7 @@ PyDoc_STRVAR(Geom_reduce_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_reduce(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ssd", PyRunTimeErr, __func__);
@@ -789,7 +789,7 @@ Geom_reduce(PyObject* self, PyObject* args)
 //------------
 //
 PyDoc_STRVAR(Geom_union_doc,
-  "union(kernel)                                    \n\ 
+  "union(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -797,7 +797,7 @@ PyDoc_STRVAR(Geom_union_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_union(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sss|d", PyRunTimeErr, __func__);
@@ -842,7 +842,7 @@ Geom_union(PyObject* self, PyObject* args)
 //----------------
 //
 PyDoc_STRVAR(Geom_intersect_doc,
-  "intersect(kernel)                                    \n\ 
+  "intersect(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -850,7 +850,7 @@ PyDoc_STRVAR(Geom_intersect_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_intersect(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sss|d", PyRunTimeErr, __func__);
@@ -891,11 +891,11 @@ Geom_intersect(PyObject* self, PyObject* args)
 }
 
 //---------------
-// Geom_subtract 
+// Geom_subtract
 //---------------
 //
 PyDoc_STRVAR(Geom_subtract_doc,
-  "subtract(kernel)                                    \n\ 
+  "subtract(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -903,7 +903,7 @@ PyDoc_STRVAR(Geom_subtract_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_subtract(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sss|d", PyRunTimeErr, __func__);
@@ -944,11 +944,11 @@ Geom_subtract(PyObject* self, PyObject* args)
 }
 
 //--------------------
-// Geom_check_surface  
+// Geom_check_surface
 //--------------------
 //
 PyDoc_STRVAR(Geom_check_surface_doc,
-  "check_surface(kernel)                                    \n\ 
+  "check_surface(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -956,7 +956,7 @@ PyDoc_STRVAR(Geom_check_surface_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject* 
+static PyObject*
 Geom_check_surface(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s|d", PyRunTimeErr, __func__);
@@ -987,7 +987,7 @@ Geom_check_surface(PyObject* self, PyObject* args)
 //------------
 //
 PyDoc_STRVAR(Geom_clean_doc,
-  "check_surface(kernel)                                    \n\ 
+  "check_surface(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -995,7 +995,7 @@ PyDoc_STRVAR(Geom_clean_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_clean(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
@@ -1030,11 +1030,11 @@ Geom_clean(PyObject* self, PyObject* args)
 }
 
 //-----------------------
-// Geom_set_ids_for_caps 
+// Geom_set_ids_for_caps
 //-----------------------
 //
 PyDoc_STRVAR(Geom_set_ids_for_caps_doc,
-  "set_ids_for_caps(kernel)                                    \n\ 
+  "set_ids_for_caps(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1042,7 +1042,7 @@ PyDoc_STRVAR(Geom_set_ids_for_caps_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_set_ids_for_caps(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
@@ -1086,11 +1086,11 @@ Geom_set_ids_for_caps(PyObject* self, PyObject* args)
 }
 
 //----------------------------------
-// Geom_set_array_for_local_op_face 
+// Geom_set_array_for_local_op_face
 //----------------------------------
 //
 PyDoc_STRVAR(Geom_set_array_for_local_op_face_doc,
-  "set_array_for_local_op_face(kernel)                                    \n\ 
+  "set_array_for_local_op_face(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1098,7 +1098,7 @@ PyDoc_STRVAR(Geom_set_array_for_local_op_face_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_set_array_for_local_op_face(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sssO|si", PyRunTimeErr, __func__);
@@ -1132,7 +1132,7 @@ Geom_set_array_for_local_op_face(PyObject* self, PyObject* args)
   for (int i =0; i<nvals;i++) {
     vals.push_back(PyLong_AsLong(PyList_GetItem(values,i)));
   }
-  
+
   if (PyErr_Occurred() != NULL) {
       api.error("Error parsing values list argument.");
       return nullptr;
@@ -1152,11 +1152,11 @@ Geom_set_array_for_local_op_face(PyObject* self, PyObject* args)
 }
 
 //------------------------------------
-// Geom_set_array_for_local_op_sphere 
+// Geom_set_array_for_local_op_sphere
 //------------------------------------
 //
 PyDoc_STRVAR(Geom_set_array_for_local_op_sphere_doc,
-  "Geom_set_array_for_local_op_sphere(kernel)                                    \n\ 
+  "Geom_set_array_for_local_op_sphere(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1164,7 +1164,7 @@ PyDoc_STRVAR(Geom_set_array_for_local_op_sphere_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_set_array_for_local_op_sphere(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ssdO|si", PyRunTimeErr, __func__);
@@ -1218,11 +1218,11 @@ Geom_set_array_for_local_op_sphere(PyObject* self, PyObject* args)
 }
 
 //-----------------------------------
-// Geom_set_array_for_local_op_cells 
+// Geom_set_array_for_local_op_cells
 //-----------------------------------
 //
 PyDoc_STRVAR(Geom_set_array_for_local_op_cells_doc,
-  "set_array_for_local_op_cells(kernel)                                    \n\ 
+  "set_array_for_local_op_cells(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1230,7 +1230,7 @@ PyDoc_STRVAR(Geom_set_array_for_local_op_cells_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_set_array_for_local_op_cells(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ssO|si", PyRunTimeErr, __func__);
@@ -1286,11 +1286,11 @@ Geom_set_array_for_local_op_cells(PyObject* self, PyObject* args)
 }
 
 //-----------------------------------
-// Geom_set_array_for_local_op_blend 
+// Geom_set_array_for_local_op_blend
 //-----------------------------------
 //
 PyDoc_STRVAR(Geom_set_array_for_local_op_blend_doc,
-  "set_array_for_local_op_blend(kernel)                                    \n\ 
+  "set_array_for_local_op_blend(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1298,7 +1298,7 @@ PyDoc_STRVAR(Geom_set_array_for_local_op_blend_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_set_array_for_local_op_blend(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sssOd|si", PyRunTimeErr, __func__);
@@ -1336,7 +1336,7 @@ Geom_set_array_for_local_op_blend(PyObject* self, PyObject* args)
   for (int i =0; i<nvals;i++) {
     vals.push_back(PyLong_AsLong(PyList_GetItem(values,i)));
   }
-  
+
   if (PyErr_Occurred() != NULL) {
       api.error("Error parsing values list argument.");
       return nullptr;
@@ -1356,11 +1356,11 @@ Geom_set_array_for_local_op_blend(PyObject* self, PyObject* args)
 }
 
 //------------------------
-// Geom_local_decimation 
+// Geom_local_decimation
 //------------------------
 //
 PyDoc_STRVAR(Geom_local_decimation_doc,
-  "local_decimation(kernel)                                    \n\ 
+  "local_decimation(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1368,7 +1368,7 @@ PyDoc_STRVAR(Geom_local_decimation_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_local_decimation(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss|dss", PyRunTimeErr, __func__);
@@ -1405,11 +1405,11 @@ Geom_local_decimation(PyObject* self, PyObject* args)
 }
 
 //-----------------------------
-// Geom_local_laplacian_smooth 
+// Geom_local_laplacian_smooth
 //-----------------------------
 //
 PyDoc_STRVAR(Geom_local_laplacian_smooth_doc,
-  "local_laplacian_smooth(kernel)                                    \n\ 
+  "local_laplacian_smooth(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1417,7 +1417,7 @@ PyDoc_STRVAR(Geom_local_laplacian_smooth_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_local_laplacian_smooth(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss|idss", PyRunTimeErr, __func__);
@@ -1455,11 +1455,11 @@ Geom_local_laplacian_smooth(PyObject* self, PyObject* args)
 }
 
 //-----------------------------
-// Geom_local_constrain_smooth 
+// Geom_local_constrain_smooth
 //-----------------------------
 //
 PyDoc_STRVAR(Geom_local_constrain_smooth_doc,
-  "local_constrain_smooth(kernel)                                    \n\ 
+  "local_constrain_smooth(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1467,7 +1467,7 @@ PyDoc_STRVAR(Geom_local_constrain_smooth_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_local_constrain_smooth(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss|idiss", PyRunTimeErr, __func__);
@@ -1487,7 +1487,7 @@ Geom_local_constrain_smooth(PyObject* self, PyObject* args)
   if (src == NULL) {
       return nullptr;
   }
-  
+
   if (RepositoryGeometryExists(api, dstName)) {
       return nullptr;
   }
@@ -1506,11 +1506,11 @@ Geom_local_constrain_smooth(PyObject* self, PyObject* args)
 }
 
 // ------------------------------
-// Geom_local_linear_subdivision 
+// Geom_local_linear_subdivision
 // ------------------------------
 //
 PyDoc_STRVAR(Geom_local_linear_subdivision_doc,
-  "local_linear_subdivision(kernel)                                    \n\ 
+  "local_linear_subdivision(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1518,7 +1518,7 @@ PyDoc_STRVAR(Geom_local_linear_subdivision_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_local_linear_subdivision(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss|iss", PyRunTimeErr, __func__);
@@ -1555,11 +1555,11 @@ Geom_local_linear_subdivision(PyObject* self, PyObject* args)
 }
 
 //-----------------------------------
-// Geom_local_butterfly_subdivision 
+// Geom_local_butterfly_subdivision
 //-----------------------------------
 //
 PyDoc_STRVAR(Geom_local_butterfly_subdivision_doc,
-  "local_butterfly_subdivision(kernel)                                    \n\ 
+  "local_butterfly_subdivision(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1567,7 +1567,7 @@ PyDoc_STRVAR(Geom_local_butterfly_subdivision_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_local_butterfly_subdivision(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss|iss", PyRunTimeErr, __func__);
@@ -1604,11 +1604,11 @@ Geom_local_butterfly_subdivision(PyObject* self, PyObject* args)
 }
 
 //-----------------------------
-// Geom_local_loop_subdivision 
+// Geom_local_loop_subdivision
 //-----------------------------
 //
 PyDoc_STRVAR(Geom_local_loop_subdivision_doc,
-  "local_butterfly_subdivision(kernel)                                    \n\ 
+  "local_butterfly_subdivision(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1616,7 +1616,7 @@ PyDoc_STRVAR(Geom_local_loop_subdivision_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_local_loop_subdivision(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss|iss", PyRunTimeErr, __func__);
@@ -1654,11 +1654,11 @@ Geom_local_loop_subdivision(PyObject* self, PyObject* args)
 
 
 //-----------------
-// Geom_all_union 
+// Geom_all_union
 //-----------------
 //
 PyDoc_STRVAR(Geom_all_union_doc,
-  "all_union(kernel)                                    \n\ 
+  "all_union(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1666,7 +1666,7 @@ PyDoc_STRVAR(Geom_all_union_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject* 
+static PyObject*
 Geom_all_union(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("Ois|d", PyRunTimeErr, __func__);
@@ -1700,7 +1700,7 @@ Geom_all_union(PyObject* self, PyObject* args)
   // Create new solid:
   auto geom = cvSolidModel::pyDefaultInstantiateSolidModel();
   if (geom == NULL) {
-      api.error("Error creating solid model."); 
+      api.error("Error creating solid model.");
       return nullptr;
   }
 
@@ -1716,13 +1716,13 @@ Geom_all_union(PyObject* self, PyObject* args)
 }
 
 //-----------------------------
-// Geom_convert_nurbs_to_poly 
+// Geom_convert_nurbs_to_poly
 //-----------------------------
 //
 // [TODO:DaveP] not sure about this function name.
 //
 PyDoc_STRVAR(Geom_convert_nurbs_to_poly_doc,
-  "convert_nurbs_to_poly(kernel)                                    \n\ 
+  "convert_nurbs_to_poly(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1730,7 +1730,7 @@ PyDoc_STRVAR(Geom_convert_nurbs_to_poly_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_convert_nurbs_to_poly(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOOs", PyRunTimeErr, __func__);
@@ -1784,11 +1784,11 @@ Geom_convert_nurbs_to_poly(PyObject* self, PyObject* args)
   if (RepositoryGeometryExists(api, dstName)) {
       return nullptr;
   }
-    
+
   // Instantiate the new solid:
   auto geom = cvSolidModel::pyDefaultInstantiateSolidModel( );
   if (geom == NULL ) {
-      api.error("Error creating solid model."); 
+      api.error("Error creating solid model.");
       return nullptr;
   }
 
@@ -1810,11 +1810,11 @@ Geom_convert_nurbs_to_poly(PyObject* self, PyObject* args)
 }
 
 //----------------------------
-// Geom_make_polys_consistent 
+// Geom_make_polys_consistent
 //----------------------------
 //
 PyDoc_STRVAR(Geom_make_polys_consistent_doc,
-  "make_polys_consistent(kernel)                                    \n\ 
+  "make_polys_consistent(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1822,7 +1822,7 @@ PyDoc_STRVAR(Geom_make_polys_consistent_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_make_polys_consistent(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
@@ -1856,11 +1856,11 @@ Geom_make_polys_consistent(PyObject* self, PyObject* args)
 }
 
 //------------------------
-// Geom_reverse_all_cells 
+// Geom_reverse_all_cells
 //------------------------
 //
 PyDoc_STRVAR(Geom_reverse_all_cells_doc,
-  "reverse_all_cells(kernel)                                    \n\ 
+  "reverse_all_cells(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1868,7 +1868,7 @@ PyDoc_STRVAR(Geom_reverse_all_cells_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_reverse_all_cells(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
@@ -1902,11 +1902,11 @@ Geom_reverse_all_cells(PyObject* self, PyObject* args)
 }
 
 //------------------------------
-// Geom_num_closed_line_regions 
+// Geom_num_closed_line_regions
 //-----------------------------
 //
 PyDoc_STRVAR(Geom_num_closed_line_regions_doc,
-  "num_closed_line_regions(kernel)                                    \n\ 
+  "num_closed_line_regions(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1914,7 +1914,7 @@ PyDoc_STRVAR(Geom_num_closed_line_regions_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_num_closed_line_regions(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -1939,11 +1939,11 @@ Geom_num_closed_line_regions(PyObject* self, PyObject* args)
 }
 
 //-----------------------------
-// Geom_get_closed_line_region 
+// Geom_get_closed_line_region
 //-----------------------------
 //
 PyDoc_STRVAR(Geom_get_closed_line_region_doc,
-  "get_closed_line_region(kernel)                                    \n\ 
+  "get_closed_line_region(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1951,7 +1951,7 @@ PyDoc_STRVAR(Geom_get_closed_line_region_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_get_closed_line_region(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sis", PyRunTimeErr, __func__);
@@ -1986,11 +1986,11 @@ Geom_get_closed_line_region(PyObject* self, PyObject* args)
 }
 
 //-----------
-// Geom_pick 
+// Geom_pick
 //-----------
 //
 PyDoc_STRVAR(Geom_pick_doc,
-  "pick(kernel)                                    \n\ 
+  "pick(kernel)                                    \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -1998,7 +1998,7 @@ PyDoc_STRVAR(Geom_pick_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_pick(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOs", PyRunTimeErr, __func__);
@@ -2044,11 +2044,11 @@ Geom_pick(PyObject* self, PyObject* args)
 }
 
 //---------------------
-// Geom_orient_profile 
+// Geom_orient_profile
 //---------------------
 //
 PyDoc_STRVAR(Geom_orient_profile_doc,
-  "orient_profile(kernel) \n\ 
+  "orient_profile(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2056,7 +2056,7 @@ PyDoc_STRVAR(Geom_orient_profile_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_orient_profile(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOOOs", PyRunTimeErr, __func__);
@@ -2120,7 +2120,7 @@ Geom_orient_profile(PyObject* self, PyObject* args)
 // [TODO:DaveP] I can only wonder what 'disorient profile' does!
 //
 PyDoc_STRVAR(Geom_disorient_profile_doc,
-  "disorient_profile(kernel) \n\ 
+  "disorient_profile(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2128,7 +2128,7 @@ PyDoc_STRVAR(Geom_disorient_profile_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_disorient_profile(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOOOs", PyRunTimeErr, __func__);
@@ -2187,11 +2187,11 @@ Geom_disorient_profile(PyObject* self, PyObject* args)
 
 
 //----------------
-// Geom_translate 
+// Geom_translate
 //----------------
 //
 PyDoc_STRVAR(Geom_translate_doc,
-  "translate(kernel) \n\ 
+  "translate(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2199,7 +2199,7 @@ PyDoc_STRVAR(Geom_translate_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_translate(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOs", PyRunTimeErr, __func__);
@@ -2245,11 +2245,11 @@ Geom_translate(PyObject* self, PyObject* args)
 }
 
 //----------------
-// Geom_scale_avg 
+// Geom_scale_avg
 //----------------
 //
 PyDoc_STRVAR(Geom_scale_avg_doc,
-  "scale_avg(kernel) \n\ 
+  "scale_avg(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2257,7 +2257,7 @@ PyDoc_STRVAR(Geom_scale_avg_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_scale_avg(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sds", PyRunTimeErr, __func__);
@@ -2292,11 +2292,11 @@ Geom_scale_avg(PyObject* self, PyObject* args)
 }
 
 //-------------------------
-// Geom_get_ordered_points 
+// Geom_get_ordered_points
 //-------------------------
 //
 PyDoc_STRVAR(Geom_get_ordered_points_doc,
-  "get_ordered_points(kernel) \n\ 
+  "get_ordered_points(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2304,7 +2304,7 @@ PyDoc_STRVAR(Geom_get_ordered_points_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_get_ordered_points(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2327,7 +2327,7 @@ Geom_get_ordered_points(PyObject* self, PyObject* args)
       api.error("Error geting ordered points from the geometry '" + std::string(srcName) + ".");
       return nullptr;
   }
-  
+
   // Convert returned points array to Python list.
   //
   // [TODO:DaveP] must remove the C-style array addressing.
@@ -2347,11 +2347,11 @@ Geom_get_ordered_points(PyObject* self, PyObject* args)
 }
 
 //---------------------------
-// Geom_write_ordered_points 
+// Geom_write_ordered_points
 //---------------------------
 //
 PyDoc_STRVAR(Geom_write_ordered_points_doc,
-  "write_ordered_points(kernel) \n\ 
+  "write_ordered_points(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2359,7 +2359,7 @@ PyDoc_STRVAR(Geom_write_ordered_points_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_write_ordered_points(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
@@ -2384,11 +2384,11 @@ Geom_write_ordered_points(PyObject* self, PyObject* args)
 }
 
 //------------------
-// Geom_write_lines 
+// Geom_write_lines
 //------------------
 //
 PyDoc_STRVAR(Geom_write_lines_doc,
-  "write_lines(kernel) \n\ 
+  "write_lines(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2396,7 +2396,7 @@ PyDoc_STRVAR(Geom_write_lines_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_write_lines(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
@@ -2421,11 +2421,11 @@ Geom_write_lines(PyObject* self, PyObject* args)
 }
 
 //-------------------
-// Geom_polys_closed 
+// Geom_polys_closed
 //-------------------
 //
 PyDoc_STRVAR(Geom_polys_closed_doc,
-  "polys_closed(kernel) \n\ 
+  "polys_closed(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2433,7 +2433,7 @@ PyDoc_STRVAR(Geom_polys_closed_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_polys_closed(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2453,16 +2453,16 @@ Geom_polys_closed(PyObject* self, PyObject* args)
       api.error("Error performing a polys closed operation for the geometry '" + std::string(srcName)+ "'.");
       return nullptr;
   }
-  
+
   return Py_BuildValue("N", PyBool_FromLong(closed));
 }
 
 //-------------------
-// Geom_surface_area 
+// Geom_surface_area
 //-------------------
 //
 PyDoc_STRVAR(Geom_surface_area_doc,
-  "surface_area(kernel) \n\ 
+  "surface_area(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2470,7 +2470,7 @@ PyDoc_STRVAR(Geom_surface_area_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_surface_area(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2495,11 +2495,11 @@ Geom_surface_area(PyObject* self, PyObject* args)
 }
 
 //------------------------
-// Geom_get_poly_centroid 
+// Geom_get_poly_centroid
 //------------------------
 //
 PyDoc_STRVAR(Geom_get_poly_centroid_doc,
-  "get_poly_centroid(kernel) \n\ 
+  "get_poly_centroid(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2507,7 +2507,7 @@ PyDoc_STRVAR(Geom_get_poly_centroid_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_get_poly_centroid(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2532,11 +2532,11 @@ Geom_get_poly_centroid(PyObject* self, PyObject* args)
 }
 
 //----------------------
-// Geom_print_tri_stats 
+// Geom_print_tri_stats
 //----------------------
 //
 PyDoc_STRVAR(Geom_print_tri_stats_doc,
-  "Geom_print_tri_stats(kernel) \n\ 
+  "Geom_print_tri_stats(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2544,7 +2544,7 @@ PyDoc_STRVAR(Geom_print_tri_stats_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_print_tri_stats(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2568,11 +2568,11 @@ Geom_print_tri_stats(PyObject* self, PyObject* args)
 }
 
 //------------------------
-// Geom_print_small_polys 
+// Geom_print_small_polys
 //------------------------
 //
 PyDoc_STRVAR(Geom_print_small_polys_doc,
-  "print_small_polys(kernel) \n\ 
+  "print_small_polys(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2580,7 +2580,7 @@ PyDoc_STRVAR(Geom_print_small_polys_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_print_small_polys(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2605,11 +2605,11 @@ Geom_print_small_polys(PyObject* self, PyObject* args)
 }
 
 //-------------------------
-// Geom_remove_small_polys 
+// Geom_remove_small_polys
 //-------------------------
 //
 PyDoc_STRVAR(Geom_remove_small_polys_doc,
-  "remove_small_polys(kernel) \n\ 
+  "remove_small_polys(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2617,7 +2617,7 @@ PyDoc_STRVAR(Geom_remove_small_polys_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_remove_small_polys(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ssd", PyRunTimeErr, __func__);
@@ -2656,7 +2656,7 @@ Geom_remove_small_polys(PyObject* self, PyObject* args)
 //-----------
 //
 PyDoc_STRVAR(Geom_bbox_doc,
-  "Geom_bbox(kernel) \n\ 
+  "Geom_bbox(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2664,7 +2664,7 @@ PyDoc_STRVAR(Geom_bbox_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_bbox(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2695,11 +2695,11 @@ Geom_bbox(PyObject* self, PyObject* args)
 
 
 //--------------------
-// Geom_point_in_poly 
+// Geom_point_in_poly
 //--------------------
 //
 PyDoc_STRVAR(Geom_point_in_poly_doc,
-  "point_in_poly(kernel) \n\ 
+  "point_in_poly(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2707,7 +2707,7 @@ PyDoc_STRVAR(Geom_point_in_poly_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_point_in_poly(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOi", PyRunTimeErr, __func__);
@@ -2741,11 +2741,11 @@ Geom_point_in_poly(PyObject* self, PyObject* args)
 }
 
 //-------------------
-// Geom_merge_points 
+// Geom_merge_points
 //-------------------
 //
 PyDoc_STRVAR(Geom_merge_points_doc,
-  "merge_points(kernel) \n\ 
+  "merge_points(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2753,7 +2753,7 @@ PyDoc_STRVAR(Geom_merge_points_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_merge_points(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ssd", PyRunTimeErr, __func__);
@@ -2784,16 +2784,16 @@ Geom_merge_points(PyObject* self, PyObject* args)
   if (!AddGeometryToRepository(api, dstName, dst)) {
       return nullptr;
   }
-    
+
   return Py_BuildValue("s",dst->GetName());
 }
 
 //---------------------
-// Geom_warp_3d_points 
+// Geom_warp_3d_points
 //---------------------
 //
 PyDoc_STRVAR(Geom_warp_3d_points_doc,
-  "warp_3d_points(kernel) \n\ 
+  "warp_3d_points(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2801,7 +2801,7 @@ PyDoc_STRVAR(Geom_warp_3d_points_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_warp_3d_points(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ssd", PyRunTimeErr, __func__);
@@ -2823,7 +2823,7 @@ Geom_warp_3d_points(PyObject* self, PyObject* args)
   }
 
   auto dst = sys_geom_warp3dPts(src, scale);
-  if (dst == nullptr) { 
+  if (dst == nullptr) {
       api.error("Error warping 3D points from the geometry '" + std::string(srcName) + ".");
       return nullptr;
   }
@@ -2836,11 +2836,11 @@ Geom_warp_3d_points(PyObject* self, PyObject* args)
 }
 
 //-----------------
-// Geom_num_points 
+// Geom_num_points
 //-----------------
 //
 PyDoc_STRVAR(Geom_num_points_doc,
-  "num_points(kernel) \n\ 
+  "num_points(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2848,7 +2848,7 @@ PyDoc_STRVAR(Geom_num_points_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_num_points(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2872,11 +2872,11 @@ Geom_num_points(PyObject* self, PyObject* args)
 
 
 //---------------------
-// Geom_winding_number 
+// Geom_winding_number
 //---------------------
 //
 PyDoc_STRVAR(Geom_winding_number_doc,
-  "winding_number(kernel) \n\ 
+  "winding_number(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2884,7 +2884,7 @@ PyDoc_STRVAR(Geom_winding_number_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_winding_number(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2905,11 +2905,11 @@ Geom_winding_number(PyObject* self, PyObject* args)
 }
 
 //---------------------
-// Geom_polygon_normal 
+// Geom_polygon_normal
 //---------------------
 //
 PyDoc_STRVAR(Geom_polygon_normal_doc,
-  "polygon_norma(kernel) \n\ 
+  "polygon_norma(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2917,7 +2917,7 @@ PyDoc_STRVAR(Geom_polygon_normal_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_polygon_normal(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -2944,11 +2944,11 @@ Geom_polygon_normal(PyObject* self, PyObject* args)
 
 
 //-----------
-// Geom_copy 
+// Geom_copy
 //-----------
 //
 PyDoc_STRVAR(Geom_copy_doc,
-  "Geom_copy(kernel) \n\ 
+  "Geom_copy(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -2956,7 +2956,7 @@ PyDoc_STRVAR(Geom_copy_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_copy(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
@@ -2990,11 +2990,11 @@ Geom_copy(PyObject* self, PyObject* args)
 }
 
 //----------------------
-// Geom_reorder_polygon 
+// Geom_reorder_polygon
 //----------------------
 //
 PyDoc_STRVAR(Geom_reorder_polygon_doc,
-  "reorder_polygon(kernel) \n\ 
+  "reorder_polygon(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3002,7 +3002,7 @@ PyDoc_STRVAR(Geom_reorder_polygon_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_reorder_polygon(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sis", PyRunTimeErr, __func__);
@@ -3037,11 +3037,11 @@ Geom_reorder_polygon(PyObject* self, PyObject* args)
 }
 
 //---------------------------------
-// Geom_spline_points_to_path_plan 
+// Geom_spline_points_to_path_plan
 //---------------------------------
 //
 PyDoc_STRVAR(Geom_spline_points_to_path_plan_doc,
-  "spline_points_to_path_plan(kernel) \n\ 
+  "spline_points_to_path_plan(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3049,7 +3049,7 @@ PyDoc_STRVAR(Geom_spline_points_to_path_plan_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_spline_points_to_path_plan(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sii|s", PyRunTimeErr, __func__);
@@ -3084,15 +3084,15 @@ Geom_spline_points_to_path_plan(PyObject* self, PyObject* args)
       return Py_BuildValue("s",output);
   } else {
       return SV_PYTHON_OK;
-  } 
+  }
 }
 
 //------------------------
-// Geom_integrate_surface 
+// Geom_integrate_surface
 //------------------------
 //
 PyDoc_STRVAR(Geom_integrate_surface_doc,
-  "integrate_surface(kernel) \n\ 
+  "integrate_surface(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3100,7 +3100,7 @@ PyDoc_STRVAR(Geom_integrate_surface_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_integrate_surface(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOi", PyRunTimeErr, __func__);
@@ -3134,11 +3134,11 @@ Geom_integrate_surface(PyObject* self, PyObject* args)
 }
 
 //-------------------------
-// Geom_integrate_surface2 
+// Geom_integrate_surface2
 //-------------------------
 //
 PyDoc_STRVAR(Geom_integrate_surface2_doc,
-  "integrate_surface2(kernel) \n\ 
+  "integrate_surface2(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3146,7 +3146,7 @@ PyDoc_STRVAR(Geom_integrate_surface2_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_integrate_surface2(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("si", PyRunTimeErr, __func__);
@@ -3173,11 +3173,11 @@ Geom_integrate_surface2(PyObject* self, PyObject* args)
 }
 
 //-----------------------
-// Geom_integrate_energy 
+// Geom_integrate_energy
 //-----------------------
 //
 PyDoc_STRVAR(Geom_integrate_energy_doc,
-  "integrate_energy(kernel) \n\ 
+  "integrate_energy(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3185,7 +3185,7 @@ PyDoc_STRVAR(Geom_integrate_energy_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_integrate_energy(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOd", PyRunTimeErr, __func__);
@@ -3203,7 +3203,7 @@ Geom_integrate_energy(PyObject* self, PyObject* args)
       api.error("The normal argument " + emsg);
       return nullptr;
   }
-  
+
   auto obj = GetRepositoryGeometry(api, objName);
   if (obj == NULL) {
       return nullptr;
@@ -3219,11 +3219,11 @@ Geom_integrate_energy(PyObject* self, PyObject* args)
 }
 
 //--------------------
-// Geom_find_distance 
+// Geom_find_distance
 //--------------------
 //
 PyDoc_STRVAR(Geom_find_distance_doc,
-  "find_distance(kernel) \n\ 
+  "find_distance(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3231,7 +3231,7 @@ PyDoc_STRVAR(Geom_find_distance_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_find_distance(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sO", PyRunTimeErr, __func__);
@@ -3260,11 +3260,11 @@ Geom_find_distance(PyObject* self, PyObject* args)
 }
 
 //-------------------------
-// Geom_interpolate_scalar 
+// Geom_interpolate_scalar
 //-------------------------
 //
 PyDoc_STRVAR(Geom_interpolate_scalar_doc,
-  "interpolate_scalar(kernel) \n\ 
+  "interpolate_scalar(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3272,7 +3272,7 @@ PyDoc_STRVAR(Geom_interpolate_scalar_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_interpolate_scalar(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sO", PyRunTimeErr, __func__);
@@ -3305,11 +3305,11 @@ Geom_interpolate_scalar(PyObject* self, PyObject* args)
 }
 
 //-------------------------
-// Geom_interpolate_vector 
+// Geom_interpolate_vector
 //-------------------------
 //
 PyDoc_STRVAR(Geom_interpolate_vector_doc,
-  "interpolate_vector(kernel) \n\ 
+  "interpolate_vector(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3317,7 +3317,7 @@ PyDoc_STRVAR(Geom_interpolate_vector_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_interpolate_vector(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sO", PyRunTimeErr, __func__);
@@ -3354,11 +3354,11 @@ Geom_interpolate_vector(PyObject* self, PyObject* args)
 }
 
 //--------------------------
-// Geom_intersect_with_line 
+// Geom_intersect_with_line
 //--------------------------
 //
 PyDoc_STRVAR(Geom_intersect_with_line_doc,
-  "intersect_with_line(kernel) \n\ 
+  "intersect_with_line(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3366,7 +3366,7 @@ PyDoc_STRVAR(Geom_intersect_with_line_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_intersect_with_line(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sOO", PyRunTimeErr, __func__);
@@ -3406,11 +3406,11 @@ Geom_intersect_with_line(PyObject* self, PyObject* args)
 }
 
 //---------------------
-// Geom_add_point_data 
+// Geom_add_point_data
 //---------------------
 //
 PyDoc_STRVAR(Geom_add_point_data_doc,
-  "add_point_data(kernel) \n\ 
+  "add_point_data(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3418,7 +3418,7 @@ PyDoc_STRVAR(Geom_add_point_data_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_add_point_data(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sssii", PyRunTimeErr, __func__);
@@ -3458,7 +3458,7 @@ Geom_add_point_data(PyObject* self, PyObject* args)
 
   cvPolyData *dst;
   if ( sys_geom_mathPointData(srcA, srcB, sc, v, &dst) != SV_OK ) {
-      api.error("Error adding point data for the geometry '" + std::string(srcNameA) + 
+      api.error("Error adding point data for the geometry '" + std::string(srcNameA) +
           " and " + std::string(srcNameB) +".");
       return nullptr;
   }
@@ -3475,7 +3475,7 @@ Geom_add_point_data(PyObject* self, PyObject* args)
 //--------------------------
 //
 PyDoc_STRVAR(Geom_subtract_point_data_doc,
-  "subtract_point_data(kernel) \n\ 
+  "subtract_point_data(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3483,7 +3483,7 @@ PyDoc_STRVAR(Geom_subtract_point_data_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_subtract_point_data(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sssii", PyRunTimeErr, __func__);
@@ -3522,7 +3522,7 @@ Geom_subtract_point_data(PyObject* self, PyObject* args)
 
   cvPolyData *dst;
   if (sys_geom_mathPointData(srcA, srcB, sc, v, &dst) != SV_OK) {
-      api.error("Error subtracting point data for the geometry '" + std::string(srcNameA) + 
+      api.error("Error subtracting point data for the geometry '" + std::string(srcNameA) +
           " and " + std::string(srcNameB) +".");
       return nullptr;
   }
@@ -3535,11 +3535,11 @@ Geom_subtract_point_data(PyObject* self, PyObject* args)
 }
 
 //--------------------------
-// Geom_multiply_point_data 
+// Geom_multiply_point_data
 //--------------------------
 //
 PyDoc_STRVAR(Geom_multiply_point_data_doc,
-  "multiply_point_data(kernel) \n\ 
+  "multiply_point_data(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3547,7 +3547,7 @@ PyDoc_STRVAR(Geom_multiply_point_data_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_multiply_point_data(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sssii", PyRunTimeErr, __func__);
@@ -3586,7 +3586,7 @@ Geom_multiply_point_data(PyObject* self, PyObject* args)
 
   cvPolyData *dst;
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != SV_OK ) {
-      api.error("Error multiplying point data for the geometry '" + std::string(srcNameA) + 
+      api.error("Error multiplying point data for the geometry '" + std::string(srcNameA) +
           " and " + std::string(srcNameB) +".");
       return nullptr;
   }
@@ -3599,11 +3599,11 @@ Geom_multiply_point_data(PyObject* self, PyObject* args)
 }
 
 //------------------------
-// Geom_divide_point_data 
+// Geom_divide_point_data
 //------------------------
 //
 PyDoc_STRVAR(Geom_divide_point_data_doc,
-  "Geom_divide_point_data(kernel) \n\ 
+  "Geom_divide_point_data(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3611,7 +3611,7 @@ PyDoc_STRVAR(Geom_divide_point_data_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_divide_point_data(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sssii", PyRunTimeErr, __func__);
@@ -3652,7 +3652,7 @@ Geom_divide_point_data(PyObject* self, PyObject* args)
   cvPolyData *dst;
   if (sys_geom_mathPointData(srcA, srcB, sc, v, &dst) != SV_OK) {
     PyErr_SetString(PyRunTimeErr, "point data math error" );
-      api.error("Error dividing point data for the geometry '" + std::string(srcNameA) + 
+      api.error("Error dividing point data for the geometry '" + std::string(srcNameA) +
           " and " + std::string(srcNameB) +".");
       return nullptr;
   }
@@ -3665,11 +3665,11 @@ Geom_divide_point_data(PyObject* self, PyObject* args)
 }
 
 //--------------
-// Geom_project 
+// Geom_project
 //---------------
 //
 PyDoc_STRVAR(Geom_project_doc,
-  "project(kernel) \n\ 
+  "project(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3677,7 +3677,7 @@ PyDoc_STRVAR(Geom_project_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_project(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sssii", PyRunTimeErr, __func__);
@@ -3717,7 +3717,7 @@ Geom_project(PyObject* self, PyObject* args)
 
   cvPolyData *dst;
   if (sys_geom_Project(srcA, srcB, sc, v, &dst) != SV_OK) {
-      api.error("Error projecting point data for the geometry '" + std::string(srcNameA) + 
+      api.error("Error projecting point data for the geometry '" + std::string(srcNameA) +
           " and " + std::string(srcNameB) +".");
       return nullptr;
   }
@@ -3734,7 +3734,7 @@ Geom_project(PyObject* self, PyObject* args)
 //-------------------------------
 //
 PyDoc_STRVAR(Geom_integrate_scalar_surface_doc,
-  "integrate_scalar_surface(kernel) \n\ 
+  "integrate_scalar_surface(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3742,7 +3742,7 @@ PyDoc_STRVAR(Geom_integrate_scalar_surface_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_integrate_scalar_surface(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
@@ -3772,7 +3772,7 @@ Geom_integrate_scalar_surface(PyObject* self, PyObject* args)
 //---------------------------------
 //
 PyDoc_STRVAR(Geom_integrate_scalar_threshold_doc,
-  "integrate_scalar_threshold(kernel) \n\ 
+  "integrate_scalar_threshold(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3780,7 +3780,7 @@ PyDoc_STRVAR(Geom_integrate_scalar_threshold_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_integrate_scalar_threshold(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sd", PyRunTimeErr, __func__);
@@ -3811,11 +3811,11 @@ Geom_integrate_scalar_threshold(PyObject* self, PyObject* args)
 }
 
 //-------------------------
-// Geom_replace_point_data 
+// Geom_replace_point_data
 //-------------------------
 //
 PyDoc_STRVAR(Geom_replace_point_data_doc,
-  "replace_point_data(kernel) \n\ 
+  "replace_point_data(kernel) \n\
    \n\
    ??? Set the computational kernel used to segment image data.       \n\
    \n\
@@ -3823,7 +3823,7 @@ PyDoc_STRVAR(Geom_replace_point_data_doc,
      kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Geom_replace_point_data(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("sssii", PyRunTimeErr, __func__);
@@ -3864,7 +3864,7 @@ Geom_replace_point_data(PyObject* self, PyObject* args)
   cvPolyData *dst;
 
   if (sys_geom_ReplacePointData(srcA, srcB, sc, v, &dst) != SV_OK) {
-      api.error("Error replacing point data for the geometry '" + std::string(srcNameA) + 
+      api.error("Error replacing point data for the geometry '" + std::string(srcNameA) +
           " and " + std::string(srcNameB) +".");
       return nullptr;
   }
@@ -3894,15 +3894,15 @@ static char* GEOMETRY_EXCEPTION_OBJECT = "Error";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(GeometryModule_doc, 
+PyDoc_STRVAR(GeometryModule_doc,
   "SimVascular geometry module. \n\
    \n\
-   The geometry module provides functions for performing geometric operations \n\ 
+   The geometry module provides functions for performing geometric operations \n\
    on vtkPolyData objects used to represents vertices, lines and polygons. \n\
 ");
 
 //---------------
-// PyGeomMethods 
+// PyGeomMethods
 //---------------
 // Geometry module methods.
 //
@@ -4073,39 +4073,39 @@ PyMethodDef PyGeomMethods[] =
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python 
+// Define the initialization function called by the Python
 // interpreter when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 
 static struct PyModuleDef PyGeomModule = {
    m_base,
-   GEOMETRY_MODULE, 
+   GEOMETRY_MODULE,
    GeometryModule_doc,
-   perInterpreterStateSize, 
+   perInterpreterStateSize,
    PyGeomMethods
 };
 
 //-------------------
-// PyInit_PyGeometry 
+// PyInit_PyGeometry
 //-------------------
 // The initialization function called by the Python interpreter when the module is loaded.
 //
-PyMODINIT_FUNC 
+PyMODINIT_FUNC
 PyInit_PyGeometry(void)
 {
   //std::cout << "========== load geometry module ==========" << std::endl;
@@ -4159,7 +4159,7 @@ PyInit_PyGeometry(void)
 
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 2

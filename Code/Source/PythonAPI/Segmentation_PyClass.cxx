@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API 'Segmentation' class. 
+// The functions defined here implement the SV Python API 'Segmentation' class.
 //
-// The 'Segmentation' class is used to store segmentation data. It is base class 
+// The 'Segmentation' class is used to store segmentation data. It is base class
 // for the segmentation cirlce, ellipse, level set, polygon and threshold types.
 //
 using sv3::Contour;
@@ -62,9 +62,9 @@ ContourCtorMapType ContourCtorMap = {
 // Create an SV Segmentation derived object.
 //
 // If 'contourType' is not valid then create a Contour object.
-// Contour objects can be used with diffetent methods. 
+// Contour objects can be used with diffetent methods.
 //
-static Contour * 
+static Contour *
 CreateSegmentationObject(cKernelType contourType, PathElement::PathPoint pathPoint)
 {
   std::cout << std::endl;
@@ -93,14 +93,14 @@ CreateSegmentationObject(cKernelType contourType, PathElement::PathPoint pathPoi
 //-------------------------
 //
 PyDoc_STRVAR(Segmentation_get_center_doc,
-  "get_center()  \n\ 
+  "get_center()  \n\
    \n\
    Get the center of the segmentation. \n\
    \n\
    Returns list([x,y,z]): The center of the segmentation. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Segmentation_get_center(PySegmentation* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
@@ -114,7 +114,7 @@ Segmentation_get_center(PySegmentation* self, PyObject* args)
 //-------------------------
 //
 PyDoc_STRVAR(Segmentation_get_points_doc,
-  "get_points()  \n\ 
+  "get_points()  \n\
    \n\
    Get the segmentation contour points. \n\
    \n\
@@ -133,24 +133,24 @@ Segmentation_get_points(PySegmentation* self, PyObject* args)
   for (auto const& point : contour_points) {
       auto pointValues = PyList_New(3);
       for (int i = 0; i < 3; i++) {
-          auto val = PyFloat_FromDouble((double)point[i]); 
-          PyList_SetItem(pointValues, i, val); 
+          auto val = PyFloat_FromDouble((double)point[i]);
+          PyList_SetItem(pointValues, i, val);
       }
-      PyList_SetItem(pointList, n, pointValues); 
+      PyList_SetItem(pointList, n, pointValues);
       n += 1;
   }
 
-  return Py_BuildValue("N", pointList); 
+  return Py_BuildValue("N", pointList);
 }
 
 //---------------------------------
 // Segmentation_get_control_points
 //---------------------------------
-// [TODO:DaveP] I will removed this, no longer have generic 
+// [TODO:DaveP] I will removed this, no longer have generic
 // get control points.
 //
 PyDoc_STRVAR(Segmentation_get_control_points_doc,
-  "get_control_points()  \n\ 
+  "get_control_points()  \n\
    \n\
    Get the center of the contour. \n\
    \n\
@@ -169,14 +169,14 @@ Segmentation_get_control_points(PySegmentation* self, PyObject* args)
   for (auto const& point : control_points) {
       auto pointValues = PyList_New(3);
       for (int i = 0; i < 3; i++) {
-          auto val = PyFloat_FromDouble((double)point[i]); 
-          PyList_SetItem(pointValues, i, val); 
+          auto val = PyFloat_FromDouble((double)point[i]);
+          PyList_SetItem(pointValues, i, val);
       }
-      PyList_SetItem(pointList, n, pointValues); 
+      PyList_SetItem(pointList, n, pointValues);
       n += 1;
   }
 
-  return Py_BuildValue("N", pointList); 
+  return Py_BuildValue("N", pointList);
 }
 
 //---------------------
@@ -184,7 +184,7 @@ Segmentation_get_control_points(PySegmentation* self, PyObject* args)
 //---------------------
 //
 PyDoc_STRVAR(Segmentation_get_id_doc,
-  "get_id()  \n\ 
+  "get_id()  \n\
    \n\
    Get the contour ID. \n\
    \n\
@@ -198,7 +198,7 @@ Segmentation_get_id(PySegmentation* self, PyObject* args)
   auto contour = self->contour;
   auto id = contour->GetContourID();
   std::cout << "######### Segmentation_get_id: id: " << id << std::endl;
-  return Py_BuildValue("i", id); 
+  return Py_BuildValue("i", id);
 }
 
 //-----------------------------
@@ -206,22 +206,22 @@ Segmentation_get_id(PySegmentation* self, PyObject* args)
 //-----------------------------
 //
 PyDoc_STRVAR(Segmentation_get_path_point_doc,
-  "get_path_point()  \n\ 
+  "get_path_point()  \n\
    \n\
    Get the contour path point. \n\
    \n\
    Returns dict(pos:[x,y,z], tangent:[x,y,z], rotation:[x,y,z]): The contour path point. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Segmentation_get_path_point(PySegmentation* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto contour = self->contour;
   auto pathPoint = contour->GetPathPoint();
   return Py_BuildValue("{s:[d,d,d], s:[d,d,d], s:[d,d,d]}",
-    "pos", pathPoint.pos[0], pathPoint.pos[1], pathPoint.pos[1], 
-    "tangent", pathPoint.tangent[0], pathPoint.tangent[1], pathPoint.tangent[1], 
+    "pos", pathPoint.pos[0], pathPoint.pos[1], pathPoint.pos[1],
+    "tangent", pathPoint.tangent[0], pathPoint.tangent[1], pathPoint.tangent[1],
     "rotation", pathPoint.rotation[0], pathPoint.rotation[1], pathPoint.rotation[1] );
 }
 
@@ -230,16 +230,16 @@ Segmentation_get_path_point(PySegmentation* self, PyObject* args)
 //-----------------------
 //
 PyDoc_STRVAR(Segmentation_get_type_doc,
-  "get_type()  \n\ 
+  "get_type()  \n\
    \n\
    Get the contour type. \n\
    \n\
    Returns (str): contour type. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Segmentation_get_type(PySegmentation* self, PyObject* args)
-{   
+{
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto contour = self->contour;
   auto contourType = contour->GetType();
@@ -251,7 +251,7 @@ Segmentation_get_type(PySegmentation* self, PyObject* args)
 //---------------------------
 //
 PyDoc_STRVAR(Segmentation_get_polydata_doc,
-  "get_vtk_polydata()  \n\ 
+  "get_vtk_polydata()  \n\
    \n\
    Get the contour type. \n\
    \n\
@@ -260,7 +260,7 @@ PyDoc_STRVAR(Segmentation_get_polydata_doc,
 
 static PyObject *
 Segmentation_get_polydata(PySegmentation* self, PyObject* args)
-{ 
+{
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto contour = self->contour;
   vtkSmartPointer<vtkPolyData> polydata = contour->CreateVtkPolyDataFromContour();
@@ -276,7 +276,7 @@ Segmentation_get_polydata(PySegmentation* self, PyObject* args)
 //------------------------
 //
 PyDoc_STRVAR(Segmentation_set_image_doc,
-  "Segmentation_set_image(image)  \n\ 
+  "Segmentation_set_image(image)  \n\
    \n\
    Set the image data for a contour. \n\
    \n\
@@ -284,34 +284,34 @@ PyDoc_STRVAR(Segmentation_set_image_doc,
      image (vtkImageData): A VTK image object.  \n\
 ");
 
-static PyObject* 
+static PyObject*
 Segmentation_set_image(PySegmentation* self, PyObject* args)
 {
-    PyObject *vtkName; 
+    PyObject *vtkName;
     auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
 
     if (!PyArg_ParseTuple(args, api.format, &vtkName)) {
         return api.argsError();
     }
-  
-    // Check the Contour object has data. 
+
+    // Check the Contour object has data.
     Contour* contour = self->contour;
     if (contour == nullptr) {
-        api.error("The Contour object does not have geometry."); 
+        api.error("The Contour object does not have geometry.");
         return nullptr;
     }
-  
+
     // Look up the named vtk object:
     auto vtkObj = (vtkImageData *)vtkPythonUtil::GetPointerFromObject(vtkName, "vtkImageData");
     if (vtkObj == nullptr) {
-        api.error("The vtkImageData object does not exist."); 
+        api.error("The vtkImageData object does not exist.");
         return nullptr;
     }
 
     // [TODO:DaveP] What does this do?
     vtkImageData* slice = sv3::SegmentationUtils::GetSlicevtkImage(contour->GetPathPoint(),vtkObj, 5.0);
     contour->SetVtkImageSlice(slice);
-    
+
     Py_INCREF(contour);
     self->contour=contour;
     Py_DECREF(contour);
@@ -319,7 +319,7 @@ Segmentation_set_image(PySegmentation* self, PyObject* args)
 }
 
 //---------------------------------
-// Segmentation_set_control_points 
+// Segmentation_set_control_points
 //---------------------------------
 //
 // Use try-catch block for error handling.
@@ -328,7 +328,7 @@ Segmentation_set_image(PySegmentation* self, PyObject* args)
 // defined for each Contour object type.
 //
 PyDoc_STRVAR(Segmentation_set_control_points_doc,
-  "Contour.set_control_points(control_points)  \n\ 
+  "Contour.set_control_points(control_points)  \n\
    \n\
    Set the control points for a contour. \n\
    \n\
@@ -336,7 +336,7 @@ PyDoc_STRVAR(Segmentation_set_control_points_doc,
      control_points (list[]): The list of control points to set for the contour. The number of control points needed depends on the Contour kernel set for this object.\n\
 ");
 
-static PyObject* 
+static PyObject*
 Segmentation_set_control_points(PySegmentation* self, PyObject* args)
 {
     PyObject *controlPoints = nullptr;
@@ -358,18 +358,18 @@ Segmentation_set_control_points(PySegmentation* self, PyObject* args)
     for (int i = 0; i < numPts; i++) {
         PyObject* pt = PyList_GetItem(controlPoints,i);
         if ((PyList_Size(pt) != 3) || !PyList_Check(pt)) {
-            throw std::runtime_error("Control points argument data at " + std::to_string(i) + 
+            throw std::runtime_error("Control points argument data at " + std::to_string(i) +
               " in the list is not a 3D point (three float values).");
         }
         for (int j = 0; j < 3; j++) {
-            if (!PyFloat_Check(PyList_GetItem(pt,j))) { 
-                throw std::runtime_error("Control points argument data at " + std::to_string(i) + 
+            if (!PyFloat_Check(PyList_GetItem(pt,j))) {
+                throw std::runtime_error("Control points argument data at " + std::to_string(i) +
                   " in the list is not a 3D point (three float values).");
             }
         }
     }
-    
-    // Check that the number of control is consistant 
+
+    // Check that the number of control is consistant
     // with the kernel type.
     //
     // [TODO:DaveP] The kernel should be set in the object.
@@ -382,13 +382,13 @@ Segmentation_set_control_points(PySegmentation* self, PyObject* args)
 
     } else if ((Contour::gCurrentKernel == cKERNEL_POLYGON) && (numPts < 3)) {
         throw std::runtime_error("Polygon contour requires at least three points");
-    }        
-    
+    }
+
     Contour* contour = self->contour;
     if (contour == NULL ) {
         throw std::runtime_error("Geometry has not been created for the contour.");
     }
-    
+
     // Copy control points to contour object.
     std::vector<std::array<double,3> > pts(numPts);
     for (int i = 0; i < numPts; i++) {
@@ -411,20 +411,20 @@ Segmentation_set_control_points(PySegmentation* self, PyObject* args)
 // Segmentation_set_control_points_by_radius
 //-------------------------------------------
 //
-// [TODO:DaveP] I think this should be removed, have it only defined 
+// [TODO:DaveP] I think this should be removed, have it only defined
 // for the CircelContour type.
 //
 PyDoc_STRVAR(Segmentation_set_control_points_by_radius_doc,
-  "Contour.set_control_points_by_radius(control_points)  \n\ 
+  "Contour.set_control_points_by_radius(control_points)  \n\
    \n\
    Set the control points for a Circle Contour with a center point and radius. \n\
    \n\
    Args: \n\
-     center ([x,y,z]): The list of three floats defining the center of the Circle Contour.   \n\ 
-     radius (float)): The radius of the Circle Contour.   \n\ 
+     center ([x,y,z]): The list of three floats defining the center of the Circle Contour.   \n\
+     radius (float)): The radius of the Circle Contour.   \n\
 ");
 
-static PyObject* 
+static PyObject*
 Segmentation_set_control_points_by_radius(PySegmentation* self, PyObject* args)
 {
     auto api = PyUtilApiFunction("Od", PyRunTimeErr, __func__);
@@ -447,13 +447,13 @@ Segmentation_set_control_points_by_radius(PySegmentation* self, PyObject* args)
     }
 
     for (int i = 0; i < PyList_Size(center); i++) {
-        if (!PyFloat_Check(PyList_GetItem(center,i))) { 
+        if (!PyFloat_Check(PyList_GetItem(center,i))) {
             api.error("Center argument is not a 3D point (three float values).");
             return nullptr;
         }
         ctr[i] = PyFloat_AsDouble(PyList_GetItem(center,i));
     }
-    
+
     auto contour = self->contour;
     if (contour == NULL) {
         api.error("No geometry has been created for the contour.");
@@ -475,14 +475,14 @@ Segmentation_set_control_points_by_radius(PySegmentation* self, PyObject* args)
 //-----------------------
 //
 PyDoc_STRVAR(Segmentation_get_area_doc,
-  "Contour.area()  \n\ 
+  "Contour.area()  \n\
    \n\
    Get the area of the contour. \n\
    \n\
    Returns: Area (float) of the contour. \n\
 ");
 
-static PyObject* 
+static PyObject*
 Segmentation_get_area(PySegmentation* self, PyObject* args)
 {
     auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
@@ -490,10 +490,10 @@ Segmentation_get_area(PySegmentation* self, PyObject* args)
     if (contour == NULL) {
         api.error("No geometry has been created for the contour.");
         return nullptr;
-        
+
     }
     double area = contour->GetArea();
-    return Py_BuildValue("d",area);    
+    return Py_BuildValue("d",area);
 }
 
 //----------------------------
@@ -501,7 +501,7 @@ Segmentation_get_area(PySegmentation* self, PyObject* args)
 //----------------------------
 //
 PyDoc_STRVAR(Segmentation_get_perimeter_doc,
-  "Contour.perimeter()  \n\ 
+  "Contour.perimeter()  \n\
    \n\
    Get the length of the contour perimeter. \n\
    \n\
@@ -517,7 +517,7 @@ PyObject* Segmentation_get_perimeter(PySegmentation* self, PyObject* args)
         return nullptr;
     }
     double perimeter = contour->GetPerimeter();
-    return Py_BuildValue("d",perimeter);    
+    return Py_BuildValue("d",perimeter);
 }
 
 
@@ -526,7 +526,7 @@ PyObject* Segmentation_get_perimeter(PySegmentation* self, PyObject* args)
 //----------------------------------
 //
 PyDoc_STRVAR(Segmentation_set_threshold_value_doc,
-  "Contour.set_threshold_value()  \n\ 
+  "Contour.set_threshold_value()  \n\
    \n\
    Set the threshold value for a Threshold Contour. \n\
    \n\
@@ -534,7 +534,7 @@ PyDoc_STRVAR(Segmentation_set_threshold_value_doc,
      threshold (float): Threshold value. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Segmentation_set_threshold_value(PySegmentation* self, PyObject* args)
 {
     double threshold = 0.0;
@@ -543,12 +543,12 @@ Segmentation_set_threshold_value(PySegmentation* self, PyObject* args)
     if (!PyArg_ParseTuple(args, api.format, &threshold)) {
         return api.argsError();
     }
-    
+
     if (Contour::gCurrentKernel != cKERNEL_THRESHOLD) {
         api.error("Contour kernel is not set to 'Threshold'");
         return nullptr;
     }
-    
+
     Contour* contour = self->contour;
     if (contour == NULL) {
         api.error("No geometry has been created for the contour.");
@@ -558,13 +558,13 @@ Segmentation_set_threshold_value(PySegmentation* self, PyObject* args)
     contour->SetThresholdValue(threshold);
     return Py_None;
 }
-    
+
 //------------------------------------
 // Segmentation_create_smooth_contour
 //------------------------------------
 //
 PyDoc_STRVAR(Segmentation_create_smooth_contour_doc,
-  "Contour.create_smooth_contour()  \n\ 
+  "Contour.create_smooth_contour()  \n\
    \n\
    Create a smoothed contour. \n\
    \n\
@@ -573,7 +573,7 @@ PyDoc_STRVAR(Segmentation_create_smooth_contour_doc,
      name (str): Name of the new smoothed contour. \n\
 ");
 
-static PySegmentation* 
+static PySegmentation*
 Segmentation_create_smooth_contour(PySegmentation* self, PyObject* args)
 {
     auto api = PyUtilApiFunction("is", PyRunTimeErr, __func__);
@@ -584,23 +584,23 @@ Segmentation_create_smooth_contour(PySegmentation* self, PyObject* args)
         api.argsError();
         return nullptr;
     }
-    
+
     Contour* contour = self->contour;
     if (contour == NULL) {
         api.error("No geometry has been created for the Contour.");
         return nullptr;
     }
-    
-    auto newContour = CreateSegmentationObject(Contour::gCurrentKernel, contour->GetPathPoint()); 
+
+    auto newContour = CreateSegmentationObject(Contour::gCurrentKernel, contour->GetPathPoint());
     //Contour *newContour = sv3::Contour::DefaultInstantiateContourObject(Contour::gCurrentKernel, contour->GetPathPoint());
     newContour= contour->CreateSmoothedContour(fourierNumber);
-    
+
     if ( !( gRepository->Register(contourName, newContour))) {
         delete newContour;
-        api.error("Could not add the new contour into the repository."); 
+        api.error("Could not add the new contour into the repository.");
         return nullptr;
     }
-        
+
     Py_INCREF(newContour);
     PySegmentation* pyNewCt;
     pyNewCt = PyCreateSegmentationType();
@@ -610,7 +610,7 @@ Segmentation_create_smooth_contour(PySegmentation* self, PyObject* args)
 }
 
 //---------------------
-// Segmentation_create 
+// Segmentation_create
 //---------------------
 //
 static PyObject *
@@ -646,14 +646,14 @@ Segmentation_create(PyObject* self, PyObject* args)
 
 static char* SEGMENTATION_CLASS = "Segmentation";
 
-// Dotted name that includes both the module name and 
+// Dotted name that includes both the module name and
 // the name of the type within the module.
 static char* SEGMENTATION_MODULE_CLASS = "segmentation.Segmentation";
 
 PyDoc_STRVAR(SegmentationClass_doc, "segmentation class functions.");
 
 //-----------------------
-// PySegmentationMethods 
+// PySegmentationMethods
 //-----------------------
 // Define the methods for the Python 'Segmentation' class.
 //
@@ -661,18 +661,18 @@ PyDoc_STRVAR(SegmentationClass_doc, "segmentation class functions.");
 //
 static PyMethodDef PySegmentationMethods[] = {
 
-  {"get_center", (PyCFunction)Segmentation_get_center, METH_NOARGS, Segmentation_get_center_doc }, 
+  {"get_center", (PyCFunction)Segmentation_get_center, METH_NOARGS, Segmentation_get_center_doc },
 
-  {"get_points", (PyCFunction)Segmentation_get_points, METH_NOARGS, Segmentation_get_points_doc}, 
+  {"get_points", (PyCFunction)Segmentation_get_points, METH_NOARGS, Segmentation_get_points_doc},
 
   // [TODO:DaveP] I will removed this, no longer have generic get control points.
-  // {"get_control_points", (PyCFunction)Segmentation_get_control_points, METH_NOARGS, Segmentation_get_control_points_doc}, 
+  // {"get_control_points", (PyCFunction)Segmentation_get_control_points, METH_NOARGS, Segmentation_get_control_points_doc},
 
-  {"get_id", (PyCFunction)Segmentation_get_id, METH_NOARGS, Segmentation_get_id_doc}, 
+  {"get_id", (PyCFunction)Segmentation_get_id, METH_NOARGS, Segmentation_get_id_doc},
 
-  {"get_path_point", (PyCFunction)Segmentation_get_path_point, METH_NOARGS, Segmentation_get_path_point_doc}, 
+  {"get_path_point", (PyCFunction)Segmentation_get_path_point, METH_NOARGS, Segmentation_get_path_point_doc},
 
-  {"get_polydata", (PyCFunction)Segmentation_get_polydata, METH_NOARGS, Segmentation_get_polydata_doc}, 
+  {"get_polydata", (PyCFunction)Segmentation_get_polydata, METH_NOARGS, Segmentation_get_polydata_doc},
 
   {"get_type", (PyCFunction)Segmentation_get_type, METH_NOARGS, Segmentation_get_type_doc},
 
@@ -701,25 +701,25 @@ static PyMethodDef PySegmentationMethods[] = {
 };
 
 //--------------------
-// PySegmentationType 
+// PySegmentationType
 //--------------------
-// Define the Python type object for the Python 'Segmentation' class. 
+// Define the Python type object for the Python 'Segmentation' class.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static PyTypeObject PySegmentationType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = SEGMENTATION_CLASS,
-  .tp_basicsize = sizeof(PySegmentation)
+  SEGMENTATION_CLASS,
+  sizeof(PySegmentation)
 };
 
 //--------------------
-// PySegmentationInit 
+// PySegmentationInit
 //--------------------
 // This function is used to initialize an object after it is created.
 //
-// This implements the Python __init__ method for the Segmentation class. 
+// This implements the Python __init__ method for the Segmentation class.
 // It is called after calling the __new__ method.
 //
 static int
@@ -732,11 +732,11 @@ PySegmentationInit(PySegmentation* self, PyObject* args, PyObject *kwds)
       return -1;
   }
 
-  if (kernelName != nullptr) { 
+  if (kernelName != nullptr) {
       //std::cout << "[ContourObjectInit] Kernel name: " << kernelName << std::endl;
   }
   self->contour = new Contour();
-  self->id = numObjs; 
+  self->id = numObjs;
   numObjs += 1;
   return 0;
 }
@@ -762,7 +762,7 @@ PySegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //-----------------------
-// PySegmentationDealloc 
+// PySegmentationDealloc
 //-----------------------
 //
 static void
@@ -776,19 +776,19 @@ PySegmentationDealloc(PySegmentation* self)
 }
 
 //---------------------------
-// SetSegmentationTypeFields 
+// SetSegmentationTypeFields
 //---------------------------
-// Set the Python type object fields that stores Segmentation data. 
+// Set the Python type object fields that stores Segmentation data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetSegmentationTypeFields(PyTypeObject& contourType)
 {
   // Doc string for this type.
   contourType.tp_doc = "Segmentation objects";
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   contourType.tp_new = PySegmentationNew;
   //contourType.tp_new = PyType_GenericNew,
@@ -799,11 +799,11 @@ SetSegmentationTypeFields(PyTypeObject& contourType)
 };
 
 //--------------------------
-// PyCreateSegmentationType 
+// PyCreateSegmentationType
 //--------------------------
 // Create a Python PySegmentation object.
 //
-static PySegmentation * 
+static PySegmentation *
 PyCreateSegmentationType()
 {
   return PyObject_New(PySegmentation, &PySegmentationType);

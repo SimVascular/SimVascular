@@ -29,13 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API polydata solid class. 
+// The functions defined here implement the SV Python API polydata solid class.
 //
 // The class name is 'PolyData'.
 //
 
 //-----------------
-// PyPolyDataSolid 
+// PyPolyDataSolid
 //-----------------
 // Define the PolyDataSolid class (type).
 //
@@ -51,16 +51,16 @@ cvPolyDataSolid* pyCreatePolyDataSolid()
 //////////////////////////////////////////////////////
 //          C l a s s    M e t h o d s              //
 //////////////////////////////////////////////////////
-// PolyData class methods. 
+// PolyData class methods.
 
 //-------------------------------
-// ModelingPolyData_delete_faces 
+// ModelingPolyData_delete_faces
 //-------------------------------
 //
-// Delete faces only works for PolyData. 
+// Delete faces only works for PolyData.
 //
 PyDoc_STRVAR(ModelingPolyData_delete_faces_doc,
-" delete_faces(face_ids)  \n\ 
+" delete_faces(face_ids)  \n\
   \n\
   Delete faces using a list of face IDs. \n\
   \n\
@@ -68,7 +68,7 @@ PyDoc_STRVAR(ModelingPolyData_delete_faces_doc,
     name (str): Name in the repository to store the unstructured grid. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
@@ -108,7 +108,7 @@ ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* k
   /*
   auto model = self->solidModel;
   if (model->DeleteFaces(faceList.size(), faceList.data()) != SV_OK) {
-      api.error("Error deleting faces for the solid model."); 
+      api.error("Error deleting faces for the solid model.");
   }
   */
 
@@ -116,13 +116,13 @@ ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* k
 }
 
 //------------------------------
-// ModelingPolyData_set_surface 
+// ModelingPolyData_set_surface
 //------------------------------
 //
-// Delete faces only works for PolyData. 
+// Delete faces only works for PolyData.
 //
 PyDoc_STRVAR(ModelingPolyData_set_surface_doc,
-  "set_surface(surface)  \n\ 
+  "set_surface(surface)  \n\
   \n\
   Set the PolyData surface defining the model. \n\
   \n\
@@ -142,7 +142,7 @@ ModelingPolyData_set_surface(PyModelingModel* self, PyObject* args, PyObject* kw
   }
 
   auto polydata = PyUtilGetVtkPolyData(api, surfaceArg);
-  if (polydata == nullptr) { 
+  if (polydata == nullptr) {
       return nullptr;
   }
 
@@ -159,7 +159,7 @@ static char* MODELING_POLYDATA_CLASS = "PolyData";
 static char* MODELING_POLYDATA_MODULE_CLASS = "modeling.PolyData";
 
 //--------------------------
-// PyPolyDataSolidClass_doc 
+// PyPolyDataSolidClass_doc
 //--------------------------
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
@@ -178,7 +178,7 @@ PyMethodDef PyPolyDataSolidMethods[] = {
   // [TODO:DaveP] The DeleteFaces() function deletes cells, not faces.
   // { "delete_faces", (PyCFunction)ModelingPolyData_delete_faces, METH_NOARGS|METH_KEYWORDS, ModelingPolyData_delete_faces_doc},
 
-  // [TODO:DaveP] This should be implemented. 
+  // [TODO:DaveP] This should be implemented.
   // { "remesh_faces", (PyCFunction)ModelingPolyData_remesh_faces, METH_NOARGS|METH_KEYWORDS, ModelingPolyData_remesh_faces_doc},
 
   { "set_surface", (PyCFunction)ModelingPolyData_set_surface, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_set_surface_doc},
@@ -187,9 +187,9 @@ PyMethodDef PyPolyDataSolidMethods[] = {
 };
 
 //---------------------
-// PyPolyDataSolidInit 
+// PyPolyDataSolidInit
 //---------------------
-// This is the __init__() method for the PolyDataSolid class. 
+// This is the __init__() method for the PolyDataSolid class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -197,7 +197,7 @@ PyMethodDef PyPolyDataSolidMethods[] = {
 //
 static int
 PyPolyDataSolidInit(PyPolyDataSolid* self, PyObject* args, PyObject *kwargs)
-{ 
+{
   auto api = PyUtilApiFunction("|O", PyRunTimeErr, "PolyDataSolid");
   static char *keywords[] = {"surface", NULL};
   PyObject* surfaceArg = nullptr;
@@ -212,7 +212,7 @@ PyPolyDataSolidInit(PyPolyDataSolid* self, PyObject* args, PyObject *kwargs)
 
   if (surfaceArg != nullptr) {
       auto polydata = PyUtilGetVtkPolyData(api, surfaceArg);
-      if (polydata == nullptr) { 
+      if (polydata == nullptr) {
           return -1;
       }
       //auto cvPolydata = new cvPolyData(polydata);
@@ -223,7 +223,7 @@ PyPolyDataSolidInit(PyPolyDataSolid* self, PyObject* args, PyObject *kwargs)
 }
 
 //--------------------
-// PyPolyDataSolidNew 
+// PyPolyDataSolidNew
 //--------------------
 //
 static PyObject *
@@ -238,7 +238,7 @@ PyPolyDataSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //------------------------
-// PyPolyDataSolidDealloc 
+// PyPolyDataSolidDealloc
 //------------------------
 //
 static void
@@ -250,36 +250,36 @@ PyPolyDataSolidDealloc(PyPolyDataSolid* self)
 }
 
 //--------------------------
-// PyPolyDataSolidType 
+// PyPolyDataSolidType
 //--------------------------
-// Define the Python type object that stores PolyDataSolid data. 
+// Define the Python type object that stores PolyDataSolid data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 PyTypeObject PyPolyDataSolidType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = MODELING_POLYDATA_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyPolyDataSolid)
+  MODELING_POLYDATA_MODULE_CLASS,
+  sizeof(PyPolyDataSolid)
 };
 
 //----------------------------
 // SetPolyDataSolidTypeFields
 //----------------------------
-// Set the Python type object fields that stores PolyDataSolid data. 
+// Set the Python type object fields that stores PolyDataSolid data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 void
 SetPolyDataSolidTypeFields(PyTypeObject& solidType)
  {
   // Doc string for this type.
-  solidType.tp_doc = PyPolyDataSolidClass_doc; 
+  solidType.tp_doc = PyPolyDataSolidClass_doc;
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   solidType.tp_new = PyPolyDataSolidNew;
   //.tp_new = PyType_GenericNew,

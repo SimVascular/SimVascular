@@ -29,13 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API circle segmentation class. 
+// The functions defined here implement the SV Python API circle segmentation class.
 //
 // The class name is 'segmentation.Circle'.
 //
 
 //----------------------
-// PyCircleSegmentation 
+// PyCircleSegmentation
 //----------------------
 // Define the Circle class.
 //
@@ -62,17 +62,17 @@ void PyCircleCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourOb
 //          C l a s s    M e t h o d s              //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 //-------------------------------
-// CircleSegmentation_get_center 
+// CircleSegmentation_get_center
 //-------------------------------
 // There is also a 'get_center' method in the Segmentation class.
 // This is a geometric center based on contour points so it may
 // not be the exact center for a circle.
 //
 PyDoc_STRVAR(CircleSegmentation_get_center_doc,
-  "get_center() \n\ 
+  "get_center() \n\
   \n\
   Get the circle segmentation center. \n\
   \n\
@@ -99,11 +99,11 @@ CircleSegmentation_get_center(PyCircleSegmentation* self, PyObject* args)
 }
 
 //-------------------------------
-// CircleSegmentation_get_normal 
+// CircleSegmentation_get_normal
 //-------------------------------
 //
 PyDoc_STRVAR(CircleSegmentation_get_normal_doc,
-  "get_normal() \n\ 
+  "get_normal() \n\
    \n\
    Get the circle segmentation normal. \n\
    \n\
@@ -116,17 +116,17 @@ CircleSegmentation_get_normal(PyCircleSegmentation* self, PyObject* args)
 {
   auto circleContour = dynamic_cast<sv3::circleContour*>(self->super.contour);
   auto plane = circleContour->GetPlaneGeometry();
-  auto normal = plane->GetNormal(); 
-  
+  auto normal = plane->GetNormal();
+
   return Py_BuildValue("[d, d, d]", normal[0], normal[1], normal[2]);
 }
 
 //-------------------------------
-// CircleSegmentation_get_radius 
+// CircleSegmentation_get_radius
 //-------------------------------
 //
 PyDoc_STRVAR(CircleSegmentation_get_radius_doc,
-  "get_radius(r) \n\ 
+  "get_radius(r) \n\
    \n\
    Get the radius for a circle segmentation. \n\
    \n\
@@ -142,11 +142,11 @@ CircleSegmentation_get_radius(PyCircleSegmentation* self, PyObject* args)
 }
 
 //-------------------------------
-// CircleSegmentation_set_center 
+// CircleSegmentation_set_center
 //-------------------------------
 //
 PyDoc_STRVAR(CircleSegmentation_set_center_doc,
-  "set_center(center) \n\ 
+  "set_center(center) \n\
    \n\
    Set the circle segmentation center. \n\
    \n\
@@ -162,7 +162,7 @@ CircleSegmentation_set_center(PyCircleSegmentation* self, PyObject* args, PyObje
   static char *keywords[] = {"center", NULL};
   PyObject* centerArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &centerArg)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &centerArg)) {
       return nullptr;
   }
 
@@ -183,11 +183,11 @@ CircleSegmentation_set_center(PyCircleSegmentation* self, PyObject* args, PyObje
 }
 
 //------------------------------
-// CircleSegmentation_set_frame  
+// CircleSegmentation_set_frame
 //------------------------------
 //
 PyDoc_STRVAR(CircleSegmentation_set_frame_doc,
-  "set_frame(frame) \n\ 
+  "set_frame(frame) \n\
    \n\
    Set the circle segmentation coordinate frame using a PathFrame object. \n\
    \n\
@@ -234,11 +234,11 @@ CircleSegmentation_set_frame(PyCircleSegmentation* self, PyObject* args, PyObjec
 }
 
 //-------------------------------
-// CircleSegmentation_set_normal 
+// CircleSegmentation_set_normal
 //-------------------------------
 //
 PyDoc_STRVAR(CircleSegmentation_set_normal_doc,
-  "set_normal(normal)  \n\ 
+  "set_normal(normal)  \n\
    \n\
    Set the circle segmentation normal. \n\
    \n\
@@ -281,11 +281,11 @@ CircleSegmentation_set_normal(PyCircleSegmentation* self, PyObject* args, PyObje
 }
 
 //-------------------------------
-// CircleSegmentation_set_radius 
+// CircleSegmentation_set_radius
 //-------------------------------
 //
 PyDoc_STRVAR(CircleSegmentation_set_radius_doc,
-  "set_radius(radius) \n\ 
+  "set_radius(radius) \n\
    \n\
    Set the radius for a circle segmentation. \n\
    \n\
@@ -327,7 +327,7 @@ static char* SEGMENTATION_CIRCLE_MODULE_CLASS = "segmentation.Circle";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PyCircleSegmentationClass_doc, 
+PyDoc_STRVAR(PyCircleSegmentationClass_doc,
    "Circle(radius, center=None, normal=None, frame=None)  \n\
    \n\
    The Circle class provides an interface for creating a circle segmentation. \n\
@@ -352,7 +352,7 @@ PyDoc_STRVAR(PyCircleSegmentationClass_doc,
 ");
 
 //-----------------------------
-// PyCircleSegmentationMethods 
+// PyCircleSegmentationMethods
 //-----------------------------
 //
 static PyMethodDef PyCircleSegmentationMethods[] = {
@@ -370,14 +370,14 @@ static PyMethodDef PyCircleSegmentationMethods[] = {
 };
 
 //--------------------------
-// PyCircleSegmentationInit 
+// PyCircleSegmentationInit
 //--------------------------
-// This is the __init__() method for the CircleSegmentation class. 
+// This is the __init__() method for the CircleSegmentation class.
 //
 // This function is used to initialize an object after it is created.
 //
-// When create a Circle directly a 'radius', 'center' and 'normal or 'frame' 
-// arguments are required. A Circle can also be created from reading contour 
+// When create a Circle directly a 'radius', 'center' and 'normal or 'frame'
+// arguments are required. A Circle can also be created from reading contour
 // group in which case no arguements are required.
 //
 static int
@@ -393,7 +393,7 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
   PyObject* normalArg = nullptr;
   PyObject* frameArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyFloat_Type, &radiusArg, 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyFloat_Type, &radiusArg,
         &PyList_Type, &centerArg, &PyList_Type, &normalArg, &PyPathFrameType, &frameArg)) {
       return -1;
   }
@@ -413,7 +413,7 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
       // Get the radius argument value.
       radius = PyFloat_AsDouble(radiusArg);
       std::cout << "[PyCircleSegmentationInit] radius: " << radius << std::endl;
-      if (radius <= 0.0) { 
+      if (radius <= 0.0) {
           api.error("The 'radius' argument must be > 0.");
           return -1;
       }
@@ -427,7 +427,7 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
 
   // Create the circle contour.
   self->super.contour = new sv3::circleContour();
-  self->super.CopySv4ContourData = PyCircleCopySegmentationData; 
+  self->super.CopySv4ContourData = PyCircleCopySegmentationData;
   auto circleContour = dynamic_cast<sv3::circleContour*>(self->super.contour);
   std::cout << "[PyCircleSegmentationInit] circleContour: " << circleContour << std::endl;
 
@@ -439,7 +439,7 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
       //
       if (frameArg != nullptr) {
           circleContour->SetPathPoint(pathPoint);
-      } else { 
+      } else {
           auto plane = vtkSmartPointer<vtkPlane>::New();
           plane->SetOrigin(center.data());
           plane->SetNormal(normal.data());
@@ -448,7 +448,7 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
 
       // Set the circle point and radius.
       //
-      // The circle center is set to the projection of the 'point' 
+      // The circle center is set to the projection of the 'point'
       // onto the given plane or frame.
       //
       circleContour->SetControlPointByRadius(radius, center.data());
@@ -459,12 +459,12 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
 }
 
 //-------------------------
-// PyCircleSegmentationNew 
+// PyCircleSegmentationNew
 //-------------------------
 //
 static PyObject *
 PyCircleSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
-{ 
+{
   std::cout << "[PyCircleSegmentationNew] New CircleSegmentation " << std::endl;
   auto self = (PyCircleSegmentation*)type->tp_alloc(type, 0);
   if (self == NULL) {
@@ -475,12 +475,12 @@ PyCircleSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 }
 
 //-----------------------------
-// PyCircleSegmentationDealloc 
+// PyCircleSegmentationDealloc
 //-----------------------------
 //
 static void
 PyCircleSegmentationDealloc(PyCircleSegmentation* self)
-{ 
+{
   std::cout << "[PyCircleSegmentationDealloc] **** Free PyCircleSegmentation ****" << std::endl;
   delete self->super.contour;
   //auto circleContour = dynamic_cast<sv3::circleContour*>(self->super.contour);
@@ -489,36 +489,36 @@ PyCircleSegmentationDealloc(PyCircleSegmentation* self)
 }
 
 //-------------------------------------
-// Define the PyCircleSegmentationType 
+// Define the PyCircleSegmentationType
 //-------------------------------------
-// Define the Python type object that stores Segmentation data. 
+// Define the Python type object that stores Segmentation data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static PyTypeObject PyCircleSegmentationType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = SEGMENTATION_CIRCLE_MODULE_CLASS, 
-  .tp_basicsize = sizeof(PyCircleSegmentation)
+  SEGMENTATION_CIRCLE_MODULE_CLASS,
+  sizeof(PyCircleSegmentation)
 };
 
 //---------------------------------
-// SetCircleSegmentationTypeFields 
+// SetCircleSegmentationTypeFields
 //---------------------------------
-// Set the Python type object fields that stores Segmentation data. 
+// Set the Python type object fields that stores Segmentation data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetCircleSegmentationTypeFields(PyTypeObject& segType)
  {
   // Doc string for this type.
-  segType.tp_doc = PyCircleSegmentationClass_doc; 
+  segType.tp_doc = PyCircleSegmentationClass_doc;
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   segType.tp_new = PyCircleSegmentationNew;
   //.tp_new = PyType_GenericNew,

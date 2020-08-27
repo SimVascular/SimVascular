@@ -33,9 +33,9 @@
 // used for creating a lofted surface using NURBS.
 //
 // A lofted suface is created from a list of profile curves that define the shape
-// of the surface. 
+// of the surface.
 //
-// The SV GUI exposes 
+// The SV GUI exposes
 //
 //   uDegree: 2
 //   vDegree: 2
@@ -44,15 +44,15 @@
 //   uParametricSpanType: centripetal
 //   vParametricSpanType: chord
 //
-// u: logitudinal direction: 
-// v: circumferential direction: 
+// u: logitudinal direction:
+// v: circumferential direction:
 //
-// Knot span types are implemented using the KnotSpanType class defined in 
+// Knot span types are implemented using the KnotSpanType class defined in
 // GeometryLoftNurbsOptionsTypes_PyClass.cxx.
 //
-//     KnotSpanTypes: average, derivative, equal 
+//     KnotSpanTypes: average, derivative, equal
 //
-// Parametric  span types are implemented using the ParametricSpanType class 
+// Parametric  span types are implemented using the ParametricSpanType class
 // defined in GeometryLoftNurbsOptionsTypes_PyClass.cxx.
 //
 //     ParametricSpanType: centripetal, chord, equal
@@ -60,7 +60,7 @@
 // Linear degree 1, quadratic degree 2, cubic degree 3, and quintic degree 5.
 //
 #ifndef PYAPI_GEOMETRY_LOFT_NURBS_OPTIONS_H
-#define PYAPI_GEOMETRY_LOFT_NURBS_OPTIONS_H 
+#define PYAPI_GEOMETRY_LOFT_NURBS_OPTIONS_H
 
 #include <iostream>
 #include <map>
@@ -71,9 +71,9 @@
 #include "GeometryLoftNurbsOptionsTypes_PyClass.cxx"
 
 //-----------------------
-// LoftNurbsOptionsClass 
+// LoftNurbsOptionsClass
 //-----------------------
-// Define the LoftNurbsOptionsClass. 
+// Define the LoftNurbsOptionsClass.
 //
 // knot span type can be 'equal', 'avg', or 'endderiv'
 // parametric span type can be 'equal', 'chord', or 'centripetal'
@@ -105,7 +105,7 @@ namespace LoftNurbsOptions {
 };
 
 //-----------------------------
-// LoftNurbsOptionsSetDefaults 
+// LoftNurbsOptionsSetDefaults
 //-----------------------------
 // Set the default options parameter values.
 //
@@ -123,13 +123,13 @@ LoftNurbsOptionsSetDefaults(PyLoftNurbsOptions* self)
   self->u_parametric_span_type = Py_BuildValue("s", "centripetal");
   self->v_parametric_span_type = Py_BuildValue("s", "chord");
 
-  // KnotSpanTypes: average, derivative, equal 
+  // KnotSpanTypes: average, derivative, equal
   //
   // [DavdeP] Another more comlicated way to define types.
   //
-  self->knot_span_types = PyObject_CallObject((PyObject *) &PyLoftNurbsOptions_KnotSpanType, NULL); 
+  self->knot_span_types = PyObject_CallObject((PyObject *) &PyLoftNurbsOptions_KnotSpanType, NULL);
 
-  // ParametricSpanTypes: centripetal, chord, equal 
+  // ParametricSpanTypes: centripetal, chord, equal
   //
   // [DavdeP] Another more comlicated way to define types.
   //
@@ -153,11 +153,11 @@ LoftNurbsOptionsGetInt(PyObject* loftOptions, std::string name)
 }
 
 //-----------------------------
-// PyLoftNurbsOptionsGetDouble 
+// PyLoftNurbsOptionsGetDouble
 //-----------------------------
 // Get a double atttibute from the LoftNurbsOptions object.
 //
-static double 
+static double
 LoftNurbsOptionsGetDouble(PyObject* loftOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(loftOptions, name.c_str());
@@ -166,7 +166,7 @@ LoftNurbsOptionsGetDouble(PyObject* loftOptions, std::string name)
   return value;
 }
 
-static char * 
+static char *
 LoftNurbsOptionsGetString(PyObject* loftOptions, std::string name)
 {
   auto obj = PyObject_GetAttrString(loftOptions, name.c_str());
@@ -186,7 +186,7 @@ LoftNurbsOptionsGetString(PyObject* loftOptions, std::string name)
 //-------------------------------
 //
 PyDoc_STRVAR(PyLoftNurbsOptions_get_values_doc,
-  "get_values()  \n\ 
+  "get_values()  \n\
   \n\
   Get options names and values.\n\
   \n\
@@ -234,46 +234,46 @@ static PyMethodDef PyLoftNurbsOptionsMethods[] = {
 
 PyDoc_STRVAR(u_degree_doc,
   "Type: int                                                              \n\
-   Default: 2                                                             \n\ 
+   Default: 2                                                             \n\
    \n\
    The degree value controls the surface curvature in the logitudinal     \n\
-   direction of the lofted surface. Degree can be thought of as constraining \n\ 
-   the surface’s freedom to bend: 1=linear, 2=quadratic, 3=cubic, etc.    \n\ 
+   direction of the lofted surface. Degree can be thought of as constraining \n\
+   the surface’s freedom to bend: 1=linear, 2=quadratic, 3=cubic, etc.    \n\
 ");
 
 PyDoc_STRVAR(v_degree_doc,
   "Type: int                                                              \n\
-   Default: 2                                                             \n\ 
+   Default: 2                                                             \n\
    \n\
    The degree value controls the surface curvature in the circumferential \n\
    direction of the lofted surface. Degree can be thought of as constraining \n\
-   the surface’s freedom to bend: 1=linear, 2=quadratic, 3=cubic, etc.    \n\ 
+   the surface’s freedom to bend: 1=linear, 2=quadratic, 3=cubic, etc.    \n\
 ");
 
 PyDoc_STRVAR(u_knot_span_type_doc,
   "Type: str                                                              \n\
-   Default: 'derivative'                                                  \n\ 
+   Default: 'derivative'                                                  \n\
    \n\
    How the knot vector divides the parametric space in a u knot interval. \n\
 ");
 
 PyDoc_STRVAR(v_knot_span_type_doc,
   "Type: str                                                              \n\
-   Default: 'average'                                                     \n\ 
+   Default: 'average'                                                     \n\
    \n\
    How the knot vector divides the parametric space in a v knot interval. \n\
 ");
 
 PyDoc_STRVAR(u_parameter_span_type_doc,
   "Type: str                                                              \n\
-   Default: 'centripetal'                                                 \n\ 
+   Default: 'centripetal'                                                 \n\
    \n\
    How the parametric space is constructed.                               \n\
 ");
 
 PyDoc_STRVAR(v_parameter_span_type_doc,
   "Type: str                                                               \n\
-   Default: 'chord'                                                        \n\ 
+   Default: 'chord'                                                        \n\
    \n\
    How the parametric space is constructed.                                 \n\
 ");
@@ -316,7 +316,7 @@ static PyMemberDef PyLoftNurbsOptionsMembers[] = {
     {LoftNurbsOptions::KNOT_SPAN_TYPES, T_OBJECT_EX, offsetof(PyLoftNurbsOptions, knot_span_types), 0, knot_span_types_doc},
     {LoftNurbsOptions::PARAMETRIC_SPAN_TYPES, T_OBJECT_EX, offsetof(PyLoftNurbsOptions, parametric_span_types), 0, paramertic_span_types_doc},
 
-    {NULL}  
+    {NULL}
 };
 
 ////////////////////////////////////////////////////////
@@ -332,8 +332,8 @@ static char* GEOMETRY_LOFT_NURBS_OPTIONS_MODULE_CLASS = "geometry.LoftNurbsOptio
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(LoftNurbsOptionsClass_doc, 
-   "The LoftNurbsOptions class stores parameter values used to control how  \n\ 
+PyDoc_STRVAR(LoftNurbsOptionsClass_doc,
+   "The LoftNurbsOptions class stores parameter values used to control how  \n\
     lofted NURBS surfaces are generated.                                    \n\
     \n\
     Example: Create a loft nurbs options object                             \n\
@@ -343,26 +343,26 @@ PyDoc_STRVAR(LoftNurbsOptionsClass_doc,
 ");
 
 //------------------------
-// PyLoftNurbsOptionsType 
+// PyLoftNurbsOptionsType
 //------------------------
-// Define the Python type object that implements the geometry.LoftNurbsOptions class. 
+// Define the Python type object that implements the geometry.LoftNurbsOptions class.
 //
 static PyTypeObject PyLoftNurbsOptionsType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = GEOMETRY_LOFT_NURBS_OPTIONS_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyLoftNurbsOptions)
+  GEOMETRY_LOFT_NURBS_OPTIONS_MODULE_CLASS,
+  sizeof(PyLoftNurbsOptions)
 };
 
 //-------------------------
 // PyLoftNurbsOptions_init
 //-------------------------
-// This is the __init__() method for the geometry.LoftNurbsOptions class. 
+// This is the __init__() method for the geometry.LoftNurbsOptions class.
 //
 // This function is used to initialize an object after it is created.
 //
 // Arguments:
 //
-static int 
+static int
 PyLoftNurbsOptionsInit(PyLoftNurbsOptions* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
@@ -381,9 +381,9 @@ PyLoftNurbsOptionsInit(PyLoftNurbsOptions* self, PyObject* args, PyObject* kwarg
 }
 
 //-----------------------
-// PyLoftNurbsOptionsNew 
+// PyLoftNurbsOptionsNew
 //-----------------------
-// Object creation function, equivalent to the Python __new__() method. 
+// Object creation function, equivalent to the Python __new__() method.
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
@@ -393,14 +393,14 @@ PyLoftNurbsOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   auto self = (PyLoftNurbsOptions*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyLoftNurbsOptionsNew] ERROR: Can't allocate type." << std::endl;
-      return nullptr; 
+      return nullptr;
   }
 
   return (PyObject *) self;
 }
 
 //---------------------------
-// PyLoftNurbsOptionsDealloc 
+// PyLoftNurbsOptionsDealloc
 //---------------------------
 //
 static void
@@ -413,12 +413,12 @@ PyLoftNurbsOptionsDealloc(PyLoftNurbsOptions* self)
 //-------------------------------
 // SetLoftNurbsOptionsTypeFields
 //-------------------------------
-// Set the Python type object fields that stores loft option data. 
+// Set the Python type object fields that stores loft option data.
 //
 static void
 SetLoftNurbsOptionsTypeFields(PyTypeObject& loftOpts)
  {
-  loftOpts.tp_doc = LoftNurbsOptionsClass_doc; 
+  loftOpts.tp_doc = LoftNurbsOptionsClass_doc;
   loftOpts.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   loftOpts.tp_dict = PyDict_New();
   loftOpts.tp_new = PyLoftNurbsOptionsNew;
@@ -428,10 +428,10 @@ SetLoftNurbsOptionsTypeFields(PyTypeObject& loftOpts)
   loftOpts.tp_methods = PyLoftNurbsOptionsMethods;
   loftOpts.tp_members = PyLoftNurbsOptionsMembers;
 
-  // Add KnotSpanType types. 
+  // Add KnotSpanType types.
   //
-  // [TODO:DaveP] This is an easy way to implement types but I'm not sure 
-  // if this will work on Windows or Ubuntu. 
+  // [TODO:DaveP] This is an easy way to implement types but I'm not sure
+  // if this will work on Windows or Ubuntu.
   //
   /*
   PyType_Ready(&PyLoftNurbsOptions_KnotSpanType);
@@ -446,7 +446,7 @@ SetLoftNurbsOptionsTypeFields(PyTypeObject& loftOpts)
   PyType_Ready(&PyLoftNurbsOptions_KnotSpanType);
   SetPyLoftNurbsOptions_KnotSpanTypes(PyLoftNurbsOptions_KnotSpanType);
 
-  // Add ParametricSpanType types. 
+  // Add ParametricSpanType types.
   //
   SetLoftNurbsOptions_ParametricSpanTypeFields(PyLoftNurbsOptions_ParametricSpanType);
   PyType_Ready(&PyLoftNurbsOptions_ParametricSpanType);
@@ -479,7 +479,7 @@ SetLoftNurbsOptionsClassTypes(PyTypeObject& loftOptsType)
 
   //std::cout << "[SetLoftNurbsOptionsClassTypes] Done! " << std::endl;
 */
- 
+
 };
 
 #endif

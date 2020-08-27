@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API spline polygon segmentation class. 
+// The functions defined here implement the SV Python API spline polygon segmentation class.
 //
-// The class name is 'SplinePolygon'. 
+// The class name is 'SplinePolygon'.
 //
 // In SV the polygon segmentation uses a list of control points with implicit meaning
 //
@@ -40,7 +40,7 @@
 //    control_points[2] = 1st control point on the polygon boundary
 //    control_points[3] = 2nd control point on the polygon boundary
 //
-// To hide these details the API uses control points to only define the polygon boundary. 
+// To hide these details the API uses control points to only define the polygon boundary.
 // The SV control points are constructed using the boundary control points and other data.
 
 #include "SimVascular.h"
@@ -66,7 +66,7 @@
 #endif
 
 //-----------------------------
-// PySplinePolygonSegmentation 
+// PySplinePolygonSegmentation
 //-----------------------------
 // Define the SplinePolygon class (type).
 //
@@ -84,7 +84,7 @@ typedef struct {
 //////////////////////////////////////////////////////
 
 //-------------------------------------
-// PySplinePolygonCopySegmentationData 
+// PySplinePolygonCopySegmentationData
 //-------------------------------------
 //
 void PySplinePolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourObj)
@@ -101,7 +101,7 @@ void PySplinePolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* co
   contour->GetPlaneGeometry()->GetNormal(normal);
   polygonContour->normal = {normal[0], normal[1], normal[2]};
 
-  // Copy control points omittinng the first two which 
+  // Copy control points omittinng the first two which
   // are the polygon center and scaling factor.
   //
   auto controlPoints = contour->GetControlPoints();
@@ -118,19 +118,19 @@ void PySplinePolygonCopySegmentationData(sv4guiContour* sv4Contour, PyObject* co
 //
 void PySplinePolygonGenerateData(PyUtilApiFunction& api, PySplinePolygonSegmentation* polygonSeg, const std::vector<std::array<double,3>>& points)
 {
-  auto contour = polygonSeg->super.contour; 
+  auto contour = polygonSeg->super.contour;
 
   // Create SV control points, adding two points for center and scale.
   //
-  std::vector<std::array<double,3>> controlPoints; 
-  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0}); 
-  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0}); 
+  std::vector<std::array<double,3>> controlPoints;
+  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0});
+  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0});
   for (auto pt : points) {
       controlPoints.push_back(pt);
   }
 
   // Set object data.
-  polygonSeg->controlPoints = points; 
+  polygonSeg->controlPoints = points;
   polygonSeg->center = PyUtilComputePointsCenter(points);
   polygonSeg->normal = PyUtilComputeNormalFromlPoints(points);
 
@@ -140,7 +140,7 @@ void PySplinePolygonGenerateData(PyUtilApiFunction& api, PySplinePolygonSegmenta
   plane->SetNormal(polygonSeg->normal.data());
   contour->SetPlaneGeometry(plane);
 
-  // Need to set control points after defining the plane. 
+  // Need to set control points after defining the plane.
   contour->SetControlPoints(controlPoints);
 }
 
@@ -149,7 +149,7 @@ void PySplinePolygonGenerateData(PyUtilApiFunction& api, PySplinePolygonSegmenta
 //////////////////////////////////////////////////////
 
 //--------------------------------------
-// SplinePolygonSegmentation_get_center 
+// SplinePolygonSegmentation_get_center
 //--------------------------------------
 //
 PyDoc_STRVAR(SplinePolygonSegmentation_get_center_doc,
@@ -168,7 +168,7 @@ SplinePolygonSegmentation_get_center(PySplinePolygonSegmentation* self, PyObject
 }
 
 //----------------------------------------------
-// SplinePolygonSegmentation_get_control_points 
+// SplinePolygonSegmentation_get_control_points
 //----------------------------------------------
 //
 PyDoc_STRVAR(SplinePolygonSegmentation_get_control_points_doc,
@@ -187,7 +187,7 @@ SplinePolygonSegmentation_get_control_points(PySplinePolygonSegmentation* self, 
   auto contour = self->super.contour;
   auto control_points = contour->GetControlPoints();
   for (auto pt : control_points) {
-      std::cout << "[SplinePolygonSegmentation_get_control_points] pt: " << pt[0] << " " << pt[1] << " " << pt[2] << std::endl; 
+      std::cout << "[SplinePolygonSegmentation_get_control_points] pt: " << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
   }
   */
   auto control_points = self->controlPoints;
@@ -195,7 +195,7 @@ SplinePolygonSegmentation_get_control_points(PySplinePolygonSegmentation* self, 
 }
 
 //--------------------------------------
-// SplinePolygonSegmentation_get_normal 
+// SplinePolygonSegmentation_get_normal
 //--------------------------------------
 //
 PyDoc_STRVAR(SplinePolygonSegmentation_get_normal_doc,
@@ -214,7 +214,7 @@ SplinePolygonSegmentation_get_normal(PySplinePolygonSegmentation* self, PyObject
 }
 
 //--------------------------------------------------
-// SplinePolygonSegmentation_get_subdivision_params 
+// SplinePolygonSegmentation_get_subdivision_params
 //--------------------------------------------------
 //
 PyDoc_STRVAR(SplinePolygonSegmentation_get_subdivision_params_doc,
@@ -227,7 +227,7 @@ PyDoc_STRVAR(SplinePolygonSegmentation_get_subdivision_params_doc,
 
 static PyObject*
 SplinePolygonSegmentation_get_subdivision_params(PySplinePolygonSegmentation* self, PyObject* args, PyObject *kwargs)
-{ 
+{
   auto contour = self->super.contour;
 
   auto subdivType = contour->GetSubdivisionType();
@@ -242,7 +242,7 @@ SplinePolygonSegmentation_get_subdivision_params(PySplinePolygonSegmentation* se
   auto spacing = contour->GetSubdivisionSpacing();
   int number = contour->GetSubdivisionNumber();
 
-  return Py_BuildValue("s,d,i", strType.c_str(), spacing, number); 
+  return Py_BuildValue("s,d,i", strType.c_str(), spacing, number);
 }
 
 //------------------------------------------------
@@ -273,11 +273,11 @@ SplinePolygonSegmentation_get_subdivision_type(PySplinePolygonSegmentation* self
       }
   }
 
-  return Py_BuildValue("s", strType.c_str()); 
+  return Py_BuildValue("s", strType.c_str());
 }
 
 //----------------------------------------------
-// SplinePolygonSegmentation_set_control_points 
+// SplinePolygonSegmentation_set_control_points
 //----------------------------------------------
 //
 PyDoc_STRVAR(SplinePolygonSegmentation_set_control_points_doc,
@@ -322,7 +322,7 @@ SplinePolygonSegmentation_set_control_points(PySplinePolygonSegmentation* self, 
 }
 
 //--------------------------------------------------
-// SplinePolygonSegmentation_set_subdivision_params 
+// SplinePolygonSegmentation_set_subdivision_params
 //--------------------------------------------------
 //
 PyDoc_STRVAR(SplinePolygonSegmentation_set_subdivision_params_doc,
@@ -340,13 +340,13 @@ PyDoc_STRVAR(SplinePolygonSegmentation_set_subdivision_params_doc,
 
 static PyObject*
 SplinePolygonSegmentation_set_subdivision_params(PySplinePolygonSegmentation* self, PyObject* args, PyObject *kwargs)
-{ 
+{
   auto api = PyUtilApiFunction("|sO!O!", PyRunTimeErr, __func__);
   static char *keywords[] = {"type", "spacing", "number", NULL};
   char* typeName = nullptr;
   PyObject* spacingArg = nullptr;
   PyObject* numberArg = nullptr;
-  
+
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &typeName, &PyFloat_Type, &spacingArg, &PyInt_Type, &numberArg)) {
       return nullptr;
   }
@@ -391,7 +391,7 @@ SplinePolygonSegmentation_set_subdivision_params(PySplinePolygonSegmentation* se
 }
 
 //------------------------------------------------
-// SplinePolygonSegmentation_set_subdivision_type 
+// SplinePolygonSegmentation_set_subdivision_type
 //------------------------------------------------
 //
 PyDoc_STRVAR(SplinePolygonSegmentation_set_subdivision_type_doc,
@@ -448,7 +448,7 @@ static char* SEGMENTATION_SPLINE_POLYGON_MODULE_CLASS = "segmentation.SplinePoly
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PySplinePolygonSegmentationClass_doc, 
+PyDoc_STRVAR(PySplinePolygonSegmentationClass_doc,
    "SplinePolygon(control_points)  \n\
    \n\
    The SplinePolygon class provides an interface for creating a spline     \n\
@@ -463,7 +463,7 @@ PyDoc_STRVAR(PySplinePolygonSegmentationClass_doc,
 ");
 
 //------------------------------------------
-// PySplineSplinePolygonSegmentationMethods 
+// PySplineSplinePolygonSegmentationMethods
 //------------------------------------------
 // Define the module methods.
 //
@@ -489,9 +489,9 @@ PyMethodDef PySplinePolygonSegmentationMethods[] = {
 };
 
 //---------------------------------
-// PySplinePolygonSegmentationInit 
+// PySplinePolygonSegmentationInit
 //---------------------------------
-// This is the __init__() method for the SplinePolygonSegmentation class. 
+// This is the __init__() method for the SplinePolygonSegmentation class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -541,12 +541,12 @@ PySplinePolygonSegmentationInit(PySplinePolygonSegmentation* self, PyObject* arg
 }
 
 //--------------------------------
-// PySplinePolygonSegmentationNew 
+// PySplinePolygonSegmentationNew
 //--------------------------------
 //
 static PyObject *
 PySplinePolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{ 
+{
   //std::cout << "[PySplinePolygonSegmentationNew] PySplinePolygonSegmentationNew " << std::endl;
   auto self = (PySplinePolygonSegmentation*)type->tp_alloc(type, 0);
   if (self != NULL) {
@@ -556,48 +556,48 @@ PySplinePolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwd
 }
 
 //------------------------------------
-// PySplinePolygonSegmentationDealloc 
+// PySplinePolygonSegmentationDealloc
 //------------------------------------
 //
 static void
 PySplinePolygonSegmentationDealloc(PySplinePolygonSegmentation* self)
-{ 
+{
   //std::cout << "[PySplinePolygonSegmentationDealloc] Free PySplinePolygonSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);
 }
 
 //---------------------------------
-// PySplinePolygonSegmentationType 
+// PySplinePolygonSegmentationType
 //---------------------------------
-// Define the Python type object that stores Segmentation data. 
+// Define the Python type object that stores Segmentation data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static PyTypeObject PySplinePolygonSegmentationType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = SEGMENTATION_SPLINE_POLYGON_MODULE_CLASS, 
-  .tp_basicsize = sizeof(PySplinePolygonSegmentation)
+  SEGMENTATION_SPLINE_POLYGON_MODULE_CLASS,
+  sizeof(PySplinePolygonSegmentation)
 };
 
 //----------------------------------------
-// SetSplinePolygonSegmentationTypeFields 
+// SetSplinePolygonSegmentationTypeFields
 //----------------------------------------
-// Set the Python type object fields that stores Contour data. 
+// Set the Python type object fields that stores Contour data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetSplinePolygonSegmentationTypeFields(PyTypeObject& contourType)
  {
   // Doc string for this type.
-  contourType.tp_doc = PySplinePolygonSegmentationClass_doc; 
+  contourType.tp_doc = PySplinePolygonSegmentationClass_doc;
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   contourType.tp_new = PySplinePolygonSegmentationNew;
   //.tp_new = PyType_GenericNew,

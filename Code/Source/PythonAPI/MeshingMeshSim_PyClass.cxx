@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API meshing module MeshSim mesh generator class. 
+// The functions defined here implement the SV Python API meshing module MeshSim mesh generator class.
 //
 // The class name is 'meshing.MeshSim'.
 
@@ -63,7 +63,7 @@ MeshingMeshSimCheckModelLoaded(PyMeshingMeshSim* self)
 //--------------------------
 // MeshingTetGenCheckOption
 //--------------------------
-// Check if an option can be correctly set for the mesh. 
+// Check if an option can be correctly set for the mesh.
 //
 // The LocalEdgeSize option needs to have a model defined for the mesh.
 //
@@ -85,14 +85,14 @@ MeshingMeshSimCheckOption(PyMeshingMeshSim* self, std::string& name, PyUtilApiFu
 //              C l a s s   F u n c t i o n s                  //
 /////////////////////////////////////////////////////////////////
 //
-// Python API functions for the PyMeshingMeshSim class. 
+// Python API functions for the PyMeshingMeshSim class.
 
 //-------------------------------
 // MeshingMeshSim_create_options
 //-------------------------------
 //
 PyDoc_STRVAR(MeshingMeshSim_create_options_doc,
-  "create_options(global_edge_size, surface_mesh_flag=True, volume_mesh_flag=True, )  \n\ 
+  "create_options(global_edge_size, surface_mesh_flag=True, volume_mesh_flag=True, )  \n\
   \n\
   Create a MeshSimOptions object. \n\
   \n\
@@ -113,7 +113,7 @@ MeshingMeshSim_create_options(PyObject* self, PyObject* args, PyObject* kwargs )
 //-------------------
 //
 PyDoc_STRVAR(MeshingMeshSim_load_model_doc,
-  "load_model(file_name)  \n\ 
+  "load_model(file_name)  \n\
   \n\
   Load a solid model from a file into the mesher. \n\
   \n\
@@ -151,7 +151,7 @@ MeshingMeshSim_load_model(PyMeshingMesher* self, PyObject* args, PyObject* kwarg
 //----------------------------
 //
 PyDoc_STRVAR(MeshingMeshSim_set_options_doc,
-  "set_options(options)  \n\ 
+  "set_options(options)  \n\
   \n\
   Set the MeshSim mesh generation options. \n\
   \n\
@@ -174,28 +174,28 @@ MeshingMeshSim_set_options(PyMeshingMeshSim* self, PyObject* args )
   auto mesher = self->super.mesher;
   std::cout << "[MeshingMeshSim_set_options] mesher: " << mesher << std::endl;
 
-  // Iterate over all option names to set mesher options. 
+  // Iterate over all option names to set mesher options.
   //
   for (auto const& entry : MeshSimOption::pyToSvNameMap) {
       auto pyName = entry.first;
       auto svName = entry.second;
       auto values = PyMeshSimOptionsGetValues(options, pyName);
       int numValues = values.size();
-      if (numValues == 0) { 
+      if (numValues == 0) {
           continue;
       }
 
-      // Check if an option can be correctly set for the mesh. 
+      // Check if an option can be correctly set for the mesh.
       if (!MeshingMeshSimCheckOption(self, pyName, api)) {
           return nullptr;
       }
 
       std::cout << "[MeshingMeshSim_set_options] name: " << svName << "  num values: " << numValues << "  values: ";
       for (auto const val : values) {
-          std::cout << val << " "; 
+          std::cout << val << " ";
       }
-      std::cout << std::endl; 
- 
+      std::cout << std::endl;
+
       if (mesher->SetMeshOptions(svName, numValues, values.data()) == SV_ERROR) {
         api.error("Error setting MeshSim meshing '" + std::string(pyName) + "' option.");
         return nullptr;
@@ -229,7 +229,7 @@ MeshingMeshSim_set_options(PyMeshingMeshSim* self, PyObject* args )
 
 static char* MESHING_MESHSIM_CLASS = "MeshSim";
 
-// Dotted name that includes both the module name and 
+// Dotted name that includes both the module name and
 // the name of the type within the module.
 static char* MESHING_MESHSIM_MODULE_CLASS = "meshing.MeshSim";
 
@@ -239,7 +239,7 @@ static char* MESHING_MESHSIM_MODULE_CLASS = "meshing.MeshSim";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PyMeshingMeshSim_doc, 
+PyDoc_STRVAR(PyMeshingMeshSim_doc,
    "The MeshSim class provides an interface for creating tetrahedral finite \n\
     element meshes from Parasolid solid models using the commercial MeshSim \n\
     mesh generator.                                                         \n\
@@ -257,13 +257,13 @@ static PyMethodDef PyMeshingMeshSimMethods[] = {
 };
 
 //----------------------
-// PyMeshingMeshSimInit 
+// PyMeshingMeshSimInit
 //----------------------
-// This is the __init__() method for the MeshGenerator class. 
+// This is the __init__() method for the MeshGenerator class.
 //
 // This function is used to initialize an object after it is created.
 //
-static int 
+static int
 PyMeshingMeshSimInit(PyMeshingMeshSim* self, PyObject* args, PyObject *kwds)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, "MeshGenerator");
@@ -276,7 +276,7 @@ PyMeshingMeshSimInit(PyMeshingMeshSim* self, PyObject* args, PyObject *kwds)
 }
 
 //---------------------
-// PyMeshingMeshSimNew 
+// PyMeshingMeshSimNew
 //---------------------
 //
 static PyObject *
@@ -287,7 +287,7 @@ PyMeshingMeshSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //-------------------------
-// PyMeshingMeshSimDealloc 
+// PyMeshingMeshSimDealloc
 //-------------------------
 //
 static void
@@ -298,28 +298,28 @@ PyMeshingMeshSimDealloc(PyMeshingMeshSim* self)
 }
 
 //----------------------
-// PyMeshingMeshSimType 
+// PyMeshingMeshSimType
 //----------------------
-// Define the Python type object that stores meshsim data. 
+// Define the Python type object that stores meshsim data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 PyTypeObject PyMeshingMeshSimType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = MESHING_MESHSIM_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyMeshingMeshSim)
+  MESHING_MESHSIM_MODULE_CLASS,
+  sizeof(PyMeshingMeshSim)
 };
 
 //-----------------------------
-// SetMeshingMeshSimTypeFields 
+// SetMeshingMeshSimTypeFields
 //-----------------------------
-// Set the Python type object fields that stores MeshSim mesher data. 
+// Set the Python type object fields that stores MeshSim mesher data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 void
 SetMeshingMeshSimTypeFields(PyTypeObject& mesherType)
@@ -327,12 +327,12 @@ SetMeshingMeshSimTypeFields(PyTypeObject& mesherType)
   // Doc string for this type.
   mesherType.tp_doc = PyMeshingMeshSim_doc;
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   mesherType.tp_new = PyMeshingMeshSimNew;
 
   // Subclass to PyMeshingMesherType.
-  mesherType.tp_base = &PyMeshingMesherType; 
+  mesherType.tp_base = &PyMeshingMesherType;
 
   mesherType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   mesherType.tp_init = (initproc)PyMeshingMeshSimInit;
@@ -341,7 +341,7 @@ SetMeshingMeshSimTypeFields(PyTypeObject& mesherType)
 };
 
 //-------------------
-// PyAPI_InitMeshSim 
+// PyAPI_InitMeshSim
 //-------------------
 // Setup creating MeshSim mesh generation objects.
 //

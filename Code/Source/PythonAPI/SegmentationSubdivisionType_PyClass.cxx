@@ -29,12 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Define the Python 'segmentation.SubdivisionType' class that encapsulates segmentation 
-// subdivision types used for splines. 
+// Define the Python 'segmentation.SubdivisionType' class that encapsulates segmentation
+// subdivision types used for splines.
 //
 // In SV subdivision types are represented using the enum SubdivisionType. The Python
 // subdivision type is represented as a string rather than int because it is easier
-// to use an int incorrectly. 
+// to use an int incorrectly.
 //
 #include <iostream>
 #include <map>
@@ -63,11 +63,11 @@ typedef struct {
     PyObject_HEAD
 } SegmentationSubdivtypeObject;
 
-std::string 
+std::string
 SegmentationSubdivtype_get_name(sv3::Contour::SubdivisionType subdivType)
 {
   for (auto const& entry : subdivTypeNameEnumMap) {
-      if (subdivType == entry.second) { 
+      if (subdivType == entry.second) {
           return entry.first;
       }
   }
@@ -78,7 +78,7 @@ SegmentationSubdivtype_get_name(sv3::Contour::SubdivisionType subdivType)
 //          C l a s s    M e t h o d s                //
 ////////////////////////////////////////////////////////
 //
-// Python 'SubdivisionType' class methods. 
+// Python 'SubdivisionType' class methods.
 
 static PyObject *
 SegmentationSubdivtype_get_names()
@@ -90,7 +90,7 @@ SegmentationSubdivtype_get_names()
       PyList_SetItem(nameList, n, PyUnicode_FromString(name));
       n += 1;
   }
-  return nameList; 
+  return nameList;
 }
 
 //------------------------------------
@@ -114,25 +114,25 @@ static char* SEGMENTATION_SUBDIVISION_TYPE_CLASS_VARIBLE_NAMES = "names";
 PyDoc_STRVAR(SegmentationSubdivtypeClass_doc, "segmentation type class functions.");
 
 //------------------------------
-// PySegmentationSubdivtypeType 
+// PySegmentationSubdivtypeType
 //------------------------------
-// Define the Python type object that stores segmentation.Method types. 
+// Define the Python type object that stores segmentation.Method types.
 //
 static PyTypeObject PySegmentationSubdivtypeType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = SEGMENTATION_SUBDIVISION_TYPE_MODULE_CLASS,
-  .tp_basicsize = sizeof(SegmentationSubdivtypeObject)
+  SEGMENTATION_SUBDIVISION_TYPE_MODULE_CLASS,
+  sizeof(SegmentationSubdivtypeObject)
 };
 
 //-------------------------------------
 // SetSegmentationSubdivtypeTypeFields
 //--------------------------------------
-// Set the Python type object fields that stores type data. 
+// Set the Python type object fields that stores type data.
 //
 static void
 SetSegmentationSubdivtypeTypeFields(PyTypeObject& contourType)
  {
-  contourType.tp_doc = SegmentationSubdivtypeClass_doc; 
+  contourType.tp_doc = SegmentationSubdivtypeClass_doc;
   contourType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   contourType.tp_methods = SegmentationSubdivtypeMethods;
   contourType.tp_dict = PyDict_New();
@@ -143,7 +143,7 @@ SetSegmentationSubdivtypeTypeFields(PyTypeObject& contourType)
 //--------------------------------
 // Set the type names in the SegmentationSubdivtypeType dictionary.
 //
-// The names in the SegmentationSubdivtypeType dictionary are referenced as a 
+// The names in the SegmentationSubdivtypeType dictionary are referenced as a
 // string class variable for the Python SubdivisionType class referenced like.
 //
 //    sv.segmentation.SubdivisionType.CONSTANT_TOTAL_NUMBER -> "CONSTANT_TOTAL_NUMBER"

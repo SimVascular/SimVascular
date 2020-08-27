@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Define the Python 'modeling.Modeler' class. This class defines modeling operations 
-// that create new Python 'modeling.Model' objects. 
+// Define the Python 'modeling.Modeler' class. This class defines modeling operations
+// that create new Python 'modeling.Model' objects.
 //
 #ifndef PYAPI_MODELING_MODELER_H
 #define PYAPI_MODELING_MODELER_H
@@ -45,7 +45,7 @@ extern bool ModelingCheckFileFormat(PyUtilApiFunction& api, SolidModel_KernelT k
 extern bool ModelingCheckModelsKernels(PyUtilApiFunction& api, cvSolidModel* model1, cvSolidModel* model2);
 
 //-------------------
-// PyModelingModeler 
+// PyModelingModeler
 //-------------------
 // Define the data members for the modeling.Modeler class.
 //
@@ -55,7 +55,7 @@ extern bool ModelingCheckModelsKernels(PyUtilApiFunction& api, cvSolidModel* mod
 //
 typedef struct {
   PyObject_HEAD
-  PyObject* kernelName;      // Put data members at the front. 
+  PyObject* kernelName;      // Put data members at the front.
   int id;
   SolidModel_KernelT kernel;
 } PyModelingModeler;
@@ -65,7 +65,7 @@ typedef struct {
 //////////////////////////////////////////////////////
 
 //-------------------
-// GetModelFromPyObj 
+// GetModelFromPyObj
 //-------------------
 // Get the cvSolidModel object from a Python PyModelingModel object.
 //
@@ -83,27 +83,27 @@ GetModelFromPyObj(PyObject* obj)
 //          C l a s s    M e t h o d s                //
 ////////////////////////////////////////////////////////
 //
-// Python 'Modeler' class methods. 
+// Python 'Modeler' class methods.
 //
 //---------------------
 // ModelingModeler_box
 //---------------------
 //
 PyDoc_STRVAR(ModelingModeler_box_doc,
-  "box(center, width, height, length)  \n\ 
+  "box(center, width, height, length)  \n\
    \n\
    Create a 3D solid box. \n\
    \n\
    Args:\n\
-     center ([float,float,float]): The box center. \n\  
-     width (float): The box width in the X coordinate direction. \n\  
-     height (float): The box height in the Y coordinate direction. \n\  
-     length (float): The box length in the Z coordinate direction. \n\  
+     center ([float,float,float]): The box center. \n\
+     width (float): The box width in the X coordinate direction. \n\
+     height (float): The box height in the Y coordinate direction. \n\
+     length (float): The box length in the Z coordinate direction. \n\
    \n\
    Returns (Model): The box solid model. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   #ifdef dbg_ModelingModeler_box
@@ -119,7 +119,7 @@ ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   double length = 1.0;
   PyObject* centerArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &centerArg, &width, &height, &length)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &centerArg, &width, &height, &length)) {
       return api.argsError();
   }
 
@@ -136,17 +136,17 @@ ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
     center[i] = PyFloat_AsDouble(PyList_GetItem(centerArg,i));
   }
 
-  if (width <= 0.0) { 
+  if (width <= 0.0) {
       api.error("The box width argument is <= 0.0.");
       return nullptr;
   }
 
-  if (height <= 0.0) { 
+  if (height <= 0.0) {
       api.error("The box height argument is <= 0.0.");
       return nullptr;
   }
 
-  if (length <= 0.0) { 
+  if (length <= 0.0) {
       api.error("The box length argument is <= 0.0.");
       return nullptr;
   }
@@ -160,7 +160,7 @@ ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 
   // Create the new solid object.
   auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
-  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel; 
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
   if (model == NULL) {
       api.error("Error creating a 3D box solid model.");
       return nullptr;
@@ -180,24 +180,24 @@ ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 }
 
 //--------------------------
-// ModelingModeler_cylinder 
+// ModelingModeler_cylinder
 //--------------------------
 //
 PyDoc_STRVAR(ModelingModeler_cylinder_doc,
-  "cylinder(center, axis, radius, length)  \n\ 
+  "cylinder(center, axis, radius, length)  \n\
    \n\
    Create a 3D solid cylinder aligned with an axis. \n\
    \n\
    Args:\n\
-     center ([float,float,float]): The cylinder center. \n\  
-     axis ([float,float,float]): The cylinder axis. \n\  
-     radius (float): The cylinder radius. \n\  
-     length (float): The cylinder length. \n\  
+     center ([float,float,float]): The cylinder center. \n\
+     axis ([float,float,float]): The cylinder axis. \n\
+     radius (float): The cylinder radius. \n\
+     length (float): The cylinder length. \n\
    \n\
    Returns (Model): The cylinder solid model. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   #ifdef dbg_ModelingModeler_cylinder
@@ -224,13 +224,13 @@ ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwar
   }
 
 
-  if (radius <= 0.0) { 
-      api.error("The radius argument is <= 0.0."); 
+  if (radius <= 0.0) {
+      api.error("The radius argument is <= 0.0.");
       return nullptr;
   }
 
-  if (length <= 0.0) { 
-      api.error("The length argument is <= 0.0."); 
+  if (length <= 0.0) {
+      api.error("The length argument is <= 0.0.");
       return nullptr;
   }
 
@@ -250,11 +250,11 @@ ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwar
 
   // Create the new solid.
   auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
-  if (pyModelingModelObj == nullptr) { 
+  if (pyModelingModelObj == nullptr) {
       api.error("Error creating a Python solid model object.");
       return nullptr;
-  } 
-  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel; 
+  }
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
   if (model == NULL) {
       api.error("Error creating a cylinder solid model.");
       return nullptr;
@@ -271,22 +271,22 @@ ModelingModeler_cylinder(PyModelingModeler* self, PyObject* args, PyObject* kwar
 }
 
 //---------------------------
-// ModelingModeler_ellipsoid 
+// ModelingModeler_ellipsoid
 //---------------------------
 //
 // [TODO:DaveP] The cvModelingModel MakeEllipsoid method is not implemented.
 //
 PyDoc_STRVAR(ModelingModeler_ellipsoid_doc,
-  "ellipsoid(center, radii)  \n\ 
+  "ellipsoid(center, radii)  \n\
    \n\
    Create a 3D solid ellipsoid. \n\
    \n\
    Args:\n\
-     center ([float,float,float]): The ellipsoid center. \n\  
-     radii ([float,float,float]): The ellipsoid axes radii. \n\  
+     center ([float,float,float]): The ellipsoid center. \n\
+     radii ([float,float,float]): The ellipsoid axes radii. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModeler_ellipsoid(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!O!", PyRunTimeErr, __func__);
@@ -294,7 +294,7 @@ ModelingModeler_ellipsoid(PyModelingModeler* self, PyObject* args, PyObject* kwa
   PyObject* centerArg;
   PyObject* radiiArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &centerArg, PyList_Type, &radiiArg)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &centerArg, PyList_Type, &radiiArg)) {
       return api.argsError();
   }
 
@@ -339,13 +339,13 @@ ModelingModeler_ellipsoid(PyModelingModeler* self, PyObject* args, PyObject* kwa
 }
 
 //---------------------------
-// ModelingModeler_intersect 
+// ModelingModeler_intersect
 //---------------------------
 //
 // [TODO:DaveP] The SolidModel_SimplifyT argument is not used by SV. Why is it given?
 
 PyDoc_STRVAR(ModelingModeler_intersect_doc,
-  "intersect(model1, model2)  \n\ 
+  "intersect(model1, model2)  \n\
    \n\
    Create a solid from the Booealn intersect operation on two solids. \n\
    \n\
@@ -356,7 +356,7 @@ PyDoc_STRVAR(ModelingModeler_intersect_doc,
    Returns (Model): The solid model of the intersected models. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModeler_intersect(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OO", PyRunTimeErr, __func__);
@@ -364,7 +364,7 @@ ModelingModeler_intersect(PyModelingModeler* self, PyObject* args, PyObject* kwa
   PyObject* model1Arg;
   PyObject* model2Arg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &model1Arg, &model2Arg)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &model1Arg, &model2Arg)) {
       return api.argsError();
   }
 
@@ -414,11 +414,11 @@ ModelingModeler_intersect(PyModelingModeler* self, PyObject* args, PyObject* kwa
 }
 
 //----------------------
-// ModelingModeler_read 
+// ModelingModeler_read
 //----------------------
 //
 PyDoc_STRVAR(ModelingModeler_read_doc,
-  "read(file_name)  \n\ 
+  "read(file_name)  \n\
    \n\
    Read a solid model from a native format file. \n\
    \n\
@@ -443,7 +443,7 @@ ModelingModeler_read(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   static char *keywords[] = {"file_name", NULL};
   char *fileName;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
       return api.argsError();
   }
 
@@ -474,22 +474,22 @@ ModelingModeler_read(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 }
 
 //------------------------
-// ModelingModeler_sphere 
+// ModelingModeler_sphere
 //------------------------
 //
 PyDoc_STRVAR(ModelingModeler_sphere_doc,
-  "sphere(center, radius)  \n\ 
+  "sphere(center, radius)  \n\
    \n\
    Create a 3D solid sphere. \n\
    \n\
    Args:\n\
-     center ([float,float,float]): The sphere center. \n\  
-     radius (float): The sphere radius. \n\  
+     center ([float,float,float]): The sphere center. \n\
+     radius (float): The sphere radius. \n\
    \n\
    Returns (Model): The sphere solid model. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModeler_sphere(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("O!d", PyRunTimeErr, __func__);
@@ -521,11 +521,11 @@ ModelingModeler_sphere(PyModelingModeler* self, PyObject* args, PyObject* kwargs
 
   // Create the new solid.
   auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
-  if (pyModelingModelObj == nullptr) { 
+  if (pyModelingModelObj == nullptr) {
       api.error("Error creating a Python solid model object.");
       return nullptr;
-  } 
-  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel; 
+  }
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
   if (model == NULL) {
       api.error("Error creating a cylinder solid model.");
       return nullptr;
@@ -541,11 +541,11 @@ ModelingModeler_sphere(PyModelingModeler* self, PyObject* args, PyObject* kwargs
 }
 
 //--------------------------
-// ModelingModeler_subtract 
+// ModelingModeler_subtract
 //--------------------------
 //
 PyDoc_STRVAR(ModelingModeler_subtract_doc,
-  "subtract(main, subtract)  \n\ 
+  "subtract(main, subtract)  \n\
    \n\
    Creates a solid from the result of a Boolean subtract operation on two solids. \n\
    \n\
@@ -556,7 +556,7 @@ PyDoc_STRVAR(ModelingModeler_subtract_doc,
    Returns (Model): The solid model of the subtracted models. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModeler_subtract(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OO", PyRunTimeErr, __func__);
@@ -564,20 +564,20 @@ ModelingModeler_subtract(PyModelingModeler* self, PyObject* args, PyObject* kwar
   PyObject* mainModelArg;
   PyObject* subtractModelArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &mainModelArg, &subtractModelArg)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &mainModelArg, &subtractModelArg)) {
       return api.argsError();
   }
 
   // Check that the mainModel argument is a SV Python Model object.
   auto mainModel = GetModelFromPyObj(mainModelArg);
-  if (mainModel == nullptr) { 
+  if (mainModel == nullptr) {
       api.error("The main model argument is not a Model object.");
       return nullptr;
   }
 
   // Check that the subtractModel argument is a SV Python Model object.
   auto subtractModel = GetModelFromPyObj(subtractModelArg);
-  if (subtractModel == nullptr) { 
+  if (subtractModel == nullptr) {
       api.error("The subtract model argument is not a Model object.");
       return nullptr;
   }
@@ -614,11 +614,11 @@ ModelingModeler_subtract(PyModelingModeler* self, PyObject* args, PyObject* kwar
 }
 
 //-----------------------
-// ModelingModeler_union 
+// ModelingModeler_union
 //-----------------------
 //
 PyDoc_STRVAR(ModelingModeler_union_doc,
-  "union(model1, model2)  \n\ 
+  "union(model1, model2)  \n\
    \n\
    Create a solid from the Boolean union operation on two solids. \n\
    \n\
@@ -629,7 +629,7 @@ PyDoc_STRVAR(ModelingModeler_union_doc,
    Returns (Model): The solid model of the unioned models. \n\
 ");
 
-static PyObject * 
+static PyObject *
 ModelingModeler_union(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("OO", PyRunTimeErr, __func__);
@@ -637,20 +637,20 @@ ModelingModeler_union(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   PyObject* model1Arg;
   PyObject* model2Arg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &model1Arg, &model2Arg)) { 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &model1Arg, &model2Arg)) {
       return api.argsError();
   }
 
   // Check that the model1 argument is a SV Python Model object.
   auto model1 = GetModelFromPyObj(model1Arg);
-  if (model1 == nullptr) { 
+  if (model1 == nullptr) {
       api.error("The first model argument is not a Model object.");
       return nullptr;
   }
 
   // Check that the model2 argument is a SV Python Model object.
   auto model2 = GetModelFromPyObj(model2Arg);
-  if (model2 == nullptr) { 
+  if (model2 == nullptr) {
       api.error("The second model argument is not a Model object.");
       return nullptr;
   }
@@ -662,11 +662,11 @@ ModelingModeler_union(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
 
   // Create the new solid.
   auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
-  if (pyModelingModelObj == nullptr) { 
+  if (pyModelingModelObj == nullptr) {
       api.error("Error creating a Python solid model object.");
       return nullptr;
-  } 
-  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel; 
+  }
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
   if (model == NULL) {
       api.error("Error creating a solid model.");
       return nullptr;
@@ -701,14 +701,14 @@ static char* MODELING_MODELER_CLASS_VARIBLE_NAMES = "names";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(ModelingModelerClass_doc, 
+PyDoc_STRVAR(ModelingModelerClass_doc,
    "Modeler(kernel) \n\
    \n\
    The Modeler class provides an interface for creating solid models and   \n\
    performing intersect, subtract and union Boolean operations on them.    \n\
    \n\
    A Modeler object is created for a specific kernel by passing a kernel   \n\
-   name as an argument to the Modeler() constructor. The kernel name is    \n\ 
+   name as an argument to the Modeler() constructor. The kernel name is    \n\
    specified using the modeling.Kernel class.                              \n\
    \n\
    Example: Creating a modeler for a PolyData kernel                       \n\
@@ -761,9 +761,9 @@ static PyMethodDef PyModelingModelerMethods[] = {
 };
 
 //-----------------------
-// PyModelingModelerInit 
+// PyModelingModelerInit
 //-----------------------
-// This is the __init__() method for the solid.Modeler class. 
+// This is the __init__() method for the solid.Modeler class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -785,7 +785,7 @@ PyModelingModelerInit(PyModelingModeler* self, PyObject* args, PyObject *kwds)
   auto kernel = kernelNameEnumMap.at(std::string(kernelName));
   self->id = numObjs;
   self->kernel = kernel;
-  self->kernelName = Py_BuildValue("s", kernelName); 
+  self->kernelName = Py_BuildValue("s", kernelName);
   numObjs += 1;
 
   #ifdef dbg_PyModelingModelerInit
@@ -798,18 +798,18 @@ PyModelingModelerInit(PyModelingModeler* self, PyObject* args, PyObject *kwds)
 }
 
 //-----------------------
-// PyModelingModelerType 
+// PyModelingModelerType
 //-----------------------
-// Define the Python type object that stores contour.kernel types. 
+// Define the Python type object that stores contour.kernel types.
 //
 static PyTypeObject PyModelingModelerType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = MODELING_MODELER_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyModelingModeler)
+  MODELING_MODELER_MODULE_CLASS,
+  sizeof(PyModelingModeler)
 };
 
 //----------------------
-// PyModelingModelerNew 
+// PyModelingModelerNew
 //----------------------
 //
 static PyObject *
@@ -822,7 +822,7 @@ PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   #endif
 
   auto api = PyUtilApiFunction("s", PyRunTimeErr, "Modeler");
-  char* kernelName = nullptr; 
+  char* kernelName = nullptr;
   if (!PyArg_ParseTuple(args, api.format, &kernelName)) {
       return api.argsError();
   }
@@ -846,7 +846,7 @@ PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
   try {
     auto ctore = CvSolidModelCtorMap.at(kernel);
   } catch (const std::out_of_range& except) {
-      api.error("No modeler is defined for the kernel name '" + std::string(kernelName) + "'."); 
+      api.error("No modeler is defined for the kernel name '" + std::string(kernelName) + "'.");
       return nullptr;
   }
 
@@ -859,7 +859,7 @@ PyModelingModelerNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //--------------------------
-// PyModelingModelerDealloc 
+// PyModelingModelerDealloc
 //--------------------------
 //
 static void
@@ -873,19 +873,19 @@ PyModelingModelerDealloc(PyModelingModeler* self)
 }
 
 //------------------------------
-// SetModelingModelerTypeFields 
+// SetModelingModelerTypeFields
 //------------------------------
-// Set the Python type object fields that stores ModelingModeler data. 
+// Set the Python type object fields that stores ModelingModeler data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetModelingModelerTypeFields(PyTypeObject& solidModelType)
 {
   // Doc string for this type.
-  solidModelType.tp_doc = ModelingModelerClass_doc; 
-  // Object creation function, equivalent to the Python __new__() method. 
+  solidModelType.tp_doc = ModelingModelerClass_doc;
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   solidModelType.tp_new = PyModelingModelerNew;
   //solidModelType.tp_new = PyType_GenericNew,
@@ -897,9 +897,9 @@ SetModelingModelerTypeFields(PyTypeObject& solidModelType)
 };
 
 //---------------------------
-// CreateModelingModelerType 
+// CreateModelingModelerType
 //---------------------------
-static PyModelingModeler * 
+static PyModelingModeler *
 CreateModelingModelerType()
 {
   return PyObject_New(PyModelingModeler, &PyModelingModelerType);

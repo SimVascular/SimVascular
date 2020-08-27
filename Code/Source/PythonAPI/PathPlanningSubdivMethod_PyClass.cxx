@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API 'pathplanning' module 'SubdivisionMethod' class. 
+// The functions defined here implement the SV Python API 'pathplanning' module 'SubdivisionMethod' class.
 //
 // The class attributes provide string constants representing each of the subdivision methods. The strings
 // are stored as a dict created using SetPathSubdivisionMethodTypes().
@@ -61,7 +61,7 @@ static std::map<std::string, sv3::PathElement::CalculationMethod> subdivMethodNa
 static std::string subdivMethodValidNames = "SPACING, SUBDIVISION or TOTAL";
 
 //-------------------------
-// PyPathSubdivisionMethod 
+// PyPathSubdivisionMethod
 //-------------------------
 // Define the PyPathSubdivisionMethod class (type).
 //
@@ -73,14 +73,14 @@ PyObject_HEAD
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 //---------------------------------
 // PathSubdivisionMethod_get_names
 //---------------------------------
-// 
+//
 PyDoc_STRVAR(PathSubdivisionMethod_get_names_doc,
-  "get_names() \n\ 
+  "get_names() \n\
    \n\
    Get the valid subdivision method names. \n\
    \n\
@@ -98,7 +98,7 @@ PathSubdivisionMethod_get_names()
       PyList_SetItem(nameList, n, PyUnicode_FromString(name));
       n += 1;
   }
-  return nameList; 
+  return nameList;
 }
 
 ////////////////////////////////////////////////////////
@@ -111,21 +111,21 @@ static char* PATH_SUBDIVISION_METHOD_MODULE_CLASS = "pathplanning.SubdivisionMet
 static char* PATH_SUBDIVISION_METHOD_CLASS_VARIBLE_NAMES = "names";
 
 //---------------------------
-// PathSubdivisionMethod_doc 
+// PathSubdivisionMethod_doc
 //---------------------------
 // Define the SubdivisionMethod class documentation.
 //
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PathSubdivisionMethod_doc, 
+PyDoc_STRVAR(PathSubdivisionMethod_doc,
    "The SubdivisionMethod class provides the names used to set the subdivision\n\
    method for a path as class variables.                                     \n\
    \n\
    The subdivision method is used to determine the number of path curve    \n\
    points N created between two adjacent control points.                   \n\
    \n\
-   Valid subdivision method names are: \n\ 
+   Valid subdivision method names are: \n\
    \n\
       SPACING - Divide the distance D between adjacent control points by a \n\
                 given spacing value S: N = D/S - 1 \n\
@@ -149,33 +149,33 @@ static PyMethodDef PyPathSubdivisionMethodMethods[] = {
 //------------------------------
 // Define the PathCalMethodType
 //------------------------------
-// Define the Python type object that stores path.CalculationMethod types. 
+// Define the Python type object that stores path.CalculationMethod types.
 //
 static PyTypeObject PyPathSubdivisionMethodType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = PATH_SUBDIVISION_METHOD_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyPathSubdivisionMethod)
+  PATH_SUBDIVISION_METHOD_MODULE_CLASS,
+  sizeof(PyPathSubdivisionMethod)
 };
 
 //------------------------------------
-// SetPathSubdivisionMethodTypeFields 
+// SetPathSubdivisionMethodTypeFields
 //------------------------------------
 //
 static void
 SetPathSubdivisionMethodTypeFields(PyTypeObject& methodType)
  {
-  methodType.tp_doc = PathSubdivisionMethod_doc; 
+  methodType.tp_doc = PathSubdivisionMethod_doc;
   methodType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   methodType.tp_methods = PyPathSubdivisionMethodMethods;
   methodType.tp_dict = PyDict_New();
 };
 
 //-------------------------------
-// SetPathSubdivisionMethodTypes 
+// SetPathSubdivisionMethodTypes
 //-------------------------------
 // Set the calculate method names in the PyPathSubdivisionMethodType dictionary.
 //
-// The names in the PyPathSubdivisionMethodType dictionary are referenced as a 
+// The names in the PyPathSubdivisionMethodType dictionary are referenced as a
 // string class variable for the Python CalculareMethod class.
 //
 static void

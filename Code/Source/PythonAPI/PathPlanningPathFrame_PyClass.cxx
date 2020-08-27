@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API 'pathplanning' module 'PathFrame' class. 
+// The functions defined here implement the SV Python API 'pathplanning' module 'PathFrame' class.
 //
 //
 #ifndef PYAPI_PATHPLANNING_PATH_FRAME_PYCLASS_H
@@ -44,7 +44,7 @@
 //        U t i l i t y     F u n c t i o n s       //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 //--------------------
 // PyPathFrameGetData
@@ -85,7 +85,7 @@ static char* PATH_FRAME_MODULE_CLASS = "pathplanning.PathFrame";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PathPathFrame_doc, 
+PyDoc_STRVAR(PathPathFrame_doc,
    "The PathFrame class stores data a path's interpolating spline position, \n\
    tangent, and normal data.                                               \n\
    \n\
@@ -158,17 +158,17 @@ PyPathFrameInit(PyPathFrame* self, PyObject* args, PyObject* kwargs)
 
   // [TODO:DaveP] just incr or copy?
   //
-  if (positionArg != nullptr) { 
+  if (positionArg != nullptr) {
       Py_INCREF(positionArg);
       self->position = positionArg;
   }
 
-  if (normalArg != nullptr) { 
+  if (normalArg != nullptr) {
       Py_INCREF(normalArg);
       self->normal = normalArg;
   }
 
-  if (tangentArg != nullptr) { 
+  if (tangentArg != nullptr) {
       Py_INCREF(tangentArg);
       self->tangent = tangentArg;
   }
@@ -187,30 +187,30 @@ PyPathFrameNew(PyTypeObject* type, PyObject* args, PyObject* kwargs)
   return (PyObject*)self;
 }
 
-static void 
+static void
 PyPathFrameDealloc(PyPathFrame* self)
 {
 }
 
 //-----------------
-// PyPathFrameType 
+// PyPathFrameType
 //-----------------
-// Define the Python type object that stores path.CalculationMethod types. 
+// Define the Python type object that stores path.CalculationMethod types.
 //
 PyTypeObject PyPathFrameType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  .tp_name = PATH_FRAME_MODULE_CLASS,
-  .tp_basicsize = sizeof(PyPathFrame)
+  PATH_FRAME_MODULE_CLASS,
+  sizeof(PyPathFrame)
 };
 
 //------------------------
-// SetPathFrameTypeFields 
+// SetPathFrameTypeFields
 //------------------------
 //
 static void
 SetPathFrameTypeFields(PyTypeObject& methodType)
  {
-  methodType.tp_doc = PathPathFrame_doc; 
+  methodType.tp_doc = PathPathFrame_doc;
   methodType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
   methodType.tp_methods = PyPathFrameMethods;
   methodType.tp_members = PyPathFrameMembers;
@@ -231,10 +231,10 @@ CreatePyPathFrame(sv3::PathElement::PathPoint& pathPoint)
   auto pathFrameObj = PyObject_CallObject((PyObject*)&PyPathFrameType, NULL);
   auto pyPathFrame = (PyPathFrame*)pathFrameObj;
 
-  pyPathFrame->id = pathPoint.id; 
-  pyPathFrame->position = Py_BuildValue("[d, d, d]", pathPoint.pos[0], pathPoint.pos[1], pathPoint.pos[2]); 
-  pyPathFrame->normal = Py_BuildValue("[d, d, d]", pathPoint.rotation[0], pathPoint.rotation[1], pathPoint.rotation[2]); 
-  pyPathFrame->tangent = Py_BuildValue("[d, d, d]", pathPoint.tangent[0], pathPoint.tangent[1], pathPoint.tangent[2]); 
+  pyPathFrame->id = pathPoint.id;
+  pyPathFrame->position = Py_BuildValue("[d, d, d]", pathPoint.pos[0], pathPoint.pos[1], pathPoint.pos[2]);
+  pyPathFrame->normal = Py_BuildValue("[d, d, d]", pathPoint.rotation[0], pathPoint.rotation[1], pathPoint.rotation[2]);
+  pyPathFrame->tangent = Py_BuildValue("[d, d, d]", pathPoint.tangent[0], pathPoint.tangent[1], pathPoint.tangent[2]);
 
   return pathFrameObj;
 }

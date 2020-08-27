@@ -29,15 +29,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This is the implementation for the SV Python API contour segmentation class. 
+// This is the implementation for the SV Python API contour segmentation class.
 //
 // The class name is 'segmentation.Contour'.
 //
 // The Contour class only stores contour points data obtained from a image
-// segmentation computation, like levelset or thresholding. 
+// segmentation computation, like levelset or thresholding.
 
 //-----------------------
-// PyContourSegmentation 
+// PyContourSegmentation
 //-----------------------
 // Define the Contour class.
 //
@@ -77,18 +77,18 @@ void PyContourCopySegmentationData(sv4guiContour* sv4Contour, PyObject* contourO
 //-----------------------
 // PyContourGenerateData
 //-----------------------
-// Generate the PyContournSegmentation and SV Contour data 
+// Generate the PyContournSegmentation and SV Contour data
 // from a list of contour points.
 //
 void PyContourGenerateData(PyUtilApiFunction& api, PyContourSegmentation* contSeg, const std::vector<std::array<double,3>>& points)
 {
-  auto contour = contSeg->super.contour; 
+  auto contour = contSeg->super.contour;
 
   // Create two SV control points for center and scale.
   //
-  std::vector<std::array<double,3>> controlPoints; 
-  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0}); 
-  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0}); 
+  std::vector<std::array<double,3>> controlPoints;
+  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0});
+  controlPoints.push_back(std::array<double,3>{0.0,0.0,0.0});
   for (auto pt : points) {
       controlPoints.push_back(pt);
   }
@@ -103,7 +103,7 @@ void PyContourGenerateData(PyUtilApiFunction& api, PyContourSegmentation* contSe
   plane->SetNormal(contSeg->normal.data());
   contour->SetPlaneGeometry(plane);
 
-  // Need to set control points after defining the plane. 
+  // Need to set control points after defining the plane.
   contour->SetControlPoints(controlPoints);
   contour->SetContourPoints(points);
 }
@@ -112,10 +112,10 @@ void PyContourGenerateData(PyUtilApiFunction& api, PyContourSegmentation* contSe
 //          C l a s s    M e t h o d s              //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 //--------------------------------
-// ContourSegmentation_get_center 
+// ContourSegmentation_get_center
 //--------------------------------
 //
 PyDoc_STRVAR(ContourSegmentation_get_center_doc,
@@ -129,13 +129,13 @@ PyDoc_STRVAR(ContourSegmentation_get_center_doc,
 
 static PyObject*
 ContourSegmentation_get_center(PyContourSegmentation* self, PyObject* args, PyObject *kwargs)
-{ 
+{
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   return Py_BuildValue("[d, d, d]", self->center[0], self->center[1], self->center[2]);
 }
 
 //--------------------------------
-// ContourSegmentation_get_normal 
+// ContourSegmentation_get_normal
 //--------------------------------
 //
 PyDoc_STRVAR(ContourSegmentation_get_normal_doc,
@@ -155,7 +155,7 @@ ContourSegmentation_get_normal(PyContourSegmentation* self, PyObject* args, PyOb
 }
 
 //----------------------------------------
-// ContourSegmentation_set_contour_points 
+// ContourSegmentation_set_contour_points
 //----------------------------------------
 //
 PyDoc_STRVAR(ContourSegmentation_set_contour_points_doc,
@@ -192,7 +192,7 @@ ContourSegmentation_set_contour_points(PyContourSegmentation* self, PyObject* ar
   // Check contour points distance to plane.
   auto maxDist = PyUtilComputeDistPointsToPlane(self->center, self->normal, points);
   if (maxDist > self->planeDistTol) {
-      api.error("The 'points' data do not lie in a plane within " + std::to_string(self->planeDistTol) + 
+      api.error("The 'points' data do not lie in a plane within " + std::to_string(self->planeDistTol) +
             ". Maximum distance computed for the points: " + std::to_string(maxDist));
       return nullptr;
   }
@@ -213,7 +213,7 @@ static char* SEGMENTATION_CONTOUR_MODULE_CLASS = "segmentation.Contour";
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(PyContourSegmentationClass_doc, 
+PyDoc_STRVAR(PyContourSegmentationClass_doc,
    "Contour(contour_points)  \n\
    \n\
    The Contour class provides an interface for creating a contour          \n\
@@ -226,7 +226,7 @@ PyDoc_STRVAR(PyContourSegmentationClass_doc,
 ");
 
 //------------------------------
-// PyContourSegmentationMethods 
+// PyContourSegmentationMethods
 //------------------------------
 //
 static PyMethodDef PyContourSegmentationMethods[] = {
@@ -237,9 +237,9 @@ static PyMethodDef PyContourSegmentationMethods[] = {
 };
 
 //---------------------------
-// PyContourSegmentationInit 
+// PyContourSegmentationInit
 //---------------------------
-// This is the __init__() method for the ContourSegmentation class. 
+// This is the __init__() method for the ContourSegmentation class.
 //
 // This function is used to initialize an object after it is created.
 //
@@ -290,7 +290,7 @@ PyContourSegmentationInit(PyContourSegmentation* self, PyObject* args, PyObject 
       // Check control points distance to plane.
       auto maxDist = PyUtilComputeDistPointsToPlane(self->center, self->normal, points);
       if (maxDist > self->planeDistTol) {
-          api.error("The 'points' data do not lie in a plane within " + std::to_string(self->planeDistTol) + 
+          api.error("The 'points' data do not lie in a plane within " + std::to_string(self->planeDistTol) +
                 ". Maximum distance computed for the points: " + std::to_string(maxDist));
           return -1;
       }
@@ -301,12 +301,12 @@ PyContourSegmentationInit(PyContourSegmentation* self, PyObject* args, PyObject 
 }
 
 //--------------------------
-// PyContourSegmentationNew 
+// PyContourSegmentationNew
 //--------------------------
 //
 static PyObject *
 PyContourSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
-{ 
+{
   std::cout << "[PyContourSegmentationNew] New ContourSegmentation " << std::endl;
   auto self = (PyContourSegmentation*)type->tp_alloc(type, 0);
   if (self == NULL) {
@@ -317,48 +317,48 @@ PyContourSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 }
 
 //------------------------------
-// PyContourSegmentationDealloc 
+// PyContourSegmentationDealloc
 //------------------------------
 //
 static void
 PyContourSegmentationDealloc(PyContourSegmentation* self)
-{ 
+{
   std::cout << "[PyContourSegmentationDealloc] **** Free PyContourSegmentation ****" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);
 }
 
 //--------------------------------------
-// Define the PyContourSegmentationType 
+// Define the PyContourSegmentationType
 //--------------------------------------
-// Define the Python type object that stores Segmentation data. 
+// Define the Python type object that stores Segmentation data.
 //
-// Can't set all the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Can't set all the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static PyTypeObject PyContourSegmentationType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  // Dotted name that includes both the module name and 
+  // Dotted name that includes both the module name and
   // the name of the type within the module.
-  .tp_name = SEGMENTATION_CONTOUR_MODULE_CLASS, 
-  .tp_basicsize = sizeof(PyContourSegmentation)
+  SEGMENTATION_CONTOUR_MODULE_CLASS,
+  sizeof(PyContourSegmentation)
 };
 
 //----------------------------------
-// SetContourSegmentationTypeFields 
+// SetContourSegmentationTypeFields
 //----------------------------------
-// Set the Python type object fields that stores Segmentation data. 
+// Set the Python type object fields that stores Segmentation data.
 //
-// Need to set the fields here because g++ does not suppor non-trivial 
-// designated initializers. 
+// Need to set the fields here because g++ does not suppor non-trivial
+// designated initializers.
 //
 static void
 SetContourSegmentationTypeFields(PyTypeObject& segType)
  {
   // Doc string for this type.
-  segType.tp_doc = PyContourSegmentationClass_doc; 
+  segType.tp_doc = PyContourSegmentationClass_doc;
 
-  // Object creation function, equivalent to the Python __new__() method. 
+  // Object creation function, equivalent to the Python __new__() method.
   // The generic handler creates a new instance using the tp_alloc field.
   segType.tp_new = PyContourSegmentationNew;
   //.tp_new = PyType_GenericNew,

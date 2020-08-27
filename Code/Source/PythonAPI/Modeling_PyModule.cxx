@@ -29,9 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API modeling module. 
+// The functions defined here implement the SV Python API modeling module.
 //
-// A Python exception sv.modeling.ModelingError is defined for this module. 
+// A Python exception sv.modeling.ModelingError is defined for this module.
 // The exception can be used in a Python 'try' statement with an 'except' clause.
 //
 #include "SimVascular.h"
@@ -78,7 +78,7 @@ static PyObject * PyRunTimeErr;
 static PyObject * CreatePyModelingModelObject(SolidModel_KernelT kernel);
 static PyObject * CreatePyModelingModelObject(cvSolidModel* solidModel);
 
-// Include solid Kernel class that defines a map between 
+// Include solid Kernel class that defines a map between
 // solid model kernel name and enum type.
 //
 #include "ModelingKernel_PyClass.cxx"
@@ -88,7 +88,7 @@ static PyObject * CreatePyModelingModelObject(cvSolidModel* solidModel);
 //---------------------
 // Define an object factory for creating cvSolidModel objects.
 //
-// An entry for SM_KT_PARASOLID is added later in PyAPI_InitParasolid() 
+// An entry for SM_KT_PARASOLID is added later in PyAPI_InitParasolid()
 // if the Parasolid interface is defined (by loading the Parasolid plugin).
 //
 using ModelingCtorMapType = std::map<SolidModel_KernelT, std::function<cvSolidModel*()>>;
@@ -102,7 +102,7 @@ ModelingCtorMapType CvSolidModelCtorMap = {
 //--------------------
 //
 std::map<SolidModel_KernelT, std::set<std::string>> modelingNativeFile = {
-    {SolidModel_KernelT::SM_KT_OCCT, {"brep"}}, 
+    {SolidModel_KernelT::SM_KT_OCCT, {"brep"}},
     {SolidModel_KernelT::SM_KT_PARASOLID, {"xmt_txt"}},
     {SolidModel_KernelT::SM_KT_POLYDATA, {"ply", "stl", "vtk", "vtp"}}
 };
@@ -112,7 +112,7 @@ std::map<SolidModel_KernelT, std::set<std::string>> modelingNativeFile = {
 //--------------------------
 //
 std::map<SolidModel_KernelT, std::string> modelingValidFileFormats = {
-    {SolidModel_KernelT::SM_KT_OCCT, "brep"}, 
+    {SolidModel_KernelT::SM_KT_OCCT, "brep"},
     {SolidModel_KernelT::SM_KT_PARASOLID, "xmt_txt"},
     {SolidModel_KernelT::SM_KT_POLYDATA, "ply, stl, vtk, and vtp"}
 };
@@ -132,7 +132,7 @@ std::map<SolidModel_KernelT, std::string> modelingValidFileFormats = {
 //---------------------
 // Define an object factory for creating Python ModelingModel derived objects.
 //
-// An entry for SM_KT_PARAMODELING is added later in PyAPI_InitParasolid() 
+// An entry for SM_KT_PARAMODELING is added later in PyAPI_InitParasolid()
 // if the Parasolid interface is defined (by loading the Parasolid plugin).
 //
 using PyModelingModelCtorMapType = std::map<SolidModel_KernelT, std::function<PyObject*()>>;
@@ -180,7 +180,7 @@ ModelingCheckModelsKernels(PyUtilApiFunction& api, cvSolidModel* model1, cvSolid
   auto kernel1 = model1->GetKernelT();
   auto kernel2 = model2->GetKernelT();
 
-  if (kernel1 != kernel2) { 
+  if (kernel1 != kernel2) {
       std::string kernelName1(SolidModel_KernelT_EnumToStr(kernel1));
       std::string kernelName2(SolidModel_KernelT_EnumToStr(kernel2));
       api.error("The models were created using different modeling kernels. Model1: " + kernelName1 + "  Model2: " + kernelName2 + ".");
@@ -195,7 +195,7 @@ ModelingCheckModelsKernels(PyUtilApiFunction& api, cvSolidModel* model1, cvSolid
 //-------------------------
 // Check that a file extension for a native modeler format is valid.
 //
-bool 
+bool
 ModelingCheckFileFormat(PyUtilApiFunction& api, SolidModel_KernelT kernel, std::string fileName)
 {
   try {
@@ -208,12 +208,12 @@ ModelingCheckFileFormat(PyUtilApiFunction& api, SolidModel_KernelT kernel, std::
               auto validFormats = modelingValidFileFormats[kernel];
               api.error("Invalid native format for the " + kernelName + " kernel. Valid formats are: " + validFormats);
               return false;
-          } 
+          }
       } else {
           api.error("The file named '" + fileName + "' does not have an extension.");
           return false;
       }
-      
+
   } catch (...) {
       std::string kernelName(SolidModel_KernelT_EnumToStr(kernel));
       api.error("Unsupported solid modeling kernel '" + kernelName + "'.");
@@ -236,7 +236,7 @@ static char* MODELING_MODULE = "modeling";
 static char* MODELING_MODULE_EXCEPTION = "modeling.Error";
 static char* MODELING_MODULE_EXCEPTION_OBJECT = "Error";
 
-PyDoc_STRVAR(Solid_module_doc, 
+PyDoc_STRVAR(Solid_module_doc,
   "SimVascular modeling module. \n\
    \n\
    The modeling module provides an interface to SV modeling functionality   \n\
@@ -276,7 +276,7 @@ PyDoc_STRVAR(Solid_module_doc,
 ");
 
 //----------------
-// PySolidMethods 
+// PySolidMethods
 //----------------
 // Methods for the 'solid' module.
 //
@@ -292,18 +292,18 @@ static PyMethodDef PyModelingModuleMethods[] = {
 static PyObject *
 CreatePyModelingModelObject(SolidModel_KernelT kernel)
 {
-  #ifdef dbg_CreatePyModelingModelObject 
+  #ifdef dbg_CreatePyModelingModelObject
   std::cout << "[CreatePyModelingModelObject] ========== CreatePyModelingModelObject ==========" << std::endl;
   #endif
   auto cvSolidModel = CreateCvSolidModel(kernel);
-  if (cvSolidModel == nullptr) { 
+  if (cvSolidModel == nullptr) {
       return nullptr;
   }
   return CreatePyModelingModelObject(cvSolidModel);
 }
 
 //-----------------------------
-// CreatePyModelingModelObject 
+// CreatePyModelingModelObject
 //-----------------------------
 // Create a Python ModelingModel object for the given cvSolidModel object.
 //
@@ -335,37 +335,37 @@ CreatePyModelingModelObject(cvSolidModel* solidModel)
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python interpreter 
+// Define the initialization function called by the Python interpreter
 // when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 
 static struct PyModuleDef PyModelingModule = {
    m_base,
-   MODELING_MODULE, 
-   Solid_module_doc, 
-   perInterpreterStateSize, 
+   MODELING_MODULE,
+   Solid_module_doc,
+   perInterpreterStateSize,
    PyModelingModuleMethods
 };
 
 //-------------------
 // PyInit_PyModeling
 //-------------------
-// The initialization function called by the Python interpreter 
+// The initialization function called by the Python interpreter
 // when the 'modeling' module is loaded.
 //
 PyMODINIT_FUNC
@@ -422,7 +422,7 @@ PyInit_PyModeling(void)
       return nullptr;
   }
 
-  // Create the 'solid' module. 
+  // Create the 'solid' module.
   auto module = PyModule_Create(&PyModelingModule);
   if (module == NULL) {
     fprintf(stdout,"Error in initializing pySolid");
