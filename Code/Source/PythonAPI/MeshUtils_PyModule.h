@@ -33,7 +33,7 @@
 #define MESH_UTILS_INIT_H
 
 #include "SimVascular.h"
-#include "svMMGExports.h" 
+#include "svMMGExports.h"
 #include "Python.h"
 
 #if PYTHON_MAJOR_VERSION == 2
@@ -43,5 +43,5 @@ PyMODINIT_FUNC  initpyMeshUtil();
 PyMODINIT_FUNC  PyInit_PyMeshUtils();
 #endif
 
-#endif 
+#endif
 

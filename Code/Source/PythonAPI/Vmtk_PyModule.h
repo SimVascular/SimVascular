@@ -30,7 +30,7 @@
  */
 
 #ifndef VMTK_PYMODULE_H
-#define VMTK_PYMODULE_H 
+#define VMTK_PYMODULE_H
 
 #include "SimVascular.h"
 #include "Python.h"
@@ -45,5 +45,5 @@ PyMODINIT_FUNC  initpyVMTKUtils();
 PyMODINIT_FUNC  PyInit_PyVmtk();
 #endif
 
-#endif 
+#endif
 

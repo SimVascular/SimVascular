@@ -30,7 +30,7 @@
  */
 
 #ifndef MESHING_PY_MODULE_H
-#define MESHING_PY_MODULE_H 
+#define MESHING_PY_MODULE_H
 
 #include "SimVascular.h"
 #include "Python.h"
@@ -51,7 +51,7 @@ extern "C" SV_EXPORT_MESH void PyAPI_InitMeshSim(CreateMesherObjectFunction crea
 // The meshing.Series class is used to store data for
 // time-varying meshes.
 //
-// In SV time-varying meshe are stored in the sv4guiMitkMesh class. 
+// In SV time-varying meshe are stored in the sv4guiMitkMesh class.
 //
 typedef struct PyMeshingSeries
 {
@@ -79,5 +79,5 @@ PyMODINIT_FUNC  initpyMesh();
 PyMODINIT_FUNC  PyInit_PyMeshing();
 #endif
 
-#endif 
+#endif
 
