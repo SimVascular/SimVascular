@@ -45,7 +45,7 @@
 //-------------------
 // PyUtilApiFunction
 //-------------------
-// This class is used to manage argument formats for API methods 
+// This class is used to manage argument formats for API methods
 // and error reporting.
 //
 class PyUtilApiFunction
@@ -54,10 +54,10 @@ class PyUtilApiFunction
       PyUtilApiFunction(const std::string& format, PyObject* pyRunTimeErr, const char* funcName);
       void error(std::string msg);
       PyObject * argsError();
-      std::string formatString; 
-      const char* format; 
-      std::string msgp; 
-      PyObject* pyError; 
+      std::string formatString;
+      const char* format;
+      std::string msgp;
+      PyObject* pyError;
 };
 
 // Types and functions used to extract data from PathFrame objects.
@@ -72,12 +72,12 @@ bool PyUtilCheckPointData(PyObject* pointData, std::string& msg);
 
 bool PyUtilCheckPointDataList(PyObject* pointData, std::string& msg);
 
-double PyUtilComputeDistPointsToPlane(const std::array<double,3>& center, const std::array<double,3>& normal, 
+double PyUtilComputeDistPointsToPlane(const std::array<double,3>& center, const std::array<double,3>& normal,
   const std::vector<std::array<double,3>>& points);
 
 std::array<double,3> PyUtilComputeNormalFromlPoints(const std::vector<std::array<double,3>>& points);
 
-std::array<double,3> 
+std::array<double,3>
 PyUtilComputePointsCenter(const std::vector<std::array<double,3>>& points);
 
 bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, double point[3]);
@@ -86,7 +86,7 @@ bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, int poi
 
 void PyUtilGetPyErrorInfo(PyObject* item, std::string& valMsg, std::string& itemStr);
 
-bool PyUtilGetFrameData(PyUtilApiFunction& api, PyObject* centerArg, std::array<double,3>& center,                  
+bool PyUtilGetFrameData(PyUtilApiFunction& api, PyObject* centerArg, std::array<double,3>& center,
   PyObject* normalArg, std::array<double,3>& normal, PyObject* frameObj, sv3::PathElement::PathPoint& pathPoint);
 
 std::string PyUtilGetFunctionName(const char* functionName);
@@ -110,4 +110,4 @@ void PyUtilSetErrorMsg(PyObject* pyRunTimeErr, std::string& msgp, std::string ms
 
 void PyUtilSetupApiFunction(const char* functionName, std::string& format, std::string& msg);
 
-#endif 
+#endif

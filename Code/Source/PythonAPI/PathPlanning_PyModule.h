@@ -30,7 +30,7 @@
  */
 
 #ifndef PYAPI_PATH_PLANNING_MODULE_H
-#define PYAPI_PATH_PLANNING_MODULE_H 
+#define PYAPI_PATH_PLANNING_MODULE_H
 
 #include "SimVascular.h"
 #include "Python.h"
@@ -51,7 +51,7 @@ typedef struct
 } PyPath;
 
 //-------------
-// PyPathSeries 
+// PyPathSeries
 //-------------
 // Define the SV Python path planning Series class.
 //
@@ -60,10 +60,10 @@ typedef struct
   PyObject_HEAD
   sv3::PathGroup* pathGroup;
   int id;
-} PyPathSeries; 
+} PyPathSeries;
 
 //-------------
-// PyPathFrame 
+// PyPathFrame
 //-------------
 // Define the PyPathFrame class (type).
 //
@@ -89,4 +89,4 @@ PyMODINIT_FUNC  initpyPath();
 PyMODINIT_FUNC PyInit_PyPathplanning();
 #endif
 
-#endif 
+#endif
