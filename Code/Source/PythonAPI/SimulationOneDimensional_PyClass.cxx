@@ -542,7 +542,7 @@ OneDimSim_GenerateSolverInput(sv4guiSimulationPython1d& pythonInterface, std::st
 // parameter values and is similar to sv4guiSimulationView1d::CreateDataFiles().
 //
 PyDoc_STRVAR(OneDimSim_write_input_file_doc,
-  "write_input_file(model, mesh, fluid, material, boundary_conditions, directory) \n\ 
+  "write_input_file(model, mesh, fluid, material, boundary_conditions, directory) \n\
    \n\
    Write the 1D simulation solver input file.                                     \n\
    \n\

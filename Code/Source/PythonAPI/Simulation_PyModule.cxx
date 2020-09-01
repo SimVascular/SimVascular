@@ -71,7 +71,7 @@ static char* SIMULATION_MODULE_EXCEPTION_OBJECT = "Error";
 PyDoc_STRVAR(SimulationModule_doc,
    "SimVascular simulation module. \n\
    \n\
-   The simulation module provides an interface for SV solvers.              \n\ 
+   The simulation module provides an interface for SV solvers.              \n\
    \n\
 ");
 
