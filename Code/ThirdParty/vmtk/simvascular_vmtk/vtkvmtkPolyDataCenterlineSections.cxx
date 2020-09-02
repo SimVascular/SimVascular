@@ -65,6 +65,7 @@ vtkStandardNewMacro(vtkvmtkPolyDataCenterlineSections);
 
 vtkvmtkPolyDataCenterlineSections::vtkvmtkPolyDataCenterlineSections()
 {
+	n_centerlines = 0;
     this->Centerlines = vtkPolyData::New();
     this->Surface = vtkPolyData::New();
     this->RadiusArrayName = NULL;
@@ -74,6 +75,7 @@ vtkvmtkPolyDataCenterlineSections::vtkvmtkPolyDataCenterlineSections()
     this->BranchIdArrayNameTmp = NULL;
     this->BranchIdArrayName = NULL;
     this->PathArrayName = NULL;
+    this->CenterlineIdArrayName = NULL;
     this->CenterlineSectionAreaArrayName = NULL;
     this->CenterlineSectionMinSizeArrayName = NULL;
     this->CenterlineSectionMaxSizeArrayName = NULL;
@@ -137,6 +139,12 @@ vtkvmtkPolyDataCenterlineSections::~vtkvmtkPolyDataCenterlineSections()
     {
         delete[] this->PathArrayName;
         this->PathArrayName = NULL;
+    }
+
+    if (this->CenterlineIdArrayName)
+    {
+        delete[] this->CenterlineIdArrayName;
+        this->CenterlineIdArrayName = NULL;
     }
     
     if (this->CenterlineSectionAreaArrayName)
@@ -953,6 +961,7 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     cleaner->PointMergingOn();
     cleaner->Update();
     vtkPolyData* centerlines = cleaner->GetOutput();
+    this->n_centerlines = centerlines->GetNumberOfCells();
 
     // check if geometry is one piece
     if (!(this->IsOnePiece(cleaner->GetOutput())))
@@ -981,13 +990,20 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     nodeId->SetNumberOfValues(centerlines->GetNumberOfPoints());
     nodeId->Fill(0);
 
+    // create id array for centerline
+    vtkNew(vtkIntArray, centId);
+    centId->SetName(this->CenterlineIdArrayName);
+    centId->SetNumberOfValues(centerlines->GetNumberOfPoints() * this->n_centerlines);
+    centId->SetNumberOfComponents(this->n_centerlines);
+    centId->Fill(0);
+
     // add inlet point
     points->InsertNextPoint(centerlines->GetPoint(0));
     pointIds->InsertNextId(0);
     radius->SetValue(0, centerlines->GetPointData()->GetArray(this->RadiusArrayName)->GetTuple1(0));
 
     // loop all centerlines
-    for (int c = 0; c < centerlines->GetNumberOfCells(); c++)
+    for (int c = 0; c < this->n_centerlines; c++)
     {
         // individual centerline
         vtkCell* cell = centerlines->GetCell(c);
@@ -1015,9 +1031,12 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
                 // copy radius
                 radius->SetValue(id_this, centerlines->GetPointData()->GetArray(this->RadiusArrayName)->GetTuple1(i));
 
-                // set id
+                // set ids
                 nodeId->SetValue(id_this, pointIds->GetNumberOfIds());
+                centId->SetComponent(id_this, c, 1);
             }
+            else
+                centId->SetComponent(pointIds->IsId(i), c, 1);
         }
     }
 
@@ -1054,6 +1073,7 @@ int vtkvmtkPolyDataCenterlineSections::GenerateCleanCenterline()
     polydata->GetPointData()->AddArray(branch);
     polydata->GetPointData()->AddArray(radius);
     polydata->GetPointData()->AddArray(nodeId);
+    polydata->GetPointData()->AddArray(centId);
 
     // go through tree and color each branch/bifurcation
 	vtkNew(vtkIdList, cellIds);
@@ -1309,6 +1329,7 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     vtkDoubleArray* normals = vtkDoubleArray::SafeDownCast(polydata->GetPointData()->GetArray(this->CenterlineSectionNormalArrayName));
     vtkIntArray* bifurcation = vtkIntArray::SafeDownCast(polydata->GetPointData()->GetArray(this->BifurcationIdArrayNameTmp));
     vtkIntArray* branch = vtkIntArray::SafeDownCast(polydata->GetPointData()->GetArray(this->BranchIdArrayNameTmp));
+    vtkIntArray* centId = vtkIntArray::SafeDownCast(polydata->GetPointData()->GetArray(this->CenterlineIdArrayName));
 
     // create new arrays
     vtkNew(vtkDoubleArray, radius_new);
@@ -1316,18 +1337,22 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     vtkNew(vtkIntArray, bifurcation_new);
     vtkNew(vtkIntArray, branch_new);
     vtkNew(vtkIntArray, nodeId_new);
+    vtkNew(vtkIntArray, centId_new);
 
     radius_new->SetName(this->RadiusArrayName);
     normals_new->SetName(this->CenterlineSectionNormalArrayName);
     bifurcation_new->SetName(this->BifurcationIdArrayNameTmp);
     branch_new->SetName(this->BranchIdArrayNameTmp);
     nodeId_new->SetName(this->GlobalNodeIdArrayName);
+    centId_new->SetName(this->CenterlineIdArrayName);
 
     radius_new->SetNumberOfValues(polydata->GetNumberOfPoints() + n_cap);
     normals_new->SetNumberOfValues(polydata->GetNumberOfPoints() + n_cap);
     bifurcation_new->SetNumberOfValues(polydata->GetNumberOfPoints() + n_cap);
     branch_new->SetNumberOfValues(polydata->GetNumberOfPoints() + n_cap);
     nodeId_new->SetNumberOfValues(polydata->GetNumberOfPoints() + n_cap);
+    centId_new->SetNumberOfValues((polydata->GetNumberOfPoints() + n_cap) * this->n_centerlines);
+    centId_new->SetNumberOfComponents(this->n_centerlines);
 
     normals_new->SetNumberOfComponents(3);
 
@@ -1335,6 +1360,7 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     bifurcation_new->Fill(-1);
     branch_new->Fill(-1);
     nodeId_new->Fill(0);
+    centId_new->Fill(0);
 
     // create new points
     vtkNew(vtkPoints, points);
@@ -1415,6 +1441,7 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
             // set new arrays
             bifurcation_new->SetValue(i + n_cap, bifurcation->GetValue(i));
             branch_new->SetValue(i + n_cap, branch->GetValue(i));
+            centId_new->SetTuple(i + n_cap, centId->GetTuple(i));
             nodeId_new->SetValue(i + n_cap, i + n_cap);
 
             n_cap++;
@@ -1440,6 +1467,7 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
         // copy to new arrays
         bifurcation_new->SetValue(i + n_cap, bifurcation->GetValue(i));
         branch_new->SetValue(i + n_cap, branch->GetValue(i));
+        centId_new->SetTuple(i + n_cap, centId->GetTuple(i));
         nodeId_new->SetValue(i + n_cap, i + n_cap);
     }
 
@@ -1452,6 +1480,7 @@ int vtkvmtkPolyDataCenterlineSections::RefineCapPoints()
     polydata_new->GetPointData()->AddArray(bifurcation_new);
     polydata_new->GetPointData()->AddArray(branch_new);
     polydata_new->GetPointData()->AddArray(radius_new);
+    polydata_new->GetPointData()->AddArray(centId_new);
     polydata_new->GetPointData()->AddArray(nodeId_new);
     polydata_new->GetPointData()->AddArray(normals_new);
 

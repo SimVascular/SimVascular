@@ -309,6 +309,7 @@ int sys_geom_centerlinesections(cvPolyData *lines_in, cvPolyData *surface_in, cv
     cross_sections->SetBranchIdArrayNameTmp("BranchIdTmp");
     cross_sections->SetBranchIdArrayName("BranchId");
     cross_sections->SetPathArrayName("Path");
+    cross_sections->SetCenterlineIdArrayName("CenterlineId");
 
     // from vmtkcenterlines
     cross_sections->SetRadiusArrayName("MaximumInscribedSphereRadius");
