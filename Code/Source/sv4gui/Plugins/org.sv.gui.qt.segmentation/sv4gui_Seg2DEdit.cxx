@@ -1921,7 +1921,7 @@ void sv4guiSeg2DEdit::initialize(){
   GetDataStorage()->GetNamedNode("Segmentations")->GetBoolProperty("ml_init",ml_init);
 
   if(!ml_init){
-    QMessageBox::warning(NULL,"Initializing machine learning","SimVascular ML segmentation is about to be loaded, this may take a minute");
+    QMessageBox::information(NULL,"Initializing machine learning", "The machine learning segmentation data will now be loaded; this may take a minute.");
     GetDataStorage()->GetNamedNode("Segmentations")->SetBoolProperty("ml_init",true);
   }
 
@@ -2065,16 +2065,25 @@ void sv4guiSeg2DEdit::segmentPaths(){
   auto seg_nodes = GetDataStorage()->GetDerivations(seg_folder_node);
   m_selected_paths.clear();
 
+  // Get the suffix used to form the segmentation name.
   bool ok;
-  QString seg_code = QInputDialog::getText(m_Parent, tr("Segmentation Name"),
-                                       tr("Enter a name to append to the new segmentations"), QLineEdit::Normal,
-                                       "", &ok);
+  char* msg = "Enter the suffix used to create new segmentation data nodes from the selected path(s).";
+  QString seg_code = QInputDialog::getText(m_Parent, tr("Segmentation Name"), tr(msg), QLineEdit::Normal, "", &ok);
 
-  std::cout << "seg name " << seg_code.toStdString() << "\n";
+  if (!ok) {
+    return;
+  }
+
+  if (seg_code.size() == 0) {
+    QMessageBox::warning(NULL, "Segmentation Name", "No segmentation suffix given.");
+    return;
+  }
+
+  // Get the path names for segementation.
   for (int i = 0; i < ui->pathList->count(); i++){
     if (ui->pathList->item(i)->checkState() == Qt::Checked){
       auto name = ui->pathList->item(i)->text().toStdString();
-      auto new_seg_name = name+"_"+seg_code.toStdString();
+      auto new_seg_name = name + "_" + seg_code.toStdString();
 
       for (int j = 0; j < seg_nodes->size(); j++){
         auto seg_node = seg_nodes->GetElement(j);
@@ -2091,25 +2100,29 @@ void sv4guiSeg2DEdit::segmentPaths(){
     }
   }
 
-  for (int i = 0; i < m_selected_paths.size(); i++){
-    auto path_name = m_selected_paths[i];
+  // Perform the ML segmentation for each selected path.
+  for (auto const& path_name : m_selected_paths) { 
+    mitk::DataNode::Pointer pathNode = nullptr;
 
     for (int j = 0; j < paths_list->size(); j++){
-      auto path_node = paths_list->GetElement(j);
-
-      if (path_node->GetName() == path_name){
-        m_current_path_node = path_node;
-        std::cout << "segmenting " << path_name << "\n";
-
-        createContourGroup(path_name, path_name+"_"+seg_code.toStdString());
-
-        segmentPath();
-
-        break;
+      pathNode = paths_list->GetElement(j);
+      if (pathNode->GetName() == path_name){
+        break; 
       }
+    }
 
+    // Compute segmentation contours.
+    m_current_path_node = pathNode;
+    auto path = dynamic_cast<sv4guiPath*>(pathNode->GetData());
+    auto contours = segmentPath(path);
+
+    // Create a new data node for the segmentations.
+    if (contours.size() != 0) { 
+      auto segName = path_name + "_" + seg_code.toStdString();
+      createContourGroup(path_name, segName, contours); 
     }
   }
+
 }
 
 /**
@@ -2119,49 +2132,70 @@ void sv4guiSeg2DEdit::segmentPaths(){
  *
  * @param path_name, name of the associated path
  * @param seg_name, name of the segmentation to be created
+ * @param contours, the list of contours for the segmentation 
  */
-void sv4guiSeg2DEdit::createContourGroup(std::string path_name, std::string seg_name){
-  auto seg_folder_node = GetDataStorage()->GetNamedNode("Segmentations");
-
+void sv4guiSeg2DEdit::createContourGroup(std::string path_name, std::string seg_name, std::vector<sv4guiContour*>& contours)
+{
+  // Create a new contour group used to store the segmentations.
   m_current_group = sv4guiContourGroup::New();
   m_current_group->SetPathName(path_name);
   m_current_group->SetDataModified();
-
-  sv4guiPath* selectedPath=dynamic_cast<sv4guiPath*>(m_current_path_node->GetData());
-
+  sv4guiPath* selectedPath = dynamic_cast<sv4guiPath*>(m_current_path_node->GetData());
   m_current_group->SetPathID(selectedPath->GetPathID());
 
+  // Add the contours to the group.
+  int n = 0;
+  for (auto const& contour : contours) {
+    m_current_group->IsEmptyTimeStep(0);
+    m_current_group->InsertContour(n, contour, 0);
+    n += 1;
+  }
+
+  // Create a new SV Data Manager Segmentations node for the group.
   auto seg_node = mitk::DataNode::New();
   seg_node->SetName(seg_name);
   seg_node->SetData(m_current_group);
-
+  auto seg_folder_node = GetDataStorage()->GetNamedNode("Segmentations");
   GetDataStorage()->Add(seg_node, seg_folder_node);
+
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 /**
- * Function to use machine learning to segment a path at discrete intervals
+ * Function to use machine learning to segment a path at discrete intervals.
  *
- * The current path node is obtained from the multipath checklist
+ * The current path node is obtained from the multipath checklist.
  *
+ * Arguments:
+ *
+ *   path - The path to segment.
+ *
+ * Returns: A list of contours. 
  */
-void sv4guiSeg2DEdit::segmentPath(){
-  auto path = dynamic_cast<sv4guiPath*>(m_current_path_node->GetData());
-
+std::vector<sv4guiContour*>
+sv4guiSeg2DEdit::segmentPath(sv4guiPath* path)
+{
   auto path_element = path->GetPathElement(0);
-
   auto path_points = path_element->GetPathPoints();
-
-  int n = 0;
 
   m_interval = ui->intervalEdit->value();
   m_numFourierModes = ui->intervalEdit->value();
+  std::vector<sv4guiContour*> contours;
 
-  for(int k = 0; k < path_points.size(); k += m_interval){
+  try { 
+    for (int k = 0; k < path_points.size(); k += m_interval) {
+      auto contour = doSegmentation(path_points[k], k, k+1);
+      contours.push_back(contour);
+    }
 
-    doSegmentation(path_points[k], k, n);
-    n+=1;
-
+  } catch (std::exception &e) {
+    QString msg = "No segmentation could be computed for the image.\n\n";
+    msg += "The image window may not contain enough data (pixel values) to distinguish a vessel boundary.";
+    QMessageBox::warning(NULL, "2D Segmentation", msg);
+    contours.clear();
   }
+
+  return contours;
 }
 
 /**
@@ -2171,17 +2205,18 @@ void sv4guiSeg2DEdit::segmentPath(){
  *
  * @param path_point an instance of a SimVascular PathPoint object
  */
-void sv4guiSeg2DEdit::doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point,
-int index, int n_){
-
+sv4guiContour *
+sv4guiSeg2DEdit::doSegmentation(sv4guiPathElement::sv4guiPathPoint path_point, int index, int n_)
+{
   sv4guiContour* contour = doMLContour(path_point);
+
+  if (contour == nullptr) {
+      throw std::runtime_error("No segmentation could be computed for the image.");
+  }
 
   contour = contour->CreateSmoothedContour(m_numFourierModes);
 
-  m_current_group->IsEmptyTimeStep(0);
-
-  m_current_group->InsertContour(n_, contour, 0);
-  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  return contour;
 }
 
 /**
@@ -2198,7 +2233,6 @@ sv4guiContour* sv4guiSeg2DEdit::doMLContour(sv4guiPathElement::sv4guiPathPoint p
   std::vector<std::vector<double>> points = ml_utils->segmentPathPoint(path_point);
 
   if (points.size() <= 0){
-    std::cout << "contour empty points\n";
     return NULL;
   }
 
