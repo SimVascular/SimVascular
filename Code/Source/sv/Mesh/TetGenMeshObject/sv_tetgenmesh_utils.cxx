@@ -577,10 +577,9 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
 
 int TGenUtils_WriteVTU(char *filename,vtkUnstructuredGrid *UGrid)
 {
-  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  auto writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  writer->SetFileName(filename);
 
-  std::string fn = "out.vtu";
-  writer->SetFileName(fn.c_str());
 #if VTK_MAJOR_VERSION <= 5
   writer->SetInput(UGrid);
 #else
@@ -588,9 +587,7 @@ int TGenUtils_WriteVTU(char *filename,vtkUnstructuredGrid *UGrid)
 #endif
 
   writer->Write();
-
   return SV_OK;
-
 }
 
 // -----------------------------
