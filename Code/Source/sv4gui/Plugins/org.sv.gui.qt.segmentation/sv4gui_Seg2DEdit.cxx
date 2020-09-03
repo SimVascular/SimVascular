@@ -2180,19 +2180,30 @@ sv4guiSeg2DEdit::segmentPath(sv4guiPath* path)
 
   m_interval = ui->intervalEdit->value();
   m_numFourierModes = ui->intervalEdit->value();
-  std::vector<sv4guiContour*> contours;
 
-  try { 
-    for (int k = 0; k < path_points.size(); k += m_interval) {
+  // Perform segmentation.
+  std::vector<sv4guiContour*> contours;
+  int numFailures = 0;
+  for (int k = 0; k < path_points.size(); k += m_interval) {
+    try { 
       auto contour = doSegmentation(path_points[k], k, k+1);
       contours.push_back(contour);
+    } catch (std::exception &e) {
+      numFailures += 1;
     }
+  }
 
-  } catch (std::exception &e) {
-    QString msg = "No segmentation could be computed for the image.\n\n";
+  // Display a message if all segmentations were not computed.
+  if (numFailures != 0) { 
+    QString msg;
+    if (contours.size() == 0) {
+      msg = "No segmentations could be computed for the image.\n\n";
+    } else {
+      int n = numFailures + contours.size();
+      msg = QString::number(numFailures) + " segmentations out of " + QString::number(n) + " could not be computed for the image.\n\n";
+    }
     msg += "The image window may not contain enough data (pixel values) to distinguish a vessel boundary.";
     QMessageBox::warning(NULL, "2D Segmentation", msg);
-    contours.clear();
   }
 
   return contours;
