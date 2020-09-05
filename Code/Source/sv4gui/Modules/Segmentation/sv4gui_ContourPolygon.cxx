@@ -46,6 +46,7 @@ sv4guiContourPolygon::sv4guiContourPolygon()
     m_ControlPointNonRemovableIndices[0]=0;
     m_ControlPointNonRemovableIndices[1]=1;
     m_Extendable=true;
+    SetKernel(cKernelType::cKERNEL_POLYGON);
 }
 
 sv4guiContourPolygon::sv4guiContourPolygon(const sv4guiContourPolygon &other)

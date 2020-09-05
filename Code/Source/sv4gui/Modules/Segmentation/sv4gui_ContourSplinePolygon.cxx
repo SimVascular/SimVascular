@@ -44,6 +44,7 @@ sv4guiContourSplinePolygon::sv4guiContourSplinePolygon()
 {
     m_Method="Manual";
     m_Type="SplinePolygon";
+    SetKernel(cKernelType::cKERNEL_SPLINEPOLYGON);
 }
 
 sv4guiContourSplinePolygon::sv4guiContourSplinePolygon(const sv4guiContourSplinePolygon &other)

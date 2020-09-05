@@ -47,6 +47,8 @@ sv4guiContourEllipse::sv4guiContourEllipse()
 
     m_SubdivisionType=CONSTANT_TOTAL_NUMBER;
     m_SubdivisionNumber=36;
+
+   SetKernel(cKernelType::cKERNEL_ELLIPSE);
 }
 
 sv4guiContourEllipse::sv4guiContourEllipse(const sv4guiContourEllipse &other)
