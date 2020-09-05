@@ -143,42 +143,6 @@ Segmentation_get_points(PySegmentation* self, PyObject* args)
   return Py_BuildValue("N", pointList);
 }
 
-//---------------------------------
-// Segmentation_get_control_points
-//---------------------------------
-// [TODO:DaveP] I will removed this, no longer have generic
-// get control points.
-//
-PyDoc_STRVAR(Segmentation_get_control_points_doc,
-  "get_control_points()  \n\
-   \n\
-   Get the center of the contour. \n\
-   \n\
-   Returns list([x,y,z]): The center of the contour. \n\
-");
-
-static PyObject *
-Segmentation_get_control_points(PySegmentation* self, PyObject* args)
-{
-  auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  auto contour = self->contour;
-  auto control_points = contour->GetControlPoints();
-  auto pointList = PyList_New(control_points.size());
-  int n = 0;
-
-  for (auto const& point : control_points) {
-      auto pointValues = PyList_New(3);
-      for (int i = 0; i < 3; i++) {
-          auto val = PyFloat_FromDouble((double)point[i]);
-          PyList_SetItem(pointValues, i, val);
-      }
-      PyList_SetItem(pointList, n, pointValues);
-      n += 1;
-  }
-
-  return Py_BuildValue("N", pointList);
-}
-
 //---------------------
 // Segmentation_get_id
 //---------------------
@@ -188,7 +152,7 @@ PyDoc_STRVAR(Segmentation_get_id_doc,
    \n\
    Get the contour ID. \n\
    \n\
-   Returns int: The contour id. \n\
+   Returns int: The contour ID. \n\
 ");
 
 static PyObject *
@@ -197,7 +161,6 @@ Segmentation_get_id(PySegmentation* self, PyObject* args)
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto contour = self->contour;
   auto id = contour->GetContourID();
-  std::cout << "######### Segmentation_get_id: id: " << id << std::endl;
   return Py_BuildValue("i", id);
 }
 
@@ -657,16 +620,11 @@ PyDoc_STRVAR(SegmentationClass_doc, "segmentation class functions.");
 //-----------------------
 // Define the methods for the Python 'Segmentation' class.
 //
-// [TODO:DaveP] I'm not sure which of these to expose, e.g. don't want to use get_control_points for circle contour.
-//
 static PyMethodDef PySegmentationMethods[] = {
 
   {"get_center", (PyCFunction)Segmentation_get_center, METH_NOARGS, Segmentation_get_center_doc },
 
   {"get_points", (PyCFunction)Segmentation_get_points, METH_NOARGS, Segmentation_get_points_doc},
-
-  // [TODO:DaveP] I will removed this, no longer have generic get control points.
-  // {"get_control_points", (PyCFunction)Segmentation_get_control_points, METH_NOARGS, Segmentation_get_control_points_doc},
 
   {"get_id", (PyCFunction)Segmentation_get_id, METH_NOARGS, Segmentation_get_id_doc},
 
