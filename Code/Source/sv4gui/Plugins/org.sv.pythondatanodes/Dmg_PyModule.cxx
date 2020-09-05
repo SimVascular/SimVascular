@@ -55,6 +55,7 @@
 
 //#include "sv_Repository.h"
 #include "sv_PolyData.h"
+#include "sv_PolyDataSolid.h"
 #include "sv_StrPts.h"
 #include "sv_UnstructuredGrid.h"
 #include "sv_arg.h"
@@ -567,17 +568,20 @@ Dmg_add_mesh(PyObject* self, PyObject* args, PyObject* kwargs)
 //---------------
 // Dmg_get_model 
 //---------------
-// Get the model group.
 //
 PyDoc_STRVAR(Dmg_get_model_doc,
   "get_model(name) \n\ 
    \n\
    Get a model from the SV Data Manager Models node. \n\
    \n\
+   The model returned is an sv.modeling modeler object of the same type used  \n\
+   used to create the model in SimVascular. For example, getting a PolyData   \n\
+   model returns an sv.modeling.PolyData object.                              \n\
+   \n\
    Args: \n\
      name (str): The model node name. \n\
    \n\
-   Returns an sv.modeling.Series object.  \n\
+   Returns a model object.                                                    \n\
 ");
 
 static PyObject * 
@@ -610,11 +614,31 @@ Dmg_get_model(PyObject* self, PyObject* args)
       return nullptr;
   }
 
-  // Get the model group.
-  auto model = dynamic_cast<sv4guiModel*>(modelNode->GetData());
+  // Get the solid model group.
+  auto solidGroup = dynamic_cast<sv4guiModel*>(modelNode->GetData());
 
-  // Create a PyModelingSeries object.
-  return CreatePyModelingSeries(model);
+  // Get the solid model for time=0.
+  //
+  int time = 0;
+  auto solidModelElement = solidGroup->GetModelElement(time);
+  if (solidModelElement == nullptr) {
+      api.error("ERROR getting the solid model for the time '" + std::to_string(time) + "'.");
+      return nullptr;
+  }
+
+  // No inner solid is created for models read from .vtp or .stl files
+  // so create a PolyData solid model and set its polydata.
+  //
+  auto solidModel = solidModelElement->GetInnerSolid();
+  if (solidModel == nullptr) {
+      auto polydata = solidModelElement->GetWholeVtkPolyData();
+      solidModel = new cvPolyDataSolid();
+      solidModel->SetVtkPolyDataObject(polydata);
+  }
+
+  // Create a PySolidModel object from the SV cvSolidModel
+  // object and return it as a PyObject.
+  return CreatePyModelingModelObject(solidModel);
 }
 
 //--------------
@@ -1008,34 +1032,44 @@ Dmg_add_geometry(PyObject* self, PyObject* args, PyObject* kwargs)
 PyDoc_STRVAR(Dmg_add_model_doc,
   "add_model(name, model) \n\ 
    \n\
-   Add a model to the SV Data Manager Models node. \n\
+   Add a model to the SV Data Manager Models node.                            \n\
    \n\
+   \n\----------------------------------------------------------------------  \n\
    Args: \n\
-     name (str): The name for the model data node. \n\
-     model (sv.modeling.Series object): The model series object from which \n\
-        to create the model node.                                          \n\
+     name (str): The name for the model data node.                            \n\
+     model (sv.modeling.Modeler): The model object representing a solid model.\n\
 ");
 
 static PyObject * 
 Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-  auto api = PyUtilApiFunction("sO!", PyRunTimeErr, __func__);
+  auto api = PyUtilApiFunction("sO", PyRunTimeErr, __func__);
   static char *keywords[] = {"name", "model", NULL};
   char* modelName = NULL;
   PyObject* modelArg;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelName, &PyModelingSeriesType, &modelArg)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelName, &modelArg)) {
       return api.argsError();
   }
 
-  // Get the model data.
-  //
-  // [TODO:DaveP] How to add group? What to do with other modelers?
+  if (!PyObject_TypeCheck(modelArg, &PyModelingModelType)) {
+      api.error("The 'model' argument is not an 'sv.modeling.Model' object.");
+      return nullptr;
+  }
+
+  // Get the model polydata.
   // 
-  auto pyModel = (PyModelingSeries*)modelArg;
-  auto solidGroup = pyModel->solidGroup;
-  auto solidModelElement = solidGroup->GetModelElement(0);
-  auto polydata = solidModelElement->GetWholeVtkPolyData();
+  // [TODO:DaveP] useMaxDist and maxDist are used as tolerances when discretizing
+  // NURBS surfaces. They are not used in cvPolyDataSolid::GetPolyData() 
+  // but are in cvOCCTSolidModel::GetPolyData() and cvParasolidSolidModel::GetPolyData() 
+  // but with different meanings.
+  //
+  int useMaxDist = 0; 
+  double maxDist = 0.0;
+  auto solidModel = (cvSolidModel*)((PyModelingModel*)modelArg)->solidModel;
+  auto cvPolyData = solidModel->GetPolyData(useMaxDist, maxDist);
+  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+  polydata->DeepCopy(cvPolyData->GetVtkPolyData());
 
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
@@ -1084,19 +1118,20 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
 // Dmg_get_segmentation
 //----------------------
 //
-PyDoc_STRVAR(Dmg_get_segmentation_doc,
-  "segmentation(name)                                    \n\ 
+PyDoc_STRVAR(Dmg_get_segmentations_doc,
+  "get_segmentations(name) \n\ 
    \n\
-   Get a segmentation from the SV Data Manager Segmentations node.       \n\
+   \n\----------------------------------------------------------------------  \n\
+   Get the segmentations from an SV Data Manager Segmentations node.          \n\
    \n\
-   Args:                                                          \n\
+   Args: \n\
      name (str): The segmentation node name. \n\
    \n\
-   Returns an sv.segmentation.Series object. \n\
+   Returns a list of sv.segmentation.Segmentation objects.                    \n\
 ");
 
 static PyObject * 
-Dmg_get_segmentation(PyObject* self, PyObject* args)
+Dmg_get_segmentations(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   char* segName = NULL;
@@ -1128,16 +1163,25 @@ Dmg_get_segmentation(PyObject* self, PyObject* args)
   // Get the contour group from the data node.
   sv4guiContourGroup* group = dynamic_cast<sv4guiContourGroup*>(node->GetData());
   if (group == NULL) {
-      api.error("Unable to get a contour group for '" + std::string(segName) + "' from the SV Data Manager.");
+      api.error("Unable to get the segmentations for the node named '" + std::string(segName) + "' from the SV Data Manager.");
       return nullptr;
   }
 
-  // [TODO:DaveP] It would be good to make a copy of the group
-  // but Clone() does not seem to work, crashes SV.
+  // Create a list of segmentations.
   //
-  //auto groupCopy = group->Clone();
-  //return CreatePyContourGroup(groupCopy);
-  return CreatePySegmentationSeries(group);
+  int time = 0;
+  //std::vector<sv4guiContour*> contours = group->GetContourSet(time);
+  auto contours = group->GetContourSet(time);
+  PyObject* segmentations = PyList_New(contours.size());
+
+  int n = 0;
+  for (auto const& contour : contours) {
+      auto seg = PyCreateSegmentation(contour);
+      PyList_SetItem(segmentations, n, seg);
+      n += 1;
+  }
+
+  return segmentations; 
 }
 
 //----------------------
@@ -1256,7 +1300,7 @@ PyMethodDef PyDmgMethods[] =
 
     {"add_path", (PyCFunction)Dmg_add_path, METH_VARARGS|METH_KEYWORDS, Dmg_add_path_doc},
 
-    {"get_segmentation", Dmg_get_segmentation, METH_VARARGS, Dmg_get_segmentation_doc},
+    {"get_segmentations", Dmg_get_segmentations, METH_VARARGS, Dmg_get_segmentations_doc},
 
     {"get_mesh", Dmg_get_mesh, METH_VARARGS , Dmg_get_mesh_doc},
 

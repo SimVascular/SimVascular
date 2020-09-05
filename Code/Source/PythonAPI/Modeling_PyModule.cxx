@@ -75,8 +75,8 @@
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 static PyObject * PyRunTimeErr;
 
-static PyObject * CreatePyModelingModelObject(SolidModel_KernelT kernel);
-static PyObject * CreatePyModelingModelObject(cvSolidModel* solidModel);
+PyObject * CreatePyModelingModelObject(SolidModel_KernelT kernel);
+PyObject * CreatePyModelingModelObject(cvSolidModel* solidModel);
 
 // Include solid Kernel class that defines a map between
 // solid model kernel name and enum type.
@@ -289,7 +289,7 @@ static PyMethodDef PyModelingModuleMethods[] = {
 //-----------------------
 // Create a Python ModelingModel object for the given kernel.
 //
-static PyObject *
+PyObject *
 CreatePyModelingModelObject(SolidModel_KernelT kernel)
 {
   #ifdef dbg_CreatePyModelingModelObject
@@ -307,7 +307,7 @@ CreatePyModelingModelObject(SolidModel_KernelT kernel)
 //-----------------------------
 // Create a Python ModelingModel object for the given cvSolidModel object.
 //
-static PyObject *
+PyObject *
 CreatePyModelingModelObject(cvSolidModel* solidModel)
 {
   //std::cout << "[CreatePyModelingModelObject] ========== CreatePyModelingModelObject ==========" << std::endl;
