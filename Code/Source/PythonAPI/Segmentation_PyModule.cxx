@@ -104,7 +104,7 @@ static PyObject * PyRunTimeErr;
 // Prototypes for creating Python segmentation objects.
 static PySegmentation* PyCreateSegmentationType();
 static PyObject * PyCreateSegmentation(cKernelType contourType);
-static PyObject * PyCreateSegmentation(sv4guiContour* contour);
+PyObject * PyCreateSegmentation(sv4guiContour* contour);
 //static PyObject * PyCreateSegmentation(sv3::Contour* contour);
 
 // Include implementations for the 'SegmentationMethod' and 'Segmentation' classes.
@@ -288,7 +288,7 @@ PyCreateSegmentation(cKernelType contourType)
 //
 //   Contour types: Circle, Ellipse, Polygon, SplinePolygon, TensionPolygon and Contour
 //
-static PyObject *
+PyObject *
 PyCreateSegmentation(sv4guiContour* contour)
 {
   std::cout << std::endl;
