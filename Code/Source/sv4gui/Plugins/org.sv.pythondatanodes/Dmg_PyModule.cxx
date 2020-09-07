@@ -29,18 +29,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API data manager 'dmg' module. 
+// The functions defined here implement the SV Python API data manager 'dmg' module.
 // The module is used to access the SV Data Manager data nodes (e.g. Paths, Segmentations, etc.)
 // from a Python script executed in the SV Python console. A project must be opened in order
 // it use the 'dmg' module.
 //
-// A Python exception sv.dmg.DmgError is defined for this module. 
-// The exception can be used in a Python 'try' statement with an 'except' clause 
+// A Python exception sv.dmg.DmgError is defined for this module.
+// The exception can be used in a Python 'try' statement with an 'except' clause
 // like this
 //
 //    except sv.dmg.DmgError:
 //
-// Some functions defined here are also visible outside of this module. They are used 
+// Some functions defined here are also visible outside of this module. They are used
 // by Python API functions to read files (e.g. .ctgr) created by SV.
 //
 #include "SimVascular.h"
@@ -112,7 +112,7 @@
 // Exception type used by PyErr_SetString() to set the for the error indicator.
 PyObject* PyRunTimeErr;
 
-// Define the SV Data Manager top level folder names. 
+// Define the SV Data Manager top level folder names.
 //
 // [TODO:DaveP] These should be globally defined somewhere.
 //
@@ -130,7 +130,7 @@ namespace SvDataManagerNodes {
       { "Mesh", Mesh },
       { "Model", Model },
       { "Path", Path },
-      { "Segmentation", Segmentation } 
+      { "Segmentation", Segmentation }
   };
 
   std::string ValidPluginNames = "Valid names: Image, Mesh, Model, Path, or Segmentation.";
@@ -150,7 +150,7 @@ namespace SvDataManagerErrorMsg {
 //----------------
 // Create Model node from a vtk polydata object.
 //
-sv4guiModel::Pointer 
+sv4guiModel::Pointer
 BuildModelNode(vtkPolyData* polydata, sv4guiModel::Pointer model)
 {
   // Hardcodeed type to be PolyData.
@@ -162,7 +162,7 @@ BuildModelNode(vtkPolyData* polydata, sv4guiModel::Pointer model)
   if (analytic) {
       analytic->SetWholeVtkPolyData(analytic->CreateWholeVtkPolyData());
   }
-    
+
   model->SetType(modelElement->GetType());
   model->SetModelElement(modelElement);
   model->SetDataModified();
@@ -172,7 +172,7 @@ BuildModelNode(vtkPolyData* polydata, sv4guiModel::Pointer model)
 //---------------
 // BuildMeshNode
 //---------------
-// Create a TetGen Mesh node from a vtk unstructured mesh object. 
+// Create a TetGen Mesh node from a vtk unstructured mesh object.
 //
 // The modelName parameter is the name of a solid model under the SV Data Manager Models node.
 //
@@ -183,7 +183,7 @@ BuildMeshNode(vtkUnstructuredGrid* ugrid, sv4guiMitkMesh::Pointer mitkMesh, cons
   //
   vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
   surfaceFilter->SetInputData(ugrid);
-  surfaceFilter->Update(); 
+  surfaceFilter->Update();
   vtkSmartPointer<vtkPolyData> polydata = surfaceFilter->GetOutput();
 
   // Set the surface and volume mesh to the sv4guiMesh.
@@ -193,7 +193,7 @@ BuildMeshNode(vtkUnstructuredGrid* ugrid, sv4guiMitkMesh::Pointer mitkMesh, cons
   mesh->SetSurfaceMesh(polydata);
 
   // Set mitk mesh.
-  mitkMesh->SetMesh(mesh); 
+  mitkMesh->SetMesh(mesh);
   mitkMesh->SetType("TetGen");
   mitkMesh->SetModelName(modelName);
   mitkMesh->SetDataModified();
@@ -204,13 +204,13 @@ BuildMeshNode(vtkUnstructuredGrid* ugrid, sv4guiMitkMesh::Pointer mitkMesh, cons
 //---------------
 // BuildPathNode
 //---------------
-// Create a Path node from a PathElement object. 
+// Create a Path node from a PathElement object.
 //
 sv4guiPath::Pointer BuildPathNode(cvRepositoryData *obj, sv4guiPath::Pointer path)
 {
   sv3::PathElement* pathElem = dynamic_cast<sv3::PathElement*> (obj);
   sv4guiPathElement* guiPath = new sv4guiPathElement();
-  
+
   switch(pathElem->GetMethod()) {
       case sv3::PathElement::CONSTANT_TOTAL_NUMBER:
           guiPath->SetMethod(sv4guiPathElement::CONSTANT_TOTAL_NUMBER);
@@ -230,7 +230,7 @@ sv4guiPath::Pointer BuildPathNode(cvRepositoryData *obj, sv4guiPath::Pointer pat
 
   guiPath->SetCalculationNumber(pathElem->GetCalculationNumber());
   guiPath->SetSpacing(pathElem->GetSpacing());
-  
+
   // Copy control points.
   std::vector<std::array<double,3> > pts = pathElem->GetControlPoints();
   for (int i=0; i<pts.size();i++)
@@ -241,22 +241,22 @@ sv4guiPath::Pointer BuildPathNode(cvRepositoryData *obj, sv4guiPath::Pointer pat
       point[2] = pts[i][2];
       guiPath->InsertControlPoint(i,point);
   }
-  
+
   //create path points
   guiPath->CreatePathPoints();
-  
+
   path->SetPathElement(guiPath);
   path->SetDataModified();
-  
+
   return path;
 }
 
 //--------------------
 // CreateSegmentationGroup
 //--------------------
-// Create a segmentation contour group from a list of contours. 
+// Create a segmentation contour group from a list of contours.
 //
-sv4guiContourGroup::Pointer 
+sv4guiContourGroup::Pointer
 CreateSegmentationGroup(std::vector<PySegmentation*> contours, sv4guiContourGroup::Pointer group, char* pathName)
 {
   std::string str(pathName);
@@ -284,7 +284,7 @@ CreateSegmentationGroup(std::vector<PySegmentation*> contours, sv4guiContourGrou
       group->InsertContour(j, contour);
       group->SetDataModified();
   }
-  
+
   return group;
 }
 
@@ -303,30 +303,30 @@ AddDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer fold
   auto doOp = new sv4guiDataNodeOperation(sv4guiDataNodeOperation::OpADDDATANODE, dataStorage, dataNode, folderNode);
 
   if (undoEnabled) {
-      auto undoOp = new sv4guiDataNodeOperation(sv4guiDataNodeOperation::OpREMOVEDATANODE, dataStorage, dataNode, 
+      auto undoOp = new sv4guiDataNodeOperation(sv4guiDataNodeOperation::OpREMOVEDATANODE, dataStorage, dataNode,
           folderNode);
       auto operationEvent = new mitk::OperationEvent(interface, doOp, undoOp, "Add DataNode");
       mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent(operationEvent);
   }
 
   interface->ExecuteOperation(doOp);
-} 
+}
 
 //----------------
 // RemoveDataNode
 //----------------
 //
-int 
+int
 RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer folderNode, char* childName)
 {
-    mitk::DataNode::Pointer childNode =dataStorage->GetNamedDerivedNode(childName,folderNode); 
-    
+    mitk::DataNode::Pointer childNode =dataStorage->GetNamedDerivedNode(childName,folderNode);
+
     if (folderNode && childNode) {
         dataStorage->Remove(childNode);
     } else {
         return SV_ERROR;
     }
-    
+
     mitk::OperationEvent::IncCurrObjectEventId();
     sv4guiDataNodeOperationInterface* interface=new sv4guiDataNodeOperationInterface;
     bool undoEnabled=true;
@@ -345,8 +345,8 @@ RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer f
 // AddSegmentationDataNode
 //-------------------------
 // Add a Segmentaion data node to the SV Data Manager.
-int 
-AddSegmentationDataNode(mitk::DataStorage::Pointer dataStorage, std::vector<PySegmentation*> segmentations, 
+int
+AddSegmentationDataNode(mitk::DataStorage::Pointer dataStorage, std::vector<PySegmentation*> segmentations,
         mitk::DataNode::Pointer folderNode, char* childName, char* pathName, sv4guiPath::Pointer path)
 {
   mitk::DataNode::Pointer node = mitk::DataNode::New();
@@ -371,7 +371,7 @@ AddSegmentationDataNode(mitk::DataStorage::Pointer dataStorage, std::vector<PySe
       mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
   }
   interface->ExecuteOperation(doOp);
-  
+
   return SV_OK;
 }
 
@@ -380,10 +380,10 @@ AddSegmentationDataNode(mitk::DataStorage::Pointer dataStorage, std::vector<PySe
 //-------------
 // Get the tool data node from the SV Data Manager.
 //
-// The tool nodes are under the root project node and defined for 
+// The tool nodes are under the root project node and defined for
 // SV tools: Images, Paths, Segmentations, Models and Meshes.
 //
-mitk::DataNode::Pointer 
+mitk::DataNode::Pointer
 GetToolNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projectNode, char* toolName)
 {
   //std::cout << "========== GetToolNode ==========" << std::endl;
@@ -413,7 +413,7 @@ GetToolNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer proj
 //----------------
 // Get the SV Data Manger root project node 'sv4guiProjectFolder'.
 //
-mitk::DataNode::Pointer 
+mitk::DataNode::Pointer
 GetProjectNode(PyUtilApiFunction& api, mitk::DataStorage::Pointer dataStorage)
 {
   mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New(SvDataManagerNodes::Project);
@@ -434,30 +434,30 @@ GetProjectNode(PyUtilApiFunction& api, mitk::DataStorage::Pointer dataStorage)
 //----------------
 // Get the data storage context from the plugin.
 //
-static mitk::DataStorage::Pointer 
+static mitk::DataStorage::Pointer
 GetDataStorage(PyUtilApiFunction& api)
 {
-  mitk::DataStorage::Pointer dataStorage; 
+  mitk::DataStorage::Pointer dataStorage;
   ctkServiceReference dsServiceRef;
   ctkPluginContext* context = sv4guiPythonDataNodesPluginActivator::GetContext();
-    
+
   if (context) {
       dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
   } else {
       api.error("Could not get the active data storgage. A project must be active.");
-      return dataStorage; 
+      return dataStorage;
   }
 
   mitk::IDataStorageService* dss = nullptr;
   if (dsServiceRef) {
       dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
   }
-    
+
   if (!dss) {
       api.error("Could not get the active data storgage. A project must be active.");
-      return dataStorage; 
+      return dataStorage;
   }
-    
+
   // Get the active data storage (or the default one, if none is active)
   mitk::IDataStorageReference::Pointer dsRef;
   dsRef = dss->GetDataStorage();
@@ -473,8 +473,8 @@ GetDataStorage(PyUtilApiFunction& api)
 //
 // These data nodes contain data for images, paths, contours, models and meshes.
 //
-mitk::DataNode::Pointer 
-GetDataNode(mitk::DataStorage::Pointer& dataStorage, mitk::DataNode::Pointer& projFolderNode, char *nodeName, char *childName) 
+mitk::DataNode::Pointer
+GetDataNode(mitk::DataStorage::Pointer& dataStorage, mitk::DataNode::Pointer& projFolderNode, char *nodeName, char *childName)
 {
   mitk::DataNode::Pointer dataNode;
   mitk::DataNode::Pointer toolNode;
@@ -492,14 +492,14 @@ GetDataNode(mitk::DataStorage::Pointer& dataStorage, mitk::DataNode::Pointer& pr
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 //--------------
-// Dmg_add_mesh 
+// Dmg_add_mesh
 //--------------
 //
 PyDoc_STRVAR(Dmg_add_mesh_doc,
-  "add_mesh(name, mesh, model)  \n\ 
+  "add_mesh(name, mesh, model)  \n\
    \n\
    Add a mesh to the SV Data Manager Meshes node. \n\
    \n\
@@ -510,7 +510,7 @@ PyDoc_STRVAR(Dmg_add_mesh_doc,
         with the mesh.                                                     \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_add_mesh(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("sOs", PyRunTimeErr, __func__);
@@ -526,7 +526,7 @@ Dmg_add_mesh(PyObject* self, PyObject* args, PyObject* kwargs)
   // Get the pointer to the vtkUnstructuredGrid object.
   vtkSmartPointer<vtkUnstructuredGrid> ugrid = (vtkUnstructuredGrid*)vtkPythonUtil::GetPointerFromObject(ugridArg, "vtkUnstructuredGrid");
   if (PyErr_Occurred()) {
-      api.error("The 'mesh' argument is not a vtkUnstructuredGrid object."); 
+      api.error("The 'mesh' argument is not a vtkUnstructuredGrid object.");
       return nullptr;
   }
 
@@ -535,18 +535,18 @@ Dmg_add_mesh(PyObject* self, PyObject* args, PyObject* kwargs)
   if (dataStorage.IsNull()) {
       return nullptr;
   }
-    
+
   // Get project folder.
   auto projFolderNode = GetProjectNode(api, dataStorage);
   if (projFolderNode.IsNull()) {
       return nullptr;
   }
-  
+
   // Check that the model exists.
   auto modelNode = GetDataNode(dataStorage, projFolderNode, SvDataManagerNodes::Model, modelName);
   if (modelNode.IsNull()) {
       auto nodeName = SvDataManagerNodes::Model;
-      api.error("The Model node '" + std::string(modelName) + "' was not found under '" + nodeName + "'."); 
+      api.error("The Model node '" + std::string(modelName) + "' was not found under '" + nodeName + "'.");
       return nullptr;
   }
 
@@ -565,12 +565,12 @@ Dmg_add_mesh(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //---------------
-// Dmg_get_model 
+// Dmg_get_model
 //---------------
 // Get the model group.
 //
 PyDoc_STRVAR(Dmg_get_model_doc,
-  "get_model(name) \n\ 
+  "get_model(name) \n\
    \n\
    Get a model from the SV Data Manager Models node. \n\
    \n\
@@ -580,16 +580,16 @@ PyDoc_STRVAR(Dmg_get_model_doc,
    Returns an sv.modeling.Series object.  \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_get_model(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   char* modelName;
-  
+
   if (!PyArg_ParseTuple(args, api.format, &modelName)) {
       return api.argsError();
   }
-  
+
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
   if (dataStorage.IsNull()) {
@@ -606,7 +606,7 @@ Dmg_get_model(PyObject* self, PyObject* args)
   auto modelNode = GetDataNode(dataStorage, projFolderNode, SvDataManagerNodes::Model, modelName);
   if (modelNode.IsNull()) {
       auto nodeName = SvDataManagerNodes::Model;
-      api.error("The Model node '" + std::string(modelName) + "' was not found under '" + nodeName + "'."); 
+      api.error("The Model node '" + std::string(modelName) + "' was not found under '" + nodeName + "'.");
       return nullptr;
   }
 
@@ -618,13 +618,13 @@ Dmg_get_model(PyObject* self, PyObject* args)
 }
 
 //--------------
-// Dmg_get_mesh 
+// Dmg_get_mesh
 //--------------
 //
-// [TODO:DaveP] Should this return a sv.meshing.Series? 
+// [TODO:DaveP] Should this return a sv.meshing.Series?
 //
 PyDoc_STRVAR(Dmg_get_mesh_doc,
-  "get_mesh(name) \n\ 
+  "get_mesh(name) \n\
    \n\
    Get a mesh from the SV Data Manager Meshes node. \n\
    \n\
@@ -634,12 +634,12 @@ PyDoc_STRVAR(Dmg_get_mesh_doc,
    Returns a vtkUnstructuredGrid object.  \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_get_mesh(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   char* meshName;
-  
+
   if (!PyArg_ParseTuple(args, api.format, &meshName)) {
       return api.argsError();
   }
@@ -660,12 +660,12 @@ Dmg_get_mesh(PyObject* self, PyObject* args)
   auto node = GetDataNode(dataStorage, projFolderNode, SvDataManagerNodes::Mesh, meshName);
   if (node.IsNull()) {
       auto nodeName = SvDataManagerNodes::Mesh;
-      api.error("The Mesh node '" + std::string(meshName) + "' was not found under '" + nodeName + "'."); 
+      api.error("The Mesh node '" + std::string(meshName) + "' was not found under '" + nodeName + "'.");
       return nullptr;
   }
-  
+
   auto mitkMesh = dynamic_cast<sv4guiMitkMesh*>(node->GetData());
-  if (!mitkMesh) { 
+  if (!mitkMesh) {
       api.error("Unable to get Mesh unstructured grid for '" + std::string(meshName) + "' from the SV Data Manager.");
       return nullptr;
    }
@@ -687,10 +687,10 @@ Dmg_get_mesh(PyObject* self, PyObject* args)
 // Dmg_get_path
 //--------------
 //
-// [TODO:DaveP] Should this return a sv.pathplanning.Series? 
+// [TODO:DaveP] Should this return a sv.pathplanning.Series?
 //
 PyDoc_STRVAR(Dmg_get_path_doc,
-  "get_path(name) \n\ 
+  "get_path(name) \n\
    \n\
    Get a path from the SV Data Manager Paths node. \n\
    \n\
@@ -700,17 +700,17 @@ PyDoc_STRVAR(Dmg_get_path_doc,
    Returns an sv.path.Path object.  \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_get_path(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   char* pathName = NULL;
-  
+
   if (!PyArg_ParseTuple(args, api.format, &pathName)) {
       return api.argsError();
   }
   std::cout << "[Dmg_get_path] Path name: " << pathName << std::endl;
-  
+
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
   if (dataStorage.IsNull()) {
@@ -729,7 +729,7 @@ Dmg_get_path(PyObject* self, PyObject* args)
   auto node = GetDataNode(dataStorage, projFolderNode, SvDataManagerNodes::Path, pathName);
   if (node.IsNull()) {
       auto nodeName = SvDataManagerNodes::Path;
-      api.error("The Path node '" + std::string(pathName) + "' was not found under '" + nodeName + "'."); 
+      api.error("The Path node '" + std::string(pathName) + "' was not found under '" + nodeName + "'.");
       return nullptr;
   }
 
@@ -754,7 +754,7 @@ Dmg_get_path(PyObject* self, PyObject* args)
 //--------------
 //
 PyDoc_STRVAR(Dmg_add_path_doc,
-  "add_path(name, path)  \n\ 
+  "add_path(name, path)  \n\
    \n\
    Add a path to the SV Data Manager Paths node. \n\
    \n\
@@ -763,7 +763,7 @@ PyDoc_STRVAR(Dmg_add_path_doc,
      path (sv.path.Path object): The path object to create the path node from. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_add_path(PyObject* self, PyObject* args, PyObject* kwargs)
 {
     auto api = PyUtilApiFunction("sO!", PyRunTimeErr, __func__);
@@ -776,16 +776,16 @@ Dmg_add_path(PyObject* self, PyObject* args, PyObject* kwargs)
     }
 
     auto pyPath = (PyPath*)pathArg;
-    auto pathElem = pyPath->path; 
+    auto pathElem = pyPath->path;
     if (pathElem == nullptr) {
         api.error("The path elem data is null.");
         return nullptr;
-    } 
+    }
 
     // Get the Data Storage node.
     auto dataStorage = GetDataStorage(api);
     if (dataStorage.IsNull()) {
-        api.error(SvDataManagerErrorMsg::DataStorage); 
+        api.error(SvDataManagerErrorMsg::DataStorage);
         return nullptr;
     }
 
@@ -820,7 +820,7 @@ Dmg_add_path(PyObject* self, PyObject* args, PyObject* kwargs)
 //----------------------
 //
 PyDoc_STRVAR(Dmg_add_segmentation_doc,
-  "add_segmentation(name, path, segmentations) \n\ 
+  "add_segmentation(name, path, segmentations) \n\
    \n\
    Add a segmentation to the SV Data Manager Segmentations node. \n\
    \n\
@@ -831,7 +831,7 @@ PyDoc_STRVAR(Dmg_add_segmentation_doc,
         defined for a vessel segmentation.                                \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_add_segmentation(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("ssO!", PyRunTimeErr, __func__);
@@ -847,14 +847,14 @@ Dmg_add_segmentation(PyObject* self, PyObject* args, PyObject* kwargs)
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
   if (dataStorage.IsNull()) {
-      api.error(SvDataManagerErrorMsg::DataStorage); 
+      api.error(SvDataManagerErrorMsg::DataStorage);
       return nullptr;
   }
 
   // Get project folder.
   auto projFolderNode = GetProjectNode(api, dataStorage);
   if (projFolderNode.IsNull()) {
-      api.error(SvDataManagerErrorMsg::ProjectFolder); 
+      api.error(SvDataManagerErrorMsg::ProjectFolder);
       return nullptr;
   }
 
@@ -864,15 +864,15 @@ Dmg_add_segmentation(PyObject* self, PyObject* args, PyObject* kwargs)
   auto pathNode = GetDataNode(dataStorage, projFolderNode, SvDataManagerNodes::Path, pathName);
   if (pathNode.IsNull()) {
       auto nodeName = SvDataManagerNodes::Path;
-      api.error("The Path node '" + std::string(pathName) + "' was not found under '" + nodeName + "'."); 
+      api.error("The Path node '" + std::string(pathName) + "' was not found under '" + nodeName + "'.");
       return nullptr;
   }
 
-  // Get the Path node associated with the segmentation. 
+  // Get the Path node associated with the segmentation.
   sv4guiPath::Pointer path = dynamic_cast<sv4guiPath*>(pathNode->GetData());
   if (path.IsNull()) {
       auto nodeName = SvDataManagerNodes::Path;
-      api.error("The Path node '" + std::string(pathName) + "' under '" + nodeName + "' has no data."); 
+      api.error("The Path node '" + std::string(pathName) + "' under '" + nodeName + "' has no data.");
       return nullptr;
   }
 
@@ -892,7 +892,7 @@ Dmg_add_segmentation(PyObject* self, PyObject* args, PyObject* kwargs)
   // Add the segmentation data node.
   std::cout << "##### AddSegmentationDataNode " << std::endl;
   if (AddSegmentationDataNode(dataStorage, segmentations, segNode, segName, pathName, path) == SV_ERROR) {
-      api.error("Error adding the segmentation data node '" + std::string(segName) + "' to the parent node '" + 
+      api.error("Error adding the segmentation data node '" + std::string(segName) + "' to the parent node '" +
             segNode->GetName() + "'.");
       return nullptr;
   }
@@ -901,11 +901,11 @@ Dmg_add_segmentation(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //------------------
-// Dmg_add_geometry 
+// Dmg_add_geometry
 //------------------
 //
 PyDoc_STRVAR(Dmg_add_geometry_doc,
-  "add_geometry(name, geometry, plugin, node) \n\ 
+  "add_geometry(name, geometry, plugin, node) \n\
    \n\
    Add a vtkPolyData object to the SV Data Manager. \n\
    \n\
@@ -921,7 +921,7 @@ PyDoc_STRVAR(Dmg_add_geometry_doc,
      node (str): The date node name to add the geomerty to.                \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_add_geometry(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   using namespace SvDataManagerNodes;
@@ -958,14 +958,14 @@ Dmg_add_geometry(PyObject* self, PyObject* args, PyObject* kwargs)
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
   if (dataStorage.IsNull()) {
-      api.error(SvDataManagerErrorMsg::DataStorage); 
+      api.error(SvDataManagerErrorMsg::DataStorage);
       return nullptr;
   }
 
   // Get project folder.
   auto projFolderNode = GetProjectNode(api, dataStorage);
   if (projFolderNode.IsNull()) {
-      api.error(SvDataManagerErrorMsg::ProjectFolder); 
+      api.error(SvDataManagerErrorMsg::ProjectFolder);
       return nullptr;
   }
 
@@ -1002,11 +1002,11 @@ Dmg_add_geometry(PyObject* self, PyObject* args, PyObject* kwargs)
 }
 
 //---------------
-// Dmg_add_model 
+// Dmg_add_model
 //---------------
 //
 PyDoc_STRVAR(Dmg_add_model_doc,
-  "add_model(name, model) \n\ 
+  "add_model(name, model) \n\
    \n\
    Add a model to the SV Data Manager Models node. \n\
    \n\
@@ -1016,7 +1016,7 @@ PyDoc_STRVAR(Dmg_add_model_doc,
         to create the model node.                                          \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("sO!", PyRunTimeErr, __func__);
@@ -1031,7 +1031,7 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
   // Get the model data.
   //
   // [TODO:DaveP] How to add group? What to do with other modelers?
-  // 
+  //
   auto pyModel = (PyModelingSeries*)modelArg;
   auto solidGroup = pyModel->solidGroup;
   auto solidModelElement = solidGroup->GetModelElement(0);
@@ -1040,14 +1040,14 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
   if (dataStorage.IsNull()) {
-      api.error(SvDataManagerErrorMsg::DataStorage); 
+      api.error(SvDataManagerErrorMsg::DataStorage);
       return nullptr;
   }
 
   // Get project folder.
   auto projFolderNode = GetProjectNode(api, dataStorage);
   if (projFolderNode.IsNull()) {
-      api.error(SvDataManagerErrorMsg::ProjectFolder); 
+      api.error(SvDataManagerErrorMsg::ProjectFolder);
       return nullptr;
   }
 
@@ -1057,7 +1057,7 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
   auto modelNode = GetDataNode(dataStorage, projFolderNode, SvDataManagerNodes::Model, modelName);
   if (!modelNode.IsNull()) {
       auto nodeName = SvDataManagerNodes::Model;
-      api.error("The Model node '" + std::string(modelName) + "' was not found under '" + nodeName + "'."); 
+      api.error("The Model node '" + std::string(modelName) + "' was not found under '" + nodeName + "'.");
       return nullptr;
   }
   */
@@ -1085,7 +1085,7 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
 //----------------------
 //
 PyDoc_STRVAR(Dmg_get_segmentation_doc,
-  "segmentation(name)                                    \n\ 
+  "segmentation(name)                                    \n\
    \n\
    Get a segmentation from the SV Data Manager Segmentations node.       \n\
    \n\
@@ -1095,16 +1095,16 @@ PyDoc_STRVAR(Dmg_get_segmentation_doc,
    Returns an sv.segmentation.Series object. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_get_segmentation(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   char* segName = NULL;
-  
+
   if (!PyArg_ParseTuple(args, api.format, &segName)) {
       return api.argsError();
   }
-  
+
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
   if (dataStorage.IsNull()) {
@@ -1121,7 +1121,7 @@ Dmg_get_segmentation(PyObject* self, PyObject* args)
   auto node = GetDataNode(dataStorage, projFolderNode, SvDataManagerNodes::Segmentation, segName);
   if (node.IsNull()) {
       auto nodeName = SvDataManagerNodes::Segmentation;
-      api.error("The Segmentation node '" + std::string(segName) + "' was not found under '" + nodeName + "'."); 
+      api.error("The Segmentation node '" + std::string(segName) + "' was not found under '" + nodeName + "'.");
       return nullptr;
   }
 
@@ -1141,12 +1141,12 @@ Dmg_get_segmentation(PyObject* self, PyObject* args)
 }
 
 //----------------------
-// Dmg_remove_data_node 
+// Dmg_remove_data_node
 //----------------------
 // [TODO:DaveP] Not sure to expose this or not.
 //
 PyDoc_STRVAR(Dmg_remove_data_node_doc,
-  "remove_data_node(folder, node) \n\ 
+  "remove_data_node(folder, node) \n\
    \n\
    Remove a node from under an SV Data Manger folder nodes (Paths, Segmentations, Models or Meshes). \n\
    \n\
@@ -1154,17 +1154,17 @@ PyDoc_STRVAR(Dmg_remove_data_node_doc,
      folder (str): Name of the SV Data Manger folder node. Valid folder: Paths, Segmentations, Models or Meshes. \n\
 ");
 
-static PyObject * 
+static PyObject *
 Dmg_remove_data_node(PyObject* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("ss", PyRunTimeErr, __func__);
   char* folderName = NULL;
   char* nodeName = NULL;
-  
+
   if (!PyArg_ParseTuple(args, api.format, &folderName, &nodeName)) {
       return api.argsError();
   }
-  
+
   // Get the Data Storage node.
   auto dataStorage = GetDataStorage(api);
   if (dataStorage.IsNull()) {
@@ -1176,10 +1176,10 @@ Dmg_remove_data_node(PyObject* self, PyObject* args)
   if (projFolderNode.IsNull()) {
       return nullptr;
   }
-  
+
   mitk::DataNode::Pointer folderNode = dataStorage->GetNamedDerivedNode(folderName,projFolderNode);
   if(!folderNode) {
-      api.error("The data node '" + std::string(folderName) + "' was not found."); 
+      api.error("The data node '" + std::string(folderName) + "' was not found.");
       return nullptr;
   }
 
@@ -1187,7 +1187,7 @@ Dmg_remove_data_node(PyObject* self, PyObject* args)
       api.error("Error removing the data node '" + std::string(nodeName) + "' under '" + std::string(folderName) + "'.");
       return nullptr;
   }
-  
+
   return SV_PYTHON_OK;
 }
 
@@ -1213,7 +1213,7 @@ PyDoc_STRVAR(DmgModule_doc,
    that organizes the data defined for a SimVascular project as a          \n\
    hierarchical tree of data nodes. The Data Manager organizes data nodes  \n\
    into predefined primary data node types according to the tools that     \n\
-   create them                                                             \n\ 
+   create them                                                             \n\
    \n\
        1) Images                                                           \n\
        2) Meshes                                                           \n\
@@ -1241,7 +1241,7 @@ PyDoc_STRVAR(DmgModule_doc,
 ");
 
 //--------------
-// PyDmgMethods 
+// PyDmgMethods
 //---------------
 //
 PyMethodDef PyDmgMethods[] =
@@ -1264,7 +1264,7 @@ PyMethodDef PyDmgMethods[] =
 
     {"get_path", Dmg_get_path, METH_VARARGS, Dmg_get_path_doc},
 
-    // [TODO:DaveP] not sure to expose this or not, a bit dangerous. 
+    // [TODO:DaveP] not sure to expose this or not, a bit dangerous.
     // {"remove_data_node", Dmg_remove_data_node, METH_VARARGS, Dmg_remove_data_node_doc},
 
     {NULL, NULL,0,NULL},
@@ -1273,30 +1273,30 @@ PyMethodDef PyDmgMethods[] =
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python 
+// Define the initialization function called by the Python
 // interpreter when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 
 static struct PyModuleDef PyDmgModule = {
    m_base,
-   DMG_MODULE, 
-   DmgModule_doc, 
-   perInterpreterStateSize,  
+   DMG_MODULE,
+   DmgModule_doc,
+   perInterpreterStateSize,
    PyDmgMethods
 };
 
@@ -1304,7 +1304,7 @@ static struct PyModuleDef PyDmgModule = {
 // PyInit_pyDmg
 //--------------
 //
-PyMODINIT_FUNC 
+PyMODINIT_FUNC
 PyInit_PyDmg(void)
 {
   // Create the dmg module.
@@ -1318,14 +1318,14 @@ PyInit_PyDmg(void)
   PyRunTimeErr = PyErr_NewException(DMG_EXCEPTION, NULL, NULL);
   Py_INCREF(PyRunTimeErr);
   PyModule_AddObject(module, DMG_EXCEPTION_OBJECT, PyRunTimeErr);
-  
+
   return module;
 }
 
 #endif
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 //------------------
@@ -1336,13 +1336,13 @@ PyMODINIT_FUNC initpyDmg(void)
 
 {
   PyObject *pyDmg;
-  
+
   if ( gRepository == NULL ) {
     gRepository = new cvRepository();
     fprintf( stdout, "gRepository created from pyDmg\n" );
     return;
   }
-  
+
   pyDmg = Py_InitModule("pyDmg", PyDmgMethods);
 
   PyRunTimeErr = PyErr_NewException("dmg.DmgError",NULL,NULL);

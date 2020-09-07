@@ -30,20 +30,22 @@
  */
 
 #ifndef MESHING_PY_MODULE_H
-#define MESHING_PY_MODULE_H
+#define MESHING_PY_MODULE_H 
 
 #include "SimVascular.h"
+
+#include "svPythonAPIExports.h"
+
 #include "Python.h"
-#include "svMeshObjectExports.h"
 #include "sv_MeshObject.h"
 #include "sv4gui_Mesh.h"
 #include "sv4gui_MitkMesh.h"
 
-extern "C" SV_EXPORT_MESH int Mesh_pyInit();
+extern "C" SV_EXPORT_PYTHON_API int Mesh_pyInit();
 
 typedef cvMeshObject * (*CreateMesherObjectFunction)();
 
-extern "C" SV_EXPORT_MESH void PyAPI_InitMeshSim(CreateMesherObjectFunction createObject);
+extern "C" SV_EXPORT_PYTHON_API void PyAPI_InitMeshSim(CreateMesherObjectFunction createObject);
 
 //-----------------
 // PyMeshingSeries
@@ -51,7 +53,7 @@ extern "C" SV_EXPORT_MESH void PyAPI_InitMeshSim(CreateMesherObjectFunction crea
 // The meshing.Series class is used to store data for
 // time-varying meshes.
 //
-// In SV time-varying meshe are stored in the sv4guiMitkMesh class.
+// In SV time-varying meshe are stored in the sv4guiMitkMesh class. 
 //
 typedef struct PyMeshingSeries
 {
@@ -66,7 +68,7 @@ typedef struct PyMeshingSeries
 // referenced anywhere else.
 //
 /*
-extern "C" SV_EXPORT_MESH typedef struct {
+extern "C" SV_EXPORT_PYTHON_API typedef struct {
   PyObject_HEAD
   cvMeshObject* meshObject;
 } pyMeshObject;
@@ -79,5 +81,5 @@ PyMODINIT_FUNC  initpyMesh();
 PyMODINIT_FUNC  PyInit_PyMeshing();
 #endif
 
-#endif
+#endif 
 

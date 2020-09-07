@@ -40,7 +40,7 @@
 #include <string>
 #include <structmember.h>
 
-#include "sv_AdaptObject.h";
+#include "sv_AdaptObject.h"
 
 // Define a map between mesh kernel name and enum type.
 //

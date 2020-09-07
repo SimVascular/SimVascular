@@ -55,6 +55,10 @@ list (APPEND CXXSRCS
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
+# hack to define US_MODULE_NAME because we are including sv4gui_ContourGroupIO.h
+set_property(TARGET ${lib} PROPERTY US_MODULE_NAME ${lib_module_name})
+set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${lib_module_name})
+
 target_link_libraries(${lib} ${PYTHON_LIBRARY} ${org_sv_pythondatanodes} )
 
 target_link_libraries(${lib}
