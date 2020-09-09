@@ -1034,7 +1034,6 @@ PyDoc_STRVAR(Dmg_add_model_doc,
    \n\
    Add a model to the SV Data Manager Models node.                            \n\
    \n\
-   \n\----------------------------------------------------------------------  \n\
    Args: \n\
      name (str): The name for the model data node.                            \n\
      model (sv.modeling.Modeler): The model object representing a solid model.\n\
@@ -1121,7 +1120,6 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
 PyDoc_STRVAR(Dmg_get_segmentations_doc,
   "get_segmentations(name) \n\ 
    \n\
-   \n\----------------------------------------------------------------------  \n\
    Get the segmentations from an SV Data Manager Segmentations node.          \n\
    \n\
    Args: \n\
