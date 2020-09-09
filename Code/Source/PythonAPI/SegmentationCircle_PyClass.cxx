@@ -83,10 +83,9 @@ static PyObject*
 CircleSegmentation_get_center(PyCircleSegmentation* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  std::cout << "[CircleSegmentation_get_center] ========= CircleSegmentation_get_center ==========" << std::endl;
-  std::cout << "[CircleSegmentation_get_center] self->super.contour: " << self->super.contour << std::endl;
+  //std::cout << "[CircleSegmentation_get_center] ========= CircleSegmentation_get_center ==========" << std::endl;
   auto circleContour = dynamic_cast<sv3::circleContour*>(self->super.contour);
-  std::cout << "[CircleSegmentation_get_center] circleContour: " << circleContour << std::endl;
+  //std::cout << "[CircleSegmentation_get_center] circleContour: " << circleContour << std::endl;
 
   if (circleContour == nullptr) {
       api.error("**** Internal error: circleContour is null.");
@@ -94,7 +93,6 @@ CircleSegmentation_get_center(PyCircleSegmentation* self, PyObject* args)
   }
 
   auto center = circleContour->GetControlPoint(0);
-  std::cout << "[CircleSegmentation_get_center] center: " << center[0] << ", " << center[1] << ", " << center[2] << std::endl;
   return Py_BuildValue("[d, d, d]", center[0], center[1], center[2]);
 }
 
@@ -199,7 +197,7 @@ PyDoc_STRVAR(CircleSegmentation_set_frame_doc,
 static PyObject*
 CircleSegmentation_set_frame(PyCircleSegmentation* self, PyObject* args, PyObject *kwargs)
 {
-  std::cout << "[CircleSegmentation_set_frame] ========== CircleSegmentation_set_frame ========== " << std::endl;
+  //std::cout << "[CircleSegmentation_set_frame] ========== CircleSegmentation_set_frame ========== " << std::endl;
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
   static char *keywords[] = {"frame", NULL};
   PyObject* frameArg = nullptr;
@@ -383,9 +381,7 @@ static PyMethodDef PyCircleSegmentationMethods[] = {
 static int
 PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *kwargs)
 {
-  std::cout << "[PyCircleSegmentationInit] ========== Init Circle Segmentation object ========== " << std::endl;
-  std::cout << "[PyCircleSegmentationInit] kwargs: " << kwargs << std::endl;
-
+  //std::cout << "[PyCircleSegmentationInit] ========== Init Circle Segmentation object ========== " << std::endl;
   auto api = PyUtilApiFunction("|O!O!O!O!", PyRunTimeErr, "CircleSegmentation");
   static char *keywords[] = {"radius", "center", "normal", "frame", NULL};
   PyObject* radiusArg = nullptr;
@@ -412,7 +408,6 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
       }
       // Get the radius argument value.
       radius = PyFloat_AsDouble(radiusArg);
-      std::cout << "[PyCircleSegmentationInit] radius: " << radius << std::endl;
       if (radius <= 0.0) {
           api.error("The 'radius' argument must be > 0.");
           return -1;
@@ -429,7 +424,6 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
   self->super.contour = new sv3::circleContour();
   self->super.CopySv4ContourData = PyCircleCopySegmentationData;
   auto circleContour = dynamic_cast<sv3::circleContour*>(self->super.contour);
-  std::cout << "[PyCircleSegmentationInit] circleContour: " << circleContour << std::endl;
 
   // Set circle data if it has been given.
   //
@@ -454,7 +448,6 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
       circleContour->SetControlPointByRadius(radius, center.data());
   }
 
-  std::cout << "[PyCircleSegmentationInit] Done " << std::endl;
   return 0;
 }
 
@@ -465,7 +458,7 @@ PyCircleSegmentationInit(PyCircleSegmentation* self, PyObject* args, PyObject *k
 static PyObject *
 PyCircleSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
-  std::cout << "[PyCircleSegmentationNew] New CircleSegmentation " << std::endl;
+  //std::cout << "[PyCircleSegmentationNew] New CircleSegmentation " << std::endl;
   auto self = (PyCircleSegmentation*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyCircleSegmentationNew] ERROR: alloc failed." << std::endl;
@@ -481,7 +474,7 @@ PyCircleSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 static void
 PyCircleSegmentationDealloc(PyCircleSegmentation* self)
 {
-  std::cout << "[PyCircleSegmentationDealloc] **** Free PyCircleSegmentation ****" << std::endl;
+  //std::cout << "[PyCircleSegmentationDealloc] **** Free PyCircleSegmentation ****" << std::endl;
   delete self->super.contour;
   //auto circleContour = dynamic_cast<sv3::circleContour*>(self->super.contour);
   //delete circleContour;

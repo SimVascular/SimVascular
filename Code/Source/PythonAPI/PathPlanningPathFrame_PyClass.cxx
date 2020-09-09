@@ -181,7 +181,7 @@ PyPathFrameNew(PyTypeObject* type, PyObject* args, PyObject* kwargs)
 {
   auto self = (PyPathFrame*)type->tp_alloc(type, 0);
   if (self == NULL) {
-      std::cout << "[PyTetGenAdaptOptNew] ERROR: Can't allocate type." << std::endl;
+      std::cout << "[PyPathFrameNew] ERROR: Can't allocate type." << std::endl;
       return nullptr;
   }
   return (PyObject*)self;
@@ -227,7 +227,7 @@ SetPathFrameTypeFields(PyTypeObject& methodType)
 PyObject *
 CreatePyPathFrame(sv3::PathElement::PathPoint& pathPoint)
 {
-  std::cout << "[CreatePyPathFrame] Create PathFrame object ... " << std::endl;
+  //std::cout << "[CreatePyPathFrame] Create PathFrame object ... " << std::endl;
   auto pathFrameObj = PyObject_CallObject((PyObject*)&PyPathFrameType, NULL);
   auto pyPathFrame = (PyPathFrame*)pathFrameObj;
 

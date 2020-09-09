@@ -76,8 +76,8 @@ ParasolidSolid_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
   }
 
   auto model = self->solidModel;
-  std::cout << "[ParasolidSolid_write] " << std::endl;
-  std::cout << "[ParasolidSolid_write] kernel: " << self->kernel << std::endl;
+  //std::cout << "[ParasolidSolid_write] " << std::endl;
+  //std::cout << "[ParasolidSolid_write] kernel: " << self->kernel << std::endl;
 
   // Add format as file extension.
   //
@@ -89,7 +89,7 @@ ParasolidSolid_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
   }
   fullFileName += "." + std::string(fileFormat);
   std::vector<char> cstr(fullFileName.c_str(), fullFileName.c_str() + fullFileName.size() + 1);
-  std::cout << "[SolidModel_write] fullFileName: " << fullFileName << std::endl;
+  //std::cout << "[SolidModel_write] fullFileName: " << fullFileName << std::endl;
 
   if (model->WriteNative(fileVersion, cstr.data()) != SV_OK) {
       api.error("Error writing the solid model to the file '" + std::string(fileName) +
@@ -139,7 +139,7 @@ static int
 PyParasolidSolidInit(PyParasolidSolid* self, PyObject* args, PyObject *kwds)
 {
   static int numObjs = 1;
-  std::cout << "[PyParasolidSolidInit] New ParasolidSolid object: " << numObjs << std::endl;
+  //std::cout << "[PyParasolidSolidInit] New ParasolidSolid object: " << numObjs << std::endl;
   //self->super.solidModel = new cvPARAMODELINGSolidModel();
   numObjs += 1;
   return 0;
@@ -156,7 +156,7 @@ PyParasolidSolidInit(PyParasolidSolid* self, PyObject* args, PyObject *kwds)
 static PyObject *
 PyParasolidSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyParasolidSolidNew] PyParasolidSolidNew " << std::endl;
+  //std::cout << "[PyParasolidSolidNew] PyParasolidSolidNew " << std::endl;
   auto self = (PyParasolidSolid*)type->tp_alloc(type, 0);
   if (self != NULL) {
       //self->super.id = 2;
@@ -171,7 +171,7 @@ PyParasolidSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyParasolidSolidDealloc(PyParasolidSolid* self)
 {
-  std::cout << "[PyParasolidSolidDealloc] Free PyParasolidSolid" << std::endl;
+  //std::cout << "[PyParasolidSolidDealloc] Free PyParasolidSolid" << std::endl;
   delete self->super.solidModel;
   Py_TYPE(self)->tp_free(self);
 }

@@ -121,8 +121,6 @@ static struct PyModuleDef PySimulationModule = {
 //
 PyMODINIT_FUNC PyInit_PySimulation()
 {
-  std::cout << "========== load simulation module ==========" << std::endl;
-
   // Setup the simulation.Fluid class type.
   //
   SetPyFluidSimTypeFields(PySimulationFluidType);

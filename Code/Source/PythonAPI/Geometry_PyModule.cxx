@@ -379,8 +379,10 @@ PyDoc_STRVAR(Geom_local_blend_doc,
 static PyObject *
 Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
 {
+  #ifdef dbg_Geom_local_blend
   std::cout << " " << std::endl;
   std::cout << "========== Geom_local_blend ==========" << std::endl;
+  #endif
   auto api = PyUtilApiFunction("OO!O!", PyRunTimeErr, __func__);
   static char *keywords[] = {"surface", "faces", "options", NULL};
   PyObject* surfaceArg;
@@ -441,12 +443,14 @@ Geom_local_blend(PyObject* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
+  #ifdef dbg_Geom_local_blend
   std::cout << "[Geom_local_blend] numBlendIters: " << numBlendIters << std::endl;
   std::cout << "[Geom_local_blend] numSubblendIters: " << numSubblendIters << std::endl;
   std::cout << "[Geom_local_blend] numSubdivisionIters: " << numSubdivisionIters << std::endl;
   std::cout << "[Geom_local_blend] numCgSmoothIters: " << numCgSmoothIters << std::endl;
   std::cout << "[Geom_local_blend] numLapSmoothIters: " << numLapSmoothIters << std::endl;
   std::cout << "[Geom_local_blend] targetDecimation: " << targetDecimation << std::endl;
+  #endif
 
   // Set svBlendParam parameters.
   sv4guiModelElement::svBlendParam params;

@@ -320,9 +320,7 @@ PyMethodDef PyPolygonSegmentationMethods[] = {
 static int
 PyPolygonSegmentationInit(PyPolygonSegmentation* self, PyObject* args, PyObject *kwargs)
 {
-  std::cout << "[PyPolygonSegmentationInit] ========== New Polygon Segmentation object ==========  " << std::endl;
-  std::cout << "[PyPolygonSegmentationInit] kwargs: " << kwargs << std::endl;
-
+  //std::cout << "[PyPolygonSegmentationInit] ========== New Polygon Segmentation object ==========  " << std::endl;
   auto api = PyUtilApiFunction("|O!", PyRunTimeErr, "PolygonSegmentation");
   static char *keywords[] = {"control_points", NULL};
   PyObject* pointsArg = nullptr;
@@ -364,7 +362,6 @@ PyPolygonSegmentationInit(PyPolygonSegmentation* self, PyObject* args, PyObject 
       }
     }
 
-  std::cout << "[PyPolygonSegmentationInit] Done " << std::endl;
   return 0;
 }
 
@@ -375,7 +372,7 @@ PyPolygonSegmentationInit(PyPolygonSegmentation* self, PyObject* args, PyObject 
 static PyObject *
 PyPolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyPolygonSegmentationNew] PyPolygonSegmentationNew " << std::endl;
+  //std::cout << "[PyPolygonSegmentationNew] PyPolygonSegmentationNew " << std::endl;
   auto self = (PyPolygonSegmentation*)type->tp_alloc(type, 0);
   if (self != NULL) {
       //self->super.id = 2;
@@ -390,7 +387,7 @@ PyPolygonSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyPolygonSegmentationDealloc(PyPolygonSegmentation* self)
 {
-  std::cout << "[PyPolygonSegmentationDealloc] Free PyPolygonSegmentation" << std::endl;
+  //std::cout << "[PyPolygonSegmentationDealloc] Free PyPolygonSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);
 }

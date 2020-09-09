@@ -67,8 +67,6 @@ ContourCtorMapType ContourCtorMap = {
 static Contour *
 CreateSegmentationObject(cKernelType contourType, PathElement::PathPoint pathPoint)
 {
-  std::cout << std::endl;
-  std::cout << "[CreateSegmentationObject] ========= CreateSegmentationObject ==========" << std::endl;
   Contour* contour = nullptr;
 
   try {
@@ -597,7 +595,7 @@ Segmentation_create(PyObject* self, PyObject* args)
       return nullptr;
   }
 
-  std::cout << "[Segmentation_create] Kernel name: " << kernelName << std::endl;
+  //std::cout << "[Segmentation_create] Kernel name: " << kernelName << std::endl;
   auto cont = PyCreateSegmentation(contourType);
   Py_INCREF(cont);
   return cont;
@@ -690,9 +688,6 @@ PySegmentationInit(PySegmentation* self, PyObject* args, PyObject *kwds)
       return -1;
   }
 
-  if (kernelName != nullptr) {
-      //std::cout << "[ContourObjectInit] Kernel name: " << kernelName << std::endl;
-  }
   self->contour = new Contour();
   self->id = numObjs;
   numObjs += 1;
@@ -726,10 +721,10 @@ PySegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PySegmentationDealloc(PySegmentation* self)
 {
-  std::cout << "[PySegmentationDealloc] " << std::endl;
-  std::cout << "[PySegmentationDealloc] *********  F r e e   P y S e g m e n t a t i o n  *********  " << self->id << std::endl;
-  std::cout << "[PySegmentationDealloc] " << std::endl;
-  //delete self->contour;
+  //std::cout << "[PySegmentationDealloc] " << std::endl;
+  //std::cout << "[PySegmentationDealloc] *********  F r e e   P y S e g m e n t a t i o n  *********  " << self->id << std::endl;
+  //std::cout << "[PySegmentationDealloc] " << std::endl;
+  delete self->contour;
   Py_TYPE(self)->tp_free(self);
 }
 
