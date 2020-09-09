@@ -963,8 +963,8 @@ PyTetGenOptions_AddSubdomain(PyMeshingTetGenOptions* self, PyObject* args, PyObj
 // PyTetGenOptions_local_edge_size
 //-------------------------------
 //
-PyDoc_STRVAR(PyTetGenOptions_local_edge_size_doc,
-  "local_edge_size(face_id, size)  \n\
+PyDoc_STRVAR(PyTetGenOptions_create_local_edge_size_doc,
+  "create_local_edge_size(face_id, size)  \n\
   \n\
   Create a value for the local_edge_size option. \n\
   \n\
@@ -974,7 +974,7 @@ PyDoc_STRVAR(PyTetGenOptions_local_edge_size_doc,
 ");
 
 static PyObject *
-PyTetGenOptions_local_edge_size(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
+PyTetGenOptions_create_local_edge_size(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("id", PyRunTimeErr, __func__);
   static char *keywords[] = { TetGenOption::LocalEdgeSize_FaceIDParam, TetGenOption::LocalEdgeSize_EdgeSizeParam, NULL };
@@ -1123,8 +1123,8 @@ PyTetGenOptions_set_defaults(PyMeshingTetGenOptions* self)
 // PyTetGenOptions_sphere_refinement
 //-----------------------------------
 //
-PyDoc_STRVAR(PyTetGenOptions_sphere_refinement_doc,
-  "sphere_refinement(edge_size, radius, center)  \n\
+PyDoc_STRVAR(PyTetGenOptions_create_sphere_refinement_doc,
+  "create_sphere_refinement(edge_size, radius, center)  \n\
   \n\
   Create a sphere refinement value. \n\
   \n\
@@ -1135,7 +1135,7 @@ PyDoc_STRVAR(PyTetGenOptions_sphere_refinement_doc,
 ");
 
 static PyObject *
-PyTetGenOptions_sphere_refinement(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
+PyTetGenOptions_create_sphere_refinement(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("ddO", PyRunTimeErr, __func__);
   static char *keywords[] = { TetGenOption::SphereRefinement_EdgeSizeParam, TetGenOption::SphereRefinement_RadiusParam,
@@ -1179,8 +1179,10 @@ PyTetGenOptions_sphere_refinement(PyMeshingTetGenOptions* self, PyObject* args, 
 static PyMethodDef PyTetGenOptionsMethods[] = {
   //{"AddSubdomain", (PyCFunction)PyTetGenOptions_AddSubdomain, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_AddSubdomain_doc},
   {"get_values", (PyCFunction)PyTetGenOptions_get_values, METH_NOARGS, PyTetGenOptions_get_values_doc},
-  {"local_edge_size", (PyCFunction)PyTetGenOptions_local_edge_size, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_local_edge_size_doc},
-  {"sphere_refinement", (PyCFunction)PyTetGenOptions_sphere_refinement, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_sphere_refinement_doc},
+
+  {"create_local_edge_size", (PyCFunction)PyTetGenOptions_create_local_edge_size, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_create_local_edge_size_doc},
+
+  {"create_sphere_refinement", (PyCFunction)PyTetGenOptions_create_sphere_refinement, METH_VARARGS|METH_KEYWORDS, PyTetGenOptions_create_sphere_refinement_doc},
   {NULL, NULL}
 };
 
