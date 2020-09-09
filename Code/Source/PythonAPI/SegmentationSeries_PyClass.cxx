@@ -421,16 +421,14 @@ SetSegmentationSeriesTypeFields(PyTypeObject& contourType)
 PyObject *
 CreatePySegmentationSeries(sv4guiContourGroup* contourGroup)
 {
-  std::cout << "[CreatePySegmentationSeries] Create ContourGroup object ... " << std::endl;
+  //std::cout << "[CreatePySegmentationSeries] Create ContourGroup object ... " << std::endl;
   auto contourGroupObj = PyObject_CallObject((PyObject*)&PySegmentationSeriesType, NULL);
   auto pyContourGroup = (PySegmentationSeries*)contourGroupObj;
 
   if (contourGroup != nullptr) {
       //delete pyContourGroup->contourGroup;
       pyContourGroup->contourGroup = contourGroup;
-      std::cout << "[CreatePyContour] Set contourGroup to: " << contourGroup << std::endl;
   }
-  std::cout << "[CreatePyContour] pyContourGroup id: " << pyContourGroup->id << std::endl;
   return contourGroupObj;
 }
 

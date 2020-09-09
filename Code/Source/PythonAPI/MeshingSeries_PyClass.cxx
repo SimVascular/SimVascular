@@ -214,8 +214,8 @@ PyDoc_STRVAR(MeshingSeries_get_mesh_doc,
 static PyObject *
 MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
 {
-  std::cout << std::endl;
-  std::cout << "========== MeshingSeries_get_mesh ==========" << std::endl;
+  //std::cout << std::endl;
+  //std::cout << "========== MeshingSeries_get_mesh ==========" << std::endl;
 
   auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
   static char *keywords[] = {"time", NULL};
@@ -227,7 +227,7 @@ MeshingSeries_get_mesh(PyMeshingSeries* self, PyObject* args, PyObject* kwargs)
 
   auto meshingGroup = self->meshingGroup;
   int numSeries = meshingGroup->GetTimeSize();
-  std::cout << "[MeshingSeries_get_mesh] time: " << time << std::endl;
+  //std::cout << "[MeshingSeries_get_mesh] time: " << time << std::endl;
 
   // Check for a valid time.
   if ((time < 0) || (time > numSeries-1)) {

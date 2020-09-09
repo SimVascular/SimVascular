@@ -206,7 +206,6 @@ PyPolyDataSolidInit(PyPolyDataSolid* self, PyObject* args, PyObject *kwargs)
       return -1;
   }
 
-  std::cout << "[PyPolyDataSolidInit] New PolyDataSolid object: " << std::endl;
   self->super.solidModel = new cvPolyDataSolid();
   self->super.kernel = SM_KT_POLYDATA;
 
@@ -229,7 +228,7 @@ PyPolyDataSolidInit(PyPolyDataSolid* self, PyObject* args, PyObject *kwargs)
 static PyObject *
 PyPolyDataSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyPolyDataSolidNew] PyPolyDataSolidNew " << std::endl;
+  //std::cout << "[PyPolyDataSolidNew] PyPolyDataSolidNew " << std::endl;
   auto self = (PyPolyDataSolid*)type->tp_alloc(type, 0);
   if (self != NULL) {
       //self->super.id = 2;
@@ -244,7 +243,7 @@ PyPolyDataSolidNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyPolyDataSolidDealloc(PyPolyDataSolid* self)
 {
-  std::cout << "[PyPolyDataSolidDealloc] Free PyPolyDataSolid" << std::endl;
+  //std::cout << "[PyPolyDataSolidDealloc] Free PyPolyDataSolid" << std::endl;
   delete self->super.solidModel;
   Py_TYPE(self)->tp_free(self);
 }

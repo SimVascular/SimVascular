@@ -258,9 +258,11 @@ PySegmentationCtorMapType PySegmentationCtorMap = {
 static PyObject *
 PyCreateSegmentation(cKernelType contourType)
 {
+  #ifdef debug_PyCreateSegmentation
   std::cout << std::endl;
   std::cout << "[PyCreateSegmentation(cKernelType)] ========== PyCreateSegmentation (cKernelType) ==========" << std::endl;
   std::cout << "[PyCreateSegmentation(cKernelType)] contourType: " << contourType << std::endl;
+  #endif
   PyObject* contourObj;
 
   try {
@@ -270,7 +272,6 @@ PyCreateSegmentation(cKernelType contourType)
       return nullptr;
   }
 
-  std::cout << "[PyCreateSegmentation(cKernelType)] Done. " << std::endl;
   return contourObj;
 }
 
@@ -291,24 +292,22 @@ PyCreateSegmentation(cKernelType contourType)
 PyObject *
 PyCreateSegmentation(sv4guiContour* contour)
 {
-  std::cout << std::endl;
-  std::cout << "[PyCreateSegmentation(contour)] ========== PyCreateSegmentation (contour) ==========" << std::endl;
   auto kernel = contour->GetKernel();
   auto ctype = contour->GetType();
+  #ifdef debug_PyCreateSegmentation_contour
+  std::cout << std::endl;
+  std::cout << "[PyCreateSegmentation(contour)] ========== PyCreateSegmentation (contour) ==========" << std::endl;
   std::cout << "[PyCreateSegmentation(contour)] type: " << ctype << std::endl;
   std::cout << "[PyCreateSegmentation(contour)] kernel: " << kernel << std::endl;
   std::cout << "[PyCreateSegmentation(contour)] contour: " << contour << std::endl;
+  #endif
 
   // Create a sv.segmentation.Segmentation object.
-  //
   auto contourObj = PyCreateSegmentation(kernel);
-  std::cout << "[PyCreateSegmentation(contour)] contourObj: " << contourObj << std::endl;
 
   // Add data from the sv4guiContour to the sv3::contour object.
-  //
   auto pyContour = (PySegmentation*)contourObj;
   pyContour->CopySv4ContourData(contour, contourObj);
-  std::cout << "[PyCreateSegmentation(contour)] Done. " << std::endl;
 
   return contourObj;
 }
@@ -351,8 +350,6 @@ static struct PyModuleDef PySegmentationModule = {
 PyMODINIT_FUNC
 PyInit_PySegmentation()
 {
-  std::cout << "========== load segmentation module ==========" << std::endl;
-
   // Initialize the Contour class type.
   SetSegmentationTypeFields(PySegmentationType);
   if (PyType_Ready(&PySegmentationType) < 0) {

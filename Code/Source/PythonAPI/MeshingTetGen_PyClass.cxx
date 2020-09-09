@@ -121,8 +121,8 @@ InitMeshSizingArrays(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* opt
 void
 GenerateLocalSizeArray(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, PyObject* options)
 {
-  std::cout << "[GenerateLocalSizeArray] " << std::endl;
-  std::cout << "[GenerateLocalSizeArray] ========== GenerateLocalSizeArray =========" << std::endl;
+  //std::cout << "[GenerateLocalSizeArray] " << std::endl;
+  //std::cout << "[GenerateLocalSizeArray] ========== GenerateLocalSizeArray =========" << std::endl;
   static std::string errorMsg = TetGenOption::LocalEdgeSize_ErrorMsg;
   auto optionName = TetGenOption::LocalEdgeSize;
   auto listObj = PyObject_GetAttrString(options, optionName);
@@ -328,12 +328,12 @@ GenerateMeshSizingArrays(PyUtilApiFunction& api, cvTetGenMeshObject* mesher, PyO
 bool
 SetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
 {
-  std::cout << "========= SetOptions =========" << std::endl;
+  //std::cout << "========= SetOptions =========" << std::endl;
   //std::cout << "[SetOptions] mesher: " << mesher << std::endl;
 
   // Set options that are not a list.
   //
-  std::cout << "[SetOptions] Set non-list options ... " << std::endl;
+  //std::cout << "[SetOptions] Set non-list options ... " << std::endl;
   for (auto const& entry : TetGenOption::pyToSvNameMap) {
       auto pyName = entry.first;
       if (TetGenOption::ListOptions.count(std::string(pyName)) != 0) {
@@ -359,8 +359,8 @@ SetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
           continue;
       }
 
-      std::cout << "[SetOptions] pyName: " << pyName << std::endl;
-      std::cout << "[SetOptions]   svName: " << svName << std::endl;
+      //std::cout << "[SetOptions] pyName: " << pyName << std::endl;
+      //std::cout << "[SetOptions]   svName: " << svName << std::endl;
       //std::cout << "[SetOptions] numValues: " << numValues << std::endl;
       //std::cout << "[SetOptions] Values: ";
       //for (auto value : values) {
@@ -376,8 +376,8 @@ SetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
 
   // Set options that are a list.
   //
-  std::cout << " " << std::endl;
-  std::cout << "[SetOptions] Set list options ... " << std::endl;
+  //std::cout << " " << std::endl;
+  //std::cout << "[SetOptions] Set list options ... " << std::endl;
   for (auto const& entry : TetGenOption::pyToSvNameMap) {
       auto pyName = entry.first;
       if (TetGenOption::ListOptions.count(std::string(pyName)) == 0) {
@@ -385,8 +385,8 @@ SetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
       }
       auto svName = entry.second;
       std::vector<std::vector<double>> valuesList;
-      std::cout << "[SetOptions] pyName: " << pyName << std::endl;
-      std::cout << "[SetOptions]   svName: " << svName << std::endl;
+      //std::cout << "[SetOptions] pyName: " << pyName << std::endl;
+      //std::cout << "[SetOptions]   svName: " << svName << std::endl;
       try {
           valuesList = PyTetGenOptionsGetListValues(options, pyName);
       } catch (const std::exception& exception) {
@@ -395,7 +395,7 @@ SetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
       }
 
       int numListValues = valuesList.size();
-      std::cout << "[SetOptions]   numListValues: " << numListValues << std::endl;
+      //std::cout << "[SetOptions]   numListValues: " << numListValues << std::endl;
       if (numListValues == 0) {
           continue;
       }
@@ -435,8 +435,7 @@ PyDoc_STRVAR(MesherTetGen_generate_mesh_doc,
 static PyObject *
 MesherTetGen_generate_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
-  std::cout << "========= MesherTetGen_generate_mesh =========" << std::endl;
-
+  //std::cout << "========= MesherTetGen_generate_mesh =========" << std::endl;
   using namespace MeshingTetGen;
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
   static char *keywords[] = {"options", NULL};

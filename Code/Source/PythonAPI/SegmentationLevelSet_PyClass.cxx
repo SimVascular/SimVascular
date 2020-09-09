@@ -112,7 +112,7 @@ static int
 PyLevelSetSegmentationInit(PyLevelSetSegmentation* self, PyObject* args, PyObject *kwds)
 {
   static int numObjs = 1;
-  std::cout << "[PyLevelSetSegmentationInit] New LevelSet Segmentation object: " << numObjs << std::endl;
+  //std::cout << "[PyLevelSetSegmentationInit] New LevelSet Segmentation object: " << numObjs << std::endl;
   self->super.contour = new sv3::levelSetContour();
   self->super.CopySv4ContourData = PyLevelSetCopySegmentationData;
   numObjs += 1;
@@ -126,7 +126,7 @@ PyLevelSetSegmentationInit(PyLevelSetSegmentation* self, PyObject* args, PyObjec
 static PyObject *
 PyLevelSetSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyLevelSetSegmentationNew] PyLevelSetSegmentationNew " << std::endl;
+  //std::cout << "[PyLevelSetSegmentationNew] PyLevelSetSegmentationNew " << std::endl;
   auto self = (PyLevelSetSegmentation*)type->tp_alloc(type, 0);
   if (self != NULL) {
       //self->super.id = 2;
@@ -141,7 +141,7 @@ PyLevelSetSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyLevelSetSegmentationDealloc(PyLevelSetSegmentation* self)
 {
-  std::cout << "[PyLevelSetSegmentationDealloc] Free PyLevelSetSegmentation" << std::endl;
+  //std::cout << "[PyLevelSetSegmentationDealloc] Free PyLevelSetSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);
 }

@@ -113,7 +113,7 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
   inmesh->pointlist = new REAL[inmesh->numberofpoints*3];
 
   //Do Point transition from polydatasolid into pointlist
-  fprintf(stderr,"Converting Points...\n");
+  //fprintf(stderr,"Converting Points...\n");
   vtkSmartPointer<vtkPoints> inPts = vtkSmartPointer<vtkPoints>::New();
   inPts = polydatasolid->GetPoints();
   for (int i=0; i<inmesh->numberofpoints;i++)
@@ -130,7 +130,7 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
   inmesh->facetlist = new tetgenio::facet[inmesh->numberoffacets];
   inmesh->facetmarkerlist = new int[inmesh->numberoffacets];
 
-  fprintf(stderr,"Converting Faces...\n");
+  //fprintf(stderr,"Converting Faces...\n");
   vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
   ptIds->SetNumberOfIds(3);
   for (int i=0;i<inmesh->numberoffacets;i++)
@@ -412,7 +412,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   int *pointMapping = new int[numPts];
 
   //Save all point information in a vtkPoints list
-  fprintf(stderr,"Converting Points to VTK Structures...\n");
+  //fprintf(stderr,"Converting Points to VTK Structures...\n");
   points->SetNumberOfPoints(numPts);
   for (i=0;i< outmesh->numberofpoints; i++)
   {
@@ -447,7 +447,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   }
 
   //Save all element information in a vtkCellArray list
-  fprintf(stderr,"Converting Elements to VTK Structures...\n");
+  //fprintf(stderr,"Converting Elements to VTK Structures...\n");
   polyPointIds->SetNumberOfIds(4);
   globalId=1;
   for (i=0;i< numPolys;i++)
@@ -484,7 +484,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   fullUGrid->GetCellData()->AddArray(globalElementIds);
 
   //Save all external faces to a vtkCellArray list
-  fprintf(stdout,"Converting Faces to VTK Structures...\n");
+  //fprintf(stdout,"Converting Faces to VTK Structures...\n");
   facePointIds->SetNumberOfIds(3);
 
   for (i=0;i< numFaces;i++)

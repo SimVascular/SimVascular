@@ -476,7 +476,7 @@ CreateSphereRefinementValue(PyUtilApiFunction& api, double edgeSize, double radi
 bool
 GetSphereRefinementValues(PyObject* obj, double& edgeSize, double& radius, std::vector<double>& center)
 {
-  std::cout << "[GetSphereRefinementValues] ========== GetSphereRefinementValues ==========" << std::endl;
+  //std::cout << "[GetSphereRefinementValues] ========== GetSphereRefinementValues ==========" << std::endl;
   // Get the edge size parameter value.
   //
   // Check the SphereRefinement_SizeParam key.
@@ -1823,7 +1823,7 @@ static int
 PyTetGenOptionsInit(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwargs)
 {
   static int numObjs = 1;
-  std::cout << "[PyTetGenOptionsInit] New MeshingOptions object: " << numObjs << std::endl;
+  //std::cout << "[PyTetGenOptionsInit] New MeshingOptions object: " << numObjs << std::endl;
   auto api = PyUtilApiFunction("|dO!O!", PyRunTimeErr, __func__);
   static char *keywords[] = { TetGenOption::GlobalEdgeSize, TetGenOption::SurfaceMeshFlag, TetGenOption::VolumeMeshFlag, NULL};
   double global_edge_size = 0.0;
@@ -1875,7 +1875,7 @@ PyTetGenOptionsInit(PyMeshingTetGenOptions* self, PyObject* args, PyObject* kwar
 static PyObject *
 PyTetGenOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyTetGenOptionsNew] PyTetGenOptionsNew " << std::endl;
+  //std::cout << "[PyTetGenOptionsNew] PyTetGenOptionsNew " << std::endl;
   auto self = (PyMeshingTetGenOptions*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyTetGenOptionsNew] ERROR: Can't allocate type." << std::endl;
@@ -1891,9 +1891,8 @@ PyTetGenOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyTetGenOptionsDealloc(PyMeshingTetGenOptions* self)
 {
-  std::cout << "[PyTetGenOptionsDealloc] Free PyTetGenOptions" << std::endl;
+  //std::cout << "[PyTetGenOptionsDealloc] Free PyTetGenOptions" << std::endl;
   Py_TYPE(self)->tp_free(self);
-  std::cout << "[PyTetGenOptionsDealloc] Done. " << std::endl;
 }
 
 //----------------------------

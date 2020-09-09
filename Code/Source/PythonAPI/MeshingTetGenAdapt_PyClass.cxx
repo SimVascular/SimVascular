@@ -69,8 +69,10 @@ pyCreateTetGenAdapt()
 bool
 TetGenAdaptSetOptions(PyTetGenAdapt* self, PyUtilApiFunction& api, PyObject* options)
 {
+  #ifdef dbg_TetGenAdaptSetOptions
   std::cout << "[TetGenAdaptSetOptions] " << std::endl;
   std::cout << "[TetGenAdaptSetOptions] ========== TetGenAdaptSetOptions =========" << std::endl;
+  #endif
 
   // Check if using multiple solver steps.
   //
@@ -80,7 +82,6 @@ TetGenAdaptSetOptions(PyTetGenAdapt* self, PyUtilApiFunction& api, PyObject* opt
   bool useMultipleSteps;
   double metric_option;
   PyTetGenAdaptOptGetValue(options, TetGenAdaptOption::use_multiple_steps, multiStep);
-  std::cout << "[TetGenAdaptSetOptions] multiStep: " << multiStep << std::endl;
 
   if (multiStep == 1.0) {
       useMultipleSteps = true;
@@ -100,7 +101,6 @@ TetGenAdaptSetOptions(PyTetGenAdapt* self, PyUtilApiFunction& api, PyObject* opt
       if (!PyTetGenAdaptOptGetValue(options, pyName, value)) {
           continue;
       }
-      std::cout << "[TetGenAdaptSetOptions] pyName: " << pyName << "  svName: " << svName << "  value: " << value << std::endl;
 
       if (mesher->SetAdaptOptions(svName, value) != SV_OK) {
           api.error("Error setting TetGen adaptive meshing '" + std::string(pyName) + "' option.");
@@ -113,7 +113,6 @@ TetGenAdaptSetOptions(PyTetGenAdapt* self, PyUtilApiFunction& api, PyObject* opt
       double value;
       PyTetGenAdaptOptGetValue(options, TetGenAdaptOption::step, value);
       auto svName = TetGenAdaptOption::pyToSvNameMap[TetGenAdaptOption::end_step];
-      std::cout << "[TetGenAdaptSetOptions] set svName: " << svName << "  value: " << value << std::endl;
       if (mesher->SetAdaptOptions(svName, value) != SV_OK) {
           api.error("Error setting TetGen adaptive meshing '" + std::string(TetGenAdaptOption::step) + "' option.");
           return nullptr;
@@ -170,9 +169,8 @@ PyDoc_STRVAR(TetGenAdapt_generate_mesh_doc,
 
 static PyObject *
 TetGenAdapt_generate_mesh(PyTetGenAdapt* self, PyObject* args, PyObject* kwargs)
-//TetGenAdapt_generate_mesh(PyMeshingAdaptiveClass* self, PyObject* args, PyObject* kwargs)
 {
-  std::cout << "[TetGenAdapt_generate_mesh] ========== TetGenAdapt_generate_mesh ==========" << std::endl;
+  //std::cout << "[TetGenAdapt_generate_mesh] ========== TetGenAdapt_generate_mesh ==========" << std::endl;
   auto api = PyUtilApiFunction("ssO!|s", PyRunTimeErr, __func__);
   static char *keywords[] = {"results_file", "model_file", "options", "log_file", NULL};
   char *resultsFileName = NULL;
@@ -308,8 +306,8 @@ PyDoc_STRVAR(TetGenAdapt_set_options_doc,
 static PyObject *
 TetGenAdapt_set_options(PyTetGenAdapt* self, PyObject* args)
 {
-  std::cout << "[TetGenAdapt_set_options] " << std::endl;
-  std::cout << "[TetGenAdapt_set_options] ========== TetGenAdapt_set_options =========" << std::endl;
+  //std::cout << "[TetGenAdapt_set_options] " << std::endl;
+  ////std::cout << "[TetGenAdapt_set_options] ========== TetGenAdapt_set_options =========" << std::endl;
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
   PyObject* options;
 
@@ -336,7 +334,7 @@ TetGenAdapt_set_options(PyTetGenAdapt* self, PyObject* args)
       if (!PyTetGenAdaptOptGetValue(options, pyName, value)) {
           continue;
       }
-      std::cout << "[TetGenAdapt_set_options] pyName: " << pyName << "  value: " << value << std::endl;
+      //std::cout << "[TetGenAdapt_set_options] pyName: " << pyName << "  value: " << value << std::endl;
 
       // If using a single simulation step then set 'end_step' with the value of the
       // 'step' option, SV uses the 'end_step' option for both the simulation end step
@@ -395,7 +393,7 @@ PyTetGenAdaptInit(PyTetGenAdapt* self, PyObject* args, PyObject *kwds)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, "TetGen adaptive mesh generator");
   static int numObjs = 1;
-  std::cout << "[PyTetGenAdaptInit] New PyTetGenAdapt object: " << numObjs << std::endl;
+  //std::cout << "[PyTetGenAdaptInit] New PyTetGenAdapt object: " << numObjs << std::endl;
   self->super.adaptKernel = KernelType::KERNEL_TETGEN;
   self->super.meshKernel = cvMeshObject::KERNEL_TETGEN;
   self->super.adaptive_mesher = new cvTetGenAdapt();
@@ -414,7 +412,7 @@ PyTetGenAdaptInit(PyTetGenAdapt* self, PyObject* args, PyObject *kwds)
 static PyObject *
 PyTetGenAdaptNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyTetGenAdaptNew] PyTetGenAdaptNew " << std::endl;
+  //std::cout << "[PyTetGenAdaptNew] PyTetGenAdaptNew " << std::endl;
   auto self = (PyMeshingAdaptive*)type->tp_alloc(type, 0);
   if (self != NULL) {
       //self->super.id = 2;
@@ -429,7 +427,7 @@ PyTetGenAdaptNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyTetGenAdaptDealloc(PyTetGenAdapt* self)
 {
-  std::cout << "[PyTetGenAdaptDealloc] Free PyTetGenAdapt" << std::endl;
+  //std::cout << "[PyTetGenAdaptDealloc] Free PyTetGenAdapt" << std::endl;
   delete self->super.adaptive_mesher;
   Py_TYPE(self)->tp_free(self);
 }

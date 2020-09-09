@@ -301,7 +301,7 @@ PyLoftOptionsInit(PyLoftOptions* self, PyObject* args, PyObject* kwargs)
 static PyObject *
 PyLoftOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyLoftOptionsNew] PyLoftOptionsNew " << std::endl;
+  //std::cout << "[PyLoftOptionsNew] PyLoftOptionsNew " << std::endl;
   auto self = (PyLoftOptions*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyLoftOptionsNew] ERROR: Can't allocate type." << std::endl;
@@ -317,7 +317,7 @@ PyLoftOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyLoftOptionsDealloc(PyLoftOptions* self)
 {
-  std::cout << "[PyLoftOptionsDealloc] Free PyLoftOptions" << std::endl;
+  //std::cout << "[PyLoftOptionsDealloc] Free PyLoftOptions" << std::endl;
   Py_TYPE(self)->tp_free(self);
 }
 
