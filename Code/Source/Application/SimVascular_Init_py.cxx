@@ -56,6 +56,7 @@
 #include "PathPlanning_PyModule.h"
 //#include "sv3_PathGroup_init_py.h"
 #include "Segmentation_PyModule.h"
+#include "Simulation_PyModule.h"
 //#include "sv3_CircleContour_init_py.h"
 //#include "sv3_LevelSetContour_init_py.h"
 //#include "sv3_ThresholdContour_init_py.h"
@@ -117,6 +118,7 @@ void SimVascular_pyInit()
     //PyImport_AppendInittab("project", PyInit_PyProject);
     //PyImport_AppendInittab("repository", PyInit_pyRepository);
     PyImport_AppendInittab("modeling", PyInit_PyModeling);
+    PyImport_AppendInittab("simulation", PyInit_PySimulation);
     //PyImport_AppendInittab("solid_polydata",PyInit_pySolidPolydata);
     //PyImport_AppendInittab("spline_polygon_contour",PyInit_pySplinePolygonContour);
     //PyImport_AppendInittab("threshold_contour", PyInit_pyThresholdContour);
