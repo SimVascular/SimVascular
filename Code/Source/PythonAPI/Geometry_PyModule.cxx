@@ -627,6 +627,8 @@ PyDoc_STRVAR(Geom_loft_nurbs_doc,
         representing the profile curves defining a surface.                 \n\
      loft_options (sv.geometry.LoftNurbsOptions): The LoftNurbsOptions      \n\
         object containing lofting parameter values.                         \n\
+     num_sections (Optopnsal[int]): The number of sections created between  \n\
+        profile curves.                                                     \n\
    \n\
    Returns (vtkPolyData): The vtkPolyData object of the lofted surface.     \n\
 ");
@@ -639,13 +641,14 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   std::cout << " " << std::endl;
   std::cout << "========== Geom_loft_nurbs ==========" << std::endl;
   #endif
-  auto api = PyUtilApiFunction("O!O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"polydata_list", "loft_options", NULL};
+  auto api = PyUtilApiFunction("O!O!|i", PyRunTimeErr, __func__);
+  static char *keywords[] = {"polydata_list", "loft_options", "num_sections", NULL};
   PyObject* objListArg;
   PyObject* loftOptsArg;
+  int num_sections = 12;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &objListArg,
-        &PyLoftNurbsOptionsType, &loftOptsArg)) {
+        &PyLoftNurbsOptionsType, &loftOptsArg, &num_sections)) {
       return api.argsError();
   }
 
@@ -677,7 +680,7 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   //
   int uDegree = LoftNurbsOptionsGetInt(loftOptsArg, LoftNurbsOptions::U_DEGREE);
   int vDegree = LoftNurbsOptionsGetInt(loftOptsArg, LoftNurbsOptions::V_DEGREE);
-  double uSpacing = 1.0 / numProfiles;
+  double uSpacing = 1.0 / (num_sections * numProfiles);
   double vSpacing = 1.0 / numProfilePoints;
   char* uKnotSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::U_KNOT_SPAN_TYPE);
   char* vKnotSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::V_KNOT_SPAN_TYPE);
@@ -685,6 +688,7 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   char* vParametricSpanType = LoftNurbsOptionsGetString(loftOptsArg, LoftNurbsOptions::V_PARAMETRIC_SPAN_TYPE);
 
   #ifdef dbg_Geom_loft_nurbs
+  std::cout << "[Geom_loft_nurbs] numProfilePoints: " << numProfilePoints << std::endl;
   std::cout << "[Geom_loft_nurbs] uDegree: " << uDegree << std::endl;
   std::cout << "[Geom_loft_nurbs] vDegree: " << vDegree << std::endl;
   std::cout << "[Geom_loft_nurbs] uSpacing: " << uSpacing << std::endl;
