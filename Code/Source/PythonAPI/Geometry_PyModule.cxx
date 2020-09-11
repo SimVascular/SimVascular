@@ -627,7 +627,7 @@ PyDoc_STRVAR(Geom_loft_nurbs_doc,
         representing the profile curves defining a surface.                 \n\
      loft_options (sv.geometry.LoftNurbsOptions): The LoftNurbsOptions      \n\
         object containing lofting parameter values.                         \n\
-     num_sections (Optopnsal[int]): The number of sections created between  \n\
+     num_sections (Optional[int]): The number of sections created between  \n\
         profile curves.                                                     \n\
    \n\
    Returns (vtkPolyData): The vtkPolyData object of the lofted surface.     \n\
