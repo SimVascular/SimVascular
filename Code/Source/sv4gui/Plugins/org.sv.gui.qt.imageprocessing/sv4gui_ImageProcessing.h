@@ -35,6 +35,7 @@
 #include <string>
 #include <QString>
 #include <sv4gui_QmitkFunctionality.h>
+#include <QmitkStdMultiWidget.h>
 
 #include "sv4gui_ImageProcessingUtils.h"
 #include "sv4gui_DataNodeOperationInterface.h"
@@ -42,22 +43,21 @@
 #include <sv4gui_ImageSeedContainer.h>
 #include <sv4gui_ImageSeedInteractor.h>
 #include <sv4gui_ImageSeedMapper.h>
+#include <sv4gui_ImageSeedMapper2D.h>
 
 #include <mitkImage.h>
 
 
 namespace Ui {
-class sv4guiImageProcessing;
+  class sv4guiImageProcessing;
 }
 
 class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-
+  public:
     sv4guiImageProcessing();
-
     virtual ~sv4guiImageProcessing();
 
     virtual void CreateQtPartControl(QWidget *parent) override;
@@ -80,74 +80,64 @@ public:
 
     void storePolyData(vtkSmartPointer<vtkPolyData> vtkPd);
 
-public slots:
+    void SetLineEditValidFloat(QLineEdit* lineEdit);
 
-    //display
+  public slots:
+
+    // Seeds. 
+    void AddStartSeed();
+    void AddEndSeed();
     void seedSize();
-    void displayGuide(bool state);
     void displaySeeds(bool state);
 
-    //displaay buttons
+    // Tab buttons.
     void imageEditingTabSelected();
     void filteringTabSelected();
     void segmentationTabSelected();
     void pipelinesTabSelected();
 
-    //run buttons
-    void runFullCollidingFronts();
-
-    void runThreshold();
-
+    // Run buttons.
+    void runAnisotropic();
     void runBinaryThreshold();
-
     void runCollidingFronts();
-
-    void runGradientMagnitude();
-
-    void runEditImage();
-
     void runCropImage();
-
+    void runEditImage();
+    void runFullCollidingFronts();
+    void runGeodesicLevelSet();
+    void runGradientMagnitude();
+    void runIsovalue();
     void runResampleImage();
-
+    void runSmoothing();
+    void runThreshold();
     void runZeroLevel();
 
-    void runSmoothing();
+  protected:
 
-    void runAnisotropic();
+    QString hello_str;
 
-    void runIsovalue();
+    Ui::sv4guiImageProcessing *ui;
 
-    void runGeodesicLevelSet();
+    QWidget *m_parent;
 
-public:
+    QmitkStdMultiWidget* m_DisplayWidget;
 
-protected:
+    std::string m_selectedAlgorithm;
 
-  QString hello_str;
+    sv4guiDataNodeOperationInterface* m_Interface;
 
-  Ui::sv4guiImageProcessing *ui;
+    sv4guiImageSeedContainer::Pointer m_SeedContainer;
 
-  QWidget *m_parent;
+    bool m_init = true;
 
-  QmitkStdMultiWidget* m_DisplayWidget;
+    sv4guiImageSeedInteractor::Pointer m_SeedInteractor;
 
-  std::string m_selectedAlgorithm;
+    sv4guiImageSeedMapper::Pointer m_SeedMapper;
+    sv4guiImageSeedMapper2D::Pointer m_SeedMapper2D;
 
-  sv4guiDataNodeOperationInterface* m_Interface;
+    sv4guiImageProcessingUtils::itkImPoint CombinedCollidingFronts(sv4guiImageProcessingUtils::itkImPoint, double lower, double upper);
 
-  sv4guiImageSeedContainer::Pointer m_SeedContainer;
+    mitk::DataNode::Pointer m_SeedNode;
 
-  bool m_init = true;
-
-  sv4guiImageSeedInteractor::Pointer m_SeedInteractor;
-
-  sv4guiImageSeedMapper::Pointer m_SeedMapper;
-
-  sv4guiImageProcessingUtils::itkImPoint CombinedCollidingFronts(
-    sv4guiImageProcessingUtils::itkImPoint, double lower, double upper);
-
-  mitk::DataNode::Pointer m_SeedNode;
 };
 
 #endif // sv4guiImageProcessing_H

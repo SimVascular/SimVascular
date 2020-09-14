@@ -2,10 +2,6 @@
 
   <state name="Start" startstate="true">
 
-    <transition event_class="InteractionPositionEvent" event_variant="AddPointClick" target="start">
-       <action name="add_seed"/>
-    </transition>
-
     <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverSeed">
       <condition name="is_over_seed" />
     </transition>

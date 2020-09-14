@@ -38,7 +38,7 @@
 #include "sv4gui_Math3.h"
 
 // mitk
-#include <QmitkStdMultiWidgetEditor.h>
+//#include <QmitkStdMultiWidgetEditor.h>
 #include <mitkDataStorage.h>
 #include "mitkDataNode.h"
 #include "mitkProperties.h"
@@ -85,54 +85,60 @@ sv4guiPathEdit::~sv4guiPathEdit()
     if(m_PathCreateWidget2) delete m_PathCreateWidget2;
 }
 
-void sv4guiPathEdit::CreateQtPartControl( QWidget *parent )
+//---------------------
+// CreateQtPartControl
+//---------------------
+// Initialize GUI widgets.
+//
+void sv4guiPathEdit::CreateQtPartControl(QWidget* parent)
 {
     m_Parent=parent;
     ui->setupUi(parent);
-    //    parent->setMaximumWidth(500);
 
+    // Setup path point Adding Mode combination box.
     ui->comboBoxAddingMode->setItemText(sv4guiPath::SMART,"Smart");
     ui->comboBoxAddingMode->setItemText(sv4guiPath::BEGINNING,"Beginning");
     ui->comboBoxAddingMode->setItemText(sv4guiPath::END,"End");
     ui->comboBoxAddingMode->setItemText(sv4guiPath::BEFORE,"Before");
     ui->comboBoxAddingMode->setItemText(sv4guiPath::AFTER,"After");
+    connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
 
-    m_DisplayWidget=GetActiveStdMultiWidget();
+    // Get access to the four-window widget in the centre of the application.
+    m_DisplayWidget = GetActiveStdMultiWidget();
 
-    if(m_DisplayWidget)
-    {
+    if(m_DisplayWidget) {
         //instead set zero in svappication
 //        m_DisplayWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
 //        m_DisplayWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
 //        m_DisplayWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
-    }
-    else
-    {
+    } else {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
         return;
     }
 
-    ui->resliceSlider->SetDisplayWidget(m_DisplayWidget);
-//    ui->resliceSlider->setCheckBoxVisible(true);
-    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
-
+    // The panel top right 'Add Path' and 'Change Type' buttons.
     connect(ui->btnNewPath, SIGNAL(clicked()), this, SLOT(NewPath()) );
     connect(ui->btnChange, SIGNAL(clicked()), this, SLOT(ChangePath()) );
+
+    // Control point buttons. 
     connect(ui->buttonAdd, SIGNAL(clicked()), this, SLOT(SmartAdd()) );
     connect(ui->buttonAddManually, SIGNAL(clicked()), this, SLOT(ManuallyAdd()) );
     connect(ui->buttonDelete, SIGNAL(clicked()), this, SLOT(DeleteSelected()) );
-    connect(ui->listWidget,SIGNAL(itemSelectionChanged()), this, SLOT(SelectPoint()) );
-    connect(ui->listWidget,SIGNAL(clicked(const QModelIndex &)), this, SLOT(SelectPoint(const QModelIndex &)) );
-
     connect(ui->btnSmooth,SIGNAL(clicked()), this, SLOT(SmoothCurrentPath()) );
 
+    // Add mouse key shortcuts for adding and deleting a path points.
     ui->buttonAdd->setShortcut(QKeySequence("Ctrl+A"));
     ui->buttonDelete->setShortcut(QKeySequence("Ctrl+D"));
 
-    connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
+    // Control point list operations.
+    connect(ui->listWidget,SIGNAL(itemSelectionChanged()), this, SLOT(SelectPoint()) );
+    connect(ui->listWidget,SIGNAL(clicked(const QModelIndex &)), this, SLOT(SelectPoint(const QModelIndex &)) );
 
-    connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
+    ui->resliceSlider->SetDisplayWidget(m_DisplayWidget);
+    //ui->resliceSlider->setCheckBoxVisible(true);
+    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
+    connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 
     ui->listWidget->installEventFilter(this);
 }
@@ -534,11 +540,16 @@ void sv4guiPathEdit::ChangePath(){
     m_PathCreateWidget->SetFocus();
 }
 
+//----------
+// AddPoint
+//----------
+//
 void sv4guiPathEdit::AddPoint(mitk::Point3D point)
 {
-    MITK_INFO << "===================== sv4guiPathEdit::AddPoint =====================";
+    std::cout << "===================== sv4guiPathEdit::AddPoint =====================" << std::endl;
+    std::cout << "[AddPoint] Point: " << point[0] << "  " << point[1] << "  " << point[2] << std::endl;
 
-    if(m_Path==NULL){
+    if (m_Path==NULL) {
         QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
         return;
     }
@@ -629,7 +640,8 @@ void sv4guiPathEdit::AddPoint(mitk::Point3D point)
 
 void sv4guiPathEdit::SmartAdd()
 {
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
+    std::cout << "===================== sv4guiPathEdit::SmartAdd =====================" << std::endl;
+    mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
 
     AddPoint(point);
 }

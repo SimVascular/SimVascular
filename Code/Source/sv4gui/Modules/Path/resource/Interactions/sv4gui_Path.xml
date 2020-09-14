@@ -1,16 +1,21 @@
 <statemachine>
     <state name="start" startstate="true">
+
         <transition event_class="InteractionPositionEvent" event_variant="AddPointClick" target="start">
              <action name="addpoint"/>
         </transition>
+
         <transition event_class="MouseMoveEvent" event_variant="CheckSelected" target="selected">
             <condition name="isoverpoint"/>
             <action name="selectpoint"/>
         </transition>
+
         <transition event_class="InteractionKeyEvent" event_variant="Abort" target="start">
           <action name="abort"/>
         </transition>
+
     </state>
+
     <state name="selected">
         <transition event_class="MouseMoveEvent" event_variant="CheckSelected" target="start">
             <condition name="isoverpoint" inverted="true"/>

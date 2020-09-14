@@ -42,7 +42,10 @@ sv4guiImageSeedMapper::~sv4guiImageSeedMapper(){
 
 }
 
-void sv4guiImageSeedMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer){
+void sv4guiImageSeedMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
+{
+  //std::cout << "===================== sv4guiImageSeedMapper::GenerateDataForRenderer =====================" << std::endl;
+
   //make ls propassembly
   mitk::DataNode* node = GetDataNode();
   if(node==NULL)
@@ -68,11 +71,9 @@ void sv4guiImageSeedMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer
   }
   ls->m_PropAssembly->GetParts()->RemoveAllItems();
 
-  auto hoverSphere = createSeedActor(seeds->hoverPoint[0],
-    seeds->hoverPoint[1],
-    seeds->hoverPoint[2], 2);
-
-  ls->m_PropAssembly->AddPart(hoverSphere);
+  // [TODO:DaveP] do we want this? 
+  //auto hoverSphere = createSeedActor(seeds->hoverPoint[0], seeds->hoverPoint[1], seeds->hoverPoint[2], 2);
+  //ls->m_PropAssembly->AddPart(hoverSphere);
 
   int numStartSeeds = seeds->getNumStartSeeds();
   for (int i = 0; i < numStartSeeds; i++){
@@ -105,52 +106,49 @@ void sv4guiImageSeedMapper::ResetMapper(mitk::BaseRenderer* renderer){
   ls->m_PropAssembly->VisibilityOff();
 }
 
-vtkProp* sv4guiImageSeedMapper::GetVtkProp(mitk::BaseRenderer* renderer){
-
+vtkProp* sv4guiImageSeedMapper::GetVtkProp(mitk::BaseRenderer* renderer)
+{
+  //std::cout << "===================== sv4guiImageSeedMapper::GetVtkProp =====================" << std::endl;
   ResetMapper(renderer);
   GenerateDataForRenderer(renderer);
-
   LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
   return ls->m_PropAssembly;
 }
 
-vtkSmartPointer<vtkActor> sv4guiImageSeedMapper::createSeedActor(int x, int y, int z, int color){
-
-  vtkSmartPointer<vtkSphereSource> sphere =
-    vtkSmartPointer<vtkSphereSource>::New();
-
+//-----------------
+// createSeedActor
+//-----------------
+// Create sphere geometry at the given point.
+//
+vtkSmartPointer<vtkActor> sv4guiImageSeedMapper::createSeedActor(double x, double y, double z, int color)
+{
+  auto sphere = vtkSmartPointer<vtkSphereSource>::New();
   sphere->SetRadius(m_seedRadius);
   sphere->SetCenter(x,y,z);
 
-  vtkSmartPointer<vtkPolyDataMapper> sphereMapper =
-    vtkSmartPointer<vtkPolyDataMapper>::New();
+  auto sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   sphereMapper->SetInputConnection(sphere->GetOutputPort());
 
-  vtkSmartPointer<vtkActor> sphere1 = vtkSmartPointer<vtkActor>::New();
-  sphere1->SetMapper(sphereMapper);
+  auto sphereActor = vtkSmartPointer<vtkActor>::New();
+  sphereActor->SetMapper(sphereMapper);
   if (color == 0){
-    sphere1->GetProperty()->SetColor(1,0,0);
+    sphereActor->GetProperty()->SetColor(1,0,0);
   }
   else if (color == 1) {
-    sphere1->GetProperty()->SetColor(0,1,0);
+    sphereActor->GetProperty()->SetColor(0,1,0);
   }
   else {
-    sphere1->GetProperty()->SetColor(0,0,1);
+    sphereActor->GetProperty()->SetColor(0,0,1);
   }
 
-  sphere1->GetProperty()->SetAmbient(0.3);
-  // sphere1->GetProperty()->SetDiffuse(0.0);
-  // sphere1->GetProperty()->SetSpecular(0.0);
-  // sphere1->GetProperty()->SetSpecularPower(5.0);
+  sphereActor->GetProperty()->SetAmbient(0.3);
 
-  return sphere1;
+  return sphereActor;
 }
 
-vtkSmartPointer<vtkActor> sv4guiImageSeedMapper::createCubeActor(int x1, int y1, int z1,
-   int x2, int y2, int z2){
-
-  vtkSmartPointer<vtkCubeSource> cube =
-    vtkSmartPointer<vtkCubeSource>::New();
+vtkSmartPointer<vtkActor> sv4guiImageSeedMapper::createCubeActor(double x1, double y1, double z1, double x2, double y2, double z2)
+{
+  vtkSmartPointer<vtkCubeSource> cube = vtkSmartPointer<vtkCubeSource>::New();
 
   cube->SetCenter( (double(x1)+x2)/2, (double(y1)+y2)/2, (double(z1)+z2)/2);
   cube->SetBounds(std::min(x1,x2), std::max(x1,x2),

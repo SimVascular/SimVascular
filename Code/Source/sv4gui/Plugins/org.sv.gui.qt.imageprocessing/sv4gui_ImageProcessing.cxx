@@ -34,6 +34,7 @@
 #include "ui_sv4gui_ImageProcessing.h"
 #include "sv4gui_VtkUtils.h"
 #include <sv4gui_ImageSeedMapper.h>
+#include <sv4gui_ImageSeedMapper2D.h>
 #include <sv4gui_ImageSeedInteractor.h>
 #include <sv4gui_Seg3D.h>
 #include <sv4gui_MitkSeg3D.h>
@@ -58,42 +59,74 @@
 
 const QString sv4guiImageProcessing::EXTENSION_ID = "org.sv.views.imageprocessing";
 
-sv4guiImageProcessing::sv4guiImageProcessing() :
-  ui(new Ui::sv4guiImageProcessing)
+sv4guiImageProcessing::sv4guiImageProcessing() : ui(new Ui::sv4guiImageProcessing)
 {
 
 }
 
-sv4guiImageProcessing::~sv4guiImageProcessing(){
+sv4guiImageProcessing::~sv4guiImageProcessing()
+{
   delete ui;
 }
 
-void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
-  m_Parent=parent;
+//-----------------------
+// SetLineEditValidFloat
+//-----------------------
+// Set float validator for line edit widgets.
+//
+// This restricts the line edit widget to valid float values.
+//
+void sv4guiImageProcessing::SetLineEditValidFloat(QLineEdit* lineEdit)
+{
+  QDoubleValidator *dvalid = new QDoubleValidator(this);
+  dvalid->setNotation(QDoubleValidator::StandardNotation);
+  lineEdit->setValidator(dvalid);
+}
+
+//---------------------
+// CreateQtPartControl
+//---------------------
+// Initialize GUI widgets.
+//
+void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
+{
+  std::cout << "========== sv4guiImageProcessing::CreateQtPartControl ========== " << std::endl;
+  m_Parent = parent;
   ui->setupUi(parent);
 
-  m_DisplayWidget=GetActiveStdMultiWidget();
+  // Get access to the four-window widget in the centre of the application.
+  m_DisplayWidget = GetActiveStdMultiWidget();
 
-  if(m_DisplayWidget==NULL)
-  {
+  if (m_DisplayWidget == NULL) {
       parent->setEnabled(false);
       MITK_ERROR << "Plugin ImageProcessing Init Error: No QmitkStdMultiWidget!";
       return;
   }
 
+  // Seed widgets.
   connect(ui->seedLineEdit, SIGNAL(editingFinished()), this, SLOT(seedSize()));
+  connect(ui->seedCheckBox, SIGNAL(clicked(bool)), this, SLOT(displaySeeds(bool)));
+  connect(ui->AddStartButton, SIGNAL(clicked(bool)), this, SLOT(AddStartSeed()));
+  connect(ui->AddEndButton, SIGNAL(clicked(bool)), this, SLOT(AddEndSeed()));
 
-  //more display stuff
-  connect(ui->imageEditingToolbox, SIGNAL(currentChanged(int)),
-    this, SLOT(imageEditingTabSelected()));
-  connect(ui->filteringToolbox, SIGNAL(currentChanged(int)),
-    this, SLOT(filteringTabSelected()));
-  connect(ui->segmentationToolbox, SIGNAL(currentChanged(int)),
-    this, SLOT(segmentationTabSelected()));
-  connect(ui->pipelinesToolbox, SIGNAL(currentChanged(int)),
-    this, SLOT(pipelinesTabSelected()));
+  // Add mouse key shortcuts for adding and deleting a seed points.
+  ui->AddStartButton->setShortcut(QKeySequence("S"));
+  ui->AddEndButton->setShortcut(QKeySequence("E"));
 
-  // getText();
+  // Toolbox tabs. 
+  connect(ui->imageEditingToolbox, SIGNAL(currentChanged(int)), this, SLOT(imageEditingTabSelected()));
+  connect(ui->filteringToolbox, SIGNAL(currentChanged(int)), this, SLOT(filteringTabSelected()));
+  connect(ui->segmentationToolbox, SIGNAL(currentChanged(int)), this, SLOT(segmentationTabSelected()));
+  connect(ui->pipelinesToolbox, SIGNAL(currentChanged(int)), this, SLOT(pipelinesTabSelected()));
+
+  // Full pipelines tab widgets. 
+  //
+  SetLineEditValidFloat(ui->fullCFUpperThresholdLineEdit);
+  SetLineEditValidFloat(ui->fullCFLowerThresholdLineEdit);
+  connect(ui->fullCFButton, SIGNAL(clicked()), this, SLOT(runFullCollidingFronts()));
+
+  // Segmentation / threshold
+  //
   connect(ui->thresholdButton, SIGNAL(clicked()), this, SLOT(runThreshold()));
   connect(ui->binaryThresholdButton, SIGNAL(clicked()), this, SLOT(runBinaryThreshold()));
   connect(ui->editImageButton, SIGNAL(clicked()), this, SLOT(runEditImage()));
@@ -101,7 +134,6 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
   connect(ui->resampleImageButton, SIGNAL(clicked()), this, SLOT(runResampleImage()));
   connect(ui->zeroLevelButton, SIGNAL(clicked()), this, SLOT(runZeroLevel()));
   connect(ui->CFButton, SIGNAL(clicked()), this, SLOT(runCollidingFronts()));
-  connect(ui->fullCFButton, SIGNAL(clicked()), this, SLOT(runFullCollidingFronts()));
 
   connect(ui->marchingCubesButton, SIGNAL(clicked()), this, SLOT(runIsovalue()));
   connect(ui->gradientMagnitudeButton, SIGNAL(clicked()), this, SLOT(runGradientMagnitude()));
@@ -109,41 +141,36 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
   connect(ui->anisotropicButton, SIGNAL(clicked()), this, SLOT(runAnisotropic()));
   connect(ui->levelSetButton, SIGNAL(clicked()), this, SLOT(runGeodesicLevelSet()));
 
-  connect(ui->guideCheckBox, SIGNAL(clicked(bool)), this,
-    SLOT(displayGuide(bool)));
+  m_Interface = new sv4guiDataNodeOperationInterface();
 
-  connect(ui->seedCheckBox, SIGNAL(clicked(bool)), this,
-      SLOT(displaySeeds(bool)));
-
-  m_Interface= new sv4guiDataNodeOperationInterface();
-
+  // Create object for processing seeds.
+  //
   if (m_init){
-    std::cout << "Making seed node\n";
+    std::cout << "[CreateQtPartControl] Create SV Data Manager 'seed' node. \n" << std::endl;
     m_init = false;
     m_SeedContainer = sv4guiImageSeedContainer::New();
+    mitk::DataNode::Pointer image_folder_node = GetDataStorage()->GetNamedNode("Images");
 
     auto seedNode = mitk::DataNode::New();
-
-    mitk::DataNode::Pointer image_folder_node =
-      GetDataStorage()->GetNamedNode("Images");
-
     seedNode->SetData(m_SeedContainer);
 
     m_SeedMapper = sv4guiImageSeedMapper::New();
     m_SeedMapper->SetDataNode(seedNode);
     m_SeedMapper->m_box = false;
-
     seedNode->SetMapper(mitk::BaseRenderer::Standard3D, m_SeedMapper);
-    //seedNode->SetMapper(mitk::BaseRenderer::Standard2D, seedMapper);
+
+    m_SeedMapper2D = sv4guiImageSeedMapper2D::New();
+    m_SeedMapper2D->SetDataNode(seedNode);
+    seedNode->SetMapper(mitk::BaseRenderer::Standard2D, m_SeedMapper2D);
 
     m_SeedInteractor = sv4guiImageSeedInteractor::New();
-    m_SeedInteractor->LoadStateMachine("seedInteraction.xml",
-        us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
-    m_SeedInteractor->SetEventConfig("seedConfig.xml",
-        us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
+    m_SeedInteractor->LoadStateMachine("seedInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
+    m_SeedInteractor->SetEventConfig("seedConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
     m_SeedInteractor->SetDataNode(seedNode);
 
-    if (image_folder_node) image_folder_node->SetVisibility(true);
+    if (image_folder_node) {
+        image_folder_node->SetVisibility(true);
+    }
 
     seedNode->SetVisibility(false);
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -154,14 +181,56 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent){
     m_SeedNode = seedNode;
     m_SeedNode->SetName("seeds");
     displaySeeds(true);
-
   }
 }
 
-void sv4guiImageProcessing::displaySeeds(bool state){
+//--------------
+// AddStartSeed 
+//--------------
+//
+void sv4guiImageProcessing::AddStartSeed()
+{
+  std::cout << "========== sv4guiImageProcessing::AddStartSeed ========== " << std::endl;
+  mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
+  std::cout << "[AddStartSeed] Point: " << point[0] << "  " << point[1] << "  " << point[2] << std::endl;
+
+  int numStartSeeds = m_SeedContainer->getNumStartSeeds();
+  std::cout << "[AddStartSeed] numStartSeeds: " << numStartSeeds << std::endl;
+  m_SeedContainer->addStartSeed(point[0], point[1], point[2]);
+}
+
+//------------
+// AddEndSeed 
+//------------
+//
+void sv4guiImageProcessing::AddEndSeed()
+{
+  std::cout << "========== sv4guiImageProcessing::AddEndSeed ========== " << std::endl;
+  mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
+  std::cout << "[AddEndSeed] Point: " << point[0] << "  " << point[1] << "  " << point[2] << std::endl;
+
+  // A start seed must have been selected.
+  int numStartSeeds = m_SeedContainer->getNumStartSeeds();
+  if (numStartSeeds < 1) { 
+    QMessageBox::warning(NULL,"","No start seeds have been selected.");
+    return;
+  }
+
+  // [TODO:DaveP] It seems that end seeds are paired with start seeds?
+  m_SeedContainer->addEndSeed(point[0], point[1], point[2], numStartSeeds-1);
+}
+
+//--------------
+// displaySeeds
+//--------------
+//
+void sv4guiImageProcessing::displaySeeds(bool state)
+{
+  std::cout << "========== sv4guiImageProcessing::displaySeeds ========== " << std::endl;
+
   if (!state){
     GetDataStorage()->Remove(m_SeedNode);
-  }else{
+  } else {
     auto image_folder_node = GetDataStorage()->GetNamedNode("Images");
     if(image_folder_node){
       GetDataStorage()->Add(m_SeedNode, image_folder_node);
@@ -170,19 +239,17 @@ void sv4guiImageProcessing::displaySeeds(bool state){
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
-void sv4guiImageProcessing::displayGuide(bool state){
-  if (!state){
-    ui->guideWidget->hide();
-  }else{
-    ui->guideWidget->show();
-  }
-}
-/*******************************************************
-* Display Buttons
-********************************************************/
-void sv4guiImageProcessing::imageEditingTabSelected(){
+//-------------------------
+// imageEditingTabSelected
+//-------------------------
+//
+void sv4guiImageProcessing::imageEditingTabSelected()
+{
+  std::cout << "========== sv4guiImageProcessing::imageEditingTabSelected ========== " << std::endl;
+
   ui->edgeImageComboBox->setEnabled(false);
 
+/*
   switch(ui->imageEditingToolbox->currentIndex()){
     case 0:
       m_SeedMapper->m_box = true;
@@ -205,13 +272,16 @@ void sv4guiImageProcessing::imageEditingTabSelected(){
         break;
   }
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+*/
 
 }
 
-void sv4guiImageProcessing::filteringTabSelected(){
+void sv4guiImageProcessing::filteringTabSelected()
+{
   ui->edgeImageComboBox->setEnabled(false);
   m_SeedMapper->m_box = false;
 
+/*
   switch(ui->filteringToolbox->currentIndex()){
     case 0:
       ui->helpLabel->setText("Smooth:\n"
@@ -231,12 +301,16 @@ void sv4guiImageProcessing::filteringTabSelected(){
         break;
   }
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+*/
 
 }
 
-void sv4guiImageProcessing::segmentationTabSelected(){
+void sv4guiImageProcessing::segmentationTabSelected()
+{
   ui->edgeImageComboBox->setEnabled(true);
   m_SeedMapper->m_box = false;
+
+/*
 
   switch(ui->segmentationToolbox->currentIndex()){
       case 0:
@@ -273,33 +347,44 @@ void sv4guiImageProcessing::segmentationTabSelected(){
           break;
   }
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+*/
 
 }
 
-void sv4guiImageProcessing::pipelinesTabSelected(){
+void sv4guiImageProcessing::pipelinesTabSelected()
+{
   ui->edgeImageComboBox->setEnabled(false);
   m_SeedMapper->m_box = false;
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-
 }
 
-void sv4guiImageProcessing::seedSize(){
-  double seedSize =
-    std::stod(ui->seedLineEdit->text().toStdString());
+//----------
+// seedSize
+//----------
+//
+void sv4guiImageProcessing::seedSize()
+{
+  double seedSize = std::stod(ui->seedLineEdit->text().toStdString());
 
   m_SeedMapper->m_seedRadius = seedSize;
 
   m_SeedInteractor->m_seedRadius = seedSize;
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
-/*******************************************************
-* Everything Else
-********************************************************/
-void sv4guiImageProcessing::OnSelectionChanged(std::vector<mitk::DataNode*> nodes){
+
+
+//--------------------
+// OnSelectionChanged
+//--------------------
+//
+void sv4guiImageProcessing::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
+{
+  std::cout << "========== sv4guiImageProcessing::OnSelectionChanged ========== " << std::endl;
   UpdateImageList();
 }
 
-std::string sv4guiImageProcessing::getImageName(int imageIndex){
+std::string sv4guiImageProcessing::getImageName(int imageIndex)
+{
   QString imageName;
   if (imageIndex == 0){
     imageName = ui->inputImageComboBox->currentText();
@@ -316,8 +401,12 @@ std::string sv4guiImageProcessing::getImageName(int imageIndex){
   return image_str;
 }
 
-mitk::Image::Pointer sv4guiImageProcessing::getImage(std::string image_name){
-
+//----------
+// getImage
+//----------
+//
+mitk::Image::Pointer sv4guiImageProcessing::getImage(std::string image_name)
+{
   mitk::DataNode::Pointer folder_node = GetDataStorage()->GetNamedNode("Images");
 
   mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetDerivations(folder_node,mitk::NodePredicateDataType::New("Image"));
@@ -419,7 +508,12 @@ void sv4guiImageProcessing::storeImage(sv4guiImageProcessingUtils::itkImPoint im
   UpdateImageList();
 }
 
-void sv4guiImageProcessing::storePolyData(vtkSmartPointer<vtkPolyData> vtkPd){
+//---------------
+// storePolyData
+//---------------
+//
+void sv4guiImageProcessing::storePolyData(vtkSmartPointer<vtkPolyData> vtkPd)
+{
   bool ok;
   QString new_polydata_name = QInputDialog::getText(m_Parent, tr("New 3D Segmentation Name"),
                                        tr("Enter a name for the new 3D Segmentation"), QLineEdit::Normal,
@@ -432,8 +526,7 @@ void sv4guiImageProcessing::storePolyData(vtkSmartPointer<vtkPolyData> vtkPd){
     return;
   }
 
-  mitk::DataNode::Pointer newPdNode =
-    GetDataStorage()->GetNamedNode(new_polydata_name.toStdString());
+  mitk::DataNode::Pointer newPdNode = GetDataStorage()->GetNamedNode(new_polydata_name.toStdString());
 
   if (newPdNode){
     QMessageBox::warning(NULL,"Segmentation Already exists","Please use a different segmentation name!");
@@ -460,7 +553,13 @@ void sv4guiImageProcessing::storePolyData(vtkSmartPointer<vtkPolyData> vtkPd){
   addNode(newPdNode, polydata_folder_node);
 }
 
-void sv4guiImageProcessing::addNode(mitk::DataNode::Pointer child_node, mitk::DataNode::Pointer parent_node){
+//---------
+// addNode
+//---------
+//
+void sv4guiImageProcessing::addNode(mitk::DataNode::Pointer child_node, mitk::DataNode::Pointer parent_node)
+{
+  std::cout << "========== sv4guiImageProcessing::addNode ========== " << std::endl;
 
   mitk::OperationEvent::IncCurrObjectEventId();
 
@@ -529,12 +628,15 @@ void sv4guiImageProcessing::runGeodesicLevelSet(){
   storeImage(itkImage);
 }
 
-void sv4guiImageProcessing::runThreshold(){
+//--------------
+// runThreshold
+//--------------
+//
+void sv4guiImageProcessing::runThreshold()
+{
   std::cout << " Threshold button clicked\n";
-  double upperThreshold =
-    std::stod(ui->thresholdUpperLineEdit->text().toStdString());
-  double lowerThreshold =
-    std::stod(ui->thresholdLowerLineEdit->text().toStdString());
+  double upperThreshold = std::stod(ui->thresholdUpperLineEdit->text().toStdString());
+  double lowerThreshold = std::stod(ui->thresholdLowerLineEdit->text().toStdString());
   std::cout << "upper,lower threshold: " << upperThreshold << ", " << lowerThreshold << "\n";
 
   sv4guiImageProcessingUtils::itkImPoint itkImage = getItkImage(0);
@@ -668,9 +770,14 @@ void sv4guiImageProcessing::runCropImage(){
   storeImage(itkImage);
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessing::CombinedCollidingFronts(sv4guiImageProcessingUtils::itkImPoint itkImage,
-double lower, double upper){
-
+//-------------------------
+// CombinedCollidingFronts
+//-------------------------
+//
+sv4guiImageProcessingUtils::itkImPoint 
+sv4guiImageProcessing::CombinedCollidingFronts(sv4guiImageProcessingUtils::itkImPoint itkImage, double lower, double upper)
+{
+  std::cout << "========== sv4guiImageProcessing::CombinedCollidingFronts ========== " << std::endl;
   bool min_init = false;
   auto minImage = sv4guiImageProcessingUtils::copyImage(itkImage);
 
@@ -688,17 +795,12 @@ double lower, double upper){
       auto v_end = m_SeedContainer->getEndSeed(s,e);
 
       std::cout << "executing colliding fronts\n";
-      auto s_index = sv4guiImageProcessingUtils::physicalPointToIndex(
-        itkImage, v_start[0], v_start[1], v_start[2]);
-      auto e_index = sv4guiImageProcessingUtils::physicalPointToIndex(
-        itkImage, v_end[0], v_end[1], v_end[2]);
-
+      auto s_index = sv4guiImageProcessingUtils::physicalPointToIndex( itkImage, v_start[0], v_start[1], v_start[2]);
+      auto e_index = sv4guiImageProcessingUtils::physicalPointToIndex( itkImage, v_end[0], v_end[1], v_end[2]);
       std::cout << s_index[0] << ", " << e_index[0] << "\n";
 
-      auto temp_im = sv4guiImageProcessingUtils::collidingFronts(itkImage,
-        s_index[0], s_index[1], s_index[2],
-        e_index[0], e_index[1], e_index[2],
-        lower, upper);
+      auto temp_im = sv4guiImageProcessingUtils::collidingFronts(itkImage, s_index[0], s_index[1], s_index[2],
+                       e_index[0], e_index[1], e_index[2], lower, upper);
 
       std::cout << "taking image minimum\n";
       if (min_init){
@@ -716,15 +818,26 @@ double lower, double upper){
   }
 }
 
-void sv4guiImageProcessing::runCollidingFronts(){
-  std::cout << " Colliding fronts button clicked\n";
+//--------------------
+// runCollidingFronts
+//--------------------
+//
+void sv4guiImageProcessing::runCollidingFronts()
+{
+  std::cout << "========== sv4guiImageProcessing::runCollidingFronts ========== " << std::endl;
 
   int startSeeds = m_SeedContainer->getNumStartSeeds();
-  if (startSeeds == 0) return;
+  std::cout << "[runCollidingFronts] Number of start seeds: " << startSeeds << std::endl;
+
+  if (startSeeds == 0) {
+    return;
+  }
 
   //threshold
   double lower = std::stod(ui->CFLowerLineEdit->text().toStdString());
   double upper = std::stod(ui->CFUpperLineEdit->text().toStdString());
+  std::cout << "[runCollidingFronts] Lower threshold: " << lower << std::endl;
+  std::cout << "[runCollidingFronts] Upper threshold: " << upper << std::endl;
 
   sv4guiImageProcessingUtils::itkImPoint itkImage = getItkImage(0);
 
@@ -741,18 +854,47 @@ void sv4guiImageProcessing::runCollidingFronts(){
   storeImage(minImage);
 }
 
-void sv4guiImageProcessing::runFullCollidingFronts(){
-  std::cout << " Colliding fronts button clicked\n";
+//------------------------
+// runFullCollidingFronts
+//------------------------
+//
+void sv4guiImageProcessing::runFullCollidingFronts()
+{
+  std::cout << "========== sv4guiImageProcessing::runFullCollidingFronts ========== " << std::endl;
 
-  /*****************
-  colliding fronts
-  *****************/
   int startSeeds = m_SeedContainer->getNumStartSeeds();
-  if (startSeeds == 0) return;
+  std::cout << "[runCollidingFronts] Number of start seeds: " << startSeeds << std::endl;
+  if (startSeeds == 0) {
+    QMessageBox::warning(NULL, "", "No seeds have been selected.");
+    return;
+  }
 
-  //threshold
-  double lower = std::stod(ui->fullCFLowerThresholdLineEdit->text().toStdString());
-  double upper = std::stod(ui->fullCFUpperThresholdLineEdit->text().toStdString());
+  // Get threshold values. 
+  //
+  auto lowerStr = ui->fullCFLowerThresholdLineEdit->text().toStdString();
+  auto upperStr = ui->fullCFUpperThresholdLineEdit->text().toStdString();
+  std::cout << "[runCollidingFronts] Lower threshold str: " << lowerStr << std::endl;
+  std::cout << "[runCollidingFronts] Upper threshold str: " << upperStr << std::endl;
+
+  if (lowerStr == "") {
+    QMessageBox::warning(NULL, "", "A lower threshold value must be specified.");
+    return;
+  }
+
+  if (upperStr == "") {
+    QMessageBox::warning(NULL, "", "An upper threshold value must be specified.");
+    return;
+  }
+
+  double lower = std::stod(lowerStr);
+  double upper = std::stod(upperStr);
+  std::cout << "[runCollidingFronts] Lower threshold: " << lower << std::endl;
+  std::cout << "[runCollidingFronts] Upper threshold: " << upper << std::endl;
+
+  if (lower >= upper) {
+    QMessageBox::warning(NULL, "", "The upper threshold value must be larger than the lower threshold value.");
+    return;
+  }
 
   sv4guiImageProcessingUtils::itkImPoint itkImage = getItkImage(0);
 
@@ -764,49 +906,32 @@ void sv4guiImageProcessing::runFullCollidingFronts(){
 
   auto minImage = CombinedCollidingFronts(itkImage,lower,upper);
 
-  /*****************
-  gradient magnitude
-  *****************/
-  double sigma =
-    std::stod(ui->fullCFGradientLineEdit->text().toStdString());
+  double sigma = std::stod(ui->fullCFGradientLineEdit->text().toStdString());
 
   std::cout << "Running gradient magnitude\n";
   auto gradImage = sv4guiImageProcessingUtils::gradientMagnitude(itkImage, sigma);
 
-  /****************
-  Level Set
-  *****************/
-  double propagation =
-    std::stod(ui->fullCFPropagationLineEdit->text().toStdString());
-  double advection =
-    std::stod(ui->fullCFAdvectionLineEdit->text().toStdString());
-  double curvature =
-    std::stod(ui->fullCFCurvatureLineEdit->text().toStdString());
-  double iterations =
-    std::stod(ui->fullCFIterationsLineEdit->text().toStdString());
+  double propagation = std::stod(ui->fullCFPropagationLineEdit->text().toStdString());
+  double advection = std::stod(ui->fullCFAdvectionLineEdit->text().toStdString());
+  double curvature = std::stod(ui->fullCFCurvatureLineEdit->text().toStdString());
+  double iterations = std::stod(ui->fullCFIterationsLineEdit->text().toStdString());
 
   if (!gradImage || !minImage){
     MITK_ERROR << "Error in gradient image or colliding fronts image\n";
     return;
   }
 
-  auto lsImage = sv4guiImageProcessingUtils::geodesicLevelSet(minImage, gradImage,
-     propagation, advection, curvature, iterations);
+  auto lsImage = sv4guiImageProcessingUtils::geodesicLevelSet(minImage, gradImage, propagation, advection, curvature, iterations);
 
-  /****************
-  IsoValue
-  *****************/
-  double isovalue =
-    std::stod(ui->fullCFIsoValueLineEdit->text().toStdString());
+  double isovalue = std::stod(ui->fullCFIsoValueLineEdit->text().toStdString());
 
-  vtkSmartPointer<vtkImageData> vtkImage =
-    sv4guiImageProcessingUtils::itkImageToVtkImage(lsImage);
-  vtkSmartPointer<vtkPolyData> vtkPd     =
-    sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue, false);
+  vtkSmartPointer<vtkImageData> vtkImage = sv4guiImageProcessingUtils::itkImageToVtkImage(lsImage);
+  vtkSmartPointer<vtkPolyData> vtkPd= sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue, false);
   storePolyData(vtkPd);
 }
 
-void sv4guiImageProcessing::runResampleImage(){
+void sv4guiImageProcessing::runResampleImage()
+{
   std::cout << " Resample Image button clicked\n";
 
   double space_x =
