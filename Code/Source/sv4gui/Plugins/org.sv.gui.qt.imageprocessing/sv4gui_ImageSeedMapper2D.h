@@ -53,8 +53,14 @@ class vtkGlyph3D;
 class vtkFloatArray;
 class vtkCellArray;
 
+//-------------------------
+// sv4guiImageSeedMapper2D
+//-------------------------
+// This class is used to display seeds in 2D windows. 
+//
+// It is implemented as a VTK-based mapper for surfaces.
+//
 class sv4guiImageSeedMapper2D : public mitk::VtkMapper
-//class SV4GUIMODULEPATH_EXPORT sv4guiImageSeedMapper2D : public mitk::VtkMapper
 {
   public:
     mitkClassMacro(sv4guiImageSeedMapper2D, mitk::VtkMapper);

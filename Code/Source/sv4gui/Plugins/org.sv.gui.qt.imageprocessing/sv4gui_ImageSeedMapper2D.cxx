@@ -90,6 +90,10 @@ sv4guiImageSeedMapper2D::LocalStorage::~LocalStorage()
 {
 }
 
+//-------------------------
+// sv4guiImageSeedMapper2D
+//-------------------------
+//
 sv4guiImageSeedMapper2D::sv4guiImageSeedMapper2D() : m_SeedPoint2DSize(100.0f), m_DistanceToPlane(4.0f)
 {
 }
@@ -98,7 +102,11 @@ sv4guiImageSeedMapper2D::~sv4guiImageSeedMapper2D()
 {
 }
 
-void sv4guiImageSeedMapper2D::ResetMapper( mitk::BaseRenderer* renderer )
+//-------------
+// ResetMapper
+//-------------
+//
+void sv4guiImageSeedMapper2D::ResetMapper(mitk::BaseRenderer* renderer)
 {
   //std::cout << "===================== sv4guiImageSeedMapper2D::ResetMapper =====================" << std::endl;
   LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
@@ -108,9 +116,13 @@ void sv4guiImageSeedMapper2D::ResetMapper( mitk::BaseRenderer* renderer )
 //------------
 // GetVtkProp
 //------------
+// This method is called when the cross-hairs are moved in a 2D window 
+// using the mouse or the Image Navagator sliders.
 //
-vtkProp* sv4guiImageSeedMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
+vtkProp * 
+sv4guiImageSeedMapper2D::GetVtkProp(mitk::BaseRenderer* renderer)
 {
+  //std::cout << "===================== sv4guiImageSeedMapper2D::GetVtkProp =====================" << std::endl;
   ResetMapper(renderer);
   GenerateDataForRenderer(renderer);
   LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
@@ -120,6 +132,10 @@ vtkProp* sv4guiImageSeedMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
 //--------------
 // CreateSphere
 //--------------
+// Create a sphere at the given location for display in a 2D window.
+//
+// Arguments:
+//   isStartSeed: If true then the sphere is a start sphere and is display with a predefined color.
 //
 vtkSmartPointer<vtkActor> 
 sv4guiImageSeedMapper2D::CreateSphere(double x, double y, double z, double radius, bool isStartSeed)
@@ -156,7 +172,7 @@ sv4guiImageSeedMapper2D::CreateSphere(double x, double y, double z, double radiu
 //
 void sv4guiImageSeedMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* renderer)
 {
-  std::cout << "===================== sv4guiImageSeedMapper2D::CreateVTKRenderObject =====================" << std::endl;
+  //std::cout << "===================== sv4guiImageSeedMapper2D::CreateVTKRenderObject =====================" << std::endl;
   mitk::DataNode* node = GetDataNode();
   if (node == nullptr) {
       return;
@@ -183,31 +199,39 @@ void sv4guiImageSeedMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* rendere
   // Removes all graphics properties.
   localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
 
-  // Get the plane to show the seed.
+  // Get the plane to show the seeds.
   const mitk::PlaneGeometry* plane = renderer->GetCurrentWorldPlaneGeometry();
   double precisionFactor = 0.52;
   m_DistanceToPlane = plane->GetExtentInMM(2) * precisionFactor;
+  double radius = 5.0 * plane->GetExtentInMM(2); 
+  //std::cout << "[CreateVTKRenderObject] radius: " << radius << std::endl;
 
   int numStartSeeds = seeds->getNumStartSeeds();
-  std::cout << "[CreateVTKRenderObject] numStartSeeds: " << numStartSeeds << std::endl;
-  bool isStartSeed = true;
+  //std::cout << "[CreateVTKRenderObject] numStartSeeds: " << numStartSeeds << std::endl;
 
   // Add seeds that are within a certain distance of the plane.
   //
-  double radius = 5.0 * plane->GetExtentInMM(2); 
-  std::cout << "[CreateVTKRenderObject] radius: " << radius << std::endl;
   for (int i = 0; i < numStartSeeds; i++){
-      auto point = seeds->getStartSeed(i);
-      mitk::Point3D mpoint;
-      mpoint[0] = point[0];
-      mpoint[1] = point[1];
-      mpoint[2] = point[2];
-      double diff = plane->Distance(mpoint);
+      mitk::Point3D point(seeds->getStartSeed(i).data());
+      double diff = plane->Distance(point);
       if (diff*diff < m_DistanceToPlane) {
+          bool isStartSeed = true;
           auto startSphere = CreateSphere(point[0], point[1], point[2], radius, isStartSeed);
           localStorage->m_PropAssembly->AddPart(startSphere);
       }
+
+      int numEndSeeds = seeds->getNumEndSeeds(i);
+      for (int j = 0; j < numEndSeeds; j++){
+          mitk::Point3D point(seeds->getEndSeed(i,j).data());
+          double diff = plane->Distance(point);
+          if (diff*diff < m_DistanceToPlane) {
+              bool isStartSeed = false;
+              auto endSphere = CreateSphere(point[0], point[1], point[2], radius, isStartSeed);
+              localStorage->m_PropAssembly->AddPart(endSphere);
+          }
+      }
   }
+
 
 
 /*
@@ -435,7 +459,7 @@ void sv4guiImageSeedMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* rendere
 //
 void sv4guiImageSeedMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
-    std::cout << "===================== sv4guiImageSeedMapper2D::GenerateDataForRenderer =====================" << std::endl;
+    //std::cout << "===================== sv4guiImageSeedMapper2D::GenerateDataForRenderer =====================" << std::endl;
     const mitk::DataNode* node = GetDataNode();
 
     if (node == NULL) {
@@ -591,6 +615,7 @@ void sv4guiImageSeedMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *rende
         this->CreateVTKRenderObjects(renderer);
     }
 */
+
 }
 
 //----------------------

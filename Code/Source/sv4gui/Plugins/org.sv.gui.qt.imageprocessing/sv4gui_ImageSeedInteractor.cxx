@@ -71,7 +71,6 @@ bool sv4guiImageSeedInteractor::IsOverSeed(const mitk::InteractionEvent* interac
   #ifdef dbg_IsOverSeed
   std::cout << "========== sv4guiImageSeedInteractor::IsOverSeed ========== " << std::endl;
   #endif
-
   const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
 
   if (positionEvent == NULL) {

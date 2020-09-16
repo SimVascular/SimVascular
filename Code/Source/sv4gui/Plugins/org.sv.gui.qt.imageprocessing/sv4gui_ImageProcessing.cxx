@@ -49,6 +49,9 @@
 #include <mitkImage.h>
 #include <mitkImageCast.h>
 
+#include "sv_PolyData.h"
+#include "sv_vmtk_utils_init.h"
+#include "sv_vmtk_utils.h"
 
 #include <usModuleRegistry.h>
 #include <usGetModuleContext.h>
@@ -104,10 +107,13 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
   }
 
   // Seed widgets.
-  connect(ui->seedLineEdit, SIGNAL(editingFinished()), this, SLOT(seedSize()));
+  connect(ui->SeedSizeLineEdit, SIGNAL(editingFinished()), this, SLOT(SeedSize()));
   connect(ui->seedCheckBox, SIGNAL(clicked(bool)), this, SLOT(displaySeeds(bool)));
   connect(ui->AddStartButton, SIGNAL(clicked(bool)), this, SLOT(AddStartSeed()));
   connect(ui->AddEndButton, SIGNAL(clicked(bool)), this, SLOT(AddEndSeed()));
+
+  // Centerlines widgets.
+  connect(ui->ComputeCenterlinesButton, SIGNAL(clicked(bool)), this, SLOT(ComputeCenterlines()));
 
   // Add mouse key shortcuts for adding and deleting a seed points.
   ui->AddStartButton->setShortcut(QKeySequence("S"));
@@ -184,9 +190,120 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
   }
 }
 
+//--------------------
+// ComputeCenterlines 
+//--------------------
+//
+void sv4guiImageProcessing::ComputeCenterlines()
+{
+  std::cout << "========== sv4guiImageProcessing::ComputeCenterlines ========== " << std::endl;
+
+  // A start seed must be defined. 
+  int numStartSeeds = m_SeedContainer->getNumStartSeeds();
+  if (numStartSeeds < 1) {
+    QMessageBox::warning(NULL,"","No start seeds have been defined.");
+    return;
+  }
+
+  // An end seed must be defined. 
+  int numEndSeeds = m_SeedContainer->getNumEndSeeds(0);
+  if (numEndSeeds < 1) {
+    QMessageBox::warning(NULL,"","No end seeds have been defined.");
+    return;
+  } 
+
+  if (m_LastSegmentationNodeName == "") {
+    QMessageBox::warning(NULL, "", "No segmentation have been created.");
+    return;
+  }
+
+  // Get the last segmentation.
+  mitk::DataNode::Pointer segFolderNode = GetDataStorage()->GetNamedNode("Segmentations");
+
+  mitk::DataNode::Pointer node = GetDataStorage()->GetNamedNode(m_LastSegmentationNodeName.toStdString());
+  if (!node) {
+    QMessageBox::warning(NULL, "", "Can't get the segmentation node named '" + m_LastSegmentationNodeName + "'.");
+    return;
+  }
+
+  sv4guiMitkSeg3D::Pointer mitkSeg3D = dynamic_cast<sv4guiMitkSeg3D*>(node->GetData());
+  sv4guiSeg3D* newSeg3D = mitkSeg3D->GetSeg3D();
+  auto segPolyData = newSeg3D->GetVtkPolyData();
+
+  int numCells = segPolyData->GetNumberOfCells();
+  int numPoints = segPolyData->GetNumberOfPoints();
+  auto points = segPolyData->GetPoints();
+  std::cout << "[ComputeCenterlines] Segmentation polydata:" << std::endl;
+  std::cout << "[ComputeCenterlines]   Number of points: " << numPoints << std::endl;
+
+  // Find the closest node to the start seed.
+  std::vector<int> sourceIDs;
+  std::vector<int> targetIDs;
+  for (int s = 0; s < numStartSeeds; s++) {
+      mitk::Point3D seedPoint(m_SeedContainer->getStartSeed(s).data());
+      double min_d = 1e6;
+      int min_id = -1;
+      double point[3];
+      for (int i = 0; i < numPoints; i++) {
+        int id = i;
+        points->GetPoint(id, point);
+        auto dx = point[0] - seedPoint[0];
+        auto dy = point[1] - seedPoint[1];
+        auto dz = point[2] - seedPoint[2];
+        auto d = dx*dx + dy*dy + dz*dz;
+        if (d < min_d) {
+          min_d = d;
+          min_id = id;
+        }
+      }
+      sourceIDs.push_back(min_id);
+
+      int numEndSeeds = m_SeedContainer->getNumEndSeeds(s);
+      if (numEndSeeds == 0) {
+        break;
+      }
+
+      for (int e = 0; e < numEndSeeds; e++){
+        mitk::Point3D seedPoint(m_SeedContainer->getEndSeed(s,e).data());
+        min_d = 1e6;
+        min_id = -1;
+
+        for (int i = 0; i < numPoints; i++) {
+          int id = i;
+          points->GetPoint(id, point);
+          auto dx = point[0] - seedPoint[0];
+          auto dy = point[1] - seedPoint[1];
+          auto dz = point[2] - seedPoint[2];
+          auto d = dx*dx + dy*dy + dz*dz;
+          if (d < min_d) {
+            min_d = d;
+            min_id = id;
+          }
+        }
+        targetIDs.push_back(min_id);
+      }
+    }
+
+  cvPolyData* linesDst = nullptr;
+  cvPolyData* voronoiDst = nullptr;
+  cvPolyData cvSurfPolydata(segPolyData);
+
+  if (sys_geom_centerlines(&cvSurfPolydata, sourceIDs.data(), sourceIDs.size(), targetIDs.data(), targetIDs.size(), &linesDst, &voronoiDst) != SV_OK) {
+    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
+    return;
+  }
+
+  auto lines = linesDst->GetVtkPolyData();
+  std::cout << "[ComputeCenterlines] Centerlines:" << std::endl;
+  std::cout << "[ComputeCenterlines]   Number of points: " << lines->GetNumberOfPoints() << std::endl;
+
+
+}
+
 //--------------
 // AddStartSeed 
 //--------------
+// Add the position of a start seed to m_SeedContainer.
 //
 void sv4guiImageProcessing::AddStartSeed()
 {
@@ -197,11 +314,15 @@ void sv4guiImageProcessing::AddStartSeed()
   int numStartSeeds = m_SeedContainer->getNumStartSeeds();
   std::cout << "[AddStartSeed] numStartSeeds: " << numStartSeeds << std::endl;
   m_SeedContainer->addStartSeed(point[0], point[1], point[2]);
+
+  // TODO:DaveP] Do we need to updata all?
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //------------
 // AddEndSeed 
 //------------
+// Add the position of an end seed to m_SeedContainer.
 //
 void sv4guiImageProcessing::AddEndSeed()
 {
@@ -212,12 +333,15 @@ void sv4guiImageProcessing::AddEndSeed()
   // A start seed must have been selected.
   int numStartSeeds = m_SeedContainer->getNumStartSeeds();
   if (numStartSeeds < 1) { 
-    QMessageBox::warning(NULL,"","No start seeds have been selected.");
+    QMessageBox::warning(NULL,"","No start seeds have been defined.");
     return;
   }
 
   // [TODO:DaveP] It seems that end seeds are paired with start seeds?
   m_SeedContainer->addEndSeed(point[0], point[1], point[2], numStartSeeds-1);
+
+  // TODO:DaveP] Do we need to updata all?
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //--------------
@@ -359,12 +483,12 @@ void sv4guiImageProcessing::pipelinesTabSelected()
 }
 
 //----------
-// seedSize
+// SeedSize
 //----------
 //
-void sv4guiImageProcessing::seedSize()
+void sv4guiImageProcessing::SeedSize()
 {
-  double seedSize = std::stod(ui->seedLineEdit->text().toStdString());
+  double seedSize = std::stod(ui->SeedSizeLineEdit->text().toStdString());
 
   m_SeedMapper->m_seedRadius = seedSize;
 
@@ -511,46 +635,52 @@ void sv4guiImageProcessing::storeImage(sv4guiImageProcessingUtils::itkImPoint im
 //---------------
 // storePolyData
 //---------------
+// Store a vtkPolyData object under an the SV Data Manager 'Segmentations' node.
 //
 void sv4guiImageProcessing::storePolyData(vtkSmartPointer<vtkPolyData> vtkPd)
 {
   bool ok;
-  QString new_polydata_name = QInputDialog::getText(m_Parent, tr("New 3D Segmentation Name"),
-                                       tr("Enter a name for the new 3D Segmentation"), QLineEdit::Normal,
-                                       "", &ok);
+  QString newNodeName = QInputDialog::getText(m_Parent, tr("New 3D Segmentation Name"),
+      tr("Enter a name for the new 3D Segmentation"), QLineEdit::Normal, "", &ok);
 
-  mitk::DataNode::Pointer polydata_folder_node = GetDataStorage()->GetNamedNode("Segmentations");
-
-  if (!polydata_folder_node){
-    MITK_ERROR << "No image folder found\n";
+  if (!ok) {
     return;
   }
 
-  mitk::DataNode::Pointer newPdNode = GetDataStorage()->GetNamedNode(new_polydata_name.toStdString());
-
-  if (newPdNode){
-    QMessageBox::warning(NULL,"Segmentation Already exists","Please use a different segmentation name!");
-    return;
-  }
-  if(!ok){
+  // Get the Segmentations node.
+  mitk::DataNode::Pointer segFolderNode = GetDataStorage()->GetNamedNode("Segmentations");
+  if (!segFolderNode) {
+    MITK_ERROR << "No Segmentations folder found\n";
+    QMessageBox::critical(NULL, "", "No Segmentations folder was found in the SV Data Manager."); 
     return;
   }
 
+  // Check for a duplicate node name.
+  mitk::DataNode::Pointer newPdNode = GetDataStorage()->GetNamedNode(newNodeName.toStdString());
+  if (newPdNode) {
+    QMessageBox::warning(NULL, "", "The segmentation node named '" + newNodeName + "' already exists.");
+    return;
+  }
+
+  // Create a new node.
   newPdNode = mitk::DataNode::New();
+  newPdNode->SetName(newNodeName.toStdString());
 
-  newPdNode->SetName(new_polydata_name.toStdString());
-
+  // Create segmentation objects to store in the node.
+  //
   sv4guiSeg3D* newSeg3D = new sv4guiSeg3D();
   newSeg3D->SetVtkPolyData(vtkPd);
 
   sv4guiMitkSeg3D::Pointer mitkSeg3D = sv4guiMitkSeg3D::New();
   mitkSeg3D->SetSeg3D(newSeg3D);
   mitkSeg3D->SetDataModified();
-
   newPdNode->SetData(mitkSeg3D);
 
-  std::cout << "Adding node\n";
-  addNode(newPdNode, polydata_folder_node);
+  // Add the new node to the Segmentations folder.
+  addNode(newPdNode, segFolderNode);
+
+  // [TODO:DaveP] this is a hack! replace later.
+  m_LastSegmentationNodeName = newNodeName;
 }
 
 //---------
@@ -773,6 +903,10 @@ void sv4guiImageProcessing::runCropImage(){
 //-------------------------
 // CombinedCollidingFronts
 //-------------------------
+// Compute a new image using colliding fronts and combine it with 
+// the imput image. 
+//
+// Returns an mikt::itkImgeType. 
 //
 sv4guiImageProcessingUtils::itkImPoint 
 sv4guiImageProcessing::CombinedCollidingFronts(sv4guiImageProcessingUtils::itkImPoint itkImage, double lower, double upper)
@@ -784,36 +918,33 @@ sv4guiImageProcessing::CombinedCollidingFronts(sv4guiImageProcessingUtils::itkIm
   int startSeeds = m_SeedContainer->getNumStartSeeds();
   if (startSeeds == 0) return NULL;
 
-  for (int s = 0; s < startSeeds; s++){
-    int endSeeds = m_SeedContainer->getNumEndSeeds(s);
-    if (endSeeds == 0) break;
+  for (int i = 0; i < startSeeds; i++) {
+    int endSeeds = m_SeedContainer->getNumEndSeeds(i);
+    if (endSeeds == 0) {
+      break;
+    }
 
-    auto v_start = m_SeedContainer->getStartSeed(s);
+    auto startPoint = m_SeedContainer->getStartSeed(i);
 
-    for (int e = 0; e < endSeeds; e++){
-      std::cout << "seed " << s << ", " << e << "\n";
-      auto v_end = m_SeedContainer->getEndSeed(s,e);
+    for (int j = 0; j < endSeeds; j++){
+      auto endPoint = m_SeedContainer->getEndSeed(i, j);
+      auto startIndex = sv4guiImageProcessingUtils::physicalPointToIndex(itkImage, startPoint[0], startPoint[1], startPoint[2]);
+      auto endIndex = sv4guiImageProcessingUtils::physicalPointToIndex(itkImage, endPoint[0], endPoint[1], endPoint[2]);
+      auto temp_im = sv4guiImageProcessingUtils::collidingFronts(itkImage, startIndex[0], startIndex[1], startIndex[2],
+                       endIndex[0], endIndex[1], endIndex[2], lower, upper);
 
-      std::cout << "executing colliding fronts\n";
-      auto s_index = sv4guiImageProcessingUtils::physicalPointToIndex( itkImage, v_start[0], v_start[1], v_start[2]);
-      auto e_index = sv4guiImageProcessingUtils::physicalPointToIndex( itkImage, v_end[0], v_end[1], v_end[2]);
-      std::cout << s_index[0] << ", " << e_index[0] << "\n";
-
-      auto temp_im = sv4guiImageProcessingUtils::collidingFronts(itkImage, s_index[0], s_index[1], s_index[2],
-                       e_index[0], e_index[1], e_index[2], lower, upper);
-
-      std::cout << "taking image minimum\n";
-      if (min_init){
+      if (min_init) {
         minImage = sv4guiImageProcessingUtils::elementwiseMinimum(minImage, temp_im);
-      }else {
+      } else {
         min_init = true;
         minImage = temp_im;
       }
     }
   }
-  if (min_init){
+
+  if (min_init) {
     return minImage;
-  }else{
+  } else {
     return NULL;
   }
 }
@@ -902,13 +1033,12 @@ void sv4guiImageProcessing::runFullCollidingFronts()
     MITK_ERROR << "No image 1 selected, please select an image 1\n";
     return;
   }
-  std::cout << "colliding fronts\n";
 
-  auto minImage = CombinedCollidingFronts(itkImage,lower,upper);
+  // Initialize the level set image.
+  auto minImage = CombinedCollidingFronts(itkImage, lower, upper);
 
+  // Compute the magnitude of the image gradient and transform the image intensities in [0.0, 1.0].
   double sigma = std::stod(ui->fullCFGradientLineEdit->text().toStdString());
-
-  std::cout << "Running gradient magnitude\n";
   auto gradImage = sv4guiImageProcessingUtils::gradientMagnitude(itkImage, sigma);
 
   double propagation = std::stod(ui->fullCFPropagationLineEdit->text().toStdString());
@@ -918,15 +1048,19 @@ void sv4guiImageProcessing::runFullCollidingFronts()
 
   if (!gradImage || !minImage){
     MITK_ERROR << "Error in gradient image or colliding fronts image\n";
+    QMessageBox::critical(NULL, "", "The colliding fronts computation has failed.");
     return;
   }
 
+  // Compute the level set segmentation.
   auto lsImage = sv4guiImageProcessingUtils::geodesicLevelSet(minImage, gradImage, propagation, advection, curvature, iterations);
 
+  // Extract an isosurface.
   double isovalue = std::stod(ui->fullCFIsoValueLineEdit->text().toStdString());
-
   vtkSmartPointer<vtkImageData> vtkImage = sv4guiImageProcessingUtils::itkImageToVtkImage(lsImage);
   vtkSmartPointer<vtkPolyData> vtkPd= sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue, false);
+
+  // Save the isosurface.
   storePolyData(vtkPd);
 }
 

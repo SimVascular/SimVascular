@@ -468,13 +468,26 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::fillHoles(sv4
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::gradientMagnitude(sv4guiImageProcessingUtils::itkImPoint image, double sigma){
+//-------------------
+// gradientMagnitude
+//-------------------
+// Computes the magnitude of the image gradient.
+//
+// The computational process is equivalent to first smoothing the image by convolving 
+// it with a Gaussian kernel for the given 'sigma' and then applying a differential operator.
+//
+// After the gradient is computed the image intensities are transformed to be between 0.0 and 1.0. 
+//
+sv4guiImageProcessingUtils::itkImPoint 
+sv4guiImageProcessingUtils::gradientMagnitude(sv4guiImageProcessingUtils::itkImPoint image, double sigma)
+{
+  // Compute the magnitude of the image gradient.
   auto gradientFilter = itk::GradientMagnitudeRecursiveGaussianImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
-
   gradientFilter->SetSigma(sigma);
   gradientFilter->SetInput(image);
   gradientFilter->Update();
 
+  // Transformation image intensities to be between 0.0 and 1.0 
   auto rescaleFilter = itk::RescaleIntensityImageFilter<sv4guiImageProcessingUtils::itkImageType,sv4guiImageProcessingUtils::itkImageType>::New();
   rescaleFilter->SetInput(gradientFilter->GetOutput());
   rescaleFilter->SetOutputMinimum(0.0);
@@ -510,9 +523,15 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::anisotropicSm
   return itkImage;
 }
 
-sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::geodesicLevelSet(sv4guiImageProcessingUtils::itkImPoint initialization, sv4guiImageProcessingUtils::itkImPoint edgeImage, double propagation, double advection, double curvature, int iterations){
+//------------------
+// geodesicLevelSet
+//------------------
+//
+sv4guiImageProcessingUtils::itkImPoint 
+sv4guiImageProcessingUtils::geodesicLevelSet(sv4guiImageProcessingUtils::itkImPoint initialization, 
+    sv4guiImageProcessingUtils::itkImPoint edgeImage, double propagation, double advection, double curvature, int iterations)
+{
   auto levelSetFilter = itk::GeodesicActiveContourLevelSetImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
-
   levelSetFilter->SetPropagationScaling(propagation);
   levelSetFilter->SetAdvectionScaling(advection);
   levelSetFilter->SetCurvatureScaling(curvature);

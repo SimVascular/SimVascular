@@ -82,13 +82,18 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     void SetLineEditValidFloat(QLineEdit* lineEdit);
 
+  // GUI widget callbacks.
+  //
   public slots:
 
     // Seeds. 
     void AddStartSeed();
     void AddEndSeed();
-    void seedSize();
+    void SeedSize();
     void displaySeeds(bool state);
+
+    // Centerlines.
+    void ComputeCenterlines();
 
     // Tab buttons.
     void imageEditingTabSelected();
@@ -137,6 +142,9 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     sv4guiImageProcessingUtils::itkImPoint CombinedCollidingFronts(sv4guiImageProcessingUtils::itkImPoint, double lower, double upper);
 
     mitk::DataNode::Pointer m_SeedNode;
+
+    // [TODO:DaveP] this is a hack! Don't keep!
+    QString m_LastSegmentationNodeName;
 
 };
 
