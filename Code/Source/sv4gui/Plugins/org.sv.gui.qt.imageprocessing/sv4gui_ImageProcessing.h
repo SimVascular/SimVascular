@@ -44,9 +44,11 @@
 #include <sv4gui_ImageSeedInteractor.h>
 #include <sv4gui_ImageSeedMapper.h>
 #include <sv4gui_ImageSeedMapper2D.h>
+#include "sv4gui_ImageLinesContainer.h"
+#include "sv4gui_ImageLinesMapper.h"
 
 #include <mitkImage.h>
-
+#include <mitkSurface.h>
 
 namespace Ui {
   class sv4guiImageProcessing;
@@ -63,6 +65,10 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     virtual void CreateQtPartControl(QWidget *parent) override;
 
     static const QString EXTENSION_ID;
+    static const std::string CENTERLINES_NODE_NAME;
+    static const std::string COLLIDING_FRONTS_NODE_NAME;
+    static const std::string SEED_POINTS_NODE_NAME;
+    static const std::string SURFACE_NODE_NAME;
 
     void UpdateImageList();
 
@@ -141,7 +147,20 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     sv4guiImageProcessingUtils::itkImPoint CombinedCollidingFronts(sv4guiImageProcessingUtils::itkImPoint, double lower, double upper);
 
+    mitk::DataStorage::Pointer m_DataStorage;
+    mitk::DataNode::Pointer m_CollidingFrontsNode;
     mitk::DataNode::Pointer m_SeedNode;
+
+    // Centerlines objects.
+    mitk::DataNode::Pointer m_CenterlinesNode;
+    sv4guiImageLinesContainer::Pointer m_CenterlinesContainer;
+    sv4guiImageLinesMapper::Pointer m_CenterlinesMapper;
+
+    // Surface objects.
+    mitk::DataNode::Pointer m_CollidingFrontsSurfaceNode;
+    mitk::Surface::Pointer m_CollidingFrontsSurface;
+
+    //sv4guiSimulationLinesMapper::Pointer m_CenterlinesMapper
 
     // [TODO:DaveP] this is a hack! Don't keep!
     QString m_LastSegmentationNodeName;
