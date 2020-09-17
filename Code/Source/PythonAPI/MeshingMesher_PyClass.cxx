@@ -265,7 +265,9 @@ Mesher_get_kernel(PyMeshingMesher* self, PyObject* args)
 PyDoc_STRVAR(Mesher_get_mesh_doc,
   "get_mesh()  \n\
   \n\
-  Get the mesh that has been generated. \n\
+  Get the generated volume mesh.                                             \n\
+  \n\
+  Returns (vtkUnstructuredGrid) The generated volume mesh.                   \n\
 ");
 
 static PyObject *
@@ -627,14 +629,21 @@ Mesher_set_walls(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 //-------------------
 // Mesher_write_mesh
 //-------------------
+// Doc width extent.
+//   \n\----------------------------------------------------------------------  \n\
 //
 PyDoc_STRVAR(Mesher_write_mesh_doc,
   "write_mesh(file_name)  \n\
    \n\
-   Write the generated volume mesh to a VTK .vtu format file. \n\
+   Write the generated volume mesh to a file. \n\
+   \n\
+   The format of the file depends on the meshing kernel used to generate the  \n\
+   mesh                                                                       \n\
+      1) TetGen - A vtkUnstructuredGrid .vtu file.                            \n\
+      2) MeshSim - A MeshSim .sms file.                                       \n\
    \n\
    Args: \n\
-     file_name (str): The name of the file to write the mesh to. \n\
+     file_name (str): The name of the file to write the mesh to.              \n\
 ");
 
 static PyObject *
@@ -652,6 +661,15 @@ Mesher_write_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 
   auto mesher = self->mesher;
   if (!MeshExists(api, mesher)) {
+      api.error("A mesh has not been generated.");
+      return nullptr;
+  }
+
+  // Check that the file can be written. 
+  if (FILE *file = fopen(fileName, "w")) {
+      fclose(file);
+  } else {
+      api.error("Unable to open the file '" + std::string(fileName) + "' for writing.");
       return nullptr;
   }
 

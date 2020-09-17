@@ -1048,7 +1048,7 @@ static int
 PyPathInit(PyPath* self, PyObject* args, PyObject *kwds)
 {
   static int numObjs = 1;
-  std::cout << "[PyPathInit] New Path object: " << numObjs << std::endl;
+  //std::cout << "[PyPathInit] New Path object: " << numObjs << std::endl;
   self->path = new PathElement();
   self->id = numObjs;
   numObjs += 1;
@@ -1064,7 +1064,7 @@ PyPathInit(PyPath* self, PyObject* args, PyObject *kwds)
 static PyObject *
 PyPathNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyPathNew] PyPathNew " << std::endl;
+  //std::cout << "[PyPathNew] PyPathNew " << std::endl;
   auto self = (PyPath*)type->tp_alloc(type, 0);
   if (self != NULL) {
       self->id = 1;
@@ -1080,7 +1080,7 @@ PyPathNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyPathDealloc(PyPath* self)
 {
-  std::cout << "[PyPathDealloc] Free PyPath" << std::endl;
+  //std::cout << "[PyPathDealloc] Free PyPath" << std::endl;
   delete self->path;
   Py_TYPE(self)->tp_free(self);
 }
@@ -1118,7 +1118,7 @@ SetPyPathTypeFields(PyTypeObject& pathType)
 PyObject *
 CreatePyPath(PathElement* path)
 {
-  std::cout << "[CreatePyPath] Create Path object ... " << std::endl;
+  //std::cout << "[CreatePyPath] Create Path object ... " << std::endl;
   auto pathObj = PyObject_CallObject((PyObject*)&PyPathType, NULL);
   auto pyPath = (PyPath*)pathObj;
 
@@ -1126,8 +1126,8 @@ CreatePyPath(PathElement* path)
       delete pyPath->path;
       pyPath->path = path;
   }
-  std::cout << "[CreatePyPath] pyPath id: " << pyPath->id << std::endl;
-  std::cout << "[CreatePyPath] pathObj ref count: " << Py_REFCNT(pathObj) << std::endl;
+  //std::cout << "[CreatePyPath] pyPath id: " << pyPath->id << std::endl;
+  //std::cout << "[CreatePyPath] pathObj ref count: " << Py_REFCNT(pathObj) << std::endl;
   return pathObj;
 }
 

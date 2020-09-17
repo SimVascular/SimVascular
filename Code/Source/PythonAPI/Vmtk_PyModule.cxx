@@ -398,7 +398,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
           return nullptr;
       }
       int id = PyLong_AsLong(item);
-      std::cout << "[Vmtk_centerlines]   ID: " << id << std::endl;
+      //std::cout << "[Vmtk_centerlines]   ID: " << id << std::endl;
       sources.push_back(id);
   }
 
@@ -457,13 +457,13 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   // Calculate the centerlines.
   cvPolyData* linesDst = nullptr;
   cvPolyData* voronoiDst = nullptr;
-  std::cout << "[Vmtk_centerlines] Calculate centerlines ... " << std::endl;
+  //std::cout << "[Vmtk_centerlines] Calculate centerlines ... " << std::endl;
 
   if (sys_geom_centerlines(&cvSurfPolydata, sources.data(), numInletIds, targets.data(), numOutletIds, &linesDst, &voronoiDst) != SV_OK) {
       api.error("Error calculating centerlines.");
       return nullptr;
   }
-  std::cout << "[Vmtk_centerlines] Done. " << std::endl;
+  //std::cout << "[Vmtk_centerlines] Done. " << std::endl;
 
   return vtkPythonUtil::GetObjectFromPointer(linesDst->GetVtkPolyData());
 }
@@ -598,13 +598,14 @@ Geom_centerlines(PyObject* self, PyObject* args)
     targets.push_back(PyLong_AsLong(PyList_GetItem(targetList,j)));
   }
 
+  /*
   for (int i=0;i<nsources;i++) {
       std::cout << "#### source: " << sources[i] << std::endl;
   }
   for (int i=0;i<ntargets;i++) {
       std::cout << "#### target: " << targets[i] << std::endl;
   }
-
+  */
 
   if (sys_geom_centerlines((cvPolyData*)geomSrc, sources.data(), nsources, targets.data(), ntargets, (cvPolyData**)&linesDst,
     (cvPolyData**)&voronoiDst) != SV_OK ) {

@@ -371,7 +371,7 @@ PyBlendOptionsInit(PyBlendOptions* self, PyObject* args, PyObject* kwargs)
 static PyObject *
 PyBlendOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyBlendOptionsNew] PyBlendOptionsNew " << std::endl;
+  //std::cout << "[PyBlendOptionsNew] PyBlendOptionsNew " << std::endl;
   auto self = (PyBlendOptions*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyBlendOptionsNew] ERROR: Can't allocate type." << std::endl;
@@ -387,7 +387,7 @@ PyBlendOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyBlendOptionsDealloc(PyBlendOptions* self)
 {
-  std::cout << "[PyBlendOptionsDealloc] Free PyBlendOptions" << std::endl;
+  //std::cout << "[PyBlendOptionsDealloc] Free PyBlendOptions" << std::endl;
   Py_TYPE(self)->tp_free(self);
 }
 

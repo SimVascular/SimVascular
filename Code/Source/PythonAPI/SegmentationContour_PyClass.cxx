@@ -248,9 +248,6 @@ static PyMethodDef PyContourSegmentationMethods[] = {
 static int
 PyContourSegmentationInit(PyContourSegmentation* self, PyObject* args, PyObject *kwargs)
 {
-  std::cout << "[PyContourSegmentationInit] ========== Init Contour Segmentation object ========== " << std::endl;
-  std::cout << "[PyContourSegmentationInit] kwargs: " << kwargs << std::endl;
-
   auto api = PyUtilApiFunction("|O!", PyRunTimeErr, "ContourSegmentation");
   static char *keywords[] = {"contour_points", NULL};
   PyObject* pointsArg = nullptr;
@@ -283,9 +280,11 @@ PyContourSegmentationInit(PyContourSegmentation* self, PyObject* args, PyObject 
 
       // Generate the PyContourSegmentation and SV Contour data from the list of control points.
       PyContourGenerateData(api, self, points);
+      #ifdef debug_PyContourSegmentationInit
       std::cout << "[PyContourSegmentationInit] Number of contour points: " << points.size() << std::endl;
       std::cout << "[PyContourSegmentationInit] Contour normal: " << self->normal[0] << " " << self->normal[1] << " " << self->normal[2] << std::endl;
       std::cout << "[PyContourSegmentationInit] Contour center: " << self->center[0] << " " << self->center[1] << " " << self->center[2] << std::endl;
+      #endif
 
       // Check control points distance to plane.
       auto maxDist = PyUtilComputeDistPointsToPlane(self->center, self->normal, points);
@@ -296,7 +295,6 @@ PyContourSegmentationInit(PyContourSegmentation* self, PyObject* args, PyObject 
       }
     }
 
-  std::cout << "[PyContourSegmentationInit] Done " << std::endl;
   return 0;
 }
 
@@ -307,7 +305,7 @@ PyContourSegmentationInit(PyContourSegmentation* self, PyObject* args, PyObject 
 static PyObject *
 PyContourSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
-  std::cout << "[PyContourSegmentationNew] New ContourSegmentation " << std::endl;
+  //std::cout << "[PyContourSegmentationNew] New ContourSegmentation " << std::endl;
   auto self = (PyContourSegmentation*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyContourSegmentationNew] ERROR: alloc failed." << std::endl;
@@ -323,7 +321,7 @@ PyContourSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 static void
 PyContourSegmentationDealloc(PyContourSegmentation* self)
 {
-  std::cout << "[PyContourSegmentationDealloc] **** Free PyContourSegmentation ****" << std::endl;
+  //std::cout << "[PyContourSegmentationDealloc] **** Free PyContourSegmentation ****" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);
 }

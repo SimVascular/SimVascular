@@ -802,7 +802,7 @@ PyModelingModelerInit(PyModelingModeler* self, PyObject* args, PyObject *kwds)
 //-----------------------
 // Define the Python type object that stores contour.kernel types.
 //
-static PyTypeObject PyModelingModelerType = {
+PyTypeObject PyModelingModelerType = {
   PyVarObject_HEAD_INIT(NULL, 0)
   MODELING_MODELER_MODULE_CLASS,
   sizeof(PyModelingModeler)

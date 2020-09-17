@@ -186,8 +186,8 @@ svCatchDebugger() {
     bool warnInvalid = true;
     for (int iarg = 1; iarg < argc;iarg++) {
       bool foundValid = false;
-      fprintf(stdout,"processing command line option (%i of %i): %s\n",iarg, argc-1, argv[iarg]);
-      fflush(stdout);
+      //fprintf(stdout,"processing command line option (%i of %i): %s\n",iarg, argc-1, argv[iarg]);
+      //fflush(stdout);
       if((!strcmp("-h",argv[iarg]))    ||
 	 (!strcmp("-help",argv[iarg])) ||
 	 (!strcmp("--help",argv[iarg]))) {
@@ -324,10 +324,10 @@ svCatchDebugger() {
 	  pass_along_options = true;
 	  pass_along_argc = argc - pass_along_start_index + 1;
 	}
-        fprintf(stdout,"  Note: remaining args passed along...\n");
-	fprintf(stdout,"    pass_along_start_index: %i\n",pass_along_start_index);
-	fprintf(stdout,"    pass_along_argc: %i\n\n",pass_along_argc);
-	fflush(stdout);
+        //fprintf(stdout,"  Note: remaining args passed along...\n");
+	//fprintf(stdout,"    pass_along_start_index: %i\n",pass_along_start_index);
+	//fprintf(stdout,"    pass_along_argc: %i\n\n",pass_along_argc);
+	//fflush(stdout);
 	foundValid = true;
 	break;
       }

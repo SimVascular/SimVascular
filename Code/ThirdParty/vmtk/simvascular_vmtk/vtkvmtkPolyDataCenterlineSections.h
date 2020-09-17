@@ -88,6 +88,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
   vtkSetStringMacro(PathArrayName);
   vtkGetStringMacro(PathArrayName);
 
+  vtkSetStringMacro(CenterlineIdArrayName);
+  vtkGetStringMacro(CenterlineIdArrayName);
+
   protected:
   vtkvmtkPolyDataCenterlineSections();
   ~vtkvmtkPolyDataCenterlineSections();  
@@ -119,6 +122,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
   char* BranchIdArrayNameTmp;
   char* BranchIdArrayName;
   char* PathArrayName;
+  char* CenterlineIdArrayName;
   char* CenterlineSectionAreaArrayName;
   char* CenterlineSectionMinSizeArrayName;
   char* CenterlineSectionMaxSizeArrayName;
@@ -126,6 +130,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
   char* CenterlineSectionClosedArrayName;
   char* CenterlineSectionBifurcationArrayName;
   char* CenterlineSectionNormalArrayName;
+
+  int n_centerlines;
 
   private:
   vtkvmtkPolyDataCenterlineSections(const vtkvmtkPolyDataCenterlineSections&);  // Not implemented.

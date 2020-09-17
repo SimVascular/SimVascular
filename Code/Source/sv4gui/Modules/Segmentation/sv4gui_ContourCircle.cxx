@@ -44,6 +44,7 @@ sv4guiContourCircle::sv4guiContourCircle()
 
     m_SubdivisionType=CONSTANT_TOTAL_NUMBER;
     m_SubdivisionNumber=36;
+    SetKernel(cKernelType::cKERNEL_CIRCLE);
 }
 
 sv4guiContourCircle::sv4guiContourCircle(const sv4guiContourCircle &other)

@@ -29,79 +29,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PYAPI_MODELING_MODULE_H
-#define PYAPI_MODELING_MODULE_H
+#ifndef PYAPI_SIMULATION_MODULE_H
+#define PYAPI_SIMULATION_MODULE_H 
 
 #include "SimVascular.h"
-
-#include "svPythonAPIExports.h"
-
-#include "sv4gui_Model.h"
-#include "sv_FactoryRegistrar.h"
-#include "sv_SolidModel.h"
-
-// Need to define this when including sv4gui_ModelIO.h..
-//nate#define US_MODULE_NAME 
-
 #include "Python.h"
 
-//extern "C" SV_EXPORT_PYTHON_API int Solid_PyInit();
-
-// Needed for 'dmg' module.
-extern PyTypeObject PyModelingSeriesType;
-extern PyTypeObject PyModelingModelerType;
-extern PyTypeObject PyModelingModelType;
-
-typedef cvSolidModel * (*CreateSolidModelObjectFunction)();
-
-extern "C" SV_EXPORT_PYTHON_API void PyAPI_InitParasolid(CreateSolidModelObjectFunction createObject);
-
-SolidModel_KernelT SV_EXPORT_PYTHON_API ModelingKernelNameToEnum(std::string name);
-
-=======
-PyObject* CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
-PyObject* CreatePyModelingModelObject(cvSolidModel* solidModel);
-
-//-----------------
-// PyModelingModel
-//-----------------
-// The Python modeling.Model class is used to store
-// solid model data. 
+//-------------------
+// PySimulationFluid 
+//-------------------
+// Define the SV Python simulation.Fluid class.
 //
-typedef struct {
-  PyObject_HEAD
-  int id;
-  SolidModel_KernelT kernel;
-  cvSolidModel* solidModel;
-} PyModelingModel;
-
-//-----------------
-// PyModelingSeries 
-//-----------------
-// The modeling.Series class is used to store data for
-// time-varying models.
-//
-// In SV time-varying meshe are stored in the sv4guiModel class. 
-//
-typedef struct PyModelingSeries 
+typedef struct
 {
   PyObject_HEAD
-  sv4guiModel::Pointer solidGroupPointer;
-  sv4guiModel* solidGroup;
-  int id;
-} PyModelingSeries;
+} PySimulationFluid;
 
-extern "C" SV_EXPORT_PYTHON_API typedef struct
+//----------------------------
+// PySimulationOneDimensional 
+//----------------------------
+// Define the SV Python simulation.OneDimensional class.
+//
+/*
+typedef struct
 {
   PyObject_HEAD
-  cvFactoryRegistrar* registrar;
-}pycvFactoryRegistrar;
+  PyObject* parameters;
+} PySimulationOneDimensional;
+*/
 
-#if PYTHON_MAJOR_VERSION == 2
-PyMODINIT_FUNC  initpySolid();
-#endif
+
 #if PYTHON_MAJOR_VERSION == 3
-PyMODINIT_FUNC  PyInit_PyModeling();
+PyMODINIT_FUNC PyInit_PySimulation();
 #endif
 
 #endif 

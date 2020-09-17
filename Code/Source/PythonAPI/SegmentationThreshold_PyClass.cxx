@@ -118,7 +118,7 @@ static int
 PyThresholdSegmentationInit(PyThresholdSegmentation* self, PyObject* args, PyObject *kwds)
 {
   static int numObjs = 1;
-  std::cout << "[PyThresholdSegmentationInit] New Threshold Segmentation object: " << numObjs << std::endl;
+  //std::cout << "[PyThresholdSegmentationInit] New Threshold Segmentation object: " << numObjs << std::endl;
   self->super.contour = new thresholdContour();
   self->super.CopySv4ContourData = PyThresholdCopySegmentationData;
   numObjs += 1;
@@ -132,7 +132,7 @@ PyThresholdSegmentationInit(PyThresholdSegmentation* self, PyObject* args, PyObj
 static PyObject *
 PyThresholdSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyThresholdSegmentationNew] PyThresholdSegmentationNew " << std::endl;
+  //std::cout << "[PyThresholdSegmentationNew] PyThresholdSegmentationNew " << std::endl;
   auto self = (PyThresholdSegmentation*)type->tp_alloc(type, 0);
   if (self != NULL) {
       //self->super.id = 2;
@@ -147,7 +147,7 @@ PyThresholdSegmentationNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyThresholdSegmentationDealloc(PyThresholdSegmentation* self)
 {
-  std::cout << "[PyThresholdSegmentationDealloc] Free PyThresholdSegmentation" << std::endl;
+  //std::cout << "[PyThresholdSegmentationDealloc] Free PyThresholdSegmentation" << std::endl;
   delete self->super.contour;
   Py_TYPE(self)->tp_free(self);
 }

@@ -37,13 +37,14 @@
 #include "svPythonAPIExports.h"
 
 #include "Python.h"
-#include <string>
 #include "vtkPythonUtil.h"
 #include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "sv3_Contour.h"
 
 #include <array>
+#include <map>
+#include <string>
 
 //-------------------
 // PyUtilApiFunction
@@ -87,12 +88,24 @@ bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, double 
 
 bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, int point[3]);
 
+std::string PyUtilGetObjectType(PyObject* obj);
+
 void PyUtilGetPyErrorInfo(PyObject* item, std::string& valMsg, std::string& itemStr);
 
 bool PyUtilGetFrameData(PyUtilApiFunction& api, PyObject* centerArg, std::array<double,3>& center,                  
   PyObject* normalArg, std::array<double,3>& normal, PyObject* frameObj, sv3::PathElement::PathPoint& pathPoint);
 
 std::string PyUtilGetFunctionName(const char* functionName);
+
+std::vector<std::map<std::string,std::string>> PyUtilGetDictListAttr(PyObject* obj, std::string name);
+
+double PyUtilGetDoubleAttr(PyObject* obj, std::string name);
+
+int PyUtilGetIntAttr(PyObject* obj, std::string name);
+
+std::string PyUtilGetStringAttr(PyObject* obj, std::string name);
+
+std::vector<std::string> PyUtilGetStringListAttr(PyObject* obj, std::string name);
 
 std::string PyUtilGetMsgPrefix(const std::string& functionName);
 

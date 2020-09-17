@@ -50,6 +50,7 @@ list (APPEND CXXSRCS
   PathPlanning_PyModule.cxx
   PyUtils.cxx
   Modeling_PyModule.cxx
+  Simulation_PyModule.cxx
   Vmtk_PyModule.cxx
 )
 
@@ -74,6 +75,8 @@ target_link_libraries(${lib}
   ${SV_LIB_TETGEN_MESH_NAME}
   ${SV_LIB_UTILS_NAME}
   ${SV_LIB_TETGEN_ADAPTOR_NAME}
+
+  org_sv_gui_qt_simulation1d
 
   ${SV_LIB_MODULE_MESH_NAME}
   ${SV_LIB_MODULE_MODEL_NAME}

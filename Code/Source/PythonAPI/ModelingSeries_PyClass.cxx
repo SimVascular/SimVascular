@@ -55,7 +55,7 @@ sv4guiModel::Pointer
 ModelingSeries_read(char* fileName)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  std::cout << "[ModelingSeries_read] File name: " << fileName << std::endl;
+  //std::cout << "[ModelingSeries_read] File name: " << fileName << std::endl;
   sv4guiModel::Pointer group;
 
   try {
@@ -67,7 +67,7 @@ ModelingSeries_read(char* fileName)
 
   auto solidGroup = dynamic_cast<sv4guiModel*>(group.GetPointer());
   int numSolids = solidGroup->GetTimeSize();
-  std::cout << "[ModelingSeries_read] Number of solids: " << numSolids << std::endl;
+  //std::cout << "[ModelingSeries_read] Number of solids: " << numSolids << std::endl;
 
   return group;
 }
@@ -312,7 +312,7 @@ PyModelingSeriesInit(PyModelingSeries* self, PyObject* args)
 static PyObject *
 PyModelingSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyModelingSeriesNew] PyModelingSeriesNew " << std::endl;
+  //std::cout << "[PyModelingSeriesNew] PyModelingSeriesNew " << std::endl;
   auto self = (PyModelingModel*)type->tp_alloc(type, 0);
   //auto self = (PyContour*)type->tp_alloc(type, 0);
   if (self == NULL) {
@@ -329,7 +329,7 @@ PyModelingSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyModelingSeriesDealloc(PyModelingSeries* self)
 {
-  std::cout << "[PyModelingSeriesDealloc] Free PyModelingSeries" << std::endl;
+  //std::cout << "[PyModelingSeriesDealloc] Free PyModelingSeries" << std::endl;
   // Can't delete solidGroup because it has a protected detructor.
   //delete self->solidGroup;
   Py_TYPE(self)->tp_free(self);
