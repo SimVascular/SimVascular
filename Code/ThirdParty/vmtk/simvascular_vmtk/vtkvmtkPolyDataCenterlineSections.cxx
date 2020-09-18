@@ -528,8 +528,11 @@ int vtkvmtkPolyDataCenterlineSections::GroupCenterline()
 	vtkNew(vtkPolyData, branches);
     this->SplitCenterline(bifurcations, branches);
 
-    // enumerate all bifurcations and branches
-    this->ConnectivityCenterline(bifurcations, this->BifurcationIdArrayName, this->BranchIdArrayName);
+    // enumerate bifurcations (only if there is at least one bifurcation, i.e. more than one centerline)
+    if (this->n_centerlines > 1)
+        this->ConnectivityCenterline(bifurcations, this->BifurcationIdArrayName, this->BranchIdArrayName);
+
+    // enumerate branches
     this->ConnectivityCenterline(branches, this->BranchIdArrayName, this->BifurcationIdArrayName);
 
     // bring bifurcations and branches back together
