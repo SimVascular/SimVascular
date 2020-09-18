@@ -389,7 +389,7 @@ PyLoftNurbsOptionsInit(PyLoftNurbsOptions* self, PyObject* args, PyObject* kwarg
 static PyObject *
 PyLoftNurbsOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyLoftNurbsOptionsNew] PyLoftNurbsOptionsNew " << std::endl;
+  //std::cout << "[PyLoftNurbsOptionsNew] PyLoftNurbsOptionsNew " << std::endl;
   auto self = (PyLoftNurbsOptions*)type->tp_alloc(type, 0);
   if (self == NULL) {
       std::cout << "[PyLoftNurbsOptionsNew] ERROR: Can't allocate type." << std::endl;
@@ -406,7 +406,7 @@ PyLoftNurbsOptionsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyLoftNurbsOptionsDealloc(PyLoftNurbsOptions* self)
 {
-  std::cout << "[PyLoftNurbsOptionsDealloc] Free PyLoftNurbsOptions" << std::endl;
+  //std::cout << "[PyLoftNurbsOptionsDealloc] Free PyLoftNurbsOptions" << std::endl;
   Py_TYPE(self)->tp_free(self);
 }
 

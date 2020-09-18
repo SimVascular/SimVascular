@@ -142,8 +142,6 @@ static struct PyModuleDef PyPathPlanningModule = {
 //
 PyMODINIT_FUNC PyInit_PyPathplanning()
 {
-  std::cout << "========== load pathplanning module ==========" << std::endl;
-
   // Setup the Path class type.
   //
   SetPyPathTypeFields(PyPathType);

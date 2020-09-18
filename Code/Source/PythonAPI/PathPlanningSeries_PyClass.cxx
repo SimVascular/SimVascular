@@ -59,10 +59,9 @@ static PyObject * CreatePyPathSeries(PathGroup* pathPaths);
 static sv3::PathGroup*
 PathSeries_read(char* fileName)
 {
-  std::cout << "========== PathSeries_read ==========" << std::endl;
+  //std::cout << "========== PathSeries_read ==========" << std::endl;
+  //std::cout << "[PathSeries_read] fileName: " << fileName << std::endl;
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-
-  std::cout << "[PathSeries_read] fileName: " << fileName << std::endl;
   sv3::PathGroup* pathGroup;
 
   try {
@@ -72,7 +71,6 @@ PathSeries_read(char* fileName)
           return nullptr;
       }
       int numElements = pathGroup->GetTimeSize();
-      std::cout << "[PathSeries_read] numElements: " << numElements << std::endl;
 
   } catch (const std::exception& readException) {
       api.error("Error reading file '" + std::string(fileName) + "': " + readException.what());
@@ -215,9 +213,6 @@ PathSeries_set_path(PyPathSeries* self, PyObject* args, PyObject* kwargs)
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyPathType, &pathArg, &timeStep)) {
      return api.argsError();
   }
-
-  auto pmsg = "[PathSeries_set_path] ";
-  std::cout << pmsg << std::endl;
 
   // Get the PathElement object.
   auto pathObj = (PyPath*)pathArg;
@@ -549,7 +544,7 @@ static int
 PyPathSeriesInit(PyPathSeries* self, PyObject* args)
 {
   static int numObjs = 1;
-  std::cout << "[PyPathSeriesInit] New PathSeries object: " << numObjs << std::endl;
+  //std::cout << "[PyPathSeriesInit] New PathSeries object: " << numObjs << std::endl;
   auto api = PyUtilApiFunction("|s", PyRunTimeErr, __func__);
   char* fileName = nullptr;
   if (!PyArg_ParseTuple(args, api.format, &fileName)) {
@@ -557,7 +552,6 @@ PyPathSeriesInit(PyPathSeries* self, PyObject* args)
       return 1;
   }
   if (fileName != nullptr) {
-      std::cout << "[PyPathSeriesInit] File name: " << fileName << std::endl;
       self->pathGroup = PathSeries_read(fileName);
   } else {
       self->pathGroup = new sv3::PathGroup();
@@ -575,7 +569,7 @@ PyPathSeriesInit(PyPathSeries* self, PyObject* args)
 static PyObject *
 PyPathSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyPathSeriesNew] PyPathSeriesNew " << std::endl;
+  //std::cout << "[PyPathSeriesNew] PyPathSeriesNew " << std::endl;
   auto self = (PyPath*)type->tp_alloc(type, 0);
   if (self != NULL) {
       self->id = 1;
@@ -590,7 +584,7 @@ PyPathSeriesNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyPathSeriesDealloc(PyPathSeries* self)
 {
-  std::cout << "[PyPathSeriesDealloc] **** Free PyPathSeries **** " << std::endl;
+  //std::cout << "[PyPathSeriesDealloc] **** Free PyPathSeries **** " << std::endl;
   delete self->pathGroup;
   Py_TYPE(self)->tp_free(self);
 }
@@ -628,7 +622,7 @@ SetPyPathSeriesTypeFields(PyTypeObject& pathType)
 PyObject *
 CreatePyPathSeries(PathGroup* pathGroup)
 {
-  std::cout << "[CreatePyPathSeries] Create PathSeries object ... " << std::endl;
+  //std::cout << "[CreatePyPathSeries] Create PathSeries object ... " << std::endl;
   auto pathPathsObj = PyObject_CallObject((PyObject*)&PyPathSeriesType, NULL);
   auto pyPathSeries = (PyPathSeries*)pathPathsObj;
 
@@ -636,7 +630,6 @@ CreatePyPathSeries(PathGroup* pathGroup)
       delete pyPathSeries->pathGroup;
       pyPathSeries->pathGroup = pathGroup;
   }
-  std::cout << "[CreatePyPath] pyPathSeries id: " << pyPathSeries->id << std::endl;
   return pathPathsObj;
 }
 

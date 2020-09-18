@@ -45,7 +45,10 @@
 
 //extern "C" SV_EXPORT_SOLID int Solid_PyInit();
 
+// Needed for 'dmg' module.
 extern PyTypeObject PyModelingSeriesType;
+extern PyTypeObject PyModelingModelerType;
+extern PyTypeObject PyModelingModelType;
 
 typedef cvSolidModel * (*CreateSolidModelObjectFunction)();
 
@@ -53,7 +56,21 @@ extern "C" SV_EXPORT_SOLID void PyAPI_InitParasolid(CreateSolidModelObjectFuncti
 
 SolidModel_KernelT ModelingKernelNameToEnum(std::string name);
 
-PyObject * CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
+PyObject* CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
+PyObject* CreatePyModelingModelObject(cvSolidModel* solidModel);
+
+//-----------------
+// PyModelingModel
+//-----------------
+// The Python modeling.Model class is used to store
+// solid model data. 
+//
+typedef struct {
+  PyObject_HEAD
+  int id;
+  SolidModel_KernelT kernel;
+  cvSolidModel* solidModel;
+} PyModelingModel;
 
 //-----------------
 // PyModelingSeries

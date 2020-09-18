@@ -41,6 +41,11 @@
 
 #include "sv4gui_ContourGroupIO.h"
 
+//----------------------
+// PySegmentationSeries
+//----------------------
+// The Series class definition.
+//
 extern "C" SV_EXPORT_PYTHON_API typedef struct
 {
   PyObject_HEAD
@@ -64,9 +69,11 @@ static PyObject * CreatePySegmentationSeries(sv4guiContourGroup::Pointer contour
 static sv4guiContourGroup::Pointer
 SegmentationSeries_read(char* fileName)
 {
+  #ifdef dbg_SegmentationSeries_read
   std::cout << "========== SegmentationSeries_read ==========" << std::endl;
-  auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   std::cout << "[SegmentationSeries_read] fileName: " << fileName << std::endl;
+  #endif
+  auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   sv4guiContourGroup::Pointer group;
 
   try {
@@ -76,26 +83,24 @@ SegmentationSeries_read(char* fileName)
       return nullptr;
   }
 
-  std::cout << "[SegmentationSeries_read] File read and group returned." << std::endl;
   auto contourGroup = dynamic_cast<sv4guiContourGroup*>(group.GetPointer());
   int numTimeSteps = contourGroup->GetTimeSize();
-  //int numTimeSteps = contourGroup->GetSize();
+  #ifdef dbg_SegmentationSeries_read
   std::cout << "[SegmentationSeries_read] Number of time steps: " << numTimeSteps << std::endl;
+  #endif
 
   return group;
 }
 
-//////////////////////////////////////////////////////
-//       G r o u p  C l a s s  M e t h o d s        //
-//////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+//       S e r i e s   C l a s s  M e t h o d s      //
+///////////////////////////////////////////////////////
 //
-// SV Python Contour Group methods.
-
-//-----------------------------------------
-// SegmentationGroup_get_num_segmentations
-//-----------------------------------------
+//------------------------------------------
+// SegmentationSeries_get_num_segmentations
+//------------------------------------------
 //
-PyDoc_STRVAR(SegmentationGroup_get_num_segmentations_doc,
+PyDoc_STRVAR(SegmentationSeries_get_num_segmentations_doc,
   "get_num_segmentations(time=0) \n\
    \n\
    Get the number of segmentations for the given time. \n\
@@ -107,7 +112,7 @@ PyDoc_STRVAR(SegmentationGroup_get_num_segmentations_doc,
 ");
 
 static PyObject *
-SegmentationGroup_get_num_segmentations(PySegmentationSeries* self, PyObject* args, PyObject* kwargs)
+SegmentationSeries_get_num_segmentations(PySegmentationSeries* self, PyObject* args, PyObject* kwargs)
 {
   auto api = PyUtilApiFunction("|i", PyRunTimeErr, __func__);
   static char *keywords[] = {"time", NULL};
@@ -131,11 +136,11 @@ SegmentationGroup_get_num_segmentations(PySegmentationSeries* self, PyObject* ar
   return Py_BuildValue("i", numSegs);
 }
 
-//---------------------------------
-// SegmentationGroup_get_num_times
-//---------------------------------
+//----------------------------------
+// SegmentationSeries_get_num_times
+//----------------------------------
 //
-PyDoc_STRVAR(SegmentationGroup_get_num_times_doc,
+PyDoc_STRVAR(SegmentationSeries_get_num_times_doc,
   "get_num_times() \n\
    \n\
    Get the number of time points in the series. \n\
@@ -144,32 +149,37 @@ PyDoc_STRVAR(SegmentationGroup_get_num_times_doc,
 ");
 
 static PyObject *
-SegmentationGroup_get_num_times(PySegmentationSeries* self, PyObject* args)
+SegmentationSeries_get_num_times(PySegmentationSeries* self, PyObject* args)
 {
   auto contourGroup = self->contourGroup;
   int numTimeSteps = contourGroup->GetTimeSize();
   return Py_BuildValue("i", numTimeSteps);
 }
 
-//------------------------------------
-// SegmentationGroup_get_segmentation
-//------------------------------------
+//-------------------------------------
+// SegmentationSeries_get_segmentation
+//-------------------------------------
 //
-PyDoc_STRVAR(SegmentationGroup_get_segmentation_doc,
-  "get_segmentation(time=0) \n\
+PyDoc_STRVAR(SegmentationSeries_get_segmentation_doc,
+  "get_segmentation(id, time=0) \n\
    \n\
-   Get the segmentation for the given time. \n\
+   Get the segmentation for the given id and time.                            \n\
+   \n\
+   The segmentation id identifies a segmentation from a list of segmentations \n\
+   defined for each time point. The id is between 0 and the number of         \n\
+   segementations - 1.                                                        \n\
    \n\
    Args: \n\
-     time (Optional[int]): The time to get the segmentation for. \n\
+     id (int): The id of the segmentation to get. 0 <= id <= #segmentations-1 \n\
+     time (Optional[int]): The time to get the segmentation for.              \n\
    \n\
-   Returns (sv.segmentation.Segmentation object): The segmentation object for the given time.\n\
+   Returns (sv.segmentation.Segmentation): The segmentation object for the    \n\
+      given id and time.                                                      \n\
 ");
 
 static PyObject *
-SegmentationGroup_get_segmentation(PySegmentationSeries* self, PyObject* args, PyObject* kwargs)
+SegmentationSeries_get_segmentation(PySegmentationSeries* self, PyObject* args, PyObject* kwargs)
 {
-  std::cout << "========== SegmentationGroup_get_segmentation ==========" << std::endl;
   auto api = PyUtilApiFunction("i|i", PyRunTimeErr, __func__);
   static char *keywords[] = {"id", "time", NULL};
   int id = 0;
@@ -205,25 +215,30 @@ SegmentationGroup_get_segmentation(PySegmentationSeries* self, PyObject* args, P
       api.error("ERROR getting the contour for the 'id=" + std::to_string(id) + "' and 'time=" + std::to_string(time) + "'.");
       return nullptr;
   }
+
+  #ifdef dbg_SegmentationSeries_get_segmentation
   auto kernel = contour->GetKernel();
   auto ctype = contour->GetType();
   auto cmethod = contour->GetMethod();
   auto contourType = SegmentationMethod_get_name(kernel);
-  std::cout << "[SegmentationGroup_get_segmentation] ctype: " << ctype << std::endl;
-  std::cout << "[SegmentationGroup_get_segmentation] kernel: " << kernel << std::endl;
-  std::cout << "[SegmentationGroup_get_segmentation] cmethod: " << cmethod << std::endl;
-  std::cout << "[SegmentationGroup_get_segmentation] Contour type: " << contourType << std::endl;
+  std::cout << "[SegmentationSeries_get_segmentation] ctype: " << ctype << std::endl;
+  std::cout << "[SegmentationSeries_get_segmentation] kernel: " << kernel << std::endl;
+  std::cout << "[SegmentationSeries_get_segmentation] cmethod: " << cmethod << std::endl;
+  std::cout << "[SegmentationSeries_get_segmentation] Contour type: " << contourType << std::endl;
+  #endif
 
   // Create a PyContour object from the SV Contour object
   // and return it as a PyObject*.
   return PyCreateSegmentation(contour);
 }
 
-//-------------------------
-// SegmentationGroup_write
-//-------------------------
+//--------------------------
+// SegmentationSeries_write
+//--------------------------
 //
-PyDoc_STRVAR(SegmentationGroup_write_doc,
+// [TODO:DaveP] implement this.
+//
+PyDoc_STRVAR(SegmentationSeries_write_doc,
   "write(file_name) \n\
    \n\
    Write the segmentation series to an SV .ctgr file.\n\
@@ -233,7 +248,7 @@ PyDoc_STRVAR(SegmentationGroup_write_doc,
 ");
 
 static PyObject *
-SegmentationGroup_write(PySegmentationSeries* self, PyObject* args)
+SegmentationSeries_write(PySegmentationSeries* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   char* fileName = NULL;
@@ -277,14 +292,15 @@ PyDoc_STRVAR(contourgroup_doc, "segmentation.Series methods.");
 //
 static PyMethodDef PySegmentationSeriesMethods[] = {
 
-  {"get_num_segmentations", (PyCFunction)SegmentationGroup_get_num_segmentations, METH_VARARGS|METH_KEYWORDS,
-                             SegmentationGroup_get_num_segmentations_doc},
+  {"get_num_segmentations", (PyCFunction)SegmentationSeries_get_num_segmentations, METH_VARARGS|METH_KEYWORDS,
+                             SegmentationSeries_get_num_segmentations_doc},
 
-  {"get_num_times", (PyCFunction)SegmentationGroup_get_num_times, METH_VARARGS, SegmentationGroup_get_num_times_doc},
+  {"get_num_times", (PyCFunction)SegmentationSeries_get_num_times, METH_VARARGS, SegmentationSeries_get_num_times_doc},
 
-  {"get_segmentation", (PyCFunction)SegmentationGroup_get_segmentation, METH_VARARGS|METH_KEYWORDS, SegmentationGroup_get_segmentation_doc},
+  {"get_segmentation", (PyCFunction)SegmentationSeries_get_segmentation, METH_VARARGS|METH_KEYWORDS, SegmentationSeries_get_segmentation_doc},
 
-  {"write", (PyCFunction)SegmentationGroup_write, METH_VARARGS, SegmentationGroup_write_doc},
+  // [TODO:DaveP] not implemented yet.
+  // {"write", (PyCFunction)SegmentationSeries_write, METH_VARARGS, SegmentationSeries_write_doc},
 
   {NULL, NULL}
 };
@@ -405,16 +421,14 @@ SetSegmentationSeriesTypeFields(PyTypeObject& contourType)
 PyObject *
 CreatePySegmentationSeries(sv4guiContourGroup* contourGroup)
 {
-  std::cout << "[CreatePySegmentationSeries] Create ContourGroup object ... " << std::endl;
+  //std::cout << "[CreatePySegmentationSeries] Create ContourGroup object ... " << std::endl;
   auto contourGroupObj = PyObject_CallObject((PyObject*)&PySegmentationSeriesType, NULL);
   auto pyContourGroup = (PySegmentationSeries*)contourGroupObj;
 
   if (contourGroup != nullptr) {
       //delete pyContourGroup->contourGroup;
       pyContourGroup->contourGroup = contourGroup;
-      std::cout << "[CreatePyContour] Set contourGroup to: " << contourGroup << std::endl;
   }
-  std::cout << "[CreatePyContour] pyContourGroup id: " << pyContourGroup->id << std::endl;
   return contourGroupObj;
 }
 

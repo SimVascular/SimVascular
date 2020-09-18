@@ -33,18 +33,6 @@
 // the PolyData, OpenCascade and Parasolid classes.
 //
 // This class is not exposed.
-//
-//-----------------
-// PyModelingModel
-//-----------------
-// The Python modeling.Model class internal data.
-//
-typedef struct {
-  PyObject_HEAD
-  int id;
-  SolidModel_KernelT kernel;
-  cvSolidModel* solidModel;
-} PyModelingModel;
 
 extern bool ModelingCheckFileFormat(PyUtilApiFunction& api, SolidModel_KernelT kernel, std::string fileName);
 
@@ -458,7 +446,7 @@ PyModelingModelInit(PyModelingModel* self, PyObject* args, PyObject *kwds)
 // The type object stores a large number of values, mostly C function pointers,
 // each of which implements a small part of the type’s functionality.
 //
-static PyTypeObject PyModelingModelType = {
+PyTypeObject PyModelingModelType = {
   PyVarObject_HEAD_INIT(NULL, 0)
   MODELING_MODEL_MODULE_CLASS,
   sizeof(PyModelingModel)

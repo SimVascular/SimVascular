@@ -29,53 +29,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PYAPI_SEGMENTATION_PYMODULE_H
-#define PYAPI_SEGMENTATION_PYMODULE_H
+#ifndef PYAPI_SIMULATION_MODULE_H
+#define PYAPI_SIMULATION_MODULE_H 
 
 #include "SimVascular.h"
 #include "Python.h"
-#include "svPythonAPIExports.h"
-#include "sv3_Contour.h"
-#include "sv_FactoryRegistrar.h"
-#include "sv4gui_ContourGroup.h"
 
-// Segmentation references Path objects.
-#include "PathPlanning_PyModule.h"
-
-// Need to define US_MODULE_NAME because we are including sv4gui_ContourGroupIO.h.
-#define US_MODULE_NAME
-
-// Needed for the dmd module.
-extern PyObject * PyCreateSegmentation(sv4guiContour* contour);
-
-PyObject* CreatePySegmentationSeries(sv4guiContourGroup* contourGroup);
-
-// Define the signature for the function used to copy sv4guiContour
-// object data to sv3::Contour objects.
-typedef void (*CopySegmentationDataFunc)(sv4guiContour* sv4Contour, PyObject*);
-
-//----------------
-// PySegmentation
-//----------------
-// Segmentation base class.
+//-------------------
+// PySimulationFluid 
+//-------------------
+// Define the SV Python simulation.Fluid class.
 //
-// CopySv4ContourData: A function pointer for copying sv4guiContour object
-//    data to sv3::Contour objects. This is set in each derived class's
-//    object initialization function (e.g. PyCircleSegmentationInit).
-//
-extern "C" SV_EXPORT_PYTHON_API typedef struct
+typedef struct
 {
   PyObject_HEAD
-  sv3::Contour* contour;
-  CopySegmentationDataFunc CopySv4ContourData;
-  int id;
-} PySegmentation;
+} PySimulationFluid;
 
-#if PYTHON_MAJOR_VERSION == 2
-PyMODINIT_FUNC  initpyContour();
-#endif
+//----------------------------
+// PySimulationOneDimensional 
+//----------------------------
+// Define the SV Python simulation.OneDimensional class.
+//
+/*
+typedef struct
+{
+  PyObject_HEAD
+  PyObject* parameters;
+} PySimulationOneDimensional;
+*/
+
+
 #if PYTHON_MAJOR_VERSION == 3
-PyMODINIT_FUNC  PyInit_PySegmentation();
+PyMODINIT_FUNC PyInit_PySimulation();
 #endif
 
-#endif
+#endif 
