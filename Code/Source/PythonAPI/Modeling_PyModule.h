@@ -58,7 +58,6 @@ extern "C" SV_EXPORT_PYTHON_API void PyAPI_InitParasolid(CreateSolidModelObjectF
 
 SolidModel_KernelT SV_EXPORT_PYTHON_API ModelingKernelNameToEnum(std::string name);
 
-=======
 PyObject* CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
 PyObject* CreatePyModelingModelObject(cvSolidModel* solidModel);
 
