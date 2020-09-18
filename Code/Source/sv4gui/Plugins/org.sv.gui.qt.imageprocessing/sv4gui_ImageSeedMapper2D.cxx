@@ -31,6 +31,7 @@
 
 #include "sv4gui_ImageSeedMapper2D.h"
 #include "sv4gui_ImageSeedContainer.h"
+#include "sv4gui_ImageSeedMapper.h"
 
 //mitk includes
 #include "mitkVtkPropRenderer.h"
@@ -129,40 +130,6 @@ sv4guiImageSeedMapper2D::GetVtkProp(mitk::BaseRenderer* renderer)
   return ls->m_PropAssembly;
 }
 
-//--------------
-// CreateSphere
-//--------------
-// Create a sphere at the given location for display in a 2D window.
-//
-// Arguments:
-//   isStartSeed: If true then the sphere is a start sphere and is display with a predefined color.
-//
-vtkSmartPointer<vtkActor> 
-sv4guiImageSeedMapper2D::CreateSphere(double x, double y, double z, double radius, bool isStartSeed)
-{
-  auto sphere = vtkSmartPointer<vtkSphereSource>::New();
-  sphere->SetRadius(radius);
-  sphere->SetCenter(x,y,z);
-  sphere->SetPhiResolution(50);
-  sphere->SetThetaResolution(100);
-
-  auto sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  sphereMapper->SetInputConnection(sphere->GetOutputPort());
-
-  auto sphereActor = vtkSmartPointer<vtkActor>::New();
-  sphereActor->SetMapper(sphereMapper);
-  if (isStartSeed){
-    sphereActor->GetProperty()->SetColor(1,0,0);
-  } else {
-    sphereActor->GetProperty()->SetColor(0,1,0);
-  }
-
-  sphereActor->GetProperty()->SetAmbient(0.3);
-
-  return sphereActor;
-}
-
-
 //------------------------
 // CreateVTKRenderObjects
 //------------------------
@@ -216,7 +183,10 @@ void sv4guiImageSeedMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* rendere
       double diff = plane->Distance(point);
       if (diff*diff < m_DistanceToPlane) {
           bool isStartSeed = true;
-          auto startSphere = CreateSphere(point[0], point[1], point[2], radius, isStartSeed);
+          auto startSphere = sv4guiImageSeedMapper::CreateSphere(point[0], point[1], point[2], radius, isStartSeed);
+          if (seeds->selectStartSeed && (seeds->selectStartSeedIndex == i)) {
+            startSphere->GetProperty()->SetColor(sv4guiImageSeedMapper::START_SEED_HIGHLIGHT_COLOR);
+          }
           localStorage->m_PropAssembly->AddPart(startSphere);
       }
 
@@ -226,7 +196,10 @@ void sv4guiImageSeedMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* rendere
           double diff = plane->Distance(point);
           if (diff*diff < m_DistanceToPlane) {
               bool isStartSeed = false;
-              auto endSphere = CreateSphere(point[0], point[1], point[2], radius, isStartSeed);
+              auto endSphere = sv4guiImageSeedMapper::CreateSphere(point[0], point[1], point[2], radius, isStartSeed);
+              if (seeds->selectEndSeed && (seeds->selectEndSeedIndex == j)) {
+                endSphere->GetProperty()->SetColor(sv4guiImageSeedMapper::END_SEED_HIGHLIGHT_COLOR);
+              }
               localStorage->m_PropAssembly->AddPart(endSphere);
           }
       }

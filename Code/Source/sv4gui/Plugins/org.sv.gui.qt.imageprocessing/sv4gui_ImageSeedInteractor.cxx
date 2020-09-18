@@ -42,6 +42,10 @@
 #include <usModule.h>
 #include <usModuleContext.h>
 
+//---------------------------
+// sv4guiImageSeedInteractor
+//---------------------------
+//
 sv4guiImageSeedInteractor::sv4guiImageSeedInteractor()
 {
   m_selectedSeed.push_back(-1);
@@ -52,12 +56,16 @@ sv4guiImageSeedInteractor::~sv4guiImageSeedInteractor()
 {
 }
 
+//----------------------------
+// ConnectActionsAndFunctions
+//----------------------------
+//
 void sv4guiImageSeedInteractor::ConnectActionsAndFunctions()
 {
   CONNECT_CONDITION("is_over_seed", IsOverSeed);
-  CONNECT_FUNCTION( "add_seed"    , AddSeed);
-  CONNECT_FUNCTION( "add_end_seed", AddEndSeed);
-  CONNECT_FUNCTION( "delete_seed" , DeleteSeed);
+  //CONNECT_FUNCTION( "add_start_seed"    , AddSeed);
+  //CONNECT_FUNCTION( "add_end_seed", AddEndSeed);
+  CONNECT_FUNCTION( "remove_seed" , DeleteSeed);
 }
 
 //------------
@@ -77,31 +85,65 @@ bool sv4guiImageSeedInteractor::IsOverSeed(const mitk::InteractionEvent* interac
       return false;
   }
 
-  sv4guiImageSeedContainer* seeds = static_cast< sv4guiImageSeedContainer* >( GetDataNode()->GetData() );
-
+  auto seeds = static_cast< sv4guiImageSeedContainer*>(GetDataNode()->GetData());
   if (seeds == NULL) {
+      std::cout << "[IsOverSeed] No seeds." << std::endl;
       return false;
   }
 
+  int numStartSeeds = seeds->getNumStartSeeds();
+  if (numStartSeeds == 0) { 
+      return false;
+  }
+
+  // Get the position of the mouse pointer.
   mitk::Point3D point3d = positionEvent->GetPositionInWorld();
-
   m_currentPickedPoint = point3d;
+  seeds->hoverPoint[0] = point3d[0];
+  seeds->hoverPoint[1] = point3d[1];
+  seeds->hoverPoint[2] = point3d[2];
 
-  seeds->hoverPoint[0] = (double)point3d[0];
-  seeds->hoverPoint[1] = (double)point3d[1];
-  seeds->hoverPoint[2] = (double)point3d[2];
-
-  m_selectedSeed = seeds->findNearestSeed((double)point3d[0], (double)point3d[1], (double)point3d[2], 3*m_seedRadius);
-
-  // [TODO:DaveP] This renders ALL visible objects from all other nodes every time the moust is moved!
-  //interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+  // Find the seed point within m_seedRadius tolerance..
+  double tol = m_seedRadius;
+  m_selectedSeed = seeds->findNearestSeed(point3d[0], point3d[1], point3d[2], tol);
 
   #ifdef dbg_IsOverSeed
   std::cout << "[IsOverSeed] m_selectedSeed[0]: " << m_selectedSeed[0] << std::endl;
+  std::cout << "[IsOverSeed] m_selectedSeed[1]: " << m_selectedSeed[1] << std::endl;
   std::cout << "[IsOverSeed] Point: " << point3d[0] << "  " << point3d[1] << "  " << point3d[2] << std::endl;
   #endif
 
-  if (m_selectedSeed[0] != -1){
+  // Check for a start seed found.
+  if (m_selectedSeed[0] == -1){
+      bool updateGraphics = false;
+      if (seeds->selectStartSeed) {
+          updateGraphics = true;
+      }
+      seeds->selectStartSeed = false;
+      if (updateGraphics) { 
+          interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+      }
+  } else { 
+    seeds->selectStartSeed = true;
+    seeds->selectStartSeedIndex = m_selectedSeed[0];
+    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    return true;
+  } 
+
+  // Check for an end seed found.
+  if (m_selectedSeed[1] == -1){
+      bool updateGraphics = false;
+      if (seeds->selectEndSeed) {
+          updateGraphics = true;
+      }
+      seeds->selectEndSeed = false;
+      if (updateGraphics) {
+          interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+      }
+  } else {
+    seeds->selectEndSeed = true;
+    seeds->selectEndSeedIndex = m_selectedSeed[1];
+    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
     return true;
   }
 
@@ -164,13 +206,44 @@ void sv4guiImageSeedInteractor::AddEndSeed(mitk::StateMachineAction*, mitk::Inte
   // interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
 }
 
-void sv4guiImageSeedInteractor::DeleteSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent ){
+//------------
+// DeleteSeed
+//------------
+// Delete a start or end seed.
+//
+void sv4guiImageSeedInteractor::DeleteSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
+{
+  std::cout << "========== sv4guiImageSeedInteractor::DeleteSeed ========== " << std::endl;
+  auto seeds = static_cast< sv4guiImageSeedContainer*>(GetDataNode()->GetData());
+  if (seeds == NULL) {
+      return;
+  }
+
+  int numStartSeeds = seeds->getNumStartSeeds();
+  std::cout << "[DeleteSeed] numStartSeeds: " << numStartSeeds << std::endl;
+
+  std::cout << "[DeleteSeed] seeds->selectStartSeed: " << seeds->selectStartSeed << std::endl;
+  std::cout << "[DeleteSeed] seeds->selectStartSeedIndex: " << seeds->selectStartSeedIndex<< std::endl;
+
+  std::cout << "[DeleteSeed] seeds->selectEndSeed: " << seeds->selectEndSeed << std::endl;
+  std::cout << "[DeleteSeed] seeds->selectEndSeedIndex: " << seeds->selectEndSeedIndex<< std::endl;
+
+  // If a start seed is selected then delete it and all of its related end seeds.
+  if (seeds->selectStartSeed) {
+      std::cout << "[DeleteSeed] Delete start seed and all of its end seed." << std::endl;
+      int startIndex = seeds->selectEndSeedIndex;
+      int endIndex = -1;
+      seeds->deleteSeed(startIndex, endIndex);
+      int numStartSeeds = seeds->getNumStartSeeds();
+      std::cout << "[DeleteSeed] After delete: numStartSeeds: " << numStartSeeds << std::endl;
+  }
+
+/*
   IsOverSeed(interactionEvent);
 
   if (m_selectedSeed[0] == -1) return;
 
-  sv4guiImageSeedContainer* seeds  =
-        static_cast< sv4guiImageSeedContainer* >( GetDataNode()->GetData() );
+  sv4guiImageSeedContainer* seeds = static_cast< sv4guiImageSeedContainer* >( GetDataNode()->GetData() );
 
   if(seeds==NULL)
       return;
@@ -179,5 +252,6 @@ void sv4guiImageSeedInteractor::DeleteSeed(mitk::StateMachineAction*, mitk::Inte
   if (m_selectedSeed[1] == -1){
     m_currentStartSeed -= 1;
   }
+*/
   interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
 }

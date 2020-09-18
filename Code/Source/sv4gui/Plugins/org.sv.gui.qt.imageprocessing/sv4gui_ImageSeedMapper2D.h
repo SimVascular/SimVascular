@@ -103,8 +103,6 @@ class sv4guiImageSeedMapper2D : public mitk::VtkMapper
     virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
     virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
 
-    vtkSmartPointer<vtkActor> CreateSphere(double x, double y, double z, double radius, bool isStartSeed=true);
-
     // "point 2D size" property, in display units
     float m_SeedPoint2DSize;   
 

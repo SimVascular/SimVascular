@@ -448,21 +448,24 @@ void sv4guiPathDataInteractor::FinishMove(mitk::StateMachineAction*, mitk::Inter
 
 }
 
+//-------------
+// SelectPoint
+//-------------
+//
 void sv4guiPathDataInteractor::SelectPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     unsigned int timeStep = interactionEvent->GetSender()->GetTimeStep(GetDataNode()->GetData());
-
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent != NULL)
-    {
+
+    if (positionEvent != NULL) {
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL)
+        if(pathElement==NULL) {
             return;
+        }
 
         mitk::Point3D point = positionEvent->GetPositionInWorld();
         int index = SearchControlPoint(positionEvent,pathElement);
-        if (index != -2)
-        {
+        if (index != -2) {
             //first deselect the other points
             pathElement->DeselectControlPoint();
 //            pathElement->SetControlPointSelected(index,true);

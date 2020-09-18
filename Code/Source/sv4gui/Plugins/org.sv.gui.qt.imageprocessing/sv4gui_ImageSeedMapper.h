@@ -53,6 +53,11 @@ class sv4guiImageSeedMapper : public mitk::VtkMapper
     mitkClassMacro(sv4guiImageSeedMapper, mitk::VtkMapper);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
+    static vtkSmartPointer<vtkActor> CreateSphere(double x, double y, double z, double radius, bool isStartSeed);
+    static double END_SEED_COLOR[3];
+    static double END_SEED_HIGHLIGHT_COLOR[3];
+    static double START_SEED_COLOR[3];
+    static double START_SEED_HIGHLIGHT_COLOR[3];
 
     class LocalStorage : public mitk::Mapper::BaseLocalStorage
     {
@@ -87,8 +92,6 @@ protected:
     virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
 
     virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
-
-    vtkSmartPointer<vtkActor> createSeedActor(double x, double y, double z, int color);
 
     vtkSmartPointer<vtkActor> createCubeActor(double x1, double y1, double z1, double x2, double y2, double z2 );
 };

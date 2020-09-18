@@ -84,7 +84,7 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     void storeImage(sv4guiImageProcessingUtils::itkImPoint image);
 
-    void storePolyData(vtkSmartPointer<vtkPolyData> vtkPd);
+    void storePolyData(vtkSmartPointer<vtkPolyData>& vtkPd);
 
     void SetLineEditValidFloat(QLineEdit* lineEdit);
 
@@ -94,7 +94,9 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     // Seeds. 
     void AddStartSeed();
+    void RemoveStartSeed();
     void AddEndSeed();
+    void RemoveEndSeed();
     void SeedSize();
     void displaySeeds(bool state);
 
@@ -138,7 +140,7 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     sv4guiImageSeedContainer::Pointer m_SeedContainer;
 
-    bool m_init = true;
+    bool m_PluginInitialized = false;
 
     sv4guiImageSeedInteractor::Pointer m_SeedInteractor;
 
@@ -160,10 +162,16 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     mitk::DataNode::Pointer m_CollidingFrontsSurfaceNode;
     mitk::Surface::Pointer m_CollidingFrontsSurface;
 
-    //sv4guiSimulationLinesMapper::Pointer m_CenterlinesMapper
+    QString m_PluginOutputDirectory;
 
     // [TODO:DaveP] this is a hack! Don't keep!
     QString m_LastSegmentationNodeName;
+
+  private: 
+
+    int FindClosesetPoint(vtkPolyData* polyData, std::vector<double>& testPoint);
+    QString GetOutputDirectory();
+    void WritePolydata(std::string& fileName, vtkPolyData* polydata);
 
 };
 

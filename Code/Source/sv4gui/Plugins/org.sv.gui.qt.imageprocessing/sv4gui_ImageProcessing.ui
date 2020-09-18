@@ -1712,6 +1712,18 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+    <property name="toolTip">
+     <string>Add a start seed at the position of the 2D window cross-hairs.</string>
+    </property>
+    <property name="statusTip">
+     <string/>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="accessibleDescription">
+     <string/>
+    </property>
     <property name="text">
      <string>Add Start</string>
     </property>
@@ -1829,7 +1841,7 @@
      <string>Size:</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="ClearStartButton">
+   <widget class="QPushButton" name="RemoveStartButton">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -1839,10 +1851,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>Clear Start</string>
+     <string>Remove Start</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="ClearEndButton">
+   <widget class="QPushButton" name="RemoveEndButton">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -1852,7 +1864,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Clear End</string>
+     <string>Remove End</string>
     </property>
    </widget>
   </widget>

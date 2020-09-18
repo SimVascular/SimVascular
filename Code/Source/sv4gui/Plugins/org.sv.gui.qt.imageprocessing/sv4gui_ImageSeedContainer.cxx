@@ -31,17 +31,28 @@
 
 #include "sv4gui_ImageSeedContainer.h"
 #include "math.h"
+#include <tuple>
 
-sv4guiImageSeedContainer::sv4guiImageSeedContainer(){
+//--------------------------
+// sv4guiImageSeedContainer
+//--------------------------
+//
+sv4guiImageSeedContainer::sv4guiImageSeedContainer()
+{
+  m_NumSeeds = 0;
+  m_NumStartSeeds = 0;
   m_startSeeds = std::vector<std::vector<double>>();
   m_endSeeds = std::vector<std::vector<std::vector<double>>>();
   hoverPoint.push_back(0.0);
   hoverPoint.push_back(0.0);
   hoverPoint.push_back(0.0);
+  selectStartSeed = false;
+  selectStartSeedIndex = -1;
+  selectEndSeed = false;
+  selectEndSeedIndex = -1;
 };
 
-sv4guiImageSeedContainer::sv4guiImageSeedContainer(const sv4guiImageSeedContainer& other)
-  :BaseData(other)
+sv4guiImageSeedContainer::sv4guiImageSeedContainer(const sv4guiImageSeedContainer& other) :BaseData(other)
 {
   int numStartSeeds = other.getNumStartSeeds();
   for(int start = 0; start < numStartSeeds; start++){
@@ -61,19 +72,33 @@ sv4guiImageSeedContainer::~sv4guiImageSeedContainer(){
 
 };
 
-void sv4guiImageSeedContainer::addStartSeed(double x, double y, double z){
+//--------------
+// addStartSeed
+//--------------
+//
+void sv4guiImageSeedContainer::addStartSeed(double x, double y, double z)
+{
   auto v = std::vector<double>();
   v.push_back(x);
   v.push_back(y);
   v.push_back(z);
-
   m_startSeeds.push_back(v);
-
   auto v2 = std::vector<std::vector<double>>();
   m_endSeeds.push_back(v2);
+
+  m_Seeds.emplace_back(ImageSeed(m_NumSeeds,x,y,z), std::vector<ImageSeed>()); 
+  m_NumSeeds += 1;
+  m_NumStartSeeds += 1;
 };
 
-void sv4guiImageSeedContainer::addEndSeed(double x, double y, double z, int seedIndex){
+//------------
+// addEndSeed
+//------------
+//
+void sv4guiImageSeedContainer::addEndSeed(double x, double y, double z, int seedIndex)
+{
+  std::cout << "========== sv4guiImageSeedContainer::addEndSeed ========== " << std::endl;
+  std::cout << "[addEndSeed] seedIndex: " << seedIndex << std::endl;
   auto v = std::vector<double>();
   v.push_back(x);
   v.push_back(y);
@@ -81,6 +106,9 @@ void sv4guiImageSeedContainer::addEndSeed(double x, double y, double z, int seed
 
   m_endSeeds[seedIndex].push_back(v);
 
+  std::get<1>(m_Seeds[seedIndex]).emplace_back(ImageSeed(m_NumSeeds,x,y,z)); 
+  //std::get<1>(m_Seeds[m_NumStartSeeds-1]).emplace_back(ImageSeed(m_NumSeeds,x,y,z)); 
+  m_NumSeeds += 1;
 };
 
 int sv4guiImageSeedContainer::getNumStartSeeds() const {
@@ -99,52 +127,71 @@ std::vector<double> sv4guiImageSeedContainer::getEndSeed(int startSeedIndex, int
   return m_endSeeds[startSeedIndex][endSeedIndex];
 }
 
-std::vector<int> sv4guiImageSeedContainer::findNearestSeed(double x, double y, double z, double tol){
-
+//-----------------
+// findNearestSeed
+//-----------------
+//
+std::vector<int> 
+sv4guiImageSeedContainer::findNearestSeed(double x, double y, double z, double tol)
+{
   bool done = false;
-
   int numStartSeeds = getNumStartSeeds();
 
-  auto v = std::vector<int>();
-  v.push_back(-1);
-  v.push_back(-1);
+  auto seedIDs = std::vector<int>();
+  seedIDs.push_back(-1);
+  seedIDs.push_back(-1);
 
-  if (numStartSeeds == 0) return v;
+  if (numStartSeeds == 0) {
+    return seedIDs;
+  }
 
-  for (int start = 0; start < numStartSeeds; start++){
-    auto v_start = m_startSeeds[start];
-    auto d       = distance(v_start[0], v_start[1], v_start[2], x, y ,z);
+  // Search seed points.
+  //
+  for (int i = 0; i < numStartSeeds; i++){
+    auto point = m_startSeeds[i];
+    auto d = distance(point[0], point[1], point[2], x, y ,z);
 
     if (d < tol) {
-      v[0] = start;
-      v[1] = -1;
-      return v;
+      seedIDs[0] = i;
+      seedIDs[1] = -1;
+      return seedIDs;
     }
 
-    int numEndSeeds = getNumEndSeeds(start);
-    for (int end = 0; end < numEndSeeds; end++){
-      auto v_end = m_endSeeds[start][end];
-
-      auto d     = distance(v_end[0], v_end[1], v_end[2], x, y, z);
+    int numEndSeeds = getNumEndSeeds(i);
+    for (int j = 0; j < numEndSeeds; j++){
+      auto point = m_endSeeds[i][j];
+      auto d = distance(point[0], point[1], point[2], x, y, z);
       if (d < tol){
-        v[0] = start;
-        v[1] = end;
-        return v;
+        //seedIDs[0] = i;
+        seedIDs[1] = j;
+        return seedIDs;
       }
     }
   }
-  return v;
+
+  return seedIDs;
 }
 
-void sv4guiImageSeedContainer::deleteSeed(int startIndex, int endIndex){
-
-  if (m_startSeeds.size() <= startIndex)
+//------------
+// deleteSeed
+//------------
+// Remove seeds.
+//
+void sv4guiImageSeedContainer::deleteSeed(int startIndex, int endIndex)
+{
+  if (startIndex >= m_startSeeds.size()) {
     return;
+  }
 
-  if (endIndex == -1){
-    m_startSeeds.erase(m_startSeeds.begin()+startIndex);
-    if (!(m_endSeeds.size() <= startIndex))
+  // Remove all end seeds for the given start seed.
+  //
+  if (endIndex == -1) {
+    m_startSeeds[startIndex];
+    //m_startSeeds.erase(m_startSeeds.begin()+startIndex);
+
+    if (!(m_endSeeds.size() <= startIndex)) {
       m_endSeeds.erase(m_endSeeds.begin()+startIndex);
+    }
 
     return;
   }
