@@ -261,6 +261,7 @@ PyDoc_STRVAR(num_subblend_iterations_doc,
    Laplacian smoothing, and decimation operations.                         \n\
 ");
 
+
 PyDoc_STRVAR(num_subdivision_iterations_doc,
   "Type: int                                                               \n\
    Default: 1                                                              \n\

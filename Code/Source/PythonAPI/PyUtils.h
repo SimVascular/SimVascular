@@ -33,6 +33,9 @@
 #define PY_UTILS_H__
 
 #include "SimVascular.h"
+
+#include "svPythonAPIExports.h"
+
 #include "Python.h"
 #include "vtkPythonUtil.h"
 #include "vtkSmartPointer.h"
@@ -49,7 +52,7 @@
 // This class is used to manage argument formats for API methods 
 // and error reporting.
 //
-class PyUtilApiFunction
+class SV_EXPORT_PYTHON_API PyUtilApiFunction
 {
   public:
       PyUtilApiFunction(const std::string& format, PyObject* pyRunTimeErr, const char* funcName);
