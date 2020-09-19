@@ -39,10 +39,11 @@
 //
 sv4guiImageSeedContainer::sv4guiImageSeedContainer()
 {
-  m_NumSeeds = 0;
-  m_NumStartSeeds = 0;
-  m_startSeeds = std::vector<std::vector<double>>();
-  m_endSeeds = std::vector<std::vector<std::vector<double>>>();
+  m_ActiveStartSeedID = -1;
+  m_CurrentStartSeedID = -1;
+  m_CurrentEndSeedID = -1;
+  //m_startSeeds = std::vector<std::vector<double>>();
+  //m_endSeeds = std::vector<std::vector<std::vector<double>>>();
   hoverPoint.push_back(0.0);
   hoverPoint.push_back(0.0);
   hoverPoint.push_back(0.0);
@@ -54,158 +55,250 @@ sv4guiImageSeedContainer::sv4guiImageSeedContainer()
 
 sv4guiImageSeedContainer::sv4guiImageSeedContainer(const sv4guiImageSeedContainer& other) :BaseData(other)
 {
-  int numStartSeeds = other.getNumStartSeeds();
-  for(int start = 0; start < numStartSeeds; start++){
-
-    std::vector<double> startSeed  = other.getStartSeed(start);
-    addStartSeed(startSeed[0], startSeed[1], startSeed[2]);
-
-    int numEndSeeds = other.getNumEndSeeds(start);
-    for (int end = 0; end < numEndSeeds; end++){
-      std::vector<double> endSeed = other.getEndSeed(start, end);
-      addEndSeed(start, endSeed[0], endSeed[1], endSeed[2]);
-    }
+  for (auto const& seed : other.m_StartSeeds) {
+      auto startSeed = std::get<0>(seed.second);
+      auto point = startSeed.point;
+      AddStartSeed(point[0], point[1], point[2]);
+      for (auto const& endSeed : std::get<1>(seed.second)) {
+          auto point = endSeed.point;
+          AddEndSeed(point[0], point[1], point[2]);
+      }
   }
-};
+}
 
-sv4guiImageSeedContainer::~sv4guiImageSeedContainer(){
-
-};
-
-//--------------
-// addStartSeed
-//--------------
-//
-void sv4guiImageSeedContainer::addStartSeed(double x, double y, double z)
+sv4guiImageSeedContainer::~sv4guiImageSeedContainer()
 {
-  auto v = std::vector<double>();
-  v.push_back(x);
-  v.push_back(y);
-  v.push_back(z);
-  m_startSeeds.push_back(v);
-  auto v2 = std::vector<std::vector<double>>();
-  m_endSeeds.push_back(v2);
+}
 
-  m_Seeds.emplace_back(ImageSeed(m_NumSeeds,x,y,z), std::vector<ImageSeed>()); 
-  m_NumSeeds += 1;
-  m_NumStartSeeds += 1;
+//--------------------
+// SetActiveStartSeed
+//--------------------
+//
+void sv4guiImageSeedContainer::SetActiveStartSeed(int seedID)
+{
+  try {
+      auto seed = m_StartSeeds.at(seedID);
+      m_ActiveStartSeedID = seedID;
+  } catch (...) {
+      std::cout << "[SetActiveStartSeed] **** Internal error: invalid start seed ID: " << seedID << std::endl;
+  }
+
+}
+
+//--------------
+// AddStartSeed
+//--------------
+// Add a start seed.
+//
+void sv4guiImageSeedContainer::AddStartSeed(double x, double y, double z)
+{
+  //std::cout << "========== sv4guiImageSeedContainer::AddStartSeed ========== " << std::endl;
+  m_CurrentStartSeedID += 1;
+  int id = m_CurrentStartSeedID;
+  //std::cout << "[AddStartSeed] m_CurrentStartSeedID: " << m_CurrentStartSeedID << std::endl;
+  auto startSeed = std::make_tuple(sv4guiImageSeed(id, id, x, y, z), std::vector<sv4guiImageSeed>()); 
+  m_StartSeeds.insert(std::pair<int,sv4guiImageStartSeed>(id, startSeed));
+  m_ActiveStartSeedID = id;
 };
 
 //------------
-// addEndSeed
+// AddEndSeed
 //------------
+// Add an end seed to the currently active start seed.
 //
-void sv4guiImageSeedContainer::addEndSeed(double x, double y, double z, int seedIndex)
+void sv4guiImageSeedContainer::AddEndSeed(double x, double y, double z)
 {
-  std::cout << "========== sv4guiImageSeedContainer::addEndSeed ========== " << std::endl;
-  std::cout << "[addEndSeed] seedIndex: " << seedIndex << std::endl;
-  auto v = std::vector<double>();
-  v.push_back(x);
-  v.push_back(y);
-  v.push_back(z);
+  if (m_ActiveStartSeedID == -1) {
+    return;
+  }
+  //std::cout << "========== sv4guiImageSeedContainer::AddEndSeed ========== " << std::endl;
+  //std::cout << "[AddEndSeed] m_ActiveStartSeedID: " << m_ActiveStartSeedID << std::endl;
+  int startID = m_ActiveStartSeedID;
+  m_CurrentEndSeedID += 1;
+  int endID = m_CurrentEndSeedID;
 
-  m_endSeeds[seedIndex].push_back(v);
-
-  std::get<1>(m_Seeds[seedIndex]).emplace_back(ImageSeed(m_NumSeeds,x,y,z)); 
-  //std::get<1>(m_Seeds[m_NumStartSeeds-1]).emplace_back(ImageSeed(m_NumSeeds,x,y,z)); 
-  m_NumSeeds += 1;
-};
-
-int sv4guiImageSeedContainer::getNumStartSeeds() const {
-  return m_startSeeds.size();
+  auto seed = m_StartSeeds.find(startID);
+  if (seed == m_StartSeeds.end()) {
+    std::cout << "[AddEndSeed] **** Internal error: m_ActiveStartSeedID " << m_ActiveStartSeedID << " is not valid." << std::endl;
+    return;
+  }
+  auto startSeed = std::get<0>(seed->second); 
+  std::get<1>(seed->second).emplace_back(sv4guiImageSeed(startID, endID, x, y, z)); 
 }
 
-int sv4guiImageSeedContainer::getNumEndSeeds(int startSeedIndex) const {
-  return m_endSeeds[startSeedIndex].size();
+//------------------
+// GetNumStartSeeds
+//------------------
+//
+int sv4guiImageSeedContainer::GetNumStartSeeds() const 
+{
+  return m_StartSeeds.size();
 }
 
-std::vector<double> sv4guiImageSeedContainer::getStartSeed(int seedIndex) const {
-  return m_startSeeds[seedIndex];
+//----------------
+// GetNumEndSeeds
+//----------------
+//
+int sv4guiImageSeedContainer::GetNumEndSeeds(int startSeedIndex) const 
+{
+  try {
+      auto seed = m_StartSeeds.at(startSeedIndex);
+      return std::get<1>(seed).size();
+  } catch (...) {
+      std::cout << "[GetNumEndSeeds] **** Internal error: : startSeedIndex " << startSeedIndex << std::endl;
+  }
+
+  return 0;
 }
 
-std::vector<double> sv4guiImageSeedContainer::getEndSeed(int startSeedIndex, int endSeedIndex) const{
-  return m_endSeeds[startSeedIndex][endSeedIndex];
+//--------------
+// GetStartSeed
+//--------------
+//
+std::array<double,3> 
+sv4guiImageSeedContainer::GetStartSeed(int seedIndex) const 
+{
+  try {
+      auto seed = m_StartSeeds.at(seedIndex);
+      return std::get<0>(seed).point;
+  } catch (...) {
+      std::cout << "[GetStartSeed] **** Internal error: : seedIndex: " << seedIndex << std::endl;
+  }
+
+  return std::array<double,3> {0,0,0};
+}
+
+//--------------
+// GetStartSeed
+//--------------
+//
+std::array<double,3> 
+sv4guiImageSeedContainer::GetEndSeed(int startSeedIndex, int endSeedIndex) const
+{
+  std::array<double,3> point;
+
+  try {
+      auto seed = m_StartSeeds.at(startSeedIndex);
+      auto endSeeds = std::get<1>(seed);
+      for (auto const& endSeed : endSeeds) { 
+          if (endSeedIndex == endSeed.id) {
+              point = endSeed.point;
+              break;
+          }
+      }
+
+  } catch (...) {
+      std::cout << "[GetEndSeed] **** Internal error: startSeedIndex: " << startSeedIndex << std::endl;
+  }
+
+  return point; 
 }
 
 //-----------------
-// findNearestSeed
+// FindNearestSeed
 //-----------------
+// Find the seed within 'tol' of the given point.
 //
-std::vector<int> 
-sv4guiImageSeedContainer::findNearestSeed(double x, double y, double z, double tol)
+// If the nearest seed is a start seed then return its ID in 'startID' and
+// and return -1 for 'endID'.
+//
+// If the nearest seed is an end seed then return its ID in 'endID' and
+// the start node it is associated with in 'startID'.
+//
+void sv4guiImageSeedContainer::FindNearestSeed(double x, double y, double z, double tol, int& startID, int& endID)
 {
-  bool done = false;
-  int numStartSeeds = getNumStartSeeds();
+  startID = -1;
+  endID = -1;
 
-  auto seedIDs = std::vector<int>();
-  seedIDs.push_back(-1);
-  seedIDs.push_back(-1);
-
+  int numStartSeeds = GetNumStartSeeds();
   if (numStartSeeds == 0) {
-    return seedIDs;
+      return;
   }
 
   // Search seed points.
   //
-  for (int i = 0; i < numStartSeeds; i++){
-    auto point = m_startSeeds[i];
-    auto d = distance(point[0], point[1], point[2], x, y ,z);
-
-    if (d < tol) {
-      seedIDs[0] = i;
-      seedIDs[1] = -1;
-      return seedIDs;
-    }
-
-    int numEndSeeds = getNumEndSeeds(i);
-    for (int j = 0; j < numEndSeeds; j++){
-      auto point = m_endSeeds[i][j];
-      auto d = distance(point[0], point[1], point[2], x, y, z);
-      if (d < tol){
-        //seedIDs[0] = i;
-        seedIDs[1] = j;
-        return seedIDs;
+  for (auto const& seed : m_StartSeeds) {
+      auto startSeed = std::get<0>(seed.second);
+      auto point = startSeed.point;
+      auto d = Distance(point[0], point[1], point[2], x, y ,z);
+      if (d <= tol) {
+          startID = startSeed.id;
+          return;
       }
-    }
+      for (auto const& endSeed : std::get<1>(seed.second)) {
+          auto point = endSeed.point;
+          auto d = Distance(point[0], point[1], point[2], x, y, z);
+          if (d <= tol){
+              startID = startSeed.id;
+              endID = endSeed.id;
+              return;
+          }
+      }
   }
 
-  return seedIDs;
 }
 
 //------------
-// deleteSeed
+// DeleteSeed
 //------------
-// Remove seeds.
+// Remove a start or end seed.
 //
-void sv4guiImageSeedContainer::deleteSeed(int startIndex, int endIndex)
+void sv4guiImageSeedContainer::DeleteSeed(int startIndex, int endIndex)
 {
-  if (startIndex >= m_startSeeds.size()) {
+  #ifdef dbg_sv4guiImageSeedContainer_DeleteSeed
+  std::cout << "========== sv4guiImageSeedContainer::DeleteSeed ========== " << std::endl;
+  std::cout << "[DeleteSeed] startIndex: " << startIndex << std::endl;
+  std::cout << "[DeleteSeed] endIndex: " << endIndex << std::endl;
+  #endif
+
+  auto seed = m_StartSeeds.find(startIndex);
+  if (seed == m_StartSeeds.end()) {
+    std::cout << "[DeleteSeed] **** Internal error: startIndex " << startIndex << " is not valid." << std::endl;
     return;
   }
 
-  // Remove all end seeds for the given start seed.
+  // Remove all end seeds and the given start seed.
   //
   if (endIndex == -1) {
-    m_startSeeds[startIndex];
-    //m_startSeeds.erase(m_startSeeds.begin()+startIndex);
+      auto startSeed = std::get<0>(seed->second); 
+      std::get<1>(seed->second).clear();
+      m_StartSeeds.erase(seed);
 
-    if (!(m_endSeeds.size() <= startIndex)) {
-      m_endSeeds.erase(m_endSeeds.begin()+startIndex);
-    }
+      // Reset the active seed.
+      m_ActiveStartSeedID = -1;
+      for (auto const& seed : m_StartSeeds) {
+          m_ActiveStartSeedID = seed.first;
+          break;
+      }
 
-    return;
+  // Remove a single end seed from the given start seed.
+  //
+  } else {
+      auto startSeed = std::get<0>(seed->second); 
+      int index = 0;
+      for (auto const& endSeed : std::get<1>(seed->second)) {
+          if (endSeed.id == endIndex) {
+              break;
+          }
+          index += 1;
+      }
+      std::get<1>(seed->second).erase(std::get<1>(seed->second).begin()+index);
   }
 
-  std::vector<std::vector<double>>& seedVec = m_endSeeds[startIndex];
-  seedVec.erase(seedVec.begin()+endIndex);
   return;
 }
 
-double sv4guiImageSeedContainer::distance(double x1, double y1, double z1, double x2,
-  double y2, double z2) const{
-
-    auto d1 = (x1-x2)*(x1-x2);
-    auto d2 = (y1-y2)*(y1-y2);
-    auto d3 = (z1-z2)*(z1-z2);
-    return sqrt(d1+d2+d3);
+//----------
+// Distance
+//----------
+// Compute the distance between two points.
+//
+double 
+sv4guiImageSeedContainer::Distance(double x1, double y1, double z1, double x2, double y2, double z2) const 
+{
+  auto d1 = (x1-x2)*(x1-x2);
+  auto d2 = (y1-y2)*(y1-y2);
+  auto d3 = (z1-z2)*(z1-z2);
+  return sqrt(d1+d2+d3);
 }
+

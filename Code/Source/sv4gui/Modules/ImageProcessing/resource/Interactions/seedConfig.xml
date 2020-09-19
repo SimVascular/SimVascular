@@ -21,6 +21,10 @@
 
 <!-- InteractionKeyEvent -->
 
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_A">
+    <attribute name="Key" value="A"/>
+  </event_variant>
+
   <event_variant class="InteractionKeyEvent" name="KeyPressed_D">
     <attribute name="Key" value="D"/>
   </event_variant>

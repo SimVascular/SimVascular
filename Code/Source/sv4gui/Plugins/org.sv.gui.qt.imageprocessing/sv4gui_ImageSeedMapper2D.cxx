@@ -173,31 +173,34 @@ void sv4guiImageSeedMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* rendere
   double radius = 5.0 * plane->GetExtentInMM(2); 
   //std::cout << "[CreateVTKRenderObject] radius: " << radius << std::endl;
 
-  int numStartSeeds = seeds->getNumStartSeeds();
+  int numStartSeeds = seeds->GetNumStartSeeds();
   //std::cout << "[CreateVTKRenderObject] numStartSeeds: " << numStartSeeds << std::endl;
 
   // Add seeds that are within a certain distance of the plane.
   //
-  for (int i = 0; i < numStartSeeds; i++){
-      mitk::Point3D point(seeds->getStartSeed(i).data());
+  for (auto const& seed : seeds->m_StartSeeds) {
+      auto startSeed = std::get<0>(seed.second);
+      int id = startSeed.id;
+      bool active = (startSeed.id == seeds->m_ActiveStartSeedID);
+      mitk::Point3D point(startSeed.point.data());
       double diff = plane->Distance(point);
       if (diff*diff < m_DistanceToPlane) {
           bool isStartSeed = true;
-          auto startSphere = sv4guiImageSeedMapper::CreateSphere(point[0], point[1], point[2], radius, isStartSeed);
-          if (seeds->selectStartSeed && (seeds->selectStartSeedIndex == i)) {
+          auto startSphere = sv4guiImageSeedMapper::CreateSphere(point[0], point[1], point[2], radius, isStartSeed, active);
+          if (seeds->selectStartSeed && (seeds->selectStartSeedIndex == id)) {
             startSphere->GetProperty()->SetColor(sv4guiImageSeedMapper::START_SEED_HIGHLIGHT_COLOR);
           }
           localStorage->m_PropAssembly->AddPart(startSphere);
       }
 
-      int numEndSeeds = seeds->getNumEndSeeds(i);
-      for (int j = 0; j < numEndSeeds; j++){
-          mitk::Point3D point(seeds->getEndSeed(i,j).data());
+      for (auto const& endSeed : std::get<1>(seed.second)) {
+          int id = endSeed.id;
+          mitk::Point3D point(endSeed.point.data());
           double diff = plane->Distance(point);
           if (diff*diff < m_DistanceToPlane) {
               bool isStartSeed = false;
-              auto endSphere = sv4guiImageSeedMapper::CreateSphere(point[0], point[1], point[2], radius, isStartSeed);
-              if (seeds->selectEndSeed && (seeds->selectEndSeedIndex == j)) {
+              auto endSphere = sv4guiImageSeedMapper::CreateSphere(point[0], point[1], point[2], radius, isStartSeed, active);
+              if (seeds->selectEndSeed && (seeds->selectEndSeedIndex == id)) {
                 endSphere->GetProperty()->SetColor(sv4guiImageSeedMapper::END_SEED_HIGHLIGHT_COLOR);
               }
               localStorage->m_PropAssembly->AddPart(endSphere);

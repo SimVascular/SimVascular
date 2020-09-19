@@ -50,7 +50,7 @@ double sv4guiImageSeedMapper::END_SEED_HIGHLIGHT_COLOR[3] = {1.0, 0.5, 0.0};
 //   isStartSeed: If true then the sphere is a start sphere and is display with a predefined color.
 //
 vtkSmartPointer<vtkActor>
-sv4guiImageSeedMapper::CreateSphere(double x, double y, double z, double radius, bool isStartSeed)
+sv4guiImageSeedMapper::CreateSphere(double x, double y, double z, double radius, bool isStartSeed, bool active)
 {
   auto sphere = vtkSmartPointer<vtkSphereSource>::New();
   sphere->SetRadius(radius);
@@ -69,7 +69,11 @@ sv4guiImageSeedMapper::CreateSphere(double x, double y, double z, double radius,
     sphereActor->GetProperty()->SetColor(END_SEED_COLOR);
   }
 
-  sphereActor->GetProperty()->SetAmbient(0.3);
+  if (active) {
+    sphereActor->GetProperty()->SetAmbient(0.6);
+    sphereActor->GetProperty()->SetSpecular(0.5);
+    sphereActor->GetProperty()->SetSpecularPower(10.0);
+  }
 
   return sphereActor;
 }
@@ -115,20 +119,21 @@ void sv4guiImageSeedMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer
   // Iterate over start and end seed points.
   //
 
-  for (auto const& seed : seeds->m_Seeds) {
-    auto startSeed = std::get<0>(seed);
+  for (auto const& seed : seeds->m_StartSeeds) {
+    auto startSeed = std::get<0>(seed.second);
+    bool active = (startSeed.id == seeds->m_ActiveStartSeedID);
     auto point = startSeed.point;
     bool isStartSeed = true;
-    auto startSphere = CreateSphere(point[0], point[1], point[2], m_seedRadius, isStartSeed);
+    auto startSphere = CreateSphere(point[0], point[1], point[2], m_seedRadius, isStartSeed, active);
     if (seeds->selectStartSeed && (seeds->selectStartSeedIndex == startSeed.id)) { 
       startSphere->GetProperty()->SetColor(START_SEED_HIGHLIGHT_COLOR);
     }
     localStorage->m_PropAssembly->AddPart(startSphere);
 
     isStartSeed = false;
-    for (auto const& endSeed : std::get<1>(seed)) {
+    for (auto const& endSeed : std::get<1>(seed.second)) {
       auto point = endSeed.point;
-      auto endSphere = CreateSphere(point[0], point[1], point[2], m_seedRadius, isStartSeed);
+      auto endSphere = CreateSphere(point[0], point[1], point[2], m_seedRadius, isStartSeed, active);
       if (seeds->selectEndSeed && (seeds->selectEndSeedIndex == endSeed.id)) { 
         endSphere->GetProperty()->SetColor(END_SEED_HIGHLIGHT_COLOR);
       }

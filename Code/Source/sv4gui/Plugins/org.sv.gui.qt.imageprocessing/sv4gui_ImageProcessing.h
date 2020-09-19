@@ -169,7 +169,7 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
   private: 
 
-    int FindClosesetPoint(vtkPolyData* polyData, std::vector<double>& testPoint);
+    int FindClosesetPoint(vtkPolyData* polyData, std::array<double,3>& testPoint);
     QString GetOutputDirectory();
     void WritePolydata(std::string& fileName, vtkPolyData* polydata);
 

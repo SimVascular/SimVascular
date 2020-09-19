@@ -53,7 +53,7 @@ class sv4guiImageSeedMapper : public mitk::VtkMapper
     mitkClassMacro(sv4guiImageSeedMapper, mitk::VtkMapper);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
-    static vtkSmartPointer<vtkActor> CreateSphere(double x, double y, double z, double radius, bool isStartSeed);
+    static vtkSmartPointer<vtkActor> CreateSphere(double x, double y, double z, double radius, bool isStartSeed, bool active=false);
     static double END_SEED_COLOR[3];
     static double END_SEED_HIGHLIGHT_COLOR[3];
     static double START_SEED_COLOR[3];

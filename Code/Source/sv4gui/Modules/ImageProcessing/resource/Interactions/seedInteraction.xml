@@ -14,6 +14,10 @@
       <condition name="is_over_seed" inverted="true" />
     </transition>
 
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_A" target="Start">
+      <action name="make_seed_current" />
+    </transition>
+
     <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_D" target="Start">
       <action name="remove_seed" />
     </transition>

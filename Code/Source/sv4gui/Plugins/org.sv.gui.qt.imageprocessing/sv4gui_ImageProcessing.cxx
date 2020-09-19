@@ -277,14 +277,14 @@ void sv4guiImageProcessing::ComputeCenterlines()
   std::cout << "========== sv4guiImageProcessing::ComputeCenterlines ========== " << std::endl;
 
   // A start seed must be defined. 
-  int numStartSeeds = m_SeedContainer->getNumStartSeeds();
+  int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
   if (numStartSeeds < 1) {
     QMessageBox::warning(NULL,"","No start seeds have been defined.");
     return;
   }
 
   // An end seed must be defined. 
-  int numEndSeeds = m_SeedContainer->getNumEndSeeds(0);
+  int numEndSeeds = m_SeedContainer->GetNumEndSeeds(0);
   if (numEndSeeds < 1) {
     QMessageBox::warning(NULL,"","No end seeds have been defined.");
     return;
@@ -308,17 +308,17 @@ void sv4guiImageProcessing::ComputeCenterlines()
   std::vector<int> targetIDs;
 
   for (int s = 0; s < numStartSeeds; s++) {
-      auto seedPoint = m_SeedContainer->getStartSeed(s);
+      auto seedPoint = m_SeedContainer->GetStartSeed(s);
       int min_id = FindClosesetPoint(segPolyData, seedPoint);
       sourceIDs.push_back(min_id);
 
-      int numEndSeeds = m_SeedContainer->getNumEndSeeds(s);
+      int numEndSeeds = m_SeedContainer->GetNumEndSeeds(s);
       if (numEndSeeds == 0) {
         break;
       }
 
       for (int e = 0; e < numEndSeeds; e++){
-          auto seedPoint = m_SeedContainer->getEndSeed(s,e);
+          auto seedPoint = m_SeedContainer->GetEndSeed(s,e);
           int min_id = FindClosesetPoint(segPolyData, seedPoint);
           targetIDs.push_back(min_id);
       }
@@ -374,7 +374,7 @@ void sv4guiImageProcessing::ComputeCenterlines()
 //
 // Returns the index of the closest point into the vtkPolyData points array.
 //
-int sv4guiImageProcessing::FindClosesetPoint(vtkPolyData* polyData, std::vector<double>& testPoint)
+int sv4guiImageProcessing::FindClosesetPoint(vtkPolyData* polyData, std::array<double,3>& testPoint)
 {
   int numPoints = polyData->GetNumberOfPoints();
   auto points = polyData->GetPoints();
@@ -409,9 +409,9 @@ void sv4guiImageProcessing::AddStartSeed()
   mitk::Point3D point = m_DisplayWidget->GetCrossPosition();
   std::cout << "[AddStartSeed] Point: " << point[0] << "  " << point[1] << "  " << point[2] << std::endl;
 
-  int numStartSeeds = m_SeedContainer->getNumStartSeeds();
+  int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
   std::cout << "[AddStartSeed] numStartSeeds: " << numStartSeeds << std::endl;
-  m_SeedContainer->addStartSeed(point[0], point[1], point[2]);
+  m_SeedContainer->AddStartSeed(point[0], point[1], point[2]);
 
   // TODO:DaveP] Do we need to updata all?
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -427,13 +427,13 @@ void sv4guiImageProcessing::RemoveStartSeed()
   std::cout << "========== sv4guiImageProcessing::RemoveStartSeed ========== " << std::endl;
 
   // A start seed must be defined. 
-  int numStartSeeds = m_SeedContainer->getNumStartSeeds();
+  int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
   if (numStartSeeds < 1) {
     QMessageBox::warning(NULL,"","No start seeds have been defined.");
     return;
   }
 
-  int numEndSeeds = m_SeedContainer->getNumEndSeeds(0);
+  int numEndSeeds = m_SeedContainer->GetNumEndSeeds(0);
 
   if (!m_SeedContainer->selectStartSeed && !m_SeedContainer->selectStartSeed) { 
     QString msg("Remove all start seeds?");
@@ -460,14 +460,14 @@ void sv4guiImageProcessing::AddEndSeed()
   std::cout << "[AddEndSeed] Point: " << point[0] << "  " << point[1] << "  " << point[2] << std::endl;
 
   // A start seed must have been selected.
-  int numStartSeeds = m_SeedContainer->getNumStartSeeds();
+  int numStartSeeds = m_SeedContainer->GetNumStartSeeds();
   if (numStartSeeds < 1) { 
     QMessageBox::warning(NULL,"","No start seeds have been defined.");
     return;
   }
 
-  // [TODO:DaveP] It seems that end seeds are paired with start seeds?
-  m_SeedContainer->addEndSeed(point[0], point[1], point[2], numStartSeeds-1);
+  // Add add an end seed to the current start seed.
+  m_SeedContainer->AddEndSeed(point[0], point[1], point[2]);
 
   // TODO:DaveP] Do we need to updata all?
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -1035,18 +1035,18 @@ void sv4guiImageProcessing::runEditImage(){
   }
   double replaceValue = std::stod(ui->editImageReplaceValueLineEdit->text().toStdString());
 
-  int startSeeds = m_SeedContainer->getNumStartSeeds();
+  int startSeeds = m_SeedContainer->GetNumStartSeeds();
   if (startSeeds == 0) return;
 
   for (int s = 0; s < startSeeds; s++){
-    int endSeeds = m_SeedContainer->getNumEndSeeds(s);
+    int endSeeds = m_SeedContainer->GetNumEndSeeds(s);
     if (endSeeds == 0) break;
 
-    auto v_start = m_SeedContainer->getStartSeed(s);
+    auto v_start = m_SeedContainer->GetStartSeed(s);
 
     for (int e = 0; e < endSeeds; e++){
       std::cout << "seed " << s << ", " << e << "\n";
-      auto v_end = m_SeedContainer->getEndSeed(s,e);
+      auto v_end = m_SeedContainer->GetEndSeed(s,e);
 
       auto s_index = sv4guiImageProcessingUtils::physicalPointToIndex(
         itkImage, v_start[0], v_start[1], v_start[2]);
@@ -1131,19 +1131,19 @@ sv4guiImageProcessing::CombinedCollidingFronts(sv4guiImageProcessingUtils::itkIm
   bool min_init = false;
   auto minImage = sv4guiImageProcessingUtils::copyImage(itkImage);
 
-  int startSeeds = m_SeedContainer->getNumStartSeeds();
+  int startSeeds = m_SeedContainer->GetNumStartSeeds();
   if (startSeeds == 0) return NULL;
 
   for (int i = 0; i < startSeeds; i++) {
-    int endSeeds = m_SeedContainer->getNumEndSeeds(i);
+    int endSeeds = m_SeedContainer->GetNumEndSeeds(i);
     if (endSeeds == 0) {
       break;
     }
 
-    auto startPoint = m_SeedContainer->getStartSeed(i);
+    auto startPoint = m_SeedContainer->GetStartSeed(i);
 
     for (int j = 0; j < endSeeds; j++){
-      auto endPoint = m_SeedContainer->getEndSeed(i, j);
+      auto endPoint = m_SeedContainer->GetEndSeed(i, j);
       auto startIndex = sv4guiImageProcessingUtils::physicalPointToIndex(itkImage, startPoint[0], startPoint[1], startPoint[2]);
       auto endIndex = sv4guiImageProcessingUtils::physicalPointToIndex(itkImage, endPoint[0], endPoint[1], endPoint[2]);
       auto temp_im = sv4guiImageProcessingUtils::collidingFronts(itkImage, startIndex[0], startIndex[1], startIndex[2],
@@ -1173,7 +1173,7 @@ void sv4guiImageProcessing::runCollidingFronts()
 {
   std::cout << "========== sv4guiImageProcessing::runCollidingFronts ========== " << std::endl;
 
-  int startSeeds = m_SeedContainer->getNumStartSeeds();
+  int startSeeds = m_SeedContainer->GetNumStartSeeds();
   std::cout << "[runCollidingFronts] Number of start seeds: " << startSeeds << std::endl;
 
   if (startSeeds == 0) {
@@ -1209,7 +1209,7 @@ void sv4guiImageProcessing::runFullCollidingFronts()
 {
   std::cout << "========== sv4guiImageProcessing::runFullCollidingFronts ========== " << std::endl;
 
-  int startSeeds = m_SeedContainer->getNumStartSeeds();
+  int startSeeds = m_SeedContainer->GetNumStartSeeds();
   std::cout << "[runCollidingFronts] Number of start seeds: " << startSeeds << std::endl;
   if (startSeeds == 0) {
     QMessageBox::warning(NULL, "", "No seeds have been selected.");

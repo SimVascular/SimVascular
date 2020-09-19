@@ -38,39 +38,54 @@
 
 #include <array>
 #include <iostream>
+#include <map>
 #include <vector>
 #include "mitkBaseData.h"
 
+//-----------------
+// sv4guiImageSeed
+//-----------------
+// The sv4guiImageSeed class stores data for a seed position.
+//
+class sv4guiImageSeed {
+  public:
+    sv4guiImageSeed(int startID, int id, double x, double y, double z) : startID(startID), id(id), point({x,y,z}){};
+    int startID;
+    int id;
+    std::array<double,3> point;
+}; 
+
+//----------------------
+// sv4guiImageStartSeed
+//----------------------
+// The sv4guiImageStartSeed tuple stores data for a start seed.
+//
+typedef std::tuple<sv4guiImageSeed, std::vector<sv4guiImageSeed>> sv4guiImageStartSeed;
+typedef std::tuple<int,int> sv4guiImageSeedID;
+
+//--------------------------
+// sv4guiImageSeedContainer
+//--------------------------
+//
 class sv4guiImageSeedContainer : public mitk::BaseData 
 {
-  class ImageSeed {
-    public:
-      ImageSeed(int id, double x, double y, double z) { 
-        this->id = id;
-        this->point[0] = x;
-        this->point[1] = y;
-        this->point[2] = z;
-      };
-      int id;
-      std::array<double,3> point;
-  }; 
-
-  typedef std::tuple<ImageSeed, std::vector<ImageSeed>> ImageSeedTuple;
-
   public:
     mitkClassMacro(sv4guiImageSeedContainer, mitk::BaseData);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
-    void addStartSeed(double x, double y, double z);
-    void addEndSeed(double x, double y, double z, int seedIndex);
-    int getNumStartSeeds() const;
-    int getNumEndSeeds(int startSeedIndex) const;
-    std::vector<double> getStartSeed(int seedIndex) const;
-    std::vector<double> getEndSeed(int startSeedIndex, int endSeedIndex) const;
-    std::vector<int> findNearestSeed(double x, double y, double z, double tol);
-    void deleteSeed(int startIndex, int endIndex);
-    double distance(double x1,double y1,double z1,double x2,double y2,double z2) const;
+    void AddStartSeed(double x, double y, double z);
+    void AddEndSeed(double x, double y, double z);
+    int GetNumStartSeeds() const;
+    int GetNumEndSeeds(int startSeedIndex) const;
+    std::array<double,3> GetStartSeed(int seedIndex) const;
+    std::array<double,3> GetEndSeed(int startSeedIndex, int endSeedIndex) const;
+    void FindNearestSeed(double x, double y, double z, double tol, int& startID, int& endId);
+    void DeleteSeed(int startIndex, int endIndex);
+    double Distance(double x1,double y1,double z1,double x2,double y2,double z2) const;
+
+    void SetActiveStartSeed(int seedID);
+
     //virtual methods, that need to be implemented due to mitk::BaseData inheriting
     //from itk::DataObject
     //however if we dont intend to use this object with an itk filter we can leave them
@@ -87,9 +102,10 @@ class sv4guiImageSeedContainer : public mitk::BaseData
     bool selectEndSeed;
     int selectEndSeedIndex;
 
-    int m_NumSeeds;
-    int m_NumStartSeeds;
-    std::vector<ImageSeedTuple> m_Seeds;
+    int m_CurrentEndSeedID;
+    int m_CurrentStartSeedID;
+    int m_ActiveStartSeedID;
+    std::map<int,sv4guiImageStartSeed> m_StartSeeds;
 
   protected:
 
@@ -99,8 +115,8 @@ class sv4guiImageSeedContainer : public mitk::BaseData
     virtual ~sv4guiImageSeedContainer();
 
   private:
-    std::vector< std::vector<double> > m_startSeeds;
-    std::vector< std::vector< std::vector<double> > > m_endSeeds;
+    // std::vector< std::vector<double> > m_startSeeds;
+    // std::vector< std::vector< std::vector<double> > > m_endSeeds;
 };
 
 #endif 

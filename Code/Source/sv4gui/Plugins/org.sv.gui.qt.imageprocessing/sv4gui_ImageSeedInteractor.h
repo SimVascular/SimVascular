@@ -55,6 +55,8 @@ protected:
 
   void DeleteSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
 
+  void MakeSeedCurrent(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+
 private:
   std::vector<int> m_selectedSeed;
   mitk::Point3D m_currentPickedPoint;
