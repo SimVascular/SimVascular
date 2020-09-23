@@ -347,7 +347,8 @@ Vmtk_cap_with_ids(PyObject* self, PyObject* args, PyObject* kwargs)
 //------------------
 //
 PyDoc_STRVAR(Vmtk_centerlines_doc,
-   "centerlines(surface, inlet_ids, outlet_ids, use_face_ids=False)         \n\
+   "centerlines(surface, inlet_ids, outlet_ids, split=True,                \n\
+        use_face_ids=False)                                                \n\
    \n\
    Compute the centerlines for a closed surface.                            \n\
    \n\
@@ -358,6 +359,8 @@ PyDoc_STRVAR(Vmtk_centerlines_doc,
         inlet faces.                                                       \n\
      outlet_ids (list[int]): The list of integer IDs identifying the vessel\n\
         outlet faces. \n\
+     split (bool): If True then split centerlines into branches.           \n\
+        they are node IDs.                                                 \n\
      use_face_ids (bool): If True then the input IDs are face IDs, else    \n\
         they are node IDs.                                                 \n\
    \n\
@@ -368,16 +371,18 @@ static PyObject *
 Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
 {
   //std::cout << "========== Vmtk_centerlines ==========" << std::endl;
-  auto api = PyUtilApiFunction("OO!O!|O!", PyRunTimeErr, __func__);
-  static char *keywords[] = {"surface", "inlet_ids", "outlet_ids", "use_face_ids", NULL};
+  auto api = PyUtilApiFunction("OO!O!|O!O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", "inlet_ids", "outlet_ids", "split", "use_face_ids", NULL};
   PyObject* surfaceArg;
   PyObject* inletIdsArg;
   PyObject* outletIdsArg;
+  PyObject* splitArg = nullptr;
+  bool splitCenterlines = true;
   PyObject* useFaceIdsArg = nullptr;
   bool useFaceIds = false;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &inletIdsArg, &PyList_Type, &outletIdsArg,
-          &PyBool_Type, &useFaceIdsArg)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &inletIdsArg, 
+        &PyList_Type, &outletIdsArg, &PyBool_Type, &splitArg, &PyBool_Type, &useFaceIdsArg)) {
       return api.argsError();
   }
 
@@ -454,6 +459,7 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
       }
   }
 
+
   // Calculate the centerlines.
   cvPolyData* linesDst = nullptr;
   cvPolyData* voronoiDst = nullptr;
@@ -462,6 +468,29 @@ Vmtk_centerlines(PyObject* self, PyObject* args, PyObject* kwargs)
   if (sys_geom_centerlines(&cvSurfPolydata, sources.data(), numInletIds, targets.data(), numOutletIds, &linesDst, &voronoiDst) != SV_OK) {
       api.error("Error calculating centerlines.");
       return nullptr;
+  }
+
+  // If split centerlines into branches. 
+  //
+  if (splitArg != nullptr) {
+      splitCenterlines = PyObject_IsTrue(splitArg);
+  }
+
+  if (splitCenterlines) {
+      cvPolyData* splitCenterlines = nullptr;
+      cvPolyData* surfGrouped = nullptr;
+      cvPolyData* sections = nullptr;
+      if (sys_geom_centerlinesections(linesDst, &cvSurfPolydata, &splitCenterlines, &surfGrouped, &sections) != SV_OK) {
+          api.error("Error splitting centerlines.");
+          delete linesDst;
+          delete surfGrouped;
+          delete sections;
+          return nullptr;
+      }
+      delete surfGrouped;
+      delete sections;
+      delete linesDst;
+      linesDst = splitCenterlines;
   }
   //std::cout << "[Vmtk_centerlines] Done. " << std::endl;
 
