@@ -33,10 +33,12 @@
 #define MATH_PY_MODULE_H
 
 #include "SimVascular.h"
-#include "svUtilsExports.h" // For exports
+
+#include "svPythonAPIExports.h"
+
 #include "Python.h"
 
-//extern "C" SV_EXPORT_UTILS int Math_pyInit( );
+//extern "C" SV_EXPORT_PYTHON_API int Math_pyInit( );
 
 #if PYTHON_MAJOR_VERSION == 2
 PyMODINIT_FUNC  initpyMath();

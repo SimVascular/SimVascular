@@ -29,11 +29,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiPythonDataNodesPluginActivator object provides access to 
-// a ctkPluginContext object, the execution context of a plugin within 
+// The sv4guiPythonDataNodesPluginActivator object provides access to
+// a ctkPluginContext object, the execution context of a plugin within
 // the framework used to access other methods that interact with the framework.
 //
-// This object is only created when running SV with the GUI, it is not 
+// This object is only created when running SV with the GUI, it is not
 // created when running the SV Python interface from the command line.
 //
 #include "sv4gui_PythonDataNodesPluginActivator.h"

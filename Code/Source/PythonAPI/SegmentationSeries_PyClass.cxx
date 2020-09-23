@@ -54,7 +54,8 @@ extern "C" SV_EXPORT_PYTHON_API typedef struct
   int id;
 } PySegmentationSeries;
 
-static PyObject * CreatePySegmentationSeries(sv4guiContourGroup::Pointer contourGroup);
+// nate: this pointer seems to duplicate the other and differ only by being static
+//SV_EXPORT_PYTHON_API PyObject * CreatePySegmentationSeries(sv4guiContourGroup::Pointer contourGroup);
 
 //////////////////////////////////////////////////////
 //          U t i l i t y  F u n c t i o n s        //
@@ -418,8 +419,11 @@ SetSegmentationSeriesTypeFields(PyTypeObject& contourType)
 // If the 'contourGroup' argument is not null then use that
 // for the PySegmentationSeriesType.contourGroup data.
 //
-PyObject *
-CreatePySegmentationSeries(sv4guiContourGroup* contourGroup)
+
+// nate: is this needed? CreatePySegmentationSeries(sv4guiContourGroup* contourGroup)
+#include "svPythonAPIExports.h"
+SV_EXPORT_PYTHON_API PyObject *
+CreatePySegmentationSeries(sv4guiContourGroup::Pointer contourGroup)
 {
   //std::cout << "[CreatePySegmentationSeries] Create ContourGroup object ... " << std::endl;
   auto contourGroupObj = PyObject_CallObject((PyObject*)&PySegmentationSeriesType, NULL);

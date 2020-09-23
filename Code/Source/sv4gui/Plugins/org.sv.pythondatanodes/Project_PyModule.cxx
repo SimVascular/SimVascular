@@ -31,7 +31,7 @@
 
 // **** This currently not used ****
 
-// The functions defined here implement the SV Python API 'project' Module. 
+// The functions defined here implement the SV Python API 'project' Module.
 //
 //
 #include "SimVascular.h"
@@ -65,14 +65,14 @@ static PyObject* PyRunTimeErr;
 //          M o d u l e  F u n c t i o n s          //
 //////////////////////////////////////////////////////
 //
-// Python API functions. 
+// Python API functions.
 
 ////////////////////////////////////////////////////////
 //          M o d u l e  D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
 
 static char* PROJECT_MODULE = "project";
-// Dotted name that includes both the module name and 
+// Dotted name that includes both the module name and
 // the name of the type within the module.
 static char* MODULE_EXCEPTION = "project.ProjectError";
 static char* MODULE_EXCEPTION_OBJECT = "ProjectError";
@@ -80,7 +80,7 @@ static char* MODULE_EXCEPTION_OBJECT = "ProjectError";
 PyDoc_STRVAR(ProjectModule_doc, "Project module functions.");
 
 //------------------------
-// PyProjectModuleMethods 
+// PyProjectModuleMethods
 //------------------------
 // Project class methods.
 //
@@ -91,29 +91,29 @@ static PyMethodDef PyProjectModuleMethods[] = {
 //-----------------------
 // Initialize the module
 //-----------------------
-// Define the initialization function called by the Python 
+// Define the initialization function called by the Python
 // interpreter when the module is loaded.
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 3                         
+//                           PYTHON_MAJOR_VERSION 3
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 3
 
 // Size of per-interpreter state of the module.
-// Set to -1 if the module keeps state in global variables. 
+// Set to -1 if the module keeps state in global variables.
 static int perInterpreterStateSize = -1;
 
 // Always initialize this to PyModuleDef_HEAD_INIT.
 static PyModuleDef_Base m_base = PyModuleDef_HEAD_INIT;
 
-// Define the module definition struct which holds all information 
-// needed to create a module object. 
+// Define the module definition struct which holds all information
+// needed to create a module object.
 //
 static struct PyModuleDef PyProjectModule = {
    m_base,
    PROJECT_MODULE,
-   ProjectModule_doc, 
+   ProjectModule_doc,
    perInterpreterStateSize,
    PyProjectModuleMethods
 };
@@ -156,7 +156,7 @@ PyMODINIT_FUNC PyInit_PyProject()
 #endif
 
 //---------------------------------------------------------------------------
-//                           PYTHON_MAJOR_VERSION 2                         
+//                           PYTHON_MAJOR_VERSION 2
 //---------------------------------------------------------------------------
 
 #if PYTHON_MAJOR_VERSION == 2

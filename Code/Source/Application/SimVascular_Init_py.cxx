@@ -63,7 +63,6 @@
 //#include "sv3_SplinePolygonContour_init_py.h"
 //#include "sv3_PolygonContour_init_py.h"
 #include "Project_PyModule.h"
-
 //#include "sv4gui_Vis_init_py.h"
 
 #ifdef SV_USE_VMTK
@@ -214,7 +213,6 @@ void SimVascular_pyInit()
 }
 #endif
 
-
 void SimVascular_pyImport()
 {
     
@@ -234,6 +232,7 @@ void SimVascular_pyImport()
   
   PyImport_ImportModule("pySolid");
   PyImport_ImportModule("pySolidPolydata");
+  
   
 #ifdef SV_USE_VMTK
    PyImport_ImportModule("pyVMTKUtils");
