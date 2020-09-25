@@ -78,15 +78,19 @@ MODULE_NAME_ALL_CAPS = SV4GUIMODULEPYTHONAPI
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
-HDRS	= Geometry_PyModule.h  \
-          Meshing_PyModule.h  \
-          Modeling_PyModule.h \
-          PyUtils.h \
-          Vmtk_PyModule.h \
+# hack
+CXXFLAGS += -I../sv4gui/Plugins/org.sv.gui.qt.simulation1d
+
+HDRS	= Geometry_PyModule.h \
           Math_PyModule.h \
+          Meshing_PyModule.h \
           MeshUtils_PyModule.h \
+          Modeling_PyModule.h \
           PathPlanning_PyModule.h \
-          Segmentation_PyModule.h
+          PyUtils.h \
+          Segmentation_PyModule.h \
+          Simulation_PyModule.h \
+          Vmtk_PyModule.h
 
 CXXSRCS	=   Segmentation_PyModule.cxx \
             Geometry_PyModule.cxx \
@@ -96,6 +100,7 @@ CXXSRCS	=   Segmentation_PyModule.cxx \
             PathPlanning_PyModule.cxx \
             PyUtils.cxx \
             Modeling_PyModule.cxx \
+            Simulation_PyModule.cxx \
             Vmtk_PyModule.cxx
 
 SVPYHDRS = 
@@ -123,6 +128,9 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ADAPTOR_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MMG_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VMTK_UTILS_NAME)$(LIBLINKEXT)
+
+# hack
+DLLLIBS += $(SVLIBFLAG)$(SV_PLUGIN_SIMULATION1D_NAME)$(LIBLINKEXT)
 
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     DLLLIBS += $(SVLIBFLAG)$(SV_LIB_MESHSIM_DISCRETE_SOLID_NAME)$(LIBLINKEXT)

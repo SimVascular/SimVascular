@@ -48,9 +48,9 @@
 //#define US_MODULE_NAME 
 
 // Needed for the dmd module.
-extern PyObject * PyCreateSegmentation(sv4guiContour* contour);
+extern SV_EXPORT_PYTHON_API PyObject * PyCreateSegmentation(sv4guiContour* contour);
 
-PyObject* CreatePySegmentationSeries(sv4guiContourGroup* contourGroup);
+SV_EXPORT_PYTHON_API PyObject* CreatePySegmentationSeries(sv4guiContourGroup* contourGroup);
 
 // Define the signature for the function used to copy sv4guiContour 
 // object data to sv3::Contour objects.
