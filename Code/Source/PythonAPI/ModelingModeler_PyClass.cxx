@@ -79,6 +79,41 @@ GetModelFromPyObj(PyObject* obj)
   return ((PyModelingModel*)obj)->solidModel;
 }
 
+//-----------------------
+// KernelSupportsCapping 
+//-----------------------
+// Check if the given kernel supports capping a surface.
+//
+bool
+KernelSupportsCapping(SolidModel_KernelT kernel)
+{
+  static std::set<SolidModel_KernelT> loftingKernels = { SM_KT_OCCT, SM_KT_PARASOLID };
+  return (loftingKernels.count(kernel) != 0);
+}
+
+//----------------------------------
+// KernelSupportsInterpolatingCurve 
+//----------------------------------
+// Check if the given kernel supports interpolating a curve.
+//
+bool
+KernelSupportsInterpolatingCurve(SolidModel_KernelT kernel)
+{
+  static std::set<SolidModel_KernelT> loftingKernels = { SM_KT_OCCT, SM_KT_PARASOLID };
+  return (loftingKernels.count(kernel) != 0);
+}
+
+//-----------------------
+// KernelSupportsLofting
+//-----------------------
+// Check if the given kernel supports lofting.
+bool
+KernelSupportsLofting(SolidModel_KernelT kernel)
+{
+  static std::set<SolidModel_KernelT> loftingKernels = { SM_KT_OCCT, SM_KT_PARASOLID };
+  return (loftingKernels.count(kernel) != 0);
+}
+
 //--------------------
 // CreateModelObjects
 //--------------------
@@ -275,6 +310,66 @@ ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   return pyModelingModelObj;
 }
 
+PyDoc_STRVAR(ModelingModeler_cap_surface_doc,
+  "cap_surface(surface)                                                     \n\
+   \n\
+   Fill the holes in a surface mesh with planar faces.                      \n\
+   \n\
+   Args: \n\
+     surface (Model): The surface model to cap.                             \n\
+   \n\
+   Returns (Model): The capped model object.                                \n\
+");
+
+static PyObject *
+ModelingModeler_cap_surface(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
+{
+  //std::cout << " " << std::endl;
+  //std::cout << "========== ModelingModeler_cap_surface ==========" << std::endl;
+
+  auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", NULL};
+  PyObject* surfaceArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg)) {
+      return api.argsError();
+  }
+
+  if (!KernelSupportsCapping(self->kernel)) {
+      api.error("The '" + ModelingKernelEnumToName(self->kernel) + "' kernel does not support capping.");
+      return nullptr;
+  }
+
+  // Check that the surface argument is a SV Python Model object.
+  auto surface = GetModelFromPyObj(surfaceArg);
+  if (surface == nullptr) {
+      api.error("The 'surface' argument is not a Model object.");
+      return nullptr;
+  }
+
+  // Create the new solid.
+  auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
+  if (pyModelingModelObj == nullptr) {
+      api.error("Error creating a Python solid model object.");
+      return nullptr;
+  }
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
+  if (model == NULL) {
+      api.error("Error capping a surface solid model.");
+      return nullptr;
+  }
+
+  // Create a capped surface.
+  //
+  if (model->CapSurfToSolid(surface) != SV_OK) {
+      api.error("Error creating a capped surface solid model.");
+      Py_DECREF(pyModelingModelObj);
+      return nullptr;
+  }
+
+  return pyModelingModelObj;
+}
+
 //--------------------------
 // ModelingModeler_cylinder
 //--------------------------
@@ -464,6 +559,11 @@ ModelingModeler_interpolate_curve(PyModelingModeler* self, PyObject* args, PyObj
       return api.argsError();
   }
 
+  if (!KernelSupportsInterpolatingCurve(self->kernel)) {
+      api.error("The '" + ModelingKernelEnumToName(self->kernel) + "' kernel does not support curve interpolation.");
+      return nullptr;
+  }
+
   std::cout << "[ModelingModeler_interpolate_curve] Check polydataArg." << std::endl;
   auto polydata = PyUtilGetVtkPolyData(api, polydataArg);
   if (polydata == nullptr) {
@@ -570,7 +670,7 @@ ModelingModeler_intersect(PyModelingModeler* self, PyObject* args, PyObject* kwa
 }
 
 PyDoc_STRVAR(ModelingModeler_loft_doc,
-  "loft(curve_list, continuity, partype, smoothing, w1, w2, w3)             \n\
+  "loft(curve_list)             \n\
    \n\
    Create a lofted surface from a list of polydata curves.                  \n\
    \n\
@@ -582,12 +682,10 @@ PyDoc_STRVAR(ModelingModeler_loft_doc,
    the its length and linearly interpolation around its profile.            \n\
    \n\
    Args: \n\
-     polydata_list (list[vtkPolyData]): The list of vtkPolyData objects     \n\
-        representing the profile curves defining a surface.                 \n\
-     loft_options (sv.geometry.LoftOptions): The LoftOptions object         \n\
-        containing lofting parameter values.                                \n\
+     curve_list (list[Model]): The list of model objects representing the   \n\
+        profile curves defining a surface.                                  \n\
    \n\
-   Returns (vtkPolyData): The vtkPolyData object of the lofted surface.     \n\
+   Returns (Model): The model object representing the lofted surface.       \n\
 ");
 
 static PyObject *
@@ -597,18 +695,16 @@ ModelingModeler_loft(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   std::cout << "========== ModelingModeler_loft ==========" << std::endl;
 
   auto api = PyUtilApiFunction("O!|iiiddd", PyRunTimeErr, __func__);
-  static char *keywords[] = {"curve_list", "continuity", "partype", "smoothing", "w1", "w2", "w3", NULL};
+  static char *keywords[] = {"curve_list", NULL};
   PyObject* curveListArg;
-  int continuity = 0;
-  int partype = 0;
-  int smoothing = 0;
-  double w1 = 0.4;
-  double w2 = 0.2;
-  double w3 = 0.4;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &curveListArg, &continuity, &partype,
-        &w1,&w2,&w3,&smoothing)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &curveListArg)) {
       return api.argsError();
+  }
+
+  if (!KernelSupportsLofting(self->kernel)) {
+      api.error("The '" + ModelingKernelEnumToName(self->kernel) + "' kernel does not support lofting.");
+      return nullptr;
   }
 
   // Check the list of polydata curve profiles.
@@ -635,8 +731,19 @@ ModelingModeler_loft(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
   }
 
   // Create a lofted surface.
+  //
+  // These are parameters used by the Open Cascade kernel.
+  int continuity = 0;
+  int partype = 0;
+  int smoothing = 0;
+  double w1 = 0.4;
+  double w2 = 0.2;
+  double w3 = 0.4;
   char* name = nullptr;
-  if (model->MakeLoftedSurf(curveList.data(), curveList.size(), name, continuity, partype, w1, w2, w3, smoothing) != SV_OK) {
+  // Need for Parasolid that otherwise will cap surfaces.
+  bool capSurface = false;
+
+  if (model->MakeLoftedSurf(curveList.data(), curveList.size(), name, continuity, partype, w1, w2, w3, smoothing, capSurface) != SV_OK) {
       api.error("Error creating a lofted surface solid model.");
       Py_DECREF(pyModelingModelObj);
       return nullptr;
@@ -975,6 +1082,8 @@ static PyMethodDef PyModelingModelerMethods[] = {
   { "approximate_curve", (PyCFunction)ModelingModeler_approximate_curve, METH_VARARGS|METH_KEYWORDS, ModelingModeler_approximate_curve_doc},
 
   { "box", (PyCFunction)ModelingModeler_box, METH_VARARGS | METH_KEYWORDS, ModelingModeler_box_doc },
+
+  { "cap_surface", (PyCFunction)ModelingModeler_cap_surface, METH_VARARGS|METH_KEYWORDS, ModelingModeler_cap_surface_doc },
 
   { "cylinder", (PyCFunction)ModelingModeler_cylinder, METH_VARARGS | METH_KEYWORDS, ModelingModeler_cylinder_doc },
 
