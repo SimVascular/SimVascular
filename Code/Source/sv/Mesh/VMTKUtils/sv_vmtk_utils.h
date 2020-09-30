@@ -65,7 +65,10 @@ SV_EXPORT_VMTK_UTILS int sys_geom_centerlinesections(cvPolyData *lines_in, cvPol
 
 SV_EXPORT_VMTK_UTILS int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked, cvPolyData **merged);
 
-SV_EXPORT_VMTK_UTILS int sys_geom_cap( cvPolyData *polydata, cvPolyData **cappedpolydata, int *numcenterids,int **centerids,int type);
+SV_EXPORT_VMTK_UTILS int sys_geom_cap(cvPolyData* polydata, bool radialFill, std::vector<int>& centerIDs, 
+  cvPolyData** cappedPolydata);
+
+SV_EXPORT_VMTK_UTILS int sys_geom_cap_for_centerlines( cvPolyData *polydata, cvPolyData **cappedpolydata, int *numcenterids,int **centerids,int type);
 
 SV_EXPORT_VMTK_UTILS int sys_geom_cap_with_ids( cvPolyData *polydata, cvPolyData **cappedpolydata,
 		int fillId,int filledholes,int filltype);

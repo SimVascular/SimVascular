@@ -990,7 +990,7 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElemen
     cleaned = sys_geom_Clean(src);
     delete src;
 
-    if ( sys_geom_cap(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1 ) != SV_OK)
+    if ( sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1 ) != SV_OK)
     {
       delete cleaned;
       if (capped != NULL)
@@ -1077,7 +1077,7 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd)
 
   cleaned = sys_geom_Clean(src);
 
-  if ( sys_geom_cap(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1 ) != SV_OK)
+  if ( sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1 ) != SV_OK)
   {
     delete cleaned;
     if (capped != NULL)

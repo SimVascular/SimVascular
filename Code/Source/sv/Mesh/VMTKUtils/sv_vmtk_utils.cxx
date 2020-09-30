@@ -458,8 +458,11 @@ int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,
  *  in the center. 0 - regular, 1 - point in center
  *  @return SV_OK if the VTMK function executes properly
  */
-
-int sys_geom_cap( cvPolyData *polydata,cvPolyData **cappedpolydata,int *numcenterids,int **centerids,int type)
+//
+// [DaveP] This appears to be only called from sv4guiModelUtils::CreateCenterlines().
+//
+int sys_geom_cap_for_centerlines(cvPolyData* polydata, cvPolyData** cappedpolydata, int* numcenterids,
+      int **centerids, int type)
 {
   vtkPolyData *geom = polydata->GetVtkPolyData();
   cvPolyData *result = NULL;
@@ -520,6 +523,90 @@ int sys_geom_cap( cvPolyData *polydata,cvPolyData **cappedpolydata,int *numcente
   }
   *numcenterids = numids;
   *centerids = allids;
+
+  return SV_OK;
+}
+
+//--------------
+// sys_geom_cap
+//--------------
+// Fill in the holes in a surface with triangles. 
+// 
+// A 'ModelFaceID' CellData array is added to the capped surface
+// identidying faces using IDs 1 - #faces.
+// 
+// Note that the CellEntityIdsArray created by vmtk is an vtkIdTypeArray 
+// array so it can't be used to create the 'ModelFaceID' CellData array. 
+//
+// Arguments:
+//   polydata: The surface to fill holes.
+//   radialFill: If true then generate trangles with a common point at the 
+//     center of each hole.
+// 
+// Returns:
+//   centerIDs: A list of node IDs for the center of each cap.
+//   cappedSurface: The capped surface.
+// 
+int sys_geom_cap(cvPolyData* polydata, bool radialFill, std::vector<int>& centerIDs, cvPolyData** cappedSurface)
+{
+  *cappedSurface = nullptr;
+  auto capCenterIds = vtkSmartPointer<vtkIdList>::New();
+  auto triangulate = vtkSmartPointer<vtkTriangleFilter>::New();
+  auto geom = polydata->GetVtkPolyData();
+
+  try {
+      if (radialFill) {
+          auto capper = vtkSmartPointer<vtkvmtkCapPolyData>::New();
+          capper->SetInputData(geom);
+          capper->SetDisplacement(0);
+          capper->SetInPlaneDisplacement(0);
+          capper->SetCellEntityIdsArrayName("CenterlineCapID");
+          capper->SetCellEntityIdOffset(1);
+          capper->Update();
+          triangulate->SetInputData(capper->GetOutput());
+          triangulate->Update();
+
+          *cappedSurface = new cvPolyData( triangulate->GetOutput() );
+          capCenterIds->DeepCopy(capper->GetCapCenterIds());
+
+      } else {
+          auto capper = vtkSmartPointer<vtkvmtkSimpleCapPolyData>::New();
+          capper->SetInputData(geom);
+          capper->SetCellEntityIdsArrayName("CenterlineCapID");
+          capper->SetCellEntityIdOffset(1);
+          capper->Update();
+          triangulate->SetInputData(capper->GetOutput());
+          triangulate->Update();
+
+          *cappedSurface = new cvPolyData( triangulate->GetOutput() );
+          capCenterIds->InsertNextId(0);
+      }
+      
+  } catch (...) {
+      fprintf(stderr,"ERROR in capping operation.\n");
+      fflush(stderr);
+      return SV_ERROR;
+  }
+
+  // Get cap node IDs for the center of each cap.
+  int numids = capCenterIds->GetNumberOfIds();
+  for (int i = 0 ; i < numids; i++) {
+      centerIDs.push_back(capCenterIds->GetId(i));
+  }
+
+  // Add an 'ModelFaceID' CellData array.
+  //
+  auto cappedPolydata = (*cappedSurface)->GetVtkPolyData();
+  auto capFaceIDs = vtkIdTypeArray::SafeDownCast(cappedPolydata->GetCellData()->GetArray("CenterlineCapID"));
+  vtkNew(vtkIntArray, modelFaceIDs);
+
+  for (int i = 0; i < cappedPolydata->GetNumberOfPolys(); i++) {
+      int value = capFaceIDs->GetValue(i);
+      modelFaceIDs->InsertValue(i, value);
+  }
+  modelFaceIDs->SetName("ModelFaceID");
+  cappedPolydata->GetCellData()->AddArray(modelFaceIDs);
+  cappedPolydata->GetCellData()->SetActiveScalars("ModelFaceID");
 
   return SV_OK;
 }
