@@ -69,7 +69,7 @@ typedef struct {
 //-------------------
 // Get the cvSolidModel object from a Python PyModelingModel object.
 //
-static cvSolidModel *
+cvSolidModel *
 GetModelFromPyObj(PyObject* obj)
 {
   // Check that the Python object is an SV Python Model object.

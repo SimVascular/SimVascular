@@ -146,6 +146,54 @@ MeshingMeshSim_load_model(PyMeshingMesher* self, PyObject* args, PyObject* kwarg
   Py_RETURN_NONE;
 }
 
+//-------------------------
+// MesherMeshSim_set_model
+//-------------------------
+//
+PyDoc_STRVAR(MesherMeshSim_set_model_doc,
+  "set_model(model)  \n\
+  \n\
+  Set the solid model used by the mesher. \n\
+  \n\
+  Args:                                    \n\
+    model (Model): A Model object.  \n\
+");
+
+static PyObject *
+MesherMeshSim_set_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
+  static char *keywords[] = {"model", NULL};
+  PyObject* modelArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelArg)) {
+    return api.argsError();
+  }
+
+  auto mesher = self->mesher;
+
+  // Check that the model argument is a SV Python Model object.
+  auto model = GetModelFromPyObj(modelArg);
+  if (model == nullptr) {
+      api.error("The 'model' argument is not a Model object.");
+      return nullptr;
+  }
+
+  // Check for a valid model type.
+  auto kernel = model->GetKernelT();
+  if (kernel != SolidModel_KernelT::SM_KT_PARASOLID) {
+      std::string kernelName(SolidModel_KernelT_EnumToStr(kernel));
+      std::transform(kernelName.begin(), kernelName.end(), kernelName.begin(), ::toupper);
+      api.error("The 'model' argument has invalid type '" + kernelName + "'. The MeshSim mesher only operates on PARASOLID models.");
+      return nullptr;
+  }
+
+  // Set the model using vtkPolyData.
+  //mesher->LoadModel(polydata);
+
+  Py_RETURN_NONE;
+}
+
 //----------------------------
 // MeshingMeshSim_set_options
 //----------------------------
@@ -252,6 +300,7 @@ PyDoc_STRVAR(PyMeshingMeshSim_doc,
 static PyMethodDef PyMeshingMeshSimMethods[] = {
   {"create_options", (PyCFunction)MeshingMeshSim_create_options, METH_VARARGS|METH_KEYWORDS, MeshingMeshSim_create_options_doc},
   {"load_model", (PyCFunction)MeshingMeshSim_load_model, METH_VARARGS|METH_KEYWORDS, MeshingMeshSim_load_model_doc},
+  { "set_model", (PyCFunction)MesherMeshSim_set_model, METH_VARARGS|METH_KEYWORDS, MesherMeshSim_set_model_doc},
   {"set_options", (PyCFunction)MeshingMeshSim_set_options, METH_VARARGS, MeshingMeshSim_set_options_doc},
   {NULL, NULL}
 };

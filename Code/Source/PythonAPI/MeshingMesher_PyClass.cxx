@@ -40,6 +40,8 @@
 
 #include "sv_TetGenMeshObject.h"
 
+extern cvSolidModel * GetModelFromPyObj(PyObject* obj);
+
 extern void MeshingMesherSetParameter(cvMeshObject* mesher, std::string& name, std::vector<double>& values);
 
 //-----------------
