@@ -97,6 +97,7 @@ sv4guiModelVtkMapper3D::~sv4guiModelVtkMapper3D()
 //
 void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 {
+    // std::cout << "========== sv4guiModelVtkMapper3D::GenerateDataForRenderer ==========" << std::endl;
     mitk::DataNode* node = GetDataNode();
     if (node == NULL) {
         return;
@@ -202,7 +203,6 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
         node->GetColor(selectedColor, renderer, "face selected color");
         // Set face mappers and actors to unreferenced.
         ResetFaceMapperAndActor();
-
         for (int i = 0; i < modelElem->GetFaces().size(); i++) {
             auto face = modelElem->GetFaces()[i];
             if (!face) {
@@ -228,6 +228,7 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
             vtkActor* faceActor;
             GetFaceMapperAndActor(face, &faceMapper, &faceActor);
             faceMapper->SetInputData(facePolyData);
+            faceMapper->SetScalarVisibility(false);
             faceActor->SetMapper(faceMapper);
 
             ApplyAllProperties(renderer, faceMapper, faceActor);
@@ -311,8 +312,8 @@ void sv4guiModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* rendere
 // There does not seem to be a way to tell when face data has changed using mitk
 // so use the face polydata. That works even when an undo is performed.
 //
-void sv4guiModelVtkMapper3D::GetFaceMapperAndActor(sv4guiModelElement::svFace* face, vtkOpenGLPolyDataMapper** faceMapper, 
-        vtkActor** faceActor)
+void sv4guiModelVtkMapper3D::GetFaceMapperAndActor(sv4guiModelElement::svFace* face, 
+  vtkOpenGLPolyDataMapper** faceMapper, vtkActor** faceActor)
 {
     vtkOpenGLPolyDataMapper* mapper; 
     vtkActor* actor;
@@ -395,7 +396,12 @@ void sv4guiModelVtkMapper3D::ResetMapper( mitk::BaseRenderer* renderer )
     ls->m_PropAssembly->VisibilityOff();
 }
 
-void sv4guiModelVtkMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, mitk::BaseRenderer* renderer)
+//----------------------------------
+// ApplyMitkPropertiesToVtkProperty
+//----------------------------------
+//
+void sv4guiModelVtkMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, 
+  mitk::BaseRenderer* renderer)
 {
     // Backface culling
     {
@@ -536,45 +542,51 @@ void sv4guiModelVtkMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *no
     }
 }
 
+//--------------------
+// ApplyAllProperties
+//--------------------
+// [TODO:DaveP] what does this do?
+//
 #if VTK_MAJOR_VERSION == 6
 void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor)
 #else
 void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkOpenGLPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor)
 #endif
 {
+    //std::cout << "----- ApplyAllProperties -----" << std::endl;
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
 
     // Applying shading properties
-//    Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
     this->ApplyShaderProperties(renderer);
-    // VTK Properties
-    ApplyMitkPropertiesToVtkProperty( this->GetDataNode(), actor->GetProperty(), renderer );
+    ApplyMitkPropertiesToVtkProperty(this->GetDataNode(), actor->GetProperty(), renderer);
 
     // [TODO:DaveP] I don't know how all of these properties are set, doesn't 
-    // seem to affect the display.
+    // seem to affect the display except for mapper->SetScalarVisibility().
     //
+    // I will not call this for now since it speeds up the interactive rotation
+    // of the model.
+    //
+    // NOTE: If we don't call all of this code then mapper->SetScalarVisibility(false) 
+    // must be called in GenerateDataForRenderer().
+    //
+    #define nApplyAllProperties_full
     #ifdef ApplyAllProperties_full
     mitk::TransferFunctionProperty::Pointer transferFuncProp;
     this->GetDataNode()->GetProperty(transferFuncProp, "Surface.TransferFunction", renderer);
-    if (transferFuncProp.IsNotNull() )
-    {
+    if (transferFuncProp.IsNotNull()) {
         mapper->SetLookupTable(transferFuncProp->GetValue()->GetColorTransferFunction());
     }
 
     mitk::LookupTableProperty::Pointer lookupTableProp;
     this->GetDataNode()->GetProperty(lookupTableProp, "LookupTable", renderer);
-    if (lookupTableProp.IsNotNull() )
-    {
+    if (lookupTableProp.IsNotNull()) {
         mapper->SetLookupTable(lookupTableProp->GetLookupTable()->GetVtkLookupTable());
     }
 
     mitk::LevelWindow levelWindow;
-    if(this->GetDataNode()->GetLevelWindow(levelWindow, renderer, "levelWindow"))
-    {
+    if(this->GetDataNode()->GetLevelWindow(levelWindow, renderer, "levelWindow")) {
         mapper->SetScalarRange(levelWindow.GetLowerWindowBound(),levelWindow.GetUpperWindowBound());
-    }
-    else if(this->GetDataNode()->GetLevelWindow(levelWindow, renderer))
-    {
+    } else if(this->GetDataNode()->GetLevelWindow(levelWindow, renderer)) {
         mapper->SetScalarRange(levelWindow.GetLowerWindowBound(),levelWindow.GetUpperWindowBound());
     }
 
@@ -582,14 +594,14 @@ void sv4guiModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vt
     this->GetDataNode()->GetBoolProperty("scalar visibility", scalarVisibility);
     mapper->SetScalarVisibility( (scalarVisibility ? 1 : 0) );
 
-    if(scalarVisibility)
-    {
+    if(scalarVisibility) {
         mitk::VtkScalarModeProperty* scalarMode;
-        if(this->GetDataNode()->GetProperty(scalarMode, "scalar mode", renderer))
+        if(this->GetDataNode()->GetProperty(scalarMode, "scalar mode", renderer)) {
             mapper->SetScalarMode(scalarMode->GetVtkScalarMode());
-        else
+        } else {
             mapper->SetScalarModeToDefault();
-
+        }
+  
         bool colorMode = false;
         this->GetDataNode()->GetBoolProperty("color mode", colorMode);
         mapper->SetColorMode( (colorMode ? 1 : 0) );
@@ -765,6 +777,7 @@ void sv4guiModelVtkMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* 
 
 void sv4guiModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
+    //std::cout << "----- SetDefaultProperties -----" << std::endl;
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
 
@@ -784,14 +797,15 @@ void sv4guiModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::Ba
 
     sv4guiModel* model = dynamic_cast<sv4guiModel*>(node->GetData());
 
-    if(model)
-    {
+    if(model) {
         sv4guiModelElement* modelElement=model->GetModelElement();
 
-        if(modelElement && (modelElement->GetWholeVtkPolyData() != 0) && (modelElement->GetWholeVtkPolyData()->GetPointData() != NULL) && (modelElement->GetWholeVtkPolyData()->GetPointData()->GetScalars() != 0))
-        {
+        if(modelElement && (modelElement->GetWholeVtkPolyData() != 0) && 
+          (modelElement->GetWholeVtkPolyData()->GetPointData() != NULL) && 
+          (modelElement->GetWholeVtkPolyData()->GetPointData()->GetScalars() != 0)) {
             node->AddProperty( "scalar visibility", mitk::BoolProperty::New(true), renderer, overwrite );
             node->AddProperty( "color mode", mitk::BoolProperty::New(true), renderer, overwrite );
+            //std::cout << "[SetDefaultProperties] set scalar visibility to true " << std::endl;
         }
     }
 
