@@ -205,15 +205,16 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
 
   // Set cap type.
   //
-  //  This determines whether to cap regularly or cap with a point  in the center.
-  //      0 - regular,
-  //      1 - point in center
-  int captype = 0;
+  // This determines whether to cap regularly or cap with a point each hole center.
+  //     0 - regular,
+  //     1 - point in center
+  //
+  bool radialFill = false;
   if ((useCenterArg != nullptr) && PyObject_IsTrue(useCenterArg)) {
-    captype = 1;
+    radialFill = true;
   }
 
-  // Get the vtkPolyData objectsfrom the Python object.
+  // Get the vtkPolyData object from the Python object.
   //
   auto surfPolydata = GetVtkPolyData(api, surfaceArg);
   if (surfPolydata == nullptr) {
@@ -223,9 +224,10 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
 
   // Perform cap operation.
   //
-  cvPolyData *result = NULL;
+  std::vector<int> centerIDs;
+  cvPolyData *cappedSurface = NULL;
   int numIds, *ids;
-  if (sys_geom_cap(&cvSurfPolydata, &result, &numIds, &ids, captype) != SV_OK) {
+  if (sys_geom_cap(&cvSurfPolydata, radialFill, centerIDs, &cappedSurface) != SV_OK) {
     api.error("Error capping model.");
     return nullptr;
   }
@@ -249,12 +251,14 @@ Vmtk_cap(PyObject* self, PyObject* args,  PyObject* kwargs)
   return pyList;
 */
 
-  return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+  return vtkPythonUtil::GetObjectFromPointer(cappedSurface->GetVtkPolyData());
 }
 
 //-------------------
 // Geom_cap_with_ids
 //-------------------
+//
+// [TODO:DaveP] I am thinking to not expose this.
 //
 PyDoc_STRVAR(Vmtk_cap_with_ids_doc,
   "cap_with_ids(surface, fill_id=0, increment_id=True)  \n\
@@ -879,65 +883,6 @@ Geom_cap(PyObject* self, PyObject* args)
   return pyList;
 }
 
-//-------------------
-// Geom_cap_with_ids
-//-------------------
-//
-PyDoc_STRVAR(Geom_cap_with_ids_doc,
-  "cap_with_ids(name)  \n\
-  \n\
-  ??? Add the unstructured grid mesh to the repository. \n\
-  \n\
-  Args:                                    \n\
-    name (str): Name in the repository to store the unstructured grid. \n\
-");
-
-static PyObject *
-Geom_cap_with_ids(PyObject* self, PyObject* args)
-{
-  auto api = PyUtilApiFunction("ssii", PyRunTimeErr, __func__);
-  char *geomName;
-  char *cappedName;
-  int fillId;
-  int filltype = 0;
-
-  if (!PyArg_ParseTuple(args, api.format, &geomName, &cappedName, &fillId, &filltype)) {
-      return api.argsError();
-  }
-
-  // Get repository data.
-  auto geomSrc = GetRepositoryData(api, geomName, POLY_DATA_T);
-  if (geomSrc == nullptr) {
-      return nullptr;
-  }
-
-  // Make sure the specified dst object does not exist:
-  if (gRepository->Exists(cappedName)) {
-    api.error("The object '"+std::string(cappedName)+"' is already in the repository.");
-    return nullptr;
-  }
-
-  // Perform cap operation.
-  //
-  // [TODO:DaveP] The 'num_filled' argument is not passed back from
-  // this function, it will always be 0.
-  //
-  int num_filled = 0;
-  cvRepositoryData *cappedDst = NULL;
-  if (sys_geom_cap_with_ids((cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst), fillId, num_filled, filltype) != SV_OK) {
-    api.error("Error creating cap with ids.");
-    return nullptr;
-  }
-
-  if (!gRepository->Register(cappedName, cappedDst)) {
-      delete cappedDst;
-      api.error("Error adding the capped ids '" + std::string(cappedName) + "' to the repository.");
-      return nullptr;
-  }
-
-  return Py_BuildValue("i", num_filled);
-}
-
 //--------------------------
 // Geom_map_and_correct_ids
 //--------------------------
@@ -1036,7 +981,8 @@ PyMethodDef PyVmtkMethods[] =
 
   { "cap", (PyCFunction)Vmtk_cap, METH_VARARGS|METH_KEYWORDS, Vmtk_cap_doc},
 
-  { "cap_with_ids", (PyCFunction)Vmtk_cap_with_ids, METH_VARARGS|METH_KEYWORDS, Vmtk_cap_with_ids_doc},
+  // [TODO:DaveP] I am thinking to not expose this.
+  // { "cap_with_ids", (PyCFunction)Vmtk_cap_with_ids, METH_VARARGS|METH_KEYWORDS, Vmtk_cap_with_ids_doc},
 
   { "centerlines", (PyCFunction)Vmtk_centerlines, METH_VARARGS|METH_KEYWORDS, Vmtk_centerlines_doc},
 
