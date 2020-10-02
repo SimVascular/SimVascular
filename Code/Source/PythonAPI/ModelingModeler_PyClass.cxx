@@ -79,12 +79,143 @@ GetModelFromPyObj(PyObject* obj)
   return ((PyModelingModel*)obj)->solidModel;
 }
 
+//-----------------------
+// KernelSupportsCapping 
+//-----------------------
+// Check if the given kernel supports capping a surface.
+//
+bool
+KernelSupportsCapping(SolidModel_KernelT kernel)
+{
+  static std::set<SolidModel_KernelT> loftingKernels = { SM_KT_OCCT, SM_KT_PARASOLID };
+  return (loftingKernels.count(kernel) != 0);
+}
+
+//----------------------------------
+// KernelSupportsInterpolatingCurve 
+//----------------------------------
+// Check if the given kernel supports interpolating a curve.
+//
+bool
+KernelSupportsInterpolatingCurve(SolidModel_KernelT kernel)
+{
+  static std::set<SolidModel_KernelT> loftingKernels = { SM_KT_OCCT, SM_KT_PARASOLID };
+  return (loftingKernels.count(kernel) != 0);
+}
+
+//-----------------------
+// KernelSupportsLofting
+//-----------------------
+// Check if the given kernel supports lofting.
+bool
+KernelSupportsLofting(SolidModel_KernelT kernel)
+{
+  static std::set<SolidModel_KernelT> loftingKernels = { SM_KT_OCCT, SM_KT_PARASOLID };
+  return (loftingKernels.count(kernel) != 0);
+}
+
+//--------------------
+// CreateModelObjects
+//--------------------
+//
+static std::vector<cvSolidModel*>
+CreateModelObjects(PyUtilApiFunction& api, PyModelingModeler* modeler, PyObject* objList)
+{
+  std::vector<cvSolidModel*> modelList;
+  auto numObjs = PyList_Size(objList);
+
+  if (numObjs == 0) {
+      api.error("The curve list argument is empty.");
+      return modelList;
+  }
+
+  for (int i = 0; i < numObjs; i++ ) {
+      auto obj = PyList_GetItem(objList, i);
+      auto model = GetModelFromPyObj(obj);
+      if (model == nullptr) {
+          api.error("Index " + std::to_string(i) + " of the curve list argument is not a model object.");
+          for (auto model : modelList) {
+              delete model;
+          }
+          modelList.clear();
+          return modelList;
+      }
+      modelList.push_back(model);
+  }
+
+  return modelList;
+}
+
 ////////////////////////////////////////////////////////
 //          C l a s s    M e t h o d s                //
 ////////////////////////////////////////////////////////
 //
 // Python 'Modeler' class methods.
 //
+
+//-----------------------------------
+// ModelingModeler_approximate_curve
+//-----------------------------------
+//
+PyDoc_STRVAR(ModelingModeler_approximate_curve_doc,
+  "approximate_curve(polydata, tolerance, closed=True)  \n\
+   \n\
+   Create a curve approximating a vtkPolyData line. \n\
+   \n\
+   Args:\n\
+     tolerance(float): The tolerance with which to approximate the curve. \n\
+   \n\
+   Returns (Model): The curve solid model. \n\
+");
+
+static PyObject *
+ModelingModeler_approximate_curve(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
+{
+  std::cout << " " << std::endl;
+  std::cout << "========== ModelingModeler_approximate_curve ==========" << std::endl;
+
+  auto api = PyUtilApiFunction("Od|O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"polydata", "tolerance", "closed", NULL};
+  PyObject* polydataArg = nullptr; 
+  double tolerance;
+  PyObject* closedArg = nullptr;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &polydataArg, &tolerance, &PyBool_Type, &closedArg)) { 
+      return api.argsError();
+  }
+
+  std::cout << "[ModelingModeler_approximate_curve] Check polydataArg." << std::endl;
+  auto polydata = PyUtilGetVtkPolyData(api, polydataArg);
+  if (polydata == nullptr) {
+      api.error("The 'polydata' argument is not a vtkPolyData object.");
+      return nullptr;
+  }
+
+  // Create the new solid object.
+  std::cout << "[ModelingModeler_approximate_curve] Create the new solid object." << std::endl;
+  auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
+  if (model == nullptr) {
+      api.error("Unable to create a solid model.");
+      return nullptr;
+  }
+
+  bool closed = true;
+  if (closedArg != nullptr) {
+      closed = PyObject_IsTrue(closedArg);
+  }
+
+  std::cout << "[ModelingModeler_approximate_curve] Call MakeApproxCurveLoop." << std::endl;
+  cvPolyData cvPolyData(polydata);
+  if (model->MakeApproxCurveLoop(&cvPolyData, tolerance, closed) != SV_OK) {
+      Py_DECREF(pyModelingModelObj);
+      api.error("Error creating the approximate curve.");
+      return nullptr;
+  }
+
+  return pyModelingModelObj;
+}
+
 //---------------------
 // ModelingModeler_box
 //---------------------
@@ -173,6 +304,66 @@ ModelingModeler_box(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
       Py_DECREF(pyModelingModelObj);
       delete model;
       api.error("Error creating a 3D box solid model.");
+      return nullptr;
+  }
+
+  return pyModelingModelObj;
+}
+
+PyDoc_STRVAR(ModelingModeler_cap_surface_doc,
+  "cap_surface(surface)                                                     \n\
+   \n\
+   Fill the holes in a surface mesh with planar faces.                      \n\
+   \n\
+   Args: \n\
+     surface (Model): The surface model to cap.                             \n\
+   \n\
+   Returns (Model): The capped model object.                                \n\
+");
+
+static PyObject *
+ModelingModeler_cap_surface(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
+{
+  //std::cout << " " << std::endl;
+  //std::cout << "========== ModelingModeler_cap_surface ==========" << std::endl;
+
+  auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", NULL};
+  PyObject* surfaceArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg)) {
+      return api.argsError();
+  }
+
+  if (!KernelSupportsCapping(self->kernel)) {
+      api.error("The '" + ModelingKernelEnumToName(self->kernel) + "' kernel does not support capping.");
+      return nullptr;
+  }
+
+  // Check that the surface argument is a SV Python Model object.
+  auto surface = GetModelFromPyObj(surfaceArg);
+  if (surface == nullptr) {
+      api.error("The 'surface' argument is not a Model object.");
+      return nullptr;
+  }
+
+  // Create the new solid.
+  auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
+  if (pyModelingModelObj == nullptr) {
+      api.error("Error creating a Python solid model object.");
+      return nullptr;
+  }
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
+  if (model == NULL) {
+      api.error("Error capping a surface solid model.");
+      return nullptr;
+  }
+
+  // Create a capped surface.
+  //
+  if (model->CapSurfToSolid(surface) != SV_OK) {
+      api.error("Error creating a capped surface solid model.");
+      Py_DECREF(pyModelingModelObj);
       return nullptr;
   }
 
@@ -338,6 +529,71 @@ ModelingModeler_ellipsoid(PyModelingModeler* self, PyObject* args, PyObject* kwa
   return pyModelingModelObj;
 }
 
+//-----------------------------------
+// ModelingModeler_interpolate_curve
+//-----------------------------------
+//
+PyDoc_STRVAR(ModelingModeler_interpolate_curve_doc,
+  "interpolate_curve(polydata, tolerance, closed=True)  \n\
+   \n\
+   Create a curve approximating a vtkPolyData line. \n\
+   \n\
+   Args:\n\
+     tolerance(float): The tolerance with which to approximate the curve. \n\
+   \n\
+   Returns (Model): The curve solid model. \n\
+");
+
+static PyObject *
+ModelingModeler_interpolate_curve(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
+{
+  std::cout << " " << std::endl;
+  std::cout << "========== ModelingModeler_interpolate_curve ==========" << std::endl;
+
+  auto api = PyUtilApiFunction("O|O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"polydata", "closed", NULL};
+  PyObject* polydataArg = nullptr; 
+  PyObject* closedArg = nullptr;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &polydataArg, &PyBool_Type, &closedArg)) { 
+      return api.argsError();
+  }
+
+  if (!KernelSupportsInterpolatingCurve(self->kernel)) {
+      api.error("The '" + ModelingKernelEnumToName(self->kernel) + "' kernel does not support curve interpolation.");
+      return nullptr;
+  }
+
+  std::cout << "[ModelingModeler_interpolate_curve] Check polydataArg." << std::endl;
+  auto polydata = PyUtilGetVtkPolyData(api, polydataArg);
+  if (polydata == nullptr) {
+      api.error("The 'polydata' argument is not a vtkPolyData object.");
+      return nullptr;
+  }
+
+  // Create the new solid object.
+  auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
+  if (model == nullptr) {
+      api.error("Unable to create a interpolated curve solid model.");
+      return nullptr;
+  }
+
+  bool closed = true;
+  if (closedArg != nullptr) {
+      closed = PyObject_IsTrue(closedArg);
+  }
+
+  cvPolyData cvPolyData(polydata);
+  if (model->MakeInterpCurveLoop(&cvPolyData, closed) != SV_OK) {
+      Py_DECREF(pyModelingModelObj);
+      api.error("Error creating the interpolated curve.");
+      return nullptr;
+  }
+
+  return pyModelingModelObj;
+}
+
 //---------------------------
 // ModelingModeler_intersect
 //---------------------------
@@ -407,6 +663,89 @@ ModelingModeler_intersect(PyModelingModeler* self, PyObject* args, PyObject* kwa
   if (model->Intersect(model1, model2, simplification) != SV_OK ) {
       delete model;
       api.error("Error performing a Boolean intersection.");
+      return nullptr;
+  }
+
+  return pyModelingModelObj;
+}
+
+PyDoc_STRVAR(ModelingModeler_loft_doc,
+  "loft(curve_list)             \n\
+   \n\
+   Create a lofted surface from a list of polydata curves.                  \n\
+   \n\
+   The loft method fits a surface through two or more profile curves that   \n\
+   define the surface shape. This is typically used to create a surface of  \n\
+   a vessel from a group of contours segmenting the vessel's lumen.         \n\
+   \n\
+   The surface is created using splines interpolating profile points along  \n\
+   the its length and linearly interpolation around its profile.            \n\
+   \n\
+   Args: \n\
+     curve_list (list[Model]): The list of model objects representing the   \n\
+        profile curves defining a surface.                                  \n\
+   \n\
+   Returns (Model): The model object representing the lofted surface.       \n\
+");
+
+static PyObject *
+ModelingModeler_loft(PyModelingModeler* self, PyObject* args, PyObject* kwargs)
+{
+  std::cout << " " << std::endl;
+  std::cout << "========== ModelingModeler_loft ==========" << std::endl;
+
+  auto api = PyUtilApiFunction("O!|iiiddd", PyRunTimeErr, __func__);
+  static char *keywords[] = {"curve_list", NULL};
+  PyObject* curveListArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &curveListArg)) {
+      return api.argsError();
+  }
+
+  if (!KernelSupportsLofting(self->kernel)) {
+      api.error("The '" + ModelingKernelEnumToName(self->kernel) + "' kernel does not support lofting.");
+      return nullptr;
+  }
+
+  // Check the list of polydata curve profiles.
+  auto curveList = CreateModelObjects(api, self, curveListArg);
+  if (curveList.size() == 0) {
+      return nullptr;
+  }
+
+  if (curveList.size() < 2) {
+      api.error("At least two curves are needed for lofing.");
+      return nullptr;
+  }
+
+  // Create the new solid.
+  auto pyModelingModelObj = CreatePyModelingModelObject(self->kernel);
+  if (pyModelingModelObj == nullptr) {
+      api.error("Error creating a Python solid model object.");
+      return nullptr;
+  }
+  auto model = ((PyModelingModel*)pyModelingModelObj)->solidModel;
+  if (model == NULL) {
+      api.error("Error creating a lofted surface solid model.");
+      return nullptr;
+  }
+
+  // Create a lofted surface.
+  //
+  // These are parameters used by the Open Cascade kernel.
+  int continuity = 0;
+  int partype = 0;
+  int smoothing = 0;
+  double w1 = 0.4;
+  double w2 = 0.2;
+  double w3 = 0.4;
+  char* name = nullptr;
+  // Need for Parasolid that otherwise will cap surfaces.
+  bool capSurface = false;
+
+  if (model->MakeLoftedSurf(curveList.data(), curveList.size(), name, continuity, partype, w1, w2, w3, smoothing, capSurface) != SV_OK) {
+      api.error("Error creating a lofted surface solid model.");
+      Py_DECREF(pyModelingModelObj);
       return nullptr;
   }
 
@@ -740,14 +1079,22 @@ PyMemberDef PyModelingModelerMembers[] = {
 //
 static PyMethodDef PyModelingModelerMethods[] = {
 
+  { "approximate_curve", (PyCFunction)ModelingModeler_approximate_curve, METH_VARARGS|METH_KEYWORDS, ModelingModeler_approximate_curve_doc},
+
   { "box", (PyCFunction)ModelingModeler_box, METH_VARARGS | METH_KEYWORDS, ModelingModeler_box_doc },
 
+  { "cap_surface", (PyCFunction)ModelingModeler_cap_surface, METH_VARARGS|METH_KEYWORDS, ModelingModeler_cap_surface_doc },
+
   { "cylinder", (PyCFunction)ModelingModeler_cylinder, METH_VARARGS | METH_KEYWORDS, ModelingModeler_cylinder_doc },
+
+  { "interpolate_curve", (PyCFunction)ModelingModeler_interpolate_curve, METH_VARARGS|METH_KEYWORDS, ModelingModeler_interpolate_curve_doc},
 
   { "intersect", (PyCFunction)ModelingModeler_intersect, METH_VARARGS | METH_KEYWORDS, ModelingModeler_intersect_doc },
 
   // [TODO:DaveP] The cvModelingModel MakeEllipsoid method is not implemented.
   //{ "ellipsoid", (PyCFunction)ModelingModeler_ellipsoid, METH_VARARGS | METH_KEYWORDS, ModelingModeler_ellipsoid_doc},
+
+  { "loft", (PyCFunction)ModelingModeler_loft, METH_VARARGS|METH_KEYWORDS, ModelingModeler_loft_doc },
 
   { "read", (PyCFunction)ModelingModeler_read, METH_VARARGS|METH_KEYWORDS, ModelingModeler_read_doc },
 
