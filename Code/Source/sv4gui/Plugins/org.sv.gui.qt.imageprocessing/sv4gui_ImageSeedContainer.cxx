@@ -108,10 +108,10 @@ void sv4guiImageSeedContainer::AddStartSeed(double x, double y, double z)
 //
 void sv4guiImageSeedContainer::AddEndSeed(double x, double y, double z)
 {
+  std::cout << "========== sv4guiImageSeedContainer::AddEndSeed ========== " << std::endl;
   if (m_ActiveStartSeedID == -1) {
     return;
   }
-  //std::cout << "========== sv4guiImageSeedContainer::AddEndSeed ========== " << std::endl;
   //std::cout << "[AddEndSeed] m_ActiveStartSeedID: " << m_ActiveStartSeedID << std::endl;
   int startID = m_ActiveStartSeedID;
   m_CurrentEndSeedID += 1;
@@ -235,7 +235,17 @@ void sv4guiImageSeedContainer::FindNearestSeed(double x, double y, double z, dou
           }
       }
   }
+}
 
+//------------
+// ClearSeeds
+//------------
+// Delete all seeds.
+//
+void sv4guiImageSeedContainer::ClearSeeds()
+{
+  std::cout << "========== sv4guiImageSeedContainer::ClearSeeds ========== " << std::endl;
+  m_StartSeeds.clear();
 }
 
 //------------

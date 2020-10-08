@@ -529,13 +529,14 @@ sv4guiImageProcessingUtils::itkImPoint sv4guiImageProcessingUtils::anisotropicSm
 //
 sv4guiImageProcessingUtils::itkImPoint 
 sv4guiImageProcessingUtils::geodesicLevelSet(sv4guiImageProcessingUtils::itkImPoint initialization, 
-    sv4guiImageProcessingUtils::itkImPoint edgeImage, double propagation, double advection, double curvature, int iterations)
+    sv4guiImageProcessingUtils::itkImPoint edgeImage, double propagation, double advection, double curvature, 
+    int numIterations)
 {
   auto levelSetFilter = itk::GeodesicActiveContourLevelSetImageFilter<sv4guiImageProcessingUtils::itkImageType, sv4guiImageProcessingUtils::itkImageType>::New();
   levelSetFilter->SetPropagationScaling(propagation);
   levelSetFilter->SetAdvectionScaling(advection);
   levelSetFilter->SetCurvatureScaling(curvature);
-  levelSetFilter->SetNumberOfIterations(iterations);
+  levelSetFilter->SetNumberOfIterations(numIterations);
   levelSetFilter->SetInitialImage(initialization);
   levelSetFilter->SetFeatureImage(edgeImage);
   levelSetFilter->SetMaximumRMSError(1e-20);

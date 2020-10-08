@@ -49,7 +49,15 @@
 //
 class sv4guiImageSeed {
   public:
-    sv4guiImageSeed(int startID, int id, double x, double y, double z) : startID(startID), id(id), point({x,y,z}){};
+    sv4guiImageSeed(int startID, int id, double x, double y, double z) : startID(startID), id(id), point({x,y,z}) {
+    };
+    sv4guiImageSeed(const sv4guiImageSeed &seed) {
+      id = seed.id;
+      startID = seed.startID;
+      point = seed.point;
+    };
+    ~sv4guiImageSeed() { 
+    };
     int startID;
     int id;
     std::array<double,3> point;
@@ -83,6 +91,7 @@ class sv4guiImageSeedContainer : public mitk::BaseData
     void FindNearestSeed(double x, double y, double z, double tol, int& startID, int& endId);
     void DeleteSeed(int startIndex, int endIndex);
     double Distance(double x1,double y1,double z1,double x2,double y2,double z2) const;
+    void ClearSeeds();
 
     void SetActiveStartSeed(int seedID);
 

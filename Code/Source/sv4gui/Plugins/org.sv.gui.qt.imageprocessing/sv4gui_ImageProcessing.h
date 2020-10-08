@@ -94,9 +94,8 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     // Seeds. 
     void AddStartSeed();
-    void RemoveStartSeed();
+    void ClearSeeds();
     void AddEndSeed();
-    void RemoveEndSeed();
     void SeedSize();
     void displaySeeds(bool state);
 

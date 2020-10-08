@@ -86,6 +86,13 @@ sv4guiImageSeedMapper::~sv4guiImageSeedMapper(){
 
 }
 
+//-------------------------
+// GenerateDataForRenderer
+//-------------------------
+// Create the seed VTK mappers and actors for displaying the seeds as spheres.
+//
+// Note that this method is called whenever the mouse is moved!
+//
 void sv4guiImageSeedMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 {
   //std::cout << "===================== sv4guiImageSeedMapper::GenerateDataForRenderer =====================" << std::endl;
@@ -109,16 +116,8 @@ void sv4guiImageSeedMapper::GenerateDataForRenderer(mitk::BaseRenderer* renderer
   }
   localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
 
-  //std::cout << "[GenerateDataForRenderer] seeds->selectEndSeed: " << seeds->selectEndSeed << std::endl;
-  //std::cout << "[GenerateDataForRenderer] seeds->selectEndSeedIndex: " << seeds->selectEndSeedIndex << std::endl;
-
-  // [TODO:DaveP] do we want this? 
-  //auto hoverSphere = createSeedActor(seeds->hoverPoint[0], seeds->hoverPoint[1], seeds->hoverPoint[2], 2);
-  //ls->m_PropAssembly->AddPart(hoverSphere);
-
   // Iterate over start and end seed points.
   //
-
   for (auto const& seed : seeds->m_StartSeeds) {
     auto startSeed = std::get<0>(seed.second);
     bool active = (startSeed.id == seeds->m_ActiveStartSeedID);
