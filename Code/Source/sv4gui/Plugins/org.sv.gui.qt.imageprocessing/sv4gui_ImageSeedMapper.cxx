@@ -69,8 +69,10 @@ sv4guiImageSeedMapper::CreateSphere(double x, double y, double z, double radius,
     sphereActor->GetProperty()->SetColor(END_SEED_COLOR);
   }
 
+  // Make active seeds brighter.
   if (active) {
     sphereActor->GetProperty()->SetAmbient(0.6);
+    //sphereActor->GetProperty()->SetDiffuse(0.3);
     sphereActor->GetProperty()->SetSpecular(0.5);
     sphereActor->GetProperty()->SetSpecularPower(10.0);
   }
