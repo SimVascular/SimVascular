@@ -212,11 +212,11 @@ Segmentation_get_type(PySegmentation* self, PyObject* args)
 //---------------------------
 //
 PyDoc_STRVAR(Segmentation_get_polydata_doc,
-  "get_vtk_polydata()  \n\
+  "get_polydata()  \n\
    \n\
-   Get the contour type. \n\
+   Get the vtkPolyData object representing contour points. \n\
    \n\
-   Returns (str): contour type. \n\
+   Returns (vtkPolyData): The vtkPolyData object. \n\
 ");
 
 static PyObject *
@@ -224,7 +224,12 @@ Segmentation_get_polydata(PySegmentation* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto contour = self->contour;
-  vtkSmartPointer<vtkPolyData> polydata = contour->CreateVtkPolyDataFromContour();
+
+  // Don't include the center and scaling control points.
+  bool includingAllLines = false;
+
+  // Get the vtkPolyData object.
+  vtkSmartPointer<vtkPolyData> polydata = contour->CreateVtkPolyDataFromContour(includingAllLines);
   return vtkPythonUtil::GetObjectFromPointer(polydata);
 }
 
