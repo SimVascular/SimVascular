@@ -66,7 +66,9 @@ void sv4guiImageSeedInteractor::ConnectActionsAndFunctions()
   //CONNECT_FUNCTION( "add_start_seed"    , AddSeed);
   //CONNECT_FUNCTION( "add_end_seed", AddEndSeed);
   CONNECT_FUNCTION( "remove_seed" , DeleteSeed);
+  //CONNECT_FUNCTION( "select_centerline" , SelectCenterline);
   CONNECT_FUNCTION( "make_seed_current" , MakeSeedCurrent);
+  //CONNECT_CONDITION("is_over_centerline", IsOverCenterline);
 }
 
 //------------
@@ -161,6 +163,26 @@ bool sv4guiImageSeedInteractor::IsOverSeed(const mitk::InteractionEvent* interac
   return selected;
 }
 
+//------------------
+// IsOverCenterline
+//------------------
+//
+/*
+bool sv4guiImageSeedInteractor::IsOverCenterline(const mitk::InteractionEvent* interactionEvent)
+{
+  #define dbg_IsOverCenterline 
+  #ifdef dbg_IsOverCenterline 
+  std::cout << "========== sv4guiImageSeedInteractor::IsOverCenterline ========== " << std::endl;
+  #endif
+  const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
+
+  if (positionEvent == NULL) {
+      return false;
+  }
+
+}
+*/
+
 //---------
 // AddSeed
 //---------
@@ -226,7 +248,7 @@ void sv4guiImageSeedInteractor::AddEndSeed(mitk::StateMachineAction*, mitk::Inte
 //
 void sv4guiImageSeedInteractor::MakeSeedCurrent(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
-  //std::cout << "========== sv4guiImageSeedInteractor::MakeSeedCurrent ========== " << std::endl;
+  std::cout << "========== sv4guiImageSeedInteractor::MakeSeedCurrent ========== " << std::endl;
   auto seeds = static_cast< sv4guiImageSeedContainer*>(GetDataNode()->GetData());
   //std::cout << "[DeleteSeed] seeds->selectStartSeed: " << seeds->selectStartSeed << std::endl;
   //std::cout << "[DeleteSeed] seeds->selectStartSeedIndex: " << seeds->selectStartSeedIndex << std::endl;
@@ -280,3 +302,24 @@ void sv4guiImageSeedInteractor::DeleteSeed(mitk::StateMachineAction*, mitk::Inte
 
   interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
 }
+
+//------------------
+// SelectCenterline
+//------------------
+//
+/*
+void sv4guiImageSeedInteractor::SelectCenterline(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
+{
+  #define dbg_SelectCenterline 
+  #ifdef dbg_SelectCenterline 
+  std::cout << "========== sv4guiImageSeedInteractor::SelectCenterline ========== " << std::endl;
+  #endif
+  const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
+
+  if (positionEvent == NULL) {
+      return;
+  }
+
+
+}
+*/

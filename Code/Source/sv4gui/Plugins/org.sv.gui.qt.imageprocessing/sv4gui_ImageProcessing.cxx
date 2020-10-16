@@ -53,6 +53,7 @@
 #include "sv_vmtk_utils_init.h"
 #include "sv_vmtk_utils.h"
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLPolyDataReader.h>
 
 #include <usModuleRegistry.h>
 #include <usGetModuleContext.h>
@@ -134,7 +135,6 @@ QString sv4guiImageProcessing::GetOutputDirectory()
 
   return outputDir;
 }
-
 
 //---------------------
 // CreateQtPartControl
@@ -285,7 +285,7 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
     m_SeedMapper2D->SetDataNode(m_SeedNode);
     m_SeedNode->SetMapper(mitk::BaseRenderer::Standard2D, m_SeedMapper2D);
 
-    // Create a node used to process mouse events. 
+    // Create a node used to process mouse events for selecting seeds. 
     m_SeedInteractor = sv4guiImageSeedInteractor::New();
     m_SeedInteractor->LoadStateMachine("seedInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
     m_SeedInteractor->SetEventConfig("seedConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
@@ -302,7 +302,38 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
     displaySeeds(true);
+
+   readData();
   }
+}
+
+//----------
+// readData
+//----------
+//
+void sv4guiImageProcessing::readData()
+{
+  std::cout << "=========== sv4guiImageProcessing::readData ===========" << std::endl;
+
+  auto dirPath = m_PluginOutputDirectory.toStdString();
+  std::string fileName = dirPath + "/centerlines.vtp"; 
+  auto *centerlines = vtkPolyData::New();
+
+  std::cout << "[readData] dirPath: " << dirPath << std::endl;
+  vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+  reader->SetFileName(fileName.c_str());
+  reader->Update();
+  centerlines->DeepCopy(reader->GetOutput());
+  std::cout << "[readData] centerlines num points: " << centerlines->GetNumberOfPoints() << std::endl;
+  std::cout << "[readData] centerlines num cells: " << centerlines->GetNumberOfCells() << std::endl;
+
+  // Create centerlines data nodes, setup interactor, etc.
+  InitializeCenterlines();
+
+  // Centerline geometry is stored in the container.
+  m_CenterlinesContainer->SetLines(centerlines);
+
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //--------------------
@@ -376,6 +407,28 @@ void sv4guiImageProcessing::ComputeCenterlines()
   //std::cout << "[ComputeCenterlines] Centerlines:" << std::endl;
   //std::cout << "[ComputeCenterlines]   Number of points: " << lines->GetNumberOfPoints() << std::endl;
 
+  // Create centerlines data nodes, setup interactor, etc.
+  InitializeCenterlines();
+
+  // Centerline geometry is stored in the container.
+  m_CenterlinesContainer->SetLines(lines);
+
+  // Write the centerlines to a file.
+  auto dirPath = m_PluginOutputDirectory.toStdString();
+  std::string fileName = dirPath + "/centerlines.vtp"; 
+  WritePolydata(fileName, lines);
+
+  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+//-----------------------
+// InitializeCenterlines
+//-----------------------
+//
+void sv4guiImageProcessing::InitializeCenterlines()
+{
+  std::cout << "========== sv4guiImageProcessing::InitializeCenterlines ==========" << std::endl;
+
   // Create a node and container for storing centerline geometry. 
   if (m_CenterlinesNode.IsNull()) { 
       m_CenterlinesNode = mitk::DataNode::New();
@@ -384,9 +437,6 @@ void sv4guiImageProcessing::ComputeCenterlines()
       m_CenterlinesNode->SetData(m_CenterlinesContainer);
       GetDataStorage()->Add(m_CenterlinesNode, m_CollidingFrontsNode);
   }
-
-  // Centerline geometry is stored in the container.
-  m_CenterlinesContainer->SetLines(lines);
 
   // Create mapper to display the centerlines.
   if (m_CenterlinesMapper.IsNull()) { 
@@ -397,12 +447,18 @@ void sv4guiImageProcessing::ComputeCenterlines()
       m_CenterlinesNode->SetMapper(mitk::BaseRenderer::Standard3D, m_CenterlinesMapper);
   }
 
-  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  // Create a node used to process mouse events for selecting centerlines. 
+  if (m_CenterlineInteractor.IsNull()) { 
+      std::cout << "[InitializeCenterlines] Create m_CenterlineInteractor" << std::endl;
+      m_CenterlineInteractor = sv4guiImageCenterlineInteractor::New();
+      m_CenterlineInteractor->LoadStateMachine("centerlineInteraction.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
+      m_CenterlineInteractor->SetEventConfig("seedConfig.xml", us::ModuleRegistry::GetModule("sv4guiModuleImageProcessing"));
+      m_CenterlineInteractor->SetDataNode(m_CenterlinesNode);
+    }
 
-  // Write the centerlines to a file.
-  auto dirPath = m_PluginOutputDirectory.toStdString();
-  std::string fileName = dirPath + "/centerlines.vtp"; 
-  WritePolydata(fileName, lines);
+    // This is needed so m_CenterlineInteractor receives events.
+    m_CenterlinesNode->SetVisibility(true);
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //-------------------
@@ -640,7 +696,6 @@ void sv4guiImageProcessing::SeedSize()
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
-
 //--------------------
 // OnSelectionChanged
 //--------------------
@@ -656,6 +711,10 @@ void sv4guiImageProcessing::OnSelectionChanged(std::vector<mitk::DataNode*> node
   UpdateImageList();
 }
 
+//--------------
+// getImageName
+//--------------
+//
 std::string sv4guiImageProcessing::getImageName(int imageIndex)
 {
   QString imageName;
@@ -681,7 +740,6 @@ std::string sv4guiImageProcessing::getImageName(int imageIndex)
 mitk::Image::Pointer sv4guiImageProcessing::getImage(std::string image_name)
 {
   mitk::DataNode::Pointer folder_node = GetDataStorage()->GetNamedNode("Images");
-
   mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetDerivations(folder_node,mitk::NodePredicateDataType::New("Image"));
 
   bool found = false;

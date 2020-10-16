@@ -55,6 +55,8 @@ class sv4guiImageLinesContainer : public mitk::BaseData {
     void SetLines(vtkPolyData* lines);
     //void SetLines(bool value);
 
+    void FindPointOnCenterline(double x, double y, double z, double tol, bool& found, double closestPoint[3], vtkIdType& cellID, int& subID);
+
   protected:
 
     mitkCloneMacro(Self);

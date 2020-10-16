@@ -47,6 +47,8 @@
 #include "sv4gui_ImageLinesContainer.h"
 #include "sv4gui_ImageLinesMapper.h"
 
+#include <sv4gui_ImageCenterlineInteractor.h>
+
 #include <mitkImage.h>
 #include <mitkSurface.h>
 
@@ -101,6 +103,7 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     // Centerlines.
     void ComputeCenterlines();
+    void InitializeCenterlines();
 
     // Tab buttons.
     void imageEditingTabSelected();
@@ -142,7 +145,6 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     bool m_PluginInitialized = false;
 
     sv4guiImageSeedInteractor::Pointer m_SeedInteractor;
-
     sv4guiImageSeedMapper::Pointer m_SeedMapper;
     sv4guiImageSeedMapper2D::Pointer m_SeedMapper2D;
 
@@ -153,6 +155,7 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     mitk::DataNode::Pointer m_SeedNode;
 
     // Centerlines objects.
+    sv4guiImageCenterlineInteractor::Pointer m_CenterlineInteractor;
     mitk::DataNode::Pointer m_CenterlinesNode;
     sv4guiImageLinesContainer::Pointer m_CenterlinesContainer;
     sv4guiImageLinesMapper::Pointer m_CenterlinesMapper;
@@ -171,6 +174,8 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     int FindClosesetPoint(vtkPolyData* polyData, std::array<double,3>& testPoint);
     QString GetOutputDirectory();
     void WritePolydata(std::string& fileName, vtkPolyData* polydata);
+
+    void readData();
 
 };
 

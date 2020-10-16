@@ -33,6 +33,7 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
+    sv4gui_ImageCenterlineInteractor.cxx
     sv4gui_ImageLinesMapper.cxx
     sv4gui_ImageProcessing.cxx
     sv4gui_ImageLinesContainer.cxx
@@ -45,6 +46,7 @@ set(INTERNAL_CPP_FILES
 )
 
 set(MOC_H_FILES
+    sv4gui_ImageCenterlineInteractor.h
     sv4gui_ImageLinesMapper.h
     sv4gui_ImageLinesContainer.h
     sv4gui_ImageProcessing.h

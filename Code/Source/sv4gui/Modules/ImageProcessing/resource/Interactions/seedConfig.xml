@@ -19,10 +19,14 @@
     <attribute name="EventButton" value="LeftMouseButton" />
   </event_variant>
 
-<!-- InteractionKeyEvent -->
+  <!-- InteractionKeyEvent -->
 
   <event_variant class="InteractionKeyEvent" name="KeyPressed_A">
     <attribute name="Key" value="A"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_C">
+    <attribute name="Key" value="C"/>
   </event_variant>
 
   <event_variant class="InteractionKeyEvent" name="KeyPressed_D">
