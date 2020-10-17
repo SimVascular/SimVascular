@@ -1772,10 +1772,17 @@ cvPolyData* cvTetGenMeshObject::GetFacePolyData (int orgfaceid) {
 //------------------
 // GetModelFaceInfo
 //------------------
-// Get the list of face ids used by the mesh.
+// Get the face information used by the mesh.
 //
-int cvTetGenMeshObject::GetModelFaceInfo(std::vector<int>& faceIDs)
+// Returns:
+//   desc: The description of the information returned.
+//   faceInfo: A list of strings containing face IDs.
+//
+int cvTetGenMeshObject::GetModelFaceInfo(std::string& desc, std::vector<std::string>& faceInfo)
 {
+  desc = "FaceID";
+  faceInfo.clear();
+
   // [TODO:DaveP] What else can the kernel be?
   //
   if (solidmodeling_kernel_ == SM_KT_POLYDATA) {
@@ -1794,7 +1801,7 @@ int cvTetGenMeshObject::GetModelFaceInfo(std::vector<int>& faceIDs)
 
       // Store face IDs into the returned string.
       for (int i = 0; i < numFaces; i++) {
-          faceIDs.push_back(faces[i]);
+          faceInfo.push_back(std::to_string(faces[i]));
       }
 
       delete [] faces;

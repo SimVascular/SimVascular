@@ -135,7 +135,7 @@ public:
   virtual cvPolyData *GetSolid() = 0;
   virtual bool HasSolid() = 0;
   virtual cvUnstructuredGrid *GetUnstructuredGrid() = 0;
-  virtual int GetModelFaceInfo(std::vector<int>& faceIDs) = 0;
+  virtual int GetModelFaceInfo(std::string& desc, std::vector<std::string>& faceInfo) = 0;
   virtual bool HasVolumeMesh() = 0;
   virtual bool HasSurfaceMesh() = 0;
 
