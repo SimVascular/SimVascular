@@ -78,73 +78,6 @@ ModelingModelGetFaceIDs(PyUtilApiFunction& api, PyModelingModel* self)
 //
 // Python API functions for the Python solid.Model class.
 
-//--------------------------------------
-// ModelingModel_compute_boundary_faces
-//--------------------------------------
-//
-PyDoc_STRVAR(ModelingModel_compute_boundary_faces_doc,
-  "compute_boundary_faces(angle)  \n\
-   \n\
-   Compute the boundary faces for the solid model. \n\
-   \n\
-   This method needs to be called when creating new PolyData or reading in  \n\
-   models that don't have faces already defined (e.g. models derived from   \n\
-   STL data). It does not need to be called for OpenCascade or Parasolid    \n\
-   models.\n\
-   \n\
-   For PolyData models faces are distinguished using the angle of the       \n\
-   normals between adjacent triangles. If the angle is less than or equal   \n\
-   to the 'angle' argument then the triangles are considered to part of     \n\
-   the same face. \n\
-   \n\
-   Args: \n\
-     angle (float): The angle used to distinguish faces in a model.         \n\
-   \n\
-   Returns list([int]): The list of integer face IDs. \n\
-");
-
-static PyObject *
-ModelingModel_compute_boundary_faces(PyModelingModel* self, PyObject* args, PyObject* kwargs)
-{
-  auto api = PyUtilApiFunction("d", PyRunTimeErr, __func__);
-  static char *keywords[] = {"angle", NULL};
-  double angle = 0.0;
-
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &angle)) {
-      return api.argsError();
-  }
-
-  if (angle < 0.0) {
-      api.error("The angle argument < 0.0.");
-      return nullptr;
-  }
-
-  auto model = self->solidModel;
-
-  // Compute the faces.
-  if (model->GetBoundaryFaces(angle) != SV_OK ) {
-      api.error("Error computing the boundary faces for the solid model using angle '" + std::to_string(angle) + ".");
-      return nullptr;
-  }
-
-  // Get the face IDs.
-  auto faceIDs = ModelingModelGetFaceIDs(api, self);
-  if (faceIDs.size() == 0) {
-      return nullptr;
-  }
-
-  // Create a list of IDs.
-  //
-  auto faceList = PyList_New(faceIDs.size());
-  int n = 0;
-  for (auto id : faceIDs) {
-      PyList_SetItem(faceList, n, PyLong_FromLong(id));
-      n += 1;
-  }
-
-  return faceList;
-}
-
 //----------------------------
 // ModelingModel_get_face_ids
 //----------------------------
@@ -390,8 +323,6 @@ PyDoc_STRVAR(ModelingModelClass_doc,
 // Define method names for ModelingModel class
 //
 static PyMethodDef PyModelingModelMethods[] = {
-
-  { "compute_boundary_faces", (PyCFunction)ModelingModel_compute_boundary_faces, METH_VARARGS|METH_KEYWORDS, ModelingModel_compute_boundary_faces_doc},
 
   { "get_face_ids", (PyCFunction)ModelingModel_get_face_ids, METH_NOARGS, ModelingModel_get_face_ids_doc },
 

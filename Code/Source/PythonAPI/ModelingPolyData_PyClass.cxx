@@ -53,6 +53,68 @@ cvPolyDataSolid* pyCreatePolyDataSolid()
 //////////////////////////////////////////////////////
 // PolyData class methods.
 
+PyDoc_STRVAR(ModelingPolyData_compute_boundary_faces_doc,
+  "compute_boundary_faces(angle)  \n\
+   \n\
+   Compute the boundary faces for the solid model. \n\
+   \n\
+   This method needs to be called when creating new PolyData models or      \n\
+   reading in models from files with formats that don't contain face        \n\
+   information (e.g. models derived from STL data).                         \n\
+   \n\
+   Models faces are distinguished using the angle of the normals between    \n\
+   adjacent model surface triangles. If the angle is less than or equal to  \n\
+   the 'angle' argument then the triangles are considered to part of the    \n\
+   same face.                                                               \n\
+   \n\
+   Args: \n\
+     angle (float): The angle used to distinguish faces in a model.         \n\
+   \n\
+   Returns list([int]): The list of integer face IDs. \n\
+");
+
+static PyObject *
+ModelingPolyData_compute_boundary_faces(PyModelingModel* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("d", PyRunTimeErr, __func__);
+  static char *keywords[] = {"angle", NULL};
+  double angle = 0.0;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &angle)) {
+      return api.argsError();
+  }
+
+  if (angle < 0.0) {
+      api.error("The angle argument < 0.0.");
+      return nullptr;
+  }
+
+  auto model = self->solidModel;
+
+  // Compute the faces.
+  if (model->GetBoundaryFaces(angle) != SV_OK ) {
+      api.error("Error computing the boundary faces for the solid model using angle '" + std::to_string(angle) + ".");
+      return nullptr;
+  }
+
+  // Get the face IDs.
+  auto faceIDs = ModelingModelGetFaceIDs(api, self);
+  if (faceIDs.size() == 0) {
+      return nullptr;
+  }
+
+  // Create a list of IDs.
+  //
+  auto faceList = PyList_New(faceIDs.size());
+  int n = 0;
+  for (auto id : faceIDs) {
+      PyList_SetItem(faceList, n, PyLong_FromLong(id));
+      n += 1;
+  }
+
+  return faceList;
+}
+
 //-------------------------------
 // ModelingPolyData_delete_faces
 //-------------------------------
@@ -180,6 +242,8 @@ PyMethodDef PyPolyDataSolidMethods[] = {
 
   // [TODO:DaveP] This should be implemented.
   // { "remesh_faces", (PyCFunction)ModelingPolyData_remesh_faces, METH_NOARGS|METH_KEYWORDS, ModelingPolyData_remesh_faces_doc},
+
+  { "compute_boundary_faces", (PyCFunction)ModelingPolyData_compute_boundary_faces, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_compute_boundary_faces_doc},
 
   { "set_surface", (PyCFunction)ModelingPolyData_set_surface, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_set_surface_doc},
 
