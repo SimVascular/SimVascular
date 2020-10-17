@@ -170,7 +170,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   cvPolyData *GetSolid();
   bool HasSolid();
   cvUnstructuredGrid *GetUnstructuredGrid();
-  int GetModelFaceInfo(std::vector<int>& faceIDs);
+  int GetModelFaceInfo(std::string& desc, std::vector<std::string>& faceInfo);
 
   // queries for bc's
   cvPolyData* GetFacePolyData (int orgfaceid);
