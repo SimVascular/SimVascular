@@ -1800,7 +1800,7 @@ int cvTetGenMeshObject::GetModelFaceInfo(std::map<std::string,std::vector<std::s
 
       // Store face IDs into the returned string.
       for (int i = 0; i < numFaces; i++) {
-          faceInfo["FaceID"].push_back(std::to_string(faces[i]));
+          faceInfo[ModelFaceInfo::ID].push_back(std::to_string(faces[i]));
       }
 
       delete [] faces;

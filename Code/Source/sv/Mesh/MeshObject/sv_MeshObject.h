@@ -80,6 +80,16 @@ public:
     KERNEL_MAX_TYPES
   };
 
+  // Define the names used to access face information
+  // in the map returned by the GetModelFaceInfo() method. 
+  //
+  class ModelFaceInfo {
+      public:
+        static const std::string ID;
+        static const std::string NAME;
+        static const std::string MODEL_ID;
+  };
+
   static char* GetKernelName( KernelType kernel );
   static KernelType GetKernelType( const char* kernel_name );
 
