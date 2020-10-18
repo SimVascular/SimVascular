@@ -311,19 +311,18 @@ Mesher_get_model_face_ids(PyMeshingMesher* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto mesher = self->mesher;
-  std::string desc;
-  std::vector<std::string> faceInfo;
+  std::vector<int> faceIDs;
 
-  if (mesher->GetModelFaceInfo(desc, faceInfo) != SV_OK) {
+  if (mesher->GetModelFaceIDs(faceIDs) != SV_OK) {
       api.error("Could not get face IDs for the mesh solid model.");
       return nullptr;
   }
 
   // Build return list of IDs.
   //
-  PyObject* pyList = PyList_New(faceInfo.size());
-  for (int i = 0; i < faceInfo.size(); i++) {
-      PyObject* value = Py_BuildValue("i", std::stoi(faceInfo[i]));
+  PyObject* pyList = PyList_New(faceIDs.size());
+  for (int i = 0; i < faceIDs.size(); i++) {
+      PyObject* value = Py_BuildValue("i", faceIDs[i]);
       PyList_SetItem(pyList, i, value);
   }
 
@@ -347,23 +346,28 @@ Mesher_get_model_face_info(PyMeshingMesher* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   auto mesher = self->mesher;
-  std::string desc;
-  std::vector<std::string> faceInfo;
+  std::map<std::string,std::vector<std::string>> faceInfo;
 
-  if (mesher->GetModelFaceInfo(desc, faceInfo) != SV_OK) {
+  if (mesher->GetModelFaceInfo(faceInfo) != SV_OK) {
       api.error("Could not get face IDs for the mesh solid model.");
       return nullptr;
   }
 
-  // Build list of face information. 
+  // Build face information map. 
   //
-  PyObject* pyList = PyList_New(faceInfo.size());
-  for (int i = 0; i < faceInfo.size(); i++) {
-      PyObject* value = Py_BuildValue("s", faceInfo[i].c_str());
-      PyList_SetItem(pyList, i, value);
+  PyObject* infoMap = PyDict_New();
+  for (auto& item : faceInfo) {
+      auto key = item.first;
+      auto vlist = item.second;
+      PyObject* pyList = PyList_New(vlist.size());
+      for (int i = 0; i < vlist.size(); i++) {
+          PyObject* value = Py_BuildValue("s", vlist[i].c_str());
+          PyList_SetItem(pyList, i, value);
+      }
+      PyDict_SetItemString(infoMap, key.c_str(), pyList);
   }
-
-  return Py_BuildValue("(s,O)", desc.c_str(), pyList); 
+ 
+  return infoMap; 
 }
 
 //---------------------------
@@ -639,20 +643,10 @@ Mesher_set_walls(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
   }
 
   // Get the loaded model face IDs.
-  std::string desc;
-  std::vector<std::string> faceInfo;
-  if (mesher->GetModelFaceInfo(desc, faceInfo) != SV_OK) {
+  std::vector<int> faceIDs;
+  if (mesher->GetModelFaceIDs(faceIDs) != SV_OK) {
       api.error("Could not get face IDs for the mesh solid model.");
       return nullptr;
-  }
-
-  // [TODO:DaveP] need to figure out which IDs to use for MeshSim?
-  // MeshSim has its own set_walls method so we should just need to
-  // convert face IDs to ints.
-  //
-  std::vector<int> faceIDs;
-  for (auto& faceID : faceInfo) {
-      faceIDs.push_back(std::stoi(faceID));
   }
 
   // Set the face IDs.

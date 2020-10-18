@@ -33,6 +33,8 @@
 //
 // The class name is 'meshing.MeshSim'.
 
+#include <tuple>
+
 //-----------------------
 // PyMeshingMeshSim
 //-----------------------
@@ -60,9 +62,9 @@ MeshingMeshSimCheckModelLoaded(PyMeshingMeshSim* self)
   return mesher->HasSolid();
 }
 
-//--------------------------
-// MeshingTetGenCheckOption
-//--------------------------
+//---------------------------
+// MeshingMeshSimCheckOption 
+//---------------------------
 // Check if an option can be correctly set for the mesh.
 //
 // The LocalEdgeSize option needs to have a model defined for the mesh.
@@ -76,6 +78,183 @@ MeshingMeshSimCheckOption(PyMeshingMeshSim* self, std::string& name, PyUtilApiFu
           api.error("A model must be defined for the mesh. Use the 'load_model' method to define a model for the mesh.");
           return false;
       }
+  }
+
+  return true;
+}
+
+//------------------------------------
+// MeshingMeshSimOptionsSetDictValues
+//------------------------------------
+// Extact values from a Python dict.
+//
+// Values are extracted in the order given in 'valueNames'.
+//
+// Note: The order of values returned in 'values' is important,
+// see cvMeshSimMeshObject::SetMeshOptions().
+//
+void MeshingMeshSimOptionsSetDictValues(PyObject* optionObj, std::string name, std::vector<std::string>& valueNames,
+       std::vector<double>& values)
+{
+  if (PyDict_Size(optionObj) == 0) {
+      return;
+  }
+
+  for (auto& elemName : valueNames) {
+      auto obj = PyDict_GetItemString(optionObj, elemName.c_str());
+      if (obj == Py_None) { 
+          throw std::runtime_error("The '" + elemName + "' item was not found in the '" + name + "' option.");
+      }
+      if (PyFloat_Check(obj)) {
+          auto value = PyFloat_AsDouble(obj);
+          values.push_back(value);
+      } else if (PyInt_Check(obj)) {
+          auto value = PyLong_AsDouble(obj);
+          values.push_back(value);
+      }
+  }
+}
+
+//--------------------------------
+// MeshingMeshSimOptionsGetValues
+//--------------------------------
+//
+static std::vector<double>
+MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, std::string& name, std::string& svName,
+    std::vector<std::string>& nameList)
+{
+  std::vector<double> values;
+  auto obj = PyObject_GetAttrString(meshingOptions, name.c_str());
+
+  // The option is not set up correctly, maybe its object has not been defined.
+  if (obj == nullptr) {
+      throw std::runtime_error("[PyTetGenOptionsGetValues] ERROR: Internal error: name: " + name);
+  }
+
+  if (obj == Py_None) {
+      return values;
+  }
+
+  auto objType = PyUtilGetObjectType(obj);
+  std::cout << std::endl;
+  std::cout << "[MeshingMeshSimOptionsGetValues] name: " << name << "  type: " << objType << std::endl;
+
+  if (PyFloat_Check(obj)) {
+      auto value = PyFloat_AsDouble(obj);
+      values.push_back(value);
+  } else if (PyInt_Check(obj)) {
+      auto value = PyLong_AsDouble(obj);
+      values.push_back(value);
+  } else if (PyTuple_Check(obj)) {
+      int num = PyTuple_Size(obj);
+      for (int i = 0; i < num; i++) {
+          auto item = PyTuple_GetItem(obj, i);
+          auto value = PyFloat_AsDouble(item);
+          values.push_back(value);
+      }
+  } else if (PyDict_Check(obj)) {
+      MeshingMeshSimOptionsSetDictValues(obj, name, nameList, values); 
+
+  // Local options can be a list of values with a face ID.
+  //
+  } else if (objType == "MeshSimListOption") {
+      auto dlistObj = PyObject_GetAttrString(obj, "dlist");
+      int listSize = PyList_Size(dlistObj);
+      std::cout << "[MeshingMeshSimOptionsGetValues] process MeshSimListOption: " << std::endl;
+      std::cout << "[MeshingMeshSimOptionsGetValues]   size: " << listSize << std::endl;
+      for (int i = 0; i < listSize; i++) { 
+          values.clear();
+          auto item = PyList_GetItem(dlistObj, i);
+          MeshingMeshSimOptionsSetDictValues(item, name, nameList, values);
+          if (mesher->SetMeshOptions(svName.c_str(), values.size(), values.data()) == SV_ERROR) {
+              std::string vstr;
+              for (auto& value : values) {
+                  vstr = vstr + std::to_string(value) + " ";
+              }
+              throw std::runtime_error("Error setting the '" + name + "' option with values '" + vstr + "'.");
+          }
+      }
+
+  } else {
+      throw std::runtime_error("[PyTetGenOptionsGetValues] ERROR: Internal error: name: " + name + "  type: " + objType);
+  }
+
+  Py_DECREF(obj);
+  return values;
+}
+
+//------------
+// SetOptions
+//------------
+// Set meshing options from a Python object.
+//
+// The MeshSim options are store in the MeshSimOptions class defined in 
+// SimVascular/Python/site-packages/sv/meshsim_options.py.
+//
+bool
+MeshingMeshSimSetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
+{
+  std::cout << "========== MeshingMeshSimSetOptions ========== " << std::endl;
+
+  // Define a tuple for storing option name information. 
+  typedef std::vector<std::string> Svec;
+  typedef std::pair<std::string, Svec> OptionInfo;
+
+  // Define a map beteen Python parameter names and SV parameter names, and a list.
+  // names used to set multi-value parameters (i.e. GlobalCurvature). Values are stored
+  // into the double values list in the sequence they are given because SV has an implicit
+  // ordering, see cvMeshSimMeshObject::SetMeshOptions().
+  //
+  static std::map<std::string, OptionInfo> optionsList = { 
+      { "_global_curvature", std::make_pair("GlobalCurvature", Svec{ "absolute", "curvature"}) }, 
+      { "_global_edge_size", std::make_pair("GlobalEdgeSize", Svec{ "absolute", "edge_size"}) },   
+      { "_global_min_curvature", std::make_pair("GlobalCurvatureMin", Svec{ "absolute", "min_curvature"}) },  
+
+      { "_local_edge_size", std::make_pair("LocalEdgeSize", Svec{ "face_id", "absolute", "edge_size"}) },  
+      { "_local_curvature", std::make_pair("LocalCurvature", Svec{ "face_id", "absolute", "curvature"}) }, 
+      { "_local_min_curvature", std::make_pair("LocalCurvatureMin", Svec{ "face_id", "absolute", "min_curvature"}) },  
+
+      { "_surface_mesh_flag", std::make_pair("SurfaceMeshFlag", Svec{}) },  
+      { "_surface_optimization", std::make_pair("SurfaceOptimization", Svec{}) },  
+      { "_surface_smoothing", std::make_pair("SurfaceSmoothing", Svec{}) },  
+
+      { "_volume_mesh_flag", std::make_pair("VolumeMeshFlag", Svec{}) },  
+      { "_volume_optimization", std::make_pair("VolumeOptimization", Svec{}) },  
+      { "_volume_smoothing", std::make_pair("VolumeSmoothing", Svec{}) },  
+
+  };
+
+  // Iterate over parameters creating a list of double values for each one.
+  //
+  try {
+      for (auto& option : optionsList) {
+          auto name = option.first;
+          auto svName = (option.second).first;
+          auto nameList = (option.second).second;
+          auto values = MeshingMeshSimOptionsGetValues(mesher, options, name, svName, nameList);
+          std::cout << "[MeshingMeshSimSetOptions] " << name << ":" << " #values: " << values.size();
+          if (values.size() == 0) { 
+              continue;
+          }
+          std::cout << " : ";
+          for (auto value : values) {
+              std::cout << value << "   ";
+          }
+          std::cout << std::endl;
+
+          if (mesher->SetMeshOptions(svName.c_str(), values.size(), values.data()) == SV_ERROR) {
+              std::string vstr;
+              for (auto& value : values) {
+                  vstr = vstr + std::to_string(value) + " ";
+              }
+              api.error("Error setting the '" + name + "' option with values '" + vstr + "'.");
+              return false;
+          }
+      }
+
+  } catch (const std::exception& exception) {
+      api.error(exception.what());
+      return false;
   }
 
   return true;
@@ -106,6 +285,56 @@ static PyObject *
 MeshingMeshSim_create_options(PyObject* self, PyObject* args, PyObject* kwargs )
 {
   return CreateMeshSimOptionsType(args, kwargs);
+}
+
+//------------------------------
+// MeshingMeshSim_generate_mesh 
+//------------------------------
+//
+PyDoc_STRVAR(MeshingMeshSim_generate_mesh_doc,
+  "generate_mesh(options)  \n\
+   \n\
+   Generate a mesh using the supplied meshing parameters. \n\
+   \n\
+   Args: \n\
+     options (meshing.MeshSimOptions): The meshing parameters used to   \n\
+         generate a mesh. \n\
+");
+
+static PyObject *
+MeshingMeshSim_generate_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
+{
+  std::cout << "========= MeshingMeshSim_generate_mesh =========" << std::endl;
+  using namespace MeshingTetGen;
+  auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
+  static char *keywords[] = {"options", NULL};
+  PyObject* options;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &options)) {
+      return api.argsError();
+  }
+
+  // Check the 'options' argument.
+  auto optionsType = PyUtilGetObjectType(options);
+  std::cout << "[MeshingMeshSim_generate_mesh] optionsType: " << optionsType << std::endl;
+  if (optionsType != "MeshSimOptions") { 
+      api.error("The 'options' argument is not a MeshSimOptions object.");
+      return nullptr;
+  }
+
+  auto mesher = self->mesher;
+
+  if (!MeshingMeshSimSetOptions(api, mesher, options)) { 
+      return nullptr;
+  }
+
+  // Generate the mesh.
+  if (mesher->GenerateMesh() == SV_ERROR) {
+      api.error("Error generating a mesh.");
+      return nullptr;
+  }
+
+  Py_RETURN_NONE;
 }
 
 //-------------------
@@ -298,10 +527,11 @@ PyDoc_STRVAR(PyMeshingMeshSim_doc,
 //-------------------------
 //
 static PyMethodDef PyMeshingMeshSimMethods[] = {
-  {"create_options", (PyCFunction)MeshingMeshSim_create_options, METH_VARARGS|METH_KEYWORDS, MeshingMeshSim_create_options_doc},
+  //{"create_options", (PyCFunction)MeshingMeshSim_create_options, METH_VARARGS|METH_KEYWORDS, MeshingMeshSim_create_options_doc},
+  {"generate_mesh", (PyCFunction)MeshingMeshSim_generate_mesh, METH_VARARGS|METH_KEYWORDS, MeshingMeshSim_generate_mesh_doc},
   {"load_model", (PyCFunction)MeshingMeshSim_load_model, METH_VARARGS|METH_KEYWORDS, MeshingMeshSim_load_model_doc},
-  { "set_model", (PyCFunction)MesherMeshSim_set_model, METH_VARARGS|METH_KEYWORDS, MesherMeshSim_set_model_doc},
-  {"set_options", (PyCFunction)MeshingMeshSim_set_options, METH_VARARGS, MeshingMeshSim_set_options_doc},
+  {"set_model", (PyCFunction)MesherMeshSim_set_model, METH_VARARGS|METH_KEYWORDS, MesherMeshSim_set_model_doc},
+  //{"set_options", (PyCFunction)MeshingMeshSim_set_options, METH_VARARGS, MeshingMeshSim_set_options_doc},
   {NULL, NULL}
 };
 

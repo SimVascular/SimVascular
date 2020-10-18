@@ -32,6 +32,8 @@
 #ifndef __CVMESHOBJECT_H
 #define __CVMESHOBJECT_H
 
+#include <map>
+
 #include "SimVascular.h"
 #include "svMeshObjectExports.h"
 
@@ -135,7 +137,9 @@ public:
   virtual cvPolyData *GetSolid() = 0;
   virtual bool HasSolid() = 0;
   virtual cvUnstructuredGrid *GetUnstructuredGrid() = 0;
-  virtual int GetModelFaceInfo(std::string& desc, std::vector<std::string>& faceInfo) = 0;
+  virtual int GetModelFaceInfo(std::map<std::string,std::vector<std::string>>& faceInfo) = 0;
+  virtual int GetModelFaceIDs(std::vector<int>& faceIDs) = 0;
+
   virtual bool HasVolumeMesh() = 0;
   virtual bool HasSurfaceMesh() = 0;
 

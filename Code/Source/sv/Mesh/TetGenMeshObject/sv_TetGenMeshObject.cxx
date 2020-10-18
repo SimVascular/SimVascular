@@ -1778,9 +1778,8 @@ cvPolyData* cvTetGenMeshObject::GetFacePolyData (int orgfaceid) {
 //   desc: The description of the information returned.
 //   faceInfo: A list of strings containing face IDs.
 //
-int cvTetGenMeshObject::GetModelFaceInfo(std::string& desc, std::vector<std::string>& faceInfo)
+int cvTetGenMeshObject::GetModelFaceInfo(std::map<std::string,std::vector<std::string>>& faceInfo)
 {
-  desc = "FaceID";
   faceInfo.clear();
 
   // [TODO:DaveP] What else can the kernel be?
@@ -1801,7 +1800,38 @@ int cvTetGenMeshObject::GetModelFaceInfo(std::string& desc, std::vector<std::str
 
       // Store face IDs into the returned string.
       for (int i = 0; i < numFaces; i++) {
-          faceInfo.push_back(std::to_string(faces[i]));
+          faceInfo["FaceID"].push_back(std::to_string(faces[i]));
+      }
+
+      delete [] faces;
+  }
+
+  return SV_OK;
+}
+
+int cvTetGenMeshObject::GetModelFaceIDs(std::vector<int>& faceIDs)
+{
+  faceIDs.clear();
+
+  // [TODO:DaveP] What else can the kernel be?
+  //
+  if (solidmodeling_kernel_ == SM_KT_POLYDATA) {
+      if (VtkUtils_PDCheckArrayName(originalpolydata_,1,"ModelFaceID") != SV_OK) {
+          fprintf(stderr,"ModelFaceID does not exist\n");
+          return SV_ERROR;
+      }
+
+      // Get face IDs.
+      int *faces;
+      int numFaces = 0;
+      if (PlyDtaUtils_GetFaceIds(originalpolydata_, &numFaces, &faces) != SV_OK) {
+          fprintf(stderr,"Could not get face ids\n");
+          return SV_ERROR;
+      }
+
+      // Store face IDs into the returned string.
+      for (int i = 0; i < numFaces; i++) {
+          faceIDs.push_back(faces[i]);
       }
 
       delete [] faces;
