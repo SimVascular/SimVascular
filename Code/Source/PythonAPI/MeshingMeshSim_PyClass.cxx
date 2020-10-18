@@ -83,6 +83,31 @@ MeshingMeshSimCheckOption(PyMeshingMeshSim* self, std::string& name, PyUtilApiFu
   return true;
 }
 
+//-----------------------------------
+// MeshingMeshSimOptionsGetNameIDMap
+//-----------------------------------
+// Get a map between face names and face IDs.
+//
+std::map<std::string,int>
+MeshingMeshSimOptionsGetNameIDMap(cvMeshObject* mesher)
+{ 
+  std::map<std::string,int> nameIDMap;
+  std::map<std::string,std::vector<std::string>> faceInfo;
+
+  if (mesher->GetModelFaceInfo(faceInfo) != SV_OK) {
+      return nameIDMap;
+  }
+
+  auto faceIDs = faceInfo[cvMeshObject::ModelFaceInfo::ID];
+  auto faceNames = faceInfo[cvMeshObject::ModelFaceInfo::NAME];
+
+  for (int i = 0; i < faceIDs.size(); i++) {
+      nameIDMap[faceNames[i]] = std::stoi(faceIDs[i]);
+  }
+
+  return nameIDMap;
+}
+
 //------------------------------------
 // MeshingMeshSimOptionsSetDictValues
 //------------------------------------
@@ -93,14 +118,15 @@ MeshingMeshSimCheckOption(PyMeshingMeshSim* self, std::string& name, PyUtilApiFu
 // Note: The order of values returned in 'values' is important,
 // see cvMeshSimMeshObject::SetMeshOptions().
 //
-void MeshingMeshSimOptionsSetDictValues(PyObject* optionObj, std::string name, std::vector<std::string>& valueNames,
-       std::vector<double>& values)
+void MeshingMeshSimOptionsSetDictValues(PyObject* optionObj, const std::string& name, const std::vector<std::string>& valueNames,
+       const std::map<std::string,int>& nameIDMap, std::vector<double>& values)
 {
   if (PyDict_Size(optionObj) == 0) {
       return;
   }
 
   for (auto& elemName : valueNames) {
+      std::cout << "[MeshingMeshSimOptionsSetDictValues] >>>>> elemName: " << elemName << std::endl;
       auto obj = PyDict_GetItemString(optionObj, elemName.c_str());
       if (obj == Py_None) { 
           throw std::runtime_error("The '" + elemName + "' item was not found in the '" + name + "' option.");
@@ -111,6 +137,17 @@ void MeshingMeshSimOptionsSetDictValues(PyObject* optionObj, std::string name, s
       } else if (PyInt_Check(obj)) {
           auto value = PyLong_AsDouble(obj);
           values.push_back(value);
+
+      // A string type is used only for face names in 'face_id' for now.
+      } else if (PyString_Check(obj)) {
+         if (elemName == "face_id") {
+             auto name = std::string(PyString_AsString(obj));
+             if (nameIDMap.count(name) == 0) {
+                 throw std::runtime_error("The face name '" + name + "' is not valid.");
+             }
+             int faceID = nameIDMap[name];
+             values.push_back(faceID);
+          }
       }
   }
 }
@@ -133,7 +170,10 @@ MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, s
 
   if (obj == Py_None) {
       return values;
-  }
+  }      
+
+  // Get the map between face names and face IDs.
+  auto nameIDMap = MeshingMeshSimOptionsGetNameIDMap(mesher);
 
   auto objType = PyUtilGetObjectType(obj);
   std::cout << std::endl;
@@ -153,19 +193,21 @@ MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, s
           values.push_back(value);
       }
   } else if (PyDict_Check(obj)) {
-      MeshingMeshSimOptionsSetDictValues(obj, name, nameList, values); 
+      MeshingMeshSimOptionsSetDictValues(obj, name, nameList, nameIDMap, values); 
 
-  // Local options can be a list of values with a face ID.
+  // Local options can be a list of values with a face ID or name.
   //
   } else if (objType == "MeshSimListOption") {
+      std::cout << std::endl;
+      std::cout << "[MeshingMeshSimOptionsGetValues] ####### Process MeshSimListOption" << std::endl;
       auto dlistObj = PyObject_GetAttrString(obj, "dlist");
       int listSize = PyList_Size(dlistObj);
       std::cout << "[MeshingMeshSimOptionsGetValues] process MeshSimListOption: " << std::endl;
-      std::cout << "[MeshingMeshSimOptionsGetValues]   size: " << listSize << std::endl;
+      std::cout << "[MeshingMeshSimOptionsGetValues]   list size: " << listSize << std::endl;
       for (int i = 0; i < listSize; i++) { 
           values.clear();
           auto item = PyList_GetItem(dlistObj, i);
-          MeshingMeshSimOptionsSetDictValues(item, name, nameList, values);
+          MeshingMeshSimOptionsSetDictValues(item, name, nameList, nameIDMap, values);
           if (mesher->SetMeshOptions(svName.c_str(), values.size(), values.data()) == SV_ERROR) {
               std::string vstr;
               for (auto& value : values) {
