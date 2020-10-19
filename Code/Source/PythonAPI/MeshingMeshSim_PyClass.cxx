@@ -145,7 +145,7 @@ void MeshingMeshSimOptionsSetDictValues(PyObject* optionObj, const std::string& 
              if (nameIDMap.count(name) == 0) {
                  throw std::runtime_error("The face name '" + name + "' is not valid.");
              }
-             int faceID = nameIDMap[name];
+             int faceID = nameIDMap.at(name);
              values.push_back(faceID);
           }
       }
@@ -208,7 +208,7 @@ MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, s
           values.clear();
           auto item = PyList_GetItem(dlistObj, i);
           MeshingMeshSimOptionsSetDictValues(item, name, nameList, nameIDMap, values);
-          if (mesher->SetMeshOptions(svName.c_str(), values.size(), values.data()) == SV_ERROR) {
+          if (mesher->SetMeshOptions(const_cast<char*>(svName.c_str()), values.size(), values.data()) == SV_ERROR) {
               std::string vstr;
               for (auto& value : values) {
                   vstr = vstr + std::to_string(value) + " ";
@@ -284,7 +284,7 @@ MeshingMeshSimSetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject*
           }
           std::cout << std::endl;
 
-          if (mesher->SetMeshOptions(svName.c_str(), values.size(), values.data()) == SV_ERROR) {
+          if (mesher->SetMeshOptions(const_cast<char*>(svName.c_str()), values.size(), values.data()) == SV_ERROR) {
               std::string vstr;
               for (auto& value : values) {
                   vstr = vstr + std::to_string(value) + " ";
