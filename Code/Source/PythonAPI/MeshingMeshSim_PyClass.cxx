@@ -126,7 +126,6 @@ void MeshingMeshSimOptionsSetDictValues(PyObject* optionObj, const std::string& 
   }
 
   for (auto& elemName : valueNames) {
-      std::cout << "[MeshingMeshSimOptionsSetDictValues] >>>>> elemName: " << elemName << std::endl;
       auto obj = PyDict_GetItemString(optionObj, elemName.c_str());
       if (obj == Py_None) { 
           throw std::runtime_error("The '" + elemName + "' item was not found in the '" + name + "' option.");
@@ -176,8 +175,6 @@ MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, s
   auto nameIDMap = MeshingMeshSimOptionsGetNameIDMap(mesher);
 
   auto objType = PyUtilGetObjectType(obj);
-  std::cout << std::endl;
-  std::cout << "[MeshingMeshSimOptionsGetValues] name: " << name << "  type: " << objType << std::endl;
 
   if (PyFloat_Check(obj)) {
       auto value = PyFloat_AsDouble(obj);
@@ -198,12 +195,8 @@ MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, s
   // Local options can be a list of values with a face ID or name.
   //
   } else if (objType == "MeshSimListOption") {
-      std::cout << std::endl;
-      std::cout << "[MeshingMeshSimOptionsGetValues] ####### Process MeshSimListOption" << std::endl;
       auto dlistObj = PyObject_GetAttrString(obj, "dlist");
       int listSize = PyList_Size(dlistObj);
-      std::cout << "[MeshingMeshSimOptionsGetValues] process MeshSimListOption: " << std::endl;
-      std::cout << "[MeshingMeshSimOptionsGetValues]   list size: " << listSize << std::endl;
       for (int i = 0; i < listSize; i++) { 
           values.clear();
           auto item = PyList_GetItem(dlistObj, i);
@@ -236,8 +229,6 @@ MeshingMeshSimOptionsGetValues(cvMeshObject* mesher, PyObject* meshingOptions, s
 bool
 MeshingMeshSimSetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject* options)
 {
-  std::cout << "========== MeshingMeshSimSetOptions ========== " << std::endl;
-
   // Define a tuple for storing option name information. 
   typedef std::vector<std::string> Svec;
   typedef std::pair<std::string, Svec> OptionInfo;
@@ -274,15 +265,9 @@ MeshingMeshSimSetOptions(PyUtilApiFunction& api, cvMeshObject* mesher, PyObject*
           auto svName = (option.second).first;
           auto nameList = (option.second).second;
           auto values = MeshingMeshSimOptionsGetValues(mesher, options, name, svName, nameList);
-          std::cout << "[MeshingMeshSimSetOptions] " << name << ":" << " #values: " << values.size();
           if (values.size() == 0) { 
               continue;
           }
-          std::cout << " : ";
-          for (auto value : values) {
-              std::cout << value << "   ";
-          }
-          std::cout << std::endl;
 
           if (mesher->SetMeshOptions(svName.c_str(), values.size(), values.data()) == SV_ERROR) {
               std::string vstr;
@@ -346,7 +331,6 @@ PyDoc_STRVAR(MeshingMeshSim_generate_mesh_doc,
 static PyObject *
 MeshingMeshSim_generate_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
-  std::cout << "========= MeshingMeshSim_generate_mesh =========" << std::endl;
   using namespace MeshingTetGen;
   auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
   static char *keywords[] = {"options", NULL};
@@ -358,7 +342,6 @@ MeshingMeshSim_generate_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kw
 
   // Check the 'options' argument.
   auto optionsType = PyUtilGetObjectType(options);
-  std::cout << "[MeshingMeshSim_generate_mesh] optionsType: " << optionsType << std::endl;
   if (optionsType != "MeshSimOptions") { 
       api.error("The 'options' argument is not a MeshSimOptions object.");
       return nullptr;
@@ -395,7 +378,6 @@ PyDoc_STRVAR(MeshingMeshSim_load_model_doc,
 static PyObject *
 MeshingMeshSim_load_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 {
-  std::cout << "======================= MeshingMeshSim_load_model ================" << std::endl;
   auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
   static char *keywords[] = {"file_name", NULL};
   char *fileName;
@@ -481,8 +463,6 @@ PyDoc_STRVAR(MeshingMeshSim_set_options_doc,
 static PyObject *
 MeshingMeshSim_set_options(PyMeshingMeshSim* self, PyObject* args )
 {
-  std::cout << "[MeshingMeshSim_set_options] " << std::endl;
-  std::cout << "[MeshingMeshSim_set_options] ========== MeshingMeshSim_set_options =========" << std::endl;
   auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
   PyObject* options;
 
@@ -491,7 +471,6 @@ MeshingMeshSim_set_options(PyMeshingMeshSim* self, PyObject* args )
   }
 
   auto mesher = self->super.mesher;
-  std::cout << "[MeshingMeshSim_set_options] mesher: " << mesher << std::endl;
 
   // Iterate over all option names to set mesher options.
   //
@@ -509,12 +488,6 @@ MeshingMeshSim_set_options(PyMeshingMeshSim* self, PyObject* args )
           return nullptr;
       }
 
-      std::cout << "[MeshingMeshSim_set_options] name: " << svName << "  num values: " << numValues << "  values: ";
-      for (auto const val : values) {
-          std::cout << val << " ";
-      }
-      std::cout << std::endl;
-
       if (mesher->SetMeshOptions(svName, numValues, values.data()) == SV_ERROR) {
         api.error("Error setting MeshSim meshing '" + std::string(pyName) + "' option.");
         return nullptr;
@@ -527,7 +500,6 @@ MeshingMeshSim_set_options(PyMeshingMeshSim* self, PyObject* args )
   //
   auto localEdgeSizes = PyMeshSimOptionsGetLocalEdgeSizes(options, MeshSimOption::LocalEdgeSize);
   auto svName = MeshSimOption::pyToSvNameMap[MeshSimOption::LocalEdgeSize];
-  std::cout << "[MeshingMeshSim_set_options] Set local edge sizes: " << std::endl;
   for (auto const localEdgeSize : localEdgeSizes) {
       int faceID = std::get<0>(localEdgeSize);
       double edgeSize = std::get<1>(localEdgeSize);
