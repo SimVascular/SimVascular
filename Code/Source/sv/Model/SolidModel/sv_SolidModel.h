@@ -140,8 +140,9 @@ public:
   virtual int MakeInterpCurveLoop( cvPolyData *pd, int closed ) = 0;
   virtual int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) = 0;
   virtual int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,
-     int continuity,int partype,double w1,double w2,double w3 ,int smoothing) = 0;
-  virtual int CapSurfToSolid( cvSolidModel *surf ) { return SV_ERROR; }
+     int continuity,int partype,double w1,double w2,double w3 ,int smoothing,  bool capSurface=true) = 0;
+  virtual int CapSurfToSolid( cvSolidModel *surf ) = 0;
+  //virtual int CapSurfToSolid( cvSolidModel *surf ) { return SV_ERROR; }
 
   // Booleans are compatible only between like-typed concrete objects:
   virtual int Intersect( cvSolidModel *a, cvSolidModel *b,

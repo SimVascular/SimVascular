@@ -112,7 +112,7 @@ public:
 
   int MakeInterpCurveLoop( cvPolyData *pd, int closed );
   int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) {return SV_ERROR; }
-  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,int continuity,int partype,double w1,double w2,double w3 ,int smoothing);
+  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,int continuity,int partype,double w1,double w2,double w3 ,int smoothing, bool capSurface=false);
   int CapSurfToSolid( cvSolidModel *surf );
 
   // Booleans are compatible only between like-typed concrete objects:

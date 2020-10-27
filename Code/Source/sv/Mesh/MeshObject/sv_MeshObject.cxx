@@ -35,6 +35,11 @@
 #include "sv_misc_utils.h"
 #include <string.h>
 
+// Set the key names used to store face information. 
+const std::string cvMeshObject::ModelFaceInfo::ID = "id"; 
+const std::string cvMeshObject::ModelFaceInfo::NAME = "name"; 
+const std::string cvMeshObject::ModelFaceInfo::MODEL_ID = "modelID"; 
+
 // -------------
 // cvMeshObject
 // -------------

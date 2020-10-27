@@ -32,6 +32,8 @@
 #ifndef __CVMESHOBJECT_H
 #define __CVMESHOBJECT_H
 
+#include <map>
+
 #include "SimVascular.h"
 #include "svMeshObjectExports.h"
 
@@ -76,6 +78,16 @@ public:
     KERNEL_TETGEN,
     KERNEL_GMSH,
     KERNEL_MAX_TYPES
+  };
+
+  // Define the names used to access face information
+  // in the map returned by the GetModelFaceInfo() method. 
+  //
+  class ModelFaceInfo {
+      public:
+        static const std::string ID;
+        static const std::string NAME;
+        static const std::string MODEL_ID;
   };
 
   static char* GetKernelName( KernelType kernel );
@@ -135,7 +147,9 @@ public:
   virtual cvPolyData *GetSolid() = 0;
   virtual bool HasSolid() = 0;
   virtual cvUnstructuredGrid *GetUnstructuredGrid() = 0;
-  virtual int GetModelFaceInfo(std::vector<int>& faceIDs) = 0;
+  virtual int GetModelFaceInfo(std::map<std::string,std::vector<std::string>>& faceInfo) = 0;
+  virtual int GetModelFaceIDs(std::vector<int>& faceIDs) = 0;
+
   virtual bool HasVolumeMesh() = 0;
   virtual bool HasSurfaceMesh() = 0;
 

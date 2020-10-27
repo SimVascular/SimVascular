@@ -40,6 +40,8 @@
 
 #include "sv_TetGenMeshObject.h"
 
+extern cvSolidModel * GetModelFromPyObj(PyObject* obj);
+
 extern void MeshingMesherSetParameter(cvMeshObject* mesher, std::string& name, std::vector<double>& values);
 
 //-----------------
@@ -308,9 +310,10 @@ static PyObject *
 Mesher_get_model_face_ids(PyMeshingMesher* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  std::vector<int> faceIDs;
   auto mesher = self->mesher;
-  if (mesher->GetModelFaceInfo(faceIDs) != SV_OK) {
+  std::vector<int> faceIDs;
+
+  if (mesher->GetModelFaceIDs(faceIDs) != SV_OK) {
       api.error("Could not get face IDs for the mesh solid model.");
       return nullptr;
   }
@@ -324,6 +327,47 @@ Mesher_get_model_face_ids(PyMeshingMesher* self, PyObject* args)
   }
 
   return pyList;
+}
+
+//----------------------------
+// Mesher_get_model_face_info
+//----------------------------
+//
+PyDoc_STRVAR(Mesher_get_model_face_info_doc,
+  "get_model_face_info()  \n\
+  \n\
+  Get the mesh solid model face information. \n\
+  \n\
+  Returns str,list([str]): The description and list of the face information. \n\
+");
+
+static PyObject *
+Mesher_get_model_face_info(PyMeshingMesher* self, PyObject* args)
+{
+  auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
+  auto mesher = self->mesher;
+  std::map<std::string,std::vector<std::string>> faceInfo;
+
+  if (mesher->GetModelFaceInfo(faceInfo) != SV_OK) {
+      api.error("Could not get face IDs for the mesh solid model.");
+      return nullptr;
+  }
+
+  // Build face information map. 
+  //
+  PyObject* infoMap = PyDict_New();
+  for (auto& item : faceInfo) {
+      auto key = item.first;
+      auto vlist = item.second;
+      PyObject* pyList = PyList_New(vlist.size());
+      for (int i = 0; i < vlist.size(); i++) {
+          PyObject* value = Py_BuildValue("s", vlist[i].c_str());
+          PyList_SetItem(pyList, i, value);
+      }
+      PyDict_SetItemString(infoMap, key.c_str(), pyList);
+  }
+ 
+  return infoMap; 
 }
 
 //---------------------------
@@ -600,7 +644,7 @@ Mesher_set_walls(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
 
   // Get the loaded model face IDs.
   std::vector<int> faceIDs;
-  if (mesher->GetModelFaceInfo(faceIDs) != SV_OK) {
+  if (mesher->GetModelFaceIDs(faceIDs) != SV_OK) {
       api.error("Could not get face IDs for the mesh solid model.");
       return nullptr;
   }
@@ -1051,6 +1095,8 @@ static PyMethodDef PyMeshingMesherMethods[] = {
   { "get_mesh", (PyCFunction)Mesher_get_mesh, METH_VARARGS|METH_KEYWORDS, Mesher_get_mesh_doc},
 
   { "get_model_face_ids", (PyCFunction)Mesher_get_model_face_ids, METH_VARARGS, Mesher_get_model_face_ids_doc },
+
+  { "get_model_face_info", (PyCFunction)Mesher_get_model_face_info, METH_VARARGS, Mesher_get_model_face_info_doc },
 
   { "get_model_polydata", (PyCFunction)Mesher_get_model_polydata, METH_VARARGS, Mesher_get_model_polydata_doc },
 

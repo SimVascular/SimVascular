@@ -583,7 +583,7 @@ int Geom_CapCmd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
   ARG_FreeListArgvs( table_size, arg_table );
 
-  if ( sys_geom_cap( (cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst), &numIds,&ids,captype )
+  if ( sys_geom_cap_for_centerlines( (cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst), &numIds,&ids,captype )
        != SV_OK ) {
     Tcl_SetResult( interp, "error capping model", TCL_STATIC );
     return TCL_ERROR;

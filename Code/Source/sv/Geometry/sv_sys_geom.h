@@ -211,5 +211,7 @@ SV_EXPORT_SYSGEOM int sys_geom_local_blend(cvPolyData *pd,cvPolyData **outpd, in
 SV_EXPORT_SYSGEOM int sys_geom_set_ids_for_caps( cvPolyData *pd, cvPolyData **outpd,int **doublecaps,
     int *numfaces);
 
+SV_EXPORT_SYSGEOM void sys_geom_check_lines_connectivity(int numLines, vtkIdType *lineConn, bool& nonManifold, bool& multipleRegions, bool& notClosed);
+
 
 #endif /* __SYS_GEOM_H */

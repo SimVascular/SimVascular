@@ -482,6 +482,60 @@ MesherTetGen_generate_mesh(PyMeshingMesher* self, PyObject* args, PyObject* kwar
   Py_RETURN_NONE;
 }
 
+//------------------------
+// MesherTetGen_set_model
+//------------------------
+//
+PyDoc_STRVAR(MesherTetGen_set_model_doc,
+  "set_model(model)  \n\
+  \n\
+  Set the solid model used by the mesher. \n\
+  \n\
+  Args:                                    \n\
+    model (Model): A Model object.  \n\
+");
+
+static PyObject *
+MesherTetGen_set_model(PyMeshingMesher* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
+  static char *keywords[] = {"model", NULL};
+  PyObject* modelArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelArg)) {
+    return api.argsError();
+  }
+
+  auto mesher = self->mesher;
+
+  // Check that the model argument is a SV Python Model object.
+  auto model = GetModelFromPyObj(modelArg);
+  if (model == nullptr) {
+      api.error("The 'model' argument is not a Model object.");
+      return nullptr;
+  }
+
+  // Check for a valid model type.
+  auto kernel = model->GetKernelT();
+  if (kernel != SolidModel_KernelT::SM_KT_POLYDATA) {
+      std::string kernelName(SolidModel_KernelT_EnumToStr(kernel));
+      std::transform(kernelName.begin(), kernelName.end(), kernelName.begin(), ::toupper);
+      api.error("The 'model' argument has invalid type '" + kernelName + "'. The TetGen mesher only operates on POLYDATA models.");
+      return nullptr;
+  }
+
+  // Get the vtkPolyData for the model.
+  double max_dist = -1.0;
+  int useMaxDist = 0;
+  auto cvPolydata = model->GetPolyData(useMaxDist, max_dist);
+  auto polydata = cvPolydata->GetVtkPolyData();
+
+  // Set the model using vtkPolyData.
+  mesher->LoadModel(polydata);
+
+  Py_RETURN_NONE;
+}
+
 ////////////////////////////////////////////////////////
 //           C l a s s    D e f i n i t i o n         //
 ////////////////////////////////////////////////////////
@@ -513,6 +567,7 @@ PyDoc_STRVAR(PyMeshingTetGen_doc,
 //
 static PyMethodDef PyMeshingTetGenMethods[] = {
  { "generate_mesh", (PyCFunction)MesherTetGen_generate_mesh, METH_VARARGS|METH_KEYWORDS, MesherTetGen_generate_mesh_doc},
+ { "set_model", (PyCFunction)MesherTetGen_set_model, METH_VARARGS|METH_KEYWORDS, MesherTetGen_set_model_doc},
   {NULL, NULL}
 };
 

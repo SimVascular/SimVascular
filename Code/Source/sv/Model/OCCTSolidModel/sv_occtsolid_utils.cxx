@@ -478,29 +478,29 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
   return SV_OK;
 }
 
-// ---------------------
+//--------------------------
 // OCCTUtils_MakeLoftedSurf
-// ---------------------
+//--------------------------
 /**
  * @brief Procedure to create a lofted surface from a set of wires
  * @param curves list of wires to be lofted. Wires should be created by
  * uniformly spaced points circumferentially and should be aligned with
  * first points matching
- * @param shape place to store the output lofted surface
- * @param numCurves number of wires contained in curves
+ *
+ * @param shape, place to store the output lofted surface
+ * @param numCurves, number of wires contained in curves
  * @param continuity desired continuity of the ouptut surface. Typically, 2
  * works okay. Trouble with higher or lower
- * @param partype The parametrization method. 0 is chord, 1 is centripetal,
+ * @param partype, The parametrization method. 0 is chord, 1 is centripetal,
  * 2 is isoparametric. Depends on wires which works best.
  * @param w1, first weighting to be used only if smoothing
  * @param w2, second weighting to be used only if smoothing
  * @param w3, third weighting to be used only if smoothing
- * @param smoothing indicates whether smoothing should be used
+ * @param smoothing, indicates whether smoothing should be used
  * @return SV_OK if function completes properly
  */
-int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
-		int numCurves,int continuity,
-		int partype, double w1, double w2, double w3, int smoothing)
+int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape, int numCurves, int continuity,
+      int partype, double w1, double w2, double w3, int smoothing)
 {
   //Methods using GeomFill_SectionGenerator
   GeomFill_SectionGenerator sectioner;
