@@ -64,8 +64,14 @@ sv4guiImageLinesContainer::GetLines()
 //
 void sv4guiImageLinesContainer::SetLines(vtkPolyData* lines)
 {
-  m_Lines = lines;
-  //m_NewMesh = true;
+  m_Lines = lines; 
+  /*
+  if (m_Lines != nullptr) { 
+      m_Lines->Delete();
+  }
+  m_Lines = vtkPolyData::New();
+  m_Lines->DeepCopy(lines);
+  */
 }
 
 //-----------------------

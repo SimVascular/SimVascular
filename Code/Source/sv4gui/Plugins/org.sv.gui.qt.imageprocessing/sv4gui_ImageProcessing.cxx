@@ -403,9 +403,26 @@ void sv4guiImageProcessing::ComputeCenterlines()
     return;
   }
 
-  auto lines = linesDst->GetVtkPolyData();
-  //std::cout << "[ComputeCenterlines] Centerlines:" << std::endl;
-  //std::cout << "[ComputeCenterlines]   Number of points: " << lines->GetNumberOfPoints() << std::endl;
+  // Compute branches.
+  //
+  /*
+  cvPolyData* splitCenterlines = nullptr;
+  cvPolyData* surfGrouped = nullptr;
+  cvPolyData* sections = nullptr;
+  if (sys_geom_centerlinesections(linesDst, &cvSurfPolydata, &splitCenterlines, &surfGrouped, &sections) != SV_OK) {
+    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
+    return;
+  }
+  */
+  cvPolyData* splitCenterlines = nullptr;
+  if (sys_geom_separatecenterlines(linesDst, &splitCenterlines) != SV_OK) {
+    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
+    return;
+  }
+
+  auto lines = splitCenterlines->GetVtkPolyData();
+  std::cout << "[ComputeCenterlines] Centerlines:" << std::endl;
+  std::cout << "[ComputeCenterlines]   Number of points: " << lines->GetNumberOfPoints() << std::endl;
 
   // Create centerlines data nodes, setup interactor, etc.
   InitializeCenterlines();
@@ -417,6 +434,16 @@ void sv4guiImageProcessing::ComputeCenterlines()
   auto dirPath = m_PluginOutputDirectory.toStdString();
   std::string fileName = dirPath + "/centerlines.vtp"; 
   WritePolydata(fileName, lines);
+
+  // [TODO:DaveP] something is crashing SV here.
+  /*
+  delete linesDst; 
+  delete voronoiDst;
+  delete splitCenterlines; 
+  delete surfGrouped; 
+  delete sections;
+  delete splitCenterlines;
+  */
 
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
