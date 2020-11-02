@@ -28,13 +28,15 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+ 
 #ifndef PYAPI_SEGMENTATION_PYMODULE_H
-#define PYAPI_SEGMENTATION_PYMODULE_H
+#define PYAPI_SEGMENTATION_PYMODULE_H 
 
 #include "SimVascular.h"
-#include "Python.h"
+
 #include "svPythonAPIExports.h"
+
+#include "Python.h"
 #include "sv3_Contour.h"
 #include "sv_FactoryRegistrar.h"
 #include "sv4gui_ContourGroup.h"
@@ -43,14 +45,14 @@
 #include "PathPlanning_PyModule.h"
 
 // Need to define US_MODULE_NAME because we are including sv4gui_ContourGroupIO.h.
-#define US_MODULE_NAME
+//#define US_MODULE_NAME 
 
 // Needed for the dmd module.
 extern PyObject * PyCreateSegmentation(sv4guiContour* contour);
 
 PyObject* CreatePySegmentationSeries(sv4guiContourGroup* contourGroup);
 
-// Define the signature for the function used to copy sv4guiContour
+// Define the signature for the function used to copy sv4guiContour 
 // object data to sv3::Contour objects.
 typedef void (*CopySegmentationDataFunc)(sv4guiContour* sv4Contour, PyObject*);
 
@@ -59,8 +61,8 @@ typedef void (*CopySegmentationDataFunc)(sv4guiContour* sv4Contour, PyObject*);
 //----------------
 // Segmentation base class.
 //
-// CopySv4ContourData: A function pointer for copying sv4guiContour object
-//    data to sv3::Contour objects. This is set in each derived class's
+// CopySv4ContourData: A function pointer for copying sv4guiContour object 
+//    data to sv3::Contour objects. This is set in each derived class's 
 //    object initialization function (e.g. PyCircleSegmentationInit).
 //
 extern "C" SV_EXPORT_PYTHON_API typedef struct
@@ -78,4 +80,4 @@ PyMODINIT_FUNC  initpyContour();
 PyMODINIT_FUNC  PyInit_PySegmentation();
 #endif
 
-#endif
+#endif 

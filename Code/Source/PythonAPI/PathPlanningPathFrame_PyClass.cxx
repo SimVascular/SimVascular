@@ -130,6 +130,7 @@ PyPathFrameSetDefaults(PyPathFrame* self)
   self->normal = Py_BuildValue("[d,d,d]", 1.0, 0.0, 0.0);
   self->position = Py_BuildValue("[d,d,d]", 0.0, 0.0, 0.0);
   self->tangent = Py_BuildValue("[d,d,d]", 0.0, 1.0, 0.0);
+  return NULL;
 }
 
 //----------------

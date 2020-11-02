@@ -58,40 +58,30 @@ PyDoc_STRVAR(ParasolidSolid_write_doc,
   \n\
   Write the solid model to a file in the Parasolid .xmt_txt format. \n\
   \n\
+  The xmt_txt extension does not need to be give in the file name.  \n\
+  \n\
+  Example: Write a model to the file named 'model.xmt_txt'.         \n\
+  \n\
+           model.write('model')                                     \n\
+  \n\
   Args: \n\
-    file_name (str): Name in the file to write the model to. \n\
+    file_name (str): Name of the file to write the model to. \n\
 ");
 
 static PyObject *
 ParasolidSolid_write(PyModelingModel* self, PyObject* args, PyObject* kwargs)
 {
-  auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", "format", "version", NULL};
-  char* fileFormat;
+  auto api = PyUtilApiFunction("s|i", PyRunTimeErr, __func__);
+  static char *keywords[] = {"file_name", "version", NULL};
   char* fileName;
   int fileVersion = 0;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName, &fileFormat, &fileVersion)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName, &fileVersion)) {
       return api.argsError();
   }
 
   auto model = self->solidModel;
-  //std::cout << "[ParasolidSolid_write] " << std::endl;
-  //std::cout << "[ParasolidSolid_write] kernel: " << self->kernel << std::endl;
-
-  // Add format as file extension.
-  //
-  std::string fullFileName = std::string(fileName);
-  auto extension = fullFileName.substr(fullFileName.find_last_of(".") + 1);
-  if (extension != "") {
-      api.error("The file name argument has a file extension '" + extension + "'.");
-      return nullptr;
-  }
-  fullFileName += "." + std::string(fileFormat);
-  std::vector<char> cstr(fullFileName.c_str(), fullFileName.c_str() + fullFileName.size() + 1);
-  //std::cout << "[SolidModel_write] fullFileName: " << fullFileName << std::endl;
-
-  if (model->WriteNative(fileVersion, cstr.data()) != SV_OK) {
+  if (model->WriteNative(fileVersion, fileName) != SV_OK) {
       api.error("Error writing the solid model to the file '" + std::string(fileName) +
         "' using version '" + std::to_string(fileVersion)+"'.");
       return nullptr;

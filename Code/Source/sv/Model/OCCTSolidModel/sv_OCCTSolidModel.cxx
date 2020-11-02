@@ -372,12 +372,12 @@ int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
   return SV_OK;
 }
 
-// ------------
+//----------------
 // MakeLoftedSurf
-// ------------
-int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
-		char *name,int continuity,int partype,
-		double w1,double w2,double w3,int smoothing)
+//----------------
+//
+int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves, char *name,int continuity,int partype,
+      double w1,double w2,double w3,int smoothing, bool capSurface)
 {
 
   //if (geom_ != NULL)
@@ -475,9 +475,8 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
     bcurves[i] = TopoDS::Wire(*(shapePtr->geom_));
   }
   this->NewShape();
-  if (OCCTUtils_MakeLoftedSurf(bcurves,*geom_,numCurves,continuity,partype,
-        		  w1,w2,w3,smoothing) != SV_OK)
-  {
+
+  if (OCCTUtils_MakeLoftedSurf(bcurves, *geom_, numCurves, continuity, partype, w1, w2, w3, smoothing) != SV_OK) {
     delete [] bcurves;
     fprintf(stderr,"Error while lofting surface\n");
     return SV_ERROR;

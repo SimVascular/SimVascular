@@ -633,6 +633,14 @@ ifeq ($(SV_USE_MITK),1)
   endif
 endif
 
+ifeq ($(SV_USE_PYTHON),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/PythonAPI
+  else
+     LIBDIRS += ../Code/Source/PythonAPI
+  endif
+endif
+
 SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 
 # -------------------------
@@ -699,6 +707,7 @@ SV_LIB_SEGMENTATION_NAME=_simvascular_segmentation
 SV_LIB_POLYDATA_SOLID_NAME=_simvascular_polydata_solid
 SV_LIB_POST_NAME=_simvascular_post
 SV_LIB_PYTHON_INTERP_NAME=_simvascular_python_interp
+SV_LIB_PYTHON_API_NAME=_simvascular_python_api
 SV_LIB_REPOSITORY_NAME=_simvascular_repository
 SV_LIB_SOLID_NAME=_simvascular_solid
 SV_LIB_TETGEN_ADAPTOR_NAME=_simvascular_tetgen_adaptor

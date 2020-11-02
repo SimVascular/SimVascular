@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <map>
 #include <math.h>
 #include "sv_sys_geom.h"
 #include "sv_VTK.h"
@@ -4317,5 +4318,83 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
   delete [] capone;
   delete [] captwo;
   return SV_OK;
+}
+
+//-----------------------------------
+// sys_geom_check_lines_connectivity
+//-----------------------------------
+// Check that the connectivity of the lines from a vtkPolyData 
+// object satisfy
+//
+//   1) Define a single closed region
+//   2) Are manifold; two lines connected to a vertex 
+//
+// Lines connectivity is given in 'lineConn' as pairs of point IDs.
+// The (startID,endID) pairs are first stored in an std::map as
+//
+//   connMap[startID] = endID
+//
+// The map is then traversed using the startID of the first pair
+// to check if it reaches the original startID. The check fails if 
+//
+//   1) The last ID in the map != original startID: not closed
+//   2) The number of lines != the number of lines traversed: more than one region
+//   3) There is more than one ID per end ID: non-manifold
+//
+// Arguments:
+//   numLines: The number of lines (i.e. pairs of IDs).
+//   lineConn: The array storing line pair IDs.
+//
+// Note: No check for an overlapping curve is performed.
+//
+// Returns:
+//   nonManifold: If true then the lines are non-manifold.
+//   multipleRegions: If true then the lines form multiple disjoint regions.
+//   notClosed: If true then the lines donot form a closed curve. 
+//
+void sys_geom_check_lines_connectivity(int numLines, vtkIdType *lineConn, bool& nonManifold, 
+         bool& multipleRegions, bool& notClosed)
+{
+  nonManifold = false;
+  multipleRegions = false;
+  notClosed = false;
+  std::map<int,std::vector<int>> connMap;
+
+  for (int i = 0; i < numLines; i++) {
+    int id1 = lineConn[2*i];
+    int id2 = lineConn[2*i+1];
+    connMap[id1].push_back(id2);
+    if (connMap[id1].size() > 1) {
+      nonManifold = true;
+      return;
+    }
+  }
+
+  int startID = lineConn[0];
+  int numLoopLines = 0;
+  int id = startID;
+  bool foundLoop = false;
+  while (true) {
+    if (connMap.count(id) == 0) {
+        break;
+    }
+    numLoopLines += 1;
+    int nextID = connMap[id][0];
+    connMap[id][0] = -1;
+    if (nextID == startID) {
+        foundLoop = true;
+        break;
+    }
+    id = nextID;
+  }
+
+  if (!foundLoop) {
+    notClosed = true;
+    return;
+  }
+
+  if (numLoopLines != numLines) {
+    multipleRegions = true;
+  }
 }
 
