@@ -226,6 +226,10 @@ PathSeries_set_path(PyPathSeries* self, PyObject* args, PyObject* kwargs)
       return nullptr;
   }
 
+  // The path object is created outside of this method so we must 
+  // increment its refence so it does not get destroyed.
+  Py_INCREF(pathObj);
+
   // Add the path to the group.
   if (timeStep+1 >= timestepSize) {
       self->pathGroup->Expand(timeStep);

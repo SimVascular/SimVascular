@@ -316,10 +316,12 @@ void sv4guiImageProcessing::readData()
   std::cout << "=========== sv4guiImageProcessing::readData ===========" << std::endl;
 
   auto dirPath = m_PluginOutputDirectory.toStdString();
+  std::cout << "[readData] dirPath: " << dirPath << std::endl;
+
+  // Read centerlines.
+  //
   std::string fileName = dirPath + "/centerlines.vtp"; 
   auto *centerlines = vtkPolyData::New();
-
-  std::cout << "[readData] dirPath: " << dirPath << std::endl;
   vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
   reader->SetFileName(fileName.c_str());
   reader->Update();
@@ -332,6 +334,19 @@ void sv4guiImageProcessing::readData()
 
   // Centerline geometry is stored in the container.
   m_CenterlinesContainer->SetLines(centerlines);
+
+  // Read surface.
+  //
+  /* [DaveP] Not sure if I need to do this.
+  std::string surfFileName = dirPath + "/surface.vtp";
+  auto *surface = vtkPolyData::New();
+  vtkSmartPointer<vtkXMLPolyDataReader> surfReader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+  surfReader->SetFileName(surfFileName.c_str());
+  surfReader->Update();
+  surface->DeepCopy(reader->GetOutput());
+  std::cout << "[readData] surface num points: " << surface->GetNumberOfPoints() << std::endl;
+  std::cout << "[readData] surface num cells: " << surface->GetNumberOfCells() << std::endl;
+  */
 
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -393,34 +408,43 @@ void sv4guiImageProcessing::ComputeCenterlines()
       }
     }
 
-  cvPolyData* linesDst = nullptr;
+  cvPolyData* centerlines = nullptr;
   cvPolyData* voronoiDst = nullptr;
   cvPolyData cvSurfPolydata(segPolyData);
 
   if (sys_geom_centerlines(&cvSurfPolydata, sourceIDs.data(), sourceIDs.size(), targetIDs.data(), targetIDs.size(), 
-        &linesDst, &voronoiDst) != SV_OK) {
+        &centerlines, &voronoiDst) != SV_OK) {
     QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
     return;
   }
 
   // Compute branches.
   //
-  /*
-  cvPolyData* splitCenterlines = nullptr;
+  cvPolyData* separateCenterlines = nullptr;
   cvPolyData* surfGrouped = nullptr;
   cvPolyData* sections = nullptr;
-  if (sys_geom_centerlinesections(linesDst, &cvSurfPolydata, &splitCenterlines, &surfGrouped, &sections) != SV_OK) {
-    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
-    return;
-  }
-  */
-  cvPolyData* splitCenterlines = nullptr;
-  if (sys_geom_separatecenterlines(linesDst, &splitCenterlines) != SV_OK) {
+  if (sys_geom_centerlinesections(centerlines, &cvSurfPolydata, &separateCenterlines, &surfGrouped, &sections) != SV_OK) {
     QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
     return;
   }
 
-  auto lines = splitCenterlines->GetVtkPolyData();
+  /*
+  cvPolyData* separateCenterlines = nullptr;
+  if (sys_geom_separatecenterlines(centerlines, &separateCenterlines) != SV_OK) {
+    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
+    return;
+  }
+  auto lines = separateCenterlines->GetVtkPolyData();
+  */
+
+  cvPolyData* mergedCenterlines = nullptr;
+  int mergeblanked = 1;
+  if (sys_geom_mergecenterlines(separateCenterlines, mergeblanked, &mergedCenterlines) != SV_OK ) {
+    QMessageBox::critical(NULL, "", "The centerline extraction computation has failed."); 
+    return;
+  }
+  auto lines = mergedCenterlines->GetVtkPolyData();
+
   std::cout << "[ComputeCenterlines] Centerlines:" << std::endl;
   std::cout << "[ComputeCenterlines]   Number of points: " << lines->GetNumberOfPoints() << std::endl;
 

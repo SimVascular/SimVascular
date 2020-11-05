@@ -84,10 +84,13 @@ void sv4guiModelExtractPathsAction::UpdateStatus()
     // Added model
 
     // Now add model for merged centerlines pd
+    #ifdef sv4guiModelExtractPathsAction_extract_paths 
     mitk::DataNode::Pointer mergedCenterlinesModelNode = m_DataStorage->GetNamedDerivedNode("Merged_Centerlines", m_Thread->GetSelectedNode());
 
     if (mergedCenterlinesModelNode.IsNull())
       m_DataStorage->Add(m_Thread->GetMergedCenterlinesModelNode(), m_Thread->GetSelectedNode());
+    #endif
+
     // Added model
 
     m_ProjFolderNode->SetBoolProperty("thread running",false);
@@ -158,6 +161,8 @@ sv4guiModelExtractPathsAction::WorkThread::WorkThread(mitk::DataStorage::Pointer
 
 void sv4guiModelExtractPathsAction::WorkThread::run()
 {
+    std::cout << "========== sv4guiModelExtractPathsAction::WorkThread::run ==========" << std::endl;
+
     m_PathNodes.clear();
     m_Status="No valid data!";
 
@@ -180,6 +185,9 @@ void sv4guiModelExtractPathsAction::WorkThread::run()
           sourceCapIds->InsertNextId(this->mm_SourceCapIds[i]);
 
         vtkSmartPointer<vtkPolyData> centerlinesPd = sv4guiModelUtils::CreateCenterlines(modelElement, sourceCapIds);
+
+        #ifdef sv4guiModelExtractPathsAction_extract_paths 
+
         vtkSmartPointer<vtkPolyData> mergedCenterlinesPD = sv4guiModelUtils::MergeCenterlines(centerlinesPd);
 
         std::vector<sv4guiPathElement*> pathElements=sv4guiModelUtils::CreatePathElements(modelElement, mergedCenterlinesPD);
@@ -220,8 +228,10 @@ void sv4guiModelExtractPathsAction::WorkThread::run()
 
             m_PathNodes.push_back(pathNode);
         }
+        #endif
 
         // Now add model for whole centerlines pd
+        std::cout << "[run] Add Full_Centerlines ... " << std::endl;
         m_CenterlinesModelNode = mm_DataStorage->GetNamedDerivedNode("Full_Centerlines", m_SelectedNode);
         mitk::Surface::Pointer centerlinesSurface;
 
@@ -236,9 +246,12 @@ void sv4guiModelExtractPathsAction::WorkThread::run()
         else
           centerlinesSurface = dynamic_cast<mitk::Surface*>(m_CenterlinesModelNode->GetData());
         centerlinesSurface->SetVtkPolyData(centerlinesPd, 0);
+        std::cout << "[run] Done. " << std::endl;
+
         // Added model
 
         // Add model for merged centerlines pd
+        #ifdef sv4guiModelExtractPathsAction_extract_paths 
         m_MergedCenterlinesModelNode = mm_DataStorage->GetNamedDerivedNode("Merged_Centerlines", m_SelectedNode);
         mitk::Surface::Pointer mergedCenterlinesSurface;
 
@@ -253,6 +266,8 @@ void sv4guiModelExtractPathsAction::WorkThread::run()
         else
           mergedCenterlinesSurface = dynamic_cast<mitk::Surface*>(m_MergedCenterlinesModelNode->GetData());
         mergedCenterlinesSurface->SetVtkPolyData(mergedCenterlinesPD, 0);
+        #endif
+
         // Added model
 
         m_Status="Paths extracting done.";
