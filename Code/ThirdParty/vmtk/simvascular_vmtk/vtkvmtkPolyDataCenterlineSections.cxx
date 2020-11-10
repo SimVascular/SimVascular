@@ -773,11 +773,12 @@ int vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* ou
     const int n_point = this->Centerlines->GetNumberOfPoints();
 
     // loop all centerline points
+    const int n_out = (int) (n_point / 10);
     for (int p = 0; p < n_point; p++)
     {
     	// progress report
-    	if ((p % (n_point / 10) == 0) || (p == n_point - 1))
-    		std::cout<<"    "<<(p + 1) * 100 / (n_point - 1)<<"%"<<endl;
+        if (p % n_out == 0)
+            std::cout<<"    "<<p / n_out * 10<<"%"<<endl;
     	
         // get centerline point and tangent (= section normal)
         this->Centerlines->GetPoint(p, point);
