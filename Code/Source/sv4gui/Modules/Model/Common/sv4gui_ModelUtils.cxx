@@ -966,7 +966,8 @@ bool sv4guiModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vec
 }
 
 vtkPolyData* sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement,
-                                             vtkIdList *sourceCapIds)
+                                                 vtkIdList *sourceCapIds,
+											     bool getSections)
 {
     if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
         return NULL;
@@ -1056,8 +1057,12 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElemen
 
     delete [] capCenterIds;
 
-    vtkPolyData* centerlines=CreateCenterlines(capped->GetVtkPolyData(),
-                                               sourcePtIds, targetPtIds);
+    vtkPolyData* centerlines;
+	if (getSections)
+		centerlines = CreateCenterlineSections(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+	else
+		centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+
     delete capped;
 
     return centerlines;
@@ -1110,6 +1115,50 @@ vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd)
 vtkPolyData* sv4guiModelUtils::CreateCenterlines(vtkPolyData* inpd,
                                              vtkIdList *sourcePtIds,
                                              vtkIdList *targetPtIds)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src = new cvPolyData(inpd);
+    cvPolyData *tempCenterlines = NULL;
+    cvPolyData *voronoi = NULL;
+
+    int numSourcePts = sourcePtIds->GetNumberOfIds();
+    int *sources=new int[numSourcePts];
+    for (int i=0; i<numSourcePts; i++)
+      sources[i]=sourcePtIds->GetId(i);
+
+    int numTargetPts = targetPtIds->GetNumberOfIds();
+    int *targets=new int[numTargetPts];
+    for (int i=0; i<numTargetPts; i++)
+      targets[i]=targetPtIds->GetId(i);
+
+    if ( sys_geom_centerlines(src, sources, numSourcePts, targets, numTargetPts, &tempCenterlines, &voronoi) != SV_OK )
+    {
+        delete src;
+        delete [] sources;
+        delete [] targets;
+        return NULL;
+    }
+    delete src;
+    delete voronoi;
+    delete [] sources;
+    delete [] targets;
+
+    cvPolyData *centerlines=NULL;
+    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != SV_OK )
+    {
+        delete tempCenterlines;
+        return NULL;
+    }
+    delete tempCenterlines;
+
+    return centerlines->GetVtkPolyData();
+}
+
+vtkPolyData* sv4guiModelUtils::CreateCenterlineSections(vtkPolyData* inpd,
+                                                        vtkIdList *sourcePtIds,
+                                                        vtkIdList *targetPtIds)
 {
     if(inpd==NULL)
         return NULL;
