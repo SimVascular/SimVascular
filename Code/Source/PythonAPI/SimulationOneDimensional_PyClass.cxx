@@ -113,7 +113,6 @@ void
 OneDimSim_WriteFlowFile(sv4guiSimulationPython1d& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues, 
     std::string& outputDir)
 {
-  //std::cout << "========== OneDimSim_WriteFlowFile ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   std::map<std::string,std::string> velBcItem;
  
@@ -151,7 +150,6 @@ void
 OneDimSim_WriteRCRFile(sv4guiSimulationPython1d& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
     std::string& outputDir)
 {
-  //std::cout << "========== OneDimSim_WriteRCRFile ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   std::vector<std::map<std::string,std::string>> rcrBcList;
 
@@ -207,7 +205,6 @@ void
 OneDimSim_WriteResistanceFile(sv4guiSimulationPython1d& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
     std::string& outputDir)
 {
-  //std::cout << "========== OneDimSim_WriteResistanceFile ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   std::vector<std::map<std::string,std::string>> resBcList;
 
@@ -251,7 +248,6 @@ OneDimSim_WriteResistanceFile(sv4guiSimulationPython1d& pythonInterface, std::ve
 void
 OneDimSim_AddBoundaryConditionParameters(sv4guiSimulationPython1d& pythonInterface, PyObject* modelObj, std::string& outputDir)
 {
-  std::cout << "========== OneDimSim_AddBoundaryConditionParameters ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
@@ -286,12 +282,10 @@ OneDimSim_AddBoundaryConditionParameters(sv4guiSimulationPython1d& pythonInterfa
 void
 OneDimSim_AddFluidParameters(sv4guiSimulationPython1d& pythonInterface, PyObject* fluidObj)
 {
-  std::cout << "========== OneDimSim_AddFluidParameters ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
   auto typeName = PyUtilGetObjectType(fluidObj);
-  std::cout << "[OneDimSim_AddFluidParameters] typeName: " << typeName << std::endl;
 
   auto density = PyUtilGetDoubleAttr(fluidObj, FLUID_DENSITY);
   pythonInterface.AddParameter(params.DENSITY, std::to_string(density));
@@ -308,7 +302,6 @@ OneDimSim_AddFluidParameters(sv4guiSimulationPython1d& pythonInterface, PyObject
 void
 OneDimSim_AddMaterialParameters(sv4guiSimulationPython1d& pythonInterface, PyObject* materialObj)
 {
-  std::cout << "========== OneDimSim_AddMaterialParameters ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
@@ -318,7 +311,6 @@ OneDimSim_AddMaterialParameters(sv4guiSimulationPython1d& pythonInterface, PyObj
       throw std::runtime_error("The material model has no 'name' attribute");
   }
   std::string materialName(PyString_AsString(nameObj));
-  std::cout << "[OneDimSim_AddMaterialParameters] material name: " << materialName << std::endl;
 
   if (materialName == MATERIAL_OLUFSEN) {
       pythonInterface.AddParameter(params.MATERIAL_MODEL, materialName);
@@ -348,7 +340,6 @@ OneDimSim_AddMaterialParameters(sv4guiSimulationPython1d& pythonInterface, PyObj
       throw std::runtime_error("Unknown material model '" + std::string(materialName) + "'.");
   }
 
-  std::cout << "[OneDimSim_AddWallPropertiesParameters] Done. " << std::endl;
 }
 
 //-----------------------------
@@ -372,7 +363,6 @@ OneDimSim_AddMeshParameters(sv4guiSimulationPython1d& pythonInterface, PyObject*
 void
 OneDimSim_AddModelParameters(sv4guiSimulationPython1d& pythonInterface, PyObject* modelObj, std::string& outputDir)
 {
-  std::cout << "========== OneDimSim_AddModelParameters ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
@@ -396,10 +386,6 @@ OneDimSim_AddModelParameters(sv4guiSimulationPython1d& pythonInterface, PyObject
   }
   outs.close();
   pythonInterface.AddParameter(params.OUTLET_FACE_NAMES_INPUT_FILE, fileName);
-
-  std::cout << "[OneDimSim_AddModelParameters] model name: " << modelName << std::endl;
-  std::cout << "[OneDimSim_AddModelParameters] centerLinesFilelName: " << centerLinesFilelName << std::endl;
-  std::cout << "[OneDimSim_AddModelParameters] outletFaceNames size: " << outletFaceNames.size() << std::endl;
 }
 
 //---------------------------------
@@ -410,7 +396,6 @@ OneDimSim_AddModelParameters(sv4guiSimulationPython1d& pythonInterface, PyObject
 void
 OneDimSim_AddSolutionParameters(sv4guiSimulationPython1d& pythonInterface, PyObject* solutionObj)
 {
-  std::cout << "========== OneDimSim_AddSolutionParameters ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
@@ -421,6 +406,9 @@ OneDimSim_AddSolutionParameters(sv4guiSimulationPython1d& pythonInterface, PyObj
 
   auto numTimeSteps = PyUtilGetIntAttr(solutionObj, SOLUTION_NUM_TIME_STEPS);
   pythonInterface.AddParameter(params.NUM_TIME_STEPS, std::to_string(numTimeSteps));
+
+  auto timeStep = PyUtilGetDoubleAttr(solutionObj, SOLUTION_TIME_STEP);
+  pythonInterface.AddParameter(params.TIME_STEP, std::to_string(timeStep));
 
   auto saveFreq = PyUtilGetIntAttr(solutionObj, SOLUTION_SAVE_DATA_FREQUENCY);
   pythonInterface.AddParameter(params.SAVE_DATA_FREQUENCY, std::to_string(saveFreq));
@@ -436,7 +424,6 @@ OneDimSim_AddSolutionParameters(sv4guiSimulationPython1d& pythonInterface, PyObj
 void
 OneDimSim_GenerateSolverInput(sv4guiSimulationPython1d& pythonInterface, std::string& outputDir)
 {
-  std::cout << "========== OneDimSim_GenerateSolverInput ===========" << std::endl;
   using namespace OneDimSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
@@ -553,8 +540,6 @@ PyDoc_STRVAR(OneDimSim_write_input_file_doc,
 static PyObject *
 OneDimSim_write_input_file(PySimulationOneDimensional* self, PyObject* args, PyObject* kwargs)
 {
-  std::cout << "========== OneDimSim_write_input_file ===========" << std::endl;
-
   auto api = PyUtilApiFunction("OOOOOOs", PyRunTimeErr, __func__);
   static char *keywords[] = {"model", "mesh", "fluid", "material", "boundary_conditions", "solution", "directory", NULL};
   PyObject* modelParamsArg = nullptr;
@@ -666,7 +651,6 @@ static int
 PyOneDimSimInit(PySimulationOneDimensional* self, PyObject* args, PyObject *kwds)
 {
   static bool initParams = true;
-  std::cout << "[PyOneDimSimInit] New SimulationOneDimensional object: " << std::endl;
 
   if (initParams) { 
       SetPyOneDimSimParamsTypeFields(PySimulationOneDimensionalParametersType);
@@ -691,7 +675,6 @@ PyOneDimSimInit(PySimulationOneDimensional* self, PyObject* args, PyObject *kwds
 static PyObject *
 PyOneDimSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyOneDimSimNew] PyOneDimSimNew " << std::endl;
   auto self = (PySimulationOneDimensional*)type->tp_alloc(type, 0);
   if (self != NULL) {
   }
@@ -706,7 +689,6 @@ PyOneDimSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyOneDimSimDealloc(PySimulationOneDimensional* self)
 {
-  std::cout << "[PyOneDimSimDealloc] Free PyOneDimSim" << std::endl;
   Py_TYPE(self)->tp_free(self);
 }
 
