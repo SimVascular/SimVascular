@@ -381,7 +381,6 @@ PyUtilGetDictListAttr(PyObject* obj, std::string name)
 
       while (PyDict_Next(item, &pos, &key, &value)) {
           std::string keyStr(PyString_AsString(key));
-          std::cout << "##### key: " << keyStr << std::endl;
           std::string sval; 
           if (PyFloat_Check(value)) {
               sval = std::to_string(PyFloat_AsDouble(value));
