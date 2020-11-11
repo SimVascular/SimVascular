@@ -124,7 +124,6 @@ PyTypeObject PySimulationOneDimensionalParametersType = {
 static int
 PyOneDimSimParamsInit(PySimulationOneDimensionalParameters* self, PyObject* args, PyObject *kwds)
 {
-  std::cout << "[PyOneDimSimParamsInit] New PySimulationOneDimensionalParameters object: " << std::endl;
   self->density = 1.06;
   self->element_size = 0.1;
   self->viscosity = 0.04;
@@ -141,7 +140,6 @@ PyOneDimSimParamsInit(PySimulationOneDimensionalParameters* self, PyObject* args
 static PyObject *
 PyOneDimSimParamsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  std::cout << "[PyOneDimSimParamsNew] PyOneDimSimParamsNew " << std::endl;
   auto self = (PySimulationOneDimensional*)type->tp_alloc(type, 0);
   if (self != NULL) {
   }
@@ -156,7 +154,6 @@ PyOneDimSimParamsNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 PyOneDimSimParamsDealloc(PySimulationOneDimensional* self)
 {
-  std::cout << "[PyOneDimSimParamsDealloc] Free PyOneDimSimParams" << std::endl;
   Py_TYPE(self)->tp_free(self);
 }
 
