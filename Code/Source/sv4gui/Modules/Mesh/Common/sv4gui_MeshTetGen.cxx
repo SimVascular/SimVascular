@@ -422,6 +422,12 @@ bool sv4guiMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double v
             values[0]=std::stod(params[1]);
             option=true;
         }
+        else if(paramSize==2 && params[0]=="mindihedral")
+        {
+            flag="MinDihedral";
+            values[0]=std::stod(params[1]);
+            option=true;
+        }
         else if(params[0]=="nobisect")
         {
             flag="NoBisect";

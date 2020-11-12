@@ -71,6 +71,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
     double maxedgesize;
     double epsilon;
     double minratio;
+    double mindihedral;
     double coarsenpercent;
     int boundarylayermeshflag;
     int numsublayers;
