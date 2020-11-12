@@ -134,6 +134,7 @@ typedef struct {
   //double hausd;
   //PyObject* mesh_wall_first;
   //PyObject* new_region_boundary_layer;
+  double minimum_dihedral_angle;
   PyObject* no_bisect;
   PyObject* no_merge;
   int optimization;
@@ -178,6 +179,7 @@ namespace TetGenOption {
   char* LocalEdgeSizeOn = "local_edge_size_on";
   //char* MeshWallFirst = "mesh_wall_first";
   //char* NewRegionBoundaryLayer = "new_region_boundary_layer";
+  char* MinimumDihedralAngle = "minimum_dihedral_angle";
   char* NoBisect = "no_bisect";
   char* NoMerge = "no_merge";
   char* Optimization = "optimization";
@@ -255,6 +257,7 @@ namespace TetGenOption {
       //{std::string(Hausd), "Hausd"},
       //{std::string(MeshWallFirst), "MeshWallFirst"},
       //{std::string(NewRegionBoundaryLayer), "NewRegionBoundaryLayer"},
+      {std::string(MinimumDihedralAngle), "MinDihedral"},
       {std::string(NoBisect), "NoBisect"},
       {std::string(NoMerge), "NoMerge"},
       {std::string(Optimization), "Optimization"},
@@ -830,6 +833,7 @@ PyTetGenOptionsCreateFromList(cvMeshObject* mesher, std::vector<std::string>& op
     {pyToSvNameMap[AllowMultipleRegions], [](OptType opt, ArgType vals, MapType fmap) -> void { opt->allow_multiple_regions = std::stoi(vals[0]); }},
     {pyToSvNameMap[GlobalEdgeSize], [](OptType opt, ArgType vals, MapType fmap) -> void { opt->global_edge_size = std::stof(vals[0]); }},
     //{pyToSvNameMap[LocalEdgeSize], [](OptType opt, ArgType vals, MapType fmap) -> void { PyTetGenOptionsAddLocalEdgeSize(opt,vals,fmap); }},
+    {pyToSvNameMap[MinimumDihedralAngle], [](OptType opt, ArgType vals, MapType fmap) -> void { opt->minimum_dihedral_angle = std::stod(vals[0]); }},
     {pyToSvNameMap[NoBisect], [](OptType opt, ArgType vals, MapType fmap) -> void { opt->no_bisect = Py_BuildValue("i", 1); }},
     {pyToSvNameMap[Optimization], [](OptType opt, ArgType vals, MapType fmap) -> void { opt->optimization = std::stoi(vals[0]); }},
     {pyToSvNameMap[QualityRatio], [](OptType opt, ArgType vals, MapType fmap) -> void { opt->quality_ratio = std::stod(vals[0]); }},
@@ -1033,6 +1037,7 @@ PyTetGenOptions_get_values(PyMeshingTetGenOptions* self, PyObject* args)
   //PyDict_SetItemString(values, TetGenOption::MeshWallFirst, self->mesh_wall_first);
 
   //PyDict_SetItemString(values, TetGenOption::NewRegionBoundaryLayer, self->new_region_boundary_layer);
+  PyDict_SetItemString(values, TetGenOption::MinimumDihedralAngle, Py_BuildValue("d", self->minimum_dihedral_angle));
   PyDict_SetItemString(values, TetGenOption::NoBisect, self->no_bisect);
   PyDict_SetItemString(values, TetGenOption::NoMerge, self->no_merge);
 
@@ -1091,6 +1096,7 @@ PyTetGenOptions_set_defaults(PyMeshingTetGenOptions* self)
   //self->hausd = 0;
   //self->mesh_wall_first = Py_BuildValue("");
   //self->new_region_boundary_layer = Py_BuildValue("");
+  self->minimum_dihedral_angle = 0.0;
   self->no_bisect = Py_BuildValue("O", Py_True);
   self->no_merge = Py_BuildValue("O", Py_True);
   self->optimization = 3;
@@ -1258,6 +1264,15 @@ PyDoc_STRVAR(local_edge_size_on_doc,
    \n\
 ");
 
+PyDoc_STRVAR(minimum_dihedral_angle_doc,
+  "Type: float                                                             \n\
+   Default: 0.0                                                            \n\
+   \n\
+   The minimum allowable dihedral angle for an element in the mesh. The    \n\
+   dihedral is the angle between two adjacent faces for an element.        \n\
+   \n\
+");
+
 PyDoc_STRVAR(no_bisect_doc,
   "Type: bool                                                              \n\
    Default: True                                                           \n\
@@ -1286,7 +1301,7 @@ PyDoc_STRVAR(quality_ratio_doc,
   "Type: float                                                             \n\
    Default: 1.4                                                            \n\
    \n\
-   he quality measure for the mesh. This number corresponds to the ratio   \n\
+   The quality measure for the mesh. This number corresponds to the ratio  \n\
    between the radius of the circumsphere of an element and the maximum    \n\
    edge size.                                                              \n\
    \n\
@@ -1425,6 +1440,8 @@ static PyMemberDef PyTetGenOptionsMembers[] = {
     //{TetGenOption::MeshWallFirst, T_OBJECT_EX, offsetof(PyMeshingTetGenOptions, mesh_wall_first), 0, mesh_wall_first_doc},
 
     //{TetGenOption::NewRegionBoundaryLayer, T_OBJECT_EX, offsetof(PyMeshingTetGenOptions, new_region_boundary_layer), 0, "new_region_boundary_layer"},
+    {TetGenOption::MinimumDihedralAngle, T_DOUBLE, offsetof(PyMeshingTetGenOptions, minimum_dihedral_angle), 0, minimum_dihedral_angle_doc},
+
     {TetGenOption::NoBisect, T_OBJECT_EX, offsetof(PyMeshingTetGenOptions, no_bisect), 0, no_bisect_doc},
     {TetGenOption::NoMerge, T_OBJECT_EX, offsetof(PyMeshingTetGenOptions, no_merge), 0, no_merge_doc},
 

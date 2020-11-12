@@ -127,6 +127,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.maxedgesize=0;
   meshoptions_.epsilon=0;
   meshoptions_.minratio=0;
+  meshoptions_.mindihedral=0;
   meshoptions_.coarsenpercent=0;
   meshoptions_.boundarylayermeshflag=0;
   meshoptions_.numsublayers=0;
@@ -212,6 +213,7 @@ cvTetGenMeshObject::cvTetGenMeshObject()
   meshoptions_.maxedgesize=0;
   meshoptions_.epsilon=0;
   meshoptions_.minratio=0;
+  meshoptions_.mindihedral=0;
   meshoptions_.coarsenpercent=0;
   meshoptions_.boundarylayermeshflag=0;
   meshoptions_.numsublayers=0;
@@ -1138,6 +1140,11 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
       return SV_ERROR;
     meshoptions_.minratio=values[0];
   }
+  else if(!strncmp(flags,"MinDihedral",11)) {//q
+    if (numValues < 1)
+      return SV_ERROR;
+    meshoptions_.mindihedral=values[0];
+  }
   else if(!strncmp(flags,"Optimization",12)) {//O
     if (numValues < 1)
       return SV_ERROR;
@@ -1579,6 +1586,12 @@ int cvTetGenMeshObject::GenerateMesh() {
       tgb->quality=1;
       tgb->minratio=meshoptions_.minratio;
     }
+    if (meshoptions_.mindihedral != 0.0)
+    {
+      tgb->quality=1;
+      tgb->mindihedral = meshoptions_.mindihedral;
+    }
+
     if (meshoptions_.optlevel != 0)
     {
       tgb->optlevel=meshoptions_.optlevel;
