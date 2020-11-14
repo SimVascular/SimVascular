@@ -343,15 +343,15 @@
             <string/>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>3</number>
            </property>
            <widget class="QWidget" name="MeshingAdvancedOptionsWidgetPage">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>453</width>
-              <height>472</height>
+              <width>333</width>
+              <height>386</height>
              </rect>
             </property>
             <attribute name="label">
@@ -953,8 +953,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>443</height>
+              <width>98</width>
+              <height>76</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -1048,8 +1048,8 @@ Press key &quot;S&quot; outside of any face to deselect all faces.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>443</height>
+              <width>159</width>
+              <height>76</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1174,46 +1174,16 @@ Change size: righ click and hold, move.</string>
               <x>0</x>
               <y>0</y>
               <width>467</width>
-              <height>443</height>
+              <height>435</height>
              </rect>
             </property>
             <attribute name="label">
              <string>Advanced Flags</string>
             </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_11">
-             <property name="spacing">
-              <number>5</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
+            <layout class="QVBoxLayout" name="verticalLayout_12">
              <item>
               <widget class="QWidget" name="widgetAdvancedFlagsT" native="true">
-               <layout class="QVBoxLayout" name="verticalLayout_12">
-                <property name="spacing">
-                 <number>5</number>
-                </property>
-                <property name="leftMargin">
-                 <number>5</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>5</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>5</number>
-                </property>
+               <layout class="QVBoxLayout" name="verticalLayout_11">
                 <item>
                  <widget class="QWidget" name="widget_12" native="true">
                   <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -1314,6 +1284,44 @@ Change size: righ click and hold, move.</string>
                      </property>
                      <property name="value" stdset="0">
                       <double>1.400000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_4" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_26">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="MinDihedralAngleCheckBox">
+                     <property name="text">
+                      <string>Minimum dihedral angle</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="MinDihedralAngleSpinBox">
+                     <property name="buttonSymbols">
+                      <enum>QAbstractSpinBox::NoButtons</enum>
+                     </property>
+                     <property name="value">
+                      <double>10.000000000000000</double>
                      </property>
                     </widget>
                    </item>
@@ -1423,8 +1431,8 @@ Change size: righ click and hold, move.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>443</height>
+              <width>226</width>
+              <height>79</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1547,8 +1555,8 @@ Click the button to add it to the left table.</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>467</width>
-              <height>443</height>
+              <width>227</width>
+              <height>303</height>
              </rect>
             </property>
             <attribute name="label">

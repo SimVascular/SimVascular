@@ -241,7 +241,7 @@ void sv4guiSimulationExtractCenterlines1d::WorkThread::run()
           sourceCapIds->InsertNextId(this->mm_SourceCapIds[i]);
         }
 
-        m_CenterlineGeometry = sv4guiModelUtils::CreateCenterlines(modelElement, sourceCapIds);
+        m_CenterlineGeometry = sv4guiModelUtils::CreateCenterlines(modelElement, sourceCapIds, true);
 
         // Add Centerlines Data Node.
         //
