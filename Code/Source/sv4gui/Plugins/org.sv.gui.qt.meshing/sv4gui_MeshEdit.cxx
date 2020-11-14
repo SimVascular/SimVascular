@@ -251,6 +251,9 @@ void sv4guiMeshEdit::SetupGUI(QWidget *parent )
     connect(ui->toolButtonResultFile, SIGNAL(clicked()), this, SLOT(SetResultFile()));
 
     connect(ui->btnAdapt, SIGNAL(clicked()), this, SLOT(Adapt()));
+
+    // Advanced flags.
+    ui->MinDihedralAngleSpinBox->setRange(0.0, 45.0);
 }
 
 void sv4guiMeshEdit::TableFaceListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
@@ -899,6 +902,10 @@ std::vector<std::string> sv4guiMeshEdit::CreateCmdsT()
     if(ui->checkBoxFlagQ->isChecked())
         cmds.push_back("option QualityRatio "+QString::number(ui->sliderFlagQ->value()).toStdString());
 
+    if(ui->MinDihedralAngleCheckBox->isChecked()) {
+        cmds.push_back("option MinDihedral " + QString::number(ui->MinDihedralAngleSpinBox->value()).toStdString());
+    }
+
     if(ui->checkBoxFlagY->isChecked())
         cmds.push_back("option NoBisect");
 
@@ -1478,6 +1485,11 @@ void sv4guiMeshEdit::UpdateTetGenGUI()
         {
             ui->checkBoxFlagO->setChecked(true);
             ui->sliderFlagO->setValue(values[0]);
+        }
+        else if (flag=="MinDihedral")
+        {
+        ui->MinDihedralAngleCheckBox->setChecked(true);
+        ui->MinDihedralAngleSpinBox->setValue(values[0]);
         }
         else if(flag=="QualityRatio")
         {
