@@ -29,6 +29,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// [DaveP] There was a lot of functionality here to do a bunch of unknown operations
+// that did not seem important. Thus all other functionality besides the colliding fronts 
+// level set computation has been disabled.
+//
+// Some of the functionality may turn out to be useful in future so leave it in for now.
+
 #include "sv4gui_ImageProcessing.h"
 #include "sv4gui_ImageProcessingUtils.h"
 #include "ui_sv4gui_ImageProcessing.h"
@@ -64,6 +70,12 @@
 #include <QDir>
 
 #include <array>
+
+// Set debugging directives.
+#ifdef DEBUG 
+  #define dbg_sv4guiImageProcessing_runFullCollidingFronts
+#endif
+#define dbg_sv4guiImageProcessing_runFullCollidingFronts
 
 const QString sv4guiImageProcessing::EXTENSION_ID = "org.sv.views.imageprocessing";
 
@@ -368,8 +380,7 @@ void sv4guiImageProcessing::ComputeCenterlines()
   }
 
   // An end seed must be defined. 
-  int numEndSeeds = m_SeedContainer->GetNumEndSeeds(0);
-  if (numEndSeeds < 1) {
+  if (m_SeedContainer->GetNumEndSeeds() == 0) { 
     QMessageBox::warning(NULL,"","No end seeds have been defined.");
     return;
   } 
@@ -391,18 +402,20 @@ void sv4guiImageProcessing::ComputeCenterlines()
   std::vector<int> sourceIDs;
   std::vector<int> targetIDs;
 
-  for (int s = 0; s < numStartSeeds; s++) {
-      auto seedPoint = m_SeedContainer->GetStartSeed(s);
+  auto startSeeds = m_SeedContainer->GetStartSeeds();
+  for (auto& seed : startSeeds) { 
+      auto startSeed = std::get<0>(seed.second);
+      auto endSeeds = std::get<1>(seed.second);
+      auto seedPoint = startSeed.point; 
       int min_id = FindClosesetPoint(segPolyData, seedPoint);
       sourceIDs.push_back(min_id);
 
-      int numEndSeeds = m_SeedContainer->GetNumEndSeeds(s);
-      if (numEndSeeds == 0) {
+      if (endSeeds.size() == 0) {
         break;
       }
 
-      for (int e = 0; e < numEndSeeds; e++){
-          auto seedPoint = m_SeedContainer->GetEndSeed(s,e);
+      for (auto& endSeed : endSeeds) { 
+          auto seedPoint = endSeed.point; 
           int min_id = FindClosesetPoint(segPolyData, seedPoint);
           targetIDs.push_back(min_id);
       }
@@ -1211,19 +1224,17 @@ sv4guiImageProcessing::CombinedCollidingFronts(sv4guiImageProcessingUtils::itkIm
   bool min_init = false;
   auto minImage = sv4guiImageProcessingUtils::copyImage(itkImage);
 
-  int startSeeds = m_SeedContainer->GetNumStartSeeds();
-  if (startSeeds == 0) return NULL;
-
-  for (int i = 0; i < startSeeds; i++) {
-    int endSeeds = m_SeedContainer->GetNumEndSeeds(i);
-    if (endSeeds == 0) {
+  auto startSeeds = m_SeedContainer->GetStartSeeds();
+  for (auto& seed : startSeeds) { 
+    auto startSeed = std::get<0>(seed.second);
+    auto endSeeds = std::get<1>(seed.second);
+    if (endSeeds.size() == 0) {
       break;
     }
 
-    auto startPoint = m_SeedContainer->GetStartSeed(i);
-
-    for (int j = 0; j < endSeeds; j++){
-      auto endPoint = m_SeedContainer->GetEndSeed(i, j);
+    auto startPoint = startSeed.point; 
+    for (auto& endSeed : endSeeds) { 
+      auto endPoint = endSeed.point; 
       auto startIndex = sv4guiImageProcessingUtils::physicalPointToIndex(itkImage, startPoint[0], startPoint[1], startPoint[2]);
       auto endIndex = sv4guiImageProcessingUtils::physicalPointToIndex(itkImage, endPoint[0], endPoint[1], endPoint[2]);
       auto temp_im = sv4guiImageProcessingUtils::collidingFronts(itkImage, startIndex[0], startIndex[1], startIndex[2],
@@ -1248,17 +1259,19 @@ sv4guiImageProcessing::CombinedCollidingFronts(sv4guiImageProcessingUtils::itkIm
 //--------------------
 // runCollidingFronts
 //--------------------
+// Execute the colliding fronts level set computation.
 //
 void sv4guiImageProcessing::runCollidingFronts()
 {
 
-#ifdef use_sv4guiImageProcessing_runCollidingFronts()
+#ifdef use_sv4guiImageProcessing_runCollidingFronts
   std::cout << "========== sv4guiImageProcessing::runCollidingFronts ========== " << std::endl;
 
   int startSeeds = m_SeedContainer->GetNumStartSeeds();
   std::cout << "[runCollidingFronts] Number of start seeds: " << startSeeds << std::endl;
 
   if (startSeeds == 0) {
+    QMessageBox::warning(NULL,"","No start seeds have been defined.");
     return;
   }
 
@@ -1287,6 +1300,7 @@ void sv4guiImageProcessing::runCollidingFronts()
 //------------------------
 // runFullCollidingFronts
 //------------------------
+// Execute the colliding fronts level set computation.
 //
 void sv4guiImageProcessing::runFullCollidingFronts()
 {
@@ -1299,9 +1313,15 @@ void sv4guiImageProcessing::runFullCollidingFronts()
   std::cout << "[runCollidingFronts] Number of start seeds: " << startSeeds << std::endl;
   #endif
   if (startSeeds == 0) {
-    QMessageBox::warning(NULL, "", "No seeds have been selected.");
+    QMessageBox::warning(NULL, "", "No start seeds have been defined.");
     return;
   }
+
+  // An end seed must be defined. 
+  if (m_SeedContainer->GetNumEndSeeds() == 0) { 
+    QMessageBox::warning(NULL,"","No end seeds have been defined.");
+    return;
+  } 
 
   // Get threshold values. 
   //

@@ -29,9 +29,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiImageSeedContainer class is used to store data for the seed points node.
+// The classes defined here are used to store seed points that define the source (start) 
+// and target (end) points for a colliding fronts computation.
 //
-// The seed points node is created in sv4guiImageProcessing::CreateQtPartControl(). 
+// Seeds are stored in a map storing a source seed and a list of target seeds 
+// referenced using an integer ID defined by 'm_CurrentStartSeedID'.
+//
+// A sv4guiImageSeedContainer object is stored as a 'seeds' in the SV Data Manager. 
+// It is created in sv4guiImageProcessing::CreateQtPartControl(). 
 //
 #ifndef SV4GUI_IMAGE_SEED_CONTAINER_H
 #define SV4GUI_IMAGE_SEED_CONTAINER_H
@@ -47,6 +52,8 @@
 //-----------------
 // The sv4guiImageSeed class stores data for a seed position.
 //
+// The int ids are used to identify seeds when interactively selecting them.
+//
 class sv4guiImageSeed {
   public:
     sv4guiImageSeed(int startID, int id, double x, double y, double z) : startID(startID), id(id), point({x,y,z}) {
@@ -58,8 +65,13 @@ class sv4guiImageSeed {
     };
     ~sv4guiImageSeed() { 
     };
+
+    // The start ID this seed is associated with.
     int startID;
+
+    // The seed start or end ID.
     int id;
+
     std::array<double,3> point;
 }; 
 
@@ -69,11 +81,14 @@ class sv4guiImageSeed {
 // The sv4guiImageStartSeed tuple stores data for a start seed.
 //
 typedef std::tuple<sv4guiImageSeed, std::vector<sv4guiImageSeed>> sv4guiImageStartSeed;
-typedef std::tuple<int,int> sv4guiImageSeedID;
 
 //--------------------------
 // sv4guiImageSeedContainer
 //--------------------------
+// The sv4guiImageSeedContainer class stores seeds used to define the source and
+// target points for a colliding fronts computation.
+//
+// Source seeds are stored in the map m_StartSeeds.
 //
 class sv4guiImageSeedContainer : public mitk::BaseData 
 {
@@ -84,10 +99,11 @@ class sv4guiImageSeedContainer : public mitk::BaseData
 
     void AddStartSeed(double x, double y, double z);
     void AddEndSeed(double x, double y, double z);
+    std::map<int,sv4guiImageStartSeed> GetStartSeeds() const;
     int GetNumStartSeeds() const;
-    int GetNumEndSeeds(int startSeedIndex) const;
-    std::array<double,3> GetStartSeed(int seedIndex) const;
-    std::array<double,3> GetEndSeed(int startSeedIndex, int endSeedIndex) const;
+    int GetNumEndSeeds() const;
+    std::array<double,3> GetStartSeedPoint(int seedID) const;
+    std::array<double,3> GetEndSeedPoint(int startSeedID, int endSeedID) const;
     void FindNearestSeed(double x, double y, double z, double tol, int& startID, int& endId);
     void DeleteSeed(int startIndex, int endIndex);
     double Distance(double x1,double y1,double z1,double x2,double y2,double z2) const;

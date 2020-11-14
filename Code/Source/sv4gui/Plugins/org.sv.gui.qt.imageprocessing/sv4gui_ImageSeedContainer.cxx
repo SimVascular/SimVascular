@@ -33,6 +33,13 @@
 #include "math.h"
 #include <tuple>
 
+// Set debugging directives.
+#ifdef DEBUG 
+  #define dbg_sv4guiImageSeedContainer_DeleteSeed
+#endif
+
+#define dbg_sv4guiImageSeedContainer_DeleteSeed
+
 //--------------------------
 // sv4guiImageSeedContainer
 //--------------------------
@@ -70,9 +77,22 @@ sv4guiImageSeedContainer::~sv4guiImageSeedContainer()
 {
 }
 
+//---------------
+// GetStartSeeds
+//---------------
+//
+std::map<int,sv4guiImageStartSeed> 
+sv4guiImageSeedContainer::GetStartSeeds() const
+{
+    return m_StartSeeds;
+}
+
 //--------------------
 // SetActiveStartSeed
 //--------------------
+// Set the active start seed. 
+//
+// If a start seed is active then end seeds can be added and removed.
 //
 void sv4guiImageSeedContainer::SetActiveStartSeed(int seedID)
 {
@@ -82,7 +102,6 @@ void sv4guiImageSeedContainer::SetActiveStartSeed(int seedID)
   } catch (...) {
       std::cout << "[SetActiveStartSeed] **** Internal error: invalid start seed ID: " << seedID << std::endl;
   }
-
 }
 
 //--------------
@@ -90,12 +109,16 @@ void sv4guiImageSeedContainer::SetActiveStartSeed(int seedID)
 //--------------
 // Add a start seed.
 //
+// The seed is added to the 'm_StartSeeds' map at m_CurrentStartSeedID+1.
+//
+// The active seed 'm_ActiveStartSeedID' is then set to this seed.
+//
 void sv4guiImageSeedContainer::AddStartSeed(double x, double y, double z)
 {
-  //std::cout << "========== sv4guiImageSeedContainer::AddStartSeed ========== " << std::endl;
+  std::cout << "========== sv4guiImageSeedContainer::AddStartSeed ========== " << std::endl;
   m_CurrentStartSeedID += 1;
   int id = m_CurrentStartSeedID;
-  //std::cout << "[AddStartSeed] m_CurrentStartSeedID: " << m_CurrentStartSeedID << std::endl;
+  std::cout << "[AddStartSeed] m_CurrentStartSeedID: " << m_CurrentStartSeedID << std::endl;
   auto startSeed = std::make_tuple(sv4guiImageSeed(id, id, x, y, z), std::vector<sv4guiImageSeed>()); 
   m_StartSeeds.insert(std::pair<int,sv4guiImageStartSeed>(id, startSeed));
   m_ActiveStartSeedID = id;
@@ -106,13 +129,15 @@ void sv4guiImageSeedContainer::AddStartSeed(double x, double y, double z)
 //------------
 // Add an end seed to the currently active start seed.
 //
+// The seed is added to the 'm_StartSeeds' map at m_ActiveStartSeedID.
+//
 void sv4guiImageSeedContainer::AddEndSeed(double x, double y, double z)
 {
-  //std::cout << "========== sv4guiImageSeedContainer::AddEndSeed ========== " << std::endl;
   if (m_ActiveStartSeedID == -1) {
     return;
   }
-  //std::cout << "[AddEndSeed] m_ActiveStartSeedID: " << m_ActiveStartSeedID << std::endl;
+  std::cout << "========== sv4guiImageSeedContainer::AddEndSeed ========== " << std::endl;
+  std::cout << "[AddEndSeed] m_ActiveStartSeedID: " << m_ActiveStartSeedID << std::endl;
   int startID = m_ActiveStartSeedID;
   m_CurrentEndSeedID += 1;
   int endID = m_CurrentEndSeedID;
@@ -139,56 +164,57 @@ int sv4guiImageSeedContainer::GetNumStartSeeds() const
 // GetNumEndSeeds
 //----------------
 //
-int sv4guiImageSeedContainer::GetNumEndSeeds(int startSeedIndex) const 
+int sv4guiImageSeedContainer::GetNumEndSeeds() const 
 {
-  try {
-      auto seed = m_StartSeeds.at(startSeedIndex);
-      return std::get<1>(seed).size();
-  } catch (...) {
-      std::cout << "[GetNumEndSeeds] **** Internal error: : startSeedIndex " << startSeedIndex << std::endl;
+  int numEndSeeds = 0;
+  for (auto& seed : m_StartSeeds) {
+      auto startSeed = std::get<0>(seed.second);
+      auto endSeeds = std::get<1>(seed.second);
+      numEndSeeds += endSeeds.size();
   }
-
-  return 0;
+  return numEndSeeds;
 }
 
-//--------------
-// GetStartSeed
-//--------------
+//-------------------
+// GetStartSeedPoint
+//-------------------
+// Get the 3D point for the start seed given an ID.
 //
 std::array<double,3> 
-sv4guiImageSeedContainer::GetStartSeed(int seedIndex) const 
+sv4guiImageSeedContainer::GetStartSeedPoint(int seedID) const 
 {
   try {
-      auto seed = m_StartSeeds.at(seedIndex);
+      auto seed = m_StartSeeds.at(seedID);
       return std::get<0>(seed).point;
   } catch (...) {
-      std::cout << "[GetStartSeed] **** Internal error: : seedIndex: " << seedIndex << std::endl;
+      std::cout << "[GetStartSeed] **** Internal error: : seedID: " << seedID << std::endl;
   }
 
   return std::array<double,3> {0,0,0};
 }
 
-//--------------
-// GetStartSeed
-//--------------
+//-----------------
+// GetEndSeedPoint
+//-----------------
+// Get the 3D point for the end seed given an ID.
 //
 std::array<double,3> 
-sv4guiImageSeedContainer::GetEndSeed(int startSeedIndex, int endSeedIndex) const
+sv4guiImageSeedContainer::GetEndSeedPoint(int startSeedID, int endSeedID) const
 {
   std::array<double,3> point;
 
   try {
-      auto seed = m_StartSeeds.at(startSeedIndex);
+      auto seed = m_StartSeeds.at(startSeedID);
       auto endSeeds = std::get<1>(seed);
       for (auto const& endSeed : endSeeds) { 
-          if (endSeedIndex == endSeed.id) {
+          if (endSeedID == endSeed.id) {
               point = endSeed.point;
               break;
           }
       }
 
   } catch (...) {
-      std::cout << "[GetEndSeed] **** Internal error: startSeedIndex: " << startSeedIndex << std::endl;
+      std::cout << "[GetEndSeed] **** Internal error: startSeedID: " << startSeedID << std::endl;
   }
 
   return point; 
@@ -203,7 +229,7 @@ sv4guiImageSeedContainer::GetEndSeed(int startSeedIndex, int endSeedIndex) const
 // and return -1 for 'endID'.
 //
 // If the nearest seed is an end seed then return its ID in 'endID' and
-// the start node it is associated with in 'startID'.
+// the start seed it is associated with in 'startID'.
 //
 void sv4guiImageSeedContainer::FindNearestSeed(double x, double y, double z, double tol, int& startID, int& endID)
 {
@@ -252,23 +278,26 @@ void sv4guiImageSeedContainer::ClearSeeds()
 //------------
 // Remove a start or end seed.
 //
-void sv4guiImageSeedContainer::DeleteSeed(int startIndex, int endIndex)
+// If only a start seed ID is given (end ID = -1) then delete
+// all end seeds defined for the start seed.
+//
+void sv4guiImageSeedContainer::DeleteSeed(int startID, int endID)
 {
   #ifdef dbg_sv4guiImageSeedContainer_DeleteSeed
   std::cout << "========== sv4guiImageSeedContainer::DeleteSeed ========== " << std::endl;
-  std::cout << "[DeleteSeed] startIndex: " << startIndex << std::endl;
-  std::cout << "[DeleteSeed] endIndex: " << endIndex << std::endl;
+  std::cout << "[DeleteSeed] startID: " << startID << std::endl;
+  std::cout << "[DeleteSeed] endID: " << endID << std::endl;
   #endif
 
-  auto seed = m_StartSeeds.find(startIndex);
+  auto seed = m_StartSeeds.find(startID);
   if (seed == m_StartSeeds.end()) {
-    std::cout << "[DeleteSeed] **** Internal error: startIndex " << startIndex << " is not valid." << std::endl;
+    std::cout << "[DeleteSeed] **** Internal error: startID " << startID << " is not valid." << std::endl;
     return;
   }
 
   // Remove all end seeds and the given start seed.
   //
-  if (endIndex == -1) {
+  if (endID == -1) {
       auto startSeed = std::get<0>(seed->second); 
       std::get<1>(seed->second).clear();
       m_StartSeeds.erase(seed);
@@ -286,11 +315,14 @@ void sv4guiImageSeedContainer::DeleteSeed(int startIndex, int endIndex)
       auto startSeed = std::get<0>(seed->second); 
       int index = 0;
       for (auto const& endSeed : std::get<1>(seed->second)) {
-          if (endSeed.id == endIndex) {
+          if (endSeed.id == endID) {
               break;
           }
           index += 1;
       }
+      #ifdef dbg_sv4guiImageSeedContainer_DeleteSeed
+      std::cout << "[DeleteSeed] Remove end seed at: " << index << std::endl;
+      #endif
       std::get<1>(seed->second).erase(std::get<1>(seed->second).begin()+index);
   }
 
