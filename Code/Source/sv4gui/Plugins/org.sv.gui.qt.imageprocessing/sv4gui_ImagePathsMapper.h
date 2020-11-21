@@ -28,31 +28,64 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef SV3_PATHUTILS_H
-#define SV3_PATHUTILS_H
 
-#include "SimVascular.h"
+#ifndef SV4GUI_IMAGE_PATHS_MAPPER_H
+#define SV4GUI_IMAGE_PATHS_MAPPER_H
 
-#include <sv3PathExports.h>
+#include "mitkVtkMapper.h"
+#include "mitkBaseRenderer.h"
+#include "mitkLocalStorageHandler.h"
 
-#include <vtkPolyData.h>
+#include <vtkAssembly.h>
+#include <vtkPropAssembly.h>
+#if VTK_MAJOR_VERSION == 6
+    #include <vtkPainterPolyDataMapper.h>
+#else
+    #include <vtkOpenGLPolyDataMapper.h>
+#endif
+#include <vtkActor.h>
 #include <vtkSmartPointer.h>
+#include <vtkActor.h>
+#include <string>
 
-#include <array>
-
-namespace sv3 {
-
-class SV_EXPORT_PATH PathUtils
+class sv4guiImagePathsMapper : public mitk::VtkMapper
 {
   public:
+    mitkClassMacro(sv4guiImagePathsMapper, mitk::VtkMapper);
 
-    static std::vector<vtkSmartPointer<vtkPolyData>> ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines);
+    itkFactorylessNewMacro(Self)
+    itkCloneMacro(Self)
 
-    static std::vector<std::array<double,3>> SampleLinePoints(vtkSmartPointer<vtkPolyData>& polydata, int numSamples, 
-        double minAngle, double distMeasure);
-    
+    class LocalStorage : public mitk::Mapper::BaseLocalStorage {
+    public:
+        vtkSmartPointer<vtkAssembly> m_PropAssembly;
+        LocalStorage() {
+            m_PropAssembly = vtkSmartPointer<vtkAssembly>::New();
+        }
+        ~LocalStorage() { }
+    };
+
+    virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
+
+    void SetColor(const float red, const float green, const float blue);
+    void SetUpdate(bool update);
+
+    mitk::LocalStorageHandler<LocalStorage> m_LSH;
+
+    double m_Color[3];
+
+  protected:
+
+    sv4guiImagePathsMapper();
+
+    virtual ~sv4guiImagePathsMapper();
+    virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
+    virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
+
+  private:
+    vtkSmartPointer<vtkActor> AddControlPointMarker(double x, double y, double z, double radius);
+    bool needsUpdate_;
+
 };
 
-}
-#endif // SV3_PATHUTILS_H
+#endif 

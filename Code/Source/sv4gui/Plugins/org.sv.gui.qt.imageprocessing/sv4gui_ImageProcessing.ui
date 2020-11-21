@@ -694,7 +694,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compute the centerlines for the current segmentation surface. Start and end seeds are used in the computation as source and taget seeds.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
-     <string>Compute Centerlines</string>
+     <string>Compute </string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -753,12 +753,19 @@
      <item>
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Number of samples</string>
+        <string>Distance multiplier</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="PathsDistanceMultiplierLineEdit">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The distance measure multiplier used to sample the centerline. The distance measure is the largest spacing value (voxel size) of the image. The larger the multiplier the fewer the number of samples.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>10</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -767,15 +774,12 @@
      <rect>
       <x>10</x>
       <y>130</y>
-      <width>350</width>
-      <height>45</height>
+      <width>299</width>
+      <height>48</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_10">
      <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
       <number>0</number>
      </property>
      <item>
@@ -786,12 +790,25 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="PathsTangentChangeLineEdit"/>
+      <widget class="QDoubleSpinBox" name="PathsTangentChangeDoubleSpinBox">
+       <property name="toolTip">
+        <string>The change in sample points tangent, in degrees, used to add control points. </string>
+       </property>
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="value">
+        <double>35.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="PathsComputePushButton">
+      <widget class="QPushButton" name="PathsExtractPushButton">
+       <property name="toolTip">
+        <string>Extract paths from centerlines.</string>
+       </property>
        <property name="text">
-        <string>Compute</string>
+        <string>Extract</string>
        </property>
       </widget>
      </item>

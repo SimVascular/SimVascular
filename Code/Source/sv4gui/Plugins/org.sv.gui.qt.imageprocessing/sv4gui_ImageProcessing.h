@@ -46,6 +46,8 @@
 #include <sv4gui_ImageSeedMapper2D.h>
 #include "sv4gui_ImageLinesContainer.h"
 #include "sv4gui_ImageLinesMapper.h"
+#include "sv4gui_ImagePathsContainer.h"
+#include "sv4gui_ImagePathsMapper.h"
 
 #include <sv4gui_ImageCenterlineInteractor.h>
 
@@ -69,12 +71,20 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     static const QString EXTENSION_ID;
     static const std::string CENTERLINES_NODE_NAME;
     static const std::string COLLIDING_FRONTS_NODE_NAME;
+    static const std::string PATHS_NODE_NAME;
     static const std::string SEED_POINTS_NODE_NAME;
     static const std::string SURFACE_NODE_NAME;
+
+    static const std::string CENTERLINES_FILE_NAME;
+    static const std::string PATH_FILE_NAME;
+    static const std::string PATH_FILE_EXTENSION;
+    static const std::string PATH_FILE_NAME_PATTERN;
+    static const std::string SURFACE_FILE_NAME;
 
     void UpdateImageList();
 
     std::string getImageName(int imageIndex);
+    std::array<double,3> GetImageSpacing();
 
     mitk::Image::Pointer getImage(std::string image_name);
 
@@ -104,6 +114,10 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     // Centerlines.
     void ComputeCenterlines();
     void InitializeCenterlines();
+
+    // Paths.
+    void ExtractPaths();
+    void InitializePaths();
 
     // Tab buttons.
     void imageEditingTabSelected();
@@ -160,6 +174,11 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     sv4guiImageLinesContainer::Pointer m_CenterlinesContainer;
     sv4guiImageLinesMapper::Pointer m_CenterlinesMapper;
 
+    // Paths objects.
+    mitk::DataNode::Pointer m_PathsNode;
+    sv4guiImagePathsContainer::Pointer m_PathsContainer;
+    sv4guiImagePathsMapper::Pointer m_PathsMapper;
+
     // Surface objects.
     mitk::DataNode::Pointer m_CollidingFrontsSurfaceNode;
     mitk::Surface::Pointer m_CollidingFrontsSurface;
@@ -176,6 +195,8 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     void WritePolydata(std::string& fileName, vtkPolyData* polydata);
 
     void readData();
+    void readCenterlines();
+    void readPaths();
 
 };
 

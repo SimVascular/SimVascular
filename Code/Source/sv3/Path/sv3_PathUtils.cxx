@@ -52,7 +52,7 @@ static std::string GroupIdsArrayName = "GroupIds";
 std::vector<vtkSmartPointer<vtkPolyData>>
 PathUtils::ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines)
 {
-  std::cout << "========== PathUtils::ExtractCenterlinesSections ========== " << std::endl;
+  //std::cout << "========== PathUtils::ExtractCenterlinesSections ========== " << std::endl;
   std::vector<vtkSmartPointer<vtkPolyData>> pathsGeometry;
 
   // Get centerline IDs used to identify sections. 
@@ -66,8 +66,8 @@ PathUtils::ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines)
   ids->GetRange(vrange);
   int minId = int(vrange[0]);
   int maxId = int(vrange[1]);
-  std::cout << "[ExtractCenterlinesSections] Max id: " << maxId << std::endl;
-  std::cout << "[ExtractCenterlinesSections] Min id: " << minId << std::endl;
+  //std::cout << "[ExtractCenterlinesSections] Max id: " << maxId << std::endl;
+  //std::cout << "[ExtractCenterlinesSections] Min id: " << minId << std::endl;
 
   // Extract sections based on cells with group IDs for each centerline ID.
   //
@@ -105,14 +105,19 @@ PathUtils::ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines)
   return pathsGeometry;
 }
 
-//-----------------
-// SampleSplineFit
-//-----------------
-// Sample a spline fit to a list of points from a line segment.
+//------------------
+// SampleLinePoints 
+//------------------
+// Sample a line at a given number of its points. 
+//
+// The line points are returned at approximately 'numSamples' points. 
+// More points are added if the point tangents change by less than
+// 'minAngle'.
 //
 std::vector<std::array<double,3>>
-PathUtils::SampleSplineFit(vtkSmartPointer<vtkPolyData>& polydata, int numSamples, double minAngle, int maxSamplePoints)
+PathUtils::SampleLinePoints(vtkSmartPointer<vtkPolyData>& polydata, int distMult, double minAngle, double distMeasure)
 {
+  // std::cout << "========== PathUtils::SampleLinePoints ==========" << std::endl;
   auto points = polydata->GetPoints();
   int numPoints = polydata->GetNumberOfPoints();
 
@@ -122,40 +127,30 @@ PathUtils::SampleSplineFit(vtkSmartPointer<vtkPolyData>& polydata, int numSample
   for (int i = 0; i < numPoints-1; i++) {
       points->GetPoint(i, pt1);
       points->GetPoint(i+1, pt2);
-      auto dist = vtkMath::Distance2BetweenPoints(pt1, pt2);
+      auto dist = sqrt(vtkMath::Distance2BetweenPoints(pt1, pt2));
       clength += dist;
   }
 
-  // Compute sampling measures.
-  double dx = clength / numSamples;
-  double maxDist = maxSamplePoints * dx;
-  double dt = 1.0 / (numSamples-1);
-  double t = 0.0;
-  double radius = 0.1;
-  double r = 4.0*radius;
+  // Set the max distance allowed between points. 
+  double maxDist = distMult * distMeasure; 
 
-  // Fit a spline between the points.
-  auto spline = vtkSmartPointer<vtkParametricSpline>::New();
-  spline->SetPoints(polydata->GetPoints());
+  // Make sure there is at least one sample.
+  double numSamples = clength / maxDist;
+  if (numSamples < 1.0) { 
+      maxDist = clength / 2.0;
+  }
+  //std::cout << "[SampleLinePoints] numSamples: " << numSamples << std::endl;
 
-  // Sample points along the spline.
-  //
-  // Note that the 'du' parameter passed to Evaluate() should contain spline 
-  // tangent information but it does not.
+  // Sample points along the line adding a point if the change in 
+  // tangents is too large or if the distance is > maxDist.
   //
   std::vector<std::array<double,3>> samplePoints;
   double lastPoint[3];
   double lastTangent[3];
 
-  for (int i = 0; i < numSamples; i++) {
-      double u1[3] = {t, t, t};
-      double pt1[3];
-      double du[9];  
-      spline->Evaluate(u1, pt1, du);
-
-      double u2[3] = {t+dt, t+dt, t+dt};
-      double pt2[3];
-      spline->Evaluate(u2, pt2, du);
+  for (int i = 0; i < numPoints-1; i++) {
+      points->GetPoint(i, pt1);
+      points->GetPoint(i+1, pt2);
 
       double tangent[3];
       for (int j = 0; j < 3; j++) {
@@ -164,8 +159,8 @@ PathUtils::SampleSplineFit(vtkSmartPointer<vtkPolyData>& polydata, int numSample
       vtkMath::Normalize(tangent);
       bool addPoint = false;
 
-      // Add first and last points.
-      if ((i == 0) || (i == numSamples-1)) {
+      // Add first point.
+      if (i == 0) { 
           for (int j = 0; j < 3; j++) {
               lastTangent[j] = tangent[j];
               lastPoint[j] = pt1[j];
@@ -179,7 +174,7 @@ PathUtils::SampleSplineFit(vtkSmartPointer<vtkPolyData>& polydata, int numSample
           if (dp < minAngle) {
               addPoint = true;
           } else {
-              double dist = vtkMath::Distance2BetweenPoints(pt1, lastPoint);
+              double dist = sqrt(vtkMath::Distance2BetweenPoints(pt1, lastPoint));
               if (dist > maxDist) {
                   addPoint = true;
               }
@@ -193,9 +188,10 @@ PathUtils::SampleSplineFit(vtkSmartPointer<vtkPolyData>& polydata, int numSample
           }
           samplePoints.push_back(std::array<double,3>{pt1[0], pt1[1], pt1[2]});
       }
-
-      t += dt;
   }
+
+  points->GetPoint(numPoints-1, pt1);
+  samplePoints.push_back(std::array<double,3>{pt1[0], pt1[1], pt1[2]});
 
   return samplePoints;
 }

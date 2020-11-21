@@ -28,31 +28,50 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef SV3_PATHUTILS_H
-#define SV3_PATHUTILS_H
 
-#include "SimVascular.h"
+#ifndef SV4GUI_IMAGE_PATHS_CONTAINER_H
+#define SV4GUI_IMAGE_PATHS_CONTAINER_H 
 
-#include <sv3PathExports.h>
+#include <sv3_PathElement.h>
 
-#include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
+#include <iostream>
+#include <vector>
+#include "mitkBaseData.h"
+#include "vtkPolyData.h"
 
-#include <array>
+class sv4guiImagePathsContainer : public mitk::BaseData {
 
-namespace sv3 {
-
-class SV_EXPORT_PATH PathUtils
-{
   public:
 
-    static std::vector<vtkSmartPointer<vtkPolyData>> ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines);
+    mitkClassMacro(sv4guiImagePathsContainer, mitk::BaseData);
+    itkFactorylessNewMacro(Self)
+    itkCloneMacro(Self)
 
-    static std::vector<std::array<double,3>> SampleLinePoints(vtkSmartPointer<vtkPolyData>& polydata, int numSamples, 
-        double minAngle, double distMeasure);
-    
+    virtual void UpdateOutputInformation() {};
+    virtual void SetRequestedRegionToLargestPossibleRegion() {};
+    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() { return false;};
+    virtual bool VerifyRequestedRegion() { return true;};
+    virtual void SetRequestedRegion(const itk::DataObject *data) {};
+
+    void AddPathElement(sv3::PathElement* pathElement);
+    void ClearPathElements();
+    const std::vector<sv3::PathElement> &GetPathElements() const;
+    void ComputeDistanceMeasure();
+    std::array<double,3> GetImageSpacing();
+    void SetImageSpacing(std::array<double,3>& imageSpacing);
+    double GetDistanceMeasure() const;
+
+  protected:
+    mitkCloneMacro(Self);
+    sv4guiImagePathsContainer();
+    sv4guiImagePathsContainer(const sv4guiImagePathsContainer& other);
+    virtual ~sv4guiImagePathsContainer();
+
+  private:
+    std::vector<sv3::PathElement> pathElements_;
+    std::array<double,3> imageSpacing_;
+    double distMeasure_;
+
 };
 
-}
-#endif // SV3_PATHUTILS_H
+#endif 
