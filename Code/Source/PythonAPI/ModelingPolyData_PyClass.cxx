@@ -74,14 +74,12 @@ classify_face(PyModelingModel* self, int faceID, PyUtilApiFunction& api, double 
   int useMaxDist = 0;
   auto cvPolydata = model->GetFacePolyData(faceID, useMaxDist, max_dist);
   if (cvPolydata == NULL) {
-      api.error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
-      return nullptr;
+      throw std::runtime_error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
   }
   vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
   polydata = cvPolydata->GetVtkPolyData();
   if (polydata == NULL) {
-      api.error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
-      return nullptr;
+      throw std::runtime_error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
   }
 
   // Compute the face center.
@@ -315,9 +313,14 @@ ModelingPolyData_identify_caps(PyModelingModel* self, PyObject* args, PyObject* 
   auto faceList = PyList_New(faceIDs.size());
   int n = 0;
   for (auto faceID: faceIDs) {
-      bool isCap = classify_face(self, faceID, api, tolerance);
-      PyList_SetItem(faceList, n, PyBool_FromLong(isCap));
-      n += 1;
+      try { 
+          bool isCap = classify_face(self, faceID, api, tolerance);
+          PyList_SetItem(faceList, n, PyBool_FromLong(isCap));
+          n += 1;
+      } catch (std::exception &e) {
+          api.error(e.what());
+          return nullptr;
+      }
   }
 
   return faceList;
