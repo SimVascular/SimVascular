@@ -198,6 +198,7 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
   }
   parent->setEnabled(true);
 
+#ifdef dp_use
   // Hide edge image widgets.
   ui->inputLabel2->setVisible(false);
   ui->edgeImageComboBox->setVisible(false);
@@ -341,7 +342,10 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
 
    readData();
   }
+
+#endif
 }
+
 
 //--------------
 // ExtractPaths
@@ -360,6 +364,8 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
 void sv4guiImageProcessing::ExtractPaths()
 {
   std::cout << "=========== sv4guiImageProcessing::ExtractPaths ===========" << std::endl;
+
+#ifdef dp_use
 
   // Check if there is are centerlines.
   if (m_CenterlinesContainer.IsNull()) {
@@ -436,6 +442,7 @@ void sv4guiImageProcessing::ExtractPaths()
   m_PathsContainer->ComputeDistanceMeasure();
 
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+#endif
 }
 
 //----------
@@ -810,9 +817,9 @@ void sv4guiImageProcessing::displaySeeds(bool state)
 //
 void sv4guiImageProcessing::imageEditingTabSelected()
 {
+/*
   ui->edgeImageComboBox->setEnabled(false);
 
-/*
   switch(ui->imageEditingToolbox->currentIndex()){
     case 0:
       m_SeedMapper->m_box = true;
@@ -841,10 +848,10 @@ void sv4guiImageProcessing::imageEditingTabSelected()
 
 void sv4guiImageProcessing::filteringTabSelected()
 {
+/*
   ui->edgeImageComboBox->setEnabled(false);
   m_SeedMapper->m_box = false;
 
-/*
   switch(ui->filteringToolbox->currentIndex()){
     case 0:
       ui->helpLabel->setText("Smooth:\n"
@@ -870,10 +877,9 @@ void sv4guiImageProcessing::filteringTabSelected()
 
 void sv4guiImageProcessing::segmentationTabSelected()
 {
+/*
   ui->edgeImageComboBox->setEnabled(true);
   m_SeedMapper->m_box = false;
-
-/*
 
   switch(ui->segmentationToolbox->currentIndex()){
       case 0:
@@ -916,9 +922,9 @@ void sv4guiImageProcessing::segmentationTabSelected()
 
 void sv4guiImageProcessing::pipelinesTabSelected()
 {
-  ui->edgeImageComboBox->setEnabled(false);
-  m_SeedMapper->m_box = false;
-  mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+  //ui->edgeImageComboBox->setEnabled(false);
+  //m_SeedMapper->m_box = false;
+  //mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //----------
@@ -927,12 +933,14 @@ void sv4guiImageProcessing::pipelinesTabSelected()
 //
 void sv4guiImageProcessing::SeedSize()
 {
+#ifdef dp_use
   double seedSize = std::stod(ui->SeedSizeLineEdit->text().toStdString());
 
   m_SeedMapper->m_seedRadius = seedSize;
 
   m_SeedInteractor->m_seedRadius = seedSize;
   mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+#endif
 }
 
 //--------------------
@@ -956,6 +964,7 @@ void sv4guiImageProcessing::OnSelectionChanged(std::vector<mitk::DataNode*> node
 //
 std::string sv4guiImageProcessing::getImageName(int imageIndex)
 {
+#ifdef dp_use
   QString imageName;
   if (imageIndex == 0){
     imageName = ui->inputImageComboBox->currentText();
@@ -970,6 +979,7 @@ std::string sv4guiImageProcessing::getImageName(int imageIndex)
 
   std::string image_str = imageName.toStdString();
   return image_str;
+#endif
 }
 
 //-----------------
@@ -1203,6 +1213,7 @@ void sv4guiImageProcessing::addNode(mitk::DataNode::Pointer child_node, mitk::Da
 //
 void sv4guiImageProcessing::UpdateImageList()
 {
+#ifdef dp_use
   auto typeCondition = mitk::NodePredicateDataType::New("Image");
   auto rs = GetDataStorage()->GetSubset(typeCondition);
 
@@ -1220,6 +1231,7 @@ void sv4guiImageProcessing::UpdateImageList()
       ui->edgeImageComboBox->addItem(Node->GetName().c_str());
     }
   }
+#endif
 }
 
 void sv4guiImageProcessing::runGeodesicLevelSet()
@@ -1492,6 +1504,7 @@ void sv4guiImageProcessing::runCollidingFronts()
 //
 void sv4guiImageProcessing::runFullCollidingFronts()
 {
+  #ifdef dp_use 
   #ifdef dbg_sv4guiImageProcessing_runFullCollidingFronts
   std::cout << "========== sv4guiImageProcessing::runFullCollidingFronts ========== " << std::endl;
   #endif
@@ -1570,6 +1583,7 @@ void sv4guiImageProcessing::runFullCollidingFronts()
 
   // Save the isosurface.
   storePolyData(vtkPd);
+  #endif
 }
 
 //------------------
