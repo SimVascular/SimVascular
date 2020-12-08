@@ -81,6 +81,9 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     static const std::string PATH_FILE_NAME_PATTERN;
     static const std::string SURFACE_FILE_NAME;
 
+    static const std::string ADD_START_SEED_SHORT_CUT;
+    static const std::string ADD_END_SEED_SHORT_CUT;
+
     void UpdateImageList();
 
     std::string getImageName(int imageIndex);
@@ -126,12 +129,13 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
     void pipelinesTabSelected();
 
     // Run buttons.
+    void ExectuteLevelSet();
+
     void runAnisotropic();
     void runBinaryThreshold();
     void runCollidingFronts();
     void runCropImage();
     void runEditImage();
-    void runFullCollidingFronts();
     void runGeodesicLevelSet();
     void runGradientMagnitude();
     void runIsovalue();
