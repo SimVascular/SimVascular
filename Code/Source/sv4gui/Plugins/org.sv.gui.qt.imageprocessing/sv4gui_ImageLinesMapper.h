@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guiImageSEEDMAPPER_H
-#define sv4guiImageSEEDMAPPER_H
+#ifndef SV4GUI_IMAGE_NLINES_MAPPER_H
+#define SV4GUI_IMAGE_LINES_MAPPER_H
 
 #include "mitkVtkMapper.h"
 #include "mitkBaseRenderer.h"
@@ -47,53 +47,47 @@
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
 #include <string>
-class sv4guiImageSeedMapper : public mitk::VtkMapper
+
+class sv4guiImageLinesMapper : public mitk::VtkMapper
 {
-  public:
-    mitkClassMacro(sv4guiImageSeedMapper, mitk::VtkMapper);
+public:
+
+    mitkClassMacro(sv4guiImageLinesMapper, mitk::VtkMapper);
+
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
-    static vtkSmartPointer<vtkActor> CreateSphere(double x, double y, double z, double radius, bool isStartSeed, bool active=false);
-    static double END_SEED_COLOR[3];
-    static double END_SEED_HIGHLIGHT_COLOR[3];
-    static double START_SEED_COLOR[3];
-    static double START_SEED_HIGHLIGHT_COLOR[3];
 
     class LocalStorage : public mitk::Mapper::BaseLocalStorage
     {
-      public:
+    public:
         vtkSmartPointer<vtkAssembly> m_PropAssembly;
-
-        LocalStorage()
-        {
+        LocalStorage() {
             m_PropAssembly = vtkSmartPointer<vtkAssembly>::New();
         }
-
         ~LocalStorage() { }
     };
 
     virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
+
+    void SetColor(const float red, const float green, const float blue);
 
     mitk::LocalStorageHandler<LocalStorage> m_LSH;
 
     std::string mode;
 
     bool m_needsUpdate = true;
-
     bool m_box = false;
-
     double m_seedRadius = 0.5;
+    bool m_NewMesh = true;
+    float m_Color[3];
 
 protected:
-    sv4guiImageSeedMapper();
 
-    virtual ~sv4guiImageSeedMapper();
+    sv4guiImageLinesMapper();
 
+    virtual ~sv4guiImageLinesMapper();
     virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
-
     virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
-
-    vtkSmartPointer<vtkActor> createCubeActor(double x1, double y1, double z1, double x2, double y2, double z2 );
 };
 
-#endif /* sv4guiImageSEEDMAPPER_H */
+#endif 

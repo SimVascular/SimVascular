@@ -1,0 +1,19 @@
+<statemachine NAME="svCollidingFronstCenterlineInteractor">
+
+  <state name="Start" startstate="true">
+      <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverCenterline">
+          <condition name="is_over_centerline" />
+      </transition>
+  </state>
+
+  <state name="OverCenterline">
+      <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start" >
+          <condition name="is_over_centerline" inverted="true" />
+      </transition>
+
+      <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_C" target="Start">
+          <action name="select_centerline" />
+      </transition>
+  </state>
+
+</statemachine>

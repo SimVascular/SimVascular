@@ -29,42 +29,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guiImageSEEDINTERACTOR_H
-#define sv4guiImageSEEDINTERACTOR_H
+#ifndef SV4GUI_IMAGE_PATHS_CONTAINER_H
+#define SV4GUI_IMAGE_PATHS_CONTAINER_H 
 
-#include <mitkDataInteractor.h>
-class sv4guiImageSeedInteractor : public mitk::DataInteractor
-{
-public:
-  mitkClassMacro(sv4guiImageSeedInteractor, mitk::DataInteractor)
-  itkFactorylessNewMacro(Self)
-  itkCloneMacro(Self)
-  double m_seedRadius = 0.5;
+#include <sv3_PathElement.h>
 
-protected:
-  sv4guiImageSeedInteractor();
-  ~sv4guiImageSeedInteractor();
+#include <iostream>
+#include <vector>
+#include "mitkBaseData.h"
+#include "vtkPolyData.h"
 
-  virtual void ConnectActionsAndFunctions() override;
+class sv4guiImagePathsContainer : public mitk::BaseData {
 
-  bool IsOverSeed( const mitk::InteractionEvent* interactionEvent );
+  public:
 
-  //bool IsOverCenterline( const mitk::InteractionEvent* interactionEvent );
+    mitkClassMacro(sv4guiImagePathsContainer, mitk::BaseData);
+    itkFactorylessNewMacro(Self)
+    itkCloneMacro(Self)
 
-  void AddSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+    virtual void UpdateOutputInformation() {};
+    virtual void SetRequestedRegionToLargestPossibleRegion() {};
+    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() { return false;};
+    virtual bool VerifyRequestedRegion() { return true;};
+    virtual void SetRequestedRegion(const itk::DataObject *data) {};
 
-  void AddEndSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+    void AddPathElement(sv3::PathElement* pathElement);
+    void ClearPathElements();
+    const std::vector<sv3::PathElement> &GetPathElements() const;
+    void ComputeDistanceMeasure();
+    std::array<double,3> GetImageSpacing();
+    void SetImageSpacing(std::array<double,3>& imageSpacing);
+    double GetDistanceMeasure() const;
 
-  void DeleteSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  protected:
+    mitkCloneMacro(Self);
+    sv4guiImagePathsContainer();
+    sv4guiImagePathsContainer(const sv4guiImagePathsContainer& other);
+    virtual ~sv4guiImagePathsContainer();
 
-  void MakeSeedCurrent(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  private:
+    std::vector<sv3::PathElement> pathElements_;
+    std::array<double,3> imageSpacing_;
+    double distMeasure_;
 
-  //void SelectCenterline(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
-
-private:
-  std::vector<int> m_selectedSeed;
-  mitk::Point3D m_currentPickedPoint;
-  int m_currentStartSeed = -1;
 };
 
-#endif // sv4guiImageSEEDINTERACTOR_H
+#endif 

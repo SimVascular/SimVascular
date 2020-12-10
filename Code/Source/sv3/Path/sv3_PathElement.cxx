@@ -69,7 +69,7 @@ int PathElement::GetControlPointNumber()
     return m_ControlPoints.size();
 }
 
-std::vector<std::array<double,3> > PathElement::GetControlPoints()
+std::vector<std::array<double,3> > PathElement::GetControlPoints() const
 {
     std::vector<std::array<double,3> > controlPoints;
     for(int i=0;i<m_ControlPoints.size();i++)
@@ -370,7 +370,7 @@ int PathElement::GetCalculationNumber()
     return m_CalculationNumber;
 }
 
-std::vector<PathElement::PathPoint> PathElement::GetPathPoints()
+std::vector<PathElement::PathPoint> PathElement::GetPathPoints() const
 {
     return m_PathPoints;
 }

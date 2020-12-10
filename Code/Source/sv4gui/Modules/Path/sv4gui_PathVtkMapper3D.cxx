@@ -263,8 +263,17 @@ void sv4guiPathVtkMapper3D::CreateVTKRenderObjects()
 
 }
 
+//-------------------------
+// GenerateDataForRenderer
+//-------------------------
+// Create objects used to render geometry into the graphics window.
+//
+// This is called when the mouse is moved in 2D or 3D windows.
+//
 void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
+    //std::cout << "===================== sv4guiPathVtkMapper3D::GenerateDataForRenderer =====================" << std::endl;
+
     bool visible = true;
     GetDataNode()->GetVisibility(visible, renderer, "visible");
     if(!visible)

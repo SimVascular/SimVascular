@@ -29,42 +29,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guiImageSEEDINTERACTOR_H
-#define sv4guiImageSEEDINTERACTOR_H
+#ifndef sv4guiImageCENTERLINEINTERACTOR_H
+#define sv4guiImageCENTERLINEINTERACTOR_H
 
 #include <mitkDataInteractor.h>
-class sv4guiImageSeedInteractor : public mitk::DataInteractor
+class sv4guiImageCenterlineInteractor : public mitk::DataInteractor
 {
 public:
-  mitkClassMacro(sv4guiImageSeedInteractor, mitk::DataInteractor)
+  mitkClassMacro(sv4guiImageCenterlineInteractor, mitk::DataInteractor)
   itkFactorylessNewMacro(Self)
   itkCloneMacro(Self)
-  double m_seedRadius = 0.5;
+  double m_selectRadius = 0.01;
 
 protected:
-  sv4guiImageSeedInteractor();
-  ~sv4guiImageSeedInteractor();
+  sv4guiImageCenterlineInteractor();
+  ~sv4guiImageCenterlineInteractor();
 
   virtual void ConnectActionsAndFunctions() override;
 
-  bool IsOverSeed( const mitk::InteractionEvent* interactionEvent );
-
-  //bool IsOverCenterline( const mitk::InteractionEvent* interactionEvent );
-
-  void AddSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
-
-  void AddEndSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
-
-  void DeleteSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
-
-  void MakeSeedCurrent(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
-
-  //void SelectCenterline(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  bool IsOverCenterline(const mitk::InteractionEvent* interactionEvent);
+  void SelectCenterline(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
 
 private:
-  std::vector<int> m_selectedSeed;
   mitk::Point3D m_currentPickedPoint;
-  int m_currentStartSeed = -1;
 };
 
-#endif // sv4guiImageSEEDINTERACTOR_H
+#endif 
