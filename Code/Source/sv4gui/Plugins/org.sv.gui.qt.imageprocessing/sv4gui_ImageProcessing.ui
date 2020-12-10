@@ -40,7 +40,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="InputImage_ComboBox"/>
+       <widget class="QComboBox" name="InputImage_ComboBox">
+        <property name="toolTip">
+         <string>Select the image to segment.</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -66,10 +70,10 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="toolTip">
-         <string>Generate a 1D mesh from the surface model.</string>
+         <string/>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="SeedsPage">
          <property name="geometry">
@@ -110,6 +114,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Set the size of the spheres used to display seeds. The value is a multiple of the image voxel size.</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
@@ -134,6 +141,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Add a start seed at the location of the 2D crosshairs. A start seed can also be added by pressing the S key.</string>
+                  </property>
                   <property name="text">
                    <string>Add Start</string>
                   </property>
@@ -141,6 +151,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="SD_AddEnd_PushButton">
+                  <property name="toolTip">
+                   <string>Add an end seed at the location of the 2D crosshairs. An end seed can also be added by pressing the S key.</string>
+                  </property>
                   <property name="text">
                    <string>Add End</string>
                   </property>
@@ -148,6 +161,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="SD_Clear_PushButton">
+                  <property name="toolTip">
+                   <string>Clear all seeds.</string>
+                  </property>
                   <property name="text">
                    <string>Clear</string>
                   </property>
@@ -241,6 +257,9 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="LS_UpThresh_DoubleSpinBox">
+                  <property name="toolTip">
+                   <string>The image upper threshold value.</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
@@ -279,6 +298,9 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="LS_LowThresh_DoubleSpinBox">
+                  <property name="toolTip">
+                   <string>The image lower threshold value.</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
@@ -502,6 +524,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="LS_Execute_PushButton">
+               <property name="toolTip">
+                <string>Start the level set computation.</string>
+               </property>
                <property name="text">
                 <string>Execute</string>
                </property>
@@ -570,7 +595,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="CenterLinesPage">
+        <widget class="QWidget" name="SurfacePage">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -580,7 +605,7 @@
           </rect>
          </property>
          <attribute name="label">
-          <string>Centerlines</string>
+          <string>Surface</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <property name="spacing">
@@ -635,9 +660,12 @@
                  <number>5</number>
                 </property>
                 <item row="1" column="0" colspan="2">
-                 <widget class="QPushButton" name="CL_Compute_PushButton">
+                 <widget class="QPushButton" name="SU_ComputeCenterlines_PushButton">
+                  <property name="toolTip">
+                   <string notr="true">Compute the centerlines for the current surface segmentation.</string>
+                  </property>
                   <property name="text">
-                   <string>Compute</string>
+                   <string>Compute Centerlines</string>
                   </property>
                  </widget>
                 </item>
@@ -725,7 +753,11 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="PT_DistMult_LineEdit"/>
+                 <widget class="QLineEdit" name="PT_DistMult_LineEdit">
+                  <property name="toolTip">
+                   <string>The multiplicative factor used to sample centerline points for path control points.</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -748,6 +780,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum angle, in degrees, between centerlines tangents used to add a path control point. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
@@ -762,7 +797,7 @@
                 <bool>true</bool>
                </property>
                <property name="toolTip">
-                <string>Select the output directory for the converted files and start the conversion process.</string>
+                <string>Extract paths from centerlines.</string>
                </property>
                <property name="text">
                 <string>Extract</string>

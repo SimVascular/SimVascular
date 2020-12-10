@@ -230,7 +230,7 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
 
   // Centerlines widgets.
   //
-  connect(ui->CL_Compute_PushButton, SIGNAL(clicked(bool)), this, SLOT(ComputeCenterlines()));
+  connect(ui->SU_ComputeCenterlines_PushButton, SIGNAL(clicked(bool)), this, SLOT(ComputeCenterlines()));
 
   // Path widgets.
   auto distMultValidator = new QIntValidator(this);
