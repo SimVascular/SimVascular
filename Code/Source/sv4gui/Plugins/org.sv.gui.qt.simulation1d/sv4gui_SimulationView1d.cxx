@@ -392,7 +392,6 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
         connect(ui->NumSegmentsLineEdit, SIGNAL(textChanged(QString)), this, slot);
-        connect(ui->MinSegmentLengthDoubleSpinBox, SIGNAL(valueChanged(double)), this, slot);
         connect(ui->AdaptiveMeshingCheckBox, SIGNAL(stateChanged(int)), this, slot);
         m_ConnectionEnabled = able;
     }
@@ -708,7 +707,6 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     auto numSegsValidator = new QIntValidator(this);
     numSegsValidator->setBottom(1);
     ui->NumSegmentsLineEdit->setValidator(numSegsValidator);
-    ui->MinSegmentLengthDoubleSpinBox->setMinimum(0.0);
 
     // By default disable push buttons used to calculate centerlines, 
     // create simulation files and run a simulation.
@@ -2951,12 +2949,6 @@ void sv4guiSimulationView1d::UpdateGUIMesh()
     }
     ui->NumSegmentsLineEdit->setText(QString::fromStdString(numSegements));
 
-    auto minSegmentLength = job->GetMeshProp("Minimum segment length");
-    if (minSegmentLength == "") { 
-        minSegmentLength = "1.0";
-    }
-    ui->MinSegmentLengthDoubleSpinBox->setValue(stod(minSegmentLength));
-
     auto adaptMeshing = job->GetMeshProp("Adaptive Meshing"); 
     if (adaptMeshing == "1") { 
         ui->AdaptiveMeshingCheckBox->setChecked(1);
@@ -3606,9 +3598,14 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
 void sv4guiSimulationView1d::AddMeshParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface)
 {
     auto params = pythonInterface.m_ParameterNames;
+
+    // Number of segments per branch.
     auto numSegements = job->GetMeshProp("Number of segments per branch");
-    auto minSegmentLength = job->GetMeshProp("Minimum segment length");
+    pythonInterface.AddParameter(params.SEG_MIN_NUM, numSegements); 
+
+    // Enable adaptive meshing (true/false).
     auto adaptMeshing = job->GetMeshProp("Adaptive Meshing"); 
+    pythonInterface.AddParameter(params.SEG_SIZE_ADAPTIVE, adaptMeshing); 
 }
 
 //-----------------------------
@@ -3662,23 +3659,14 @@ void sv4guiSimulationView1d::WriteBCFiles(const QString outputDir, sv4guiSimJob1
     // Write the inflow BC data.
     WriteFlowFile(outputDir, job, pythonInterface);
 
-    // Find the BC type.
-    //
-    // [DaveP] Can only have one BC type, resistance or rcr?
-    //
+    // Write other BC types files.
     for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
         bcType = m_TableModelCap->item(i,1)->text().trimmed().toStdString();
-        if (bcType != "Prescribed Velocities") {
-            break;
+        if (bcType == "RCR") {
+            WriteRcrFile(outputDir, job, pythonInterface);
+        } else if (bcType == "Resistance") {
+            WriteResistanceFile(outputDir, job, pythonInterface);
         }
-    }
-    MITK_INFO << msg << "bcType: " << bcType;
-    auto params = pythonInterface.m_ParameterNames;
-
-    if (bcType == "RCR") {
-        WriteRcrFile(outputDir, job, pythonInterface);
-    } else if (bcType == "Resistance") {
-        WriteResistanceFile(outputDir, job, pythonInterface);
     }
 }
 
@@ -4006,15 +3994,12 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
 //-------------------
 // SetMeshParameters
 //-------------------
+// Set the parameters used to generte the FE mesh from centerlines.
 //
 bool sv4guiSimulationView1d::SetMeshParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity)
 {
-    std::cout << "========== sv4guiSimulationView1d::SetMeshParameters =========" << std::endl;
     auto numSegements = ui->NumSegmentsLineEdit->text().toStdString();
     job->SetMeshProp("Number of segments per branch", numSegements); 
-
-    double minSegmentLength = ui->MinSegmentLengthDoubleSpinBox->value();
-    job->SetMeshProp("Minimum segment length", std::to_string(minSegmentLength)); 
 
     if (ui->AdaptiveMeshingCheckBox->isChecked()) {
         job->SetMeshProp("Adaptive Meshing", "1"); 
@@ -4391,11 +4376,14 @@ bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
         passed = false;
     }
 
+    // [TODO:DaveP] why was this here?
+    /*
     if ((bcTypeCount[sv4guiCapBCWidget1d::BCType::RESISTANCE] != 0) && 
         (bcTypeCount[sv4guiCapBCWidget1d::BCType::RCR] != 0)) {
         errorMsg = "Outlet boundary conditions can not be of mixed type. They must all be of type rcr or resistance.";
         passed = false;
     }
+    */
 
     if (errorMsg != "") {
         QMessageBox::warning(m_Parent, MsgTitle, "Inlet / Outlet BC parameter values error.\n" + QString::fromStdString(errorMsg));

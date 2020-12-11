@@ -71,6 +71,8 @@ class sv4guiSimulationPython1dParamNames
       allNames.insert(OUTLET_FACE_NAMES_INPUT_FILE);
       allNames.insert(OUTPUT_DIRECTORY);
       allNames.insert(SAVE_DATA_FREQUENCY);
+      allNames.insert(SEG_MIN_NUM);
+      allNames.insert(SEG_SIZE_ADAPTIVE);
       allNames.insert(SOLVER_OUTPUT_FILE);
       allNames.insert(TIME_STEP);
       allNames.insert(UNIFORM_BC);
@@ -104,7 +106,10 @@ class sv4guiSimulationPython1dParamNames
     const std::string OUTFLOW_BC_TYPE = "outflow_bc_type";
     const std::string OUTLET_FACE_NAMES_INPUT_FILE = "outlet_face_names_input_file";
     const std::string OUTPUT_DIRECTORY = "output_directory";
+
     const std::string SAVE_DATA_FREQUENCY = "save_data_frequency";
+    const std::string SEG_MIN_NUM = "seg_min_num";
+    const std::string SEG_SIZE_ADAPTIVE = "seg_size_adaptive";
     const std::string SOLVER_OUTPUT_FILE = "solver_output_file";
     const std::string TIME_STEP = "time_step"; 
     const std::string UNIFORM_BC = "uniform_bc";
