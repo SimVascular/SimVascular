@@ -38,6 +38,9 @@
 // model is used to create geometry identifying vessel centerlines, branches and
 // bifurcations. The centerlines geometry is used to create a 1D finite element mesh.
 //
+// A Qt connect() must be set for each widget in sv4guiSimulationView1d::EnableConnection(bool able)
+// so that its value is saved for the job and written to the .s1djb file.
+//
 // The input files neeed to run a simulation are created using the following steps
 //
 //   1) Select an inlet face from a model surface.
@@ -377,7 +380,7 @@ sv4guiSimulationView1d::~sv4guiSimulationView1d()
 //------------------
 // EnableConnection
 //------------------
-// [DaveP] Not sure why this is needed.
+// Set slots for changed parameter values to be written the the .s1djb file. 
 //
 void sv4guiSimulationView1d::EnableConnection(bool able)
 {
@@ -388,6 +391,9 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
         connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        connect(ui->NumSegmentsLineEdit, SIGNAL(textChanged(QString)), this, slot);
+        connect(ui->MinSegmentLengthDoubleSpinBox, SIGNAL(valueChanged(double)), this, slot);
+        connect(ui->AdaptiveMeshingCheckBox, SIGNAL(stateChanged(int)), this, slot);
         m_ConnectionEnabled = able;
     }
 
@@ -697,6 +703,12 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     // [DaveP] Hide these for now.
     //ui->generateMeshPushButton->hide();
     //ui->showMeshCheckBox->hide();
+
+    // Mesh segment parameters. 
+    auto numSegsValidator = new QIntValidator(this);
+    numSegsValidator->setBottom(1);
+    ui->NumSegmentsLineEdit->setValidator(numSegsValidator);
+    ui->MinSegmentLengthDoubleSpinBox->setMinimum(0.0);
 
     // By default disable push buttons used to calculate centerlines, 
     // create simulation files and run a simulation.
@@ -1759,6 +1771,8 @@ void sv4guiSimulationView1d::OnPreferencesChanged(const berry::IBerryPreferences
 //
 void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
+    std::cout << "========== sv4guiSimulationView1d::OnSelectionChanged =========" << std::endl;
+
     auto msg = "[sv4guiSimulationView1d::OnSelectionChanged] ";
     MITK_INFO << msg;
     MITK_INFO << msg << "--------- OnSelectionChanged ----------";
@@ -1921,6 +1935,8 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     UpdateModelGUI();
 
     UpdateGUIBasic();
+
+    UpdateGUIMesh();
 
     UpdateGUICap();
 
@@ -2908,6 +2924,49 @@ void sv4guiSimulationView1d::SetVarE(bool)
 }
 
 //---------------
+// UpdateGUIMesh
+//---------------
+// Update the mesh GUI with values from the .s1djb file.
+//
+// These parameters were added later so we must check to
+// see if they exist to maintain compatibility with older
+// files.
+//
+void sv4guiSimulationView1d::UpdateGUIMesh()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+    std::cout << "========== sv4guiSimulationView1d::UpdateGUIMesh =========" << std::endl;
+
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+
+    if (job == nullptr) {
+        job = new sv4guiSimJob1d();
+    }
+
+    auto numSegements = job->GetMeshProp("Number of segments per branch");
+    if (numSegements == "") { 
+        numSegements = "1";
+    }
+    ui->NumSegmentsLineEdit->setText(QString::fromStdString(numSegements));
+
+    auto minSegmentLength = job->GetMeshProp("Minimum segment length");
+    if (minSegmentLength == "") { 
+        minSegmentLength = "1.0";
+    }
+    ui->MinSegmentLengthDoubleSpinBox->setValue(stod(minSegmentLength));
+
+    auto adaptMeshing = job->GetMeshProp("Adaptive Meshing"); 
+    if (adaptMeshing == "1") { 
+        ui->AdaptiveMeshingCheckBox->setChecked(1);
+    } else {
+        ui->AdaptiveMeshingCheckBox->setChecked(0);
+    } 
+
+}
+
+//---------------
 // UpdateGUIWall
 //---------------
 //
@@ -3485,6 +3544,9 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     pythonInterface.AddParameter(params.ELEMENT_SIZE, std::to_string(m_1DMeshElementSize));
     pythonInterface.AddParameter(params.CENTERLINES_INPUT_FILE, m_CenterlinesFileName.toStdString()); 
 
+    // Mesh parameters.
+    AddMeshParameters(job, pythonInterface);
+
     // Set parameter and write outlet face names to a file.
     WriteOutletFaceNames(outputDir, job, pythonInterface);
 
@@ -3534,6 +3596,19 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     m_SimulationFilesCreated = true;
 
     return true;
+}
+
+//-------------------
+// AddMeshParameters
+//-------------------
+// Add parameters used to generate the 1D mesh.
+//
+void sv4guiSimulationView1d::AddMeshParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface)
+{
+    auto params = pythonInterface.m_ParameterNames;
+    auto numSegements = job->GetMeshProp("Number of segments per branch");
+    auto minSegmentLength = job->GetMeshProp("Minimum segment length");
+    auto adaptMeshing = job->GetMeshProp("Adaptive Meshing"); 
 }
 
 //-----------------------------
@@ -3905,6 +3980,11 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
         return nullptr;
     }
 
+    if (!SetMeshParameters(job, msg, checkValidity)) {
+        delete job;
+        return nullptr;
+    }
+
     if (!SetCapBcs(job, msg, checkValidity)) {
         delete job;
         return nullptr;
@@ -3921,6 +4001,28 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
     }
 
     return job;
+}
+
+//-------------------
+// SetMeshParameters
+//-------------------
+//
+bool sv4guiSimulationView1d::SetMeshParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity)
+{
+    std::cout << "========== sv4guiSimulationView1d::SetMeshParameters =========" << std::endl;
+    auto numSegements = ui->NumSegmentsLineEdit->text().toStdString();
+    job->SetMeshProp("Number of segments per branch", numSegements); 
+
+    double minSegmentLength = ui->MinSegmentLengthDoubleSpinBox->value();
+    job->SetMeshProp("Minimum segment length", std::to_string(minSegmentLength)); 
+
+    if (ui->AdaptiveMeshingCheckBox->isChecked()) {
+        job->SetMeshProp("Adaptive Meshing", "1"); 
+    } else {
+        job->SetMeshProp("Adaptive Meshing", "0"); 
+    }
+
+    return true;
 }
 
 //--------------------

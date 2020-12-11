@@ -67,6 +67,11 @@ public:
     void SetCapProp(const std::string& capName, const std::string& key, std::string value);
     std::string GetCapProp(const std::string& capName, const std::string& key);
 
+    void SetMeshProps(std::map<std::string,std::string> meshProps);
+    std::map<std::string,std::string> GetMeshProps();
+    void SetMeshProp(const std::string& key, std::string value);
+    std::string GetMeshProp(const std::string& key);
+
     void SetWallProps(std::map<std::string,std::string> wallProps);
     std::map<std::string,std::string> GetWallProps();
     void SetWallProp(const std::string& key, std::string value);
@@ -101,6 +106,7 @@ public:
     std::map<std::string,std::string> m_ModelProps;
     std::map<std::string,std::string> m_BasicProps;
     std::map<std::string,std::map<std::string,std::string> > m_CapProps;
+    std::map<std::string,std::string> m_MeshProps;
     std::map<std::string,std::string> m_WallProps;
     std::map<std::string,std::map<std::string,std::string> > m_VarProps;
     std::map<std::string,std::string> m_SolverProps;

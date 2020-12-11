@@ -93,7 +93,7 @@
          <string>Generate a 1D mesh from the surface model.</string>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="page_7">
          <property name="geometry">
@@ -110,7 +110,7 @@
          <layout class="QVBoxLayout" name="verticalLayout_18">
           <item>
            <widget class="QWidget" name="widget_3" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_19">
+            <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
               <widget class="QWidget" name="widget_12" native="true">
                <property name="styleSheet">
@@ -239,6 +239,77 @@ background-color: white
                  <widget class="QLineEdit" name="ElementSizeLineEdit">
                   <property name="text">
                    <string>0.1</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget_21" native="true">
+               <property name="styleSheet">
+                <string notr="true">QWidget {
+#background-color: rgb(225, 225, 225)
+}</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QLabel" name="ElementSizeLabel_2">
+                  <property name="text">
+                   <string>Number of segments per branch</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="NumSegmentsLineEdit">
+                  <property name="text">
+                   <string>1</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget_22" native="true">
+               <property name="styleSheet">
+                <string notr="true">QWidget {
+#background-color: rgb(225, 225, 225)
+}</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QLabel" name="MinSegmentLengthLabel">
+                  <property name="text">
+                   <string>Minimum segment length</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="MinSegmentLengthDoubleSpinBox">
+                  <property name="buttonSymbols">
+                   <enum>QAbstractSpinBox::NoButtons</enum>
+                  </property>
+                  <property name="value">
+                   <double>1.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget_23" native="true">
+               <property name="styleSheet">
+                <string notr="true">QWidget {
+#background-color: rgb(225, 225, 225)
+}</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item>
+                 <widget class="QCheckBox" name="AdaptiveMeshingCheckBox">
+                  <property name="text">
+                   <string>Adaptive meshing</string>
                   </property>
                  </widget>
                 </item>

@@ -229,6 +229,7 @@ public slots:
     void RemoveObservers();
     void UpdateFaceListSelection();
     void UpdateGUIBasic();
+    void UpdateGUIMesh();
     void UpdateModelGUI();
     void TableViewBasicDoubleClicked(const QModelIndex& index);
 
@@ -317,6 +318,7 @@ public:
     void UpdateCenterlines();
     vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
+    void AddMeshParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void AddWallPropertiesParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
     std::vector<std::string> ReadInletFaceNames(const QString outputDir);
@@ -448,6 +450,7 @@ private:
 
     bool SetBasicParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
+    bool SetMeshParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     QString GetSolverExecutable();
