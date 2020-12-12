@@ -180,18 +180,28 @@ bool sv4guiPathDataInteractor::IsOverPoint(const mitk::InteractionEvent *interac
     return false;
 }
 
+//----------
+// AddPoint
+//----------
+// Add point in a 2D or 3D window with a control-left mouse click.
+//
 void sv4guiPathDataInteractor::AddPoint(mitk::StateMachineAction* stateMachineAction, mitk::InteractionEvent* interactionEvent)
 {
+   std::cout << "========== sv4guiPathDataInteractor::AddPoint ========== " << std::endl;
+
     unsigned int timeStep = interactionEvent->GetSender()->GetTimeStep(GetDataNode()->GetData());
 
     // To add a point the minimal information is the position, this method accepts all InteractionsPositionEvents
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent != NULL)
-    {
+
+    std::cout << "[AddPoint] positionEvent: " << positionEvent << std::endl;
+
+    if (positionEvent != NULL) {
         // this statement indicates that a new Operation starts here
         mitk::OperationEvent::IncCurrObjectEventId();
-
         mitk::Point3D newPoint = positionEvent->GetPositionInWorld();
+
+        std::cout << "[AddPoint] Point: " << newPoint[0] << "  " << newPoint[1] << "  " << newPoint[2] << std::endl;
 
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
         if(pathElement==NULL)
@@ -438,21 +448,24 @@ void sv4guiPathDataInteractor::FinishMove(mitk::StateMachineAction*, mitk::Inter
 
 }
 
+//-------------
+// SelectPoint
+//-------------
+//
 void sv4guiPathDataInteractor::SelectPoint(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     unsigned int timeStep = interactionEvent->GetSender()->GetTimeStep(GetDataNode()->GetData());
-
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if (positionEvent != NULL)
-    {
+
+    if (positionEvent != NULL) {
         sv4guiPathElement* pathElement=m_Path->GetPathElement(timeStep);
-        if(pathElement==NULL)
+        if(pathElement==NULL) {
             return;
+        }
 
         mitk::Point3D point = positionEvent->GetPositionInWorld();
         int index = SearchControlPoint(positionEvent,pathElement);
-        if (index != -2)
-        {
+        if (index != -2) {
             //first deselect the other points
             pathElement->DeselectControlPoint();
 //            pathElement->SetControlPointSelected(index,true);

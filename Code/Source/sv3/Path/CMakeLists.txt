@@ -40,9 +40,9 @@ list(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
 
-set(CXXSRCS sv3_PathElement.cxx sv3_PathGroup.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx 
+set(CXXSRCS sv3_PathUtils.cxx sv3_PathElement.cxx sv3_PathGroup.cxx sv3_VtkParametricSpline.cxx sv3_Spline.cxx sv3_PathIO.cxx 
   )
-set(HDRS sv3_PathElement.h sv3_PathGroup.h sv3_VtkParametricSpline.h sv3_Spline.h sv3_PathIO.h
+set(HDRS sv3_PathUtils.h sv3_PathElement.h sv3_PathGroup.h sv3_VtkParametricSpline.h sv3_Spline.h sv3_PathIO.h
   )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})

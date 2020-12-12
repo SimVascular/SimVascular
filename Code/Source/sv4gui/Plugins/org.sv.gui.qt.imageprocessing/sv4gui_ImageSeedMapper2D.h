@@ -29,71 +29,85 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guiImageSEEDMAPPER_H
-#define sv4guiImageSEEDMAPPER_H
+#ifndef SV4GUI_IMAGESEED_MAPPER2D_H
+#define SV4GUI_IMAGESEED_MAPPER2D_H
+
+#include "SimVascular.h"
+
+//#include <sv4guiModulePathExports.h>
+
+//#include "sv4gui_Path.h"
 
 #include "mitkVtkMapper.h"
 #include "mitkBaseRenderer.h"
 #include "mitkLocalStorageHandler.h"
 
-#include <vtkAssembly.h>
-#include <vtkPropAssembly.h>
-#if VTK_MAJOR_VERSION == 6
-    #include <vtkPainterPolyDataMapper.h>
-#else
-    #include <vtkOpenGLPolyDataMapper.h>
-#endif
-#include <vtkActor.h>
 #include <vtkSmartPointer.h>
-#include <vtkActor.h>
-#include <string>
-class sv4guiImageSeedMapper : public mitk::VtkMapper
+
+class vtkActor;
+class vtkPropAssembly;
+class vtkPolyData;
+class vtkPolyDataMapper;
+class vtkGlyphSource2D;
+class vtkGlyph3D;
+class vtkFloatArray;
+class vtkCellArray;
+
+//-------------------------
+// sv4guiImageSeedMapper2D
+//-------------------------
+// This class is used to display seeds in 2D windows. 
+//
+// It is implemented as a VTK-based mapper for surfaces.
+//
+class sv4guiImageSeedMapper2D : public mitk::VtkMapper
 {
   public:
-    mitkClassMacro(sv4guiImageSeedMapper, mitk::VtkMapper);
+    mitkClassMacro(sv4guiImageSeedMapper2D, mitk::VtkMapper);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
-    static vtkSmartPointer<vtkActor> CreateSphere(double x, double y, double z, double radius, bool isStartSeed, bool active=false);
-    static double END_SEED_COLOR[3];
-    static double END_SEED_HIGHLIGHT_COLOR[3];
-    static double START_SEED_COLOR[3];
-    static double START_SEED_HIGHLIGHT_COLOR[3];
 
     class LocalStorage : public mitk::Mapper::BaseLocalStorage
     {
       public:
-        vtkSmartPointer<vtkAssembly> m_PropAssembly;
+        LocalStorage();
+        ~LocalStorage();
 
-        LocalStorage()
-        {
-            m_PropAssembly = vtkSmartPointer<vtkAssembly>::New();
-        }
+        vtkSmartPointer<vtkPoints> m_SeedPoints;
+        vtkSmartPointer<vtkFloatArray> m_SeedPointsScale;
 
-        ~LocalStorage() { }
+        vtkSmartPointer<vtkGlyph3D> m_SeedPointsGlyph3D;
+        vtkSmartPointer<vtkPolyData> m_SeedPointsPolyData;
+
+        vtkSmartPointer<vtkActor> m_SeedPointsActor;
+
+        vtkSmartPointer<vtkPolyDataMapper> m_SeedPointsPolyDataMapper;
+
+        // Object that groups graphics properties into a tree-like hierarchy.
+        vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
     };
 
-    virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
+    virtual vtkProp* GetVtkProp(mitk::BaseRenderer* renderer) override;
 
     mitk::LocalStorageHandler<LocalStorage> m_LSH;
 
-    std::string mode;
+    //static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
 
-    bool m_needsUpdate = true;
+    double m_SeedRadius = 0.5;
 
-    bool m_box = false;
+  protected:
+    sv4guiImageSeedMapper2D();
+    virtual ~sv4guiImageSeedMapper2D();
 
-    double m_seedRadius = 0.5;
-
-protected:
-    sv4guiImageSeedMapper();
-
-    virtual ~sv4guiImageSeedMapper();
-
+    virtual void CreateVTKRenderObjects(mitk::BaseRenderer* renderer);
     virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
-
     virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
 
-    vtkSmartPointer<vtkActor> createCubeActor(double x1, double y1, double z1, double x2, double y2, double z2 );
+    // "point 2D size" property, in display units
+    float m_SeedPoint2DSize;   
+
+    // "point 2D distance to plane" property
+    float m_DistanceToPlane;        
 };
 
-#endif /* sv4guiImageSEEDMAPPER_H */
+#endif // SV4GUI_PATHVTKMAPPER2D_H

@@ -29,53 +29,119 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guiImageSEEDCONTAINER_H
-#define sv4guiImageSEEDCONTAINER_H
+// The classes defined here are used to store seed points that define the source (start) 
+// and target (end) points for a colliding fronts computation.
+//
+// Seeds are stored in a map storing a source seed and a list of target seeds 
+// referenced using an integer ID defined by 'm_CurrentStartSeedID'.
+//
+// A sv4guiImageSeedContainer object is stored as a 'seeds' in the SV Data Manager. 
+// It is created in sv4guiImageProcessing::CreateQtPartControl(). 
+//
+#ifndef SV4GUI_IMAGE_SEED_CONTAINER_H
+#define SV4GUI_IMAGE_SEED_CONTAINER_H
 
+#include <array>
 #include <iostream>
+#include <map>
 #include <vector>
 #include "mitkBaseData.h"
 
-class sv4guiImageSeedContainer : public mitk::BaseData {
+//-----------------
+// sv4guiImageSeed
+//-----------------
+// The sv4guiImageSeed class stores data for a seed position.
+//
+// The int ids are used to identify seeds when interactively selecting them.
+//
+class sv4guiImageSeed {
+  public:
+    sv4guiImageSeed(int startID, int id, double x, double y, double z) : startID(startID), id(id), point({x,y,z}) {
+    };
+    sv4guiImageSeed(const sv4guiImageSeed &seed) {
+      id = seed.id;
+      startID = seed.startID;
+      point = seed.point;
+    };
+    ~sv4guiImageSeed() { 
+    };
 
-public:
+    // The start ID this seed is associated with.
+    int startID;
 
-  mitkClassMacro(sv4guiImageSeedContainer, mitk::BaseData);
-  itkFactorylessNewMacro(Self)
-  itkCloneMacro(Self)
+    // The seed start or end ID.
+    int id;
 
-  void addStartSeed(double x, double y, double z);
-  void addEndSeed(double x, double y, double z, int seedIndex);
-  int getNumStartSeeds() const;
-  int getNumEndSeeds(int startSeedIndex) const;
-  std::vector<double> getStartSeed(int seedIndex) const;
-  std::vector<double> getEndSeed(int startSeedIndex, int endSeedIndex) const;
-  std::vector<int> findNearestSeed(double x, double y, double z, double tol);
-  void deleteSeed(int startIndex, int endIndex);
-  double distance(double x1,double y1,double z1,double x2,double y2,double z2) const;
-  //virtual methods, that need to be implemented due to mitk::BaseData inheriting
-  //from itk::DataObject
-  //however if we dont intend to use this object with an itk filter we can leave them
-  //empty
-  virtual void UpdateOutputInformation() {};
-  virtual void SetRequestedRegionToLargestPossibleRegion() {};
-  virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() { return false;};
-  virtual bool VerifyRequestedRegion() { return true;};
-  virtual void SetRequestedRegion(const itk::DataObject *data) {};
+    std::array<double,3> point;
+}; 
 
-  std::vector<double> hoverPoint = std::vector<double>();
+//----------------------
+// sv4guiImageStartSeed
+//----------------------
+// The sv4guiImageStartSeed tuple stores data for a start seed.
+//
+typedef std::tuple<sv4guiImageSeed, std::vector<sv4guiImageSeed>> sv4guiImageStartSeed;
 
-protected:
+//--------------------------
+// sv4guiImageSeedContainer
+//--------------------------
+// The sv4guiImageSeedContainer class stores seeds used to define the source and
+// target points for a colliding fronts computation.
+//
+// Source seeds are stored in the map m_StartSeeds.
+//
+class sv4guiImageSeedContainer : public mitk::BaseData 
+{
+  public:
+    mitkClassMacro(sv4guiImageSeedContainer, mitk::BaseData);
+    itkFactorylessNewMacro(Self)
+    itkCloneMacro(Self)
 
-  mitkCloneMacro(Self);
-  sv4guiImageSeedContainer();
-  sv4guiImageSeedContainer(const sv4guiImageSeedContainer& other);
-  virtual ~sv4guiImageSeedContainer();
+    void AddStartSeed(double x, double y, double z);
+    void AddEndSeed(double x, double y, double z);
+    std::map<int,sv4guiImageStartSeed> GetStartSeeds() const;
+    int GetNumStartSeeds() const;
+    int GetNumEndSeeds() const;
+    std::array<double,3> GetStartSeedPoint(int seedID) const;
+    std::array<double,3> GetEndSeedPoint(int startSeedID, int endSeedID) const;
+    void FindNearestSeed(double x, double y, double z, double tol, int& startID, int& endId);
+    void DeleteSeed(int startIndex, int endIndex);
+    double Distance(double x1,double y1,double z1,double x2,double y2,double z2) const;
+    void ClearSeeds();
 
-private:
+    void SetActiveStartSeed(int seedID);
 
-  std::vector< std::vector<double> > m_startSeeds;
-  std::vector< std::vector< std::vector<double> > > m_endSeeds;
+    //virtual methods, that need to be implemented due to mitk::BaseData inheriting
+    //from itk::DataObject
+    //however if we dont intend to use this object with an itk filter we can leave them
+    //empty
+    virtual void UpdateOutputInformation() {};
+    virtual void SetRequestedRegionToLargestPossibleRegion() {};
+    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() { return false;};
+    virtual bool VerifyRequestedRegion() { return true;};
+    virtual void SetRequestedRegion(const itk::DataObject *data) {};
+
+    std::vector<double> hoverPoint = std::vector<double>();
+    bool selectStartSeed;
+    int selectStartSeedIndex;
+    bool selectEndSeed;
+    int selectEndSeedIndex;
+
+    int m_CurrentEndSeedID;
+    int m_CurrentStartSeedID;
+    int m_ActiveStartSeedID;
+    std::map<int,sv4guiImageStartSeed> m_StartSeeds;
+
+  protected:
+
+    mitkCloneMacro(Self);
+    sv4guiImageSeedContainer();
+    sv4guiImageSeedContainer(const sv4guiImageSeedContainer& other);
+    virtual ~sv4guiImageSeedContainer();
+
+  private:
+    // std::vector< std::vector<double> > m_startSeeds;
+    // std::vector< std::vector< std::vector<double> > > m_endSeeds;
 };
 
-#endif //sv4guiImageSEEDCONTAINER_H
+#endif 

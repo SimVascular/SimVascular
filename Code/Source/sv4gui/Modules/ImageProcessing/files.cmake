@@ -39,4 +39,5 @@ set(CPP_FILES
 set(RESOURCE_FILES
   Interactions/seedConfig.xml
   Interactions/seedInteraction.xml
+  Interactions/centerlineInteraction.xml
 )

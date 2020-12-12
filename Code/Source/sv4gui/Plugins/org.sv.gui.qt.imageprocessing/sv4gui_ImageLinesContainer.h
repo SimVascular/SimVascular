@@ -29,42 +29,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef sv4guiImageSEEDINTERACTOR_H
-#define sv4guiImageSEEDINTERACTOR_H
+#ifndef SV4GUI_IMAGE_LINES_CONTAINER_H
+#define SV4GUI_IMAGE_LINES_CONTAINER_H 
 
-#include <mitkDataInteractor.h>
-class sv4guiImageSeedInteractor : public mitk::DataInteractor
-{
-public:
-  mitkClassMacro(sv4guiImageSeedInteractor, mitk::DataInteractor)
-  itkFactorylessNewMacro(Self)
-  itkCloneMacro(Self)
-  double m_seedRadius = 0.5;
+#include <iostream>
+#include <vector>
+#include "mitkBaseData.h"
+#include "vtkPolyData.h"
 
-protected:
-  sv4guiImageSeedInteractor();
-  ~sv4guiImageSeedInteractor();
+class sv4guiImageLinesContainer : public mitk::BaseData {
 
-  virtual void ConnectActionsAndFunctions() override;
+  public:
 
-  bool IsOverSeed( const mitk::InteractionEvent* interactionEvent );
+    mitkClassMacro(sv4guiImageLinesContainer, mitk::BaseData);
+    itkFactorylessNewMacro(Self)
+    itkCloneMacro(Self)
 
-  //bool IsOverCenterline( const mitk::InteractionEvent* interactionEvent );
+    virtual void UpdateOutputInformation() {};
+    virtual void SetRequestedRegionToLargestPossibleRegion() {};
+    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() { return false;};
+    virtual bool VerifyRequestedRegion() { return true;};
+    virtual void SetRequestedRegion(const itk::DataObject *data) {};
 
-  void AddSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+    vtkPolyData* GetLines();
+    void SetLines(vtkPolyData* lines);
+    //void SetLines(bool value);
 
-  void AddEndSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+    void FindPointOnCenterline(double x, double y, double z, double tol, bool& found, double closestPoint[3], vtkIdType& cellID, int& subID);
 
-  void DeleteSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
+  protected:
 
-  void MakeSeedCurrent(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+    mitkCloneMacro(Self);
+    sv4guiImageLinesContainer();
+    sv4guiImageLinesContainer(const sv4guiImageLinesContainer& other);
+    virtual ~sv4guiImageLinesContainer();
 
-  //void SelectCenterline(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
+  private:
 
-private:
-  std::vector<int> m_selectedSeed;
-  mitk::Point3D m_currentPickedPoint;
-  int m_currentStartSeed = -1;
+    vtkPolyData* m_Lines;
+
 };
 
-#endif // sv4guiImageSEEDINTERACTOR_H
+#endif 

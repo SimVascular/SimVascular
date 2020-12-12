@@ -35,6 +35,7 @@
 #include <string>
 #include <QString>
 #include <sv4gui_QmitkFunctionality.h>
+#include <QmitkStdMultiWidget.h>
 
 #include "sv4gui_ImageProcessingUtils.h"
 #include "sv4gui_DataNodeOperationInterface.h"
@@ -42,31 +43,51 @@
 #include <sv4gui_ImageSeedContainer.h>
 #include <sv4gui_ImageSeedInteractor.h>
 #include <sv4gui_ImageSeedMapper.h>
+#include <sv4gui_ImageSeedMapper2D.h>
+#include "sv4gui_ImageLinesContainer.h"
+#include "sv4gui_ImageLinesMapper.h"
+#include "sv4gui_ImagePathsContainer.h"
+#include "sv4gui_ImagePathsMapper.h"
+
+#include <sv4gui_ImageCenterlineInteractor.h>
 
 #include <mitkImage.h>
-
+#include <mitkSurface.h>
 
 namespace Ui {
-class sv4guiImageProcessing;
+  class sv4guiImageProcessing;
 }
 
 class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-
+  public:
     sv4guiImageProcessing();
-
     virtual ~sv4guiImageProcessing();
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
     static const QString EXTENSION_ID;
+    static const std::string CENTERLINES_NODE_NAME;
+    static const std::string COLLIDING_FRONTS_NODE_NAME;
+    static const std::string PATHS_NODE_NAME;
+    static const std::string SEED_POINTS_NODE_NAME;
+    static const std::string SURFACE_NODE_NAME;
+
+    static const std::string CENTERLINES_FILE_NAME;
+    static const std::string PATH_FILE_NAME;
+    static const std::string PATH_FILE_EXTENSION;
+    static const std::string PATH_FILE_NAME_PATTERN;
+    static const std::string SURFACE_FILE_NAME;
+
+    static const std::string ADD_START_SEED_SHORT_CUT;
+    static const std::string ADD_END_SEED_SHORT_CUT;
 
     void UpdateImageList();
 
     std::string getImageName(int imageIndex);
+    std::array<double,3> GetImageSpacing();
 
     mitk::Image::Pointer getImage(std::string image_name);
 
@@ -78,76 +99,109 @@ public:
 
     void storeImage(sv4guiImageProcessingUtils::itkImPoint image);
 
-    void storePolyData(vtkSmartPointer<vtkPolyData> vtkPd);
+    void storePolyData(vtkSmartPointer<vtkPolyData>& vtkPd);
 
-public slots:
+    void SetLineEditValidFloat(QLineEdit* lineEdit);
 
-    //display
-    void seedSize();
-    void displayGuide(bool state);
+  // GUI widget callbacks.
+  //
+  public slots:
+
+    // Seeds. 
+    void AddStartSeed();
+    void ClearSeeds();
+    void AddEndSeed();
+    void SeedSize();
     void displaySeeds(bool state);
 
-    //displaay buttons
+    // Centerlines.
+    void ComputeCenterlines();
+    void InitializeCenterlines();
+
+    // Paths.
+    void ExtractPaths();
+    void InitializePaths();
+
+    // Tab buttons.
     void imageEditingTabSelected();
     void filteringTabSelected();
     void segmentationTabSelected();
     void pipelinesTabSelected();
 
-    //run buttons
-    void runFullCollidingFronts();
-
-    void runThreshold();
-
-    void runBinaryThreshold();
-
-    void runCollidingFronts();
-
-    void runGradientMagnitude();
-
-    void runEditImage();
-
-    void runCropImage();
-
-    void runResampleImage();
-
-    void runZeroLevel();
-
-    void runSmoothing();
+    // Run buttons.
+    void ExectuteLevelSet();
 
     void runAnisotropic();
-
-    void runIsovalue();
-
+    void runBinaryThreshold();
+    void runCollidingFronts();
+    void runCropImage();
+    void runEditImage();
     void runGeodesicLevelSet();
+    void runGradientMagnitude();
+    void runIsovalue();
+    void runResampleImage();
+    void runSmoothing();
+    void runThreshold();
+    void runZeroLevel();
 
-public:
+  protected:
 
-protected:
+    QString hello_str;
 
-  QString hello_str;
+    Ui::sv4guiImageProcessing *ui;
 
-  Ui::sv4guiImageProcessing *ui;
+    QWidget *m_parent;
 
-  QWidget *m_parent;
+    QmitkStdMultiWidget* m_DisplayWidget;
 
-  QmitkStdMultiWidget* m_DisplayWidget;
+    std::string m_selectedAlgorithm;
 
-  std::string m_selectedAlgorithm;
+    sv4guiDataNodeOperationInterface* m_Interface;
 
-  sv4guiDataNodeOperationInterface* m_Interface;
+    sv4guiImageSeedContainer::Pointer m_SeedContainer;
 
-  sv4guiImageSeedContainer::Pointer m_SeedContainer;
+    bool m_PluginInitialized = false;
 
-  bool m_init = true;
+    sv4guiImageSeedInteractor::Pointer m_SeedInteractor;
+    sv4guiImageSeedMapper::Pointer m_SeedMapper;
+    sv4guiImageSeedMapper2D::Pointer m_SeedMapper2D;
 
-  sv4guiImageSeedInteractor::Pointer m_SeedInteractor;
+    sv4guiImageProcessingUtils::itkImPoint CombinedCollidingFronts(sv4guiImageProcessingUtils::itkImPoint, double lower, double upper);
 
-  sv4guiImageSeedMapper::Pointer m_SeedMapper;
+    mitk::DataStorage::Pointer m_DataStorage;
+    mitk::DataNode::Pointer m_CollidingFrontsNode;
+    mitk::DataNode::Pointer m_SeedNode;
 
-  sv4guiImageProcessingUtils::itkImPoint CombinedCollidingFronts(
-    sv4guiImageProcessingUtils::itkImPoint, double lower, double upper);
+    // Centerlines objects.
+    sv4guiImageCenterlineInteractor::Pointer m_CenterlineInteractor;
+    mitk::DataNode::Pointer m_CenterlinesNode;
+    sv4guiImageLinesContainer::Pointer m_CenterlinesContainer;
+    sv4guiImageLinesMapper::Pointer m_CenterlinesMapper;
 
-  mitk::DataNode::Pointer m_SeedNode;
+    // Paths objects.
+    mitk::DataNode::Pointer m_PathsNode;
+    sv4guiImagePathsContainer::Pointer m_PathsContainer;
+    sv4guiImagePathsMapper::Pointer m_PathsMapper;
+
+    // Surface objects.
+    mitk::DataNode::Pointer m_CollidingFrontsSurfaceNode;
+    mitk::Surface::Pointer m_CollidingFrontsSurface;
+
+    QString m_PluginOutputDirectory;
+
+    // [TODO:DaveP] this is a hack! Don't keep!
+    QString m_LastSegmentationNodeName;
+
+  private: 
+
+    int FindClosesetPoint(vtkPolyData* polyData, std::array<double,3>& testPoint);
+    QString GetOutputDirectory();
+    void WritePolydata(std::string& fileName, vtkPolyData* polydata);
+
+    void readData();
+    void readCenterlines();
+    void readPaths();
+
 };
 
 #endif // sv4guiImageProcessing_H

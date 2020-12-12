@@ -34,6 +34,8 @@
 // The class name is 'PolyData'.
 //
 
+#include <vtkMath.h>
+
 //-----------------
 // PyPolyDataSolid
 //-----------------
@@ -43,9 +45,104 @@ typedef struct {
   PyModelingModel super;
 } PyPolyDataSolid;
 
+//////////////////////////////////////////////////////
+//          U t i l i t i e s                       //
+//////////////////////////////////////////////////////
+
+//------------------------
+// pyCreatePolyDataSolid
+//------------------------
+//
 cvPolyDataSolid* pyCreatePolyDataSolid()
 {
   return new cvPolyDataSolid();
+}
+
+//---------------
+// classify_face
+//---------------
+// Determine if a model face is a cap.
+//
+// A face is considered a cap if it is flat.
+//
+static bool
+classify_face(PyModelingModel* self, int faceID, PyUtilApiFunction& api, double tolerance)
+{
+  // Get the cvPolyData for the face.
+  auto model = self->solidModel;
+  double max_dist = -1.0;
+  int useMaxDist = 0;
+  auto cvPolydata = model->GetFacePolyData(faceID, useMaxDist, max_dist);
+  if (cvPolydata == NULL) {
+      throw std::runtime_error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
+  }
+  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+  polydata = cvPolydata->GetVtkPolyData();
+  if (polydata == NULL) {
+      throw std::runtime_error("Error getting polydata for the solid model face ID '" + std::to_string(faceID) + "'.");
+  }
+
+  // Compute the face center.
+  auto points = polydata->GetPoints();
+  int numPoints = points->GetNumberOfPoints();
+  double cx = 0.0;
+  double cy = 0.0;
+  double cz = 0.0;
+  for (vtkIdType i = 0; i < numPoints; i++) {
+      double point[3];
+      points->GetPoint(i,point);
+      cx += point[0];
+      cy += point[1];
+      cz += point[2];
+  }
+
+  // Compute the variance matrix for the polydata points.
+  //
+  double com[3] = { cx /= numPoints, cy /= numPoints, cz /= numPoints};
+  double csum[3] = { 0.0, 0.0, 0.0};
+  for (int i = 0; i < numPoints; i++) {
+      double point[3];
+      points->GetPoint(i,point);
+      csum[0] += point[0] - com[0];
+      csum[1] += point[1] - com[1];
+      csum[2] += point[2] - com[2];
+  }
+
+  double* var[3], v0[3]={ 0.0, 0.0, 0.0}, v1[3]={ 0.0, 0.0, 0.0}, v2[3]={ 0.0, 0.0, 0.0};
+  var[0] = v0;
+  var[1] = v1;
+  var[2] = v2;
+
+  for (int k = 0; k < numPoints; k++) {
+      double point[3];
+      points->GetPoint(k,point);
+      for (int i = 0; i < 3; i++) {
+          for (int j = 0; j < 3; j++) {
+              var[i][j] += (point[i] - com[i]) * (point[j] - com[j]);
+          }
+      }
+  }
+
+  for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+          var[i][j] = (var[i][j] - csum[i]*csum[j] / numPoints) / (numPoints-1);
+      }
+  }
+
+  // Compute the eigenvalues and eigenvectors of the variance matrix.
+  double eigvals[3]; 
+  double w0[3], w1[3], w2[3];
+  double* w[3] = {w0, w1, w2};
+  vtkMath::Jacobi(var, eigvals, w);
+
+  // If the smallest eigenvalue is close to zero then the face 
+  // is flat and is considered a cap.
+  bool isCap = false;
+  if (eigvals[2] < tolerance) {
+      isCap = true;
+  }
+
+  return isCap;
 }
 
 //////////////////////////////////////////////////////
@@ -177,6 +274,58 @@ ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* k
   Py_RETURN_NONE;
 }
 
+PyDoc_STRVAR(ModelingPolyData_identify_caps_doc,
+  "identify_caps()  \n\
+   \n\
+   Identify which model faces are caps.        \n\
+   \n\
+   Returns list([bool]): A list of bool values for each face ID, True if it is a cap. \n\
+");
+
+static PyObject *
+ModelingPolyData_identify_caps(PyModelingModel* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("|d", PyRunTimeErr, __func__);
+  static char *keywords[] = {"tolerance", NULL};
+  double tolerance = 1e-5;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &tolerance)) {
+      return api.argsError();
+  }
+
+  if (tolerance < 0.0) {
+      api.error("The tolerance argument < 0.0.");
+      return nullptr;
+  }
+
+  auto model = self->solidModel;
+
+  // Get the face IDs.
+  auto faceIDs = ModelingModelGetFaceIDs(api, self);
+  if (faceIDs.size() == 0) {
+      api.error("The model has no face information.");
+      return nullptr;
+  }
+
+  // Classify each face as a cap or wall and add the
+  // result to a bool list.
+  //
+  auto faceList = PyList_New(faceIDs.size());
+  int n = 0;
+  for (auto faceID: faceIDs) {
+      try { 
+          bool isCap = classify_face(self, faceID, api, tolerance);
+          PyList_SetItem(faceList, n, PyBool_FromLong(isCap));
+          n += 1;
+      } catch (std::exception &e) {
+          api.error(e.what());
+          return nullptr;
+      }
+  }
+
+  return faceList;
+}
+
 //------------------------------
 // ModelingPolyData_set_surface
 //------------------------------
@@ -244,6 +393,8 @@ PyMethodDef PyPolyDataSolidMethods[] = {
   // { "remesh_faces", (PyCFunction)ModelingPolyData_remesh_faces, METH_NOARGS|METH_KEYWORDS, ModelingPolyData_remesh_faces_doc},
 
   { "compute_boundary_faces", (PyCFunction)ModelingPolyData_compute_boundary_faces, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_compute_boundary_faces_doc},
+
+  { "identify_caps", (PyCFunction)ModelingPolyData_identify_caps, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_identify_caps_doc},
 
   { "set_surface", (PyCFunction)ModelingPolyData_set_surface, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_set_surface_doc},
 

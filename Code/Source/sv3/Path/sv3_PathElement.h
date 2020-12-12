@@ -72,7 +72,7 @@ public:
 
     int GetControlPointNumber();
 
-    std::vector<std::array<double,3> > GetControlPoints();
+    std::vector<std::array<double,3> > GetControlPoints() const;
 
     svControlPoint GetsvControlPoint(int index) ;
 
@@ -116,9 +116,9 @@ public:
 
     int GetCalculationNumber();
 
-    std::vector<PathPoint>  GetPathPoints();
+    std::vector<PathPoint> GetPathPoints() const;
 
-    std::vector<std::array<double,3> > GetPathPosPoints();
+    std::vector<std::array<double,3>> GetPathPosPoints();
 
     PathPoint GetPathPoint(int index) ;
 

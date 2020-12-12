@@ -28,43 +28,31 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#ifndef SV3_PATHUTILS_H
+#define SV3_PATHUTILS_H
 
-#ifndef sv4guiImageSEEDINTERACTOR_H
-#define sv4guiImageSEEDINTERACTOR_H
+#include "SimVascular.h"
 
-#include <mitkDataInteractor.h>
-class sv4guiImageSeedInteractor : public mitk::DataInteractor
+#include <sv3PathExports.h>
+
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+
+#include <array>
+
+namespace sv3 {
+
+class SV_EXPORT_PATH PathUtils
 {
-public:
-  mitkClassMacro(sv4guiImageSeedInteractor, mitk::DataInteractor)
-  itkFactorylessNewMacro(Self)
-  itkCloneMacro(Self)
-  double m_seedRadius = 0.5;
+  public:
 
-protected:
-  sv4guiImageSeedInteractor();
-  ~sv4guiImageSeedInteractor();
+    static std::vector<vtkSmartPointer<vtkPolyData>> ExtractCenterlinesSections(vtkSmartPointer<vtkPolyData>& centerlines);
 
-  virtual void ConnectActionsAndFunctions() override;
-
-  bool IsOverSeed( const mitk::InteractionEvent* interactionEvent );
-
-  //bool IsOverCenterline( const mitk::InteractionEvent* interactionEvent );
-
-  void AddSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
-
-  void AddEndSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
-
-  void DeleteSeed(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent );
-
-  void MakeSeedCurrent(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
-
-  //void SelectCenterline(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent);
-
-private:
-  std::vector<int> m_selectedSeed;
-  mitk::Point3D m_currentPickedPoint;
-  int m_currentStartSeed = -1;
+    static std::vector<std::array<double,3>> SampleLinePoints(vtkSmartPointer<vtkPolyData>& polydata, int numSamples, 
+        double minAngle, double distMeasure);
+    
 };
 
-#endif // sv4guiImageSEEDINTERACTOR_H
+}
+#endif // SV3_PATHUTILS_H

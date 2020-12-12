@@ -33,18 +33,32 @@ set(SRC_CPP_FILES
 )
 
 set(INTERNAL_CPP_FILES
+    sv4gui_ImageCenterlineInteractor.cxx
+    sv4gui_ImageLinesMapper.cxx
     sv4gui_ImageProcessing.cxx
+    sv4gui_ImageLinesContainer.cxx
+    sv4gui_ImagePathsContainer.cxx
+    sv4gui_ImagePathsMapper.cxx
     sv4gui_ImageSeedContainer.cxx
     sv4gui_ImageSeedMapper.cxx
+    sv4gui_ImageSeedMapper2D.cxx
     sv4gui_ImageSeedInteractor.cxx
+    sv4gui_ImageSurfaceMapper3D.cxx
     sv4gui_ImageProcessingPluginActivator.cxx
 )
 
 set(MOC_H_FILES
+    sv4gui_ImageCenterlineInteractor.h
+    sv4gui_ImageLinesMapper.h
+    sv4gui_ImageLinesContainer.h
+    sv4gui_ImagePathsContainer.h
+    sv4gui_ImagePathsMapper.h
     sv4gui_ImageProcessing.h
     sv4gui_ImageSeedContainer.h
     sv4gui_ImageSeedMapper.h
+    sv4gui_ImageSeedMapper2D.h
     sv4gui_ImageSeedInteractor.h
+    sv4gui_ImageSurfaceMapper3D.h
     sv4gui_ImageProcessingPluginActivator.h
 )
 

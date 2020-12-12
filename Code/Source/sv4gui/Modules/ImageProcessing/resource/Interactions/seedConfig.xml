@@ -2,6 +2,7 @@
   <!-- Undeclared tags are filled with standard values -->
   <!-- Mouse Events -->
   <!-- MousePressEvents -->
+
   <event_variant class="MousePressEvent" name="PrimaryButtonPressed">
     <attribute name="EventButton" value="LeftMouseButton" />
   </event_variant>
@@ -18,13 +19,18 @@
     <attribute name="EventButton" value="LeftMouseButton" />
   </event_variant>
 
-<!-- InteractionKeyEvent -->
-  <event_variant class="InteractionKeyEvent" name="KeyPressed_S">
-    <attribute name="Key" value="S"/>
+  <!-- InteractionKeyEvent -->
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_A">
+    <attribute name="Key" value="A"/>
   </event_variant>
 
-  <event_variant class="InteractionKeyEvent" name="KeyPressed_E">
-    <attribute name="Key" value="E"/>
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_C">
+    <attribute name="Key" value="C"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_D">
+    <attribute name="Key" value="D"/>
   </event_variant>
 
 </config>

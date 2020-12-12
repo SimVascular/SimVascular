@@ -29,7 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sv4gui_PathVtkMapper2D.h"
+#include "sv4gui_ImageSeedMapper2D.h"
+#include "sv4gui_ImageSeedContainer.h"
+#include "sv4gui_ImageSeedMapper.h"
 
 //mitk includes
 #include "mitkVtkPropRenderer.h"
@@ -50,126 +52,82 @@
 #include <vtkGlyphSource2D.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
+#include "vtkSphereSource.h"
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
 #include <vtkCellArray.h>
 
 #include <stdlib.h>
 
-sv4guiPathVtkMapper2D::LocalStorage::LocalStorage()
+//--------------
+// LocalStorage
+//--------------
+//
+sv4guiImageSeedMapper2D::LocalStorage::LocalStorage()
 {
     // points
-    m_UnselectedPoints = vtkSmartPointer<vtkPoints>::New();
-    m_SelectedPoints = vtkSmartPointer<vtkPoints>::New();
-    m_SplinePoints = vtkSmartPointer<vtkPoints>::New();
-    m_SplineConnectingPoints = vtkSmartPointer<vtkPoints>::New();
+    m_SeedPoints = vtkSmartPointer<vtkPoints>::New();
 
     // scales
-    m_UnselectedScales = vtkSmartPointer<vtkFloatArray>::New();
-    m_SelectedScales = vtkSmartPointer<vtkFloatArray>::New();
-    m_SplinePointsScales = vtkSmartPointer<vtkFloatArray>::New();
-
-    // distances
-    //  m_DistancesBetweenPoints = vtkSmartPointer<vtkFloatArray>::New();
-
-    // lines
-    m_SplineConnectingLines = vtkSmartPointer<vtkCellArray>::New();
-
-    // glyph source (provides the different shapes)
-    m_UnselectedGlyphSource2D = vtkSmartPointer<vtkGlyphSource2D>::New();
-    m_SelectedGlyphSource2D = vtkSmartPointer<vtkGlyphSource2D>::New();
-    m_SplineGlyphSource2D = vtkSmartPointer<vtkGlyphSource2D>::New();
+    m_SeedPointsScale = vtkSmartPointer<vtkFloatArray>::New();
 
     // glyphs
-    m_UnselectedGlyph3D = vtkSmartPointer<vtkGlyph3D>::New();
-    m_SelectedGlyph3D = vtkSmartPointer<vtkGlyph3D>::New();
-    m_SplineGlyph3D = vtkSmartPointer<vtkGlyph3D>::New();
+    m_SeedPointsGlyph3D = vtkSmartPointer<vtkGlyph3D>::New();
 
     // polydata
-    m_VtkUnselectedPointsPolyData = vtkSmartPointer<vtkPolyData>::New();
-    m_VtkSelectedPointsPolyData = vtkSmartPointer <vtkPolyData>::New();
-    m_VtkSplinePointsPolyData = vtkSmartPointer<vtkPolyData>::New();
-    m_VtkSplineConnectingLinesPolyData = vtkSmartPointer<vtkPolyData>::New();
+    m_SeedPointsPolyData = vtkSmartPointer<vtkPolyData>::New();
 
     // actors
-    m_UnselectedActor = vtkSmartPointer <vtkActor>::New();
-    m_SelectedActor = vtkSmartPointer <vtkActor>::New();
-    m_SplinePointsActor = vtkSmartPointer <vtkActor>::New();
-    m_SplineConnectingLinesActor = vtkSmartPointer <vtkActor>::New();
+    m_SeedPointsActor = vtkSmartPointer <vtkActor>::New();
 
     // mappers
-    m_VtkUnselectedPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    m_VtkSelectedPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    m_VtkSplinePointsPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    m_VtkSplineConnectingLinesPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    m_SeedPointsPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 
-    // propassembly
+    // Object that groups graphics properties into a tree-like hierarchy.
     m_PropAssembly = vtkSmartPointer <vtkPropAssembly>::New();
 }
 
-sv4guiPathVtkMapper2D::LocalStorage::~LocalStorage()
+sv4guiImageSeedMapper2D::LocalStorage::~LocalStorage()
 {
 }
 
-const sv4guiPath* sv4guiPathVtkMapper2D::GetInput() const
-{
-    return static_cast<const sv4guiPath * > ( GetDataNode()->GetData() );
-}
-
-// constructor PointSetVtkMapper2D
-sv4guiPathVtkMapper2D::sv4guiPathVtkMapper2D()
-    : m_ShowSpline(false),
-      m_ShowSplinePoints(true),
-      m_ShowPoints(true),
-      m_LineWidth(1),
-      m_PointLineWidth(1),
-      m_Point2DSize(100.0f),
-      m_DistanceToPlane(4.0f)
-{
-    m_SplinePoint2DSize=0.6f*m_Point2DSize;
-}
-
-sv4guiPathVtkMapper2D::~sv4guiPathVtkMapper2D()
+//-------------------------
+// sv4guiImageSeedMapper2D
+//-------------------------
+//
+sv4guiImageSeedMapper2D::sv4guiImageSeedMapper2D() : m_SeedPoint2DSize(100.0f), m_DistanceToPlane(4.0f)
 {
 }
 
-void sv4guiPathVtkMapper2D::ResetMapper( mitk::BaseRenderer* renderer )
+sv4guiImageSeedMapper2D::~sv4guiImageSeedMapper2D()
 {
-    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
-    ls->m_PropAssembly->VisibilityOff();
 }
 
-// returns propassembly
-vtkProp* sv4guiPathVtkMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
+//-------------
+// ResetMapper
+//-------------
+//
+void sv4guiImageSeedMapper2D::ResetMapper(mitk::BaseRenderer* renderer)
 {
-    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
-    return ls->m_PropAssembly;
+  //std::cout << "===================== sv4guiImageSeedMapper2D::ResetMapper =====================" << std::endl;
+  LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
+  ls->m_PropAssembly->VisibilityOff();
 }
 
-bool sv4guiPathVtkMapper2D::makePerpendicularVector2D(const mitk::Vector2D& in, mitk::Vector2D& out)
+//------------
+// GetVtkProp
+//------------
+// This method is called when the cross-hairs are moved in a 2D window 
+// using the mouse or the Image Navagator sliders.
+//
+vtkProp * 
+sv4guiImageSeedMapper2D::GetVtkProp(mitk::BaseRenderer* renderer)
 {
-    // The dot product of orthogonal vectors is zero.
-    // In two dimensions the slopes of perpendicular lines are negative reciprocals.
-    if((fabs(in[0])>0) && ( (fabs(in[0])>fabs(in[1])) || (in[1] == 0) ) )
-    {
-        // negative reciprocal
-        out[0]=-in[1]/in[0];
-        out[1]=1;
-        out.Normalize();
-        return true;
-    }
-    else if(fabs(in[1])>0)
-    {
-        out[0]=1;
-        // negative reciprocal
-        out[1]=-in[0]/in[1];
-        out.Normalize();
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+  //std::cout << "===================== sv4guiImageSeedMapper2D::GetVtkProp =====================" << std::endl;
+  ResetMapper(renderer);
+  GenerateDataForRenderer(renderer);
+  LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
+  return ls->m_PropAssembly;
 }
 
 //------------------------
@@ -179,11 +137,80 @@ bool sv4guiPathVtkMapper2D::makePerpendicularVector2D(const mitk::Vector2D& in, 
 //
 // This is called when cross-hairs are moved in the 2D windows.
 //
-void sv4guiPathVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* renderer)
+void sv4guiImageSeedMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* renderer)
 {
-    std::cout << "===================== sv4guiPathVtkMapper2D::CreateVTKRenderObject =====================" << std::endl;
+  //std::cout << "===================== sv4guiImageSeedMapper2D::CreateVTKRenderObject =====================" << std::endl;
+  mitk::DataNode* node = GetDataNode();
+  if (node == nullptr) {
+      return;
+  }
 
-    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
+  LocalStorage *localStorage = m_LSH.GetLocalStorage(renderer);
+
+  // Check if seeds are visible.
+  //
+  bool visible = true;
+  GetDataNode()->GetVisibility(visible, renderer, "visible");
+  if (!visible) {
+      localStorage->m_PropAssembly->VisibilityOff();
+      return;
+  }
+
+  sv4guiImageSeedContainer* seeds = static_cast< sv4guiImageSeedContainer* >( GetDataNode()->GetData() );
+
+  if (seeds == nullptr) {
+      localStorage->m_PropAssembly->VisibilityOff();
+      return;
+  }
+
+  // Removes all graphics properties.
+  localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
+
+  // Get the plane to show the seeds.
+  const mitk::PlaneGeometry* plane = renderer->GetCurrentWorldPlaneGeometry();
+  double precisionFactor = 0.52;
+  m_DistanceToPlane = plane->GetExtentInMM(2) * precisionFactor;
+  double radius = 5.0 * plane->GetExtentInMM(2); 
+  //std::cout << "[CreateVTKRenderObject] radius: " << radius << std::endl;
+
+  int numStartSeeds = seeds->GetNumStartSeeds();
+  //std::cout << "[CreateVTKRenderObject] numStartSeeds: " << numStartSeeds << std::endl;
+
+  // Add seeds that are within a certain distance of the plane.
+  //
+  for (auto const& seed : seeds->m_StartSeeds) {
+      auto startSeed = std::get<0>(seed.second);
+      int id = startSeed.id;
+      bool active = (startSeed.id == seeds->m_ActiveStartSeedID);
+      mitk::Point3D point(startSeed.point.data());
+      double diff = plane->Distance(point);
+      if (diff*diff < m_DistanceToPlane) {
+          bool isStartSeed = true;
+          auto startSphere = sv4guiImageSeedMapper::CreateSphere(point[0], point[1], point[2], radius, isStartSeed, active);
+          if (seeds->selectStartSeed && (seeds->selectStartSeedIndex == id)) {
+            startSphere->GetProperty()->SetColor(sv4guiImageSeedMapper::START_SEED_HIGHLIGHT_COLOR);
+          }
+          localStorage->m_PropAssembly->AddPart(startSphere);
+      }
+
+      for (auto const& endSeed : std::get<1>(seed.second)) {
+          int id = endSeed.id;
+          mitk::Point3D point(endSeed.point.data());
+          double diff = plane->Distance(point);
+          if (diff*diff < m_DistanceToPlane) {
+              bool isStartSeed = false;
+              auto endSphere = sv4guiImageSeedMapper::CreateSphere(point[0], point[1], point[2], radius, isStartSeed, active);
+              if (seeds->selectEndSeed && (seeds->selectEndSeedIndex == id)) {
+                endSphere->GetProperty()->SetColor(sv4guiImageSeedMapper::END_SEED_HIGHLIGHT_COLOR);
+              }
+              localStorage->m_PropAssembly->AddPart(endSphere);
+          }
+      }
+  }
+
+
+
+/*
 
     // initialize polydata here, otherwise we have update problems when
     // executing this function again
@@ -399,17 +426,21 @@ void sv4guiPathVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* renderer)
     ls->m_SplinePointsActor->GetProperty()->SetLineWidth(m_PointLineWidth);
 
     ls->m_PropAssembly->AddPart(ls->m_SplinePointsActor);
+*/
 }
 
 //-------------------------
 // GenerateDataForRenderer
 //-------------------------
 //
-void sv4guiPathVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
+void sv4guiImageSeedMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
+    //std::cout << "===================== sv4guiImageSeedMapper2D::GenerateDataForRenderer =====================" << std::endl;
     const mitk::DataNode* node = GetDataNode();
-    if( node == NULL )
+
+    if (node == NULL) {
         return;
+    }
 
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
 
@@ -419,17 +450,21 @@ void sv4guiPathVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
     // toggle visibility
     bool visible = true;
     node->GetVisibility(visible, renderer, "visible");
-    if(!visible)
-    {
-        ls->m_UnselectedActor->VisibilityOff();
-        ls->m_SelectedActor->VisibilityOff();
-        ls->m_SplinePointsActor->VisibilityOff();
-        ls->m_SplineConnectingLinesActor->VisibilityOff();
+
+    if (!visible) {
+        //ls->m_UnselectedActor->VisibilityOff();
+        //ls->m_SelectedActor->VisibilityOff();
+        //ls->m_SplinePointsActor->VisibilityOff();
+        //ls->m_SplineConnectingLinesActor->VisibilityOff();
         ls->m_PropAssembly->VisibilityOff();
         return;
     }else{
         ls->m_PropAssembly->VisibilityOn();
     }
+
+    CreateVTKRenderObjects(renderer);
+
+    /*
     node->GetBoolProperty("show points",        m_ShowPoints, renderer);
     node->GetBoolProperty("show spline points",      m_ShowSplinePoints, renderer);
     node->GetFloatProperty("point 2D display size",       m_Point2DSize, renderer);
@@ -555,9 +590,16 @@ void sv4guiPathVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
         //create new vtk render objects (e.g. a circle for a point)
         this->CreateVTKRenderObjects(renderer);
     }
+*/
+
 }
 
-void sv4guiPathVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
+//----------------------
+// SetDefaultProperties
+//----------------------
+//
+/*
+void sv4guiImageSeedMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
 //    Superclass::SetDefaultProperties(node, renderer, overwrite);
 
@@ -580,3 +622,4 @@ void sv4guiPathVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::Bas
     Superclass::SetDefaultProperties(node, renderer, overwrite);
 
 }
+*/
