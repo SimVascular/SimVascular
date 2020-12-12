@@ -141,6 +141,7 @@ class sv4guiSimulationPython1d
 
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value);
+    bool AddParameterList(const std::string& name, const std::vector<std::string>& values);
     bool GenerateMesh(const std::string& outputDir, const std::string& centerlinesFile, const std::string& meshFile);
     bool GenerateSolverInput(const std::string outputDirectory, const sv4guiSimJob1d* job);
     std::string StartCommand();

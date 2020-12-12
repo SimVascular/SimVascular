@@ -306,6 +306,17 @@ bool sv4guiSimulationPython1d::AddParameter(const std::string& name, const std::
     return SV_OK;
 }
 
+bool sv4guiSimulationPython1d::AddParameterList(const std::string& name, const std::vector<std::string>& values)
+{
+    std::string list = "";
+    std::string sep;
+    for (auto value : values) {
+        list += sep + value;
+        sep = ",";
+    }
+    m_ParameterValues.insert(std::pair<std::string,std::string>(name, list));
+}
+
 //-----------
 // WriteMesh 
 //-----------

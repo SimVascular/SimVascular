@@ -51,6 +51,7 @@ public:
     // This class defines valid boundary condition types.
     class BCType {
       public:
+        static const std::string CORONARY;
         static const std::string PRESCRIBED_VELOCITIES;
         static const std::string RCR;
         static const std::string RESISTANCE;

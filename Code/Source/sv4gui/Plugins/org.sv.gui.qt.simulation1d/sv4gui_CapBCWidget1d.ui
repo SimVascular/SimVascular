@@ -93,6 +93,11 @@
        <widget class="QComboBox" name="comboBoxBCType">
         <item>
          <property name="text">
+          <string>Coronary</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Prescribed Velocities</string>
          </property>
         </item>
@@ -132,7 +137,7 @@
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="page">
          <layout class="QGridLayout" name="gridLayout_2">

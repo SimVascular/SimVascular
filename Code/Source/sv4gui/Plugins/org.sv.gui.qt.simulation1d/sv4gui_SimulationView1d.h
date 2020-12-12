@@ -82,6 +82,7 @@ public:
     static const QString SOLVER_LOG_FILE_NAME;
 
     // The names of files written by this class.
+    static const QString CORONARY_BC_FILE_NAME;
     static const QString INLET_FACE_NAMES_FILE_NAME;
     static const QString MESH_FILE_NAME;
     static const QString MODEL_SURFACE_FILE_NAME;
@@ -326,6 +327,7 @@ public:
     void WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void WriteInletFaceNames(const QString outputDir);
     void WriteOutletFaceNames(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteCoronaryFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void WriteRcrFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void WriteResistanceFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
 
