@@ -34,6 +34,7 @@
 #include "sv4gui_StringUtils.h"
 #include "sv_integrate_surface.h"
 
+#include <array>
 #include <sstream>
 #include <iostream>
 #include <string>
@@ -61,7 +62,8 @@ std::string sv4guiSimulationUtils1d::CreateRCRTFileContent(const sv4guiSimJob1d*
     auto it = capProps.begin();
 
     for (auto const& cap : capProps) {
-        if (cap.first == "") { continue;
+        if (cap.first == "") { 
+            continue;
         }
         auto props = cap.second;
 
@@ -86,3 +88,105 @@ std::string sv4guiSimulationUtils1d::CreateRCRTFileContent(const sv4guiSimJob1d*
    }
 }
 
+//-----------------------
+// CreateCORTFileContent
+//-----------------------
+// Generate the content of a coronary boundary condition file. 
+//
+// Unlike the standard cort.dat file, this file contains the outlet face name. 
+//
+std::string sv4guiSimulationUtils1d::CreateCORTFileContent(const sv4guiSimJob1d* job)
+{
+    std::stringstream ss;
+    auto capProps = job->GetCapProps();
+    int maxStepNumber = 0;
+    std::string contents;
+
+    for (auto const& cap : capProps) {
+        if (cap.first == "") { 
+            continue;
+        }
+        auto props = cap.second;
+
+        if (props["BC Type"] != "Coronary") {
+            continue;
+        }
+
+        auto values = sv4guiStringUtils_split(props["Values"],' ');
+        if (values.size() != 5) {
+            return contents;
+        }
+        double pressurePeriod = std::stod(props["Pressure Period"]);
+        double pressureScaling = std::stod(props["Pressure Scaling"]);
+
+        auto timePressureStr = sv4guiStringUtils_split(props["Timed Pressure"],'\n');
+        int numTimeSteps = timePressureStr.size();
+        if (numTimeSteps > maxStepNumber) {
+            maxStepNumber = numTimeSteps;
+        }
+
+        // Convert the time-pressure data.
+        std::vector<std::array<double,2>> timePressure(numTimeSteps);
+        transform(timePressureStr.begin(), timePressureStr.end(), timePressure.begin(), [](std::string const& entry) { 
+          auto vals = sv4guiStringUtils_split(entry,' '); return std::array<double,2>{std::stod(vals[0]), std::stod(vals[1])};} );
+
+        double orignalPeriod = timePressure.back()[0]; 
+        double timeFactor = 1.0;
+        if ((pressurePeriod > 0.0) && (pressurePeriod != orignalPeriod)) {
+            timeFactor = pressurePeriod / orignalPeriod;
+        }
+
+        double pressureFactor = 1.0;
+        if ((pressureScaling != 0.0) && (pressureScaling != 1.0)) {
+            pressureFactor = pressureScaling;
+        }
+
+        double Ra = std::stod(values[0]);
+        double Ca = std::stod(values[1]);
+        double Ram = std::stod(values[2]);
+        double Cim = std::stod(values[3]);
+        double Rv = std::stod(values[4]);
+
+        double q0 = Ra + Ram + Rv;
+        double q1 = Ra*Ca*(Ram+Rv) + Cim*(Ra+Ram)*Rv;
+        double q2 = Ca*Cim*Ra*Ram*Rv;
+
+        double p0 = 1.0;
+        double p1 = Ram*Ca + Rv*(Ca+Cim);
+        double p2 = Ca*Cim*Ram*Rv;
+
+        double b0 = 0.0;
+        double b1 = Cim*Rv;
+        double b2 = 0.0;
+
+        ss << numTimeSteps << "\n";
+        ss << cap.first << "\n";
+        ss << q0 << "\n";
+        ss << q1 << "\n";
+        ss << q2 << "\n";
+        ss << p0 << "\n";
+        ss << p1 << "\n";
+        ss << p2 << "\n";
+        ss << b0 << "\n";
+        ss << b1 << "\n";
+        ss << b2 << "\n";
+        ss << "0.0 \n";
+        ss << "100.0 \n";
+
+        for (auto entry : timePressure) {
+            auto time = timeFactor * entry[0];
+            auto pressure = pressureFactor * entry[1];
+            ss << time << " " << pressure << "\n";
+        }
+    }
+
+    if (ss.str() == "") { 
+        contents = "";
+    } else {
+        std::stringstream newss;
+        newss<<maxStepNumber << "\n" <<ss.str();
+        contents = newss.str();
+    }
+
+    return contents;
+}

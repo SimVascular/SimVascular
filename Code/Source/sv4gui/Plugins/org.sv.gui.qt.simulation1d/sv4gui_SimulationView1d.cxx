@@ -146,6 +146,7 @@
 
 #include "sv4gui_SimulationExtractCenterlines1d.h"
 #include "sv_polydatasolid_utils.h"
+#include "sv4gui_StringUtils.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
@@ -1770,13 +1771,6 @@ void sv4guiSimulationView1d::OnPreferencesChanged(const berry::IBerryPreferences
 //
 void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
-    std::cout << "========== sv4guiSimulationView1d::OnSelectionChanged =========" << std::endl;
-
-    auto msg = "[sv4guiSimulationView1d::OnSelectionChanged] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "--------- OnSelectionChanged ----------";
-    MITK_INFO << msg << "nodes.size() " << nodes.size();
-
     if (!IsVisible()) {
         return;
     }
@@ -1790,7 +1784,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 
     m_DataStorage = GetDataStorage();
     if (m_DataStorage == nullptr) {
-        MITK_INFO << msg << " m_DataStorage == nullptr";
         return;
     }
 
@@ -1801,7 +1794,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         RemoveObservers();
         EnableTool(false);
         m_Parent->setEnabled(false);
-        MITK_INFO << msg << " mitkJob == nullptr";
         return;
     }
 
@@ -1815,7 +1807,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 
     // Set the plugin output directory.
     m_PluginOutputDirectory = GetJobPath();
-    MITK_INFO << msg << "Set m_PluginOutputDirectory to: " << m_PluginOutputDirectory;
     if (!QDir(m_PluginOutputDirectory).exists()) {
         QDir().mkdir(m_PluginOutputDirectory);
     }
@@ -1827,7 +1818,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     // Get the model name (set when we create a 1d simulation).
     //
     std::string modelName = mitkJob->GetModelName();
-    MITK_INFO << msg << "Model name '" << modelName << "'";
 
     // Set the model node. 
     //
@@ -1846,7 +1836,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
             m_Model = model;
             WriteModel();
         }
-        MITK_INFO << msg << "Model node: " << modelNode; 
 
         // [DaveP] can't get time the model node's data was last modified.
         //auto lastTimeModified = m_ModelNode->GetDataReferenceChangedTime();
@@ -1855,11 +1844,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         //MITK_INFO << msg << "#### The last time the model has been modified: " << lastTimeModified;
         std::string timeModified;
         m_ModelNode->GetStringProperty("time modified", timeModified);
-        MITK_INFO << msg;
-        MITK_INFO << msg << "#############################";
-        MITK_INFO << msg << "Model time modified: " << timeModified; 
-        MITK_INFO << msg << "m_ModelNodeTimeModified: " << m_ModelNodeTimeModified; 
-        MITK_INFO << msg << "#############################";
 
         // The model has changed so reset the data the depends on the surface model. 
         if ((timeModified != "") && (timeModified != m_ModelNodeTimeModified)) {
@@ -1870,22 +1854,15 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         if (m_ModelFileName.isEmpty()) {
             m_ModelFileName = GetModelFileName();
         }
-        MITK_INFO << msg << "The model has been set.";
         // Check for centerlines created for the model.
         auto rs = GetDataStorage()->GetDerivations(modelNode);
         if (rs->size() > 0) {
-            MITK_INFO << msg << "Have centerlines:";
             m_ModelCenterlineNodes.clear();
             for (auto const& node : *rs) { 
                 auto name = node->GetName();
-                MITK_INFO << msg << name;
                 m_ModelCenterlineNodes.emplace_back(name, node);
             }
-        } else { 
-            MITK_INFO << msg << "Don't have centerlines from Model Tool.";
         }
-    } else {
-        MITK_WARN << msg << "No model has been created!";
     }
 
     // Set the mesh node. 
@@ -1893,15 +1870,11 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     auto meshNodes = m_DataStorage->GetDerivations(m_MeshFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkMesh"));
     if (meshNodes->size() != 0) {
         m_MeshNodes.clear();
-        MITK_INFO << msg << "Mesh names: ";
         for (auto const& node : *meshNodes) {
             auto name = node->GetName();
-            MITK_INFO << msg << name; 
             m_MeshNodes.emplace_back(name, node);
         }
-    } else {
-      MITK_WARN << msg << "Mesh data node not found!";
-    }
+    } 
 
     // Enable the toolbox pages ('1D Mesh', 'Basic Parameters', etc.) to allow input.
     //
@@ -2936,7 +2909,6 @@ void sv4guiSimulationView1d::UpdateGUIMesh()
     if (!m_MitkJob) {
         return;
     }
-    std::cout << "========== sv4guiSimulationView1d::UpdateGUIMesh =========" << std::endl;
 
     sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
 
@@ -3642,30 +3614,43 @@ void sv4guiSimulationView1d::AddWallPropertiesParameters(sv4guiSimJob1d* job, sv
 //
 // Files written:
 //   inlet flow file    
-//   rcr or resistance boundary conditions
+//   coronary, rcr and resistance boundary conditions
 //
 void sv4guiSimulationView1d::WriteBCFiles(const QString outputDir, sv4guiSimJob1d* job, 
   sv4guiSimulationPython1d& pythonInterface)
 {
-    // Write the inflow BC data.
-    WriteFlowFile(outputDir, job, pythonInterface);
-
-    // Write other BC types files.
+    // Get the list of BC types files.
     std::set<std::string> bcTypes;
     for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
         auto bcType = m_TableModelCap->item(i,1)->text().trimmed().toStdString();
         if (bcType == "RCR") {
-            WriteRcrFile(outputDir, job, pythonInterface);
             bcTypes.insert(RCR_BC_FILE_NAME.toStdString()); 
         } else if (bcType == "Resistance") {
-            WriteResistanceFile(outputDir, job, pythonInterface);
             bcTypes.insert(RESISTANCE_BC_FILE_NAME.toStdString()); 
         } else if (bcType == "Coronary") {
-            WriteCoronaryFile(outputDir, job, pythonInterface);
             bcTypes.insert(CORONARY_BC_FILE_NAME.toStdString()); 
         }
     }
 
+    // Write the inflow BC data.
+    WriteFlowFile(outputDir, job, pythonInterface);
+
+    // Write resistance BC data.
+    if (bcTypes.count("Resistance") != 0) {
+        WriteResistanceFile(outputDir, job, pythonInterface);
+    }
+
+    // Write RCR BC data.
+    if (bcTypes.count("RCR") != 0) {
+        WriteRcrFile(outputDir, job, pythonInterface);
+    }
+
+    // Write coronary BC data.
+    if (bcTypes.count("Coronary") != 0) {
+        WriteCoronaryFile(outputDir, job, pythonInterface);
+    }
+
+    // Set the list of BC files used to identify different BC types.
     auto params = pythonInterface.m_ParameterNames;
     std::vector<std::string> values;
     for (auto bcType : bcTypes) { 
@@ -3717,24 +3702,19 @@ void sv4guiSimulationView1d::WriteFlowFile(const QString outputDir, sv4guiSimJob
 void sv4guiSimulationView1d::WriteCoronaryFile(const QString outputDir, sv4guiSimJob1d* job,
   sv4guiSimulationPython1d& pythonInterface)
 {
-    std::cout << "########## WriteCoronaryFile ########" << std::endl;
+    // Get the data for the coronary BC.
+    auto fileContents = sv4guiSimulationUtils1d::CreateCORTFileContent(job);
+    if (fileContents == "") { 
+        return;
+    }
 
-    // Set the Python script parameters.
-    std::string bcType = "Coronary";
+    // Write the data.
     auto cortBcFileName = outputDir + "/" + CORONARY_BC_FILE_NAME;
-    QFile cortFile(cortBcFileName);
-
-    if (cortFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&cortFile);
-
-        for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
-            auto capName = m_TableModelCap->item(i,0)->text();
-            if (m_TableModelCap->item(i,1)->text().trimmed().toStdString() == bcType) {
-                auto values = m_TableModelCap->item(i,2)->text().trimmed();
-                out << capName << " " << values << "\n";
-            }
-        }
-        cortFile.close();
+    QFile cortrFile(cortBcFileName);
+    if (cortrFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&cortrFile);
+        out << QString::fromStdString(fileContents);
+        cortrFile.close();
     }
 }
 
@@ -3777,16 +3757,14 @@ void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, sv4guiSimJob1
         return;
     }
 
-    auto outflowBcFileName = outputDir + "/" + RCR_BC_FILE_NAME; 
-
     // Write rcr data.
+    auto outflowBcFileName = outputDir + "/" + RCR_BC_FILE_NAME; 
     QFile rcrtFile(outflowBcFileName);
     if (rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&rcrtFile);
         out << rcrtFielContent;
         rcrtFile.close();
     }
-    return;
 }
 
 //--------------------
