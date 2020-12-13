@@ -82,7 +82,9 @@
 #include <QDir>
 
 #include <array>
-//#include <dirent.h>
+#ifndef WIN32
+  #include <dirent.h>
+#endif
 #include<regex>
 
 // Set debugging directives.
