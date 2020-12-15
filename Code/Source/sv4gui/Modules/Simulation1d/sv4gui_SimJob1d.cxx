@@ -122,6 +122,26 @@ std::string sv4guiSimJob1d::GetCapProp(const std::string& capName, const std::st
     return m_CapProps[capName][key];
 }
 
+void sv4guiSimJob1d::SetMeshProps(std::map<std::string,std::string> meshProps)
+{
+    m_MeshProps=meshProps;
+}
+
+std::map<std::string,std::string> sv4guiSimJob1d::GetMeshProps()
+{
+    return m_MeshProps;
+}
+
+void sv4guiSimJob1d::SetMeshProp(const std::string& key, std::string value)
+{
+    m_MeshProps[key]=value;
+}
+
+std::string sv4guiSimJob1d::GetMeshProp(const std::string& key)
+{
+    return m_MeshProps[key];
+}
+
 void sv4guiSimJob1d::SetWallProps(std::map<std::string,std::string> wallProps)
 {
     m_WallProps=wallProps;

@@ -82,6 +82,7 @@ public:
     static const QString SOLVER_LOG_FILE_NAME;
 
     // The names of files written by this class.
+    static const QString CORONARY_BC_FILE_NAME;
     static const QString INLET_FACE_NAMES_FILE_NAME;
     static const QString MESH_FILE_NAME;
     static const QString MODEL_SURFACE_FILE_NAME;
@@ -229,6 +230,7 @@ public slots:
     void RemoveObservers();
     void UpdateFaceListSelection();
     void UpdateGUIBasic();
+    void UpdateGUIMesh();
     void UpdateModelGUI();
     void TableViewBasicDoubleClicked(const QModelIndex& index);
 
@@ -317,6 +319,7 @@ public:
     void UpdateCenterlines();
     vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
+    void AddMeshParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void AddWallPropertiesParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
     std::vector<std::string> ReadInletFaceNames(const QString outputDir);
@@ -324,6 +327,7 @@ public:
     void WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void WriteInletFaceNames(const QString outputDir);
     void WriteOutletFaceNames(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
+    void WriteCoronaryFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void WriteRcrFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void WriteResistanceFile(const QString outputDir, sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
 
@@ -448,6 +452,7 @@ private:
 
     bool SetBasicParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     bool SetCapBcs(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
+    bool SetMeshParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     bool SetWallProperites(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     bool SetSolverParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity);
     QString GetSolverExecutable();
