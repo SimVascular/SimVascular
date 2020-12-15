@@ -17,11 +17,11 @@ REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install Cython --install-option="--no-cy
 #must install torando-5.1.1 since tornado-6.0.1 breaks jupyter!!
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tornado==5.1.1
 #install numpy
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install numpy
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install numpy==1.14.3
 #install jupyter
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install jupyter
 #install tensorflow
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tensorflow
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tensorflow==1.4.0
 
 $GMKDIR REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate
 
