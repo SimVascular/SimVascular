@@ -3620,15 +3620,19 @@ void sv4guiSimulationView1d::WriteBCFiles(const QString outputDir, sv4guiSimJob1
   sv4guiSimulationPython1d& pythonInterface)
 {
     // Get the list of BC types files.
+    auto resFileName = RESISTANCE_BC_FILE_NAME.toStdString();
+    auto rcrFileName = RCR_BC_FILE_NAME.toStdString();
+    auto corFileName = CORONARY_BC_FILE_NAME.toStdString();
+
     std::set<std::string> bcTypes;
     for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
         auto bcType = m_TableModelCap->item(i,1)->text().trimmed().toStdString();
         if (bcType == "RCR") {
-            bcTypes.insert(RCR_BC_FILE_NAME.toStdString()); 
+            bcTypes.insert(rcrFileName);
         } else if (bcType == "Resistance") {
-            bcTypes.insert(RESISTANCE_BC_FILE_NAME.toStdString()); 
+            bcTypes.insert(resFileName);
         } else if (bcType == "Coronary") {
-            bcTypes.insert(CORONARY_BC_FILE_NAME.toStdString()); 
+            bcTypes.insert(corFileName);
         }
     }
 
@@ -3636,17 +3640,17 @@ void sv4guiSimulationView1d::WriteBCFiles(const QString outputDir, sv4guiSimJob1
     WriteFlowFile(outputDir, job, pythonInterface);
 
     // Write resistance BC data.
-    if (bcTypes.count("Resistance") != 0) {
+    if (bcTypes.count(resFileName) != 0) {
         WriteResistanceFile(outputDir, job, pythonInterface);
     }
 
     // Write RCR BC data.
-    if (bcTypes.count("RCR") != 0) {
+    if (bcTypes.count(rcrFileName) != 0) {
         WriteRcrFile(outputDir, job, pythonInterface);
     }
 
     // Write coronary BC data.
-    if (bcTypes.count("Coronary") != 0) {
+    if (bcTypes.count(corFileName) != 0) {
         WriteCoronaryFile(outputDir, job, pythonInterface);
     }
 
