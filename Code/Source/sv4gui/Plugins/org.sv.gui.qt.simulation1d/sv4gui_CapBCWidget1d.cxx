@@ -49,10 +49,12 @@
 #define MITK_INFO MITK_DEBUG
 
 // Set boundary condition types.
+const std::string sv4guiCapBCWidget1d::BCType::CORONARY = "Coronary";
 const std::string sv4guiCapBCWidget1d::BCType::PRESCRIBED_VELOCITIES = "Prescribed Velocities";
 const std::string sv4guiCapBCWidget1d::BCType::RCR = "RCR";
 const std::string sv4guiCapBCWidget1d::BCType::RESISTANCE = "Resistance";
 const std::set<std::string> sv4guiCapBCWidget1d::BCType::types = {
+    sv4guiCapBCWidget1d::BCType::CORONARY,
     sv4guiCapBCWidget1d::BCType::PRESCRIBED_VELOCITIES,
     sv4guiCapBCWidget1d::BCType::RCR, 
     sv4guiCapBCWidget1d::BCType::RESISTANCE
