@@ -401,7 +401,6 @@ OneDimSim_AddSolutionParameters(sv4guiSimulationPython1d& pythonInterface, PyObj
 
   // Add the name of the solver input file.
   auto solverFileName = OneDimSim_Parameters::SOLVER_FILE_NAME;
-  pythonInterface.AddParameter(params.WRITE_SOLVER_FILE, "true");
   pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName);
 
   auto numTimeSteps = PyUtilGetIntAttr(solutionObj, SOLUTION_NUM_TIME_STEPS);
