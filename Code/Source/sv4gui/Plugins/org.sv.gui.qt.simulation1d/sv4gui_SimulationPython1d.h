@@ -78,8 +78,6 @@ class sv4guiSimulationPython1dParamNames
       allNames.insert(UNIFORM_BC);
       allNames.insert(UNITS);
       allNames.insert(VISCOSITY);
-      allNames.insert(WRITE_MESH_FILE);
-      allNames.insert(WRITE_SOLVER_FILE);
     }
     const std::string BOUNDARY_SURFACE_DIR = "boundary_surfaces_directory";
     const std::string DENSITY = "density";
@@ -115,8 +113,6 @@ class sv4guiSimulationPython1dParamNames
     const std::string UNIFORM_BC = "uniform_bc";
     const std::string UNITS = "units";
     const std::string VISCOSITY = "viscosity";
-    const std::string WRITE_MESH_FILE = "write_mesh_file";
-    const std::string WRITE_SOLVER_FILE = "write_solver_file";
 
     std::set<std::string> allNames;
 };

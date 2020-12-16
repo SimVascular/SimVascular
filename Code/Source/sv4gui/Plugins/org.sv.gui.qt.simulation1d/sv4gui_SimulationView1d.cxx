@@ -3515,7 +3515,6 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     WriteBCFiles(outputDir, job, pythonInterface);
 
     auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
-    pythonInterface.AddParameter(params.WRITE_SOLVER_FILE, "true"); 
     pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName); 
 
     // Add basic physical parameters.
