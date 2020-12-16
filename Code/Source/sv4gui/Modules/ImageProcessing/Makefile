@@ -62,7 +62,8 @@ SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
 
 RCFILES = \
     resource/Interactions/seedConfig.xml \
-    resource/Interactions/seedInteraction.xml
+    resource/Interactions/seedInteraction.xml \
+    resource/Interactions/centerlineInteraction.xml
 
 QRCFILES =
 
