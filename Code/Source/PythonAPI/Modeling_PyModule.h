@@ -48,9 +48,9 @@
 //extern "C" SV_EXPORT_PYTHON_API int Solid_PyInit();
 
 // Needed for 'dmg' module.
-extern PyTypeObject PyModelingSeriesType;
-extern PyTypeObject PyModelingModelerType;
-extern PyTypeObject PyModelingModelType;
+extern SV_EXPORT_PYTHON_API PyTypeObject PyModelingSeriesType;
+extern SV_EXPORT_PYTHON_API PyTypeObject PyModelingModelerType;
+extern SV_EXPORT_PYTHON_API PyTypeObject PyModelingModelType;
 
 typedef cvSolidModel * (*CreateSolidModelObjectFunction)();
 
@@ -58,8 +58,8 @@ extern "C" SV_EXPORT_PYTHON_API void PyAPI_InitParasolid(CreateSolidModelObjectF
 
 SolidModel_KernelT SV_EXPORT_PYTHON_API ModelingKernelNameToEnum(std::string name);
 
-PyObject* CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
-PyObject* CreatePyModelingModelObject(cvSolidModel* solidModel);
+SV_EXPORT_PYTHON_API PyObject* CreatePyModelingSeries(sv4guiModel::Pointer solidGroup);
+SV_EXPORT_PYTHON_API PyObject* CreatePyModelingModelObject(cvSolidModel* solidModel);
 
 //-----------------
 // PyModelingModel

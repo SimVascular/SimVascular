@@ -35,6 +35,13 @@
 //
 // Some of the functionality may turn out to be useful in future so leave it in for now.
 
+#include "SimVascular.h"
+
+#include "math.h"
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 #include "sv4gui_ImageProcessing.h"
 #include "sv4gui_ImageProcessingUtils.h"
 #include "ui_sv4gui_ImageProcessing.h"
@@ -75,7 +82,9 @@
 #include <QDir>
 
 #include <array>
-#include <dirent.h>
+#ifndef WIN32
+  #include <dirent.h>
+#endif
 #include<regex>
 
 // Set debugging directives.
@@ -431,6 +440,7 @@ void sv4guiImageProcessing::readData()
 //
 void sv4guiImageProcessing::readPaths()
 {
+#ifndef WIN32
   auto dirPath = m_PluginOutputDirectory.toStdString();
   std::string fileName = dirPath + "/" + PATH_FILE_NAME;
 
@@ -442,7 +452,10 @@ void sv4guiImageProcessing::readPaths()
       std::string fileName(dirEntry->d_name);
   }
   
-  closedir(dir); 
+  closedir(dir);
+#else
+  std::cerr << "ERROR!!!! sv4guiImageProcessing::readPaths NOT DEFINED ON WIN32"; 
+#endif
 }
 
 //-----------------

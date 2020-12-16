@@ -83,7 +83,7 @@ public:
   // Define the names used to access face information
   // in the map returned by the GetModelFaceInfo() method. 
   //
-  class ModelFaceInfo {
+  class SV_EXPORT_MESH ModelFaceInfo {
       public:
         static const std::string ID;
         static const std::string NAME;

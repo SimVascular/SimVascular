@@ -53,17 +53,31 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 endif
 
 HDRS	= \
+    sv4gui_ImageCenterlineInteractor.h \
+    sv4gui_ImageLinesMapper.h \
+    sv4gui_ImageLinesContainer.h \
+    sv4gui_ImagePathsContainer.h \
+    sv4gui_ImagePathsMapper.h \
     sv4gui_ImageProcessing.h \
     sv4gui_ImageSeedContainer.h \
     sv4gui_ImageSeedMapper.h \
+    sv4gui_ImageSeedMapper2D.h \
     sv4gui_ImageSeedInteractor.h \
+    sv4gui_ImageSurfaceMapper3D.h \
     sv4gui_ImageProcessingPluginActivator.h
 
 CXXSRCS	= \
+    sv4gui_ImageCenterlineInteractor.cxx \
+    sv4gui_ImageLinesMapper.cxx \
     sv4gui_ImageProcessing.cxx \
+    sv4gui_ImageLinesContainer.cxx \
+    sv4gui_ImagePathsContainer.cxx \
+    sv4gui_ImagePathsMapper.cxx \
     sv4gui_ImageSeedContainer.cxx \
     sv4gui_ImageSeedMapper.cxx \
+    sv4gui_ImageSeedMapper2D.cxx \
     sv4gui_ImageSeedInteractor.cxx \
+    sv4gui_ImageSurfaceMapper3D.cxx \
     sv4gui_ImageProcessingPluginActivator.cxx
 
 UIFILES = \
@@ -95,10 +109,15 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GEOM_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_UTILS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_GLOBALS_NAME)$(LIBLINKEXT)
+
+ifeq ($(SV_USE_VMTK),1)
+  DLLLIBS += $(SVLIBFLAG)$(SV_LIB_VMTK_UTILS_NAME)$(LIBLINKEXT)
+endif
 
 ifeq ($(SV_USE_TINYXML),1)
   DLLLIBS += $(SV_TINYXML_LIBS)
