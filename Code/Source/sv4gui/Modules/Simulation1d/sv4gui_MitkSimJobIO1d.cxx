@@ -98,6 +98,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO1d::Read()
         auto basicProps = GetProps(jobElement, "basic_props");
         job->SetBasicProps(basicProps);
 
+        auto meshProps = GetProps(jobElement, "mesh_props");
+        job->SetMeshProps(meshProps);
+
         auto modelProps = GetProps(jobElement, "model_props");
         job->SetModelProps(modelProps);
 
@@ -256,7 +259,7 @@ void sv4guiMitkSimJobIO1d::Write()
         std::map<std::string,std::string> basicProps=job->GetBasicProps();
         std::map<std::string, std::string>::iterator it = basicProps.begin();
 
-        while(it != basicProps.end()) {
+        while (it != basicProps.end()) {
             auto element = new TiXmlElement("prop");
             bpElement->LinkEndChild(element);
             element->SetAttribute("key", it->first);
@@ -286,6 +289,19 @@ void sv4guiMitkSimJobIO1d::Write()
             }
 
             itit++;
+        }
+
+        auto msElement = new TiXmlElement("mesh_props");
+        jobElement->LinkEndChild(msElement);
+        std::map<std::string,std::string> meshProps = job->GetMeshProps();
+        it = meshProps.begin();
+
+        while(it != meshProps.end()) {
+            auto element = new TiXmlElement("prop");
+            msElement->LinkEndChild(element);
+            element->SetAttribute("key", it->first);
+            element->SetAttribute("value", it->second);
+            it++;
         }
 
         auto wpElement = new TiXmlElement("wall_props");

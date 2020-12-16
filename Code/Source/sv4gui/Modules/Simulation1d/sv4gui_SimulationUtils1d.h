@@ -47,13 +47,9 @@ class SV4GUIMODULESIMULATION1D_EXPORT sv4guiSimulationUtils1d
 {
 
 public:
-
     static std::string CreatePreSolverFileContent(sv4guiSimJob1d* job, std::string outputDir="");
-
+    static std::string CreateCORTFileContent(const sv4guiSimJob1d* job);
     static std::string CreateRCRTFileContent(const sv4guiSimJob1d* job);
-
-    static std::string CreateCORTFileContent(sv4guiSimJob1d* job);
-
     static std::string CreateFlowSolverFileContent(sv4guiSimJob1d* job);
 
     static bool CreateFlowFiles(std::string outFlowFilePath, std::string outPressureFlePath

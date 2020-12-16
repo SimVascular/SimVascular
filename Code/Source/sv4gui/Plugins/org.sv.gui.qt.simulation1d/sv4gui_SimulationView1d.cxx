@@ -38,6 +38,9 @@
 // model is used to create geometry identifying vessel centerlines, branches and
 // bifurcations. The centerlines geometry is used to create a 1D finite element mesh.
 //
+// A Qt connect() must be set for each widget in sv4guiSimulationView1d::EnableConnection(bool able)
+// so that its value is saved for the job and written to the .s1djb file.
+//
 // The input files neeed to run a simulation are created using the following steps
 //
 //   1) Select an inlet face from a model surface.
@@ -143,6 +146,7 @@
 
 #include "sv4gui_SimulationExtractCenterlines1d.h"
 #include "sv_polydatasolid_utils.h"
+#include "sv4gui_StringUtils.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
@@ -190,6 +194,7 @@ const QString sv4guiSimulationView1d::SOLVER_INSTALL_SUB_DIRECTORY = "/bin";
 const QString sv4guiSimulationView1d::SOLVER_LOG_FILE_NAME = "sv1dsolver.log";
 
 // Set the names of the files written as output.
+const QString sv4guiSimulationView1d::CORONARY_BC_FILE_NAME = "cort.dat";
 const QString sv4guiSimulationView1d::INLET_FACE_NAMES_FILE_NAME = "inlet_face_names.dat";
 const QString sv4guiSimulationView1d::MESH_FILE_NAME = "mesh1d.vtp";
 const QString sv4guiSimulationView1d::MODEL_SURFACE_FILE_NAME = "model_surface.vtp";
@@ -377,7 +382,7 @@ sv4guiSimulationView1d::~sv4guiSimulationView1d()
 //------------------
 // EnableConnection
 //------------------
-// [DaveP] Not sure why this is needed.
+// Set slots for changed parameter values to be written the the .s1djb file. 
 //
 void sv4guiSimulationView1d::EnableConnection(bool able)
 {
@@ -388,6 +393,8 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
         connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
+        connect(ui->NumSegmentsLineEdit, SIGNAL(textChanged(QString)), this, slot);
+        connect(ui->AdaptiveMeshingCheckBox, SIGNAL(stateChanged(int)), this, slot);
         m_ConnectionEnabled = able;
     }
 
@@ -697,6 +704,11 @@ void sv4guiSimulationView1d::Create1DMeshControls(QWidget *parent)
     // [DaveP] Hide these for now.
     //ui->generateMeshPushButton->hide();
     //ui->showMeshCheckBox->hide();
+
+    // Mesh segment parameters. 
+    auto numSegsValidator = new QIntValidator(this);
+    numSegsValidator->setBottom(1);
+    ui->NumSegmentsLineEdit->setValidator(numSegsValidator);
 
     // By default disable push buttons used to calculate centerlines, 
     // create simulation files and run a simulation.
@@ -1759,11 +1771,6 @@ void sv4guiSimulationView1d::OnPreferencesChanged(const berry::IBerryPreferences
 //
 void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
-    auto msg = "[sv4guiSimulationView1d::OnSelectionChanged] ";
-    MITK_INFO << msg;
-    MITK_INFO << msg << "--------- OnSelectionChanged ----------";
-    MITK_INFO << msg << "nodes.size() " << nodes.size();
-
     if (!IsVisible()) {
         return;
     }
@@ -1777,7 +1784,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 
     m_DataStorage = GetDataStorage();
     if (m_DataStorage == nullptr) {
-        MITK_INFO << msg << " m_DataStorage == nullptr";
         return;
     }
 
@@ -1788,7 +1794,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         RemoveObservers();
         EnableTool(false);
         m_Parent->setEnabled(false);
-        MITK_INFO << msg << " mitkJob == nullptr";
         return;
     }
 
@@ -1802,7 +1807,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
 
     // Set the plugin output directory.
     m_PluginOutputDirectory = GetJobPath();
-    MITK_INFO << msg << "Set m_PluginOutputDirectory to: " << m_PluginOutputDirectory;
     if (!QDir(m_PluginOutputDirectory).exists()) {
         QDir().mkdir(m_PluginOutputDirectory);
     }
@@ -1814,7 +1818,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     // Get the model name (set when we create a 1d simulation).
     //
     std::string modelName = mitkJob->GetModelName();
-    MITK_INFO << msg << "Model name '" << modelName << "'";
 
     // Set the model node. 
     //
@@ -1833,7 +1836,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
             m_Model = model;
             WriteModel();
         }
-        MITK_INFO << msg << "Model node: " << modelNode; 
 
         // [DaveP] can't get time the model node's data was last modified.
         //auto lastTimeModified = m_ModelNode->GetDataReferenceChangedTime();
@@ -1842,11 +1844,6 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         //MITK_INFO << msg << "#### The last time the model has been modified: " << lastTimeModified;
         std::string timeModified;
         m_ModelNode->GetStringProperty("time modified", timeModified);
-        MITK_INFO << msg;
-        MITK_INFO << msg << "#############################";
-        MITK_INFO << msg << "Model time modified: " << timeModified; 
-        MITK_INFO << msg << "m_ModelNodeTimeModified: " << m_ModelNodeTimeModified; 
-        MITK_INFO << msg << "#############################";
 
         // The model has changed so reset the data the depends on the surface model. 
         if ((timeModified != "") && (timeModified != m_ModelNodeTimeModified)) {
@@ -1857,22 +1854,15 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
         if (m_ModelFileName.isEmpty()) {
             m_ModelFileName = GetModelFileName();
         }
-        MITK_INFO << msg << "The model has been set.";
         // Check for centerlines created for the model.
         auto rs = GetDataStorage()->GetDerivations(modelNode);
         if (rs->size() > 0) {
-            MITK_INFO << msg << "Have centerlines:";
             m_ModelCenterlineNodes.clear();
             for (auto const& node : *rs) { 
                 auto name = node->GetName();
-                MITK_INFO << msg << name;
                 m_ModelCenterlineNodes.emplace_back(name, node);
             }
-        } else { 
-            MITK_INFO << msg << "Don't have centerlines from Model Tool.";
         }
-    } else {
-        MITK_WARN << msg << "No model has been created!";
     }
 
     // Set the mesh node. 
@@ -1880,15 +1870,11 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     auto meshNodes = m_DataStorage->GetDerivations(m_MeshFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkMesh"));
     if (meshNodes->size() != 0) {
         m_MeshNodes.clear();
-        MITK_INFO << msg << "Mesh names: ";
         for (auto const& node : *meshNodes) {
             auto name = node->GetName();
-            MITK_INFO << msg << name; 
             m_MeshNodes.emplace_back(name, node);
         }
-    } else {
-      MITK_WARN << msg << "Mesh data node not found!";
-    }
+    } 
 
     // Enable the toolbox pages ('1D Mesh', 'Basic Parameters', etc.) to allow input.
     //
@@ -1921,6 +1907,8 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     UpdateModelGUI();
 
     UpdateGUIBasic();
+
+    UpdateGUIMesh();
 
     UpdateGUICap();
 
@@ -2908,6 +2896,42 @@ void sv4guiSimulationView1d::SetVarE(bool)
 }
 
 //---------------
+// UpdateGUIMesh
+//---------------
+// Update the mesh GUI with values from the .s1djb file.
+//
+// These parameters were added later so we must check to
+// see if they exist to maintain compatibility with older
+// files.
+//
+void sv4guiSimulationView1d::UpdateGUIMesh()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+
+    if (job == nullptr) {
+        job = new sv4guiSimJob1d();
+    }
+
+    auto numSegements = job->GetMeshProp("Number of segments per branch");
+    if (numSegements == "") { 
+        numSegements = "1";
+    }
+    ui->NumSegmentsLineEdit->setText(QString::fromStdString(numSegements));
+
+    auto adaptMeshing = job->GetMeshProp("Adaptive Meshing"); 
+    if (adaptMeshing == "1") { 
+        ui->AdaptiveMeshingCheckBox->setChecked(1);
+    } else {
+        ui->AdaptiveMeshingCheckBox->setChecked(0);
+    } 
+
+}
+
+//---------------
 // UpdateGUIWall
 //---------------
 //
@@ -3395,7 +3419,7 @@ QString sv4guiSimulationView1d::GetSolverExecutable()
 // Files written:
 //   OUTLET_FACE_NAMES_FILE_NAME
 //   SOLVER_FILE_NAME
-//   RCR_BC_FILE_NAME or RESISTANCE_BC_FILE_NAME 
+//   CORONARY_BC_FILE_NAME, RCR_BC_FILE_NAME, or RESISTANCE_BC_FILE_NAME 
 //
 // Modifies:
 //   m_SolverInputFile = solverInputFile;
@@ -3403,11 +3427,6 @@ QString sv4guiSimulationView1d::GetSolverExecutable()
 //
 bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
-    auto msg = "[sv4guiSimulationView1d::CreateDataFiles] ";
-    MITK_INFO << msg << "--------- CreateDataFiles ----------"; 
-    MITK_INFO << msg << "Output directory: " << outputDir;
-    MITK_INFO << msg << "Output pulgin directory: " << m_PluginOutputDirectory;
-
     if (!m_MitkJob) {
         return false;
     }
@@ -3446,7 +3465,6 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
         MITK_ERROR << "No centerlines file is defined.";
         return false;
     }
-    MITK_INFO << msg << "Centerlines file: " << m_CenterlinesFileName;
 
     // Check that inlet and outlet faces have been identified.
     if (!m_ModelInletFaceSelected || (m_ModelOutletFaceNames.size() == 0)) {
@@ -3485,15 +3503,18 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     pythonInterface.AddParameter(params.ELEMENT_SIZE, std::to_string(m_1DMeshElementSize));
     pythonInterface.AddParameter(params.CENTERLINES_INPUT_FILE, m_CenterlinesFileName.toStdString()); 
 
+    // Mesh parameters.
+    AddMeshParameters(job, pythonInterface);
+
     // Set parameter and write outlet face names to a file.
     WriteOutletFaceNames(outputDir, job, pythonInterface);
 
     // Set bc paramaters and write the bc data files.
     pythonInterface.AddParameter(params.UNIFORM_BC, "false"); 
+    pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outputDir.toStdString());
     WriteBCFiles(outputDir, job, pythonInterface);
 
     auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
-    pythonInterface.AddParameter(params.WRITE_SOLVER_FILE, "true"); 
     pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName); 
 
     // Add basic physical parameters.
@@ -3526,7 +3547,6 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
 
     m_SolverInputFile = outputDir + "/" + SOLVER_FILE_NAME;
     ui->RunSimulationPushButton->setEnabled(true);
-    MITK_INFO << msg << "Solver input file: " << m_SolverInputFile;
 
     statusMsg = "Simulation files have been created."; 
     ui->JobStatusValueLabel->setText(statusMsg);
@@ -3534,6 +3554,24 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
     m_SimulationFilesCreated = true;
 
     return true;
+}
+
+//-------------------
+// AddMeshParameters
+//-------------------
+// Add parameters used to generate the 1D mesh.
+//
+void sv4guiSimulationView1d::AddMeshParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface)
+{
+    auto params = pythonInterface.m_ParameterNames;
+
+    // Number of segments per branch.
+    auto numSegements = job->GetMeshProp("Number of segments per branch");
+    pythonInterface.AddParameter(params.SEG_MIN_NUM, numSegements); 
+
+    // Enable adaptive meshing (true/false).
+    auto adaptMeshing = job->GetMeshProp("Adaptive Meshing"); 
+    pythonInterface.AddParameter(params.SEG_SIZE_ADAPTIVE, adaptMeshing); 
 }
 
 //-----------------------------
@@ -3575,36 +3613,53 @@ void sv4guiSimulationView1d::AddWallPropertiesParameters(sv4guiSimJob1d* job, sv
 //
 // Files written:
 //   inlet flow file    
-//   rcr or resistance boundary conditions
+//   coronary, rcr and resistance boundary conditions
 //
 void sv4guiSimulationView1d::WriteBCFiles(const QString outputDir, sv4guiSimJob1d* job, 
   sv4guiSimulationPython1d& pythonInterface)
 {
-    auto msg = "[sv4guiSimulationView1d::WriteBCFiles] ";
-    MITK_INFO << msg << "--------- WriteBCFiles ----------";
-    std::string bcType;
+    // Get the list of BC types files.
+    auto resFileName = RESISTANCE_BC_FILE_NAME.toStdString();
+    auto rcrFileName = RCR_BC_FILE_NAME.toStdString();
+    auto corFileName = CORONARY_BC_FILE_NAME.toStdString();
+
+    std::set<std::string> bcTypes;
+    for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
+        auto bcType = m_TableModelCap->item(i,1)->text().trimmed().toStdString();
+        if (bcType == "RCR") {
+            bcTypes.insert(rcrFileName);
+        } else if (bcType == "Resistance") {
+            bcTypes.insert(resFileName);
+        } else if (bcType == "Coronary") {
+            bcTypes.insert(corFileName);
+        }
+    }
 
     // Write the inflow BC data.
     WriteFlowFile(outputDir, job, pythonInterface);
 
-    // Find the BC type.
-    //
-    // [DaveP] Can only have one BC type, resistance or rcr?
-    //
-    for (int i = 0; i < m_TableModelCap->rowCount(); i++) {
-        bcType = m_TableModelCap->item(i,1)->text().trimmed().toStdString();
-        if (bcType != "Prescribed Velocities") {
-            break;
-        }
-    }
-    MITK_INFO << msg << "bcType: " << bcType;
-    auto params = pythonInterface.m_ParameterNames;
-
-    if (bcType == "RCR") {
-        WriteRcrFile(outputDir, job, pythonInterface);
-    } else if (bcType == "Resistance") {
+    // Write resistance BC data.
+    if (bcTypes.count(resFileName) != 0) {
         WriteResistanceFile(outputDir, job, pythonInterface);
     }
+
+    // Write RCR BC data.
+    if (bcTypes.count(rcrFileName) != 0) {
+        WriteRcrFile(outputDir, job, pythonInterface);
+    }
+
+    // Write coronary BC data.
+    if (bcTypes.count(corFileName) != 0) {
+        WriteCoronaryFile(outputDir, job, pythonInterface);
+    }
+
+    // Set the list of BC files used to identify different BC types.
+    auto params = pythonInterface.m_ParameterNames;
+    std::vector<std::string> values;
+    for (auto bcType : bcTypes) { 
+        values.push_back(bcType);
+    }
+    pythonInterface.AddParameterList(params.OUTFLOW_BC_TYPE, values); 
 }
 
 //---------------
@@ -3621,18 +3676,11 @@ void sv4guiSimulationView1d::WriteBCFiles(const QString outputDir, sv4guiSimJob1
 void sv4guiSimulationView1d::WriteFlowFile(const QString outputDir, sv4guiSimJob1d* job, 
     sv4guiSimulationPython1d& pythonInterface)
 {
-    auto msg = "[sv4guiSimulationView1d::WriteFlowFile] ";
-    MITK_INFO << msg << "--------- WriteFlowFile ----------";
-    MITK_INFO << msg << "Output directory: " << outputDir;
-
-    // Write flow file.
-    //
     auto inletFaceName = m_ModelInletFaceNames[0];
     auto flowFileName = job->GetCapProp(inletFaceName, "Original File");
     auto flowFileContent = QString::fromStdString(job->GetCapProp(inletFaceName, "Flow Rate"));
     auto flowFile = outputDir + "/" + QString(flowFileName.c_str());
     QFile flowFileWriter(flowFile);
-    MITK_INFO << msg << "inletFaceName: " << inletFaceName;
 
     if (flowFileWriter.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream output(&flowFileWriter);
@@ -3649,29 +3697,41 @@ void sv4guiSimulationView1d::WriteFlowFile(const QString outputDir, sv4guiSimJob
     pythonInterface.AddParameter(params.INFLOW_INPUT_FILE, flowFile.toStdString()); 
 }
 
+//-------------------
+// WriteCoronaryFile
+//-------------------
+// Write the coronary boundary conditions file.
+//
+void sv4guiSimulationView1d::WriteCoronaryFile(const QString outputDir, sv4guiSimJob1d* job,
+  sv4guiSimulationPython1d& pythonInterface)
+{
+    // Get the data for the coronary BC.
+    auto fileContents = sv4guiSimulationUtils1d::CreateCORTFileContent(job);
+    if (fileContents == "") { 
+        return;
+    }
+
+    // Write the data.
+    auto cortBcFileName = outputDir + "/" + CORONARY_BC_FILE_NAME;
+    QFile cortrFile(cortBcFileName);
+    if (cortrFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&cortrFile);
+        out << QString::fromStdString(fileContents);
+        cortrFile.close();
+    }
+}
+
 //---------------------
 // WriteResistanceFile
 //---------------------
-// Write the resistance boundary conditions file and set the parameters used 
-// by the Python script.
+// Write the resistance boundary conditions file.
 //
 void sv4guiSimulationView1d::WriteResistanceFile(const QString outputDir, sv4guiSimJob1d* job,
   sv4guiSimulationPython1d& pythonInterface)
 {
-    auto msg = "[sv4guiSimulationView1d::WriteResistanceFile] ";
-    MITK_INFO << msg << "--------- WriteResistanceFile ----------";
-    MITK_INFO << msg << "Output directory: " << outputDir;
-
-    // Set the Python script parameters.
     std::string bcType = "Resistance";
-    auto outflowBcFileName = outputDir + "/" + RESISTANCE_BC_FILE_NAME;
-    auto params = pythonInterface.m_ParameterNames;
-    pythonInterface.AddParameter(params.OUTFLOW_BC_TYPE, "resistance");
-    pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outflowBcFileName.toStdString());
-
-    // Write the resistance bc data to a file.
-    //
-    QFile resFile(outflowBcFileName);
+    auto resBcFileName = outputDir + "/" + RESISTANCE_BC_FILE_NAME;
+    QFile resFile(resBcFileName);
 
     if (resFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&resFile);
@@ -3690,35 +3750,24 @@ void sv4guiSimulationView1d::WriteResistanceFile(const QString outputDir, sv4gui
 //--------------
 // WriteRcrFile
 //--------------
-// Write the RCR boundary conditions file and set the parameters used 
-// by the Python script.
+// Write the RCR boundary conditions file.
 //
 void sv4guiSimulationView1d::WriteRcrFile(const QString outputDir, sv4guiSimJob1d* job, 
   sv4guiSimulationPython1d& pythonInterface)
 {
-    auto msg = "[sv4guiSimulationView1d::WriteRcrFile] ";
-    MITK_INFO << msg << "--------- WriteRcrFile ----------"; 
-    MITK_INFO << msg << "Output directory: " << outputDir;
     QString rcrtFielContent = QString::fromStdString(sv4guiSimulationUtils1d::CreateRCRTFileContent(job));
-    //MITK_INFO << msg << "rcrtFielContent: " << rcrtFielContent;
-
     if (rcrtFielContent == "") {
         return;
     }
 
-    auto outflowBcFileName = outputDir + "/" + RCR_BC_FILE_NAME; 
-    auto params = pythonInterface.m_ParameterNames;
-    pythonInterface.AddParameter(params.OUTFLOW_BC_TYPE, "rcr"); 
-    pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outflowBcFileName.toStdString()); 
-
     // Write rcr data.
+    auto outflowBcFileName = outputDir + "/" + RCR_BC_FILE_NAME; 
     QFile rcrtFile(outflowBcFileName);
     if (rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&rcrtFile);
         out << rcrtFielContent;
         rcrtFile.close();
     }
-    return;
 }
 
 //--------------------
@@ -3905,6 +3954,11 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
         return nullptr;
     }
 
+    if (!SetMeshParameters(job, msg, checkValidity)) {
+        delete job;
+        return nullptr;
+    }
+
     if (!SetCapBcs(job, msg, checkValidity)) {
         delete job;
         return nullptr;
@@ -3921,6 +3975,25 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
     }
 
     return job;
+}
+
+//-------------------
+// SetMeshParameters
+//-------------------
+// Set the parameters used to generte the FE mesh from centerlines.
+//
+bool sv4guiSimulationView1d::SetMeshParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity)
+{
+    auto numSegements = ui->NumSegmentsLineEdit->text().toStdString();
+    job->SetMeshProp("Number of segments per branch", numSegements); 
+
+    if (ui->AdaptiveMeshingCheckBox->isChecked()) {
+        job->SetMeshProp("Adaptive Meshing", "1"); 
+    } else {
+        job->SetMeshProp("Adaptive Meshing", "0"); 
+    }
+
+    return true;
 }
 
 //--------------------
@@ -4289,11 +4362,14 @@ bool sv4guiSimulationView1d::CheckBCsInputState(bool validate)
         passed = false;
     }
 
+    // [TODO:DaveP] why was this here?
+    /*
     if ((bcTypeCount[sv4guiCapBCWidget1d::BCType::RESISTANCE] != 0) && 
         (bcTypeCount[sv4guiCapBCWidget1d::BCType::RCR] != 0)) {
         errorMsg = "Outlet boundary conditions can not be of mixed type. They must all be of type rcr or resistance.";
         passed = false;
     }
+    */
 
     if (errorMsg != "") {
         QMessageBox::warning(m_Parent, MsgTitle, "Inlet / Outlet BC parameter values error.\n" + QString::fromStdString(errorMsg));

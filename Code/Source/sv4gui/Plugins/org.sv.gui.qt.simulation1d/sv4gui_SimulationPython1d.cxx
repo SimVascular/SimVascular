@@ -79,8 +79,6 @@ bool sv4guiSimulationPython1d::GenerateMesh(const std::string& outputDir, const 
   auto cmd = StartCommand();
   cmd += AddArgument(paramNames.OUTPUT_DIRECTORY, outputDir);
   cmd += AddArgument(paramNames.CENTERLINES_INPUT_FILE, centerlinesFile);
-  cmd += AddArgument(paramNames.COMPUTE_MESH, "true");
-  cmd += AddArgument(paramNames.WRITE_MESH_FILE, "true");
   cmd += AddArgument(paramNames.MESH_OUTPUT_FILE, meshFile, last);
   MITK_INFO << msg << "Execute cmd " << cmd;
   //PyRun_SimpleString(cmd.c_str());
@@ -304,6 +302,17 @@ bool sv4guiSimulationPython1d::AddParameter(const std::string& name, const std::
 {
     m_ParameterValues.insert(std::pair<std::string,std::string>(name, value));
     return SV_OK;
+}
+
+bool sv4guiSimulationPython1d::AddParameterList(const std::string& name, const std::vector<std::string>& values)
+{
+    std::string list = "";
+    std::string sep;
+    for (auto value : values) {
+        list += sep + value;
+        sep = ",";
+    }
+    m_ParameterValues.insert(std::pair<std::string,std::string>(name, list));
 }
 
 //-----------
