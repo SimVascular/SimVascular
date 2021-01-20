@@ -36,6 +36,8 @@
 #ifndef SV4GUI_SIMULATION_PYTHON1D_H
 #define SV4GUI_SIMULATION_PYTHON1D_H
 
+#include "org_sv_gui_qt_simulation1d_Export.h"
+
 #include "sv4gui_MitkSimJob1d.h"
 
 #include <array>
@@ -53,7 +55,7 @@
 //
 // The names must match those defined in the 'generate_1d_mesh.py' Args class.
 //
-class sv4guiSimulationPython1dParamNames
+class SV_QT_SIMULATION1D sv4guiSimulationPython1dParamNames
 { 
   public: 
     sv4guiSimulationPython1dParamNames() {
@@ -122,7 +124,7 @@ class sv4guiSimulationPython1dParamNames
 //--------------------------
 //
 //
-class sv4guiSimulationPython1d 
+class SV_QT_SIMULATION1D sv4guiSimulationPython1d 
 {
   public:
     sv4guiSimulationPython1d();

@@ -78,25 +78,27 @@ MODULE_NAME_ALL_CAPS = SV4GUIMODULEPYTHONAPI
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
-HDRS	= Geometry_PyModule.h  \
-          Meshing_PyModule.h  \
-          Modeling_PyModule.h \
-          PyUtils.h \
-          Vmtk_PyModule.h \
-          Math_PyModule.h \
-          MeshUtils_PyModule.h \
-          PathPlanning_PyModule.h \
-          Segmentation_PyModule.h
+HDRS	=     Segmentation_PyModule.h \
+              Geometry_PyModule.h \
+              Math_PyModule.h \
+              Meshing_PyModule.h \
+              MeshUtils_PyModule.h \
+              PathPlanning_PyModule.h \
+              PyUtils.h \
+              Modeling_PyModule.h \
+              Simulation_PyModule.h \
+              Vmtk_PyModule.h
 
-CXXSRCS	=   Segmentation_PyModule.cxx \
-            Geometry_PyModule.cxx \
-            Math_PyModule.cxx \
-            Meshing_PyModule.cxx \
-            MeshUtils_PyModule.cxx \
-            PathPlanning_PyModule.cxx \
-            PyUtils.cxx \
-            Modeling_PyModule.cxx \
-            Vmtk_PyModule.cxx
+CXXSRCS	=     Segmentation_PyModule.cxx \
+              Geometry_PyModule.cxx \
+              Math_PyModule.cxx \
+              Meshing_PyModule.cxx \
+              MeshUtils_PyModule.cxx \
+              PathPlanning_PyModule.cxx \
+              PyUtils.cxx \
+              Modeling_PyModule.cxx \
+              Simulation_PyModule.cxx \
+              Vmtk_PyModule.cxx
 
 SVPYHDRS = 
 SVPYSRCS = 
@@ -111,6 +113,7 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVMISC_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_POLYDATA_SOLID_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_PLUGIN_SIMULATION1D_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_OCCT_NAME)$(LIBLINKEXT) \

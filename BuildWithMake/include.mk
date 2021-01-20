@@ -661,6 +661,7 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.pathplanning \
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.segmentation \
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.simulation \
+                     -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.simulation1d \
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.application \
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing \
                      -I$(TOP)/../Code/Source/sv4gui/Plugins/org.sv.gui.qt.svfsi \
