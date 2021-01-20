@@ -166,6 +166,10 @@ ifeq ($(SV_USE_MITK),1)
   DLLLIBS += $(MITK_LIBS)
 endif
 
+ifeq ($(SV_USE_QT),1)
+  DLLLIBS += $(QT_LIBS)
+endif
+
 TARGET_LIB_NAME = $(SV_LIB_PYTHON_API_NAME)
 
 SV_PYTHON_MODULE_NAME = pyPythonAPI
