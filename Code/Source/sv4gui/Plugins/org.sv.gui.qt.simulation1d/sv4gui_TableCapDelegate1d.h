@@ -32,6 +32,8 @@
 #ifndef SV4GUI_TABLECAPDELEGATE1D_H
 #define SV4GUI_TABLECAPDELEGATE1D_H
 
+#include "org_sv_gui_qt_simulation1d_Export.h"
+
 #include <QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
@@ -39,7 +41,7 @@
 #include <QDoubleSpinBox>
 #include <QComboBox>
 
-class sv4guiTableCapDelegate1d : public QItemDelegate
+class SV_QT_SIMULATION1D sv4guiTableCapDelegate1d : public QItemDelegate
 {
     Q_OBJECT
 public:

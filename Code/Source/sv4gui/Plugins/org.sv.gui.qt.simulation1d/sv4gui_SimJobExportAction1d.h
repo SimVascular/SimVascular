@@ -32,7 +32,7 @@
 #ifndef SV4GUI_SIMJOBEXPORTACTION1D_H
 #define SV4GUI_SIMJOBEXPORTACTION1D_H
 
-#include <org_sv_gui_qt_simulation1d_Export.h>
+#include "org_sv_gui_qt_simulation1d_Export.h"
 
 #include <sv4gui_mitkIContextMenuAction.h>
 #include <mitkDataNode.h>

@@ -32,15 +32,17 @@
 #ifndef SV4GUI_SIMJOBCREATE1D_H
 #define SV4GUI_SIMJOBCREATE1D_H
 
+#include "org_sv_gui_qt_simulation1d_Export.h"
+
 #include "sv4gui_DataNodeOperationInterface.h"
 #include <mitkDataStorage.h>
 #include <QWidget>
 
 namespace Ui {
-class sv4guiSimJobCreate1d;
+class SV_QT_SIMULATION1D sv4guiSimJobCreate1d;
 }
 
-class sv4guiSimJobCreate1d : public QWidget
+class SV_QT_SIMULATION1D sv4guiSimJobCreate1d : public QWidget
 {
     Q_OBJECT
 

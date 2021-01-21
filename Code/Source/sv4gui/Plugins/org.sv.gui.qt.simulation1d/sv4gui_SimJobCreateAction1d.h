@@ -32,7 +32,7 @@
 #ifndef SV4GUI_SIMJOBCREATEACTION1D_H
 #define SV4GUI_SIMJOBCREATEACTION1D_H
 
-#include <org_sv_gui_qt_simulation1d_Export.h>
+#include "org_sv_gui_qt_simulation1d_Export.h"
 
 #include "sv4gui_SimJobCreate1d.h"
 

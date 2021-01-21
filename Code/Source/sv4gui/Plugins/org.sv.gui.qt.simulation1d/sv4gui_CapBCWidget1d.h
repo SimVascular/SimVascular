@@ -32,14 +32,16 @@
 #ifndef SV4GUI_CAPBCWIDGET1D_H
 #define SV4GUI_CAPBCWIDGET1D_H
 
+#include "org_sv_gui_qt_simulation1d_Export.h"
+
 #include <QWidget>
 #include <set>
 
 namespace Ui {
-class sv4guiCapBCWidget1d;
+class SV_QT_SIMULATION1D sv4guiCapBCWidget1d;
 }
 
-class sv4guiCapBCWidget1d : public QWidget
+class SV_QT_SIMULATION1D sv4guiCapBCWidget1d : public QWidget
 {
     Q_OBJECT
 
