@@ -96,7 +96,7 @@ const QString sv4guiImageProcessing::EXTENSION_ID = "org.sv.views.imageprocessin
 
 // Set the names used to create for SV Data Manager nodes.
 const std::string sv4guiImageProcessing::CENTERLINES_NODE_NAME = "centerlines";
-const std::string sv4guiImageProcessing::COLLIDING_FRONTS_NODE_NAME = "colliding-fronts";
+const std::string sv4guiImageProcessing::LEVEL_SET_NODE_NAME = "level-set";
 const std::string sv4guiImageProcessing::PATHS_NODE_NAME = "paths";
 const std::string sv4guiImageProcessing::SEED_POINTS_NODE_NAME = "seed-points";
 const std::string sv4guiImageProcessing::SURFACE_NODE_NAME = "surface";
@@ -261,7 +261,7 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
 
     // Create main colliding fronts node for storing all data created.
     m_CollidingFrontsNode = mitk::DataNode::New();
-    m_CollidingFrontsNode->SetName(COLLIDING_FRONTS_NODE_NAME);
+    m_CollidingFrontsNode->SetName(LEVEL_SET_NODE_NAME);
     m_CollidingFrontsNode->SetVisibility(true);
     // [TODO:DaveP] nodes must have data so add something.
     auto seedContainer = sv4guiImageSeedContainer::New();
