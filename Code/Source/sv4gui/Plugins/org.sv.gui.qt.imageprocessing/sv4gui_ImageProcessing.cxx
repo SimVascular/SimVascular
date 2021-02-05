@@ -92,6 +92,9 @@
   #define dbg_sv4guiImageProcessing_ExectuteLevelSet
 #endif
 
+// Set reading paths and centerline data for development. 
+//#define READ_DATA 
+
 const QString sv4guiImageProcessing::EXTENSION_ID = "org.sv.views.imageprocessing";
 
 // Set the names used to create for SV Data Manager nodes.
@@ -361,10 +364,16 @@ void sv4guiImageProcessing::ExtractPaths()
   // Extract disjoint sections from the centerlines based on centerline and group IDs.
   auto sections = sv3::PathUtils::ExtractCenterlinesSections(centerlines);
 
+  // Remove old .path files.
+  auto dirPath = m_PluginOutputDirectory.toStdString();
+  QDir dir(m_PluginOutputDirectory, {"*.pth"});
+  for (const QString & filename: dir.entryList()){
+      dir.remove(filename);
+  }
+
   // Extract path control points from the sections, create SV path elements from them
   // and write the path to an XML .pth file.
-  auto dirPath = m_PluginOutputDirectory.toStdString();
-  int pathID = 0;
+  int pathID = 1;
   std::vector<sv3::PathElement*> pathElements;
   for (auto& section : sections) {
       auto pathPoints = sv3::PathUtils::SampleLinePoints(section, distMult, tangentChange, distMeasure);
@@ -409,11 +418,15 @@ void sv4guiImageProcessing::readData()
 {
   // Create centerlines data nodes, setup interactor, etc.
   InitializeCenterlines();
-  readCenterlines();
+  #ifdef READ_DATA 
+      readCenterlines();
+  #endif
 
   // Create paths data nodes.
   InitializePaths();
-  readPaths();
+  #ifdef READ_DATA 
+      readPaths();
+  #endif
 
   // Read surface.
   //

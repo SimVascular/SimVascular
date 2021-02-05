@@ -73,7 +73,7 @@
          <string/>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="SeedsPage">
          <property name="geometry">
@@ -152,7 +152,7 @@
                 <item>
                  <widget class="QPushButton" name="SD_AddEnd_PushButton">
                   <property name="toolTip">
-                   <string>Add an end seed at the location of the 2D crosshairs. An end seed can also be added by pressing the S key.</string>
+                   <string>Add a start seed at the location of the 2D crosshairs. A start seed can also be added by pressing the S key.</string>
                   </property>
                   <property name="text">
                    <string>Add End</string>
@@ -339,6 +339,9 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="LS_GradMag_DoubleSpinBox">
+                  <property name="toolTip">
+                   <string>The standard deviation value used for the Gaussian smoothing filter, measured in the units of image spacing.</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
@@ -368,12 +371,15 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Propagation scaling</string>
+                   <string>Propagation weight</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="LS_PropScale_DoubleSpinBox">
+                  <property name="toolTip">
+                   <string>The weight used to regulate surface inflation.</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
@@ -403,12 +409,18 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Advection scaling</string>
+                   <string>Advection weight</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="LS_AdvScale_DoubleSpinBox">
+                  <property name="toolTip">
+                   <string>The weight used to regulate the attraction of the surface towards the ridges of the image gradient magnitude.</string>
+                  </property>
+                  <property name="toolTipDuration">
+                   <number>-2</number>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
@@ -438,12 +450,15 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Curvature scaling</string>
+                   <string>Curvature weight</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="LS_CurvScale_DoubleSpinBox">
+                  <property name="toolTip">
+                   <string>The weight used to regulate the surface mean curvature smoothenss constraint.</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
@@ -482,6 +497,9 @@
                 </item>
                 <item>
                  <widget class="QLineEdit" name="LS_NumItLineEdit">
+                  <property name="toolTip">
+                   <string>The number of iterations to incrementally update (evolve in time) the level set function.</string>
+                  </property>
                   <property name="text">
                    <string>100</string>
                   </property>
@@ -514,6 +532,9 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="LS_IsoLevel_DoubleSpinBox">
+                  <property name="toolTip">
+                   <string>The isolevel used to extract the segmentation surface from the level set function.</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
