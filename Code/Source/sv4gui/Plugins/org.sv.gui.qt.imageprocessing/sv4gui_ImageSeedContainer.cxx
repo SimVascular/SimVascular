@@ -115,10 +115,10 @@ void sv4guiImageSeedContainer::SetActiveStartSeed(int seedID)
 //
 void sv4guiImageSeedContainer::AddStartSeed(double x, double y, double z)
 {
-  std::cout << "========== sv4guiImageSeedContainer::AddStartSeed ========== " << std::endl;
+  //std::cout << "========== sv4guiImageSeedContainer::AddStartSeed ========== " << std::endl;
   m_CurrentStartSeedID += 1;
   int id = m_CurrentStartSeedID;
-  std::cout << "[AddStartSeed] m_CurrentStartSeedID: " << m_CurrentStartSeedID << std::endl;
+  //std::cout << "[AddStartSeed] m_CurrentStartSeedID: " << m_CurrentStartSeedID << std::endl;
   auto startSeed = std::make_tuple(sv4guiImageSeed(id, id, x, y, z), std::vector<sv4guiImageSeed>()); 
   m_StartSeeds.insert(std::pair<int,sv4guiImageStartSeed>(id, startSeed));
   m_ActiveStartSeedID = id;
@@ -136,8 +136,8 @@ void sv4guiImageSeedContainer::AddEndSeed(double x, double y, double z)
   if (m_ActiveStartSeedID == -1) {
     return;
   }
-  std::cout << "========== sv4guiImageSeedContainer::AddEndSeed ========== " << std::endl;
-  std::cout << "[AddEndSeed] m_ActiveStartSeedID: " << m_ActiveStartSeedID << std::endl;
+  //std::cout << "========== sv4guiImageSeedContainer::AddEndSeed ========== " << std::endl;
+  //std::cout << "[AddEndSeed] m_ActiveStartSeedID: " << m_ActiveStartSeedID << std::endl;
   int startID = m_ActiveStartSeedID;
   m_CurrentEndSeedID += 1;
   int endID = m_CurrentEndSeedID;
