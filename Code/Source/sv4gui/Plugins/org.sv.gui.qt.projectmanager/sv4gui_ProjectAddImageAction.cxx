@@ -55,94 +55,109 @@ sv4guiProjectAddImageAction::~sv4guiProjectAddImageAction()
 {
 }
 
+//-----
+// Run
+//-----
+// This is the method executed when adding image data by selecting the Images
+// data node Add/Replace Image menu item.
+//
 void sv4guiProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
+    std::cout << std::endl;
+    std::cout << "========== sv4guiProjectAddImageAction::Run ========== " << std::endl;
+
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
     mitk::NodePredicateDataType::Pointer isImageFolder = mitk::NodePredicateDataType::New("sv4guiImageFolder");
 
-    if(!isImageFolder->CheckNode(selectedNode))
-    {
+    if(!isImageFolder->CheckNode(selectedNode)) {
         return;
     }
 
-    try
-    {
-         berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-         berry::IPreferences::Pointer prefs;
-        if (prefService)
-        {
+    try {
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+        if (prefService) {
             prefs = prefService->GetSystemPreferences()->Node("/General");
         }
-        else
-        {
+        else {
             prefs = berry::IPreferences::Pointer(0);
         }
 
         QString lastFileOpenPath="";
-        if(prefs.IsNotNull())
-        {
+        if(prefs.IsNotNull()) {
             lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
         }
 
-        if(lastFileOpenPath=="")
+        if(lastFileOpenPath=="") {
             lastFileOpenPath=QDir::homePath();
+        }
 
         QString imageFilePath = QFileDialog::getOpenFileName(NULL, tr("Open Image File")
                                                              , lastFileOpenPath
                                                              , QmitkIOUtil::GetFileOpenFilterString()
                                                              , NULL);
 
-        if (imageFilePath.isEmpty())
+        if (imageFilePath.isEmpty()) {
             return;
+        }
 
-        //mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
-        mitk::DataNode::Pointer imageNode=sv4guiProjectManager::LoadDataNode(imageFilePath.toStdString());
+        // Create a data node with the file path. This reads in the image data.
+        //
+        std::cout << "[Run] imageFilePath: " << imageFilePath.toStdString() << std::endl;
+        mitk::DataNode::Pointer imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath.toStdString());
 
+        // Check that the imageNode is an image.
+        //
+        // If it is not an image then the image read failed.
+        //
         mitk::NodePredicateDataType::Pointer isImage = mitk::NodePredicateDataType::New("Image");
-        if(imageNode.IsNull() || !isImage->CheckNode(imageNode))
-        {
+        if(imageNode.IsNull() || !isImage->CheckNode(imageNode)) {
             QMessageBox::warning(NULL,"Not Image!", "Please add an image.");
             return;
         }
 
         mitk::BaseData::Pointer mimage = imageNode->GetData();
-        if(mimage.IsNull() || !mimage->GetTimeGeometry()->IsValid())
-        {
+        if(mimage.IsNull() || !mimage->GetTimeGeometry()->IsValid()) {
             QMessageBox::warning(NULL,"Not Valid!", "Please add a valid image.");
             return;
         }
 
-        if(prefs.IsNotNull())
-        {
+        if(prefs.IsNotNull()) {
             prefs->Put("LastFileOpenPath", imageFilePath);
             prefs->Flush();
         }
 
-        bool copy=false;
+        // Save the image as a VTI file and optionally scale it.
+        //
+        bool copy = false;
+        auto yes = QMessageBox::Yes;
+        auto yesOrNo = QMessageBox::Yes | QMessageBox::No;
 
-        if (QMessageBox::question(NULL, "Copy into Project?", "Do you want to copy the image as vti into the project?",
-                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
-        {
-            copy=true;
+        if (QMessageBox::question(NULL, "", "Save the image in the project as a VTI file?", yesOrNo, yes) == yes) {
+            copy = true;
         }
 
-        double scaleFactor=0;
-        if(copy)
-        {
-            if (QMessageBox::question(NULL, "Scale image?", "Do you want to scale the image?",
-                                      QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-            {
+        double scaleFactor = 0.0;
+
+        if (copy) {
+            if (QMessageBox::question(NULL, "", "Scale the image?", yesOrNo) == yes) {
                 bool ok;
-                double factor = QInputDialog::getDouble(NULL, tr("Image Scaling"),
-                                                     tr("Scaling Factor (for unit conversion):"), 0.1, 0, 1000, 3, &ok);
-                if (ok)
-                    scaleFactor=factor;
+                double defaultValue = 0.1;
+                double min = 0.0; 
+                double max = 1000.0; 
+                int decimals = 3; 
+                double factor = QInputDialog::getDouble(NULL, tr("Image Scaling"), 
+                      tr("Scaling Factor (for unit conversion):"), defaultValue, min, max, decimals, &ok);
+                if (ok) {
+                    scaleFactor = factor;
+                }
             }
         }
 
+        // Set the image name.
         QString imageName = QInputDialog::getText(NULL, tr("Assign Image Name"),
-                                                                tr("Image name:"), QLineEdit::Normal);
+              tr("Image name:"), QLineEdit::Normal);
 
         if (!sv4guiDataNodeOperationInterface::IsValidDataNodeName(imageName.toStdString())) {
             auto validName = QString::fromStdString(sv4guiDataNodeOperationInterface::ValidDataNodeNameMsg);
@@ -152,16 +167,21 @@ void sv4guiProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &sele
             return;
          }
 
+        // Add the image.
         mitk::StatusBar::GetInstance()->DisplayText("Adding or replacing image");
         QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-        sv4guiProjectManager::AddImage(m_DataStorage, imageFilePath, imageNode, selectedNode, copy, scaleFactor, imageName.trimmed());
-
+        sv4guiProjectManager::AddImage(m_DataStorage, imageFilePath, imageNode, selectedNode, copy, 
+              scaleFactor, imageName.trimmed());
         mitk::StatusBar::GetInstance()->DisplayText("Imaged Added");
         QApplication::restoreOverrideCursor();
-    }
-    catch(...)
-    {
+
+        mitk::Image::Pointer imageData = dynamic_cast<mitk::Image*>(imageNode->GetData());
+        auto spacing = imageData->GetGeometry()->GetSpacing();
+        std::cout << "[Run] Image spacing: " << spacing[0] << std::endl;
+
+
+    } catch(...) {
         MITK_ERROR << "Image adding failed!";
     }
 }
