@@ -760,15 +760,20 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
   }
 }
 
-void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path,
-  std::string imageName){
+//--------------
+// setTransform
+//--------------
+// Set the image transformation from the SV project Images/.transform.xml file.
+//
+// This sets the upper 3x3 elements in the vtkMatrix4x4 object.
+//
+void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path, std::string imageName)
+{
+  std::cout << "========== sv4guiProjectManager::setTransform ==========" << std::endl;
 
-    QDir dir(QString::fromStdString(proj_path));
-    dir.cd(QString::fromStdString("Images"));
-
-    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".transform.xml"));
-
-
+  QDir dir(QString::fromStdString(proj_path));
+  dir.cd(QString::fromStdString("Images"));
+  QString FilePath = dir.absoluteFilePath(QString::fromStdString(imageName+".transform.xml"));
   auto transform_fn = FilePath.toStdString();
 
   QDomDocument doc("transform");
@@ -785,6 +790,11 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
     //std::cout << root.text().toStdString() << "\n";
     auto transform = image->GetGeometry()->GetVtkMatrix();
 
+    std::cout << "[setTransform] ---------- transform ----------" << std::endl;
+    vtkIndent indent;
+    transform->PrintSelf(std::cout, indent);
+    std::cout << "[setTransform] ----------------------------" << std::endl;
+
     //std::cout << "starting loop\n";
     for (int j = 0; j < 3; j++){
       for (int i = 0; i < 3; i++){
@@ -797,8 +807,26 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
       }
     }
 
+
+    auto spacing = image->GetGeometry()->GetSpacing();
+    std::cout << "[setTransform] Spacing: " << spacing[0] << " " << spacing[1] << " " << spacing[2] << std::endl;
+    auto origin = image->GetGeometry()->GetOrigin();
+    std::cout << "[setTransform] Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+
     image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
     image->UpdateOutputInformation();
+
+    transform = image->GetGeometry()->GetVtkMatrix();
+    std::cout << "[setTransform] ---------- new transform ----------" << std::endl;
+    transform->PrintSelf(std::cout, indent);
+    std::cout << "[setTransform] ----------------------------" << std::endl;
+
+    spacing = image->GetGeometry()->GetSpacing();
+    std::cout << "[setTransform] New Spacing: "<<spacing[0]<<" "<<spacing[1]<<" "<<spacing[2]<<std::endl;
+
+    auto norigin = image->GetGeometry()->GetOrigin();
+    std::cout << "[setTransform] New Origin: " << norigin[0] << " " << norigin[1] << " " << norigin[2] << std::endl;
+
   }
 }
 

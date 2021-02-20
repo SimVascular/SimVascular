@@ -177,9 +177,18 @@ void sv4guiProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &sele
         QApplication::restoreOverrideCursor();
 
         mitk::Image::Pointer imageData = dynamic_cast<mitk::Image*>(imageNode->GetData());
-        auto spacing = imageData->GetGeometry()->GetSpacing();
-        std::cout << "[Run] Image spacing: " << spacing[0] << std::endl;
 
+        auto transform = imageData->GetGeometry()->GetVtkMatrix();
+        vtkIndent indent;
+        std::cout << "[Run] ---------- new transform ----------" << std::endl;
+        transform->PrintSelf(std::cout, indent);
+        std::cout << "[Run] ----------------------------" << std::endl;
+
+        auto spacing = imageData->GetGeometry()->GetSpacing();
+        std::cout << "[Run] Spacing: "<<spacing[0]<<" "<<spacing[1]<<" "<<spacing[2]<<std::endl;
+
+        auto origin = imageData->GetGeometry()->GetOrigin();
+        std::cout << "[Run] Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
 
     } catch(...) {
         MITK_ERROR << "Image adding failed!";

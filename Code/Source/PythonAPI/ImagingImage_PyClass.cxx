@@ -74,9 +74,9 @@ GetPathElement(PyUtilApiFunction& api, PyPath* self)
 //
 // Python 'Image' class methods.
 
-//-------------------
-// Image_get_spacing 
-//-------------------
+//----------------
+// get_dimensions 
+//----------------
 //
 PyDoc_STRVAR(Image_get_dimensions_doc,
   "get_dimensions() \n\
@@ -89,12 +89,28 @@ static PyObject *
 Image_get_dimensions(PyImage* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-
   auto dimentions = self->image_data->GetDimensions();
-
   return Py_BuildValue("[i, i, i]", dimentions[0], dimentions[1], dimentions[2]);
 }
 
+//------------
+// get_origin 
+//------------
+//
+PyDoc_STRVAR(Image_get_origin_doc,
+  "get_origin() \n\
+   \n\
+   Get the image origin.  \n\
+   \n\
+");
+
+static PyObject *
+Image_get_origin(PyImage* self, PyObject* args)
+{ 
+  auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
+  auto origin = self->image_data->GetGeometry()->GetOrigin();
+  return Py_BuildValue("[d, d, d]", origin[0], origin[1], origin[2]);
+}
 
 //-------------------
 // Image_get_spacing 
@@ -111,12 +127,57 @@ static PyObject *
 Image_get_spacing(PyImage* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-
   auto spacing = self->image_data->GetGeometry()->GetSpacing();
-
   return Py_BuildValue("[d, d, d]", spacing[0], spacing[1], spacing[2]);
 }
 
+//-----------------
+// Image_transform 
+//-----------------
+//
+PyDoc_STRVAR(Image_transform_doc,
+  "transform(matrix) \n\
+   \n\
+   Transform the image using a 4x4 transformation matrix. \n\
+   \n\
+   \n\
+   Args:                                    \n\
+     matrix (vtkMatrix4x4): The 4x4 transformation matrix. \n\
+");
+
+static PyObject *
+Image_transform(PyImage* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("O", PyRunTimeErr, __func__);
+  static char *keywords[] = {"matrix", NULL};
+  PyObject* matrixArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &matrixArg)) {
+    return api.argsError();
+  }
+
+  // Get the vtkMatrix4x4 object.
+  auto matrix = (vtkMatrix4x4*)vtkPythonUtil::GetPointerFromObject(matrixArg, "vtkMatrix4x4");
+  if (matrix == nullptr) { 
+      api.error("The 'matrix' argument is not a vtkMatrix4x4 object.");
+      return nullptr;
+  }
+  std::cout << "[Image_transform] ---------- matrix ----------" << std::endl;
+  vtkIndent indent;
+  matrix->PrintSelf(std::cout, indent);
+  std::cout << "[Image_transform] ----------------------------" << std::endl;
+
+  auto transform = self->image_data->GetGeometry()->GetVtkMatrix();
+  std::cout << "[Image_transform] ---------- transform ----------" << std::endl;
+  transform->PrintSelf(std::cout, indent);
+  std::cout << "[Image_transform] ----------------------------" << std::endl;
+
+  // Transform the image.
+  self->image_data->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(matrix);
+  self->image_data->UpdateOutputInformation();
+
+  Py_RETURN_NONE;
+}
 
 ////////////////////////////////////////////////////////
 //           C l a s s   D e f i n i t i o n          //
@@ -147,8 +208,10 @@ PyDoc_STRVAR(ImageClass_doc,
 //
 static PyMethodDef PyImageMethods[] = {
 
-  {"get_dimensions", (PyCFunction)Image_get_dimensions, METH_VARARGS|METH_KEYWORDS, Image_get_dimensions_doc },
-  {"get_spacing", (PyCFunction)Image_get_spacing, METH_VARARGS|METH_KEYWORDS, Image_get_spacing_doc },
+  {"get_dimensions", (PyCFunction)Image_get_dimensions, METH_NOARGS, Image_get_dimensions_doc },
+  {"get_origin", (PyCFunction)Image_get_origin, METH_NOARGS, Image_get_origin_doc},
+  {"get_spacing", (PyCFunction)Image_get_spacing, METH_NOARGS, Image_get_spacing_doc },
+  {"transform", (PyCFunction)Image_transform, METH_VARARGS|METH_KEYWORDS, Image_transform_doc },
 
   {NULL,NULL}
 };
