@@ -114,13 +114,13 @@ void sv4guiImagePathsContainer::SetImageSpacing(std::array<double,3>& imageSpaci
 //
 void sv4guiImagePathsContainer::ComputeDistanceMeasure()
 {
-  std::cout << "========== sv4guiImagePathsContainer::ComputeDistanceMeasure ==========" << std::endl;
-  std::cout << "[ComputeDistanceMeasure] pathElements_.size(): " << pathElements_.size() << std::endl;
+  //std::cout << "========== sv4guiImagePathsContainer::ComputeDistanceMeasure ==========" << std::endl;
+  //std::cout << "[ComputeDistanceMeasure] pathElements_.size(): " << pathElements_.size() << std::endl;
   double avgDist = 0.0;
   int numPoints = 0;
   for (auto& pathElem : pathElements_) {
       auto pathPoints = pathElem.GetPathPosPoints();
-      std::cout << "[ComputeDistanceMeasure] pathPoints.size(): " << pathPoints.size() << std::endl;
+      //std::cout << "[ComputeDistanceMeasure] pathPoints.size(): " << pathPoints.size() << std::endl;
       for (int i = 0; i < pathPoints.size()-1; i++) {
           double pt1[3] = {pathPoints[i][0], pathPoints[i][1], pathPoints[i][2]}; 
           double pt2[3] = {pathPoints[i+1][0], pathPoints[i+1][1], pathPoints[i+1][2]}; 
@@ -131,7 +131,7 @@ void sv4guiImagePathsContainer::ComputeDistanceMeasure()
   }
 
   distMeasure_ = avgDist / numPoints;
-  std::cout << "[ComputeDistanceMeasure] distMeasure_: " << distMeasure_ << std::endl;
+  //std::cout << "[ComputeDistanceMeasure] distMeasure_: " << distMeasure_ << std::endl;
 }
 
 

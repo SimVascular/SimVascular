@@ -36,6 +36,8 @@
 #ifndef SV4GUI_SIMULATIONVIEW1D_H
 #define SV4GUI_SIMULATIONVIEW1D_H
 
+#include "org_sv_gui_qt_simulation1d_Export.h"
+
 #include <tuple>
 
 #include "sv4gui_MitkSimJob1d.h"
@@ -63,12 +65,12 @@
 #include <QItemSelection>
 
 namespace Ui {
-class sv4guiSimulationView1d;
+class SV_QT_SIMULATION1D sv4guiSimulationView1d;
 }
 
 typedef std::tuple<std::string,mitk::DataNode::Pointer> NameNodeTuple;
 
-class sv4guiSimulationView1d : public sv4guiQmitkFunctionality
+class SV_QT_SIMULATION1D sv4guiSimulationView1d : public sv4guiQmitkFunctionality
 {
     Q_OBJECT
 

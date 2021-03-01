@@ -11,6 +11,9 @@ GRM=rm
 # need pip to install things
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/python REPLACEME_SV_TOPLEVEL_SRCDIR/BuildHelpers/Originals/python/get-pip.py
 
+# purge if a previous installation of python existed
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip cache purge
+
 # needed to compile numpy if desired
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install Cython --install-option="--no-cython-compile"
 
@@ -19,9 +22,17 @@ REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tornado==5.1.1
 #install numpy
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install numpy==1.14.3
 #install jupyter
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install jupyter
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install jupyter==1.0.0
 #install tensorflow
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tensorflow==1.4.0
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tensorflow==1.14.0
+#install pwlf for 1-D python code
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install pwlf==2.0.4
+#install scipy for 1-D python code
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install scipy==1.2.0
+#install pydoe for 1-D python code
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install pydoe==0.3.8
+#install pyyaml needed for ML
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install pyyaml==3.12
 
 $GMKDIR REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin-relocate
 

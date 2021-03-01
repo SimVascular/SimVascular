@@ -3,7 +3,7 @@
 
   <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.imageprocessing"
-          name="Colliding Fronts"
+          name="Level Set"
           class="sv4guiImageProcessing"
           icon="resources/image_processing.png" />
   </extension>

@@ -181,8 +181,6 @@ bool sv4guiPathVtkMapper2D::makePerpendicularVector2D(const mitk::Vector2D& in, 
 //
 void sv4guiPathVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* renderer)
 {
-    std::cout << "===================== sv4guiPathVtkMapper2D::CreateVTKRenderObject =====================" << std::endl;
-
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
 
     // initialize polydata here, otherwise we have update problems when
@@ -236,7 +234,6 @@ void sv4guiPathVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* renderer)
     // Process control points.
     //
     if (pathElement->GetControlPointNumber() > 0) {
-        std::cout << "[CreateVTKRenderObject] Show control points" << std::endl;
         const mitk::PlaneGeometry* plane = renderer->GetCurrentWorldPlaneGeometry();
         double precisionFactor = 0.52;
         m_DistanceToPlane = plane->GetExtentInMM(2) * precisionFactor;

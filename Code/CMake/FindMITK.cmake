@@ -84,7 +84,26 @@ set(${proj}_LIBNAMES CppMicroServices
                      tinyxml
                      mbilog
                      PocoFoundation
-                     PocoUtil)
+                     PocoUtil
+                     dcmjpeg
+                     dcmjpls
+                     dcmwlm
+                     dcmpstat
+                     dcmrt
+                     dcmseg
+                     dcmtract
+                     dcmpmap
+                     dcmtls
+                     dcmsr
+                     dcmimage
+                     dcmdsig
+                     dcmqrdb
+                     dcmnet
+                     dcmimgle
+                     dcmfg
+                     dcmiod
+                     dcmdata
+                     )
 if(SV_USE_MITK_SEGMENTATION)
     list(APPEND ${proj}_LIBNAMES MitkMultilabel)
 endif()
@@ -178,9 +197,11 @@ endif()
 #-----------------------------------------------------------------------------
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 set(lib_sub_path "lib")
+set(lib64_sub_path "lib64")
 
 foreach(p ${${proj}_POSSIBLE_PATHS})
   list(APPEND ${proj}_POSSIBLE_LIB_PATHS "${p}/${lib_sub_path}")
+  list(APPEND ${proj}_POSSIBLE_LIB_PATHS "${p}/${lib64_sub_path}")
 endforeach()
 
 set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
@@ -188,6 +209,8 @@ set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
   ${${proj}_DIR}/shared_object
   ${${proj}_DIR}/dll
   ${${proj}_DIR}/lib/${CMAKE_BUILD_TYPE}
+  ${${proj}_DIR}/lib64
+  ${${proj}_DIR}/lib64/${CMAKE_BUILD_TYPE}
   )
 
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})

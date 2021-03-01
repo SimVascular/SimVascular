@@ -70,7 +70,7 @@ class sv4guiImageProcessing : public sv4guiQmitkFunctionality
 
     static const QString EXTENSION_ID;
     static const std::string CENTERLINES_NODE_NAME;
-    static const std::string COLLIDING_FRONTS_NODE_NAME;
+    static const std::string LEVEL_SET_NODE_NAME;
     static const std::string PATHS_NODE_NAME;
     static const std::string SEED_POINTS_NODE_NAME;
     static const std::string SURFACE_NODE_NAME;

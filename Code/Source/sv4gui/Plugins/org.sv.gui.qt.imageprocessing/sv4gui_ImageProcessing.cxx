@@ -92,11 +92,14 @@
   #define dbg_sv4guiImageProcessing_ExectuteLevelSet
 #endif
 
+// Set reading paths and centerline data for development. 
+//#define READ_DATA 
+
 const QString sv4guiImageProcessing::EXTENSION_ID = "org.sv.views.imageprocessing";
 
 // Set the names used to create for SV Data Manager nodes.
 const std::string sv4guiImageProcessing::CENTERLINES_NODE_NAME = "centerlines";
-const std::string sv4guiImageProcessing::COLLIDING_FRONTS_NODE_NAME = "colliding-fronts";
+const std::string sv4guiImageProcessing::LEVEL_SET_NODE_NAME = "level-set";
 const std::string sv4guiImageProcessing::PATHS_NODE_NAME = "paths";
 const std::string sv4guiImageProcessing::SEED_POINTS_NODE_NAME = "seed-points";
 const std::string sv4guiImageProcessing::SURFACE_NODE_NAME = "surface";
@@ -261,7 +264,7 @@ void sv4guiImageProcessing::CreateQtPartControl(QWidget *parent)
 
     // Create main colliding fronts node for storing all data created.
     m_CollidingFrontsNode = mitk::DataNode::New();
-    m_CollidingFrontsNode->SetName(COLLIDING_FRONTS_NODE_NAME);
+    m_CollidingFrontsNode->SetName(LEVEL_SET_NODE_NAME);
     m_CollidingFrontsNode->SetVisibility(true);
     // [TODO:DaveP] nodes must have data so add something.
     auto seedContainer = sv4guiImageSeedContainer::New();
@@ -361,10 +364,16 @@ void sv4guiImageProcessing::ExtractPaths()
   // Extract disjoint sections from the centerlines based on centerline and group IDs.
   auto sections = sv3::PathUtils::ExtractCenterlinesSections(centerlines);
 
+  // Remove old .path files.
+  auto dirPath = m_PluginOutputDirectory.toStdString();
+  QDir dir(m_PluginOutputDirectory, {"*.pth"});
+  for (const QString & filename: dir.entryList()){
+      dir.remove(filename);
+  }
+
   // Extract path control points from the sections, create SV path elements from them
   // and write the path to an XML .pth file.
-  auto dirPath = m_PluginOutputDirectory.toStdString();
-  int pathID = 0;
+  int pathID = 1;
   std::vector<sv3::PathElement*> pathElements;
   for (auto& section : sections) {
       auto pathPoints = sv3::PathUtils::SampleLinePoints(section, distMult, tangentChange, distMeasure);
@@ -409,11 +418,15 @@ void sv4guiImageProcessing::readData()
 {
   // Create centerlines data nodes, setup interactor, etc.
   InitializeCenterlines();
-  readCenterlines();
+  #ifdef READ_DATA 
+      readCenterlines();
+  #endif
 
   // Create paths data nodes.
   InitializePaths();
-  readPaths();
+  #ifdef READ_DATA 
+      readPaths();
+  #endif
 
   // Read surface.
   //

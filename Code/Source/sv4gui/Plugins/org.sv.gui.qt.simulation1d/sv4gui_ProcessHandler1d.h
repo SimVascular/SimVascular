@@ -32,6 +32,8 @@
 #ifndef SV4GUI_PROCESSHANDLER1D_H
 #define SV4GUI_PROCESSHANDLER1D_H
 
+#include "org_sv_gui_qt_simulation1d_Export.h"
+
 #include "sv4gui_MitkSimJob1d.h"
 #include "sv4gui_Model.h"
 #include "sv4gui_CapBCWidget1d.h"
@@ -47,7 +49,7 @@
 #include <QProcess>
 #include <QMessageBox>
 
-class sv4guiProcessHandler1d : public QObject
+class SV_QT_SIMULATION1D sv4guiProcessHandler1d : public QObject
 {
     Q_OBJECT
 
