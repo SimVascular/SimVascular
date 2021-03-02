@@ -87,6 +87,7 @@ target_link_libraries(${lib}
   ${TCL_LIBRARY} 
   ${TK_LIBRARY}
   ${VTK_LIBRARIES} 
+  ${SV_LIB_MODULE_COMMON_NAME}
 )
 
 if(SV_USE_TINYXML)

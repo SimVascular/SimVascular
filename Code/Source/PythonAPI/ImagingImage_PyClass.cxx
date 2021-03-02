@@ -35,10 +35,29 @@
 //
 // The Python Image class is implemented using the PyImage struct defined in Imaging_PyModule.h.
 //
+// The 'Image' class is used to create an image from DICOM and VTK .vti image files. The image
+// data can then be operated using various methods.
+
+#include "sv4gui_VtkUtils.h"
+
+#include <tinyxml.h>
+
+#include <vtkImageData.h>
+#include <vtkXMLImageDataWriter.h>
 
 //////////////////////////////////////////////////////
 //          U t i l i t y  F u n c t i o n s        //
 //////////////////////////////////////////////////////
+
+bool CheckImageData(PyUtilApiFunction& api, PyImage* self)
+{
+  if (self->image_node == nullptr) {
+      api.error("The Image object does not have image data.");
+      return false;
+  }
+
+  return true;
+}
 
 //----------
 // ReadFile
@@ -48,6 +67,94 @@ mitk::DataNode::Pointer
 ReadFile(const std::string& fileName)
 {
   return sv4guiProjectManager::LoadDataNode(fileName);
+}
+
+//--------------------
+// ReadImageTransform
+//--------------------
+// Read an image transformation from a file and apply it.
+//
+// This sets the image orientation, it does not set its origin.
+//
+// Note: This reproduces the SV sv4guiProjectManager::setTransform() method.
+//
+void ReadImageTransform(PyImage* self, const std::string& fileName)
+{
+  TiXmlDocument document;
+  if (!document.LoadFile(fileName)) {
+      throw std::runtime_error("Unable to load the file named '" + fileName + "'.");
+  }
+
+  auto root = document.FirstChildElement("Transform");
+  auto xformElement = root->FirstChildElement("transform");
+  auto transform = self->image_data->GetGeometry()->GetVtkMatrix();
+
+  for (int j = 0; j < 3; j++){
+    for (int i = 0; i < 3; i++){
+      auto label = "t" + std::to_string(i) + std::to_string(j);
+      float value;
+      if (xformElement->QueryFloatAttribute(label.c_str(), &value) != TIXML_SUCCESS) {
+        throw std::runtime_error("No '" + label + "' element found.");
+      }
+      transform->SetElement(i,j,value);
+    }
+  }
+
+ self->image_data->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
+ self->image_data->UpdateOutputInformation();
+}
+
+//------------
+// WriteImage
+//------------
+// Write the image to a VTK .vti file. 
+//
+void WriteImage(PyImage* self, const std::string& fileName)
+{
+  vtkImageData* vtkImg = sv4guiVtkUtils::MitkImage2VtkImage(self->image_data);
+
+  if (vtkImg == nullptr) {
+    throw std::runtime_error("Unable to get VTK image data.");
+  }
+
+  vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+  writer->SetFileName(fileName.c_str());
+  writer->SetInputData(vtkImg);
+  writer->Write();
+}
+
+//---------------------
+// WriteImageTransform
+//---------------------
+// Write the image transformation.
+//
+// Note: This reproduces the SV sv4guiProjectManager::writeTransformFile() method.
+//
+bool WriteImageTransform(PyImage* self, const std::string& fileName)
+{
+  //std::cout << "========== WriteImageTransform ==========" << std::endl;
+  TiXmlDocument document;
+  auto decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+  document.LinkEndChild( decl );
+
+  auto  root = new TiXmlElement("Transform");
+  document.LinkEndChild(root);
+
+  auto xformElement = new TiXmlElement("transform");
+  auto transform = self->image_data->GetGeometry()->GetVtkMatrix();
+
+  for (int j = 0; j < 3; j++){
+      for (int i = 0; i < 3; i++){
+          auto value = transform->GetElement(i,j);
+          auto label = "t" + std::to_string(i) + std::to_string(j);
+          //std::cout << "[WriteImageTransform] label: " << label << "  value: " << value << std::endl;
+          xformElement->SetDoubleAttribute(label, value);
+      }
+  }
+
+  root->LinkEndChild(xformElement);
+
+  return document.SaveFile(fileName);
 }
 
 //----------------
@@ -89,6 +196,11 @@ static PyObject *
 Image_get_dimensions(PyImage* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
+
+  if (!CheckImageData(api, self)) {
+      return nullptr;
+  } 
+
   auto dimentions = self->image_data->GetDimensions();
   return Py_BuildValue("[i, i, i]", dimentions[0], dimentions[1], dimentions[2]);
 }
@@ -108,6 +220,11 @@ static PyObject *
 Image_get_origin(PyImage* self, PyObject* args)
 { 
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
+
+  if (!CheckImageData(api, self)) {
+      return nullptr;
+  } 
+
   auto origin = self->image_data->GetGeometry()->GetOrigin();
   return Py_BuildValue("[d, d, d]", origin[0], origin[1], origin[2]);
 }
@@ -127,8 +244,84 @@ static PyObject *
 Image_get_spacing(PyImage* self, PyObject* args)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
+
+  if (!CheckImageData(api, self)) {
+      return nullptr;
+  } 
+
   auto spacing = self->image_data->GetGeometry()->GetSpacing();
   return Py_BuildValue("[d, d, d]", spacing[0], spacing[1], spacing[2]);
+}
+
+//-------------
+// Image_read  
+//-------------
+//
+PyDoc_STRVAR(Image_read_doc,
+  "read(file_name) \n\
+   \n\
+   Create image data from a file. \n\
+   \n\
+   \n\
+   Args:                                    \n\
+     file_name (str): The name of the file to read image data from. \n\
+");
+
+static PyObject *
+Image_read(PyImage* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
+  static char *keywords[] = {"file_name", NULL};
+  char* fileName = NULL;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
+    return api.argsError();
+  }
+
+  self->image_node = ReadFile(std::string(fileName));
+  self->image_data  = dynamic_cast<mitk::Image*>(self->image_node->GetData());
+}
+
+//---------------------------
+// Image_read_transformation 
+//---------------------------
+//
+PyDoc_STRVAR(Image_read_transformation_doc,
+  "read_transformation(file_name) \n\
+   \n\
+   Rean an image transformation from a file. \n\
+   \n\
+   \n\
+   Args:                                    \n\
+     file_name (str): The name of the image transformation file to read. \n\
+");
+
+static PyObject *
+Image_read_transformation(PyImage* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
+  static char *keywords[] = {"file_name", NULL};
+  char* fileName = NULL;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
+    return api.argsError();
+  }
+
+  if (!CheckImageData(api, self)) {
+      return nullptr;
+  }
+
+  // Read in the transformtion XML file and apply it to the image.
+  //
+  try {
+      ReadImageTransform(self, std::string(fileName));
+
+  } catch (std::exception &e) {
+      api.error(e.what());
+      return nullptr;
+  }
+
+  Py_RETURN_NONE;
 }
 
 //-----------------
@@ -179,6 +372,98 @@ Image_transform(PyImage* self, PyObject* args, PyObject* kwargs)
   Py_RETURN_NONE;
 }
 
+//-------------
+// Image_write
+//------------
+//
+PyDoc_STRVAR(Image_write_doc,
+  "write(file_name) \n\
+   \n\
+   Write the image to a VTK VTI format file. \n\
+   \n\
+   \n\
+   Args:                                    \n\
+     file_name (str): The name of the file to write the image to. \n\
+");
+
+static PyObject *
+Image_write(PyImage* self, PyObject* args, PyObject* kwargs)
+{ 
+  auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
+  static char *keywords[] = {"file_name", NULL};
+  char* fileName = NULL;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
+    return api.argsError();
+  }
+
+  if (!CheckImageData(api, self)) {
+      return nullptr;
+  } 
+
+  // Check that you can write to the file.
+  ofstream cfile;
+  cfile.open(fileName);
+  if (!cfile.is_open()) {
+      api.error("Unable to write the image to the file named '" + std::string(fileName) + "'.");
+      return nullptr;
+  }
+
+  try {
+      WriteImage(self, std::string(fileName));
+  } catch (std::exception &e) {
+      api.error(e.what());
+      return nullptr;
+  }
+
+  Py_RETURN_NONE;
+}
+
+//----------------------------
+// Image_write_transformation 
+//----------------------------
+//
+PyDoc_STRVAR(Image_write_transformation_doc,
+  "write_transformation(file_name) \n\
+   \n\
+   Write the image transformation to a file. \n\
+   \n\
+   \n\
+   Args:                                    \n\
+     file_name (str): The name of the file to write the image transformation to. \n\
+");
+
+static PyObject *
+Image_write_transformation(PyImage* self, PyObject* args, PyObject* kwargs)
+{ 
+  auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
+  static char *keywords[] = {"file_name", NULL};
+  char* fileName = NULL;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
+    return api.argsError();
+  }
+
+  if (!CheckImageData(api, self)) {
+      return nullptr;
+  } 
+
+  // Check that you can write to the file.
+  ofstream cfile;
+  cfile.open(fileName);
+  if (!cfile.is_open()) {
+      api.error("Unable to write the image transformatio to the file named '" + std::string(fileName) + "'.");
+      return nullptr;
+  }
+
+  if (!WriteImageTransform(self, std::string(fileName))) {
+      api.error("Unable to write the image transformatio to the file named '" + std::string(fileName) + "'.");
+      return nullptr;
+  }
+
+  Py_RETURN_NONE;
+}
+
 ////////////////////////////////////////////////////////
 //           C l a s s   D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
@@ -211,7 +496,11 @@ static PyMethodDef PyImageMethods[] = {
   {"get_dimensions", (PyCFunction)Image_get_dimensions, METH_NOARGS, Image_get_dimensions_doc },
   {"get_origin", (PyCFunction)Image_get_origin, METH_NOARGS, Image_get_origin_doc},
   {"get_spacing", (PyCFunction)Image_get_spacing, METH_NOARGS, Image_get_spacing_doc },
+  {"read", (PyCFunction)Image_read, METH_VARARGS|METH_KEYWORDS, Image_read_doc },
+  {"read_transformation", (PyCFunction)Image_read_transformation, METH_VARARGS|METH_KEYWORDS, Image_read_transformation_doc},
   {"transform", (PyCFunction)Image_transform, METH_VARARGS|METH_KEYWORDS, Image_transform_doc },
+  {"write", (PyCFunction)Image_write, METH_VARARGS|METH_KEYWORDS, Image_write_doc},
+  {"write_transformation", (PyCFunction)Image_write_transformation, METH_VARARGS|METH_KEYWORDS, Image_write_transformation_doc},
 
   {NULL,NULL}
 };
@@ -259,7 +548,7 @@ PyImageInit(PyImage* self, PyObject* args, PyObject *kwds)
 static PyObject *
 PyImageNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  auto api = PyUtilApiFunction("s", PyRunTimeErr, "imaging.Image");
+  auto api = PyUtilApiFunction("|s", PyRunTimeErr, "imaging.Image");
   char* fileNameArg = nullptr; 
   if (!PyArg_ParseTuple(args, api.format, &fileNameArg)) {
       return api.argsError();

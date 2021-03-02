@@ -795,13 +795,13 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
     transform->PrintSelf(std::cout, indent);
     std::cout << "[setTransform] ----------------------------" << std::endl;
 
-    //std::cout << "starting loop\n";
+    std::cout << "[setTransform] Read 'transform' element ..." << std::endl;
     for (int j = 0; j < 3; j++){
       for (int i = 0; i < 3; i++){
         auto label = "t"+std::to_string(i)+std::to_string(j);
-        //std::cout << label << "\n";
+        std::cout << "[setTransform] Label: " << label << std::endl;
         auto line = root.attribute(QString::fromStdString(label));
-        //std::cout << line.toStdString() << "\n";
+        std::cout << "[setTransform] Value: " << line.toStdString() << std::endl;
         auto v = std::stod(line.toStdString());
         transform->SetElement(i,j,v);
       }
