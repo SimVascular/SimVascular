@@ -43,10 +43,11 @@
 #include "vtkSmartPointer.h"
 #include <vtkPlane.h>
 
-namespace sv3{
+namespace sv3 {
+
 class SV_EXPORT_SEGMENTATION SegmentationUtils
 {
-    public:
+  public:
     static cvStrPts* vtkImageData2cvStrPts(vtkImageData* vtkImg);
     
     static std::deque<int> GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed);
@@ -58,7 +59,17 @@ class SV_EXPORT_SEGMENTATION SegmentationUtils
     static vtkPlane* CreatePlaneGeometry(PathElement::PathPoint pathPoint, std::array<double,3> spacing, double size);
     
     static void getOrthogonalVector(double normal[3], double vec[3]);
-;
+
+    static double math_angleBtw3DVectors(double vecA[3], double vecB[3]);
+
+    static double math_radToDeg(double rad);
+
+    static double math_dot(double vecA[3], double vecB[3]);
+
+    static void math_cross(double cross[3], double vecA[3], double vecB[3]);
+
+    static double math_magnitude(double vecA[3]);
+
 };
 
 }

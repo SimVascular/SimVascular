@@ -39,11 +39,22 @@
 // data can then be operated using various methods.
 
 #include "sv4gui_VtkUtils.h"
+#include "sv3_SegmentationUtils.h"
+
+#include <mitkExtractSliceFilter.h>
+#include "mitkPoint.h"
+#include "mitkPlaneGeometry.h"
+#include "mitkSlicedGeometry3D.h"
+#include <mitkVtkResliceInterpolationProperty.h>
 
 #include <tinyxml.h>
 
+#include <vtkDoubleArray.h>
 #include <vtkImageData.h>
+#include <vtkPointData.h>
+#include <vtkTransformPolyDataFilter.h>
 #include <vtkXMLImageDataWriter.h>
+
 
 //////////////////////////////////////////////////////
 //          U t i l i t y  F u n c t i o n s        //
@@ -58,6 +69,165 @@ bool CheckImageData(PyUtilApiFunction& api, PyImage* self)
 
   return true;
 }
+
+//-----------------
+// GetvtkTransform
+//-----------------
+// Compute the transformation to orient the plane with a local coordinates system
+// given by tangent and normal.
+//
+vtkTransform * 
+GetvtkTransform(double pos[3], double nrm[3], double xhat[3])
+{
+  using util = sv3::SegmentationUtils; 
+
+  /*
+  double pos[3],nrm[3],xhat[3];
+
+  pos[0]=pathPoint.pos[0];
+  pos[1]=pathPoint.pos[1];
+  pos[2]=pathPoint.pos[2];
+
+  nrm[0]=pathPoint.tangent[0];
+  nrm[1]=pathPoint.tangent[1];
+  nrm[2]=pathPoint.tangent[2];
+
+  xhat[0]=pathPoint.rotation[0];
+  xhat[1]=pathPoint.rotation[1];
+  xhat[2]=pathPoint.rotation[2];
+  */
+
+  double zhat[3]={0,0,1};
+  double theta = util::math_radToDeg(util::math_angleBtw3DVectors(zhat,nrm));
+
+  double axis[3];
+  util::math_cross(axis,zhat,nrm);
+
+  vtkTransform* tmpTr = vtkTransform::New();
+  tmpTr->Identity();
+  tmpTr->RotateWXYZ(theta,axis);
+
+  vtkPoints* tmpPt = vtkPoints::New();
+  tmpPt->InsertNextPoint(1, 0, 0);
+
+  vtkPolyData* tmpPd = vtkPolyData::New();
+  tmpPd->SetPoints(tmpPt);
+
+  vtkTransformPolyDataFilter* tmpTf = vtkTransformPolyDataFilter::New();
+  tmpTf->SetInputDataObject(tmpPd);
+  tmpTf->SetTransform(tmpTr);
+  tmpTf->Update();
+  double pt[3];
+  tmpTf->GetOutput()->GetPoint(0,pt);
+
+  tmpTr->Delete();
+  tmpPt->Delete();
+  tmpPd->Delete();
+  tmpTf->Delete();
+
+  double rot = util::math_radToDeg(util::math_angleBtw3DVectors(pt,xhat));
+
+  double x[3];
+  util::math_cross(x,pt,xhat);
+  double d = util::math_dot(x,nrm);
+  if (d < 0.0) {
+        rot=-rot;
+  }
+
+  vtkTransform* tr = vtkTransform::New();
+  tr->Identity();
+  tr->Translate(pos);
+  tr->RotateWXYZ(rot,nrm);
+  tr->RotateWXYZ(theta,axis);
+
+  return tr;
+}
+
+//---------------------
+// ComputePlaneSpacing 
+//---------------------
+// Compute the plane spacing used when slicing an image.
+//
+// The spacing is used to sample the image.
+//
+mitk::Vector3D 
+ComputePlaneSpacing(mitk::Image* image, double planeSize, double pos[3], double tangent[3], double rotation[3])
+{
+  // Compute the transformation to orient the plane.
+  vtkTransform* tr = GetvtkTransform(pos, tangent, rotation);
+  mitk::PlaneGeometry::Pointer planeGeometry = mitk::PlaneGeometry::New();
+  planeGeometry->SetIndexToWorldTransformByVtkMatrix(tr->GetMatrix());
+
+  mitk::Vector3D right = planeGeometry->GetAxisVector(0);
+  mitk::Vector3D bottom = planeGeometry->GetAxisVector(1);
+  mitk::Vector3D planeNormal = planeGeometry->GetNormal();
+
+  right.Normalize();
+  bottom.Normalize();
+  planeNormal.Normalize();
+
+  right = planeSize * right;
+  bottom = planeSize * bottom;
+
+  mitk::Vector3D rightInIndex, bottomInIndex, normalInIndex;
+  image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex(right, rightInIndex);
+  image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex(bottom, bottomInIndex);
+  image->GetTimeGeometry()->GetGeometryForTimeStep(0)->WorldToIndex(planeNormal, normalInIndex);
+
+  mitk::Vector3D planeSpacing;
+  planeSpacing[0] = planeSize / rightInIndex.GetNorm();
+  planeSpacing[1] = planeSize / bottomInIndex.GetNorm();
+  planeSpacing[2] = 1.0 / normalInIndex.GetNorm();
+
+  return planeSpacing;
+}
+
+//---------------------
+// CreatePlaneGeometry
+//---------------------
+//
+mitk::PlaneGeometry::Pointer
+CreatePlaneGeometry(mitk::Image* image, double planeSize, double pos[3], double tangent[3], double rotation[3])
+{
+  std::cout << "========== PyImage.CreatePlaneGeometry ==========" << std::endl;
+   
+  // Compute plane spacing.
+  auto planeSpacing = ComputePlaneSpacing(image, planeSize, pos, tangent, rotation);
+  std::cout << "[PyImage.CreatePlaneGeometry] planeSpacing: " <<planeSpacing[0]<<" "<<planeSpacing[1]<<" "<<planeSpacing[2]<<std::endl;
+
+  // Compute the transformation to orient the plane.
+  vtkTransform* tr = GetvtkTransform(pos, tangent, rotation);
+  mitk::PlaneGeometry::Pointer planeGeometry = mitk::PlaneGeometry::New();
+  planeGeometry->SetIndexToWorldTransformByVtkMatrix(tr->GetMatrix());
+
+  mitk::Vector3D right,bottom;
+  right.SetVnlVector(planeGeometry->GetIndexToWorldTransform()->GetMatrix().GetVnlMatrix().get_column(0) );
+  bottom.SetVnlVector(planeGeometry->GetIndexToWorldTransform()->GetMatrix().GetVnlMatrix().get_column(1) );
+
+  mitk::Point3D origin;
+  origin[0] = pos[0] - right[0]*planeSize/2.0 - bottom[0]*planeSize/2.0;
+  origin[1] = pos[1] - right[1]*planeSize/2.0 - bottom[1]*planeSize/2.0;
+  origin[2] = pos[2] - right[2]*planeSize/2.0 - bottom[2]*planeSize/2.0;
+  std::cout << "[PyImage.CreatePlaneGeometry] Plane origin: " <<origin[0]<<" " << origin[1]<<" " <<origin[2] << std::endl;
+    
+  planeGeometry->SetOrigin(origin);
+  planeGeometry->SetSpacing(planeSpacing);
+    
+  double width = planeSize/ planeSpacing[0];
+  double height = planeSize / planeSpacing[1];
+  mitk::ScalarType bounds[6] = { 0, width, 0, height, 0, 1 };
+  planeGeometry->SetBounds(bounds);
+
+  planeGeometry->SetReferenceGeometry(image->GetTimeGeometry()->GetGeometryForTimeStep(0));
+  planeGeometry->SetImageGeometry(true);
+
+  mitk::Vector3D normal;
+  normal = planeGeometry->GetNormal();
+  std::cout << "[PyImage.CreatePlaneGeometry] Plane normal: " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
+
+  return planeGeometry;
+}
+
 
 //----------
 // ReadFile
@@ -102,6 +272,48 @@ void ReadImageTransform(PyImage* self, const std::string& fileName)
 
  self->image_data->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
  self->image_data->UpdateOutputInformation();
+}
+
+//--------------
+// ResliceImage
+//--------------
+//
+// Note: This is taken from sv4guiSegmentationUtils::GetSlicevtkImage() 
+// but does not work here, slice is off.
+//
+vtkImageData *
+ResliceImage(mitk::Image* image, double planeSize, double pos[3], double tangent[3], double rotation[3])
+{
+  vtkTransform* tr = GetvtkTransform(pos, tangent, rotation);
+  vtkImageReslice* rs = vtkImageReslice::New();
+
+  auto vtkImage = image->GetVtkImageData();
+  double spacing[3];
+  vtkImage->GetSpacing(spacing);
+
+  // This does not make sense, just need std::min(spacing[0],spacing[1]).
+  double vmin = std::min(spacing[0], std::min(spacing[0],spacing[1]));
+
+  int width = planeSize / vmin;
+  int height = planeSize / vmin;
+  double pdimx = width * vmin;
+  double pdimy = height * vmin;
+
+  double origin[3];
+  origin[0] = -0.5 * pdimx;
+  origin[1] = -0.5 * pdimy;
+  origin[2] = 0.0;
+
+  rs->SetInputDataObject(vtkImage);
+
+  rs->SetResliceTransform(tr);
+  rs->SetOutputSpacing(vmin,vmin,vmin);
+  rs->SetOutputOrigin(origin);
+  rs->SetOutputExtent(0, width-1, 0, height-1, 0, 0);
+  rs->InterpolateOn();
+  rs->Update();
+
+  return rs->GetOutput();
 }
 
 //------------
@@ -185,6 +397,223 @@ GetPathElement(PyUtilApiFunction& api, PyPath* self)
 // get_dimensions 
 //----------------
 //
+PyDoc_STRVAR(Image_extract_slice_doc,
+  "extract_slice() \n\
+   \n\
+   Extract a slice from the image.  \n\
+   \n\
+");
+
+
+static PyObject *
+Image_extract_slice(PyImage* self, PyObject* args)
+{
+  std::cout << std::endl;
+  std::cout << "========== Image_extract_slice ==========" << std::endl;
+  auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
+
+  if (!CheckImageData(api, self)) {
+      return nullptr;
+  }
+
+  auto image = self->image_data;
+  auto dimensions = image->GetDimensions();
+  auto imageGeometry = image->GetGeometry();
+  auto origin = image->GetGeometry()->GetOrigin();
+
+  /*
+  double pos[3] = { 2.438, 5.200, 82.219};
+  double tangent[3] = { -0.047, -0.121, -0.992};
+  double rotation[3] = {0.000, 0.993, -0.121};
+
+  double pos[3] = { 0.412,0.016,50.294 }; 
+  double tangent[3] = { -0.094,-0.242,-0.966 };
+  double rotation[3] = { 0.000,0.970,-0.243 };
+  double planeSize = 80.0;
+
+  double pos[3] = {2.824, -5.721, 30.409 }; 
+  double tangent[3] = {0.223, -0.223, -0.949 };
+  double rotation[3] = { 0.000, 0.973, -0.229 };
+
+  // Saggital
+  double pos[3] = {2.824, -5.721, 30.409 }; 
+  double tangent[3] = {1.0, 0.0, 0.0 };
+  double rotation[3] = { 0.0, 1.0, 0.0 };
+
+  // Coronal, (239, 252, 31)
+  double pos[3] = {0.88, -12.8, -16.2 }; 
+  double tangent[3] = {0.0, -1.0, 0.0 };
+  double rotation[3] = { 1.0, 0.0, 0.0 };
+  */
+
+  // Axial (239, 252, 31) but LR switched 
+  double pos[3] = {0.88, -12.8, -16.2 }; 
+  double tangent[3] = {0.0, 0.0, -1.0 };
+  double rotation[3] = { -1.0, 0.0, 0.0 };
+
+  double planeSize = 80.0;
+
+  std::cout << "[Image_extract_slice] Pos: " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+  std::cout << "[Image_extract_slice] Tangent: " << tangent[0] << " " << tangent[1] << " " << tangent[2] << std::endl;
+  std::cout << "[Image_extract_slice] Rotation: " << rotation[0] << " " << rotation[1] << " " << rotation[2] << std::endl;
+
+  // Create an oriented plane used to slice the image.
+  auto planeGeometry = CreatePlaneGeometry(image, planeSize, pos, tangent, rotation);
+
+  mitk::SlicedGeometry3D::Pointer slicedGeo3D=mitk::SlicedGeometry3D::New();
+  slicedGeo3D->SetEvenlySpaced(false);
+  slicedGeo3D->InitializeSlicedGeometry(1);
+  slicedGeo3D->SetPlaneGeometry(planeGeometry,0);
+
+  auto geometry = image->GetTimeGeometry()->GetGeometryForTimeStep(0);
+  slicedGeo3D->SetReferenceGeometry(geometry);
+  slicedGeo3D->SetBounds(geometry->GetBounds());
+  slicedGeo3D->SetOrigin(geometry->GetOrigin());
+  slicedGeo3D->SetIndexToWorldTransform(geometry->GetIndexToWorldTransform());
+
+  mitk::VtkResliceInterpolationProperty::Pointer interProp = mitk::VtkResliceInterpolationProperty::New();
+  interProp->SetInterpolationToNearest();
+
+  mitk::ExtractSliceFilter::Pointer slicer = mitk::ExtractSliceFilter::New();
+  slicer->SetInput(image);
+  slicer->SetTimeStep(0);
+  slicer->SetWorldGeometry(planeGeometry);
+  slicer->SetResliceTransformByGeometry(image->GetTimeGeometry()->GetGeometryForTimeStep(0));
+  slicer->SetVtkOutputRequest(true);
+  slicer->Modified();
+  slicer->Update();
+
+  //vtkSmartPointer<vtkImageData> slice = vtkSmartPointer<vtkImageData>::New();
+  auto slice = slicer->GetVtkOutput();
+
+
+  double* slice_origin = slice->GetOrigin();
+  int* slice_extent = slice->GetExtent();
+  double* slice_spacing = slice->GetSpacing();
+
+  std::cout << "[Image_extract_slice] Slice: "<<std::endl;
+  std::cout << "[Image_extract_slice]   Min scalar: " << slice->GetScalarRange()[0] << std::endl;
+  std::cout << "[Image_extract_slice]   Max scalar: " << slice->GetScalarRange()[1] << std::endl;
+  std::cout << "[Image_extract_slice]   Orign: "<<slice_origin[0]<<","<<slice_origin[1]<<","<<slice_origin[2]<<std::endl;
+  std::cout << "[Image_extract_slice]   Extent: " << slice_extent[0] << ", " << slice_extent[1] << "; " << slice_extent[2] << ", " << slice_extent[3] << "; " << slice_extent[4] << ", " << slice_extent[5] << std::endl;
+  std::cout << "[Image_extract_slice]   Spacing: " << slice_spacing[0] << ", " << slice_spacing[1] << ", " << slice_spacing[2] << std::endl;
+
+  std::cout<<"[Image_extract_slice] Structured points: "<<std::endl;
+  auto vtkStructPts = sv3::SegmentationUtils::vtkImageData2cvStrPts(slice);
+  auto slicePts = vtkStructPts->GetVtkStructuredPoints();
+
+  int* dims = slicePts->GetDimensions();
+  std::cout << "[Image_extract_slice]   Dims: " << " x: " << dims[0] << " y: " << dims[1] << " z: " << dims[2] << std::endl;
+  
+  std::cout << "[Image_extract_slice]   Number of points: " << slicePts->GetNumberOfPoints() << std::endl;
+  std::cout << "[Image_extract_slice]   Number of cells: " << slicePts->GetNumberOfCells() << std::endl;
+  std::cout << "[Image_extract_slice]   Min scalar: " << slicePts->GetScalarRange()[0] << std::endl;
+  std::cout << "[Image_extract_slice]   Max scalar: " << slicePts->GetScalarRange()[1] << std::endl;
+  
+  for (int z = 0; z < dims[2]; z++) {
+    for (int y = 0; y < dims[1]; y++) {
+      for (int x = 0; x < dims[0]; x++) {
+        double* pixel = static_cast<double*>(slicePts->GetScalarPointer(x,y,z));
+        }
+      }
+    }
+
+  return vtkPythonUtil::GetObjectFromPointer(slicePts);
+  //return vtkPythonUtil::GetObjectFromPointer(slice);
+}
+
+
+static PyObject *
+Image_extract_slice_1(PyImage* self, PyObject* args)
+{
+  std::cout << std::endl;
+  std::cout << "========== Image_extract_slice ==========" << std::endl;
+  auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
+
+  if (!CheckImageData(api, self)) {
+      return nullptr;
+  }
+
+  auto dimensions = self->image_data->GetDimensions();
+  auto imageGeometry = self->image_data->GetGeometry();
+  auto origin = self->image_data->GetGeometry()->GetOrigin();
+
+  /*
+  auto currentGeometry = mitk::BaseGeometry::ConstPointer();
+  currentGeometry = self->image_data->GetGeometry();
+
+  bool top = false;
+  bool frontside = false;
+  bool rotated = false;
+
+  auto slicedWorldGeometry = mitk::SlicedGeometry3D::New();
+  slicedWorldGeometry->InitializePlanes(currentGeometry, mitk::PlaneGeometry::Axial, top, frontside, rotated);
+  */
+
+  auto slicedGeom = mitk::SlicedGeometry3D::New();
+  slicedGeom->SetEvenlySpaced(true);
+  slicedGeom->InitializeSlicedGeometry(1);
+
+  // Define a plane to slice the 3D image.
+  //
+  int sliceIndex = 30; 
+  bool isFrontside = true;
+  bool isRotated = false;
+  mitk::PlaneGeometry::Pointer plane = mitk::PlaneGeometry::New();
+  plane->InitializeStandardPlane(imageGeometry, mitk::PlaneGeometry::Frontal, sliceIndex, isFrontside, isRotated);
+  //plane->InitializeStandardPlane(imageGeometry, mitk::PlaneGeometry::Axial, sliceindex, isFrontside, isRotated);
+  plane->SetOrigin(origin);
+
+  mitk::Vector3D normal;
+  normal = plane->GetNormal();
+  std::cout << "[Image_extract_slice] Plane normal: " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
+
+  // Extract slice.
+  //
+  //vtkSmartPointer<mitkVtkImageOverwrite> resliceIdx = vtkSmartPointer<mitkVtkImageOverwrite>::New();
+  mitk::ExtractSliceFilter::Pointer slicer = mitk::ExtractSliceFilter::New();
+  //mitk::ExtractSliceFilter::Pointer slicer = mitk::ExtractSliceFilter::New(resliceIdx);
+  slicer->SetInput(self->image_data);
+  slicer->SetWorldGeometry(plane);
+  slicer->SetVtkOutputRequest(true);
+  slicer->Modified();
+  slicer->Update();
+
+  //vtkSmartPointer<vtkImageData> slice = vtkSmartPointer<vtkImageData>::New();
+  auto slice = slicer->GetVtkOutput();
+
+  /*
+  double valuesRange[2];
+  vtkDoubleArray::SafeDownCast(slice->GetPointData()->GetArray("ImageScalars"))->GetValueRange(valuesRange);
+  std::cout << "valuesRange = " << valuesRange[0] << " " << valuesRange[1] << std::endl;
+  */
+  std::cout << "Min scalar: " << slice->GetScalarRange()[0] << std::endl;
+  std::cout << "Max scalar: " << slice->GetScalarRange()[1] << std::endl;
+
+  int sdims[3];
+  slice->GetDimensions(sdims);
+
+  /*
+  for (int z = 0; z < sdims[2]; z++) {
+    for (int y = 0; y < sdims[1]; y++) {
+      for (int x = 0; x < sdims[0]; x++) {
+        double* pixel = static_cast<double*>(slice->GetScalarPointer(x,y,z));
+        printf("%g \n", pixel[0]);
+        }
+      std::cout << std::endl;
+      }
+    std::cout << std::endl;
+  }
+  */
+  
+
+  return vtkPythonUtil::GetObjectFromPointer(slice);
+}
+
+//----------------
+// get_dimensions 
+//----------------
+//
 PyDoc_STRVAR(Image_get_dimensions_doc,
   "get_dimensions() \n\
    \n\
@@ -201,8 +630,8 @@ Image_get_dimensions(PyImage* self, PyObject* args)
       return nullptr;
   } 
 
-  auto dimentions = self->image_data->GetDimensions();
-  return Py_BuildValue("[i, i, i]", dimentions[0], dimentions[1], dimentions[2]);
+  auto dimensions = self->image_data->GetDimensions();
+  return Py_BuildValue("[i, i, i]", dimensions[0], dimensions[1], dimensions[2]);
 }
 
 //------------
@@ -493,6 +922,7 @@ PyDoc_STRVAR(ImageClass_doc,
 //
 static PyMethodDef PyImageMethods[] = {
 
+  {"extract_slice", (PyCFunction)Image_extract_slice, METH_VARARGS|METH_KEYWORDS, Image_extract_slice_doc },
   {"get_dimensions", (PyCFunction)Image_get_dimensions, METH_NOARGS, Image_get_dimensions_doc },
   {"get_origin", (PyCFunction)Image_get_origin, METH_NOARGS, Image_get_origin_doc},
   {"get_spacing", (PyCFunction)Image_get_spacing, METH_NOARGS, Image_get_spacing_doc },

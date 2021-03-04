@@ -402,7 +402,7 @@ void sv4guiContour::SetPathPoint(sv4guiPathElement::sv4guiPathPoint pathPoint)
     mitk::Vector3D spacing;
     spacing.Fill(0.1);
 
-    m_PlaneGeometry=sv4guiSegmentationUtils::CreatePlaneGeometry(pathPoint,spacing, 1.0);
+    m_PlaneGeometry=sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(pathPoint,spacing, 1.0);
 }
 
 
