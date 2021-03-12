@@ -1751,6 +1751,11 @@ void sv4guiSeg2DEdit::ShowPath(bool checked)
     }
 }
 
+//---------------------------
+// PreparePreviewInteraction
+//---------------------------
+// Create an image slice used for threshold image segmentation.
+//
 void sv4guiSeg2DEdit::PreparePreviewInteraction(QString method)
 {
     m_PreviewContourModel = sv4guiContourModel::New();

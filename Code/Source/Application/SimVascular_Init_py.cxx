@@ -48,6 +48,7 @@
 
 //#include "sv_repos_init_py.h"
 #include "Geometry_PyModule.h"
+#include "Imaging_PyModule.h"
 //#include "sv2_image_init_py.h"
 #include "Math_PyModule.h"
 //#include "sv_polydatasolid_init_py.h"
@@ -107,7 +108,7 @@ void SimVascular_pyInit()
     //PyImport_AppendInittab("circle_contour",PyInit_pyCircleContour);
     PyImport_AppendInittab("segmentation", PyInit_PySegmentation);
     PyImport_AppendInittab("geometry", PyInit_PyGeometry);
-    //PyImport_AppendInittab("image", PyInit_pyImage);
+    PyImport_AppendInittab("imaging", PyInit_PyImaging);
     //PyImport_AppendInittab("levelset_contour",PyInit_pylevelSetContour);
     // [DaveP] Don't expose math module.
     //PyImport_AppendInittab("math", PyInit_PyMath);

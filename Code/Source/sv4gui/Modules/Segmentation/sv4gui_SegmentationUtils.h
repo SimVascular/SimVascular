@@ -48,6 +48,8 @@
 #include <vtkTransform.h>
 #include <vtkPolyData.h>
 
+// [TODO:DaveP] These functions should be defined in a namespace, not in a class.
+
 class SV4GUIMODULESEGMENTATION_EXPORT sv4guiSegmentationUtils
 {
 
@@ -98,16 +100,15 @@ public:
 
     };
 
+    // These do absolutely nothing.
     sv4guiSegmentationUtils();
-
     virtual ~sv4guiSegmentationUtils();
-
 
     static vtkTransform* GetvtkTransform(sv4guiPathElement::sv4guiPathPoint pathPoint);
 
     static vtkTransform* GetvtkTransformBox(sv4guiPathElement::sv4guiPathPoint pathPoint, double boxHeight);
 
-    static mitk::PlaneGeometry::Pointer CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint pathPoint, mitk::Vector3D spacing, double size);
+    static mitk::PlaneGeometry::Pointer CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4guiPathPoint pathPoint, mitk::Vector3D spacing, double size);
 
     static mitk::PlaneGeometry::Pointer CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint pathPoint, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing = false);
 
@@ -117,8 +118,6 @@ public:
     static mitk::Image::Pointer GetSliceImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep = 0);
 
     static cvStrPts* GetSlicevtkImage(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, double size);
-
-    static vtkImageData* GetSlicevtkImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep = 0);
 
     static cvStrPts* image2cvStrPts(mitk::Image* image);
 
