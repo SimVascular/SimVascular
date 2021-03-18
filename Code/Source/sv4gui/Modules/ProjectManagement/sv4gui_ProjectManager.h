@@ -45,7 +45,10 @@
 class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 {
 
-public:
+  static const QString SVPROJ_CONFIG_FILE_NAME;
+  static const QString IMAGE_LOCATION_FILE_NAME;
+
+  public:
 
     static void AddProject(mitk::DataStorage::Pointer dataStorage, QString projectName, QString projParentDir, bool newProject);
     static void WriteEmptyConfigFile(QString projConfigFilePath);
@@ -120,6 +123,23 @@ public:
         return dataFolderNode;
     }
 
+  private:
+    static mitk::DataNode::Pointer CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+        mitk::DataNode::Pointer imageFolderNode, QStringList imageFilePathList, QStringList imageNameList);
+    static void CreatePathsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
+        mitk::DataNode::Pointer pathFolderNode, QString pathFolderName);
+    static void CreateSegmentationsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
+        mitk::DataNode::Pointer segFolderNode, QString segFolderName);
+    static void CreateMitkSegmentationsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
+        mitk::DataNode::Pointer imageNode);
+    static void CreateModelPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,             
+        mitk::DataNode::Pointer modelNode, QString modelFolderName);
+    static void CreatePlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
+        mitk::DataNode::Pointer folderNode, QString folderName, QString fileExt);
+    static void GetImageDataPath(QString projName, QString projParentDir, QString imageFolderName);
+    static void GetImageDataPathFromSvproj(QString projName, QString projParentDir, QString imageFolderName, 
+       QStringList& imageFilePathList, QStringList& imageNameList);
+    static void GetImageDataPathFromImageLoc(QString imageLocFilePath, QString imageFolderName, QString& imageFilePath, QString& imageName);
 
 };
 

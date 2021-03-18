@@ -109,47 +109,55 @@
 //     Simulations: .sjb
 //     1D Simulations: .s1djb
 //     svFSI: .fsijob
-// 
+
+// Define the name of the files used to identify the image data location.
+//
+// SVPROJ_CONFIG_FILE_NAME is deprecated.
+//
+const QString sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME = ".svproj";
+const QString sv4guiProjectManager::IMAGE_LOCATION_FILE_NAME = "image_location.xml";
+
 //------------
 // AddProject
 //------------
 // Create a new project or read in an existing one.
 //
-//
-// [TODO] 1) Break up this 400 line function so we can see what is going on.
-//        2) Would it somehow be possible to iterate over the different plugins, like maybe use a for loop?
-//
-void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir,bool newProject)
+void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir, bool newProject)
 {
-    QString projectConfigFileName=".svproj";
-    QString imageFolderName="Images";
-    QString pathFolderName="Paths";
-    QString segFolderName="Segmentations";
-    QString modelFolderName="Models";
-    QString meshFolderName="Meshes";
-    QString simFolderName="Simulations";
-    QString sim1dFolderName="Simulations1d";
-    QString svFSIFolderName="svFSI";
-    QString reposFolderName="Repository";
+    std::cout << std::endl;
+    std::cout << "========== sv4guiProjectManager::AddProject ========== " << std::endl;
+    std::cout << "[AddProject] newProject: " << newProject << std::endl;
+    QString projectConfigFileName = ".svproj";
+
+    // Set plugin directory names. 
+    QString imageFolderName = "Images";
+    QString pathFolderName = "Paths";
+    QString segFolderName = "Segmentations";
+    QString modelFolderName = "Models";
+    QString meshFolderName = "Meshes";
+    QString simFolderName = "Simulations";
+    QString sim1dFolderName = "Simulations1d";
+    QString svFSIFolderName = "svFSI";
+    QString reposFolderName = "Repository";
+
+    GetImageDataPath(projName, projParentDir, imageFolderName);
 
     QDir dir(projParentDir);
-    if(newProject)
-    {
+    if (newProject) {
         dir.mkdir(projName);
     }
     dir.cd(projName);
 
-    QString projPath=dir.absolutePath();
-    QString projectConfigFilePath=dir.absoluteFilePath(projectConfigFileName);
+    QString projPath = dir.absolutePath();
+    QString projectConfigFilePath = dir.absoluteFilePath(projectConfigFileName);
 
     QStringList imageFilePathList;
     QStringList imageNameList;
 
-    bool rewriteProjectConfigFile=false;
+    bool rewriteProjectConfigFile = false;
     QDomDocument doc("svproj");
 
-    if(newProject)
-    {
+    if (newProject) {
         WriteEmptyConfigFile(projectConfigFilePath);
         dir.mkdir(imageFolderName);
         dir.mkdir(pathFolderName);
@@ -161,7 +169,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         dir.mkdir(svFSIFolderName);
         dir.mkdir(reposFolderName);
 
-    }else{
+    } else {
 
         QFile xmlFile(projectConfigFilePath);
         xmlFile.open(QIODevice::ReadOnly);
@@ -171,90 +179,84 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         xmlFile.close();
 
         QDomElement projDesc = doc.firstChildElement("projectDescription");
-        QDomElement imagesElement=projDesc.firstChildElement("images");
-        imageFolderName=imagesElement.attribute("folder_name");
-        QDomNodeList imageList=imagesElement.elementsByTagName("image");
-        for(int i=0;i<imageList.size();i++)
-        {
-            QDomNode imageNode=imageList.item(i);
-            if(imageNode.isNull()) continue;
+        QDomElement imagesElement = projDesc.firstChildElement("images");
+        imageFolderName = imagesElement.attribute("folder_name");
+        QDomNodeList imageList = imagesElement.elementsByTagName("image");
+
+        // Create a list of image names to read.
+        //
+        // [TODO:DaveP] This loop does not make sense because only one 
+        // image is allowed in SV.
+        //
+        std::cout << "[AddProject] imageList.size(): " << imageList.size() << std::endl;
+        for (int i = 0; i < imageList.size(); i++) {
+            QDomNode imageNode = imageList.item(i);
+            if (imageNode.isNull()) {
+                continue;
+            }
 
             QDomElement imageElement=imageNode.toElement();
-            if(imageElement.isNull()) continue;
-
-            QString inProj=imageElement.attribute("in_project");
-            QString imageName=imageElement.attribute("name");
-            QString imagePath=imageElement.attribute("path");
-
-            if(inProj=="yes")
-            {
-                if(imagePath!="")
-                {
-                    imageFilePathList<<(projPath+"/"+imageFolderName+"/"+imagePath);
-                }
-                else if(imageName!="")
-                {
-                    imageFilePathList<<(projPath+"/"+imageFolderName+"/"+imageName);
-
-                    imageElement.setAttribute("path",imageName);
-                    imageElement.setAttribute("name",imageName.remove(".vti"));
-                    rewriteProjectConfigFile=true;
-                }
-                 imageNameList<<imageName;
+            if(imageElement.isNull()) {
+                continue;
             }
-            else
-            {
-                imageFilePathList<<imageElement.attribute("path");
 
-                if(imageName=="")
-                {
-                    imageName="image";
+            QString inProj = imageElement.attribute("in_project");
+            QString imageName = imageElement.attribute("name");
+            QString imagePath = imageElement.attribute("path");
+
+            // Set the image plugin attributes.
+            //
+            // [TODO:DaveP] How can imagePath = "" ?
+            //
+            if (inProj == "yes") {
+                if (imagePath != "") {
+                    imageFilePathList << (projPath+"/"+imageFolderName+"/"+imagePath);
+                } else if(imageName != "") {
+                    imageFilePathList << (projPath+"/"+imageFolderName+"/"+imageName);
+                    imageElement.setAttribute("path", imageName);
+                    imageElement.setAttribute("name", imageName.remove(".vti"));
+                    rewriteProjectConfigFile = true;
+                }
+                imageNameList << imageName;
+
+            } else {
+                imageFilePathList << imageElement.attribute("path");
+
+                if (imageName=="") {
+                    imageName = "image";
                     imageElement.setAttribute("name",imageName);
-                    rewriteProjectConfigFile=true;
+                    rewriteProjectConfigFile = true;
                 }
                 imageNameList<<imageName;
-
             }
         }
-
-        pathFolderName=projDesc.firstChildElement("paths").attribute("folder_name");
-        segFolderName=projDesc.firstChildElement("segmentations").attribute("folder_name");
-        modelFolderName=projDesc.firstChildElement("models").attribute("folder_name");
-        meshFolderName=projDesc.firstChildElement("meshes").attribute("folder_name");
-        simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
-        sim1dFolderName=projDesc.firstChildElement("simulations1d").attribute("folder_name");
-	    svFSIFolderName=projDesc.firstChildElement("svFSI").attribute("folder_name");
-        //reposFolderName=projDesc.firstChildElement("repository").attribute("folder_name");
-
     }
 
-    if(rewriteProjectConfigFile)
-    {
+    // Overwrite the .svproj file.
+
+    if (rewriteProjectConfigFile) {
         QString xml = doc.toString(4);
-
         QFile file( projectConfigFilePath );
-
         if (file.open(QFile::WriteOnly | QFile::Truncate)) {
             QTextStream out(&file);
             out << xml <<endl;
         }
     }
 
-
     // Create the SV Data Manager top level plugin data nodes.
     //
-    mitk::DataNode::Pointer projectFolderNode= CreateDataFolder<sv4guiProjectFolder>(dataStorage,projName);
+    mitk::DataNode::Pointer projectFolderNode = CreateDataFolder<sv4guiProjectFolder>(dataStorage,projName);
     projectFolderNode->AddProperty("project path",mitk::StringProperty::New(projPath.toStdString().c_str()));
 
-    mitk::DataNode::Pointer imageFolderNode=CreateDataFolder<sv4guiImageFolder>(dataStorage, imageFolderName, projectFolderNode);
-    mitk::DataNode::Pointer pathFolderNode=CreateDataFolder<sv4guiPathFolder>(dataStorage, pathFolderName, projectFolderNode);
-    mitk::DataNode::Pointer segFolderNode=CreateDataFolder<sv4guiSegmentationFolder>(dataStorage,segFolderName, projectFolderNode);
-    mitk::DataNode::Pointer modelFolderNode=CreateDataFolder<sv4guiModelFolder>(dataStorage, modelFolderName, projectFolderNode);
-    mitk::DataNode::Pointer meshFolderNode=CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
-    mitk::DataNode::Pointer simFolderNode=CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
-    mitk::DataNode::Pointer svFSIFolderNode=CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
-    mitk::DataNode::Pointer sim1dFolderNode=CreateDataFolder<sv4guiSimulation1dFolder>(dataStorage, sim1dFolderName, projectFolderNode);
-    mitk::DataNode::Pointer reposFolderNode=CreateDataFolder<sv4guiRepositoryFolder>(dataStorage, reposFolderName, projectFolderNode);
+    mitk::DataNode::Pointer imageFolderNode = CreateDataFolder<sv4guiImageFolder>(dataStorage, imageFolderName, projectFolderNode);
+    mitk::DataNode::Pointer pathFolderNode = CreateDataFolder<sv4guiPathFolder>(dataStorage, pathFolderName, projectFolderNode);
+    mitk::DataNode::Pointer segFolderNode = CreateDataFolder<sv4guiSegmentationFolder>(dataStorage,segFolderName, projectFolderNode);
+    mitk::DataNode::Pointer modelFolderNode = CreateDataFolder<sv4guiModelFolder>(dataStorage, modelFolderName, projectFolderNode);
+    mitk::DataNode::Pointer meshFolderNode = CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
+    mitk::DataNode::Pointer simFolderNode = CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
+    mitk::DataNode::Pointer svFSIFolderNode = CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
+    mitk::DataNode::Pointer sim1dFolderNode = CreateDataFolder<sv4guiSimulation1dFolder>(dataStorage, sim1dFolderName, projectFolderNode);
+    mitk::DataNode::Pointer reposFolderNode = CreateDataFolder<sv4guiRepositoryFolder>(dataStorage, reposFolderName, projectFolderNode);
 
     imageFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     pathFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
@@ -266,247 +268,195 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     sim1dFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     reposFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
-    // Create the SV Data Manager plugin data nodes for an existing project.
-    //
-    // Read in the files stored under plugin directories. 
-    //
-    if(!newProject)
-    {
-
-        // Create Images plugin data nodes.
-        //
-        imageFolderNode->SetVisibility(false);
-        mitk::DataNode::Pointer imageNode;
-        for(int i=0;i<imageFilePathList.size();i++)
-        {
-            std::string imageFilePath=imageFilePathList[i].toStdString();
-
-            try{
-                //mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath);
-                //            imageNode->SetVisibility(false);
-                imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath);
-                imageNode->SetName(imageNameList[i].toStdString());
-
-                //do image transform stuff
-                mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
-                setTransform(image, projPath.toStdString(), imageNode->GetName());
-
-                dataStorage->Add(imageNode,imageFolderNode);
-            }
-            catch(...)
-            {
-                MITK_ERROR << "Failed to load image (maybe non-existing or unsupported data type): " << imageFilePath;
-            }
-        }
-
-        // Create Paths plugin data nodes.
-        //
-        pathFolderNode->SetVisibility(false);
-        QDir dir1(projPath);
-        dir1.cd(pathFolderName);
-        QFileInfoList fileInfoList=dir1.entryInfoList(QStringList("*.pth"), QDir::Files, QDir::Name);
-        for(int i=0;i<fileInfoList.size();i++)
-        {
-            //mitk::DataNode::Pointer pathNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer pathNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            pathNode->SetVisibility(false);
-
-            sv4guiPath* path=dynamic_cast<sv4guiPath*>(pathNode->GetData());
-            if(path)
-            {
-                auto props=path->GetProps();
-                auto it = props.begin();
-                while(it != props.end())
-                {
-                    if(it->first=="point 2D display size"
-                    || it->first=="point size")
-                    {
-                        if(it->second!="")
-                        {
-                            float value=(float)(std::stod(it->second));
-                            pathNode->SetFloatProperty(it->first.c_str(),value);
-                        }
-                    }
-                    it++;
-                }
-            }
-
-            dataStorage->Add(pathNode,pathFolderNode);
-        }
-
-        // Create Segmentations plugin data nodes.
-        //
-        segFolderNode->SetVisibility(false);
-        QDir dirSeg(projPath);
-        dirSeg.cd(segFolderName);
-        QStringList segNameFilters;
-        segNameFilters<<"*.ctgr"<<"*.s3d";
-        fileInfoList=dirSeg.entryInfoList(segNameFilters, QDir::Files, QDir::Name);
-        for(int i=0;i<fileInfoList.size();i++)
-        {
-            std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
-
-            try
-            {
-                //mitk::DataNode::Pointer segNode=mitk::IOUtil::LoadDataNode(filePath);
-                mitk::DataNode::Pointer segNode = sv4guiProjectManager::LoadDataNode(filePath);
-                segNode->SetVisibility(false);
-
-                sv4guiContourGroup* group=dynamic_cast<sv4guiContourGroup*>(segNode->GetData());
-                if(group)
-                {
-                    auto props=group->GetProps();
-                    auto it = props.begin();
-                    while(it != props.end())
-                    {
-                        if(it->second!="")
-                        {
-                            if(it->first=="point 2D display size")
-                            {
-                                float value=(float)(std::stod(it->second));
-                                segNode->SetFloatProperty("point.displaysize",value);
-                            }
-                            else if(it->first=="point size")
-                            {
-                                float value=(float)(std::stod(it->second));
-                                segNode->SetFloatProperty("point.3dsize",value);
-                            }
-                        }
-
-                        it++;
-                    }
-                }
-
-                dataStorage->Add(segNode,segFolderNode);
-            }
-            catch(...)
-            {
-                MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
-            }
-        }
-
-        // Create MITK segmentation data nodes
-        fileInfoList=dirSeg.entryInfoList(QStringList("*.vti"), QDir::Files, QDir::Name);
-        for(int i=0;i<fileInfoList.size();i++)
-        {
-            std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
-
-            try{
-                mitk::DataNode::Pointer mitkSegNode = sv4guiProjectManager::LoadDataNode(filePath);
-                mitkSegNode->SetVisibility(false);
-
-                //do image transform stuff
-                mitk::Image* image=dynamic_cast<mitk::Image*>(mitkSegNode->GetData());
-                setTransform(image, projPath.toStdString(), imageNode->GetName());
-
-                dataStorage->Add(mitkSegNode,imageNode);
-                //dataStorage->Add(mitkSegNode, segFolderNode);
-            }
-            catch(...)
-            {
-                MITK_ERROR << "Failed to load segmentation image (maybe non-existing or unsupported data type): " << filePath;
-            }
-        }
-        
-        // Create Model plugin data nodes.
-        //
-        modelFolderNode->SetVisibility(false);
-        QDir dirModel(projPath);
-        dirModel.cd(modelFolderName);
-        fileInfoList=dirModel.entryInfoList(QStringList("*.mdl"), QDir::Files, QDir::Name);
-        bool firstModel=true;
-        for(int i=0;i<fileInfoList.size();i++)
-        {
-            std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
-
-            try
-            {
-                //mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(filePath);
-                mitk::DataNode::Pointer modelNode = sv4guiProjectManager::LoadDataNode(filePath);
-                if(firstModel)
-                {
-                    modelNode->SetVisibility(true);
-                    firstModel=false;
-                }
-                else
-                    modelNode->SetVisibility(false);
-
-                dataStorage->Add(modelNode,modelFolderNode);
-            }
-            catch(...)
-            {
-                MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
-            }
-        }
-
-        // Create Meshes plugin data nodes.
-        //
-        meshFolderNode->SetVisibility(false);
-        QDir dirMesh(projPath);
-        dirMesh.cd(meshFolderName);
-        fileInfoList=dirMesh.entryInfoList(QStringList("*.msh"), QDir::Files, QDir::Name);
-        for(int i=0;i<fileInfoList.size();i++)
-        {
-            std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
-            try
-            {
-            //mitk::DataNode::Pointer meshNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer meshNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            meshNode->SetVisibility(false);
-            dataStorage->Add(meshNode,meshFolderNode);
-            }
-            catch(...)
-            {
-                MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
-            }
-        }
-
-        // Create Simulations plugin data nodes.
-        //
-        simFolderNode->SetVisibility(false);
-        QDir dirSim(projPath);
-        dirSim.cd(simFolderName);
-        fileInfoList=dirSim.entryInfoList(QStringList("*.sjb"), QDir::Files, QDir::Name);
-        for(int i=0;i<fileInfoList.size();i++)
-        {
-            //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            jobNode->SetVisibility(false);
-            dataStorage->Add(jobNode,simFolderNode);
-        }
-
-        // Create svFSI plugin data nodes.
-        //
-        svFSIFolderNode->SetVisibility(false);
-        QDir dirsvFSI(projPath);
-        dirsvFSI.cd(svFSIFolderName);
-        fileInfoList = dirsvFSI.entryInfoList(QStringList("*.fsijob"), QDir::Files, QDir::Name);
-        for(int i=0;i<fileInfoList.size();i++) {
-            //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            jobNode->SetVisibility(false);
-            dataStorage->Add(jobNode,svFSIFolderNode);
-        }
-
-        // Create Simulations1d plugin data nodes.
-        //
-        sim1dFolderNode->SetVisibility(false);
-        QDir dirSim1d(projPath);
-        dirSim1d.cd(sim1dFolderName);
-        fileInfoList=dirSim1d.entryInfoList(QStringList("*.s1djb"), QDir::Files, QDir::Name);
-        for(int i=0;i<fileInfoList.size();i++)
-        {
-            //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            jobNode->SetVisibility(false);
-            dataStorage->Add(jobNode,sim1dFolderNode);
-        }
+    if (newProject) {
+        mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
+        return;
     }
 
+    // Create Images plugin data nodes and read image data.
+    auto imageNode = CreateImagesPlugin(dataStorage, projPath, imageFolderNode, imageFilePathList, imageNameList);
+
+    // Create Paths plugin data nodes.
+    CreatePathsPlugin(dataStorage, projPath, pathFolderNode, pathFolderName);
+
+    // Create Segmentations plugin data nodes.
+    CreateSegmentationsPlugin(dataStorage, projPath, segFolderNode, segFolderName);
+
+    // Create MITK segmentation data nodes
+    CreateMitkSegmentationsPlugin(dataStorage, projPath, imageNode);
+
+    // Create Model plugin data nodes.
+    CreateModelPlugin(dataStorage, projPath, modelFolderNode, modelFolderName);
+
+    // Create Meshes plugin data nodes.
+    CreatePlugin(dataStorage, projPath, meshFolderNode, meshFolderName, "*.msh");
+
+    // Create Simulations plugin data nodes.
+    CreatePlugin(dataStorage, projPath, simFolderNode, simFolderName, "*.sjb");
+
+    // Create svFSI plugin data nodes.
+    CreatePlugin(dataStorage, projPath, svFSIFolderNode, svFSIFolderName, "*.fsijob");
+
+    // Create Simulations1d plugin data nodes.
+    CreatePlugin(dataStorage, projPath, sim1dFolderNode, sim1dFolderName, "*.s1djb");
+
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
+}
+
+//------------------
+// GetImageDataPath
+//------------------
+//
+void sv4guiProjectManager::GetImageDataPath(QString projName, QString projParentDir, QString imageFolderName)
+{
+  std::cout << std::endl;
+  std::cout << "========== sv4guiProjectManager::GetImageDataPath ========== " << std::endl;
+  QDir dir(projParentDir);
+  dir.cd(projName);
+
+  std::cout << "[GetImageDataPath] projName: " << projName.toStdString() << std::endl;
+  std::cout << "[GetImageDataPath] projParentDir: " << projParentDir.toStdString() << std::endl;
+
+  auto projPath = dir.absolutePath();
+  auto imageLocFilePath = dir.absoluteFilePath(imageFolderName + "/" + sv4guiProjectManager::IMAGE_LOCATION_FILE_NAME);
+  std::cout << "[GetImageDataPath] imageLocFilePath: " << imageLocFilePath.toStdString() << std::endl;
+
+  QString imageFilePath;
+  QString imageName;
+  bool noimageLocFile; 
+
+  // If there is no image location file then read the old .svproj file.
+  //
+  QFileInfo checkFile(imageLocFilePath);
+  if (!checkFile.exists()) { 
+    std::cout << "[GetImageDataPath] **** No imageLocFilePath: " << imageLocFilePath.toStdString() << std::endl;
+    QStringList imageFilePathList;
+    QStringList imageNameList;
+    GetImageDataPathFromSvproj(projName, projParentDir, imageFolderName, imageFilePathList, imageNameList);
+    imageFilePath = imageFilePathList[0];
+    imageName = imageNameList[0];
+    noimageLocFile = true; 
+  } else {
+    noimageLocFile = false; 
+    GetImageDataPathFromImageLoc(imageLocFilePath, imageFolderName, imageFilePath, imageName);
+  }
+
+  std::cout << "[GetImageDataPath] imageName: " << imageName.toStdString() << std::endl;
+  std::cout << "[GetImageDataPath] imageFilePath: " << imageFilePath.toStdString() << std::endl;
+
+  std::cout << std::endl;
 
 }
 
+//------------------------------
+// GetImageDataPathFromImageLoc
+//------------------------------
+//
+void sv4guiProjectManager::GetImageDataPathFromImageLoc(QString imageLocFilePath, QString imageFolderName, QString& imageFilePath, 
+      QString& imageName)
+{
+  // Read IMAGE_LOCATION_FILE_NAME xml file.
+  //
+  QDomDocument doc("image_location");
+  QFile xmlFile(imageLocFilePath);
+  xmlFile.open(QIODevice::ReadOnly);
+  QString *em = NULL;
+  doc.setContent(&xmlFile, em);
+  xmlFile.close();
+  
+  QDomElement imageLoc = doc.firstChildElement("ImageLocation");
+  imageName = imageLoc.attribute("name");
+  imageFilePath = imageLoc.attribute("path");
+}
+
+//----------------------------
+// GetImageDataPathFromSvproj
+//----------------------------
+//
+void sv4guiProjectManager::GetImageDataPathFromSvproj(QString projName, QString projParentDir, QString imageFolderName, 
+    QStringList& imageFilePathList, QStringList& imageNameList)
+{
+  std::cout << std::endl;
+  std::cout << "========== sv4guiProjectManager::GetImageDataPathFromSvproj ========== " << std::endl;
+  QDir dir(projParentDir);
+  dir.cd(projName);
+  auto projPath = dir.absolutePath();
+
+  QString svprojFilePath = dir.absoluteFilePath(sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME);
+  std::cout << "[GetImageDataPathFromSvproj] svprojFilePath: " << svprojFilePath.toStdString() << std::endl;
+  QFileInfo checkFile(svprojFilePath);
+
+  if (!checkFile.exists()) { 
+    std::cout << "[GetImageDataPathFromSvproj] **** No svproj file; " << svprojFilePath.toStdString() << std::endl;
+    MITK_ERROR << "No .svproj file '" << svprojFilePath.toStdString() << "' found for the project.";
+  }
+  
+  // Read .svproj xml file.
+  //
+  QDomDocument doc("svproj");
+  QFile xmlFile(svprojFilePath);
+  xmlFile.open(QIODevice::ReadOnly);
+  QString *em = NULL;
+  doc.setContent(&xmlFile, em);
+  xmlFile.close();
+
+  QDomElement projDesc = doc.firstChildElement("projectDescription");
+  QDomElement imagesElement = projDesc.firstChildElement("images");
+  imageFolderName = imagesElement.attribute("folder_name");
+  QDomNodeList imageList = imagesElement.elementsByTagName("image");
+
+  // Get image paths and names.
+  //
+  // [DaveP] There can only be a single image?
+  //
+  for (int i = 0; i < imageList.size(); i++) {
+    QDomNode imageNode = imageList.item(i);
+    if (imageNode.isNull()) {
+      continue;
+    }
+
+    QDomElement imageElement = imageNode.toElement();
+    if (imageElement.isNull()) {
+      continue;
+    }
+
+    QString inProj = imageElement.attribute("in_project");
+    QString imageName = imageElement.attribute("name");
+    QString imagePath = imageElement.attribute("path");
+    bool rewriteProjectConfigFile = false;
+
+    if (inProj == "yes") {
+      if (imagePath != "") {
+        imageFilePathList << (projPath+"/"+imageFolderName+"/"+imagePath);
+      } else if(imageName != "") {
+        imageFilePathList << (projPath+"/"+imageFolderName+"/"+imageName);
+        imageElement.setAttribute("path", imageName);
+        imageElement.setAttribute("name", imageName.remove(".vti"));
+        rewriteProjectConfigFile = true;
+      }
+      imageNameList << imageName;
+
+    } else {
+      imageFilePathList << imageElement.attribute("path");
+
+      if (imageName == "") {
+        imageName = "image";
+        imageElement.setAttribute("name",imageName);
+        rewriteProjectConfigFile = true;
+      }
+      imageNameList << imageName;
+    }
+  }
+
+  if (imageFilePathList.size() != 1) {
+      MITK_ERROR << "Failed to load .svproj file '" << svprojFilePath.toStdString() << "'; no image path information.";
+  }
+}
+
+//----------------------
+// WriteEmptyConfigFile
+//----------------------
+//
 void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
 {
     QDomDocument doc;
@@ -570,6 +520,10 @@ void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
     }
 }
 
+//----------
+// AddImage
+//----------
+//
 void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode
                                 , bool copyIntoProject, double scaleFactor, QString newImageName)
 {
@@ -715,20 +669,15 @@ transform.
 To counteract this we write the original transform when loading in the dicom,
 then when the converted .vti is read back in, we reset the transform.
 **/
-void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
-  std::string imageParentPath, std::string imageName){
-
-    QDir dir(QString::fromStdString(imageParentPath));
-
-    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".transform.xml"));
-
+void sv4guiProjectManager::writeTransformFile(mitk::Image* image, std::string imageParentPath, std::string imageName)
+{
+  QDir dir(QString::fromStdString(imageParentPath));
+  QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".transform.xml"));
 
   auto transform_fn = FilePath.toStdString();
-
   auto transform = image->GetGeometry()->GetVtkMatrix();
 
   QDomDocument doc;
-
   QDomNode xmlNode = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
   doc.appendChild(xmlNode);
 
@@ -830,7 +779,12 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
   }
 }
 
-void sv4guiProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath)
+//---------------
+// SaveProjectAs
+//---------------
+//
+void sv4guiProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, 
+      QString saveFilePath)
 {
     SaveProject(dataStorage,projFolderNode);
 
@@ -842,14 +796,16 @@ void sv4guiProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage,
     DuplicateDirRecursively(oldPath, saveFilePath);
 }
 
+//-------------
+// SaveProject
+//-------------
+//
 void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode)
 {
     std::vector<std::string> removeList;
 
     std::string projPath;
     projFolderNode->GetStringProperty("project path",projPath);
-
-
 
     //save paths
     mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiPathFolder"));
@@ -1210,6 +1166,10 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
     svFSIFolder->ClearRemoveList();
 }
 
+//-----------------
+// SaveAllProjects
+//-----------------
+//
 void sv4guiProjectManager::SaveAllProjects(mitk::DataStorage::Pointer dataStorage)
 {
     mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSubset(mitk::NodePredicateDataType::New("sv4guiProjectFolder"));
@@ -1348,7 +1308,12 @@ mitk::DataNode::Pointer sv4guiProjectManager::LoadDataNode(std::string filePath)
  return node;
 }
 
-mitk::DataNode::Pointer sv4guiProjectManager::GetProjectFolderNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode)
+//----------------------
+// GetProjectFolderNode
+//----------------------
+//
+mitk::DataNode::Pointer 
+sv4guiProjectManager::GetProjectFolderNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode)
 {
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources (dataNode,isProjFolder,false);
@@ -1360,6 +1325,10 @@ mitk::DataNode::Pointer sv4guiProjectManager::GetProjectFolderNode(mitk::DataSto
     return projFolderNode;
 }
 
+//-------------
+// AddDataNode
+//-------------
+//
 void sv4guiProjectManager::AddDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode)
 {
     if(parentNode.IsNull())
@@ -1368,6 +1337,10 @@ void sv4guiProjectManager::AddDataNode(mitk::DataStorage::Pointer dataStorage, m
         dataStorage->Add(dataNode,parentNode);
 }
 
+//----------------
+// RemoveDataNode
+//----------------
+//
 void sv4guiProjectManager::RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode)
 {
     dataStorage->Remove(dataNode);
@@ -1385,6 +1358,10 @@ void sv4guiProjectManager::RemoveDataNode(mitk::DataStorage::Pointer dataStorage
 
 }
 
+//----------------
+// RenameDataNode
+//----------------
+//
 void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, std::string newName)
 {
     std::string name=dataNode->GetName();
@@ -1461,6 +1438,10 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     }
 }
 
+//------------------
+// DuplicateProject
+//------------------
+//
 void sv4guiProjectManager::DuplicateProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString newName)
 {
     SaveProject(dataStorage,projFolderNode);
@@ -1478,6 +1459,10 @@ void sv4guiProjectManager::DuplicateProject(mitk::DataStorage::Pointer dataStora
         sv4guiProjectManager::AddProject(dataStorage,newName,projParentDir,false);
 }
 
+//-------------------------
+// DuplicateDirRecursively
+//-------------------------
+//
 bool sv4guiProjectManager::DuplicateDirRecursively(const QString &srcFilePath, const QString &tgtFilePath)
 {
     QFileInfo srcFileInfo(srcFilePath);
@@ -1517,4 +1502,208 @@ bool sv4guiProjectManager::DuplicateDirRecursively(const QString &srcFilePath, c
         }
     }
     return true;
+}
+
+//--------------------
+// CreateImagesPlugin
+//--------------------
+// Create Images plugin data nodes and read image data.
+//
+mitk::DataNode::Pointer 
+sv4guiProjectManager::CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+    mitk::DataNode::Pointer imageFolderNode, QStringList imageFilePathList, QStringList imageNameList)
+{
+  imageFolderNode->SetVisibility(false);
+  mitk::DataNode::Pointer imageNode;
+
+  for (int i = 0; i < imageFilePathList.size(); i++) {
+    auto imageFilePath = imageFilePathList[i].toStdString();
+    std::cout << "[AddProject] imageFilePath: " << imageFilePath << std::endl;
+
+    try {
+      imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath);
+      imageNode->SetName(imageNameList[i].toStdString());
+
+      // Transform the image from the values given in the .transform.xml file. 
+      auto image = dynamic_cast<mitk::Image*>(imageNode->GetData());
+      setTransform(image, projPath.toStdString(), imageNode->GetName());
+      dataStorage->Add(imageNode,imageFolderNode);
+
+    } catch(...) {
+      MITK_ERROR << "Failed to load image (maybe non-existing or unsupported data type): " << imageFilePath;
+    }
+  }
+
+  return imageNode;
+}
+
+//-------------------
+// CreatePathsPlugin
+//-------------------
+// Create Paths plugin data nodes.
+//
+void sv4guiProjectManager::CreatePathsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+    mitk::DataNode::Pointer pathFolderNode, QString pathFolderName)
+{
+  pathFolderNode->SetVisibility(false);
+  QDir dir(projPath);
+  dir.cd(pathFolderName);
+  auto fileInfoList = dir.entryInfoList(QStringList("*.pth"), QDir::Files, QDir::Name);
+
+  for (int i = 0; i < fileInfoList.size(); i++) {
+    auto pathNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+    pathNode->SetVisibility(false);
+    auto path = dynamic_cast<sv4guiPath*>(pathNode->GetData());
+
+    if (path) {
+      auto props = path->GetProps();
+      auto it = props.begin();
+      while (it != props.end()) {
+        if (it->first=="point 2D display size" || it->first=="point size") {
+          if (it->second != "") {
+            float value = (float)(std::stod(it->second));
+            pathNode->SetFloatProperty(it->first.c_str(),value);
+          }
+        }
+        it++;
+      }
+    }
+
+    dataStorage->Add(pathNode, pathFolderNode);
+  }
+}
+
+//---------------------------
+// CreateSegmentationsPlugin
+//---------------------------
+// Create Segmentations plugin data nodes.
+//
+void sv4guiProjectManager::CreateSegmentationsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+    mitk::DataNode::Pointer segFolderNode, QString segFolderName)
+{
+  segFolderNode->SetVisibility(false);
+  QDir dirSeg(projPath);
+  dirSeg.cd(segFolderName);
+  QStringList segNameFilters;
+  segNameFilters << "*.ctgr" <<"*.s3d";
+  auto fileInfoList = dirSeg.entryInfoList(segNameFilters, QDir::Files, QDir::Name);
+
+  for (int i = 0; i < fileInfoList.size(); i++) {
+    auto filePath = fileInfoList[i].absoluteFilePath().toStdString();
+
+    try {
+      auto segNode = sv4guiProjectManager::LoadDataNode(filePath);
+      segNode->SetVisibility(false);
+      auto group = dynamic_cast<sv4guiContourGroup*>(segNode->GetData());
+
+      if (group) {
+        auto props = group->GetProps();
+        auto it = props.begin();
+        while(it != props.end()) {
+          if (it->second!="") {
+            if (it->first=="point 2D display size") {
+              float value=(float)(std::stod(it->second));
+              segNode->SetFloatProperty("point.displaysize",value);
+            } else if (it->first=="point size") {
+              float value=(float)(std::stod(it->second));
+              segNode->SetFloatProperty("point.3dsize",value);
+            }
+          }
+
+          it++;
+        }
+      }
+
+      dataStorage->Add(segNode,segFolderNode);
+
+    } catch(...) {
+      MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
+    }
+  }
+
+}
+
+//-------------------------------
+// CreateMitkSegmentationsPlugin
+//-------------------------------
+// Create MITK segmentation data nodes
+//
+void sv4guiProjectManager::CreateMitkSegmentationsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+    mitk::DataNode::Pointer imageNode)
+{
+  QDir dirSeg(projPath);
+  auto fileInfoList = dirSeg.entryInfoList(QStringList("*.vti"), QDir::Files, QDir::Name);
+
+  for (int i = 0; i < fileInfoList.size(); i++) {
+    auto filePath = fileInfoList[i].absoluteFilePath().toStdString();
+
+    try {
+      auto mitkSegNode = sv4guiProjectManager::LoadDataNode(filePath);
+      mitkSegNode->SetVisibility(false);
+      auto image = dynamic_cast<mitk::Image*>(mitkSegNode->GetData());
+      setTransform(image, projPath.toStdString(), imageNode->GetName());
+      dataStorage->Add(mitkSegNode,imageNode);
+    } catch(...) {
+      MITK_ERROR << "Failed to load segmentation image (maybe non-existing or unsupported data type): " << filePath;
+    }
+  }
+
+}
+
+//-------------------
+// CreateModelPlugin
+//-------------------
+// Create Model plugin data nodes.
+//
+void sv4guiProjectManager::CreateModelPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+    mitk::DataNode::Pointer modelFolderNode, QString modelFolderName)
+{
+  modelFolderNode->SetVisibility(false);
+  QDir dirModel(projPath);
+  dirModel.cd(modelFolderName);
+  auto fileInfoList = dirModel.entryInfoList(QStringList("*.mdl"), QDir::Files, QDir::Name);
+  bool firstModel = true;
+
+  for (int i = 0; i < fileInfoList.size(); i++) {
+    auto filePath = fileInfoList[i].absoluteFilePath().toStdString();
+    try {
+      auto modelNode = sv4guiProjectManager::LoadDataNode(filePath);
+      if (firstModel) {
+        modelNode->SetVisibility(true);
+        firstModel = false;
+      } else {
+        modelNode->SetVisibility(false);
+      }
+      dataStorage->Add(modelNode,modelFolderNode);
+
+    } catch(...) {
+      MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
+    }
+  }
+}
+
+//--------------
+// CreatePlugin
+//--------------
+// Create generic plugin data nodes.
+//
+void sv4guiProjectManager::CreatePlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+    mitk::DataNode::Pointer folderNode, QString folderName, QString fileExt)
+{
+  folderNode->SetVisibility(false);
+  QDir dir(projPath);
+  dir.cd(folderName);
+  auto fileInfoList = dir.entryInfoList(QStringList(fileExt), QDir::Files, QDir::Name);
+
+  for (int i = 0; i < fileInfoList.size();i++) {
+    auto filePath = fileInfoList[i].absoluteFilePath().toStdString();
+
+    try {
+      auto node = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+      node->SetVisibility(false);
+      dataStorage->Add(node, folderNode);
+    } catch(...) {
+      MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
+    }
+  }
 }
