@@ -78,7 +78,8 @@ MODULE_NAME_ALL_CAPS = SV4GUIMODULEPYTHONAPI
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
-HDRS	=     Segmentation_PyModule.h \
+HDRS	=     Imaging_PyModule.h \
+              Segmentation_PyModule.h \
               Geometry_PyModule.h \
               Math_PyModule.h \
               Meshing_PyModule.h \
@@ -89,7 +90,8 @@ HDRS	=     Segmentation_PyModule.h \
               Simulation_PyModule.h \
               Vmtk_PyModule.h
 
-CXXSRCS	=     Segmentation_PyModule.cxx \
+CXXSRCS	=     Imaging_PyModule.cxx \
+              Segmentation_PyModule.cxx \
               Geometry_PyModule.cxx \
               Math_PyModule.cxx \
               Meshing_PyModule.cxx \
@@ -118,6 +120,8 @@ DLLLIBS = $(SVLIBFLAG)$(SV_LIB_REPOSITORY_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_OCCT_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_PROJECTMANAGEMENT_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_ITK_LSET_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_SEGMENTATION_NAME)$(LIBLINKEXT) \
