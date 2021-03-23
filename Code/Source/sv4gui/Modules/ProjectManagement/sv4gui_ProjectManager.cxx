@@ -29,6 +29,39 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiProjectManager class is used to manage SimVascular projects. 
+//
+// The SV Data Manager contains a hierarchy of Data Nodes comprising
+// top level plugin nodes (e.g. Images, Paths, Segmentations, etc.) under 
+// under which instances of that plugin type are created and stored. 
+//
+// For example:
+//
+//     Project Node
+//
+//        Images              - Top Level Images Plugin Data Node
+//           Images-1         - Images Plugin Data Node 1
+//           Images-2         - Images Plugin Data Node 2
+//
+//        Paths               - Top Level Paths Plugin Data Node
+//           Paths-1          - Instance of Paths Plugin Data Node 
+//
+//
+// Each plugin (Images, Paths, etc.) has a unique file extension used to
+// identify a plugin type. Each plugin directory contains files for each plugin 
+// instance (name chosen by the user) with its extenstion. This stores the plugin
+// state, i.e. the values of the GUI widgets used as parameters used to perform
+// plugin operations.
+// 
+//     Images: .vti
+//     Meshes: .msh
+//     Models: .mdl 
+//     Paths:  .pth
+//     Segmentations: .ctgr
+//     Simulations: .sjb
+//     1D Simulations: .s1djb
+//     svFSI: .fsijob
+
 #include "sv4gui_ProjectManager.h"
 
 #include "sv4gui_ProjectFolder.h"
@@ -74,41 +107,9 @@
 #include <QFile>
 #include <QTextStream>
 
-#include <iostream>
 #include <fstream>
-
-// The sv4guiProjectManager class is used to manage SimVascular projects. 
-//
-// The SV Data Manager contains a hierarchy of Data Nodes comprising
-// top level plugin nodes (e.g. Images, Paths, Segmentations, etc.) under 
-// under which instances of that plugin type are created and stored. 
-//
-// For example:
-//
-//     Project Node
-//
-//        Images              - Top Level Images Plugin Data Node
-//           Images-1         - Images Plugin Data Node 1
-//           Images-2         - Images Plugin Data Node 2
-//
-//        Paths               - Top Level Paths Plugin Data Node
-//           Paths-1          - Instance of Paths Plugin Data Node 
-//
-//
-// Each plugin (Images, Paths, etc.) has a unique file extension used to
-// identify a plugin type. Each plugin directory contains files for each plugin 
-// instance (name chosen by the user) with its extenstion. This stores the plugin
-// state, i.e. the values of the GUI widgets used as parameters used to perform
-// plugin operations.
-// 
-//     Images: .vti
-//     Meshes: .msh
-//     Models: .mdl 
-//     Paths:  .pth
-//     Segmentations: .ctgr
-//     Simulations: .sjb
-//     1D Simulations: .s1djb
-//     svFSI: .fsijob
+#include <iostream>
+#include <map>
 
 // Define the name of the files used to identify the image data location.
 //
@@ -117,6 +118,35 @@
 const QString sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME = ".svproj";
 const QString sv4guiProjectManager::IMAGE_LOCATION_FILE_NAME = "image_location.xml";
 
+namespace sv4gui_project_manager {
+
+  // Set plugin names. 
+  const QString PluginNames::IMAGES = "Images";
+  const QString PluginNames::MESHES = "Meshes";
+  const QString PluginNames::MODELS = "Models";
+  const QString PluginNames::PATHS = "Paths";
+  const QString PluginNames::SEGMENTATIONS = "Segmentations";
+  const QString PluginNames::SIMULATIONS = "Simulations";
+  const QString PluginNames::SIMULATIONS_1D = "Simulations1d";
+  const QString PluginNames::SVFSI = "svFSI";
+  const QStringList PluginNames::NAMES_LIST = {
+    PluginNames::IMAGES,
+    PluginNames::MESHES,
+    PluginNames::MODELS,
+    PluginNames::PATHS,
+    PluginNames::SEGMENTATIONS,
+    PluginNames::SIMULATIONS,
+    PluginNames::SIMULATIONS_1D,
+    PluginNames::SVFSI 
+  };
+
+  const QString XmlElementNames::FILE_NAME = "file_name";
+  const QString XmlElementNames::IMAGE_NAME = "image_name";
+  const QString XmlElementNames::PATH = "path";
+  const QString XmlElementNames::ROOT = "ImageLocation";
+
+}
+
 //------------
 // AddProject
 //------------
@@ -124,149 +154,74 @@ const QString sv4guiProjectManager::IMAGE_LOCATION_FILE_NAME = "image_location.x
 //
 void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir, bool newProject)
 {
+    using namespace sv4gui_project_manager;
     std::cout << std::endl;
     std::cout << "========== sv4guiProjectManager::AddProject ========== " << std::endl;
     std::cout << "[AddProject] newProject: " << newProject << std::endl;
-    QString projectConfigFileName = ".svproj";
+    QString projectConfigFileName = sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME; 
 
-    // Set plugin directory names. 
-    QString imageFolderName = "Images";
-    QString pathFolderName = "Paths";
-    QString segFolderName = "Segmentations";
-    QString modelFolderName = "Models";
-    QString meshFolderName = "Meshes";
-    QString simFolderName = "Simulations";
-    QString sim1dFolderName = "Simulations1d";
-    QString svFSIFolderName = "svFSI";
-    QString reposFolderName = "Repository";
+    QString imageFolderName = PluginNames::IMAGES; 
+    QString meshFolderName = PluginNames::MESHES; 
+    QString modelFolderName = PluginNames::MODELS;
+    QString pathFolderName =  PluginNames::PATHS; 
+    QString segFolderName = PluginNames::SEGMENTATIONS;  
+    QString simFolderName = PluginNames::SIMULATIONS;
+    QString sim1dFolderName = PluginNames::SIMULATIONS_1D; 
+    QString svFSIFolderName = PluginNames::SVFSI;
 
-    GetImageDataPath(projName, projParentDir, imageFolderName);
-
-    QDir dir(projParentDir);
+    QDir project_dir(projParentDir);
     if (newProject) {
-        dir.mkdir(projName);
+        project_dir.mkdir(projName);
     }
-    dir.cd(projName);
+    project_dir.cd(projName);
 
-    QString projPath = dir.absolutePath();
-    QString projectConfigFilePath = dir.absoluteFilePath(projectConfigFileName);
+    QString projPath = project_dir.absolutePath();
+    //QString projectConfigFilePath = dir.absoluteFilePath(projectConfigFileName);
 
-    QStringList imageFilePathList;
-    QStringList imageNameList;
+    QString imageFilePath;
+    QString imageFileName;
+    QString imageName;
 
-    bool rewriteProjectConfigFile = false;
-    QDomDocument doc("svproj");
-
+    // If this is a new project then create plugin directories. 
+    //
     if (newProject) {
-        WriteEmptyConfigFile(projectConfigFilePath);
-        dir.mkdir(imageFolderName);
-        dir.mkdir(pathFolderName);
-        dir.mkdir(segFolderName);
-        dir.mkdir(modelFolderName);
-        dir.mkdir(meshFolderName);
-        dir.mkdir(simFolderName);
-        dir.mkdir(sim1dFolderName);
-        dir.mkdir(svFSIFolderName);
-        dir.mkdir(reposFolderName);
+        for (auto const& name : PluginNames::NAMES_LIST) {
+            project_dir.mkdir(name);
+        }
+        WriteImageInfo(projPath, imageFilePath, imageFileName, imageName);
 
     } else {
-
-        QFile xmlFile(projectConfigFilePath);
-        xmlFile.open(QIODevice::ReadOnly);
-//        QDomDocument doc("svproj");
-        QString *em=NULL;
-        doc.setContent(&xmlFile,em);
-        xmlFile.close();
-
-        QDomElement projDesc = doc.firstChildElement("projectDescription");
-        QDomElement imagesElement = projDesc.firstChildElement("images");
-        imageFolderName = imagesElement.attribute("folder_name");
-        QDomNodeList imageList = imagesElement.elementsByTagName("image");
-
-        // Create a list of image names to read.
-        //
-        // [TODO:DaveP] This loop does not make sense because only one 
-        // image is allowed in SV.
-        //
-        std::cout << "[AddProject] imageList.size(): " << imageList.size() << std::endl;
-        for (int i = 0; i < imageList.size(); i++) {
-            QDomNode imageNode = imageList.item(i);
-            if (imageNode.isNull()) {
-                continue;
-            }
-
-            QDomElement imageElement=imageNode.toElement();
-            if(imageElement.isNull()) {
-                continue;
-            }
-
-            QString inProj = imageElement.attribute("in_project");
-            QString imageName = imageElement.attribute("name");
-            QString imagePath = imageElement.attribute("path");
-
-            // Set the image plugin attributes.
-            //
-            // [TODO:DaveP] How can imagePath = "" ?
-            //
-            if (inProj == "yes") {
-                if (imagePath != "") {
-                    imageFilePathList << (projPath+"/"+imageFolderName+"/"+imagePath);
-                } else if(imageName != "") {
-                    imageFilePathList << (projPath+"/"+imageFolderName+"/"+imageName);
-                    imageElement.setAttribute("path", imageName);
-                    imageElement.setAttribute("name", imageName.remove(".vti"));
-                    rewriteProjectConfigFile = true;
-                }
-                imageNameList << imageName;
-
-            } else {
-                imageFilePathList << imageElement.attribute("path");
-
-                if (imageName=="") {
-                    imageName = "image";
-                    imageElement.setAttribute("name",imageName);
-                    rewriteProjectConfigFile = true;
-                }
-                imageNameList<<imageName;
-            }
-        }
-    }
-
-    // Overwrite the .svproj file.
-
-    if (rewriteProjectConfigFile) {
-        QString xml = doc.toString(4);
-        QFile file( projectConfigFilePath );
-        if (file.open(QFile::WriteOnly | QFile::Truncate)) {
-            QTextStream out(&file);
-            out << xml <<endl;
-        }
+        ReadImageInfo(projPath, imageFilePath, imageFileName, imageName);
     }
 
     // Create the SV Data Manager top level plugin data nodes.
     //
-    mitk::DataNode::Pointer projectFolderNode = CreateDataFolder<sv4guiProjectFolder>(dataStorage,projName);
+    mitk::DataNode::Pointer projectFolderNode = CreateDataFolder<sv4guiProjectFolder>(dataStorage, projName);
     projectFolderNode->AddProperty("project path",mitk::StringProperty::New(projPath.toStdString().c_str()));
 
-    mitk::DataNode::Pointer imageFolderNode = CreateDataFolder<sv4guiImageFolder>(dataStorage, imageFolderName, projectFolderNode);
-    mitk::DataNode::Pointer pathFolderNode = CreateDataFolder<sv4guiPathFolder>(dataStorage, pathFolderName, projectFolderNode);
-    mitk::DataNode::Pointer segFolderNode = CreateDataFolder<sv4guiSegmentationFolder>(dataStorage,segFolderName, projectFolderNode);
-    mitk::DataNode::Pointer modelFolderNode = CreateDataFolder<sv4guiModelFolder>(dataStorage, modelFolderName, projectFolderNode);
-    mitk::DataNode::Pointer meshFolderNode = CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
-    mitk::DataNode::Pointer simFolderNode = CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
-    mitk::DataNode::Pointer svFSIFolderNode = CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
-    mitk::DataNode::Pointer sim1dFolderNode = CreateDataFolder<sv4guiSimulation1dFolder>(dataStorage, sim1dFolderName, projectFolderNode);
-    mitk::DataNode::Pointer reposFolderNode = CreateDataFolder<sv4guiRepositoryFolder>(dataStorage, reposFolderName, projectFolderNode);
-
+    auto imageFolderNode = sv4guiProjectManager::CreateDataFolder<sv4guiImageFolder>(dataStorage, imageFolderName, projectFolderNode); 
     imageFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+
+    auto pathFolderNode = CreateDataFolder<sv4guiPathFolder>(dataStorage, pathFolderName, projectFolderNode);
     pathFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+
+    auto segFolderNode = CreateDataFolder<sv4guiSegmentationFolder>(dataStorage,segFolderName, projectFolderNode);
     segFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+
+    auto modelFolderNode = CreateDataFolder<sv4guiModelFolder>(dataStorage, modelFolderName, projectFolderNode);
     modelFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+
+    auto meshFolderNode = CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
     meshFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+
+    auto simFolderNode = CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
     simFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+
+    auto svFSIFolderNode = CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
     svFSIFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+
+    auto sim1dFolderNode = CreateDataFolder<sv4guiSimulation1dFolder>(dataStorage, sim1dFolderName, projectFolderNode);
     sim1dFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
-    reposFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
     if (newProject) {
         mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
@@ -274,7 +229,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     }
 
     // Create Images plugin data nodes and read image data.
-    auto imageNode = CreateImagesPlugin(dataStorage, projPath, imageFolderNode, imageFilePathList, imageNameList);
+    auto imageNode = CreateImagesPlugin(dataStorage, projPath, imageFolderNode, imageFilePath, imageFileName, imageName);
+    //auto imageNode = CreateImagesPlugin(dataStorage, projPath, imageFolderNode, imageFilePathList, imageNameList);
 
     // Create Paths plugin data nodes.
     CreatePathsPlugin(dataStorage, projPath, pathFolderNode, pathFolderName);
@@ -303,95 +259,128 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
 }
 
-//------------------
-// GetImageDataPath
-//------------------
+//---------------
+// ReadImageInfo
+//---------------
+// Read the path to image data, the image file name, and the image name from a file.
 //
-void sv4guiProjectManager::GetImageDataPath(QString projName, QString projParentDir, QString imageFolderName)
+// The information is read from the IMAGE_LOCATION_FILE_NAME file if it exists. 
+// If not then it is read from the SVPROJ_CONFIG_FILE_NAME file. 
+//
+// Arguments
+//   projPath: The path to the SV project.
+//
+// Returns:
+//   imageFilePath: The path to the image file. If empty then the image file is in the project's Images directory.
+//   imageFileName: The name of the image file. 
+//   imageName: The name of the image. 
+//
+void sv4guiProjectManager::ReadImageInfo(const QString& projPath, QString& imageFilePath, QString& imageFileName, 
+     QString& imageName)
 {
+  using namespace sv4gui_project_manager;
+  auto imageFolderName = PluginNames::IMAGES;
   std::cout << std::endl;
-  std::cout << "========== sv4guiProjectManager::GetImageDataPath ========== " << std::endl;
-  QDir dir(projParentDir);
-  dir.cd(projName);
+  std::cout << "========== sv4guiProjectManager::ReadImageInfo ========== " << std::endl;
+  std::cout << "[ReadImageInfo] projPath: " << projPath.toStdString() << std::endl;
+  QDir projec_dir(projPath);
 
-  std::cout << "[GetImageDataPath] projName: " << projName.toStdString() << std::endl;
-  std::cout << "[GetImageDataPath] projParentDir: " << projParentDir.toStdString() << std::endl;
+  auto imageLocFilePath = GetImageInfoFilePath(projec_dir);
+  std::cout << "[ReadImageInfo] imageLocFilePath: " << imageLocFilePath.toStdString() << std::endl;
 
-  auto projPath = dir.absolutePath();
-  auto imageLocFilePath = dir.absoluteFilePath(imageFolderName + "/" + sv4guiProjectManager::IMAGE_LOCATION_FILE_NAME);
-  std::cout << "[GetImageDataPath] imageLocFilePath: " << imageLocFilePath.toStdString() << std::endl;
-
-  QString imageFilePath;
-  QString imageName;
-  bool noimageLocFile; 
-
-  // If there is no image location file then read the old .svproj file.
+  // If there is no image location file then read the old SVPROJ_CONFIG_FILE_NAME file.
   //
+  QString imagePath;
   QFileInfo checkFile(imageLocFilePath);
   if (!checkFile.exists()) { 
-    std::cout << "[GetImageDataPath] **** No imageLocFilePath: " << imageLocFilePath.toStdString() << std::endl;
+    std::cout << "[ReadImageInfo] Read old file: " << imageLocFilePath.toStdString() << std::endl;
     QStringList imageFilePathList;
     QStringList imageNameList;
-    GetImageDataPathFromSvproj(projName, projParentDir, imageFolderName, imageFilePathList, imageNameList);
+    bool localFile; 
+    ReadImageInfoFromSvproj(projPath, imageFilePathList, imageNameList, localFile);
     imageFilePath = imageFilePathList[0];
     imageName = imageNameList[0];
-    noimageLocFile = true; 
+    // Get separate file path and file name.
+    QFileInfo fileInfo(imageFilePath);
+    imageFilePath = fileInfo.path();
+    imageFileName = fileInfo.fileName();
   } else {
-    noimageLocFile = false; 
-    GetImageDataPathFromImageLoc(imageLocFilePath, imageFolderName, imageFilePath, imageName);
+    std::cout << "[ReadImageInfo] Read new file: " << imageLocFilePath.toStdString() << std::endl;
+    ReadImageInfoFromImageLoc(imageLocFilePath, imageFilePath, imageFileName, imageName);
   }
 
-  std::cout << "[GetImageDataPath] imageName: " << imageName.toStdString() << std::endl;
-  std::cout << "[GetImageDataPath] imageFilePath: " << imageFilePath.toStdString() << std::endl;
-
+  std::cout << "[ReadImageInfo] imageFilePath: " << imageFilePath.toStdString() << std::endl;
+  std::cout << "[ReadImageInfo] imageFileName: " << imageFileName.toStdString() << std::endl;
+  std::cout << "[ReadImageInfo] imageName: " << imageName.toStdString() << std::endl;
   std::cout << std::endl;
-
 }
 
-//------------------------------
-// GetImageDataPathFromImageLoc
-//------------------------------
+//---------------------------
+// ReadImageInfoFromImageLoc
+//---------------------------
+// Read the path to image data and the image name from a IMAGE_LOCATION_FILE_NAME file.
 //
-void sv4guiProjectManager::GetImageDataPathFromImageLoc(QString imageLocFilePath, QString imageFolderName, QString& imageFilePath, 
-      QString& imageName)
+void sv4guiProjectManager::ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, 
+       QString& imageName)
 {
+  using namespace sv4gui_project_manager;
+
   // Read IMAGE_LOCATION_FILE_NAME xml file.
-  //
   QDomDocument doc("image_location");
   QFile xmlFile(imageLocFilePath);
   xmlFile.open(QIODevice::ReadOnly);
   QString *em = NULL;
   doc.setContent(&xmlFile, em);
   xmlFile.close();
-  
-  QDomElement imageLoc = doc.firstChildElement("ImageLocation");
-  imageName = imageLoc.attribute("name");
-  imageFilePath = imageLoc.attribute("path");
+
+  // Parse xml file data.
+  QDomElement docElem = doc.documentElement();
+  QDomNode node = docElem.firstChild();
+
+  while (!node.isNull()) {
+    QDomElement element = node.toElement(); 
+    if (element.isNull()) {
+      continue;
+    }
+    auto tagName = element.tagName();
+    if (tagName == XmlElementNames::IMAGE_NAME) {
+      imageName = element.text(); 
+    }
+    else if (tagName == XmlElementNames::FILE_NAME) {
+      imageFileName = element.text(); 
+    }
+    else if (tagName == XmlElementNames::PATH) {
+      imageFilePath = element.text(); 
+    } else {
+      MITK_ERROR << "An unknown element '" << tagName.toStdString() << "' was found in the image location file '" << imageLocFilePath.toStdString() << "'.";
+    }
+    node = node.nextSibling();
+  }
 }
 
-//----------------------------
-// GetImageDataPathFromSvproj
-//----------------------------
+//-------------------------
+// ReadImageInfoFromSvproj
+//-------------------------
+// Read the path to image data and the image name from a SVPROJ_CONFIG_FILE_NAME file.
 //
-void sv4guiProjectManager::GetImageDataPathFromSvproj(QString projName, QString projParentDir, QString imageFolderName, 
-    QStringList& imageFilePathList, QStringList& imageNameList)
+void sv4guiProjectManager::ReadImageInfoFromSvproj(const QString& projPath, QStringList& imageFilePathList, QStringList& imageNameList,
+    bool& localFile)
 {
   std::cout << std::endl;
-  std::cout << "========== sv4guiProjectManager::GetImageDataPathFromSvproj ========== " << std::endl;
-  QDir dir(projParentDir);
-  dir.cd(projName);
-  auto projPath = dir.absolutePath();
+  std::cout << "========== sv4guiProjectManager::ReadImageInfoFromSvproj ========== " << std::endl;
+  std::cout << "[ReadImageInfoFromSvproj] projPath: " << projPath.toStdString() << std::endl;
+  QDir projec_dir(projPath);
 
-  QString svprojFilePath = dir.absoluteFilePath(sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME);
-  std::cout << "[GetImageDataPathFromSvproj] svprojFilePath: " << svprojFilePath.toStdString() << std::endl;
+  QString svprojFilePath = projec_dir.absoluteFilePath(sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME);
+  std::cout << "[ReadImageInfoFromSvproj] svprojFilePath: " << svprojFilePath.toStdString() << std::endl;
   QFileInfo checkFile(svprojFilePath);
 
   if (!checkFile.exists()) { 
-    std::cout << "[GetImageDataPathFromSvproj] **** No svproj file; " << svprojFilePath.toStdString() << std::endl;
+    std::cout << "[ReadImageInfoFromSvproj] **** No svproj file; " << svprojFilePath.toStdString() << std::endl;
     MITK_ERROR << "No .svproj file '" << svprojFilePath.toStdString() << "' found for the project.";
   }
   
-  // Read .svproj xml file.
+  // Read SVPROJ_CONFIG_FILE_NAME xml file.
   //
   QDomDocument doc("svproj");
   QFile xmlFile(svprojFilePath);
@@ -402,7 +391,7 @@ void sv4guiProjectManager::GetImageDataPathFromSvproj(QString projName, QString 
 
   QDomElement projDesc = doc.firstChildElement("projectDescription");
   QDomElement imagesElement = projDesc.firstChildElement("images");
-  imageFolderName = imagesElement.attribute("folder_name");
+  auto imageFolderName = imagesElement.attribute("folder_name");
   QDomNodeList imageList = imagesElement.elementsByTagName("image");
 
   // Get image paths and names.
@@ -426,6 +415,7 @@ void sv4guiProjectManager::GetImageDataPathFromSvproj(QString projName, QString 
     bool rewriteProjectConfigFile = false;
 
     if (inProj == "yes") {
+      localFile = true;
       if (imagePath != "") {
         imageFilePathList << (projPath+"/"+imageFolderName+"/"+imagePath);
       } else if(imageName != "") {
@@ -438,6 +428,7 @@ void sv4guiProjectManager::GetImageDataPathFromSvproj(QString projName, QString 
 
     } else {
       imageFilePathList << imageElement.attribute("path");
+      localFile = false;
 
       if (imageName == "") {
         imageName = "image";
@@ -449,216 +440,308 @@ void sv4guiProjectManager::GetImageDataPathFromSvproj(QString projName, QString 
   }
 
   if (imageFilePathList.size() != 1) {
-      MITK_ERROR << "Failed to load .svproj file '" << svprojFilePath.toStdString() << "'; no image path information.";
+      MITK_ERROR << "Failed to load file '" << svprojFilePath.toStdString() << "'; no image path information.";
   }
+
 }
 
-//----------------------
-// WriteEmptyConfigFile
-//----------------------
+//----------------
+// WriteImageInfo
+//----------------
+// Write the location of image data and the image name to the IMAGE_LOCATION_FILE_NAME file.
 //
-void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
+// Arguments
+//   projPath: The path to the SV project.
+//   imageFilePath: The path to the image file. If empty then the image file is in the project's Images directory.
+//   imageFileName: The name of the image file. 
+//   imageName: The name of the image. 
+//
+void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString& imageFilePath, const QString& imageFileName,
+       const QString& imageName)
 {
-    QDomDocument doc;
-    //    doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    std::cout << std::endl;
+    std::cout << "========== sv4guiProjectManager::WriteImageInfo ========== " << std::endl;
+    std::cout << "[WriteImageInfo] projPath: " << projPath.toStdString() << std::endl;
+    std::cout << "[WriteImageInfo] imageFilePath: " << imageFilePath.toStdString() << std::endl;
+    std::cout << "[WriteImageInfo] imageName: " << imageName.toStdString() << std::endl;
+    using namespace sv4gui_project_manager;
 
+    // Create XML doc.
+    QDomDocument doc;
     QDomNode xmlNode = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
     doc.appendChild(xmlNode);
 
-    QDomElement root = doc.createElement("projectDescription");
-//    root.setAttribute("version", "1.0");
-    root.setAttribute("version", "1.1");
+    // Add data.
+    QDomElement root = doc.createElement(XmlElementNames::ROOT);
     doc.appendChild(root);
 
-    QDomElement tag = doc.createElement("images");
-    tag.setAttribute("folder_name","Images");
-    root.appendChild(tag);
+    auto pathElem = doc.createElement(XmlElementNames::PATH);
+    auto pathText = doc.createTextNode(imageFilePath);
+    pathElem.appendChild(pathText);
+    root.appendChild(pathElem);
 
-    tag = doc.createElement("paths");
-    tag.setAttribute("folder_name","Paths");
-    root.appendChild(tag);
+    auto fileNameElem = doc.createElement(XmlElementNames::FILE_NAME);
+    auto fileNameText = doc.createTextNode(imageFileName);
+    fileNameElem.appendChild(fileNameText);
+    root.appendChild(fileNameElem);
 
-    tag = doc.createElement("segmentations");
-    tag.setAttribute("folder_name","Segmentations");
-    root.appendChild(tag);
+    auto nameElem = doc.createElement(XmlElementNames::IMAGE_NAME);
+    auto nameText = doc.createTextNode(imageName);
+    nameElem.appendChild(nameText);
+    root.appendChild(nameElem);
 
-    tag = doc.createElement("models");
-    tag.setAttribute("folder_name","Models");
-    root.appendChild(tag);
-
-    tag = doc.createElement("meshes");
-    tag.setAttribute("folder_name","Meshes");
-    root.appendChild(tag);
-
-    tag = doc.createElement("simulations");
-    tag.setAttribute("folder_name","Simulations");
-    root.appendChild(tag);
-
-    tag = doc.createElement("simulations1d");
-    tag.setAttribute("folder_name","Simulations1d");
-    root.appendChild(tag);
-
-    tag = doc.createElement("svFSI");
-    tag.setAttribute("folder_name","svFSI");
-    root.appendChild(tag);
-
-    tag = doc.createElement("repository");
-    tag.setAttribute("folder_name","Repository");
-    root.appendChild(tag);
-
-    tag = doc.createElement("svFSI");
-    tag.setAttribute("folder_name","svFSI");
-    root.appendChild(tag);
-
+    // Write the data to a file.
+    QDir project_dir(projPath);
     QString xml = doc.toString(4);
-
-    QFile file( projConfigFilePath );
+    QString filePath = GetImageInfoFilePath(project_dir);
+    QFile file(filePath);
 
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
         out << xml <<endl;
     }
+}
+
+//----------------------
+// GetImageInfoFilePath
+//----------------------
+// Get the path to the image location file IMAGE_LOCATION_FILE_NAME.
+//
+// The IMAGE_LOCATION_FILE_NAME file is currently store in the 
+// project's 'Images' directory.
+//
+QString sv4guiProjectManager::GetImageInfoFilePath(QDir project_dir)
+{
+  using namespace sv4gui_project_manager;
+  return project_dir.absoluteFilePath(PluginNames::IMAGES + "/" + sv4guiProjectManager::IMAGE_LOCATION_FILE_NAME);
 }
 
 //----------
 // AddImage
 //----------
+// Add image data to SV Data Manager Images node.
 //
-void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode
-                                , bool copyIntoProject, double scaleFactor, QString newImageName)
+// If 'copyIntoProject' is true then the image data is copied into the project as a .vti file.
+//
+void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, 
+      mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor, QString addImageName)
 {
-    mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
+  using namespace sv4gui_project_manager;
+  std::cout << std::endl;
+  std::cout << "========== sv4guiProjectManager::AddImage ========== " << std::endl;
+  std::cout << "[AddImage] imageFilePath: " << imageFilePath.toStdString() << std::endl;
+  std::cout << "[AddImage] addImageName: " << addImageName.toStdString() << std::endl;
+  std::cout << "[AddImage] copyIntoProject: " << copyIntoProject << std::endl;
+  std::cout << "[AddImage] scaleFactor: " << scaleFactor << std::endl;
+  mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
 
-    //add image to config
+  // Get the project path. 
+  auto isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+  auto rs = dataStorage->GetSources(imageFolderNode, isProjFolder);
+  auto projectFolderNode = rs->GetElement(0);
+  std::string projPath;
+  projectFolderNode->GetStringProperty("project path", projPath);
+  std::cout << "[AddImage] projPath: " << projPath << std::endl;
 
-    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources (imageFolderNode,isProjFolder);
+  // Set the new image name.
+  auto newImageName = addImageName.toStdString();
+  if (newImageName == "") {
+    newImageName = "image";
+    if (projectFolderNode.IsNotNull()) {
+      newImageName = projectFolderNode->GetName();
+    }
+  }
+  imageNode->SetName(newImageName);
+  std::cout << "[AddImage] newImageName: " << newImageName << std::endl;
 
-    std::string projPath;
-    mitk::DataNode::Pointer projectFolderNode=rs->GetElement(0);
+  // Read imge path and name information from a file.
+  std::cout << "[AddImage] Read image information ... "  << std::endl;
+  QString imageFolderName = PluginNames::IMAGES; 
+  QString oldImageFilePath; 
+  QString oldImageFileName;
+  QString oldImageName;
+  ReadImageInfo(QString(projPath.c_str()), oldImageFilePath, oldImageFileName, oldImageName);
+  std::cout << "[AddImage] oldImageFilePath: " << oldImageFilePath.toStdString() << std::endl;
+  std::cout << "[AddImage] oldImageFileName: " << oldImageFileName.toStdString() << std::endl;
+  std::cout << "[AddImage] oldImageName: " << oldImageName.toStdString() << std::endl;
+  auto imagePath = QString(projPath.c_str()) + "/" + PluginNames::IMAGES + "/" + oldImageName;
 
-    projectFolderNode->GetStringProperty("project path",projPath);
+/*
+  if (oldImageFilePath != "") {
+    QString fullPath = QString::fromStdString(projPath+"/"+imageFolderNode->GetName()+"/"+imagePath.toStdString());
+    std::cout << "[AddImage] Remove file: " << fullPath.toStdString() << std::endl;
+    QFile piFile(fullPath);
+    piFile.remove();
+  }
+*/
 
-    std::string imageName=newImageName.toStdString();
-    if(imageName=="")
-    {
-        imageName="image";
-        if(projectFolderNode.IsNotNull())
-            imageName=projectFolderNode->GetName();
+  // Copy image data to the project as a VTK VTI file.
+  QString newImageFileName;
+  QString newImageFilePath;
+  if (copyIntoProject) {
+    CopyImageToProject(projPath, imageNode, imageFolderNode, scaleFactor, newImageFileName);
+    newImageFilePath = "";
+  } else {
+    QFileInfo fileInfo(imageFilePath);
+    newImageFilePath = fileInfo.path();
+    newImageFileName = fileInfo.fileName();
+  }
+  std::cout << "[AddImage] newImageFilePath: " << newImageFilePath.toStdString() << std::endl;
+  std::cout << "[AddImage] newImageFileName: " << newImageFileName.toStdString() << std::endl;
+
+  // Write the image location file.
+   WriteImageInfo(QString(projPath.c_str()), newImageFilePath, newImageFileName, QString(newImageName.c_str()));
+
+
+/*
+  QDir projDir(QString::fromStdString(projPath));
+  QString configFilePath = projDir.absoluteFilePath(".svproj");
+  QFile xmlFile(configFilePath);
+  xmlFile.open(QIODevice::ReadOnly);
+  QDomDocument doc("svproj");
+  QString *em = NULL;
+  doc.setContent(&xmlFile, em);
+  xmlFile.close();
+  std::cout << "[AddImage] Done. "  << std::endl;
+
+  QDomElement projDesc = doc.firstChildElement("projectDescription");
+  QDomElement imagesElement = projDesc.firstChildElement("images");
+  QDomElement previousImgElement = imagesElement.firstChildElement("image");
+
+  if (!previousImgElement.isNull()) {
+    QString inProj = previousImgElement.attribute("in_project");
+
+    if (inProj == "yes") {
+      QString imagePath = previousImgElement.attribute("path");
+      if (imagePath == "") {
+        imagePath = previousImgElement.attribute("name");
+      }
+
+      if (imagePath != "") {
+        QString fullPath = QString::fromStdString(projPath+"/"+imageFolderNode->GetName()+"/"+imagePath.toStdString());
+        std::cout << "[AddImage] Remove file: " << fullPath.toStdString() << std::endl;
+        QFile piFile(fullPath);
+        piFile.remove();
+      }
     }
 
-    imageNode->SetName(imageName);
+    auto nodesToRemove = dataStorage->GetDerivations(imageFolderNode, nullptr, false);
 
-    QDir projDir(QString::fromStdString(projPath));
-    QString	configFilePath=projDir.absoluteFilePath(".svproj");
+    if (!nodesToRemove->empty()) {
+      std::cout << "[AddImage] Remove data node: " << std::endl;
+      dataStorage->Remove(nodesToRemove);
+    }
 
-    QFile xmlFile(configFilePath);
-    xmlFile.open(QIODevice::ReadOnly);
-    QDomDocument doc("svproj");
-    QString *em=NULL;
-    doc.setContent(&xmlFile,em);
-    xmlFile.close();
+    imagesElement.removeChild(previousImgElement);
+  }
 
-    QDomElement projDesc = doc.firstChildElement("projectDescription");
-    QDomElement imagesElement=projDesc.firstChildElement("images");
+  //continue image adding
 
-    QDomElement previousImgElement=imagesElement.firstChildElement("image");
-    if(!previousImgElement.isNull())
-    {
-        QString inProj=previousImgElement.attribute("in_project");
+  QDomElement imgElement = doc.createElement("image");
+  if (copyIntoProject) {
+      imgElement.setAttribute("in_project","yes");
+      QString imageName = QString::fromStdString(imageNode->GetName());
+      QString imagePath = imageName+".vti";
 
-        if(inProj=="yes")
-        {
-            QString imagePath=previousImgElement.attribute("path");
-            if(imagePath=="")
-                imagePath=previousImgElement.attribute("name");
+      imgElement.setAttribute("name",imageName);
+      imgElement.setAttribute("path",imagePath);
 
-            if(imagePath!="")
-            {
-                QString fullPath=QString::fromStdString(projPath+"/"+imageFolderNode->GetName()+"/"+imagePath.toStdString());
-                QFile piFile(fullPath);
-                piFile.remove();
-            }
+      std::string imageParentPath=projPath+"/"+imageFolderNode->GetName();
+      std::string imagFullPath=imageParentPath+"/"+imagePath.toStdString();
+      imageNode->SetStringProperty("path",imageParentPath.c_str());
+      mitk::Image* image = dynamic_cast<mitk::Image*>(imageNode->GetData());
+
+      if(image) {
+        if (scaleFactor>0 && scaleFactor!=1) {
+          mitk::Point3D org = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin();
+          mitk::Vector3D spacing=image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
+          org[0]*=scaleFactor;
+          org[1]*=scaleFactor;
+          org[2]*=scaleFactor;
+          image->SetOrigin(org);
+          image->SetSpacing(scaleFactor*spacing);
         }
 
-        mitk::DataStorage::SetOfObjects::ConstPointer nodesToRemove=dataStorage->GetDerivations(imageFolderNode,nullptr,false);
-        if( !nodesToRemove->empty())
-        {
-            dataStorage->Remove(nodesToRemove);
+        //if converting from dicom to vti we need to record the original
+        //image transform so we can load it back in
+        //otherwise the vti will use an incorrect transform when reloaded
+        writeTransformFile(image, imageParentPath, imageNode->GetName());
+
+        vtkImageData* vtkImg = sv4guiVtkUtils::MitkImage2VtkImage(image);
+        if (vtkImg) {
+          vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+          writer->SetFileName(imagFullPath.c_str());
+          writer->SetInputData(vtkImg);
+          writer->Write();
         }
+      }
 
-        imagesElement.removeChild(previousImgElement);
-    }
+  } else {
+      imgElement.setAttribute("in_project","no");
+      imgElement.setAttribute("name",QString::fromStdString(imageName));
+      imgElement.setAttribute("path",imageFilePath);
+  }
+*/
 
-    //continue image adding
+  dataStorage->Add(imageNode, imageFolderNode);
+  mitk::RenderingManager::GetInstance()->InitializeViews(imageNode->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
 
-    QDomElement imgElement = doc.createElement("image");
-    if(copyIntoProject)
-    {
-        imgElement.setAttribute("in_project","yes");
-        QString imageName=QString::fromStdString(imageNode->GetName());
-        QString imagePath=imageName+".vti";
+/*
+  imagesElement.appendChild(imgElement);
 
-        imgElement.setAttribute("name",imageName);
-        imgElement.setAttribute("path",imagePath);
+  QString xml = doc.toString(4);
+  QFile file( configFilePath );
 
-        std::string imageParentPath=projPath+"/"+imageFolderNode->GetName();
-        std::string imagFullPath=imageParentPath+"/"+imagePath.toStdString();
-        imageNode->SetStringProperty("path",imageParentPath.c_str());
-        mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
-        if(image)
-        {
-            if(scaleFactor>0 && scaleFactor!=1)
-            {
-                mitk::Point3D org = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin();
-                mitk::Vector3D spacing=image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
-                org[0]*=scaleFactor;
-                org[1]*=scaleFactor;
-                org[2]*=scaleFactor;
-                image->SetOrigin(org);
-                image->SetSpacing(scaleFactor*spacing);
-            }
+  if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+      QTextStream out(&file);
+      out << xml <<endl;
+  }
+*/
 
-            //if converting from dicom to vti we need to record the original
-            //image transform so we can load it back in
-            //otherwise the vti will use an incorrect transform when reloaded
-            writeTransformFile(image, imageParentPath, imageNode->GetName());
 
-            vtkImageData* vtkImg=sv4guiVtkUtils::MitkImage2VtkImage(image);
-            if(vtkImg)
-            {
-                vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
-                writer->SetFileName(imagFullPath.c_str());
-                writer->SetInputData(vtkImg);
-                writer->Write();
-            }
-        }
+}
 
-        //        mitk::IOUtil::Save(imageNode->GetData(),ifilePath);
-    }
-    else
-    {
-        imgElement.setAttribute("in_project","no");
-        imgElement.setAttribute("name",QString::fromStdString(imageName));
-        imgElement.setAttribute("path",imageFilePath);
-    }
+//--------------------
+// CopyImageToProject
+//--------------------
+// Copy image data into the project's 'Images' directory as a VTK VTI file.
+//
+void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, mitk::DataNode::Pointer imageNode, 
+    mitk::DataNode::Pointer imageFolderNode, double scaleFactor, QString& imageFileName)
+{
+  QString imageName = QString::fromStdString(imageNode->GetName());
+  imageFileName = imageName + ".vti";
 
-    dataStorage->Add(imageNode,imageFolderNode);
+  std::string imageParentPath = projPath + "/" + imageFolderNode->GetName();
+  std::string imagFullPath = imageParentPath + "/" + imageFileName.toStdString();
+  imageNode->SetStringProperty("path", imageParentPath.c_str());
+  mitk::Image* image = dynamic_cast<mitk::Image*>(imageNode->GetData());
 
-    mitk::RenderingManager::GetInstance()->InitializeViews(imageNode->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
-
-    imagesElement.appendChild(imgElement);
-
-    QString xml = doc.toString(4);
-
-    QFile file( configFilePath );
-
-    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
-        QTextStream out(&file);
-        out << xml <<endl;
-    }
-
+  if (!image) {
     return;
+  }
+
+  if ((scaleFactor > 0.0) && (scaleFactor != 1.0)) {
+    mitk::Point3D org = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin();
+    mitk::Vector3D spacing = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
+    org[0] *= scaleFactor;
+    org[1] *= scaleFactor;
+    org[2] *= scaleFactor;
+    image->SetOrigin(org);
+    image->SetSpacing(scaleFactor*spacing);
+  }
+
+  // Write the original DICOM image transform. 
+  writeTransformFile(image, imageParentPath, imageNode->GetName());
+
+  // Write the .vti file.
+  vtkImageData* vtkImg = sv4guiVtkUtils::MitkImage2VtkImage(image);
+  if (vtkImg) {
+    vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+    writer->SetFileName(imagFullPath.c_str());
+    writer->SetInputData(vtkImg);
+    writer->Write();
+  }
 }
 
 /**
@@ -718,7 +801,7 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image, std::string im
 //
 void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path, std::string imageName)
 {
-  std::cout << "========== sv4guiProjectManager::setTransform ==========" << std::endl;
+  //std::cout << "========== sv4guiProjectManager::setTransform ==========" << std::endl;
 
   QDir dir(QString::fromStdString(proj_path));
   dir.cd(QString::fromStdString("Images"));
@@ -739,18 +822,18 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
     //std::cout << root.text().toStdString() << "\n";
     auto transform = image->GetGeometry()->GetVtkMatrix();
 
-    std::cout << "[setTransform] ---------- transform ----------" << std::endl;
-    vtkIndent indent;
-    transform->PrintSelf(std::cout, indent);
-    std::cout << "[setTransform] ----------------------------" << std::endl;
+    //std::cout << "[setTransform] ---------- transform ----------" << std::endl;
+    //vtkIndent indent;
+    //transform->PrintSelf(std::cout, indent);
+    //std::cout << "[setTransform] ----------------------------" << std::endl;
 
-    std::cout << "[setTransform] Read 'transform' element ..." << std::endl;
+    //std::cout << "[setTransform] Read 'transform' element ..." << std::endl;
     for (int j = 0; j < 3; j++){
       for (int i = 0; i < 3; i++){
         auto label = "t"+std::to_string(i)+std::to_string(j);
-        std::cout << "[setTransform] Label: " << label << std::endl;
+        //std::cout << "[setTransform] Label: " << label << std::endl;
         auto line = root.attribute(QString::fromStdString(label));
-        std::cout << "[setTransform] Value: " << line.toStdString() << std::endl;
+        //std::cout << "[setTransform] Value: " << line.toStdString() << std::endl;
         auto v = std::stod(line.toStdString());
         transform->SetElement(i,j,v);
       }
@@ -758,23 +841,23 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
 
 
     auto spacing = image->GetGeometry()->GetSpacing();
-    std::cout << "[setTransform] Spacing: " << spacing[0] << " " << spacing[1] << " " << spacing[2] << std::endl;
+    //std::cout << "[setTransform] Spacing: " << spacing[0] << " " << spacing[1] << " " << spacing[2] << std::endl;
     auto origin = image->GetGeometry()->GetOrigin();
-    std::cout << "[setTransform] Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+    //std::cout << "[setTransform] Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
 
     image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
     image->UpdateOutputInformation();
 
     transform = image->GetGeometry()->GetVtkMatrix();
-    std::cout << "[setTransform] ---------- new transform ----------" << std::endl;
-    transform->PrintSelf(std::cout, indent);
-    std::cout << "[setTransform] ----------------------------" << std::endl;
+    //std::cout << "[setTransform] ---------- new transform ----------" << std::endl;
+    //transform->PrintSelf(std::cout, indent);
+    //std::cout << "[setTransform] ----------------------------" << std::endl;
 
     spacing = image->GetGeometry()->GetSpacing();
-    std::cout << "[setTransform] New Spacing: "<<spacing[0]<<" "<<spacing[1]<<" "<<spacing[2]<<std::endl;
+    //std::cout << "[setTransform] New Spacing: "<<spacing[0]<<" "<<spacing[1]<<" "<<spacing[2]<<std::endl;
 
     auto norigin = image->GetGeometry()->GetOrigin();
-    std::cout << "[setTransform] New Origin: " << norigin[0] << " " << norigin[1] << " " << norigin[2] << std::endl;
+    //std::cout << "[setTransform] New Origin: " << norigin[0] << " " << norigin[1] << " " << norigin[2] << std::endl;
 
   }
 }
@@ -1508,6 +1591,48 @@ bool sv4guiProjectManager::DuplicateDirRecursively(const QString &srcFilePath, c
 // CreateImagesPlugin
 //--------------------
 // Create Images plugin data nodes and read image data.
+//
+mitk::DataNode::Pointer 
+sv4guiProjectManager::CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+    mitk::DataNode::Pointer imageFolderNode, const QString& imageFilePath, const QString& imageFileName, const QString& imageName)
+{
+  using namespace sv4gui_project_manager;
+  std::cout << std::endl;
+  std::cout << "========== sv4guiProjectManager::CreateImagesPlugin ========== " << std::endl;
+  std::cout << "[CreateImagesPlugin] imageFilePath: " << imageFilePath.toStdString() << std::endl;
+  std::cout << "[CreateImagesPlugin] imageFileName: " << imageFileName.toStdString() << std::endl;
+  std::cout << "[CreateImagesPlugin] imageName: " << imageName.toStdString() << std::endl;
+  imageFolderNode->SetVisibility(false);
+  mitk::DataNode::Pointer imageNode;
+  QString imagePath;
+
+  if (imageFilePath == "") {
+    imagePath = projPath + "/" + PluginNames::IMAGES + "/" + imageFileName; 
+  } else {
+    imagePath = imageFilePath + "/" + imageFileName; 
+  }
+  std::cout << "[CreateImagesPlugin] imagePath: " << imagePath.toStdString() << std::endl;
+
+  try {
+    imageNode = sv4guiProjectManager::LoadDataNode(imagePath.toStdString());
+    imageNode->SetName(imageName.toStdString());
+
+    // Transform the image from the values given in the .transform.xml file. 
+    auto image = dynamic_cast<mitk::Image*>(imageNode->GetData());
+    setTransform(image, projPath.toStdString(), imageNode->GetName());
+    dataStorage->Add(imageNode,imageFolderNode);
+
+  } catch(...) {
+    MITK_ERROR << "Failed to load image (maybe non-existing or unsupported data type): " << imageFilePath.toStdString();
+  }
+
+  return imageNode;
+}
+
+//--------------------
+// CreateImagesPlugin
+//--------------------
+// Old version.
 //
 mitk::DataNode::Pointer 
 sv4guiProjectManager::CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 

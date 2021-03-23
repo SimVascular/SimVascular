@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiProjectManager class is used to manage SimVascular projects. 
+
 #ifndef SV4GUI_PROJECTMANAGER_H
 #define SV4GUI_PROJECTMANAGER_H
 
@@ -40,8 +42,55 @@
 #include <mitkDataStorage.h>
 #include <mitkNodePredicateDataType.h>
 
+#include <QDir>
 #include <QString>
 
+namespace sv4gui_project_manager {
+
+//-------------
+// PluginNames
+//-------------
+// This class is used to stores the names of SV plugins.
+//
+class PluginNames 
+{
+  public:
+    static const QString IMAGES;
+    static const QString MESHES;
+    static const QString MODELS;
+    static const QString PATHS;
+    static const QString SEGMENTATIONS;
+    static const QString SIMULATIONS;
+    static const QString SIMULATIONS_1D;
+    static const QString SVFSI;
+    static const QStringList NAMES_LIST;
+};
+
+//-----------------
+// XmlElementNames
+//-----------------
+// This class is used to store the element names for the 
+// image location xml file. 
+//
+class XmlElementNames 
+{
+  public:
+    static const QString FILE_NAME;
+    static const QString IMAGE_NAME;
+    static const QString PATH;
+    static const QString ROOT;
+};
+
+}
+
+//----------------------
+// sv4guiProjectManager
+//----------------------
+// The sv4guiProjectManager class primarially stores methods for project
+// operations.
+//
+// [TODO:DaveP] This should really just be a namespace.
+//
 class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 {
 
@@ -51,7 +100,8 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
   public:
 
     static void AddProject(mitk::DataStorage::Pointer dataStorage, QString projectName, QString projParentDir, bool newProject);
-    static void WriteEmptyConfigFile(QString projConfigFilePath);
+    static void WriteImageInfo(const QString& projPath, const QString& imageFilePath, const QString& imageFileName, 
+       const QString& imageName); 
     static void AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor, QString newImageName);
 
     static void SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode);
@@ -75,47 +125,43 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
     static bool DuplicateDirRecursively(const QString &srcFilePath, const QString &tgtFilePath);
 
+    // A function template defining functions used to create a SV Data Manager node. 
+    //
     template <typename TDataFolder>
-    mitk::DataNode::Pointer static CreateDataFolder(mitk::DataStorage::Pointer dataStorage, QString folderName, mitk::DataNode::Pointer projFolderNode=NULL)
+    mitk::DataNode::Pointer static CreateDataFolder(mitk::DataStorage::Pointer dataStorage, QString folderName, 
+          mitk::DataNode::Pointer projFolderNode=NULL)
     {
         mitk::NodePredicateDataType::Pointer isDataFolder = mitk::NodePredicateDataType::New(TDataFolder::GetStaticNameOfClass());
-
         mitk::DataStorage::SetOfObjects::ConstPointer rs;
-        if(projFolderNode.IsNull())
-        {
+
+        if (projFolderNode.IsNull()) {
             rs=dataStorage->GetSubset(isDataFolder);
-        }else
-        {
-            rs=dataStorage->GetDerivations (projFolderNode,isDataFolder);
+        } else {
+            rs = dataStorage->GetDerivations(projFolderNode, isDataFolder);
         }
 
-        bool exists=false;
-        mitk::DataNode::Pointer dataFolderNode=NULL;
+        bool exists = false;
+        mitk::DataNode::Pointer dataFolderNode = NULL;
         std::string fdName=folderName.toStdString();
 
-        for(int i=0;i<rs->size();i++)
-        {
-            if(rs->GetElement(i)->GetName()==fdName)
-            {
-                exists=true;
+        for (int i = 0; i < rs->size(); i++) {
+            if (rs->GetElement(i)->GetName() == fdName) {
+                exists = true;
                 dataFolderNode=rs->GetElement(i);
                 break;
             }
         }
 
-        if(!exists)
-        {
-            dataFolderNode=mitk::DataNode::New();
+        if (!exists) {
+            dataFolderNode = mitk::DataNode::New();
             dataFolderNode->SetName(fdName);
             dataFolderNode->SetVisibility(true);
-            typename TDataFolder::Pointer dataFolder=TDataFolder::New();
+            typename TDataFolder::Pointer dataFolder = TDataFolder::New();
             dataFolderNode->SetData(dataFolder);
-            if(projFolderNode.IsNull())
-            {
+            if(projFolderNode.IsNull()) {
                 dataStorage->Add(dataFolderNode);
-            }else
-            {
-                dataStorage->Add(dataFolderNode,projFolderNode);
+            } else {
+                dataStorage->Add(dataFolderNode, projFolderNode);
             }
 
         }
@@ -124,22 +170,38 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
     }
 
   private:
+
+    static void CopyImageToProject(const std::string& projPath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode,
+        double scaleFactor, QString& imageFileName);
+
     static mitk::DataNode::Pointer CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
         mitk::DataNode::Pointer imageFolderNode, QStringList imageFilePathList, QStringList imageNameList);
+
+    static mitk::DataNode::Pointer CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
+        mitk::DataNode::Pointer imageFolderNode, const QString& imageFilePath, const QString& imageFileName, const QString& imageName);
+
     static void CreatePathsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
         mitk::DataNode::Pointer pathFolderNode, QString pathFolderName);
+
     static void CreateSegmentationsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
         mitk::DataNode::Pointer segFolderNode, QString segFolderName);
+
     static void CreateMitkSegmentationsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
         mitk::DataNode::Pointer imageNode);
+
     static void CreateModelPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,             
         mitk::DataNode::Pointer modelNode, QString modelFolderName);
+
     static void CreatePlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
         mitk::DataNode::Pointer folderNode, QString folderName, QString fileExt);
-    static void GetImageDataPath(QString projName, QString projParentDir, QString imageFolderName);
-    static void GetImageDataPathFromSvproj(QString projName, QString projParentDir, QString imageFolderName, 
-       QStringList& imageFilePathList, QStringList& imageNameList);
-    static void GetImageDataPathFromImageLoc(QString imageLocFilePath, QString imageFolderName, QString& imageFilePath, QString& imageName);
+
+    static QString GetImageInfoFilePath(QDir project_dir);
+
+    static void ReadImageInfo(const QString& projPath, QString& imageFilePath, QString& imageFileName, QString& imageName);
+
+    static void ReadImageInfoFromSvproj(const QString& projPath, QStringList& imageFilePathList, QStringList& imageNameList, bool& localFile);
+
+    static void ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, QString& imageName);
 
 };
 

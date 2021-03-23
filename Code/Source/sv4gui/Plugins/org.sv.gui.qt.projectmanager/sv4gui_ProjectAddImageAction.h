@@ -36,6 +36,7 @@
 
 #include <sv4gui_mitkIContextMenuAction.h>
 #include <mitkDataNode.h>
+#include <berryIPreferences.h>
 
 #include <QObject>
 
@@ -56,6 +57,7 @@ public:
   void SetFunctionality(berry::QtViewPart *functionality) override {}
 
 private:
+  void ReadImage(QString& imageFilePath, mitk::DataNode::Pointer& imageNode);
   sv4guiProjectAddImageAction(const sv4guiProjectAddImageAction &);
   sv4guiProjectAddImageAction & operator=(const sv4guiProjectAddImageAction &);
 
