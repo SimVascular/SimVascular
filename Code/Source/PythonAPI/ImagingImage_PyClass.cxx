@@ -883,6 +883,8 @@ Image_write_transformation(PyImage* self, PyObject* args, PyObject* kwargs)
   if (!cfile.is_open()) {
       api.error("Unable to write the image transformatio to the file named '" + std::string(fileName) + "'.");
       return nullptr;
+  } else {
+    cfile.close();
   }
 
   if (!WriteImageTransform(self, std::string(fileName))) {
