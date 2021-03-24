@@ -228,10 +228,10 @@ CreatePlaneGeometry(mitk::Image* image, double planeSize, double pos[3], double 
   return planeGeometry;
 }
 
-
 //----------
 // ReadFile
 //----------
+// Read image data from a file and store it the returned MITK data node.
 //
 mitk::DataNode::Pointer
 ReadFile(const std::string& fileName)
@@ -314,6 +314,26 @@ ResliceImage(mitk::Image* image, double planeSize, double pos[3], double tangent
   rs->Update();
 
   return rs->GetOutput();
+}
+
+//------------
+// ScaleImage 
+//-------------
+// Scale an image.
+//
+// Note: This is taken from the SV sv4guiProjectManager::AddImage() code. 
+//
+void ScaleImage(PyImage* self, double scale)
+{
+  auto image = self->image_data;
+  mitk::Point3D origin = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin();
+  mitk::Vector3D spacing = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
+  origin[0] *= scale;
+  origin[1] *= scale;
+  origin[2] *= scale;
+  image->SetOrigin(origin);
+  image->SetSpacing(scale * spacing);
+  image->UpdateOutputInformation();
 }
 
 //------------
@@ -687,28 +707,47 @@ Image_get_spacing(PyImage* self, PyObject* args)
 //-------------
 //
 PyDoc_STRVAR(Image_read_doc,
-  "read(file_name) \n\
+  "read(file_name, scale=None) \n\
    \n\
    Create image data from a file. \n\
    \n\
    \n\
    Args:                                    \n\
      file_name (str): The name of the file to read image data from. \n\
+     scale (Optional[float]): The value used to scale the image data. \n\
 ");
 
 static PyObject *
 Image_read(PyImage* self, PyObject* args, PyObject* kwargs)
 {
-  auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
-  static char *keywords[] = {"file_name", NULL};
+  auto api = PyUtilApiFunction("s|O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"file_name", "scale_factor", NULL};
   char* fileName = NULL;
+  PyObject* scaleObj = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName, &PyFloat_Type, &scaleObj)) {
     return api.argsError();
   }
 
   self->image_node = ReadFile(std::string(fileName));
   self->image_data  = dynamic_cast<mitk::Image*>(self->image_node->GetData());
+
+  // Process 'scale' argument.
+  if (scaleObj != nullptr) {
+      double scale = PyFloat_AsDouble(scaleObj);
+      if (PyErr_Occurred()) {
+          return nullptr;
+      }
+
+      if (scale <= 0.0) {
+          api.error("The 'scale ' argument must be >= 0.0.");
+          return nullptr;
+      }
+
+      ScaleImage(self, scale);
+  }
+
+  Py_RETURN_NONE;
 }
 
 //---------------------------
@@ -749,6 +788,120 @@ Image_read_transformation(PyImage* self, PyObject* args, PyObject* kwargs)
       api.error(e.what());
       return nullptr;
   }
+
+  Py_RETURN_NONE;
+}
+
+//-------------
+// Image_scale 
+//-------------
+//
+PyDoc_STRVAR(Image_scale_doc,
+  "scale(scale_factor) \n\
+   \n\
+   Scale the image by a scaling factor.  \n\
+   \n\
+   \n\
+   Args:                                    \n\
+     scale_factor (float): The scaling factor. \n\
+");
+
+static PyObject *
+Image_scale(PyImage* self, PyObject* args, PyObject* kwargs)
+{ 
+  auto api = PyUtilApiFunction("d", PyRunTimeErr, __func__);
+  static char *keywords[] = {"scale_factor", NULL};
+  double scale;
+  
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &scale)) {
+    return api.argsError();
+  }
+
+  if (scale <= 0.0) {
+      api.error("The 'scale_factor' argument must be >= 0.0.");
+      return nullptr;
+  }
+
+  ScaleImage(self, scale);
+
+  Py_RETURN_NONE;
+}
+
+//--------------
+// Image_origin 
+//--------------
+//
+PyDoc_STRVAR(Image_set_origin_doc,
+  "set_origin(origin) \n\
+   \n\
+   Set the image origin.  \n\
+   \n\
+   \n\
+   Args:                                    \n\
+     origin (list([float,float,float]): The 3D point to set the image origin to.  \n\
+");
+
+static PyObject *
+Image_set_origin(PyImage* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"origin", NULL};
+  PyObject* originArg = nullptr;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &originArg)) {
+    return api.argsError();
+  }
+
+  std::string emsg;
+  std::array<double,3> origin;
+  if (!PyUtilGetPointData(originArg, emsg, origin.data())) {
+      api.error("The 'origin' argument " + emsg);
+      return nullptr;
+  }
+
+  mitk::Point3D mitkOrigin = {origin.data()};
+  self->image_data->SetOrigin(mitkOrigin);
+
+  Py_RETURN_NONE;
+}
+
+PyDoc_STRVAR(Image_set_spacing_doc,
+  "set_spacing(origin) \n\
+   \n\
+   Set the image spacing.  \n\
+   \n\
+   \n\
+   Args:                                    \n\
+     spacing (list([float,float,float]): The three values used to set the image spacing.  \n\
+");
+
+static PyObject *
+Image_set_spacing(PyImage* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"spacing", NULL};
+  PyObject* spacingArg = nullptr;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &spacingArg)) {
+    return api.argsError();
+  }
+
+  std::string emsg;
+  std::array<double,3> spacing;
+  if (!PyUtilGetPointData(spacingArg, emsg, spacing.data())) {
+      api.error("The 'spacing' argument " + emsg);
+      return nullptr;
+  }
+
+  for (auto value : spacing) {
+      if (value <= 0.0) {
+          api.error("The 'spacing' argument must contain values that are > 0.0.");
+          return nullptr;
+      }
+  }
+
+  mitk::Vector3D mitkSpacing = {spacing.data()};
+  self->image_data->SetSpacing(mitkSpacing);
 
   Py_RETURN_NONE;
 }
@@ -930,6 +1083,9 @@ static PyMethodDef PyImageMethods[] = {
   {"get_spacing", (PyCFunction)Image_get_spacing, METH_NOARGS, Image_get_spacing_doc },
   {"read", (PyCFunction)Image_read, METH_VARARGS|METH_KEYWORDS, Image_read_doc },
   {"read_transformation", (PyCFunction)Image_read_transformation, METH_VARARGS|METH_KEYWORDS, Image_read_transformation_doc},
+  {"scale", (PyCFunction)Image_scale, METH_VARARGS|METH_KEYWORDS, Image_scale_doc},
+  {"set_origin", (PyCFunction)Image_set_origin, METH_VARARGS|METH_KEYWORDS, Image_set_origin_doc},
+  {"set_spacing", (PyCFunction)Image_set_spacing, METH_VARARGS|METH_KEYWORDS, Image_set_spacing_doc},
   {"transform", (PyCFunction)Image_transform, METH_VARARGS|METH_KEYWORDS, Image_transform_doc },
   {"write", (PyCFunction)Image_write, METH_VARARGS|METH_KEYWORDS, Image_write_doc},
   {"write_transformation", (PyCFunction)Image_write_transformation, METH_VARARGS|METH_KEYWORDS, Image_write_transformation_doc},
@@ -978,11 +1134,14 @@ PyImageInit(PyImage* self, PyObject* args, PyObject *kwds)
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
-PyImageNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
+PyImageNew(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
-  auto api = PyUtilApiFunction("|s", PyRunTimeErr, "imaging.Image");
+  static char *keywords[] = {"file_name", "scale_factor", NULL};
+  auto api = PyUtilApiFunction("|sO!", PyRunTimeErr, "imaging.Image");
   char* fileNameArg = nullptr; 
-  if (!PyArg_ParseTuple(args, api.format, &fileNameArg)) {
+  PyObject* scaleObj = nullptr;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileNameArg, &PyFloat_Type, &scaleObj)) {
       return api.argsError();
   }
 
@@ -996,6 +1155,22 @@ PyImageNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
       std::cout << "[PyImageNew] fileNameArg: " << fileNameArg << std::endl;
       self->image_node = ReadFile(std::string(fileNameArg));
       self->image_data  = dynamic_cast<mitk::Image*>(self->image_node->GetData());
+  }
+
+  // Process 'scale' argument.
+  if (scaleObj != nullptr) {
+      double scale = PyFloat_AsDouble(scaleObj);
+      if (PyErr_Occurred()) {
+          return nullptr;
+      }
+
+      if (scale <= 0.0) {
+          api.error("The 'scale ' argument must be >= 0.0.");
+          return nullptr;
+      }
+
+      std::cout << "[PyImageNew] Scale image: " << scale << std::endl;
+      ScaleImage(self, scale);
   }
 
   return (PyObject*)self;
