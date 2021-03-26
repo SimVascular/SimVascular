@@ -44,6 +44,7 @@
 
 #include <QDir>
 #include <QString>
+#include <set>
 
 namespace sv4gui_project_manager {
 
@@ -79,6 +80,8 @@ class XmlElementNames
     static const QString IMAGE_NAME;
     static const QString PATH;
     static const QString ROOT;
+    static const QString SCALE_FACTOR;
+    static const std::set<QString> valid_names;
 };
 
 }
@@ -94,14 +97,13 @@ class XmlElementNames
 class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 {
 
-  static const QString SVPROJ_CONFIG_FILE_NAME;
-  static const QString IMAGE_LOCATION_FILE_NAME;
-
   public:
+    static const QString SVPROJ_CONFIG_FILE_NAME;
+    static const QString IMAGE_INFORMATION_FILE_NAME;
 
     static void AddProject(mitk::DataStorage::Pointer dataStorage, QString projectName, QString projParentDir, bool newProject);
     static void WriteImageInfo(const QString& projPath, const QString& imageFilePath, const QString& imageFileName, 
-       const QString& imageName); 
+       const QString& imageName, double scaleFactor=1.0); 
     static void AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor, QString newImageName);
 
     static void SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode);
@@ -124,6 +126,9 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
     static void DuplicateProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString newName);
 
     static bool DuplicateDirRecursively(const QString &srcFilePath, const QString &tgtFilePath);
+
+    static QString GetImageInfoFilePath(QDir project_dir);
+
 
     // A function template defining functions used to create a SV Data Manager node. 
     //
@@ -194,8 +199,6 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
     static void CreatePlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
         mitk::DataNode::Pointer folderNode, QString folderName, QString fileExt);
-
-    static QString GetImageInfoFilePath(QDir project_dir);
 
     static void ReadImageInfo(const QString& projPath, QString& imageFilePath, QString& imageFileName, QString& imageName);
 
