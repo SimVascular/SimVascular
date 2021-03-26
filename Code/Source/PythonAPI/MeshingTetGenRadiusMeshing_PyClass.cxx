@@ -298,6 +298,8 @@ PyTetGenRadiusMeshing_write_centerlines(PyMeshingTetGenRadiusMeshing* self, PyOb
   if (!cfile.is_open()) {
       api.error("Unable to write to the file named '" + std::string(fileName) + "'.");
       return nullptr;
+  } else {
+    cfile.close();
   }
 
   // Write the file.
