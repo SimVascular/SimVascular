@@ -180,7 +180,7 @@
 #include <QApplication>
 
 // Redefine MITK_INFO to deactivate all of the debugging statements.
-#define MITK_INFO MITK_DEBUG
+//#define MITK_INFO MITK_DEBUG
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
@@ -4736,6 +4736,8 @@ void sv4guiSimulationView1d::SelectSegmentExportType(int index)
 void sv4guiSimulationView1d::ExportResults()
 {
     auto msg = "sv4guiSimulationView1d::ExportResults";
+    MITK_INFO << msg; 
+    MITK_INFO << msg << "##########################################"; 
     MITK_INFO << msg << "--------- ExportResults ----------"; 
 
     QString resultDir = ui->lineEditResultDir->text();
@@ -4755,7 +4757,6 @@ void sv4guiSimulationView1d::ExportResults()
     auto startTime = std::stod(startTimeStr.toStdString());
     QString stopTimeStr = ui->lineEditStop->text().trimmed();
     auto stopTime = std::stod(stopTimeStr.toStdString());
-
     if (stopTime < stopTime) { 
         QMessageBox::warning(m_Parent,"1D Simulation", "The stop time must be larger than the start time.");
         return;
@@ -4796,7 +4797,7 @@ void sv4guiSimulationView1d::ExportResults()
    if (segmentExportType == sv4guiSimulationView1d::SegmentExportType::ALL) {
        pythonInterface.AddParameter(params.ALL_SEGMENTS, "true"); 
    } else {
-     pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
+       pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
    }
 
    // Export results to NumPy arrays. 
@@ -4804,8 +4805,27 @@ void sv4guiSimulationView1d::ExportResults()
    MITK_INFO << msg << "exportNumpy: " << exportNumpy; 
 
    // Project results to centerline geometry. 
-   bool projectCenterlines = ui->ProjectCenterlines_CheckBox->isChecked();
-   MITK_INFO << msg << "projectCenterlines: " << projectCenterlines; 
+   if (ui->ProjectCenterlines_CheckBox->isChecked()) {
+       auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
+       MITK_INFO << msg << "inputCenterlinesFile: " << inputCenterlinesFile; 
+       pythonInterface.AddParameter(params.CENTERLINES_FILE, inputCenterlinesFile); 
+   }
+
+   // Export results as numpy arrays.
+   if (ui->ExportNumpy_CheckBox->isChecked()) {
+   }
+
+   // Project results to a 3D simulation mesh.
+   if (ui->ProjectTo3DMesh_CheckBox->isChecked()) {
+       auto simName = ui->SimName_ComboBox->currentText().toStdString();
+       std::string volumeMeshPath; 
+       std::string wallsMeshPath; 
+       GetSimulationMeshPaths(simName, volumeMeshPath, wallsMeshPath); 
+       MITK_INFO << msg << "volumeMeshPath: " << volumeMeshPath; 
+       MITK_INFO << msg << "wallsMeshPath: " << wallsMeshPath; 
+       pythonInterface.AddParameter(params.VOLUME_MESH_FILE, volumeMeshPath); 
+       pythonInterface.AddParameter(params.WALLS_MESH_FILE, wallsMeshPath); 
+   }
 
    QString jobName("");
    if (m_JobNode.IsNotNull()) {
@@ -4837,6 +4857,21 @@ void sv4guiSimulationView1d::ExportResults()
    statusMsg = "1D simulation files have been converted.";
    ui->JobStatusValueLabel->setText(statusMsg);
    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+}
+
+//------------------------
+// GetSimulationMeshPaths
+//------------------------
+//
+void sv4guiSimulationView1d::GetSimulationMeshPaths(const std::string& simName, std::string& volumeMeshPath, std::string& wallsMeshPath)
+{
+    mitk::DataNode::Pointer projFolderNode = getProjectNode();
+    std::string projPath = "";
+    projFolderNode->GetStringProperty("project path", projPath);
+
+    std::string simMeshPath = projPath + "/Simulations/" + simName + "/mesh-complete/"; 
+    volumeMeshPath = simMeshPath + "mesh-complete.mesh.vtu";
+    wallsMeshPath = simMeshPath + "walls_combined.vtp";
 }
 
 //---------------------

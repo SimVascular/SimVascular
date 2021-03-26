@@ -357,6 +357,7 @@ private:
     std::vector<std::string> GetSimulationNames();
     void Create1DMeshControls(QWidget *parent);
     void CreateWallPropertiesControls(QWidget *parent);
+    void GetSimulationMeshPaths(const std::string& simName, std::string& volumeMeshPath, std::string& wallsMeshPath);
 
     QWidget* m_Parent;
 
