@@ -295,10 +295,18 @@ void sv4guiProjectManager::ReadImageInfo(const QString& projPath, QString& image
   QString imagePath;
   QFileInfo checkFile(imageLocFilePath);
   if (!checkFile.exists()) { 
+    std::cout << "[ReadImageInfo] Read .svprof file." << std::endl;
     QStringList imageFilePathList;
     QStringList imageNameList;
     bool localFile; 
     ReadImageInfoFromSvproj(projPath, imageFilePathList, imageNameList, localFile);
+    // There may be not image information in the file.
+    if ((imageFilePathList.size() == 0) || (imageNameList.size() == 0)) {
+      imageFilePath = "";
+      imageFileName = "";
+      imageName = "";
+      return;
+    }
     imageFilePath = imageFilePathList[0];
     imageName = imageNameList[0];
     // Get separate file path and file name.
@@ -372,6 +380,7 @@ void sv4guiProjectManager::ReadImageInfoFromSvproj(const QString& projPath, QStr
 
   if (!checkFile.exists()) { 
     MITK_ERROR << "No .svproj file '" << svprojFilePath.toStdString() << "' found for the project.";
+    return;
   }
   
   // Read SVPROJ_CONFIG_FILE_NAME xml file.
@@ -432,11 +441,6 @@ void sv4guiProjectManager::ReadImageInfoFromSvproj(const QString& projPath, QStr
       imageNameList << imageName;
     }
   }
-
-  if (imageFilePathList.size() != 1) {
-      MITK_ERROR << "Failed to load file '" << svprojFilePath.toStdString() << "'; no image path information.";
-  }
-
 }
 
 //----------------
