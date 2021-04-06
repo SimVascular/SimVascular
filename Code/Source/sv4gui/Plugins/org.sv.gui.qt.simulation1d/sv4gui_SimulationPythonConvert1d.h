@@ -46,12 +46,12 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-//------------------------------------
+//-------------------------------------------
 // sv4guiSimulationPythonConvert1dParamNames
-//------------------------------------
-// This class defines valid parameter names used by the 'generate_1d_mesh.py' Python script.
+//-------------------------------------------
+// This class defines valid parameter names used by the 'extract_results.py' Python script.
 //
-// The names must match those defined in the 'generate_1d_mesh.py' Args class.
+// The names must match those defined in the 'extract_results.py' Args class.
 //
 class sv4guiSimulationPythonConvert1dParamNames
 { 
@@ -60,14 +60,19 @@ class sv4guiSimulationPythonConvert1dParamNames
       allNames.insert(OUTPUT_DIRECTORY);
     }
     const std::string ALL_SEGMENTS = "all_segments";
+    const std::string CENTERLINES_FILE = "centerlines_file";
     const std::string DATA_NAMES = "data_names";
+    const std::string ONED_MODEL_FILE = "oned_model_file";
     const std::string OUTPUT_DIRECTORY = "output_directory";
     const std::string OUTPUT_FILE_NAME = "output_file_name";
     const std::string OUTPUT_FORMAT = "output_format";
     const std::string OUTLET_SEGMENTS = "outlet_segments";
     const std::string RESULTS_DIRECTORY = "results_directory";
     const std::string SOLVER_FILE_NAME = "solver_file_name";
+    const std::string SURFACE_MESH_FILE = "volume_mesh_file";
     const std::string TIME_RANGE = "time_range";
+    const std::string VOLUME_MESH_FILE = "volume_mesh_file";
+    const std::string WALLS_MESH_FILE = "walls_mesh_file";
     std::set<std::string> allNames;
 };
 

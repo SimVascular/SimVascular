@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>417</width>
-    <height>866</height>
+    <height>945</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,22 +23,6 @@
    <item>
     <widget class="QWidget" name="widgetTop" native="true">
      <layout class="QGridLayout" name="gridLayout_8">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Job Name:</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QLabel" name="labelJobName">
         <property name="text">
@@ -63,6 +47,22 @@
        <widget class="QLabel" name="JobStatusValueLabel">
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Job Name:</string>
         </property>
        </widget>
       </item>
@@ -93,7 +93,7 @@
          <string>Generate a 1D mesh from the surface model.</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>6</number>
         </property>
         <widget class="QWidget" name="page_7">
          <property name="geometry">
@@ -101,7 +101,7 @@
            <x>0</x>
            <y>0</y>
            <width>393</width>
-           <height>528</height>
+           <height>607</height>
           </rect>
          </property>
          <attribute name="label">
@@ -298,8 +298,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>393</width>
+           <height>607</height>
           </rect>
          </property>
          <attribute name="label">
@@ -335,8 +335,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>393</width>
+           <height>607</height>
           </rect>
          </property>
          <attribute name="label">
@@ -399,8 +399,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>220</width>
-           <height>244</height>
+           <width>393</width>
+           <height>607</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -658,8 +658,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>76</height>
+           <width>393</width>
+           <height>607</height>
           </rect>
          </property>
          <attribute name="label">
@@ -695,8 +695,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>212</width>
-           <height>68</height>
+           <width>393</width>
+           <height>607</height>
           </rect>
          </property>
          <attribute name="label">
@@ -813,34 +813,19 @@ background-color: white
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="page_6">
+        <widget class="QWidget" name="Convertresults_Panel">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>227</width>
-           <height>421</height>
+           <width>393</width>
+           <height>607</height>
           </rect>
          </property>
          <attribute name="label">
           <string>Convert Results</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_13">
-          <property name="spacing">
-           <number>5</number>
-          </property>
-          <property name="leftMargin">
-           <number>5</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>5</number>
-          </property>
-          <property name="bottomMargin">
-           <number>5</number>
-          </property>
           <item>
            <widget class="QWidget" name="widget_11" native="true">
             <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1184,6 +1169,45 @@ background-color: white
               </widget>
              </item>
              <item>
+              <widget class="QFrame" name="ProjectMesh_Frame">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QCheckBox" name="ProjectTo3DMesh_CheckBox">
+                  <property name="toolTip">
+                   <string>Project results to a 3D simulation volume mesh.</string>
+                  </property>
+                  <property name="text">
+                   <string>Project results to 3D mesh</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="SimName_ComboBox">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The simulation name for projecting results to a 3D simulation volume mesh.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="ProjectCenterlines_CheckBox">
+               <property name="toolTip">
+                <string>If selected then results are projected to centerline geometry.</string>
+               </property>
+               <property name="text">
+                <string>Project results to centerline geometry</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QWidget" name="widget_13" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_9">
                 <property name="spacing">
@@ -1205,33 +1229,43 @@ background-color: white
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="btnExportResults">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
+              <widget class="QCheckBox" name="ExportNumpy_CheckBox">
                <property name="toolTip">
-                <string>Select the output directory for the converted files and start the conversion process.</string>
+                <string>If checked then results are written as NumPy arrays.</string>
                </property>
                <property name="text">
-                <string>Convert ...</string>
+                <string>Write results as NumPy arrays</string>
                </property>
               </widget>
              </item>
-             <item>
-              <spacer name="verticalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
             </layout>
            </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnExportResults">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="toolTip">
+             <string>Select the output directory for the converted files and start the conversion process.</string>
+            </property>
+            <property name="text">
+             <string>Convert ...</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>17</width>
+              <height>56</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>

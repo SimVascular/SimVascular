@@ -98,6 +98,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkSimJobIO1d::Read()
         auto basicProps = GetProps(jobElement, "basic_props");
         job->SetBasicProps(basicProps);
 
+        auto convProps = GetProps(jobElement, "convert_results_props");
+        job->SetConvertResultsProps(convProps);
+
         auto meshProps = GetProps(jobElement, "mesh_props");
         job->SetMeshProps(meshProps);
 
@@ -231,7 +234,7 @@ void sv4guiMitkSimJobIO1d::Write()
 
     sv4guiSimJob1d* job=mitkSimJob->GetSimJob();
 
-    if(job) {
+    if (job) {
         auto jobElement = new TiXmlElement("job");
         mjElement->LinkEndChild(jobElement);
 
@@ -274,11 +277,8 @@ void sv4guiMitkSimJobIO1d::Write()
         while(itit != capProps.end()) {
             auto celement = new TiXmlElement("cap");
             cpElement->LinkEndChild(celement);
-
             celement->SetAttribute("name", itit->first);
-
             std::map<std::string, std::string> props=itit->second;
-
             it = props.begin();
             while(it != props.end()) {
                 auto element = new TiXmlElement("prop");
@@ -287,15 +287,25 @@ void sv4guiMitkSimJobIO1d::Write()
                 element->SetAttribute("value", it->second);
                 it++;
             }
-
             itit++;
+        }
+
+        auto convElement = new TiXmlElement("convert_results_props");
+        jobElement->LinkEndChild(convElement);
+        std::map<std::string,std::string> convProps = job->GetConvertResultsProps();
+        it = convProps.begin();
+        while (it != convProps.end()) {
+            auto element = new TiXmlElement("prop");
+            convElement->LinkEndChild(element);
+            element->SetAttribute("key", it->first);
+            element->SetAttribute("value", it->second);
+            it++;
         }
 
         auto msElement = new TiXmlElement("mesh_props");
         jobElement->LinkEndChild(msElement);
         std::map<std::string,std::string> meshProps = job->GetMeshProps();
         it = meshProps.begin();
-
         while(it != meshProps.end()) {
             auto element = new TiXmlElement("prop");
             msElement->LinkEndChild(element);
