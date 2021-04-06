@@ -39,30 +39,31 @@
 #include <vtkImageReslice.h>
 
 using sv3::SegmentationUtils;
+
 double SV_PI=3.1415926535;
 
-double math_radToDeg(double rad){
+double SegmentationUtils::math_radToDeg(double rad){
     return rad*180.0/SV_PI;
 }
 
-double math_dot(double vecA[3], double vecB[3])
+double SegmentationUtils::math_dot(double vecA[3], double vecB[3])
 {
     return vecA[0]*vecB[0]+vecA[1]*vecB[1]+vecA[2]*vecB[2];
 }
 
-void math_cross(double cross[3], double vecA[3], double vecB[3])
+void SegmentationUtils::math_cross(double cross[3], double vecA[3], double vecB[3])
 {
     cross[0]=vecA[1]*vecB[2]-vecA[2]*vecB[1];
     cross[1]=vecA[2]*vecB[0]-vecA[0]*vecB[2];
     cross[2]=vecA[0]*vecB[1]-vecA[1]*vecB[0];
 }
 
-double math_magnitude(double vecA[3])
+double SegmentationUtils::math_magnitude(double vecA[3])
 {
     return sqrt(math_dot(vecA,vecA));
 }
 
-double math_angleBtw3DVectors(double vecA[3], double vecB[3])
+double SegmentationUtils::math_angleBtw3DVectors(double vecA[3], double vecB[3])
 {
     double dot=math_dot(vecA, vecB);
     double magA=math_magnitude(vecA);

@@ -42,6 +42,7 @@ include_directories(${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_DIR} ${PYTHON_INCLUD
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH} ${TINYXML_INCLUDE_DIR})
 
 list (APPEND CXXSRCS 
+  Imaging_PyModule.cxx
   Segmentation_PyModule.cxx
   Geometry_PyModule.cxx
   Math_PyModule.cxx
@@ -71,6 +72,7 @@ target_link_libraries(${lib}
   ${SV_LIB_OpenCASCADE_SOLID_NAME}
   ${SV_LIB_PATH_NAME}
   ${SV_LIB_POLYDATA_SOLID_NAME}
+  ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME}
   ${SV_LIB_SEGMENTATION_NAME}
   ${SV_LIB_TETGEN_MESH_NAME}
   ${SV_LIB_UTILS_NAME}
@@ -85,6 +87,7 @@ target_link_libraries(${lib}
   ${TCL_LIBRARY} 
   ${TK_LIBRARY}
   ${VTK_LIBRARIES} 
+  ${SV_LIB_MODULE_COMMON_NAME}
 )
 
 if(SV_USE_TINYXML)

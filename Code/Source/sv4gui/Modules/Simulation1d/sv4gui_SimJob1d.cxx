@@ -39,8 +39,8 @@ sv4guiSimJob1d::sv4guiSimJob1d()
 
 sv4guiSimJob1d::sv4guiSimJob1d(const sv4guiSimJob1d &other)
     : m_ModelProps(other.m_ModelProps), m_BasicProps(other.m_BasicProps), m_CapProps(other.m_CapProps), 
-      m_WallProps(other.m_WallProps), m_VarProps(other.m_VarProps), m_SolverProps(other.m_SolverProps), 
-      m_RunProps(other.m_RunProps)
+      m_ConvertResultsProps(other.m_ConvertResultsProps), m_WallProps(other.m_WallProps), 
+      m_VarProps(other.m_VarProps), m_SolverProps(other.m_SolverProps), m_RunProps(other.m_RunProps)
 {
 }
 
@@ -102,6 +102,10 @@ std::string sv4guiSimJob1d::GetBasicProp(const std::string& key)
     return m_BasicProps[key];
 }
 
+///////////////////////////////////////////////////////////
+//                   C a p    P r o p s                 //
+/////////////////////////////////////////////////////////
+
 void sv4guiSimJob1d::SetCapProps(std::map<std::string,std::map<std::string,std::string> > capProps)
 {
     m_CapProps=capProps;
@@ -121,6 +125,34 @@ std::string sv4guiSimJob1d::GetCapProp(const std::string& capName, const std::st
 {
     return m_CapProps[capName][key];
 }
+
+///////////////////////////////////////////////////////////
+//        C o n v e r t R e s u l t s     P r o p s     //
+/////////////////////////////////////////////////////////
+
+void sv4guiSimJob1d::SetConvertResultsProps(std::map<std::string,std::string> props)
+{
+    m_ConvertResultsProps = props;
+}
+
+std::map<std::string,std::string> sv4guiSimJob1d::GetConvertResultsProps()
+{
+    return m_ConvertResultsProps;
+}
+
+void sv4guiSimJob1d::SetConvertResultsProp(const std::string& key, std::string value)
+{
+    m_ConvertResultsProps[key] = value;
+}
+
+std::string sv4guiSimJob1d::GetConvertResultsProp(const std::string& key)
+{
+    return m_ConvertResultsProps[key];
+}
+
+///////////////////////////////////////////////////////////
+//                   M e s h   P r o p s                //
+/////////////////////////////////////////////////////////
 
 void sv4guiSimJob1d::SetMeshProps(std::map<std::string,std::string> meshProps)
 {

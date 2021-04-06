@@ -108,6 +108,7 @@
 //      Methods called:
 //        CreateJob()
 //        SetBasicParameters()
+//        SetConvertResultsParameters()
 //        SetCapBcs() - job->SetCapProp()
 //        SetSolverParameters() - job->SetSolverProp()
 //        SetWallProperites()
@@ -141,6 +142,7 @@
 #include "sv4gui_TableCapDelegate1d.h"
 #include "sv4gui_TableSolverDelegate1d.h"
 #include "sv4gui_MitkMesh.h"
+#include "sv4gui_MitkSimJob.h"
 #include "sv4gui_MeshLegacyIO.h"
 #include "sv4gui_SimulationUtils1d.h"
 
@@ -178,7 +180,7 @@
 #include <QApplication>
 
 // Redefine MITK_INFO to deactivate all of the debugging statements.
-#define MITK_INFO MITK_DEBUG
+//#define MITK_INFO MITK_DEBUG
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
@@ -395,6 +397,13 @@ void sv4guiSimulationView1d::EnableConnection(bool able)
         connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, slot);
         connect(ui->NumSegmentsLineEdit, SIGNAL(textChanged(QString)), this, slot);
         connect(ui->AdaptiveMeshingCheckBox, SIGNAL(stateChanged(int)), this, slot);
+
+        // Convert results.
+        connect(ui->ProjectCenterlines_CheckBox, SIGNAL(stateChanged(int)), this, slot);
+        connect(ui->ExportNumpy_CheckBox, SIGNAL(stateChanged(int)), this, slot);
+        connect(ui->ProjectTo3DMesh_CheckBox, SIGNAL(stateChanged(int)), this, slot);
+        connect(ui->SimName_ComboBox, SIGNAL(currentTextChanged(QString)), this, slot);
+
         m_ConnectionEnabled = able;
     }
 
@@ -547,6 +556,10 @@ void sv4guiSimulationView1d::CreateQtPartControl( QWidget *parent )
 
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()));
     connect(ui->toolButtonConvertDir, SIGNAL(clicked()), this, SLOT(SetConvertDir()));
+
+    ui->ExportNumpy_CheckBox->setChecked(0);
+    ui->ProjectCenterlines_CheckBox->setChecked(0);
+
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()));
 
     SetupInternalSolverPaths();
@@ -1392,10 +1405,14 @@ vtkSmartPointer<vtkPolyData> sv4guiSimulationView1d::ReadCenterlines(const std::
 //
 mitk::DataNode::Pointer sv4guiSimulationView1d::getProjectNode()
 {
+  //MITK_INFO << "---------- getProjectNode ---------"; 
+  //MITK_INFO << "[getProjectNode] m_DataStorage: " << m_DataStorage; 
   if (m_DataStorage == nullptr) {
     return nullptr;
   }
   mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+  //MITK_INFO << "[getProjectNode] isProjFolder: " << isProjFolder; 
+
   mitk::DataNode::Pointer projFolderNode = m_DataStorage->GetNode(isProjFolder);
   return projFolderNode;
 }
@@ -1919,6 +1936,8 @@ void sv4guiSimulationView1d::OnSelectionChanged(std::vector<mitk::DataNode*> nod
     UpdateGUIJob();
 
     UpdateGUIRunDir();
+
+    UpdateGUIConvertResults();
 
     UpdateFaceListSelection();
 
@@ -2895,6 +2914,46 @@ void sv4guiSimulationView1d::SetVarE(bool)
 */
 }
 
+//-------------------------
+// UpdateGUIConvertResults 
+//-------------------------
+// Update the convert results panel GUI with values from the .s1djb file.
+//
+void sv4guiSimulationView1d::UpdateGUIConvertResults()
+{
+    if (!m_MitkJob) {
+        return;
+    }
+
+    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+    if (job == nullptr) {
+        job = new sv4guiSimJob1d();
+    }
+
+    // Set the check boxes.
+    //
+    auto projCenterlines = job->GetConvertResultsProp("Project Centerlines");
+    ui->ProjectCenterlines_CheckBox->setChecked(std::stoi(projCenterlines));
+
+    auto exportNumpy = job->GetConvertResultsProp("Export NumPy");
+    ui->ExportNumpy_CheckBox->setChecked(std::stoi(exportNumpy));
+
+    auto projMesh = job->GetConvertResultsProp("Project To 3D Mesh");
+    ui->ProjectTo3DMesh_CheckBox->setChecked(std::stoi(projMesh));
+
+    // Set simulation names for projecting results to a 3D simulation volume mesh.
+    //
+    auto simNames = GetSimulationNames();
+    ui->SimName_ComboBox->clear();
+    for (auto const& simName : simNames) {
+        ui->SimName_ComboBox->addItem(QString::fromStdString(simName));
+    }
+
+    auto simName = job->GetConvertResultsProp("Simulation Name");
+    int foundIndex = ui->SimName_ComboBox->findText(QString(simName.c_str()));
+    ui->SimName_ComboBox->setCurrentIndex(foundIndex);
+}
+
 //---------------
 // UpdateGUIMesh
 //---------------
@@ -3559,6 +3618,27 @@ bool sv4guiSimulationView1d::CreateDataFiles(QString outputDir, bool outputAllFi
 //-------------------
 // AddMeshParameters
 //-------------------
+// Add parameters used to convert results.
+//
+void sv4guiSimulationView1d::AddConvertResultsParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface)
+{
+    auto params = pythonInterface.m_ParameterNames;
+
+    auto projCenterlines = job->GetConvertResultsProp("Project Centerlines");
+    //pythonInterface.AddParameter(params.SEG_MIN_NUM, numSegements);
+
+    auto exportNumpy = job->GetConvertResultsProp("Export NumPy");
+    //pythonInterface.AddParameter(params.SEG_MIN_NUM, numSegements);
+
+    auto projMesh = job->GetConvertResultsProp("Project To 3D Mesh");
+    //pythonInterface.AddParameter(params.SEG_MIN_NUM, numSegements);
+
+    auto simName = ui->SimName_ComboBox->currentText();
+}
+
+//-------------------
+// AddMeshParameters
+//-------------------
 // Add parameters used to generate the 1D mesh.
 //
 void sv4guiSimulationView1d::AddMeshParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface)
@@ -3954,6 +4034,11 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
         return nullptr;
     }
 
+    if (!SetConvertResultsParameters(job, msg, checkValidity)) {
+        delete job;
+        return nullptr;
+    }
+
     if (!SetMeshParameters(job, msg, checkValidity)) {
         delete job;
         return nullptr;
@@ -3980,7 +4065,7 @@ sv4guiSimJob1d* sv4guiSimulationView1d::CreateJob(std::string& msg, bool checkVa
 //-------------------
 // SetMeshParameters
 //-------------------
-// Set the parameters used to generte the FE mesh from centerlines.
+// Set the parameters used to generate the FE mesh from centerlines.
 //
 bool sv4guiSimulationView1d::SetMeshParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity)
 {
@@ -3992,6 +4077,37 @@ bool sv4guiSimulationView1d::SetMeshParameters(sv4guiSimJob1d* job, std::string&
     } else {
         job->SetMeshProp("Adaptive Meshing", "0"); 
     }
+
+    return true;
+}
+
+//-----------------------------
+// SetConvertResultsParameters
+//-----------------------------
+// Set the parameters used to convert results. 
+//
+bool sv4guiSimulationView1d::SetConvertResultsParameters(sv4guiSimJob1d* job, std::string& msg, bool checkValidity)
+{
+    if (ui->ProjectCenterlines_CheckBox->isChecked()) {
+        job->SetConvertResultsProp("Project Centerlines", "1");
+    } else {
+        job->SetConvertResultsProp("Project Centerlines", "0");
+    }
+
+    if (ui->ExportNumpy_CheckBox->isChecked()) {
+        job->SetConvertResultsProp("Export NumPy", "1");
+    } else {
+        job->SetConvertResultsProp("Export NumPy", "0");
+    }
+
+    if (ui->ProjectTo3DMesh_CheckBox->isChecked()) {
+        job->SetConvertResultsProp("Project To 3D Mesh", "1");
+    } else {
+        job->SetConvertResultsProp("Project To 3D Mesh", "0");
+    }
+
+    auto simName = ui->SimName_ComboBox->currentText();
+    job->SetConvertResultsProp("Simulation Name", simName.toStdString());
 
     return true;
 }
@@ -4615,10 +4731,13 @@ void sv4guiSimulationView1d::SelectSegmentExportType(int index)
 //---------------
 // ExportResults
 //---------------
+// Process the Convert Results button press.
 //
 void sv4guiSimulationView1d::ExportResults()
 {
     auto msg = "sv4guiSimulationView1d::ExportResults";
+    MITK_INFO << msg; 
+    MITK_INFO << msg << "##########################################"; 
     MITK_INFO << msg << "--------- ExportResults ----------"; 
 
     QString resultDir = ui->lineEditResultDir->text();
@@ -4638,7 +4757,6 @@ void sv4guiSimulationView1d::ExportResults()
     auto startTime = std::stod(startTimeStr.toStdString());
     QString stopTimeStr = ui->lineEditStop->text().trimmed();
     auto stopTime = std::stod(stopTimeStr.toStdString());
-
     if (stopTime < stopTime) { 
         QMessageBox::warning(m_Parent,"1D Simulation", "The stop time must be larger than the start time.");
         return;
@@ -4679,7 +4797,34 @@ void sv4guiSimulationView1d::ExportResults()
    if (segmentExportType == sv4guiSimulationView1d::SegmentExportType::ALL) {
        pythonInterface.AddParameter(params.ALL_SEGMENTS, "true"); 
    } else {
-     pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
+       pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
+   }
+
+   // Export results to NumPy arrays. 
+   bool exportNumpy = ui->ExportNumpy_CheckBox->isChecked();
+   MITK_INFO << msg << "exportNumpy: " << exportNumpy; 
+
+   // Project results to centerline geometry. 
+   if (ui->ProjectCenterlines_CheckBox->isChecked()) {
+       auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
+       MITK_INFO << msg << "inputCenterlinesFile: " << inputCenterlinesFile; 
+       pythonInterface.AddParameter(params.CENTERLINES_FILE, inputCenterlinesFile); 
+   }
+
+   // Export results as numpy arrays.
+   if (ui->ExportNumpy_CheckBox->isChecked()) {
+   }
+
+   // Project results to a 3D simulation mesh.
+   if (ui->ProjectTo3DMesh_CheckBox->isChecked()) {
+       auto simName = ui->SimName_ComboBox->currentText().toStdString();
+       std::string volumeMeshPath; 
+       std::string wallsMeshPath; 
+       GetSimulationMeshPaths(simName, volumeMeshPath, wallsMeshPath); 
+       MITK_INFO << msg << "volumeMeshPath: " << volumeMeshPath; 
+       MITK_INFO << msg << "wallsMeshPath: " << wallsMeshPath; 
+       pythonInterface.AddParameter(params.VOLUME_MESH_FILE, volumeMeshPath); 
+       pythonInterface.AddParameter(params.WALLS_MESH_FILE, wallsMeshPath); 
    }
 
    QString jobName("");
@@ -4712,6 +4857,21 @@ void sv4guiSimulationView1d::ExportResults()
    statusMsg = "1D simulation files have been converted.";
    ui->JobStatusValueLabel->setText(statusMsg);
    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+}
+
+//------------------------
+// GetSimulationMeshPaths
+//------------------------
+//
+void sv4guiSimulationView1d::GetSimulationMeshPaths(const std::string& simName, std::string& volumeMeshPath, std::string& wallsMeshPath)
+{
+    mitk::DataNode::Pointer projFolderNode = getProjectNode();
+    std::string projPath = "";
+    projFolderNode->GetStringProperty("project path", projPath);
+
+    std::string simMeshPath = projPath + "/Simulations/" + simName + "/mesh-complete/"; 
+    volumeMeshPath = simMeshPath + "mesh-complete.mesh.vtu";
+    wallsMeshPath = simMeshPath + "walls_combined.vtp";
 }
 
 //---------------------
@@ -4915,4 +5075,52 @@ void sv4guiSimulationView1d::UpdateJobStatus()
     }
 
 }
+
+//--------------------
+// GetSimulationNames
+//--------------------
+//
+std::vector<std::string> sv4guiSimulationView1d::GetSimulationNames()
+{
+    MITK_INFO << "--------- GetSimulationNames ----------"; 
+    std::string modelName = m_MitkJob->GetModelName();
+    std::vector<std::string> simNames;
+
+    auto isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
+    auto rs = GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+    if (rs->size() == 0) {
+        return simNames;
+    }
+
+    auto projFolderNode = rs->GetElement(0);
+    rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulationFolder"));
+    if (rs->size() == 0) {
+        return simNames;
+    }
+
+    mitk::DataNode::Pointer simFolderNode = rs->GetElement(0);
+    rs = GetDataStorage()->GetDerivations(simFolderNode);
+    MITK_INFO << "[GetSimulationNames] num sims: " << rs->size(); 
+    auto sim1DModelName = m_ModelNode->GetName();
+    MITK_INFO << "[GetSimulationNames] sim1DModelName: " << sim1DModelName; 
+
+    for (int i = 0; i < rs->size(); i++) {
+        sv4guiMitkSimJob* simJob = dynamic_cast<sv4guiMitkSimJob*>(rs->GetElement(i)->GetData());
+        if (simJob == nullptr) {
+            continue; 
+        } 
+        auto simName = rs->GetElement(i)->GetName();
+        MITK_INFO << "[GetSimulationNames] ----- simulation: " << simName << " -----"; 
+        auto modelName = simJob->GetModelName();
+        auto meshName = simJob->GetMeshName();
+        MITK_INFO << "[GetSimulationNames] modelName: " << modelName; 
+        MITK_INFO << "[GetSimulationNames] meshName: " << meshName; 
+        if (modelName == sim1DModelName) {
+            simNames.push_back(simName);
+        }
+    }
+
+    return simNames;
+}
+
 

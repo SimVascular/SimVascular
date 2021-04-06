@@ -760,15 +760,20 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image,
   }
 }
 
-void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path,
-  std::string imageName){
+//--------------
+// setTransform
+//--------------
+// Set the image transformation from the SV project Images/.transform.xml file.
+//
+// This sets the upper 3x3 elements in the vtkMatrix4x4 object.
+//
+void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_path, std::string imageName)
+{
+  std::cout << "========== sv4guiProjectManager::setTransform ==========" << std::endl;
 
-    QDir dir(QString::fromStdString(proj_path));
-    dir.cd(QString::fromStdString("Images"));
-
-    QString FilePath=dir.absoluteFilePath(QString::fromStdString(imageName+".transform.xml"));
-
-
+  QDir dir(QString::fromStdString(proj_path));
+  dir.cd(QString::fromStdString("Images"));
+  QString FilePath = dir.absoluteFilePath(QString::fromStdString(imageName+".transform.xml"));
   auto transform_fn = FilePath.toStdString();
 
   QDomDocument doc("transform");
@@ -785,20 +790,43 @@ void sv4guiProjectManager::setTransform(mitk::Image* image, std::string proj_pat
     //std::cout << root.text().toStdString() << "\n";
     auto transform = image->GetGeometry()->GetVtkMatrix();
 
-    //std::cout << "starting loop\n";
+    std::cout << "[setTransform] ---------- transform ----------" << std::endl;
+    vtkIndent indent;
+    transform->PrintSelf(std::cout, indent);
+    std::cout << "[setTransform] ----------------------------" << std::endl;
+
+    std::cout << "[setTransform] Read 'transform' element ..." << std::endl;
     for (int j = 0; j < 3; j++){
       for (int i = 0; i < 3; i++){
         auto label = "t"+std::to_string(i)+std::to_string(j);
-        //std::cout << label << "\n";
+        std::cout << "[setTransform] Label: " << label << std::endl;
         auto line = root.attribute(QString::fromStdString(label));
-        //std::cout << line.toStdString() << "\n";
+        std::cout << "[setTransform] Value: " << line.toStdString() << std::endl;
         auto v = std::stod(line.toStdString());
         transform->SetElement(i,j,v);
       }
     }
 
+
+    auto spacing = image->GetGeometry()->GetSpacing();
+    std::cout << "[setTransform] Spacing: " << spacing[0] << " " << spacing[1] << " " << spacing[2] << std::endl;
+    auto origin = image->GetGeometry()->GetOrigin();
+    std::cout << "[setTransform] Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+
     image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
     image->UpdateOutputInformation();
+
+    transform = image->GetGeometry()->GetVtkMatrix();
+    std::cout << "[setTransform] ---------- new transform ----------" << std::endl;
+    transform->PrintSelf(std::cout, indent);
+    std::cout << "[setTransform] ----------------------------" << std::endl;
+
+    spacing = image->GetGeometry()->GetSpacing();
+    std::cout << "[setTransform] New Spacing: "<<spacing[0]<<" "<<spacing[1]<<" "<<spacing[2]<<std::endl;
+
+    auto norigin = image->GetGeometry()->GetOrigin();
+    std::cout << "[setTransform] New Origin: " << norigin[0] << " " << norigin[1] << " " << norigin[2] << std::endl;
+
   }
 }
 
@@ -1191,13 +1219,26 @@ void sv4guiProjectManager::SaveAllProjects(mitk::DataStorage::Pointer dataStorag
     }
 }
 
+//----------
+// LoadData
+//----------
+//
 void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
 {
-    std::string path="";
+    // Get the path to the project data node (e.g. Paths data node)..
+    std::string path = "";
     dataNode->GetStringProperty("path",path);
-    if(path=="")
+    if (path == "") {
         return;
+    }
 
+    // Evaluate if the given DataNodes data objects are of the specific data type.
+    //
+    // The data type is specified a string
+    //
+    // [TODO:DaveP] This is hideous! Need to have a global class that stores
+    // all of these string names.
+    //
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("sv4guiPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("sv4guiContourGroup");
     mitk::NodePredicateDataType::Pointer isSeg3D = mitk::NodePredicateDataType::New("sv4guiMitkSeg3D");
@@ -1207,6 +1248,8 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
     mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
 
+    // Determine data node file extension.
+    //
     std::string extension="";
     if(isPath->CheckNode(dataNode))
     {
@@ -1249,48 +1292,56 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     }
 }
 
+//--------------
+// LoadDataNode
+//--------------
+// Create a data node with the given file path and load data into it.
+//
+// This loads data for all SV tools from their specific files types: .vti, .ctgr, .mdl, etc. 
+//
+// Note: MITK knows how to load the different data files by defining a Read() method inherited 
+// from mitk::AbstractFileIO.
+//
 mitk::DataNode::Pointer sv4guiProjectManager::LoadDataNode(std::string filePath)
 {
+ /*
+ std::cout << std::endl;
+ std::cout << "========== sv4guiProjectManager::LoadData(string) ========== " << std::endl;
+ std::cout << "[LoadData] filePath: " << filePath << std::endl;
+ */
+
+ // Load data from a file.
  std::vector<mitk::BaseData::Pointer> baseDataList = mitk::IOUtil::Load(filePath);
- if (baseDataList.empty())
- {
-   MITK_ERROR <<"Object not added to Data Storage! Please make sure object is valid: " << filePath;
+ if (baseDataList.empty()) {
+   MITK_ERROR << "Object not added to Data Storage! Please make sure object is valid: " << filePath;
    return NULL;
  }
 
+ // Create a data node for the data.
  mitk::BaseData::Pointer baseData = baseDataList.front();
-
  mitk::DataNode::Pointer node = mitk::DataNode::New();
  node->SetData(baseData);
 
- // path
+ // Set the data node PATH property. 
  mitk::StringProperty::Pointer pathProp = mitk::StringProperty::New(itksys::SystemTools::GetFilenamePath(filePath));
  node->SetProperty(mitk::StringProperty::PATH, pathProp);
 
- // name already defined?
+ // Check if the name is already defined.
  mitk::StringProperty::Pointer nameProp = dynamic_cast<mitk::StringProperty *>(node->GetProperty("name"));
- if (nameProp.IsNull() || (strcmp(nameProp->GetValue(), "No Name!") == 0))
- {
-   // name already defined in BaseData
+ if (nameProp.IsNull() || (strcmp(nameProp->GetValue(), "No Name!") == 0)) {
    mitk::StringProperty::Pointer baseDataNameProp =
-     dynamic_cast<mitk::StringProperty *>(node->GetData()->GetProperty("name").GetPointer());
-   if (baseDataNameProp.IsNull() || (strcmp(baseDataNameProp->GetValue(), "No Name!") == 0))
-   {
-     // name neither defined in node, nor in BaseData -> name = filename
+       dynamic_cast<mitk::StringProperty*>(node->GetData()->GetProperty("name").GetPointer());
+   if (baseDataNameProp.IsNull() || (strcmp(baseDataNameProp->GetValue(), "No Name!") == 0)) {
      nameProp = mitk::StringProperty::New(itksys::SystemTools::GetFilenameWithoutExtension(filePath));
      node->SetProperty("name", nameProp);
-   }
-   else
-   {
-     // name defined in BaseData!
+   } else {
      nameProp = mitk::StringProperty::New(baseDataNameProp->GetValue());
      node->SetProperty("name", nameProp);
    }
  }
 
- // visibility
- if (!node->GetProperty("visible"))
- {
+ // Set visibility.
+ if (!node->GetProperty("visible")) {
    node->SetVisibility(true);
  }
 

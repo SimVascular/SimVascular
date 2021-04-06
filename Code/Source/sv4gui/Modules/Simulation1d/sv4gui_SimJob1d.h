@@ -62,6 +62,11 @@ public:
     void SetBasicProp(const std::string& key, std::string value);
     std::string GetBasicProp(const std::string& key);
 
+    void SetConvertResultsProps(std::map<std::string,std::string> basicProps);
+    std::map<std::string,std::string> GetConvertResultsProps();
+    void SetConvertResultsProp(const std::string& key, std::string value);
+    std::string GetConvertResultsProp(const std::string& key);
+
     void SetCapProps(std::map<std::string,std::map<std::string,std::string> > capProps);
     std::map<std::string,std::map<std::string,std::string> > GetCapProps() const;
     void SetCapProp(const std::string& capName, const std::string& key, std::string value);
@@ -105,6 +110,7 @@ public:
 
     std::map<std::string,std::string> m_ModelProps;
     std::map<std::string,std::string> m_BasicProps;
+    std::map<std::string,std::string> m_ConvertResultsProps;
     std::map<std::string,std::map<std::string,std::string> > m_CapProps;
     std::map<std::string,std::string> m_MeshProps;
     std::map<std::string,std::string> m_WallProps;
