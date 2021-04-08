@@ -51,7 +51,7 @@
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MitkSimJob.h"
 #include "sv4gui_MitksvFSIJob.h"
-#include "sv4gui_MitkSimJob1d.h"
+#include "sv4gui_MitkROMSimJob.h"
 
 #include <QMenu>
 #include <QMenuBar>
@@ -692,7 +692,7 @@ void sv4guiWorkbenchWindowAdvisor::PostWindowCreate()
                 idx=5;
             else if(viewID=="org.sv.views.simulation")
                 idx=6;
-            else if(viewID=="org.sv.views.simulation1d")
+            else if(viewID=="org.sv.views.romsimulation")
                 idx=7;
             else if(viewID=="org.sv.views.svfsi")
                 idx=8;
@@ -1183,7 +1183,7 @@ void sv4guiWorkbenchWindowAdvisor::ShowSVView()
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
     mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
-    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
+    mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
 
     if( selectedNode.IsNotNull() && dynamic_cast<mitk::Image*>(selectedNode->GetData()) )
     {
@@ -1219,9 +1219,9 @@ void sv4guiWorkbenchWindowAdvisor::ShowSVView()
     {
        page->ShowView("org.sv.views.svfsi");
     }
-    else if(isSim1dJob->CheckNode(selectedNode))
+    else if(isROMSimJob->CheckNode(selectedNode))
     {
-       page->ShowView("org.sv.views.simulation1d");
+       page->ShowView("org.sv.views.romsimulation");
     }
 }
 
@@ -1743,7 +1743,7 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     mitk::NodePredicateDataType::Pointer isMeshFolder = mitk::NodePredicateDataType::New("sv4guiMeshFolder");
     mitk::NodePredicateDataType::Pointer isSimFolder = mitk::NodePredicateDataType::New("sv4guiSimulationFolder");
     mitk::NodePredicateDataType::Pointer issvFSIFolder = mitk::NodePredicateDataType::New("sv4guisvFSIFolder");
-    mitk::NodePredicateDataType::Pointer isSim1dFolder = mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder");
+    mitk::NodePredicateDataType::Pointer isROMSimFolder = mitk::NodePredicateDataType::New("sv4guiROMSimulationFolder");
 
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("sv4guiPath");
     mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("sv4guiContourGroup");
@@ -1752,7 +1752,7 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
     mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
-    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
+    mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
 
     mitk::DataNode::Pointer parentNode=NULL;
 
@@ -1838,11 +1838,11 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
     }
 
 
-    else if(isSim1dJob->CheckNode(m_CopyDataNode))
+    else if(isROMSimJob->CheckNode(m_CopyDataNode))
     {
-        if(isSim1dFolder->CheckNode(node))
+        if(isROMSimFolder->CheckNode(node))
             parentNode=node;
-        else if(isSim1dJob->CheckNode(node))
+        else if(isROMSimJob->CheckNode(node))
         {
             mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
             if(rs->size()>0)
@@ -1917,10 +1917,10 @@ void sv4guiWorkbenchWindowAdvisor::PasteDataNode( bool )
         newNode->SetData(copyJob);
     }
 
-    sv4guiMitkSimJob1d* simJob1d=dynamic_cast<sv4guiMitkSimJob1d*>(m_CopyDataNode->GetData());
-    if(simJob1d)
+    sv4guiMitkROMSimJob* romSimJob=dynamic_cast<sv4guiMitkROMSimJob*>(m_CopyDataNode->GetData());
+    if(romSimJob)
     {
-        sv4guiMitkSimJob1d::Pointer copyJob=simJob1d->Clone();
+        sv4guiMitkROMSimJob::Pointer copyJob=romSimJob->Clone();
         copyJob->SetStatus("No Data Files");
         newNode->SetData(copyJob);
     }

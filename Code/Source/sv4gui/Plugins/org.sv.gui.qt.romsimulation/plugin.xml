@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.romsimulation"
+          name="Reduced-Order Model Simulation"
+          class="sv4guiROMSimulationView"
+          icon="resources/romsimulation.png" />
+  </extension>
+
+  <extension point="org.sv.gui.qt.datamanager.contextMenuActions">
+    <contextMenuAction nodeDescriptorName="sv4guiROMSimulationFolder" label="Create Reduced-Order Mode Simulation Job" icon="" class="sv4guiROMSimJobCreateAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkROMSimJob" label="Stop Simulation" icon="" class="sv4guiROMSimJobStopAction" />
+    <contextMenuAction nodeDescriptorName="sv4guiMitkROMSimJob" label="Export Data Files" icon="" class="sv4guiROMSimJobExportAction" />
+  </extension>
+
+  <extension point="org.blueberry.ui.preferencePages">
+    <page id="org.sv.gui.qt.ROMSimulationPreferencePage" name="SimVascular Reduced-Order Mode Simulation" class="sv4guiROMSimulationPreferencePage">
+      <keywordreference id="org.sv.gui.qt.SimulationPreferencePageKeywords"></keywordreference>
+    </page>
+  </extension>
+
+</plugin>

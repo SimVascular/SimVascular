@@ -28,38 +28,48 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(H_FILES
-    sv4gui_DataFolder.h
-    sv4gui_ProjectFolder.h
-    sv4gui_ImageFolder.h
-    sv4gui_PathFolder.h
-    sv4gui_SegmentationFolder.h
-    sv4gui_svFSIFolder.h
-    sv4gui_ModelFolder.h
-    sv4gui_MeshFolder.h
-    sv4gui_SimulationFolder.h
-    sv4gui_ROMSimulationFolder.h
-    sv4gui_RepositoryFolder.h
-    sv4gui_ProjectManager.h
-    sv4gui_DataNodeOperation.h
-    sv4gui_DataNodeOperationInterface.h
-    
-)
+project(org_sv_gui_qt_romsimulation)
 
-set(CPP_FILES
-    sv4gui_DataFolder.cxx
-    sv4gui_ProjectManager.cxx
-    sv4gui_DataNodeOperation.cxx
-    sv4gui_DataNodeOperationInterface.cxx
-    sv4gui_ImageFolder.cxx
-    sv4gui_MeshFolder.cxx
-    sv4gui_ModelFolder.cxx
-    sv4gui_PathFolder.cxx
-    sv4gui_RepositoryFolder.cxx
-    sv4gui_ProjectFolder.cxx
-    sv4gui_SegmentationFolder.cxx
-    sv4gui_SimulationFolder.cxx
-    sv4gui_ROMSimulationFolder.cxx
-    sv4gui_svFSIFolder.cxx
-)
+set(lib org_sv_gui_qt_romsimulation)
 
+if(SV_USE_TINYXML)
+  include_directories(${TINYXML_INCLUDE_DIR})
+endif()
+
+if(SV_USE_MITK_CONFIG)
+  mitk_create_plugin(
+    EXPORT_DIRECTIVE SV_QT_ROMSIMULATION
+    EXPORTED_INCLUDE_SUFFIXES src
+    MODULE_DEPENDS MitkQtWidgets org_sv_gui_qt_datamanager 
+      ${SV_LIB_POLYDATA_SOLID_NAME} 
+      ${SV_LIB_MODULE_PATH_NAME} 
+      ${SV_LIB_MODULE_SEGMENTATION_NAME} 
+      ${SV_LIB_MODULE_MODEL_NAME} 
+      ${SV_LIB_MODULE_MESH_NAME} 
+      ${SV_LIB_MODULE_ROM_SIMULATION_NAME} 
+      ${SV_LIB_MODULE_SIMULATION_NAME} 
+      ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME} 
+      org_sv_gui_qt_modeling
+  )
+else()
+  simvascular_create_plugin(
+    EXPORT_DIRECTIVE SV_QT_ROMSIMULATION
+    MODULE_DEPENDS MitkQtWidgets org_sv_gui_qt_datamanager 
+      ${SV_LIB_POLYDATA_SOLID_NAME} 
+      ${SV_LIB_MODULE_PATH_NAME} 
+      ${SV_LIB_MODULE_SEGMENTATION_NAME} 
+      ${SV_LIB_MODULE_MODEL_NAME} 
+      ${SV_LIB_MODULE_MESH_NAME} 
+      ${SV_LIB_MODULE_ROM_SIMULATION_NAME} 
+      ${SV_LIB_MODULE_SIMULATION_NAME} 
+      ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME} 
+      org_sv_gui_qt_modeling
+  )
+endif()
+if(SV_INSTALL_LIBS)
+    install(TARGETS ${lib}
+        RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR}/plugins COMPONENT CoreExecutables
+        LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR}/plugins COMPONENT CoreLibraries
+        ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR}/plugins COMPONENT CoreLibraries
+    )
+endif()

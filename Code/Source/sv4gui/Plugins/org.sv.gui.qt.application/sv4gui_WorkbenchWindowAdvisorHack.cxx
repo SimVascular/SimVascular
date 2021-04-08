@@ -53,7 +53,7 @@
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MitkSimJob.h"
 #include "sv4gui_MitksvFSIJob.h"
-#include "sv4gui_MitkSimJob1d.h"
+#include "sv4gui_MitkROMSimJob.h"
 
 #include <QMenu>
 #include <QMenuBar>

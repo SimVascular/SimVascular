@@ -248,7 +248,7 @@ if(SV_USE_SV4_GUI)
     "Source/sv4gui/Modules/Model/Common"
     "Source/sv4gui/Modules/Mesh/Common"
     "Source/sv4gui/Modules/Simulation"
-    "Source/sv4gui/Modules/Simulation1d"
+    "Source/sv4gui/Modules/ROMSimulation"
     "Source/sv4gui/Modules/ProjectManagement"
     "Source/sv4gui/Modules/QtWidgets"
     "Source/sv4gui/Modules/ImageProcessing"
@@ -288,8 +288,8 @@ if(SV_USE_SV4_GUI)
       "Source/sv4gui/Plugins/org.sv.gui.qt.segmentation"
       "Source/sv4gui/Plugins/org.sv.gui.qt.modeling"
       "Source/sv4gui/Plugins/org.sv.gui.qt.meshing"
+      "Source/sv4gui/Plugins/org.sv.gui.qt.romsimulation"
       "Source/sv4gui/Plugins/org.sv.gui.qt.simulation"
-      "Source/sv4gui/Plugins/org.sv.gui.qt.simulation1d"
       "Source/sv4gui/Plugins/org.sv.gui.qt.application"
       "Source/sv4gui/Plugins/org.sv.gui.qt.imageprocessing"
       "Source/sv4gui/Plugins/org.sv.gui.qt.svfsi")

@@ -28,38 +28,43 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(H_FILES
-    sv4gui_DataFolder.h
-    sv4gui_ProjectFolder.h
-    sv4gui_ImageFolder.h
-    sv4gui_PathFolder.h
-    sv4gui_SegmentationFolder.h
-    sv4gui_svFSIFolder.h
-    sv4gui_ModelFolder.h
-    sv4gui_MeshFolder.h
-    sv4gui_SimulationFolder.h
-    sv4gui_ROMSimulationFolder.h
-    sv4gui_RepositoryFolder.h
-    sv4gui_ProjectManager.h
-    sv4gui_DataNodeOperation.h
-    sv4gui_DataNodeOperationInterface.h
-    
-)
+set(lib ${SV_LIB_MODULE_ROM_SIMULATION_NAME})
 
-set(CPP_FILES
-    sv4gui_DataFolder.cxx
-    sv4gui_ProjectManager.cxx
-    sv4gui_DataNodeOperation.cxx
-    sv4gui_DataNodeOperationInterface.cxx
-    sv4gui_ImageFolder.cxx
-    sv4gui_MeshFolder.cxx
-    sv4gui_ModelFolder.cxx
-    sv4gui_PathFolder.cxx
-    sv4gui_RepositoryFolder.cxx
-    sv4gui_ProjectFolder.cxx
-    sv4gui_SegmentationFolder.cxx
-    sv4gui_SimulationFolder.cxx
-    sv4gui_ROMSimulationFolder.cxx
-    sv4gui_svFSIFolder.cxx
-)
+#-----------------------------------------------------------------------------
+# Create module
+simvascular_create_module(
+  TARGET ${lib}
+  EXPORT_DIRECTIVE sv4guiModuleROMSimulation
+  SHARED_LIB ${SV_USE_MODULES_SHARED_LIBRARIES}
+  LIBRARY_DEPENDS
+  ${QT_LIBRARIES}
+  ${VTK_LIBRARIES}
+  ${ITK_LIBRARIES}
+  ${MITK_LIBRARIES}
+  ${SV_LIB_GEOM_NAME}
+  ${SV_LIB_MODULE_MESH_NAME})
+#-----------------------------------------------------------------------------
+
+include_directories(${TINYXML_INCLUDE_DIR})
+
+if(SV_INSTALL_LIBS)
+  install(TARGETS ${lib}
+    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+  )
+endif()
+
+if(SV_INSTALL_HEADERS)
+  set(MODULE_FILES_CMAKE files.cmake)
+  if(NOT IS_ABSOLUTE ${MODULE_FILES_CMAKE})
+    set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
+  endif()
+  if (EXISTS ${MODULE_FILES_CMAKE})
+    include(${MODULE_FILES_CMAKE})
+  endif()
+  install(FILES ${H_FILES}
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+  )
+endif()
 

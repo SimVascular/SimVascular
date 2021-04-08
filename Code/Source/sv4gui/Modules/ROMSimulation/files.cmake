@@ -29,37 +29,21 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(H_FILES
-    sv4gui_DataFolder.h
-    sv4gui_ProjectFolder.h
-    sv4gui_ImageFolder.h
-    sv4gui_PathFolder.h
-    sv4gui_SegmentationFolder.h
-    sv4gui_svFSIFolder.h
-    sv4gui_ModelFolder.h
-    sv4gui_MeshFolder.h
-    sv4gui_SimulationFolder.h
-    sv4gui_ROMSimulationFolder.h
-    sv4gui_RepositoryFolder.h
-    sv4gui_ProjectManager.h
-    sv4gui_DataNodeOperation.h
-    sv4gui_DataNodeOperationInterface.h
-    
+    sv4gui_ROMSimJob.h
+    sv4gui_MitkROMSimJob.h
+    sv4gui_MitkROMSimJobIO.h
+    sv4gui_ROMSimulationUtils.h
+    sv4gui_MitkROMSimulationObjectFactory.h
 )
 
 set(CPP_FILES
-    sv4gui_DataFolder.cxx
-    sv4gui_ProjectManager.cxx
-    sv4gui_DataNodeOperation.cxx
-    sv4gui_DataNodeOperationInterface.cxx
-    sv4gui_ImageFolder.cxx
-    sv4gui_MeshFolder.cxx
-    sv4gui_ModelFolder.cxx
-    sv4gui_PathFolder.cxx
-    sv4gui_RepositoryFolder.cxx
-    sv4gui_ProjectFolder.cxx
-    sv4gui_SegmentationFolder.cxx
-    sv4gui_SimulationFolder.cxx
-    sv4gui_ROMSimulationFolder.cxx
-    sv4gui_svFSIFolder.cxx
+    sv4gui_ROMSimJob.cxx
+    sv4gui_MitkROMSimJob.cxx
+    sv4gui_MitkROMSimJobIO.cxx
+    sv4gui_ROMSimulationUtils.cxx
+    sv4gui_MitkROMSimulationObjectFactory.cxx
 )
 
+set(RESOURCE_FILES
+
+)

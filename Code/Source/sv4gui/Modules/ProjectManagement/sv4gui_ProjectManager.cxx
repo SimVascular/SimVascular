@@ -39,7 +39,7 @@
 #include "sv4gui_MeshFolder.h"
 #include "sv4gui_SimulationFolder.h"
 #include "sv4gui_svFSIFolder.h"
-#include "sv4gui_Simulation1dFolder.h"
+#include "sv4gui_ROMSimulationFolder.h"
 #include "sv4gui_RepositoryFolder.h"
 #include "sv4gui_svFSIFolder.h"
 
@@ -50,7 +50,7 @@
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MitkSimJob.h"
 #include "sv4gui_MitksvFSIJob.h"
-#include "sv4gui_MitkSimJob1d.h"
+#include "sv4gui_MitkROMSimJob.h"
 #include "sv4gui_MitkMeshIO.h"
 #include "sv4gui_VtkUtils.h"
 
@@ -121,6 +121,9 @@
 //
 void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir,bool newProject)
 {
+    std::cout << std::endl;
+    std::cout << "====================== sv4guiProjectManager::AddProject ===============" << std::endl;
+
     QString projectConfigFileName=".svproj";
     QString imageFolderName="Images";
     QString pathFolderName="Paths";
@@ -128,7 +131,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     QString modelFolderName="Models";
     QString meshFolderName="Meshes";
     QString simFolderName="Simulations";
-    QString sim1dFolderName="Simulations1d";
+    QString romSimFolderName="ROMSimulations";
     QString svFSIFolderName="svFSI";
     QString reposFolderName="Repository";
 
@@ -157,7 +160,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         dir.mkdir(modelFolderName);
         dir.mkdir(meshFolderName);
         dir.mkdir(simFolderName);
-        dir.mkdir(sim1dFolderName);
+        dir.mkdir(romSimFolderName);
         dir.mkdir(svFSIFolderName);
         dir.mkdir(reposFolderName);
 
@@ -222,9 +225,8 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         modelFolderName=projDesc.firstChildElement("models").attribute("folder_name");
         meshFolderName=projDesc.firstChildElement("meshes").attribute("folder_name");
         simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
-        sim1dFolderName=projDesc.firstChildElement("simulations1d").attribute("folder_name");
-	    svFSIFolderName=projDesc.firstChildElement("svFSI").attribute("folder_name");
-        //reposFolderName=projDesc.firstChildElement("repository").attribute("folder_name");
+        romSimFolderName=projDesc.firstChildElement("romsimulations").attribute("folder_name");
+	svFSIFolderName=projDesc.firstChildElement("svFSI").attribute("folder_name");
 
     }
 
@@ -253,7 +255,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     mitk::DataNode::Pointer meshFolderNode=CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
     mitk::DataNode::Pointer simFolderNode=CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
     mitk::DataNode::Pointer svFSIFolderNode=CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
-    mitk::DataNode::Pointer sim1dFolderNode=CreateDataFolder<sv4guiSimulation1dFolder>(dataStorage, sim1dFolderName, projectFolderNode);
+    mitk::DataNode::Pointer romSimFolderNode=CreateDataFolder<sv4guiROMSimulationFolder>(dataStorage, romSimFolderName, projectFolderNode);
     mitk::DataNode::Pointer reposFolderNode=CreateDataFolder<sv4guiRepositoryFolder>(dataStorage, reposFolderName, projectFolderNode);
 
     imageFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
@@ -263,7 +265,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     meshFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     simFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     svFSIFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
-    sim1dFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    romSimFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
     reposFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
     // Create the SV Data Manager plugin data nodes for an existing project.
@@ -488,18 +490,21 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             dataStorage->Add(jobNode,svFSIFolderNode);
         }
 
-        // Create Simulations1d plugin data nodes.
+        // Create ROMSimulations plugin data nodes.
         //
-        sim1dFolderNode->SetVisibility(false);
-        QDir dirSim1d(projPath);
-        dirSim1d.cd(sim1dFolderName);
-        fileInfoList=dirSim1d.entryInfoList(QStringList("*.s1djb"), QDir::Files, QDir::Name);
+        std::cout << "[AddProject] Add ROMSimulations plugin data nodes ..." << std::endl;
+        romSimFolderNode->SetVisibility(false);
+        QDir dirROMSim(projPath);
+        dirROMSim.cd(romSimFolderName);
+        std::cout << "[AddProject] romSimFolderName: " << romSimFolderName.toStdString() << std::endl;
+        fileInfoList=dirROMSim.entryInfoList(QStringList("*.s1djb"), QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
+          std::cout << "[AddProject] i: " << i << std::endl;
             //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             jobNode->SetVisibility(false);
-            dataStorage->Add(jobNode,sim1dFolderNode);
+            dataStorage->Add(jobNode,romSimFolderNode);
         }
     }
 
@@ -544,8 +549,8 @@ void sv4guiProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
     tag.setAttribute("folder_name","Simulations");
     root.appendChild(tag);
 
-    tag = doc.createElement("simulations1d");
-    tag.setAttribute("folder_name","Simulations1d");
+    tag = doc.createElement("romsimulations");
+    tag.setAttribute("folder_name","ROMSimulations");
     root.appendChild(tag);
 
     tag = doc.createElement("svFSI");
@@ -1123,19 +1128,19 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
     }
     simFolder->ClearRemoveList();
 
-    // Save simulations 1d jobs
-    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder"));
-    mitk::DataNode::Pointer sim1dFolderNode=rs->GetElement(0);
-    std::string sim1dFolderName=sim1dFolderNode->GetName();
-    sv4guiSimulation1dFolder* sim1dFolder=dynamic_cast<sv4guiSimulation1dFolder*>(sim1dFolderNode->GetData());
+    // Save ROM simulations jobs
+    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiROMSimulationFolder"));
+    mitk::DataNode::Pointer romSimFolderNode=rs->GetElement(0);
+    std::string romSimFolderName=romSimFolderNode->GetName();
+    sv4guiROMSimulationFolder* romSimFolder=dynamic_cast<sv4guiROMSimulationFolder*>(romSimFolderNode->GetData());
     removeList.clear();
-    if(sim1dFolder)
-        removeList=sim1dFolder->GetNodeNamesToRemove();
+    if(romSimFolder)
+        removeList=romSimFolder->GetNodeNamesToRemove();
 
-    rs=dataStorage->GetDerivations(sim1dFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d"));
+    rs=dataStorage->GetDerivations(romSimFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob"));
 
-    QDir dir1dSim(QString::fromStdString(projPath));
-    dir1dSim.cd(QString::fromStdString(sim1dFolderName));
+    QDir dirROMSim(QString::fromStdString(projPath));
+    dirROMSim.cd(QString::fromStdString(romSimFolderName));
 
     for(int i=0;i<rs->size();i++)
     {
@@ -1147,14 +1152,14 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
                 removeList.erase(removeList.begin()+j);
         }
 
-        sv4guiMitkSimJob1d *mitkJob=dynamic_cast<sv4guiMitkSimJob1d*>(node->GetData());
-        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dir1dSim.exists(QString::fromStdString(node->GetName())+".s1djb")) )
+        sv4guiMitkROMSimJob *mitkJob=dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData());
+        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirROMSim.exists(QString::fromStdString(node->GetName())+".s1djb")) )
             continue;
 
-        QString	filePath=dir1dSim.absoluteFilePath(QString::fromStdString(node->GetName())+".s1djb");
+        QString	filePath=dirROMSim.absoluteFilePath(QString::fromStdString(node->GetName())+".s1djb");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
-        node->SetStringProperty("path",dir1dSim.absolutePath().toStdString().c_str());
+        node->SetStringProperty("path",dirROMSim.absolutePath().toStdString().c_str());
 
         mitkJob->SetDataModified(false);
     }
@@ -1163,7 +1168,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
     {
         dirSim.remove(QString::fromStdString(removeList[i])+".s1djb");
     }
-    sim1dFolder->ClearRemoveList();
+    romSimFolder->ClearRemoveList();
 
 
     //svFSI Jobs
@@ -1246,7 +1251,7 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
     mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
-    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
+    mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
 
     // Determine data node file extension.
     //
@@ -1275,7 +1280,7 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     {
         extension="sjb";
     }
-    else if(isSim1dJob->CheckNode(dataNode))
+    else if(isROMSimJob->CheckNode(dataNode))
     {
         extension="s1djb";
     }
@@ -1405,7 +1410,7 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("sv4guiMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
     mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitksvFSIJob");
-    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
+    mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
     // fix???    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
 
     std::vector<std::string> extensions;
@@ -1441,7 +1446,7 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
         extensions.push_back(".sjb");
         extensions.push_back("");//for folder
     }
-    else if(isSim1dJob->CheckNode(dataNode))
+    else if(isROMSimJob->CheckNode(dataNode))
     {
         extensions.push_back(".s1djb");
         extensions.push_back("");//for folder
