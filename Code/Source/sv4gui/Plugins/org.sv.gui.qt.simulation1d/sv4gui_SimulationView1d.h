@@ -322,7 +322,6 @@ public:
     void UpdateCenterlines();
     vtkSmartPointer<vtkPolyData> ReadCenterlines(const std::string fileName);
 
-    void AddConvertResultsParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void AddMeshParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     void AddWallPropertiesParameters(sv4guiSimJob1d* job, sv4guiSimulationPython1d& pythonInterface);
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
