@@ -180,7 +180,7 @@
 #include <QApplication>
 
 // Redefine MITK_INFO to deactivate all of the debugging statements.
-//#define MITK_INFO MITK_DEBUG
+#define MITK_INFO MITK_DEBUG
 
 const QString sv4guiSimulationView1d::EXTENSION_ID = "org.sv.views.simulation1d";
 
@@ -4788,12 +4788,11 @@ void sv4guiSimulationView1d::ExportResults()
        pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
    }
 
-   // Export results to NumPy arrays. 
-   bool exportNumpy = ui->ExportNumpy_CheckBox->isChecked();
-   MITK_INFO << msg << "exportNumpy: " << exportNumpy; 
-
    // Project results to centerline geometry. 
-   if (ui->ProjectCenterlines_CheckBox->isChecked()) {
+   //
+   // The algorithm for projecting results also needs the centerlines geometry.
+   //
+   if (ui->ProjectCenterlines_CheckBox->isChecked() || ui->ProjectTo3DMesh_CheckBox->isChecked()) {
        auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
        MITK_INFO << msg << "inputCenterlinesFile: " << inputCenterlinesFile; 
        pythonInterface.AddParameter(params.CENTERLINES_FILE, inputCenterlinesFile); 
@@ -4801,9 +4800,11 @@ void sv4guiSimulationView1d::ExportResults()
 
    // Export results as numpy arrays.
    if (ui->ExportNumpy_CheckBox->isChecked()) {
+       MITK_INFO << msg << "exportNumpy "; 
    }
 
    // Project results to a 3D simulation mesh.
+   //
    if (ui->ProjectTo3DMesh_CheckBox->isChecked()) {
        auto simName = ui->SimName_ComboBox->currentText().toStdString();
        if (simName != "") { 
@@ -4814,6 +4815,7 @@ void sv4guiSimulationView1d::ExportResults()
            MITK_INFO << msg << "wallsMeshPath: " << wallsMeshPath; 
            pythonInterface.AddParameter(params.VOLUME_MESH_FILE, volumeMeshPath); 
            pythonInterface.AddParameter(params.WALLS_MESH_FILE, wallsMeshPath); 
+
        } else {
            auto modelName = QString(m_MitkJob->GetModelName().c_str());
            QMessageBox::warning(NULL, "", "No simulation job was found for the model '" + modelName + 
