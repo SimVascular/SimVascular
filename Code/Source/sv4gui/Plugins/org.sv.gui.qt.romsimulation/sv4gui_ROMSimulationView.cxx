@@ -2933,13 +2933,19 @@ void sv4guiROMSimulationView::UpdateGUIConvertResults()
     // Set the check boxes.
     //
     auto projCenterlines = job->GetConvertResultsProp("Project Centerlines");
-    ui->ProjectCenterlines_CheckBox->setChecked(std::stoi(projCenterlines));
+    if (projCenterlines != "") { 
+        ui->ProjectCenterlines_CheckBox->setChecked(std::stoi(projCenterlines));
+    }
 
     auto exportNumpy = job->GetConvertResultsProp("Export NumPy");
-    ui->ExportNumpy_CheckBox->setChecked(std::stoi(exportNumpy));
+    if (exportNumpy != "") { 
+        ui->ExportNumpy_CheckBox->setChecked(std::stoi(exportNumpy));
+    }
 
     auto projMesh = job->GetConvertResultsProp("Project To 3D Mesh");
-    ui->ProjectTo3DMesh_CheckBox->setChecked(std::stoi(projMesh));
+    if (projMesh != "") { 
+        ui->ProjectTo3DMesh_CheckBox->setChecked(std::stoi(projMesh));
+    }
 
     // Set simulation names for projecting results to a 3D simulation volume mesh.
     //
