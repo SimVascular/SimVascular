@@ -39,6 +39,9 @@
 
 #include <vtkXMLPolyDataWriter.h>
 
+// Redefine MITK_INFO to deactivate all of the debugging statements.
+#define MITK_INFO MITK_DEBUG
+
 //-------------
 // Constructor
 //-------------
