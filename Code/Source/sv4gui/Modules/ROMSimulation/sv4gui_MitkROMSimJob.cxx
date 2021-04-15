@@ -48,6 +48,7 @@ sv4guiMitkROMSimJob::sv4guiMitkROMSimJob()
 //    , m_Job(NULL)
     , m_MeshName("")
     , m_ModelName("")
+    , m_ModelOrder("1")
     , m_Status("Inlet face needs to be selected")
     //, m_Status("No Data Files")
     , m_DataModified(false)
@@ -59,6 +60,7 @@ sv4guiMitkROMSimJob::sv4guiMitkROMSimJob(const sv4guiMitkROMSimJob &other)
     : mitk::BaseData(other)
     , m_MeshName(other.m_MeshName)
     , m_ModelName(other.m_ModelName)
+    , m_ModelOrder(other.m_ModelOrder)
     , m_JobSet(other.GetTimeSize())
     , m_DataModified(true)
     , m_CalculateBoundingBox(true)
@@ -217,6 +219,16 @@ void sv4guiMitkROMSimJob::SetModelName(std::string modelName)
 std::string sv4guiMitkROMSimJob::GetModelName() const
 {
     return m_ModelName;
+}
+
+void sv4guiMitkROMSimJob::SetModelOrder(std::string modelOrder)
+{
+    m_ModelOrder=modelOrder;
+}
+
+std::string sv4guiMitkROMSimJob::GetModelOrder() const
+{
+    return m_ModelOrder;
 }
 
 void sv4guiMitkROMSimJob::SetStatus(std::string status)

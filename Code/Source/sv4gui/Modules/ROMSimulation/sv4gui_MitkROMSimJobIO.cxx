@@ -80,13 +80,16 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitkROMSimJobIO::Read()
     }
 
     sv4guiMitkROMSimJob::Pointer mitkSimJob = sv4guiMitkROMSimJob::New();
-    std::string modelName="";
-    std::string meshName="";
-    std::string status="";
+    std::string modelName = "";
+    std::string modelOrder = "";
+    std::string meshName = "";
+    std::string status = "";
     mjElement->QueryStringAttribute("model_name",&modelName);
+    mjElement->QueryStringAttribute("model_order", &modelOrder);
     mjElement->QueryStringAttribute("mesh_name",&meshName);
     mjElement->QueryStringAttribute("status",&status);
     mitkSimJob->SetModelName(modelName);
+    mitkSimJob->SetModelOrder(modelOrder);
     mitkSimJob->SetMeshName(meshName);
     mitkSimJob->SetStatus(status);
 
@@ -228,6 +231,7 @@ void sv4guiMitkROMSimJobIO::Write()
 
     auto  mjElement = new TiXmlElement("mitk_job");
     mjElement->SetAttribute("model_name", mitkSimJob->GetModelName());
+    mjElement->SetAttribute("model_order", mitkSimJob->GetModelOrder());
     mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName());
     mjElement->SetAttribute("status", mitkSimJob->GetStatus());
     document.LinkEndChild(mjElement);

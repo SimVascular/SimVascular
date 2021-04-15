@@ -391,6 +391,9 @@ void sv4guiROMSimulationView::EnableConnection(bool able)
     auto slot = SLOT(UpdateSimJob());
 
     if (able && !m_ConnectionEnabled) {
+        connect(ui->ModelOrderOne_RadioButton, SIGNAL(clicked()), this, slot);
+        connect(ui->ModelOrderZero_RadioButton, SIGNAL(clicked()), this, slot);
+
         connect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, slot);
         connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, slot);
         connect(ui->MaterialModelComboBox,SIGNAL(currentIndexChanged(int )), this, slot);
@@ -435,7 +438,7 @@ void sv4guiROMSimulationView::CreateQtPartControl( QWidget *parent )
     ui->setupUi(parent);
 
     // Hide Job Status for now, can't get it to work. 
-    ui->JobStatusNameLabel->hide();
+    //ui->JobStatusNameLabel->hide();
     ui->JobStatusValueLabel->hide();
 
     // Set the toolbox to display the first ('1D Mesh') tab.
@@ -1917,6 +1920,13 @@ void sv4guiROMSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> no
         }
     } else {
         ui->ModelNameLabel->setText("No model found");
+    }
+
+    // Set the model order.
+    if (ui->ModelOrderZero_RadioButton->isChecked()) { 
+        m_MitkJob->SetModelOrder("0");
+    } else if (ui->ModelOrderOne_RadioButton->isChecked()) { 
+        m_MitkJob->SetModelOrder("1");
     }
 
     EnableConnection(false);
@@ -3560,6 +3570,9 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
     //
     auto modelName = m_ModelNode->GetName();
     pythonInterface.AddParameter(params.MODEL_NAME, modelName);
+
+    auto modelOrder =  m_MitkJob->GetModelOrder();
+    pythonInterface.AddParameter(params.MODEL_ORDER, modelOrder);
 
     auto outDir = outputDir.toStdString();
     pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, outDir);

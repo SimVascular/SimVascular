@@ -175,6 +175,7 @@ void sv4guiROMSimJobCreate::CreateJob()
 
     sv4guiMitkROMSimJob::Pointer mitkJob = sv4guiMitkROMSimJob::New();
     mitkJob->SetModelName(selectedModelNode->GetName());
+    mitkJob->SetModelOrder("1");
     mitkJob->SetDataModified();
 
     mitk::DataNode::Pointer jobNode = mitk::DataNode::New();

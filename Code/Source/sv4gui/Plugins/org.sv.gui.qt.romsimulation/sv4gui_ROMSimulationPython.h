@@ -67,6 +67,7 @@ class SV_QT_ROMSIMULATION sv4guiROMSimulationPythonParamNames
       allNames.insert(INFLOW_INPUT_FILE);
       allNames.insert(MESH_OUTPUT_FILE);
       allNames.insert(MODEL_NAME);
+      allNames.insert(MODEL_ORDER);
       allNames.insert(NUM_TIME_STEPS);
       allNames.insert(OUTFLOW_BC_INPUT_FILE);
       allNames.insert(OUTFLOW_BC_TYPE);
@@ -94,6 +95,7 @@ class SV_QT_ROMSIMULATION sv4guiROMSimulationPythonParamNames
     const std::string MATERIAL_MODEL = "material_model";
     const std::string MESH_OUTPUT_FILE = "mesh_output_file";
     const std::string MODEL_NAME = "model_name";
+    const std::string MODEL_ORDER = "model_order";
     const std::string NUM_TIME_STEPS = "num_time_steps";
 
     const std::string OLUFSEN_MATERIAL_K1 = "olufsen_material_k1";

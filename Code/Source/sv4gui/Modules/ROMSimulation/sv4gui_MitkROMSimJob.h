@@ -72,15 +72,15 @@ public:
     void SetSimJob(sv4guiROMSimJob* job, unsigned int t=0);
 
     void SetMeshName(std::string meshName);
-
     std::string GetMeshName() const;
 
     void SetModelName(std::string modelName);
-
     std::string GetModelName() const;
 
-    std::string GetStatus() const;
+    void SetModelOrder(std::string modelOrder);
+    std::string GetModelOrder() const;
 
+    std::string GetStatus() const;
     void SetStatus(std::string status);
 
     bool IsDataModified(){return m_DataModified;}
@@ -106,6 +106,8 @@ public:
     std::string m_MeshName;
 
     std::string m_ModelName;
+
+    std::string m_ModelOrder;
 
     std::string m_Status;
 
