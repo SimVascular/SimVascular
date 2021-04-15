@@ -107,7 +107,7 @@
 //     Paths:  .pth
 //     Segmentations: .ctgr
 //     Simulations: .sjb
-//     1D Simulations: .s1djb
+//     1D Simulations: .romsjob
 //     svFSI: .fsijob
 // 
 //------------
@@ -497,7 +497,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         QDir dirROMSim(projPath);
         dirROMSim.cd(romSimFolderName);
         std::cout << "[AddProject] romSimFolderName: " << romSimFolderName.toStdString() << std::endl;
-        fileInfoList=dirROMSim.entryInfoList(QStringList("*.s1djb"), QDir::Files, QDir::Name);
+        fileInfoList=dirROMSim.entryInfoList(QStringList("*.romsjob"), QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
           std::cout << "[AddProject] i: " << i << std::endl;
@@ -1153,10 +1153,10 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiMitkROMSimJob *mitkJob=dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData());
-        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirROMSim.exists(QString::fromStdString(node->GetName())+".s1djb")) )
+        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirROMSim.exists(QString::fromStdString(node->GetName())+".romsjob")) )
             continue;
 
-        QString	filePath=dirROMSim.absoluteFilePath(QString::fromStdString(node->GetName())+".s1djb");
+        QString	filePath=dirROMSim.absoluteFilePath(QString::fromStdString(node->GetName())+".romsjob");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
         node->SetStringProperty("path",dirROMSim.absolutePath().toStdString().c_str());
@@ -1166,7 +1166,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
 
     for(int i=0;i<removeList.size();i++)
     {
-        dirSim.remove(QString::fromStdString(removeList[i])+".s1djb");
+        dirSim.remove(QString::fromStdString(removeList[i])+".romsjob");
     }
     romSimFolder->ClearRemoveList();
 
@@ -1282,7 +1282,7 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     }
     else if(isROMSimJob->CheckNode(dataNode))
     {
-        extension="s1djb";
+        extension="romsjob";
     }
     else if(issvFSIJob->CheckNode(dataNode))
     {
@@ -1448,7 +1448,7 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     }
     else if(isROMSimJob->CheckNode(dataNode))
     {
-        extensions.push_back(".s1djb");
+        extensions.push_back(".romsjob");
         extensions.push_back("");//for folder
     }
     else if(issvFSIJob->CheckNode(dataNode))

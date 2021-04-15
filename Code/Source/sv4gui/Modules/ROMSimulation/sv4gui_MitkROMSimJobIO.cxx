@@ -42,7 +42,7 @@ static mitk::CustomMimeType Createsv4guiROMSimJobMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".sv1djob");
     mimeType.SetCategory("SimVascular Files");
-    mimeType.AddExtension("s1djb");
+    mimeType.AddExtension("romsjob");
     mimeType.SetComment("SimVascular Reduced-Order Job");
 
     return mimeType;
@@ -57,7 +57,7 @@ sv4guiMitkROMSimJobIO::sv4guiMitkROMSimJobIO()
 //------
 // Read
 //------
-// Read in a job .s1djb xml file.
+// Read in a job .romsjob xml file.
 //
 std::vector<mitk::BaseData::Pointer> sv4guiMitkROMSimJobIO::Read()
 {
@@ -210,7 +210,7 @@ sv4guiMitkROMSimJobIO::GetMapProps(TiXmlElement* jobElement, const std::string& 
 //-------
 // Write
 //-------
-// Write a job .s1djb xml file.
+// Write a job .romsjob xml file.
 //
 void sv4guiMitkROMSimJobIO::Write()
 {
