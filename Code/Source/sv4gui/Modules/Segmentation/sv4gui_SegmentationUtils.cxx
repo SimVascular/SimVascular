@@ -250,6 +250,7 @@ mitk::PlaneGeometry::Pointer
 sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4guiPathPoint pathPoint, 
     mitk::Vector3D spacing, double size)
 {
+/*
     std::cout << "========== sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing ==========" << std::endl;
     std::cout << "[CreatePlaneGeometryFromSpacing] Path pos: " <<pathPoint.pos[0]<<", " << pathPoint.pos[1]<<", " 
       <<pathPoint.pos[2] << std::endl;
@@ -258,6 +259,7 @@ sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4gu
     std::cout << "[CreatePlaneGeometryFromSpacing] Path rotation: " <<pathPoint.rotation[0]<<", " << 
       pathPoint.rotation[1]<<", " <<pathPoint.rotation[2] << std::endl;
     std::cout << "[CreatePlaneGeometryFromSpacing] Spacing: " <<spacing[0]<<" " << spacing[1]<<" " <<spacing[2] << std::endl;
+*/
     vtkTransform* tr=GetvtkTransform(pathPoint);
     mitk::PlaneGeometry::Pointer planegeometry = mitk::PlaneGeometry::New();
     planegeometry->SetIndexToWorldTransformByVtkMatrix(tr->GetMatrix());
@@ -270,7 +272,7 @@ sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4gu
     pos[0]=pathPoint.pos[0]-right[0]*size/2.0-bottom[0]*size/2.0;
     pos[1]=pathPoint.pos[1]-right[1]*size/2.0-bottom[1]*size/2.0;
     pos[2]=pathPoint.pos[2]-right[2]*size/2.0-bottom[2]*size/2.0;
-    std::cout << "[CreatePlaneGeometryFromSpacing] Plane origin: " <<pos[0]<<" " << pos[1]<<" " <<pos[2] << std::endl;
+    //std::cout << "[CreatePlaneGeometryFromSpacing] Plane origin: " <<pos[0]<<" " << pos[1]<<" " <<pos[2] << std::endl;
 
     planegeometry->SetOrigin(pos);
     planegeometry->SetSpacing(spacing);
@@ -283,7 +285,7 @@ sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4gu
 
     mitk::Vector3D normal;
     normal = planegeometry->GetNormal();
-    std::cout << "[CreatePlaneGeometryFromSpacing] Plane normal: " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
+    //std::cout << "[CreatePlaneGeometryFromSpacing] Plane normal: " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
 
     return planegeometry;
 }
@@ -299,10 +301,10 @@ mitk::PlaneGeometry::Pointer
 sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint pathPoint, 
     mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
-    std::cout << "========== sv4guiSegmentationUtils::CreatePlaneGeometry 2 ==========" << std::endl;
+    //std::cout << "========== sv4guiSegmentationUtils::CreatePlaneGeometry 2 ==========" << std::endl;
     mitk::Vector3D newSpacing;
     mitk::Image* image = dynamic_cast<mitk::Image*>(baseData);
-    std::cout << "[CreatePlaneGeometry 2] useOnlyMinimumSpacing: " << useOnlyMinimumSpacing << std::endl;
+    //std::cout << "[CreatePlaneGeometry 2] useOnlyMinimumSpacing: " << useOnlyMinimumSpacing << std::endl;
 
     if (image) {
         mitk::Vector3D imageSpacing = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
@@ -356,9 +358,11 @@ sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint 
 //
 mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
+/*
     std::cout << "========== sv4guiSegmentationUtils::CreateSlicedGeometry ==========" << std::endl;
     std::cout << "[CreateSlicedGeometry] Size: " << size << std::endl;
     std::cout << "[CreateSlicedGeometry] useOnlyMinimumSpacing: " << useOnlyMinimumSpacing << std::endl;
+*/
 
     mitk::SlicedGeometry3D::Pointer slicedGeo3D=mitk::SlicedGeometry3D::New();
     slicedGeo3D->SetEvenlySpaced(false);

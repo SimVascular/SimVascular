@@ -325,6 +325,7 @@ public:
     void AddConvertResultsParameters(sv4guiROMSimJob* job, sv4guiROMSimulationPython& pythonInterface);
     void AddMeshParameters(sv4guiROMSimJob* job, sv4guiROMSimulationPython& pythonInterface);
     void AddWallPropertiesParameters(sv4guiROMSimJob* job, sv4guiROMSimulationPython& pythonInterface);
+
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
     std::vector<std::string> ReadInletFaceNames(const QString outputDir);
     void WriteBCFiles(const QString outputDir, sv4guiROMSimJob* job, sv4guiROMSimulationPython& pythonInterface);

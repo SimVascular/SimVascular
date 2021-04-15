@@ -180,7 +180,7 @@
 #include <QApplication>
 
 // Redefine MITK_INFO to deactivate all of the debugging statements.
-//#define MITK_INFO MITK_DEBUG
+#define MITK_INFO MITK_DEBUG
 
 const QString sv4guiROMSimulationView::EXTENSION_ID = "org.sv.views.romsimulation";
 
@@ -2931,6 +2931,10 @@ void sv4guiROMSimulationView::SetVarE(bool)
 //
 void sv4guiROMSimulationView::UpdateGUIConvertResults()
 {
+    auto msg = "[sv4guiSimulationView1d::UpdateGUIConvertResults]";
+    MITK_INFO << msg;
+    MITK_INFO << msg << "--------- UpdateGUIConvertResults ----------";
+
     if (!m_MitkJob) {
         return;
     }
@@ -2943,17 +2947,18 @@ void sv4guiROMSimulationView::UpdateGUIConvertResults()
     // Set the check boxes.
     //
     auto projCenterlines = job->GetConvertResultsProp("Project Centerlines");
-    if (projCenterlines != "") { 
+    MITK_INFO << msg << "projCenterlines: " << projCenterlines;
+    if (projCenterlines != "") {
         ui->ProjectCenterlines_CheckBox->setChecked(std::stoi(projCenterlines));
     }
 
     auto exportNumpy = job->GetConvertResultsProp("Export NumPy");
-    if (exportNumpy != "") { 
+    if (exportNumpy != "") {
         ui->ExportNumpy_CheckBox->setChecked(std::stoi(exportNumpy));
     }
 
     auto projMesh = job->GetConvertResultsProp("Project To 3D Mesh");
-    if (projMesh != "") { 
+    if (projMesh != "") {
         ui->ProjectTo3DMesh_CheckBox->setChecked(std::stoi(projMesh));
     }
 
@@ -2961,13 +2966,13 @@ void sv4guiROMSimulationView::UpdateGUIConvertResults()
     //
     auto simNames = GetSimulationNames();
     ui->SimName_ComboBox->clear();
-    for (auto const& simName : simNames) {
-        ui->SimName_ComboBox->addItem(QString::fromStdString(simName));
+    if (simNames.size() > 0) {
+        for (auto const& simName : simNames) {
+            ui->SimName_ComboBox->addItem(QString::fromStdString(simName));
+        }
+        int foundIndex = ui->SimName_ComboBox->findText(QString(simNames[0].c_str()));
+        ui->SimName_ComboBox->setCurrentIndex(foundIndex);
     }
-
-    auto simName = job->GetConvertResultsProp("Simulation Name");
-    int foundIndex = ui->SimName_ComboBox->findText(QString(simName.c_str()));
-    ui->SimName_ComboBox->setCurrentIndex(foundIndex);
 }
 
 //---------------
@@ -3193,7 +3198,6 @@ void sv4guiROMSimulationView::UpdateGUISolver()
 
     ui->tableViewSolver->setColumnHidden(2,true);
     ui->tableViewSolver->setColumnHidden(3,true);
-
 }
 
 //--------------
@@ -4756,7 +4760,6 @@ void sv4guiROMSimulationView::ExportResults()
 {
     auto msg = "sv4guiROMSimulationView::ExportResults";
     MITK_INFO << msg; 
-    MITK_INFO << msg << "##########################################"; 
     MITK_INFO << msg << "--------- ExportResults ----------"; 
 
     QString resultDir = ui->lineEditResultDir->text();
@@ -4819,12 +4822,11 @@ void sv4guiROMSimulationView::ExportResults()
        pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
    }
 
-   // Export results to NumPy arrays. 
-   bool exportNumpy = ui->ExportNumpy_CheckBox->isChecked();
-   MITK_INFO << msg << "exportNumpy: " << exportNumpy; 
-
    // Project results to centerline geometry. 
-   if (ui->ProjectCenterlines_CheckBox->isChecked()) {
+   //
+   // The algorithm for projecting results also needs the centerlines geometry.
+   //
+   if (ui->ProjectCenterlines_CheckBox->isChecked() || ui->ProjectTo3DMesh_CheckBox->isChecked()) {
        auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
        MITK_INFO << msg << "inputCenterlinesFile: " << inputCenterlinesFile; 
        pythonInterface.AddParameter(params.CENTERLINES_FILE, inputCenterlinesFile); 
@@ -4832,18 +4834,28 @@ void sv4guiROMSimulationView::ExportResults()
 
    // Export results as numpy arrays.
    if (ui->ExportNumpy_CheckBox->isChecked()) {
+       MITK_INFO << msg << "exportNumpy "; 
    }
 
    // Project results to a 3D simulation mesh.
+   //
    if (ui->ProjectTo3DMesh_CheckBox->isChecked()) {
        auto simName = ui->SimName_ComboBox->currentText().toStdString();
-       std::string volumeMeshPath; 
-       std::string wallsMeshPath; 
-       GetSimulationMeshPaths(simName, volumeMeshPath, wallsMeshPath); 
-       MITK_INFO << msg << "volumeMeshPath: " << volumeMeshPath; 
-       MITK_INFO << msg << "wallsMeshPath: " << wallsMeshPath; 
-       pythonInterface.AddParameter(params.VOLUME_MESH_FILE, volumeMeshPath); 
-       pythonInterface.AddParameter(params.WALLS_MESH_FILE, wallsMeshPath); 
+       if (simName != "") { 
+           std::string volumeMeshPath; 
+           std::string wallsMeshPath; 
+           GetSimulationMeshPaths(simName, volumeMeshPath, wallsMeshPath); 
+           MITK_INFO << msg << "volumeMeshPath: " << volumeMeshPath; 
+           MITK_INFO << msg << "wallsMeshPath: " << wallsMeshPath; 
+           pythonInterface.AddParameter(params.VOLUME_MESH_FILE, volumeMeshPath); 
+           pythonInterface.AddParameter(params.WALLS_MESH_FILE, wallsMeshPath); 
+
+       } else {
+           auto modelName = QString(m_MitkJob->GetModelName().c_str());
+           QMessageBox::warning(NULL, "", "No simulation job was found for the model '" + modelName + 
+               "' used by the 1D simulation.");
+           return;
+       }
    }
 
    QString jobName("");
@@ -5005,6 +5017,18 @@ void sv4guiROMSimulationView::UpdateSimJob()
     if (newJob == NULL) {
         //QMessageBox::warning(m_Parent, MsgTitle, "Parameter Values Error.\n"+QString::fromStdString(emsg));
         return;
+    }
+
+    // Check that there is a simulation for the model used by the 1D simultion.
+    //
+    if (m_ConnectionEnabled && ui->ProjectTo3DMesh_CheckBox->isChecked()) {
+       auto simName = ui->SimName_ComboBox->currentText().toStdString();
+       if (simName == "") { 
+           auto modelName = QString(m_MitkJob->GetModelName().c_str());
+           QMessageBox::warning(NULL, "", "No simulation job was found for the model '" + modelName + 
+               "' used by the 1D simulation.");
+           ui->ProjectTo3DMesh_CheckBox->setChecked(0);
+       }
     }
 
     m_MitkJob->SetSimJob(newJob);
