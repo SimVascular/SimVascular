@@ -62,7 +62,7 @@ class PluginNames
     static const QString PATHS;
     static const QString SEGMENTATIONS;
     static const QString SIMULATIONS;
-    static const QString SIMULATIONS_1D;
+    static const QString ROMSIMULATIONS;
     static const QString SVFSI;
     static const QStringList NAMES_LIST;
 };
@@ -206,6 +206,7 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
     static void ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, QString& imageName);
 
+    static void UpdateSimulations1dFolder(const QString& projPath, const QString& romSimFolderName);
 };
 
 #endif // SV4GUI_PROJECTMANAGER_H

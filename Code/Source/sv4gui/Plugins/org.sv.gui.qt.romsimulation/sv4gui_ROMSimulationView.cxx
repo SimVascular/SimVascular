@@ -39,7 +39,7 @@
 // bifurcations. The centerlines geometry is used to create a 1D finite element mesh.
 //
 // A Qt connect() must be set for each widget in sv4guiROMSimulationView::EnableConnection(bool able)
-// so that its value is saved for the job and written to the .romsjob file.
+// so that its value is saved for the job and written to the .romsimjob file.
 //
 // The input files neeed to run a simulation are created using the following steps
 //
@@ -384,7 +384,7 @@ sv4guiROMSimulationView::~sv4guiROMSimulationView()
 //------------------
 // EnableConnection
 //------------------
-// Set slots for changed parameter values to be written the the .romsjob file. 
+// Set slots for changed parameter values to be written the the .romsimjob file. 
 //
 void sv4guiROMSimulationView::EnableConnection(bool able)
 {
@@ -2081,7 +2081,7 @@ void sv4guiROMSimulationView::ClearAll()
 // Update the surface model GUI.
 //
 // If an inlet face has been previously set and stored for the job
-// (in the .romsjob file) then set that name in the checkable
+// (in the .romsimjob file) then set that name in the checkable
 // rows of the GUI popup table m_ModelFaceSelectionWidget.
 //
 void sv4guiROMSimulationView::UpdateModelGUI()
@@ -2927,7 +2927,7 @@ void sv4guiROMSimulationView::SetVarE(bool)
 //-------------------------
 // UpdateGUIConvertResults 
 //-------------------------
-// Update the convert results panel GUI with values from the .romsjob file.
+// Update the convert results panel GUI with values from the .romsimjob file.
 //
 void sv4guiROMSimulationView::UpdateGUIConvertResults()
 {
@@ -2978,7 +2978,7 @@ void sv4guiROMSimulationView::UpdateGUIConvertResults()
 //---------------
 // UpdateGUIMesh
 //---------------
-// Update the mesh GUI with values from the .romsjob file.
+// Update the mesh GUI with values from the .romsimjob file.
 //
 // These parameters were added later so we must check to
 // see if they exist to maintain compatibility with older

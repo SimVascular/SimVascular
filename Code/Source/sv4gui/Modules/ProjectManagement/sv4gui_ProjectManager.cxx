@@ -59,7 +59,7 @@
 //     Paths:  .pth
 //     Segmentations: .ctgr
 //     Simulations: .sjb
-//     1D Simulations: .s1djb
+//     ROMSimulations: .romsimjob
 //     svFSI: .fsijob
 
 #include "sv4gui_ProjectManager.h"
@@ -111,26 +111,12 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <regex>
 
 // Define the name of the files used to identify the image data location.
 //
 // SVPROJ_CONFIG_FILE_NAME is deprecated.
 //
-// Each plugin (Images, Paths, etc.) has a unique file extension used to
-// identify a plugin type. Each plugin directory contains files for each plugin 
-// instance (name chosen by the user) with its extenstion. This stores the plugin
-// state, i.e. the values of the GUI widgets used as parameters used to perform
-// plugin operations.
-// 
-//     Images: .vti
-//     Meshes: .msh
-//     Models: .mdl 
-//     Paths:  .pth
-//     Segmentations: .ctgr
-//     Simulations: .sjb
-//     1D Simulations: .romsjob
-//     svFSI: .fsijob
-// 
 const QString sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME = ".svproj";
 const QString sv4guiProjectManager::IMAGE_INFORMATION_FILE_NAME = "image_information.xml";
 
@@ -143,7 +129,7 @@ namespace sv4gui_project_manager {
   const QString PluginNames::PATHS = "Paths";
   const QString PluginNames::SEGMENTATIONS = "Segmentations";
   const QString PluginNames::SIMULATIONS = "Simulations";
-  const QString PluginNames::ROM_SIMULATIONS = "ROMSimulations";
+  const QString PluginNames::ROMSIMULATIONS = "ROMSimulations";
   const QString PluginNames::SVFSI = "svFSI";
   const QStringList PluginNames::NAMES_LIST = {
     PluginNames::IMAGES,
@@ -180,110 +166,71 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     using namespace sv4gui_project_manager;
     QString projectConfigFileName = sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME; 
 
-    QString imageFolderName = PluginNames::IMAGES; 
-    QString meshFolderName = PluginNames::MESHES; 
-    QString modelFolderName = PluginNames::MODELS;
-    QString pathFolderName =  PluginNames::PATHS; 
-    QString segFolderName = PluginNames::SEGMENTATIONS;  
-    QString simFolderName = PluginNames::SIMULATIONS;
-    QString romSimFolderName = PluginNames::ROMSIMULATIONS;
-    QString svFSIFolderName = PluginNames::SVFSI;
-
+    // Create a new project directory and cd to it.
     QDir project_dir(projParentDir);
     if (newProject) {
         project_dir.mkdir(projName);
     }
     project_dir.cd(projName);
->>>>>>> upstream/master
 
+    // Get the image information.
+    //
+    // imageFilePath: where the image data resides.
+    // imageFileName: the name of the image file (e.g. image.vti or image001.dcm)
+    // imageName: the name of SV Data Manager Images node.
+    //
     QString projPath = project_dir.absolutePath();
-    //QString projectConfigFilePath = dir.absoluteFilePath(projectConfigFileName);
-
     QString imageFilePath;
     QString imageFileName;
     QString imageName;
 
-    // If this is a new project then create plugin directories. 
-    //
+    // If a new project then create plugin directories. 
     if (newProject) {
         for (auto const& name : PluginNames::NAMES_LIST) {
             project_dir.mkdir(name);
         }
         WriteImageInfo(projPath, imageFilePath, imageFileName, imageName);
 
-<<<<<<< HEAD
-        pathFolderName=projDesc.firstChildElement("paths").attribute("folder_name");
-        segFolderName=projDesc.firstChildElement("segmentations").attribute("folder_name");
-        modelFolderName=projDesc.firstChildElement("models").attribute("folder_name");
-        meshFolderName=projDesc.firstChildElement("meshes").attribute("folder_name");
-        simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
-        romSimFolderName=projDesc.firstChildElement("romsimulations").attribute("folder_name");
-	svFSIFolderName=projDesc.firstChildElement("svFSI").attribute("folder_name");
-
-    }
-
-    if(rewriteProjectConfigFile)
-    {
-        QString xml = doc.toString(4);
-
-        QFile file( projectConfigFilePath );
-
-        if (file.open(QFile::WriteOnly | QFile::Truncate)) {
-            QTextStream out(&file);
-            out << xml <<endl;
-        }
-=======
     } else {
         ReadImageInfo(projPath, imageFilePath, imageFileName, imageName);
->>>>>>> upstream/master
     }
 
-    // Create the SV Data Manager top level plugin data nodes.
+    // Create the SV Data Manager top level plugin mitk data nodes.
     //
-    mitk::DataNode::Pointer projectFolderNode = CreateDataFolder<sv4guiProjectFolder>(dataStorage, projName);
+    auto projectFolderNode = CreateDataFolder<sv4guiProjectFolder>(dataStorage, projName);
     projectFolderNode->AddProperty("project path",mitk::StringProperty::New(projPath.toStdString().c_str()));
 
-<<<<<<< HEAD
-    mitk::DataNode::Pointer imageFolderNode=CreateDataFolder<sv4guiImageFolder>(dataStorage, imageFolderName, projectFolderNode);
-    mitk::DataNode::Pointer pathFolderNode=CreateDataFolder<sv4guiPathFolder>(dataStorage, pathFolderName, projectFolderNode);
-    mitk::DataNode::Pointer segFolderNode=CreateDataFolder<sv4guiSegmentationFolder>(dataStorage,segFolderName, projectFolderNode);
-    mitk::DataNode::Pointer modelFolderNode=CreateDataFolder<sv4guiModelFolder>(dataStorage, modelFolderName, projectFolderNode);
-    mitk::DataNode::Pointer meshFolderNode=CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
-    mitk::DataNode::Pointer simFolderNode=CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
-    mitk::DataNode::Pointer svFSIFolderNode=CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
-    mitk::DataNode::Pointer romSimFolderNode=CreateDataFolder<sv4guiROMSimulationFolder>(dataStorage, romSimFolderName, projectFolderNode);
-    mitk::DataNode::Pointer reposFolderNode=CreateDataFolder<sv4guiRepositoryFolder>(dataStorage, reposFolderName, projectFolderNode);
-
-=======
+    QString imageFolderName = PluginNames::IMAGES; 
     auto imageFolderNode = sv4guiProjectManager::CreateDataFolder<sv4guiImageFolder>(dataStorage, imageFolderName, projectFolderNode); 
->>>>>>> upstream/master
     imageFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
+    QString pathFolderName =  PluginNames::PATHS; 
     auto pathFolderNode = CreateDataFolder<sv4guiPathFolder>(dataStorage, pathFolderName, projectFolderNode);
     pathFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
+    QString segFolderName = PluginNames::SEGMENTATIONS;  
     auto segFolderNode = CreateDataFolder<sv4guiSegmentationFolder>(dataStorage,segFolderName, projectFolderNode);
     segFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
+    QString modelFolderName = PluginNames::MODELS;
     auto modelFolderNode = CreateDataFolder<sv4guiModelFolder>(dataStorage, modelFolderName, projectFolderNode);
     modelFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
+    QString meshFolderName = PluginNames::MESHES; 
     auto meshFolderNode = CreateDataFolder<sv4guiMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
     meshFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
+    QString simFolderName = PluginNames::SIMULATIONS;
     auto simFolderNode = CreateDataFolder<sv4guiSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
     simFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
+    QString svFSIFolderName = PluginNames::SVFSI;
     auto svFSIFolderNode = CreateDataFolder<sv4guisvFSIFolder>(dataStorage, svFSIFolderName, projectFolderNode);
     svFSIFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
-<<<<<<< HEAD
-    romSimFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
-    reposFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
-=======
 
-    auto sim1dFolderNode = CreateDataFolder<sv4guiSimulation1dFolder>(dataStorage, sim1dFolderName, projectFolderNode);
-    sim1dFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
->>>>>>> upstream/master
+    QString romSimFolderName = PluginNames::ROMSIMULATIONS;
+    auto romSimFolderNode = CreateDataFolder<sv4guiROMSimulationFolder>(dataStorage, romSimFolderName, projectFolderNode);
+    romSimFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
     if (newProject) {
         mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
@@ -317,8 +264,9 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     // Create svFSI plugin data nodes.
     CreatePlugin(dataStorage, projPath, svFSIFolderNode, svFSIFolderName, "*.fsijob");
 
-    // Create Simulations1d plugin data nodes.
-    CreatePlugin(dataStorage, projPath, sim1dFolderNode, sim1dFolderName, "*.s1djb");
+    // Create ROMSimulations plugin data nodes.
+    UpdateSimulations1dFolder(projPath, romSimFolderName);
+    CreatePlugin(dataStorage, projPath, romSimFolderNode, romSimFolderName, "*.romsimjob");
 
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
 }
@@ -464,28 +412,9 @@ void sv4guiProjectManager::ReadImageInfoFromSvproj(const QString& projPath, QStr
       continue;
     }
 
-<<<<<<< HEAD
-        // Create ROMSimulations plugin data nodes.
-        //
-        std::cout << "[AddProject] Add ROMSimulations plugin data nodes ..." << std::endl;
-        romSimFolderNode->SetVisibility(false);
-        QDir dirROMSim(projPath);
-        dirROMSim.cd(romSimFolderName);
-        std::cout << "[AddProject] romSimFolderName: " << romSimFolderName.toStdString() << std::endl;
-        fileInfoList=dirROMSim.entryInfoList(QStringList("*.romsjob"), QDir::Files, QDir::Name);
-        for(int i=0;i<fileInfoList.size();i++)
-        {
-          std::cout << "[AddProject] i: " << i << std::endl;
-            //mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            mitk::DataNode::Pointer jobNode = sv4guiProjectManager::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            jobNode->SetVisibility(false);
-            dataStorage->Add(jobNode,romSimFolderNode);
-        }
-=======
     QDomElement imageElement = imageNode.toElement();
     if (imageElement.isNull()) {
       continue;
->>>>>>> upstream/master
     }
 
     QString inProj = imageElement.attribute("in_project");
@@ -554,16 +483,10 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
     fileNameElem.appendChild(fileNameText);
     root.appendChild(fileNameElem);
 
-<<<<<<< HEAD
-    tag = doc.createElement("romsimulations");
-    tag.setAttribute("folder_name","ROMSimulations");
-    root.appendChild(tag);
-=======
     auto nameElem = doc.createElement(XmlElementNames::IMAGE_NAME);
     auto nameText = doc.createTextNode(imageName);
     nameElem.appendChild(nameText);
     root.appendChild(nameElem);
->>>>>>> upstream/master
 
     auto scaleElem = doc.createElement(XmlElementNames::SCALE_FACTOR);
     auto scaleText = doc.createTextNode(QString::number(scaleFactor));
@@ -1103,35 +1026,33 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
     }
     simFolder->ClearRemoveList();
 
-    // Save ROM simulations jobs
-    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiROMSimulationFolder"));
-    mitk::DataNode::Pointer romSimFolderNode=rs->GetElement(0);
-    std::string romSimFolderName=romSimFolderNode->GetName();
-    sv4guiROMSimulationFolder* romSimFolder=dynamic_cast<sv4guiROMSimulationFolder*>(romSimFolderNode->GetData());
+    // Save ROMsimulations jobs.
+    rs = dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiROMSimulationFolder"));
+    mitk::DataNode::Pointer romSimFolderNode = rs->GetElement(0);
+    std::string romSimFolderName = romSimFolderNode->GetName();
+    sv4guiROMSimulationFolder* romSimFolder = dynamic_cast<sv4guiROMSimulationFolder*>(romSimFolderNode->GetData());
     removeList.clear();
-    if(romSimFolder)
-        removeList=romSimFolder->GetNodeNamesToRemove();
-
-    rs=dataStorage->GetDerivations(romSimFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob"));
+    if (romSimFolder) {
+        removeList = romSimFolder->GetNodeNamesToRemove();
+    }
+    rs = dataStorage->GetDerivations(romSimFolderNode,mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob"));
 
     QDir dirROMSim(QString::fromStdString(projPath));
     dirROMSim.cd(QString::fromStdString(romSimFolderName));
 
-    for(int i=0;i<rs->size();i++)
-    {
+    for(int i=0;i<rs->size();i++) {
         mitk::DataNode::Pointer node=rs->GetElement(i);
 
-        for(int j=removeList.size()-1;j>-1;j--)
-        {
+        for(int j=removeList.size()-1;j>-1;j--) {
             if(removeList[j]==node->GetName())
                 removeList.erase(removeList.begin()+j);
         }
 
         sv4guiMitkROMSimJob *mitkJob=dynamic_cast<sv4guiMitkROMSimJob*>(node->GetData());
-        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirROMSim.exists(QString::fromStdString(node->GetName())+".romsjob")) )
+        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirROMSim.exists(QString::fromStdString(node->GetName())+".romsimjob")) )
             continue;
 
-        QString	filePath=dirROMSim.absoluteFilePath(QString::fromStdString(node->GetName())+".romsjob");
+        QString	filePath=dirROMSim.absoluteFilePath(QString::fromStdString(node->GetName())+".romsimjob");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
         node->SetStringProperty("path",dirROMSim.absolutePath().toStdString().c_str());
@@ -1141,7 +1062,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
 
     for(int i=0;i<removeList.size();i++)
     {
-        dirSim.remove(QString::fromStdString(removeList[i])+".romsjob");
+        dirSim.remove(QString::fromStdString(removeList[i])+".romsimjob");
     }
     romSimFolder->ClearRemoveList();
 
@@ -1261,7 +1182,7 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
     }
     else if(isROMSimJob->CheckNode(dataNode))
     {
-        extension="romsjob";
+        extension="romsimjob";
     }
     else if(issvFSIJob->CheckNode(dataNode))
     {
@@ -1438,7 +1359,7 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     }
     else if(isROMSimJob->CheckNode(dataNode))
     {
-        extensions.push_back(".romsjob");
+        extensions.push_back(".romsimjob");
         extensions.push_back("");//for folder
     }
     else if(issvFSIJob->CheckNode(dataNode))
@@ -1446,8 +1367,9 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
         extensions.push_back(".fsijob");
         extensions.push_back("");//for folder
     }
-    else
+    else {
         return;
+    }
 
     QDir dir(QString::fromStdString(path));
     for(int i=0;i<extensions.size();i++)
@@ -1760,3 +1682,46 @@ void sv4guiProjectManager::CreatePlugin(mitk::DataStorage::Pointer dataStorage, 
     }
   }
 }
+
+//---------------------------
+// UpdateSimulations1dFolder
+//---------------------------
+//
+void sv4guiProjectManager::UpdateSimulations1dFolder(const QString& projPath, const QString& romSimFolderName)
+{
+  //std::cout << "[UpdateSimulations1dFolder] ========== UpdateSimulations1dFolder ==========" << std::endl;
+  QDir project_dir(projPath);
+  auto sim1dFolder = project_dir.absoluteFilePath("Simulations1d");
+
+  QFileInfo checkFile(sim1dFolder);
+  if (!checkFile.exists()) { 
+    //std::cout << "[UpdateSimulations1dFolder] No Simulations1d folder." << std::endl;
+    return; 
+  }
+  //std::cout << "[UpdateSimulations1dFolder] Found Simulations1d folder." << std::endl;
+
+  // Rename .s1djb files to .romsimjob.
+  //
+  project_dir.cd(sim1dFolder);
+  auto fileInfoList = project_dir.entryInfoList(QStringList("*.s1djb"), QDir::Files, QDir::Name);
+
+  for (int i = 0; i < fileInfoList.size();i++) {
+    auto filePath = fileInfoList[i].absoluteFilePath().toStdString();
+    auto fileName = fileInfoList[i].fileName().toStdString();
+    auto baseName = fileInfoList[i].baseName().toStdString();
+    //std::cout << "[UpdateSimulations1dFolder] File: " << filePath << std::endl;
+    //std::cout << "[UpdateSimulations1dFolder] fileName: " << fileName << std::endl;
+    //std::cout << "[UpdateSimulations1dFolder] baseName: " << baseName << std::endl;
+
+    auto renamedFilePath = std::regex_replace(filePath, std::regex(fileName), baseName+".romsimjob"); 
+    //std::cout << "[UpdateSimulations1dFolder] Renamed file: " << renamedFilePath << std::endl;
+    QFile oldFile(fileInfoList[i].absoluteFilePath());
+    oldFile.rename(QString(renamedFilePath.c_str()));
+  }
+
+  // Rename 'Simulations1d' directory to 'ROMSimulations'.
+  project_dir.cdUp();
+  project_dir.rename("Simulations1d", "ROMSimulations"); 
+}
+
+
