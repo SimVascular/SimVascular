@@ -61,6 +61,7 @@ class PluginNames
     static const QString MODELS;
     static const QString PATHS;
     static const QString SEGMENTATIONS;
+    static const QString SEGMENTATIONS3D;
     static const QString SIMULATIONS;
     static const QString ROMSIMULATIONS;
     static const QString SVFSI;
@@ -82,6 +83,25 @@ class XmlElementNames
     static const QString ROOT;
     static const QString SCALE_FACTOR;
     static const std::set<QString> valid_names;
+};
+
+//---------------
+// FileExtension
+//---------------
+// This class stores the names of plugin file extensions
+// used to store plugin state.
+//
+class FileExtension
+{
+  public:
+    static const QString MESHES;
+    static const QString MODELS;
+    static const QString PATHS;
+    static const QString SEGMENTATIONS;
+    static const QString SEGMENTATIONS3D;
+    static const QString SIMULATIONS;
+    static const QString ROMSIMULATIONS;
+    static const QString SVFSI;
 };
 
 }

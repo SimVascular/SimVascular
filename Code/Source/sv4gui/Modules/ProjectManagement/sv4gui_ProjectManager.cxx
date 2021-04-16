@@ -142,6 +142,17 @@ namespace sv4gui_project_manager {
     PluginNames::SVFSI 
   };
 
+  // Set plugin file extensions.
+  const QString FileExtension::MESHES = ".msh";
+  const QString FileExtension::MODELS = ".mdl";
+  const QString FileExtension::PATHS = ".pth";
+  const QString FileExtension::SEGMENTATIONS = ".ctgr";
+  const QString FileExtension::SEGMENTATIONS3D = ".s3d";
+  const QString FileExtension::SIMULATIONS = ".sjb";
+  const QString FileExtension::ROMSIMULATIONS = ".romsimjob";
+  const QString FileExtension::SVFSI = ".fsijob";
+
+  // Set the element names used in the image location xml file. 
   const QString XmlElementNames::FILE_NAME = "file_name";
   const QString XmlElementNames::IMAGE_NAME = "image_name";
   const QString XmlElementNames::PATH = "path";
@@ -256,17 +267,17 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     CreateModelPlugin(dataStorage, projPath, modelFolderNode, modelFolderName);
 
     // Create Meshes plugin data nodes.
-    CreatePlugin(dataStorage, projPath, meshFolderNode, meshFolderName, "*.msh");
+    CreatePlugin(dataStorage, projPath, meshFolderNode, meshFolderName, FileExtension::MESHES);
 
     // Create Simulations plugin data nodes.
-    CreatePlugin(dataStorage, projPath, simFolderNode, simFolderName, "*.sjb");
+    CreatePlugin(dataStorage, projPath, simFolderNode, simFolderName, FileExtension::SIMULATIONS);
 
     // Create svFSI plugin data nodes.
-    CreatePlugin(dataStorage, projPath, svFSIFolderNode, svFSIFolderName, "*.fsijob");
+    CreatePlugin(dataStorage, projPath, svFSIFolderNode, svFSIFolderName, FileExtension::SVFSI);
 
     // Create ROMSimulations plugin data nodes.
     UpdateSimulations1dFolder(projPath, romSimFolderName);
-    CreatePlugin(dataStorage, projPath, romSimFolderNode, romSimFolderName, "*.romsimjob");
+    CreatePlugin(dataStorage, projPath, romSimFolderNode, romSimFolderName, FileExtension::ROMSIMULATIONS);
 
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
 }
@@ -749,6 +760,7 @@ void sv4guiProjectManager::SaveProjectAs(mitk::DataStorage::Pointer dataStorage,
 //
 void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode)
 {
+    using namespace sv4gui_project_manager;
     std::vector<std::string> removeList;
 
     std::string projPath;
@@ -780,10 +792,10 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
         }
 
         sv4guiPath *path=dynamic_cast<sv4guiPath*>(node->GetData());
-        if(path==NULL || (!path->IsDataModified() && dir.exists(QString::fromStdString(node->GetName())+".pth")) )
+        if(path==NULL || (!path->IsDataModified() && dir.exists(QString::fromStdString(node->GetName())+FileExtension::PATHS)) )
             continue;
 
-        QString	filePath=dir.absoluteFilePath(QString::fromStdString(node->GetName())+".pth");
+        QString	filePath=dir.absoluteFilePath(QString::fromStdString(node->GetName())+FileExtension::PATHS);
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
         node->SetStringProperty("path",dir.absolutePath().toStdString().c_str());
@@ -794,7 +806,7 @@ void sv4guiProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, m
     //delete files using removeList
     for(int i=0;i<removeList.size();i++)
     {
-        dir.remove(QString::fromStdString(removeList[i])+".pth");
+        dir.remove(QString::fromStdString(removeList[i])+FileExtension::PATHS);
     }
     pathFolder->ClearRemoveList();
 
@@ -1130,6 +1142,7 @@ void sv4guiProjectManager::SaveAllProjects(mitk::DataStorage::Pointer dataStorag
 //
 void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
 {
+    using namespace sv4gui_project_manager;
     // Get the path to the project data node (e.g. Paths data node)..
     std::string path = "";
     dataNode->GetStringProperty("path",path);
@@ -1155,44 +1168,27 @@ void sv4guiProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
 
     // Determine data node file extension.
     //
-    std::string extension="";
-    if(isPath->CheckNode(dataNode))
-    {
-        extension="pth";
-    }
-    else if(isContourGroup->CheckNode(dataNode))
-    {
-        extension="ctgr";
-    }
-    else if(isSeg3D->CheckNode(dataNode))
-    {
-        extension="s3d";
-    }
-    else if(isModel->CheckNode(dataNode))
-    {
-        extension="mdl";
-    }
-    else if(isMesh->CheckNode(dataNode))
-    {
-        extension="msh";
-    }
-    else if(isSimJob->CheckNode(dataNode))
-    {
-        extension="sjb";
-    }
-    else if(isROMSimJob->CheckNode(dataNode))
-    {
-        extension="romsimjob";
-    }
-    else if(issvFSIJob->CheckNode(dataNode))
-    {
-        extension="fsijob";
+    QString extension = "";
+    if (isPath->CheckNode(dataNode)) {
+        extension = FileExtension::PATHS;
+    } else if (isContourGroup->CheckNode(dataNode)) {
+        extension = FileExtension::SEGMENTATIONS;
+    } else if(isSeg3D->CheckNode(dataNode)) {
+        extension = FileExtension::SEGMENTATIONS3D;
+    } else if(isModel->CheckNode(dataNode)) {
+        extension = FileExtension::MODELS;
+    } else if(isMesh->CheckNode(dataNode)) {
+        extension = FileExtension::MESHES;
+    } else if(isSimJob->CheckNode(dataNode)) {
+        extension = FileExtension::SIMULATIONS;
+    } else if(isROMSimJob->CheckNode(dataNode)) {
+        extension = FileExtension::ROMSIMULATIONS;
+    } else if(issvFSIJob->CheckNode(dataNode)) {
+        extension = FileExtension::SVFSI;
     }
 
-
-    std::vector<mitk::BaseData::Pointer> vdata = mitk::IOUtil::Load(path+"/"+dataNode->GetName()+"."+extension);
-    if(vdata.size()>0)
-    {
+    std::vector<mitk::BaseData::Pointer> vdata = mitk::IOUtil::Load(path+"/"+dataNode->GetName()+ extension.toStdString());
+    if(vdata.size()>0) {
         dataNode->SetData(vdata[0]);
     }
 }
@@ -1303,15 +1299,15 @@ void sv4guiProjectManager::RemoveDataNode(mitk::DataStorage::Pointer dataStorage
 //
 void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, std::string newName)
 {
+    using namespace sv4gui_project_manager;
     std::string name=dataNode->GetName();
-
     std::string path="";
     dataNode->GetStringProperty("path", path);
-
     dataNode->SetName(newName);
 
-    if(path=="")
+    if (path == "") {
         return;
+    }
 
     //rename the corresponding files and folder if applicable, for sv4guiPath, sv4guiContourGroup, sv4guiModel, sv4guiMitkMesh,sv4guiMitkSimJob
     mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("sv4guiPath");
@@ -1324,57 +1320,41 @@ void sv4guiProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage
     mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
     // fix???    mitk::NodePredicateDataType::Pointer issvFSIJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob");
 
-    std::vector<std::string> extensions;
-    if(isPath->CheckNode(dataNode))
-    {
-        extensions.push_back(".pth");
-    }
-    else if(isContourGroup->CheckNode(dataNode))
-    {
-        extensions.push_back(".ctgr");
-    }
-    else if(isSeg3D->CheckNode(dataNode))
-    {
-        extensions.push_back(".s3d");
+    std::vector<QString> extensions;
+
+    if(isPath->CheckNode(dataNode)) { 
+        extensions.push_back( FileExtension::PATHS);
+    } else if(isContourGroup->CheckNode(dataNode)) {
+        extensions.push_back(FileExtension::SEGMENTATIONS);
+    } else if(isSeg3D->CheckNode(dataNode)) {
+        extensions.push_back(FileExtension::SEGMENTATIONS3D);
         extensions.push_back(".vtp");
-    }
-    else if(isModel->CheckNode(dataNode))
-    {
-        extensions.push_back(".mdl");
+    } else if(isModel->CheckNode(dataNode)) {
+        extensions.push_back(FileExtension::MODELS);
         extensions.push_back(".vtp");
         extensions.push_back(".brep");
         extensions.push_back(".xmt_txt");
-    }
-    else if(isMesh->CheckNode(dataNode))
-    {
-        extensions.push_back(".msh");
+    } else if(isMesh->CheckNode(dataNode)) {
+        extensions.push_back(FileExtension::MESHES);
         extensions.push_back(".vtp");
         extensions.push_back(".vtu");
         extensions.push_back(".sms");
-    }
-    else if(isSimJob->CheckNode(dataNode))
-    {
-        extensions.push_back(".sjb");
+    } else if(isSimJob->CheckNode(dataNode)) {
+        extensions.push_back(FileExtension::SIMULATIONS);
         extensions.push_back("");//for folder
-    }
-    else if(isROMSimJob->CheckNode(dataNode))
-    {
-        extensions.push_back(".romsimjob");
+    } else if(isROMSimJob->CheckNode(dataNode)) {
+        extensions.push_back(FileExtension::ROMSIMULATIONS);
         extensions.push_back("");//for folder
-    }
-    else if(issvFSIJob->CheckNode(dataNode))
-    {
-        extensions.push_back(".fsijob");
+    } else if(issvFSIJob->CheckNode(dataNode)) {
+        extensions.push_back(FileExtension::SVFSI);
         extensions.push_back("");//for folder
-    }
-    else {
+    } else {
         return;
     }
 
     QDir dir(QString::fromStdString(path));
-    for(int i=0;i<extensions.size();i++)
-    {
-        dir.rename(QString::fromStdString(name+extensions[i]),QString::fromStdString(newName+extensions[i]));
+    for (const auto& extension : extensions) {
+        dir.rename(QString::fromStdString(name)+extension, QString::fromStdString(newName)+extension);
     }
 }
 
@@ -1668,7 +1648,7 @@ void sv4guiProjectManager::CreatePlugin(mitk::DataStorage::Pointer dataStorage, 
   folderNode->SetVisibility(false);
   QDir dir(projPath);
   dir.cd(folderName);
-  auto fileInfoList = dir.entryInfoList(QStringList(fileExt), QDir::Files, QDir::Name);
+  auto fileInfoList = dir.entryInfoList(QStringList("*"+fileExt), QDir::Files, QDir::Name);
 
   for (int i = 0; i < fileInfoList.size();i++) {
     auto filePath = fileInfoList[i].absoluteFilePath().toStdString();
@@ -1686,21 +1666,26 @@ void sv4guiProjectManager::CreatePlugin(mitk::DataStorage::Pointer dataStorage, 
 //---------------------------
 // UpdateSimulations1dFolder
 //---------------------------
+// Update an old SV project 'Simulations1d' directory to the new 'ROMSimulations'. 
+//
+// The '1D Simulation' tool was changed to the 'Reduced-Order Model Simualtion' tool 
+// that includes both 1D and 0D simulations. Update older SV projects by 
+//
+//    1) Changing file extensions from .s1djb to .romsimjob
+//
+//    2) Rename 'Simulations1d' directory to 'ROMSimulations'
 //
 void sv4guiProjectManager::UpdateSimulations1dFolder(const QString& projPath, const QString& romSimFolderName)
 {
-  //std::cout << "[UpdateSimulations1dFolder] ========== UpdateSimulations1dFolder ==========" << std::endl;
   QDir project_dir(projPath);
   auto sim1dFolder = project_dir.absoluteFilePath("Simulations1d");
 
   QFileInfo checkFile(sim1dFolder);
   if (!checkFile.exists()) { 
-    //std::cout << "[UpdateSimulations1dFolder] No Simulations1d folder." << std::endl;
     return; 
   }
-  //std::cout << "[UpdateSimulations1dFolder] Found Simulations1d folder." << std::endl;
 
-  // Rename .s1djb files to .romsimjob.
+  // Change file extensions from .s1djb to .romsimjob.
   //
   project_dir.cd(sim1dFolder);
   auto fileInfoList = project_dir.entryInfoList(QStringList("*.s1djb"), QDir::Files, QDir::Name);
@@ -1709,12 +1694,7 @@ void sv4guiProjectManager::UpdateSimulations1dFolder(const QString& projPath, co
     auto filePath = fileInfoList[i].absoluteFilePath().toStdString();
     auto fileName = fileInfoList[i].fileName().toStdString();
     auto baseName = fileInfoList[i].baseName().toStdString();
-    //std::cout << "[UpdateSimulations1dFolder] File: " << filePath << std::endl;
-    //std::cout << "[UpdateSimulations1dFolder] fileName: " << fileName << std::endl;
-    //std::cout << "[UpdateSimulations1dFolder] baseName: " << baseName << std::endl;
-
     auto renamedFilePath = std::regex_replace(filePath, std::regex(fileName), baseName+".romsimjob"); 
-    //std::cout << "[UpdateSimulations1dFolder] Renamed file: " << renamedFilePath << std::endl;
     QFile oldFile(fileInfoList[i].absoluteFilePath());
     oldFile.rename(QString(renamedFilePath.c_str()));
   }
@@ -1722,6 +1702,9 @@ void sv4guiProjectManager::UpdateSimulations1dFolder(const QString& projPath, co
   // Rename 'Simulations1d' directory to 'ROMSimulations'.
   project_dir.cdUp();
   project_dir.rename("Simulations1d", "ROMSimulations"); 
+
+  QString msg = "To maintain compatibility the `Simulations1d` folder has been renamed to `ROMSimulations` and files with the .s1djb extension have been changed to use the .romsimjob extension."; 
+  QMessageBox::information(NULL, "", msg);
 }
 
 
