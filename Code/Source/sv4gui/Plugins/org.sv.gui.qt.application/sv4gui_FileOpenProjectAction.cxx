@@ -81,6 +81,8 @@ void sv4guiFileOpenProjectAction::Init(berry::IWorkbenchWindow* window)
 
 void sv4guiFileOpenProjectAction::Run()
 {
+    using namespace sv4gui_project_manager;
+
     try
     {
         mitk::IDataStorageReference::Pointer dsRef;
@@ -137,7 +139,10 @@ void sv4guiFileOpenProjectAction::Run()
         lastSVProjPath=projPath.trimmed();
 
         QDir dir(lastSVProjPath);
-        if(dir.exists(".svproj"))
+        QString newImageLocFile = sv4guiProjectManager::GetImageInfoFilePath(dir);
+
+        // Check that either the old .svproj or newer IMAGE_LOCATION_FILE_NAME exists. 
+        if (dir.exists(".svproj") || dir.exists(newImageLocFile)) 
         {
             QString projName=dir.dirName();
             dir.cdUp();
@@ -158,7 +163,7 @@ void sv4guiFileOpenProjectAction::Run()
                 prefs->Flush();
             }
         }else{
-            QMessageBox::warning(NULL,"Invalid Project","No project config file found!");
+            QMessageBox::warning(NULL,"Invalid Project","No project image location file found.");
         }
     }
     catch (std::exception& e)

@@ -70,7 +70,8 @@ endif
                        /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcpmtd.lib \
                        /NODEFAULTLIB:msvcrtd.lib \
                       /MACHINE:X64 -subsystem:console
-
+    # add verbose flag to debug linking issues (lists all search libraries)
+    #GLOBAL_LFLAGS   += /VERBOSE:LIB
     SHARED_LFLAGS   = /DLL $(GLOBAL_LFLAGS) $(CXX_LIBS)
     STATIC_FLAG     =
     DYNAMIC_FLAG    =
@@ -83,5 +84,6 @@ endif
     LIBCMD          = lib
     SVLIBFLAG       =lib
     LIBLINKEXT      =.lib
-#    SV_QUIET_FLAG   = @
+    # comment out the SV_QUIET_FLAG to get more debug info at compiler time
+    SV_QUIET_FLAG   = @
 endif
