@@ -35,7 +35,7 @@
 #include "sv4gui_TableSolverDelegateROM.h"
 #include "sv4gui_MitkMesh.h"
 #include "sv4gui_MeshLegacyIO.h"
-#include "sv4gui_RomSimulationUtils.h"
+#include "sv4gui_ROMSimulationUtils.h"
 
 #include <QmitkStdMultiWidgetEditor.h>
 #include <mitkNodePredicateDataType.h>
