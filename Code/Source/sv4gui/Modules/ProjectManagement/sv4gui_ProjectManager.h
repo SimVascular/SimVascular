@@ -61,8 +61,9 @@ class PluginNames
     static const QString MODELS;
     static const QString PATHS;
     static const QString SEGMENTATIONS;
+    static const QString SEGMENTATIONS3D;
     static const QString SIMULATIONS;
-    static const QString SIMULATIONS_1D;
+    static const QString ROMSIMULATIONS;
     static const QString SVFSI;
     static const QStringList NAMES_LIST;
 };
@@ -82,6 +83,25 @@ class XmlElementNames
     static const QString ROOT;
     static const QString SCALE_FACTOR;
     static const std::set<QString> valid_names;
+};
+
+//---------------
+// FileExtension
+//---------------
+// This class stores the names of plugin file extensions
+// used to store plugin state.
+//
+class FileExtension
+{
+  public:
+    static const QString MESHES;
+    static const QString MODELS;
+    static const QString PATHS;
+    static const QString SEGMENTATIONS;
+    static const QString SEGMENTATIONS3D;
+    static const QString SIMULATIONS;
+    static const QString ROMSIMULATIONS;
+    static const QString SVFSI;
 };
 
 }
@@ -206,6 +226,7 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
     static void ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, QString& imageName);
 
+    static void UpdateSimulations1dFolder(const QString& projPath, const QString& romSimFolderName);
 };
 
 #endif // SV4GUI_PROJECTMANAGER_H

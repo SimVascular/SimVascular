@@ -36,7 +36,7 @@
 #include "sv4gui_MitkMeshObjectFactory.h"
 #include "sv4gui_MitkSimulationObjectFactory.h"
 #include "sv4gui_MitksvFSIObjectFactory.h"
-#include "sv4gui_MitkSimulationObjectFactory1d.h"
+#include "sv4gui_MitkROMSimulationObjectFactory.h"
 
 #include <QmitkNodeDescriptorManager.h>
 #include <mitkNodePredicateDataType.h>
@@ -49,7 +49,7 @@ static Registersv4guiModelObjectFactory registersv4guiModelObjectFactory;
 static Registersv4guiMitkMeshObjectFactory registersv4guiMitkMeshObjectFactory;
 static Registersv4guiMitkSimulationObjectFactory registersv4guiMitkSimulationObjectFactory;
 static Registersv4guiMitksvFSIObjectFactory registersv4guiMitksvFSIObjectFactory;
-static Registersv4guiMitkSimulationObjectFactory1d registersv4guiMitkSimulationObjectFactory1d;
+static Registersv4guiMitkROMSimulationObjectFactory registersv4guiMitkROMSimulationObjectFactory;
 
 //ctkPluginContext* sv4guiProjectDataNodesPluginActivator::m_Context = nullptr;
 
@@ -147,12 +147,12 @@ void sv4guiProjectDataNodesPluginActivator::start(ctkPluginContext* context)
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitksvFSIJob"), QString(":svfsijob.png"), issvFSIJob, descriptorManager));
 
 
-    // Simulation1d
-    mitk::NodePredicateDataType::Pointer isSimulation1dFolder = mitk::NodePredicateDataType::New("sv4guiSimulation1dFolder");
-    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiSimulation1dFolder"), QString(":svsim1dfolder.png"), isSimulation1dFolder, descriptorManager));
+    // ROM Simulation
+    auto isROMSimulationFolder = mitk::NodePredicateDataType::New("sv4guiROMSimulationFolder");
+    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiROMSimulationFolder"), QString(":svromsimfolder.png"), isROMSimulationFolder, descriptorManager));
 
-    mitk::NodePredicateDataType::Pointer isSim1dJob = mitk::NodePredicateDataType::New("sv4guiMitkSimJob1d");
-    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitkSimJob1d"), QString(":svsim1djob.png"), isSim1dJob, descriptorManager));
+    mitk::NodePredicateDataType::Pointer isROMSimJob = mitk::NodePredicateDataType::New("sv4guiMitkROMSimJob");
+    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("sv4guiMitkROMSimJob"), QString(":svromsimjob.png"), isROMSimJob, descriptorManager));
 
     // Repository
     mitk::NodePredicateDataType::Pointer isRepositoryFolder = mitk::NodePredicateDataType::New("sv4guiRepositoryFolder");
