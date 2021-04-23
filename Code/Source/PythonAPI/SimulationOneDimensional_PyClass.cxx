@@ -142,16 +142,17 @@ OneDimSim_WriteFlowFile(sv4guiSimulationPython1d& pythonInterface, std::vector<s
   pythonInterface.AddParameter(params.INFLOW_INPUT_FILE, copyFileName); 
 }
 
-//-------------------------------
-// OneDimSim_WriteResistanceFile 
-//-------------------------------
+//------------------------
+// OneDimSim_WriteRCRFile  
+//------------------------
 //
-void
+bool
 OneDimSim_WriteRCRFile(sv4guiSimulationPython1d& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
     std::string& outputDir)
 {
   using namespace OneDimSim_Parameters;
   std::vector<std::map<std::string,std::string>> rcrBcList;
+  std::string fileWritten;
 
   for (auto bcItem : bcValues) {
       auto bctype = bcItem[BOUNDARY_CONDITION_TYPE];
@@ -161,7 +162,7 @@ OneDimSim_WriteRCRFile(sv4guiSimulationPython1d& pythonInterface, std::vector<st
   }
 
   if (rcrBcList.size() == 0) {
-     return;
+     return false;
   }
 
   // Write the rcr values to a file.
@@ -190,18 +191,14 @@ OneDimSim_WriteRCRFile(sv4guiSimulationPython1d& pythonInterface, std::vector<st
       outs << "1.0 0" << std::endl;
   }
   outs.close();
-
-  // Add rcr parameters.
-  auto params = pythonInterface.m_ParameterNames;
-  pythonInterface.AddParameter(params.OUTFLOW_BC_TYPE, "rcr");
-  pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, fileName);
+  return true;
 }
 
 //-------------------------------
 // OneDimSim_WriteResistanceFile 
 //-------------------------------
 //
-void
+bool 
 OneDimSim_WriteResistanceFile(sv4guiSimulationPython1d& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
     std::string& outputDir)
 {
@@ -216,7 +213,7 @@ OneDimSim_WriteResistanceFile(sv4guiSimulationPython1d& pythonInterface, std::ve
   }
 
   if (resBcList.size() == 0) {
-     return; 
+     return false; 
   }
 
   // Write the resistance values to a file.
@@ -233,11 +230,7 @@ OneDimSim_WriteResistanceFile(sv4guiSimulationPython1d& pythonInterface, std::ve
       outs << faceID << " " << resistance << "\n";
   }
   outs.close();
-
-  // Add resistance parameters.
-  auto params = pythonInterface.m_ParameterNames;
-  pythonInterface.AddParameter(params.OUTFLOW_BC_TYPE, "resistance");
-  pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, fileName);
+  return true; 
 }
 
 //------------------------------------------
@@ -263,16 +256,28 @@ OneDimSim_AddBoundaryConditionParameters(sv4guiSimulationPython1d& pythonInterfa
       }
   }
 
+  std::vector<std::string> filesWritten;
+
   // Write the inflow BC data.
   OneDimSim_WriteFlowFile(pythonInterface, bcValues, outputDir);
 
   // Write the resistance BC data.
-  OneDimSim_WriteResistanceFile(pythonInterface, bcValues, outputDir);
+  if (OneDimSim_WriteResistanceFile(pythonInterface, bcValues, outputDir)) { 
+      filesWritten.push_back(std::string(BOUNDARY_CONDITION_RESISTANCE_FILE_NAME));
+  }
 
   // Write the RCR BC data.
-  OneDimSim_WriteRCRFile(pythonInterface, bcValues, outputDir);
+  if (OneDimSim_WriteRCRFile(pythonInterface, bcValues, outputDir)) {
+      filesWritten.push_back(std::string(BOUNDARY_CONDITION_RCR_FILE_NAME));
+  }
 
-  pythonInterface.AddParameter(params.UNIFORM_BC, "false");
+  // Set BC file names.
+  if (filesWritten.size() != 0) { 
+      pythonInterface.AddParameterList(params.OUTFLOW_BC_TYPE, filesWritten);
+      pythonInterface.AddParameter(params.UNIFORM_BC, "false");
+  }
+
+  pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outputDir);
 }
 
 //------------------------------
