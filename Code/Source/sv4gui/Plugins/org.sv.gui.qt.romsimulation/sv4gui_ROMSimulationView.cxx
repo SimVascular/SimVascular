@@ -4052,6 +4052,13 @@ sv4guiROMSimJob* sv4guiROMSimulationView::CreateJob(std::string& msg, bool check
 {
     sv4guiROMSimJob* job = new sv4guiROMSimJob();
 
+    // Set the model order.
+    if (ui->ModelOrderZero_RadioButton->isChecked()) { 
+        m_MitkJob->SetModelOrder("0");
+    } else if (ui->ModelOrderOne_RadioButton->isChecked()) { 
+        m_MitkJob->SetModelOrder("1");
+    }
+
     if (!SetBasicParameters(job, msg, checkValidity)) {
         delete job;
         return nullptr;
@@ -5001,7 +5008,6 @@ void sv4guiROMSimulationView::UpdateSimJob()
 {
     auto msg = "[sv4guiROMSimulationView::UpdateSimJob] ";
     MITK_INFO << msg << "---------- UpdateSimJob ---------"; 
-
     if (!m_MitkJob) {
         return;
     }
