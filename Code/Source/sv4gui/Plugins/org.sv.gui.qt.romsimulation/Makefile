@@ -43,64 +43,64 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(SV_TINYXML_INCDIR) $(SV_TINYXML2_INCDIR) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_simulation1d_EXPORTS \
-           -DUS_MODULE_NAME=sv4guiModuleSimulation1d
+           -Dorg_sv_gui_qt_romsimulation_EXPORTS \
+           -DUS_MODULE_NAME=sv4guiModuleROMSimulation
 
 HDRS	= \
-    sv4gui_SimJobCreate1d.h \
-    sv4gui_SimJobCreateAction1d.h \
-    sv4gui_CapBCWidget1d.h \
-    sv4gui_SplitBCWidget1d.h \
-    sv4gui_TableCapDelegate1d.h \
-    sv4gui_TableSolverDelegate1d.h \
-    sv4gui_SimulationExtractCenterlines1d.h \
-    sv4gui_SimulationLinesContainer.h \
-    sv4gui_SimulationLinesMapper.h \
-    sv4gui_SimulationView1d.h \
-    sv4gui_SimulationPreferencePage1d.h \
-    sv4gui_SimulationPython1d.h \
-    sv4gui_SimulationPythonConvert1d.h \
-    sv4gui_SimJobStopAction1d.h \
-    sv4gui_SimJobExportAction1d.h \
-    sv4gui_SimulationPluginActivator1d.h \
-    sv4gui_ProcessHandler1d.h \
-    sv4gui_SolverProcessHandler1d.h
+    sv4gui_ROMSimJobCreate.h \
+    sv4gui_ROMSimJobCreateAction.h \
+    sv4gui_CapBCWidgetROM.h \
+    sv4gui_SplitBCWidgetROM.h \
+    sv4gui_TableCapDelegateROM.h \
+    sv4gui_TableSolverDelegateROM.h \
+    sv4gui_ROMSimulationExtractCenterlines.h \
+    sv4gui_ROMSimulationLinesContainer.h \
+    sv4gui_ROMSimulationLinesMapper.h \
+    sv4gui_ROMSimulationView.h \
+    sv4gui_ROMSimulationPreferencePage.h \
+    sv4gui_ROMSimulationPython.h \
+    sv4gui_ROMSimulationPythonConvert.h \
+    sv4gui_ROMSimJobStopAction.h \
+    sv4gui_ROMSimJobExportAction.h \
+    sv4gui_ROMSimulationPluginActivator.h \
+    sv4gui_ProcessHandlerROM.h \
+    sv4gui_SolverProcessHandlerROM.h
 
 CXXSRCS	= \
-    sv4gui_SimJobCreate1d.cxx \
-    sv4gui_SimJobCreateAction1d.cxx \
-    sv4gui_CapBCWidget1d.cxx \
-    sv4gui_SplitBCWidget1d.cxx \
-    sv4gui_TableCapDelegate1d.cxx \
-    sv4gui_TableSolverDelegate1d.cxx \
-    sv4gui_SimulationExtractCenterlines1d.cxx \
-    sv4gui_SimulationLinesContainer.cxx \
-    sv4gui_SimulationLinesMapper.cxx \
-    sv4gui_SimulationView1d.cxx \
-    sv4gui_SimulationPreferencePage1d.cxx \
-    sv4gui_SimulationPython1d.cxx \
-    sv4gui_SimulationPythonConvert1d.cxx \
-    sv4gui_SimJobStopAction1d.cxx \
-    sv4gui_SimJobExportAction1d.cxx \
-    sv4gui_SimulationPluginActivator1d.cxx \
-    sv4gui_ProcessHandler1d.cxx \
-    sv4gui_SolverProcessHandler1d.cxx
+    sv4gui_ROMSimJobCreate.cxx \
+    sv4gui_ROMSimJobCreateAction.cxx \
+    sv4gui_CapBCWidgetROM.cxx \
+    sv4gui_SplitBCWidgetROM.cxx \
+    sv4gui_TableCapDelegateROM.cxx \
+    sv4gui_TableSolverDelegateROM.cxx \
+    sv4gui_ROMSimulationExtractCenterlines.cxx \
+    sv4gui_ROMSimulationLinesContainer.cxx \
+    sv4gui_ROMSimulationLinesMapper.cxx \
+    sv4gui_ROMSimulationView.cxx \
+    sv4gui_ROMSimulationPreferencePage.cxx \
+    sv4gui_ROMSimulationPython.cxx \
+    sv4gui_ROMSimulationPythonConvert.cxx \
+    sv4gui_ROMSimJobStopAction.cxx \
+    sv4gui_ROMSimJobExportAction.cxx \
+    sv4gui_ROMSimulationPluginActivator.cxx \
+    sv4gui_ProcessHandlerROM.cxx \
+    sv4gui_SolverProcessHandlerROM.cxx
 
 UIFILES = \
-    sv4gui_SimJobCreate1d.ui \
-    sv4gui_CapBCWidget1d.ui \
-    sv4gui_SplitBCWidget1d.ui \
-    sv4gui_SimulationPreferencePage1d.ui \
-    sv4gui_SimulationView1d.ui
+    sv4gui_ROMSimJobCreate.ui \
+    sv4gui_CapBCWidgetROM.ui \
+    sv4gui_SplitBCWidgetROM.ui \
+    sv4gui_ROMSimulationPreferencePage.ui \
+    sv4gui_ROMSimulationView.ui
 
-QRCFILES = resources/simulation1d.qrc
+QRCFILES = resources/romsimulation.qrc
 
-QRCFILES += org_sv_gui_qt_simulation1d_manifest.qrc \
-            org_sv_gui_qt_simulation1d_cached.qrc
+QRCFILES += org_sv_gui_qt_romsimulation_manifest.qrc \
+            org_sv_gui_qt_romsimulation_cached.qrc
 
 RCFILES = \
   plugin.xml \
-  resources/simulation1d.png
+  resources/romsimulation.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
@@ -117,7 +117,7 @@ DLLLIBS +=  \
           $(SVLIBFLAG)$(SV_LIB_MODULE_COMMON_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SEGMENTATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION1D_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_ROM_SIMULATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
@@ -140,12 +140,12 @@ endif
 
 EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../org.sv.gui.qt.datamanager
 
-TARGET_LIB_NAME = $(SV_PLUGIN_SIMULATION1D_NAME)
+TARGET_LIB_NAME = $(SV_PLUGIN_ROM_SIMULATION_NAME)
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_simulation1d
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_simulation1d
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_romsimulation
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_romsimulation
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = SIMULATION1D
+PLUGIN_NAME = ROMSIMULATION
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

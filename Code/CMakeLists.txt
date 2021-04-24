@@ -257,7 +257,7 @@ if(SV_USE_SV4_GUI)
      )
 
   #if(SV_USE_ONEDSOLVER)
-   # set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/Simulation1d")
+   # set(SV_MODULE_DIRS ${SV_MODULE_DIRS} "Source/sv4gui/Modules/ROMSimulation")
   #endif()
 
   if(SV_USE_OpenCASCADE)

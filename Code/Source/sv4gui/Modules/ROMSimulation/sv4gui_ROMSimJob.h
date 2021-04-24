@@ -126,4 +126,4 @@ public:
   };
 
 
-#endif // SV4GUI_SIMJOB1D_H
+#endif // SV4GUI_ROMSIMJOB_H
