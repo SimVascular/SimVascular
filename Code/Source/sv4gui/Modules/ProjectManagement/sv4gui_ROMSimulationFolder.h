@@ -58,4 +58,4 @@ protected:
 
 };
 
-#endif // SV4GUI_SIMULATION1DFOLDER_H
+#endif // SV4GUI_ROMSIMULATIONFOLDER_H

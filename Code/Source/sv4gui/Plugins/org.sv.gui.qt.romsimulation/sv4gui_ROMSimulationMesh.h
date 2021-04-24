@@ -92,4 +92,4 @@ class sv4guiROMSimulationMesh
     std::map<std::string, std::string> parameterValues;
 };
 
-#endif //SV4GUI_SIMULATION1D_MESH_H
+#endif //SV4GUI_ROMSIMULATION_MESH_H

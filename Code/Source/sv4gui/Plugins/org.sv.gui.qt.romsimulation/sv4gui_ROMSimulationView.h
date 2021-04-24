@@ -474,4 +474,4 @@ private:
 
 };
 
-#endif // SV4GUI_SIMULATION1DVIEW_H
+#endif // SV4GUI_ROMSIMULATIONVIEW_H

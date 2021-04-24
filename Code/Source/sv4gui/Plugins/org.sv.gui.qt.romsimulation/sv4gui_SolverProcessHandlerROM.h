@@ -88,4 +88,4 @@ private:
     QString m_RunDir;
 };
 
-#endif // SV4GUI_SOLVERPROCESSHANDLER1D_H
+#endif // SV4GUI_SOLVERPROCESSHANDLERROM_H

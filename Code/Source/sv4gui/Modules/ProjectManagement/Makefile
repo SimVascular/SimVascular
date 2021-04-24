@@ -59,7 +59,7 @@ HDRS	= \
     sv4gui_ModelFolder.h \
     sv4gui_MeshFolder.h \
     sv4gui_SimulationFolder.h \
-    sv4gui_Simulation1dFolder.h \
+    sv4gui_ROMSimulationFolder.h \
     sv4gui_RepositoryFolder.h \
     sv4gui_ProjectManager.h \
     sv4gui_DataNodeOperation.h \
@@ -79,7 +79,7 @@ CXXSRCS	= \
     sv4gui_SegmentationFolder.cxx \
     sv4gui_svFSIFolder.cxx \
     sv4gui_SimulationFolder.cxx \
-    sv4gui_Simulation1dFolder.cxx
+    sv4gui_ROMSimulationFolder.cxx
 
 CXXSRCS += us_init.cxx
 
@@ -108,7 +108,7 @@ DLLLIBS += \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MESH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_MODEL_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION_NAME)$(LIBLINKEXT) \
-          $(SVLIBFLAG)$(SV_LIB_MODULE_SIMULATION1D_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_MODULE_ROM_SIMULATION_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_PATH_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_SVFSI_NAME)$(LIBLINKEXT) \
           $(SVLIBFLAG)$(SV_LIB_MODULE_QTWIDGETS_NAME)$(LIBLINKEXT) \

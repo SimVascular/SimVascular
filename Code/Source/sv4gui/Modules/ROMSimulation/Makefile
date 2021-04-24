@@ -44,25 +44,25 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(SV_TINYXML_INCDIR) $(SV_TINYXML2_INCDIR) \
            $(MITK_INCDIRS) $(MITK_DEFS)
 
-MODULE_NAME = sv4guiModuleSimulation1d
-MODULE_NAME_ALL_CAPS = SV4GUIMODULESIMULATION1D
+MODULE_NAME = sv4guiModuleROMSimulation
+MODULE_NAME_ALL_CAPS = SV4GUIMODULEROMSIMULATION
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    sv4gui_SimJob1d.h \
-    sv4gui_MitkSimJob1d.h \
-    sv4gui_MitkSimJobIO1d.h \
-    sv4gui_SimulationUtils1d.h \
-    sv4gui_MitkSimulationObjectFactory1d.h
+    sv4gui_ROMSimJob.h \
+    sv4gui_MitkROMSimJob.h \
+    sv4gui_MitkROMSimJobIO.h \
+    sv4gui_ROMSimulationUtils.h \
+    sv4gui_MitkROMSimulationObjectFactory.h
 
 CXXSRCS	= \
-    sv4gui_SimJob1d.cxx \
-    sv4gui_MitkSimJob1d.cxx \
-    sv4gui_MitkSimJobIO1d.cxx \
-    sv4gui_SimulationUtils1d.cxx \
-    sv4gui_MitkSimulationObjectFactory1d.cxx
+    sv4gui_ROMSimJob.cxx \
+    sv4gui_MitkROMSimJob.cxx \
+    sv4gui_MitkROMSimJobIO.cxx \
+    sv4gui_ROMSimulationUtils.cxx \
+    sv4gui_MitkROMSimulationObjectFactory.cxx
 
 CXXSRCS += us_init.cxx
 
@@ -98,6 +98,6 @@ ifeq ($(SV_USE_TINYXML2),1)
   DLLLIBS += $(SV_TINYXML2_LIBS)
 endif
 
-TARGET_LIB_NAME = $(SV_LIB_MODULE_SIMULATION1D_NAME)
+TARGET_LIB_NAME = $(SV_LIB_MODULE_ROM_SIMULATION_NAME)
 
 include $(TOP)/targetlib.mk

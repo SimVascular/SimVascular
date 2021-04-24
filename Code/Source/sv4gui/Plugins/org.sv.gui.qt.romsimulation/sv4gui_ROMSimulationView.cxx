@@ -71,7 +71,7 @@
 //        SetCenterlinesGeometry()
 //        UpdateCenterlines()
 //        ---- 
-//        sv4guiSimulationExtractCenterlines1d::Run()
+//        sv4guiROMSimulationExtractCenterlines::Run()
 //
 //      Data set:
 //        m_CenterlinesCalculated
@@ -82,12 +82,12 @@
 //
 //   3) Set inlet and outlet boundary conditions 
 //
-//      This uses the sv4guiCapBCWidget1d class and m_TableModelCap.
+//      This uses the sv4guiCapBCWidgetROM class and m_TableModelCap.
 //
 //      GUI widgets used: 
 //        m_TableModelCap - QStandardItemModel which provides a generic model for storing custom data.
 //        tableViewCap
-//        m_CapBCWidget - sv4guiCapBCWidget1d
+//        m_CapBCWidget - sv4guiCapBCWidgetROM
 //
 //      Methods called:
 //        CreateJob()
@@ -2095,9 +2095,9 @@ void sv4guiROMSimulationView::UpdateModelGUI()
     //MITK_INFO << msg << "--------- UpdateModelGUI ----------";
 
     /* [DaveP] This does not work well.
-    sv4guiSimJob1d* job = m_MitkJob->GetSimJob();
+    sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
     if (job == NULL) {
-        job = new sv4guiSimJob1d();
+        job = new sv4guiROMSimJob();
     }
     auto inletFaceName = job->GetModelProp("Inlet Face Name");
     MITK_INFO << msg << "inletFaceName: " << inletFaceName;
@@ -2387,7 +2387,7 @@ void sv4guiROMSimulationView::TableViewCapContextMenuRequested( const QPoint & p
 //-----------------
 // ShowCapBCWidget
 //-----------------
-// Show the m_CapBCWidget (sv4guiCapBCWidget1d) popup.
+// Show the m_CapBCWidget (sv4guiCapBCWidgetROM) popup.
 //
 // Sets values stored in m_TableModelCap.
 //
@@ -2474,7 +2474,7 @@ void sv4guiROMSimulationView::SetDistalPressure(bool)
 // The GUI values are updated from m_CapBCWidget properties.
 //
 // This is called when values in the 'Set Inlet/Outlet BCs' popup values 
-// are changed (sv4guiCapBCWidget1d class).
+// are changed (sv4guiCapBCWidgetROM class).
 //
 // Modifies:
 //   m_TableModelCap
@@ -2698,7 +2698,7 @@ void  sv4guiROMSimulationView::SplitCapBC()
 // Set the GUI values for inlet / outler (cap) boundary conditions
 // table in the 'Inlet and Outlet BCs' toolbox tab.
 //
-// The GUI values are updated from sv4guiSimJob1d properties?
+// The GUI values are updated from sv4guiROMSimJob properties?
 //
 // Modifies:
 //   m_TableModelCap
@@ -2931,7 +2931,7 @@ void sv4guiROMSimulationView::SetVarE(bool)
 //
 void sv4guiROMSimulationView::UpdateGUIConvertResults()
 {
-    auto msg = "[sv4guiSimulationView1d::UpdateGUIConvertResults]";
+    auto msg = "[sv4guiROMSimulationView::UpdateGUIConvertResults]";
     MITK_INFO << msg;
     MITK_INFO << msg << "--------- UpdateGUIConvertResults ----------";
 
@@ -3487,7 +3487,7 @@ QString sv4guiROMSimulationView::GetSolverExecutable()
 //-----------------
 // Create files for a simulation.
 //
-// A sv4guiSimulationPython1d object is used to execute a Python script to generate 
+// A sv4guiROMSimulationPython object is used to execute a Python script to generate 
 // a 1D mesh and create a input file for the 1D solver.
 //
 // Files are written to the PROJECT/Simulations1d/JOB_NAME directory.
@@ -3564,7 +3564,7 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
     m_SimulationFilesCreated = false;
     m_SolverInputFile = ""; 
 
-   // Create a sv4guiSimulationPython1d used to execute a Python script
+   // Create a sv4guiROMSimulationPython used to execute a Python script
    // and get the parameter names used by that script.
     //
     auto pythonInterface = sv4guiROMSimulationPython();
@@ -3773,7 +3773,7 @@ void sv4guiROMSimulationView::WriteBCFiles(const QString outputDir, sv4guiROMSim
 //
 // The flow rate file is set by the user using the 'Set Inlet/Outlet BCs' popup 
 // called up from the 'Inlet and Outlet BCs' toolbox tab and processed using the
-// sv4guiCapBCWidget1d object. The sv4guiROMSimJob object stores the flow rate
+// sv4guiCapBCWidgetROM object. The sv4guiROMSimJob object stores the flow rate
 // file name (without path) and its contents.
 //
 void sv4guiROMSimulationView::WriteFlowFile(const QString outputDir, sv4guiROMSimJob* job, 
