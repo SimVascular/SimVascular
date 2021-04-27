@@ -50,7 +50,7 @@ static PyObject* PyRunTimeErr;
 
 // Include the definitions for the 'simulation' classes.
 #include "SimulationFluid_PyClass.cxx"
-#include "SimulationOneDimensional_PyClass.cxx"
+#include "SimulationROM_PyClass.cxx"
 
 ////////////////////////////////////////////////////////
 //          M o d u l e  D e f i n i t i o n          //
@@ -131,9 +131,9 @@ PyMODINIT_FUNC PyInit_PySimulation()
 
   // Setup the simulation.Fluid class type.
   //
-  SetPyOneDimSimTypeFields(PySimulationOneDimensionalType);
-  if (PyType_Ready(&PySimulationOneDimensionalType) < 0) {
-      fprintf(stdout, "Error initilizing PySimulationOneDimensionalType \n");
+  SetPyROMSimTypeFields(PySimulationROMType);
+  if (PyType_Ready(&PySimulationROMType) < 0) {
+      fprintf(stdout, "Error initilizing PySimulationROMType \n");
       return nullptr;
   }
 
@@ -153,9 +153,9 @@ PyMODINIT_FUNC PyInit_PySimulation()
   Py_INCREF(&PySimulationFluidType);
   PyModule_AddObject(module, SIMULATION_FLUID_CLASS, (PyObject*)&PySimulationFluidType);
 
-  // Add OneDimensional class.
-  Py_INCREF(&PySimulationOneDimensionalType);
-  PyModule_AddObject(module, SIMULATION_ONE_DIMENSIONAL_CLASS, (PyObject*)&PySimulationOneDimensionalType);
+  // Add ROM class.
+  Py_INCREF(&PySimulationROMType);
+  PyModule_AddObject(module, SIMULATION_ROM_CLASS, (PyObject*)&PySimulationROMType);
 
   return module;
 }

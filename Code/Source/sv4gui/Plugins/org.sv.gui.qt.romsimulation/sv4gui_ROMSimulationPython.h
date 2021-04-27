@@ -137,7 +137,7 @@ class SV_QT_ROMSIMULATION sv4guiROMSimulationPython
     vtkSmartPointer<vtkPolyData> meshPolyData;
     sv4guiROMSimulationPythonParamNames m_ParameterNames;
     std::map<std::string, std::string> m_ParameterValues;
-    const std::string m_PythonModuleName = "sv_1d_simulation";
+    const std::string m_PythonModuleName = "sv_rom_simulation";
 
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value);
