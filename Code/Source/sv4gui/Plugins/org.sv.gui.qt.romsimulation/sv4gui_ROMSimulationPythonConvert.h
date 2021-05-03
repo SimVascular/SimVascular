@@ -62,6 +62,7 @@ class sv4guiROMSimulationPythonConvertParamNames
     const std::string ALL_SEGMENTS = "all_segments";
     const std::string CENTERLINES_FILE = "centerlines_file";
     const std::string DATA_NAMES = "data_names";
+    const std::string MODEL_ORDER = "model_order";
     const std::string ONED_MODEL_FILE = "oned_model_file";
     const std::string OUTPUT_DIRECTORY = "output_directory";
     const std::string OUTPUT_FILE_NAME = "output_file_name";
