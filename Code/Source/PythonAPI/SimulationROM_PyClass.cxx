@@ -99,6 +99,9 @@ namespace ROMSim_Parameters {
 
   char* PYTHON_ROM_SIMULATION_MODULE_NAME = "sv_rom_simulation";
 
+  char* SEG_MIN_NUM = "seg_min_num";
+  char* SEG_SIZE_ADAPTIVE = "seg_size_adaptive";
+
   char* SOLVER_FILE_NAME = "solver.in"; 
 
   char* SOLUTION_TIME_STEP = "time_step"; 
@@ -355,8 +358,15 @@ ROMSim_AddMeshParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* m
 {
   using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
+
   auto element_size = PyUtilGetDoubleAttr(meshObj, MESH_ELEMENT_SIZE);
   pythonInterface.AddParameter(params.ELEMENT_SIZE, std::to_string(element_size));
+
+  auto numSegements = PyUtilGetIntAttr(meshObj, SEG_MIN_NUM);
+  pythonInterface.AddParameter(params.SEG_MIN_NUM, std::to_string(numSegements));
+
+  auto adaptMeshing = PyUtilGetIntAttr(meshObj, SEG_SIZE_ADAPTIVE);
+  pythonInterface.AddParameter(params.SEG_SIZE_ADAPTIVE, std::to_string(adaptMeshing));
 }
 
 //---------------------------
