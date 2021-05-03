@@ -94,7 +94,6 @@ namespace ROMSim_Parameters {
   char* MODEL_NAME = "name";
   char* MODEL_ORDER = "model_order";
   char* MODEL_CENTERLINES_FILE = "centerlines_file_name";
-  char* MODEL_ORDER = "model_order";
   char* MODEL_OUTLET_FACE_FILE_NAME = "outlet_face_names.dat";
   char* MODEL_OUTLET_FACE_NAMES = "outlet_face_names";
 
