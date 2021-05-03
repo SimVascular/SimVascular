@@ -144,17 +144,17 @@ bool sv4guiROMSimulationPythonConvert::ConvertResults(const std::string outputDi
       auto sResult = std::string(PyUnicode_AsUTF8(uResult));
 
       if (sResult.find("ERROR") != std::string::npos) {
-          MITK_WARN << "Converting 1D solver results files has failed.";
+          MITK_WARN << "Converting reduced-order results files has failed.";
           MITK_WARN << "Returned message: " << QString(sResult.c_str()); 
           QMessageBox mb(nullptr);
           mb.setWindowTitle(sv4guiROMSimulationView::MsgTitle);
-          mb.setText("Converting 1D solver results files has failed.");
+          mb.setText("Converting reduced-order results files has failed.");
           mb.setIcon(QMessageBox::Critical);
           mb.setDetailedText(QString(sResult.c_str()));
           mb.setDefaultButton(QMessageBox::Ok);
           mb.exec();
       } else {
-          QString rmsg = "1D solver files have been successfully converted.\n";
+          QString rmsg = "Reduced-order solver files have been successfully converted.\n";
           MITK_INFO << msg << rmsg;
           QMessageBox::information(NULL, sv4guiROMSimulationView::MsgTitle, rmsg);
       }

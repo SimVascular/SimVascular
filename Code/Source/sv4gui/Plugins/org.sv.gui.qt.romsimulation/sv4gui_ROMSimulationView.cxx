@@ -4794,9 +4794,11 @@ void sv4guiROMSimulationView::ExportResults()
    // Create a sv4guiROMSimulationPythonConvert object used to execute a Python 
    // script and get the parameter names used by that script.
    //
+   auto modelOrder =  m_MitkJob->GetModelOrder();
    auto pythonInterface = sv4guiROMSimulationPythonConvert();
    auto params = pythonInterface.m_ParameterNames;
 
+   pythonInterface.AddParameter(params.MODEL_ORDER, modelOrder);
    pythonInterface.AddParameter(params.RESULTS_DIRECTORY, resultDir.toStdString());
    pythonInterface.AddParameter(params.SOLVER_FILE_NAME, SOLVER_FILE_NAME.toStdString());
 
@@ -4888,7 +4890,7 @@ void sv4guiROMSimulationView::ExportResults()
    auto status = pythonInterface.ConvertResults(convertDir.toStdString());
 
    if (!status) {
-       QMessageBox::warning(NULL, MsgTitle, "Converting 1D solver results has failed.");
+       QMessageBox::warning(NULL, MsgTitle, "Converting reduced-order results has failed.");
        return;
    }
 
