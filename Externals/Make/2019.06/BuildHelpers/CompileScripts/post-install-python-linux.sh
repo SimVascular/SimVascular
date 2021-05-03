@@ -28,7 +28,7 @@ REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install tensorflow==1.14.0
 #install pwlf for 1-D python code
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install pwlf==2.0.4
 #install scipy for 1-D python code
-REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install scipy==1.2.0
+REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install scipy==1.6.0
 #install pydoe for 1-D python code
 REPLACEME_SV_TOP_BIN_DIR_PYTHON/bin/pip install pydoe==0.3.8
 #install pyyaml needed for ML
