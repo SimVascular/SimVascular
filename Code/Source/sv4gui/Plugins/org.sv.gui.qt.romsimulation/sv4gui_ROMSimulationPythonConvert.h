@@ -92,7 +92,7 @@ class sv4guiROMSimulationPythonConvert
     vtkSmartPointer<vtkPolyData> meshPolyData;
     sv4guiROMSimulationPythonConvertParamNames m_ParameterNames;
     std::map<std::string, std::string> m_ParameterValues;
-    const std::string m_PythonModuleName = "sv_1d_extract_results";
+    const std::string m_PythonModuleName = "sv_rom_extract_results";
 
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value = "");

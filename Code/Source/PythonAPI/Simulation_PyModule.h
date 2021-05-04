@@ -45,20 +45,6 @@ typedef struct
   PyObject_HEAD
 } PySimulationFluid;
 
-//----------------------------
-// PySimulationOneDimensional 
-//----------------------------
-// Define the SV Python simulation.OneDimensional class.
-//
-/*
-typedef struct
-{
-  PyObject_HEAD
-  PyObject* parameters;
-} PySimulationOneDimensional;
-*/
-
-
 #if PYTHON_MAJOR_VERSION == 3
 PyMODINIT_FUNC PyInit_PySimulation();
 #endif

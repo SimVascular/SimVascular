@@ -29,33 +29,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The functions defined here implement the SV Python API 'simulation' module 'OneDimensional' class. 
+// The functions defined here implement the SV Python API 'simulation' module 'ROMensional' class. 
 //
-//     oneD_sim = simulation.OneDimensional()
+//     oneD_sim = simulation.ROM()
 
 #include "sv4gui_ROMSimulationPython.h"
 
 #include <map>
 #include <fstream>
 
-//----------------------------
-// PySimulationOneDimensional 
-//----------------------------
-// Define the SV Python simulation.OneDimensional class.
+//-----------------
+// PySimulationROM 
+//-----------------
+// Define the SV Python simulation.ROM class.
 //
 typedef struct
 {
   PyObject_HEAD
   PyObject* parameters;
-} PySimulationOneDimensional;
+} PySimulationROM;
 
-#include "SimulationOneDimensionalParams_PyClass.cxx"
+#include "SimulationROMParams_PyClass.cxx"
 
 //////////////////////////////////////////////////////
 //          U t i l i t y  F u n c t i o n s        //
 //////////////////////////////////////////////////////
 
-namespace OneDimSim_Parameters {
+namespace ROMSim_Parameters {
 
   char* BOUNDARY_CONDITION_LIST = "bc_list";
 
@@ -97,7 +97,10 @@ namespace OneDimSim_Parameters {
   char* MODEL_OUTLET_FACE_FILE_NAME = "outlet_face_names.dat";
   char* MODEL_OUTLET_FACE_NAMES = "outlet_face_names";
 
-  char* PYTHON_1D_SIMULATION_MODULE_NAME = "sv_1d_simulation";
+  char* PYTHON_ROM_SIMULATION_MODULE_NAME = "sv_rom_simulation";
+
+  char* SEG_MIN_NUM = "seg_min_num";
+  char* SEG_SIZE_ADAPTIVE = "seg_size_adaptive";
 
   char* SOLVER_FILE_NAME = "solver.in"; 
 
@@ -106,15 +109,15 @@ namespace OneDimSim_Parameters {
   char* SOLUTION_SAVE_DATA_FREQUENCY = "save_frequency"; 
 }
 
-//-------------------------
-// OneDimSim_WriteFlowFile
-//-------------------------
+//----------------------
+// ROMSim_WriteFlowFile
+//----------------------
 // Copy the input flow file to the output directory.
 void
-OneDimSim_WriteFlowFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues, 
+ROMSim_WriteFlowFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues, 
     std::string& outputDir)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   std::map<std::string,std::string> velBcItem;
  
   for (auto bcItem : bcValues) { 
@@ -143,14 +146,14 @@ OneDimSim_WriteFlowFile(sv4guiROMSimulationPython& pythonInterface, std::vector<
   pythonInterface.AddParameter(params.INFLOW_INPUT_FILE, copyFileName); 
 }
 
-//------------------------
-// OneDimSim_WriteRCRFile  
-//------------------------
+//---------------------
+// ROMSim_WriteRCRFile  
+//---------------------
 //
-bool OneDimSim_WriteRCRFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
+bool ROMSim_WriteRCRFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
     std::string& outputDir)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   std::vector<std::map<std::string,std::string>> rcrBcList;
   std::string fileWritten;
 
@@ -194,14 +197,14 @@ bool OneDimSim_WriteRCRFile(sv4guiROMSimulationPython& pythonInterface, std::vec
   return true;
 }
 
-//-------------------------------
-// OneDimSim_WriteResistanceFile 
-//-------------------------------
+//----------------------------
+// ROMSim_WriteResistanceFile 
+//----------------------------
 //
-bool OneDimSim_WriteResistanceFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
+bool ROMSim_WriteResistanceFile(sv4guiROMSimulationPython& pythonInterface, std::vector<std::map<std::string,std::string>>& bcValues,
     std::string& outputDir)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   std::vector<std::map<std::string,std::string>> resBcList;
 
   for (auto bcItem : bcValues) {
@@ -232,15 +235,15 @@ bool OneDimSim_WriteResistanceFile(sv4guiROMSimulationPython& pythonInterface, s
   return true; 
 }
 
-//------------------------------------------
-// OneDimSim_AddBoundaryConditionParameters 
-//------------------------------------------
-// Add parameter values from the 'OneDimensionalParameters.BoundaryConditions' object.
+//---------------------------------------
+// ROMSim_AddBoundaryConditionParameters 
+//---------------------------------------
+// Add parameter values from the 'ROMParameters.BoundaryConditions' object.
 //
 void
-OneDimSim_AddBoundaryConditionParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* modelObj, std::string& outputDir)
+ROMSim_AddBoundaryConditionParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* modelObj, std::string& outputDir)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
   // Get bcs from object.
@@ -258,15 +261,15 @@ OneDimSim_AddBoundaryConditionParameters(sv4guiROMSimulationPython& pythonInterf
   std::vector<std::string> filesWritten;
 
   // Write the inflow BC data.
-  OneDimSim_WriteFlowFile(pythonInterface, bcValues, outputDir);
+  ROMSim_WriteFlowFile(pythonInterface, bcValues, outputDir);
 
   // Write the resistance BC data.
-  if (OneDimSim_WriteResistanceFile(pythonInterface, bcValues, outputDir)) { 
+  if (ROMSim_WriteResistanceFile(pythonInterface, bcValues, outputDir)) { 
       filesWritten.push_back(std::string(BOUNDARY_CONDITION_RESISTANCE_FILE_NAME));
   }
 
   // Write the RCR BC data.
-  if (OneDimSim_WriteRCRFile(pythonInterface, bcValues, outputDir)) {
+  if (ROMSim_WriteRCRFile(pythonInterface, bcValues, outputDir)) {
       filesWritten.push_back(std::string(BOUNDARY_CONDITION_RCR_FILE_NAME));
   }
 
@@ -279,14 +282,14 @@ OneDimSim_AddBoundaryConditionParameters(sv4guiROMSimulationPython& pythonInterf
   pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outputDir);
 }
 
-//------------------------------
-// OneDimSim_AddFluidParameters 
-//------------------------------
+//---------------------------
+// ROMSim_AddFluidParameters 
+//---------------------------
 //
 void
-OneDimSim_AddFluidParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* fluidObj)
+ROMSim_AddFluidParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* fluidObj)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
   auto typeName = PyUtilGetObjectType(fluidObj);
@@ -298,15 +301,15 @@ OneDimSim_AddFluidParameters(sv4guiROMSimulationPython& pythonInterface, PyObjec
   pythonInterface.AddParameter(params.VISCOSITY, std::to_string(viscosity));
 }
 
-//---------------------------------
-// OneDimSim_AddMaterialParameters 
-//---------------------------------
+//------------------------------
+// ROMSim_AddMaterialParameters 
+//------------------------------
 // Add material properties to sv4guiROMSimulationPython..
 //
 void
-OneDimSim_AddMaterialParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* materialObj)
+ROMSim_AddMaterialParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* materialObj)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
   // Get material name.
@@ -346,28 +349,35 @@ OneDimSim_AddMaterialParameters(sv4guiROMSimulationPython& pythonInterface, PyOb
 
 }
 
-//-----------------------------
-// OneDimSim_AddMeshParameters
-//-----------------------------
+//--------------------------
+// ROMSim_AddMeshParameters
+//--------------------------
 //
 void
-OneDimSim_AddMeshParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* meshObj)
+ROMSim_AddMeshParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* meshObj)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
+
   auto element_size = PyUtilGetDoubleAttr(meshObj, MESH_ELEMENT_SIZE);
   pythonInterface.AddParameter(params.ELEMENT_SIZE, std::to_string(element_size));
+
+  auto numSegements = PyUtilGetIntAttr(meshObj, SEG_MIN_NUM);
+  pythonInterface.AddParameter(params.SEG_MIN_NUM, std::to_string(numSegements));
+
+  auto adaptMeshing = PyUtilGetIntAttr(meshObj, SEG_SIZE_ADAPTIVE);
+  pythonInterface.AddParameter(params.SEG_SIZE_ADAPTIVE, std::to_string(adaptMeshing));
 }
 
-//------------------------------
-// OneDimSim_AddModelParameters 
-//------------------------------
-// Add parameter values from the 'OneDimensionalParameters.ModelParameters' object.
+//---------------------------
+// ROMSim_AddModelParameters 
+//---------------------------
+// Add parameter values from the 'ROMParameters.ModelParameters' object.
 //
 void
-OneDimSim_AddModelParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* modelObj, std::string& outputDir)
+ROMSim_AddModelParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* modelObj, std::string& outputDir)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
   auto modelName = PyUtilGetStringAttr(modelObj, MODEL_NAME);
@@ -392,19 +402,19 @@ OneDimSim_AddModelParameters(sv4guiROMSimulationPython& pythonInterface, PyObjec
   pythonInterface.AddParameter(params.OUTLET_FACE_NAMES_INPUT_FILE, fileName);
 }
 
-//---------------------------------
-//OneDimSim_AddSolutionParameters 
-//---------------------------------
+//-----------------------------
+//ROMSim_AddSolutionParameters 
+//-----------------------------
 // Add solution paramaters. 
 //
 void
-OneDimSim_AddSolutionParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* solutionObj)
+ROMSim_AddSolutionParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* solutionObj)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
   // Add the name of the solver input file.
-  auto solverFileName = OneDimSim_Parameters::SOLVER_FILE_NAME;
+  auto solverFileName = ROMSim_Parameters::SOLVER_FILE_NAME;
   pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName);
 
   auto numTimeSteps = PyUtilGetIntAttr(solutionObj, SOLUTION_NUM_TIME_STEPS);
@@ -417,29 +427,29 @@ OneDimSim_AddSolutionParameters(sv4guiROMSimulationPython& pythonInterface, PyOb
   pythonInterface.AddParameter(params.SAVE_DATA_FREQUENCY, std::to_string(saveFreq));
 }
 
-//-------------------------------
-// OneDimSim_GenerateSolverInput 
-//-------------------------------
-// Generate a 1D solver input file. 
+//----------------------------
+// ROMSim_GenerateSolverInput 
+//----------------------------
+// Generate a ROM solver input file. 
 //
 // This is similar to the sv4guiROMSimulationPython::GenerateSolverInput() method.
 //
 void
-OneDimSim_GenerateSolverInput(sv4guiROMSimulationPython& pythonInterface, std::string& outputDir)
+ROMSim_GenerateSolverInput(sv4guiROMSimulationPython& pythonInterface, std::string& outputDir)
 {
-  using namespace OneDimSim_Parameters;
+  using namespace ROMSim_Parameters;
   auto params = pythonInterface.m_ParameterNames;
 
-  // Import the 1D mesh generation module.
+  // Import the ROM mesh generation module.
   //
-  auto pyName = PyUnicode_DecodeFSDefault(PYTHON_1D_SIMULATION_MODULE_NAME);
+  auto pyName = PyUnicode_DecodeFSDefault(PYTHON_ROM_SIMULATION_MODULE_NAME);
   auto pyModule = PyImport_Import(pyName);
 
   if (pyModule == nullptr) {
-      throw std::runtime_error("Unable to load the Python '" + std::string(PYTHON_1D_SIMULATION_MODULE_NAME) + "' module.");
+      throw std::runtime_error("Unable to load the Python '" + std::string(PYTHON_ROM_SIMULATION_MODULE_NAME) + "' module.");
   }
 
- // Get the module interface function that executes 
+  // Get the module interface function that executes 
   // module functions based on input arguments. 
   //
   auto pyFuncName = (char*)"run_from_c";
@@ -448,7 +458,7 @@ OneDimSim_GenerateSolverInput(sv4guiROMSimulationPython& pythonInterface, std::s
 
   if (!PyCallable_Check(pyFunc)) {
       throw std::runtime_error("Can't find the function '" + std::string(pyFuncName) + "' in the '" + 
-        std::string(PYTHON_1D_SIMULATION_MODULE_NAME) + "' module.");
+        std::string(PYTHON_ROM_SIMULATION_MODULE_NAME) + "' module.");
   }
 
   // Create an argument containing the output directory.
@@ -523,28 +533,29 @@ OneDimSim_GenerateSolverInput(sv4guiROMSimulationPython& pythonInterface, std::s
 //          C l a s s   M e t h o d s               //
 //////////////////////////////////////////////////////
 //
-// Python 'OneDimensional' class methods.
+// Python 'ROM' class methods.
 
 //----------------------------
-// OneDimSim_write_input_file 
+// ROMSim_write_input_file 
 //----------------------------
 // This method uses a sv4guiROMSimulationPython() object to collect
 // parameter values and is similar to sv4guiROMSimulationView::CreateDataFiles().
 //
-PyDoc_STRVAR(OneDimSim_write_input_file_doc,
+PyDoc_STRVAR(ROMSim_write_input_file_doc,
   "write_input_file(model, mesh, fluid, material, boundary_conditions, directory) \n\
    \n\
-   Write the 1D simulation solver input file.                                     \n\
+   Write the ROM simulation solver input file.                                     \n\
    \n\
    Args: \n\
      model (ModelParameters): The model parameters.                               \n\
 ");
 
 static PyObject *
-OneDimSim_write_input_file(PySimulationOneDimensional* self, PyObject* args, PyObject* kwargs)
+ROMSim_write_input_file(PySimulationROM* self, PyObject* args, PyObject* kwargs)
 {
-  auto api = PyUtilApiFunction("OOOOOOs", PyRunTimeErr, __func__);
-  static char *keywords[] = {"model", "mesh", "fluid", "material", "boundary_conditions", "solution", "directory", NULL};
+  auto api = PyUtilApiFunction("O!OOOOOOs", PyRunTimeErr, __func__);
+  static char *keywords[] = {"model_order", "model", "mesh", "fluid", "material", "boundary_conditions", "solution", "directory", NULL};
+  PyObject* modelOrderArg = 0;
   PyObject* modelParamsArg = nullptr;
   PyObject* meshParamsArg = nullptr;
   PyObject* fluidPropsArg = nullptr;
@@ -553,7 +564,7 @@ OneDimSim_write_input_file(PySimulationOneDimensional* self, PyObject* args, PyO
   PyObject* solutionParamsArg = nullptr;
   char* outputDirArg = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &modelParamsArg, &meshParamsArg, 
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyInt_Type, &modelOrderArg, &modelParamsArg, &meshParamsArg, 
         &fluidPropsArg, &materialModelArg, &bcsParamsArg, &solutionParamsArg, &outputDirArg)) {
       return api.argsError();
   }
@@ -563,6 +574,18 @@ OneDimSim_write_input_file(PySimulationOneDimensional* self, PyObject* args, PyO
   auto pythonInterface = sv4guiROMSimulationPython();
   auto params = pythonInterface.m_ParameterNames;
 
+  // Set model order.
+  //
+  int modelOrder = PyInt_AsLong(modelOrderArg);
+  if (PyErr_Occurred()) {
+      return nullptr;
+  }
+  if ((modelOrder != 0) && (modelOrder != 1)) {
+      api.error("The 'model_order' argument '" + std::to_string(modelOrder) + "' is not valid. Valid model orders are 0 or 1.");
+      return nullptr;
+  }
+  pythonInterface.AddParameter(params.MODEL_ORDER, std::to_string(modelOrder));
+
   // Add parameter values from the argument objects.
   //
   std::string outputDir(outputDirArg);
@@ -571,13 +594,13 @@ OneDimSim_write_input_file(PySimulationOneDimensional* self, PyObject* args, PyO
 
   try {
 
-      OneDimSim_AddModelParameters(pythonInterface, modelParamsArg, outputDir);
-      OneDimSim_AddMeshParameters(pythonInterface, meshParamsArg);
-      OneDimSim_AddFluidParameters(pythonInterface, fluidPropsArg);
-      OneDimSim_AddMaterialParameters(pythonInterface, materialModelArg);
-      OneDimSim_AddBoundaryConditionParameters(pythonInterface, bcsParamsArg, outputDir);
-      OneDimSim_AddSolutionParameters(pythonInterface, solutionParamsArg);
-      OneDimSim_GenerateSolverInput(pythonInterface, outputDir);
+      ROMSim_AddModelParameters(pythonInterface, modelParamsArg, outputDir);
+      ROMSim_AddMeshParameters(pythonInterface, meshParamsArg);
+      ROMSim_AddFluidParameters(pythonInterface, fluidPropsArg);
+      ROMSim_AddMaterialParameters(pythonInterface, materialModelArg);
+      ROMSim_AddBoundaryConditionParameters(pythonInterface, bcsParamsArg, outputDir);
+      ROMSim_AddSolutionParameters(pythonInterface, solutionParamsArg);
+      ROMSim_GenerateSolverInput(pythonInterface, outputDir);
 
   } catch (const std::exception& exception) {
       api.error(exception.what());
@@ -592,93 +615,93 @@ OneDimSim_write_input_file(PySimulationOneDimensional* self, PyObject* args, PyO
 //           C l a s s   D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
 
-static char* SIMULATION_ONE_DIMENSIONAL_CLASS = "OneDimensional";
+static char* SIMULATION_ROM_CLASS = "ROM";
 // Dotted name that includes both the module name and 
 // the name of the type within the module.
-static char* SIMULATION_ONE_DIMENSIONAL_MODULE_CLASS = "simulation.OneDimensional";
+static char* SIMULATION_ROM_MODULE_CLASS = "simulation.ROM";
 
 //--------------------
-// OneDimSimClass_doc 
+// ROMSimClass_doc 
 //--------------------
 // Define the Fluid class documentation.
 //
 // Doc width extent.
 //   \n\----------------------------------------------------------------------  \n\
 //
-PyDoc_STRVAR(OneDimSimClass_doc,
-   "The OneDimensional class provides methods for                                       \n\
+PyDoc_STRVAR(ROMSimClass_doc,
+   "The ROM class provides methods for                                       \n\
    \n\
 ");
 
 //--------------------
-// PyOneDimSimMethods 
+// PyROMSimMethods 
 //--------------------
 // Fluid class methods.
 //
-static PyMethodDef PyOneDimSimMethods[] = {
+static PyMethodDef PyROMSimMethods[] = {
 
-  {"write_input_file", (PyCFunction)OneDimSim_write_input_file, METH_VARARGS|METH_KEYWORDS, OneDimSim_write_input_file_doc},
+  {"write_input_file", (PyCFunction)ROMSim_write_input_file, METH_VARARGS|METH_KEYWORDS, ROMSim_write_input_file_doc},
 
   {NULL,NULL}
 };
 
-static PyMemberDef PyOneDimSimMembers[] = {
-    {"parameters", T_OBJECT_EX, offsetof(PySimulationOneDimensional, parameters), 0, NULL},
+static PyMemberDef PyROMSimMembers[] = {
+    {"parameters", T_OBJECT_EX, offsetof(PySimulationROM, parameters), 0, NULL},
     {NULL}
 };
 
 //----------------
-// PyOneDimSimType 
+// PyROMSimType 
 //----------------
 // Define the Python type object that stores Fluid data. 
 //
 // Can't set all the fields here because g++ does not suppor non-trivial 
 // designated initializers. 
 //
-PyTypeObject PySimulationOneDimensionalType = {
+PyTypeObject PySimulationROMType = {
   PyVarObject_HEAD_INIT(NULL, 0)
   // Dotted name that includes both the module name and 
   // the name of the type within the module.
-  SIMULATION_ONE_DIMENSIONAL_MODULE_CLASS, 
-  sizeof(PySimulationOneDimensional)
+  SIMULATION_ROM_MODULE_CLASS, 
+  sizeof(PySimulationROM)
 };
 
 //----------------
-// PyOneDimSimInit
+// PyROMSimInit
 //----------------
 // This is the __init__() method for the Fluid class. 
 //
 // This function is used to initialize an object after it is created.
 //
 static int
-PyOneDimSimInit(PySimulationOneDimensional* self, PyObject* args, PyObject *kwds)
+PyROMSimInit(PySimulationROM* self, PyObject* args, PyObject *kwds)
 {
   static bool initParams = true;
 
   if (initParams) { 
-      SetPyOneDimSimParamsTypeFields(PySimulationOneDimensionalParametersType);
-      if (PyType_Ready(&PySimulationOneDimensionalParametersType) < 0) {
-          fprintf(stdout, "Error initilizing PySimulationOneDimensionalParametersType \n");
+      SetPyROMSimParamsTypeFields(PySimulationROMParametersType);
+      if (PyType_Ready(&PySimulationROMParametersType) < 0) {
+          fprintf(stdout, "Error initilizing PySimulationROMParametersType \n");
           return -1;
       }
       initParams = false;
   }
 
-  self->parameters = PyObject_CallObject((PyObject*)&PySimulationOneDimensionalParametersType, NULL);
+  self->parameters = PyObject_CallObject((PyObject*)&PySimulationROMParametersType, NULL);
 
   return 0;
 }
 
 //---------------
-// PyOneDimSimNew 
+// PyROMSimNew 
 //---------------
 // Object creation function, equivalent to the Python __new__() method. 
 // The generic handler creates a new instance using the tp_alloc field.
 //
 static PyObject *
-PyOneDimSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
+PyROMSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  auto self = (PySimulationOneDimensional*)type->tp_alloc(type, 0);
+  auto self = (PySimulationROM*)type->tp_alloc(type, 0);
   if (self != NULL) {
   }
 
@@ -686,35 +709,35 @@ PyOneDimSimNew(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 //--------------------
-// PyOneDimSimDealloc 
+// PyROMSimDealloc 
 //--------------------
 //
 static void
-PyOneDimSimDealloc(PySimulationOneDimensional* self)
+PyROMSimDealloc(PySimulationROM* self)
 {
   Py_TYPE(self)->tp_free(self);
 }
 
 //--------------------------
-// SetPyOneDimSimTypeFields 
+// SetPyROMSimTypeFields 
 //--------------------------
-// Set the Python type object fields that stores OneDimensional data. 
+// Set the Python type object fields that stores ROM data. 
 //
 // Need to set the fields here because g++ does not suppor non-trivial 
 // designated initializers. 
 //
 static void
-SetPyOneDimSimTypeFields(PyTypeObject& oneDimSimType)
+SetPyROMSimTypeFields(PyTypeObject& romSimType)
 {
   // Doc string for this type.
-  oneDimSimType.tp_doc = OneDimSimClass_doc; 
+  romSimType.tp_doc = ROMSimClass_doc; 
   // Object creation function, equivalent to the Python __new__() method. 
   // The generic handler creates a new instance using the tp_alloc field.
-  oneDimSimType.tp_new = PyOneDimSimNew;
-  oneDimSimType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
-  oneDimSimType.tp_init = (initproc)PyOneDimSimInit;
-  oneDimSimType.tp_dealloc = (destructor)PyOneDimSimDealloc;
-  oneDimSimType.tp_methods = PyOneDimSimMethods;
-  oneDimSimType.tp_members = PyOneDimSimMembers;
+  romSimType.tp_new = PyROMSimNew;
+  romSimType.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE;
+  romSimType.tp_init = (initproc)PyROMSimInit;
+  romSimType.tp_dealloc = (destructor)PyROMSimDealloc;
+  romSimType.tp_methods = PyROMSimMethods;
+  romSimType.tp_members = PyROMSimMembers;
 }
 

@@ -328,7 +328,7 @@ if(SV_USE_PYTHON)
   append_env_string_concat(PYTHONPATH "${_sv_python_site_packages}" developer_script_string)
   append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/Python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
 
-  append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/sv_1d_simulation_python" install_script_string)
+  append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/sv_rom_simulation_python" install_script_string)
   #append_env_string_concat(PYTHONPATH "${SV_SOURCE_DIR}/Source/sv4gui/Modules/ROMSimulation/python" developer_script_string)
   
 if(WIN32)
