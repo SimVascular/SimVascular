@@ -127,14 +127,29 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     connect(ui->btnClearEq, SIGNAL(clicked()), this, SLOT(ClearEquation()));
     connect(ui->listEqs, SIGNAL(itemSelectionChanged()), this, SLOT(SelectEquation()));
 
-    //props
-    propL.append(ui->prop_1_txt); propB.append(ui->prop_1_box);
-    propL.append(ui->prop_2_txt); propB.append(ui->prop_2_box);
-    propL.append(ui->prop_3_txt); propB.append(ui->prop_3_box);
-    propL.append(ui->prop_4_txt); propB.append(ui->prop_4_box);
-    propL.append(ui->prop_5_txt); propB.append(ui->prop_5_box);
+    // Physics properties.
+    //
+    // propL[] stores the property label, propB[] its value (box?).
+    //
+    // The label and values are determined in sv4guisvFSIeqClass() and
+    // set in sv4guisvFSIView::SelectEquation().
+    //
+    propL.append(ui->prop_1_txt); 
+    propB.append(ui->prop_1_box);
 
-    for ( int i=0 ; i < propL.length() ; i++ ) {
+    propL.append(ui->prop_2_txt);  
+    propB.append(ui->prop_2_box);
+
+    propL.append(ui->prop_3_txt); 
+    propB.append(ui->prop_3_box);
+
+    propL.append(ui->prop_4_txt); 
+    propB.append(ui->prop_4_box);
+
+    propL.append(ui->prop_5_txt); 
+    propB.append(ui->prop_5_box);
+
+    for (int i=0; i < propL.length(); i++) {
         propB.at(i)->setValidator(m_RealVal);
         connect(propB.at(i), SIGNAL(textEdited(const QString &)), this, SLOT(SaveProps()));
     }
@@ -181,6 +196,11 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     connect(ui->lineEditLSAbsTol, SIGNAL(textEdited(const QString &)), this, SLOT(SaveLinearSolver()));
 
     connect(ui->comboBoxPreconditioner, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SaveLinearSolver()));
+    ui->comboBoxPreconditioner->clear();
+    ui->comboBoxPreconditioner->addItem(QString::fromStdString("Default"));
+    for (auto const& precond : sv4guisvFSILinearSolverPreconditioner::list) {
+        ui->comboBoxPreconditioner->addItem(QString::fromStdString(precond));
+    }
 
     //bc
     ui->bcList->horizontalHeader()->setVisible(true);
@@ -204,23 +224,26 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     //reset
     connect(ui->btnResetEq, SIGNAL(clicked()), this, SLOT(ResetEquation()));
 
-    //simulation parameters
+    // Simulation parameters.
+    //
     ui->lineEditStepSize->setValidator(m_RealVal);
-    connect(ui->procFolder, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
+    // davep connect(ui->procFolder, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
     connect(ui->stFileFlag, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
     connect(ui->nTimeSteps, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
     connect(ui->lineEditStepSize, SIGNAL(textEdited(const QString &)), this, SLOT(SaveSimParameters()));
-    connect(ui->saveResults_box, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
+    // davep connect(ui->saveResults_box, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
     connect(ui->save_average, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->start_saving_ts, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
-    connect(ui->sIncr, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
-    connect(ui->saveName, SIGNAL(textEdited(const QString &)), this, SLOT(SaveSimParameters()));
+    connect(ui->StartTimeStep_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
+    // davep connect(ui->sIncr, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
+
+    connect(ui->SaveBinName_lineEdit, SIGNAL(textEdited(const QString &)), this, SLOT(SaveSimParameters()));
+
     connect(ui->warn, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
     connect(ui->verb, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
     connect(ui->checkBoxRemeshing, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
     connect(ui->debug, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
     connect(ui->rhoInf, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
-    connect(ui->stFileIncr, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
+    connect(ui->RestartSaveIncr_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
 
     //load mesh
     connect(ui->loadMeshButton, SIGNAL(clicked()), this, SLOT(loadMesh()));
@@ -235,7 +258,7 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     connect(ui->btnRunSim, SIGNAL(clicked()), this, SLOT(RunSimulation()));
     connect(ui->btnStopSim, SIGNAL(clicked()), this, SLOT(StopSimulation()));
 
-    ui->centerWidget->setEnabled(false);
+    ui->Subpanel_Widget->setEnabled(false);
     ui->btnSave->setEnabled(false);
 
     //get paths for the external solvers
@@ -254,7 +277,7 @@ void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
 
     if(nodes.size()==0)
     {
-        ui->centerWidget->setEnabled(false);
+        ui->Subpanel_Widget->setEnabled(false);
         ui->btnSave->setEnabled(false);
         return;
     }
@@ -262,12 +285,12 @@ void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
     sv4guiMitksvFSIJob* mitkJob=dynamic_cast<sv4guiMitksvFSIJob*>(jobNode->GetData());
     if(!mitkJob)
     {
-        ui->centerWidget->setEnabled(false);
+        ui->Subpanel_Widget->setEnabled(false);
         ui->btnSave->setEnabled(false);
         return;
     }
 
-    ui->centerWidget->setEnabled(true);
+    ui->Subpanel_Widget->setEnabled(true);
     ui->btnSave->setEnabled(true);
 
     m_JobNode=jobNode;
@@ -319,21 +342,28 @@ void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
         ui->listAvailableEqs->item(2)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     }
 
-    //simulation parameters
-    ui->nTimeSteps->setValue(m_Job->timeSteps);
-    ui->lineEditStepSize->setText(QString::fromStdString(m_Job->stepSize));
-    ui->stFileFlag->setChecked(m_Job->continuePrevious);
-    ui->procFolder->setChecked(m_Job->saveInFoder);
-    ui->stFileIncr->setValue(m_Job->restartInc);
-    ui->saveName->setText(QString::fromStdString(m_Job->resultPrefix));
-    ui->sIncr->setValue(m_Job->resultInc);
-    ui->start_saving_ts->setValue(m_Job->startSavingStep);
-    ui->save_average->setChecked(m_Job->saveAvgResult);
-    ui->rhoInf->setValue(m_Job->rhoInf);
+    // Simulation parameters.
+    //
+    // General information.
+    // davep: ui->procFolder->setChecked(m_Job->saveInFoder);                     // Save results in a folder
+    ui->stFileFlag->setChecked(m_Job->continuePrevious);                          // Start from previous simulation
+    ui->nTimeSteps->setValue(m_Job->timeSteps);                                   // Number of time steps
+    ui->lineEditStepSize->setText(QString::fromStdString(m_Job->stepSize));       // Time step size
+
+    // Save simulation results.
+    ui->save_average->setChecked(m_Job->saveAvgResult);                           // Produce a time-averaged results
+    ui->StartTimeStep_spinBox->setValue(m_Job->startSavingStep);                        // Start
+    // davep ui->sIncr->setValue(m_Job->resultInc);                               // Increment
+    // davep ui->saveName->setText(QString::fromStdString(m_Job->resultPrefix));  // Prefix
+
+    // Advanced options.
+    ui->rhoInf->setValue(m_Job->rhoInf);                   // Rho inf
+    ui->checkBoxRemeshing->setChecked(m_Job->remeshing);   // Remeshing
+    ui->RestartSaveIncr_spinBox->setValue(m_Job->restartInc);           // Increment in saving restart
+
     ui->verb->setChecked(m_Job->verbose);
     ui->warn->setChecked(m_Job->warn);
     ui->debug->setChecked(m_Job->debug);
-    ui->checkBoxRemeshing->setChecked(m_Job->remeshing);
 
     //run parameters
     ui->sliderNumProcs->setValue(m_MitkJob->GetProcessNumber());
@@ -847,14 +877,20 @@ void sv4guisvFSIView::ClearEquation()
     DataChanged();
 }
 
+//----------------
+// SelectEquation
+//----------------
+// Set the visibility of different GUI widgets based on equation type (e.g. fluid).
+//
 void sv4guisvFSIView::SelectEquation()
 {
-    if(!m_Job)
+    if (!m_Job) {
         return;
+    }
 
-    m_EnableSave=false;
+    m_EnableSave = false;
 
-    for ( int i=0 ; i < propL.length() ; i++ ) {
+    for (int i = 0; i < propL.length(); i++) {
         propL.at(i)->setVisible(false);
         propB.at(i)->setVisible(false);
     }
@@ -866,31 +902,33 @@ void sv4guisvFSIView::SelectEquation()
     ui->bcList->clearContents();
 
     QList<QListWidgetItem*> items = ui->listEqs->selectedItems();
-    if ( items.isEmpty() )
+    if (items.isEmpty()) {
         return;
+    }
 
-    int row=ui->listEqs->row(items.first());
-    if(row<0)
+    int row = ui->listEqs->row(items.first());
+    if (row < 0) {
         return;
+    }
 
-    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[row];
+    // Get the equation object selected from the Physics panel.
+    sv4guisvFSIeqClass& eq = m_Job->m_Eqs[row];
 
-    //properties
+    // Set property names and values defined for the equation.
     ui->phys_prop_group_box->setVisible(true);
-    for ( int i=0 ; i < eq.getPropCount() ; i++ ) {
+    for (int i = 0; i < eq.getPropCount(); i++) {
         propL.at(i)->setVisible(true);
         propB.at(i)->setVisible(true);
         propL.at(i)->setText(eq.getPropName(i));
         propB.at(i)->setText(QString::number(eq.getPropValue(i)));
     }
 
-    if(eq.physName=="FSI" || eq.physName=="struct")
-    {
+    if(eq.physName=="FSI" || eq.physName=="struct") {
         ui->widgetConstitutive->show();
         ui->comboBoxConstitutive->setCurrentText(eq.constitutiveModel);
-    }
-    else
+    } else {
         ui->widgetConstitutive->hide();
+    }
 
     //output
     ui->output->addItems(eq.getOutputCandidates());
@@ -903,17 +941,15 @@ void sv4guisvFSIView::SelectEquation()
     ui->minItr->setValue(eq.getMinItr());
     ui->maxItr->setValue(eq.getMaxItr());
 
-    if(eq.physName=="fluid" || eq.physName=="FSI")
-    {
+    if(eq.physName=="fluid" || eq.physName=="FSI") {
         ui->labelBackflow->show();
         ui->dsbBackflow->show();
         ui->dsbBackflow->setValue(eq.backflowStab);
-    }
-    else
-    {
+    } else {
         ui->labelBackflow->hide();
         ui->dsbBackflow->hide();
     }
+
     //linear solver
     ui->comboBoxLSType->setCurrentText(eq.lsType);
     ui->lineEditLSMaxItr->setText(QString::number(eq.lsMaxItr));
@@ -968,6 +1004,10 @@ void sv4guisvFSIView::SelectEquation()
     m_EnableSave=true;
 }
 
+//-----------
+// SaveProps
+//-----------
+//
 void sv4guisvFSIView::SaveProps()
 {
     if(!m_Job)
@@ -1280,11 +1320,13 @@ void sv4guisvFSIView::SaveSimParameters()
     m_Job->timeSteps=ui->nTimeSteps->value();
     m_Job->stepSize=ui->lineEditStepSize->text().trimmed().toStdString();
     m_Job->continuePrevious=ui->stFileFlag->isChecked();
-    m_Job->saveInFoder=ui->procFolder->isChecked();
-    m_Job->restartInc=ui->stFileIncr->value();
-    m_Job->resultPrefix=ui->saveName->text().trimmed().toStdString();
-    m_Job->resultInc=ui->sIncr->value();
-    m_Job->startSavingStep=ui->start_saving_ts->value();
+
+    // davep: m_Job->saveInFoder=ui->procFolder->isChecked();
+
+    m_Job->restartInc = ui->RestartSaveIncr_spinBox->value();
+    // davep m_Job->resultPrefix=ui->saveName->text().trimmed().toStdString();
+    // davep m_Job->resultInc=ui->sIncr->value();
+    m_Job->startSavingStep=ui->StartTimeStep_spinBox->value();
     m_Job->saveAvgResult=ui->save_average->isChecked();
     m_Job->rhoInf=ui->rhoInf->value();
     m_Job->verbose=ui->verb->isChecked();

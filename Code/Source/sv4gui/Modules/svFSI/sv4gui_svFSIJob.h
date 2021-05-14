@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The classes defined here store FSI simulation parameters.
+
 #ifndef sv4guisvFSIJOB_H
 #define sv4guisvFSIJOB_H
 
@@ -42,6 +44,11 @@
 #include <iostream>
 #include <string>
 
+//-------------------
+// sv4guisvFSIDomain
+//-------------------
+// Store information defining a mesh domain.
+//
 struct SV4GUIMODULESVFSI_EXPORT sv4guisvFSIDomain
 {
     std::string name;
@@ -56,44 +63,34 @@ struct SV4GUIMODULESVFSI_EXPORT sv4guisvFSIDomain
 
     double edgeSize; //max edge size for remesher
 
-    sv4guisvFSIDomain()
-        : name("")
-        , folderName("")
-        , fileName("")
-        , surfaceName("")
-        , type("fluid")
-        , faceFolderName("mesh-surfaces")
-        , id(0)
-        , edgeSize(2.6)
+    sv4guisvFSIDomain() : name("") , folderName("") , fileName("") , surfaceName(""), type("fluid"), 
+        faceFolderName("mesh-surfaces"), id(0), edgeSize(2.6)
     {
-
     }
 
 };
 
+//----------------
+// sv4guisvFSIJob
+//----------------
+// The sv4guisvFSIJob class is primarily used to store simulation parameters. 
+//
+// Note: All of the data members are public and set in sv4gui_svFSIView.cxx 
+// directly from the GUI.
+//
 class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIJob
 {
-
-public:
-
-    sv4guisvFSIJob();
-
-    sv4guisvFSIJob(const sv4guisvFSIJob &other);
-
-    virtual ~sv4guisvFSIJob();
-
-    virtual sv4guisvFSIJob* Clone();
-
   public:
+    sv4guisvFSIJob();
+    sv4guisvFSIJob(const sv4guisvFSIJob &other);
+    virtual ~sv4guisvFSIJob();
+    virtual sv4guisvFSIJob* Clone();
 
     int nsd;
     int timeSteps;
     std::string stepSize;
     bool continuePrevious;
-    bool saveInFoder;
     int restartInc;
-    std::string resultPrefix;
-    int resultInc;
     int startSavingStep;
     bool saveAvgResult;
     double rhoInf;
@@ -109,10 +106,6 @@ public:
     std::vector<sv4guisvFSIeqClass> m_Eqs;
 
     bool WriteFile(std::string filePath);
-
-//    bool ReadFile(std::string filePath);
-
   };
-
 
 #endif // sv4guisvFSIJOB_H

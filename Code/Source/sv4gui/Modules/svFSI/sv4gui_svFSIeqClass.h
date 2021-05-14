@@ -39,12 +39,44 @@
 #define maxProp 10
 #include <map>
 #include <QStringList>
+#include <vector>
 
+class SV4GUIMODULESVFSI_EXPORT sv4guisvFSILinearSolverPreconditioner
+{
+  public:
+    static std::string FSILS;
+    static std::string ROW_COLUMN_SCALING;
+    static std::string TRILINOS_DIAGONAL;
+    static std::string TRILINOS_BLOCK_JACOBI;
+    static std::string TRILINOS_ILU;
+    static std::string TRILINOS_ILUT;
+    static std::string TRILINOS_IC;
+    static std::string TRILINOS_ICT;
+    static std::string TRILINOS_ML;
+    static std::vector<std::string> list;
+};
+
+//--------------------
+// sv4guisvFSIeqClass
+//--------------------
+// The sv4guisvFSIeqClass is used to store properties for different simulation
+// physics: fluid, solid, FSI, etc.
+//
+// Equation specific properties are store in
+//
+//    QStringList propNames;
+//
+//    double propVal[maxProp];
+//
+// Warning: Property names and values are referenced using an interger index into
+// propNames[] and propVal[] so values stored at a given index must match.
+// propNames[] sets the GUI widget label name in the Physics/Properties panel.
+//
+// See sv4guisvFSIView::SelectEquation().
+//
 class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIeqClass
 {
-public:
-
-    // constructor and destructor
+  public:
     sv4guisvFSIeqClass(const QString& eq="none");
     sv4guisvFSIeqClass(const sv4guisvFSIeqClass& iEq) { *this = iEq; }
     ~sv4guisvFSIeqClass();
@@ -91,7 +123,7 @@ public:
     void setPropValue( const double val, const int i ) { propVal[i] = val; }
     void setPropValue( const double value, const QString propName);
 
-    //common properties
+    // Common properties
     bool coupled;
     int maxItr;
     int minItr;
@@ -99,10 +131,12 @@ public:
     double dBr;
     QString fullName;
     QString physName;
+
     // Outputs
     QStringList outputNames;
     bool isOutsputed[maxOutput];
-    //equation specific properties
+
+    // Equation specific properties
     QStringList propNames;
     double propVal[maxProp];
 

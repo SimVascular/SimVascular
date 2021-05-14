@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The methods defined here are used to read/write SV XML FSI project .fsijob files.
+
 #include "sv4gui_MitksvFSIJobIO.h"
 
 #include "sv4gui_MitksvFSIJob.h"
@@ -107,10 +109,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
         jobElement->QueryIntAttribute("timeSteps",&job->timeSteps);
         jobElement->QueryStringAttribute("stepSize",&job->stepSize);
         jobElement->QueryBoolAttribute("continuePrevious",&job->continuePrevious);
-        jobElement->QueryBoolAttribute("saveInFoder",&job->saveInFoder);
         jobElement->QueryIntAttribute("restartInc",&job->restartInc);
-        jobElement->QueryStringAttribute("resultPrefix",&job->resultPrefix);
-        jobElement->QueryIntAttribute("resultInc",&job->resultInc);
         jobElement->QueryIntAttribute("startSavingStep",&job->startSavingStep);
         jobElement->QueryBoolAttribute("saveAvgResult",&job->saveAvgResult);
         jobElement->QueryDoubleAttribute("rhoInf",&job->rhoInf);
@@ -406,10 +405,7 @@ void sv4guiMitksvFSIJobIO::Write()
         jobElement->SetAttribute("timeSteps",job->timeSteps);
         jobElement->SetAttribute("stepSize",job->stepSize);
         jobElement->SetAttribute("continuePrevious",job->continuePrevious?"true":"false");
-        jobElement->SetAttribute("saveInFoder",job->saveInFoder?"true":"false");
         jobElement->SetAttribute("restartInc",job->restartInc);
-        jobElement->SetAttribute("resultPrefix",job->resultPrefix);
-        jobElement->SetAttribute("resultInc",job->resultInc);
         jobElement->SetAttribute("startSavingStep",job->startSavingStep);
         jobElement->SetAttribute("saveAvgResult",job->saveAvgResult?"true":"false");
         jobElement->SetDoubleAttribute("rhoInf",job->rhoInf);

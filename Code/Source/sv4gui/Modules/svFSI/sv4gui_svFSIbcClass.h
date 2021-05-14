@@ -29,6 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The 'sv4guisvFSIbcClass' class is used to store data for an initial condition.
+
 #ifndef SV4GUI_SVFSIBCCLASS_H
 #define SV4GUI_SVFSIBCCLASS_H
 
@@ -39,8 +41,9 @@
 #include <map>
 #include <QStringList>
 
-class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIbcClass {
-public:
+class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIbcClass 
+{
+  public:
     QString faceName;
 
     QString bcGrp;

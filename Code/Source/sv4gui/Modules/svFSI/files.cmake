@@ -32,6 +32,7 @@ set(H_FILES
     sv4gui_svFSIbcClass.h
     sv4gui_svFSIeqClass.h
     sv4gui_svFSIJob.h
+    sv4gui_svFSViscosity.h
     sv4gui_MitksvFSIJob.h
     sv4gui_MitksvFSIJobIO.h
     sv4gui_MitksvFSIObjectFactory.h
@@ -41,6 +42,7 @@ set(CPP_FILES
     sv4gui_svFSIbcClass.cxx
     sv4gui_svFSIeqClass.cxx
     sv4gui_svFSIJob.cxx
+    sv4gui_svFSViscosity.cxx
     sv4gui_MitksvFSIJob.cxx
     sv4gui_MitksvFSIJobIO.cxx
     sv4gui_MitksvFSIObjectFactory.cxx
