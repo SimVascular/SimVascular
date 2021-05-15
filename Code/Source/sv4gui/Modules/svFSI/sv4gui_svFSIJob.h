@@ -90,8 +90,15 @@ class SV4GUIMODULESVFSI_EXPORT sv4guisvFSIJob
     int timeSteps;
     std::string stepSize;
     bool continuePrevious;
+
+    std::string restartFileName;
     int restartInc;
     int startSavingStep;
+
+    bool vtkSaveResults;
+    std::string vtkFileName;
+    int vtkInc;
+
     bool saveAvgResult;
     double rhoInf;
     std::string stopFileName;

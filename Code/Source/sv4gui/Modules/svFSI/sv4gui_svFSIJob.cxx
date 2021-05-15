@@ -43,10 +43,13 @@
 //----------------
 //
 sv4guisvFSIJob::sv4guisvFSIJob() : nsd(3), timeSteps(1000), stepSize("1e-3"), continuePrevious(false), 
-    restartInc(10), startSavingStep(1), 
+    restartFileName("results"), restartInc(10), startSavingStep(1), 
     saveAvgResult(true), rhoInf(0.2), stopFileName("STOP_SIM"), verbose(true), warn(true), debug(false), 
     remeshing(false)
 {
+    vtkSaveResults = false;
+    vtkFileName = "results";
+    vtkInc = 10;
 }
 
 sv4guisvFSIJob::sv4guisvFSIJob(const sv4guisvFSIJob &other)
@@ -100,10 +103,18 @@ bool sv4guisvFSIJob::WriteFile(std::string filePath)
     // out << "Name prefix of saved files: " << QString::fromStdString(resultPrefix) << endL;
     // out << "Increment in saving files: " << resultInc << endL;
 
+    // Restart 
+    out << "Restart file name: " << QString::fromStdString(restartFileName) << endL;
     out << "Increment in saving restart files: " << restartInc << endL;
     out << "Start saving after time step: " << startSavingStep << endL;
     out << "Save averaged results: " << saveAvgResult << endL;
 
+    // vtk output
+    out << "Save results to VTK format: " << vtkSaveResults << endL;
+    out << "Name prefix of saved VTK files: " << QString::fromStdString(vtkFileName) << endL;
+    out << "Increment in saving VTK files: " << vtkInc << endL;
+
+    // Advanced 
     out << "Spectral radius of infinite time step: " << rhoInf << endL;
 
     out << "Searched file name to trigger stop: " << QString::fromStdString(stopFileName) << endL;

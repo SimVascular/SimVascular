@@ -1925,7 +1925,7 @@
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>-52</y>
+           <y>0</y>
            <width>434</width>
            <height>609</height>
           </rect>
@@ -1941,7 +1941,7 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
              <item row="0" column="0">
-              <widget class="QCheckBox" name="stFileFlag">
+              <widget class="QCheckBox" name="TimeStartFromPrev_checkBox">
                <property name="toolTip">
                 <string>Continue the last simulation </string>
                </property>
@@ -1997,7 +1997,7 @@
                   <number>5</number>
                  </property>
                  <item row="1" column="0">
-                  <widget class="QLineEdit" name="lineEditStepSize">
+                  <widget class="QLineEdit" name="TimeStepSize_lineEdit">
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
@@ -2016,7 +2016,7 @@
                   </widget>
                  </item>
                  <item row="0" column="0">
-                  <widget class="QSpinBox" name="nTimeSteps">
+                  <widget class="QSpinBox" name="TimeNumSteps_spinBox">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                      <horstretch>0</horstretch>
@@ -2028,6 +2028,9 @@
                    </property>
                    <property name="inputMethodHints">
                     <set>Qt::ImhDigitsOnly</set>
+                   </property>
+                   <property name="buttonSymbols">
+                    <enum>QAbstractSpinBox::NoButtons</enum>
                    </property>
                    <property name="minimum">
                     <number>1</number>
@@ -2076,13 +2079,16 @@
                   <property name="font">
                    <font>
                     <pointsize>13</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
+                    <weight>50</weight>
+                    <bold>false</bold>
                     <underline>false</underline>
                    </font>
                   </property>
                   <property name="text">
                    <string>Restart files</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -2101,7 +2107,7 @@
                  </widget>
                 </item>
                 <item row="2" column="0" colspan="2">
-                 <widget class="QLabel" name="label_22">
+                 <widget class="QLabel" name="RestartSaveIncr_label">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -2124,6 +2130,9 @@
                   <property name="toolTip">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increment in saving files that can be used later on to restart the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
+                  <property name="buttonSymbols">
+                   <enum>QAbstractSpinBox::NoButtons</enum>
+                  </property>
                   <property name="minimum">
                    <number>1</number>
                   </property>
@@ -2139,14 +2148,14 @@
                  </widget>
                 </item>
                 <item row="3" column="0" colspan="3">
-                 <widget class="QLabel" name="StartTimeStep_label">
+                 <widget class="QLabel" name="RestartSaveStart_label">
                   <property name="text">
                    <string>Save results aftet time step</string>
                   </property>
                  </widget>
                 </item>
                 <item row="3" column="3">
-                 <widget class="QSpinBox" name="StartTimeStep_spinBox">
+                 <widget class="QSpinBox" name="RestartSaveStart_spinBox">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -2155,6 +2164,9 @@
                   </property>
                   <property name="toolTip">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will start saving results after this time step&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="buttonSymbols">
+                   <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
                   <property name="minimum">
                    <number>1</number>
@@ -2174,7 +2186,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QFrame" name="SaveVtk_frame">
+              <widget class="QFrame" name="Vtk_frame">
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
@@ -2183,11 +2195,11 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_15">
                 <item row="0" column="0" colspan="2">
-                 <widget class="QCheckBox" name="SaveBin_checkBox">
+                 <widget class="QCheckBox" name="VtkSave_checkBox">
                   <property name="font">
                    <font>
-                    <weight>75</weight>
-                    <bold>true</bold>
+                    <weight>50</weight>
+                    <bold>false</bold>
                    </font>
                   </property>
                   <property name="text">
@@ -2203,7 +2215,7 @@
                  </widget>
                 </item>
                 <item row="1" column="1" colspan="2">
-                 <widget class="QLineEdit" name="SaveBinName_lineEdit">
+                 <widget class="QLineEdit" name="VtkName_lineEdit">
                   <property name="toolTip">
                    <string>Simulation results files name prefix </string>
                   </property>
@@ -2232,6 +2244,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="buttonSymbols">
+                   <enum>QAbstractSpinBox::NoButtons</enum>
                   </property>
                  </widget>
                 </item>
@@ -2290,6 +2305,9 @@
                <property name="toolTip">
                 <string>Spectral radius of infinite time step size</string>
                </property>
+               <property name="buttonSymbols">
+                <enum>QAbstractSpinBox::NoButtons</enum>
+               </property>
                <property name="maximum">
                 <double>1.000000000000000</double>
                </property>
@@ -2332,7 +2350,7 @@
                   <string>Output simulation status</string>
                  </property>
                  <property name="text">
-                  <string>Verbosity</string>
+                  <string>Verbose</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -2345,7 +2363,7 @@
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output debugging information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Debugging</string>
+                  <string>Debug</string>
                  </property>
                  <property name="checked">
                   <bool>false</bool>
@@ -2523,9 +2541,9 @@
   <tabstop>btnAddBC</tabstop>
   <tabstop>btnModifyBC</tabstop>
   <tabstop>btnRemoveBC</tabstop>
-  <tabstop>stFileFlag</tabstop>
-  <tabstop>nTimeSteps</tabstop>
-  <tabstop>lineEditStepSize</tabstop>
+  <tabstop>TimeStartFromPrev_checkBox</tabstop>
+  <tabstop>TimeNumSteps_spinBox</tabstop>
+  <tabstop>TimeStepSize_lineEdit</tabstop>
   <tabstop>SimulationResultsOutput_groupBox</tabstop>
   <tabstop>AdvancedOptions_groupBox</tabstop>
   <tabstop>warn</tabstop>

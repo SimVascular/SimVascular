@@ -118,7 +118,16 @@ public slots:
 
     void SaveRemesher();
 
-    void SaveSimParameters();
+    void UpdatePhysicsPanel();
+    void SetupPhysicsPanel();
+
+    void SetupDomainsPanel();
+
+    void SetupRunSimulationPanel();
+
+    void SaveSimulationParameters();
+    void SetupSimulationParametersPanel();
+    void UpdateSimulationParametersPanel();
 
     void CreateInputFile();
 
