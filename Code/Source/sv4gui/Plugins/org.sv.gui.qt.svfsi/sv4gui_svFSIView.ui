@@ -1433,6 +1433,9 @@
                   </item>
                   <item row="0" column="1">
                    <widget class="QComboBox" name="comboBoxLSType">
+                    <property name="toolTip">
+                     <string>The linear solver type.</string>
+                    </property>
                     <item>
                      <property name="text">
                       <string>GMRES</string>
@@ -2101,6 +2104,9 @@
                 </item>
                 <item row="1" column="1" colspan="2">
                  <widget class="QLineEdit" name="RestartName_lineEdit">
+                  <property name="toolTip">
+                   <string>The prefix used to name simulation results bin files.</string>
+                  </property>
                   <property name="text">
                    <string>result</string>
                   </property>
@@ -2128,7 +2134,7 @@
                    </sizepolicy>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increment in saving files that can be used later on to restart the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The frequency used to save restart files in terns of a  time step increment.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
@@ -2163,7 +2169,7 @@
                    </sizepolicy>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will start saving results after this time step&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start saving results after the given time step.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
@@ -2202,6 +2208,9 @@
                     <bold>false</bold>
                    </font>
                   </property>
+                  <property name="toolTip">
+                   <string>If selected then save simulatiion results as VTK files.</string>
+                  </property>
                   <property name="text">
                    <string>Save as VTK</string>
                   </property>
@@ -2217,7 +2226,7 @@
                 <item row="1" column="1" colspan="2">
                  <widget class="QLineEdit" name="VtkName_lineEdit">
                   <property name="toolTip">
-                   <string>Simulation results files name prefix </string>
+                   <string>The prefix used to name simulation results VTK files.</string>
                   </property>
                   <property name="inputMethodHints">
                    <set>Qt::ImhDigitsOnly</set>
@@ -2245,8 +2254,14 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>The frequency used to save VTK files in terns of a time step increment.</string>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::NoButtons</enum>
+                  </property>
+                  <property name="value">
+                   <number>1</number>
                   </property>
                  </widget>
                 </item>

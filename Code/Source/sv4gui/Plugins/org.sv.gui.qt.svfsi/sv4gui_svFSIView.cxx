@@ -345,7 +345,7 @@ void sv4guisvFSIView::SetupDomainsPanel()
 //--------------------------------
 // SetupSimulationParametersPanel
 //--------------------------------
-// Setup the Simulation Parameters GUI.
+// Setup the Simulation Parameters panel GUI.
 //
 void sv4guisvFSIView::SetupSimulationParametersPanel()
 {
@@ -359,6 +359,11 @@ void sv4guisvFSIView::SetupSimulationParametersPanel()
     connect(ui->RestartName_lineEdit, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
     connect(ui->RestartSaveIncr_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
     connect(ui->RestartSaveStart_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+
+    // VTK output.
+    connect(ui->VtkSave_checkBox, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->VtkName_lineEdit, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->VtkSaveIncr_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
 
     connect(ui->save_average, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
 
@@ -397,16 +402,13 @@ void sv4guisvFSIView::SaveSimulationParameters()
     m_Job->vtkFileName = ui->VtkName_lineEdit->text().toStdString();
     m_Job->vtkInc = ui->VtkSaveIncr_spinBox->value();                            
 
-    // davep: m_Job->saveInFoder=ui->procFolder->isChecked();
-
-    // davep m_Job->resultPrefix=ui->saveName->text().trimmed().toStdString();
-    // davep m_Job->resultInc=ui->sIncr->value();
-    m_Job->saveAvgResult=ui->save_average->isChecked();
-    m_Job->rhoInf=ui->rhoInf->value();
-    m_Job->verbose=ui->verb->isChecked();
-    m_Job->warn=ui->warn->isChecked();
-    m_Job->debug=ui->debug->isChecked();
-    m_Job->remeshing=ui->checkBoxRemeshing->isChecked();
+    // Advanded 
+    m_Job->saveAvgResult = ui->save_average->isChecked();
+    m_Job->rhoInf = ui->rhoInf->value();
+    m_Job->verbose = ui->verb->isChecked();
+    m_Job->warn = ui->warn->isChecked();
+    m_Job->debug = ui->debug->isChecked();
+    m_Job->remeshing = ui->checkBoxRemeshing->isChecked();
 
     DataChanged();
 }
@@ -453,7 +455,6 @@ void sv4guisvFSIView::UpdatePhysicsPanel()
 void sv4guisvFSIView::UpdateSimulationParametersPanel()
 {
     // Time control. 
-    // davep: ui->procFolder->setChecked(m_Job->saveInFoder);                     // Save results in a folder
     ui->TimeStartFromPrev_checkBox->setChecked(m_Job->continuePrevious);          // Start from previous simulation
     ui->TimeNumSteps_spinBox->setValue(m_Job->timeSteps);                         // Number of time steps
     ui->TimeStepSize_lineEdit->setText(QString::fromStdString(m_Job->stepSize));  // Time step size
@@ -466,11 +467,9 @@ void sv4guisvFSIView::UpdateSimulationParametersPanel()
     // Save as VTK.
     ui->VtkSave_checkBox->setChecked(m_Job->vtkSaveResults);                      // Save results using VTK format
     ui->VtkName_lineEdit->setText(QString::fromStdString(m_Job->vtkFileName));    // VTK file prefix name 
-    ui->VtkSaveIncr_spinBox->setValue(m_Job->vtkInc);                            // VTK save start time step
+    ui->VtkSaveIncr_spinBox->setValue(m_Job->vtkInc);                             // VTK save start time step
 
     ui->save_average->setChecked(m_Job->saveAvgResult);                           // Produce a time-averaged results
-    // davep ui->sIncr->setValue(m_Job->resultInc);                               // Increment
-    // davep ui->saveName->setText(QString::fromStdString(m_Job->resultPrefix));  // Prefix
 
     // Advanced options.
     ui->rhoInf->setValue(m_Job->rhoInf);                   // Rho inf
