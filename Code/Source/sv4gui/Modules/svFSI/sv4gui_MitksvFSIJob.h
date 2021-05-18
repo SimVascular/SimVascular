@@ -29,6 +29,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The 'sv4guiMitksvFSIJob' class a mitk::BaseData derived class used to
+// represent a FSI job SV Data Manager data node.
+
+
 #ifndef sv4guiMitksvFSIJOB_H
 #define sv4guiMitksvFSIJOB_H
 

@@ -29,69 +29,130 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The methods defined here are used to set/get data for the various
+// equations (fluid, structure, FSI, etc.) supported in the FSI solver.
+
 #include "sv4gui_svFSIeqClass.h"
 
+// Define the linear solver preconditionsers.
+//
+// These names must match those in READFILES.f:READLS().
+//
+std::string sv4guisvFSILinearSolverPreconditioner::FSILS = "fsils" ;
+std::string sv4guisvFSILinearSolverPreconditioner::ROW_COLUMN_SCALING = "row-column-scaling";
+std::string sv4guisvFSILinearSolverPreconditioner::TRILINOS_DIAGONAL = "trilinos-diagonal";
+std::string sv4guisvFSILinearSolverPreconditioner::TRILINOS_BLOCK_JACOBI = "trilinos-blockjacobi";
+std::string sv4guisvFSILinearSolverPreconditioner::TRILINOS_ILU = "trilinos-ilu";
+std::string sv4guisvFSILinearSolverPreconditioner::TRILINOS_ILUT = "trilinos-ilut";
+std::string sv4guisvFSILinearSolverPreconditioner::TRILINOS_IC = "trilinos-ic";
+std::string sv4guisvFSILinearSolverPreconditioner::TRILINOS_ICT = "trilinos-ict";
+std::string sv4guisvFSILinearSolverPreconditioner::TRILINOS_ML = "trilinos-ml";
+
+std::vector<std::string> sv4guisvFSILinearSolverPreconditioner::list = {
+  sv4guisvFSILinearSolverPreconditioner::FSILS,
+  sv4guisvFSILinearSolverPreconditioner::ROW_COLUMN_SCALING,
+  sv4guisvFSILinearSolverPreconditioner::TRILINOS_BLOCK_JACOBI,
+  sv4guisvFSILinearSolverPreconditioner::TRILINOS_DIAGONAL, 
+  sv4guisvFSILinearSolverPreconditioner::TRILINOS_IC,
+  sv4guisvFSILinearSolverPreconditioner::TRILINOS_ICT,
+  sv4guisvFSILinearSolverPreconditioner::TRILINOS_ILU,
+  sv4guisvFSILinearSolverPreconditioner::TRILINOS_ILUT,
+  sv4guisvFSILinearSolverPreconditioner::TRILINOS_ML,
+};
+            
+
+//--------------------
+// sv4guisvFSIeqClass
+//--------------------
+// Set class member data depending on 'eq' which is the type of
+// physics (e.g. fluid) the equation represents.
+//
+// Warning: There is a dependancy between the names in propNames[] 
+// and those in the GUI. 
+//
 sv4guisvFSIeqClass::sv4guisvFSIeqClass(const QString& eq)
 {
-    for (int i=0; i < maxOutput ; i++ ) isOutsputed[i] = false;
-    for (int i=0; i < maxProp ; i++ ) propVal[i] = 0.0;
+    for (int i=0; i < maxOutput ; i++ ) {
+        isOutsputed[i] = false;
+    }
+
+    for (int i=0; i < maxProp ; i++ ) {
+        propVal[i] = 0.0;
+    }
+
     if ( eq == "none") {
         return;
+
     } else if ( eq == "Incomp. fluid" ||  eq == "fluid") {
         outputNames << "Velocity" << "Acceleration" << "Pressure" << "WSS" << "Vorticity";
         fullName = "Incomp. fluid";
         physName = "fluid";
+
         isOutsputed[0]=true;
         isOutsputed[2]=true;
+
         propNames << "Density" << "Viscosity";
         propVal[0] = 1.0;
         propVal[1] = 0.04;
+
     } else if ( eq == "Structure" || eq == "struct") {
         outputNames << "Displacement" << "Velocity" << "Acceleration";
         fullName = "Structure";
         physName = "struct";
+
         isOutsputed[0]=true;
         isOutsputed[1]=true;
+
         propNames << "Density" << "Elasticity modulus" << "Poisson ratio";
         propVal[0] = 1.0;
         propVal[1] = 100000;
         propVal[2] = 0.4;
+
     } else if ( eq == "FSI" ) {
         outputNames << "Displacement" << "Velocity" << "Acceleration" << "Pressure" << "WSS" << "Vorticity";
         fullName = "FSI";
         physName = "FSI";
+
         isOutsputed[0]=true;
         isOutsputed[1]=true;
         isOutsputed[3]=true;
+
         propNames << "Fluid density" << "Viscosity" << "Solid density" << "Elasticity modulus" << "Poisson ratio";
         propVal[0] = 1.0;
         propVal[1] = 0.04;
         propVal[2] = 1.0;
         propVal[3] = 100000;
         propVal[4] = 0.4;
+
     } else if ( eq == "Mesh motion" || eq == "mesh") {
         outputNames << "Displacement" << "Velocity" << "Acceleration";
         fullName = "Mesh motion";
         physName = "mesh";
+
         isOutsputed[0]=true;
+
         propNames << "Poisson ratio";
         propVal[0] = 0.3;
+
     } else if ( eq == "Transport" || eq == "heatF") {
         outputNames << "Temperature";
         fullName = "Transport";
         physName = "heatF";
         isOutsputed[0]=true;
         propNames << "Conductivity";
+
     } else if ( eq == "Linear elasticity" || eq == "lElas") {
         outputNames << "Displacement" << "Velocity" << "Acceleration";
         fullName = "Linear elasticity";
         physName = "lElas";
         isOutsputed[0]=true;
         isOutsputed[1]=true;
+
         propNames << "Density" << "Elasticity modulus" << "Poisson ratio";
         propVal[0] = 1.0;
         propVal[1] = 100000;
         propVal[2] = 0.4;
+
     } else if ( eq == "Heat (Laplace)" || eq == "heatS" ) {
         outputNames << "Temperature";
         fullName = "Heat (Laplace)";
@@ -147,15 +208,24 @@ sv4guisvFSIeqClass::~sv4guisvFSIeqClass()
     outputNames.clear();
 }
 
+//--------------
+// setPropValue
+//--------------
+// Set the value of a property by its name.
+//
 void sv4guisvFSIeqClass::setPropValue( const double value, const QString propName)
 {
-    int indx=-1;
-    for (int i=0 ; i < propNames.length() ; i++)
-        if ( propName == propNames.at(i) )
-            indx=i;
+    int indx = -1;
 
-    if(indx!=-1)
+    for (int i=0 ; i < propNames.length() ; i++) {
+        if ( propName == propNames.at(i) ) {
+            indx=i;
+        }
+    }
+
+    if(indx!=-1) {
         propVal[indx]=value;
+    }
 }
 
 
