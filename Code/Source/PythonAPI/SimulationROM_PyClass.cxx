@@ -57,56 +57,67 @@ typedef struct
 
 namespace ROMSim_Parameters {
 
-  char* BOUNDARY_CONDITION_LIST = "bc_list";
-
+  // The names here primarily identify the attributes for the
+  // various classes in 
+  //
+  //    SimVascular/Python/site-packages/sv/simulation_parameters.py
+  
+  // BoundaryConditions class
+  //
+  static const char* BOUNDARY_CONDITION_LIST = "bc_list";
   // Fields in the BC dict.
-  char* BOUNDARY_CONDITION_TYPE = "type";
-  char* BOUNDARY_CONDITION_FACE_ID = "faceID";
-  char* BOUNDARY_CONDITION_RESISTANCE_VALUE = "resistance";
-  char* BOUNDARY_CONDITION_RCR_RP = "Rp";
-  char* BOUNDARY_CONDITION_RCR_C = "C";
-  char* BOUNDARY_CONDITION_RCR_RD = "Rd";
-  char* BOUNDARY_CONDITION_FILE_NAME = "file_name";
-  char* BOUNDARY_CONDITION_RESISTANCE_FILE_NAME = "resistance.dat";
-  char* BOUNDARY_CONDITION_RCR_FILE_NAME = "rcrt.dat"; 
-
+  static const char* BOUNDARY_CONDITION_TYPE = "type";
+  static const char* BOUNDARY_CONDITION_FACE_ID = "faceID";
+  static const char* BOUNDARY_CONDITION_RESISTANCE_VALUE = "resistance";
+  static const char* BOUNDARY_CONDITION_RCR_RP = "Rp";
+  static const char* BOUNDARY_CONDITION_RCR_C = "C";
+  static const char* BOUNDARY_CONDITION_RCR_RD = "Rd";
+  static const char* BOUNDARY_CONDITION_FILE_NAME = "file_name";
+  static const char* BOUNDARY_CONDITION_RESISTANCE_FILE_NAME = "resistance.dat";
+  static const char* BOUNDARY_CONDITION_RCR_FILE_NAME = "rcrt.dat"; 
   // BC type.
-  char* BOUNDARY_CONDITION_PRESCRIBED_VELOCITIES = "Prescribed Velocities";
-  char* BOUNDARY_CONDITION_RESISTANCE = "Resistnce";
-  char* BOUNDARY_CONDITION_RCR = "RCR";
+  static const char* BOUNDARY_CONDITION_PRESCRIBED_VELOCITIES = "Prescribed Velocities";
+  static const char* BOUNDARY_CONDITION_RESISTANCE = "Resistance";
+  static const char* BOUNDARY_CONDITION_RCR = "RCR";
 
-  char* FLUID_DENSITY = "density";
-  char* FLUID_VISCOSITY = "viscosity";
+  // FluidProperties class.
+  //
+  static const char* FLUID_DENSITY = "density";
+  static const char* FLUID_VISCOSITY = "viscosity";
 
-  char* MATERIAL_EH_R = "eh_r";
-  char* MATERIAL_EXPONENT = "exponent";
-  char* MATERIAL_NAME = "name";
-  char* MATERIAL_K1 = "k1";
-  char* MATERIAL_K2 = "k2";
-  char* MATERIAL_K3 = "k3";
-  char* MATERIAL_PRESSURE = "pressure";
+  // OlufsenMaterial class.
+  static const char* MATERIAL_EH_R = "eh_r";
+  static const char* MATERIAL_EXPONENT = "exponent";
+  static const char* MATERIAL_NAME = "name";
+  static const char* MATERIAL_K1 = "k1";
+  static const char* MATERIAL_K2 = "k2";
+  static const char* MATERIAL_K3 = "k3";
+  static const char* MATERIAL_PRESSURE = "pressure";
 
-  char* MATERIAL_LINEAR = "LINEAR";
-  char* MATERIAL_OLUFSEN = "OLUFSEN";
+  // WallProperties class.
+  static const char* MATERIAL_LINEAR = "LINEAR";
+  static const char* MATERIAL_OLUFSEN = "OLUFSEN";
 
-  char* MESH_ELEMENT_SIZE = "element_size";
+  // MeshParameters class.
+  static const char* MESH_ELEMENT_SIZE = "element_size";
+  static const char* MESH_NUM_BRANCH_SEGS = "num_branch_segments";
+  static const char* MESH_USE_ADAPTIVE = "use_adaptive_meshing";
 
-  char* MODEL_NAME = "name";
-  char* MODEL_ORDER = "model_order";
-  char* MODEL_CENTERLINES_FILE = "centerlines_file_name";
-  char* MODEL_OUTLET_FACE_FILE_NAME = "outlet_face_names.dat";
-  char* MODEL_OUTLET_FACE_NAMES = "outlet_face_names";
+  // ModelParameters class.
+  static const char* MODEL_NAME = "name";
+  static const char* MODEL_CENTERLINES_FILE = "centerlines_file_name";
+  static const char* MODEL_OUTLET_FACE_FILE_NAME = "outlet_face_names.dat";
+  static const char* MODEL_OUTLET_FACE_NAMES = "outlet_face_names";
 
-  char* PYTHON_ROM_SIMULATION_MODULE_NAME = "sv_rom_simulation";
 
-  char* SEG_MIN_NUM = "seg_min_num";
-  char* SEG_SIZE_ADAPTIVE = "seg_size_adaptive";
+  // Solution class.
+  static const char* SOLUTION_TIME_STEP = "time_step"; 
+  static const char* SOLUTION_NUM_TIME_STEPS = "num_time_steps"; 
+  static const char* SOLUTION_SAVE_DATA_FREQUENCY = "save_frequency"; 
 
-  char* SOLVER_FILE_NAME = "solver.in"; 
-
-  char* SOLUTION_TIME_STEP = "time_step"; 
-  char* SOLUTION_NUM_TIME_STEPS = "num_time_steps"; 
-  char* SOLUTION_SAVE_DATA_FREQUENCY = "save_frequency"; 
+  static const char* MODEL_ORDER = "model_order";
+  static const char* PYTHON_ROM_SIMULATION_MODULE_NAME = "sv_rom_simulation";
+  static const char* SOLVER_FILE_NAME = "solver.in"; 
 }
 
 //----------------------
@@ -362,10 +373,10 @@ ROMSim_AddMeshParameters(sv4guiROMSimulationPython& pythonInterface, PyObject* m
   auto element_size = PyUtilGetDoubleAttr(meshObj, MESH_ELEMENT_SIZE);
   pythonInterface.AddParameter(params.ELEMENT_SIZE, std::to_string(element_size));
 
-  auto numSegements = PyUtilGetIntAttr(meshObj, SEG_MIN_NUM);
-  pythonInterface.AddParameter(params.SEG_MIN_NUM, std::to_string(numSegements));
+  auto numBranchSegements = PyUtilGetIntAttr(meshObj, MESH_NUM_BRANCH_SEGS);
+  pythonInterface.AddParameter(params.SEG_MIN_NUM, std::to_string(numBranchSegements));
 
-  auto adaptMeshing = PyUtilGetIntAttr(meshObj, SEG_SIZE_ADAPTIVE);
+  auto adaptMeshing = PyUtilGetBoolAttr(meshObj, MESH_USE_ADAPTIVE);
   pythonInterface.AddParameter(params.SEG_SIZE_ADAPTIVE, std::to_string(adaptMeshing));
 }
 

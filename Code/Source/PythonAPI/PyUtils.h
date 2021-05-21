@@ -99,6 +99,8 @@ std::string PyUtilGetFunctionName(const char* functionName);
 
 std::vector<std::map<std::string,std::string>> PyUtilGetDictListAttr(PyObject* obj, std::string name);
 
+bool PyUtilGetBoolAttr(PyObject* obj, std::string name);
+
 double PyUtilGetDoubleAttr(PyObject* obj, std::string name);
 
 int PyUtilGetIntAttr(PyObject* obj, std::string name);

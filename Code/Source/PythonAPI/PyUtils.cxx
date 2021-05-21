@@ -264,6 +264,31 @@ bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, int poi
   return true;
 }
 
+//-------------------
+// PyUtilGetBoolAttr
+//-------------------
+// Get a Boolean atttibute from an object.
+//
+bool 
+PyUtilGetBoolAttr(PyObject* obj, std::string name)
+{
+  auto attr = PyObject_GetAttrString(obj, name.c_str());
+  if (attr == nullptr) {
+      auto typeName = PyUtilGetObjectType(obj);
+      std::string msg = "The '" + typeName + "' object has no attribute named '" + name + "'." ;
+      throw std::runtime_error(msg);
+  }
+  if (!PyBool_Check(attr)) {
+      auto typeName = PyUtilGetObjectType(obj);
+      auto attTypeName = PyUtilGetObjectType(attr);
+      std::string msg = "The '" + typeName + "' object attribute named '" + name + "' is not a Boolean.";
+      throw std::runtime_error(msg);
+  }
+  bool value = (attr == Py_True);
+  Py_DECREF(attr);
+  return value;
+}
+
 //---------------------
 // PyUtilGetDoubleAttr
 //---------------------
