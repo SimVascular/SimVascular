@@ -37,9 +37,11 @@
 #include "SimVascular_python.h"
 #include "sv_misc_utils.h"
 #include "sv_mmg_mesh_init.h"
+#include "sv_vmtk_utils.h"
 #include "sv_arg.h"
 #include "PyUtils.h"
 
+#include <set>
 #include <stdio.h>
 #include <string.h>
 #include "sv_Repository.h"
@@ -92,9 +94,21 @@ GetVtkPolyData(PyUtilApiFunction& api, PyObject* obj)
 // Python API functions.
 
 PyDoc_STRVAR(MeshUtils_remesh_doc,
-" remesh(surface, hmin=0.1, hmax=0.1, angle=45.0, hgrad=1.1, hausd=0.01, log_file=None)  \n\
+" remesh(surface, hmin=0.1, hmax=0.1, angle=45.0, hgrad=1.1, hausd=0.01)     \n\
   \n\
-  ??? Add the unstructured grid mesh to the repository. \n\
+  Remesh a polygonal surface.                                                \n\
+  \n\
+  Args: \n\
+    surface (vtkPolyData): A polygonal surface.                              \n\
+    hmin (float): The minimum edge size.                                     \n\
+    hmax (float): The maximum edge size.                                     \n\
+    angle (float): The angle threshold for detection of sharp features.      \n\
+         disabling.                                                          \n\
+    hgrad (float): The gradation value used to control the ratio between     \n\
+        two adjacent edges.                                                  \n\
+    hausd (float): The maximal Hausdorff distance for the boundaries         \n\
+        approximation. A smaller value produces more refinement in regions   \n\
+        of high curvature.                                                   \n\
   \n\
 ");
 
@@ -115,7 +129,8 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   double hausd = 0.01;
   char *logFileName = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &hmin, &hmax, &angle, &hgrad, &hausd, &logFileName)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &hmin, &hmax, &angle, 
+          &hgrad, &hausd, &logFileName)) {
       return api.argsError();
   }
 
@@ -142,7 +157,7 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   //cvPolyData cvSurfPolydata(surfPolydata);
   surfPolydata->BuildLinks();
 
-  // Remesh the surface polydata.
+  // Remesh the entire surface polydata.
   //
   int useSizingFunction = 0;
   int numAddedRefines = 0;
@@ -169,6 +184,112 @@ MeshUtils_remesh(PyObject* self, PyObject* args, PyObject* kwargs)
   return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
 }
 
+//------------------------
+// MeshUtils_remesh_faces
+//------------------------
+//
+PyDoc_STRVAR(MeshUtils_remesh_faces_doc,
+" remesh_faces(surface, face_ids, edge_size)  \n\
+  \n\
+  Selectively remesh the faces of a polygonal surface identified using a list of        \n\
+  a list of integer face IDs.                                                           \n\
+  \n\
+  The surface must contain a cell data array named 'ModelFaceID' used to identify       \n\
+  the set of cells associated with each face. Surfaces with this data can be obtained   \n\
+  from a model created from the modeling.Modeler() class using the get_polydata()       \n\
+  method.                                                                               \n\
+  \n\
+  Args: \n\
+    surface (vtkPolyData): A polygonal surface. \n\
+    face_ids (list[int]): The list of integer IDs identifying the surface faces. \n\
+    edge_size (float): The maximum edge size to remesh to.                       \n\
+  \n\
+");
+
+static PyObject *
+MeshUtils_remesh_faces(PyObject* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("OO!d", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", "face_ids", "edge_size", NULL};
+  PyObject* surfaceArg;
+  PyObject* faceIDsArg;
+  double edgeSize = 0.0;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &PyList_Type, &faceIDsArg, &edgeSize)) {
+      return api.argsError();
+  }
+
+  // Get the vtkPolyData objects from the Python object.
+  //
+  auto surfPolydata = GetVtkPolyData(api, surfaceArg);
+  if (surfPolydata == nullptr) {
+      return nullptr;
+  }
+  //cvPolyData cvSurfPolydata(surfPolydata);
+  surfPolydata->BuildLinks();
+
+  // Get face IDs.
+  //
+  std::vector<int> faceIDs;
+  int numFaceIDs = PyList_Size(faceIDsArg);
+  if (numFaceIDs == 0) {
+      api.error("The 'face_ids' argument is empty.");
+      return nullptr;
+  }
+  for (int i = 0; i < numFaceIDs; i++) {
+      auto item = PyList_GetItem(faceIDsArg, i);
+      if (!PyLong_Check(item)) {
+          api.error("The 'face_ids' argument is not a list of integers.");
+          return nullptr;
+      }
+      int id = PyLong_AsLong(item);
+      faceIDs.push_back(id);
+  }
+
+  // Find excluded faceIDs.
+  //
+  std::string markerListName = "ModelFaceID";
+  int numCells = surfPolydata->GetNumberOfCells();
+  auto cellData = vtkIntArray::SafeDownCast(surfPolydata->GetCellData()->GetArray(markerListName.c_str()));
+  if (cellData == nullptr) {
+      api.error("No 'ModelFaceID' data found for the input polydata.");
+      return nullptr;
+  }
+  std::set<int> allFaceIDs;
+  for (int i = 0; i < numCells; i++) {
+      allFaceIDs.insert(cellData->GetValue(i));
+  }
+  auto excludeFaceIDs = vtkSmartPointer<vtkIdList>::New();
+  for (auto const faceID : allFaceIDs) { 
+      auto it = std::find(faceIDs.begin(), faceIDs.end(), faceID);
+      if (it == faceIDs.end()) {
+          excludeFaceIDs->InsertNextId(faceID);
+      }
+  }
+
+  // Remesh the selected entire surface polydata faces.
+  //
+  int meshCaps = 1;
+  int preserveEdges = 0;
+  double collapseAngleThreshold = 0;
+  double triangleSplitFactor = 0;
+  int useSizeFunction = 0;
+
+  if (VMTKUtils_SurfaceRemeshing(surfPolydata, edgeSize, meshCaps, preserveEdges, triangleSplitFactor, collapseAngleThreshold,
+          excludeFaceIDs,  markerListName, useSizeFunction, NULL) != SV_OK) {
+      api.error("Remeshing failed.");
+      return nullptr;
+  }
+
+  auto result = new cvPolyData(surfPolydata);
+  if (result == NULL) {
+      api.error("Error creating polydata from the remeshed object.");
+      return nullptr;
+  }
+
+  return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
+}
+
 ////////////////////////////////////////////////////////
 //          M o d u l e  D e f i n i t i o n          //
 ////////////////////////////////////////////////////////
@@ -186,7 +307,7 @@ PyDoc_STRVAR(MeshUtils_doc, "mesh_util functions");
 PyMethodDef PyMeshUtilsMethods[] =
 {
   {"remesh", (PyCFunction)MeshUtils_remesh, METH_VARARGS|METH_KEYWORDS, MeshUtils_remesh_doc},
-
+  {"remesh_faces", (PyCFunction)MeshUtils_remesh_faces, METH_VARARGS|METH_KEYWORDS, MeshUtils_remesh_faces_doc},
   {NULL,NULL}
 };
 
