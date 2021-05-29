@@ -203,7 +203,8 @@ const QString sv4guiROMSimulationView::MODEL_SURFACE_FILE_NAME = "model_surface.
 const QString sv4guiROMSimulationView::OUTLET_FACE_NAMES_FILE_NAME = "outlet_face_names.dat";
 const QString sv4guiROMSimulationView::RCR_BC_FILE_NAME = "rcrt.dat";
 const QString sv4guiROMSimulationView::RESISTANCE_BC_FILE_NAME = "resistance.dat";
-const QString sv4guiROMSimulationView::SOLVER_FILE_NAME = "solver.in";
+const QString sv4guiROMSimulationView::SOLVER_0D_FILE_NAME = "solver_0d.in";
+const QString sv4guiROMSimulationView::SOLVER_1D_FILE_NAME = "solver_1d.in";
 
 // Set the values of the Surface Model Origin types.
 const QString sv4guiROMSimulationView::SurfaceModelSource::MESH_PLUGIN = "Mesh Plugin";
@@ -3596,8 +3597,13 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
     pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outputDir.toStdString());
     WriteBCFiles(outputDir, job, pythonInterface);
 
-    auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
-    pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName); 
+	QString solverFileName;
+	if (modelOrder == "0")
+		solverFileName = SOLVER_0D_FILE_NAME;
+	if (modelOrder == "1")
+		solverFileName = SOLVER_1D_FILE_NAME;
+	pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE,
+			solverFileName.toStdString());
 
     // Add basic physical parameters.
     auto density = m_TableModelBasic->item(TableModelBasicRow::Density,1)->text().trimmed().toStdString();
@@ -3627,7 +3633,7 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
         return false;
     }
 
-    m_SolverInputFile = outputDir + "/" + SOLVER_FILE_NAME;
+	m_SolverInputFile = outputDir + "/" + solverFileName;
     ui->RunSimulationPushButton->setEnabled(true);
 
     statusMsg = "Simulation files have been created."; 
@@ -4798,9 +4804,16 @@ void sv4guiROMSimulationView::ExportResults()
    auto pythonInterface = sv4guiROMSimulationPythonConvert();
    auto params = pythonInterface.m_ParameterNames;
 
+	QString solverFileName;
+	if (modelOrder == "0")
+		solverFileName = SOLVER_0D_FILE_NAME;
+	if (modelOrder == "1")
+		solverFileName = SOLVER_1D_FILE_NAME;
+
    pythonInterface.AddParameter(params.MODEL_ORDER, modelOrder);
    pythonInterface.AddParameter(params.RESULTS_DIRECTORY, resultDir.toStdString());
-   pythonInterface.AddParameter(params.SOLVER_FILE_NAME, SOLVER_FILE_NAME.toStdString());
+	pythonInterface.AddParameter(params.SOLVER_FILE_NAME,
+			solverFileName.toStdString());
 
    // Set the data names to convert.
    //
@@ -4873,7 +4886,9 @@ void sv4guiROMSimulationView::ExportResults()
    }
    MITK_INFO << msg << "jobName: " << jobName; 
 
-   convertDir = convertDir + "/" + jobName + "-converted-results";
+   QString modelOrderStr = QString::fromStdString(modelOrder);
+
+   convertDir = convertDir + "/" + jobName + "-converted-results_" + modelOrderStr + "d";
    QDir exdir(convertDir);
    exdir.mkpath(convertDir);
 
