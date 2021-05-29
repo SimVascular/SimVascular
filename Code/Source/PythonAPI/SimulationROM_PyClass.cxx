@@ -117,7 +117,8 @@ namespace ROMSim_Parameters {
 
   static const char* MODEL_ORDER = "model_order";
   static const char* PYTHON_ROM_SIMULATION_MODULE_NAME = "sv_rom_simulation";
-  static const char* SOLVER_FILE_NAME = "solver.in"; 
+  static const char *SOLVER_0D_FILE_NAME = "solver_0d.in";
+  static const char *SOLVER_1D_FILE_NAME = "solver_1d.in";
 }
 
 //----------------------
@@ -425,7 +426,12 @@ ROMSim_AddSolutionParameters(sv4guiROMSimulationPython& pythonInterface, PyObjec
   auto params = pythonInterface.m_ParameterNames;
 
   // Add the name of the solver input file.
-  auto solverFileName = ROMSim_Parameters::SOLVER_FILE_NAME;
+  auto modelOrder = PyUtilGetIntAttr(solutionObj, MODEL_ORDER);
+  char *solverFileName;
+  if (modelOrder == "0")
+	  solverFileName = ROMSim_Parameters::SOLVER_0D_FILE_NAME;
+  else if (modelOrder == "1")
+	  solverFileName = ROMSim_Parameters::SOLVER_1D_FILE_NAME;
   pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName);
 
   auto numTimeSteps = PyUtilGetIntAttr(solutionObj, SOLUTION_NUM_TIME_STEPS);

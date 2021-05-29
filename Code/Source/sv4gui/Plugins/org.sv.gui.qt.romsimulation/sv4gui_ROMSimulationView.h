@@ -91,7 +91,8 @@ public:
     static const QString OUTLET_FACE_NAMES_FILE_NAME;
     static const QString RCR_BC_FILE_NAME;
     static const QString RESISTANCE_BC_FILE_NAME;
-    static const QString SOLVER_FILE_NAME;
+	static const QString SOLVER_0D_FILE_NAME;
+	static const QString SOLVER_1D_FILE_NAME;
 
     sv4guiROMSimulationView();
 
