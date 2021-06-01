@@ -426,12 +426,12 @@ ROMSim_AddSolutionParameters(sv4guiROMSimulationPython& pythonInterface, PyObjec
   auto params = pythonInterface.m_ParameterNames;
 
   // Add the name of the solver input file.
-  auto modelOrder = PyUtilGetIntAttr(solutionObj, MODEL_ORDER);
-  char *solverFileName;
-  if (modelOrder == "0")
-	  solverFileName = ROMSim_Parameters::SOLVER_0D_FILE_NAME;
-  else if (modelOrder == "1")
-	  solverFileName = ROMSim_Parameters::SOLVER_1D_FILE_NAME;
+  int modelOrder = PyUtilGetIntAttr(solutionObj, MODEL_ORDER);
+  const char *solverFileName = "";
+  if (modelOrder == 0)
+	  const char *solverFileName = ROMSim_Parameters::SOLVER_0D_FILE_NAME;
+  else if (modelOrder == 1)
+	  const char *solverFileName = ROMSim_Parameters::SOLVER_1D_FILE_NAME;
   pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName);
 
   auto numTimeSteps = PyUtilGetIntAttr(solutionObj, SOLUTION_NUM_TIME_STEPS);
