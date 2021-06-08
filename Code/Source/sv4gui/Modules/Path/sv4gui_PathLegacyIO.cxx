@@ -143,6 +143,8 @@ static void ReadDataFromFile(QString filePath, QList<int>& IDList, QList<QHash<i
 //
 // This used by the Python API to read in legacy paths.
 //
+// Note: This only works for a single path defined in the .paths file.
+//
 sv3::PathGroup* sv4guiPathLegacyIO::CreateGroupFromFile(const std::string& filePath)
 {
     using sv3::PathGroup;
@@ -215,7 +217,7 @@ std::vector<mitk::DataNode::Pointer> sv4guiPathLegacyIO::ReadFile(QString filePa
     //
     std::vector<mitk::DataNode::Pointer> nodes;
 
-    for(int i=0; i<IDList.size();i++) {
+    for (int i=0; i<IDList.size();i++) {
         sv4guiPath::Pointer path = sv4guiPath::New();
         path->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
         path->SetCalculationNumber(IDSplineNum[IDList[i]]);
