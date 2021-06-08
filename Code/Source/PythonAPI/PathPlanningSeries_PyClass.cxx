@@ -740,6 +740,7 @@ static PyTypeObject PyPathSeriesType = {
 // Args:
 //   fileName (str): An SV .pth file. A new PathSeries object is created from
 //       the contents of the file. (optional)
+//   legacy (bool): If True then read in a legacy path file.\n\
 //
 static int
 PyPathSeriesInit(PyPathSeries* self, PyObject* args, PyObject* kwargs)

@@ -71,6 +71,10 @@ std::vector<mitk::BaseData::Pointer> sv4guiContourGroupIO::ReadFile(std::string 
     return result;
 }
 
+//---------------------
+// CreateGroupFromFile
+//---------------------
+//
 sv4guiContourGroup::Pointer
 sv4guiContourGroupIO::CreateGroupFromFile(std::string fileName)
 {
