@@ -70,36 +70,28 @@ bool PathSeriesUtil_check(PyPathSeries* self, PyUtilApiFunction& api)
 // Read in an SV .pth or legacy .paths file and create a PathSeries 
 // object from its contents.
 //
-static sv3::PathGroup*
+static std::vector<sv3::PathGroup*>
 PathSeriesUtil_read(char* fileName, bool legacyFile)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
-  sv3::PathGroup* pathGroup;
+  std::vector<sv3::PathGroup*> pathGroups;
 
   try {
       if (legacyFile) {
-          pathGroup = sv4guiPathLegacyIO::CreateGroupFromFile(fileName);
+          pathGroups = sv4guiPathLegacyIO::CreateGroupFromFile(fileName);
       } else {
-          pathGroup = sv3::PathIO().ReadFile(fileName);
+          auto pathGroup = sv3::PathIO().ReadFile(fileName);
+          pathGroups.push_back(pathGroup);
       }
-      if (pathGroup == nullptr) {
+      if (pathGroups.size() == 0) {
           api.error("Error reading file '" + std::string(fileName) + "'.");
-          return nullptr;
       }
-      int numElements = pathGroup->GetTimeSize();
 
   } catch (const std::exception& readException) {
       api.error("Error reading file '" + std::string(fileName) + "': " + readException.what());
-      return nullptr;
   }
 
-  /*
-  for (int i=0; i<svPathGrp->GetTimeSize(); i++) {
-        path->SetPathElement(static_cast<sv4guiPathElement*>(svPathGrp->GetPathElement(i)),i);
-  }
-  */
-
-  return pathGroup;
+  return pathGroups;
 }
 
 //////////////////////////////////////////////////////
@@ -131,9 +123,30 @@ PathSeries_get_calculation_number(PyPathSeries* self, PyObject* args)
   return Py_BuildValue("i", number);
 }
 
-//-------------------------
+PyDoc_STRVAR(PathSeries_get_name_doc,
+  "get_name() \n\
+   \n\
+   Get the path name. \n\
+   \n\
+   Returns (str): The path name.\n\
+");
+
+static PyObject *
+PathSeries_get_name(PyPathSeries* self)
+{
+  auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
+
+  if (!PathSeriesUtil_check(self, api)) {
+      return nullptr;
+  }
+
+  auto name = self->pathGroup->GetName();
+  return Py_BuildValue("s", name.c_str()); 
+}
+
+//--------------------------
 // PathSeries_get_num_times
-//-------------------------
+//--------------------------
 //
 PyDoc_STRVAR(PathSeries_get_num_times_doc,
   "get_num_times() \n\
@@ -225,7 +238,7 @@ PathSeries_get_path_id(PyPathSeries* self, PyObject* args)
 //-----------------
 //
 PyDoc_STRVAR(PathSeries_read_doc,
-  "write(file_name, legacy=False) \n\
+  "read(file_name, legacy=False) \n\
    \n\
    Read in a path group from an SV .pth file file or an .paths legacy file.\n\
    \n\
@@ -252,9 +265,86 @@ PathSeries_read(PyPathSeries* self, PyObject* args, PyObject* kwargs)
       legacyFile = PyObject_IsTrue(legacyArg);
   }
 
-  std::cout << "[PathSeries_read] legacyFile: " << legacyFile << std::endl;
+  // Create path groups from the .paths file.
+  auto pathGroups = PathSeriesUtil_read(fileName, legacyFile);
 
-  self->pathGroup = PathSeriesUtil_read(fileName, legacyFile);
+  if (pathGroups.size() != 1) { 
+      api.warning("The legacy paths file contains " + std::to_string(pathGroups.size()) + " paths. Only the first path is used."); 
+  } else if (pathGroups.size() == 0) { 
+      return nullptr;
+  }
+
+  self->pathGroup = pathGroups[0];
+  Py_RETURN_NONE;
+}
+
+//------------------------
+// PathSeries_read_legacy
+//------------------------
+//
+PyDoc_STRVAR(PathSeries_read_legacy_doc,
+  "read_legacy(file_name) \n\
+   \n\
+   Read in one or more path groups from an SV .paths legacy file.\n\
+   \n\
+   Args: \n\
+     file_name (str): The name of the file to path group file to read.\n\
+");
+
+static PyObject *
+PathSeries_read_legacy(PyPathSeries* cls, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("|sO!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"file_name", "legacy", nullptr };
+  char* fileName = nullptr;
+  PyObject* legacyArg = nullptr;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName, &PyBool_Type, &legacyArg)) {
+      api.argsError();
+      return nullptr;
+  }
+
+  // Create path groups from the .paths file.
+  bool legacyFile = true;
+  auto pathGroups = PathSeriesUtil_read(fileName, legacyFile);
+
+  if (pathGroups.size() == 0) { 
+      return nullptr;
+  }
+
+  // Create a PyList for the path groups.
+  int numPathGroups = pathGroups.size();
+  PyObject* groupList = PyList_New(numPathGroups);
+  for (int i = 0; i < numPathGroups; i++) { 
+      auto pathSeries = CreatePyPathSeries(pathGroups[i]);
+      PyList_SetItem(groupList, i, pathSeries);
+  }
+
+  return groupList; 
+}
+
+PyDoc_STRVAR(PathSeries_set_name_doc,
+  "set_name() \n\
+   \n\
+   Set the path name. \n\
+   \n\
+");
+
+static PyObject *
+PathSeries_set_name(PyPathSeries* self, PyObject* args)
+{ 
+  auto api = PyUtilApiFunction("s", PyRunTimeErr, __func__);
+  char* pathName;
+
+  if (!PyArg_ParseTuple(args, api.format, &pathName)) {
+     return api.argsError();
+  }
+
+  if (!PathSeriesUtil_check(self, api)) {
+      return nullptr;
+  }
+  
+  self->pathGroup->SetName(std::string(pathName));
   Py_RETURN_NONE;
 }
 
@@ -602,15 +692,18 @@ PyDoc_STRVAR(PathSeries_doc,
 static PyMethodDef PyPathSeriesMethods[] = {
   {"get_calculation_number", (PyCFunction)PathSeries_get_calculation_number, METH_NOARGS, PathSeries_get_calculation_number_doc},
   {"get_method", (PyCFunction)PathSeries_get_method, METH_NOARGS, PathSeries_get_method_doc},
+  {"get_name", (PyCFunction)PathSeries_get_name, METH_NOARGS, PathSeries_get_name_doc},
   {"get_path", (PyCFunction)PathSeries_get_path, METH_VARARGS, PathSeries_get_path_doc},
   {"get_path_id", (PyCFunction)PathSeries_get_path_id,METH_VARARGS,PathSeries_get_path_id_doc},
   {"get_spacing", (PyCFunction)PathSeries_get_spacing, METH_NOARGS, PathSeries_get_spacing_doc},
   {"get_num_times", (PyCFunction)PathSeries_get_num_times, METH_NOARGS, PathSeries_get_num_times_doc},
 
   {"read", (PyCFunction)PathSeries_read, METH_VARARGS|METH_KEYWORDS, PathSeries_read_doc},
+  {"read_legacy", (PyCFunction)PathSeries_read_legacy, METH_VARARGS|METH_KEYWORDS|METH_CLASS, PathSeries_read_legacy_doc},
 
   {"set_calculation_number", (PyCFunction)PathSeries_set_calculation_number, METH_NOARGS, PathSeries_set_calculation_number_doc},
   {"set_method", (PyCFunction)PathSeries_set_method, METH_VARARGS, PathSeries_set_method_doc},
+  {"set_name", (PyCFunction)PathSeries_set_name, METH_VARARGS, PathSeries_set_name_doc},
   {"set_path", (PyCFunction)PathSeries_set_path, METH_VARARGS|METH_KEYWORDS, PathSeries_set_path_doc},
   {"set_path_id", (PyCFunction)PathSeries_set_path_id, METH_VARARGS,PathSeries_set_path_id_doc},
   {"set_spacing", (PyCFunction)PathSeries_set_spacing, METH_VARARGS, PathSeries_set_spacing_doc},
@@ -669,11 +762,14 @@ PyPathSeriesInit(PyPathSeries* self, PyObject* args, PyObject* kwargs)
   }
 
   if (fileName != nullptr) {
-      self->pathGroup = PathSeriesUtil_read(fileName, legacyFile);
+      auto pathGroups = PathSeriesUtil_read(fileName, legacyFile);
+      if (pathGroups.size() != 1) { 
+          api.error("The legacy paths file contains " + std::to_string(pathGroups.size()) + " paths. Only the first path is used."); 
+      }
+      self->pathGroup = pathGroups[0];
   } else {
       self->pathGroup = new sv3::PathGroup();
   }
-  //std::cout << "[PyPathSeriesInit] self->pathGroup: " << self->pathGroup << std::endl;
   numObjs += 1;
   return 0;
 }

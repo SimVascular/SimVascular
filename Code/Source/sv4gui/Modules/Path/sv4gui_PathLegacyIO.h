@@ -49,7 +49,7 @@ public:
   virtual ~sv4guiPathLegacyIO(){}
 
   static std::vector<mitk::DataNode::Pointer> ReadFile(QString filePath);
-  static sv3::PathGroup* CreateGroupFromFile(const std::string& filePath);
+  static std::vector<sv3::PathGroup*> CreateGroupFromFile(const std::string& filePath);
   static void WriteFile(mitk::DataStorage::SetOfObjects::ConstPointer rs, QString filePath);
 
 };

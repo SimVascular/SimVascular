@@ -143,9 +143,11 @@ static void ReadDataFromFile(QString filePath, QList<int>& IDList, QList<QHash<i
 //
 // This used by the Python API to read in legacy paths.
 //
-// Note: This only works for a single path defined in the .paths file.
+// A legacy path file may contain more than one path so a list
+// of PathGroup pointers is returned..
 //
-sv3::PathGroup* sv4guiPathLegacyIO::CreateGroupFromFile(const std::string& filePath)
+std::vector<sv3::PathGroup*> 
+sv4guiPathLegacyIO::CreateGroupFromFile(const std::string& filePath)
 {
     using sv3::PathGroup;
     using sv3::PathElement;
@@ -156,16 +158,21 @@ sv3::PathGroup* sv4guiPathLegacyIO::CreateGroupFromFile(const std::string& fileP
     QHash<int,int> IDSplineNum;
     QHash<int,std::vector<sv4guiPathElement::sv4guiPathPoint>> dataHash;
 
+    // Read path data from a file.
     ReadDataFromFile(QString::fromStdString(filePath), IDList, dataList, IDNames, IDSplineNum, dataHash);
 
-    PathGroup* pathGroup = new PathGroup();
+    // Create a PathGroup* list from the data.
+    //
+    std::vector<sv3::PathGroup*> pathGroups;
 
     for (int i = 0; i < IDList.size(); i++) {
+        auto pathGroup = new PathGroup();
         pathGroup->SetPathID(IDList[i]);
+        pathGroup->SetName(IDNames[IDList[i]].toStdString());
         pathGroup->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
         pathGroup->SetCalculationNumber(IDSplineNum[IDList[i]]);
 
-        PathElement* pe = new PathElement();
+        auto pe = new PathElement();
         pe->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
         pe->SetCalculationNumber(IDSplineNum[IDList[i]]);
 
@@ -192,9 +199,10 @@ sv3::PathGroup* sv4guiPathLegacyIO::CreateGroupFromFile(const std::string& fileP
 
         pe->SetPathPoints(pathPoints);
         pathGroup->SetPathElement(pe);
+        pathGroups.push_back(pathGroup);
     }
 
-    return pathGroup;
+    return pathGroups;
 }
 
 //----------
