@@ -160,6 +160,7 @@ namespace sv4gui_project_manager {
 
   // Set the element names used in the image location xml file.
   const QString XmlElementNames::ROOT = "ImageObjectInformation";
+  const QString XmlElementNames::TIMESTEP = "timestep";
   const QString XmlElementNames::CREATED_WITH_SIMVASCULAR_VERSION = "created_with_simvascular_version";
   const QString XmlElementNames::IMAGE_FILE_NAME = "image_file_name";
   const QString XmlElementNames::TRANSFORM_FILE_NAME = "transform_file_name";
@@ -168,6 +169,7 @@ namespace sv4gui_project_manager {
   const QString XmlElementNames::PATH = "path";
   const QString XmlElementNames::SCALE_FACTOR = "scale_factor";
   const std::set<QString> XmlElementNames::valid_names = {
+    XmlElementNames::TIMESTEP,
     XmlElementNames::CREATED_WITH_SIMVASCULAR_VERSION,
     XmlElementNames::IMAGE_FILE_NAME,
     XmlElementNames::TRANSFORM_FILE_NAME,
@@ -370,7 +372,10 @@ void sv4guiProjectManager::ReadImageInfoFromImageLoc(QString imageLocFilePath, Q
 
   // Parse xml file data.
   QDomElement docElem = doc.documentElement();
-  QDomNode node = docElem.firstChild();
+
+  // hardcoding here to expect only one timestep
+  QDomNode imageobjectnode = docElem.firstChild();
+  QDomNode node = imageobjectnode.firstChild();
 
   while (!node.isNull()) {
     QDomElement element = node.toElement(); 
@@ -511,7 +516,10 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
     root.setAttribute("modification_time", modtime);
     doc.appendChild(root);
 
-    
+    QDomElement timestep = doc.createElement(XmlElementNames::TIMESTEP);
+    timestep.setAttribute("id","0");
+    root.appendChild(timestep);
+
     auto generatedWithElem = doc.createElement(XmlElementNames::CREATED_WITH_SIMVASCULAR_VERSION);
 #ifndef SV_FULL_VER_NO
     auto generatedWithText = doc.createTextNode("0");
@@ -519,38 +527,38 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
     auto generatedWithText = doc.createTextNode(SV_FULL_VER_NO);
 #endif
     generatedWithElem.appendChild(generatedWithText);
-    root.appendChild(generatedWithElem);
+    timestep.appendChild(generatedWithElem);
 
     auto pathElem = doc.createElement(XmlElementNames::PATH);
     auto pathText = doc.createTextNode(imageFilePath);
     pathElem.appendChild(pathText);
-    root.appendChild(pathElem);
+    timestep.appendChild(pathElem);
 
     auto fileNameElem = doc.createElement(XmlElementNames::IMAGE_FILE_NAME);
     auto fileNameText = doc.createTextNode(imageFileName);
     fileNameElem.appendChild(fileNameText);
-    root.appendChild(fileNameElem);
+    timestep.appendChild(fileNameElem);
 
     auto transFileNameElem = doc.createElement(XmlElementNames::TRANSFORM_FILE_NAME);
     auto transFileNameText = doc.createTextNode(transformFileName);
     transFileNameElem.appendChild(transFileNameText);
-    root.appendChild(transFileNameElem);
+    timestep.appendChild(transFileNameElem);
   
     auto nameElem = doc.createElement(XmlElementNames::IMAGE_NAME);
     auto nameText = doc.createTextNode(imageName);
     nameElem.appendChild(nameText);
-    root.appendChild(nameElem);
+    timestep.appendChild(nameElem);
 
     QString boolText = copyIntoProject ? "true" : "false"; 
     auto copiedWithElem = doc.createElement(XmlElementNames::DATA_IS_LOCAL_COPY);
     auto copiedWithText = doc.createTextNode(boolText);
     copiedWithElem.appendChild(copiedWithText);
-    root.appendChild(copiedWithElem);
+    timestep.appendChild(copiedWithElem);
    
     auto scaleElem = doc.createElement(XmlElementNames::SCALE_FACTOR);
     auto scaleText = doc.createTextNode(QString::number(scaleFactor));
     scaleElem.appendChild(scaleText);
-    root.appendChild(scaleElem);
+    timestep.appendChild(scaleElem);
 
     // Write the data to a file.
     QDir project_dir(projPath);

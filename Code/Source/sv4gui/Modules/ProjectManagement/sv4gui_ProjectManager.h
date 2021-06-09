@@ -78,6 +78,7 @@ class XmlElementNames
 {
   public:
     static const QString ROOT;
+    static const QString TIMESTEP;
     static const QString CREATED_WITH_SIMVASCULAR_VERSION;
     static const QString PATH;
     static const QString IMAGE_FILE_NAME;
