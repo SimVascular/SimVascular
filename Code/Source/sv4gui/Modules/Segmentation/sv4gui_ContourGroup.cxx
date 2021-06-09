@@ -44,7 +44,6 @@ sv4guiContourGroup::sv4guiContourGroup()
 {
     this->InitializeEmpty();
     m_LoftingParam=new svLoftingParam();
-    std::cout << "++++++++ sv4guiContourGroup:: ctor +++++++ " << this << std::endl;
 }
 
 sv4guiContourGroup::sv4guiContourGroup(const sv4guiContourGroup &other)
@@ -73,7 +72,6 @@ sv4guiContourGroup::sv4guiContourGroup(const sv4guiContourGroup &other)
 
 sv4guiContourGroup::~sv4guiContourGroup()
 {
-    std::cout << " ********* sv4guiContourGroup: dtor ********* this: " << this << std::endl;
     this->ClearData();
     if(m_LoftingParam)
         delete m_LoftingParam;
@@ -120,7 +118,6 @@ void sv4guiContourGroup::Expand( unsigned int timeSteps )
 
 unsigned int sv4guiContourGroup::GetTimeSize() const
 {
-    std::cout << "###### sv4guiContourGroup::GetTimeSize() ######" << std::endl;
     return m_ContourSets.size();
 }
 
