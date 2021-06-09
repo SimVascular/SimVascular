@@ -69,12 +69,12 @@ class PluginNames
 };
 
 //-----------------
-// XmlElementNames
+// XmlImageInformationElementNames
 //-----------------
 // This class is used to store the element names for the 
 // image location xml file. 
 //
-class XmlElementNames 
+class XmlImageInformationElementNames 
 {
   public:
     static const QString ROOT;
@@ -82,13 +82,32 @@ class XmlElementNames
     static const QString CREATED_WITH_SIMVASCULAR_VERSION;
     static const QString PATH;
     static const QString IMAGE_FILE_NAME;
-    static const QString TRANSFORM_FILE_NAME;
+    static const QString IMAGE_HEADER_FILE_NAME;
     static const QString IMAGE_NAME;
     static const QString DATA_IS_LOCAL_COPY;
     static const QString SCALE_FACTOR;
     static const std::set<QString> valid_names;
 };
 
+class  XmlImageHeaderElementNames
+{
+  public:
+    static const QString ROOT;
+    static const QString CREATED_WITH_SIMVASCULAR_VERSION;
+    static const QString MODALITY;
+    static const QString AGE;
+    static const QString GENDER;
+    static const QString ETHNICITY;
+    static const QString IMAGE_IS_SCALED;
+    static const QString SCALE_FACTOR;
+    static const QString ORIGINAL_UNITS;
+    static const QString CURRENT_UNITS;
+    static const QString TRANSFORM_LPS;
+    // transform is for legacy transform files and is deprecated
+    static const QString TRANSFORM;
+    static const std::set<QString> valid_names;
+  };
+  
 //---------------
 // FileExtension
 //---------------
@@ -107,7 +126,7 @@ class FileExtension
     static const QString ROMSIMULATIONS;
     static const QString SVFSI;
     static const QString IMAGE_VTI;
-    static const QString IMAGE_TRANSFORM;  
+    static const QString IMAGE_HEADER;  
 };
 
 }
@@ -147,11 +166,16 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
     // public image data methods
     static void WriteImageInfo(const QString& projPath, const QString& imageFilePath, const QString& imageFileName,
-			       const QString& transformFileName, const QString& imageName, bool copyIntoProject=false, double scaleFactor=1.0); 
+			       const QString& imageHeaderFileName, const QString& imageName, bool copyIntoProject=false, double scaleFactor=1.0); 
     static void AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode,
 			 mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor, QString newImageName);
-    static void writeTransformFile(mitk::Image* image, std::string transformAbsoluteFileName);
-    static void setTransformFromFile(mitk::Image* image, std::string transformAbsoluteFileName);
+    static void writeTransformFile(mitk::Image* image, std::string transformAbsoluteFileName);   // deprecated
+    static void setTransformFromFile(mitk::Image* image, std::string transformAbsoluteFileName);  // deprecated
+    static void writeImageHeaderFile(mitk::Image* image,
+				     std::string modality, int age, std::string gender, std::string race,
+				     bool scale_volume, double scaleFactor, std::string orginal_units, std::string scaled_units, 
+				     std::string imageHeaderAbsoluteFileName);
+    static void setTransformFromImageHeaderFile(mitk::Image* image, std::string imageHeaderAbsoluteFileName);
     static QString GetImageInfoFilePath(QDir project_dir); 
 
     // A function template defining functions used to create a SV Data Manager node. 
@@ -202,7 +226,7 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
     static mitk::DataNode::Pointer CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
 						      mitk::DataNode::Pointer imageFolderNode, const QString& imageFilePath,
-						      const QString& imageFileName, const QString& transformFileName, const QString& imageName);
+						      const QString& imageFileName, const QString& imageHeaderFileName, const QString& imageName);
 
     static void CreatePathsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
         mitk::DataNode::Pointer pathFolderNode, QString pathFolderName);
@@ -221,12 +245,12 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
     // private image data methods
     static void CopyImageToProject(const std::string& projPath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode,
-				   double scaleFactor, QString& imageFileName, QString& transformFileName);
+				   double scaleFactor, QString& imageFileName, QString& imageHeaderFileName);
 
-    static void ReadImageInfo(const QString& projPath, QString& imageFilePath, QString& imageFileName, QString& transformFileName,
+    static void ReadImageInfo(const QString& projPath, QString& imageFilePath, QString& imageFileName, QString& imageHeaderFileName,
 			      QString& imageName);
 
-    static void ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, QString& transformFileName,
+    static void ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, QString& imageHeaderFileName,
 					  QString& imageName);
 
     static void ReadImageInfoFromSvproj(const QString& projPath, QStringList& imageFilePathList, QStringList& imageNameList, bool& localFile);

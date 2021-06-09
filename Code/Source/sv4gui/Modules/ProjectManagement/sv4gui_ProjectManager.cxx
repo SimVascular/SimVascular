@@ -156,27 +156,55 @@ namespace sv4gui_project_manager {
 
   // image file extensions
   const QString FileExtension::IMAGE_VTI = ".vti";
-  const QString FileExtension::IMAGE_TRANSFORM = ".tfx";
+  const QString FileExtension::IMAGE_HEADER = ".hdr";
 
   // Set the element names used in the image location xml file.
-  const QString XmlElementNames::ROOT = "ImageObjectInformation";
-  const QString XmlElementNames::TIMESTEP = "timestep";
-  const QString XmlElementNames::CREATED_WITH_SIMVASCULAR_VERSION = "created_with_simvascular_version";
-  const QString XmlElementNames::IMAGE_FILE_NAME = "image_file_name";
-  const QString XmlElementNames::TRANSFORM_FILE_NAME = "transform_file_name";
-  const QString XmlElementNames::IMAGE_NAME = "image_name";
-  const QString XmlElementNames::DATA_IS_LOCAL_COPY = "data_is_local_copy";
-  const QString XmlElementNames::PATH = "path";
-  const QString XmlElementNames::SCALE_FACTOR = "scale_factor";
-  const std::set<QString> XmlElementNames::valid_names = {
-    XmlElementNames::TIMESTEP,
-    XmlElementNames::CREATED_WITH_SIMVASCULAR_VERSION,
-    XmlElementNames::IMAGE_FILE_NAME,
-    XmlElementNames::TRANSFORM_FILE_NAME,
-    XmlElementNames::IMAGE_NAME,
-    XmlElementNames::PATH,
-    XmlElementNames::DATA_IS_LOCAL_COPY,
-    XmlElementNames::SCALE_FACTOR
+  const QString XmlImageInformationElementNames::ROOT = "ImageObjectInformation";
+  const QString XmlImageInformationElementNames::TIMESTEP = "timestep";
+  const QString XmlImageInformationElementNames::CREATED_WITH_SIMVASCULAR_VERSION = "created_with_simvascular_version";
+  const QString XmlImageInformationElementNames::IMAGE_FILE_NAME = "image_file_name";
+  const QString XmlImageInformationElementNames::IMAGE_HEADER_FILE_NAME = "image_header_file_name";
+  const QString XmlImageInformationElementNames::IMAGE_NAME = "image_name";
+  const QString XmlImageInformationElementNames::DATA_IS_LOCAL_COPY = "data_is_local_copy";
+  const QString XmlImageInformationElementNames::PATH = "path";
+  const QString XmlImageInformationElementNames::SCALE_FACTOR = "scale_factor";
+  const std::set<QString> XmlImageInformationElementNames::valid_names = {
+    XmlImageInformationElementNames::TIMESTEP,
+    XmlImageInformationElementNames::CREATED_WITH_SIMVASCULAR_VERSION,
+    XmlImageInformationElementNames::IMAGE_FILE_NAME,
+    XmlImageInformationElementNames::IMAGE_HEADER_FILE_NAME,
+    XmlImageInformationElementNames::IMAGE_NAME,
+    XmlImageInformationElementNames::PATH,
+    XmlImageInformationElementNames::DATA_IS_LOCAL_COPY,
+    XmlImageInformationElementNames::SCALE_FACTOR
+  };
+
+  // Set the element names used in the image header file.
+  const QString XmlImageHeaderElementNames::ROOT = "ImageHeaderInformation";
+  const QString XmlImageHeaderElementNames::CREATED_WITH_SIMVASCULAR_VERSION = "created_with_simvascular_version";
+  const QString XmlImageHeaderElementNames::MODALITY = "modality";
+  const QString XmlImageHeaderElementNames::AGE = "age";
+  const QString XmlImageHeaderElementNames::GENDER = "gender";
+  const QString XmlImageHeaderElementNames::ETHNICITY = "ethnicity";
+  const QString XmlImageHeaderElementNames::IMAGE_IS_SCALED = "image_is_scaled";
+  const QString XmlImageHeaderElementNames::SCALE_FACTOR = "scale_factor";
+  const QString XmlImageHeaderElementNames::ORIGINAL_UNITS = "original_units";
+  const QString XmlImageHeaderElementNames::CURRENT_UNITS = "current_units";
+  const QString XmlImageHeaderElementNames::TRANSFORM_LPS = "transform_lps";
+  const QString XmlImageHeaderElementNames::TRANSFORM = "transform";
+
+  const std::set<QString> XmlImageHeaderElementNames::valid_names = {
+    XmlImageHeaderElementNames::CREATED_WITH_SIMVASCULAR_VERSION,
+    XmlImageHeaderElementNames::MODALITY,
+    XmlImageHeaderElementNames::AGE,
+    XmlImageHeaderElementNames::GENDER,
+    XmlImageHeaderElementNames::ETHNICITY,
+    XmlImageHeaderElementNames::IMAGE_IS_SCALED,
+    XmlImageHeaderElementNames::SCALE_FACTOR,
+    XmlImageHeaderElementNames::ORIGINAL_UNITS,
+    XmlImageHeaderElementNames::CURRENT_UNITS,
+    XmlImageHeaderElementNames::TRANSFORM_LPS,
+    XmlImageHeaderElementNames::TRANSFORM,
   };
 
 }
@@ -207,7 +235,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     QString projPath = project_dir.absolutePath();
     QString imageFilePath;
     QString imageFileName;
-    QString transformFileName;
+    QString imageHeaderFileName;
     QString imageName;
 
     // If a new project then create plugin directories. 
@@ -215,10 +243,10 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
         for (auto const& name : PluginNames::NAMES_LIST) {
             project_dir.mkdir(name);
         }
-        WriteImageInfo(projPath, imageFilePath, imageFileName, transformFileName, imageName);
+        WriteImageInfo(projPath, imageFilePath, imageFileName, imageHeaderFileName, imageName);
 
     } else {
-        ReadImageInfo(projPath, imageFilePath, imageFileName, transformFileName, imageName);
+        ReadImageInfo(projPath, imageFilePath, imageFileName, imageHeaderFileName, imageName);
     }
 
     // Create the SV Data Manager top level plugin mitk data nodes.
@@ -268,7 +296,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     // Note: imageFileName == "" if the project was created without adding an image.
     //
     if (imageFileName != "") {
-      auto imageNode = CreateImagesPlugin(dataStorage, projPath, imageFolderNode, imageFilePath, imageFileName, transformFileName, imageName);
+      auto imageNode = CreateImagesPlugin(dataStorage, projPath, imageFolderNode, imageFilePath, imageFileName, imageHeaderFileName, imageName);
       CreateMitkSegmentationsPlugin(dataStorage, projPath, imageNode);
     }
 
@@ -311,11 +339,11 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
 // Returns:
 //   imageFilePath: The path to the image file. If empty then the image file is in the project's Images directory.
 //   imageFileName: The name of the image file.
-//   transformFileName: The name of the image transform file.
+//   imageHeaderFileName: The name of the image transform file.
 //   imageName: The name of the image.
 //
 void sv4guiProjectManager::ReadImageInfo(const QString& projPath, QString& imageFilePath, QString& imageFileName, 
-     QString& transformFileName, QString& imageName)
+     QString& imageHeaderFileName, QString& imageName)
 {
   using namespace sv4gui_project_manager;
   auto imageFolderName = PluginNames::IMAGES;
@@ -336,7 +364,7 @@ void sv4guiProjectManager::ReadImageInfo(const QString& projPath, QString& image
     if ((imageFilePathList.size() == 0) || (imageNameList.size() == 0)) {
       imageFilePath = "";
       imageFileName = "";
-      transformFileName = "";
+      imageHeaderFileName = "";
       imageName = "";
       return;
     }
@@ -346,9 +374,9 @@ void sv4guiProjectManager::ReadImageInfo(const QString& projPath, QString& image
     QFileInfo fileInfo(imageFilePath);
     imageFilePath = fileInfo.path();
     imageFileName = fileInfo.fileName();
-    transformFileName = imageName+".transform.xml" ;
+    imageHeaderFileName = imageName+".transform.xml" ;
   } else {
-    ReadImageInfoFromImageLoc(imageLocFilePath, imageFilePath, imageFileName, transformFileName, imageName);
+    ReadImageInfoFromImageLoc(imageLocFilePath, imageFilePath, imageFileName, imageHeaderFileName, imageName);
   }
 }
 
@@ -358,7 +386,7 @@ void sv4guiProjectManager::ReadImageInfo(const QString& projPath, QString& image
 // Read the path to image data and the image name from a IMAGE_OBJECT_INFORMATION_FILE_NAME file.
 //
 void sv4guiProjectManager::ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, 
-       QString& transformFileName, QString& imageName)
+       QString& imageHeaderFileName, QString& imageName)
 {
   using namespace sv4gui_project_manager;
 
@@ -384,21 +412,21 @@ void sv4guiProjectManager::ReadImageInfoFromImageLoc(QString imageLocFilePath, Q
     }
     auto tagName = element.tagName();
 
-    if (XmlElementNames::valid_names.count(tagName) == 0) { 
+    if (XmlImageInformationElementNames::valid_names.count(tagName) == 0) { 
       auto msg = "An unknown element '" + tagName + "' was found in the image location file '" + imageLocFilePath + "'.";
       QMessageBox::warning(NULL, "", msg);
     }
 
-    if (tagName == XmlElementNames::IMAGE_NAME) {
+    if (tagName == XmlImageInformationElementNames::IMAGE_NAME) {
       imageName = element.text(); 
 
-    } else if (tagName == XmlElementNames::IMAGE_FILE_NAME) {
+    } else if (tagName == XmlImageInformationElementNames::IMAGE_FILE_NAME) {
       imageFileName = element.text(); 
 
-    } else if (tagName == XmlElementNames::TRANSFORM_FILE_NAME) {
-      transformFileName = element.text(); 
+    } else if (tagName == XmlImageInformationElementNames::IMAGE_HEADER_FILE_NAME) {
+      imageHeaderFileName = element.text(); 
 
-    } else if (tagName == XmlElementNames::PATH) {
+    } else if (tagName == XmlImageInformationElementNames::PATH) {
       imageFilePath = element.text(); 
     }
 
@@ -498,7 +526,7 @@ void sv4guiProjectManager::ReadImageInfoFromSvproj(const QString& projPath, QStr
 //   imageName: The name of the image. 
 //
 void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString& imageFilePath, const QString& imageFileName,
-					  const QString& transformFileName, const QString& imageName, bool copyIntoProject, double scaleFactor)
+					  const QString& imageHeaderFileName, const QString& imageName, bool copyIntoProject, double scaleFactor)
 {
     using namespace sv4gui_project_manager;
 
@@ -510,17 +538,17 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
     std::time_t modtime = std::time(nullptr);
 
     // Add data.
-    QDomElement root = doc.createElement(XmlElementNames::ROOT);
+    QDomElement root = doc.createElement(XmlImageInformationElementNames::ROOT);
     root.setAttribute("version", "1.0");
     root.setAttribute("creation_time", modtime); 
     root.setAttribute("modification_time", modtime);
     doc.appendChild(root);
 
-    QDomElement timestep = doc.createElement(XmlElementNames::TIMESTEP);
+    QDomElement timestep = doc.createElement(XmlImageInformationElementNames::TIMESTEP);
     timestep.setAttribute("id","0");
     root.appendChild(timestep);
 
-    auto generatedWithElem = doc.createElement(XmlElementNames::CREATED_WITH_SIMVASCULAR_VERSION);
+    auto generatedWithElem = doc.createElement(XmlImageInformationElementNames::CREATED_WITH_SIMVASCULAR_VERSION);
 #ifndef SV_FULL_VER_NO
     auto generatedWithText = doc.createTextNode("0");
 #else
@@ -529,33 +557,33 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
     generatedWithElem.appendChild(generatedWithText);
     timestep.appendChild(generatedWithElem);
 
-    auto pathElem = doc.createElement(XmlElementNames::PATH);
+    auto pathElem = doc.createElement(XmlImageInformationElementNames::PATH);
     auto pathText = doc.createTextNode(imageFilePath);
     pathElem.appendChild(pathText);
     timestep.appendChild(pathElem);
 
-    auto fileNameElem = doc.createElement(XmlElementNames::IMAGE_FILE_NAME);
+    auto fileNameElem = doc.createElement(XmlImageInformationElementNames::IMAGE_FILE_NAME);
     auto fileNameText = doc.createTextNode(imageFileName);
     fileNameElem.appendChild(fileNameText);
     timestep.appendChild(fileNameElem);
 
-    auto transFileNameElem = doc.createElement(XmlElementNames::TRANSFORM_FILE_NAME);
-    auto transFileNameText = doc.createTextNode(transformFileName);
+    auto transFileNameElem = doc.createElement(XmlImageInformationElementNames::IMAGE_HEADER_FILE_NAME);
+    auto transFileNameText = doc.createTextNode(imageHeaderFileName);
     transFileNameElem.appendChild(transFileNameText);
     timestep.appendChild(transFileNameElem);
   
-    auto nameElem = doc.createElement(XmlElementNames::IMAGE_NAME);
+    auto nameElem = doc.createElement(XmlImageInformationElementNames::IMAGE_NAME);
     auto nameText = doc.createTextNode(imageName);
     nameElem.appendChild(nameText);
     timestep.appendChild(nameElem);
 
-    QString boolText = copyIntoProject ? "true" : "false"; 
-    auto copiedWithElem = doc.createElement(XmlElementNames::DATA_IS_LOCAL_COPY);
+    QString boolText = copyIntoProject ? "true" : "false";
+    auto copiedWithElem = doc.createElement(XmlImageInformationElementNames::DATA_IS_LOCAL_COPY);
     auto copiedWithText = doc.createTextNode(boolText);
     copiedWithElem.appendChild(copiedWithText);
     timestep.appendChild(copiedWithElem);
    
-    auto scaleElem = doc.createElement(XmlElementNames::SCALE_FACTOR);
+    auto scaleElem = doc.createElement(XmlImageInformationElementNames::SCALE_FACTOR);
     auto scaleText = doc.createTextNode(QString::number(scaleFactor));
     scaleElem.appendChild(scaleText);
     timestep.appendChild(scaleElem);
@@ -632,7 +660,7 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
     QFile oldImageAbsoluteFile(oldImageAbsoluteFileName);
     oldImageAbsoluteFile.remove();
     // Remove transform file if it exists.
-    QString oldTransformAbsoluteFileName = oldImageAbsoluteFileName+FileExtension::IMAGE_TRANSFORM;
+    QString oldTransformAbsoluteFileName = oldImageAbsoluteFileName+FileExtension::IMAGE_HEADER;
     QFile oldTransformAbsoluteFile(oldTransformAbsoluteFileName);
     oldTransformAbsoluteFile.remove();
   }
@@ -655,7 +683,7 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
     QFileInfo fileInfo(imageFilePath);
     newImageFilePath = fileInfo.path();
     newImageFileName = fileInfo.fileName();
-    newTransformFileName = fileInfo.fileName()+FileExtension::IMAGE_TRANSFORM;
+    newTransformFileName = fileInfo.fileName()+FileExtension::IMAGE_HEADER;
   }
 
   // Write the image location file.
@@ -674,7 +702,7 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
 //
 void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, mitk::DataNode::Pointer imageNode, 
 					      mitk::DataNode::Pointer imageFolderNode, double scaleFactor, QString& imageFileName,
-					      QString& transformFileName)
+					      QString& imageHeaderFileName)
 {
   using namespace sv4gui_project_manager;
   
@@ -683,7 +711,7 @@ void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, mitk:
   imageFileName = imageName + FileExtension::IMAGE_VTI;
   std::string imageParentPath = projPath + "/" + imageFolderNode->GetName();
   std::string imageAbsoluteFileName = imageParentPath + "/" + imageFileName.toStdString();
-  transformFileName = imageFileName + FileExtension::IMAGE_TRANSFORM;
+  imageHeaderFileName = imageFileName + FileExtension::IMAGE_HEADER;
  
   // storing the path to the image dir in the image node
   imageNode->SetStringProperty("path", imageParentPath.c_str());
@@ -692,11 +720,11 @@ void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, mitk:
   imageNode->SetStringProperty("image_absolute_file_name", imageAbsoluteFileName.c_str());
 
   // need to use full path when reading / writing transform file
-  std::string transformAbsoluteFileName = imageParentPath + "/" + transformFileName.toStdString();
+  std::string imageHeaderAbsoluteFileName = imageParentPath + "/" + imageHeaderFileName.toStdString();
 
   // storing the path to the image dir in the image node
-  imageNode->SetStringProperty("transform_file_name", (transformFileName.toStdString()).c_str());
-  imageNode->SetStringProperty("transform_absolute_file_name", transformAbsoluteFileName.c_str());
+  imageNode->SetStringProperty("transform_file_name", (imageHeaderFileName.toStdString()).c_str());
+  imageNode->SetStringProperty("transform_absolute_file_name", imageHeaderAbsoluteFileName.c_str());
 
   mitk::Image* image = dynamic_cast<mitk::Image*>(imageNode->GetData());
 
@@ -714,8 +742,25 @@ void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, mitk:
     image->SetSpacing(scaleFactor*spacing);
   }
 
-  // Write the original DICOM image transform.
-  writeTransformFile(image, transformAbsoluteFileName);
+  // Write the original DICOM image header
+  std::string modality = "unknown-CT";
+  int age = 0;
+  std::string gender = "unknown-M";
+  std::string ethnicity = "unknown-W";
+  std::string original_units = "mm";
+  bool scale_volume;
+  std::string scaled_units;
+  if ((scaleFactor > 0.0) && (scaleFactor != 1.0)) {
+    scale_volume = true;
+    scaled_units = "cm";
+  } else {
+    scale_volume = true;
+    scaled_units = "mm";
+  }
+  
+  writeImageHeaderFile(image, modality, age, gender, ethnicity,
+		       scale_volume, scaleFactor, original_units, scaled_units, 
+		       imageHeaderAbsoluteFileName);
 
   // Write the .vti file.
   vtkImageData* vtkImg = sv4guiVtkUtils::MitkImage2VtkImage(image);
@@ -732,7 +777,7 @@ void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, mitk:
 //--------------------
 // Write a file containing the DICOM image axes.
 //
-void sv4guiProjectManager::writeTransformFile(mitk::Image* image, std::string transformAbsoluteFileName)
+void sv4guiProjectManager::writeTransformFile(mitk::Image* image, std::string imageHeaderAbsoluteFileName)
 {
 
   auto transform = image->GetGeometry()->GetVtkMatrix();
@@ -761,9 +806,9 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image, std::string tr
   root.appendChild(tag);
   QString xml = doc.toString(4);
 
-  std::cout << std::endl << "Writing to transform file (" << transformAbsoluteFileName << ")..." << std::endl << std::endl;
+  std::cout << std::endl << "Writing to transform file (" << imageHeaderAbsoluteFileName << ")..." << std::endl << std::endl;
   
-  QFile file( QString::fromStdString(transformAbsoluteFileName ) );
+  QFile file( QString::fromStdString(imageHeaderAbsoluteFileName ) );
 
   if (file.open(QFile::WriteOnly | QFile::Truncate)) {
       QTextStream out(&file);
@@ -778,12 +823,12 @@ void sv4guiProjectManager::writeTransformFile(mitk::Image* image, std::string tr
 //
 // This sets the upper 3x3 elements in the vtkMatrix4x4 object.
 //
-void sv4guiProjectManager::setTransformFromFile(mitk::Image* image, std::string transformAbsoluteFileName)
+void sv4guiProjectManager::setTransformFromFile(mitk::Image* image, std::string imageHeaderAbsoluteFileName)
 {
 
   QDomDocument doc("transform");
 
-  QFile xmlFile(QString::fromStdString(transformAbsoluteFileName));
+  QFile xmlFile(QString::fromStdString(imageHeaderAbsoluteFileName));
   if (xmlFile.open(QIODevice::ReadOnly)){
     QString *em=NULL;
     doc.setContent(&xmlFile,em);
@@ -807,11 +852,223 @@ void sv4guiProjectManager::setTransformFromFile(mitk::Image* image, std::string 
   } else {
     
     // note: no transform file found! Warn user as this is the norm!
-    std::cout << "NOTE: no transform file found (" << transformAbsoluteFileName <<")" << std::endl;
+    std::cout << "NOTE: no transform file found (" << imageHeaderAbsoluteFileName <<")" << std::endl;
 
   }
 
 }
+
+
+//---------------------
+// writeImageHeaderFile
+//---------------------
+// Write a file containing the DICOM header info and transformation matrix.
+//
+void sv4guiProjectManager::writeImageHeaderFile(mitk::Image* image,
+				     std::string modality, int age, std::string gender, std::string ethnicity,
+				     bool scale_volume, double scaleFactor, std::string original_units, std::string scaled_units, 
+				     std::string imageHeaderAbsoluteFileName)
+{
+
+    using namespace sv4gui_project_manager;
+
+    auto transform = image->GetGeometry()->GetVtkMatrix();
+   
+    // Create XML doc.
+    QDomDocument doc;
+    QDomNode xmlNode = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(xmlNode);
+
+    std::time_t modtime = std::time(nullptr);
+
+    // Add data.
+    QDomElement root = doc.createElement(XmlImageHeaderElementNames::ROOT);
+    root.setAttribute("version", "1.0");
+    root.setAttribute("creation_time", modtime); 
+    root.setAttribute("modification_time", modtime);
+    doc.appendChild(root);
+
+    auto generatedWithElem = doc.createElement(XmlImageHeaderElementNames::CREATED_WITH_SIMVASCULAR_VERSION);
+#ifndef SV_FULL_VER_NO
+    auto generatedWithText = doc.createTextNode("0");
+#else
+    auto generatedWithText = doc.createTextNode(SV_FULL_VER_NO);
+#endif
+    generatedWithElem.appendChild(generatedWithText);
+    root.appendChild(generatedWithElem);
+
+    QString q_modality = QString::fromStdString(modality);
+    QString q_age = QString::fromStdString(std::to_string(age));
+    QString q_gender = QString::fromStdString(gender);
+    QString q_ethnicity = QString::fromStdString(ethnicity);
+    QString q_image_is_scaled = scale_volume ? "true" : "false";
+    QString q_scale_factor = QString::fromStdString(std::to_string(scaleFactor));
+    QString q_original_units = QString::fromStdString(original_units);
+    QString q_current_units = QString::fromStdString(scaled_units);
+  
+    auto modalityElem = doc.createElement(XmlImageHeaderElementNames::MODALITY);
+    auto modalityText = doc.createTextNode(q_modality);
+    modalityElem.appendChild(modalityText);
+    root.appendChild(modalityElem);
+
+    auto ageElem = doc.createElement(XmlImageHeaderElementNames::AGE);
+    auto ageText = doc.createTextNode(q_age);
+    ageElem.appendChild(ageText);
+    root.appendChild(ageElem);
+
+    auto genderElem = doc.createElement(XmlImageHeaderElementNames::GENDER);
+    auto genderText = doc.createTextNode(q_gender);
+    genderElem.appendChild(genderText);
+    root.appendChild(genderElem);
+
+    auto ethnicityElem = doc.createElement(XmlImageHeaderElementNames::ETHNICITY);
+    auto ethnicityText = doc.createTextNode(q_ethnicity);
+    ethnicityElem.appendChild(ethnicityText);
+    root.appendChild(ethnicityElem);
+
+    auto image_is_scaledElem = doc.createElement(XmlImageHeaderElementNames::IMAGE_IS_SCALED);
+    auto image_is_scaledText = doc.createTextNode(q_image_is_scaled);
+    image_is_scaledElem.appendChild(image_is_scaledText);
+    root.appendChild(image_is_scaledElem);
+
+    auto scale_factorElem = doc.createElement(XmlImageHeaderElementNames::SCALE_FACTOR);
+    auto scale_factorText = doc.createTextNode(q_scale_factor);
+    scale_factorElem.appendChild(scale_factorText);
+    root.appendChild(scale_factorElem);
+
+    auto original_unitsElem = doc.createElement(XmlImageHeaderElementNames::ORIGINAL_UNITS);
+    auto original_unitsText = doc.createTextNode(q_original_units);
+    original_unitsElem.appendChild(original_unitsText);
+    root.appendChild(original_unitsElem);
+
+    auto current_unitsElem = doc.createElement(XmlImageHeaderElementNames::CURRENT_UNITS);
+    auto current_unitsText = doc.createTextNode(q_current_units);
+    current_unitsElem.appendChild(current_unitsText);
+    root.appendChild(current_unitsElem);
+    
+    auto transform_lpsElem = doc.createElement(XmlImageHeaderElementNames::TRANSFORM_LPS);
+    //auto transform_lpsText = doc.createTextNode();
+    //transform_lpsElem.appendChild(transform_lpsText);
+ 
+    for (int j = 0; j < 3; j++){
+      for (int i = 0; i < 3; i++){
+        auto v = transform->GetElement(i,j);
+        auto label = "t"+std::to_string(i)+std::to_string(j);
+        transform_lpsElem.setAttribute(QString::fromStdString(label),v);
+      }
+    }
+
+    root.appendChild(transform_lpsElem);
+
+    QString xml = doc.toString(4);
+
+    std::cout << std::endl << "Writing to transform file (" << imageHeaderAbsoluteFileName << ")..." << std::endl << std::endl;
+  
+    QFile file( QString::fromStdString(imageHeaderAbsoluteFileName ) );
+
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+      QTextStream out(&file);
+      out << xml <<endl;
+    }
+}
+
+
+//--------------------------------
+// setTransformFromImageHeaderFile
+//--------------------------------
+// Set the image transformation from a file.
+//
+// This sets the upper 3x3 elements in the vtkMatrix4x4 object.
+//
+void sv4guiProjectManager::setTransformFromImageHeaderFile(mitk::Image* image, std::string imageHeaderAbsoluteFileName)
+{
+  using namespace sv4gui_project_manager;
+
+  std::cout << std::endl << "Reading from transform file (" << imageHeaderAbsoluteFileName << ")..." << std::endl << std::endl;
+  
+  bool boolFoundTransform = false;
+  QString q_imageHeaderAbsoluteFileName = QString::fromStdString(imageHeaderAbsoluteFileName);
+   
+  // Read IMAGE_HEADER_FILE_NAME xml file.
+  QDomDocument doc("image_header");
+  QFile xmlFile( q_imageHeaderAbsoluteFileName);
+  xmlFile.open(QIODevice::ReadOnly);
+  QString *em = NULL;
+  doc.setContent(&xmlFile, em);
+  xmlFile.close();
+
+  // Parse xml file data.
+  QDomElement docElem = doc.documentElement();
+
+  // hardcoding here to only interact with first child
+  
+  //  QDomNode imageobjectnode = docElem.firstChild();
+  QDomNode node = docElem.firstChild();
+
+  while (!node.isNull()) {
+    QDomElement element = node.toElement(); 
+    if (element.isNull()) {
+      continue;
+    }
+    auto tagName = element.tagName();
+
+    if (XmlImageHeaderElementNames::valid_names.count(tagName) == 0) { 
+      auto msg = "An unknown element '" + tagName + "' was found in the image header file '" + q_imageHeaderAbsoluteFileName + "'.";
+      QMessageBox::warning(NULL, "", msg);
+    }
+
+    if (tagName == XmlImageHeaderElementNames::TRANSFORM_LPS) {
+
+       boolFoundTransform = true;
+	
+       auto transform = image->GetGeometry()->GetVtkMatrix();
+
+       for (int j = 0; j < 3; j++){
+        for (int i = 0; i < 3; i++){
+          auto label = "t"+std::to_string(i)+std::to_string(j);
+          auto line = element.attribute(QString::fromStdString(label));
+          auto v = std::stod(line.toStdString());
+          transform->SetElement(i,j,v);
+        }
+      }
+
+      image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
+      image->UpdateOutputInformation();
+      
+    } else if (tagName == XmlImageHeaderElementNames::TRANSFORM) {
+
+      // legacy read  -- deprecated
+      boolFoundTransform = true;
+      
+      auto transform = image->GetGeometry()->GetVtkMatrix();
+
+       for (int j = 0; j < 3; j++){
+        for (int i = 0; i < 3; i++){
+          auto label = "t"+std::to_string(i)+std::to_string(j);
+          auto line = element.attribute(QString::fromStdString(label));
+          auto v = std::stod(line.toStdString());
+          transform->SetElement(i,j,v);
+        }
+      }
+
+      image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
+      image->UpdateOutputInformation();      
+      
+    }
+
+    node = node.nextSibling();
+  }
+
+  return;
+
+  if (!boolFoundTransform) {
+    // note: no transform file found! Warn user as this is the norm!
+    std::cout << "NOTE: no transform file found (" << imageHeaderAbsoluteFileName <<")" << std::endl;
+
+  }
+
+}
+
 
 //---------------
 // SaveProjectAs
@@ -1508,14 +1765,14 @@ bool sv4guiProjectManager::DuplicateDirRecursively(const QString &srcFilePath, c
 mitk::DataNode::Pointer 
 sv4guiProjectManager::CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
 					 mitk::DataNode::Pointer imageFolderNode, const QString& imageFilePath,
-					 const QString& imageFileName, const QString& transformFileName, const QString& imageName)
+					 const QString& imageFileName, const QString& imageHeaderFileName, const QString& imageName)
 {
   using namespace sv4gui_project_manager;
   imageFolderNode->SetVisibility(false);
   mitk::DataNode::Pointer imageNode;
   
   QString imageAbsoluteFileName;
-  QString transformAbsoluteFileName;
+  QString imageHeaderAbsoluteFileName;
 
   // assume that if path is blank, image is a local copy
   if (imageFilePath == "") {
@@ -1527,9 +1784,9 @@ sv4guiProjectManager::CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage,
   // assume that if path is blank, it is a local copy
   // note: this code forces the transform file to be in the same directory as the image vol
   if (imageFilePath == "") {
-    transformAbsoluteFileName = projPath + "/" + PluginNames::IMAGES + "/" + transformFileName; 
+    imageHeaderAbsoluteFileName = projPath + "/" + PluginNames::IMAGES + "/" + imageHeaderFileName; 
   } else {
-    transformAbsoluteFileName = imageFilePath + "/" + transformFileName; 
+    imageHeaderAbsoluteFileName = imageFilePath + "/" + imageHeaderFileName; 
   }
 
   try {
@@ -1539,10 +1796,10 @@ sv4guiProjectManager::CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage,
 
     // Transform the image from the values given in the transform file. 
     auto image = dynamic_cast<mitk::Image*>(imageNode->GetData());
-    if (transformFileName.toStdString().empty()) {
-      std::cout << "NOTE: no transform file specified (" << transformFileName.toStdString() <<")" << std::endl;
+    if (imageHeaderFileName.toStdString().empty()) {
+      std::cout << "NOTE: no transform file specified (" << imageHeaderFileName.toStdString() <<")" << std::endl;
     } else {  
-      setTransformFromFile(image, transformAbsoluteFileName.toStdString());
+      setTransformFromImageHeaderFile(image, imageHeaderAbsoluteFileName.toStdString());
     }
     dataStorage->Add(imageNode,imageFolderNode);
 
@@ -1553,8 +1810,8 @@ sv4guiProjectManager::CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage,
     imageNode->SetStringProperty("image_absolute_file_name", (imageAbsoluteFileName.toStdString()).c_str());
 
     // storing the path to the image dir in the image node
-    imageNode->SetStringProperty("transform_file_name", (transformFileName.toStdString()).c_str());
-    imageNode->SetStringProperty("transform_absolute_file_name", (transformAbsoluteFileName.toStdString()).c_str());
+    imageNode->SetStringProperty("image_header_file_name", (imageHeaderFileName.toStdString()).c_str());
+    imageNode->SetStringProperty("image_header_absolute_file_name", (imageHeaderAbsoluteFileName.toStdString()).c_str());
   
   } catch(...) {
     MITK_ERROR << "Failed to load image (maybe non-existing or unsupported data type): " << imageFilePath.toStdString();
@@ -1667,19 +1924,19 @@ void sv4guiProjectManager::CreateMitkSegmentationsPlugin(mitk::DataStorage::Poin
       auto mitkSegNode = sv4guiProjectManager::LoadDataNode(filePath);
       mitkSegNode->SetVisibility(false);
       auto image = dynamic_cast<mitk::Image*>(mitkSegNode->GetData());
-      std::string transformFileName = "";
-      std::string transformAbsoluteFileName = "";
-      if (imageNode->GetStringProperty("transform_file_name",transformFileName)) {
+      std::string imageHeaderFileName = "";
+      std::string imageHeaderAbsoluteFileName = "";
+      if (imageNode->GetStringProperty("image_header_file_name",imageHeaderFileName)) {
 	std::cout << "NOTE: NO tranform file name found in mitksegmentationsplugin!" << std::endl;
       } else {
-        std::cout << "NOTE: found transform file name (" << transformFileName << ")..." << std::endl;
+        std::cout << "NOTE: found transform file name (" << imageHeaderFileName << ")..." << std::endl;
       }
-      if (imageNode->GetStringProperty("transform_absolute_file_name",transformAbsoluteFileName)) {
+      if (imageNode->GetStringProperty("image_header_absolute_file_name",imageHeaderAbsoluteFileName)) {
 	std::cout << "no absolute tranform file name found in mitksegmentationsplugin!" << std::endl;
       }	else {
-	std::cout << "NOTE: found transform absolute file name (" << transformAbsoluteFileName << ")..." << std::endl;
+	std::cout << "NOTE: found transform absolute file name (" << imageHeaderAbsoluteFileName << ")..." << std::endl;
       }
-      setTransformFromFile(image, transformAbsoluteFileName);
+      setTransformFromImageHeaderFile(image, imageHeaderAbsoluteFileName);
       dataStorage->Add(mitkSegNode,imageNode);
     } catch(...) {
       MITK_ERROR << "Failed to load segmentation image (maybe non-existing or unsupported data type): " << filePath;
