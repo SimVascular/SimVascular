@@ -540,8 +540,8 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
     // Add data.
     QDomElement root = doc.createElement(XmlImageInformationElementNames::ROOT);
     root.setAttribute("version", "1.0");
-    root.setAttribute("creation_time", modtime); 
-    root.setAttribute("modification_time", modtime);
+    root.setAttribute("creation_time", QString::fromStdString(std::to_string(modtime))); 
+    root.setAttribute("modification_time", QString::fromStdString(std::to_string(modtime)));
     doc.appendChild(root);
 
     QDomElement timestep = doc.createElement(XmlImageInformationElementNames::TIMESTEP);
@@ -884,8 +884,8 @@ void sv4guiProjectManager::writeImageHeaderFile(mitk::Image* image,
     // Add data.
     QDomElement root = doc.createElement(XmlImageHeaderElementNames::ROOT);
     root.setAttribute("version", "1.0");
-    root.setAttribute("creation_time", modtime); 
-    root.setAttribute("modification_time", modtime);
+    root.setAttribute("creation_time", QString::fromStdString(std::to_string(modtime))); 
+    root.setAttribute("modification_time", QString::fromStdString(std::to_string(modtime)));
     doc.appendChild(root);
 
     auto generatedWithElem = doc.createElement(XmlImageHeaderElementNames::CREATED_WITH_SIMVASCULAR_VERSION);
