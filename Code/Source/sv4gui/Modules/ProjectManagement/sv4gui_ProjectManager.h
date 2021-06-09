@@ -77,10 +77,13 @@ class PluginNames
 class XmlElementNames 
 {
   public:
-    static const QString FILE_NAME;
-    static const QString IMAGE_NAME;
-    static const QString PATH;
     static const QString ROOT;
+    static const QString CREATED_WITH_SIMVASCULAR_VERSION;
+    static const QString PATH;
+    static const QString IMAGE_FILE_NAME;
+    static const QString TRANSFORM_FILE_NAME;
+    static const QString IMAGE_NAME;
+    static const QString DATA_IS_LOCAL_COPY;
     static const QString SCALE_FACTOR;
     static const std::set<QString> valid_names;
 };
@@ -102,6 +105,8 @@ class FileExtension
     static const QString SIMULATIONS;
     static const QString ROMSIMULATIONS;
     static const QString SVFSI;
+    static const QString IMAGE_VTI;
+    static const QString IMAGE_TRANSFORM;  
 };
 
 }
@@ -119,36 +124,34 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
   public:
     static const QString SVPROJ_CONFIG_FILE_NAME;
-    static const QString IMAGE_INFORMATION_FILE_NAME;
+    static const QString IMAGE_OBJECT_INFORMATION_FILE_NAME;
 
+    // project methods
     static void AddProject(mitk::DataStorage::Pointer dataStorage, QString projectName, QString projParentDir, bool newProject);
-    static void WriteImageInfo(const QString& projPath, const QString& imageFilePath, const QString& imageFileName, 
-       const QString& imageName, double scaleFactor=1.0); 
-    static void AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor, QString newImageName);
-
     static void SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode);
     static void SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath);
     static void SaveAllProjects(mitk::DataStorage::Pointer dataStorage);
 
-    static void writeTransformFile(mitk::Image* image, std::string imageParentPath, std::string imageName);
-    static void setTransform(mitk::Image* image, std::string proj_path, std::string imageName);
-
+    // data node methods
     static void LoadData(mitk::DataNode::Pointer dataNode);
     static mitk::DataNode::Pointer LoadDataNode(std::string filePath);
     static mitk::DataNode::Pointer GetProjectFolderNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode);
 
     static void AddDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode);
-
     static void RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode);
-
     static void RenameDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, std::string newName);
 
     static void DuplicateProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString newName);
-
     static bool DuplicateDirRecursively(const QString &srcFilePath, const QString &tgtFilePath);
 
-    static QString GetImageInfoFilePath(QDir project_dir);
-
+    // public image data methods
+    static void WriteImageInfo(const QString& projPath, const QString& imageFilePath, const QString& imageFileName,
+			       const QString& transformFileName, const QString& imageName, bool copyIntoProject=false, double scaleFactor=1.0); 
+    static void AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageNode,
+			 mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor, QString newImageName);
+    static void writeTransformFile(mitk::Image* image, std::string transformAbsoluteFileName);
+    static void setTransformFromFile(mitk::Image* image, std::string transformAbsoluteFileName);
+    static QString GetImageInfoFilePath(QDir project_dir); 
 
     // A function template defining functions used to create a SV Data Manager node. 
     //
@@ -196,14 +199,9 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
   private:
 
-    static void CopyImageToProject(const std::string& projPath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode,
-        double scaleFactor, QString& imageFileName);
-
-    static mitk::DataNode::Pointer CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
-        mitk::DataNode::Pointer imageFolderNode, QStringList imageFilePathList, QStringList imageNameList);
-
-    static mitk::DataNode::Pointer CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath, 
-        mitk::DataNode::Pointer imageFolderNode, const QString& imageFilePath, const QString& imageFileName, const QString& imageName);
+    static mitk::DataNode::Pointer CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
+						      mitk::DataNode::Pointer imageFolderNode, const QString& imageFilePath,
+						      const QString& imageFileName, const QString& transformFileName, const QString& imageName);
 
     static void CreatePathsPlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
         mitk::DataNode::Pointer pathFolderNode, QString pathFolderName);
@@ -220,12 +218,19 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
     static void CreatePlugin(mitk::DataStorage::Pointer dataStorage, QString projPath,
         mitk::DataNode::Pointer folderNode, QString folderName, QString fileExt);
 
-    static void ReadImageInfo(const QString& projPath, QString& imageFilePath, QString& imageFileName, QString& imageName);
+    // private image data methods
+    static void CopyImageToProject(const std::string& projPath, mitk::DataNode::Pointer imageNode, mitk::DataNode::Pointer imageFolderNode,
+				   double scaleFactor, QString& imageFileName, QString& transformFileName);
+
+    static void ReadImageInfo(const QString& projPath, QString& imageFilePath, QString& imageFileName, QString& transformFileName,
+			      QString& imageName);
+
+    static void ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, QString& transformFileName,
+					  QString& imageName);
 
     static void ReadImageInfoFromSvproj(const QString& projPath, QStringList& imageFilePathList, QStringList& imageNameList, bool& localFile);
-
-    static void ReadImageInfoFromImageLoc(QString imageLocFilePath, QString& imageFilePath, QString& imageFileName, QString& imageName);
-
+    
+    // private update methods
     static void UpdateSimulations1dFolder(const QString& projPath, const QString& romSimFolderName);
 };
 
