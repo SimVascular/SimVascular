@@ -743,10 +743,10 @@ void sv4guiProjectManager::CopyImageToProject(const std::string& projPath, mitk:
   }
 
   // Write the original DICOM image header
-  std::string modality = "unknown-CT";
+  std::string modality = "unknown";
   int age = 0;
-  std::string gender = "unknown-M";
-  std::string ethnicity = "unknown-W";
+  std::string gender = "unknown";
+  std::string ethnicity = "unknown";
   std::string original_units = "mm";
   bool scale_volume;
   std::string scaled_units;
