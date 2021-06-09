@@ -64,7 +64,6 @@ ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += /DEBUG
 endif
     GLOBAL_LFLAGS   += /LARGEADDRESSAWARE /INCREMENTAL:NO /FIXED:NO /RELEASE /NOLOGO \
-                       /VERBOSE:LIB \
                        /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcd.lib \
                        /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcpmt.lib \
                        /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcpmtd.lib \

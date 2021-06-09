@@ -49,92 +49,104 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkErrorCode.h>
 
-mitk::DataNode::Pointer sv4guiSegmentationLegacyIO::ReadContourGroupFile(QString filePath)
+//---------------------
+// CreateGroupFromFile
+//---------------------
+// Create a sv4guiContourGroup from contour file.
+//
+sv4guiContourGroup::Pointer
+sv4guiSegmentationLegacyIO::CreateGroupFromFile(const std::string& fileName)
 {
-    QFileInfo fi(filePath);
-    QString groupName = fi.baseName();
+    QString qfileName = QString::fromStdString(fileName);
+    QFileInfo file(qfileName);
+    QString groupName = file.baseName();
 
-    sv4guiContourGroup::Pointer contourGroup=sv4guiContourGroup::New();
+    sv4guiContourGroup::Pointer contourGroup = sv4guiContourGroup::New();
 
-//    contourGroup->SetPathName(groupName.toStdString());
+    QFile inputFile(qfileName);
+    if (!inputFile.open(QIODevice::ReadOnly)) {
+        return contourGroup;
+    }
 
-    QFile inputFile(filePath);
-    if (inputFile.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&inputFile);
-        while (!in.atEnd())
-        {
-            QString line = in.readLine();
+    QTextStream in(&inputFile);
 
-            if(line.contains("/group/"))
-            {
-                QStringList list = line.split("/",QString::SkipEmptyParts);
-                contourGroup->SetPathName(list[1].toStdString());
-
-                sv4guiContour* contour= new sv4guiContour();
-                contourGroup->InsertContour(-1,contour);
-
-                sv4guiPathElement::sv4guiPathPoint pathPoint;
-                line = in.readLine();
-                pathPoint.id=line.toInt();
-
-                line = in.readLine();
-                list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-
-                int index;
-
-                index=list.indexOf("pathId");
-                if(index!=-1)
-                {
-                    contourGroup->SetPathID(list[index+1].toInt());
-                }
-
-                //index=list.indexOf("posId");
-
-                index=list.indexOf("pos");
-                if(index!=-1)
-                {
-                    for(int i=0;i<3;i++)
-                        pathPoint.pos[i]=list[index+i+1].toDouble();
-                }
-
-                index=list.indexOf("nrm");
-                if(index!=-1)
-                {
-                    for(int i=0;i<3;i++)
-                        pathPoint.tangent[i]=list[index+i+1].toDouble();
-                }
-
-                index=list.indexOf("xhat");
-                if(index!=-1)
-                {
-                    for(int i=0;i<3;i++)
-                        pathPoint.rotation[i]=list[index+i+1].toDouble();
-                }
-
-                contour->SetPathPoint(pathPoint);
-                contour->SetMethod("Legacy");
-                contour->SetPlaced();
-
-                std::vector<mitk::Point3D> contourPoints;
-                while((line=in.readLine().trimmed())!=""){
-                    list = line.split(QRegExp("\\s+"));
-                    mitk::Point3D point;
-                    for(int i=0;i<3;i++)
-                    {
-                        point[i]=list[i].toDouble();
-                    }
-                    contourPoints.push_back(point);
-                }
-
-                contour->SetContourPoints(contourPoints,false);
-
-            }
-
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        if (!line.contains("/group/")) {
+            continue;
         }
 
-        inputFile.close();
+        QStringList list = line.split("/",QString::SkipEmptyParts);
+        contourGroup->SetPathName(list[1].toStdString());
+
+        sv4guiContour* contour = new sv4guiContour();
+        contourGroup->InsertContour(-1,contour);
+
+        sv4guiPathElement::sv4guiPathPoint pathPoint;
+        line = in.readLine();
+        pathPoint.id=line.toInt();
+
+        line = in.readLine();
+        list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+
+        int index;
+
+        index=list.indexOf("pathId");
+        if(index!=-1) {
+            contourGroup->SetPathID(list[index+1].toInt());
+        }
+
+        index=list.indexOf("pos");
+        if(index!=-1) {
+            for(int i=0;i<3;i++)
+                pathPoint.pos[i]=list[index+i+1].toDouble();
+        }
+
+        index=list.indexOf("nrm");
+        if(index!=-1) {
+            for(int i=0;i<3;i++)
+                pathPoint.tangent[i]=list[index+i+1].toDouble();
+        }
+
+        index=list.indexOf("xhat");
+        if(index!=-1) {
+            for(int i=0;i<3;i++)
+                pathPoint.rotation[i]=list[index+i+1].toDouble();
+        }
+
+        contour->SetPathPoint(pathPoint);
+        contour->SetMethod("Legacy");
+        contour->SetPlaced();
+
+        std::vector<mitk::Point3D> contourPoints;
+        while((line=in.readLine().trimmed())!=""){
+            list = line.split(QRegExp("\\s+"));
+            mitk::Point3D point;
+            for(int i=0;i<3;i++) {
+                point[i]=list[i].toDouble();
+            }
+            contourPoints.push_back(point);
+        }
+
+        contour->SetContourPoints(contourPoints,false);
     }
+
+    inputFile.close();
+
+    return contourGroup;
+}
+
+//----------------------
+// ReadContourGroupFile
+//----------------------
+// Create a DataNode from a contour file.
+//
+mitk::DataNode::Pointer sv4guiSegmentationLegacyIO::ReadContourGroupFile(QString filePath)
+{
+    QFileInfo file(filePath);
+    QString groupName = file.baseName();
+
+    sv4guiContourGroup::Pointer contourGroup = CreateGroupFromFile(filePath.toStdString());
 
     mitk::DataNode::Pointer node = mitk::DataNode::New();
     node->SetData(contourGroup);
@@ -143,6 +155,11 @@ mitk::DataNode::Pointer sv4guiSegmentationLegacyIO::ReadContourGroupFile(QString
     return node;
 }
 
+//-----------
+// ReadFiles
+//-----------
+// Create DataNodes from the contour files in a directory.
+//
 std::vector<mitk::DataNode::Pointer> sv4guiSegmentationLegacyIO::ReadFiles(QString segDir)
 {
     QStringList groupList;

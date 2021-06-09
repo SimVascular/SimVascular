@@ -447,6 +447,9 @@ private:
     void ResetModel();
     void WriteModel();
 
+    void RunOneDSimulationJob(const QString& jobPath);
+    void RunZeroDSimulationJob(const QString& jobPath);
+
     sv4guiMesh* GetDataNodeMesh();
     mitk::DataNode::Pointer GetMeshFolderDataNode();
     std::vector<std::string> GetMeshNames();
