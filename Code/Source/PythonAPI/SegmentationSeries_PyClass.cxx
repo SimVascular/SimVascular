@@ -70,7 +70,7 @@ extern "C" SV_EXPORT_PYTHON_API typedef struct
 // If 'legacyFile' is true then read in legacy files.
 //
 static sv4guiContourGroup::Pointer
-SegmentationSeries_read(char* fileName, bool legacyFile)
+SegmentationSeriesUtils_read(char* fileName, bool legacyFile)
 {
   auto api = PyUtilApiFunction("", PyRunTimeErr, __func__);
   sv4guiContourGroup::Pointer groupPtr;
@@ -148,9 +148,7 @@ static PyObject *
 SegmentationSeries_get_num_times(PySegmentationSeries* self, PyObject* args)
 {
   auto contourGroup = self->contourGroup;
-  std::cout << "[SegmentationSeries_get_num_times] contourGroup: " << contourGroup << std::endl;
   int numTimeSteps = contourGroup->GetTimeSize();
-  std::cout << "[SegmentationSeries_get_num_times] numTimeSteps: " << numTimeSteps << std::endl;
   return Py_BuildValue("i", numTimeSteps);
 }
 
@@ -230,11 +228,52 @@ SegmentationSeries_get_segmentation(PySegmentationSeries* self, PyObject* args, 
   return PyCreateSegmentation(contour);
 }
 
+//-------------------------
+// SegmentationSeries_read 
+//-------------------------
+//
+PyDoc_STRVAR(SegmentationSeries_read_doc,
+  "read(file_name, legacy=False) \n\
+   \n\
+   Read in a segmentaion group from an SV .ctgr file or a legacy text file.\n\
+   \n\
+   Args: \n\
+     file_name (str): The name of the file to segmentaion group file to read.\n\
+     legacy (bool): If True then read in a legacy segmentaion group file.\n\
+");
+
+static PyObject *
+SegmentationSeries_read(PySegmentationSeries* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("s|O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"file_name", "legacy", nullptr };
+  char* fileName = nullptr;
+  PyObject* legacyArg = nullptr;
+  
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &fileName, &PyBool_Type, &legacyArg)) {
+      api.argsError();
+      return nullptr;
+  }
+  
+  bool legacyFile = false;
+  if (legacyArg) { 
+      legacyFile = PyObject_IsTrue(legacyArg);
+  }
+
+  self->contourGroupPointer = SegmentationSeriesUtils_read(fileName, legacyFile);
+  self->contourGroup = dynamic_cast<sv4guiContourGroup*>(self->contourGroupPointer.GetPointer());
+  int numSegs = self->contourGroup->GetSize(0);
+  if (numSegs == 0) {
+      api.error("Error reading the segmentation series file '" + std::string(fileName) + "'.");
+      return nullptr;
+  }
+
+  Py_RETURN_NONE; 
+}
+
 //--------------------------
 // SegmentationSeries_write
 //--------------------------
-//
-// [TODO:DaveP] implement this.
 //
 PyDoc_STRVAR(SegmentationSeries_write_doc,
   "write(file_name) \n\
@@ -255,22 +294,15 @@ SegmentationSeries_write(PySegmentationSeries* self, PyObject* args)
       return api.argsError();
   }
 
-/*
-
   try {
-      if (sv3::ContourIO().Write(fileName, self->contourGroup) != SV_OK) {
-          api.error("Error writing contour group to the file '" + std::string(fileName) + "'.");
-          return nullptr;
-      }
+      sv4guiContourGroupIO::WriteToFile(self->contourGroup, fileName);
   } catch (const std::exception& readException) {
       api.error("Error writing contour group to the file '" + std::string(fileName) + "': " + readException.what());
       return nullptr;
   }
-*/
 
   return SV_PYTHON_OK;
 }
-
 
 ////////////////////////////////////////////////////////
 //          C l a s s    D e f i n i t i o n          //
@@ -297,8 +329,9 @@ static PyMethodDef PySegmentationSeriesMethods[] = {
 
   {"get_segmentation", (PyCFunction)SegmentationSeries_get_segmentation, METH_VARARGS|METH_KEYWORDS, SegmentationSeries_get_segmentation_doc},
 
-  // [TODO:DaveP] not implemented yet.
-  // {"write", (PyCFunction)SegmentationSeries_write, METH_VARARGS, SegmentationSeries_write_doc},
+  {"read", (PyCFunction)SegmentationSeries_read, METH_VARARGS|METH_KEYWORDS, SegmentationSeries_read_doc},
+
+  {"write", (PyCFunction)SegmentationSeries_write, METH_VARARGS, SegmentationSeries_write_doc},
 
   {NULL, NULL}
 };
@@ -355,7 +388,7 @@ PySegmentationSeriesInit(PySegmentationSeries* self, PyObject* args, PyObject* k
   // Read in a contour group file.
   //
   if (fileName != nullptr) {
-      self->contourGroupPointer = SegmentationSeries_read(fileName, legacyFile);
+      self->contourGroupPointer = SegmentationSeriesUtils_read(fileName, legacyFile);
       self->contourGroup = dynamic_cast<sv4guiContourGroup*>(self->contourGroupPointer.GetPointer());
       int numSegs = self->contourGroup->GetSize(0);
       if (numSegs == 0) {

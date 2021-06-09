@@ -250,7 +250,7 @@ PyDoc_STRVAR(PathSeries_read_doc,
 static PyObject *
 PathSeries_read(PyPathSeries* self, PyObject* args, PyObject* kwargs)
 {
-  auto api = PyUtilApiFunction("|sO!", PyRunTimeErr, __func__);
+  auto api = PyUtilApiFunction("s|O!", PyRunTimeErr, __func__);
   static char *keywords[] = {"file_name", "legacy", nullptr };
   char* fileName = nullptr;
   PyObject* legacyArg = nullptr;
