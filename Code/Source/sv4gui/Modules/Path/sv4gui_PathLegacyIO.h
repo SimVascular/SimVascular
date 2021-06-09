@@ -39,6 +39,7 @@
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 #include <QString>
+#include "sv3_PathGroup.h"
 
 class SV4GUIMODULEPATH_EXPORT sv4guiPathLegacyIO
 {
@@ -47,8 +48,8 @@ public:
   sv4guiPathLegacyIO(){}
   virtual ~sv4guiPathLegacyIO(){}
 
-  static std::vector<mitk::DataNode::Pointer> ReadFile(QString filePath) ;
-
+  static std::vector<mitk::DataNode::Pointer> ReadFile(QString filePath);
+  static std::vector<sv3::PathGroup*> CreateGroupFromFile(const std::string& filePath);
   static void WriteFile(mitk::DataStorage::SetOfObjects::ConstPointer rs, QString filePath);
 
 };

@@ -370,8 +370,8 @@ mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(st
     mitk::Image* image=dynamic_cast<mitk::Image*>(baseData);
 
     for (int i = 0; i < pathPoints.size(); i++) {
-        std::cout << "[CreateSlicedGeometry] " << std::endl;
-        std::cout << "[CreateSlicedGeometry] --------------- path " << i << " ---------------" << std::endl;
+        //std::cout << "[CreateSlicedGeometry] " << std::endl;
+        //std::cout << "[CreateSlicedGeometry] --------------- path " << i << " ---------------" << std::endl;
         mitk::PlaneGeometry::Pointer planegeometry = CreatePlaneGeometry(pathPoints[i], baseData,
           size, useOnlyMinimumSpacing);
 
@@ -398,7 +398,7 @@ mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(st
 //
 mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep)
 {
-    std::cout << "========== sv4guiSegmentationUtils::GetSliceImage ==========" << std::endl;
+    //std::cout << "========== sv4guiSegmentationUtils::GetSliceImage ==========" << std::endl;
     if ( !image || !planeGeometry ) return NULL;
 
     //    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer

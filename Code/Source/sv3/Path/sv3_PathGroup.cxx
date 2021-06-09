@@ -96,6 +96,16 @@ void PathGroup::Expand( unsigned int timeSteps )
     }
 }
 
+std::string PathGroup::GetName() const
+{
+    return m_Name;
+}
+
+void PathGroup::SetName(const std::string& name) 
+{
+    m_Name = name;
+}
+
 unsigned int PathGroup::GetTimeSize() const
 {
     return m_PathElementSet.size();

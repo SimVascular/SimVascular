@@ -40,124 +40,215 @@
 #include <QFile>
 #include <QTextStream>
 
-std::vector<mitk::DataNode::Pointer> sv4guiPathLegacyIO::ReadFile(QString filePath)
+//------------------
+// ReadDataFromFile
+//------------------
+// Read path data from a file.
+//
+static void ReadDataFromFile(QString filePath, QList<int>& IDList, QList<QHash<int,mitk::Point3D>>& dataList,
+      QHash<int,QString>& IDNames, QHash<int,int>& IDSplineNum, 
+      QHash<int,std::vector<sv4guiPathElement::sv4guiPathPoint>>& dataHash)
+    {
+
+    QFile inputFile(filePath);
+
+    if (!inputFile.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QTextStream in(&inputFile);
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+
+        if(line.contains("set",Qt::CaseInsensitive) && 
+           line.contains("gPathPoints",Qt::CaseInsensitive) && 
+           line.contains("name",Qt::CaseInsensitive)) {
+            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            IDNames[list[2].toInt()]=list[4];
+        }
+
+        if(line.contains("set",Qt::CaseInsensitive) && 
+           line.contains("gPathPoints",Qt::CaseInsensitive) && 
+           line.contains("numSplinePts",Qt::CaseInsensitive)) {
+            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            IDSplineNum[list[2].toInt()]=list[4].toInt();
+        }
+
+        if(line.contains("set",Qt::CaseInsensitive) && 
+           line.contains("gPathPoints",Qt::CaseInsensitive) && 
+           !line.contains("name",Qt::CaseInsensitive) && 
+           !line.contains("numSplinePts",Qt::CaseInsensitive) && 
+           !line.contains("splinePts",Qt::CaseInsensitive) ) {
+            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            int id=list[2].toInt();
+            int index=list[3].toInt();
+            mitk::Point3D point;
+            point[0]=list[4].toDouble();
+            point[1]=list[5].toDouble();
+            point[2]=list[6].toDouble();
+
+            if(!IDList.contains(id)) {
+                IDList<<id;
+                QHash<int,mitk::Point3D> data;
+                dataList<<data;
+            }
+
+            int loc=IDList.lastIndexOf(id);
+            dataList[loc][index]=point;
+
+        }
+
+        if(line.contains("set",Qt::CaseInsensitive) && 
+           line.contains("gPathPoints",Qt::CaseInsensitive) && 
+           line.contains("splinePts",Qt::CaseInsensitive) && 
+           line.contains("list",Qt::CaseInsensitive) ) {
+            QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+            int id=list[2].toInt();
+
+            std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints;
+
+            line = in.readLine();
+            int posID=-1;
+            while (!line.contains("]")) {
+                posID++;
+                QStringList listx = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                sv4guiPathElement::sv4guiPathPoint pathPoint;
+                pathPoint.id=posID;
+                pathPoint.pos[0]=listx[1].toDouble();
+                pathPoint.pos[1]=listx[2].toDouble();
+                pathPoint.pos[2]=listx[3].toDouble();
+                pathPoint.tangent[0]=listx[5].toDouble();
+                pathPoint.tangent[1]=listx[6].toDouble();
+                pathPoint.tangent[2]=listx[7].toDouble();
+                pathPoint.rotation[0]=listx[9].toDouble();
+                pathPoint.rotation[1]=listx[10].toDouble();
+                pathPoint.rotation[2]=listx[11].toDouble();
+                pathPoints.push_back(pathPoint);
+
+                line = in.readLine();
+            }
+
+            dataHash[id]=pathPoints;
+        }
+
+    }
+    inputFile.close();
+}
+
+//---------------------
+// CreateGroupFromFile
+//---------------------
+// Create a PathGroup from a file.
+//
+// This used by the Python API to read in legacy paths.
+//
+// A legacy path file may contain more than one path so a list
+// of PathGroup pointers is returned..
+//
+std::vector<sv3::PathGroup*> 
+sv4guiPathLegacyIO::CreateGroupFromFile(const std::string& filePath)
 {
-    std::vector<mitk::DataNode::Pointer> nodes;
+    using sv3::PathGroup;
+    using sv3::PathElement;
 
     QList<int> IDList;
     QList<QHash<int,mitk::Point3D>> dataList;
     QHash<int,QString> IDNames;
     QHash<int,int> IDSplineNum;
-
     QHash<int,std::vector<sv4guiPathElement::sv4guiPathPoint>> dataHash;
 
-    QFile inputFile(filePath);
-    if (inputFile.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&inputFile);
-        while (!in.atEnd())
-        {
-//            QString line = in.readLine().toLower();
-            QString line = in.readLine();
+    // Read path data from a file.
+    ReadDataFromFile(QString::fromStdString(filePath), IDList, dataList, IDNames, IDSplineNum, dataHash);
 
-            if(line.contains("set",Qt::CaseInsensitive) && line.contains("gPathPoints",Qt::CaseInsensitive) && line.contains("name",Qt::CaseInsensitive))
-            {
-                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-                IDNames[list[2].toInt()]=list[4];
-            }
+    // Create a PathGroup* list from the data.
+    //
+    std::vector<sv3::PathGroup*> pathGroups;
 
-            if(line.contains("set",Qt::CaseInsensitive) && line.contains("gPathPoints",Qt::CaseInsensitive) && line.contains("numSplinePts",Qt::CaseInsensitive))
-            {
-                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-                IDSplineNum[list[2].toInt()]=list[4].toInt();
-            }
+    for (int i = 0; i < IDList.size(); i++) {
+        auto pathGroup = new PathGroup();
+        pathGroup->SetPathID(IDList[i]);
+        pathGroup->SetName(IDNames[IDList[i]].toStdString());
+        pathGroup->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
+        pathGroup->SetCalculationNumber(IDSplineNum[IDList[i]]);
 
-            if(line.contains("set",Qt::CaseInsensitive) && line.contains("gPathPoints",Qt::CaseInsensitive) && !line.contains("name",Qt::CaseInsensitive)
-                    && !line.contains("numSplinePts",Qt::CaseInsensitive) && !line.contains("splinePts",Qt::CaseInsensitive) )
-            {
-                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-                int id=list[2].toInt();
-                int index=list[3].toInt();
-                mitk::Point3D point;
-                point[0]=list[4].toDouble();
-                point[1]=list[5].toDouble();
-                point[2]=list[6].toDouble();
+        auto pe = new PathElement();
+        pe->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
+        pe->SetCalculationNumber(IDSplineNum[IDList[i]]);
 
-                if(!IDList.contains(id))
-                {
-                    IDList<<id;
-                    QHash<int,mitk::Point3D> data;
-                    dataList<<data;
-                }
-
-                int loc=IDList.lastIndexOf(id);
-                dataList[loc][index]=point;
-
-            }
-
-            if(line.contains("set",Qt::CaseInsensitive) && line.contains("gPathPoints",Qt::CaseInsensitive) && line.contains("splinePts",Qt::CaseInsensitive)
-                    && line.contains("list",Qt::CaseInsensitive) )
-            {
-                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-                int id=list[2].toInt();
-
-                std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints;
-
-                line = in.readLine();
-                int posID=-1;
-                while (!line.contains("]"))
-                {
-                    posID++;
-                    QStringList listx = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-                    sv4guiPathElement::sv4guiPathPoint pathPoint;
-                    pathPoint.id=posID;
-                    pathPoint.pos[0]=listx[1].toDouble();
-                    pathPoint.pos[1]=listx[2].toDouble();
-                    pathPoint.pos[2]=listx[3].toDouble();
-                    pathPoint.tangent[0]=listx[5].toDouble();
-                    pathPoint.tangent[1]=listx[6].toDouble();
-                    pathPoint.tangent[2]=listx[7].toDouble();
-                    pathPoint.rotation[0]=listx[9].toDouble();
-                    pathPoint.rotation[1]=listx[10].toDouble();
-                    pathPoint.rotation[2]=listx[11].toDouble();
-                    pathPoints.push_back(pathPoint);
-
-                    line = in.readLine();
-                }
-
-                dataHash[id]=pathPoints;
-            }
-
+        std::vector<std::array<double, 3>> controlPoints;
+        for(int j = 0; j < dataList[i].size(); j++) {
+            auto mitkPt = dataList[i][j];
+            controlPoints.push_back({mitkPt[0], mitkPt[1], mitkPt[2]});
         }
-        inputFile.close();
+        pe->SetControlPoints(controlPoints, false);
 
-        for(int i=0; i<IDList.size();i++)
-        {
-            sv4guiPath::Pointer path = sv4guiPath::New();
-            path->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
-            path->SetCalculationNumber(IDSplineNum[IDList[i]]);
-            path->SetPathID(IDList[i]);
+        std::vector<PathElement::PathPoint> pathPoints;
+        auto points = dataHash[IDList[i]];
 
-            sv4guiPathElement* pe = new sv4guiPathElement();
-            pe->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
-            pe->SetCalculationNumber(IDSplineNum[IDList[i]]);
-
-            std::vector<mitk::Point3D> controlPoints;
-            for(int j=0;j<dataList[i].size();j++)
-            {
-                controlPoints.push_back(dataList[i][j]);
+        for (auto const& point : points) {
+            PathElement::PathPoint pathPoint;
+            pathPoint.id = point.id;
+            for (int j = 0; j < 3; j++) {
+                pathPoint.pos[j] = point.pos[j];
+                pathPoint.tangent[j] = point.tangent[j];
+                pathPoint.rotation[j] = point.rotation[j];
             }
-            pe->SetControlPoints(controlPoints,false);
-            pe->SetPathPoints(dataHash[IDList[i]]);
-
-            path->SetPathElement(pe);
-
-            mitk::DataNode::Pointer pathNode = mitk::DataNode::New();
-            pathNode->SetData(path);
-            pathNode->SetName(IDNames[IDList[i]].toStdString());
-
-            nodes.push_back(pathNode);
+            pathPoints.push_back(pathPoint);
         }
+
+        pe->SetPathPoints(pathPoints);
+        pathGroup->SetPathElement(pe);
+        pathGroups.push_back(pathGroup);
+    }
+
+    return pathGroups;
+}
+
+//----------
+// ReadFile
+//----------
+// Create an MITK Path Data Node from the data in a file.
+//
+std::vector<mitk::DataNode::Pointer> sv4guiPathLegacyIO::ReadFile(QString filePath)
+{
+    QList<int> IDList;
+    QList<QHash<int,mitk::Point3D>> dataList;
+    QHash<int,QString> IDNames;
+    QHash<int,int> IDSplineNum;
+    QHash<int,std::vector<sv4guiPathElement::sv4guiPathPoint>> dataHash;
+
+    // Read the path data.
+    ReadDataFromFile(filePath, IDList, dataList, IDNames, IDSplineNum, dataHash);
+
+    // Create Data Nodes.
+    //
+    std::vector<mitk::DataNode::Pointer> nodes;
+
+    for (int i=0; i<IDList.size();i++) {
+        sv4guiPath::Pointer path = sv4guiPath::New();
+        path->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
+        path->SetCalculationNumber(IDSplineNum[IDList[i]]);
+        path->SetPathID(IDList[i]);
+
+        sv4guiPathElement* pe = new sv4guiPathElement();
+        pe->SetMethod(sv3::PathElement::CONSTANT_TOTAL_NUMBER);
+        pe->SetCalculationNumber(IDSplineNum[IDList[i]]);
+
+        std::vector<mitk::Point3D> controlPoints;
+        for(int j=0;j<dataList[i].size();j++) {
+            controlPoints.push_back(dataList[i][j]);
+        }
+        pe->SetControlPoints(controlPoints,false);
+        pe->SetPathPoints(dataHash[IDList[i]]);
+
+        path->SetPathElement(pe);
+
+        mitk::DataNode::Pointer pathNode = mitk::DataNode::New();
+        pathNode->SetData(path);
+        pathNode->SetName(IDNames[IDList[i]].toStdString());
+
+        nodes.push_back(pathNode);
     }
 
     return nodes;

@@ -48,9 +48,8 @@ public:
     std::vector<mitk::BaseData::Pointer> Read() override;
     static std::vector<mitk::BaseData::Pointer> ReadFile(std::string fileName);
     mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
-
-   static sv4guiContourGroup::Pointer CreateGroupFromFile(std::string fileName);
-
+    static sv4guiContourGroup::Pointer CreateGroupFromFile(std::string fileName);
+    static void WriteToFile(const sv4guiContourGroup* group, const std::string& fileName);
     void Write() override;
     mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 

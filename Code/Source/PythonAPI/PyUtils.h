@@ -58,6 +58,7 @@ class SV_EXPORT_PYTHON_API PyUtilApiFunction
       PyUtilApiFunction(const std::string& format, PyObject* pyRunTimeErr, const char* funcName);
       void error(std::string msg);
       PyObject * argsError();
+      void warning(std::string msg);
       std::string formatString; 
       const char* format; 
       std::string msgp; 
