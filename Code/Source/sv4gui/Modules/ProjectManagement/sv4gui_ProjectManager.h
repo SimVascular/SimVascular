@@ -129,6 +129,14 @@ class FileExtension
     static const QString IMAGE_HEADER;  
 };
 
+class  XmlProjectElementNames
+{
+  public:
+    static const QString ROOT;
+    static const QString VERSION;
+    static const std::set<QString> valid_names;
+};
+
 }
 
 //----------------------
@@ -143,14 +151,20 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 {
 
   public:
+    sv4guiProjectManager();
     static const QString SVPROJ_CONFIG_FILE_NAME;
     static const QString IMAGE_OBJECT_INFORMATION_FILE_NAME;
+    static const QString SV_PROJECT_FILE_NAME;
+
+    static QString simvascularVersion_;
 
     // project methods
     static void AddProject(mitk::DataStorage::Pointer dataStorage, QString projectName, QString projParentDir, bool newProject);
+    static void ReadProjectfile(const QString& projPath, QString& version);
     static void SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode);
     static void SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath);
     static void SaveAllProjects(mitk::DataStorage::Pointer dataStorage);
+    static void WriteProjectFile(const QString& projPath);
 
     // data node methods
     static void LoadData(mitk::DataNode::Pointer dataNode);
