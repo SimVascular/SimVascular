@@ -312,16 +312,13 @@ void sv4guiContourGroupIO::WriteToFile(const sv4guiContourGroup* group, const st
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
 
-    auto  version = new TiXmlElement("format");
-    version->SetAttribute("version",  "1.0" );
-    document.LinkEndChild(version);
-
     auto  groupElement = new TiXmlElement("contourgroup");
     groupElement->SetAttribute("path_name", group->GetPathName());
     groupElement->SetAttribute("path_id", group->GetPathID());
     groupElement->SetDoubleAttribute("reslice_size", group->GetResliceSize());
     groupElement->SetAttribute("point_2D_display_size",group->GetProp("point 2D display size"));
     groupElement->SetAttribute("point_size",group->GetProp("point size"));
+    groupElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(groupElement);
 
     for(int t=0;t<group->GetTimeSize();t++) {
