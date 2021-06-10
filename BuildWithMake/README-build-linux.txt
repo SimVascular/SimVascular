@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
             Compiling Instructions for SimVascular on Linux
-                       Revised 2020-04-12
+                       Revised 2021-06-10
 ------------------------------------------------------------------------
 
 --------
@@ -12,24 +12,23 @@ makefiles.  You must override the deafult options to build on linux.
 
 Our base test configuration for linux is:
 
-Highly recommended:
+Recommended:
 
 Ubuntu 18.04 64-bit desktop (w/ patches)
 Intel 7/9 processor
-gcc/g++ version 7.3
+gcc/g++ version 7.5
 
-minimim requirements:
+Partially support platforms:
 
-Ubuntu 16.04 64-bit desktop (w/ patches)
+Ubuntu 20.04 64-bit desktop (w/ patches)
 Intel 7/9 processor
-gcc/g++ version 5.4
+gcc/g++ version 7.5 NOTE: gcc 9 is not supported!!
 
-Note: there is currently a bug if you build the externals
-      and SV on the same system under Ubuntu 16.
-      It crashes on launch. This problem does not exist on Ubuntu 18
-      so it is the recommended platform.
+NOTE: On Ubuntu 20, you need to switch to the gcc 7 compilers to compile SV.  For help, see for example:
 
-experimental platform:
+  * https://linuxconfig.org/how-to-switch-between-multiple-gcc-and-g-compiler-versions-on-ubuntu-20-04-lts-focal-fossa
+
+Experimental platforms:
 
 CentOS 8.1 64-bit (w/ patches)
 Intel 7/9 processor
@@ -38,9 +37,9 @@ gcc/g++ version 8.3
 Note: SimVascular builds and launches on CentOS but no testing has
 been done.
 
--------------------------------
-Major Steps (2019.06 externals)
--------------------------------
+-----------------------------------------------
+Major Steps (2019.06 externals) - for Ubuntu 18
+-----------------------------------------------
 
 1. Ubuntu prerequisities
 ------------------------
@@ -99,5 +98,7 @@ from the command line anywhere:
 7.  To build external open source packages (very optional)
 ----------------------------------------------------------
 
+% cd Externals/Prep/2019.06
+% source ./ubuntu-18-prep.sh
 % cd Externals/Make/2019.06
-% source build-sv-exeternals-linux.sh
+% source ./build-sv-exeternals-linux.sh
