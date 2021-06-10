@@ -160,7 +160,7 @@ class SV4GUIMODULEPROJECTMANAGEMENT_EXPORT sv4guiProjectManager
 
     // project methods
     static void AddProject(mitk::DataStorage::Pointer dataStorage, QString projectName, QString projParentDir, bool newProject);
-    static void ReadProjectfile(const QString& projPath, QString& version);
+    static void ReadProjectFile(const QString& projPath, QString& version);
     static void SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode);
     static void SaveProjectAs(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode, QString saveFilePath);
     static void SaveAllProjects(mitk::DataStorage::Pointer dataStorage);

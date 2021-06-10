@@ -269,7 +269,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
 
     } else {
         ReadImageInfo(projPath, imageFilePath, imageFileName, imageHeaderFileName, imageName);
-        ReadProjectfile(projPath, simvascularVersion);
+        ReadProjectFile(projPath, simvascularVersion);
     }
 
     // Create the SV Data Manager top level plugin mitk data nodes.
@@ -624,11 +624,11 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
 }
 
 //-----------------
-// ReadProjectfile
+// ReadProjectFile
 //-----------------
 // Read the SimVascular project file.
 //
-void sv4guiProjectManager::ReadProjectfile(const QString& projPath, QString& version)
+void sv4guiProjectManager::ReadProjectFile(const QString& projPath, QString& version)
 {
   using namespace sv4gui_project_manager;
   QString projFilePath = projPath + "/" + sv4guiProjectManager::SV_PROJECT_FILE_NAME;
