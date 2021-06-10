@@ -16,7 +16,9 @@ osid=$(lsb_release -si)
 case "$osid" in
 
   'Ubuntu')
+     sudo nmcli networking off
      sudo ./Originals/qt/qt-opensource-linux-x64-REPLACEME_SV_QT_VERSION.run --script tmp/qt.installer-noninteractive.qs
+     sudo nmcli networking on
      ;;
 
   'CentOS')
