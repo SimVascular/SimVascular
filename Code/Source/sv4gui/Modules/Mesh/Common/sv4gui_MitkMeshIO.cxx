@@ -127,13 +127,10 @@ void sv4guiMitkMeshIO::WriteGroupToFile(sv4guiMitkMesh* mitkMesh, std::string& f
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
 
-    auto  version = new TiXmlElement("format");
-    version->SetAttribute("version",  "1.0" );
-    document.LinkEndChild(version);
-
     auto  mmElement = new TiXmlElement("mitk_mesh");
     mmElement->SetAttribute("type", mitkMesh->GetType());
     mmElement->SetAttribute("model_name", mitkMesh->GetModelName());
+    mmElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(mmElement);
 
     for(int t=0;t<mitkMesh->GetTimeSize();t++)

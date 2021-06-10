@@ -377,12 +377,9 @@ void sv4guiModelIO::WriteGroupToFile(sv4guiModel* model, std::string& fileName)
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
 
-    auto  version = new TiXmlElement("format");
-    version->SetAttribute("version",  "1.0" );
-    document.LinkEndChild(version);
-
     auto  modelElement = new TiXmlElement("model");
     modelElement->SetAttribute("type", model->GetType());
+    modelElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(modelElement);
 
     for(int t=0;t<model->GetTimeSize();t++)

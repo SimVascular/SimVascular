@@ -126,15 +126,12 @@ void sv4guiPathIO::Write()
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
 
-    auto  version = new TiXmlElement("format");
-    version->SetAttribute("version",  "1.0" );
-    document.LinkEndChild(version);
-
     auto  pathElement = new TiXmlElement("path");
     pathElement->SetAttribute("id", path->GetPathID());
     pathElement->SetAttribute("method", path->GetMethod());
     pathElement->SetAttribute("calculation_number", path->GetCalculationNumber());
     pathElement->SetDoubleAttribute("spacing", path->GetSpacing());
+    pathElement->SetAttribute("version",  "1.0" );
     
     //only for GUI
     pathElement->SetDoubleAttribute("reslice_size", path->GetResliceSize());
