@@ -1924,10 +1924,11 @@ void sv4guiROMSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> no
     }
 
     // Set the model order.
-    if (ui->ModelOrderZero_RadioButton->isChecked()) { 
-        m_MitkJob->SetModelOrder("0");
-    } else if (ui->ModelOrderOne_RadioButton->isChecked()) { 
-        m_MitkJob->SetModelOrder("1");
+    auto model_order = m_MitkJob->GetModelOrder();
+    if (model_order == "0") { 
+        ui->ModelOrderZero_RadioButton->setChecked(true); 
+    } else if (model_order == "1") { 
+       ui->ModelOrderOne_RadioButton->setChecked(true);
     }
 
     EnableConnection(false);
@@ -2137,7 +2138,7 @@ void sv4guiROMSimulationView::UpdateGUIBasic()
     //MITK_INFO << msg;
     //MITK_INFO << msg << "--------- UpdateGUIBasic ----------";
 
-    sv4guiROMSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
 
     if (job == NULL) {
         job = new sv4guiROMSimJob();
@@ -3384,7 +3385,6 @@ void sv4guiROMSimulationView::CreateSimulationFiles()
 void sv4guiROMSimulationView::RunJob()
 {
     auto msg = "[sv4guiROMSimulationView::RunJob] ";
-    //MITK_INFO << msg << "--------- RunJob ----------"; 
 
     if (!m_MitkJob) {
         return;
@@ -3396,6 +3396,56 @@ void sv4guiROMSimulationView::RunJob()
         return;
     }
     MITK_INFO << msg << "Job path: " << jobPath;
+
+    if (ui->ModelOrderZero_RadioButton->isChecked()) { 
+        RunZeroDSimulationJob(jobPath);
+    } else {
+        RunOneDSimulationJob(jobPath);
+    }
+
+}
+
+//-----------------------
+// RunZeroDSimulationJob
+//-----------------------
+// Execute a 0D simulation job.
+//
+// Arguments:
+//   jobPath: The simulation results output directory.
+//
+void sv4guiROMSimulationView::RunZeroDSimulationJob(const QString& jobPath)
+{
+    // Set job properties used to write solver log.
+    //
+    m_JobNode->SetStringProperty("output directory", GetJobPath().toStdString().c_str());
+    m_JobNode->SetStringProperty("solver log file", sv4guiROMSimulationView::SOLVER_LOG_FILE_NAME.toStdString().c_str());
+
+    sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
+
+    QDir dir(jobPath);
+    dir.mkpath(jobPath);
+
+    // Execute the 0D solver.
+    auto pythonInterface = sv4guiROMSimulationPython();
+    auto statusMsg = "Executing a 0D simulation ..."; 
+    ui->JobStatusValueLabel->setText(statusMsg);
+    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+    auto status = pythonInterface.ExecuteZeroDSimulation(jobPath.toStdString(), job);
+
+    statusMsg = "The 0D simulation has completed."; 
+    ui->JobStatusValueLabel->setText(statusMsg);
+    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+}
+
+//----------------------
+// RunOneDSimulationJob 
+//----------------------
+// Execute a 1D simulation job.
+//
+void sv4guiROMSimulationView::RunOneDSimulationJob(const QString& jobPath)
+{
+    auto msg = "[sv4guiROMSimulationView::RunJob] ";
+    //MITK_INFO << msg << "--------- RunJob ----------"; 
 
     // Get the solver executable.
     auto solverExecutable = GetSolverExecutable();
@@ -3417,7 +3467,7 @@ void sv4guiROMSimulationView::RunJob()
     }
 */
 
-    mitk::StatusBar::GetInstance()->DisplayText("Running simulation ...");
+    mitk::StatusBar::GetInstance()->DisplayText("Running 1D simulation ...");
 
     QProcess* solverProcess = new QProcess(m_Parent);
     solverProcess->setWorkingDirectory(jobPath);

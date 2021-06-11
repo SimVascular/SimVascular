@@ -35,6 +35,7 @@
 #include "SimVascular.h"
 
 #include <sv4guiModuleSegmentationExports.h>
+#include "sv4gui_ContourGroup.h"
 
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
@@ -50,6 +51,8 @@ public:
   virtual ~sv4guiSegmentationLegacyIO(){}
 
   static mitk::DataNode::Pointer ReadContourGroupFile(QString filePath) ;
+
+  static sv4guiContourGroup::Pointer CreateGroupFromFile(const std::string& fileName);
 
   static std::vector<mitk::DataNode::Pointer> ReadFiles(QString segDir);
 

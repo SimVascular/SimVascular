@@ -29,6 +29,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The sv4guiROMSimulationPython class methods defined here are primarily used to 
+// execute 0D and 1D simulation Python scripts.
+//
+// The 'GenerateSolverInput()' method generates a 1D solver input file. This file
+// is also used by the 0D solver.
+//
+
 #include <Python.h>
 
 #include <map>
@@ -57,7 +64,9 @@ sv4guiROMSimulationPython::~sv4guiROMSimulationPython()
 //--------------
 // GenerateMesh   
 //--------------
-// Generate a 1D mesh. 
+// Generate a mesh. 
+//
+// The mesh is the centerlines geometry computed for an SV model (polygonal surface).
 //
 // Script arguments: 
 //
@@ -68,7 +77,7 @@ sv4guiROMSimulationPython::~sv4guiROMSimulationPython()
 //     mesh-output-file: The name of the mesh file to write (.vtp format).
 //
 bool sv4guiROMSimulationPython::GenerateMesh(const std::string& outputDir, const std::string& centerlinesFile,
-                                            const std::string& meshFile) 
+                                             const std::string& meshFile) 
 {
   std::string msg = "[sv4guiROMSimulationPython::GenerateMesh] ";
   MITK_INFO << msg << "---------- GenerateMesh ----------";
@@ -89,7 +98,7 @@ bool sv4guiROMSimulationPython::GenerateMesh(const std::string& outputDir, const
   //std::string cmd = "import " + pythonModuleName + "\n";
   //cmd += pythonModuleName + ".run(";
 
-  pName = PyUnicode_DecodeFSDefault(m_PythonModuleName.c_str());
+  pName = PyUnicode_DecodeFSDefault(m_PythonROMSimulationModuleName.c_str());
 
   pModule = PyImport_Import(pName);
   Py_DECREF(pName);
@@ -104,6 +113,11 @@ bool sv4guiROMSimulationPython::GenerateMesh(const std::string& outputDir, const
 // GenerateSolverInput
 //---------------------
 // Generate a 1D solver input file.
+//
+// The solver input file is used by both the 0D and 1D solvers.
+//
+// The 'run_from_c' function, defined in 'generate_1d_mesh.py', is called
+// with args and kwargs function arguments. 
 //
 // Example script arguments: 
 //
@@ -133,11 +147,11 @@ bool sv4guiROMSimulationPython::GenerateSolverInput(const std::string outputDire
 
   // Import the 1D mesh generation module.
   //
-  auto pyName = PyUnicode_DecodeFSDefault((char*)m_PythonModuleName.c_str());
+  auto pyName = PyUnicode_DecodeFSDefault((char*)m_PythonROMSimulationModuleName.c_str());
   auto pyModule = PyImport_Import(pyName);
 
   if (pyModule == nullptr) {
-      auto msg = "Unable to load the Python '" + QString(m_PythonModuleName.c_str()) + "' module.";
+      auto msg = "Unable to load the Python '" + QString(m_PythonROMSimulationModuleName.c_str()) + "' module.";
       MITK_ERROR << msg;
       QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
       return false;
@@ -151,7 +165,7 @@ bool sv4guiROMSimulationPython::GenerateSolverInput(const std::string outputDire
   auto pyFunc = PyDict_GetItemString(pyDict, (char*)pyFuncName);
 
   if (!PyCallable_Check(pyFunc)) {
-      auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(m_PythonModuleName.c_str()) + "' module.";
+      auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(m_PythonROMSimulationModuleName.c_str()) + "' module.";
       MITK_ERROR << msg;
       QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
       return false;
@@ -268,24 +282,90 @@ bool sv4guiROMSimulationPython::GenerateSolverInput(const std::string outputDire
   MITK_INFO << msg << "Done!";
 */
   return SV_OK;
+} 
+
+//------------------------
+// ExecuteZeroDSimulation
+//------------------------
+// Execute a 0D simulation.
+//
+// The svZeroDSolver.py Python script is executed by calling the 'run_from_c' function. 
+//
+bool sv4guiROMSimulationPython::ExecuteZeroDSimulation(const std::string outputDirectory, const sv4guiROMSimJob* job)
+{
+  std::string msg = "[sv4guiROMSimulationPython::ExecuteZeroDSimulation] ";
+  MITK_INFO << msg << "---------- ExecuteZeroDSimulation ----------";
+  sv4guiROMSimulationPythonParamNames paramNames;
+
+  // Import the svZeroDSolver module.
+  //
+  auto moduleName = m_PythonZeroDSolverModuleName;
+  auto pyName = PyUnicode_DecodeFSDefault((char*)moduleName.c_str());
+  auto pyModule = PyImport_Import(pyName);
+
+  if (pyModule == nullptr) {
+      auto msg = "Unable to load the Python '" + QString(moduleName.c_str()) + "' module.";
+      MITK_ERROR << msg;
+      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      return false;
+  }
+
+  // Get the module interface function that executes 
+  // module functions based on input arguments. 
+  //
+  auto pyFuncName = (char*)"run_from_c";
+  auto pyDict = PyModule_GetDict(pyModule);
+  auto pyFunc = PyDict_GetItemString(pyDict, (char*)pyFuncName);
+
+  if (!PyCallable_Check(pyFunc)) {
+      auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(moduleName.c_str()) + "' module.";
+      MITK_ERROR << msg;
+      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      return false;
+  }
+
+  // Create an argument containing the name of the solver.in file. 
+  //
+  auto fileName = outputDirectory + "/" + m_PythonZeroDSolverFileName;
+  auto args = PyTuple_New(1);
+  auto argValue = PyUnicode_DecodeFSDefault(fileName.c_str());
+  PyTuple_SetItem(args, 0, argValue);
+
+  // Create the **kwarg arguments that are the input arguments to the module.
+  //
+  // No parameters are currently passed.
+  //
+  auto kwargs = PyDict_New();
+
+  // Execute the Python script.
+  //
+  MITK_INFO << msg << "Execute script ...";
+  auto result = PyObject_Call(pyFunc, args, kwargs);
+  MITK_INFO << msg << "Done.";
+
+  // Check for errors.
+  PyErr_Print();
 }
 
 //--------------
 // StartCommand 
 //--------------
-// Start a command.
+// Start a command used to run a script from 'generate_1d_mesh.py'
+// using the 'run' function.
+//
+// Function arguments are added later.
 //
 std::string sv4guiROMSimulationPython::StartCommand()
 {
-  std::string cmd = "import " + m_PythonModuleName + "\n";
-  cmd += m_PythonModuleName + ".run(";
+  std::string cmd = "import " + m_PythonROMSimulationModuleName + "\n";
+  cmd += m_PythonROMSimulationModuleName + ".run(";
   return cmd;
 }
 
 //-------------
 // AddArgument
 //-------------
-// Add an argument to a command string.
+// Add an named argument to a command string executed as a function.
 //
 std::string sv4guiROMSimulationPython::AddArgument(const std::string& name, const std::string& value, bool last)
 {
@@ -298,12 +378,22 @@ std::string sv4guiROMSimulationPython::AddArgument(const std::string& name, cons
     return arg;
 }
 
+//--------------
+// AddParameter
+//--------------
+// Add a parameter with a single value to a list of parameters.
+//
 bool sv4guiROMSimulationPython::AddParameter(const std::string& name, const std::string& value)
 {
     m_ParameterValues.insert(std::pair<std::string,std::string>(name, value));
     return SV_OK;
 }
 
+//------------------
+// AddParameterList
+//------------------
+// Add a parameter with a list of values to a list of parameters.
+//
 bool sv4guiROMSimulationPython::AddParameterList(const std::string& name, const std::vector<std::string>& values)
 {
     std::string list = "";
@@ -313,32 +403,4 @@ bool sv4guiROMSimulationPython::AddParameterList(const std::string& name, const 
         sep = ",";
     }
     m_ParameterValues.insert(std::pair<std::string,std::string>(name, list));
-}
-
-//-----------
-// WriteMesh 
-//-----------
-// Write the surface mesh on which to generate the network to a VTK .vtp
-// file. This file is read in by the Python fractal tree code.
-
-bool sv4guiROMSimulationPython::WriteMesh(const std::string fileName)
-{
-/*
-  vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-  writer->SetFileName(fileName.c_str());
-  writer->SetInputData(this->meshPolyData);
-  writer->Write();
-*/
-  return SV_ERROR;
-}
-
-//-----------------
-// WriteParameters
-//-----------------
-// Write the parameters used to generate a Purkinje network to a text file.
-
-bool sv4guiROMSimulationPython::WriteParameters(const std::string fileName, 
-    std::map<std::string, std::string>& params)
-{
-  return SV_ERROR;
 }

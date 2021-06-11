@@ -50,9 +50,9 @@ PyUtilApiFunction::PyUtilApiFunction(const std::string& format, PyObject* pyErro
   this->pyError = pyError;
 }
 
-//--------
+//-------
 // error
-//--------
+//-------
 // Set the Python exception description.
 //
 void PyUtilApiFunction::error(std::string msg)
@@ -74,6 +74,22 @@ PyUtilApiFunction::argsError()
 {
   return PyUtilResetException(this->pyError);
 }
+
+//---------
+// warning
+//---------
+// Raise a warning exception. 
+//
+// This causes a 'RuntimeWarning' but allows the script
+// to continue.
+//
+void PyUtilApiFunction::warning(std::string msg)
+{
+  Py_ssize_t stack_level = 1;
+  auto emsg = this->msgp + msg;
+  PyErr_WarnEx(nullptr, emsg.c_str(), stack_level);
+}
+
 
 //---------------------
 // PyUtilGetObjectType

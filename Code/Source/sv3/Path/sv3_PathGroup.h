@@ -57,31 +57,27 @@ public:
     virtual ~PathGroup();
 
     virtual void Expand( unsigned int timeSteps );
-
     virtual unsigned int GetTimeSize() const;
-
     virtual int GetSize( unsigned int t = 0 ) const;
 
     PathElement* GetPathElement(unsigned int t = 0) const;
-
     void SetPathElement(PathElement* pathElement, unsigned int t = 0);
 
     void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
 
-    int GetPathID() const;
+    std::string GetName() const;
+    void SetName(const std::string& name);
 
+    int GetPathID() const;
     void SetPathID(int pathID);
 
     void SetSpacing(double spacing);
-
     double GetSpacing() const;
 
     void SetMethod(sv3::PathElement::CalculationMethod method = sv3::PathElement::CONSTANT_TOTAL_NUMBER );
-
     sv3::PathElement::CalculationMethod GetMethod() const;
 
     void SetCalculationNumber(int number);
-
     int GetCalculationNumber() const;
 
   protected:
@@ -101,6 +97,9 @@ public:
     sv3::PathElement::CalculationMethod m_Method;
 
     int m_CalculationNumber;
+
+    // Name is only set when reading in legacy paths.
+    std::string m_Name;
 
   };
 
