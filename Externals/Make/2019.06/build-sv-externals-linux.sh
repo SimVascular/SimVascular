@@ -17,6 +17,9 @@ case "$osid" in
     'Ubuntu')
 	
 	case "$osver" in
+	    'focal')
+		export SV_EXTERN_LINUX_VERSION=ubuntu_20
+		;;
 	    'disco')
 		export SV_EXTERN_LINUX_VERSION=ubuntu_19
 		;;

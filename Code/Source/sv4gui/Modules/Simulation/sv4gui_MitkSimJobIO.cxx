@@ -276,14 +276,11 @@ void sv4guiMitkSimJobIO::Write()
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
 
-    auto  version = new TiXmlElement("format");
-    version->SetAttribute("version",  "1.0" );
-    document.LinkEndChild(version);
-
     auto  mjElement = new TiXmlElement("mitk_job");
     mjElement->SetAttribute("model_name", mitkSimJob->GetModelName());
     mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName());
     mjElement->SetAttribute("status", mitkSimJob->GetStatus());
+    mjElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(mjElement);
 
     sv4guiSimJob* job=mitkSimJob->GetSimJob();
