@@ -1,6 +1,3 @@
-[submodule "Code/Licensed/ParasolidSolidModel"]
-	path = Code/Licensed/ParasolidSolidModel
-	url = ../LicensedPlugin-ParasolidSolidModel.git
 [submodule "Python/site-packages/svZeroDSolver"]
 	path = Python/site-packages/svZeroDSolver
 	url = ../svZeroDSolver.git
