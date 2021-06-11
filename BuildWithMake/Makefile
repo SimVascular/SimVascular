@@ -271,10 +271,15 @@ machine-learning-network:
 
 #	-/bin/rm -f networks.tar
 
+#clone-zeroDsolver:
+#	if [[ ! -e ../Python/site-packages/svZeroDSolver/svzerodsolver ]];  then \
+#	  /bin/rm -Rf ../Python/site-packages/svZeroDSolver; \
+#	  git clone https://github.com/SimVascular/svZeroDSolver.git ../Python/site-packages/svZeroDSolver; \
+#	fi
+
 clone-zeroDsolver:
 	if [[ ! -e ../Python/site-packages/svZeroDSolver/svzerodsolver ]];  then \
-	  /bin/rm -Rf ../Python/site-packages/svZeroDSolver; \
-	  git clone https://github.com/SimVascular/svZeroDSolver.git ../Python/site-packages/svZeroDSolver; \
+	  git submodule update --init --recursive --remote; \
 	fi
 
 common-pre-build: mksedscript mk_simvascular_options_h machine-learning-network clone-zeroDsolver post-build 
