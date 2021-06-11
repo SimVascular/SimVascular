@@ -1,3 +1,4 @@
 [submodule "Python/site-packages/svZeroDSolver"]
 	path = Python/site-packages/svZeroDSolver
-	url = ../svZeroDSolver.git
+	url = http://github.com/SimVascular/svZeroDSolver.git
+	branch = master
