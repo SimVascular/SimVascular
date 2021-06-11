@@ -121,6 +121,7 @@
 //
 const QString sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME = ".svproj";
 const QString sv4guiProjectManager::IMAGE_OBJECT_INFORMATION_FILE_NAME = "image_information.xml";
+const QString sv4guiProjectManager::SV_PROJECT_FILE_NAME = "simvascular.proj";
 
 namespace sv4gui_project_manager {
 
@@ -207,6 +208,23 @@ namespace sv4gui_project_manager {
     XmlImageHeaderElementNames::TRANSFORM,
   };
 
+  const QString XmlProjectElementNames::ROOT = "simvascular_project";
+  const QString XmlProjectElementNames::VERSION = "version";
+  const std::set<QString> XmlProjectElementNames::valid_names = {
+  };
+
+}
+
+// [TODO:DaveP] How should the version be set?
+QString sv4guiProjectManager::simvascularVersion_ = "1.0";
+
+//----------------------
+// sv4guiProjectManager
+//----------------------
+//
+sv4guiProjectManager::sv4guiProjectManager()
+{
+    // simvascularVersion_ = "1.0";
 }
 
 //------------
@@ -217,6 +235,8 @@ namespace sv4gui_project_manager {
 void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QString projName, QString projParentDir, bool newProject)
 {
     using namespace sv4gui_project_manager;
+
+
     QString projectConfigFileName = sv4guiProjectManager::SVPROJ_CONFIG_FILE_NAME; 
 
     // Create a new project directory and cd to it.
@@ -237,6 +257,7 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
     QString imageFileName;
     QString imageHeaderFileName;
     QString imageName;
+    QString simvascularVersion;
 
     // If a new project then create plugin directories. 
     if (newProject) {
@@ -244,9 +265,11 @@ void sv4guiProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QS
             project_dir.mkdir(name);
         }
         WriteImageInfo(projPath, imageFilePath, imageFileName, imageHeaderFileName, imageName);
+        WriteProjectFile(projPath);
 
     } else {
         ReadImageInfo(projPath, imageFilePath, imageFileName, imageHeaderFileName, imageName);
+        ReadProjectFile(projPath, simvascularVersion);
     }
 
     // Create the SV Data Manager top level plugin mitk data nodes.
@@ -592,6 +615,86 @@ void sv4guiProjectManager::WriteImageInfo(const QString& projPath, const QString
     QDir project_dir(projPath);
     QString xml = doc.toString(4);
     QString filePath = GetImageInfoFilePath(project_dir);
+    QFile file(filePath);
+
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
+        out << xml <<endl;
+    }
+}
+
+//-----------------
+// ReadProjectFile
+//-----------------
+// Read the SimVascular project file.
+//
+void sv4guiProjectManager::ReadProjectFile(const QString& projPath, QString& version)
+{
+  using namespace sv4gui_project_manager;
+  QString projFilePath = projPath + "/" + sv4guiProjectManager::SV_PROJECT_FILE_NAME;
+
+  QFileInfo checkFile(projFilePath);
+  if (!checkFile.exists()) { 
+      return;
+  }
+
+  QDomDocument doc(XmlProjectElementNames::ROOT);
+  QFile xmlFile(projFilePath);
+  xmlFile.open(QIODevice::ReadOnly);
+  QString *em = NULL;
+  doc.setContent(&xmlFile, em);
+  xmlFile.close();
+
+  // Get ROOT attributes.
+  QDomNode root = doc.namedItem(XmlProjectElementNames::ROOT);
+  version = root.attributes().namedItem(XmlProjectElementNames::VERSION).nodeValue();
+
+  // Parse xml file data.
+  QDomElement docElem = doc.documentElement();
+  QDomNode projObjectNode = docElem.firstChild();
+  QDomNode node = projObjectNode.firstChild();
+
+  while (!node.isNull()) {
+    QDomElement element = node.toElement(); 
+    if (element.isNull()) {
+      continue;
+    }
+    auto tagName = element.tagName();
+
+    if (XmlProjectElementNames::valid_names.count(tagName) == 0) { 
+      auto msg = "An unknown element '" + tagName + "' was found in the project file '" + projFilePath + "'.";
+      QMessageBox::warning(NULL, "", msg);
+    }
+
+    node = node.nextSibling();
+  }
+}
+
+//------------------
+// WriteProjectFile
+//------------------
+// Writte the SimVascular project file.
+//
+void sv4guiProjectManager::WriteProjectFile(const QString& projPath)
+{
+    using namespace sv4gui_project_manager;
+
+    // Create XML doc.
+    QDomDocument doc;
+    QDomNode xmlNode = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+    doc.appendChild(xmlNode);
+
+    std::time_t modtime = std::time(nullptr);
+
+    // Add data.
+    QDomElement root = doc.createElement(XmlProjectElementNames::ROOT);
+    root.setAttribute(XmlProjectElementNames::VERSION, sv4guiProjectManager::simvascularVersion_);
+    doc.appendChild(root);
+
+    // Write the data to a file.
+    QDir project_dir(projPath);
+    QString xml = doc.toString(4);
+    QString filePath = projPath + "/" + sv4guiProjectManager::SV_PROJECT_FILE_NAME;
     QFile file(filePath);
 
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
