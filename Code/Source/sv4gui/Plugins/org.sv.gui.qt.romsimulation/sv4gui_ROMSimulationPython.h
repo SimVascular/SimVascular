@@ -143,7 +143,7 @@ class SV_QT_ROMSIMULATION sv4guiROMSimulationPython
 
     // The 0D solver Python package name.
     const std::string m_PythonZeroDSolverModuleName = "svZeroDSolver.svzerodsolver";
-    const std::string m_PythonZeroDSolverFileName = "solver.in";
+    const std::string m_PythonZeroDSolverFileName = "solver_0d.in";
 
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value);
