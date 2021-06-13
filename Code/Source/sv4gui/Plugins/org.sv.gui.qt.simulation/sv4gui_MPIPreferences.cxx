@@ -69,9 +69,9 @@ sv4guiMPIPreferences::~sv4guiMPIPreferences()
 {
 }
 
-//---------------------------
+//-----------------------
 // InitializeMPILocation
-//---------------------------
+//-----------------------
 // Find the location of solver binaries and mpiexec.
 //
 // The the full binary path is displayed in the SimVascular 
