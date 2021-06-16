@@ -1475,6 +1475,7 @@ int cvLevelSetSparseGrid::PollNeighborSigns( int i, int j, int k )
   } else {
     assert(0);
   }
+  return 0;
 }
 
 
