@@ -115,6 +115,7 @@ int cvStateArray::GetSign( int ix )
     return 1;
   }
   assert(0);
+  return 0;
 }
 
 

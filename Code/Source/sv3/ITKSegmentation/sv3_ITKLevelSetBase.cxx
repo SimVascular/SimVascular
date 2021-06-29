@@ -931,6 +931,7 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 
 	}
 
+   return TCL_OK;
  }
 
 

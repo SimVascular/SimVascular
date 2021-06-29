@@ -345,6 +345,8 @@ bool sv4guiROMSimulationPython::ExecuteZeroDSimulation(const std::string outputD
 
   // Check for errors.
   PyErr_Print();
+
+  return true;
 }
 
 //--------------
@@ -403,4 +405,5 @@ bool sv4guiROMSimulationPython::AddParameterList(const std::string& name, const 
         sep = ",";
     }
     m_ParameterValues.insert(std::pair<std::string,std::string>(name, list));
+    return SV_OK;
 }
