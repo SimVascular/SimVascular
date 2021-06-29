@@ -2120,11 +2120,14 @@ void sv4guiProjectManager::CreatePlugin(mitk::DataStorage::Pointer dataStorage, 
 //
 void sv4guiProjectManager::UpdateSimulations1dFolder(const QString& projPath, const QString& romSimFolderName)
 {
+  // If there is no 'Simulations1d' directory then just 
+  // create a 'ROMSimulations' directory.
+  //
   QDir project_dir(projPath);
   auto sim1dFolder = project_dir.absoluteFilePath("Simulations1d");
-
   QFileInfo checkFile(sim1dFolder);
   if (!checkFile.exists()) { 
+    project_dir.mkdir("ROMSimulations"); 
     return; 
   }
 
