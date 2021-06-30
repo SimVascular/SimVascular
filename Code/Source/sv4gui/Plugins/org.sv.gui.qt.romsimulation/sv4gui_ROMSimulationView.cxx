@@ -203,7 +203,8 @@ const QString sv4guiROMSimulationView::MODEL_SURFACE_FILE_NAME = "model_surface.
 const QString sv4guiROMSimulationView::OUTLET_FACE_NAMES_FILE_NAME = "outlet_face_names.dat";
 const QString sv4guiROMSimulationView::RCR_BC_FILE_NAME = "rcrt.dat";
 const QString sv4guiROMSimulationView::RESISTANCE_BC_FILE_NAME = "resistance.dat";
-const QString sv4guiROMSimulationView::SOLVER_FILE_NAME = "solver.in";
+const QString sv4guiROMSimulationView::SOLVER_0D_FILE_NAME = "solver_0d.in";
+const QString sv4guiROMSimulationView::SOLVER_1D_FILE_NAME = "solver_1d.in";
 
 // Set the values of the Surface Model Origin types.
 const QString sv4guiROMSimulationView::SurfaceModelSource::MESH_PLUGIN = "Mesh Plugin";
@@ -1923,10 +1924,11 @@ void sv4guiROMSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> no
     }
 
     // Set the model order.
-    if (ui->ModelOrderZero_RadioButton->isChecked()) { 
-        m_MitkJob->SetModelOrder("0");
-    } else if (ui->ModelOrderOne_RadioButton->isChecked()) { 
-        m_MitkJob->SetModelOrder("1");
+    auto model_order = m_MitkJob->GetModelOrder();
+    if (model_order == "0") { 
+        ui->ModelOrderZero_RadioButton->setChecked(true); 
+    } else if (model_order == "1") { 
+       ui->ModelOrderOne_RadioButton->setChecked(true);
     }
 
     EnableConnection(false);
@@ -2136,7 +2138,7 @@ void sv4guiROMSimulationView::UpdateGUIBasic()
     //MITK_INFO << msg;
     //MITK_INFO << msg << "--------- UpdateGUIBasic ----------";
 
-    sv4guiROMSimJob* job=m_MitkJob->GetSimJob();
+    sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
 
     if (job == NULL) {
         job = new sv4guiROMSimJob();
@@ -3383,7 +3385,6 @@ void sv4guiROMSimulationView::CreateSimulationFiles()
 void sv4guiROMSimulationView::RunJob()
 {
     auto msg = "[sv4guiROMSimulationView::RunJob] ";
-    //MITK_INFO << msg << "--------- RunJob ----------"; 
 
     if (!m_MitkJob) {
         return;
@@ -3395,6 +3396,56 @@ void sv4guiROMSimulationView::RunJob()
         return;
     }
     MITK_INFO << msg << "Job path: " << jobPath;
+
+    if (ui->ModelOrderZero_RadioButton->isChecked()) { 
+        RunZeroDSimulationJob(jobPath);
+    } else {
+        RunOneDSimulationJob(jobPath);
+    }
+
+}
+
+//-----------------------
+// RunZeroDSimulationJob
+//-----------------------
+// Execute a 0D simulation job.
+//
+// Arguments:
+//   jobPath: The simulation results output directory.
+//
+void sv4guiROMSimulationView::RunZeroDSimulationJob(const QString& jobPath)
+{
+    // Set job properties used to write solver log.
+    //
+    m_JobNode->SetStringProperty("output directory", GetJobPath().toStdString().c_str());
+    m_JobNode->SetStringProperty("solver log file", sv4guiROMSimulationView::SOLVER_LOG_FILE_NAME.toStdString().c_str());
+
+    sv4guiROMSimJob* job = m_MitkJob->GetSimJob();
+
+    QDir dir(jobPath);
+    dir.mkpath(jobPath);
+
+    // Execute the 0D solver.
+    auto pythonInterface = sv4guiROMSimulationPython();
+    auto statusMsg = "Executing a 0D simulation ..."; 
+    ui->JobStatusValueLabel->setText(statusMsg);
+    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+    auto status = pythonInterface.ExecuteZeroDSimulation(jobPath.toStdString(), job);
+
+    statusMsg = "The 0D simulation has completed."; 
+    ui->JobStatusValueLabel->setText(statusMsg);
+    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+}
+
+//----------------------
+// RunOneDSimulationJob 
+//----------------------
+// Execute a 1D simulation job.
+//
+void sv4guiROMSimulationView::RunOneDSimulationJob(const QString& jobPath)
+{
+    auto msg = "[sv4guiROMSimulationView::RunJob] ";
+    //MITK_INFO << msg << "--------- RunJob ----------"; 
 
     // Get the solver executable.
     auto solverExecutable = GetSolverExecutable();
@@ -3416,7 +3467,7 @@ void sv4guiROMSimulationView::RunJob()
     }
 */
 
-    mitk::StatusBar::GetInstance()->DisplayText("Running simulation ...");
+    mitk::StatusBar::GetInstance()->DisplayText("Running 1D simulation ...");
 
     QProcess* solverProcess = new QProcess(m_Parent);
     solverProcess->setWorkingDirectory(jobPath);
@@ -3596,8 +3647,13 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
     pythonInterface.AddParameter(params.OUTFLOW_BC_INPUT_FILE, outputDir.toStdString());
     WriteBCFiles(outputDir, job, pythonInterface);
 
-    auto solverFileName = SOLVER_FILE_NAME.toStdString(); 
-    pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE, solverFileName); 
+	QString solverFileName;
+	if (modelOrder == "0")
+		solverFileName = SOLVER_0D_FILE_NAME;
+	if (modelOrder == "1")
+		solverFileName = SOLVER_1D_FILE_NAME;
+	pythonInterface.AddParameter(params.SOLVER_OUTPUT_FILE,
+			solverFileName.toStdString());
 
     // Add basic physical parameters.
     auto density = m_TableModelBasic->item(TableModelBasicRow::Density,1)->text().trimmed().toStdString();
@@ -3627,7 +3683,7 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
         return false;
     }
 
-    m_SolverInputFile = outputDir + "/" + SOLVER_FILE_NAME;
+	m_SolverInputFile = outputDir + "/" + solverFileName;
     ui->RunSimulationPushButton->setEnabled(true);
 
     statusMsg = "Simulation files have been created."; 
@@ -4798,9 +4854,16 @@ void sv4guiROMSimulationView::ExportResults()
    auto pythonInterface = sv4guiROMSimulationPythonConvert();
    auto params = pythonInterface.m_ParameterNames;
 
+	QString solverFileName;
+	if (modelOrder == "0")
+		solverFileName = SOLVER_0D_FILE_NAME;
+	if (modelOrder == "1")
+		solverFileName = SOLVER_1D_FILE_NAME;
+
    pythonInterface.AddParameter(params.MODEL_ORDER, modelOrder);
    pythonInterface.AddParameter(params.RESULTS_DIRECTORY, resultDir.toStdString());
-   pythonInterface.AddParameter(params.SOLVER_FILE_NAME, SOLVER_FILE_NAME.toStdString());
+	pythonInterface.AddParameter(params.SOLVER_FILE_NAME,
+			solverFileName.toStdString());
 
    // Set the data names to convert.
    //
@@ -4873,7 +4936,9 @@ void sv4guiROMSimulationView::ExportResults()
    }
    MITK_INFO << msg << "jobName: " << jobName; 
 
-   convertDir = convertDir + "/" + jobName + "-converted-results";
+   QString modelOrderStr = QString::fromStdString(modelOrder);
+
+   convertDir = convertDir + "/" + jobName + "-converted-results_" + modelOrderStr + "d";
    QDir exdir(convertDir);
    exdir.mkpath(convertDir);
 

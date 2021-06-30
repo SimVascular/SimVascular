@@ -70,6 +70,7 @@
 #include "sv_PolyData.h"
 #include "sv_vmtk_utils_init.h"
 #include "sv_vmtk_utils.h"
+#include <vtkTransformPolyDataFilter.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
 
@@ -1446,6 +1447,15 @@ void sv4guiImageProcessing::runCollidingFronts()
 //------------------------
 // Execute the colliding fronts level set computation.
 //
+// The image may be transformed in sv4guiProjectManager::setTransformFromImageHeaderFile().
+// This transforms image geometry (e.g. image slices) from its original coordinate
+// system for display. 
+//
+// The image data does have direction cosines that match the image transformation but 
+// vtkMarchingCubes() does not take this into account. The level set surface is thus
+// in the original coordinate system so it must also be transformed by the image 
+// transformation.
+//
 void sv4guiImageProcessing::ExectuteLevelSet()
 {
   #ifdef dbg_sv4guiImageProcessing_ExectuteLevelSet
@@ -1507,11 +1517,34 @@ void sv4guiImageProcessing::ExectuteLevelSet()
 
   // Extract an isosurface.
   double isovalue = ui->LS_IsoLevel_DoubleSpinBox->value();
-  vtkSmartPointer<vtkImageData> vtkImage = sv4guiImageProcessingUtils::itkImageToVtkImage(lsImage);
-  vtkSmartPointer<vtkPolyData> vtkPd = sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue, false);
+  auto vtkImage = sv4guiImageProcessingUtils::itkImageToVtkImage(lsImage);
+  auto vtkPd = sv4guiImageProcessingUtils::marchingCubes(vtkImage, isovalue, false);
+
+  // Transform the isosurface by the image transformation. 
+  //
+  auto direction_cos = lsImage->GetDirection();
+  auto origin = lsImage->GetOrigin();
+  auto matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  matrix->Identity();
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+        matrix->SetElement(i, j, direction_cos[i][j]);
+    }
+  }
+
+  auto transform = vtkSmartPointer<vtkTransform>::New(); 
+  transform->Translate(origin[0], origin[1], origin[2]);
+  transform->Concatenate(matrix); 
+  transform->Translate(-origin[0], -origin[1], -origin[2]);
+
+  auto transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New(); 
+  transformFilter->SetInputData(vtkPd); 
+  transformFilter->SetTransform(transform); 
+  transformFilter->Update(); 
+  vtkSmartPointer<vtkPolyData> xform_vtkPd = transformFilter->GetOutput(); 
 
   // Save the isosurface.
-  storePolyData(vtkPd);
+  storePolyData(xform_vtkPd);
 }
 
 //------------------

@@ -31,26 +31,30 @@
 
 #include "sv4gui_svFSIbcClass.h"
 
+//--------------------
+// sv4guisvFSIbcClass
+//--------------------
+//
 sv4guisvFSIbcClass::sv4guisvFSIbcClass()
-    {
-        faceName="";
-        bcGrp = "NA";
-        bcType = "Steady";
-        profile = "Flat";
-        eDrn = 0;
-        cplBCPtr = -1;
-        faIn = -1;
-        r = 0.0;
-        g = 0.0;
-        gmFile = "";
-        gtFile = "";
-        gxFile = "";
-        zperm = true;
-        flux = false;
-        projectionFaceName="";
-        imposeIntegral=false;
-        effectiveDirection="";
-    }
+{
+  faceName="";
+  bcGrp = "NA";
+  bcType = "Steady";
+  profile = "Flat";
+  eDrn = 0;
+  cplBCPtr = -1;
+  faIn = -1;
+  r = 0.0;
+  g = 0.0;
+  gmFile = "";
+  gtFile = "";
+  gxFile = "";
+  zperm = true;
+  flux = false;
+  projectionFaceName="";
+  imposeIntegral=false;
+  effectiveDirection="";
+}
 
 sv4guisvFSIbcClass::~sv4guisvFSIbcClass() {}
 

@@ -159,11 +159,18 @@ if(LINUX)
 
 	SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-linux-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
-	#code needed to put qt.conf files in install directory/install package
-	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qt.conf DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/bin")
-
-	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qt_ext.conf DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/svExternals/bin" RENAME "qt.conf")
-	INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../Python/site-packages" DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/Python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}")
+        # we always use DEB on Ubuntu, but CentOS we need to use TGZ
+	if(SV_INSTALLER_TYPE STREQUAL DEB)
+	  #code needed to put qt.conf files in install directory/install package
+	  INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qt.conf DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/bin")
+	  INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qt_ext.conf DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/svExternals/bin" RENAME "qt.conf")
+	  INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../Python/site-packages" DESTINATION "/usr/local/sv/simvascular/${SV_INSTALL_VERSION_DIR}/Python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}")
+	elseif(SV_INSTALLER_TYPE STREQUAL TGZ)
+	  #code needed to put qt.conf files in install directory/install package
+	  INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qt.conf DESTINATION "bin")
+	  INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qt_ext.conf DESTINATION "svExternals/bin" RENAME "qt.conf")
+	  INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../Python/site-packages" DESTINATION "Python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}")
+	endif()
 
 endif()
 #-----------------------------------------------------------------------------

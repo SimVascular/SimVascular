@@ -167,16 +167,13 @@ void sv4guiMitkSeg3DIO::Write()
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
 
-    auto  version = new TiXmlElement("format");
-    version->SetAttribute("version",  "1.0" );
-    document.LinkEndChild(version);
-
     sv4guiSeg3D* seg3D=mitkSeg3D->GetSeg3D();
     if(seg3D)
     {
         sv4guiSeg3DParam& param=seg3D->GetParam();
 
         auto  segElement = new TiXmlElement("seg3d");
+        segElement->SetAttribute("version",  "1.0" );
         document.LinkEndChild(segElement);
 
         auto  paramElement = new TiXmlElement("param");

@@ -1,3 +1,4 @@
-[submodule "Code/Licensed/ParasolidSolidModel"]
-	path = Code/Licensed/ParasolidSolidModel
-	url = git@github.com:SimVascular/LicensedPlugin-ParasolidSolidModel.git
+[submodule "Python/site-packages/svZeroDSolver"]
+	path = Python/site-packages/svZeroDSolver
+	url = https://github.com/SimVascular/svZeroDSolver.git
+	branch = master

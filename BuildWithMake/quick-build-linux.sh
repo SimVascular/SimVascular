@@ -46,16 +46,15 @@ case "$osid" in
 	export EXTERNALS_SV_OS_LONG_NAME_DIR=ubuntu
 	export EXTERNALS_SV_COMPILER_SHORT_NAME=gnu
 	case "$osver" in
-	    'disco')
-		# use 18.04 externals for now
-		export SV_EXTERN_LINUX_VERSION=ubuntu_19
-		export EXTERNALS_SV_FULL_OS_VER_NO=19.04
-		export EXTERNALS_SV_COMPILER_VER_NO=8.3
+	    'focal')
+		export SV_EXTERN_LINUX_VERSION=ubuntu_20
+		export EXTERNALS_SV_FULL_OS_VER_NO=20.04
+		export EXTERNALS_SV_COMPILER_VER_NO=7.5
 		if [ $SV_EXTERNALS_VERSION_NUMBER == '2019.02' ]; then
-		  echo "Error - no 2019.02 for ubuntu 19!"
+		  echo "Error - no 2019.02 for ubuntu 20!"
 		  exit
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
-                  export EXTERNALS_BUILD_DATE=2019.07.22
+                  export EXTERNALS_BUILD_DATE=2021.06.10
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;

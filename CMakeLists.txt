@@ -70,6 +70,9 @@ include(SimVascularFunctionCheckCompilerFlags)
 # No objects built directly with project. Not needed!
 #-----------------------------------------------------------------------------
 
+# Optionally pull in the svZeroDSolver code 
+option(SV_GIT_PULL_SUBMODULES "Check submodules during build" OFF)
+
 # Optionally build the 1D solver plugin.
 option(SV_USE_ONEDSOLVER "Enable building the 1D solver plugin" ON)
 
@@ -149,6 +152,7 @@ ExternalProject_Add(Externals
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_EXAMPLES:BOOL=OFF
     -DSV_USE_MITK:BOOL=${SV_CMAKE_DOWLOAD_MITK_EXTERNAL}
+    -DSV_GIT_PULL_SUBMODULES:BOOL=${SV_GIT_PULL_SUBMODULES}
     -DSV_EXTERNALS_VERSION_NUMBER:STRING=${SV_EXTERNALS_VERSION_NUMBER}
     -DSV_EXTERNALS_USE_PREBUILT_QT:BOOL=${SV_EXTERNALS_USE_PREBUILT_QT}
     -DSV_EXTERNALS_PREBUILT_QT_PATH:PATH=${SV_EXTERNALS_PREBUILT_QT_PATH}

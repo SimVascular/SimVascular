@@ -459,6 +459,23 @@ foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
 endforeach()
 #-----------------------------------------------------------------------------
 
+# add git submodules
+if(SV_GIT_PULL_SUBMODULES)
+  #message(STATUS "inside of SV_GIT_PULL_SUBMODULES")
+  find_package(Git)
+  message (STATUS "Checking if git repository: ${PROJECT_SOURCE_DIR}/../.git")  
+  if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/../.git")
+  # Update submodules as needed
+    message(STATUS "Submodule update")
+    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --remote
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(WARNING "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+    endif()
+  endif()
+endif()
+
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
 if(SV_USE_SV4_GUI)

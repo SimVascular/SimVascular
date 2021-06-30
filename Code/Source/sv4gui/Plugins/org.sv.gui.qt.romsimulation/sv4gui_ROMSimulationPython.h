@@ -29,10 +29,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The classes defined here provide an interface to the 'generate_1d_mesh' 
-// Python script used to generate a 1D mesh from centerlines geometry and 
-// create input files to the 1D solver. 
-//
+// The classes defined here provide an interface for executing 0D and 1D 
+// simulation Python scripts used to create solver input files.. 
+
 #ifndef SV4GUI_ROM_SIMULATION_PYTHON_H
 #define SV4GUI_ROM_SIMULATION_PYTHON_H
 
@@ -48,9 +47,9 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-//------------------------------------
+//-------------------------------------
 // sv4guiROMSimulationPythonParamNames
-//------------------------------------
+//-------------------------------------
 // This class defines valid parameter names used by the 'generate_1d_mesh.py' Python script.
 //
 // The names must match those defined in the 'generate_1d_mesh.py' Args class.
@@ -121,10 +120,11 @@ class SV_QT_ROMSIMULATION sv4guiROMSimulationPythonParamNames
     std::set<std::string> allNames;
 };
 
-//--------------------------
+//---------------------------
 // sv4guiROMSimulationPython
-//--------------------------
-//
+//---------------------------
+// The sv4guiROMSimulationPython class is used as an interface 
+// for executing Python scripts used by the SV 0D and 1D solvers.
 //
 class SV_QT_ROMSIMULATION sv4guiROMSimulationPython 
 {
@@ -137,17 +137,21 @@ class SV_QT_ROMSIMULATION sv4guiROMSimulationPython
     vtkSmartPointer<vtkPolyData> meshPolyData;
     sv4guiROMSimulationPythonParamNames m_ParameterNames;
     std::map<std::string, std::string> m_ParameterValues;
-    const std::string m_PythonModuleName = "sv_rom_simulation";
+
+    // The name of the ROM Python package in SimVascular/Python/site-packages.
+    const std::string m_PythonROMSimulationModuleName = "sv_rom_simulation";
+
+    // The 0D solver Python package name.
+    const std::string m_PythonZeroDSolverModuleName = "svZeroDSolver.svzerodsolver";
+    const std::string m_PythonZeroDSolverFileName = "solver_0d.in";
 
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value);
     bool AddParameterList(const std::string& name, const std::vector<std::string>& values);
+    bool ExecuteZeroDSimulation(const std::string outputDirectory, const sv4guiROMSimJob* job);
     bool GenerateMesh(const std::string& outputDir, const std::string& centerlinesFile, const std::string& meshFile);
     bool GenerateSolverInput(const std::string outputDirectory, const sv4guiROMSimJob* job);
     std::string StartCommand();
-    bool WriteMesh(const std::string fileName);
-    bool WriteParameters(const std::string fileName, std::map<std::string, std::string>& params);
-
 };
 
-#endif //SV4GUI_SIMULATION_PYTHON1D_H
+#endif 

@@ -1691,6 +1691,8 @@ int VMTKUtils_CreateBoundaryLayerSurfaceAndCaps(vtkUnstructuredGrid* boundaryMes
     fprintf(stderr,"Failure in resetting model face id on boundary layer caps\n");
     return SV_ERROR;
   }
+
+  return SV_OK;
 }
 
 //------------------------------

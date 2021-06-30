@@ -1678,7 +1678,7 @@ void sv4guiSimulationView::RunJob()
         if(m_UseMPI) {
           // Check that the solver binaries are valid.
           CheckSolver();
-          // Check that mpi is installed and that the implementation is MPICH or MSMPI.
+          // Check that mpi is installed and that the implementation is OpenMPI or MSMPI.
           CheckMpi();
         } else {
 	  CheckSolverNOMPI();
@@ -1924,13 +1924,12 @@ void sv4guiSimulationView::CheckSolverNOMPI()
     }
 }
 
-
 //----------
 // CheckMpi
 //----------
 // Check for valid mpiexec binary and MPI implementation.
 //
-// svSolver needs the MPICH MPI implementation.
+// svSolver needs the OpenMPI implementation.
 //
 void sv4guiSimulationView::CheckMpi()
 {
@@ -1961,9 +1960,9 @@ void sv4guiSimulationView::CheckMpi()
     #ifndef WIN32
     // Check the MPI implementation.
     auto mpiName = m_DefaultMPIPrefs.GetMpiImplementationName();
-    if (m_MpiImplementation != sv4guiMPIPreferences::MpiImplementation::MPICH) {
-       QString msg1 = "svSolver requires MPICH but an MPICH MPI implementation was not found.\n";
-       QString msg2 = "Please install MPICH MPI or set the location of an MPICH mpiexec in the Preferences->SimVascular Simulation page.";
+    if (m_MpiImplementation != sv4guiMPIPreferences::MpiImplementation::OpenMPI) {
+       QString msg1 = "svSolver requires OpenMPI but an OpenMPI MPI implementation was not found.\n";
+       QString msg2 = "Please install OpenMPI MPI or set the location of an OpenMPI mpiexec in the Preferences->SimVascular Simulation page.";
        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2);
        throw exception; 
     }

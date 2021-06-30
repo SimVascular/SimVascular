@@ -186,6 +186,7 @@ Adapt_get_mesh(PyMeshingAdaptive* self, PyObject* args)
   auto vtkUnstructuredGrid = mesher->GetAdaptedVolumeMesh();
   return vtkPythonUtil::GetObjectFromPointer(vtkUnstructuredGrid);
 */
+  Py_RETURN_NONE;
 }
 
 //------------------

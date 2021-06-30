@@ -92,49 +92,166 @@ void sv4guisvFSIView::Initialize(){
 
 }
 
+//---------------------
+// CreateQtPartControl
+//---------------------
+//
 void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
 {
     m_Parent=parent;
     ui->setupUi(parent);
 
-    //initialize folder nodes etc
+    // Initialize folder nodes etc
     Initialize();
 
-    m_RealVal=new QDoubleValidator;
+    // Define validators to check for valid integer and double input values. 
+    m_RealVal = new QDoubleValidator;
     m_RealVal->setBottom(0.0);
-    m_IntVal=new QIntValidator;
+    m_IntVal = new QIntValidator;
     m_IntVal->setBottom(1);
 
-    //top part
+    // Top section of the FSI panel.
     connect(ui->btnNewJob, SIGNAL(clicked()), this, SLOT(CreateNewJob()));
-    connect(ui->btnLoadJob, SIGNAL(clicked()), this, SLOT(LoadJob()));
     connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveJob()));
+    connect(ui->btnLoadJob, SIGNAL(clicked()), this, SLOT(LoadJob()));
+    connect(ui->loadMeshButton, SIGNAL(clicked()), this, SLOT(loadMesh()));
 
-    //domains
-    //connect(ui->comboBoxNsd, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SetNsd(const QString &)));
-    SetNsd(QString(3));
-//    connect(ui->btnAddMesh, SIGNAL(clicked()), this, SLOT(AddMesh()));
-    connect(ui->btnAddMeshComplete, SIGNAL(clicked()), this, SLOT(AddMeshComplete()));
-    connect(ui->comboBoxDomains, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SelectDomain(const QString &)));
-    connect(ui->btnDeleteDomain, SIGNAL(clicked()), this, SLOT(DeleteDomain()));
+    // Setup Domains panel.
+    SetupDomainsPanel();
 
-    ui->buttonGroup->setId(ui->radioButtonFluid,0);
-    ui->buttonGroup->setId(ui->radioButtonSolid,1);
-    connect(ui->buttonGroup, SIGNAL(buttonClicked(int )), this, SLOT(ChangeDomainType(int )));
+    // Setup Physics panel.
+    SetupPhysicsPanel();
 
-    //physics
+    // Reset
+    connect(ui->btnResetEq, SIGNAL(clicked()), this, SLOT(ResetEquation()));
+
+    //  Setup the Simulation Parameters panel.
+    SetupSimulationParametersPanel();
+
+    // Setup the Run simulation panel.
+    SetupRunSimulationPanel();
+
+    ui->Subpanel_Widget->setEnabled(false);
+    ui->btnSave->setEnabled(false);
+
+    // Get paths for the external solvers
+    berry::IPreferences::Pointer prefs = this->GetPreferences();
+    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
+    this->OnPreferencesChanged(berryprefs);
+
+    ui->comboBoxRemesher->setEnabled(false);
+}
+
+//--------------------
+// OnSelectionChanged
+//--------------------
+//
+void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
+{
+    if (!IsVisible()) {
+        return;
+    }
+
+    if(nodes.size()==0) {
+        ui->Subpanel_Widget->setEnabled(false);
+        ui->btnSave->setEnabled(false);
+        return;
+    }
+
+    mitk::DataNode::Pointer jobNode=nodes.front();
+    sv4guiMitksvFSIJob* mitkJob=dynamic_cast<sv4guiMitksvFSIJob*>(jobNode->GetData());
+    if (!mitkJob) {
+        ui->Subpanel_Widget->setEnabled(false);
+        ui->btnSave->setEnabled(false);
+        return;
+    }
+
+    ui->Subpanel_Widget->setEnabled(true);
+    ui->btnSave->setEnabled(true);
+
+    m_JobNode=jobNode;
+    m_MitkJob=mitkJob;
+    m_Job=mitkJob->GetSimJob();
+
+    // Setup the top of the FSI tool.
+    ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
+    ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+
+    if (!m_Job) {
+        return;
+    }
+
+    // Update the Domains panel.
+    ui->comboBoxDomains->clear();
+    for(auto& d: m_Job->m_Domains) {
+        ui->comboBoxDomains->addItem(QString::fromStdString(d.first));
+    }
+
+    // Update the Physics panel.
+    UpdatePhysicsPanel();
+
+    // Update the Simulation Parameters panel.
+    UpdateSimulationParametersPanel();
+
+    // Run parameters
+    //
+    ui->sliderNumProcs->setValue(m_MitkJob->GetProcessNumber());
+
+    UpdateJobStatus();
+}
+
+//-------------------------
+// SetupRunSimulationPanel
+//-------------------------
+//
+void sv4guisvFSIView::SetupRunSimulationPanel()
+{
+    SetupInternalSolverPaths();
+
+    // Set the number of MPI processors.
+    ui->sliderNumProcs->setDecimals(0);
+    ui->sliderNumProcs->setMinimum(1);
+    int coreNum = QThread::idealThreadCount();
+    ui->sliderNumProcs->setMaximum(coreNum);
+
+    connect(ui->btnCreateInputFile, SIGNAL(clicked()), this, SLOT(CreateInputFile()));
+    connect(ui->btnRunSim, SIGNAL(clicked()), this, SLOT(RunSimulation()));
+    connect(ui->btnStopSim, SIGNAL(clicked()), this, SLOT(StopSimulation()));
+}
+
+//-------------------
+// SetupPhysicsPanel
+//-------------------
+//
+void sv4guisvFSIView::SetupPhysicsPanel()
+{
     connect(ui->btnAddEq, SIGNAL(clicked()), this, SLOT(AddEquation()));
     connect(ui->btnClearEq, SIGNAL(clicked()), this, SLOT(ClearEquation()));
     connect(ui->listEqs, SIGNAL(itemSelectionChanged()), this, SLOT(SelectEquation()));
 
-    //props
-    propL.append(ui->prop_1_txt); propB.append(ui->prop_1_box);
-    propL.append(ui->prop_2_txt); propB.append(ui->prop_2_box);
-    propL.append(ui->prop_3_txt); propB.append(ui->prop_3_box);
-    propL.append(ui->prop_4_txt); propB.append(ui->prop_4_box);
-    propL.append(ui->prop_5_txt); propB.append(ui->prop_5_box);
+    // Physics properties.
+    //
+    // propL[] stores the property label, propB[] its value (box?).
+    //
+    // The label and values are determined in sv4guisvFSIeqClass() and
+    // set in sv4guisvFSIView::SelectEquation().
+    //
+    propL.append(ui->prop_1_txt); 
+    propB.append(ui->prop_1_box);
 
-    for ( int i=0 ; i < propL.length() ; i++ ) {
+    propL.append(ui->prop_2_txt);  
+    propB.append(ui->prop_2_box);
+
+    propL.append(ui->prop_3_txt); 
+    propB.append(ui->prop_3_box);
+
+    propL.append(ui->prop_4_txt); 
+    propB.append(ui->prop_4_box);
+
+    propL.append(ui->prop_5_txt); 
+    propB.append(ui->prop_5_box);
+
+    for (int i=0; i < propL.length(); i++) {
         propB.at(i)->setValidator(m_RealVal);
         connect(propB.at(i), SIGNAL(textEdited(const QString &)), this, SLOT(SaveProps()));
     }
@@ -143,11 +260,11 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     ui->widgetConstitutive->hide();
     connect(ui->comboBoxConstitutive, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SaveProps()));
 
-    //output
+    // Output
     connect(ui->btnAddOutput, SIGNAL(clicked()), this, SLOT(AddOutput()));
     connect(ui->btnClearOutput, SIGNAL(clicked()), this, SLOT(ClearOutput()));
 
-    //advanced
+    // Advanced
     ui->lineEditTol->setValidator(m_RealVal);
     connect(ui->coupled, SIGNAL(clicked()), this, SLOT(SaveAdvanced()));
     connect(ui->lineEditTol, SIGNAL(textEdited(const QString &)), this, SLOT(SaveAdvanced()));
@@ -155,7 +272,7 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     connect(ui->minItr, SIGNAL(editingFinished()), this, SLOT(SaveAdvanced()));
     connect(ui->maxItr, SIGNAL(editingFinished()), this, SLOT(SaveAdvanced()));
 
-    //linear solver
+    // Linear solver
     ShowNSWidget();
     connect(ui->comboBoxLSType, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SaveLinearSolver()));
     connect(ui->comboBoxLSType, SIGNAL(currentTextChanged(const QString &)), this, SLOT(ShowNSWidget()));
@@ -181,15 +298,20 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     connect(ui->lineEditLSAbsTol, SIGNAL(textEdited(const QString &)), this, SLOT(SaveLinearSolver()));
 
     connect(ui->comboBoxPreconditioner, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SaveLinearSolver()));
+    ui->comboBoxPreconditioner->clear();
+    ui->comboBoxPreconditioner->addItem(QString::fromStdString("Default"));
+    for (auto const& precond : sv4guisvFSILinearSolverPreconditioner::list) {
+        ui->comboBoxPreconditioner->addItem(QString::fromStdString(precond));
+    }
 
-    //bc
+    // Boundary conditions 
     ui->bcList->horizontalHeader()->setVisible(true);
     connect(ui->bcList, SIGNAL(cellDoubleClicked(int,int)), ui->btnModifyBC, SLOT(click()));
     connect(ui->btnAddBC, SIGNAL(clicked()), this, SLOT(AddBC()));
     connect(ui->btnModifyBC, SIGNAL(clicked()), this, SLOT(ModifyBC()));
     connect(ui->btnRemoveBC, SIGNAL(clicked()), this, SLOT(RemoveBC()));
 
-    //remesher
+    // Remesher
     ui->widgetRemesher->hide();
     connect(ui->comboBoxRemesher, SIGNAL(currentTextChanged(const QString &)), this, SLOT(ShowRemesher()));
     connect(ui->comboBoxDomain2, SIGNAL(currentTextChanged(const QString &)), this, SLOT(ShowEdgeSize()));
@@ -200,150 +322,170 @@ void sv4guisvFSIView::CreateQtPartControl( QWidget *parent )
     connect(ui->sbRemeshFrequency, SIGNAL(editingFinished()), this, SLOT(SaveRemesher()));
     connect(ui->sbCopyFrequency, SIGNAL(editingFinished()), this, SLOT(SaveRemesher()));
     connect(ui->dsbEdgeSize, SIGNAL(editingFinished()), this, SLOT(SaveRemesher()));
-
-    //reset
-    connect(ui->btnResetEq, SIGNAL(clicked()), this, SLOT(ResetEquation()));
-
-    //simulation parameters
-    ui->lineEditStepSize->setValidator(m_RealVal);
-    connect(ui->procFolder, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->stFileFlag, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->nTimeSteps, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
-    connect(ui->lineEditStepSize, SIGNAL(textEdited(const QString &)), this, SLOT(SaveSimParameters()));
-    connect(ui->saveResults_box, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->save_average, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->start_saving_ts, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
-    connect(ui->sIncr, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
-    connect(ui->saveName, SIGNAL(textEdited(const QString &)), this, SLOT(SaveSimParameters()));
-    connect(ui->warn, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->verb, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->checkBoxRemeshing, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->debug, SIGNAL(clicked()), this, SLOT(SaveSimParameters()));
-    connect(ui->rhoInf, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
-    connect(ui->stFileIncr, SIGNAL(editingFinished()), this, SLOT(SaveSimParameters()));
-
-    //load mesh
-    connect(ui->loadMeshButton, SIGNAL(clicked()), this, SLOT(loadMesh()));
-
-    //run simulation
-    SetupInternalSolverPaths();
-    ui->sliderNumProcs->setDecimals(0);
-    ui->sliderNumProcs->setMinimum(1);
-    int coreNum=QThread::idealThreadCount();
-    ui->sliderNumProcs->setMaximum(coreNum);
-    connect(ui->btnCreateInputFile, SIGNAL(clicked()), this, SLOT(CreateInputFile()));
-    connect(ui->btnRunSim, SIGNAL(clicked()), this, SLOT(RunSimulation()));
-    connect(ui->btnStopSim, SIGNAL(clicked()), this, SLOT(StopSimulation()));
-
-    ui->centerWidget->setEnabled(false);
-    ui->btnSave->setEnabled(false);
-
-    //get paths for the external solvers
-    berry::IPreferences::Pointer prefs = this->GetPreferences();
-    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
-    //    InitializePreferences(berryprefs);
-    this->OnPreferencesChanged(berryprefs);
-
-    ui->comboBoxRemesher->setEnabled(false);
 }
 
-void sv4guisvFSIView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes)
+//-------------------
+// SetupDomainsPanel
+//-------------------
+//
+void sv4guisvFSIView::SetupDomainsPanel()
 {
-    if(!IsVisible())
-        return;
+    //connect(ui->comboBoxNsd, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SetNsd(const QString &)));
+    SetNsd(QString(3));
+//    connect(ui->btnAddMesh, SIGNAL(clicked()), this, SLOT(AddMesh()));
+    connect(ui->btnAddMeshComplete, SIGNAL(clicked()), this, SLOT(AddMeshComplete()));
+    connect(ui->comboBoxDomains, SIGNAL(currentTextChanged(const QString &)), this, SLOT(SelectDomain(const QString &)));
+    connect(ui->btnDeleteDomain, SIGNAL(clicked()), this, SLOT(DeleteDomain()));
 
-    if(nodes.size()==0)
-    {
-        ui->centerWidget->setEnabled(false);
-        ui->btnSave->setEnabled(false);
+    ui->buttonGroup->setId(ui->radioButtonFluid,0);
+    ui->buttonGroup->setId(ui->radioButtonSolid,1);
+    connect(ui->buttonGroup, SIGNAL(buttonClicked(int )), this, SLOT(ChangeDomainType(int )));
+}
+
+//--------------------------------
+// SetupSimulationParametersPanel
+//--------------------------------
+// Setup the Simulation Parameters panel GUI.
+//
+void sv4guisvFSIView::SetupSimulationParametersPanel()
+{
+    // Time control.
+    connect(ui->TimeStartFromPrev_checkBox, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->TimeNumSteps_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+    ui->TimeStepSize_lineEdit->setValidator(m_RealVal);
+    connect(ui->TimeStepSize_lineEdit, SIGNAL(textEdited(const QString &)), this, SLOT(SaveSimulationParameters()));
+
+    // Results output.
+    connect(ui->RestartName_lineEdit, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->RestartSaveIncr_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->RestartSaveStart_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+
+    // VTK output.
+    connect(ui->VtkSave_checkBox, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->VtkName_lineEdit, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->VtkSaveIncr_spinBox, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+
+    connect(ui->save_average, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
+
+    // Advanced.
+    connect(ui->checkBoxRemeshing, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->rhoInf, SIGNAL(editingFinished()), this, SLOT(SaveSimulationParameters()));
+
+    connect(ui->warn, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->verb, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
+    connect(ui->debug, SIGNAL(clicked()), this, SLOT(SaveSimulationParameters()));
+}
+
+//--------------------------
+// SaveSimulationParameters
+//--------------------------
+// Save GUI Simulation Parameters to the m_Job object. 
+//
+void sv4guisvFSIView::SaveSimulationParameters()
+{
+    if (!m_Job) {
         return;
     }
-    mitk::DataNode::Pointer jobNode=nodes.front();
-    sv4guiMitksvFSIJob* mitkJob=dynamic_cast<sv4guiMitksvFSIJob*>(jobNode->GetData());
-    if(!mitkJob)
-    {
-        ui->centerWidget->setEnabled(false);
-        ui->btnSave->setEnabled(false);
-        return;
-    }
 
-    ui->centerWidget->setEnabled(true);
-    ui->btnSave->setEnabled(true);
+    // Time control.
+    m_Job->continuePrevious = ui->TimeStartFromPrev_checkBox->isChecked();
+    m_Job->timeSteps = ui->TimeNumSteps_spinBox->value();
+    m_Job->stepSize = ui->TimeStepSize_lineEdit->text().trimmed().toStdString();
 
-    m_JobNode=jobNode;
-    m_MitkJob=mitkJob;
-    m_Job=mitkJob->GetSimJob();
+    // Results output.
+    m_Job->restartFileName = ui->RestartName_lineEdit->text().toStdString();
+    m_Job->restartInc = ui->RestartSaveIncr_spinBox->value();
+    m_Job->startSavingStep = ui->RestartSaveStart_spinBox->value();
 
-    //top part
-    ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
-    ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+    // vtk output.
+    m_Job->vtkSaveResults = ui->VtkSave_checkBox->isChecked(); 
+    m_Job->vtkFileName = ui->VtkName_lineEdit->text().toStdString();
+    m_Job->vtkInc = ui->VtkSaveIncr_spinBox->value();                            
 
-    if(!m_Job)
-        return;
+    // Advanded 
+    m_Job->saveAvgResult = ui->save_average->isChecked();
+    m_Job->rhoInf = ui->rhoInf->value();
+    m_Job->verbose = ui->verb->isChecked();
+    m_Job->warn = ui->warn->isChecked();
+    m_Job->debug = ui->debug->isChecked();
+    m_Job->remeshing = ui->checkBoxRemeshing->isChecked();
 
-    //domains
-    ui->comboBoxDomains->clear();
-    for(auto& d: m_Job->m_Domains)
-    {
-        ui->comboBoxDomains->addItem(QString::fromStdString(d.first));
-    }
+    DataChanged();
+}
 
-    //physics-equations
+//--------------------
+// UpdatePhysicsPanel
+//--------------------
+// Update the widgets in the Physics panel from the m_Job object.
+//
+void sv4guisvFSIView::UpdatePhysicsPanel()
+{
     ui->listEqs->clear();
-    for(int i=0;i<m_Job->m_Eqs.size();++i)
+    for(int i=0;i<m_Job->m_Eqs.size();++i) {
         ui->listEqs->insertItem(i,new QListWidgetItem(m_Job->m_Eqs[i].fullName));
+    }
 
-    if(ui->listEqs->count()>0)
-    {
+    if(ui->listEqs->count()>0) {
         ui->listEqs->setCurrentRow(0);
         ui->eqAdvOptions->setEnabled(true);
     }
 
-    bool includingFluid=false;
-    for(sv4guisvFSIeqClass& eq : m_Job->m_Eqs)
-    {
-        if(eq.physName=="FSI" || eq.physName=="fluid")
-        {
-            includingFluid=true;
+    bool includingFluid = false;
+    for(sv4guisvFSIeqClass& eq : m_Job->m_Eqs) {
+        if (eq.physName=="FSI" || eq.physName=="fluid") {
+            includingFluid = true;
             break;
         }
     }
 
-    if(includingFluid){
+    if (includingFluid){
         ui->listAvailableEqs->item(0)->setFlags(Qt::NoItemFlags);
         ui->listAvailableEqs->item(2)->setFlags(Qt::NoItemFlags);
-    }
-    else
-    {
+    } else {
         ui->listAvailableEqs->item(0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         ui->listAvailableEqs->item(2)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     }
+}
 
-    //simulation parameters
-    ui->nTimeSteps->setValue(m_Job->timeSteps);
-    ui->lineEditStepSize->setText(QString::fromStdString(m_Job->stepSize));
-    ui->stFileFlag->setChecked(m_Job->continuePrevious);
-    ui->procFolder->setChecked(m_Job->saveInFoder);
-    ui->stFileIncr->setValue(m_Job->restartInc);
-    ui->saveName->setText(QString::fromStdString(m_Job->resultPrefix));
-    ui->sIncr->setValue(m_Job->resultInc);
-    ui->start_saving_ts->setValue(m_Job->startSavingStep);
-    ui->save_average->setChecked(m_Job->saveAvgResult);
-    ui->rhoInf->setValue(m_Job->rhoInf);
+//---------------------------------
+// UpdateSimulationParametersPanel
+//---------------------------------
+// Update GUI Simulation Parameters from the m_Job object. 
+//
+void sv4guisvFSIView::UpdateSimulationParametersPanel()
+{
+    // Time control. 
+    ui->TimeStartFromPrev_checkBox->setChecked(m_Job->continuePrevious);          // Start from previous simulation
+    ui->TimeNumSteps_spinBox->setValue(m_Job->timeSteps);                         // Number of time steps
+    ui->TimeStepSize_lineEdit->setText(QString::fromStdString(m_Job->stepSize));  // Time step size
+
+    // Simulation results output.
+    ui->RestartName_lineEdit->setText(QString::fromStdString(m_Job->restartFileName));
+    ui->RestartSaveIncr_spinBox->setValue(m_Job->restartInc);                     // Increment in saving restart
+    ui->RestartSaveStart_spinBox->setValue(m_Job->startSavingStep);               // Save start time step
+
+    // Save as VTK.
+    ui->VtkSave_checkBox->setChecked(m_Job->vtkSaveResults);                      // Save results using VTK format
+    ui->VtkName_lineEdit->setText(QString::fromStdString(m_Job->vtkFileName));    // VTK file prefix name 
+    ui->VtkSaveIncr_spinBox->setValue(m_Job->vtkInc);                             // VTK save start time step
+
+    ui->save_average->setChecked(m_Job->saveAvgResult);                           // Produce a time-averaged results
+
+    // Advanced options.
+    ui->rhoInf->setValue(m_Job->rhoInf);                   // Rho inf
+    ui->checkBoxRemeshing->setChecked(m_Job->remeshing);   // Remeshing
     ui->verb->setChecked(m_Job->verbose);
     ui->warn->setChecked(m_Job->warn);
     ui->debug->setChecked(m_Job->debug);
-    ui->checkBoxRemeshing->setChecked(m_Job->remeshing);
-
-    //run parameters
-    ui->sliderNumProcs->setValue(m_MitkJob->GetProcessNumber());
-    UpdateJobStatus();
 }
 
+//-------------
+// NodeChanged
+//-------------
+//
 void sv4guisvFSIView::NodeChanged(const mitk::DataNode* node)
 {
-    if(m_JobNode.IsNotNull() && m_JobNode==node)
-    {
+    if(m_JobNode.IsNotNull() && m_JobNode==node) {
         ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
         UpdateJobStatus();
 
@@ -396,6 +538,10 @@ void sv4guisvFSIView::DataChanged()
         m_MitkJob->SetDataModified();
 }
 
+//------------
+// GetJobPath
+//------------
+//
 QString sv4guisvFSIView::GetJobPath()
 {
     QString jobPath="";
@@ -406,30 +552,13 @@ QString sv4guisvFSIView::GetJobPath()
     std::string path="";
     m_JobNode->GetStringProperty("path",path);
     jobPath=QString::fromStdString(path+"/"+m_JobNode->GetName());
-
-//    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
-//    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
-
-//    std::string projPath="";
-//    std::string simFolderName="";
-
-//    if(rs->size()>0)
-//    {
-//        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
-//        projFolderNode->GetStringProperty("project path", projPath);
-
-//        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
-//        if (rs->size()>0)
-//        {
-//            mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
-//            simFolderName=simFolderNode->GetName();
-//            jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
-//        }
-//    }
-
     return jobPath;
 }
 
+//--------------------------
+// SetupInternalSolverPaths
+//--------------------------
+//
 void sv4guisvFSIView::SetupInternalSolverPaths()
 {
     m_InternalMPIExecPath="mpiexec";
@@ -485,39 +614,30 @@ void sv4guisvFSIView::SetupInternalSolverPaths()
 #endif
 }
 
-//void sv4guisvFSIView::ClearAll()
-//{
-//    m_JobNode=NULL;
-//    m_MitkJob=NULL;
-//    m_Job=NULL;
-
-//    ui->labelJobName->setText("");
-//    ui->labelJobStatus->setText("");
-//}
-
 void sv4guisvFSIView::SetNsd(const QString &text)
 {
     int nsd=text.toInt();
-    if(m_Job && m_Job->nsd!=nsd)
-    {
+    if(m_Job && m_Job->nsd!=nsd) {
         m_Job->nsd=nsd;
         DataChanged();
     }
 }
 
+//-----------------
+// AddMeshComplete
+//-----------------
+//
 void sv4guisvFSIView::AddMeshComplete()
 {
-    if(!m_Job)
+    if(!m_Job) {
         return;
+    }
 
     berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     berry::IPreferences::Pointer prefs;
-    if (prefService)
-    {
+    if (prefService) {
         prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
+    } else {
         prefs = berry::IPreferences::Pointer(0);
     }
 
@@ -534,22 +654,20 @@ void sv4guisvFSIView::AddMeshComplete()
                                                         , tr("Choose Mesh-Complete Directory")
                                                         , sv4guisvFSI_dir.absolutePath());
 
-    dirPath=dirPath.trimmed();
-    if(dirPath.isEmpty()) return;
+    dirPath = dirPath.trimmed();
+    if(dirPath.isEmpty()) {
+        return;
+    }
 
-    if(prefs.IsNotNull())
-    {
+    if(prefs.IsNotNull()) {
         prefs->Put("LastFileOpenPath", dirPath);
         prefs->Flush();
     }
 
     QDir meshDir(dirPath);
-
     QString domainName=meshDir.dirName();
-
     auto search=m_Job->m_Domains.find(domainName.toStdString());
-    if(search!=m_Job->m_Domains.end())
-    {
+    if(search!=m_Job->m_Domains.end()) {
         QMessageBox::warning(m_Parent,"Already exists", "A domain with the same name was already added.");
         return;
     }
@@ -558,23 +676,20 @@ void sv4guisvFSIView::AddMeshComplete()
     QString faceFolderName=QString::fromStdString(domain.faceFolderName); //use the default name
 
     QFileInfoList meshList=meshDir.entryInfoList(QStringList("*.vtu"));
-    if(meshList.size()==0)
-    {
+    if(meshList.size()==0) {
         QMessageBox::warning(m_Parent,"No Mesh Found", "A mesh (vtu) file is not found in the folder");
         return;
     }
 
     QFileInfoList vtpList=meshDir.entryInfoList(QStringList("*.vtp"));
-    if(vtpList.size()==0)
-    {
+    if(vtpList.size()==0) {
         QMessageBox::warning(m_Parent,"No Mesh Found", "A mesh (vtp) file is not found in the folder");
         return;
     }
 
     QDir faceDir(dirPath+"/"+faceFolderName);
     QFileInfoList faceList=faceDir.entryInfoList(QStringList("*.vtp"));
-    if(faceList.size()==0)
-    {
+    if(faceList.size()==0) {
         QMessageBox::warning(m_Parent,"No Faces Found", "Face (vtp) files are not found in the mesh-surfaces folder");
         return;
     }
@@ -624,7 +739,12 @@ void sv4guisvFSIView::AddMeshComplete()
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
-void sv4guisvFSIView::loadMesh(){
+//----------
+// loadMesh
+//----------
+//
+void sv4guisvFSIView::loadMesh()
+{
   auto children = GetDataStorage()->GetDerivations(m_JobNode);
   if (!children->empty()){
     GetDataStorage()->Remove(children);
@@ -635,13 +755,9 @@ void sv4guisvFSIView::loadMesh(){
 
   for (auto itr = domains.begin(); itr != domains.end(); ++itr){
     auto dom = itr->second;
-
     auto folderName = dom.folderName;
     auto surfaceName = dom.surfaceName;
-
-    auto path =
-     (jobPath+"/"+QString::fromStdString(folderName)+
-        "/"+QString::fromStdString(surfaceName)).toStdString();
+    auto path = (jobPath+"/"+QString::fromStdString(folderName)+ "/" + QString::fromStdString(surfaceName)).toStdString();
 
     std::cout << "Reading mesh file " << path << "\n";
 
@@ -659,6 +775,10 @@ void sv4guisvFSIView::loadMesh(){
   }
 }
 
+//--------------
+// SelectDomain
+//--------------
+//
 void sv4guisvFSIView::SelectDomain(const QString &name)
 {
     if(!m_Job)
@@ -847,14 +967,20 @@ void sv4guisvFSIView::ClearEquation()
     DataChanged();
 }
 
+//----------------
+// SelectEquation
+//----------------
+// Set the visibility of different GUI widgets based on equation type (e.g. fluid).
+//
 void sv4guisvFSIView::SelectEquation()
 {
-    if(!m_Job)
+    if (!m_Job) {
         return;
+    }
 
-    m_EnableSave=false;
+    m_EnableSave = false;
 
-    for ( int i=0 ; i < propL.length() ; i++ ) {
+    for (int i = 0; i < propL.length(); i++) {
         propL.at(i)->setVisible(false);
         propB.at(i)->setVisible(false);
     }
@@ -866,31 +992,33 @@ void sv4guisvFSIView::SelectEquation()
     ui->bcList->clearContents();
 
     QList<QListWidgetItem*> items = ui->listEqs->selectedItems();
-    if ( items.isEmpty() )
+    if (items.isEmpty()) {
         return;
+    }
 
-    int row=ui->listEqs->row(items.first());
-    if(row<0)
+    int row = ui->listEqs->row(items.first());
+    if (row < 0) {
         return;
+    }
 
-    sv4guisvFSIeqClass& eq=m_Job->m_Eqs[row];
+    // Get the equation object selected from the Physics panel.
+    sv4guisvFSIeqClass& eq = m_Job->m_Eqs[row];
 
-    //properties
+    // Set property names and values defined for the equation.
     ui->phys_prop_group_box->setVisible(true);
-    for ( int i=0 ; i < eq.getPropCount() ; i++ ) {
+    for (int i = 0; i < eq.getPropCount(); i++) {
         propL.at(i)->setVisible(true);
         propB.at(i)->setVisible(true);
         propL.at(i)->setText(eq.getPropName(i));
         propB.at(i)->setText(QString::number(eq.getPropValue(i)));
     }
 
-    if(eq.physName=="FSI" || eq.physName=="struct")
-    {
+    if(eq.physName=="FSI" || eq.physName=="struct") {
         ui->widgetConstitutive->show();
         ui->comboBoxConstitutive->setCurrentText(eq.constitutiveModel);
-    }
-    else
+    } else {
         ui->widgetConstitutive->hide();
+    }
 
     //output
     ui->output->addItems(eq.getOutputCandidates());
@@ -903,17 +1031,15 @@ void sv4guisvFSIView::SelectEquation()
     ui->minItr->setValue(eq.getMinItr());
     ui->maxItr->setValue(eq.getMaxItr());
 
-    if(eq.physName=="fluid" || eq.physName=="FSI")
-    {
+    if(eq.physName=="fluid" || eq.physName=="FSI") {
         ui->labelBackflow->show();
         ui->dsbBackflow->show();
         ui->dsbBackflow->setValue(eq.backflowStab);
-    }
-    else
-    {
+    } else {
         ui->labelBackflow->hide();
         ui->dsbBackflow->hide();
     }
+
     //linear solver
     ui->comboBoxLSType->setCurrentText(eq.lsType);
     ui->lineEditLSMaxItr->setText(QString::number(eq.lsMaxItr));
@@ -968,6 +1094,10 @@ void sv4guisvFSIView::SelectEquation()
     m_EnableSave=true;
 }
 
+//-----------
+// SaveProps
+//-----------
+//
 void sv4guisvFSIView::SaveProps()
 {
     if(!m_Job)
@@ -1272,28 +1402,6 @@ void sv4guisvFSIView::SaveRemesher()
     DataChanged();
 }
 
-void sv4guisvFSIView::SaveSimParameters()
-{
-    if(!m_Job)
-        return;
-
-    m_Job->timeSteps=ui->nTimeSteps->value();
-    m_Job->stepSize=ui->lineEditStepSize->text().trimmed().toStdString();
-    m_Job->continuePrevious=ui->stFileFlag->isChecked();
-    m_Job->saveInFoder=ui->procFolder->isChecked();
-    m_Job->restartInc=ui->stFileIncr->value();
-    m_Job->resultPrefix=ui->saveName->text().trimmed().toStdString();
-    m_Job->resultInc=ui->sIncr->value();
-    m_Job->startSavingStep=ui->start_saving_ts->value();
-    m_Job->saveAvgResult=ui->save_average->isChecked();
-    m_Job->rhoInf=ui->rhoInf->value();
-    m_Job->verbose=ui->verb->isChecked();
-    m_Job->warn=ui->warn->isChecked();
-    m_Job->debug=ui->debug->isChecked();
-    m_Job->remeshing=ui->checkBoxRemeshing->isChecked();
-
-    DataChanged();
-}
 
 void sv4guisvFSIView::CreateInputFile()
 {

@@ -50,9 +50,9 @@ PyUtilApiFunction::PyUtilApiFunction(const std::string& format, PyObject* pyErro
   this->pyError = pyError;
 }
 
-//--------
+//-------
 // error
-//--------
+//-------
 // Set the Python exception description.
 //
 void PyUtilApiFunction::error(std::string msg)
@@ -74,6 +74,22 @@ PyUtilApiFunction::argsError()
 {
   return PyUtilResetException(this->pyError);
 }
+
+//---------
+// warning
+//---------
+// Raise a warning exception. 
+//
+// This causes a 'RuntimeWarning' but allows the script
+// to continue.
+//
+void PyUtilApiFunction::warning(std::string msg)
+{
+  Py_ssize_t stack_level = 1;
+  auto emsg = this->msgp + msg;
+  PyErr_WarnEx(nullptr, emsg.c_str(), stack_level);
+}
+
 
 //---------------------
 // PyUtilGetObjectType
@@ -262,6 +278,31 @@ bool PyUtilConvertPointData(PyObject* data, int index, std::string& msg, int poi
   }
   point[index] = PyLong_AsLong(data);
   return true;
+}
+
+//-------------------
+// PyUtilGetBoolAttr
+//-------------------
+// Get a Boolean atttibute from an object.
+//
+bool 
+PyUtilGetBoolAttr(PyObject* obj, std::string name)
+{
+  auto attr = PyObject_GetAttrString(obj, name.c_str());
+  if (attr == nullptr) {
+      auto typeName = PyUtilGetObjectType(obj);
+      std::string msg = "The '" + typeName + "' object has no attribute named '" + name + "'." ;
+      throw std::runtime_error(msg);
+  }
+  if (!PyBool_Check(attr)) {
+      auto typeName = PyUtilGetObjectType(obj);
+      auto attTypeName = PyUtilGetObjectType(attr);
+      std::string msg = "The '" + typeName + "' object attribute named '" + name + "' is not a Boolean.";
+      throw std::runtime_error(msg);
+  }
+  bool value = (attr == Py_True);
+  Py_DECREF(attr);
+  return value;
 }
 
 //---------------------

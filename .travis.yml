@@ -9,12 +9,7 @@ matrix:
       env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: linux
       compiler: gcc
-      dist: xenial
-      sudo: required
-      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
-    - os: linux
-      compiler: gcc
-      dist: xenial
+      dist: bionic
       sudo: required
       env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: osx
@@ -28,6 +23,16 @@ matrix:
       sudo: required
       env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
   allow_failures:
+    - os: linux
+      compiler: gcc
+      dist: focal
+      sudo: required
+      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
+    - os: linux
+      compiler: gcc
+      dist: focal
+      sudo: required
+      env: WITH_CMAKE=false SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
     - os: windows
       env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 SV_EXTERNALS_USE_PREBUILT_QT=false
 

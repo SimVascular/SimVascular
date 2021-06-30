@@ -225,15 +225,12 @@ void sv4guiMitkROMSimJobIO::Write()
     auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
     document.LinkEndChild( decl );
 
-    auto  version = new TiXmlElement("format");
-    version->SetAttribute("version",  "1.0" );
-    document.LinkEndChild(version);
-
     auto  mjElement = new TiXmlElement("mitk_job");
     mjElement->SetAttribute("model_name", mitkSimJob->GetModelName());
     mjElement->SetAttribute("model_order", mitkSimJob->GetModelOrder());
     mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName());
     mjElement->SetAttribute("status", mitkSimJob->GetStatus());
+    mjElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(mjElement);
 
     sv4guiROMSimJob* job=mitkSimJob->GetSimJob();

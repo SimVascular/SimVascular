@@ -58,6 +58,7 @@ class SV_EXPORT_PYTHON_API PyUtilApiFunction
       PyUtilApiFunction(const std::string& format, PyObject* pyRunTimeErr, const char* funcName);
       void error(std::string msg);
       PyObject * argsError();
+      void warning(std::string msg);
       std::string formatString; 
       const char* format; 
       std::string msgp; 
@@ -98,6 +99,8 @@ bool PyUtilGetFrameData(PyUtilApiFunction& api, PyObject* centerArg, std::array<
 std::string PyUtilGetFunctionName(const char* functionName);
 
 std::vector<std::map<std::string,std::string>> PyUtilGetDictListAttr(PyObject* obj, std::string name);
+
+bool PyUtilGetBoolAttr(PyObject* obj, std::string name);
 
 double PyUtilGetDoubleAttr(PyObject* obj, std::string name);
 
