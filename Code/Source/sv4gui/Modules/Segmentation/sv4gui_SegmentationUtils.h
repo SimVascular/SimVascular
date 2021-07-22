@@ -104,7 +104,8 @@ public:
     sv4guiSegmentationUtils();
     virtual ~sv4guiSegmentationUtils();
 
-    static vtkTransform* GetvtkTransform(sv4guiPathElement::sv4guiPathPoint pathPoint);
+    static vtkSmartPointer<vtkTransform> GetvtkTransform_old(sv4guiPathElement::sv4guiPathPoint pathPoint);
+    static vtkSmartPointer<vtkTransform> GetvtkTransform(sv4guiPathElement::sv4guiPathPoint pathPoint);
 
     static vtkTransform* GetvtkTransformBox(sv4guiPathElement::sv4guiPathPoint pathPoint, double boxHeight);
 
@@ -117,22 +118,26 @@ public:
 
     static mitk::Image::Pointer GetSliceImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep = 0);
 
-    static cvStrPts* GetSlicevtkImage(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, double size);
+    static cvStrPts* GetSlicevtkImage_old(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, double size);
+
+    static vtkSmartPointer<vtkTransform> GetImageTransformation(mitk::Image* image);
+
+    static cvStrPts* GetSlicevtkImage(sv4guiPathElement::sv4guiPathPoint pathPoint, 
+        vtkImageData* volumeimage, double size, vtkTransform* imageXform); 
 
     static cvStrPts* image2cvStrPts(mitk::Image* image);
 
     static cvStrPts* vtkImageData2cvStrPts(vtkImageData* vtkImg);
 
-
-    static sv4guiContour* CreateLSContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, svLSParam* param, double size, bool forceClosed = true);
+    static sv4guiContour* CreateLSContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, 
+        svLSParam* param, double size, vtkTransform* imageXform, bool forceClosed = true);
 
     static vtkPolyData* orientBack(vtkPolyData* srcPd, mitk::PlaneGeometry* planeGeometry);
 
-
     static std::vector<mitk::Point3D> GetThresholdContour(vtkImageData* imageSlice, double thresholdValue, sv4guiPathElement::sv4guiPathPoint pathPoint, bool& ifClosed, double seedPoint[3]);
 
-    static sv4guiContour* CreateThresholdContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, double thresholdValue, double size, bool forceClosed = true);
-
+    static sv4guiContour* CreateThresholdContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, 
+        double thresholdValue, double size, vtkTransform* imageTransform, bool forceClosed = true);
 
     static std::deque<int> GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed);
 

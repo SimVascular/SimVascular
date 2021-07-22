@@ -87,6 +87,9 @@
 #include "sv4gui_MitkMeshIO.h"
 #include "sv4gui_VtkUtils.h"
 
+#include "sv4gui_ImageProcessingUtils.h"
+#include <mitkImageCast.h>
+
 #include <mitkNodePredicateDataType.h>
 #include <mitkIOUtil.h>
 #include <mitkRenderingManager.h>
@@ -1085,6 +1088,7 @@ void sv4guiProjectManager::writeImageHeaderFile(mitk::Image* image,
 //
 void sv4guiProjectManager::setTransformFromImageHeaderFile(mitk::Image* image, std::string imageHeaderAbsoluteFileName)
 {
+  //std::cout << "============================ sv4guiProjectManager::setTransformFromImageHeaderFile =====================" << std::endl;
   using namespace sv4gui_project_manager;
 
   std::cout << std::endl << "Reading from transform file (" << imageHeaderAbsoluteFileName << ")..." << std::endl << std::endl;
@@ -1123,9 +1127,8 @@ void sv4guiProjectManager::setTransformFromImageHeaderFile(mitk::Image* image, s
     if (tagName == XmlImageHeaderElementNames::TRANSFORM_LPS) {
 
        boolFoundTransform = true;
-	
        auto transform = image->GetGeometry()->GetVtkMatrix();
-
+	
        for (int j = 0; j < 3; j++){
         for (int i = 0; i < 3; i++){
           auto label = "t"+std::to_string(i)+std::to_string(j);
@@ -1135,9 +1138,11 @@ void sv4guiProjectManager::setTransformFromImageHeaderFile(mitk::Image* image, s
         }
       }
 
+      // Setting the ITK transform (m_IndexToWorldTransform) using a vtkMatrix4x4.
+      // The spacing of the new transform is copied to m_spacing.
       image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
       image->UpdateOutputInformation();
-      
+
     } else if (tagName == XmlImageHeaderElementNames::TRANSFORM) {
 
       // legacy read  -- deprecated
@@ -1156,11 +1161,47 @@ void sv4guiProjectManager::setTransformFromImageHeaderFile(mitk::Image* image, s
 
       image->GetGeometry()->SetIndexToWorldTransformByVtkMatrix(transform);
       image->UpdateOutputInformation();      
-      
     }
 
     node = node.nextSibling();
   }
+
+  /* [DaveP] Leave this here for now, might need it later.
+  auto origin = image->GetGeometry()->GetOrigin();
+  std::cout << "[setTransformFromImageHeaderFile] image origin: "  << origin[0] << " " << origin[1] << " " << origin[2] << std::endl; 
+
+  auto spacing = image->GetGeometry()->GetSpacing();
+  std::cout << "[setTransformFromImageHeaderFile] image spacing: "  << spacing[0] << " " << spacing[1] << " " << 
+          spacing[2] << std::endl; 
+
+  auto dims = image->GetDimensions();
+  std::cout << "[setTransformFromImageHeaderFile] image dims: "  << dims[0] << " " << dims[1] << " " << dims[2] << std::endl; 
+
+  auto mat = image->GetGeometry()->GetIndexToWorldTransform()->GetMatrix();
+  std::cout << "[setTransformFromImageHeaderFile] GetIndexToWorldTransform matrix: " << std::endl;
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      std::cout << mat[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  sv4guiImageProcessingUtils::itkImPoint itkImage = sv4guiImageProcessingUtils::itkImageType::New();
+  mitk::CastToItkImage(image, itkImage);
+
+  auto direction_cos = itkImage->GetDirection();
+
+  std::cout << "[setTransformFromImageHeaderFile] itkImage direction_cos: " << std::endl;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      std::cout << direction_cos[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  auto itk_origin = itkImage->GetOrigin();
+  std::cout << "[setTransformFromImageHeaderFile] itkImage origin: "  << itk_origin[0] << " " << itk_origin[1] << " " << itk_origin[2] << std::endl;
+  */
 
   return;
 

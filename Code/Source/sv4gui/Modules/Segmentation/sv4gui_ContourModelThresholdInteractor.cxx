@@ -112,6 +112,19 @@ bool sv4guiContourModelThresholdInteractor::OnCurrentContourPlane( const mitk::I
     return false;
 }
 
+//-------------------
+// SetImageTransform
+//-------------------
+// Set the mitk itk image transformation.
+//
+// This transformation is needed to transform the 2D image slices definded from path data.
+//
+void sv4guiContourModelThresholdInteractor::SetImageTransform(vtkTransform* imageTransform)
+{
+  m_ImageTransformation = vtkSmartPointer<vtkTransform>::New();
+  m_ImageTransformation->DeepCopy(imageTransform);
+}
+
 void sv4guiContourModelThresholdInteractor::StartDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     m_Contour=NULL;
@@ -131,7 +144,7 @@ void sv4guiContourModelThresholdInteractor::StartDrawing(mitk::StateMachineActio
     if(renderer->GetMapperID()!=mitk::BaseRenderer::Standard2D)
         return;
 
-    cvStrPts* strPts=sv4guiSegmentationUtils::GetSlicevtkImage(m_PathPoint, m_VtkImageData, m_ResliceSize);
+    cvStrPts* strPts=sv4guiSegmentationUtils::GetSlicevtkImage(m_PathPoint, m_VtkImageData, m_ResliceSize, m_ImageTransformation);
     m_ImageSlice=strPts->GetVtkStructuredPoints();
     vtkImageData* imageSlice=m_ImageSlice;
     if(imageSlice==NULL)
@@ -184,18 +197,26 @@ void sv4guiContourModelThresholdInteractor::StartDrawing(mitk::StateMachineActio
 
 }
 
+//---------------
+// UpdateDrawing
+//---------------
+// Recompute the contour when the mouse is moved.
+//
 void sv4guiContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>( interactionEvent );
-    if ( positionEvent == NULL )
+    if (positionEvent == NULL) {
         return;
+    }
 
     sv4guiContourModel* model = dynamic_cast<sv4guiContourModel*>( GetDataNode()->GetData() );
-    if(model==NULL)
+    if(model == NULL) {
         return;
+    }
 
-    if(m_Contour==NULL)
+    if(m_Contour==NULL) {
         return;
+    }
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
     const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
@@ -208,16 +229,23 @@ void sv4guiContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineActi
     renderer->WorldToDisplay( m_LastPoint, lastDiplayPosition );
 
     double thresholdValue=0.5*(m_MaxValue+m_MinValue)-0.5*(newDisplayPosition[1]-lastDiplayPosition[1])/m_ScaleBase*(m_MaxValue-m_MinValue);
+    //std::cout << "[UpdateDrawing] thresholdValue: " << thresholdValue << std::endl;
 
-    if(thresholdValue<m_MinValue) thresholdValue=m_MinValue;
+    if (thresholdValue<m_MinValue) {
+        thresholdValue=m_MinValue;
+    }
 
-    if(thresholdValue>m_MaxValue) thresholdValue=m_MaxValue;
+    if (thresholdValue > m_MaxValue) {
+        thresholdValue=m_MaxValue;
+    }
 
     sv4guiPathElement::sv4guiPathPoint pathPoint=m_Contour->GetPathPoint();
 
-    vtkImageData* imageSlice=m_ImageSlice;
-    if(imageSlice==NULL)
+    vtkImageData* imageSlice = m_ImageSlice;
+
+    if (imageSlice == NULL) {
         return;
+    }
 
     double spacing[3];
     double origin[3];
@@ -234,7 +262,7 @@ void sv4guiContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineActi
     seedPoint[2]=0.0;
 
     bool ifClosed;
-    std::vector<mitk::Point3D> contourPoints=sv4guiSegmentationUtils::GetThresholdContour(imageSlice, thresholdValue, pathPoint, ifClosed, seedPoint);
+    std::vector<mitk::Point3D> contourPoints = sv4guiSegmentationUtils::GetThresholdContour(imageSlice, thresholdValue, pathPoint, ifClosed, seedPoint);
 
     bool forceClosed=true;
     m_Contour->SetClosed(ifClosed||forceClosed);

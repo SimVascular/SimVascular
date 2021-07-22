@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #include "sv4gui_ProjectAddImageAction.h"
 #include "sv4gui_ProjectManager.h"
 #include "sv4gui_DataNodeOperationInterface.h"
@@ -46,6 +47,9 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QInputDialog>
+
+#include "sv4gui_ImageProcessingUtils.h"
+#include <mitkImageCast.h>
 
 sv4guiProjectAddImageAction::sv4guiProjectAddImageAction()
 {
@@ -176,6 +180,7 @@ void sv4guiProjectAddImageAction::ReadImage(QString& imageFilePath, mitk::DataNo
 
   imageFilePath = QFileDialog::getOpenFileName(NULL, tr("Open Image File"), lastFileOpenPath, 
                     QmitkIOUtil::GetFileOpenFilterString() , NULL);
+  std::cout << "[ReadImage] imageFilePath: " << imageFilePath.toStdString() << std::endl;
 
   // Create a data node with the file path. This reads in the image data.
   imageNode = sv4guiProjectManager::LoadDataNode(imageFilePath.toStdString());
@@ -200,6 +205,33 @@ void sv4guiProjectAddImageAction::ReadImage(QString& imageFilePath, mitk::DataNo
     prefs->Put("LastFileOpenPath", imageFilePath);
     prefs->Flush();
   }
+
+  auto image = dynamic_cast<mitk::Image*>(imageNode->GetData());
+  auto origin = image->GetGeometry()->GetOrigin();
+  std::cout << "[ReadImage] image origin: "  << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+
+  auto spacing = image->GetGeometry()->GetSpacing();
+  std::cout << "[ReadImage] image spacing: "  << spacing[0] << " " << spacing[1] << " " <<
+          spacing[2] << std::endl;
+
+  auto dims = image->GetDimensions();
+  std::cout << "[ReadImage] image dims: "  << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
+
+  sv4guiImageProcessingUtils::itkImPoint itkImage = sv4guiImageProcessingUtils::itkImageType::New();
+  mitk::CastToItkImage(image, itkImage);
+  auto direction_cos = itkImage->GetDirection();
+
+  std::cout << "[ReadImage] direction_cos: " << std::endl;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      std::cout << direction_cos[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  auto itk_origin = itkImage->GetOrigin();
+  std::cout << "[ReadImage] itk_origin: "  << itk_origin[0] << " " << itk_origin[1] << " " << itk_origin[2] << std::endl;
+
 
 }
 

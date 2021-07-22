@@ -65,6 +65,8 @@ public:
 
     void SetGroupInteractor(sv4guiContourGroupDataInteractor::Pointer groupInteractor) {m_GroupInteractor=groupInteractor;}
 
+    void SetImageTransform(vtkTransform* imageTransform);
+
 protected:
 
     sv4guiContourModelThresholdInteractor();
@@ -116,6 +118,9 @@ private:
 
     sv4guiContourGroupDataInteractor::Pointer m_GroupInteractor;
 
+    // Stores the mitk image transformation needed to transform 
+    // the 2D image slices definded from path data.
+    vtkSmartPointer<vtkTransform> m_ImageTransformation;
 };
 
 itkEventMacro( EndInteractionContourModelEvent, sv4guiContourModelEvent );
