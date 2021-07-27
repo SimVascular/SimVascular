@@ -152,13 +152,17 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
 
 int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
 {
-  if (geom_ != NULL)
-  {
+  if (geom_ != NULL) {
     geom_->Delete();
   }
 
+  auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->SetInputData(newPolyData);
+  cleaner->Update();
+
   geom_ = vtkPolyData::New();
-  geom_->DeepCopy(newPolyData);
+  geom_->DeepCopy(cleaner->GetOutput());
+  geom_->BuildLinks();
 
   if (VtkUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == SV_OK)
   {
