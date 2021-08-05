@@ -71,6 +71,14 @@
 #include <vtkContourFilter.h>
 #include <vtkPolyDataConnectivityFilter.h>
 
+#include <vtkXMLImageDataWriter.h>
+
+#include "sv4gui_ImageProcessingUtils.h"
+#include <mitkImageCast.h>
+
+#include <vtkPlaneSource.h>
+#include "vtkXMLPolyDataWriter.h"
+
 #include <iostream>
 using namespace std;
 
@@ -117,64 +125,49 @@ sv4guiSegmentationUtils::~sv4guiSegmentationUtils()
 {
 }
 
-vtkTransform* sv4guiSegmentationUtils::GetvtkTransform(sv4guiPathElement::sv4guiPathPoint pathPoint)
+//-----------------
+// GetvtkTransform
+//-----------------
+// Compute the transformation used to translate and rotate a plane with 
+// origin = [0,0,0] and normal = [0,0,1] to the 'pathPoint' point and normal.
+//
+// Since we are transforming from the standard basis just set the columns
+// of the rotation matrix with the path point local basis.
+//
+vtkSmartPointer<vtkTransform> 
+sv4guiSegmentationUtils::GetvtkTransform(sv4guiPathElement::sv4guiPathPoint pathPoint)
 {
-    double pos[3],nrm[3],xhat[3];
+    double pos[3], tangent[3], normal[3], binormal[3];
 
-    pos[0]=pathPoint.pos[0];
-    pos[1]=pathPoint.pos[1];
-    pos[2]=pathPoint.pos[2];
-
-    nrm[0]=pathPoint.tangent[0];
-    nrm[1]=pathPoint.tangent[1];
-    nrm[2]=pathPoint.tangent[2];
-
-    xhat[0]=pathPoint.rotation[0];
-    xhat[1]=pathPoint.rotation[1];
-    xhat[2]=pathPoint.rotation[2];
-
-    double zhat[3]={0,0,1};
-    double theta=math_radToDeg(math_angleBtw3DVectors(zhat,nrm));
-    double axis[3];
-    math_cross(axis,zhat,nrm);
-
-    vtkTransform* tmpTr=vtkTransform::New();
-    tmpTr->Identity();
-    tmpTr->RotateWXYZ(theta,axis);
-
-    vtkPoints* tmpPt=vtkPoints::New();
-    tmpPt->InsertNextPoint(1, 0, 0);
-
-    vtkPolyData* tmpPd=vtkPolyData::New();
-    tmpPd->SetPoints(tmpPt);
-
-    vtkTransformPolyDataFilter* tmpTf=vtkTransformPolyDataFilter::New();
-    tmpTf->SetInputDataObject(tmpPd);
-    tmpTf->SetTransform(tmpTr);
-    tmpTf->Update();
-    double pt[3];
-    tmpTf->GetOutput()->GetPoint(0,pt);
-
-    tmpTr->Delete();
-    tmpPt->Delete();
-    tmpPd->Delete();
-    tmpTf->Delete();
-
-    double rot=math_radToDeg(math_angleBtw3DVectors(pt,xhat));
-
-    double x[3];
-    math_cross(x,pt,xhat);
-    double d=math_dot(x,nrm);
-    if (d < 0.0) {
-        rot=-rot;
+    // Define path local basis.
+    for (int i = 0; i < 3; i++) {
+        pos[i] = pathPoint.pos[i];
+        tangent[i] = pathPoint.tangent[i];
+        normal[i] = pathPoint.rotation[i];
     }
 
-    vtkTransform* tr=vtkTransform::New();
-    tr->Identity();
-    tr->Translate(pos);
-    tr->RotateWXYZ(rot,nrm);
-    tr->RotateWXYZ(theta,axis);
-    return tr;
+    binormal[0] = tangent[1]*normal[2] - tangent[2]*normal[1];
+    binormal[1] = tangent[2]*normal[0] - tangent[0]*normal[2];
+    binormal[2] = tangent[0]*normal[1] - tangent[1]*normal[0];
+
+    // Define rotation matrix.
+    auto matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+    matrix->Identity();
+    int a0 = 2, a1 = 0, a2 = 1;
+
+    for (int i = 0; i < 3; i++) {
+        matrix->SetElement(i, a0, tangent[i]);
+        matrix->SetElement(i, a1, normal[i]);
+        matrix->SetElement(i, a2, binormal[i]);
+    }
+
+    // Create transformation to rotate and then translate.
+    auto transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    transform->Translate(pos[0], pos[1], pos[2]);
+    transform->Concatenate(matrix);
+
+    return transform;
 }
 
 vtkTransform* sv4guiSegmentationUtils::GetvtkTransformBox(sv4guiPathElement::sv4guiPathPoint pathPoint,double boxHeight)
@@ -250,17 +243,7 @@ mitk::PlaneGeometry::Pointer
 sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4guiPathPoint pathPoint, 
     mitk::Vector3D spacing, double size)
 {
-/*
-    std::cout << "========== sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing ==========" << std::endl;
-    std::cout << "[CreatePlaneGeometryFromSpacing] Path pos: " <<pathPoint.pos[0]<<", " << pathPoint.pos[1]<<", " 
-      <<pathPoint.pos[2] << std::endl;
-    std::cout << "[CreatePlaneGeometryFromSpacing] Path tangent: " <<pathPoint.tangent[0]<<", " << 
-      pathPoint.tangent[1]<<", " <<pathPoint.tangent[2] << std::endl;
-    std::cout << "[CreatePlaneGeometryFromSpacing] Path rotation: " <<pathPoint.rotation[0]<<", " << 
-      pathPoint.rotation[1]<<", " <<pathPoint.rotation[2] << std::endl;
-    std::cout << "[CreatePlaneGeometryFromSpacing] Spacing: " <<spacing[0]<<" " << spacing[1]<<" " <<spacing[2] << std::endl;
-*/
-    vtkTransform* tr=GetvtkTransform(pathPoint);
+    auto tr=GetvtkTransform(pathPoint);
     mitk::PlaneGeometry::Pointer planegeometry = mitk::PlaneGeometry::New();
     planegeometry->SetIndexToWorldTransformByVtkMatrix(tr->GetMatrix());
 
@@ -272,7 +255,6 @@ sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4gu
     pos[0]=pathPoint.pos[0]-right[0]*size/2.0-bottom[0]*size/2.0;
     pos[1]=pathPoint.pos[1]-right[1]*size/2.0-bottom[1]*size/2.0;
     pos[2]=pathPoint.pos[2]-right[2]*size/2.0-bottom[2]*size/2.0;
-    //std::cout << "[CreatePlaneGeometryFromSpacing] Plane origin: " <<pos[0]<<" " << pos[1]<<" " <<pos[2] << std::endl;
 
     planegeometry->SetOrigin(pos);
     planegeometry->SetSpacing(spacing);
@@ -285,7 +267,6 @@ sv4guiSegmentationUtils::CreatePlaneGeometryFromSpacing(sv4guiPathElement::sv4gu
 
     mitk::Vector3D normal;
     normal = planegeometry->GetNormal();
-    //std::cout << "[CreatePlaneGeometryFromSpacing] Plane normal: " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
 
     return planegeometry;
 }
@@ -301,10 +282,8 @@ mitk::PlaneGeometry::Pointer
 sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint pathPoint, 
     mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
-    //std::cout << "========== sv4guiSegmentationUtils::CreatePlaneGeometry 2 ==========" << std::endl;
     mitk::Vector3D newSpacing;
     mitk::Image* image = dynamic_cast<mitk::Image*>(baseData);
-    //std::cout << "[CreatePlaneGeometry 2] useOnlyMinimumSpacing: " << useOnlyMinimumSpacing << std::endl;
 
     if (image) {
         mitk::Vector3D imageSpacing = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
@@ -312,7 +291,7 @@ sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint 
             double minSpacing = std::min(imageSpacing[0],std::min(imageSpacing[1],imageSpacing[2]));
             newSpacing.Fill(minSpacing);
         } else {
-            vtkTransform* tr = GetvtkTransform(pathPoint);
+            auto tr = GetvtkTransform(pathPoint);
             mitk::PlaneGeometry::Pointer planeGeometry1 = mitk::PlaneGeometry::New();
             planeGeometry1->SetIndexToWorldTransformByVtkMatrix(tr->GetMatrix());
 
@@ -358,20 +337,12 @@ sv4guiSegmentationUtils::CreatePlaneGeometry(sv4guiPathElement::sv4guiPathPoint 
 //
 mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(std::vector<sv4guiPathElement::sv4guiPathPoint> pathPoints, mitk::BaseData* baseData, double size, bool useOnlyMinimumSpacing)
 {
-/*
-    std::cout << "========== sv4guiSegmentationUtils::CreateSlicedGeometry ==========" << std::endl;
-    std::cout << "[CreateSlicedGeometry] Size: " << size << std::endl;
-    std::cout << "[CreateSlicedGeometry] useOnlyMinimumSpacing: " << useOnlyMinimumSpacing << std::endl;
-*/
-
     mitk::SlicedGeometry3D::Pointer slicedGeo3D=mitk::SlicedGeometry3D::New();
     slicedGeo3D->SetEvenlySpaced(false);
     slicedGeo3D->InitializeSlicedGeometry(pathPoints.size());
     mitk::Image* image=dynamic_cast<mitk::Image*>(baseData);
 
     for (int i = 0; i < pathPoints.size(); i++) {
-        //std::cout << "[CreateSlicedGeometry] " << std::endl;
-        //std::cout << "[CreateSlicedGeometry] --------------- path " << i << " ---------------" << std::endl;
         mitk::PlaneGeometry::Pointer planegeometry = CreatePlaneGeometry(pathPoints[i], baseData,
           size, useOnlyMinimumSpacing);
 
@@ -398,7 +369,6 @@ mitk::SlicedGeometry3D::Pointer sv4guiSegmentationUtils::CreateSlicedGeometry(st
 //
 mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeometry* planeGeometry, const mitk::Image* image, unsigned int timeStep)
 {
-    //std::cout << "========== sv4guiSegmentationUtils::GetSliceImage ==========" << std::endl;
     if ( !image || !planeGeometry ) return NULL;
 
     //    //Make sure that for reslicing and overwriting the same alogrithm is used. We can specify the mode of the vtk reslicer
@@ -409,6 +379,7 @@ mitk::Image::Pointer sv4guiSegmentationUtils::GetSliceImage(const mitk::PlaneGeo
 
     //use ExtractSliceFilter with our specific vtkImageReslice for overwriting and extracting
     //    mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New(reslice);
+
     mitk::ExtractSliceFilter::Pointer extractor =  mitk::ExtractSliceFilter::New();
     extractor->SetInput( image );
     extractor->SetTimeStep( timeStep );
@@ -489,44 +460,151 @@ sv4guiSegmentationUtils::GetSlicevtkImage(const mitk::PlaneGeometry* planeGeomet
 }
 */
 
+//------------------------
+// GetImageTransformation
+//------------------------
+// Get the transformation used to transform geometry defined in mitk::Image 
+// coordinate system to unoriented vtkImageData coordinate system. 
+//
+// The direction cosine matrix is the direction of the image axis in row major order.
+//
+vtkSmartPointer<vtkTransform> 
+sv4guiSegmentationUtils::GetImageTransformation(mitk::Image* image)
+{ 
+  sv4guiImageProcessingUtils::itkImPoint itkImage = sv4guiImageProcessingUtils::itkImageType::New();
+  mitk::CastToItkImage(image, itkImage);
+  auto itkDirCos = itkImage->GetDirection();
+
+  // Set a 4x4 matrix with the image direction cosines.
+  auto matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  matrix->Identity();
+  for (int i = 0; i < 3; i++) { 
+    for (int j = 0; j < 3; j++) {
+      matrix->SetElement(i, j, itkDirCos[i][j]);
+    }
+  }
+  matrix->Invert();
+ 
+  //double origin[3];
+  auto origin = image->GetGeometry()->GetOrigin();
+
+  // Create a transformation to rotatate about the origin.
+  auto imageTransform = vtkSmartPointer<vtkTransform>::New();
+  imageTransform->Identity();
+  imageTransform->Translate(origin[0], origin[1], origin[2]);
+  imageTransform->Concatenate(matrix);
+  imageTransform->Translate(-origin[0], -origin[1], -origin[2]);
+
+  return imageTransform;
+}
+
+//------------------
+// GetSlicevtkImage
+//------------------
+// Old version no longer used. 
+//
+cvStrPts * 
+sv4guiSegmentationUtils::GetSlicevtkImage_old(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeImage, double size)
+{
+    // Compute a slice transformation from the 'pathPoint' path point, normal and tangent.
+    //
+    auto sliceTransform = GetvtkTransform(pathPoint);
+
+    double spacing[3];
+    volumeImage->GetSpacing(spacing);
+    double sliceSpacing = std::min(spacing[0],std::min(spacing[0],spacing[1]));
+
+    int dims[3];
+    volumeImage->GetDimensions(dims);
+
+    int sliceWidth = size / sliceSpacing;
+    int sliceHeight = size / sliceSpacing;
+    double pdimx = sliceWidth * sliceSpacing;
+    double pdimy = sliceHeight * sliceSpacing;
+
+    double sliceOrigin[3];
+    sliceOrigin[0] = -0.5*pdimx;
+    sliceOrigin[1] = -0.5*pdimy;
+    sliceOrigin[2] = 0.0;
+
+    // Extract a slice from the image volume.
+    vtkImageReslice* imageReslice = vtkImageReslice::New();
+    imageReslice->SetInputDataObject(volumeImage);
+    imageReslice->SetResliceTransform(sliceTransform);
+    imageReslice->SetOutputSpacing(sliceSpacing, sliceSpacing, sliceSpacing);
+    imageReslice->SetOutputOrigin(sliceOrigin);
+    imageReslice->SetOutputExtent(0, sliceWidth-1, 0, sliceHeight-1, 0, 0);
+    imageReslice->InterpolateOn();
+    imageReslice->Update();
+
+    return vtkImageData2cvStrPts(imageReslice->GetOutput());
+}
+
 //------------------
 // GetSlicevtkImage
 //------------------
 // Extract a 2D slice from a 3D volume using a path point.
 //
-// Note: This appears to be used for only threshold segmentation.
+// An image slice is extracted using 'vtkImageReslice' from a 'vtkImageData' image volume. 
+// However, 'vtkImageData' does not store a rotation matrix and so supports only axis-parallel 
+// 
+// Path data (points, tangents and normals) are defined in a possibly transformed mitk image 
+// coordinate system so we must transform a slice obtained from path data into the 'vtkImageData' 
+// coordinate system. 
 //
 cvStrPts * 
-sv4guiSegmentationUtils::GetSlicevtkImage(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, 
-  double size)
+sv4guiSegmentationUtils::GetSlicevtkImage(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeImage, 
+    double size, vtkTransform* imageTransform) 
 {
-    vtkTransform* tr =GetvtkTransform(pathPoint);
-    vtkImageReslice* rs=vtkImageReslice::New();
+    // Compute the transformation to define a slice plane aligned with
+    // the 'pathPoint' point, normal and tangent.
+    //
+    auto sliceTransform = GetvtkTransform(pathPoint);
 
+    // Transform to vtkImageData system.
+    //
+    sliceTransform->PostMultiply();
+    sliceTransform->Concatenate(imageTransform);
+
+    // Set the spacing and dimensions of the plane used
+    // to extract a slice from a image volume.
+    //
     double spacing[3];
-    volumeimage->GetSpacing(spacing);
-    double vmin=std::min(spacing[0],std::min(spacing[0],spacing[1]));
+    volumeImage->GetSpacing(spacing);
+    double sliceSpacing = std::min(spacing[0],std::min(spacing[0],spacing[1]));
 
-    int width=size/vmin;
-    int height=size/vmin;
-    double pdimx=width*vmin;
-    double pdimy=height*vmin;
+    int dims[3];
+    volumeImage->GetDimensions(dims);
 
-    double ors[3];
-    ors[0]=-0.5*pdimx;
-    ors[1]=-0.5*pdimy;
-    ors[2]=0.0;
+    int sliceWidth = size / sliceSpacing;
+    int sliceHeight = size / sliceSpacing;
 
-    rs->SetInputDataObject(volumeimage);
+    double pdimx = sliceWidth * sliceSpacing;
+    double pdimy = sliceHeight * sliceSpacing;
 
-    rs->SetResliceTransform(tr);
-    rs->SetOutputSpacing(vmin,vmin,vmin);
-    rs->SetOutputOrigin(ors);
-    rs->SetOutputExtent(0,width-1,0,height-1,0,0);
-    rs->InterpolateOn();
-    rs->Update();
+    double sliceOrigin[3];
+    sliceOrigin[0] = -0.5*pdimx;
+    sliceOrigin[1] = -0.5*pdimy;
+    sliceOrigin[2] = 0.0;
 
-    return vtkImageData2cvStrPts(rs->GetOutput());
+    // Extract a slice from the image volume.
+    vtkImageReslice* imageReslice = vtkImageReslice::New();
+    imageReslice->SetInputDataObject(volumeImage);
+    imageReslice->SetResliceTransform(sliceTransform);
+    imageReslice->SetOutputSpacing(sliceSpacing, sliceSpacing, sliceSpacing);
+    imageReslice->SetOutputOrigin(sliceOrigin);
+    imageReslice->SetOutputExtent(0, sliceWidth-1, 0, sliceHeight-1, 0, 0);
+    imageReslice->InterpolateOn();
+    imageReslice->Update();
+
+    /*
+    auto writer = vtkXMLImageDataWriter::New();
+    writer->SetFileName("GetSlicevtkImage.vti");
+    writer->SetInputData(imageReslice->GetOutput());
+    writer->Write();
+    */
+
+    return vtkImageData2cvStrPts(imageReslice->GetOutput());
 }
 
 cvStrPts* sv4guiSegmentationUtils::image2cvStrPts(mitk::Image* image)
@@ -580,56 +658,59 @@ cvStrPts* sv4guiSegmentationUtils::vtkImageData2cvStrPts(vtkImageData* vtkImg)
     return sp;
 }
 
-sv4guiContour* sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, svLSParam* param, double size,  bool forceClosed)
+//-----------------
+// CreateLSContour
+//-----------------
+// Extract a level set contour from a 2D image slice.
+//
+sv4guiContour* 
+sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeImage, 
+    svLSParam* param, double size, vtkTransform* imageTransform, bool forceClosed)
 {
-    //stage 1
-    //**************************
+    ////////////////////////////
+    //  Stage 1 computation  //
+    ///////////////////////////
+
+    // Create level set object set some parameters. 
     cvITKLevelSet *ls;
     ls = new cvITKLevelSet;
     ls->SetDebug(false);
     ls->SetUseInputImageAsFeature(false);
-
-    cvPolyData *seedPd = NULL;
-    //    int loc[3];
-    //    loc[0] = x;
-    //    loc[1] = y;
-    //    loc[2] = z;
-    double center[3];
-    center[0] = param->ctrx;
-    center[1] = param->ctry;
-    //    center[2] = param->ctrz;
-    center[2] = 0.0;
-
-    cvITKLSUtil::vtkGenerateCircle(param->radius,center,50,&seedPd);
-    //    vtkGenerateCircle(param->radius,center,50,&seedPd);
-
-    ls->SetMaxIterations(param->maxIter1);//int
-    ls->SetMaxRMSError(param->maxErr1);//double
+    ls->SetMaxIterations(param->maxIter1);
+    ls->SetMaxRMSError(param->maxErr1);
     ls->SetAdvectionScaling(1.0);
     ls->SetCurvatureScaling(1.0);
 
-    cvStrPts*  strPts=GetSlicevtkImage(pathPoint, volumeimage,  size);
-    ls->SetInputImage(strPts);
-    ls->SetSeed(seedPd);
-
-    //$itklset PhaseOneLevelSet -Kc $kThr -expRising $expRise -expFalling $expFall -sigmaFeat $gSigma1 -sigmaAdv $advSigma1
-
-    if(param->sigmaFeat1 >= 0)
-    {
+    if(param->sigmaFeat1 >= 0) {
         ls->SetSigmaFeature(param->sigmaFeat1);
     }
-    if(param->sigmaAdv1 >= 0)
-    {
+    if(param->sigmaAdv1 >= 0) {
         ls->SetSigmaAdvection(param->sigmaAdv1);
     }
 
-    ls->ComputePhaseOneLevelSet(param->kc, param->expFactorRising,param->expFactorFalling);
+    // Create seed curve.
+    cvPolyData *seedPd = NULL;
+    double center[3];
+    center[0] = param->ctrx;
+    center[1] = param->ctry;
+    center[2] = 0.0;
+    cvITKLSUtil::vtkGenerateCircle(param->radius, center, 50, &seedPd);
+
+    // Extract a 2D slice from the image volume.
+    cvStrPts* strPts = GetSlicevtkImage(pathPoint, volumeImage, size, imageTransform);
+    ls->SetInputImage(strPts);
+    ls->SetSeed(seedPd);
+
+    // Phase 1 (whatever that is ...)
+    ls->ComputePhaseOneLevelSet(param->kc, param->expFactorRising, param->expFactorFalling);
 
     cvPolyData *front1;
-    front1=ls->GetFront();
+    front1 = ls->GetFront();
 
-    //stage 2
-    //**********************************************
+    ////////////////////////////
+    //  Stage 2 computation  //
+    ///////////////////////////
+
     cvITKLevelSet *ls2;
     ls2 = new cvITKLevelSet;
 
@@ -641,16 +722,14 @@ sv4guiContour* sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4gu
     ls2->SetAdvectionScaling(1.0);
     ls2->SetCurvatureScaling(1.0);
 
-    cvStrPts*  strPts2=GetSlicevtkImage(pathPoint, volumeimage,  size);
+    cvStrPts* strPts2 = GetSlicevtkImage(pathPoint, volumeImage,  size, imageTransform);
     ls2->SetInputImage(strPts2);
     ls2->SetSeed(front1);
 
-    if(param->sigmaFeat2 >= 0)
-    {
+    if(param->sigmaFeat2 >= 0) {
         ls2->SetSigmaFeature(param->sigmaFeat2);
     }
-    if(param->sigmaAdv2 >= 0)
-    {
+    if(param->sigmaAdv2 >= 0) {
         ls2->SetSigmaAdvection(param->sigmaAdv2);
     }
 
@@ -679,7 +758,7 @@ sv4guiContour* sv4guiSegmentationUtils::CreateLSContour(sv4guiPathElement::sv4gu
 
     cvPolyData *dst2;
 
-    sys_geom_OrientProfile(dst, pos, nrm,xhat,&dst2);
+    sys_geom_OrientProfile(dst, pos, nrm, xhat, &dst2);
 
     sv4guiContour* contour=new sv4guiContour();
     contour->SetPathPoint(pathPoint);
@@ -810,14 +889,18 @@ std::vector<mitk::Point3D> sv4guiSegmentationUtils::GetThresholdContour(vtkImage
     return contourPoints;
 }
 
-sv4guiContour* sv4guiSegmentationUtils::CreateThresholdContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, double thresholdValue, double size, bool forceClosed)
+//------------------------
+// CreateThresholdContour
+//------------------------
+//
+sv4guiContour* sv4guiSegmentationUtils::CreateThresholdContour(sv4guiPathElement::sv4guiPathPoint pathPoint, vtkImageData* volumeimage, double thresholdValue, double size, vtkTransform* imageTransform, bool forceClosed)
 {
     sv4guiContour* contour=new sv4guiContour();
     contour->SetPlaced(true);
     contour->SetMethod("Threshold");
     contour->SetPathPoint(pathPoint);
 
-    cvStrPts*  strPts=GetSlicevtkImage(pathPoint, volumeimage,  size);
+    cvStrPts*  strPts = GetSlicevtkImage(pathPoint, volumeimage,  size, imageTransform);
 
     bool ifClosed;
     double point[3]={0};
