@@ -797,6 +797,16 @@ void sv4guiProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QStr
 
   dataStorage->Add(imageNode, imageFolderNode);
   mitk::RenderingManager::GetInstance()->InitializeViews(imageNode->GetData()->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
+
+  // Set the imageNode's path to the image data; used in sv4guiSeg2DEdit::initialize().
+  QString imageAbsoluteFileName;
+  if (newImageFilePath == "") {
+    imageAbsoluteFileName = QString(projPath.c_str()) + "/" + PluginNames::IMAGES + "/" + newImageFileName;
+  } else {
+    imageAbsoluteFileName = newImageFilePath + "/" + newImageFileName;
+  }
+
+  imageNode->SetStringProperty("image_absolute_file_name", imageAbsoluteFileName.toStdString().c_str());
 }
 
 //--------------------
@@ -1949,7 +1959,6 @@ sv4guiProjectManager::CreateImagesPlugin(mitk::DataStorage::Pointer dataStorage,
 
     // storing the path to the image dir in the image node
     imageNode->SetStringProperty("path", (imageFilePath.toStdString()).c_str());
-
     imageNode->SetStringProperty("image_file_name", (imageFileName.toStdString()).c_str());
     imageNode->SetStringProperty("image_absolute_file_name", (imageAbsoluteFileName.toStdString()).c_str());
 
