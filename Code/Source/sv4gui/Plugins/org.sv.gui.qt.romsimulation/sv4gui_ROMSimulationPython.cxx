@@ -346,6 +346,26 @@ bool sv4guiROMSimulationPython::ExecuteZeroDSimulation(const std::string outputD
   // Check for errors.
   PyErr_Print();
 
+  // Search for the Python ERROR or WARNING messages in the 
+  // returned result string to determine if the script failed.
+  //
+  if (result) {
+      auto uResult = PyUnicode_FromObject(result);
+      auto sResult = std::string(PyUnicode_AsUTF8(uResult));
+
+      if (sResult.find("ERROR") != std::string::npos) {
+          MITK_WARN << "The 0D solver has failed.";
+          MITK_WARN << "Returned message: " << QString(sResult.c_str());
+          QMessageBox mb(nullptr);
+          mb.setWindowTitle(sv4guiROMSimulationView::MsgTitle);
+          mb.setText("The 0D solver has failed.");
+          mb.setIcon(QMessageBox::Critical);
+          mb.setDetailedText(QString(sResult.c_str()));
+          mb.setDefaultButton(QMessageBox::Ok);
+          mb.exec();
+      }
+  }
+
   return true;
 }
 
