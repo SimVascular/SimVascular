@@ -330,22 +330,19 @@ void sv4guiSeg2DEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ContourGroupNode,isProjFolder,false);
 
     m_PathNode=NULL;
-    if(rs->size()>0)
-    {
+
+    if(rs->size()>0) {
         mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
 
         rs=GetDataStorage()->GetDerivations (projFolderNode,mitk::NodePredicateDataType::New("sv4guiImageFolder"));
-        if(rs->size()>0)
-        {
-
+        if(rs->size()>0) {
             mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
             rs=GetDataStorage()->GetDerivations(imageFolderNode);
-//            if(rs->size()<1) return;
-            if(rs->size()>0)
-            {
+            if(rs->size()>0) {
                 imageNode=rs->GetElement(0);
-                if(imageNode.IsNotNull())
+                if(imageNode.IsNotNull()) {
                     m_Image= dynamic_cast<mitk::Image*>(imageNode->GetData());
+                }
             }
 
         }
@@ -1957,7 +1954,9 @@ void sv4guiSeg2DEdit::segTabSelected(){
  * and sets the image volume path.
  *
  */
-void sv4guiSeg2DEdit::initialize(){
+void sv4guiSeg2DEdit::initialize()
+{
+  std::cout << "========== sv4guiSeg2DEdit::initialize ==========" << std::endl;
   bool ml_init;
   GetDataStorage()->GetNamedNode("Segmentations")->GetBoolProperty("ml_init",ml_init);
 
@@ -1969,67 +1968,35 @@ void sv4guiSeg2DEdit::initialize(){
   mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("sv4guiProjectFolder");
   mitk::DataNode::Pointer projFolderNode = GetDataStorage()->GetNode (isProjFolder);
 
+  if (!projFolderNode) {
+    return;
+  }
 
-  if (projFolderNode){
-    std::string projPath;
-    projFolderNode->GetStringProperty("project path", projPath);
+  std::string projPath;
+  projFolderNode->GetStringProperty("project path", projPath);
+  std::cout << "[initialize] projPath: " << projPath << std::endl;
+  mitk::DataNode::Pointer imageNode;
 
-    QString QprojPath = QString(projPath.c_str());
-
-    QDir dir(QprojPath);
-
-    QString projectConfigFileName=".svproj";
-
-    QString projectConfigFilePath=dir.absoluteFilePath(projectConfigFileName);
-
-    std::string projConfigFile = projectConfigFilePath.toStdString();
-
-    //get image path
-    QDomDocument doc("svproj");
-    QString imageFolderName="Images";
-
-    QFile xmlFile(projectConfigFilePath);
-    xmlFile.open(QIODevice::ReadOnly);
-
-    QString *em=NULL;
-    doc.setContent(&xmlFile,em);
-    xmlFile.close();
-
-    QDomElement projDesc      = doc.firstChildElement("projectDescription");
-    QDomElement imagesElement = projDesc.firstChildElement("images");
-    imageFolderName           = imagesElement.attribute("folder_name");
-    QDomNodeList imageList    = imagesElement.elementsByTagName("image");
-
-    QDomNode imageNode = imageList.item(0);
-    QDomElement imageElement=imageNode.toElement();
-
-    QString inProj    = imageElement.attribute("in_project");
-    QString imageName = imageElement.attribute("name");
-    QString imagePath = imageElement.attribute("path");
-
-    if(inProj=="yes")
-    {
-        if(imagePath!="")
-        {
-            m_imageFilePath = (projPath
-            +"/"+imageFolderName.toStdString()+"/"+imagePath.toStdString());
-        }
-        else if(imageName!="")
-        {
-            m_imageFilePath = (projPath
-            +"/"+imageFolderName.toStdString()+"/"+imageName.toStdString());
-        }
+  auto rs = GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("sv4guiImageFolder"));
+  if (rs->size() > 0) {
+    mitk::DataNode::Pointer imageFolderNode = rs->GetElement(0);
+    rs = GetDataStorage()->GetDerivations(imageFolderNode);
+    if (rs->size() > 0) {
+      imageNode = rs->GetElement(0);
     }
-    else
-    {
-        m_imageFilePath = imageElement.attribute("path").toStdString();
-    }
+  } 
 
-    ml_utils = sv4gui_MachineLearningUtils::getInstance("googlenet_c30_train300k_aug10_clean");
-    ml_utils->setImage(m_imageFilePath);
+  if (imageNode.IsNull()) {
+    std::cout << "[initialize] imageNode is nullptr " << std::endl;
+    return;
+  }
 
-  }//end if projectfoldernode
+  if (imageNode->GetStringProperty("image_absolute_file_name", m_imageFilePath)) { 
+    std::cout << "[initialize] image_absolute_file_name: " << m_imageFilePath << std::endl;
+  }
 
+  ml_utils = sv4gui_MachineLearningUtils::getInstance("googlenet_c30_train300k_aug10_clean");
+  ml_utils->setImage(m_imageFilePath);
 }
 
 /**
