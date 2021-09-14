@@ -73,6 +73,9 @@
            <property name="text">
             <string>0</string>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -81,7 +84,7 @@
             <string>1</string>
            </property>
            <property name="checked">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -320,8 +323,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>599</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -357,8 +360,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>599</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -421,8 +424,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>599</height>
+           <width>220</width>
+           <height>244</height>
           </rect>
          </property>
          <property name="sizePolicy">
@@ -680,8 +683,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>599</height>
+           <width>98</width>
+           <height>76</height>
           </rect>
          </property>
          <attribute name="label">
@@ -717,8 +720,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>599</height>
+           <width>212</width>
+           <height>68</height>
           </rect>
          </property>
          <attribute name="label">
@@ -840,8 +843,8 @@ background-color: white
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>393</width>
-           <height>599</height>
+           <width>357</width>
+           <height>548</height>
           </rect>
          </property>
          <attribute name="label">
