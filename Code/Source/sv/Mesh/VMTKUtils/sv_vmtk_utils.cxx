@@ -464,21 +464,16 @@ int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,
 int sys_geom_cap_for_centerlines(cvPolyData* polydata, cvPolyData** cappedpolydata, int* numcenterids,
       int **centerids, int type)
 {
-  vtkPolyData *geom = polydata->GetVtkPolyData();
+  auto geom = polydata->GetVtkPolyData();
   cvPolyData *result = NULL;
   *cappedpolydata = NULL;
-  vtkSmartPointer<vtkIdList> capCenterIds = vtkSmartPointer<vtkIdList>::New();
-  vtkSmartPointer<vtkTriangleFilter> triangulate =
-	  vtkSmartPointer<vtkTriangleFilter>::New();
-  int numids;
-  int *allids;
-  int i;
+  auto capCenterIds = vtkSmartPointer<vtkIdList>::New();
+  auto triangulate = vtkSmartPointer<vtkTriangleFilter>::New();
 
   try {
-    if (type ==0)
-    {
-      vtkSmartPointer<vtkvmtkSimpleCapPolyData> capper =
-	      vtkSmartPointer<vtkvmtkSimpleCapPolyData>::New();
+
+    if (type ==0) {
+      auto capper = vtkSmartPointer<vtkvmtkSimpleCapPolyData>::New();
       capper->SetInputData(geom);
       capper->SetCellEntityIdsArrayName("CenterlineCapID");
       capper->SetCellEntityIdOffset(1);
@@ -489,11 +484,9 @@ int sys_geom_cap_for_centerlines(cvPolyData* polydata, cvPolyData** cappedpolyda
       result = new cvPolyData( triangulate->GetOutput() );
       *cappedpolydata = result;
       capCenterIds->InsertNextId(0);
-    }
-    else if (type == 1)
-    {
-      vtkSmartPointer<vtkvmtkCapPolyData> capper =
-	      vtkSmartPointer<vtkvmtkCapPolyData>::New();
+
+    } else if (type == 1) {
+      auto capper = vtkSmartPointer<vtkvmtkCapPolyData>::New();
       capper->SetInputData(geom);
       capper->SetDisplacement(0);
       capper->SetInPlaneDisplacement(0);
@@ -504,23 +497,21 @@ int sys_geom_cap_for_centerlines(cvPolyData* polydata, cvPolyData** cappedpolyda
       result = new cvPolyData( triangulate->GetOutput() );
       *cappedpolydata = result;
       capCenterIds->DeepCopy(capper->GetCapCenterIds());
-
     }
 
-  }
-  catch (...) {
+  } catch (...) {
     fprintf(stderr,"ERROR in capping operation.\n");
     fflush(stderr);
     return SV_ERROR;
   }
 
-  numids = capCenterIds->GetNumberOfIds();
-  allids = new int[numids];
+  int numids = capCenterIds->GetNumberOfIds();
+  int* allids = new int[numids];
 
-  for (i=0;i<numids;i++)
-  {
+  for (int i = 0; i < numids; i++) {
     allids[i] = capCenterIds->GetId(i);
   }
+
   *numcenterids = numids;
   *centerids = allids;
 
