@@ -3694,9 +3694,9 @@ bool sv4guiROMSimulationView::CreateDataFiles(QString outputDir, bool outputAllF
     return true;
 }
 
-//-------------------
-// AddMeshParameters
-//-------------------
+//-----------------------------
+// AddConvertResultsParameters 
+//-----------------------------
 // Add parameters used to convert results.
 //
 void sv4guiROMSimulationView::AddConvertResultsParameters(sv4guiROMSimJob* job, sv4guiROMSimulationPython& pythonInterface)
@@ -4827,13 +4827,13 @@ void sv4guiROMSimulationView::ExportResults()
 
     QString resultDir = ui->lineEditResultDir->text();
     if (resultDir.isEmpty()) { 
-        QMessageBox::warning(m_Parent, "1D Simultation", "No results directory has been set.");
+        QMessageBox::warning(m_Parent, "ROM Simultation", "No results directory has been set.");
         return;
     }
 
     QString convertDir = ui->lineEditConvertDir->text();
     if (convertDir.isEmpty()) { 
-        QMessageBox::warning(m_Parent, "1D Simultation", "No convert directory has been set.");
+        QMessageBox::warning(m_Parent, "ROM Simultation", "No convert directory has been set.");
         return;
     }
 
@@ -4843,7 +4843,7 @@ void sv4guiROMSimulationView::ExportResults()
     QString stopTimeStr = ui->lineEditStop->text().trimmed();
     auto stopTime = std::stod(stopTimeStr.toStdString());
     if (stopTime < stopTime) { 
-        QMessageBox::warning(m_Parent,"1D Simulation", "The stop time must be larger than the start time.");
+        QMessageBox::warning(m_Parent,"ROM Simulation", "The stop time must be larger than the start time.");
         return;
     }
 
@@ -4854,24 +4854,26 @@ void sv4guiROMSimulationView::ExportResults()
    auto pythonInterface = sv4guiROMSimulationPythonConvert();
    auto params = pythonInterface.m_ParameterNames;
 
-	QString solverFileName;
-	if (modelOrder == "0")
-		solverFileName = SOLVER_0D_FILE_NAME;
-	if (modelOrder == "1")
-		solverFileName = SOLVER_1D_FILE_NAME;
+   QString solverFileName;
+   if (modelOrder == "0") {
+       solverFileName = SOLVER_0D_FILE_NAME;
+   }
+
+   if (modelOrder == "1") {
+       solverFileName = SOLVER_1D_FILE_NAME;
+   }
 
    pythonInterface.AddParameter(params.MODEL_ORDER, modelOrder);
    pythonInterface.AddParameter(params.RESULTS_DIRECTORY, resultDir.toStdString());
-	pythonInterface.AddParameter(params.SOLVER_FILE_NAME,
-			solverFileName.toStdString());
+   pythonInterface.AddParameter(params.SOLVER_FILE_NAME, solverFileName.toStdString());
 
    // Set the data names to convert.
    //
    std::string dataNames;
    auto selectedItems = ui->DataExportListWidget->selectedItems();
    if (selectedItems.size() == 0) { 
-        QMessageBox::warning(m_Parent,"1D Simulation", "No data names are selected to convert.");
-        return;
+       QMessageBox::warning(m_Parent,"1D Simulation", "No data names are selected to convert.");
+       return;
    }
 
    for (auto const& item : selectedItems) {
@@ -4894,22 +4896,12 @@ void sv4guiROMSimulationView::ExportResults()
        pythonInterface.AddParameter(params.OUTLET_SEGMENTS, "true"); 
    }
 
-   // Project results to centerline geometry. 
-   //
-   // The algorithm for projecting results also needs the centerlines geometry.
-   //
-   if (ui->ProjectCenterlines_CheckBox->isChecked() || ui->ProjectTo3DMesh_CheckBox->isChecked()) {
-       auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
-       MITK_INFO << msg << "inputCenterlinesFile: " << inputCenterlinesFile; 
-       pythonInterface.AddParameter(params.CENTERLINES_FILE, inputCenterlinesFile); 
-   }
-
    // Export results as numpy arrays.
    if (ui->ExportNumpy_CheckBox->isChecked()) {
        MITK_INFO << msg << "exportNumpy "; 
    }
 
-   // Project results to a 3D simulation mesh.
+   // Set parameters to project results to a 3D simulation mesh.
    //
    if (ui->ProjectTo3DMesh_CheckBox->isChecked()) {
        auto simName = ui->SimName_ComboBox->currentText().toStdString();
@@ -4928,6 +4920,14 @@ void sv4guiROMSimulationView::ExportResults()
                "' used by the 1D simulation.");
            return;
        }
+   }
+
+   // Set the name for the centerlines geometry file needed to project results to a mesh. 
+   //
+   if (ui->ProjectCenterlines_CheckBox->isChecked() || ui->ProjectTo3DMesh_CheckBox->isChecked()) {
+       auto inputCenterlinesFile = m_CenterlinesFileName.toStdString();
+       MITK_INFO << msg << "inputCenterlinesFile: " << inputCenterlinesFile; 
+       pythonInterface.AddParameter(params.CENTERLINES_FILE, inputCenterlinesFile); 
    }
 
    QString jobName("");
@@ -4949,6 +4949,7 @@ void sv4guiROMSimulationView::ExportResults()
    //
    // The script writes a log file to the convert directory.
    //
+   #ifdef sv4guiROMSimulationView_ExportResults_python
    auto statusMsg = "Converting simulation files ..."; 
    ui->JobStatusValueLabel->setText(statusMsg);
    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
@@ -4962,6 +4963,10 @@ void sv4guiROMSimulationView::ExportResults()
    statusMsg = "1D simulation files have been converted.";
    ui->JobStatusValueLabel->setText(statusMsg);
    mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
+   #else 
+     auto status = pythonInterface.ConvertResultsProcess(convertDir.toStdString());
+   #endif
+
 }
 
 //------------------------
