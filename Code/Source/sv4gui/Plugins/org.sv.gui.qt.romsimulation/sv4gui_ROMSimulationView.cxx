@@ -350,6 +350,9 @@ sv4guiROMSimulationView::sv4guiROMSimulationView() : ui(new Ui::sv4guiROMSimulat
     m_SimulationFilesCreated = false;
 
     m_CenterlinesSource = CenterlinesSource::CALCULATE;
+
+    m_ConvertWorker = nullptr;
+
 }
 
 //-------------------------
@@ -575,6 +578,53 @@ void sv4guiROMSimulationView::CreateQtPartControl( QWidget *parent )
     this->OnPreferencesChanged(berryprefs);
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+//--------------------------
+// ShowConvertWorkerMessage
+//--------------------------
+// The callback executed by an sv4guiConvertWorkerROM object's 'showMessage' event.
+//
+void sv4guiROMSimulationView::ShowConvertWorkerMessage(const bool errorMsg, const QString& msg)
+{
+  QMessageBox mb(nullptr);
+  mb.setWindowTitle(sv4guiROMSimulationView::MsgTitle);
+  mb.setDetailedText(msg);
+  mb.setDefaultButton(QMessageBox::Ok);
+
+  if (errorMsg) { 
+    mb.setIcon(QMessageBox::Critical);
+    mb.setText("Converting reduced-order results files has failed.");
+  } else {
+    mb.setIcon(QMessageBox::Information);
+    mb.setText("Converting reduced-order results files has completed.");
+  }
+
+  mb.exec();
+}
+
+//--------------------
+// ConvertWorkerError
+//--------------------
+// The callback executed by an sv4guiConvertWorkerROM object's 'error' event.
+//
+void sv4guiROMSimulationView::ConvertWorkerError(const QString& msg)
+{
+  ShowConvertWorkerMessage(true, msg);
+  ConvertWorkerFinished();
+}
+
+//-----------------------
+// ConvertWorkerFinished
+//-----------------------
+// The callback executed by an sv4guiConvertWorkerROM object's 'finish' event.
+//
+void sv4guiROMSimulationView::ConvertWorkerFinished()
+{
+  if (m_ConvertWorker != nullptr) {
+      delete m_ConvertWorker;
+      m_ConvertWorker = nullptr;
+  }
 }
 
 //----------------
@@ -4819,6 +4869,10 @@ void sv4guiROMSimulationView::SelectSegmentExportType(int index)
 //---------------
 // Process the Convert Results button press.
 //
+// The 'run_from_c()' function in the 'extract_results.py' script located in the 
+// 'sv_rom_extract_results' module is executed to extract solution resulsts and write them
+// to files of various formats.
+//
 void sv4guiROMSimulationView::ExportResults()
 {
     auto msg = "sv4guiROMSimulationView::ExportResults";
@@ -4945,28 +4999,17 @@ void sv4guiROMSimulationView::ExportResults()
    pythonInterface.AddParameter(params.OUTPUT_DIRECTORY, convertDir.toStdString());
    pythonInterface.AddParameter(params.OUTPUT_FILE_NAME, jobName.toStdString());
 
-   // Execute the Python script to generate the 1D solver input file.
+   // Create a sv4guiConvertWorkerROM used to convert ROM solver results from a QThread
+   // so as not to freeze the SV GUI while executing.
    //
-   // The script writes a log file to the convert directory.
+   // The object is created here so the worker, which is executed in a separate thread, 
+   // can display messages using QMessage.
    //
-   #ifdef sv4guiROMSimulationView_ExportResults_python
-   auto statusMsg = "Converting simulation files ..."; 
-   ui->JobStatusValueLabel->setText(statusMsg);
-   mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
-   auto status = pythonInterface.ConvertResults(convertDir.toStdString());
-
-   if (!status) {
-       QMessageBox::warning(NULL, MsgTitle, "Converting reduced-order results has failed.");
-       return;
-   }
-
-   statusMsg = "1D simulation files have been converted.";
-   ui->JobStatusValueLabel->setText(statusMsg);
-   mitk::StatusBar::GetInstance()->DisplayText(statusMsg);
-   #else 
-     auto status = pythonInterface.ConvertResultsProcess(convertDir.toStdString());
-   #endif
-
+   m_ConvertWorker = new sv4guiConvertWorkerROM();
+   connect(m_ConvertWorker, &sv4guiConvertWorkerROM::showMessage, this, &sv4guiROMSimulationView::ShowConvertWorkerMessage);
+   connect(m_ConvertWorker, &sv4guiConvertWorkerROM::finished, this, &sv4guiROMSimulationView::ConvertWorkerFinished);
+   connect(m_ConvertWorker, &sv4guiConvertWorkerROM::error, this, &sv4guiROMSimulationView::ConvertWorkerError);
+   auto status = pythonInterface.ConvertResultsWorker(m_ConvertWorker, convertDir.toStdString());
 }
 
 //------------------------
