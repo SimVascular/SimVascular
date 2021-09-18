@@ -29,6 +29,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(CPP_FILES
+    sv4gui_ConvertProcessHandlerROM.cxx
+    sv4gui_ConvertWorkerROM.cxx
     sv4gui_ROMSimJobCreate.cxx
     sv4gui_ROMSimJobCreateAction.cxx
     sv4gui_CapBCWidgetROM.cxx
@@ -50,6 +52,8 @@ set(CPP_FILES
 )
 
 set(MOC_H_FILES
+    sv4gui_ConvertProcessHandlerROM.h
+    sv4gui_ConvertWorkerROM.h
     sv4gui_ROMSimJobCreate.h
     sv4gui_ROMSimJobCreateAction.h
     sv4gui_CapBCWidgetROM.h

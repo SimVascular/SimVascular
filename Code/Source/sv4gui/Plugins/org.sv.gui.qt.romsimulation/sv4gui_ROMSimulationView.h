@@ -49,6 +49,7 @@
 #include "sv4gui_ROMSimulationLinesContainer.h"
 #include "sv4gui_ROMSimulationLinesMapper.h"
 #include "sv4gui_ROMSimulationPython.h"
+#include "sv4gui_ConvertWorkerROM.h"
 
 #include "sv4gui_CapSelectionWidget.h"
 #include "sv4gui_ProcessHandlerROM.h"
@@ -296,6 +297,11 @@ public slots:
 
     void SetupInternalSolverPaths();
 
+    // Slots executed by ConvertWorkerROM signals. 
+    void ShowConvertWorkerMessage(const bool errorMsg, const QString& msg);
+    void ConvertWorkerError(const QString& msg);
+    void ConvertWorkerFinished();
+
 public:
 
     virtual void CreateQtPartControl(QWidget *parent) override;
@@ -476,6 +482,7 @@ private:
 
     QString GetExportResultsDir();
 
+    sv4guiConvertWorkerROM* m_ConvertWorker;
 };
 
 #endif // SV4GUI_ROMSIMULATIONVIEW_H
