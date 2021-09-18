@@ -47,6 +47,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            -DUS_MODULE_NAME=sv4guiModuleROMSimulation
 
 HDRS	= \
+    sv4gui_ConvertProcessHandlerROM.h \
     sv4gui_ROMSimJobCreate.h \
     sv4gui_ROMSimJobCreateAction.h \
     sv4gui_CapBCWidgetROM.h \
@@ -67,6 +68,7 @@ HDRS	= \
     sv4gui_SolverProcessHandlerROM.h
 
 CXXSRCS	= \
+    sv4gui_ConvertProcessHandlerROM.cxx \
     sv4gui_ROMSimJobCreate.cxx \
     sv4gui_ROMSimJobCreateAction.cxx \
     sv4gui_CapBCWidgetROM.cxx \
