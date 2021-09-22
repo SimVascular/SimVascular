@@ -224,6 +224,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
 
   TGoptions meshoptions_;
 
+  void SetCapBoundaryNormals(vtkPolyData* surface);
 };
 
 #endif // _CVTETGENMESHOBJECT_H
