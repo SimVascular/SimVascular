@@ -29,16 +29,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file sv_TetGenMeshObject.cxx
- *  @brief The implementations of functions in cvTetGenMeshObject
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *  @note Most functions in class call functions in cv_tetgenmesh_utils.
- */
-
 #include "SimVascular.h"
 
 #include "sv_TetGenMeshObject.h"
@@ -67,6 +57,8 @@
 #include "vtkXMLUnstructuredGridWriter.h"
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkAppendPolyData.h"
+#include "vtkPolyDataConnectivityFilter.h"
+#include "vtkCenterOfMass.h"
 
 #ifdef SV_USE_VMTK
   #include "sv_vmtk_utils.h"
@@ -76,6 +68,10 @@
 #ifdef SV_USE_MMG
   #include "sv_mmg_mesh_utils.h"
 #endif
+
+#include <array>
+#include <set>
+#include <math.h>
 
 // -----------
 // cvTetGenMeshObject
@@ -1285,6 +1281,8 @@ int cvTetGenMeshObject::SetBoundaryLayer(int type, int id, int side,
  */
 int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
 {
+  std::cout << "[SetWalls] " << std::endl;
+  std::cout << "[SetWalls] ========== cvTetGenMeshObject::SetWalls ==========" << std::endl;
   int max=0;
   double range[2];
   vtkIntArray *wallArray = vtkIntArray::New();
@@ -1296,8 +1294,7 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
     return SV_ERROR;
   }
   vtkIntArray *modelIds;
-  modelIds = vtkIntArray::SafeDownCast(
-      polydatasolid_->GetCellData()->GetArray("ModelFaceID"));
+  modelIds = vtkIntArray::SafeDownCast( polydatasolid_->GetCellData()->GetArray("ModelFaceID"));
   modelIds->GetRange(range);
   max = range[1];
 
@@ -1308,6 +1305,8 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   {
     int wallid = *(walls+i);
     isWall[wallid-1] = 1;
+    std::cout << "[SetWalls] wallid: " << wallid << std::endl;
+    wallFaceIDs_.insert(wallid);
   }
 
   int numCells = polydatasolid_->GetNumberOfCells();
@@ -1328,16 +1327,14 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   if (meshoptions_.usemmg == 0)
   {
 #endif
-    vtkSmartPointer<vtkThreshold> thresholder =
-      vtkSmartPointer<vtkThreshold>::New();
+    auto thresholder = vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(polydatasolid_);
      //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
     thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
     thresholder->ThresholdBetween(1,1);
     thresholder->Update();
 
-    vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
-      vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
     surfacer->SetInputData(thresholder->GetOutput());
     surfacer->Update();
 
@@ -2032,6 +2029,477 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   return SV_OK;
 }
 
+//----------------------
+// set_boundary_normals
+//----------------------
+//
+// originalsurfpd - has ModelFaceID
+//
+void set_boundary_normals(vtkPolyData* originalpolydata_, vtkUnstructuredGrid* boundarylayermesh_, vtkPolyData* originalsurfpd, std::set<int>& wallFaceIDs_)
+{
+  std::cout << "[set_boundary_normals] " << std::endl;
+  std::cout << "[set_boundary_normals] ========== cvTetGenMeshObject::set_boundary_normals ==========" << std::endl;
+
+  auto face_ids = originalpolydata_->GetCellData()->GetArray("ModelFaceID");
+  double face_ids_range[2];
+  face_ids->GetRange(face_ids_range, 0);
+  int face_min_id = int(face_ids_range[0]);
+  int face_max_id = int(face_ids_range[1]);
+  std::cout << "[set_boundary_normals] face_min_id: " << face_min_id << std::endl;
+  std::cout << "[set_boundary_normals] face_max_id: " << face_max_id << std::endl;
+  std::cout << "[set_boundary_normals] num walls: " << wallFaceIDs_.size() << std::endl;
+
+  auto cellLocator = vtkSmartPointer<vtkCellLocator>::New();
+  cellLocator->SetDataSet(boundarylayermesh_);
+  cellLocator->BuildLocator();
+
+  auto pointLocator = vtkSmartPointer<vtkPointLocator>::New();
+  pointLocator->SetDataSet(boundarylayermesh_);
+  pointLocator->BuildLocator();
+
+  // Extract mesh boundary edges.
+  //
+  std::cout << "set_boundary_normals] " << std::endl;
+  std::cout << "set_boundary_normals] Extract originalsurfpd boundary edges ..." << std::endl;
+  auto mesh_feature_edges = vtkFeatureEdges::New();
+  mesh_feature_edges->SetInputData(originalsurfpd);
+  //mesh_feature_edges->SetInputData(boundarylayermesh_);
+  mesh_feature_edges->BoundaryEdgesOn();
+  mesh_feature_edges->ManifoldEdgesOff();
+  mesh_feature_edges->NonManifoldEdgesOff();
+  mesh_feature_edges->FeatureEdgesOff();
+  mesh_feature_edges->Update();
+
+  auto mesh_boundary_edges = mesh_feature_edges->GetOutput();
+  auto mesh_clean_filter = vtkCleanPolyData::New();
+  mesh_clean_filter->SetInputData(mesh_boundary_edges);
+  mesh_clean_filter->Update();
+  auto mesh_cleaned_edges = mesh_clean_filter->GetOutput();
+
+  auto conn_filter = vtkPolyDataConnectivityFilter::New();
+  conn_filter->SetInputData(mesh_cleaned_edges);
+  conn_filter->SetExtractionModeToSpecifiedRegions();
+  std::vector<vtkPolyData*> original_surf_edge_components;
+  int edge_id = 0;
+
+  while (true) {
+    conn_filter->AddSpecifiedRegion(edge_id);
+    conn_filter->Update();
+    auto component = vtkPolyData::New();
+    component->DeepCopy(conn_filter->GetOutput());
+    if (component->GetNumberOfCells() <= 0) {
+      break;
+    }
+    auto clean_filter = vtkCleanPolyData::New();
+    clean_filter->SetInputData(component);
+    clean_filter->Update();
+    auto cleaned_edges = clean_filter->GetOutput();
+    original_surf_edge_components.push_back(cleaned_edges);
+    conn_filter->DeleteSpecifiedRegion(edge_id);
+
+    auto pwriter = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    pwriter->SetInputData(cleaned_edges);
+    auto file_name = "edge_component_" + std::to_string(edge_id) + ".vtp";
+    pwriter->SetFileName(file_name.c_str());
+    pwriter->Update();
+    pwriter->Write();
+
+    edge_id += 1;
+  }
+  std::cout << "set_boundary_normals] Number of original_surf_edge_components: " << original_surf_edge_components.size() << std::endl;
+
+  // Get faces.
+  //
+  std::cout << "set_boundary_normals] " << std::endl;
+  std::cout << "set_boundary_normals] Get faces ..." << std::endl;
+  std::vector<vtkPolyData*> faces;
+  std::vector<std::array<double,3>> face_centers;
+
+  for (int i = face_min_id; i <= face_max_id; i++) {
+    std::cout << "[set_boundary_normals] ----- Face: " << i << " -----" << std::endl;
+    if (wallFaceIDs_.count(i) != 0) { 
+        std::cout << "[set_boundary_normals] Face is wall " << std::endl;
+        continue;
+    }
+    std::cout << "[set_boundary_normals] Face is cap " << std::endl;
+    auto thresholder = vtkSmartPointer<vtkThreshold>::New();
+    thresholder->SetInputData(originalpolydata_);
+    //thresholder->SetInputArrayToProcess(0,0,0,1,"CapID");
+    thresholder->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
+    thresholder->ThresholdBetween(i,i);
+    thresholder->Update();
+
+    auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    surfacer->SetInputData(thresholder->GetOutput());
+    surfacer->Update();
+    auto face = surfacer->GetOutput();
+
+    auto normaler = vtkSmartPointer<vtkPolyDataNormals>::New();
+    normaler->SetInputData(face);
+    normaler->SetConsistency(1);
+    normaler->SetAutoOrientNormals(1);
+    normaler->SetFlipNormals(0);
+    normaler->SetComputeCellNormals(0);
+    normaler->SplittingOff();
+    normaler->Update();
+
+    auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->SetInputData(normaler->GetOutput());
+    cleaner->Update();
+
+    auto face_with_normals = vtkSmartPointer<vtkPolyData>::New();
+    face_with_normals->DeepCopy(cleaner->GetOutput());
+    faces.push_back(face_with_normals);
+
+    // Get face center.
+    auto com_filter = vtkSmartPointer<vtkCenterOfMass>::New();
+    com_filter->SetInputData(face_with_normals);
+    com_filter->Update();
+    double center[3];
+    com_filter->GetCenter(center);
+    face_centers.push_back({center[0], center[1], center[2]});
+
+    // Write face.
+    auto pwriter = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    pwriter->SetInputData(face_with_normals);
+    auto file_name = "face_" + std::to_string(i) + ".vtp";
+    pwriter->SetFileName(file_name.c_str());
+    pwriter->Update();
+    pwriter->Write();
+  }
+  std::cout << "[set_boundary_normals] Number of faces: " << faces.size() << std::endl;
+
+  std::cout << "[set_boundary_normals] " << std::endl;
+  std::cout << "[set_boundary_normals] Set normals ..." << std::endl;
+  int surf_edge_count = 0;
+  for (auto& surf_edge : original_surf_edge_components) { 
+    std::cout << "[set_boundary_normals] " << std::endl;
+    std::cout << "[set_boundary_normals] ----- surf_edge " << surf_edge_count << " ----" << std::endl;
+
+    auto com_filter = vtkSmartPointer<vtkCenterOfMass>::New();
+    com_filter->SetInputData(surf_edge);
+    com_filter->Update();
+    double surf_center[3];
+    com_filter->GetCenter(surf_center);
+    std::cout << "[set_boundary_face_points] surf_edge center: " << surf_center[0] << " " << surf_center[1] << " " << surf_center[2] << std::endl;
+
+    // Find the face for the surf_edge. 
+    //
+    double min_d = 1e6;
+    int min_face = -1;
+
+    for (int i = 0; i < faces.size(); i++) {
+      auto face_center = face_centers[i];
+      std::cout << "[set_boundary_face_points] face_center: " << face_center[0] << " " << face_center[1] << " " << face_center[2] << std::endl;
+      double dist = 0.0;
+      for (int j = 0; j < 3; j++) {
+        dist += (face_center[j]-surf_center[j]) * (face_center[j]-surf_center[j]);
+      }
+      dist = sqrt(dist);
+      if (dist < min_d) {
+        min_face = i;
+        min_d = dist;
+      }
+    }
+
+    std::cout << "[set_boundary_normals] Matching face: " << min_face << std::endl;
+    std::cout << "[set_boundary_normals]   min_d: " << min_d << std::endl;
+    int num_points = surf_edge->GetNumberOfPoints();
+    auto points = surf_edge->GetPoints();
+    std::cout << "[set_boundary_normals] " << std::endl;
+    std::cout << "[set_boundary_normals] num surf_edge points: " << num_points << std::endl;
+
+    auto face_center = face_centers[min_face];
+    auto bl_mesh_points = boundarylayermesh_->GetPoints();
+    auto bl_mesh_normals = boundarylayermesh_->GetPointData()->GetArray("Normals");
+
+    for (int i = 0; i < num_points; i++) {
+      double edge_point[3];
+      surf_edge->GetPoint(i, edge_point);
+
+      int ptId = pointLocator->FindClosestPoint(edge_point);
+      std::cout << "[set_boundary_normals] ptId: " << ptId << std::endl;
+
+      double bl_mesh_point[3];
+      bl_mesh_points->GetPoint(ptId, bl_mesh_point);
+      std::cout << "[set_boundary_mesh_points] bl_mesh_point: " << bl_mesh_point[0] << " " << bl_mesh_point[1] << " " << bl_mesh_point[2] << std::endl;
+      double ptId_dist = 0;
+      for (int k = 0; k < 3; k++) {
+        ptId_dist += (edge_point[k]-bl_mesh_point[k]) * (edge_point[k]-bl_mesh_point[k]);
+      }
+      ptId_dist = sqrt(ptId_dist);
+      std::cout << "[set_boundary_normals] ptId_dist: " << ptId_dist << std::endl;
+
+      double normal[3];
+      double mag = 0.0;
+      for (int j = 0; j < 3; j++) {
+        normal[j] = edge_point[j] - face_center[j];
+        mag += normal[j]*normal[j];
+      }
+      mag = sqrt(mag);
+      std::cout << "[set_boundary_normals] mag: " << mag << std::endl;
+      for (int j = 0; j < 3; j++) {
+        normal[j] /= mag; 
+      }
+      std::cout << "[set_boundary_normals] normal: " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
+
+      bl_mesh_normals->SetComponent(ptId, 0, normal[0]);
+      bl_mesh_normals->SetComponent(ptId, 1, normal[1]);
+      bl_mesh_normals->SetComponent(ptId, 2, normal[2]);
+    }
+
+    surf_edge_count += 1;
+  }
+
+}
+
+void set_boundary_normals_1(vtkPolyData* originalpolydata_, vtkUnstructuredGrid* boundarylayermesh_, vtkPolyData* originalsurfpd, std::set<int>& wallFaceIDs_)
+{
+  std::cout << "[set_boundary_normals] " << std::endl;
+  std::cout << "[set_boundary_normals] ========== cvTetGenMeshObject::set_boundary_normals ==========" << std::endl;
+
+  auto face_ids = originalpolydata_->GetCellData()->GetArray("ModelFaceID");
+  double face_ids_range[2];
+  face_ids->GetRange(face_ids_range, 0);
+  int face_min_id = int(face_ids_range[0]);
+  int face_max_id = int(face_ids_range[1]);
+  std::cout << "[set_boundary_normals] face_min_id: " << face_min_id << std::endl;
+  std::cout << "[set_boundary_normals] face_max_id: " << face_max_id << std::endl;
+  std::cout << "[set_boundary_normals] num walls: " << wallFaceIDs_.size() << std::endl;
+
+  auto cellLocator = vtkSmartPointer<vtkCellLocator>::New();
+  cellLocator->SetDataSet(boundarylayermesh_);
+  cellLocator->BuildLocator();
+
+  auto pointLocator = vtkSmartPointer<vtkPointLocator>::New();
+  pointLocator->SetDataSet(boundarylayermesh_);
+  pointLocator->BuildLocator();
+
+  /*
+  int num_surf_points = originalpolydata_->GetNumberOfPoints();
+  auto surf_points = originalpolydata_->GetPoints();
+  auto surf_normals = originalpolydata_->GetPointData()->GetArray("Normals");
+  */
+  int num_mesh_points = boundarylayermesh_->GetNumberOfPoints();
+  auto mesh_points = boundarylayermesh_->GetPoints();
+  auto mesh_normals = boundarylayermesh_->GetPointData()->GetArray("Normals");
+
+  // Extract face boundary edges.
+  //
+  std::cout << "set_boundary_normals] " << std::endl;
+  auto mesh_feature_edges = vtkFeatureEdges::New();
+  mesh_feature_edges->SetInputData(originalsurfpd);
+  //mesh_feature_edges->SetInputData(boundarylayermesh_);
+  mesh_feature_edges->BoundaryEdgesOn();
+  mesh_feature_edges->ManifoldEdgesOff();
+  mesh_feature_edges->NonManifoldEdgesOff();
+  mesh_feature_edges->FeatureEdgesOff();
+  mesh_feature_edges->Update();
+
+  auto mesh_boundary_edges = mesh_feature_edges->GetOutput();
+  auto mesh_clean_filter = vtkCleanPolyData::New();
+  mesh_clean_filter->SetInputData(mesh_boundary_edges);
+  mesh_clean_filter->Update();
+  auto mesh_cleaned_edges = mesh_clean_filter->GetOutput();
+
+  auto conn_filter = vtkPolyDataConnectivityFilter::New();
+  conn_filter->SetInputData(mesh_cleaned_edges);
+  conn_filter->SetExtractionModeToSpecifiedRegions();
+  std::vector<vtkPolyData*> mesh_edge_components;
+  int edge_id = 0;
+
+  while (true) {
+    conn_filter->AddSpecifiedRegion(edge_id);
+    conn_filter->Update();
+    auto component = vtkPolyData::New();
+    component->DeepCopy(conn_filter->GetOutput());
+    if (component->GetNumberOfCells() <= 0) {
+      break;
+    }
+    mesh_edge_components.push_back(component);
+    conn_filter->DeleteSpecifiedRegion(edge_id);
+    edge_id += 1;
+
+    auto pwriter = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    pwriter->SetInputData(component);
+    auto file_name = "edge_component_" + std::to_string(edge_id) + ".vtp";
+    pwriter->SetFileName(file_name.c_str());
+    pwriter->Update();
+    pwriter->Write();
+
+  }
+  std::cout << "set_boundary_normals] Number of mesh_edge_components: " << mesh_edge_components.size() << std::endl;
+
+  // Get faces.
+  //
+  std::cout << "set_boundary_normals] " << std::endl;
+  std::vector<vtkPolyData*> faces;
+  std::vector<vtkPolyData*> faces_boundaries;
+
+  for (int i = face_min_id; i <= face_max_id; i++) {
+    std::cout << "[set_boundary_normals] Face: " << i << std::endl;
+    if (wallFaceIDs_.count(i) != 0) { 
+        std::cout << "[set_boundary_normals]   is wall " << std::endl;
+        continue;
+    }
+    std::cout << "[set_boundary_normals]   is cap " << std::endl;
+    auto thresholder = vtkSmartPointer<vtkThreshold>::New();
+    thresholder->SetInputData(originalpolydata_);
+    //thresholder->SetInputArrayToProcess(0,0,0,1,"CapID");
+    thresholder->SetInputArrayToProcess(0,0,0,1,"ModelFaceID");
+    thresholder->ThresholdBetween(i,i);
+    thresholder->Update();
+
+    auto surfacer = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    surfacer->SetInputData(thresholder->GetOutput());
+    surfacer->Update();
+    auto face = surfacer->GetOutput();
+
+    auto normaler = vtkSmartPointer<vtkPolyDataNormals>::New();
+    normaler->SetInputData(face);
+    normaler->SetConsistency(1);
+    normaler->SetAutoOrientNormals(1);
+    normaler->SetFlipNormals(0);
+    normaler->SetComputeCellNormals(0);
+    normaler->SplittingOff();
+    normaler->Update();
+
+    auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->SetInputData(normaler->GetOutput());
+    cleaner->Update();
+
+    auto face_with_normals = vtkSmartPointer<vtkPolyData>::New();
+    face_with_normals->DeepCopy(cleaner->GetOutput());
+
+    // Extract face boundary edges.
+    //
+    auto feature_edges = vtkFeatureEdges::New();
+    feature_edges->SetInputData(face_with_normals);
+    feature_edges->BoundaryEdgesOn();
+    feature_edges->ManifoldEdgesOff();
+    feature_edges->NonManifoldEdgesOff();
+    feature_edges->FeatureEdgesOff();
+    feature_edges->Update();
+
+    auto boundary_edges = feature_edges->GetOutput();
+    auto clean_filter = vtkCleanPolyData::New();
+    clean_filter->SetInputData(boundary_edges);
+    clean_filter->Update();
+    auto face_edges = clean_filter->GetOutput();
+
+    // Get face center.
+    auto com_filter = vtkSmartPointer<vtkCenterOfMass>::New();
+    com_filter->SetInputData(face_with_normals);
+    com_filter->Update();
+    double center[3];
+    com_filter->GetCenter(center);
+
+    /*
+    auto normals = face_with_normals->GetPointData()->GetArray("Normals");
+    int num_points = face_with_normals->GetNumberOfPoints();
+    auto points = face_with_normals->GetPoints();
+    */
+
+    #ifdef use_this_1
+    auto normals = face_edges->GetPointData()->GetArray("Normals");
+    int num_points = face_edges->GetNumberOfPoints();
+    auto points = face_edges->GetPoints();
+
+    for (int j = 0; j < num_points; j++) {
+      std::cout << "[set_boundary_normals]   " << std::endl;
+      std::cout << "[set_boundary_normals]   ---- Point: " << j << " ----" << std::endl;
+      double face_point[3];
+      double normal[3];
+      double mag = 0.0;
+      face_edges->GetPoint(j, face_point);
+      std::cout << "[set_boundary_face_points] face_point: " << face_point[0] << " " << face_point[1] << " " << face_point[2] << std::endl;
+
+      for (int k = 0; k < 3; k++) {
+        normal[k] = face_point[k] - center[k];
+        //normal[k] = center[k] - point[k];
+        mag += normal[k]*normal[k];
+      }
+
+      mag = sqrt(mag);
+      std::cout << "[set_boundary_normals] mag: " << mag << std::endl;
+      for (int k = 0; k < 3; k++) {
+        normal[k] /= mag; 
+      }
+
+      std::cout << "[set_boundary_normals] normal: " << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
+      //normals->SetComponent(j, 0, normal[0]);
+      //normals->SetComponent(j, 1, normal[1]);
+      //normals->SetComponent(j, 2, normal[2]);
+
+      /*
+      double closestPoint[3];
+      double closestPointDist2;
+      vtkIdType cellId;
+      int subId;
+      cellLocator->FindClosestPoint(point, closestPoint, cellId, subId, closestPointDist2);
+      std::cout << "[set_boundary_normals]   closestPointDist2: " << closestPointDist2 << std::endl;
+      std::cout << "[set_boundary_normals]   cellId: " << cellId << std::endl;
+      std::cout << "[set_boundary_normals]   subId: " << subId << std::endl;
+      */
+
+      int ptId = pointLocator->FindClosestPoint(face_point);
+      std::cout << "[set_boundary_normals] ptId: " << ptId << std::endl;
+      double mesh_point[3];
+      mesh_points->GetPoint(ptId, mesh_point);
+      std::cout << "[set_boundary_mesh_points] mesh_point: " << mesh_point[0] << " " << mesh_point[1] << " " << mesh_point[2] << std::endl;
+      double ptId_dist = 0;
+      for (int k = 0; k < 3; k++) {
+        ptId_dist += (face_point[k]-mesh_point[k]) * (face_point[k]-mesh_point[k]);
+      }
+      ptId_dist = sqrt(ptId_dist);
+      std::cout << "[set_boundary_normals] ptId_dist: " << ptId_dist << std::endl;
+
+      /*
+      int min_id = -1;
+      double min_d = 1e6;
+      for (int jj = 0; jj < num_mesh_points; jj++) {
+        double mesh_point[3];
+        mesh_points->GetPoint(jj, mesh_point);
+        double dist = 0.0;
+        for (int k = 0; k < 3; k++) {
+          dist += (face_point[k]-mesh_point[k]) * (face_point[k]-mesh_point[k]);
+        }
+        dist = sqrt(dist);
+        if (dist < min_d) { 
+          min_d = dist;
+          min_id = jj;
+        }
+      }
+      std::cout << "[set_boundary_normals] search: " << std::endl;
+      std::cout << "[set_boundary_normals]   min_d: " << min_d << std::endl;
+      std::cout << "[set_boundary_normals]   min_id: " << min_id << std::endl;
+      */
+
+      //surf_normals->SetComponent(ptId, 0, normal[0]);
+      //surf_normals->SetComponent(ptId, 1, normal[1]);
+      //surf_normals->SetComponent(ptId, 2, normal[2]);
+    }
+    #endif
+
+    auto pwriter = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    pwriter->SetInputData(face_with_normals);
+    auto file_name = "face_" + std::to_string(i) + ".vtp";
+    pwriter->SetFileName(file_name.c_str());
+    pwriter->Update();
+    pwriter->Write();
+
+    auto bnd_pwriter = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    bnd_pwriter->SetInputData(face_edges);
+    file_name = "face_bnd_" + std::to_string(i) + ".vtp";
+    bnd_pwriter->SetFileName(file_name.c_str());
+    bnd_pwriter->Update();
+    bnd_pwriter->Write();
+  }
+
+  std::cout << "[set_boundary_normals] Number of faces: " << faces.size() << std::endl;
+}
+
+
 /**
  * @brief Helper function to generate boundary layer mesh
  * @note This is a helper function. It is called from GenerateMesh
@@ -2040,6 +2508,9 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
  */
 int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
 {
+  std::cout << "[GenerateBoundaryLayerMesh] " << std::endl;
+  std::cout << "[GenerateBoundaryLayerMesh] ========== cvTetGenMeshObject::GenerateBoundaryLayerMesh ==========" << std::endl;
+
 #ifdef SV_USE_VMTK
   if (boundarylayermesh_ != NULL)
   {
@@ -2050,18 +2521,9 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   {
     innerblmesh_->Delete();
   }
-  innerblmesh_ = vtkUnstructuredGrid::New();
-  boundarylayermesh_ = vtkUnstructuredGrid::New();
 
-  vtkSmartPointer<vtkGeometryFilter> surfacer
-    = vtkSmartPointer<vtkGeometryFilter>::New();
-  vtkSmartPointer<vtkUnstructuredGrid> innerSurface =
-    vtkSmartPointer<vtkUnstructuredGrid>::New();
-  vtkSmartPointer<vtkvmtkPolyDataToUnstructuredGridFilter> converter
-    = vtkSmartPointer<vtkvmtkPolyDataToUnstructuredGridFilter>::New();
-  vtkSmartPointer<vtkCleanPolyData> cleaner =
-    vtkSmartPointer<vtkCleanPolyData>::New();
   std::string markerListName;
+
   if (meshoptions_.boundarylayermeshflag)
   {
     markerListName = "CellEntityIds";
@@ -2070,13 +2532,17 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   {
     markerListName = "ModelFaceID";
   }
+  std::cout << "[GenerateBoundaryLayerMesh] markerListName: " << markerListName << std::endl;
 
-  //Clean and convert the polydata to a vtu
-  //Then we call VMTK to generate a boundary layer mesh, and we set
-  //the boundary layer mesh as the member vtkUnstructuredGrid
-  //called boundarylayermesh_
-  vtkSmartPointer<vtkPolyDataNormals> normaler =
-    vtkSmartPointer<vtkPolyDataNormals>::New();
+  auto pwriter = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  pwriter->SetInputData(originalpolydata_);
+  pwriter->SetFileName("originalpolydata.vtp");
+  pwriter->Update();
+  pwriter->Write();
+
+  // Clean and convert the polydata to a vtu.
+  //
+  auto normaler = vtkSmartPointer<vtkPolyDataNormals>::New();
   normaler->SetInputData(polydatasolid_);
   normaler->SetConsistency(1);
   normaler->SetAutoOrientNormals(1);
@@ -2085,45 +2551,81 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   normaler->SplittingOff();
   normaler->Update();
 
+  auto cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
   cleaner->SetInputData(normaler->GetOutput());
   cleaner->Update();
 
-  vtkSmartPointer<vtkPolyData> originalsurfpd = vtkSmartPointer<vtkPolyData>::New();
+  auto originalsurfpd = vtkSmartPointer<vtkPolyData>::New();
   originalsurfpd->DeepCopy(cleaner->GetOutput());
 
-  if (VMTKUtils_ComputeSizingFunction(originalsurfpd,NULL,
-	"MeshSizingFunction") != SV_OK)
-  {
+  // Create a sizing function vtk data array named 'MeshSizingFunction' for the 
+  // current mesh used to define the size of the mesh at each node. 
+  //
+  // This modifies 'originalsurfpd'.
+  //
+  if (VMTKUtils_ComputeSizingFunction(originalsurfpd, NULL, "MeshSizingFunction") != SV_OK) {
     fprintf(stderr,"Problem when computing sizing function");
     return SV_ERROR;
   }
 
+  auto originalsurfpd_writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  originalsurfpd_writer->SetInputData(originalsurfpd);
+  originalsurfpd_writer->SetFileName("originalsurfpd.vtp");
+  originalsurfpd_writer->Update();
+  originalsurfpd_writer->Write();
+
+  // Convert the surface to an vtkUnstructuredGrid.
+  auto converter = vtkSmartPointer<vtkvmtkPolyDataToUnstructuredGridFilter>::New();
   converter->SetInputData(originalsurfpd);
   converter->Update();
 
+  // Copy the vtkUnstructuredGrid.
+  innerblmesh_ = vtkUnstructuredGrid::New();
   innerblmesh_->DeepCopy(converter->GetOutput());
-
+  boundarylayermesh_ = vtkUnstructuredGrid::New();
   boundarylayermesh_->DeepCopy(converter->GetOutput());
+
+  // Set normals.
+  set_boundary_normals(originalpolydata_, boundarylayermesh_, originalsurfpd, wallFaceIDs_);
+
+  // Compute the boundary layer mesh using vmtk. 
+  //
+  // Modifies: 'boundarylayermesh_' and 'innerSurface'.
+  //
   int negateWarpVectors = meshoptions_.boundarylayerdirection;
   int innerSurfaceCellId = 1;
   int sidewallCellEntityId = 9999;
   int useConstantThickness = meshoptions_.useconstantblthickness;
   std::string layerThicknessArrayName = "MeshSizingFunction";
+  auto innerSurface = vtkSmartPointer<vtkUnstructuredGrid>::New();
+  std::cout << "[GenerateBoundaryLayerMesh] negateWarpVectors: " << negateWarpVectors << std::endl;
+  std::cout << "[GenerateBoundaryLayerMesh] useConstantThickness: " << useConstantThickness << std::endl;
 
-  if (VMTKUtils_BoundaryLayerMesh(boundarylayermesh_,innerSurface,
-	meshoptions_.maxedgesize,meshoptions_.blthicknessfactor,
-	meshoptions_.numsublayers,meshoptions_.sublayerratio,
-	sidewallCellEntityId,innerSurfaceCellId,negateWarpVectors,
+  if (!boundarylayermesh_->GetPointData()->GetArray("Normals")) {
+    std::cout << "[GenerateBoundaryLayerMesh] **** boundarylayermesh_ does not have point normals." << std::endl;
+  } else {
+    std::cout << "[GenerateBoundaryLayerMesh] boundarylayermesh_ has point normals." << std::endl;
+  }
+
+  TGenUtils_WriteVTU("boundarylayermesh_normals.vtu", boundarylayermesh_);
+
+  if (VMTKUtils_BoundaryLayerMesh(boundarylayermesh_, innerSurface, meshoptions_.maxedgesize, meshoptions_.blthicknessfactor,
+	meshoptions_.numsublayers, meshoptions_.sublayerratio, sidewallCellEntityId, innerSurfaceCellId, negateWarpVectors,
 	markerListName, useConstantThickness, layerThicknessArrayName) != SV_OK)
   {
     fprintf(stderr,"Problem with boundary layer meshing\n");
     return SV_ERROR;
   }
 
+  TGenUtils_WriteVTU("boundarylayermesh.vtu", boundarylayermesh_);
 
-  //We take the inside surface of the boundary layer mesh and set the
-  //member vtkPolyData polydatasolid_ to be equal to this. We will
-  //use this to create the volume mesh with TetGen.
+  TGenUtils_WriteVTU("innerSurface.vtu", innerSurface);
+
+  // We take the inside surface of the boundary layer mesh and set the
+  // member vtkPolyData polydatasolid_ to be equal to this. We will
+  // use this to create the volume mesh with TetGen.
+  //
+  auto surfacer = vtkSmartPointer<vtkGeometryFilter>::New();
   surfacer->SetInputData(innerSurface);
   surfacer->Update();
 
@@ -2135,10 +2637,10 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
   {
     // The remeshing excludes cell entity ids with value of 1. Need to
     // set all to one so that only caps are remeshed.
+    //
     polydatasolid_->DeepCopy(originalsurfpd);
     polydatasolid_->GetCellData()->RemoveArray("CellEntityIds");
-    vtkSmartPointer<vtkIntArray> newEntityIds =
-      vtkSmartPointer<vtkIntArray>::New();
+    auto newEntityIds = vtkSmartPointer<vtkIntArray>::New();
     newEntityIds->SetNumberOfTuples(polydatasolid_->GetNumberOfCells());
     newEntityIds->FillComponent(0, 1);
     newEntityIds->SetName("CellEntityIds");

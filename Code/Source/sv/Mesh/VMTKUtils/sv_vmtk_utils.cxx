@@ -1013,30 +1013,23 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
  * sizing function attached to the mesh.
  * @return SV_OK if the sizing function is computed correctly.
  */
-int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
-    std::string sizingFunctionArrayName)
+int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor, std::string sizingFunctionArrayName)
 {
-  vtkSmartPointer<vtkvmtkPolyDataSizingFunction> sizer =
-    vtkSmartPointer<vtkvmtkPolyDataSizingFunction>::New();
-  vtkSmartPointer<vtkPolyData> copypd =
-    vtkSmartPointer<vtkPolyData>::New();
+  auto sizer = vtkSmartPointer<vtkvmtkPolyDataSizingFunction>::New();
+  auto copypd = vtkSmartPointer<vtkPolyData>::New();
   copypd->DeepCopy(inpd);
 
-  if (scalefactor == NULL)
-  {
+  if (scalefactor == NULL) {
     scalefactor = 1.8;
   }
 
   sizer->SetInputData(copypd);
-  //"VolumeSizingFunction"
   sizer->SetSizingFunctionArrayName(sizingFunctionArrayName.c_str());
-  //sizer->SetScaleFactor(0.8);
   sizer->SetScaleFactor(scalefactor);
   sizer->Update();
 
   inpd->DeepCopy(sizer->GetOutput());
 
-  fprintf(stderr,"Got Volume Mesh Func!\n");
   return SV_OK;
 }
 
@@ -1132,9 +1125,9 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
   return SV_OK;
 }
 
-// --------------------
-//  VMTKUtils_BoundaryLayerMesh
-// --------------------
+//-----------------------------
+// VMTKUtils_BoundaryLayerMesh
+//-----------------------------
 /**
  * @brief Function to compute the boundary layer on a mesh
  * @param blMesh This is the returned boundary layer mesh as a vtu
@@ -1157,28 +1150,19 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
  * nodes of the output mesh.
  * @return SV_OK if the boundary layer mesh is created properly
  */
-int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
-    vtkUnstructuredGrid *innerSurface,
-    double edgeSize,double blThicknessFactor,int numSublayers,
-    double sublayerRatio,int sidewallCellEntityId,
-    int innerSurfaceCellEntityId,int negateWarpVectors,
-    std::string cellEntityIdsArrayName,
-    int useConstantThickness,
-    std::string layerThicknessArrayName)
+int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh, vtkUnstructuredGrid *innerSurface, double edgeSize, double blThicknessFactor,
+    int numSublayers, double sublayerRatio, int sidewallCellEntityId, int innerSurfaceCellEntityId, int negateWarpVectors,
+    std::string cellEntityIdsArrayName, int useConstantThickness, std::string layerThicknessArrayName)
 {
-  vtkSmartPointer<vtkvmtkBoundaryLayerGenerator> layerer =
-    vtkSmartPointer<vtkvmtkBoundaryLayerGenerator>::New();
 // needs fixed!!! NMW 2014-08-04
 #ifndef WIN32
-  vtkSmartPointer<vtkDoubleArray> checkArray =
-    vtkSmartPointer<vtkDoubleArray>::New();
+  auto checkArray = vtkSmartPointer<vtkDoubleArray>::New();
 #endif
-  vtkSmartPointer<vtkUnstructuredGrid> copyug =
-    vtkSmartPointer<vtkUnstructuredGrid>::New();
+
+  auto copyug = vtkSmartPointer<vtkUnstructuredGrid>::New();
   copyug->DeepCopy(blMesh);
 
-  try
-  {
+  try {
 // needs fixed!!!  NMW 2014-08-04, MSVC compiler doesn't like.
 // should just check for array, not copy it anyway.
 //
@@ -1186,35 +1170,32 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
 
 //    checkArray = vtkDoubleArray::SafeDownCast(copyug->GetPointData()->GetArray("Normals"));
 //
-  }
-  catch ( ... )
-  {
+  } catch ( ... ) {
     fprintf(stderr,"Normals vector doesn't exist in Unstructured Grid \
 	and must exist for boundary layer formation\n");
     return SV_ERROR;
   }
 
-  if (blThicknessFactor == NULL)
-  {
+  if (blThicknessFactor == NULL) {
     blThicknessFactor = 0.5;
   }
-  if (numSublayers == NULL)
-  {
+
+  if (numSublayers == NULL) {
     numSublayers = 2;
   }
-  if (sublayerRatio == NULL)
-  {
+
+  if (sublayerRatio == NULL) {
     sublayerRatio = 0.3;
   }
-  if (!useConstantThickness)
-  {
-    if (VtkUtils_UGCheckArrayName(copyug,0,layerThicknessArrayName) != SV_OK)
-    {
+
+  if (!useConstantThickness) {
+    if (VtkUtils_UGCheckArrayName(copyug,0,layerThicknessArrayName) != SV_OK) {
       fprintf(stderr,"%s Array is not on the surface\n", layerThicknessArrayName.c_str());
       return SV_ERROR;
     }
   }
 
+  auto layerer = vtkSmartPointer<vtkvmtkBoundaryLayerGenerator>::New();
   layerer->SetInputData(copyug);
   layerer->SetLayerThickness(edgeSize*blThicknessFactor);
   layerer->SetLayerThicknessRatio(blThicknessFactor);
