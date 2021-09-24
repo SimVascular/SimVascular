@@ -363,6 +363,8 @@ bool sv4guiROMSimulationPython::ExecuteZeroDSimulation(const std::string outputD
           mb.setDetailedText(QString(sResult.c_str()));
           mb.setDefaultButton(QMessageBox::Ok);
           mb.exec();
+      } else {
+          QMessageBox::information(NULL, sv4guiROMSimulationView::MsgTitle, "The 0D solver has completed.");
       }
   }
 
