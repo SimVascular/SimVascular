@@ -33,6 +33,7 @@
 
 #include <map>
 #include "sv4gui_ROMSimulationPythonConvert.h"
+#include "sv4gui_ROMSimulationView.h"
 #include "sv4gui_ConvertProcessHandlerROM.h"
 #include "sv4gui_ConvertWorkerROM.h"
 
@@ -62,11 +63,110 @@ sv4guiROMSimulationPythonConvert::~sv4guiROMSimulationPythonConvert()
 {
 }
 
+//----------------
+// ConvertResults
+//----------------
+// Convert ROM solver results into a general format for plotting. 
+//
+// This uses CPython PyImport_Import() and PyObject_Call() API functioins to 
+// load the 'm_PythonModuleName' module and execute the 'run_from_c()' function.
+//
+bool sv4guiROMSimulationPythonConvert::ConvertResults(const std::string outputDirectory)
+{
+  std::string msg = "[sv4guiROMSimulationPythonConvert::ConvertResults] ";
+  sv4guiROMSimulationPythonConvertParamNames paramNames;
+
+  // Import the convert 1D solver results module.
+  //
+  auto pyName = PyUnicode_DecodeFSDefault((char*)m_PythonModuleName.c_str());
+  auto pyModule = PyImport_Import(pyName);
+
+  if (pyModule == nullptr) {
+      auto msg = "Unable to load the Python '" + QString(m_PythonModuleName.c_str()) + "' module.";
+      MITK_ERROR << msg;
+      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      return false;
+  } 
+
+  // Get the module interface function that executes 
+  // module functions based on input arguments. 
+  //
+  auto pyFuncName = (char*)"run_from_c";
+  auto pyDict = PyModule_GetDict(pyModule);
+  auto pyFunc = PyDict_GetItemString(pyDict, (char*)pyFuncName);
+
+  if (!PyCallable_Check(pyFunc)) {
+      auto msg = "Can't find the function '" + QString(pyFuncName) + "' in the '" + QString(m_PythonModuleName.c_str()) + "' module.";
+      MITK_ERROR << msg;
+      QMessageBox::warning(NULL, sv4guiROMSimulationView::MsgTitle, msg);
+      return false;
+  }
+
+  // Create an argument containing the output directory.
+  // This is used to write a script log file to the
+  // solver job directory.
+  //
+  auto dummyArgs = PyTuple_New(1);
+  auto dummyValue = PyUnicode_DecodeFSDefault(outputDirectory.c_str());
+  PyTuple_SetItem(dummyArgs, 0, dummyValue);
+
+  // Create the **kwarg arguments that are the input arguments to the module.
+  //
+  MITK_INFO << msg << "Add arguments ... ";
+  auto kwargs = PyDict_New();
+  for (auto const& param : m_ParameterValues) {
+      MITK_INFO << msg << param.first << "   " << "'" << param.second << "'"; 
+      PyDict_SetItemString(kwargs, param.first.c_str(), PyUnicode_DecodeFSDefault(param.second.c_str()));
+  }
+  MITK_INFO << msg << "Done.";
+
+  // Execute the Python script.
+  //
+  MITK_INFO << msg << "Execute script ...";
+  auto result = PyObject_Call(pyFunc, dummyArgs, kwargs);
+  MITK_INFO << msg << "Done.";
+
+  // Check for errors.
+  PyErr_Print();
+
+  // If the convert results files was not successful then
+  // then display error messages and the script log file.
+  //
+  // Search for the Python logger ERROR or WARNING messages in the 
+  // returned result to determine if the script failed.
+  //
+  if (result) {
+      auto uResult = PyUnicode_FromObject(result);
+      auto sResult = std::string(PyUnicode_AsUTF8(uResult));
+
+      if (sResult.find("ERROR") != std::string::npos) {
+          MITK_WARN << "Converting reduced-order results files has failed.";
+          MITK_WARN << "Returned message: " << QString(sResult.c_str()); 
+          QMessageBox mb(nullptr);
+          mb.setWindowTitle(sv4guiROMSimulationView::MsgTitle);
+          mb.setText("Converting reduced-order results files has failed.");
+          mb.setIcon(QMessageBox::Critical);
+          mb.setDetailedText(QString(sResult.c_str()));
+          mb.setDefaultButton(QMessageBox::Ok);
+          mb.exec();
+      } else {
+          QString rmsg = "Reduced-order solver files have been successfully converted.\n";
+          MITK_INFO << msg << rmsg;
+          QMessageBox::information(NULL, sv4guiROMSimulationView::MsgTitle, rmsg);
+      }
+  }
+
+  return SV_OK;
+}
+
 //----------------------
 // ConvertResultsWorker
 //----------------------
 // Set the data and event connections for a sv4guiConvertWorkerROM object
 // used to convert ROM simulation results in a QThread.
+//
+// Note: This was hanging SV on Ubuntu 20 when importing scipy.
+// The code is not used but keep it around just in case it might be useful.
 //
 bool sv4guiROMSimulationPythonConvert::ConvertResultsWorker(sv4guiConvertWorkerROM* convertWorker, const std::string outputDirectory)
 {
@@ -97,7 +197,12 @@ bool sv4guiROMSimulationPythonConvert::ConvertResultsWorker(sv4guiConvertWorkerR
 // This executes the Python script as a separate process using the Python interpreter. 
 //
 // Note: This did not work because VTK could not be successfully imported in Python.
-// The code is not used but keep it around just in case it might be useful.
+// The code is not used but keep it around just in case it might be useful. This 
+// might could work by calling '$SV_HOME/simvascular --python -- convert.py' where
+// 'convert.py' is a Python script that like this
+//
+//   from sv_rom_extract_results import *
+//   extract_results.run(args)
 //
 bool sv4guiROMSimulationPythonConvert::ConvertResultsProcess(const std::string outputDirectory)
 {
