@@ -5005,11 +5005,30 @@ void sv4guiROMSimulationView::ExportResults()
    // The object is created here so the worker, which is executed in a separate thread, 
    // can display messages using QMessage.
    //
+   // Note: This may cause SV to hang when importing scipy. 
+   //
+   #ifdef sv4guiROMSimulationView_ExportResults_use_threads
    m_ConvertWorker = new sv4guiConvertWorkerROM();
    connect(m_ConvertWorker, &sv4guiConvertWorkerROM::showMessage, this, &sv4guiROMSimulationView::ShowConvertWorkerMessage);
    connect(m_ConvertWorker, &sv4guiConvertWorkerROM::finished, this, &sv4guiROMSimulationView::ConvertWorkerFinished);
    connect(m_ConvertWorker, &sv4guiConvertWorkerROM::error, this, &sv4guiROMSimulationView::ConvertWorkerError);
    auto status = pythonInterface.ConvertResultsWorker(m_ConvertWorker, convertDir.toStdString());
+
+   // Run a script as a separate process calling the SV Python interpreter.
+   //
+   // Note: This fails when importing vtk.
+   //
+   #elif sv4guiROMSimulationView_ExportResults_use_process
+
+   auto status = pythonInterface.ConvertResultsProcess(convertDir.toStdString());
+
+   // Run the convert within this process, will block GUI.
+   //
+   #else
+
+   auto status = pythonInterface.ConvertResults(convertDir.toStdString());
+
+   #endif
 }
 
 //------------------------
