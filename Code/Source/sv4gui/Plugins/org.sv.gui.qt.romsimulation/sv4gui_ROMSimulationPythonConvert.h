@@ -46,6 +46,8 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+#include <QString>
+
 //-------------------------------------------
 // sv4guiROMSimulationPythonConvertParamNames
 //-------------------------------------------
@@ -81,6 +83,8 @@ class sv4guiROMSimulationPythonConvertParamNames
 // sv4guiROMSimulationPythonConvert
 //----------------------------------
 //
+class sv4guiConvertWorkerROM;
+
 class sv4guiROMSimulationPythonConvert
 {
   public:
@@ -97,8 +101,9 @@ class sv4guiROMSimulationPythonConvert
     std::string AddArgument(const std::string& arg, const std::string& value, bool last=false);
     bool AddParameter(const std::string& name, const std::string& value = "");
     bool ConvertResults(const std::string outputDirectory);
+    bool ConvertResultsProcess(const std::string outputDirectory);
+    bool ConvertResultsWorker(sv4guiConvertWorkerROM* convertWorker, const std::string outputDirectory);
     std::string StartCommand();
-
 };
 
 #endif 

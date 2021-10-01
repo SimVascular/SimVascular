@@ -52,6 +52,7 @@
 #include <vtkDataSetSurfaceFilter.h>
 #include "vtkSVGlobals.h"
 #include "vtkSVNURBSSurface.h"
+#include <vtkCenterOfMass.h>
 
 #include "vtkXMLPolyDataWriter.h"
 
@@ -930,31 +931,35 @@ vtkSmartPointer<vtkPolyData> sv4guiModelUtils::CutByBox(vtkSmartPointer<vtkPolyD
     return triangulator->GetOutput();
 }
 
+//---------------
+// DeleteRegions
+//---------------
+// Delete the cells from a vtkPolyData with ModelFaceID given in 'regionIDs'.
+//
 bool sv4guiModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> regionIDs)
 {
-    if(inpd==NULL)
+    if (inpd == NULL) {
         return false;
+    }
 
     std::string arrayname="ModelFaceID";
     bool existing=false;
 
-    if(inpd->GetCellData()->HasArray(arrayname.c_str()))
+    if(inpd->GetCellData()->HasArray(arrayname.c_str())) {
         existing=true;
+    }
 
-    if(!existing)
+    if(!existing) {
         return false;
+    }
 
-    for(int i=0;i<regionIDs.size();i++)
-    {
-        vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
+    for (int i = 0; i < regionIDs.size(); i++) {
+        auto boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
         boundaryRegions = vtkIntArray::SafeDownCast(inpd->GetCellData()-> GetScalars("ModelFaceID"));
-
         inpd->BuildLinks();
 
-        for (vtkIdType cellId=0; cellId< inpd->GetNumberOfCells(); cellId++)
-        {
-            if (boundaryRegions->GetValue(cellId) == regionIDs[i])
-            {
+        for (vtkIdType cellId = 0; cellId < inpd->GetNumberOfCells(); cellId++) {
+            if (boundaryRegions->GetValue(cellId) == regionIDs[i]) {
                 inpd->DeleteCell(cellId);
             }
         }
@@ -965,106 +970,126 @@ bool sv4guiModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vec
     return true;
 }
 
-vtkPolyData* sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement,
-                                                 vtkIdList *sourceCapIds,
-											     bool getSections)
+//-------------------
+// CreateCenterlines
+//-------------------
+// Compute the centerlines for the given model.
+//
+// Note: Model caps are removed and replaced with new geometry. It is not clear why this 
+// is done, perhaps to produce a better geometry for centerline computation; the new caps 
+// are defined with a single node in the center of the model face.
+//
+vtkPolyData* 
+sv4guiModelUtils::CreateCenterlines(sv4guiModelElement* modelElement, vtkIdList *sourceCapIds, bool getSections)
 {
-    if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
+    if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL) {
         return NULL;
+    }
 
-    vtkSmartPointer<vtkPolyData> inpd=vtkSmartPointer<vtkPolyData>::New();
-    vtkSmartPointer<vtkPolyData> fullpd=vtkSmartPointer<vtkPolyData>::New();
+    // Copy model twice (?)
+    auto inpd = vtkSmartPointer<vtkPolyData>::New();
     inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+    auto fullpd = vtkSmartPointer<vtkPolyData>::New();
     fullpd->DeepCopy(modelElement->GetWholeVtkPolyData());
 
-    if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()))
-    {
+    // Remove the cells defining the model caps.
+    if (!DeleteRegions(inpd, modelElement->GetCapFaceIDs())) {
         return NULL;
     }
 
-    cvPolyData *src=new cvPolyData(inpd);
-    cvPolyData *cleaned = NULL;
-    cvPolyData *capped  = NULL;
-    int numCapCenterIds;
-    int *capCenterIds=NULL;
-
-    cleaned = sys_geom_Clean(src);
+    cvPolyData *src = new cvPolyData(inpd);
+    auto cleaned = sys_geom_Clean(src);
     delete src;
 
-    if ( sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, 1 ) != SV_OK)
-    {
+    // Recap the model surface.
+    //
+    cvPolyData *capped  = NULL;
+    int numCapCenterIds;
+    int *capCenterIds = NULL;
+    int capUsingCenter = 1;     // Cap using a point in the cap center.
+
+    if (sys_geom_cap_for_centerlines(cleaned, &capped, &numCapCenterIds, &capCenterIds, capUsingCenter ) != SV_OK) {
       delete cleaned;
-      if (capped != NULL)
+      if (capped != NULL) {
         delete capped;
+      }
       return NULL;
     }
-    if (numCapCenterIds < 2)
-    {
+
+    if (numCapCenterIds < 2) {
       delete cleaned;
-      if (capped != NULL)
+      if (capped != NULL) {
         delete capped;
+      }
       return NULL;
     }
     delete cleaned;
 
-    vtkSmartPointer<vtkIdList> sourcePtIds = vtkSmartPointer<vtkIdList>::New();
-    vtkSmartPointer<vtkIdList> targetPtIds = vtkSmartPointer<vtkIdList>::New();
-
-    int capIdsGiven = 0;
-    if (sourceCapIds != NULL)
-    {
-      if (sourceCapIds->GetNumberOfIds() > 0)
-        capIdsGiven = 1;
+    bool capIdsGiven = false;
+    if ((sourceCapIds != NULL) && (sourceCapIds->GetNumberOfIds() > 0)) {
+        capIdsGiven = true;
     }
 
-    if (!capIdsGiven)
-    {
+    // Define the source and target cap node IDs used to compute the centerline.
+    //
+    auto sourcePtIds = vtkSmartPointer<vtkIdList>::New();
+    auto targetPtIds = vtkSmartPointer<vtkIdList>::New();
+
+    if (!capIdsGiven) {
       sourcePtIds->InsertNextId(capCenterIds[0]);
-      for (int i=1; i<numCapCenterIds; i++)
+      for (int i = 1; i < numCapCenterIds; i++) {
         targetPtIds->InsertNextId(capCenterIds[i]);
-    }
-    else
-    {
-      vtkSmartPointer<vtkCellLocator> locator =
-        vtkSmartPointer<vtkCellLocator>::New();
+      }
+
+    // Get the node IDs closest to the cap centers. 
+    //
+    // capFaceId's are added to a map to produce a sorted list. 
+    //
+    } else {
+      auto locator = vtkSmartPointer<vtkCellLocator>::New();
       locator->SetDataSet(fullpd);
       locator->BuildLocator();
+      auto genericCell = vtkSmartPointer<vtkGenericCell>::New();
+      std::map<int,int> facePtIdMap;
 
-      int subId;
-      double distance;
-      double capPt[3];
-      double closestPt[3];
-      vtkIdType closestCell;
-      vtkSmartPointer<vtkGenericCell> genericCell =
-        vtkSmartPointer<vtkGenericCell>::New();
-
-      for (int i=0; i<numCapCenterIds; i++)
-      {
+      for (int i = 0;  i < numCapCenterIds; i++) {
         int ptId = capCenterIds[i];
+        double capPt[3];
         capped->GetVtkPolyData()->GetPoint(ptId, capPt);
 
-        locator->FindClosestPoint(capPt,closestPt,genericCell,closestCell,
-          subId,distance);
+        int subId;
+        double closestPt[3];
+        vtkIdType closestCellId;
+        double distance;
+        locator->FindClosestPoint(capPt, closestPt, genericCell, closestCellId, subId, distance);
 
-        int capFaceId = fullpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCell);
+        int capFaceId = fullpd->GetCellData()->GetArray("ModelFaceID")->GetTuple1(closestCellId);
+        facePtIdMap[capFaceId] = ptId;
+      }
 
-        if (sourceCapIds->IsId(capFaceId) != -1)
+      // Add point IDs to the source and target lists.
+      for (auto face : facePtIdMap) { 
+        int capFaceId = face.first;
+        int ptId = face.second;
+        if (sourceCapIds->IsId(capFaceId) != -1) {
           sourcePtIds->InsertNextId(ptId);
-        else
+        } else {
           targetPtIds->InsertNextId(ptId);
+        }
       }
     }
 
     delete [] capCenterIds;
 
     vtkPolyData* centerlines;
-	if (getSections)
-		centerlines = CreateCenterlineSections(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
-	else
-		centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+
+    if (getSections) {
+      centerlines = CreateCenterlineSections(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+    } else {
+      centerlines = CreateCenterlines(capped->GetVtkPolyData(), sourcePtIds, targetPtIds);
+    }
 
     delete capped;
-
     return centerlines;
 }
 

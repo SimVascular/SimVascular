@@ -51,6 +51,7 @@
 #include "svTetGenMeshExports.h" // For exports
 
 #include <math.h>
+#include <set>
 
 #include "sv_MeshObject.h"
 
@@ -219,8 +220,11 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
   vtkUnstructuredGrid *boundarylayermesh_;
   vtkUnstructuredGrid *innerblmesh_;
 
+  std::set<int> wallFaceIDs_;
+
   TGoptions meshoptions_;
 
+  void SetCapBoundaryNormals(vtkPolyData* surface);
 };
 
 #endif // _CVTETGENMESHOBJECT_H
