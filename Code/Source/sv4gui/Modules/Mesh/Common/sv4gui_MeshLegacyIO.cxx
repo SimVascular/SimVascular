@@ -54,12 +54,18 @@ static void ComputeVolumeMeshMaps(vtkSmartPointer<vtkUnstructuredGrid> volumeMes
   auto nodeIDs = vtkIntArray::SafeDownCast(volumeMesh->GetPointData()->GetArray("GlobalNodeID"));
   for (int i = 0; i < nodeIDs->GetNumberOfTuples(); i++) {
     auto nid = nodeIDs->GetValue(i);
+    if (node_map.count(nid) != 0) { 
+      std::cout << "[ComputeVolumeMeshMaps] Duplicate node ID " << nid << std::endl;
+    }
     node_map.insert({nid, i});
   }
 
   auto elemIDs = vtkIntArray::SafeDownCast(volumeMesh->GetCellData()->GetScalars("GlobalElementID"));
   for (int i = 0; i < elemIDs->GetNumberOfTuples(); i++) {
     auto eid = elemIDs->GetValue(i);
+    if (elem_map.count(eid) != 0) { 
+      std::cout << "[ComputeVolumeMeshMaps] Duplicate element ID " << eid << std::endl;
+    }
     elem_map.insert({eid, i});
   }
 }
@@ -80,9 +86,14 @@ static void ResetFaceSurfaceIds(vtkPolyData* surface, const std::map<int,int>& n
   auto node_ids_data = vtkSmartPointer<vtkIntArray>::New();
   node_ids_data->SetNumberOfValues(num_nodes);
   node_ids_data->SetName("GlobalNodeID");
+  std::set<int> node_id_set;
 
   for (int i = 0; i < num_nodes; i++) { 
     auto nid = node_ids->GetValue(i);
+    if (node_id_set.count(nid) != 0) {
+      std::cout << "[ResetFaceSurfaceIds] Duplicate node ID " << nid << std::endl;
+    }
+    node_id_set.insert(nid);
     try {
       int index = node_map.at(nid);
       node_ids_data->SetValue(i, index+1);
