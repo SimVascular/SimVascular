@@ -1501,7 +1501,7 @@ int VMTKUtils_CreateNewBoundaryLayerRegion(vtkUnstructuredGrid* meshFromTetGen, 
       globalNodeID++;
     } else {
       int n = ids->GetNumberOfIds();
-      auto id = ids->GetId(0);
+      id = ids->GetId(0);
       //std::cout << "  Dupe node at: " << i << "  use: " << id << std::endl; 
     }
     globalNodeIds1->SetTuple1(i,id);
