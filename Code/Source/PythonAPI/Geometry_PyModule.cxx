@@ -746,7 +746,7 @@ PyDoc_STRVAR(Geom_local_sphere_smooth_doc,
    reducing the angles between adjacent polygons. Two smoothing methods are supported: Laplacian and constrained. \n\
    The Laplacian method sweeps over a region of the polygonal mesh several iterations, repeatedly moving each adjustable \n\
    vertex to the arithmetic average of the vertices adjacent to it. Laplacian smoothing is computationally inexpensive \n\
-   but may a degrade the accuracy of the representation and possibly change its topology by removing connecting parts. \n\ 
+   but may a degrade the accuracy of the representation and possibly change its topology by removing connecting parts. \n\
    Laplacian smoothing is controlled by two parameters: a relaxation (weighting) factor and the number of iterations (sweeps) \n\
    used to apply the smoothing operation. The relaxation factor scales each adjacent vertex by the total area of the polygons \n\
    adjacent to it. The relaxation factor should be choosen between 0.01 and 0.05.                                             \n\
