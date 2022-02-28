@@ -1721,6 +1721,17 @@ int cvTetGenMeshObject::GenerateMesh() {
       return SV_ERROR;
   }
 
+  // Boundary layer meshing creates 'ModelFaceID' IDs for regions of local mesh
+  // refinement (e.g. local sphere refinement). Set the 'ModelFaceID' IDs to
+  // the IDs from the original input model. This is not done for boundary layer
+  // meshing extruded outward.
+  //
+  if (meshoptions_.boundarylayermeshflag && (meshoptions_.boundarylayerdirection == 1)) { 
+    if (TGenUtils_ResetOriginalRegions(surfacemesh_ ,originalpolydata_, "ModelFaceID") != SV_OK) {
+      std::cout << "Failed to reset original face IDs for boundary layer mesh." << std::endl;
+    }
+  }
+
   return SV_OK;
 }
 
