@@ -733,6 +733,205 @@ Geom_loft_nurbs(PyObject* self, PyObject* args, PyObject* kwargs)
   return vtkPythonUtil::GetObjectFromPointer(result->GetVtkPolyData());
 }
 
+//------------------------------------
+// Geom_set_array_for_local_op_sphere
+//------------------------------------
+//
+PyDoc_STRVAR(Geom_local_sphere_smooth_doc,
+  "local_sphere_smooth(surface, radius, center, smoothing_parameters)  \n\
+   \n\
+   Smooth a surface locally in a region defined by a sphere.     \n\
+   \n\
+   Polygonal surface smoothing is used to smooth the bumps and ridges (e.g. vessel junctions) of a surface by \n\
+   reducing the angles between adjacent polygons. Two smoothing methods are supported: Laplacian and constrained. \n\
+   The Laplacian method sweeps over a region of the polygonal mesh several iterations, repeatedly moving each adjustable \n\
+   vertex to the arithmetic average of the vertices adjacent to it. Laplacian smoothing is computationally inexpensive \n\
+   but may a degrade the accuracy of the representation and possibly change its topology by removing connecting parts. \n\
+   Laplacian smoothing is controlled by two parameters: a relaxation (weighting) factor and the number of iterations (sweeps) \n\
+   used to apply the smoothing operation. The relaxation factor scales each adjacent vertex by the total area of the polygons \n\
+   adjacent to it. The relaxation factor should be choosen between 0.01 and 0.05.                                             \n\
+   \n\
+   The constrained method method solves for a surface that minimizes the error between the original mesh and the Laplacian    \n\
+   smoothed mesh. Constrained smoothing is controlled by three parameters: a constrain factor, the number of iterations (sweeps) \n\
+   used to apply the smoothing operation, and the number of conjugate gradient (CG) iteratons used to solve the system of equations   \n\
+   used to minimumize the error. The constrain factor determines how much the smoothed surface deviates from the original \n\
+   surface. The constrain factor should be choosen between 0.0 (no deviation) and 1.0. \n\
+   \n\
+   Args: \n\
+     surface (vtkPolyData): The surface to be smoothed.                     \n\
+     radius (float): The radius of the sphere.                              \n\
+     center ([x,y,z]): The list of three floats defining the center of the sphere. \n\
+     smoothing_parameters (dict): The parameters used in the smoothing operation. \n\
+       For 'laplacian' smoothing: { 'method':'laplacian', 'num_iterations':int, 'relaxation_factor':float }      \n\
+           Defaults: 'laplacian' smoothing: { 'method':'laplacian', 'num_iterations':5, 'relaxation_factor':0.01}  \n\
+       For 'constrained' smoothing: { 'method':'constrained', 'num_iterations':int, 'constrain_factor':float, 'num_cg_solves':int }  \n\
+           Defaults: { 'method':'constrained', 'num_iterations':5, 'constrain_factor':0.2, 'num_cg_solves':30 }  \n\
+   \n\
+   Returns (vtkPolyData): The vtkPolyData object of the smoothed surface.     \n\
+");
+
+static PyObject *
+Geom_local_sphere_smooth(PyObject* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("OdO!O!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"surface", "radius", "center", "smoothing_parameters", NULL};
+  PyObject* surfaceArg;
+  double radius = 0.0;
+  PyObject* centerArg;
+  PyObject* smoothingParmaArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &surfaceArg, &radius, &PyList_Type, &centerArg, 
+        &PyDict_Type, &smoothingParmaArg)) {
+      return api.argsError();
+  }
+
+  // Check that a non-empty dict has been passed.
+  int numItems = PyDict_Size(smoothingParmaArg);
+  if (numItems == 0) { 
+      api.error("The 'smooth_method' argument is empty.");
+      return nullptr;
+  }
+
+  // Get smoothing method.
+  auto methodItem = PyDict_GetItemString(smoothingParmaArg, "method");
+  if (methodItem == nullptr) {
+      api.error("The 'smooth_parameters' argument has no 'method' key.");
+      return nullptr;
+  }
+  std::string smoothingMethod(PyString_AsString(methodItem));
+
+  int numIters = 0;
+  double constrainFactor = 0.0; 
+  int numCGSolves = 0;
+  double relaxFactor = 0.0;
+
+  // Get number of iterations. 
+  auto item = PyDict_GetItemString(smoothingParmaArg, "num_iterations");
+  if (item != nullptr) { 
+      numIters = PyLong_AsLong(item);
+      if (PyErr_Occurred()) {
+          PyErr_SetString(PyExc_ValueError, "The 'num_iterations' parameter is not an int.");
+          return nullptr;
+      }
+  }
+
+  // Get constrained smoothing parameters.
+  //
+  if (smoothingMethod == "constrained") { 
+      if (numIters == 0) { 
+          numIters = 5;
+      }
+      constrainFactor = 0.2; 
+      numCGSolves = 30;
+
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+
+      while (PyDict_Next(smoothingParmaArg, &pos, &key, &value)) {
+          auto keyName = std::string(PyString_AsString(key));
+          if ((keyName == "method") || (keyName == "num_iterations")) {
+              continue;
+          }
+          if (keyName == "num_cg_solves") {
+              numCGSolves = PyLong_AsLong(value);
+              if (PyErr_Occurred()) {
+                  PyErr_SetString(PyExc_ValueError, "The 'num_cg_solves' parameter is not an int.");
+                  return nullptr;
+              }
+          } else if (keyName == "constrain_factor") {
+              constrainFactor = PyFloat_AsDouble(value);
+              if (PyErr_Occurred()) {
+                  PyErr_SetString(PyExc_ValueError, "The 'contrain_factor' parameter is not a float.");
+                  return nullptr;
+              }
+          } else {
+              api.error("The 'smoothing_parameter' key '" + keyName + "' is not valid for the 'constrained' method.");
+              return nullptr;
+          }
+      }
+
+  // Get Laplacian smoothing parameters.
+  //
+  } else if (smoothingMethod != "laplacian") {
+      if (numIters == 0) { 
+          numIters = 100;
+      }
+      relaxFactor = 0.01;
+
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+
+      while (PyDict_Next(smoothingParmaArg, &pos, &key, &value)) {
+          auto keyName = std::string(PyString_AsString(key));
+          if ((keyName == "method") || (keyName == "num_iterations")) {
+              continue;
+          }
+          if (keyName == "relaxation_factor") {
+              relaxFactor = PyFloat_AsDouble(value);
+              if (PyErr_Occurred()) {
+                  PyErr_SetString(PyExc_ValueError, "The 'relaxation_factor' parameter is not a float.");
+                  return nullptr;
+              }
+          } else {
+              api.error("The 'smoothing_parameter' key '" + keyName + "' is not valid for the 'laplacian' method.");
+              return nullptr;
+          }
+      }
+
+  } else {
+      api.error("The 'smoothing_method' argument type value '" + smoothingMethod + "' is not valid. Valid types are 'constrained' and 'laplacian'.");
+      return nullptr;
+  }
+
+  // Get the vtkPolyData object from the Python object.
+  //
+  auto surfPolydata = GetVtkPolyData(api, surfaceArg);
+  if (surfPolydata == nullptr) {
+      return nullptr;
+  }
+
+  cvPolyData surfCvPolyData(surfPolydata);
+
+  // Get the sphere center.
+  std::string emsg;
+  std::array<double,3> center;
+  if (!PyUtilGetPointData(centerArg, emsg, center.data())) {
+      api.error("The 'center' argument " + emsg);
+      return nullptr;
+  }
+
+  // Set the cell array used in smoothing.
+  cvPolyData* arrayCvPolyData = nullptr;
+  char* cellArrayName = "ActiveCells";
+  int dataType = 1;
+
+  if (sys_geom_set_array_for_local_op_sphere(&surfCvPolyData, &arrayCvPolyData, radius, center.data(), cellArrayName, dataType) != SV_OK) {
+      api.error("Error setting local sphere operation array for input surface geometry.");
+      return nullptr;
+  }
+
+  // Perform the smoothing operation.
+  //
+  cvPolyData* smoothedCvPolyData = nullptr;
+  char* pointArrayName = nullptr;
+
+  if (smoothingMethod == "constrained") { 
+      if (sys_geom_local_constrain_smooth(arrayCvPolyData, &smoothedCvPolyData, numIters, constrainFactor, numCGSolves, 
+          pointArrayName, cellArrayName) != SV_OK ) {
+          api.error("The local sphere constrained smoothing operation has failed.");
+          return nullptr;
+      }
+
+  } else if (smoothingMethod == "laplacian") { 
+      if (sys_geom_local_laplacian_smooth(arrayCvPolyData, &smoothedCvPolyData, numIters, relaxFactor, pointArrayName, cellArrayName) != SV_OK ) {
+          api.error("The local sphere laplacian smoothing operation has failed.");
+          return nullptr;
+      }
+    }
+
+  return vtkPythonUtil::GetObjectFromPointer(smoothedCvPolyData->GetVtkPolyData());
+}
+
 //===================================================================================
 //                                  O l d    M e t h o d s
 //===================================================================================
@@ -1159,71 +1358,6 @@ Geom_set_array_for_local_op_face(PyObject* self, PyObject* args)
   return Py_BuildValue("s",dst->GetName());
 }
 
-//------------------------------------
-// Geom_set_array_for_local_op_sphere
-//------------------------------------
-//
-PyDoc_STRVAR(Geom_set_array_for_local_op_sphere_doc,
-  "Geom_set_array_for_local_op_sphere(kernel)                                    \n\
-   \n\
-   ??? Set the computational kernel used to segment image data.       \n\
-   \n\
-   Args:                                                          \n\
-     kernel (str): Name of the contouring kernel. Valid names are: Circle, Ellipse, LevelSet, Polygon, SplinePolygon or Threshold. \n\
-");
-
-static PyObject *
-Geom_set_array_for_local_op_sphere(PyObject* self, PyObject* args)
-{
-  auto api = PyUtilApiFunction("ssdO|si", PyRunTimeErr, __func__);
-  char *srcName;
-  char *dstName;
-  double radius;
-  char *outArray = "LocalOpsArray";
-  int dataType = 1;
-  double ctr[3];
-  int nctr;
-  PyObject* ctrList;
-
-  if (!PyArg_ParseTuple(args, api.format, &srcName,&dstName,&radius,&ctrList,&outArray,&dataType)) {
-      return api.argsError();
-  }
-
-  // Retrieve source object:
-  auto src = GetRepositoryGeometry(api, srcName);
-  if (src == NULL) {
-      return nullptr;
-  }
-
-  if (RepositoryGeometryExists(api, dstName)) {
-      return nullptr;
-  }
-
-  std::string emsg;
-  if (!svPyUtilCheckPointData(ctrList, emsg)) {
-      api.error("The sphere center argument " + emsg);
-      return nullptr;
-  }
-
-  for(int i=0;i<3;i++) {
-    ctr[i] = PyFloat_AsDouble(PyList_GetItem(ctrList,i));
-  }
-
-  cvPolyData* dst;
-  if (sys_geom_set_array_for_local_op_sphere(src, &dst,radius,ctr,outArray,dataType) != SV_OK) {
-      api.error("Error setting local op array for geometry '" + std::string(srcName) + ".");
-      return nullptr;
-  }
-
-  // [TODO:DaveP] why?
-  vtkPolyData *geom = ((cvPolyData*)(dst))->GetVtkPolyData();
-
-  if (!AddGeometryToRepository(api, dstName, dst)) {
-      return nullptr;
-  }
-
-  return Py_BuildValue("s",dst->GetName());
-}
 
 //-----------------------------------
 // Geom_set_array_for_local_op_cells
@@ -3930,6 +4064,7 @@ PyMethodDef PyGeomMethods[] =
 
   {"loft_nurbs", (PyCFunction)Geom_loft_nurbs, METH_VARARGS|METH_KEYWORDS, Geom_loft_nurbs_doc},
 
+  {"local_sphere_smooth", (PyCFunction)Geom_local_sphere_smooth, METH_VARARGS|METH_KEYWORDS, Geom_local_sphere_smooth_doc},
 
 #ifdef python_geom_module_use_old_methods
 
@@ -4043,8 +4178,6 @@ PyMethodDef PyGeomMethods[] =
   {"set_array_for_local_op_face", Geom_set_array_for_local_op_face, METH_VARARGS, Geom_set_array_for_local_op_face_doc},
 
   {"set_array_for_local_op_blend", Geom_set_array_for_local_op_blend, METH_VARARGS, Geom_set_array_for_local_op_blend_doc},
-
-  {"set_array_for_local_op_sphere", Geom_set_array_for_local_op_sphere, METH_VARARGS, Geom_set_array_for_local_op_sphere_doc},
 
   {"set_ids_for_caps", Geom_set_ids_for_caps, METH_VARARGS, Geom_set_ids_for_caps_doc},
 
