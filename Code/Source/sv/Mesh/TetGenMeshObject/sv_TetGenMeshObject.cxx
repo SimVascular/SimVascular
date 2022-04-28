@@ -1691,8 +1691,7 @@ int cvTetGenMeshObject::GenerateMesh() {
   }
 
 #ifdef SV_USE_VMTK
-  //This is a post meshing step that needs to be done for boundary layer
-  //mesh
+  // This is a post meshing step that needs to be done for boundary layer mesh.
   if (meshoptions_.boundarylayermeshflag)
   {
     AppendBoundaryLayerMesh();
@@ -1720,6 +1719,17 @@ int cvTetGenMeshObject::GenerateMesh() {
     if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
 	  &numBoundaryRegions_,1) != SV_OK)
       return SV_ERROR;
+  }
+
+  // Boundary layer meshing creates 'ModelFaceID' IDs for regions of local mesh
+  // refinement (e.g. local sphere refinement). Set the 'ModelFaceID' IDs to
+  // the IDs from the original input model. This is not done for boundary layer
+  // meshing extruded outward.
+  //
+  if (meshoptions_.boundarylayermeshflag && (meshoptions_.boundarylayerdirection == 1)) { 
+    if (TGenUtils_ResetOriginalRegions(surfacemesh_ ,originalpolydata_, "ModelFaceID") != SV_OK) {
+      std::cout << "Failed to reset original face IDs for boundary layer mesh." << std::endl;
+    }
   }
 
   return SV_OK;
@@ -2462,10 +2472,8 @@ int cvTetGenMeshObject::AppendBoundaryLayerMesh()
   surfacemesh_ = vtkPolyData::New();
   volumemesh_ = vtkUnstructuredGrid::New();
 
-  vtkSmartPointer<vtkvmtkPolyDataToUnstructuredGridFilter> surfacetomesh=
-  vtkSmartPointer<vtkvmtkPolyDataToUnstructuredGridFilter>::New();
-  vtkSmartPointer<vtkPolyDataNormals> newnormaler =
-  vtkSmartPointer<vtkPolyDataNormals>::New();
+  auto surfacetomesh = vtkSmartPointer<vtkvmtkPolyDataToUnstructuredGridFilter>::New();
+  auto newnormaler = vtkSmartPointer<vtkPolyDataNormals>::New();
 
   if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
     &numBoundaryRegions_,0) != SV_OK)
@@ -2476,12 +2484,11 @@ int cvTetGenMeshObject::AppendBoundaryLayerMesh()
   surfacetomesh->SetInputData(polydatasolid_);
   surfacetomesh->Update();
 
-  //We append the volume mesh from tetgen, the inner surface, and the
-  //boundary layer mesh all together.
-  vtkSmartPointer<vtkUnstructuredGrid> newVolumeMesh =
-    vtkSmartPointer<vtkUnstructuredGrid>::New();
-  vtkSmartPointer<vtkPolyData> newSurfaceMesh =
-    vtkSmartPointer<vtkPolyData>::New();
+  // We append the volume mesh from tetgen, the inner surface, and the
+  // boundary layer mesh all together.
+  //
+  auto newVolumeMesh = vtkSmartPointer<vtkUnstructuredGrid>::New();
+  auto newSurfaceMesh = vtkSmartPointer<vtkPolyData>::New();
   int giveblnewregion = meshoptions_.newregionboundarylayer;
   fprintf(stdout,"Appending Boundary Layer and Volume Mesh\n");
   if (VMTKUtils_AppendData(volumemesh_,boundarylayermesh_,

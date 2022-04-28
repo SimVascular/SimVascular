@@ -150,6 +150,100 @@ classify_face(PyModelingModel* self, int faceID, PyUtilApiFunction& api, double 
 //////////////////////////////////////////////////////
 // PolyData class methods.
 
+PyDoc_STRVAR(ModelingPolyData_combine_faces_doc,
+  "combine_faces(face_id, combine_with)  \n\
+   \n\
+   Combine a list of faces with a given face in the solid model. \n\
+   \n\
+   The model face IDs specified in 'combine_with' are replaced with a single 'face_id' face ID. \n\
+   \n\
+   Args: \n\
+     face_id (int): The ID of the face to combine other faces with.      \n\
+     combine_with (list[int]): The list of face IDs to combine.          \n\
+   \n\
+");
+
+static PyObject *
+ModelingPolyData_combine_faces(PyModelingModel* self, PyObject* args, PyObject* kwargs)
+{
+  auto api = PyUtilApiFunction("iO!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"face_id", "combine_with", NULL};
+  int combFaceID;
+  PyObject* faceListArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &combFaceID, &PyList_Type, &faceListArg)) {
+      return api.argsError();
+  }
+
+  if (PyList_Size(faceListArg) == 0) {
+      api.error("The 'combine_with' list is empty.");
+      return nullptr;
+  }
+
+  // Get the face IDs.
+  auto faceIDs = ModelingModelGetFaceIDs(api, self);
+  if (faceIDs.size() == 0) {
+      api.error("The model does not have an face IDs defined for it.");
+      return nullptr;
+  }
+
+  if (faceIDs.count(combFaceID) == 0) {
+    api.error("The face ID " + std::to_string(combFaceID) + " is not a valid face ID for the model.");
+    return nullptr;
+  }
+
+  // Create list of faces to combine.
+  std::set<int> combFaceIDs{combFaceID};
+  for (int i = 0; i < PyList_Size(faceListArg); i++) {
+      auto faceID = PyLong_AsLong(PyList_GetItem(faceListArg,i));
+      bool faceFound = false;
+      if (faceIDs.count(faceID) == 0) {
+          api.error("The face ID " + std::to_string(faceID) + " in 'combine_with' is not a valid face ID for the model.");
+          return nullptr;
+      }
+      combFaceIDs.insert(faceID);
+  }
+
+  // Get the model PolyData.
+  //
+  auto model = self->solidModel;
+  double max_dist = -1.0;
+  int useMaxDist = 0;
+  auto cvPolydata = model->GetPolyData(useMaxDist, max_dist);
+
+  auto polydata = vtkSmartPointer<vtkPolyData>::New();
+  polydata->DeepCopy(cvPolydata->GetVtkPolyData());
+  if (polydata == NULL) {
+      api.error("Could not get polydata for the solid model.");
+      return nullptr;
+  }
+
+  // Create a new ModelFaceID data array.
+  //
+  std::string markerListName = "ModelFaceID";
+  auto modelFaceIDs = vtkSmartPointer<vtkIntArray>::New();
+  modelFaceIDs = vtkIntArray::SafeDownCast(polydata->GetCellData()->GetScalars(markerListName.c_str()));
+  int numCells = polydata->GetNumberOfCells();
+  for (vtkIdType cellID = 0; cellID < numCells; cellID++) {
+      int faceID = modelFaceIDs->GetValue(cellID); 
+      if (combFaceIDs.count(faceID) != 0) { 
+          modelFaceIDs->SetValue(cellID,combFaceID);
+      }
+  }
+
+  // Add the a new ModelFaceID data array to the model PolyData.
+  //
+  polydata->GetCellData()->RemoveArray(markerListName.c_str());
+  modelFaceIDs->SetName(markerListName.c_str());
+  polydata->GetCellData()->AddArray(modelFaceIDs);
+  polydata->GetCellData()->SetActiveScalars(markerListName.c_str());
+
+  // Set the model PolyData to the one with the new ModelFaceID data array.
+  self->solidModel->SetVtkPolyDataObject(polydata);
+
+  Py_RETURN_NONE;
+}
+
 PyDoc_STRVAR(ModelingPolyData_compute_boundary_faces_doc,
   "compute_boundary_faces(angle)  \n\
    \n\
@@ -391,6 +485,8 @@ PyMethodDef PyPolyDataSolidMethods[] = {
 
   // [TODO:DaveP] This should be implemented.
   // { "remesh_faces", (PyCFunction)ModelingPolyData_remesh_faces, METH_NOARGS|METH_KEYWORDS, ModelingPolyData_remesh_faces_doc},
+
+  { "combine_faces", (PyCFunction)ModelingPolyData_combine_faces, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_combine_faces_doc},
 
   { "compute_boundary_faces", (PyCFunction)ModelingPolyData_compute_boundary_faces, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_compute_boundary_faces_doc},
 

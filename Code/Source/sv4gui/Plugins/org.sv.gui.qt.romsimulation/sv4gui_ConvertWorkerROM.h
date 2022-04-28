@@ -50,6 +50,9 @@
 #include <QThread>
 #include <QMessageBox>
 */
+
+#include "org_sv_gui_qt_romsimulation_Export.h"
+
 #include <QObject>
 #include <QThread>
 
@@ -61,7 +64,7 @@
 //------------------------
 // The sv4guiConvertWorkerROM class is used to convert ROM simulation results in a QThread.
 //
-class sv4guiConvertWorkerROM : public QObject 
+class SV_QT_ROMSIMULATION sv4guiConvertWorkerROM : public QObject 
 {
   Q_OBJECT
 
