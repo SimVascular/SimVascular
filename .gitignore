@@ -69,6 +69,8 @@ Code/Source/vtkSV/Modules/Segmentation/VesselNetworkDecomposerAndParameterizer.c
 Code/Source/vtkSV/Modules/Parameterization/module.cmake
 Code/Source/vtkSV/Testing/
 .project
+.cproject
+.settings/*
 Tcl/.buildpath
 Tcl/.project
 Code/FlowSolvers/.cproject
