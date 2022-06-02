@@ -178,20 +178,13 @@ BuildModelNode(vtkPolyData* polydata, sv4guiModel::Pointer model)
 // The modelName parameter is the name of a solid model under the SV Data Manager Models node.
 //
 sv4guiMitkMesh::Pointer
-BuildMeshNode(vtkUnstructuredGrid* ugrid, sv4guiMitkMesh::Pointer mitkMesh, const char* modelName)
+BuildMeshNode(vtkUnstructuredGrid* volume, vtkPolyData* surface, sv4guiMitkMesh::Pointer mitkMesh, const char* modelName)
 {
-  // Get surface polydata from the unstructured grid.
-  //
-  vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  surfaceFilter->SetInputData(ugrid);
-  surfaceFilter->Update();
-  vtkSmartPointer<vtkPolyData> polydata = surfaceFilter->GetOutput();
-
   // Set the surface and volume mesh to the sv4guiMesh.
   //
   auto mesh = sv4guiMeshFactory::CreateMesh("TetGen");
-  mesh->SetVolumeMesh(ugrid);
-  mesh->SetSurfaceMesh(polydata);
+  mesh->SetVolumeMesh(volume);
+  mesh->SetSurfaceMesh(surface);
 
   // Set mitk mesh.
   mitkMesh->SetMesh(mesh);
@@ -500,13 +493,14 @@ GetDataNode(mitk::DataStorage::Pointer& dataStorage, mitk::DataNode::Pointer& pr
 //--------------
 //
 PyDoc_STRVAR(Dmg_add_mesh_doc,
-  "add_mesh(name, mesh, model)  \n\
+  "add_mesh(name, volume, surface, model)  \n\
    \n\
-   Add a mesh to the SV Data Manager Meshes node. \n\
+   Add a mesh volume and mesh surface to the SV Data Manager Meshes node. \n\
    \n\
    Args: \n\
      name (str): The name of the mesh data node.                           \n\
-     mesh (vtkUnstructuredGrid object): The vtkUnstructuredGrid object.    \n\
+     volume (vtkUnstructuredGrid object): The mesh volume.    \n\
+     surface (vtkPolyData object): The mesh surface.    \n\
      model (str): The name of the SV Data Manager Models node associated   \n\
         with the mesh.                                                     \n\
 ");
@@ -514,20 +508,28 @@ PyDoc_STRVAR(Dmg_add_mesh_doc,
 static PyObject *
 Dmg_add_mesh(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-  auto api = PyUtilApiFunction("sOs", PyRunTimeErr, __func__);
-  static char *keywords[] = {"name", "mesh", "model", NULL};
+  auto api = PyUtilApiFunction("sOOs", PyRunTimeErr, __func__);
+  static char *keywords[] = {"name", "volume", "surface", "model", NULL};
   char* meshName;
-  PyObject* ugridArg;
+  PyObject* volumeArg;
+  PyObject* surfaceArg;
   char* modelName;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &meshName, &ugridArg, &modelName)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &meshName, &volumeArg, &surfaceArg, &modelName)) {
       return api.argsError();
   }
 
   // Get the pointer to the vtkUnstructuredGrid object.
-  vtkSmartPointer<vtkUnstructuredGrid> ugrid = (vtkUnstructuredGrid*)vtkPythonUtil::GetPointerFromObject(ugridArg, "vtkUnstructuredGrid");
+  auto volume = (vtkUnstructuredGrid*)vtkPythonUtil::GetPointerFromObject(volumeArg, "vtkUnstructuredGrid");
   if (PyErr_Occurred()) {
-      api.error("The 'mesh' argument is not a vtkUnstructuredGrid object.");
+      api.error("The 'volume' argument is not a vtkUnstructuredGrid object.");
+      return nullptr;
+  }
+
+  // Get the pointer to the vtkPolyData object.
+  auto surface = (vtkPolyData*)vtkPythonUtil::GetPointerFromObject(surfaceArg, "vtkPolyData");
+  if (PyErr_Occurred()) {
+      api.error("The 'surface' argument is not a vtkPolyData object.");
       return nullptr;
   }
 
@@ -554,7 +556,7 @@ Dmg_add_mesh(PyObject* self, PyObject* args, PyObject* kwargs)
   // Create a new Mesh node.
   mitk::DataNode::Pointer meshNode = mitk::DataNode::New();
   sv4guiMitkMesh::Pointer mitkMesh = sv4guiMitkMesh::New();
-  mitkMesh = BuildMeshNode(ugrid, mitkMesh, modelName);
+  mitkMesh = BuildMeshNode(volume, surface, mitkMesh, modelName);
   meshNode->SetData(mitkMesh);
   meshNode->SetName(meshName);
 
