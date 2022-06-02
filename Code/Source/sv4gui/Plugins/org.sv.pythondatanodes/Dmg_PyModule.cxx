@@ -1100,7 +1100,7 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
 
   // Create new model.
   sv4guiModel::Pointer model = sv4guiModel::New();
-  model  = BuildModelNode(polydata, model);
+  model = BuildModelNode(polydata, model);
 
   // Create new Model data node.
   auto modelNode = mitk::DataNode::New();
@@ -1109,6 +1109,22 @@ Dmg_add_model(PyObject* self, PyObject* args, PyObject* kwargs)
 
   // Add the data node.
   AddDataNode(dataStorage, folderNode, modelNode);
+
+  //sv4guiModel* model=dynamic_cast<sv4guiModel*>(modelNode->GetData())
+
+  // Get the solid model for time=0.
+  //
+  int time = 0;
+  auto solidModelElement = model->GetModelElement(time);
+  int numFaces = solidModelElement->GetFaceNumber();
+  std::cout << "[add_model] numFaces: " << numFaces << std::endl;
+
+  auto mepd = dynamic_cast<sv4guiModelElementPolyData*>(solidModelElement);
+  double angle = 30.0;
+  bool success = mepd->ExtractFaces(angle);
+  numFaces = solidModelElement->GetFaceNumber();
+  std::cout << "[add_model] numFaces: " << numFaces << std::endl;
+                                
 
   return SV_PYTHON_OK;
 }
