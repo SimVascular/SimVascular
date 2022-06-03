@@ -13,8 +13,14 @@ jobs:
           brew install qt5
           mkdir Build
           cd Build
-          cmake ..
+          cmake .. -DSV_ENABLE_DISTRIBUTION
           make
+          cd ..
+      - name: Save build
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build
+          path: Build
   build-ubuntu-20:
     runs-on: ubuntu-20.04
     steps:
@@ -29,8 +35,14 @@ jobs:
           export CXX=/usr/bin/g++-8
           mkdir Build
           cd Build
-          cmake ..
+          cmake .. -DSV_ENABLE_DISTRIBUTION
           make
+          cd ..
+      - name: Save build
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build
+          path: Build
   build-ubuntu-18:
     runs-on: ubuntu-18.04
     steps:
@@ -43,5 +55,11 @@ jobs:
         run: |
           mkdir Build
           cd Build
-          cmake ..
+          cmake .. -DSV_ENABLE_DISTRIBUTION
           make
+          cd ..
+      - name: Save build
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build
+          path: Build
