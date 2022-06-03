@@ -6,6 +6,6 @@
 
  - If you want to *compile the software from source* then visit [here](https://github.com/SimVascular/SimVascular/wiki/wiki_for_developers) for compilation instructions.
 
-# Status of Travis Test Build
+# Status of GitHub Build Test
 
-[![Build Status](https://travis-ci.org/SimVascular/SimVascular.svg?branch=master)](https://travis-ci.org/SimVascular/SimVascular)
+<img src="https://github.com/SimVascular/SimVascular/actions/workflows/build.yml/badge.svg"/>

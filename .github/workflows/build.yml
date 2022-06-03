@@ -1,22 +1,24 @@
-name: macos
+name: Build
 on: [push, pull_request]
 jobs:
   build-macos-catalina:
     runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
-      - name: Build
+      - name: Prepare
         shell: bash
         run: |
           export TERM=xterm-256color
           export CPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
-          brew install qt5
+      - name: Build
+        shell: bash
+        run: |
           mkdir Build
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
-      - name: Save build
+      - name: Save
         uses: actions/upload-artifact@v3
         with:
           name: Build
@@ -25,20 +27,21 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
+      - name: Prepare
         shell: bash
-        run: sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev gcc-8 g++-8 qt5-default
+        run: |
+          sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev gcc-8 g++-8 qt5-default
+          export CC=/usr/bin/gcc-8
+          export CXX=/usr/bin/g++-8
       - name: Build
         shell: bash
         run: |
-          export CC=/usr/bin/gcc-8
-          export CXX=/usr/bin/g++-8
           mkdir Build
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
-      - name: Save build
+      - name: Save
         uses: actions/upload-artifact@v3
         with:
           name: Build
@@ -47,9 +50,10 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
+      - name: Prepare
         shell: bash
-        run: sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev qt5-default
+        run: |
+          sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev qt5-default
       - name: Build
         shell: bash
         run: |
@@ -58,7 +62,7 @@ jobs:
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
-      - name: Save build
+      - name: Save
         uses: actions/upload-artifact@v3
         with:
           name: Build
