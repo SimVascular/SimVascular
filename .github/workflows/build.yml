@@ -13,7 +13,7 @@ jobs:
           brew install qt5
           mkdir Build
           cd Build
-          cmake .. -DSV_ENABLE_DISTRIBUTION
+          cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
       - name: Save build
@@ -35,7 +35,7 @@ jobs:
           export CXX=/usr/bin/g++-8
           mkdir Build
           cd Build
-          cmake .. -DSV_ENABLE_DISTRIBUTION
+          cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
       - name: Save build
@@ -55,7 +55,7 @@ jobs:
         run: |
           mkdir Build
           cd Build
-          cmake .. -DSV_ENABLE_DISTRIBUTION
+          cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
       - name: Save build
