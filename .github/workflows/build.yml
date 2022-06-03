@@ -5,47 +5,45 @@ jobs:
     runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
-      - name: Prepare
+      - name: Build
         shell: bash
         run: |
           export TERM=xterm-256color
           export CPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
-      - name: Build
-        shell: bash
-        run: |
           mkdir Build
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
+          zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
         with:
           name: Build
-          path: Build
+          path: build.zip
   build-ubuntu-20:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - name: Prepare
         shell: bash
-        run: |
-          sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev gcc-8 g++-8 qt5-default
-          export CC=/usr/bin/gcc-8
-          export CXX=/usr/bin/g++-8
+        run: sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev gcc-8 g++-8 qt5-default zip
       - name: Build
         shell: bash
         run: |
+          export CC=/usr/bin/gcc-8
+          export CXX=/usr/bin/g++-8
           mkdir Build
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
+          zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
         with:
           name: Build
-          path: Build
+          path: build.zip
   build-ubuntu-18:
     runs-on: ubuntu-18.04
     steps:
@@ -53,7 +51,7 @@ jobs:
       - name: Prepare
         shell: bash
         run: |
-          sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev qt5-default
+          sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev qt5-default zip
       - name: Build
         shell: bash
         run: |
@@ -62,8 +60,9 @@ jobs:
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
           cd ..
+          zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
         with:
           name: Build
-          path: Build
+          path: build.zip
