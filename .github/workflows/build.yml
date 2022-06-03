@@ -14,8 +14,9 @@ jobs:
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
+          cd SimVascular-build
           cpack
-          cd ..
+          cd ../..
           zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
@@ -38,8 +39,9 @@ jobs:
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
+          cd SimVascular-build
           cpack
-          cd ..
+          cd ../..
           zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
@@ -61,8 +63,9 @@ jobs:
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
+          cd SimVascular-build
           cpack
-          cd ..
+          cd ../..
           zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
