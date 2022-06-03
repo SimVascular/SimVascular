@@ -16,13 +16,11 @@ jobs:
           make
           cd SimVascular-build
           cpack
-          cd ../..
-          zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
         with:
-          name: Build Catalina
-          path: build.zip
+          name: macOS Catalina Installer
+          path: "SimVascular*.dmg"
   build-ubuntu-20:
     runs-on: ubuntu-20.04
     steps:
@@ -41,13 +39,11 @@ jobs:
           make
           cd SimVascular-build
           cpack
-          cd ../..
-          zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
         with:
-          name: Build Ubuntu 20
-          path: build.zip
+          name: Ubuntu 20 Installer
+          path: "SimVascular*.deb"
   build-ubuntu-18:
     runs-on: ubuntu-18.04
     steps:
@@ -65,10 +61,8 @@ jobs:
           make
           cd SimVascular-build
           cpack
-          cd ../..
-          zip -r build.zip  Build
       - name: Save
         uses: actions/upload-artifact@v3
         with:
-          name: Build Ubuntu 18
-          path: build.zip
+          name: Build Ubuntu 18 Installer
+          path: "SimVascular*.dmg"

@@ -11,7 +11,6 @@ https://doi.org/10.1007/s10439-016-1762-8)
 The only fully opensource software package providing a complete pipeline from medical image data segmentation to patient specific blood flow simulation and analysis.
 
 * **Website:** https://simvascular.github.io
-* **Documentation:** https://simvascular.github.io/docsQuickGuide.html
 * **Wiki:** https://github.com/SimVascular/SimVascular/wiki
 * **Source code:** https://github.com/SimVascular/SimVascular
 
