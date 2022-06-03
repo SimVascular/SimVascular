@@ -14,6 +14,7 @@ jobs:
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
+          make package
           cd ..
           zip -r build.zip  Build
       - name: Save
@@ -37,6 +38,7 @@ jobs:
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
+          make package
           cd ..
           zip -r build.zip  Build
       - name: Save
@@ -59,6 +61,7 @@ jobs:
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
           make
+          make package
           cd ..
           zip -r build.zip  Build
       - name: Save
