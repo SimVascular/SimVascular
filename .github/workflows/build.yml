@@ -23,7 +23,7 @@ jobs:
           mkdir Build
           cd Build
           cmake .. -DSV_ENABLE_DISTRIBUTION=ON
-          make -j2
+          make -j3
       - name: Create installer
         shell: bash
         run: |
