@@ -1,0 +1,47 @@
+name: macos
+on: [push, pull_request]
+jobs:
+  build-macos-catalina:
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        shell: bash
+        run: |
+          export TERM=xterm-256color
+          export CPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+          brew install qt5
+          mkdir Build
+          cd Build
+          cmake ..
+          make
+  build-ubuntu-20:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        shell: bash
+        run: sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev gcc-8 g++-8 qt5-default
+      - name: Build
+        shell: bash
+        run: |
+          export CC=/usr/bin/gcc-8
+          export CXX=/usr/bin/g++-8
+          mkdir Build
+          cd Build
+          cmake ..
+          make
+  build-ubuntu-18:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        shell: bash
+        run: sudo apt-get install libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev qt5-default
+      - name: Build
+        shell: bash
+        run: |
+          mkdir Build
+          cd Build
+          cmake ..
+          make
