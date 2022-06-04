@@ -42,7 +42,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: SimVascular-macOS-Catalina.dmg
-          asset_name: SimVascular-${tag}-macOS-Catalina.dmg
+          asset_name: SimVascular-${{github.ref_name}}-macOS-Catalina.dmg
           tag: ${{ github.ref }}
   build-ubuntu-20:
     runs-on: ubuntu-20.04
@@ -79,7 +79,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: SimVascular-Ubuntu-20.deb
-          asset_name: SimVascular-${tag}-Ubuntu-20.deb
+          asset_name: SimVascular-${{github.ref_name}}-Ubuntu-20.deb
           tag: ${{ github.ref }}
   build-ubuntu-18:
     runs-on: ubuntu-18.04
@@ -115,5 +115,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: SimVascular-Ubuntu-18.deb
-          asset_name: SimVascular-${tag}-Ubuntu-18.deb
+          asset_name: SimVascular-${{github.ref_name}}-Ubuntu-18.deb
           tag: ${{ github.ref }}
