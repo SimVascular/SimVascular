@@ -1,7 +1,8 @@
 
 <div align="center">
 <img src="https://simvascular.github.io/img/svlogo/svLogoTitle.png" width="300">
-_______________________________________________________________________________
+
+______________________________________________________________________
 
 [![Build Status](https://github.com/SimVascular/SimVascular/actions/workflows/build.yml/badge.svg)](https://github.com/SimVascular/SimVascular/actions)
 [![Latest Release](https://img.shields.io/github/v/release/SimVascular/SimVascular?label=latest)](https://github.com/SimVascular/SimVascular/releases/latest)
