@@ -29,19 +29,21 @@ jobs:
         run: |
           cd Build/SimVascular-build
           cpack
+          cp SimVascular*.dmg ../../SimVascular-macOS-Catalina.dmg
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: macOS Catalina Installer
-          path: Build/SimVascular-build/SimVascular*.dmg
+          path: SimVascular-macOS-Catalina.dmg
+          if-no-files-found: error
       - name: Upload release asset
         if: startsWith(github.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: Build/SimVascular-build/SimVascular*.dmg
+          file: SimVascular-macOS-Catalina.dmg
+          asset_name: SimVascular-${tag}-macOS-Catalina.dmg
           tag: ${{ github.ref }}
-          file_glob: true
   build-ubuntu-20:
     runs-on: ubuntu-20.04
     steps:
@@ -64,19 +66,21 @@ jobs:
         run: |
           cd Build/SimVascular-build
           cpack
+          cp SimVascular*.deb ../../SimVascular-Ubuntu-20.deb
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Ubuntu 20 Installer
-          path: Build/SimVascular-build/SimVascular*.deb
+          path: SimVascular-Ubuntu-20.deb
+          if-no-files-found: error
       - name: Upload release asset
         if: startsWith(github.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: Build/SimVascular-build/SimVascular*.deb
+          file: SimVascular-Ubuntu-20.deb
+          asset_name: SimVascular-${tag}-Ubuntu-20.deb
           tag: ${{ github.ref }}
-          file_glob: true
   build-ubuntu-18:
     runs-on: ubuntu-18.04
     steps:
@@ -98,16 +102,18 @@ jobs:
         run: |
           cd Build/SimVascular-build
           cpack
+          cp SimVascular*.deb ../../SimVascular-Ubuntu-18.deb
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Ubuntu 18 Installer
-          path: Build/SimVascular-build/SimVascular*.deb
+          path: SimVascular-Ubuntu-18.deb
+          if-no-files-found: error
       - name: Upload release asset
         if: startsWith(github.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: Build/SimVascular-build/SimVascular*.deb
+          file: SimVascular-Ubuntu-18.deb
+          asset_name: SimVascular-${tag}-Ubuntu-18.deb
           tag: ${{ github.ref }}
-          file_glob: true

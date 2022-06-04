@@ -10,6 +10,8 @@ https://doi.org/10.1007/s10439-016-1762-8)
 
 The only fully opensource software package providing a complete pipeline from medical image data segmentation to patient specific blood flow simulation and analysis.
 
+SimVascular is an interactive application used to created patient-specific geometric models of human vasculature from 3D medical imaging data acquired for a specific anatomical region. These models are then used as the basis for blood flow simulations using various numerical methods.
+
 * **Website:** https://simvascular.github.io
 * **Wiki:** https://github.com/SimVascular/SimVascular/wiki
 * **Source code:** https://github.com/SimVascular/SimVascular
