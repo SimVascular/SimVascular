@@ -10,9 +10,11 @@ jobs:
           install-dir: C:\cygwin64
           packages: make tclsh zip gzip tar date patch
       - name: Build
+        shell: bash
         run: |
           C:\cygwin64\bin\bash --login
           choco install wget visualstudio2017community
+          rm -r -f "C:\Program Files (x86)\Microsoft Visual Studio\2019"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools"
           ./vsdevcmd -arch=x64
           cd D:\a\SimVascular\SimVascular\BuildWithMake
