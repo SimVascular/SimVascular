@@ -9,7 +9,7 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          choco install cygwin cyg-get wget
+          choco install cygwin cyg-get wget make
           cyg-get make tclsh zip gzip tar date patch
           cd BuildWithMake
           bash quick-build-windows.sh
