@@ -12,8 +12,8 @@ jobs:
       - name: Build
         run: |
           choco install wget visualstudio2017community
-          cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\"
-          ./vcvarsall.bat x86_x64 uwp
+          cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools"
+          ./vsdevcmd -arch=x86_x64
           cd D:\a\SimVascular\SimVascular\BuildWithMake
           echo "which-CL"
           which CL
