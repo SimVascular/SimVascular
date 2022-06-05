@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        shell: bash
+        shell: pwsh
         run: |
           mkdir Build
           cd Build
