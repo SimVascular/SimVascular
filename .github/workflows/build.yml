@@ -12,7 +12,7 @@ jobs:
       - name: Build
         run: |
           cd BuildWithMake
-          C:\cygwin64\bin\bash.exe -c "bash prep_windows.sh && bash quick-build-windows.sh && cd Release && make"
+          C:\cygwin64\bin\bash.exe --login -c "bash prep_windows.sh && bash quick-build-windows.sh && cd Release && make"
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
