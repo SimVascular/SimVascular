@@ -13,7 +13,7 @@ jobs:
         run: |
           choco install wget
           cd BuildWithMake
-          cat "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat"
+          cat "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vsdevcmd.bat"
           C:\cygwin64\bin\bash.exe
           ./startX-with-2017.bat
           echo "which-CL"
