@@ -15,7 +15,6 @@ jobs:
           ./startX-with-2017.bat
           echo "which-CL"
           which CL
-          C:\cygwin64\bin\bash --login
           bash prep_windows.sh
           bash quick-build-windows.sh
           cd Release
