@@ -30,7 +30,7 @@ jobs:
           packages: make tclsh zip gzip tar date patch wget
       - name: Build
         run: |
-          vs_buildtools.exe --quiet --add Microsoft.VisualStudio.Workload.VCTools
+          choco install visualstudio2017enterprise visualstudio2017buildtools
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
