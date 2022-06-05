@@ -10,7 +10,6 @@ jobs:
           install-dir: C:\cygwin64
           packages: make tclsh zip gzip tar date patch
       - name: Build
-        shell: bash
         run: |
           choco install wget
           cd BuildWithMake
