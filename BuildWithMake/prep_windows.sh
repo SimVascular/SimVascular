@@ -2,6 +2,7 @@
 chmod +x "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 bash --login
 which CL
+which cl
 
 if hash CL 2>/dev/null; then
     clfullpath=`which CL`
