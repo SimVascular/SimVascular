@@ -12,8 +12,10 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          C:\cygwin64\bin\bash.exe --login
-          choco install wget visualstudio2017community
+          vs_community.exe --quiet
+          echo "dir-vs"
+          dir "C:\Program Files (x86)\Microsoft Visual Studio"
+          choco install wget
           rm -r -f "C:\Program Files (x86)\Microsoft Visual Studio\2019"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools"
           ./vsdevcmd -arch=x64
