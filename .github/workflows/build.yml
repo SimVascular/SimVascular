@@ -11,11 +11,11 @@ jobs:
           choco install cygwin --params "/InstallDir:C:/cygwin64"
           choco install cyg-get wget visualstudio2017community
           cyg-get make tclsh zip gzip tar date patch
+          cd BuildWithMake
           ./startX-with-2017.bat
           echo "which-CL"
           which CL
           C:\cygwin64\bin\bash --login
-          cd BuildWithMake
           bash prep_windows.sh
           bash quick-build-windows.sh
           cd Release
