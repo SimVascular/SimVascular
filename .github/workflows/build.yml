@@ -9,9 +9,15 @@ jobs:
         shell: pwsh
         run: |
           choco install cygwin --params "/InstallDir:C:/cygwin64"
-          choco install cyg-get wget make
+          choco install cyg-get wget visualstudio2017community
           cyg-get make tclsh zip gzip tar date patch
           cd BuildWithMake
           bash quick-build-windows.sh
           cd Release
           make
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Windows Installer
+          path: BuildWithMake/Release/*.exe
+          if-no-files-found: error
