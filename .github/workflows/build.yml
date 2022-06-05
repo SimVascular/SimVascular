@@ -12,7 +12,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          C:\cygwin64\bin\bash --login
+          C:\cygwin64\bin\bash.exe --login
           choco install wget visualstudio2017community
           rm -r -f "C:\Program Files (x86)\Microsoft Visual Studio\2019"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools"
