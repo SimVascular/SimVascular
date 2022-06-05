@@ -10,9 +10,7 @@ jobs:
           install-dir: C:\cygwin64
           packages: make tclsh zip gzip tar date patch
       - name: Build
-        shell: bash
         run: |
-          echo ${env:GITHUB_PATH}
           cd BuildWithMake
           ./startX-with-2017.bat
           choco install wget visualstudio2017community
