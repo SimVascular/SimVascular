@@ -14,8 +14,7 @@ jobs:
           "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
           echo "which-CL"
           which CL
-          set PATH=C:\cygwin64\bin:$PATH;%PATH%
-          bash --login
+          C:\cygwin64\bin\bash --login
           cd BuildWithMake
           bash prep_windows.sh
           bash quick-build-windows.sh
