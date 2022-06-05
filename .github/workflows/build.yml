@@ -8,8 +8,6 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          mkdir Build
-          cd Build
           choco install cygwin cyg-get
           cyg-get make tclsh zip gzip tar date patch
           cd BuildWithMake
