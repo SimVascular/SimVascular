@@ -10,7 +10,7 @@ jobs:
         run: |
           choco install cygwin --params "/InstallDir:C:/cygwin64"
           choco install cyg-get wget visualstudio2017community
-          cyg-get make tclsh zip gzip tar date patch
+          cyg-get make tclsh zip gzip tar date patch startxwin
           "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
           dir "C:/cygwin64/bin/"
           bash --login -c "C:/cygwin64/bin/startxwin"
