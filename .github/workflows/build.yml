@@ -12,6 +12,8 @@ jobs:
           choco install cyg-get wget visualstudio2017community
           cyg-get make tclsh zip gzip tar date patch
           cd BuildWithMake
+          startX-with-2017.bat
+          bash prep_windows.sh
           bash quick-build-windows.sh
           cd Release
           make
