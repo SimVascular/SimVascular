@@ -12,14 +12,9 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          vs_community.exe --quiet
-          echo "dir-vs"
-          dir "C:\Program Files (x86)\Microsoft Visual Studio"
           choco install wget
-          rm -r -f "C:\Program Files (x86)\Microsoft Visual Studio\2019"
-          cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools"
-          ./vsdevcmd -arch=x64
-          cd D:\a\SimVascular\SimVascular\BuildWithMake
+          cd BuildWithMake
+          startX-with-2017.bat
           echo "which-CL"
           which CL
           bash prep_windows.sh
