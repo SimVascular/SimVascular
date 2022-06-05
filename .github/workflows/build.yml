@@ -12,7 +12,8 @@ jobs:
           choco install cyg-get wget visualstudio2017community
           cyg-get make tclsh zip gzip tar date patch startxwin
           "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-          "C:/cygwin64/bin/bash.exe" --login -i
+          export PATH=C:\cygwin64\bin:$PATH
+          bash --login
           cd BuildWithMake
           bash prep_windows.sh
           bash quick-build-windows.sh
