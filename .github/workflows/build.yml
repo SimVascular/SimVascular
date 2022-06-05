@@ -11,7 +11,7 @@ jobs:
           mkdir Build
           cd Build
           choco install cygwin cyg-get
-          cyg-get make, tclsh, zip, gzip, tar, date, patch
+          cyg-get make tclsh zip gzip tar date patch
           cd BuildWithMake
           source quick-build-windows.sh
           cd Release
