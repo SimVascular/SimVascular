@@ -12,9 +12,10 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          echo $env:GITHUB_PATH
-          choco install wget visualstudio2017community
+          echo ${env:GITHUB_PATH}
+          echo $PATH
           ./startX-with-2017.bat
+          choco install wget visualstudio2017community
           echo "which-CL"
           which CL
           bash prep_windows.sh
