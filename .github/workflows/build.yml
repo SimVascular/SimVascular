@@ -8,17 +8,11 @@ jobs:
       - uses: cygwin/cygwin-install-action@master
         with:
           install-dir: C:\cygwin64
-          packages: make tclsh zip gzip tar date patch
+          packages: make tclsh zip gzip tar date patch wget
       - name: Build
         run: |
-          choco install wget
           cd BuildWithMake
-          C:\cygwin64\bin\bash.exe -c $'"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && which CL'
-          C:\cygwin64\bin\bash.exe -c "which CL"
-          C:\cygwin64\bin\bash.exe -c "prep_windows.sh"
-          C:\cygwin64\bin\bash.exe -c "quick-build-windows.sh"
-          cd Release
-          make
+          C:\cygwin64\bin\bash.exe -c "bash prep_windows.sh && bash quick-build-windows.sh && cd Release && make"
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
