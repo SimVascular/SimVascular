@@ -12,6 +12,7 @@ jobs:
       - name: Build
         run: |
           cd BuildWithMake
+          dos2unix ./prep_windows.sh
           C:\cygwin64\bin\bash.exe -c "./prep_windows.sh && ./quick-build-windows.sh && cd Release && make"
       - name: Upload artifact
         uses: actions/upload-artifact@v3
