@@ -8,7 +8,7 @@ jobs:
       - uses: cygwin/cygwin-install-action@master
         with:
           install-dir: C:\cygwin64
-          packages: [make, tclsh, zip, gzip, tar, date, patch]
+          packages: make tclsh zip gzip tar date patch
       - name: Build
         shell: bash
         run: |
