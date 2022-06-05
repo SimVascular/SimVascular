@@ -14,7 +14,8 @@ jobs:
           cd BuildWithMake
           dos2unix ./prep_windows.sh
           dos2unix ./quick-build-windows.sh
-          C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
+          dir "C:\Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/"
+        # C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
