@@ -13,9 +13,8 @@ jobs:
         run: |
           choco install wget
           cd BuildWithMake
-          cat "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\vsdevcmd.bat"
           C:\cygwin64\bin\bash.exe
-          ./startX-with-2017.bat
+          "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           echo "which-CL"
           which CL
           bash prep_windows.sh
