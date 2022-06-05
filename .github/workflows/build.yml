@@ -10,8 +10,8 @@ jobs:
         run: |
           choco install wget visualstudio2017community
           wget https://www.cygwin.com/setup-x86_64.exe
-          ./setup-x86_64.exe --quiet-mode --disable-buggy-antivirus --no-desktop --download --no-verify --root C:/cygwin64
-          ./setup-x86_64.exe --quiet-mode --disable-buggy-antivirus --no-desktop --download --no-verify --root C:/cygwin64 --packages make,tclsh,zip,gzip,tar,date,patch
+          ./setup-x86_64.exe --quiet-mode --disable-buggy-antivirus --no-desktop --download --no-verify --root C:/cygwin64 -s http://cygwin.mirrors.pair.com/
+          ./setup-x86_64.exe --quiet-mode --disable-buggy-antivirus --no-desktop --download --no-verify --root C:/cygwin64 --packages make,tclsh,zip,gzip,tar,date,patch -s http://cygwin.mirrors.pair.com/
           cd BuildWithMake
           ./startX-with-2017.bat
           echo "which-CL"
