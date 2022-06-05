@@ -1,0 +1,18 @@
+name: macos
+on: [push, pull_request]
+jobs:
+  build-windows:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        shell: bash
+        run: |
+          mkdir Build
+          cd Build
+          choco install cygwin cyg-get
+          cyg-get make, tclsh, zip, gzip, tar, date, patch
+          cd BuildWithMake
+          source quick-build-windows.sh
+          cd Release
+          make
