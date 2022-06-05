@@ -12,7 +12,7 @@ jobs:
       - name: Build
         run: |
           cd BuildWithMake
-          choco install visualstudio2017community
+          choco install wget visualstudio2017community
           "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
           echo "which-CL"
           which CL
