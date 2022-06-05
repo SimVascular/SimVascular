@@ -13,7 +13,7 @@ jobs:
         run: |
           choco install wget
           cd BuildWithMake
-          C:\cygwin64\bin\bash.exe -c "'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat' && which CL"
+          C:\cygwin64\bin\bash.exe -c $'"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && which CL'
           C:\cygwin64\bin\bash.exe -c "which CL"
           C:\cygwin64\bin\bash.exe -c "prep_windows.sh"
           C:\cygwin64\bin\bash.exe -c "quick-build-windows.sh"
