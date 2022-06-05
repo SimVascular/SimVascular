@@ -11,6 +11,8 @@ jobs:
           choco install cygwin --params "/InstallDir:C:/cygwin64"
           choco install cyg-get wget visualstudio2017community
           cyg-get make tclsh zip gzip tar date patch
+          cd C:\cygwin64
+          dir
           cd BuildWithMake
           echo "Before bat"
           ./startX-with-2017.bat
