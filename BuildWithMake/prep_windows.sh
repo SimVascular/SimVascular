@@ -11,6 +11,3 @@ if hash vsstrace.exe 2>/dev/null; then
     rcparentdir="$(dirname "$rcfullpath")"
     export PATH=$rcparentdir:$PATH
 fi
-
-# add my custom dir to path
-export PATH=~/bin:$PATH
