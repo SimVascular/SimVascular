@@ -13,7 +13,7 @@ jobs:
         shell: bash
         run: |
           echo ${env:GITHUB_PATH}
-          echo $PATH
+          cd BuildWithMake
           ./startX-with-2017.bat
           choco install wget visualstudio2017community
           echo "which-CL"
