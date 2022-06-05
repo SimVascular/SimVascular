@@ -11,9 +11,10 @@ jobs:
           packages: make tclsh zip gzip tar date patch
       - name: Build
         run: |
+          C:\cygwin64\bin\bash --login
           choco install wget visualstudio2017community
-          cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools"
-          ./vsdevcmd -arch=x64
+          cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\VC\bin\"
+          ./vcvarsall.bat
           cd D:\a\SimVascular\SimVascular\BuildWithMake
           echo "which-CL"
           which CL
