@@ -1,4 +1,3 @@
-# --params "/InstallDir:C:/cygwin64"
 name: macos
 on: [push, pull_request]
 jobs:
@@ -9,7 +8,8 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          choco install cygwin cyg-get wget make
+          choco install cygwin --params "/InstallDir:C:/cygwin64"
+          choco install cyg-get wget make
           cyg-get make tclsh zip gzip tar date patch
           cd BuildWithMake
           bash quick-build-windows.sh
