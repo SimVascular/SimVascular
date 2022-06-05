@@ -2,7 +2,7 @@ name: macos
 on: [push, pull_request]
 jobs:
   build-windows:
-    runs-on: windows-2019
+    runs-on: windows-2016
     steps:
       - uses: actions/checkout@v2
       - uses: cygwin/cygwin-install-action@master
