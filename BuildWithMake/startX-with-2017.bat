@@ -1,7 +1,7 @@
 @echo off
 
 C:
-chdir C:/cygwin64/bin
+chdir C:\cygwin64\bin
 
 REM set the correct path and visual studio path if you have Intel Fortran compiler
 REM call "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2019.4.245\windows\bin\compilervars.bat" intel64 vs2017
