@@ -10,7 +10,7 @@ jobs:
         run: |
           choco install wget visualstudio2017community
           wget https://www.cygwin.com/setup-x86_64.exe
-          ./setup-x86_64.exe -q -P make,tclsh,zip,gzip,tar,date,patch --root "/InstallDir:C:/cygwin64"
+          ./setup-x86_64.exe -q -P make,tclsh,zip,gzip,tar,date,patch --root C:/cygwin64
           cd BuildWithMake
           ./startX-with-2017.bat
           echo "which-CL"
