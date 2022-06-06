@@ -14,11 +14,12 @@ jobs:
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
+          tree /f /a
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Windows Installer
-          path: BuildWithMake/Release/*.exe
+          path: BuildWithMake/Release/package
           if-no-files-found: error
   build-windows-2019:
     runs-on: windows-2019
@@ -34,9 +35,10 @@ jobs:
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
+          tree /f /a
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Windows Installer 2019
-          path: BuildWithMake/Release/*.exe
+          path: BuildWithMake/Release/package
           if-no-files-found: error
