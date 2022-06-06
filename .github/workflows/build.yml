@@ -30,7 +30,7 @@ jobs:
           packages: make tclsh zip gzip tar date patch wget
       - name: Install dependencies
         run: |
-          rm -r -f "C:\Program Files (x86)\Microsoft Visual Studio\2019"
+          rm -r "C:\Program Files (x86)\Microsoft Visual Studio\2019"
           choco install visualstudio2017enterprise visualstudio2017buildtools visualstudio2017-workload-vctools
       - name: Build
         run: |
