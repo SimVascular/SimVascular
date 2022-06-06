@@ -28,5 +28,5 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.14/bin
-WIXUI_WIN_PATH := C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.14/bin
+WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.11/bin
+WIXUI_WIN_PATH := C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.11/bin

@@ -31,7 +31,6 @@ jobs:
       - name: Install dependencies
         run: |
           choco install visualstudio2017buildtools visualstudio2017-workload-vctools
-          choco install wixtoolset --version=3.11.2
           dir "C:\Program Files (x86)\WiX Toolset v3.11"
           tree "C:\Program Files (x86)\WiX Toolset v3.11"
       - name: Build
