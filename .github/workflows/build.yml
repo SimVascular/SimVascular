@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         run: |
           choco install visualstudio2017buildtools visualstudio2017-workload-vctools wixtoolset
-          dir "C:\Program Files (x86)\WiX Toolset"
-          tree "C:\Program Files (x86)\WiX Toolset"
+          dir "C:\Program Files (x86)"
+          tree "C:\Program Files (x86)\WiX*"
       - name: Build
         run: |
           cd BuildWithMake
