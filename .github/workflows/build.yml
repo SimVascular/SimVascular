@@ -1,25 +1,25 @@
 name: macos
 on: [push, pull_request]
 jobs:
-  build-windows-2016:
-    runs-on: windows-2016
-    steps:
-      - uses: actions/checkout@v2
-      - uses: cygwin/cygwin-install-action@master
-        with:
-          install-dir: C:\cygwin64
-          packages: make tclsh zip gzip tar date patch wget
-      - name: Build
-        run: |
-          cd BuildWithMake
-          dos2unix ./quick-build-windows.sh
-          C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: Windows Installer
-          path: BuildWithMake/Bin/simvascular.exe
-          if-no-files-found: error
+  # build-windows-2016:
+  #   runs-on: windows-2016
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: cygwin/cygwin-install-action@master
+  #       with:
+  #         install-dir: C:\cygwin64
+  #         packages: make tclsh zip gzip tar date patch wget
+  #     - name: Build
+  #       run: |
+  #         cd BuildWithMake
+  #         dos2unix ./quick-build-windows.sh
+  #         C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: Windows Installer
+  #         path: BuildWithMake/Bin/simvascular.exe
+  #         if-no-files-found: error
   build-windows-2019:
     runs-on: windows-2019
     steps:
@@ -30,8 +30,8 @@ jobs:
           packages: make tclsh zip gzip tar date patch wget
       - name: Install dependencies
         run: |
-          rm -r "C:\Program Files (x86)\Microsoft Visual Studio\2019"
-          choco install visualstudio2017enterprise visualstudio2017buildtools visualstudio2017-workload-vctools
+          choco install visualstudio2017buildtools visualstudio2017-workload-vctools
+          dir "C:\Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/"
       - name: Build
         run: |
           cd BuildWithMake

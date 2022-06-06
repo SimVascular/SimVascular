@@ -51,7 +51,7 @@ else
     DEBUG_FLAGS     = /nologo /MD /Zi /Od /EHsc -D_CRT_SECURE_NO_DEPRECATE /GS /GR /MP /FS
   endif
 endif
-    SHAR            = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/link.exe"
+    SHAR            = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/link.exe"
     SOEXT           = dll
     STATICEXT       = lib
     OBJECTEXT       = obj
