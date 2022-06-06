@@ -30,7 +30,7 @@ jobs:
           packages: make tcl zip gzip tar date patch wget
       - name: Install dependencies
         run: |
-          choco install visualstudio2017buildtools visualstudio2017-workload-vctools
+          choco install visualstudio2017buildtools visualstudio2017-workload-vctools wixtoolset
           dir "C:\Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/"
       - name: Build
         run: |
