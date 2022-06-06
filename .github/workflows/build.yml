@@ -37,9 +37,11 @@ jobs:
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows2019.bat"
+          cd ..
+          zip -r COMPLETE_FOLDER.zip BuildWithMake
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Windows Installer
-          path: BuildWithMake/Bin/simvascular.exe
+          path: COMPLETE_FOLDER.zip
           if-no-files-found: error
