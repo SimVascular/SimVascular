@@ -39,7 +39,7 @@ jobs:
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows2019.bat"
           cd ..
-          zip -r COMPLETE_FOLDER.zip BuildWithMake/Release
+          zip -r COMPLETE_FOLDER.zip BuildWithMake/Bin
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
