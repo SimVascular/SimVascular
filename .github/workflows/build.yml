@@ -33,15 +33,12 @@ jobs:
           packages: make tclsh zip gzip tar date patch wget
       - name: Install dependencies
         run: |
-          choco install visualstudio2017enterprise visualstudio2017buildtools
+          choco install visualstudio2017enterprise visualcpp-build-tools
       - name: Build
         run: |
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
-          tree
-          cd ..
-          tree
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
