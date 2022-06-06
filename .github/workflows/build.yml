@@ -14,7 +14,9 @@ jobs:
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
-          tree /f /a
+          tree
+          cd ..
+          tree
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
@@ -35,7 +37,9 @@ jobs:
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
-          tree /f /a
+          tree
+          cd ..
+          tree
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
