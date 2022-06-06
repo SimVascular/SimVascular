@@ -6,4 +6,4 @@ echo "release-make"
 
 cd Release
 
-make msi-bundle
+make all
