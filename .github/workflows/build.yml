@@ -14,13 +14,11 @@ jobs:
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
           C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
-          cd ..
-          zip -r COMPLETE_FOLDER.zip .
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Windows Installer
-          path: COMPLETE_FOLDER.zip
+          path: BuildWithMake/Bin/simvascular.exe
           if-no-files-found: error
   build-windows-2019:
     runs-on: windows-2019
@@ -32,15 +30,15 @@ jobs:
           packages: make tclsh zip gzip tar date patch wget
       - name: Install dependencies
         run: |
-          choco install visualstudio2017enterprise visualcpp-build-tools
+          choco install visualstudio2017enterprise microsoft-build-tools
       - name: Build
         run: |
           cd BuildWithMake
           dos2unix ./quick-build-windows.sh
-          C:\cygwin64\bin\bash.exe -c "./build_windows.bat"
+          C:\cygwin64\bin\bash.exe -c "./build_windows2019.bat"
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Windows Installer 2019
-          path: BuildWithMake/Release/package
+          name: Windows Installer
+          path: BuildWithMake/Bin/simvascular.exe
           if-no-files-found: error
