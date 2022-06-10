@@ -30,6 +30,18 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# See https://github.com/SimVascular/SimVascular/blob/master/BuildWithMake/README-build-windows.txt
+if hash CL 2>/dev/null; then
+    clfullpath=`which CL`
+    clparentdir="$(dirname "$clfullpath")"
+    export PATH=$clparentdir::$PATH
+fi
+if hash vsstrace.exe 2>/dev/null; then
+    rcfullpath=`which vsstrace.exe`
+    rcparentdir="$(dirname "$rcfullpath")"
+    export PATH=$rcparentdir:$PATH
+fi
+
 #export SV_EXTERNALS_VERSION_NUMBER=2019.02
 export SV_EXTERNALS_VERSION_NUMBER=2019.06
 
