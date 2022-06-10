@@ -51,6 +51,10 @@ else
     DEBUG_FLAGS     = /nologo /MD /Zi /Od /EHsc -D_CRT_SECURE_NO_DEPRECATE /GS /GR /MP /FS
   endif
 endif
+    # If VS BuildTools are installed stand-alone use */BuildTools/*. Otherwise
+    # use VS edition name, i.e. "Community" or "Enterprise" in the link below instead.
+    # The path with */BuildTools/* is used because the GitHub automatic build
+    # uses the BuildTools stand-alone.
     SHAR            = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/link.exe"
     SOEXT           = dll
     STATICEXT       = lib
