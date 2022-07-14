@@ -29,54 +29,48 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_ROM_SIMULATIONPREFERENCEPAGE_H
-#define SV4GUI_ROM_SIMULATIONPREFERENCEPAGE_H
-
-#include <sv4gui_ROMSimulationPreferences.h>
-
-#include <berryIPreferences.h>
-#include <berryIQtPreferencePage.h>
-
-namespace Ui {
-class sv4guiROMSimulationPreferencePage;
-}
-
-// Define MITK Database keys.
+// The sv4guiROMSimulationPreferences class is used to determine which default binaries,
+// (svsolver, svpre and svpost) are used by the SV Simulation plugin. The class also 
+// determines which mpiexec binary is used to execute solver jobs using MPI and what
+// its implementation is: MPICH or OpenMPI. 
 //
-// The keys are used to store property values in a MITK database.
+// An sv4guiROMSimulationPreferences object is used by the sv4guiSimulationPreferencePage objectc
+// to display the full path to these binaries in the Preferences -> SimVascular Simulation panel.
 //
-namespace sv4guiROMSimulationPreferenceDBKey {
-    const QString ONED_SOLVER_PATH = "oned solver path";
-};
+// The sv4guiSimulationView object, used to lauch simulation jobs, only reads values from 
+// the sv4guiSimulationPreferencePage object when a value is changed. Because of this the 
+// sv4guiSimulationView object must also use a sv4guiROMSimulationPreferences object to set
+// the default solver binaries.
 
+#ifndef SV4GUI_ROMSIMULATIONPREFERENCES_H
+#define SV4GUI_ROMSIMULATIONPREFERENCES_H
 
-class sv4guiROMSimulationPreferencePage : public QObject, public berry::IQtPreferencePage
+#include <iostream>
+#include <map>
+#include <QString>
+
+#ifdef WIN32
+  #include "sv4gui_win32_use_registry.h"
+#endif
+
+//-----------------------------
+// sv4guiROMSimulationPreferences 
+//-----------------------------
+class sv4guiROMSimulationPreferences 
 {
-    Q_OBJECT
-    Q_INTERFACES(berry::IPreferencePage)
 
 public:
-    sv4guiROMSimulationPreferencePage();
-    ~sv4guiROMSimulationPreferencePage();
+  sv4guiROMSimulationPreferences();
+  ~sv4guiROMSimulationPreferences();
 
-    void CreateQtControl(QWidget* parent) override;
-    QWidget* GetQtControl() const override;
-    void Init(berry::IWorkbench::Pointer) override;
-    void PerformCancel() override;
-    bool PerformOk() override;
-    void Update() override;
-    void InitializeSolverLocations();
-
-private slots:
-  void SetOneDSolverFile();
+  void InitializeSolverLocations();
+  QString GetOneDSolver();
+  static const QString UnknownBinary;
 
 private:
-  berry::IPreferences::Pointer m_Preferences;
-  QScopedPointer<Ui::sv4guiROMSimulationPreferencePage> m_Ui;
-  QWidget* m_Control;
-  sv4guiROMSimulationPreferences m_DefaultPrefs;
-  void SetOneDSolver();
+  QString m_svOneDSolver;
 
+  void SetOneDSolver(const QString& solverInstallPath, const QString& applicationPath);
 };
 
-#endif // SV4GUI_SIMULATIONPREFERENCEPAGE1D_H
+#endif // SV4GUI_SIMULATIONPREFERENCES_H

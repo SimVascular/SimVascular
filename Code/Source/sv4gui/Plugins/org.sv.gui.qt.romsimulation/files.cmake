@@ -40,6 +40,7 @@ set(CPP_FILES
     sv4gui_ROMSimulationExtractCenterlines.cxx
     sv4gui_ROMSimulationLinesContainer.cxx
     sv4gui_ROMSimulationLinesMapper.cxx
+    sv4gui_ROMSimulationPreferences.cxx
     sv4gui_ROMSimulationView.cxx
     sv4gui_ROMSimulationPreferencePage.cxx
     sv4gui_ROMSimulationPython.cxx
@@ -63,6 +64,7 @@ set(MOC_H_FILES
     sv4gui_ROMSimulationExtractCenterlines.h
     sv4gui_ROMSimulationLinesContainer.h
     sv4gui_ROMSimulationLinesMapper.h
+    sv4gui_ROMSimulationPreferences.h
     sv4gui_ROMSimulationView.h
     sv4gui_ROMSimulationPreferencePage.h
     sv4gui_ROMSimulationPython.h

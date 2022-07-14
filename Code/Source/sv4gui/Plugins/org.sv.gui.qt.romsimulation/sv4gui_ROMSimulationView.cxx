@@ -145,6 +145,8 @@
 #include "sv4gui_MitkSimJob.h"
 #include "sv4gui_MeshLegacyIO.h"
 #include "sv4gui_ROMSimulationUtils.h"
+#include "sv4gui_ROMSimulationPreferences.h"
+#include "sv4gui_ROMSimulationPreferencePage.h"
 
 #include "sv4gui_ROMSimulationExtractCenterlines.h"
 #include "sv_polydatasolid_utils.h"
@@ -189,12 +191,6 @@ const QString sv4guiROMSimulationView::EXTENSION_ID = "org.sv.views.romsimulatio
 // Note: On MacOS the window title is ignored (as required by the Mac OS X Guidelines). 
 const QString sv4guiROMSimulationView::MsgTitle = "SimVascular SV ROM Simulation";
 
-// Set solver default name and install location.
-const QString sv4guiROMSimulationView::SOLVER_EXECUTABLE_NAME = "OneDSolver";
-const QString sv4guiROMSimulationView::SOLVER_INSTALL_DIRECTORY = "/usr/local/sv/oneDSolver";
-const QString sv4guiROMSimulationView::SOLVER_INSTALL_SUB_DIRECTORY = "/bin";
-const QString sv4guiROMSimulationView::SOLVER_LOG_FILE_NAME = "svromsolver.log";
-
 // Set the names of the files written as output.
 const QString sv4guiROMSimulationView::CORONARY_BC_FILE_NAME = "cort.dat";
 const QString sv4guiROMSimulationView::INLET_FACE_NAMES_FILE_NAME = "inlet_face_names.dat";
@@ -205,6 +201,7 @@ const QString sv4guiROMSimulationView::RCR_BC_FILE_NAME = "rcrt.dat";
 const QString sv4guiROMSimulationView::RESISTANCE_BC_FILE_NAME = "resistance.dat";
 const QString sv4guiROMSimulationView::SOLVER_0D_FILE_NAME = "solver_0d.in";
 const QString sv4guiROMSimulationView::SOLVER_1D_FILE_NAME = "solver_1d.in";
+const QString sv4guiROMSimulationView::SOLVER_LOG_FILE_NAME = "svromsolver.log";
 
 // Set the values of the Surface Model Origin types.
 const QString sv4guiROMSimulationView::SurfaceModelSource::MESH_PLUGIN = "Mesh Plugin";
@@ -294,6 +291,7 @@ const std::vector<QString> sv4guiROMSimulationView::DataExportName::names =
 //
 sv4guiROMSimulationView::sv4guiROMSimulationView() : ui(new Ui::sv4guiROMSimulationView)
 {
+    m_Parent = NULL;
     m_MitkJob = NULL;
 
     m_Model = NULL;
@@ -330,20 +328,10 @@ sv4guiROMSimulationView::sv4guiROMSimulationView() : ui(new Ui::sv4guiROMSimulat
 
     m_TableModelSolver=NULL;
 
-    m_InternalPresolverPath="";
-    m_InternalFlowsolverPath="";
-    m_InternalFlowsolverNoMPIPath="";
-    m_InternalPostsolverPath="";
-    m_InternalMPIExecPath="";
+    m_SolverExecutable = "";
 
-    m_ExternalPresolverPath="";
-    m_ExternalFlowsolverPath="";
-    m_ExternalFlowsolverNoMPIPath="";
-    m_UseMPI=true;
     m_UseCustom=false;
     m_SolverTemplatePath="";
-    m_ExternalPostsolverPath="";
-    m_ExternalMPIExecPath="";
 
     m_ConnectionEnabled=false;
 
@@ -438,7 +426,7 @@ void sv4guiROMSimulationView::CreateQtPartControl( QWidget *parent )
 {
     auto msg = "[sv4guiROMSimulationView::CreateQtPartControl] ";
     //MITK_INFO << msg << "--------- CreateQtPartControl ----------"; 
-    m_Parent=parent;
+    m_Parent = parent;
     ui->setupUi(parent);
 
     // Hide Job Status for now, can't get it to work. 
@@ -568,8 +556,6 @@ void sv4guiROMSimulationView::CreateQtPartControl( QWidget *parent )
     ui->ProjectCenterlines_CheckBox->setChecked(0);
 
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()));
-
-    SetupInternalSolverPaths();
 
     //get paths for the external solvers
     berry::IPreferences::Pointer prefs = this->GetPreferences();
@@ -1689,143 +1675,25 @@ void sv4guiROMSimulationView::ReadMesh()
     //MITK_INFO << msg << "--------- ReadMesh ----------";
 }
 
-
-//--------------------------
-// SetupInternalSolverPaths
-//--------------------------
-// Set the path to the 1D solver.
-//
-void sv4guiROMSimulationView::SetupInternalSolverPaths()
-{
-    //get path for the internal solvers
-    QString solverPath="/usr/local/sv/svsolver";
-    QStringList dirList=QDir(solverPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
-    if(dirList.size()!=0)
-        solverPath+="/"+dirList.back();
-
-    QString solverPathBin=solverPath+"/bin";
-
-    QString applicationPath=QCoreApplication::applicationDirPath();
-    QString svpreName="/svpre";
-    QString svsolverName="/svsolver";
-    QString svsolverNoMPIName="/svsolver-nompi";
-    QString svpostName="/svpost";
-
-    m_InternalMPIExecPath="mpiexec";
-
-    QString filePath="";
-
-#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-    //flowsolver with mpi, prefer to the script one which sets some lib paths for the mpi libs from svsolver
-    //Those libs are needed in Ubuntu 16, intead of using the system ones
-    if(QFile(filePath=solverPathBin+"/.."+svsolverName).exists())
-        m_InternalFlowsolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+svsolverName).exists())
-        m_InternalFlowsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svsolverName).exists())
-        m_InternalFlowsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svsolverName).exists())
-        m_InternalFlowsolverPath=filePath;
-
-    //svpost
-    if(QFile(filePath=solverPathBin+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+"/.."+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svpostName).exists())
-        m_InternalPostsolverPath=filePath;
-#endif
-
-#if defined(Q_OS_LINUX)
-    //svpre
-    if(QFile(filePath=solverPathBin+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-
-    //flowsolver with no mpi
-    if(QFile(filePath=solverPathBin+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=solverPathBin+"/.."+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=applicationPath+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-
-    //mpiexec
-    //user the system one; issue happens if use the one from svsolver or application in Ubuntu 16
-#endif
-
-#if defined(Q_OS_MAC)
-    //svpre
-    if(QFile(filePath=solverPathBin+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=solverPathBin+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-    else if(QFile(filePath=applicationPath+svpreName).exists())
-        m_InternalPresolverPath=filePath;
-
-    //flowsolver with no mpi
-    if(QFile(filePath=solverPathBin+"/.."+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=solverPathBin+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-    else if(QFile(filePath=applicationPath+svsolverNoMPIName).exists())
-        m_InternalFlowsolverNoMPIPath=filePath;
-
-    //mpiexec
-    QString mpiexecName="/mpiexec";
-    if(QFile(filePath=solverPathBin+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-    else if(QFile(filePath=applicationPath+"/.."+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-    else if(QFile(filePath=applicationPath+mpiexecName).exists())
-        m_InternalMPIExecPath=filePath;
-#endif
-
-#if defined(Q_OS_WIN)
-    m_InternalPresolverPath=GetRegistryValue("SimVascular\\svSolver","SVPRE_EXE");
-    m_InternalFlowsolverPath=GetRegistryValue("SimVascular\\svSolver","SVSOLVER_MSMPI_EXE");
-    m_InternalFlowsolverNoMPIPath=GetRegistryValue("SimVascular\\svSolver","SVSOLVER_NOMPI_EXE");
-    m_InternalPostsolverPath=GetRegistryValue("SimVascular\\svSolver","SVPOST_EXE");
-    QString msmpiDir=GetRegistryValue("Microsoft\\MPI","InstallRoot");
-    if(msmpiDir!="")
-    {
-        if(msmpiDir.endsWith("\\"))
-            m_InternalMPIExecPath=msmpiDir+"Bin\\mpiexec";
-        else
-            m_InternalMPIExecPath=msmpiDir+"\\Bin\\mpiexec";
-    }
-#endif
-}
-
 //----------------------
 // OnPreferencesChanged
 //----------------------
+// Get the path to the 1d solver executable.
 //
 void sv4guiROMSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
 {
-    if(prefs==NULL)
-        return;
+    using namespace sv4guiROMSimulationPreferenceDBKey;
 
-    m_ExternalPresolverPath=prefs->Get("presolver path","");
-    m_ExternalFlowsolverPath=prefs->Get("flowsolver path","");
-    m_UseMPI=prefs->GetBool("use mpi", true);
-    m_ExternalMPIExecPath=prefs->Get("mpiexec path","");
-    m_UseCustom=prefs->GetBool("use custom", false);
-    m_SolverTemplatePath=prefs->Get("solver template path","");
-    m_ExternalPostsolverPath=prefs->Get("postsolver path","");
+    if (prefs == NULL) {
+        return;
+    }
+
+    if (m_Parent == NULL) { 
+        return;
+    }
+
+    // Set the 1D solver binary. 
+    m_SolverExecutable = prefs->Get(ONED_SOLVER_PATH, m_DefaultPrefs.GetOneDSolver());
 }
 
 //--------------------
@@ -3538,49 +3406,36 @@ void sv4guiROMSimulationView::RunOneDSimulationJob(const QString& jobPath)
 //---------------------
 // GetSolverExecutable
 //---------------------
+// Get the 1d solver executable set in the preferences page.
 //
 QString sv4guiROMSimulationView::GetSolverExecutable()
 {
-    auto msg = "[sv4guiROMSimulationView::GetSolverExecutable] ";
-    MITK_INFO << msg << "--------- GetSolverExecutable ----------";
-#ifdef WIN32
-    auto solverExecutable = "svOneDSolver.exe";
-#else
-    auto solverExecutable = SOLVER_INSTALL_DIRECTORY + "/" + SOLVER_EXECUTABLE_NAME;
-    auto solverInstallPath = SOLVER_INSTALL_DIRECTORY;
+    if (m_Parent == NULL) { 
+        return nullptr;
+    }
 
-    if (!QDir(solverInstallPath).exists()) {
-        auto msg1 = "The 1D solver was not found.\n"; 
-        auto msg2 = "Please install the 1D solver in '" + solverInstallPath + "'.\n"; 
+    if (m_SolverExecutable == "") { 
+        QString msg1 = "The 1D solver executable has not been set.\n";
+        QString msg2 = "Set the path to the executable in the SimVascular Preferences / SimVascular ROM Simulation panel.\n"; 
         QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2); 
         return nullptr;
     }
 
-    // Set the install path.
-    QStringList dirList = QDir(solverInstallPath).entryList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::NoSymLinks,QDir::Name);
-    if (dirList.size() != 0) {
-      solverInstallPath += "/" + dirList.back();
-    } else {
-        auto msg1 = "The 1D solver was not found.\n"; 
-        auto msg2 = "Please install the 1D solver in '" + solverInstallPath + "'.\n"; 
-        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2); 
+    QFileInfo check_file(m_SolverExecutable);
+
+    if (!check_file.exists()) { 
+        auto msg = "The 1D solver executable '" + m_SolverExecutable + "' does not exist.\n"; 
+        QMessageBox::warning(m_Parent, MsgTitle, msg); 
         return nullptr;
     }
-    MITK_INFO << msg << "solverInstallPath: " << solverInstallPath;
 
-    // Set the solver executable.
-    solverExecutable = solverInstallPath + "/" + SOLVER_INSTALL_SUB_DIRECTORY + "/" + SOLVER_EXECUTABLE_NAME; 
-    if (!QFile::exists(solverExecutable)) {
-        auto msg1 = "The 1D solver was not found.\n"; 
-        auto msg2 = "Please install the 1D solver in '" + solverInstallPath + "'.\n"; 
-        QMessageBox::warning(m_Parent, MsgTitle, msg1+msg2); 
+    if (!check_file.isFile()) {
+        auto msg = "The 1D solver executable '" + m_SolverExecutable + "' is not a file.\n"; 
+        QMessageBox::warning(m_Parent, MsgTitle, msg); 
         return nullptr;
     }
-#endif
 
-    MITK_INFO << msg << "solverExecutable: " << solverExecutable;
-
-    return solverExecutable;
+    return m_SolverExecutable;
 }
 
 //-----------------
