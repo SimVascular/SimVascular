@@ -114,16 +114,12 @@ void sv4guiROMSimulationPreferences::SetOneDSolver(const QString& solverInstallP
 
 #elif defined(Q_OS_WIN)
 
-  // TODO [DaveP] not sure what should be here.
-
   char result[1024];
-  result[0]='\0';
+  result[0] = '\0';
 
-/*
   if (sv4gui_parse_registry_for_svonedsolver("SVONEDSOLVER_EXE",result) == SV_OK) {
-     svSolver = result;
+     svOneDSolver = result;
   }
-*/
 
 #endif
 
