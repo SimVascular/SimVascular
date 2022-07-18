@@ -5055,7 +5055,7 @@ QString sv4guiROMSimulationView::GetRegistryValue(QString category, QString key)
 {
     QString value="";
 
-    QSettings settings1("HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver", QSettings::NativeFormat);
+    QSettings settings1("HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svOneDSolver", QSettings::NativeFormat);
     value=settings1.value(key).toString().trimmed();
     if(value!="")
         return value;
@@ -5069,7 +5069,7 @@ QString sv4guiROMSimulationView::GetRegistryValue(QString category, QString key)
             return value;
     }
 
-    QSettings settings2("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\SimVascular\\svSolver", QSettings::NativeFormat);
+    QSettings settings2("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\SimVascular\\svOneDSolver", QSettings::NativeFormat);
     value=settings2.value(key).toString().trimmed();
     if(value!="")
         return value;
