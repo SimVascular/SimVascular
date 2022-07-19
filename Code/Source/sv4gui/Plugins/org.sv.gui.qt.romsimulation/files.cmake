@@ -50,6 +50,7 @@ set(CPP_FILES
     sv4gui_ROMSimulationPluginActivator.cxx
     sv4gui_ProcessHandlerROM.cxx
     sv4gui_SolverProcessHandlerROM.cxx
+    sv4gui_rom_win32_use_registry.cxx
 )
 
 set(MOC_H_FILES
@@ -74,6 +75,7 @@ set(MOC_H_FILES
     sv4gui_ROMSimulationPluginActivator.h
     sv4gui_ProcessHandlerROM.h
     sv4gui_SolverProcessHandlerROM.h
+    sv4gui_rom_win32_use_registry.h
 )
 
 set(UI_FILES

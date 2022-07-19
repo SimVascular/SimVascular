@@ -29,48 +29,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The sv4guiROMSimulationPreferences class is used to determine which default binaries,
-// (svsolver, svpre and svpost) are used by the SV Simulation plugin. The class also 
-// determines which mpiexec binary is used to execute solver jobs using MPI and what
-// its implementation is: MPICH or OpenMPI. 
-//
-// An sv4guiROMSimulationPreferences object is used by the sv4guiSimulationPreferencePage objectc
-// to display the full path to these binaries in the Preferences -> SimVascular Simulation panel.
-//
-// The sv4guiSimulationView object, used to lauch simulation jobs, only reads values from 
-// the sv4guiSimulationPreferencePage object when a value is changed. Because of this the 
-// sv4guiSimulationView object must also use a sv4guiROMSimulationPreferences object to set
-// the default solver binaries.
+#ifndef _SV4GUI_ROM_USE_WIN32_REGISTRY_H
+#define _SV4GUI_ROM_USE_WIN32_REGISTRY_H
 
-#ifndef SV4GUI_ROMSIMULATIONPREFERENCES_H
-#define SV4GUI_ROMSIMULATIONPREFERENCES_H
+#include "SimVascular.h"
 
-#include <iostream>
-#include <map>
-#include <QString>
+#include "simvascular_options.h"
 
-#ifdef WIN32
-  #include "sv4gui_rom_win32_use_registry.h"
+// The following is needed for Windows
+#ifdef GetObject
+#undef GetObject
 #endif
 
-//-----------------------------
-// sv4guiROMSimulationPreferences 
-//-----------------------------
-class sv4guiROMSimulationPreferences 
-{
+#include <windows.h>
+#include <tchar.h>
+#include "Shlwapi.h"
+#include <Shlobj.h>
 
-public:
-  sv4guiROMSimulationPreferences();
-  ~sv4guiROMSimulationPreferences();
+#define BUFSIZE 1024
+#define BUF_SIZE 1024
 
-  void InitializeSolverLocations();
-  QString GetOneDSolver();
-  static const QString UnknownBinary;
+#ifndef GetShortPathName
+  #ifdef UNICODE
+    #define GetShortPathName GetShortPathNameW
+  #else
+    #define GetShortPathName GetShortPathNameA
+  #endif // !UNICODE
+#endif
 
-private:
-  QString m_svOneDSolver;
+#include <windows.h>
+#include <stdio.h>
+#include <tchar.h>
 
-  void SetOneDSolver(const QString& solverInstallPath, const QString& applicationPath);
-};
+#define MAX_KEY_LENGTH 255
+#define MAX_VALUE_NAME 16383
 
-#endif // SV4GUI_SIMULATIONPREFERENCES_H
+#ifdef WIN32
+#ifdef SV_USE_WIN32_REGISTRY
+
+void sv4guiROMQueryKey(HKEY hKey);
+int sv4gui_rom_parse_registry_for_svonedsolver(char* keytofind, char* rtnval);
+int sv4gui_rom_parse_registry_for_svonedsolver_internal(char* toplevel_key, char* keytofind, char* rtnval);
+
+#endif
+#endif
+
+#endif // _SV4GUI_USE_WIN32_REGISTRY_H
