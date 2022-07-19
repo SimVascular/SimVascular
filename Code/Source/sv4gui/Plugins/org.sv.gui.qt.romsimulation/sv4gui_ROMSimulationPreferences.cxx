@@ -117,6 +117,12 @@ void sv4guiROMSimulationPreferences::SetOneDSolver(const QString& solverInstallP
   char result[1024];
   result[0] = '\0';
 
+  // This returns the full path including the executable for the svOneDSolver.
+  //
+  // The most recent installed solver is returned.
+  //
+  // The registry entry name is 'SVONEDSOLVER_EXE' and is located under WOW6432Node/SimVascular/Solvers/svOneDSolver.
+  //
   if (sv4gui_rom_parse_registry_for_svonedsolver("SVONEDSOLVER_EXE",result) == SV_OK) {
      svOneDSolver = result;
   }
@@ -124,6 +130,7 @@ void sv4guiROMSimulationPreferences::SetOneDSolver(const QString& solverInstallP
 #endif
 
   m_svOneDSolver = svOneDSolver;
+  std::cout << "svOneDSolver executable: '" << m_svOneDSolver << "'" << std::endl;
 }
 
 QString sv4guiROMSimulationPreferences::GetOneDSolver()
