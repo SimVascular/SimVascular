@@ -130,7 +130,7 @@ void sv4guiROMSimulationPreferences::SetOneDSolver(const QString& solverInstallP
 #endif
 
   m_svOneDSolver = svOneDSolver;
-  std::cout << "svOneDSolver executable: '" << m_svOneDSolver << "'" << std::endl;
+  std::cout << "svOneDSolver executable: '" << m_svOneDSolver.toStdString() << "'" << std::endl;
 }
 
 QString sv4guiROMSimulationPreferences::GetOneDSolver()
