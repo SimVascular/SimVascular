@@ -54,6 +54,7 @@
 #include "sv4gui_CapSelectionWidget.h"
 #include "sv4gui_ProcessHandlerROM.h"
 #include "sv4gui_SolverProcessHandlerROM.h"
+#include "sv4gui_ROMSimulationPreferences.h"
 
 #include "sv4gui_ModelDataInteractor.h"
 
@@ -295,8 +296,6 @@ public slots:
     void UpdateSimJob();
     void UpdateSurfaceMeshName();
 
-    void SetupInternalSolverPaths();
-
     // Slots executed by ConvertWorkerROM signals. 
     void ShowConvertWorkerMessage(const bool errorMsg, const QString& msg);
     void ConvertWorkerError(const QString& msg);
@@ -367,7 +366,7 @@ private:
     void CreateWallPropertiesControls(QWidget *parent);
     void GetSimulationMeshPaths(const std::string& simName, std::string& volumeMeshPath, std::string& wallsMeshPath);
 
-    QWidget* m_Parent;
+    QWidget* m_Parent = nullptr;
 
     Ui::sv4guiROMSimulationView *ui;
 
@@ -428,23 +427,13 @@ private:
 
     QString m_SolverInputFile;
 
-    QString m_InternalPresolverPath;
-    QString m_InternalFlowsolverPath;
-    QString m_InternalFlowsolverNoMPIPath;
-    QString m_InternalPostsolverPath;
-    QString m_InternalMPIExecPath;
+    QString m_SolverExecutable;
 
-    QString m_ExternalPresolverPath;
-    QString m_ExternalFlowsolverPath;
-    QString m_ExternalFlowsolverNoMPIPath;
-    bool m_UseMPI;
-    QString m_MPIExecPath;
-    bool m_UseCustom;
     QString m_SolverTemplatePath;
-    QString m_ExternalPostsolverPath;
-    QString m_ExternalMPIExecPath;
+    bool m_UseCustom;
 
     bool m_ConnectionEnabled;
+    sv4guiROMSimulationPreferences m_DefaultPrefs;
     bool m_SimulationFilesCreated = false;
 
     mitk::DataNode::Pointer getProjectNode();

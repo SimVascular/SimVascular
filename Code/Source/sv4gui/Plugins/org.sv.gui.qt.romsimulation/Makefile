@@ -60,12 +60,14 @@ HDRS	= \
     sv4gui_ROMSimulationLinesMapper.h \
     sv4gui_ROMSimulationView.h \
     sv4gui_ROMSimulationPreferencePage.h \
+    sv4gui_ROMSimulationPreferences.h \
     sv4gui_ROMSimulationPython.h \
     sv4gui_ROMSimulationPythonConvert.h \
     sv4gui_ROMSimJobStopAction.h \
     sv4gui_ROMSimJobExportAction.h \
     sv4gui_ROMSimulationPluginActivator.h \
     sv4gui_ProcessHandlerROM.h \
+    sv4gui_rom_win32_use_registry.h \
     sv4gui_SolverProcessHandlerROM.h
 
 CXXSRCS	= \
@@ -82,12 +84,14 @@ CXXSRCS	= \
     sv4gui_ROMSimulationLinesMapper.cxx \
     sv4gui_ROMSimulationView.cxx \
     sv4gui_ROMSimulationPreferencePage.cxx \
+    sv4gui_ROMSimulationPreferences.cxx \
     sv4gui_ROMSimulationPython.cxx \
     sv4gui_ROMSimulationPythonConvert.cxx \
     sv4gui_ROMSimJobStopAction.cxx \
     sv4gui_ROMSimJobExportAction.cxx \
     sv4gui_ROMSimulationPluginActivator.cxx \
     sv4gui_ProcessHandlerROM.cxx \
+    sv4gui_rom_win32_use_registry.cxx \
     sv4gui_SolverProcessHandlerROM.cxx
 
 UIFILES = \

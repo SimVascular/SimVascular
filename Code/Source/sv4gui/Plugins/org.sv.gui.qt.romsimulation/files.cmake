@@ -40,6 +40,7 @@ set(CPP_FILES
     sv4gui_ROMSimulationExtractCenterlines.cxx
     sv4gui_ROMSimulationLinesContainer.cxx
     sv4gui_ROMSimulationLinesMapper.cxx
+    sv4gui_ROMSimulationPreferences.cxx
     sv4gui_ROMSimulationView.cxx
     sv4gui_ROMSimulationPreferencePage.cxx
     sv4gui_ROMSimulationPython.cxx
@@ -49,6 +50,7 @@ set(CPP_FILES
     sv4gui_ROMSimulationPluginActivator.cxx
     sv4gui_ProcessHandlerROM.cxx
     sv4gui_SolverProcessHandlerROM.cxx
+    sv4gui_rom_win32_use_registry.cxx
 )
 
 set(MOC_H_FILES
@@ -63,6 +65,7 @@ set(MOC_H_FILES
     sv4gui_ROMSimulationExtractCenterlines.h
     sv4gui_ROMSimulationLinesContainer.h
     sv4gui_ROMSimulationLinesMapper.h
+    sv4gui_ROMSimulationPreferences.h
     sv4gui_ROMSimulationView.h
     sv4gui_ROMSimulationPreferencePage.h
     sv4gui_ROMSimulationPython.h
@@ -72,6 +75,7 @@ set(MOC_H_FILES
     sv4gui_ROMSimulationPluginActivator.h
     sv4gui_ProcessHandlerROM.h
     sv4gui_SolverProcessHandlerROM.h
+    sv4gui_rom_win32_use_registry.h
 )
 
 set(UI_FILES
