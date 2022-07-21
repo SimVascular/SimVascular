@@ -22,6 +22,7 @@ jobs:
           export CPATH='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include:/opt/local/include'
           export LIBRARY_PATH='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib:/opt/local/lib'
           export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
+          export LDFLAGS=-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib
           export CXX=/usr/bin/g++
           export CC=/usr/bin/gcc
           mkdir Build
