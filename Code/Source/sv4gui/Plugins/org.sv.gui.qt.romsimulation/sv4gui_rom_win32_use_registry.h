@@ -29,54 +29,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SV4GUI_ROM_SIMULATIONPREFERENCEPAGE_H
-#define SV4GUI_ROM_SIMULATIONPREFERENCEPAGE_H
+#ifndef _SV4GUI_ROM_USE_WIN32_REGISTRY_H
+#define _SV4GUI_ROM_USE_WIN32_REGISTRY_H
 
-#include <sv4gui_ROMSimulationPreferences.h>
+#include "SimVascular.h"
 
-#include <berryIPreferences.h>
-#include <berryIQtPreferencePage.h>
+#include "simvascular_options.h"
 
-namespace Ui {
-class sv4guiROMSimulationPreferencePage;
-}
+// The following is needed for Windows
+#ifdef GetObject
+#undef GetObject
+#endif
 
-// Define MITK Database keys.
-//
-// The keys are used to store property values in a MITK database.
-//
-namespace sv4guiROMSimulationPreferenceDBKey {
-    const QString ONED_SOLVER_PATH = "oned solver path";
-};
+#include <windows.h>
+#include <tchar.h>
+#include "Shlwapi.h"
+#include <Shlobj.h>
 
+#define BUFSIZE 1024
+#define BUF_SIZE 1024
 
-class sv4guiROMSimulationPreferencePage : public QObject, public berry::IQtPreferencePage
-{
-    Q_OBJECT
-    Q_INTERFACES(berry::IPreferencePage)
+#ifndef GetShortPathName
+  #ifdef UNICODE
+    #define GetShortPathName GetShortPathNameW
+  #else
+    #define GetShortPathName GetShortPathNameA
+  #endif // !UNICODE
+#endif
 
-public:
-    sv4guiROMSimulationPreferencePage();
-    ~sv4guiROMSimulationPreferencePage();
+#include <windows.h>
+#include <stdio.h>
+#include <tchar.h>
 
-    void CreateQtControl(QWidget* parent) override;
-    QWidget* GetQtControl() const override;
-    void Init(berry::IWorkbench::Pointer) override;
-    void PerformCancel() override;
-    bool PerformOk() override;
-    void Update() override;
-    void InitializeSolverLocations();
+#define MAX_KEY_LENGTH 255
+#define MAX_VALUE_NAME 16383
 
-private slots:
-  void SetOneDSolverFile();
+#ifdef WIN32
+#ifdef SV_USE_WIN32_REGISTRY
 
-private:
-  berry::IPreferences::Pointer m_Preferences;
-  QScopedPointer<Ui::sv4guiROMSimulationPreferencePage> m_Ui;
-  QWidget* m_Control;
-  sv4guiROMSimulationPreferences m_DefaultPrefs;
-  void SetOneDSolver();
+void sv4guiROMQueryKey(HKEY hKey);
+int sv4gui_rom_parse_registry_for_svonedsolver(char* keytofind, char* rtnval);
+int sv4gui_rom_parse_registry_for_svonedsolver_internal(char* toplevel_key, char* keytofind, char* rtnval);
 
-};
+#endif
+#endif
 
-#endif // SV4GUI_SIMULATIONPREFERENCEPAGE1D_H
+#endif // _SV4GUI_USE_WIN32_REGISTRY_H

@@ -2793,21 +2793,22 @@ void sv4guiSimulationView::ExportResults()
     delete handler;
 
     bool convertedFilesExit=true;
-    bool meshFaceDirExits=true;
+    bool meshFaceDirExists=true;
     bool meshFaceFilesExist=true;
     bool calculateFlows=true;
+    QString meshFaceDir;
 
     if(ui->checkBoxCalculateFlows->isChecked())
     {
         convertedFilesExit=false;
-        meshFaceDirExits=false;
+        meshFaceDirExists=false;
         meshFaceFilesExist=false;
         calculateFlows=false;
 
-        QString meshFaceDir=GetJobPath()+"/mesh-complete/mesh-surfaces";
-        meshFaceDirExits=QDir(meshFaceDir).exists();
+        meshFaceDir=GetJobPath()+"/mesh-complete/mesh-surfaces";
+        meshFaceDirExists=QDir(meshFaceDir).exists();
         std::vector<std::string> meshFaceFileNames;
-        if(meshFaceDirExits)
+        if(meshFaceDirExists)
         {
             QStringList filters;
             filters<<"*.vtp";
@@ -2849,7 +2850,7 @@ void sv4guiSimulationView::ExportResults()
 
         convertedFilesExit=(vtxFilePaths.size()>0);
 
-        if( convertedFilesExit && meshFaceDirExits && meshFaceFilesExist )
+        if( convertedFilesExit && meshFaceDirExists && meshFaceFilesExist )
         {
 
 
@@ -2869,18 +2870,27 @@ void sv4guiSimulationView::ExportResults()
     }
 
     QString msg="";
-    if(convertedFilesExit)
-    {
-        msg="Results have been converted.";
-        if(!meshFaceDirExits)
-            msg=msg+"\nNo mesh face dir exits.";
-        else if(!meshFaceFilesExist)
-            msg=msg+"\nNo mesh face files exit.";
-        else if(!calculateFlows)
-            msg=msg+"\nFail to calculate flows.";
+
+    if (convertedFilesExit) {
+        msg = "Results have been converted.";
+        QString avg_msg = "\n\nWARNING: Results for flow averages across faces have not been converted.";
+        QString avg_check_msg = "\n\nCheck that there is a .sjb file with the same name as the simulation results directory.";
+
+        if (!meshFaceDirExists) {
+            QString avg_file_msg = "\n\nThe directory '" + meshFaceDir + "' containing face mesh files could not be opened.";
+            msg = msg + avg_msg + avg_file_msg + avg_check_msg; 
+
+        } else if (!meshFaceFilesExist) {
+            QString avg_file_msg = "\n\nNo face mesh files were found in the directory '" + meshFaceDir + "'.";
+            msg = msg + avg_msg + avg_file_msg; 
+
+        } else if (!calculateFlows) {
+            msg = msg + avg_msg + "\n\nAn error occured computing flow averages across faces.";
+        }
+
+    } else {
+        msg = "Results were not converted.";
     }
-    else
-        msg="Results not converted.";
 
     msg=msg+"                                                                                        ";
 

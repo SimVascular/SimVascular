@@ -4,11 +4,9 @@ Code/SV3
 Code/svSolver
 Code/Licensed/ParasolidSolidModel
 Code/Source/vtkSV/.git
-Code/Source/vtkSV/.travis.yml
 Code/Source/vtkSV/CMake
 Code/Source/vtkSV/CMakeLists.txt
 Code/Source/vtkSV/ThirdParty
-Code/Source/vtkSV/Travis
 Code/Source/vtkSV/Common/Testing
 Code/Source/vtkSV/Common/module.cmake
 Code/Source/vtkSV/Documentation

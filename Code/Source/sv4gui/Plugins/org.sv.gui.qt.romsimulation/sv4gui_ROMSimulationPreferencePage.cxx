@@ -51,6 +51,16 @@ sv4guiROMSimulationPreferencePage::~sv4guiROMSimulationPreferencePage()
 {
 }
 
+//---------------------------
+// InitializeSolverLocations
+//---------------------------
+// Find the location of solver binaries and mpiexec.
+//
+void sv4guiROMSimulationPreferencePage::InitializeSolverLocations()
+{
+    SetOneDSolver();
+}
+
 void sv4guiROMSimulationPreferencePage::CreateQtControl(QWidget* parent)
 {
     m_Control = new QWidget(parent);
@@ -61,64 +71,42 @@ void sv4guiROMSimulationPreferencePage::CreateQtControl(QWidget* parent)
     Q_ASSERT(prefService);
 
     m_Preferences = prefService->GetSystemPreferences()->Node("/org.sv.views.romsimulation");
-
-    connect( m_Ui->toolButtonPresolver, SIGNAL(clicked()), this, SLOT(SetPresolverPath()) );
-    connect( m_Ui->toolButtonFlowsolver, SIGNAL(clicked()), this, SLOT(SetFlowsolverPath()) );
-    connect( m_Ui->toolButtonMPIExec, SIGNAL(clicked()), this, SLOT(SetMPIExecPath()) );
-    connect( m_Ui->toolButtonCustomTemplate, SIGNAL(clicked()), this, SLOT(SetCustomTemplatePath()) );
-    connect( m_Ui->toolButtonPostsolver, SIGNAL(clicked()), this, SLOT(SetPostsolverPath()) );
-
+    connect( m_Ui->SolverExecutablePath_Button, SIGNAL(clicked()), this, SLOT(SetOneDSolverFile()) );
     this->Update();
+
+    // Set the locations of the solver binary.
+    InitializeSolverLocations();
 }
 
-void sv4guiROMSimulationPreferencePage::SetPresolverPath()
+//-------------------
+// SetOneDSolverFile
+//-------------------
+// Set the location of the 1D solver executable using a file browser.
+//
+void sv4guiROMSimulationPreferencePage::SetOneDSolverFile()
 {
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Presolver");
+    QString filePath = QFileDialog::getOpenFileName(m_Control, "Select the 1D solver executable");
 
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditPresolverPath->setText(filePath);
+    if (!filePath.isEmpty()) {
+        m_Ui->SolverExecutablePath_LineEdit->setText(filePath);
     }
 }
 
-void sv4guiROMSimulationPreferencePage::SetFlowsolverPath()
+//---------------
+// SetOneDSolver
+//---------------
+// Set the 1D solver executable from the GUI line edit widget
+// or from the default value.
+//
+void sv4guiROMSimulationPreferencePage::SetOneDSolver()
 {
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Flowsolver");
+  QString solver = m_Ui->SolverExecutablePath_LineEdit->text().trimmed();
+  if (!solver.isEmpty() && (solver != m_DefaultPrefs.UnknownBinary)) {
+    return;
+  }
 
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditFlowsolverPath->setText(filePath);
-    }
-}
-
-void sv4guiROMSimulationPreferencePage::SetMPIExecPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose MPIExec");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditMPIExecPath->setText(filePath);
-    }
-}
-
-void sv4guiROMSimulationPreferencePage::SetCustomTemplatePath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose Solver Custom Template");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditCustomTemplatePath->setText(filePath);
-    }
-}
-
-void sv4guiROMSimulationPreferencePage::SetPostsolverPath()
-{
-    QString filePath = QFileDialog::getOpenFileName(m_Control, "Choose SimVascular Postsolver");
-
-    if (!filePath.isEmpty())
-    {
-        m_Ui->lineEditPostsolverPath->setText(filePath);
-    }
+  solver = m_DefaultPrefs.GetOneDSolver();
+  m_Ui->SolverExecutablePath_LineEdit->setText(solver);
 }
 
 QWidget* sv4guiROMSimulationPreferencePage::GetQtControl() const
@@ -136,68 +124,14 @@ void sv4guiROMSimulationPreferencePage::PerformCancel()
 
 bool sv4guiROMSimulationPreferencePage::PerformOk()
 {
-    QString presolverPath=m_Ui->lineEditPresolverPath->text().trimmed();
-    QString flowsolverPath=m_Ui->lineEditFlowsolverPath->text().trimmed();
-    bool useMPI=m_Ui->checkBoxUseMPI->isChecked();
-    QString MPIExecPath=m_Ui->lineEditMPIExecPath->text().trimmed();
-    bool useCustom=m_Ui->checkBoxUseCustom->isChecked();
-    QString customTemplatePath=m_Ui->lineEditCustomTemplatePath->text().trimmed();
-    QString postsolverPath=m_Ui->lineEditPostsolverPath->text().trimmed();
-
-//    if(presolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Presolver Missing","Please provide SimVascular presolver.");
-//        return false;
-//    }
-
-//    if(flowsolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Flowsolver Missing","Please provide SimVascular flowsolver.");
-//        return false;
-//    }
-
-//    if(useMPI && MPIExecPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"MPIExec Missing","Please provide mpiexec.");
-//        return false;
-//    }
-
-//    if(useCustom && customTemplatePath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Custom Template Missing","Please provide SimVascular Solver Input Template File.");
-//        return false;
-//    }
-
-//    if(postsolverPath=="")
-//    {
-//        QMessageBox::warning(m_Control,"Postsolver Missing","Please provide SimVascular postsolver.");
-//        return false;
-//    }
-
-    m_Preferences->Put("presolver path", presolverPath);
-
-    m_Preferences->Put("flowsolver path", flowsolverPath);
-    m_Preferences->PutBool("use mpi", useMPI);
-    if(useMPI)
-        m_Preferences->Put("mpiexec path", MPIExecPath);
-
-    m_Preferences->PutBool("use custom", useCustom);
-    if(useCustom)
-        m_Preferences->Put("solver template path", customTemplatePath);
-
-    m_Preferences->Put("postsolver path", postsolverPath);
-
+    using namespace sv4guiROMSimulationPreferenceDBKey;
+    QString oneDSolverPath = m_Ui->SolverExecutablePath_LineEdit->text().trimmed();
+    m_Preferences->Put(ONED_SOLVER_PATH, oneDSolverPath);
     return true;
 }
 
 void sv4guiROMSimulationPreferencePage::Update()
 {
-    m_Ui->lineEditPresolverPath->setText(m_Preferences->Get("presolver path",""));
-    m_Ui->lineEditFlowsolverPath->setText(m_Preferences->Get("flowsolver path",""));
-    m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
-    m_Ui->lineEditMPIExecPath->setText(m_Preferences->Get("mpiexec path",""));
-    m_Ui->checkBoxUseCustom->setChecked(m_Preferences->GetBool("use custom", false));
-    m_Ui->lineEditCustomTemplatePath->setText(m_Preferences->Get("solver template path",""));
-    m_Ui->lineEditPostsolverPath->setText(m_Preferences->Get("postsolver path",""));
+    m_Ui->SolverExecutablePath_LineEdit->setText(m_Preferences->Get("1d solver executable path",""));
 }
 
