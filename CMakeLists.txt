@@ -81,7 +81,7 @@ option(SV_USE_MITK_SEGMENTATION "Enable building the MITK segmentation plugin" O
 #-----------------------------------------------------------------------------
 # Externals!
 
-set(SV_EXTERNALS_VERSION_NUMBER "2019.06" CACHE STRING "SimVascular Externals Release Version")
+set(SV_EXTERNALS_VERSION_NUMBER "2022.09" CACHE STRING "SimVascular Externals Release Version")
 mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
 
 # Distribution
