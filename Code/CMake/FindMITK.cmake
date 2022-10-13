@@ -63,7 +63,7 @@ set(${proj}_LIBNAMES CppMicroServices
                      CTKPluginFramework
                      CTKScriptingPythonCore
                      CTKScriptingPythonWidgets
-                     #CTKVisualizationVTKCore
+                     # CTKVisualizationVTKCore
                      CTKWidgets
                      CTKXNATCore
                      mbilog
@@ -81,7 +81,7 @@ set(${proj}_LIBNAMES CppMicroServices
                      MitkSegmentationUI
                      MitkSurfaceInterpolation
                      PythonQt
-                     tinyxml
+                     # tinyxml
                      mbilog
                      PocoFoundation
                      PocoUtil
@@ -112,7 +112,7 @@ set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
                             org_mitk_gui_common
                             org_mitk_gui_qt_application
                             org_mitk_gui_qt_common
-                            org_mitk_gui_qt_common_legacy
+                            # org_mitk_gui_qt_common_legacy
                             org_mitk_gui_qt_datamanager
                             org_mitk_gui_qt_stdmultiwidgeteditor
                             org_mitk_gui_qt_ext
@@ -153,18 +153,18 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "mitkLabel.h"                                    #mitk/Modules/Multilabel
                     "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
                     "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
-                    "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
-                    "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
-                    "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
+                    # "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
+                    # "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
+                    # "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
                     "mitkSurfaceInterpolationController.h"           #mitk/Modules/SurfaceInterpolation
                     "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets
                     "PythonQt.h"                                     #PythonQt
-                    "tinyxml.h"                                      #tinyxml
+                    # "tinyxml.h"                                      #tinyxml
                     "mitkIDataStorageService.h"                      #mitk/plugins/org.mitk.core.services
                     "mitkDataNodeSelection.h"                        #mitk/plugins/org.mitk.gui.common
                     "QmitkFileOpenAction.h"                          #mitk/plugins/org.mitk.gui.qt.application
                     "QmitkAbstractView.h"                            #mitk/plugins/org.mitk.gui.qt.common
-                    "QmitkFunctionality.h"                           #mitk/plugins/org.mitk.gui.qt.common.legacy
+                    # "QmitkFunctionality.h"                           #mitk/plugins/org.mitk.gui.qt.common.legacy
                     "mitkIContextMenuAction.h"                       #mitk/plugins/org.mitk.gui.qt.datamanager
                     "QmitkStdMultiWidgetEditor.h"                    #mitk/plugins/org.mitk.gui.qt.stdmultiwidgeteditor
                     "QmitkExtActionBarAdvisor.h"                     #mitk/plugins/org.mitk.gui.qt.ext

@@ -1,0 +1,1 @@
+{"argv": ["python", "-m", "cygwin_bash_kernel", "-f", "{connection_file}"], "display_name": "Cygwin Bash", "env": {"cygwin_bash_command": "cygwin_bash"}, "language": "bash"}

@@ -43,6 +43,9 @@ if(SV_USE_${proj})
   # Find Python
   if(NOT WIN32)
 
+
+    set(CMAKE_PREFIX_PATH "${PYTHON_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
+  
     simvascular_external(${proj}
       SHARED_LIB ${SV_USE_${proj}_SHARED}
       VERSION ${${proj}_VERSION}
@@ -79,7 +82,7 @@ if(SV_USE_${proj})
   endif()
 
   # Need to make sure we pick up python module from vtk
-  set(VTK_${proj}_MODULES vtkWrappingPythonCore)
+  set(VTK_${proj}_MODULES WrappingPythonCore)
 
 endif()
 #-----------------------------------------------------------------------------

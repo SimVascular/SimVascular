@@ -132,12 +132,14 @@ macro(simvascular_external _pkg)
   # Default PATHS
   unset(ARG_STRING)
   set(_paths "${simvascular_external_PATHS}")
+  message(STATUS "${simvascular_external_PATHS}")
   if(NOT simvascular_external_PATHS)
     set(_paths "${CMAKE_MODULE_PATH}")
   endif()
 
-  #message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
-
+  message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
+  message(STATUS "${_pkg}")
+  message(STATUS "${EXTRA_ARGS}")
   # Find Package
   find_package(${_pkg} ${EXTRA_ARGS})
 

@@ -229,7 +229,7 @@ echo "CREATE_POST_PROCESS_ALL_CMAKE_CONFIG"
 #   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 # fi
 
-export PYPATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/python-3.9.10/
+export PYPATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/python-3.9.10/
 export PATH=$PYPATH/share/python3.9:$PYPATH/bin/:$PYPATH/include/:$PYPATH/lib/:$PATH
 
 # #  swig
@@ -289,8 +289,8 @@ export PATH=$PYPATH/share/python3.9:$PYPATH/bin/:$PYPATH/include/:$PYPATH/lib/:$
 #   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 # fi
 
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14.2/gcc_64/:$PATH
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14.2/gcc_64/lib/cmake/Qt5/:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14.2/gcc_64/:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14.2/gcc_64/lib/cmake/Qt5/:$PATH
 
 # # vtk
 # if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
@@ -321,14 +321,14 @@ export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14
 #   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 # fi
 
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/lib/gdcm-2.6:$PATH
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/lib:$PATH
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/hdf5-1.12.2/cmake/:$PATH
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/vtk-9.2.0/lib/cmake/vtk-9.2/:$PATH
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/vtk-9.2.0/lib/:$PATH
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/itk-5.2.1/lib/cmake/ITK-5.2/:$PATH
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/itk-5.2.1/lib/:$PATH
-export PATH=/usr/local/sv/ext/2022.09/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/include/gdcm-2.6:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/lib/gdcm-2.6:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/lib:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/hdf5-1.12.2/cmake/:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/vtk-9.2.0/lib/cmake/vtk-9.2/:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/vtk-9.2.0/lib/:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/itk-5.2.1/lib/cmake/ITK-5.2/:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/itk-5.2.1/lib/:$PATH
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/include/gdcm-2.6:$PATH
 
 # # mitk
 # if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then

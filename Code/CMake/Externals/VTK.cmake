@@ -46,24 +46,24 @@ endif()
 # Find VTK, specific components
 simvascular_external(${proj}
   COMPONENTS
-  vtkFiltersFlowPaths
-  vtkWrappingTcl
-  vtkRenderingTk
-  vtkRenderingLabel
-  vtkCommonDataModel
-  vtkCommonCore
-  vtkChartsCore
-  vtkCommonExecutionModel
-  vtkFiltersCore
-  vtkFiltersTexture
-  vtkFiltersVerdict
-  vtkIOGeometry
-  vtkIOLegacy
-  vtkIOPLY
-  vtkIOXML
-  vtkImagingStencil
-  vtkParallelCore
-  vtktiff
+  FiltersFlowPaths
+  # WrappingTcl
+  # RenderingTk
+  RenderingLabel
+  CommonDataModel
+  CommonCore
+  ChartsCore
+  CommonExecutionModel
+  FiltersCore
+  FiltersTexture
+  FiltersVerdict
+  IOGeometry
+  IOLegacy
+  IOPLY
+  IOXML
+  ImagingStencil
+  ParallelCore
+  tiff
   ${${proj}_PYTHON_MODULES}
   NO_DEFAULT_PATH
   SHARED_LIB ${SV_USE_${proj}_SHARED}
@@ -71,8 +71,9 @@ simvascular_external(${proj}
   REQUIRED
   )
 
+# No longer needed
 # Include cmake file provided by VTK to define libs and include dirs
-include(${${proj}_USE_FILE})
+# include(${${proj}_USE_FILE})
 
 # We have to manually add vtkCommonCoreTCL to the list of libraries
 set(${proj}_LIBRARIES ${${proj}_LIBRARIES} vtkCommonCoreTCL)
@@ -135,7 +136,7 @@ if(SV_USE_PYTHON)
   get_filename_component(tmp_replace_python_lib_name ${PYTHON_LIBRARY} NAME)
   #message("replace python name ${tmp_replace_python_lib_name}")
   simvascular_list_find_and_replace(${proj}_LIBRARIES "${tmp_replace_python_lib_name}" ${PYTHON_LIBRARY})
-  #simvascular_property_list_find_and_replace(vtkWrappingPythonCore INTERFACE_LINK_LIBRARIES "${tmp_replace_python_lib_name}" ${PYTHON_LIBRARY})
+  #simvascular_property_list_find_and_replace(WrappingPythonCore INTERFACE_LINK_LIBRARIES "${tmp_replace_python_lib_name}" ${PYTHON_LIBRARY})
 endif()
 if(SV_USE_FREETYPE)
   get_filename_component(tmp_replace_freetype_lib_name ${FREETYPE_LIBRARY} NAME)

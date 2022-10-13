@@ -111,3 +111,13 @@ diff -Naur '--exclude=.git' mitk-2022.09.27/Modules/QtWidgets/src/QmitkMxNMultiW
  
    SetWidgetPlaneMode(mitk::InteractionSchemeSwitcher::MITKStandard);
  }
+
+diff -Naur mitk-2022.09.27/CMake/PackageDepends/MITK_tinyxml2_Config.cmake mitk-2022.09.27-modified/CMake/PackageDepends/MITK_tinyxml2_Config.cmake
+--- mitk-2022.09.27/CMake/PackageDepends/MITK_tinyxml2_Config.cmake	2022-10-13 13:30:06.001969699 -0700
++++ mitk-2022.09.27-modified/CMake/PackageDepends/MITK_tinyxml2_Config.cmake	2022-10-13 13:29:07.169304440 -0700
+@@ -1 +1 @@
+-set(ALL_LIBRARIES "tinyxml2::tinyxml2")
++set(ALL_LIBRARIES "tinyxml2")
+
+
+ 

@@ -1,4 +1,4 @@
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2022.09/src/originals/
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/2019.06/src/originals/
 
 mkdir Originals
 pushd Originals
@@ -16,15 +16,15 @@ if [[ $SV_SUPER_OPTIONS == *WGET_TCL* ]]; then
   popd
 fi
 
-# python 3.9.10
+# python 2.7
 if [[ $SV_SUPER_OPTIONS == *WGET_PYTHON* ]]; then
   echo "WGET_PYTHON"
   rm -Rf python
   mkdir -p python
   pushd python
   wget $PARENT_URL/python/get-pip.py
-  wget $PARENT_URL/python/Python-3.9.10.tgz
-  wget $PARENT_URL/python/python-3.9.10-cmakebuild.tar.gz
+  wget $PARENT_URL/python/Python-3.6.5.tgz
+  wget $PARENT_URL/python/python-3.6.5-cmakebuild.tar.gz
   popd
 fi
 
@@ -64,7 +64,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_QT* ]]; then
   rm -Rf qt
   mkdir -p qt
   pushd qt
-  wget $PARENT_URL/qt/qt-everywhere-src-5.12.12.tar.xz
+  wget $PARENT_URL/qt/qt-everywhere-opensource-src-5.11.3.tar.gz
   popd
 fi
 if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
@@ -77,23 +77,23 @@ if [[ $SV_SUPER_OPTIONS == *WGET_BIN_QT* ]]; then
      case "$osid" in
 
        'Ubuntu')
-          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.14.2.run
-          chmod a+rx ./qt-opensource-linux-x64-5.14.2.run	
+          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.11.3.run
+          chmod a+rx ./qt-opensource-linux-x64-5.11.3.run	
 	  ;;
 
       'CentOS')
-          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.14.2.run
-          chmod a+rx ./qt-opensource-linux-x64-5.14.2.run
+          wget $PARENT_URL/qt/qt-opensource-linux-x64-5.11.3.run
+          chmod a+rx ./qt-opensource-linux-x64-5.11.3.run
 	  ;;
 
       'AmazonAMI')
-          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.14.2.tar.gz
-          chmod a+rx ./qt-opensource-centos-x64-5.14.2.tar.gz
+          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.11.3.tar.gz
+          chmod a+rx ./qt-opensource-centos-x64-5.11.3.tar.gz
           ;;
 
       'Amazon')
-          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.14.2.tar.gz
-          chmod a+rx ./qt-opensource-centos-x64-5.14.2.tar.gz
+          wget $PARENT_URL/qt/qt-opensource-centos-x64-5.11.3.tar.gz
+          chmod a+rx ./qt-opensource-centos-x64-5.11.3.tar.gz
           ;;
 
       *)	 
@@ -141,7 +141,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_HDF5* ]]; then
   mkdir -p hdf5
   pushd hdf5
   #  wget $PARENT_URL/hdf5/CMake-hdf5-1.10.1.zip
-  wget $PARENT_URL/hdf5/hdf5-1.12.2.tar.gz
+  wget $PARENT_URL/hdf5/hdf5-1.10.1.tar.gz
   popd
 fi
 
@@ -151,7 +151,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_VTK* ]]; then
   rm -Rf vtk
   mkdir -p vtk
   pushd vtk
-  wget $PARENT_URL/vtk/VTK-9.2.0.tar.gz
+  wget $PARENT_URL/vtk/VTK-8.1.1.tar.gz
   popd
 fi
 
@@ -161,7 +161,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_ITK* ]]; then
   rm -Rf itk
   mkdir -p itk
   pushd itk
-  wget $PARENT_URL/itk/InsightToolkit-5.2.1.tar.gz
+  wget $PARENT_URL/itk/InsightToolkit-4.13.2.tar.gz
   popd
 fi
 
@@ -171,7 +171,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_OPENCASCADE* ]]; then
   rm -Rf opencascade
   mkdir -p opencascade
   pushd opencascade
-  wget $PARENT_URL/opencascade/opencascade-7.6.0.tar
+  wget $PARENT_URL/opencascade/opencascade-7.3.0.tgz
 #  wget $PARENT_URL/opencascade/Release_Notes_7.3.0.pdf
   popd
 fi
@@ -192,7 +192,7 @@ if [[ $SV_SUPER_OPTIONS == *WGET_MITK* ]]; then
   rm -Rf mitk
   mkdir -p mitk
   pushd mitk
-  wget $PARENT_URL/mitk/mitk-2022.09.27.tar.gz
+  wget $PARENT_URL/mitk/mitk-2018.04.2.tar.gz
   popd
 fi
 
