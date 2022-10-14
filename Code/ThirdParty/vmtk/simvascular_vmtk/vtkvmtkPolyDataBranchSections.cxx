@@ -572,9 +572,10 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
 
   int numberOfLinePoints = section->GetNumberOfPoints();
 
-  unsigned short ncells;
+  vtkIdType ncells;
   vtkIdType* cells;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts = new vtkIdType;
 
   int numberOfSingleCellPoints = 0;
   vtkIdType firstPointId = -1;

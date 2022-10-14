@@ -109,7 +109,8 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   bool* isUnremovable;
   vtkIdType i, j, id;
   vtkIdType n;
-  vtkIdType npts, *pts, ncells;
+  vtkIdType npts, ncells;
+  const vtkIdType *pts = new vtkIdType;
   npts = 0;
   pts = NULL;
   vtkIdType edge[2];
@@ -182,7 +183,10 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   currentPolys->DeepCopy(inputPolys);
 
   currentLinks->Allocate(input->GetNumberOfPoints());
-  currentLinks->BuildLinks(input,currentPolys);
+  
+  // Previous version of VTK (8.1.1)
+  // currentLinks->BuildLinks(input,currentPolys);
+  currentLinks->BuildLinks(input);
 
   anyRemoved = true;
   while (anyRemoved)
@@ -271,7 +275,9 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     currentLinks->Delete();
     currentLinks = vtkCellLinks::New();
     currentLinks->Allocate(input->GetNumberOfPoints());
-    currentLinks->BuildLinks(input,currentPolys);
+    // previous version of VTK (8.1.1)
+    // currentLinks->BuildLinks(input,currentPolys);
+    currentLinks->BuildLinks(input);
 
     newPolys->Delete();
     newCell->Delete();

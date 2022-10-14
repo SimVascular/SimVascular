@@ -22,7 +22,7 @@
 #include "vtkvmtkStencil.h"
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
-
+#include <math.h>
 
 
 vtkvmtkStencil::vtkvmtkStencil()
