@@ -42,8 +42,8 @@ public:
 
     sv4guiMitksvFSIJobIO();
 
-    using mitk::AbstractFileReader::Read;
-    std::vector<mitk::BaseData::Pointer> Read() override;
+    using mitk::AbstractFileReader::DoRead;
+    std::vector<mitk::BaseData::Pointer> DoRead() override;
     mitk::IFileIO::ConfidenceLevel GetReaderConfidenceLevel() const override;
 
     void Write() override;

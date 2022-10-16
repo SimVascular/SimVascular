@@ -44,13 +44,13 @@ echo "SV_SUPER_OPTIONS for build: $SV_SUPER_OPTIONS"
 # wget all source code
 #
 
-source Scripts/build-sv-externals-helper-wget-generic.sh
+# source Scripts/build-sv-externals-helper-wget-generic.sh
 
 #
 # unpack all of the source code
 #
 
-source Scripts/untar-unzip-source-all.sh
+# source Scripts/untar-unzip-source-all.sh
 
 #
 # must have primary destination build dir for subst commands
@@ -254,11 +254,11 @@ export PATH=$PYPATH/share/python3.9:$PYPATH/bin/:$PYPATH/include/:$PYPATH/lib/:$
 # fi
 
 # tinyxml2
-if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
-  echo "BUILD_TINYXML2"
-  ./tmp/compile.cmake.tinyxml2.gcc.sh >& ./tmp/stdout.tinyxml2.gcc.txt
-  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-fi
+# if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
+#   echo "BUILD_TINYXML2"
+#   ./tmp/compile.cmake.tinyxml2.gcc.sh >& ./tmp/stdout.tinyxml2.gcc.txt
+#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+# fi
 
 # #  qt
 # if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
@@ -291,12 +291,18 @@ fi
 export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14.2/gcc_64/:$PATH
 export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14.2/gcc_64/lib/cmake/Qt5/:$PATH
 
-# # vtk
-# if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
-#   echo "BUILD_VTK"
-#   ./tmp/compile.cmake.vtk.gcc.sh >& ./tmp/stdout.vtk.gcc.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/lib/gdcm-2.6:$PATH
+
+# vtk
+if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
+  echo "BUILD_VTK"
+  ./tmp/compile.cmake.vtk.gcc.sh # >& ./tmp/stdout.vtk.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
+
+# we need to copy these manually because for some reason they are not copied
+cp /usr/local/sv/ext/2022.10/release/gl2/src/vtk-9.2.0/Rendering/Tk/*. /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/vtk-9.2.0/include/vtk-9.2/
+cp /usr/local/sv/ext/2022.10/release/gl2/build/gnu/7.5/x64/vtk-9.2.0/Rendering/Tk/*.h /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/vtk-9.2.0/include/vtk-9.2/
 
 # # itk
 # if [[ $SV_SUPER_OPTIONS == *BUILD_ITK* ]]; then
@@ -333,21 +339,21 @@ export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/tinyxml2-6.2.0
 export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/tinyxml2-6.2.0/include/:$PATH
 
 # this is needed because otherwise MITK doesn't find tinyxml
-pushd /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/
-patch -p0 < ../../../../src/BuildHelpers/Patches/2022.09/correct_tinyxml2.patch 
-popd
+# pushd /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/
+# patch -p0 < ../../../../src/BuildHelpers/Patches/2022.09/correct_tinyxml2.patch 
+# popd
 
-# mitk
-if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
-  echo "BUILD_MITK"
-  ./tmp/compile.cmake.mitk.gcc.sh >& ./tmp/stdout.mitk.gcc.txt
-  ./tmp/post-install-mitk-linux.sh >& ./tmp/stdout.post-install-mitk-linux.txt
-  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-fi
+# # mitk
+# if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
+#   echo "BUILD_MITK"
+#   ./tmp/compile.cmake.mitk.gcc.sh >& ./tmp/stdout.mitk.gcc.txt
+#   ./tmp/post-install-mitk-linux.sh >& ./tmp/stdout.post-install-mitk-linux.txt
+#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+# fi
 
-pushd /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/
-patch -p0 -f < ../../../../src/BuildHelpers/Patches/2022.09/revert_tinyxml2.patch 
-popd
+# pushd /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/
+# patch -p0 -f < ../../../../src/BuildHelpers/Patches/2022.09/revert_tinyxml2.patch 
+# popd
 
 #
 # check generated cmake configs for hardcorded paths

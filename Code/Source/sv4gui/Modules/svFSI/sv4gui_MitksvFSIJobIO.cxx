@@ -38,7 +38,7 @@
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
-#include <tinyxml.h>
+#include <tinyxml2.h>
 
 #include <fstream>
 
@@ -58,24 +58,24 @@ sv4guiMitksvFSIJobIO::sv4guiMitksvFSIJobIO()
     this->RegisterService();
 }
 
-std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
+std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::DoRead()
 {
     std::vector<mitk::BaseData::Pointer> result;
 
-    TiXmlDocument document;
+    tinyxml2::XMLDocument document;
 
-    std::string fileName=GetInputLocation();
+    std::string fileName = GetInputLocation();
 
-    if (!document.LoadFile(fileName))
+    if (!document.LoadFile(fileName.c_str()))
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
         //        MITK_ERROR << "Could not open/read/parse " << fileName;
         return result;
     }
 
-    //    TiXmlElement* version = document.FirstChildElement("format");
+    //    tinyxml2::XMLElement* version = document.FirstChildElement("format");
 
-    TiXmlElement* mjElement = document.FirstChildElement("mitk_job");
+    tinyxml2::XMLElement* mjElement = document.FirstChildElement("mitk_job");
 
     if(!mjElement){
         //        MITK_ERROR << "No job data in "<< fileName;
@@ -84,9 +84,9 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
     }
 
     sv4guiMitksvFSIJob::Pointer mitkSimJob = sv4guiMitksvFSIJob::New();
-    std::string modelName="";
-    std::string meshName="";
-    std::string status="";
+    char* modelName="";
+    char* meshName="";
+    char* status="";
     int procNum=1;
     mjElement->QueryStringAttribute("model_name",&modelName);
     mjElement->QueryStringAttribute("mesh_name",&meshName);
@@ -98,38 +98,46 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
     mitkSimJob->SetStatus(status);
     mitkSimJob->SetProcessNumber(procNum);
 
-    std::string strValue="";
+    char* strValue="";
 
-    TiXmlElement* jobElement = mjElement->FirstChildElement("job");
+    tinyxml2::XMLElement* jobElement = mjElement->FirstChildElement("job");
 
     if (jobElement != nullptr) {
         sv4guisvFSIJob* job = new sv4guisvFSIJob();
 
         jobElement->QueryIntAttribute("nsd",&job->nsd);
         jobElement->QueryIntAttribute("timeSteps",&job->timeSteps);
-        jobElement->QueryStringAttribute("stepSize",&job->stepSize);
+        char* stepSize="";
+        jobElement->QueryStringAttribute("stepSize",&stepSize);
+        job->stepSize = stepSize;
         jobElement->QueryBoolAttribute("continuePrevious",&job->continuePrevious);
 
-        jobElement->QueryStringAttribute("restartFileName", &job->restartFileName);
+        char* restartFileName="";
+        jobElement->QueryStringAttribute("restartFileName", &restartFileName);
+        job->restartFileName = restartFileName;
         jobElement->QueryIntAttribute("restartInc", &job->restartInc);
 
         jobElement->QueryBoolAttribute("vtkSaveResults", &job->vtkSaveResults);
-        jobElement->QueryStringAttribute("vtkFileName", &job->vtkFileName);
+        char* vtkFileName="";
+        jobElement->QueryStringAttribute("vtkFileName", &vtkFileName);
+        job->vtkFileName = vtkFileName;
         jobElement->QueryIntAttribute("vtkInc", &job->vtkInc);
 
         jobElement->QueryIntAttribute("startSavingStep",&job->startSavingStep);
         jobElement->QueryBoolAttribute("saveAvgResult",&job->saveAvgResult);
         jobElement->QueryDoubleAttribute("rhoInf",&job->rhoInf);
-        jobElement->QueryStringAttribute("stopFileName",&job->stopFileName);
+        char* stopFileName="";
+        jobElement->QueryStringAttribute("stopFileName",&stopFileName);
+        job->stopFileName = stopFileName;
         jobElement->QueryBoolAttribute("remeshing",&job->remeshing);
         jobElement->QueryBoolAttribute("verbose",&job->verbose);
         jobElement->QueryBoolAttribute("warn",&job->warn);
         jobElement->QueryBoolAttribute("debug",&job->debug);
 
-        TiXmlElement* dsElement = jobElement->FirstChildElement("domains");
+        tinyxml2::XMLElement* dsElement = jobElement->FirstChildElement("domains");
         if(dsElement != nullptr)
         {
-            for( TiXmlElement* domainElement = dsElement->FirstChildElement("domain");
+            for( tinyxml2::XMLElement* domainElement = dsElement->FirstChildElement("domain");
                  domainElement != nullptr;
                  domainElement =domainElement->NextSiblingElement("domain") )
             {
@@ -137,18 +145,30 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
 //                    continue;
 
                 sv4guisvFSIDomain domain;
-                domainElement->QueryStringAttribute("name", &domain.name);
-                domainElement->QueryStringAttribute("type", &domain.type);
-                domainElement->QueryStringAttribute("folder_name", &domain.folderName);
-                domainElement->QueryStringAttribute("file_name", &domain.fileName);
-                domainElement->QueryStringAttribute("surface_name", &domain.surfaceName);
-                domainElement->QueryStringAttribute("face_folder_name", &domain.faceFolderName);
+                char* name="";
+                char* type="";
+                char* folderName="";
+                char* fileName="";
+                char* surfaceName="";
+                char* faceFolderName="";
+                domainElement->QueryStringAttribute("name", &name);
+                domainElement->QueryStringAttribute("type", &type);
+                domainElement->QueryStringAttribute("folder_name", &folderName);
+                domainElement->QueryStringAttribute("file_name", &fileName);
+                domainElement->QueryStringAttribute("surface_name",&surfaceName);
+                domainElement->QueryStringAttribute("face_folder_name", &faceFolderName);
+                domain.name = name;
+                domain.type = type;
+                domain.folderName = folderName;
+                domain.fileName = fileName;
+                domain.surfaceName = surfaceName;
+                domain.faceFolderName = faceFolderName;
 
-                for(TiXmlElement* faceElement=domainElement->FirstChildElement("face");
+                for(tinyxml2::XMLElement* faceElement=domainElement->FirstChildElement("face");
                     faceElement !=nullptr;
                     faceElement = faceElement->NextSiblingElement("face"))
                 {
-                    std::string faceName="";
+                    char* faceName="";
                     faceElement->QueryStringAttribute("name",&faceName);
                     domain.faceNames.push_back(faceName);
                 }
@@ -158,10 +178,10 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
             }
         }
 
-        TiXmlElement* eqsElement = jobElement->FirstChildElement("equations");
+        tinyxml2::XMLElement* eqsElement = jobElement->FirstChildElement("equations");
         if(eqsElement != nullptr)
         {
-            for( TiXmlElement* eqElement = eqsElement->FirstChildElement("equation");
+            for( tinyxml2::XMLElement* eqElement = eqsElement->FirstChildElement("equation");
                  eqElement != nullptr;
                  eqElement =eqElement->NextSiblingElement("equation") )
             {
@@ -181,16 +201,16 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                 eqElement->QueryDoubleAttribute("dBr", &eq.dBr);
                 eqElement->QueryDoubleAttribute("backflow", &eq.backflowStab);
 
-                TiXmlElement* propsElement=eqElement->FirstChildElement("props");
+                tinyxml2::XMLElement* propsElement=eqElement->FirstChildElement("props");
                 if(propsElement!=nullptr)
                 {
-                    for(TiXmlElement* propElement=propsElement->FirstChildElement("prop");
+                    for(tinyxml2::XMLElement* propElement=propsElement->FirstChildElement("prop");
                         propElement !=nullptr;
                         propElement = propElement->NextSiblingElement("prop"))
                     {
                         strValue="";
                         propElement->QueryStringAttribute("name",&strValue);
-                        std::string strValue2="";
+                        char* strValue2="";
                         propElement->QueryStringAttribute("value",&strValue2);
 
                         if(strValue=="Constitutive model")
@@ -203,7 +223,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                     }
                 }
 
-                TiXmlElement* lsElement=eqElement->FirstChildElement("linear_solver");
+                tinyxml2::XMLElement* lsElement=eqElement->FirstChildElement("linear_solver");
                 if(lsElement!=nullptr)
                 {
                     strValue="";
@@ -243,7 +263,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                     eq.lsPreconditioner=QString::fromStdString(strValue);
                 }
 
-                TiXmlElement* rmElement=eqElement->FirstChildElement("remesher");
+                tinyxml2::XMLElement* rmElement=eqElement->FirstChildElement("remesher");
                 if(rmElement!=nullptr)
                 {
                     strValue="";
@@ -255,7 +275,7 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                     rmElement->QueryIntAttribute("frequency",&eq.rmFrequency);
                     rmElement->QueryIntAttribute("copy_frequency",&eq.rmCopyFrequency);
 
-                    for(TiXmlElement* sizeElement=rmElement->FirstChildElement("edge_size");
+                    for(tinyxml2::XMLElement* sizeElement=rmElement->FirstChildElement("edge_size");
                         sizeElement !=nullptr;
                         sizeElement = sizeElement->NextSiblingElement("edge_size"))
                     {
@@ -269,13 +289,13 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                     }
                 }
 
-                TiXmlElement* outputsElement=eqElement->FirstChildElement("outputs");
+                tinyxml2::XMLElement* outputsElement=eqElement->FirstChildElement("outputs");
                 if(outputsElement!=nullptr)
                 {
-                    TiXmlElement* spatialElement=outputsElement->FirstChildElement("spatial");
+                    tinyxml2::XMLElement* spatialElement=outputsElement->FirstChildElement("spatial");
                     if(spatialElement!=nullptr)
                     {
-                        for(TiXmlElement* oElement=spatialElement->FirstChildElement("output");
+                        for(tinyxml2::XMLElement* oElement=spatialElement->FirstChildElement("output");
                             oElement !=nullptr;
                             oElement = oElement->NextSiblingElement("output"))
                         {
@@ -287,10 +307,10 @@ std::vector<mitk::BaseData::Pointer> sv4guiMitksvFSIJobIO::Read()
                     }
                 }
 
-                TiXmlElement* bcsElement=eqElement->FirstChildElement("boundary_conditions");
+                tinyxml2::XMLElement* bcsElement=eqElement->FirstChildElement("boundary_conditions");
                 if(bcsElement!=nullptr)
                 {
-                    for(TiXmlElement* faceElement=bcsElement->FirstChildElement("face");
+                    for(tinyxml2::XMLElement* faceElement=bcsElement->FirstChildElement("face");
                         faceElement!=nullptr;
                         faceElement=faceElement->NextSiblingElement("face"))
                     {
@@ -386,14 +406,15 @@ void sv4guiMitksvFSIJobIO::Write()
     const sv4guiMitksvFSIJob* mitkSimJob = dynamic_cast<const sv4guiMitksvFSIJob*>(this->GetInput());
     if(!mitkSimJob) return;
 
-    TiXmlDocument document;
-    auto  decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+    tinyxml2::XMLDocument document;
+    tinyxml2::XMLDeclaration* decl = document.NewDeclaration();
+    decl->SetValue("xml version=\"1.0\" encoding=\"\"");
     document.LinkEndChild( decl );
 
-    auto  mjElement = new TiXmlElement("mitk_job");
-    mjElement->SetAttribute("model_name", mitkSimJob->GetModelName());
-    mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName());
-    mjElement->SetAttribute("status", mitkSimJob->GetStatus());
+    tinyxml2::XMLElement* mjElement = document.NewElement("mitk_job");
+    mjElement->SetAttribute("model_name", mitkSimJob->GetModelName().c_str());
+    mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName().c_str());
+    mjElement->SetAttribute("status", mitkSimJob->GetStatus().c_str());
     mjElement->SetAttribute("process_number", mitkSimJob->GetProcessNumber());
     mjElement->SetAttribute("version",  "1.0" );
     document.LinkEndChild(mjElement);
@@ -401,109 +422,109 @@ void sv4guiMitksvFSIJobIO::Write()
     sv4guisvFSIJob* job = mitkSimJob->GetSimJob();
 
     if (job) {
-        auto jobElement = new TiXmlElement("job");
+        tinyxml2::XMLElement* jobElement = document.NewElement("job");
         mjElement->LinkEndChild(jobElement);
 
         jobElement->SetAttribute("nsd",job->nsd);
         jobElement->SetAttribute("timeSteps",job->timeSteps);
-        jobElement->SetAttribute("stepSize",job->stepSize);
+        jobElement->SetAttribute("stepSize",job->stepSize.c_str());
         jobElement->SetAttribute("continuePrevious",job->continuePrevious?"true":"false");
 
-        jobElement->SetAttribute("restartFileName", job->restartFileName);
+        jobElement->SetAttribute("restartFileName", job->restartFileName.c_str());
         jobElement->SetAttribute("restartInc", job->restartInc);
 
         jobElement->SetAttribute("vtkSaveResults", job->vtkSaveResults);
-        jobElement->SetAttribute("vtkFileName", job->vtkFileName);
+        jobElement->SetAttribute("vtkFileName", job->vtkFileName.c_str());
         jobElement->SetAttribute("vtkInc", job->vtkInc);
 
         jobElement->SetAttribute("startSavingStep",job->startSavingStep);
         jobElement->SetAttribute("saveAvgResult",job->saveAvgResult?"true":"false");
-        jobElement->SetDoubleAttribute("rhoInf",job->rhoInf);
-        jobElement->SetAttribute("stopFileName",job->stopFileName);
+        jobElement->DoubleAttribute("rhoInf",job->rhoInf);
+        jobElement->SetAttribute("stopFileName",job->stopFileName.c_str());
         jobElement->SetAttribute("remeshing",job->remeshing?"true":"false");
         jobElement->SetAttribute("verbose",job->verbose?"true":"false");
         jobElement->SetAttribute("warn",job->warn?"true":"false");
         jobElement->SetAttribute("debug",job->debug?"true":"false");
 
-        auto dsElement =new TiXmlElement("domains");
+        tinyxml2::XMLElement* dsElement = document.NewElement("domains");
         jobElement->LinkEndChild(dsElement);
 
         for(auto& md : job->m_Domains) {
             sv4guisvFSIDomain& domain=md.second;
 
-            auto domainElement = new TiXmlElement("domain");
+            tinyxml2::XMLElement* domainElement = document.NewElement("domain");
             dsElement->LinkEndChild(domainElement);
 
-            domainElement->SetAttribute("name", domain.name);
-            domainElement->SetAttribute("type", domain.type);
-            domainElement->SetAttribute("folder_name", domain.folderName);
-            domainElement->SetAttribute("file_name",domain.fileName);
-            domainElement->SetAttribute("surface_name",domain.surfaceName);
-            domainElement->SetAttribute("face_folder_name",domain.faceFolderName);
+            domainElement->SetAttribute("name", domain.name.c_str());
+            domainElement->SetAttribute("type", domain.type.c_str());
+            domainElement->SetAttribute("folder_name", domain.folderName.c_str());
+            domainElement->SetAttribute("file_name",domain.fileName.c_str());
+            domainElement->SetAttribute("surface_name",domain.surfaceName.c_str());
+            domainElement->SetAttribute("face_folder_name",domain.faceFolderName.c_str());
 
             for(std::string faceName : domain.faceNames)
             {
-                auto faceElement = new TiXmlElement("face");
+                tinyxml2::XMLElement* faceElement = document.NewElement("face");
                 domainElement->LinkEndChild(faceElement);
-                faceElement->SetAttribute("name", faceName);
+                faceElement->SetAttribute("name", faceName.c_str());
             }
         }
 
-        auto eqsElement =new TiXmlElement("equations");
+        tinyxml2::XMLElement* eqsElement = document.NewElement("equations");
         jobElement->LinkEndChild(eqsElement);
 
         for(sv4guisvFSIeqClass & eq : job->m_Eqs) {
-            auto eqElement = new TiXmlElement("equation");
+            tinyxml2::XMLElement* eqElement = document.NewElement("equation");
             eqsElement->LinkEndChild(eqElement);
 
-            eqElement->SetAttribute("physName",eq.physName.toStdString());
+            eqElement->SetAttribute("physName",eq.physName.toStdString().c_str());
             eqElement->SetAttribute("coupled",eq.coupled?"true":"false");
             eqElement->SetAttribute("minItr",eq.minItr);
             eqElement->SetAttribute("maxItr",eq.maxItr);
-            eqElement->SetAttribute("tol",eq.tol.toStdString());
+            eqElement->SetAttribute("tol",eq.tol.toStdString().c_str());
             eqElement->SetAttribute("dBr",eq.dBr);
-            eqElement->SetDoubleAttribute("backflow",eq.backflowStab);
+            eqElement->DoubleAttribute("backflow",eq.backflowStab);
 
-            auto propsElement =new TiXmlElement("props");
+            tinyxml2::XMLElement* propsElement = document.NewElement("props");
             eqElement->LinkEndChild(propsElement);
             for(int i=0;i<eq.getPropCount();++i)
             {
-                auto propElement =new TiXmlElement("prop");
+                tinyxml2::XMLElement* propElement = document.NewElement("prop");
                 propsElement->LinkEndChild(propElement);
 
-                propElement->SetAttribute("name",eq.getPropName(i).toStdString());
-                propElement->SetDoubleAttribute("value",eq.getPropValue(i));
+                propElement->SetAttribute("name",eq.getPropName(i).toStdString().c_str());
+                propElement->DoubleAttribute("value",eq.getPropValue(i));
             }
 
             if(eq.physName=="FSI" || eq.physName=="struct")
             {
-                auto propElement =new TiXmlElement("prop");
+                tinyxml2::XMLElement* propElement = document.NewElement("prop");
                 propsElement->LinkEndChild(propElement);
 
                 propElement->SetAttribute("name","Constitutive model");
-                propElement->SetAttribute("value",eq.constitutiveModel.toStdString());
+                propElement->SetAttribute("value",eq.constitutiveModel.toStdString().c_str());
             }
 
-            auto lsElement =new TiXmlElement("linear_solver");
+            tinyxml2::XMLElement* lsElement = document.NewElement("linear_solver");
             eqElement->LinkEndChild(lsElement);
-            lsElement->SetAttribute("lsType",eq.lsType.toStdString());
+            lsElement->SetAttribute("lsType",eq.lsType.toStdString().c_str());
             lsElement->SetAttribute("lsMaxItr",eq.lsMaxItr);
-            lsElement->SetAttribute("lsTol",eq.lsTol.toStdString());
+            lsElement->SetAttribute("lsTol",eq.lsTol.toStdString().c_str());
             lsElement->SetAttribute("lsNSGMMaxItr",eq.lsNSGMMaxItr);
-            lsElement->SetAttribute("lsNSGMTol",eq.lsNSGMTol.toStdString());
+            lsElement->SetAttribute("lsNSGMTol",eq.lsNSGMTol.toStdString().c_str());
             lsElement->SetAttribute("lsNSCGMaxItr",eq.lsNSCGMaxItr);
-            lsElement->SetAttribute("lsNSCGTol",eq.lsNSCGTol.toStdString());
-            lsElement->SetAttribute("lsAbsoluteTol",eq.lsAbsoluteTol.toStdString());
+            lsElement->SetAttribute("lsNSCGTol",eq.lsNSCGTol.toStdString().c_str());
+            lsElement->SetAttribute("lsAbsoluteTol",eq.lsAbsoluteTol.toStdString().c_str());
             lsElement->SetAttribute("lsKrylovDim",eq.lsKrylovDim);
-            lsElement->SetAttribute("lsPreconditioner",eq.lsPreconditioner.toStdString());
+            lsElement->SetAttribute("lsPreconditioner",eq.lsPreconditioner.toStdString().c_str());
 
             if(eq.physName=="FSI" && eq.remesher!="None")
             {
-                auto rmElement =new TiXmlElement("remesher");
+                tinyxml2::XMLElement* rmElement = document.NewElement("remesher");
                 eqElement->LinkEndChild(rmElement);
-                rmElement->SetAttribute("name",eq.remesher.toStdString());
-                rmElement->SetDoubleAttribute("angle",eq.rmMinAngle);
-                rmElement->SetDoubleAttribute("ratio",eq.rmMaxRadiusRatio);
+                rmElement->SetAttribute("name",eq.remesher.toStdString().c_str());
+                rmElement->DoubleAttribute("angle",eq.rmMinAngle);
+                rmElement->DoubleAttribute("ratio",eq.rmMaxRadiusRatio);
                 rmElement->SetAttribute("frequency",eq.rmFrequency);
                 rmElement->SetAttribute("copy_frequency",eq.rmCopyFrequency);
 
@@ -512,64 +533,64 @@ void sv4guiMitksvFSIJobIO::Write()
                     std::string domainName=pair.first;
                     sv4guisvFSIDomain& domain=pair.second;
 
-                    auto sizeElement =new TiXmlElement("edge_size");
+                    tinyxml2::XMLElement* sizeElement = document.NewElement("edge_size");
                     rmElement->LinkEndChild(sizeElement);
-                    sizeElement->SetAttribute("domain",domainName);
-                    sizeElement->SetDoubleAttribute("size",domain.edgeSize);
+                    sizeElement->SetAttribute("domain",domainName.c_str());
+                    sizeElement->DoubleAttribute("size",domain.edgeSize);
                 }
             }
 
-            auto outputsElement=new TiXmlElement("outputs");
+            tinyxml2::XMLElement* outputsElement = document.NewElement("outputs");
             eqElement->LinkEndChild(outputsElement);
 
-            auto spatialElement=new TiXmlElement("spatial");
+            tinyxml2::XMLElement* spatialElement = document.NewElement("spatial");
             outputsElement->LinkEndChild(spatialElement);
             foreach ( QString outName , eq.getOutputNames() )
             {
-                auto oElement=new TiXmlElement("output");
+                tinyxml2::XMLElement* oElement = document.NewElement("output");
                 spatialElement->LinkEndChild(oElement);
-                oElement->SetAttribute("name",outName.toStdString());
+                oElement->SetAttribute("name",outName.toStdString().c_str());
             }
 
-            auto bcsElement=new TiXmlElement("boundary_conditions");
+            tinyxml2::XMLElement* bcsElement = document.NewElement("boundary_conditions");
             eqElement->LinkEndChild(bcsElement);
             for ( auto& f : eq.faceBCs )
             {
                 sv4guisvFSIbcClass& bc=f.second;
 
-                auto faceElement = new TiXmlElement("face");
+                tinyxml2::XMLElement* faceElement = document.NewElement("face");
                 bcsElement->LinkEndChild(faceElement);
-                faceElement->SetAttribute("name",bc.faceName.toStdString());
-                faceElement->SetAttribute("group",bc.bcGrp.toStdString());
-                faceElement->SetAttribute("type",bc.bcType.toStdString());
+                faceElement->SetAttribute("name",bc.faceName.toStdString().c_str());
+                faceElement->SetAttribute("group",bc.bcGrp.toStdString().c_str());
+                faceElement->SetAttribute("type",bc.bcType.toStdString().c_str());
 
                 if ( bc.bcType == "Steady" )
-                    faceElement->SetDoubleAttribute("value",bc.g);
+                    faceElement->DoubleAttribute("value",bc.g);
                 else if ( bc.bcType == "Unsteady" )
-                    faceElement->SetAttribute("file",bc.gtFile.toStdString());
+                    faceElement->SetAttribute("file",bc.gtFile.toStdString().c_str());
                 else if ( bc.bcType == "Resistance" )
-                    faceElement->SetDoubleAttribute("value",bc.r);
+                    faceElement->DoubleAttribute("value",bc.r);
                 else if ( bc.bcType == "General" )
-                    faceElement->SetAttribute("file",bc.gmFile.toStdString());
+                    faceElement->SetAttribute("file",bc.gmFile.toStdString().c_str());
                 else if ( bc.bcType == "Projection" )
-                    faceElement->SetAttribute("projection",bc.projectionFaceName.toStdString());
+                    faceElement->SetAttribute("projection",bc.projectionFaceName.toStdString().c_str());
 
-                faceElement->SetAttribute("profile",bc.profile.toStdString());
+                faceElement->SetAttribute("profile",bc.profile.toStdString().c_str());
                 if(bc.profile== "User_defined" )
-                    faceElement->SetAttribute("profile_file",bc.gxFile.toStdString());
+                    faceElement->SetAttribute("profile_file",bc.gxFile.toStdString().c_str());
 
                 faceElement->SetAttribute("zperm",bc.zperm?"true":"false");
                 faceElement->SetAttribute("flux",bc.flux?"true":"false");
 
                 faceElement->SetAttribute("impose_integral", bc.imposeIntegral?"true":"false");
-                faceElement->SetAttribute("effective_direction", bc.effectiveDirection.toStdString());
+                faceElement->SetAttribute("effective_direction", bc.effectiveDirection.toStdString().c_str());
             }
 
         }
 
     }
 
-    if (document.SaveFile(fileName) == false)
+    if (document.SaveFile(fileName.c_str()) == false)
     {
         mitkThrow() << "Could not write model to " << fileName;
     }

@@ -144,7 +144,7 @@ option(SV_USE_TETGEN "Enable Tetgen Meshing Plugin" ON)
 
 option(SV_USE_TETGEN_ADAPTOR "Option to use open source mesh adaption" ON)
 
-option(SV_USE_TINYXML "Use TinyXML" ON)
+option(SV_USE_tinyxml2 "Use TinyXML" ON)
 
 option(SV_USE_PYTHON "Use Python" ON)
 

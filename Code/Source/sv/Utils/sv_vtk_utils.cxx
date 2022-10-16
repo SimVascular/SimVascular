@@ -267,7 +267,7 @@ int VtkUtils_FixTopology( vtkPolyData *pd, double tol )
   int numNewCells, newCellIter;
   vtkIdType *newCells;
   vtkIdType npts;
-  vtkIdType *pts;
+  const vtkIdType *pts = new vtkIdType;
   int oldId, mappedId;
   vtkPoints *compressedPts;
 
@@ -534,7 +534,8 @@ int VtkUtils_GetAllLines( vtkPolyData *pd, int *numLines, vtkIdType **lines )
 {
   vtkCellArray *pdLines;
   int size, i;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts = new vtkIdType;
   int pos = 0;
 
   (*numLines) = pd->GetNumberOfLines();
@@ -577,7 +578,8 @@ int VtkUtils_GetAllPolys( vtkPolyData *pd, int *numPgns, vtkIdType **pgns )
 {
   vtkCellArray *pdPgns;
   int size, i;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts = new vtkIdType;
   int pos = 0;
 
   (*numPgns) = pd->GetNumberOfPolys();
@@ -614,7 +616,8 @@ int VtkUtils_GetAllPolys( vtkPolyData *pd, int *numPgns, vtkIdType **pgns )
 int VtkUtils_GetLines( vtkPolyData *pd, vtkIdType **lines, int *numLines )
 {
   vtkCellArray *pdLines;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts = new vtkIdType;
   int size;
   int pos = 0;
 
@@ -1203,7 +1206,7 @@ vtkCellArray *VtkUtils_DeepCopyCells( vtkCellArray *cellsIn )
 {
   vtkCellArray *cellsOut;
   vtkIdType npts;
-  vtkIdType *idlist;
+  const vtkIdType *idlist = new vtkIdType;
 
   if ( cellsIn == NULL ) {
     return NULL;

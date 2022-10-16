@@ -156,11 +156,13 @@ macro(simvascular_external _pkg)
     	dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
     	# This get many of them
     	include_directories(${${_pkg}_INCLUDE_DIR})
+      message(STATUS ${${_pkg}_INCLUDE_DIR})
     endif()
     if( ${_pkg}_INCLUDE_DIRS )
       dev_message("Including dir: ${${_pkg}_INCLUDE_DIRS}")
     	# This get many of them
       include_directories(${${_pkg}_INCLUDE_DIRS})
+      message(STATUS ${${_pkg}_INCLUDE_DIRS})
     endif()
   endif()
 
@@ -1143,6 +1145,8 @@ macro(simvascular_add_new_external proj version use shared dirname)
   set(${proj}_VERSION "${version}" CACHE TYPE STRING)
   simvascular_get_major_minor_patch_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION ${proj}_PATCH_VERSION)
   set(SV_EXT_${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${dirname}-${${proj}_VERSION})
+
+  message(STATUS ${proj})
 
   # Install rules
   set(SV_EXTERNALS_${proj}_INSTALL_PREFIX ${SV_EXTERNALS_INSTALL_PREFIX}/${dirname}-${${proj}_VERSION})

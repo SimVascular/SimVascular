@@ -56,7 +56,7 @@ sv4guiMitksvFSIObjectFactory::~sv4guiMitksvFSIObjectFactory()
 
 mitk::Mapper::Pointer sv4guiMitksvFSIObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
 {
-  mitk::Mapper::Pointer newMapper=NULL;
+  mitk::Mapper::Pointer newMapper=nullptr;
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
@@ -87,11 +87,11 @@ void sv4guiMitksvFSIObjectFactory::SetDefaultProperties(mitk::DataNode* node)
   }
 }
 
-const char* sv4guiMitksvFSIObjectFactory::GetFileExtensions()
+std::string sv4guiMitksvFSIObjectFactory::GetFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
-  return fileExtension.c_str();
+  return fileExtension;
 }
 
 mitk::CoreObjectFactoryBase::MultimapType sv4guiMitksvFSIObjectFactory::GetFileExtensionsMap()
@@ -108,11 +108,11 @@ void sv4guiMitksvFSIObjectFactory::CreateFileExtensionsMap()
 {
 }
 
-const char* sv4guiMitksvFSIObjectFactory::GetSaveFileExtensions()
+std::string sv4guiMitksvFSIObjectFactory::GetSaveFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);
-  return fileExtension.c_str();
+  return fileExtension;
 }
 
 void sv4guiMitksvFSIObjectFactory::RegisterIOFactories()

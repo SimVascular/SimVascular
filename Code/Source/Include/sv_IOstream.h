@@ -32,10 +32,8 @@
 #ifndef SU_cvIOstream_H
 #define SU_cvIOstream_H
 
-// for now vtk decides if we use ansi C++
 #include "vtkConfigure.h"
-// Handle changes for ANSI C++ ---------------------------------------------
-#ifdef VTK_USE_ANSI_STDLIB
+
 #include <iostream>
 #include <strstream>
 #include <fstream>
@@ -52,16 +50,5 @@ using std::istrstream;
 using std::ofstream;
 using std::ifstream;
 using std::ws;
-
-// otherwise, non-ANSI -----------------------------------------------------
-#else
-#include <iostream.h>
-#if defined(_MSC_VER)
-#include <strstrea.h>
-#else
-#include <strstream.h>
-#endif
-#include <fstream.h>
-#endif
 
 #endif

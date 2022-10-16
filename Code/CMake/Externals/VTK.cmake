@@ -76,7 +76,7 @@ simvascular_external(${proj}
 # include(${${proj}_USE_FILE})
 
 # We have to manually add vtkCommonCoreTCL to the list of libraries
-set(${proj}_LIBRARIES ${${proj}_LIBRARIES} vtkCommonCoreTCL)
+# set(${proj}_LIBRARIES ${${proj}_LIBRARIES} vtkCommonCoreTCL)
 set(vtkCommonCoreTCL_LIBRARIES "")
 if(NOT SV_INSTALL_${proj}_TCL_DIR)
   set(SV_INSTALL_${proj}_TCL_DIR ${SV_EXT_${proj}_BIN_DIR}/lib/tcltk/vtk-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION})
