@@ -239,7 +239,8 @@ int vtkSVGeneralUtils::GetEdgePolyData(vtkPolyData *pd, vtkPolyData *edgePd)
   for (int i=0; i<numCells; i++)
   {
     // Get cellpoints
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -312,7 +313,8 @@ int vtkSVGeneralUtils::CheckSurface(vtkPolyData *pd)
 
   for (int i=0; i<numPolys; i++)
   {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
     if (npts != 3)
     {
@@ -359,7 +361,8 @@ int vtkSVGeneralUtils::CheckSurface(vtkPolyData *pd,
   numNonManifoldEdges = 0;
   for (int i=0; i<numPolys; i++)
   {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
     if (npts != 3)
     {
@@ -450,7 +453,7 @@ int vtkSVGeneralUtils::GiveIds(vtkPolyData *pd,
   // Send through Id filter
   vtkNew(vtkIdFilter, ider);
   ider->SetInputData(pd);
-  ider->SetIdsArrayName(arrayName.c_str());
+  ider->SetPointIdsArrayName(arrayName.c_str());
   ider->Update();
 
   pd->DeepCopy(ider->GetOutput());
@@ -492,7 +495,8 @@ int vtkSVGeneralUtils::IteratePoint(vtkPolyData *pd, int &pointId, int &prevCell
   prevCellId = cellId;
 
   // Get cell points
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
   pd->GetCellPoints(prevCellId, npts, pts);
 
   // Get next point which isnt the pointId we started with
@@ -663,7 +667,8 @@ int vtkSVGeneralUtils::GetNeighborsCellsValues(vtkPolyData *pd, std::string arra
   valList->Reset();
 
   // Get cell points
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
   pd->GetCellPoints(cellId, npts, pts);
 
   // Loop through points
@@ -1029,7 +1034,8 @@ int vtkSVGeneralUtils::GetPointNeighbors(vtkIdType p0,
     vtkIdType cellId = cellIdList->GetId(i);
 
     // Get points of touching cell
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(cellId, npts, pts);
 
     // Loop through neighbor cell points
@@ -1118,7 +1124,8 @@ int vtkSVGeneralUtils::CreateEdgeTable(vtkPolyData *pd,
   for (int i=0; i<numTris; i++)
   {
     // Get cellpoints
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -1188,7 +1195,8 @@ int vtkSVGeneralUtils::ComputeHarmonicEdgeWeight(vtkPolyData *pd,
   for (int i=0; i<2; i++)
   {
     // If cell id != -1 (i.e. not boundary), then its on!
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     if (cellIds[i] != -1)
     {
       // Get Cell points
@@ -1247,7 +1255,8 @@ int vtkSVGeneralUtils::ConvertFieldToPolyData(vtkPolyData *inPd, std::string fie
   for (int i=0; i<numCells; i++)
   {
     // Get cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     inPd->GetCellPoints(i, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -1557,7 +1566,8 @@ int vtkSVGeneralUtils::SeparateLoops(vtkPolyData *pd,
     pd->GetPointCells(startPt,cellIds);
 
     nextCell = cellIds->GetId(0);
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     int testPt = -1;
     pd->GetCellPoints(nextCell, npts, pts);
     if (pts[0] == startPt)
@@ -1835,7 +1845,8 @@ int vtkSVGeneralUtils::GetPolyDataAngles(vtkPolyData *pd, vtkFloatArray *cellAng
   // Loop through cells
   for (int i=0; i<numCells; i++)
   {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
     for (int j=0; j<3; j++)
     {
@@ -1888,7 +1899,8 @@ int vtkSVGeneralUtils::GetRegions(vtkPolyData *pd, std::string arrayName,
   {
     int directNeiCount = 0;
     std::vector<int> neighborCells;
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -2011,7 +2023,8 @@ int vtkSVGeneralUtils::GetRegions(vtkPolyData *pd, std::string arrayName,
     for (int j=0; j<allRegions[i].NumberOfElements; j++)
     {
       int cellId = allRegions[i].Elements[j];
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
       pd->GetCellPoints(cellId, npts, pts);
       for (int k=0; k<npts; k++)
       {
@@ -2177,7 +2190,8 @@ int vtkSVGeneralUtils::GetSpecificRegions(vtkPolyData *pd, std::string arrayName
   {
     int directNeiCount = 0;
     std::vector<int> neighborCells;
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -2319,7 +2333,8 @@ int vtkSVGeneralUtils::GetSpecificRegions(vtkPolyData *pd, std::string arrayName
     for (int j=0; j<allRegions[i].NumberOfElements; j++)
     {
       int cellId = allRegions[i].Elements[j];
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
       pd->GetCellPoints(cellId, npts, pts);
       for (int k=0; k<npts; k++)
       {
@@ -2492,7 +2507,8 @@ int vtkSVGeneralUtils::GetCCWPoint(vtkPolyData *pd, const int pointId, const int
 	int pointCCW;
 	int position = 0;
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
   pd->GetCellPoints(cellId, npts, pts);
 	for (int i = 0; i < npts; i++)
 	{
@@ -2515,7 +2531,8 @@ int vtkSVGeneralUtils::GetCWPoint(vtkPolyData *pd, const int pointId, const int 
 	int pointCCW;
 	int position = 0;
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
   pd->GetCellPoints(cellId, npts, pts);
 	for (int i = 0; i < npts; i++)
 	{
@@ -2771,7 +2788,8 @@ int vtkSVGeneralUtils::SmoothBoundaries(vtkPolyData *pd, std::string arrayName)
         if (count[0] == 2 || count[1] == 2)
         {
           vtkNew(vtkIdList, uniquePoints);
-          vtkIdType npts, *pts;
+          vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
           if (count[0] == 2 && count[1] == 2)
           {
             for (int j=0; j<2; j++)
@@ -3012,7 +3030,8 @@ int vtkSVGeneralUtils::SmoothSpecificBoundaries(vtkPolyData *pd, std::string arr
         if (count[0] == 2 || count[1] == 2)
         {
           vtkNew(vtkIdList, uniquePoints);
-          vtkIdType npts, *pts;
+          vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
           if (count[0] == 2 && count[1] == 2)
           {
             for (int j=0; j<2; j++)
@@ -3196,7 +3215,8 @@ int vtkSVGeneralUtils::GetPointEdgeCells(vtkPolyData *pd, std::string arrayName,
 {
   int sameValue = pd->GetCellData()->GetArray(arrayName.c_str())->GetTuple1(cellId);
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
   pd->GetCellPoints(cellId, npts, pts);
 
   for (int i=0; i<npts; i++)
@@ -3377,7 +3397,8 @@ int vtkSVGeneralUtils::GetCellRingNeighbors(vtkPolyData *pd, vtkIdList *cellIds,
     {
       // Get neighbor cell points
       int neiCellId = neighbors[i][j];
-      vtkIdType *pts, npts;
+      vtkIdType npts;
+      const vtkIdType* pts = new vtkIdType;
       pd->GetCellPoints(neiCellId, npts, pts);
 
       // Loop around cell points
@@ -3462,7 +3483,8 @@ int vtkSVGeneralUtils::GetCellDirectNeighbors(vtkPolyData *pd,
     std::vector<int> neighborCells;
 
     // Get cell points
-    vtkIdType *pts, npts;
+    vtkIdType npts;
+    const vtkIdType* pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
 
     // Get cell edge neighbors
@@ -3527,7 +3549,8 @@ int vtkSVGeneralUtils::CorrectCellBoundaries(vtkPolyData *pd, std::string cellAr
       for (int j=0; j<count; j++)
       {
         // Get Cell points
-        vtkIdType npts, *pts;
+        vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
         pd->GetCellPoints(queue->GetId(j), npts, pts);
 
         // Loop through cell points
@@ -3575,7 +3598,8 @@ int vtkSVGeneralUtils::CorrectCellBoundaries(vtkPolyData *pd, std::string cellAr
       vtkNew(vtkIdList, neiTmpIds);
 
       // Get cell points
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
       pd->GetCellPoints(i, npts, pts);
 
       // Loop through cell points
@@ -3677,7 +3701,8 @@ int vtkSVGeneralUtils::CorrectSpecificCellBoundaries(vtkPolyData *pd, std::strin
       for (int j=0; j<count; j++)
       {
         // Get Cell points
-        vtkIdType npts, *pts;
+        vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
         pd->GetCellPoints(queue->GetId(j), npts, pts);
 
         // Loop through cell points
@@ -3725,7 +3750,8 @@ int vtkSVGeneralUtils::CorrectSpecificCellBoundaries(vtkPolyData *pd, std::strin
       vtkNew(vtkIdList, neiTmpIds);
 
       // Get cell points
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType* pts = new vtkIdType;
       pd->GetCellPoints(i, npts, pts);
 
       // Loop through cell points
