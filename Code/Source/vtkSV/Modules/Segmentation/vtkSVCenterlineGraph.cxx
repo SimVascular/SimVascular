@@ -216,7 +216,8 @@ int vtkSVCenterlineGraph::BuildGraph()
   }
 
   // Check to see if we need to flip the first line
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   this->Lines->BuildLinks();
   int cellId = this->Lines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(this->Root->GroupId);
   this->Lines->GetCellPoints(cellId, npts, pts);
@@ -355,7 +356,8 @@ int vtkSVCenterlineGraph::GrowGraph(vtkSVCenterlineGCell *parent)
 int vtkSVCenterlineGraph::GetConnectingLineGroups(const int groupId, std::vector<int> &connectingGroups)
 {
   // Get first cell points
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   int cellId = this->Lines->GetCellData()->GetArray(this->GroupIdsArrayName)->LookupValue(groupId);
   this->Lines->GetCellPoints(cellId, npts, pts);
 
@@ -840,7 +842,8 @@ int vtkSVCenterlineGraph::GetGraphPoints()
      this->GroupIdsArrayName)->LookupValue(gCell->GroupId);
 
     // Get Cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     this->Lines->GetCellPoints(cellId, npts, pts);
 
     double length = 0.0;
@@ -1315,7 +1318,8 @@ int vtkSVCenterlineGraph::UpdateBranchReferenceDirections()
      this->GroupIdsArrayName)->LookupValue(gCell->GroupId);
 
     // Get Cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     this->Lines->GetCellPoints(cellId, npts, pts);
 
     int isTerminating = 0;
@@ -1598,7 +1602,8 @@ int vtkSVCenterlineGraph::RotateVecAroundLine(const double inVec[3],
 // ----------------------
 int vtkSVCenterlineGraph::FlipLinePoints(vtkPolyData *pd, const int cellId)
 {
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   pd->GetCellPoints(cellId, npts, pts);
 
   double *tmpPts = new double[npts];

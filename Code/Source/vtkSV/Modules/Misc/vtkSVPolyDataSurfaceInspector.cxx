@@ -93,7 +93,8 @@ int vtkSVPolyDataSurfaceInspector::RequestData(
   for (int i=0; i<numPolys; i++)
   {
     // get cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     input->GetCellPoints(i, npts, pts);
     if (npts != 3)
     {

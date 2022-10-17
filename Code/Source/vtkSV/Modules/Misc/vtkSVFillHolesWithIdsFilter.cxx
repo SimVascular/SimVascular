@@ -99,7 +99,8 @@ int vtkSVFillHolesWithIdsFilter::RequestData(
   vtkDebugMacro(<<"Executing hole fill operation");
 
   // check the input, build data structures as necessary
-  vtkIdType numPts, npts, *pts;
+  vtkIdType numPts, npts;
+  const vtkIdType *pts = new vtkIdType;
   vtkPoints *inPts=input->GetPoints();
   vtkIdType numPolys = input->GetNumberOfPolys();
   vtkIdType numStrips = input->GetNumberOfStrips();

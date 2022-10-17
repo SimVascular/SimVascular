@@ -457,7 +457,8 @@ int vtkSVGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   }
 
   // Time to set our cells in sphere radius
-  vtkIdType npts,*pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   double centroid[3];
   for (vtkIdType cellId=0;cellId < pd->GetNumberOfCells();cellId++)
   {

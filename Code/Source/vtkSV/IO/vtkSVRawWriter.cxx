@@ -73,7 +73,8 @@ void vtkSVRawWriter::WriteData()
   vtkCellArray *cells;
   vtkPolyData *input = this->GetInput();
 
-  vtkIdType npts, *index;
+  vtkIdType npts;
+  const vtkIdType* index = new vtkIdType;
   input->BuildLinks();
   input->GetCellPoints(0, npts, index);
   if (npts == 2)
@@ -121,7 +122,7 @@ void vtkSVRawWriter::WriteRawFile(
   double v[3];
   int top[2];
   vtkIdType npts = 0;
-  vtkIdType *indx = 0;
+  const vtkIdType* indx = new vtkIdType;
 
   if ((fp = fopen(this->FileName, "w")) == NULL)
   {

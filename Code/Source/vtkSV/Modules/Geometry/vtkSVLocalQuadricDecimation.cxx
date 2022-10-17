@@ -226,7 +226,8 @@ int vtkSVLocalQuadricDecimation::RequestData(
   vtkPointData *pointData;
   vtkIdType endPtIds[2];
   vtkIdList *outputCellList;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   vtkIdType numDeletedTris=0;
 
   // check some assuptiona about the data
@@ -664,7 +665,8 @@ void vtkSVLocalQuadricDecimation::AddBoundaryConstraints(void)
   double *QEM;
   vtkIdType  cellId;
   int i, j;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   double t0[3], t1[3], t2[3];
   double e0[3], e1[3], n[3], c, d, w;
   vtkIdList *cellIds = vtkIdList::New();
@@ -1559,7 +1561,8 @@ void vtkSVLocalQuadricDecimation::CorrectPointData(vtkPolyData *object)
 // ----------------------
 int vtkSVLocalQuadricDecimation::SetFixedPoints(vtkPolyData *object, int numTris)
 {
-  vtkIdType npts,*pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   if (this->UseCellArray)
   {
     numTris = 0;

@@ -1121,7 +1121,8 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
   double dist;
   double value;
   double factor;
-  vtkIdType npts,*pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   vtkIdType pointId,cellId;
   double min = 0;
   double range[2];
@@ -1587,7 +1588,8 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd, int meshInfo[3])
 int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size)
 {
   vtkIdType pointId, cellId;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   vtkSmartPointer<vtkIntArray> regionarray =
     vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkDoubleArray> meshSizeArray =

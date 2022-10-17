@@ -232,7 +232,8 @@ int vtkSVCenterlineParallelTransportVectors::RunFilter()
      this->GroupIdsArrayName)->LookupValue(gCell->GroupId);
 
     // Get Cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     this->WorkPd->GetCellPoints(cellId, npts, pts);
 
     int isTerminating = 0;

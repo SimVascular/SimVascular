@@ -480,7 +480,8 @@ int vtkSVCenterlineMerger::RequestData(vtkInformation *vtkNotUsed(request), vtkI
   outputLines->InitTraversal();
   for (i=0; i<numberOfMergedCells; i++)
     {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     npts = 0;
     pts = NULL;
     outputLines->GetNextCell(npts,pts);

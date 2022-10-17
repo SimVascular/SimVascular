@@ -150,7 +150,7 @@ int vtkSVPolyDataRawReader::RequestData(
     locator->InitPointInsertion(mergedPts, newPts->GetBounds());
 
     int nextCell = 0;
-    vtkIdType *pts = 0;
+    const vtkIdType* pts = new vtkIdType;
     vtkIdType npts;
     for (newPolys->InitTraversal(); newPolys->GetNextCell(npts, pts);)
     {

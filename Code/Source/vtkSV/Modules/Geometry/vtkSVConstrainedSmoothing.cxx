@@ -266,7 +266,8 @@ int vtkSVConstrainedSmoothing::SetFixedPoints(vtkPolyData *pd)
 
   if (this->UseCellArray)
   {
-    vtkIdType npts,*pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     for (vtkIdType cellId = 0;cellId < numCells;cellId++)
     {
       pd->GetCellPoints(cellId,npts,pts);
@@ -430,7 +431,8 @@ int vtkSVConstrainedSmoothing::ConstainedSmooth(vtkPolyData *original,vtkPolyDat
 // ----------------------
 int vtkSVConstrainedSmoothing::GetAttachedPoints(vtkPolyData *pd, vtkIdType nodeId,std::set<vtkIdType> *attachedPts)
 {
-  vtkIdType npts,*pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   vtkNew(vtkIdList, pointCells);
   //Do Before function call!
   pd->GetPointCells(nodeId,pointCells);

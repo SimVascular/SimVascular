@@ -1380,7 +1380,8 @@ bool sv4guiModelUtils::CheckPolyDataSurface(vtkPolyData* pd, std::string &msg)
     int numNonManifoldEdges=0;
     for (int i=0; i<numPolys; i++)
     {
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
       pd->GetCellPoints(i, npts, pts);
       if (npts != 3)
       {

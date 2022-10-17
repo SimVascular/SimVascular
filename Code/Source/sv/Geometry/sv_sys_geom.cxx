@@ -3384,7 +3384,8 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
   else
   {
     double centroid[3];
-    vtkIdType npts,*pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     int numCells = tmp->GetNumberOfCells();
     if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != SV_OK)
     {

@@ -288,7 +288,8 @@ int vtkSVPolyDataEdgeSplitter::SplitCellsAroundPoint(vtkPolyData *pd, int ptId)
     int cellId = pointCells->GetId(i);
 
     // Get Cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     pd->GetCellPoints(cellId, npts, pts);
     for (int j=0; j<npts; j++)
     {
@@ -352,7 +353,8 @@ int vtkSVPolyDataEdgeSplitter::SplitEdge(vtkPolyData *pd, int cellId, int ptId0,
     int splitCellId = edgeCells->GetId(i);
 
     // get cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     pd->GetCellPoints(splitCellId, npts, pts);
 
     // Loop through points

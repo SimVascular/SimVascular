@@ -172,7 +172,8 @@ int vtkSVLocalLinearSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSub
     }
   }
   int numPoints = pd->GetNumberOfPoints();
-  vtkIdType npts,*pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   if (this->UsePointArray)
   {
     for (vtkIdType cellId=0;cellId < numCells;cellId++)

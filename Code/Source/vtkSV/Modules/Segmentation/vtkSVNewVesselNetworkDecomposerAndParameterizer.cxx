@@ -538,7 +538,8 @@ int vtkSVNewVesselNetworkDecomposerAndParameterizer::MergeCenterlines()
 
     for (int i=0; i<this->MergedCenterlines->GetNumberOfCells(); i++)
     {
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
       this->MergedCenterlines->GetCellPoints(i, npts, pts);
 
       vtkNew(vtkIdList, point0CellIds);

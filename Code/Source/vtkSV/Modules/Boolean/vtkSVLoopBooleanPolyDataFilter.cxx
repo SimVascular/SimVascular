@@ -1601,7 +1601,8 @@ void vtkSVLoopBooleanPolyDataFilter::Impl::ThresholdRegions(vtkPolyData **surfac
     for (int j=0; j<numCells; j++)
       {
       int value = this->BooleanArray[i]->GetValue(j);
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
       this->Mesh[i]->GetCellPoints(j, npts, pts);
       if (value < 0)
         {

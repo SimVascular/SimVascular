@@ -318,7 +318,7 @@ void vtkSVGetBoundaryFaces::FindBoundaryRegion(int reg, int start, double &area)
   //Variables used in function
   int i;
   vtkIdType j,k,l,cellId;
-  vtkIdType *pts = 0;
+  const vtkIdType *pts = new vtkIdType;
   vtkIdType npts = 0;
   vtkIdType numNei, nei, p1, p2, nIds, neis;
 
@@ -406,7 +406,7 @@ void vtkSVGetBoundaryFaces::FindBoundaryRegionTipToe(int reg, double &area)
   //Variables used in function
   int i;
   vtkIdType j,k,l;
-  vtkIdType *pts = 0;
+  const vtkIdType *pts = new vtkIdType;
   vtkIdType npts = 0;
   vtkIdType cellId;
   vtkIdType numNei, nei, p1, p2, nIds, neiId;
@@ -585,7 +585,8 @@ void vtkSVGetBoundaryFaces::SetBoundaryArrays()
 int vtkSVGetBoundaryFaces::AddCellArea(const int cellId, double &area)
 {
   // Get cell points
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts = new vtkIdType;
   this->WorkPd->GetCellPoints(cellId, npts, pts);
 
   // Get points

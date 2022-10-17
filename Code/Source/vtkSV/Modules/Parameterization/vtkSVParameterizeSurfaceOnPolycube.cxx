@@ -452,7 +452,8 @@ int vtkSVParameterizeSurfaceOnPolycube::RunFilter()
   for (int i=0; i<tmpPd->GetNumberOfCells(); i++)
   {
     int getCellId = realCellIds->LookupValue(i);
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     tmpPd->GetCellPoints(getCellId, npts, pts);
 
     vtkNew(vtkIdList, newPointIds);

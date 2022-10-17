@@ -1186,7 +1186,8 @@ int vtkSVSphericalMapper::CalculateCircleLength(vtkPolyData *lines,
   length = 0.0;
   for (int i=0; i<numLines; i++)
   {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     lines->GetCellPoints(i, npts, pts);
 
     double pt0[3], pt1[3];
@@ -1220,7 +1221,8 @@ int vtkSVSphericalMapper::CalculateSquareEdgeLengths(vtkPolyData *lines,
   for (int i=0; i<markerPts->GetNumberOfTuples(); i++)
   {
     int lastPt  = markerPts->GetValue(i);
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     int checkPt = -1;
     while (checkPt != lastPt)
     {
@@ -1255,7 +1257,8 @@ int vtkSVSphericalMapper::SetLoopOnUnitCircle(vtkPolyData *lines,
   double currLength = 0.0;
   for (int i=0; i<numLines; i++)
   {
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     lines->GetCellPoints(i, npts, pts);
 
     double pt0[3], pt1[3];
@@ -1307,7 +1310,8 @@ int vtkSVSphericalMapper::SetCircleBoundary(vtkPolyData *lines,
     double currLength = 0.0;
     int lastPt  = markerPts->GetValue(i);
     int dir     = markerDirs->GetValue(i);
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     while (checkPt != lastPt)
     {
       lines->GetCellPoints(currCell, npts, pts);
@@ -1426,7 +1430,8 @@ int vtkSVSphericalMapper::SetCubeBoundary(vtkPolyData *lines,
     double currLength = 0.0;
     int lastPt  = markerPts->GetValue(i);
     int dir     = markerDirs->GetValue(i);
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     while (checkPt != lastPt)
     {
       lines->GetCellPoints(currCell, npts, pts);

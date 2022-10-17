@@ -901,7 +901,8 @@ int vtkSVLocalSmoothPolyDataFilter::SetFixedPoints(vtkPolyData *pd,int *fixedPoi
   }
   if (this->UseCellArray)
   {
-    vtkIdType npts,*pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     for (vtkIdType cellId = 0;cellId < numCells; cellId ++)
     {
       pd->GetCellPoints(cellId,npts,pts);

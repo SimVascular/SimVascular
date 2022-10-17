@@ -280,7 +280,8 @@ int vtkSVCenterlinesBasedNormals::RunFilter()
   //this->WorkPd->BuildLinks();
   //for (int i=0; i<numCells; i++)
   //{
-  //  vtkIdType npts, *pts;
+  //  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   //  centerlinesWorkPd->GetCellPoints(i, npts, pts);
 
   //  vtkNew(vtkIdList, pt0Cells);
@@ -341,7 +342,8 @@ int vtkSVCenterlinesBasedNormals::RunFilter()
   //  int lineType = lineIndicator->GetTuple1(i);
 
   //  // cell points
-  //  vtkIdType npts, *pts;
+  //  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   //  centerlinesWorkPd->GetCellPoints(i, npts, pts);
 
   //  double startX[3];
@@ -394,7 +396,8 @@ int vtkSVCenterlinesBasedNormals::RunFilter()
   //  int lineType = lineIndicator->GetTuple1(i);
 
   //  // cell points
-  //  vtkIdType npts, *pts;
+  //  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   //  centerlinesWorkPd->GetCellPoints(i, npts, pts);
 
   //  // start vector
@@ -656,7 +659,8 @@ int vtkSVCenterlinesBasedNormals::ComputeRotationMatrix(const double vx[3],
 // ----------------------
 int vtkSVCenterlinesBasedNormals::FlipLinePoints(vtkPolyData *pd, const int cellId)
 {
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   pd->GetCellPoints(cellId, npts, pts);
 
   double *tmpPts = new double[npts];

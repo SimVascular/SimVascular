@@ -136,7 +136,8 @@ void vtkSVCenterlineBranchSplitter::ComputeCenterlineSplitting(vtkPolyData* inpu
     int alreadyDeleted = deletedCellArray->GetTuple1(i);
     if (!alreadyDeleted)
     {
-      vtkIdType npts, *pts;
+      vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
       cleanInput->GetCellPoints(i, npts, pts);
 
       vtkIdList *cellPtIds = vtkIdList::New();

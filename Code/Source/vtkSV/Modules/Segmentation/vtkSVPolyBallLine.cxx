@@ -128,7 +128,8 @@ double vtkSVPolyBallLine::ComplexDot(double x[4], double y[4])
 // ----------------------
 void vtkSVPolyBallLine::PreprocessInputForFastEvaluate()
 {
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   double pt[3];
 
   this->Input->BuildCells();
@@ -214,7 +215,8 @@ void vtkSVPolyBallLine::BuildLocator()
   vtkNew(vtkPoints, bifurcationPoints);
 
   int ptId0, ptIdN;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   std::vector<int> pointInserted(this->Input->GetNumberOfPoints(), 0);
   vtkNew(vtkIdList, pointCellIds);
   for (int i=0; i<this->Input->GetNumberOfCells(); i++)
@@ -270,7 +272,8 @@ void vtkSVPolyBallLine::BuildLocator()
 double vtkSVPolyBallLine::EvaluateFunction(double x[3])
 {
   vtkIdType i, k;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
   double polyballFunctionValue, minPolyBallFunctionValue;
   double point0[3], point1[3];
   double radius0, radius1;

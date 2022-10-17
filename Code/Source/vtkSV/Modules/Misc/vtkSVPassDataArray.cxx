@@ -348,7 +348,8 @@ int vtkSVPassDataArray::PassInformationToCells(vtkPolyData *sourcePd, vtkPolyDat
   for (int i=0; i<numCells; i++)
   {
     // Get cell points
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
     targetPd->GetCellPoints(i, npts, pts);
 
     // If using cell centroid, comput the centroid

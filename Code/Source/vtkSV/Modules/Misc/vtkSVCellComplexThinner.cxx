@@ -203,7 +203,8 @@ int vtkSVCellComplexThinner::RunFilter()
   std::vector<int> tmpDeletedCells;
   std::vector<int> tmpDeletedEdges;
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+const vtkIdType *pts = new vtkIdType;
 
   int loc;
   int ptId0;
