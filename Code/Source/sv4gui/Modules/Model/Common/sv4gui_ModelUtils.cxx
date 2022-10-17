@@ -1381,7 +1381,7 @@ bool sv4guiModelUtils::CheckPolyDataSurface(vtkPolyData* pd, std::string &msg)
     for (int i=0; i<numPolys; i++)
     {
       vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+      const vtkIdType *pts = new vtkIdType;
       pd->GetCellPoints(i, npts, pts);
       if (npts != 3)
       {

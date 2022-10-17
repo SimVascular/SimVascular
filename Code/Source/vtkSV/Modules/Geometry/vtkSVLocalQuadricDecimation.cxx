@@ -227,7 +227,7 @@ int vtkSVLocalQuadricDecimation::RequestData(
   vtkIdType endPtIds[2];
   vtkIdList *outputCellList;
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
   vtkIdType numDeletedTris=0;
 
   // check some assuptiona about the data
@@ -503,7 +503,8 @@ void vtkSVLocalQuadricDecimation::InitializeQuadrics(vtkIdType numPts)
   vtkIdType ptId;
   int i, j;
   vtkCellArray *polys;
-  vtkIdType npts, *pts=NULL;
+  vtkIdType npts;
+  const vtkIdType *pts = new vtkIdType;
   double point0[3], point1[3], point2[3];
   double n[3];
   double tempP1[3], tempP2[3],  d, triArea2;
@@ -666,7 +667,7 @@ void vtkSVLocalQuadricDecimation::AddBoundaryConstraints(void)
   vtkIdType  cellId;
   int i, j;
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
   double t0[3], t1[3], t2[3];
   double e0[3], e1[3], n[3], c, d, w;
   vtkIdList *cellIds = vtkIdList::New();
@@ -764,8 +765,9 @@ void vtkSVLocalQuadricDecimation::AddQuadric(vtkIdType oldPtId, vtkIdType newPtI
 void vtkSVLocalQuadricDecimation::FindAffectedEdges(vtkIdType p1Id, vtkIdType p2Id,
                                               vtkIdList *edges)
 {
-  unsigned short ncells;
-  vtkIdType *cells, npts, *pts, edgeId;
+  vtkIdType ncells;
+  vtkIdType *cells, npts, edgeId; 
+  const vtkIdType *pts = new vtkIdType;
   unsigned short i, j;
 
   edges->Reset();
@@ -1196,7 +1198,8 @@ double vtkSVLocalQuadricDecimation::ComputeCost2(vtkIdType edgeId, double *x)
 int vtkSVLocalQuadricDecimation::CollapseEdge(vtkIdType pt0Id, vtkIdType pt1Id)
 {
   int j, numDeleted=0;
-  vtkIdType i, npts, *pts, cellId;
+  vtkIdType i, npts, cellId;
+  const vtkIdType *pts = new vtkIdType;
 
   this->Mesh->GetPointCells(pt0Id, this->CollapseCellIds);
   for (i = 0; i < this->CollapseCellIds->GetNumberOfIds(); i++)
@@ -1296,8 +1299,9 @@ int vtkSVLocalQuadricDecimation::TrianglePlaneCheck(const double t0[3],
 int vtkSVLocalQuadricDecimation::IsGoodPlacement(vtkIdType pt0Id, vtkIdType pt1Id,
 const double *x)
 {
-  unsigned short ncells, i;
-  vtkIdType npts, *pts,  ptId, *cells;
+  vtkIdType ncells, i;
+  vtkIdType npts, ptId, *cells;
+  const vtkIdType *pts = new vtkIdType;
   double pt1[3], pt2[3], pt3[3];
 
   this->Mesh->GetPointCells(pt0Id, ncells, cells);
@@ -1562,7 +1566,7 @@ void vtkSVLocalQuadricDecimation::CorrectPointData(vtkPolyData *object)
 int vtkSVLocalQuadricDecimation::SetFixedPoints(vtkPolyData *object, int numTris)
 {
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
   if (this->UseCellArray)
   {
     numTris = 0;

@@ -799,7 +799,7 @@ int vtkSVSurfaceCenterlineGrouper::FixRegions(vtkPolyData *pd, std::string array
       {
         int cellId = allRegions[badRegion].Elements[j];
         vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+        const vtkIdType *pts = new vtkIdType;
         pd->GetCellPoints(cellId, npts, pts);
         for (int k=0; k<npts; k++)
         {
@@ -913,7 +913,7 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithCenterlines(int fixIters)
   int edgeCellId0, edgeCellId1, edgeCellValue0, edgeCellValue1;
   double pt[3], newCenterPt[3];
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
   vtkIdType nlinepts, *linepts;
   vtkNew(vtkIdList, edgeCellIds);
   vtkNew(vtkIdList, frontNeighbors);
@@ -1438,7 +1438,7 @@ int vtkSVSurfaceCenterlineGrouper::FixGroupsWithPolycube()
   {
     // Check for non-manifold cell, if found, delete (just the one).
     vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts = new vtkIdType;
     polycubePd->GetCellPoints(i, npts, pts);
 
     for (int j=0; j<npts; j++)
@@ -3186,7 +3186,7 @@ int vtkSVSurfaceCenterlineGrouper::FixEdges(vtkPolyData *pd, vtkPolyData *origPd
 
 
             vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+            const vtkIdType *pts = new vtkIdType;
             branchPd->GetCellPoints(tmpCellId, npts, pts);
             for (int l=0; l<npts; l++)
             {
@@ -3636,7 +3636,7 @@ int vtkSVSurfaceCenterlineGrouper::CheckSlicePoints()
 int vtkSVSurfaceCenterlineGrouper::CheckPolycubeEnforcePossible()
 {
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
 
   double avgRadius = 0.0;
   std::vector<double> avgRadiusValues;

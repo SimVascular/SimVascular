@@ -597,7 +597,7 @@ int vtkSVCenterlines::RequestData(
   // ------------------------------------------------------------------------
   // Check to see if duplicate lines, and remove if necessary
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
   vtkNew(vtkIdList, cellEdgeNeighbors);
   std::vector<int> dupDeleted(linesPd->GetNumberOfCells(), 0);
   for (int i=0; i<linesPd->GetNumberOfCells(); i++)
@@ -2143,7 +2143,7 @@ int vtkSVCenterlines::GetLinesEndPoints(vtkPolyData *pd,
   endPoints->Reset();
 
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
   int numEndPoints = 0;
   double maxRadiusValue = -1.0;
   vtkNew(vtkIdList, pointCellIds);

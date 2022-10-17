@@ -68,8 +68,9 @@ class vtkSVIntegrateAttributes::vtkFieldList :
 {
 public:
   vtkFieldList(int numInputs) : vtkDataSetAttributes::FieldList(numInputs) { }
-  void SetFieldIndex(int i, int index)
-      { this->vtkDataSetAttributes::FieldList::SetFieldIndex(i, index); }
+  // TODO: fix this
+  // void SetFieldIndex(int i, int index)
+  //     { this->vtkDataSetAttributes::FieldList::SetFieldIndex(i, index); }
 };
 
 // ----------------------
@@ -625,28 +626,29 @@ void vtkSVIntegrateAttributes::AllocateAttributes(
   vtkSVIntegrateAttributes::vtkFieldList& fieldList,
   vtkDataSetAttributes* outda)
 {
-  int numArrays = fieldList.GetNumberOfFields();
-  for (int i = 0; i < numArrays; ++i)
-    {
-    if (fieldList.GetFieldIndex(i) < 0)
-      {
-      continue;
-      }
-    int numComponents = fieldList.GetFieldComponents(i);
-    // All arrays are allocated double with one tuple.
-    vtkDoubleArray* outArray = vtkDoubleArray::New();
-    outArray->SetNumberOfComponents(numComponents);
-    outArray->SetNumberOfTuples(1);
-    outArray->SetName(fieldList.GetFieldName(i));
-    // It cannot hurt to zero the arrays here.
-    for (int j = 0; j < numComponents; ++j)
-      {
-      outArray->SetComponent(0, j, 0.0);
-      }
-    fieldList.SetFieldIndex(i, outda->AddArray(outArray));
-    outArray->Delete();
-    // Should we set scalars, vectors ...
-    }
+  // TODO: fix this
+  // int numArrays = fieldList.GetNumberOfArrays();
+  // for (int i = 0; i < numArrays; ++i)
+  //   {
+  //   if (fieldList.GetFieldIndex(i) < 0)
+  //     {
+  //     continue;
+  //     }
+  //   int numComponents = fieldList.GetFieldComponents(i);
+  //   // All arrays are allocated double with one tuple.
+  //   vtkDoubleArray* outArray = vtkDoubleArray::New();
+  //   outArray->SetNumberOfComponents(numComponents);
+  //   outArray->SetNumberOfTuples(1);
+  //   outArray->SetName(fieldList.GetFieldName(i));
+  //   // It cannot hurt to zero the arrays here.
+  //   for (int j = 0; j < numComponents; ++j)
+  //     {
+  //     outArray->SetComponent(0, j, 0.0);
+  //     }
+  //   fieldList.SetFieldIndex(i, outda->AddArray(outArray));
+  //   outArray->Delete();
+  //   // Should we set scalars, vectors ...
+  //   }
 }
 
 // ----------------------
@@ -676,30 +678,31 @@ void vtkSVIntegrateAttributes::IntegrateData1(vtkDataSetAttributes* inda,
   vtkIdType pt1Id, double k,
   vtkSVIntegrateAttributes::vtkFieldList& fieldList, int index)
 {
-  int numArrays, i, numComponents, j;
-  vtkDataArray* inArray;
-  vtkDataArray* outArray;
-  numArrays = fieldList.GetNumberOfFields();
-  double vIn1, dv, vOut;
-  for (i = 0; i < numArrays; ++i)
-    {
-    if (fieldList.GetFieldIndex(i) < 0)
-      {
-      continue;
-      }
-    // We could template for speed.
-    inArray = inda->GetArray(fieldList.GetDSAIndex(index, i));
-    outArray = outda->GetArray(fieldList.GetFieldIndex(i));
-    numComponents = inArray->GetNumberOfComponents();
-    for (j = 0; j < numComponents; ++j)
-      {
-      vIn1 = inArray->GetComponent(pt1Id, j);
-      vOut = outArray->GetComponent(0, j);
-      dv = vIn1;
-      vOut += dv*k;
-      outArray->SetComponent(0, j, vOut);
-      }
-    }
+  // TODO: fix this
+  // int numArrays, i, numComponents, j;
+  // vtkDataArray* inArray;
+  // vtkDataArray* outArray;
+  // numArrays = fieldList.GetNumberOfArrays();
+  // double vIn1, dv, vOut;
+  // for (i = 0; i < numArrays; ++i)
+  //   {
+  //   if (fieldList.GetFieldIndex(i) < 0)
+  //     {
+  //     continue;
+  //     }
+  //   // We could template for speed.
+  //   inArray = inda->GetArray(fieldList.GetDSAIndex(index, i));
+  //   outArray = outda->GetArray(fieldList.GetFieldIndex(i));
+  //   numComponents = inArray->GetNumberOfComponents();
+  //   for (j = 0; j < numComponents; ++j)
+  //     {
+  //     vIn1 = inArray->GetComponent(pt1Id, j);
+  //     vOut = outArray->GetComponent(0, j);
+  //     dv = vIn1;
+  //     vOut += dv*k;
+  //     outArray->SetComponent(0, j, vOut);
+  //     }
+  //   }
 }
 
 // ----------------------
@@ -710,31 +713,32 @@ void vtkSVIntegrateAttributes::IntegrateData2(vtkDataSetAttributes* inda,
   vtkIdType pt1Id, vtkIdType pt2Id, double k,
   vtkSVIntegrateAttributes::vtkFieldList& fieldList, int index)
 {
-  int numArrays, i, numComponents, j;
-  vtkDataArray* inArray;
-  vtkDataArray* outArray;
-  numArrays = fieldList.GetNumberOfFields();
-  double vIn1, vIn2, dv, vOut;
-  for (i = 0; i < numArrays; ++i)
-    {
-    if (fieldList.GetFieldIndex(i) < 0)
-      {
-      continue;
-      }
-    // We could template for speed.
-    inArray = inda->GetArray(fieldList.GetDSAIndex(index, i));
-    outArray = outda->GetArray(fieldList.GetFieldIndex(i));
-    numComponents = inArray->GetNumberOfComponents();
-    for (j = 0; j < numComponents; ++j)
-      {
-      vIn1 = inArray->GetComponent(pt1Id, j);
-      vIn2 = inArray->GetComponent(pt2Id, j);
-      vOut = outArray->GetComponent(0, j);
-      dv = 0.5*(vIn1+vIn2);
-      vOut += dv*k;
-      outArray->SetComponent(0, j, vOut);
-      }
-    }
+  // TODO: fix this
+  // int numArrays, i, numComponents, j;
+  // vtkDataArray* inArray;
+  // vtkDataArray* outArray;
+  // numArrays = fieldList.GetNumberOfArrays();
+  // double vIn1, vIn2, dv, vOut;
+  // for (i = 0; i < numArrays; ++i)
+  //   {
+  //   if (fieldList.GetFieldIndex(i) < 0)
+  //     {
+  //     continue;
+  //     }
+  //   // We could template for speed.
+  //   inArray = inda->GetArray(fieldList.GetDSAIndex(index, i));
+  //   outArray = outda->GetArray(fieldList.GetFieldIndex(i));
+  //   numComponents = inArray->GetNumberOfComponents();
+  //   for (j = 0; j < numComponents; ++j)
+  //     {
+  //     vIn1 = inArray->GetComponent(pt1Id, j);
+  //     vIn2 = inArray->GetComponent(pt2Id, j);
+  //     vOut = outArray->GetComponent(0, j);
+  //     dv = 0.5*(vIn1+vIn2);
+  //     vOut += dv*k;
+  //     outArray->SetComponent(0, j, vOut);
+  //     }
+  //   }
 }
 // ----------------------
 // IntegrateData3
@@ -746,32 +750,33 @@ void vtkSVIntegrateAttributes::IntegrateData3(vtkDataSetAttributes* inda,
   vtkIdType pt3Id, double k,
   vtkSVIntegrateAttributes::vtkFieldList& fieldList, int index)
 {
-  int numArrays, i, numComponents, j;
-  vtkDataArray* inArray;
-  vtkDataArray* outArray;
-  numArrays = fieldList.GetNumberOfFields();
-  double vIn1, vIn2, vIn3, dv, vOut;
-  for (i = 0; i < numArrays; ++i)
-    {
-    if (fieldList.GetFieldIndex(i) < 0)
-      {
-      continue;
-      }
-    // We could template for speed.
-    inArray = inda->GetArray(fieldList.GetDSAIndex(index, i));
-    outArray = outda->GetArray(fieldList.GetFieldIndex(i));
-    numComponents = inArray->GetNumberOfComponents();
-    for (j = 0; j < numComponents; ++j)
-      {
-      vIn1 = inArray->GetComponent(pt1Id, j);
-      vIn2 = inArray->GetComponent(pt2Id, j);
-      vIn3 = inArray->GetComponent(pt3Id, j);
-      vOut = outArray->GetComponent(0, j);
-      dv = (vIn1+vIn2+vIn3)/3.0;
-      vOut += dv*k;
-      outArray->SetComponent(0, j, vOut);
-      }
-    }
+  // TODO: fix this
+  // int numArrays, i, numComponents, j;
+  // vtkDataArray* inArray;
+  // vtkDataArray* outArray;
+  // numArrays = fieldList.GetNumberOfArrays();
+  // double vIn1, vIn2, vIn3, dv, vOut;
+  // for (i = 0; i < numArrays; ++i)
+  //   {
+  //   if (fieldList.GetFieldIndex(i) < 0)
+  //     {
+  //     continue;
+  //     }
+  //   // We could template for speed.
+  //   inArray = inda->GetArray(fieldList.GetDSAIndex(index, i));
+  //   outArray = outda->GetArray(fieldList.GetFieldIndex(i));
+  //   numComponents = inArray->GetNumberOfComponents();
+  //   for (j = 0; j < numComponents; ++j)
+  //     {
+  //     vIn1 = inArray->GetComponent(pt1Id, j);
+  //     vIn2 = inArray->GetComponent(pt2Id, j);
+  //     vIn3 = inArray->GetComponent(pt3Id, j);
+  //     vOut = outArray->GetComponent(0, j);
+  //     dv = (vIn1+vIn2+vIn3)/3.0;
+  //     vOut += dv*k;
+  //     outArray->SetComponent(0, j, vOut);
+  //     }
+  //   }
 }
 
 // ----------------------
@@ -785,33 +790,34 @@ void vtkSVIntegrateAttributes::IntegrateData4(vtkDataSetAttributes* inda,
   double k,
   vtkSVIntegrateAttributes::vtkFieldList& fieldList, int index)
 {
-  int numArrays, i, numComponents, j;
-  vtkDataArray* inArray;
-  vtkDataArray* outArray;
-  numArrays = fieldList.GetNumberOfFields();
-  double vIn1, vIn2, vIn3, vIn4, dv, vOut;
-  for (i = 0; i < numArrays; ++i)
-    {
-    if (fieldList.GetFieldIndex(i) < 0)
-      {
-      continue;
-      }
-    // We could template for speed.
-    inArray = inda->GetArray(fieldList.GetDSAIndex(index, i));
-    outArray = outda->GetArray(fieldList.GetFieldIndex(i));
-    numComponents = inArray->GetNumberOfComponents();
-    for (j = 0; j < numComponents; ++j)
-      {
-      vIn1 = inArray->GetComponent(pt1Id, j);
-      vIn2 = inArray->GetComponent(pt2Id, j);
-      vIn3 = inArray->GetComponent(pt3Id, j);
-      vIn4 = inArray->GetComponent(pt4Id, j);
-      vOut = outArray->GetComponent(0, j);
-      dv = (vIn1+vIn2+vIn3+vIn4) * 0.25;
-      vOut += dv*k;
-      outArray->SetComponent(0, j, vOut);
-      }
-    }
+  // TODO: fix this
+  // int numArrays, i, numComponents, j;
+  // vtkDataArray* inArray;
+  // vtkDataArray* outArray;
+  // numArrays = fieldList.GetNumberOfArrays();
+  // double vIn1, vIn2, vIn3, vIn4, dv, vOut;
+  // for (i = 0; i < numArrays; ++i)
+  //   {
+  //   if (fieldList.GetFieldIndex(i) < 0)
+  //     {
+  //     continue;
+  //     }
+  //   // We could template for speed.
+  //   inArray = inda->GetArray(fieldList.GetDSAIndex(index, i));
+  //   outArray = outda->GetArray(fieldList.GetFieldIndex(i));
+  //   numComponents = inArray->GetNumberOfComponents();
+  //   for (j = 0; j < numComponents; ++j)
+  //     {
+  //     vIn1 = inArray->GetComponent(pt1Id, j);
+  //     vIn2 = inArray->GetComponent(pt2Id, j);
+  //     vIn3 = inArray->GetComponent(pt3Id, j);
+  //     vIn4 = inArray->GetComponent(pt4Id, j);
+  //     vOut = outArray->GetComponent(0, j);
+  //     dv = (vIn1+vIn2+vIn3+vIn4) * 0.25;
+  //     vOut += dv*k;
+  //     outArray->SetComponent(0, j, vOut);
+  //     }
+  //   }
 }
 
 // ----------------------

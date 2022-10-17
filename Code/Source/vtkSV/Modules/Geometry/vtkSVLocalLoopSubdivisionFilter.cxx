@@ -78,7 +78,7 @@ static double LoopWeights[4] =
 int vtkSVLocalLoopSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inputDS,vtkIntArray *edgeData, vtkPoints *outputPts, vtkPointData *outputPD)
 {
   double *weights;
-  vtkIdType *pts = 0;
+  const vtkIdType *pts = new vtkIdType;
   vtkIdType numPts, cellId, newId;
   int edgeId;
   vtkIdType npts;
@@ -461,7 +461,8 @@ int vtkSVLocalLoopSubdivisionFilter::RequestData(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkCellArray *polys = input->GetPolys();
   int hasTris = 0;
-  vtkIdType numPts = 0, *pts = 0;
+  vtkIdType numPts = 0;
+  const vtkIdType *pts = new vtkIdType;
 
   input->BuildLinks();
 
@@ -480,7 +481,7 @@ int vtkSVLocalLoopSubdivisionFilter::RequestData(
 
   if (!hasTris)
     {
-      vtkErrorMacro("vtkSVLocalLoopSubdivisionFilter only operates on triangles, but this data set has no triangles to operate on.")
+      vtkErrorMacro("vtkSVLocalLoopSubdivisionFilter only operates on triangles, but this data set has no triangles to operate on.");
       this->SetErrorCode(vtkErrorCode::UserError + 1);
       return SV_ERROR;
     }
@@ -505,7 +506,7 @@ int vtkSVLocalLoopSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSubdi
   }
   int numPoints = pd->GetNumberOfPoints();
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
   if (this->UsePointArray)
   {
     for (vtkIdType cellId=0;cellId < numCells;cellId++)

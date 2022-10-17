@@ -879,7 +879,7 @@ int vtkSVSurfaceCuboidPatcher::RunFilter()
   {
     // Now enforce boundaries if we need to!!!!
     vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts = new vtkIdType;
     double avgRadius = 0.0;
     std::vector<double> avgRadiusValues;
     for (int i=0; i<this->MergedCenterlines->GetNumberOfCells(); i++)
@@ -2224,7 +2224,7 @@ int vtkSVSurfaceCuboidPatcher::ClusterBranchWithGeodesics(vtkPolyData *pd, vtkPo
         pd->GetCellData()->GetArray(this->PatchIdsArrayName)->SetTuple1(tmpCellId, patchVal0);
 
         vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+        const vtkIdType *pts = new vtkIdType;
         pd->GetCellPoints(tmpCellId, npts, pts);
         for (int l=0; l<npts; l++)
         {
@@ -2350,7 +2350,7 @@ int vtkSVSurfaceCuboidPatcher::FixEndPatches(vtkPolyData *pd)
         int cellId = endRegions[badPatch].Elements[i];
 
         vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+        const vtkIdType *pts = new vtkIdType;
         pd->GetCellPoints(cellId, npts, pts);
 
         for (int j=0; j<npts; j++)
@@ -2728,7 +2728,7 @@ int vtkSVSurfaceCuboidPatcher::FixSidePatches(vtkPolyData *pd)
           {
             int cellId = sideRegions[minPatch].Elements[j];
             vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+            const vtkIdType *pts = new vtkIdType;
             pd->GetCellPoints(cellId, npts, pts);
             for (int k=0; k<npts; k++)
             {
@@ -2880,7 +2880,7 @@ int vtkSVSurfaceCuboidPatcher::FixPatchesWithPolycube()
   {
     // Check for non-manifold cell, if found, delete (just the one).
     vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts = new vtkIdType;
     polycubePd->GetCellPoints(i, npts, pts);
 
     for (int j=0; j<npts; j++)
@@ -3467,7 +3467,7 @@ int vtkSVSurfaceCuboidPatcher::MatchPatchesToPolycube(vtkPolyData *branchPd, vtk
         }
         branchPd->GetCellData()->GetArray(this->PatchIdsArrayName)->SetTuple1(tmpCellId, newCellValue);
         vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+        const vtkIdType *pts = new vtkIdType;
         branchPd->GetCellPoints(tmpCellId, npts, pts);
         for (int l=0; l<npts; l++)
         {
@@ -4629,7 +4629,7 @@ int vtkSVSurfaceCuboidPatcher::GetOpenBoundaryEdges(vtkPolyData *pd,
   for (int i=0; i<numCells; i++)
   {
     vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts = new vtkIdType;
     pd->GetCellPoints(i, npts, pts);
 
     for (int j=0; j<npts; j++)
@@ -5356,7 +5356,7 @@ int vtkSVSurfaceCuboidPatcher::FixNoBoundaryRegions(vtkPolyData *pd, std::string
   // Loop through cells
   int count = 1;
   vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+  const vtkIdType *pts = new vtkIdType;
   vtkNew(vtkIdList, queue);
   vtkNew(vtkIdList, cellEdgeNeighbors);
   std::vector<int> numCellsInRegion;
@@ -5829,7 +5829,7 @@ int vtkSVSurfaceCuboidPatcher::FixThinRegions(vtkPolyData *pd, std::string array
     int cellVal0, cellVal1;
     int ptId, ptId0, ptId1, ptIdN;
     vtkIdType npts;
-const vtkIdType *pts = new vtkIdType;
+    const vtkIdType *pts = new vtkIdType;
     vtkNew(vtkIdList, pointCellIds);
     vtkNew(vtkIdList, cellEdgeNeighbors);
     for (int patchId=0; patchId<4; patchId++)
