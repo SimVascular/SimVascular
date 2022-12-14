@@ -24,7 +24,7 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_SWIG        UNTAR_SWIG        BUILD_SWIG        ARCHIVE_SWIG        ZIP_SWIG        $SV_SUPER_OPTIONS"
 # numpy is now pip installed during postprocessing script!  Our version is incompatible with tensorflow
 #   SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
-   SV_SUPER_OPTIONS="WGET_TINYXML2    UNTAR_TINYXML2    BUILD_TINYXML2    ARCHIVE_TINYXML2    ZIP_TINYXML2    $SV_SUPER_OPTIONS"
+    SV_SUPER_OPTIONS="WGET_TINYXML2    UNTAR_TINYXML2    BUILD_TINYXML2    ARCHIVE_TINYXML2    ZIP_TINYXML2    $SV_SUPER_OPTIONS"
    # SV_SUPER_OPTIONS="WGET_QT          UNTAR_QT          BUILD_QT          ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_BIN_QT          INSTALL_BIN_QT   ARCHIVE_QT          ZIP_QT          $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_FREETYPE    UNTAR_FREETYPE    BUILD_FREETYPE    ARCHIVE_FREETYPE    ZIP_FREETYPE    $SV_SUPER_OPTIONS"
@@ -44,13 +44,13 @@ echo "SV_SUPER_OPTIONS for build: $SV_SUPER_OPTIONS"
 # wget all source code
 #
 
-# source Scripts/build-sv-externals-helper-wget-generic.sh
+source Scripts/build-sv-externals-helper-wget-generic.sh
 
 #
 # unpack all of the source code
 #
 
-# source Scripts/untar-unzip-source-all.sh
+source Scripts/untar-unzip-source-all.sh
 
 #
 # must have primary destination build dir for subst commands
@@ -205,88 +205,88 @@ echo "CREATE_POST_PROCESS_ALL_CMAKE_CONFIG"
 # run installers
 #
 
-# # qt interactive installer
-# if [[ $SV_SUPER_OPTIONS == *INSTALL_BIN_QT* ]]; then
-#   echo "INSTALL_BIN_QT"
-#   time ./tmp/install.qt.gcc.sh >& ./tmp/stdout.install.qt.txt
-# fi
+# qt interactive installer
+if [[ $SV_SUPER_OPTIONS == *INSTALL_BIN_QT* ]]; then
+  echo "INSTALL_BIN_QT"
+  time ./tmp/install.qt.gcc.sh >& ./tmp/stdout.install.qt.txt
+fi
 
 
-# # compile code
+# compile code
 
-# #  tcl/tk 8.6
-# if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
-#   echo "BUILD_TCL"
-#   ./tmp/compile.make.tcl.gcc.sh >& ./tmp/stdout.tcl.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+#  tcl/tk 8.6
+if [[ $SV_SUPER_OPTIONS == *BUILD_TCL* ]]; then
+  echo "BUILD_TCL"
+  ./tmp/compile.make.tcl.gcc.sh >& ./tmp/stdout.tcl.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# ## python
-# if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
-#   echo "BUILD_PYTHON"
-#   ./tmp/compile.cmake.python.gcc.sh >& ./tmp/stdout.python.gcc.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+## python
+if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
+  echo "BUILD_PYTHON"
+  ./tmp/compile.cmake.python.gcc.sh >& ./tmp/stdout.python.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
 export PYPATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/python-3.9.10/
 export PATH=$PYPATH/share/python3.9:$PYPATH/bin/:$PYPATH/include/:$PYPATH/lib/:$PATH
 
-# #  swig
-# if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
-#   echo "BUILD_SWIG"
-#   time ./tmp/compile.make.swig.gcc.sh >& ./tmp/stdout.swig.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+#  swig
+if [[ $SV_SUPER_OPTIONS == *BUILD_SWIG* ]]; then
+  echo "BUILD_SWIG"
+  time ./tmp/compile.make.swig.gcc.sh >& ./tmp/stdout.swig.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# # numpy
-# if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
-#   echo "BUILD_NUMPY"
-#   ./tmp/compile.python.numpy-linux.sh >& ./tmp/stdout.numpy.python.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+# numpy
+if [[ $SV_SUPER_OPTIONS == *BUILD_NUMPY* ]]; then
+  echo "BUILD_NUMPY"
+  ./tmp/compile.python.numpy-linux.sh >& ./tmp/stdout.numpy.python.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# ## python
-# ## want to run post install after numpy is built
-# if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
-#   echo "BUILD_PYTHON post-install"
-#   ./tmp/post-install-python-linux.sh >& ./tmp/stdout.post-install-python-linux.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+## python
+## want to run post install after numpy is built
+if [[ $SV_SUPER_OPTIONS == *BUILD_PYTHON* ]]; then
+  echo "BUILD_PYTHON post-install"
+  ./tmp/post-install-python-linux.sh >& ./tmp/stdout.post-install-python-linux.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# tinyxml2
-# if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
-#   echo "BUILD_TINYXML2"
-#   ./tmp/compile.cmake.tinyxml2.gcc.sh >& ./tmp/stdout.tinyxml2.gcc.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+tinyxml2
+if [[ $SV_SUPER_OPTIONS == *BUILD_TINYXML2* ]]; then
+  echo "BUILD_TINYXML2"
+  ./tmp/compile.cmake.tinyxml2.gcc.sh >& ./tmp/stdout.tinyxml2.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# #  qt
-# if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
-#   echo "BUILD_QT"
-#   time ./tmp/compile.make.qt.gcc.sh >& ./tmp/stdout.qt.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+#  qt
+if [[ $SV_SUPER_OPTIONS == *BUILD_QT* ]]; then
+  echo "BUILD_QT"
+  time ./tmp/compile.make.qt.gcc.sh >& ./tmp/stdout.qt.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# # freetype
-# if [[ $SV_SUPER_OPTIONS == *BUILD_FREETYPE* ]]; then
-#   echo "BUILD_FREETYPE"
-#   ./tmp/compile.cmake.freetype.gcc.sh >& ./tmp/stdout.freetype.gcc.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+# freetype
+if [[ $SV_SUPER_OPTIONS == *BUILD_FREETYPE* ]]; then
+  echo "BUILD_FREETYPE"
+  ./tmp/compile.cmake.freetype.gcc.sh >& ./tmp/stdout.freetype.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# # gdcm
-# if [[ $SV_SUPER_OPTIONS == *BUILD_GDCM* ]]; then
-#   echo "BUILD_GDCM"
-#   ./tmp/compile.cmake.gdcm.gcc.sh >& ./tmp/stdout.gdcm.gcc.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+# gdcm
+if [[ $SV_SUPER_OPTIONS == *BUILD_GDCM* ]]; then
+  echo "BUILD_GDCM"
+  ./tmp/compile.cmake.gdcm.gcc.sh >& ./tmp/stdout.gdcm.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# # hdf5
-# if [[ $SV_SUPER_OPTIONS == *BUILD_HDF5* ]]; then
-#   echo "BUILD_HDF5"
-#   ./tmp/compile.cmake.hdf5.gcc.sh >& ./tmp/stdout.hdf5.gcc.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+# hdf5
+if [[ $SV_SUPER_OPTIONS == *BUILD_HDF5* ]]; then
+  echo "BUILD_HDF5"
+  ./tmp/compile.cmake.hdf5.gcc.sh >& ./tmp/stdout.hdf5.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
 export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14.2/gcc_64/:$PATH
 export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/qt-5.14.2/5.14.2/gcc_64/lib/cmake/Qt5/:$PATH
@@ -300,31 +300,27 @@ if [[ $SV_SUPER_OPTIONS == *BUILD_VTK* ]]; then
   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
 fi
 
-# we need to copy these manually because for some reason they are not copied
-cp /usr/local/sv/ext/2022.10/release/gl2/src/vtk-9.2.0/Rendering/Tk/*. /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/vtk-9.2.0/include/vtk-9.2/
-cp /usr/local/sv/ext/2022.10/release/gl2/build/gnu/7.5/x64/vtk-9.2.0/Rendering/Tk/*.h /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/vtk-9.2.0/include/vtk-9.2/
+# itk
+if [[ $SV_SUPER_OPTIONS == *BUILD_ITK* ]]; then
+  echo "BUILD_ITK"
+  ./tmp/compile.cmake.itk.gcc.sh >& ./tmp/stdout.itk.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# # itk
-# if [[ $SV_SUPER_OPTIONS == *BUILD_ITK* ]]; then
-#   echo "BUILD_ITK"
-#   ./tmp/compile.cmake.itk.gcc.sh >& ./tmp/stdout.itk.gcc.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+# opencascade
+if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
+  echo "BUILD_OPENCASCADE"s
+  ./tmp/compile.cmake.opencascade.gcc.sh >& ./tmp/stdout.opencascade.gcc.txt
+  ./tmp/post-install-opencascade-linux.sh >& ./tmp/stdout.post-install-linux.opencascade.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# # opencascade
-# if [[ $SV_SUPER_OPTIONS == *BUILD_OPENCASCADE* ]]; then
-#   echo "BUILD_OPENCASCADE"s
-#   ./tmp/compile.cmake.opencascade.gcc.sh >& ./tmp/stdout.opencascade.gcc.txt
-#   ./tmp/post-install-opencascade-linux.sh >& ./tmp/stdout.post-install-linux.opencascade.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
-
-# # mmg
-# if [[ $SV_SUPER_OPTIONS == *BUILD_MMG* ]]; then
-#   echo "BUILD_MMG"
-#   ./tmp/compile.cmake.mmg.gcc.sh >& ./tmp/stdout.mmg.gcc.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+# mmg
+if [[ $SV_SUPER_OPTIONS == *BUILD_MMG* ]]; then
+  echo "BUILD_MMG"
+  ./tmp/compile.cmake.mmg.gcc.sh >& ./tmp/stdout.mmg.gcc.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
 export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/lib/gdcm-2.6:$PATH
 export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/gdcm-2.6.3/lib:$PATH
@@ -339,21 +335,21 @@ export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/tinyxml2-6.2.0
 export PATH=/usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/tinyxml2-6.2.0/include/:$PATH
 
 # this is needed because otherwise MITK doesn't find tinyxml
-# pushd /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/
-# patch -p0 < ../../../../src/BuildHelpers/Patches/2022.09/correct_tinyxml2.patch 
-# popd
+pushd /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/
+patch -p0 < ../../../../src/BuildHelpers/Patches/2022.09/correct_tinyxml2.patch 
+popd
 
-# # mitk
-# if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
-#   echo "BUILD_MITK"
-#   ./tmp/compile.cmake.mitk.gcc.sh >& ./tmp/stdout.mitk.gcc.txt
-#   ./tmp/post-install-mitk-linux.sh >& ./tmp/stdout.post-install-mitk-linux.txt
-#   tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
-# fi
+# mitk
+if [[ $SV_SUPER_OPTIONS == *BUILD_MITK* ]]; then
+  echo "BUILD_MITK"
+  ./tmp/compile.cmake.mitk.gcc.sh >& ./tmp/stdout.mitk.gcc.txt
+  ./tmp/post-install-mitk-linux.sh >& ./tmp/stdout.post-install-mitk-linux.txt
+  tclsh ./tmp/replace-explicit-paths-in-config-cmake.tcl
+fi
 
-# pushd /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/
-# patch -p0 -f < ../../../../src/BuildHelpers/Patches/2022.09/revert_tinyxml2.patch 
-# popd
+pushd /usr/local/sv/ext/2022.10/release/gl2/bin/gnu/7.5/x64/
+patch -p0 -f < ../../../../src/BuildHelpers/Patches/2022.09/revert_tinyxml2.patch 
+popd
 
 #
 # check generated cmake configs for hardcorded paths
