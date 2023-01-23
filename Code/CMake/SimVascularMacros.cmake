@@ -207,6 +207,8 @@ macro(simvascular_third_party _pkg)
 
 	configure_file(${SV_SOURCE_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h.in
 		${SV_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h)
+  message(STATUS ${SV_BINARY_DIR}/${${_upper}_SUBDIR})
+  message(STATUS ${SV_SOURCE_DIR}/${${_upper}_SUBDIR})
 	include_directories(BEFORE ${SV_BINARY_DIR}/${${_upper}_SUBDIR} ${SV_SOURCE_DIR}/${${_upper}_SUBDIR})
 	if(SV_USE_SYSTEM_${_upper})
 		set(${_upper}_LIBRARIES)

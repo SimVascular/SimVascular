@@ -42,9 +42,9 @@ VascularPhaseTwoLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
  {
 	/* Instantiate a geodesic active contour function and set it as the
     segmentation function. */
-	m_VascularPhaseTwoLevelSetFunction = VascularPhaseTwoLevelSetFunctionType::New();
+	// m_VascularPhaseTwoLevelSetFunction = VascularPhaseTwoLevelSetFunctionType::New();
 
-	this->SetVascularSegmentationFunction(m_VascularPhaseTwoLevelSetFunction);
+	// this->SetVascularSegmentationFunction(m_VascularPhaseTwoLevelSetFunction);
 	/* Turn off interpolation. */
 	this->InterpolateSurfaceLocationOff();
 	this->SetDebug(0);
@@ -80,7 +80,7 @@ VascularPhaseTwoLevelSetImageFilter< TInputImage, TFeatureImage, TOutputType >
 ::PrintSelf(std::ostream & os, Indent indent) const
  {
 	Superclass::PrintSelf(os, indent);
-	os << "VascularPhaseTwoLevelSetFunction: " << m_VascularPhaseTwoLevelSetFunction.GetPointer();
+	// os << "VascularPhaseTwoLevelSetFunction: " << m_VascularPhaseTwoLevelSetFunction.GetPointer();
  }
 
 

@@ -58,7 +58,7 @@ sv4guiPathObjectFactory::~sv4guiPathObjectFactory()
 
 mitk::Mapper::Pointer sv4guiPathObjectFactory::CreateMapper(mitk::DataNode* node, MapperSlotId id)
 {
-  mitk::Mapper::Pointer newMapper=NULL;
+  mitk::Mapper::Pointer newMapper=nullptr;
 
   if ( id == mitk::BaseRenderer::Standard2D )
   {
@@ -99,7 +99,7 @@ void sv4guiPathObjectFactory::SetDefaultProperties(mitk::DataNode* node)
 
 }
 
-const char* sv4guiPathObjectFactory::GetFileExtensions()
+std::string sv4guiPathObjectFactory::GetFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_FileExtensionsMap, fileExtension);
@@ -120,7 +120,7 @@ void sv4guiPathObjectFactory::CreateFileExtensionsMap()
 {
 }
 
-const char* sv4guiPathObjectFactory::GetSaveFileExtensions()
+std::string sv4guiPathObjectFactory::GetSaveFileExtensions()
 {
   std::string fileExtension;
   this->CreateFileExtensions(m_SaveFileExtensionsMap, fileExtension);

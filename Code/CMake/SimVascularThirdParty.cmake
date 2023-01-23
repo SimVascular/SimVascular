@@ -72,7 +72,7 @@ endif()
 # TINYXML
 if(SV_USE_TINYXML)
 	SET(USE_TINYXML ON)
-  SET(SV_USE_TINYXML ON)
+    SET(SV_USE_TINYXML ON)
 	simvascular_third_party(tinyxml)
 	if(NOT SV_USE_SYSTEM_TINYXML)
     set(TINYXML_LIBRARY ${SV_LIB_THIRDPARTY_TINYXML_NAME})
@@ -110,5 +110,4 @@ if(SV_USE_SOLVERIO)
 else()
   unset(SOLVERIO_LIBRARY)
 endif()
-
 #-----------------------------------------------------------------------------

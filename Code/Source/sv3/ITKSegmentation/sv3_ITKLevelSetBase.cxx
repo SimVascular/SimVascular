@@ -570,10 +570,10 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 		float expFactorRising,float expFactorFalling)
 		{
 
-	typedef itk::VascularPhaseOneLevelSetImageFilter
-			<ITKInternalImageType,ITKInternalImageType> LevelSetFilterType;
+	// typedef itk::VascularPhaseOneLevelSetImageFilter
+	// 		<ITKInternalImageType,ITKInternalImageType> LevelSetFilterType;
 
-	cvITKTemplateNewMacro(LevelSetFilterType,levelSetFilter);
+	// cvITKTemplateNewMacro(LevelSetFilterType,levelSetFilter);
 
 	this->GenerateFeatureImage();
 	this->GenerateSeedImage();
@@ -590,30 +590,30 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	}
 	try
 	{
-		levelSetFilter->SetFeatureImage(m_itkFeatureImage);
-		levelSetFilter->SetInitialImage(m_itkSeedImage);
-		levelSetFilter->SetDebug(0);
-		levelSetFilter->UseImageSpacingOff();
+		// levelSetFilter->SetFeatureImage(m_itkFeatureImage);
+		// levelSetFilter->SetInitialImage(m_itkSeedImage);
+		// levelSetFilter->SetDebug(0);
+		// levelSetFilter->UseImageSpacingOff();
 
-		//levelSetFilter->SetSpeedDerivativeSigma(m_SigmaFeature);
+		// //levelSetFilter->SetSpeedDerivativeSigma(m_SigmaFeature);
 
-		levelSetFilter->SetAdvectionDerivativeSigma(m_SigmaAdvection);
-		levelSetFilter->SetRisingVelocityDecayModifier(expFactorRising);
-		levelSetFilter->SetFallingVelocityDecayModifier(expFactorFalling);
-		levelSetFilter->SetPropagationScaling(m_PropagationScaling);
-		levelSetFilter->SetCurvatureScaling(m_CurvatureScaling);
-		levelSetFilter->SetAdvectionScaling(m_AdvectionScaling);
-		levelSetFilter->SetEquilibriumCurvature(kc);
-		levelSetFilter->SetMaximumRMSError(m_MaxRMSError);
-		levelSetFilter->SetNumberOfIterations(m_MaxIterations);
-		//levelSetFilter->SetUseNormalVectorCurvature(m_UseNormalVectorCurvature);
+		// levelSetFilter->SetAdvectionDerivativeSigma(m_SigmaAdvection);
+		// levelSetFilter->SetRisingVelocityDecayModifier(expFactorRising);
+		// levelSetFilter->SetFallingVelocityDecayModifier(expFactorFalling);
+		// levelSetFilter->SetPropagationScaling(m_PropagationScaling);
+		// levelSetFilter->SetCurvatureScaling(m_CurvatureScaling);
+		// levelSetFilter->SetAdvectionScaling(m_AdvectionScaling);
+		// levelSetFilter->SetEquilibriumCurvature(kc);
+		// levelSetFilter->SetMaximumRMSError(m_MaxRMSError);
+		// levelSetFilter->SetNumberOfIterations(m_MaxIterations);
+		// //levelSetFilter->SetUseNormalVectorCurvature(m_UseNormalVectorCurvature);
 
-		levelSetFilter->Update();
+		// levelSetFilter->Update();
 
-		if(1){
-			std::cout << "LevelSet Completed in: " << levelSetFilter->GetElapsedIterations() << " iterations with " <<
-					levelSetFilter->GetRMSChange() << "RMS Change at end"<< std::endl;
-		}
+		// if(1){
+		// 	std::cout << "LevelSet Completed in: " << levelSetFilter->GetElapsedIterations() << " iterations with " <<
+		// 			levelSetFilter->GetRMSChange() << "RMS Change at end"<< std::endl;
+		// }
 	}
 	catch( itk::ExceptionObject & err )
 	{
@@ -639,7 +639,7 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	//save itkseed
 	try
 	{
-		cvITKLSUtil::itkDeepCopy<ITKInternalImageType>(levelSetFilter->GetOutput(),m_itkFrontImage);
+		// cvITKLSUtil::itkDeepCopy<ITKInternalImageType>(levelSetFilter->GetOutput(),m_itkFrontImage);
 	}
 	catch( itk::ExceptionObject & err )
 	{
@@ -649,10 +649,10 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	}
 
 	//copy seed to VTK
-	cvITKLSUtil::itk2vtkRecast<ITKInternalImageType>((ITKInternalImageType*)levelSetFilter->GetOutput(),m_vtkFrontImage,&ExternalImgInfo);
+	// cvITKLSUtil::itk2vtkRecast<ITKInternalImageType>((ITKInternalImageType*)levelSetFilter->GetOutput(),m_vtkFrontImage,&ExternalImgInfo);
 	//copy speed image to VTK
 
-	cvITKLSUtil::itk2vtkRecastAndRescale<ITKInternalImageType,ITKExternalImageType>((ITKInternalImageType*)levelSetFilter->GetSpeedImage(),m_vtkFeatureImage,&ExternalImgInfo);
+	// cvITKLSUtil::itk2vtkRecastAndRescale<ITKInternalImageType,ITKExternalImageType>((ITKInternalImageType*)levelSetFilter->GetSpeedImage(),m_vtkFeatureImage,&ExternalImgInfo);
 
 	//perform contouring in vtk and save i in the front
 	vtkSmartPointer<vtkContourFilter> contour = vtkSmartPointer<vtkContourFilter>::New();

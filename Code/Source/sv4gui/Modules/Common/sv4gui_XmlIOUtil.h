@@ -39,7 +39,7 @@
 #include "mitkPoint.h"
 #include "mitkVector.h"
 
-#include <tinyxml.h>
+#include <simvascular_tinyxml.h>
 
 #include <list>
 

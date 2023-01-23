@@ -256,7 +256,11 @@ void sv4guiPathDataInteractor::AddPoint(mitk::StateMachineAction* stateMachineAc
             if ( !m_UndoEnabled )
                 delete doOp;
 
-            interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+            interactionEvent->GetSender()->RequestUpdate();
+            // previously this was done, but BaseRenderer does not have access
+            // anymore to the manager. If bugs occur, We need to find the way to
+            // access the manager
+            // interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
         }
 
     }
@@ -312,7 +316,11 @@ void sv4guiPathDataInteractor::RemovePoint(mitk::StateMachineAction*, mitk::Inte
             //            }
         }
 
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
+        // previously this was done, but BaseRenderer does not have access
+        // anymore to the manager. If bugs occur, We need to find the way to
+        // access the manager
+        // interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
     }
 
 }
@@ -384,7 +392,11 @@ void sv4guiPathDataInteractor::MovePoint(mitk::StateMachineAction* stateMachineA
 
         m_LastPoint = newPoint;//for calculation of the direction vector
 
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
+        // previously this was done, but BaseRenderer does not have access
+        // anymore to the manager. If bugs occur, We need to find the way to
+        // access the manager
+        // interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
     }
 
 }
@@ -439,7 +451,11 @@ void sv4guiPathDataInteractor::FinishMove(mitk::StateMachineAction*, mitk::Inter
 
         m_Path->InvokeEvent( sv4guiPathFinishMovePointEvent() );
 
-        interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+        interactionEvent->GetSender()->RequestUpdate();
+        // previously this was done, but BaseRenderer does not have access
+        // anymore to the manager. If bugs occur, We need to find the way to
+        // access the manager
+        // interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
         mitk::OperationEvent::IncCurrGroupEventId();
 
         this->NotifyResultReady();
@@ -472,7 +488,11 @@ void sv4guiPathDataInteractor::SelectPoint(mitk::StateMachineAction*, mitk::Inte
             sv4guiPathOperation* doOp = new sv4guiPathOperation(sv4guiPathOperation::OpSELECTCONTROLPOINT,timeStep, index,true);
             m_Path->ExecuteOperation(doOp);
 
-            interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+            interactionEvent->GetSender()->RequestUpdate();
+            // previously this was done, but BaseRenderer does not have access
+            // anymore to the manager. If bugs occur, We need to find the way to
+            // access the manager
+            // interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
         }
     }
 }
@@ -494,7 +514,11 @@ void sv4guiPathDataInteractor::UnSelectAll(mitk::StateMachineAction *, mitk::Int
         m_Path->ExecuteOperation(doOp);
     }
 
-    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
+    interactionEvent->GetSender()->RequestUpdate();
+    // previously this was done, but BaseRenderer does not have access
+    // anymore to the manager. If bugs occur, We need to find the way to
+    // access the manager
+    // interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
 }
 
 void sv4guiPathDataInteractor::Abort(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)

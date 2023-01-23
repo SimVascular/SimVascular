@@ -61,10 +61,10 @@ public:
 	typedef typename Superclass::CurrentImageType CurrentImageType;
 
 	/** Type of the segmentation function */
-	typedef VascularPhaseTwoLevelSetFunction< OutputImageType,
-			FeatureImageType > VascularPhaseTwoLevelSetFunctionType;
-	typedef typename VascularPhaseTwoLevelSetFunctionType::Pointer
-			VascularPhaseTwoLevelSetFunctionPointer;
+	// typedef VascularPhaseTwoLevelSetFunction< OutputImageType,
+	// 		FeatureImageType > VascularPhaseTwoLevelSetFunctionType;
+	// typedef typename VascularPhaseTwoLevelSetFunctionType::Pointer
+	// 		VascularPhaseTwoLevelSetFunctionPointer;
 
 	/** Run-time type information (and related methods). */
 	itkTypeMacro(VascularPhaseTwoLevelSetImageFilter, VascularLevelSetImageFilter);
@@ -72,34 +72,54 @@ public:
 	/** Method for creation through the object factory */
 	itkNewMacro(Self);
 
-	void SetAdvectionDerivativeSigma(float value)
-	{if ( value != m_VascularPhaseTwoLevelSetFunction->GetAdvectionDerivativeSigma() )
-	{m_VascularPhaseTwoLevelSetFunction->SetAdvectionDerivativeSigma(value);
-	this->Modified();}}
+	void SetAdvectionDerivativeSigma(float value){
+		std::cout << "I add to comment this because of missing classes in ITK" << std::endl << std::flush;
+	}
+
+	
+	// {if ( value != m_VascularPhaseTwoLevelSetFunction->GetAdvectionDerivativeSigma() )
+	// {m_VascularPhaseTwoLevelSetFunction->SetAdvectionDerivativeSigma(value);
+	// this->Modified();}}
 
 	/** Get the value of sigma used to compute the edge potential map derivatives.*/
 	float GetAdvectionDerivativeSigma() const
-	{ return m_VascularPhaseTwoLevelSetFunction->GetAdvectionDerivativeSigma(); }
+	{ 
+		std::cout << "I commented this because of missing functions in ITK" << std::endl << std::flush;
+		// return m_VascularPhaseTwoLevelSetFunction->GetAdvectionDerivativeSigma(); 
+		}
 
 	void SetSpeedDerivativeSigma(float value)
-	{if ( value != m_VascularPhaseTwoLevelSetFunction->GetSpeedDerivativeSigma() )
-	{m_VascularPhaseTwoLevelSetFunction->SetSpeedDerivativeSigma(value);
-	this->Modified();}}
+	{
+		std::cout << "Commenting this because of missing ITK functions" << std::endl << std::flush;
+	// 	if ( value != m_VascularPhaseTwoLevelSetFunction->GetSpeedDerivativeSigma() )
+	// {m_VascularPhaseTwoLevelSetFunction->SetSpeedDerivativeSigma(value);
+	// this->Modified();}
+	}
 	float GetSpeedDerivativeSigma() const
-	{ return m_VascularPhaseTwoLevelSetFunction->GetSpeedDerivativeSigma(); }
+	{ 
+		// return m_VascularPhaseTwoLevelSetFunction->GetSpeedDerivativeSigma(); 
+	}
 
 
 	void SetCurvataureLowerThreshold(const double v)
-	{ m_VascularPhaseTwoLevelSetFunction->SetCurvataureLowerThreshold(v);
-	this->Modified();}
+	{ 
+	// 	m_VascularPhaseTwoLevelSetFunction->SetCurvataureLowerThreshold(v);
+	// this->Modified();
+	}
 	double GetCurvataureLowerThreshold()
-	{ return m_VascularPhaseTwoLevelSetFunction->GetCurvataureLowerThreshold(); }
+	{ 
+		// return m_VascularPhaseTwoLevelSetFunction->GetCurvataureLowerThreshold(); 
+		}
 
 	void SetCurvataureUpperThreshold(const double v)
-	{ m_VascularPhaseTwoLevelSetFunction->SetCurvataureUpperThreshold(v);
-	this->Modified();}
+	{ 
+	// 	m_VascularPhaseTwoLevelSetFunction->SetCurvataureUpperThreshold(v);
+	// this->Modified();
+	}
 	double GetCurvataureUpperThreshold()
-	{ return m_VascularPhaseTwoLevelSetFunction->GetCurvataureUpperThreshold();}
+	{ 
+		// return m_VascularPhaseTwoLevelSetFunction->GetCurvataureUpperThreshold();
+		}
 
 
 
@@ -116,7 +136,7 @@ protected:
 	void GenerateData();
 
 private:
-	VascularPhaseTwoLevelSetFunctionPointer m_VascularPhaseTwoLevelSetFunction;
+	// VascularPhaseTwoLevelSetFunctionPointer m_VascularPhaseTwoLevelSetFunction;
 
 
 };

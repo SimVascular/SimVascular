@@ -285,9 +285,16 @@ void sv4guiPathVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *rendere
         return;
     }
 
-    // create new vtk render objects (e.g. sphere for a point)
-
-#if MITK_MAJOR_VERSION == 2018 && MITK_MINOR_VERSION == 04
+// create new vtk render objects (e.g. sphere for a point)
+#if MITK_MAJOR_VERSION == 2022 && MITK_MINOR_VERSION == 9
+    // might be a problem later on?
+    std::cout << "Need to figure out what to do here" << std::endl;
+    exit(1);
+    // m_VtkSelectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
+    // m_VtkUnselectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
+    // m_VtkSplinePointsPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
+    // m_VtkSplinePolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
+#elif MITK_MAJOR_VERSION == 2018 && MITK_MINOR_VERSION == 04
     m_VtkSelectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
     m_VtkUnselectedPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());
     m_VtkSplinePointsPolyDataMapper->SetGlobalImmediateModeRendering(mitk::VtkPropRenderer::useImmediateModeRendering());

@@ -48,9 +48,9 @@ public:
     itkCloneMacro(Self)
     virtual mitk::Mapper::Pointer CreateMapper(mitk::DataNode* node, MapperSlotId slotId) override;
     virtual void SetDefaultProperties(mitk::DataNode* node) override;
-    virtual const char* GetFileExtensions() override;
+    virtual std::string GetFileExtensions() override;
     virtual mitk::CoreObjectFactoryBase::MultimapType GetFileExtensionsMap() override;
-    virtual const char* GetSaveFileExtensions() override;
+    virtual std::string GetSaveFileExtensions() override;
     virtual mitk::CoreObjectFactoryBase::MultimapType GetSaveFileExtensionsMap() override;
 
     void RegisterIOFactories(); //deprecatedSince{2013_09}

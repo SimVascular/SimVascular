@@ -171,6 +171,8 @@ else()
   set(freetype_shared_option "-DSV_USE_FREETYPE_SHARED:BOOL=ON")
 endif()
 
+variable_watch(SV_USE_ZLIB)
+
 set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 ExternalProject_Add(SimVascular
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
