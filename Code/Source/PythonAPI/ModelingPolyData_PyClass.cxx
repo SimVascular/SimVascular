@@ -34,7 +34,13 @@
 // The class name is 'PolyData'.
 //
 
+#include "sv_sys_geom.h"
+
 #include <vtkMath.h>
+#include "vtkSVGlobals.h"
+#include "vtkSVNURBSSurface.h"
+#include "sv_vmtk_utils.h"
+#include "sv_polydatasolid_utils.h"
 
 //-----------------
 // PyPolyDataSolid
@@ -48,6 +54,364 @@ typedef struct {
 //////////////////////////////////////////////////////
 //          U t i l i t i e s                       //
 //////////////////////////////////////////////////////
+
+static vtkSmartPointer<vtkPolyData> 
+OrientVtkPolyData(vtkSmartPointer<vtkPolyData> inpd)
+{
+  vtkSmartPointer<vtkCleanPolyData> cleaner=vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->PointMergingOn();
+  cleaner->ConvertLinesToPointsOff();
+  cleaner->ConvertPolysToLinesOff();
+  cleaner->SetInputDataObject(inpd);
+  cleaner->Update();
+
+  vtkSmartPointer<vtkPolyDataNormals> orienter=vtkSmartPointer<vtkPolyDataNormals>::New();
+  orienter->SetInputDataObject(cleaner->GetOutput());
+  orienter->AutoOrientNormalsOn();
+  orienter->ComputePointNormalsOff();
+  orienter->SplittingOff();
+  orienter->ComputeCellNormalsOn();
+  orienter->ConsistencyOn();
+  orienter->NonManifoldTraversalOff();
+  orienter->Update();
+
+  return orienter->GetOutput();
+}
+
+static vtkPolyData* 
+Orient(vtkPolyData* inpd)
+{
+  vtkSmartPointer<vtkCleanPolyData> cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->PointMergingOn();
+  cleaner->ConvertLinesToPointsOff();
+  cleaner->ConvertPolysToLinesOff();
+  cleaner->SetInputData(inpd);
+  cleaner->Update();
+
+  vtkSmartPointer<vtkPolyDataNormals> orienter = vtkSmartPointer<vtkPolyDataNormals>::New();
+  orienter->SetInputData(cleaner->GetOutput());
+  orienter->AutoOrientNormalsOn();
+  orienter->ComputePointNormalsOff();
+  orienter->FlipNormalsOn();
+  orienter->SplittingOff();
+  orienter->ComputeCellNormalsOn();
+  orienter->ConsistencyOn();
+  orienter->NonManifoldTraversalOff();
+  orienter->Update();
+
+  vtkPolyData* outpd=vtkPolyData::New();
+  outpd->DeepCopy(orienter->GetOutput());
+
+  return outpd;
+}
+
+static vtkPolyData* 
+FillHolesWithIDs(vtkPolyData* inpd, int fillID, int fillType)
+{
+  cvPolyData* cvpd=new cvPolyData(inpd);
+  int numFilled=0;
+  cvPolyData* tmpcvpd;
+
+  if (sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType)!=SV_OK) {
+    return NULL;
+  }
+
+  if(tmpcvpd==NULL) {
+    return NULL;
+  }
+
+  vtkPolyData* outpd = Orient(tmpcvpd->GetVtkPolyData());
+
+  delete tmpcvpd;
+
+  return outpd;
+}
+
+
+static vtkPolyData* 
+CreateOrientClosedPolySolidVessel(vtkPolyData* inpd)
+{
+  int fillID=0;
+  int fillType=0;
+
+  vtkPolyData* tmppd = FillHolesWithIDs(inpd,fillID,fillType);
+
+  vtkSmartPointer<vtkPolyDataNormals> nrmls = vtkSmartPointer<vtkPolyDataNormals>::New();
+  nrmls->SplittingOff();
+  nrmls->ConsistencyOn();
+  nrmls->AutoOrientNormalsOn();
+  nrmls->ComputeCellNormalsOn();
+  nrmls->ComputePointNormalsOff();
+  nrmls->SetInputData(tmppd);
+  nrmls->Update();
+
+  vtkPolyData* outpd=vtkPolyData::New();
+  outpd->DeepCopy(nrmls->GetOutput());
+
+  tmppd->Delete();
+
+  return outpd;
+}
+
+//------------------------------
+// CreateVtkPolyDataFromContour
+//------------------------------
+//
+static vtkSmartPointer<vtkPolyData> 
+CreateVtkPolyDataFromContour(vtkPolyData* contour)
+{
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+  int pointNumber = contour->GetNumberOfPoints();
+  //std::cout << "[CreateVtkPolyDataFromContour] pointNumber: " << pointNumber << std::endl;
+  auto contour_pts = contour->GetPoints();
+
+  for (int i=0; i<=pointNumber; i++) {
+    auto pt = contour_pts->GetPoint(i);
+    if(i < pointNumber) {
+      //std::array<double, 3> point = GetContourPoint(i);
+      points->InsertPoint(i, pt[0], pt[1], pt[2]);
+    }
+
+    if(i>0&&i<pointNumber){
+      vtkIdType cell[2] = {i-1,i};
+      lines->InsertNextCell(2,cell);
+    }else if(i==pointNumber){
+      vtkIdType cell[2] = {i-1,0};
+      lines->InsertNextCell(2,cell);
+    }
+  }
+
+  vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+  polyData->SetPoints(points);
+  polyData->SetLines(lines);
+  //std::cout << "[CreateVtkPolyDataFromContour] polyData num points: " << polyData->GetNumberOfPoints() << std::endl;
+  //std::cout << "[CreateVtkPolyDataFromContour] polyData num cells: " << polyData->GetNumberOfCells() << std::endl;
+
+  return polyData;
+}
+
+static vtkPolyData*
+CreateLoftSurface(std::vector<vtkPolyData*> contourSet, int numSamplingPts, svLoftingParam& param)
+{
+  std::cout << "========== [CreateLoftSurface] ========== " << std::endl;
+  int contourNumber = contourSet.size();
+
+  param.numOutPtsAlongLength = param.samplePerSegment * contourNumber;
+  param.numPtsInLinearSampleAlongLength = param.linearMuliplier * param.numOutPtsAlongLength;
+  param.numSuperPts = 0;
+
+  std::cout << "[CreateLoftSurface] contourNumber: " << contourNumber << std::endl;
+  std::cout << "[CreateLoftSurface] param.samplePerSegment: " << param.samplePerSegment << std::endl;
+  std::cout << "[CreateLoftSurface] param.linearMuliplier: " << param.linearMuliplier << std::endl;
+  std::cout << "[CreateLoftSurface] param.numOutPtsAlongLength: " << param.numOutPtsAlongLength << std::endl;
+
+  for(int i=0;i<contourNumber;i++) {   
+    int pointNunumber = contourSet[i]->GetNumberOfPoints();
+
+    if (pointNunumber > param.numSuperPts) {
+      param.numSuperPts = pointNunumber;
+    }
+
+  }
+
+  if (param.numOutPtsInSegs > param.numSuperPts) {
+    param.numSuperPts = param.numOutPtsInSegs;
+  }
+
+  int newNumSamplingPts = param.numOutPtsInSegs;
+
+  if (numSamplingPts > 3) {
+    newNumSamplingPts = numSamplingPts; 
+    if (numSamplingPts > param.numSuperPts) {
+      param.numSuperPts = numSamplingPts;
+    }
+  }
+
+  std::vector<cvPolyData*> superSampledContours;
+
+  for (int i = 0; i < contourNumber; i++) {
+    vtkPolyData* vtkpd = vtkPolyData::New();
+    //vtkpd->DeepCopy(contourSet[i]);
+    vtkpd->DeepCopy(CreateVtkPolyDataFromContour(contourSet[i]));
+    cvPolyData* cvpd = new cvPolyData(vtkpd);
+    //vtkpd->Delete();
+    cvPolyData* cvpd2 = sys_geom_sampleLoop(cvpd, param.numSuperPts);
+
+    if (cvpd2 == nullptr) {
+      throw std::runtime_error("Supersampling error");
+    }
+ 
+    superSampledContours.push_back(cvpd2);
+  }
+
+  std::cout << "[CreateLoftSurface] align contours ... " << std::endl;
+  std::cout << "[CreateLoftSurface] param.vecFlag: " << param.vecFlag << std::endl;
+
+  std::vector<cvPolyData*> alignedContours;
+
+  for (int i = 0; i < contourNumber; i++) {
+    //std::cout << "[CreateLoftSurface] ----- i " << i << " -----" << std::endl;
+    cvPolyData* cvpd3;
+    auto cont = superSampledContours[i]->GetVtkPolyData();
+    //std::cout << "[CreateLoftSurface] cont: " << cont << std::endl;
+    //std::cout << "[CreateLoftSurface] cont npts: " << cont->GetNumberOfPoints() << std::endl;
+
+    if (i == 0) {
+      alignedContours.push_back(superSampledContours[0]);
+
+    } else {
+
+      if (param.vecFlag == 1) {
+        cvpd3 = sys_geom_Align(alignedContours[i-1], superSampledContours[i]);
+      } else {
+        cvpd3 = sys_geom_AlignByDist(alignedContours[i-1], superSampledContours[i]);
+      }
+
+      if (cvpd3 == nullptr) {
+        throw std::runtime_error("Alignment error");
+      }
+
+      alignedContours.push_back(cvpd3);
+    }
+  }
+
+  cvPolyData **sampledContours = new cvPolyData*[contourNumber];
+
+  for(int i=0;i<contourNumber;i++) {
+    cvPolyData * cvpd4=sys_geom_sampleLoop(alignedContours[i],newNumSamplingPts);
+
+    if(cvpd4==NULL) {
+      throw std::runtime_error("Sampling error");
+    }
+
+    sampledContours[i]=cvpd4;
+  }
+
+  cvPolyData *dst;
+  vtkPolyData* outpd = NULL;
+  bool addCaps = true;
+  std::cout << "[CreateLoftSurface] param.method: " << param.method << std::endl;
+  std::cout << "[CreateLoftSurface] addCaps: " << addCaps << std::endl;
+
+  if (param.method=="spline") {
+    if ( sys_geom_loft_solid(sampledContours, contourNumber, param.useLinearSampleAlongLength, param.useFFT,
+        param.numOutPtsAlongLength, newNumSamplingPts, param.numPtsInLinearSampleAlongLength, param.numModes,
+        param.splineType, param.bias, param.tension, param.continuity, &dst ) != SV_OK ) {
+      outpd=NULL;
+    } else {
+
+      if (addCaps == 1) {
+        //outpd = CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+      } else {
+        //outpd = CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+      }
+    }
+
+  } else if (param.method == "nurbs") {
+
+    // Degrees of surface
+    int uDegree = param.uDegree;
+    int vDegree = param.vDegree;
+
+    // Override to maximum possible degree if too large a degree for given number of inputs!
+    if (uDegree >= contourNumber)
+        uDegree = contourNumber-1;
+
+    if (vDegree >= newNumSamplingPts)
+        vDegree = newNumSamplingPts-1;
+
+    std::cout << "[CreateLoftSurface] contourNumber: " << contourNumber << std::endl;
+    std::cout << "[CreateLoftSurface] newNumSamplingPts: " << newNumSamplingPts << std::endl;
+    std::cout << "[CreateLoftSurface] uDegree: " << uDegree << std::endl;
+    std::cout << "[CreateLoftSurface] vDegree: " << vDegree << std::endl;
+
+    // Output spacing function of given input points
+    double uSpacing = 1.0 / param.numOutPtsAlongLength;
+    double vSpacing = 1.0 / newNumSamplingPts;
+
+    // span types
+    const char *uKnotSpanType       = param.uKnotSpanType.c_str();
+    const char *vKnotSpanType       = param.vKnotSpanType.c_str();
+    const char *uParametricSpanType = param.uParametricSpanType.c_str();
+    const char *vParametricSpanType = param.vParametricSpanType.c_str();
+    vtkNew(vtkSVNURBSSurface, NURBSSurface);
+
+    std::cout << "[CreateLoftSurface] uKnotSpanType: " << uKnotSpanType << std::endl;
+    std::cout << "[CreateLoftSurface] vKnotSpanType: " << vKnotSpanType << std::endl;
+    std::cout << "[CreateLoftSurface] uParametricSpanType: " << uParametricSpanType << std::endl;
+    std::cout << "[CreateLoftSurface] vParametricSpanType: " << vParametricSpanType << std::endl;
+    std::cout << "[CreateLoftSurface] uSpacing: " << uSpacing << std::endl;
+    std::cout << "[CreateLoftSurface] vSpacing: " << vSpacing << std::endl;
+
+    if ( sys_geom_loft_solid_with_nurbs(sampledContours, contourNumber,
+        uDegree, vDegree, uSpacing, vSpacing, uKnotSpanType, vKnotSpanType, uParametricSpanType,
+        vParametricSpanType, NURBSSurface, &dst ) != SV_OK ) {
+      //MITK_ERROR << "poly manipulation error ";
+      outpd=NULL;
+
+    } else {
+      if (PlyDtaUtils_CheckLoftSurface(dst->GetVtkPolyData()) != SV_OK) {
+        throw std::runtime_error("Error lofting surface");
+        outpd=NULL;
+
+      } else {
+        if(addCaps==1) {
+          outpd = CreateOrientClosedPolySolidVessel(dst->GetVtkPolyData());
+        } else {
+          //outpd=CreateOrientOpenPolySolidVessel(dst->GetVtkPolyData());
+        }
+      }
+    }
+
+  }
+
+  // Clean up
+  for (int i=0; i<contourNumber; i++) {
+    delete superSampledContours[i];
+    delete sampledContours[i];
+  }
+
+  delete [] sampledContours;
+
+  if (dst != NULL) delete dst;
+
+  return outpd;
+}
+
+
+//----------------
+// CreatePolyData
+//----------------
+//
+static vtkPolyData*
+CreatePolyData(std::vector< std::vector<vtkPolyData*> >& contour_groups, int num_sampling_pts, svLoftingParam& param)
+{
+  std::cout << "========== CreatePolyData ==========" << std::endl;
+
+  int num_groups = contour_groups.size();
+  cvPolyData **srcs = new cvPolyData* [num_groups];
+
+  for (int i = 0; i < num_groups; i++) {
+    auto& group = contour_groups[i];
+    vtkPolyData *vtkpd = CreateLoftSurface(group, num_sampling_pts, param);
+    srcs[i] = new cvPolyData(vtkpd);
+    vtkpd->Delete();
+  }
+
+  int noInterOut = 1;
+  double tol = 0.0;
+  cvPolyData *dst = NULL;
+
+  int status = sys_geom_all_union(srcs, num_groups, noInterOut, tol, &dst);
+
+  if (status != SV_OK) {
+    throw std::runtime_error("Union of vessels has failed. ");
+  }
+ 
+  return dst->GetVtkPolyData();
+}
+
 
 //------------------------
 // pyCreatePolyDataSolid
@@ -368,6 +732,181 @@ ModelingPolyData_delete_faces(PyModelingModel* self, PyObject* args, PyObject* k
   Py_RETURN_NONE;
 }
 
+//--------------------------------------
+// ModelingPolyData_create_vessel_model
+//--------------------------------------
+//
+PyDoc_STRVAR(ModelingPolyData_create_vessel_model_doc,
+  "create_vessel_mode()  \n\
+   \n\
+   Identify which model faces are caps.        \n\
+   \n\
+   Returns list([bool]): A list of bool values for each face ID, True if it is a cap. \n\
+");
+
+static PyObject *
+ModelingPolyData_create_vessel_model(PyModelingModel* self, PyObject* args, PyObject* kwargs)
+{
+  std::cout << "========== create_vessel_model ==========" << std::endl;
+
+  auto api = PyUtilApiFunction("O!O!iO!", PyRunTimeErr, __func__);
+  static char *keywords[] = {"contour_list", "contour_names", "num_sampling_pts", "loft_options", NULL};
+
+  PyObject* contourListArg;
+  PyObject* contourNamesListArg;
+  int num_sampling_pts;
+  PyObject* loftOptsArg;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, api.format, keywords, &PyList_Type, &contourListArg, 
+      &PyList_Type, &contourNamesListArg, &num_sampling_pts, &PyDict_Type, &loftOptsArg)) {
+    return api.argsError();
+  }
+
+  // Get list of vtkPolyData storing contour points.
+  //
+  std::vector<vtkPolyData*> polyDataList;
+  auto contourListArg_size = PyList_Size(contourListArg);
+
+  if (contourListArg_size == 0) {
+    api.error("The points list argument is empty.");
+    return nullptr;
+  }
+
+  std::cout << "[create_vessel_model] contourListArg_size: " << contourListArg_size << std::endl;
+
+  std::vector< std::vector<vtkPolyData*> > contour_groups;
+
+  for (int i = 0; i < contourListArg_size; i++ ) {
+    auto polydata_list = PyList_GetItem(contourListArg, i);
+    auto polydata_list_size = PyList_Size(polydata_list);
+    std::cout << "[create_vessel_model] polydata_list_size: " << polydata_list_size << std::endl;
+    std::vector<vtkPolyData*> cont_grp;
+
+    for (int j = 0; j < polydata_list_size; j++ ) {
+      auto obj = PyList_GetItem(polydata_list, j);
+      auto polydata = (vtkPolyData*)vtkPythonUtil::GetPointerFromObject(obj, "vtkPolyData");
+      //std::cout << "[create_vessel_model] polydata: " << polydata << std::endl;
+      //std::cout << "[create_vessel_model] polydata num pts: " << polydata->GetNumberOfPoints() << std::endl;
+      cont_grp.push_back(polydata);
+    }
+
+    contour_groups.push_back(cont_grp);
+  }
+
+  // Get contour names.
+  //
+  auto contourNamesListArg_size = PyList_Size(contourNamesListArg);
+
+  if (contourNamesListArg_size == 0) {
+    api.error("The contour name list argument is empty.");
+    return nullptr;
+  }
+
+  std::vector<std::string> contourNames;
+
+  for (int i = 0; i < contourNamesListArg_size; i++ ) {
+    auto obj = PyList_GetItem(contourNamesListArg, i);
+    contourNames.push_back(std::string(PyString_AsString(obj)));
+  }
+
+  // Get lofting parameters.
+  //
+  svLoftingParam param;
+  param.vecFlag = 0;
+
+  PyObject *key, *value;
+  Py_ssize_t pos = 0;
+
+  while (PyDict_Next(loftOptsArg, &pos, &key, &value)) {
+    auto name = std::string(PyString_AsString(key));
+    std::cout << "[create_vessel_model] name: " << name << std::endl;
+
+    if (name == "linearMuliplier") {
+      param.linearMuliplier = PyLong_AsLong(value);
+      std::cout << "[create_vessel_model] value: " << param.linearMuliplier << std::endl;
+
+    } else if (name == "method") {
+      param.method = PyString_AsString(value);
+      std::cout << "[create_vessel_model] value: " << param.method << std::endl;
+
+    } else if (name == "numOutPtsInSegs") {
+      param.numOutPtsInSegs = PyLong_AsLong(value);
+      std::cout << "[create_vessel_model] value: " << param.numOutPtsInSegs << std::endl;
+
+    } else if (name == "samplePerSegment") {
+      param.samplePerSegment = PyLong_AsLong(value);
+      std::cout << "[create_vessel_model] value: " << param.samplePerSegment << std::endl;
+
+    } else if (name == "uKnotSpanType") {
+      param.uKnotSpanType = PyString_AsString(value);
+      std::cout << "[create_vessel_model] value: " << param.uKnotSpanType << std::endl;
+
+    } else if (name == "vKnotSpanType") {
+      param.vKnotSpanType = PyString_AsString(value);
+      std::cout << "[create_vessel_model] value: " << param.vKnotSpanType << std::endl;
+
+    } else if (name == "uParametricSpanType") {
+      param.uParametricSpanType = PyString_AsString(value);
+      std::cout << "[create_vessel_model] value: " << param.uParametricSpanType << std::endl;
+
+    } else if (name == "vParametricSpanType") {
+      param.vParametricSpanType = PyString_AsString(value);
+      std::cout << "[create_vessel_model] value: " << param.vParametricSpanType << std::endl;
+
+    }
+
+  }
+
+  // Create a solid model by lofting the contours for each vessel and
+  // unioning them.
+  vtkPolyData* solidvpd = CreatePolyData(contour_groups, num_sampling_pts, param); 
+
+  cvPolyData *src = new cvPolyData(solidvpd);
+  cvPolyData *dst = NULL;
+
+  /*
+  if (sys_geom_checksurface(src,stats,tol) !=SV_OK) {
+    api.error("Vessel union has failed.");
+    return nullptr;
+  }
+  */
+
+
+  int *doublecaps;
+  int numfaces = 0;
+
+  if (sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces) != SV_OK) {
+    solidvpd->Delete();
+    api.error("Vessel union has failed.");
+    return nullptr;
+  }
+
+  auto forClean = vtkSmartPointer<vtkPolyData>::New();
+  forClean->DeepCopy(dst->GetVtkPolyData());
+  auto nowClean = vtkSmartPointer<vtkPolyData>::New();
+  nowClean = OrientVtkPolyData(forClean);
+
+  solidvpd->DeepCopy(nowClean);;
+
+  int numSeg = contourNames.size();
+  int numCap2 = 0;
+
+  for (int i = numSeg-1; i > -1; i--) {   
+    if (doublecaps[i] != 0) {   
+      numCap2=doublecaps[i];
+      break;
+      }
+   }
+
+  self->solidModel->SetVtkPolyDataObject(solidvpd);
+
+  Py_RETURN_NONE;
+}
+
+//--------------------------------
+// ModelingPolyData_identify_caps
+//--------------------------------
+//
 PyDoc_STRVAR(ModelingPolyData_identify_caps_doc,
   "identify_caps()  \n\
    \n\
@@ -489,6 +1028,8 @@ PyMethodDef PyPolyDataSolidMethods[] = {
   { "combine_faces", (PyCFunction)ModelingPolyData_combine_faces, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_combine_faces_doc},
 
   { "compute_boundary_faces", (PyCFunction)ModelingPolyData_compute_boundary_faces, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_compute_boundary_faces_doc},
+
+  { "create_vessel_model", (PyCFunction)ModelingPolyData_create_vessel_model, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_create_vessel_model_doc},
 
   { "identify_caps", (PyCFunction)ModelingPolyData_identify_caps, METH_VARARGS|METH_KEYWORDS, ModelingPolyData_identify_caps_doc},
 
